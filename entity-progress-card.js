@@ -16,7 +16,7 @@ class EntityProgressCard extends HTMLElement {
 
     setConfig(config) {
         if (!config.entity) {
-            throw new Error("Le paramètre 'entity' est obligatoire !");
+            throw new Error("The 'entity' parameter is required!");
         }
 
         this.config = config;
