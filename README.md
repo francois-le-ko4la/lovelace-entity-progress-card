@@ -1,4 +1,4 @@
-# hass-entity-progress-card
+# lovelace-entity-progress-card
 Entity progress card for Home Assistant
 
 ![Bar Card](example.png)
