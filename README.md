@@ -83,3 +83,6 @@ The card editor allows you to quickly set up and customize the card.
 - Experiment with color codes like HEX or RGB for precise customization.
 - Combine with other Lovelace cards to create a visually cohesive dashboard.
 
+## 🛠️ Known Issue
+
+- In the card editor, you must switch to another field for a modification to be saved.
