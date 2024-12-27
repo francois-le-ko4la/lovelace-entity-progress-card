@@ -238,12 +238,38 @@ class EntityProgressCardEditor extends HTMLElement {
     constructor() {
         super();
         this.config = {};
-        this.hass = {};
+        this._hass = null;
+        this.rendered = false;
     }
-    
+
+    set hass(value) {
+        if (!value) {
+            console.warn('Skipping render until hass is defined');
+            return;
+        }
+        // if `hass` not null and changed -> render
+        if (!this._hass || this._hass.entities !== value.entities) {
+            this._hass = value;
+            if (this.rendered) {
+                this.render();
+            }
+        }
+    }
+
+    get hass() {
+        return this._hass;
+    }
+
     setConfig(config) {
+        if (!this.hass) {
+            console.warn('Skipping render until hass is defined');
+            return;
+        }
         this.config = config;
-        this.render();
+        if (!this.rendered) {
+            this.rendered = true;
+            this.render();
+        }
     }
 
     reorderConfig(config) {
@@ -266,77 +292,77 @@ class EntityProgressCardEditor extends HTMLElement {
         this.config[key] = value;
         // reorder
         this.config = this.reorderConfig(this.config);
-    }
+        this.dispatchEvent(new CustomEvent('config-changed', { detail: { config: this.config } }));
+    };
 
     render() {
         this.innerHTML = ''; // Reset inner HTML
-    
+
         const container = document.createElement('div');
-        container.style.display = "flex";
-        container.style.flexDirection = "column";
-    
+        container.style.display = 'flex';
+        container.style.flexDirection = 'column';
+
         // Define input fields with descriptions
         const fields = [
-            { name: 'entity', label: 'Entity (*)', type: 'text', description: 'Enter an entity from Home Assistant.' },
-            { name: 'name', label: 'Name', type: 'text', description: 'Enter a name for the entity.' },
-            { name: 'icon', label: 'Icon', type: 'icon', description: 'Choose an icon for the entity.' },
-            { name: 'color', label: 'Color', type: 'text', description: 'Enter the main color for the icon.' },
-            { name: 'bar_color', label: 'Bar Color', type: 'text', description: 'Enter the color for the bar.' }
+            { name: 'entity', label: 'Entity', type: 'text', required: true, description: 'Enter an entity from Home Assistant.' },
+            { name: 'name', label: 'Name', type: 'text', required: false, description: 'Enter a name for the entity.' },
+            { name: 'icon', label: 'Icon', type: 'icon', required: false, description: 'Choose an icon for the entity.' },
+            { name: 'color', label: 'Color', type: 'text', required: false, description: 'Enter the main color for the icon.' },
+            { name: 'bar_color', label: 'Bar Color', type: 'text', required: false, description: 'Enter the color for the bar.' }
         ];
 
-        fields.forEach(field => {
+        fields.forEach((field) => {
             let inputElement;
-            if (field.type === 'dropdown') {
-                inputElement = document.createElement('ha-select');
-                field.options.forEach(option => {
-                    const optionElement = document.createElement('mwc-list-item');
-                    optionElement.value = option;
-                    optionElement.innerText = option;
-                    inputElement.appendChild(optionElement);
-                });
-                inputElement.value = this.config.mode || field.defaultValue;
-            } else if (field.type === 'entity') {
-                // Use ha-entity-picker for entity selection
+
+            if (field.type === 'entity') {
                 inputElement = document.createElement('ha-entity-picker');
+                inputElement.style.display = 'block';
+                inputElement.required = field.required;
                 inputElement.hass = this.hass;
-                inputElement.label = field.label
-                inputElement.value = this.config.entity || '';
-            } else if (field.type === 'icon') {
-                // Use ha-icon-picker for icon selection
-                inputElement = document.createElement('ha-icon-picker');
-                inputElement.label = field.label
-                inputElement.value = this.config.icon || '';
+                inputElement.label = field.label;
+                inputElement.value = this.config[field.name] || '';
+
                 // Listen for value-changed event to update config
                 inputElement.addEventListener('value-changed', (event) => {
-                    this.updateConfigProperty('icon', event.target.value)
-                    this.dispatchEvent(new CustomEvent('config-changed', { detail: { config: this.config } }));
+                    console.log('Entity selected:', event.detail.value);
+                    this.updateConfigProperty(field.name, event.detail.value);
+                });
+            } else if (field.type === 'icon') {
+                inputElement = document.createElement('ha-icon-picker');
+                inputElement.required = field.required
+                inputElement.label = field.label;
+                inputElement.value = this.config[field.name] || '';
+
+                // Listen for value-changed event to update config
+                inputElement.addEventListener('value-changed', (event) => {
+                    this.updateConfigProperty(field.name, event.detail.value);
                 });
             } else {
                 inputElement = document.createElement('ha-textfield');
-                inputElement.type = field.type;
-                inputElement.label = field.label
-                inputElement.value = this.config[field.name] || field.defaultValue || '';
+                inputElement.type = 'text';
+                inputElement.required = field.required
+                inputElement.label = field.label;
+                inputElement.value = this.config[field.name] || '';
+
+                // Listen for input event to update config
+                inputElement.addEventListener('input', (event) => {
+                    this.updateConfigProperty(field.name, event.target.value);
+                });
             }
-    
+
             inputElement.configValue = field.name;
-        
-            // Listen for change event to update config
-            inputElement.addEventListener('change', (event) => {
-                const target = event.target;
-                this.updateConfigProperty(target.configValue, target.value)
-                this.dispatchEvent(new CustomEvent('config-changed', { detail: { config: this.config } }));
-            });
-        
+
             // Create a description
             const fieldDescription = document.createElement('span');
             fieldDescription.innerText = field.description;
-            fieldDescription.style.fontSize = "12px";
-            fieldDescription.style.color = "#888";
-            fieldDescription.style.marginBottom = "6px";
-        
+            fieldDescription.style.fontSize = '12px';
+            fieldDescription.style.color = '#888';
+            fieldDescription.style.marginBottom = '6px';
+
             container.appendChild(inputElement);
             container.appendChild(fieldDescription);
         });
+
         this.appendChild(container);
     }
 }
