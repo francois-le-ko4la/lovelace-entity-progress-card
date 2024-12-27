@@ -82,7 +82,3 @@ The card editor allows you to quickly set up and customize the card.
 - Use Material Design Icons (MDI) for a consistent look. Browse available icons at Material Design Icons.
 - Experiment with color codes like HEX or RGB for precise customization.
 - Combine with other Lovelace cards to create a visually cohesive dashboard.
-
-## 🛠️ Known Issue
-
-- In the card editor, you must switch to another field for a modification to be saved.
