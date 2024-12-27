@@ -15,7 +15,7 @@ This custom version of the **Bar Card** for Home Assistant allows you to display
 - HA version: 2024+
 > Ensure your Home Assistant instance is up to date to support this custom card.
 
-## ⚙️ Installation Steps
+## 📦 Installation Steps
 ### Manual Installation
 
 1. Download the file `entity-progress-card.js` to the `/config/www/` directory in your Home Assistant setup.
