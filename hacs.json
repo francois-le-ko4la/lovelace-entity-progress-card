@@ -1,0 +1,9 @@
+{
+  "name": "Entity Progress Card",
+  "content_in_root": true,
+  "render_readme": true,
+  "description": "A progress bar card for Lovelace in Home Assistant",
+  "documentation": "https://github.com/username/entity-progress-card",
+  "domains": ["lovelace"],
+  "iot_class": "local_polling"
+}
