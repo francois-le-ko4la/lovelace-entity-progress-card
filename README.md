@@ -1,2 +1,64 @@
 # hass-entity-progress-card
 Entity progress card for Home Assistant
+
+![Bar Card](example.png)
+
+This custom version of the **Bar Card** for Home Assistant allows you to display a simple percentage bar that is quick and easy to integrate into your Lovelace cards. It blends seamlessly with the `Tile`/`Mushroom` look & feel of the latest Home Assistant versions. This card is based on custom CSS and leverages existing code to fine-tune the appearance.
+
+## 🚀 Features
+- Displays a percentage progress bar.
+- Seamlessly integrates with the "Tile" look & feel of recent Home Assistant versions.
+- Easily customizable using the card editor or YAML config : entity, name, colors, and bar color
+  
+## ⚙️ Prerequisites
+
+- HA version: 2024+
+- install: download `entity-progress-card.js` in /local/www and restart HA
+
+## 📝 Usage
+### Parameters
+
+You can customize the card using the following parameters:
+
+- **`entity`** *(required)*:  
+  The Home Assistant entity to display.  
+  *Example:* `sensor.hp_envy_6400_series_tri_color_cartridge`
+
+- **`name`** *(optional)*:  
+  The name displayed on the progress bar. If omitted, the entity's friendly name will be used.  
+  *Example:* `"RGB Color"`
+
+- **`icon`** *(optional)*:  
+  The icon associated with the entity. Supports Material Design Icons (MDI).  
+  *Examples:* `mdi:lightbulb`, `mdi:thermometer`
+
+- **`color`** *(optional)*:  
+  The color of the icon. Accepts color names, RGB values, or HEX codes.  
+  *Examples:* `"green"`, `"rgb(68, 115, 158)"`, `"#FF5733"`
+
+- **`bar-color`** *(optional)*:  
+  The color of the progress bar. Accepts color names, RGB values, or HEX codes.  
+  *Examples:* `"blue"`, `"rgb(68, 115, 158)"`, `"#FF5733"`
+  
+### YAML
+Here’s our example of how to use the Custom Bar Card with custom styles:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.hp_envy_6400_series_tri_color_cartridge
+name: RVB
+icon: mdi:grain
+color: rgb(110, 65, 171)
+bar_color: rgb(110, 65, 171)
+```
+
+### Card Editor
+The card editor allows you to quickly set up and customize the card.
+![Editor](editor.png)
+
+## 💡 Tips
+
+- Use Material Design Icons (MDI) for a consistent look. Browse available icons at Material Design Icons.
+- Experiment with color codes like HEX or RGB for precise customization.
+- Combine with other Lovelace cards to create a visually cohesive dashboard.
+
