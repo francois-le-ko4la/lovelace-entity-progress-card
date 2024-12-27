@@ -308,10 +308,6 @@ class EntityProgressCardEditor extends HTMLElement {
                 inputElement.value = this.config.icon || '';
                 // Listen for value-changed event to update config
                 inputElement.addEventListener('value-changed', (event) => {
-                    //this.config = {
-                    //    ...this.config,
-                    //    icon: event.target.value
-                    //};
                     this.updateConfigProperty('icon', event.target.value)
                     this.dispatchEvent(new CustomEvent('config-changed', { detail: { config: this.config } }));
                 });
@@ -327,10 +323,6 @@ class EntityProgressCardEditor extends HTMLElement {
             // Listen for change event to update config
             inputElement.addEventListener('change', (event) => {
                 const target = event.target;
-                //this.config = {
-                //    ...this.config,
-                //    [target.configValue]: target.value
-                //};
                 this.updateConfigProperty(target.configValue, target.value)
                 this.dispatchEvent(new CustomEvent('config-changed', { detail: { config: this.config } }));
             });
