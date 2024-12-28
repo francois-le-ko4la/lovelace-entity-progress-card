@@ -55,11 +55,11 @@ You can customize the card using the following parameters:
 
 - **`color`** *(optional)*:  
   The color of the icon. Accepts color names, RGB values, or HEX codes.  
-  *Examples:* `"green"`, `"rgb(68, 115, 158)"`, `"#FF5733"`
+  *Examples:* `"green"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`
 
 - **`bar-color`** *(optional)*:  
   The color of the progress bar. Accepts color names, RGB values, or HEX codes.  
-  *Examples:* `"blue"`, `"rgb(68, 115, 158)"`, `"#FF5733"`
+  *Examples:* `"blue"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`
   
 ### YAML
 Here’s our example of how to use the Custom Bar Card with custom styles:
@@ -75,7 +75,13 @@ bar_color: rgb(110, 65, 171)
 
 ### Card Editor
 The card editor allows you to quickly set up and customize the card.
+
 ![Editor](editor.png)
+
+- The `Entity` field is required, and an error message will appear if it is not filled in.
+- The `Name` field is an input form. If the `Name` field is left empty, the card will use the entity’s default name.
+- The `Icon` is selected directly from a dropdown with all available icons in Home Assistant.
+- `Colors` can be selected from the provided list, which is based on standard Home Assistant colors. It’s possible to use a color outside of this list, but it must be set through YAML configuration.
 
 ## 💡 Tips
 
