@@ -16,6 +16,7 @@ class EntityProgressCard extends HTMLElement {
         }
         // to store DOM ref.
         this._elements = {};
+        this._isBuilt = false;
     }
 
     static getConfigElement() {
@@ -26,51 +27,25 @@ class EntityProgressCard extends HTMLElement {
         if (!config.entity) {
             throw new Error("The 'entity' parameter is required!");
         }
-
+    
+        const entityChanged = this.config?.entity !== config.entity;
         this.config = config;
-
-        // build the card content
-        this._buildCard();
+    
+        // Ne reconstruire la carte que si elle n'est pas encore construite
+        if (!this._isBuilt) {
+            this._buildCard();
+            this._isBuilt = true; // Marquer comme construite
+        }
+    
+        // Si l'entité ou la config a changé, mettre à jour les éléments
+        if (entityChanged) {
+            this._updateDynamicElements();
+        }
     }
-
+    
     set hass(hass) {
         this._hass = hass;
-
-        // get entity state
-        const entity = hass.states[this.config.entity];
-        if (!entity) {
-            // show error message
-            this._showError("Entity not found in Home Assistant states.");
-            return;
-        }
-        // Hide error message if entity is found
-        this._hideError();
-
-        const value = parseFloat(entity.state);
-        const percentage = isNaN(value) ? 0 : Math.min(Math.max(value, 0), 100);
-
-        // update dyn element
-        this._updateElement('progressBar', (el) => {
-            el.style.width = `${percentage}%`;
-            el.style.backgroundColor = this.config['bar_color'] || 'var(--state-icon-color)';
-        });
-
-        this._updateElement('icon', (el) => {
-            el.setAttribute('icon', this.config.icon || entity.attributes.icon || 'mdi:alert');
-            el.style.color = this.config.color || 'var(--state-icon-color)';
-        });
-
-        this._updateElement('shape', (el) => {
-            el.style.backgroundColor = this.config.color || 'var(--state-icon-color)';
-        });
-
-        this._updateElement('name', (el) => {
-            el.textContent = this.config.name || entity.attributes.friendly_name || this.config.entity;
-        });
-
-        this._updateElement('percentage', (el) => {
-            el.textContent = `${percentage}%`;
-        });
+        this._updateDynamicElements();
     }
 
     _buildCard() {
@@ -243,10 +218,53 @@ class EntityProgressCard extends HTMLElement {
     _updateElement(key, callback) {
         const element = this._elements[key];
         if (element) {
-            callback(element);
+            const currentValue = element.textContent || element.style.width;
+            const newValue = callback(element);
+            if (currentValue !== newValue) {
+                callback(element);
+            }
         }
     }
 
+    _updateDynamicElements() {
+        // get entity state
+        const entity = this._hass?.states[this.config.entity];
+
+        if (!entity) {
+            // show error message
+            this._showError("Entity not found in Home Assistant states.");
+            return;
+        }
+        // Hide error message if entity is found
+        this._hideError();
+
+        const value = parseFloat(entity.state);
+        const percentage = isNaN(value) ? 0 : Math.min(Math.max(value, 0), 100);
+
+        // update dyn element
+        this._updateElement('progressBar', (el) => {
+            el.style.width = `${percentage}%`;
+            el.style.backgroundColor = this.config['bar_color'] || 'var(--state-icon-color)';
+        });
+
+        this._updateElement('icon', (el) => {
+            el.setAttribute('icon', this.config.icon || entity.attributes.icon || 'mdi:alert');
+            el.style.color = this.config.color || 'var(--state-icon-color)';
+        });
+
+        this._updateElement('shape', (el) => {
+            el.style.backgroundColor = this.config.color || 'var(--state-icon-color)';
+        });
+
+        this._updateElement('name', (el) => {
+            el.textContent = this.config.name || entity.attributes.friendly_name || this.config.entity;
+        });
+
+        this._updateElement('percentage', (el) => {
+            el.textContent = `${percentage}%`;
+        });
+    }
+    
     // Show error alert
     _showError(message) {
         const alertElement = this._elements.alert;
