@@ -14,16 +14,12 @@ class EntityProgressCard extends HTMLElement {
             console.groupEnd();
             EntityProgressCard._moduleLoaded = true;
         }
+        // to store DOM ref.
+        this._elements = {};
     }
 
     static getConfigElement() {
         return document.createElement('entity-progress-card-editor');
-    }
-
-    static getStubConfig() {
-        return {
-            entity: 'sensor.example',
-        };
     }
 
     setConfig(config) {
@@ -40,53 +36,48 @@ class EntityProgressCard extends HTMLElement {
     set hass(hass) {
         this._hass = hass;
 
-        // current entity state
+        // get entity state
         const entity = hass.states[this.config.entity];
         if (!entity) {
+            // show error message
+            this._showError("Entity not found in Home Assistant states.");
             return;
         }
+        // Hide error message if entity is found
+        this._hideError();
 
-        const value = parseFloat(entity.state); // admit it's a float...
-        const percentage = isNaN(value) ? 0 : Math.min(Math.max(value, 0), 100); // Clamping
+        const value = parseFloat(entity.state);
+        const percentage = isNaN(value) ? 0 : Math.min(Math.max(value, 0), 100);
 
-        // update the progress bar
-        const progressBar = this.shadowRoot.querySelector('.progress-bar-inner');
-        if (progressBar) {
-            progressBar.style.width = `${percentage}%`;
-            progressBar.style.backgroundColor = this.config['bar_color'] || 'var(--state-icon-color)';
-        }
+        // update dyn element
+        this._updateElement('progressBar', (el) => {
+            el.style.width = `${percentage}%`;
+            el.style.backgroundColor = this.config['bar_color'] || 'var(--state-icon-color)';
+        });
 
-        // update icon
-        const icon = this.shadowRoot.querySelector('.icon');
-        if (icon) {
-            icon.setAttribute('icon', this.config.icon || entity.attributes.icon || 'mdi:alert');
-            icon.style.color = this.config.color || 'var(--state-icon-color)';
-        }
+        this._updateElement('icon', (el) => {
+            el.setAttribute('icon', this.config.icon || entity.attributes.icon || 'mdi:alert');
+            el.style.color = this.config.color || 'var(--state-icon-color)';
+        });
 
-        // update shape
-        const shape = this.shadowRoot.querySelector('.shape');
-        if (shape) {
-            shape.style.backgroundColor = this.config.color || 'var(--state-icon-color)';
-        }
+        this._updateElement('shape', (el) => {
+            el.style.backgroundColor = this.config.color || 'var(--state-icon-color)';
+        });
 
-        // update name
-        const nameElement = this.shadowRoot.querySelector('.name');
-        if (nameElement) {
-            nameElement.textContent = this.config.name || entity.attributes.friendly_name || this.config.entity;
-        }
+        this._updateElement('name', (el) => {
+            el.textContent = this.config.name || entity.attributes.friendly_name || this.config.entity;
+        });
 
-        // update percentage
-        const percentageElement = this.shadowRoot.querySelector('.percentage');
-        if (percentageElement) {
-            percentageElement.textContent = `${percentage}%`;
-        }
+        this._updateElement('percentage', (el) => {
+            el.textContent = `${percentage}%`;
+        });
     }
 
     _buildCard() {
         const wrapper = document.createElement('ha-card');
         wrapper.classList.add('custom-progress-card');
         wrapper.innerHTML = `
-        <!-- Conteneur principal -->
+        <!-- Main container -->
         <div class="container">
             <!-- Section gauche avec l'icône -->
             <div class="left">
@@ -105,6 +96,8 @@ class EntityProgressCard extends HTMLElement {
                 </div>   
             </div>
         </div>
+        <!-- HA Alert -->
+        <ha-alert style="display:none;" type="error"></ha-alert>
         `;
 
         const style = document.createElement('style');
@@ -115,7 +108,7 @@ class EntityProgressCard extends HTMLElement {
                 flex-direction: row;
                 align-items: center;
                 justify-content: flex-start; /* Aligner tous les éléments à gauche */
-                padding: 7px 10px;
+                padding: 0;
                 box-sizing: border-box;
                 border-radius: 8px;
                 max-width: 600px;
@@ -127,39 +120,39 @@ class EntityProgressCard extends HTMLElement {
                 display: flex;
                 flex-direction: row;
                 align-items: center;
-                padding: 0; /* Supprime les marges internes (erreur "0 px" corrigée) */
-                margin: 0; /* Supprime les marges externes */
-                gap: 10px; /* Ajout de marge de 10px entre le left et le right */
-                width: 100%; /* Prendre 100% de la largeur de la carte */
-                height: 100%; /* Prendre 100% de la hauteur de la carte */
-                overflow: hidden; /* Empêche le contenu de dépasser */
+                padding: 0;
+                margin: 7px 10px;
+                gap: 10px;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
             }
 
             /* .left: icon & shape */
             .left {
                 display: flex;
-                align-items: center; /* Centre verticalement */
-                justify-content: center; /* Centre horizontalement */
+                align-items: center;
+                justify-content: center;
                 position: relative;
-                width: 36px; /* Taille fixe pour le conteneur */
-                height: 36px; /* Taille fixe pour le conteneur */
-                flex-shrink: 0; /* Empêche le rétrécissement */
+                width: 36px;
+                height: 36px;
+                flex-shrink: 0;
             }
 
             .shape {
-                position: absolute; /* Position absolue pour occuper tout l'espace */
-                width: 36px; /* S'assure que le cercle correspond exactement au conteneur */
-                height: 36px; /* Taille identique à la largeur */
-                border-radius: 50%; /* Crée un cercle parfait */
-                background-color: var(--state-icon-color); /* Couleur du cercle */
-                opacity: 0.2; /* Transparence */
+                position: absolute;
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                background-color: var(--state-icon-color);
+                opacity: 0.2;
             }
 
             .icon {
-                position: relative; /* Relatif pour rester centré au-dessus du shape */
-                z-index: 1; /* S'assure que l'icône est au-dessus du shape */
-                width: 24px; /* Taille de l'icône */
-                height: 24px; /* Taille de l'icône */
+                position: relative;
+                z-index: 1;
+                width: 24px;
+                height: 24px;
             }
 
             /* .right: name & percentage */
@@ -167,8 +160,8 @@ class EntityProgressCard extends HTMLElement {
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
-                flex-grow: 1; /* Prend toute la place restante */
-                overflow: hidden; /* Empêche le débordement */
+                flex-grow: 1;
+                overflow: hidden;
                 width:100%;
             }
  
@@ -176,51 +169,99 @@ class EntityProgressCard extends HTMLElement {
                 font-size: 1em;
                 font-weight: bold;
                 color: var(--primary-text-color);
-                white-space: nowrap; /* Empêche le retour à la ligne */
-                overflow: hidden; /* Cache le contenu débordant */
-                text-overflow: ellipsis; /* Ajoute des "..." si le texte est trop long */
-                width: 100%; /* Limite la largeur au conteneur parent */
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 100%;
             }
 
             .secondary_info {
-                display: flex; /* Flex container */
-                flex-direction: row; /* Dispose les éléments sur une seule ligne */
-                align-items: center; /* Centre verticalement les éléments */
-                justify-content: flex-start; /* Aligne les éléments à gauche */
-                gap: 10px; /* Ajout d'un espace fixe entre le pourcentage et la barre */
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: flex-start;
+                gap: 10px;
             }
 
             .percentage {
                 font-size: 0.9em;
                 color: var(--primary-text-color);
-                min-width: 40px; /* Largeur minimale pour aligner avec la barre */
-                text-align: left; /* Aligner le texte du pourcentage à droite */
+                min-width: 40px;
+                text-align: left;
             }
 
             /* Progress bar */
             .progress-bar {
-                flex-grow: 1; /* La barre de progression occupe le reste de l'espace */
+                flex-grow: 1;
                 height: 8px;
-                max-height: 8px; /* Garantit que la hauteur ne dépasse pas cette valeur */
+                max-height: 8px;
                 background-color: var(--divider-color);
                 border-radius: 4px;
                 overflow: hidden;
-                position: relative; /* Position pour que les enfants soient bien alignés */
+                position: relative;
             }
 
             .progress-bar-inner {
                 height: 100%;
-                width: 75%; /* La largeur est mise à jour dynamiquement */
+                width: 75%;
                 background-color: var(--primary-color);
                 transition: width 0.3s ease;
             }
 
+            ha-alert {
+                display: flex;
+                position: absolute;
+                margin: 0;
+                padding: 0px;
+                display: flex;
+                top: -1px;
+                left: -2px;
+                width: 102%;
+                height: 105%;
+                z-index: 10;
+                align-items: center;
+                justify-content: center;
+                background-color: black;
+            }
         `;
 
         // Inject in the DOM
         this.shadowRoot.innerHTML = '';
         this.shadowRoot.appendChild(style);
         this.shadowRoot.appendChild(wrapper);
+        // store DOM ref to update
+        this._elements = {
+            icon: this.shadowRoot.querySelector('.icon'),
+            shape: this.shadowRoot.querySelector('.shape'),
+            name: this.shadowRoot.querySelector('.name'),
+            percentage: this.shadowRoot.querySelector('.percentage'),
+            progressBar: this.shadowRoot.querySelector('.progress-bar-inner'),
+            alert: this.shadowRoot.querySelector('ha-alert'), // New reference to the ha-alert
+        };
+    }
+
+    _updateElement(key, callback) {
+        const element = this._elements[key];
+        if (element) {
+            callback(element);
+        }
+    }
+
+    // Show error alert
+    _showError(message) {
+        const alertElement = this._elements.alert;
+        if (alertElement) {
+            alertElement.style.display = 'block';
+            alertElement.textContent = message;  // Set the error message in the alert
+        }
+    }
+
+    // Hide the alert when the entity is found
+    _hideError() {
+        const alertElement = this._elements.alert;
+        if (alertElement) {
+            alertElement.style.display = 'none';
+        }
     }
 
     getCardSize() {
@@ -228,7 +269,7 @@ class EntityProgressCard extends HTMLElement {
     }
 }
 
-EntityProgressCard.version = '1.0.3';
+EntityProgressCard.version = '1.0.4';
 EntityProgressCard._moduleLoaded = false;
 customElements.define('entity-progress-card', EntityProgressCard);
 
