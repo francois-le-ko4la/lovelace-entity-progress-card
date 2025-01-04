@@ -317,7 +317,7 @@ class EntityProgressCard extends HTMLElement {
     }
 }
 
-EntityProgressCard.version = '1.0.5';
+EntityProgressCard.version = '1.0.4';
 EntityProgressCard._moduleLoaded = false;
 customElements.define('entity-progress-card', EntityProgressCard);
 
@@ -367,6 +367,7 @@ class EntityProgressCardEditor extends HTMLElement {
             return;
         }
         this.config = config;
+        this.loadEntityPicker();
         if (!this.rendered) {
             this.rendered = true;
             this.render();
@@ -487,6 +488,24 @@ class EntityProgressCardEditor extends HTMLElement {
         return fieldContainer;
     }
 
+    /**
+     * Need this to load the HA elements we want to re-use
+     * see: 
+     *  - https://github.com/thomasloven/hass-config/wiki/PreLoading-Lovelace-Elements
+     *  - https://gist.github.com/thomasloven/5f965bd26e5f69876890886c09dd9ba8
+     * */
+
+    async loadEntityPicker() {
+        if (!window.customElements.get("ha-entity-picker")) {
+            const ch = await window.loadCardHelpers();
+            const c = await ch.createCardElement({ type: "entities", entities: [] });
+            await c.constructor.getConfigElement();
+            // Since ha-elements are not using scopedRegistry we can get a reference to
+            // the newly loaded element from the global customElement registry...
+            const haEntityPicker = window.customElements.get("ha-entity-picker");
+        }
+    }
+
     render() {
         this.innerHTML = ''; // Reset inner HTML
         const fragment = document.createDocumentFragment();
@@ -499,7 +518,7 @@ class EntityProgressCardEditor extends HTMLElement {
         container.style.maxHeight = '100vh';     // Limit height to the viewport
 
         const fields = [
-            { name: 'entity', label: 'Entity', type: 'text', required: true, description: 'Enter an entity from Home Assistant.' },
+            { name: 'entity', label: 'Entity', type: 'entity', required: true, description: 'Enter an entity from Home Assistant.' },
             { name: 'name', label: 'Name', type: 'text', required: false, description: 'Enter a name for the entity.' },
             { name: 'icon', label: 'Icon', type: 'icon', required: false, description: 'Choose an icon for the entity.' },
             { name: 'color', label: 'Color', type: 'color', required: false, description: 'Choose the primary color for the icon.' },
