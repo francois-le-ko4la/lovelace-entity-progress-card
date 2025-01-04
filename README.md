@@ -88,6 +88,7 @@ The card editor allows you to quickly set up and customize the card.
 - The `Name` field is an input form. If the `Name` field is left empty, the card will use the entity’s default name.
 - The `Icon` is selected directly from a dropdown with all available icons in Home Assistant.
 - `Colors` can be selected from the provided list, which is based on standard Home Assistant colors. It’s possible to use a color outside of this list, but it must be set through YAML configuration.
+- The `theme` can be selected. Once a theme is chosen, the `icon`, `color`, and `bar-color` parameters will no longer be visible.
 
 ## 💡 Tips
 ### Usage
