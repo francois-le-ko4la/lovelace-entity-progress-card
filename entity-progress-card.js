@@ -315,9 +315,16 @@ class EntityProgressCard extends HTMLElement {
     getCardSize() {
         return 1; // card size
     }
+
+    getLayoutOptions() {
+        return {
+          grid_rows: 1,
+          grid_columns: 2,
+        };
+      }
 }
 
-EntityProgressCard.version = '1.0.4';
+EntityProgressCard.version = '1.0.6';
 EntityProgressCard._moduleLoaded = false;
 customElements.define('entity-progress-card', EntityProgressCard);
 
