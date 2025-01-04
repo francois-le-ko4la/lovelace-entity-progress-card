@@ -60,7 +60,13 @@ You can customize the card using the following parameters:
 - **`bar-color`** *(optional)*:  
   The color of the progress bar. Accepts color names, RGB values, or HEX codes.  
   *Examples:* `"blue"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`
-  
+
+- **`theme`** *(optional)*:  
+  Allows customization of the progress bar's appearance using a predefined theme.
+  In version 1.0.5, only the "battery" theme is available.
+  This theme dynamically adjusts the `icon`, `color` and `bar-color` parameters based on the battery level, eliminating the need for manual adjustments or complex Jinja2 templates.  
+  *Example:* "battery"
+
 ### YAML
 Here’s our example of how to use the Custom Bar Card with custom styles:
 
@@ -84,7 +90,35 @@ The card editor allows you to quickly set up and customize the card.
 - `Colors` can be selected from the provided list, which is based on standard Home Assistant colors. It’s possible to use a color outside of this list, but it must be set through YAML configuration.
 
 ## 💡 Tips
+### Usage
 
 - Use Material Design Icons (MDI) for a consistent look. Browse available icons at Material Design Icons.
 - Experiment with color codes like HEX or RGB for precise customization.
 - Combine with other Lovelace cards to create a visually cohesive dashboard.
+
+### Battery dashboard
+
+This card enables the creation of a streamlined battery dashboard by leveraging theme capabilities and auto-entities custom card.
+```yaml
+type: custom:auto-entities
+filter:
+  include:
+    - attributes:
+        device_class: battery
+      options:
+        type: custom:entity-progress-card
+        entity: this.entity_id
+        theme: battery
+card:
+  square: false
+  type: grid
+  columns: 2
+show_empty: true
+card_param: cards
+sort:
+  method: state
+  numeric: true
+  ignore_case: false
+```
+
+<img src="./battery_dashboard.png" alt="Image title" width="500"/>
