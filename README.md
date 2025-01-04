@@ -98,7 +98,8 @@ The card editor allows you to quickly set up and customize the card.
 
 ### Battery dashboard
 
-This card enables the creation of a streamlined battery dashboard by leveraging theme capabilities and auto-entities custom card.
+This card enables the creation of a streamlined battery dashboard by leveraging theme capabilities and [auto-entities](https://github.com/thomasloven/lovelace-auto-entities) custom card.
+
 ```yaml
 type: custom:auto-entities
 filter:
