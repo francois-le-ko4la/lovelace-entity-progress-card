@@ -215,6 +215,28 @@ class EntityProgressCard extends HTMLElement {
         };
     }
 
+    _getBatteryThemeIcon(percentage) {
+        if (percentage === 100) return 'mdi:battery'; // Cas spécial pour 100%
+    
+        const step = 10;
+        const baseIcon = 'mdi:battery';
+    
+        const level = Math.floor(percentage / step) * step;
+    
+        if (level > 0) {
+            return `${baseIcon}-${level}`;
+        }
+    
+        return `${baseIcon}-alert`; // 0%
+    }
+    
+    _getBatteryThemeColor(percentage) {
+        if (percentage >= 75) return 'var(--green-color)';
+        if (percentage >= 50) return 'var(--yellow-color)';
+        if (percentage >= 25) return 'var(--orange-color)';
+        return 'var(--red-color)';
+    }
+
     _updateElement(key, callback) {
         const element = this._elements[key];
         if (element) {
@@ -241,19 +263,27 @@ class EntityProgressCard extends HTMLElement {
         const value = parseFloat(entity.state);
         const percentage = isNaN(value) ? 0 : Math.min(Math.max(value, 0), 100);
 
+        let iconTheme = null;
+        let colorTheme = null;
+
+        if (this.config.theme === "battery") {
+            iconTheme = this._getBatteryThemeIcon(percentage)
+            colorTheme = this._getBatteryThemeColor(percentage)
+        }
+
         // update dyn element
         this._updateElement('progressBar', (el) => {
             el.style.width = `${percentage}%`;
-            el.style.backgroundColor = this.config['bar_color'] || 'var(--state-icon-color)';
+            el.style.backgroundColor = colorTheme || this.config['bar_color'] || 'var(--state-icon-color)';
         });
 
         this._updateElement('icon', (el) => {
-            el.setAttribute('icon', this.config.icon || entity.attributes.icon || 'mdi:alert');
-            el.style.color = this.config.color || 'var(--state-icon-color)';
+            el.setAttribute('icon', iconTheme || this.config.icon || entity.attributes.icon || 'mdi:alert');
+            el.style.color = colorTheme|| this.config.color || 'var(--state-icon-color)';
         });
 
         this._updateElement('shape', (el) => {
-            el.style.backgroundColor = this.config.color || 'var(--state-icon-color)';
+            el.style.backgroundColor = colorTheme || this.config.color || 'var(--state-icon-color)';
         });
 
         this._updateElement('name', (el) => {
@@ -287,7 +317,7 @@ class EntityProgressCard extends HTMLElement {
     }
 }
 
-EntityProgressCard.version = '1.0.4';
+EntityProgressCard.version = '1.0.5';
 EntityProgressCard._moduleLoaded = false;
 customElements.define('entity-progress-card', EntityProgressCard);
 
