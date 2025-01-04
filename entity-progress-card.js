@@ -1,3 +1,244 @@
+/** --------------------------------------------------------------------------
+ * CARD
+ */
+
+const VERSION='1.0.6';
+const CARD_TNAME='entity-progress-card';
+const CARD_NAME="Entity progress card";
+const CARD_DESCRIPTION="A cool custom card to show current entity status with a progress bar.";
+const EDITOR_NAME='entity-progress-card-editor';
+const GRID_ROWS=1;
+const GRID_COLUMNS=2;
+const DEFAULT_COLOR='var(--state-icon-color)';
+
+const CARD_INSTALLED_MESSAGE = `%c✨${CARD_TNAME.toUpperCase()} ${VERSION} IS INSTALLED.`;
+const CARD_INSTALLED_MESSAGE_CSS = 'color:orange; background-color:black; font-weight: bold;'
+const README_LINK = '      For more details, check the README: https://github.com/francois-le-ko4la/lovelace-entity-progress-card';
+
+const EDITOR_INPUT_FIELDS = [
+    { name: 'entity', label: 'Entity', type: 'entity', required: true, isThemeOverriding: false, description: 'Enter an entity from Home Assistant.' },
+    { name: 'name', label: 'Name', type: 'text', required: false, isThemeOverriding: false, description: 'Enter a name for the entity.' },
+    { name: 'theme', label: 'Theme', type: 'theme', required: false, isThemeOverriding: false, description: 'Choose the primary color for the bar.' },
+    { name: 'icon', label: 'Icon', type: 'icon', required: false, isThemeOverriding: true, description: 'Choose an icon for the entity.' },
+    { name: 'color', label: 'Color', type: 'color', required: false, isThemeOverriding: true, description: 'Choose the primary color for the icon.' },
+    { name: 'bar_color', label: 'Bar Color', type: 'color', required: false, isThemeOverriding: true, description: 'Choose the primary color for the bar.' },
+];
+
+const COLORS = [
+    { name: 'Default', value: 'var(--state-icon-color)' },
+    { name: 'Accent', value: 'var(--accent-color)' },
+    { name: 'Info', value: 'var(--info-color)' },
+    { name: 'Success', value: 'var(--success-color)' },
+    { name: 'Disable', value: 'var(--disabled-color)' },
+    { name: 'Red', value: 'var(--red-color)' },
+    { name: 'Pink', value: 'var(--pink-color)' },
+    { name: 'Purple', value: 'var(--purple-color)' },
+    { name: 'Deep purple', value: 'var(--deep-purple-color)' },
+    { name: 'Indigo', value: 'var(--indigo-color)' },
+    { name: 'Blue', value: 'var(--blue-color)' },
+    { name: 'Light blue', value: 'var(--light-blue-color)' },
+    { name: 'Cyan', value: 'var(--cyan-color)' },
+    { name: 'Teal', value: 'var(--teal-color)' },
+    { name: 'Green', value: 'var(--green-color)' },
+    { name: 'Light green', value: 'var(--light-green-color)' },
+    { name: 'Lime', value: 'var(--lime-color)' },
+    { name: 'Yellow', value: 'var(--yellow-color)' },
+    { name: 'Amber', value: 'var(--amber-color)' },
+    { name: 'Orange', value: 'var(--orange-color)' },
+    { name: 'Deep orange', value: 'var(--deep-orange-color)' },
+    { name: 'Brown', value: 'var(--brown-color)' },
+    { name: 'Light grey', value: 'var(--light-grey-color)' },
+    { name: 'Grey', value: 'var(--grey-color)' },
+    { name: 'Dark grey', value: 'var(--dark-grey-color)' },
+    { name: 'Blue grey', value: 'var(--blue-grey-color)' },
+    { name: 'Black', value: 'var(--black-color)' },
+    { name: 'White', value: 'var(--white-color)' }
+];
+
+const THEMES = [
+    { name: '', value: '' },
+    { name: 'Battery', value: 'battery' }
+];
+
+// Constants for DOM element selectors
+const MAIN_CONTAINER_HTML_ELMNT = "container";
+const SELECTORS = {
+    ICON: 'icon',
+    SHAPE: 'shape',
+    NAME: 'name',
+    PERCENTAGE: 'percentage',
+    PROGRESS_BAR: 'progress-bar-inner',
+    ALERT: 'ha-alert'
+};
+
+const CARD_HTML = `
+    <!-- Main container -->
+    <div class="${MAIN_CONTAINER_HTML_ELMNT}">
+        <!-- Section gauche avec l'icône -->
+        <div class="left">
+            <div class="${SELECTORS.SHAPE}"></div>
+            <ha-icon class="${SELECTORS.ICON}"></ha-icon>
+        </div>
+
+        <!-- Section droite avec le texte -->
+        <div class="right">
+            <div class="${SELECTORS.NAME}"></div>
+            <div class="secondary_info">
+                <div class="${SELECTORS.PERCENTAGE}"></div>
+                <div class="progress-bar">
+                    <div class="${SELECTORS.PROGRESS_BAR}"></div>
+                </div>         
+            </div>   
+        </div>
+    </div>
+    <!-- HA Alert -->
+    <ha-alert style="display:none;" type="error"></ha-alert>
+`;
+
+const CARD_CSS=`
+    ha-card {
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start; /* Aligner tous les éléments à gauche */
+        padding: 0;
+        box-sizing: border-box;
+        border-radius: 8px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* main container */
+    .container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 0;
+        margin: 7px 10px;
+        gap: 10px;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    /* .left: icon & shape */
+    .left {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+    }
+
+    .shape {
+        position: absolute;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: var(--state-icon-color);
+        opacity: 0.2;
+    }
+
+    .icon {
+        position: relative;
+        z-index: 1;
+        width: 24px;
+        height: 24px;
+    }
+
+    /* .right: name & percentage */
+    .right {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        flex-grow: 1;
+        overflow: hidden;
+        width:100%;
+    }
+
+    .name {
+        font-size: 1em;
+        font-weight: bold;
+        color: var(--primary-text-color);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+    }
+
+    .secondary_info {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 10px;
+    }
+
+    .percentage {
+        font-size: 0.9em;
+        color: var(--primary-text-color);
+        min-width: 40px;
+        text-align: left;
+    }
+
+    /* Progress bar */
+    .progress-bar {
+        flex-grow: 1;
+        height: 8px;
+        max-height: 8px;
+        background-color: var(--divider-color);
+        border-radius: 4px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .progress-bar-inner {
+        height: 100%;
+        width: 75%;
+        background-color: var(--primary-color);
+        transition: width 0.3s ease;
+    }
+
+    ha-alert {
+        display: flex;
+        position: absolute;
+        margin: 0;
+        padding: 0px;
+        display: flex;
+        top: -1px;
+        left: -2px;
+        width: 102%;
+        height: 105%;
+        z-index: 10;
+        align-items: center;
+        justify-content: center;
+        background-color: black;
+    }
+    `;
+
+const SHOW_DIV='block';
+const HIDE_DIV='none';
+
+const BATTERY_THEME_COLORS = [
+    { color: 'var(--red-color)',    label: 'critical' },   // Pourcentage < 25
+    { color: 'var(--orange-color)', label: 'low'      },   // Pourcentage >= 25
+    { color: 'var(--yellow-color)', label: 'medium'   },   // Pourcentage >= 50
+    { color: 'var(--green-color)',  label: 'high'     }    // Pourcentage >= 75
+];
+
+const BATTERY_THEME_ICON = 'mdi:battery';
+const ENTITY_ERROR_MSG = "The 'entity' parameter is required!";
+const ENTITY_NOTFOUND_MSG = "Entity not found in Home Assistant states.";
+const THEME_KEY = "theme"
+
+
+/** --------------------------------------------------------------------------
+ * CARD
+ */
+
 class EntityProgressCard extends HTMLElement {
     constructor() {
         super();
@@ -5,12 +246,10 @@ class EntityProgressCard extends HTMLElement {
 
         if (!EntityProgressCard._moduleLoaded) {
             console.groupCollapsed(
-                `%c✨ ENTITY-PROGRESS-CARD ${EntityProgressCard.version} IS INSTALLED.`,
-                'color:orange; background-color:black; font-weight: bold;'
+                CARD_INSTALLED_MESSAGE,
+                CARD_INSTALLED_MESSAGE_CSS
             );
-            console.log(
-                '      For more details, check the README: https://github.com/francois-le-ko4la/lovelace-entity-progress-card'
-            );
+            console.log(README_LINK);
             console.groupEnd();
             EntityProgressCard._moduleLoaded = true;
         }
@@ -20,24 +259,22 @@ class EntityProgressCard extends HTMLElement {
     }
 
     static getConfigElement() {
-        return document.createElement('entity-progress-card-editor');
+        return document.createElement(EDITOR_NAME);
     }
 
     setConfig(config) {
         if (!config.entity) {
-            throw new Error("The 'entity' parameter is required!");
+            throw new Error(ENTITY_ERROR_MSG);
         }
     
         const entityChanged = this.config?.entity !== config.entity;
         this.config = config;
-    
-        // Ne reconstruire la carte que si elle n'est pas encore construite
+
         if (!this._isBuilt) {
             this._buildCard();
-            this._isBuilt = true; // Marquer comme construite
+            this._isBuilt = true;
         }
-    
-        // Si l'entité ou la config a changé, mettre à jour les éléments
+
         if (entityChanged) {
             this._updateDynamicElements();
         }
@@ -50,155 +287,10 @@ class EntityProgressCard extends HTMLElement {
 
     _buildCard() {
         const wrapper = document.createElement('ha-card');
-        wrapper.classList.add('custom-progress-card');
-        wrapper.innerHTML = `
-        <!-- Main container -->
-        <div class="container">
-            <!-- Section gauche avec l'icône -->
-            <div class="left">
-                <div class="shape"></div>
-                <ha-icon class="icon"></ha-icon>
-            </div>
-
-            <!-- Section droite avec le texte -->
-            <div class="right">
-                <div class="name"></div>
-                <div class="secondary_info">
-                    <div class="percentage"></div>
-                    <div class="progress-bar">
-                        <div class="progress-bar-inner"></div>
-                    </div>         
-                </div>   
-            </div>
-        </div>
-        <!-- HA Alert -->
-        <ha-alert style="display:none;" type="error"></ha-alert>
-        `;
-
+        wrapper.classList.add(CARD_TNAME);
+        wrapper.innerHTML = CARD_HTML;
         const style = document.createElement('style');
-        style.textContent = `
-            ha-card {
-                height: 100%;
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                justify-content: flex-start; /* Aligner tous les éléments à gauche */
-                padding: 0;
-                box-sizing: border-box;
-                border-radius: 8px;
-                max-width: 600px;
-                margin: 0 auto;
-            }
-
-            /* main container */
-            .container {
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                padding: 0;
-                margin: 7px 10px;
-                gap: 10px;
-                width: 100%;
-                height: 100%;
-                overflow: hidden;
-            }
-
-            /* .left: icon & shape */
-            .left {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                position: relative;
-                width: 36px;
-                height: 36px;
-                flex-shrink: 0;
-            }
-
-            .shape {
-                position: absolute;
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
-                background-color: var(--state-icon-color);
-                opacity: 0.2;
-            }
-
-            .icon {
-                position: relative;
-                z-index: 1;
-                width: 24px;
-                height: 24px;
-            }
-
-            /* .right: name & percentage */
-            .right {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                flex-grow: 1;
-                overflow: hidden;
-                width:100%;
-            }
- 
-            .name {
-                font-size: 1em;
-                font-weight: bold;
-                color: var(--primary-text-color);
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                width: 100%;
-            }
-
-            .secondary_info {
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                justify-content: flex-start;
-                gap: 10px;
-            }
-
-            .percentage {
-                font-size: 0.9em;
-                color: var(--primary-text-color);
-                min-width: 40px;
-                text-align: left;
-            }
-
-            /* Progress bar */
-            .progress-bar {
-                flex-grow: 1;
-                height: 8px;
-                max-height: 8px;
-                background-color: var(--divider-color);
-                border-radius: 4px;
-                overflow: hidden;
-                position: relative;
-            }
-
-            .progress-bar-inner {
-                height: 100%;
-                width: 75%;
-                background-color: var(--primary-color);
-                transition: width 0.3s ease;
-            }
-
-            ha-alert {
-                display: flex;
-                position: absolute;
-                margin: 0;
-                padding: 0px;
-                display: flex;
-                top: -1px;
-                left: -2px;
-                width: 102%;
-                height: 105%;
-                z-index: 10;
-                align-items: center;
-                justify-content: center;
-                background-color: black;
-            }
-        `;
+        style.textContent = CARD_CSS;
 
         // Inject in the DOM
         this.shadowRoot.innerHTML = '';
@@ -206,35 +298,35 @@ class EntityProgressCard extends HTMLElement {
         this.shadowRoot.appendChild(wrapper);
         // store DOM ref to update
         this._elements = {
-            icon: this.shadowRoot.querySelector('.icon'),
-            shape: this.shadowRoot.querySelector('.shape'),
-            name: this.shadowRoot.querySelector('.name'),
-            percentage: this.shadowRoot.querySelector('.percentage'),
-            progressBar: this.shadowRoot.querySelector('.progress-bar-inner'),
-            alert: this.shadowRoot.querySelector('ha-alert'), // New reference to the ha-alert
+            [SELECTORS.ICON]: this.shadowRoot.querySelector(`.${SELECTORS.ICON}`),
+            [SELECTORS.SHAPE]: this.shadowRoot.querySelector(`.${SELECTORS.SHAPE}`),
+            [SELECTORS.NAME]: this.shadowRoot.querySelector(`.${SELECTORS.NAME}`),
+            [SELECTORS.PERCENTAGE]: this.shadowRoot.querySelector(`.${SELECTORS.PERCENTAGE}`),
+            [SELECTORS.PROGRESS_BAR]: this.shadowRoot.querySelector(`.${SELECTORS.PROGRESS_BAR}`),
+            [SELECTORS.ALERT]: this.shadowRoot.querySelector(`${SELECTORS.ALERT}`),
         };
     }
 
     _getBatteryThemeIcon(percentage) {
-        if (percentage === 100) return 'mdi:battery'; // Cas spécial pour 100%
+        if (percentage === 100) return BATTERY_THEME_ICON; // 100%
     
         const step = 10;
-        const baseIcon = 'mdi:battery';
-    
         const level = Math.floor(percentage / step) * step;
-    
         if (level > 0) {
-            return `${baseIcon}-${level}`;
+            return `${BATTERY_THEME_ICON}-${level}`;
         }
     
-        return `${baseIcon}-alert`; // 0%
+        return `${BATTERY_THEME_ICON}-alert`; // 0%
     }
     
     _getBatteryThemeColor(percentage) {
-        if (percentage >= 75) return 'var(--green-color)';
-        if (percentage >= 50) return 'var(--yellow-color)';
-        if (percentage >= 25) return 'var(--orange-color)';
-        return 'var(--red-color)';
+        const numberOfThresholds = BATTERY_THEME_COLORS.length;
+        const thresholdSize = 100 / numberOfThresholds;
+    
+        if (percentage === 100) {
+            return BATTERY_THEME_COLORS[numberOfThresholds - 1].color;
+        }
+        return BATTERY_THEME_COLORS[Math.floor(percentage / thresholdSize)].color;
     }
 
     _updateElement(key, callback) {
@@ -254,7 +346,7 @@ class EntityProgressCard extends HTMLElement {
 
         if (!entity) {
             // show error message
-            this._showError("Entity not found in Home Assistant states.");
+            this._showError(ENTITY_NOTFOUND_MSG);
             return;
         }
         // Hide error message if entity is found
@@ -266,94 +358,94 @@ class EntityProgressCard extends HTMLElement {
         let iconTheme = null;
         let colorTheme = null;
 
-        if (this.config.theme === "battery") {
+        if (this.config.theme === THEMES[1].value) {
             iconTheme = this._getBatteryThemeIcon(percentage)
             colorTheme = this._getBatteryThemeColor(percentage)
         }
 
         // update dyn element
-        this._updateElement('progressBar', (el) => {
+        this._updateElement(SELECTORS.PROGRESS_BAR, (el) => {
             el.style.width = `${percentage}%`;
-            el.style.backgroundColor = colorTheme || this.config['bar_color'] || 'var(--state-icon-color)';
+            el.style.backgroundColor = colorTheme || this.config.bar_color || DEFAULT_COLOR;
         });
 
-        this._updateElement('icon', (el) => {
-            el.setAttribute('icon', iconTheme || this.config.icon || entity.attributes.icon || 'mdi:alert');
-            el.style.color = colorTheme|| this.config.color || 'var(--state-icon-color)';
+        this._updateElement(SELECTORS.ICON, (el) => {
+            el.setAttribute(SELECTORS.ICON, iconTheme || this.config.icon || entity.attributes.icon || 'mdi:alert');
+            el.style.color = colorTheme|| this.config.color || DEFAULT_COLOR;
         });
 
-        this._updateElement('shape', (el) => {
-            el.style.backgroundColor = colorTheme || this.config.color || 'var(--state-icon-color)';
+        this._updateElement(SELECTORS.SHAPE, (el) => {
+            el.style.backgroundColor = colorTheme || this.config.color || DEFAULT_COLOR;
         });
 
-        this._updateElement('name', (el) => {
+        this._updateElement(SELECTORS.NAME, (el) => {
             el.textContent = this.config.name || entity.attributes.friendly_name || this.config.entity;
         });
 
-        this._updateElement('percentage', (el) => {
+        this._updateElement(SELECTORS.PERCENTAGE, (el) => {
             el.textContent = `${percentage}%`;
         });
     }
-    
+  
     // Show error alert
     _showError(message) {
-        const alertElement = this._elements.alert;
+        const alertElement = this._elements[SELECTORS.ALERT];
         if (alertElement) {
-            alertElement.style.display = 'block';
+            alertElement.style.display = SHOW_DIV;
             alertElement.textContent = message;  // Set the error message in the alert
         }
     }
 
     // Hide the alert when the entity is found
     _hideError() {
-        const alertElement = this._elements.alert;
+        const alertElement = this._elements[SELECTORS.ALERT];
         if (alertElement) {
-            alertElement.style.display = 'none';
+            alertElement.style.display = HIDE_DIV;
         }
     }
 
     getCardSize() {
-        return 1; // card size
+        return GRID_ROWS; // card size
     }
 
     getLayoutOptions() {
         return {
-          grid_rows: 1,
-          grid_columns: 2,
+          grid_rows: GRID_ROWS,
+          grid_columns: GRID_COLUMNS,
         };
       }
 }
 
-EntityProgressCard.version = '1.0.6';
+EntityProgressCard.version = VERSION;
 EntityProgressCard._moduleLoaded = false;
-customElements.define('entity-progress-card', EntityProgressCard);
+customElements.define(CARD_TNAME, EntityProgressCard);
 
-//
-// Add this card to the list of custom cards for the card picker
-//
+/** --------------------------------------------------------------------------
+ * Add this card to the list of custom cards for the card picker
+ */
 
 window.customCards = window.customCards || []; // Create the list if it doesn't exist. Careful not to overwrite it
 window.customCards.push({
-  type: "entity-progress-card",
-  name: "Entity progress card",
-  description: "A cool custom card to show current entity status with a progress bar.",
+    type: CARD_TNAME,
+    name: CARD_NAME,
+    description: CARD_DESCRIPTION,    
 });
 
-//
-// Editor
-//
+/** --------------------------------------------------------------------------
+ * EDITOR
+ */
 
 class EntityProgressCardEditor extends HTMLElement {
     constructor() {
         super();
         this.config = {};
         this._hass = null;
+        this._overridableElements = {};
         this.rendered = false;
     }
 
     set hass(value) {
         if (!value) {
-            console.warn('Skipping render until hass is defined');
             return;
         }
         if (!this._hass || this._hass.entities !== value.entities) {
@@ -370,7 +462,6 @@ class EntityProgressCardEditor extends HTMLElement {
 
     setConfig(config) {
         if (!this.hass) {
-            console.warn('Skipping render until hass is defined');
             return;
         }
         this.config = config;
@@ -381,49 +472,47 @@ class EntityProgressCardEditor extends HTMLElement {
         }
     }
 
-    reorderConfig(config) {
+    _toggleFieldDisable(disable) {
+        const fields = Object.keys(this._overridableElements);
+        fields.forEach(fieldName => {
+            this._overridableElements[fieldName].style.display = disable ? HIDE_DIV : SHOW_DIV;
+        });
+    }
+
+    _reorderConfig(config) {
         const { grid_options, ...rest } = config;
         return grid_options ? { ...rest, grid_options } : { ...rest };
     }
 
-    updateConfigProperty(key, value) {
-        this.config[key] = value;
-        this.config = this.reorderConfig(this.config);
+    _updateConfigProperty(key, value) {
+        if (value === '') {
+            if (key in this.config) {
+                delete this.config[key];
+            }
+        } else {
+            this.config[key] = value;
+        }
+        if (key === THEME_KEY) {
+            const disableFields = THEME_KEY in this.config;
+            this._toggleFieldDisable(disableFields);
+        }
+        this.config = this._reorderConfig(this.config);
         this.dispatchEvent(new CustomEvent('config-changed', { detail: { config: this.config } }));
     }
 
-    addColor(colorSelect) {
-        const colors = [
-            { name: 'Default', value: 'var(--state-icon-color)' },
-            { name: 'Accent', value: 'var(--accent-color)' },
-            { name: 'Info', value: 'var(--info-color)' },
-            { name: 'Success', value: 'var(--success-color)' },
-            { name: 'Disable', value: 'var(--disabled-color)' },
-            { name: 'Red', value: 'var(--red-color)' },
-            { name: 'Pink', value: 'var(--pink-color)' },
-            { name: 'Purple', value: 'var(--purple-color)' },
-            { name: 'Deep purple', value: 'var(--deep-purple-color)' },
-            { name: 'Indigo', value: 'var(--indigo-color)' },
-            { name: 'Blue', value: 'var(--blue-color)' },
-            { name: 'Light blue', value: 'var(--light-blue-color)' },
-            { name: 'Cyan', value: 'var(--cyan-color)' },
-            { name: 'Teal', value: 'var(--teal-color)' },
-            { name: 'Green', value: 'var(--green-color)' },
-            { name: 'Light green', value: 'var(--light-green-color)' },
-            { name: 'Lime', value: 'var(--lime-color)' },
-            { name: 'Yellow', value: 'var(--yellow-color)' },
-            { name: 'Amber', value: 'var(--amber-color)' },
-            { name: 'Orange', value: 'var(--orange-color)' },
-            { name: 'Deep orange', value: 'var(--deep-orange-color)' },
-            { name: 'Brown', value: 'var(--brown-color)' },
-            { name: 'Light grey', value: 'var(--light-grey-color)' },
-            { name: 'Grey', value: 'var(--grey-color)' },
-            { name: 'Dark grey', value: 'var(--dark-grey-color)' },
-            { name: 'Blue grey', value: 'var(--blue-grey-color)' },
-            { name: 'Black', value: 'var(--black-color)' },
-            { name: 'White', value: 'var(--white-color)' }
-        ];
+    _addTheme(themeSelect) {
+        THEMES.forEach(cur_theme => {
+            const option = document.createElement('mwc-list-item');
+            option.value = cur_theme.value;
+            option.innerHTML = `
+                <span style="display: inline-block; width: 16px; height: 16px; background-color: ${cur_theme.value}; border-radius: 50%; margin-right: 8px;"></span>
+                ${cur_theme.name}
+            `;
+            themeSelect.appendChild(option);
+        });
+    }
 
+    _addColor(colorSelect) {
         const noColorOption = document.createElement('mwc-list-item');
         noColorOption.value = '';
         noColorOption.innerHTML = `
@@ -431,7 +520,7 @@ class EntityProgressCardEditor extends HTMLElement {
         `;
         colorSelect.appendChild(noColorOption);
 
-        colors.forEach(color => {
+        COLORS.forEach(color => {
             const option = document.createElement('mwc-list-item');
             option.value = color.value;
             option.innerHTML = `
@@ -443,7 +532,7 @@ class EntityProgressCardEditor extends HTMLElement {
         });
     }
 
-    createField({ name, label, type, required = false, description }) {
+    _createField({ name, label, type, required = false, isThemeOverriding, description }) {
         let inputElement;
         const value = this.config[name] || '';
 
@@ -455,10 +544,18 @@ class EntityProgressCardEditor extends HTMLElement {
             case 'icon':
                 inputElement = document.createElement('ha-icon-picker');
                 break;
+            case 'theme':
+                inputElement = document.createElement('ha-select');
+                inputElement.popperOptions = ""
+                this._addTheme(inputElement);
+                inputElement.addEventListener('closed', (event) => {
+                    event.stopPropagation();
+                });
+                break;
             case 'color':
                 inputElement = document.createElement('ha-select');
                 inputElement.popperOptions = ""
-                this.addColor(inputElement);
+                this._addColor(inputElement);
                 inputElement.addEventListener('closed', (event) => {
                     event.stopPropagation();
                 });
@@ -468,22 +565,28 @@ class EntityProgressCardEditor extends HTMLElement {
                 inputElement.type = 'text';
         }
 
-        inputElement.style.display = 'block';
+        if (isThemeOverriding) {
+            this._overridableElements[name]=inputElement;
+        }
+
+        inputElement.style.display = SHOW_DIV;
         inputElement.required = required;
         inputElement.label = label;
         inputElement.value = value;
 
         inputElement.addEventListener(
-            type === 'color' ? 'selected' : (type === 'entity' || type === 'icon' ? 'value-changed' : 'input'),
+            (type === 'color' || type === 'theme') ? 'selected' : (type === 'entity' || type === 'icon' ? 'value-changed' : 'input'),
             (event) => {
                 const newValue = event.detail?.value || event.target.value;
-                this.updateConfigProperty(name, newValue);
-            }
+                this._updateConfigProperty(name, newValue);
+             }
         );
 
         const fieldContainer = document.createElement('div');
+        if (isThemeOverriding) {
+            this._overridableElements[`${name}_description`] = fieldContainer;
+        }
         fieldContainer.style.marginBottom = '12px';
-
         const fieldDescription = document.createElement('span');
         fieldDescription.innerText = description;
         fieldDescription.style.fontSize = '12px';
@@ -496,6 +599,8 @@ class EntityProgressCardEditor extends HTMLElement {
     }
 
     /**
+     * loadEntityPicker
+     * Author: Thomas Loven
      * Need this to load the HA elements we want to re-use
      * see: 
      *  - https://github.com/thomasloven/hass-config/wiki/PreLoading-Lovelace-Elements
@@ -507,8 +612,6 @@ class EntityProgressCardEditor extends HTMLElement {
             const ch = await window.loadCardHelpers();
             const c = await ch.createCardElement({ type: "entities", entities: [] });
             await c.constructor.getConfigElement();
-            // Since ha-elements are not using scopedRegistry we can get a reference to
-            // the newly loaded element from the global customElement registry...
             const haEntityPicker = window.customElements.get("ha-entity-picker");
         }
     }
@@ -522,24 +625,16 @@ class EntityProgressCardEditor extends HTMLElement {
         container.style.flexDirection = 'column';
         container.style.flexWrap = 'wrap';        // Allows wrapping
         container.style.overflow = 'auto';
+        container.style.overflowX = 'hidden';
         container.style.maxHeight = '100vh';     // Limit height to the viewport
 
-        const fields = [
-            { name: 'entity', label: 'Entity', type: 'entity', required: true, description: 'Enter an entity from Home Assistant.' },
-            { name: 'name', label: 'Name', type: 'text', required: false, description: 'Enter a name for the entity.' },
-            { name: 'icon', label: 'Icon', type: 'icon', required: false, description: 'Choose an icon for the entity.' },
-            { name: 'color', label: 'Color', type: 'color', required: false, description: 'Choose the primary color for the icon.' },
-            { name: 'bar_color', label: 'Bar Color', type: 'color', required: false, description: 'Choose the primary color for the bar.' },
-        ];
-
-        fields.forEach((field) => {
-            container.appendChild(this.createField(field));
+        EDITOR_INPUT_FIELDS.forEach((field) => {
+            container.appendChild(this._createField(field));
         });
-
 
         fragment.appendChild(container);
         this.appendChild(fragment);
     }
 }
 
-customElements.define('entity-progress-card-editor', EntityProgressCardEditor);
+customElements.define(EDITOR_NAME, EntityProgressCardEditor);
