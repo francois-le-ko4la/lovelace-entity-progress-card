@@ -47,7 +47,9 @@ You can customize the card using the following parameters:
 
 - **`layout`** *(optional)*:  
   Determines the layout of the elements inside the card. You can choose between different layouts based on your visual preferences.
-  *Examples:*  
+  
+  *Examples:*
+  
     `horizontal`: Displays the elements horizontally, with a row layout (by default, the text and progress bar will be displayed side by side).
     `vertical`: Displays the elements vertically, with a column layout (by default, the text and progress bar will be stacked one below the other).
   
