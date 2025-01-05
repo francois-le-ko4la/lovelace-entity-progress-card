@@ -1,8 +1,8 @@
 /** --------------------------------------------------------------------------
- * PARAMETERS
+ * CARD
  */
 
-const VERSION='1.0.6';
+const VERSION='1.0.7';
 const CARD_TNAME='entity-progress-card';
 const CARD_NAME="Entity progress card";
 const CARD_DESCRIPTION="A cool custom card to show current entity status with a progress bar.";
@@ -18,7 +18,8 @@ const README_LINK = '      For more details, check the README: https://github.co
 const EDITOR_INPUT_FIELDS = [
     { name: 'entity', label: 'Entity', type: 'entity', required: true, isThemeOverriding: false, description: 'Enter an entity from Home Assistant.' },
     { name: 'name', label: 'Name', type: 'text', required: false, isThemeOverriding: false, description: 'Enter a name for the entity.' },
-    { name: 'theme', label: 'Theme', type: 'theme', required: false, isThemeOverriding: false, description: 'Choose the primary color for the bar.' },
+    { name: 'layout', label: 'Layout', type: 'layout', required: false, isThemeOverriding: false, description: 'Select the layout.' },
+    { name: 'theme', label: 'Theme', type: 'theme', required: false, isThemeOverriding: false, description: 'Select a theme to automatically define the colors and icon.' },
     { name: 'icon', label: 'Icon', type: 'icon', required: false, isThemeOverriding: true, description: 'Choose an icon for the entity.' },
     { name: 'color', label: 'Color', type: 'color', required: false, isThemeOverriding: true, description: 'Choose the primary color for the icon.' },
     { name: 'bar_color', label: 'Bar Color', type: 'color', required: false, isThemeOverriding: true, description: 'Choose the primary color for the bar.' },
@@ -60,9 +61,15 @@ const THEMES = [
     { name: 'Battery', value: 'battery' }
 ];
 
+const LAYOUT = [
+    { name: 'Horizontal (default)', value: 'horizontal' },
+    { name: 'Vertical', value: 'vertical' }
+];
+
 // Constants for DOM element selectors
-const MAIN_CONTAINER_HTML_ELMNT = "container";
 const SELECTORS = {
+    CONTAINER: 'container',
+    RIGHT: 'right',
     ICON: 'icon',
     SHAPE: 'shape',
     NAME: 'name',
@@ -73,7 +80,7 @@ const SELECTORS = {
 
 const CARD_HTML = `
     <!-- Main container -->
-    <div class="${MAIN_CONTAINER_HTML_ELMNT}">
+    <div class="${SELECTORS.CONTAINER}">
         <!-- Section gauche avec l'icône -->
         <div class="left">
             <div class="${SELECTORS.SHAPE}"></div>
@@ -81,7 +88,7 @@ const CARD_HTML = `
         </div>
 
         <!-- Section droite avec le texte -->
-        <div class="right">
+        <div class="${SELECTORS.RIGHT}">
             <div class="${SELECTORS.NAME}"></div>
             <div class="secondary_info">
                 <div class="${SELECTORS.PERCENTAGE}"></div>
@@ -114,6 +121,7 @@ const CARD_CSS=`
         display: flex;
         flex-direction: row;
         align-items: center;
+        justify-content: center;
         padding: 0;
         margin: 7px 10px;
         gap: 10px;
@@ -268,11 +276,16 @@ class EntityProgressCard extends HTMLElement {
         }
     
         const entityChanged = this.config?.entity !== config.entity;
+        const layoutChanged = this.config?.layout !== config.layout;
         this.config = config;
 
         if (!this._isBuilt) {
             this._buildCard();
             this._isBuilt = true;
+        }
+
+        if (layoutChanged) {
+            this._changeLayout();
         }
 
         if (entityChanged) {
@@ -298,6 +311,8 @@ class EntityProgressCard extends HTMLElement {
         this.shadowRoot.appendChild(wrapper);
         // store DOM ref to update
         this._elements = {
+            [SELECTORS.CONTAINER]: this.shadowRoot.querySelector(`.${SELECTORS.CONTAINER}`),
+            [SELECTORS.RIGHT]: this.shadowRoot.querySelector(`.${SELECTORS.RIGHT}`),
             [SELECTORS.ICON]: this.shadowRoot.querySelector(`.${SELECTORS.ICON}`),
             [SELECTORS.SHAPE]: this.shadowRoot.querySelector(`.${SELECTORS.SHAPE}`),
             [SELECTORS.NAME]: this.shadowRoot.querySelector(`.${SELECTORS.NAME}`),
@@ -305,6 +320,29 @@ class EntityProgressCard extends HTMLElement {
             [SELECTORS.PROGRESS_BAR]: this.shadowRoot.querySelector(`.${SELECTORS.PROGRESS_BAR}`),
             [SELECTORS.ALERT]: this.shadowRoot.querySelector(`${SELECTORS.ALERT}`),
         };
+    }
+
+    _changeLayout() {
+        /**
+         *  .container
+         *      flex-direction: row; -> column
+         *  .name
+         *      text-align: left; -> center
+         *  .right
+         *      width: 100% -> 80%;
+         *      flex-grow: 1; -> 0
+         */
+        if (this.config.layout === LAYOUT[1].value) {
+            this._elements[SELECTORS.CONTAINER].style.flexDirection = 'column';
+            this._elements[SELECTORS.NAME].style.textAlign = 'center';
+            this._elements[SELECTORS.RIGHT].style.width = '90%';
+            this._elements[SELECTORS.RIGHT].style.flexGrow = '0';
+        } else {
+            this._elements[SELECTORS.CONTAINER].style.flexDirection = 'row';
+            this._elements[SELECTORS.NAME].style.textAlign = 'left';
+            this._elements[SELECTORS.RIGHT].style.width = '100%';
+            this._elements[SELECTORS.RIGHT].style.flexGrow = '1';
+        }
     }
 
     _getBatteryThemeIcon(percentage) {
@@ -384,7 +422,7 @@ class EntityProgressCard extends HTMLElement {
 
         this._updateElement(SELECTORS.PERCENTAGE, (el) => {
             el.textContent = `${percentage}%`;
-        });
+        });     
     }
   
     // Show error alert
@@ -500,6 +538,18 @@ class EntityProgressCardEditor extends HTMLElement {
         this.dispatchEvent(new CustomEvent('config-changed', { detail: { config: this.config } }));
     }
 
+    _addLayout(layoutSelect) {
+        LAYOUT.forEach(cur_layout => {
+            const option = document.createElement('mwc-list-item');
+            option.value = cur_layout.value;
+            option.innerHTML = `
+                <span style="display: inline-block; width: 16px; height: 16px; background-color: ${cur_layout.value}; border-radius: 50%; margin-right: 8px;"></span>
+                ${cur_layout.name}
+            `;
+            layoutSelect.appendChild(option);
+        });
+    }
+
     _addTheme(themeSelect) {
         THEMES.forEach(cur_theme => {
             const option = document.createElement('mwc-list-item');
@@ -544,6 +594,14 @@ class EntityProgressCardEditor extends HTMLElement {
             case 'icon':
                 inputElement = document.createElement('ha-icon-picker');
                 break;
+            case 'layout':
+                inputElement = document.createElement('ha-select');
+                inputElement.popperOptions = ""
+                this._addLayout(inputElement);
+                inputElement.addEventListener('closed', (event) => {
+                    event.stopPropagation();
+                });
+                break;
             case 'theme':
                 inputElement = document.createElement('ha-select');
                 inputElement.popperOptions = ""
@@ -575,7 +633,7 @@ class EntityProgressCardEditor extends HTMLElement {
         inputElement.value = value;
 
         inputElement.addEventListener(
-            (type === 'color' || type === 'theme') ? 'selected' : (type === 'entity' || type === 'icon' ? 'value-changed' : 'input'),
+            (type === 'color' || type === 'theme' || type === 'layout') ? 'selected' : (type === 'entity' || type === 'icon' ? 'value-changed' : 'input'),
             (event) => {
                 const newValue = event.detail?.value || event.target.value;
                 this._updateConfigProperty(name, newValue);
