@@ -2,13 +2,17 @@
  * PARAMETERS
  */
 
-const VERSION='1.0.7';
+const VERSION='1.0.8';
 const CARD_TNAME='entity-progress-card';
 const CARD_NAME="Entity progress card";
 const CARD_DESCRIPTION="A cool custom card to show current entity status with a progress bar.";
 const EDITOR_NAME='entity-progress-card-editor';
-const GRID_ROWS=1;
-const GRID_COLUMNS=2;
+
+const LAYOUT_SIZE = {
+    horizontal: { grid_rows: 1, grid_min_rows: 1, grid_columns: 2, grid_min_columns: 2 },
+    vertical:   { grid_rows: 2, grid_min_rows: 2, grid_columns: 1, grid_min_columns: 1 }
+};
+
 const DEFAULT_COLOR='var(--state-icon-color)';
 
 const CARD_INSTALLED_MESSAGE = `%c✨${CARD_TNAME.toUpperCase()} ${VERSION} IS INSTALLED.`;
@@ -74,6 +78,7 @@ const SELECTORS = {
     SHAPE: 'shape',
     NAME: 'name',
     PERCENTAGE: 'percentage',
+    SECONDARY_INFO: 'secondary_info',
     PROGRESS_BAR: 'progress-bar-inner',
     ALERT: 'ha-alert'
 };
@@ -317,6 +322,7 @@ class EntityProgressCard extends HTMLElement {
             [SELECTORS.SHAPE]: this.shadowRoot.querySelector(`.${SELECTORS.SHAPE}`),
             [SELECTORS.NAME]: this.shadowRoot.querySelector(`.${SELECTORS.NAME}`),
             [SELECTORS.PERCENTAGE]: this.shadowRoot.querySelector(`.${SELECTORS.PERCENTAGE}`),
+            [SELECTORS.SECONDARY_INFO]: this.shadowRoot.querySelector(`.${SELECTORS.SECONDARY_INFO}`),
             [SELECTORS.PROGRESS_BAR]: this.shadowRoot.querySelector(`.${SELECTORS.PROGRESS_BAR}`),
             [SELECTORS.ALERT]: this.shadowRoot.querySelector(`${SELECTORS.ALERT}`),
         };
@@ -331,17 +337,27 @@ class EntityProgressCard extends HTMLElement {
          *  .right
          *      width: 100% -> 80%;
          *      flex-grow: 1; -> 0
+         * 
+         * --
+         *   .secondary_info {
+         *      display: flex; -> block
+         *   .percentage
+         *      text-align: left; -> center
          */
         if (this.config.layout === LAYOUT[1].value) {
             this._elements[SELECTORS.CONTAINER].style.flexDirection = 'column';
             this._elements[SELECTORS.NAME].style.textAlign = 'center';
             this._elements[SELECTORS.RIGHT].style.width = '90%';
             this._elements[SELECTORS.RIGHT].style.flexGrow = '0';
+            this._elements[SELECTORS.SECONDARY_INFO].style.display = 'block';
+            this._elements[SELECTORS.PERCENTAGE].style.textAlign = 'center';
         } else {
             this._elements[SELECTORS.CONTAINER].style.flexDirection = 'row';
             this._elements[SELECTORS.NAME].style.textAlign = 'left';
             this._elements[SELECTORS.RIGHT].style.width = '100%';
             this._elements[SELECTORS.RIGHT].style.flexGrow = '1';
+            this._elements[SELECTORS.SECONDARY_INFO].style.display = 'flex';
+            this._elements[SELECTORS.PERCENTAGE].style.textAlign = 'left';
         }
     }
 
@@ -443,15 +459,18 @@ class EntityProgressCard extends HTMLElement {
     }
 
     getCardSize() {
-        return GRID_ROWS; // card size
+        if (this.config.layout === LAYOUT[1].value) {
+            return LAYOUT_SIZE.vertical.grid_rows;
+        }
+        return LAYOUT_SIZE.horizontal.grid_rows;
     }
 
     getLayoutOptions() {
-        return {
-          grid_rows: GRID_ROWS,
-          grid_columns: GRID_COLUMNS,
-        };
-      }
+        if (this.config.layout === LAYOUT[1].value) {
+            return LAYOUT_SIZE.vertical;
+        }
+        return LAYOUT_SIZE.horizontal;
+    }
 }
 
 EntityProgressCard.version = VERSION;
