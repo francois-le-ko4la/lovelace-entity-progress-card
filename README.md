@@ -1,7 +1,7 @@
 # lovelace-entity-progress-card
 Entity progress card for Home Assistant
 
-<img src="example.png" alt="Image title" width="250"/>
+<img src="./doc/example.png" alt="Image title" width="250"/>
 
 This custom version of the **Bar Card** for Home Assistant allows you to display a simple percentage bar that is quick and easy to integrate into your Lovelace cards. It blends seamlessly with the `Tile`/`Mushroom` look & feel of the latest Home Assistant versions. This card is based on custom CSS and leverages existing code to fine-tune the appearance.
 
@@ -78,7 +78,7 @@ bar_color: rgb(110, 65, 171)
 ### Card Editor
 The card editor allows you to quickly set up and customize the card.
 
-![Editor](editor.png)
+![Editor](./doc/editor.png)
 
 - The `Entity` field is required, and an error message will appear if it is not filled in.
 - The `Name` field is an input form. If the `Name` field is left empty, the card will use the entity’s default name.
@@ -119,4 +119,4 @@ sort:
   ignore_case: false
 ```
 
-<img src="./battery_dashboard.png" alt="Image title" width="500"/>
+<img src="./doc/battery_dashboard.png" alt="Image title" width="500"/>
