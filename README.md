@@ -1,4 +1,5 @@
-# lovelace-entity-progress-card
+# Lovelace Entity Progress Card
+
 Entity progress card for Home Assistant
 
 <img src="./doc/example.png" alt="Image title" width="250"/>
@@ -16,6 +17,16 @@ This custom version of the **Bar Card** for Home Assistant allows you to display
 > Ensure your Home Assistant instance is up to date to support this custom card.
 
 ## 📦 Installation Steps
+### HACS Installation (Recommended)
+
+Use this button to add the repository to your HACS:
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=francois-le-ko4la&repository=lovelace-entity-progress-card&category=plugin)
+or follow these steps:
+1. Add this repository to HACS by including it as a custom repository:
+  - Go to `HACS` > `Integrations` > `⋮` > `Custom repositories`.
+  - Paste the URL of this repository and select Lovelace as the category.
+2. Install the Entity Progress Card from HACS.
+
 ### Manual Installation
 
 1. Download the file `entity-progress-card.js` to the `/config/www/` directory in your Home Assistant setup.
@@ -24,13 +35,6 @@ This custom version of the **Bar Card** for Home Assistant allows you to display
 url: /local/entity-progress-card.js
 type: module
 ```
-
-### HACS Installation (Recommended)
-
-1. Add this repository to HACS by including it as a custom repository:
-  - Go to `HACS` > `Integrations` > `⋮` > `Custom repositories`.
-  - Paste the URL of this repository and select Lovelace as the category.
-2. Install the Entity Progress Card from HACS.
 
 ## 📝 Usage
 ### Parameters
