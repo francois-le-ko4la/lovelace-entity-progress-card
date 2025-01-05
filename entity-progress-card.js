@@ -1,8 +1,8 @@
 /** --------------------------------------------------------------------------
- * CARD
+ * PARAMETERS
  */
 
-const VERSION='1.0.7';
+const VERSION='1.0.6';
 const CARD_TNAME='entity-progress-card';
 const CARD_NAME="Entity progress card";
 const CARD_DESCRIPTION="A cool custom card to show current entity status with a progress bar.";
@@ -538,27 +538,15 @@ class EntityProgressCardEditor extends HTMLElement {
         this.dispatchEvent(new CustomEvent('config-changed', { detail: { config: this.config } }));
     }
 
-    _addLayout(layoutSelect) {
-        LAYOUT.forEach(cur_layout => {
+    _addChoice(select, list) {
+        list.forEach(cur_choice => {
             const option = document.createElement('mwc-list-item');
-            option.value = cur_layout.value;
+            option.value = cur_choice.value;
             option.innerHTML = `
-                <span style="display: inline-block; width: 16px; height: 16px; background-color: ${cur_layout.value}; border-radius: 50%; margin-right: 8px;"></span>
-                ${cur_layout.name}
+                <span style="display: inline-block; width: 16px; height: 16px; background-color: ${cur_choice.value}; border-radius: 50%; margin-right: 8px;"></span>
+                ${cur_choice.name}
             `;
-            layoutSelect.appendChild(option);
-        });
-    }
-
-    _addTheme(themeSelect) {
-        THEMES.forEach(cur_theme => {
-            const option = document.createElement('mwc-list-item');
-            option.value = cur_theme.value;
-            option.innerHTML = `
-                <span style="display: inline-block; width: 16px; height: 16px; background-color: ${cur_theme.value}; border-radius: 50%; margin-right: 8px;"></span>
-                ${cur_theme.name}
-            `;
-            themeSelect.appendChild(option);
+            select.appendChild(option);
         });
     }
 
@@ -597,7 +585,7 @@ class EntityProgressCardEditor extends HTMLElement {
             case 'layout':
                 inputElement = document.createElement('ha-select');
                 inputElement.popperOptions = ""
-                this._addLayout(inputElement);
+                this._addChoice(inputElement, LAYOUT);
                 inputElement.addEventListener('closed', (event) => {
                     event.stopPropagation();
                 });
@@ -605,7 +593,7 @@ class EntityProgressCardEditor extends HTMLElement {
             case 'theme':
                 inputElement = document.createElement('ha-select');
                 inputElement.popperOptions = ""
-                this._addTheme(inputElement);
+                this._addChoice(inputElement, THEMES);
                 inputElement.addEventListener('closed', (event) => {
                     event.stopPropagation();
                 });
