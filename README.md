@@ -22,7 +22,9 @@ This custom version of the **Bar Card** for Home Assistant allows you to display
 ### HACS Installation (Recommended)
 
 Use this button to add the repository to your HACS:
+
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=francois-le-ko4la&repository=lovelace-entity-progress-card&category=plugin)
+
 or follow these steps:
 1. Add this repository to HACS by including it as a custom repository:
   - Go to `HACS` > `Integrations` > `⋮` > `Custom repositories`.
