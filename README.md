@@ -75,6 +75,8 @@ color: rgb(110, 65, 171)
 bar_color: rgb(110, 65, 171)
 ```
 
+<img src="./doc/RVB.png" alt="Image title" width="250"/>
+
 ### Card Editor
 The card editor allows you to quickly set up and customize the card.
 
