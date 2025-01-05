@@ -2,7 +2,7 @@
  * PARAMETERS
  */
 
-const VERSION='1.0.8';
+const VERSION='1.0.9';
 const CARD_TNAME='entity-progress-card';
 const CARD_NAME="Entity progress card";
 const CARD_DESCRIPTION="A cool custom card to show current entity status with a progress bar.";
@@ -20,13 +20,73 @@ const CARD_INSTALLED_MESSAGE_CSS = 'color:orange; background-color:black; font-w
 const README_LINK = '      For more details, check the README: https://github.com/francois-le-ko4la/lovelace-entity-progress-card';
 
 const EDITOR_INPUT_FIELDS = [
-    { name: 'entity', label: 'Entity', type: 'entity', required: true, isThemeOverriding: false, description: 'Enter an entity from Home Assistant.' },
-    { name: 'name', label: 'Name', type: 'text', required: false, isThemeOverriding: false, description: 'Enter a name for the entity.' },
-    { name: 'layout', label: 'Layout', type: 'layout', required: false, isThemeOverriding: false, description: 'Select the layout.' },
-    { name: 'theme', label: 'Theme', type: 'theme', required: false, isThemeOverriding: false, description: 'Select a theme to automatically define the colors and icon.' },
-    { name: 'icon', label: 'Icon', type: 'icon', required: false, isThemeOverriding: true, description: 'Choose an icon for the entity.' },
-    { name: 'color', label: 'Color', type: 'color', required: false, isThemeOverriding: true, description: 'Choose the primary color for the icon.' },
-    { name: 'bar_color', label: 'Bar Color', type: 'color', required: false, isThemeOverriding: true, description: 'Choose the primary color for the bar.' },
+    {   name: 'entity',
+        label: { en: 'Entity', fr: 'Entité', es: 'Entidad',},
+        type: 'entity',
+        required: true,
+        isThemeOverriding: false,
+        description: {
+            en: 'Enter an entity from Home Assistant.',
+            fr: 'Saisissez une entité de Home Assistant.',
+            es: 'Introduzca una entidad de Home Assistant.',}},
+    {   name: 'name',
+        label: { en: 'Name', fr: 'Nom', es: 'Nombre',},
+        type: 'text',
+        required: false,
+        isThemeOverriding: false,
+        description: {
+            en: 'Enter a name for the entity.',
+            fr: 'Saisissez un nom pour l\'entité.',
+            es: 'Introduzca un nombre para la entidad.',}},
+    {   name: 'layout',
+        label: { en: 'Layout', fr: 'Disposition', es: 'Disposición',},
+        type: 'layout',
+        required: false,
+        isThemeOverriding: false,
+        description: {
+            en: 'Select the layout.',
+            fr: 'Sélectionnez la disposition.',
+            es: 'Seleccione la disposición.',}},
+    {   name: 'theme',
+        label: { en: 'Theme', fr: 'Thème', es: 'Tema',},
+        type: 'theme',
+        required: false,
+        isThemeOverriding: false,
+        description: {
+            en: 'Select a theme to automatically define the colors and icon.',
+            fr: 'Sélectionnez un thème pour définir automatiquement les couleurs et l\'icône.',
+            es: 'Seleccione un tema para definir automáticamente los colores y el icono.',
+        }},
+    {   name: 'icon',
+        label: { en: 'Icon', fr: 'Icône', es: 'Icono',},
+        type: 'icon',
+        required: false,
+        isThemeOverriding: true,
+        description: {
+            en: 'Choose an icon for the entity.',
+            fr: 'Choisissez une icône pour l\'entité.',
+            es: 'Elija un icono para la entidad.',
+        }},
+    {   name: 'color',
+        label: { en: 'Primary color', fr: 'Couleur de l\'icône', es: 'Color del icono',},
+        type: 'color',
+        required: false,
+        isThemeOverriding: true,
+        description: {
+            en: 'Choose the primary color for the icon.',
+            fr: 'Choisissez la couleur principale de l\'icône.',
+            es: 'Elija el color principal del icono.',
+        }},
+    {   name: 'bar_color',
+        label: { en: 'Color for the bar', fr: 'Couleur de la barre', es: 'Color de la barra',},
+        type: 'color',
+        required: false,
+        isThemeOverriding: true,
+        description: {
+            en: 'Choose the primary color for the bar.',
+            fr: 'Choisissez la couleur principale de la barre.',
+            es: 'Elija el color principal de la barra.',
+        }},
 ];
 
 const COLORS = [
@@ -243,10 +303,30 @@ const BATTERY_THEME_COLORS = [
 ];
 
 const BATTERY_THEME_ICON = 'mdi:battery';
-const ENTITY_ERROR_MSG = "The 'entity' parameter is required!";
-const ENTITY_NOTFOUND_MSG = "Entity not found in Home Assistant states.";
 const THEME_KEY = "theme"
 
+const MSG = {
+    en: {
+        ENTITY_ERROR: "The 'entity' parameter is required!",
+        ENTITY_NOTFOUND: "Entity not found in Home Assistant.",
+    },
+    fr: {
+        ENTITY_ERROR: "Le paramètre 'entity' est requis !",
+        ENTITY_NOTFOUND: "Entité introuvable dans Home Assistant.",
+    },
+    es: {
+        ENTITY_ERROR: "¡El parámetro 'entity' es obligatorio!",
+        ENTITY_NOTFOUND: "Entidad no encontrada en Home Assistant.",
+    },
+};
+
+function getCurrentLanguage() {
+    const browserLang = navigator.language.split('-')[0];
+    if (MSG[browserLang]) {
+        return browserLang;
+    }
+    return 'en';
+}
 
 /** --------------------------------------------------------------------------
  * CARD
@@ -266,6 +346,7 @@ class EntityProgressCard extends HTMLElement {
             console.groupEnd();
             EntityProgressCard._moduleLoaded = true;
         }
+        this._currentLanguage = getCurrentLanguage()
         // to store DOM ref.
         this._elements = {};
         this._isBuilt = false;
@@ -277,7 +358,7 @@ class EntityProgressCard extends HTMLElement {
 
     setConfig(config) {
         if (!config.entity) {
-            throw new Error(ENTITY_ERROR_MSG);
+            throw new Error(MSG[this._currentLanguage].ENTITY_ERROR);
         }
     
         const entityChanged = this.config?.entity !== config.entity;
@@ -400,7 +481,7 @@ class EntityProgressCard extends HTMLElement {
 
         if (!entity) {
             // show error message
-            this._showError(ENTITY_NOTFOUND_MSG);
+            this._showError(MSG[this._currentLanguage].ENTITY_NOTFOUND);
             return;
         }
         // Hide error message if entity is found
@@ -499,6 +580,7 @@ class EntityProgressCardEditor extends HTMLElement {
         this._hass = null;
         this._overridableElements = {};
         this.rendered = false;
+        this._currentLanguage=getCurrentLanguage();
     }
 
     set hass(value) {
@@ -694,7 +776,13 @@ class EntityProgressCardEditor extends HTMLElement {
         container.style.maxHeight = '100vh';     // Limit height to the viewport
 
         EDITOR_INPUT_FIELDS.forEach((field) => {
-            container.appendChild(this._createField(field));
+            container.appendChild(this._createField({
+                name:field.name,
+                label:field.label[this._currentLanguage],
+                type:field.type,
+                required:field.required,
+                isThemeOverriding: field.isThemeOverriding,
+                description: field.description[this._currentLanguage] }));
         });
 
         fragment.appendChild(container);
