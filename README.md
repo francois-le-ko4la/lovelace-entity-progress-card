@@ -151,3 +151,38 @@ card_mod:
       25% { transform: scale3d(1, 1, 1); }
     }
 ```
+
+### vertical-stack-in-card
+
+We can use `vertical-stack-in-card` to group multiple cards into a cohesive layout. Additionally, we'll leverage `card_mod` to seamlessly remove the borders, creating a cleaner and more unified design.
+
+*Example:*
+```yaml
+type: custom:vertical-stack-in-card
+cards:
+  - type: custom:auto-entities
+    filter:
+      include:
+        - attributes:
+            device_class: battery
+          options:
+            type: custom:entity-progress-card
+            entity: this.entity_id
+            name: sample
+            theme: battery
+            card_mod:
+              style:
+                .: |-
+                  :host {
+                    --ha-card-border-width: 0px !important; /* Forcer la suppression des bordures */
+                    box-shadow: none !important; /* Supprimer l'ombre pour enlever tout contour */
+                  }
+    sort:
+      method: friendly_name
+    card:
+      square: false
+      type: grid
+      columns: 2
+    card_param: cards
+```
+<img src="./doc/stack.png" alt="Image title" width="500"/>
