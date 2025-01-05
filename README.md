@@ -24,7 +24,6 @@ This custom version of the **Bar Card** for Home Assistant allows you to display
 url: /local/entity-progress-card.js
 type: module
 ```
-3. Restart Home Assistant to load the new resource.
 
 ### HACS Installation (Recommended)
 
@@ -32,9 +31,6 @@ type: module
   - Go to `HACS` > `Integrations` > `⋮` > `Custom repositories`.
   - Paste the URL of this repository and select Lovelace as the category.
 2. Install the Entity Progress Card from HACS.
-3. Restart Home Assistant to finalize the installation.
-4. Ensure the card is automatically added to your resources in Settings > Dashboards > Resources.
-
 
 ## 📝 Usage
 ### Parameters
