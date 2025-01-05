@@ -122,3 +122,32 @@ sort:
 ```
 
 <img src="./doc/battery_dashboard.png" alt="Image title" width="500"/>
+
+### card_mod / animation
+
+We can use `card_mod` to add dynamic animations to the icon, enhancing the visual experience and providing a more engaging user interface.
+
+*Example:*
+```yaml
+type: custom:entity-progress-card
+entity: sensor.hp_envy_6400_series_tri_color_cartridge
+name: RVB
+icon: mdi:grain
+color: rgb(110, 65, 171)
+bar_color: rgb(110, 65, 171)
+card_mod:
+  style: |-
+    ha-icon {
+      animation: boing 3s ease infinite;
+      transform-origin: 50% 90%;
+    }
+    @keyframes boing {
+      0% { transform: scale3d(1, 1, 1); }
+      7% { transform: scale3d(1.25, 0.75, 1); }
+      10% { transform: scale3d(0.75, 1.25, 1); }
+      12% { transform: scale3d(1.15, 0.85, 1); }
+      16% { transform: scale3d(0.95, 1.05, 1); }
+      19% { transform: scale3d(1.05, 0.95, 1); }
+      25% { transform: scale3d(1, 1, 1); }
+    }
+```
