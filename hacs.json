@@ -1,9 +1,7 @@
 {
   "name": "Entity Progress Card",
+  "filename": "entity-progress-card.js",
   "content_in_root": true,
-  "render_readme": true,
-  "description": "A progress bar card for Lovelace in Home Assistant",
-  "documentation": "https://github.com/francois-le-ko4la/lovelace-entity-progress-card",
-  "domains": ["lovelace"],
-  "iot_class": "local_polling"
+  "zip_release": true,
+  "hide_default_branch": true
 }
