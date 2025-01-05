@@ -9,6 +9,8 @@ This custom version of the **Bar Card** for Home Assistant allows you to display
 - Displays a percentage progress bar.
 - Seamlessly integrates with the "Tile" look & feel of recent Home Assistant versions.
 - Easily customizable using the card editor or YAML config : entity, name, colors, and bar color
+- Theme to automatically adjust icon and colors according to the context (Theme Battery)
+- Automatically adapts to the user's language for error messages and descriptions, ensuring a localized experience. 🇬🇧🇪🇸🇫🇷
   
 ## ⚙️ Prerequisites
 
@@ -50,7 +52,7 @@ You can customize the card using the following parameters:
   
   *Examples:*
   
-    `horizontal`: Displays the elements horizontally, with a row layout (by default, the text and progress bar will be displayed side by side).
+    `horizontal`: Displays the elements horizontally, with a row layout (by default, the text and progress bar will be displayed side by side).  
     `vertical`: Displays the elements vertically, with a column layout (by default, the text and progress bar will be stacked one below the other).
   
     If no specific layout is set, the default layout is `horizontal`.
