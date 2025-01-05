@@ -45,6 +45,14 @@ You can customize the card using the following parameters:
   The name displayed on the progress bar. If omitted, the entity's friendly name will be used.  
   *Example:* `"RGB Color"`
 
+- **`layout`** *(optional)*:  
+  Determines the layout of the elements inside the card. You can choose between different layouts based on your visual preferences.
+  *Examples:*  
+    `horizontal`: Displays the elements horizontally, with a row layout (by default, the text and progress bar will be displayed side by side).
+    `vertical`: Displays the elements vertically, with a column layout (by default, the text and progress bar will be stacked one below the other).
+  
+    If no specific layout is set, the default layout is `horizontal`.
+
 - **`icon`** *(optional)*:  
   The icon associated with the entity. Supports Material Design Icons (MDI).  
   *Examples:* `mdi:lightbulb`, `mdi:thermometer`
@@ -84,9 +92,10 @@ The card editor allows you to quickly set up and customize the card.
 
 - The `Entity` field is required, and an error message will appear if it is not filled in.
 - The `Name` field is an input form. If the `Name` field is left empty, the card will use the entity’s default name.
+- The `Layout` can be selected.
 - The `Icon` is selected directly from a dropdown with all available icons in Home Assistant.
 - `Colors` can be selected from the provided list, which is based on standard Home Assistant colors. It’s possible to use a color outside of this list, but it must be set through YAML configuration.
-- The `theme` can be selected. Once a theme is chosen, the `icon`, `color`, and `bar-color` parameters will no longer be visible.
+- The `Theme` can be selected. Once a theme is chosen, the `icon`, `color`, and `bar-color` parameters will no longer be visible.
 
 ## 💡 Tips
 ### Usage
