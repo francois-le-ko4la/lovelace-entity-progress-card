@@ -85,7 +85,23 @@ color: rgb(110, 65, 171)
 bar_color: rgb(110, 65, 171)
 ```
 
-<img src="./doc/RVB.png" alt="Image title" width="250"/>
+<img src="./doc/RVB.png" alt="Image title" width="250px"/>
+
+Another example with `grid_option` and vertical `layout`:
+```yaml
+type: custom:entity-progress-card
+entity: sensor.hp_envy_6400_series_tri_color_cartridge
+name: RVB
+icon: mdi:grain
+color: yellow
+bar_color: green
+layout: vertical
+grid_options:
+  columns: 3
+  rows: 2
+```
+
+<img src="./doc/RVB_vertical.png" alt="Image title" width="118px"/>
 
 ### Card Editor
 The card editor allows you to quickly set up and customize the card.
