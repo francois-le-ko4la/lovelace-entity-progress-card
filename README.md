@@ -77,7 +77,6 @@ You can customize the card using the following parameters:
 
 - **`theme`** *(optional)*:  
   Allows customization of the progress bar's appearance using a predefined theme.
-  In version 1.0.5, only the "battery" theme is available.
   This theme dynamically adjusts the `icon`, `color` and `bar-color` parameters based on the battery level, eliminating the need for manual adjustments or complex Jinja2 templates.  
   *Example:* "battery"
 
