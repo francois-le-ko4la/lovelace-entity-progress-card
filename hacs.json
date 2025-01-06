@@ -2,6 +2,5 @@
   "name": "Entity Progress Card",
   "filename": "entity-progress-card.js",
   "content_in_root": true,
-  "zip_release": true,
   "hide_default_branch": true
 }
