@@ -1,8 +1,40 @@
+/**
+ * @fileoverview
+ * 
+ * This file defines a custom element `EntityProgressCard` for displaying 
+ * progress or status information about an entity in Home Assistant. 
+ * The card displays visual elements like icons, progress bars, and other dynamic content 
+ * based on the state of the entity and user configurations.
+ * 
+ * The file includes the following:
+ * - Class `EntityProgressCard`: Defines the behavior and structure of the card element.
+ * - Class `EntityProgressCardEditor`: Defines the editor UI for configuring the card's properties.
+ * - Methods for dynamically updating the card's elements based on entity state (e.g., battery level).
+ * - Methods to support entity picker and configuration fields.
+ * 
+ * The primary functionality is centered around:
+ * 1. Creating and rendering the custom card element with configurable properties.
+ * 2. Handling dynamic updates to the card based on the state of the associated entity.
+ * 3. Providing an editor interface for customizing the card's configuration in the Home Assistant UI.
+ * 
+ * Main Classes:
+ * - `EntityProgressCard`: The main card element displaying entity status.
+ * - `EntityProgressCardEditor`: The configuration editor for the `EntityProgressCard`.
+ * 
+ * Key Features:
+ * - Dynamic content update (e.g., progress bar, icons) based on entity state.
+ * - Support for theme and layout customization.
+ * - Error handling for missing or invalid entities.
+ * - Configuration options for various card elements, including entity picker, color settings, and layout options.
+ * 
+ * @version 1.0.10
+ */
+
 /** --------------------------------------------------------------------------
  * PARAMETERS
  */
 
-const VERSION='1.0.9';
+const VERSION='1.0.10';
 const CARD_TNAME='entity-progress-card';
 const CARD_NAME="Entity progress card";
 const CARD_DESCRIPTION="A cool custom card to show current entity status with a progress bar.";
@@ -320,6 +352,16 @@ const MSG = {
     },
 };
 
+/** --------------------------------------------------------------------------
+ * 
+ * Retrieves the current browser language and checks if it is supported.
+ * 
+ * If the browser's language (excluding regional variants) is present 
+ * in the `MSG` object (which represents the supported languages), 
+ * it is returned. Otherwise, the default language ('en') is returned.
+ * 
+ * @returns {string} The supported language or 'en' as the default.
+ */
 function getCurrentLanguage() {
     const browserLang = navigator.language.split('-')[0];
     if (MSG[browserLang]) {
@@ -329,10 +371,37 @@ function getCurrentLanguage() {
 }
 
 /** --------------------------------------------------------------------------
- * CARD
+ * 
+ * Represents a custom card element displaying the progress of an entity.
+ * 
+ * The `EntityProgressCard` class extends the base `HTMLElement` class and 
+ * implements a custom web component that displays information about an entity's 
+ * state, typically showing a progress bar or other dynamic elements. This card 
+ * updates its visual state based on the entity's current value, and it is capable 
+ * of handling different layouts and themes for better adaptability within the UI.
+ * 
+ * The component also provides error handling and can display an error message 
+ * when the specified entity is not found or there is an issue with retrieving 
+ * its state.
+ * 
+ * The card's layout and appearance can be customized based on configuration 
+ * settings, such as the color scheme, icon, and the display format of the progress.
+ * 
+ * Example usage:
+ * <entity-progress-card></entity-progress-card>
  */
-
 class EntityProgressCard extends HTMLElement {
+    /**
+     * Constructor for the EntityProgressCard component.
+     * 
+     * - Initializes the Shadow DOM in 'open' mode for encapsulation.
+     * - Logs a one-time installation message and README link in the console 
+     *   when the component is first loaded (using `_moduleLoaded` to track state).
+     * - Sets the current language using the `getCurrentLanguage()` function.
+     * - Initializes properties to manage the component's internal state:
+     *   - `_elements`: An object to store references to DOM elements within the component.
+     *   - `_isBuilt`: A flag to track whether the component has been built or not.
+     */
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
@@ -352,10 +421,38 @@ class EntityProgressCard extends HTMLElement {
         this._isBuilt = false;
     }
 
+    /**
+     * Creates and returns a new configuration element for the component.
+     * 
+     * This static method is used to dynamically generate an instance of the 
+     * editor element, identified by the constant `EDITOR_NAME`. The returned 
+     * element can be used for configuring the component's behavior or settings.
+     * 
+     * @returns {HTMLElement} A newly created configuration element.
+     */
     static getConfigElement() {
         return document.createElement(EDITOR_NAME);
     }
 
+    /**
+     * Updates the component's configuration and triggers necessary changes.
+     *
+     * This method validates the provided configuration, updates the component's
+     * state, and ensures that the visual and functional elements of the component
+     * reflect the new configuration. It performs the following:
+     * 
+     * - **Validation:** Throws an error if the `entity` property is missing from the configuration.
+     * - **State Updates:** Checks for changes in the `entity` and `layout` properties 
+     *   to determine if specific updates are required.
+     * - **Initial Build:** If the card has not been built yet, it calls `_buildCard()` to construct it.
+     * - **Layout Changes:** If the `layout` property has changed, it calls `_changeLayout()` 
+     *   to update the card's layout.
+     * - **Dynamic Updates:** If the `entity` property has changed, it calls `_updateDynamicElements()` 
+     *   to refresh dynamic elements based on the new entity.
+     * 
+     * @param {Object} config - The new configuration object.
+     * @throws {Error} If the `entity` property is missing from the configuration.
+     */
     setConfig(config) {
         if (!config.entity) {
             throw new Error(MSG[this._currentLanguage].ENTITY_ERROR);
@@ -378,12 +475,38 @@ class EntityProgressCard extends HTMLElement {
             this._updateDynamicElements();
         }
     }
-    
+
+    /**
+     * Sets the Home Assistant (`hass`) instance and updates dynamic elements.
+     * 
+     * This setter is called whenever the Home Assistant instance (`hass`) is updated. 
+     * It stores the new `hass` instance in the `_hass` property and triggers a 
+     * refresh of the dynamic elements within the component by calling 
+     * `_updateDynamicElements()`.
+     * 
+     * @param {Object} hass - The Home Assistant instance containing the current 
+     *                        state and services.
+     */
     set hass(hass) {
         this._hass = hass;
         this._updateDynamicElements();
     }
 
+    /**
+     * Builds and initializes the structure of the custom card component.
+     * 
+     * This method creates the visual and structural elements of the card and injects
+     * them into the component's Shadow DOM. It performs the following steps:
+     * 
+     * 1. Creates a wrapper element (`<ha-card>`) with the appropriate class and inner HTML.
+     * 2. Adds a `<style>` element containing the card's CSS styles.
+     * 3. Injects both the wrapper and style into the Shadow DOM, clearing any existing content.
+     * 4. Stores references to important DOM elements in the `_elements` object, allowing
+     *    them to be easily updated dynamically during the card's lifecycle.
+     * 
+     * These DOM elements are identified using predefined selectors (`SELECTORS`) 
+     * and include elements like the container, icon, progress bar, and alert.
+     */
     _buildCard() {
         const wrapper = document.createElement('ha-card');
         wrapper.classList.add(CARD_TNAME);
@@ -409,22 +532,27 @@ class EntityProgressCard extends HTMLElement {
         };
     }
 
+    /**
+     * Changes the layout of the card based on the current configuration.
+     * 
+     * This method adjusts the styling of various DOM elements based on the selected 
+     * layout configuration. It uses predefined CSS styles to switch between two 
+     * layout modes:
+     * 
+     * **Layout 1 (e.g., column layout):**
+     * - `.container`'s `flex-direction` changes from `row` to `column`.
+     * - `.name`'s `text-align` changes from `left` to `center`.
+     * - `.right`'s `width` changes from `100%` to `90%` and `flex-grow` changes from `1` to `0`.
+     * - `.secondary_info`'s `display` changes from `flex` to `block`.
+     * - `.percentage`'s `text-align` changes from `left` to `center`.
+     * 
+     * **Layout 2 (e.g., row layout):**
+     * - Reverts all the styles back to their original values, enabling a `row` layout.
+     * 
+     * The layout change is triggered based on the `this.config.layout` value, which 
+     * determines the current layout mode.
+     */
     _changeLayout() {
-        /**
-         *  .container
-         *      flex-direction: row; -> column
-         *  .name
-         *      text-align: left; -> center
-         *  .right
-         *      width: 100% -> 80%;
-         *      flex-grow: 1; -> 0
-         * 
-         * --
-         *   .secondary_info {
-         *      display: flex; -> block
-         *   .percentage
-         *      text-align: left; -> center
-         */
         if (this.config.layout === LAYOUT[1].value) {
             this._elements[SELECTORS.CONTAINER].style.flexDirection = 'column';
             this._elements[SELECTORS.NAME].style.textAlign = 'center';
@@ -442,6 +570,21 @@ class EntityProgressCard extends HTMLElement {
         }
     }
 
+    /**
+     * Returns the appropriate battery theme icon based on the battery percentage.
+     * 
+     * This method calculates the battery level in steps of 10% and returns the
+     * corresponding icon. If the battery is fully charged (100%), it returns the
+     * default `BATTERY_THEME_ICON`. For other percentages, it returns the icon 
+     * corresponding to the closest 10% step (e.g., 90%, 80%, etc.). If the battery 
+     * level is 0%, it returns an "alert" icon.
+     * 
+     * The returned icon is in the format of `BATTERY_THEME_ICON-[level]`, where 
+     * `[level]` is one of the predefined steps (e.g., `BATTERY_THEME_ICON-90`).
+     * 
+     * @param {number} percentage - The current battery percentage (from 0 to 100).
+     * @returns {string} The corresponding battery theme icon.
+     */
     _getBatteryThemeIcon(percentage) {
         if (percentage === 100) return BATTERY_THEME_ICON; // 100%
     
@@ -453,7 +596,25 @@ class EntityProgressCard extends HTMLElement {
     
         return `${BATTERY_THEME_ICON}-alert`; // 0%
     }
-    
+
+    /**
+     * Returns the appropriate battery theme color based on the battery percentage.
+     * 
+     * This method calculates the battery color by determining which threshold 
+     * the current percentage falls into. The thresholds are defined in the 
+     * `BATTERY_THEME_COLORS` array, where each entry corresponds to a specific 
+     * battery level range and its associated color.
+     * 
+     * If the battery is fully charged (100%), it returns the color of the last 
+     * threshold in the array. For other percentages, it determines the closest 
+     * threshold based on the battery percentage and returns the corresponding color.
+     * 
+     * The thresholds are evenly distributed, so each color represents a range 
+     * of battery levels (e.g., 0-10%, 10-20%, etc.).
+     * 
+     * @param {number} percentage - The current battery percentage (from 0 to 100).
+     * @returns {string} The corresponding color for the battery theme.
+     */
     _getBatteryThemeColor(percentage) {
         const numberOfThresholds = BATTERY_THEME_COLORS.length;
         const thresholdSize = 100 / numberOfThresholds;
@@ -464,6 +625,23 @@ class EntityProgressCard extends HTMLElement {
         return BATTERY_THEME_COLORS[Math.floor(percentage / thresholdSize)].color;
     }
 
+    /**
+     * Updates the specified DOM element based on a provided callback function.
+     * 
+     * This method accepts a `key` (which corresponds to an element stored in 
+     * the `_elements` object) and a `callback` function. The callback is executed 
+     * on the specified element, and its current value (either `textContent` or 
+     * `style.width`) is compared with the new value returned by the callback.
+     * 
+     * If the value has changed, the callback function is re-executed to update 
+     * the element's content or style. This helps ensure that dynamic elements 
+     * are updated only when necessary, preventing unnecessary DOM modifications.
+     * 
+     * @param {string} key - The key that identifies the element to be updated 
+     *                       in the `_elements` object.
+     * @param {function} callback - A function that is applied to the element. 
+     *                              It should return the new value for the element.
+     */
     _updateElement(key, callback) {
         const element = this._elements[key];
         if (element) {
@@ -475,6 +653,23 @@ class EntityProgressCard extends HTMLElement {
         }
     }
 
+    /**
+     * Updates the dynamic elements of the card based on the state of a specified entity.
+     * 
+     * This method fetches the state of the entity defined in the configuration and
+     * updates various dynamic elements of the card (e.g., progress bar, icon, shape, 
+     * name, and percentage) accordingly.
+     * 
+     * - If the entity state cannot be found, an error message is displayed.
+     * - If the entity state is valid, the error message is hidden and the elements are updated.
+     * - The percentage value from the entity state is clamped between 0 and 100.
+     * - If a specific theme is selected, the battery icon and color are updated based on the percentage.
+     * 
+     * The elements are updated using the `_updateElement` method, which ensures the DOM
+     * is only updated when the values change.
+     * 
+     * @returns {void}
+     */
     _updateDynamicElements() {
         // get entity state
         const entity = this._hass?.states[this.config.entity];
@@ -522,7 +717,20 @@ class EntityProgressCard extends HTMLElement {
         });     
     }
   
-    // Show error alert
+    /**
+     * Displays an error alert with the provided message.
+     * 
+     * This method shows an error alert on the card by updating the corresponding
+     * DOM element (identified by `SELECTORS.ALERT`). The element is made visible 
+     * by changing its `display` style, and the provided error message is set as 
+     * the text content of the alert.
+     * 
+     * The error alert is typically used to notify users when an issue occurs, 
+     * such as an entity not being found or any other problem that needs user 
+     * attention.
+     * 
+     * @param {string} message - The error message to display in the alert.
+     */
     _showError(message) {
         const alertElement = this._elements[SELECTORS.ALERT];
         if (alertElement) {
@@ -531,7 +739,16 @@ class EntityProgressCard extends HTMLElement {
         }
     }
 
-    // Hide the alert when the entity is found
+    /**
+     * Hides the error alert by setting its display style to hide.
+     * 
+     * This method hides the error alert on the card by changing the `display` 
+     * style of the corresponding DOM element (identified by `SELECTORS.ALERT`) 
+     * to the value of `HIDE_DIV`. This is typically used to remove the error 
+     * message once the issue (such as the entity being found) has been resolved.
+     * 
+     * @returns {void}
+     */
     _hideError() {
         const alertElement = this._elements[SELECTORS.ALERT];
         if (alertElement) {
@@ -539,6 +756,16 @@ class EntityProgressCard extends HTMLElement {
         }
     }
 
+    /**
+     * Returns the number of grid rows for the card size based on the current layout.
+     * 
+     * This method determines the size of the card (specifically the number of grid rows) 
+     * depending on whether the layout configuration is vertical or horizontal. 
+     * The layout configuration is checked against `LAYOUT[1].value`, and based on this, 
+     * it returns the appropriate number of rows for the card's grid.
+     * 
+     * @returns {number} - The number of grid rows for the current card layout.
+     */
     getCardSize() {
         if (this.config.layout === LAYOUT[1].value) {
             return LAYOUT_SIZE.vertical.grid_rows;
@@ -546,6 +773,16 @@ class EntityProgressCard extends HTMLElement {
         return LAYOUT_SIZE.horizontal.grid_rows;
     }
 
+    /**
+     * Returns the layout options based on the current layout configuration.
+     * 
+     * This method returns an object containing layout options (e.g., grid rows, columns, etc.) 
+     * depending on the layout configuration. If the layout is set to vertical, it returns 
+     * the options for the vertical layout; if horizontal, it returns the options for the 
+     * horizontal layout.
+     * 
+     * @returns {object} - The layout options for the current layout configuration.
+     */
     getLayoutOptions() {
         if (this.config.layout === LAYOUT[1].value) {
             return LAYOUT_SIZE.vertical;
@@ -554,14 +791,28 @@ class EntityProgressCard extends HTMLElement {
     }
 }
 
+/** --------------------------------------------------------------------------
+ * Define static properties and register the custom element for the card.
+ * 
+ * These lines of code define static properties and register the custom element 
+ * for `EntityProgressCard`, making it available for use within the DOM. The class 
+ * is associated with a custom tag name and is given versioning information to track 
+ * changes.
+ * 
+ * @static
+ */
 EntityProgressCard.version = VERSION;
 EntityProgressCard._moduleLoaded = false;
 customElements.define(CARD_TNAME, EntityProgressCard);
 
 /** --------------------------------------------------------------------------
- * Add this card to the list of custom cards for the card picker
+ * Registers the custom card in the global `customCards` array for use in Home Assistant.
+ * 
+ * This code ensures that the custom card is added to the list of registered custom cards, 
+ * which Home Assistant uses to dynamically render and manage custom cards in its user interface. 
+ * The check ensures that the `customCards` array is created if it does not exist, without overwriting 
+ * any existing custom cards that may already be registered.
  */
-
 window.customCards = window.customCards || []; // Create the list if it doesn't exist. Careful not to overwrite it
 window.customCards.push({
     type: CARD_TNAME,
@@ -570,10 +821,42 @@ window.customCards.push({
 });
 
 /** --------------------------------------------------------------------------
- * EDITOR
+ * Custom editor component for configuring the `EntityProgressCard`.
+ * 
+ * The `EntityProgressCardEditor` class extends `HTMLElement` and represents the editor interface 
+ * for configuring the settings of the `EntityProgressCard`. This class provides a UI for users 
+ * to modify the card's configuration, such as entity selection, layout, and theme options. 
+ * It is typically used in Home Assistant's configuration interface to allow users to customize 
+ * their cards through a graphical interface.
+ * 
+ * This editor component interacts with the settings of the `EntityProgressCard`, providing 
+ * an interface to change key attributes of the card like layout, color, entity type, and others.
+ * 
+ * Example usage:
+ * <entity-progress-card-editor></entity-progress-card-editor>
  */
-
 class EntityProgressCardEditor extends HTMLElement {
+    /**
+     * Initializes an instance of the `EntityProgressCardEditor` component.
+     * 
+     * The constructor initializes the editor component by setting up initial values for key properties. 
+     * These properties will be used throughout the lifecycle of the editor to store the configuration, 
+     * manage the Home Assistant instance, track overridable elements, and handle rendering.
+     * 
+     * - `this.config`: This object holds the configuration for the card, such as layout, entity, theme, etc. 
+     *   It starts as an empty object and will be populated as the user interacts with the editor.
+     * 
+     * - `this._hass`: This property will store the Home Assistant instance, which provides access to 
+     *   entity states and other data relevant to the card. Initially set to `null`.
+     * 
+     * - `this._overridableElements`: This object will hold references to elements that can be overridden 
+     *   in the card configuration. It is initialized as an empty object.
+     * 
+     * - `this.rendered`: A flag to track whether the editor has been rendered. Initially set to `false`.
+     * 
+     * - `this._currentLanguage`: Stores the current language code, which is determined by the `getCurrentLanguage` 
+     *   function. This ensures that the editor can be localized according to the user's preferred language.
+     */
     constructor() {
         super();
         this.config = {};
@@ -583,6 +866,24 @@ class EntityProgressCardEditor extends HTMLElement {
         this._currentLanguage=getCurrentLanguage();
     }
 
+    /**
+     * Sets the `hass` (Home Assistant) instance for the editor component.
+     * 
+     * This setter method is used to assign a new Home Assistant instance to the editor component. 
+     * It ensures that the editor is only updated when the `hass` instance changes, preventing 
+     * unnecessary re-renders. If the new instance is different from the previous one or if it is the 
+     * first time the `hass` value is being set, the component updates its internal reference and, 
+     * if it has already been rendered, triggers a re-render.
+     * 
+     * - If the provided `value` is falsy (null or undefined), the method simply returns without doing anything.
+     * - If the current `hass` instance is different from the new one (checked by comparing `entities`), 
+     *   the method updates the internal `_hass` reference and triggers a re-render if the editor is already rendered.
+     * 
+     * This ensures that changes in the Home Assistant instance are properly reflected in the component 
+     * without unnecessary updates or re-renders.
+     * 
+     * @param {object} value - The new Home Assistant instance to set.
+     */
     set hass(value) {
         if (!value) {
             return;
@@ -595,10 +896,37 @@ class EntityProgressCardEditor extends HTMLElement {
         }
     }
 
+    /**
+     * Gets the current Home Assistant instance stored in the editor component.
+     * 
+     * This getter method provides access to the internal `_hass` property, which holds the 
+     * current Home Assistant instance. The value of `_hass` is used throughout the component 
+     * to access entity states and interact with Home Assistant data. This method simply 
+     * returns the stored instance when called.
+     * 
+     * @returns {object|null} The current Home Assistant instance, or `null` if not set.
+     */    
     get hass() {
         return this._hass;
     }
 
+    /**
+     * Sets the configuration for the editor component and triggers the necessary updates.
+     * 
+     * This method accepts a configuration object and updates the component's internal `config` property. 
+     * If the Home Assistant instance (`hass`) is available, the method performs the following actions:
+     * 
+     * - **Sets the configuration**: It stores the provided `config` in the component's internal `config` property.
+     * - **Loads the entity picker**: The `loadEntityPicker()` method is called to initialize or update the entity picker, 
+     *   allowing the user to select entities for the card.
+     * - **Renders the component**: If the editor hasn't been rendered yet (`rendered` is `false`), the component is 
+     *   marked as rendered, and the `render()` method is called to render the editor's UI.
+     * 
+     * This method ensures that the editor's configuration is applied correctly and that any necessary UI updates 
+     * are triggered, including rendering the editor if it's not already displayed.
+     * 
+     * @param {object} config - The configuration object containing settings for the editor.
+     */   
     setConfig(config) {
         if (!this.hass) {
             return;
@@ -611,6 +939,23 @@ class EntityProgressCardEditor extends HTMLElement {
         }
     }
 
+    /**
+     * Toggles the visibility of fields based on the `disable` flag.
+     * 
+     * This method is used to control the visibility of specific fields in the editor. 
+     * It updates the `style.display` property of each field element stored in the `_overridableElements` 
+     * object, hiding or showing the fields based on the `disable` parameter.
+     * 
+     * - If `disable` is `true`, the method hides the fields by setting `style.display` to `HIDE_DIV`.
+     * - If `disable` is `false`, the method shows the fields by setting `style.display` to `SHOW_DIV`.
+     * 
+     * The fields that are affected by this method are those stored in the `_overridableElements` object, 
+     * which holds references to DOM elements that can be dynamically shown or hidden. The fields are identified 
+     * by the keys of the `_overridableElements` object.
+     * 
+     * @param {boolean} disable - A boolean flag to control the visibility of the fields.
+     *                            If `true`, fields are hidden. If `false`, fields are shown.
+     */
     _toggleFieldDisable(disable) {
         const fields = Object.keys(this._overridableElements);
         fields.forEach(fieldName => {
@@ -618,11 +963,53 @@ class EntityProgressCardEditor extends HTMLElement {
         });
     }
 
+    /**
+     * Reorders the configuration object by extracting `grid_options` and placing it at the end.
+     * 
+     * This method processes the provided configuration object, extracts the `grid_options` property 
+     * (if present), and then returns a new object with `grid_options` placed at the end. All other 
+     * properties of the configuration are kept intact and remain in their original order. 
+     * 
+     * If the `grid_options` property is not present, the method simply returns the configuration object 
+     * without any changes.
+     * 
+     * - If `grid_options` exists, the method places it at the end of the returned object.
+     * - If `grid_options` does not exist, the method returns the object without modification.
+     * 
+     * This method helps to ensure that `grid_options` is handled consistently when used elsewhere, 
+     * possibly for further processing or rendering.
+     * 
+     * @param {object} config - The configuration object to be reordered.
+     * @returns {object} The reordered configuration object with `grid_options` at the end.
+     */
     _reorderConfig(config) {
         const { grid_options, ...rest } = config;
         return grid_options ? { ...rest, grid_options } : { ...rest };
     }
 
+    /**
+     * Updates a specific property in the configuration object, and handles additional logic 
+     * related to `theme` and field visibility.
+     * 
+     * This method updates the configuration object based on the provided `key` and `value`. It checks
+     * if the `value` is an empty string, and if so, it removes the property from the configuration. If 
+     * the `value` is not an empty string, it updates the property with the new `value`.
+     * 
+     * If the updated property is related to the theme (identified by `THEME_KEY`), it triggers an 
+     * additional action to toggle the visibility of certain fields based on the presence of the theme 
+     * property in the configuration.
+     * 
+     * After the update, the method ensures the configuration is reordered with the `grid_options` at 
+     * the end by calling `_reorderConfig`. Finally, it dispatches a custom event (`'config-changed'`) 
+     * to notify other components about the configuration change.
+     * 
+     * - If the `value` is an empty string, the corresponding property is deleted from the configuration.
+     * - If the `key` corresponds to the theme, it toggles the visibility of fields related to the theme.
+     * - The configuration is reordered after every update to ensure `grid_options` is placed at the end.
+     * 
+     * @param {string} key - The key of the configuration property to update.
+     * @param {string} value - The new value to assign to the configuration property.
+     */
     _updateConfigProperty(key, value) {
         if (value === '') {
             if (key in this.config) {
@@ -639,18 +1026,46 @@ class EntityProgressCardEditor extends HTMLElement {
         this.dispatchEvent(new CustomEvent('config-changed', { detail: { config: this.config } }));
     }
 
+    /**
+     * Adds a list of choices to a given `<select>` element as `<mwc-list-item>` options.
+     * 
+     * This method takes a list of choice objects and appends them as options to the provided 
+     * `<select>` element. Each choice is represented by a circular colored icon (using 
+     * the `value` property as the background color) followed by the choice's `name`.
+     * 
+     * For each item in the `list`, a new `<mwc-list-item>` is created, where the `value` attribute 
+     * of the option is set to the `value` of the choice.
+     * - The `value` of the choice.
+     * - The name of the choice.
+     * 
+     * The new `<mwc-list-item>` is then appended to the provided `select` element, allowing 
+     * the user to choose from the list in a graphical form.
+     * 
+     * @param {HTMLElement} select - The `<select>` element to which the choices will be added.
+     * @param {Array} list - An array of choice objects, where each object contains a `value` (color) and `name` (label) property.
+     */
     _addChoice(select, list) {
         list.forEach(cur_choice => {
             const option = document.createElement('mwc-list-item');
             option.value = cur_choice.value;
-            option.innerHTML = `
-                <span style="display: inline-block; width: 16px; height: 16px; background-color: ${cur_choice.value}; border-radius: 50%; margin-right: 8px;"></span>
-                ${cur_choice.name}
-            `;
+            option.innerHTML = `${cur_choice.name}`;
             select.appendChild(option);
         });
     }
 
+    /**
+     * Adds a list of color options to a given `<select>` element, including a "no color" option.
+     * 
+     * This method populates a `<select>` element with color choices. It first adds a special 
+     * option to represent the "no color" choice, followed by the color options defined in the 
+     * `COLORS` array. Each color option is displayed with a circular colored icon (styled using 
+     * the `value` of the color) and its respective `name`. 
+     * 
+     * For each color in the `COLORS` array, a new `<mwc-list-item>` is created with the color 
+     * as the background of a circular `span` and the color name displayed beside it.
+     * 
+     * @param {HTMLElement} colorSelect - The `<select>` element to which the color options will be added.
+     */
     _addColor(colorSelect) {
         const noColorOption = document.createElement('mwc-list-item');
         noColorOption.value = '';
@@ -671,6 +1086,33 @@ class EntityProgressCardEditor extends HTMLElement {
         });
     }
 
+    /**
+     * Creates a form field based on the provided configuration and appends it to a container.
+     * 
+     * This method generates a form field element dynamically based on the provided field type.
+     * It handles different types of form controls such as:
+     * - Entity picker (`ha-entity-picker`)
+     * - Icon picker (`ha-icon-picker`)
+     * - Layout selector (`ha-select`)
+     * - Theme selector (`ha-select`)
+     * - Color selector (`ha-select`)
+     * - Text input (`ha-textfield`)
+     *
+     * For the `layout`, `theme`, and `color` field types, additional choices are populated 
+     * via helper methods `_addChoice` and `_addColor`. Each field is configured with a label, 
+     * value, and an optional description. If the field is marked as a theme-overridable element, 
+     * it is stored in the `_overridableElements` object for potential dynamic modification.
+     * 
+     * @param {Object} config - The configuration object for the field.
+     * @param {string} config.name - The name of the field (used to store the field's value in `this.config`).
+     * @param {string} config.label - The label for the field, displayed next to the input element.
+     * @param {string} config.type - The type of field to create ('entity', 'icon', 'layout', 'theme', 'color', or 'text').
+     * @param {boolean} [config.required=false] - A flag indicating whether the field is required.
+     * @param {boolean} [config.isThemeOverriding=false] - A flag indicating if the field should be theme-overridable.
+     * @param {string} config.description - The description of the field, typically displayed below the input.
+     * 
+     * @returns {HTMLElement} The container element (`<div>`) containing the input field and its description.
+     */
     _createField({ name, label, type, required = false, isThemeOverriding, description }) {
         let inputElement;
         const value = this.config[name] || '';
@@ -746,14 +1188,26 @@ class EntityProgressCardEditor extends HTMLElement {
     }
 
     /**
-     * loadEntityPicker
      * Author: Thomas Loven
-     * Need this to load the HA elements we want to re-use
      * see: 
      *  - https://github.com/thomasloven/hass-config/wiki/PreLoading-Lovelace-Elements
      *  - https://gist.github.com/thomasloven/5f965bd26e5f69876890886c09dd9ba8
-     * */
-
+     *
+     * Dynamically loads the `ha-entity-picker` component if it is not already defined.
+     *
+     * This function checks if the `ha-entity-picker` custom element is already registered 
+     * in the browser. If it is not registered, it dynamically loads it by using 
+     * Home Assistant's `loadCardHelpers` utility. Once loaded, it creates a temporary 
+     * `entities` card element to ensure that the `ha-entity-picker` element is properly 
+     * defined and ready for use. Afterward, it retrieves the configuration element 
+     * for the picker by calling `getConfigElement()`. 
+     *
+     * This is typically done when the editor is being initialized and the entity picker 
+     * is required but hasn't been loaded yet.
+     *
+     * @returns {Promise<void>} A promise that resolves when the `ha-entity-picker` 
+     *         component is successfully loaded and available.
+     */
     async loadEntityPicker() {
         if (!window.customElements.get("ha-entity-picker")) {
             const ch = await window.loadCardHelpers();
@@ -763,6 +1217,17 @@ class EntityProgressCardEditor extends HTMLElement {
         }
     }
 
+    /**
+     * Renders the editor interface for configuring the card's settings.
+     * 
+     * This method creates and displays the editor UI for the custom card. It dynamically generates
+     * a set of form fields based on the **`EDITOR_INPUT_FIELDS`** array. Each field is rendered
+     * according to its configuration, including the field name, label, type, required status, 
+     * and description. The fields are appended to a container, which is styled and added to the card.
+     * The layout of the fields is controlled using flexbox for proper alignment and wrapping.
+     * 
+     * @returns {void}
+     */    
     render() {
         this.innerHTML = ''; // Reset inner HTML
         const fragment = document.createDocumentFragment();
@@ -790,4 +1255,11 @@ class EntityProgressCardEditor extends HTMLElement {
     }
 }
 
+/** --------------------------------------------------------------------------
+ * Registers the custom element for the EntityProgressCardEditor editor.
+ * This registration step enables the creation and use of the custom card editor 
+ * in the Home Assistant's UI.
+ * 
+ * @returns {void}
+ */
 customElements.define(EDITOR_NAME, EntityProgressCardEditor);
