@@ -34,7 +34,7 @@
  * PARAMETERS
  */
 
-const VERSION='1.0.10';
+const VERSION='1.0.9';
 const CARD_TNAME='entity-progress-card';
 const CARD_NAME="Entity progress card";
 const CARD_DESCRIPTION="A cool custom card to show current entity status with a progress bar.";
