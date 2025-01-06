@@ -941,7 +941,7 @@ class EntityProgressCardEditor extends HTMLElement {
             return;
         }
         this._currentLanguage = MSG[hass.config.language] ? hass.config.language : DEF_LANG;
-        if (!this._hass || this._hass.entities !== value.entities) {
+        if (!this._hass || this._hass.entities !== hass.entities) {
             this._hass = hass;
             if (this.rendered) {
                 this.render();
