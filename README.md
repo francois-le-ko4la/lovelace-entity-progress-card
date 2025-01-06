@@ -81,6 +81,10 @@ You can customize the card using the following parameters:
   This theme dynamically adjusts the `icon`, `color` and `bar-color` parameters based on the battery level, eliminating the need for manual adjustments or complex Jinja2 templates.  
   *Example:* "battery"
 
+- **`max_value`** *(optional)*:
+  Allows representing standard values and calculating the percentage relative to the maximum value.  
+  *Example:* LQI @ 150 with max_value @ 255.
+
 ### YAML
 Here’s our example of how to use the Custom Bar Card with custom styles:
 
