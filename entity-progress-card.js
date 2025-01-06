@@ -34,7 +34,7 @@
  * PARAMETERS
  */
 
-const VERSION='1.0.9';
+const VERSION='1.0.10';
 const CARD_TNAME='entity-progress-card';
 const CARD_NAME="Entity progress card";
 const CARD_DESCRIPTION="A cool custom card to show current entity status with a progress bar.";
@@ -352,23 +352,7 @@ const MSG = {
     },
 };
 
-/** --------------------------------------------------------------------------
- * 
- * Retrieves the current browser language and checks if it is supported.
- * 
- * If the browser's language (excluding regional variants) is present 
- * in the `MSG` object (which represents the supported languages), 
- * it is returned. Otherwise, the default language ('en') is returned.
- * 
- * @returns {string} The supported language or 'en' as the default.
- */
-function getCurrentLanguage() {
-    const browserLang = navigator.language.split('-')[0];
-    if (MSG[browserLang]) {
-        return browserLang;
-    }
-    return 'en';
-}
+const DEF_LANG = "en";
 
 /** --------------------------------------------------------------------------
  * 
@@ -397,7 +381,7 @@ class EntityProgressCard extends HTMLElement {
      * - Initializes the Shadow DOM in 'open' mode for encapsulation.
      * - Logs a one-time installation message and README link in the console 
      *   when the component is first loaded (using `_moduleLoaded` to track state).
-     * - Sets the current language using the `getCurrentLanguage()` function.
+     * - Sets the default language.
      * - Initializes properties to manage the component's internal state:
      *   - `_elements`: An object to store references to DOM elements within the component.
      *   - `_isBuilt`: A flag to track whether the component has been built or not.
@@ -415,7 +399,8 @@ class EntityProgressCard extends HTMLElement {
             console.groupEnd();
             EntityProgressCard._moduleLoaded = true;
         }
-        this._currentLanguage = getCurrentLanguage()
+        this._currentLanguage = DEF_LANG;
+        this._max_value = null; // 100%
         // to store DOM ref.
         this._elements = {};
         this._isBuilt = false;
@@ -461,6 +446,7 @@ class EntityProgressCard extends HTMLElement {
         const entityChanged = this.config?.entity !== config.entity;
         const layoutChanged = this.config?.layout !== config.layout;
         this.config = config;
+        this._max_value = this.config.max_value;
 
         if (!this._isBuilt) {
             this._buildCard();
@@ -480,15 +466,18 @@ class EntityProgressCard extends HTMLElement {
      * Sets the Home Assistant (`hass`) instance and updates dynamic elements.
      * 
      * This setter is called whenever the Home Assistant instance (`hass`) is updated. 
-     * It stores the new `hass` instance in the `_hass` property and triggers a 
-     * refresh of the dynamic elements within the component by calling 
-     * `_updateDynamicElements()`.
+     * It :
+     * - stores the new `hass` instance in the `_hass` property
+     * - Update the this._currentLanguage according to hass.config.language (HA Environment)
+     * - triggers a refresh of the dynamic elements within the component by calling
+     *   `_updateDynamicElements()`.
      * 
      * @param {Object} hass - The Home Assistant instance containing the current 
      *                        state and services.
      */
     set hass(hass) {
         this._hass = hass;
+        this._currentLanguage = MSG[hass.config.language] ? hass.config.language : DEF_LANG;
         this._updateDynamicElements();
     }
 
@@ -683,7 +672,15 @@ class EntityProgressCard extends HTMLElement {
         this._hideError();
 
         const value = parseFloat(entity.state);
-        const percentage = isNaN(value) ? 0 : Math.min(Math.max(value, 0), 100);
+        let percentage = 0;
+        // `this._max_value` in config ?
+        if (!this._max_value) {
+            // standard case
+            percentage = isNaN(value) ? 0 : Math.min(Math.max(value, 0), 100);
+        } else if (typeof this._max_value === "number" && !isNaN(this._max_value)) {
+            // if `this._max_value` is a number (float ou int)
+            percentage = isNaN(value) ? 0 : (value / this._max_value) * 100;
+        }
 
         let iconTheme = null;
         let colorTheme = null;
@@ -713,8 +710,11 @@ class EntityProgressCard extends HTMLElement {
         });
 
         this._updateElement(SELECTORS.PERCENTAGE, (el) => {
-            el.textContent = `${percentage}%`;
-        });     
+            const formattedPercentage = Number.isInteger(percentage)
+                ? percentage
+                : percentage.toFixed(2); // Limit the number of digit (@Hypfer suggestion)
+            el.textContent = `${formattedPercentage}%`;
+        });
     }
   
     /**
@@ -854,8 +854,7 @@ class EntityProgressCardEditor extends HTMLElement {
      * 
      * - `this.rendered`: A flag to track whether the editor has been rendered. Initially set to `false`.
      * 
-     * - `this._currentLanguage`: Stores the current language code, which is determined by the `getCurrentLanguage` 
-     *   function. This ensures that the editor can be localized according to the user's preferred language.
+     * - `this._currentLanguage`: Stores the current default language.
      */
     constructor() {
         super();
@@ -863,7 +862,7 @@ class EntityProgressCardEditor extends HTMLElement {
         this._hass = null;
         this._overridableElements = {};
         this.rendered = false;
-        this._currentLanguage=getCurrentLanguage();
+        this._currentLanguage = DEF_LANG;
     }
 
     /**
@@ -876,6 +875,7 @@ class EntityProgressCardEditor extends HTMLElement {
      * if it has already been rendered, triggers a re-render.
      * 
      * - If the provided `value` is falsy (null or undefined), the method simply returns without doing anything.
+     * - Update the this._currentLanguage according to hass.config.language (HA Environment)
      * - If the current `hass` instance is different from the new one (checked by comparing `entities`), 
      *   the method updates the internal `_hass` reference and triggers a re-render if the editor is already rendered.
      * 
@@ -884,12 +884,13 @@ class EntityProgressCardEditor extends HTMLElement {
      * 
      * @param {object} value - The new Home Assistant instance to set.
      */
-    set hass(value) {
-        if (!value) {
+    set hass(hass) {
+        if (!hass) {
             return;
         }
+        this._currentLanguage = MSG[hass.config.language] ? hass.config.language : DEF_LANG;
         if (!this._hass || this._hass.entities !== value.entities) {
-            this._hass = value;
+            this._hass = hass;
             if (this.rendered) {
                 this.render();
             }
