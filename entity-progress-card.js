@@ -154,7 +154,8 @@ const COLORS = [
 
 const THEMES = [
     { name: '', value: '' },
-    { name: 'Battery', value: 'battery' }
+    { name: 'Battery', value: 'battery' },
+    { name: 'Light', value: 'light' }
 ];
 
 const LAYOUT = [
@@ -335,6 +336,16 @@ const BATTERY_THEME_COLORS = [
 ];
 
 const BATTERY_THEME_ICON = 'mdi:battery';
+
+const LIGHT_THEME_COLORS = [
+    { color: '#4B4B4B', label: 'dim'        },   // Pourcentage < 25
+    { color: '#877F67', label: 'dim-brigh'  },   // Pourcentage >= 25
+    { color: '#C3B382', label: 'bright-dim' },   // Pourcentage >= 50
+    { color: '#FFE79E', label: 'bright'     }    // Pourcentage >= 75
+]
+const LIGHT_THEME_ICON = 'mdi:lightbulb';
+const LIGHT_THEME_ICON_DIM = 'mdi:lightbulb-outline';
+
 const THEME_KEY = "theme"
 
 const MSG = {
@@ -587,6 +598,19 @@ class EntityProgressCard extends HTMLElement {
     }
 
     /**
+     * Returns the appropriate light theme icon based on the light brightness.
+     * 
+     * more than or equal tp 50% light is "bright" less than is off.
+     * 
+     * @param {number} percentage - The current light brightness (from 0 to 100).
+     * @returns {string} The corresponding light theme icon.
+     */
+    _getLightThemeIcon(percentage) {
+        if (percentage >= 50) return LIGHT_THEME_ICON; // Light Bright
+        return `${LIGHT_THEME_ICON_DIM}`; // Light Dim
+    }
+
+    /**
      * Returns the appropriate battery theme color based on the battery percentage.
      * 
      * This method calculates the battery color by determining which threshold 
@@ -612,6 +636,31 @@ class EntityProgressCard extends HTMLElement {
             return BATTERY_THEME_COLORS[numberOfThresholds - 1].color;
         }
         return BATTERY_THEME_COLORS[Math.floor(percentage / thresholdSize)].color;
+    }
+
+    /**
+     * Returns the appropriate light theme color based on the light brightness.
+     * 
+     * This method calculates the light color by determining which threshold 
+     * the current percentage falls into. The thresholds are defined in the 
+     * `LIGHT_THEME_COLORS` array, where each entry corresponds to a specific 
+     * brightness level range and its associated color.
+     * 
+     * If the light is bright (100%), it returns the color of the last 
+     * threshold in the array. For other percentages, it determines the closest 
+     * threshold based on the brightness level and returns the corresponding color.
+     * 
+     * @param {number} percentage - The current battery percentage (from 0 to 100).
+     * @returns {string} The corresponding color for the battery theme.
+     */
+    _getLightThemeColor(percentage) {
+        const numberOfThresholds = LIGHT_THEME_COLORS.length;
+        const thresholdSize = 100 / numberOfThresholds;
+    
+        if (percentage === 100) {
+            return LIGHT_THEME_COLORS[numberOfThresholds - 1].color;
+        }
+        return LIGHT_THEME_COLORS[Math.floor(percentage / thresholdSize)].color;
     }
 
     /**
@@ -688,6 +737,9 @@ class EntityProgressCard extends HTMLElement {
         if (this.config.theme === THEMES[1].value) {
             iconTheme = this._getBatteryThemeIcon(percentage)
             colorTheme = this._getBatteryThemeColor(percentage)
+        } else if (this.config.theme === THEMES[2].value) {
+            iconTheme = this._getLightThemeIcon(percentage)
+            colorTheme = this._getLightThemeColor(percentage)
         }
 
         // update dyn element
