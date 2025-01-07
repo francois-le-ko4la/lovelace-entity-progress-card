@@ -9,7 +9,7 @@ This custom version of the **Bar Card** for Home Assistant allows you to display
 ## 🚀 Features
 - Displays a percentage progress bar.
 - Seamlessly integrates with the "Tile" look & feel of recent Home Assistant versions.
-- Easily customizable using the card editor or YAML config : entity, name, colors, and bar color
+- Easily customizable using the card editor or YAML config : entity, name, colors, bar color, unit... (full description below)
 - Theme to automatically adjust icon and colors according to the context (Theme Battery)
 - Automatically adapts to the user's language for error messages and descriptions, ensuring a localized experience. 🇬🇧🇪🇸🇩🇪🇫🇷
   
@@ -92,6 +92,9 @@ You can customize the card using the following parameters:
   change the unit (string).  
   *Example:*
   - XYZ
+
+> Note:  
+> `max_value` & `unit` can be set with the YAML editor only
 
 ### YAML
 Here’s our example of how to use the Custom Bar Card with custom styles:
