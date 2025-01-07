@@ -82,7 +82,7 @@ You can customize the card using the following parameters:
 
 - **`max_value`** [numeric/entity] *(optional)*:
   Allows representing standard values and calculating the percentage relative to the maximum value.
-  This value can be numeric (float/int) or an entity.  
+  This value can be numeric (float/int) or an entity and real value must be > 0.  
   *Example:*
   - LQI @ 150 (entity) with max_value @ 255 (static value -> max_value = 255)
   - A (entity_a) with max_value (entity_b)
