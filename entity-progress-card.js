@@ -27,14 +27,14 @@
  * - Error handling for missing or invalid entities.
  * - Configuration options for various card elements, including entity picker, color settings, and layout options.
  * 
- * @version 1.0.13
+ * @version 1.0.12
  */
 
 /** --------------------------------------------------------------------------
  * PARAMETERS
  */
 
-const VERSION='1.0.13';
+const VERSION='1.0.12';
 const CARD_TNAME='entity-progress-card';
 const CARD_NAME="Entity progress card";
 const CARD_DESCRIPTION="A cool custom card to show current entity status with a progress bar.";
@@ -360,18 +360,22 @@ const MSG = {
     en: {
         ENTITY_ERROR: "The 'entity' parameter is required!",
         ENTITY_NOTFOUND: "Entity not found in Home Assistant.",
+        MAX_VALUE_ERROR: "Check your max_value."
     },
     fr: {
         ENTITY_ERROR: "Le paramètre 'entity' est requis !",
         ENTITY_NOTFOUND: "Entité introuvable dans Home Assistant.",
+        MAX_VALUE_ERROR: "Vérifiez votre max_value."
     },
     es: {
         ENTITY_ERROR: "¡El parámetro 'entity' es obligatorio!",
         ENTITY_NOTFOUND: "Entidad no encontrada en Home Assistant.",
+        MAX_VALUE_ERROR: "Verifique su max_value."
     },
     de: {
         ENTITY_ERROR: "Der Parameter 'entity' ist erforderlich!",
         ENTITY_NOTFOUND: "Entität in Home Assistant nicht gefunden.",
+        MAX_VALUE_ERROR: "Überprüfen Sie Ihren max_value."
     },
 };
 
@@ -694,15 +698,23 @@ class EntityProgressCard extends HTMLElement {
     /**
      * Parse max_value and return a numeric value and its validity.
      * @param {string|number} maxValue - The max_value to parse (could be a number or an entity ID).
-     * @returns {{value: number, valid: boolean}} - Parsed value and its validity.
+     * @returns {{value: number, valid: boolean, config_error: boolean}} - Parsed value and its validity.
+     *    - value: the value to use
+     *    - valid: the max value is a numeric|entity > 0
+     *    - config_error: worst case -> the max value define is not correct (null, <0, entity not found)
      */
     _parseMaxValue(maxValue) {
+        if (!maxValue){
+            // no max value defined
+            return { value: 0, valid: false, config_error: false };
+        }
+
         if (typeof maxValue === "number") {
             // maxValue is numeric
             if (!isNaN(maxValue) && maxValue > 0) {
-                return { value: maxValue, valid: true };
+                return { value: maxValue, valid: true, config_error: false };
             }
-            return { value: 0, valid: false };
+            return { value: 0, valid: false, config_error: true };
         }
 
         if (typeof maxValue === "string" && this._hass && this._hass.states[maxValue]) {
@@ -711,13 +723,13 @@ class EntityProgressCard extends HTMLElement {
             const parsedValue = parseFloat(entityState);
 
             if (!isNaN(parsedValue) && parsedValue > 0) {
-                return { value: parsedValue, valid: true };
+                return { value: parsedValue, valid: true, config_error: false };
             }
-            return { value: 0, valid: false };
+            return { value: 0, valid: false, config_error: true };
         }
 
         // maxValue is not supported
-        return { value: 0, valid: false };
+        return { value: 0, valid: false, config_error: true };
     }
 
     /**
@@ -746,6 +758,8 @@ class EntityProgressCard extends HTMLElement {
             // show error message
             this._showError(MSG[this._currentLanguage].ENTITY_ERROR);
             return;
+        } else {
+            this._hideError();
         }
 
         // get entity state
@@ -755,15 +769,25 @@ class EntityProgressCard extends HTMLElement {
             // show error message
             this._showError(MSG[this._currentLanguage].ENTITY_NOTFOUND);
             return;
+        } else {
+            this._hideError();
         }
-        // Hide error message if entity is found
-        this._hideError();
+        // Hide error message if all is ok
+        // this._hideError();
 
         /**
          * Manage the percentage part
          */
         const value = parseFloat(entity.state);
         const maxValueResult = this._parseMaxValue(this._max_value)
+        if (maxValueResult.config_error){
+            // show error message
+            this._showError(MSG[this._currentLanguage].MAX_VALUE_ERROR);
+            return;
+        } else {
+            this._hideError();
+        }
+
         let percentage = 0;
         if (!maxValueResult.valid) {
             percentage = isNaN(value) ? 0 : Math.min(Math.max(value, 0), 100);
