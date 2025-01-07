@@ -27,14 +27,14 @@
  * - Error handling for missing or invalid entities.
  * - Configuration options for various card elements, including entity picker, color settings, and layout options.
  * 
- * @version 1.0.11
+ * @version 1.0.12
  */
 
 /** --------------------------------------------------------------------------
  * PARAMETERS
  */
 
-const VERSION='1.0.11';
+const VERSION='1.0.12';
 const CARD_TNAME='entity-progress-card';
 const CARD_NAME="Entity progress card";
 const CARD_DESCRIPTION="A cool custom card to show current entity status with a progress bar.";
@@ -53,34 +53,40 @@ const README_LINK = '      For more details, check the README: https://github.co
 
 const EDITOR_INPUT_FIELDS = [
     {   name: 'entity',
-        label: { en: 'Entity', fr: 'Entité', es: 'Entidad',},
+        label: { en: 'Entity', fr: 'Entité', es: 'Entidad', de: 'Entität', },
         type: 'entity',
         required: true,
         isThemeOverriding: false,
         description: {
-            en: 'Enter an entity from Home Assistant.',
-            fr: 'Saisissez une entité de Home Assistant.',
-            es: 'Introduzca una entidad de Home Assistant.',}},
+            en: 'Select an entity from Home Assistant.',
+            fr: 'Sélectionnez une entité de Home Assistant.',
+            es: 'Seleccione una entidad de Home Assistant.',
+            de: 'Wählen Sie eine Entität aus Home Assistant.',
+        }},
     {   name: 'name',
-        label: { en: 'Name', fr: 'Nom', es: 'Nombre',},
+        label: { en: 'Name', fr: 'Nom', es: 'Nombre', de: 'Name', },
         type: 'text',
         required: false,
         isThemeOverriding: false,
         description: {
             en: 'Enter a name for the entity.',
             fr: 'Saisissez un nom pour l\'entité.',
-            es: 'Introduzca un nombre para la entidad.',}},
+            es: 'Introduzca un nombre para la entidad.',
+            de: 'Geben Sie einen Namen für die Entität ein.',
+        }},
     {   name: 'layout',
-        label: { en: 'Layout', fr: 'Disposition', es: 'Disposición',},
+        label: { en: 'Layout', fr: 'Disposition', es: 'Disposición', de: 'Layout', },
         type: 'layout',
         required: false,
         isThemeOverriding: false,
         description: {
             en: 'Select the layout.',
             fr: 'Sélectionnez la disposition.',
-            es: 'Seleccione la disposición.',}},
+            es: 'Seleccione la disposición.',
+            de: 'Wählen Sie das Layout.',
+        }},
     {   name: 'theme',
-        label: { en: 'Theme', fr: 'Thème', es: 'Tema',},
+        label: { en: 'Theme', fr: 'Thème', es: 'Tema', de: 'Thema', },
         type: 'theme',
         required: false,
         isThemeOverriding: false,
@@ -88,36 +94,40 @@ const EDITOR_INPUT_FIELDS = [
             en: 'Select a theme to automatically define the colors and icon.',
             fr: 'Sélectionnez un thème pour définir automatiquement les couleurs et l\'icône.',
             es: 'Seleccione un tema para definir automáticamente los colores y el icono.',
+            de: 'Wählen Sie ein Thema, um die Farben und das Symbol automatisch festzulegen.',
         }},
     {   name: 'icon',
-        label: { en: 'Icon', fr: 'Icône', es: 'Icono',},
+        label: { en: 'Icon', fr: 'Icône', es: 'Icono', de: 'Symbol', },
         type: 'icon',
         required: false,
         isThemeOverriding: true,
         description: {
-            en: 'Choose an icon for the entity.',
-            fr: 'Choisissez une icône pour l\'entité.',
-            es: 'Elija un icono para la entidad.',
+            en: 'Select an icon for the entity.',
+            fr: 'Sélectionnez une icône pour l\'entité.',
+            es: 'Seleccione un icono para la entidad.',
+            de: 'Wählen Sie ein Symbol für die Entität.',
         }},
     {   name: 'color',
-        label: { en: 'Primary color', fr: 'Couleur de l\'icône', es: 'Color del icono',},
+        label: { en: 'Primary color', fr: 'Couleur de l\'icône', es: 'Color del icono', de: 'Primärfarbe', },
         type: 'color',
         required: false,
         isThemeOverriding: true,
         description: {
-            en: 'Choose the primary color for the icon.',
-            fr: 'Choisissez la couleur principale de l\'icône.',
-            es: 'Elija el color principal del icono.',
+            en: 'Select the primary color for the icon.',
+            fr: 'Sélectionnez la couleur principale de l\'icône.',
+            es: 'Seleccione el color principal del icono.',
+            de: 'Wählen Sie die Primärfarbe für das Symbol.',
         }},
     {   name: 'bar_color',
-        label: { en: 'Color for the bar', fr: 'Couleur de la barre', es: 'Color de la barra',},
+        label: { en: 'Color for the bar', fr: 'Couleur de la barre', es: 'Color de la barra', de: 'Farbe für die Leiste', },
         type: 'color',
         required: false,
         isThemeOverriding: true,
         description: {
-            en: 'Choose the primary color for the bar.',
-            fr: 'Choisissez la couleur principale de la barre.',
-            es: 'Elija el color principal de la barra.',
+            en: 'Select the primary color for the bar.',
+            fr: 'Sélectionnez la couleur principale de la barre.',
+            es: 'Seleccione el color principal de la barra.',
+            de: 'Wählen Sie die Primärfarbe für die Leiste.',
         }},
 ];
 
@@ -309,23 +319,21 @@ const CARD_CSS=`
     }
 
     ha-alert {
-        display: flex;
         position: absolute;
-        margin: 0;
-        padding: 0px;
-        display: flex;
         top: -1px;
         left: -2px;
-        width: 102%;
-        height: 105%;
-        z-index: 10;
+        width: 105%;
+        height: 110%;
+        display: flex;
         align-items: center;
         justify-content: center;
         background-color: black;
+        z-index: 10;
     }
     `;
 
 const SHOW_DIV='block';
+const SHOW_DIVF='flex';
 const HIDE_DIV='none';
 
 const BATTERY_THEME_COLORS = [
@@ -360,6 +368,10 @@ const MSG = {
     es: {
         ENTITY_ERROR: "¡El parámetro 'entity' es obligatorio!",
         ENTITY_NOTFOUND: "Entidad no encontrada en Home Assistant.",
+    },
+    de: {
+        ENTITY_ERROR: "Der Parameter 'entity' ist erforderlich!",
+        ENTITY_NOTFOUND: "Entität in Home Assistant nicht gefunden.",
     },
 };
 
@@ -431,46 +443,30 @@ class EntityProgressCard extends HTMLElement {
     }
 
     /**
-     * Updates the component's configuration and triggers necessary changes.
-     *
-     * This method validates the provided configuration, updates the component's
-     * state, and ensures that the visual and functional elements of the component
-     * reflect the new configuration. It performs the following:
+     * Updates the component's configuration and triggers static changes.
      * 
-     * - **Validation:** Throws an error if the `entity` property is missing from the configuration.
-     * - **State Updates:** Checks for changes in the `entity` and `layout` properties 
-     *   to determine if specific updates are required.
      * - **Initial Build:** If the card has not been built yet, it calls `_buildCard()` to construct it.
      * - **Layout Changes:** If the `layout` property has changed, it calls `_changeLayout()` 
      *   to update the card's layout.
-     * - **Dynamic Updates:** If the `entity` property has changed, it calls `_updateDynamicElements()` 
-     *   to refresh dynamic elements based on the new entity.
+     * 
+     * **Note:** Dynamic Updates will be done in set hass function.
      * 
      * @param {Object} config - The new configuration object.
-     * @throws {Error} If the `entity` property is missing from the configuration.
      */
     setConfig(config) {
-        if (!config.entity) {
-            throw new Error(MSG[this._currentLanguage].ENTITY_ERROR);
-        }
-    
-        const entityChanged = this.config?.entity !== config.entity;
         const layoutChanged = this.config?.layout !== config.layout;
         this.config = config;
         this._max_value = this.config.max_value;
 
         if (!this._isBuilt) {
-            this._buildCard();
             this._isBuilt = true;
+            this._buildCard();
         }
 
         if (layoutChanged) {
             this._changeLayout();
         }
 
-        if (entityChanged) {
-            this._updateDynamicElements();
-        }
     }
 
     /**
@@ -709,6 +705,13 @@ class EntityProgressCard extends HTMLElement {
      * @returns {void}
      */
     _updateDynamicElements() {
+
+        if (!this.config.entity) {
+            // show error message
+            this._showError(MSG[this._currentLanguage].ENTITY_ERROR);
+            return;
+        }
+
         // get entity state
         const entity = this._hass?.states[this.config.entity];
 
@@ -786,7 +789,7 @@ class EntityProgressCard extends HTMLElement {
     _showError(message) {
         const alertElement = this._elements[SELECTORS.ALERT];
         if (alertElement) {
-            alertElement.style.display = SHOW_DIV;
+            alertElement.style.display = SHOW_DIVF;
             alertElement.textContent = message;  // Set the error message in the alert
         }
     }
@@ -934,7 +937,7 @@ class EntityProgressCardEditor extends HTMLElement {
      * This ensures that changes in the Home Assistant instance are properly reflected in the component 
      * without unnecessary updates or re-renders.
      * 
-     * @param {object} value - The new Home Assistant instance to set.
+     * @param {object} hass - The new Home Assistant instance to set.
      */
     set hass(hass) {
         if (!hass) {
@@ -1211,7 +1214,7 @@ class EntityProgressCardEditor extends HTMLElement {
             this._overridableElements[name]=inputElement;
         }
 
-        inputElement.style.display = SHOW_DIV;
+        inputElement.style.display = SHOW_DIVF;
         inputElement.required = required;
         inputElement.label = label;
         inputElement.value = value;
@@ -1230,6 +1233,7 @@ class EntityProgressCardEditor extends HTMLElement {
         }
         fieldContainer.style.marginBottom = '12px';
         const fieldDescription = document.createElement('span');
+        fieldDescription.style.width = '90%';
         fieldDescription.innerText = description;
         fieldDescription.style.fontSize = '12px';
         fieldDescription.style.color = '#888';
