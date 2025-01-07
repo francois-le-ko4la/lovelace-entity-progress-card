@@ -82,16 +82,16 @@ You can customize the card using the following parameters:
   This theme dynamically adjusts the `icon`, `color` and `bar-color` parameters based on the battery level, eliminating the need for manual adjustments or complex Jinja2 templates.  
   *Example:* "battery"
 
-- **`max_value`** [numeric/entity] *(optional)*:
+- **`max_value`** [numeric/entity] *(optional)*:  
   Allows representing standard values and calculating the percentage relative to the maximum value.
   This value can be numeric (float/int) or an entity and real value must be > 0.  
   *Example:*
   - LQI @ 150 (entity) with max_value @ 255 (static value -> max_value = 255)
   - A (entity_a) with max_value (entity_b)
 
-- **`unit`** [string] *(optional)*:
-  Allows representing standard unit. For specific purpose (max_value is an entity) it can be usefull to
-  change the unit (string).  
+- **`unit`** [string] *(optional)*:  
+  Allows representing standard unit.  
+  Specifies the unit to display the entity's actual value, ignoring max_value. The max_value is still used for the progress bar representation.  
   *Example:*
   - XYZ
 
