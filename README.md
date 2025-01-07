@@ -89,7 +89,7 @@ You can customize the card using the following parameters:
 
 - **`unit`** [string] *(optional)*:
   Allows representing standard unit. For specific purpose (max_value is an entity) it can be usefull to
-  change the unit (string).
+  change the unit (string).  
   *Example:*
   - XYZ
 
