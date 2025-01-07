@@ -834,7 +834,13 @@ class EntityProgressCard extends HTMLElement {
             const formattedPercentage = Number.isInteger(percentage)
                 ? percentage
                 : percentage.toFixed(2); // Limit the number of digit (@Hypfer suggestion)
-            el.textContent = `${formattedPercentage}${this._unit}`;
+			const formattedValue = Number.isInteger(value)
+				? value
+				: value.toFixed(2);
+			if (this._unit == "%")
+            	el.textContent = `${formattedPercentage}${this._unit}`; // Show percentage if unit is %
+			else
+				el.textContent = `${formattedValue}${this._unit}`; // show value if unit is custom
         });
     }
   
