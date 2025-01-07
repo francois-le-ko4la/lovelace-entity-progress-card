@@ -27,14 +27,14 @@
  * - Error handling for missing or invalid entities.
  * - Configuration options for various card elements, including entity picker, color settings, and layout options.
  * 
- * @version 1.0.13
+ * @version 1.0.14
  */
 
 /** --------------------------------------------------------------------------
  * PARAMETERS
  */
 
-const VERSION='1.0.13';
+const VERSION='1.0.14';
 const CARD_TNAME='entity-progress-card';
 const CARD_NAME="Entity progress card";
 const CARD_DESCRIPTION="A cool custom card to show current entity status with a progress bar.";
@@ -380,6 +380,7 @@ const MSG = {
 };
 
 const DEF_LANG = "en";
+const DEF_MAXPERCENT = 100;
 
 /** --------------------------------------------------------------------------
  * 
@@ -590,9 +591,10 @@ class EntityProgressCard extends HTMLElement {
      * @returns {string} The corresponding battery theme icon.
      */
     _getBatteryThemeIcon(percentage) {
-        if (percentage === 100) return BATTERY_THEME_ICON; // 100%
+        const step = (BATTERY_THEME_ICON.length - 1);
+
+        if (percentage >= DEF_MAXPERCENT) return BATTERY_THEME_ICON; // 100%
     
-        const step = 10;
         const level = Math.floor(percentage / step) * step;
         if (level > 0) {
             return `${BATTERY_THEME_ICON}-${level}`;
@@ -610,8 +612,7 @@ class EntityProgressCard extends HTMLElement {
      * @returns {string} The corresponding light theme icon.
      */
     _getLightThemeIcon(percentage) {
-        if (percentage >= 50) return LIGHT_THEME_ICON; // Light Bright
-        return `${LIGHT_THEME_ICON_DIM}`; // Light Dim
+        return percentage >= (DEF_MAXPERCENT / 2) ? LIGHT_THEME_ICON : LIGHT_THEME_ICON_DIM;
     }
 
     /**
@@ -634,9 +635,9 @@ class EntityProgressCard extends HTMLElement {
      */
     _getBatteryThemeColor(percentage) {
         const numberOfThresholds = BATTERY_THEME_COLORS.length;
-        const thresholdSize = 100 / numberOfThresholds;
+        const thresholdSize = DEF_MAXPERCENT / numberOfThresholds;
     
-        if (percentage === 100) {
+        if (percentage >= DEF_MAXPERCENT) {
             return BATTERY_THEME_COLORS[numberOfThresholds - 1].color;
         }
         return BATTERY_THEME_COLORS[Math.floor(percentage / thresholdSize)].color;
@@ -659,9 +660,9 @@ class EntityProgressCard extends HTMLElement {
      */
     _getLightThemeColor(percentage) {
         const numberOfThresholds = LIGHT_THEME_COLORS.length;
-        const thresholdSize = 100 / numberOfThresholds;
+        const thresholdSize = DEF_MAXPERCENT / numberOfThresholds;
     
-        if (percentage === 100) {
+        if (percentage >= DEF_MAXPERCENT) {
             return LIGHT_THEME_COLORS[numberOfThresholds - 1].color;
         }
         return LIGHT_THEME_COLORS[Math.floor(percentage / thresholdSize)].color;
@@ -779,7 +780,7 @@ class EntityProgressCard extends HTMLElement {
          * Manage the percentage part
          */
         const value = parseFloat(entity.state);
-        const maxValueResult = this._parseMaxValue(this._max_value)
+        let maxValueResult = this._parseMaxValue(this._max_value)
         if (maxValueResult.config_error){
             // show error message
             this._showError(MSG[this._currentLanguage].MAX_VALUE_ERROR);
@@ -790,9 +791,9 @@ class EntityProgressCard extends HTMLElement {
 
         let percentage = 0;
         if (!maxValueResult.valid) {
-            percentage = isNaN(value) ? 0 : Math.min(Math.max(value, 0), 100);
+            percentage = isNaN(value) ? 0 : Math.min(Math.max(value, 0), DEF_MAXPERCENT);
         } else {
-            percentage = isNaN(value) ? 0 : (value / maxValueResult.value) * 100;
+            percentage = isNaN(value) ? 0 : (value / maxValueResult.value) * DEF_MAXPERCENT;
         }
 
         /**
@@ -834,13 +835,7 @@ class EntityProgressCard extends HTMLElement {
             const formattedPercentage = Number.isInteger(percentage)
                 ? percentage
                 : percentage.toFixed(2); // Limit the number of digit (@Hypfer suggestion)
-			const formattedValue = Number.isInteger(value)
-				? value
-				: value.toFixed(2);
-			if (this._unit == "%")
-            	el.textContent = `${formattedPercentage}${this._unit}`; // Show percentage if unit is %
-			else
-				el.textContent = `${formattedValue}${this._unit}`; // show value if unit is custom
+            el.textContent = `${formattedPercentage}${this._unit}`;
         });
     }
   
