@@ -433,6 +433,7 @@ class EntityProgressCard extends HTMLElement {
         // to store DOM ref.
         this._elements = {};
         this._isBuilt = false;
+        this._entityAvailable = true;
     }
 
     /**
@@ -721,6 +722,10 @@ class EntityProgressCard extends HTMLElement {
         if (typeof maxValue === "string" && this._hass && this._hass.states[maxValue]) {
             // maxValue is an entity
             const entityState = this._hass.states[maxValue].state;
+            if (!entityState || entityState === "unavailable" || entityState === "unknown") {
+                this._entityAvailable=false;
+                return { value: 0, valid: false, config_error: false };
+            }
             const parsedValue = parseFloat(entityState);
 
             if (!isNaN(parsedValue) && parsedValue > 0) {
@@ -773,28 +778,38 @@ class EntityProgressCard extends HTMLElement {
         } else {
             this._hideError();
         }
-        // Hide error message if all is ok
-        // this._hideError();
+
+        if (entity.state === "unavailable" || entity.state === "unknown"){
+            this._entityAvailable=false;
+        }
+
 
         /**
          * Manage the percentage part
          */
-        const value = parseFloat(entity.state);
-        let maxValueResult = this._parseMaxValue(this._max_value)
-        if (maxValueResult.config_error){
-            // show error message
-            this._showError(MSG[this._currentLanguage].MAX_VALUE_ERROR);
-            return;
+        let percentage = 0;
+        let value = 0;
+        if(this._entityAvailable) {
+            value = parseFloat(entity.state);
+            let maxValueResult = this._parseMaxValue(this._max_value)
+            if (maxValueResult.config_error){
+                // show error message
+                this._showError(MSG[this._currentLanguage].MAX_VALUE_ERROR);
+                return;
+            } else {
+                this._hideError();
+            }
+
+            if (!maxValueResult.valid) {
+                percentage = isNaN(value) ? 0 : Math.min(Math.max(value, 0), DEF_MAXPERCENT);
+            } else {
+                percentage = isNaN(value) ? 0 : (value / maxValueResult.value) * DEF_MAXPERCENT;
+            }
         } else {
-            this._hideError();
+
+            percentage = 0;
         }
 
-        let percentage = 0;
-        if (!maxValueResult.valid) {
-            percentage = isNaN(value) ? 0 : Math.min(Math.max(value, 0), DEF_MAXPERCENT);
-        } else {
-            percentage = isNaN(value) ? 0 : (value / maxValueResult.value) * DEF_MAXPERCENT;
-        }
 
         /**
          * Manage theme
@@ -832,16 +847,22 @@ class EntityProgressCard extends HTMLElement {
         });
 
         this._updateElement(SELECTORS.PERCENTAGE, (el) => {
-            const formattedPercentage = Number.isInteger(percentage)
-                ? percentage
-                : percentage.toFixed(2); // Limit the number of digit (@Hypfer suggestion)
-			const formattedValue = Number.isInteger(value)
-				? value
-				: value.toFixed(2);
-			if (this._unit == "%")
-            	el.textContent = `${formattedPercentage}${this._unit}`; // Show percentage if unit is %
-			else
-				el.textContent = `${formattedValue}${this._unit}`; // show value if unit is custom
+        
+            const formattedPercentage = Number.isFinite(percentage)
+                ? (Number.isInteger(percentage) ? percentage : percentage.toFixed(2))
+                : 0;
+        
+            const formattedValue = Number.isFinite(value)
+                ? (Number.isInteger(value) ? value : value.toFixed(2))
+                : 0;
+        
+            if (this._entityAvailable) {
+                el.textContent = this._unit === "%"
+                    ? `${formattedPercentage}${this._unit}` // if unit = %
+                    : `${formattedValue}${this._unit}`; // if unit <> %
+            } else {
+                el.textContent = "unavailable";
+            }
         });
     }
   
