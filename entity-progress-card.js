@@ -360,27 +360,32 @@ const MSG = {
     en: {
         ENTITY_ERROR: "The 'entity' parameter is required!",
         ENTITY_NOTFOUND: "Entity not found in Home Assistant.",
+        ENTITY_UNAVAILABLE: "unavailable",
         MAX_VALUE_ERROR: "Check your max_value."
     },
     fr: {
         ENTITY_ERROR: "Le paramètre 'entity' est requis !",
         ENTITY_NOTFOUND: "Entité introuvable dans Home Assistant.",
+        ENTITY_UNAVAILABLE: "indisponible",
         MAX_VALUE_ERROR: "Vérifiez votre max_value."
     },
     es: {
         ENTITY_ERROR: "¡El parámetro 'entity' es obligatorio!",
         ENTITY_NOTFOUND: "Entidad no encontrada en Home Assistant.",
+        ENTITY_UNAVAILABLE: "no disponible",
         MAX_VALUE_ERROR: "Verifique su max_value."
     },
     de: {
         ENTITY_ERROR: "Der Parameter 'entity' ist erforderlich!",
         ENTITY_NOTFOUND: "Entität in Home Assistant nicht gefunden.",
+        ENTITY_UNAVAILABLE: "nicht verfügbar",
         MAX_VALUE_ERROR: "Überprüfen Sie Ihren max_value."
     },
 };
 
 const DEF_LANG = "en";
 const DEF_MAXPERCENT = 100;
+const DEF_UNIT = '%';
 
 /** --------------------------------------------------------------------------
  * 
@@ -429,7 +434,7 @@ class EntityProgressCard extends HTMLElement {
         }
         this._currentLanguage = DEF_LANG;
         this._max_value = null; // 100%
-        this._unit = "%";
+        this._unit = DEF_UNIT;
         // to store DOM ref.
         this._elements = {};
         this._isBuilt = false;
@@ -857,11 +862,11 @@ class EntityProgressCard extends HTMLElement {
                 : 0;
         
             if (this._entityAvailable) {
-                el.textContent = this._unit === "%"
+                el.textContent = this._unit === DEF_UNIT
                     ? `${formattedPercentage}${this._unit}` // if unit = %
                     : `${formattedValue}${this._unit}`; // if unit <> %
             } else {
-                el.textContent = "unavailable";
+                el.textContent = MSG[this._currentLanguage].ENTITY_UNAVAILABLE;
             }
         });
     }
