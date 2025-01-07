@@ -424,6 +424,7 @@ class EntityProgressCard extends HTMLElement {
         }
         this._currentLanguage = DEF_LANG;
         this._max_value = null; // 100%
+        this._unit = "%";
         // to store DOM ref.
         this._elements = {};
         this._isBuilt = false;
@@ -457,6 +458,9 @@ class EntityProgressCard extends HTMLElement {
         const layoutChanged = this.config?.layout !== config.layout;
         this.config = config;
         this._max_value = this.config.max_value;
+        if (this.config.unit) {
+            this._unit = this.config.unit;
+        }
 
         if (!this._isBuilt) {
             this._isBuilt = true;
@@ -688,6 +692,35 @@ class EntityProgressCard extends HTMLElement {
     }
 
     /**
+     * Parse max_value and return a numeric value and its validity.
+     * @param {string|number} maxValue - The max_value to parse (could be a number or an entity ID).
+     * @returns {{value: number, valid: boolean}} - Parsed value and its validity.
+     */
+    _parseMaxValue(maxValue) {
+        if (typeof maxValue === "number") {
+            // maxValue is numeric
+            if (!isNaN(maxValue) && maxValue > 0) {
+                return { value: maxValue, valid: true };
+            }
+            return { value: 0, valid: false };
+        }
+
+        if (typeof maxValue === "string" && this._hass && this._hass.states[maxValue]) {
+            // maxValue is an entity
+            const entityState = this._hass.states[maxValue].state;
+            const parsedValue = parseFloat(entityState);
+
+            if (!isNaN(parsedValue) && parsedValue > 0) {
+                return { value: parsedValue, valid: true };
+            }
+            return { value: 0, valid: false };
+        }
+
+        // maxValue is not supported
+        return { value: 0, valid: false };
+    }
+
+    /**
      * Updates the dynamic elements of the card based on the state of a specified entity.
      * 
      * This method fetches the state of the entity defined in the configuration and
@@ -705,6 +738,9 @@ class EntityProgressCard extends HTMLElement {
      * @returns {void}
      */
     _updateDynamicElements() {
+        /**
+         * Manage here config error
+         */
 
         if (!this.config.entity) {
             // show error message
@@ -723,17 +759,21 @@ class EntityProgressCard extends HTMLElement {
         // Hide error message if entity is found
         this._hideError();
 
+        /**
+         * Manage the percentage part
+         */
         const value = parseFloat(entity.state);
+        const maxValueResult = this._parseMaxValue(this._max_value)
         let percentage = 0;
-        // `this._max_value` in config ?
-        if (!this._max_value) {
-            // standard case
+        if (!maxValueResult.valid) {
             percentage = isNaN(value) ? 0 : Math.min(Math.max(value, 0), 100);
-        } else if (typeof this._max_value === "number" && !isNaN(this._max_value)) {
-            // if `this._max_value` is a number (float ou int)
-            percentage = isNaN(value) ? 0 : (value / this._max_value) * 100;
+        } else {
+            percentage = isNaN(value) ? 0 : (value / maxValueResult.value) * 100;
         }
 
+        /**
+         * Manage theme
+         */
         let iconTheme = null;
         let colorTheme = null;
 
@@ -745,7 +785,9 @@ class EntityProgressCard extends HTMLElement {
             colorTheme = this._getLightThemeColor(percentage)
         }
 
-        // update dyn element
+        /**
+         * Update dyn element
+         */
         this._updateElement(SELECTORS.PROGRESS_BAR, (el) => {
             el.style.width = `${percentage}%`;
             el.style.backgroundColor = colorTheme || this.config.bar_color || DEFAULT_COLOR;
@@ -768,7 +810,7 @@ class EntityProgressCard extends HTMLElement {
             const formattedPercentage = Number.isInteger(percentage)
                 ? percentage
                 : percentage.toFixed(2); // Limit the number of digit (@Hypfer suggestion)
-            el.textContent = `${formattedPercentage}%`;
+            el.textContent = `${formattedPercentage}${this._unit}`;
         });
     }
   
