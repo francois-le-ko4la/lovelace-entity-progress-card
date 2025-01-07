@@ -45,15 +45,15 @@ type: module
 
 You can customize the card using the following parameters:
 
-- **`entity`** *(required)*:  
+- **`entity`** [entity] *(required)*:  
   The Home Assistant entity to display.  
   *Example:* `sensor.hp_envy_6400_series_tri_color_cartridge`
 
-- **`name`** *(optional)*:  
+- **`name`** [string] *(optional)*:  
   The name displayed on the progress bar. If omitted, the entity's friendly name will be used.  
   *Example:* `"RGB Color"`
 
-- **`layout`** *(optional)*:  
+- **`layout`** [string `horizontal`| `vertical`] *(optional)*:  
   Determines the layout of the elements inside the card. You can choose between different layouts based on your visual preferences.
   
   *Examples:*
@@ -63,26 +63,35 @@ You can customize the card using the following parameters:
   
     If no specific layout is set, the default layout is `horizontal`.
 
-- **`icon`** *(optional)*:  
+- **`icon`** [string] *(optional)*:  
   The icon associated with the entity. Supports Material Design Icons (MDI).  
   *Examples:* `mdi:lightbulb`, `mdi:thermometer`
 
-- **`color`** *(optional)*:  
+- **`color`** [string] *(optional)*:  
   The color of the icon. Accepts color names, RGB values, or HEX codes.  
   *Examples:* `"green"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`
 
-- **`bar-color`** *(optional)*:  
+- **`bar-color`** [string] *(optional)*:  
   The color of the progress bar. Accepts color names, RGB values, or HEX codes.  
   *Examples:* `"blue"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`
 
-- **`theme`** *(optional)*:  
+- **`theme`** [string `battery`|`light`] *(optional)*:  
   Allows customization of the progress bar's appearance using a predefined theme.
   This theme dynamically adjusts the `icon`, `color` and `bar-color` parameters based on the battery level, eliminating the need for manual adjustments or complex Jinja2 templates.  
   *Example:* "battery"
 
-- **`max_value`** *(optional)*:
-  Allows representing standard values and calculating the percentage relative to the maximum value.  
-  *Example:* LQI @ 150 with max_value @ 255.
+- **`max_value`** [numeric/entity] *(optional)*:
+  Allows representing standard values and calculating the percentage relative to the maximum value.
+  This value can be numeric (float/int) or an entity.  
+  *Example:*
+  - LQI @ 150 (entity) with max_value @ 255 (static value -> max_value = 255)
+  - A (entity_a) with max_value (entity_b)
+
+- **`unit`** [string] *(optional)*:
+  Allows representing standard unit. For specific purpose (max_value is an entity) it can be usefull to
+  change the unit (string).
+  *Example:*
+  - XYZ
 
 ### YAML
 Here’s our example of how to use the Custom Bar Card with custom styles:
