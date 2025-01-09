@@ -27,29 +27,264 @@
  * - Error handling for missing or invalid entities.
  * - Configuration options for various card elements, including entity picker, color settings, and layout options.
  * 
- * @version 1.0.14
+ * @version 1.0.15
  */
 
 /** --------------------------------------------------------------------------
  * PARAMETERS
  */
 
-const VERSION='1.0.14';
-const CARD_TNAME='entity-progress-card';
-const CARD_NAME="Entity progress card";
-const CARD_DESCRIPTION="A cool custom card to show current entity status with a progress bar.";
-const EDITOR_NAME='entity-progress-card-editor';
-
-const LAYOUT_SIZE = {
-    horizontal: { grid_rows: 1, grid_min_rows: 1, grid_columns: 2, grid_min_columns: 2 },
-    vertical:   { grid_rows: 2, grid_min_rows: 2, grid_columns: 1, grid_min_columns: 1 }
+const VERSION='1.0.15';
+const CARD = {
+    typeName: 'entity-progress-card',
+    name: 'Entity progress card',
+    description: 'A cool custom card to show current entity status with a progress bar.',
+    editor: 'entity-progress-card-editor',
+    layout: {
+        horizontal: {
+            label: 'horizontal',
+            value: { grid_rows: 1, grid_min_rows: 1, grid_columns: 2, grid_min_columns: 2 }
+        },
+        vertical:{
+            label: 'vertical',
+            value: { grid_rows: 2, grid_min_rows: 2, grid_columns: 1, grid_min_columns: 1 }
+        }
+    },
+    config: {
+        language: "en",
+        maxPercent: 100,
+        unit: '%',
+        color: 'var(--state-icon-color)'
+    }
 };
 
-const DEFAULT_COLOR='var(--state-icon-color)';
+CARD.console = {
+    message: `%c✨${CARD.typeName.toUpperCase()} ${VERSION} IS INSTALLED.`,
+    css: 'color:orange; background-color:black; font-weight: bold;',
+    link: '      For more details, check the README: https://github.com/francois-le-ko4la/lovelace-entity-progress-card'
+};
 
-const CARD_INSTALLED_MESSAGE = `%c✨${CARD_TNAME.toUpperCase()} ${VERSION} IS INSTALLED.`;
-const CARD_INSTALLED_MESSAGE_CSS = 'color:orange; background-color:black; font-weight: bold;'
-const README_LINK = '      For more details, check the README: https://github.com/francois-le-ko4la/lovelace-entity-progress-card';
+// Constants for DOM element selectors
+const SELECTORS = {
+    container: 'container',
+    left: 'left',
+    right: 'right',
+    icon: 'icon',
+    shape: 'shape',
+    name: 'name',
+    percentage: 'percentage',
+    secondaryInfo: 'secondary_info',
+    progressBar: 'progress-bar',
+    progressBarInner: 'progress-bar-inner',
+    alert: 'ha-alert'
+};
+
+const CARD_HTML = `
+    <!-- Main container -->
+    <div class="${SELECTORS.container}">
+        <!-- Section gauche avec l'icône -->
+        <div class="${SELECTORS.left}">
+            <div class="${SELECTORS.shape}"></div>
+            <ha-icon class="${SELECTORS.icon}"></ha-icon>
+        </div>
+
+        <!-- Section droite avec le texte -->
+        <div class="${SELECTORS.right}">
+            <div class="${SELECTORS.name}"></div>
+            <div class="${SELECTORS.secondaryInfo}">
+                <div class="${SELECTORS.percentage}"></div>
+                <div class="${SELECTORS.progressBar}">
+                    <div class="${SELECTORS.progressBarInner}"></div>
+                </div>         
+            </div>   
+        </div>
+    </div>
+    <!-- HA Alert -->
+    <${SELECTORS.alert} type="error"></${SELECTORS.alert}>
+`;
+
+const CARD_CSS=`
+    ha-card {
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start; /* Aligner tous les éléments à gauche */
+        padding: 0;
+        box-sizing: border-box;
+        border-radius: 8px;
+        margin: 0 auto;
+    }
+
+    /* main container */
+    .${SELECTORS.container} {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        margin: 7px 10px;
+        gap: 10px;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    /* .left: icon & shape */
+    .${SELECTORS.left} {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+    }
+
+    .${SELECTORS.shape} {
+        position: absolute;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: var(--state-icon-color);
+        opacity: 0.2;
+    }
+
+    .${SELECTORS.icon} {
+        position: relative;
+        z-index: 1;
+        width: 24px;
+        height: 24px;
+    }
+
+    /* .right: name & percentage */
+    .${SELECTORS.right} {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        flex-grow: 1;
+        overflow: hidden;
+        width:100%;
+    }
+
+    .${SELECTORS.name} {
+        font-size: 1em;
+        font-weight: bold;
+        color: var(--primary-text-color);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+    }
+
+    .${SELECTORS.secondaryInfo} {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 10px;
+    }
+
+    .${SELECTORS.percentage} {
+        font-size: 0.9em;
+        color: var(--primary-text-color);
+        min-width: 40px;
+        text-align: left;
+    }
+
+    /* Progress bar */
+    .${SELECTORS.progressBar} {
+        flex-grow: 1;
+        height: 8px;
+        max-height: 8px;
+        background-color: var(--divider-color);
+        border-radius: 4px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .${SELECTORS.progressBarInner} {
+        height: 100%;
+        width: 75%;
+        background-color: var(--primary-color);
+        transition: width 0.3s ease;
+    }
+
+    ${SELECTORS.alert} {
+        display: none;
+        position: absolute;
+        top: -1px;
+        left: -2px;
+        width: 105%;
+        height: 110%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: black;
+        z-index: 10;
+    }
+    `;
+
+const HTML = {
+    block: {
+        show: 'block',
+        hide: 'none',
+    },
+    flex: {
+        show: 'block',
+        hide: 'none',
+    },
+};
+
+const THEME = {
+    battery: [
+        { icon: 'mdi:battery-alert',     color: 'var(--red-color)'    },   // Pourcentage < 10
+        { icon: 'mdi:battery-alert',     color: 'var(--red-color)'    },   // Pourcentage >= 10
+        { icon: 'mdi:battery-20',        color: 'var(--orange-color)' },   // Pourcentage >= 20
+        { icon: 'mdi:battery-30',        color: 'var(--orange-color)' },   // Pourcentage >= 30
+        { icon: 'mdi:battery-40',        color: 'var(--orange-color)' },   // Pourcentage >= 40
+        { icon: 'mdi:battery-50',        color: 'var(--yellow-color)' },   // Pourcentage >= 50
+        { icon: 'mdi:battery-60',        color: 'var(--yellow-color)' },   // Pourcentage >= 60
+        { icon: 'mdi:battery-70',        color: 'var(--yellow-color)' },   // Pourcentage >= 70
+        { icon: 'mdi:battery-80',        color: 'var(--green-color)'  },   // Pourcentage >= 80
+        { icon: 'mdi:battery-90',        color: 'var(--green-color)'  },   // Pourcentage >= 90
+        { icon: 'mdi:battery',           color: 'var(--green-color)'  }    // Pourcentage >= 100
+    ],
+    light: [
+        { icon: 'mdi:lightbulb-outline', color: '#4B4B4B'},   // Pourcentage < 25
+        { icon: 'mdi:lightbulb-outline', color: '#877F67'},   // Pourcentage >= 25
+        { icon: 'mdi:lightbulb',         color: '#C3B382'},   // Pourcentage >= 50
+        { icon: 'mdi:lightbulb',         color: '#FFE79E'},   // Pourcentage >= 75
+        { icon: 'mdi:lightbulb',         color: '#FFE79E'}    // Pourcentage >= 100
+    ]
+};
+
+const MSG = {
+    en: {
+        entityError: "The 'entity' parameter is required!",
+        entityNotFound: "Entity not found in Home Assistant.",
+        entityUnavailable: "unavailable",
+        maxValueError: "Check your max_value."
+    },
+    fr: {
+        entityError: "Le paramètre 'entity' est requis !",
+        entityNotFound: "Entité introuvable dans Home Assistant.",
+        entityUnavailable: "indisponible",
+        maxValueError: "Vérifiez votre max_value."
+    },
+    es: {
+        entityError: "¡El parámetro 'entity' es obligatorio!",
+        entityNotFound: "Entidad no encontrada en Home Assistant.",
+        entityUnavailable: "no disponible",
+        maxValueError: "Verifique su max_value."
+    },
+    de: {
+        entityError: "Der Parameter 'entity' ist erforderlich!",
+        entityNotFound: "Entität in Home Assistant nicht gefunden.",
+        entityUnavailable: "nicht verfügbar",
+        maxValueError: "Überprüfen Sie Ihren max_value."
+    },
+};
 
 const EDITOR_INPUT_FIELDS = [
     {   name: 'entity',
@@ -131,7 +366,17 @@ const EDITOR_INPUT_FIELDS = [
         }},
 ];
 
-const COLORS = [
+const THEME_OPTION = [
+    { name: '', value: '' },
+    ...Object.keys(THEME).map(key => ({
+        name: key.charAt(0).toUpperCase() + key.slice(1),
+        value: key
+    }))
+];
+
+const THEME_KEY = "theme"
+
+const COLOR_OPTION = [
     { name: 'Default', value: 'var(--state-icon-color)' },
     { name: 'Accent', value: 'var(--accent-color)' },
     { name: 'Info', value: 'var(--info-color)' },
@@ -162,230 +407,25 @@ const COLORS = [
     { name: 'White', value: 'var(--white-color)' }
 ];
 
-const THEMES = [
-    { name: '', value: '' },
-    { name: 'Battery', value: 'battery' },
-    { name: 'Light', value: 'light' }
-];
-
-const LAYOUT = [
-    { name: 'Horizontal (default)', value: 'horizontal' },
-    { name: 'Vertical', value: 'vertical' }
-];
-
-// Constants for DOM element selectors
-const SELECTORS = {
-    CONTAINER: 'container',
-    RIGHT: 'right',
-    ICON: 'icon',
-    SHAPE: 'shape',
-    NAME: 'name',
-    PERCENTAGE: 'percentage',
-    SECONDARY_INFO: 'secondary_info',
-    PROGRESS_BAR: 'progress-bar-inner',
-    ALERT: 'ha-alert'
+const LAYOUT_OPTION = {
+    en: [
+        { value: CARD.layout.horizontal.label, name: 'Horizontal (default)' },
+        { value: CARD.layout.vertical.label,   name: 'Vertical' }
+    ],
+    fr: [
+        { value: CARD.layout.horizontal.label, name: 'Horizontal (par défaut)' },
+        { value: CARD.layout.vertical.label,   name: 'Vertical' }
+    ],
+    es: [
+        { value: CARD.layout.horizontal.label, name: 'Horizontal (predeterminado)' },
+        { value: CARD.layout.vertical.label,   name: 'Vertical' }
+    ],
+    de: [
+        { value: CARD.layout.horizontal.label, name: 'Horizontal (Standard)' },
+        { value: CARD.layout.vertical.label,   name: 'Vertikal' }
+    ]
 };
 
-const CARD_HTML = `
-    <!-- Main container -->
-    <div class="${SELECTORS.CONTAINER}">
-        <!-- Section gauche avec l'icône -->
-        <div class="left">
-            <div class="${SELECTORS.SHAPE}"></div>
-            <ha-icon class="${SELECTORS.ICON}"></ha-icon>
-        </div>
-
-        <!-- Section droite avec le texte -->
-        <div class="${SELECTORS.RIGHT}">
-            <div class="${SELECTORS.NAME}"></div>
-            <div class="secondary_info">
-                <div class="${SELECTORS.PERCENTAGE}"></div>
-                <div class="progress-bar">
-                    <div class="${SELECTORS.PROGRESS_BAR}"></div>
-                </div>         
-            </div>   
-        </div>
-    </div>
-    <!-- HA Alert -->
-    <ha-alert style="display:none;" type="error"></ha-alert>
-`;
-
-const CARD_CSS=`
-    ha-card {
-        height: 100%;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: flex-start; /* Aligner tous les éléments à gauche */
-        padding: 0;
-        box-sizing: border-box;
-        border-radius: 8px;
-        max-width: 600px;
-        margin: 0 auto;
-    }
-
-    /* main container */
-    .container {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-        margin: 7px 10px;
-        gap: 10px;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-    }
-
-    /* .left: icon & shape */
-    .left {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        width: 36px;
-        height: 36px;
-        flex-shrink: 0;
-    }
-
-    .shape {
-        position: absolute;
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background-color: var(--state-icon-color);
-        opacity: 0.2;
-    }
-
-    .icon {
-        position: relative;
-        z-index: 1;
-        width: 24px;
-        height: 24px;
-    }
-
-    /* .right: name & percentage */
-    .right {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        flex-grow: 1;
-        overflow: hidden;
-        width:100%;
-    }
-
-    .name {
-        font-size: 1em;
-        font-weight: bold;
-        color: var(--primary-text-color);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        width: 100%;
-    }
-
-    .secondary_info {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: flex-start;
-        gap: 10px;
-    }
-
-    .percentage {
-        font-size: 0.9em;
-        color: var(--primary-text-color);
-        min-width: 40px;
-        text-align: left;
-    }
-
-    /* Progress bar */
-    .progress-bar {
-        flex-grow: 1;
-        height: 8px;
-        max-height: 8px;
-        background-color: var(--divider-color);
-        border-radius: 4px;
-        overflow: hidden;
-        position: relative;
-    }
-
-    .progress-bar-inner {
-        height: 100%;
-        width: 75%;
-        background-color: var(--primary-color);
-        transition: width 0.3s ease;
-    }
-
-    ha-alert {
-        position: absolute;
-        top: -1px;
-        left: -2px;
-        width: 105%;
-        height: 110%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: black;
-        z-index: 10;
-    }
-    `;
-
-const SHOW_DIV='block';
-const SHOW_DIVF='flex';
-const HIDE_DIV='none';
-
-const BATTERY_THEME_COLORS = [
-    { color: 'var(--red-color)',    label: 'critical' },   // Pourcentage < 25
-    { color: 'var(--orange-color)', label: 'low'      },   // Pourcentage >= 25
-    { color: 'var(--yellow-color)', label: 'medium'   },   // Pourcentage >= 50
-    { color: 'var(--green-color)',  label: 'high'     }    // Pourcentage >= 75
-];
-
-const BATTERY_THEME_ICON = 'mdi:battery';
-
-const LIGHT_THEME_COLORS = [
-    { color: '#4B4B4B', label: 'dim'        },   // Pourcentage < 25
-    { color: '#877F67', label: 'dim-brigh'  },   // Pourcentage >= 25
-    { color: '#C3B382', label: 'bright-dim' },   // Pourcentage >= 50
-    { color: '#FFE79E', label: 'bright'     }    // Pourcentage >= 75
-]
-const LIGHT_THEME_ICON = 'mdi:lightbulb';
-const LIGHT_THEME_ICON_DIM = 'mdi:lightbulb-outline';
-
-const THEME_KEY = "theme"
-
-const MSG = {
-    en: {
-        ENTITY_ERROR: "The 'entity' parameter is required!",
-        ENTITY_NOTFOUND: "Entity not found in Home Assistant.",
-        ENTITY_UNAVAILABLE: "unavailable",
-        MAX_VALUE_ERROR: "Check your max_value."
-    },
-    fr: {
-        ENTITY_ERROR: "Le paramètre 'entity' est requis !",
-        ENTITY_NOTFOUND: "Entité introuvable dans Home Assistant.",
-        ENTITY_UNAVAILABLE: "indisponible",
-        MAX_VALUE_ERROR: "Vérifiez votre max_value."
-    },
-    es: {
-        ENTITY_ERROR: "¡El parámetro 'entity' es obligatorio!",
-        ENTITY_NOTFOUND: "Entidad no encontrada en Home Assistant.",
-        ENTITY_UNAVAILABLE: "no disponible",
-        MAX_VALUE_ERROR: "Verifique su max_value."
-    },
-    de: {
-        ENTITY_ERROR: "Der Parameter 'entity' ist erforderlich!",
-        ENTITY_NOTFOUND: "Entität in Home Assistant nicht gefunden.",
-        ENTITY_UNAVAILABLE: "nicht verfügbar",
-        MAX_VALUE_ERROR: "Überprüfen Sie Ihren max_value."
-    },
-};
-
-const DEF_LANG = "en";
-const DEF_MAXPERCENT = 100;
-const DEF_UNIT = '%';
 
 /** --------------------------------------------------------------------------
  * 
@@ -425,17 +465,16 @@ class EntityProgressCard extends HTMLElement {
 
         if (!EntityProgressCard._moduleLoaded) {
             console.groupCollapsed(
-                CARD_INSTALLED_MESSAGE,
-                CARD_INSTALLED_MESSAGE_CSS
+                CARD.console.message,
+                CARD.console.css
             );
-            console.log(README_LINK);
+            console.log(CARD.console.link);
             console.groupEnd();
             EntityProgressCard._moduleLoaded = true;
         }
-        this._currentLanguage = DEF_LANG;
+        this._currentLanguage = CARD.config.language;
+        this._unit = CARD.config.unit;
         this._max_value = null; // 100%
-        this._unit = DEF_UNIT;
-        // to store DOM ref.
         this._elements = {};
         this._isBuilt = false;
         this._entityAvailable = true;
@@ -445,13 +484,13 @@ class EntityProgressCard extends HTMLElement {
      * Creates and returns a new configuration element for the component.
      * 
      * This static method is used to dynamically generate an instance of the 
-     * editor element, identified by the constant `EDITOR_NAME`. The returned 
+     * editor element, identified by the constant `CARD.editor`. The returned 
      * element can be used for configuring the component's behavior or settings.
      * 
      * @returns {HTMLElement} A newly created configuration element.
      */
     static getConfigElement() {
-        return document.createElement(EDITOR_NAME);
+        return document.createElement(CARD.editor);
     }
 
     /**
@@ -499,7 +538,7 @@ class EntityProgressCard extends HTMLElement {
      */
     set hass(hass) {
         this._hass = hass;
-        this._currentLanguage = MSG[hass.config.language] ? hass.config.language : DEF_LANG;
+        this._currentLanguage = MSG[hass.config.language] ? hass.config.language : CARD.config.language;
         this._updateDynamicElements();
     }
 
@@ -520,7 +559,7 @@ class EntityProgressCard extends HTMLElement {
      */
     _buildCard() {
         const wrapper = document.createElement('ha-card');
-        wrapper.classList.add(CARD_TNAME);
+        wrapper.classList.add(CARD.typeName);
         wrapper.innerHTML = CARD_HTML;
         const style = document.createElement('style');
         style.textContent = CARD_CSS;
@@ -531,15 +570,15 @@ class EntityProgressCard extends HTMLElement {
         this.shadowRoot.appendChild(wrapper);
         // store DOM ref to update
         this._elements = {
-            [SELECTORS.CONTAINER]: this.shadowRoot.querySelector(`.${SELECTORS.CONTAINER}`),
-            [SELECTORS.RIGHT]: this.shadowRoot.querySelector(`.${SELECTORS.RIGHT}`),
-            [SELECTORS.ICON]: this.shadowRoot.querySelector(`.${SELECTORS.ICON}`),
-            [SELECTORS.SHAPE]: this.shadowRoot.querySelector(`.${SELECTORS.SHAPE}`),
-            [SELECTORS.NAME]: this.shadowRoot.querySelector(`.${SELECTORS.NAME}`),
-            [SELECTORS.PERCENTAGE]: this.shadowRoot.querySelector(`.${SELECTORS.PERCENTAGE}`),
-            [SELECTORS.SECONDARY_INFO]: this.shadowRoot.querySelector(`.${SELECTORS.SECONDARY_INFO}`),
-            [SELECTORS.PROGRESS_BAR]: this.shadowRoot.querySelector(`.${SELECTORS.PROGRESS_BAR}`),
-            [SELECTORS.ALERT]: this.shadowRoot.querySelector(`${SELECTORS.ALERT}`),
+            [SELECTORS.container]: this.shadowRoot.querySelector(`.${SELECTORS.container}`),
+            [SELECTORS.right]: this.shadowRoot.querySelector(`.${SELECTORS.right}`),
+            [SELECTORS.icon]: this.shadowRoot.querySelector(`.${SELECTORS.icon}`),
+            [SELECTORS.shape]: this.shadowRoot.querySelector(`.${SELECTORS.shape}`),
+            [SELECTORS.name]: this.shadowRoot.querySelector(`.${SELECTORS.name}`),
+            [SELECTORS.percentage]: this.shadowRoot.querySelector(`.${SELECTORS.percentage}`),
+            [SELECTORS.secondaryInfo]: this.shadowRoot.querySelector(`.${SELECTORS.secondaryInfo}`),
+            [SELECTORS.progressBarInner]: this.shadowRoot.querySelector(`.${SELECTORS.progressBarInner}`),
+            [SELECTORS.alert]: this.shadowRoot.querySelector(`${SELECTORS.alert}`),
         };
     }
 
@@ -564,114 +603,46 @@ class EntityProgressCard extends HTMLElement {
      * determines the current layout mode.
      */
     _changeLayout() {
-        if (this.config.layout === LAYOUT[1].value) {
-            this._elements[SELECTORS.CONTAINER].style.flexDirection = 'column';
-            this._elements[SELECTORS.NAME].style.textAlign = 'center';
-            this._elements[SELECTORS.RIGHT].style.width = '90%';
-            this._elements[SELECTORS.RIGHT].style.flexGrow = '0';
-            this._elements[SELECTORS.SECONDARY_INFO].style.display = 'block';
-            this._elements[SELECTORS.PERCENTAGE].style.textAlign = 'center';
+        if (this.config.layout === CARD.layout.vertical.label) {
+            this._elements[SELECTORS.container].style.flexDirection = 'column';
+            this._elements[SELECTORS.name].style.textAlign = 'center';
+            this._elements[SELECTORS.right].style.width = '90%';
+            this._elements[SELECTORS.right].style.flexGrow = '0';
+            this._elements[SELECTORS.secondaryInfo].style.display = 'block';
+            this._elements[SELECTORS.percentage].style.textAlign = 'center';
         } else {
-            this._elements[SELECTORS.CONTAINER].style.flexDirection = 'row';
-            this._elements[SELECTORS.NAME].style.textAlign = 'left';
-            this._elements[SELECTORS.RIGHT].style.width = '100%';
-            this._elements[SELECTORS.RIGHT].style.flexGrow = '1';
-            this._elements[SELECTORS.SECONDARY_INFO].style.display = 'flex';
-            this._elements[SELECTORS.PERCENTAGE].style.textAlign = 'left';
+            this._elements[SELECTORS.container].style.flexDirection = 'row';
+            this._elements[SELECTORS.name].style.textAlign = 'left';
+            this._elements[SELECTORS.right].style.width = '100%';
+            this._elements[SELECTORS.right].style.flexGrow = '1';
+            this._elements[SELECTORS.secondaryInfo].style.display = 'flex';
+            this._elements[SELECTORS.percentage].style.textAlign = 'left';
         }
     }
 
     /**
-     * Returns the appropriate battery theme icon based on the battery percentage.
+     * Returns the icon and color corresponding to the given percentage and theme.
      * 
-     * This method calculates the battery level in steps of 10% and returns the
-     * corresponding icon. If the battery is fully charged (100%), it returns the
-     * default `BATTERY_THEME_ICON`. For other percentages, it returns the icon 
-     * corresponding to the closest 10% step (e.g., 90%, 80%, etc.). If the battery 
-     * level is 0%, it returns an "alert" icon.
+     * This function calculates the step in the theme's array that corresponds to the given percentage,
+     * using intervals based on the number of elements in the theme's array. If the percentage is less than 0, 
+     * it is adjusted to 0. If the percentage is greater than or equal to 100, the last step is returned.
      * 
-     * The returned icon is in the format of `BATTERY_THEME_ICON-[level]`, where 
-     * `[level]` is one of the predefined steps (e.g., `BATTERY_THEME_ICON-90`).
-     * 
-     * @param {number} percentage - The current battery percentage (from 0 to 100).
-     * @returns {string} The corresponding battery theme icon.
+     * @param {string} theme - The name of the theme to use (e.g., "battery").
+     * @param {number} percentage - The percentage of progress to use in determining the icon and color.
+     * @returns {Object} An object containing the icon and color corresponding to the calculated step.
+     *                  Example: { icon: 'mdi:battery-50', color: 'var(--yellow-color)' }
      */
-    _getBatteryThemeIcon(percentage) {
-        const step = (BATTERY_THEME_ICON.length - 1);
-
-        if (percentage >= DEF_MAXPERCENT) return BATTERY_THEME_ICON; // 100%
-    
-        const level = Math.floor(percentage / step) * step;
-        if (level > 0) {
-            return `${BATTERY_THEME_ICON}-${level}`;
+    _getIconColorForTheme(theme, percentage) {
+        if (!THEME[theme]) {
+            return { icon:null, color: null };
         }
-    
-        return `${BATTERY_THEME_ICON}-alert`; // 0%
-    }
+        const lastStep = (THEME[theme].length - 1);
+        const thresholdSize = (100 / lastStep);
 
-    /**
-     * Returns the appropriate light theme icon based on the light brightness.
-     * 
-     * more than or equal tp 50% light is "bright" less than is off.
-     * 
-     * @param {number} percentage - The current light brightness (from 0 to 100).
-     * @returns {string} The corresponding light theme icon.
-     */
-    _getLightThemeIcon(percentage) {
-        return percentage >= (DEF_MAXPERCENT / 2) ? LIGHT_THEME_ICON : LIGHT_THEME_ICON_DIM;
-    }
-
-    /**
-     * Returns the appropriate battery theme color based on the battery percentage.
-     * 
-     * This method calculates the battery color by determining which threshold 
-     * the current percentage falls into. The thresholds are defined in the 
-     * `BATTERY_THEME_COLORS` array, where each entry corresponds to a specific 
-     * battery level range and its associated color.
-     * 
-     * If the battery is fully charged (100%), it returns the color of the last 
-     * threshold in the array. For other percentages, it determines the closest 
-     * threshold based on the battery percentage and returns the corresponding color.
-     * 
-     * The thresholds are evenly distributed, so each color represents a range 
-     * of battery levels (e.g., 0-10%, 10-20%, etc.).
-     * 
-     * @param {number} percentage - The current battery percentage (from 0 to 100).
-     * @returns {string} The corresponding color for the battery theme.
-     */
-    _getBatteryThemeColor(percentage) {
-        const numberOfThresholds = BATTERY_THEME_COLORS.length;
-        const thresholdSize = DEF_MAXPERCENT / numberOfThresholds;
+        if (percentage < 0) percentage = 0;
+        if (percentage >= CARD.config.maxPercent) return THEME[theme][lastStep]; // >=100%
     
-        if (percentage >= DEF_MAXPERCENT) {
-            return BATTERY_THEME_COLORS[numberOfThresholds - 1].color;
-        }
-        return BATTERY_THEME_COLORS[Math.floor(percentage / thresholdSize)].color;
-    }
-
-    /**
-     * Returns the appropriate light theme color based on the light brightness.
-     * 
-     * This method calculates the light color by determining which threshold 
-     * the current percentage falls into. The thresholds are defined in the 
-     * `LIGHT_THEME_COLORS` array, where each entry corresponds to a specific 
-     * brightness level range and its associated color.
-     * 
-     * If the light is bright (100%), it returns the color of the last 
-     * threshold in the array. For other percentages, it determines the closest 
-     * threshold based on the brightness level and returns the corresponding color.
-     * 
-     * @param {number} percentage - The current battery percentage (from 0 to 100).
-     * @returns {string} The corresponding color for the battery theme.
-     */
-    _getLightThemeColor(percentage) {
-        const numberOfThresholds = LIGHT_THEME_COLORS.length;
-        const thresholdSize = DEF_MAXPERCENT / numberOfThresholds;
-    
-        if (percentage >= DEF_MAXPERCENT) {
-            return LIGHT_THEME_COLORS[numberOfThresholds - 1].color;
-        }
-        return LIGHT_THEME_COLORS[Math.floor(percentage / thresholdSize)].color;
+        return THEME[theme][Math.floor(percentage / thresholdSize)];
     }
 
     /**
@@ -767,7 +738,7 @@ class EntityProgressCard extends HTMLElement {
 
         if (!this.config.entity) {
             // show error message
-            this._showError(MSG[this._currentLanguage].ENTITY_ERROR);
+            this._showError(MSG[this._currentLanguage].entityError);
             return;
         } else {
             this._hideError();
@@ -778,7 +749,7 @@ class EntityProgressCard extends HTMLElement {
 
         if (!entity) {
             // show error message
-            this._showError(MSG[this._currentLanguage].ENTITY_NOTFOUND);
+            this._showError(MSG[this._currentLanguage].entityNotFound);
             return;
         } else {
             this._hideError();
@@ -787,7 +758,6 @@ class EntityProgressCard extends HTMLElement {
         if (entity.state === "unavailable" || entity.state === "unknown"){
             this._entityAvailable=false;
         }
-
 
         /**
          * Manage the percentage part
@@ -799,59 +769,49 @@ class EntityProgressCard extends HTMLElement {
             let maxValueResult = this._parseMaxValue(this._max_value)
             if (maxValueResult.config_error){
                 // show error message
-                this._showError(MSG[this._currentLanguage].MAX_VALUE_ERROR);
+                this._showError(MSG[this._currentLanguage].maxValueError);
                 return;
             } else {
                 this._hideError();
             }
 
             if (!maxValueResult.valid) {
-                percentage = isNaN(value) ? 0 : Math.min(Math.max(value, 0), DEF_MAXPERCENT);
+                percentage = isNaN(value) ? 0 : Math.min(Math.max(value, 0), CARD.config.maxPercent);
             } else {
-                percentage = isNaN(value) ? 0 : (value / maxValueResult.value) * DEF_MAXPERCENT;
+                percentage = isNaN(value) ? 0 : (value / maxValueResult.value) * CARD.config.maxPercent;
             }
         } else {
 
             percentage = 0;
         }
 
-
         /**
          * Manage theme
          */
-        let iconTheme = null;
-        let colorTheme = null;
-
-        if (this.config.theme === THEMES[1].value) {
-            iconTheme = this._getBatteryThemeIcon(percentage)
-            colorTheme = this._getBatteryThemeColor(percentage)
-        } else if (this.config.theme === THEMES[2].value) {
-            iconTheme = this._getLightThemeIcon(percentage)
-            colorTheme = this._getLightThemeColor(percentage)
-        }
+        let iconAndColorFromTheme = this._getIconColorForTheme(this.config.theme, percentage);
 
         /**
          * Update dyn element
          */
-        this._updateElement(SELECTORS.PROGRESS_BAR, (el) => {
+        this._updateElement(SELECTORS.progressBarInner, (el) => {
             el.style.width = `${percentage}%`;
-            el.style.backgroundColor = colorTheme || this.config.bar_color || DEFAULT_COLOR;
+            el.style.backgroundColor = iconAndColorFromTheme.color || this.config.bar_color || CARD.config.color;
         });
 
-        this._updateElement(SELECTORS.ICON, (el) => {
-            el.setAttribute(SELECTORS.ICON, iconTheme || this.config.icon || entity.attributes.icon || 'mdi:alert');
-            el.style.color = colorTheme|| this.config.color || DEFAULT_COLOR;
+        this._updateElement(SELECTORS.icon, (el) => {
+            el.setAttribute(SELECTORS.icon, iconAndColorFromTheme.icon || this.config.icon || entity.attributes.icon || 'mdi:alert');
+            el.style.color = iconAndColorFromTheme.color|| this.config.color || CARD.config.color;
         });
 
-        this._updateElement(SELECTORS.SHAPE, (el) => {
-            el.style.backgroundColor = colorTheme || this.config.color || DEFAULT_COLOR;
+        this._updateElement(SELECTORS.shape, (el) => {
+            el.style.backgroundColor = iconAndColorFromTheme.color || this.config.color || CARD.config.color;
         });
 
-        this._updateElement(SELECTORS.NAME, (el) => {
+        this._updateElement(SELECTORS.name, (el) => {
             el.textContent = this.config.name || entity.attributes.friendly_name || this.config.entity;
         });
 
-        this._updateElement(SELECTORS.PERCENTAGE, (el) => {
+        this._updateElement(SELECTORS.percentage, (el) => {
         
             const formattedPercentage = Number.isFinite(percentage)
                 ? (Number.isInteger(percentage) ? percentage : percentage.toFixed(2))
@@ -862,11 +822,11 @@ class EntityProgressCard extends HTMLElement {
                 : 0;
         
             if (this._entityAvailable) {
-                el.textContent = this._unit === DEF_UNIT
+                el.textContent = this._unit === CARD.config.unit
                     ? `${formattedPercentage}${this._unit}` // if unit = %
                     : `${formattedValue}${this._unit}`; // if unit <> %
             } else {
-                el.textContent = MSG[this._currentLanguage].ENTITY_UNAVAILABLE;
+                el.textContent = MSG[this._currentLanguage].entityUnavailable;
             }
         });
     }
@@ -875,7 +835,7 @@ class EntityProgressCard extends HTMLElement {
      * Displays an error alert with the provided message.
      * 
      * This method shows an error alert on the card by updating the corresponding
-     * DOM element (identified by `SELECTORS.ALERT`). The element is made visible 
+     * DOM element (identified by `SELECTORS.alert`). The element is made visible 
      * by changing its `display` style, and the provided error message is set as 
      * the text content of the alert.
      * 
@@ -886,9 +846,9 @@ class EntityProgressCard extends HTMLElement {
      * @param {string} message - The error message to display in the alert.
      */
     _showError(message) {
-        const alertElement = this._elements[SELECTORS.ALERT];
+        const alertElement = this._elements[SELECTORS.alert];
         if (alertElement) {
-            alertElement.style.display = SHOW_DIVF;
+            alertElement.style.display = HTML.flex.show;
             alertElement.textContent = message;  // Set the error message in the alert
         }
     }
@@ -897,16 +857,16 @@ class EntityProgressCard extends HTMLElement {
      * Hides the error alert by setting its display style to hide.
      * 
      * This method hides the error alert on the card by changing the `display` 
-     * style of the corresponding DOM element (identified by `SELECTORS.ALERT`) 
-     * to the value of `HIDE_DIV`. This is typically used to remove the error 
+     * style of the corresponding DOM element (identified by `SELECTORS.alert`) 
+     * to the value of `HTML.flex.hide`. This is typically used to remove the error 
      * message once the issue (such as the entity being found) has been resolved.
      * 
      * @returns {void}
      */
     _hideError() {
-        const alertElement = this._elements[SELECTORS.ALERT];
+        const alertElement = this._elements[SELECTORS.alert];
         if (alertElement) {
-            alertElement.style.display = HIDE_DIV;
+            alertElement.style.display = HTML.flex.hide;
         }
     }
 
@@ -915,16 +875,16 @@ class EntityProgressCard extends HTMLElement {
      * 
      * This method determines the size of the card (specifically the number of grid rows) 
      * depending on whether the layout configuration is vertical or horizontal. 
-     * The layout configuration is checked against `LAYOUT[1].value`, and based on this, 
-     * it returns the appropriate number of rows for the card's grid.
+     * The layout configuration is checked against `CARD.layout.vertical.label`, and based
+     * on this, it returns the appropriate number of rows for the card's grid.
      * 
      * @returns {number} - The number of grid rows for the current card layout.
      */
     getCardSize() {
-        if (this.config.layout === LAYOUT[1].value) {
-            return LAYOUT_SIZE.vertical.grid_rows;
+        if (this.config.layout === CARD.layout.vertical.label) {
+            return CARD.layout.vertical.value.grid_rows;
         }
-        return LAYOUT_SIZE.horizontal.grid_rows;
+        return CARD.layout.horizontal.value.grid_rows;
     }
 
     /**
@@ -938,10 +898,10 @@ class EntityProgressCard extends HTMLElement {
      * @returns {object} - The layout options for the current layout configuration.
      */
     getLayoutOptions() {
-        if (this.config.layout === LAYOUT[1].value) {
-            return LAYOUT_SIZE.vertical;
+        if (this.config.layout === CARD.layout.vertical.label) {
+            return CARD.layout.vertical.value;
         }
-        return LAYOUT_SIZE.horizontal;
+        return CARD.layout.horizontal.value;
     }
 }
 
@@ -957,7 +917,7 @@ class EntityProgressCard extends HTMLElement {
  */
 EntityProgressCard.version = VERSION;
 EntityProgressCard._moduleLoaded = false;
-customElements.define(CARD_TNAME, EntityProgressCard);
+customElements.define(CARD.typeName, EntityProgressCard);
 
 /** --------------------------------------------------------------------------
  * Registers the custom card in the global `customCards` array for use in Home Assistant.
@@ -969,9 +929,9 @@ customElements.define(CARD_TNAME, EntityProgressCard);
  */
 window.customCards = window.customCards || []; // Create the list if it doesn't exist. Careful not to overwrite it
 window.customCards.push({
-    type: CARD_TNAME,
-    name: CARD_NAME,
-    description: CARD_DESCRIPTION,    
+    type: CARD.typeName,
+    name: CARD.name,
+    description: CARD.description,    
 });
 
 /** --------------------------------------------------------------------------
@@ -1016,7 +976,7 @@ class EntityProgressCardEditor extends HTMLElement {
         this._hass = null;
         this._overridableElements = {};
         this.rendered = false;
-        this._currentLanguage = DEF_LANG;
+        this._currentLanguage = CARD.config.language;
     }
 
     /**
@@ -1042,7 +1002,7 @@ class EntityProgressCardEditor extends HTMLElement {
         if (!hass) {
             return;
         }
-        this._currentLanguage = MSG[hass.config.language] ? hass.config.language : DEF_LANG;
+        this._currentLanguage = MSG[hass.config.language] ? hass.config.language : CARD.config.language;
         if (!this._hass || this._hass.entities !== hass.entities) {
             this._hass = hass;
             if (this.rendered) {
@@ -1114,7 +1074,7 @@ class EntityProgressCardEditor extends HTMLElement {
     _toggleFieldDisable(disable) {
         const fields = Object.keys(this._overridableElements);
         fields.forEach(fieldName => {
-            this._overridableElements[fieldName].style.display = disable ? HIDE_DIV : SHOW_DIV;
+            this._overridableElements[fieldName].style.display = disable ? HTML.block.hide : HTML.block.show;
         });
     }
 
@@ -1213,10 +1173,10 @@ class EntityProgressCardEditor extends HTMLElement {
      * 
      * This method populates a `<select>` element with color choices. It first adds a special 
      * option to represent the "no color" choice, followed by the color options defined in the 
-     * `COLORS` array. Each color option is displayed with a circular colored icon (styled using 
+     * `COLOR_OPTION` array. Each color option is displayed with a circular colored icon (styled using 
      * the `value` of the color) and its respective `name`. 
      * 
-     * For each color in the `COLORS` array, a new `<mwc-list-item>` is created with the color 
+     * For each color in the `COLOR_OPTION` array, a new `<mwc-list-item>` is created with the color 
      * as the background of a circular `span` and the color name displayed beside it.
      * 
      * @param {HTMLElement} colorSelect - The `<select>` element to which the color options will be added.
@@ -1229,7 +1189,7 @@ class EntityProgressCardEditor extends HTMLElement {
         `;
         colorSelect.appendChild(noColorOption);
 
-        COLORS.forEach(color => {
+        COLOR_OPTION.forEach(color => {
             const option = document.createElement('mwc-list-item');
             option.value = color.value;
             option.innerHTML = `
@@ -1283,7 +1243,7 @@ class EntityProgressCardEditor extends HTMLElement {
             case 'layout':
                 inputElement = document.createElement('ha-select');
                 inputElement.popperOptions = ""
-                this._addChoice(inputElement, LAYOUT);
+                this._addChoice(inputElement, LAYOUT_OPTION[this._currentLanguage]);
                 inputElement.addEventListener('closed', (event) => {
                     event.stopPropagation();
                 });
@@ -1291,7 +1251,7 @@ class EntityProgressCardEditor extends HTMLElement {
             case 'theme':
                 inputElement = document.createElement('ha-select');
                 inputElement.popperOptions = ""
-                this._addChoice(inputElement, THEMES);
+                this._addChoice(inputElement, THEME_OPTION);
                 inputElement.addEventListener('closed', (event) => {
                     event.stopPropagation();
                 });
@@ -1313,7 +1273,7 @@ class EntityProgressCardEditor extends HTMLElement {
             this._overridableElements[name]=inputElement;
         }
 
-        inputElement.style.display = SHOW_DIVF;
+        inputElement.style.display = HTML.flex.show;
         inputElement.required = required;
         inputElement.label = label;
         inputElement.value = value;
@@ -1418,4 +1378,4 @@ class EntityProgressCardEditor extends HTMLElement {
  * 
  * @returns {void}
  */
-customElements.define(EDITOR_NAME, EntityProgressCardEditor);
+customElements.define(CARD.editor, EntityProgressCardEditor);
