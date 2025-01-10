@@ -27,14 +27,14 @@
  * - Error handling for missing or invalid entities.
  * - Configuration options for various card elements, including entity picker, color settings, and layout options.
  * 
- * @version 1.0.15
+ * @version 1.0.16
  */
 
 /** --------------------------------------------------------------------------
  * PARAMETERS
  */
 
-const VERSION='1.0.15';
+const VERSION='1.0.16';
 const CARD = {
     typeName: 'entity-progress-card',
     name: 'Entity progress card',
@@ -54,7 +54,11 @@ const CARD = {
         language: "en",
         maxPercent: 100,
         unit: '%',
-        color: 'var(--state-icon-color)'
+        color: 'var(--state-icon-color)',
+        decimal: {
+            percentage: 2,
+            other: 0
+        }
     }
 };
 
@@ -473,8 +477,9 @@ class EntityProgressCard extends HTMLElement {
             EntityProgressCard._moduleLoaded = true;
         }
         this._currentLanguage = CARD.config.language;
-        this._unit = CARD.config.unit;
-        this._max_value = null; // 100%
+        this._unit = null;
+        this._max_value = null;
+        this._decimal = null;
         this._elements = {};
         this._isBuilt = false;
         this._entityAvailable = true;
@@ -507,10 +512,9 @@ class EntityProgressCard extends HTMLElement {
     setConfig(config) {
         const layoutChanged = this.config?.layout !== config.layout;
         this.config = config;
-        this._max_value = this.config.max_value;
-        if (this.config.unit) {
-            this._unit = this.config.unit;
-        }
+        this._max_value = this.config.max_value || null;
+        this._unit      = this.config.unit      || CARD.config.unit;
+        this._decimal   = this.config.decimal   || (this._unit === CARD.config.unit ? CARD.config.decimal.percentage : CARD.config.decimal.other);
 
         if (!this._isBuilt) {
             this._isBuilt = true;
@@ -812,25 +816,24 @@ class EntityProgressCard extends HTMLElement {
         });
 
         this._updateElement(SELECTORS.percentage, (el) => {
-        
-            const formattedPercentage = Number.isFinite(percentage)
-                ? (Number.isInteger(percentage) ? percentage : percentage.toFixed(2))
-                : 0;
-        
-            const formattedValue = Number.isFinite(value)
-                ? (Number.isInteger(value) ? value : value.toFixed(2))
-                : 0;
-        
             if (this._entityAvailable) {
-                el.textContent = this._unit === CARD.config.unit
-                    ? `${formattedPercentage}${this._unit}` // if unit = %
-                    : `${formattedValue}${this._unit}`; // if unit <> %
+                const formattedPercentage = Number.isFinite(percentage)
+                    ? (Number.isInteger(percentage) ? percentage : percentage.toFixed(this._decimal))
+                    : 0;
+            
+                const formattedValue = Number.isFinite(value)
+                    ? (Number.isInteger(value) ? value : value.toFixed(this._decimal))
+                    : 0;
+            
+                    el.textContent = this._unit === CARD.config.unit
+                        ? `${formattedPercentage}${this._unit}` // if unit = %
+                        : `${formattedValue}${this._unit}`; // if unit <> %
             } else {
                 el.textContent = MSG[this._currentLanguage].entityUnavailable;
             }
         });
     }
-  
+
     /**
      * Displays an error alert with the provided message.
      * 
