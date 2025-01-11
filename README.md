@@ -49,21 +49,22 @@ You can customize the card using the following parameters:
 
 - **`entity`** [entity] *(required)*:  
   The Home Assistant entity to display.  
-  *Example:* `sensor.hp_envy_6400_series_tri_color_cartridge`
+  *Example:*
+    - `sensor.hp_envy_6400_series_tri_color_cartridge`
 
 - **`name`** [string] *(optional)*:  
   The name displayed on the progress bar. If omitted, the entity's friendly name will be used.  
-  *Example:* `"RGB Color"`
+  *Example:*
+    - `"RGB Color"`
 
 - **`layout`** [string `horizontal`| `vertical`] *(optional)*:  
   Determines the layout of the elements inside the card. You can choose between different layouts based on your visual preferences.
   
   *Examples:*
+    - `horizontal`: Displays the elements horizontally, with a row layout (by default, the text and progress bar will be displayed side by side).  
+    - `vertical`: Displays the elements vertically, with a column layout (by default, the text and progress bar will be stacked one below the other).
   
-    `horizontal`: Displays the elements horizontally, with a row layout (by default, the text and progress bar will be displayed side by side).  
-    `vertical`: Displays the elements vertically, with a column layout (by default, the text and progress bar will be stacked one below the other).
-  
-    If no specific layout is set, the default layout is `horizontal`.
+  If no specific layout is set, the default layout is `horizontal`.
 
 - **`icon`** [string] *(optional)*:  
   The icon associated with the entity. Supports Material Design Icons (MDI).  
@@ -80,7 +81,8 @@ You can customize the card using the following parameters:
 - **`theme`** [string `battery`|`light`] *(optional)*:  
   Allows customization of the progress bar's appearance using a predefined theme.
   This theme dynamically adjusts the `icon`, `color` and `bar-color` parameters based on the battery level, eliminating the need for manual adjustments or complex Jinja2 templates.  
-  *Example:* "battery"
+  *Example:*
+  - `battery`
 
 - **`max_value`** [numeric/entity] *(optional)*:  
   Allows representing standard values and calculating the percentage relative to the maximum value.
@@ -93,8 +95,22 @@ You can customize the card using the following parameters:
   Allows representing standard unit.  
   Specifies the unit to display the entity's actual value, ignoring max_value. The max_value is still used for the progress bar representation.  
   *Example:*
-  - XYZ
+  - `°C` for temperature.
+  - `kWh` for energy consumption.
+    
+- **`decimal`** [int >=0] *(optional)*:  
+  Override the default number of decimal places to display for numerical values.
+  
+  *by default:*
+    - `decimal` = 2 for percentage (%)
+    - `decimal` = 0 for other unit (°C, kWh...)
+  
+  *Example:*
+    - `1` for displaying 50.6%.
+    - `0` for displaying 51%
+    -  `1` for displaying 20.7°C
 
+  
 > Note:  
 > `max_value` & `unit` can be set with the YAML editor only
 
