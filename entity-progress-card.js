@@ -265,28 +265,32 @@ const THEME = {
 
 const MSG = {
     en: {
-        entityError: "The 'entity' parameter is required!",
-        entityNotFound: "Entity not found in Home Assistant.",
+        entityError: "entity: The 'entity' parameter is required!",
+        entityNotFound: "entity: Entity not found in Home Assistant.",
         entityUnavailable: "unavailable",
-        maxValueError: "Check your max_value."
+        maxValueError: "max_value: Check your max_value.",
+        decimalError: "decimal: Decimal value cannot be negative."
     },
     fr: {
-        entityError: "Le paramètre 'entity' est requis !",
-        entityNotFound: "Entité introuvable dans Home Assistant.",
+        entityError: "entity: Le paramètre 'entity' est requis !",
+        entityNotFound: "entity: Entité introuvable dans Home Assistant.",
         entityUnavailable: "indisponible",
-        maxValueError: "Vérifiez votre max_value."
+        maxValueError: "max_value: Vérifiez votre max_value.",
+        decimalError: "decimal: La valeur décimale ne peut pas être négative."
     },
     es: {
-        entityError: "¡El parámetro 'entity' es obligatorio!",
-        entityNotFound: "Entidad no encontrada en Home Assistant.",
+        entityError: "entity: ¡El parámetro 'entity' es obligatorio!",
+        entityNotFound: "entity: Entidad no encontrada en Home Assistant.",
         entityUnavailable: "no disponible",
-        maxValueError: "Verifique su max_value."
+        maxValueError: "max_value: Verifique su max_value.",
+        decimalError: "decimal: El valor decimal no puede ser negativo."
     },
     de: {
-        entityError: "Der Parameter 'entity' ist erforderlich!",
-        entityNotFound: "Entität in Home Assistant nicht gefunden.",
+        entityError: "entity: Der Parameter 'entity' ist erforderlich!",
+        entityNotFound: "entity: Entität in Home Assistant nicht gefunden.",
         entityUnavailable: "nicht verfügbar",
-        maxValueError: "Überprüfen Sie Ihren max_value."
+        maxValueError: "max_value: Überprüfen Sie Ihren max_value.",
+        decimalError: "decimal: Der Dezimalwert darf nicht negativ sein."
     },
 };
 
@@ -482,7 +486,6 @@ class EntityProgressCard extends HTMLElement {
         this._decimal = null;
         this._elements = {};
         this._isBuilt = false;
-        this._entityAvailable = true;
     }
 
     /**
@@ -678,127 +681,175 @@ class EntityProgressCard extends HTMLElement {
     }
 
     /**
-     * Parse max_value and return a numeric value and its validity.
-     * @param {string|number} maxValue - The max_value to parse (could be a number or an entity ID).
-     * @returns {{value: number, valid: boolean, config_error: boolean}} - Parsed value and its validity.
-     *    - value: the value to use
-     *    - valid: the max value is a numeric|entity > 0
-     *    - config_error: worst case -> the max value define is not correct (null, <0, entity not found)
+     * Validates the card configuration and returns the validation status and error messages.
+     * 
+     * Main Steps:
+     * 1. **Entity Check**: Ensures `entity` is defined in the configuration and exists in Home Assistant.
+     * 2. **Max Value Validation**: Confirms `max_value` is either:
+     *    - A positive number.
+     *    - A valid entity in Home Assistant.
+     * 3. **Decimal Check**: Validates that the `decimal` value is not negative.
+     * 
+     * Returns:
+     * - An object `{ valid, msg }`:
+     *   - `valid`: Boolean indicating whether the configuration is valid.
+     *   - `msg`: An error message string, or `null` if the configuration is valid.
+     * 
+     * Provides localized error messages for each type of configuration issue.
+     * 
+     * @returns {{ valid: boolean, msg: string|null }}
      */
-    _parseMaxValue(maxValue) {
-        if (!maxValue){
-            // no max value defined
-            return { value: 0, valid: false, config_error: false };
+    _checkConfig() {
+
+        const entity = this._hass?.states[this.config.entity];
+
+        if (!this.config.entity) {
+            return { valid: false, msg: MSG[this._currentLanguage].entityError };
+        } else if (!entity) {
+            return { valid: false, msg: MSG[this._currentLanguage].entityNotFound };
+        } else if (this._max_value &&
+            !(
+                (typeof this._max_value === "number" && !isNaN(this._max_value) && this._max_value > 0) ||
+                (typeof this._max_value === "string" && this._hass?.states[this._max_value])
+            )) {
+            return { valid: false, msg: MSG[this._currentLanguage].maxValueError };
+        } else if (this._decimal < 0) {
+            return { valid: false, msg: MSG[this._currentLanguage].decimalError };
         }
+        return { valid: true, msg: null };
 
-        if (typeof maxValue === "number") {
-            // maxValue is numeric
-            if (!isNaN(maxValue) && maxValue > 0) {
-                return { value: maxValue, valid: true, config_error: false };
-            }
-            return { value: 0, valid: false, config_error: true };
-        }
-
-        if (typeof maxValue === "string" && this._hass && this._hass.states[maxValue]) {
-            // maxValue is an entity
-            const entityState = this._hass.states[maxValue].state;
-            if (!entityState || entityState === "unavailable" || entityState === "unknown") {
-                this._entityAvailable=false;
-                return { value: 0, valid: false, config_error: false };
-            }
-            const parsedValue = parseFloat(entityState);
-
-            if (!isNaN(parsedValue) && parsedValue > 0) {
-                return { value: parsedValue, valid: true, config_error: false };
-            }
-            return { value: 0, valid: false, config_error: true };
-        }
-
-        // maxValue is not supported
-        return { value: 0, valid: false, config_error: true };
     }
 
     /**
-     * Updates the dynamic elements of the card based on the state of a specified entity.
+     * Parses and validates the `max_value` configuration to determine its value and validity.
      * 
-     * This method fetches the state of the entity defined in the configuration and
-     * updates various dynamic elements of the card (e.g., progress bar, icon, shape, 
-     * name, and percentage) accordingly.
+     * Main Steps:
+     * 1. **Numeric `max_value`**: If `max_value` is a positive number, it's valid.
+     * 2. **Entity-Based `max_value`**: If `max_value` references a valid entity:
+     *    - Checks if the entity state is valid (not "unavailable" or "unknown").
+     *    - Parses and returns the entity state as a numeric value.
+     * 3. **Fallback**: Returns invalid result if `max_value` is neither valid numeric nor a valid entity.
      * 
-     * - If the entity state cannot be found, an error message is displayed.
-     * - If the entity state is valid, the error message is hidden and the elements are updated.
-     * - The percentage value from the entity state is clamped between 0 and 100.
-     * - If a specific theme is selected, the battery icon and color are updated based on the percentage.
+     * Returns:
+     * - An object `{ value, valid }`:
+     *   - `value`: The numeric `max_value` or 0 if invalid.
+     *   - `valid`: Boolean indicating whether `max_value` is valid.
      * 
-     * The elements are updated using the `_updateElement` method, which ensures the DOM
-     * is only updated when the values change.
+     * Handles unavailable or unknown entity states gracefully.
+     * 
+     * @returns {{ value: number, valid: boolean }}
+     */
+    _parseMaxValue() {
+
+        if (typeof this._max_value === "number") { // maxValue is numeric > 0
+            return { value: this._max_value, valid: true };
+        } else if (typeof this._max_value === "string") { // maxValue is a known entity
+            const entityState = this._hass.states[this._max_value].state;
+            if (!entityState || entityState === "unavailable" || entityState === "unknown") {
+                return { value: 0, valid: false };
+            }
+            return { value: parseFloat(entityState), valid: true };
+        }
+
+        return { value: 0, valid: false };
+    }
+
+    /**
+     * Calculates the percentage and value based on the current entity state and max value configuration.
+     *
+     * This function retrieves the state of the configured entity and calculates its value and percentage 
+     * based on the `max_value` configuration. If `max_value` is not defined or invalid, a fallback logic 
+     * ensures a default percentage calculation.
+     *
+     * @returns {Object} An object containing:
+     *  - `value` {number}: The numeric value of the entity's current state (parsed from the entity's state).
+     *  - `percentage` {number}: The percentage of the entity's value relative to `max_value` or a default max percent.
+     *  - `entityAvailable` {boolean}: A flag indicating whether the entity is available (`true`) or not (`false`).
+     */
+    _getPercent() {
+
+        const entity = this._hass?.states[this.config.entity];
+        let percentage = 0;
+        let value = 0;
+        let label = null;
+        let entityAvailable = true;
+
+        if (entity.state === "unavailable" || entity.state === "unknown"){
+            entityAvailable=false;
+        } else {
+            value = parseFloat(entity.state);
+            let maxValueResult = this._parseMaxValue();
+            if (!this._max_value) {
+                percentage = isNaN(value) ? 0 : Math.min(Math.max(value, 0), CARD.config.maxPercent);
+            } else if (this.config.max_value && maxValueResult.valid) {
+                percentage = isNaN(value) ? 0 : (value / maxValueResult.value) * CARD.config.maxPercent;
+            } else {
+                entityAvailable=false;
+            }
+
+            const formattedPercentage = Number.isFinite(percentage)
+                ? (Number.isInteger(percentage) ? percentage : percentage.toFixed(this._decimal))
+                : 0;
+    
+            const formattedValue = Number.isFinite(value)
+                ? (Number.isInteger(value) ? value : value.toFixed(this._decimal))
+                : 0;
+        
+            label = this._unit === CARD.config.unit
+                ? `${formattedPercentage}${this._unit}` // if unit = %
+                : `${formattedValue}${this._unit}`; // if unit <> %
+        }
+        return { value: value, percentage: percentage, label:label, entityAvailable: entityAvailable };
+
+    }
+
+    /**
+     * Updates dynamic card elements based on the entity's state and configuration.
+     * 
+     * Main Steps:
+     * 1. **Configuration Validation**: Validates entity setup via `_checkConfig()`. Shows/hides errors accordingly.
+     * 2. **Percentage Calculation**: Uses `_getPercent()` to derive the percentage and determine entity availability.
+     * 3. **Theme Handling**: Gets icon and color based on the theme using `_getIconColorForTheme()`.
+     * 4. **Element Updates**: Dynamically updates:
+     *    - Progress bar width and color.
+     *    - Icon attributes and color.
+     *    - Shape background color.
+     *    - Display name (friendly name or fallback).
+     *    - Percentage label (value or unavailable message).
+     * 
+     * Utilities Used:
+     * - `_updateElement()`: Updates DOM elements only if values/styles change.
+     * - `_getPercent()`: Calculates percentage from the entity state and max value.
+     * - `_getIconColorForTheme()`: Determines icon and color based on theme/percentage.
+     * 
+     * Handles errors gracefully (e.g., invalid config, unavailable entity).
      * 
      * @returns {void}
      */
     _updateDynamicElements() {
         /**
-         * Manage here config error
+         * Manage config error and get inputs
          */
-
-        if (!this.config.entity) {
-            // show error message
-            this._showError(MSG[this._currentLanguage].entityError);
-            return;
-        } else {
-            this._hideError();
-        }
-
-        // get entity state
         const entity = this._hass?.states[this.config.entity];
+        const configState = this._checkConfig();
 
-        if (!entity) {
-            // show error message
-            this._showError(MSG[this._currentLanguage].entityNotFound);
+        if (!configState.valid) {
+            this._showError(configState.msg);
             return;
         } else {
             this._hideError();
         }
 
-        if (entity.state === "unavailable" || entity.state === "unknown"){
-            this._entityAvailable=false;
-        }
-
-        /**
-         * Manage the percentage part
-         */
-        let percentage = 0;
-        let value = 0;
-        if(this._entityAvailable) {
-            value = parseFloat(entity.state);
-            let maxValueResult = this._parseMaxValue(this._max_value)
-            if (maxValueResult.config_error){
-                // show error message
-                this._showError(MSG[this._currentLanguage].maxValueError);
-                return;
-            } else {
-                this._hideError();
-            }
-
-            if (!maxValueResult.valid) {
-                percentage = isNaN(value) ? 0 : Math.min(Math.max(value, 0), CARD.config.maxPercent);
-            } else {
-                percentage = isNaN(value) ? 0 : (value / maxValueResult.value) * CARD.config.maxPercent;
-            }
-        } else {
-
-            percentage = 0;
-        }
-
-        /**
-         * Manage theme
-         */
-        let iconAndColorFromTheme = this._getIconColorForTheme(this.config.theme, percentage);
+        // Manage the percentage part
+        const currentPercent = this._getPercent();
+        // Manage theme
+        let iconAndColorFromTheme = this._getIconColorForTheme(this.config.theme, currentPercent.percentage);
 
         /**
          * Update dyn element
          */
         this._updateElement(SELECTORS.progressBarInner, (el) => {
-            el.style.width = `${percentage}%`;
+            el.style.width = `${currentPercent.percentage}%`;
             el.style.backgroundColor = iconAndColorFromTheme.color || this.config.bar_color || CARD.config.color;
         });
 
@@ -816,18 +867,8 @@ class EntityProgressCard extends HTMLElement {
         });
 
         this._updateElement(SELECTORS.percentage, (el) => {
-            if (this._entityAvailable) {
-                const formattedPercentage = Number.isFinite(percentage)
-                    ? (Number.isInteger(percentage) ? percentage : percentage.toFixed(this._decimal))
-                    : 0;
-            
-                const formattedValue = Number.isFinite(value)
-                    ? (Number.isInteger(value) ? value : value.toFixed(this._decimal))
-                    : 0;
-            
-                    el.textContent = this._unit === CARD.config.unit
-                        ? `${formattedPercentage}${this._unit}` // if unit = %
-                        : `${formattedValue}${this._unit}`; // if unit <> %
+            if (currentPercent.entityAvailable) {
+                el.textContent = currentPercent.label;
             } else {
                 el.textContent = MSG[this._currentLanguage].entityUnavailable;
             }
