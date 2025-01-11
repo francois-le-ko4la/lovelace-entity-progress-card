@@ -99,9 +99,13 @@ You can customize the card using the following parameters:
   - `kWh` for energy consumption.
     
 - **`decimal`** [int >=0] *(optional)*:  
-  Override the default number of decimal places to display for numerical values.
+  Defines the number of decimal places to display for numerical values.  
+  The `decimal` value will be determined based on the following priority:
+  - `Display Precision` from the entity (if defined in Home Assistant).
+  - `decimal` setting in the YAML configuration.
+  - `Default Value` (if no other value is set).
   
-  *by default:*
+  *Default values:*
     - `decimal` = 2 for percentage (%)
     - `decimal` = 0 for other unit (°C, kWh...)
   
