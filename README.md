@@ -112,7 +112,7 @@ You can customize the card using the following parameters:
 
   
 > Note:  
-> `max_value` & `unit` can be set with the YAML editor only
+> `max_value`, `unit` & `decimal` can be set with the YAML editor only
 
 ### YAML
 Here’s our example of how to use the Custom Bar Card with custom styles:
