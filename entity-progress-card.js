@@ -27,14 +27,14 @@
  * - Error handling for missing or invalid entities.
  * - Configuration options for various card elements, including entity picker, color settings, and layout options.
  * 
- * @version 1.0.16
+ * @version 1.0.17
  */
 
 /** --------------------------------------------------------------------------
  * PARAMETERS
  */
 
-const VERSION='1.0.16';
+const VERSION='1.0.17';
 const CARD = {
     typeName: 'entity-progress-card',
     name: 'Entity progress card',
@@ -55,6 +55,8 @@ const CARD = {
         maxPercent: 100,
         unit: '%',
         color: 'var(--state-icon-color)',
+        bar_animation: false,
+        icon_animation: 'none',
         decimal: {
             percentage: 2,
             other: 0
@@ -80,6 +82,7 @@ const SELECTORS = {
     secondaryInfo: 'secondary_info',
     progressBar: 'progress-bar',
     progressBarInner: 'progress-bar-inner',
+    ha_icon: 'ha-icon',
     alert: 'ha-alert'
 };
 
@@ -226,6 +229,29 @@ const CARD_CSS=`
         justify-content: center;
         background-color: black;
         z-index: 10;
+    }
+
+    @keyframes boing {
+        0% { transform: scale3d(1, 1, 1); }
+        7% { transform: scale3d(1.25, 0.75, 1); }
+        10% { transform: scale3d(0.75, 1.25, 1); }
+        12% { transform: scale3d(1.15, 0.85, 1); }
+        16% { transform: scale3d(0.95, 1.05, 1); }
+        19% { transform: scale3d(1.05, 0.95, 1); }
+        25% { transform: scale3d(1, 1, 1); }
+    }
+
+    /* Définir l'animation spin */
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    /* Définir l'animation pulse */
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
     }
     `;
 
@@ -484,6 +510,8 @@ class EntityProgressCard extends HTMLElement {
         this._unit = null;
         this._max_value = null;
         this._decimal = null;
+        this._bar_animation = false;
+        this._icon_animation = null;
         this._elements = {};
         this._isBuilt = false;
     }
@@ -513,11 +541,12 @@ class EntityProgressCard extends HTMLElement {
      * @param {Object} config - The new configuration object.
      */
     setConfig(config) {
-        const layoutChanged = this.config?.layout !== config.layout;
-        this.config = config;
-        this._max_value = this.config.max_value || null;
-        this._unit      = this.config.unit      || CARD.config.unit;
-        this._decimal   = this.config.decimal   || (this._unit === CARD.config.unit ? CARD.config.decimal.percentage : CARD.config.decimal.other);
+        const layoutChanged    = this.config?.layout !== config.layout;
+        this.config            = config;
+        this._max_value        = this.config.max_value      || null;
+        this._unit             = this.config.unit           || CARD.config.unit;
+        this._bar_animation    = this.config.bar_animation  || CARD.config.bar_animation;
+        this._icon_animation   = this.config.icon_animation || CARD.config.icon_animation;
 
         if (!this._isBuilt) {
             this._isBuilt = true;
@@ -544,8 +573,12 @@ class EntityProgressCard extends HTMLElement {
      *                        state and services.
      */
     set hass(hass) {
-        this._hass = hass;
-        this._currentLanguage = MSG[hass.config.language] ? hass.config.language : CARD.config.language;
+        this._hass             = hass;
+        const entity           = this._hass?.entities[this.config.entity];
+        const displayPrecision = entity ? entity.display_precision : undefined;
+        this._decimal          = this.config.decimal ?? displayPrecision ?? (this._unit === CARD.config.unit ? CARD.config.decimal.percentage : CARD.config.decimal.other);
+        this._currentLanguage  = MSG[hass.config.language] ? hass.config.language : CARD.config.language;
+
         this._updateDynamicElements();
     }
 
@@ -586,6 +619,7 @@ class EntityProgressCard extends HTMLElement {
             [SELECTORS.secondaryInfo]: this.shadowRoot.querySelector(`.${SELECTORS.secondaryInfo}`),
             [SELECTORS.progressBarInner]: this.shadowRoot.querySelector(`.${SELECTORS.progressBarInner}`),
             [SELECTORS.alert]: this.shadowRoot.querySelector(`${SELECTORS.alert}`),
+            [SELECTORS.ha_icon]: this.shadowRoot.querySelector(`${SELECTORS.ha_icon}`),
         };
     }
 
@@ -745,6 +779,7 @@ class EntityProgressCard extends HTMLElement {
             return { value: this._max_value, valid: true };
         } else if (typeof this._max_value === "string") { // maxValue is a known entity
             const entityState = this._hass.states[this._max_value].state;
+
             if (!entityState || entityState === "unavailable" || entityState === "unknown") {
                 return { value: 0, valid: false };
             }
@@ -788,13 +823,13 @@ class EntityProgressCard extends HTMLElement {
             }
 
             const formattedPercentage = Number.isFinite(percentage)
-                ? (Number.isInteger(percentage) ? percentage : percentage.toFixed(this._decimal))
+                ? percentage.toFixed(this._decimal)
                 : 0;
-    
+
             const formattedValue = Number.isFinite(value)
-                ? (Number.isInteger(value) ? value : value.toFixed(this._decimal))
+                ? value.toFixed(this._decimal)
                 : 0;
-        
+
             label = this._unit === CARD.config.unit
                 ? `${formattedPercentage}${this._unit}` // if unit = %
                 : `${formattedValue}${this._unit}`; // if unit <> %
@@ -848,7 +883,17 @@ class EntityProgressCard extends HTMLElement {
         /**
          * Update dyn element
          */
+        this._updateElement(SELECTORS.ha_icon, (el) => {
+            if (this._icon_animation === 'boing') {
+                el.style.animation = 'boing 3s ease infinite';
+                el.style.transformOrigin = '50% 90%';
+            }            
+        });
+
         this._updateElement(SELECTORS.progressBarInner, (el) => {
+            if (this._bar_animation) {
+                el.style.transition = 'width 0.5s ease';
+            }            
             el.style.width = `${currentPercent.percentage}%`;
             el.style.backgroundColor = iconAndColorFromTheme.color || this.config.bar_color || CARD.config.color;
         });
@@ -856,6 +901,13 @@ class EntityProgressCard extends HTMLElement {
         this._updateElement(SELECTORS.icon, (el) => {
             el.setAttribute(SELECTORS.icon, iconAndColorFromTheme.icon || this.config.icon || entity.attributes.icon || 'mdi:alert');
             el.style.color = iconAndColorFromTheme.color|| this.config.color || CARD.config.color;
+            if (this._icon_animation === 'spin') {
+                el.style.animation = 'spin 1s linear infinite;';
+            }
+            if (this._icon_animation === 'pulse') {
+                el.style.icon_animation = 'pulse 2s ease-in-out infinite;;';
+            }
+
         });
 
         this._updateElement(SELECTORS.shape, (el) => {
