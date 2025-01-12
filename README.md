@@ -91,6 +91,19 @@ You can customize the card using the following parameters:
   - LQI @ 150 (entity) with max_value @ 255 (static value -> max_value = 255)
   - A (entity_a) with max_value (entity_b)
 
+- **`min_value`** [numeric] *(optional)*:  
+  Defines the minimum value to be used when calculating the percentage.  
+  This allows the percentage to be relative to both a minimum (min_value, which represents 0%) and a maximum (max_value, which represents 100%).  
+  This value must be numeric (either a float or an integer).
+
+  *Example:*  
+    Suppose you are measuring the weight of a connected litter box, where:
+
+    - `min_value` = 6 (the minimum weight representing an empty box, i.e., 0%).
+    - `max_value` = 11 (the maximum weight representing a full box, i.e., 100%).
+    - `value` = 8 (the current weight).
+    - `percentage` = 40%
+
 - **`unit`** [string] *(optional)*:  
   Allows representing standard unit.  
   Specifies the unit to display the entity's actual value, ignoring max_value. The max_value is still used for the progress bar representation.  
