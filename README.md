@@ -192,6 +192,7 @@ filter:
         type: custom:entity-progress-card
         entity: this.entity_id
         theme: battery
+        decimal: 0
 card:
   square: false
   type: grid
@@ -254,6 +255,7 @@ cards:
             entity: this.entity_id
             name: sample
             theme: battery
+            decimal: 0
             card_mod:
               style:
                 .: |-
