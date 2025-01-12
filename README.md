@@ -230,6 +230,7 @@ card_mod:
       25% { transform: scale3d(1, 1, 1); }
     }
 ```
+We expose the `ha-icon` and `ha-shape` elements to properly animate the card.
 
 ### vertical-stack-in-card
 
