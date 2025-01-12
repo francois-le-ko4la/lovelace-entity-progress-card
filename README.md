@@ -137,6 +137,7 @@ name: RVB
 icon: mdi:grain
 color: rgb(110, 65, 171)
 bar_color: rgb(110, 65, 171)
+decimal: 0
 ```
 
 <img src="./doc/RVB.png" alt="Image title" width="250px"/>
@@ -149,6 +150,7 @@ name: RVB
 icon: mdi:grain
 color: yellow
 bar_color: green
+decimal: 0
 layout: vertical
 grid_options:
   columns: 3
