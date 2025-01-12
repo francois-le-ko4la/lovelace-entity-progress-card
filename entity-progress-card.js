@@ -27,14 +27,14 @@
  * - Error handling for missing or invalid entities.
  * - Configuration options for various card elements, including entity picker, color settings, and layout options.
  * 
- * @version 1.0.18
+ * @version 1.0.19
  */
 
 /** --------------------------------------------------------------------------
  * PARAMETERS
  */
 
-const VERSION='1.0.18';
+const VERSION='1.0.19';
 const CARD = {
     typeName: 'entity-progress-card',
     name: 'Entity progress card',
@@ -52,6 +52,7 @@ const CARD = {
     },
     config: {
         language: "en",
+        minValue: 0,
         maxPercent: 100,
         unit: '%',
         color: 'var(--state-icon-color)',
@@ -272,6 +273,7 @@ const MSG = {
         entityError: "entity: The 'entity' parameter is required!",
         entityNotFound: "entity: Entity not found in Home Assistant.",
         entityUnavailable: "unavailable",
+        minValueError: "min_value: Check your min_value.",
         maxValueError: "max_value: Check your max_value.",
         decimalError: "decimal: Decimal value cannot be negative."
     },
@@ -279,6 +281,7 @@ const MSG = {
         entityError: "entity: Le paramètre 'entity' est requis !",
         entityNotFound: "entity: Entité introuvable dans Home Assistant.",
         entityUnavailable: "indisponible",
+        minValueError: "min_value: Vérifiez votre min_value.",
         maxValueError: "max_value: Vérifiez votre max_value.",
         decimalError: "decimal: La valeur décimale ne peut pas être négative."
     },
@@ -286,6 +289,7 @@ const MSG = {
         entityError: "entity: ¡El parámetro 'entity' es obligatorio!",
         entityNotFound: "entity: Entidad no encontrada en Home Assistant.",
         entityUnavailable: "no disponible",
+        minValueError: "max_value: Verifique su min_value.",
         maxValueError: "max_value: Verifique su max_value.",
         decimalError: "decimal: El valor decimal no puede ser negativo."
     },
@@ -293,6 +297,7 @@ const MSG = {
         entityError: "entity: Der Parameter 'entity' ist erforderlich!",
         entityNotFound: "entity: Entität in Home Assistant nicht gefunden.",
         entityUnavailable: "nicht verfügbar",
+        minValueError: "max_value: Überprüfen Sie Ihren min_value.",
         maxValueError: "max_value: Überprüfen Sie Ihren max_value.",
         decimalError: "decimal: Der Dezimalwert darf nicht negativ sein."
     },
@@ -486,6 +491,7 @@ class EntityProgressCard extends HTMLElement {
         }
         this._currentLanguage = CARD.config.language;
         this._unit = null;
+        this._min_value = null;
         this._max_value = null;
         this._decimal = null;
         this._show_more_info = null;
@@ -541,6 +547,7 @@ class EntityProgressCard extends HTMLElement {
     setConfig(config) {
         const layoutChanged    = this.config?.layout !== config.layout;
         this.config            = config;
+        this._min_value        = this.config.min_value      || CARD.config.minValue;
         this._max_value        = this.config.max_value      || null;
         this._unit             = this.config.unit           || CARD.config.unit;
         this._show_more_info   = this.config.show_more_info ?? CARD.config.showMoreInfo;
@@ -738,6 +745,11 @@ class EntityProgressCard extends HTMLElement {
             return { valid: false, msg: MSG[this._currentLanguage].entityError };
         } else if (!entity) {
             return { valid: false, msg: MSG[this._currentLanguage].entityNotFound };
+        }  else if (this._min_value &&
+            !(
+                typeof this._min_value === "number" && !isNaN(this._min_value)
+            )) {
+            return { valid: false, msg: MSG[this._currentLanguage].minValueError };
         } else if (this._max_value &&
             !(
                 (typeof this._max_value === "number" && !isNaN(this._max_value) && this._max_value > 0) ||
@@ -814,7 +826,7 @@ class EntityProgressCard extends HTMLElement {
             if (!this._max_value) {
                 percentage = isNaN(value) ? 0 : Math.min(Math.max(value, 0), CARD.config.maxPercent);
             } else if (this.config.max_value && maxValueResult.valid) {
-                percentage = isNaN(value) ? 0 : (value / maxValueResult.value) * CARD.config.maxPercent;
+                percentage = isNaN(value) ? 0 : ((value - this._min_value) / (maxValueResult.value - this._min_value)) * CARD.config.maxPercent;
             } else {
                 entityAvailable=false;
             }
