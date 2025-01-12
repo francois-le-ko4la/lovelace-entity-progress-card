@@ -117,7 +117,9 @@ You can customize the card using the following parameters:
 - **`show_more_info`** [boolean] *(optional)*:  
   Determines whether clicking on the card will open the entity's "more info" dialog in Home Assistant.  
   Defaults to true. If set to false, clickingthe card will not trigger any "more info" action.
+  
   *Default:* true
+  
   *Example:*
     - `true` to enable "more info" on click.
     - `false` to disable the "more info" dialog.
