@@ -138,7 +138,7 @@ You can customize the card using the following parameters:
     - `false` to disable the "more info" dialog.
   
 > Note:  
-> `max_value`, `unit`, `decimal` & `show_more_info` can be set with the YAML editor only
+> `min_value`, `max_value`, `unit`, `decimal` & `show_more_info` can be set with the YAML editor only
 
 ### YAML
 Here’s our example of how to use the Custom Bar Card with custom styles:
