@@ -127,6 +127,18 @@ You can customize the card using the following parameters:
     - `0` for displaying 51%
     -  `1` for displaying 20.7°C
 
+- **`navigate_to`** [string] *(optional)*:  
+  Specifies a URL to navigate to when the card is clicked.
+  If defined, clicking the card will redirect to the specified location.
+  This parameter takes precedence over show_more_info if both are defined.
+
+  *Default values:* null (no navigation).
+
+  *Example:*
+  - `/lovelace/dashboard` to navigate to another Home Assistant dashboard ("dashboard").
+  - `/lovelace/5` to navigate to another Home Assistant dashboard (5).
+  - `https://example.com` to open an external link.
+
 - **`show_more_info`** [boolean] *(optional)*:  
   Determines whether clicking on the card will open the entity's "more info" dialog in Home Assistant.  
   Defaults to true. If set to false, clickingthe card will not trigger any "more info" action.
@@ -138,7 +150,7 @@ You can customize the card using the following parameters:
     - `false` to disable the "more info" dialog.
   
 > Note:  
-> `min_value`, `max_value`, `unit`, `decimal` & `show_more_info` can be set with the YAML editor only
+> `min_value`, `max_value`, `unit`, `decimal`, `navigate_to`, `show_more_info` can be set with the YAML editor only
 
 ### YAML
 Here’s our example of how to use the Custom Bar Card with custom styles:
