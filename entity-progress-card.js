@@ -27,14 +27,14 @@
  * - Error handling for missing or invalid entities.
  * - Configuration options for various card elements, including entity picker, color settings, and layout options.
  * 
- * @version 1.0.19
+ * @version 1.0.20
  */
 
 /** --------------------------------------------------------------------------
  * PARAMETERS
  */
 
-const VERSION='1.0.19';
+const VERSION='1.0.20';
 const CARD = {
     typeName: 'entity-progress-card',
     name: 'Entity progress card',
@@ -58,8 +58,8 @@ const CARD = {
         color: 'var(--state-icon-color)',
         showMoreInfo: true,
         decimal: {
-            percentage: 2,
-            other: 0
+            percentage: 0,
+            other: 2
         }
     }
 };
@@ -495,9 +495,10 @@ class EntityProgressCard extends HTMLElement {
         this._max_value = null;
         this._decimal = null;
         this._show_more_info = null;
+        this._navigate_to = null;
         this._elements = {};
         this._isBuilt = false;
-        this.addEventListener('click', this._showMoreInfo.bind(this));
+        this.addEventListener('click', this._navigateToOrShowMoreInfo.bind(this));
     }
 
     /**
@@ -510,8 +511,19 @@ class EntityProgressCard extends HTMLElement {
      * - `this._show_more_info` must be true.
      * - `this.config.entity` must be defined and contain a valid entity ID.
      */
-    _showMoreInfo() {
-        if (this._show_more_info && this.config && this.config.entity) {
+    _navigateToOrShowMoreInfo() {
+        if (this._navigate_to) {
+            window.history.pushState(null, '', this._navigate_to);
+            this.dispatchEvent(new CustomEvent('location-changed', { bubbles: true, composed: true }));
+    
+            const anchor = this._navigate_to.split('#')[1];
+            if (anchor) {
+                const element = document.querySelector(`#${anchor}`);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        } else if (this._show_more_info && this.config && this.config.entity) {
             this.dispatchEvent(new CustomEvent('hass-more-info', {
                 bubbles: true,
                 composed: true,
@@ -551,6 +563,7 @@ class EntityProgressCard extends HTMLElement {
         this._max_value        = this.config.max_value      || null;
         this._unit             = this.config.unit           || CARD.config.unit;
         this._show_more_info   = this.config.show_more_info ?? CARD.config.showMoreInfo;
+        this._navigate_to      = this.config.navigate_to    || null;
 
         if (!this._isBuilt) {
             this._isBuilt = true;
