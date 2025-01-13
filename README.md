@@ -119,8 +119,8 @@ You can customize the card using the following parameters:
   - `Default Value` (if no other value is set).
   
   *Default values:*
-    - `decimal` = 2 for percentage (%)
-    - `decimal` = 0 for other unit (°C, kWh...)
+    - `decimal` = 0 for percentage (%)
+    - `decimal` = 2 for other unit (°C, kWh...)
   
   *Example:*
     - `1` for displaying 50.6%.
@@ -162,7 +162,6 @@ name: RVB
 icon: mdi:grain
 color: rgb(110, 65, 171)
 bar_color: rgb(110, 65, 171)
-decimal: 0
 ```
 
 <img src="./doc/RVB.png" alt="Image title" width="250px"/>
@@ -175,7 +174,6 @@ name: RVB
 icon: mdi:grain
 color: yellow
 bar_color: green
-decimal: 0
 layout: vertical
 grid_options:
   columns: 3
@@ -217,7 +215,6 @@ filter:
         type: custom:entity-progress-card
         entity: this.entity_id
         theme: battery
-        decimal: 0
 card:
   square: false
   type: grid
@@ -280,7 +277,6 @@ cards:
             entity: this.entity_id
             name: sample
             theme: battery
-            decimal: 0
             card_mod:
               style:
                 .: |-
