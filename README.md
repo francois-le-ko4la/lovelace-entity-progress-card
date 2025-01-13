@@ -118,7 +118,7 @@ You can customize the card using the following parameters:
   - `decimal` setting in the YAML configuration.
   - `Default Value` (if no other value is set).
   
-  *Default values:*
+  *Default values (⚠️1.0.20):*
     - `decimal` = 0 for percentage (%)
     - `decimal` = 2 for other unit (°C, kWh...)
   
