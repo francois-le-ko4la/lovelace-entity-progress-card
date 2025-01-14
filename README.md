@@ -9,11 +9,14 @@ Entity progress card for Home Assistant
 This custom version of the **Bar Card** for Home Assistant allows you to display a simple percentage bar that is quick and easy to integrate into your Lovelace cards. It blends seamlessly with the `Tile`/`Mushroom` look & feel of the latest Home Assistant versions. This card is based on custom CSS and leverages existing code to fine-tune the appearance.
 
 ## 🚀 Features
-- Displays a percentage progress bar.
-- Seamlessly integrates with the "Tile" look & feel of recent Home Assistant versions.
-- Easily customizable using the card editor or YAML config : entity, name, colors, bar color, unit... (full description below)
-- Theme to automatically adjust icon and colors according to the context (Theme Battery)
-- Automatically adapts to the user's language for error messages and descriptions, ensuring a localized experience. 🇬🇧🇪🇸🇩🇪🇫🇷
+- **Percentage Progress Bar**: Displays the progress of a specified entity in percentage.
+- **Seamless Integration with Home Assistant's Modern UI**: Fully aligns with the "Tile" look & feel of recent Home Assistant versions.
+- **Dynamic Theme**: Automatically adjusts icons and colors based on the context (e.g., Battery Theme), reflecting the entity's state.
+- **Enhanced Customization**: Offers a balanced default setup while allowing users to further tailor the card's behavior and appearance through YAML or the card editor (full details below).
+- **Smooth Animations**: Provides HTML elements that facilitate smooth, visually appealing animations, leveraging well-known mechanisms for easy implementation.
+- **Interactive Features**: Includes a "More Info" option, enabling users to view additional entity details or navigate to another dashboard with a simple click, improving accessibility and usability.
+- **Performance Optimized**: Code enhancements ensure better performance and maintainability, offering a more stable and responsive experience.
+- **Multi-Language Support**: Provides localized error messages and descriptions, supporting multiple languages 🇬🇧🇪🇸🇩🇪🇫🇷.
   
 ## ⚙️ Prerequisites
 
@@ -28,11 +31,12 @@ Use this button to add the repository to your HACS:
 
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=francois-le-ko4la&repository=lovelace-entity-progress-card&category=plugin)
 
-or follow these steps:
-1. Add this repository to HACS by including it as a custom repository:
-  - Go to `HACS` > `Integrations` > `⋮` > `Custom repositories`.
-  - Paste the URL of this repository and select Lovelace as the category.
-2. Install the Entity Progress Card from HACS.
+> [!TIP]
+> If you are unable to use the button above, follow the steps below:
+> 1. Add this repository to HACS by including it as a custom repository:
+>   - Go to `HACS` > `Integrations` > `⋮` > `Custom repositories`.
+>   - Paste the URL of this repository and select Lovelace as the category.
+> 2. Install the Entity Progress Card from HACS.
 
 ### Manual Installation
 
