@@ -18,6 +18,7 @@ This custom version of the **Bar Card** for Home Assistant allows you to display
 ## ⚙️ Prerequisites
 
 - HA version: 2024+
+> [!IMPORTANT]
 > Ensure your Home Assistant instance is up to date to support this custom card.
 
 ## 📦 Installation Steps
@@ -118,14 +119,19 @@ You can customize the card using the following parameters:
   - `decimal` setting in the YAML configuration.
   - `Default Value` (if no other value is set).
   
-  *Default values (⚠️1.0.20):*
+  *Default values:*
     - `decimal` = 0 for percentage (%)
     - `decimal` = 2 for other unit (°C, kWh...)
-  
-  *Example:*
+
+  *Example:*  
     - `1` for displaying 50.6%.
     - `0` for displaying 51%
     -  `1` for displaying 20.7°C
+
+> [!IMPORTANT]
+> Before version 1.0.20, the default values were different (2 for percentages
+> and 0 for other units). When updating, you will need to adjust the parameter
+> according to your needs.
 
 - **`navigate_to`** [string] *(optional)*:  
   Specifies a URL to navigate to when the card is clicked.
@@ -149,7 +155,7 @@ You can customize the card using the following parameters:
     - `true` to enable "more info" on click.
     - `false` to disable the "more info" dialog.
   
-> Note:  
+> [!NOTE] 
 > `min_value`, `max_value`, `unit`, `decimal`, `navigate_to`, `show_more_info` can be set with the YAML editor only
 
 ### YAML
@@ -194,16 +200,25 @@ The card editor allows you to quickly set up and customize the card.
 - `Colors` can be selected from the provided list, which is based on standard Home Assistant colors. It’s possible to use a color outside of this list, but it must be set through YAML configuration.
 - The `Theme` can be selected. Once a theme is chosen, the `icon`, `color`, and `bar-color` parameters will no longer be visible.
 
-## 💡 Tips
-### Usage
+## 💡 Sample Usage
 
-- Use Material Design Icons (MDI) for a consistent look. Browse available icons at Material Design Icons.
-- Experiment with color codes like HEX or RGB for precise customization.
-- Combine with other Lovelace cards to create a visually cohesive dashboard.
+> [!TIP]
+>  - Use Material Design Icons (MDI) for a consistent look. Browse available icons at Material Design Icons.
+>  - Experiment with color codes like HEX or RGB for precise customization.
+>  - Combine with other Lovelace cards to create a visually cohesive dashboard.
+
+> [!IMPORTANT]
+>
+> Below, you'll find examples that highlight the interoperability of this card with other popular Home Assistant projects.
+> To replicate these samples, ensure the following are set up:
+>
+>  - vertical-stack-in-card ([GitHub link](https://github.com/ofekashery/vertical-stack-in-card))
+>  - auto-entities ([GitHub link](https://github.com/thomasloven/lovelace-auto-entities))
+>  - card_mod ([GitHub link](https://github.com/thomasloven/lovelace-card-mod))
 
 ### Battery dashboard
 
-This card enables the creation of a streamlined battery dashboard by leveraging theme capabilities and [auto-entities](https://github.com/thomasloven/lovelace-auto-entities) custom card.
+This card enables the creation of a streamlined battery dashboard by leveraging theme capabilities and `auto-entities` custom card.
 
 ```yaml
 type: custom:auto-entities
@@ -228,6 +243,23 @@ sort:
 ```
 
 <img src="./doc/battery_dashboard.png" alt="Image title" width="500"/>
+
+### litter box
+
+Do you want a percentage based on a minimum and maximum quantity? Here’s an example with a litter box:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.petkit_puramax_2_litter_weight
+max_value: 12
+min_value: 6
+name: Litière
+bar_color: var(--disabled-color)
+grid_options:
+  columns: 6
+  rows: 1
+```
+
 
 ### card_mod / animation
 
@@ -257,11 +289,17 @@ card_mod:
       25% { transform: scale3d(1, 1, 1); }
     }
 ```
-We expose the `ha-icon` and `ha-shape` elements to properly animate the card.
+> [!TIP]
+> We expose the `ha-icon` and `ha-shape` elements to properly animate the card.
 
 ### vertical-stack-in-card
 
-We can use `vertical-stack-in-card` to group multiple cards into a cohesive layout. Additionally, we'll leverage `card_mod` to seamlessly remove the borders, creating a cleaner and more unified design.
+We can use `vertical-stack-in-card` to group multiple cards into a cohesive layout.
+This approach is particularly useful when combining custom cards while maintaining a
+consistent design. Additionally, we leverage `auto-entities` to dynamically list entities
+based on specific attributes or filters, allowing for flexible and automatic card
+generation. Finally, `card_mod` is used to remove the borders and shadows, ensuring a
+clean and seamless appearance.
 
 *Example:*
 ```yaml
