@@ -58,7 +58,7 @@ You can customize the card using the following parameters:
   *Example:*
     - `"RGB Color"`
 
-- **`layout`** [string `horizontal`| `vertical`] *(optional)*:  
+- **`layout`** [string {`horizontal`| `vertical`}] *(optional)*:  
   Determines the layout of the elements inside the card. You can choose between different layouts based on your visual preferences.
   
   *Examples:*
@@ -79,11 +79,12 @@ You can customize the card using the following parameters:
   The color of the progress bar. Accepts color names, RGB values, or HEX codes.  
   *Examples:* `"blue"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`
 
-- **`theme`** [string `battery`|`light`] *(optional)*:  
+- **`theme`** [string {`battery`|`light`}] *(optional)*:  
   Allows customization of the progress bar's appearance using a predefined theme.
   This theme dynamically adjusts the `icon`, `color` and `bar-color` parameters based on the battery level, eliminating the need for manual adjustments or complex Jinja2 templates.  
   *Example:*
   - `battery`
+  - `light`
 
 - **`max_value`** [numeric/entity] *(optional)*:  
   Allows representing standard values and calculating the percentage relative to the maximum value.
@@ -138,7 +139,7 @@ You can customize the card using the following parameters:
   If defined, clicking the card will redirect to the specified location.
   This parameter takes precedence over show_more_info if both are defined.
 
-  *Default values:* null (no navigation).
+  *Default values:* `null` (no navigation).
 
   *Example:*
   - `/lovelace/dashboard` to navigate to another Home Assistant dashboard ("dashboard").
@@ -149,7 +150,7 @@ You can customize the card using the following parameters:
   Determines whether clicking on the card will open the entity's "more info" dialog in Home Assistant.  
   Defaults to true. If set to false, clickingthe card will not trigger any "more info" action.
   
-  *Default:* true
+  *Default:* `true`
   
   *Example:*
     - `true` to enable "more info" on click.
