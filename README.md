@@ -49,58 +49,79 @@ type: module
 You can customize the card using the following parameters:
 
 - **`entity`** [entity] *(required)*:  
-  The Home Assistant entity to display.  
+  The Home Assistant entity to display.
+  
   *Example:*
     - `sensor.hp_envy_6400_series_tri_color_cartridge`
 
 - **`name`** [string] *(optional)*:  
-  The name displayed on the progress bar. If omitted, the entity's friendly name will be used.  
+  The name displayed on the progress bar. If omitted, the entity's friendly name will be used.
+  
+  *Default:*
+    - `<entity_name>`
+      
   *Example:*
     - `"RGB Color"`
 
 - **`layout`** [string {`horizontal`| `vertical`}] *(optional)*:  
   Determines the layout of the elements inside the card. You can choose between different layouts based on your visual preferences.
   
+  *Default:*
+    - `horizontal`
+  
   *Examples:*
     - `horizontal`: Displays the elements horizontally, with a row layout (by default, the text and progress bar will be displayed side by side).  
     - `vertical`: Displays the elements vertically, with a column layout (by default, the text and progress bar will be stacked one below the other).
-  
-  If no specific layout is set, the default layout is `horizontal`.
 
 - **`icon`** [string] *(optional)*:  
-  The icon associated with the entity. Supports Material Design Icons (MDI).  
+  The icon associated with the entity. Supports Material Design Icons (MDI).
+  
   *Examples:* `mdi:lightbulb`, `mdi:thermometer`
 
 - **`color`** [string] *(optional)*:  
-  The color of the icon. Accepts color names, RGB values, or HEX codes.  
+  The color of the icon. Accepts color names, RGB values, or HEX codes.
+  
+  *Default:*
+    - `var(--state-icon-color)`
+
   *Examples:* `"green"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`
 
 - **`bar-color`** [string] *(optional)*:  
-  The color of the progress bar. Accepts color names, RGB values, or HEX codes.  
+  The color of the progress bar. Accepts color names, RGB values, or HEX codes.
+  
+  *Default:*
+    - `var(--state-icon-color)`
+
   *Examples:* `"blue"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`
 
 - **`theme`** [string {`battery`|`light`}] *(optional)*:  
   Allows customization of the progress bar's appearance using a predefined theme.
   This theme dynamically adjusts the `icon`, `color` and `bar-color` parameters based on the battery level, eliminating the need for manual adjustments or complex Jinja2 templates.  
   *Example:*
-  - `battery`
-  - `light`
+    - `battery`
+    - `light`
 
 - **`max_value`** [numeric/entity] *(optional)*:  
   Allows representing standard values and calculating the percentage relative to the maximum value.
-  This value can be numeric (float/int) or an entity and real value must be > 0.  
+  This value can be numeric (float/int) or an entity and real value must be > 0.
+  
+  *Default:*
+    - `100%`
+
   *Example:*
-  - LQI @ 150 (entity) with max_value @ 255 (static value -> max_value = 255)
-  - A (entity_a) with max_value (entity_b)
+    - LQI @ 150 (entity) with max_value @ 255 (static value -> max_value = 255)
+    - A (entity_a) with max_value (entity_b)
 
 - **`min_value`** [numeric] *(optional)*:  
   Defines the minimum value to be used when calculating the percentage.  
   This allows the percentage to be relative to both a minimum (min_value, which represents 0%) and a maximum (max_value, which represents 100%).  
   This value must be numeric (either a float or an integer).
 
-  *Example:*  
-    Suppose you are measuring the weight of a connected litter box, where:
+  *Default:*
+    - `0`
 
+  *Example:*
+    Suppose you are measuring the weight of a connected litter box, where:
     - `min_value` = 6 (the minimum weight representing an empty box, i.e., 0%).
     - `max_value` = 11 (the maximum weight representing a full box, i.e., 100%).
     - `value` = 8 (the current weight).
@@ -108,10 +129,14 @@ You can customize the card using the following parameters:
 
 - **`unit`** [string] *(optional)*:  
   Allows representing standard unit.  
-  Specifies the unit to display the entity's actual value, ignoring max_value. The max_value is still used for the progress bar representation.  
+  Specifies the unit to display the entity's actual value, ignoring max_value. The max_value is still used for the progress bar representation.
+  
+  *Default:*
+    - `%`
+      
   *Example:*
-  - `°C` for temperature.
-  - `kWh` for energy consumption.
+    - `°C` for temperature.
+    - `kWh` for energy consumption.
     
 - **`decimal`** [int >=0] *(optional)*:  
   Defines the number of decimal places to display for numerical values.  
@@ -139,18 +164,20 @@ You can customize the card using the following parameters:
   If defined, clicking the card will redirect to the specified location.
   This parameter takes precedence over show_more_info if both are defined.
 
-  *Default values:* `null` (no navigation).
+  *Default values:*
+    - `null` (no navigation).
 
   *Example:*
-  - `/lovelace/dashboard` to navigate to another Home Assistant dashboard ("dashboard").
-  - `/lovelace/5` to navigate to another Home Assistant dashboard (5).
-  - `https://example.com` to open an external link.
+    - `/lovelace/dashboard` to navigate to another Home Assistant dashboard ("dashboard").
+    - `/lovelace/5` to navigate to another Home Assistant dashboard (5).
+    - `https://example.com` to open an external link.
 
 - **`show_more_info`** [boolean] *(optional)*:  
   Determines whether clicking on the card will open the entity's "more info" dialog in Home Assistant.  
   Defaults to true. If set to false, clickingthe card will not trigger any "more info" action.
   
-  *Default:* `true`
+  *Default:*
+    - `true`
   
   *Example:*
     - `true` to enable "more info" on click.
