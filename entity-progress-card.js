@@ -27,14 +27,14 @@
  * - Error handling for missing or invalid entities.
  * - Configuration options for various card elements, including entity picker, color settings, and layout options.
  * 
- * @version 1.0.20
+ * @version 1.0.21
  */
 
 /** --------------------------------------------------------------------------
  * PARAMETERS
  */
 
-const VERSION='1.0.20';
+const VERSION='1.0.21';
 const CARD = {
     typeName: 'entity-progress-card',
     name: 'Entity progress card',
@@ -48,7 +48,12 @@ const CARD = {
         vertical:{
             label: 'vertical',
             value: { grid_rows: 2, grid_min_rows: 2, grid_columns: 1, grid_min_columns: 1 }
-        }
+        },
+    },
+    tap_action: {
+        no_action: "no_action",
+        navigate_to: "navigate_to",
+        more_info:"show_more_info"
     },
     config: {
         language: "en",
@@ -303,12 +308,16 @@ const MSG = {
     },
 };
 
+const THEME_KEY = "theme";
+const NAVIGATETO_KEY = "navigate_to";
+
 const EDITOR_INPUT_FIELDS = [
     {   name: 'entity',
         label: { en: 'Entity', fr: 'Entité', es: 'Entidad', de: 'Entität', },
         type: 'entity',
+        width: '92%',
         required: true,
-        isThemeOverriding: false,
+        isInGroup: null,
         description: {
             en: 'Select an entity from Home Assistant.',
             fr: 'Sélectionnez une entité de Home Assistant.',
@@ -318,41 +327,129 @@ const EDITOR_INPUT_FIELDS = [
     {   name: 'name',
         label: { en: 'Name', fr: 'Nom', es: 'Nombre', de: 'Name', },
         type: 'text',
+        width: '48%',
         required: false,
-        isThemeOverriding: false,
+        isInGroup: null,
         description: {
             en: 'Enter a name for the entity.',
             fr: 'Saisissez un nom pour l\'entité.',
             es: 'Introduzca un nombre para la entidad.',
             de: 'Geben Sie einen Namen für die Entität ein.',
         }},
-    {   name: 'layout',
-        label: { en: 'Layout', fr: 'Disposition', es: 'Disposición', de: 'Layout', },
-        type: 'layout',
+    {   name: 'unit',
+        label: { en: 'Unit', fr: 'Unité', es: 'Nombre', de: 'Name', },
+        type: 'text',
+        width: '15%',
         required: false,
-        isThemeOverriding: false,
+        isInGroup: null,
         description: {
-            en: 'Select the layout.',
-            fr: 'Sélectionnez la disposition.',
-            es: 'Seleccione la disposición.',
-            de: 'Wählen Sie das Layout.',
+            en: 'm, kg...',
+            fr: 'm, kg...',
+            es: 'm, kg...',
+            de: 'm, kg...',
+        }},
+    {   name: 'decimal',
+        label: { en: 'decimal', fr: 'decimal', es: 'decimal', de: 'decimal', },
+        type: 'number',
+        width: '25%',
+        required: false,
+        isInGroup: null,
+        description: {
+            en: 'Precision.',
+            fr: 'Précision.',
+            es: 'Precisión.',
+            de: 'Präzision.',
+        }},
+    {   name: 'min_value',
+        label: { en: 'Minimum value', fr: 'Valeur minimum', es: 'Nombre', de: 'Name', },
+        type: 'number',
+        width: '45%',
+        required: false,
+        isInGroup: null,
+        description: {
+            en: 'Enter the minimum value.',
+            fr: 'Saisissez la valeur minimum.',
+            es: 'Introduzca el valor mínimo.',
+            de: 'Geben Sie den Mindestwert ein.',
+        }},
+    {   name: 'max_value',
+        label: { en: 'Maximum value', fr: 'Valeur maximum', es: 'Nombre', de: 'Name', },
+        type: 'text',
+        width: '45%',
+        required: false,
+        isInGroup: null,
+        description: {
+            en: 'Enter the maximum value.',
+            fr: 'Saisissez la valeur maximum.',
+            es: 'Introduzca el valor máximo.',
+            de: 'Geben Sie den Höchstwert ein.',
+        }},
+    {   name: 'tap_action',
+        label: { en: 'Tap action', fr: 'Action au tap', es: 'Acción al tocar', de: 'Tippen Aktion', },
+        type: 'tap_action',
+        width: '45%',
+        required: false,
+        isInGroup: null,
+        description: {
+            en: 'Select the action.',
+            fr: 'Sélectionnez l\'action.',
+            es: 'Seleccione la acción.',
+            de: 'Wählen Sie die Aktion.'
+        }},
+    {   name: NAVIGATETO_KEY,
+        label: { en: 'Navigate to...', fr: 'Naviguer vers...', es: 'Navegar a...', de: 'Navigieren zu...',  },
+        type: 'text',
+        width: '45%',
+        required: false,
+        isInGroup: NAVIGATETO_KEY,
+        description: {
+            en: 'Select the target (/lovelace/0).',
+            fr: 'Saisir la cible (/lovelace/0).',
+            es: 'Seleccione el objetivo (/lovelace/0).',
+            de: 'Wählen Sie das Ziel (/lovelace/0).'
         }},
     {   name: 'theme',
         label: { en: 'Theme', fr: 'Thème', es: 'Tema', de: 'Thema', },
         type: 'theme',
+        width: '92%',
         required: false,
-        isThemeOverriding: false,
+        isInGroup: null,
         description: {
             en: 'Select a theme to automatically define the colors and icon.',
             fr: 'Sélectionnez un thème pour définir automatiquement les couleurs et l\'icône.',
             es: 'Seleccione un tema para definir automáticamente los colores y el icono.',
             de: 'Wählen Sie ein Thema, um die Farben und das Symbol automatisch festzulegen.',
         }},
+    {   name: 'layout',
+        label: { en: 'Layout', fr: 'Disposition', es: 'Disposición', de: 'Layout', },
+        type: 'layout',
+        width: '45%',
+        required: false,
+        isInGroup: null,
+        description: {
+            en: 'Select the layout.',
+            fr: 'Sélectionnez la disposition.',
+            es: 'Seleccione la disposición.',
+            de: 'Wählen Sie das Layout.',
+        }},
+    {   name: 'bar_color',
+        label: { en: 'Color for the bar', fr: 'Couleur de la barre', es: 'Color de la barra', de: 'Farbe für die Leiste', },
+        type: 'color',
+        width: '45%',
+        required: false,
+        isInGroup: THEME_KEY,
+        description: {
+            en: 'Select the color for the bar.',
+            fr: 'Sélectionnez la couleur de la barre.',
+            es: 'Seleccione el color de la barra.',
+            de: 'Wählen Sie für die Leiste.',
+        }},
     {   name: 'icon',
         label: { en: 'Icon', fr: 'Icône', es: 'Icono', de: 'Symbol', },
         type: 'icon',
+        width: '45%',
         required: false,
-        isThemeOverriding: true,
+        isInGroup: THEME_KEY,
         description: {
             en: 'Select an icon for the entity.',
             fr: 'Sélectionnez une icône pour l\'entité.',
@@ -362,24 +459,14 @@ const EDITOR_INPUT_FIELDS = [
     {   name: 'color',
         label: { en: 'Primary color', fr: 'Couleur de l\'icône', es: 'Color del icono', de: 'Primärfarbe', },
         type: 'color',
+        width: '45%',
         required: false,
-        isThemeOverriding: true,
+        isInGroup: THEME_KEY,
         description: {
             en: 'Select the primary color for the icon.',
-            fr: 'Sélectionnez la couleur principale de l\'icône.',
+            fr: 'Sélectionnez la couleur de l\'icône.',
             es: 'Seleccione el color principal del icono.',
             de: 'Wählen Sie die Primärfarbe für das Symbol.',
-        }},
-    {   name: 'bar_color',
-        label: { en: 'Color for the bar', fr: 'Couleur de la barre', es: 'Color de la barra', de: 'Farbe für die Leiste', },
-        type: 'color',
-        required: false,
-        isThemeOverriding: true,
-        description: {
-            en: 'Select the primary color for the bar.',
-            fr: 'Sélectionnez la couleur principale de la barre.',
-            es: 'Seleccione el color principal de la barra.',
-            de: 'Wählen Sie die Primärfarbe für die Leiste.',
         }},
 ];
 
@@ -390,8 +477,6 @@ const THEME_OPTION = [
         value: key
     }))
 ];
-
-const THEME_KEY = "theme"
 
 const COLOR_OPTION = [
     { name: 'Default', value: 'var(--state-icon-color)' },
@@ -443,6 +528,28 @@ const LAYOUT_OPTION = {
     ]
 };
 
+const TAP_ACTION = {
+    en: [
+        { value: CARD.tap_action.more_info,   name: 'More info (default)' },
+        { value: CARD.tap_action.navigate_to, name: 'Navigate to...' },
+        { value: CARD.tap_action.no_action,   name: 'No action' },
+    ],
+    fr: [
+        { value: CARD.tap_action.more_info,   name: 'Plus d\'infos (par défaut)' },
+        { value: CARD.tap_action.navigate_to, name: 'Naviguer vers...' },
+        { value: CARD.tap_action.no_action,   name: 'Aucune action' },
+    ],
+    es: [
+        { value: CARD.tap_action.more_info,   name: 'Más información (predeterminado)' },
+        { value: CARD.tap_action.navigate_to, name: 'Navegar a...' },
+        { value: CARD.tap_action.no_action,   name: 'Sin acción' },
+    ],
+    de: [
+        { value: CARD.tap_action.more_info,   name: 'Mehr Infos (Standard)' },
+        { value: CARD.tap_action.navigate_to, name: 'Zu navigieren...' },
+        { value: CARD.tap_action.no_action,   name: 'Keine Aktion' },
+    ]
+};
 
 /** --------------------------------------------------------------------------
  * 
@@ -857,7 +964,6 @@ class EntityProgressCard extends HTMLElement {
                 : `${formattedValue}${this._unit}`; // if unit <> %
         }
         return { value: value, percentage: percentage, label:label, entityAvailable: entityAvailable };
-
     }
 
     /**
@@ -1075,6 +1181,7 @@ class EntityProgressCardEditor extends HTMLElement {
         super();
         this.config = {};
         this._hass = null;
+        this._elements = {};
         this._overridableElements = {};
         this.rendered = false;
         this._currentLanguage = CARD.config.language;
@@ -1153,6 +1260,12 @@ class EntityProgressCardEditor extends HTMLElement {
             this.rendered = true;
             this.render();
         }
+        const yamlEditor = document.querySelector('#gui-editor');
+        if (yamlEditor) {
+            yamlEditor.addEventListener('focus', () => {
+                console.log('L editor est visible.');
+            });
+        }
     }
 
     /**
@@ -1172,10 +1285,10 @@ class EntityProgressCardEditor extends HTMLElement {
      * @param {boolean} disable - A boolean flag to control the visibility of the fields.
      *                            If `true`, fields are hidden. If `false`, fields are shown.
      */
-    _toggleFieldDisable(disable) {
-        const fields = Object.keys(this._overridableElements);
+    _toggleFieldDisable(key, disable) {
+        const fields = Object.keys(this._overridableElements[key]);
         fields.forEach(fieldName => {
-            this._overridableElements[fieldName].style.display = disable ? HTML.block.hide : HTML.block.show;
+            this._overridableElements[key][fieldName].style.display = disable ? HTML.block.hide : HTML.block.show;
         });
     }
 
@@ -1227,6 +1340,13 @@ class EntityProgressCardEditor extends HTMLElement {
      * @param {string} value - The new value to assign to the configuration property.
      */
     _updateConfigProperty(key, value) {
+
+        if ((key === 'min_value' || key === 'max_value' || key === 'decimal') && value !== '') {
+            const numericValue = Number(value); // Conversion explicite en nombre
+            if (!isNaN(numericValue)) {         // Vérifier si c'est un nombre valide
+                value = numericValue;          // Mise à jour avec la valeur numérique
+            }
+        }
         if (value === '') {
             if (key in this.config) {
                 delete this.config[key];
@@ -1236,10 +1356,74 @@ class EntityProgressCardEditor extends HTMLElement {
         }
         if (key === THEME_KEY) {
             const disableFields = THEME_KEY in this.config;
-            this._toggleFieldDisable(disableFields);
+            this._toggleFieldDisable(THEME_KEY, disableFields);
         }
         this.config = this._reorderConfig(this.config);
         this.dispatchEvent(new CustomEvent('config-changed', { detail: { config: this.config } }));
+    }
+
+    /**
+     * Manages the tap action behavior based on the provided value.
+     *
+     * This function updates the configuration and toggles fields related to the 
+     * tap action (e.g., `navigate_to` and `show_more_info`) depending on the 
+     * selected action. It ensures that mutually exclusive properties are handled 
+     * properly.
+     *
+     * Logic:
+     * - Disables or enables the `NAVIGATETO_KEY` field depending on whether the 
+     *   provided `value` matches `NAVIGATETO_KEY`.
+     * - For `CARD.tap_action.navigate_to`, resets the `more_info` property.
+     * - For `CARD.tap_action.more_info`, clears `navigate_to` and sets `more_info` to `true`.
+     * - For `CARD.tap_action.no_action`, clears `navigate_to` and sets `more_info` to `false`.
+     *
+     * @param {string} value - The selected tap action value to manage.
+     *                         Possible values: `CARD.tap_action.navigate_to`, 
+     *                         `CARD.tap_action.more_info`, `CARD.tap_action.no_action`.
+     */
+    _manageTapAction(value) {
+        this._toggleFieldDisable(NAVIGATETO_KEY, (value !== NAVIGATETO_KEY));
+        switch (value) {
+            case CARD.tap_action.navigate_to:
+                this._updateConfigProperty(CARD.tap_action.more_info, '');
+                break;
+            case CARD.tap_action.more_info:
+                this._updateConfigProperty(CARD.tap_action.navigate_to, '');
+                this._updateConfigProperty(CARD.tap_action.more_info, true);
+                break;
+            case CARD.tap_action.no_action:
+                this._updateConfigProperty(CARD.tap_action.navigate_to, '');
+                this._updateConfigProperty(CARD.tap_action.more_info, false);
+                break;
+        }
+    }
+
+    /**
+     * Determines the tap action value based on the current configuration.
+     *
+     * This function evaluates the `config` object to determine the appropriate 
+     * tap action to return. It considers the `navigate_to` and `show_more_info` 
+     * properties in the configuration to decide the value.
+     *
+     * Logic:
+     * - If `navigate_to` is defined, it returns `CARD.tap_action.navigate_to`.
+     * - If `show_more_info` is `true` or undefined, it returns `CARD.tap_action.more_info`.
+     * - If `show_more_info` is explicitly `false`, it returns `CARD.tap_action.no_action`.
+     *
+     * @returns {string|null} The determined tap action value, or `null` if no valid action is found.
+     */
+    _getTapActionValue() {
+        let value = null;
+
+        if (this.config.navigate_to) {
+            value = CARD.tap_action.navigate_to;
+        } else if (this.config.show_more_info === true || this.config.show_more_info === undefined) {
+            value = CARD.tap_action.more_info;
+        } else if (this.config.show_more_info === false) {
+            value = CARD.tap_action.no_action;
+        }
+
+        return value;
     }
 
     /**
@@ -1319,19 +1503,18 @@ class EntityProgressCardEditor extends HTMLElement {
      * value, and an optional description. If the field is marked as a theme-overridable element, 
      * it is stored in the `_overridableElements` object for potential dynamic modification.
      * 
-     * @param {Object} config - The configuration object for the field.
      * @param {string} config.name - The name of the field (used to store the field's value in `this.config`).
      * @param {string} config.label - The label for the field, displayed next to the input element.
      * @param {string} config.type - The type of field to create ('entity', 'icon', 'layout', 'theme', 'color', or 'text').
-     * @param {boolean} [config.required=false] - A flag indicating whether the field is required.
-     * @param {boolean} [config.isThemeOverriding=false] - A flag indicating if the field should be theme-overridable.
+     * @param {boolean} config.required - A flag indicating whether the field is required.
+     * @param {boolean} config.isInGroup - A flag indicating if the field should be group-overridable.
      * @param {string} config.description - The description of the field, typically displayed below the input.
      * 
      * @returns {HTMLElement} The container element (`<div>`) containing the input field and its description.
      */
-    _createField({ name, label, type, required = false, isThemeOverriding, description }) {
+    _createField({ name, label, type, required, isInGroup, description, width }) {
         let inputElement;
-        const value = this.config[name] || '';
+        let value = this.config[name] || '';
 
         switch (type) {
             case 'entity':
@@ -1343,11 +1526,25 @@ class EntityProgressCardEditor extends HTMLElement {
                 break;
             case 'layout':
                 inputElement = document.createElement('ha-select');
-                inputElement.popperOptions = ""
+                inputElement.popperOptions = "";
                 this._addChoice(inputElement, LAYOUT_OPTION[this._currentLanguage]);
                 inputElement.addEventListener('closed', (event) => {
                     event.stopPropagation();
                 });
+                break;
+            case 'tap_action':
+                inputElement = document.createElement('ha-select');
+                inputElement.popperOptions = ""
+                this._addChoice(inputElement, TAP_ACTION[this._currentLanguage]);
+                inputElement.addEventListener('closed', (event) => {
+                    event.stopPropagation();
+                });
+                inputElement.addEventListener('selected', (event) => {
+                        const newValue = event.detail?.value || event.target.value;
+                        this._manageTapAction(newValue);
+                    }
+                );
+                value = this._getTapActionValue();
                 break;
             case 'theme':
                 inputElement = document.createElement('ha-select');
@@ -1365,14 +1562,24 @@ class EntityProgressCardEditor extends HTMLElement {
                     event.stopPropagation();
                 });
                 break;
+            case 'number':
+                inputElement = document.createElement('ha-textfield');
+                inputElement.type = 'number'
+                break;
             default:
                 inputElement = document.createElement('ha-textfield');
                 inputElement.type = 'text';
-        }
+                }
 
-        if (isThemeOverriding) {
-            this._overridableElements[name]=inputElement;
+        inputElement.style.width = '100%';
+
+        if (isInGroup) {
+            if (!this._overridableElements[isInGroup]) {
+                this._overridableElements[isInGroup] = {};
+            }
+            this._overridableElements[isInGroup][name]=inputElement;
         }
+        this._elements[name]=inputElement;
 
         inputElement.style.display = HTML.flex.show;
         inputElement.required = required;
@@ -1388,10 +1595,12 @@ class EntityProgressCardEditor extends HTMLElement {
         );
 
         const fieldContainer = document.createElement('div');
-        if (isThemeOverriding) {
-            this._overridableElements[`${name}_description`] = fieldContainer;
+        if (isInGroup) {
+            this._overridableElements[isInGroup][`${name}_description`] = fieldContainer;
         }
         fieldContainer.style.marginBottom = '12px';
+        fieldContainer.style.width = width;
+        fieldContainer.style.height = '73px';
         const fieldDescription = document.createElement('span');
         fieldDescription.style.width = '90%';
         fieldDescription.innerText = description;
@@ -1451,11 +1660,9 @@ class EntityProgressCardEditor extends HTMLElement {
 
         const container = document.createElement('div');
         container.style.display = 'flex';
-        container.style.flexDirection = 'column';
+        container.style.flexDirection = 'row';
         container.style.flexWrap = 'wrap';        // Allows wrapping
-        container.style.overflow = 'auto';
-        container.style.overflowX = 'hidden';
-        container.style.maxHeight = '100vh';     // Limit height to the viewport
+        container.style.gap = '0 2%';
 
         EDITOR_INPUT_FIELDS.forEach((field) => {
             container.appendChild(this._createField({
@@ -1463,8 +1670,9 @@ class EntityProgressCardEditor extends HTMLElement {
                 label:field.label[this._currentLanguage],
                 type:field.type,
                 required:field.required,
-                isThemeOverriding: field.isThemeOverriding,
-                description: field.description[this._currentLanguage] }));
+                isInGroup: field.isInGroup,
+                description: field.description[this._currentLanguage],
+                width: field.width }));
         });
 
         fragment.appendChild(container);
