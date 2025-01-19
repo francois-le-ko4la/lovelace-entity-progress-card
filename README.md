@@ -48,6 +48,11 @@ type: module
 ```
 
 ## 📝 Usage
+### Card Editor
+The card editor allows you to quickly set up and customize the card.
+
+![Editor](./doc/editor.png)
+
 ### Parameters
 
 You can customize the card using the following parameters:
@@ -187,9 +192,6 @@ You can customize the card using the following parameters:
     - `true` to enable "more info" on click.
     - `false` to disable the "more info" dialog.
   
-> [!NOTE] 
-> `min_value`, `max_value`, `unit`, `decimal`, `navigate_to`, `show_more_info` can be set with the YAML editor only
-
 ### YAML
 Here’s our example of how to use the Custom Bar Card with custom styles:
 
@@ -219,18 +221,6 @@ grid_options:
 ```
 
 <img src="./doc/RVB_vertical.png" alt="Image title" width="118px"/>
-
-### Card Editor
-The card editor allows you to quickly set up and customize the card.
-
-![Editor](./doc/editor.png)
-
-- The `Entity` field is required, and an error message will appear if it is not filled in.
-- The `Name` field is an input form. If the `Name` field is left empty, the card will use the entity’s default name.
-- The `Layout` can be selected.
-- The `Icon` is selected directly from a dropdown with all available icons in Home Assistant.
-- `Colors` can be selected from the provided list, which is based on standard Home Assistant colors. It’s possible to use a color outside of this list, but it must be set through YAML configuration.
-- The `Theme` can be selected. Once a theme is chosen, the `icon`, `color`, and `bar-color` parameters will no longer be visible.
 
 ## 💡 Sample Usage
 
