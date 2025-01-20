@@ -27,14 +27,14 @@
  * - Error handling for missing or invalid entities.
  * - Configuration options for various card elements, including entity picker, color settings, and layout options.
  * 
- * @version 1.0.22
+ * @version 1.0.23
  */
 
 /** --------------------------------------------------------------------------
  * PARAMETERS
  */
 
-const VERSION='1.0.22';
+const VERSION='1.0.23';
 const CARD = {
     typeName: 'entity-progress-card',
     name: 'Entity progress card',
