@@ -27,14 +27,14 @@
  * - Error handling for missing or invalid entities.
  * - Configuration options for various card elements, including entity picker, color settings, and layout options.
  * 
- * @version 1.0.21
+ * @version 1.0.22
  */
 
 /** --------------------------------------------------------------------------
  * PARAMETERS
  */
 
-const VERSION='1.0.21';
+const VERSION='1.0.22';
 const CARD = {
     typeName: 'entity-progress-card',
     name: 'Entity progress card',
@@ -308,8 +308,10 @@ const MSG = {
     },
 };
 
+
 const THEME_KEY = "theme";
 const NAVIGATETO_KEY = "navigate_to";
+const TAP_ACTION_KEY = "tap_action";
 
 const EDITOR_INPUT_FIELDS = [
     {   name: 'entity',
@@ -1185,6 +1187,7 @@ class EntityProgressCardEditor extends HTMLElement {
         this._overridableElements = {};
         this.rendered = false;
         this._currentLanguage = CARD.config.language;
+        this._isGuiEditor = false;
     }
 
     /**
@@ -1213,9 +1216,6 @@ class EntityProgressCardEditor extends HTMLElement {
         this._currentLanguage = MSG[hass.config.language] ? hass.config.language : CARD.config.language;
         if (!this._hass || this._hass.entities !== hass.entities) {
             this._hass = hass;
-            if (this.rendered) {
-                this.render();
-            }
         }
     }
 
@@ -1255,17 +1255,57 @@ class EntityProgressCardEditor extends HTMLElement {
             return;
         }
         this.config = config;
-        this.loadEntityPicker();
         if (!this.rendered) {
             this.rendered = true;
+            this.loadEntityPicker();
             this.render();
+            return;
         }
-        const yamlEditor = document.querySelector('#gui-editor');
-        if (yamlEditor) {
-            yamlEditor.addEventListener('focus', () => {
-                console.log('L editor est visible.');
-            });
+        if (!this._checkConfigChangeFromGUI()) {
+            this._refreshConfigFromYAML();
         }
+
+    }
+
+    /**
+     * Checks if a configuration change originates from the graphical editor (GUI).
+     * 
+     * This function uses the dimensions of the `entity` field element to determine 
+     * if the graphical editor is currently visible and interactive. The GUI editor 
+     * is considered active if its dimensions (width and height) are greater than zero.
+     * 
+     * @returns {boolean} - Returns `true` if the GUI editor is visible, otherwise `false`.
+     */
+    _checkConfigChangeFromGUI() {
+        const rect = this._elements['entity'].getBoundingClientRect();
+        this._isGuiEditor = (
+            rect.width > 0 &&
+            rect.height > 0
+        );
+        return this._isGuiEditor;
+    }
+
+    /**
+     * Synchronizes the configuration from the YAML editor with the GUI editor.
+     * 
+     * This function iterates over the keys of the `_elements` object and updates 
+     * the values of the corresponding input fields in the graphical editor based 
+     * on the current configuration (`this.config`). If a configuration key exists, 
+     * its value is assigned to the corresponding element. Additionally, the 
+     * `tap_action` field is explicitly updated using the `_getTapActionValue()` method.
+     * 
+     * Note: This ensures that the graphical editor reflects the latest YAML-based changes.
+     */
+    _refreshConfigFromYAML() {
+        const keys = Object.keys(this._elements);
+        keys.forEach(key => {
+            if (this.config[key]) {
+                this._elements[key].value = this.config[key];
+            } else if (key !== TAP_ACTION_KEY) {
+                this._elements[key].value = '';
+            }
+            this._elements[TAP_ACTION_KEY].value = this._getTapActionValue();
+        });
     }
 
     /**
