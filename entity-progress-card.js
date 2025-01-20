@@ -622,14 +622,18 @@ class EntityProgressCard extends HTMLElement {
      */
     _navigateToOrShowMoreInfo() {
         if (this._navigate_to) {
-            window.history.pushState(null, '', this._navigate_to);
-            this.dispatchEvent(new CustomEvent('location-changed', { bubbles: true, composed: true }));
-    
-            const anchor = this._navigate_to.split('#')[1];
-            if (anchor) {
-                const element = document.querySelector(`#${anchor}`);
-                if (element) {
-                    element.scrollIntoView({ behavior: 'smooth' });
+            if (/^https?:\/\//.test(this._navigate_to)) {
+                window.location.href = this._navigate_to;
+            } else {
+                window.history.pushState(null, '', this._navigate_to);
+                this.dispatchEvent(new CustomEvent('location-changed', { bubbles: true, composed: true }));
+        
+                const anchor = this._navigate_to.split('#')[1];
+                if (anchor) {
+                    const element = document.querySelector(`#${anchor}`);
+                    if (element) {
+                        element.scrollIntoView({ behavior: 'smooth' });
+                    }
                 }
             }
         } else if (this._show_more_info && this.config && this.config.entity) {
