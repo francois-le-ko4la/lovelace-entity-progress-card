@@ -27,14 +27,14 @@
  * - Error handling for missing or invalid entities.
  * - Configuration options for various card elements, including entity picker, color settings, and layout options.
  * 
- * @version 1.0.23
+ * @version 1.0.24
  */
 
 /** --------------------------------------------------------------------------
  * PARAMETERS
  */
 
-const VERSION='1.0.23';
+const VERSION='1.0.24';
 const CARD = {
     typeName: 'entity-progress-card',
     name: 'Entity progress card',
@@ -43,11 +43,13 @@ const CARD = {
     layout: {
         horizontal: {
             label: 'horizontal',
-            value: { grid_rows: 1, grid_min_rows: 1, grid_columns: 2, grid_min_columns: 2 }
+            value: { grid_rows: 1, grid_min_rows: 1, grid_columns: 2, grid_min_columns: 2 },
+            mdi: "focus-field-horizontal"
         },
         vertical:{
             label: 'vertical',
-            value: { grid_rows: 2, grid_min_rows: 2, grid_columns: 1, grid_min_columns: 1 }
+            value: { grid_rows: 2, grid_min_rows: 2, grid_columns: 1, grid_min_columns: 1 },
+            mdi: "focus-field-vertical"
         },
     },
     tap_action: {
@@ -66,7 +68,9 @@ const CARD = {
             percentage: 0,
             other: 2
         }
-    }
+    },
+    debounce: 100,
+    debug: false,
 };
 
 CARD.console = {
@@ -313,164 +317,176 @@ const THEME_KEY = "theme";
 const NAVIGATETO_KEY = "navigate_to";
 const TAP_ACTION_KEY = "tap_action";
 
-const EDITOR_INPUT_FIELDS = [
-    {   name: 'entity',
-        label: { en: 'Entity', fr: 'Entité', es: 'Entidad', de: 'Entität', },
-        type: 'entity',
-        width: '92%',
-        required: true,
-        isInGroup: null,
-        description: {
-            en: 'Select an entity from Home Assistant.',
-            fr: 'Sélectionnez une entité de Home Assistant.',
-            es: 'Seleccione una entidad de Home Assistant.',
-            de: 'Wählen Sie eine Entität aus Home Assistant.',
-        }},
-    {   name: 'name',
-        label: { en: 'Name', fr: 'Nom', es: 'Nombre', de: 'Name', },
-        type: 'text',
-        width: '48%',
-        required: false,
-        isInGroup: null,
-        description: {
-            en: 'Enter a name for the entity.',
-            fr: 'Saisissez un nom pour l\'entité.',
-            es: 'Introduzca un nombre para la entidad.',
-            de: 'Geben Sie einen Namen für die Entität ein.',
-        }},
-    {   name: 'unit',
-        label: { en: 'Unit', fr: 'Unité', es: 'Nombre', de: 'Name', },
-        type: 'text',
-        width: '15%',
-        required: false,
-        isInGroup: null,
-        description: {
-            en: 'm, kg...',
-            fr: 'm, kg...',
-            es: 'm, kg...',
-            de: 'm, kg...',
-        }},
-    {   name: 'decimal',
-        label: { en: 'decimal', fr: 'decimal', es: 'decimal', de: 'decimal', },
-        type: 'number',
-        width: '25%',
-        required: false,
-        isInGroup: null,
-        description: {
-            en: 'Precision.',
-            fr: 'Précision.',
-            es: 'Precisión.',
-            de: 'Präzision.',
-        }},
-    {   name: 'min_value',
-        label: { en: 'Minimum value', fr: 'Valeur minimum', es: 'Nombre', de: 'Name', },
-        type: 'number',
-        width: '45%',
-        required: false,
-        isInGroup: null,
-        description: {
-            en: 'Enter the minimum value.',
-            fr: 'Saisissez la valeur minimum.',
-            es: 'Introduzca el valor mínimo.',
-            de: 'Geben Sie den Mindestwert ein.',
-        }},
-    {   name: 'max_value',
-        label: { en: 'Maximum value', fr: 'Valeur maximum', es: 'Nombre', de: 'Name', },
-        type: 'text',
-        width: '45%',
-        required: false,
-        isInGroup: null,
-        description: {
-            en: 'Enter the maximum value.',
-            fr: 'Saisissez la valeur maximum.',
-            es: 'Introduzca el valor máximo.',
-            de: 'Geben Sie den Höchstwert ein.',
-        }},
-    {   name: 'tap_action',
-        label: { en: 'Tap action', fr: 'Action au tap', es: 'Acción al tocar', de: 'Tippen Aktion', },
-        type: 'tap_action',
-        width: '45%',
-        required: false,
-        isInGroup: null,
-        description: {
-            en: 'Select the action.',
-            fr: 'Sélectionnez l\'action.',
-            es: 'Seleccione la acción.',
-            de: 'Wählen Sie die Aktion.'
-        }},
-    {   name: NAVIGATETO_KEY,
-        label: { en: 'Navigate to...', fr: 'Naviguer vers...', es: 'Navegar a...', de: 'Navigieren zu...',  },
-        type: 'text',
-        width: '45%',
-        required: false,
-        isInGroup: NAVIGATETO_KEY,
-        description: {
-            en: 'Select the target (/lovelace/0).',
-            fr: 'Saisir la cible (/lovelace/0).',
-            es: 'Seleccione el objetivo (/lovelace/0).',
-            de: 'Wählen Sie das Ziel (/lovelace/0).'
-        }},
-    {   name: 'theme',
-        label: { en: 'Theme', fr: 'Thème', es: 'Tema', de: 'Thema', },
-        type: 'theme',
-        width: '92%',
-        required: false,
-        isInGroup: null,
-        description: {
-            en: 'Select a theme to automatically define the colors and icon.',
-            fr: 'Sélectionnez un thème pour définir automatiquement les couleurs et l\'icône.',
-            es: 'Seleccione un tema para definir automáticamente los colores y el icono.',
-            de: 'Wählen Sie ein Thema, um die Farben und das Symbol automatisch festzulegen.',
-        }},
-    {   name: 'layout',
-        label: { en: 'Layout', fr: 'Disposition', es: 'Disposición', de: 'Layout', },
-        type: 'layout',
-        width: '45%',
-        required: false,
-        isInGroup: null,
-        description: {
-            en: 'Select the layout.',
-            fr: 'Sélectionnez la disposition.',
-            es: 'Seleccione la disposición.',
-            de: 'Wählen Sie das Layout.',
-        }},
-    {   name: 'bar_color',
-        label: { en: 'Color for the bar', fr: 'Couleur de la barre', es: 'Color de la barra', de: 'Farbe für die Leiste', },
-        type: 'color',
-        width: '45%',
-        required: false,
-        isInGroup: THEME_KEY,
-        description: {
-            en: 'Select the color for the bar.',
-            fr: 'Sélectionnez la couleur de la barre.',
-            es: 'Seleccione el color de la barra.',
-            de: 'Wählen Sie für die Leiste.',
-        }},
-    {   name: 'icon',
-        label: { en: 'Icon', fr: 'Icône', es: 'Icono', de: 'Symbol', },
-        type: 'icon',
-        width: '45%',
-        required: false,
-        isInGroup: THEME_KEY,
-        description: {
-            en: 'Select an icon for the entity.',
-            fr: 'Sélectionnez une icône pour l\'entité.',
-            es: 'Seleccione un icono para la entidad.',
-            de: 'Wählen Sie ein Symbol für die Entität.',
-        }},
-    {   name: 'color',
-        label: { en: 'Primary color', fr: 'Couleur de l\'icône', es: 'Color del icono', de: 'Primärfarbe', },
-        type: 'color',
-        width: '45%',
-        required: false,
-        isInGroup: THEME_KEY,
-        description: {
-            en: 'Select the primary color for the icon.',
-            fr: 'Sélectionnez la couleur de l\'icône.',
-            es: 'Seleccione el color principal del icono.',
-            de: 'Wählen Sie die Primärfarbe für das Symbol.',
-        }},
-];
+const FIELD_TYPE = {
+    entity: { type: 'entity', tag: 'ha-entity-picker'},
+    icon: { type: 'icon', tag: 'ha-icon-picker'},
+    layout: { type: 'layout', tag: 'ha-select'},
+    tap_action: { type: 'tap_action', tag: 'ha-select'},
+    theme: { type: 'theme', tag: 'ha-select'},
+    color: { type: 'color', tag: 'ha-select'},
+    number: { type: 'number', tag: 'ha-textfield'},
+    default: { type: 'text', tag: 'ha-textfield'},
+    listItem: { type: 'list item', tag: 'mwc-list-item'},
+}
+
+const EDITOR_INPUT_FIELDS = {
+    entity: {       name: 'entity',
+                    label: { en: 'Entity', fr: 'Entité', es: 'Entidad', de: 'Entität', },
+                    type: FIELD_TYPE.entity.type,
+                    width: '92%',
+                    required: true,
+                    isInGroup: null,
+                    description: {
+                        en: 'Select an entity from Home Assistant.',
+                        fr: 'Sélectionnez une entité de Home Assistant.',
+                        es: 'Seleccione una entidad de Home Assistant.',
+                        de: 'Wählen Sie eine Entität aus Home Assistant.',
+                    }},
+    name: {         name: 'name',
+                    label: { en: 'Name', fr: 'Nom', es: 'Nombre', de: 'Name', },
+                    type: FIELD_TYPE.default.type,
+                    width: '48%',
+                    required: false,
+                    isInGroup: null,
+                    description: {
+                        en: 'Enter a name for the entity.',
+                        fr: 'Saisissez un nom pour l\'entité.',
+                        es: 'Introduzca un nombre para la entidad.',
+                        de: 'Geben Sie einen Namen für die Entität ein.',
+                    }},
+    unit: {         name: 'unit',
+                    label: { en: 'Unit', fr: 'Unité', es: 'Nombre', de: 'Name', },
+                    type: FIELD_TYPE.default.type,
+                    width: '15%',
+                    required: false,
+                    isInGroup: null,
+                    description: {
+                        en: 'm, kg...',
+                        fr: 'm, kg...',
+                        es: 'm, kg...',
+                        de: 'm, kg...',
+                    }},
+    decimal: {      name: 'decimal',
+                    label: { en: 'decimal', fr: 'decimal', es: 'decimal', de: 'decimal', },
+                    type: FIELD_TYPE.number.type,
+                    width: '25%',
+                    required: false,
+                    isInGroup: null,
+                    description: {
+                        en: 'Precision.',
+                        fr: 'Précision.',
+                        es: 'Precisión.',
+                        de: 'Präzision.',
+                    }},
+    min_value: {    name: 'min_value',
+                    label: { en: 'Minimum value', fr: 'Valeur minimum', es: 'Nombre', de: 'Name', },
+                    type: FIELD_TYPE.number.type,
+                    width: '45%',
+                    required: false,
+                    isInGroup: null,
+                    description: {
+                        en: 'Enter the minimum value.',
+                        fr: 'Saisissez la valeur minimum.',
+                        es: 'Introduzca el valor mínimo.',
+                        de: 'Geben Sie den Mindestwert ein.',
+                    }},
+    max_value: {    name: 'max_value',
+                    label: { en: 'Maximum value', fr: 'Valeur maximum', es: 'Nombre', de: 'Name', },
+                    type: FIELD_TYPE.default.type,
+                    width: '45%',
+                    required: false,
+                    isInGroup: null,
+                    description: {
+                        en: 'Enter the maximum value.',
+                        fr: 'Saisissez la valeur maximum.',
+                        es: 'Introduzca el valor máximo.',
+                        de: 'Geben Sie den Höchstwert ein.',
+                    }},
+    tap_action: {   name: 'tap_action',
+                    label: { en: 'Tap action', fr: 'Action au tap', es: 'Acción al tocar', de: 'Tippen Aktion', },
+                    type: FIELD_TYPE.tap_action.type,
+                    width: '45%',
+                    required: false,
+                    isInGroup: null,
+                    description: {
+                        en: 'Select the action.',
+                        fr: 'Sélectionnez l\'action.',
+                        es: 'Seleccione la acción.',
+                        de: 'Wählen Sie die Aktion.'
+                    }},
+    navigate_to: {  name: NAVIGATETO_KEY,
+                    label: { en: 'Navigate to...', fr: 'Naviguer vers...', es: 'Navegar a...', de: 'Navigieren zu...',  },
+                    type: FIELD_TYPE.default.type,
+                    width: '45%',
+                    required: false,
+                    isInGroup: NAVIGATETO_KEY,
+                    description: {
+                        en: 'Select the target (/lovelace/0).',
+                        fr: 'Saisir la cible (/lovelace/0).',
+                        es: 'Seleccione el objetivo (/lovelace/0).',
+                        de: 'Wählen Sie das Ziel (/lovelace/0).'
+                    }},
+    theme: {        name: 'theme',
+                    label: { en: 'Theme', fr: 'Thème', es: 'Tema', de: 'Thema', },
+                    type: FIELD_TYPE.theme.type,
+                    width: '92%',
+                    required: false,
+                    isInGroup: null,
+                    description: {
+                        en: 'Select a theme to automatically define the colors and icon.',
+                        fr: 'Sélectionnez un thème pour définir automatiquement les couleurs et l\'icône.',
+                        es: 'Seleccione un tema para definir automáticamente los colores y el icono.',
+                        de: 'Wählen Sie ein Thema, um die Farben und das Symbol automatisch festzulegen.',
+                    }},
+    layout: {       name: 'layout',
+                    label: { en: 'Layout', fr: 'Disposition', es: 'Disposición', de: 'Layout', },
+                    type: FIELD_TYPE.layout.type,
+                    width: '45%',
+                    required: false,
+                    isInGroup: null,
+                    description: {
+                        en: 'Select the layout.',
+                        fr: 'Sélectionnez la disposition.',
+                        es: 'Seleccione la disposición.',
+                        de: 'Wählen Sie das Layout.',
+                    }},
+    bar_color: {    name: 'bar_color',
+                    label: { en: 'Color for the bar', fr: 'Couleur de la barre', es: 'Color de la barra', de: 'Farbe für die Leiste', },
+                    type: FIELD_TYPE.color.type,
+                    width: '45%',
+                    required: false,
+                    isInGroup: THEME_KEY,
+                    description: {
+                        en: 'Select the color for the bar.',
+                        fr: 'Sélectionnez la couleur de la barre.',
+                        es: 'Seleccione el color de la barra.',
+                        de: 'Wählen Sie für die Leiste.',
+                    }},
+    icon: {         name: 'icon',
+                    label: { en: 'Icon', fr: 'Icône', es: 'Icono', de: 'Symbol', },
+                    type: FIELD_TYPE.icon.type,
+                    width: '45%',
+                    required: false,
+                    isInGroup: THEME_KEY,
+                    description: {
+                        en: 'Select an icon for the entity.',
+                        fr: 'Sélectionnez une icône pour l\'entité.',
+                        es: 'Seleccione un icono para la entidad.',
+                        de: 'Wählen Sie ein Symbol für die Entität.',
+                    }},
+    color: {        name: 'color',
+                    label: { en: 'Primary color', fr: 'Couleur de l\'icône', es: 'Color del icono', de: 'Primärfarbe', },
+                    type: FIELD_TYPE.color.type,
+                    width: '45%',
+                    required: false,
+                    isInGroup: THEME_KEY,
+                    description: {
+                        en: 'Select the primary color for the icon.',
+                        fr: 'Sélectionnez la couleur de l\'icône.',
+                        es: 'Seleccione el color principal del icono.',
+                        de: 'Wählen Sie die Primärfarbe für das Symbol.',
+                    }},
+};
 
 const THEME_OPTION = [
     { name: '', value: '' },
@@ -598,6 +614,7 @@ class EntityProgressCard extends HTMLElement {
             console.groupEnd();
             EntityProgressCard._moduleLoaded = true;
         }
+        this.config = {};
         this._currentLanguage = CARD.config.language;
         this._unit = null;
         this._min_value = null;
@@ -1147,6 +1164,242 @@ window.customCards.push({
     description: CARD.description,    
 });
 
+
+/** --------------------------------------------------------------------------
+ * ConfigManager
+ * 
+ * A class for dynamically managing and manipulating a configuration object. 
+ * This class provides methods for updating configuration properties, 
+ * applying deferred updates (debouncing), and notifying changes via a callback.
+ * 
+ * Key Features:
+ * - Load and merge an initial configuration.
+ * - Update specific properties with type handling and removal of invalid values.
+ * - Debouncing updates to optimize performance.
+ * - Automatic change notifications via a callback.
+ * - Debugging mode for tracking actions performed by the class.
+ * 
+ * @class ConfigManager
+ * 
+ * @param {Object} initialConfig - The initial configuration object, consisting of key/value pairs.
+ * @param {Boolean} debug - Enables or disables debugging mode to log class actions (default value via `CARD.debug`).
+ */ 
+class ConfigManager {
+    /**
+     * Constructor for ConfigManager
+     * 
+     * Initializes a new instance of the `ConfigManager` class with the provided configuration and sets up 
+     * internal state variables. The constructor ensures that the configuration is properly stored and that
+     * other mechanisms, such as change notifications and debouncing, are ready for use.
+     * 
+     * @param {Object} [initialConfig={}] - The initial configuration object used to set default key/value pairs.
+     * 
+     * Instance Variables:
+     * - `_config` (Object): Stores the current configuration, initialized with the provided `initialConfig`.
+     * - `_onConfigChange` (Function|null): Holds the callback function for notifying configuration changes.
+     * - `_debounceTimeout` (number|null): Tracks the timeout for debouncing property updates.
+     * - `_pendingUpdates` (Object): Temporarily stores updates for deferred application (debouncing).
+     * - `_lastUpdateFromProperty` (Boolean): Tracks whether the last configuration change came from a property update 
+     *   to prevent redundant updates.
+     * - `_debug` (Boolean): Indicates whether debugging mode is active, enabling detailed logs. 
+     *   The value is sourced from `CARD.debug`.
+     */
+    constructor(initialConfig = {}) {
+        this._config = { ...initialConfig }; // Configuration actuelle
+        this._onConfigChange = null; // Callback pour notifier les changements
+        this._debounceTimeout = null; // Timeout pour le debouncing
+        this._pendingUpdates = {}; // Stockage temporaire des changements
+        this._lastUpdateFromProperty = false;
+        this._debug = CARD.debug;
+    }
+
+    /**
+     * Getter for the current configuration.
+     * 
+     * Provides access to the current configuration as a new object, ensuring that external mutations do not 
+     * directly affect the internal state. This approach ensures encapsulation and protects the integrity 
+     * of the configuration.
+     * 
+     * @returns {Object} - A copy of the current configuration object.
+     */
+    get config() {
+        return { ...this._config }; // Retourne une copie pour éviter les mutations externes
+    }
+
+    /**
+     * Logs debug messages to the console if debugging is enabled.
+     * 
+     * This method checks the `_debug` flag to determine whether debug logging is enabled. 
+     * If enabled, it logs the provided message and optional data to the console using 
+     * `console.debug`. This is a utility method for easier debugging of the class behavior.
+     * 
+     * @param {string} message - The message to be logged.
+     * @param {any} [data=null] - Optional additional data to log with the message. Can be of any type.
+     */
+    _logDebug(message, data = null) {
+        if (this._debug) {
+            if (data) {
+                console.debug(message, data);
+            } else {
+                console.debug(message);
+            }
+        }
+    }
+
+    /**
+     * Updates the configuration of the ConfigManager instance.
+     * 
+     * This method sets a new configuration by merging it with the existing configuration. 
+     * If the last update was triggered by the `updateProperty` method, the update is skipped 
+     * to prevent redundant changes. Debug messages are logged if debugging is enabled.
+     * 
+     * - If `_lastUpdateFromProperty` is `true`, the method resets the flag and returns without 
+     *   making any changes.
+     * - Otherwise, the provided `newConfig` object is merged with the current `_config`, 
+     *   ensuring that new or updated properties are applied while retaining existing ones.
+     * - Logs debug information to indicate whether the configuration was updated or skipped.
+     * 
+     * @param {Object} newConfig - The new configuration object to be merged with the current configuration.
+     */
+    setConfig(newConfig) {
+        if (this._lastUpdateFromProperty) {
+            this._logDebug('ConfigManager/setConfig: already ok...');
+            this._lastUpdateFromProperty = false;
+            return;
+        }
+        this._logDebug('ConfigManager/setConfig: updateall!');
+        const mergedConfig = { ...this._config, ...newConfig }; // Fusionner les nouvelles valeurs
+        this._config = mergedConfig;
+    }
+
+    /**
+     * Updates a specific property in the configuration with a debounce mechanism.
+     * 
+     * This method allows updating an individual property of the configuration.
+     * Updates are temporarily stored in `_pendingUpdates` and only applied
+     * after the specified debounce time (`CARD.debounce`) has elapsed. This prevents
+     * multiple rapid updates from being processed immediately.
+     *
+     * @param {string} key - The name of the property to update.
+     * @param {*} value - The new value for the property. Can be any type.
+     *
+     * Behavior:
+     * - If the method is called multiple times within the debounce period, 
+     *   previous timeouts are cleared, and only the latest update is applied.
+     * - After the debounce timeout, `_applyPendingUpdates()` is called to process 
+     *   and commit the changes to the configuration.
+     */
+    updateProperty(key, value) {
+        this._pendingUpdates[key] = value;
+        this._logDebug('ConfigManager/updateProperty - pendingUpdates: ', this._pendingUpdates);
+
+
+        if (this._debounceTimeout) {
+            clearTimeout(this._debounceTimeout);
+        }
+
+        this._debounceTimeout = setTimeout(() => {
+            this._applyPendingUpdates();
+        }, CARD.debounce); // Temps configurable (200ms ici)
+    }
+
+    /**
+     * Applies all pending configuration updates after the debounce period.
+     * 
+     * This method processes and commits any changes stored in `_pendingUpdates` to the
+     * actual configuration (`_config`). It handles type conversion, such as converting
+     * numeric strings to numbers, and removes properties with empty or invalid values.
+     *
+     * Behavior:
+     * - Iterates over all pending updates stored in `_pendingUpdates`.
+     * - Converts numeric fields to numbers when applicable.
+     * - Removes properties with empty string values (`''`) or `null`.
+     * - Updates the `_config` object only if the value has changed.
+     * - If any changes are applied, `_reorderConfig()` is called to reorganize the
+     *   configuration, and `_notifyChange()` is triggered to notify listeners.
+     * - Clears `_pendingUpdates` after processing.
+     * 
+     * @private
+     */
+    _applyPendingUpdates() {
+        let hasChanges = false;
+
+        for (const [key, value] of Object.entries(this._pendingUpdates)) {
+            this._logDebug('ConfigManager/_applyPendingUpdates:', [key, value]);
+            let curValue = value;
+            if (key in EDITOR_INPUT_FIELDS && EDITOR_INPUT_FIELDS[key].type === FIELD_TYPE.number.type || key === EDITOR_INPUT_FIELDS.max_value.name && value.trim() !== '') {
+                const numericValue = Number(value);
+                if (!isNaN(numericValue)) {
+                    curValue = numericValue;
+                }
+            }
+
+            if ((typeof curValue === 'string' && curValue.trim() === '') || curValue == null) {
+                if (key in this._config) {
+                    delete this._config[key];
+                    hasChanges = true;
+                }
+            } else if (this._config[key] !== curValue) {
+                this._config[key] = curValue;
+                hasChanges = true;
+            }
+        }
+
+        this._pendingUpdates = {};
+
+        if (hasChanges) {
+            this._reorderConfig();
+            this._lastUpdateFromProperty = true;
+            this._notifyChange();
+        }
+    }
+
+    /**
+     * Reorders the configuration properties, ensuring `grid_options` appears last.
+     * 
+     * This method restructures the internal configuration object to move the `grid_options` 
+     * property (if it exists) to the end of the object. This is useful for ensuring that 
+     * `grid_options` is always serialized or displayed after other properties, maintaining a 
+     * consistent order in the configuration.
+     * 
+     * - The method destructures `_config` into `grid_options` and the remaining properties (`rest`).
+     * - If `grid_options` exists, it is appended to the end of the configuration object.
+     * - If `grid_options` does not exist, the configuration remains unchanged.
+     */
+    _reorderConfig() {
+        const { grid_options, ...rest } = this._config;
+        this._config = grid_options ? { ...rest, grid_options } : { ...rest };
+    }
+
+    /**
+     * Notifies listeners of a configuration change.
+     * 
+     * This method invokes the registered callback function, passing a copy of the current 
+     * configuration as an argument. It ensures that any external subscribers (e.g., the editor 
+     * or other components) are informed whenever the configuration is updated.
+     * 
+     * - If no callback (`_onConfigChange`) is registered, the method does nothing.
+     * - A copy of the current configuration is sent to prevent direct mutations.
+     */
+    _notifyChange() {
+        if (this._onConfigChange) {
+            this._onConfigChange({ ...this._config });
+        }
+    }
+
+    /**
+     * Registers a callback to handle configuration changes.
+     * 
+     * This method allows external components or systems to subscribe to updates
+     * of the configuration managed by this class. When a configuration change
+     * occurs, the provided callback will be invoked with a cloned version of
+     * the updated configuration.
+     */
+    onConfigChange(callback) {
+        this._onConfigChange = callback;
+    }
+}
+
 /** --------------------------------------------------------------------------
  * Custom editor component for configuring the `EntityProgressCard`.
  * 
@@ -1164,27 +1417,26 @@ window.customCards.push({
  */
 class EntityProgressCardEditor extends HTMLElement {
     /**
-     * Initializes an instance of the `EntityProgressCardEditor` component.
+     * Initializes an instance of the `EntityProgressCardEditor` class.
      * 
-     * The constructor initializes the editor component by setting up initial values for key properties. 
-     * These properties will be used throughout the lifecycle of the editor to store the configuration, 
-     * manage the Home Assistant instance, track overridable elements, and handle rendering.
+     * This constructor sets up the configuration manager, initial values, and event listeners:
+     * - Creates an instance of `ConfigManager` to manage the configuration state.
+     * - Initializes properties for the editor, including `config`, `_hass`, `_elements`, 
+     *   `_overridableElements`, and the editor's language settings.
+     * - Sets up a callback with the `ConfigManager` to listen for configuration changes and
+     *   dispatch a `config-changed` event whenever updates are applied.
      * 
-     * - `this.config`: This object holds the configuration for the card, such as layout, entity, theme, etc. 
-     *   It starts as an empty object and will be populated as the user interacts with the editor.
+     * Behavior:
+     * - Listens for changes in the configuration (`onConfigChange`) and updates the local
+     *   `config` property accordingly.
+     * - Dispatches a `CustomEvent` (`config-changed`) to notify external listeners of the
+     *   updated configuration.
      * 
-     * - `this._hass`: This property will store the Home Assistant instance, which provides access to 
-     *   entity states and other data relevant to the card. Initially set to `null`.
-     * 
-     * - `this._overridableElements`: This object will hold references to elements that can be overridden 
-     *   in the card configuration. It is initialized as an empty object.
-     * 
-     * - `this.rendered`: A flag to track whether the editor has been rendered. Initially set to `false`.
-     * 
-     * - `this._currentLanguage`: Stores the current default language.
+     * @constructor
      */
     constructor() {
         super();
+        this.configManager = new ConfigManager();
         this.config = {};
         this._hass = null;
         this._elements = {};
@@ -1192,23 +1444,29 @@ class EntityProgressCardEditor extends HTMLElement {
         this.rendered = false;
         this._currentLanguage = CARD.config.language;
         this._isGuiEditor = false;
+
+        this.configManager.onConfigChange((newConfig) => {
+            this.config = newConfig;
+            this.configManager._logDebug('EntityProgressCardEditor OnConfigChange - new value registered: ', { detail: { config: this.config } });
+            this.dispatchEvent(new CustomEvent('config-changed', { detail: { config: this.config } }));
+        });
     }
 
     /**
      * Sets the `hass` (Home Assistant) instance for the editor component.
      * 
-     * This setter method is used to assign a new Home Assistant instance to the editor component. 
-     * It ensures that the editor is only updated when the `hass` instance changes, preventing 
-     * unnecessary re-renders. If the new instance is different from the previous one or if it is the 
-     * first time the `hass` value is being set, the component updates its internal reference and, 
+     * This setter method is used to assign a new Home Assistant instance to the editor component.
+     * It ensures that the editor is only updated when the `hass` instance changes, preventing
+     * unnecessary re-renders. If the new instance is different from the previous one or if it is the
+     * first time the `hass` value is being set, the component updates its internal reference and,
      * if it has already been rendered, triggers a re-render.
      * 
      * - If the provided `value` is falsy (null or undefined), the method simply returns without doing anything.
      * - Update the this._currentLanguage according to hass.config.language (HA Environment)
-     * - If the current `hass` instance is different from the new one (checked by comparing `entities`), 
+     * - If the current `hass` instance is different from the new one (checked by comparing `entities`),
      *   the method updates the internal `_hass` reference and triggers a re-render if the editor is already rendered.
      * 
-     * This ensures that changes in the Home Assistant instance are properly reflected in the component 
+     * This ensures that changes in the Home Assistant instance are properly reflected in the component
      * without unnecessary updates or re-renders.
      * 
      * @param {object} hass - The new Home Assistant instance to set.
@@ -1226,9 +1484,9 @@ class EntityProgressCardEditor extends HTMLElement {
     /**
      * Gets the current Home Assistant instance stored in the editor component.
      * 
-     * This getter method provides access to the internal `_hass` property, which holds the 
-     * current Home Assistant instance. The value of `_hass` is used throughout the component 
-     * to access entity states and interact with Home Assistant data. This method simply 
+     * This getter method provides access to the internal `_hass` property, which holds the
+     * current Home Assistant instance. The value of `_hass` is used throughout the component
+     * to access entity states and interact with Home Assistant data. This method simply
      * returns the stored instance when called.
      * 
      * @returns {object|null} The current Home Assistant instance, or `null` if not set.
@@ -1240,16 +1498,16 @@ class EntityProgressCardEditor extends HTMLElement {
     /**
      * Sets the configuration for the editor component and triggers the necessary updates.
      * 
-     * This method accepts a configuration object and updates the component's internal `config` property. 
+     * This method accepts a configuration object and updates the component's internal `config` property.
      * If the Home Assistant instance (`hass`) is available, the method performs the following actions:
      * 
      * - **Sets the configuration**: It stores the provided `config` in the component's internal `config` property.
-     * - **Loads the entity picker**: The `loadEntityPicker()` method is called to initialize or update the entity picker, 
+     * - **Loads the entity picker**: The `loadEntityPicker()` method is called to initialize or update the entity picker,
      *   allowing the user to select entities for the card.
-     * - **Renders the component**: If the editor hasn't been rendered yet (`rendered` is `false`), the component is 
+     * - **Renders the component**: If the editor hasn't been rendered yet (`rendered` is `false`), the component is
      *   marked as rendered, and the `render()` method is called to render the editor's UI.
      * 
-     * This method ensures that the editor's configuration is applied correctly and that any necessary UI updates 
+     * This method ensures that the editor's configuration is applied correctly and that any necessary UI updates
      * are triggered, including rendering the editor if it's not already displayed.
      * 
      * @param {object} config - The configuration object containing settings for the editor.
@@ -1258,11 +1516,17 @@ class EntityProgressCardEditor extends HTMLElement {
         if (!this.hass) {
             return;
         }
-        this.config = config;
+
+        this.configManager._logDebug('EntityProgressCardEditor/setConfig - value before change: ', { detail: { config: this.config } });
+        this.configManager._logDebug('EntityProgressCardEditor/setConfig - update: ', { detail: { config } });
+        this.configManager.setConfig(config);
+        this.config = this.configManager.config;
+        this.configManager._logDebug('EntityProgressCardEditor/setConfig - check value updated: ', { detail: { config: this.config } });
+
         if (!this.rendered) {
-            this.rendered = true;
             this.loadEntityPicker();
             this.render();
+            this.rendered = true;
             return;
         }
         if (!this._checkConfigChangeFromGUI()) {
@@ -1330,80 +1594,28 @@ class EntityProgressCardEditor extends HTMLElement {
      *                            If `true`, fields are hidden. If `false`, fields are shown.
      */
     _toggleFieldDisable(key, disable) {
+        this.configManager._logDebug('_toggleFieldDisable - Toggle: ', [key, disable]);
         const fields = Object.keys(this._overridableElements[key]);
         fields.forEach(fieldName => {
-            this._overridableElements[key][fieldName].style.display = disable ? HTML.block.hide : HTML.block.show;
+            let display = disable ? HTML.block.hide : HTML.block.show;
+            this._overridableElements[key][fieldName].style.display = display;
+            this.configManager._logDebug('_toggleFieldDisable - Toggle: ', [fieldName, this._overridableElements[key], display])
         });
-    }
-
-    /**
-     * Reorders the configuration object by extracting `grid_options` and placing it at the end.
-     * 
-     * This method processes the provided configuration object, extracts the `grid_options` property 
-     * (if present), and then returns a new object with `grid_options` placed at the end. All other 
-     * properties of the configuration are kept intact and remain in their original order. 
-     * 
-     * If the `grid_options` property is not present, the method simply returns the configuration object 
-     * without any changes.
-     * 
-     * - If `grid_options` exists, the method places it at the end of the returned object.
-     * - If `grid_options` does not exist, the method returns the object without modification.
-     * 
-     * This method helps to ensure that `grid_options` is handled consistently when used elsewhere, 
-     * possibly for further processing or rendering.
-     * 
-     * @param {object} config - The configuration object to be reordered.
-     * @returns {object} The reordered configuration object with `grid_options` at the end.
-     */
-    _reorderConfig(config) {
-        const { grid_options, ...rest } = config;
-        return grid_options ? { ...rest, grid_options } : { ...rest };
     }
 
     /**
      * Updates a specific property in the configuration object, and handles additional logic 
      * related to `theme` and field visibility.
      * 
-     * This method updates the configuration object based on the provided `key` and `value`. It checks
-     * if the `value` is an empty string, and if so, it removes the property from the configuration. If 
-     * the `value` is not an empty string, it updates the property with the new `value`.
-     * 
-     * If the updated property is related to the theme (identified by `THEME_KEY`), it triggers an 
-     * additional action to toggle the visibility of certain fields based on the presence of the theme 
-     * property in the configuration.
-     * 
-     * After the update, the method ensures the configuration is reordered with the `grid_options` at 
-     * the end by calling `_reorderConfig`. Finally, it dispatches a custom event (`'config-changed'`) 
-     * to notify other components about the configuration change.
-     * 
-     * - If the `value` is an empty string, the corresponding property is deleted from the configuration.
-     * - If the `key` corresponds to the theme, it toggles the visibility of fields related to the theme.
-     * - The configuration is reordered after every update to ensure `grid_options` is placed at the end.
      * 
      * @param {string} key - The key of the configuration property to update.
      * @param {string} value - The new value to assign to the configuration property.
      */
     _updateConfigProperty(key, value) {
-
-        if ((key === 'min_value' || key === 'max_value' || key === 'decimal') && value !== '') {
-            const numericValue = Number(value); // Conversion explicite en nombre
-            if (!isNaN(numericValue)) {         // Vérifier si c'est un nombre valide
-                value = numericValue;          // Mise à jour avec la valeur numérique
-            }
-        }
-        if (value === '') {
-            if (key in this.config) {
-                delete this.config[key];
-            }
-        } else {
-            this.config[key] = value;
-        }
+        this.configManager.updateProperty(key, value);
         if (key === THEME_KEY) {
-            const disableFields = THEME_KEY in this.config;
-            this._toggleFieldDisable(THEME_KEY, disableFields);
+            this._toggleFieldDisable(THEME_KEY, value !== '');
         }
-        this.config = this._reorderConfig(this.config);
-        this.dispatchEvent(new CustomEvent('config-changed', { detail: { config: this.config } }));
     }
 
     /**
@@ -1426,10 +1638,13 @@ class EntityProgressCardEditor extends HTMLElement {
      *                         `CARD.tap_action.more_info`, `CARD.tap_action.no_action`.
      */
     _manageTapAction(value) {
-        this._toggleFieldDisable(NAVIGATETO_KEY, (value !== NAVIGATETO_KEY));
+        this.configManager._logDebug('_manageTapAction - Toggle value', value);
         switch (value) {
             case CARD.tap_action.navigate_to:
                 this._updateConfigProperty(CARD.tap_action.more_info, '');
+                // reenable with a value already set
+                this._updateConfigProperty(
+                    CARD.tap_action.navigate_to, this._overridableElements[EDITOR_INPUT_FIELDS.navigate_to.isInGroup][EDITOR_INPUT_FIELDS.navigate_to.name].value);
                 break;
             case CARD.tap_action.more_info:
                 this._updateConfigProperty(CARD.tap_action.navigate_to, '');
@@ -1440,6 +1655,7 @@ class EntityProgressCardEditor extends HTMLElement {
                 this._updateConfigProperty(CARD.tap_action.more_info, false);
                 break;
         }
+        this._toggleFieldDisable(NAVIGATETO_KEY, (value !== NAVIGATETO_KEY));
     }
 
     /**
@@ -1456,6 +1672,7 @@ class EntityProgressCardEditor extends HTMLElement {
      *
      * @returns {string|null} The determined tap action value, or `null` if no valid action is found.
      */
+
     _getTapActionValue() {
         let value = null;
 
@@ -1490,7 +1707,7 @@ class EntityProgressCardEditor extends HTMLElement {
      */
     _addChoice(select, list) {
         list.forEach(cur_choice => {
-            const option = document.createElement('mwc-list-item');
+            const option = document.createElement(FIELD_TYPE.listItem.tag);
             option.value = cur_choice.value;
             option.innerHTML = `${cur_choice.name}`;
             select.appendChild(option);
@@ -1511,7 +1728,7 @@ class EntityProgressCardEditor extends HTMLElement {
      * @param {HTMLElement} colorSelect - The `<select>` element to which the color options will be added.
      */
     _addColor(colorSelect) {
-        const noColorOption = document.createElement('mwc-list-item');
+        const noColorOption = document.createElement(FIELD_TYPE.listItem.tag);
         noColorOption.value = '';
         noColorOption.innerHTML = `
             <span style="display: inline-block; width: 16px; height: 16px; background-color: transparent; border-radius: 50%; margin-right: 8px;"></span>
@@ -1519,7 +1736,7 @@ class EntityProgressCardEditor extends HTMLElement {
         colorSelect.appendChild(noColorOption);
 
         COLOR_OPTION.forEach(color => {
-            const option = document.createElement('mwc-list-item');
+            const option = document.createElement(FIELD_TYPE.listItem.tag);
             option.value = color.value;
             option.innerHTML = `
                 <span style="display: inline-block; width: 16px; height: 16px; background-color: ${color.value}; border-radius: 50%; margin-right: 8px;"></span>
@@ -1527,6 +1744,48 @@ class EntityProgressCardEditor extends HTMLElement {
             `;
             
             colorSelect.appendChild(option);
+        });
+    }
+
+    /**
+     * Adds an event listener to a specified element and handles events based on the provided type.
+     * 
+     * @param {string} name - The name of the element to attach the event listener to.
+     * @param {string} type - The type of the event listener. Supported types include 'color', 'theme', 'tap_action', 'layout', 
+     *                        or other types triggering 'value-changed' and 'input' events.
+     * 
+     * - For 'color', 'theme', 'tap_action', and 'layout', the function listens for the 'selected' event and attaches an 
+     *   additional 'closed' event listener to stop event propagation.
+     * - For other types, the function listens for 'value-changed' and 'input' events.
+     * 
+     * When an event occurs, the function checks if the component has been rendered and if there are configuration changes 
+     * initiated from the GUI. It then updates the configuration property or manages the tap action, depending on the event type.
+     */
+    _addEventListener(name, type) {
+        const events = (type === FIELD_TYPE.color.type || type === FIELD_TYPE.theme.type || type === FIELD_TYPE.tap_action.type || type === FIELD_TYPE.layout.type)
+            ? ['selected']
+            : ['value-changed', 'input'];
+
+        if (type === FIELD_TYPE.color.type || type === FIELD_TYPE.theme.type || type === FIELD_TYPE.tap_action.type || type === FIELD_TYPE.layout.type) {
+            this._elements[name].addEventListener('closed', (event) => {
+                event.stopPropagation();
+            });
+        }
+
+        const handleEvent = (event) => {
+            this.configManager._logDebug('EntityProgressCardEditor/handleEvent - new value from GUI: ', event.target.value);
+            if (this.rendered && this._checkConfigChangeFromGUI()) {
+                const newValue = event.detail?.value || event.target.value;
+                if (type === FIELD_TYPE.tap_action.type) {
+                    this._manageTapAction(newValue);
+                } else {
+                    this._updateConfigProperty(name, newValue);
+                }
+            }
+        };
+
+        events.forEach(eventType => {
+            this._elements[name].addEventListener(eventType, handleEvent);
         });
     }
 
@@ -1559,89 +1818,69 @@ class EntityProgressCardEditor extends HTMLElement {
     _createField({ name, label, type, required, isInGroup, description, width }) {
         let inputElement;
         let value = this.config[name] || '';
+        let defaultDisplay = HTML.flex.show;
 
         switch (type) {
-            case 'entity':
-                inputElement = document.createElement('ha-entity-picker');
+            case FIELD_TYPE.entity.type:
+                inputElement = document.createElement(FIELD_TYPE.entity.tag);
                 inputElement.hass = this.hass;
                 break;
-            case 'icon':
-                inputElement = document.createElement('ha-icon-picker');
+            case FIELD_TYPE.icon.type:
+                inputElement = document.createElement(FIELD_TYPE.icon.tag);
                 break;
-            case 'layout':
-                inputElement = document.createElement('ha-select');
+            case FIELD_TYPE.layout.type:
+                inputElement = document.createElement(FIELD_TYPE.layout.tag);
                 inputElement.popperOptions = "";
                 this._addChoice(inputElement, LAYOUT_OPTION[this._currentLanguage]);
-                inputElement.addEventListener('closed', (event) => {
-                    event.stopPropagation();
-                });
                 break;
-            case 'tap_action':
-                inputElement = document.createElement('ha-select');
+            case FIELD_TYPE.tap_action.type:
+                inputElement = document.createElement(FIELD_TYPE.tap_action.tag);
                 inputElement.popperOptions = ""
                 this._addChoice(inputElement, TAP_ACTION[this._currentLanguage]);
-                inputElement.addEventListener('closed', (event) => {
-                    event.stopPropagation();
-                });
-                inputElement.addEventListener('selected', (event) => {
-                        const newValue = event.detail?.value || event.target.value;
-                        this._manageTapAction(newValue);
-                    }
-                );
                 value = this._getTapActionValue();
                 break;
-            case 'theme':
-                inputElement = document.createElement('ha-select');
+            case FIELD_TYPE.theme.type:
+                inputElement = document.createElement(FIELD_TYPE.theme.tag);
                 inputElement.popperOptions = ""
                 this._addChoice(inputElement, THEME_OPTION);
-                inputElement.addEventListener('closed', (event) => {
-                    event.stopPropagation();
-                });
                 break;
-            case 'color':
-                inputElement = document.createElement('ha-select');
+            case FIELD_TYPE.color.type:
+                inputElement = document.createElement(FIELD_TYPE.color.tag);
                 inputElement.popperOptions = ""
                 this._addColor(inputElement);
-                inputElement.addEventListener('closed', (event) => {
-                    event.stopPropagation();
-                });
                 break;
-            case 'number':
-                inputElement = document.createElement('ha-textfield');
-                inputElement.type = 'number'
+            case FIELD_TYPE.number.type:
+                inputElement = document.createElement(FIELD_TYPE.number.tag);
+                inputElement.type = FIELD_TYPE.number.type;
                 break;
             default:
-                inputElement = document.createElement('ha-textfield');
-                inputElement.type = 'text';
+                inputElement = document.createElement(FIELD_TYPE.default.tag);
+                inputElement.type = FIELD_TYPE.default.type;
                 }
 
-        inputElement.style.width = '100%';
-
+        // store element and manage default display
+        this._elements[name]=inputElement;
         if (isInGroup) {
             if (!this._overridableElements[isInGroup]) {
                 this._overridableElements[isInGroup] = {};
             }
             this._overridableElements[isInGroup][name]=inputElement;
+            if ((isInGroup === NAVIGATETO_KEY && this._getTapActionValue() !== NAVIGATETO_KEY) || (isInGroup === THEME_KEY && this.config.theme)) {
+                defaultDisplay = HTML.flex.hide;
+            }
         }
-        this._elements[name]=inputElement;
-
-        inputElement.style.display = HTML.flex.show;
+        inputElement.style.display = defaultDisplay;
+        inputElement.style.width = '100%';
         inputElement.required = required;
         inputElement.label = label;
         inputElement.value = value;
-
-        inputElement.addEventListener(
-            (type === 'color' || type === 'theme' || type === 'layout') ? 'selected' : (type === 'entity' || type === 'icon' ? 'value-changed' : 'input'),
-            (event) => {
-                const newValue = event.detail?.value || event.target.value;
-                this._updateConfigProperty(name, newValue);
-             }
-        );
+        this._addEventListener(name, type);
 
         const fieldContainer = document.createElement('div');
         if (isInGroup) {
             this._overridableElements[isInGroup][`${name}_description`] = fieldContainer;
         }
+        fieldContainer.style.display = defaultDisplay;
         fieldContainer.style.marginBottom = '12px';
         fieldContainer.style.width = width;
         fieldContainer.style.height = '73px';
@@ -1679,11 +1918,11 @@ class EntityProgressCardEditor extends HTMLElement {
      *         component is successfully loaded and available.
      */
     async loadEntityPicker() {
-        if (!window.customElements.get("ha-entity-picker")) {
+        if (!window.customElements.get(FIELD_TYPE.entity.tag)) {
             const ch = await window.loadCardHelpers();
             const c = await ch.createCardElement({ type: "entities", entities: [] });
             await c.constructor.getConfigElement();
-            const haEntityPicker = window.customElements.get("ha-entity-picker");
+            const haEntityPicker = window.customElements.get(FIELD_TYPE.entity.tag);
         }
     }
 
@@ -1708,7 +1947,7 @@ class EntityProgressCardEditor extends HTMLElement {
         container.style.flexWrap = 'wrap';        // Allows wrapping
         container.style.gap = '0 2%';
 
-        EDITOR_INPUT_FIELDS.forEach((field) => {
+        Object.entries(EDITOR_INPUT_FIELDS).forEach(([key, field]) => {
             container.appendChild(this._createField({
                 name:field.name,
                 label:field.label[this._currentLanguage],
