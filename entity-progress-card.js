@@ -27,14 +27,14 @@
  * - Error handling for missing or invalid entities.
  * - Configuration options for various card elements, including entity picker, color settings, and layout options.
  * 
- * @version 1.0.24
+ * @version 1.0.25
  */
 
 /** --------------------------------------------------------------------------
  * PARAMETERS
  */
 
-const VERSION='1.0.24';
+const VERSION='1.0.25';
 const CARD = {
     typeName: 'entity-progress-card',
     name: 'Entity progress card',
@@ -44,12 +44,12 @@ const CARD = {
         horizontal: {
             label: 'horizontal',
             value: { grid_rows: 1, grid_min_rows: 1, grid_columns: 2, grid_min_columns: 2 },
-            mdi: "focus-field-horizontal"
+            mdi: "mdi:focus-field-horizontal"
         },
         vertical:{
             label: 'vertical',
             value: { grid_rows: 2, grid_min_rows: 2, grid_columns: 1, grid_min_columns: 1 },
-            mdi: "focus-field-vertical"
+            mdi: "mdi:focus-field-vertical"
         },
     },
     tap_action: {
@@ -488,84 +488,52 @@ const EDITOR_INPUT_FIELDS = {
                     }},
 };
 
-const THEME_OPTION = [
-    { name: '', value: '' },
-    ...Object.keys(THEME).map(key => ({
-        name: key.charAt(0).toUpperCase() + key.slice(1),
-        value: key
-    }))
-];
-
-const COLOR_OPTION = [
-    { name: 'Default', value: 'var(--state-icon-color)' },
-    { name: 'Accent', value: 'var(--accent-color)' },
-    { name: 'Info', value: 'var(--info-color)' },
-    { name: 'Success', value: 'var(--success-color)' },
-    { name: 'Disable', value: 'var(--disabled-color)' },
-    { name: 'Red', value: 'var(--red-color)' },
-    { name: 'Pink', value: 'var(--pink-color)' },
-    { name: 'Purple', value: 'var(--purple-color)' },
-    { name: 'Deep purple', value: 'var(--deep-purple-color)' },
-    { name: 'Indigo', value: 'var(--indigo-color)' },
-    { name: 'Blue', value: 'var(--blue-color)' },
-    { name: 'Light blue', value: 'var(--light-blue-color)' },
-    { name: 'Cyan', value: 'var(--cyan-color)' },
-    { name: 'Teal', value: 'var(--teal-color)' },
-    { name: 'Green', value: 'var(--green-color)' },
-    { name: 'Light green', value: 'var(--light-green-color)' },
-    { name: 'Lime', value: 'var(--lime-color)' },
-    { name: 'Yellow', value: 'var(--yellow-color)' },
-    { name: 'Amber', value: 'var(--amber-color)' },
-    { name: 'Orange', value: 'var(--orange-color)' },
-    { name: 'Deep orange', value: 'var(--deep-orange-color)' },
-    { name: 'Brown', value: 'var(--brown-color)' },
-    { name: 'Light grey', value: 'var(--light-grey-color)' },
-    { name: 'Grey', value: 'var(--grey-color)' },
-    { name: 'Dark grey', value: 'var(--dark-grey-color)' },
-    { name: 'Blue grey', value: 'var(--blue-grey-color)' },
-    { name: 'Black', value: 'var(--black-color)' },
-    { name: 'White', value: 'var(--white-color)' }
-];
-
-const LAYOUT_OPTION = {
-    en: [
-        { value: CARD.layout.horizontal.label, name: 'Horizontal (default)' },
-        { value: CARD.layout.vertical.label,   name: 'Vertical' }
+const FIELD_OPTIONS = {
+    theme: [
+        { label: '', value: '' },
+        ...Object.keys(THEME).map(key => ({
+            label: key.charAt(0).toUpperCase() + key.slice(1),
+            value: key
+        }))
     ],
-    fr: [
-        { value: CARD.layout.horizontal.label, name: 'Horizontal (par défaut)' },
-        { value: CARD.layout.vertical.label,   name: 'Vertical' }
+    color: [
+        { value: 'var(--state-icon-color)', label: { en: 'Default', fr: 'Défaut', es: 'Predeterminado', de: 'Standard' } },
+        { value: 'var(--accent-color)', label: { en: 'Accent', fr: 'Accent', es: 'Acento', de: 'Akzent' } },
+        { value: 'var(--info-color)', label: { en: 'Info', fr: 'Info', es: 'Información', de: 'Info' } },
+        { value: 'var(--success-color)', label: { en: 'Success', fr: 'Succès', es: 'Éxito', de: 'Erfolg' } },
+        { value: 'var(--disabled-color)', label: { en: 'Disable', fr: 'Désactivé', es: 'Deshabilitado', de: 'Deaktiviert' } },
+        { value: 'var(--red-color)', label: { en: 'Red', fr: 'Rouge', es: 'Rojo', de: 'Rot' } },
+        { value: 'var(--pink-color)', label: { en: 'Pink', fr: 'Rose', es: 'Rosa', de: 'Pink' } },
+        { value: 'var(--purple-color)', label: { en: 'Purple', fr: 'Violet', es: 'Púrpura', de: 'Lila' } },
+        { value: 'var(--deep-purple-color)', label: { en: 'Deep purple', fr: 'Violet foncé', es: 'Púrpura profundo', de: 'Dunkellila' } },
+        { value: 'var(--indigo-color)', label: { en: 'Indigo', fr: 'Indigo', es: 'Índigo', de: 'Indigo' } },
+        { value: 'var(--blue-color)', label: { en: 'Blue', fr: 'Bleu', es: 'Azul', de: 'Blau' } },
+        { value: 'var(--light-blue-color)', label: { en: 'Light blue', fr: 'Bleu clair', es: 'Azul claro', de: 'Hellblau' } },
+        { value: 'var(--cyan-color)', label: { en: 'Cyan', fr: 'Cyan', es: 'Cian', de: 'Cyan' } },
+        { value: 'var(--teal-color)', label: { en: 'Teal', fr: 'Bleu sarcelle', es: 'Verde azulado', de: 'Blaugrün' } },
+        { value: 'var(--green-color)', label: { en: 'Green', fr: 'Vert', es: 'Verde', de: 'Grün' } },
+        { value: 'var(--light-green-color)', label: { en: 'Light green', fr: 'Vert clair', es: 'Verde claro', de: 'Hellgrün' } },
+        { value: 'var(--lime-color)', label: { en: 'Lime', fr: 'Citron vert', es: 'Lima', de: 'Limette' } },
+        { value: 'var(--yellow-color)', label: { en: 'Yellow', fr: 'Jaune', es: 'Amarillo', de: 'Gelb' } },
+        { value: 'var(--amber-color)', label: { en: 'Amber', fr: 'Ambre', es: 'Ámbar', de: 'Bernstein' } },
+        { value: 'var(--orange-color)', label: { en: 'Orange', fr: 'Orange', es: 'Naranja', de: 'Orange' } },
+        { value: 'var(--deep-orange-color)', label: { en: 'Deep orange', fr: 'Orange foncé', es: 'Naranja oscuro', de: 'Dunkelorange' } },
+        { value: 'var(--brown-color)', label: { en: 'Brown', fr: 'Marron', es: 'Marrón', de: 'Braun' } },
+        { value: 'var(--light-grey-color)', label: { en: 'Light grey', fr: 'Gris clair', es: 'Gris claro', de: 'Hellgrau' } },
+        { value: 'var(--grey-color)', label: { en: 'Grey', fr: 'Gris', es: 'Gris', de: 'Grau' } },
+        { value: 'var(--dark-grey-color)', label: { en: 'Dark grey', fr: 'Gris foncé', es: 'Gris oscuro', de: 'Dunkelgrau' } },
+        { value: 'var(--blue-grey-color)', label: { en: 'Blue grey', fr: 'Gris bleuté', es: 'Gris azulado', de: 'Blaugrau' } },
+        { value: 'var(--black-color)', label: { en: 'Black', fr: 'Noir', es: 'Negro', de: 'Schwarz' } },
+        { value: 'var(--white-color)', label: { en: 'White', fr: 'Blanc', es: 'Blanco', de: 'Weiß' } }
     ],
-    es: [
-        { value: CARD.layout.horizontal.label, name: 'Horizontal (predeterminado)' },
-        { value: CARD.layout.vertical.label,   name: 'Vertical' }
+    layout: [
+        { value: 'horizontal', label: { en: 'Horizontal (default)', fr: 'Horizontal (par défaut)', es: 'Horizontal (predeterminado)', de: 'Horizontal (Standard)',}, icon: CARD.layout.horizontal.mdi, },
+        { value: 'vertical', label: { en: 'Vertical', fr: 'Vertical', es: 'Vertical', de: 'Vertikal',}, icon: CARD.layout.vertical.mdi, },
     ],
-    de: [
-        { value: CARD.layout.horizontal.label, name: 'Horizontal (Standard)' },
-        { value: CARD.layout.vertical.label,   name: 'Vertikal' }
-    ]
-};
-
-const TAP_ACTION = {
-    en: [
-        { value: CARD.tap_action.more_info,   name: 'More info (default)' },
-        { value: CARD.tap_action.navigate_to, name: 'Navigate to...' },
-        { value: CARD.tap_action.no_action,   name: 'No action' },
-    ],
-    fr: [
-        { value: CARD.tap_action.more_info,   name: 'Plus d\'infos (par défaut)' },
-        { value: CARD.tap_action.navigate_to, name: 'Naviguer vers...' },
-        { value: CARD.tap_action.no_action,   name: 'Aucune action' },
-    ],
-    es: [
-        { value: CARD.tap_action.more_info,   name: 'Más información (predeterminado)' },
-        { value: CARD.tap_action.navigate_to, name: 'Navegar a...' },
-        { value: CARD.tap_action.no_action,   name: 'Sin acción' },
-    ],
-    de: [
-        { value: CARD.tap_action.more_info,   name: 'Mehr Infos (Standard)' },
-        { value: CARD.tap_action.navigate_to, name: 'Zu navigieren...' },
-        { value: CARD.tap_action.no_action,   name: 'Keine Aktion' },
+    tap_action: [
+        { value: CARD.tap_action.more_info, label: { en: 'More info (default)', fr: 'Plus d\'infos (par défaut)', es: 'Más información (predeterminado)', de: 'Mehr Infos (Standard)', }},
+        { value: CARD.tap_action.navigate_to, label: { en: 'Navigate to...', fr: 'Naviguer vers...', es: 'Navegar a...', de: 'Zu navigieren...', }},
+        { value: CARD.tap_action.no_action, label: { en: 'No action', fr: 'Aucune action', es: 'Sin acción', de: 'Keine Aktion', }}
     ]
 };
 
@@ -1688,62 +1656,42 @@ class EntityProgressCardEditor extends HTMLElement {
     }
 
     /**
-     * Adds a list of choices to a given `<select>` element as `<mwc-list-item>` options.
+     * Adds a list of choices to a given `<select>` element based on the specified list type.
      * 
-     * This method takes a list of choice objects and appends them as options to the provided 
-     * `<select>` element. Each choice is represented by a circular colored icon (using 
-     * the `value` property as the background color) followed by the choice's `name`.
-     * 
-     * For each item in the `list`, a new `<mwc-list-item>` is created, where the `value` attribute 
-     * of the option is set to the `value` of the choice.
-     * - The `value` of the choice.
-     * - The name of the choice.
-     * 
-     * The new `<mwc-list-item>` is then appended to the provided `select` element, allowing 
-     * the user to choose from the list in a graphical form.
+     * This method populates the `<select>` element with options according to the provided `type`. The `type`
+     * determines the kind of list (e.g., colors, layout, theme, tap actions) and how the options will be displayed.
      * 
      * @param {HTMLElement} select - The `<select>` element to which the choices will be added.
-     * @param {Array} list - An array of choice objects, where each object contains a `value` (color) and `name` (label) property.
+     * @param {string} type - The type of list to populate ('layout', 'color', 'theme', or 'tap_action').
      */
-    _addChoice(select, list) {
-        list.forEach(cur_choice => {
+    _addChoices(select, type) {
+        select.innerHTML = '';
+        const list = FIELD_OPTIONS[type];
+
+        list.forEach(optionData => {
             const option = document.createElement(FIELD_TYPE.listItem.tag);
-            option.value = cur_choice.value;
-            option.innerHTML = `${cur_choice.name}`;
+            option.value = optionData.value;
+
+            if (type === 'color') {
+                option.innerHTML = `
+                    <span style="display: inline-block; width: 16px; height: 16px; background-color: ${optionData.value}; border-radius: 50%; margin-right: 8px;"></span>
+                    ${optionData.label[this._currentLanguage]}
+                `;
+            } else if (type === 'layout') {
+                const haIcon = document.createElement('ha-icon');
+                haIcon.setAttribute('icon', optionData.icon || 'mdi:alert'); // Définit l'icône par défaut ou celle dans FIELD_OPTIONS
+                haIcon.style.marginRight = '8px'; // Ajuste l'espace entre l'icône et le texte
+                haIcon.style.width = '20px'; // Assurez-vous que la largeur est visible
+                haIcon.style.height = '20px';    
+                option.appendChild(haIcon); // Ajouter l'icône à l'option
+                option.append(optionData.label[this._currentLanguage]);
+            } else if (type === 'tap_action') {
+                option.innerHTML = `${optionData.label[this._currentLanguage]}`;
+            } else if (type === 'theme') {
+                option.innerHTML = `${optionData.label}`;
+            }
+
             select.appendChild(option);
-        });
-    }
-
-    /**
-     * Adds a list of color options to a given `<select>` element, including a "no color" option.
-     * 
-     * This method populates a `<select>` element with color choices. It first adds a special 
-     * option to represent the "no color" choice, followed by the color options defined in the 
-     * `COLOR_OPTION` array. Each color option is displayed with a circular colored icon (styled using 
-     * the `value` of the color) and its respective `name`. 
-     * 
-     * For each color in the `COLOR_OPTION` array, a new `<mwc-list-item>` is created with the color 
-     * as the background of a circular `span` and the color name displayed beside it.
-     * 
-     * @param {HTMLElement} colorSelect - The `<select>` element to which the color options will be added.
-     */
-    _addColor(colorSelect) {
-        const noColorOption = document.createElement(FIELD_TYPE.listItem.tag);
-        noColorOption.value = '';
-        noColorOption.innerHTML = `
-            <span style="display: inline-block; width: 16px; height: 16px; background-color: transparent; border-radius: 50%; margin-right: 8px;"></span>
-        `;
-        colorSelect.appendChild(noColorOption);
-
-        COLOR_OPTION.forEach(color => {
-            const option = document.createElement(FIELD_TYPE.listItem.tag);
-            option.value = color.value;
-            option.innerHTML = `
-                <span style="display: inline-block; width: 16px; height: 16px; background-color: ${color.value}; border-radius: 50%; margin-right: 8px;"></span>
-                ${color.name}
-            `;
-            
-            colorSelect.appendChild(option);
         });
     }
 
@@ -1829,25 +1777,15 @@ class EntityProgressCardEditor extends HTMLElement {
                 inputElement = document.createElement(FIELD_TYPE.icon.tag);
                 break;
             case FIELD_TYPE.layout.type:
-                inputElement = document.createElement(FIELD_TYPE.layout.tag);
-                inputElement.popperOptions = "";
-                this._addChoice(inputElement, LAYOUT_OPTION[this._currentLanguage]);
-                break;
-            case FIELD_TYPE.tap_action.type:
-                inputElement = document.createElement(FIELD_TYPE.tap_action.tag);
-                inputElement.popperOptions = ""
-                this._addChoice(inputElement, TAP_ACTION[this._currentLanguage]);
-                value = this._getTapActionValue();
-                break;
             case FIELD_TYPE.theme.type:
-                inputElement = document.createElement(FIELD_TYPE.theme.tag);
-                inputElement.popperOptions = ""
-                this._addChoice(inputElement, THEME_OPTION);
-                break;
             case FIELD_TYPE.color.type:
-                inputElement = document.createElement(FIELD_TYPE.color.tag);
-                inputElement.popperOptions = ""
-                this._addColor(inputElement);
+            case FIELD_TYPE.tap_action.type:
+                inputElement = document.createElement(FIELD_TYPE[type].tag);
+                inputElement.popperOptions = "";
+                this._addChoices(inputElement, type);
+                if (type === FIELD_TYPE.tap_action.type) {
+                    value = this._getTapActionValue();
+                }
                 break;
             case FIELD_TYPE.number.type:
                 inputElement = document.createElement(FIELD_TYPE.number.tag);
@@ -1856,7 +1794,8 @@ class EntityProgressCardEditor extends HTMLElement {
             default:
                 inputElement = document.createElement(FIELD_TYPE.default.tag);
                 inputElement.type = FIELD_TYPE.default.type;
-                }
+                break;
+        }
 
         // store element and manage default display
         this._elements[name]=inputElement;
