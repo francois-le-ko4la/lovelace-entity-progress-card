@@ -6,35 +6,24 @@
  * The card displays visual elements like icons, progress bars, and other dynamic content 
  * based on the state of the entity and user configurations.
  * 
- * The file includes the following:
- * - Class `EntityProgressCard`: Defines the behavior and structure of the card element.
- * - Class `EntityProgressCardEditor`: Defines the editor UI for configuring the card's properties.
- * - Methods for dynamically updating the card's elements based on entity state (e.g., battery level).
- * - Methods to support entity picker and configuration fields.
- * 
- * The primary functionality is centered around:
- * 1. Creating and rendering the custom card element with configurable properties.
- * 2. Handling dynamic updates to the card based on the state of the associated entity.
- * 3. Providing an editor interface for customizing the card's configuration in the Home Assistant UI.
- * 
- * Main Classes:
- * - `EntityProgressCard`: The main card element displaying entity status.
- * - `EntityProgressCardEditor`: The configuration editor for the `EntityProgressCard`.
- * 
  * Key Features:
  * - Dynamic content update (e.g., progress bar, icons) based on entity state.
  * - Support for theme and layout customization.
  * - Error handling for missing or invalid entities.
- * - Configuration options for various card elements, including entity picker, color settings, and layout options.
+ * - Configuration options for various card elements.
  * 
- * @version 1.0.25
+ * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
+ * 
+ * @author ko4la
+ * @version 1.0.26
+ * 
  */
 
 /** --------------------------------------------------------------------------
  * PARAMETERS
  */
 
-const VERSION='1.0.25';
+const VERSION='1.0.26';
 const CARD = {
     typeName: 'entity-progress-card',
     name: 'Entity progress card',
@@ -63,11 +52,15 @@ const CARD = {
         maxPercent: 100,
         unit: '%',
         color: 'var(--state-icon-color)',
+        icon: 'mdi:alert',
+        alert_icon: 'mdi:alert-circle-outline',
+        alert_icon_color: "#0080ff",
         showMoreInfo: true,
         decimal: {
             percentage: 0,
             other: 2
-        }
+        },
+    documentation: "https://github.com/francois-le-ko4la/lovelace-entity-progress-card/",
     },
     debounce: 100,
     debug: false,
@@ -93,7 +86,9 @@ const SELECTORS = {
     progressBarInner: 'progress-bar-inner',
     ha_shape: 'ha-shape',
     ha_icon: 'ha-icon',
-    alert: 'ha-alert'
+    alert: 'progress-alert',
+    alert_icon: 'progress-alert-icon',
+    alert_message: 'progress-alert-message'
 };
 
 const CARD_HTML = `
@@ -117,7 +112,10 @@ const CARD_HTML = `
         </div>
     </div>
     <!-- HA Alert -->
-    <${SELECTORS.alert} type="error"></${SELECTORS.alert}>
+    <${SELECTORS.alert}>
+        <${SELECTORS.ha_icon} class="${SELECTORS.alert_icon}"></${SELECTORS.ha_icon}>
+        <div class="${SELECTORS.alert_message}"></div>
+    </${SELECTORS.alert}>
 `;
 
 const CARD_CSS=`
@@ -127,10 +125,10 @@ const CARD_CSS=`
         display: flex;
         flex-direction: row;
         align-items: center;
-        justify-content: flex-start; /* Aligner tous les éléments à gauche */
+        justify-content: flex-start;
         padding: 0;
         box-sizing: border-box;
-        border-radius: 8px;
+        border-radius: 12px;
         margin: 0 auto;
     }
 
@@ -151,6 +149,7 @@ const CARD_CSS=`
     /* .left: icon & shape */
     .${SELECTORS.left} {
         display: flex;
+        flex-direction: column; 
         align-items: center;
         justify-content: center;
         position: relative;
@@ -160,6 +159,7 @@ const CARD_CSS=`
     }
 
     .${SELECTORS.shape} {
+        display: block;
         position: absolute;
         width: 36px;
         height: 36px;
@@ -231,15 +231,38 @@ const CARD_CSS=`
     ${SELECTORS.alert} {
         display: none;
         position: absolute;
-        top: -1px;
-        left: -2px;
-        width: 105%;
-        height: 110%;
-        display: flex;
+        flex-direction: row;
         align-items: center;
         justify-content: center;
-        background-color: black;
+        padding: 0;
+        margin: 0px;
+        gap: 10px;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
         z-index: 10;
+        background-color: #202833;
+        border-radius: 12px;
+    }
+    .${SELECTORS.alert_icon} {
+        display: flex;
+        flex-direction: column; 
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+        margin-left: 8px;
+    }
+    .${SELECTORS.alert_message} {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        flex-grow: 1;
+        overflow: hidden;
+        width:100%;
+        margin-right: 8px;
     }
     `;
 
@@ -249,24 +272,24 @@ const HTML = {
         hide: 'none',
     },
     flex: {
-        show: 'block',
+        show: 'flex',
         hide: 'none',
     },
 };
 
 const THEME = {
     battery: [
-        { icon: 'mdi:battery-alert',     color: 'var(--red-color)'    },   // Pourcentage < 10
-        { icon: 'mdi:battery-alert',     color: 'var(--red-color)'    },   // Pourcentage >= 10
-        { icon: 'mdi:battery-20',        color: 'var(--orange-color)' },   // Pourcentage >= 20
-        { icon: 'mdi:battery-30',        color: 'var(--orange-color)' },   // Pourcentage >= 30
-        { icon: 'mdi:battery-40',        color: 'var(--orange-color)' },   // Pourcentage >= 40
-        { icon: 'mdi:battery-50',        color: 'var(--yellow-color)' },   // Pourcentage >= 50
-        { icon: 'mdi:battery-60',        color: 'var(--yellow-color)' },   // Pourcentage >= 60
-        { icon: 'mdi:battery-70',        color: 'var(--yellow-color)' },   // Pourcentage >= 70
-        { icon: 'mdi:battery-80',        color: 'var(--green-color)'  },   // Pourcentage >= 80
-        { icon: 'mdi:battery-90',        color: 'var(--green-color)'  },   // Pourcentage >= 90
-        { icon: 'mdi:battery',           color: 'var(--green-color)'  }    // Pourcentage >= 100
+        { icon: 'mdi:battery-alert',     color: 'var(--state-sensor-battery-low-color)'    },   // Pourcentage < 10
+        { icon: 'mdi:battery-alert',     color: 'var(--state-sensor-battery-low-color)'    },   // Pourcentage >= 10
+        { icon: 'mdi:battery-20',        color: 'var(--state-sensor-battery-medium-color)' },   // Pourcentage >= 20
+        { icon: 'mdi:battery-30',        color: 'var(--state-sensor-battery-medium-color)' },   // Pourcentage >= 30
+        { icon: 'mdi:battery-40',        color: 'var(--state-sensor-battery-medium-color)' },   // Pourcentage >= 40
+        { icon: 'mdi:battery-50',        color: 'var(--yellow-color)' },                        // Pourcentage >= 50
+        { icon: 'mdi:battery-60',        color: 'var(--yellow-color)' },                        // Pourcentage >= 60
+        { icon: 'mdi:battery-70',        color: 'var(--yellow-color)' },                        // Pourcentage >= 70
+        { icon: 'mdi:battery-80',        color: 'var(--state-sensor-battery-high-color)'  },    // Pourcentage >= 80
+        { icon: 'mdi:battery-90',        color: 'var(--state-sensor-battery-high-color)'  },    // Pourcentage >= 90
+        { icon: 'mdi:battery',           color: 'var(--state-sensor-battery-high-color)'  }     // Pourcentage >= 100
     ],
     light: [
         { icon: 'mdi:lightbulb-outline', color: '#4B4B4B'},   // Pourcentage < 25
@@ -278,37 +301,41 @@ const THEME = {
 };
 
 const MSG = {
-    en: {
-        entityError: "entity: The 'entity' parameter is required!",
-        entityNotFound: "entity: Entity not found in Home Assistant.",
-        entityUnavailable: "unavailable",
-        minValueError: "min_value: Check your min_value.",
-        maxValueError: "max_value: Check your max_value.",
-        decimalError: "decimal: Decimal value cannot be negative."
+    entityError: {
+        en: "entity: The 'entity' parameter is required!",
+        fr: "entity: Le paramètre 'entity' est requis !",
+        es: "entity: ¡El parámetro 'entity' es obligatorio!",
+        de: "entity: Der Parameter 'entity' ist erforderlich!",
     },
-    fr: {
-        entityError: "entity: Le paramètre 'entity' est requis !",
-        entityNotFound: "entity: Entité introuvable dans Home Assistant.",
-        entityUnavailable: "indisponible",
-        minValueError: "min_value: Vérifiez votre min_value.",
-        maxValueError: "max_value: Vérifiez votre max_value.",
-        decimalError: "decimal: La valeur décimale ne peut pas être négative."
+    entityNotFound: {
+        en: "entity: Entity not found in HA.",
+        fr: "entity: Entité introuvable dans HA.",
+        es: "entity: Entidad no encontrada en HA.",
+        de: "entity: Entität in HA nicht gefunden.",
     },
-    es: {
-        entityError: "entity: ¡El parámetro 'entity' es obligatorio!",
-        entityNotFound: "entity: Entidad no encontrada en Home Assistant.",
-        entityUnavailable: "no disponible",
-        minValueError: "max_value: Verifique su min_value.",
-        maxValueError: "max_value: Verifique su max_value.",
-        decimalError: "decimal: El valor decimal no puede ser negativo."
+    entityUnavailable: {
+        en: "unavailable",
+        fr: "indisponible",
+        es: "no disponible",
+        de: "nicht verfügbar",
     },
-    de: {
-        entityError: "entity: Der Parameter 'entity' ist erforderlich!",
-        entityNotFound: "entity: Entität in Home Assistant nicht gefunden.",
-        entityUnavailable: "nicht verfügbar",
-        minValueError: "max_value: Überprüfen Sie Ihren min_value.",
-        maxValueError: "max_value: Überprüfen Sie Ihren max_value.",
-        decimalError: "decimal: Der Dezimalwert darf nicht negativ sein."
+    minValueError: {
+        en: "min_value: Check your min_value.",
+        fr: "min_value: Vérifiez votre min_value.",
+        es: "max_value: Verifique su min_value.", // Corrected typo here
+        de: "max_value: Überprüfen Sie Ihren min_value.", // Corrected typo here
+    },
+    maxValueError: {
+        en: "max_value: Check your max_value.",
+        fr: "max_value: Vérifiez votre max_value.",
+        es: "max_value: Verifique su max_value.",
+        de: "max_value: Überprüfen Sie Ihren max_value.",
+    },
+    decimalError: {
+        en: "decimal: This value cannot be negative.",
+        fr: "decimal: La valeur ne peut pas être négative.",
+        es: "decimal: El valor no puede ser negativo.",
+        de: "decimal: Negative Werte sind nicht zulässig.",
     },
 };
 
@@ -490,11 +517,9 @@ const EDITOR_INPUT_FIELDS = {
 
 const FIELD_OPTIONS = {
     theme: [
-        { label: '', value: '' },
-        ...Object.keys(THEME).map(key => ({
-            label: key.charAt(0).toUpperCase() + key.slice(1),
-            value: key
-        }))
+        { value: '',        label: { en: 'Disabled (default)', fr: 'Désactivé (défaut)', es: 'Desactivado (defecto)', de: 'Deaktiviert (Standard)' }, icon: "mdi:palette-outline" },
+        { value: 'battery', label: { en: 'Battery', fr: 'Batterie', es: 'Batería', de: 'Batterie'},                                                   icon: "mdi:battery" },
+        { value: 'light',   label: { en: 'Light', fr: 'Lumière', es: 'Luz', de: 'Licht' },                                                            icon: "mdi:lightbulb" },        
     ],
     color: [
         { value: 'var(--state-icon-color)', label: { en: 'Default', fr: 'Défaut', es: 'Predeterminado', de: 'Standard' } },
@@ -537,41 +562,1000 @@ const FIELD_OPTIONS = {
     ]
 };
 
+
+/**
+ * Represents a numeric value that can be valid or invalid.
+ *
+ * @class Value
+ */
+class Value {
+    /**
+     * Creates a new instance of Value.
+     *
+     * @param {number} [value=null] - The numeric value. Defaults to null.
+     * @param {boolean} [isValid=false] - Indicates whether the value is valid. Defaults to false.
+     */
+    constructor(value = null, isValid = false) {
+        this._value = value;
+        this._isValid = isValid;
+    }
+
+    /**
+     * Sets the numeric value.
+     * If the new value is not a number or is NaN, the value is considered invalid.
+     *
+     * @param {number} newValue - The new numeric value.
+     */
+    set value(newValue) {
+        if (typeof newValue !== 'number' || isNaN(newValue)) {
+            this._isValid = false;
+            return;
+        }
+        this._value = newValue;
+        this._isValid = true;
+    }
+    /**
+     * Returns the numeric value.
+     *
+     * @returns {number} The numeric value.
+     */
+    get value() {
+        return this._value;
+    }
+    /**
+     * Indicates whether the value is valid.
+     *
+     * @returns {boolean} True if the value is valid, false otherwise.
+     */
+    get isValid() {
+        return this._isValid;
+    }
+}
+
+/**
+ * Represents a non-negative integer value that can be valid or invalid.
+ *
+ * @class Decimal
+ */
+class Decimal {
+    /**
+     * Creates a new instance of Decimal.
+     *
+     * @param {number} [value=null] - The non-negative integer value. Defaults to null.
+     * @param {boolean} [isValid=false] - Indicates whether the value is valid. Defaults to false.
+     */
+    constructor(value = null, isValid = false) {
+        this._value = value;
+        this._isValid = isValid;
+    }
+  
+    /**
+     * Sets the non-negative integer value.
+     * If the new value is not a number, is NaN, is negative, or is not an integer, the value is considered invalid.
+     *
+     * @param {number} newValue - The new non-negative integer value.
+     */
+    set value(newValue) {
+        if (typeof newValue !== 'number' || isNaN(newValue) || !(newValue >= 0) || !Number.isInteger(newValue)) {
+            this._isValid = false;
+            return;
+        }
+        this._value = newValue;
+        this._isValid = true;
+    }
+  
+    /**
+     * Returns the non-negative integer value.
+     *
+     * @returns {number} The non-negative integer value.
+     */
+    get value() {
+        return this._value;
+    }
+  
+    /**
+     * Indicates whether the value is valid.
+     *
+     * @returns {boolean} True if the value is valid, false otherwise.
+     */
+    get isValid() {
+        return this._isValid;
+    }
+}
+
+/**
+ * Represents a unit of measurement, stored as a string.
+ *
+ * @class Unit
+ */
+class Unit {
+    /**
+     * Creates a new instance of Unit.
+     *
+     * @param {string} [value=''] - The unit of measurement. Defaults to an empty string.
+     */
+    constructor(value = '') {
+        this._value = value; 
+    }
+
+    /**
+     * Sets the unit of measurement.
+     * If the new value is not a string, it will be converted to one.
+     *
+     * @param {string|*} newValue - The new unit of measurement.
+     */
+    set value(newValue) {
+        if (typeof newValue === 'string') {
+            this._value = newValue;
+        } else {
+            this._value = String(newValue); 
+        }
+    }
+
+    /**
+     * Returns the unit of measurement.
+     *
+     * @returns {string} The unit of measurement.
+     */
+    get value() {
+        return this._value;
+    }
+}
+
+/**
+ * Helper class for calculating and formatting percentages.
+ * This class uses `Value`, `Unit`, and `Decimal` objects to manage and validate its internal data.
+ *
+ * @class PercentHelper
+ */
+class PercentHelper {
+    /**
+     * Creates a new instance of PercentHelper.
+     *
+     * @param {number} [currentValue=0] - The current value. Defaults to 0.
+     * @param {number} [minValue=CARD.config.minValue] - The minimum value. Defaults to CARD.config.minValue.
+     * @param {number} [maxValue=CARD.config.maxPercent] - The maximum percentage value. Defaults to CARD.config.maxPercent.
+     * @param {string} [unit=CARD.config.unit] - The unit of measurement. Defaults to CARD.config.unit.
+     * @param {number} [decimal=CARD.config.decimal.percentage] - The number of decimal places to use. Defaults to CARD.config.decimal.percentage.
+     */
+    constructor(currentValue = 0, minValue = CARD.config.minValue, maxValue = CARD.config.maxPercent, unit = CARD.config.unit, decimal = CARD.config.decimal.percentage) {
+        /**
+         * @type {Value}
+         * @private
+         */
+        this._min = new Value(minValue);
+        /**
+         * @type {Value}
+         * @private
+         */
+        this._max = new Value(maxValue);
+        /**
+         * @type {Value}
+         * @private
+         */
+        this._current = new Value(currentValue);
+        /**
+         * @type {Unit}
+         * @private
+         */
+        this._unit = new Unit(unit);
+        /**
+         * @type {Decimal}
+         * @private
+         */
+        this._decimal = new Decimal(decimal);
+        /**
+         * @type {number}
+         * @private
+         */
+        this._percent = 0;
+        /**
+         * @type {string}
+         * @private
+         */
+        this._label = null;
+    }
+    /**
+     * Sets the minimum value.
+     *
+     * @param {number} [newMin] - The new minimum value. If not provided, defaults to CARD.config.minValue.
+     */
+    set min(newMin) {
+        if (!newMin) {
+            newMin = CARD.config.minValue;
+        }
+        this._min.value = newMin;
+    }
+    /**
+     * Sets the maximum percentage value.
+     *
+     * @param {number} [newMax] - The new maximum value. If not provided, defaults to CARD.config.maxPercent.
+     */
+    set max(newMax) {
+        if (!newMax) {
+            newMax = CARD.config.maxPercent;
+        }
+        this._max.value = newMax;
+    }
+
+    /**
+     * Sets the current value.
+     *
+     * @param {number} newCurrent - The new current value.
+     */
+    set current(newCurrent) {
+        this._current.value = newCurrent;
+    }
+
+    /**
+     * Returns the unit of measurement.
+     *
+     * @returns {string} The unit of measurement.
+     */
+    get unit() {
+        return this._unit.value;
+    }
+
+    /**
+     * Sets the unit of measurement.
+     *
+     * @param {string} [newUnit] - The new unit of measurement. If not provided, defaults to CARD.config.unit.
+     */
+    set unit(newUnit) {
+        if (!newUnit) {
+            newUnit = CARD.config.unit;
+        }
+        this._unit.value = newUnit;
+    }
+
+    /**
+     * Sets the number of decimal places to use.
+     * If no value is provided, it defaults to CARD.config.decimal.percentage if the unit is CARD.config.unit, 
+     * otherwise it defaults to CARD.config.decimal.other.
+     *
+     * @param {number} [newDecimal] - The new number of decimal places.
+     */
+    set decimal(newDecimal) {
+        if (newDecimal === undefined || newDecimal === null) {
+            if (this._unit.value === CARD.config.unit) {
+                newDecimal = CARD.config.decimal.percentage;
+            } else {
+                newDecimal = CARD.config.decimal.other;
+            }
+        }        
+        this._decimal.value = newDecimal;
+    }
+
+    /**
+     * Checks if all internal values are valid.
+     *
+     * @returns {boolean} True if all values are valid, false otherwise.
+     */
+    get isValid() {
+        if (!this._min.isValid || !this._max.isValid || !this._current.isValid || !this._decimal.isValid) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Calculates and updates the percentage value based on the current, minimum, and maximum values.
+     */
+    refresh() {
+        if (!this.isValid) {
+            return;
+        }
+        const range = this._max.value - this._min.value;
+        const correctedValue = this._current.value - this._min.value;
+        const percent = (correctedValue / range) * 100;
+        this._percent = parseFloat(percent.toFixed(this._decimal.value));
+    }
+
+    /**
+     * Returns the calculated percentage value.
+     *
+     * @returns {number|null} The percentage value, or null if the internal values are invalid.
+     */
+    get percent() {
+        if (!this.isValid) {
+            return null;
+        }
+        return this._percent;
+    }
+
+    /**
+     * Returns a formatted label with the value and unit.
+     *
+     * @returns {string} The formatted label.
+     */
+    get label() {
+        let value = this._percent;
+        if (this._unit.value !== CARD.config.unit) {
+            value = this._current.value;
+        }
+        return `${value.toFixed(this._decimal.value)}${this._unit.value}`;
+    }
+}
+
+/**
+ * Manages the theme and its associated icon and color based on a percentage value.
+ *
+ * @class ThemeManager
+ */
+class ThemeManager {
+    /**
+     * Creates a new instance of ThemeManager.
+     *
+     * @param {string} [theme=null] - The name of the theme. Defaults to null.
+     * @param {number} [percent=0] - The percentage value used to determine the theme's icon and color. Defaults to 0.
+     */
+    constructor(theme = null, percent = 0) {
+        /**
+         * @type {string}
+         * @private
+         */
+        this._theme = theme;
+        /**
+         * @type {string}
+         * @private
+         */
+        this._icon = null;
+        /**
+         * @type {string}
+         * @private
+         */
+        this._color = null;
+        /**
+         * @type {number}
+         * @private
+         */
+        this._percent = percent;
+    }
+
+    /**
+     * Returns the name of the current theme.
+     *
+     * @returns {string} The name of the theme.
+     */
+    get theme() {
+        return this._theme;
+    }
+
+    /**
+     * Sets the theme.
+     * If the theme name is invalid (not found in `THEME`), the icon, color, and theme are reset to null.
+     *
+     * @param {string} newTheme - The name of the new theme.
+     */
+    set theme(newTheme) {
+        if (!THEME[newTheme]) {
+            this._icon = null;
+            this._color = null;
+            this._theme = null;
+            return;
+        }
+        this._theme = newTheme;
+    }
+
+    /**
+     * Sets the percentage value and refreshes the icon and color.
+     *
+     * @param {number} newPercent - The new percentage value.
+     */
+    set percent(newPercent) {
+        this._percent = newPercent;
+        this._refresh();
+    }
+
+    /**
+     * Returns the icon associated with the current theme and percentage.
+     *
+     * @returns {string} The icon.
+     */
+    get icon() {
+        return this._icon;
+    }
+
+    /**
+     * Returns the color associated with the current theme and percentage.
+     *
+     * @returns {string} The color.
+     */
+    get color() {
+        return this._color;
+    }
+
+    /**
+     * Updates the icon and color based on the current theme and percentage.
+     * This method calculates the appropriate icon and color from the `THEME` object based on the percentage value.
+     *
+     * @private
+     */
+    _refresh() {
+        if (!this._theme) {
+            return;
+        }
+        const lastStep = THEME[this._theme].length - 1;
+        const thresholdSize = 100 / lastStep;
+        const percentage = Math.max(0, Math.min(this._percent, CARD.config.maxPercent));
+        const themeData = THEME[this._theme][Math.floor(percentage / thresholdSize)];
+        this._icon = themeData.icon;
+        this._color = themeData.color;
+    }
+}
+
+/**
+ * Provides access to the Home Assistant object.
+ * This class implements a singleton pattern to ensure only one instance exists.
+ *
+ * @class HassProvider
+ */
+class HassProvider {
+    /**
+     * @type {HassProvider}
+     * @private
+     * @static
+     */
+    static _instance = null;
+
+    /**
+     * Creates a new instance of HassProvider.
+     * If an instance already exists, it returns the existing instance.
+     */
+    constructor() {
+        if (HassProvider._instance) {
+            return HassProvider._instance;
+        }
+        /**
+         * @type {object}
+         * @private
+         */
+        this._hass = null;
+        HassProvider._instance = this;
+    }
+
+    /**
+     * Sets the Home Assistant object.
+     *
+     * @param {object} hass - The Home Assistant object.
+     */
+    set hass(hass) {
+        this._hass = hass;
+    }
+
+    /**
+     * Returns the Home Assistant object.
+     *
+     * @returns {object} The Home Assistant object.
+     */
+    get hass() {
+        return this._hass;
+    }
+
+    /**
+     * Returns the language configured in Home Assistant.
+     *
+     * @returns {string} The language code.
+     */
+    get language() {
+        return this._hass.config.language;
+    }
+}
+
+/**
+ * Represents either an entity ID or a direct value.
+ * This class validates the provided value and retrieves information from Home Assistant if it's an entity.
+ *
+ * @class EntityOrValue
+ */
+class EntityOrValue {
+    /**
+     * Creates a new instance of EntityOrValue.
+     */
+    constructor() {
+        /**
+         * @type {object|string}
+         * @private
+         */
+        this._value = {}; 
+        /**
+         * @type {HassProvider}
+         * @private
+         */
+        this._hassProvider = new HassProvider();
+        /**
+         * @type {boolean}
+         * @private
+         */
+        this._isValid = false;
+        /**
+         * @type {boolean}
+         * @private
+         */
+        this._isAvailable = false;
+        /**
+         * @type {boolean}
+         * @private
+         */
+        this._isFound = false;
+        /**
+         * @type {string}
+         * @private
+         */
+        this._entity = null;
+    }
+    /**
+     * Sets the value, which can be an entity ID or a direct value.
+     * Triggers validation and updates internal state.
+     *
+     * @param {object|string} newValue - The new value to set.
+     */
+    set value(newValue) {
+        this._value = newValue;
+        this._checkValue();
+    }
+    /**
+     * Returns the validated value.
+     * Returns null if the value is invalid.
+     *
+     * @returns {object|string|null} The validated value.
+     */
+    get value() {
+        if (this._isValid) {
+            return this._value;
+        } else {
+            return null;
+        }
+    }
+    /**
+     * Indicates whether the value is valid.
+     *
+     * @returns {boolean} True if the value is valid, false otherwise.
+     */
+    get isValid() {
+        return this._isValid;
+    }
+    /**
+     * Indicates whether the entity (if applicable) is available.
+     *
+     * @returns {boolean} True if the entity is available, false otherwise.
+     */
+    get isAvailable() {
+        return this._isAvailable;
+    }
+    /**
+     * Indicates whether the entity (if applicable) was found in Home Assistant.
+     *
+     * @returns {boolean} True if the entity is found, false otherwise.
+     */
+    get isFound() {
+        return this._isFound;
+    }
+    /**
+     * Returns the display precision of the entity (if applicable).
+     * Returns null if the value is not a valid entity.
+     *
+     * @returns {number|null} The display precision of the entity.
+     */
+    get precision() {
+        if (this._isValid) {
+            return this._hassProvider.hass.entities[this._entity].display_precision;
+        } else {
+            return null;
+        }
+    }
+    /**
+     * Returns the friendly name of the entity (if applicable).
+     * Returns null if the value is not a valid entity.
+     *
+     * @returns {string|null} The friendly name of the entity.
+     */
+    get name(){
+        if (this._isValid) {
+            return this._hassProvider.hass.states[this._entity].attributes.friendly_name;
+        } else {
+            return null;
+        }
+    }
+    /**
+     * Returns the icon of the entity (if applicable).
+     * Returns null if the value is not a valid entity.
+     *
+     * @returns {string|null} The icon of the entity.
+     */
+    get icon(){
+        if (this._isValid) {
+            return this._hassProvider.hass.states[this._entity].attributes.icon;
+        } else {
+            return null;
+        }
+    }
+    /**
+     * Validates the value and updates internal state.
+     * Checks if the value is a valid entity ID or a direct value.
+     *
+     * @private
+     */
+    _checkValue() {
+        this._isFound = false;
+        this._isValid = false;
+        this._isAvailable = false;
+
+        if (Number.isFinite(this._value)) {
+            this._isFound = true;
+            this._isValid = true;
+            this._isAvailable = true;
+            return;
+        } else if (typeof this._value === "string") {
+            if (!this._hassProvider.hass.states[this._value]) {
+                return;
+            }
+            this._entity = this._value;
+            this._isFound = true;
+            const entityState = this._hassProvider.hass.states[this._entity].state;
+            if (!entityState) {
+                this._isValid = true;
+                this._value = 0;
+                return;
+            } else if (entityState === "unavailable" || entityState === "unknown") {
+                this._value = 0;
+                return;
+            }
+            this._isValid = true;
+            this._isAvailable = true;
+            this._value = parseFloat(entityState);
+            return;
+        }
+        this._value = 0;
+        return;
+    }
+}
+
+/**
+ * Helper class for managing and validating card configuration.
+ *
+ * @class ConfigHelper
+ */
+class ConfigHelper {
+    /**
+     * Creates a new instance of ConfigHelper.
+     */
+    constructor() {
+        /**
+         * @type {object}
+         * @private
+         */
+        this._config = {};
+        /**
+         * @type {HassProvider}
+         * @private
+         */
+        this._hassProvider = new HassProvider();
+        /**
+         * @type {boolean}
+         * @private
+         */
+        this._isValid = false;
+        /**
+         * @type {string|null}
+         * @private
+         */
+        this._msg = null;
+        /**
+         * @type {boolean}
+         * @private
+         */
+        this._isChanged = false;
+        /**
+         * @type {number|null}
+         * @private
+         */
+        this._decimal = null;
+        /**
+         * @type {number|null}
+         */
+        this.max_value = null;
+    }
+
+    /**
+     * Returns the card configuration object.
+     *
+     * @returns {object} The card configuration.
+     */
+    get config() {
+        return this._config;
+    }
+
+    /**
+     * Sets the card configuration and marks it as changed.
+     *
+     * @param {object} config - The new card configuration.
+     */
+    set config(config) {
+        this._config = config;
+        this._isChanged = true;
+    }
+
+    /**
+     * Returns the number of decimal places to use.
+     *
+     * @returns {number|null} The number of decimal places.
+     */    
+    get decimal() {
+        return this._decimal;
+    }
+
+    /**
+     * Sets the number of decimal places.
+     * Defaults to `CARD.config.decimal.percentage` if the unit is `CARD.config.unit`, 
+     * otherwise defaults to `CARD.config.decimal.other`.
+     *
+     * @param {number} [newDecimal] - The new number of decimal places.
+     */
+    set decimal(newDecimal) {
+        if (newDecimal === undefined || newDecimal === null) {
+            if (this._config.unit === CARD.config.unit) {
+                newDecimal = CARD.config.decimal.percentage;
+            } else {
+                newDecimal = CARD.config.decimal.other;
+            }
+        }
+        this._decimal = newDecimal;
+    }
+
+    /**
+     * Indicates whether the current configuration is valid.
+     *
+     * @returns {boolean} True if the configuration is valid, false otherwise.
+     */
+    get isValid() {
+        return this._isValid;
+    }
+
+    /**
+     * Returns the validation error message, or null if the configuration is valid.
+     *
+     * @returns {string|null} The error message.
+     */
+    get msg() {
+        return this._msg;
+    }
+
+    /**
+     * Validates the card configuration and returns the validation status and error messages.
+     * 
+     * Main Steps:
+     * 1. **Entity Check**: Ensures `entity` is defined in the configuration and exists in Home Assistant.
+     * 2. **Max Value Validation**: Confirms `max_value` is either:
+     *    - A positive number.
+     *    - A valid entity in Home Assistant.
+     * 3. **Decimal Check**: Validates that the `decimal` value is not negative.
+     * 
+     * Returns:
+     * - An object `{ valid, msg }`:
+     *   - `valid`: Boolean indicating whether the configuration is valid.
+     *   - `msg`: An error message string, or `null` if the configuration is valid.
+     * 
+     * Provides localized error messages for each type of configuration issue.
+     * 
+     * @returns {{ valid: boolean, msg: string|null }}
+     */
+    checkConfig() {
+
+        if (!this._isChanged){
+            return;
+        }
+        this._isChanged = false;
+
+        const entityState = this._hassProvider.hass.states[this._config.entity];
+
+        this._isValid = false;
+        if (!this._config.entity) {
+            this._msg = MSG.entityError;
+            return;
+        } else if (!entityState) {
+            this._msg = MSG.entityNotFound;
+            return;
+        }  else if (this._config.min_value && !Number.isFinite(this._config.min_value)) {
+            this._msg = MSG.minValueError;
+            return;
+        } else if (!Number.isFinite(this.max_value)){
+            this._msg = MSG.maxValueError;
+            return;
+        } else if (this._decimal < 0) {
+            this._msg = MSG.decimalError;
+            return;
+        }
+
+        this._isValid = true;
+        this._msg = null;
+
+        return;
+    }
+}
+
+/**
+ * A card view that manage all informations to create the card.
+ *
+ * @class CardView
+ */
+class CardView {
+    constructor() {
+        this._hassProvider = new HassProvider();
+        this._configHelper = new ConfigHelper();
+        this._percentHelper = new PercentHelper();
+        this._theme = new ThemeManager();
+        this.currentLanguage = CARD.config.language;
+        this.show_more_info = null;
+        this.navigate_to = null;
+        this.layout = null;
+        /** */
+        this._currentValue = new EntityOrValue();
+        this._max_value = new EntityOrValue();
+        this.isAvailable = false;
+    }
+
+    /**
+     * Returns whether the card configuration is valid.
+     *
+     * @returns {boolean} True if the configuration is valid, false otherwise.
+     */
+    get isValid(){
+        return this._configHelper.isValid;
+    }
+
+    /**
+     * Returns the validation error message, or null if the configuration is valid.
+     *
+     * @returns {string|null} The error message.
+     */
+    get msg(){
+        return this._configHelper.msg[this.currentLanguage];
+    }
+
+    /**
+     * Returns the card configuration.
+     *
+     * @returns {object} The card configuration.
+     */
+    get config(){
+        return this._config;
+    }
+
+    /**
+     * Sets the card configuration and updates related properties.
+     *
+     * @param {object} config - The new card configuration.
+     */
+    set config(config) {
+        this._configHelper.config = config;
+        this.layout               = config.layout;
+        this._percentHelper.unit  = config.unit;
+        this.show_more_info       = typeof config.show_more_info === 'boolean' ? config.show_more_info : CARD.config.showMoreInfo;
+        this.navigate_to          = config.navigate_to !== undefined ? config.navigate_to : null;
+        this._theme.theme         = config.theme;
+    }
+
+    /**
+     * Refreshes the card by updating the current value and checking for availability.
+     *
+     * @param {object} hass - The Home Assistant object.
+     */
+    refresh(hass) {
+        this._hassProvider.hass = hass;
+        this.currentLanguage = Object.keys(MSG.entityError).includes(this._hassProvider.language)
+            ? this._hassProvider.language
+            : CARD.config.language;
+        this._currentValue.value = this._configHelper.config.entity;
+        this._max_value.value = this._configHelper.config.max_value || CARD.config.maxPercent;
+        this._configHelper.max_value = this._max_value.value;
+        this._configHelper.decimal = this._configHelper.config.decimal ?? this._currentValue.precision;
+        this._configHelper.checkConfig();
+
+        // availability check
+        if (!this._currentValue.isAvailable || (!this._max_value.isAvailable && this._configHelper.config.max_value)){
+            this.isAvailable=false;
+            return;
+        }
+        this.isAvailable=true;
+        // update
+        this._percentHelper.current = this._currentValue.value;
+        this._percentHelper.decimal = this._configHelper.config.decimal ?? this._currentValue.precision;
+        this._percentHelper.min = this._configHelper.config.min_value;
+        this._percentHelper.max = this._max_value.value;
+        this._percentHelper.refresh();
+        this._theme.percent = this._percentHelper.percent;
+    }
+
+    /**
+     * Returns the entity used in the card.
+     *
+     * @returns {string} The entity.
+     */
+    get entity() {
+        return this._configHelper.config.entity;
+    }
+
+    /**
+     * Returns the icon to use based on the theme, configuration, and entity.
+     *
+     * @returns {string} The icon.
+     */
+    get icon() {
+        if (this._theme.theme === "battery" && this._currentValue.icon && this._currentValue.icon.includes("battery")) {
+            return this._currentValue.icon;
+        }
+        return this._theme.icon || this._configHelper.config.icon || this._currentValue.icon || CARD.config.icon;
+    }
+
+    /**
+     * Returns the color to use based on the theme or configuration.
+     *
+     * @returns {string} The color.
+     */
+    get color() {
+        return this._theme.color || this._configHelper.config.color || CARD.config.color;
+    }
+
+    /**
+     * Returns the color to use for the progress bar.
+     *
+     * @returns {string} The bar color.
+     */
+    get bar_color() {
+        return this._theme.color || this._configHelper.config.bar_color || CARD.config.color;
+    }
+
+    /**
+     * Returns the percentage value.
+     *
+     * @returns {number} The percentage value.
+     */
+    get percent() {
+        if(this.isAvailable) {
+            return this._percentHelper.percent;
+        }
+        return CARD.config.minValue;
+    }
+
+    /**
+     * Returns the description, which is the formatted percentage value or the unavailable message.
+     *
+     * @returns {string} The description.
+     */
+    get description() {
+        if(this.isAvailable) {
+            return this._percentHelper.label;
+        }
+        return MSG.entityUnavailable[this.currentLanguage];
+    }
+
+    /**
+     * Returns the name of the entity or the configured name.
+     *
+     * @returns {string} The name.
+     */
+    get name() {
+        return this._configHelper.config.name || this._currentValue.name || this._configHelper.config.entity;
+    }
+}
+
 /** --------------------------------------------------------------------------
  * 
  * Represents a custom card element displaying the progress of an entity.
  * 
  * The `EntityProgressCard` class extends the base `HTMLElement` class and 
  * implements a custom web component that displays information about an entity's 
- * state, typically showing a progress bar or other dynamic elements. This card 
- * updates its visual state based on the entity's current value, and it is capable 
- * of handling different layouts and themes for better adaptability within the UI.
- * 
- * The component also provides error handling and can display an error message 
- * when the specified entity is not found or there is an issue with retrieving 
- * its state.
- * 
- * The card's layout and appearance can be customized based on configuration 
- * settings, such as the color scheme, icon, and the display format of the progress.
- * 
- * Example usage:
- * <entity-progress-card></entity-progress-card>
+ * state.
  */
 class EntityProgressCard extends HTMLElement {
     /**
      * Constructor for the EntityProgressCard component.
-     * 
-     * - Initializes the Shadow DOM in 'open' mode for encapsulation.
-     * - Logs a one-time installation message and README link in the console 
-     *   when the component is first loaded (using `_moduleLoaded` to track state).
-     * - Sets the default language.
-     * - Initializes properties to manage the component's internal state:
-     *   - `_elements`: An object to store references to DOM elements within the component.
-     *   - `_isBuilt`: A flag to track whether the component has been built or not.
      */
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
+        this._cardView = new CardView();
 
         if (!EntityProgressCard._moduleLoaded) {
             console.groupCollapsed(
@@ -582,60 +1566,50 @@ class EntityProgressCard extends HTMLElement {
             console.groupEnd();
             EntityProgressCard._moduleLoaded = true;
         }
-        this.config = {};
-        this._currentLanguage = CARD.config.language;
-        this._unit = null;
-        this._min_value = null;
-        this._max_value = null;
-        this._decimal = null;
-        this._show_more_info = null;
-        this._navigate_to = null;
+
         this._elements = {};
         this._isBuilt = false;
-        this.addEventListener('click', this._navigateToOrShowMoreInfo.bind(this));
+        this.addEventListener('click', this._handleCardAction.bind(this));
     }
 
-    /**
-     * Trigger the "more info" dialog for a specific Home Assistant entity.
-     *
-     * This method dispatches a custom event (`hass-more-info`) that is handled by Home Assistant
-     * to display the details of the entity specified in the card configuration (`this.config.entity`).
-     *
-     * Preconditions:
-     * - `this._show_more_info` must be true.
-     * - `this.config.entity` must be defined and contain a valid entity ID.
-     */
-    _navigateToOrShowMoreInfo() {
-        if (this._navigate_to) {
-            if (/^https?:\/\//.test(this._navigate_to)) {
-                window.location.href = this._navigate_to;
-            } else {
-                window.history.pushState(null, '', this._navigate_to);
-                this.dispatchEvent(new CustomEvent('location-changed', { bubbles: true, composed: true }));
-        
-                const anchor = this._navigate_to.split('#')[1];
-                if (anchor) {
-                    const element = document.querySelector(`#${anchor}`);
-                    if (element) {
-                        element.scrollIntoView({ behavior: 'smooth' });
-                    }
-                }
-            }
-        } else if (this._show_more_info && this.config && this.config.entity) {
-            this.dispatchEvent(new CustomEvent('hass-more-info', {
-                bubbles: true,
-                composed: true,
-                detail: { entityId: this.config.entity },
-            }));
+    _handleCardAction() {
+        if (this._cardView.navigate_to) {
+            this._navigateTo();
+        } else if (this._cardView.show_more_info) {
+            this._showMoreInfo();
         }
     }
 
+    _navigateTo() {
+        if (/^https?:\/\//.test(this._cardView.navigate_to)) {
+            window.location.href = this._cardView.navigate_to;
+            return;
+        }
+
+        window.history.pushState(null, '', this._cardView.navigate_to);
+        this.dispatchEvent(new CustomEvent('location-changed', { bubbles: true, composed: true }));
+
+        const anchor = this._cardView.navigate_to.split('#')[1];
+        if (anchor) {
+            const element = document.querySelector(`#${anchor}`);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                console.warn(`Ancre non trouvée: ${anchor}`);
+            }
+        }
+    }
+
+    _showMoreInfo() {
+        this.dispatchEvent(new CustomEvent('hass-more-info', {
+            bubbles: true,
+            composed: true,
+            detail: { entityId: this._cardView.entity },
+        }));
+      }
+
     /**
      * Creates and returns a new configuration element for the component.
-     * 
-     * This static method is used to dynamically generate an instance of the 
-     * editor element, identified by the constant `CARD.editor`. The returned 
-     * element can be used for configuring the component's behavior or settings.
      * 
      * @returns {HTMLElement} A newly created configuration element.
      */
@@ -646,22 +1620,13 @@ class EntityProgressCard extends HTMLElement {
     /**
      * Updates the component's configuration and triggers static changes.
      * 
-     * - **Initial Build:** If the card has not been built yet, it calls `_buildCard()` to construct it.
-     * - **Layout Changes:** If the `layout` property has changed, it calls `_changeLayout()` 
-     *   to update the card's layout.
-     * 
      * **Note:** Dynamic Updates will be done in set hass function.
      * 
      * @param {Object} config - The new configuration object.
      */
     setConfig(config) {
-        const layoutChanged    = this.config?.layout !== config.layout;
-        this.config            = config;
-        this._min_value        = this.config.min_value      || CARD.config.minValue;
-        this._max_value        = this.config.max_value      || null;
-        this._unit             = this.config.unit           || CARD.config.unit;
-        this._show_more_info   = this.config.show_more_info ?? CARD.config.showMoreInfo;
-        this._navigate_to      = this.config.navigate_to    || null;
+        const layoutChanged = this._cardView.layout !== config.layout;
+        this._cardView.config = config;
 
         if (!this._isBuilt) {
             this._isBuilt = true;
@@ -677,23 +1642,11 @@ class EntityProgressCard extends HTMLElement {
     /**
      * Sets the Home Assistant (`hass`) instance and updates dynamic elements.
      * 
-     * This setter is called whenever the Home Assistant instance (`hass`) is updated. 
-     * It :
-     * - stores the new `hass` instance in the `_hass` property
-     * - Update the this._currentLanguage according to hass.config.language (HA Environment)
-     * - triggers a refresh of the dynamic elements within the component by calling
-     *   `_updateDynamicElements()`.
-     * 
      * @param {Object} hass - The Home Assistant instance containing the current 
      *                        state and services.
      */
     set hass(hass) {
-        this._hass             = hass;
-        const entity           = this._hass?.entities[this.config.entity];
-        const displayPrecision = entity ? entity.display_precision : undefined;
-        this._decimal          = this.config.decimal ?? displayPrecision ?? (this._unit === CARD.config.unit ? CARD.config.decimal.percentage : CARD.config.decimal.other);
-        this._currentLanguage  = MSG[hass.config.language] ? hass.config.language : CARD.config.language;
-
+        this._cardView.refresh(hass);
         this._updateDynamicElements();
     }
 
@@ -701,16 +1654,7 @@ class EntityProgressCard extends HTMLElement {
      * Builds and initializes the structure of the custom card component.
      * 
      * This method creates the visual and structural elements of the card and injects
-     * them into the component's Shadow DOM. It performs the following steps:
-     * 
-     * 1. Creates a wrapper element (`<ha-card>`) with the appropriate class and inner HTML.
-     * 2. Adds a `<style>` element containing the card's CSS styles.
-     * 3. Injects both the wrapper and style into the Shadow DOM, clearing any existing content.
-     * 4. Stores references to important DOM elements in the `_elements` object, allowing
-     *    them to be easily updated dynamically during the card's lifecycle.
-     * 
-     * These DOM elements are identified using predefined selectors (`SELECTORS`) 
-     * and include elements like the container, icon, progress bar, and alert.
+     * them into the component's Shadow DOM.
      */
     _buildCard() {
         const wrapper = document.createElement('ha-card');
@@ -734,6 +1678,8 @@ class EntityProgressCard extends HTMLElement {
             [SELECTORS.secondaryInfo]: this.shadowRoot.querySelector(`.${SELECTORS.secondaryInfo}`),
             [SELECTORS.progressBarInner]: this.shadowRoot.querySelector(`.${SELECTORS.progressBarInner}`),
             [SELECTORS.alert]: this.shadowRoot.querySelector(`${SELECTORS.alert}`),
+            [SELECTORS.alert_icon]: this.shadowRoot.querySelector(`.${SELECTORS.alert_icon}`),
+            [SELECTORS.alert_message]: this.shadowRoot.querySelector(`.${SELECTORS.alert_message}`),
             [SELECTORS.ha_icon]: this.shadowRoot.querySelector(`${SELECTORS.ha_icon}`),
         };
     }
@@ -743,23 +1689,11 @@ class EntityProgressCard extends HTMLElement {
      * 
      * This method adjusts the styling of various DOM elements based on the selected 
      * layout configuration. It uses predefined CSS styles to switch between two 
-     * layout modes:
+     * layout modes.
      * 
-     * **Layout 1 (e.g., column layout):**
-     * - `.container`'s `flex-direction` changes from `row` to `column`.
-     * - `.name`'s `text-align` changes from `left` to `center`.
-     * - `.right`'s `width` changes from `100%` to `90%` and `flex-grow` changes from `1` to `0`.
-     * - `.secondary_info`'s `display` changes from `flex` to `block`.
-     * - `.percentage`'s `text-align` changes from `left` to `center`.
-     * 
-     * **Layout 2 (e.g., row layout):**
-     * - Reverts all the styles back to their original values, enabling a `row` layout.
-     * 
-     * The layout change is triggered based on the `this.config.layout` value, which 
-     * determines the current layout mode.
      */
     _changeLayout() {
-        if (this.config.layout === CARD.layout.vertical.label) {
+        if (this._cardView.layout === CARD.layout.vertical.label) {
             this._elements[SELECTORS.container].style.flexDirection = 'column';
             this._elements[SELECTORS.name].style.textAlign = 'center';
             this._elements[SELECTORS.right].style.width = '90%';
@@ -777,41 +1711,12 @@ class EntityProgressCard extends HTMLElement {
     }
 
     /**
-     * Returns the icon and color corresponding to the given percentage and theme.
-     * 
-     * This function calculates the step in the theme's array that corresponds to the given percentage,
-     * using intervals based on the number of elements in the theme's array. If the percentage is less than 0, 
-     * it is adjusted to 0. If the percentage is greater than or equal to 100, the last step is returned.
-     * 
-     * @param {string} theme - The name of the theme to use (e.g., "battery").
-     * @param {number} percentage - The percentage of progress to use in determining the icon and color.
-     * @returns {Object} An object containing the icon and color corresponding to the calculated step.
-     *                  Example: { icon: 'mdi:battery-50', color: 'var(--yellow-color)' }
-     */
-    _getIconColorForTheme(theme, percentage) {
-        if (!THEME[theme]) {
-            return { icon:null, color: null };
-        }
-        const lastStep = (THEME[theme].length - 1);
-        const thresholdSize = (100 / lastStep);
-
-        if (percentage < 0) percentage = 0;
-        if (percentage >= CARD.config.maxPercent) return THEME[theme][lastStep]; // >=100%
-    
-        return THEME[theme][Math.floor(percentage / thresholdSize)];
-    }
-
-    /**
      * Updates the specified DOM element based on a provided callback function.
      * 
      * This method accepts a `key` (which corresponds to an element stored in 
      * the `_elements` object) and a `callback` function. The callback is executed 
      * on the specified element, and its current value (either `textContent` or 
      * `style.width`) is compared with the new value returned by the callback.
-     * 
-     * If the value has changed, the callback function is re-executed to update 
-     * the element's content or style. This helps ensure that dynamic elements 
-     * are updated only when necessary, preventing unnecessary DOM modifications.
      * 
      * @param {string} key - The key that identifies the element to be updated 
      *                       in the `_elements` object.
@@ -830,202 +1735,40 @@ class EntityProgressCard extends HTMLElement {
     }
 
     /**
-     * Validates the card configuration and returns the validation status and error messages.
-     * 
-     * Main Steps:
-     * 1. **Entity Check**: Ensures `entity` is defined in the configuration and exists in Home Assistant.
-     * 2. **Max Value Validation**: Confirms `max_value` is either:
-     *    - A positive number.
-     *    - A valid entity in Home Assistant.
-     * 3. **Decimal Check**: Validates that the `decimal` value is not negative.
-     * 
-     * Returns:
-     * - An object `{ valid, msg }`:
-     *   - `valid`: Boolean indicating whether the configuration is valid.
-     *   - `msg`: An error message string, or `null` if the configuration is valid.
-     * 
-     * Provides localized error messages for each type of configuration issue.
-     * 
-     * @returns {{ valid: boolean, msg: string|null }}
-     */
-    _checkConfig() {
-
-        const entity = this._hass?.states[this.config.entity];
-
-        if (!this.config.entity) {
-            return { valid: false, msg: MSG[this._currentLanguage].entityError };
-        } else if (!entity) {
-            return { valid: false, msg: MSG[this._currentLanguage].entityNotFound };
-        }  else if (this._min_value &&
-            !(
-                typeof this._min_value === "number" && !isNaN(this._min_value)
-            )) {
-            return { valid: false, msg: MSG[this._currentLanguage].minValueError };
-        } else if (this._max_value &&
-            !(
-                (typeof this._max_value === "number" && !isNaN(this._max_value) && this._max_value > 0) ||
-                (typeof this._max_value === "string" && this._hass?.states[this._max_value])
-            )) {
-            return { valid: false, msg: MSG[this._currentLanguage].maxValueError };
-        } else if (this._decimal < 0) {
-            return { valid: false, msg: MSG[this._currentLanguage].decimalError };
-        }
-        return { valid: true, msg: null };
-
-    }
-
-    /**
-     * Parses and validates the `max_value` configuration to determine its value and validity.
-     * 
-     * Main Steps:
-     * 1. **Numeric `max_value`**: If `max_value` is a positive number, it's valid.
-     * 2. **Entity-Based `max_value`**: If `max_value` references a valid entity:
-     *    - Checks if the entity state is valid (not "unavailable" or "unknown").
-     *    - Parses and returns the entity state as a numeric value.
-     * 3. **Fallback**: Returns invalid result if `max_value` is neither valid numeric nor a valid entity.
-     * 
-     * Returns:
-     * - An object `{ value, valid }`:
-     *   - `value`: The numeric `max_value` or 0 if invalid.
-     *   - `valid`: Boolean indicating whether `max_value` is valid.
-     * 
-     * Handles unavailable or unknown entity states gracefully.
-     * 
-     * @returns {{ value: number, valid: boolean }}
-     */
-    _parseMaxValue() {
-
-        if (typeof this._max_value === "number") { // maxValue is numeric > 0
-            return { value: this._max_value, valid: true };
-        } else if (typeof this._max_value === "string") { // maxValue is a known entity
-            const entityState = this._hass.states[this._max_value].state;
-
-            if (!entityState || entityState === "unavailable" || entityState === "unknown") {
-                return { value: 0, valid: false };
-            }
-            return { value: parseFloat(entityState), valid: true };
-        }
-
-        return { value: 0, valid: false };
-    }
-
-    /**
-     * Calculates the percentage and value based on the current entity state and max value configuration.
-     *
-     * This function retrieves the state of the configured entity and calculates its value and percentage 
-     * based on the `max_value` configuration. If `max_value` is not defined or invalid, a fallback logic 
-     * ensures a default percentage calculation.
-     *
-     * @returns {Object} An object containing:
-     *  - `value` {number}: The numeric value of the entity's current state (parsed from the entity's state).
-     *  - `percentage` {number}: The percentage of the entity's value relative to `max_value` or a default max percent.
-     *  - `entityAvailable` {boolean}: A flag indicating whether the entity is available (`true`) or not (`false`).
-     */
-    _getPercent() {
-
-        const entity = this._hass?.states[this.config.entity];
-        let percentage = 0;
-        let value = 0;
-        let label = null;
-        let entityAvailable = true;
-
-        if (entity.state === "unavailable" || entity.state === "unknown"){
-            entityAvailable=false;
-        } else {
-            value = parseFloat(entity.state);
-            let maxValueResult = this._parseMaxValue();
-            if (!this._max_value) {
-                percentage = isNaN(value) ? 0 : Math.min(Math.max(value, 0), CARD.config.maxPercent);
-            } else if (this.config.max_value && maxValueResult.valid) {
-                percentage = isNaN(value) ? 0 : ((value - this._min_value) / (maxValueResult.value - this._min_value)) * CARD.config.maxPercent;
-            } else {
-                entityAvailable=false;
-            }
-
-            const formattedPercentage = Number.isFinite(percentage)
-                ? percentage.toFixed(this._decimal)
-                : 0;
-
-            const formattedValue = Number.isFinite(value)
-                ? value.toFixed(this._decimal)
-                : 0;
-
-            label = this._unit === CARD.config.unit
-                ? `${formattedPercentage}${this._unit}` // if unit = %
-                : `${formattedValue}${this._unit}`; // if unit <> %
-        }
-        return { value: value, percentage: percentage, label:label, entityAvailable: entityAvailable };
-    }
-
-    /**
      * Updates dynamic card elements based on the entity's state and configuration.
-     * 
-     * Main Steps:
-     * 1. **Configuration Validation**: Validates entity setup via `_checkConfig()`. Shows/hides errors accordingly.
-     * 2. **Percentage Calculation**: Uses `_getPercent()` to derive the percentage and determine entity availability.
-     * 3. **Theme Handling**: Gets icon and color based on the theme using `_getIconColorForTheme()`.
-     * 4. **Element Updates**: Dynamically updates:
-     *    - Progress bar width and color.
-     *    - Icon attributes and color.
-     *    - Shape background color.
-     *    - Display name (friendly name or fallback).
-     *    - Percentage label (value or unavailable message).
-     * 
-     * Utilities Used:
-     * - `_updateElement()`: Updates DOM elements only if values/styles change.
-     * - `_getPercent()`: Calculates percentage from the entity state and max value.
-     * - `_getIconColorForTheme()`: Determines icon and color based on theme/percentage.
      * 
      * Handles errors gracefully (e.g., invalid config, unavailable entity).
      * 
      * @returns {void}
      */
     _updateDynamicElements() {
-        /**
-         * Manage config error and get inputs
-         */
-        const entity = this._hass?.states[this.config.entity];
-        const configState = this._checkConfig();
-
-        if (!configState.valid) {
-            this._showError(configState.msg);
+        if (!this._cardView.isValid) {
+            this._showError(this._cardView.msg);
             return;
         } else {
             this._hideError();
         }
 
-        // Manage the percentage part
-        const currentPercent = this._getPercent();
-        // Manage theme
-        let iconAndColorFromTheme = this._getIconColorForTheme(this.config.theme, currentPercent.percentage);
-
-        /**
-         * Update dyn element
-         */
         this._updateElement(SELECTORS.progressBarInner, (el) => {
-            el.style.width = `${currentPercent.percentage}%`;
-            el.style.backgroundColor = iconAndColorFromTheme.color || this.config.bar_color || CARD.config.color;
+            el.style.width = `${this._cardView.percent}%`;
+            el.style.backgroundColor = this._cardView.bar_color;
         });
 
         this._updateElement(SELECTORS.icon, (el) => {
-            el.setAttribute(SELECTORS.icon, iconAndColorFromTheme.icon || this.config.icon || entity.attributes.icon || 'mdi:alert');
-            el.style.color = iconAndColorFromTheme.color|| this.config.color || CARD.config.color;
+            el.setAttribute(SELECTORS.icon, this._cardView.icon);
+            el.style.color = this._cardView.color;
         });
 
         this._updateElement(SELECTORS.shape, (el) => {
-            el.style.backgroundColor = iconAndColorFromTheme.color || this.config.color || CARD.config.color;
+            el.style.backgroundColor = this._cardView.color;
         });
 
         this._updateElement(SELECTORS.name, (el) => {
-            el.textContent = this.config.name || entity.attributes.friendly_name || this.config.entity;
+            el.textContent = this._cardView.name;
         });
 
         this._updateElement(SELECTORS.percentage, (el) => {
-            if (currentPercent.entityAvailable) {
-                el.textContent = currentPercent.label;
-            } else {
-                el.textContent = MSG[this._currentLanguage].entityUnavailable;
-            }
+                el.textContent = this._cardView.description;
         });
     }
 
@@ -1033,31 +1776,28 @@ class EntityProgressCard extends HTMLElement {
      * Displays an error alert with the provided message.
      * 
      * This method shows an error alert on the card by updating the corresponding
-     * DOM element (identified by `SELECTORS.alert`). The element is made visible 
-     * by changing its `display` style, and the provided error message is set as 
-     * the text content of the alert.
-     * 
-     * The error alert is typically used to notify users when an issue occurs, 
-     * such as an entity not being found or any other problem that needs user 
-     * attention.
+     * DOM element (identified by `SELECTORS.alert`).
      * 
      * @param {string} message - The error message to display in the alert.
      */
     _showError(message) {
-        const alertElement = this._elements[SELECTORS.alert];
-        if (alertElement) {
-            alertElement.style.display = HTML.flex.show;
-            alertElement.textContent = message;  // Set the error message in the alert
-        }
+        this._updateElement(SELECTORS.alert, (el) => {
+            el.style.display = HTML.flex.show;
+        });
+        this._updateElement(SELECTORS.alert_icon, (el) => {
+            el.setAttribute("icon", CARD.config.alert_icon);
+            el.style.color = CARD.config.alert_icon_color;
+        });
+        this._updateElement(SELECTORS.alert_message, (el) => {
+            el.textContent = message;
+        });
     }
 
     /**
      * Hides the error alert by setting its display style to hide.
      * 
      * This method hides the error alert on the card by changing the `display` 
-     * style of the corresponding DOM element (identified by `SELECTORS.alert`) 
-     * to the value of `HTML.flex.hide`. This is typically used to remove the error 
-     * message once the issue (such as the entity being found) has been resolved.
+     * style of the corresponding DOM element (identified by `SELECTORS.alert`).
      * 
      * @returns {void}
      */
@@ -1071,15 +1811,10 @@ class EntityProgressCard extends HTMLElement {
     /**
      * Returns the number of grid rows for the card size based on the current layout.
      * 
-     * This method determines the size of the card (specifically the number of grid rows) 
-     * depending on whether the layout configuration is vertical or horizontal. 
-     * The layout configuration is checked against `CARD.layout.vertical.label`, and based
-     * on this, it returns the appropriate number of rows for the card's grid.
-     * 
      * @returns {number} - The number of grid rows for the current card layout.
      */
     getCardSize() {
-        if (this.config.layout === CARD.layout.vertical.label) {
+        if (this._cardView.layout === CARD.layout.vertical.label) {
             return CARD.layout.vertical.value.grid_rows;
         }
         return CARD.layout.horizontal.value.grid_rows;
@@ -1088,15 +1823,10 @@ class EntityProgressCard extends HTMLElement {
     /**
      * Returns the layout options based on the current layout configuration.
      * 
-     * This method returns an object containing layout options (e.g., grid rows, columns, etc.) 
-     * depending on the layout configuration. If the layout is set to vertical, it returns 
-     * the options for the vertical layout; if horizontal, it returns the options for the 
-     * horizontal layout.
-     * 
      * @returns {object} - The layout options for the current layout configuration.
      */
     getLayoutOptions() {
-        if (this.config.layout === CARD.layout.vertical.label) {
+        if (this._cardView.layout === CARD.layout.vertical.label) {
             return CARD.layout.vertical.value;
         }
         return CARD.layout.horizontal.value;
@@ -1105,11 +1835,6 @@ class EntityProgressCard extends HTMLElement {
 
 /** --------------------------------------------------------------------------
  * Define static properties and register the custom element for the card.
- * 
- * These lines of code define static properties and register the custom element 
- * for `EntityProgressCard`, making it available for use within the DOM. The class 
- * is associated with a custom tag name and is given versioning information to track 
- * changes.
  * 
  * @static
  */
@@ -1140,13 +1865,6 @@ window.customCards.push({
  * This class provides methods for updating configuration properties, 
  * applying deferred updates (debouncing), and notifying changes via a callback.
  * 
- * Key Features:
- * - Load and merge an initial configuration.
- * - Update specific properties with type handling and removal of invalid values.
- * - Debouncing updates to optimize performance.
- * - Automatic change notifications via a callback.
- * - Debugging mode for tracking actions performed by the class.
- * 
  * @class ConfigManager
  * 
  * @param {Object} initialConfig - The initial configuration object, consisting of key/value pairs.
@@ -1172,13 +1890,16 @@ class ConfigManager {
      * - `_debug` (Boolean): Indicates whether debugging mode is active, enabling detailed logs. 
      *   The value is sourced from `CARD.debug`.
      */
+
     constructor(initialConfig = {}) {
         this._config = { ...initialConfig }; // Configuration actuelle
+        this._onChangeValidated = null;
         this._onConfigChange = null; // Callback pour notifier les changements
         this._debounceTimeout = null; // Timeout pour le debouncing
         this._pendingUpdates = {}; // Stockage temporaire des changements
         this._lastUpdateFromProperty = false;
         this._debug = CARD.debug;
+        this._pendingUpdatesLock = false;
     }
 
     /**
@@ -1221,12 +1942,6 @@ class ConfigManager {
      * If the last update was triggered by the `updateProperty` method, the update is skipped 
      * to prevent redundant changes. Debug messages are logged if debugging is enabled.
      * 
-     * - If `_lastUpdateFromProperty` is `true`, the method resets the flag and returns without 
-     *   making any changes.
-     * - Otherwise, the provided `newConfig` object is merged with the current `_config`, 
-     *   ensuring that new or updated properties are applied while retaining existing ones.
-     * - Logs debug information to indicate whether the configuration was updated or skipped.
-     * 
      * @param {Object} newConfig - The new configuration object to be merged with the current configuration.
      */
     setConfig(newConfig) {
@@ -1242,11 +1957,6 @@ class ConfigManager {
 
     /**
      * Updates a specific property in the configuration with a debounce mechanism.
-     * 
-     * This method allows updating an individual property of the configuration.
-     * Updates are temporarily stored in `_pendingUpdates` and only applied
-     * after the specified debounce time (`CARD.debounce`) has elapsed. This prevents
-     * multiple rapid updates from being processed immediately.
      *
      * @param {string} key - The name of the property to update.
      * @param {*} value - The new value for the property. Can be any type.
@@ -1258,9 +1968,19 @@ class ConfigManager {
      *   and commit the changes to the configuration.
      */
     updateProperty(key, value) {
+        while (this._pendingUpdatesLock) {}
+        this._pendingUpdatesLock = true;
+        const hasPendingUpdate = key in this._pendingUpdates;
+        if (
+            (hasPendingUpdate && this._pendingUpdates[key] === value) || 
+            (!hasPendingUpdate && this._config[key] === value)
+        ) {
+            this._logDebug(`ConfigManager/updateProperty: no change for ${key}`);
+            this._pendingUpdatesLock = false;
+            return;
+        }
         this._pendingUpdates[key] = value;
         this._logDebug('ConfigManager/updateProperty - pendingUpdates: ', this._pendingUpdates);
-
 
         if (this._debounceTimeout) {
             clearTimeout(this._debounceTimeout);
@@ -1269,6 +1989,7 @@ class ConfigManager {
         this._debounceTimeout = setTimeout(() => {
             this._applyPendingUpdates();
         }, CARD.debounce); // Temps configurable (200ms ici)
+        this._pendingUpdatesLock = false;
     }
 
     /**
@@ -1277,25 +1998,19 @@ class ConfigManager {
      * This method processes and commits any changes stored in `_pendingUpdates` to the
      * actual configuration (`_config`). It handles type conversion, such as converting
      * numeric strings to numbers, and removes properties with empty or invalid values.
-     *
-     * Behavior:
-     * - Iterates over all pending updates stored in `_pendingUpdates`.
-     * - Converts numeric fields to numbers when applicable.
-     * - Removes properties with empty string values (`''`) or `null`.
-     * - Updates the `_config` object only if the value has changed.
-     * - If any changes are applied, `_reorderConfig()` is called to reorganize the
-     *   configuration, and `_notifyChange()` is triggered to notify listeners.
-     * - Clears `_pendingUpdates` after processing.
      * 
      * @private
      */
     _applyPendingUpdates() {
+        while (this._pendingUpdatesLock) {}
+        this._pendingUpdatesLock = true;
+
         let hasChanges = false;
 
         for (const [key, value] of Object.entries(this._pendingUpdates)) {
             this._logDebug('ConfigManager/_applyPendingUpdates:', [key, value]);
             let curValue = value;
-            if (key in EDITOR_INPUT_FIELDS && EDITOR_INPUT_FIELDS[key].type === FIELD_TYPE.number.type || key === EDITOR_INPUT_FIELDS.max_value.name && value.trim() !== '') {
+            if (typeof value === 'string' && value.trim() !== '' && (key in EDITOR_INPUT_FIELDS && EDITOR_INPUT_FIELDS[key].type === FIELD_TYPE.number.type || key === EDITOR_INPUT_FIELDS.max_value.name)) {
                 const numericValue = Number(value);
                 if (!isNaN(numericValue)) {
                     curValue = numericValue;
@@ -1318,93 +2033,73 @@ class ConfigManager {
         if (hasChanges) {
             this._reorderConfig();
             this._lastUpdateFromProperty = true;
-            this._notifyChange();
+            this._notifyChangeValidated();
         }
+        this._pendingUpdatesLock = false;
     }
 
     /**
      * Reorders the configuration properties, ensuring `grid_options` appears last.
-     * 
-     * This method restructures the internal configuration object to move the `grid_options` 
-     * property (if it exists) to the end of the object. This is useful for ensuring that 
-     * `grid_options` is always serialized or displayed after other properties, maintaining a 
-     * consistent order in the configuration.
-     * 
-     * - The method destructures `_config` into `grid_options` and the remaining properties (`rest`).
-     * - If `grid_options` exists, it is appended to the end of the configuration object.
-     * - If `grid_options` does not exist, the configuration remains unchanged.
      */
     _reorderConfig() {
-        const { grid_options, ...rest } = this._config;
-        this._config = grid_options ? { ...rest, grid_options } : { ...rest };
-    }
-
-    /**
-     * Notifies listeners of a configuration change.
-     * 
-     * This method invokes the registered callback function, passing a copy of the current 
-     * configuration as an argument. It ensures that any external subscribers (e.g., the editor 
-     * or other components) are informed whenever the configuration is updated.
-     * 
-     * - If no callback (`_onConfigChange`) is registered, the method does nothing.
-     * - A copy of the current configuration is sent to prevent direct mutations.
-     */
-    _notifyChange() {
-        if (this._onConfigChange) {
-            this._onConfigChange({ ...this._config });
+        if (this._config.grid_options) {
+            const { grid_options, ...rest } = this._config;
+            this._config = { ...rest, grid_options };
         }
     }
 
     /**
-     * Registers a callback to handle configuration changes.
+     * Notifies listeners (editor) of a configuration change.
+     * 
+     * This method invokes the registered callback function, passing a copy of the current 
+     * configuration as an argument. It ensures that any external subscribers (e.g., the editor 
+     * or other components) are informed whenever the configuration is updated.
+     */
+    _notifyChangeValidated() {
+        if (this._onChangeValidated) {
+            this._onChangeValidated({ ...this._config });
+        }
+    }
+
+    /**
+     * Registers a callback (editor) to handle configuration changes.
      * 
      * This method allows external components or systems to subscribe to updates
      * of the configuration managed by this class. When a configuration change
      * occurs, the provided callback will be invoked with a cloned version of
      * the updated configuration.
      */
+    onChangeValidated(callback) {
+        this._onChangeValidated = callback;
+    }
+
+    /** ---- */
+    _notifyConfigChange() {
+        if (this._onConfigChange) {
+            this._onConfigChange({ ...this._config });
+        }
+    }
+
     onConfigChange(callback) {
         this._onConfigChange = callback;
     }
+
 }
 
 /** --------------------------------------------------------------------------
  * Custom editor component for configuring the `EntityProgressCard`.
  * 
  * The `EntityProgressCardEditor` class extends `HTMLElement` and represents the editor interface 
- * for configuring the settings of the `EntityProgressCard`. This class provides a UI for users 
- * to modify the card's configuration, such as entity selection, layout, and theme options. 
- * It is typically used in Home Assistant's configuration interface to allow users to customize 
- * their cards through a graphical interface.
- * 
- * This editor component interacts with the settings of the `EntityProgressCard`, providing 
- * an interface to change key attributes of the card like layout, color, entity type, and others.
- * 
- * Example usage:
- * <entity-progress-card-editor></entity-progress-card-editor>
+ * for configuring the settings of the `EntityProgressCard`.
  */
 class EntityProgressCardEditor extends HTMLElement {
     /**
      * Initializes an instance of the `EntityProgressCardEditor` class.
      * 
-     * This constructor sets up the configuration manager, initial values, and event listeners:
-     * - Creates an instance of `ConfigManager` to manage the configuration state.
-     * - Initializes properties for the editor, including `config`, `_hass`, `_elements`, 
-     *   `_overridableElements`, and the editor's language settings.
-     * - Sets up a callback with the `ConfigManager` to listen for configuration changes and
-     *   dispatch a `config-changed` event whenever updates are applied.
-     * 
-     * Behavior:
-     * - Listens for changes in the configuration (`onConfigChange`) and updates the local
-     *   `config` property accordingly.
-     * - Dispatches a `CustomEvent` (`config-changed`) to notify external listeners of the
-     *   updated configuration.
-     * 
      * @constructor
      */
     constructor() {
         super();
-        this.configManager = new ConfigManager();
         this.config = {};
         this._hass = null;
         this._elements = {};
@@ -1412,12 +2107,14 @@ class EntityProgressCardEditor extends HTMLElement {
         this.rendered = false;
         this._currentLanguage = CARD.config.language;
         this._isGuiEditor = false;
+        this.configManager = new ConfigManager();
 
-        this.configManager.onConfigChange((newConfig) => {
+        this.configManager.onChangeValidated((newConfig) => {
             this.config = newConfig;
             this.configManager._logDebug('EntityProgressCardEditor OnConfigChange - new value registered: ', { detail: { config: this.config } });
             this.dispatchEvent(new CustomEvent('config-changed', { detail: { config: this.config } }));
         });
+
     }
 
     /**
@@ -1443,7 +2140,7 @@ class EntityProgressCardEditor extends HTMLElement {
         if (!hass) {
             return;
         }
-        this._currentLanguage = MSG[hass.config.language] ? hass.config.language : CARD.config.language;
+        this._currentLanguage = MSG.decimalError[hass.config.language] ? hass.config.language : CARD.config.language;
         if (!this._hass || this._hass.entities !== hass.entities) {
             this._hass = hass;
         }
@@ -1452,10 +2149,7 @@ class EntityProgressCardEditor extends HTMLElement {
     /**
      * Gets the current Home Assistant instance stored in the editor component.
      * 
-     * This getter method provides access to the internal `_hass` property, which holds the
-     * current Home Assistant instance. The value of `_hass` is used throughout the component
-     * to access entity states and interact with Home Assistant data. This method simply
-     * returns the stored instance when called.
+     * This getter method provides access to the internal `_hass` property.
      * 
      * @returns {object|null} The current Home Assistant instance, or `null` if not set.
      */    
@@ -1467,14 +2161,7 @@ class EntityProgressCardEditor extends HTMLElement {
      * Sets the configuration for the editor component and triggers the necessary updates.
      * 
      * This method accepts a configuration object and updates the component's internal `config` property.
-     * If the Home Assistant instance (`hass`) is available, the method performs the following actions:
-     * 
-     * - **Sets the configuration**: It stores the provided `config` in the component's internal `config` property.
-     * - **Loads the entity picker**: The `loadEntityPicker()` method is called to initialize or update the entity picker,
-     *   allowing the user to select entities for the card.
-     * - **Renders the component**: If the editor hasn't been rendered yet (`rendered` is `false`), the component is
-     *   marked as rendered, and the `render()` method is called to render the editor's UI.
-     * 
+     *
      * This method ensures that the editor's configuration is applied correctly and that any necessary UI updates
      * are triggered, including rendering the editor if it's not already displayed.
      * 
@@ -1488,7 +2175,7 @@ class EntityProgressCardEditor extends HTMLElement {
         this.configManager._logDebug('EntityProgressCardEditor/setConfig - value before change: ', { detail: { config: this.config } });
         this.configManager._logDebug('EntityProgressCardEditor/setConfig - update: ', { detail: { config } });
         this.configManager.setConfig(config);
-        this.config = this.configManager.config;
+        this.config = config;
         this.configManager._logDebug('EntityProgressCardEditor/setConfig - check value updated: ', { detail: { config: this.config } });
 
         if (!this.rendered) {
@@ -1524,24 +2211,27 @@ class EntityProgressCardEditor extends HTMLElement {
     /**
      * Synchronizes the configuration from the YAML editor with the GUI editor.
      * 
-     * This function iterates over the keys of the `_elements` object and updates 
-     * the values of the corresponding input fields in the graphical editor based 
-     * on the current configuration (`this.config`). If a configuration key exists, 
-     * its value is assigned to the corresponding element. Additionally, the 
-     * `tap_action` field is explicitly updated using the `_getTapActionValue()` method.
-     * 
      * Note: This ensures that the graphical editor reflects the latest YAML-based changes.
      */
     _refreshConfigFromYAML() {
         const keys = Object.keys(this._elements);
         keys.forEach(key => {
             if (this.config[key]) {
-                this._elements[key].value = this.config[key];
+                if (this._elements[key].value !== this.config[key]) {
+                    this._elements[key].value = this.config[key];
+                }
             } else if (key !== TAP_ACTION_KEY) {
                 this._elements[key].value = '';
+            } else {
+                this._elements[TAP_ACTION_KEY].value = this._getTapActionValue();
             }
-            this._elements[TAP_ACTION_KEY].value = this._getTapActionValue();
         });
+        this._toggleFieldDisable(NAVIGATETO_KEY, (this._getTapActionValue() !== NAVIGATETO_KEY));
+        if (typeof this.config[THEME_KEY] === 'undefined') {
+            this._toggleFieldDisable(THEME_KEY, false);
+        } else {
+            this._toggleFieldDisable(THEME_KEY, this.config[THEME_KEY] in THEME);
+        }
     }
 
     /**
@@ -1550,13 +2240,6 @@ class EntityProgressCardEditor extends HTMLElement {
      * This method is used to control the visibility of specific fields in the editor. 
      * It updates the `style.display` property of each field element stored in the `_overridableElements` 
      * object, hiding or showing the fields based on the `disable` parameter.
-     * 
-     * - If `disable` is `true`, the method hides the fields by setting `style.display` to `HIDE_DIV`.
-     * - If `disable` is `false`, the method shows the fields by setting `style.display` to `SHOW_DIV`.
-     * 
-     * The fields that are affected by this method are those stored in the `_overridableElements` object, 
-     * which holds references to DOM elements that can be dynamically shown or hidden. The fields are identified 
-     * by the keys of the `_overridableElements` object.
      * 
      * @param {boolean} disable - A boolean flag to control the visibility of the fields.
      *                            If `true`, fields are hidden. If `false`, fields are shown.
@@ -1594,13 +2277,6 @@ class EntityProgressCardEditor extends HTMLElement {
      * selected action. It ensures that mutually exclusive properties are handled 
      * properly.
      *
-     * Logic:
-     * - Disables or enables the `NAVIGATETO_KEY` field depending on whether the 
-     *   provided `value` matches `NAVIGATETO_KEY`.
-     * - For `CARD.tap_action.navigate_to`, resets the `more_info` property.
-     * - For `CARD.tap_action.more_info`, clears `navigate_to` and sets `more_info` to `true`.
-     * - For `CARD.tap_action.no_action`, clears `navigate_to` and sets `more_info` to `false`.
-     *
      * @param {string} value - The selected tap action value to manage.
      *                         Possible values: `CARD.tap_action.navigate_to`, 
      *                         `CARD.tap_action.more_info`, `CARD.tap_action.no_action`.
@@ -1632,11 +2308,6 @@ class EntityProgressCardEditor extends HTMLElement {
      * This function evaluates the `config` object to determine the appropriate 
      * tap action to return. It considers the `navigate_to` and `show_more_info` 
      * properties in the configuration to decide the value.
-     *
-     * Logic:
-     * - If `navigate_to` is defined, it returns `CARD.tap_action.navigate_to`.
-     * - If `show_more_info` is `true` or undefined, it returns `CARD.tap_action.more_info`.
-     * - If `show_more_info` is explicitly `false`, it returns `CARD.tap_action.no_action`.
      *
      * @returns {string|null} The determined tap action value, or `null` if no valid action is found.
      */
@@ -1677,7 +2348,7 @@ class EntityProgressCardEditor extends HTMLElement {
                     <span style="display: inline-block; width: 16px; height: 16px; background-color: ${optionData.value}; border-radius: 50%; margin-right: 8px;"></span>
                     ${optionData.label[this._currentLanguage]}
                 `;
-            } else if (type === 'layout') {
+            } else if (type === 'layout' || type === 'theme' ) {
                 const haIcon = document.createElement('ha-icon');
                 haIcon.setAttribute('icon', optionData.icon || 'mdi:alert'); // Définit l'icône par défaut ou celle dans FIELD_OPTIONS
                 haIcon.style.marginRight = '8px'; // Ajuste l'espace entre l'icône et le texte
@@ -1687,9 +2358,9 @@ class EntityProgressCardEditor extends HTMLElement {
                 option.append(optionData.label[this._currentLanguage]);
             } else if (type === 'tap_action') {
                 option.innerHTML = `${optionData.label[this._currentLanguage]}`;
-            } else if (type === 'theme') {
-                option.innerHTML = `${optionData.label}`;
-            }
+            }// else if (type === 'theme') {
+            //    option.innerHTML = `${optionData.label}`;
+            //}
 
             select.appendChild(option);
         });
@@ -1701,10 +2372,6 @@ class EntityProgressCardEditor extends HTMLElement {
      * @param {string} name - The name of the element to attach the event listener to.
      * @param {string} type - The type of the event listener. Supported types include 'color', 'theme', 'tap_action', 'layout', 
      *                        or other types triggering 'value-changed' and 'input' events.
-     * 
-     * - For 'color', 'theme', 'tap_action', and 'layout', the function listens for the 'selected' event and attaches an 
-     *   additional 'closed' event listener to stop event propagation.
-     * - For other types, the function listens for 'value-changed' and 'input' events.
      * 
      * When an event occurs, the function checks if the component has been rendered and if there are configuration changes 
      * initiated from the GUI. It then updates the configuration property or manages the tap action, depending on the event type.
@@ -1741,13 +2408,6 @@ class EntityProgressCardEditor extends HTMLElement {
      * Creates a form field based on the provided configuration and appends it to a container.
      * 
      * This method generates a form field element dynamically based on the provided field type.
-     * It handles different types of form controls such as:
-     * - Entity picker (`ha-entity-picker`)
-     * - Icon picker (`ha-icon-picker`)
-     * - Layout selector (`ha-select`)
-     * - Theme selector (`ha-select`)
-     * - Color selector (`ha-select`)
-     * - Text input (`ha-textfield`)
      *
      * For the `layout`, `theme`, and `color` field types, additional choices are populated 
      * via helper methods `_addChoice` and `_addColor`. Each field is configured with a label, 
@@ -1766,7 +2426,7 @@ class EntityProgressCardEditor extends HTMLElement {
     _createField({ name, label, type, required, isInGroup, description, width }) {
         let inputElement;
         let value = this.config[name] || '';
-        let defaultDisplay = HTML.flex.show;
+        let defaultDisplay = HTML.block.show;
 
         switch (type) {
             case FIELD_TYPE.entity.type:
@@ -1805,7 +2465,7 @@ class EntityProgressCardEditor extends HTMLElement {
             }
             this._overridableElements[isInGroup][name]=inputElement;
             if ((isInGroup === NAVIGATETO_KEY && this._getTapActionValue() !== NAVIGATETO_KEY) || (isInGroup === THEME_KEY && this.config.theme)) {
-                defaultDisplay = HTML.flex.hide;
+                defaultDisplay = HTML.block.hide;
             }
         }
         inputElement.style.display = defaultDisplay;
@@ -1833,6 +2493,50 @@ class EntityProgressCardEditor extends HTMLElement {
         fieldContainer.appendChild(fieldDescription);
 
         return fieldContainer;
+    }
+
+    _makeHelpIcon() {
+        // Lien cliquable
+        const link = document.createElement('a');
+        link.href = CARD.config.documentation;
+        link.target = '_blank';
+        link.style.textDecoration = 'none';
+        link.style.display = 'flex';
+        link.style.position='absolute';
+        link.style.top='0px';
+        link.style.right='0px';
+        link.style.zIndex ='600';
+    
+        const outerDiv = document.createElement('div');
+        outerDiv.style.width = '50px';
+        outerDiv.style.height = '50px';
+        outerDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+        outerDiv.style.display = 'flex';
+        outerDiv.style.alignItems = 'center';
+        outerDiv.style.justifyContent = 'center';
+        outerDiv.style.borderRadius = '50%';
+        outerDiv.style.cursor = 'pointer';
+
+        const innerDiv = document.createElement('div');
+        innerDiv.style.width = '30px';
+        innerDiv.style.height = '30px';
+        innerDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
+        innerDiv.style.display = 'flex';
+        innerDiv.style.alignItems = 'center';
+        innerDiv.style.justifyContent = 'center';
+        innerDiv.style.borderRadius = '50%';
+
+        const questionMark = document.createElement('div');
+        questionMark.textContent = '?';
+        questionMark.style.fontSize = '20px';
+        questionMark.style.color = 'black';
+        questionMark.style.fontWeight = 'bold';
+    
+        innerDiv.appendChild(questionMark);
+        outerDiv.appendChild(innerDiv);
+        link.appendChild(outerDiv);
+        
+        return link;
     }
 
     /**
@@ -1868,12 +2572,6 @@ class EntityProgressCardEditor extends HTMLElement {
     /**
      * Renders the editor interface for configuring the card's settings.
      * 
-     * This method creates and displays the editor UI for the custom card. It dynamically generates
-     * a set of form fields based on the **`EDITOR_INPUT_FIELDS`** array. Each field is rendered
-     * according to its configuration, including the field name, label, type, required status, 
-     * and description. The fields are appended to a container, which is styled and added to the card.
-     * The layout of the fields is controlled using flexbox for proper alignment and wrapping.
-     * 
      * @returns {void}
      */    
     render() {
@@ -1896,6 +2594,8 @@ class EntityProgressCardEditor extends HTMLElement {
                 description: field.description[this._currentLanguage],
                 width: field.width }));
         });
+
+        container.appendChild(this._makeHelpIcon());
 
         fragment.appendChild(container);
         this.appendChild(fragment);
