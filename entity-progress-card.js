@@ -1,29 +1,29 @@
 /**
  * @fileoverview
- * 
- * This file defines a custom element `EntityProgressCard` for displaying 
- * progress or status information about an entity in Home Assistant. 
- * The card displays visual elements like icons, progress bars, and other dynamic content 
+ *
+ * This file defines a custom element `EntityProgressCard` for displaying
+ * progress or status information about an entity in Home Assistant.
+ * The card displays visual elements like icons, progress bars, and other dynamic content
  * based on the state of the entity and user configurations.
- * 
+ *
  * Key Features:
  * - Dynamic content update (e.g., progress bar, icons) based on entity state.
  * - Support for theme and layout customization.
  * - Error handling for missing or invalid entities.
  * - Configuration options for various card elements.
- * 
+ *
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
- * 
+ *
  * @author ko4la
- * @version 1.0.27
- * 
+ * @version 1.0.28
+ *
  */
 
 /** --------------------------------------------------------------------------
  * PARAMETERS
  */
 
-const VERSION='1.0.27';
+const VERSION='1.0.26';
 const CARD = {
     typeName: 'entity-progress-card',
     name: 'Entity progress card',
@@ -107,8 +107,8 @@ const CARD_HTML = `
                 <div class="${SELECTORS.percentage}"></div>
                 <div class="${SELECTORS.progressBar}">
                     <div class="${SELECTORS.progressBarInner}"></div>
-                </div>         
-            </div>   
+                </div>
+            </div>
         </div>
     </div>
     <!-- HA Alert -->
@@ -149,7 +149,7 @@ const CARD_CSS=`
     /* .left: icon & shape */
     .${SELECTORS.left} {
         display: flex;
-        flex-direction: column; 
+        flex-direction: column;
         align-items: center;
         justify-content: center;
         position: relative;
@@ -246,7 +246,7 @@ const CARD_CSS=`
     }
     .${SELECTORS.alert_icon} {
         display: flex;
-        flex-direction: column; 
+        flex-direction: column;
         align-items: center;
         justify-content: center;
         position: relative;
@@ -297,7 +297,26 @@ const THEME = {
         { icon: 'mdi:lightbulb',         color: '#C3B382'},   // Pourcentage >= 50
         { icon: 'mdi:lightbulb',         color: '#FFE79E'},   // Pourcentage >= 75
         { icon: 'mdi:lightbulb',         color: '#FFE79E'}    // Pourcentage >= 100
-    ]
+    ],
+    temperature: [
+        { icon: 'mdi:thermometer',       color: 'var(--deep-purple-color)'    },
+        { icon: 'mdi:thermometer',       color: 'var(--indigo-color)'    },
+        { icon: 'mdi:thermometer',       color: 'var(--light-blue-color)' },
+        { icon: 'mdi:thermometer',       color: 'var(--light-green-color)' },
+        { icon: 'mdi:thermometer',       color: 'var(--yellow-color)' },
+        { icon: 'mdi:thermometer',       color: 'var(--accent-color)' },
+        { icon: 'mdi:thermometer',       color: 'var(--deep-orange-color)' },
+        { icon: 'mdi:thermometer',       color: 'var(--red-color)' },
+        { icon: 'mdi:thermometer',       color: 'var(--red-color)' },
+    ],
+    humidity: [
+        { icon: 'mdi:water-percent',     color: 'var(--accent-color)'     },   // Pourcentage < 20
+        { icon: 'mdi:water-percent',     color: 'var(--yellow-color)'     },   // Pourcentage >= 20
+        { icon: 'mdi:water-percent',     color: 'var(--teal-color)'       },   // Pourcentage >= 40
+        { icon: 'mdi:water-percent',     color: 'var(--light-blue-color)' },   // Pourcentage >= 60
+        { icon: 'mdi:water-percent',     color: 'var(--indigo-color)'     },   // Pourcentage >= 80
+        { icon: 'mdi:water-percent',     color: 'var(--indigo-color)'     },   // Pourcentage >= 100
+    ],
 };
 
 const MSG = {
@@ -305,36 +324,42 @@ const MSG = {
         en: "entity: The 'entity' parameter is required!",
         fr: "entity: Le paramètre 'entity' est requis !",
         es: "entity: ¡El parámetro 'entity' es obligatorio!",
+        it: "entity: Il parametro 'entity' è obbligatorio!",
         de: "entity: Der Parameter 'entity' ist erforderlich!",
     },
     entityNotFound: {
         en: "entity: Entity not found in HA.",
         fr: "entity: Entité introuvable dans HA.",
         es: "entity: Entidad no encontrada en HA.",
+        it: "entity: Entità non trovata in HA.",
         de: "entity: Entität in HA nicht gefunden.",
     },
     entityUnavailable: {
         en: "unavailable",
         fr: "indisponible",
         es: "no disponible",
+        it: "non disponibile",
         de: "nicht verfügbar",
     },
     minValueError: {
         en: "min_value: Check your min_value.",
         fr: "min_value: Vérifiez votre min_value.",
-        es: "max_value: Verifique su min_value.", // Corrected typo here
-        de: "max_value: Überprüfen Sie Ihren min_value.", // Corrected typo here
+        es: "min_value: Verifique su min_value.",
+        it: "min_value: Controlla il tuo min_value.",
+        de: "min_value: Überprüfen Sie Ihren min_value.",
     },
     maxValueError: {
         en: "max_value: Check your max_value.",
         fr: "max_value: Vérifiez votre max_value.",
         es: "max_value: Verifique su max_value.",
+        it: "max_value: Controlla il tuo max_value.",
         de: "max_value: Überprüfen Sie Ihren max_value.",
     },
     decimalError: {
         en: "decimal: This value cannot be negative.",
         fr: "decimal: La valeur ne peut pas être négative.",
         es: "decimal: El valor no puede ser negativo.",
+        it: "decimal: Questo valore non può essere negativo.",
         de: "decimal: Negative Werte sind nicht zulässig.",
     },
 };
@@ -526,10 +551,11 @@ const EDITOR_INPUT_FIELDS = {
                         en: 'Select an icon for the entity.',
                         fr: 'Sélectionnez une icône pour l\'entité.',
                         es: 'Seleccione un icono para la entidad.',
+                        it: 'Seleziona un\'icona per l\'entità.',
                         de: 'Wählen Sie ein Symbol für die Entität.',
                     }},
     color: {        name: 'color',
-                    label: { en: 'Primary color', fr: 'Couleur de l\'icône', es: 'Color del icono', de: 'Primärfarbe', },
+                    label: { en: 'Primary color', fr: 'Couleur de l\'icône', es: 'Color del icono', it: 'Colore dell\'icona', de: 'Primärfarbe', },
                     type: FIELD_TYPE.color.type,
                     width: '45%',
                     required: false,
@@ -545,48 +571,50 @@ const EDITOR_INPUT_FIELDS = {
 
 const FIELD_OPTIONS = {
     theme: [
-        { value: '',        label: { en: 'Disabled (default)', fr: 'Désactivé (défaut)', es: 'Desactivado (defecto)', de: 'Deaktiviert (Standard)' }, icon: "mdi:palette-outline" },
-        { value: 'battery', label: { en: 'Battery', fr: 'Batterie', es: 'Batería', de: 'Batterie'},                                                   icon: "mdi:battery" },
-        { value: 'light',   label: { en: 'Light', fr: 'Lumière', es: 'Luz', de: 'Licht' },                                                            icon: "mdi:lightbulb" },        
+        { value: '',            label: { en: 'Disabled (default)', fr: 'Désactivé (défaut)', es: 'Desactivado (defecto)', it: 'Disabilitato (predefinito)', de: 'Deaktiviert (Standard)' }, icon: "mdi:palette-outline" },
+        { value: 'battery',     label: { en: 'Battery', fr: 'Batterie', es: 'Batería', it: 'Batteria', de: 'Batterie'},                                                                     icon: "mdi:battery" },
+        { value: 'light',       label: { en: 'Light', fr: 'Lumière', es: 'Luz', it: 'Luce', de: 'Licht' },                                                                                  icon: "mdi:lightbulb" },
+        { value: 'temperature', label: { en: 'Temperature', fr: 'Température', es: 'Temperatura', it: 'Temperatura', de: 'Temperatur'  },                                                   icon: "mdi:thermometer" },
+        { value: 'humidity',    label: { en: 'Humidity', fr: 'Humidité', es: 'Humedad', it: 'Umidità', de: 'Feuchtigkeit'  },                                                               icon: "mdi:water-percent" },
     ],
     color: [
-        { value: 'var(--state-icon-color)', label: { en: 'Default', fr: 'Défaut', es: 'Predeterminado', de: 'Standard' } },
-        { value: 'var(--accent-color)', label: { en: 'Accent', fr: 'Accent', es: 'Acento', de: 'Akzent' } },
-        { value: 'var(--info-color)', label: { en: 'Info', fr: 'Info', es: 'Información', de: 'Info' } },
-        { value: 'var(--success-color)', label: { en: 'Success', fr: 'Succès', es: 'Éxito', de: 'Erfolg' } },
-        { value: 'var(--disabled-color)', label: { en: 'Disable', fr: 'Désactivé', es: 'Deshabilitado', de: 'Deaktiviert' } },
-        { value: 'var(--red-color)', label: { en: 'Red', fr: 'Rouge', es: 'Rojo', de: 'Rot' } },
-        { value: 'var(--pink-color)', label: { en: 'Pink', fr: 'Rose', es: 'Rosa', de: 'Pink' } },
-        { value: 'var(--purple-color)', label: { en: 'Purple', fr: 'Violet', es: 'Púrpura', de: 'Lila' } },
-        { value: 'var(--deep-purple-color)', label: { en: 'Deep purple', fr: 'Violet foncé', es: 'Púrpura profundo', de: 'Dunkellila' } },
-        { value: 'var(--indigo-color)', label: { en: 'Indigo', fr: 'Indigo', es: 'Índigo', de: 'Indigo' } },
-        { value: 'var(--blue-color)', label: { en: 'Blue', fr: 'Bleu', es: 'Azul', de: 'Blau' } },
-        { value: 'var(--light-blue-color)', label: { en: 'Light blue', fr: 'Bleu clair', es: 'Azul claro', de: 'Hellblau' } },
-        { value: 'var(--cyan-color)', label: { en: 'Cyan', fr: 'Cyan', es: 'Cian', de: 'Cyan' } },
-        { value: 'var(--teal-color)', label: { en: 'Teal', fr: 'Bleu sarcelle', es: 'Verde azulado', de: 'Blaugrün' } },
-        { value: 'var(--green-color)', label: { en: 'Green', fr: 'Vert', es: 'Verde', de: 'Grün' } },
-        { value: 'var(--light-green-color)', label: { en: 'Light green', fr: 'Vert clair', es: 'Verde claro', de: 'Hellgrün' } },
-        { value: 'var(--lime-color)', label: { en: 'Lime', fr: 'Citron vert', es: 'Lima', de: 'Limette' } },
-        { value: 'var(--yellow-color)', label: { en: 'Yellow', fr: 'Jaune', es: 'Amarillo', de: 'Gelb' } },
-        { value: 'var(--amber-color)', label: { en: 'Amber', fr: 'Ambre', es: 'Ámbar', de: 'Bernstein' } },
-        { value: 'var(--orange-color)', label: { en: 'Orange', fr: 'Orange', es: 'Naranja', de: 'Orange' } },
-        { value: 'var(--deep-orange-color)', label: { en: 'Deep orange', fr: 'Orange foncé', es: 'Naranja oscuro', de: 'Dunkelorange' } },
-        { value: 'var(--brown-color)', label: { en: 'Brown', fr: 'Marron', es: 'Marrón', de: 'Braun' } },
-        { value: 'var(--light-grey-color)', label: { en: 'Light grey', fr: 'Gris clair', es: 'Gris claro', de: 'Hellgrau' } },
-        { value: 'var(--grey-color)', label: { en: 'Grey', fr: 'Gris', es: 'Gris', de: 'Grau' } },
-        { value: 'var(--dark-grey-color)', label: { en: 'Dark grey', fr: 'Gris foncé', es: 'Gris oscuro', de: 'Dunkelgrau' } },
-        { value: 'var(--blue-grey-color)', label: { en: 'Blue grey', fr: 'Gris bleuté', es: 'Gris azulado', de: 'Blaugrau' } },
-        { value: 'var(--black-color)', label: { en: 'Black', fr: 'Noir', es: 'Negro', de: 'Schwarz' } },
-        { value: 'var(--white-color)', label: { en: 'White', fr: 'Blanc', es: 'Blanco', de: 'Weiß' } }
+        { value: 'var(--state-icon-color)', label: { en: 'Default', fr: 'Défaut', es: 'Predeterminado', it: 'Predefinito', de: 'Standard' } },
+        { value: 'var(--accent-color)', label: { en: 'Accent', fr: 'Accent', es: 'Acento', it: 'Accentuato', de: 'Akzent' } },
+        { value: 'var(--info-color)', label: { en: 'Info', fr: 'Info', es: 'Información', it: 'Info', de: 'Info' } },
+        { value: 'var(--success-color)', label: { en: 'Success', fr: 'Succès', es: 'Éxito', it: 'Successo', de: 'Erfolg' } },
+        { value: 'var(--disabled-color)', label: { en: 'Disable', fr: 'Désactivé', es: 'Deshabilitado', it: 'Disabilitato', de: 'Deaktiviert' } },
+        { value: 'var(--red-color)', label: { en: 'Red', fr: 'Rouge', es: 'Rojo', it: 'Rosso', de: 'Rot' } },
+        { value: 'var(--pink-color)', label: { en: 'Pink', fr: 'Rose', es: 'Rosa', it: 'Rosa', de: 'Pink' } },
+        { value: 'var(--purple-color)', label: { en: 'Purple', fr: 'Violet', es: 'Púrpura', it: 'Viola', de: 'Lila' } },
+        { value: 'var(--deep-purple-color)', label: { en: 'Deep purple', fr: 'Violet foncé', es: 'Púrpura profundo', it: 'Viola scuro', de: 'Dunkellila' } },
+        { value: 'var(--indigo-color)', label: { en: 'Indigo', fr: 'Indigo', es: 'Índigo', it: 'Indaco', de: 'Indigo' } },
+        { value: 'var(--blue-color)', label: { en: 'Blue', fr: 'Bleu', es: 'Azul', it: 'Blu', de: 'Blau' } },
+        { value: 'var(--light-blue-color)', label: { en: 'Light blue', fr: 'Bleu clair', es: 'Azul claro', it: 'Blu chiaro', de: 'Hellblau' } },
+        { value: 'var(--cyan-color)', label: { en: 'Cyan', fr: 'Cyan', es: 'Cian', it: 'Ciano', de: 'Cyan' } },
+        { value: 'var(--teal-color)', label: { en: 'Teal', fr: 'Bleu sarcelle', es: 'Verde azulado', it: 'Verde acqua', de: 'Blaugrün' } },
+        { value: 'var(--green-color)', label: { en: 'Green', fr: 'Vert', es: 'Verde', it: 'Verde', de: 'Grün' } },
+        { value: 'var(--light-green-color)', label: { en: 'Light green', fr: 'Vert clair', es: 'Verde claro', it: 'Verde chiaro', de: 'Hellgrün' } },
+        { value: 'var(--lime-color)', label: { en: 'Lime', fr: 'Citron vert', es: 'Lima', it: 'Lime', de: 'Limette' } },
+        { value: 'var(--yellow-color)', label: { en: 'Yellow', fr: 'Jaune', es: 'Amarillo', it: 'Giallo', de: 'Gelb' } },
+        { value: 'var(--amber-color)', label: { en: 'Amber', fr: 'Ambre', es: 'Ámbar', it: 'Ambra', de: 'Bernstein' } },
+        { value: 'var(--orange-color)', label: { en: 'Orange', fr: 'Orange', es: 'Naranja', it: 'Arancione', de: 'Orange' } },
+        { value: 'var(--deep-orange-color)', label: { en: 'Deep orange', fr: 'Orange foncé', es: 'Naranja oscuro', it: 'Arancione scuro', de: 'Dunkelorange' } },
+        { value: 'var(--brown-color)', label: { en: 'Brown', fr: 'Marron', es: 'Marrón', it: 'Marrone', de: 'Braun' } },
+        { value: 'var(--light-grey-color)', label: { en: 'Light grey', fr: 'Gris clair', es: 'Gris claro', it: 'Grigio chiaro', de: 'Hellgrau' } },
+        { value: 'var(--grey-color)', label: { en: 'Grey', fr: 'Gris', es: 'Gris', it: 'Grigio', de: 'Grau' } },
+        { value: 'var(--dark-grey-color)', label: { en: 'Dark grey', fr: 'Gris foncé', es: 'Gris oscuro', it: 'Grigio scuro', de: 'Dunkelgrau' } },
+        { value: 'var(--blue-grey-color)', label: { en: 'Blue grey', fr: 'Gris bleuté', es: 'Gris azulado', it: 'Grigio bluastro', de: 'Blaugrau' } },
+        { value: 'var(--black-color)', label: { en: 'Black', fr: 'Noir', es: 'Negro', it: 'Nero', de: 'Schwarz' } },
+        { value: 'var(--white-color)', label: { en: 'White', fr: 'Blanc', es: 'Blanco', it: 'Bianco', de: 'Weiß' } }
     ],
     layout: [
-        { value: 'horizontal', label: { en: 'Horizontal (default)', fr: 'Horizontal (par défaut)', es: 'Horizontal (predeterminado)', de: 'Horizontal (Standard)',}, icon: CARD.layout.horizontal.mdi, },
-        { value: 'vertical', label: { en: 'Vertical', fr: 'Vertical', es: 'Vertical', de: 'Vertikal',}, icon: CARD.layout.vertical.mdi, },
+        { value: 'horizontal', label: { en: 'Horizontal (default)', fr: 'Horizontal (par défaut)', es: 'Horizontal (predeterminado)', it: 'Orizzontale (predefinito)', de: 'Horizontal (Standard)',}, icon: CARD.layout.horizontal.mdi, },
+        { value: 'vertical', label: { en: 'Vertical', fr: 'Vertical', es: 'Vertical', it: 'Verticale', de: 'Vertikal',}, icon: CARD.layout.vertical.mdi, },
     ],
     tap_action: [
-        { value: CARD.tap_action.more_info, label: { en: 'More info (default)', fr: 'Plus d\'infos (par défaut)', es: 'Más información (predeterminado)', de: 'Mehr Infos (Standard)', }},
-        { value: CARD.tap_action.navigate_to, label: { en: 'Navigate to...', fr: 'Naviguer vers...', es: 'Navegar a...', de: 'Zu navigieren...', }},
-        { value: CARD.tap_action.no_action, label: { en: 'No action', fr: 'Aucune action', es: 'Sin acción', de: 'Keine Aktion', }}
+        { value: CARD.tap_action.more_info, label: { en: 'More info (default)', fr: 'Plus d\'infos (par défaut)', es: 'Más información (predeterminado)', it: 'Più informazioni (predefinito)', de: 'Mehr Infos (Standard)', }},
+        { value: CARD.tap_action.navigate_to, label: { en: 'Navigate to...', fr: 'Naviguer vers...', es: 'Navegar a...', it: 'Naviga a...', de: 'Zu navigieren...', }},
+        { value: CARD.tap_action.no_action, label: { en: 'No action', fr: 'Aucune action', es: 'Sin acción', it: 'Nessuna azione', de: 'Keine Aktion', }}
     ]
 };
 
@@ -667,7 +695,7 @@ class Decimal {
         this._value = value;
         this._isValid = isValid;
     }
-  
+
     /**
      * Sets the non-negative integer value.
      * If the new value is not a number, is NaN, is negative, or is not an integer, the value is considered invalid.
@@ -682,7 +710,7 @@ class Decimal {
         this._value = newValue;
         this._isValid = true;
     }
-  
+
     /**
      * Returns the non-negative integer value.
      *
@@ -691,7 +719,7 @@ class Decimal {
     get value() {
         return this._value;
     }
-  
+
     /**
      * Indicates whether the value is valid.
      *
@@ -714,7 +742,7 @@ class Unit {
      * @param {string} [value=''] - The unit of measurement. Defaults to an empty string.
      */
     constructor(value = '') {
-        this._value = value; 
+        this._value = value;
     }
 
     /**
@@ -727,7 +755,7 @@ class Unit {
         if (typeof newValue === 'string') {
             this._value = newValue;
         } else {
-            this._value = String(newValue); 
+            this._value = String(newValue);
         }
     }
 
@@ -849,7 +877,7 @@ class PercentHelper {
 
     /**
      * Sets the number of decimal places to use.
-     * If no value is provided, it defaults to CARD.config.decimal.percentage if the unit is CARD.config.unit, 
+     * If no value is provided, it defaults to CARD.config.decimal.percentage if the unit is CARD.config.unit,
      * otherwise it defaults to CARD.config.decimal.other.
      *
      * @param {number} [newDecimal] - The new number of decimal places.
@@ -861,7 +889,7 @@ class PercentHelper {
             } else {
                 newDecimal = CARD.config.decimal.other;
             }
-        }        
+        }
         this._decimal.value = newDecimal;
     }
 
@@ -1096,7 +1124,7 @@ class EntityOrValue {
          * @type {object|string}
          * @private
          */
-        this._value = {}; 
+        this._value = {};
         /**
          * @type {HassProvider}
          * @private
@@ -1345,14 +1373,14 @@ class ConfigHelper {
      * Returns the number of decimal places to use.
      *
      * @returns {number|null} The number of decimal places.
-     */    
+     */
     get decimal() {
         return this._decimal;
     }
 
     /**
      * Sets the number of decimal places.
-     * Defaults to `CARD.config.decimal.percentage` if the unit is `CARD.config.unit`, 
+     * Defaults to `CARD.config.decimal.percentage` if the unit is `CARD.config.unit`,
      * otherwise defaults to `CARD.config.decimal.other`.
      *
      * @param {number} [newDecimal] - The new number of decimal places.
@@ -1388,21 +1416,21 @@ class ConfigHelper {
 
     /**
      * Validates the card configuration and returns the validation status and error messages.
-     * 
+     *
      * Main Steps:
      * 1. **Entity Check**: Ensures `entity` is defined in the configuration and exists in Home Assistant.
      * 2. **Max Value Validation**: Confirms `max_value` is either:
      *    - A positive number.
      *    - A valid entity in Home Assistant.
      * 3. **Decimal Check**: Validates that the `decimal` value is not negative.
-     * 
+     *
      * Returns:
      * - An object `{ valid, msg }`:
      *   - `valid`: Boolean indicating whether the configuration is valid.
      *   - `msg`: An error message string, or `null` if the configuration is valid.
-     * 
+     *
      * Provides localized error messages for each type of configuration issue.
-     * 
+     *
      * @returns {{ valid: boolean, msg: string|null }}
      */
     checkConfig() {
@@ -1607,11 +1635,11 @@ class CardView {
 }
 
 /** --------------------------------------------------------------------------
- * 
+ *
  * Represents a custom card element displaying the progress of an entity.
- * 
- * The `EntityProgressCard` class extends the base `HTMLElement` class and 
- * implements a custom web component that displays information about an entity's 
+ *
+ * The `EntityProgressCard` class extends the base `HTMLElement` class and
+ * implements a custom web component that displays information about an entity's
  * state.
  */
 class EntityProgressCard extends HTMLElement {
@@ -1676,7 +1704,7 @@ class EntityProgressCard extends HTMLElement {
 
     /**
      * Creates and returns a new configuration element for the component.
-     * 
+     *
      * @returns {HTMLElement} A newly created configuration element.
      */
     static getConfigElement() {
@@ -1685,9 +1713,9 @@ class EntityProgressCard extends HTMLElement {
 
     /**
      * Updates the component's configuration and triggers static changes.
-     * 
+     *
      * **Note:** Dynamic Updates will be done in set hass function.
-     * 
+     *
      * @param {Object} config - The new configuration object.
      */
     setConfig(config) {
@@ -1707,8 +1735,8 @@ class EntityProgressCard extends HTMLElement {
 
     /**
      * Sets the Home Assistant (`hass`) instance and updates dynamic elements.
-     * 
-     * @param {Object} hass - The Home Assistant instance containing the current 
+     *
+     * @param {Object} hass - The Home Assistant instance containing the current
      *                        state and services.
      */
     set hass(hass) {
@@ -1718,7 +1746,7 @@ class EntityProgressCard extends HTMLElement {
 
     /**
      * Builds and initializes the structure of the custom card component.
-     * 
+     *
      * This method creates the visual and structural elements of the card and injects
      * them into the component's Shadow DOM.
      */
@@ -1752,11 +1780,11 @@ class EntityProgressCard extends HTMLElement {
 
     /**
      * Changes the layout of the card based on the current configuration.
-     * 
-     * This method adjusts the styling of various DOM elements based on the selected 
-     * layout configuration. It uses predefined CSS styles to switch between two 
+     *
+     * This method adjusts the styling of various DOM elements based on the selected
+     * layout configuration. It uses predefined CSS styles to switch between two
      * layout modes.
-     * 
+     *
      */
     _changeLayout() {
         if (this._cardView.layout === CARD.layout.vertical.label) {
@@ -1778,15 +1806,15 @@ class EntityProgressCard extends HTMLElement {
 
     /**
      * Updates the specified DOM element based on a provided callback function.
-     * 
-     * This method accepts a `key` (which corresponds to an element stored in 
-     * the `_elements` object) and a `callback` function. The callback is executed 
-     * on the specified element, and its current value (either `textContent` or 
+     *
+     * This method accepts a `key` (which corresponds to an element stored in
+     * the `_elements` object) and a `callback` function. The callback is executed
+     * on the specified element, and its current value (either `textContent` or
      * `style.width`) is compared with the new value returned by the callback.
-     * 
-     * @param {string} key - The key that identifies the element to be updated 
+     *
+     * @param {string} key - The key that identifies the element to be updated
      *                       in the `_elements` object.
-     * @param {function} callback - A function that is applied to the element. 
+     * @param {function} callback - A function that is applied to the element.
      *                              It should return the new value for the element.
      */
     _updateElement(key, callback) {
@@ -1802,9 +1830,9 @@ class EntityProgressCard extends HTMLElement {
 
     /**
      * Updates dynamic card elements based on the entity's state and configuration.
-     * 
+     *
      * Handles errors gracefully (e.g., invalid config, unavailable entity).
-     * 
+     *
      * @returns {void}
      */
     _updateDynamicElements() {
@@ -1840,10 +1868,10 @@ class EntityProgressCard extends HTMLElement {
 
     /**
      * Displays an error alert with the provided message.
-     * 
+     *
      * This method shows an error alert on the card by updating the corresponding
      * DOM element (identified by `SELECTORS.alert`).
-     * 
+     *
      * @param {string} message - The error message to display in the alert.
      */
     _showError(message) {
@@ -1861,10 +1889,10 @@ class EntityProgressCard extends HTMLElement {
 
     /**
      * Hides the error alert by setting its display style to hide.
-     * 
-     * This method hides the error alert on the card by changing the `display` 
+     *
+     * This method hides the error alert on the card by changing the `display`
      * style of the corresponding DOM element (identified by `SELECTORS.alert`).
-     * 
+     *
      * @returns {void}
      */
     _hideError() {
@@ -1876,7 +1904,7 @@ class EntityProgressCard extends HTMLElement {
 
     /**
      * Returns the number of grid rows for the card size based on the current layout.
-     * 
+     *
      * @returns {number} - The number of grid rows for the current card layout.
      */
     getCardSize() {
@@ -1888,7 +1916,7 @@ class EntityProgressCard extends HTMLElement {
 
     /**
      * Returns the layout options based on the current layout configuration.
-     * 
+     *
      * @returns {object} - The layout options for the current layout configuration.
      */
     getLayoutOptions() {
@@ -1901,7 +1929,7 @@ class EntityProgressCard extends HTMLElement {
 
 /** --------------------------------------------------------------------------
  * Define static properties and register the custom element for the card.
- * 
+ *
  * @static
  */
 EntityProgressCard.version = VERSION;
@@ -1910,50 +1938,50 @@ customElements.define(CARD.typeName, EntityProgressCard);
 
 /** --------------------------------------------------------------------------
  * Registers the custom card in the global `customCards` array for use in Home Assistant.
- * 
- * This code ensures that the custom card is added to the list of registered custom cards, 
- * which Home Assistant uses to dynamically render and manage custom cards in its user interface. 
- * The check ensures that the `customCards` array is created if it does not exist, without overwriting 
+ *
+ * This code ensures that the custom card is added to the list of registered custom cards,
+ * which Home Assistant uses to dynamically render and manage custom cards in its user interface.
+ * The check ensures that the `customCards` array is created if it does not exist, without overwriting
  * any existing custom cards that may already be registered.
  */
 window.customCards = window.customCards || []; // Create the list if it doesn't exist. Careful not to overwrite it
 window.customCards.push({
     type: CARD.typeName,
     name: CARD.name,
-    description: CARD.description,    
+    description: CARD.description,
 });
 
 
 /** --------------------------------------------------------------------------
  * ConfigManager
- * 
- * A class for dynamically managing and manipulating a configuration object. 
- * This class provides methods for updating configuration properties, 
+ *
+ * A class for dynamically managing and manipulating a configuration object.
+ * This class provides methods for updating configuration properties,
  * applying deferred updates (debouncing), and notifying changes via a callback.
- * 
+ *
  * @class ConfigManager
- * 
+ *
  * @param {Object} initialConfig - The initial configuration object, consisting of key/value pairs.
  * @param {Boolean} debug - Enables or disables debugging mode to log class actions (default value via `CARD.debug`).
- */ 
+ */
 class ConfigManager {
     /**
      * Constructor for ConfigManager
-     * 
-     * Initializes a new instance of the `ConfigManager` class with the provided configuration and sets up 
+     *
+     * Initializes a new instance of the `ConfigManager` class with the provided configuration and sets up
      * internal state variables. The constructor ensures that the configuration is properly stored and that
      * other mechanisms, such as change notifications and debouncing, are ready for use.
-     * 
+     *
      * @param {Object} [initialConfig={}] - The initial configuration object used to set default key/value pairs.
-     * 
+     *
      * Instance Variables:
      * - `_config` (Object): Stores the current configuration, initialized with the provided `initialConfig`.
      * - `_onConfigChange` (Function|null): Holds the callback function for notifying configuration changes.
      * - `_debounceTimeout` (number|null): Tracks the timeout for debouncing property updates.
      * - `_pendingUpdates` (Object): Temporarily stores updates for deferred application (debouncing).
-     * - `_lastUpdateFromProperty` (Boolean): Tracks whether the last configuration change came from a property update 
+     * - `_lastUpdateFromProperty` (Boolean): Tracks whether the last configuration change came from a property update
      *   to prevent redundant updates.
-     * - `_debug` (Boolean): Indicates whether debugging mode is active, enabling detailed logs. 
+     * - `_debug` (Boolean): Indicates whether debugging mode is active, enabling detailed logs.
      *   The value is sourced from `CARD.debug`.
      */
 
@@ -1970,11 +1998,11 @@ class ConfigManager {
 
     /**
      * Getter for the current configuration.
-     * 
-     * Provides access to the current configuration as a new object, ensuring that external mutations do not 
-     * directly affect the internal state. This approach ensures encapsulation and protects the integrity 
+     *
+     * Provides access to the current configuration as a new object, ensuring that external mutations do not
+     * directly affect the internal state. This approach ensures encapsulation and protects the integrity
      * of the configuration.
-     * 
+     *
      * @returns {Object} - A copy of the current configuration object.
      */
     get config() {
@@ -1983,11 +2011,11 @@ class ConfigManager {
 
     /**
      * Logs debug messages to the console if debugging is enabled.
-     * 
-     * This method checks the `_debug` flag to determine whether debug logging is enabled. 
-     * If enabled, it logs the provided message and optional data to the console using 
+     *
+     * This method checks the `_debug` flag to determine whether debug logging is enabled.
+     * If enabled, it logs the provided message and optional data to the console using
      * `console.debug`. This is a utility method for easier debugging of the class behavior.
-     * 
+     *
      * @param {string} message - The message to be logged.
      * @param {any} [data=null] - Optional additional data to log with the message. Can be of any type.
      */
@@ -2003,11 +2031,11 @@ class ConfigManager {
 
     /**
      * Updates the configuration of the ConfigManager instance.
-     * 
-     * This method sets a new configuration by merging it with the existing configuration. 
-     * If the last update was triggered by the `updateProperty` method, the update is skipped 
+     *
+     * This method sets a new configuration by merging it with the existing configuration.
+     * If the last update was triggered by the `updateProperty` method, the update is skipped
      * to prevent redundant changes. Debug messages are logged if debugging is enabled.
-     * 
+     *
      * @param {Object} newConfig - The new configuration object to be merged with the current configuration.
      */
     setConfig(newConfig) {
@@ -2028,9 +2056,9 @@ class ConfigManager {
      * @param {*} value - The new value for the property. Can be any type.
      *
      * Behavior:
-     * - If the method is called multiple times within the debounce period, 
+     * - If the method is called multiple times within the debounce period,
      *   previous timeouts are cleared, and only the latest update is applied.
-     * - After the debounce timeout, `_applyPendingUpdates()` is called to process 
+     * - After the debounce timeout, `_applyPendingUpdates()` is called to process
      *   and commit the changes to the configuration.
      */
     updateProperty(key, value) {
@@ -2038,7 +2066,7 @@ class ConfigManager {
         this._pendingUpdatesLock = true;
         const hasPendingUpdate = key in this._pendingUpdates;
         if (
-            (hasPendingUpdate && this._pendingUpdates[key] === value) || 
+            (hasPendingUpdate && this._pendingUpdates[key] === value) ||
             (!hasPendingUpdate && this._config[key] === value)
         ) {
             this._logDebug(`ConfigManager/updateProperty: no change for ${key}`);
@@ -2060,11 +2088,11 @@ class ConfigManager {
 
     /**
      * Applies all pending configuration updates after the debounce period.
-     * 
+     *
      * This method processes and commits any changes stored in `_pendingUpdates` to the
      * actual configuration (`_config`). It handles type conversion, such as converting
      * numeric strings to numbers, and removes properties with empty or invalid values.
-     * 
+     *
      * @private
      */
     _applyPendingUpdates() {
@@ -2116,9 +2144,9 @@ class ConfigManager {
 
     /**
      * Notifies listeners (editor) of a configuration change.
-     * 
-     * This method invokes the registered callback function, passing a copy of the current 
-     * configuration as an argument. It ensures that any external subscribers (e.g., the editor 
+     *
+     * This method invokes the registered callback function, passing a copy of the current
+     * configuration as an argument. It ensures that any external subscribers (e.g., the editor
      * or other components) are informed whenever the configuration is updated.
      */
     _notifyChangeValidated() {
@@ -2129,7 +2157,7 @@ class ConfigManager {
 
     /**
      * Registers a callback (editor) to handle configuration changes.
-     * 
+     *
      * This method allows external components or systems to subscribe to updates
      * of the configuration managed by this class. When a configuration change
      * occurs, the provided callback will be invoked with a cloned version of
@@ -2154,14 +2182,14 @@ class ConfigManager {
 
 /** --------------------------------------------------------------------------
  * Custom editor component for configuring the `EntityProgressCard`.
- * 
- * The `EntityProgressCardEditor` class extends `HTMLElement` and represents the editor interface 
+ *
+ * The `EntityProgressCardEditor` class extends `HTMLElement` and represents the editor interface
  * for configuring the settings of the `EntityProgressCard`.
  */
 class EntityProgressCardEditor extends HTMLElement {
     /**
      * Initializes an instance of the `EntityProgressCardEditor` class.
-     * 
+     *
      * @constructor
      */
     constructor() {
@@ -2185,21 +2213,21 @@ class EntityProgressCardEditor extends HTMLElement {
 
     /**
      * Sets the `hass` (Home Assistant) instance for the editor component.
-     * 
+     *
      * This setter method is used to assign a new Home Assistant instance to the editor component.
      * It ensures that the editor is only updated when the `hass` instance changes, preventing
      * unnecessary re-renders. If the new instance is different from the previous one or if it is the
      * first time the `hass` value is being set, the component updates its internal reference and,
      * if it has already been rendered, triggers a re-render.
-     * 
+     *
      * - If the provided `value` is falsy (null or undefined), the method simply returns without doing anything.
      * - Update the this._currentLanguage according to hass.config.language (HA Environment)
      * - If the current `hass` instance is different from the new one (checked by comparing `entities`),
      *   the method updates the internal `_hass` reference and triggers a re-render if the editor is already rendered.
-     * 
+     *
      * This ensures that changes in the Home Assistant instance are properly reflected in the component
      * without unnecessary updates or re-renders.
-     * 
+     *
      * @param {object} hass - The new Home Assistant instance to set.
      */
     set hass(hass) {
@@ -2214,25 +2242,25 @@ class EntityProgressCardEditor extends HTMLElement {
 
     /**
      * Gets the current Home Assistant instance stored in the editor component.
-     * 
+     *
      * This getter method provides access to the internal `_hass` property.
-     * 
+     *
      * @returns {object|null} The current Home Assistant instance, or `null` if not set.
-     */    
+     */
     get hass() {
         return this._hass;
     }
 
     /**
      * Sets the configuration for the editor component and triggers the necessary updates.
-     * 
+     *
      * This method accepts a configuration object and updates the component's internal `config` property.
      *
      * This method ensures that the editor's configuration is applied correctly and that any necessary UI updates
      * are triggered, including rendering the editor if it's not already displayed.
-     * 
+     *
      * @param {object} config - The configuration object containing settings for the editor.
-     */   
+     */
     setConfig(config) {
         if (!this.hass) {
             return;
@@ -2258,11 +2286,11 @@ class EntityProgressCardEditor extends HTMLElement {
 
     /**
      * Checks if a configuration change originates from the graphical editor (GUI).
-     * 
-     * This function uses the dimensions of the `entity` field element to determine 
-     * if the graphical editor is currently visible and interactive. The GUI editor 
+     *
+     * This function uses the dimensions of the `entity` field element to determine
+     * if the graphical editor is currently visible and interactive. The GUI editor
      * is considered active if its dimensions (width and height) are greater than zero.
-     * 
+     *
      * @returns {boolean} - Returns `true` if the GUI editor is visible, otherwise `false`.
      */
     _checkConfigChangeFromGUI() {
@@ -2276,7 +2304,7 @@ class EntityProgressCardEditor extends HTMLElement {
 
     /**
      * Synchronizes the configuration from the YAML editor with the GUI editor.
-     * 
+     *
      * Note: This ensures that the graphical editor reflects the latest YAML-based changes.
      */
     _refreshConfigFromYAML() {
@@ -2302,11 +2330,11 @@ class EntityProgressCardEditor extends HTMLElement {
 
     /**
      * Toggles the visibility of fields based on the `disable` flag.
-     * 
-     * This method is used to control the visibility of specific fields in the editor. 
-     * It updates the `style.display` property of each field element stored in the `_overridableElements` 
+     *
+     * This method is used to control the visibility of specific fields in the editor.
+     * It updates the `style.display` property of each field element stored in the `_overridableElements`
      * object, hiding or showing the fields based on the `disable` parameter.
-     * 
+     *
      * @param {boolean} disable - A boolean flag to control the visibility of the fields.
      *                            If `true`, fields are hidden. If `false`, fields are shown.
      */
@@ -2321,10 +2349,10 @@ class EntityProgressCardEditor extends HTMLElement {
     }
 
     /**
-     * Updates a specific property in the configuration object, and handles additional logic 
+     * Updates a specific property in the configuration object, and handles additional logic
      * related to `theme` and field visibility.
-     * 
-     * 
+     *
+     *
      * @param {string} key - The key of the configuration property to update.
      * @param {string} value - The new value to assign to the configuration property.
      */
@@ -2346,13 +2374,13 @@ class EntityProgressCardEditor extends HTMLElement {
     /**
      * Manages the tap action behavior based on the provided value.
      *
-     * This function updates the configuration and toggles fields related to the 
-     * tap action (e.g., `navigate_to` and `show_more_info`) depending on the 
-     * selected action. It ensures that mutually exclusive properties are handled 
+     * This function updates the configuration and toggles fields related to the
+     * tap action (e.g., `navigate_to` and `show_more_info`) depending on the
+     * selected action. It ensures that mutually exclusive properties are handled
      * properly.
      *
      * @param {string} value - The selected tap action value to manage.
-     *                         Possible values: `CARD.tap_action.navigate_to`, 
+     *                         Possible values: `CARD.tap_action.navigate_to`,
      *                         `CARD.tap_action.more_info`, `CARD.tap_action.no_action`.
      */
     _manageTapAction(value) {
@@ -2379,8 +2407,8 @@ class EntityProgressCardEditor extends HTMLElement {
     /**
      * Determines the tap action value based on the current configuration.
      *
-     * This function evaluates the `config` object to determine the appropriate 
-     * tap action to return. It considers the `navigate_to` and `show_more_info` 
+     * This function evaluates the `config` object to determine the appropriate
+     * tap action to return. It considers the `navigate_to` and `show_more_info`
      * properties in the configuration to decide the value.
      *
      * @returns {string|null} The determined tap action value, or `null` if no valid action is found.
@@ -2420,10 +2448,10 @@ class EntityProgressCardEditor extends HTMLElement {
 
     /**
      * Adds a list of choices to a given `<select>` element based on the specified list type.
-     * 
+     *
      * This method populates the `<select>` element with options according to the provided `type`. The `type`
      * determines the kind of list (e.g., colors, layout, theme, tap actions) and how the options will be displayed.
-     * 
+     *
      * @param {HTMLElement} select - The `<select>` element to which the choices will be added.
      * @param {string} type - The type of list to populate ('layout', 'color', 'theme', or 'tap_action').
      */
@@ -2448,7 +2476,7 @@ class EntityProgressCardEditor extends HTMLElement {
                 haIcon.setAttribute('icon', optionData.icon || 'mdi:alert'); // Définit l'icône par défaut ou celle dans FIELD_OPTIONS
                 haIcon.style.marginRight = '8px'; // Ajuste l'espace entre l'icône et le texte
                 haIcon.style.width = '20px'; // Assurez-vous que la largeur est visible
-                haIcon.style.height = '20px';    
+                haIcon.style.height = '20px';
                 option.appendChild(haIcon); // Ajouter l'icône à l'option
                 option.append(optionData.label[this._currentLanguage]);
             } else if (type === FIELD_TYPE.tap_action.type) {
@@ -2471,17 +2499,17 @@ class EntityProgressCardEditor extends HTMLElement {
             inputElement.removeChild(inputElement.firstChild);
         }
         // add option
-        this._addChoices(inputElement, FIELD_TYPE.attribute.type, curEntity);        
+        this._addChoices(inputElement, FIELD_TYPE.attribute.type, curEntity);
     }
 
     /**
      * Adds an event listener to a specified element and handles events based on the provided type.
-     * 
+     *
      * @param {string} name - The name of the element to attach the event listener to.
-     * @param {string} type - The type of the event listener. Supported types include 'color', 'theme', 'tap_action', 'layout', 
+     * @param {string} type - The type of the event listener. Supported types include 'color', 'theme', 'tap_action', 'layout',
      *                        or other types triggering 'value-changed' and 'input' events.
-     * 
-     * When an event occurs, the function checks if the component has been rendered and if there are configuration changes 
+     *
+     * When an event occurs, the function checks if the component has been rendered and if there are configuration changes
      * initiated from the GUI. It then updates the configuration property or manages the tap action, depending on the event type.
      */
 
@@ -2514,21 +2542,21 @@ class EntityProgressCardEditor extends HTMLElement {
 
     /**
      * Creates a form field based on the provided configuration and appends it to a container.
-     * 
+     *
      * This method generates a form field element dynamically based on the provided field type.
      *
-     * For the `layout`, `theme`, and `color` field types, additional choices are populated 
-     * via helper methods `_addChoice` and `_addColor`. Each field is configured with a label, 
-     * value, and an optional description. If the field is marked as a theme-overridable element, 
+     * For the `layout`, `theme`, and `color` field types, additional choices are populated
+     * via helper methods `_addChoice` and `_addColor`. Each field is configured with a label,
+     * value, and an optional description. If the field is marked as a theme-overridable element,
      * it is stored in the `_overridableElements` object for potential dynamic modification.
-     * 
+     *
      * @param {string} config.name - The name of the field (used to store the field's value in `this.config`).
      * @param {string} config.label - The label for the field, displayed next to the input element.
      * @param {string} config.type - The type of field to create ('entity', 'icon', 'layout', 'theme', 'color', or 'text').
      * @param {boolean} config.required - A flag indicating whether the field is required.
      * @param {boolean} config.isInGroup - A flag indicating if the field should be group-overridable.
      * @param {string} config.description - The description of the field, typically displayed below the input.
-     * 
+     *
      * @returns {HTMLElement} The container element (`<div>`) containing the input field and its description.
      */
     _createField({ name, label, type, required, isInGroup, description, width }) {
@@ -2615,7 +2643,7 @@ class EntityProgressCardEditor extends HTMLElement {
         link.style.top='0px';
         link.style.right='0px';
         link.style.zIndex ='600';
-    
+
         const outerDiv = document.createElement('div');
         outerDiv.style.width = '50px';
         outerDiv.style.height = '50px';
@@ -2640,33 +2668,33 @@ class EntityProgressCardEditor extends HTMLElement {
         questionMark.style.fontSize = '20px';
         questionMark.style.color = 'black';
         questionMark.style.fontWeight = 'bold';
-    
+
         innerDiv.appendChild(questionMark);
         outerDiv.appendChild(innerDiv);
         link.appendChild(outerDiv);
-        
+
         return link;
     }
 
     /**
      * Author: Thomas Loven
-     * see: 
+     * see:
      *  - https://github.com/thomasloven/hass-config/wiki/PreLoading-Lovelace-Elements
      *  - https://gist.github.com/thomasloven/5f965bd26e5f69876890886c09dd9ba8
      *
      * Dynamically loads the `ha-entity-picker` component if it is not already defined.
      *
-     * This function checks if the `ha-entity-picker` custom element is already registered 
-     * in the browser. If it is not registered, it dynamically loads it by using 
-     * Home Assistant's `loadCardHelpers` utility. Once loaded, it creates a temporary 
-     * `entities` card element to ensure that the `ha-entity-picker` element is properly 
-     * defined and ready for use. Afterward, it retrieves the configuration element 
-     * for the picker by calling `getConfigElement()`. 
+     * This function checks if the `ha-entity-picker` custom element is already registered
+     * in the browser. If it is not registered, it dynamically loads it by using
+     * Home Assistant's `loadCardHelpers` utility. Once loaded, it creates a temporary
+     * `entities` card element to ensure that the `ha-entity-picker` element is properly
+     * defined and ready for use. Afterward, it retrieves the configuration element
+     * for the picker by calling `getConfigElement()`.
      *
-     * This is typically done when the editor is being initialized and the entity picker 
+     * This is typically done when the editor is being initialized and the entity picker
      * is required but hasn't been loaded yet.
      *
-     * @returns {Promise<void>} A promise that resolves when the `ha-entity-picker` 
+     * @returns {Promise<void>} A promise that resolves when the `ha-entity-picker`
      *         component is successfully loaded and available.
      */
     async loadEntityPicker() {
@@ -2680,9 +2708,9 @@ class EntityProgressCardEditor extends HTMLElement {
 
     /**
      * Renders the editor interface for configuring the card's settings.
-     * 
+     *
      * @returns {void}
-     */    
+     */
     render() {
         this.innerHTML = ''; // Reset inner HTML
         const fragment = document.createDocumentFragment();
@@ -2713,9 +2741,9 @@ class EntityProgressCardEditor extends HTMLElement {
 
 /** --------------------------------------------------------------------------
  * Registers the custom element for the EntityProgressCardEditor editor.
- * This registration step enables the creation and use of the custom card editor 
+ * This registration step enables the creation and use of the custom card editor
  * in the Home Assistant's UI.
- * 
+ *
  * @returns {void}
  */
 customElements.define(CARD.editor, EntityProgressCardEditor);
