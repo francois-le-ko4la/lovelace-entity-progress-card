@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  * 
  * @author ko4la
- * @version 1.0.26
+ * @version 1.0.27
  * 
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION='1.0.26';
+const VERSION='1.0.27';
 const CARD = {
     typeName: 'entity-progress-card',
     name: 'Entity progress card',
@@ -343,9 +343,12 @@ const MSG = {
 const THEME_KEY = "theme";
 const NAVIGATETO_KEY = "navigate_to";
 const TAP_ACTION_KEY = "tap_action";
+const ENTITY_ATTRIBUTE = "attribute";
+const TAG_HASELECT = 'ha-select';
 
 const FIELD_TYPE = {
     entity: { type: 'entity', tag: 'ha-entity-picker'},
+    attribute: { type: 'attribute', tag: 'ha-select'},
     icon: { type: 'icon', tag: 'ha-icon-picker'},
     layout: { type: 'layout', tag: 'ha-select'},
     tap_action: { type: 'tap_action', tag: 'ha-select'},
@@ -358,7 +361,7 @@ const FIELD_TYPE = {
 
 const EDITOR_INPUT_FIELDS = {
     entity: {       name: 'entity',
-                    label: { en: 'Entity', fr: 'Entité', es: 'Entidad', de: 'Entität', },
+                    label: { en: 'Entity', fr: 'Entité', es: 'Entidad', it: 'Entità', de: 'Entität', },
                     type: FIELD_TYPE.entity.type,
                     width: '92%',
                     required: true,
@@ -367,10 +370,24 @@ const EDITOR_INPUT_FIELDS = {
                         en: 'Select an entity from Home Assistant.',
                         fr: 'Sélectionnez une entité de Home Assistant.',
                         es: 'Seleccione una entidad de Home Assistant.',
+                        it: 'Seleziona un\'entità da Home Assistant.',
                         de: 'Wählen Sie eine Entität aus Home Assistant.',
                     }},
+    attribute: {    name: 'attribute',
+                    label: { en: 'Attribute', fr: 'Attribut', es: 'Atributo', it: 'Attributo', de: 'Attribut', },
+                    type: FIELD_TYPE.attribute.type,
+                    width: '92%',
+                    required: false,
+                    isInGroup: ENTITY_ATTRIBUTE,
+                    description: {
+                        en: 'Select the attribute.',
+                        fr: 'Sélectionnez l\'attribut.',
+                        es: 'Seleccione el atributo.',
+                        it: 'Seleziona l\'attributo.',
+                        de: 'Wählen Sie das Attribut aus.',
+                    }},
     name: {         name: 'name',
-                    label: { en: 'Name', fr: 'Nom', es: 'Nombre', de: 'Name', },
+                    label: { en: 'Name', fr: 'Nom', es: 'Nombre', it: 'Nome', de: 'Name', },
                     type: FIELD_TYPE.default.type,
                     width: '48%',
                     required: false,
@@ -379,10 +396,11 @@ const EDITOR_INPUT_FIELDS = {
                         en: 'Enter a name for the entity.',
                         fr: 'Saisissez un nom pour l\'entité.',
                         es: 'Introduzca un nombre para la entidad.',
+                        it: 'Inserisci un nome per l\'entità.',
                         de: 'Geben Sie einen Namen für die Entität ein.',
                     }},
     unit: {         name: 'unit',
-                    label: { en: 'Unit', fr: 'Unité', es: 'Nombre', de: 'Name', },
+                    label: { en: 'Unit', fr: 'Unité', es: 'Nombre', it: 'Unità', de: 'Name', },
                     type: FIELD_TYPE.default.type,
                     width: '15%',
                     required: false,
@@ -391,10 +409,11 @@ const EDITOR_INPUT_FIELDS = {
                         en: 'm, kg...',
                         fr: 'm, kg...',
                         es: 'm, kg...',
+                        it: 'm, kg...',
                         de: 'm, kg...',
                     }},
     decimal: {      name: 'decimal',
-                    label: { en: 'decimal', fr: 'decimal', es: 'decimal', de: 'decimal', },
+                    label: { en: 'decimal', fr: 'decimal', es: 'decimal', it: 'Decimale', de: 'decimal', },
                     type: FIELD_TYPE.number.type,
                     width: '25%',
                     required: false,
@@ -403,10 +422,11 @@ const EDITOR_INPUT_FIELDS = {
                         en: 'Precision.',
                         fr: 'Précision.',
                         es: 'Precisión.',
+                        it: 'Precisione.',
                         de: 'Präzision.',
                     }},
     min_value: {    name: 'min_value',
-                    label: { en: 'Minimum value', fr: 'Valeur minimum', es: 'Nombre', de: 'Name', },
+                    label: { en: 'Minimum value', fr: 'Valeur minimum', es: 'Valor mínimo', it: 'Valore minimo', de: 'Mindestwert',},
                     type: FIELD_TYPE.number.type,
                     width: '45%',
                     required: false,
@@ -415,10 +435,11 @@ const EDITOR_INPUT_FIELDS = {
                         en: 'Enter the minimum value.',
                         fr: 'Saisissez la valeur minimum.',
                         es: 'Introduzca el valor mínimo.',
+                        it: 'Inserisci il valore minimo.',
                         de: 'Geben Sie den Mindestwert ein.',
                     }},
     max_value: {    name: 'max_value',
-                    label: { en: 'Maximum value', fr: 'Valeur maximum', es: 'Nombre', de: 'Name', },
+                    label: { en: 'Maximum value', fr: 'Valeur maximum', es: 'Valor máximo', it: 'Valore massimo', de: 'Höchstwert', },
                     type: FIELD_TYPE.default.type,
                     width: '45%',
                     required: false,
@@ -427,10 +448,11 @@ const EDITOR_INPUT_FIELDS = {
                         en: 'Enter the maximum value.',
                         fr: 'Saisissez la valeur maximum.',
                         es: 'Introduzca el valor máximo.',
+                        it: 'Inserisci il valore massimo.',
                         de: 'Geben Sie den Höchstwert ein.',
                     }},
     tap_action: {   name: 'tap_action',
-                    label: { en: 'Tap action', fr: 'Action au tap', es: 'Acción al tocar', de: 'Tippen Aktion', },
+                    label: { en: 'Tap action', fr: 'Action au tap', es: 'Acción al tocar', it: 'Azione al tocco', de: 'Tippen Aktion', },
                     type: FIELD_TYPE.tap_action.type,
                     width: '45%',
                     required: false,
@@ -439,22 +461,24 @@ const EDITOR_INPUT_FIELDS = {
                         en: 'Select the action.',
                         fr: 'Sélectionnez l\'action.',
                         es: 'Seleccione la acción.',
-                        de: 'Wählen Sie die Aktion.'
+                        it: 'Seleziona l\'azione.',
+                        de: 'Wählen Sie die Aktion.',
                     }},
     navigate_to: {  name: NAVIGATETO_KEY,
-                    label: { en: 'Navigate to...', fr: 'Naviguer vers...', es: 'Navegar a...', de: 'Navigieren zu...',  },
+                    label: { en: 'Navigate to...', fr: 'Naviguer vers...', es: 'Navegar a...', it: 'Naviga verso...', de: 'Navigieren zu...',  },
                     type: FIELD_TYPE.default.type,
                     width: '45%',
                     required: false,
                     isInGroup: NAVIGATETO_KEY,
                     description: {
-                        en: 'Select the target (/lovelace/0).',
+                        en: 'Enter the target (/lovelace/0).',
                         fr: 'Saisir la cible (/lovelace/0).',
-                        es: 'Seleccione el objetivo (/lovelace/0).',
-                        de: 'Wählen Sie das Ziel (/lovelace/0).'
+                        es: 'Introduzca el objetivo (/lovelace/0).',
+                        it: 'Inserisci il target (/lovelace/0).',
+                        de: 'Geben Sie das Ziel (/lovelace/0) ein.',
                     }},
     theme: {        name: 'theme',
-                    label: { en: 'Theme', fr: 'Thème', es: 'Tema', de: 'Thema', },
+                    label: { en: 'Theme', fr: 'Thème', es: 'Tema', it: 'Tema', de: 'Thema', },
                     type: FIELD_TYPE.theme.type,
                     width: '92%',
                     required: false,
@@ -463,10 +487,11 @@ const EDITOR_INPUT_FIELDS = {
                         en: 'Select a theme to automatically define the colors and icon.',
                         fr: 'Sélectionnez un thème pour définir automatiquement les couleurs et l\'icône.',
                         es: 'Seleccione un tema para definir automáticamente los colores y el icono.',
+                        it: 'Seleziona un tema per definire automaticamente i colori e l\'icona.',
                         de: 'Wählen Sie ein Thema, um die Farben und das Symbol automatisch festzulegen.',
                     }},
     layout: {       name: 'layout',
-                    label: { en: 'Layout', fr: 'Disposition', es: 'Disposición', de: 'Layout', },
+                    label: { en: 'Layout', fr: 'Disposition', es: 'Disposición', it: 'Layout', de: 'Layout', },
                     type: FIELD_TYPE.layout.type,
                     width: '45%',
                     required: false,
@@ -475,10 +500,11 @@ const EDITOR_INPUT_FIELDS = {
                         en: 'Select the layout.',
                         fr: 'Sélectionnez la disposition.',
                         es: 'Seleccione la disposición.',
+                        it: 'Seleziona il layout.',
                         de: 'Wählen Sie das Layout.',
                     }},
     bar_color: {    name: 'bar_color',
-                    label: { en: 'Color for the bar', fr: 'Couleur de la barre', es: 'Color de la barra', de: 'Farbe für die Leiste', },
+                    label: { en: 'Color for the bar', fr: 'Couleur de la barre', es: 'Color de la barra', it: 'Colore per la barra', de: 'Farbe für die Leiste', },
                     type: FIELD_TYPE.color.type,
                     width: '45%',
                     required: false,
@@ -487,10 +513,11 @@ const EDITOR_INPUT_FIELDS = {
                         en: 'Select the color for the bar.',
                         fr: 'Sélectionnez la couleur de la barre.',
                         es: 'Seleccione el color de la barra.',
+                        it: 'Seleziona il colore per la barra.',
                         de: 'Wählen Sie für die Leiste.',
                     }},
     icon: {         name: 'icon',
-                    label: { en: 'Icon', fr: 'Icône', es: 'Icono', de: 'Symbol', },
+                    label: { en: 'Icon', fr: 'Icône', es: 'Icono', it: 'Icona', de: 'Symbol', },
                     type: FIELD_TYPE.icon.type,
                     width: '45%',
                     required: false,
@@ -511,6 +538,7 @@ const EDITOR_INPUT_FIELDS = {
                         en: 'Select the primary color for the icon.',
                         fr: 'Sélectionnez la couleur de l\'icône.',
                         es: 'Seleccione el color principal del icono.',
+                        it: 'Seleziona un\'icona per l\'entità.',
                         de: 'Wählen Sie die Primärfarbe für das Symbol.',
                     }},
 };
@@ -562,6 +590,17 @@ const FIELD_OPTIONS = {
     ]
 };
 
+const ATTRIBUTE_MAPPING = {
+    cover: {label: "cover", attribute: "current_position"},
+    light: {label: "light" , attribute: "brightness"},
+    fan: {label: "fan", attribute: "percentage"},
+    climate: {label: "climate", attribute: null},
+    humidifier: {label: "humidifier", attribute: null},
+    media_player: {label: "media_player", attribute: null},
+    vacuum: {label: "vacuum", attribute: null},
+    device_tracker: {label: "device_tracker", attribute: null},
+    weather: {label: "weather", attribute: null},
+};
 
 /**
  * Represents a numeric value that can be valid or invalid.
@@ -1083,6 +1122,11 @@ class EntityOrValue {
          * @private
          */
         this._entity = null;
+        /**
+         * @type {string}
+         * @private
+         */
+        this._attribute = null;
     }
     /**
      * Sets the value, which can be an entity ID or a direct value.
@@ -1106,6 +1150,14 @@ class EntityOrValue {
         } else {
             return null;
         }
+    }
+    /**
+     * Sets the attribute.
+     *
+     * @param {object|string} newAttribute - The new value to set.
+     */
+    set attribute(newAttribute) {
+        this._attribute = newAttribute;
     }
     /**
      * Indicates whether the value is valid.
@@ -1203,7 +1255,20 @@ class EntityOrValue {
             }
             this._isValid = true;
             this._isAvailable = true;
-            this._value = parseFloat(entityState);
+            const entityType = this._entity.split(".")[0]; // "cover", "light", "fan", etc.
+            if (ATTRIBUTE_MAPPING[entityType]) {
+                const attribute = this._attribute ?? ATTRIBUTE_MAPPING[entityType].attribute;
+                if (attribute && this._hassProvider.hass.states[this._entity].attributes.hasOwnProperty(attribute)) {
+                    this._value = this._hassProvider.hass.states[this._entity].attributes[attribute] ?? 0;
+                    if (entityType === ATTRIBUTE_MAPPING.light.label && attribute === ATTRIBUTE_MAPPING.light.attribute) {
+                        this._value = (100 * this._value) / 255;
+                    }
+                } else { // attribute not supported
+                    this._value = 0;
+                }
+            } else {
+                this._value = parseFloat(entityState) || 0;
+            }
             return;
         }
         this._value = 0;
@@ -1428,12 +1493,13 @@ class CardView {
      * @param {object} config - The new card configuration.
      */
     set config(config) {
-        this._configHelper.config = config;
-        this.layout               = config.layout;
-        this._percentHelper.unit  = config.unit;
-        this.show_more_info       = typeof config.show_more_info === 'boolean' ? config.show_more_info : CARD.config.showMoreInfo;
-        this.navigate_to          = config.navigate_to !== undefined ? config.navigate_to : null;
-        this._theme.theme         = config.theme;
+        this._configHelper.config       = config;
+        this.layout                     = config.layout;
+        this._percentHelper.unit        = config.unit;
+        this.show_more_info             = typeof config.show_more_info === 'boolean' ? config.show_more_info : CARD.config.showMoreInfo;
+        this.navigate_to                = config.navigate_to !== undefined ? config.navigate_to : null;
+        this._theme.theme               = config.theme;
+        this._currentValue.attribute    = config.attribute || null;
     }
 
     /**
@@ -2267,6 +2333,14 @@ class EntityProgressCardEditor extends HTMLElement {
         if (key === THEME_KEY) {
             this._toggleFieldDisable(THEME_KEY, value !== '');
         }
+        if (key === EDITOR_INPUT_FIELDS.entity.type) {
+            const attributeAvailable = this._isEntityWithAttribute(value);
+            if(attributeAvailable) {
+                this._refreshAttributeOption(this._hass.states[value] ?? null)
+            }
+            this._toggleFieldDisable(EDITOR_INPUT_FIELDS.attribute.isInGroup, !attributeAvailable);
+        }
+
     }
 
     /**
@@ -2326,6 +2400,24 @@ class EntityProgressCardEditor extends HTMLElement {
         return value;
     }
 
+    _isEntityWithAttribute(entity) {
+        return !!ATTRIBUTE_MAPPING[entity?.split(".")[0]];
+    }
+
+    _getAttributeOption(curEntity=null) {
+        const entity = curEntity ?? this._hass.states[this.config.entity] ?? null;
+        if (!entity) {
+            return null;
+        }
+        const availableAttributes = Object.keys(entity.attributes || {}).map(attr => ({
+            value: attr,
+            label: attr
+        }));
+
+        return availableAttributes;
+    }
+
+
     /**
      * Adds a list of choices to a given `<select>` element based on the specified list type.
      * 
@@ -2335,20 +2427,23 @@ class EntityProgressCardEditor extends HTMLElement {
      * @param {HTMLElement} select - The `<select>` element to which the choices will be added.
      * @param {string} type - The type of list to populate ('layout', 'color', 'theme', or 'tap_action').
      */
-    _addChoices(select, type) {
+    _addChoices(select, type, curEntity=null) {
         select.innerHTML = '';
-        const list = FIELD_OPTIONS[type];
-
+        const list = (type === FIELD_TYPE.attribute.type) ? this._getAttributeOption(curEntity) : FIELD_OPTIONS[type];
+        this.configManager._logDebug('_addChoices - List ', list);
+        if(!list) {
+            return;
+        }
         list.forEach(optionData => {
             const option = document.createElement(FIELD_TYPE.listItem.tag);
             option.value = optionData.value;
 
-            if (type === 'color') {
+            if (type === FIELD_TYPE.color.type) {
                 option.innerHTML = `
                     <span style="display: inline-block; width: 16px; height: 16px; background-color: ${optionData.value}; border-radius: 50%; margin-right: 8px;"></span>
                     ${optionData.label[this._currentLanguage]}
                 `;
-            } else if (type === 'layout' || type === 'theme' ) {
+            } else if (type === FIELD_TYPE.layout.type || type === FIELD_TYPE.theme.type ) {
                 const haIcon = document.createElement('ha-icon');
                 haIcon.setAttribute('icon', optionData.icon || 'mdi:alert'); // Définit l'icône par défaut ou celle dans FIELD_OPTIONS
                 haIcon.style.marginRight = '8px'; // Ajuste l'espace entre l'icône et le texte
@@ -2356,14 +2451,27 @@ class EntityProgressCardEditor extends HTMLElement {
                 haIcon.style.height = '20px';    
                 option.appendChild(haIcon); // Ajouter l'icône à l'option
                 option.append(optionData.label[this._currentLanguage]);
-            } else if (type === 'tap_action') {
+            } else if (type === FIELD_TYPE.tap_action.type) {
                 option.innerHTML = `${optionData.label[this._currentLanguage]}`;
-            }// else if (type === 'theme') {
-            //    option.innerHTML = `${optionData.label}`;
-            //}
+            } else if (type === FIELD_TYPE.attribute.type) {
+                option.innerHTML = `${optionData.label}`;
+            }
 
             select.appendChild(option);
         });
+    }
+
+    _refreshAttributeOption(curEntity) {
+        if (!curEntity) {
+            return;
+        }
+        const inputElement = this._elements["attribute"];
+        // delete current options
+        while (inputElement.firstChild) {
+            inputElement.removeChild(inputElement.firstChild);
+        }
+        // add option
+        this._addChoices(inputElement, FIELD_TYPE.attribute.type, curEntity);        
     }
 
     /**
@@ -2376,12 +2484,12 @@ class EntityProgressCardEditor extends HTMLElement {
      * When an event occurs, the function checks if the component has been rendered and if there are configuration changes 
      * initiated from the GUI. It then updates the configuration property or manages the tap action, depending on the event type.
      */
-    _addEventListener(name, type) {
-        const events = (type === FIELD_TYPE.color.type || type === FIELD_TYPE.theme.type || type === FIELD_TYPE.tap_action.type || type === FIELD_TYPE.layout.type)
-            ? ['selected']
-            : ['value-changed', 'input'];
 
-        if (type === FIELD_TYPE.color.type || type === FIELD_TYPE.theme.type || type === FIELD_TYPE.tap_action.type || type === FIELD_TYPE.layout.type) {
+    _addEventListener(name, type) {
+        const isHASelect = FIELD_TYPE[type]?.tag === TAG_HASELECT;
+        const events = isHASelect ? ['selected'] : ['value-changed', 'input'];
+
+        if (isHASelect) {
             this._elements[name].addEventListener('closed', (event) => {
                 event.stopPropagation();
             });
@@ -2440,6 +2548,7 @@ class EntityProgressCardEditor extends HTMLElement {
             case FIELD_TYPE.theme.type:
             case FIELD_TYPE.color.type:
             case FIELD_TYPE.tap_action.type:
+            case FIELD_TYPE.attribute.type:
                 inputElement = document.createElement(FIELD_TYPE[type].tag);
                 inputElement.popperOptions = "";
                 this._addChoices(inputElement, type);
@@ -2464,7 +2573,7 @@ class EntityProgressCardEditor extends HTMLElement {
                 this._overridableElements[isInGroup] = {};
             }
             this._overridableElements[isInGroup][name]=inputElement;
-            if ((isInGroup === NAVIGATETO_KEY && this._getTapActionValue() !== NAVIGATETO_KEY) || (isInGroup === THEME_KEY && this.config.theme)) {
+            if ((isInGroup === NAVIGATETO_KEY && this._getTapActionValue() !== NAVIGATETO_KEY) || (isInGroup === THEME_KEY && this.config.theme) || (isInGroup === ENTITY_ATTRIBUTE && !(this.config.entity && ATTRIBUTE_MAPPING[this.config.entity.split(".")[0]]))) {
                 defaultDisplay = HTML.block.hide;
             }
         }
