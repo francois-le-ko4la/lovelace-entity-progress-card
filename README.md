@@ -302,6 +302,53 @@ grid_options:
   rows: 1
 ```
 
+### Temperature
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.xxx
+attribute: temperature
+unit: °C
+min_value: 11
+max_value: 27
+theme: temperature
+```
+
+We can use `min_value` and `max_value` to define the range of values we want to represent with our color gradient.  Let's assume, for example, that `min_value` is 11°C and `max_value` is 27°C.  This gives us a total range of 16°C (27 - 11).
+
+We want to divide this range into 8 equal segments, each corresponding to one of our colors.  To determine the size of each segment, we divide the total range by the number of colors: 16°C / 8 colors = 2°C per color.
+
+Now, we can map each 2°C increment to a specific color.  Starting with `min_value`:
+
+*   11°C - 13°C:  `var(--deep-purple-color)`
+*   13°C - 15°C:  `var(--indigo-color)`
+*   15°C - 17°C:  `var(--light-blue-color)`
+*   17°C - 19°C:  `var(--light-green-color)`
+*   19°C - 21°C:  `var(--yellow-color)`
+*   21°C - 23°C:  `var(--accent-color)`
+*   23°C - 25°C:  `var(--deep-orange-color)`
+*   25°C - 27°C:  `var(--red-color)`
+
+<img src="./doc/temperature.png" alt="Image title" width="500"/>
+
+### Humidity
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.xxx
+attribute: humidity
+theme: humidity
+```
+
+We have specific thresholds at which the colors change.  We can represent this as a series of ranges:
+
+*   0% - 20%: `var(--accent-color)`
+*   20% - 40%: `var(--yellow-color)`
+*   40% - 60%: `var(--teal-color)`
+*   60% - 80%: `var(--light-blue-color)`
+*   80% - 100%: `var(--indigo-color)`
+
+<img src="./doc/humidity.png" alt="Image title" width="500"/>
 
 ### card_mod / animation
 
