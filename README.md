@@ -74,7 +74,7 @@ You can customize the card using the following parameters:
   | entity (supported)    | default attribute   |
   | --------------------- | ------------------- |
   | cover.xxx             | current_position    |
-  | light.xxx             | brightness          |
+  | light.xxx             | brightness (%)      |
   | fan.xxx               | percentage          |
   | climate.xxx           | N/A                 |
   | humidifier.xxx        | N/A                 |
