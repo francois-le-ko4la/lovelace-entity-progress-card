@@ -62,11 +62,27 @@ You can customize the card using the following parameters:
   
   *Example:*
     - `sensor.hp_envy_6400_series_tri_color_cartridge`
+  
 - **`attribut`** [entity] *(optional)*:  
   The Home Assistant entity's attribut to display.
   
   *Example:*
     - `brightness`
+ 
+  *Supported entities:*
+  
+  | entity (supported)    | default attribute   |
+  | --------------------- | ------------------- |
+  | cover.xxx             | current_position    |
+  | light.xxx             | brightness          |
+  | fan.xxx               | percentage          |
+  | climate.xxx           | N/A                 |
+  | humidifier.xxx        | N/A                 |
+  | media_player.xxx      | N/A                 |
+  | vacuum.xxx            | N/A                 |
+  | device_tracker.xxx    | N/A                 |
+  | weather.xxx           | N/A                 |
+  
 - **`name`** [string] *(optional)*:  
   The name displayed on the progress bar. If omitted, the entity's friendly name will be used.
   
