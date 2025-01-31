@@ -16,7 +16,7 @@ This custom version of the **Bar Card** for Home Assistant allows you to display
 - **Smooth Animations**: Provides HTML elements that facilitate smooth, visually appealing animations, leveraging well-known mechanisms for easy implementation.
 - **Interactive Features**: Includes a "More Info" option, enabling users to view additional entity details or navigate to another dashboard with a simple click, improving accessibility and usability.
 - **Performance Optimized**: Code enhancements ensure better performance and maintainability, offering a more stable and responsive experience.
-- **Multi-Language Support**: Provides localized error messages and descriptions, supporting multiple languages 🇬🇧🇪🇸🇩🇪🇫🇷.
+- **Multi-Language Support**: Provides localized error messages and descriptions, supporting multiple languages 🇬🇧🇪🇸🇩🇪🇮🇹🇫🇷.
   
 ## ⚙️ Prerequisites
 
@@ -63,8 +63,8 @@ You can customize the card using the following parameters:
   *Example:*
     - `sensor.hp_envy_6400_series_tri_color_cartridge`
   
-- **`attribut`** [entity] *(optional)*:  
-  The Home Assistant entity's attribut to display.
+- **`attribute`** [entity] *(optional)*:  
+  The Home Assistant entity's attribute to display.
   
   *Example:*
     - `brightness`
