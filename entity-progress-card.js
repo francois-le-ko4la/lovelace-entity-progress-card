@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.0.29
+ * @version 1.0.30
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION='1.0.29';
+const VERSION='1.0.30';
 const CARD = {
     typeName: 'entity-progress-card',
     name: 'Entity progress card',
@@ -50,7 +50,7 @@ const CARD = {
         language: "en",
         minValue: 0,
         maxPercent: 100,
-        unit: '%',
+        unit: {default: '%', fahrenheit: '°F' },
         color: 'var(--state-icon-color)',
         icon: 'mdi:alert',
         alert_icon: 'mdi:alert-circle-outline',
@@ -818,10 +818,10 @@ class PercentHelper {
      * @param {number} [currentValue=0] - The current value. Defaults to 0.
      * @param {number} [minValue=CARD.config.minValue] - The minimum value. Defaults to CARD.config.minValue.
      * @param {number} [maxValue=CARD.config.maxPercent] - The maximum percentage value. Defaults to CARD.config.maxPercent.
-     * @param {string} [unit=CARD.config.unit] - The unit of measurement. Defaults to CARD.config.unit.
+     * @param {string} [unit=CARD.config.unit.default] - The unit of measurement. Defaults to CARD.config.unit.default.
      * @param {number} [decimal=CARD.config.decimal.percentage] - The number of decimal places to use. Defaults to CARD.config.decimal.percentage.
      */
-    constructor(currentValue = 0, minValue = CARD.config.minValue, maxValue = CARD.config.maxPercent, unit = CARD.config.unit, decimal = CARD.config.decimal.percentage) {
+    constructor(currentValue = 0, minValue = CARD.config.minValue, maxValue = CARD.config.maxPercent, unit = CARD.config.unit.default, decimal = CARD.config.decimal.percentage) {
         /**
          * @type {Value}
          * @private
@@ -902,31 +902,39 @@ class PercentHelper {
     /**
      * Sets the unit of measurement.
      *
-     * @param {string} [newUnit] - The new unit of measurement. If not provided, defaults to CARD.config.unit.
+     * @param {string} [newUnit] - The new unit of measurement. If not provided, defaults to CARD.config.unit.default.
      */
     set unit(newUnit) {
         if (!newUnit) {
-            newUnit = CARD.config.unit;
+            newUnit = CARD.config.unit.default;
         }
         this._unit.value = newUnit;
     }
 
     /**
      * Sets the number of decimal places to use.
-     * If no value is provided, it defaults to CARD.config.decimal.percentage if the unit is CARD.config.unit,
+     * If no value is provided, it defaults to CARD.config.decimal.percentage if the unit is CARD.config.unit.default,
      * otherwise it defaults to CARD.config.decimal.other.
      *
      * @param {number} [newDecimal] - The new number of decimal places.
      */
     set decimal(newDecimal) {
         if (newDecimal === undefined || newDecimal === null) {
-            if (this._unit.value === CARD.config.unit) {
+            if (this._unit.value === CARD.config.unit.default) {
                 newDecimal = CARD.config.decimal.percentage;
             } else {
                 newDecimal = CARD.config.decimal.other;
             }
         }
         this._decimal.value = newDecimal;
+    }
+
+    valueForThemes(themeIsLinear) {
+        let value = this._current.value;
+        if (this._unit.value === CARD.config.unit.fahrenheit) {
+            value = (value - 32) * 5 / 9;
+        }
+        return themeIsLinear || this._unit.value === CARD.config.unit.default ? this._percent : value;
     }
 
     /**
@@ -973,7 +981,7 @@ class PercentHelper {
      */
     get label() {
         let value = this._percent;
-        if (this._unit.value !== CARD.config.unit) {
+        if (this._unit.value !== CARD.config.unit.default) {
             value = this._current.value;
         }
         return `${value.toFixed(this._decimal.value)}${this._unit.value}`;
@@ -1456,14 +1464,14 @@ class ConfigHelper {
 
     /**
      * Sets the number of decimal places.
-     * Defaults to `CARD.config.decimal.percentage` if the unit is `CARD.config.unit`,
+     * Defaults to `CARD.config.decimal.percentage` if the unit is `CARD.config.unit.default`,
      * otherwise defaults to `CARD.config.decimal.other`.
      *
      * @param {number} [newDecimal] - The new number of decimal places.
      */
     set decimal(newDecimal) {
         if (newDecimal === undefined || newDecimal === null) {
-            if (this._config.unit === CARD.config.unit) {
+            if (this._config.unit === CARD.config.unit.default) {
                 newDecimal = CARD.config.decimal.percentage;
             } else {
                 newDecimal = CARD.config.decimal.other;
@@ -1634,7 +1642,7 @@ class CardView {
         this._percentHelper.min = this._configHelper.config.min_value;
         this._percentHelper.max = this._max_value.value;
         this._percentHelper.refresh();
-        this._theme.value = this._theme.isLinear ? this._percentHelper.percent : this._currentValue.value;
+        this._theme.value = this._percentHelper.valueForThemes(this._theme.isLinear);
     }
 
     /**
@@ -2424,6 +2432,16 @@ class EntityProgressCardEditor extends HTMLElement {
         });
     }
 
+
+    _updateUnitFromEntity(unitAvailable) {
+        if(unitAvailable) {
+            this.configManager.updateProperty(EDITOR_INPUT_FIELDS.unit.name, unitAvailable);
+            this._elements[EDITOR_INPUT_FIELDS.unit.name].value = unitAvailable;
+        } else {
+            this.configManager.updateProperty(EDITOR_INPUT_FIELDS.unit.name, '');
+            this._elements[EDITOR_INPUT_FIELDS.unit.name].value = '';
+        }
+    }
     /**
      * Updates a specific property in the configuration object, and handles additional logic
      * related to `theme` and field visibility.
@@ -2439,9 +2457,12 @@ class EntityProgressCardEditor extends HTMLElement {
         }
         if (key === EDITOR_INPUT_FIELDS.entity.type) {
             const attributeAvailable = this._isEntityWithAttribute(value);
+            const unitAvailable = this._getUnitFromEntity(value);
             if(attributeAvailable) {
                 this._refreshAttributeOption(this._hass.states[value] ?? null)
             }
+            this._updateUnitFromEntity(unitAvailable);
+
             this._toggleFieldDisable(EDITOR_INPUT_FIELDS.attribute.isInGroup, !attributeAvailable);
         }
 
@@ -2506,6 +2527,11 @@ class EntityProgressCardEditor extends HTMLElement {
 
     _isEntityWithAttribute(entity) {
         return !!ATTRIBUTE_MAPPING[entity?.split(".")[0]];
+    }
+
+    _getUnitFromEntity(curEntity = null) {
+        const entity = curEntity || this._hass.states[this.config.entity];
+        return this._hass.states[entity]?.attributes?.unit_of_measurement ?? null;
     }
 
     _getAttributeOption(curEntity=null) {
