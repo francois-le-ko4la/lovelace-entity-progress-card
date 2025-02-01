@@ -429,11 +429,17 @@ Instead of a linear gradient, this system categorizes VOC levels into predefined
 
 The ranges and their corresponding colors are as follows:
 
-*   0 - 300 ppb:     `var(--success-color)` → Excellent air quality  
-*   300 - 500 ppb:   `var(--yellow-color)` → Good air quality  
+*   0 - 300 ppb:     `var(--success-color)` → Good air quality  
+*   300 - 500 ppb:   `var(--yellow-color)` → Acceptable air quality  
 *   500 - 3000 ppb:  `var(--accent-color)` → Moderate air quality  
 *   3000 - 25000 ppb: `var(--red-color)` → Poor air quality  
-*   25000 - 50000 ppb: `var(--deep-purple-color)` → Very poor air quality  
+*   25000 - 50000 ppb: `var(--deep-purple-color)` → Hazardous
+
+> [!IMPORTANT]
+> The information provided in this [color code/tool/analysis] is based on thresholds from the following [source](https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element).
+> This color code is for informational purposes only and should not be taken as professional advice or a standard to follow. It is crucial to consult the device's official documentation or current standards for the most accurate and up-to-date information. In case of any discrepancy between the information provided here and the device's documentation or current standards, the latter shall prevail.
+> The lower the value, the better it is generally considered to be.
+ 
 
 Each range is visually represented using the `mdi:air-filter` icon, ensuring a clear and intuitive display of VOC levels.
 
@@ -451,7 +457,7 @@ theme: pm25
 ```
 
 The `pm25` configuration defines how different concentrations of fine particulate matter (PM2.5) are represented using colors and icons.  
-Rather than a linear gradient, this system categorizes PM2.5 levels into predefined ranges, each mapped to a specific color for easy interpretation.  
+Rather than a linear gradient, this system categorizes PM2.5 levels into predefined ranges, each mapped to a specific color for easy interpretation.
 
 The ranges and their corresponding colors are as follows:
 
@@ -460,6 +466,11 @@ The ranges and their corresponding colors are as follows:
 *   35 - 55 µg/m³:  `var(--accent-color)` → Unhealthy for sensitive groups  
 *   55 - 150 µg/m³: `var(--red-color)` → Unhealthy air quality  
 *   150 - 200 µg/m³: `var(--deep-purple-color)` → Very unhealthy air quality  
+
+> [!IMPORTANT]
+> The information provided in this [color code/tool/analysis] is based on thresholds from the following [source](https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element).
+> This color code is for informational purposes only and should not be taken as professional advice or a standard to follow. It is crucial to consult the device's official documentation or current standards for the most accurate and up-to-date information. In case of any discrepancy between the information provided here and the device's documentation or current standards, the latter shall prevail.
+> The lower the value, the better it is generally considered to be.
 
 Each range is visually represented using the `mdi:air-filter` icon, ensuring a clear and intuitive display of PM2.5 pollution levels.
 
