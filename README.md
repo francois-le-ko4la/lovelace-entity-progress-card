@@ -309,25 +309,23 @@ type: custom:entity-progress-card
 entity: sensor.xxx
 attribute: temperature
 unit: °C
-min_value: 11
-max_value: 27
+min_value: -20
+max_value: 45
 theme: temperature
 ```
 
-We can use `min_value` and `max_value` to define the range of values we want to represent with our color gradient.  Let's assume, for example, that `min_value` is 11°C and `max_value` is 27°C.  This gives us a total range of 16°C (27 - 11).
+We can use `min_value` and `max_value` to define the range of values we want to represent with our color gradient.
+We use predefined intervals, each associated with a specific color:
 
-We want to divide this range into 8 equal segments, each corresponding to one of our colors.  To determine the size of each segment, we divide the total range by the number of colors: 16°C / 8 colors = 2°C per color.
-
-Now, we can map each 2°C increment to a specific color.  Starting with `min_value`:
-
-*   11°C - 13°C:  `var(--deep-purple-color)`
-*   13°C - 15°C:  `var(--indigo-color)`
-*   15°C - 17°C:  `var(--light-blue-color)`
-*   17°C - 19°C:  `var(--light-green-color)`
-*   19°C - 21°C:  `var(--yellow-color)`
-*   21°C - 23°C:  `var(--accent-color)`
-*   23°C - 25°C:  `var(--deep-orange-color)`
-*   25°C - 27°C:  `var(--red-color)`
+*   -50°C - 8°C:  `var(--deep-purple-color)`
+*   8°C - 16°C:   `var(--indigo-color)`
+*   16°C - 18°C:  `var(--light-blue-color)`
+*   18°C - 20°C:  `var(--teal-color)`
+*   20°C - 25°C:  `var(--success-color)`
+*   25°C - 27°C:  `var(--yellow-color)`
+*   27°C - 29°C:  `var(--accent-color)`
+*   29°C - 34°C:  `var(--deep-orange-color)`
+*   34°C - 100°C: `var(--red-color)`
 
 <img src="./doc/temperature.png" alt="Image title" width="500"/>
 
@@ -340,15 +338,75 @@ attribute: humidity
 theme: humidity
 ```
 
-We have specific thresholds at which the colors change.  We can represent this as a series of ranges:
+The `humidity` configuration defines how different humidity levels are represented with colors and icons.  
+Unlike a linear gradient, this system uses predefined humidity ranges, each associated with a specific color and icon.  
 
-*   0% - 20%: `var(--accent-color)`
-*   20% - 40%: `var(--yellow-color)`
-*   40% - 60%: `var(--teal-color)`
-*   60% - 80%: `var(--light-blue-color)`
-*   80% - 100%: `var(--indigo-color)`
+The ranges and their corresponding colors are as follows:
+
+*   0% - 23%:   `var(--red-color)` → Very dry air  
+*   23% - 30%:  `var(--accent-color)` → Dry air  
+*   30% - 40%:  `var(--yellow-color)` → Slightly dry air  
+*   40% - 50%:  `var(--success-color)` → Optimal humidity  
+*   50% - 60%:  `var(--teal-color)` → Comfortable humidity  
+*   60% - 65%:  `var(--light-blue-color)` → Slightly humid air  
+*   65% - 80%:  `var(--indigo-color)` → Humid air  
+*   80% - 100%: `var(--deep-purple-color)` → Very humid air  
+
+Each range is visually represented using the `mdi:water-percent` icon, ensuring a clear and intuitive display of humidity levels.
 
 <img src="./doc/humidity.png" alt="Image title" width="500"/>
+
+### VOC
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.xxx_voc
+unit: ppb
+decimal: 0
+max_value: 300
+theme: voc
+```
+
+The `voc` configuration defines how different levels of volatile organic compounds (VOCs) are represented using colors and icons.  
+Instead of a linear gradient, this system categorizes VOC levels into predefined ranges, each associated with a specific color for better visualization.  
+
+The ranges and their corresponding colors are as follows:
+
+*   0 - 300 ppb:     `var(--success-color)` → Excellent air quality  
+*   300 - 500 ppb:   `var(--yellow-color)` → Good air quality  
+*   500 - 3000 ppb:  `var(--accent-color)` → Moderate air quality  
+*   3000 - 25000 ppb: `var(--red-color)` → Poor air quality  
+*   25000 - 50000 ppb: `var(--deep-purple-color)` → Very poor air quality  
+
+Each range is visually represented using the `mdi:air-filter` icon, ensuring a clear and intuitive display of VOC levels.
+
+<img src="./doc/voc.png" alt="Image title" width="500"/>
+
+### PM 2.5
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.xxx_pm25
+unit: µg/m³
+decimal: 0
+max_value: 50
+theme: pm25
+```
+
+The `pm25` configuration defines how different concentrations of fine particulate matter (PM2.5) are represented using colors and icons.  
+Rather than a linear gradient, this system categorizes PM2.5 levels into predefined ranges, each mapped to a specific color for easy interpretation.  
+
+The ranges and their corresponding colors are as follows:
+
+*   0 - 12 µg/m³:   `var(--success-color)` → Good air quality  
+*   12 - 35 µg/m³:  `var(--yellow-color)` → Moderate air quality  
+*   35 - 55 µg/m³:  `var(--accent-color)` → Unhealthy for sensitive groups  
+*   55 - 150 µg/m³: `var(--red-color)` → Unhealthy air quality  
+*   150 - 200 µg/m³: `var(--deep-purple-color)` → Very unhealthy air quality  
+
+Each range is visually represented using the `mdi:air-filter` icon, ensuring a clear and intuitive display of PM2.5 pollution levels.
+
+<img src="./doc/voc.png" alt="Image title" width="500"/>
 
 ### card_mod / animation
 
