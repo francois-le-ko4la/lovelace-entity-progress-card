@@ -371,15 +371,18 @@ theme: temperature
 We can use `min_value` and `max_value` to define the range of values we want to represent with our color gradient.
 We use predefined intervals, each associated with a specific color:
 
-*   -50°C - 8°C:  `var(--deep-purple-color)`
-*   8°C - 16°C:   `var(--indigo-color)`
-*   16°C - 18°C:  `var(--light-blue-color)`
-*   18°C - 20°C:  `var(--teal-color)`
-*   20°C - 25°C:  `var(--success-color)`
-*   25°C - 27°C:  `var(--yellow-color)`
-*   27°C - 29°C:  `var(--accent-color)`
-*   29°C - 34°C:  `var(--deep-orange-color)`
-*   34°C - 100°C: `var(--red-color)`
+*   -50°C - 8°C / -58°F - 46.4°F:  `var(--deep-purple-color)`
+*   8°C - 16°C / 46.4°F - 60.8°F:  `var(--indigo-color)`
+*   16°C - 18°C / 60.8°F - 64.4°F: `var(--light-blue-color)`
+*   18°C - 20°C / 64.4°F - 68°F:   `var(--teal-color)`
+*   20°C - 25°C / 68°F - 77°F:     `var(--success-color)`
+*   25°C - 27°C / 77°F - 80.6°F:   `var(--yellow-color)`
+*   27°C - 29°C / 80.6°F - 84.2°F: `var(--accent-color)`
+*   29°C - 34°C / 84.2°F - 93.2°F: `var(--deep-orange-color)`
+*   34°C - 100°C / 93.2°F - 212°F: `var(--red-color)`
+
+> [!IMPORTANT]
+> Fahrenheit values are converted to apply the correct color. Make sure to set your unit to `°F` correctly in order to see the accurate color representation.
 
 <img src="./doc/temperature.png" alt="Image title" width="500"/>
 
