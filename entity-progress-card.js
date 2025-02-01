@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.0.28
+ * @version 1.0.29
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION='1.0.26';
+const VERSION='1.0.29';
 const CARD = {
     typeName: 'entity-progress-card',
     name: 'Entity progress card',
@@ -278,45 +278,79 @@ const HTML = {
 };
 
 const THEME = {
-    battery: [
-        { icon: 'mdi:battery-alert',     color: 'var(--state-sensor-battery-low-color)'    },   // Pourcentage < 10
-        { icon: 'mdi:battery-alert',     color: 'var(--state-sensor-battery-low-color)'    },   // Pourcentage >= 10
-        { icon: 'mdi:battery-20',        color: 'var(--state-sensor-battery-medium-color)' },   // Pourcentage >= 20
-        { icon: 'mdi:battery-30',        color: 'var(--state-sensor-battery-medium-color)' },   // Pourcentage >= 30
-        { icon: 'mdi:battery-40',        color: 'var(--state-sensor-battery-medium-color)' },   // Pourcentage >= 40
-        { icon: 'mdi:battery-50',        color: 'var(--yellow-color)' },                        // Pourcentage >= 50
-        { icon: 'mdi:battery-60',        color: 'var(--yellow-color)' },                        // Pourcentage >= 60
-        { icon: 'mdi:battery-70',        color: 'var(--yellow-color)' },                        // Pourcentage >= 70
-        { icon: 'mdi:battery-80',        color: 'var(--state-sensor-battery-high-color)'  },    // Pourcentage >= 80
-        { icon: 'mdi:battery-90',        color: 'var(--state-sensor-battery-high-color)'  },    // Pourcentage >= 90
-        { icon: 'mdi:battery',           color: 'var(--state-sensor-battery-high-color)'  }     // Pourcentage >= 100
-    ],
-    light: [
-        { icon: 'mdi:lightbulb-outline', color: '#4B4B4B'},   // Pourcentage < 25
-        { icon: 'mdi:lightbulb-outline', color: '#877F67'},   // Pourcentage >= 25
-        { icon: 'mdi:lightbulb',         color: '#C3B382'},   // Pourcentage >= 50
-        { icon: 'mdi:lightbulb',         color: '#FFE79E'},   // Pourcentage >= 75
-        { icon: 'mdi:lightbulb',         color: '#FFE79E'}    // Pourcentage >= 100
-    ],
-    temperature: [
-        { icon: 'mdi:thermometer',       color: 'var(--deep-purple-color)'    },
-        { icon: 'mdi:thermometer',       color: 'var(--indigo-color)'    },
-        { icon: 'mdi:thermometer',       color: 'var(--light-blue-color)' },
-        { icon: 'mdi:thermometer',       color: 'var(--light-green-color)' },
-        { icon: 'mdi:thermometer',       color: 'var(--yellow-color)' },
-        { icon: 'mdi:thermometer',       color: 'var(--accent-color)' },
-        { icon: 'mdi:thermometer',       color: 'var(--deep-orange-color)' },
-        { icon: 'mdi:thermometer',       color: 'var(--red-color)' },
-        { icon: 'mdi:thermometer',       color: 'var(--red-color)' },
-    ],
-    humidity: [
-        { icon: 'mdi:water-percent',     color: 'var(--accent-color)'     },   // Pourcentage < 20
-        { icon: 'mdi:water-percent',     color: 'var(--yellow-color)'     },   // Pourcentage >= 20
-        { icon: 'mdi:water-percent',     color: 'var(--teal-color)'       },   // Pourcentage >= 40
-        { icon: 'mdi:water-percent',     color: 'var(--light-blue-color)' },   // Pourcentage >= 60
-        { icon: 'mdi:water-percent',     color: 'var(--indigo-color)'     },   // Pourcentage >= 80
-        { icon: 'mdi:water-percent',     color: 'var(--indigo-color)'     },   // Pourcentage >= 100
-    ],
+    battery: {
+        linear: true,
+        style: [
+            { icon: 'mdi:battery-alert',     color: 'var(--state-sensor-battery-low-color)'    },   // Pourcentage < 10
+            { icon: 'mdi:battery-alert',     color: 'var(--state-sensor-battery-low-color)'    },   // Pourcentage >= 10
+            { icon: 'mdi:battery-20',        color: 'var(--state-sensor-battery-medium-color)' },   // Pourcentage >= 20
+            { icon: 'mdi:battery-30',        color: 'var(--state-sensor-battery-medium-color)' },   // Pourcentage >= 30
+            { icon: 'mdi:battery-40',        color: 'var(--state-sensor-battery-medium-color)' },   // Pourcentage >= 40
+            { icon: 'mdi:battery-50',        color: 'var(--yellow-color)' },                        // Pourcentage >= 50
+            { icon: 'mdi:battery-60',        color: 'var(--yellow-color)' },                        // Pourcentage >= 60
+            { icon: 'mdi:battery-70',        color: 'var(--yellow-color)' },                        // Pourcentage >= 70
+            { icon: 'mdi:battery-80',        color: 'var(--state-sensor-battery-high-color)'  },    // Pourcentage >= 80
+            { icon: 'mdi:battery-90',        color: 'var(--state-sensor-battery-high-color)'  },    // Pourcentage >= 90
+            { icon: 'mdi:battery',           color: 'var(--state-sensor-battery-high-color)'  }     // Pourcentage >= 100
+        ]
+    },
+    light:  {
+        linear: true,
+        style: [
+            { icon: 'mdi:lightbulb-outline', color: '#4B4B4B'},   // Pourcentage < 25
+            { icon: 'mdi:lightbulb-outline', color: '#877F67'},   // Pourcentage >= 25
+            { icon: 'mdi:lightbulb',         color: '#C3B382'},   // Pourcentage >= 50
+            { icon: 'mdi:lightbulb',         color: '#FFE79E'},   // Pourcentage >= 75
+            { icon: 'mdi:lightbulb',         color: '#FFE79E'}    // Pourcentage >= 100
+        ]
+    },
+    temperature:  {
+        linear: false,
+        style: [
+            { min: -50, max:8,   icon: 'mdi:thermometer', color: 'var(--deep-purple-color)' },
+            { min: 8,   max:16,  icon: 'mdi:thermometer', color: 'var(--indigo-color)'      },
+            { min: 16,  max:18,  icon: 'mdi:thermometer', color: 'var(--light-blue-color)'  },
+            { min: 18,  max:20,  icon: 'mdi:thermometer', color: 'var(--teal-color)'        },
+            { min: 20,  max:25,  icon: 'mdi:thermometer', color: 'var(--success-color)'     },
+            { min: 25,  max:27,  icon: 'mdi:thermometer', color: 'var(--yellow-color)'      },
+            { min: 27,  max:29,  icon: 'mdi:thermometer', color: 'var(--accent-color)'      },
+            { min: 29,  max:34,  icon: 'mdi:thermometer', color: 'var(--deep-orange-color)' },
+            { min: 34,  max:100, icon: 'mdi:thermometer', color: 'var(--red-color)'         },
+        ],
+    },
+    humidity: {
+        linear: false,
+        style: [
+            { min: 0,  max:23,  icon: 'mdi:water-percent', color: 'var(--red-color)'         },
+            { min: 23, max:30,  icon: 'mdi:water-percent', color: 'var(--accent-color)'      },
+            { min: 30, max:40,  icon: 'mdi:water-percent', color: 'var(--yellow-color)'      },
+            { min: 40, max:50,  icon: 'mdi:water-percent', color: 'var(--success-color)'     },
+            { min: 50, max:60,  icon: 'mdi:water-percent', color: 'var(--teal-color)'        },
+            { min: 60, max:65,  icon: 'mdi:water-percent', color: 'var(--light-blue-color)'  },
+            { min: 65, max:80,  icon: 'mdi:water-percent', color: 'var(--indigo-color)'      },
+            { min: 80, max:100, icon: 'mdi:water-percent', color: 'var(--deep-purple-color)' },
+        ],
+    },
+    voc: {
+        linear: false,
+        style: [
+            { min: 0,     max:300,   icon: 'mdi:air-filter', color: 'var(--success-color)'     },
+            { min: 300,   max:500,   icon: 'mdi:air-filter', color: 'var(--yellow-color)'      },
+            { min: 500,   max:3000,  icon: 'mdi:air-filter', color: 'var(--accent-color)'      },
+            { min: 3000,  max:25000, icon: 'mdi:air-filter', color: 'var(--red-color)'         },
+            { min: 25000, max:50000, icon: 'mdi:air-filter', color: 'var(--deep-purple-color)' },
+        ],
+    },
+    pm25: {
+        linear: false,
+        style: [
+            { min: 0,   max:12,  icon: 'mdi:air-filter', color: 'var(--success-color)'     },
+            { min: 12,  max:35,  icon: 'mdi:air-filter', color: 'var(--yellow-color)'      },
+            { min: 35,  max:55,  icon: 'mdi:air-filter', color: 'var(--accent-color)'      },
+            { min: 55,  max:150, icon: 'mdi:air-filter', color: 'var(--red-color)'         },
+            { min: 150, max:200, icon: 'mdi:air-filter', color: 'var(--deep-purple-color)' },
+        ],
+    },
 };
 
 const MSG = {
@@ -576,6 +610,8 @@ const FIELD_OPTIONS = {
         { value: 'light',       label: { en: 'Light', fr: 'Lumière', es: 'Luz', it: 'Luce', de: 'Licht' },                                                                                  icon: "mdi:lightbulb" },
         { value: 'temperature', label: { en: 'Temperature', fr: 'Température', es: 'Temperatura', it: 'Temperatura', de: 'Temperatur'  },                                                   icon: "mdi:thermometer" },
         { value: 'humidity',    label: { en: 'Humidity', fr: 'Humidité', es: 'Humedad', it: 'Umidità', de: 'Feuchtigkeit'  },                                                               icon: "mdi:water-percent" },
+        { value: 'voc',         label: { en: 'VOC', fr: 'VOC', es: 'VOC', it: 'VOC', de: 'VOC'  },                                                                                          icon: "mdi:air-filter" },
+        { value: 'pm25',        label: { en: 'PM2.5', fr: 'PM2.5', es: 'PM2.5', it: 'PM2.5', de: 'PM2.5' },                                                                                 icon: "mdi:air-filter" },
     ],
     color: [
         { value: 'var(--state-icon-color)', label: { en: 'Default', fr: 'Défaut', es: 'Predeterminado', it: 'Predefinito', de: 'Standard' } },
@@ -956,7 +992,7 @@ class ThemeManager {
      * @param {string} [theme=null] - The name of the theme. Defaults to null.
      * @param {number} [percent=0] - The percentage value used to determine the theme's icon and color. Defaults to 0.
      */
-    constructor(theme = null, percent = 0) {
+    constructor(theme = null, value = 0, isValid=false) {
         /**
          * @type {string}
          * @private
@@ -976,7 +1012,12 @@ class ThemeManager {
          * @type {number}
          * @private
          */
-        this._percent = percent;
+        this._value = value;
+        /**
+         * @type {boolean}
+         * @private
+         */
+        this._isValid = isValid;
     }
 
     /**
@@ -1002,6 +1043,18 @@ class ThemeManager {
             return;
         }
         this._theme = newTheme;
+        this._isValid = true;
+    }
+
+    get isLinear() {
+        if (this._isValid) {
+            return THEME[this._theme].linear;
+        }
+        return false;
+    }
+
+    get isValid() {
+        return this._isValid;
     }
 
     /**
@@ -1009,8 +1062,8 @@ class ThemeManager {
      *
      * @param {number} newPercent - The new percentage value.
      */
-    set percent(newPercent) {
-        this._percent = newPercent;
+    set value(newValue) {
+        this._value = newValue;
         this._refresh();
     }
 
@@ -1039,15 +1092,38 @@ class ThemeManager {
      * @private
      */
     _refresh() {
-        if (!this._theme) {
+        if (!this._isValid) {
             return;
         }
-        const lastStep = THEME[this._theme].length - 1;
+        if (this.isLinear) {
+            this._setLinearStyle();
+        } else {
+            this._setStyle();
+        }
+    }
+
+    _setLinearStyle() {
+        const currentStyle = THEME[this._theme].style;
+        const lastStep = currentStyle.length - 1;
         const thresholdSize = 100 / lastStep;
-        const percentage = Math.max(0, Math.min(this._percent, CARD.config.maxPercent));
-        const themeData = THEME[this._theme][Math.floor(percentage / thresholdSize)];
+        const percentage = Math.max(0, Math.min(this._value, CARD.config.maxPercent));
+        const themeData = currentStyle[Math.floor(percentage / thresholdSize)];
         this._icon = themeData.icon;
         this._color = themeData.color;
+    }
+
+    _setStyle() {
+        const currentStyle = THEME[this._theme].style;
+        let themeData = null;
+        if (this._value === CARD.config.maxPercent) {
+            themeData = currentStyle[currentStyle.length - 1];
+        } else {
+            themeData = currentStyle.find(level => this._value >= level.min && this._value < level.max);
+        }
+        if (themeData) {
+            this._icon = themeData.icon;
+            this._color = themeData.color;
+        }
     }
 }
 
@@ -1558,7 +1634,7 @@ class CardView {
         this._percentHelper.min = this._configHelper.config.min_value;
         this._percentHelper.max = this._max_value.value;
         this._percentHelper.refresh();
-        this._theme.percent = this._percentHelper.percent;
+        this._theme.value = this._theme.isLinear ? this._percentHelper.percent : this._currentValue.value;
     }
 
     /**
