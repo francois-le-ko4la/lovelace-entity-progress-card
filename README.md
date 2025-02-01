@@ -436,7 +436,7 @@ The ranges and their corresponding colors are as follows:
 *   25000 - 50000 ppb: `var(--deep-purple-color)` → Hazardous
 
 > [!IMPORTANT]
-> The information provided in this [color code/tool/analysis] is based on thresholds from the following [source](https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element).
+> The information provided in this HA card is based on thresholds from the following [source](https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element).
 > This color code is for informational purposes only and should not be taken as professional advice or a standard to follow. It is crucial to consult the device's official documentation or current standards for the most accurate and up-to-date information. In case of any discrepancy between the information provided here and the device's documentation or current standards, the latter shall prevail.
 > The lower the value, the better it is generally considered to be.
  
@@ -468,7 +468,7 @@ The ranges and their corresponding colors are as follows:
 *   150 - 200 µg/m³: `var(--deep-purple-color)` → Very unhealthy air quality  
 
 > [!IMPORTANT]
-> The information provided in this [color code/tool/analysis] is based on thresholds from the following [source](https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element).
+> The information provided in this HA card is based on thresholds from the following [source](https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element).
 > This color code is for informational purposes only and should not be taken as professional advice or a standard to follow. It is crucial to consult the device's official documentation or current standards for the most accurate and up-to-date information. In case of any discrepancy between the information provided here and the device's documentation or current standards, the latter shall prevail.
 > The lower the value, the better it is generally considered to be.
 
