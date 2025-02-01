@@ -286,7 +286,7 @@ sort:
 
 <img src="./doc/battery_dashboard.png" alt="Image title" width="500"/>
 
-### litter box
+### Litter box
 
 Do you want a percentage based on a minimum and maximum quantity? Here’s an example with a litter box:
 
@@ -302,7 +302,61 @@ grid_options:
   rows: 1
 ```
 
-### Temperature
+### Themes
+#### Battery
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.xxx_battery_level
+theme: battery
+```
+
+The `battery` configuration defines how different battery charge levels are visually represented using colors and icons.  
+This system uses a **linear gradient**, meaning the color transitions progressively across the charge percentage range.  
+
+The battery levels and their corresponding icons and colors are as follows:
+
+*   **< 10%**:   `mdi:battery-alert` → Critical battery (`var(--state-sensor-battery-low-color)`)  
+*   **≥ 10%**:   `mdi:battery-alert` → Low battery (`var(--state-sensor-battery-low-color)`)  
+*   **≥ 20%**:   `mdi:battery-20` → Low battery (`var(--state-sensor-battery-medium-color)`)  
+*   **≥ 30%**:   `mdi:battery-30` → Medium battery (`var(--state-sensor-battery-medium-color)`)  
+*   **≥ 40%**:   `mdi:battery-40` → Medium battery (`var(--state-sensor-battery-medium-color)`)  
+*   **≥ 50%**:   `mdi:battery-50` → Moderate battery (`var(--yellow-color)`)  
+*   **≥ 60%**:   `mdi:battery-60` → Moderate battery (`var(--yellow-color)`)  
+*   **≥ 70%**:   `mdi:battery-70` → Moderate battery (`var(--yellow-color)`)  
+*   **≥ 80%**:   `mdi:battery-80` → High battery (`var(--state-sensor-battery-high-color)`)  
+*   **≥ 90%**:   `mdi:battery-90` → High battery (`var(--state-sensor-battery-high-color)`)  
+*   **≥ 100%**:  `mdi:battery` → Fully charged (`var(--state-sensor-battery-high-color)`)  
+
+Icons change progressively from `mdi:battery-alert` at low levels to `mdi:battery` when fully charged.  
+The **linear approach** ensures a smooth transition between battery levels.
+
+#### Light
+
+```yaml
+type: custom:entity-progress-card
+entity: light.bandeau_led
+attribute: brightness
+theme: light
+```
+
+The `light` configuration, designed by [@harmonie-durrant](https://github.com/harmonie-durrant), defines how different brightness levels are visually represented using colors and icons.  
+This system uses a **linear gradient**, meaning the color transitions smoothly across the brightness percentage range.  
+
+The brightness levels and their corresponding colors are as follows:
+
+*   **< 25%**:   `#4B4B4B` → Dim light (`mdi:lightbulb-outline`)  
+*   **≥ 25%**:   `#877F67` → Soft warm light (`mdi:lightbulb-outline`)  
+*   **≥ 50%**:   `#C3B382` → Medium warm light (`mdi:lightbulb`)  
+*   **≥ 75%**:   `#FFE79E` → Bright warm light (`mdi:lightbulb`)  
+*   **≥ 100%**:  `#FFE79E` → Maximum brightness (`mdi:lightbulb`)  
+
+The `mdi:lightbulb-outline` icon is used for lower brightness levels, while `mdi:lightbulb` is displayed when the light intensity increases.  
+Thanks to the **linear** approach, the brightness smoothly transitions between these levels.
+
+<img src="./doc/light.png" alt="Image title" width="500"/>
+
+#### Temperature
 
 ```yaml
 type: custom:entity-progress-card
@@ -329,7 +383,7 @@ We use predefined intervals, each associated with a specific color:
 
 <img src="./doc/temperature.png" alt="Image title" width="500"/>
 
-### Humidity
+#### Humidity
 
 ```yaml
 type: custom:entity-progress-card
@@ -356,7 +410,7 @@ Each range is visually represented using the `mdi:water-percent` icon, ensuring 
 
 <img src="./doc/humidity.png" alt="Image title" width="500"/>
 
-### VOC
+#### VOC
 
 ```yaml
 type: custom:entity-progress-card
@@ -382,7 +436,7 @@ Each range is visually represented using the `mdi:air-filter` icon, ensuring a c
 
 <img src="./doc/voc.png" alt="Image title" width="500"/>
 
-### PM 2.5
+#### PM 2.5
 
 ```yaml
 type: custom:entity-progress-card
