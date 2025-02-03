@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.0.30
+ * @version 1.0.31
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION='1.0.30';
+const VERSION='1.0.31';
 const CARD = {
     typeName: 'entity-progress-card',
     name: 'Entity progress card',
@@ -39,6 +39,23 @@ const CARD = {
             label: 'vertical',
             value: { grid_rows: 2, grid_min_rows: 2, grid_columns: 1, grid_min_columns: 1 },
             mdi: "mdi:focus-field-vertical"
+        },
+    },
+    bar_size: {
+        small: {
+            label: 'small',
+            mdi: "mdi:size-s",
+            size: '8px'
+        },
+        medium: {
+            label: 'medium',
+            mdi: "mdi:size-m",
+            size: '12px'
+        },
+        large: {
+            label: 'large',
+            mdi: "mdi:size-l",
+            size: '16px'
         },
     },
     tap_action: {
@@ -214,7 +231,7 @@ const CARD_CSS=`
     .${SELECTORS.progressBar} {
         flex-grow: 1;
         height: 8px;
-        max-height: 8px;
+        max-height: 16px;
         background-color: var(--divider-color);
         border-radius: 4px;
         overflow: hidden;
@@ -410,6 +427,7 @@ const FIELD_TYPE = {
     attribute: { type: 'attribute', tag: 'ha-select'},
     icon: { type: 'icon', tag: 'ha-icon-picker'},
     layout: { type: 'layout', tag: 'ha-select'},
+    bar_size: { type: 'bar_size', tag: 'ha-select'},
     tap_action: { type: 'tap_action', tag: 'ha-select'},
     theme: { type: 'theme', tag: 'ha-select'},
     color: { type: 'color', tag: 'ha-select'},
@@ -549,18 +567,18 @@ const EDITOR_INPUT_FIELDS = {
                         it: 'Seleziona un tema per definire automaticamente i colori e l\'icona.',
                         de: 'Wählen Sie ein Thema, um die Farben und das Symbol automatisch festzulegen.',
                     }},
-    layout: {       name: 'layout',
-                    label: { en: 'Layout', fr: 'Disposition', es: 'Disposición', it: 'Layout', de: 'Layout', },
-                    type: FIELD_TYPE.layout.type,
+    bar_size: {     name: 'bar_size',
+                    label: { en: 'Size', fr: 'Taille', es: 'Tamaño', it: 'Dimensione', de: 'Größe' },
+                    type: FIELD_TYPE.bar_size.type,
                     width: '45%',
                     required: false,
                     isInGroup: null,
-                    description: {
-                        en: 'Select the layout.',
-                        fr: 'Sélectionnez la disposition.',
-                        es: 'Seleccione la disposición.',
-                        it: 'Seleziona il layout.',
-                        de: 'Wählen Sie das Layout.',
+                    description: { 
+                        en: 'Select the bar size', 
+                        fr: 'Sélectionnez la taille de la barre', 
+                        es: 'Seleccione el tamaño de la barra', 
+                        it: 'Seleziona la dimensione della barra', 
+                        de: 'Wählen Sie die Balkengröße' 
                     }},
     bar_color: {    name: 'bar_color',
                     label: { en: 'Color for the bar', fr: 'Couleur de la barre', es: 'Color de la barra', it: 'Colore per la barra', de: 'Farbe für die Leiste', },
@@ -600,6 +618,19 @@ const EDITOR_INPUT_FIELDS = {
                         es: 'Seleccione el color principal del icono.',
                         it: 'Seleziona un\'icona per l\'entità.',
                         de: 'Wählen Sie die Primärfarbe für das Symbol.',
+                    }},
+    layout: {       name: 'layout',
+                    label: { en: 'Layout', fr: 'Disposition', es: 'Disposición', it: 'Layout', de: 'Layout', },
+                    type: FIELD_TYPE.layout.type,
+                    width: '45%',
+                    required: false,
+                    isInGroup: null,
+                    description: {
+                        en: 'Select the layout.',
+                        fr: 'Sélectionnez la disposition.',
+                        es: 'Seleccione la disposición.',
+                        it: 'Seleziona il layout.',
+                        de: 'Wählen Sie das Layout.',
                     }},
 };
 
@@ -643,9 +674,14 @@ const FIELD_OPTIONS = {
         { value: 'var(--black-color)', label: { en: 'Black', fr: 'Noir', es: 'Negro', it: 'Nero', de: 'Schwarz' } },
         { value: 'var(--white-color)', label: { en: 'White', fr: 'Blanc', es: 'Blanco', it: 'Bianco', de: 'Weiß' } }
     ],
+    bar_size: [
+        { value: CARD.bar_size.small.label,  label: { en: 'Small', fr: 'Petite', es: 'Pequeña', it: 'Piccola', de: 'Klein',}, icon: CARD.bar_size.small.mdi, },
+        { value: CARD.bar_size.medium.label, label: { en: 'Medium', fr: 'Moyenne', es: 'Media', it: 'Media', de: 'Mittel',}, icon: CARD.bar_size.medium.mdi, },
+        { value: CARD.bar_size.large.label,  label: { en: 'Large', fr: 'Grande', es: 'Grande', it: 'Grande', de: 'Groß',}, icon: CARD.bar_size.large.mdi, },
+    ],
     layout: [
-        { value: 'horizontal', label: { en: 'Horizontal (default)', fr: 'Horizontal (par défaut)', es: 'Horizontal (predeterminado)', it: 'Orizzontale (predefinito)', de: 'Horizontal (Standard)',}, icon: CARD.layout.horizontal.mdi, },
-        { value: 'vertical', label: { en: 'Vertical', fr: 'Vertical', es: 'Vertical', it: 'Verticale', de: 'Vertikal',}, icon: CARD.layout.vertical.mdi, },
+        { value: CARD.layout.horizontal.label, label: { en: 'Horizontal (default)', fr: 'Horizontal (par défaut)', es: 'Horizontal (predeterminado)', it: 'Orizzontale (predefinito)', de: 'Horizontal (Standard)',}, icon: CARD.layout.horizontal.mdi, },
+        { value: CARD.layout.vertical.label,   label: { en: 'Vertical', fr: 'Vertical', es: 'Vertical', it: 'Verticale', de: 'Vertikal',}, icon: CARD.layout.vertical.mdi, },
     ],
     tap_action: [
         { value: CARD.tap_action.more_info, label: { en: 'More info (default)', fr: 'Plus d\'infos (par défaut)', es: 'Más información (predeterminado)', it: 'Più informazioni (predefinito)', de: 'Mehr Infos (Standard)', }},
@@ -1566,6 +1602,7 @@ class CardView {
         this.show_more_info = null;
         this.navigate_to = null;
         this.layout = null;
+        this.bar_size = null;
         /** */
         this._currentValue = new EntityOrValue();
         this._max_value = new EntityOrValue();
@@ -1607,6 +1644,7 @@ class CardView {
     set config(config) {
         this._configHelper.config       = config;
         this.layout                     = config.layout;
+        this.bar_size                   = config.bar_size;
         this._percentHelper.unit        = config.unit;
         this.show_more_info             = typeof config.show_more_info === 'boolean' ? config.show_more_info : CARD.config.showMoreInfo;
         this.navigate_to                = config.navigate_to !== undefined ? config.navigate_to : null;
@@ -1624,6 +1662,7 @@ class CardView {
         this.currentLanguage = Object.keys(MSG.entityError).includes(this._hassProvider.language)
             ? this._hassProvider.language
             : CARD.config.language;
+
         this._currentValue.value = this._configHelper.config.entity;
         this._max_value.value = this._configHelper.config.max_value || CARD.config.maxPercent;
         this._configHelper.max_value = this._max_value.value;
@@ -1747,6 +1786,7 @@ class EntityProgressCard extends HTMLElement {
 
         this._elements = {};
         this._isBuilt = false;
+        this._errorVisible = false;
         this.addEventListener('click', this._handleCardAction.bind(this));
     }
 
@@ -1804,6 +1844,7 @@ class EntityProgressCard extends HTMLElement {
      */
     setConfig(config) {
         const layoutChanged = this._cardView.layout !== config.layout;
+        const barSizeChanged = this._cardView.bar_size !== config.bar_size;
         this._cardView.config = config;
 
         if (!this._isBuilt) {
@@ -1813,6 +1854,9 @@ class EntityProgressCard extends HTMLElement {
 
         if (layoutChanged) {
             this._changeLayout();
+        }
+        if (barSizeChanged) {
+            this._changeBarSize();
         }
 
     }
@@ -1854,6 +1898,7 @@ class EntityProgressCard extends HTMLElement {
             [SELECTORS.name]: this.shadowRoot.querySelector(`.${SELECTORS.name}`),
             [SELECTORS.percentage]: this.shadowRoot.querySelector(`.${SELECTORS.percentage}`),
             [SELECTORS.secondaryInfo]: this.shadowRoot.querySelector(`.${SELECTORS.secondaryInfo}`),
+            [SELECTORS.progressBar]: this.shadowRoot.querySelector(`.${SELECTORS.progressBar}`),
             [SELECTORS.progressBarInner]: this.shadowRoot.querySelector(`.${SELECTORS.progressBarInner}`),
             [SELECTORS.alert]: this.shadowRoot.querySelector(`${SELECTORS.alert}`),
             [SELECTORS.alert_icon]: this.shadowRoot.querySelector(`.${SELECTORS.alert_icon}`),
@@ -1862,6 +1907,19 @@ class EntityProgressCard extends HTMLElement {
         };
     }
 
+    _changeBarSize(){
+        let size = CARD.bar_size.small.size;
+
+        switch (this._cardView.bar_size) {
+            case CARD.bar_size.medium.label:
+                size = CARD.bar_size.medium.size
+                break;
+            case CARD.bar_size.large.label:
+                size = CARD.bar_size.large.size
+                break;
+        }
+        this._elements[SELECTORS.progressBar].style.height = size;
+    }
     /**
      * Changes the layout of the card based on the current configuration.
      *
@@ -1901,14 +1959,21 @@ class EntityProgressCard extends HTMLElement {
      * @param {function} callback - A function that is applied to the element.
      *                              It should return the new value for the element.
      */
-    _updateElement(key, callback) {
+    _updateElement(key, updateCallback) {
         const element = this._elements[key];
         if (element) {
-            const currentValue = element.textContent || element.style.width;
-            const newValue = callback(element);
-            if (currentValue !== newValue) {
-                callback(element);
-            }
+            updateCallback(element);
+        }
+    }
+
+    _manageErrorMessage() {
+        if (!this._cardView.isValid) {
+            this._showError(this._cardView.msg);
+            this._errorVisible = true;
+            return;
+        } else if (this._errorVisible) {
+            this._hideError();
+            this._errorVisible = false;
         }
     }
 
@@ -1920,33 +1985,44 @@ class EntityProgressCard extends HTMLElement {
      * @returns {void}
      */
     _updateDynamicElements() {
-        if (!this._cardView.isValid) {
-            this._showError(this._cardView.msg);
-            return;
-        } else {
-            this._hideError();
-        }
+        this._manageErrorMessage();
 
         this._updateElement(SELECTORS.progressBarInner, (el) => {
-            el.style.width = `${this._cardView.percent}%`;
-            el.style.backgroundColor = this._cardView.bar_color;
+            const newWidth = `${this._cardView.percent}%`;
+            if (el.style.width !== newWidth) {
+                el.style.width = newWidth;
+            }
+    
+            if (el.style.backgroundColor !== this._cardView.bar_color) {
+                el.style.backgroundColor = this._cardView.bar_color;
+            }
         });
 
         this._updateElement(SELECTORS.icon, (el) => {
-            el.setAttribute(SELECTORS.icon, this._cardView.icon);
-            el.style.color = this._cardView.color;
+            if (el.getAttribute(SELECTORS.icon) !== this._cardView.icon) {
+                el.setAttribute(SELECTORS.icon, this._cardView.icon);
+            }
+            if (el.style.color !== this._cardView.color) {
+                el.style.color = this._cardView.color;
+            }
         });
 
         this._updateElement(SELECTORS.shape, (el) => {
-            el.style.backgroundColor = this._cardView.color;
+            if (el.style.backgroundColor !== this._cardView.color) {
+                el.style.backgroundColor = this._cardView.color;
+            }
         });
 
         this._updateElement(SELECTORS.name, (el) => {
-            el.textContent = this._cardView.name;
+            if (el.textContent !== this._cardView.name) {
+                el.textContent = this._cardView.name;
+            }
         });
 
         this._updateElement(SELECTORS.percentage, (el) => {
+            if (el.textContent !== this._cardView.description) {
                 el.textContent = this._cardView.description;
+            }
         });
     }
 
@@ -1980,10 +2056,9 @@ class EntityProgressCard extends HTMLElement {
      * @returns {void}
      */
     _hideError() {
-        const alertElement = this._elements[SELECTORS.alert];
-        if (alertElement) {
-            alertElement.style.display = HTML.flex.hide;
-        }
+        this._updateElement(SELECTORS.alert, (el) => {
+            el.style.display = HTML.flex.hide;
+        });
     }
 
     /**
@@ -2573,7 +2648,7 @@ class EntityProgressCardEditor extends HTMLElement {
                     <span style="display: inline-block; width: 16px; height: 16px; background-color: ${optionData.value}; border-radius: 50%; margin-right: 8px;"></span>
                     ${optionData.label[this._currentLanguage]}
                 `;
-            } else if (type === FIELD_TYPE.layout.type || type === FIELD_TYPE.theme.type ) {
+            } else if (type === FIELD_TYPE.layout.type || type === FIELD_TYPE.theme.type || type === FIELD_TYPE.bar_size.type) {
                 const haIcon = document.createElement('ha-icon');
                 haIcon.setAttribute('icon', optionData.icon || 'mdi:alert'); // Définit l'icône par défaut ou celle dans FIELD_OPTIONS
                 haIcon.style.marginRight = '8px'; // Ajuste l'espace entre l'icône et le texte
@@ -2675,6 +2750,7 @@ class EntityProgressCardEditor extends HTMLElement {
                 inputElement = document.createElement(FIELD_TYPE.icon.tag);
                 break;
             case FIELD_TYPE.layout.type:
+            case FIELD_TYPE.bar_size.type:
             case FIELD_TYPE.theme.type:
             case FIELD_TYPE.color.type:
             case FIELD_TYPE.tap_action.type:
