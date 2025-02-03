@@ -115,7 +115,17 @@ You can customize the card using the following parameters:
 
   *Examples:* `"green"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`
 
-- **`bar-color`** [string] *(optional)*:  
+- **`bar_size`** [string {`small`|`medium`|`large`}] *(optional)*:  
+  Customizes the appearance of the progress bar by selecting a predefined size.
+  Choose from small, medium, or large to adjust the visual scale of the bar.
+  
+  *Default:*
+    - `small`
+
+  *Example:*
+    - `medium`
+
+- **`bar_color`** [string] *(optional)*:  
   The color of the progress bar. Accepts color names, RGB values, or HEX codes.
   
   *Default:*
@@ -123,7 +133,7 @@ You can customize the card using the following parameters:
 
   *Examples:* `"blue"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`
 
-- **`theme`** [string {`battery`|`light`}] *(optional)*:  
+- **`theme`** [string {`battery`|`light`|`temperature`|`humidity`|`voc`|`pm25`}] *(optional)*:  
   Allows customization of the progress bar's appearance using a predefined theme.
   This theme dynamically adjusts the `icon`, `color` and `bar-color` parameters based on the battery level, eliminating the need for manual adjustments or complex Jinja2 templates.  
   *Example:*
