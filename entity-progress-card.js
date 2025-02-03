@@ -77,7 +77,40 @@ const CARD = {
             percentage: 0,
             other: 2
         },
-    documentation: "https://github.com/francois-le-ko4la/lovelace-entity-progress-card/",
+        editor: {
+            elements: {
+                editor: 'div',
+                fieldContainer: 'div',
+                fieldDescription: 'span',
+            },
+            classes: {
+                editor: 'editor',
+                fieldContainer: 'editor-field-container',
+                fieldDescription: 'editor-field-description',
+            },
+        },        
+        documentation: {
+            elements: {
+                link: 'a',
+                outerDiv: 'div',
+                innerDiv: 'div',
+                questionMark: 'div',
+            },
+            attributes: {
+                linkTarget: '_blank',
+                documentationUrl: 'https://github.com/francois-le-ko4la/lovelace-entity-progress-card/'              ,
+            },
+            classes: {
+                link: 'documentation-link',
+                outerDiv: 'documentation-outer',
+                innerDiv: 'documentation-inner',
+                questionMark: 'documentation-icon',
+            },
+            text: {
+                questionMark: '?',
+            },
+        },
+
     },
     debounce: 100,
     debug: false,
@@ -137,7 +170,6 @@ const CARD_HTML = `
 
 const CARD_CSS=`
     ha-card {
-        cursor: pointer;
         height: 100%;
         display: flex;
         flex-direction: row;
@@ -147,6 +179,10 @@ const CARD_CSS=`
         box-sizing: border-box;
         border-radius: 12px;
         margin: 0 auto;
+    }
+
+    .clickable {
+        cursor: pointer;
     }
 
     /* main container */
@@ -161,6 +197,12 @@ const CARD_CSS=`
         width: 100%;
         height: 100%;
         overflow: hidden;
+    }
+    .${SELECTORS.container}.${CARD.layout.vertical.label} {
+        flex-direction: column;
+    }
+    .${SELECTORS.container}.${CARD.layout.horizontal.label} {
+        flex-direction: row;
     }
 
     /* .left: icon & shape */
@@ -202,7 +244,14 @@ const CARD_CSS=`
         width:100%;
     }
 
+    .${CARD.layout.vertical.label} .${SELECTORS.right} {
+        width: 90%;
+        flex-grow: 0;
+    }
+
+
     .${SELECTORS.name} {
+        text-align: left;
         font-size: 1em;
         font-weight: bold;
         color: var(--primary-text-color);
@@ -218,6 +267,10 @@ const CARD_CSS=`
         align-items: center;
         justify-content: flex-start;
         gap: 10px;
+    }
+
+    .${CARD.layout.vertical.label} .${SELECTORS.secondaryInfo} {
+        display: block;
     }
 
     .${SELECTORS.percentage} {
@@ -245,6 +298,12 @@ const CARD_CSS=`
         transition: width 0.3s ease;
     }
 
+
+    .${CARD.layout.vertical.label} .${SELECTORS.name},
+    .${CARD.layout.vertical.label} .${SELECTORS.percentage} {
+        text-align: center;
+    }
+
     ${SELECTORS.alert} {
         display: none;
         position: absolute;
@@ -257,7 +316,7 @@ const CARD_CSS=`
         width: 100%;
         height: 100%;
         overflow: hidden;
-        z-index: 10;
+        z-index: 2;
         background-color: #202833;
         border-radius: 12px;
     }
@@ -281,7 +340,60 @@ const CARD_CSS=`
         width:100%;
         margin-right: 8px;
     }
-    `;
+
+    .${CARD.config.editor.classes.editor} {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap; /* Permet le retour à la ligne */
+        gap: 0 2%;
+    }
+    .${CARD.config.editor.classes.fieldContainer} {
+        margin-bottom: 12px;
+        height: 73px;
+    }
+
+    .${CARD.config.editor.classes.fieldDescription} {
+        width: 90%;
+        font-size: 12px;
+        color: #888;
+    }
+
+    .${CARD.config.documentation.classes.link} {
+        text-decoration: none;
+        display: flex;
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 600;
+    }
+
+    .${CARD.config.documentation.classes.outerDiv} {
+        width: 50px;
+        height: 50px;
+        background-color: rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    .${CARD.config.documentation.classes.innerDiv} {
+        width: 30px;
+        height: 30px;
+        background-color: rgba(255, 255, 255, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+
+    .${CARD.config.documentation.classes.questionMark} {
+        font-size: 20px;
+        color: black;
+        font-weight: bold;
+    }
+`;
 
 const HTML = {
     block: {
@@ -411,6 +523,13 @@ const MSG = {
         es: "no disponible",
         it: "non disponibile",
         de: "nicht verfügbar",
+    },
+    attributeNotFound: {
+        en: "attribute: Attribute not found in HA.",
+        fr: "attribute: Attribut introuvable dans HA.",
+        es: "attribute: Atributo no encontrado en HA.",
+        it: "attribute: Attributo non trovato in HA.",
+        de: "attribute: Attribut in HA nicht gefunden.",
     },
     minValueError: {
         en: "min_value: Check your min_value.",
@@ -1354,43 +1473,24 @@ class EntityOrValue {
         return this._isFound;
     }
     /**
-     * Returns the display precision of the entity (if applicable).
-     * Returns null if the value is not a valid entity.
-     *
-     * @returns {number|null} The display precision of the entity.
+     * Returns the display precision of the entity, if valid.
      */
     get precision() {
-        if (this._isValid) {
-            return this._hassProvider.hass.entities[this._entity].display_precision;
-        } else {
-            return null;
-        }
+        return this._isValid ? this._hassProvider.hass.entities[this._entity].display_precision : null;
     }
+
     /**
-     * Returns the friendly name of the entity (if applicable).
-     * Returns null if the value is not a valid entity.
-     *
-     * @returns {string|null} The friendly name of the entity.
+     * Returns the friendly name of the entity, if valid.
      */
-    get name(){
-        if (this._isValid) {
-            return this._hassProvider.hass.states[this._entity].attributes.friendly_name;
-        } else {
-            return null;
-        }
+    get name() {
+        return this._isValid ? this._hassProvider.hass.states[this._entity]?.attributes?.friendly_name : null;
     }
+
     /**
-     * Returns the icon of the entity (if applicable).
-     * Returns null if the value is not a valid entity.
-     *
-     * @returns {string|null} The icon of the entity.
+     * Returns the icon of the entity, if valid.
      */
-    get icon(){
-        if (this._isValid) {
-            return this._hassProvider.hass.states[this._entity].attributes.icon;
-        } else {
-            return null;
-        }
+    get icon() {
+        return this._isValid ? this._hassProvider.hass.states[this._entity]?.attributes?.icon : null;
     }
     /**
      * Validates the value and updates internal state.
@@ -1408,18 +1508,12 @@ class EntityOrValue {
             this._isValid = true;
             this._isAvailable = true;
             return;
-        } else if (typeof this._value === "string") {
-            if (!this._hassProvider.hass.states[this._value]) {
-                return;
-            }
+        } else if (typeof this._value === "string" && this._hassProvider.hass.states[this._value]) {
             this._entity = this._value;
             this._isFound = true;
-            const entityState = this._hassProvider.hass.states[this._entity].state;
-            if (!entityState) {
-                this._isValid = true;
-                this._value = 0;
-                return;
-            } else if (entityState === "unavailable" || entityState === "unknown") {
+            const entityState = this._hassProvider.hass.states[this._entity];
+            const state = entityState.state;
+            if (state === "unavailable" || state === "unknown") {
                 this._value = 0;
                 return;
             }
@@ -1428,16 +1522,19 @@ class EntityOrValue {
             const entityType = this._entity.split(".")[0]; // "cover", "light", "fan", etc.
             if (ATTRIBUTE_MAPPING[entityType]) {
                 const attribute = this._attribute ?? ATTRIBUTE_MAPPING[entityType].attribute;
-                if (attribute && this._hassProvider.hass.states[this._entity].attributes.hasOwnProperty(attribute)) {
-                    this._value = this._hassProvider.hass.states[this._entity].attributes[attribute] ?? 0;
+                if (attribute && entityState.attributes.hasOwnProperty(attribute)) {
+                    this._value = entityState.attributes[attribute] ?? 0;
                     if (entityType === ATTRIBUTE_MAPPING.light.label && attribute === ATTRIBUTE_MAPPING.light.attribute) {
                         this._value = (100 * this._value) / 255;
                     }
                 } else { // attribute not supported
                     this._value = 0;
+                    this._isFound = false;
+                    this._isValid = false;
+                    this._isAvailable = false;
                 }
             } else {
-                this._value = parseFloat(entityState) || 0;
+                this._value = parseFloat(state) || 0;
             }
             return;
         }
@@ -1590,6 +1687,9 @@ class ConfigHelper {
             return;
         } else if (!entityState) {
             this._msg = MSG.entityNotFound;
+            return;
+        } else if (this._config.attribute && !entityState.attributes.hasOwnProperty(this._config.attribute)) {
+            this._msg = MSG.attributeNotFound;
             return;
         }  else if (this._config.min_value && !Number.isFinite(this._config.min_value)) {
             this._msg = MSG.minValueError;
@@ -1903,6 +2003,7 @@ class EntityProgressCard extends HTMLElement {
     _buildCard() {
         const wrapper = document.createElement('ha-card');
         wrapper.classList.add(CARD.typeName);
+        wrapper.classList.toggle('clickable', this._cardView.show_more_info || this._cardView.navigate_to);
         wrapper.innerHTML = CARD_HTML;
         const style = document.createElement('style');
         style.textContent = CARD_CSS;
@@ -1942,31 +2043,6 @@ class EntityProgressCard extends HTMLElement {
         }
         this._elements[SELECTORS.progressBar].style.height = size;
     }
-    /**
-     * Changes the layout of the card based on the current configuration.
-     *
-     * This method adjusts the styling of various DOM elements based on the selected
-     * layout configuration. It uses predefined CSS styles to switch between two
-     * layout modes.
-     *
-     */
-    _changeLayout() {
-        if (this._cardView.layout === CARD.layout.vertical.label) {
-            this._elements[SELECTORS.container].style.flexDirection = 'column';
-            this._elements[SELECTORS.name].style.textAlign = 'center';
-            this._elements[SELECTORS.right].style.width = '90%';
-            this._elements[SELECTORS.right].style.flexGrow = '0';
-            this._elements[SELECTORS.secondaryInfo].style.display = 'block';
-            this._elements[SELECTORS.percentage].style.textAlign = 'center';
-        } else {
-            this._elements[SELECTORS.container].style.flexDirection = 'row';
-            this._elements[SELECTORS.name].style.textAlign = 'left';
-            this._elements[SELECTORS.right].style.width = '100%';
-            this._elements[SELECTORS.right].style.flexGrow = '1';
-            this._elements[SELECTORS.secondaryInfo].style.display = 'flex';
-            this._elements[SELECTORS.percentage].style.textAlign = 'left';
-        }
-    }
 
     /**
      * Updates the specified DOM element based on a provided callback function.
@@ -1986,6 +2062,22 @@ class EntityProgressCard extends HTMLElement {
         if (element) {
             updateCallback(element);
         }
+    }
+
+    /**
+     * Changes the layout of the card based on the current configuration.
+     *
+     * This method adjusts the styling of various DOM elements based on the selected
+     * layout configuration. It uses predefined CSS styles to switch between two
+     * layout modes.
+     *
+     */
+    _changeLayout() {
+        this._updateElement(SELECTORS.container, (el) => {
+            const isVertical = this._cardView.layout === CARD.layout.vertical.label;
+            el.classList.toggle(CARD.layout.vertical.label, isVertical);
+            el.classList.toggle(CARD.layout.horizontal.label, !isVertical);
+        });
     }
 
     _manageErrorMessage() {
@@ -2375,6 +2467,7 @@ class EntityProgressCardEditor extends HTMLElement {
      */
     constructor() {
         super();
+        this.attachShadow({ mode: 'open' });
         this.config = {};
         this._hass = null;
         this._elements = {};
@@ -2475,7 +2568,7 @@ class EntityProgressCardEditor extends HTMLElement {
      * @returns {boolean} - Returns `true` if the GUI editor is visible, otherwise `false`.
      */
     _checkConfigChangeFromGUI() {
-        const rect = this._elements['entity'].getBoundingClientRect();
+        const rect = this._elements[EDITOR_INPUT_FIELDS.entity.name].getBoundingClientRect();
         this._isGuiEditor = (
             rect.width > 0 &&
             rect.height > 0
@@ -2755,6 +2848,7 @@ class EntityProgressCardEditor extends HTMLElement {
      * @param {boolean} config.required - A flag indicating whether the field is required.
      * @param {boolean} config.isInGroup - A flag indicating if the field should be group-overridable.
      * @param {string} config.description - The description of the field, typically displayed below the input.
+     * @param {string} config.width - The width of the field.
      *
      * @returns {HTMLElement} The container element (`<div>`) containing the input field and its description.
      */
@@ -2812,19 +2906,17 @@ class EntityProgressCardEditor extends HTMLElement {
         inputElement.value = value;
         this._addEventListener(name, type);
 
-        const fieldContainer = document.createElement('div');
+        const fieldContainer = document.createElement(CARD.config.editor.elements.fieldContainer);
         if (isInGroup) {
             this._overridableElements[isInGroup][`${name}_description`] = fieldContainer;
         }
+        fieldContainer.classList.add(CARD.config.editor.classes.fieldContainer);
         fieldContainer.style.display = defaultDisplay;
-        fieldContainer.style.marginBottom = '12px';
         fieldContainer.style.width = width;
-        fieldContainer.style.height = '73px';
-        const fieldDescription = document.createElement('span');
-        fieldDescription.style.width = '90%';
+
+        const fieldDescription = document.createElement(CARD.config.editor.elements.fieldDescription);
+        fieldDescription.classList.add(CARD.config.editor.classes.fieldDescription);
         fieldDescription.innerText = description;
-        fieldDescription.style.fontSize = '12px';
-        fieldDescription.style.color = '#888';
 
         fieldContainer.appendChild(inputElement);
         fieldContainer.appendChild(fieldDescription);
@@ -2834,45 +2926,24 @@ class EntityProgressCardEditor extends HTMLElement {
 
     _makeHelpIcon() {
         // Lien cliquable
-        const link = document.createElement('a');
-        link.href = CARD.config.documentation;
-        link.target = '_blank';
-        link.style.textDecoration = 'none';
-        link.style.display = 'flex';
-        link.style.position='absolute';
-        link.style.top='0px';
-        link.style.right='0px';
-        link.style.zIndex ='600';
-
-        const outerDiv = document.createElement('div');
-        outerDiv.style.width = '50px';
-        outerDiv.style.height = '50px';
-        outerDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-        outerDiv.style.display = 'flex';
-        outerDiv.style.alignItems = 'center';
-        outerDiv.style.justifyContent = 'center';
-        outerDiv.style.borderRadius = '50%';
-        outerDiv.style.cursor = 'pointer';
-
-        const innerDiv = document.createElement('div');
-        innerDiv.style.width = '30px';
-        innerDiv.style.height = '30px';
-        innerDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
-        innerDiv.style.display = 'flex';
-        innerDiv.style.alignItems = 'center';
-        innerDiv.style.justifyContent = 'center';
-        innerDiv.style.borderRadius = '50%';
-
-        const questionMark = document.createElement('div');
-        questionMark.textContent = '?';
-        questionMark.style.fontSize = '20px';
-        questionMark.style.color = 'black';
-        questionMark.style.fontWeight = 'bold';
-
+        const link = document.createElement(CARD.config.documentation.elements.link);
+        link.href = CARD.config.documentation.attributes.documentationUrl;
+        link.target = CARD.config.documentation.attributes.linkTarget;
+        link.classList.add(CARD.config.documentation.classes.link);
+        
+        const outerDiv = document.createElement(CARD.config.documentation.elements.outerDiv);
+        outerDiv.classList.add(CARD.config.documentation.classes.outerDiv);
+        
+        const innerDiv = document.createElement(CARD.config.documentation.elements.innerDiv);
+        innerDiv.classList.add(CARD.config.documentation.classes.innerDiv);
+        
+        const questionMark = document.createElement(CARD.config.documentation.elements.questionMark);
+        questionMark.textContent = CARD.config.documentation.text.questionMark;
+        questionMark.classList.add(CARD.config.documentation.classes.questionMark);
+        
         innerDiv.appendChild(questionMark);
         outerDiv.appendChild(innerDiv);
         link.appendChild(outerDiv);
-
         return link;
     }
 
@@ -2912,30 +2983,28 @@ class EntityProgressCardEditor extends HTMLElement {
      * @returns {void}
      */
     render() {
-        this.innerHTML = ''; // Reset inner HTML
+        const style = document.createElement('style');
+        style.textContent = CARD_CSS;
         const fragment = document.createDocumentFragment();
-
-        const container = document.createElement('div');
-        container.style.display = 'flex';
-        container.style.flexDirection = 'row';
-        container.style.flexWrap = 'wrap';        // Allows wrapping
-        container.style.gap = '0 2%';
+        fragment.appendChild(style);
+        const container = document.createElement(CARD.config.editor.elements.editor);
+        container.classList.add(CARD.config.editor.classes.editor);
 
         Object.entries(EDITOR_INPUT_FIELDS).forEach(([key, field]) => {
             container.appendChild(this._createField({
-                name:field.name,
-                label:field.label[this._currentLanguage],
-                type:field.type,
-                required:field.required,
+                name: field.name,
+                label: field.label[this._currentLanguage],
+                type: field.type,
+                required: field.required,
                 isInGroup: field.isInGroup,
                 description: field.description[this._currentLanguage],
-                width: field.width }));
+                width: field.width
+            }));
         });
 
         container.appendChild(this._makeHelpIcon());
-
         fragment.appendChild(container);
-        this.appendChild(fragment);
+        this.shadowRoot.appendChild(fragment);
     }
 }
 
