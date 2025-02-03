@@ -133,7 +133,7 @@ You can customize the card using the following parameters:
 
   *Examples:* `"blue"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`
 
-- **`theme`** [string {`battery`|`light`|`temperature`|`humidity`|`voc`|`pm25`}] *(optional)*:  
+- **`theme`** [string {`battery`|`cpu`|`light`|`memory`|`temperature`|`humidity`|`pm25`|`voc`}] *(optional)*:  
   Allows customization of the progress bar's appearance using a predefined theme.
   This theme dynamically adjusts the `icon`, `color` and `bar-color` parameters based on the battery level, eliminating the need for manual adjustments or complex Jinja2 templates.  
   *Example:*
