@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.0.31
+ * @version 1.0.32
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION='1.0.31';
+const VERSION='1.0.32';
 const CARD = {
     typeName: 'entity-progress-card',
     name: 'Entity progress card',
@@ -309,6 +309,26 @@ const THEME = {
             { icon: 'mdi:battery-80',        color: 'var(--state-sensor-battery-high-color)'  },    // Pourcentage >= 80
             { icon: 'mdi:battery-90',        color: 'var(--state-sensor-battery-high-color)'  },    // Pourcentage >= 90
             { icon: 'mdi:battery',           color: 'var(--state-sensor-battery-high-color)'  }     // Pourcentage >= 100
+        ]
+    },
+    cpu: {
+        linear: true,
+        style: [
+            { icon: 'mdi:cpu-64-bit',        color: 'var(--state-sensor-battery-high-color)'  },
+            { icon: 'mdi:cpu-64-bit',        color: 'var(--yellow-color)' },
+            { icon: 'mdi:cpu-64-bit',        color: 'var(--state-sensor-battery-medium-color)' },
+            { icon: 'mdi:cpu-64-bit',        color: 'var(--state-sensor-battery-low-color)'    },
+            { icon: 'mdi:cpu-64-bit',        color: 'var(--state-sensor-battery-low-color)'    },
+        ]
+    },
+    memory: {
+        linear: true,
+        style: [
+            { icon: 'mdi:memory',        color: 'var(--state-sensor-battery-high-color)'  },
+            { icon: 'mdi:memory',        color: 'var(--yellow-color)' },
+            { icon: 'mdi:memory',        color: 'var(--state-sensor-battery-medium-color)' },
+            { icon: 'mdi:memory',        color: 'var(--state-sensor-battery-low-color)'    },
+            { icon: 'mdi:memory',        color: 'var(--state-sensor-battery-low-color)'    },
         ]
     },
     light:  {
@@ -638,11 +658,13 @@ const FIELD_OPTIONS = {
     theme: [
         { value: '',            label: { en: 'Disabled (default)', fr: 'Désactivé (défaut)', es: 'Desactivado (defecto)', it: 'Disabilitato (predefinito)', de: 'Deaktiviert (Standard)' }, icon: "mdi:palette-outline" },
         { value: 'battery',     label: { en: 'Battery', fr: 'Batterie', es: 'Batería', it: 'Batteria', de: 'Batterie'},                                                                     icon: "mdi:battery" },
-        { value: 'light',       label: { en: 'Light', fr: 'Lumière', es: 'Luz', it: 'Luce', de: 'Licht' },                                                                                  icon: "mdi:lightbulb" },
-        { value: 'temperature', label: { en: 'Temperature', fr: 'Température', es: 'Temperatura', it: 'Temperatura', de: 'Temperatur'  },                                                   icon: "mdi:thermometer" },
+        { value: 'cpu',         label: { en: 'CPU', fr: 'CPU', es: 'CPU', it: 'CPU', de: 'CPU'},                                                                                            icon: "mdi:cpu-64-bit" },
         { value: 'humidity',    label: { en: 'Humidity', fr: 'Humidité', es: 'Humedad', it: 'Umidità', de: 'Feuchtigkeit'  },                                                               icon: "mdi:water-percent" },
-        { value: 'voc',         label: { en: 'VOC', fr: 'VOC', es: 'VOC', it: 'VOC', de: 'VOC'  },                                                                                          icon: "mdi:air-filter" },
+        { value: 'light',       label: { en: 'Light', fr: 'Lumière', es: 'Luz', it: 'Luce', de: 'Licht' },                                                                                  icon: "mdi:lightbulb" },
+        { value: 'memory',      label: { en: 'RAM', fr: 'RAM', es: 'RAM', it: 'RAM', de: 'RAM' },                                                                                           icon: "mdi:memory" },
         { value: 'pm25',        label: { en: 'PM2.5', fr: 'PM2.5', es: 'PM2.5', it: 'PM2.5', de: 'PM2.5' },                                                                                 icon: "mdi:air-filter" },
+        { value: 'temperature', label: { en: 'Temperature', fr: 'Température', es: 'Temperatura', it: 'Temperatura', de: 'Temperatur'  },                                                   icon: "mdi:thermometer" },
+        { value: 'voc',         label: { en: 'VOC', fr: 'VOC', es: 'VOC', it: 'VOC', de: 'VOC'  },                                                                                          icon: "mdi:air-filter" },
     ],
     color: [
         { value: 'var(--state-icon-color)', label: { en: 'Default', fr: 'Défaut', es: 'Predeterminado', it: 'Predefinito', de: 'Standard' } },
