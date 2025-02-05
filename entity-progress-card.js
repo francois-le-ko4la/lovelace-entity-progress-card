@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.0.33
+ * @version 1.0.34
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION='1.0.33';
+const VERSION='1.0.34';
 const CARD = {
     typeName: 'entity-progress-card',
     name: 'Entity progress card',
@@ -78,332 +78,54 @@ const CARD = {
             other: 2
         },
         editor: {
-            elements: {
-                editor: 'div',
-                fieldContainer: 'div',
-                fieldDescription: 'span',
+            field: {
+                container: {element: 'div', class:'editor'},
+                fieldContainer: {element: 'div', class:'editor-field-container'},
+                fieldDescription: {element: 'span', class:'editor-field-description'},
+                entity: { type: 'entity', element: 'ha-entity-picker'},
+                attribute: { type: 'attribute', element: 'ha-select'},
+                icon: { type: 'icon', element: 'ha-icon-picker'},
+                layout: { type: 'layout', element: 'ha-select'},
+                bar_size: { type: 'bar_size', element: 'ha-select'},
+                tap_action: { type: 'tap_action', element: 'ha-select'},
+                theme: { type: 'theme', element: 'ha-select'},
+                color: { type: 'color', element: 'ha-select'},
+                number: { type: 'number', element: 'ha-textfield'},
+                default: { type: 'text', element: 'ha-textfield'},
+                listItem: { type: 'list item', element: 'mwc-list-item'},
+                iconItem: { element: 'ha-icon'},
+                select: { element: 'ha-select'},
+
             },
-            classes: {
-                editor: 'editor',
-                fieldContainer: 'editor-field-container',
-                fieldDescription: 'editor-field-description',
+            key: {
+                attribute: "attribute",
+                navigate_to: "navigate_to",
+                theme: "theme",
+                tap_action: "tap_action"
             },
-        },        
+
+        },
         documentation: {
-            elements: {
-                link: 'a',
-                outerDiv: 'div',
-                innerDiv: 'div',
-                questionMark: 'div',
-            },
+            link: { element: 'a', class: 'documentation-link'},
+            outerDiv: { element: 'div', class: 'documentation-outer'},
+            innerDiv: { element: 'div', class: 'documentation-inner'},
+            questionMark: { element: 'div', class: 'documentation-icon'},
             attributes: {
+                text: '?',
                 linkTarget: '_blank',
-                documentationUrl: 'https://github.com/francois-le-ko4la/lovelace-entity-progress-card/'              ,
-            },
-            classes: {
-                link: 'documentation-link',
-                outerDiv: 'documentation-outer',
-                innerDiv: 'documentation-inner',
-                questionMark: 'documentation-icon',
-            },
-            text: {
-                questionMark: '?',
+                documentationUrl: 'https://github.com/francois-le-ko4la/lovelace-entity-progress-card/',
             },
         },
 
     },
     debounce: 100,
-    debug: false,
+    debug: true,
 };
 
 CARD.console = {
     message: `%c✨${CARD.typeName.toUpperCase()} ${VERSION} IS INSTALLED.`,
     css: 'color:orange; background-color:black; font-weight: bold;',
     link: '      For more details, check the README: https://github.com/francois-le-ko4la/lovelace-entity-progress-card'
-};
-
-// Constants for DOM element selectors
-const SELECTORS = {
-    container: 'container',
-    left: 'left',
-    right: 'right',
-    icon: 'icon',
-    shape: 'shape',
-    name: 'name',
-    percentage: 'percentage',
-    secondaryInfo: 'secondary_info',
-    progressBar: 'progress-bar',
-    progressBarInner: 'progress-bar-inner',
-    ha_shape: 'ha-shape',
-    ha_icon: 'ha-icon',
-    alert: 'progress-alert',
-    alert_icon: 'progress-alert-icon',
-    alert_message: 'progress-alert-message'
-};
-
-const CARD_HTML = `
-    <!-- Main container -->
-    <div class="${SELECTORS.container}">
-        <!-- Section gauche avec l'icône -->
-        <div class="${SELECTORS.left}">
-            <${SELECTORS.ha_shape} class="${SELECTORS.shape}"></${SELECTORS.ha_shape}>
-            <${SELECTORS.ha_icon} class="${SELECTORS.icon}"></${SELECTORS.ha_icon}>
-        </div>
-
-        <!-- Section droite avec le texte -->
-        <div class="${SELECTORS.right}">
-            <div class="${SELECTORS.name}"></div>
-            <div class="${SELECTORS.secondaryInfo}">
-                <div class="${SELECTORS.percentage}"></div>
-                <div class="${SELECTORS.progressBar}">
-                    <div class="${SELECTORS.progressBarInner}"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- HA Alert -->
-    <${SELECTORS.alert}>
-        <${SELECTORS.ha_icon} class="${SELECTORS.alert_icon}"></${SELECTORS.ha_icon}>
-        <div class="${SELECTORS.alert_message}"></div>
-    </${SELECTORS.alert}>
-`;
-
-const CARD_CSS=`
-    ha-card {
-        height: 100%;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: flex-start;
-        padding: 0;
-        box-sizing: border-box;
-        border-radius: 12px;
-        margin: 0 auto;
-    }
-
-    .clickable {
-        cursor: pointer;
-    }
-
-    /* main container */
-    .${SELECTORS.container} {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-        margin: 7px 10px;
-        gap: 10px;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-    }
-    .${SELECTORS.container}.${CARD.layout.vertical.label} {
-        flex-direction: column;
-    }
-    .${SELECTORS.container}.${CARD.layout.horizontal.label} {
-        flex-direction: row;
-    }
-
-    /* .left: icon & shape */
-    .${SELECTORS.left} {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        width: 36px;
-        height: 36px;
-        flex-shrink: 0;
-    }
-
-    .${SELECTORS.shape} {
-        display: block;
-        position: absolute;
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background-color: var(--state-icon-color);
-        opacity: 0.2;
-    }
-
-    .${SELECTORS.icon} {
-        position: relative;
-        z-index: 1;
-        width: 24px;
-        height: 24px;
-    }
-
-    /* .right: name & percentage */
-    .${SELECTORS.right} {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        flex-grow: 1;
-        overflow: hidden;
-        width:100%;
-    }
-
-    .${CARD.layout.vertical.label} .${SELECTORS.right} {
-        width: 90%;
-        flex-grow: 0;
-    }
-
-
-    .${SELECTORS.name} {
-        text-align: left;
-        font-size: 1em;
-        font-weight: bold;
-        color: var(--primary-text-color);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        width: 100%;
-    }
-
-    .${SELECTORS.secondaryInfo} {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: flex-start;
-        gap: 10px;
-    }
-
-    .${CARD.layout.vertical.label} .${SELECTORS.secondaryInfo} {
-        display: block;
-    }
-
-    .${SELECTORS.percentage} {
-        font-size: 0.9em;
-        color: var(--primary-text-color);
-        min-width: 40px;
-        text-align: left;
-    }
-
-    /* Progress bar */
-    .${SELECTORS.progressBar} {
-        flex-grow: 1;
-        height: 8px;
-        max-height: 16px;
-        background-color: var(--divider-color);
-        border-radius: 4px;
-        overflow: hidden;
-        position: relative;
-    }
-
-    .${SELECTORS.progressBarInner} {
-        height: 100%;
-        width: 75%;
-        background-color: var(--primary-color);
-        transition: width 0.3s ease;
-    }
-
-
-    .${CARD.layout.vertical.label} .${SELECTORS.name},
-    .${CARD.layout.vertical.label} .${SELECTORS.percentage} {
-        text-align: center;
-    }
-
-    ${SELECTORS.alert} {
-        display: none;
-        position: absolute;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-        margin: 0px;
-        gap: 10px;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        z-index: 2;
-        background-color: #202833;
-        border-radius: 12px;
-    }
-    .${SELECTORS.alert_icon} {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        width: 36px;
-        height: 36px;
-        flex-shrink: 0;
-        margin-left: 8px;
-    }
-    .${SELECTORS.alert_message} {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        flex-grow: 1;
-        overflow: hidden;
-        width:100%;
-        margin-right: 8px;
-    }
-
-    .${CARD.config.editor.classes.editor} {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap; /* Permet le retour à la ligne */
-        gap: 0 2%;
-    }
-    .${CARD.config.editor.classes.fieldContainer} {
-        margin-bottom: 12px;
-        height: 73px;
-    }
-
-    .${CARD.config.editor.classes.fieldDescription} {
-        width: 90%;
-        font-size: 12px;
-        color: #888;
-    }
-
-    .${CARD.config.documentation.classes.link} {
-        text-decoration: none;
-        display: flex;
-        position: absolute;
-        top: 0;
-        right: 0;
-        z-index: 600;
-    }
-
-    .${CARD.config.documentation.classes.outerDiv} {
-        width: 50px;
-        height: 50px;
-        background-color: rgba(255, 255, 255, 0.1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        cursor: pointer;
-    }
-
-    .${CARD.config.documentation.classes.innerDiv} {
-        width: 30px;
-        height: 30px;
-        background-color: rgba(255, 255, 255, 0.7);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-    }
-
-    .${CARD.config.documentation.classes.questionMark} {
-        font-size: 20px;
-        color: black;
-        font-weight: bold;
-    }
-`;
-
-const HTML = {
-    block: {
-        show: 'block',
-        hide: 'none',
-    },
-    flex: {
-        show: 'flex',
-        hide: 'none',
-    },
 };
 
 const THEME = {
@@ -554,31 +276,10 @@ const MSG = {
     },
 };
 
-
-const THEME_KEY = "theme";
-const NAVIGATETO_KEY = "navigate_to";
-const TAP_ACTION_KEY = "tap_action";
-const ENTITY_ATTRIBUTE = "attribute";
-const TAG_HASELECT = 'ha-select';
-
-const FIELD_TYPE = {
-    entity: { type: 'entity', tag: 'ha-entity-picker'},
-    attribute: { type: 'attribute', tag: 'ha-select'},
-    icon: { type: 'icon', tag: 'ha-icon-picker'},
-    layout: { type: 'layout', tag: 'ha-select'},
-    bar_size: { type: 'bar_size', tag: 'ha-select'},
-    tap_action: { type: 'tap_action', tag: 'ha-select'},
-    theme: { type: 'theme', tag: 'ha-select'},
-    color: { type: 'color', tag: 'ha-select'},
-    number: { type: 'number', tag: 'ha-textfield'},
-    default: { type: 'text', tag: 'ha-textfield'},
-    listItem: { type: 'list item', tag: 'mwc-list-item'},
-}
-
 const EDITOR_INPUT_FIELDS = {
     entity: {       name: 'entity',
                     label: { en: 'Entity', fr: 'Entité', es: 'Entidad', it: 'Entità', de: 'Entität', },
-                    type: FIELD_TYPE.entity.type,
+                    type: CARD.config.editor.field.entity.type,
                     width: '92%',
                     required: true,
                     isInGroup: null,
@@ -591,10 +292,10 @@ const EDITOR_INPUT_FIELDS = {
                     }},
     attribute: {    name: 'attribute',
                     label: { en: 'Attribute', fr: 'Attribut', es: 'Atributo', it: 'Attributo', de: 'Attribut', },
-                    type: FIELD_TYPE.attribute.type,
+                    type: CARD.config.editor.field.attribute.type,
                     width: '92%',
                     required: false,
-                    isInGroup: ENTITY_ATTRIBUTE,
+                    isInGroup: CARD.config.editor.key.attribute,
                     description: {
                         en: 'Select the attribute.',
                         fr: 'Sélectionnez l\'attribut.',
@@ -604,7 +305,7 @@ const EDITOR_INPUT_FIELDS = {
                     }},
     name: {         name: 'name',
                     label: { en: 'Name', fr: 'Nom', es: 'Nombre', it: 'Nome', de: 'Name', },
-                    type: FIELD_TYPE.default.type,
+                    type: CARD.config.editor.field.default.type,
                     width: '48%',
                     required: false,
                     isInGroup: null,
@@ -617,7 +318,7 @@ const EDITOR_INPUT_FIELDS = {
                     }},
     unit: {         name: 'unit',
                     label: { en: 'Unit', fr: 'Unité', es: 'Nombre', it: 'Unità', de: 'Name', },
-                    type: FIELD_TYPE.default.type,
+                    type: CARD.config.editor.field.default.type,
                     width: '15%',
                     required: false,
                     isInGroup: null,
@@ -630,7 +331,7 @@ const EDITOR_INPUT_FIELDS = {
                     }},
     decimal: {      name: 'decimal',
                     label: { en: 'decimal', fr: 'decimal', es: 'decimal', it: 'Decimale', de: 'decimal', },
-                    type: FIELD_TYPE.number.type,
+                    type: CARD.config.editor.field.number.type,
                     width: '25%',
                     required: false,
                     isInGroup: null,
@@ -643,7 +344,7 @@ const EDITOR_INPUT_FIELDS = {
                     }},
     min_value: {    name: 'min_value',
                     label: { en: 'Minimum value', fr: 'Valeur minimum', es: 'Valor mínimo', it: 'Valore minimo', de: 'Mindestwert',},
-                    type: FIELD_TYPE.number.type,
+                    type: CARD.config.editor.field.number.type,
                     width: '45%',
                     required: false,
                     isInGroup: null,
@@ -656,7 +357,7 @@ const EDITOR_INPUT_FIELDS = {
                     }},
     max_value: {    name: 'max_value',
                     label: { en: 'Maximum value', fr: 'Valeur maximum', es: 'Valor máximo', it: 'Valore massimo', de: 'Höchstwert', },
-                    type: FIELD_TYPE.default.type,
+                    type: CARD.config.editor.field.default.type,
                     width: '45%',
                     required: false,
                     isInGroup: null,
@@ -669,7 +370,7 @@ const EDITOR_INPUT_FIELDS = {
                     }},
     tap_action: {   name: 'tap_action',
                     label: { en: 'Tap action', fr: 'Action au tap', es: 'Acción al tocar', it: 'Azione al tocco', de: 'Tippen Aktion', },
-                    type: FIELD_TYPE.tap_action.type,
+                    type: CARD.config.editor.field.tap_action.type,
                     width: '45%',
                     required: false,
                     isInGroup: null,
@@ -680,12 +381,12 @@ const EDITOR_INPUT_FIELDS = {
                         it: 'Seleziona l\'azione.',
                         de: 'Wählen Sie die Aktion.',
                     }},
-    navigate_to: {  name: NAVIGATETO_KEY,
+    navigate_to: {  name: CARD.config.editor.key.navigate_to,
                     label: { en: 'Navigate to...', fr: 'Naviguer vers...', es: 'Navegar a...', it: 'Naviga verso...', de: 'Navigieren zu...',  },
-                    type: FIELD_TYPE.default.type,
+                    type: CARD.config.editor.field.default.type,
                     width: '45%',
                     required: false,
-                    isInGroup: NAVIGATETO_KEY,
+                    isInGroup: CARD.config.editor.key.navigate_to,
                     description: {
                         en: 'Enter the target (/lovelace/0).',
                         fr: 'Saisir la cible (/lovelace/0).',
@@ -695,7 +396,7 @@ const EDITOR_INPUT_FIELDS = {
                     }},
     theme: {        name: 'theme',
                     label: { en: 'Theme', fr: 'Thème', es: 'Tema', it: 'Tema', de: 'Thema', },
-                    type: FIELD_TYPE.theme.type,
+                    type: CARD.config.editor.field.theme.type,
                     width: '92%',
                     required: false,
                     isInGroup: null,
@@ -708,7 +409,7 @@ const EDITOR_INPUT_FIELDS = {
                     }},
     bar_size: {     name: 'bar_size',
                     label: { en: 'Size', fr: 'Taille', es: 'Tamaño', it: 'Dimensione', de: 'Größe' },
-                    type: FIELD_TYPE.bar_size.type,
+                    type: CARD.config.editor.field.bar_size.type,
                     width: '45%',
                     required: false,
                     isInGroup: null,
@@ -721,10 +422,10 @@ const EDITOR_INPUT_FIELDS = {
                     }},
     bar_color: {    name: 'bar_color',
                     label: { en: 'Color for the bar', fr: 'Couleur de la barre', es: 'Color de la barra', it: 'Colore per la barra', de: 'Farbe für die Leiste', },
-                    type: FIELD_TYPE.color.type,
+                    type: CARD.config.editor.field.color.type,
                     width: '45%',
                     required: false,
-                    isInGroup: THEME_KEY,
+                    isInGroup: CARD.config.editor.key.theme,
                     description: {
                         en: 'Select the color for the bar.',
                         fr: 'Sélectionnez la couleur de la barre.',
@@ -734,10 +435,10 @@ const EDITOR_INPUT_FIELDS = {
                     }},
     icon: {         name: 'icon',
                     label: { en: 'Icon', fr: 'Icône', es: 'Icono', it: 'Icona', de: 'Symbol', },
-                    type: FIELD_TYPE.icon.type,
+                    type: CARD.config.editor.field.icon.type,
                     width: '45%',
                     required: false,
-                    isInGroup: THEME_KEY,
+                    isInGroup: CARD.config.editor.key.theme,
                     description: {
                         en: 'Select an icon for the entity.',
                         fr: 'Sélectionnez une icône pour l\'entité.',
@@ -747,10 +448,10 @@ const EDITOR_INPUT_FIELDS = {
                     }},
     color: {        name: 'color',
                     label: { en: 'Primary color', fr: 'Couleur de l\'icône', es: 'Color del icono', it: 'Colore dell\'icona', de: 'Primärfarbe', },
-                    type: FIELD_TYPE.color.type,
+                    type: CARD.config.editor.field.color.type,
                     width: '45%',
                     required: false,
-                    isInGroup: THEME_KEY,
+                    isInGroup: CARD.config.editor.key.theme,
                     description: {
                         en: 'Select the primary color for the icon.',
                         fr: 'Sélectionnez la couleur de l\'icône.',
@@ -760,7 +461,7 @@ const EDITOR_INPUT_FIELDS = {
                     }},
     layout: {       name: 'layout',
                     label: { en: 'Layout', fr: 'Disposition', es: 'Disposición', it: 'Layout', de: 'Layout', },
-                    type: FIELD_TYPE.layout.type,
+                    type: CARD.config.editor.field.layout.type,
                     width: '45%',
                     required: false,
                     isInGroup: null,
@@ -842,6 +543,331 @@ const ATTRIBUTE_MAPPING = {
     device_tracker: {label: "device_tracker", attribute: null},
     weather: {label: "weather", attribute: null},
 };
+
+// Constants for DOM element selectors
+const SELECTORS = {
+    card: 'ha-card',
+    container: 'container',
+    left: 'left',
+    right: 'right',
+    icon: 'icon',
+    shape: 'shape',
+    name: 'name',
+    percentage: 'percentage',
+    secondaryInfo: 'secondary_info',
+    progressBar: 'progress-bar',
+    progressBarInner: 'progress-bar-inner',
+    ha_shape: 'ha-shape',
+    ha_icon: 'ha-icon',
+    alert: 'progress-alert',
+    alert_icon: 'progress-alert-icon',
+    alert_message: 'progress-alert-message'
+};
+
+const CARD_HTML = `
+    <!-- Main container -->
+    <div class="${SELECTORS.container}">
+        <!-- Section gauche avec l'icône -->
+        <div class="${SELECTORS.left}">
+            <${SELECTORS.ha_shape} class="${SELECTORS.shape}"></${SELECTORS.ha_shape}>
+            <${SELECTORS.ha_icon} class="${SELECTORS.icon}"></${SELECTORS.ha_icon}>
+        </div>
+
+        <!-- Section droite avec le texte -->
+        <div class="${SELECTORS.right}">
+            <div class="${SELECTORS.name}"></div>
+            <div class="${SELECTORS.secondaryInfo}">
+                <div class="${SELECTORS.percentage}"></div>
+                <div class="${SELECTORS.progressBar}">
+                    <div class="${SELECTORS.progressBarInner}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- HA Alert -->
+    <${SELECTORS.alert}>
+        <${SELECTORS.ha_icon} class="${SELECTORS.alert_icon}"></${SELECTORS.ha_icon}>
+        <div class="${SELECTORS.alert_message}"></div>
+    </${SELECTORS.alert}>
+`;
+
+const CARD_CSS=`
+    ha-card {
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 0;
+        box-sizing: border-box;
+        border-radius: 12px;
+        margin: 0 auto;
+    }
+
+    .clickable {
+        cursor: pointer;
+    }
+
+    /* main container */
+    .${SELECTORS.container} {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        margin: 7px 10px;
+        gap: 10px;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+    .${SELECTORS.container}.${CARD.layout.vertical.label} {
+        flex-direction: column;
+    }
+    .${SELECTORS.container}.${CARD.layout.horizontal.label} {
+        flex-direction: row;
+    }
+
+    /* .left: icon & shape */
+    .${SELECTORS.left} {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+    }
+    .small .${CARD.layout.vertical.label} .${SELECTORS.left} {
+        margin-top: 6px;
+    }
+
+    .medium .${CARD.layout.vertical.label} .${SELECTORS.left} {
+        margin-top: 10px;
+    }
+
+    .large .${CARD.layout.vertical.label} .${SELECTORS.left} {
+        margin-top: 14px;
+    }
+        
+    .${SELECTORS.shape} {
+        display: block;
+        position: absolute;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: var(--state-icon-color);
+        opacity: 0.2;
+    }
+
+    .${SELECTORS.icon} {
+        position: relative;
+        z-index: 1;
+        width: 24px;
+        height: 24px;
+    }
+
+    /* .right: name & percentage */
+    .${SELECTORS.right} {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        flex-grow: 1;
+        overflow: hidden;
+        width:100%;
+    }
+
+    .${CARD.layout.vertical.label} .${SELECTORS.right} {
+        width: 90%;
+        flex-grow: 0;
+    }
+
+
+    .${SELECTORS.name} {
+        text-align: left;
+        font-size: 1em;
+        font-weight: bold;
+        color: var(--primary-text-color);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: 0;
+        width: 100%;
+    }
+
+    .${SELECTORS.secondaryInfo} {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 10px;
+    }
+
+    .${CARD.layout.vertical.label} .${SELECTORS.secondaryInfo} {
+        display: block;
+    }
+
+    .${SELECTORS.percentage} {
+        font-size: 0.9em;
+        color: var(--primary-text-color);
+        min-width: 40px;
+        text-align: left;
+    }
+
+    /* Progress bar */
+    .${SELECTORS.progressBar} {
+        flex-grow: 1;
+        height: 8px;
+        max-height: 16px;
+        background-color: var(--divider-color);
+        border-radius: 4px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .small .${SELECTORS.progressBar} {
+        height: 8px;
+        max-height: 8px;
+   }
+
+    .medium .${SELECTORS.progressBar} {
+        height: 12px;
+        max-height: 12px;
+   }
+
+    .large .${SELECTORS.progressBar} {
+        height: 16px;
+        max-height: 16px;
+   }
+
+    .${SELECTORS.progressBarInner} {
+        height: 100%;
+        width: 75%;
+        background-color: var(--primary-color);
+        transition: width 0.3s ease;
+    }
+
+
+    .${CARD.layout.vertical.label} .${SELECTORS.name} {
+        text-align: center;
+    }
+
+    .${CARD.layout.vertical.label} .large .${SELECTORS.name} {
+        height: 18px;
+    }
+    .${CARD.layout.vertical.label} .${SELECTORS.percentage} {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 13px;
+        font-size: 0.8em;
+    }
+
+
+    ${SELECTORS.alert} {
+        display: none;
+        position: absolute;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        margin: 0px;
+        gap: 10px;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: 2;
+        background-color: #202833;
+        border-radius: 12px;
+    }
+    
+    .show-${SELECTORS.alert} ${SELECTORS.alert}{
+        display: flex;
+    }
+
+    .${SELECTORS.alert_icon} {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+        margin-left: 8px;
+    }
+    .${SELECTORS.alert_message} {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        flex-grow: 1;
+        overflow: hidden;
+        width:100%;
+        margin-right: 8px;
+    }
+
+    .${CARD.config.editor.field.container.class} {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap; /* Permet le retour à la ligne */
+        gap: 0 2%;
+    }
+    .${CARD.config.editor.field.fieldContainer.class} {
+        display: block;
+        margin-bottom: 12px;
+        height: 73px;
+    }
+
+    .hide-${CARD.config.editor.key.attribute} .${CARD.config.editor.key.attribute},
+    .hide-${CARD.config.editor.key.navigate_to} .${CARD.config.editor.key.navigate_to},
+    .hide-${CARD.config.editor.key.theme} .${CARD.config.editor.key.theme} {
+        display: none;
+    }
+
+    .${CARD.config.editor.field.fieldDescription.class} {
+        width: 90%;
+        font-size: 12px;
+        color: #888;
+    }
+
+    .${CARD.config.documentation.link.class} {
+        text-decoration: none;
+        display: flex;
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 600;
+    }
+
+    .${CARD.config.documentation.outerDiv.class} {
+        width: 50px;
+        height: 50px;
+        background-color: rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    .${CARD.config.documentation.innerDiv.class} {
+        width: 30px;
+        height: 30px;
+        background-color: rgba(255, 255, 255, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+
+    .${CARD.config.documentation.questionMark.class} {
+        font-size: 20px;
+        color: black;
+        font-weight: bold;
+    }
+    
+`;
 
 /**
  * Represents a numeric value that can be valid or invalid.
@@ -1177,7 +1203,7 @@ class ThemeManager {
      * @param {string} [theme=null] - The name of the theme. Defaults to null.
      * @param {number} [percent=0] - The percentage value used to determine the theme's icon and color. Defaults to 0.
      */
-    constructor(theme = null, value = 0, isValid=false) {
+    constructor(theme = null, value = 0, isValid=false, isLinear=false, isCustomTheme=false) {
         /**
          * @type {string}
          * @private
@@ -1203,6 +1229,22 @@ class ThemeManager {
          * @private
          */
         this._isValid = isValid;
+        /**
+         * @type {boolean}
+         * @private
+         */
+        this._isLinear = isLinear;
+        /**
+         * @type {boolean}
+         * @private
+         */
+        this._isCustomTheme = isCustomTheme;
+        /**
+         * @type {array}
+         * @private
+         */
+        this._currentStyle = null;
+
     }
 
     /**
@@ -1221,21 +1263,51 @@ class ThemeManager {
      * @param {string} newTheme - The name of the new theme.
      */
     set theme(newTheme) {
-        if (!THEME[newTheme]) {
+        if (!newTheme || !THEME.hasOwnProperty(newTheme)) {
             this._icon = null;
             this._color = null;
             this._theme = null;
             return;
         }
+        this._isValid = true;
+        this._isCustomTheme = false;
         this._theme = newTheme;
+        this._currentStyle = THEME[newTheme].style;
+        this._isLinear = THEME[newTheme].linear;
+    }
+
+    _checkCustomThemeStructure(customTheme) {
+        const expectedKeys = ["min", "max", "icon", "color"];
+
+        if (!(Array.isArray(customTheme) && customTheme.length > 0 && customTheme.some(item => item !== null))) {
+            return false;
+        }
+        return customTheme.every(item => 
+            typeof item === "object" &&
+            expectedKeys.every(key => key in item)
+        );
+    }
+
+    /**
+     * Sets the custom theme.
+     *
+     * @param {obj} newTheme - Theme def.
+     */
+    set customTheme(newTheme) {
+        this._isValid = false;
+        this._isCustomTheme = true;
+        this._isLinear = false;
+        this._theme = "**CUSTOM**";
+
+        if (!this._checkCustomThemeStructure(newTheme)){
+            return;
+        }
+        this._currentStyle = newTheme;
         this._isValid = true;
     }
 
     get isLinear() {
-        if (this._isValid) {
-            return THEME[this._theme].linear;
-        }
-        return false;
+        return this._isLinear;
     }
 
     get isValid() {
@@ -1288,22 +1360,20 @@ class ThemeManager {
     }
 
     _setLinearStyle() {
-        const currentStyle = THEME[this._theme].style;
-        const lastStep = currentStyle.length - 1;
+        const lastStep = this._currentStyle.length - 1;
         const thresholdSize = 100 / lastStep;
         const percentage = Math.max(0, Math.min(this._value, CARD.config.maxPercent));
-        const themeData = currentStyle[Math.floor(percentage / thresholdSize)];
+        const themeData = this._currentStyle[Math.floor(percentage / thresholdSize)];
         this._icon = themeData.icon;
         this._color = themeData.color;
     }
 
     _setStyle() {
-        const currentStyle = THEME[this._theme].style;
         let themeData = null;
         if (this._value === CARD.config.maxPercent) {
-            themeData = currentStyle[currentStyle.length - 1];
+            themeData = this._currentStyle[this._currentStyle.length - 1];
         } else {
-            themeData = currentStyle.find(level => this._value >= level.min && this._value < level.max);
+            themeData = this._currentStyle.find(level => this._value >= level.min && this._value < level.max);
         }
         if (themeData) {
             this._icon = themeData.icon;
@@ -1771,6 +1841,9 @@ class CardView {
         this.show_more_info             = typeof config.show_more_info === 'boolean' ? config.show_more_info : CARD.config.showMoreInfo;
         this.navigate_to                = config.navigate_to !== undefined ? config.navigate_to : null;
         this._theme.theme               = config.theme;
+        if (Array.isArray(config.custom_theme)) {
+            this._theme.customTheme     = config.custom_theme;
+        }
         this._currentValue.attribute    = config.attribute || null;
     }
 
@@ -2001,19 +2074,20 @@ class EntityProgressCard extends HTMLElement {
      * them into the component's Shadow DOM.
      */
     _buildCard() {
-        const wrapper = document.createElement('ha-card');
-        wrapper.classList.add(CARD.typeName);
-        wrapper.classList.toggle('clickable', this._cardView.show_more_info || this._cardView.navigate_to);
-        wrapper.innerHTML = CARD_HTML;
+        const card = document.createElement(SELECTORS.card);
+        card.classList.add(CARD.typeName);
+        card.classList.toggle('clickable', this._cardView.show_more_info || this._cardView.navigate_to);
+        card.innerHTML = CARD_HTML;
         const style = document.createElement('style');
         style.textContent = CARD_CSS;
 
         // Inject in the DOM
         this.shadowRoot.innerHTML = '';
         this.shadowRoot.appendChild(style);
-        this.shadowRoot.appendChild(wrapper);
+        this.shadowRoot.appendChild(card);
         // store DOM ref to update
         this._elements = {
+            [SELECTORS.card]: card,
             [SELECTORS.container]: this.shadowRoot.querySelector(`.${SELECTORS.container}`),
             [SELECTORS.right]: this.shadowRoot.querySelector(`.${SELECTORS.right}`),
             [SELECTORS.icon]: this.shadowRoot.querySelector(`.${SELECTORS.icon}`),
@@ -2031,17 +2105,20 @@ class EntityProgressCard extends HTMLElement {
     }
 
     _changeBarSize(){
-        let size = CARD.bar_size.small.size;
+        let size = null;
 
         switch (this._cardView.bar_size) {
+            case CARD.bar_size.small.label:
             case CARD.bar_size.medium.label:
-                size = CARD.bar_size.medium.size
-                break;
             case CARD.bar_size.large.label:
-                size = CARD.bar_size.large.size
+                size = this._cardView.bar_size;
+                break;
+            default:
+                size = CARD.bar_size.small.label;
                 break;
         }
-        this._elements[SELECTORS.progressBar].style.height = size;
+        //this._elements[SELECTORS.progressBar].style.height = size;
+        this._elements[SELECTORS.card].classList.toggle(size, true);
     }
 
     /**
@@ -2143,15 +2220,10 @@ class EntityProgressCard extends HTMLElement {
     /**
      * Displays an error alert with the provided message.
      *
-     * This method shows an error alert on the card by updating the corresponding
-     * DOM element (identified by `SELECTORS.alert`).
-     *
      * @param {string} message - The error message to display in the alert.
      */
     _showError(message) {
-        this._updateElement(SELECTORS.alert, (el) => {
-            el.style.display = HTML.flex.show;
-        });
+        this._elements[SELECTORS.card].classList.toggle(`show-${SELECTORS.alert}`, true);
         this._updateElement(SELECTORS.alert_icon, (el) => {
             el.setAttribute("icon", CARD.config.alert_icon);
             el.style.color = CARD.config.alert_icon_color;
@@ -2164,15 +2236,10 @@ class EntityProgressCard extends HTMLElement {
     /**
      * Hides the error alert by setting its display style to hide.
      *
-     * This method hides the error alert on the card by changing the `display`
-     * style of the corresponding DOM element (identified by `SELECTORS.alert`).
-     *
      * @returns {void}
      */
     _hideError() {
-        this._updateElement(SELECTORS.alert, (el) => {
-            el.style.display = HTML.flex.hide;
-        });
+        this._elements[SELECTORS.card].classList.toggle(`show-${SELECTORS.alert}`, false);
     }
 
     /**
@@ -2229,13 +2296,10 @@ window.customCards.push({
  * ConfigManager
  *
  * A class for dynamically managing and manipulating a configuration object.
- * This class provides methods for updating configuration properties,
- * applying deferred updates (debouncing), and notifying changes via a callback.
  *
  * @class ConfigManager
  *
  * @param {Object} initialConfig - The initial configuration object, consisting of key/value pairs.
- * @param {Boolean} debug - Enables or disables debugging mode to log class actions (default value via `CARD.debug`).
  */
 class ConfigManager {
     /**
@@ -2247,15 +2311,6 @@ class ConfigManager {
      *
      * @param {Object} [initialConfig={}] - The initial configuration object used to set default key/value pairs.
      *
-     * Instance Variables:
-     * - `_config` (Object): Stores the current configuration, initialized with the provided `initialConfig`.
-     * - `_onConfigChange` (Function|null): Holds the callback function for notifying configuration changes.
-     * - `_debounceTimeout` (number|null): Tracks the timeout for debouncing property updates.
-     * - `_pendingUpdates` (Object): Temporarily stores updates for deferred application (debouncing).
-     * - `_lastUpdateFromProperty` (Boolean): Tracks whether the last configuration change came from a property update
-     *   to prevent redundant updates.
-     * - `_debug` (Boolean): Indicates whether debugging mode is active, enabling detailed logs.
-     *   The value is sourced from `CARD.debug`.
      */
 
     constructor(initialConfig = {}) {
@@ -2272,10 +2327,6 @@ class ConfigManager {
     /**
      * Getter for the current configuration.
      *
-     * Provides access to the current configuration as a new object, ensuring that external mutations do not
-     * directly affect the internal state. This approach ensures encapsulation and protects the integrity
-     * of the configuration.
-     *
      * @returns {Object} - A copy of the current configuration object.
      */
     get config() {
@@ -2286,8 +2337,6 @@ class ConfigManager {
      * Logs debug messages to the console if debugging is enabled.
      *
      * This method checks the `_debug` flag to determine whether debug logging is enabled.
-     * If enabled, it logs the provided message and optional data to the console using
-     * `console.debug`. This is a utility method for easier debugging of the class behavior.
      *
      * @param {string} message - The message to be logged.
      * @param {any} [data=null] - Optional additional data to log with the message. Can be of any type.
@@ -2377,7 +2426,7 @@ class ConfigManager {
         for (const [key, value] of Object.entries(this._pendingUpdates)) {
             this._logDebug('ConfigManager/_applyPendingUpdates:', [key, value]);
             let curValue = value;
-            if (typeof value === 'string' && value.trim() !== '' && (key in EDITOR_INPUT_FIELDS && EDITOR_INPUT_FIELDS[key].type === FIELD_TYPE.number.type || key === EDITOR_INPUT_FIELDS.max_value.name)) {
+            if (typeof value === 'string' && value.trim() !== '' && (EDITOR_INPUT_FIELDS.hasOwnProperty(key) && EDITOR_INPUT_FIELDS[key].type === CARD.config.editor.field.number.type || key === EDITOR_INPUT_FIELDS.max_value.name)) {
                 const numericValue = Number(value);
                 if (!isNaN(numericValue)) {
                     curValue = numericValue;
@@ -2385,7 +2434,7 @@ class ConfigManager {
             }
 
             if ((typeof curValue === 'string' && curValue.trim() === '') || curValue == null) {
-                if (key in this._config) {
+                if (this._config.hasOwnProperty(key)) {
                     delete this._config[key];
                     hasChanges = true;
                 }
@@ -2468,10 +2517,11 @@ class EntityProgressCardEditor extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
+        this._container = null
         this.config = {};
         this._hass = null;
         this._elements = {};
-        this._overridableElements = {};
+        // this._overridableElements = {};
         this.rendered = false;
         this._currentLanguage = CARD.config.language;
         this._isGuiEditor = false;
@@ -2577,6 +2627,19 @@ class EntityProgressCardEditor extends HTMLElement {
     }
 
     /**
+     * Toggles the visibility of fields based on the `disable` flag.
+     *
+     * This method is used to control the visibility of specific fields in the editor.
+     *
+     * @param {boolean} disable - A boolean flag to control the visibility of the fields.
+     *                            If `true`, fields are hidden. If `false`, fields are shown.
+     */
+    _toggleFieldDisable(key, disable) {
+        this.configManager._logDebug('_toggleFieldDisable - Toggle: ', [key, disable]);
+        this._container.classList.toggle(`hide-${key}`, disable);
+    }
+
+    /**
      * Synchronizes the configuration from the YAML editor with the GUI editor.
      *
      * Note: This ensures that the graphical editor reflects the latest YAML-based changes.
@@ -2584,44 +2647,21 @@ class EntityProgressCardEditor extends HTMLElement {
     _refreshConfigFromYAML() {
         const keys = Object.keys(this._elements);
         keys.forEach(key => {
-            if (this.config[key]) {
-                if (this._elements[key].value !== this.config[key]) {
-                    this._elements[key].value = this.config[key];
-                }
-            } else if (key !== TAP_ACTION_KEY) {
+            if (this.config.hasOwnProperty(key) && this._elements[key].value !== this.config[key]) {
+                this._elements[key].value = this.config[key];
+            } else if (key !== CARD.config.editor.key.tap_action) {
                 this._elements[key].value = '';
             } else {
-                this._elements[TAP_ACTION_KEY].value = this._getTapActionValue();
+                this._elements[CARD.config.editor.key.tap_action].value = this._getTapActionValue();
             }
         });
-        this._toggleFieldDisable(NAVIGATETO_KEY, (this._getTapActionValue() !== NAVIGATETO_KEY));
-        if (typeof this.config[THEME_KEY] === 'undefined') {
-            this._toggleFieldDisable(THEME_KEY, false);
+        this._toggleFieldDisable(CARD.config.editor.key.navigate_to, (this._getTapActionValue() !== CARD.config.editor.key.navigate_to));
+        if (!this.config.hasOwnProperty(CARD.config.editor.key.theme)) {
+            this._toggleFieldDisable(CARD.config.editor.key.theme, false);
         } else {
-            this._toggleFieldDisable(THEME_KEY, this.config[THEME_KEY] in THEME);
+            this._toggleFieldDisable(CARD.config.editor.key.theme, THEME.hasOwnProperty(this.config[CARD.config.editor.key.theme]));
         }
     }
-
-    /**
-     * Toggles the visibility of fields based on the `disable` flag.
-     *
-     * This method is used to control the visibility of specific fields in the editor.
-     * It updates the `style.display` property of each field element stored in the `_overridableElements`
-     * object, hiding or showing the fields based on the `disable` parameter.
-     *
-     * @param {boolean} disable - A boolean flag to control the visibility of the fields.
-     *                            If `true`, fields are hidden. If `false`, fields are shown.
-     */
-    _toggleFieldDisable(key, disable) {
-        this.configManager._logDebug('_toggleFieldDisable - Toggle: ', [key, disable]);
-        const fields = Object.keys(this._overridableElements[key]);
-        fields.forEach(fieldName => {
-            let display = disable ? HTML.block.hide : HTML.block.show;
-            this._overridableElements[key][fieldName].style.display = display;
-            this.configManager._logDebug('_toggleFieldDisable - Toggle: ', [fieldName, this._overridableElements[key], display])
-        });
-    }
-
 
     _updateUnitFromEntity(unitAvailable) {
         if(unitAvailable) {
@@ -2642,8 +2682,8 @@ class EntityProgressCardEditor extends HTMLElement {
      */
     _updateConfigProperty(key, value) {
         this.configManager.updateProperty(key, value);
-        if (key === THEME_KEY) {
-            this._toggleFieldDisable(THEME_KEY, value !== '');
+        if (key === CARD.config.editor.key.theme) {
+            this._toggleFieldDisable(CARD.config.editor.key.theme, value !== '');
         }
         if (key === EDITOR_INPUT_FIELDS.entity.type) {
             const attributeAvailable = this._isEntityWithAttribute(value);
@@ -2677,7 +2717,7 @@ class EntityProgressCardEditor extends HTMLElement {
                 this._updateConfigProperty(CARD.tap_action.more_info, '');
                 // reenable with a value already set
                 this._updateConfigProperty(
-                    CARD.tap_action.navigate_to, this._overridableElements[EDITOR_INPUT_FIELDS.navigate_to.isInGroup][EDITOR_INPUT_FIELDS.navigate_to.name].value);
+                    CARD.tap_action.navigate_to, this._elements[EDITOR_INPUT_FIELDS.navigate_to.name].value);
                 break;
             case CARD.tap_action.more_info:
                 this._updateConfigProperty(CARD.tap_action.navigate_to, '');
@@ -2688,7 +2728,7 @@ class EntityProgressCardEditor extends HTMLElement {
                 this._updateConfigProperty(CARD.tap_action.more_info, false);
                 break;
         }
-        this._toggleFieldDisable(NAVIGATETO_KEY, (value !== NAVIGATETO_KEY));
+        this._toggleFieldDisable(CARD.config.editor.key.navigate_to, (value !== CARD.config.editor.key.navigate_to));
     }
 
     /**
@@ -2749,31 +2789,31 @@ class EntityProgressCardEditor extends HTMLElement {
      */
     _addChoices(select, type, curEntity=null) {
         select.innerHTML = '';
-        const list = (type === FIELD_TYPE.attribute.type) ? this._getAttributeOption(curEntity) : FIELD_OPTIONS[type];
+        const list = (type === CARD.config.editor.field.attribute.type) ? this._getAttributeOption(curEntity) : FIELD_OPTIONS[type];
         this.configManager._logDebug('_addChoices - List ', list);
         if(!list) {
             return;
         }
         list.forEach(optionData => {
-            const option = document.createElement(FIELD_TYPE.listItem.tag);
+            const option = document.createElement(CARD.config.editor.field.listItem.element);
             option.value = optionData.value;
 
-            if (type === FIELD_TYPE.color.type) {
+            if (type === CARD.config.editor.field.color.type) {
                 option.innerHTML = `
                     <span style="display: inline-block; width: 16px; height: 16px; background-color: ${optionData.value}; border-radius: 50%; margin-right: 8px;"></span>
                     ${optionData.label[this._currentLanguage]}
                 `;
-            } else if (type === FIELD_TYPE.layout.type || type === FIELD_TYPE.theme.type || type === FIELD_TYPE.bar_size.type) {
-                const haIcon = document.createElement('ha-icon');
-                haIcon.setAttribute('icon', optionData.icon || 'mdi:alert'); // Définit l'icône par défaut ou celle dans FIELD_OPTIONS
+            } else if (type === CARD.config.editor.field.layout.type || type === CARD.config.editor.field.theme.type || type === CARD.config.editor.field.bar_size.type) {
+                const haIcon = document.createElement(CARD.config.editor.field.iconItem.element);
+                haIcon.setAttribute('icon', optionData.icon || CARD.config.icon); // Définit l'icône par défaut ou celle dans FIELD_OPTIONS
                 haIcon.style.marginRight = '8px'; // Ajuste l'espace entre l'icône et le texte
                 haIcon.style.width = '20px'; // Assurez-vous que la largeur est visible
                 haIcon.style.height = '20px';
                 option.appendChild(haIcon); // Ajouter l'icône à l'option
                 option.append(optionData.label[this._currentLanguage]);
-            } else if (type === FIELD_TYPE.tap_action.type) {
+            } else if (type === CARD.config.editor.field.tap_action.type) {
                 option.innerHTML = `${optionData.label[this._currentLanguage]}`;
-            } else if (type === FIELD_TYPE.attribute.type) {
+            } else if (type === CARD.config.editor.field.attribute.type) {
                 option.innerHTML = `${optionData.label}`;
             }
 
@@ -2791,7 +2831,7 @@ class EntityProgressCardEditor extends HTMLElement {
             inputElement.removeChild(inputElement.firstChild);
         }
         // add option
-        this._addChoices(inputElement, FIELD_TYPE.attribute.type, curEntity);
+        this._addChoices(inputElement, CARD.config.editor.field.attribute.type, curEntity);
     }
 
     /**
@@ -2806,7 +2846,7 @@ class EntityProgressCardEditor extends HTMLElement {
      */
 
     _addEventListener(name, type) {
-        const isHASelect = FIELD_TYPE[type]?.tag === TAG_HASELECT;
+        const isHASelect = CARD.config.editor.field[type]?.element === CARD.config.editor.field.select.element;
         const events = isHASelect ? ['selected'] : ['value-changed', 'input'];
 
         if (isHASelect) {
@@ -2819,7 +2859,7 @@ class EntityProgressCardEditor extends HTMLElement {
             this.configManager._logDebug('EntityProgressCardEditor/handleEvent - new value from GUI: ', event.target.value);
             if (this.rendered && this._checkConfigChangeFromGUI()) {
                 const newValue = event.detail?.value || event.target.value;
-                if (type === FIELD_TYPE.tap_action.type) {
+                if (type === CARD.config.editor.field.tap_action.type) {
                     this._manageTapAction(newValue);
                 } else {
                     this._updateConfigProperty(name, newValue);
@@ -2855,67 +2895,60 @@ class EntityProgressCardEditor extends HTMLElement {
     _createField({ name, label, type, required, isInGroup, description, width }) {
         let inputElement;
         let value = this.config[name] || '';
-        let defaultDisplay = HTML.block.show;
 
         switch (type) {
-            case FIELD_TYPE.entity.type:
-                inputElement = document.createElement(FIELD_TYPE.entity.tag);
+            case CARD.config.editor.field.entity.type:
+                inputElement = document.createElement(CARD.config.editor.field.entity.element);
                 inputElement.hass = this.hass;
+                this._toggleFieldDisable(CARD.config.editor.key.attribute, !(this.config.entity && ATTRIBUTE_MAPPING[this.config.entity.split(".")[0]]));
                 break;
-            case FIELD_TYPE.icon.type:
-                inputElement = document.createElement(FIELD_TYPE.icon.tag);
+            case CARD.config.editor.field.icon.type:
+                inputElement = document.createElement(CARD.config.editor.field.icon.element);
                 break;
-            case FIELD_TYPE.layout.type:
-            case FIELD_TYPE.bar_size.type:
-            case FIELD_TYPE.theme.type:
-            case FIELD_TYPE.color.type:
-            case FIELD_TYPE.tap_action.type:
-            case FIELD_TYPE.attribute.type:
-                inputElement = document.createElement(FIELD_TYPE[type].tag);
+            case CARD.config.editor.field.layout.type:
+            case CARD.config.editor.field.bar_size.type:
+            case CARD.config.editor.field.theme.type:
+            case CARD.config.editor.field.color.type:
+            case CARD.config.editor.field.tap_action.type:
+            case CARD.config.editor.field.attribute.type:
+                inputElement = document.createElement(CARD.config.editor.field[type].element);
                 inputElement.popperOptions = "";
                 this._addChoices(inputElement, type);
-                if (type === FIELD_TYPE.tap_action.type) {
+                if (type === CARD.config.editor.field.tap_action.type) {
                     value = this._getTapActionValue();
+                    this._toggleFieldDisable(CARD.config.editor.key.navigate_to, value !== CARD.config.editor.key.navigate_to);
+                }
+                if (type === CARD.config.editor.field.theme.type) {
+                    this._toggleFieldDisable(CARD.config.editor.key.theme, !!this.config.theme);
                 }
                 break;
-            case FIELD_TYPE.number.type:
-                inputElement = document.createElement(FIELD_TYPE.number.tag);
-                inputElement.type = FIELD_TYPE.number.type;
+            case CARD.config.editor.field.number.type:
+                inputElement = document.createElement(CARD.config.editor.field.number.element);
+                inputElement.type = CARD.config.editor.field.number.type;
                 break;
             default:
-                inputElement = document.createElement(FIELD_TYPE.default.tag);
-                inputElement.type = FIELD_TYPE.default.type;
+                inputElement = document.createElement(CARD.config.editor.field.default.element);
+                inputElement.type = CARD.config.editor.field.default.type;
                 break;
         }
 
         // store element and manage default display
         this._elements[name]=inputElement;
-        if (isInGroup) {
-            if (!this._overridableElements[isInGroup]) {
-                this._overridableElements[isInGroup] = {};
-            }
-            this._overridableElements[isInGroup][name]=inputElement;
-            if ((isInGroup === NAVIGATETO_KEY && this._getTapActionValue() !== NAVIGATETO_KEY) || (isInGroup === THEME_KEY && this.config.theme) || (isInGroup === ENTITY_ATTRIBUTE && !(this.config.entity && ATTRIBUTE_MAPPING[this.config.entity.split(".")[0]]))) {
-                defaultDisplay = HTML.block.hide;
-            }
-        }
-        inputElement.style.display = defaultDisplay;
         inputElement.style.width = '100%';
         inputElement.required = required;
         inputElement.label = label;
         inputElement.value = value;
         this._addEventListener(name, type);
 
-        const fieldContainer = document.createElement(CARD.config.editor.elements.fieldContainer);
+        const fieldContainer = document.createElement(CARD.config.editor.field.fieldContainer.element);
         if (isInGroup) {
-            this._overridableElements[isInGroup][`${name}_description`] = fieldContainer;
+            fieldContainer.classList.add(isInGroup);
         }
-        fieldContainer.classList.add(CARD.config.editor.classes.fieldContainer);
-        fieldContainer.style.display = defaultDisplay;
+        fieldContainer.classList.add(CARD.config.editor.field.fieldContainer.class);
         fieldContainer.style.width = width;
 
-        const fieldDescription = document.createElement(CARD.config.editor.elements.fieldDescription);
-        fieldDescription.classList.add(CARD.config.editor.classes.fieldDescription);
+        const fieldDescription = document.createElement(CARD.config.editor.field.fieldDescription.element);
+        fieldDescription.classList.add(CARD.config.editor.field.fieldDescription.class);
         fieldDescription.innerText = description;
 
         fieldContainer.appendChild(inputElement);
@@ -2926,20 +2959,20 @@ class EntityProgressCardEditor extends HTMLElement {
 
     _makeHelpIcon() {
         // Lien cliquable
-        const link = document.createElement(CARD.config.documentation.elements.link);
+        const link = document.createElement(CARD.config.documentation.link.element);
         link.href = CARD.config.documentation.attributes.documentationUrl;
         link.target = CARD.config.documentation.attributes.linkTarget;
-        link.classList.add(CARD.config.documentation.classes.link);
+        link.classList.add(CARD.config.documentation.link.class);
         
-        const outerDiv = document.createElement(CARD.config.documentation.elements.outerDiv);
-        outerDiv.classList.add(CARD.config.documentation.classes.outerDiv);
+        const outerDiv = document.createElement(CARD.config.documentation.outerDiv.element);
+        outerDiv.classList.add(CARD.config.documentation.outerDiv.class);
         
-        const innerDiv = document.createElement(CARD.config.documentation.elements.innerDiv);
-        innerDiv.classList.add(CARD.config.documentation.classes.innerDiv);
+        const innerDiv = document.createElement(CARD.config.documentation.innerDiv.element);
+        innerDiv.classList.add(CARD.config.documentation.innerDiv.class);
         
-        const questionMark = document.createElement(CARD.config.documentation.elements.questionMark);
-        questionMark.textContent = CARD.config.documentation.text.questionMark;
-        questionMark.classList.add(CARD.config.documentation.classes.questionMark);
+        const questionMark = document.createElement(CARD.config.documentation.questionMark.element);
+        questionMark.textContent = CARD.config.documentation.attributes.text;
+        questionMark.classList.add(CARD.config.documentation.questionMark.class);
         
         innerDiv.appendChild(questionMark);
         outerDiv.appendChild(innerDiv);
@@ -2969,11 +3002,11 @@ class EntityProgressCardEditor extends HTMLElement {
      *         component is successfully loaded and available.
      */
     async loadEntityPicker() {
-        if (!window.customElements.get(FIELD_TYPE.entity.tag)) {
+        if (!window.customElements.get(CARD.config.editor.field.entity.element)) {
             const ch = await window.loadCardHelpers();
             const c = await ch.createCardElement({ type: "entities", entities: [] });
             await c.constructor.getConfigElement();
-            const haEntityPicker = window.customElements.get(FIELD_TYPE.entity.tag);
+            const haEntityPicker = window.customElements.get(CARD.config.editor.field.entity.element);
         }
     }
 
@@ -2987,11 +3020,11 @@ class EntityProgressCardEditor extends HTMLElement {
         style.textContent = CARD_CSS;
         const fragment = document.createDocumentFragment();
         fragment.appendChild(style);
-        const container = document.createElement(CARD.config.editor.elements.editor);
-        container.classList.add(CARD.config.editor.classes.editor);
+        this._container = document.createElement(CARD.config.editor.field.container.element);
+        this._container.classList.add(CARD.config.editor.field.container.class);
 
         Object.entries(EDITOR_INPUT_FIELDS).forEach(([key, field]) => {
-            container.appendChild(this._createField({
+            this._container.appendChild(this._createField({
                 name: field.name,
                 label: field.label[this._currentLanguage],
                 type: field.type,
@@ -3002,17 +3035,13 @@ class EntityProgressCardEditor extends HTMLElement {
             }));
         });
 
-        container.appendChild(this._makeHelpIcon());
-        fragment.appendChild(container);
+        this._container.appendChild(this._makeHelpIcon());
+        fragment.appendChild(this._container);
         this.shadowRoot.appendChild(fragment);
     }
 }
 
 /** --------------------------------------------------------------------------
  * Registers the custom element for the EntityProgressCardEditor editor.
- * This registration step enables the creation and use of the custom card editor
- * in the Home Assistant's UI.
- *
- * @returns {void}
  */
 customElements.define(CARD.editor, EntityProgressCardEditor);
