@@ -140,6 +140,34 @@ You can customize the card using the following parameters:
     - `battery`
     - `light`
 
+- **`custom_theme`** [array] *(optional)*:
+  
+  Defines a list of custom theme rules based on value ranges. Setting this variable disables the theme variable.
+  This variable can only be defined in YAML.
+
+  *Properties of each item:*
+    - min [number] (required): The minimum value for this range.
+    - max [number] (required): The maximum value for this range.
+    - color [string] (required): The color of the icon.
+    - icon [string] (required): The icon to display.
+
+  *Example:*
+  ```yaml
+  custom_theme:
+    - min: 0
+      max: 10
+      color: yellow
+      icon: mdi:abacus
+    - min: 10
+      max: 20
+      color: green
+      icon: mdi:ab-testing
+    - min: 20
+      max: 50
+      color: var(--state-icon-color)
+      icon: mdi:abacus
+  ```
+
 - **`max_value`** [numeric/entity] *(optional)*:  
   Allows representing standard values and calculating the percentage relative to the maximum value.
   This value can be numeric (float/int) or an entity and real value must be > 0.
