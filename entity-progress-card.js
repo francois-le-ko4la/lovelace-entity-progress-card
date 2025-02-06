@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.0.34
+ * @version 1.0.36
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION='1.0.34';
+const VERSION='1.0.36';
 const CARD = {
     typeName: 'entity-progress-card',
     name: 'Entity progress card',
@@ -178,15 +178,19 @@ const THEME = {
     temperature:  {
         linear: false,
         style: [
-            { min: -50, max:8,   icon: 'mdi:thermometer', color: 'var(--deep-purple-color)' },
-            { min: 8,   max:16,  icon: 'mdi:thermometer', color: 'var(--indigo-color)'      },
-            { min: 16,  max:18,  icon: 'mdi:thermometer', color: 'var(--light-blue-color)'  },
-            { min: 18,  max:20,  icon: 'mdi:thermometer', color: 'var(--teal-color)'        },
-            { min: 20,  max:25,  icon: 'mdi:thermometer', color: 'var(--success-color)'     },
-            { min: 25,  max:27,  icon: 'mdi:thermometer', color: 'var(--yellow-color)'      },
-            { min: 27,  max:29,  icon: 'mdi:thermometer', color: 'var(--accent-color)'      },
-            { min: 29,  max:34,  icon: 'mdi:thermometer', color: 'var(--deep-orange-color)' },
-            { min: 34,  max:100, icon: 'mdi:thermometer', color: 'var(--red-color)'         },
+            { min: -50, max: -30, icon: 'mdi:thermometer', color: 'var(--deep-purple-color)'    },
+            { min: -30, max: -15, icon: 'mdi:thermometer', color: 'var(--dark-blue-color)'      },
+            { min: -15, max: -2,  icon: 'mdi:thermometer', color: 'var(--blue-color)'           },
+            { min: -2,  max: 2,   icon: 'mdi:thermometer', color: 'var(--light-blue-color)'     },
+            { min: 2,   max: 8,   icon: 'mdi:thermometer', color: 'var(--cyan-color)'           },
+            { min: 8,   max: 16,  icon: 'mdi:thermometer', color: 'var(--teal-color)'           },
+            { min: 16,  max: 18,  icon: 'mdi:thermometer', color: 'var(--green-teal-color)'     },
+            { min: 18,  max: 20,  icon: 'mdi:thermometer', color: 'var(--light-green-color)'    },
+            { min: 20,  max: 25,  icon: 'mdi:thermometer', color: 'var(--success-color)'        },
+            { min: 25,  max: 27,  icon: 'mdi:thermometer', color: 'var(--yellow-color)'         },
+            { min: 27,  max: 29,  icon: 'mdi:thermometer', color: 'var(--amber-color)'          },
+            { min: 29,  max: 34,  icon: 'mdi:thermometer', color: 'var(--deep-orange-color)'    },
+            { min: 34,  max: 100, icon: 'mdi:thermometer', color: 'var(--red-color)'            }
         ],
     },
     humidity: {
@@ -2404,7 +2408,7 @@ class ConfigManager {
 
         this._debounceTimeout = setTimeout(() => {
             this._applyPendingUpdates();
-        }, CARD.debounce); // Temps configurable (200ms ici)
+        }, CARD.debounce);
         this._pendingUpdatesLock = false;
     }
 
@@ -2521,7 +2525,6 @@ class EntityProgressCardEditor extends HTMLElement {
         this.config = {};
         this._hass = null;
         this._elements = {};
-        // this._overridableElements = {};
         this.rendered = false;
         this._currentLanguage = CARD.config.language;
         this._isGuiEditor = false;
@@ -2777,7 +2780,6 @@ class EntityProgressCardEditor extends HTMLElement {
         return availableAttributes;
     }
 
-
     /**
      * Adds a list of choices to a given `<select>` element based on the specified list type.
      *
@@ -2805,11 +2807,11 @@ class EntityProgressCardEditor extends HTMLElement {
                 `;
             } else if (type === CARD.config.editor.field.layout.type || type === CARD.config.editor.field.theme.type || type === CARD.config.editor.field.bar_size.type) {
                 const haIcon = document.createElement(CARD.config.editor.field.iconItem.element);
-                haIcon.setAttribute('icon', optionData.icon || CARD.config.icon); // Définit l'icône par défaut ou celle dans FIELD_OPTIONS
-                haIcon.style.marginRight = '8px'; // Ajuste l'espace entre l'icône et le texte
-                haIcon.style.width = '20px'; // Assurez-vous que la largeur est visible
+                haIcon.setAttribute('icon', optionData.icon || CARD.config.icon);
+                haIcon.style.marginRight = '8px';
+                haIcon.style.width = '20px';
                 haIcon.style.height = '20px';
-                option.appendChild(haIcon); // Ajouter l'icône à l'option
+                option.appendChild(haIcon);
                 option.append(optionData.label[this._currentLanguage]);
             } else if (type === CARD.config.editor.field.tap_action.type) {
                 option.innerHTML = `${optionData.label[this._currentLanguage]}`;
