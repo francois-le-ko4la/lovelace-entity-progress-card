@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.0.35
+ * @version 1.0.36
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION='1.0.35';
+const VERSION='1.0.36';
 const CARD = {
     typeName: 'entity-progress-card',
     name: 'Entity progress card',
@@ -606,6 +606,7 @@ const CARD_CSS=`
         box-sizing: border-box;
         border-radius: 12px;
         margin: 0 auto;
+        overflow: hidden;
     }
 
     .clickable {
@@ -613,18 +614,20 @@ const CARD_CSS=`
     }
 
     /* main container */
-    .${SELECTORS.container} {
+    .${SELECTORS.container},
+    ${SELECTORS.alert} {
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: center;
         padding: 0;
-        margin: 7px 10px;
+        margin: 0px 10px;
         gap: 10px;
         width: 100%;
         height: 100%;
         overflow: hidden;
     }
+
     .${SELECTORS.container}.${CARD.layout.vertical.label} {
         flex-direction: column;
     }
@@ -633,7 +636,7 @@ const CARD_CSS=`
     }
 
     /* .left: icon & shape */
-    .${SELECTORS.left} {
+    .${SELECTORS.left}, .${SELECTORS.alert_icon} {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -643,12 +646,13 @@ const CARD_CSS=`
         height: 36px;
         flex-shrink: 0;
     }
+
     .small .${CARD.layout.vertical.label} .${SELECTORS.left} {
-        margin-top: 6px;
+        margin-top: 10px;
     }
 
     .medium .${CARD.layout.vertical.label} .${SELECTORS.left} {
-        margin-top: 10px;
+        margin-top: 12px;
     }
 
     .large .${CARD.layout.vertical.label} .${SELECTORS.left} {
@@ -673,7 +677,8 @@ const CARD_CSS=`
     }
 
     /* .right: name & percentage */
-    .${SELECTORS.right} {
+    .${SELECTORS.right},
+    .${SELECTORS.alert_message} {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -683,28 +688,33 @@ const CARD_CSS=`
     }
 
     .${CARD.layout.vertical.label} .${SELECTORS.right} {
-        width: 90%;
         flex-grow: 0;
     }
 
 
     .${SELECTORS.name} {
-        text-align: left;
-        font-size: 1em;
-        font-weight: bold;
-        color: var(--primary-text-color);
+        width: 100%;
+        min-width: 0;
+        height: 20px;
+
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        min-width: 0;
-        width: 100%;
+
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 20px;
+        letter-spacing: 0.1px;
+        text-align: left;
+
+        color: var(--primary-text-color);
     }
 
     .${SELECTORS.secondaryInfo} {
         display: flex;
         flex-direction: row;
         align-items: center;
-        justify-content: flex-start;
+        justify-content: center;
         gap: 10px;
     }
 
@@ -713,10 +723,16 @@ const CARD_CSS=`
     }
 
     .${SELECTORS.percentage} {
-        font-size: 0.9em;
-        color: var(--primary-text-color);
-        min-width: 40px;
+        display: flex;
+        align-items: center;
+        height: 16px;
+        min-width: 45px;
         text-align: left;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 16px;
+        letter-spacing: 0.4px;
+        color: var(--primary-text-color);
     }
 
     /* Progress bar */
@@ -750,8 +766,8 @@ const CARD_CSS=`
         width: 75%;
         background-color: var(--primary-color);
         transition: width 0.3s ease;
+        will-change: width;
     }
-
 
     .${CARD.layout.vertical.label} .${SELECTORS.name} {
         text-align: center;
@@ -760,30 +776,33 @@ const CARD_CSS=`
     .${CARD.layout.vertical.label} .large .${SELECTORS.name} {
         height: 18px;
     }
+
     .${CARD.layout.vertical.label} .${SELECTORS.percentage} {
-        display: flex;
         align-items: center;
         justify-content: center;
+    }
+
+    .small .${CARD.layout.vertical.label} .${SELECTORS.percentage} {
+        margin-bottom: 1px;
+    }
+
+    .medium .${CARD.layout.vertical.label} .${SELECTORS.percentage} {
+        height: 15px;
+        font-size: 0.8em;
+    }
+
+    .large .${CARD.layout.vertical.label} .${SELECTORS.percentage} {
         height: 13px;
         font-size: 0.8em;
     }
 
-
     ${SELECTORS.alert} {
         display: none;
         position: absolute;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-        margin: 0px;
-        gap: 10px;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
         z-index: 2;
         background-color: #202833;
         border-radius: 12px;
+        margin: 0;
     }
     
     .show-${SELECTORS.alert} ${SELECTORS.alert}{
@@ -791,30 +810,18 @@ const CARD_CSS=`
     }
 
     .${SELECTORS.alert_icon} {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        width: 36px;
-        height: 36px;
-        flex-shrink: 0;
-        margin-left: 8px;
+        margin-left: 10px;
     }
+
     .${SELECTORS.alert_message} {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        flex-grow: 1;
-        overflow: hidden;
-        width:100%;
         margin-right: 8px;
+        letter-spacing: 0.1px;
     }
 
     .${CARD.config.editor.field.container.class} {
         display: flex;
         flex-direction: row;
-        flex-wrap: wrap; /* Permet le retour à la ligne */
+        flex-wrap: wrap;
         gap: 0 2%;
     }
     .${CARD.config.editor.field.fieldContainer.class} {
@@ -1929,7 +1936,7 @@ class CardView {
      */
     get percent() {
         if(this.isAvailable) {
-            return this._percentHelper.percent;
+            return Math.min(CARD.config.maxPercent, Math.max(0, this._percentHelper.percent));
         }
         return CARD.config.minValue;
     }
@@ -2779,6 +2786,7 @@ class EntityProgressCardEditor extends HTMLElement {
 
         return availableAttributes;
     }
+
 
     /**
      * Adds a list of choices to a given `<select>` element based on the specified list type.
