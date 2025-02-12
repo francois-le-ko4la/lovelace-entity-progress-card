@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.0.36
+ * @version 1.0.37
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION='1.0.36';
+const VERSION='1.0.37';
 const CARD = {
     typeName: 'entity-progress-card',
     name: 'Entity progress card',
@@ -1289,16 +1289,43 @@ class ThemeManager {
 
     _checkCustomThemeStructure(customTheme) {
         const expectedKeys = ["min", "max", "icon", "color"];
-
-        if (!(Array.isArray(customTheme) && customTheme.length > 0 && customTheme.some(item => item !== null))) {
+    
+        // array with 1 element
+        if (!Array.isArray(customTheme) || customTheme.length === 0) {
             return false;
         }
-        return customTheme.every(item => 
-            typeof item === "object" &&
-            expectedKeys.every(key => key in item)
-        );
+    
+        // check all elements
+        let isFirstItem = true;
+        let lastMax = null;
+    
+        return customTheme.every(item => {
+            if (item === null || typeof item !== "object") {
+                return false;
+            }
+    
+            // check keys
+            if (!expectedKeys.every(key => key in item)) {
+                return false;
+            }
+    
+            // min < max
+            if (item.min >= item.max) {
+                return false;
+            }
+    
+            // check continuity
+            if (!isFirstItem && item.min !== lastMax) {
+                return false;
+            }
+    
+            isFirstItem = false;
+            lastMax = item.max;
+    
+            return true;
+        });
     }
-
+    
     /**
      * Sets the custom theme.
      *
@@ -1372,7 +1399,7 @@ class ThemeManager {
 
     _setLinearStyle() {
         const lastStep = this._currentStyle.length - 1;
-        const thresholdSize = 100 / lastStep;
+        const thresholdSize = CARD.config.maxPercent / lastStep;
         const percentage = Math.max(0, Math.min(this._value, CARD.config.maxPercent));
         const themeData = this._currentStyle[Math.floor(percentage / thresholdSize)];
         this._icon = themeData.icon;
@@ -1381,8 +1408,10 @@ class ThemeManager {
 
     _setStyle() {
         let themeData = null;
-        if (this._value === CARD.config.maxPercent) {
+        if (this._value >= this._currentStyle[this._currentStyle.length - 1].max) {
             themeData = this._currentStyle[this._currentStyle.length - 1];
+        } else if (this._value < this._currentStyle[0].min) {
+            themeData = this._currentStyle[0];
         } else {
             themeData = this._currentStyle.find(level => this._value >= level.min && this._value < level.max);
         }
