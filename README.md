@@ -182,11 +182,17 @@ You can customize the card using the following parameters:
 > [!TIP]
 > If you wish to define colors for discontinuous ranges, you will need to create intermediary ranges to ensure continuity, using default colors such as var(--state-icon-color) for these filler ranges.
 >   ```yaml
->  # default color: var(--state-icon-color)
->  # deffault icon: icon: mdi:abacus
->  # specific range:
->  #      10 -> 20 - green / mdi:ab-testing
->  #      50 -> 60 - red / mdi:ab-testing
+>  # Default settings:
+>  #   - Color: var(--state-icon-color)
+>  #   - Icon: mdi:abacus
+>  # 
+>  # Specific ranges:
+>  #   - 10 to 20: 
+>  #       - Color: green
+>  #       - Icon: mdi:ab-testing
+>  #   - 50 to 60: 
+>  #       - Color: red
+>  #       - Icon: mdi:ab-testing
 >  custom_theme:
 >    - min: 0
 >      max: 10
