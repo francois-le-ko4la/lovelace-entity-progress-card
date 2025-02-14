@@ -194,22 +194,27 @@ You can customize the card using the following parameters:
 >  #       - Color: red
 >  #       - Icon: mdi:ab-testing
 >  custom_theme:
+>    # value < 10:
 >    - min: 0
 >      max: 10
 >      color: var(--state-icon-color)
 >      icon: mdi:abacus
+>    # 10 <= value < 20:
 >    - min: 10
 >      max: 20
 >      color: green
 >      icon: mdi:ab-testing
+>    # 20 <= value < 50:
 >    - min: 20
 >      max: 50
 >      color: var(--state-icon-color)
 >      icon: mdi:abacus
+>    # 50 <= value < 60:
 >    - min: 50
 >      max: 60
 >      color: red
 >      icon: mdi:ab-testing
+>    # 60 <= value < 70:
 >    - min: 60
 >      max: 70
 >      color: var(--state-icon-color)
