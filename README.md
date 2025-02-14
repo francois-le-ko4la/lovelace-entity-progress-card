@@ -168,6 +168,48 @@ You can customize the card using the following parameters:
       icon: mdi:abacus
   ```
 
+> [!NOTE]
+> [`min`, `max`[ / [`min`, `max`) : The range includes the min value but excludes the max value.
+
+> [!IMPORTANT]
+> Please follow these guidelines for defining your themes:
+> - Intervals must be valid: Each range should respect the rule `min` < `max`.
+> - Seamless continuity: Each `max` must connect smoothly to the next `min`, with no awkward gaps or overlaps between ranges.
+> - Boundary flexibility: If a value falls below the lowest defined interval, the lowest range will be applied. Conversely, if a value exceeds the highest interval, the highest range will be used.
+> 
+> This is an advanced feature that may require some trial and error during customization. For a seamless editing experience, if the theme definition is incorrect, the card simulation will revert to a standard configuration and ignore the `custom_theme` definition.
+
+> [!TIP]
+> If you wish to define colors for discontinuous ranges, you will need to create intermediary ranges to ensure continuity, using default colors such as var(--state-icon-color) for these filler ranges.
+>   ```yaml
+>  # default color: var(--state-icon-color)
+>  # deffault icon: icon: mdi:abacus
+>  # specific range:
+>  #      10 -> 20 - green / mdi:ab-testing
+>  #      50 -> 60 - red / mdi:ab-testing
+>  custom_theme:
+>    - min: 0
+>      max: 10
+>      color: var(--state-icon-color)
+>      icon: mdi:abacus
+>    - min: 10
+>      max: 20
+>      color: green
+>      icon: mdi:ab-testing
+>    - min: 20
+>      max: 50
+>      color: var(--state-icon-color)
+>      icon: mdi:abacus
+>    - min: 50
+>      max: 60
+>      color: red
+>      icon: mdi:ab-testing
+>    - min: 60
+>      max: 70
+>      color: var(--state-icon-color)
+>      icon: mdi:abacus
+>  ```
+
 - **`max_value`** [numeric/entity] *(optional)*:  
   Allows representing standard values and calculating the percentage relative to the maximum value.
   This value can be numeric (float/int) or an entity and real value must be > 0.
