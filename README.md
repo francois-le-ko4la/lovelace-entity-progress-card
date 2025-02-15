@@ -214,7 +214,7 @@ You can customize the card using the following parameters:
 >      max: 60
 >      color: red
 >      icon: mdi:ab-testing
->    # 60 <= value < 70:
+>    # 60 <= value:
 >    - min: 60
 >      max: 70
 >      color: var(--state-icon-color)
