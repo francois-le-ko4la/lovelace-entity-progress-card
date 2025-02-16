@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.0.37
+ * @version 1.0.38
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION='1.0.37';
+const VERSION='1.0.38';
 const CARD = {
     typeName: 'entity-progress-card',
     name: 'Entity progress card',
@@ -65,17 +65,48 @@ const CARD = {
     },
     config: {
         language: "en",
-        minValue: 0,
-        maxPercent: 100,
+        value: {min: 0, max: 100 },
         unit: {default: '%', fahrenheit: '°F' },
-        color: 'var(--state-icon-color)',
-        icon: 'mdi:alert',
-        alert_icon: 'mdi:alert-circle-outline',
-        alert_icon_color: "#0080ff",
+        color: {default: 'var(--state-icon-color)', disabled: 'var(--dark-grey-color)' },
+        icon: {
+            default: { icon: 'mdi:alert', },
+            alert: { icon: 'mdi:alert-circle-outline', color: '#0080ff' },
+            badge: { icon: 'mdi:exclamation-thick', color: 'white' },
+            },
+        dynamicStyle:{
+            iconAndShape: {
+                color: { var: '--epb-icon-and-shape-color', default: 'var(--state-icon-color)' },
+            },
+            progressBar: { 
+                color: { var: '--epb-progress-bar-color', default: 'var(--state-icon-color)' },
+                size: { var: '--epb-progress-bar-size', default: '0%' },
+            },
+            show: 'show',
+            hide: 'hide',
+            clickable: 'clickable'
+        },
         showMoreInfo: true,
         decimal: {
             percentage: 0,
             other: 2
+        },
+        html: {
+            card: {element: 'ha-card'},
+            container: {element: 'div', class:'container'},
+            left: {element: 'div', class:'left'},
+            shape: {element: 'ha-shape', class:'shape'},
+            icon: {element: 'ha-icon', class:'icon'},
+            badge: {element: 'div', class:'badge'},
+            badgeIcon: {element: 'ha-icon', class:'badge-icon'},
+            right: {element: 'div', class:'right'},
+            name: {element: 'div', class:'name'},
+            secondaryInfo: {element: 'div', class:'secondary-info'},
+            percentage: {element: 'div', class:'percentage'},
+            progressBar: {element: 'div', class:'progress-bar'},
+            progressBarInner: {element: 'div', class:'progress-bar-inner'},
+            alert: {element: 'progress-alert'},
+            alertIcon: {element: 'ha-icon', class:'progress-alert-icon'},
+            alertMessage: {element: 'div', class:'progress-alert-message'},
         },
         editor: {
             field: {
@@ -95,7 +126,6 @@ const CARD = {
                 listItem: { type: 'list item', element: 'mwc-list-item'},
                 iconItem: { element: 'ha-icon'},
                 select: { element: 'ha-select'},
-
             },
             key: {
                 attribute: "attribute",
@@ -103,7 +133,6 @@ const CARD = {
                 theme: "theme",
                 tap_action: "tap_action"
             },
-
         },
         documentation: {
             link: { element: 'a', class: 'documentation-link'},
@@ -116,8 +145,8 @@ const CARD = {
                 documentationUrl: 'https://github.com/francois-le-ko4la/lovelace-entity-progress-card/',
             },
         },
-
     },
+    entity: { state: { unavailable: 'unavailable', unknown: 'unknown'}, },
     debounce: 100,
     debug: true,
 };
@@ -243,12 +272,19 @@ const MSG = {
         it: "entity: Entità non trovata in HA.",
         de: "entity: Entität in HA nicht gefunden.",
     },
+    entityUnknown: {
+        en: "Unknown",
+        fr: "Inconnu",
+        es: "Desconocido",
+        it: "Sconosciuto",
+        de: "Unbekannt"
+    },
     entityUnavailable: {
-        en: "unavailable",
-        fr: "indisponible",
-        es: "no disponible",
-        it: "non disponibile",
-        de: "nicht verfügbar",
+        en: "Unavailable",
+        fr: "Indisponible",
+        es: "No disponible",
+        it: "Non disponibile",
+        de: "Nicht verfügbar",
     },
     attributeNotFound: {
         en: "attribute: Attribute not found in HA.",
@@ -548,55 +584,38 @@ const ATTRIBUTE_MAPPING = {
     weather: {label: "weather", attribute: null},
 };
 
-// Constants for DOM element selectors
-const SELECTORS = {
-    card: 'ha-card',
-    container: 'container',
-    left: 'left',
-    right: 'right',
-    icon: 'icon',
-    shape: 'shape',
-    name: 'name',
-    percentage: 'percentage',
-    secondaryInfo: 'secondary_info',
-    progressBar: 'progress-bar',
-    progressBarInner: 'progress-bar-inner',
-    ha_shape: 'ha-shape',
-    ha_icon: 'ha-icon',
-    alert: 'progress-alert',
-    alert_icon: 'progress-alert-icon',
-    alert_message: 'progress-alert-message'
-};
-
 const CARD_HTML = `
     <!-- Main container -->
-    <div class="${SELECTORS.container}">
-        <!-- Section gauche avec l'icône -->
-        <div class="${SELECTORS.left}">
-            <${SELECTORS.ha_shape} class="${SELECTORS.shape}"></${SELECTORS.ha_shape}>
-            <${SELECTORS.ha_icon} class="${SELECTORS.icon}"></${SELECTORS.ha_icon}>
-        </div>
+    <${CARD.config.html.container.element} class="${CARD.config.html.container.class}">
+        <!-- icon/shape -->
+        <${CARD.config.html.left.element} class="${CARD.config.html.left.class}">
+            <${CARD.config.html.shape.element} class="${CARD.config.html.shape.class}"></${CARD.config.html.shape.element}>
+            <${CARD.config.html.icon.element} class="${CARD.config.html.icon.class}"></${CARD.config.html.icon.element}>
+            <${CARD.config.html.badge.element} class="${CARD.config.html.badge.class}">
+                <${CARD.config.html.badgeIcon.element} class="${CARD.config.html.badgeIcon.class}"></${CARD.config.html.badgeIcon.element}>
+            </${CARD.config.html.badge.element}>          
+        </${CARD.config.html.left.element}>
 
-        <!-- Section droite avec le texte -->
-        <div class="${SELECTORS.right}">
-            <div class="${SELECTORS.name}"></div>
-            <div class="${SELECTORS.secondaryInfo}">
-                <div class="${SELECTORS.percentage}"></div>
-                <div class="${SELECTORS.progressBar}">
-                    <div class="${SELECTORS.progressBarInner}"></div>
-                </div>
-            </div>
-        </div>
-    </div>
+        <!-- infos/progress bar -->
+        <${CARD.config.html.right.element} class="${CARD.config.html.right.class}">
+            <${CARD.config.html.name.element} class="${CARD.config.html.name.class}"></${CARD.config.html.name.element}>
+            <${CARD.config.html.secondaryInfo.element} class="${CARD.config.html.secondaryInfo.class}">
+                <${CARD.config.html.percentage.element} class="${CARD.config.html.percentage.class}"></${CARD.config.html.percentage.element}>
+                <${CARD.config.html.progressBar.element} class="${CARD.config.html.progressBar.class}">
+                    <${CARD.config.html.progressBarInner.element} class="${CARD.config.html.progressBarInner.class}"></${CARD.config.html.progressBarInner.element}>
+                </${CARD.config.html.progressBar.element}>
+            </${CARD.config.html.secondaryInfo.element}>
+        </${CARD.config.html.right.element}>
+    </${CARD.config.html.container.element}>
     <!-- HA Alert -->
-    <${SELECTORS.alert}>
-        <${SELECTORS.ha_icon} class="${SELECTORS.alert_icon}"></${SELECTORS.ha_icon}>
-        <div class="${SELECTORS.alert_message}"></div>
-    </${SELECTORS.alert}>
+    <${CARD.config.html.alert.element}>
+        <${CARD.config.html.alertIcon.element} class="${CARD.config.html.alertIcon.class}"></${CARD.config.html.alertIcon.element}>
+        <${CARD.config.html.alertMessage.element} class="${CARD.config.html.alertMessage.class}"></${CARD.config.html.alertMessage.element}>
+    </${CARD.config.html.alert.element}>
 `;
 
-const CARD_CSS=`
-    ha-card {
+const CARD_CSS = `
+    ${CARD.config.html.card.element} {
         height: 100%;
         display: flex;
         flex-direction: row;
@@ -609,13 +628,13 @@ const CARD_CSS=`
         overflow: hidden;
     }
 
-    .clickable {
+    .${CARD.config.dynamicStyle.clickable} {
         cursor: pointer;
     }
 
     /* main container */
-    .${SELECTORS.container},
-    ${SELECTORS.alert} {
+    .${CARD.config.html.container.class},
+    ${CARD.config.html.alert.element} {
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -628,15 +647,15 @@ const CARD_CSS=`
         overflow: hidden;
     }
 
-    .${SELECTORS.container}.${CARD.layout.vertical.label} {
+    .${CARD.layout.vertical.label} .${CARD.config.html.container.class} {
         flex-direction: column;
     }
-    .${SELECTORS.container}.${CARD.layout.horizontal.label} {
+    .${CARD.layout.horizontal.label} .${CARD.config.html.container.class} {
         flex-direction: row;
     }
 
     /* .left: icon & shape */
-    .${SELECTORS.left}, .${SELECTORS.alert_icon} {
+    .${CARD.config.html.left.class}, .${CARD.config.html.alertIcon.class} {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -647,38 +666,39 @@ const CARD_CSS=`
         flex-shrink: 0;
     }
 
-    .small .${CARD.layout.vertical.label} .${SELECTORS.left} {
+    .${CARD.bar_size.small.label} .${CARD.layout.vertical.label} .${CARD.config.html.left.class} {
         margin-top: 10px;
     }
 
-    .medium .${CARD.layout.vertical.label} .${SELECTORS.left} {
+    .${CARD.bar_size.medium.label} .${CARD.layout.vertical.label} .${CARD.config.html.left.class} {
         margin-top: 12px;
     }
 
-    .large .${CARD.layout.vertical.label} .${SELECTORS.left} {
+    .${CARD.bar_size.large.label} .${CARD.layout.vertical.label} .${CARD.config.html.left.class} {
         margin-top: 14px;
     }
         
-    .${SELECTORS.shape} {
+    .${CARD.config.html.shape.class} {
         display: block;
         position: absolute;
         width: 36px;
         height: 36px;
         border-radius: 50%;
-        background-color: var(--state-icon-color);
+        background-color: var(${CARD.config.dynamicStyle.iconAndShape.color.var}, ${CARD.config.dynamicStyle.iconAndShape.color.default});
         opacity: 0.2;
     }
 
-    .${SELECTORS.icon} {
+    .${CARD.config.html.icon.class} {
         position: relative;
         z-index: 1;
         width: 24px;
         height: 24px;
+        color: var(${CARD.config.dynamicStyle.iconAndShape.color.var}, ${CARD.config.dynamicStyle.iconAndShape.color.default});
     }
 
     /* .right: name & percentage */
-    .${SELECTORS.right},
-    .${SELECTORS.alert_message} {
+    .${CARD.config.html.right.class},
+    .${CARD.config.html.alertMessage.class} {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -687,12 +707,11 @@ const CARD_CSS=`
         width:100%;
     }
 
-    .${CARD.layout.vertical.label} .${SELECTORS.right} {
+    .${CARD.layout.vertical.label} .${CARD.config.html.right.class} {
         flex-grow: 0;
     }
 
-
-    .${SELECTORS.name} {
+    .${CARD.config.html.name.class} {
         width: 100%;
         min-width: 0;
         height: 20px;
@@ -710,7 +729,7 @@ const CARD_CSS=`
         color: var(--primary-text-color);
     }
 
-    .${SELECTORS.secondaryInfo} {
+    .${CARD.config.html.secondaryInfo.class} {
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -718,11 +737,11 @@ const CARD_CSS=`
         gap: 10px;
     }
 
-    .${CARD.layout.vertical.label} .${SELECTORS.secondaryInfo} {
+    .${CARD.layout.vertical.label} .${CARD.config.html.secondaryInfo.class} {
         display: block;
     }
 
-    .${SELECTORS.percentage} {
+    .${CARD.config.html.percentage.class} {
         display: flex;
         align-items: center;
         height: 16px;
@@ -736,7 +755,7 @@ const CARD_CSS=`
     }
 
     /* Progress bar */
-    .${SELECTORS.progressBar} {
+    .${CARD.config.html.progressBar.class} {
         flex-grow: 1;
         height: 8px;
         max-height: 16px;
@@ -746,74 +765,75 @@ const CARD_CSS=`
         position: relative;
     }
 
-    .small .${SELECTORS.progressBar} {
+    .${CARD.bar_size.small.label} .${CARD.config.html.progressBar.class} {
         height: 8px;
         max-height: 8px;
    }
 
-    .medium .${SELECTORS.progressBar} {
+    .${CARD.bar_size.medium.label} .${CARD.config.html.progressBar.class} {
         height: 12px;
         max-height: 12px;
    }
 
-    .large .${SELECTORS.progressBar} {
+    .${CARD.bar_size.large.label} .${CARD.config.html.progressBar.class} {
         height: 16px;
         max-height: 16px;
    }
 
-    .${SELECTORS.progressBarInner} {
+    .${CARD.config.html.progressBarInner.class} {
         height: 100%;
-        width: 75%;
-        background-color: var(--primary-color);
+        width: var(${CARD.config.dynamicStyle.progressBar.size.var}, ${CARD.config.dynamicStyle.progressBar.size.default});
+        background-color: var(${CARD.config.dynamicStyle.progressBar.color.var}, ${CARD.config.dynamicStyle.progressBar.color.default});
         transition: width 0.3s ease;
         will-change: width;
     }
 
-    .${CARD.layout.vertical.label} .${SELECTORS.name} {
+    .${CARD.layout.vertical.label} .${CARD.config.html.name.class} {
         text-align: center;
     }
 
-    .${CARD.layout.vertical.label} .large .${SELECTORS.name} {
+    .${CARD.layout.vertical.label} .large .${CARD.config.html.name.class} {
         height: 18px;
     }
 
-    .${CARD.layout.vertical.label} .${SELECTORS.percentage} {
+    .${CARD.layout.vertical.label} .${CARD.config.html.percentage.class} {
         align-items: center;
         justify-content: center;
     }
 
-    .small .${CARD.layout.vertical.label} .${SELECTORS.percentage} {
+    .${CARD.bar_size.small.label} .${CARD.layout.vertical.label} .${CARD.config.html.percentage.class} {
         margin-bottom: 1px;
     }
 
-    .medium .${CARD.layout.vertical.label} .${SELECTORS.percentage} {
+    .${CARD.bar_size.medium.label} .${CARD.layout.vertical.label} .${CARD.config.html.percentage.class} {
         height: 15px;
         font-size: 0.8em;
     }
 
-    .large .${CARD.layout.vertical.label} .${SELECTORS.percentage} {
+    .${CARD.bar_size.large.label} .${CARD.layout.vertical.label} .${CARD.config.html.percentage.class} {
         height: 13px;
         font-size: 0.8em;
     }
 
-    ${SELECTORS.alert} {
+    ${CARD.config.html.alert.element} {
         display: none;
         position: absolute;
-        z-index: 2;
-        background-color: #202833;
+        z-index: 3;
+        background-color: color-mix(in srgb, var(--card-background-color) 80%, var(--state-icon-color) 20%);
         border-radius: 12px;
         margin: 0;
     }
     
-    .show-${SELECTORS.alert} ${SELECTORS.alert}{
+    .${CARD.config.dynamicStyle.show}-${CARD.config.html.alert.element} ${CARD.config.html.alert.element}{
         display: flex;
     }
 
-    .${SELECTORS.alert_icon} {
+    .${CARD.config.html.alertIcon.class} {
+        color: ${CARD.config.icon.alert.color};
         margin-left: 10px;
     }
 
-    .${SELECTORS.alert_message} {
+    .${CARD.config.html.alertMessage.class} {
         margin-right: 8px;
         letter-spacing: 0.1px;
     }
@@ -830,16 +850,16 @@ const CARD_CSS=`
         height: 73px;
     }
 
-    .hide-${CARD.config.editor.key.attribute} .${CARD.config.editor.key.attribute},
-    .hide-${CARD.config.editor.key.navigate_to} .${CARD.config.editor.key.navigate_to},
-    .hide-${CARD.config.editor.key.theme} .${CARD.config.editor.key.theme} {
+    .${CARD.config.dynamicStyle.hide}-${CARD.config.editor.key.attribute} .${CARD.config.editor.key.attribute},
+    .${CARD.config.dynamicStyle.hide}-${CARD.config.editor.key.navigate_to} .${CARD.config.editor.key.navigate_to},
+    .${CARD.config.dynamicStyle.hide}-${CARD.config.editor.key.theme} .${CARD.config.editor.key.theme} {
         display: none;
     }
 
     .${CARD.config.editor.field.fieldDescription.class} {
         width: 90%;
         font-size: 12px;
-        color: #888;
+        color: var(--secondary-text-color);
     }
 
     .${CARD.config.documentation.link.class} {
@@ -876,6 +896,34 @@ const CARD_CSS=`
         font-size: 20px;
         color: black;
         font-weight: bold;
+    }
+
+    .${CARD.config.html.badge.class} {
+        position: absolute;
+        z-index: 2;
+        top: -3px;
+        right: -3px;
+        inset-inline-end: -3px;
+        inset-inline-start: initial;
+        height: 16px;
+        width: 16px;
+        border-radius: 50%;
+        background-color: var(--orange-color);
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .${CARD.config.dynamicStyle.show}-${CARD.config.html.badge.class} .${CARD.config.html.badge.class} {
+        display: flex;
+    }
+
+    .${CARD.config.html.badge.class} .${CARD.config.html.badgeIcon.class} {
+        height: 12px;
+        width: 12px;
+        display: flex; /* Assure que l'icône reste proportionnée */
+        align-items: center;
+        justify-content: center;
     }
     
 `;
@@ -1030,12 +1078,12 @@ class PercentHelper {
      * Creates a new instance of PercentHelper.
      *
      * @param {number} [currentValue=0] - The current value. Defaults to 0.
-     * @param {number} [minValue=CARD.config.minValue] - The minimum value. Defaults to CARD.config.minValue.
-     * @param {number} [maxValue=CARD.config.maxPercent] - The maximum percentage value. Defaults to CARD.config.maxPercent.
+     * @param {number} [minValue=CARD.config.value.min] - The minimum value. Defaults to CARD.config.value.min.
+     * @param {number} [maxValue=CARD.config.value.max] - The maximum percentage value. Defaults to CARD.config.value.max.
      * @param {string} [unit=CARD.config.unit.default] - The unit of measurement. Defaults to CARD.config.unit.default.
      * @param {number} [decimal=CARD.config.decimal.percentage] - The number of decimal places to use. Defaults to CARD.config.decimal.percentage.
      */
-    constructor(currentValue = 0, minValue = CARD.config.minValue, maxValue = CARD.config.maxPercent, unit = CARD.config.unit.default, decimal = CARD.config.decimal.percentage) {
+    constructor(currentValue = 0, minValue = CARD.config.value.min, maxValue = CARD.config.value.max, unit = CARD.config.unit.default, decimal = CARD.config.decimal.percentage) {
         /**
          * @type {Value}
          * @private
@@ -1075,22 +1123,22 @@ class PercentHelper {
     /**
      * Sets the minimum value.
      *
-     * @param {number} [newMin] - The new minimum value. If not provided, defaults to CARD.config.minValue.
+     * @param {number} [newMin] - The new minimum value. If not provided, defaults to CARD.config.value.min.
      */
     set min(newMin) {
         if (!newMin) {
-            newMin = CARD.config.minValue;
+            newMin = CARD.config.value.min;
         }
         this._min.value = newMin;
     }
     /**
      * Sets the maximum percentage value.
      *
-     * @param {number} [newMax] - The new maximum value. If not provided, defaults to CARD.config.maxPercent.
+     * @param {number} [newMax] - The new maximum value. If not provided, defaults to CARD.config.value.max.
      */
     set max(newMax) {
         if (!newMax) {
-            newMax = CARD.config.maxPercent;
+            newMax = CARD.config.value.max;
         }
         this._max.value = newMax;
     }
@@ -1143,6 +1191,16 @@ class PercentHelper {
         this._decimal.value = newDecimal;
     }
 
+    /**
+     * Calculates the value to display based on the selected theme and unit system.
+     * 
+     * @param {boolean} themeIsLinear - Indicates whether the theme uses a linear scale.
+     * @returns {number} - The percentage value if the theme is linear or if the unit is the default, 
+     *                     otherwise returns the temperature value converted to Celsius if the unit is Fahrenheit.
+     *
+     * - If the unit is Fahrenheit, the temperature is converted to Celsius before returning.
+     * - If the theme is linear or the unit is the default, the percentage value is returned.
+     */
     valueForThemes(themeIsLinear) {
         let value = this._current.value;
         if (this._unit.value === CARD.config.unit.fahrenheit) {
@@ -1399,8 +1457,8 @@ class ThemeManager {
 
     _setLinearStyle() {
         const lastStep = this._currentStyle.length - 1;
-        const thresholdSize = CARD.config.maxPercent / lastStep;
-        const percentage = Math.max(0, Math.min(this._value, CARD.config.maxPercent));
+        const thresholdSize = CARD.config.value.max / lastStep;
+        const percentage = Math.max(0, Math.min(this._value, CARD.config.value.max));
         const themeData = this._currentStyle[Math.floor(percentage / thresholdSize)];
         this._icon = themeData.icon;
         this._color = themeData.color;
@@ -1505,6 +1563,11 @@ class EntityOrValue {
          * @type {boolean}
          * @private
          */
+        this._isEntity = false;
+        /**
+         * @type {boolean}
+         * @private
+         */
         this._isValid = false;
         /**
          * @type {boolean}
@@ -1526,6 +1589,11 @@ class EntityOrValue {
          * @private
          */
         this._attribute = null;
+        /**
+         * @type {string}
+         * @private
+         */
+        this._state = null;
     }
     /**
      * Sets the value, which can be an entity ID or a direct value.
@@ -1557,6 +1625,22 @@ class EntityOrValue {
      */
     set attribute(newAttribute) {
         this._attribute = newAttribute;
+    }
+    /**
+     * Indicates if we manage an Entity
+     *
+     * @returns {boolean} True if the value is an entity, false otherwise.
+     */
+    get isEntity() {
+        return this._isEntity;
+    }
+    /**
+     * Indicates Entity's state
+     *
+     * @returns {string} Current state.
+     */
+    get state() {
+        return this._state;
     }
     /**
      * Indicates whether the value is valid.
@@ -1611,6 +1695,7 @@ class EntityOrValue {
     _checkValue() {
         this._isFound = false;
         this._isValid = false;
+        this._isEntity = false;
         this._isAvailable = false;
 
         if (Number.isFinite(this._value)) {
@@ -1619,11 +1704,12 @@ class EntityOrValue {
             this._isAvailable = true;
             return;
         } else if (typeof this._value === "string" && this._hassProvider.hass.states[this._value]) {
+            this._isEntity = true;
             this._entity = this._value;
             this._isFound = true;
             const entityState = this._hassProvider.hass.states[this._entity];
-            const state = entityState.state;
-            if (state === "unavailable" || state === "unknown") {
+            this._state = entityState.state;
+            if (this._state === CARD.entity.state.unavailable || this._state === CARD.entity.state.unknown) {
                 this._value = 0;
                 return;
             }
@@ -1644,7 +1730,7 @@ class EntityOrValue {
                     this._isAvailable = false;
                 }
             } else {
-                this._value = parseFloat(state) || 0;
+                this._value = parseFloat(this._state) || 0;
             }
             return;
         }
@@ -1899,7 +1985,7 @@ class CardView {
             : CARD.config.language;
 
         this._currentValue.value = this._configHelper.config.entity;
-        this._max_value.value = this._configHelper.config.max_value || CARD.config.maxPercent;
+        this._max_value.value = this._configHelper.config.max_value || CARD.config.value.max;
         this._configHelper.max_value = this._max_value.value;
         this._configHelper.decimal = this._configHelper.config.decimal ?? this._currentValue.precision;
         this._configHelper.checkConfig();
@@ -1937,7 +2023,7 @@ class CardView {
         if (this._theme.theme === "battery" && this._currentValue.icon && this._currentValue.icon.includes("battery")) {
             return this._currentValue.icon;
         }
-        return this._theme.icon || this._configHelper.config.icon || this._currentValue.icon || CARD.config.icon;
+        return this._theme.icon || this._configHelper.config.icon || this._currentValue.icon || CARD.config.icon.default.icon;
     }
 
     /**
@@ -1946,7 +2032,13 @@ class CardView {
      * @returns {string} The color.
      */
     get color() {
-        return this._theme.color || this._configHelper.config.color || CARD.config.color;
+        if(this.isAvailable) {
+            return this._theme.color || this._configHelper.config.color || CARD.config.color.default;
+        }
+        if (this._currentValue.state === CARD.entity.state.unknown || this._max_value.state === CARD.entity.state.unknown){
+            return CARD.config.color.default;
+        }
+        return CARD.config.color.disabled;
     }
 
     /**
@@ -1955,7 +2047,13 @@ class CardView {
      * @returns {string} The bar color.
      */
     get bar_color() {
-        return this._theme.color || this._configHelper.config.bar_color || CARD.config.color;
+        if(this.isAvailable) {
+            return this._theme.color || this._configHelper.config.bar_color || CARD.config.color.default;
+        }
+        if (this._currentValue.state === CARD.entity.state.unknown || this._max_value.state === CARD.entity.state.unknown){
+            return CARD.config.color.default;
+        }
+        return CARD.config.color.disabled;
     }
 
     /**
@@ -1965,9 +2063,9 @@ class CardView {
      */
     get percent() {
         if(this.isAvailable) {
-            return Math.min(CARD.config.maxPercent, Math.max(0, this._percentHelper.percent));
+            return Math.min(CARD.config.value.max, Math.max(0, this._percentHelper.percent));
         }
-        return CARD.config.minValue;
+        return CARD.config.value.min;
     }
 
     /**
@@ -1978,6 +2076,9 @@ class CardView {
     get description() {
         if(this.isAvailable) {
             return this._percentHelper.label;
+        }
+        if (this._currentValue.state === CARD.entity.state.unknown || this._max_value.state === CARD.entity.state.unknown){
+            return MSG.entityUnknown[this.currentLanguage];
         }
         return MSG.entityUnavailable[this.currentLanguage];
     }
@@ -1990,6 +2091,17 @@ class CardView {
     get name() {
         return this._configHelper.config.name || this._currentValue.name || this._configHelper.config.entity;
     }
+
+    get isBadgeEnable() {
+        if(this.isAvailable) {
+            return false;
+        }
+        if (this._currentValue.state === CARD.entity.state.unknown || this._max_value.state === CARD.entity.state.unknown){
+            return false;
+        }
+        return true;
+    }
+
 }
 
 /** --------------------------------------------------------------------------
@@ -2114,9 +2226,9 @@ class EntityProgressCard extends HTMLElement {
      * them into the component's Shadow DOM.
      */
     _buildCard() {
-        const card = document.createElement(SELECTORS.card);
+        const card = document.createElement(CARD.config.html.card.element);
         card.classList.add(CARD.typeName);
-        card.classList.toggle('clickable', this._cardView.show_more_info || this._cardView.navigate_to);
+        card.classList.toggle(CARD.config.dynamicStyle.clickable, this._cardView.show_more_info || this._cardView.navigate_to);
         card.innerHTML = CARD_HTML;
         const style = document.createElement('style');
         style.textContent = CARD_CSS;
@@ -2127,20 +2239,14 @@ class EntityProgressCard extends HTMLElement {
         this.shadowRoot.appendChild(card);
         // store DOM ref to update
         this._elements = {
-            [SELECTORS.card]: card,
-            [SELECTORS.container]: this.shadowRoot.querySelector(`.${SELECTORS.container}`),
-            [SELECTORS.right]: this.shadowRoot.querySelector(`.${SELECTORS.right}`),
-            [SELECTORS.icon]: this.shadowRoot.querySelector(`.${SELECTORS.icon}`),
-            [SELECTORS.shape]: this.shadowRoot.querySelector(`.${SELECTORS.shape}`),
-            [SELECTORS.name]: this.shadowRoot.querySelector(`.${SELECTORS.name}`),
-            [SELECTORS.percentage]: this.shadowRoot.querySelector(`.${SELECTORS.percentage}`),
-            [SELECTORS.secondaryInfo]: this.shadowRoot.querySelector(`.${SELECTORS.secondaryInfo}`),
-            [SELECTORS.progressBar]: this.shadowRoot.querySelector(`.${SELECTORS.progressBar}`),
-            [SELECTORS.progressBarInner]: this.shadowRoot.querySelector(`.${SELECTORS.progressBarInner}`),
-            [SELECTORS.alert]: this.shadowRoot.querySelector(`${SELECTORS.alert}`),
-            [SELECTORS.alert_icon]: this.shadowRoot.querySelector(`.${SELECTORS.alert_icon}`),
-            [SELECTORS.alert_message]: this.shadowRoot.querySelector(`.${SELECTORS.alert_message}`),
-            [SELECTORS.ha_icon]: this.shadowRoot.querySelector(`${SELECTORS.ha_icon}`),
+            [CARD.config.html.card.element]: card,
+            [CARD.config.html.icon.class]: this.shadowRoot.querySelector(`.${CARD.config.html.icon.class}`),
+            [CARD.config.html.badgeIcon.class]: this.shadowRoot.querySelector(`.${CARD.config.html.badgeIcon.class}`),
+            [CARD.config.html.name.class]: this.shadowRoot.querySelector(`.${CARD.config.html.name.class}`),
+            [CARD.config.html.percentage.class]: this.shadowRoot.querySelector(`.${CARD.config.html.percentage.class}`),
+            [CARD.config.html.alert.element]: this.shadowRoot.querySelector(`${CARD.config.html.alert.element}`),
+            [CARD.config.html.alertIcon.class]: this.shadowRoot.querySelector(`.${CARD.config.html.alertIcon.class}`),
+            [CARD.config.html.alertMessage.class]: this.shadowRoot.querySelector(`.${CARD.config.html.alertMessage.class}`),
         };
     }
 
@@ -2157,8 +2263,7 @@ class EntityProgressCard extends HTMLElement {
                 size = CARD.bar_size.small.label;
                 break;
         }
-        //this._elements[SELECTORS.progressBar].style.height = size;
-        this._elements[SELECTORS.card].classList.toggle(size, true);
+        this._elements[CARD.config.html.card.element].classList.toggle(size, true);
     }
 
     /**
@@ -2190,7 +2295,7 @@ class EntityProgressCard extends HTMLElement {
      *
      */
     _changeLayout() {
-        this._updateElement(SELECTORS.container, (el) => {
+        this._updateElement(CARD.config.html.card.element, (el) => {
             const isVertical = this._cardView.layout === CARD.layout.vertical.label;
             el.classList.toggle(CARD.layout.vertical.label, isVertical);
             el.classList.toggle(CARD.layout.horizontal.label, !isVertical);
@@ -2208,6 +2313,14 @@ class EntityProgressCard extends HTMLElement {
         }
     }
 
+    _updateCSS() {
+        this._updateElement(CARD.config.html.card.element, (el) => {
+            el.style.setProperty(CARD.config.dynamicStyle.progressBar.color.var, this._cardView.bar_color);
+            el.style.setProperty(CARD.config.dynamicStyle.progressBar.size.var, `${this._cardView.percent}%`);
+            el.style.setProperty(CARD.config.dynamicStyle.iconAndShape.color.var, this._cardView.color);
+        });
+    }
+
     /**
      * Updates dynamic card elements based on the entity's state and configuration.
      *
@@ -2217,43 +2330,38 @@ class EntityProgressCard extends HTMLElement {
      */
     _updateDynamicElements() {
         this._manageErrorMessage();
+        this._showBadge();
+        this._updateCSS();
 
-        this._updateElement(SELECTORS.progressBarInner, (el) => {
-            const newWidth = `${this._cardView.percent}%`;
-            if (el.style.width !== newWidth) {
-                el.style.width = newWidth;
-            }
-    
-            if (el.style.backgroundColor !== this._cardView.bar_color) {
-                el.style.backgroundColor = this._cardView.bar_color;
+        this._updateElement(CARD.config.html.icon.class, (el) => {
+            if (el.getAttribute(CARD.config.html.icon.class) !== this._cardView.icon) {
+                el.setAttribute(CARD.config.html.icon.class, this._cardView.icon);
             }
         });
 
-        this._updateElement(SELECTORS.icon, (el) => {
-            if (el.getAttribute(SELECTORS.icon) !== this._cardView.icon) {
-                el.setAttribute(SELECTORS.icon, this._cardView.icon);
-            }
-            if (el.style.color !== this._cardView.color) {
-                el.style.color = this._cardView.color;
-            }
-        });
-
-        this._updateElement(SELECTORS.shape, (el) => {
-            if (el.style.backgroundColor !== this._cardView.color) {
-                el.style.backgroundColor = this._cardView.color;
-            }
-        });
-
-        this._updateElement(SELECTORS.name, (el) => {
+        this._updateElement(CARD.config.html.name.class, (el) => {
             if (el.textContent !== this._cardView.name) {
                 el.textContent = this._cardView.name;
             }
         });
 
-        this._updateElement(SELECTORS.percentage, (el) => {
+        this._updateElement(CARD.config.html.percentage.class, (el) => {
             if (el.textContent !== this._cardView.description) {
                 el.textContent = this._cardView.description;
             }
+        });
+    }
+
+    /**
+     * Displays a badge
+     *
+     * @param {string} message - The error message to display in the alert.
+     */
+    _showBadge() {
+        this._elements[CARD.config.html.card.element].classList.toggle(`${CARD.config.dynamicStyle.show}-${CARD.config.html.badge.class}`, this._cardView.isBadgeEnable);
+        this._updateElement(CARD.config.html.badgeIcon.class, (el) => {
+            el.setAttribute("icon", CARD.config.icon.badge.icon);
+            el.style.color = CARD.config.icon.badge.color;
         });
     }
 
@@ -2263,13 +2371,16 @@ class EntityProgressCard extends HTMLElement {
      * @param {string} message - The error message to display in the alert.
      */
     _showError(message) {
-        this._elements[SELECTORS.card].classList.toggle(`show-${SELECTORS.alert}`, true);
-        this._updateElement(SELECTORS.alert_icon, (el) => {
-            el.setAttribute("icon", CARD.config.alert_icon);
-            el.style.color = CARD.config.alert_icon_color;
+        this._elements[CARD.config.html.card.element].classList.toggle(`${CARD.config.dynamicStyle.show}-${CARD.config.html.alert.element}`, true);
+        this._updateElement(CARD.config.html.alertIcon.class, (el) => {
+            if (el.getAttribute("icon") !== CARD.config.icon.alert.icon) {
+                el.setAttribute("icon", CARD.config.icon.alert.icon);
+            }
         });
-        this._updateElement(SELECTORS.alert_message, (el) => {
-            el.textContent = message;
+        this._updateElement(CARD.config.html.alertMessage.class, (el) => {
+            if (el.textContent !== message) {
+                el.textContent = message;
+            }
         });
     }
 
@@ -2279,7 +2390,7 @@ class EntityProgressCard extends HTMLElement {
      * @returns {void}
      */
     _hideError() {
-        this._elements[SELECTORS.card].classList.toggle(`show-${SELECTORS.alert}`, false);
+        this._elements[CARD.config.html.card.element].classList.toggle(`${CARD.config.dynamicStyle.show}-${CARD.config.html.alert.element}`, false);
     }
 
     /**
@@ -2675,7 +2786,7 @@ class EntityProgressCardEditor extends HTMLElement {
      */
     _toggleFieldDisable(key, disable) {
         this.configManager._logDebug('_toggleFieldDisable - Toggle: ', [key, disable]);
-        this._container.classList.toggle(`hide-${key}`, disable);
+        this._container.classList.toggle(`${CARD.config.dynamicStyle.hide}-${key}`, disable);
     }
 
     /**
@@ -2844,7 +2955,7 @@ class EntityProgressCardEditor extends HTMLElement {
                 `;
             } else if (type === CARD.config.editor.field.layout.type || type === CARD.config.editor.field.theme.type || type === CARD.config.editor.field.bar_size.type) {
                 const haIcon = document.createElement(CARD.config.editor.field.iconItem.element);
-                haIcon.setAttribute('icon', optionData.icon || CARD.config.icon);
+                haIcon.setAttribute('icon', optionData.icon || CARD.config.icon.default.icon);
                 haIcon.style.marginRight = '8px';
                 haIcon.style.width = '20px';
                 haIcon.style.height = '20px';
