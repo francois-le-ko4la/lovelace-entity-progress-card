@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.0.38
+ * @version 1.0.39
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION='1.0.38';
+const VERSION = '1.0.39';
 const CARD = {
     typeName: 'entity-progress-card',
     name: 'Entity progress card',
@@ -33,51 +33,58 @@ const CARD = {
         horizontal: {
             label: 'horizontal',
             value: { grid_rows: 1, grid_min_rows: 1, grid_columns: 2, grid_min_columns: 2 },
-            mdi: "mdi:focus-field-horizontal"
+            mdi: 'mdi:focus-field-horizontal'
         },
-        vertical:{
+        vertical: {
             label: 'vertical',
             value: { grid_rows: 2, grid_min_rows: 2, grid_columns: 1, grid_min_columns: 1 },
-            mdi: "mdi:focus-field-vertical"
+            mdi: 'mdi:focus-field-vertical'
         },
     },
     bar_size: {
         small: {
             label: 'small',
-            mdi: "mdi:size-s",
+            mdi: 'mdi:size-s',
             size: '8px'
         },
         medium: {
             label: 'medium',
-            mdi: "mdi:size-m",
+            mdi: 'mdi:size-m',
             size: '12px'
         },
         large: {
             label: 'large',
-            mdi: "mdi:size-l",
+            mdi: 'mdi:size-l',
             size: '16px'
         },
     },
     tap_action: {
-        no_action: "no_action",
-        navigate_to: "navigate_to",
-        more_info:"show_more_info"
+        no_action: 'no_action',
+        navigate_to: 'navigate_to',
+        more_info: 'show_more_info'
     },
     config: {
-        language: "en",
-        value: {min: 0, max: 100 },
-        unit: {default: '%', fahrenheit: '°F' },
-        color: {default: 'var(--state-icon-color)', disabled: 'var(--dark-grey-color)' },
+        language: 'en',
+        value: { min: 0, max: 100 },
+        unit: { default: '%', fahrenheit: '°F' },
+        color: { default: 'var(--state-icon-color)', disabled: 'var(--dark-grey-color)' },
         icon: {
             default: { icon: 'mdi:alert', },
-            alert: { icon: 'mdi:alert-circle-outline', color: '#0080ff' },
-            badge: { icon: 'mdi:exclamation-thick', color: 'white' },
-            },
-        dynamicStyle:{
+            alert: { icon: 'mdi:alert-circle-outline', color: '#0080ff', attribute: 'icon' },
+            badge: { icon: 'mdi:exclamation-thick', color: 'white', attribute: 'icon' },
+        },
+        event: {
+            HASelect: ['selected'],
+            other: ['value-changed', 'input'],
+            closed: 'closed',
+            click: 'click',
+        },
+        dynamicStyle: {
+            element: 'style',
             iconAndShape: {
                 color: { var: '--epb-icon-and-shape-color', default: 'var(--state-icon-color)' },
             },
-            progressBar: { 
+            progressBar: {
                 color: { var: '--epb-progress-bar-color', default: 'var(--state-icon-color)' },
                 size: { var: '--epb-progress-bar-size', default: '0%' },
             },
@@ -91,54 +98,60 @@ const CARD = {
             other: 2
         },
         html: {
-            card: {element: 'ha-card'},
-            container: {element: 'div', class:'container'},
-            left: {element: 'div', class:'left'},
-            shape: {element: 'ha-shape', class:'shape'},
-            icon: {element: 'ha-icon', class:'icon'},
-            badge: {element: 'div', class:'badge'},
-            badgeIcon: {element: 'ha-icon', class:'badge-icon'},
-            right: {element: 'div', class:'right'},
-            name: {element: 'div', class:'name'},
-            secondaryInfo: {element: 'div', class:'secondary-info'},
-            percentage: {element: 'div', class:'percentage'},
-            progressBar: {element: 'div', class:'progress-bar'},
-            progressBarInner: {element: 'div', class:'progress-bar-inner'},
-            alert: {element: 'progress-alert'},
-            alertIcon: {element: 'ha-icon', class:'progress-alert-icon'},
-            alertMessage: {element: 'div', class:'progress-alert-message'},
+            card: { element: 'ha-card' },
+            container: { element: 'div', class: 'container' },
+            left: { element: 'div', class: 'left' },
+            shape: { element: 'ha-shape', class: 'shape' },
+            icon: { element: 'ha-icon', class: 'icon' },
+            badge: { element: 'div', class: 'badge' },
+            badgeIcon: { element: 'ha-icon', class: 'badge-icon' },
+            right: { element: 'div', class: 'right' },
+            name: { element: 'div', class: 'name' },
+            secondaryInfo: { element: 'div', class: 'secondary-info' },
+            percentage: { element: 'div', class: 'percentage' },
+            progressBar: { element: 'div', class: 'progress-bar' },
+            progressBarInner: { element: 'div', class: 'progress-bar-inner' },
+            alert: { element: 'progress-alert' },
+            alertIcon: { element: 'ha-icon', class: 'progress-alert-icon' },
+            alertMessage: { element: 'div', class: 'progress-alert-message' },
         },
         editor: {
             field: {
-                container: {element: 'div', class:'editor'},
-                fieldContainer: {element: 'div', class:'editor-field-container'},
-                fieldDescription: {element: 'span', class:'editor-field-description'},
-                entity: { type: 'entity', element: 'ha-entity-picker'},
-                attribute: { type: 'attribute', element: 'ha-select'},
-                icon: { type: 'icon', element: 'ha-icon-picker'},
-                layout: { type: 'layout', element: 'ha-select'},
-                bar_size: { type: 'bar_size', element: 'ha-select'},
-                tap_action: { type: 'tap_action', element: 'ha-select'},
-                theme: { type: 'theme', element: 'ha-select'},
-                color: { type: 'color', element: 'ha-select'},
-                number: { type: 'number', element: 'ha-textfield'},
-                default: { type: 'text', element: 'ha-textfield'},
-                listItem: { type: 'list item', element: 'mwc-list-item'},
-                iconItem: { element: 'ha-icon'},
-                select: { element: 'ha-select'},
+                container: { element: 'div', class: 'editor' },
+                fieldContainer: { element: 'div', class: 'editor-field-container' },
+                fieldDescription: { element: 'span', class: 'editor-field-description' },
+                entity: { type: 'entity', element: 'ha-entity-picker' },
+                attribute: { type: 'attribute', element: 'ha-select' },
+                icon: { type: 'icon', element: 'ha-icon-picker' },
+                layout: { type: 'layout', element: 'ha-select' },
+                bar_size: { type: 'bar_size', element: 'ha-select' },
+                tap_action: { type: 'tap_action', element: 'ha-select' },
+                theme: { type: 'theme', element: 'ha-select' },
+                color: { type: 'color', element: 'ha-select' },
+                number: { type: 'number', element: 'ha-textfield' },
+                default: { type: 'text', element: 'ha-textfield' },
+                listItem: { type: 'list item', element: 'mwc-list-item' },
+                iconItem: { element: 'ha-icon', attribute: 'icon', class: 'editor-icon-list' },
+                select: { element: 'ha-select' },
             },
             key: {
-                attribute: "attribute",
-                navigate_to: "navigate_to",
-                theme: "theme",
-                tap_action: "tap_action"
+                attribute: 'attribute',
+                navigate_to: 'navigate_to',
+                theme: 'theme',
+                tap_action: 'tap_action'
             },
+
+        },
+        theme: {
+            default: '**CUSTOM**',
+            battery: { label: 'battery', icon: 'battery' },
+            customTheme: { expectedKeys: ['min', 'max', 'icon', 'color'] },
         },
         documentation: {
-            link: { element: 'a', class: 'documentation-link'},
-            outerDiv: { element: 'div', class: 'documentation-outer'},
-            innerDiv: { element: 'div', class: 'documentation-inner'},
-            questionMark: { element: 'div', class: 'documentation-icon'},
+            link: { element: 'a', class: 'documentation-link' },
+            outerDiv: { element: 'div', class: 'documentation-outer' },
+            innerDiv: { element: 'div', class: 'documentation-inner' },
+            questionMark: { element: 'div', class: 'documentation-icon' },
             attributes: {
                 text: '?',
                 linkTarget: '_blank',
@@ -146,7 +159,8 @@ const CARD = {
             },
         },
     },
-    entity: { state: { unavailable: 'unavailable', unknown: 'unknown'}, },
+    entity: { state: { unavailable: 'unavailable', unknown: 'unknown' }, },
+    shadowMode: 'open',
     debounce: 100,
     debug: true,
 };
@@ -161,98 +175,98 @@ const THEME = {
     battery: {
         linear: true,
         style: [
-            { icon: 'mdi:battery-alert',     color: 'var(--state-sensor-battery-low-color)'    },   // Pourcentage < 10
-            { icon: 'mdi:battery-alert',     color: 'var(--state-sensor-battery-low-color)'    },   // Pourcentage >= 10
-            { icon: 'mdi:battery-20',        color: 'var(--state-sensor-battery-medium-color)' },   // Pourcentage >= 20
-            { icon: 'mdi:battery-30',        color: 'var(--state-sensor-battery-medium-color)' },   // Pourcentage >= 30
-            { icon: 'mdi:battery-40',        color: 'var(--state-sensor-battery-medium-color)' },   // Pourcentage >= 40
-            { icon: 'mdi:battery-50',        color: 'var(--yellow-color)' },                        // Pourcentage >= 50
-            { icon: 'mdi:battery-60',        color: 'var(--yellow-color)' },                        // Pourcentage >= 60
-            { icon: 'mdi:battery-70',        color: 'var(--yellow-color)' },                        // Pourcentage >= 70
-            { icon: 'mdi:battery-80',        color: 'var(--state-sensor-battery-high-color)'  },    // Pourcentage >= 80
-            { icon: 'mdi:battery-90',        color: 'var(--state-sensor-battery-high-color)'  },    // Pourcentage >= 90
-            { icon: 'mdi:battery',           color: 'var(--state-sensor-battery-high-color)'  }     // Pourcentage >= 100
+            { icon: 'mdi:battery-alert', color: 'var(--state-sensor-battery-low-color)' },
+            { icon: 'mdi:battery-alert', color: 'var(--state-sensor-battery-low-color)' },
+            { icon: 'mdi:battery-20', color: 'var(--state-sensor-battery-medium-color)' },
+            { icon: 'mdi:battery-30', color: 'var(--state-sensor-battery-medium-color)' },
+            { icon: 'mdi:battery-40', color: 'var(--state-sensor-battery-medium-color)' },
+            { icon: 'mdi:battery-50', color: 'var(--yellow-color)' },
+            { icon: 'mdi:battery-60', color: 'var(--yellow-color)' },
+            { icon: 'mdi:battery-70', color: 'var(--yellow-color)' },
+            { icon: 'mdi:battery-80', color: 'var(--state-sensor-battery-high-color)' },
+            { icon: 'mdi:battery-90', color: 'var(--state-sensor-battery-high-color)' },
+            { icon: 'mdi:battery', color: 'var(--state-sensor-battery-high-color)' }
         ]
     },
     cpu: {
         linear: true,
         style: [
-            { icon: 'mdi:cpu-64-bit',        color: 'var(--state-sensor-battery-high-color)'  },
-            { icon: 'mdi:cpu-64-bit',        color: 'var(--yellow-color)' },
-            { icon: 'mdi:cpu-64-bit',        color: 'var(--state-sensor-battery-medium-color)' },
-            { icon: 'mdi:cpu-64-bit',        color: 'var(--state-sensor-battery-low-color)'    },
-            { icon: 'mdi:cpu-64-bit',        color: 'var(--state-sensor-battery-low-color)'    },
+            { icon: 'mdi:cpu-64-bit', color: 'var(--state-sensor-battery-high-color)' },
+            { icon: 'mdi:cpu-64-bit', color: 'var(--yellow-color)' },
+            { icon: 'mdi:cpu-64-bit', color: 'var(--state-sensor-battery-medium-color)' },
+            { icon: 'mdi:cpu-64-bit', color: 'var(--state-sensor-battery-low-color)' },
+            { icon: 'mdi:cpu-64-bit', color: 'var(--state-sensor-battery-low-color)' },
         ]
     },
     memory: {
         linear: true,
         style: [
-            { icon: 'mdi:memory',        color: 'var(--state-sensor-battery-high-color)'  },
-            { icon: 'mdi:memory',        color: 'var(--yellow-color)' },
-            { icon: 'mdi:memory',        color: 'var(--state-sensor-battery-medium-color)' },
-            { icon: 'mdi:memory',        color: 'var(--state-sensor-battery-low-color)'    },
-            { icon: 'mdi:memory',        color: 'var(--state-sensor-battery-low-color)'    },
+            { icon: 'mdi:memory', color: 'var(--state-sensor-battery-high-color)' },
+            { icon: 'mdi:memory', color: 'var(--yellow-color)' },
+            { icon: 'mdi:memory', color: 'var(--state-sensor-battery-medium-color)' },
+            { icon: 'mdi:memory', color: 'var(--state-sensor-battery-low-color)' },
+            { icon: 'mdi:memory', color: 'var(--state-sensor-battery-low-color)' },
         ]
     },
-    light:  {
+    light: {
         linear: true,
         style: [
-            { icon: 'mdi:lightbulb-outline', color: '#4B4B4B'},   // Pourcentage < 25
-            { icon: 'mdi:lightbulb-outline', color: '#877F67'},   // Pourcentage >= 25
-            { icon: 'mdi:lightbulb',         color: '#C3B382'},   // Pourcentage >= 50
-            { icon: 'mdi:lightbulb',         color: '#FFE79E'},   // Pourcentage >= 75
-            { icon: 'mdi:lightbulb',         color: '#FFE79E'}    // Pourcentage >= 100
+            { icon: 'mdi:lightbulb-outline', color: '#4B4B4B' },
+            { icon: 'mdi:lightbulb-outline', color: '#877F67' },
+            { icon: 'mdi:lightbulb', color: '#C3B382' },
+            { icon: 'mdi:lightbulb', color: '#FFE79E' },
+            { icon: 'mdi:lightbulb', color: '#FFE79E' }
         ]
     },
-    temperature:  {
+    temperature: {
         linear: false,
         style: [
-            { min: -50, max: -30, icon: 'mdi:thermometer', color: 'var(--deep-purple-color)'    },
-            { min: -30, max: -15, icon: 'mdi:thermometer', color: 'var(--dark-blue-color)'      },
-            { min: -15, max: -2,  icon: 'mdi:thermometer', color: 'var(--blue-color)'           },
-            { min: -2,  max: 2,   icon: 'mdi:thermometer', color: 'var(--light-blue-color)'     },
-            { min: 2,   max: 8,   icon: 'mdi:thermometer', color: 'var(--cyan-color)'           },
-            { min: 8,   max: 16,  icon: 'mdi:thermometer', color: 'var(--teal-color)'           },
-            { min: 16,  max: 18,  icon: 'mdi:thermometer', color: 'var(--green-teal-color)'     },
-            { min: 18,  max: 20,  icon: 'mdi:thermometer', color: 'var(--light-green-color)'    },
-            { min: 20,  max: 25,  icon: 'mdi:thermometer', color: 'var(--success-color)'        },
-            { min: 25,  max: 27,  icon: 'mdi:thermometer', color: 'var(--yellow-color)'         },
-            { min: 27,  max: 29,  icon: 'mdi:thermometer', color: 'var(--amber-color)'          },
-            { min: 29,  max: 34,  icon: 'mdi:thermometer', color: 'var(--deep-orange-color)'    },
-            { min: 34,  max: 100, icon: 'mdi:thermometer', color: 'var(--red-color)'            }
+            { min: -50, max: -30, icon: 'mdi:thermometer', color: 'var(--deep-purple-color)' },
+            { min: -30, max: -15, icon: 'mdi:thermometer', color: 'var(--dark-blue-color)' },
+            { min: -15, max: -2, icon: 'mdi:thermometer', color: 'var(--blue-color)' },
+            { min: -2, max: 2, icon: 'mdi:thermometer', color: 'var(--light-blue-color)' },
+            { min: 2, max: 8, icon: 'mdi:thermometer', color: 'var(--cyan-color)' },
+            { min: 8, max: 16, icon: 'mdi:thermometer', color: 'var(--teal-color)' },
+            { min: 16, max: 18, icon: 'mdi:thermometer', color: 'var(--green-teal-color)' },
+            { min: 18, max: 20, icon: 'mdi:thermometer', color: 'var(--light-green-color)' },
+            { min: 20, max: 25, icon: 'mdi:thermometer', color: 'var(--success-color)' },
+            { min: 25, max: 27, icon: 'mdi:thermometer', color: 'var(--yellow-color)' },
+            { min: 27, max: 29, icon: 'mdi:thermometer', color: 'var(--amber-color)' },
+            { min: 29, max: 34, icon: 'mdi:thermometer', color: 'var(--deep-orange-color)' },
+            { min: 34, max: 100, icon: 'mdi:thermometer', color: 'var(--red-color)' }
         ],
     },
     humidity: {
         linear: false,
         style: [
-            { min: 0,  max:23,  icon: 'mdi:water-percent', color: 'var(--red-color)'         },
-            { min: 23, max:30,  icon: 'mdi:water-percent', color: 'var(--accent-color)'      },
-            { min: 30, max:40,  icon: 'mdi:water-percent', color: 'var(--yellow-color)'      },
-            { min: 40, max:50,  icon: 'mdi:water-percent', color: 'var(--success-color)'     },
-            { min: 50, max:60,  icon: 'mdi:water-percent', color: 'var(--teal-color)'        },
-            { min: 60, max:65,  icon: 'mdi:water-percent', color: 'var(--light-blue-color)'  },
-            { min: 65, max:80,  icon: 'mdi:water-percent', color: 'var(--indigo-color)'      },
-            { min: 80, max:100, icon: 'mdi:water-percent', color: 'var(--deep-purple-color)' },
+            { min: 0, max: 23, icon: 'mdi:water-percent', color: 'var(--red-color)' },
+            { min: 23, max: 30, icon: 'mdi:water-percent', color: 'var(--accent-color)' },
+            { min: 30, max: 40, icon: 'mdi:water-percent', color: 'var(--yellow-color)' },
+            { min: 40, max: 50, icon: 'mdi:water-percent', color: 'var(--success-color)' },
+            { min: 50, max: 60, icon: 'mdi:water-percent', color: 'var(--teal-color)' },
+            { min: 60, max: 65, icon: 'mdi:water-percent', color: 'var(--light-blue-color)' },
+            { min: 65, max: 80, icon: 'mdi:water-percent', color: 'var(--indigo-color)' },
+            { min: 80, max: 100, icon: 'mdi:water-percent', color: 'var(--deep-purple-color)' },
         ],
     },
     voc: {
         linear: false,
         style: [
-            { min: 0,     max:300,   icon: 'mdi:air-filter', color: 'var(--success-color)'     },
-            { min: 300,   max:500,   icon: 'mdi:air-filter', color: 'var(--yellow-color)'      },
-            { min: 500,   max:3000,  icon: 'mdi:air-filter', color: 'var(--accent-color)'      },
-            { min: 3000,  max:25000, icon: 'mdi:air-filter', color: 'var(--red-color)'         },
-            { min: 25000, max:50000, icon: 'mdi:air-filter', color: 'var(--deep-purple-color)' },
+            { min: 0, max: 300, icon: 'mdi:air-filter', color: 'var(--success-color)' },
+            { min: 300, max: 500, icon: 'mdi:air-filter', color: 'var(--yellow-color)' },
+            { min: 500, max: 3000, icon: 'mdi:air-filter', color: 'var(--accent-color)' },
+            { min: 3000, max: 25000, icon: 'mdi:air-filter', color: 'var(--red-color)' },
+            { min: 25000, max: 50000, icon: 'mdi:air-filter', color: 'var(--deep-purple-color)' },
         ],
     },
     pm25: {
         linear: false,
         style: [
-            { min: 0,   max:12,  icon: 'mdi:air-filter', color: 'var(--success-color)'     },
-            { min: 12,  max:35,  icon: 'mdi:air-filter', color: 'var(--yellow-color)'      },
-            { min: 35,  max:55,  icon: 'mdi:air-filter', color: 'var(--accent-color)'      },
-            { min: 55,  max:150, icon: 'mdi:air-filter', color: 'var(--red-color)'         },
-            { min: 150, max:200, icon: 'mdi:air-filter', color: 'var(--deep-purple-color)' },
+            { min: 0, max: 12, icon: 'mdi:air-filter', color: 'var(--success-color)' },
+            { min: 12, max: 35, icon: 'mdi:air-filter', color: 'var(--yellow-color)' },
+            { min: 35, max: 55, icon: 'mdi:air-filter', color: 'var(--accent-color)' },
+            { min: 55, max: 150, icon: 'mdi:air-filter', color: 'var(--red-color)' },
+            { min: 150, max: 200, icon: 'mdi:air-filter', color: 'var(--deep-purple-color)' },
         ],
     },
 };
@@ -317,214 +331,244 @@ const MSG = {
 };
 
 const EDITOR_INPUT_FIELDS = {
-    entity: {       name: 'entity',
-                    label: { en: 'Entity', fr: 'Entité', es: 'Entidad', it: 'Entità', de: 'Entität', },
-                    type: CARD.config.editor.field.entity.type,
-                    width: '92%',
-                    required: true,
-                    isInGroup: null,
-                    description: {
-                        en: 'Select an entity from Home Assistant.',
-                        fr: 'Sélectionnez une entité de Home Assistant.',
-                        es: 'Seleccione una entidad de Home Assistant.',
-                        it: 'Seleziona un\'entità da Home Assistant.',
-                        de: 'Wählen Sie eine Entität aus Home Assistant.',
-                    }},
-    attribute: {    name: 'attribute',
-                    label: { en: 'Attribute', fr: 'Attribut', es: 'Atributo', it: 'Attributo', de: 'Attribut', },
-                    type: CARD.config.editor.field.attribute.type,
-                    width: '92%',
-                    required: false,
-                    isInGroup: CARD.config.editor.key.attribute,
-                    description: {
-                        en: 'Select the attribute.',
-                        fr: 'Sélectionnez l\'attribut.',
-                        es: 'Seleccione el atributo.',
-                        it: 'Seleziona l\'attributo.',
-                        de: 'Wählen Sie das Attribut aus.',
-                    }},
-    name: {         name: 'name',
-                    label: { en: 'Name', fr: 'Nom', es: 'Nombre', it: 'Nome', de: 'Name', },
-                    type: CARD.config.editor.field.default.type,
-                    width: '48%',
-                    required: false,
-                    isInGroup: null,
-                    description: {
-                        en: 'Enter a name for the entity.',
-                        fr: 'Saisissez un nom pour l\'entité.',
-                        es: 'Introduzca un nombre para la entidad.',
-                        it: 'Inserisci un nome per l\'entità.',
-                        de: 'Geben Sie einen Namen für die Entität ein.',
-                    }},
-    unit: {         name: 'unit',
-                    label: { en: 'Unit', fr: 'Unité', es: 'Nombre', it: 'Unità', de: 'Name', },
-                    type: CARD.config.editor.field.default.type,
-                    width: '15%',
-                    required: false,
-                    isInGroup: null,
-                    description: {
-                        en: 'm, kg...',
-                        fr: 'm, kg...',
-                        es: 'm, kg...',
-                        it: 'm, kg...',
-                        de: 'm, kg...',
-                    }},
-    decimal: {      name: 'decimal',
-                    label: { en: 'decimal', fr: 'decimal', es: 'decimal', it: 'Decimale', de: 'decimal', },
-                    type: CARD.config.editor.field.number.type,
-                    width: '25%',
-                    required: false,
-                    isInGroup: null,
-                    description: {
-                        en: 'Precision.',
-                        fr: 'Précision.',
-                        es: 'Precisión.',
-                        it: 'Precisione.',
-                        de: 'Präzision.',
-                    }},
-    min_value: {    name: 'min_value',
-                    label: { en: 'Minimum value', fr: 'Valeur minimum', es: 'Valor mínimo', it: 'Valore minimo', de: 'Mindestwert',},
-                    type: CARD.config.editor.field.number.type,
-                    width: '45%',
-                    required: false,
-                    isInGroup: null,
-                    description: {
-                        en: 'Enter the minimum value.',
-                        fr: 'Saisissez la valeur minimum.',
-                        es: 'Introduzca el valor mínimo.',
-                        it: 'Inserisci il valore minimo.',
-                        de: 'Geben Sie den Mindestwert ein.',
-                    }},
-    max_value: {    name: 'max_value',
-                    label: { en: 'Maximum value', fr: 'Valeur maximum', es: 'Valor máximo', it: 'Valore massimo', de: 'Höchstwert', },
-                    type: CARD.config.editor.field.default.type,
-                    width: '45%',
-                    required: false,
-                    isInGroup: null,
-                    description: {
-                        en: 'Enter the maximum value.',
-                        fr: 'Saisissez la valeur maximum.',
-                        es: 'Introduzca el valor máximo.',
-                        it: 'Inserisci il valore massimo.',
-                        de: 'Geben Sie den Höchstwert ein.',
-                    }},
-    tap_action: {   name: 'tap_action',
-                    label: { en: 'Tap action', fr: 'Action au tap', es: 'Acción al tocar', it: 'Azione al tocco', de: 'Tippen Aktion', },
-                    type: CARD.config.editor.field.tap_action.type,
-                    width: '45%',
-                    required: false,
-                    isInGroup: null,
-                    description: {
-                        en: 'Select the action.',
-                        fr: 'Sélectionnez l\'action.',
-                        es: 'Seleccione la acción.',
-                        it: 'Seleziona l\'azione.',
-                        de: 'Wählen Sie die Aktion.',
-                    }},
-    navigate_to: {  name: CARD.config.editor.key.navigate_to,
-                    label: { en: 'Navigate to...', fr: 'Naviguer vers...', es: 'Navegar a...', it: 'Naviga verso...', de: 'Navigieren zu...',  },
-                    type: CARD.config.editor.field.default.type,
-                    width: '45%',
-                    required: false,
-                    isInGroup: CARD.config.editor.key.navigate_to,
-                    description: {
-                        en: 'Enter the target (/lovelace/0).',
-                        fr: 'Saisir la cible (/lovelace/0).',
-                        es: 'Introduzca el objetivo (/lovelace/0).',
-                        it: 'Inserisci il target (/lovelace/0).',
-                        de: 'Geben Sie das Ziel (/lovelace/0) ein.',
-                    }},
-    theme: {        name: 'theme',
-                    label: { en: 'Theme', fr: 'Thème', es: 'Tema', it: 'Tema', de: 'Thema', },
-                    type: CARD.config.editor.field.theme.type,
-                    width: '92%',
-                    required: false,
-                    isInGroup: null,
-                    description: {
-                        en: 'Select a theme to automatically define the colors and icon.',
-                        fr: 'Sélectionnez un thème pour définir automatiquement les couleurs et l\'icône.',
-                        es: 'Seleccione un tema para definir automáticamente los colores y el icono.',
-                        it: 'Seleziona un tema per definire automaticamente i colori e l\'icona.',
-                        de: 'Wählen Sie ein Thema, um die Farben und das Symbol automatisch festzulegen.',
-                    }},
-    bar_size: {     name: 'bar_size',
-                    label: { en: 'Size', fr: 'Taille', es: 'Tamaño', it: 'Dimensione', de: 'Größe' },
-                    type: CARD.config.editor.field.bar_size.type,
-                    width: '45%',
-                    required: false,
-                    isInGroup: null,
-                    description: { 
-                        en: 'Select the bar size', 
-                        fr: 'Sélectionnez la taille de la barre', 
-                        es: 'Seleccione el tamaño de la barra', 
-                        it: 'Seleziona la dimensione della barra', 
-                        de: 'Wählen Sie die Balkengröße' 
-                    }},
-    bar_color: {    name: 'bar_color',
-                    label: { en: 'Color for the bar', fr: 'Couleur de la barre', es: 'Color de la barra', it: 'Colore per la barra', de: 'Farbe für die Leiste', },
-                    type: CARD.config.editor.field.color.type,
-                    width: '45%',
-                    required: false,
-                    isInGroup: CARD.config.editor.key.theme,
-                    description: {
-                        en: 'Select the color for the bar.',
-                        fr: 'Sélectionnez la couleur de la barre.',
-                        es: 'Seleccione el color de la barra.',
-                        it: 'Seleziona il colore per la barra.',
-                        de: 'Wählen Sie für die Leiste.',
-                    }},
-    icon: {         name: 'icon',
-                    label: { en: 'Icon', fr: 'Icône', es: 'Icono', it: 'Icona', de: 'Symbol', },
-                    type: CARD.config.editor.field.icon.type,
-                    width: '45%',
-                    required: false,
-                    isInGroup: CARD.config.editor.key.theme,
-                    description: {
-                        en: 'Select an icon for the entity.',
-                        fr: 'Sélectionnez une icône pour l\'entité.',
-                        es: 'Seleccione un icono para la entidad.',
-                        it: 'Seleziona un\'icona per l\'entità.',
-                        de: 'Wählen Sie ein Symbol für die Entität.',
-                    }},
-    color: {        name: 'color',
-                    label: { en: 'Primary color', fr: 'Couleur de l\'icône', es: 'Color del icono', it: 'Colore dell\'icona', de: 'Primärfarbe', },
-                    type: CARD.config.editor.field.color.type,
-                    width: '45%',
-                    required: false,
-                    isInGroup: CARD.config.editor.key.theme,
-                    description: {
-                        en: 'Select the primary color for the icon.',
-                        fr: 'Sélectionnez la couleur de l\'icône.',
-                        es: 'Seleccione el color principal del icono.',
-                        it: 'Seleziona un\'icona per l\'entità.',
-                        de: 'Wählen Sie die Primärfarbe für das Symbol.',
-                    }},
-    layout: {       name: 'layout',
-                    label: { en: 'Layout', fr: 'Disposition', es: 'Disposición', it: 'Layout', de: 'Layout', },
-                    type: CARD.config.editor.field.layout.type,
-                    width: '45%',
-                    required: false,
-                    isInGroup: null,
-                    description: {
-                        en: 'Select the layout.',
-                        fr: 'Sélectionnez la disposition.',
-                        es: 'Seleccione la disposición.',
-                        it: 'Seleziona il layout.',
-                        de: 'Wählen Sie das Layout.',
-                    }},
+    entity: {
+        name: 'entity',
+        label: { en: 'Entity', fr: 'Entité', es: 'Entidad', it: 'Entità', de: 'Entität', },
+        type: CARD.config.editor.field.entity.type,
+        width: '92%',
+        required: true,
+        isInGroup: null,
+        description: {
+            en: 'Select an entity from Home Assistant.',
+            fr: 'Sélectionnez une entité de Home Assistant.',
+            es: 'Seleccione una entidad de Home Assistant.',
+            it: 'Seleziona un\'entità da Home Assistant.',
+            de: 'Wählen Sie eine Entität aus Home Assistant.',
+        }
+    },
+    attribute: {
+        name: 'attribute',
+        label: { en: 'Attribute', fr: 'Attribut', es: 'Atributo', it: 'Attributo', de: 'Attribut', },
+        type: CARD.config.editor.field.attribute.type,
+        width: '92%',
+        required: false,
+        isInGroup: CARD.config.editor.key.attribute,
+        description: {
+            en: 'Select the attribute.',
+            fr: 'Sélectionnez l\'attribut.',
+            es: 'Seleccione el atributo.',
+            it: 'Seleziona l\'attributo.',
+            de: 'Wählen Sie das Attribut aus.',
+        }
+    },
+    name: {
+        name: 'name',
+        label: { en: 'Name', fr: 'Nom', es: 'Nombre', it: 'Nome', de: 'Name', },
+        type: CARD.config.editor.field.default.type,
+        width: '48%',
+        required: false,
+        isInGroup: null,
+        description: {
+            en: 'Enter a name for the entity.',
+            fr: 'Saisissez un nom pour l\'entité.',
+            es: 'Introduzca un nombre para la entidad.',
+            it: 'Inserisci un nome per l\'entità.',
+            de: 'Geben Sie einen Namen für die Entität ein.',
+        }
+    },
+    unit: {
+        name: 'unit',
+        label: { en: 'Unit', fr: 'Unité', es: 'Nombre', it: 'Unità', de: 'Name', },
+        type: CARD.config.editor.field.default.type,
+        width: '15%',
+        required: false,
+        isInGroup: null,
+        description: {
+            en: 'm, kg...',
+            fr: 'm, kg...',
+            es: 'm, kg...',
+            it: 'm, kg...',
+            de: 'm, kg...',
+        }
+    },
+    decimal: {
+        name: 'decimal',
+        label: { en: 'decimal', fr: 'decimal', es: 'decimal', it: 'Decimale', de: 'decimal', },
+        type: CARD.config.editor.field.number.type,
+        width: '25%',
+        required: false,
+        isInGroup: null,
+        description: {
+            en: 'Precision.',
+            fr: 'Précision.',
+            es: 'Precisión.',
+            it: 'Precisione.',
+            de: 'Präzision.',
+        }
+    },
+    min_value: {
+        name: 'min_value',
+        label: { en: 'Minimum value', fr: 'Valeur minimum', es: 'Valor mínimo', it: 'Valore minimo', de: 'Mindestwert', },
+        type: CARD.config.editor.field.number.type,
+        width: '45%',
+        required: false,
+        isInGroup: null,
+        description: {
+            en: 'Enter the minimum value.',
+            fr: 'Saisissez la valeur minimum.',
+            es: 'Introduzca el valor mínimo.',
+            it: 'Inserisci il valore minimo.',
+            de: 'Geben Sie den Mindestwert ein.',
+        }
+    },
+    max_value: {
+        name: 'max_value',
+        label: { en: 'Maximum value', fr: 'Valeur maximum', es: 'Valor máximo', it: 'Valore massimo', de: 'Höchstwert', },
+        type: CARD.config.editor.field.default.type,
+        width: '45%',
+        required: false,
+        isInGroup: null,
+        description: {
+            en: 'Enter the maximum value.',
+            fr: 'Saisissez la valeur maximum.',
+            es: 'Introduzca el valor máximo.',
+            it: 'Inserisci il valore massimo.',
+            de: 'Geben Sie den Höchstwert ein.',
+        }
+    },
+    tap_action: {
+        name: 'tap_action',
+        label: { en: 'Tap action', fr: 'Action au tap', es: 'Acción al tocar', it: 'Azione al tocco', de: 'Tippen Aktion', },
+        type: CARD.config.editor.field.tap_action.type,
+        width: '45%',
+        required: false,
+        isInGroup: null,
+        description: {
+            en: 'Select the action.',
+            fr: 'Sélectionnez l\'action.',
+            es: 'Seleccione la acción.',
+            it: 'Seleziona l\'azione.',
+            de: 'Wählen Sie die Aktion.',
+        }
+    },
+    navigate_to: {
+        name: CARD.config.editor.key.navigate_to,
+        label: { en: 'Navigate to...', fr: 'Naviguer vers...', es: 'Navegar a...', it: 'Naviga verso...', de: 'Navigieren zu...', },
+        type: CARD.config.editor.field.default.type,
+        width: '45%',
+        required: false,
+        isInGroup: CARD.config.editor.key.navigate_to,
+        description: {
+            en: 'Enter the target (/lovelace/0).',
+            fr: 'Saisir la cible (/lovelace/0).',
+            es: 'Introduzca el objetivo (/lovelace/0).',
+            it: 'Inserisci il target (/lovelace/0).',
+            de: 'Geben Sie das Ziel (/lovelace/0) ein.',
+        }
+    },
+    theme: {
+        name: 'theme',
+        label: { en: 'Theme', fr: 'Thème', es: 'Tema', it: 'Tema', de: 'Thema', },
+        type: CARD.config.editor.field.theme.type,
+        width: '92%',
+        required: false,
+        isInGroup: null,
+        description: {
+            en: 'Select a theme to automatically define the colors and icon.',
+            fr: 'Sélectionnez un thème pour définir automatiquement les couleurs et l\'icône.',
+            es: 'Seleccione un tema para definir automáticamente los colores y el icono.',
+            it: 'Seleziona un tema per definire automaticamente i colori e l\'icona.',
+            de: 'Wählen Sie ein Thema, um die Farben und das Symbol automatisch festzulegen.',
+        }
+    },
+    bar_size: {
+        name: 'bar_size',
+        label: { en: 'Size', fr: 'Taille', es: 'Tamaño', it: 'Dimensione', de: 'Größe' },
+        type: CARD.config.editor.field.bar_size.type,
+        width: '45%',
+        required: false,
+        isInGroup: null,
+        description: {
+            en: 'Select the bar size',
+            fr: 'Sélectionnez la taille de la barre',
+            es: 'Seleccione el tamaño de la barra',
+            it: 'Seleziona la dimensione della barra',
+            de: 'Wählen Sie die Balkengröße'
+        }
+    },
+    bar_color: {
+        name: 'bar_color',
+        label: { en: 'Color for the bar', fr: 'Couleur de la barre', es: 'Color de la barra', it: 'Colore per la barra', de: 'Farbe für die Leiste', },
+        type: CARD.config.editor.field.color.type,
+        width: '45%',
+        required: false,
+        isInGroup: CARD.config.editor.key.theme,
+        description: {
+            en: 'Select the color for the bar.',
+            fr: 'Sélectionnez la couleur de la barre.',
+            es: 'Seleccione el color de la barra.',
+            it: 'Seleziona il colore per la barra.',
+            de: 'Wählen Sie für die Leiste.',
+        }
+    },
+    icon: {
+        name: 'icon',
+        label: { en: 'Icon', fr: 'Icône', es: 'Icono', it: 'Icona', de: 'Symbol', },
+        type: CARD.config.editor.field.icon.type,
+        width: '45%',
+        required: false,
+        isInGroup: CARD.config.editor.key.theme,
+        description: {
+            en: 'Select an icon for the entity.',
+            fr: 'Sélectionnez une icône pour l\'entité.',
+            es: 'Seleccione un icono para la entidad.',
+            it: 'Seleziona un\'icona per l\'entità.',
+            de: 'Wählen Sie ein Symbol für die Entität.',
+        }
+    },
+    color: {
+        name: 'color',
+        label: { en: 'Primary color', fr: 'Couleur de l\'icône', es: 'Color del icono', it: 'Colore dell\'icona', de: 'Primärfarbe', },
+        type: CARD.config.editor.field.color.type,
+        width: '45%',
+        required: false,
+        isInGroup: CARD.config.editor.key.theme,
+        description: {
+            en: 'Select the primary color for the icon.',
+            fr: 'Sélectionnez la couleur de l\'icône.',
+            es: 'Seleccione el color principal del icono.',
+            it: 'Seleziona un\'icona per l\'entità.',
+            de: 'Wählen Sie die Primärfarbe für das Symbol.',
+        }
+    },
+    layout: {
+        name: 'layout',
+        label: { en: 'Layout', fr: 'Disposition', es: 'Disposición', it: 'Layout', de: 'Layout', },
+        type: CARD.config.editor.field.layout.type,
+        width: '45%',
+        required: false,
+        isInGroup: null,
+        description: {
+            en: 'Select the layout.',
+            fr: 'Sélectionnez la disposition.',
+            es: 'Seleccione la disposición.',
+            it: 'Seleziona il layout.',
+            de: 'Wählen Sie das Layout.',
+        }
+    },
 };
 
 const FIELD_OPTIONS = {
     theme: [
-        { value: '',            label: { en: 'Disabled (default)', fr: 'Désactivé (défaut)', es: 'Desactivado (defecto)', it: 'Disabilitato (predefinito)', de: 'Deaktiviert (Standard)' }, icon: "mdi:palette-outline" },
-        { value: 'battery',     label: { en: 'Battery', fr: 'Batterie', es: 'Batería', it: 'Batteria', de: 'Batterie'},                                                                     icon: "mdi:battery" },
-        { value: 'cpu',         label: { en: 'CPU', fr: 'CPU', es: 'CPU', it: 'CPU', de: 'CPU'},                                                                                            icon: "mdi:cpu-64-bit" },
-        { value: 'humidity',    label: { en: 'Humidity', fr: 'Humidité', es: 'Humedad', it: 'Umidità', de: 'Feuchtigkeit'  },                                                               icon: "mdi:water-percent" },
-        { value: 'light',       label: { en: 'Light', fr: 'Lumière', es: 'Luz', it: 'Luce', de: 'Licht' },                                                                                  icon: "mdi:lightbulb" },
-        { value: 'memory',      label: { en: 'RAM', fr: 'RAM', es: 'RAM', it: 'RAM', de: 'RAM' },                                                                                           icon: "mdi:memory" },
-        { value: 'pm25',        label: { en: 'PM2.5', fr: 'PM2.5', es: 'PM2.5', it: 'PM2.5', de: 'PM2.5' },                                                                                 icon: "mdi:air-filter" },
-        { value: 'temperature', label: { en: 'Temperature', fr: 'Température', es: 'Temperatura', it: 'Temperatura', de: 'Temperatur'  },                                                   icon: "mdi:thermometer" },
-        { value: 'voc',         label: { en: 'VOC', fr: 'VOC', es: 'VOC', it: 'VOC', de: 'VOC'  },                                                                                          icon: "mdi:air-filter" },
+        { value: '', label: { en: '', fr: '', es: '', it: '', de: '' }, icon: 'mdi:cancel' },
+        { value: 'battery', label: { en: 'Battery', fr: 'Batterie', es: 'Batería', it: 'Batteria', de: 'Batterie' }, icon: 'mdi:battery' },
+        { value: 'cpu', label: { en: 'CPU', fr: 'CPU', es: 'CPU', it: 'CPU', de: 'CPU' }, icon: 'mdi:cpu-64-bit' },
+        { value: 'humidity', label: { en: 'Humidity', fr: 'Humidité', es: 'Humedad', it: 'Umidità', de: 'Feuchtigkeit' }, icon: 'mdi:water-percent' },
+        { value: 'light', label: { en: 'Light', fr: 'Lumière', es: 'Luz', it: 'Luce', de: 'Licht' }, icon: 'mdi:lightbulb' },
+        { value: 'memory', label: { en: 'RAM', fr: 'RAM', es: 'RAM', it: 'RAM', de: 'RAM' }, icon: 'mdi:memory' },
+        { value: 'pm25', label: { en: 'PM2.5', fr: 'PM2.5', es: 'PM2.5', it: 'PM2.5', de: 'PM2.5' }, icon: 'mdi:air-filter' },
+        { value: 'temperature', label: { en: 'Temperature', fr: 'Température', es: 'Temperatura', it: 'Temperatura', de: 'Temperatur' }, icon: 'mdi:thermometer' },
+        { value: 'voc', label: { en: 'VOC', fr: 'VOC', es: 'VOC', it: 'VOC', de: 'VOC' }, icon: 'mdi:air-filter' },
     ],
     color: [
         { value: 'var(--state-icon-color)', label: { en: 'Default', fr: 'Défaut', es: 'Predeterminado', it: 'Predefinito', de: 'Standard' } },
@@ -557,31 +601,31 @@ const FIELD_OPTIONS = {
         { value: 'var(--white-color)', label: { en: 'White', fr: 'Blanc', es: 'Blanco', it: 'Bianco', de: 'Weiß' } }
     ],
     bar_size: [
-        { value: CARD.bar_size.small.label,  label: { en: 'Small', fr: 'Petite', es: 'Pequeña', it: 'Piccola', de: 'Klein',}, icon: CARD.bar_size.small.mdi, },
-        { value: CARD.bar_size.medium.label, label: { en: 'Medium', fr: 'Moyenne', es: 'Media', it: 'Media', de: 'Mittel',}, icon: CARD.bar_size.medium.mdi, },
-        { value: CARD.bar_size.large.label,  label: { en: 'Large', fr: 'Grande', es: 'Grande', it: 'Grande', de: 'Groß',}, icon: CARD.bar_size.large.mdi, },
+        { value: CARD.bar_size.small.label, label: { en: 'Small', fr: 'Petite', es: 'Pequeña', it: 'Piccola', de: 'Klein', }, icon: CARD.bar_size.small.mdi, },
+        { value: CARD.bar_size.medium.label, label: { en: 'Medium', fr: 'Moyenne', es: 'Media', it: 'Media', de: 'Mittel', }, icon: CARD.bar_size.medium.mdi, },
+        { value: CARD.bar_size.large.label, label: { en: 'Large', fr: 'Grande', es: 'Grande', it: 'Grande', de: 'Groß', }, icon: CARD.bar_size.large.mdi, },
     ],
     layout: [
-        { value: CARD.layout.horizontal.label, label: { en: 'Horizontal (default)', fr: 'Horizontal (par défaut)', es: 'Horizontal (predeterminado)', it: 'Orizzontale (predefinito)', de: 'Horizontal (Standard)',}, icon: CARD.layout.horizontal.mdi, },
-        { value: CARD.layout.vertical.label,   label: { en: 'Vertical', fr: 'Vertical', es: 'Vertical', it: 'Verticale', de: 'Vertikal',}, icon: CARD.layout.vertical.mdi, },
+        { value: CARD.layout.horizontal.label, label: { en: 'Horizontal (default)', fr: 'Horizontal (par défaut)', es: 'Horizontal (predeterminado)', it: 'Orizzontale (predefinito)', de: 'Horizontal (Standard)', }, icon: CARD.layout.horizontal.mdi, },
+        { value: CARD.layout.vertical.label, label: { en: 'Vertical', fr: 'Vertical', es: 'Vertical', it: 'Verticale', de: 'Vertikal', }, icon: CARD.layout.vertical.mdi, },
     ],
     tap_action: [
-        { value: CARD.tap_action.more_info, label: { en: 'More info (default)', fr: 'Plus d\'infos (par défaut)', es: 'Más información (predeterminado)', it: 'Più informazioni (predefinito)', de: 'Mehr Infos (Standard)', }},
-        { value: CARD.tap_action.navigate_to, label: { en: 'Navigate to...', fr: 'Naviguer vers...', es: 'Navegar a...', it: 'Naviga a...', de: 'Zu navigieren...', }},
-        { value: CARD.tap_action.no_action, label: { en: 'No action', fr: 'Aucune action', es: 'Sin acción', it: 'Nessuna azione', de: 'Keine Aktion', }}
+        { value: CARD.tap_action.more_info, label: { en: 'More info (default)', fr: 'Plus d\'infos (par défaut)', es: 'Más información (predeterminado)', it: 'Più informazioni (predefinito)', de: 'Mehr Infos (Standard)', } },
+        { value: CARD.tap_action.navigate_to, label: { en: 'Navigate to...', fr: 'Naviguer vers...', es: 'Navegar a...', it: 'Naviga a...', de: 'Zu navigieren...', } },
+        { value: CARD.tap_action.no_action, label: { en: 'No action', fr: 'Aucune action', es: 'Sin acción', it: 'Nessuna azione', de: 'Keine Aktion', } }
     ]
 };
 
 const ATTRIBUTE_MAPPING = {
-    cover: {label: "cover", attribute: "current_position"},
-    light: {label: "light" , attribute: "brightness"},
-    fan: {label: "fan", attribute: "percentage"},
-    climate: {label: "climate", attribute: null},
-    humidifier: {label: "humidifier", attribute: null},
-    media_player: {label: "media_player", attribute: null},
-    vacuum: {label: "vacuum", attribute: null},
-    device_tracker: {label: "device_tracker", attribute: null},
-    weather: {label: "weather", attribute: null},
+    cover: { label: 'cover', attribute: 'current_position' },
+    light: { label: 'light', attribute: 'brightness' },
+    fan: { label: 'fan', attribute: 'percentage' },
+    climate: { label: 'climate', attribute: null },
+    humidifier: { label: 'humidifier', attribute: null },
+    media_player: { label: 'media_player', attribute: null },
+    vacuum: { label: 'vacuum', attribute: null },
+    device_tracker: { label: 'device_tracker', attribute: null },
+    weather: { label: 'weather', attribute: null },
 };
 
 const CARD_HTML = `
@@ -666,15 +710,15 @@ const CARD_CSS = `
         flex-shrink: 0;
     }
 
-    .${CARD.bar_size.small.label} .${CARD.layout.vertical.label} .${CARD.config.html.left.class} {
+    .${CARD.layout.vertical.label}.${CARD.bar_size.small.label} .${CARD.config.html.left.class} {
         margin-top: 10px;
     }
 
-    .${CARD.bar_size.medium.label} .${CARD.layout.vertical.label} .${CARD.config.html.left.class} {
+    .${CARD.layout.vertical.label}.${CARD.bar_size.medium.label} .${CARD.config.html.left.class} {
         margin-top: 12px;
     }
 
-    .${CARD.bar_size.large.label} .${CARD.layout.vertical.label} .${CARD.config.html.left.class} {
+    .${CARD.layout.vertical.label}.${CARD.bar_size.large.label} .${CARD.config.html.left.class} {
         margin-top: 14px;
     }
         
@@ -765,10 +809,10 @@ const CARD_CSS = `
         position: relative;
     }
 
-    .${CARD.bar_size.small.label} .${CARD.config.html.progressBar.class} {
+    .${CARD.bar_size.small.label} ${CARD.config.html.progressBar.class} {
         height: 8px;
         max-height: 8px;
-   }
+    }
 
     .${CARD.bar_size.medium.label} .${CARD.config.html.progressBar.class} {
         height: 12px;
@@ -792,7 +836,7 @@ const CARD_CSS = `
         text-align: center;
     }
 
-    .${CARD.layout.vertical.label} .large .${CARD.config.html.name.class} {
+    .${CARD.layout.vertical.label} .${CARD.bar_size.large.label} .${CARD.config.html.name.class} {
         height: 18px;
     }
 
@@ -862,6 +906,12 @@ const CARD_CSS = `
         color: var(--secondary-text-color);
     }
 
+    .${CARD.config.editor.field.iconItem.class} {
+        margin-right: 8px;
+        width: 20px;
+        height: 20px;
+    }
+
     .${CARD.config.documentation.link.class} {
         text-decoration: none;
         display: flex;
@@ -924,6 +974,7 @@ const CARD_CSS = `
         display: flex; /* Assure que l'icône reste proportionnée */
         align-items: center;
         justify-content: center;
+        color: ${CARD.config.html.badgeIcon.class};
     }
     
 `;
@@ -1272,7 +1323,7 @@ class ThemeManager {
      * @param {string} [theme=null] - The name of the theme. Defaults to null.
      * @param {number} [percent=0] - The percentage value used to determine the theme's icon and color. Defaults to 0.
      */
-    constructor(theme = null, value = 0, isValid=false, isLinear=false, isCustomTheme=false) {
+    constructor(theme = null, value = 0, isValid = false, isLinear = false, isCustomTheme = false) {
         /**
          * @type {string}
          * @private
@@ -1346,44 +1397,42 @@ class ThemeManager {
     }
 
     _checkCustomThemeStructure(customTheme) {
-        const expectedKeys = ["min", "max", "icon", "color"];
-    
         // array with 1 element
         if (!Array.isArray(customTheme) || customTheme.length === 0) {
             return false;
         }
-    
+
         // check all elements
         let isFirstItem = true;
         let lastMax = null;
-    
+
         return customTheme.every(item => {
-            if (item === null || typeof item !== "object") {
+            if (item === null || typeof item !== 'object') {
                 return false;
             }
-    
+
             // check keys
-            if (!expectedKeys.every(key => key in item)) {
+            if (!CARD.config.theme.customTheme.expectedKeys.every(key => key in item)) {
                 return false;
             }
-    
+
             // min < max
             if (item.min >= item.max) {
                 return false;
             }
-    
+
             // check continuity
             if (!isFirstItem && item.min !== lastMax) {
                 return false;
             }
-    
+
             isFirstItem = false;
             lastMax = item.max;
-    
+
             return true;
         });
     }
-    
+
     /**
      * Sets the custom theme.
      *
@@ -1393,9 +1442,9 @@ class ThemeManager {
         this._isValid = false;
         this._isCustomTheme = true;
         this._isLinear = false;
-        this._theme = "**CUSTOM**";
+        this._theme = CARD.config.theme.default;
 
-        if (!this._checkCustomThemeStructure(newTheme)){
+        if (!this._checkCustomThemeStructure(newTheme)) {
             return;
         }
         this._currentStyle = newTheme;
@@ -1703,7 +1752,7 @@ class EntityOrValue {
             this._isValid = true;
             this._isAvailable = true;
             return;
-        } else if (typeof this._value === "string" && this._hassProvider.hass.states[this._value]) {
+        } else if (typeof this._value === 'string' && this._hassProvider.hass.states[this._value]) {
             this._isEntity = true;
             this._entity = this._value;
             this._isFound = true;
@@ -1715,7 +1764,7 @@ class EntityOrValue {
             }
             this._isValid = true;
             this._isAvailable = true;
-            const entityType = this._entity.split(".")[0]; // "cover", "light", "fan", etc.
+            const entityType = this._entity.split('.')[0]; // 'cover', 'light', 'fan', etc.
             if (ATTRIBUTE_MAPPING[entityType]) {
                 const attribute = this._attribute ?? ATTRIBUTE_MAPPING[entityType].attribute;
                 if (attribute && entityState.attributes.hasOwnProperty(attribute)) {
@@ -1870,7 +1919,7 @@ class ConfigHelper {
      */
     checkConfig() {
 
-        if (!this._isChanged){
+        if (!this._isChanged) {
             return;
         }
         this._isChanged = false;
@@ -1887,10 +1936,10 @@ class ConfigHelper {
         } else if (this._config.attribute && !entityState.attributes.hasOwnProperty(this._config.attribute)) {
             this._msg = MSG.attributeNotFound;
             return;
-        }  else if (this._config.min_value && !Number.isFinite(this._config.min_value)) {
+        } else if (this._config.min_value && !Number.isFinite(this._config.min_value)) {
             this._msg = MSG.minValueError;
             return;
-        } else if (!Number.isFinite(this.max_value)){
+        } else if (!Number.isFinite(this.max_value)) {
             this._msg = MSG.maxValueError;
             return;
         } else if (this._decimal < 0) {
@@ -1932,7 +1981,7 @@ class CardView {
      *
      * @returns {boolean} True if the configuration is valid, false otherwise.
      */
-    get isValid(){
+    get isValid() {
         return this._configHelper.isValid;
     }
 
@@ -1941,7 +1990,7 @@ class CardView {
      *
      * @returns {string|null} The error message.
      */
-    get msg(){
+    get msg() {
         return this._configHelper.msg[this.currentLanguage];
     }
 
@@ -1950,7 +1999,7 @@ class CardView {
      *
      * @returns {object} The card configuration.
      */
-    get config(){
+    get config() {
         return this._config;
     }
 
@@ -1960,17 +2009,17 @@ class CardView {
      * @param {object} config - The new card configuration.
      */
     set config(config) {
-        this._configHelper.config       = config;
-        this.layout                     = config.layout;
-        this.bar_size                   = config.bar_size;
-        this._percentHelper.unit        = config.unit;
-        this.show_more_info             = typeof config.show_more_info === 'boolean' ? config.show_more_info : CARD.config.showMoreInfo;
-        this.navigate_to                = config.navigate_to !== undefined ? config.navigate_to : null;
-        this._theme.theme               = config.theme;
+        this._configHelper.config = config;
+        this.layout = config.layout;
+        this.bar_size = config.bar_size;
+        this._percentHelper.unit = config.unit;
+        this.show_more_info = typeof config.show_more_info === 'boolean' ? config.show_more_info : CARD.config.showMoreInfo;
+        this.navigate_to = config.navigate_to !== undefined ? config.navigate_to : null;
+        this._theme.theme = config.theme;
         if (Array.isArray(config.custom_theme)) {
-            this._theme.customTheme     = config.custom_theme;
+            this._theme.customTheme = config.custom_theme;
         }
-        this._currentValue.attribute    = config.attribute || null;
+        this._currentValue.attribute = config.attribute || null;
     }
 
     /**
@@ -1991,11 +2040,11 @@ class CardView {
         this._configHelper.checkConfig();
 
         // availability check
-        if (!this._currentValue.isAvailable || (!this._max_value.isAvailable && this._configHelper.config.max_value)){
-            this.isAvailable=false;
+        if (!this._currentValue.isAvailable || (!this._max_value.isAvailable && this._configHelper.config.max_value)) {
+            this.isAvailable = false;
             return;
         }
-        this.isAvailable=true;
+        this.isAvailable = true;
         // update
         this._percentHelper.current = this._currentValue.value;
         this._percentHelper.decimal = this._configHelper.config.decimal ?? this._currentValue.precision;
@@ -2020,7 +2069,7 @@ class CardView {
      * @returns {string} The icon.
      */
     get icon() {
-        if (this._theme.theme === "battery" && this._currentValue.icon && this._currentValue.icon.includes("battery")) {
+        if (this._theme.theme === CARD.config.theme.battery.label && this._currentValue.icon && this._currentValue.icon.includes(CARD.config.theme.battery.icon)) {
             return this._currentValue.icon;
         }
         return this._theme.icon || this._configHelper.config.icon || this._currentValue.icon || CARD.config.icon.default.icon;
@@ -2032,10 +2081,10 @@ class CardView {
      * @returns {string} The color.
      */
     get color() {
-        if(this.isAvailable) {
+        if (this.isAvailable) {
             return this._theme.color || this._configHelper.config.color || CARD.config.color.default;
         }
-        if (this._currentValue.state === CARD.entity.state.unknown || this._max_value.state === CARD.entity.state.unknown){
+        if (this._currentValue.state === CARD.entity.state.unknown || this._max_value.state === CARD.entity.state.unknown) {
             return CARD.config.color.default;
         }
         return CARD.config.color.disabled;
@@ -2047,10 +2096,10 @@ class CardView {
      * @returns {string} The bar color.
      */
     get bar_color() {
-        if(this.isAvailable) {
+        if (this.isAvailable) {
             return this._theme.color || this._configHelper.config.bar_color || CARD.config.color.default;
         }
-        if (this._currentValue.state === CARD.entity.state.unknown || this._max_value.state === CARD.entity.state.unknown){
+        if (this._currentValue.state === CARD.entity.state.unknown || this._max_value.state === CARD.entity.state.unknown) {
             return CARD.config.color.default;
         }
         return CARD.config.color.disabled;
@@ -2062,7 +2111,7 @@ class CardView {
      * @returns {number} The percentage value.
      */
     get percent() {
-        if(this.isAvailable) {
+        if (this.isAvailable) {
             return Math.min(CARD.config.value.max, Math.max(0, this._percentHelper.percent));
         }
         return CARD.config.value.min;
@@ -2074,10 +2123,10 @@ class CardView {
      * @returns {string} The description.
      */
     get description() {
-        if(this.isAvailable) {
+        if (this.isAvailable) {
             return this._percentHelper.label;
         }
-        if (this._currentValue.state === CARD.entity.state.unknown || this._max_value.state === CARD.entity.state.unknown){
+        if (this._currentValue.state === CARD.entity.state.unknown || this._max_value.state === CARD.entity.state.unknown) {
             return MSG.entityUnknown[this.currentLanguage];
         }
         return MSG.entityUnavailable[this.currentLanguage];
@@ -2093,10 +2142,10 @@ class CardView {
     }
 
     get isBadgeEnable() {
-        if(this.isAvailable) {
+        if (this.isAvailable) {
             return false;
         }
-        if (this._currentValue.state === CARD.entity.state.unknown || this._max_value.state === CARD.entity.state.unknown){
+        if (this._currentValue.state === CARD.entity.state.unknown || this._max_value.state === CARD.entity.state.unknown) {
             return false;
         }
         return true;
@@ -2118,7 +2167,7 @@ class EntityProgressCard extends HTMLElement {
      */
     constructor() {
         super();
-        this.attachShadow({ mode: 'open' });
+        this.attachShadow({ mode: CARD.shadowMode });
         this._cardView = new CardView();
 
         if (!EntityProgressCard._moduleLoaded) {
@@ -2134,7 +2183,7 @@ class EntityProgressCard extends HTMLElement {
         this._elements = {};
         this._isBuilt = false;
         this._errorVisible = false;
-        this.addEventListener('click', this._handleCardAction.bind(this));
+        this.addEventListener(CARD.config.event.click, this._handleCardAction.bind(this));
     }
 
     _handleCardAction() {
@@ -2159,8 +2208,6 @@ class EntityProgressCard extends HTMLElement {
             const element = document.querySelector(`#${anchor}`);
             if (element) {
                 element.scrollIntoView({ behavior: 'smooth' });
-            } else {
-                console.warn(`Ancre non trouvée: ${anchor}`);
             }
         }
     }
@@ -2171,7 +2218,7 @@ class EntityProgressCard extends HTMLElement {
             composed: true,
             detail: { entityId: this._cardView.entity },
         }));
-      }
+    }
 
     /**
      * Creates and returns a new configuration element for the component.
@@ -2230,7 +2277,7 @@ class EntityProgressCard extends HTMLElement {
         card.classList.add(CARD.typeName);
         card.classList.toggle(CARD.config.dynamicStyle.clickable, this._cardView.show_more_info || this._cardView.navigate_to);
         card.innerHTML = CARD_HTML;
-        const style = document.createElement('style');
+        const style = document.createElement(CARD.config.dynamicStyle.element);
         style.textContent = CARD_CSS;
 
         // Inject in the DOM
@@ -2250,7 +2297,7 @@ class EntityProgressCard extends HTMLElement {
         };
     }
 
-    _changeBarSize(){
+    _changeBarSize() {
         let size = null;
 
         switch (this._cardView.bar_size) {
@@ -2360,8 +2407,9 @@ class EntityProgressCard extends HTMLElement {
     _showBadge() {
         this._elements[CARD.config.html.card.element].classList.toggle(`${CARD.config.dynamicStyle.show}-${CARD.config.html.badge.class}`, this._cardView.isBadgeEnable);
         this._updateElement(CARD.config.html.badgeIcon.class, (el) => {
-            el.setAttribute("icon", CARD.config.icon.badge.icon);
-            el.style.color = CARD.config.icon.badge.color;
+            if (el.getAttribute(CARD.config.icon.badge.attribute) !== CARD.config.icon.badge.icon) {
+                el.setAttribute(CARD.config.icon.badge.attribute, CARD.config.icon.badge.icon);
+            }
         });
     }
 
@@ -2373,8 +2421,8 @@ class EntityProgressCard extends HTMLElement {
     _showError(message) {
         this._elements[CARD.config.html.card.element].classList.toggle(`${CARD.config.dynamicStyle.show}-${CARD.config.html.alert.element}`, true);
         this._updateElement(CARD.config.html.alertIcon.class, (el) => {
-            if (el.getAttribute("icon") !== CARD.config.icon.alert.icon) {
-                el.setAttribute("icon", CARD.config.icon.alert.icon);
+            if (el.getAttribute(CARD.config.icon.alert.attribute) !== CARD.config.icon.alert.icon) {
+                el.setAttribute(CARD.config.icon.alert.attribute, CARD.config.icon.alert.icon);
             }
         });
         this._updateElement(CARD.config.html.alertMessage.class, (el) => {
@@ -2535,7 +2583,7 @@ class ConfigManager {
      *   and commit the changes to the configuration.
      */
     updateProperty(key, value) {
-        while (this._pendingUpdatesLock) {}
+        while (this._pendingUpdatesLock) { }
         this._pendingUpdatesLock = true;
         const hasPendingUpdate = key in this._pendingUpdates;
         if (
@@ -2569,7 +2617,7 @@ class ConfigManager {
      * @private
      */
     _applyPendingUpdates() {
-        while (this._pendingUpdatesLock) {}
+        while (this._pendingUpdatesLock) { }
         this._pendingUpdatesLock = true;
 
         let hasChanges = false;
@@ -2667,7 +2715,7 @@ class EntityProgressCardEditor extends HTMLElement {
      */
     constructor() {
         super();
-        this.attachShadow({ mode: 'open' });
+        this.attachShadow({ mode: CARD.shadowMode });
         this._container = null
         this.config = {};
         this._hass = null;
@@ -2814,7 +2862,7 @@ class EntityProgressCardEditor extends HTMLElement {
     }
 
     _updateUnitFromEntity(unitAvailable) {
-        if(unitAvailable) {
+        if (unitAvailable) {
             this.configManager.updateProperty(EDITOR_INPUT_FIELDS.unit.name, unitAvailable);
             this._elements[EDITOR_INPUT_FIELDS.unit.name].value = unitAvailable;
         } else {
@@ -2838,7 +2886,7 @@ class EntityProgressCardEditor extends HTMLElement {
         if (key === EDITOR_INPUT_FIELDS.entity.type) {
             const attributeAvailable = this._isEntityWithAttribute(value);
             const unitAvailable = this._getUnitFromEntity(value);
-            if(attributeAvailable) {
+            if (attributeAvailable) {
                 this._refreshAttributeOption(this._hass.states[value] ?? null)
             }
             this._updateUnitFromEntity(unitAvailable);
@@ -2906,7 +2954,7 @@ class EntityProgressCardEditor extends HTMLElement {
     }
 
     _isEntityWithAttribute(entity) {
-        return !!ATTRIBUTE_MAPPING[entity?.split(".")[0]];
+        return !!ATTRIBUTE_MAPPING[entity?.split('.')[0]];
     }
 
     _getUnitFromEntity(curEntity = null) {
@@ -2914,7 +2962,7 @@ class EntityProgressCardEditor extends HTMLElement {
         return this._hass.states[entity]?.attributes?.unit_of_measurement ?? null;
     }
 
-    _getAttributeOption(curEntity=null) {
+    _getAttributeOption(curEntity = null) {
         const entity = curEntity ?? this._hass.states[this.config.entity] ?? null;
         if (!entity) {
             return null;
@@ -2927,7 +2975,6 @@ class EntityProgressCardEditor extends HTMLElement {
         return availableAttributes;
     }
 
-
     /**
      * Adds a list of choices to a given `<select>` element based on the specified list type.
      *
@@ -2937,11 +2984,11 @@ class EntityProgressCardEditor extends HTMLElement {
      * @param {HTMLElement} select - The `<select>` element to which the choices will be added.
      * @param {string} type - The type of list to populate ('layout', 'color', 'theme', or 'tap_action').
      */
-    _addChoices(select, type, curEntity=null) {
+    _addChoices(select, type, curEntity = null) {
         select.innerHTML = '';
         const list = (type === CARD.config.editor.field.attribute.type) ? this._getAttributeOption(curEntity) : FIELD_OPTIONS[type];
         this.configManager._logDebug('_addChoices - List ', list);
-        if(!list) {
+        if (!list) {
             return;
         }
         list.forEach(optionData => {
@@ -2955,10 +3002,8 @@ class EntityProgressCardEditor extends HTMLElement {
                 `;
             } else if (type === CARD.config.editor.field.layout.type || type === CARD.config.editor.field.theme.type || type === CARD.config.editor.field.bar_size.type) {
                 const haIcon = document.createElement(CARD.config.editor.field.iconItem.element);
-                haIcon.setAttribute('icon', optionData.icon || CARD.config.icon.default.icon);
-                haIcon.style.marginRight = '8px';
-                haIcon.style.width = '20px';
-                haIcon.style.height = '20px';
+                haIcon.setAttribute(CARD.config.editor.field.iconItem.attribute, optionData.icon);
+                haIcon.classList.add(CARD.config.editor.field.iconItem.class);
                 option.appendChild(haIcon);
                 option.append(optionData.label[this._currentLanguage]);
             } else if (type === CARD.config.editor.field.tap_action.type) {
@@ -2975,7 +3020,7 @@ class EntityProgressCardEditor extends HTMLElement {
         if (!curEntity) {
             return;
         }
-        const inputElement = this._elements["attribute"];
+        const inputElement = this._elements[CARD.config.editor.key.attribute];
         // delete current options
         while (inputElement.firstChild) {
             inputElement.removeChild(inputElement.firstChild);
@@ -2997,10 +3042,10 @@ class EntityProgressCardEditor extends HTMLElement {
 
     _addEventListener(name, type) {
         const isHASelect = CARD.config.editor.field[type]?.element === CARD.config.editor.field.select.element;
-        const events = isHASelect ? ['selected'] : ['value-changed', 'input'];
+        const events = isHASelect ? CARD.config.event.HASelect : CARD.config.event.other;
 
         if (isHASelect) {
-            this._elements[name].addEventListener('closed', (event) => {
+            this._elements[name].addEventListener(CARD.config.event.closed, (event) => {
                 event.stopPropagation();
             });
         }
@@ -3050,7 +3095,7 @@ class EntityProgressCardEditor extends HTMLElement {
             case CARD.config.editor.field.entity.type:
                 inputElement = document.createElement(CARD.config.editor.field.entity.element);
                 inputElement.hass = this.hass;
-                this._toggleFieldDisable(CARD.config.editor.key.attribute, !(this.config.entity && ATTRIBUTE_MAPPING[this.config.entity.split(".")[0]]));
+                this._toggleFieldDisable(CARD.config.editor.key.attribute, !(this.config.entity && ATTRIBUTE_MAPPING[this.config.entity.split('.')[0]]));
                 break;
             case CARD.config.editor.field.icon.type:
                 inputElement = document.createElement(CARD.config.editor.field.icon.element);
@@ -3062,7 +3107,7 @@ class EntityProgressCardEditor extends HTMLElement {
             case CARD.config.editor.field.tap_action.type:
             case CARD.config.editor.field.attribute.type:
                 inputElement = document.createElement(CARD.config.editor.field[type].element);
-                inputElement.popperOptions = "";
+                inputElement.popperOptions = '';
                 this._addChoices(inputElement, type);
                 if (type === CARD.config.editor.field.tap_action.type) {
                     value = this._getTapActionValue();
@@ -3083,7 +3128,7 @@ class EntityProgressCardEditor extends HTMLElement {
         }
 
         // store element and manage default display
-        this._elements[name]=inputElement;
+        this._elements[name] = inputElement;
         inputElement.style.width = '100%';
         inputElement.required = required;
         inputElement.label = label;
@@ -3113,17 +3158,17 @@ class EntityProgressCardEditor extends HTMLElement {
         link.href = CARD.config.documentation.attributes.documentationUrl;
         link.target = CARD.config.documentation.attributes.linkTarget;
         link.classList.add(CARD.config.documentation.link.class);
-        
+
         const outerDiv = document.createElement(CARD.config.documentation.outerDiv.element);
         outerDiv.classList.add(CARD.config.documentation.outerDiv.class);
-        
+
         const innerDiv = document.createElement(CARD.config.documentation.innerDiv.element);
         innerDiv.classList.add(CARD.config.documentation.innerDiv.class);
-        
+
         const questionMark = document.createElement(CARD.config.documentation.questionMark.element);
         questionMark.textContent = CARD.config.documentation.attributes.text;
         questionMark.classList.add(CARD.config.documentation.questionMark.class);
-        
+
         innerDiv.appendChild(questionMark);
         outerDiv.appendChild(innerDiv);
         link.appendChild(outerDiv);
@@ -3154,7 +3199,7 @@ class EntityProgressCardEditor extends HTMLElement {
     async loadEntityPicker() {
         if (!window.customElements.get(CARD.config.editor.field.entity.element)) {
             const ch = await window.loadCardHelpers();
-            const c = await ch.createCardElement({ type: "entities", entities: [] });
+            const c = await ch.createCardElement({ type: 'entities', entities: [] });
             await c.constructor.getConfigElement();
             const haEntityPicker = window.customElements.get(CARD.config.editor.field.entity.element);
         }
@@ -3166,7 +3211,7 @@ class EntityProgressCardEditor extends HTMLElement {
      * @returns {void}
      */
     render() {
-        const style = document.createElement('style');
+        const style = document.createElement(CARD.config.dynamicStyle.element);
         style.textContent = CARD_CSS;
         const fragment = document.createDocumentFragment();
         fragment.appendChild(style);
