@@ -153,7 +153,13 @@ You can customize the card using the following parameters:
     - min [number] (required): The minimum value for this range.
     - max [number] (required): The maximum value for this range.
     - color [string] (required): The color of the icon.
-    - icon [string] (required): The icon to display.
+    - icon [string] (optional): The icon to display.
+
+  *Order of Priority for the Icon:*
+    - Theme/Custom Theme: The icon derived from the theme or style applied to the item.
+    - Icon Parameter: A custom icon specifically defined for the item.
+    - Icon Associated with the Entity: The icon directly linked or representative of the entity.
+    - Default: The icon used by default if no other is specified.
 
   *Example:*
   ```yaml

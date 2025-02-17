@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.0.39
+ * @version 1.0.40
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.0.39';
+const VERSION = '1.0.40';
 const CARD = {
     typeName: 'entity-progress-card',
     name: 'Entity progress card',
@@ -145,7 +145,7 @@ const CARD = {
         theme: {
             default: '**CUSTOM**',
             battery: { label: 'battery', icon: 'battery' },
-            customTheme: { expectedKeys: ['min', 'max', 'icon', 'color'] },
+            customTheme: { expectedKeys: ['min', 'max', 'color'] },
         },
         documentation: {
             link: { element: 'a', class: 'documentation-link' },
