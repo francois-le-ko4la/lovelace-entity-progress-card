@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.0.40
+ * @version 1.0.41
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.0.40';
+const VERSION = '1.0.41';
 const CARD = {
     typeName: 'entity-progress-card',
     name: 'Entity progress card',
@@ -67,11 +67,49 @@ const CARD = {
         language: 'en',
         value: { min: 0, max: 100 },
         unit: { default: '%', fahrenheit: '°F' },
-        color: { default: 'var(--state-icon-color)', disabled: 'var(--dark-grey-color)' },
+        color: { default: 'var(--state-icon-color)', disabled: 'var(--dark-grey-color)', unavailable: 'var(--state-unavailable-color)', notFound: 'var(--state-inactive-color)' },
         icon: {
             default: { icon: 'mdi:alert', },
             alert: { icon: 'mdi:alert-circle-outline', color: '#0080ff', attribute: 'icon' },
-            badge: { icon: 'mdi:exclamation-thick', color: 'white', attribute: 'icon' },
+            notFound: { icon: 'mdi:help', },
+            badge: {
+                unavailable: { icon: 'mdi:exclamation-thick', color: 'white', backgroundColor: 'var(--orange-color)', attribute: 'icon' },
+                notFound: { icon: 'mdi:exclamation-thick', color: 'white', backgroundColor: 'var(--red-color)', attribute: 'icon' },
+            },
+        },
+        deviceClassIcon: {
+            battery: "mdi:battery",
+            cold: "mdi:snowflake",
+            connectivity: "mdi:wifi",
+            current: "mdi:current-ac",
+            door: "mdi:door-open",
+            energy: "mdi:flash",
+            gas: "mdi:fire",
+            heat: "mdi:fire",
+            humidity: "mdi:water-percent",
+            illuminance: "mdi:brightness-5",
+            light: "mdi:lightbulb",
+            lock: "mdi:lock",
+            moisture: "mdi:water",
+            motion: "mdi:motion-sensor",
+            occupancy: "mdi:account",
+            opening: "mdi:window-open",
+            plug: "mdi:power-plug",
+            power: "mdi:flash",
+            power_factor: "mdi:flash",
+            pressure: "mdi:gauge",
+            problem: "mdi:alert",
+            safety: "mdi:shield-check",
+            shutter: "mdi:window-shutter",
+            smoke: "mdi:smoke-detector",
+            sound: "mdi:volume-high",
+            switch: "mdi:power-socket",
+            temperature: "mdi:thermometer",
+            timestamp: "mdi:calendar-clock",
+            tv: "mdi:television",
+            vibration: "mdi:vibrate",
+            voltage: "mdi:flash",
+            window: "mdi:window-open"
         },
         event: {
             HASelect: ['selected'],
@@ -81,6 +119,10 @@ const CARD = {
         },
         dynamicStyle: {
             element: 'style',
+            badge: {
+                color: { var: '--epb-badge-color', default: 'var(--orange-color)' },
+                backgroundColor: { var: '--epb-badge-bgcolor', default: 'white' },
+            },
             iconAndShape: {
                 color: { var: '--epb-icon-and-shape-color', default: 'var(--state-icon-color)' },
             },
@@ -159,7 +201,7 @@ const CARD = {
             },
         },
     },
-    entity: { state: { unavailable: 'unavailable', unknown: 'unknown' }, },
+    entity: { state: { unavailable: 'unavailable', unknown: 'unknown', notFound: 'notFound' }, },
     shadowMode: 'open',
     debounce: 100,
     debug: true,
@@ -280,11 +322,11 @@ const MSG = {
         de: "entity: Der Parameter 'entity' ist erforderlich!",
     },
     entityNotFound: {
-        en: "entity: Entity not found in HA.",
-        fr: "entity: Entité introuvable dans HA.",
-        es: "entity: Entidad no encontrada en HA.",
-        it: "entity: Entità non trovata in HA.",
-        de: "entity: Entität in HA nicht gefunden.",
+        en: "Entity not found",
+        fr: "Entité introuvable",
+        es: "Entidad no encontrada",
+        it: "Entità non trovata",
+        de: "Entität nicht gefunden",
     },
     entityUnknown: {
         en: "Unknown",
@@ -958,7 +1000,7 @@ const CARD_CSS = `
         height: 16px;
         width: 16px;
         border-radius: 50%;
-        background-color: var(--orange-color);
+        background-color: var(${CARD.config.dynamicStyle.badge.backgroundColor.var}, ${CARD.config.dynamicStyle.badge.backgroundColor.default});
         display: none;
         align-items: center;
         justify-content: center;
@@ -971,10 +1013,10 @@ const CARD_CSS = `
     .${CARD.config.html.badge.class} .${CARD.config.html.badgeIcon.class} {
         height: 12px;
         width: 12px;
-        display: flex; /* Assure que l'icône reste proportionnée */
+        display: flex; /* h/w ratio */
         align-items: center;
         justify-content: center;
-        color: ${CARD.config.html.badgeIcon.class};
+        color: var(${CARD.config.dynamicStyle.badge.color.var}, ${CARD.config.dynamicStyle.badge.color.default});
     }
     
 `;
@@ -1587,16 +1629,77 @@ class HassProvider {
     }
 }
 
-/**
- * Represents either an entity ID or a direct value.
- * This class validates the provided value and retrieves information from Home Assistant if it's an entity.
- *
- * @class EntityOrValue
- */
-class EntityOrValue {
+
+class IconHelper {
     /**
-     * Creates a new instance of EntityOrValue.
+     * Creates a new instance of IconHelper.
      */
+    constructor() {
+        /**
+         * @type {string}
+         * @private
+         */
+        this._entity = null;
+        /**
+         * @type {string}
+         * @private
+         */
+        this._icon = null;
+    }
+    set entity(curEntity) {
+        if (!curEntity) {
+            this._entity = null;
+            this._icon = null;
+            return;
+        }
+        this._entity = curEntity;
+        const entityType = this._entity.split('.')[0];
+        if (!CARD.config.defaultIcons.hasOwnProperty(entityType)) {
+            this._icon = null;
+            return;
+        }
+        this._icon = CARD.config.defaultIcons[entityType];
+        return;
+    }
+
+    get icon() {
+        return this._icon;
+    }
+}
+
+/**
+ * Helper class for managing numeric values.
+ * This class validates and stor a numeric value.
+ *
+ * @class ValueHelper
+ */
+class ValueHelper {
+    constructor() {
+        this._value = null;
+        this._isValid = false;
+    }
+
+    set value(value) {
+        this._value = Number.isFinite(value) ? value : null;
+        this._isValid = Number.isFinite(value);
+    }
+
+    get value() {
+        return this._value;
+    }
+
+    get isValid() {
+        return this._isValid;
+    }
+}
+
+/**
+ * Helper class for managing entities.
+ * This class validates and retrieves information from Home Assistant if it's an entity.
+ *
+ * @class EntityHelper
+ */
+class EntityHelper {
     constructor() {
         /**
          * @type {object|string}
@@ -1608,11 +1711,6 @@ class EntityOrValue {
          * @private
          */
         this._hassProvider = new HassProvider();
-        /**
-         * @type {boolean}
-         * @private
-         */
-        this._isEntity = false;
         /**
          * @type {boolean}
          * @private
@@ -1644,22 +1742,17 @@ class EntityOrValue {
          */
         this._state = null;
     }
-    /**
-     * Sets the value, which can be an entity ID or a direct value.
-     * Triggers validation and updates internal state.
-     *
-     * @param {object|string} newValue - The new value to set.
-     */
-    set value(newValue) {
-        this._value = newValue;
-        this._checkValue();
+
+    set entity(entity) {
+        this._entity = entity;
+        this._isValid = false;
     }
     /**
-     * Returns the validated value.
-     * Returns null if the value is invalid.
-     *
-     * @returns {object|string|null} The validated value.
-     */
+    * Returns the validated value.
+    * Returns null if the value is invalid.
+    *
+    * @returns {object|string|null} The validated value.
+    */
     get value() {
         if (this._isValid) {
             return this._value;
@@ -1674,14 +1767,7 @@ class EntityOrValue {
      */
     set attribute(newAttribute) {
         this._attribute = newAttribute;
-    }
-    /**
-     * Indicates if we manage an Entity
-     *
-     * @returns {boolean} True if the value is an entity, false otherwise.
-     */
-    get isEntity() {
-        return this._isEntity;
+        this._isValid = false;
     }
     /**
      * Indicates Entity's state
@@ -1700,14 +1786,6 @@ class EntityOrValue {
         return this._isValid;
     }
     /**
-     * Indicates whether the entity (if applicable) is available.
-     *
-     * @returns {boolean} True if the entity is available, false otherwise.
-     */
-    get isAvailable() {
-        return this._isAvailable;
-    }
-    /**
      * Indicates whether the entity (if applicable) was found in Home Assistant.
      *
      * @returns {boolean} True if the entity is found, false otherwise.
@@ -1716,75 +1794,190 @@ class EntityOrValue {
         return this._isFound;
     }
     /**
+     * Indicates whether the entity (if applicable) is available.
+     *
+     * @returns {boolean} True if the entity is available, false otherwise.
+     */
+    get isAvailable() {
+        return this._isAvailable;
+    }
+    /**
      * Returns the display precision of the entity, if valid.
      */
     get precision() {
-        return this._isValid ? this._hassProvider.hass.entities[this._entity].display_precision : null;
+        return this._isValid ? this._hassProvider?.hass?.entities?.[this._entity]?.display_precision ?? null : null;
     }
-
     /**
      * Returns the friendly name of the entity, if valid.
      */
     get name() {
         return this._isValid ? this._hassProvider.hass.states[this._entity]?.attributes?.friendly_name : null;
     }
+    refresh() {
+        this._state = null;
+        this._isFound = false;
+        this._isValid = false;
+        this._isAvailable = false;
 
+        if (!(typeof this._entity === 'string' && this._entity)) {
+            this._value = 0;
+            return;
+        }
+
+        if (!this._hassProvider.hass.states[this._entity]) {
+            this._state = CARD.entity.state.notFound;
+            return;
+        }
+        this._isFound = true;
+
+        const entityState = this._hassProvider.hass.states[this._entity];
+        this._state = entityState.state;
+        if (this._state === CARD.entity.state.unavailable || this._state === CARD.entity.state.unknown) {
+            this._value = 0;
+            return;
+        }
+        this._isValid = true;
+        this._isAvailable = true;
+
+        const entityType = this._entity.split('.')[0]; // 'cover', 'light', 'fan', etc.
+        if (ATTRIBUTE_MAPPING[entityType]) {
+            const attribute = this._attribute ?? ATTRIBUTE_MAPPING[entityType].attribute;
+            if (attribute && entityState.attributes.hasOwnProperty(attribute)) {
+                this._value = entityState.attributes[attribute] ?? 0;
+                if (entityType === ATTRIBUTE_MAPPING.light.label && attribute === ATTRIBUTE_MAPPING.light.attribute) {
+                    this._value = (100 * this._value) / 255;
+                }
+            } else { // attribute not supported
+                this._value = 0;
+                this._isFound = false;
+                this._isValid = false;
+                this._isAvailable = false;
+            }
+        } else {
+            this._value = parseFloat(this._state) || 0;
+        }
+        return;
+    }
+    _getDeviceClass() {    
+        const entityState = this._hassProvider.hass.states[this._entity];
+        const entityType = this._entity.split('.')[0];
+
+        if (!entityState) {
+            return null;
+        }
+    
+        if (entityState.attributes?.device_class) {
+            return entityState.attributes.device_class;
+        }
+    
+        if (entityType === 'light' && entityState.attributes?.brightness !== undefined) {
+            return 'light';
+        }
+        
+        return null;
+    }
     /**
      * Returns the icon of the entity, if valid.
      */
     get icon() {
-        return this._isValid ? this._hassProvider.hass.states[this._entity]?.attributes?.icon : null;
-    }
-    /**
-     * Validates the value and updates internal state.
-     * Checks if the value is a valid entity ID or a direct value.
-     *
-     * @private
-     */
-    _checkValue() {
-        this._isFound = false;
-        this._isValid = false;
-        this._isEntity = false;
-        this._isAvailable = false;
-
-        if (Number.isFinite(this._value)) {
-            this._isFound = true;
-            this._isValid = true;
-            this._isAvailable = true;
-            return;
-        } else if (typeof this._value === 'string' && this._hassProvider.hass.states[this._value]) {
-            this._isEntity = true;
-            this._entity = this._value;
-            this._isFound = true;
-            const entityState = this._hassProvider.hass.states[this._entity];
-            this._state = entityState.state;
-            if (this._state === CARD.entity.state.unavailable || this._state === CARD.entity.state.unknown) {
-                this._value = 0;
-                return;
-            }
-            this._isValid = true;
-            this._isAvailable = true;
-            const entityType = this._entity.split('.')[0]; // 'cover', 'light', 'fan', etc.
-            if (ATTRIBUTE_MAPPING[entityType]) {
-                const attribute = this._attribute ?? ATTRIBUTE_MAPPING[entityType].attribute;
-                if (attribute && entityState.attributes.hasOwnProperty(attribute)) {
-                    this._value = entityState.attributes[attribute] ?? 0;
-                    if (entityType === ATTRIBUTE_MAPPING.light.label && attribute === ATTRIBUTE_MAPPING.light.attribute) {
-                        this._value = (100 * this._value) / 255;
-                    }
-                } else { // attribute not supported
-                    this._value = 0;
-                    this._isFound = false;
-                    this._isValid = false;
-                    this._isAvailable = false;
-                }
-            } else {
-                this._value = parseFloat(this._state) || 0;
-            }
-            return;
+        const entityState = this._hassProvider.hass.states[this._entity];
+        if (!entityState) {
+            return null;
         }
-        this._value = 0;
-        return;
+        const icon = entityState.attributes?.icon;
+        const deviceClass = this._getDeviceClass();
+        const deviceClassIcon = deviceClass && CARD.config.deviceClassIcon.hasOwnProperty(deviceClass)
+            ? CARD.config.deviceClassIcon[deviceClass]
+            : null;
+        return this._isValid ? (icon || deviceClassIcon) : null;
+    }
+}
+
+/**
+ * Represents either an entity ID or a direct value.
+ * This class validates the provided value and retrieves information from Home Assistant if it's an entity.
+ *
+ * @class EntityOrValue
+ */
+class EntityOrValue {
+    /**
+     * Creates a new instance of EntityOrValue.
+     */
+    constructor() {
+        this._activeHelper = null; // Dynamically set to EntityHelper or ValueHelper
+        this._isEntity = null;
+    }
+
+    _createValueHelper() {
+        if (!this._activeHelper || !(this._activeHelper instanceof ValueHelper)) {
+            this._activeHelper = new ValueHelper();
+            this._isEntity = false;
+        }
+    }
+
+    _createEntityHelper() {
+        if (!this._activeHelper || !(this._activeHelper instanceof EntityHelper)) {
+            this._activeHelper = new EntityHelper();
+            this._isEntity = true;
+        }
+    }
+
+    /**
+     * Sets the value, which can be an entity ID or a direct value.
+     * Dynamically delegates to the appropriate helper.
+     * @param {string|number} input - The value or entity ID.
+     */
+    set value(input) {
+        if (typeof input === 'string') {
+            this._createEntityHelper();
+            this._activeHelper.entity = input;
+        } else if (Number.isFinite(input)) {
+            this._createValueHelper();
+            this._activeHelper.value = input;
+        } else {
+            this._activeHelper = null;
+        }
+    }
+
+    /******************************************************************************************
+     * Proxy function
+     */
+    get isEntity() {
+        return this._isEntity;
+    }
+    get value() {
+        return this._activeHelper ? this._activeHelper.value : null;
+    }
+    set attribute(newAttribute) {
+        if (this._isEntity) {
+            this._activeHelper.attribute = newAttribute;
+        }
+    }
+     get state() {
+        return this._activeHelper && this._isEntity ? this._activeHelper.state : null;
+    }   
+    get isValid() {
+        return this._activeHelper ? this._activeHelper.isValid : false;
+    }
+    get isFound() {
+        return this._activeHelper ? this._isEntity && this._activeHelper.isFound || this._activeHelper.isValid : false;
+    }
+    get isAvailable() {
+        return this._activeHelper ? this._isEntity && this._activeHelper.isAvailable || this._activeHelper.isValid : false;
+    }
+    get precision() {
+        return this._activeHelper && this._isEntity ?  this._activeHelper.precision : null;
+    }
+    get name() {
+        return this._activeHelper && this._isEntity ? this._activeHelper.name : null;
+    }
+    get icon() {
+        return this._activeHelper && this._isEntity ? this._activeHelper.icon : null;
+    }
+    refresh() {
+        if (this._activeHelper && this._isEntity) {
+            this._activeHelper.refresh();
+        }
     }
 }
 
@@ -1930,9 +2123,6 @@ class ConfigHelper {
         if (!this._config.entity) {
             this._msg = MSG.entityError;
             return;
-        } else if (!entityState) {
-            this._msg = MSG.entityNotFound;
-            return;
         } else if (this._config.attribute && !entityState.attributes.hasOwnProperty(this._config.attribute)) {
             this._msg = MSG.attributeNotFound;
             return;
@@ -1974,6 +2164,9 @@ class CardView {
         this._currentValue = new EntityOrValue();
         this._max_value = new EntityOrValue();
         this.isAvailable = false;
+        this._isUnknown = false;
+        this._isNotFound = false;
+        this._isUnavailable = false;
     }
 
     /**
@@ -2019,7 +2212,9 @@ class CardView {
         if (Array.isArray(config.custom_theme)) {
             this._theme.customTheme = config.custom_theme;
         }
+        this._currentValue.value = config.entity;
         this._currentValue.attribute = config.attribute || null;
+        this._max_value.value = config.max_value || CARD.config.value.max;
     }
 
     /**
@@ -2033,15 +2228,14 @@ class CardView {
             ? this._hassProvider.language
             : CARD.config.language;
 
-        this._currentValue.value = this._configHelper.config.entity;
-        this._max_value.value = this._configHelper.config.max_value || CARD.config.value.max;
+        // this._max_value.value = this._configHelper.config.max_value || CARD.config.value.max;
+        this._currentValue.refresh();
+        this._max_value.refresh();
         this._configHelper.max_value = this._max_value.value;
         this._configHelper.decimal = this._configHelper.config.decimal ?? this._currentValue.precision;
         this._configHelper.checkConfig();
 
-        // availability check
-        if (!this._currentValue.isAvailable || (!this._max_value.isAvailable && this._configHelper.config.max_value)) {
-            this.isAvailable = false;
+        if (!this._checkEntityState()) {
             return;
         }
         this.isAvailable = true;
@@ -2052,6 +2246,15 @@ class CardView {
         this._percentHelper.max = this._max_value.value;
         this._percentHelper.refresh();
         this._theme.value = this._percentHelper.valueForThemes(this._theme.isLinear);
+    }
+
+    _checkEntityState() {
+        this._isUnknown = (this._currentValue.state === CARD.entity.state.unknown || this._max_value.state === CARD.entity.state.unknown);
+        this._isUnavailable = (this._currentValue.state === CARD.entity.state.unavailable || this._max_value.state === CARD.entity.state.unavailable);
+        this._isNotFound = (this._currentValue.state === CARD.entity.state.notFound || this._max_value.state === CARD.entity.state.notFound);
+        this.isAvailable = !(!this._currentValue.isAvailable || (!this._max_value.isAvailable && this._configHelper.config.max_value));
+
+        return this.isAvailable;
     }
 
     /**
@@ -2069,6 +2272,9 @@ class CardView {
      * @returns {string} The icon.
      */
     get icon() {
+        if (this._isNotFound) {
+            return CARD.config.icon.notFound.icon;
+        }
         if (this._theme.theme === CARD.config.theme.battery.label && this._currentValue.icon && this._currentValue.icon.includes(CARD.config.theme.battery.icon)) {
             return this._currentValue.icon;
         }
@@ -2084,8 +2290,14 @@ class CardView {
         if (this.isAvailable) {
             return this._theme.color || this._configHelper.config.color || CARD.config.color.default;
         }
-        if (this._currentValue.state === CARD.entity.state.unknown || this._max_value.state === CARD.entity.state.unknown) {
+        if (this._isUnknown) {
             return CARD.config.color.default;
+        }
+        if (this._isUnavailable) {
+            return CARD.config.color.unavailable;
+        }
+        if (this._isNotFound) {
+            return CARD.config.color.notFound;
         }
         return CARD.config.color.disabled;
     }
@@ -2099,7 +2311,7 @@ class CardView {
         if (this.isAvailable) {
             return this._theme.color || this._configHelper.config.bar_color || CARD.config.color.default;
         }
-        if (this._currentValue.state === CARD.entity.state.unknown || this._max_value.state === CARD.entity.state.unknown) {
+        if (this._isUnknown) {
             return CARD.config.color.default;
         }
         return CARD.config.color.disabled;
@@ -2126,10 +2338,13 @@ class CardView {
         if (this.isAvailable) {
             return this._percentHelper.label;
         }
-        if (this._currentValue.state === CARD.entity.state.unknown || this._max_value.state === CARD.entity.state.unknown) {
+        if (this._isUnknown) {
             return MSG.entityUnknown[this.currentLanguage];
         }
-        return MSG.entityUnavailable[this.currentLanguage];
+        if (this._isUnavailable) {
+            return MSG.entityUnavailable[this.currentLanguage];
+        }
+        return MSG.entityNotFound[this.currentLanguage];
     }
 
     /**
@@ -2142,15 +2357,21 @@ class CardView {
     }
 
     get isBadgeEnable() {
-        if (this.isAvailable) {
-            return false;
-        }
-        if (this._currentValue.state === CARD.entity.state.unknown || this._max_value.state === CARD.entity.state.unknown) {
+        if (!(this._isUnavailable || this._isNotFound)) {
             return false;
         }
         return true;
     }
 
+    get badgeInfo() {
+        if (this._isNotFound) {
+            return CARD.config.icon.badge.notFound;
+        }
+        if (this._isUnavailable) {
+            return CARD.config.icon.badge.unavailable;
+        }
+        return null;
+    }
 }
 
 /** --------------------------------------------------------------------------
@@ -2401,16 +2622,25 @@ class EntityProgressCard extends HTMLElement {
 
     /**
      * Displays a badge
-     *
-     * @param {string} message - The error message to display in the alert.
      */
     _showBadge() {
-        this._elements[CARD.config.html.card.element].classList.toggle(`${CARD.config.dynamicStyle.show}-${CARD.config.html.badge.class}`, this._cardView.isBadgeEnable);
-        this._updateElement(CARD.config.html.badgeIcon.class, (el) => {
-            if (el.getAttribute(CARD.config.icon.badge.attribute) !== CARD.config.icon.badge.icon) {
-                el.setAttribute(CARD.config.icon.badge.attribute, CARD.config.icon.badge.icon);
-            }
-        });
+        const isBadgeEnable = this._cardView.isBadgeEnable;
+        this._elements[CARD.config.html.card.element].classList.toggle(`${CARD.config.dynamicStyle.show}-${CARD.config.html.badge.class}`, isBadgeEnable);
+        if(isBadgeEnable) {
+            const badgeInfo = this._cardView.badgeInfo;
+            if (!badgeInfo) {
+                return;
+            }            
+            this._updateElement(CARD.config.html.badgeIcon.class, (el) => {
+                if (el.getAttribute(badgeInfo.attribute) !== badgeInfo.icon) {
+                    el.setAttribute(badgeInfo.attribute, badgeInfo.icon);
+                }
+            });
+            this._updateElement(CARD.config.html.card.element, (el) => {
+                el.style.setProperty(CARD.config.dynamicStyle.badge.backgroundColor.var, badgeInfo.backgroundColor);
+                el.style.setProperty(CARD.config.dynamicStyle.badge.color.var, badgeInfo.color);
+            });
+        }
     }
 
     /**
