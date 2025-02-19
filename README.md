@@ -159,6 +159,7 @@ You can customize the card using the following parameters:
     - Theme/Custom Theme: The icon derived from the theme or style applied to the item.
     - Icon Parameter: A custom icon specifically defined for the item.
     - Icon Associated with the Entity: The icon directly linked or representative of the entity.
+    - Icon Associated with the Entity's device_class: temperature, humidity...
     - Default: The icon used by default if no other is specified.
 
   *Example:*
