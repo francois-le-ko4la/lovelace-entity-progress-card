@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.0.42
+ * @version 1.0.43
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.0.42';
+const VERSION = '1.0.43';
 const CARD = {
     meta: {
         typeName: 'entity-progress-card',
@@ -40,8 +40,9 @@ const CARD = {
             percentage: 0,
             other: 2
         },
-        entity: { state: { unavailable: 'unavailable', unknown: 'unknown', notFound: 'notFound' }, },
+        entity: { state: { unavailable: 'unavailable', unknown: 'unknown', notFound: 'notFound', idle: 'idle', active: 'active'}, timer: 'timer', },
         shadowMode: 'open',
+        refresh: { ratio: 500, min:250, max: 1000 },
         debounce: 100,
         debug: false,
     },
@@ -1255,8 +1256,8 @@ const CARD_CSS = `
     /* Progress bar */
     .${CARD.htmlStructure.elements.progressBar.container.class} {
         flex-grow: 1;
-        height: 8px;
-        max-height: 16px;
+        height: ${CARD.style.bar.sizeOptions.small.size};
+        max-height: ${CARD.style.bar.sizeOptions.large.size};
         background-color: var(--divider-color);
         border-radius: ${CARD.style.bar.radius};
         overflow: hidden;
@@ -1264,18 +1265,18 @@ const CARD_CSS = `
     }
 
     .${CARD.style.bar.sizeOptions.small.label} ${CARD.htmlStructure.elements.progressBar.container.class} {
-        height: 8px;
-        max-height: 8px;
+        height: ${CARD.style.bar.sizeOptions.small.size};
+        max-height: ${CARD.style.bar.sizeOptions.small.size};
     }
 
     .${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.container.class} {
-        height: 12px;
-        max-height: 12px;
+        height: ${CARD.style.bar.sizeOptions.medium.size};
+        max-height: ${CARD.style.bar.sizeOptions.medium.size};
    }
 
     .${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.container.class} {
-        height: 16px;
-        max-height: 16px;
+        height: ${CARD.style.bar.sizeOptions.large.size};
+        max-height: ${CARD.style.bar.sizeOptions.large.size};
    }
 
     .${CARD.htmlStructure.elements.progressBar.inner.class} {
@@ -2202,10 +2203,19 @@ class EntityHelper {
         }
         this._isAvailable = true;
 
+        // timer
+        if (this._type !== CARD.config.entity.timer) {
+            this._manageStdEntity();
+        } else {
+            this._manageTimerEntity();
+        }
+        return;
+    }
+    _manageStdEntity() {
         if (this.hasAttribute) {
             const attribute = this._attribute ?? ATTRIBUTE_MAPPING[this._type].attribute;
-            if (attribute && entityState.attributes.hasOwnProperty(attribute)) {
-                this._value = entityState.attributes[attribute] ?? 0;
+            if (attribute && this.states.attributes.hasOwnProperty(attribute)) {
+                this._value = this.states.attributes[attribute] ?? 0;
                 if (this._type === ATTRIBUTE_MAPPING.light.label && attribute === ATTRIBUTE_MAPPING.light.attribute) {
                     this._value = (100 * this._value) / 255;
                 }
@@ -2217,8 +2227,40 @@ class EntityHelper {
         } else {
             this._value = parseFloat(this._state) || 0;
         }
-        return;
     }
+    _parseDuration(duration) {
+        let parts = duration.split(":").map(Number); // Séparer et convertir en nombres
+        let hours = parts[0] || 0;
+        let minutes = parts[1] || 0;
+        let seconds = parts[2] || 0;
+        
+        return (hours * 3600 + minutes * 60 + seconds) * 1000; // Convertir en millisecondes
+    }
+    _manageTimerEntity() {
+        let result = null;
+        let duration = null;
+        let elapsed = null;
+        switch (this._state) {
+            case CARD.config.entity.state.idle:
+                elapsed = CARD.config.value.min;
+                duration = CARD.config.value.max;
+                break;
+            case CARD.config.entity.state.active:
+                let finished_at = new Date(this.states.attributes.finishes_at).getTime(); // Convertir en timestamp
+                duration = this._parseDuration(this.states.attributes.duration); // Convertir HH:MM:SS en millisecondes
+                let started_at = finished_at - duration; // Calcul du début
+                let now = new Date().getTime(); // Temps actuel
+                elapsed = now - started_at; // Temps écoulé
+                break;
+            default:
+                let remaining = this._parseDuration(this.states.attributes.remaining);
+                duration = this._parseDuration(this.states.attributes.duration); // Convertir HH:MM:SS en millisecondes
+                elapsed = duration - remaining;
+                break;
+        }
+        this._value = { elapsed: elapsed, duration: duration };
+    }
+
     _getDeviceClass() {
         const entityState = this.states;
 
@@ -2270,8 +2312,10 @@ class EntityHelper {
         return this._isValid ? this._hassProvider?.hass?.entities?.[this._id]?.display_precision ?? null : null;
     }
     get attributes() {
-
         return this._isValid ? this._hassProvider?.hass?.entities?.[this._id]?.display_precision ?? null : null;
+    }
+    get isTimer() {
+        return this._type === CARD.config.entity.timer;
     }
 }
 
@@ -2352,6 +2396,9 @@ class EntityOrValue {
     }
     get icon() {
         return this._activeHelper && this._isEntity ? this._activeHelper.icon : null;
+    }
+    get isTimer() {
+        return this._activeHelper && this._isEntity ? this._activeHelper.isTimer : false;
     }
     refresh() {
         if (this._activeHelper && this._isEntity) {
@@ -2591,8 +2638,12 @@ class CardView {
             this._theme.customTheme = config.custom_theme;
         }
         this._currentValue.value = config.entity;
-        this._currentValue.attribute = config.attribute || null;
-        this._max_value.value = config.max_value || CARD.config.value.max;
+        if (this._currentValue.isTimer){
+            this._max_value.value = CARD.config.value.max;
+        } else {
+            this._currentValue.attribute = config.attribute || null;
+            this._max_value.value = config.max_value || CARD.config.value.max;
+        }
     }
 
     /**
@@ -2606,7 +2657,6 @@ class CardView {
             ? this._hassProvider.language
             : CARD.config.language;
 
-        // this._max_value.value = this._configHelper.config.max_value || CARD.config.value.max;
         this._currentValue.refresh();
         this._max_value.refresh();
         this._configHelper.max_value = this._max_value.value;
@@ -2618,10 +2668,16 @@ class CardView {
         }
         this.isAvailable = true;
         // update
-        this._percentHelper.current = this._currentValue.value;
         this._percentHelper.decimal = this._configHelper.config.decimal ?? this._currentValue.precision;
-        this._percentHelper.min = this._configHelper.config.min_value;
-        this._percentHelper.max = this._max_value.value;
+        if (this._currentValue.isTimer){
+            this._percentHelper.current = this._currentValue.value.elapsed;
+            this._percentHelper.min = CARD.config.value.min;
+            this._percentHelper.max = this._currentValue.value.duration;
+        } else {
+            this._percentHelper.current = this._currentValue.value;
+            this._percentHelper.min = this._configHelper.config.min_value;
+            this._percentHelper.max = this._max_value.value;
+        }
         this._percentHelper.refresh();
         this._theme.value = this._percentHelper.valueForThemes(this._theme.isLinear);
     }
@@ -2750,6 +2806,13 @@ class CardView {
         }
         return null;
     }
+    get isActiveTimer() {
+        return this._currentValue.isTimer && this._currentValue.state === CARD.config.entity.state.active;
+    }
+    get refreshSpeed() {
+        return Math.min(CARD.config.refresh.max, Math.max(CARD.config.refresh.min, this._currentValue.value.duration / CARD.config.refresh.ratio));
+    }
+
 }
 
 /** --------------------------------------------------------------------------
@@ -2861,9 +2924,44 @@ class EntityProgressCard extends HTMLElement {
      *                        state and services.
      */
     set hass(hass) {
+        // On garde toujours la dernière valeur de hass
+        this._lastHass = hass;
+    
+        // Si ce n'est pas un timer actif, on fait un rafraîchissement immédiat
+        if (!this._cardView.isActiveTimer) {
+            this.refresh(hass);
+            this._stopAutoRefresh();
+            return;
+        }
+        if (!this._autoRefreshInterval) {
+            this.refresh(hass);
+            this._startAutoRefresh();
+        }
+    }
+    
+    refresh(hass) {
         this._cardView.refresh(hass);
         this._updateDynamicElements();
     }
+    
+    _startAutoRefresh() {
+        this._autoRefreshInterval = setInterval(() => {
+            this.refresh(this._lastHass);
+            console.log("Refresh automatique toutes les secondes");
+            if (!this._cardView.isActiveTimer) {
+                this._stopAutoRefresh();
+                return;
+            }            
+        }, this._cardView.refreshSpeed);
+    }
+    
+    _stopAutoRefresh() {
+        if (this._autoRefreshInterval) {
+            clearInterval(this._autoRefreshInterval);
+            this._autoRefreshInterval = null;
+        }
+    }
+    
 
     /**
      * Builds and initializes the structure of the custom card component.

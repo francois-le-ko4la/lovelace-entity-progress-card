@@ -67,6 +67,13 @@ You can customize the card using the following parameters:
   *Example:*
     - `sensor.hp_envy_6400_series_tri_color_cartridge`
   
+> [!NOTE]
+> Supported entities are not hardcoded, ensuring flexibility.
+> If you need a specific attribute, use the `attribute` parameter.
+
+> [!IMPORTANT]
+> Timer are supported (1.0.43). `attribute`, `min`, `max` parameters are not considered.
+
 - **`attribute`** [entity] *(optional)*:  
   The Home Assistant entity's attribute to display.
   
@@ -110,6 +117,51 @@ You can customize the card using the following parameters:
   The icon associated with the entity. Supports Material Design Icons (MDI).
   
   *Examples:* `mdi:lightbulb`, `mdi:thermometer`
+
+  *Default:*
+    | Device Class                        | Icon (MDI)             |
+    |-------------------------------------|------------------------|
+    | battery                             | mdi:battery            |
+    | carbon_dioxide                      | mdi:molecule-co2       |
+    | cold                                | mdi:snowflake          |
+    | connectivity                        | mdi:wifi               |
+    | current                             | mdi:current-ac         |
+    | door                                | mdi:door-open          |
+    | energy                              | mdi:flash              |
+    | gas                                 | mdi:fire               |
+    | heat                                | mdi:fire               |
+    | humidity                            | mdi:water-percent      |
+    | illuminance                         | mdi:brightness-5       |
+    | light                               | mdi:lightbulb          |
+    | lock                                | mdi:lock               |
+    | moisture                            | mdi:water              |
+    | motion                              | mdi:motion-sensor      |
+    | occupancy                           | mdi:account            |
+    | opening                             | mdi:window-open        |
+    | plug                                | mdi:power-plug         |
+    | power                               | mdi:flash              |
+    | power_factor                        | mdi:flash              |
+    | pressure                            | mdi:gauge              |
+    | problem                             | mdi:alert              |
+    | safety                              | mdi:shield-check       |
+    | shutter                             | mdi:window-shutter     |
+    | smoke                               | mdi:smoke-detector     |
+    | sound                               | mdi:volume-high        |
+    | switch                              | mdi:power-socket       |
+    | temperature                         | mdi:thermometer        |
+    | timestamp                           | mdi:calendar-clock     |
+    | tv                                  | mdi:television         |
+    | vibration                           | mdi:vibrate            |
+    | volatile_organic_compounds_parts    | mdi:molecule           |
+    | voltage                             | mdi:flash              |
+    | window                              | mdi:window-open        |
+
+  *Order of Priority for the Icon:*
+    - Theme/Custom Theme: The icon derived from the theme or style applied to the item.
+    - Icon Parameter: A custom icon specifically defined for the item.
+    - Icon Associated with the Entity: The icon directly linked or representative of the entity.
+    - Icon Associated with the Entity's device_class: temperature, humidity...
+    - Default: The icon used by default if no other is specified.
 
 - **`color`** [string] *(optional)*:  
   The color of the icon. Accepts color names, RGB values, or HEX codes.
@@ -545,8 +597,8 @@ The ranges and their corresponding colors are as follows:
 > The information provided in this HA card is based on thresholds from the following [source](https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element).
 > This color code is for informational purposes only and should not be taken as professional advice or a standard to follow. It is crucial to consult the device's official documentation or current standards for the most accurate and up-to-date information. In case of any discrepancy between the information provided here and the device's documentation or current standards, the latter shall prevail.
 > The lower the value, the better it is generally considered to be.
+> With this card you can use `custom_theme` to define your own ranges.
  
-
 Each range is visually represented using the `mdi:air-filter` icon, ensuring a clear and intuitive display of VOC levels.
 
 <img src="./doc/voc.png" alt="Image title" width="500"/>
@@ -577,6 +629,7 @@ The ranges and their corresponding colors are as follows:
 > The information provided in this HA card is based on thresholds from the following [source](https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element).
 > This color code is for informational purposes only and should not be taken as professional advice or a standard to follow. It is crucial to consult the device's official documentation or current standards for the most accurate and up-to-date information. In case of any discrepancy between the information provided here and the device's documentation or current standards, the latter shall prevail.
 > The lower the value, the better it is generally considered to be.
+> With this card you can use `custom_theme` to define your own ranges.
 
 Each range is visually represented using the `mdi:air-filter` icon, ensuring a clear and intuitive display of PM2.5 pollution levels.
 
