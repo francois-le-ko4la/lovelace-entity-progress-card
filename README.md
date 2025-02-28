@@ -328,6 +328,7 @@ You can customize the card using the following parameters:
     - `kWh` for energy consumption.
     - `s` for timer
     - `timer` for timer (display HH:MM:SS without unit)
+    - `flextimer` for timer (same than timer but truncate the display according to the current value)
     
 - **`decimal`** [int >=0] *(optional)*:  
   Defines the number of decimal places to display for numerical values.  

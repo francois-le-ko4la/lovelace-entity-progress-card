@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.0.44
+ * @version 1.0.45
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.0.44';
+const VERSION = '1.0.45';
 const CARD = {
     meta: {
         typeName: 'entity-progress-card',
@@ -34,7 +34,7 @@ const CARD = {
     config: {
         language: 'en',
         value: { min: 0, max: 100 },
-        unit: { default: '%', fahrenheit: '°F', timer: 'timer' },
+        unit: { default: '%', fahrenheit: '°F', timer: 'timer', flexTimer: 'flextimer' },
         showMoreInfo: true,
         reverse: false,
         decimal: {
@@ -1783,7 +1783,7 @@ class PercentHelper {
      */
     get label() {
         
-        return this._isTimer && this._unit.value === CARD.config.unit.timer ?
+        return this._isTimer && (this._unit.value === CARD.config.unit.timer || this._unit.value === CARD.config.unit.flexTimer) ?
             `${this.formattedValue}`
             :`${this.formattedValue}${this._unit.value}`;
     }
@@ -1791,7 +1791,7 @@ class PercentHelper {
     get formattedValue() {
         let value = this._percent;
 
-        if (this._isTimer && this._unit.value === CARD.config.unit.timer) {
+        if (this._isTimer && (this._unit.value === CARD.config.unit.timer || this._unit.value === CARD.config.unit.flexTimer)) {
             return this._getTiming();
         }
         if (this._unit.value !== CARD.config.unit.default) {
@@ -1805,7 +1805,14 @@ class PercentHelper {
         let h = Math.floor(seconds / 3600);
         let m = Math.floor((seconds % 3600) / 60);
         let s = (seconds % 60).toFixed(this._decimal.value);
-    
+
+        if (this._unit.value === CARD.config.unit.flexTimer) {
+            if (seconds < 60) {
+                return `${s}s`;
+            } else if (seconds < 3600) {
+                return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+            }
+        }    
         return [h, m, s].map(unit => String(unit).padStart(2, "0")).join(":");
     }
 }
