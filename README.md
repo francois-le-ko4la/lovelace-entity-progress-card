@@ -196,9 +196,14 @@ You can customize the card using the following parameters:
     - `battery`
     - `light`
 
+- **`reverse`** [boolean] *(optional)*:
+
+  Used only for entities of type timer. 
+  If set to true, the timer functions as a countdown (in seconds or percentage).
+
 - **`custom_theme`** [array] *(optional)*:
   
-  Defines a list of custom theme rules based on value ranges. Setting this variable disables the theme variable.
+  Defines a list of custom theme rules based on value ranges. Setting this variable disables the theme variable. 
   This variable can only be defined in YAML.
 
   *Properties of each item:*

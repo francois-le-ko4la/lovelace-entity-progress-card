@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.0.43
+ * @version 1.0.44
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.0.43';
+const VERSION = '1.0.44';
 const CARD = {
     meta: {
         typeName: 'entity-progress-card',
@@ -36,11 +36,16 @@ const CARD = {
         value: { min: 0, max: 100 },
         unit: { default: '%', fahrenheit: '°F' },
         showMoreInfo: true,
+        reverse: false,
         decimal: {
             percentage: 0,
             other: 2
         },
-        entity: { state: { unavailable: 'unavailable', unknown: 'unknown', notFound: 'notFound', idle: 'idle', active: 'active'}, timer: 'timer', },
+        entity: {
+            state: { unavailable: 'unavailable', unknown: 'unknown', notFound: 'notFound', idle: 'idle', active: 'active', paused: 'paused' },
+            type: { timer: 'timer', light: 'light', },
+        },
+        msFactor: 1000,
         shadowMode: 'open',
         refresh: { ratio: 500, min:250, max: 1000 },
         debounce: 100,
@@ -85,6 +90,11 @@ const CARD = {
             badge: {
                 unavailable: { icon: 'mdi:exclamation-thick', color: 'white', backgroundColor: 'var(--orange-color)', attribute: 'icon' },
                 notFound: { icon: 'mdi:exclamation-thick', color: 'white', backgroundColor: 'var(--red-color)', attribute: 'icon' },
+                timer: {
+                    active: { icon: 'mdi:play', color: 'white', backgroundColor: 'var(--success-color)', attribute: 'icon' },
+                    paused: { icon: 'mdi:pause', color: 'white', backgroundColor: 'var(--state-icon-color)', attribute: 'icon' },
+                }
+
             },
             byDeviceClass: {
                 battery: "mdi:battery",
@@ -1625,6 +1635,16 @@ class PercentHelper {
          * @private
          */
         this._label = null;
+
+        this._isTimer = false;
+        this._isReversed = false;
+    }
+
+    set isTimer(isTimer) {
+        this._isTimer = typeof isTimer === 'boolean' ? isTimer : false;
+    }
+    set isReversed(isReversed) {
+        this._isReversed = typeof isReversed === 'boolean' ? isReversed : CARD.config.reverse;
     }
     /**
      * Sets the minimum value.
@@ -1656,6 +1676,10 @@ class PercentHelper {
      */
     set current(newCurrent) {
         this._current.value = newCurrent;
+    }
+
+    get actual() {
+        return this._isReversed ? this._max.value - this._current.value : this._current.value;
     }
 
     /**
@@ -1708,7 +1732,7 @@ class PercentHelper {
      * - If the theme is linear or the unit is the default, the percentage value is returned.
      */
     valueForThemes(themeIsLinear) {
-        let value = this._current.value;
+        let value = this.actual;
         if (this._unit.value === CARD.config.unit.fahrenheit) {
             value = (value - 32) * 5 / 9;
         }
@@ -1735,7 +1759,7 @@ class PercentHelper {
             return;
         }
         const range = this._max.value - this._min.value;
-        const correctedValue = this._current.value - this._min.value;
+        const correctedValue = this.actual - this._min.value;
         const percent = (correctedValue / range) * 100;
         this._percent = parseFloat(percent.toFixed(this._decimal.value));
     }
@@ -1758,11 +1782,15 @@ class PercentHelper {
      * @returns {string} The formatted label.
      */
     get label() {
+        return `${this.formattedValue}${this._unit.value}`;
+    }
+
+    get formattedValue() {
         let value = this._percent;
         if (this._unit.value !== CARD.config.unit.default) {
-            value = this._current.value;
+            value = this._isTimer ? this.actual / 1000 : this.actual;
         }
-        return `${value.toFixed(this._decimal.value)}${this._unit.value}`;
+        return value.toFixed(this._decimal.value);
     }
 }
 
@@ -2204,7 +2232,7 @@ class EntityHelper {
         this._isAvailable = true;
 
         // timer
-        if (this._type !== CARD.config.entity.timer) {
+        if (this._type !== CARD.config.entity.type.timer) {
             this._manageStdEntity();
         } else {
             this._manageTimerEntity();
@@ -2229,12 +2257,12 @@ class EntityHelper {
         }
     }
     _parseDuration(duration) {
-        let parts = duration.split(":").map(Number); // Séparer et convertir en nombres
+        let parts = duration.split(":").map(Number);
         let hours = parts[0] || 0;
         let minutes = parts[1] || 0;
         let seconds = parts[2] || 0;
         
-        return (hours * 3600 + minutes * 60 + seconds) * 1000; // Convertir en millisecondes
+        return (hours * 3600 + minutes * 60 + seconds) * CARD.config.msFactor;
     }
     _manageTimerEntity() {
         let result = null;
@@ -2246,19 +2274,19 @@ class EntityHelper {
                 duration = CARD.config.value.max;
                 break;
             case CARD.config.entity.state.active:
-                let finished_at = new Date(this.states.attributes.finishes_at).getTime(); // Convertir en timestamp
-                duration = this._parseDuration(this.states.attributes.duration); // Convertir HH:MM:SS en millisecondes
-                let started_at = finished_at - duration; // Calcul du début
-                let now = new Date().getTime(); // Temps actuel
-                elapsed = now - started_at; // Temps écoulé
+                let finished_at = new Date(this.states.attributes.finishes_at).getTime();
+                duration = this._parseDuration(this.states.attributes.duration);
+                let started_at = finished_at - duration;
+                let now = new Date().getTime();
+                elapsed = now - started_at;
                 break;
-            default:
+                case CARD.config.entity.state.paused:
                 let remaining = this._parseDuration(this.states.attributes.remaining);
-                duration = this._parseDuration(this.states.attributes.duration); // Convertir HH:MM:SS en millisecondes
+                duration = this._parseDuration(this.states.attributes.duration);
                 elapsed = duration - remaining;
                 break;
         }
-        this._value = { elapsed: elapsed, duration: duration };
+        this._value = { elapsed: elapsed, duration: duration, state: this._state };
     }
 
     _getDeviceClass() {
@@ -2272,8 +2300,8 @@ class EntityHelper {
             return entityState.attributes.device_class;
         }
 
-        if (this._type === 'light' && entityState.attributes?.brightness !== undefined) {
-            return 'light';
+        if (this._type === CARD.config.entity.type.light && entityState.attributes?.brightness !== undefined) {
+            return CARD.config.entity.type.light;
         }
 
         return null;
@@ -2315,7 +2343,7 @@ class EntityHelper {
         return this._isValid ? this._hassProvider?.hass?.entities?.[this._id]?.display_precision ?? null : null;
     }
     get isTimer() {
-        return this._type === CARD.config.entity.timer;
+        return this._type === CARD.config.entity.type.timer;
     }
 }
 
@@ -2592,6 +2620,7 @@ class CardView {
         this._isUnknown = false;
         this._isNotFound = false;
         this._isUnavailable = false;
+        this._isReversed = false;
     }
 
     /**
@@ -2638,7 +2667,9 @@ class CardView {
             this._theme.customTheme = config.custom_theme;
         }
         this._currentValue.value = config.entity;
-        if (this._currentValue.isTimer){
+        this._percentHelper.isTimer = this._currentValue.isTimer;
+        if (this._currentValue.isTimer) {
+            this._isReversed = config.reverse;
             this._max_value.value = CARD.config.value.max;
         } else {
             this._currentValue.attribute = config.attribute || null;
@@ -2669,7 +2700,8 @@ class CardView {
         this.isAvailable = true;
         // update
         this._percentHelper.decimal = this._configHelper.config.decimal ?? this._currentValue.precision;
-        if (this._currentValue.isTimer){
+        if (this._currentValue.isTimer) {
+            this._percentHelper.isReversed = typeof this._isReversed ==='boolean' && this._isReversed && this._currentValue.value.state !== CARD.config.entity.state.idle;
             this._percentHelper.current = this._currentValue.value.elapsed;
             this._percentHelper.min = CARD.config.value.min;
             this._percentHelper.max = this._currentValue.value.duration;
@@ -2791,7 +2823,7 @@ class CardView {
     }
 
     get isBadgeEnable() {
-        if (!(this._isUnavailable || this._isNotFound)) {
+        if (!(this._isUnavailable || this._isNotFound || this._currentValue.isTimer && (this._currentValue.value.state === CARD.config.entity.state.paused || this._currentValue.value.state === CARD.config.entity.state.active))) {
             return false;
         }
         return true;
@@ -2803,6 +2835,16 @@ class CardView {
         }
         if (this._isUnavailable) {
             return CARD.style.icon.badge.unavailable;
+        }
+        if (this._currentValue.isTimer) {
+            switch (this._currentValue.value.state) {
+                case CARD.config.entity.state.paused:
+                    return CARD.style.icon.badge.timer.paused;
+                    break;
+                case CARD.config.entity.state.active:
+                    return CARD.style.icon.badge.timer.active;
+                    break;
+            }
         }
         return null;
     }
