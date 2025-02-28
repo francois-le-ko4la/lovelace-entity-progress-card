@@ -34,7 +34,7 @@ const CARD = {
     config: {
         language: 'en',
         value: { min: 0, max: 100 },
-        unit: { default: '%', fahrenheit: '°F' },
+        unit: { default: '%', fahrenheit: '°F', timer: 'timer' },
         showMoreInfo: true,
         reverse: false,
         decimal: {
@@ -1782,15 +1782,31 @@ class PercentHelper {
      * @returns {string} The formatted label.
      */
     get label() {
-        return `${this.formattedValue}${this._unit.value}`;
+        
+        return this._isTimer && this._unit.value === CARD.config.unit.timer ?
+            `${this.formattedValue}`
+            :`${this.formattedValue}${this._unit.value}`;
     }
 
     get formattedValue() {
         let value = this._percent;
+
+        if (this._isTimer && this._unit.value === CARD.config.unit.timer) {
+            return this._getTiming();
+        }
         if (this._unit.value !== CARD.config.unit.default) {
             value = this._isTimer ? this.actual / 1000 : this.actual;
         }
         return value.toFixed(this._decimal.value);
+    }
+
+    _getTiming() {
+        let seconds = this.actual / 1000;
+        let h = Math.floor(seconds / 3600);
+        let m = Math.floor((seconds % 3600) / 60);
+        let s = (seconds % 60).toFixed(this._decimal.value);
+    
+        return [h, m, s].map(unit => String(unit).padStart(2, "0")).join(":");
     }
 }
 

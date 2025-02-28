@@ -317,6 +317,7 @@ You can customize the card using the following parameters:
 
 - **`unit`** [string] *(optional)*:  
   Allows representing standard unit.  
+  By default, the unit is % and allow you to get a ratio.  
   Specifies the unit to display the entity's actual value, ignoring max_value. The max_value is still used for the progress bar representation.
   
   *Default:*
@@ -325,6 +326,8 @@ You can customize the card using the following parameters:
   *Example:*
     - `°C` for temperature.
     - `kWh` for energy consumption.
+    - `s` for timer
+    - `timer` for timer (display HH:MM:SS without unit)
     
 - **`decimal`** [int >=0] *(optional)*:  
   Defines the number of decimal places to display for numerical values.  
