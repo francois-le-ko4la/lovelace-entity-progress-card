@@ -119,7 +119,7 @@ You can customize the card using the following parameters:
   
   *Examples:* `mdi:lightbulb`, `mdi:thermometer`
 
-  *Default:*
+  *Default by device type:*  
     | Device Type                         | Icon (MDI)              |
     |-------------------------------------|-------------------------|
     | light                               | mdi:lightbulb           |
@@ -140,6 +140,7 @@ You can customize the card using the following parameters:
     | weather                             | mdi:weather-cloudy      |
     | sun                                 | mdi:white-balance-sunny |
 
+  *Default by device class:*  
     | Device Class                        | Icon (MDI)             |
     |-------------------------------------|------------------------|
     | battery                             | mdi:battery            |
