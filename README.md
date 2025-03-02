@@ -4,10 +4,11 @@
 [![Static Badge](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=Javascript&logoColor=black&color=%23F7DF1E)](#)
 [![Static Badge](https://img.shields.io/badge/Discord-%235865F2?style=for-the-badge&logo=Discord&logoColor=white&color=%235865F2)](https://discord.gg/tyMQ2SfyNG)
 
-Entity progress card for Home Assistant
+A modern Entity progress card for Home Assistant's Lovelace UI.
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/thumbnail.png" alt="Default" width="700"/>
 
+## ⚡ Description
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/example.png" alt="Default" width="400"/>
 
 This custom version of the **Bar Card** for Home Assistant allows you to display a simple percentage bar that is quick and easy to integrate into your Lovelace cards. It blends seamlessly with the `Tile`/`Mushroom` look & feel of the latest Home Assistant versions. This card is based on custom CSS and leverages existing code to fine-tune the appearance.
@@ -39,7 +40,7 @@ Use this button to add the repository to your HACS:
 > If you are unable to use the button above, follow the steps below:
 > 1. Add this repository to HACS by including it as a custom repository:
 >   - Go to `HACS` > `Integrations` > `⋮` > `Custom repositories`.
->   - Paste the URL of this repository and select Lovelace as the category.
+>   - Paste the URL of this repository and select `Dashboard` as the category.
 > 2. Install the Entity Progress Card from HACS.
 
 ### Manual Installation
@@ -734,3 +735,17 @@ cards:
     card_param: cards
 ```
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/stack.png" alt="Image title" width="500"/>
+
+## ❓ Troubleshooting
+
+- Card not loading? Ensure the resource is correctly added to Lovelace.
+- HACS not detecting the card? Clear your browser cache or restart Home Assistant.
+- Want more features? Open a GitHub issue with your request!
+
+## 👥 Contributing
+
+Want to improve this card? Contributions are welcome! 🚀
+
+## 📜 License
+
+This project is licensed under the GPL-3.0 license.
