@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.0.46
+ * @version 1.0.47
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.0.46';
+const VERSION = '1.0.47';
 const CARD = {
     meta: {
         typeName: 'entity-progress-card',
@@ -175,6 +175,7 @@ const CARD = {
             progressBar: {
                 color: { var: '--epb-progress-bar-color', default: 'var(--state-icon-color)' },
                 size: { var: '--epb-progress-bar-size', default: '0%' },
+                orientation: { rtl: 'rtl_orientation', },
             },
             show: 'show',
             hide: 'hide',
@@ -1162,6 +1163,15 @@ const CARD_CSS = `
         cursor: pointer;
     }
 
+    .${CARD.style.dynamic.clickable}:hover {
+        background-color: color-mix(in srgb, var(--card-background-color) 96%, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) 4%);
+    }
+
+    .${CARD.style.dynamic.clickable}:active {
+        background-color: color-mix(in srgb, var(--card-background-color) 85%, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) 15%);
+        transition: background-color 0.5s ease;
+    }
+
     /* main container */
     .${CARD.htmlStructure.sections.container.class},
     ${CARD.htmlStructure.alert.container.element} {
@@ -1296,8 +1306,12 @@ const CARD_CSS = `
         overflow: hidden;
         position: relative;
     }
+    
+    .${CARD.style.dynamic.progressBar.orientation.rtl} .${CARD.htmlStructure.elements.progressBar.container.class} {
+        transform: scaleX(-1);
+    }
 
-    .${CARD.style.bar.sizeOptions.small.label} ${CARD.htmlStructure.elements.progressBar.container.class} {
+    .${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.elements.progressBar.container.class} {
         height: ${CARD.style.bar.sizeOptions.small.size};
         max-height: ${CARD.style.bar.sizeOptions.small.size};
     }
@@ -1478,16 +1492,10 @@ class ValueHelper {
         this._value = null;
         this._isValid = false;
     }
-    /**
-     * Validates if a value is a valid float.
-     *
-     * @param {number} value - The value to validate.
-     * @returns {boolean} True if the value is a valid non-negative integer, false otherwise.
-     */
-    _validate(value) {
-        return Number.isFinite(value);
-    }
 
+    /******************************************************************************************
+     * Getter/Setter
+     */
     set value(value) {
         if (this._validate(value)) {
             this._value = value;
@@ -1505,6 +1513,16 @@ class ValueHelper {
     get isValid() {
         return this._isValid;
     }
+
+    /******************************************************************************************
+     * Validates if a value is a valid float.
+     *
+     * @param {number} value - The value to validate.
+     * @returns {boolean} True if the value is a valid non-negative integer, false otherwise.
+     */
+    _validate(value) {
+        return Number.isFinite(value);
+    }
 }
 
 /**
@@ -1521,21 +1539,8 @@ class DecimalHelper {
         this._isValid = false;
     }
 
-    /**
-     * Validates if a value is a valid non-negative integer.
-     *
-     * @param {number} value - The value to validate.
-     * @returns {boolean} True if the value is a valid non-negative integer, false otherwise.
-     */
-    _validate(value) {
-        return typeof value === 'number' && !isNaN(value) && value >= 0 && Number.isInteger(value);
-    }
-
-    /**
-     * Sets the non-negative integer value.
-     * If the new value is not a number, is NaN, is negative, or is not an integer, the value is considered invalid.
-     *
-     * @param {number} newValue - The new non-negative integer value.
+    /******************************************************************************************
+     * Getter/Setter
      */
     set value(newValue) {
         if (this._validate(newValue)) {
@@ -1547,23 +1552,25 @@ class DecimalHelper {
         }
     }
 
-    /**
-     * Returns the non-negative integer value.
-     *
-     * @returns {number} The non-negative integer value.
-     */
     get value() {
         return this._value;
     }
 
-    /**
-     * Indicates whether the value is valid.
-     *
-     * @returns {boolean} True if the value is valid, false otherwise.
-     */
     get isValid() {
         return this._isValid;
     }
+
+    /******************************************************************************************
+     * Validates if a value is a valid non-negative integer.
+     *
+     * @param {number} value - The value to validate.
+     * @returns {boolean} True if the value is a valid non-negative integer, false otherwise.
+     */
+    _validate(value) {
+        return typeof value === 'number' && !isNaN(value) && value >= 0 && Number.isInteger(value);
+    }
+
+
 }
 
 /**
@@ -1581,11 +1588,8 @@ class UnitHelper {
         this._value = value;
     }
 
-    /**
-     * Sets the unit of measurement.
-     * If the new value is not a string, it will be converted to one.
-     *
-     * @param {string|*} newValue - The new unit of measurement.
+    /******************************************************************************************
+     * Getter/Setter
      */
     set value(newValue) {
         if (typeof newValue === 'string') {
@@ -1595,11 +1599,6 @@ class UnitHelper {
         }
     }
 
-    /**
-     * Returns the unit of measurement.
-     *
-     * @returns {string} The unit of measurement.
-     */
     get value() {
         return this._value;
     }
@@ -1669,28 +1668,24 @@ class PercentHelper {
         this._isReversed = false;
     }
 
+    /******************************************************************************************
+     * Getter/Setter
+     */
     set isTimer(isTimer) {
         this._isTimer = typeof isTimer === 'boolean' ? isTimer : false;
     }
+
     set isReversed(isReversed) {
         this._isReversed = typeof isReversed === 'boolean' ? isReversed : CARD.config.reverse;
     }
-    /**
-     * Sets the minimum value.
-     *
-     * @param {number} [newMin] - The new minimum value. If not provided, defaults to CARD.config.value.min.
-     */
+
     set min(newMin) {
         if (!newMin) {
             newMin = CARD.config.value.min;
         }
         this._min.value = newMin;
     }
-    /**
-     * Sets the maximum percentage value.
-     *
-     * @param {number} [newMax] - The new maximum value. If not provided, defaults to CARD.config.value.max.
-     */
+
     set max(newMax) {
         if (!newMax) {
             newMax = CARD.config.value.max;
@@ -1698,11 +1693,6 @@ class PercentHelper {
         this._max.value = newMax;
     }
 
-    /**
-     * Sets the current value.
-     *
-     * @param {number} newCurrent - The new current value.
-     */
     set current(newCurrent) {
         this._current.value = newCurrent;
     }
@@ -1711,20 +1701,10 @@ class PercentHelper {
         return this._isReversed ? this._max.value - this._current.value : this._current.value;
     }
 
-    /**
-     * Returns the unit of measurement.
-     *
-     * @returns {string} The unit of measurement.
-     */
     get unit() {
         return this._unit.value;
     }
 
-    /**
-     * Sets the unit of measurement.
-     *
-     * @param {string} [newUnit] - The new unit of measurement. If not provided, defaults to CARD.config.unit.default.
-     */
     set unit(newUnit) {
         if (!newUnit) {
             newUnit = CARD.config.unit.default;
@@ -1732,13 +1712,6 @@ class PercentHelper {
         this._unit.value = newUnit;
     }
 
-    /**
-     * Sets the number of decimal places to use.
-     * If no value is provided, it defaults to CARD.config.decimal.percentage if the unit is CARD.config.unit.default,
-     * otherwise it defaults to CARD.config.decimal.other.
-     *
-     * @param {number} [newDecimal] - The new number of decimal places.
-     */
     set decimal(newDecimal) {
         if (newDecimal === undefined || newDecimal === null) {
             if (this._unit.value === CARD.config.unit.default || this.hasTimerOrFlexTimerUnit) {
@@ -1750,29 +1723,6 @@ class PercentHelper {
         this._decimal.value = newDecimal;
     }
 
-    /**
-     * Calculates the value to display based on the selected theme and unit system.
-     *
-     * @param {boolean} themeIsLinear - Indicates whether the theme uses a linear scale.
-     * @returns {number} - The percentage value if the theme is linear or if the unit is the default,
-     *                     otherwise returns the temperature value converted to Celsius if the unit is Fahrenheit.
-     *
-     * - If the unit is Fahrenheit, the temperature is converted to Celsius before returning.
-     * - If the theme is linear or the unit is the default, the percentage value is returned.
-     */
-    valueForThemes(themeIsLinear) {
-        let value = this.actual;
-        if (this._unit.value === CARD.config.unit.fahrenheit) {
-            value = (value - 32) * 5 / 9;
-        }
-        return themeIsLinear || this._unit.value === CARD.config.unit.default ? this._percent : value;
-    }
-
-    /**
-     * Checks if all internal values are valid.
-     *
-     * @returns {boolean} True if all values are valid, false otherwise.
-     */
     get isValid() {
         if (!this._min.isValid || !this._max.isValid || !this._current.isValid || !this._decimal.isValid) {
             return false;
@@ -1780,24 +1730,6 @@ class PercentHelper {
         return true;
     }
 
-    /**
-     * Calculates and updates the percentage value based on the current, minimum, and maximum values.
-     */
-    refresh() {
-        if (!this.isValid) {
-            return;
-        }
-        const range = this._max.value - this._min.value;
-        const correctedValue = this.actual - this._min.value;
-        const percent = (correctedValue / range) * 100;
-        this._percent = parseFloat(percent.toFixed(this._decimal.value));
-    }
-
-    /**
-     * Returns the calculated percentage value.
-     *
-     * @returns {number|null} The percentage value, or null if the internal values are invalid.
-     */
     get percent() {
         if (!this.isValid) {
             return null;
@@ -1815,11 +1747,6 @@ class PercentHelper {
         return this.hasTimerUnit || this.hasFlexTimerUnit;
     }
 
-    /**
-     * Returns a formatted label with the value and unit.
-     *
-     * @returns {string} The formatted label.
-     */
     get label() {
         return  this.hasTimerOrFlexTimerUnit ?
             `${this.formattedValue}`
@@ -1838,6 +1765,36 @@ class PercentHelper {
         return value.toFixed(this._decimal.value);
     }
 
+    /******************************************************************************************
+     * Calculates the value to display based on the selected theme and unit system.
+     *
+     * @param {boolean} themeIsLinear - Indicates whether the theme uses a linear scale.
+     * @returns {number} - The percentage value if the theme is linear or if the unit is the default,
+     *                     otherwise returns the temperature value converted to Celsius if the unit is Fahrenheit.
+     *
+     * - If the unit is Fahrenheit, the temperature is converted to Celsius before returning.
+     * - If the theme is linear or the unit is the default, the percentage value is returned.
+     */
+    valueForThemes(themeIsLinear) {
+        let value = this.actual;
+        if (this._unit.value === CARD.config.unit.fahrenheit) {
+            value = (value - 32) * 5 / 9;
+        }
+        return themeIsLinear || this._unit.value === CARD.config.unit.default ? this._percent : value;
+    }
+
+    /**
+     * Calculates and updates the percentage value based on the current, minimum, and maximum values.
+     */
+    refresh() {
+        if (!this.isValid) {
+            return;
+        }
+        const range = this._max.value - this._min.value;
+        const correctedValue = this.actual - this._min.value;
+        const percent = (correctedValue / range) * 100;
+        this._percent = parseFloat(percent.toFixed(this._decimal.value));
+    }
     _getTiming() {
         let seconds = this.actual / 1000;
         let h = Math.floor(seconds / 3600);
@@ -1919,20 +1876,8 @@ class ThemeManager {
 
     }
 
-    /**
-     * Returns the name of the current theme.
-     *
-     * @returns {string} The name of the theme.
-     */
-    get theme() {
-        return this._theme;
-    }
-
-    /**
-     * Sets the theme.
-     * If the theme name is invalid (not found in `THEME`), the icon, color, and theme are reset to null.
-     *
-     * @param {string} newTheme - The name of the new theme.
+    /******************************************************************************************
+     * Getter/Setter
      */
     set theme(newTheme) {
         if (!newTheme || !THEME.hasOwnProperty(newTheme)) {
@@ -1948,59 +1893,19 @@ class ThemeManager {
         this._isLinear = THEME[newTheme].linear;
     }
 
-    _checkCustomThemeStructure(customTheme) {
-        // array with 1 element
-        if (!Array.isArray(customTheme) || customTheme.length === 0) {
-            return false;
-        }
-
-        // check all elements
-        let isFirstItem = true;
-        let lastMax = null;
-
-        return customTheme.every(item => {
-            if (item === null || typeof item !== 'object') {
-                return false;
-            }
-
-            // check keys
-            if (!CARD.theme.customTheme.expectedKeys.every(key => key in item)) {
-                return false;
-            }
-
-            // min < max
-            if (item.min >= item.max) {
-                return false;
-            }
-
-            // check continuity
-            if (!isFirstItem && item.min !== lastMax) {
-                return false;
-            }
-
-            isFirstItem = false;
-            lastMax = item.max;
-
-            return true;
-        });
+    get theme() {
+        return this._theme;
     }
 
-    /**
-     * Sets the custom theme.
-     *
-     * @param {obj} newTheme - Theme def.
-     */
     set customTheme(newTheme) {
-        this._isValid = false;
-        this._isCustomTheme = true;
-        this._isLinear = false;
-        this._theme = CARD.theme.default;
-
-        if (!this._checkCustomThemeStructure(newTheme)) {
+        if (!this._validateCustomTheme(newTheme)) {
             return;
         }
+        this._theme = CARD.theme.default;
         this._currentStyle = newTheme;
         this._isValid = true;
+        this._isCustomTheme = true;
+        this._isLinear = false;
     }
 
     get isLinear() {
@@ -2011,35 +1916,21 @@ class ThemeManager {
         return this._isValid;
     }
 
-    /**
-     * Sets the percentage value and refreshes the icon and color.
-     *
-     * @param {number} newPercent - The new percentage value.
-     */
     set value(newValue) {
         this._value = newValue;
         this._refresh();
     }
 
-    /**
-     * Returns the icon associated with the current theme and percentage.
-     *
-     * @returns {string} The icon.
-     */
     get icon() {
         return this._icon;
     }
 
-    /**
-     * Returns the color associated with the current theme and percentage.
-     *
-     * @returns {string} The color.
-     */
     get color() {
         return this._color;
     }
 
-    /**
+
+    /******************************************************************************************
      * Updates the icon and color based on the current theme and percentage.
      * This method calculates the appropriate icon and color from the `THEME` object based on the percentage value.
      *
@@ -2079,6 +1970,44 @@ class ThemeManager {
             this._color = themeData.color;
         }
     }
+
+    _validateCustomTheme(customTheme) {
+        // array with 1 element
+        if (!Array.isArray(customTheme) || customTheme.length === 0) {
+            return false;
+        }
+
+        // check all elements
+        let isFirstItem = true;
+        let lastMax = null;
+
+        return customTheme.every(item => {
+            if (item === null || typeof item !== 'object') {
+                return false;
+            }
+
+            // check keys
+            if (!CARD.theme.customTheme.expectedKeys.every(key => key in item)) {
+                return false;
+            }
+
+            // min < max
+            if (item.min >= item.max) {
+                return false;
+            }
+
+            // check continuity
+            if (!isFirstItem && item.min !== lastMax) {
+                return false;
+            }
+
+            isFirstItem = false;
+            lastMax = item.max;
+
+            return true;
+        });
+    }
+
 }
 
 /**
@@ -2519,41 +2448,22 @@ class ConfigHelper {
         this.max_value = null;
     }
 
-    /**
-     * Returns the card configuration object.
-     *
-     * @returns {object} The card configuration.
+    /******************************************************************************************
+     * Getter/Setter
      */
     get config() {
         return this._config;
     }
 
-    /**
-     * Sets the card configuration and marks it as changed.
-     *
-     * @param {object} config - The new card configuration.
-     */
     set config(config) {
         this._config = config;
         this._isChanged = true;
     }
 
-    /**
-     * Returns the number of decimal places to use.
-     *
-     * @returns {number|null} The number of decimal places.
-     */
     get decimal() {
         return this._decimal;
     }
 
-    /**
-     * Sets the number of decimal places.
-     * Defaults to `CARD.config.decimal.percentage` if the unit is `CARD.config.unit.default`,
-     * otherwise defaults to `CARD.config.decimal.other`.
-     *
-     * @param {number} [newDecimal] - The new number of decimal places.
-     */
     set decimal(newDecimal) {
         if (newDecimal === undefined || newDecimal === null) {
             if (this._config.unit === CARD.config.unit.default) {
@@ -2565,20 +2475,10 @@ class ConfigHelper {
         this._decimal = newDecimal;
     }
 
-    /**
-     * Indicates whether the current configuration is valid.
-     *
-     * @returns {boolean} True if the configuration is valid, false otherwise.
-     */
     get isValid() {
         return this._isValid;
     }
 
-    /**
-     * Returns the validation error message, or null if the configuration is valid.
-     *
-     * @returns {string|null} The error message.
-     */
     get msg() {
         return this._msg;
     }
@@ -2646,64 +2546,191 @@ class CardView {
         this._configHelper = new ConfigHelper();
         this._percentHelper = new PercentHelper();
         this._theme = new ThemeManager();
-        this.currentLanguage = CARD.config.language;
-        this.show_more_info = null;
-        this.navigate_to = null;
-        this.layout = null;
-        this.bar_size = null;
-        /** */
+        this._currentLanguage = CARD.config.language;
+        this._show_more_info = null;
+        this._navigate_to = null;
+        this._layout = null;
+        this._bar_size = null;
+        this._bar_orientation = null;
         this._currentValue = new EntityOrValue();
         this._max_value = new EntityOrValue();
-        this.isAvailable = false;
-        this._isUnknown = false;
-        this._isNotFound = false;
-        this._isUnavailable = false;
         this._isReversed = false;
     }
 
-    /**
-     * Returns whether the card configuration is valid.
-     *
-     * @returns {boolean} True if the configuration is valid, false otherwise.
+    /******************************************************************************************
+     * Getter/Setter
      */
-    get isValid() {
+    get hasValidatedConfig() {
         return this._configHelper.isValid;
     }
 
-    /**
-     * Returns the validation error message, or null if the configuration is valid.
-     *
-     * @returns {string|null} The error message.
-     */
     get msg() {
         return this._configHelper.msg[this.currentLanguage];
     }
 
-    /**
-     * Returns the card configuration.
-     *
-     * @returns {object} The card configuration.
-     */
     get config() {
         return this._config;
     }
 
-    /**
+    get isUnknown() {
+        return this._currentValue.state === CARD.config.entity.state.unknown || this._max_value.state === CARD.config.entity.state.unknown;
+    }
+
+    get isUnavailable() {
+        return this._currentValue.state === CARD.config.entity.state.unavailable || this._max_value.state === CARD.config.entity.state.unavailable;
+    }
+
+    get isNotFound() {
+        return this._currentValue.state === CARD.config.entity.state.notFound || this._max_value.state === CARD.config.entity.state.notFound;
+    }
+
+    get isAvailable() {
+        return !(!this._currentValue.isAvailable || (!this._max_value.isAvailable && this._configHelper.config.max_value));
+    }
+
+    set currentLanguage(newLanguage) {
+        if (Object.keys(MSG.entityError).includes(newLanguage)) {
+            this._currentLanguage = newLanguage;
+        }
+    }
+
+    get currentLanguage() {
+        return this._currentLanguage;
+    }
+
+    get entity() {
+        return this._configHelper.config.entity;
+    }
+
+    get icon() {
+        if (this.isNotFound) {
+            return CARD.style.icon.notFound.icon;
+        }
+        if (this._theme.theme === CARD.theme.battery.label && this._currentValue.icon && this._currentValue.icon.includes(CARD.theme.battery.icon)) {
+            return this._currentValue.icon;
+        }
+        return this._theme.icon || this._configHelper.config.icon || this._currentValue.icon || CARD.style.icon.default.icon;
+    }
+
+    get color() {
+        if (this.isAvailable) {
+            return this._theme.color || this._configHelper.config.color || CARD.style.color.default;
+        }
+        if (this.isUnknown) {
+            return CARD.style.color.default;
+        }
+        if (this.isUnavailable) {
+            return CARD.style.color.unavailable;
+        }
+        if (this.isNotFound) {
+            return CARD.style.color.notFound;
+        }
+        return CARD.style.color.disabled;
+    }
+
+    get bar_color() {
+        if (this.isAvailable) {
+            return this._theme.color || this._configHelper.config.bar_color || CARD.style.color.default;
+        }
+        if (this.isUnknown) {
+            return CARD.style.color.default;
+        }
+        return CARD.style.color.disabled;
+    }
+
+    get percent() {
+        if (this.isAvailable) {
+            return Math.min(CARD.config.value.max, Math.max(0, this._percentHelper.percent));
+        }
+        return CARD.config.value.min;
+    }
+
+    get description() {
+        if (this.isAvailable) {
+            return this._percentHelper.label;
+        }
+        if (this.isUnknown) {
+            return MSG.entityUnknown[this.currentLanguage];
+        }
+        if (this.isUnavailable) {
+            return MSG.entityUnavailable[this.currentLanguage];
+        }
+        return MSG.entityNotFound[this.currentLanguage];
+    }
+
+    get name() {
+        return this._configHelper.config.name || this._currentValue.name || this._configHelper.config.entity;
+    }
+
+    get isBadgeEnable() {
+        if (!(this.isUnavailable || this.isNotFound || this._currentValue.isTimer && (this._currentValue.value.state === CARD.config.entity.state.paused || this._currentValue.value.state === CARD.config.entity.state.active))) {
+            return false;
+        }
+        return true;
+    }
+
+    get badgeInfo() {
+        if (this.isNotFound) {
+            return CARD.style.icon.badge.notFound;
+        }
+        if (this.isUnavailable) {
+            return CARD.style.icon.badge.unavailable;
+        }
+        if (this._currentValue.isTimer) {
+            switch (this._currentValue.value.state) {
+                case CARD.config.entity.state.paused:
+                    return CARD.style.icon.badge.timer.paused;
+                    break;
+                case CARD.config.entity.state.active:
+                    return CARD.style.icon.badge.timer.active;
+                    break;
+            }
+        }
+        return null;
+    }
+    get layout() {
+        return CARD.layout.orientations.hasOwnProperty(this._layout) ? CARD.layout.orientations[this._layout].label : CARD.layout.orientations.horizontal.label;
+    }
+    get hasBarOrientationChanged() {
+        return typeof this._bar_orientation === 'string' && Object.keys(CARD.style.dynamic.progressBar.orientation).includes(this._bar_orientation);
+    }
+    get barOrientation() {
+        return CARD.style.dynamic.progressBar.orientation.hasOwnProperty(this._bar_orientation) ? CARD.style.dynamic.progressBar.orientation[this._bar_orientation] : null;
+    }
+    get isActiveTimer() {
+        return this._currentValue.isTimer && this._currentValue.state === CARD.config.entity.state.active;
+    }
+    get refreshSpeed() {
+        return Math.min(CARD.config.refresh.max, Math.max(CARD.config.refresh.min, this._currentValue.value.duration / CARD.config.refresh.ratio));
+    }
+    get show_more_info() {
+        return typeof this._show_more_info === 'boolean' ? this._show_more_info : CARD.config.showMoreInfo;
+    }
+    get navigate_to() {
+        return this._navigate_to !== undefined ? this._navigate_to : null;;
+    }
+    get bar_size() {
+        return this._bar_size && CARD.style.bar.sizeOptions.hasOwnProperty(this._bar_size) ? this._bar_size : CARD.style.bar.sizeOptions.small.label;
+    }
+    get isClickable() {
+        return this.show_more_info || this.navigate_to;
+    }
+
+    /******************************************************************************************
      * Sets the card configuration and updates related properties.
      *
      * @param {object} config - The new card configuration.
      */
     set config(config) {
         this._configHelper.config = config;
-        this.layout = config.layout;
-        this.bar_size = config.bar_size;
+        this._layout = config.layout;
+        this._bar_size = config.bar_size;
         this._percentHelper.unit = config.unit;
-        this.show_more_info = typeof config.show_more_info === 'boolean' ? config.show_more_info : CARD.config.showMoreInfo;
-        this.navigate_to = config.navigate_to !== undefined ? config.navigate_to : null;
+        this._show_more_info = config.show_more_info;
+        this._bar_orientation = config.bar_orientation;
+        this._navigate_to = config.navigate_to;
         this._theme.theme = config.theme;
-        if (Array.isArray(config.custom_theme)) {
-            this._theme.customTheme = config.custom_theme;
-        }
+        this._theme.customTheme = config.custom_theme;
         this._currentValue.value = config.entity;
         this._percentHelper.isTimer = this._currentValue.isTimer;
         if (this._currentValue.isTimer) {
@@ -2722,20 +2749,16 @@ class CardView {
      */
     refresh(hass) {
         this._hassProvider.hass = hass;
-        this.currentLanguage = Object.keys(MSG.entityError).includes(this._hassProvider.language)
-            ? this._hassProvider.language
-            : CARD.config.language;
-
+        this.currentLanguage = this._hassProvider.language;
         this._currentValue.refresh();
         this._max_value.refresh();
         this._configHelper.max_value = this._max_value.value;
         this._configHelper.decimal = this._configHelper.config.decimal ?? this._currentValue.precision;
         this._configHelper.checkConfig();
 
-        if (!this._checkEntityState()) {
+        if (!this.isAvailable) {
             return;
         }
-        this.isAvailable = true;
         // update
         this._percentHelper.decimal = this._configHelper.config.decimal ?? this._currentValue.precision;
         if (this._currentValue.isTimer) {
@@ -2750,147 +2773,6 @@ class CardView {
         }
         this._percentHelper.refresh();
         this._theme.value = this._percentHelper.valueForThemes(this._theme.isLinear);
-    }
-
-    _checkEntityState() {
-        this._isUnknown = (this._currentValue.state === CARD.config.entity.state.unknown || this._max_value.state === CARD.config.entity.state.unknown);
-        this._isUnavailable = (this._currentValue.state === CARD.config.entity.state.unavailable || this._max_value.state === CARD.config.entity.state.unavailable);
-        this._isNotFound = (this._currentValue.state === CARD.config.entity.state.notFound || this._max_value.state === CARD.config.entity.state.notFound);
-        this.isAvailable = !(!this._currentValue.isAvailable || (!this._max_value.isAvailable && this._configHelper.config.max_value));
-
-        return this.isAvailable;
-    }
-
-    /**
-     * Returns the entity used in the card.
-     *
-     * @returns {string} The entity.
-     */
-    get entity() {
-        return this._configHelper.config.entity;
-    }
-
-    /**
-     * Returns the icon to use based on the theme, configuration, and entity.
-     *
-     * @returns {string} The icon.
-     */
-    get icon() {
-        if (this._isNotFound) {
-            return CARD.style.icon.notFound.icon;
-        }
-        if (this._theme.theme === CARD.theme.battery.label && this._currentValue.icon && this._currentValue.icon.includes(CARD.theme.battery.icon)) {
-            return this._currentValue.icon;
-        }
-        return this._theme.icon || this._configHelper.config.icon || this._currentValue.icon || CARD.style.icon.default.icon;
-    }
-
-    /**
-     * Returns the color to use based on the theme or configuration.
-     *
-     * @returns {string} The color.
-     */
-    get color() {
-        if (this.isAvailable) {
-            return this._theme.color || this._configHelper.config.color || CARD.style.color.default;
-        }
-        if (this._isUnknown) {
-            return CARD.style.color.default;
-        }
-        if (this._isUnavailable) {
-            return CARD.style.color.unavailable;
-        }
-        if (this._isNotFound) {
-            return CARD.style.color.notFound;
-        }
-        return CARD.style.color.disabled;
-    }
-
-    /**
-     * Returns the color to use for the progress bar.
-     *
-     * @returns {string} The bar color.
-     */
-    get bar_color() {
-        if (this.isAvailable) {
-            return this._theme.color || this._configHelper.config.bar_color || CARD.style.color.default;
-        }
-        if (this._isUnknown) {
-            return CARD.style.color.default;
-        }
-        return CARD.style.color.disabled;
-    }
-
-    /**
-     * Returns the percentage value.
-     *
-     * @returns {number} The percentage value.
-     */
-    get percent() {
-        if (this.isAvailable) {
-            return Math.min(CARD.config.value.max, Math.max(0, this._percentHelper.percent));
-        }
-        return CARD.config.value.min;
-    }
-
-    /**
-     * Returns the description, which is the formatted percentage value or the unavailable message.
-     *
-     * @returns {string} The description.
-     */
-    get description() {
-        if (this.isAvailable) {
-            return this._percentHelper.label;
-        }
-        if (this._isUnknown) {
-            return MSG.entityUnknown[this.currentLanguage];
-        }
-        if (this._isUnavailable) {
-            return MSG.entityUnavailable[this.currentLanguage];
-        }
-        return MSG.entityNotFound[this.currentLanguage];
-    }
-
-    /**
-     * Returns the name of the entity or the configured name.
-     *
-     * @returns {string} The name.
-     */
-    get name() {
-        return this._configHelper.config.name || this._currentValue.name || this._configHelper.config.entity;
-    }
-
-    get isBadgeEnable() {
-        if (!(this._isUnavailable || this._isNotFound || this._currentValue.isTimer && (this._currentValue.value.state === CARD.config.entity.state.paused || this._currentValue.value.state === CARD.config.entity.state.active))) {
-            return false;
-        }
-        return true;
-    }
-
-    get badgeInfo() {
-        if (this._isNotFound) {
-            return CARD.style.icon.badge.notFound;
-        }
-        if (this._isUnavailable) {
-            return CARD.style.icon.badge.unavailable;
-        }
-        if (this._currentValue.isTimer) {
-            switch (this._currentValue.value.state) {
-                case CARD.config.entity.state.paused:
-                    return CARD.style.icon.badge.timer.paused;
-                    break;
-                case CARD.config.entity.state.active:
-                    return CARD.style.icon.badge.timer.active;
-                    break;
-            }
-        }
-        return null;
-    }
-    get isActiveTimer() {
-        return this._currentValue.isTimer && this._currentValue.state === CARD.config.entity.state.active;
-    }
-    get refreshSpeed() {
-        return Math.min(CARD.config.refresh.max, Math.max(CARD.config.refresh.min, this._currentValue.value.duration / CARD.config.refresh.ratio));
     }
 
 }
@@ -2923,7 +2805,6 @@ class EntityProgressCard extends HTMLElement {
         }
 
         this._elements = {};
-        this._isBuilt = false;
         this._errorVisible = false;
         this.addEventListener(CARD.interactions.event.click, this._handleCardAction.bind(this));
     }
@@ -2979,22 +2860,10 @@ class EntityProgressCard extends HTMLElement {
      * @param {Object} config - The new configuration object.
      */
     setConfig(config) {
-        const layoutChanged = this._cardView.layout !== config.layout;
-        const barSizeChanged = this._cardView.bar_size !== config.bar_size;
         this._cardView.config = config;
-
-        if (!this._isBuilt) {
-            this._isBuilt = true;
-            this._buildCard();
-        }
-
-        if (layoutChanged) {
-            this._changeLayout();
-        }
-        if (barSizeChanged) {
-            this._changeBarSize();
-        }
-
+        this._buildCard();
+        this._setLayout();
+        this._setBarSize();
     }
 
     /**
@@ -3052,7 +2921,8 @@ class EntityProgressCard extends HTMLElement {
     _buildCard() {
         const card = document.createElement(CARD.htmlStructure.card.element);
         card.classList.add(CARD.meta.typeName);
-        card.classList.toggle(CARD.style.dynamic.clickable, this._cardView.show_more_info || this._cardView.navigate_to);
+        card.classList.toggle(CARD.style.dynamic.clickable, this._cardView.isClickable);
+        card.classList.toggle(this._cardView.barOrientation, this._cardView.hasBarOrientationChanged);
         card.innerHTML = CARD_HTML;
         const style = document.createElement(CARD.style.element);
         style.textContent = CARD_CSS;
@@ -3072,22 +2942,6 @@ class EntityProgressCard extends HTMLElement {
             [CARD.htmlStructure.alert.icon.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.alert.icon.class}`),
             [CARD.htmlStructure.alert.message.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.alert.message.class}`),
         };
-    }
-
-    _changeBarSize() {
-        let size = null;
-
-        switch (this._cardView.bar_size) {
-            case CARD.style.bar.sizeOptions.small.label:
-            case CARD.style.bar.sizeOptions.medium.label:
-            case CARD.style.bar.sizeOptions.large.label:
-                size = this._cardView.bar_size;
-                break;
-            default:
-                size = CARD.style.bar.sizeOptions.small.label;
-                break;
-        }
-        this._elements[CARD.htmlStructure.card.element].classList.toggle(size, true);
     }
 
     /**
@@ -3118,16 +2972,15 @@ class EntityProgressCard extends HTMLElement {
      * layout modes.
      *
      */
-    _changeLayout() {
-        this._updateElement(CARD.htmlStructure.card.element, (el) => {
-            const isVertical = this._cardView.layout === CARD.layout.orientations.vertical.label;
-            el.classList.toggle(CARD.layout.orientations.vertical.label, isVertical);
-            el.classList.toggle(CARD.layout.orientations.horizontal.label, !isVertical);
-        });
+    _setLayout() {
+        this._elements[CARD.htmlStructure.card.element].classList.add(this._cardView.layout);
+    }
+    _setBarSize() {
+        this._elements[CARD.htmlStructure.card.element].classList.add(this._cardView.bar_size);
     }
 
     _manageErrorMessage() {
-        if (!this._cardView.isValid) {
+        if (!this._cardView.hasValidatedConfig) {
             this._showError(this._cardView.msg);
             this._errorVisible = true;
             return;

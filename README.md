@@ -217,10 +217,25 @@ You can customize the card using the following parameters:
     - `battery`
     - `light`
 
-- **`reverse`** [boolean] *(optional)*:
-
+- **`reverse`** [boolean] *(optional)*:  
   Used only for entities of type timer. 
   If set to true, the timer functions as a countdown (in seconds or percentage).
+
+- **`bar_orientation`** [string {`rtl`}] *(optional)*:  
+Adjusts the progress bar direction to display from right to left.  
+This is especially useful for timers to visually represent the remaining time.
+  *Example:*
+  ```yaml
+  type: custom:entity-progress-card
+  entity: timer.testtimer
+  icon: mdi:washing-machine
+  unit: flextimer
+  name: Remaining Time reverse
+  bar_orientation: rtl
+  reverse: true
+  ```
+> [!NOTE]
+> While this parameter was originally designed for timers, it can be applied to any entity where a reversed progress bar is needed.
 
 - **`custom_theme`** [array] *(optional)*:
   
