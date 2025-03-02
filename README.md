@@ -6,9 +6,9 @@
 
 Entity progress card for Home Assistant
 
-<img src="./doc/thumbnail.png" alt="Default" width="700"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/thumbnail.png" alt="Default" width="700"/>
 
-<img src="./doc/example.png" alt="Default" width="400"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/example.png" alt="Default" width="400"/>
 
 This custom version of the **Bar Card** for Home Assistant allows you to display a simple percentage bar that is quick and easy to integrate into your Lovelace cards. It blends seamlessly with the `Tile`/`Mushroom` look & feel of the latest Home Assistant versions. This card is based on custom CSS and leverages existing code to fine-tune the appearance.
 
@@ -55,7 +55,7 @@ type: module
 ### Card Editor
 The card editor allows you to quickly set up and customize the card.
 
-![Editor](./doc/editor.png)
+![Editor](https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/editor.png)
 
 ### Parameters
 
@@ -407,7 +407,7 @@ color: rgb(110, 65, 171)
 bar_color: rgb(110, 65, 171)
 ```
 
-<img src="./doc/RVB.png" alt="Image title" width="250px"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/RVB.png" alt="Image title" width="250px"/>
 
 Another example with `grid_option` and vertical `layout`:
 ```yaml
@@ -423,7 +423,7 @@ grid_options:
   rows: 2
 ```
 
-<img src="./doc/RVB_vertical.png" alt="Image title" width="118px"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/RVB_vertical.png" alt="Image title" width="118px"/>
 
 ## 💡 Sample Usage
 
@@ -467,7 +467,7 @@ sort:
   ignore_case: false
 ```
 
-<img src="./doc/battery_dashboard.png" alt="Image title" width="500"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/battery_dashboard.png" alt="Image title" width="500"/>
 
 ### Litter box
 
@@ -537,7 +537,7 @@ The brightness levels and their corresponding colors are as follows:
 The `mdi:lightbulb-outline` icon is used for lower brightness levels, while `mdi:lightbulb` is displayed when the light intensity increases.  
 Thanks to the **linear** approach, the brightness smoothly transitions between these levels.
 
-<img src="./doc/light.png" alt="Image title" width="500"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/light.png" alt="Image title" width="500"/>
 
 #### Temperature
 
@@ -571,7 +571,7 @@ We use predefined intervals, each associated with a specific color:
 > [!IMPORTANT]
 > Fahrenheit values are converted to apply the correct color. Make sure to set your unit to `°F` correctly in order to see the accurate color representation.
 
-<img src="./doc/temperature.png" alt="Image title" width="500"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/temperature.png" alt="Image title" width="500"/>
 
 #### Humidity
 
@@ -598,7 +598,7 @@ The ranges and their corresponding colors are as follows:
 
 Each range is visually represented using the `mdi:water-percent` icon, ensuring a clear and intuitive display of humidity levels.
 
-<img src="./doc/humidity.png" alt="Image title" width="500"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/humidity.png" alt="Image title" width="500"/>
 
 #### VOC
 
@@ -630,7 +630,7 @@ The ranges and their corresponding colors are as follows:
  
 Each range is visually represented using the `mdi:air-filter` icon, ensuring a clear and intuitive display of VOC levels.
 
-<img src="./doc/voc.png" alt="Image title" width="500"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/voc.png" alt="Image title" width="500"/>
 
 #### PM 2.5
 
@@ -662,7 +662,7 @@ The ranges and their corresponding colors are as follows:
 
 Each range is visually represented using the `mdi:air-filter` icon, ensuring a clear and intuitive display of PM2.5 pollution levels.
 
-<img src="./doc/voc.png" alt="Image title" width="500"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/voc.png" alt="Image title" width="500"/>
 
 ### card_mod / animation
 
@@ -733,4 +733,4 @@ cards:
       columns: 2
     card_param: cards
 ```
-<img src="./doc/stack.png" alt="Image title" width="500"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/stack.png" alt="Image title" width="500"/>
