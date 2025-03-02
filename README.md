@@ -222,8 +222,8 @@ You can customize the card using the following parameters:
   If set to true, the timer functions as a countdown (in seconds or percentage).
 
 - **`bar_orientation`** [string {`rtl`}] *(optional)*:  
-Adjusts the progress bar direction to display from right to left.  
-This is especially useful for timers to visually represent the remaining time.
+  Adjusts the progress bar direction to display from right to left.  
+  This is especially useful for timers to visually represent the remaining time.  
   *Example:*
   ```yaml
   type: custom:entity-progress-card
@@ -276,54 +276,58 @@ This is especially useful for timers to visually represent the remaining time.
 > [`min`, `max`[ / [`min`, `max`) : The range includes the min value but excludes the max value.
 
 > [!IMPORTANT]
-> Please follow these guidelines for defining your themes:
-> - Intervals must be valid: Each range should respect the rule `min` < `max`.
-> - Seamless continuity: Each `max` must connect smoothly to the next `min`, with no awkward gaps or overlaps between ranges.
-> - Boundary flexibility: If a value falls below the lowest defined interval, the lowest range will be applied. Conversely, if a value exceeds the highest interval, the highest range will be used.
+> Please ensure your themes follow these guidelines: Each interval must be valid, respecting the rule `min` < `max`.
+> The transitions between ranges should be seamless, with each max connecting smoothly to the next min to avoid
+> gaps or overlaps. If a value falls below the lowest defined interval, the lowest range will be applied, while
+> values exceeding the highest interval will use the highest range.
 > 
-> This is an advanced feature that may require some trial and error during customization. For a seamless editing experience, if the theme definition is incorrect, the card simulation will revert to a standard configuration and ignore the `custom_theme` definition.
+> This is an advanced feature that may require some trial and error during customization. For a seamless editing
+> experience, if the theme definition is incorrect, the card simulation will revert to a standard configuration
+> and ignore the `custom_theme` definition.
 
 > [!TIP]
-> If you wish to define colors for discontinuous ranges, you will need to create intermediary ranges to ensure continuity, using default colors such as var(--state-icon-color) for these filler ranges.
->   ```yaml
->  # Default settings:
->  #   - Color: var(--state-icon-color)
->  #   - Icon: mdi:abacus
->  # 
->  # Specific ranges:
->  #   - 10 to 20: 
->  #       - Color: green
->  #       - Icon: mdi:ab-testing
->  #   - 50 to 60: 
->  #       - Color: red
->  #       - Icon: mdi:ab-testing
->  custom_theme:
->    # value < 10:
->    - min: 0
->      max: 10
->      color: var(--state-icon-color)
->      icon: mdi:abacus
->    # 10 <= value < 20:
->    - min: 10
->      max: 20
->      color: green
->      icon: mdi:ab-testing
->    # 20 <= value < 50:
->    - min: 20
->      max: 50
->      color: var(--state-icon-color)
->      icon: mdi:abacus
->    # 50 <= value < 60:
->    - min: 50
->      max: 60
->      color: red
->      icon: mdi:ab-testing
->    # 60 <= value:
->    - min: 60
->      max: 70
->      color: var(--state-icon-color)
->      icon: mdi:abacus
->  ```
+> If you wish to define colors for discontinuous ranges, you will need to create intermediary ranges to ensure
+> continuity, using default colors such as `var(--state-icon-color)` for these filler ranges.
+
+```yaml
+# Default settings:
+#   - Color: var(--state-icon-color)
+#   - Icon: mdi:abacus
+# 
+# Specific ranges:
+#   - 10 to 20: 
+#       - Color: green
+#       - Icon: mdi:ab-testing
+#   - 50 to 60: 
+#       - Color: red
+#       - Icon: mdi:ab-testing
+custom_theme:
+  # value < 10:
+  - min: 0
+    max: 10
+    color: var(--state-icon-color)
+    icon: mdi:abacus
+  # 10 <= value < 20:
+  - min: 10
+    max: 20
+    color: green
+    icon: mdi:ab-testing
+  # 20 <= value < 50:
+  - min: 20
+   max: 50
+   color: var(--state-icon-color)
+   icon: mdi:abacus
+  # 50 <= value < 60:
+  - min: 50
+    max: 60
+    color: red
+    icon: mdi:ab-testing
+  # 60 <= value:
+  - min: 60
+    max: 70
+    color: var(--state-icon-color)
+    icon: mdi:abacus
+```
 
 - **`max_value`** [numeric/entity] *(optional)*:  
   Allows representing standard values and calculating the percentage relative to the maximum value.
