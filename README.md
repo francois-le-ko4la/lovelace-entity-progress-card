@@ -180,6 +180,7 @@ You can customize the card using the following parameters:
     - Icon Parameter: A custom icon specifically defined for the item.
     - Icon Associated with the Entity: The icon directly linked or representative of the entity.
     - Icon Associated with the Entity's device_class: temperature, humidity...
+    - Icon Associated with the Entity's device type
     - Default: The icon used by default if no other is specified.
 
 - **`color`** [string] *(optional)*:  
