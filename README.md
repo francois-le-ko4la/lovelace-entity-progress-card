@@ -119,6 +119,26 @@ You can customize the card using the following parameters:
   *Examples:* `mdi:lightbulb`, `mdi:thermometer`
 
   *Default:*
+    | Device Type                         | Icon (MDI)              |
+    |-------------------------------------|-------------------------|
+    | light                               | mdi:lightbulb           |
+    | timer                               | mdi:timer-outline       |
+    | switch	                            | mdi:toggle-switch       |
+    | sensor	                            | mdi:chart-line          |
+    | binary_sensor                       | mdi:circle-outline      |
+    | cover	                              | mdi:garage              |
+    | climate                             | mdi:thermostat          |
+    | fan                                 | mdi:fan                 |
+    | media_player                        | mdi:speaker             |
+    | lock                                | mdi:lock                |
+    | person                              | mdi:account             |
+    | scene                               | mdi:palette             |
+    | input_boolean                       | mdi:toggle-switch       |
+    | input_number                        | mdi:numeric             |
+    | input_select                        | mdi:form-dropdown       |
+    | weather                             | mdi:weather-cloudy      |
+    | sun                                 | mdi:white-balance-sunny |
+
     | Device Class                        | Icon (MDI)             |
     |-------------------------------------|------------------------|
     | battery                             | mdi:battery            |
@@ -132,7 +152,6 @@ You can customize the card using the following parameters:
     | heat                                | mdi:fire               |
     | humidity                            | mdi:water-percent      |
     | illuminance                         | mdi:brightness-5       |
-    | light                               | mdi:lightbulb          |
     | lock                                | mdi:lock               |
     | moisture                            | mdi:water              |
     | motion                              | mdi:motion-sensor      |

@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.0.45
+ * @version 1.0.46
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.0.45';
+const VERSION = '1.0.46';
 const CARD = {
     meta: {
         typeName: 'entity-progress-card',
@@ -43,7 +43,8 @@ const CARD = {
         },
         entity: {
             state: { unavailable: 'unavailable', unknown: 'unknown', notFound: 'notFound', idle: 'idle', active: 'active', paused: 'paused' },
-            type: { timer: 'timer', light: 'light', },
+            type: { timer: 'timer', light: 'light' },
+            class: { shutter: 'shutter' },
         },
         msFactor: 1000,
         shadowMode: 'open',
@@ -96,6 +97,26 @@ const CARD = {
                 }
 
             },
+            byDeviceType: {
+                timer: "mdi:timer-outline",
+                light: "mdi:lightbulb",
+                switch: "mdi:toggle-switch",
+                sensor: "mdi:eye",
+                binary_sensor: "mdi:circle-outline",
+                cover: "mdi:garage",
+                climate: "mdi:thermostat",
+                fan: "mdi:fan",
+                media_player: "mdi:speaker",
+                lock: "mdi:lock",
+                person: "mdi:account",
+                scene: "mdi:palette",
+                input_boolean: "mdi:toggle-switch",
+                input_number: "mdi:numeric",
+                input_select: "mdi:form-dropdown",
+                timer: "mdi:timer-outline",
+                weather: "mdi:weather-cloudy",
+                sun: "mdi:white-balance-sunny"
+            },           
             byDeviceClass: {
                 battery: "mdi:battery",
                 carbon_dioxide: "mdi:molecule-co2",
@@ -108,7 +129,6 @@ const CARD = {
                 heat: "mdi:fire",
                 humidity: "mdi:water-percent",
                 illuminance: "mdi:brightness-5",
-                light: "mdi:lightbulb",
                 lock: "mdi:lock",
                 moisture: "mdi:water",
                 motion: "mdi:motion-sensor",
@@ -131,6 +151,9 @@ const CARD = {
                 volatile_organic_compounds_parts: "mdi:molecule",
                 voltage: "mdi:flash",
                 window: "mdi:window-open"
+            },
+            suffix: {
+                open: "-open"
             },
         },
         bar: {
@@ -1445,49 +1468,40 @@ const CARD_CSS = `
 `;
 
 /**
- * Represents a numeric value that can be valid or invalid.
+ * Helper class for managing numeric values.
+ * This class validates and stor a numeric value.
  *
- * @class Value
+ * @class ValueHelper
  */
-class Value {
+class ValueHelper {
+    constructor() {
+        this._value = null;
+        this._isValid = false;
+    }
     /**
-     * Creates a new instance of Value.
+     * Validates if a value is a valid float.
      *
-     * @param {number} [value=null] - The numeric value. Defaults to null.
-     * @param {boolean} [isValid=false] - Indicates whether the value is valid. Defaults to false.
+     * @param {number} value - The value to validate.
+     * @returns {boolean} True if the value is a valid non-negative integer, false otherwise.
      */
-    constructor(value = null, isValid = false) {
-        this._value = value;
-        this._isValid = isValid;
+    _validate(value) {
+        return Number.isFinite(value);
     }
 
-    /**
-     * Sets the numeric value.
-     * If the new value is not a number or is NaN, the value is considered invalid.
-     *
-     * @param {number} newValue - The new numeric value.
-     */
-    set value(newValue) {
-        if (typeof newValue !== 'number' || isNaN(newValue)) {
+    set value(value) {
+        if (this._validate(value)) {
+            this._value = value;
+            this._isValid = true;
+        } else {
+            this._value = null;
             this._isValid = false;
-            return;
         }
-        this._value = newValue;
-        this._isValid = true;
     }
-    /**
-     * Returns the numeric value.
-     *
-     * @returns {number} The numeric value.
-     */
+
     get value() {
         return this._value;
     }
-    /**
-     * Indicates whether the value is valid.
-     *
-     * @returns {boolean} True if the value is valid, false otherwise.
-     */
+
     get isValid() {
         return this._isValid;
     }
@@ -1498,16 +1512,23 @@ class Value {
  *
  * @class Decimal
  */
-class Decimal {
+class DecimalHelper {
     /**
      * Creates a new instance of Decimal.
-     *
-     * @param {number} [value=null] - The non-negative integer value. Defaults to null.
-     * @param {boolean} [isValid=false] - Indicates whether the value is valid. Defaults to false.
      */
-    constructor(value = null, isValid = false) {
-        this._value = value;
-        this._isValid = isValid;
+    constructor() {
+        this._value = null;
+        this._isValid = false;
+    }
+
+    /**
+     * Validates if a value is a valid non-negative integer.
+     *
+     * @param {number} value - The value to validate.
+     * @returns {boolean} True if the value is a valid non-negative integer, false otherwise.
+     */
+    _validate(value) {
+        return typeof value === 'number' && !isNaN(value) && value >= 0 && Number.isInteger(value);
     }
 
     /**
@@ -1517,12 +1538,13 @@ class Decimal {
      * @param {number} newValue - The new non-negative integer value.
      */
     set value(newValue) {
-        if (typeof newValue !== 'number' || isNaN(newValue) || !(newValue >= 0) || !Number.isInteger(newValue)) {
+        if (this._validate(newValue)) {
+            this._value = newValue;
+            this._isValid = true;
+        } else {
+            this._value = null;
             this._isValid = false;
-            return;
         }
-        this._value = newValue;
-        this._isValid = true;
     }
 
     /**
@@ -1549,7 +1571,7 @@ class Decimal {
  *
  * @class Unit
  */
-class Unit {
+class UnitHelper {
     /**
      * Creates a new instance of Unit.
      *
@@ -1581,6 +1603,13 @@ class Unit {
     get value() {
         return this._value;
     }
+
+    get isTimerUnit() {
+        return this._value.trim().toLowerCase() === CARD.config.unit.timer;
+    }
+    get isFlexTimerUnit() {
+        return this._value.trim().toLowerCase() === CARD.config.unit.flexTimer;
+    }
 }
 
 /**
@@ -1604,27 +1633,27 @@ class PercentHelper {
          * @type {Value}
          * @private
          */
-        this._min = new Value(minValue);
+        this._min = new ValueHelper(minValue);
         /**
          * @type {Value}
          * @private
          */
-        this._max = new Value(maxValue);
+        this._max = new ValueHelper(maxValue);
         /**
          * @type {Value}
          * @private
          */
-        this._current = new Value(currentValue);
+        this._current = new ValueHelper(currentValue);
         /**
          * @type {Unit}
          * @private
          */
-        this._unit = new Unit(unit);
+        this._unit = new UnitHelper(unit);
         /**
          * @type {Decimal}
          * @private
          */
-        this._decimal = new Decimal(decimal);
+        this._decimal = new DecimalHelper(decimal);
         /**
          * @type {number}
          * @private
@@ -1712,7 +1741,7 @@ class PercentHelper {
      */
     set decimal(newDecimal) {
         if (newDecimal === undefined || newDecimal === null) {
-            if (this._unit.value === CARD.config.unit.default) {
+            if (this._unit.value === CARD.config.unit.default || this.hasTimerOrFlexTimerUnit) {
                 newDecimal = CARD.config.decimal.percentage;
             } else {
                 newDecimal = CARD.config.decimal.other;
@@ -1776,14 +1805,23 @@ class PercentHelper {
         return this._percent;
     }
 
+    get hasTimerUnit() {
+        return this._isTimer && this._unit.isTimerUnit;
+    }
+    get hasFlexTimerUnit() {
+        return this._isTimer && this._unit.isFlexTimerUnit;
+    }
+    get hasTimerOrFlexTimerUnit() {
+        return this.hasTimerUnit || this.hasFlexTimerUnit;
+    }
+
     /**
      * Returns a formatted label with the value and unit.
      *
      * @returns {string} The formatted label.
      */
     get label() {
-        
-        return this._isTimer && (this._unit.value === CARD.config.unit.timer || this._unit.value === CARD.config.unit.flexTimer) ?
+        return  this.hasTimerOrFlexTimerUnit ?
             `${this.formattedValue}`
             :`${this.formattedValue}${this._unit.value}`;
     }
@@ -1791,7 +1829,7 @@ class PercentHelper {
     get formattedValue() {
         let value = this._percent;
 
-        if (this._isTimer && (this._unit.value === CARD.config.unit.timer || this._unit.value === CARD.config.unit.flexTimer)) {
+        if (this.hasTimerOrFlexTimerUnit) {
             return this._getTiming();
         }
         if (this._unit.value !== CARD.config.unit.default) {
@@ -1805,12 +1843,20 @@ class PercentHelper {
         let h = Math.floor(seconds / 3600);
         let m = Math.floor((seconds % 3600) / 60);
         let s = (seconds % 60).toFixed(this._decimal.value);
-
-        if (this._unit.value === CARD.config.unit.flexTimer) {
+    
+        if (s.includes(".")) {
+            let [intPart, decimalPart] = s.split(".");
+            intPart = intPart.padStart(2, "0");
+            s = `${intPart}.${decimalPart}`;
+        } else {
+            s = s.padStart(2, "0");
+        }
+    
+        if (this.hasFlexTimerUnit) {
             if (seconds < 60) {
-                return `${s}s`;
+                return `${parseFloat(s)}s`;
             } else if (seconds < 3600) {
-                return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+                return `${String(m).padStart(2, "0")}:${s}`;
             }
         }    
         return [h, m, s].map(unit => String(unit).padStart(2, "0")).join(":");
@@ -2096,32 +2142,6 @@ class HassProvider {
 }
 
 /**
- * Helper class for managing numeric values.
- * This class validates and stor a numeric value.
- *
- * @class ValueHelper
- */
-class ValueHelper {
-    constructor() {
-        this._value = null;
-        this._isValid = false;
-    }
-
-    set value(value) {
-        this._value = Number.isFinite(value) ? value : null;
-        this._isValid = Number.isFinite(value);
-    }
-
-    get value() {
-        return this._value;
-    }
-
-    get isValid() {
-        return this._isValid;
-    }
-}
-
-/**
  * Helper class for managing entities.
  * This class validates and retrieves information from Home Assistant if it's an entity.
  *
@@ -2315,34 +2335,29 @@ class EntityHelper {
     _getDeviceClass() {
         const entityState = this.states;
 
-        if (!this._isValid) {
-            return null;
-        }
-
         if (entityState.attributes?.device_class) {
             return entityState.attributes.device_class;
         }
-
-        if (this._type === CARD.config.entity.type.light && entityState.attributes?.brightness !== undefined) {
-            return CARD.config.entity.type.light;
-        }
-
         return null;
     }
+    _getIconByClass() {
+        const deviceClass = this._getDeviceClass();
+        const suffix = deviceClass === CARD.config.entity.class.shutter && this.states.attributes.current_position > 0 ? CARD.style.icon.suffix.open:'';
+        return deviceClass && CARD.style.icon.byDeviceClass.hasOwnProperty(deviceClass)
+            ? `${CARD.style.icon.byDeviceClass[deviceClass]}${suffix}`
+            : null;
+    }
+    _getIconByType() {
+        return this._type && CARD.style.icon.byDeviceType.hasOwnProperty(this._type)
+            ? CARD.style.icon.byDeviceType[this._type]
+            : null;
+    }
+
     /**
      * Returns the icon of the entity, if valid.
      */
     get icon() {
-        const entityState = this.states;
-        if (!entityState) {
-            return null;
-        }
-        const icon = entityState.attributes?.icon;
-        const deviceClass = this._getDeviceClass();
-        const deviceClassIcon = deviceClass && CARD.style.icon.byDeviceClass.hasOwnProperty(deviceClass)
-            ? CARD.style.icon.byDeviceClass[deviceClass]
-            : null;
-        return this._isValid ? (icon || deviceClassIcon) : null;
+        return this._isValid && this.states ? (this.states.attributes?.icon || this._getIconByClass() || this._getIconByType()) : null;
     }
     /**
      *
