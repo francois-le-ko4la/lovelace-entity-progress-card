@@ -2801,8 +2801,8 @@ class CardView {
     }
 
     _isComponentConfiguredAsHidden(component) {
-        return this._configHelper.config.hide && Array.isArray(this._configHelper.config.hide) && this._configHelper.config.hide.includes(component);
-    }
+        return Array.isArray(this._configHelper.config?.hide) && this._configHelper.config.hide.includes(component);
+    }    
 
 }
 
