@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.0.47
+ * @version 1.0.48
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.0.47';
+const VERSION = '1.0.48';
 const CARD = {
     meta: {
         typeName: 'entity-progress-card',
@@ -179,7 +179,13 @@ const CARD = {
             },
             show: 'show',
             hide: 'hide',
-            clickable: 'clickable'
+            clickable: 'clickable',
+            hiddenComponent: {
+                "icon": { "label": "icon", "class": "hide_icon" },
+                "name": { "label": "name", "class": "hide_name" },
+                "secondary_info": { "label": "secondary_info", "class": "hide_secondary_info" },
+                "progress_bar": { "label": "progress_bar", "class": "hide_progress_bar" }
+            },
         },
     },
     layout: {
@@ -1479,6 +1485,13 @@ const CARD_CSS = `
         color: var(${CARD.style.dynamic.badge.color.var}, ${CARD.style.dynamic.badge.color.default});
     }
 
+    .${CARD.style.dynamic.hiddenComponent.icon.class} .${CARD.htmlStructure.sections.left.class},
+    .${CARD.style.dynamic.hiddenComponent.name.class} .${CARD.htmlStructure.elements.name.class},
+    .${CARD.style.dynamic.hiddenComponent.progress_bar.class} .${CARD.htmlStructure.elements.progressBar.container.class},
+    .${CARD.style.dynamic.hiddenComponent.secondary_info.class} .${CARD.htmlStructure.elements.percentage.class} {
+        display: none;
+    }
+
 `;
 
 /**
@@ -2715,6 +2728,18 @@ class CardView {
     get isClickable() {
         return this.show_more_info || this.navigate_to;
     }
+    get hasHiddenIcon() {
+        return this._isComponentConfiguredAsHidden(CARD.style.dynamic.hiddenComponent.icon.label);
+    }
+    get hasHiddenName() {
+        return this._isComponentConfiguredAsHidden(CARD.style.dynamic.hiddenComponent.name.label);
+    }
+    get hasHiddenSecondaryInfo() {
+        return this._isComponentConfiguredAsHidden(CARD.style.dynamic.hiddenComponent.secondary_info.label);
+    }
+    get hasHiddenProgressBar() {
+        return this._isComponentConfiguredAsHidden(CARD.style.dynamic.hiddenComponent.progress_bar.label);
+    }
 
     /******************************************************************************************
      * Sets the card configuration and updates related properties.
@@ -2773,6 +2798,10 @@ class CardView {
         }
         this._percentHelper.refresh();
         this._theme.value = this._percentHelper.valueForThemes(this._theme.isLinear);
+    }
+
+    _isComponentConfiguredAsHidden(component) {
+        return this._configHelper.config.hide && Array.isArray(this._configHelper.config.hide) && this._configHelper.config.hide.includes(component);
     }
 
 }
@@ -2862,8 +2891,6 @@ class EntityProgressCard extends HTMLElement {
     setConfig(config) {
         this._cardView.config = config;
         this._buildCard();
-        this._setLayout();
-        this._setBarSize();
     }
 
     /**
@@ -2923,6 +2950,13 @@ class EntityProgressCard extends HTMLElement {
         card.classList.add(CARD.meta.typeName);
         card.classList.toggle(CARD.style.dynamic.clickable, this._cardView.isClickable);
         card.classList.toggle(this._cardView.barOrientation, this._cardView.hasBarOrientationChanged);
+        card.classList.add(this._cardView.layout);
+        card.classList.add(this._cardView.bar_size);
+        card.classList.toggle(CARD.style.dynamic.hiddenComponent.icon.class, this._cardView.hasHiddenIcon);
+        card.classList.toggle(CARD.style.dynamic.hiddenComponent.name.class, this._cardView.hasHiddenName);
+        card.classList.toggle(CARD.style.dynamic.hiddenComponent.secondary_info.class, this._cardView.hasHiddenSecondaryInfo);
+        card.classList.toggle(CARD.style.dynamic.hiddenComponent.progress_bar.class, this._cardView.hasHiddenProgressBar);
+
         card.innerHTML = CARD_HTML;
         const style = document.createElement(CARD.style.element);
         style.textContent = CARD_CSS;
@@ -2962,21 +2996,6 @@ class EntityProgressCard extends HTMLElement {
         if (element) {
             updateCallback(element);
         }
-    }
-
-    /**
-     * Changes the layout of the card based on the current configuration.
-     *
-     * This method adjusts the styling of various DOM elements based on the selected
-     * layout configuration. It uses predefined CSS styles to switch between two
-     * layout modes.
-     *
-     */
-    _setLayout() {
-        this._elements[CARD.htmlStructure.card.element].classList.add(this._cardView.layout);
-    }
-    _setBarSize() {
-        this._elements[CARD.htmlStructure.card.element].classList.add(this._cardView.bar_size);
     }
 
     _manageErrorMessage() {

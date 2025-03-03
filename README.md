@@ -104,15 +104,116 @@ You can customize the card using the following parameters:
   *Example:*
     - `"RGB Color"`
 
-- **`layout`** [string {`horizontal`| `vertical`}] *(optional)*:  
-  Determines the layout of the elements inside the card. You can choose between different layouts based on your visual preferences.
+- **`unit`** [string] *(optional)*:  
+  Allows representing standard unit.  
+  By default, the unit is % and allow you to get a ratio.  
+  Specifies the unit to display the entity's actual value, ignoring max_value. The max_value is still used for the progress bar representation.
   
   *Default:*
-    - `horizontal`
+    - `%`
+      
+  *Example:*
+    - `°C` for temperature.
+    - `kWh` for energy consumption.
+    - `s` for timer
+    - `timer` for timer (display HH:MM:SS without unit)
+    - `flextimer` for timer (same than timer but truncate the display according to the current value)
+    
+- **`decimal`** [int >=0] *(optional)*:  
+  Defines the number of decimal places to display for numerical values.  
+  The `decimal` value will be determined based on the following priority:
+  - `Display Precision` from the entity (if defined in Home Assistant).
+  - `decimal` setting in the YAML configuration.
+  - `Default Value` (if no other value is set).
   
-  *Examples:*
-    - `horizontal`: Displays the elements horizontally, with a row layout (by default, the text and progress bar will be displayed side by side).  
-    - `vertical`: Displays the elements vertically, with a column layout (by default, the text and progress bar will be stacked one below the other).
+  *Default values:*
+    - `decimal` = 0 for percentage (%)
+    - `decimal` = 2 for other unit (°C, kWh...)
+
+  *Example:*  
+    - `1` for displaying 50.6%.
+    - `0` for displaying 51%
+    - `1` for displaying 20.7°C
+
+> [!IMPORTANT]
+> Before version 1.0.20, the default values were different (2 for percentages
+> and 0 for other units). When updating, you will need to adjust the parameter
+> according to your needs.
+
+- **`min_value`** [numeric] *(optional)*:  
+  Defines the minimum value to be used when calculating the percentage.  
+  This allows the percentage to be relative to both a minimum (min_value, which represents 0%) and a maximum (max_value, which represents 100%).  
+  This value must be numeric (either a float or an integer).
+
+  *Default:*
+    - `0`
+
+  *Example:*
+    Suppose you are measuring the weight of a connected litter box, where:
+    - `min_value` = 6 (the minimum weight representing an empty box, i.e., 0%).
+    - `max_value` = 11 (the maximum weight representing a full box, i.e., 100%).
+    - `value` = 8 (the current weight).
+    - `percentage` = 40%
+
+- **`max_value`** [numeric/entity] *(optional)*:  
+  Allows representing standard values and calculating the percentage relative to the maximum value.
+  This value can be numeric (float/int) or an entity and real value must be > 0.
+  
+  *Default:*
+    - `100%`
+
+  *Example:*
+    - LQI @ 150 (entity) with max_value @ 255 (static value -> max_value = 255)
+    - A (entity_a) with max_value (entity_b)
+
+- **`navigate_to`** [string] *(optional)*:  
+  Specifies a URL to navigate to when the card is clicked.
+  If defined, clicking the card will redirect to the specified location.
+  This parameter takes precedence over show_more_info if both are defined.
+
+  *Default values:*
+    - `null` (no navigation).
+
+  *Example:*
+    - `/lovelace/dashboard` to navigate to another Home Assistant dashboard ("dashboard").
+    - `/lovelace/5` to navigate to another Home Assistant dashboard (5).
+    - `https://example.com` to open an external link.
+
+- **`show_more_info`** [boolean] *(optional)*:  
+  Determines whether clicking on the card will open the entity's "more info" dialog in Home Assistant.  
+  Defaults to true. If set to false, clickingthe card will not trigger any "more info" action.
+  
+  *Default:*
+    - `true`
+  
+  *Example:*
+    - `true` to enable "more info" on click.
+    - `false` to disable the "more info" dialog.
+
+- **`theme`** [string {`battery`|`cpu`|`light`|`memory`|`temperature`|`humidity`|`pm25`|`voc`}] *(optional)*:  
+  Allows customization of the progress bar's appearance using a predefined theme.
+  This theme dynamically adjusts the `icon`, `color` and `bar-color` parameters based on the battery level, eliminating the need for manual adjustments or complex Jinja2 templates.  
+  *Example:*
+    - `battery`
+    - `light`
+
+- **`bar_size`** [string {`small`|`medium`|`large`}] *(optional)*:  
+  Customizes the appearance of the progress bar by selecting a predefined size.
+  Choose from small, medium, or large to adjust the visual scale of the bar.
+  
+  *Default:*
+    - `small`
+
+  *Example:*
+    - `medium`
+
+- **`bar_color`** [string] *(optional)*:  
+  The color of the progress bar. Accepts color names, RGB values, or HEX codes.
+  
+  *Default:*
+    - `var(--state-icon-color)`
+
+  *Examples:* `"blue"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`
 
 - **`icon`** [string] *(optional)*:  
   The icon associated with the entity. Supports Material Design Icons (MDI).
@@ -193,54 +294,20 @@ You can customize the card using the following parameters:
 
   *Examples:* `"green"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`
 
-- **`bar_size`** [string {`small`|`medium`|`large`}] *(optional)*:  
-  Customizes the appearance of the progress bar by selecting a predefined size.
-  Choose from small, medium, or large to adjust the visual scale of the bar.
+- **`layout`** [string {`horizontal`| `vertical`}] *(optional)*:  
+  Determines the layout of the elements inside the card. You can choose between different layouts based on your visual preferences.
   
   *Default:*
-    - `small`
-
-  *Example:*
-    - `medium`
-
-- **`bar_color`** [string] *(optional)*:  
-  The color of the progress bar. Accepts color names, RGB values, or HEX codes.
+    - `horizontal`
   
-  *Default:*
-    - `var(--state-icon-color)`
+  *Examples:*
+    - `horizontal`: Displays the elements horizontally, with a row layout (by default, the text and progress bar will be displayed side by side).  
+    - `vertical`: Displays the elements vertically, with a column layout (by default, the text and progress bar will be stacked one below the other).
 
-  *Examples:* `"blue"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`
-
-- **`theme`** [string {`battery`|`cpu`|`light`|`memory`|`temperature`|`humidity`|`pm25`|`voc`}] *(optional)*:  
-  Allows customization of the progress bar's appearance using a predefined theme.
-  This theme dynamically adjusts the `icon`, `color` and `bar-color` parameters based on the battery level, eliminating the need for manual adjustments or complex Jinja2 templates.  
-  *Example:*
-    - `battery`
-    - `light`
-
-- **`reverse`** [boolean] *(optional)*:  
-  Used only for entities of type timer. 
-  If set to true, the timer functions as a countdown (in seconds or percentage).
-
-- **`bar_orientation`** [string {`rtl`}] *(optional)*:  
-  Adjusts the progress bar direction to display from right to left.  
-  This is especially useful for timers to visually represent the remaining time.  
-  *Example:*
-  ```yaml
-  type: custom:entity-progress-card
-  entity: timer.testtimer
-  icon: mdi:washing-machine
-  unit: flextimer
-  name: Remaining Time reverse
-  bar_orientation: rtl
-  reverse: true
-  ```
-> [!NOTE]
-> While this parameter was originally designed for timers, it can be applied to any entity where a reversed progress bar is needed.
-
-- **`custom_theme`** [array] *(optional)*:
+- **`custom_theme`** [array] *(optional)*:    
+  [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#)  
   
-  Defines a list of custom theme rules based on value ranges. Setting this variable disables the theme variable. 
+  Defines a list of custom theme rules based on value ranges. Setting this variable disables the theme variable.  
   This variable can only be defined in YAML.
 
   *Properties of each item:*
@@ -330,92 +397,40 @@ custom_theme:
     icon: mdi:abacus
 ```
 
-- **`max_value`** [numeric/entity] *(optional)*:  
-  Allows representing standard values and calculating the percentage relative to the maximum value.
-  This value can be numeric (float/int) or an entity and real value must be > 0.
+- **`reverse`** [boolean] *(optional)*:  
+  [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#)  
   
-  *Default:*
-    - `100%`
+  Used only for entities of type timer. 
+  If set to true, the timer functions as a countdown (in seconds or percentage).
 
+- **`bar_orientation`** [string {`rtl`}] *(optional)*:  
+  [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#)  
+  
+  Adjusts the progress bar direction to display from right to left.  
+  This is especially useful for timers to visually represent the remaining time.  
   *Example:*
-    - LQI @ 150 (entity) with max_value @ 255 (static value -> max_value = 255)
-    - A (entity_a) with max_value (entity_b)
+  ```yaml
+  type: custom:entity-progress-card
+  entity: timer.testtimer
+  icon: mdi:washing-machine
+  unit: flextimer
+  name: Remaining Time reverse
+  bar_orientation: rtl
+  reverse: true
+  ```
+> [!NOTE]
+> While this parameter was originally designed for timers, it can be applied to any entity where a reversed progress bar is needed.
 
-- **`min_value`** [numeric] *(optional)*:  
-  Defines the minimum value to be used when calculating the percentage.  
-  This allows the percentage to be relative to both a minimum (min_value, which represents 0%) and a maximum (max_value, which represents 100%).  
-  This value must be numeric (either a float or an integer).
-
-  *Default:*
-    - `0`
-
-  *Example:*
-    Suppose you are measuring the weight of a connected litter box, where:
-    - `min_value` = 6 (the minimum weight representing an empty box, i.e., 0%).
-    - `max_value` = 11 (the maximum weight representing a full box, i.e., 100%).
-    - `value` = 8 (the current weight).
-    - `percentage` = 40%
-
-- **`unit`** [string] *(optional)*:  
-  Allows representing standard unit.  
-  By default, the unit is % and allow you to get a ratio.  
-  Specifies the unit to display the entity's actual value, ignoring max_value. The max_value is still used for the progress bar representation.
+- **`hide`** [array] *(optional)*:  
+  [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#)  
   
-  *Default:*
-    - `%`
-      
-  *Example:*
-    - `°C` for temperature.
-    - `kWh` for energy consumption.
-    - `s` for timer
-    - `timer` for timer (display HH:MM:SS without unit)
-    - `flextimer` for timer (same than timer but truncate the display according to the current value)
-    
-- **`decimal`** [int >=0] *(optional)*:  
-  Defines the number of decimal places to display for numerical values.  
-  The `decimal` value will be determined based on the following priority:
-  - `Display Precision` from the entity (if defined in Home Assistant).
-  - `decimal` setting in the YAML configuration.
-  - `Default Value` (if no other value is set).
-  
-  *Default values:*
-    - `decimal` = 0 for percentage (%)
-    - `decimal` = 2 for other unit (°C, kWh...)
+  Defines which elements should be hidden in the card.  
+  The array can contain any of the following values:
+  - icon → Hides the entity's icon.
+  - name → Hides the entity's name.
+  - secondary_info → Hides secondary information related to the entity.
+  - progress_bar → Hides the progress bar display.
 
-  *Example:*  
-    - `1` for displaying 50.6%.
-    - `0` for displaying 51%
-    -  `1` for displaying 20.7°C
-
-> [!IMPORTANT]
-> Before version 1.0.20, the default values were different (2 for percentages
-> and 0 for other units). When updating, you will need to adjust the parameter
-> according to your needs.
-
-- **`navigate_to`** [string] *(optional)*:  
-  Specifies a URL to navigate to when the card is clicked.
-  If defined, clicking the card will redirect to the specified location.
-  This parameter takes precedence over show_more_info if both are defined.
-
-  *Default values:*
-    - `null` (no navigation).
-
-  *Example:*
-    - `/lovelace/dashboard` to navigate to another Home Assistant dashboard ("dashboard").
-    - `/lovelace/5` to navigate to another Home Assistant dashboard (5).
-    - `https://example.com` to open an external link.
-
-- **`show_more_info`** [boolean] *(optional)*:  
-  Determines whether clicking on the card will open the entity's "more info" dialog in Home Assistant.  
-  Defaults to true. If set to false, clickingthe card will not trigger any "more info" action.
-  
-  *Default:*
-    - `true`
-  
-  *Example:*
-    - `true` to enable "more info" on click.
-    - `false` to disable the "more info" dialog.
-  
 ### YAML
 Here’s our example of how to use the Custom Bar Card with custom styles:
 
