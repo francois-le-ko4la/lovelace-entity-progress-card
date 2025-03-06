@@ -1768,7 +1768,7 @@ class PercentHelper {
     }
 
     get formattedValue() {
-        let value = null;
+        let value = this.actual;
 
         if (this.hasTimerOrFlexTimerUnit) { // timer with unit
             return this._getTiming();
@@ -1776,9 +1776,8 @@ class PercentHelper {
             value = this.actual / 1000;
         } else if (this._unit.value === CARD.config.unit.default) {
             value = this.percent;
-        } else {
-            value = this.actual;
-        } 
+        }
+         
         return value.toFixed(this._decimal.value);
     }
 
@@ -1836,9 +1835,9 @@ class PercentHelper {
         return [h, m, s].map(unit => String(unit).padStart(2, "0")).join(":");
     }
     toString() {
-        return  this.hasTimerOrFlexTimerUnit ?
-            `${this.formattedValue}`
-            :`${this.formattedValue}${this._unit.toString()}`;
+        return this.isValid 
+        ? `${this.formattedValue}${this.hasTimerOrFlexTimerUnit ? '' : this._unit.toString()}` 
+        : null;
     }
 
 }
