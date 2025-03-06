@@ -363,6 +363,11 @@ You can customize the card using the following parameters:
     - `horizontal`
   
   *Examples:*
+  ```yaml
+  type: custom:entity-progress-card
+  ...
+  layout: vertical
+  ```
     - `horizontal`: Displays the elements horizontally, with a row layout (by default, the text and progress bar will be displayed side by side).  
     - `vertical`: Displays the elements vertically, with a column layout (by default, the text and progress bar will be stacked one below the other).
 
@@ -464,6 +469,15 @@ custom_theme:
   
   Used only for entities of type timer. 
   If set to true, the timer functions as a countdown (in seconds or percentage).
+  *Example:*
+  ```yaml
+  type: custom:entity-progress-card
+  entity: timer.testtimer
+  icon: mdi:washing-machine
+  unit: flextimer
+  name: Remaining Time reverse
+  reverse: true
+  ```
 
 - **`bar_orientation`** [string {`rtl`}] *(optional)*:  
   [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#)  
@@ -495,6 +509,8 @@ custom_theme:
 
   *Example:*  
   ```yaml
+  type: custom:entity-progress-card
+  ...
   hide:
   - icon
   - name
