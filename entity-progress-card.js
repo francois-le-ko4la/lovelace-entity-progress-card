@@ -1610,7 +1610,7 @@ class UnitHelper {
     }
 
     get value() {
-        return this._value;
+        return this._isDisabled ? '' : this._value;
     }
 
     set isDisabled(disabled) {
