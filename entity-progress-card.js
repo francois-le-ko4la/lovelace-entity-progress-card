@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.0.49
+ * @version 1.0.50
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.0.49';
+const VERSION = '1.0.50';
 const CARD = {
     meta: {
         typeName: 'entity-progress-card',
@@ -1768,14 +1768,17 @@ class PercentHelper {
     }
 
     get formattedValue() {
-        let value = this._percent;
+        let value = null;
 
-        if (this.hasTimerOrFlexTimerUnit) {
+        if (this.hasTimerOrFlexTimerUnit) { // timer with unit
             return this._getTiming();
-        }
-        if (this._unit.value !== CARD.config.unit.default) {
-            value = this._isTimer ? this.actual / 1000 : this.actual;
-        }
+        } else if (this._isTimer) { // timer without specific unit
+            value = this.actual / 1000;
+        } else if (this._unit.value === CARD.config.unit.default) {
+            value = this.percent;
+        } else {
+            value = this.actual;
+        } 
         return value.toFixed(this._decimal.value);
     }
 
