@@ -66,7 +66,10 @@ You can customize the card using the following parameters:
   The Home Assistant entity to display.
   
   *Example:*
-    - `sensor.hp_envy_6400_series_tri_color_cartridge`
+  ```yaml
+  type: custom:entity-progress-card
+  entity: sensor.hp_envy_6400_series_tri_color_cartridge
+  ``` 
   
 > [!NOTE]
 > Supported entities are not hardcoded, ensuring flexibility.
@@ -79,7 +82,11 @@ You can customize the card using the following parameters:
   The Home Assistant entity's attribute to display.
   
   *Example:*
-    - `brightness`
+  ```yaml
+  type: custom:entity-progress-card
+  entity: light.led0
+  attribute: brightness
+  ``` 
  
   *Supported entities:*
   
@@ -102,7 +109,11 @@ You can customize the card using the following parameters:
     - `<entity_name>`
       
   *Example:*
-    - `"RGB Color"`
+  ```yaml
+  type: custom:entity-progress-card
+  ...
+  name: ABC
+  ``` 
 
 - **`unit`** [string] *(optional)*:  
   Allows representing standard unit.  
@@ -113,6 +124,11 @@ You can customize the card using the following parameters:
     - `%`
       
   *Example:*
+  ```yaml
+  type: custom:entity-progress-card
+  ...
+  unit: ABC
+  ``` 
     - `°C` for temperature.
     - `kWh` for energy consumption.
     - `s` for timer
@@ -131,6 +147,11 @@ You can customize the card using the following parameters:
     - `decimal` = 2 for other unit (°C, kWh...)
 
   *Example:*  
+ ```yaml
+  type: custom:entity-progress-card
+  ...
+  decimal: 1
+  ```  
     - `1` for displaying 50.6%.
     - `0` for displaying 51%
     - `1` for displaying 20.7°C
@@ -149,6 +170,11 @@ You can customize the card using the following parameters:
     - `0`
 
   *Example:*
+ ```yaml
+  type: custom:entity-progress-card
+  ...
+  min_value: 10
+  ```
     Suppose you are measuring the weight of a connected litter box, where:
     - `min_value` = 6 (the minimum weight representing an empty box, i.e., 0%).
     - `max_value` = 11 (the maximum weight representing a full box, i.e., 100%).
@@ -163,6 +189,11 @@ You can customize the card using the following parameters:
     - `100%`
 
   *Example:*
+  ```yaml
+  type: custom:entity-progress-card
+  ...
+  max_value: 255
+  ```
     - LQI @ 150 (entity) with max_value @ 255 (static value -> max_value = 255)
     - A (entity_a) with max_value (entity_b)
 
@@ -175,6 +206,12 @@ You can customize the card using the following parameters:
     - `null` (no navigation).
 
   *Example:*
+  ```yaml
+  type: custom:entity-progress-card
+  ...
+  navigate_to: /lovelace/0
+  ```
+
     - `/lovelace/dashboard` to navigate to another Home Assistant dashboard ("dashboard").
     - `/lovelace/5` to navigate to another Home Assistant dashboard (5).
     - `https://example.com` to open an external link.
@@ -187,6 +224,11 @@ You can customize the card using the following parameters:
     - `true`
   
   *Example:*
+  ```yaml
+  type: custom:entity-progress-card
+  ...
+  show_more_info: true
+  ```
     - `true` to enable "more info" on click.
     - `false` to disable the "more info" dialog.
 
@@ -194,9 +236,11 @@ You can customize the card using the following parameters:
   Allows customization of the progress bar's appearance using a predefined theme.
   This theme dynamically adjusts the `icon`, `color` and `bar-color` parameters based on the battery level, eliminating the need for manual adjustments or complex Jinja2 templates.  
   *Example:*
-    - `battery`
-    - `light`
-
+  ```yaml
+  type: custom:entity-progress-card
+  ...
+  theme: light
+  ```
 - **`bar_size`** [string {`small`|`medium`|`large`}] *(optional)*:  
   Customizes the appearance of the progress bar by selecting a predefined size.
   Choose from small, medium, or large to adjust the visual scale of the bar.
@@ -205,7 +249,11 @@ You can customize the card using the following parameters:
     - `small`
 
   *Example:*
-    - `medium`
+  ```yaml
+  type: custom:entity-progress-card
+  ...
+  bar_size: medium
+  ```
 
 - **`bar_color`** [string] *(optional)*:  
   The color of the progress bar. Accepts color names, RGB values, or HEX codes.
@@ -214,11 +262,20 @@ You can customize the card using the following parameters:
     - `var(--state-icon-color)`
 
   *Examples:* `"blue"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`
-
+  ```yaml
+  type: custom:entity-progress-card
+  ...
+  bar_color: rgb(110, 65, 171)
+  ```
 - **`icon`** [string] *(optional)*:  
   The icon associated with the entity. Supports Material Design Icons (MDI).
   
   *Examples:* `mdi:lightbulb`, `mdi:thermometer`
+  ```yaml
+  type: custom:entity-progress-card
+  ...
+  icon: mdi:grain
+  ```
 
   *Default by device type:*  
     | Device Type                         | Icon (MDI)              |
@@ -293,6 +350,11 @@ You can customize the card using the following parameters:
     - `var(--state-icon-color)`
 
   *Examples:* `"green"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`
+  ```yaml
+  type: custom:entity-progress-card
+  ...
+  color: rgb(110, 65, 171)
+  ```
 
 - **`layout`** [string {`horizontal`| `vertical`}] *(optional)*:  
   Determines the layout of the elements inside the card. You can choose between different layouts based on your visual preferences.
@@ -430,6 +492,26 @@ custom_theme:
   - name → Hides the entity's name.
   - secondary_info → Hides secondary information related to the entity.
   - progress_bar → Hides the progress bar display.
+
+  *Example:*  
+  ```yaml
+  hide:
+  - icon
+  - name
+  - secondary_info
+  ```
+
+- **`disable_unit`** [boolean] *(optional)*:  
+  [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#)  
+  
+  Disables the display of the unit when set to `true`. If not defined or set to `false`, the unit will be shown.
+
+  *Example:*  
+  ```yaml
+  type: custom:entity-progress-card
+  ...
+  disable_unit: true
+  ```
 
 ### YAML
 Here’s our example of how to use the Custom Bar Card with custom styles:

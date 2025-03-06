@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.0.48
+ * @version 1.0.49
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.0.48';
+const VERSION = '1.0.49';
 const CARD = {
     meta: {
         typeName: 'entity-progress-card',
@@ -1599,28 +1599,34 @@ class UnitHelper {
      */
     constructor(value = '') {
         this._value = value;
+        this._isDisabled = false;
     }
 
     /******************************************************************************************
      * Getter/Setter
      */
     set value(newValue) {
-        if (typeof newValue === 'string') {
-            this._value = newValue;
-        } else {
-            this._value = String(newValue);
-        }
+        this._value = newValue ?? CARD.config.unit.default;
     }
 
     get value() {
         return this._value;
     }
 
+    set isDisabled(disabled) {
+        this._isDisabled = disabled === true;
+    }
+    get isDisabled() {
+        return this._isDisabled;
+    }
     get isTimerUnit() {
         return this._value.trim().toLowerCase() === CARD.config.unit.timer;
     }
     get isFlexTimerUnit() {
         return this._value.trim().toLowerCase() === CARD.config.unit.flexTimer;
+    }
+    toString() {
+        return this._isDisabled ? '' : this._value;
     }
 }
 
@@ -1719,15 +1725,16 @@ class PercentHelper {
     }
 
     set unit(newUnit) {
-        if (!newUnit) {
-            newUnit = CARD.config.unit.default;
-        }
         this._unit.value = newUnit;
+    }
+
+    set hasDisabledUnit(disabled) {
+        this._unit.isDisabled = disabled;
     }
 
     set decimal(newDecimal) {
         if (newDecimal === undefined || newDecimal === null) {
-            if (this._unit.value === CARD.config.unit.default || this.hasTimerOrFlexTimerUnit) {
+            if (!this._unit.isDisabled && (this._unit.value === CARD.config.unit.default || this.hasTimerOrFlexTimerUnit)) {
                 newDecimal = CARD.config.decimal.percentage;
             } else {
                 newDecimal = CARD.config.decimal.other;
@@ -1758,12 +1765,6 @@ class PercentHelper {
     }
     get hasTimerOrFlexTimerUnit() {
         return this.hasTimerUnit || this.hasFlexTimerUnit;
-    }
-
-    get label() {
-        return  this.hasTimerOrFlexTimerUnit ?
-            `${this.formattedValue}`
-            :`${this.formattedValue}${this._unit.value}`;
     }
 
     get formattedValue() {
@@ -1831,6 +1832,12 @@ class PercentHelper {
         }    
         return [h, m, s].map(unit => String(unit).padStart(2, "0")).join(":");
     }
+    toString() {
+        return  this.hasTimerOrFlexTimerUnit ?
+            `${this.formattedValue}`
+            :`${this.formattedValue}${this._unit.toString()}`;
+    }
+
 }
 
 /**
@@ -2660,7 +2667,7 @@ class CardView {
 
     get description() {
         if (this.isAvailable) {
-            return this._percentHelper.label;
+            return this._percentHelper.toString();
         }
         if (this.isUnknown) {
             return MSG.entityUnknown[this.currentLanguage];
@@ -2751,6 +2758,7 @@ class CardView {
         this._layout = config.layout;
         this._bar_size = config.bar_size;
         this._percentHelper.unit = config.unit;
+        this._percentHelper.hasDisabledUnit = config.disable_unit;
         this._show_more_info = config.show_more_info;
         this._bar_orientation = config.bar_orientation;
         this._navigate_to = config.navigate_to;
