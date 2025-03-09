@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.0.51
+ * @version 1.0.52
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.0.51';
+const VERSION = '1.0.52';
 const CARD = {
     meta: {
         typeName: 'entity-progress-card',
@@ -182,6 +182,7 @@ const CARD = {
             clickable: 'clickable',
             hiddenComponent: {
                 "icon": { "label": "icon", "class": "hide_icon" },
+                "shape": { "label": "shape", "class": "hide_shape" },
                 "name": { "label": "name", "class": "hide_name" },
                 "secondary_info": { "label": "secondary_info", "class": "hide_secondary_info" },
                 "progress_bar": { "label": "progress_bar", "class": "hide_progress_bar" }
@@ -1487,6 +1488,7 @@ const CARD_CSS = `
 
     .${CARD.style.dynamic.hiddenComponent.icon.class} .${CARD.htmlStructure.sections.left.class},
     .${CARD.style.dynamic.hiddenComponent.name.class} .${CARD.htmlStructure.elements.name.class},
+    .${CARD.style.dynamic.hiddenComponent.shape.class} .${CARD.htmlStructure.elements.shape.class},
     .${CARD.style.dynamic.hiddenComponent.progress_bar.class} .${CARD.htmlStructure.elements.progressBar.container.class},
     .${CARD.style.dynamic.hiddenComponent.secondary_info.class} .${CARD.htmlStructure.elements.percentage.class} {
         display: none;
@@ -2090,6 +2092,13 @@ class HassProvider {
     get language() {
         return this._hass.language;
     }
+
+    get hasNewShapeStrategy() {
+        if (!this._hass || !this._hass.config || !this._hass.config.version) return false;
+        const [year, month] = this._hass.config.version.split(".").map(Number);
+        return year > 2025 || (year === 2025 && month >= 3);
+    }
+      
 }
 
 /**
@@ -2737,6 +2746,9 @@ class CardView {
     get isClickable() {
         return this.show_more_info || this.navigate_to;
     }
+    get hasVisibleShape() {
+        return this._hassProvider.hasNewShapeStrategy ? this.isClickable : true;
+    }
     get hasHiddenIcon() {
         return this._isComponentConfiguredAsHidden(CARD.style.dynamic.hiddenComponent.icon.label);
     }
@@ -3037,6 +3049,7 @@ class EntityProgressCard extends HTMLElement {
     _updateDynamicElements() {
         this._manageErrorMessage();
         this._showBadge();
+        this._manageShape();
         this._updateCSS();
 
         this._updateElement(CARD.htmlStructure.elements.icon.class, (el) => {
@@ -3056,6 +3069,10 @@ class EntityProgressCard extends HTMLElement {
                 el.textContent = this._cardView.description;
             }
         });
+    }
+
+    _manageShape() {
+        this._elements[CARD.htmlStructure.card.element].classList.toggle(CARD.style.dynamic.hiddenComponent.shape.class, !this._cardView.hasVisibleShape);
     }
 
     /**
