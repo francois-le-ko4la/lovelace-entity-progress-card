@@ -44,7 +44,7 @@ const CARD = {
         entity: {
             state: { unavailable: 'unavailable', unknown: 'unknown', notFound: 'notFound', idle: 'idle', active: 'active', paused: 'paused' },
             type: { timer: 'timer', light: 'light', cover: 'cover', fan: 'fan', climate: 'climate', counter: 'counter' },
-            class: { shutter: 'shutter' },
+            class: { shutter: 'shutter', battery:'battery' },
         },
         msFactor: 1000,
         shadowMode: 'open',
@@ -92,10 +92,17 @@ const CARD = {
             coverActive: 'var(--state-cover-active-color)',
             lightActive:'#FF890E',
             fanActive: 'var(--state-fan-active-color)',
-            climateDry: 'var(--state-climate-dry-color)',
-            climateCool: 'var(--state-climate-cool-color)',
-            climateHeat: 'var(--state-climate-heat-color)',
-            climateFanOnly: 'var(--state-climate-fan_only-color)',
+            battery: {
+                low: 'var(--state-sensor-battery-low-color)',
+                medium: 'var(--state-sensor-battery-medium-color)',
+                high: 'var(--state-sensor-battery-high-color)'
+            },
+            climate: {
+                dry: 'var(--state-climate-dry-color)',
+                cool: 'var(--state-climate-cool-color)',
+                heat: 'var(--state-climate-heat-color)',
+                fanOnly: 'var(--state-climate-fan_only-color)',
+                },
             inactive: 'var(--state-inactive-color)'
         },
         icon: {
@@ -2355,12 +2362,22 @@ class EntityHelper {
     _getClimateColor() {
         const climateColorMap = {
             heat_cool: CARD.style.color.active,
-            dry: CARD.style.color.climateDry,
-            cool: CARD.style.color.climateCool,
-            heat: CARD.style.color.climateHeat,
-            fan_only: CARD.style.color.climateFanOnly,
+            dry: CARD.style.color.climate.dry,
+            cool: CARD.style.color.climate.cool,
+            heat: CARD.style.color.climate.heat,
+            fan_only: CARD.style.color.climate.fanOnly,
         };
         return climateColorMap[this._state] || CARD.style.color.inactive;
+    }
+
+    _getBatteryColor() {
+        if (this._value <= 30) {
+            return CARD.style.color.battery.low;
+        }
+        if (this._value <= 70) {
+            return CARD.style.color.battery.medium;
+        }
+        return CARD.style.color.battery.high;
     }
 
     get defaultColor() {
@@ -2369,10 +2386,11 @@ class EntityHelper {
             [CARD.config.entity.type.cover]: this.value > 0 ? CARD.style.color.coverActive : CARD.style.color.inactive,
             [CARD.config.entity.type.light]: this.value > 0 ? CARD.style.color.lightActive : CARD.style.color.inactive,
             [CARD.config.entity.type.fan]: this.value > 0 ? CARD.style.color.fanActive : CARD.style.color.inactive,
-            [CARD.config.entity.type.climate]: this._getClimateColor()
+            [CARD.config.entity.type.climate]: this._getClimateColor(),
+            [CARD.config.entity.class.battery]: this._getBatteryColor(),
         };
     
-        return typeColorMap[this._type] ?? null;
+        return typeColorMap[this._type] ?? typeColorMap[this._getDeviceClass()] ?? null;
     }
 }
 
