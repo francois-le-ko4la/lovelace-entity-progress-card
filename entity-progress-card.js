@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.1.0';
+const VERSION = '1.1.1';
 const CARD = {
     meta: {
         typeName: 'entity-progress-card',
@@ -2548,17 +2548,17 @@ class ConfigHelper {
     }
 
     get decimal() {
-        if (!this._config.decimal) {
+        if (this._config.decimal === undefined) {
             if (this.unit === CARD.config.unit.default) {
                 return CARD.config.decimal.percentage;
             } else {
                 return CARD.config.decimal.other;
             }
         }
-        if (!Number.isInteger(this._config.decimal) || this._config.decimal < 0) {
-            return null;
+        if (Number.isInteger(this._config.decimal) && this._config.decimal >= 0) {
+            return this._config.decimal;
         }
-        return this._config.decimal;
+        return null;
     }
 
     get isValid() {
@@ -3903,7 +3903,7 @@ class EntityProgressCardEditor extends HTMLElement {
      */
     _createField({ name, label, type, required, isInGroup, description, width }) {
         let inputElement;
-        let value = this.config[name] || '';
+        let value = this.config[name] ?? '';
 
         switch (type) {
             case CARD.editor.fields.entity.type:
