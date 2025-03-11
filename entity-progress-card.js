@@ -2624,7 +2624,7 @@ class ConfigHelper {
     get cardTapAction() {
         let value = null;
 
-        if (!this._config.navigate_to && !this._config.show_more_info) {
+        if (this._config.navigate_to === undefined && this._config.show_more_info === undefined) {
             value = CARD.interactions.action.tap.default;
         } else if (this._config.navigate_to) {
             value = CARD.interactions.action.tap.navigate_to;
@@ -2867,7 +2867,7 @@ class CardView {
         return Math.min(CARD.config.refresh.max, Math.max(CARD.config.refresh.min, this._currentValue.value.duration / CARD.config.refresh.ratio));
     }
     get show_more_info() {
-        return this._configHelper.show_more_info || this._configHelper.cardTapAction !== CARD.interactions.action.tap.default;
+        return this._configHelper.show_more_info || this._configHelper.cardTapAction === CARD.interactions.action.tap.default;
     }
     get navigate_to() {
         return this._configHelper.navigate_to;
@@ -3763,11 +3763,11 @@ class EntityProgressCardEditor extends HTMLElement {
     _getTapActionValue() {
         let value = null;
 
-        if (!this.config.navigate_to && !this.config.show_more_info) {
+        if (this.config.navigate_to === undefined && this.config.show_more_info === undefined) {
             value = CARD.interactions.action.tap.default;
         } else if (this.config.navigate_to) {
             value = CARD.interactions.action.tap.navigate_to;
-        } else if (this.config.show_more_info === true || this.config.show_more_info === undefined) {
+        } else if (this.config.show_more_info === true) {
             value = CARD.interactions.action.tap.more_info;
         } else if (this.config.show_more_info === false) {
             value = CARD.interactions.action.tap.no_action;
