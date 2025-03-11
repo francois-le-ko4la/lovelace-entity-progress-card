@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.0.52
+ * @version 1.1.0
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.0.52';
+const VERSION = '1.1.0';
 const CARD = {
     meta: {
         typeName: 'entity-progress-card',
@@ -43,7 +43,7 @@ const CARD = {
         },
         entity: {
             state: { unavailable: 'unavailable', unknown: 'unknown', notFound: 'notFound', idle: 'idle', active: 'active', paused: 'paused' },
-            type: { timer: 'timer', light: 'light' },
+            type: { timer: 'timer', light: 'light', cover: 'cover', fan: 'fan', climate: 'climate', counter: 'counter' },
             class: { shutter: 'shutter' },
         },
         msFactor: 1000,
@@ -83,7 +83,21 @@ const CARD = {
     },
     style: {
         element: 'style',
-        color: { default: 'var(--state-icon-color)', disabled: 'var(--dark-grey-color)', unavailable: 'var(--state-unavailable-color)', notFound: 'var(--state-inactive-color)' },
+        color: {
+            default: 'var(--state-icon-color)',
+            disabled: 'var(--dark-grey-color)',
+            unavailable: 'var(--state-unavailable-color)',
+            notFound: 'var(--state-inactive-color)',
+            active: 'var(--state-active-color)',
+            coverActive: 'var(--state-cover-active-color)',
+            lightActive:'#FF890E',
+            fanActive: 'var(--state-fan-active-color)',
+            climateDry: 'var(--state-climate-dry-color)',
+            climateCool: 'var(--state-climate-cool-color)',
+            climateHeat: 'var(--state-climate-heat-color)',
+            climateFanOnly: 'var(--state-climate-fan_only-color)',
+            inactive: 'var(--state-inactive-color)'
+        },
         icon: {
             default: { icon: 'mdi:alert', },
             alert: { icon: 'mdi:alert-circle-outline', color: '#0080ff', attribute: 'icon' },
@@ -98,21 +112,21 @@ const CARD = {
 
             },
             byDeviceType: {
-                timer: "mdi:timer-outline",
-                light: "mdi:lightbulb",
-                switch: "mdi:toggle-switch",
-                sensor: "mdi:eye",
                 binary_sensor: "mdi:circle-outline",
-                cover: "mdi:garage",
                 climate: "mdi:thermostat",
+                counter: "mdi:counter",
+                cover: "mdi:garage",
                 fan: "mdi:fan",
-                media_player: "mdi:speaker",
-                lock: "mdi:lock",
-                person: "mdi:account",
-                scene: "mdi:palette",
                 input_boolean: "mdi:toggle-switch",
                 input_number: "mdi:numeric",
                 input_select: "mdi:form-dropdown",
+                media_player: "mdi:speaker",
+                light: "mdi:lightbulb",
+                lock: "mdi:lock",
+                person: "mdi:account",
+                sensor: "mdi:eye",
+                scene: "mdi:palette",
+                switch: "mdi:toggle-switch",
                 timer: "mdi:timer-outline",
                 weather: "mdi:weather-cloudy",
                 sun: "mdi:white-balance-sunny"
@@ -124,6 +138,7 @@ const CARD = {
                 connectivity: "mdi:wifi",
                 current: "mdi:current-ac",
                 door: "mdi:door-open",
+                duration: "mdi:timer-outline",
                 energy: "mdi:flash",
                 gas: "mdi:fire",
                 heat: "mdi:fire",
@@ -135,6 +150,7 @@ const CARD = {
                 occupancy: "mdi:account",
                 opening: "mdi:window-open",
                 plug: "mdi:power-plug",
+                pm25: "mdi:molecule",
                 power: "mdi:flash",
                 power_factor: "mdi:flash",
                 pressure: "mdi:gauge",
@@ -214,6 +230,7 @@ const CARD = {
         },
         action: {
             tap: {
+                default: 'tap_default',
                 no_action: 'no_action',
                 navigate_to: 'navigate_to',
                 more_info: 'show_more_info'
@@ -1104,7 +1121,8 @@ const FIELD_OPTIONS = {
         { value: CARD.layout.orientations.vertical.label, label: { en: "Vertical", fr: "Vertical", es: "Vertical", it: "Verticale", de: "Vertikal", nl: "Verticaal", hr: "Vertikalno", pl: "Pionowy", mk: "Вертикално", pt: "Vertical", da: "Vertikal", nb: "Vertikal", sv: "Vertikal" }, icon: CARD.layout.orientations.vertical.mdi },
     ],
     tap_action: [
-        { value: CARD.interactions.action.tap.more_info, label: { en: "More info (default)", fr: "Plus d'infos (par défaut)", es: "Más información (predeterminado)", it: "Più informazioni (predefinito)", de: "Mehr Infos (Standard)", nl: "Meer info (standaard)", hr: "Više informacija (zadano)", pl: "Więcej informacji (domyślnie)", mk: "Повеќе информации (стандардно)", pt: "Mais informações (padrão)", da: "Mere info (standard)", nb: "Mer info (standard)", sv: "Mer info (standard)" } },
+        { value: CARD.interactions.action.tap.default, label: { en: "Default", fr: "Par défaut", es: "Predeterminado", it: "Predefinito", de: "Standard", nl: "Standaard", hr: "Zadano", pl: "Domyślnie", mk: "стандардно", pt: "Padrão", da: "Standard", nb: "Standard", sv: "Standard" } },
+        { value: CARD.interactions.action.tap.more_info, label: { en: "More info", fr: "Plus d'infos", es: "Más información", it: "Più informazioni", de: "Mehr Infos", nl: "Meer info", hr: "Više informacija", pl: "Więcej informacji", mk: "Повеќе информации", pt: "Mais informações", da: "Mere info", nb: "Mer info", sv: "Mer info" } },
         { value: CARD.interactions.action.tap.navigate_to, label: { en: "Navigate to...", fr: "Naviguer vers...", es: "Navegar a...", it: "Naviga a...", de: "Zu navigieren...", nl: "Navigeer naar...", hr: "Navigiraj na...", pl: "Nawiguj do...", mk: "Навигирај до...", pt: "Navegar para...", da: "Naviger til...", nb: "Naviger til...", sv: "Navigera till..." } },
         { value: CARD.interactions.action.tap.no_action, label: { en: "No action", fr: "Aucune action", es: "Sin acción", it: "Nessuna azione", de: "Keine Aktion", nl: "Geen actie", hr: "Nema akcije", pl: "Brak akcji", mk: "Нема акција", pt: "Sem ação", da: "Ingen handling", nb: "Ingen handling", sv: "Ingen åtgärd" } }
     ]
@@ -1701,17 +1719,11 @@ class PercentHelper {
     }
 
     set min(newMin) {
-        if (!newMin) {
-            newMin = CARD.config.value.min;
-        }
-        this._min.value = newMin;
+        this._min.value = Number.isFinite(newMin) ? newMin : CARD.config.value.min;
     }
 
     set max(newMax) {
-        if (!newMax) {
-            newMax = CARD.config.value.max;
-        }
-        this._max.value = newMax;
+        this._max.value = Number.isFinite(newMax) ? newMax : CARD.config.value.min;
     }
 
     set current(newCurrent) {
@@ -1735,14 +1747,7 @@ class PercentHelper {
     }
 
     set decimal(newDecimal) {
-        if (newDecimal === undefined || newDecimal === null) {
-            if (!this._unit.isDisabled && (this._unit.value === CARD.config.unit.default || this.hasTimerOrFlexTimerUnit)) {
-                newDecimal = CARD.config.decimal.percentage;
-            } else {
-                newDecimal = CARD.config.decimal.other;
-            }
-        }
-        this._decimal.value = newDecimal;
+        this._decimal.value = Number.isFinite(newDecimal) ? newDecimal : CARD.config.decimal.percentage;
     }
 
     get isValid() {
@@ -2343,6 +2348,32 @@ class EntityHelper {
     get isTimer() {
         return this._type === CARD.config.entity.type.timer;
     }
+    get hasShapeByDefault() {
+        return this._type === CARD.config.entity.type.light || this._type === CARD.config.entity.type.fan;
+    }
+
+    _getClimateColor() {
+        const climateColorMap = {
+            heat_cool: CARD.style.color.active,
+            dry: CARD.style.color.climateDry,
+            cool: CARD.style.color.climateCool,
+            heat: CARD.style.color.climateHeat,
+            fan_only: CARD.style.color.climateFanOnly,
+        };
+        return climateColorMap[this._state] || CARD.style.color.inactive;
+    }
+
+    get defaultColor() {
+        const typeColorMap = {
+            [CARD.config.entity.type.timer]: this.value.state === CARD.config.entity.state.active ? CARD.style.color.active : CARD.style.color.inactive,
+            [CARD.config.entity.type.cover]: this.value > 0 ? CARD.style.color.coverActive : CARD.style.color.inactive,
+            [CARD.config.entity.type.light]: this.value > 0 ? CARD.style.color.lightActive : CARD.style.color.inactive,
+            [CARD.config.entity.type.fan]: this.value > 0 ? CARD.style.color.fanActive : CARD.style.color.inactive,
+            [CARD.config.entity.type.climate]: this._getClimateColor()
+        };
+    
+        return typeColorMap[this._type] ?? null;
+    }
 }
 
 /**
@@ -2426,6 +2457,12 @@ class EntityOrValue {
     get isTimer() {
         return this._activeHelper && this._isEntity ? this._activeHelper.isTimer : false;
     }
+    get hasShapeByDefault() {
+        return this._activeHelper && this._isEntity ? this._activeHelper.hasShapeByDefault : false;
+    }
+    get defaultColor() {
+        return this._activeHelper && this._isEntity ? this._activeHelper.defaultColor : false;
+    }
     refresh() {
         if (this._activeHelper && this._isEntity) {
             this._activeHelper.refresh();
@@ -2448,6 +2485,7 @@ class ConfigHelper {
          * @private
          */
         this._config = {};
+        this._bar = { size: null, color: null, orientation: null, changed: null };
         /**
          * @type {HassProvider}
          * @private
@@ -2473,10 +2511,6 @@ class ConfigHelper {
          * @private
          */
         this._decimal = null;
-        /**
-         * @type {number|null}
-         */
-        this.max_value = null;
     }
 
     /******************************************************************************************
@@ -2487,23 +2521,26 @@ class ConfigHelper {
     }
 
     set config(config) {
-        this._config = config;
         this._isChanged = true;
+        this._config = config;
+        this._bar.size = this._config.bar_size && CARD.style.bar.sizeOptions.hasOwnProperty(this._config.bar_size) ? this._config.bar_size : CARD.style.bar.sizeOptions.small.label;
+        this._bar.color = this._config.bar_color;
+        this._bar.orientation = CARD.style.dynamic.progressBar.orientation.hasOwnProperty(this._config.bar_orientation) ? CARD.style.dynamic.progressBar.orientation[this._config.bar_orientation] : null;
+        this._bar.changed = typeof this._config.bar_orientation === 'string' && Object.keys(CARD.style.dynamic.progressBar.orientation).includes(this._config.bar_orientation);
     }
 
     get decimal() {
-        return this._decimal;
-    }
-
-    set decimal(newDecimal) {
-        if (newDecimal === undefined || newDecimal === null) {
-            if (this._config.unit === CARD.config.unit.default) {
-                newDecimal = CARD.config.decimal.percentage;
+        if (!this._config.decimal) {
+            if (this.unit === CARD.config.unit.default) {
+                return CARD.config.decimal.percentage;
             } else {
-                newDecimal = CARD.config.decimal.other;
+                return CARD.config.decimal.other;
             }
         }
-        this._decimal = newDecimal;
+        if (!Number.isInteger(this._config.decimal) || this._config.decimal < 0) {
+            return null;
+        }
+        return this._config.decimal;
     }
 
     get isValid() {
@@ -2512,6 +2549,83 @@ class ConfigHelper {
 
     get msg() {
         return this._msg;
+    }
+
+    get color() {
+        return this._config.color;
+    }
+    get layout() {
+        return CARD.layout.orientations.hasOwnProperty(this._config.layout) ? CARD.layout.orientations[this._config.layout].label : CARD.layout.orientations.horizontal.label;
+    }
+    get bar() {
+        return this._bar;
+    }
+    get icon() {
+        return this._config.icon;
+    }
+    get entity() {
+        return this._config.entity;
+    }
+    get name() {
+        return this._config.name;
+    }
+    get min_value() {
+        return this._config.min_value ? this._config.min_value : CARD.config.value.min;
+    }
+    get max_value() {
+        if (!this._config.max_value) {
+            return CARD.config.value.max;
+        }
+        if (Number.isFinite(this._config.max_value))
+        {
+            return this._config.max_value;
+        }
+        if (typeof this._config.max_value === 'string') {
+            const state = this._hassProvider.hass.states[this._config.max_value]?.state;
+            const parsedState = parseFloat(state);
+    
+            if (!isNaN(parsedState)) {
+                return parsedState;
+            }
+        }
+        return null;
+    }
+    get unit() {
+        return this._config.unit ? this._config.unit : CARD.config.unit.default;
+    }
+    get hasDisabledUnit() {
+        return this._config.disable_unit;
+    }
+    get show_more_info() {
+        return typeof this._config.show_more_info === 'boolean'? this._config.show_more_info : CARD.config.showMoreInfo;
+    }
+    get navigate_to() {
+        return this._config.navigate_to !== undefined ? this._config.navigate_to : null;
+    }
+
+    get cardTapAction() {
+        let value = null;
+
+        if (!this._config.navigate_to && !this._config.show_more_info) {
+            value = CARD.interactions.action.tap.default;
+        } else if (this._config.navigate_to) {
+            value = CARD.interactions.action.tap.navigate_to;
+        } else if (this._config.show_more_info === true) {
+            value = CARD.interactions.action.tap.more_info;
+        } else if (this._config.show_more_info === false) {
+            value = CARD.interactions.action.tap.no_action;
+        }
+        return value;
+    }
+
+    get theme() {
+        return this._config.theme;
+    }
+    get custom_theme() {
+        return this._config.custom_theme;
+    }
+    get reverse() {
+        return this._config.reverse;
     }
 
     /**
@@ -2538,27 +2652,38 @@ class ConfigHelper {
             return;
         }
         this._isChanged = false;
-
-        const entityState = this._hassProvider.hass.states[this._config.entity];
-
         this._isValid = false;
-        if (!this._config.entity) {
-            this._msg = MSG.entityError;
-            return;
-        } else if (this._config.attribute && !entityState.attributes.hasOwnProperty(this._config.attribute)) {
-            this._msg = MSG.attributeNotFound;
-            return;
-        } else if (this._config.min_value && !Number.isFinite(this._config.min_value)) {
-            this._msg = MSG.minValueError;
-            return;
-        } else if (!Number.isFinite(this.max_value)) {
-            this._msg = MSG.maxValueError;
-            return;
-        } else if (this._decimal < 0) {
-            this._msg = MSG.decimalError;
-            return;
+        const entityState = this._hassProvider.hass.states[this._config.entity];
+        const validationRules = [
+            {
+                valid: !!this._config.entity,
+                msg: MSG.entityError
+            },
+            {
+                valid: !this._config.attribute || (entityState && entityState.attributes.hasOwnProperty(this._config.attribute)),
+                msg: MSG.attributeNotFound
+            },
+            {
+                valid: Number.isFinite(this.min_value),
+                msg: MSG.minValueError
+            },
+            {
+                valid: Number.isFinite(this.max_value),
+                msg: MSG.maxValueError
+            },
+            {
+                valid: Number.isFinite(this.decimal),
+                msg: MSG.decimalError
+            }
+        ];
+    
+        for (const rule of validationRules) {
+            if (!rule.valid) {
+                this._isValid = false;
+                this._msg = rule.msg;
+                return;
+            }
         }
-
         this._isValid = true;
         this._msg = null;
 
@@ -2578,11 +2703,6 @@ class CardView {
         this._percentHelper = new PercentHelper();
         this._theme = new ThemeManager();
         this._currentLanguage = CARD.config.language;
-        this._show_more_info = null;
-        this._navigate_to = null;
-        this._layout = null;
-        this._bar_size = null;
-        this._bar_orientation = null;
         this._currentValue = new EntityOrValue();
         this._max_value = new EntityOrValue();
         this._isReversed = false;
@@ -2616,7 +2736,7 @@ class CardView {
     }
 
     get isAvailable() {
-        return !(!this._currentValue.isAvailable || (!this._max_value.isAvailable && this._configHelper.config.max_value));
+        return !(!this._currentValue.isAvailable || (!this._max_value.isAvailable && this._configHelper.max_value));
     }
 
     set currentLanguage(newLanguage) {
@@ -2630,7 +2750,7 @@ class CardView {
     }
 
     get entity() {
-        return this._configHelper.config.entity;
+        return this._configHelper.entity;
     }
 
     get icon() {
@@ -2640,12 +2760,12 @@ class CardView {
         if (this._theme.theme === CARD.theme.battery.label && this._currentValue.icon && this._currentValue.icon.includes(CARD.theme.battery.icon)) {
             return this._currentValue.icon;
         }
-        return this._theme.icon || this._configHelper.config.icon || this._currentValue.icon || CARD.style.icon.default.icon;
+        return this._theme.icon || this._configHelper.icon || this._currentValue.icon || CARD.style.icon.default.icon;
     }
 
     get color() {
         if (this.isAvailable) {
-            return this._theme.color || this._configHelper.config.color || CARD.style.color.default;
+            return this._theme.color || this._configHelper.color || this._currentValue.defaultColor || CARD.style.color.default;
         }
         if (this.isUnknown) {
             return CARD.style.color.default;
@@ -2661,7 +2781,7 @@ class CardView {
 
     get bar_color() {
         if (this.isAvailable) {
-            return this._theme.color || this._configHelper.config.bar_color || CARD.style.color.default;
+            return this._theme.color || this._configHelper.bar.color || this._currentValue.defaultColor || CARD.style.color.default;
         }
         if (this.isUnknown) {
             return CARD.style.color.default;
@@ -2690,7 +2810,7 @@ class CardView {
     }
 
     get name() {
-        return this._configHelper.config.name || this._currentValue.name || this._configHelper.config.entity;
+        return this._configHelper.name || this._currentValue.name || this._configHelper.entity;
     }
 
     get isBadgeEnable() {
@@ -2720,13 +2840,7 @@ class CardView {
         return null;
     }
     get layout() {
-        return CARD.layout.orientations.hasOwnProperty(this._layout) ? CARD.layout.orientations[this._layout].label : CARD.layout.orientations.horizontal.label;
-    }
-    get hasBarOrientationChanged() {
-        return typeof this._bar_orientation === 'string' && Object.keys(CARD.style.dynamic.progressBar.orientation).includes(this._bar_orientation);
-    }
-    get barOrientation() {
-        return CARD.style.dynamic.progressBar.orientation.hasOwnProperty(this._bar_orientation) ? CARD.style.dynamic.progressBar.orientation[this._bar_orientation] : null;
+        return this._configHelper.layout;
     }
     get isActiveTimer() {
         return this._currentValue.isTimer && this._currentValue.state === CARD.config.entity.state.active;
@@ -2735,19 +2849,19 @@ class CardView {
         return Math.min(CARD.config.refresh.max, Math.max(CARD.config.refresh.min, this._currentValue.value.duration / CARD.config.refresh.ratio));
     }
     get show_more_info() {
-        return typeof this._show_more_info === 'boolean' ? this._show_more_info : CARD.config.showMoreInfo;
+        return this._configHelper.show_more_info || this._configHelper.cardTapAction !== CARD.interactions.action.tap.default;
     }
     get navigate_to() {
-        return this._navigate_to !== undefined ? this._navigate_to : null;;
+        return this._configHelper.navigate_to;
     }
-    get bar_size() {
-        return this._bar_size && CARD.style.bar.sizeOptions.hasOwnProperty(this._bar_size) ? this._bar_size : CARD.style.bar.sizeOptions.small.label;
+    get bar() {
+        return this._configHelper.bar;
     }
     get isClickable() {
-        return this.show_more_info || this.navigate_to;
+        return this._configHelper.cardTapAction !== CARD.interactions.action.tap.no_action;
     }
     get hasVisibleShape() {
-        return this._hassProvider.hasNewShapeStrategy ? this.isClickable : true;
+        return this._hassProvider.hasNewShapeStrategy ? (this._currentValue.hasShapeByDefault || this._configHelper.cardTapAction === CARD.interactions.action.tap.navigate_to || this._configHelper.cardTapAction === CARD.interactions.action.tap.more_info) : true;
     }
     get hasHiddenIcon() {
         return this._isComponentConfiguredAsHidden(CARD.style.dynamic.hiddenComponent.icon.label);
@@ -2769,23 +2883,18 @@ class CardView {
      */
     set config(config) {
         this._configHelper.config = config;
-        this._layout = config.layout;
-        this._bar_size = config.bar_size;
-        this._percentHelper.unit = config.unit;
-        this._percentHelper.hasDisabledUnit = config.disable_unit;
-        this._show_more_info = config.show_more_info;
-        this._bar_orientation = config.bar_orientation;
-        this._navigate_to = config.navigate_to;
-        this._theme.theme = config.theme;
-        this._theme.customTheme = config.custom_theme;
-        this._currentValue.value = config.entity;
+        this._percentHelper.unit = this._configHelper.unit;
+        this._percentHelper.hasDisabledUnit = this._configHelper.hasDisabledUnit;
+        this._theme.theme = this._configHelper.theme;
+        this._theme.customTheme = this._configHelper.custom_theme;
+        this._currentValue.value = this._configHelper.entity;
         this._percentHelper.isTimer = this._currentValue.isTimer;
         if (this._currentValue.isTimer) {
-            this._isReversed = config.reverse;
+            this._isReversed = this._configHelper.reverse;
             this._max_value.value = CARD.config.value.max;
         } else {
             this._currentValue.attribute = config.attribute || null;
-            this._max_value.value = config.max_value || CARD.config.value.max;
+            this._max_value.value = this._configHelper.max_value || CARD.config.value.max;
         }
     }
 
@@ -2799,15 +2908,13 @@ class CardView {
         this.currentLanguage = this._hassProvider.language;
         this._currentValue.refresh();
         this._max_value.refresh();
-        this._configHelper.max_value = this._max_value.value;
-        this._configHelper.decimal = this._configHelper.config.decimal ?? this._currentValue.precision;
         this._configHelper.checkConfig();
 
         if (!this.isAvailable) {
             return;
         }
         // update
-        this._percentHelper.decimal = this._configHelper.config.decimal ?? this._currentValue.precision;
+        this._percentHelper.decimal = !this._configHelper.config.decimal && this._currentValue.precision ? this._currentValue.precision : this._configHelper.decimal;
         if (this._currentValue.isTimer) {
             this._percentHelper.isReversed = typeof this._isReversed ==='boolean' && this._isReversed && this._currentValue.value.state !== CARD.config.entity.state.idle;
             this._percentHelper.current = this._currentValue.value.elapsed;
@@ -2815,7 +2922,7 @@ class CardView {
             this._percentHelper.max = this._currentValue.value.duration;
         } else {
             this._percentHelper.current = this._currentValue.value;
-            this._percentHelper.min = this._configHelper.config.min_value;
+            this._percentHelper.min = this._configHelper.min_value;
             this._percentHelper.max = this._max_value.value;
         }
         this._percentHelper.refresh();
@@ -2971,9 +3078,9 @@ class EntityProgressCard extends HTMLElement {
         const card = document.createElement(CARD.htmlStructure.card.element);
         card.classList.add(CARD.meta.typeName);
         card.classList.toggle(CARD.style.dynamic.clickable, this._cardView.isClickable);
-        card.classList.toggle(this._cardView.barOrientation, this._cardView.hasBarOrientationChanged);
+        card.classList.toggle(this._cardView.bar.orientation, this._cardView.bar.changed);
         card.classList.add(this._cardView.layout);
-        card.classList.add(this._cardView.bar_size);
+        card.classList.add(this._cardView.bar.size);
         card.classList.toggle(CARD.style.dynamic.hiddenComponent.icon.class, this._cardView.hasHiddenIcon);
         card.classList.toggle(CARD.style.dynamic.hiddenComponent.name.class, this._cardView.hasHiddenName);
         card.classList.toggle(CARD.style.dynamic.hiddenComponent.secondary_info.class, this._cardView.hasHiddenSecondaryInfo);
@@ -3600,9 +3707,16 @@ class EntityProgressCardEditor extends HTMLElement {
     _manageTapAction(value) {
         this.configManager._logDebug('_manageTapAction - Toggle value', value);
         switch (value) {
+            case CARD.interactions.action.tap.default:
+                this._updateConfigProperty(CARD.interactions.action.tap.more_info, '');
+                this._updateConfigProperty(CARD.interactions.action.tap.navigate_to, '');
+                break;
             case CARD.interactions.action.tap.navigate_to:
                 this._updateConfigProperty(CARD.interactions.action.tap.more_info, '');
                 // reenable with a value already set
+                if (!this._elements[EDITOR_INPUT_FIELDS.navigate_to.name].value) {
+                    this._elements[EDITOR_INPUT_FIELDS.navigate_to.name].value = "/path/to";
+                }
                 this._updateConfigProperty(
                     CARD.interactions.action.tap.navigate_to, this._elements[EDITOR_INPUT_FIELDS.navigate_to.name].value);
                 break;
@@ -3631,7 +3745,9 @@ class EntityProgressCardEditor extends HTMLElement {
     _getTapActionValue() {
         let value = null;
 
-        if (this.config.navigate_to) {
+        if (!this.config.navigate_to && !this.config.show_more_info) {
+            value = CARD.interactions.action.tap.default;
+        } else if (this.config.navigate_to) {
             value = CARD.interactions.action.tap.navigate_to;
         } else if (this.config.show_more_info === true || this.config.show_more_info === undefined) {
             value = CARD.interactions.action.tap.more_info;

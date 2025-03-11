@@ -280,21 +280,22 @@ You can customize the card using the following parameters:
   *Default by device type:*  
     | Device Type                         | Icon (MDI)              |
     |-------------------------------------|-------------------------|
-    | light                               | mdi:lightbulb           |
-    | timer                               | mdi:timer-outline       |
-    | switch	                            | mdi:toggle-switch       |
-    | sensor	                            | mdi:chart-line          |
     | binary_sensor                       | mdi:circle-outline      |
-    | cover	                              | mdi:garage              |
     | climate                             | mdi:thermostat          |
+    | counter                             | mdi:counter             |
+    | cover	                              | mdi:garage              |
     | fan                                 | mdi:fan                 |
-    | media_player                        | mdi:speaker             |
-    | lock                                | mdi:lock                |
-    | person                              | mdi:account             |
-    | scene                               | mdi:palette             |
     | input_boolean                       | mdi:toggle-switch       |
     | input_number                        | mdi:numeric             |
     | input_select                        | mdi:form-dropdown       |
+    | media_player                        | mdi:speaker             |
+    | light                               | mdi:lightbulb           |
+    | lock                                | mdi:lock                |
+    | person                              | mdi:account             |
+    | sensor	                            | mdi:eye                 |
+    | scene                               | mdi:palette             |
+    | timer                               | mdi:timer-outline       |
+    | switch	                            | mdi:toggle-switch       |
     | weather                             | mdi:weather-cloudy      |
     | sun                                 | mdi:white-balance-sunny |
 
@@ -307,6 +308,7 @@ You can customize the card using the following parameters:
     | connectivity                        | mdi:wifi               |
     | current                             | mdi:current-ac         |
     | door                                | mdi:door-open          |
+    | duration                            | mdi:timer-outline      |
     | energy                              | mdi:flash              |
     | gas                                 | mdi:fire               |
     | heat                                | mdi:fire               |
@@ -318,6 +320,7 @@ You can customize the card using the following parameters:
     | occupancy                           | mdi:account            |
     | opening                             | mdi:window-open        |
     | plug                                | mdi:power-plug         |
+    | pm25                                | mdi:molecule           |
     | power                               | mdi:flash              |
     | power_factor                        | mdi:flash              |
     | pressure                            | mdi:gauge              |
