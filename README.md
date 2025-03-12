@@ -872,6 +872,63 @@ cards:
 ```
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/stack.png" alt="Image title" width="500"/>
 
+## Advanced usage
+### Use case example
+
+We want to monitor a process and we have entities for:
+- start time: states.sensor.print_puppy_start_time (time)
+- finish time: states.sensor.print_puppy_end_time (time)
+- and remaining time: sensor.print_puppy_remaining_time (min)
+
+Our goal is to display the percentage of remaining time and show the remaining time in minutes. Unfortunately, the standard usage of this card cannot achieve what we need.
+We read the README it seems to be impossible but...
+
+### Mathematical Model
+
+Using a simple model, we can calculate the percentage of remaining time with:
+
+$$P_{\text{remain}} = \frac{t_{\text{remain}}}{\Delta T} \times 100$$  
+
+Where:  
+- $P_{\text{remain}}$: Percentage of remaining time (the expected result).
+- $t_{\text{remain}}$: Remaining time (in minutes).
+- $\Delta T$: Total duration of the task (in minutes).
+
+The good news is that we can use an entity to define the `max_value` and dynamically calculate the percentage. Therefore, we need to find a way to determine $\Delta T$.
+
+### Solution
+
+We'll use a Helper (Number) to handle this calculation. It’s simple to define and can be set up according to various needs.
+
+- Go to `settings` > `Devices and services` > `Helpers` > `Create Helper` > `Template` > `Template a number`
+- Define the template to do the delta automatically
+  - Choose a name and define your state template:
+    ```yaml
+    {% set start_time = states.sensor.print_puppy_start_time.state %}
+    {% set end_time = states.sensor.print_puppy_end_time.state %}
+    {% if start_time and end_time %}
+      {{ ((as_datetime(end_time) - as_datetime(start_time)).days * 1440) + ((as_datetime(end_time) - as_datetime(start_time)).seconds / 60) | int }}
+    {% else %}
+      unknown
+    {% endif %}
+    ```
+    > Check your syntax. Here, we are using entity values; therefore, we access the value through xxx.state. Sometimes, the value will be an attribute.
+  - Set the minimum, maximum, step value, and unit accordingly.
+  - Check the current value to ensure it’s working properly.
+- Define the card:
+  ```yaml
+  type: custom:entity-progress-card
+  entity: sensor.print_puppy_remaining_time
+  max_value: number.totaldurationofthetask
+  unit: min
+  decimal: 0
+  bar_color: var(--success-color)
+  icon: mdi:clock-end
+  ```
+
+### Conclusion
+By implementing this model through the helper, we can accurately calculate and display the percentage of remaining time for any task. This approach provides a dynamic and intuitive way to monitor progress, ensuring that the displayed percentage accurately reflects the time remaining regardless of the task’s total duration. This solution effectively extend our card usage vision, and enhances the user experience.
+
 ## ❓ Troubleshooting
 
 - Card not loading? Ensure the resource is correctly added to Lovelace.
