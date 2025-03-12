@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.1.1
+ * @version 1.1.2
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.1.1';
+const VERSION = '1.1.2';
 const CARD = {
     meta: {
         typeName: 'entity-progress-card',
@@ -2782,19 +2782,13 @@ class CardView {
     }
 
     get color() {
-        if (this.isAvailable) {
-            return this._theme.color || this._configHelper.color || this._currentValue.defaultColor || CARD.style.color.default;
-        }
-        if (this.isUnknown) {
-            return CARD.style.color.default;
-        }
         if (this.isUnavailable) {
             return CARD.style.color.unavailable;
         }
         if (this.isNotFound) {
             return CARD.style.color.notFound;
         }
-        return CARD.style.color.disabled;
+        return this._theme.color || this._configHelper.color || this._currentValue.defaultColor || CARD.style.color.default;
     }
 
     get bar_color() {
@@ -2815,8 +2809,8 @@ class CardView {
     }
 
     get description() {
-        if (this.isAvailable) {
-            return this._percentHelper.toString();
+        if (this.isNotFound) {
+            return MSG.entityNotFound[this.currentLanguage];
         }
         if (this.isUnknown) {
             return MSG.entityUnknown[this.currentLanguage];
@@ -2824,7 +2818,7 @@ class CardView {
         if (this.isUnavailable) {
             return MSG.entityUnavailable[this.currentLanguage];
         }
-        return MSG.entityNotFound[this.currentLanguage];
+        return this._percentHelper.toString();
     }
 
     get name() {
