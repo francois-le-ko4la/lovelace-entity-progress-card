@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.1.2
+ * @version 1.1.3
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.1.2';
+const VERSION = '1.1.3';
 const CARD = {
     meta: {
         typeName: 'entity-progress-card',
@@ -50,7 +50,7 @@ const CARD = {
         shadowMode: 'open',
         refresh: { ratio: 500, min:250, max: 1000 },
         debounce: 100,
-        debug: false,
+        debug: true,
     },
     htmlStructure: {
         card: { element: 'ha-card' },
@@ -187,6 +187,25 @@ const CARD = {
                 large: { label: 'large', mdi: 'mdi:size-l', size: '16px' },
             },
         },
+        dropdown: {
+            colorDot: {
+                display: "inline-block",
+                width: "16px",
+                height: "16px",
+                borderRadius: "50%",
+                marginRight: "8px"
+            }
+        },
+        accordion: {
+            icon: {
+                size: {
+                    width: '24',
+                    height: '24',
+                    viewBox: '0 0 24 24'
+                },
+                arrow: "M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"
+            }
+        },
         dynamic: {
             badge: {
                 color: { var: '--epb-badge-color', default: 'var(--orange-color)' },
@@ -234,6 +253,7 @@ const CARD = {
             other: ['value-changed', 'input'],
             closed: 'closed',
             click: 'click',
+            configChanged: "config-changed",
         },
         action: {
             tap: {
@@ -251,6 +271,7 @@ const CARD = {
             fieldDescription: { element: 'span', class: 'editor-field-description' },
             entity: { type: 'entity', element: 'ha-entity-picker' },
             attribute: { type: 'attribute', element: 'ha-select' },
+            max_value_attribute: { type: 'max_value_attribute', element: 'ha-select' },
             icon: { type: 'icon', element: 'ha-icon-picker' },
             layout: { type: 'layout', element: 'ha-select' },
             bar_size: { type: 'bar_size', element: 'ha-select' },
@@ -262,9 +283,18 @@ const CARD = {
             listItem: { type: 'list item', element: 'mwc-list-item' },
             iconItem: { element: 'ha-icon', attribute: 'icon', class: 'editor-icon-list' },
             select: { element: 'ha-select' },
+            colorDot: { element: 'span' },
+            colorText: { element: 'span' },
+            accordion: {
+                item: { element: 'div', class: 'accordion' },
+                title: { element: 'button', class: 'accordion-title' },
+                arrow: { element: 'div', class: 'accordion-arrow' },
+                content: { element: 'div', class: 'accordion-content' },
+            }
         },
         keyMappings: {
             attribute: 'attribute',
+            max_value_attribute: 'max_value_attribute',
             navigateTo: 'navigate_to',
             theme: 'theme',
             tapAction: 'tap_action',
@@ -518,561 +548,667 @@ const MSG = {
 };
 
 const EDITOR_INPUT_FIELDS = {
-    entity: {
-        name: 'entity',
-        label: {
-            en: "Entity",
-            fr: "Entité",
-            es: "Entidad",
-            it: "Entità",
-            de: "Entität",
-            nl: "Entiteit",
-            hr: "Entitet",
-            pl: "Encja",
-            mk: "Ентитет",
-            pt: "Entidade",
-            da: "Enhed",
-            nb: "Enhet",
-            sv: "Enhet"
+    basicConfiguration: {
+        entity: {
+            name: 'entity',
+            label: {
+                en: "Entity",
+                fr: "Entité",
+                es: "Entidad",
+                it: "Entità",
+                de: "Entität",
+                nl: "Entiteit",
+                hr: "Entitet",
+                pl: "Encja",
+                mk: "Ентитет",
+                pt: "Entidade",
+                da: "Enhed",
+                nb: "Enhet",
+                sv: "Enhet"
+            },
+            type: CARD.editor.fields.entity.type,
+            width: '100%',
+            required: true,
+            isInGroup: null,
+            description: {
+                en: "Select an entity from Home Assistant.",
+                fr: "Sélectionnez une entité de Home Assistant.",
+                es: "Seleccione una entidad de Home Assistant.",
+                it: "Seleziona un'entità da Home Assistant.",
+                de: "Wählen Sie eine Entität aus Home Assistant.",
+                nl: "Selecteer een entiteit uit Home Assistant.",
+                hr: "Odaberite entitet iz Home Assistanta.",
+                pl: "Wybierz encję z Home Assistant.",
+                mk: "Изберете ентитет од Home Assistant.",
+                pt: "Selecione uma entidade do Home Assistant.",
+                da: "Vælg en enhed fra Home Assistant.",
+                nb: "Velg en enhet fra Home Assistant.",
+                sv: "Välj en enhet från Home Assistant."
+            }
         },
-        type: CARD.editor.fields.entity.type,
-        width: '92%',
-        required: true,
-        isInGroup: null,
-        description: {
-            en: "Select an entity from Home Assistant.",
-            fr: "Sélectionnez une entité de Home Assistant.",
-            es: "Seleccione una entidad de Home Assistant.",
-            it: "Seleziona un'entità da Home Assistant.",
-            de: "Wählen Sie eine Entität aus Home Assistant.",
-            nl: "Selecteer een entiteit uit Home Assistant.",
-            hr: "Odaberite entitet iz Home Assistanta.",
-            pl: "Wybierz encję z Home Assistant.",
-            mk: "Изберете ентитет од Home Assistant.",
-            pt: "Selecione uma entidade do Home Assistant.",
-            da: "Vælg en enhed fra Home Assistant.",
-            nb: "Velg en enhet fra Home Assistant.",
-            sv: "Välj en enhet från Home Assistant."
-        }
+        attribute: {
+            name: 'attribute',
+            label: {
+                en: "Attribute",
+                fr: "Attribut",
+                es: "Atributo",
+                it: "Attributo",
+                de: "Attribut",
+                nl: "Attribuut",
+                hr: "Atribut",
+                pl: "Atrybut",
+                mk: "Атрибут",
+                pt: "Atributo",
+                da: "Attribut",
+                nb: "Attribut",
+                sv: "Attribut"
+            },
+            type: CARD.editor.fields.attribute.type,
+            width: '100%',
+            required: false,
+            isInGroup: CARD.editor.keyMappings.attribute,
+            description: {
+                en: "Select the attribute.",
+                fr: "Sélectionnez l'attribut.",
+                es: "Seleccione el atributo.",
+                it: "Seleziona l'attributo.",
+                de: "Wählen Sie das Attribut aus.",
+                nl: "Selecteer het attribuut.",
+                hr: "Odaberite atribut.",
+                pl: "Wybierz atrybut.",
+                mk: "Изберете го атрибутот.",
+                pt: "Selecione o atributo.",
+                da: "Vælg attributet.",
+                nb: "Velg attributtet.",
+                sv: "Välj attributet."
+            }
+        },
     },
-    attribute: {
-        name: 'attribute',
-        label: {
-            en: "Attribute",
-            fr: "Attribut",
-            es: "Atributo",
-            it: "Attributo",
-            de: "Attribut",
-            nl: "Attribuut",
-            hr: "Atribut",
-            pl: "Atrybut",
-            mk: "Атрибут",
-            pt: "Atributo",
-            da: "Attribut",
-            nb: "Attribut",
-            sv: "Attribut"
+    content: {
+        title: {
+            label: {
+                en: "Content",
+                fr: "Contenu",
+                es: "Contenido",
+                it: "Contenuto",
+                de: "Inhalt",
+                nl: "Inhoud",
+                hr: "Sadržaj",
+                pl: "Zawartość",
+                mk: "Cодржина",
+                pt: "Conteúdo",
+                da: "Indhold",
+                nb: "Innhold",
+                sv: "Innehåll"
+            },
+            svg: 'M4,9H20V11H4V9M4,13H14V15H4V13Z',
         },
-        type: CARD.editor.fields.attribute.type,
-        width: '92%',
-        required: false,
-        isInGroup: CARD.editor.keyMappings.attribute,
-        description: {
-            en: "Select the attribute.",
-            fr: "Sélectionnez l'attribut.",
-            es: "Seleccione el atributo.",
-            it: "Seleziona l'attributo.",
-            de: "Wählen Sie das Attribut aus.",
-            nl: "Selecteer het attribuut.",
-            hr: "Odaberite atribut.",
-            pl: "Wybierz atrybut.",
-            mk: "Изберете го атрибутот.",
-            pt: "Selecione o atributo.",
-            da: "Vælg attributet.",
-            nb: "Velg attributtet.",
-            sv: "Välj attributet."
-        }
+        field: {
+            name: {
+                name: 'name',
+                label: {
+                    en: "Name",
+                    fr: "Nom",
+                    es: "Nombre",
+                    it: "Nome",
+                    de: "Name",
+                    nl: "Naam",
+                    hr: "Ime",
+                    pl: "Nazwa",
+                    mk: "Име",
+                    pt: "Nome",
+                    da: "Navn",
+                    nb: "Navn",
+                    sv: "Namn"
+                },
+                type: CARD.editor.fields.default.type,
+                width: '100%',
+                required: false,
+                isInGroup: null,
+                description: {
+                    en: "Enter a name for the entity.",
+                    fr: "Saisissez un nom pour l'entité.",
+                    es: "Introduzca un nombre para la entidad.",
+                    it: "Inserisci un nome per l'entità.",
+                    de: "Geben Sie einen Namen für die Entität ein.",
+                    nl: "Voer een naam in voor de entiteit.",
+                    hr: "Unesite ime za entitet.",
+                    pl: "Wprowadź nazwę dla encji.",
+                    mk: "Внесете име за ентитетот.",
+                    pt: "Digite um nome para a entidade.",
+                    da: "Indtast et navn for enheden.",
+                    nb: "Skriv inn et navn for enheten.",
+                    sv: "Skriv ett namn för enheten."
+                }
+            },
+            unit: {
+                name: 'unit',
+                label: {
+                    en: "Unit",
+                    fr: "Unité",
+                    es: "Unidad",
+                    it: "Unità",
+                    de: "Einheit",
+                    nl: "Eenheid",
+                    hr: "Jedinica",
+                    pl: "Jednostka",
+                    mk: "Јединство",
+                    pt: "Unidade",
+                    da: "Enhed",
+                    nb: "Enhet",
+                    sv: "Enhet"
+                },
+                type: CARD.editor.fields.default.type,
+                width: 'calc((100% - 20px) * 0.2)',
+                required: false,
+                isInGroup: null,
+                description: {
+                    en: "m, kg...",
+                    fr: "m, kg...",
+                    es: "m, kg...",
+                    it: "m, kg...",
+                    de: "m, kg...",
+                    nl: "m, kg...",
+                    hr: "m, kg...",
+                    pl: "m, kg...",
+                    mk: "m, kg...",
+                    pt: "m, kg...",
+                    da: "m, kg...",
+                    nb: "m, kg...",
+                    sv: "m, kg...",
+                }
+            },
+            decimal: {
+                name: 'decimal',
+                label: {
+                    en: "decimal",
+                    fr: "décimal",
+                    es: "decimal",
+                    it: "Decimale",
+                    de: "dezimal",
+                    nl: "decimaal",
+                    hr: "decimalni",
+                    pl: "dziesiętny",
+                    mk: "децемален",
+                    pt: "decimal",
+                    da: "decimal",
+                    nb: "desimal",
+                    sv: "decimal"
+                },
+                type: CARD.editor.fields.number.type,
+                width: 'calc((100% - 20px) * 0.2)',
+                required: false,
+                isInGroup: null,
+                description: {
+                    en: "Precision.",
+                    fr: "Précision.",
+                    es: "Precisión.",
+                    it: "Precisione.",
+                    de: "Präzision.",
+                    nl: "Precisie.",
+                    hr: "Preciznost.",
+                    pl: "Precyzja.",
+                    mk: "Прецизност.",
+                    pt: "Precisão.",
+                    da: "Præcision.",
+                    nb: "Presisjon.",
+                    sv: "Precision."
+                }
+            },
+            min_value: {
+                name: 'min_value',
+                label: {
+                    en: "Minimum value",
+                    fr: "Valeur minimum",
+                    es: "Valor mínimo",
+                    it: "Valore minimo",
+                    de: "Mindestwert",
+                    nl: "Minimale waarde",
+                    hr: "Minimalna vrijednost",
+                    pl: "Wartość minimalna",
+                    mk: "Минимална вредност",
+                    pt: "Valor mínimo",
+                    da: "Minimum værdi",
+                    nb: "Minimum verdi",
+                    sv: "Minsta värde"
+                },
+                type: CARD.editor.fields.number.type,
+                width: 'calc((100% - 20px) * 0.6)',
+                required: false,
+                isInGroup: null,
+                description: {
+                    en: "Enter the minimum value.",
+                    fr: "Saisissez la valeur minimum.",
+                    es: "Introduzca el valor mínimo.",
+                    it: "Inserisci il valore minimo.",
+                    de: "Geben Sie den Mindestwert ein.",
+                    nl: "Voer de minimale waarde in.",
+                    hr: "Unesite minimalnu vrijednost.",
+                    pl: "Wprowadź wartość minimalną.",
+                    mk: "Внесете ја минималната вредност.",
+                    pt: "Digite o valor mínimo.",
+                    da: "Indtast minimumværdien.",
+                    nb: "Skriv inn minimumverdien.",
+                    sv: "Ange det minsta värdet."
+                }
+            },
+            max_value: {
+                name: 'max_value',
+                label: {
+                    en: "Maximum value",
+                    fr: "Valeur maximum",
+                    es: "Valor máximo",
+                    it: "Valore massimo",
+                    de: "Höchstwert",
+                    nl: "Maximale waarde",
+                    hr: "Maksimalna vrijednost",
+                    pl: "Wartość maksymalna",
+                    mk: "Максимална вредност",
+                    pt: "Valor máximo",
+                    da: "Maksimal værdi",
+                    nb: "Maksimal verdi",
+                    sv: "Högsta värde"
+                },
+                type: CARD.editor.fields.default.type,
+                width: '100%',
+                required: false,
+                isInGroup: null,
+                description: {
+                    en: "Enter the maximum value.",
+                    fr: "Saisissez la valeur maximum.",
+                    es: "Introduzca el valor máximo.",
+                    it: "Inserisci il valore massimo.",
+                    de: "Geben Sie den Höchstwert ein.",
+                    nl: "Voer de maximale waarde in.",
+                    hr: "Unesite maksimalnu vrijednost.",
+                    pl: "Wprowadź wartość maksymalną.",
+                    mk: "Внесете ја максималната вредност.",
+                    pt: "Digite o valor máximo.",
+                    da: "Indtast maksimumværdien.",
+                    nb: "Skriv inn maksimumverdien.",
+                    sv: "Ange det högsta värdet."
+                }
+            },
+            max_value_attribute: {
+                name: 'max_value_attribute',
+                label: {
+                    en: "Attribute (max_value)",
+                    fr: "Attribut (max_value)",
+                    es: "Atributo (max_value)",
+                    it: "Attributo (max_value)",
+                    de: "Attribut (max_value)",
+                    nl: "Attribuut (max_value)",
+                    hr: "Atribut (max_value)",
+                    pl: "Atrybut (max_value)",
+                    mk: "Атрибут (max_value)",
+                    pt: "Atributo (max_value)",
+                    da: "Attribut (max_value)",
+                    nb: "Attribut (max_value)",
+                    sv: "Attribut (max_value)"
+                },
+                type: CARD.editor.fields.max_value_attribute.type,
+                width: '100%',
+                required: false,
+                isInGroup: CARD.editor.keyMappings.max_value_attribute,
+                description: {
+                    en: "Select the attribute (max_value).",
+                    fr: "Sélectionnez l'attribut (max_value).",
+                    es: "Seleccione el atributo (max_value).",
+                    it: "Seleziona l'attributo (max_value).",
+                    de: "Wählen Sie das Attribut aus (max_value).",
+                    nl: "Selecteer het attribuut (max_value).",
+                    hr: "Odaberite atribut (max_value).",
+                    pl: "Wybierz atrybut (max_value).",
+                    mk: "Изберете го атрибутот (max_value).",
+                    pt: "Selecione o atributo (max_value).",
+                    da: "Vælg attributet (max_value).",
+                    nb: "Velg attributtet (max_value).",
+                    sv: "Välj attributet (max_value)."
+                },
+            },
+        },
     },
-    name: {
-        name: 'name',
-        label: {
-            en: "Name",
-            fr: "Nom",
-            es: "Nombre",
-            it: "Nome",
-            de: "Name",
-            nl: "Naam",
-            hr: "Ime",
-            pl: "Nazwa",
-            mk: "Име",
-            pt: "Nome",
-            da: "Navn",
-            nb: "Navn",
-            sv: "Namn"
+    interaction: {
+        title: {
+            label: {
+                en: "Interactions",
+                fr: "Interactions",
+                es: "Interacciones",
+                it: "Interazioni",
+                de: "Interaktionen",
+                nl: "Interactie",
+                hr: "Interakcije",
+                pl: "Interakcje",
+                mk: "Интеракции",
+                pt: "Interações",
+                da: "Interaktioner",
+                nb: "Interaksjoner",
+                sv: "Interaktioner"
+            },
+            svg: 'M10,9A1,1 0 0,1 11,8A1,1 0 0,1 12,9V13.47L13.21,13.6L18.15,15.79C18.68,16.03 19,16.56 19,17.14V21.5C18.97,22.32 18.32,22.97 17.5,23H11C10.62,23 10.26,22.85 10,22.57L5.1,18.37L5.84,17.6C6.03,17.39 6.3,17.28 6.58,17.28H6.8L10,19V9M11,5A4,4 0 0,1 15,9C15,10.5 14.2,11.77 13,12.46V11.24C13.61,10.69 14,9.89 14,9A3,3 0 0,0 11,6A3,3 0 0,0 8,9C8,9.89 8.39,10.69 9,11.24V12.46C7.8,11.77 7,10.5 7,9A4,4 0 0,1 11,5Z',
         },
-        type: CARD.editor.fields.default.type,
-        width: '48%',
-        required: false,
-        isInGroup: null,
-        description: {
-            en: "Enter a name for the entity.",
-            fr: "Saisissez un nom pour l'entité.",
-            es: "Introduzca un nombre para la entidad.",
-            it: "Inserisci un nome per l'entità.",
-            de: "Geben Sie einen Namen für die Entität ein.",
-            nl: "Voer een naam in voor de entiteit.",
-            hr: "Unesite ime za entitet.",
-            pl: "Wprowadź nazwę dla encji.",
-            mk: "Внесете име за ентитетот.",
-            pt: "Digite um nome para a entidade.",
-            da: "Indtast et navn for enheden.",
-            nb: "Skriv inn et navn for enheten.",
-            sv: "Skriv ett namn för enheten."
-        }
-    },
-    unit: {
-        name: 'unit',
-        label: {
-            en: "Unit",
-            fr: "Unité",
-            es: "Unidad",
-            it: "Unità",
-            de: "Einheit",
-            nl: "Eenheid",
-            hr: "Jedinica",
-            pl: "Jednostka",
-            mk: "Јединство",
-            pt: "Unidade",
-            da: "Enhed",
-            nb: "Enhet",
-            sv: "Enhet"
+        field: {
+            tap_action: {
+                name: 'tap_action',
+                label: {
+                    en: "Tap action",
+                    fr: "Action au tap",
+                    es: "Acción al tocar",
+                    it: "Azione al tocco",
+                    de: "Tippen Aktion",
+                    nl: "Tik actie",
+                    hr: "Akcija na dodir",
+                    pl: "Akcja dotknięcia",
+                    mk: "Акција на допир",
+                    pt: "Ação ao toque",
+                    da: "Tap handling",
+                    nb: "Trykk handling",
+                    sv: "Tryckåtgärd"
+                },
+                type: CARD.editor.fields.tap_action.type,
+                width: '100%',
+                required: false,
+                isInGroup: null,
+                description: {
+                    en: "Select the action.",
+                    fr: "Sélectionnez l'action.",
+                    es: "Seleccione la acción.",
+                    it: "Seleziona l'azione.",
+                    de: "Wählen Sie die Aktion.",
+                    nl: "Selecteer de actie.",
+                    hr: "Odaberite akciju.",
+                    pl: "Wybierz akcję.",
+                    mk: "Изберете ја акцијата.",
+                    pt: "Selecione a ação.",
+                    da: "Vælg handlingen.",
+                    nb: "Velg handlingen.",
+                    sv: "Välj åtgärden."
+                }
+            },
+            navigate_to: {
+                name: CARD.editor.keyMappings.navigateTo,
+                label: {
+                    en: "Navigate to...",
+                    fr: "Naviguer vers...",
+                    es: "Navegar a...",
+                    it: "Naviga verso...",
+                    de: "Navigieren zu...",
+                    nl: "Navigeer naar...",
+                    hr: "Navigiraj na...",
+                    pl: "Nawiguj do...",
+                    mk: "Навигирај до...",
+                    pt: "Navegar para...",
+                    da: "Naviger til...",
+                    nb: "Naviger til...",
+                    sv: "Navigera till..."
+                },
+                type: CARD.editor.fields.default.type,
+                width: '100%',
+                required: false,
+                isInGroup: CARD.editor.keyMappings.navigateTo,
+                description: {
+                    en: "Enter the target (/lovelace/0).",
+                    fr: "Saisir la cible (/lovelace/0).",
+                    es: "Introduzca el objetivo (/lovelace/0).",
+                    it: "Inserisci il target (/lovelace/0).",
+                    de: "Geben Sie das Ziel (/lovelace/0) ein.",
+                    nl: "Voer de bestemming in (/lovelace/0).",
+                    hr: "Unesite odredište (/lovelace/0).",
+                    pl: "Wprowadź cel (/lovelace/0).",
+                    mk: "Внесете цел (/lovelace/0).",
+                    pt: "Digite o destino (/lovelace/0).",
+                    da: "Indtast målet (/lovelace/0).",
+                    nb: "Skriv inn målet (/lovelace/0).",
+                    sv: "Ange målet (/lovelace/0)."
+                }
+            },
         },
-        type: CARD.editor.fields.default.type,
-        width: '15%',
-        required: false,
-        isInGroup: null,
-        description: {
-            en: "m, kg...",
-            fr: "m, kg...",
-            es: "m, kg...",
-            it: "m, kg...",
-            de: "m, kg...",
-            nl: "m, kg...",
-            hr: "m, kg...",
-            pl: "m, kg...",
-            mk: "m, kg...",
-            pt: "m, kg...",
-            da: "m, kg...",
-            nb: "m, kg...",
-            sv: "m, kg...",
-        }
-    },
-    decimal: {
-        name: 'decimal',
-        label: {
-            en: "decimal",
-            fr: "décimal",
-            es: "decimal",
-            it: "Decimale",
-            de: "dezimal",
-            nl: "decimaal",
-            hr: "decimalni",
-            pl: "dziesiętny",
-            mk: "децемален",
-            pt: "decimal",
-            da: "decimal",
-            nb: "desimal",
-            sv: "decimal"
-        },
-        type: CARD.editor.fields.number.type,
-        width: '25%',
-        required: false,
-        isInGroup: null,
-        description: {
-            en: "Precision.",
-            fr: "Précision.",
-            es: "Precisión.",
-            it: "Precisione.",
-            de: "Präzision.",
-            nl: "Precisie.",
-            hr: "Preciznost.",
-            pl: "Precyzja.",
-            mk: "Прецизност.",
-            pt: "Precisão.",
-            da: "Præcision.",
-            nb: "Presisjon.",
-            sv: "Precision."
-        }
-    },
-    min_value: {
-        name: 'min_value',
-        label: {
-            en: "Minimum value",
-            fr: "Valeur minimum",
-            es: "Valor mínimo",
-            it: "Valore minimo",
-            de: "Mindestwert",
-            nl: "Minimale waarde",
-            hr: "Minimalna vrijednost",
-            pl: "Wartość minimalna",
-            mk: "Минимална вредност",
-            pt: "Valor mínimo",
-            da: "Minimum værdi",
-            nb: "Minimum verdi",
-            sv: "Minsta värde"
-        },
-        type: CARD.editor.fields.number.type,
-        width: '45%',
-        required: false,
-        isInGroup: null,
-        description: {
-            en: "Enter the minimum value.",
-            fr: "Saisissez la valeur minimum.",
-            es: "Introduzca el valor mínimo.",
-            it: "Inserisci il valore minimo.",
-            de: "Geben Sie den Mindestwert ein.",
-            nl: "Voer de minimale waarde in.",
-            hr: "Unesite minimalnu vrijednost.",
-            pl: "Wprowadź wartość minimalną.",
-            mk: "Внесете ја минималната вредност.",
-            pt: "Digite o valor mínimo.",
-            da: "Indtast minimumværdien.",
-            nb: "Skriv inn minimumverdien.",
-            sv: "Ange det minsta värdet."
-        }
-    },
-    max_value: {
-        name: 'max_value',
-        label: {
-            en: "Maximum value",
-            fr: "Valeur maximum",
-            es: "Valor máximo",
-            it: "Valore massimo",
-            de: "Höchstwert",
-            nl: "Maximale waarde",
-            hr: "Maksimalna vrijednost",
-            pl: "Wartość maksymalna",
-            mk: "Максимална вредност",
-            pt: "Valor máximo",
-            da: "Maksimal værdi",
-            nb: "Maksimal verdi",
-            sv: "Högsta värde"
-        },
-        type: CARD.editor.fields.default.type,
-        width: '45%',
-        required: false,
-        isInGroup: null,
-        description: {
-            en: "Enter the maximum value.",
-            fr: "Saisissez la valeur maximum.",
-            es: "Introduzca el valor máximo.",
-            it: "Inserisci il valore massimo.",
-            de: "Geben Sie den Höchstwert ein.",
-            nl: "Voer de maximale waarde in.",
-            hr: "Unesite maksimalnu vrijednost.",
-            pl: "Wprowadź wartość maksymalną.",
-            mk: "Внесете ја максималната вредност.",
-            pt: "Digite o valor máximo.",
-            da: "Indtast maksimumværdien.",
-            nb: "Skriv inn maksimumverdien.",
-            sv: "Ange det högsta värdet."
-        }
-    },
-    tap_action: {
-        name: 'tap_action',
-        label: {
-            en: "Tap action",
-            fr: "Action au tap",
-            es: "Acción al tocar",
-            it: "Azione al tocco",
-            de: "Tippen Aktion",
-            nl: "Tik actie",
-            hr: "Akcija na dodir",
-            pl: "Akcja dotknięcia",
-            mk: "Акција на допир",
-            pt: "Ação ao toque",
-            da: "Tap handling",
-            nb: "Trykk handling",
-            sv: "Tryckåtgärd"
-        },
-        type: CARD.editor.fields.tap_action.type,
-        width: '45%',
-        required: false,
-        isInGroup: null,
-        description: {
-            en: "Select the action.",
-            fr: "Sélectionnez l'action.",
-            es: "Seleccione la acción.",
-            it: "Seleziona l'azione.",
-            de: "Wählen Sie die Aktion.",
-            nl: "Selecteer de actie.",
-            hr: "Odaberite akciju.",
-            pl: "Wybierz akcję.",
-            mk: "Изберете ја акцијата.",
-            pt: "Selecione a ação.",
-            da: "Vælg handlingen.",
-            nb: "Velg handlingen.",
-            sv: "Välj åtgärden."
-        }
-    },
-    navigate_to: {
-        name: CARD.editor.keyMappings.navigateTo,
-        label: {
-            en: "Navigate to...",
-            fr: "Naviguer vers...",
-            es: "Navegar a...",
-            it: "Naviga verso...",
-            de: "Navigieren zu...",
-            nl: "Navigeer naar...",
-            hr: "Navigiraj na...",
-            pl: "Nawiguj do...",
-            mk: "Навигирај до...",
-            pt: "Navegar para...",
-            da: "Naviger til...",
-            nb: "Naviger til...",
-            sv: "Navigera till..."
-        },
-        type: CARD.editor.fields.default.type,
-        width: '45%',
-        required: false,
-        isInGroup: CARD.editor.keyMappings.navigateTo,
-        description: {
-            en: "Enter the target (/lovelace/0).",
-            fr: "Saisir la cible (/lovelace/0).",
-            es: "Introduzca el objetivo (/lovelace/0).",
-            it: "Inserisci il target (/lovelace/0).",
-            de: "Geben Sie das Ziel (/lovelace/0) ein.",
-            nl: "Voer de bestemming in (/lovelace/0).",
-            hr: "Unesite odredište (/lovelace/0).",
-            pl: "Wprowadź cel (/lovelace/0).",
-            mk: "Внесете цел (/lovelace/0).",
-            pt: "Digite o destino (/lovelace/0).",
-            da: "Indtast målet (/lovelace/0).",
-            nb: "Skriv inn målet (/lovelace/0).",
-            sv: "Ange målet (/lovelace/0)."
-        }
     },
     theme: {
-        name: 'theme',
-        label: {
-            en: "Theme",
-            fr: "Thème",
-            es: "Tema",
-            it: "Tema",
-            de: "Thema",
-            nl: "Thema",
-            hr: "Tema",
-            pl: "Motyw",
-            mk: "Тема",
-            pt: "Tema",
-            da: "Tema",
-            nb: "Tema",
-            sv: "Tema"
+        title: {
+            label: {
+                en: "Look & Feel",
+                fr: "Aspect visuel et convivialité",
+                es: "Apariencia y funcionamiento",
+                it: "Aspetto e funzionalità",
+                de: "Aussehen und Bedienung",
+                nl: "Uiterlijk en gebruiksgemak",
+                hr: "Izgled i funkcionalnost",
+                pl: "Wygląd i funkcjonalność",
+                mk: "Изглед и функционалност",
+                pt: "Aparência e usabilidade",
+                da: "Udseende og funktionalitet",
+                nb: "Utseende og funksjonalitet",
+                sv: "Utseende och funktion"
+            },
+            svg: 'M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3M7 7H9V9H7V7M7 11H9V13H7V11M7 15H9V17H7V15M17 17H11V15H17V17M17 13H11V11H17V13M17 9H11V7H17V9Z',
         },
-        type: CARD.editor.fields.theme.type,
-        width: '92%',
-        required: false,
-        isInGroup: null,
-        description: {
-            en: "Select a theme to automatically define the colors and icon.",
-            fr: "Sélectionnez un thème pour définir automatiquement les couleurs et l'icône.",
-            es: "Seleccione un tema para definir automáticamente los colores y el icono.",
-            it: "Seleziona un tema per definire automaticamente i colori e l'icona.",
-            de: "Wählen Sie ein Thema, um die Farben und das Symbol automatisch festzulegen.",
-            nl: "Selecteer een thema om automatisch de kleuren en het pictogram in te stellen.",
-            hr: "Odaberite temu za automatsko definiranje boja i ikone.",
-            pl: "Wybierz motyw, aby automatycznie zdefiniować kolory i ikonę.",
-            mk: "Изберете тема за автоматско дефинирање на боите и иконата.",
-            pt: "Selecione um tema para definir automaticamente as cores e o ícone.",
-            da: "Vælg et tema for automatisk at definere farver og ikon.",
-            nb: "Velg et tema for automatisk å definere farger og ikoner.",
-            sv: "Välj ett tema för att automatiskt definiera färger och ikoner."
-        }
-    },
-    bar_size: {
-        name: 'bar_size',
-        label: {
-            en: "Size",
-            fr: "Taille",
-            es: "Tamaño",
-            it: "Dimensione",
-            de: "Größe",
-            nl: "Grootte",
-            hr: "Veličina",
-            pl: "Rozmiar",
-            mk: "Големина",
-            pt: "Tamanho",
-            da: "Størrelse",
-            nb: "Størrelse",
-            sv: "Storlek"
+        field: {
+            theme: {
+                name: 'theme',
+                label: {
+                    en: "Theme",
+                    fr: "Thème",
+                    es: "Tema",
+                    it: "Tema",
+                    de: "Thema",
+                    nl: "Thema",
+                    hr: "Tema",
+                    pl: "Motyw",
+                    mk: "Тема",
+                    pt: "Tema",
+                    da: "Tema",
+                    nb: "Tema",
+                    sv: "Tema"
+                },
+                type: CARD.editor.fields.theme.type,
+                width: '100%',
+                required: false,
+                isInGroup: null,
+                description: {
+                    en: "Select a theme to automatically define the colors and icon.",
+                    fr: "Sélectionnez un thème pour définir automatiquement les couleurs et l'icône.",
+                    es: "Seleccione un tema para definir automáticamente los colores y el icono.",
+                    it: "Seleziona un tema per definire automaticamente i colori e l'icona.",
+                    de: "Wählen Sie ein Thema, um die Farben und das Symbol automatisch festzulegen.",
+                    nl: "Selecteer een thema om automatisch de kleuren en het pictogram in te stellen.",
+                    hr: "Odaberite temu za automatsko definiranje boja i ikone.",
+                    pl: "Wybierz motyw, aby automatycznie zdefiniować kolory i ikonę.",
+                    mk: "Изберете тема за автоматско дефинирање на боите и иконата.",
+                    pt: "Selecione um tema para definir automaticamente as cores e o ícone.",
+                    da: "Vælg et tema for automatisk at definere farver og ikon.",
+                    nb: "Velg et tema for automatisk å definere farger og ikoner.",
+                    sv: "Välj ett tema för att automatiskt definiera färger och ikoner."
+                }
+            },
+            bar_size: {
+                name: 'bar_size',
+                label: {
+                    en: "Size",
+                    fr: "Taille",
+                    es: "Tamaño",
+                    it: "Dimensione",
+                    de: "Größe",
+                    nl: "Grootte",
+                    hr: "Veličina",
+                    pl: "Rozmiar",
+                    mk: "Големина",
+                    pt: "Tamanho",
+                    da: "Størrelse",
+                    nb: "Størrelse",
+                    sv: "Storlek"
+                },
+                type: CARD.editor.fields.bar_size.type,
+                width: 'calc((100% - 10px) * 0.5)',
+                required: false,
+                isInGroup: null,
+                description: {
+                    en: "Select the bar size",
+                    fr: "Sélectionnez la taille de la barre",
+                    es: "Seleccione el tamaño de la barra",
+                    it: "Seleziona la dimensione della barra",
+                    de: "Wählen Sie die Balkengröße",
+                    nl: "Selecteer de balkgrootte",
+                    hr: "Odaberite veličinu trake",
+                    pl: "Wybierz rozmiar paska",
+                    mk: "Изберете ја големината на лентата",
+                    pt: "Selecione o tamanho da barra",
+                    da: "Vælg barstørrelse",
+                    nb: "Velg størrelse på baren",
+                    sv: "Välj barstorlek"
+                }
+            },
+            bar_color: {
+                name: 'bar_color',
+                label: {
+                    en: "Color for the bar",
+                    fr: "Couleur de la barre",
+                    es: "Color de la barra",
+                    it: "Colore per la barra",
+                    de: "Farbe für die Leiste",
+                    nl: "Kleur voor de balk",
+                    hr: "Boja za traku",
+                    pl: "Kolor paska",
+                    mk: "Боја за лентата",
+                    pt: "Cor para a barra",
+                    da: "Farve til baren",
+                    nb: "Farge for baren",
+                    sv: "Färg för baren"
+                },
+                type: CARD.editor.fields.color.type,
+                width: 'calc((100% - 10px) * 0.5)',
+                required: false,
+                isInGroup: CARD.editor.keyMappings.theme,
+                description: {
+                    en: "Select the color for the bar.",
+                    fr: "Sélectionnez la couleur de la barre.",
+                    es: "Seleccione el color de la barra.",
+                    it: "Seleziona il colore per la barra.",
+                    de: "Wählen Sie die Farbe für die Leiste.",
+                    nl: "Selecteer de kleur voor de balk",
+                    hr: "Odaberite boju trake",
+                    pl: "Wybierz kolor paska",
+                    mk: "Изберете ја бојата за лентата",
+                    pt: "Selecione a cor para a barra",
+                    da: "Vælg farven til baren",
+                    nb: "Velg farge for baren",
+                    sv: "Välj färg för baren"
+                }
+            },
+            icon: {
+                name: 'icon',
+                label: {
+                    en: "Icon",
+                    fr: "Icône",
+                    es: "Icono",
+                    it: "Icona",
+                    de: "Symbol",
+                    nl: "Pictogram",
+                    hr: "Ikona",
+                    pl: "Ikona",
+                    mk: "Икона",
+                    pt: "Ícone",
+                    da: "Ikon",
+                    nb: "Ikon",
+                    sv: "Ikon"
+                },
+                type: CARD.editor.fields.icon.type,
+                width: 'calc((100% - 10px) * 0.5)',
+                required: false,
+                isInGroup: CARD.editor.keyMappings.theme,
+                description: {
+                    en: "Select an icon for the entity.",
+                    fr: "Sélectionnez une icône pour l'entité.",
+                    es: "Seleccione un icono para la entidad.",
+                    it: "Seleziona un'icona per l'entità.",
+                    de: "Wählen Sie ein Symbol für die Entität.",
+                    nl: "Selecteer een pictogram voor de entiteit",
+                    hr: "Odaberite ikonu za entitetu",
+                    pl: "Wybierz ikonę dla encji",
+                    mk: "Изберете икона за ентитетот",
+                    pt: "Selecione um ícone para a entidade",
+                    da: "Vælg et ikon for enheden",
+                    nb: "Velg et ikon for enheten",
+                    sv: "Välj ett ikon för enheten"
+                }
+            },
+            color: {
+                name: 'color',
+                label: {
+                    en: "Primary color",
+                    fr: "Couleur de l'icône",
+                    es: "Color del icono",
+                    it: "Colore dell'icona",
+                    de: "Primärfarbe",
+                    nl: "Primaire kleur",
+                    hr: "Primarna boja",
+                    pl: "Kolor podstawowy",
+                    mk: "Примарна боја",
+                    pt: "Cor primária",
+                    da: "Primærfarve",
+                    nb: "Primærfarge",
+                    sv: "Primärfärg"
+                },
+                type: CARD.editor.fields.color.type,
+                width: 'calc((100% - 10px) * 0.5)',
+                required: false,
+                isInGroup: CARD.editor.keyMappings.theme,
+                description: {
+                    en: "Select the primary color for the icon.",
+                    fr: "Sélectionnez la couleur de l'icône.",
+                    es: "Seleccione el color principal del icono.",
+                    it: "Seleziona il colore principale per l'icona.",
+                    de: "Wählen Sie die Primärfarbe für das Symbol.",
+                    nl: "Selecteer de primaire kleur voor het pictogram",
+                    hr: "Odaberite primarnu boju za ikonu",
+                    pl: "Wybierz główny kolor ikony",
+                    mk: "Изберете ја примарната боја за иконата",
+                    pt: "Selecione a cor primária para o ícone",
+                    da: "Vælg primærfarven for ikonet",
+                    nb: "Velg primærfargen for ikonet",
+                    sv: "Välj primärfärgen för ikonen"
+                }
+            },
+            layout: {
+                name: 'layout',
+                label: {
+                    en: "Layout",
+                    fr: "Disposition",
+                    es: "Disposición",
+                    it: "Layout",
+                    de: "Layout",
+                    nl: "Indeling",
+                    hr: "Izgled",
+                    pl: "Układ",
+                    mk: "Распоред",
+                    pt: "Layout",
+                    da: "Layout",
+                    nb: "Layout",
+                    sv: "Layout"
+                },
+                type: CARD.editor.fields.layout.type,
+                width: '100%',
+                required: false,
+                isInGroup: null,
+                description: {
+                    en: "Select the layout.",
+                    fr: "Sélectionnez la disposition.",
+                    es: "Seleccione la disposición.",
+                    it: "Seleziona il layout.",
+                    de: "Wählen Sie das Layout.",
+                    nl: "Selecteer de indeling.",
+                    hr: "Odaberite izgled.",
+                    pl: "Wybierz układ.",
+                    mk: "Изберете го распоредот.",
+                    pt: "Selecione o layout.",
+                    da: "Vælg layoutet.",
+                    nb: "Velg oppsettet.",
+                    sv: "Välj layouten."
+                }
+            },
         },
-        type: CARD.editor.fields.bar_size.type,
-        width: '45%',
-        required: false,
-        isInGroup: null,
-        description: {
-            en: "Select the bar size",
-            fr: "Sélectionnez la taille de la barre",
-            es: "Seleccione el tamaño de la barra",
-            it: "Seleziona la dimensione della barra",
-            de: "Wählen Sie die Balkengröße",
-            nl: "Selecteer de balkgrootte",
-            hr: "Odaberite veličinu trake",
-            pl: "Wybierz rozmiar paska",
-            mk: "Изберете ја големината на лентата",
-            pt: "Selecione o tamanho da barra",
-            da: "Vælg barstørrelse",
-            nb: "Velg størrelse på baren",
-            sv: "Välj barstorlek"
-        }
     },
-    bar_color: {
-        name: 'bar_color',
-        label: {
-            en: "Color for the bar",
-            fr: "Couleur de la barre",
-            es: "Color de la barra",
-            it: "Colore per la barra",
-            de: "Farbe für die Leiste",
-            nl: "Kleur voor de balk",
-            hr: "Boja za traku",
-            pl: "Kolor paska",
-            mk: "Боја за лентата",
-            pt: "Cor para a barra",
-            da: "Farve til baren",
-            nb: "Farge for baren",
-            sv: "Färg för baren"
-        },
-        type: CARD.editor.fields.color.type,
-        width: '45%',
-        required: false,
-        isInGroup: CARD.editor.keyMappings.theme,
-        description: {
-            en: "Select the color for the bar.",
-            fr: "Sélectionnez la couleur de la barre.",
-            es: "Seleccione el color de la barra.",
-            it: "Seleziona il colore per la barra.",
-            de: "Wählen Sie die Farbe für die Leiste.",
-            nl: "Selecteer de kleur voor de balk",
-            hr: "Odaberite boju trake",
-            pl: "Wybierz kolor paska",
-            mk: "Изберете ја бојата за лентата",
-            pt: "Selecione a cor para a barra",
-            da: "Vælg farven til baren",
-            nb: "Velg farge for baren",
-            sv: "Välj färg för baren"
-        }
-    },
-    icon: {
-        name: 'icon',
-        label: {
-            en: "Icon",
-            fr: "Icône",
-            es: "Icono",
-            it: "Icona",
-            de: "Symbol",
-            nl: "Pictogram",
-            hr: "Ikona",
-            pl: "Ikona",
-            mk: "Икона",
-            pt: "Ícone",
-            da: "Ikon",
-            nb: "Ikon",
-            sv: "Ikon"
-        },
-        type: CARD.editor.fields.icon.type,
-        width: '45%',
-        required: false,
-        isInGroup: CARD.editor.keyMappings.theme,
-        description: {
-            en: "Select an icon for the entity.",
-            fr: "Sélectionnez une icône pour l'entité.",
-            es: "Seleccione un icono para la entidad.",
-            it: "Seleziona un'icona per l'entità.",
-            de: "Wählen Sie ein Symbol für die Entität.",
-            nl: "Selecteer een pictogram voor de entiteit",
-            hr: "Odaberite ikonu za entitetu",
-            pl: "Wybierz ikonę dla encji",
-            mk: "Изберете икона за ентитетот",
-            pt: "Selecione um ícone para a entidade",
-            da: "Vælg et ikon for enheden",
-            nb: "Velg et ikon for enheten",
-            sv: "Välj ett ikon för enheten"
-        }
-    },
-    color: {
-        name: 'color',
-        label: {
-            en: "Primary color",
-            fr: "Couleur de l'icône",
-            es: "Color del icono",
-            it: "Colore dell'icona",
-            de: "Primärfarbe",
-            nl: "Primaire kleur",
-            hr: "Primarna boja",
-            pl: "Kolor podstawowy",
-            mk: "Примарна боја",
-            pt: "Cor primária",
-            da: "Primærfarve",
-            nb: "Primærfarge",
-            sv: "Primärfärg"
-        },
-        type: CARD.editor.fields.color.type,
-        width: '45%',
-        required: false,
-        isInGroup: CARD.editor.keyMappings.theme,
-        description: {
-            en: "Select the primary color for the icon.",
-            fr: "Sélectionnez la couleur de l'icône.",
-            es: "Seleccione el color principal del icono.",
-            it: "Seleziona il colore principale per l'icona.",
-            de: "Wählen Sie die Primärfarbe für das Symbol.",
-            nl: "Selecteer de primaire kleur voor het pictogram",
-            hr: "Odaberite primarnu boju za ikonu",
-            pl: "Wybierz główny kolor ikony",
-            mk: "Изберете ја примарната боја за иконата",
-            pt: "Selecione a cor primária para o ícone",
-            da: "Vælg primærfarven for ikonet",
-            nb: "Velg primærfargen for ikonet",
-            sv: "Välj primärfärgen för ikonen"
-        }
-    },
-    layout: {
-        name: 'layout',
-        label: {
-            en: "Layout",
-            fr: "Disposition",
-            es: "Disposición",
-            it: "Layout",
-            de: "Layout",
-            nl: "Indeling",
-            hr: "Izgled",
-            pl: "Układ",
-            mk: "Распоред",
-            pt: "Layout",
-            da: "Layout",
-            nb: "Layout",
-            sv: "Layout"
-        },
-        type: CARD.editor.fields.layout.type,
-        width: '45%',
-        required: false,
-        isInGroup: null,
-        description: {
-            en: "Select the layout.",
-            fr: "Sélectionnez la disposition.",
-            es: "Seleccione la disposición.",
-            it: "Seleziona il layout.",
-            de: "Wählen Sie das Layout.",
-            nl: "Selecteer de indeling.",
-            hr: "Odaberite izgled.",
-            pl: "Wybierz układ.",
-            mk: "Изберете го распоредот.",
-            pt: "Selecione o layout.",
-            da: "Vælg layoutet.",
-            nb: "Velg oppsettet.",
-            sv: "Välj layouten."
-        }
-    },
+
 };
 
 const FIELD_OPTIONS = {
@@ -1186,7 +1322,6 @@ const CARD_CSS = `
         justify-content: flex-start;
         padding: 0;
         box-sizing: border-box;
-        border-radius: 12px;
         margin: 0 auto;
         overflow: hidden;
     }
@@ -1398,7 +1533,7 @@ const CARD_CSS = `
         position: absolute;
         z-index: 3;
         background-color: color-mix(in srgb, var(--card-background-color) 80%, var(--state-icon-color) 20%);
-        border-radius: 12px;
+        border-radius: var(ha-card-border-radius);
         margin: 0;
     }
 
@@ -1418,17 +1553,16 @@ const CARD_CSS = `
 
     .${CARD.editor.fields.container.class} {
         display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 0 2%;
+        flex-direction: column;
+        gap: 25px;
     }
     .${CARD.editor.fields.fieldContainer.class} {
         display: block;
-        margin-bottom: 12px;
         height: 73px;
     }
 
     .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.attribute} .${CARD.editor.keyMappings.attribute},
+    .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.max_value_attribute} .${CARD.editor.keyMappings.max_value_attribute},
     .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.navigateTo} .${CARD.editor.keyMappings.navigateTo},
     .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.theme} .${CARD.editor.keyMappings.theme} {
         display: none;
@@ -1456,19 +1590,21 @@ const CARD_CSS = `
     }
 
     .${CARD.documentation.outerDiv.class} {
-        width: 50px;
-        height: 50px;
-        background-color: rgba(255, 255, 255, 0.1);
+        width: 48px;
+        height: 48px;
         display: flex;
         align-items: center;
         justify-content: center;
         border-radius: 50%;
         cursor: pointer;
     }
+    .${CARD.documentation.outerDiv.class}:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
 
     .${CARD.documentation.innerDiv.class} {
-        width: 30px;
-        height: 30px;
+        width: 25px;
+        height: 25px;
         background-color: rgba(255, 255, 255, 0.7);
         display: flex;
         align-items: center;
@@ -1519,7 +1655,91 @@ const CARD_CSS = `
         display: none;
     }
 
+    .accordion {
+        display: block;
+        width: 100%;
+        border: 1px solid #363636;
+        border-radius: 6px;
+        overflow: visible;
+    }
+    .accordion-title {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 10px;
+        position: relative;
+        background-color: var(--card-background-color);
+        color: var(--primary-text-color);
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        height: 48px;
+        border: none;
+        text-align: left;
+        font-size: 15px;
+        transition: 0.4s;
+        border-radius: 6px;
+    }
+    
+    .accordion-title:focus {
+        background-color: var(--secondary-background-color);
+    }
+
+    .accordion.expanded .accordion-title {
+        border-radius: 0px;
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+    }
+
+    .accordion-arrow {
+        display: inline-block;
+        width: 24px; /* Adapter à la taille de votre flèche */
+        height: 24px; /* Adapter à la taille de votre flèche */
+        margin-left: auto;
+        color: var(--primary-text-color);
+        transition: transform 0.2s ease-out;
+    }
+    .accordion.expanded .accordion-arrow {
+        transform: rotate(180deg);
+    }
+    .accordion-content {
+        display: flex;
+        flex-direction: row; /* Pour espacer les éléments verticalement */
+        flex-wrap: wrap;
+        align-content: flex-start;
+        gap: 10px;
+        padding: 0px 18px;
+        background-color: transparent;
+        max-height: 0;
+        transition: max-height 0.1s ease-out;
+        overflow: hidden;
+    }
+
+    .accordion.expanded .accordion-content {
+        max-height: 1000px;
+        overflow: visible;
+    }
+    .accordion.expanded .accordion-content::before {
+        content: "";
+        height: 10px; /* Espace au-dessus du premier élément */
+    }
+
+    .accordion.expanded .accordion-content::after {
+        content: "";
+        height: 10px; /* Espace en dessous du dernier élément */
+        border-radius: 6px;
+    }
 `;
+
+/******************************************************************************************
+ *  Debug
+ */
+
+function debugLog(message) {
+    if (CARD.config.debug) {
+        console.debug(message);
+    }
+}
 
 /**
  * Helper class for managing numeric values.
@@ -1758,12 +1978,17 @@ class PercentHelper {
     }
 
     get isValid() {
-        if (!this._min.isValid || !this._max.isValid || !this._current.isValid || !this._decimal.isValid) {
-            return false;
-        }
-        return true;
+        return (this._max.value === this._min.value || !this._min.isValid || !this._max.isValid || !this._current.isValid || !this._decimal.isValid) ? false : true;
     }
 
+    get range() {
+        return this._max.value - this._min.value;
+    }
+
+    get correctedValue() {
+        return this.actual - this._min.value;
+    }
+    
     get percent() {
         if (!this.isValid) {
             return null;
@@ -1817,13 +2042,7 @@ class PercentHelper {
      * Calculates and updates the percentage value based on the current, minimum, and maximum values.
      */
     refresh() {
-        if (!this.isValid) {
-            return;
-        }
-        const range = this._max.value - this._min.value;
-        const correctedValue = this.actual - this._min.value;
-        const percent = (correctedValue / range) * 100;
-        this._percent = parseFloat(percent.toFixed(this._decimal.value));
+        this._percent = this.isValid ? +(this.correctedValue / this.range * 100).toFixed(this._decimal.value) : 0;
     }
     _getTiming() {
         let seconds = this.actual / 1000;
@@ -1851,7 +2070,7 @@ class PercentHelper {
     toString() {
         return this.isValid 
         ? `${this.formattedValue}${this.hasTimerOrFlexTimerUnit ? '' : this._unit.toString()}` 
-        : null;
+        : "Div0";
     }
 
 }
@@ -2053,20 +2272,15 @@ class ThemeManager {
  * @class HassProvider
  */
 class HassProvider {
-    /**
-     * @type {HassProvider}
-     * @private
-     * @static
-     */
+
     static _instance = null;
     
-
     /**
      * Creates a new instance of HassProvider.
      * If an instance already exists, it returns the existing instance.
      */
     constructor(callerName) {
-        // console.log(`Caller : ${callerName}`);
+        debugLog(`Caller : ${callerName}`);
         if (HassProvider._instance) {
             return HassProvider._instance;
         }
@@ -2075,36 +2289,26 @@ class HassProvider {
          * @private
          */
         this._hass = null;
+        this._isValid = false;
         HassProvider._instance = this;
     }
 
-    /**
-     * Sets the Home Assistant object.
-     *
-     * @param {object} hass - The Home Assistant object.
-     */
     set hass(hass) {
+        if(!hass) {
+            return;
+        }
         this._hass = hass;
+        this._isValid = true;
     }
-
-    /**
-     * Returns the Home Assistant object.
-     *
-     * @returns {object} The Home Assistant object.
-     */
+    get isValid() {
+        return this._isValid;
+    }
     get hass() {
         return this._hass;
     }
-
-    /**
-     * Returns the language configured in Home Assistant.
-     *
-     * @returns {string} The language code.
-     */
     get language() {
-        return this._hass.language;
+        return this._isValid && MSG.decimalError[this._hass.language] ? this._hass.language : CARD.config.language;
     }
-
     get hasNewShapeStrategy() {
         if (!this._hass || !this._hass.config || !this._hass.config.version) return false;
         const [year, month] = this._hass.config.version.split(".").map(Number);
@@ -2121,42 +2325,13 @@ class HassProvider {
  */
 class EntityHelper {
     constructor() {
-        /**
-         * @type {object|string}
-         * @private
-         */
         this._value = {};
-        /**
-         * @type {HassProvider}
-         * @private
-         */
         this._hassProvider = new HassProvider(this.constructor.name);
-        /**
-         * @type {boolean}
-         * @private
-         */
         this._isValid = false;
-        /**
-         * @type {boolean}
-         * @private
-         */
         this._isAvailable = false;
-        /**
-         * @type {string}
-         * @private
-         */
         this._id = null;
-        /**
-         * @type {string}
-         * @private
-         */
         this._attribute = null;
-        /**
-         * @type {string}
-         * @private
-         */
         this._state = null;
-
         this._type = null;
         this._hassCache = null;
         this._lastHass = null;
@@ -2172,12 +2347,6 @@ class EntityHelper {
         this._validate();
         this._type = this._id.split('.')[0];
     }
-    /**
-    * Returns the validated value.
-    * Returns null if the value is invalid.
-    *
-    * @returns {object|string|null} The validated value.
-    */
     get value() {
         if (this._isValid) {
             return this._value;
@@ -2185,36 +2354,16 @@ class EntityHelper {
             return null;
         }
     }
-    /**
-     * Sets the attribute.
-     *
-     * @param {object|string} newAttribute - The new value to set.
-     */
     set attribute(newAttribute) {
         this._attribute = newAttribute;
         this._isValid = false;
     }
-    /**
-     * Indicates Entity's state
-     *
-     * @returns {string} Current state.
-     */
     get state() {
         return this._state;
     }
-    /**
-     * Indicates whether the value is valid.
-     *
-     * @returns {boolean} True if the value is valid, false otherwise.
-     */
     get isValid() {
         return this._isValid;
     }
-    /**
-     * Indicates whether the entity (if applicable) is available.
-     *
-     * @returns {boolean} True if the entity is available, false otherwise.
-     */
     get isAvailable() {
         return this._isAvailable;
     }
@@ -2228,7 +2377,6 @@ class EntityHelper {
         }
         this._isValid = true;
     }
-
     refresh() {
         this._state = null;
         this._isAvailable = false;
@@ -2331,8 +2479,8 @@ class EntityHelper {
     get icon() {
         return this._isValid && this.states ? (this.states.attributes?.icon || this._getIconByClass() || this._getIconByType()) : null;
     }
-    /**
-     *
+    /******************************************************************************************
+     * 
      */
     get hasAttribute() {
         return this._isValid ? !!ATTRIBUTE_MAPPING[this._type] : false;
@@ -2350,7 +2498,8 @@ class EntityHelper {
         return this._isValid ? this._hassProvider?.hass?.entities?.[this._id]?.display_precision ?? null : null;
     }
     get attributes() {
-        return this._isValid ? this._hassProvider?.hass?.entities?.[this._id]?.display_precision ?? null : null;
+        return this._isValid ? this._hassProvider.hass.states[this._id]?.attributes ?? null : null;
+        //return this._isValid ? this._hassProvider?.hass?.entities?.[this._id]?.display_precision ?? null : null;
     }
     get isTimer() {
         return this._type === CARD.config.entity.type.timer;
@@ -2371,7 +2520,7 @@ class EntityHelper {
     }
 
     _getBatteryColor() {
-        if (this._value <= 30) {
+        if (!this._value || this._value <= 30) {
             return CARD.style.color.battery.low;
         }
         if (this._value <= 70) {
@@ -2382,10 +2531,10 @@ class EntityHelper {
 
     get defaultColor() {
         const typeColorMap = {
-            [CARD.config.entity.type.timer]: this.value.state === CARD.config.entity.state.active ? CARD.style.color.active : CARD.style.color.inactive,
-            [CARD.config.entity.type.cover]: this.value > 0 ? CARD.style.color.coverActive : CARD.style.color.inactive,
-            [CARD.config.entity.type.light]: this.value > 0 ? CARD.style.color.lightActive : CARD.style.color.inactive,
-            [CARD.config.entity.type.fan]: this.value > 0 ? CARD.style.color.fanActive : CARD.style.color.inactive,
+            [CARD.config.entity.type.timer]: this.value && this.value.state === CARD.config.entity.state.active ? CARD.style.color.active : CARD.style.color.inactive,
+            [CARD.config.entity.type.cover]: this.value && this.value > 0 ? CARD.style.color.coverActive : CARD.style.color.inactive,
+            [CARD.config.entity.type.light]: this.value && this.value > 0 ? CARD.style.color.lightActive : CARD.style.color.inactive,
+            [CARD.config.entity.type.fan]: this.value && this.value > 0 ? CARD.style.color.fanActive : CARD.style.color.inactive,
             [CARD.config.entity.type.climate]: this._getClimateColor(),
             [CARD.config.entity.class.battery]: this._getBatteryColor(),
         };
@@ -2480,6 +2629,15 @@ class EntityOrValue {
     }
     get defaultColor() {
         return this._activeHelper && this._isEntity ? this._activeHelper.defaultColor : false;
+    }
+    get hasAttribute() {
+        return this._activeHelper && this._isEntity ? this._activeHelper.hasAttribute : false;
+    }
+    get attributes() {
+        return this._activeHelper && this._isEntity ? this._activeHelper.attributes : null;
+    }
+    get unit() {
+        return this._activeHelper && this._isEntity ? this._activeHelper.unit : null;
     }
     refresh() {
         if (this._activeHelper && this._isEntity) {
@@ -2648,22 +2806,6 @@ class ConfigHelper {
 
     /**
      * Validates the card configuration and returns the validation status and error messages.
-     *
-     * Main Steps:
-     * 1. **Entity Check**: Ensures `entity` is defined in the configuration and exists in Home Assistant.
-     * 2. **Max Value Validation**: Confirms `max_value` is either:
-     *    - A positive number.
-     *    - A valid entity in Home Assistant.
-     * 3. **Decimal Check**: Validates that the `decimal` value is not negative.
-     *
-     * Returns:
-     * - An object `{ valid, msg }`:
-     *   - `valid`: Boolean indicating whether the configuration is valid.
-     *   - `msg`: An error message string, or `null` if the configuration is valid.
-     *
-     * Provides localized error messages for each type of configuration issue.
-     *
-     * @returns {{ valid: boolean, msg: string|null }}
      */
     checkConfig() {
         if (!this._isChanged) {
@@ -2672,6 +2814,7 @@ class ConfigHelper {
         this._isChanged = false;
         this._isValid = false;
         const entityState = this._hassProvider.hass.states[this._config.entity];
+        const maxValueState = typeof this._config.max_value === 'string' && this._config.max_value.trim() ? this._hassProvider.hass.states[this._config.max_value] : null;
         const validationRules = [
             {
                 valid: !!this._config.entity,
@@ -2686,7 +2829,7 @@ class ConfigHelper {
                 msg: MSG.minValueError
             },
             {
-                valid: Number.isFinite(this.max_value),
+                valid: Number.isFinite(this.max_value) || maxValueState && (this._config.max_value_attribute ? maxValueState.attributes.hasOwnProperty(this._config.max_value_attribute):true),
                 msg: MSG.maxValueError
             },
             {
@@ -2697,7 +2840,6 @@ class ConfigHelper {
     
         for (const rule of validationRules) {
             if (!rule.valid) {
-                this._isValid = false;
                 this._msg = rule.msg;
                 return;
             }
@@ -2906,7 +3048,8 @@ class CardView {
             this._max_value.value = CARD.config.value.max;
         } else {
             this._currentValue.attribute = config.attribute || null;
-            this._max_value.value = this._configHelper.max_value || CARD.config.value.max;
+            this._max_value.value = config.max_value ?? CARD.config.value.max;
+            this._max_value.attribute = config.max_value_attribute || null;
         }
     }
 
@@ -3064,7 +3207,7 @@ class EntityProgressCard extends HTMLElement {
     _startAutoRefresh() {
         this._autoRefreshInterval = setInterval(() => {
             this.refresh(this._lastHass);
-            console.log("Refresh automatique toutes les secondes");
+            debugLog("EntityProgressCard._startAutoRefresh()");
             if (!this._cardView.isActiveTimer) {
                 this._stopAutoRefresh();
                 return;
@@ -3281,11 +3424,6 @@ customElements.define(CARD.meta.typeName, EntityProgressCard);
 
 /** --------------------------------------------------------------------------
  * Registers the custom card in the global `customCards` array for use in Home Assistant.
- *
- * This code ensures that the custom card is added to the list of registered custom cards,
- * which Home Assistant uses to dynamically render and manage custom cards in its user interface.
- * The check ensures that the `customCards` array is created if it does not exist, without overwriting
- * any existing custom cards that may already be registered.
  */
 window.customCards = window.customCards || []; // Create the list if it doesn't exist. Careful not to overwrite it
 window.customCards.push({
@@ -3296,559 +3434,115 @@ window.customCards.push({
 
 
 /** --------------------------------------------------------------------------
- * ConfigManager
- *
- * A class for dynamically managing and manipulating a configuration object.
- *
- * @class ConfigManager
- *
- * @param {Object} initialConfig - The initial configuration object, consisting of key/value pairs.
- */
-class ConfigManager {
-    /**
-     * Constructor for ConfigManager
-     *
-     * Initializes a new instance of the `ConfigManager` class with the provided configuration and sets up
-     * internal state variables. The constructor ensures that the configuration is properly stored and that
-     * other mechanisms, such as change notifications and debouncing, are ready for use.
-     *
-     * @param {Object} [initialConfig={}] - The initial configuration object used to set default key/value pairs.
-     *
-     */
-
-    constructor(initialConfig = {}) {
-        this._config = { ...initialConfig }; // Configuration actuelle
-        this._onChangeValidated = null;
-        this._onConfigChange = null; // Callback pour notifier les changements
-        this._debounceTimeout = null; // Timeout pour le debouncing
-        this._pendingUpdates = {}; // Stockage temporaire des changements
-        this._lastUpdateFromProperty = false;
-        this._debug = CARD.config.debug;
-        this._pendingUpdatesLock = false;
-    }
-
-    /**
-     * Getter for the current configuration.
-     *
-     * @returns {Object} - A copy of the current configuration object.
-     */
-    get config() {
-        return { ...this._config }; // Retourne une copie pour éviter les mutations externes
-    }
-
-    /**
-     * Logs debug messages to the console if debugging is enabled.
-     *
-     * This method checks the `_debug` flag to determine whether debug logging is enabled.
-     *
-     * @param {string} message - The message to be logged.
-     * @param {any} [data=null] - Optional additional data to log with the message. Can be of any type.
-     */
-    _logDebug(message, data = null) {
-        if (this._debug) {
-            if (data) {
-                console.debug(message, data);
-            } else {
-                console.debug(message);
-            }
-        }
-    }
-
-    /**
-     * Updates the configuration of the ConfigManager instance.
-     *
-     * This method sets a new configuration by merging it with the existing configuration.
-     * If the last update was triggered by the `updateProperty` method, the update is skipped
-     * to prevent redundant changes. Debug messages are logged if debugging is enabled.
-     *
-     * @param {Object} newConfig - The new configuration object to be merged with the current configuration.
-     */
-    setConfig(newConfig) {
-        if (this._lastUpdateFromProperty) {
-            this._logDebug('ConfigManager/setConfig: already ok...');
-            this._lastUpdateFromProperty = false;
-            return;
-        }
-        this._logDebug('ConfigManager/setConfig: updateall!');
-        const mergedConfig = { ...this._config, ...newConfig }; // Fusionner les nouvelles valeurs
-        this._config = mergedConfig;
-    }
-
-    /**
-     * Updates a specific property in the configuration with a debounce mechanism.
-     *
-     * @param {string} key - The name of the property to update.
-     * @param {*} value - The new value for the property. Can be any type.
-     *
-     * Behavior:
-     * - If the method is called multiple times within the debounce period,
-     *   previous timeouts are cleared, and only the latest update is applied.
-     * - After the debounce timeout, `_applyPendingUpdates()` is called to process
-     *   and commit the changes to the configuration.
-     */
-    updateProperty(key, value) {
-        while (this._pendingUpdatesLock) { }
-        this._pendingUpdatesLock = true;
-        const hasPendingUpdate = key in this._pendingUpdates;
-        if (
-            (hasPendingUpdate && this._pendingUpdates[key] === value) ||
-            (!hasPendingUpdate && this._config[key] === value)
-        ) {
-            this._logDebug(`ConfigManager/updateProperty: no change for ${key}`);
-            this._pendingUpdatesLock = false;
-            return;
-        }
-        this._pendingUpdates[key] = value;
-        this._logDebug('ConfigManager/updateProperty - pendingUpdates: ', this._pendingUpdates);
-
-        if (this._debounceTimeout) {
-            clearTimeout(this._debounceTimeout);
-        }
-
-        this._debounceTimeout = setTimeout(() => {
-            this._applyPendingUpdates();
-        }, CARD.config.debounce);
-        this._pendingUpdatesLock = false;
-    }
-
-    /**
-     * Applies all pending configuration updates after the debounce period.
-     *
-     * This method processes and commits any changes stored in `_pendingUpdates` to the
-     * actual configuration (`_config`). It handles type conversion, such as converting
-     * numeric strings to numbers, and removes properties with empty or invalid values.
-     *
-     * @private
-     */
-    _applyPendingUpdates() {
-        while (this._pendingUpdatesLock) { }
-        this._pendingUpdatesLock = true;
-
-        let hasChanges = false;
-
-        for (const [key, value] of Object.entries(this._pendingUpdates)) {
-            this._logDebug('ConfigManager/_applyPendingUpdates:', [key, value]);
-            let curValue = value;
-            if (typeof value === 'string' && value.trim() !== '' && (EDITOR_INPUT_FIELDS.hasOwnProperty(key) && EDITOR_INPUT_FIELDS[key].type === CARD.editor.fields.number.type || key === EDITOR_INPUT_FIELDS.max_value.name)) {
-                const numericValue = Number(value);
-                if (!isNaN(numericValue)) {
-                    curValue = numericValue;
-                }
-            }
-
-            if ((typeof curValue === 'string' && curValue.trim() === '') || curValue == null) {
-                if (this._config.hasOwnProperty(key)) {
-                    delete this._config[key];
-                    hasChanges = true;
-                }
-            } else if (this._config[key] !== curValue) {
-                this._config[key] = curValue;
-                hasChanges = true;
-            }
-        }
-
-        this._pendingUpdates = {};
-
-        if (hasChanges) {
-            this._reorderConfig();
-            this._lastUpdateFromProperty = true;
-            this._notifyChangeValidated();
-        }
-        this._pendingUpdatesLock = false;
-    }
-
-    /**
-     * Reorders the configuration properties, ensuring `grid_options` appears last.
-     */
-    _reorderConfig() {
-        if (this._config.grid_options) {
-            const { grid_options, ...rest } = this._config;
-            this._config = { ...rest, grid_options };
-        }
-    }
-
-    /**
-     * Notifies listeners (editor) of a configuration change.
-     *
-     * This method invokes the registered callback function, passing a copy of the current
-     * configuration as an argument. It ensures that any external subscribers (e.g., the editor
-     * or other components) are informed whenever the configuration is updated.
-     */
-    _notifyChangeValidated() {
-        if (this._onChangeValidated) {
-            this._onChangeValidated({ ...this._config });
-        }
-    }
-
-    /**
-     * Registers a callback (editor) to handle configuration changes.
-     *
-     * This method allows external components or systems to subscribe to updates
-     * of the configuration managed by this class. When a configuration change
-     * occurs, the provided callback will be invoked with a cloned version of
-     * the updated configuration.
-     */
-    onChangeValidated(callback) {
-        this._onChangeValidated = callback;
-    }
-
-    /** ---- */
-    _notifyConfigChange() {
-        if (this._onConfigChange) {
-            this._onConfigChange({ ...this._config });
-        }
-    }
-
-    onConfigChange(callback) {
-        this._onConfigChange = callback;
-    }
-
-}
-
-/** --------------------------------------------------------------------------
  * Custom editor component for configuring the `EntityProgressCard`.
- *
- * The `EntityProgressCardEditor` class extends `HTMLElement` and represents the editor interface
- * for configuring the settings of the `EntityProgressCard`.
  */
 class EntityProgressCardEditor extends HTMLElement {
-    /**
-     * Initializes an instance of the `EntityProgressCardEditor` class.
-     *
-     * @constructor
-     */
     constructor() {
         super();
         this.attachShadow({ mode: CARD.config.shadowMode });
         this._container = null
-        this.config = {};
+        this._config = {};
+        this._previous = { entity: null, max_value: null };
         this._hassProvider = new HassProvider(this.constructor.name);
+        this._isRendered = false;
         this._elements = {};
-        this.rendered = false;
+        this._accordionContent=[];
         this._currentLanguage = CARD.config.language;
-        this._isGuiEditor = false;
-        this.configManager = new ConfigManager();
-
-        this.configManager.onChangeValidated((newConfig) => {
-            this.config = newConfig;
-            this.configManager._logDebug('EntityProgressCardEditor OnConfigChange - new value registered: ', { detail: { config: this.config } });
-            this.dispatchEvent(new CustomEvent('config-changed', { detail: { config: this.config } }));
-        });
-
     }
 
-    /**
-     * Sets the `hass` (Home Assistant) instance for the editor component.
-     *
-     * This setter method is used to assign a new Home Assistant instance to the editor component.
-     * It ensures that the editor is only updated when the `hass` instance changes, preventing
-     * unnecessary re-renders. If the new instance is different from the previous one or if it is the
-     * first time the `hass` value is being set, the component updates its internal reference and,
-     * if it has already been rendered, triggers a re-render.
-     *
-     * - If the provided `value` is falsy (null or undefined), the method simply returns without doing anything.
-     * - Update the this._currentLanguage according to hass.config.language (HA Environment)
-     * - If the current `hass` instance is different from the new one (checked by comparing `entities`),
-     *   the method updates the internal `_hass` reference and triggers a re-render if the editor is already rendered.
-     *
-     * This ensures that changes in the Home Assistant instance are properly reflected in the component
-     * without unnecessary updates or re-renders.
-     *
-     * @param {object} hass - The new Home Assistant instance to set.
-     */
     set hass(hass) {
         if (!hass) {
             return;
         }
-
-        this._currentLanguage = MSG.decimalError[hass.language] ? hass.language : CARD.config.language;
         if (!this._hassProvider.hass || this._hassProvider.hass.entities !== hass.entities) {
             this._hassProvider.hass = hass;
         }
+        this._currentLanguage = this._hassProvider.language;
     }
 
-    /**
-     * Gets the current Home Assistant instance stored in the editor component.
-     *
-     * This getter method provides access to the internal `_hass` property.
-     *
-     * @returns {object|null} The current Home Assistant instance, or `null` if not set.
-     */
-    get hass() {
-        //return this._hass;
-        return this._hassProvider.hass;
-    }
-
-    /**
-     * Sets the configuration for the editor component and triggers the necessary updates.
-     *
-     * This method accepts a configuration object and updates the component's internal `config` property.
-     *
-     * This method ensures that the editor's configuration is applied correctly and that any necessary UI updates
-     * are triggered, including rendering the editor if it's not already displayed.
-     *
-     * @param {object} config - The configuration object containing settings for the editor.
-     */
     setConfig(config) {
-        if (!this._hassProvider.hass) {
+        debugLog("editor:setConfig()");
+        debugLog(config);
+        this._config = config;
+        if (!this._hassProvider.isValid) {
             return;
         }
-
-        this.configManager._logDebug('EntityProgressCardEditor/setConfig - value before change: ', { detail: { config: this.config } });
-        this.configManager._logDebug('EntityProgressCardEditor/setConfig - update: ', { detail: { config } });
-        this.configManager.setConfig(config);
-        this.config = config;
-        this.configManager._logDebug('EntityProgressCardEditor/setConfig - check value updated: ', { detail: { config: this.config } });
-
-        if (!this.rendered) {
+        if (!this._isRendered) {
             this.loadEntityPicker();
             this.render();
-            this.rendered = true;
-            return;
+            this._addEventListener();
+            this._isRendered = true;
         }
-        if (!this._checkConfigChangeFromGUI()) {
-            this._refreshConfigFromYAML();
-        }
-
+        this._updateFields();
     }
 
-    /**
-     * Checks if a configuration change originates from the graphical editor (GUI).
-     *
-     * This function uses the dimensions of the `entity` field element to determine
-     * if the graphical editor is currently visible and interactive. The GUI editor
-     * is considered active if its dimensions (width and height) are greater than zero.
-     *
-     * @returns {boolean} - Returns `true` if the GUI editor is visible, otherwise `false`.
-     */
-    _checkConfigChangeFromGUI() {
-        const rect = this._elements[EDITOR_INPUT_FIELDS.entity.name].getBoundingClientRect();
-        this._isGuiEditor = (
-            rect.width > 0 &&
-            rect.height > 0
-        );
-        return this._isGuiEditor;
-    }
-
-    /**
-     * Toggles the visibility of fields based on the `disable` flag.
-     *
-     * This method is used to control the visibility of specific fields in the editor.
-     *
-     * @param {boolean} disable - A boolean flag to control the visibility of the fields.
-     *                            If `true`, fields are hidden. If `false`, fields are shown.
-     */
-    _toggleFieldDisable(key, disable) {
-        this.configManager._logDebug('_toggleFieldDisable - Toggle: ', [key, disable]);
-        this._container.classList.toggle(`${CARD.style.dynamic.hide}-${key}`, disable);
-    }
-
-    /**
-     * Synchronizes the configuration from the YAML editor with the GUI editor.
-     *
-     * Note: This ensures that the graphical editor reflects the latest YAML-based changes.
-     */
-    _refreshConfigFromYAML() {
+    _updateFields() {
+        debugLog("editor._updateFields()");
         const keys = Object.keys(this._elements);
         keys.forEach(key => {
-            if (this.config.hasOwnProperty(key) && this._elements[key].value !== this.config[key]) {
-                this._elements[key].value = this.config[key];
-            } else if (key !== CARD.editor.keyMappings.tapAction) {
-                this._elements[key].value = '';
-            } else {
-                this._elements[CARD.editor.keyMappings.tapAction].value = this._getTapActionValue();
+            if (key !== CARD.editor.keyMappings.tapAction && key !== CARD.editor.keyMappings.attribute && key !== CARD.editor.keyMappings.max_value_attribute && this._config.hasOwnProperty(key) && this._elements[key].value !== this._config[key]) {
+                this._elements[key].value = this._config[key];
             }
         });
-        this._toggleFieldDisable(CARD.editor.keyMappings.navigateTo, (this._getTapActionValue() !== CARD.editor.keyMappings.navigateTo));
-        if (!this.config.hasOwnProperty(CARD.editor.keyMappings.theme)) {
-            this._toggleFieldDisable(CARD.editor.keyMappings.theme, false);
-        } else {
-            this._toggleFieldDisable(CARD.editor.keyMappings.theme, THEME.hasOwnProperty(this.config[CARD.editor.keyMappings.theme]));
+
+        // TapAction
+        const curTapAction = this._getTapActionValue();
+        if (this._elements[CARD.editor.keyMappings.tapAction].value !== curTapAction) {
+            this._elements[CARD.editor.keyMappings.tapAction].value = curTapAction;
         }
+        this._toggleFieldDisable(CARD.editor.keyMappings.navigateTo, (curTapAction !== CARD.editor.keyMappings.navigateTo));
+
+        // Theme
+        this._toggleFieldDisable(CARD.editor.keyMappings.theme, !!this._config.theme);
+
+        // Entity & max_value
+        const curEntity = new EntityOrValue();
+        curEntity.value = this._config.entity; // 1st Entity management
+        if (this._previous.entity !== this._config.entity && curEntity.hasAttribute) {
+            this._previous.entity = this._config.entity;
+            this._updateChoices(this._elements[CARD.editor.keyMappings.attribute], CARD.editor.fields.attribute.type, Object.keys(curEntity.attributes));
+        }
+        if (this._config.attribute && curEntity.hasAttribute && curEntity.attributes.hasOwnProperty(this._config.attribute) && this._elements[CARD.editor.keyMappings.attribute].value !== this._config.attribute) {
+            this._elements[CARD.editor.keyMappings.attribute].value = this._config.attribute;
+        }
+        this._toggleFieldDisable(EDITOR_INPUT_FIELDS.basicConfiguration.attribute.isInGroup, !curEntity.hasAttribute);
+
+        curEntity.value = this._config.max_value; // max value
+        if (this._previous.max_value !== this._config.max_value && curEntity.hasAttribute) {
+            this._previous.max_value = this._config.max_value;
+            this._updateChoices(this._elements[CARD.editor.keyMappings.max_value_attribute], CARD.editor.fields.max_value_attribute.type, Object.keys(curEntity.attributes));
+        }
+        if (this._config.max_value_attribute && curEntity.hasAttribute && curEntity.attributes.hasOwnProperty(this._config.max_value_attribute) && this._elements[CARD.editor.keyMappings.max_value_attribute].value !== this._config.max_value_attribute) {
+            this._elements[CARD.editor.keyMappings.max_value_attribute].value = this._config.max_value_attribute;
+        }
+        this._toggleFieldDisable(EDITOR_INPUT_FIELDS.content.field.max_value_attribute.isInGroup, !curEntity.hasAttribute);
     }
 
-    _updateUnitFromEntity(unitAvailable) {
-        if (unitAvailable) {
-            this.configManager.updateProperty(EDITOR_INPUT_FIELDS.unit.name, unitAvailable);
-            this._elements[EDITOR_INPUT_FIELDS.unit.name].value = unitAvailable;
-        } else {
-            this.configManager.updateProperty(EDITOR_INPUT_FIELDS.unit.name, '');
-            this._elements[EDITOR_INPUT_FIELDS.unit.name].value = '';
-        }
-    }
-    /**
-     * Updates a specific property in the configuration object, and handles additional logic
-     * related to `theme` and field visibility.
-     *
-     *
-     * @param {string} key - The key of the configuration property to update.
-     * @param {string} value - The new value to assign to the configuration property.
-     */
-    _updateConfigProperty(key, value) {
-        this.configManager.updateProperty(key, value);
-        if (key === CARD.editor.keyMappings.theme) {
-            this._toggleFieldDisable(CARD.editor.keyMappings.theme, value !== '');
-        }
-        if (key === EDITOR_INPUT_FIELDS.entity.type) {
-            const curEntity = new EntityHelper();
-            curEntity.id = value;
-            const attributeAvailable = curEntity.hasAttribute;
-            const unitAvailable = curEntity.unit;
-            if (attributeAvailable) {
-                this._refreshAttributeOption(curEntity.states)
-            }
-            this._updateUnitFromEntity(unitAvailable);
-
-            this._toggleFieldDisable(EDITOR_INPUT_FIELDS.attribute.isInGroup, !attributeAvailable);
-        }
-
+    _onChanged(event) {
+        debugLog("editor._onChanged()");
+        debugLog(event);
+        debugLog(event.target.id);
+        this._sendMessageForUpdate(event);
     }
 
-    /**
-     * Manages the tap action behavior based on the provided value.
-     *
-     * This function updates the configuration and toggles fields related to the
-     * tap action (e.g., `navigate_to` and `show_more_info`) depending on the
-     * selected action. It ensures that mutually exclusive properties are handled
-     * properly.
-     *
-     * @param {string} value - The selected tap action value to manage.
-     *                         Possible values: `CARD.interactions.action.tap.navigate_to`,
-     *                         `CARD.interactions.action.tap.more_info`, `CARD.interactions.action.tap.no_action`.
-     */
-    _manageTapAction(value) {
-        this.configManager._logDebug('_manageTapAction - Toggle value', value);
-        switch (value) {
-            case CARD.interactions.action.tap.default:
-                this._updateConfigProperty(CARD.interactions.action.tap.more_info, '');
-                this._updateConfigProperty(CARD.interactions.action.tap.navigate_to, '');
-                break;
-            case CARD.interactions.action.tap.navigate_to:
-                this._updateConfigProperty(CARD.interactions.action.tap.more_info, '');
-                // reenable with a value already set
-                if (!this._elements[EDITOR_INPUT_FIELDS.navigate_to.name].value) {
-                    this._elements[EDITOR_INPUT_FIELDS.navigate_to.name].value = "/path/to";
-                }
-                this._updateConfigProperty(
-                    CARD.interactions.action.tap.navigate_to, this._elements[EDITOR_INPUT_FIELDS.navigate_to.name].value);
-                break;
-            case CARD.interactions.action.tap.more_info:
-                this._updateConfigProperty(CARD.interactions.action.tap.navigate_to, '');
-                this._updateConfigProperty(CARD.interactions.action.tap.more_info, true);
-                break;
-            case CARD.interactions.action.tap.no_action:
-                this._updateConfigProperty(CARD.interactions.action.tap.navigate_to, '');
-                this._updateConfigProperty(CARD.interactions.action.tap.more_info, false);
-                break;
-        }
-        this._toggleFieldDisable(CARD.editor.keyMappings.navigateTo, (value !== CARD.editor.keyMappings.navigateTo));
-    }
-
-    /**
-     * Determines the tap action value based on the current configuration.
-     *
-     * This function evaluates the `config` object to determine the appropriate
-     * tap action to return. It considers the `navigate_to` and `show_more_info`
-     * properties in the configuration to decide the value.
-     *
-     * @returns {string|null} The determined tap action value, or `null` if no valid action is found.
-     */
-
-    _getTapActionValue() {
-        let value = null;
-
-        if (this.config.navigate_to === undefined && this.config.show_more_info === undefined) {
-            value = CARD.interactions.action.tap.default;
-        } else if (this.config.navigate_to) {
-            value = CARD.interactions.action.tap.navigate_to;
-        } else if (this.config.show_more_info === true) {
-            value = CARD.interactions.action.tap.more_info;
-        } else if (this.config.show_more_info === false) {
-            value = CARD.interactions.action.tap.no_action;
-        }
-
-        return value;
-    }
-
-    _getAttributeOption(curEntity = null) {
-        const entity = curEntity ?? this._hassProvider.hass.states[this.config.entity] ?? null;
-        if (!entity) {
-            return null;
-        }
-        const availableAttributes = Object.keys(entity.attributes || {}).map(attr => ({
-            value: attr,
-            label: attr
-        }));
-
-        return availableAttributes;
-    }
-
-    /**
-     * Adds a list of choices to a given `<select>` element based on the specified list type.
-     *
-     * This method populates the `<select>` element with options according to the provided `type`. The `type`
-     * determines the kind of list (e.g., colors, layout, theme, tap actions) and how the options will be displayed.
-     *
-     * @param {HTMLElement} select - The `<select>` element to which the choices will be added.
-     * @param {string} type - The type of list to populate ('layout', 'color', 'theme', or 'tap_action').
-     */
-    _addChoices(select, type, curEntity = null) {
-        select.innerHTML = '';
-        const list = (type === CARD.editor.fields.attribute.type) ? this._getAttributeOption(curEntity) : FIELD_OPTIONS[type];
-        this.configManager._logDebug('_addChoices - List ', list);
-        if (!list) {
-            return;
-        }
-        list.forEach(optionData => {
-            const option = document.createElement(CARD.editor.fields.listItem.element);
-            option.value = optionData.value;
-
-            if (type === CARD.editor.fields.color.type) {
-                option.innerHTML = `
-                    <span style="display: inline-block; width: 16px; height: 16px; background-color: ${optionData.value}; border-radius: 50%; margin-right: 8px;"></span>
-                    ${optionData.label[this._currentLanguage]}
-                `;
-            } else if (type === CARD.editor.fields.layout.type || type === CARD.editor.fields.theme.type || type === CARD.editor.fields.bar_size.type) {
-                const haIcon = document.createElement(CARD.editor.fields.iconItem.element);
-                haIcon.setAttribute(CARD.editor.fields.iconItem.attribute, optionData.icon);
-                haIcon.classList.add(CARD.editor.fields.iconItem.class);
-                option.appendChild(haIcon);
-                option.append(optionData.label[this._currentLanguage]);
-            } else if (type === CARD.editor.fields.tap_action.type) {
-                option.innerHTML = `${optionData.label[this._currentLanguage]}`;
-            } else if (type === CARD.editor.fields.attribute.type) {
-                option.innerHTML = `${optionData.label}`;
-            }
-
-            select.appendChild(option);
+    _addEventListener() {
+        debugLog("editor._addEventListener");
+        const fieldsToProcess = [
+            EDITOR_INPUT_FIELDS.basicConfiguration,
+            EDITOR_INPUT_FIELDS.content.field,
+            EDITOR_INPUT_FIELDS.interaction.field,
+            EDITOR_INPUT_FIELDS.theme.field
+        ];
+        fieldsToProcess.forEach(fieldObject => {
+            Object.keys(fieldObject).forEach(field => {
+                const value = fieldObject[field]; // Use the correct fieldObject
+                this._addEventListenerFor(value.name, value.type);
+            });
         });
     }
 
-    _refreshAttributeOption(curEntity) {
-        if (!curEntity) {
-            return;
-        }
-        const inputElement = this._elements[CARD.editor.keyMappings.attribute];
-        // delete current options
-        while (inputElement.firstChild) {
-            inputElement.removeChild(inputElement.firstChild);
-        }
-        // add option
-        this._addChoices(inputElement, CARD.editor.fields.attribute.type, curEntity);
-    }
-
-    /**
-     * Adds an event listener to a specified element and handles events based on the provided type.
-     *
-     * @param {string} name - The name of the element to attach the event listener to.
-     * @param {string} type - The type of the event listener. Supported types include 'color', 'theme', 'tap_action', 'layout',
-     *                        or other types triggering 'value-changed' and 'input' events.
-     *
-     * When an event occurs, the function checks if the component has been rendered and if there are configuration changes
-     * initiated from the GUI. It then updates the configuration property or manages the tap action, depending on the event type.
-     */
-
-    _addEventListener(name, type) {
+    _addEventListenerFor(name, type) {
+        debugLog(`Caller : _addEventListenerFor(${name}, ${type})`)
         const isHASelect = CARD.editor.fields[type]?.element === CARD.editor.fields.select.element;
         const events = isHASelect ? CARD.interactions.event.HASelect : CARD.interactions.event.other;
 
@@ -3857,53 +3551,186 @@ class EntityProgressCardEditor extends HTMLElement {
                 event.stopPropagation();
             });
         }
-
-        const handleEvent = (event) => {
-            this.configManager._logDebug('EntityProgressCardEditor/handleEvent - new value from GUI: ', event.target.value);
-            if (this.rendered && this._checkConfigChangeFromGUI()) {
-                const newValue = event.detail?.value || event.target.value;
-                if (type === CARD.editor.fields.tap_action.type) {
-                    this._manageTapAction(newValue);
-                } else {
-                    this._updateConfigProperty(name, newValue);
-                }
-            }
-        };
-
         events.forEach(eventType => {
-            this._elements[name].addEventListener(eventType, handleEvent);
+            this._elements[name].addEventListener(eventType, this._onChanged.bind(this));
+        });
+    }
+
+    _sendMessageForUpdate(changedEvent) {
+        debugLog("editor._sendMessageForUpdate()");
+        let newConfig = Object.assign({}, this._config);
+
+        switch (changedEvent.target.id) {
+            case EDITOR_INPUT_FIELDS.basicConfiguration.entity.name:
+            case EDITOR_INPUT_FIELDS.basicConfiguration.attribute.name:
+            case EDITOR_INPUT_FIELDS.content.field.max_value_attribute.name:
+            case EDITOR_INPUT_FIELDS.content.field.name.name:
+            case EDITOR_INPUT_FIELDS.content.field.unit.name:
+            case EDITOR_INPUT_FIELDS.interaction.field.navigate_to.name:
+            case EDITOR_INPUT_FIELDS.theme.field.bar_color.name:
+            case EDITOR_INPUT_FIELDS.theme.field.bar_size.name:
+            case EDITOR_INPUT_FIELDS.theme.field.color.name:
+            case EDITOR_INPUT_FIELDS.theme.field.icon.name:
+            case EDITOR_INPUT_FIELDS.theme.field.layout.name:
+            case EDITOR_INPUT_FIELDS.theme.field.theme.name:
+                if (changedEvent.target.value === undefined || changedEvent.target.value === null || changedEvent.target.value.trim() === '') {
+                    delete newConfig[changedEvent.target.id];
+                } else {
+                    newConfig[changedEvent.target.id] = changedEvent.target.value;
+                }
+                break;;
+            case EDITOR_INPUT_FIELDS.content.field.decimal.name:
+            case EDITOR_INPUT_FIELDS.content.field.min_value.name:
+                const curValue = parseFloat(changedEvent.target.value);
+                if (isNaN(curValue)) {
+                    delete newConfig[changedEvent.target.id];
+                } else {
+                    newConfig[changedEvent.target.id] = curValue;
+                }
+                break;;
+            case EDITOR_INPUT_FIELDS.content.field.max_value.name:
+                if (!isNaN(changedEvent.target.value) && changedEvent.target.value.trim() !== '') {
+                    newConfig[changedEvent.target.id] = parseFloat(changedEvent.target.value);
+                } else if (changedEvent.target.value.trim() !== '') {
+                    newConfig[changedEvent.target.id] = changedEvent.target.value;
+                } else {
+                    delete newConfig[changedEvent.target.id];
+                }
+                break;;
+            case EDITOR_INPUT_FIELDS.interaction.field.tap_action.name:
+                switch (changedEvent.target.value) {
+                    case CARD.interactions.action.tap.default:
+                        delete newConfig.show_more_info;
+                        delete newConfig.navigate_to;
+                        break;;
+                    case CARD.interactions.action.tap.navigate_to:
+                        delete newConfig.show_more_info;
+                        newConfig.navigate_to = "/lovelace/0";
+                        break;;
+                    case CARD.interactions.action.tap.more_info:
+                        newConfig.show_more_info = true;
+                        delete newConfig.navigate_to;
+                        break;;
+                    case CARD.interactions.action.tap.no_action:
+                        newConfig.show_more_info = false;
+                        delete newConfig.navigate_to;
+                        break;;                    
+                }
+                        
+                break;;
+        }
+        if (changedEvent.target.id === EDITOR_INPUT_FIELDS.basicConfiguration.entity.name ||
+            changedEvent.target.id === EDITOR_INPUT_FIELDS.content.field.max_value.name) {
+            const curAttribute = changedEvent.target.id === EDITOR_INPUT_FIELDS.basicConfiguration.entity.name ? EDITOR_INPUT_FIELDS.basicConfiguration.attribute.name : EDITOR_INPUT_FIELDS.content.field.max_value_attribute.name; 
+            const curEntity = new EntityOrValue();
+            curEntity.value = changedEvent.target.value;
+            if (!curEntity.hasAttribute) {
+                delete newConfig[curAttribute];
+            }
+            if (changedEvent.target.id === EDITOR_INPUT_FIELDS.basicConfiguration.entity.name && curEntity.unit && newConfig.unit === undefined) {
+                newConfig.unit = curEntity.unit;
+            }
+        }
+        if (newConfig.grid_options) {
+            const { grid_options, ...rest } = newConfig;
+            newConfig = { ...rest, grid_options };
+        }
+        debugLog(newConfig);
+        const messageEvent = new CustomEvent(CARD.interactions.event.configChanged, {
+            detail: { config: newConfig },
+            bubbles: true,
+            composed: true,
+        });
+        this.dispatchEvent(messageEvent);
+    }
+
+    _toggleFieldDisable(key, disable) {
+        this._container.classList.toggle(`${CARD.style.dynamic.hide}-${key}`, disable);
+    }
+
+    /**
+     * Determines the tap action value based on the current configuration (this._config).
+     */
+    _getTapActionValue() {
+        let value = null;
+
+        if (this._config.navigate_to === undefined && this._config.show_more_info === undefined) {
+            value = CARD.interactions.action.tap.default;
+        } else if (this._config.navigate_to) {
+            value = CARD.interactions.action.tap.navigate_to;
+        } else if (this._config.show_more_info === true) {
+            value = CARD.interactions.action.tap.more_info;
+        } else if (this._config.show_more_info === false) {
+            value = CARD.interactions.action.tap.no_action;
+        }
+
+        return value;
+    }
+
+    /**
+     * Update a list of choices to a given `<select>` element based on the specified list type.
+     *
+     * This method populates the `<select>` element with options according to the provided `type`. The `type`
+     * determines the kind of list (e.g., colors, layout, theme, tap actions) and how the options will be displayed.
+     *
+     * @param {HTMLElement} select - The `<select>` element to which the choices will be added.
+     * @param {string} type - The type of list to populate ('layout', 'color', 'theme', or 'tap_action').
+     */
+    _updateChoices(select, type, choices = null) {
+        debugLog("editor._updateChoices");
+        debugLog(`select : ${select}`);
+        debugLog(`type : ${type}`);
+        select.innerHTML = '';
+        const list = (type === CARD.editor.fields.attribute.type || type === CARD.editor.fields.max_value_attribute.type) ? choices : FIELD_OPTIONS[type];
+        if (!list) {
+            return;
+        }
+        list.forEach(optionData => {
+            const option = document.createElement(CARD.editor.fields.listItem.element);
+            option.value = optionData.value || optionData;
+
+            if (type === CARD.editor.fields.color.type) {
+                const container = document.createElement("div");
+                Object.assign(container.style, {
+                    display: "flex",
+                    alignItems: "center"
+                });
+                const colorDot = document.createElement(CARD.editor.fields.colorDot.element);
+                Object.assign(colorDot.style, CARD.style.dropdown.colorDot);
+                colorDot.style.backgroundColor = optionData.value;
+                const label = document.createElement(CARD.editor.fields.colorText.element);
+                label.textContent = optionData.label[this._currentLanguage];
+                container.appendChild(colorDot);
+                container.appendChild(label);
+                option.innerHTML = '';
+                option.appendChild(container);
+            } else if (type === CARD.editor.fields.layout.type || type === CARD.editor.fields.theme.type || type === CARD.editor.fields.bar_size.type) {
+                const haIcon = document.createElement(CARD.editor.fields.iconItem.element);
+                haIcon.setAttribute(CARD.editor.fields.iconItem.attribute, optionData.icon);
+                haIcon.classList.add(CARD.editor.fields.iconItem.class);
+                option.appendChild(haIcon);
+                option.append(optionData.label[this._currentLanguage]);
+            } else if (type === CARD.editor.fields.tap_action.type) {
+                option.innerHTML = `${optionData.label[this._currentLanguage]}`;
+            } else if (type === CARD.editor.fields.attribute.type || type === CARD.editor.fields.max_value_attribute.type) {
+                option.innerHTML = `${optionData}`;
+            }
+
+            select.appendChild(option);
         });
     }
 
     /**
      * Creates a form field based on the provided configuration and appends it to a container.
-     *
-     * This method generates a form field element dynamically based on the provided field type.
-     *
-     * For the `layout`, `theme`, and `color` field types, additional choices are populated
-     * via helper methods `_addChoice` and `_addColor`. Each field is configured with a label,
-     * value, and an optional description. If the field is marked as a theme-overridable element,
-     * it is stored in the `_overridableElements` object for potential dynamic modification.
-     *
-     * @param {string} config.name - The name of the field (used to store the field's value in `this.config`).
-     * @param {string} config.label - The label for the field, displayed next to the input element.
-     * @param {string} config.type - The type of field to create ('entity', 'icon', 'layout', 'theme', 'color', or 'text').
-     * @param {boolean} config.required - A flag indicating whether the field is required.
-     * @param {boolean} config.isInGroup - A flag indicating if the field should be group-overridable.
-     * @param {string} config.description - The description of the field, typically displayed below the input.
-     * @param {string} config.width - The width of the field.
-     *
-     * @returns {HTMLElement} The container element (`<div>`) containing the input field and its description.
      */
     _createField({ name, label, type, required, isInGroup, description, width }) {
         let inputElement;
-        let value = this.config[name] ?? '';
+        let value = this._config[name] ?? '';
 
         switch (type) {
             case CARD.editor.fields.entity.type:
                 inputElement = document.createElement(CARD.editor.fields.entity.element);
-                inputElement.hass = this.hass;
-                this._toggleFieldDisable(CARD.editor.keyMappings.attribute, !(this.config.entity && ATTRIBUTE_MAPPING[this.config.entity.split('.')[0]]));
+                inputElement.hass = this._hassProvider.hass;
                 break;
             case CARD.editor.fields.icon.type:
                 inputElement = document.createElement(CARD.editor.fields.icon.element);
@@ -3914,16 +3741,10 @@ class EntityProgressCardEditor extends HTMLElement {
             case CARD.editor.fields.color.type:
             case CARD.editor.fields.tap_action.type:
             case CARD.editor.fields.attribute.type:
+            case CARD.editor.fields.max_value_attribute.type:
                 inputElement = document.createElement(CARD.editor.fields[type].element);
                 inputElement.popperOptions = '';
-                this._addChoices(inputElement, type);
-                if (type === CARD.editor.fields.tap_action.type) {
-                    value = this._getTapActionValue();
-                    this._toggleFieldDisable(CARD.editor.keyMappings.navigateTo, value !== CARD.editor.keyMappings.navigateTo);
-                }
-                if (type === CARD.editor.fields.theme.type) {
-                    this._toggleFieldDisable(CARD.editor.keyMappings.theme, !!this.config.theme);
-                }
+                this._updateChoices(inputElement, type);
                 break;
             case CARD.editor.fields.number.type:
                 inputElement = document.createElement(CARD.editor.fields.number.element);
@@ -3941,7 +3762,7 @@ class EntityProgressCardEditor extends HTMLElement {
         inputElement.required = required;
         inputElement.label = label;
         inputElement.value = value;
-        this._addEventListener(name, type);
+        inputElement.id = name;
 
         const fieldContainer = document.createElement(CARD.editor.fields.fieldContainer.element);
         if (isInGroup) {
@@ -3983,6 +3804,11 @@ class EntityProgressCardEditor extends HTMLElement {
         return link;
     }
 
+    toggleAccordion(index) {
+        const accordionContent = this._accordionContent[index];
+        accordionContent.classList.toggle('expanded');
+    }
+
     /**
      * Author: Thomas Loven
      * see:
@@ -4013,6 +3839,70 @@ class EntityProgressCardEditor extends HTMLElement {
         }
     }
 
+    _renderFields(parent, inputFields) {
+        Object.entries(inputFields).forEach(([key, field]) => {
+            parent.appendChild(this._createField({
+                name: field.name,
+                label: field.label[this._currentLanguage],
+                type: field.type,
+                required: field.required,
+                isInGroup: field.isInGroup,
+                description: field.description[this._currentLanguage],
+                width: field.width
+            }));
+        });
+    }
+
+    _renderAccordion(parent, inputFields) {
+        const accordionItem = document.createElement(CARD.editor.fields.accordion.item.element);
+        accordionItem.classList.add(CARD.editor.fields.accordion.item.class);
+        const index = this._accordionContent.push(accordionItem) - 1;
+
+        const accordionTitle = document.createElement(CARD.editor.fields.accordion.title.element);
+        accordionTitle.classList.add(CARD.editor.fields.accordion.title.class);
+        // Créer l'élément SVG
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('width', CARD.style.accordion.icon.size.width);
+        svg.setAttribute('height', CARD.style.accordion.icon.size.height);
+        svg.setAttribute('viewBox', CARD.style.accordion.icon.size.viewBox);
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', inputFields.title.svg);
+        path.setAttribute('fill', 'var(--secondary-text-color)');
+        svg.appendChild(path);
+
+        accordionTitle.appendChild(svg);
+        const title = document.createTextNode(inputFields.title.label[this._currentLanguage]);
+        accordionTitle.appendChild(title);
+        svg.style.marginRight = '8px';
+
+        const accordionArrow = document.createElement(CARD.editor.fields.accordion.arrow.element);
+        accordionArrow.classList.add(CARD.editor.fields.accordion.arrow.class);
+        const svgArrow = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svgArrow.setAttribute('width', CARD.style.accordion.icon.size.width);
+        svgArrow.setAttribute('height', CARD.style.accordion.icon.size.height);
+        svgArrow.setAttribute('viewBox', CARD.style.accordion.icon.size.viewBox);
+        const pathArrow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        pathArrow.setAttribute('d', CARD.style.accordion.icon.arrow); // Définir le chemin
+        pathArrow.setAttribute('fill', 'var(--primary-text-color)');
+        svgArrow.appendChild(pathArrow);
+        accordionArrow.appendChild(svgArrow);
+        accordionTitle.appendChild(accordionArrow);
+
+        accordionTitle.addEventListener(CARD.interactions.event.click, () => {
+            this.toggleAccordion(index);
+        });
+        accordionItem.appendChild(accordionTitle);
+
+        const accordionContent = document.createElement(CARD.editor.fields.accordion.content.element);
+        accordionContent.classList.add(CARD.editor.fields.accordion.content.class);
+
+        this._renderFields(accordionContent, inputFields.field);
+
+        accordionItem.appendChild(accordionContent);
+        parent.appendChild(accordionItem);
+
+    }
+
     /**
      * Renders the editor interface for configuring the card's settings.
      *
@@ -4026,17 +3916,10 @@ class EntityProgressCardEditor extends HTMLElement {
         this._container = document.createElement(CARD.editor.fields.container.element);
         this._container.classList.add(CARD.editor.fields.container.class);
 
-        Object.entries(EDITOR_INPUT_FIELDS).forEach(([key, field]) => {
-            this._container.appendChild(this._createField({
-                name: field.name,
-                label: field.label[this._currentLanguage],
-                type: field.type,
-                required: field.required,
-                isInGroup: field.isInGroup,
-                description: field.description[this._currentLanguage],
-                width: field.width
-            }));
-        });
+        this._renderFields(this._container, EDITOR_INPUT_FIELDS.basicConfiguration);
+        this._renderAccordion(this._container, EDITOR_INPUT_FIELDS.content);
+        this._renderAccordion(this._container, EDITOR_INPUT_FIELDS.interaction);
+        this._renderAccordion(this._container, EDITOR_INPUT_FIELDS.theme);
 
         this._container.appendChild(this._makeHelpIcon());
         fragment.appendChild(this._container);
