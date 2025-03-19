@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.1.3
+ * @version 1.1.4
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.1.3';
+const VERSION = '1.1.4';
 const CARD = {
     meta: {
         typeName: 'entity-progress-card',
@@ -1658,7 +1658,7 @@ const CARD_CSS = `
     .accordion {
         display: block;
         width: 100%;
-        border: 1px solid #363636;
+        border: 1px solid color-mix(in srgb, var(--card-background-color) 80%, var(--secondary-text-color) 20%);
         border-radius: 6px;
         overflow: visible;
     }
@@ -1668,7 +1668,7 @@ const CARD_CSS = `
         justify-content: flex-start;
         gap: 10px;
         position: relative;
-        background-color: var(--card-background-color);
+        background-color: transparent;
         color: var(--primary-text-color);
         cursor: pointer;
         padding: 18px;
@@ -1678,23 +1678,16 @@ const CARD_CSS = `
         text-align: left;
         font-size: 15px;
         transition: 0.4s;
-        border-radius: 6px;
     }
     
     .accordion-title:focus {
         background-color: var(--secondary-background-color);
     }
-
-    .accordion.expanded .accordion-title {
-        border-radius: 0px;
-        border-top-left-radius: 6px;
-        border-top-right-radius: 6px;
-    }
-
+    
     .accordion-arrow {
         display: inline-block;
-        width: 24px; /* Adapter à la taille de votre flèche */
-        height: 24px; /* Adapter à la taille de votre flèche */
+        width: 24px;
+        height: 24px;
         margin-left: auto;
         color: var(--primary-text-color);
         transition: transform 0.2s ease-out;
@@ -2485,6 +2478,9 @@ class EntityHelper {
     get hasAttribute() {
         return this._isValid ? !!ATTRIBUTE_MAPPING[this._type] : false;
     }
+    get defaultAttribute() {
+        return this._isValid && this.hasAttribute ? ATTRIBUTE_MAPPING[this._type].attribute : null;
+    }
     get name() {
         return this._isValid ? this._hassProvider.hass.states[this._id]?.attributes?.friendly_name : null;
     }
@@ -2499,7 +2495,6 @@ class EntityHelper {
     }
     get attributes() {
         return this._isValid ? this._hassProvider.hass.states[this._id]?.attributes ?? null : null;
-        //return this._isValid ? this._hassProvider?.hass?.entities?.[this._id]?.display_precision ?? null : null;
     }
     get isTimer() {
         return this._type === CARD.config.entity.type.timer;
@@ -2632,6 +2627,9 @@ class EntityOrValue {
     }
     get hasAttribute() {
         return this._activeHelper && this._isEntity ? this._activeHelper.hasAttribute : false;
+    }
+    get defaultAttribute() {
+        return this._activeHelper && this._isEntity ? this._activeHelper.defaultAttribute : null;
     }
     get attributes() {
         return this._activeHelper && this._isEntity ? this._activeHelper.attributes : null;
@@ -3069,7 +3067,7 @@ class CardView {
             return;
         }
         // update
-        this._percentHelper.decimal = !this._configHelper.config.decimal && this._currentValue.precision ? this._currentValue.precision : this._configHelper.decimal;
+        this._percentHelper.decimal = this._configHelper.config.decimal === undefined && this._currentValue.precision ? this._currentValue.precision : this._configHelper.decimal;
         if (this._currentValue.isTimer) {
             this._percentHelper.isReversed = typeof this._isReversed ==='boolean' && this._isReversed && this._currentValue.value.state !== CARD.config.entity.state.idle;
             this._percentHelper.current = this._currentValue.value.elapsed;
@@ -3505,6 +3503,11 @@ class EntityProgressCardEditor extends HTMLElement {
         if (this._config.attribute && curEntity.hasAttribute && curEntity.attributes.hasOwnProperty(this._config.attribute) && this._elements[CARD.editor.keyMappings.attribute].value !== this._config.attribute) {
             this._elements[CARD.editor.keyMappings.attribute].value = this._config.attribute;
         }
+        if (this._config.attribute === undefined && curEntity.hasAttribute && this._elements[CARD.editor.keyMappings.attribute].value !== curEntity.defaultAttribute) {
+            let newConfig = Object.assign({}, this._config);
+            newConfig[CARD.editor.keyMappings.attribute] = curEntity.defaultAttribute;
+            this._sendNewConfig(newConfig);
+        }
         this._toggleFieldDisable(EDITOR_INPUT_FIELDS.basicConfiguration.attribute.isInGroup, !curEntity.hasAttribute);
 
         curEntity.value = this._config.max_value; // max value
@@ -3514,6 +3517,11 @@ class EntityProgressCardEditor extends HTMLElement {
         }
         if (this._config.max_value_attribute && curEntity.hasAttribute && curEntity.attributes.hasOwnProperty(this._config.max_value_attribute) && this._elements[CARD.editor.keyMappings.max_value_attribute].value !== this._config.max_value_attribute) {
             this._elements[CARD.editor.keyMappings.max_value_attribute].value = this._config.max_value_attribute;
+        }
+        if (this._config.max_value_attribute === undefined && curEntity.hasAttribute && this._elements[CARD.editor.keyMappings.max_value_attribute].value !== curEntity.defaultAttribute) {
+            let newConfig = Object.assign({}, this._config);
+            newConfig[CARD.editor.keyMappings.max_value_attribute] = curEntity.defaultAttribute;
+            this._sendNewConfig(newConfig);
         }
         this._toggleFieldDisable(EDITOR_INPUT_FIELDS.content.field.max_value_attribute.isInGroup, !curEntity.hasAttribute);
     }
@@ -3631,6 +3639,11 @@ class EntityProgressCardEditor extends HTMLElement {
                 newConfig.unit = curEntity.unit;
             }
         }
+
+        this._sendNewConfig(newConfig);
+    }
+
+    _sendNewConfig(newConfig) {
         if (newConfig.grid_options) {
             const { grid_options, ...rest } = newConfig;
             newConfig = { ...rest, grid_options };
@@ -3687,35 +3700,42 @@ class EntityProgressCardEditor extends HTMLElement {
         }
         list.forEach(optionData => {
             const option = document.createElement(CARD.editor.fields.listItem.element);
-            option.value = optionData.value || optionData;
+            option.value = optionData.value !== undefined ? optionData.value : optionData;
 
-            if (type === CARD.editor.fields.color.type) {
-                const container = document.createElement("div");
-                Object.assign(container.style, {
-                    display: "flex",
-                    alignItems: "center"
-                });
-                const colorDot = document.createElement(CARD.editor.fields.colorDot.element);
-                Object.assign(colorDot.style, CARD.style.dropdown.colorDot);
-                colorDot.style.backgroundColor = optionData.value;
-                const label = document.createElement(CARD.editor.fields.colorText.element);
-                label.textContent = optionData.label[this._currentLanguage];
-                container.appendChild(colorDot);
-                container.appendChild(label);
-                option.innerHTML = '';
-                option.appendChild(container);
-            } else if (type === CARD.editor.fields.layout.type || type === CARD.editor.fields.theme.type || type === CARD.editor.fields.bar_size.type) {
-                const haIcon = document.createElement(CARD.editor.fields.iconItem.element);
-                haIcon.setAttribute(CARD.editor.fields.iconItem.attribute, optionData.icon);
-                haIcon.classList.add(CARD.editor.fields.iconItem.class);
-                option.appendChild(haIcon);
-                option.append(optionData.label[this._currentLanguage]);
-            } else if (type === CARD.editor.fields.tap_action.type) {
-                option.innerHTML = `${optionData.label[this._currentLanguage]}`;
-            } else if (type === CARD.editor.fields.attribute.type || type === CARD.editor.fields.max_value_attribute.type) {
-                option.innerHTML = `${optionData}`;
+            switch (type) {
+                case CARD.editor.fields.color.type:
+                    const container = document.createElement("div");
+                    Object.assign(container.style, {
+                        display: "flex",
+                        alignItems: "center"
+                    });
+                    const colorDot = document.createElement(CARD.editor.fields.colorDot.element);
+                    Object.assign(colorDot.style, CARD.style.dropdown.colorDot);
+                    colorDot.style.backgroundColor = optionData.value;
+                    const label = document.createElement(CARD.editor.fields.colorText.element);
+                    label.textContent = optionData.label[this._currentLanguage];
+                    container.appendChild(colorDot);
+                    container.appendChild(label);
+                    option.innerHTML = '';
+                    option.appendChild(container);
+                    break;;
+                case CARD.editor.fields.layout.type:
+                case CARD.editor.fields.theme.type:
+                case CARD.editor.fields.bar_size.type:
+                    const haIcon = document.createElement(CARD.editor.fields.iconItem.element);
+                    haIcon.setAttribute(CARD.editor.fields.iconItem.attribute, optionData.icon);
+                    haIcon.classList.add(CARD.editor.fields.iconItem.class);
+                    option.appendChild(haIcon);
+                    option.append(optionData.label[this._currentLanguage]);
+                    break;;
+                case CARD.editor.fields.tap_action.type:
+                    option.innerHTML = `${optionData.label[this._currentLanguage]}`;
+                    break;;
+                case CARD.editor.fields.attribute.type:
+                case CARD.editor.fields.max_value_attribute.type:
+                    option.innerHTML = `${optionData}`;
+                    break;;
             }
-
             select.appendChild(option);
         });
     }
