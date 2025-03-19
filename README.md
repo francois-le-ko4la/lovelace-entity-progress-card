@@ -78,7 +78,7 @@ You can customize the card using the following parameters:
 > [!IMPORTANT]
 > Timer are supported (1.0.43). `attribute`, `min`, `max` parameters are not considered.
 
-- **`attribute`** [entity] *(optional)*:  
+- **`attribute`** [string] *(optional)*:  
   The Home Assistant entity's attribute to display.
   
   *Example:*
@@ -196,6 +196,10 @@ You can customize the card using the following parameters:
   ```
     - LQI @ 150 (entity) with max_value @ 255 (static value -> max_value = 255)
     - A (entity_a) with max_value (entity_b)
+
+- **`max_value_attribute`** [string] *(optional)*:  
+  The Home Assistant `max_value`'s attribute to display.  
+  `max_value` must be an entity.
 
 - **`navigate_to`** [string] *(optional)*:  
   Specifies a URL to navigate to when the card is clicked.
