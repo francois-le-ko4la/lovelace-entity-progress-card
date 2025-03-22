@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.1.4
+ * @version 1.1.5
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.1.4';
+const VERSION = '1.1.5';
 const CARD = {
     meta: {
         typeName: 'entity-progress-card',
@@ -50,7 +50,7 @@ const CARD = {
         shadowMode: 'open',
         refresh: { ratio: 500, min:250, max: 1000 },
         debounce: 100,
-        debug: true,
+        debug: false,
     },
     htmlStructure: {
         card: { element: 'ha-card' },
@@ -66,7 +66,8 @@ const CARD = {
             percentage: { element: 'div', class: 'percentage' },
             secondaryInfo: { element: 'div', class: 'secondary-info' },
             progressBar: {
-                container: { element: 'div', class: 'progress-bar' },
+                container: { element: 'div', class: 'progress-bar-container' },
+                bar: { element: 'div', class: 'progress-bar' },
                 inner: { element: 'div', class: 'progress-bar-inner' },
             },
             badge: {
@@ -137,7 +138,7 @@ const CARD = {
                 timer: "mdi:timer-outline",
                 weather: "mdi:weather-cloudy",
                 sun: "mdi:white-balance-sunny"
-            },           
+            },
             byDeviceClass: {
                 battery: "mdi:battery",
                 carbon_dioxide: "mdi:molecule-co2",
@@ -283,12 +284,14 @@ const CARD = {
             listItem: { type: 'list item', element: 'mwc-list-item' },
             iconItem: { element: 'ha-icon', attribute: 'icon', class: 'editor-icon-list' },
             select: { element: 'ha-select' },
+            toggle: { type: 'toggle', element: 'ha-switch' },
             colorDot: { element: 'span' },
-            colorText: { element: 'span' },
+            text: { element: 'span' },
             accordion: {
                 item: { element: 'div', class: 'accordion' },
+                icon: { element: 'ha-icon', class: 'accordion-icon' },
                 title: { element: 'button', class: 'accordion-title' },
-                arrow: { element: 'div', class: 'accordion-arrow' },
+                arrow: { element: 'ha-icon', class: 'accordion-arrow', icon: 'mdi:chevron-down' },
                 content: { element: 'div', class: 'accordion-content' },
             }
         },
@@ -306,15 +309,9 @@ const CARD = {
         customTheme: { expectedKeys: ['min', 'max', 'color'] },
     },
     documentation: {
-        link: { element: 'a', class: 'documentation-link' },
-        outerDiv: { element: 'div', class: 'documentation-outer' },
-        innerDiv: { element: 'div', class: 'documentation-inner' },
-        questionMark: { element: 'div', class: 'documentation-icon' },
-        attributes: {
-            text: '?',
-            linkTarget: '_blank',
-            documentationUrl: 'https://github.com/francois-le-ko4la/lovelace-entity-progress-card/',
-        },
+        link: { element: 'a', class: 'documentation-link', linkTarget: '_blank', documentationUrl: 'https://github.com/francois-le-ko4la/lovelace-entity-progress-card/', },
+        shape: { element: 'div', class: 'documentation-link-shape' },
+        questionMark: { element: 'ha-icon', class: 'documentation-icon', icon:'mdi:help-circle',  style: { width: '24px', class: '24px' } },
     },
 };
 
@@ -624,6 +621,7 @@ const EDITOR_INPUT_FIELDS = {
             }
         },
     },
+
     content: {
         title: {
             label: {
@@ -641,7 +639,7 @@ const EDITOR_INPUT_FIELDS = {
                 nb: "Innhold",
                 sv: "Innehåll"
             },
-            svg: 'M4,9H20V11H4V9M4,13H14V15H4V13Z',
+            icon: 'mdi:text-short',
         },
         field: {
             name: {
@@ -718,6 +716,7 @@ const EDITOR_INPUT_FIELDS = {
                     sv: "m, kg...",
                 }
             },
+
             decimal: {
                 name: 'decimal',
                 label: {
@@ -885,7 +884,7 @@ const EDITOR_INPUT_FIELDS = {
                 nb: "Interaksjoner",
                 sv: "Interaktioner"
             },
-            svg: 'M10,9A1,1 0 0,1 11,8A1,1 0 0,1 12,9V13.47L13.21,13.6L18.15,15.79C18.68,16.03 19,16.56 19,17.14V21.5C18.97,22.32 18.32,22.97 17.5,23H11C10.62,23 10.26,22.85 10,22.57L5.1,18.37L5.84,17.6C6.03,17.39 6.3,17.28 6.58,17.28H6.8L10,19V9M11,5A4,4 0 0,1 15,9C15,10.5 14.2,11.77 13,12.46V11.24C13.61,10.69 14,9.89 14,9A3,3 0 0,0 11,6A3,3 0 0,0 8,9C8,9.89 8.39,10.69 9,11.24V12.46C7.8,11.77 7,10.5 7,9A4,4 0 0,1 11,5Z',
+            icon: 'mdi:gesture-tap-hold',
         },
         field: {
             tap_action: {
@@ -981,9 +980,119 @@ const EDITOR_INPUT_FIELDS = {
                 nb: "Utseende og funksjonalitet",
                 sv: "Utseende och funktion"
             },
-            svg: 'M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3M7 7H9V9H7V7M7 11H9V13H7V11M7 15H9V17H7V15M17 17H11V15H17V17M17 13H11V11H17V13M17 9H11V7H17V9Z',
+            icon: 'mdi:list-box',
         },
         field: {
+            toggleIcon: {
+                name: 'toggle_icon',
+                label: {
+                    en: "Icon",
+                    fr: "Icône",
+                    es: "Icono",
+                    it: "Icona",
+                    de: "Icon",
+                    nl: "Icoon",
+                    hr: "Ikona",
+                    pl: "Ikona",
+                    mk: "Икона",
+                    pt: "Ícone",
+                    da: "Ikon",
+                    nb: "Ikon",
+                    sv: "Ikon"
+                },
+                type: CARD.editor.fields.toggle.type,
+                width: '100%',
+                required: false,
+                isInGroup: null
+            },
+            toggleName: {
+                name: 'toggle_name',
+                label: {
+                    en: "Name",
+                    fr: "Nom",
+                    es: "Nombre",
+                    it: "Nome",
+                    de: "Name",
+                    nl: "Naam",
+                    hr: "Ime",
+                    pl: "Nazwa",
+                    mk: "Име",
+                    pt: "Nome",
+                    da: "Navn",
+                    nb: "Navn",
+                    sv: "Namn"
+                },
+                type: CARD.editor.fields.toggle.type,
+                width: '100%',
+                required: false,
+                isInGroup: null
+            },
+            toggleUnit: {
+                name: 'toggle_unit',
+                label: {
+                    en: "Unit",
+                    fr: "Unité",
+                    es: "Unidad",
+                    it: "Unità",
+                    de: "Einheit",
+                    nl: "Eenheid",
+                    hr: "Jedinica",
+                    pl: "Jednostka",
+                    mk: "Единица",
+                    pt: "Unidade",
+                    da: "Enhed",
+                    nb: "Enhet",
+                    sv: "Enhet"
+                },
+                type: CARD.editor.fields.toggle.type,
+                width: '100%',
+                required: false,
+                isInGroup: null
+            },
+            toggleSecondaryInfo: {
+                name: 'toggle_secondary_info',
+                label: {
+                    en: "Info",
+                    fr: "Info",
+                    es: "Info",
+                    it: "Info",
+                    de: "Info",
+                    nl: "Info",
+                    hr: "Info",
+                    pl: "Info",
+                    mk: "Инфо",
+                    pt: "Info",
+                    da: "Info",
+                    nb: "Info",
+                    sv: "Info"
+                },
+                type: CARD.editor.fields.toggle.type,
+                width: '100%',
+                required: false,
+                isInGroup: null
+            },
+            toggleBar: {
+                name: 'toggle_progress_bar',
+                label: {
+                    en: "Bar",
+                    fr: "Barre",
+                    es: "Barra",
+                    it: "Barra",
+                    de: "Balken",
+                    nl: "Balk",
+                    hr: "Traka",
+                    pl: "Pasek",
+                    mk: "Лента",
+                    pt: "Barra",
+                    da: "Linje",
+                    nb: "Linje",
+                    sv: "Fält"
+                },
+                type: CARD.editor.fields.toggle.type,
+                width: '100%',
+                required: false,
+                isInGroup: null
+            },
             theme: {
                 name: 'theme',
                 label: {
@@ -1301,7 +1410,9 @@ const CARD_HTML = `
             <${CARD.htmlStructure.elements.secondaryInfo.element} class="${CARD.htmlStructure.elements.secondaryInfo.class}">
                 <${CARD.htmlStructure.elements.percentage.element} class="${CARD.htmlStructure.elements.percentage.class}"></${CARD.htmlStructure.elements.percentage.element}>
                 <${CARD.htmlStructure.elements.progressBar.container.element} class="${CARD.htmlStructure.elements.progressBar.container.class}">
-                    <${CARD.htmlStructure.elements.progressBar.inner.element} class="${CARD.htmlStructure.elements.progressBar.inner.class}"></${CARD.htmlStructure.elements.progressBar.inner.element}>
+                    <${CARD.htmlStructure.elements.progressBar.bar.element} class="${CARD.htmlStructure.elements.progressBar.bar.class}">
+                        <${CARD.htmlStructure.elements.progressBar.inner.element} class="${CARD.htmlStructure.elements.progressBar.inner.class}"></${CARD.htmlStructure.elements.progressBar.inner.element}>
+                    </${CARD.htmlStructure.elements.progressBar.bar.element}>
                 </${CARD.htmlStructure.elements.progressBar.container.element}>
             </${CARD.htmlStructure.elements.secondaryInfo.element}>
         </${CARD.htmlStructure.sections.right.element}>
@@ -1466,6 +1577,13 @@ const CARD_CSS = `
     /* Progress bar */
     .${CARD.htmlStructure.elements.progressBar.container.class} {
         flex-grow: 1;
+        height: 16px; /* Même hauteur que le pourcentage */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .${CARD.htmlStructure.elements.progressBar.bar.class} {
+        width: 100%;
         height: ${CARD.style.bar.sizeOptions.small.size};
         max-height: ${CARD.style.bar.sizeOptions.large.size};
         background-color: var(--divider-color);
@@ -1474,21 +1592,21 @@ const CARD_CSS = `
         position: relative;
     }
     
-    .${CARD.style.dynamic.progressBar.orientation.rtl} .${CARD.htmlStructure.elements.progressBar.container.class} {
+    .${CARD.style.dynamic.progressBar.orientation.rtl} .${CARD.htmlStructure.elements.progressBar.bar.class} {
         transform: scaleX(-1);
     }
 
-    .${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.elements.progressBar.container.class} {
+    .${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
         height: ${CARD.style.bar.sizeOptions.small.size};
         max-height: ${CARD.style.bar.sizeOptions.small.size};
     }
 
-    .${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.container.class} {
+    .${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
         height: ${CARD.style.bar.sizeOptions.medium.size};
         max-height: ${CARD.style.bar.sizeOptions.medium.size};
    }
 
-    .${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.container.class} {
+    .${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
         height: ${CARD.style.bar.sizeOptions.large.size};
         max-height: ${CARD.style.bar.sizeOptions.large.size};
    }
@@ -1589,7 +1707,7 @@ const CARD_CSS = `
         z-index: 600;
     }
 
-    .${CARD.documentation.outerDiv.class} {
+    .${CARD.documentation.shape.class} {
         width: 48px;
         height: 48px;
         display: flex;
@@ -1598,24 +1716,12 @@ const CARD_CSS = `
         border-radius: 50%;
         cursor: pointer;
     }
-    .${CARD.documentation.outerDiv.class}:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-    }
-
-    .${CARD.documentation.innerDiv.class} {
-        width: 25px;
-        height: 25px;
-        background-color: rgba(255, 255, 255, 0.7);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
+    .${CARD.documentation.shape.class}:hover {
+        background-color: color-mix(in srgb, var(--card-background-color) 90%, var(--secondary-text-color) 10%);
     }
 
     .${CARD.documentation.questionMark.class} {
-        font-size: 20px;
-        color: black;
-        font-weight: bold;
+        color: var(--primary-text-color);
     }
 
     .${CARD.htmlStructure.elements.badge.container.class} {
@@ -1650,19 +1756,32 @@ const CARD_CSS = `
     .${CARD.style.dynamic.hiddenComponent.icon.class} .${CARD.htmlStructure.sections.left.class},
     .${CARD.style.dynamic.hiddenComponent.name.class} .${CARD.htmlStructure.elements.name.class},
     .${CARD.style.dynamic.hiddenComponent.shape.class} .${CARD.htmlStructure.elements.shape.class},
-    .${CARD.style.dynamic.hiddenComponent.progress_bar.class} .${CARD.htmlStructure.elements.progressBar.container.class},
+    .${CARD.style.dynamic.hiddenComponent.progress_bar.class} .${CARD.htmlStructure.elements.progressBar.bar.class},
     .${CARD.style.dynamic.hiddenComponent.secondary_info.class} .${CARD.htmlStructure.elements.percentage.class} {
         display: none;
     }
 
-    .accordion {
+    .${CARD.style.dynamic.hiddenComponent.icon.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.left.class},
+    .${CARD.style.dynamic.hiddenComponent.name.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.name.class},
+    .${CARD.style.dynamic.hiddenComponent.shape.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.shape.class},
+    .${CARD.style.dynamic.hiddenComponent.progress_bar.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.progressBar.bar.class},
+    .${CARD.style.dynamic.hiddenComponent.secondary_info.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.percentage.class} {
+        display: flex;
+        visibility: hidden;
+    }
+
+    .${CARD.editor.fields.accordion.item.class} {
         display: block;
         width: 100%;
         border: 1px solid color-mix(in srgb, var(--card-background-color) 80%, var(--secondary-text-color) 20%);
         border-radius: 6px;
         overflow: visible;
     }
-    .accordion-title {
+    .${CARD.editor.fields.accordion.icon.class} {
+        color: var(--secondary-text-color);
+        margin-right: 8px;
+    }
+    .${CARD.editor.fields.accordion.title.class} {
         display: flex;
         align-items: center;
         justify-content: flex-start;
@@ -1680,11 +1799,11 @@ const CARD_CSS = `
         transition: 0.4s;
     }
     
-    .accordion-title:focus {
+    .${CARD.editor.fields.accordion.title.class}:focus {
         background-color: var(--secondary-background-color);
     }
     
-    .accordion-arrow {
+    .${CARD.editor.fields.accordion.arrow.class} {
         display: inline-block;
         width: 24px;
         height: 24px;
@@ -1692,10 +1811,10 @@ const CARD_CSS = `
         color: var(--primary-text-color);
         transition: transform 0.2s ease-out;
     }
-    .accordion.expanded .accordion-arrow {
+    .accordion.expanded .${CARD.editor.fields.accordion.arrow.class} {
         transform: rotate(180deg);
     }
-    .accordion-content {
+    .${CARD.editor.fields.accordion.content.class} {
         display: flex;
         flex-direction: row; /* Pour espacer les éléments verticalement */
         flex-wrap: wrap;
@@ -1704,23 +1823,24 @@ const CARD_CSS = `
         padding: 0px 18px;
         background-color: transparent;
         max-height: 0;
-        transition: max-height 0.1s ease-out;
+        transition:
+            max-height 0.2s cubic-bezier(0.33, 0, 0.2, 1),
+            padding 0.4s cubic-bezier(0.33, 0, 0.2, 1);
         overflow: hidden;
     }
 
-    .accordion.expanded .accordion-content {
+    .accordion.expanded .${CARD.editor.fields.accordion.content.class} {
         max-height: 1000px;
         overflow: visible;
+        padding-top: 30px;
+        padding-bottom: 30px;
     }
-    .accordion.expanded .accordion-content::before {
-        content: "";
-        height: 10px; /* Espace au-dessus du premier élément */
+    .${CARD.editor.fields.accordion.content.class} > * {
+        opacity: 0;
+        transition: opacity 0.3s ease;
     }
-
-    .accordion.expanded .accordion-content::after {
-        content: "";
-        height: 10px; /* Espace en dessous du dernier élément */
-        border-radius: 6px;
+    .${CARD.editor.fields.accordion.content.class} > * {
+        opacity: 1;
     }
 `;
 
@@ -3524,6 +3644,22 @@ class EntityProgressCardEditor extends HTMLElement {
             this._sendNewConfig(newConfig);
         }
         this._toggleFieldDisable(EDITOR_INPUT_FIELDS.content.field.max_value_attribute.isInGroup, !curEntity.hasAttribute);
+
+        const keysArray = ['icon', 'name', 'secondary_info', 'progress_bar'];
+        keysArray.forEach(currentKey => {
+            if (this._config.hide && this._config.hide.includes(currentKey)) {
+                this._elements["toggle_" + currentKey].checked = false;
+            } else {
+                this._elements["toggle_" + currentKey].checked = true;
+            }
+        });
+
+        if (this._config.disable_unit !== undefined && this._config.disable_unit === true) {
+            this._elements["toggle_unit"].checked = false;
+        } else {
+            this._elements["toggle_unit"].checked = true;
+        }
+
     }
 
     _onChanged(event) {
@@ -3566,6 +3702,8 @@ class EntityProgressCardEditor extends HTMLElement {
 
     _sendMessageForUpdate(changedEvent) {
         debugLog("editor._sendMessageForUpdate()");
+        debugLog(changedEvent);
+        debugLog(`${changedEvent.target.id} -> ${changedEvent.target.value}`);
         let newConfig = Object.assign({}, this._config);
 
         switch (changedEvent.target.id) {
@@ -3586,7 +3724,7 @@ class EntityProgressCardEditor extends HTMLElement {
                 } else {
                     newConfig[changedEvent.target.id] = changedEvent.target.value;
                 }
-                break;;
+                break;
             case EDITOR_INPUT_FIELDS.content.field.decimal.name:
             case EDITOR_INPUT_FIELDS.content.field.min_value.name:
                 const curValue = parseFloat(changedEvent.target.value);
@@ -3595,7 +3733,7 @@ class EntityProgressCardEditor extends HTMLElement {
                 } else {
                     newConfig[changedEvent.target.id] = curValue;
                 }
-                break;;
+                break;
             case EDITOR_INPUT_FIELDS.content.field.max_value.name:
                 if (!isNaN(changedEvent.target.value) && changedEvent.target.value.trim() !== '') {
                     newConfig[changedEvent.target.id] = parseFloat(changedEvent.target.value);
@@ -3604,28 +3742,59 @@ class EntityProgressCardEditor extends HTMLElement {
                 } else {
                     delete newConfig[changedEvent.target.id];
                 }
-                break;;
+                break;
             case EDITOR_INPUT_FIELDS.interaction.field.tap_action.name:
                 switch (changedEvent.target.value) {
                     case CARD.interactions.action.tap.default:
                         delete newConfig.show_more_info;
                         delete newConfig.navigate_to;
-                        break;;
+                        break;
                     case CARD.interactions.action.tap.navigate_to:
                         delete newConfig.show_more_info;
                         newConfig.navigate_to = "/lovelace/0";
-                        break;;
+                        break;
                     case CARD.interactions.action.tap.more_info:
                         newConfig.show_more_info = true;
                         delete newConfig.navigate_to;
-                        break;;
+                        break;
                     case CARD.interactions.action.tap.no_action:
                         newConfig.show_more_info = false;
                         delete newConfig.navigate_to;
-                        break;;                    
+                        break;                 
                 }
-                        
-                break;;
+            case EDITOR_INPUT_FIELDS.theme.field.toggleBar.name:
+            case EDITOR_INPUT_FIELDS.theme.field.toggleIcon.name:
+            case EDITOR_INPUT_FIELDS.theme.field.toggleName.name:
+            case EDITOR_INPUT_FIELDS.theme.field.toggleSecondaryInfo.name:
+                const newState = !changedEvent.srcElement.checked;
+                const key = changedEvent.target.id.replace('toggle_', '');
+                debugLog(newState);
+                if (changedEvent.srcElement.checked) {
+                    if (!newConfig.hasOwnProperty('hide')) {
+                        newConfig['hide'] = [];
+                    }
+                    if (!newConfig['hide'].includes(key)) {
+                        newConfig['hide'].push(key);
+                    }
+                } else if (newConfig.hasOwnProperty('hide')) {
+                    const index = newConfig['hide'].indexOf(key);
+                    if (index !== -1) {
+                        newConfig['hide'].splice(index, 1);
+                    }                    
+                    if (newConfig['hide'].length === 0) {
+                        delete newConfig['hide'];
+                    }                    
+                }  
+                break;
+            case EDITOR_INPUT_FIELDS.theme.field.toggleUnit.name:
+                if (changedEvent.srcElement.checked) {
+                    if (newConfig.disable_unit === undefined || newConfig.disable_unit !== true) {
+                        newConfig['disable_unit'] = true;
+                    }
+                } else if (newConfig.disable_unit !== undefined) {
+                    delete newConfig['disable_unit'];
+                }
+                break;
         }
         if (changedEvent.target.id === EDITOR_INPUT_FIELDS.basicConfiguration.entity.name ||
             changedEvent.target.id === EDITOR_INPUT_FIELDS.content.field.max_value.name) {
@@ -3712,13 +3881,13 @@ class EntityProgressCardEditor extends HTMLElement {
                     const colorDot = document.createElement(CARD.editor.fields.colorDot.element);
                     Object.assign(colorDot.style, CARD.style.dropdown.colorDot);
                     colorDot.style.backgroundColor = optionData.value;
-                    const label = document.createElement(CARD.editor.fields.colorText.element);
+                    const label = document.createElement(CARD.editor.fields.text.element);
                     label.textContent = optionData.label[this._currentLanguage];
                     container.appendChild(colorDot);
                     container.appendChild(label);
                     option.innerHTML = '';
                     option.appendChild(container);
-                    break;;
+                    break;
                 case CARD.editor.fields.layout.type:
                 case CARD.editor.fields.theme.type:
                 case CARD.editor.fields.bar_size.type:
@@ -3727,14 +3896,14 @@ class EntityProgressCardEditor extends HTMLElement {
                     haIcon.classList.add(CARD.editor.fields.iconItem.class);
                     option.appendChild(haIcon);
                     option.append(optionData.label[this._currentLanguage]);
-                    break;;
+                    break;
                 case CARD.editor.fields.tap_action.type:
                     option.innerHTML = `${optionData.label[this._currentLanguage]}`;
-                    break;;
+                    break;
                 case CARD.editor.fields.attribute.type:
                 case CARD.editor.fields.max_value_attribute.type:
                     option.innerHTML = `${optionData}`;
-                    break;;
+                    break;
             }
             select.appendChild(option);
         });
@@ -3770,13 +3939,31 @@ class EntityProgressCardEditor extends HTMLElement {
                 inputElement = document.createElement(CARD.editor.fields.number.element);
                 inputElement.type = CARD.editor.fields.number.type;
                 break;
+            case CARD.editor.fields.toggle.type:
+                inputElement = document.createElement(CARD.editor.fields.container.element);
+                inputElement.style.display = 'flex';
+                inputElement.style.alignItems = 'center';
+                inputElement.style.gap = '8px';
+                
+                const toggleLabel = document.createElement(CARD.editor.fields.text.element);
+                toggleLabel.textContent = label;
+                
+                const toggle = document.createElement(CARD.editor.fields.toggle.element);
+                toggle.setAttribute('checked', true);
+                toggle.id = name;
+
+                inputElement.appendChild(toggleLabel);
+                inputElement.appendChild(toggle);
+
+                this._elements[name] = toggle;
+                return inputElement;
+                break;
             default:
                 inputElement = document.createElement(CARD.editor.fields.default.element);
                 inputElement.type = CARD.editor.fields.default.type;
                 break;
         }
 
-        // store element and manage default display
         this._elements[name] = inputElement;
         inputElement.style.width = '100%';
         inputElement.required = required;
@@ -3804,23 +3991,19 @@ class EntityProgressCardEditor extends HTMLElement {
     _makeHelpIcon() {
         // Lien cliquable
         const link = document.createElement(CARD.documentation.link.element);
-        link.href = CARD.documentation.attributes.documentationUrl;
-        link.target = CARD.documentation.attributes.linkTarget;
+        link.href = CARD.documentation.link.documentationUrl;
+        link.target = CARD.documentation.link.linkTarget;
         link.classList.add(CARD.documentation.link.class);
-
-        const outerDiv = document.createElement(CARD.documentation.outerDiv.element);
-        outerDiv.classList.add(CARD.documentation.outerDiv.class);
-
-        const innerDiv = document.createElement(CARD.documentation.innerDiv.element);
-        innerDiv.classList.add(CARD.documentation.innerDiv.class);
+        const shape = document.createElement(CARD.documentation.shape.element);
+        shape.classList.add(CARD.documentation.shape.class);
 
         const questionMark = document.createElement(CARD.documentation.questionMark.element);
-        questionMark.textContent = CARD.documentation.attributes.text;
         questionMark.classList.add(CARD.documentation.questionMark.class);
+        questionMark.setAttribute("icon", CARD.documentation.questionMark.icon);
+        Object.assign(questionMark.style, CARD.documentation.questionMark.style);
 
-        innerDiv.appendChild(questionMark);
-        outerDiv.appendChild(innerDiv);
-        link.appendChild(outerDiv);
+        shape.appendChild(questionMark);
+        link.appendChild(shape);
         return link;
     }
 
@@ -3867,7 +4050,7 @@ class EntityProgressCardEditor extends HTMLElement {
                 type: field.type,
                 required: field.required,
                 isInGroup: field.isInGroup,
-                description: field.description[this._currentLanguage],
+                description: field.description !== undefined ? field.description[this._currentLanguage] : null,
                 width: field.width
             }));
         });
@@ -3880,32 +4063,17 @@ class EntityProgressCardEditor extends HTMLElement {
 
         const accordionTitle = document.createElement(CARD.editor.fields.accordion.title.element);
         accordionTitle.classList.add(CARD.editor.fields.accordion.title.class);
-        // Créer l'élément SVG
-        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.setAttribute('width', CARD.style.accordion.icon.size.width);
-        svg.setAttribute('height', CARD.style.accordion.icon.size.height);
-        svg.setAttribute('viewBox', CARD.style.accordion.icon.size.viewBox);
-        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        path.setAttribute('d', inputFields.title.svg);
-        path.setAttribute('fill', 'var(--secondary-text-color)');
-        svg.appendChild(path);
+        const icon = document.createElement(CARD.editor.fields.accordion.icon.element);
+        icon.setAttribute("icon", inputFields.title.icon);
+        icon.classList.add(CARD.editor.fields.accordion.icon.class);
+        accordionTitle.appendChild(icon);
 
-        accordionTitle.appendChild(svg);
         const title = document.createTextNode(inputFields.title.label[this._currentLanguage]);
         accordionTitle.appendChild(title);
-        svg.style.marginRight = '8px';
 
         const accordionArrow = document.createElement(CARD.editor.fields.accordion.arrow.element);
         accordionArrow.classList.add(CARD.editor.fields.accordion.arrow.class);
-        const svgArrow = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svgArrow.setAttribute('width', CARD.style.accordion.icon.size.width);
-        svgArrow.setAttribute('height', CARD.style.accordion.icon.size.height);
-        svgArrow.setAttribute('viewBox', CARD.style.accordion.icon.size.viewBox);
-        const pathArrow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        pathArrow.setAttribute('d', CARD.style.accordion.icon.arrow); // Définir le chemin
-        pathArrow.setAttribute('fill', 'var(--primary-text-color)');
-        svgArrow.appendChild(pathArrow);
-        accordionArrow.appendChild(svgArrow);
+        accordionArrow.setAttribute("icon", CARD.editor.fields.accordion.arrow.icon);
         accordionTitle.appendChild(accordionArrow);
 
         accordionTitle.addEventListener(CARD.interactions.event.click, () => {

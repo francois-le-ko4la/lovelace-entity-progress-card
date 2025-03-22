@@ -27,6 +27,7 @@ This custom version of the **Bar Card** for Home Assistant allows you to display
 
 - HA version: 2024+
 > [!IMPORTANT]
+>
 > Ensure your Home Assistant instance is up to date to support this custom card.
 
 ## 📦 Installation Steps
@@ -37,11 +38,11 @@ Use this button to add the repository to your HACS:
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=francois-le-ko4la&repository=lovelace-entity-progress-card&category=plugin)
 
 > [!TIP]
+> 
 > If you are unable to use the button above, follow the steps below:
-> 1. Add this repository to HACS by including it as a custom repository:
->   - Go to `HACS` > `Integrations` > `⋮` > `Custom repositories`.
->   - Paste the URL of this repository and select `Dashboard` as the category.
-> 2. Install the Entity Progress Card from HACS.
+> - Add this repository to HACS: Go to `HACS` > `Integrations` > `⋮` > `Custom repositories`.
+> - Paste the URL of this repository and select `Dashboard` as the category.
+> - Install the Entity Progress Card from HACS.
 
 ### Manual Installation
 
@@ -72,10 +73,12 @@ You can customize the card using the following parameters:
   ``` 
   
 > [!NOTE]
+>
 > Supported entities are not hardcoded, ensuring flexibility.
 > If you need a specific attribute, use the `attribute` parameter.
 
 > [!IMPORTANT]
+>
 > Timer are supported (1.0.43). `attribute`, `min`, `max` parameters are not considered.
 
 - **`attribute`** [string] *(optional)*:  
@@ -147,7 +150,7 @@ You can customize the card using the following parameters:
     - `decimal` = 2 for other unit (°C, kWh...)
 
   *Example:*  
- ```yaml
+  ```yaml
   type: custom:entity-progress-card
   ...
   decimal: 1
@@ -157,6 +160,7 @@ You can customize the card using the following parameters:
     - `1` for displaying 20.7°C
 
 > [!IMPORTANT]
+>
 > Before version 1.0.20, the default values were different (2 for percentages
 > and 0 for other units). When updating, you will need to adjust the parameter
 > according to your needs.
@@ -170,7 +174,7 @@ You can customize the card using the following parameters:
     - `0`
 
   *Example:*
- ```yaml
+  ```yaml
   type: custom:entity-progress-card
   ...
   min_value: 10
@@ -415,9 +419,11 @@ You can customize the card using the following parameters:
   ```
 
 > [!NOTE]
+>
 > [`min`, `max`[ / [`min`, `max`) : The range includes the min value but excludes the max value.
 
 > [!IMPORTANT]
+>
 > Please ensure your themes follow these guidelines: Each interval must be valid, respecting the rule `min` < `max`.
 > The transitions between ranges should be seamless, with each max connecting smoothly to the next min to avoid
 > gaps or overlaps. If a value falls below the lowest defined interval, the lowest range will be applied, while
@@ -428,6 +434,7 @@ You can customize the card using the following parameters:
 > and ignore the `custom_theme` definition.
 
 > [!TIP]
+>
 > If you wish to define colors for discontinuous ranges, you will need to create intermediary ranges to ensure
 > continuity, using default colors such as `var(--state-icon-color)` for these filler ranges.
 
@@ -505,8 +512,6 @@ custom_theme:
 > While this parameter was originally designed for timers, it can be applied to any entity where a reversed progress bar is needed.
 
 - **`hide`** [array] *(optional)*:  
-  [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#)  
-  
   Defines which elements should be hidden in the card.  
   The array can contain any of the following values:
   - icon → Hides the entity's icon.
@@ -519,14 +524,12 @@ custom_theme:
   type: custom:entity-progress-card
   ...
   hide:
-  - icon
-  - name
-  - secondary_info
+    - icon
+    - name
+    - secondary_info
   ```
 
 - **`disable_unit`** [boolean] *(optional)*:  
-  [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#)  
-  
   Disables the display of the unit when set to `true`. If not defined or set to `false`, the unit will be shown.
 
   *Example:*  
@@ -710,6 +713,7 @@ We use predefined intervals, each associated with a specific color:
 * 34°C - 50°C / 93.2°F - 122°F: `var(--red-color)`
 
 > [!IMPORTANT]
+>
 > Fahrenheit values are converted to apply the correct color. Make sure to set your unit to `°F` correctly in order to see the accurate color representation.
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/temperature.png" alt="Image title" width="500"/>
@@ -764,6 +768,7 @@ The ranges and their corresponding colors are as follows:
 *   25000 - 50000 ppb: `var(--deep-purple-color)` → Hazardous
 
 > [!IMPORTANT]
+>
 > The information provided in this HA card is based on thresholds from the following [source](https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element).
 > This color code is for informational purposes only and should not be taken as professional advice or a standard to follow. It is crucial to consult the device's official documentation or current standards for the most accurate and up-to-date information. In case of any discrepancy between the information provided here and the device's documentation or current standards, the latter shall prevail.
 > The lower the value, the better it is generally considered to be.
@@ -796,6 +801,7 @@ The ranges and their corresponding colors are as follows:
 *   150 - 200 µg/m³: `var(--deep-purple-color)` → Very unhealthy air quality  
 
 > [!IMPORTANT]
+>
 > The information provided in this HA card is based on thresholds from the following [source](https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element).
 > This color code is for informational purposes only and should not be taken as professional advice or a standard to follow. It is crucial to consult the device's official documentation or current standards for the most accurate and up-to-date information. In case of any discrepancy between the information provided here and the device's documentation or current standards, the latter shall prevail.
 > The lower the value, the better it is generally considered to be.
