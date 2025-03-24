@@ -235,6 +235,7 @@ The Home Assistant `max_value`'s attribute to display.
 #### `navigate_to`
 
 > **`navigate_to`** [string] *(optional)*
+
 Specifies a URL to navigate to when the card is clicked.
 If defined, clicking the card will redirect to the specified location.
 This parameter takes precedence over show_more_info if both are defined.
