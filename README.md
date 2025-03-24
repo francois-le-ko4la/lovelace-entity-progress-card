@@ -26,6 +26,8 @@ This custom version of the **Bar Card** for Home Assistant allows you to display
 ## ⚙️ Prerequisites
 
 - HA version: 2024+
+- Chrome 92+, Edge 92+, Firefox 90+, Safari 15.4+, Opera 78+
+
 > [!IMPORTANT]
 >
 > Ensure your Home Assistant instance is up to date to support this custom card.
@@ -54,23 +56,26 @@ type: module
 ```
 
 ## 📝 Usage
-### Card Editor
+### 🪄 Card Editor
 The card editor allows you to quickly set up and customize the card.
 
 ![Editor](https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/editor.png)
 
-### Parameters
+### 🔧 Parameters
 
 You can customize the card using the following parameters:
 
-- **`entity`** [entity] *(required)*:  
-  The Home Assistant entity to display.
-  
-  *Example:*
-  ```yaml
-  type: custom:entity-progress-card
-  entity: sensor.hp_envy_6400_series_tri_color_cartridge
-  ``` 
+#### `entity`
+
+> **`entity`** [entity] *(required)*
+
+The Home Assistant entity to display.
+
+*Example:*
+```yaml
+type: custom:entity-progress-card
+entity: sensor.hp_envy_6400_series_tri_color_cartridge
+``` 
   
 > [!NOTE]
 >
@@ -81,83 +86,96 @@ You can customize the card using the following parameters:
 >
 > Timer are supported (1.0.43). `attribute`, `min`, `max` parameters are not considered.
 
-- **`attribute`** [string] *(optional)*:  
-  The Home Assistant entity's attribute to display.
-  
-  *Example:*
-  ```yaml
-  type: custom:entity-progress-card
-  entity: light.led0
-  attribute: brightness
-  ``` 
- 
-  *Supported entities:*
-  
-  | entity (supported)    | default attribute   |
-  | --------------------- | ------------------- |
-  | cover.xxx             | current_position    |
-  | light.xxx             | brightness (%)      |
-  | fan.xxx               | percentage          |
-  | climate.xxx           | N/A                 |
-  | humidifier.xxx        | N/A                 |
-  | media_player.xxx      | N/A                 |
-  | vacuum.xxx            | N/A                 |
-  | device_tracker.xxx    | N/A                 |
-  | weather.xxx           | N/A                 |
-  
-- **`name`** [string] *(optional)*:  
-  The name displayed on the progress bar. If omitted, the entity's friendly name will be used.
-  
-  *Default:*
-    - `<entity_name>`
-      
-  *Example:*
-  ```yaml
-  type: custom:entity-progress-card
-  ...
-  name: ABC
-  ``` 
+#### `attribute`
 
-- **`unit`** [string] *(optional)*:  
-  Allows representing standard unit.  
-  By default, the unit is % and allow you to get a ratio.  
-  Specifies the unit to display the entity's actual value, ignoring max_value. The max_value is still used for the progress bar representation.
-  
-  *Default:*
-    - `%`
-      
-  *Example:*
-  ```yaml
-  type: custom:entity-progress-card
-  ...
-  unit: ABC
-  ``` 
-    - `°C` for temperature.
-    - `kWh` for energy consumption.
-    - `s` for timer
-    - `timer` for timer (display HH:MM:SS without unit)
-    - `flextimer` for timer (same than timer but truncate the display according to the current value)
-    
-- **`decimal`** [int >=0] *(optional)*:  
-  Defines the number of decimal places to display for numerical values.  
-  The `decimal` value will be determined based on the following priority:
-  - `Display Precision` from the entity (if defined in Home Assistant).
-  - `decimal` setting in the YAML configuration.
-  - `Default Value` (if no other value is set).
-  
-  *Default values:*
-    - `decimal` = 0 for percentage (%)
-    - `decimal` = 2 for other unit (°C, kWh...)
+> **`attribute`** [string] *(optional)*
 
-  *Example:*  
-  ```yaml
-  type: custom:entity-progress-card
-  ...
-  decimal: 1
-  ```  
-    - `1` for displaying 50.6%.
-    - `0` for displaying 51%
-    - `1` for displaying 20.7°C
+The Home Assistant entity's attribute to display.
+
+*Example:*
+```yaml
+type: custom:entity-progress-card
+entity: light.led0
+attribute: brightness
+``` 
+
+*Supported entities:*
+
+| entity (supported)    | default attribute   |
+| --------------------- | ------------------- |
+| cover.xxx             | current_position    |
+| light.xxx             | brightness (%)      |
+| fan.xxx               | percentage          |
+| climate.xxx           | N/A                 |
+| humidifier.xxx        | N/A                 |
+| media_player.xxx      | N/A                 |
+| vacuum.xxx            | N/A                 |
+| device_tracker.xxx    | N/A                 |
+| weather.xxx           | N/A                 |
+
+#### `name`
+
+> **`name`** [string] *(optional)*
+
+The name displayed on the progress bar. If omitted, the entity's friendly name will be used.
+
+*Default:*
+- `<entity_name>`
+
+*Example:*
+```yaml
+type: custom:entity-progress-card
+····
+name: ABC
+``` 
+
+#### `unit`
+
+> **`unit`** [string] *(optional)*
+
+Allows representing standard unit.  
+By default, the unit is % and allow you to get a ratio.  
+Specifies the unit to display the entity's actual value, ignoring max_value. The max_value is still used for the progress bar representation.
+
+*Default:*
+- `%`
+  
+*Example:*
+```yaml
+type: custom:entity-progress-card
+····
+unit: ABC
+```
+- `°C` for temperature.
+- `kWh` for energy consumption.
+- `s` for timer
+- `timer` for timer (display HH:MM:SS without unit)
+- `flextimer` for timer (same than timer but truncate the display according to the current value)
+
+#### `decimal`
+
+> **`decimal`** [int >=0] *(optional)*
+
+Defines the number of decimal places to display for numerical values.  
+The `decimal` value will be determined based on the following priority:
+- `Display Precision` from the entity (if defined in Home Assistant).
+- `decimal` setting in the YAML configuration.
+- `Default Value` (if no other value is set).
+  
+*Default values:*
+- `decimal` = 0 for percentage (%)
+- `decimal` = 0 for timer (1.1.6)
+- `decimal` = 2 for other unit (°C, kWh...)
+
+*Example:*
+```yaml
+type: custom:entity-progress-card
+····
+decimal: 1
+```  
+- `1` for displaying 50.6%.
+- `0` for displaying 51%
+- `1` for displaying 20.7°C
 
 > [!IMPORTANT]
 >
@@ -165,258 +183,293 @@ You can customize the card using the following parameters:
 > and 0 for other units). When updating, you will need to adjust the parameter
 > according to your needs.
 
-- **`min_value`** [numeric] *(optional)*:  
-  Defines the minimum value to be used when calculating the percentage.  
-  This allows the percentage to be relative to both a minimum (min_value, which represents 0%) and a maximum (max_value, which represents 100%).  
-  This value must be numeric (either a float or an integer).
+#### `min_value`
 
-  *Default:*
-    - `0`
+> **`min_value`** [numeric] *(optional)*
 
-  *Example:*
-  ```yaml
-  type: custom:entity-progress-card
-  ...
-  min_value: 10
-  ```
-    Suppose you are measuring the weight of a connected litter box, where:
-    - `min_value` = 6 (the minimum weight representing an empty box, i.e., 0%).
-    - `max_value` = 11 (the maximum weight representing a full box, i.e., 100%).
-    - `value` = 8 (the current weight).
-    - `percentage` = 40%
+Defines the minimum value to be used when calculating the percentage.  
+This allows the percentage to be relative to both a minimum (min_value, which represents 0%) and a maximum (max_value, which represents 100%).  
+This value must be numeric (either a float or an integer).
 
-- **`max_value`** [numeric/entity] *(optional)*:  
-  Allows representing standard values and calculating the percentage relative to the maximum value.
-  This value can be numeric (float/int) or an entity and real value must be > 0.
-  
-  *Default:*
-    - `100%`
+*Default:*
+- `0`
 
-  *Example:*
-  ```yaml
-  type: custom:entity-progress-card
-  ...
-  max_value: 255
-  ```
-    - LQI @ 150 (entity) with max_value @ 255 (static value -> max_value = 255)
-    - A (entity_a) with max_value (entity_b)
+*Example:*
+```yaml
+type: custom:entity-progress-card
+····
+min_value: 10
+```
+Suppose you are measuring the weight of a connected litter box, where:
+- `min_value` = 6 (the minimum weight representing an empty box, i.e., 0%).
+- `max_value` = 11 (the maximum weight representing a full box, i.e., 100%).
+- `value` = 8 (the current weight).
+- `percentage` = 40%
 
-- **`max_value_attribute`** [string] *(optional)*:  
-  The Home Assistant `max_value`'s attribute to display.  
-  `max_value` must be an entity.
+#### `max_value`
 
-- **`navigate_to`** [string] *(optional)*:  
-  Specifies a URL to navigate to when the card is clicked.
-  If defined, clicking the card will redirect to the specified location.
-  This parameter takes precedence over show_more_info if both are defined.
+> **`max_value`** [numeric/entity] *(optional)*
 
-  *Default values:*
-    - `null` (no navigation).
+Allows representing standard values and calculating the percentage relative to the maximum value.
+This value can be numeric (float/int) or an entity and real value must be > 0.
 
-  *Example:*
-  ```yaml
-  type: custom:entity-progress-card
-  ...
-  navigate_to: /lovelace/0
-  ```
+*Default:*
+- `100%`
 
-    - `/lovelace/dashboard` to navigate to another Home Assistant dashboard ("dashboard").
-    - `/lovelace/5` to navigate to another Home Assistant dashboard (5).
-    - `https://example.com` to open an external link.
+*Example:*
+```yaml
+type: custom:entity-progress-card
+····
+max_value: 255
+```
+- LQI @ 150 (entity) with max_value @ 255 (static value -> max_value = 255)
+- A (entity_a) with max_value (entity_b)
 
-- **`show_more_info`** [boolean] *(optional)*:  
-  Determines whether clicking on the card will open the entity's "more info" dialog in Home Assistant.  
-  Defaults to true. If set to false, clickingthe card will not trigger any "more info" action.
-  
-  *Default:*
-    - `true`
-  
-  *Example:*
-  ```yaml
-  type: custom:entity-progress-card
-  ...
-  show_more_info: true
-  ```
-    - `true` to enable "more info" on click.
-    - `false` to disable the "more info" dialog.
+#### `max_value_attribute`
 
-- **`theme`** [string {`battery`|`cpu`|`light`|`memory`|`temperature`|`humidity`|`pm25`|`voc`}] *(optional)*:  
-  Allows customization of the progress bar's appearance using a predefined theme.
-  This theme dynamically adjusts the `icon`, `color` and `bar-color` parameters based on the battery level, eliminating the need for manual adjustments or complex Jinja2 templates.  
-  *Example:*
-  ```yaml
-  type: custom:entity-progress-card
-  ...
-  theme: light
-  ```
-- **`bar_size`** [string {`small`|`medium`|`large`}] *(optional)*:  
-  Customizes the appearance of the progress bar by selecting a predefined size.
-  Choose from small, medium, or large to adjust the visual scale of the bar.
-  
-  *Default:*
-    - `small`
+> **`max_value_attribute`** [string] *(optional)*
 
-  *Example:*
-  ```yaml
-  type: custom:entity-progress-card
-  ...
-  bar_size: medium
-  ```
+The Home Assistant `max_value`'s attribute to display.  
+`max_value` must be an entity.
 
-- **`bar_color`** [string] *(optional)*:  
-  The color of the progress bar. Accepts color names, RGB values, or HEX codes.
-  
-  *Default:*
-    - `var(--state-icon-color)`
+#### `navigate_to`
 
-  *Examples:* `"blue"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`
-  ```yaml
-  type: custom:entity-progress-card
-  ...
-  bar_color: rgb(110, 65, 171)
-  ```
-- **`icon`** [string] *(optional)*:  
-  The icon associated with the entity. Supports Material Design Icons (MDI).
-  
-  *Examples:* `mdi:lightbulb`, `mdi:thermometer`
-  ```yaml
-  type: custom:entity-progress-card
-  ...
-  icon: mdi:grain
-  ```
+> **`navigate_to`** [string] *(optional)*
+Specifies a URL to navigate to when the card is clicked.
+If defined, clicking the card will redirect to the specified location.
+This parameter takes precedence over show_more_info if both are defined.
 
-  *Default by device type:*  
-    | Device Type                         | Icon (MDI)              |
-    |-------------------------------------|-------------------------|
-    | binary_sensor                       | mdi:circle-outline      |
-    | climate                             | mdi:thermostat          |
-    | counter                             | mdi:counter             |
-    | cover	                              | mdi:garage              |
-    | fan                                 | mdi:fan                 |
-    | input_boolean                       | mdi:toggle-switch       |
-    | input_number                        | mdi:numeric             |
-    | input_select                        | mdi:form-dropdown       |
-    | media_player                        | mdi:speaker             |
-    | light                               | mdi:lightbulb           |
-    | lock                                | mdi:lock                |
-    | person                              | mdi:account             |
-    | sensor	                            | mdi:eye                 |
-    | scene                               | mdi:palette             |
-    | timer                               | mdi:timer-outline       |
-    | switch	                            | mdi:toggle-switch       |
-    | weather                             | mdi:weather-cloudy      |
-    | sun                                 | mdi:white-balance-sunny |
+*Default values:*
+- `null` (no navigation).
 
-  *Default by device class:*  
-    | Device Class                        | Icon (MDI)             |
-    |-------------------------------------|------------------------|
-    | battery                             | mdi:battery            |
-    | carbon_dioxide                      | mdi:molecule-co2       |
-    | cold                                | mdi:snowflake          |
-    | connectivity                        | mdi:wifi               |
-    | current                             | mdi:current-ac         |
-    | door                                | mdi:door-open          |
-    | duration                            | mdi:timer-outline      |
-    | energy                              | mdi:flash              |
-    | gas                                 | mdi:fire               |
-    | heat                                | mdi:fire               |
-    | humidity                            | mdi:water-percent      |
-    | illuminance                         | mdi:brightness-5       |
-    | lock                                | mdi:lock               |
-    | moisture                            | mdi:water              |
-    | motion                              | mdi:motion-sensor      |
-    | occupancy                           | mdi:account            |
-    | opening                             | mdi:window-open        |
-    | plug                                | mdi:power-plug         |
-    | pm25                                | mdi:molecule           |
-    | power                               | mdi:flash              |
-    | power_factor                        | mdi:flash              |
-    | pressure                            | mdi:gauge              |
-    | problem                             | mdi:alert              |
-    | safety                              | mdi:shield-check       |
-    | shutter                             | mdi:window-shutter     |
-    | smoke                               | mdi:smoke-detector     |
-    | sound                               | mdi:volume-high        |
-    | switch                              | mdi:power-socket       |
-    | temperature                         | mdi:thermometer        |
-    | timestamp                           | mdi:calendar-clock     |
-    | tv                                  | mdi:television         |
-    | vibration                           | mdi:vibrate            |
-    | volatile_organic_compounds_parts    | mdi:molecule           |
-    | voltage                             | mdi:flash              |
-    | window                              | mdi:window-open        |
+*Example:*
+```yaml
+type: custom:entity-progress-card
+····
+navigate_to: /lovelace/0
+```
 
-  *Order of Priority for the Icon:*
-    - Theme/Custom Theme: The icon derived from the theme or style applied to the item.
-    - Icon Parameter: A custom icon specifically defined for the item.
-    - Icon Associated with the Entity: The icon directly linked or representative of the entity.
-    - Icon Associated with the Entity's device_class: temperature, humidity...
-    - Icon Associated with the Entity's device type
-    - Default: The icon used by default if no other is specified.
+- `/lovelace/dashboard` to navigate to another Home Assistant dashboard ("dashboard").
+- `/lovelace/5` to navigate to another Home Assistant dashboard (5).
+- `https://example.com` to open an external link.
 
-- **`color`** [string] *(optional)*:  
-  The color of the icon. Accepts color names, RGB values, or HEX codes.
-  
-  *Default:*
-    - `var(--state-icon-color)`
+#### `show_more_info`
 
-  *Examples:* `"green"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`
-  ```yaml
-  type: custom:entity-progress-card
-  ...
-  color: rgb(110, 65, 171)
-  ```
+> **`show_more_info`** [boolean] *(optional)*
 
-- **`layout`** [string {`horizontal`| `vertical`}] *(optional)*:  
-  Determines the layout of the elements inside the card. You can choose between different layouts based on your visual preferences.
-  
-  *Default:*
-    - `horizontal`
-  
-  *Examples:*
-  ```yaml
-  type: custom:entity-progress-card
-  ...
-  layout: vertical
-  ```
-    - `horizontal`: Displays the elements horizontally, with a row layout (by default, the text and progress bar will be displayed side by side).  
-    - `vertical`: Displays the elements vertically, with a column layout (by default, the text and progress bar will be stacked one below the other).
+Determines whether clicking on the card will open the entity's "more info" dialog in Home Assistant.  
+Defaults to true. If set to false, clickingthe card will not trigger any "more info" action.
 
-- **`custom_theme`** [array] *(optional)*:    
-  [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#)  
-  
-  Defines a list of custom theme rules based on value ranges. Setting this variable disables the theme variable.  
-  This variable can only be defined in YAML.
+*Default:*
+- `true`
 
-  *Properties of each item:*
-    - min [number] (required): The minimum value for this range.
-    - max [number] (required): The maximum value for this range.
-    - color [string] (required): The color of the icon.
-    - icon [string] (optional): The icon to display.
+*Example:*
+```yaml
+type: custom:entity-progress-card
+····
+show_more_info: true
+```
+- `true` to enable "more info" on click.
+- `false` to disable the "more info" dialog.
 
-  *Order of Priority for the Icon:*
-    - Theme/Custom Theme: The icon derived from the theme or style applied to the item.
-    - Icon Parameter: A custom icon specifically defined for the item.
-    - Icon Associated with the Entity: The icon directly linked or representative of the entity.
-    - Icon Associated with the Entity's device_class: temperature, humidity...
-    - Default: The icon used by default if no other is specified.
+#### `theme`
 
-  *Example:*
-  ```yaml
-  custom_theme:
-    - min: 0
-      max: 10
-      color: yellow
-      icon: mdi:abacus
-    - min: 10
-      max: 20
-      color: green
-      icon: mdi:ab-testing
-    - min: 20
-      max: 50
-      color: var(--state-icon-color)
-      icon: mdi:abacus
-  ```
+> **`theme`** [string {`battery`|`cpu`|`light`|`memory`|`temperature`|`humidity`|`pm25`|`voc`}] *(optional)*
+
+Allows customization of the progress bar's appearance using a predefined theme.
+This theme dynamically adjusts the `icon`, `color` and `bar-color` parameters based on the battery level, eliminating the need for manual adjustments or complex Jinja2 templates.  
+*Example:*
+```yaml
+type: custom:entity-progress-card
+····
+theme: light
+```
+
+#### `bar_size`
+
+> **`bar_size`** [string {`small`|`medium`|`large`}] *(optional)*
+
+Customizes the appearance of the progress bar by selecting a predefined size.
+Choose from small, medium, or large to adjust the visual scale of the bar.
+
+*Default:*
+- `small`
+
+*Example:*
+```yaml
+type: custom:entity-progress-card
+····
+bar_size: medium
+```
+
+#### `bar_color`
+
+> **`bar_color`** [string] *(optional)*
+
+The color of the progress bar. Accepts color names, RGB values, or HEX codes.
+
+*Default:*
+- `var(--state-icon-color)`
+
+*Examples:* `"blue"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`
+```yaml
+type: custom:entity-progress-card
+····
+bar_color: rgb(110, 65, 171)
+```
+
+#### `icon`
+
+> **`icon`** [string] *(optional)*
+
+The icon associated with the entity. Supports Material Design Icons (MDI).
+
+*Examples:* `mdi:lightbulb`, `mdi:thermometer`...
+```yaml
+type: custom:entity-progress-card
+····
+icon: mdi:grain
+```
+
+*Default by device type:*  
+| Device Type                         | Icon (MDI)              |
+|-------------------------------------|-------------------------|
+| binary_sensor                       | mdi:circle-outline      |
+| climate                             | mdi:thermostat          |
+| counter                             | mdi:counter             |
+| cover	                              | mdi:garage              |
+| fan                                 | mdi:fan                 |
+| input_boolean                       | mdi:toggle-switch       |
+| input_number                        | mdi:numeric             |
+| input_select                        | mdi:form-dropdown       |
+| media_player                        | mdi:speaker             |
+| light                               | mdi:lightbulb           |
+| lock                                | mdi:lock                |
+| person                              | mdi:account             |
+| sensor	                            | mdi:eye                 |
+| scene                               | mdi:palette             |
+| timer                               | mdi:timer-outline       |
+| switch	                            | mdi:toggle-switch       |
+| weather                             | mdi:weather-cloudy      |
+| sun                                 | mdi:white-balance-sunny |
+
+*Default by device class:*  
+| Device Class                        | Icon (MDI)             |
+|-------------------------------------|------------------------|
+| battery                             | mdi:battery            |
+| carbon_dioxide                      | mdi:molecule-co2       |
+| cold                                | mdi:snowflake          |
+| connectivity                        | mdi:wifi               |
+| current                             | mdi:current-ac         |
+| door                                | mdi:door-open          |
+| duration                            | mdi:timer-outline      |
+| energy                              | mdi:flash              |
+| gas                                 | mdi:fire               |
+| heat                                | mdi:fire               |
+| humidity                            | mdi:water-percent      |
+| illuminance                         | mdi:brightness-5       |
+| lock                                | mdi:lock               |
+| moisture                            | mdi:water              |
+| motion                              | mdi:motion-sensor      |
+| occupancy                           | mdi:account            |
+| opening                             | mdi:window-open        |
+| plug                                | mdi:power-plug         |
+| pm25                                | mdi:molecule           |
+| power                               | mdi:flash              |
+| power_factor                        | mdi:flash              |
+| pressure                            | mdi:gauge              |
+| problem                             | mdi:alert              |
+| safety                              | mdi:shield-check       |
+| shutter                             | mdi:window-shutter     |
+| smoke                               | mdi:smoke-detector     |
+| sound                               | mdi:volume-high        |
+| switch                              | mdi:power-socket       |
+| temperature                         | mdi:thermometer        |
+| timestamp                           | mdi:calendar-clock     |
+| tv                                  | mdi:television         |
+| vibration                           | mdi:vibrate            |
+| volatile_organic_compounds_parts    | mdi:molecule           |
+| voltage                             | mdi:flash              |
+| window                              | mdi:window-open        |
+
+*Order of Priority for the Icon:*
+- Theme/Custom Theme: The icon derived from the theme or style applied to the item.
+- Icon Parameter: A custom icon specifically defined for the item.
+- Icon Associated with the Entity: The icon directly linked or representative of the entity.
+- Icon Associated with the Entity's device_class: temperature, humidity...
+- Icon Associated with the Entity's device type
+- Default: The icon used by default if no other is specified.
+
+#### `color`
+
+> **`color`** [string] *(optional)*
+
+The color of the icon. Accepts color names, RGB values, or HEX codes.
+
+*Default:*
+- `var(--state-icon-color)`
+
+*Examples:* `"green"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`...
+```yaml
+type: custom:entity-progress-card
+····
+color: rgb(110, 65, 171)
+```
+
+#### `layout`
+
+> **`layout`** [string {`horizontal`| `vertical`}] *(optional)*:  
+
+Determines the layout of the elements inside the card. You can choose between different layouts based on your visual preferences.
+
+*Default:*
+- `horizontal`
+
+*Examples:*
+```yaml
+type: custom:entity-progress-card
+····
+layout: vertical
+```
+- `horizontal`: Displays the elements horizontally, with a row layout (by default, the text and progress bar will be displayed side by side).  
+- `vertical`: Displays the elements vertically, with a column layout (by default, the text and progress bar will be stacked one below the other).
+
+#### `custom_theme` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#)
+
+> **`custom_theme`** [array] *(optional)*
+
+Defines a list of custom theme rules based on value ranges. Setting this variable disables the theme variable.  
+This variable can only be defined in YAML.
+
+*Properties of each item:*
+- min [number] (required): The minimum value for this range.
+- max [number] (required): The maximum value for this range.
+- color [string] (required): The color of the icon.
+- icon [string] (optional): The icon to display.
+
+*Order of Priority for the Icon:*
+- Theme/Custom Theme: The icon derived from the theme or style applied to the item.
+- Icon Parameter: A custom icon specifically defined for the item.
+- Icon Associated with the Entity: The icon directly linked or representative of the entity.
+- Icon Associated with the Entity's device_class: temperature, humidity...
+- Default: The icon used by default if no other is specified.
+
+*Example:*
+```yaml
+custom_theme:
+  - min: 0
+    max: 10
+    color: yellow
+    icon: mdi:abacus
+  - min: 10
+    max: 20
+    color: green
+    icon: mdi:ab-testing
+  - min: 20
+    max: 50
+    color: var(--state-icon-color)
+    icon: mdi:abacus
+```
 
 > [!NOTE]
 >
@@ -478,68 +531,81 @@ custom_theme:
     icon: mdi:abacus
 ```
 
-- **`reverse`** [boolean] *(optional)*:  
-  [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#)  
-  
-  Used only for entities of type timer. 
-  If set to true, the timer functions as a countdown (in seconds or percentage).
-  *Example:*
-  ```yaml
-  type: custom:entity-progress-card
-  entity: timer.testtimer
-  icon: mdi:washing-machine
-  unit: flextimer
-  name: Remaining Time reverse
-  reverse: true
-  ```
+#### `reverse` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#)
 
-- **`bar_orientation`** [string {`rtl`}] *(optional)*:  
-  [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#)  
-  
-  Adjusts the progress bar direction to display from right to left.  
-  This is especially useful for timers to visually represent the remaining time.  
-  *Example:*
-  ```yaml
-  type: custom:entity-progress-card
-  entity: timer.testtimer
-  icon: mdi:washing-machine
-  unit: flextimer
-  name: Remaining Time reverse
-  bar_orientation: rtl
-  reverse: true
-  ```
+> **`reverse`** [boolean] *(optional)*
+
+Used only for entities of type timer. 
+If set to true, the timer functions as a countdown (in seconds or percentage).
+
+*Example:*
+```yaml
+type: custom:entity-progress-card
+entity: timer.testtimer
+icon: mdi:washing-machine
+unit: flextimer
+name: Remaining Time reverse
+reverse: true
+```
+
+#### `bar_orientation` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#)
+
+> **`bar_orientation`** [string {`rtl`}] *(optional)*
+
+Adjusts the progress bar direction to display from right to left.  
+This is especially useful for timers to visually represent the remaining time.
+
+*Example:*
+```yaml
+type: custom:entity-progress-card
+entity: timer.testtimer
+icon: mdi:washing-machine
+unit: flextimer
+name: Remaining Time reverse
+bar_orientation: rtl
+reverse: true
+```
+
 > [!NOTE]
 > While this parameter was originally designed for timers, it can be applied to any entity where a reversed progress bar is needed.
 
-- **`hide`** [array] *(optional)*:  
-  Defines which elements should be hidden in the card.  
-  The array can contain any of the following values:
-  - icon → Hides the entity's icon.
-  - name → Hides the entity's name.
-  - secondary_info → Hides secondary information related to the entity.
-  - progress_bar → Hides the progress bar display.
+#### `hide`
 
-  *Example:*  
-  ```yaml
-  type: custom:entity-progress-card
-  ...
-  hide:
-    - icon
-    - name
-    - secondary_info
-  ```
+> **`hide`** [array] *(optional)*:  
 
-- **`disable_unit`** [boolean] *(optional)*:  
-  Disables the display of the unit when set to `true`. If not defined or set to `false`, the unit will be shown.
+Defines which elements should be hidden in the card.
 
-  *Example:*  
-  ```yaml
-  type: custom:entity-progress-card
-  ...
-  disable_unit: true
-  ```
+The array can contain any of the following values:
+- icon → Hides the entity's icon.
+- name → Hides the entity's name.
+- secondary_info → Hides secondary information related to the entity.
+- progress_bar → Hides the progress bar display.
 
-### YAML
+*Example:*
+
+```yaml
+type: custom:entity-progress-card
+····
+hide:
+  - icon
+  - name
+  - secondary_info
+```
+
+#### `disable_unit`
+
+> **`disable_unit`** [boolean] *(optional)*
+
+Disables the display of the unit when set to `true`. If not defined or set to `false`, the unit will be shown.
+
+*Example:*
+```yaml
+type: custom:entity-progress-card
+····
+disable_unit: true
+```
+
+### 📎 YAML
 Here’s our example of how to use the Custom Bar Card with custom styles:
 
 ```yaml
@@ -569,23 +635,23 @@ grid_options:
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/RVB_vertical.png" alt="Image title" width="118px"/>
 
-## 💡 Sample Usage
+## 🧐 Sample Usage
 
 > [!TIP]
->  - Use Material Design Icons (MDI) for a consistent look. Browse available icons at Material Design Icons.
->  - Experiment with color codes like HEX or RGB for precise customization.
->  - Combine with other Lovelace cards to create a visually cohesive dashboard.
+> Use Material Design Icons (MDI) for a consistent look. Browse available icons at Material Design Icons.  
+> Experiment with color codes like HEX or RGB for precise customization.  
+> Combine with other Lovelace cards to create a visually cohesive dashboard.
 
 > [!IMPORTANT]
 >
 > Below, you'll find examples that highlight the interoperability of this card with other popular Home Assistant projects.
 > To replicate these samples, ensure the following are set up:
 >
->  - vertical-stack-in-card ([GitHub link](https://github.com/ofekashery/vertical-stack-in-card))
->  - auto-entities ([GitHub link](https://github.com/thomasloven/lovelace-auto-entities))
->  - card_mod ([GitHub link](https://github.com/thomasloven/lovelace-card-mod))
+> 📌 vertical-stack-in-card ([GitHub link](https://github.com/ofekashery/vertical-stack-in-card))  
+> 📌 auto-entities ([GitHub link](https://github.com/thomasloven/lovelace-auto-entities))  
+> 📌 card_mod ([GitHub link](https://github.com/thomasloven/lovelace-card-mod))
 
-### Battery dashboard
+### 🔋 Battery dashboard
 
 This card enables the creation of a streamlined battery dashboard by leveraging theme capabilities and `auto-entities` custom card.
 
@@ -613,7 +679,7 @@ sort:
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/battery_dashboard.png" alt="Image title" width="500"/>
 
-### Litter box
+### 😺 Litter box
 
 Do you want a percentage based on a minimum and maximum quantity? Here’s an example with a litter box:
 
@@ -629,8 +695,8 @@ grid_options:
   rows: 1
 ```
 
-### Themes
-#### Battery
+### 🎨 Themes
+#### 🔋 Battery
 
 ```yaml
 type: custom:entity-progress-card
@@ -658,7 +724,7 @@ The battery levels and their corresponding icons and colors are as follows:
 Icons change progressively from `mdi:battery-alert` at low levels to `mdi:battery` when fully charged.  
 The **linear approach** ensures a smooth transition between battery levels.
 
-#### Light
+#### 💡 Light
 
 ```yaml
 type: custom:entity-progress-card
@@ -683,7 +749,7 @@ Thanks to the **linear** approach, the brightness smoothly transitions between t
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/light.png" alt="Image title" width="500"/>
 
-#### Temperature
+#### 🌡️ Temperature
 
 ```yaml
 type: custom:entity-progress-card
@@ -718,7 +784,7 @@ We use predefined intervals, each associated with a specific color:
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/temperature.png" alt="Image title" width="500"/>
 
-#### Humidity
+#### 💧 Humidity
 
 ```yaml
 type: custom:entity-progress-card
@@ -745,7 +811,7 @@ Each range is visually represented using the `mdi:water-percent` icon, ensuring 
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/humidity.png" alt="Image title" width="500"/>
 
-#### VOC
+#### 🦠 VOC
 
 ```yaml
 type: custom:entity-progress-card
@@ -778,7 +844,7 @@ Each range is visually represented using the `mdi:air-filter` icon, ensuring a c
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/voc.png" alt="Image title" width="500"/>
 
-#### PM 2.5
+#### 🦠 PM 2.5
 
 ```yaml
 type: custom:entity-progress-card
@@ -811,7 +877,7 @@ Each range is visually represented using the `mdi:air-filter` icon, ensuring a c
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/voc.png" alt="Image title" width="500"/>
 
-### card_mod / animation
+### 🕹️ card_mod / animation
 
 We can use `card_mod` to add dynamic animations to the icon, enhancing the visual experience and providing a more engaging user interface.
 
@@ -842,7 +908,7 @@ card_mod:
 > [!TIP]
 > We expose the `ha-icon` and `ha-shape` elements to properly animate the card.
 
-### vertical-stack-in-card
+### 🗃️ vertical-stack-in-card
 
 We can use `vertical-stack-in-card` to group multiple cards into a cohesive layout.
 This approach is particularly useful when combining custom cards while maintaining a
@@ -882,7 +948,7 @@ cards:
 ```
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/stack.png" alt="Image title" width="500"/>
 
-## Advanced usage
+## 🗒️ Advanced usage
 ### Use case example
 
 We want to monitor a process and we have entities for:
@@ -949,6 +1015,6 @@ By implementing this model through the helper, we can accurately calculate and d
 
 Want to improve this card? Contributions are welcome! 🚀
 
-## 📜 License
+## 📄 License
 
 This project is licensed under the GPL-3.0 license.
