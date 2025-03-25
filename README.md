@@ -723,7 +723,7 @@ theme: optimal_when_high
 > 
 > The icon is automatically retrieved from the entity but can be overridden using the `icon` parameter.
 
-#### 💽 Optimal when high (CPU, RAM, disk...)
+#### 💽 Optimal when low (CPU, RAM, disk...)
 
 The "Optimal when Low" parameter is particularly valuable for monitoring systems or components that perform best when their values are at a lower level. For example, in the case of memory usage or CPU load, lower values often indicate that the system is running efficiently and not overburdened. 
 ```yaml
