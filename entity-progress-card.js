@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.1.6
+ * @version 1.1.7
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.1.6';
+const VERSION = '1.1.7';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
@@ -114,7 +114,7 @@ const CARD = {
           paused: { icon: 'mdi:pause', color: 'white', backgroundColor: 'var(--state-icon-color)', attribute: 'icon' },
         },
       },
-      byDeviceType: {
+      byDeviceDomain: {
         binary_sensor: 'mdi:circle-outline',
         climate: 'mdi:thermostat',
         counter: 'mdi:counter',
@@ -310,6 +310,24 @@ const THEME = {
       { icon: 'mdi:battery-80', color: 'var(--state-sensor-battery-high-color)' },
       { icon: 'mdi:battery-90', color: 'var(--state-sensor-battery-high-color)' },
       { icon: 'mdi:battery', color: 'var(--state-sensor-battery-high-color)' },
+    ],
+  },
+  optimal_when_low: {
+    linear: false,
+    style: [
+      { min: 0, max: 20, icon: null, color: 'var(--state-sensor-battery-high-color)' },
+      { min: 20, max: 50, icon: null, color: 'var(--yellow-color)' },
+      { min: 50, max: 80, icon: null, color: 'var(--state-sensor-battery-medium-color)' },
+      { min: 80, max: 100, icon: null, color: 'var(--state-sensor-battery-low-color)' },
+    ],
+  },
+  optimal_when_high: {
+    linear: false,
+    style: [
+      { min: 0, max: 20, icon: null, color: 'var(--state-sensor-battery-low-color)' },
+      { min: 20, max: 50, icon: null, color: 'var(--state-sensor-battery-medium-color)' },
+      { min: 50, max: 80, icon: null, color: 'var(--yellow-color)' },
+      { min: 80, max: 100, icon: null, color: 'var(--state-sensor-battery-high-color)' },
     ],
   },
   cpu: {
@@ -1198,7 +1216,7 @@ const EDITOR_INPUT_FIELDS = {
         type: CARD.editor.fields.icon.type,
         width: 'calc((100% - 10px) * 0.5)',
         required: false,
-        isInGroup: CARD.editor.keyMappings.theme,
+        isInGroup: null, //CARD.editor.keyMappings.theme
         description: {
           en: 'Select an icon for the entity.',
           fr: "Sélectionnez une icône pour l'entité.",
@@ -1299,6 +1317,44 @@ const FIELD_OPTIONS = {
       value: '',
       label: { en: '', fr: '', es: '', it: '', de: '', nl: '', hr: '', pl: '', mk: '', pt: '', da: '', nb: '', sv: '' },
       icon: 'mdi:cancel',
+    },
+    {
+      value: 'optimal_when_low',
+      label: {
+        en: 'Optimal when Low (CPU, RAM,...)',
+        fr: "Optimal quand c'est bas (CPU, RAM,...)",
+        es: 'Óptimo cuando es bajo (CPU, RAM,...)',
+        it: 'Ottimale quando è basso (CPU, RAM,...)',
+        de: 'Optimal bei niedrig (CPU, RAM,...)',
+        nl: 'Optimaal wanneer laag (CPU, RAM,...)',
+        hr: 'Optimalno kada je nisko (CPU, RAM,...)',
+        pl: 'Optymalny, gdy niskie (CPU, RAM,...)',
+        mk: 'Оптимално кога е ниско(CPU, RAM,...)',
+        pt: 'Ótimo quando é baixo (CPU, RAM,...)',
+        da: 'Optimal når lavt (CPU, RAM,...)',
+        nb: 'Optimal når lavt (CPU, RAM,...)',
+        sv: 'Optimal när det är lågt (CPU, RAM,...)',
+      },
+      icon: 'mdi:arrow-collapse-down',
+    },
+    {
+      value: 'optimal_when_high',
+      label: {
+        en: 'Optimal when High (Battery...)',
+        fr: "Optimal quand c'est élevé (Batterie...)",
+        es: 'Óptimo cuando es alto (Batería...)',
+        it: 'Ottimale quando è alto (Batteria...)',
+        de: 'Optimal bei hoch (Batterie...)',
+        nl: 'Optimaal wanneer hoog (Batterij...)',
+        hr: 'Optimalno kada je visoko (Baterija...)',
+        pl: 'Optymalny, gdy wysokie (Bateria...)',
+        mk: 'Оптимално кога е високо (Батерија...)',
+        pt: 'Ótimo quando é alto (Bateria...)',
+        da: 'Optimal når højt (Batteri...)',
+        nb: 'Optimal når høyt (Batteri...)',
+        sv: 'Optimal när det är högt (Batteri...)',
+      },
+      icon: 'mdi:arrow-collapse-up',
     },
     {
       value: 'battery',
@@ -3127,7 +3183,7 @@ class EntityHelper {
   #id = null;
   #attribute = null;
   #state = null;
-  #type = null;
+  #domain = null;
 
   constructor() {
     this.#hassProvider = new HassProvider(this.constructor.name);
@@ -3141,7 +3197,7 @@ class EntityHelper {
       return;
     }
     this.#validate();
-    this.#type = this.#id.split('.')[0];
+    this.#domain = this.#id.split('.')[0];
   }
   get value() {
     if (this.#isValid) {
@@ -3191,7 +3247,7 @@ class EntityHelper {
     this.#isAvailable = true;
 
     // timer
-    if (this.#type !== CARD.config.entity.type.timer) {
+    if (this.#domain !== CARD.config.entity.type.timer) {
       this.#manageStdEntity();
     } else {
       this.#manageTimerEntity();
@@ -3200,10 +3256,10 @@ class EntityHelper {
   }
   #manageStdEntity() {
     if (this.hasAttribute) {
-      const attribute = this.#attribute ?? ATTRIBUTE_MAPPING[this.#type].attribute;
+      const attribute = this.#attribute ?? ATTRIBUTE_MAPPING[this.#domain].attribute;
       if (attribute && Object.hasOwn(this.states.attributes, attribute)) {
         this.#value = this.states.attributes[attribute] ?? 0;
-        if (this.#type === ATTRIBUTE_MAPPING.light.label && attribute === ATTRIBUTE_MAPPING.light.attribute) {
+        if (this.#domain === ATTRIBUTE_MAPPING.light.label && attribute === ATTRIBUTE_MAPPING.light.attribute) {
           this.#value = (100 * this.#value) / 255;
         }
       } else {
@@ -3250,7 +3306,6 @@ class EntityHelper {
     }
     this.#value = { elapsed: elapsed, duration: duration, state: this.#state };
   }
-
   #getDeviceClass() {
     const entityState = this.states;
 
@@ -3259,29 +3314,29 @@ class EntityHelper {
     }
     return null;
   }
-  #getIconByClass() {
+  #getIconByDeviceClass() {
     const deviceClass = this.#getDeviceClass();
     const suffix = deviceClass === CARD.config.entity.class.shutter && this.states.attributes.current_position > 0 ? CARD.style.icon.suffix.open : '';
     return deviceClass && Object.hasOwn(CARD.style.icon.byDeviceClass, deviceClass) ? `${CARD.style.icon.byDeviceClass[deviceClass]}${suffix}` : null;
   }
-  #getIconByType() {
-    return this.#type && Object.hasOwn(CARD.style.icon.byDeviceType, this.#type) ? CARD.style.icon.byDeviceType[this.#type] : null;
+  #getIconByDomain() {
+    return this.#domain && Object.hasOwn(CARD.style.icon.byDeviceDomain, this.#domain) ? CARD.style.icon.byDeviceDomain[this.#domain] : null;
   }
 
   /**
    * Returns the icon of the entity, if valid.
    */
   get icon() {
-    return this.#isValid && this.states ? this.states.attributes?.icon || this.#getIconByClass() || this.#getIconByType() : null;
+    return this.#isValid && this.states ? this.states.attributes?.icon || this.#getIconByDeviceClass() || this.#getIconByDomain() : null;
   }
   /******************************************************************************************
    *
    */
   get hasAttribute() {
-    return this.#isValid ? !!ATTRIBUTE_MAPPING[this.#type] : false;
+    return this.#isValid ? !!ATTRIBUTE_MAPPING[this.#domain] : false;
   }
   get defaultAttribute() {
-    return this.#isValid && this.hasAttribute ? ATTRIBUTE_MAPPING[this.#type].attribute : null;
+    return this.#isValid && this.hasAttribute ? ATTRIBUTE_MAPPING[this.#domain].attribute : null;
   }
   get name() {
     return this.#isValid ? this.#hassProvider.hass.states[this.#id]?.attributes?.friendly_name : null;
@@ -3299,10 +3354,10 @@ class EntityHelper {
     return this.#isValid ? this.#hassProvider.hass.states[this.#id]?.attributes ?? null : null;
   }
   get isTimer() {
-    return this.#type === CARD.config.entity.type.timer;
+    return this.#domain === CARD.config.entity.type.timer;
   }
   get hasShapeByDefault() {
-    return this.#type === CARD.config.entity.type.light || this.#type === CARD.config.entity.type.fan;
+    return this.#domain === CARD.config.entity.type.light || this.#domain === CARD.config.entity.type.fan;
   }
 
   #getClimateColor() {
@@ -3337,7 +3392,7 @@ class EntityHelper {
       [CARD.config.entity.class.battery]: this.#getBatteryColor(),
     };
 
-    return typeColorMap[this.#type] ?? typeColorMap[this.#getDeviceClass()] ?? null;
+    return typeColorMap[this.#domain] ?? typeColorMap[this.#getDeviceClass()] ?? null;
   }
 }
 

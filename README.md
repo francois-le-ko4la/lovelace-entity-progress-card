@@ -275,7 +275,7 @@ show_more_info: true
 
 #### `theme`
 
-> **`theme`** [string {`battery`|`cpu`|`light`|`memory`|`temperature`|`humidity`|`pm25`|`voc`}] *(optional)*
+> **`theme`** [string {`optimal_when_low`|`optimal_when_high`|`battery`|`cpu`|`light`|`memory`|`temperature`|`humidity`|`pm25`|`voc`}] *(optional)*
 
 Allows customization of the progress bar's appearance using a predefined theme.
 This theme dynamically adjusts the `icon`, `color` and `bar-color` parameters based on the battery level, eliminating the need for manual adjustments or complex Jinja2 templates.  
@@ -285,6 +285,11 @@ type: custom:entity-progress-card
 ····
 theme: light
 ```
+
+> [!WARNING]
+> The `battery`, `cpu`, and `memory` parameters are deprecated and SHOULD no longer be used.
+> Although these parameters are still valid, they MUST be replaced by `optimal_when_low` or `optimal_when_high`.
+> These new parameters, introduced in version `1.1.7`, eliminate the need for multiple theme definitions and are sufficient to replace the deprecated themes.
 
 #### `bar_size`
 
@@ -332,8 +337,8 @@ type: custom:entity-progress-card
 icon: mdi:grain
 ```
 
-*Default by device type:*  
-| Device Type                         | Icon (MDI)              |
+*Default by device domain:*  
+| Device domain                       | Icon (MDI)              |
 |-------------------------------------|-------------------------|
 | binary_sensor                       | mdi:circle-outline      |
 | climate                             | mdi:thermostat          |
@@ -398,7 +403,7 @@ icon: mdi:grain
 - Icon Parameter: A custom icon specifically defined for the item.
 - Icon Associated with the Entity: The icon directly linked or representative of the entity.
 - Icon Associated with the Entity's device_class: temperature, humidity...
-- Icon Associated with the Entity's device type
+- Icon Associated with the Entity's device domain
 - Default: The icon used by default if no other is specified.
 
 #### `color`
@@ -616,6 +621,7 @@ name: RVB
 icon: mdi:grain
 color: rgb(110, 65, 171)
 bar_color: rgb(110, 65, 171)
+show_more_info: true
 ```
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/RVB.png" alt="Image title" width="250px"/>
@@ -628,6 +634,7 @@ name: RVB
 icon: mdi:grain
 color: yellow
 bar_color: green
+show_more_info: true
 layout: vertical
 grid_options:
   columns: 3
@@ -665,7 +672,8 @@ filter:
       options:
         type: custom:entity-progress-card
         entity: this.entity_id
-        theme: battery
+        theme: optimal_when_high
+        show_more_info: true
 card:
   square: false
   type: grid
@@ -697,33 +705,41 @@ grid_options:
 ```
 
 ### 🎨 Themes
-#### 🔋 Battery
+#### 🔋 Optimal when high (Battery...)
 
+The "Optimal when High" parameter is particularly useful in cases where the system or component in question performs best at higher values. For instance, in the case of battery charge, the device functions more efficiently and with better performance when the battery level is high. By using "Optimal when High," you can set a theme that visually emphasizes and prioritizes states where the value is at its peak.
 ```yaml
 type: custom:entity-progress-card
-entity: sensor.xxx_battery_level
-theme: battery
+entity: sensor.in2013_battery_level
+theme: optimal_when_high
 ```
 
-The `battery` configuration defines how different battery charge levels are visually represented using colors and icons.  
-This system uses a **linear gradient**, meaning the color transitions progressively across the charge percentage range.  
+*   0% -> 20%:     `red`
+*   20% -> 50%:    `amber`
+*   50% -> 80%:    `yellow`
+*   80% -> 100%:   `green`
 
-The battery levels and their corresponding icons and colors are as follows:
+> [!NOTE]
+> 
+> The icon is automatically retrieved from the entity but can be overridden using the `icon` parameter.
 
-*   **< 10%**:   `mdi:battery-alert` → Critical battery (`var(--state-sensor-battery-low-color)`)  
-*   **≥ 10%**:   `mdi:battery-alert` → Low battery (`var(--state-sensor-battery-low-color)`)  
-*   **≥ 20%**:   `mdi:battery-20` → Low battery (`var(--state-sensor-battery-medium-color)`)  
-*   **≥ 30%**:   `mdi:battery-30` → Medium battery (`var(--state-sensor-battery-medium-color)`)  
-*   **≥ 40%**:   `mdi:battery-40` → Medium battery (`var(--state-sensor-battery-medium-color)`)  
-*   **≥ 50%**:   `mdi:battery-50` → Moderate battery (`var(--yellow-color)`)  
-*   **≥ 60%**:   `mdi:battery-60` → Moderate battery (`var(--yellow-color)`)  
-*   **≥ 70%**:   `mdi:battery-70` → Moderate battery (`var(--yellow-color)`)  
-*   **≥ 80%**:   `mdi:battery-80` → High battery (`var(--state-sensor-battery-high-color)`)  
-*   **≥ 90%**:   `mdi:battery-90` → High battery (`var(--state-sensor-battery-high-color)`)  
-*   **≥ 100%**:  `mdi:battery` → Fully charged (`var(--state-sensor-battery-high-color)`)  
+#### 💽 Optimal when high (CPU, RAM, disk...)
 
-Icons change progressively from `mdi:battery-alert` at low levels to `mdi:battery` when fully charged.  
-The **linear approach** ensures a smooth transition between battery levels.
+The "Optimal when Low" parameter is particularly valuable for monitoring systems or components that perform best when their values are at a lower level. For example, in the case of memory usage or CPU load, lower values often indicate that the system is running efficiently and not overburdened. 
+```yaml
+type: custom:entity-progress-card
+entity: sensor.system_monitor_cpu_usage
+theme: optimal_when_low
+```
+
+*   0% -> 20%:     `green`
+*   20% -> 50%:    `yellow`
+*   50% -> 80%:    `amber`
+*   80% -> 100%:   `red`
+
+> [!NOTE]
+> 
+> The icon is automatically retrieved from the entity but can be overridden using the `icon` parameter.
 
 #### 💡 Light
 
@@ -732,6 +748,7 @@ type: custom:entity-progress-card
 entity: light.bandeau_led
 attribute: brightness
 theme: light
+show_more_info: true
 ```
 
 The `light` configuration, designed by [@harmonie-durrant](https://github.com/harmonie-durrant), defines how different brightness levels are visually represented using colors and icons.  
@@ -760,6 +777,7 @@ unit: °C
 min_value: -20
 max_value: 45
 theme: temperature
+show_more_info: true
 ```
 
 We can use `min_value` and `max_value` to define the range of values we want to represent with our color gradient.
@@ -792,6 +810,7 @@ type: custom:entity-progress-card
 entity: sensor.xxx
 attribute: humidity
 theme: humidity
+show_more_info: true
 ```
 
 The `humidity` configuration defines how different humidity levels are represented with colors and icons.  
@@ -821,6 +840,7 @@ unit: ppb
 decimal: 0
 max_value: 300
 theme: voc
+show_more_info: true
 ```
 
 The `voc` configuration defines how different levels of volatile organic compounds (VOCs) are represented using colors and icons.  
@@ -854,6 +874,7 @@ unit: µg/m³
 decimal: 0
 max_value: 50
 theme: pm25
+show_more_info: true
 ```
 
 The `pm25` configuration defines how different concentrations of fine particulate matter (PM2.5) are represented using colors and icons.  
