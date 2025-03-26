@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.1.7
+ * @version 1.1.8
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.1.7';
+const VERSION = '1.1.8';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
@@ -34,7 +34,7 @@ const CARD = {
   config: {
     language: 'en',
     value: { min: 0, max: 100 },
-    unit: { default: '%', fahrenheit: '°F', timer: 'timer', flexTimer: 'flextimer' },
+    unit: { default: '%', fahrenheit: '°F', timer: 'timer', flexTimer: 'flextimer', disable: '' },
     showMoreInfo: true,
     reverse: false,
     decimal: { percentage: 0, timer: 0, other: 2 },
@@ -315,19 +315,19 @@ const THEME = {
   optimal_when_low: {
     linear: false,
     style: [
-      { min: 0, max: 20, icon: null, color: 'var(--state-sensor-battery-high-color)' },
+      { min: 0, max: 20, icon: null, color: 'var(--success-color)' },
       { min: 20, max: 50, icon: null, color: 'var(--yellow-color)' },
-      { min: 50, max: 80, icon: null, color: 'var(--state-sensor-battery-medium-color)' },
-      { min: 80, max: 100, icon: null, color: 'var(--state-sensor-battery-low-color)' },
+      { min: 50, max: 80, icon: null, color: 'var(--accent-color)' },
+      { min: 80, max: 100, icon: null, color: 'var(--red-color)' },
     ],
   },
   optimal_when_high: {
     linear: false,
     style: [
-      { min: 0, max: 20, icon: null, color: 'var(--state-sensor-battery-low-color)' },
-      { min: 20, max: 50, icon: null, color: 'var(--state-sensor-battery-medium-color)' },
+      { min: 0, max: 20, icon: null, color: 'var(--red-color)' },
+      { min: 20, max: 50, icon: null, color: 'var(--accent-color)' },
       { min: 50, max: 80, icon: null, color: 'var(--yellow-color)' },
-      { min: 80, max: 100, icon: null, color: 'var(--state-sensor-battery-high-color)' },
+      { min: 80, max: 100, icon: null, color: 'var(--success-color)' },
     ],
   },
   cpu: {
@@ -2928,7 +2928,7 @@ class PercentHelper {
     if (this.#unit.value === CARD.config.unit.fahrenheit) {
       value = ((value - 32) * 5) / 9;
     }
-    return themeIsLinear || this.#unit.value === CARD.config.unit.default ? this.#percent : value;
+    return themeIsLinear || [CARD.config.unit.default, CARD.config.unit.disable].includes(this.#unit.value) ? this.#percent : value;
   }
 
   /**
