@@ -3173,6 +3173,9 @@ class HassProvider {
   get hass() {
     return this.#hass;
   }
+  get systemLanguage() {
+    return this.#isValid && MSG.decimalError[this.#hass.config.language] ? this.#hass.config.language : CARD.config.language;
+  }
   get language() {
     return this.#isValid && MSG.decimalError[this.#hass.language] ? this.#hass.language : CARD.config.language;
   }
@@ -3185,6 +3188,7 @@ class HassProvider {
       comma_decimal: 'en-US', // 1,234.56 (USA, UK, etc.)
       space_comma: 'fr-FR', // 1 234,56 (France, Norvège, etc.)
       language: CARD.config.languageMap[this.language],
+      system: CARD.config.languageMap[this.systemLanguage],
     };
 
     return formatMap[this.#hass.locale.number_format] || CARD.config.languageMap[CARD.config.language]; 
