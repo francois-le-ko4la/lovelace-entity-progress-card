@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.1.8
+ * @version 1.1.9
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.1.8';
+const VERSION = '1.1.9';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
@@ -46,7 +46,21 @@ const CARD = {
     msFactor: 1000,
     shadowMode: 'open',
     refresh: { ratio: 500, min: 250, max: 1000 },
-    debounce: 100,
+    languageMap: {
+      en: 'en-US',  // Anglais → 1,234.56
+      fr: 'fr-FR',  // Français → 1 234,56
+      es: 'es-ES',  // Espagnol → 1.234,56
+      it: 'it-IT',  // Italien → 1.234,56
+      de: 'de-DE',  // Allemand → 1.234,56
+      nl: 'nl-NL',  // Néerlandais → 1.234,56
+      hr: 'hr-HR',  // Croate → 1.234,56
+      pl: 'pl-PL',  // Polonais → 1 234,56
+      mk: 'mk-MK',  // Macédonien → 1.234,56
+      pt: 'pt-PT',  // Portugais → 1.234,56
+      da: 'da-DK',  // Danois → 1.234,56
+      nb: 'nb-NO',  // Norvégien (Bokmål) → 1 234,56
+      sv: 'sv-SE',  // Suédois → 1 234,56
+    },
     debug: false,
   },
   htmlStructure: {
@@ -2973,7 +2987,7 @@ class PercentHelper {
       return this._getTiming();
     }
 
-    const formattedValue = new Intl.NumberFormat(this.#hassProvider.language, {
+    const formattedValue = new Intl.NumberFormat(this.#hassProvider.numberFormat, {
       style: 'decimal',
       minimumFractionDigits: this.#decimal.value,
       maximumFractionDigits: this.#decimal.value,
@@ -3161,6 +3175,19 @@ class HassProvider {
   }
   get language() {
     return this.#isValid && MSG.decimalError[this.#hass.language] ? this.#hass.language : CARD.config.language;
+  }
+  get numberFormat() {
+    if (!this.#isValid || !this.#hass?.locale?.number_format) {
+      return CARD.config.languageMap[CARD.config.language]; // if unavailable return default
+    }
+    const formatMap = {
+      decimal_comma: 'de-DE', // 1.234,56 (Allemagne, France, etc.)
+      comma_decimal: 'en-US', // 1,234.56 (USA, UK, etc.)
+      space_comma: 'fr-FR', // 1 234,56 (France, Norvège, etc.)
+      language: CARD.config.languageMap[this.language],
+    };
+
+    return formatMap[this.#hass.locale.number_format] || CARD.config.languageMap[CARD.config.language]; 
   }
   get hasNewShapeStrategy() {
     if (!this.#hass || !this.#hass.config || !this.#hass.config.version) return false;
