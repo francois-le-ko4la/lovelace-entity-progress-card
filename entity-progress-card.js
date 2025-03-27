@@ -2987,11 +2987,17 @@ class PercentHelper {
       return this._getTiming();
     }
 
-    const formattedValue = new Intl.NumberFormat(this.#hassProvider.numberFormat, {
-      style: 'decimal',
-      minimumFractionDigits: this.#decimal.value,
-      maximumFractionDigits: this.#decimal.value,
-    }).format(this.processedValue);
+    let formattedValue;
+    const numberFormat = this.#hassProvider.numberFormat;
+    if (numberFormat) {
+      formattedValue = new Intl.NumberFormat(numberFormat, {
+        style: 'decimal',
+        minimumFractionDigits: this.#decimal.value,
+        maximumFractionDigits: this.#decimal.value,
+      }).format(this.processedValue);
+    } else {
+      formattedValue = `${this.processedValue}`;
+    }
 
     return this.#unit.value ? `${formattedValue}${this.#unit.value}` : formattedValue;
   }
@@ -3183,12 +3189,15 @@ class HassProvider {
     if (!this.#isValid || !this.#hass?.locale?.number_format) {
       return CARD.config.languageMap[CARD.config.language]; // if unavailable return default
     }
+    if (this.#hass?.locale?.number_format === 'none') {
+      return null;
+    }
     const formatMap = {
       decimal_comma: 'de-DE', // 1.234,56 (Allemagne, France, etc.)
       comma_decimal: 'en-US', // 1,234.56 (USA, UK, etc.)
       space_comma: 'fr-FR', // 1 234,56 (France, Norvège, etc.)
-      language: CARD.config.languageMap[this.language],
-      system: CARD.config.languageMap[this.systemLanguage],
+      language: this.#hass.language,
+      system: Intl.NumberFormat().resolvedOptions().locale,
     };
 
     return formatMap[this.#hass.locale.number_format] || CARD.config.languageMap[CARD.config.language]; 
