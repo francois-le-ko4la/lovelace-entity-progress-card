@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.1.9
+ * @version 1.1.10
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.1.9';
+const VERSION = '1.1.10';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
@@ -47,19 +47,68 @@ const CARD = {
     shadowMode: 'open',
     refresh: { ratio: 500, min: 250, max: 1000 },
     languageMap: {
-      en: 'en-US',  // Anglais → 1,234.56
-      fr: 'fr-FR',  // Français → 1 234,56
-      es: 'es-ES',  // Espagnol → 1.234,56
-      it: 'it-IT',  // Italien → 1.234,56
-      de: 'de-DE',  // Allemand → 1.234,56
-      nl: 'nl-NL',  // Néerlandais → 1.234,56
-      hr: 'hr-HR',  // Croate → 1.234,56
-      pl: 'pl-PL',  // Polonais → 1 234,56
-      mk: 'mk-MK',  // Macédonien → 1.234,56
-      pt: 'pt-PT',  // Portugais → 1.234,56
-      da: 'da-DK',  // Danois → 1.234,56
-      nb: 'nb-NO',  // Norvégien (Bokmål) → 1 234,56
-      sv: 'sv-SE',  // Suédois → 1 234,56
+      af: 'af-ZA',
+      ar: 'ar',
+      bg: 'bg-BG',
+      bn: 'bn',
+      ca: 'ca-ES',
+      cs: 'cs-CZ',
+      da: 'da-DK',
+      de: 'de-DE',
+      'de-CH': 'de-CH',
+      el: 'el-GR',
+      en: 'en-US',
+      es: 'es-ES',
+      et: 'et-EE',
+      eu: 'eu-ES',
+      fa: 'fa-IR',
+      fi: 'fi-FI',
+      fr: 'fr-FR',
+      gl: 'gl-ES',
+      gu: 'gu-IN',
+      he: 'he-IL',
+      hi: 'hi-IN',
+      hr: 'hr-HR',
+      hu: 'hu-HU',
+      id: 'id-ID',
+      is: 'is-IS',
+      it: 'it-IT',
+      ja: 'ja-JP',
+      ka: 'ka-GE',
+      kn: 'kn-IN',
+      ko: 'ko-KR',
+      kw: 'kw-GB',
+      lb: 'lb-LU',
+      lt: 'lt-LT',
+      lv: 'lv-LV',
+      ml: 'ml-IN',
+      mn: 'mn-MN',
+      mr: 'mr-IN',
+      ms: 'ms-MY',
+      nb: 'nb-NO',
+      ne: 'ne-NP',
+      nl: 'nl-NL',
+      pl: 'pl-PL',
+      pt: 'pt-PT',
+      'pt-br': 'pt-BR',
+      ro: 'ro-RO',
+      ru: 'ru-RU',
+      sk: 'sk-SK',
+      sl: 'sl-SI',
+      sr: 'sr-RS',
+      'sr-Latn': 'sr-Latn-RS',
+      sv: 'sv-SE',
+      sw: 'sw-KE',
+      te: 'te-IN',
+      th: 'th-TH',
+      tr: 'tr-TR',
+      uk: 'uk-UA',
+      ur: 'ur-PK',
+      vi: 'vi-VN',
+      'zh-cn': 'zh-CN',
+      'zh-hk': 'zh-HK',
+      'zh-tw': 'zh-TW',
+      'zh-Hant': 'zh-TW',
     },
     debug: false,
   },
@@ -3196,7 +3245,9 @@ class HassProvider {
       decimal_comma: 'de-DE', // 1.234,56 (Allemagne, France, etc.)
       comma_decimal: 'en-US', // 1,234.56 (USA, UK, etc.)
       space_comma: 'fr-FR', // 1 234,56 (France, Norvège, etc.)
-      language: this.#hass.language,
+      language: CARD.config.languageMap[this.#hass.language]
+        ? CARD.config.languageMap[this.#hass.language]
+        : CARD.config.languageMap[CARD.config.language],
       system: Intl.NumberFormat().resolvedOptions().locale,
     };
 

@@ -1027,6 +1027,29 @@ We'll use a Helper (Number) to handle this calculation. It’s simple to define 
 ### Conclusion
 By implementing this model through the helper, we can accurately calculate and display the percentage of remaining time for any task. This approach provides a dynamic and intuitive way to monitor progress, ensuring that the displayed percentage accurately reflects the time remaining regardless of the task’s total duration. This solution effectively extend our card usage vision, and enhances the user experience.
 
+## 🌍 Universal Language & Number Support
+
+🌟 Our goal is to make this card a seamless and intuitive tool for users worldwide, eliminating language barriers and ensuring proper data formatting for every region. If you have suggestions for additional languages or formatting improvements, we’re always open to feedback!
+To accommodate multilingual environments, the card defaults to the language set in the user's profile for optimal consistency and localization.
+
+### 📖 Text Display
+
+This card supports multiple languages to provide:
+- Clear and localized information
+- Context-specific error messages
+
+We strive to make this card as inclusive as possible, with support for:
+🇬🇧 English, 🇪🇸 Spanish, 🇩🇪 German, 🇮🇹 Italian, 🇫🇷 French, 🇵🇱 Polish, 🇳🇱 Dutch, 🇲🇰 Macedonian, 🇵🇹 Portuguese, 🇩🇰 Danish, 🇸🇪 Swedish, and 🇳🇴 Norwegian (Bokmål).
+More languages may be added in the future to enhance accessibility!
+
+### 🔢 Intelligent Number Formatting
+
+Numbers are displayed based on your regional preferences, using:
+- Your selected language settings
+- Or the system-defined format from your Home Assistant user profile
+
+By default, the card uses standard Arabic numerals (0-9) for maximum compatibility.
+
 ## ❓ Troubleshooting
 
 - Card not loading? Ensure the resource is correctly added to Lovelace.
