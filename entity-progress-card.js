@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.1.10
+ * @version 1.1.11
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.1.10';
+const VERSION = '1.1.11';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
