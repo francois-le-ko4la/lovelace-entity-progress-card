@@ -1045,8 +1045,9 @@ More languages may be added in the future to enhance accessibility!
 ### 🔢 Intelligent Number Formatting
 
 Numbers are displayed based on your regional preferences, using:
-- Your selected language settings
-- Or the system-defined format from your Home Assistant user profile
+- Your selected language settings (auto)
+- Your specific format (manual selection)
+- Or the system-defined format from your Home Assistant user profile (system/navigator)
 
 By default, the card uses standard Arabic numerals (0-9) for maximum compatibility.
 

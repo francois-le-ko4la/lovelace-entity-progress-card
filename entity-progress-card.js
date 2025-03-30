@@ -359,22 +359,6 @@ CARD.console = {
 };
 
 const THEME = {
-  battery: {
-    linear: true,
-    style: [
-      { icon: 'mdi:battery-alert', color: 'var(--state-sensor-battery-low-color)' },
-      { icon: 'mdi:battery-alert', color: 'var(--state-sensor-battery-low-color)' },
-      { icon: 'mdi:battery-20', color: 'var(--state-sensor-battery-medium-color)' },
-      { icon: 'mdi:battery-30', color: 'var(--state-sensor-battery-medium-color)' },
-      { icon: 'mdi:battery-40', color: 'var(--state-sensor-battery-medium-color)' },
-      { icon: 'mdi:battery-50', color: 'var(--yellow-color)' },
-      { icon: 'mdi:battery-60', color: 'var(--yellow-color)' },
-      { icon: 'mdi:battery-70', color: 'var(--yellow-color)' },
-      { icon: 'mdi:battery-80', color: 'var(--state-sensor-battery-high-color)' },
-      { icon: 'mdi:battery-90', color: 'var(--state-sensor-battery-high-color)' },
-      { icon: 'mdi:battery', color: 'var(--state-sensor-battery-high-color)' },
-    ],
-  },
   optimal_when_low: {
     linear: false,
     style: [
@@ -391,26 +375,6 @@ const THEME = {
       { min: 20, max: 50, icon: null, color: 'var(--accent-color)' },
       { min: 50, max: 80, icon: null, color: 'var(--yellow-color)' },
       { min: 80, max: 100, icon: null, color: 'var(--success-color)' },
-    ],
-  },
-  cpu: {
-    linear: true,
-    style: [
-      { icon: 'mdi:cpu-64-bit', color: 'var(--state-sensor-battery-high-color)' },
-      { icon: 'mdi:cpu-64-bit', color: 'var(--yellow-color)' },
-      { icon: 'mdi:cpu-64-bit', color: 'var(--state-sensor-battery-medium-color)' },
-      { icon: 'mdi:cpu-64-bit', color: 'var(--state-sensor-battery-low-color)' },
-      { icon: 'mdi:cpu-64-bit', color: 'var(--state-sensor-battery-low-color)' },
-    ],
-  },
-  memory: {
-    linear: true,
-    style: [
-      { icon: 'mdi:memory', color: 'var(--state-sensor-battery-high-color)' },
-      { icon: 'mdi:memory', color: 'var(--yellow-color)' },
-      { icon: 'mdi:memory', color: 'var(--state-sensor-battery-medium-color)' },
-      { icon: 'mdi:memory', color: 'var(--state-sensor-battery-low-color)' },
-      { icon: 'mdi:memory', color: 'var(--state-sensor-battery-low-color)' },
     ],
   },
   light: {
@@ -1420,42 +1384,42 @@ const FIELD_OPTIONS = {
       icon: 'mdi:arrow-collapse-up',
     },
     {
-      value: 'battery',
+      value: 'light',
       label: {
-        en: 'Battery',
-        fr: 'Batterie',
-        es: 'Batería',
-        it: 'Batteria',
-        de: 'Batterie',
-        nl: 'Batterij',
-        hr: 'Baterija',
-        pl: 'Bateria',
-        mk: 'Батерија',
-        pt: 'Bateria',
-        da: 'Batteri',
-        nb: 'Batteri',
-        sv: 'Batteri',
+        en: 'Light',
+        fr: 'Lumière',
+        es: 'Luz',
+        it: 'Luce',
+        de: 'Licht',
+        nl: 'Licht',
+        hr: 'Svjetlo',
+        pl: 'Światło',
+        mk: 'Светлина',
+        pt: 'Luz',
+        da: 'Lys',
+        nb: 'Lys',
+        sv: 'Ljus',
       },
-      icon: 'mdi:battery',
+      icon: 'mdi:lightbulb',
     },
     {
-      value: 'cpu',
+      value: 'temperature',
       label: {
-        en: 'CPU',
-        fr: 'CPU',
-        es: 'CPU',
-        it: 'CPU',
-        de: 'CPU',
-        nl: 'CPU',
-        hr: 'CPU',
-        pl: 'CPU',
-        mk: 'CPU',
-        pt: 'CPU',
-        da: 'CPU',
-        nb: 'CPU',
-        sv: 'CPU',
+        en: 'Temperature',
+        fr: 'Température',
+        es: 'Temperatura',
+        it: 'Temperatura',
+        de: 'Temperatur',
+        nl: 'Temperatuur',
+        hr: 'Temperatura',
+        pl: 'Temperatura',
+        mk: 'Температура',
+        pt: 'Temperatura',
+        da: 'Temperatur',
+        nb: 'Temperatur',
+        sv: 'Temperatur',
       },
-      icon: 'mdi:cpu-64-bit',
+      icon: 'mdi:thermometer',
     },
     {
       value: 'humidity',
@@ -1477,44 +1441,6 @@ const FIELD_OPTIONS = {
       icon: 'mdi:water-percent',
     },
     {
-      value: 'light',
-      label: {
-        en: 'Light',
-        fr: 'Lumière',
-        es: 'Luz',
-        it: 'Luce',
-        de: 'Licht',
-        nl: 'Licht',
-        hr: 'Svjetlo',
-        pl: 'Światło',
-        mk: 'Светлина',
-        pt: 'Luz',
-        da: 'Lys',
-        nb: 'Lys',
-        sv: 'Ljus',
-      },
-      icon: 'mdi:lightbulb',
-    },
-    {
-      value: 'memory',
-      label: {
-        en: 'RAM',
-        fr: 'RAM',
-        es: 'RAM',
-        it: 'RAM',
-        de: 'RAM',
-        nl: 'RAM',
-        hr: 'RAM',
-        pl: 'RAM',
-        mk: 'RAM',
-        pt: 'RAM',
-        da: 'RAM',
-        nb: 'RAM',
-        sv: 'RAM',
-      },
-      icon: 'mdi:memory',
-    },
-    {
       value: 'pm25',
       label: {
         en: 'PM2.5',
@@ -1532,25 +1458,6 @@ const FIELD_OPTIONS = {
         sv: 'PM2.5',
       },
       icon: 'mdi:air-filter',
-    },
-    {
-      value: 'temperature',
-      label: {
-        en: 'Temperature',
-        fr: 'Température',
-        es: 'Temperatura',
-        it: 'Temperatura',
-        de: 'Temperatur',
-        nl: 'Temperatuur',
-        hr: 'Temperatura',
-        pl: 'Temperatura',
-        mk: 'Температура',
-        pt: 'Temperatura',
-        da: 'Temperatur',
-        nb: 'Temperatur',
-        sv: 'Temperatur',
-      },
-      icon: 'mdi:thermometer',
     },
     {
       value: 'voc',
@@ -1573,6 +1480,24 @@ const FIELD_OPTIONS = {
     },
   ],
   color: [
+    {
+      value: '',
+      label: {
+        en: '',
+        fr: '',
+        es: '',
+        it: '',
+        de: '',
+        nl: '',
+        hr: '',
+        pl: '',
+        mk: '',
+        pt: '',
+        da: '',
+        nb: '',
+        sv: '',
+      },
+    },
     {
       value: 'var(--state-icon-color)',
       label: {
@@ -2569,6 +2494,7 @@ const CARD_CSS = `
         display: flex;
         flex-direction: column;
         gap: 25px;
+        padding-bottom: 150px;
     }
     .${CARD.editor.fields.fieldContainer.class} {
         display: block;
@@ -2744,6 +2670,9 @@ const CARD_CSS = `
         height: 16px;
         border-radius: 50%;
         margin-right: 8px;
+    }
+    ha-select {
+      --mdc-menu-max-height: 250px; /* Définit la hauteur maximale */
     }
 `;
 
@@ -3070,6 +2999,12 @@ class ThemeManager {
    * Getter/Setter
    */
   set theme(newTheme) {
+    if (newTheme === 'battery') {
+      newTheme = 'optimal_when_high';
+    }
+    if (newTheme === 'memory' || newTheme === 'cpu') {
+      newTheme = 'optimal_when_low';
+    }
     if (!newTheme || !Object.hasOwn(THEME, newTheme)) {
       this.#icon = null;
       this.#color = null;
@@ -4745,10 +4680,12 @@ class EntityProgressCardEditor extends HTMLElement {
     debugLog(`select : ${select}`);
     debugLog(`type : ${type}`);
     select.innerHTML = '';
+    
     const list = type === CARD.editor.fields.attribute.type || type === CARD.editor.fields.max_value_attribute.type ? choices : FIELD_OPTIONS[type];
     if (!list) {
       return;
     }
+
     list.forEach((optionData) => {
       const option = document.createElement(CARD.editor.fields.listItem.element);
       option.value = optionData.value !== undefined ? optionData.value : optionData;
@@ -4791,6 +4728,16 @@ class EntityProgressCardEditor extends HTMLElement {
       }
       select.appendChild(option);
     });
+
+    // Appliquer une hauteur maximale à la liste déroulante via le shadow DOM
+    const shadowRoot = select.shadowRoot; // Accède au shadowRoot de ha-select
+    if (shadowRoot) {
+      const menu = shadowRoot.querySelector('.mdc-menu-surface'); // Trouve l'élément de menu
+      if (menu) {
+        menu.style.maxHeight = '160px'; // Définir la hauteur maximale pour les options
+        menu.style.overflowY = 'auto'; // Ajoute un défilement vertical si nécessaire
+      }
+    }
   }
 
   /**
