@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.1.11
+ * @version 1.2.0
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.1.11';
+const VERSION = '1.2.0';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
@@ -110,7 +110,7 @@ const CARD = {
       'zh-tw': 'zh-TW',
       'zh-Hant': 'zh-TW',
     },
-    debug: false,
+    debug: true,
   },
   htmlStructure: {
     card: { element: 'ha-card' },
@@ -288,8 +288,22 @@ const CARD = {
   },
   interactions: {
     event: { HASelect: ['selected'], other: ['value-changed', 'input'], closed: 'closed', click: 'click', configChanged: 'config-changed' },
-    action: {
-      tap: { default: 'tap_default', no_action: 'no_action', navigate_to: 'navigate_to', more_info: 'show_more_info' },
+    tap_action: {
+      default: 'default',
+      navigate: {
+        action: 'navigate',
+        navigation_path: '',
+      },
+      moreInfo: {
+        action: 'more-info',
+      },
+      url: {
+        action: 'url',
+        url_path: '',
+      },
+      none: {
+        action: 'none',
+      },
     },
   },
   editor: {
@@ -304,6 +318,7 @@ const CARD = {
       layout: { type: 'layout', element: 'ha-select' },
       bar_size: { type: 'bar_size', element: 'ha-select' },
       tap_action: { type: 'tap_action', element: 'ha-select' },
+      navigation_picker: { type: 'navigation_picker', element: 'ha-select' },
       theme: { type: 'theme', element: 'ha-select' },
       color: { type: 'color', element: 'ha-select' },
       number: { type: 'number', element: 'ha-textfield' },
@@ -325,7 +340,9 @@ const CARD = {
     keyMappings: {
       attribute: 'attribute',
       max_value_attribute: 'max_value_attribute',
-      navigateTo: 'navigate_to',
+      navigateTo: 'navigate_to', // keep it
+      url_path: 'url_path',
+      navigation_path: 'navigation_path',
       theme: 'theme',
       tapAction: 'tap_action',
     },
@@ -361,6 +378,7 @@ CARD.console = {
 const THEME = {
   optimal_when_low: {
     linear: false,
+    percent: true,
     style: [
       { min: 0, max: 20, icon: null, color: 'var(--success-color)' },
       { min: 20, max: 50, icon: null, color: 'var(--yellow-color)' },
@@ -370,6 +388,7 @@ const THEME = {
   },
   optimal_when_high: {
     linear: false,
+    percent: true,
     style: [
       { min: 0, max: 20, icon: null, color: 'var(--red-color)' },
       { min: 20, max: 50, icon: null, color: 'var(--accent-color)' },
@@ -379,6 +398,7 @@ const THEME = {
   },
   light: {
     linear: true,
+    percent: true,
     style: [
       { icon: 'mdi:lightbulb-outline', color: '#4B4B4B' },
       { icon: 'mdi:lightbulb-outline', color: '#877F67' },
@@ -389,6 +409,7 @@ const THEME = {
   },
   temperature: {
     linear: false,
+    percent: false,
     style: [
       { min: -50, max: -30, icon: 'mdi:thermometer', color: 'var(--deep-purple-color)' },
       { min: -30, max: -15, icon: 'mdi:thermometer', color: 'var(--dark-blue-color)' },
@@ -407,6 +428,7 @@ const THEME = {
   },
   humidity: {
     linear: false,
+    percent: true,
     style: [
       { min: 0, max: 23, icon: 'mdi:water-percent', color: 'var(--red-color)' },
       { min: 23, max: 30, icon: 'mdi:water-percent', color: 'var(--accent-color)' },
@@ -420,6 +442,7 @@ const THEME = {
   },
   voc: {
     linear: false,
+    percent: false,
     style: [
       { min: 0, max: 300, icon: 'mdi:air-filter', color: 'var(--success-color)' },
       { min: 300, max: 500, icon: 'mdi:air-filter', color: 'var(--yellow-color)' },
@@ -430,6 +453,7 @@ const THEME = {
   },
   pm25: {
     linear: false,
+    percent: false,
     style: [
       { min: 0, max: 12, icon: 'mdi:air-filter', color: 'var(--success-color)' },
       { min: 12, max: 35, icon: 'mdi:air-filter', color: 'var(--yellow-color)' },
@@ -943,41 +967,78 @@ const EDITOR_INPUT_FIELDS = {
           sv: 'Välj åtgärden.',
         },
       },
-      navigate_to: {
-        name: CARD.editor.keyMappings.navigateTo,
+      navigation_path: {
+        name: CARD.editor.keyMappings.navigation_path,
         label: {
-          en: 'Navigate to...',
-          fr: 'Naviguer vers...',
-          es: 'Navegar a...',
-          it: 'Naviga verso...',
-          de: 'Navigieren zu...',
-          nl: 'Navigeer naar...',
-          hr: 'Navigiraj na...',
-          pl: 'Nawiguj do...',
-          mk: 'Навигирај до...',
-          pt: 'Navegar para...',
-          da: 'Naviger til...',
-          nb: 'Naviger til...',
-          sv: 'Navigera till...',
+          en: 'Navigation Path',
+          fr: 'Chemin De Navigation',
+          es: 'Ruta De Navegación',
+          it: 'Percorso Di Navigazione',
+          de: 'Navigationspfad',
+          nl: 'Navigatiepad',
+          hr: 'Navigacijska Staza',
+          pl: 'Ścieżka Nawigacji',
+          mk: 'Навигациска Патека',
+          pt: 'Caminho De Navegação',
+          da: 'Navigationssti',
+          nb: 'Navigasjonssti',
+          sv: 'Navigeringssökväg',
+        },
+        type: CARD.editor.fields.navigation_picker.type,
+        width: '100%',
+        required: false,
+        isInGroup: CARD.editor.keyMappings.navigation_path,
+        description: {
+          en: 'Select Navigation Path',
+          fr: 'Sélectionner le chemin de navigation',
+          es: 'Seleccionar la ruta de navegación',
+          it: 'Selezionare il percorso di navigazione',
+          de: 'Navigationspfad auswählen',
+          nl: 'Navigatiepad selecteren',
+          hr: 'Odaberite navigacijsku stazu',
+          pl: 'Wybierz ścieżkę nawigacji',
+          mk: 'Изберете навигациска патека',
+          pt: 'Selecionar o caminho de navegação',
+          da: 'Vælg navigationssti',
+          nb: 'Velg navigasjonssti',
+          sv: 'Välj navigeringssökväg',
+        },
+      },
+      url_path: {
+        name: CARD.editor.keyMappings.url_path,
+        label: {
+          en: 'URL',
+          fr: 'URL',
+          es: 'URL',
+          it: 'URL',
+          de: 'URL',
+          nl: 'URL',
+          hr: 'URL',
+          pl: 'URL',
+          mk: 'URL',
+          pt: 'URL',
+          da: 'URL',
+          nb: 'URL',
+          sv: 'URL',
         },
         type: CARD.editor.fields.default.type,
         width: '100%',
         required: false,
-        isInGroup: CARD.editor.keyMappings.navigateTo,
+        isInGroup: CARD.editor.keyMappings.url_path,
         description: {
-          en: 'Enter the target (/lovelace/0).',
-          fr: 'Saisir la cible (/lovelace/0).',
-          es: 'Introduzca el objetivo (/lovelace/0).',
-          it: 'Inserisci il target (/lovelace/0).',
-          de: 'Geben Sie das Ziel (/lovelace/0) ein.',
-          nl: 'Voer de bestemming in (/lovelace/0).',
-          hr: 'Unesite odredište (/lovelace/0).',
-          pl: 'Wprowadź cel (/lovelace/0).',
-          mk: 'Внесете цел (/lovelace/0).',
-          pt: 'Digite o destino (/lovelace/0).',
-          da: 'Indtast målet (/lovelace/0).',
-          nb: 'Skriv inn målet (/lovelace/0).',
-          sv: 'Ange målet (/lovelace/0).',
+          en: 'Enter the target (https://example.com/).',
+          fr: 'Saisir la cible (https://example.com/).',
+          es: 'Introduzca el objetivo (https://example.com/).',
+          it: 'Inserisci il target (https://example.com/).',
+          de: 'Geben Sie das Ziel (https://example.com/) ein.',
+          nl: 'Voer de bestemming in (https://example.com/).',
+          hr: 'Unesite odredište (https://example.com/).',
+          pl: 'Wprowadź cel (https://example.com/).',
+          mk: 'Внесете цел (https://example.com/).',
+          pt: 'Digite o destino (https://example.com/).',
+          da: 'Indtast målet (https://example.com/).',
+          nb: 'Skriv inn målet (https://example.com/).',
+          sv: 'Ange målet (https://example.com/).',
         },
       },
     },
@@ -2104,7 +2165,7 @@ const FIELD_OPTIONS = {
   ],
   tap_action: [
     {
-      value: CARD.interactions.action.tap.default,
+      value: CARD.interactions.tap_action.default,
       label: {
         en: 'Default',
         fr: 'Par défaut',
@@ -2122,7 +2183,7 @@ const FIELD_OPTIONS = {
       },
     },
     {
-      value: CARD.interactions.action.tap.more_info,
+      value: CARD.interactions.tap_action.moreInfo.action,
       label: {
         en: 'More info',
         fr: "Plus d'infos",
@@ -2140,7 +2201,7 @@ const FIELD_OPTIONS = {
       },
     },
     {
-      value: CARD.interactions.action.tap.navigate_to,
+      value: CARD.interactions.tap_action.navigate.action,
       label: {
         en: 'Navigate to...',
         fr: 'Naviguer vers...',
@@ -2158,7 +2219,25 @@ const FIELD_OPTIONS = {
       },
     },
     {
-      value: CARD.interactions.action.tap.no_action,
+      value: CARD.interactions.tap_action.url.action,
+      label: {
+        en: 'URL',
+        fr: 'URL',
+        es: 'URL',
+        it: 'URL',
+        de: 'URL',
+        nl: 'URL',
+        hr: 'URL',
+        pl: 'URL',
+        mk: 'URL',
+        pt: 'URL',
+        da: 'URL',
+        nb: 'URL',
+        sv: 'URL',
+      },
+    },
+    {
+      value: CARD.interactions.tap_action.none.action,
       label: {
         en: 'No action',
         fr: 'Aucune action',
@@ -2504,6 +2583,8 @@ const CARD_CSS = `
     .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.attribute} .${CARD.editor.keyMappings.attribute},
     .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.max_value_attribute} .${CARD.editor.keyMappings.max_value_attribute},
     .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.navigateTo} .${CARD.editor.keyMappings.navigateTo},
+    .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.url_path} .${CARD.editor.keyMappings.url_path},
+    .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.navigation_path} .${CARD.editor.keyMappings.navigation_path},
     .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.theme} .${CARD.editor.keyMappings.theme} {
         display: none;
     }
@@ -2679,9 +2760,13 @@ const CARD_CSS = `
 /******************************************************************************************
  *  Debug
  */
-function debugLog(message) {
+function debugLog(message, variable) {
   if (CARD.config.debug) {
-    console.debug(message);
+    if (variable !== undefined) {
+      console.debug(message, variable);
+    } else {
+      console.debug(message);
+    }
   }
 }
 
@@ -2915,12 +3000,12 @@ class PercentHelper {
    * - If the unit is Fahrenheit, the temperature is converted to Celsius before returning.
    * - If the theme is linear or the unit is the default, the percentage value is returned.
    */
-  valueForThemes(themeIsLinear) {
+  valueForThemes(valueBasedOnPercentage) {
     let value = this.actual;
     if (this.#unit.value === CARD.config.unit.fahrenheit) {
       value = ((value - 32) * 5) / 9;
     }
-    return themeIsLinear || [CARD.config.unit.default, CARD.config.unit.disable].includes(this.#unit.value) ? this.#percent : value;
+    return valueBasedOnPercentage || [CARD.config.unit.default, CARD.config.unit.disable].includes(this.#unit.value) ? this.#percent : value;
   }
 
   /**
@@ -2993,6 +3078,7 @@ class ThemeManager {
   #value = 0;
   #isValid = false;
   #isLinear = false;
+  #isBasedOnPercentage = false;
   #currentStyle = null;
 
   /******************************************************************************************
@@ -3015,6 +3101,7 @@ class ThemeManager {
     this.#theme = newTheme;
     this.#currentStyle = THEME[newTheme].style;
     this.#isLinear = THEME[newTheme].linear;
+    this.#isBasedOnPercentage = THEME[newTheme].percent;
   }
 
   get theme() {
@@ -3033,6 +3120,10 @@ class ThemeManager {
 
   get isLinear() {
     return this.#isLinear;
+  }
+
+  get isBasedOnPercentage() {
+    return this.#isBasedOnPercentage;
   }
 
   get isValid() {
@@ -3143,7 +3234,7 @@ class HassProvider {
   #isValid = false;
 
   constructor(callerName) {
-    debugLog(`HassProvider - Caller : ${callerName}`);
+    debugLog(`👉 HassProvider(${callerName})`);
     if (HassProvider.#instance) {
       return HassProvider.#instance;
     }
@@ -3186,12 +3277,36 @@ class HassProvider {
       system: Intl.NumberFormat().resolvedOptions().locale,
     };
 
-    return formatMap[this.#hass.locale.number_format] || CARD.config.languageMap[CARD.config.language]; 
+    return formatMap[this.#hass.locale.number_format] || CARD.config.languageMap[CARD.config.language];
   }
   get hasNewShapeStrategy() {
     if (!this.#hass || !this.#hass.config || !this.#hass.config.version) return false;
     const [year, month] = this.#hass.config.version.split('.').map(Number);
     return year > 2025 || (year === 2025 && month >= 3);
+  }
+  getLovelaceViews() {
+    console.log('🔄 Récupération des vues Lovelace...');
+    
+    return this.#hass.callWS({ type: 'lovelace/config' })
+      .then(response => {
+        console.log('✅ Réponse reçue :', response);
+
+        const views = response.views.map((view, index) => {
+          const title = view.title || view.path || index;
+          const value = '/lovelace/' + (view.path || index);
+          const label = `${title} (${value})`;
+          const icon = view.icon || 'mdi:page-layout-header';
+
+          return { label: label, value: value, icon: icon };
+        });
+
+        console.log('📌 Vues formatées :', views);
+        return views;
+      })
+      .catch(error => {
+        console.error('❌ Erreur lors de la récupération des vues :', error);
+        return [];
+      });
   }
 }
 
@@ -3630,25 +3745,22 @@ class ConfigHelper {
   get hasDisabledUnit() {
     return this.#config.disable_unit;
   }
-  get show_more_info() {
-    return typeof this.#config.show_more_info === 'boolean' ? this.#config.show_more_info : CARD.config.showMoreInfo;
+  get urlPath() {
+    return this.cardTapAction === CARD.interactions.tap_action.url.action && this.#config.tap_action.url_path !== undefined
+      ? this.#config.tap_action.url_path
+      : null;
+  }
+  get navigationPath() {
+    return this.cardTapAction === CARD.interactions.tap_action.navigate.action && this.#config.tap_action.navigation_path !== undefined
+      ? this.#config.tap_action.navigation_path
+      : null;
   }
   get navigate_to() {
-    return this.#config.navigate_to !== undefined ? this.#config.navigate_to : null;
+    return this.urlPath || this.navigationPath;
   }
   get cardTapAction() {
-    let value = null;
-
-    if (this.#config.navigate_to === undefined && this.#config.show_more_info === undefined) {
-      value = CARD.interactions.action.tap.default;
-    } else if (this.#config.navigate_to) {
-      value = CARD.interactions.action.tap.navigate_to;
-    } else if (this.#config.show_more_info === true) {
-      value = CARD.interactions.action.tap.more_info;
-    } else if (this.#config.show_more_info === false) {
-      value = CARD.interactions.action.tap.no_action;
-    }
-    return value;
+    const result = (this.#config.tap_action?.action ?? null) === null ? CARD.interactions.tap_action.default : this.#config.tap_action?.action;
+    return result;
   }
   get theme() {
     return this.#config.theme;
@@ -3879,7 +3991,10 @@ class CardView {
     return roundedSpeed;
   }
   get show_more_info() {
-    return this.#configHelper.show_more_info || this.#configHelper.cardTapAction === CARD.interactions.action.tap.default;
+    return [
+      CARD.interactions.tap_action.default,
+      CARD.interactions.tap_action.moreInfo.action,
+    ].includes(this.#configHelper.cardTapAction);
   }
   get navigate_to() {
     return this.#configHelper.navigate_to;
@@ -3888,13 +4003,16 @@ class CardView {
     return this.#configHelper.bar;
   }
   get isClickable() {
-    return this.#configHelper.cardTapAction !== CARD.interactions.action.tap.no_action;
+    return this.#configHelper.cardTapAction !== CARD.interactions.tap_action.none.action;
   }
   get hasVisibleShape() {
     return this.#hassProvider.hasNewShapeStrategy
       ? this.#currentValue.hasShapeByDefault ||
-          this.#configHelper.cardTapAction === CARD.interactions.action.tap.navigate_to ||
-          this.#configHelper.cardTapAction === CARD.interactions.action.tap.more_info
+          [
+            CARD.interactions.tap_action.navigate.action,
+            CARD.interactions.tap_action.url.action,
+            CARD.interactions.tap_action.moreInfo.action,
+          ].includes(this.#configHelper.cardTapAction)
       : true;
   }
   get hasHiddenIcon() {
@@ -3964,7 +4082,7 @@ class CardView {
       this.#percentHelper.max = this.#max_value.value;
     }
     this.#percentHelper.refresh();
-    this.#theme.value = this.#percentHelper.valueForThemes(this.#theme.isLinear);
+    this.#theme.value = this.#percentHelper.valueForThemes(this.#theme.isBasedOnPercentage);
   }
 
   #isComponentConfiguredAsHidden(component) {
@@ -4097,7 +4215,7 @@ class EntityProgressCard extends HTMLElement {
   #startAutoRefresh() {
     this.#autoRefreshInterval = setInterval(() => {
       this.refresh(this.#lastHass);
-      debugLog('EntityProgressCard.#startAutoRefresh()');
+      debugLog('👉 EntityProgressCard.#startAutoRefresh()');
       if (!this.#cardView.isActiveTimer) {
         this.#stopAutoRefresh();
         return;
@@ -4361,8 +4479,8 @@ class EntityProgressCardEditor extends HTMLElement {
   }
 
   setConfig(config) {
-    debugLog('editor.setConfig()');
-    debugLog(config);
+    debugLog('👉 editor.setConfig()');
+    debugLog('  📎 ', config);
     this.#config = config;
     if (!this.#hassProvider.isValid) {
       return;
@@ -4377,26 +4495,50 @@ class EntityProgressCardEditor extends HTMLElement {
   }
 
   #updateFields() {
-    debugLog('editor.#updateFields()');
+    debugLog('👉 editor.#updateFields()');
     const keys = Object.keys(this.#elements);
     keys.forEach((key) => {
       if (
-        key !== CARD.editor.keyMappings.tapAction &&
-        key !== CARD.editor.keyMappings.attribute &&
-        key !== CARD.editor.keyMappings.max_value_attribute &&
+        ![
+          CARD.editor.keyMappings.tapAction,
+          CARD.editor.keyMappings.attribute,
+          CARD.editor.keyMappings.max_value_attribute,
+          CARD.editor.keyMappings.url_path,
+          CARD.editor.keyMappings.navigation_path,
+        ].includes(key) &&
         Object.hasOwn(this.#config, key) &&
         this.#elements[key].value !== this.#config[key]
       ) {
         this.#elements[key].value = this.#config[key];
+        debugLog('✅ updateFields - update de la clef: ', key);
       }
     });
 
-    // TapAction
+    // TapAction childElementCount
     const curTapAction = this.#getTapActionValue();
     if (this.#elements[CARD.editor.keyMappings.tapAction].value !== curTapAction) {
       this.#elements[CARD.editor.keyMappings.tapAction].value = curTapAction;
+      debugLog('✅ updateFields - update tap_action');
     }
-    this.#toggleFieldDisable(CARD.editor.keyMappings.navigateTo, curTapAction !== CARD.editor.keyMappings.navigateTo);
+    if (
+      curTapAction === CARD.interactions.tap_action.url.action &&
+      this.#config.tap_action.url_path !== undefined &&
+      this.#elements['url_path'].value !== this.#config.tap_action.url_path
+    ) {
+      this.#elements['url_path'].value = this.#config.tap_action.url_path;
+      debugLog('✅ updateFields - update url_path');
+    }
+    if (
+      this.#elements['navigation_path'].childElementCount > 0 &&
+      curTapAction === CARD.interactions.tap_action.navigate.action &&
+      this.#config.tap_action.navigation_path !== undefined &&
+      this.#elements['navigation_path'].value !== this.#config.tap_action.navigation_path
+    ) {
+      this.#elements['navigation_path'].value = this.#config.tap_action.navigation_path;
+      debugLog('✅ updateFields - update navigation_path');
+    }
+    this.#toggleFieldDisable(CARD.editor.keyMappings.url_path, curTapAction !== CARD.interactions.tap_action.url.action);
+    this.#toggleFieldDisable(CARD.editor.keyMappings.navigation_path, curTapAction !== CARD.interactions.tap_action.navigate.action);
 
     // Theme
     this.#toggleFieldDisable(CARD.editor.keyMappings.theme, !!this.#config.theme);
@@ -4472,14 +4614,14 @@ class EntityProgressCardEditor extends HTMLElement {
   }
 
   #onChanged(event) {
-    debugLog('editor.#onChanged()');
-    debugLog(event);
-    debugLog(event.target.id);
+    debugLog('👉 editor.#onChanged()');
+    debugLog('  📎 event: ', event);
+    debugLog('  📎 event.target.id: ', event.target.id);
     this.#sendMessageForUpdate(event);
   }
 
   #addEventListener() {
-    debugLog('editor.#addEventListener');
+    debugLog('👉 editor.#addEventListener');
     const fieldsToProcess = [
       EDITOR_INPUT_FIELDS.basicConfiguration,
       EDITOR_INPUT_FIELDS.content.field,
@@ -4495,7 +4637,7 @@ class EntityProgressCardEditor extends HTMLElement {
   }
 
   #addEventListenerFor(name, type) {
-    debugLog(`Caller : _addEventListenerFor(${name}, ${type})`);
+    debugLog(`👉 Editor.#addEventListenerFor(${name}, ${type})`);
     const isHASelect = CARD.editor.fields[type]?.element === CARD.editor.fields.select.element;
     const events = isHASelect ? CARD.interactions.event.HASelect : CARD.interactions.event.other;
 
@@ -4510,9 +4652,9 @@ class EntityProgressCardEditor extends HTMLElement {
   }
 
   #sendMessageForUpdate(changedEvent) {
-    debugLog('editor.#sendMessageForUpdate()');
-    debugLog(changedEvent);
-    debugLog(`${changedEvent.target.id} -> ${changedEvent.target.value}`);
+    debugLog('👉 editor.#sendMessageForUpdate()');
+    debugLog('  📎 ', changedEvent);
+    debugLog(`      ${changedEvent.target.id} -> ${changedEvent.target.value}`);
     const newConfig = Object.assign({}, this.#config);
 
     switch (changedEvent.target.id) {
@@ -4521,7 +4663,6 @@ class EntityProgressCardEditor extends HTMLElement {
       case EDITOR_INPUT_FIELDS.content.field.max_value_attribute.name:
       case EDITOR_INPUT_FIELDS.content.field.name.name:
       case EDITOR_INPUT_FIELDS.content.field.unit.name:
-      case EDITOR_INPUT_FIELDS.interaction.field.navigate_to.name:
       case EDITOR_INPUT_FIELDS.theme.field.bar_color.name:
       case EDITOR_INPUT_FIELDS.theme.field.bar_size.name:
       case EDITOR_INPUT_FIELDS.theme.field.color.name:
@@ -4555,23 +4696,26 @@ class EntityProgressCardEditor extends HTMLElement {
         break;
       case EDITOR_INPUT_FIELDS.interaction.field.tap_action.name:
         switch (changedEvent.target.value) {
-          case CARD.interactions.action.tap.default:
-            delete newConfig.show_more_info;
-            delete newConfig.navigate_to;
+          case CARD.interactions.tap_action.default:
+            delete newConfig.tap_action;
             break;
-          case CARD.interactions.action.tap.navigate_to:
-            delete newConfig.show_more_info;
-            newConfig.navigate_to = '/lovelace/0';
+          case CARD.interactions.tap_action.moreInfo.action:
+            newConfig.tap_action = CARD.interactions.tap_action.moreInfo;
             break;
-          case CARD.interactions.action.tap.more_info:
-            newConfig.show_more_info = true;
-            delete newConfig.navigate_to;
+          case CARD.interactions.tap_action.navigate.action:
+            newConfig.tap_action = CARD.interactions.tap_action.navigate;
             break;
-          case CARD.interactions.action.tap.no_action:
-            newConfig.show_more_info = false;
-            delete newConfig.navigate_to;
+          case CARD.interactions.tap_action.url.action:
+            newConfig.tap_action = CARD.interactions.tap_action.url;
+            break;
+          case CARD.interactions.tap_action.none.action:
+            newConfig.tap_action = CARD.interactions.tap_action.none;
             break;
         }
+        break;
+      case EDITOR_INPUT_FIELDS.interaction.field.navigation_path.name:
+      case EDITOR_INPUT_FIELDS.interaction.field.url_path.name:
+        newConfig.tap_action[changedEvent.target.id] = changedEvent.target.value;
         break;
       case EDITOR_INPUT_FIELDS.theme.field.toggleBar.name:
       case EDITOR_INPUT_FIELDS.theme.field.toggleIcon.name:
@@ -4579,7 +4723,7 @@ class EntityProgressCardEditor extends HTMLElement {
       case EDITOR_INPUT_FIELDS.theme.field.toggleSecondaryInfo.name: {
         const newState = !changedEvent.srcElement.checked;
         const key = changedEvent.target.id.replace('toggle_', '');
-        debugLog(newState);
+        debugLog('  📌 ', newState);
         if (changedEvent.srcElement.checked) {
           if (!Object.hasOwn(newConfig, 'hide')) {
             newConfig.hide = [];
@@ -4634,7 +4778,7 @@ class EntityProgressCardEditor extends HTMLElement {
       const { grid_options, ...rest } = newConfig;
       newConfig = { ...rest, grid_options };
     }
-    debugLog(newConfig);
+    debugLog('  📎 newConfig: ', newConfig);
     const messageEvent = new CustomEvent(CARD.interactions.event.configChanged, {
       detail: { config: newConfig },
       bubbles: true,
@@ -4651,19 +4795,10 @@ class EntityProgressCardEditor extends HTMLElement {
    * Determines the tap action value based on the current configuration (this.#config).
    */
   #getTapActionValue() {
-    let value = null;
-
-    if (this.#config.navigate_to === undefined && this.#config.show_more_info === undefined) {
-      value = CARD.interactions.action.tap.default;
-    } else if (this.#config.navigate_to) {
-      value = CARD.interactions.action.tap.navigate_to;
-    } else if (this.#config.show_more_info === true) {
-      value = CARD.interactions.action.tap.more_info;
-    } else if (this.#config.show_more_info === false) {
-      value = CARD.interactions.action.tap.no_action;
-    }
-
-    return value;
+    const result = (this.#config.tap_action?.action ?? null) === null 
+      ? CARD.interactions.tap_action.default 
+      : this.#config.tap_action?.action;
+    return result;
   }
 
   /**
@@ -4676,19 +4811,30 @@ class EntityProgressCardEditor extends HTMLElement {
    * @param {string} type - The type of list to populate ('layout', 'color', 'theme', or 'tap_action').
    */
   #updateChoices(select, type, choices = null) {
-    debugLog('editor.#updateChoices');
-    debugLog(`select : ${select}`);
-    debugLog(`type : ${type}`);
+    debugLog('👉 editor.#updateChoices');
+    debugLog(`  📎 select: ${select}`);
+    debugLog(`  📎 type: ${type}`);
+    debugLog(`  📎 choices: ${choices}`);
     select.innerHTML = '';
     
-    const list = type === CARD.editor.fields.attribute.type || type === CARD.editor.fields.max_value_attribute.type ? choices : FIELD_OPTIONS[type];
+    const list = [CARD.editor.fields.navigation_picker.type, CARD.editor.fields.attribute.type, CARD.editor.fields.max_value_attribute.type].includes(
+      type
+    )
+      ? choices
+      : FIELD_OPTIONS[type];
     if (!list) {
       return;
     }
+    debugLog('  📌 list: ', list);
 
     list.forEach((optionData) => {
+      if (type === CARD.editor.fields.tap_action.type) {
+        debugLog(optionData);
+      }
       const option = document.createElement(CARD.editor.fields.listItem.element);
-      option.value = optionData.value !== undefined ? optionData.value : optionData;
+      const value = optionData.value !== undefined ? optionData.value : optionData;
+      option.setAttribute('value', String(value));
+
 
       switch (type) {
         case CARD.editor.fields.color.type: {
@@ -4710,12 +4856,14 @@ class EntityProgressCardEditor extends HTMLElement {
         }
         case CARD.editor.fields.layout.type:
         case CARD.editor.fields.theme.type:
-        case CARD.editor.fields.bar_size.type: {
+        case CARD.editor.fields.bar_size.type:
+        case CARD.editor.fields.navigation_picker.type: {
+          const label = type !== CARD.editor.fields.navigation_picker.type ? optionData.label[this.#currentLanguage] : optionData.label;
           const haIcon = document.createElement(CARD.editor.fields.iconItem.element);
           haIcon.setAttribute(CARD.editor.fields.iconItem.attribute, optionData.icon);
           haIcon.classList.add(CARD.editor.fields.iconItem.class);
           option.appendChild(haIcon);
-          option.append(optionData.label[this.#currentLanguage]);
+          option.append(label);
           break;
         }
         case CARD.editor.fields.tap_action.type:
@@ -4729,15 +4877,6 @@ class EntityProgressCardEditor extends HTMLElement {
       select.appendChild(option);
     });
 
-    // Appliquer une hauteur maximale à la liste déroulante via le shadow DOM
-    const shadowRoot = select.shadowRoot; // Accède au shadowRoot de ha-select
-    if (shadowRoot) {
-      const menu = shadowRoot.querySelector('.mdc-menu-surface'); // Trouve l'élément de menu
-      if (menu) {
-        menu.style.maxHeight = '160px'; // Définir la hauteur maximale pour les options
-        menu.style.overflowY = 'auto'; // Ajoute un défilement vertical si nécessaire
-      }
-    }
   }
 
   /**
@@ -4765,6 +4904,24 @@ class EntityProgressCardEditor extends HTMLElement {
         inputElement = document.createElement(CARD.editor.fields[type].element);
         inputElement.popperOptions = '';
         this.#updateChoices(inputElement, type);
+        break;
+      case CARD.editor.fields.navigation_picker.type:
+        inputElement = document.createElement(CARD.editor.fields.navigation_picker.element);
+        inputElement.popperOptions = '';
+
+        this.#hassProvider
+          .getLovelaceViews()
+          .then((views) => {
+            debugLog('✅ Lovelace Views: ', views); // ✅ Affiche les vues une fois récupérées
+            this.#updateChoices(inputElement, CARD.editor.fields.navigation_picker.type, views);
+            if (this.#config.tap_action !== undefined && this.#config.tap_action.navigation_path !== undefined) {
+              inputElement.value = this.#config.tap_action.navigation_path;
+              debugLog('✅ Update navigate selection'); // ✅ Affiche les vues une fois récupérées
+            }
+          })
+          .catch((error) => {
+            debugLog('❌ Error:', error);
+          });
         break;
       case CARD.editor.fields.number.type:
         inputElement = document.createElement(CARD.editor.fields.number.element);
@@ -4875,6 +5032,7 @@ class EntityProgressCardEditor extends HTMLElement {
 
   #renderFields(parent, inputFields) {
     Object.values(inputFields).forEach((field) => {
+      console.log(field);
       parent.appendChild(
         this.#createField({
           name: field.name,
