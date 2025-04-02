@@ -110,7 +110,7 @@ const CARD = {
       'zh-tw': 'zh-TW',
       'zh-Hant': 'zh-TW',
     },
-    debug: true,
+    debug: false,
   },
   htmlStructure: {
     card: { element: 'ha-card' },
@@ -3285,11 +3285,11 @@ class HassProvider {
     return year > 2025 || (year === 2025 && month >= 3);
   }
   getLovelaceViews() {
-    console.log('🔄 Récupération des vues Lovelace...');
+    debugLog('🔄 Récupération des vues Lovelace...');
     
     return this.#hass.callWS({ type: 'lovelace/config' })
       .then(response => {
-        console.log('✅ Réponse reçue :', response);
+        debugLog('✅ Réponse reçue :', response);
 
         const views = response.views.map((view, index) => {
           const title = view.title || view.path || index;
@@ -3300,7 +3300,7 @@ class HassProvider {
           return { label: label, value: value, icon: icon };
         });
 
-        console.log('📌 Vues formatées :', views);
+        debugLog('📌 Vues formatées :', views);
         return views;
       })
       .catch(error => {
@@ -5032,7 +5032,7 @@ class EntityProgressCardEditor extends HTMLElement {
 
   #renderFields(parent, inputFields) {
     Object.values(inputFields).forEach((field) => {
-      console.log(field);
+      debugLog('#renderFields - field: ', field);
       parent.appendChild(
         this.#createField({
           name: field.name,
