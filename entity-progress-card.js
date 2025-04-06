@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.2.0
+ * @version 1.2.1
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.2.0';
+const VERSION = '1.2.1';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
@@ -110,7 +110,7 @@ const CARD = {
       'zh-tw': 'zh-TW',
       'zh-Hant': 'zh-TW',
     },
-    debug: false,
+    debug: true,
   },
   htmlStructure: {
     card: { element: 'ha-card' },
@@ -290,37 +290,28 @@ const CARD = {
     event: { HASelect: ['selected'], other: ['value-changed', 'input'], closed: 'closed', click: 'click', configChanged: 'config-changed' },
     tap_action: {
       default: 'default',
-      navigate: {
-        action: 'navigate',
-        navigation_path: '',
-      },
-      moreInfo: {
-        action: 'more-info',
-      },
-      url: {
-        action: 'url',
-        url_path: '',
-      },
-      none: {
-        action: 'none',
-      },
+      navigate: { action: 'navigate' },
+      moreInfo: { action: 'more-info' },
+      url: { action: 'url' },
+      assist: { action: 'assist' },
+      toggle: { action: 'toggle' },
+      performaAction: { action: 'performa-action' },
+      none: { action: 'none' },
     },
   },
   editor: {
     fields: {
       container: { element: 'div', class: 'editor' },
-      fieldContainer: { element: 'div', class: 'editor-field-container' },
-      fieldDescription: { element: 'span', class: 'editor-field-description' },
       entity: { type: 'entity', element: 'ha-entity-picker' },
       attribute: { type: 'attribute', element: 'ha-select' },
       max_value_attribute: { type: 'max_value_attribute', element: 'ha-select' },
       icon: { type: 'icon', element: 'ha-icon-picker' },
       layout: { type: 'layout', element: 'ha-select' },
       bar_size: { type: 'bar_size', element: 'ha-select' },
-      tap_action: { type: 'tap_action', element: 'ha-select' },
+      tap_action: { type: 'tap_action', element: 'ha-form' },
       navigation_picker: { type: 'navigation_picker', element: 'ha-select' },
       theme: { type: 'theme', element: 'ha-select' },
-      color: { type: 'color', element: 'ha-select' },
+      color: { type: 'color', element: 'ha-form' },
       number: { type: 'number', element: 'ha-textfield' },
       default: { type: 'text', element: 'ha-textfield' },
       listItem: { type: 'list item', element: 'mwc-list-item' },
@@ -374,6 +365,36 @@ CARD.console = {
   css: 'color:orange; background-color:black; font-weight: bold;',
   link: '      For more details, check the README: https://github.com/francois-le-ko4la/lovelace-entity-progress-card',
 };
+
+
+const DEF_COLORS = [
+  'primary',
+  'accent',
+  'red',
+  'pink',
+  'purple',
+  'deep-purple',
+  'indigo',
+  'blue',
+  'light-blue',
+  'cyan',
+  'teal',
+  'green',
+  'light-green',
+  'lime',
+  'yellow',
+  'amber',
+  'orange',
+  'deep-orange',
+  'brown',
+  'light-grey',
+  'grey',
+  'dark-grey',
+  'blue-grey',
+  'black',
+  'white',
+  'disabled',
+];
 
 const THEME = {
   optimal_when_low: {
@@ -610,21 +631,6 @@ const EDITOR_INPUT_FIELDS = {
       width: '100%',
       required: true,
       isInGroup: null,
-      description: {
-        en: 'Select an entity from Home Assistant.',
-        fr: 'Sélectionnez une entité de Home Assistant.',
-        es: 'Seleccione una entidad de Home Assistant.',
-        it: "Seleziona un'entità da Home Assistant.",
-        de: 'Wählen Sie eine Entität aus Home Assistant.',
-        nl: 'Selecteer een entiteit uit Home Assistant.',
-        hr: 'Odaberite entitet iz Home Assistanta.',
-        pl: 'Wybierz encję z Home Assistant.',
-        mk: 'Изберете ентитет од Home Assistant.',
-        pt: 'Selecione uma entidade do Home Assistant.',
-        da: 'Vælg en enhed fra Home Assistant.',
-        nb: 'Velg en enhet fra Home Assistant.',
-        sv: 'Välj en enhet från Home Assistant.',
-      },
     },
     attribute: {
       name: 'attribute',
@@ -647,21 +653,6 @@ const EDITOR_INPUT_FIELDS = {
       width: '100%',
       required: false,
       isInGroup: CARD.editor.keyMappings.attribute,
-      description: {
-        en: 'Select the attribute.',
-        fr: "Sélectionnez l'attribut.",
-        es: 'Seleccione el atributo.',
-        it: "Seleziona l'attributo.",
-        de: 'Wählen Sie das Attribut aus.',
-        nl: 'Selecteer het attribuut.',
-        hr: 'Odaberite atribut.',
-        pl: 'Wybierz atrybut.',
-        mk: 'Изберете го атрибутот.',
-        pt: 'Selecione o atributo.',
-        da: 'Vælg attributet.',
-        nb: 'Velg attributtet.',
-        sv: 'Välj attributet.',
-      },
     },
   },
 
@@ -706,21 +697,6 @@ const EDITOR_INPUT_FIELDS = {
         width: '100%',
         required: false,
         isInGroup: null,
-        description: {
-          en: 'Enter a name for the entity.',
-          fr: "Saisissez un nom pour l'entité.",
-          es: 'Introduzca un nombre para la entidad.',
-          it: "Inserisci un nome per l'entità.",
-          de: 'Geben Sie einen Namen für die Entität ein.',
-          nl: 'Voer een naam in voor de entiteit.',
-          hr: 'Unesite ime za entitet.',
-          pl: 'Wprowadź nazwę dla encji.',
-          mk: 'Внесете име за ентитетот.',
-          pt: 'Digite um nome para a entidade.',
-          da: 'Indtast et navn for enheden.',
-          nb: 'Skriv inn et navn for enheten.',
-          sv: 'Skriv ett namn för enheten.',
-        },
       },
       unit: {
         name: 'unit',
@@ -743,21 +719,6 @@ const EDITOR_INPUT_FIELDS = {
         width: 'calc((100% - 20px) * 0.2)',
         required: false,
         isInGroup: null,
-        description: {
-          en: 'm, kg...',
-          fr: 'm, kg...',
-          es: 'm, kg...',
-          it: 'm, kg...',
-          de: 'm, kg...',
-          nl: 'm, kg...',
-          hr: 'm, kg...',
-          pl: 'm, kg...',
-          mk: 'm, kg...',
-          pt: 'm, kg...',
-          da: 'm, kg...',
-          nb: 'm, kg...',
-          sv: 'm, kg...',
-        },
       },
 
       decimal: {
@@ -781,21 +742,6 @@ const EDITOR_INPUT_FIELDS = {
         width: 'calc((100% - 20px) * 0.2)',
         required: false,
         isInGroup: null,
-        description: {
-          en: 'Precision.',
-          fr: 'Précision.',
-          es: 'Precisión.',
-          it: 'Precisione.',
-          de: 'Präzision.',
-          nl: 'Precisie.',
-          hr: 'Preciznost.',
-          pl: 'Precyzja.',
-          mk: 'Прецизност.',
-          pt: 'Precisão.',
-          da: 'Præcision.',
-          nb: 'Presisjon.',
-          sv: 'Precision.',
-        },
       },
       min_value: {
         name: 'min_value',
@@ -818,21 +764,6 @@ const EDITOR_INPUT_FIELDS = {
         width: 'calc((100% - 20px) * 0.6)',
         required: false,
         isInGroup: null,
-        description: {
-          en: 'Enter the minimum value.',
-          fr: 'Saisissez la valeur minimum.',
-          es: 'Introduzca el valor mínimo.',
-          it: 'Inserisci il valore minimo.',
-          de: 'Geben Sie den Mindestwert ein.',
-          nl: 'Voer de minimale waarde in.',
-          hr: 'Unesite minimalnu vrijednost.',
-          pl: 'Wprowadź wartość minimalną.',
-          mk: 'Внесете ја минималната вредност.',
-          pt: 'Digite o valor mínimo.',
-          da: 'Indtast minimumværdien.',
-          nb: 'Skriv inn minimumverdien.',
-          sv: 'Ange det minsta värdet.',
-        },
       },
       max_value: {
         name: 'max_value',
@@ -855,21 +786,6 @@ const EDITOR_INPUT_FIELDS = {
         width: '100%',
         required: false,
         isInGroup: null,
-        description: {
-          en: 'Enter the maximum value.',
-          fr: 'Saisissez la valeur maximum.',
-          es: 'Introduzca el valor máximo.',
-          it: 'Inserisci il valore massimo.',
-          de: 'Geben Sie den Höchstwert ein.',
-          nl: 'Voer de maximale waarde in.',
-          hr: 'Unesite maksimalnu vrijednost.',
-          pl: 'Wprowadź wartość maksymalną.',
-          mk: 'Внесете ја максималната вредност.',
-          pt: 'Digite o valor máximo.',
-          da: 'Indtast maksimumværdien.',
-          nb: 'Skriv inn maksimumverdien.',
-          sv: 'Ange det högsta värdet.',
-        },
       },
       max_value_attribute: {
         name: 'max_value_attribute',
@@ -892,21 +808,6 @@ const EDITOR_INPUT_FIELDS = {
         width: '100%',
         required: false,
         isInGroup: CARD.editor.keyMappings.max_value_attribute,
-        description: {
-          en: 'Select the attribute (max_value).',
-          fr: "Sélectionnez l'attribut (max_value).",
-          es: 'Seleccione el atributo (max_value).',
-          it: "Seleziona l'attributo (max_value).",
-          de: 'Wählen Sie das Attribut aus (max_value).',
-          nl: 'Selecteer het attribuut (max_value).',
-          hr: 'Odaberite atribut (max_value).',
-          pl: 'Wybierz atrybut (max_value).',
-          mk: 'Изберете го атрибутот (max_value).',
-          pt: 'Selecione o atributo (max_value).',
-          da: 'Vælg attributet (max_value).',
-          nb: 'Velg attributtet (max_value).',
-          sv: 'Välj attributet (max_value).',
-        },
       },
     },
   },
@@ -933,113 +834,25 @@ const EDITOR_INPUT_FIELDS = {
       tap_action: {
         name: 'tap_action',
         label: {
-          en: 'Tap action',
-          fr: 'Action au tap',
-          es: 'Acción al tocar',
-          it: 'Azione al tocco',
-          de: 'Tippen Aktion',
-          nl: 'Tik actie',
-          hr: 'Akcija na dodir',
-          pl: 'Akcja dotknięcia',
-          mk: 'Акција на допир',
-          pt: 'Ação ao toque',
-          da: 'Tap handling',
-          nb: 'Trykk handling',
-          sv: 'Tryckåtgärd',
+          en: 'Tap behavior',
+          fr: "Comportement lors d'un appui court",
+          es: 'Comportamiento al tocar',
+          it: 'Comportamento al tocco',
+          de: 'Tippen-Verhalten',
+          nl: 'Tikgedrag',
+          hr: 'Ponašanje pri dodiru',
+          pl: 'Zachowanie przy dotknięciu',
+          mk: 'Однесување при допир',
+          pt: 'Comportamento ao toque',
+          da: 'Tryk-adfærd',
+          nb: 'Trykkoppførsel',
+          sv: 'Tryckbeteende',
         },
         type: CARD.editor.fields.tap_action.type,
-        width: '100%',
         required: false,
         isInGroup: null,
-        description: {
-          en: 'Select the action.',
-          fr: "Sélectionnez l'action.",
-          es: 'Seleccione la acción.',
-          it: "Seleziona l'azione.",
-          de: 'Wählen Sie die Aktion.',
-          nl: 'Selecteer de actie.',
-          hr: 'Odaberite akciju.',
-          pl: 'Wybierz akcję.',
-          mk: 'Изберете ја акцијата.',
-          pt: 'Selecione a ação.',
-          da: 'Vælg handlingen.',
-          nb: 'Velg handlingen.',
-          sv: 'Välj åtgärden.',
-        },
-      },
-      navigation_path: {
-        name: CARD.editor.keyMappings.navigation_path,
-        label: {
-          en: 'Navigation Path',
-          fr: 'Chemin De Navigation',
-          es: 'Ruta De Navegación',
-          it: 'Percorso Di Navigazione',
-          de: 'Navigationspfad',
-          nl: 'Navigatiepad',
-          hr: 'Navigacijska Staza',
-          pl: 'Ścieżka Nawigacji',
-          mk: 'Навигациска Патека',
-          pt: 'Caminho De Navegação',
-          da: 'Navigationssti',
-          nb: 'Navigasjonssti',
-          sv: 'Navigeringssökväg',
-        },
-        type: CARD.editor.fields.navigation_picker.type,
         width: '100%',
-        required: false,
-        isInGroup: CARD.editor.keyMappings.navigation_path,
-        description: {
-          en: 'Select Navigation Path',
-          fr: 'Sélectionner le chemin de navigation',
-          es: 'Seleccionar la ruta de navegación',
-          it: 'Selezionare il percorso di navigazione',
-          de: 'Navigationspfad auswählen',
-          nl: 'Navigatiepad selecteren',
-          hr: 'Odaberite navigacijsku stazu',
-          pl: 'Wybierz ścieżkę nawigacji',
-          mk: 'Изберете навигациска патека',
-          pt: 'Selecionar o caminho de navegação',
-          da: 'Vælg navigationssti',
-          nb: 'Velg navigasjonssti',
-          sv: 'Välj navigeringssökväg',
-        },
-      },
-      url_path: {
-        name: CARD.editor.keyMappings.url_path,
-        label: {
-          en: 'URL',
-          fr: 'URL',
-          es: 'URL',
-          it: 'URL',
-          de: 'URL',
-          nl: 'URL',
-          hr: 'URL',
-          pl: 'URL',
-          mk: 'URL',
-          pt: 'URL',
-          da: 'URL',
-          nb: 'URL',
-          sv: 'URL',
-        },
-        type: CARD.editor.fields.default.type,
-        width: '100%',
-        required: false,
-        isInGroup: CARD.editor.keyMappings.url_path,
-        description: {
-          en: 'Enter the target (https://example.com/).',
-          fr: 'Saisir la cible (https://example.com/).',
-          es: 'Introduzca el objetivo (https://example.com/).',
-          it: 'Inserisci il target (https://example.com/).',
-          de: 'Geben Sie das Ziel (https://example.com/) ein.',
-          nl: 'Voer de bestemming in (https://example.com/).',
-          hr: 'Unesite odredište (https://example.com/).',
-          pl: 'Wprowadź cel (https://example.com/).',
-          mk: 'Внесете цел (https://example.com/).',
-          pt: 'Digite o destino (https://example.com/).',
-          da: 'Indtast målet (https://example.com/).',
-          nb: 'Skriv inn målet (https://example.com/).',
-          sv: 'Ange målet (https://example.com/).',
-        },
+        schema: { name: 'new_tap_action', selector: { 'ui-action': {} } },
       },
     },
   },
@@ -1194,58 +1007,28 @@ const EDITOR_INPUT_FIELDS = {
         width: '100%',
         required: false,
         isInGroup: null,
-        description: {
-          en: 'Select a theme to automatically define the colors and icon.',
-          fr: "Sélectionnez un thème pour définir automatiquement les couleurs et l'icône.",
-          es: 'Seleccione un tema para definir automáticamente los colores y el icono.',
-          it: "Seleziona un tema per definire automaticamente i colori e l'icona.",
-          de: 'Wählen Sie ein Thema, um die Farben und das Symbol automatisch festzulegen.',
-          nl: 'Selecteer een thema om automatisch de kleuren en het pictogram in te stellen.',
-          hr: 'Odaberite temu za automatsko definiranje boja i ikone.',
-          pl: 'Wybierz motyw, aby automatycznie zdefiniować kolory i ikonę.',
-          mk: 'Изберете тема за автоматско дефинирање на боите и иконата.',
-          pt: 'Selecione um tema para definir automaticamente as cores e o ícone.',
-          da: 'Vælg et tema for automatisk at definere farver og ikon.',
-          nb: 'Velg et tema for automatisk å definere farger og ikoner.',
-          sv: 'Välj ett tema för att automatiskt definiera färger och ikoner.',
-        },
       },
       bar_size: {
         name: 'bar_size',
         label: {
-          en: 'Size',
-          fr: 'Taille',
-          es: 'Tamaño',
-          it: 'Dimensione',
-          de: 'Größe',
-          nl: 'Grootte',
-          hr: 'Veličina',
-          pl: 'Rozmiar',
-          mk: 'Големина',
-          pt: 'Tamanho',
-          da: 'Størrelse',
-          nb: 'Størrelse',
-          sv: 'Storlek',
+          en: 'Bar size',
+          fr: 'Taille de la barre',
+          es: 'Tamaño de la barra',
+          it: 'Dimensione della barra',
+          de: 'Größe der Bar',
+          nl: 'Balkgrootte',
+          hr: 'Veličina trake',
+          pl: 'Rozmiar paska',
+          mk: 'Големина на лента',
+          pt: 'Tamanho da barra',
+          da: 'Bark størrelse',
+          nb: 'Barstørrelse',
+          sv: 'Barstorlek',
         },
         type: CARD.editor.fields.bar_size.type,
         width: 'calc((100% - 10px) * 0.5)',
         required: false,
         isInGroup: null,
-        description: {
-          en: 'Select the bar size',
-          fr: 'Sélectionnez la taille de la barre',
-          es: 'Seleccione el tamaño de la barra',
-          it: 'Seleziona la dimensione della barra',
-          de: 'Wählen Sie die Balkengröße',
-          nl: 'Selecteer de balkgrootte',
-          hr: 'Odaberite veličinu trake',
-          pl: 'Wybierz rozmiar paska',
-          mk: 'Изберете ја големината на лентата',
-          pt: 'Selecione o tamanho da barra',
-          da: 'Vælg barstørrelse',
-          nb: 'Velg størrelse på baren',
-          sv: 'Välj barstorlek',
-        },
       },
       bar_color: {
         name: 'bar_color',
@@ -1268,21 +1051,7 @@ const EDITOR_INPUT_FIELDS = {
         width: 'calc((100% - 10px) * 0.5)',
         required: false,
         isInGroup: CARD.editor.keyMappings.theme,
-        description: {
-          en: 'Select the color for the bar.',
-          fr: 'Sélectionnez la couleur de la barre.',
-          es: 'Seleccione el color de la barra.',
-          it: 'Seleziona il colore per la barra.',
-          de: 'Wählen Sie die Farbe für die Leiste.',
-          nl: 'Selecteer de kleur voor de balk',
-          hr: 'Odaberite boju trake',
-          pl: 'Wybierz kolor paska',
-          mk: 'Изберете ја бојата за лентата',
-          pt: 'Selecione a cor para a barra',
-          da: 'Vælg farven til baren',
-          nb: 'Velg farge for baren',
-          sv: 'Välj färg för baren',
-        },
+        schema: { name: 'bar_color', selector: { 'ui-color': {} } },
       },
       icon: {
         name: 'icon',
@@ -1304,22 +1073,7 @@ const EDITOR_INPUT_FIELDS = {
         type: CARD.editor.fields.icon.type,
         width: 'calc((100% - 10px) * 0.5)',
         required: false,
-        isInGroup: null, //CARD.editor.keyMappings.theme
-        description: {
-          en: 'Select an icon for the entity.',
-          fr: "Sélectionnez une icône pour l'entité.",
-          es: 'Seleccione un icono para la entidad.',
-          it: "Seleziona un'icona per l'entità.",
-          de: 'Wählen Sie ein Symbol für die Entität.',
-          nl: 'Selecteer een pictogram voor de entiteit',
-          hr: 'Odaberite ikonu za entitetu',
-          pl: 'Wybierz ikonę dla encji',
-          mk: 'Изберете икона за ентитетот',
-          pt: 'Selecione um ícone para a entidade',
-          da: 'Vælg et ikon for enheden',
-          nb: 'Velg et ikon for enheten',
-          sv: 'Välj ett ikon för enheten',
-        },
+        isInGroup: null,
       },
       color: {
         name: 'color',
@@ -1342,58 +1096,29 @@ const EDITOR_INPUT_FIELDS = {
         width: 'calc((100% - 10px) * 0.5)',
         required: false,
         isInGroup: CARD.editor.keyMappings.theme,
-        description: {
-          en: 'Select the primary color for the icon.',
-          fr: "Sélectionnez la couleur de l'icône.",
-          es: 'Seleccione el color principal del icono.',
-          it: "Seleziona il colore principale per l'icona.",
-          de: 'Wählen Sie die Primärfarbe für das Symbol.',
-          nl: 'Selecteer de primaire kleur voor het pictogram',
-          hr: 'Odaberite primarnu boju za ikonu',
-          pl: 'Wybierz główny kolor ikony',
-          mk: 'Изберете ја примарната боја за иконата',
-          pt: 'Selecione a cor primária para o ícone',
-          da: 'Vælg primærfarven for ikonet',
-          nb: 'Velg primærfargen for ikonet',
-          sv: 'Välj primärfärgen för ikonen',
-        },
+        schema: { name: 'bar_color', selector: { 'ui-color': {} } },
       },
       layout: {
         name: 'layout',
         label: {
-          en: 'Layout',
-          fr: 'Disposition',
-          es: 'Disposición',
-          it: 'Layout',
-          de: 'Layout',
-          nl: 'Indeling',
-          hr: 'Izgled',
-          pl: 'Układ',
-          mk: 'Распоред',
-          pt: 'Layout',
-          da: 'Layout',
-          nb: 'Layout',
-          sv: 'Layout',
+          en: 'Card layout',
+          fr: 'Disposition de la carte',
+          es: 'Disposición de la tarjeta',
+          it: 'Layout della carta',
+          de: 'Kartenlayout',
+          nl: 'Kaartindeling',
+          hr: 'Izgled kartice',
+          pl: 'Układ karty',
+          mk: 'Распоред на карта',
+          pt: 'Layout do cartão',
+          da: 'Kortlayout',
+          nb: 'Kortoppsett',
+          sv: 'Kortlayout',
         },
         type: CARD.editor.fields.layout.type,
         width: '100%',
         required: false,
         isInGroup: null,
-        description: {
-          en: 'Select the layout.',
-          fr: 'Sélectionnez la disposition.',
-          es: 'Seleccione la disposición.',
-          it: 'Seleziona il layout.',
-          de: 'Wählen Sie das Layout.',
-          nl: 'Selecteer de indeling.',
-          hr: 'Odaberite izgled.',
-          pl: 'Wybierz układ.',
-          mk: 'Изберете го распоредот.',
-          pt: 'Selecione o layout.',
-          da: 'Vælg layoutet.',
-          nb: 'Velg oppsettet.',
-          sv: 'Välj layouten.',
-        },
       },
     },
   },
@@ -1540,530 +1265,6 @@ const FIELD_OPTIONS = {
       icon: 'mdi:air-filter',
     },
   ],
-  color: [
-    {
-      value: '',
-      label: {
-        en: '',
-        fr: '',
-        es: '',
-        it: '',
-        de: '',
-        nl: '',
-        hr: '',
-        pl: '',
-        mk: '',
-        pt: '',
-        da: '',
-        nb: '',
-        sv: '',
-      },
-    },
-    {
-      value: 'var(--state-icon-color)',
-      label: {
-        en: 'Default',
-        fr: 'Défaut',
-        es: 'Predeterminado',
-        it: 'Predefinito',
-        de: 'Standard',
-        nl: 'Standaard',
-        hr: 'Zadano',
-        pl: 'Domyślny',
-        mk: 'Стандарден',
-        pt: 'Padrão',
-        da: 'Standard',
-        nb: 'Standard',
-        sv: 'Standard',
-      },
-    },
-    {
-      value: 'var(--accent-color)',
-      label: {
-        en: 'Accent',
-        fr: 'Accent',
-        es: 'Acento',
-        it: 'Accentuato',
-        de: 'Akzent',
-        nl: 'Accent',
-        hr: 'Akcenat',
-        pl: 'Akcent',
-        mk: 'Акцент',
-        pt: 'Acente',
-        da: 'Accent',
-        nb: 'Akent',
-        sv: 'Accent',
-      },
-    },
-    {
-      value: 'var(--info-color)',
-      label: {
-        en: 'Info',
-        fr: 'Info',
-        es: 'Información',
-        it: 'Info',
-        de: 'Info',
-        nl: 'Info',
-        hr: 'Info',
-        pl: 'Info',
-        mk: 'Инфо',
-        pt: 'Info',
-        da: 'Info',
-        nb: 'Info',
-        sv: 'Info',
-      },
-    },
-    {
-      value: 'var(--success-color)',
-      label: {
-        en: 'Success',
-        fr: 'Succès',
-        es: 'Éxito',
-        it: 'Successo',
-        de: 'Erfolg',
-        nl: 'Succes',
-        hr: 'Uspjeh',
-        pl: 'Sukces',
-        mk: 'Успех',
-        pt: 'Sucesso',
-        da: 'Succes',
-        nb: 'Suksess',
-        sv: 'Framgång',
-      },
-    },
-    {
-      value: 'var(--disabled-color)',
-      label: {
-        en: 'Disable',
-        fr: 'Désactivé',
-        es: 'Deshabilitado',
-        it: 'Disabilitato',
-        de: 'Deaktiviert',
-        nl: 'Deactiveren',
-        hr: 'Onemogući',
-        pl: 'Wyłącz',
-        mk: 'Оневозможи',
-        pt: 'Desativar',
-        da: 'Deaktiver',
-        nb: 'Deaktiver',
-        sv: 'Inaktivera',
-      },
-    },
-    {
-      value: 'var(--red-color)',
-      label: {
-        en: 'Red',
-        fr: 'Rouge',
-        es: 'Rojo',
-        it: 'Rosso',
-        de: 'Rot',
-        nl: 'Rood',
-        hr: 'Crvena',
-        pl: 'Czerwony',
-        mk: 'Црвена',
-        pt: 'Vermelho',
-        da: 'Rød',
-        nb: 'Rød',
-        sv: 'Röd',
-      },
-    },
-    {
-      value: 'var(--pink-color)',
-      label: {
-        en: 'Pink',
-        fr: 'Rose',
-        es: 'Rosa',
-        it: 'Rosa',
-        de: 'Pink',
-        nl: 'Roze',
-        hr: 'Roza',
-        pl: 'Różowy',
-        mk: 'Розова',
-        pt: 'Rosa',
-        da: 'Pink',
-        nb: 'Rosa',
-        sv: 'Rosa',
-      },
-    },
-    {
-      value: 'var(--purple-color)',
-      label: {
-        en: 'Purple',
-        fr: 'Violet',
-        es: 'Púrpura',
-        it: 'Viola',
-        de: 'Lila',
-        nl: 'Paars',
-        hr: 'Ljubičasta',
-        pl: 'Fioletowy',
-        mk: 'Пурпурна',
-        pt: 'Roxo',
-        da: 'Lilla',
-        nb: 'Lilla',
-        sv: 'Lila',
-      },
-    },
-    {
-      value: 'var(--deep-purple-color)',
-      label: {
-        en: 'Deep purple',
-        fr: 'Violet foncé',
-        es: 'Púrpura profundo',
-        it: 'Viola scuro',
-        de: 'Dunkellila',
-        nl: 'Diep paars',
-        hr: 'Tamno ljubičasta',
-        pl: 'Ciemnofioletowy',
-        mk: 'Темно виолетова',
-        pt: 'Roxo escuro',
-        da: 'Mørk lilla',
-        nb: 'Mørk lilla',
-        sv: 'Djuplila',
-      },
-    },
-    {
-      value: 'var(--indigo-color)',
-      label: {
-        en: 'Indigo',
-        fr: 'Indigo',
-        es: 'Índigo',
-        it: 'Indaco',
-        de: 'Indigo',
-        nl: 'Indigo',
-        hr: 'Indigo',
-        pl: 'Indygo',
-        mk: 'Индиго',
-        pt: 'Índigo',
-        da: 'Indigo',
-        nb: 'Indigo',
-        sv: 'Indigo',
-      },
-    },
-    {
-      value: 'var(--blue-color)',
-      label: {
-        en: 'Blue',
-        fr: 'Bleu',
-        es: 'Azul',
-        it: 'Blu',
-        de: 'Blau',
-        nl: 'Blauw',
-        hr: 'Plava',
-        pl: 'Niebieski',
-        mk: 'Сина',
-        pt: 'Azul',
-        da: 'Blå',
-        nb: 'Blå',
-        sv: 'Blå',
-      },
-    },
-    {
-      value: 'var(--light-blue-color)',
-      label: {
-        en: 'Light blue',
-        fr: 'Bleu clair',
-        es: 'Azul claro',
-        it: 'Blu chiaro',
-        de: 'Hellblau',
-        nl: 'Lichtblauw',
-        hr: 'Svijetloplava',
-        pl: 'Jasnoniebieski',
-        mk: 'Светло сина',
-        pt: 'Azul claro',
-        da: 'Lyseblå',
-        nb: 'Lyseblå',
-        sv: 'Ljusblå',
-      },
-    },
-    {
-      value: 'var(--cyan-color)',
-      label: {
-        en: 'Cyan',
-        fr: 'Cyan',
-        es: 'Cian',
-        it: 'Ciano',
-        de: 'Cyan',
-        nl: 'Cyaan',
-        hr: 'Cijan',
-        pl: 'Cyjan',
-        mk: 'Цијан',
-        pt: 'Ciano',
-        da: 'Cyan',
-        nb: 'Cyan',
-        sv: 'Cyan',
-      },
-    },
-    {
-      value: 'var(--teal-color)',
-      label: {
-        en: 'Teal',
-        fr: 'Bleu sarcelle',
-        es: 'Verde azulado',
-        it: 'Verde acqua',
-        de: 'Blaugrün',
-        nl: 'Blauwgroen',
-        hr: 'Tirkizna',
-        pl: 'Morski',
-        mk: 'Сината зелена',
-        pt: 'Verde-azulado',
-        da: 'Blågrøn',
-        nb: 'Blågrønn',
-        sv: 'Blågrön',
-      },
-    },
-    {
-      value: 'var(--green-color)',
-      label: {
-        en: 'Green',
-        fr: 'Vert',
-        es: 'Verde',
-        it: 'Verde',
-        de: 'Grün',
-        nl: 'Groen',
-        hr: 'Zelena',
-        pl: 'Zielony',
-        mk: 'Зелена',
-        pt: 'Verde',
-        da: 'Grøn',
-        nb: 'Grønn',
-        sv: 'Grön',
-      },
-    },
-    {
-      value: 'var(--light-green-color)',
-      label: {
-        en: 'Light green',
-        fr: 'Vert clair',
-        es: 'Verde claro',
-        it: 'Verde chiaro',
-        de: 'Hellgrün',
-        nl: 'Lichtgroen',
-        hr: 'Svijetlozelena',
-        pl: 'Jasnozielony',
-        mk: 'Светло зелена',
-        pt: 'Verde claro',
-        da: 'Lysegrøn',
-        nb: 'Lysegrønn',
-        sv: 'Ljusgrön',
-      },
-    },
-    {
-      value: 'var(--lime-color)',
-      label: {
-        en: 'Lime',
-        fr: 'Citron vert',
-        es: 'Lima',
-        it: 'Lime',
-        de: 'Limette',
-        nl: 'Limoen',
-        hr: 'Limeta',
-        pl: 'Limonka',
-        mk: 'Лајм',
-        pt: 'Lima',
-        da: 'Lime',
-        nb: 'Lime',
-        sv: 'Lime',
-      },
-    },
-    {
-      value: 'var(--yellow-color)',
-      label: {
-        en: 'Yellow',
-        fr: 'Jaune',
-        es: 'Amarillo',
-        it: 'Giallo',
-        de: 'Gelb',
-        nl: 'Geel',
-        hr: 'Žuta',
-        pl: 'Żółty',
-        mk: 'Жолта',
-        pt: 'Amarelo',
-        da: 'Gul',
-        nb: 'Gul',
-        sv: 'Gul',
-      },
-    },
-    {
-      value: 'var(--amber-color)',
-      label: {
-        en: 'Amber',
-        fr: 'Ambre',
-        es: 'Ámbar',
-        it: 'Ambra',
-        de: 'Bernstein',
-        nl: 'Amber',
-        hr: 'Jantar',
-        pl: 'Bursztyn',
-        mk: 'Килибар',
-        pt: 'Âmbar',
-        da: 'Ravgul',
-        nb: 'Gult',
-        sv: 'Bärnsten',
-      },
-    },
-    {
-      value: 'var(--orange-color)',
-      label: {
-        en: 'Orange',
-        fr: 'Orange',
-        es: 'Naranja',
-        it: 'Arancione',
-        de: 'Orange',
-        nl: 'Oranje',
-        hr: 'Narančasta',
-        pl: 'Pomarańczowy',
-        mk: 'Портокалова',
-        pt: 'Laranja',
-        da: 'Orange',
-        nb: 'Oransje',
-        sv: 'Orange',
-      },
-    },
-    {
-      value: 'var(--deep-orange-color)',
-      label: {
-        en: 'Deep orange',
-        fr: 'Orange foncé',
-        es: 'Naranja oscuro',
-        it: 'Arancione scuro',
-        de: 'Dunkelorange',
-        nl: 'Dieporanje',
-        hr: 'Tamnonarančasta',
-        pl: 'Ciemnopomarańczowy',
-        mk: 'Темно портокалова',
-        pt: 'Laranja escuro',
-        da: 'Mørk orange',
-        nb: 'Mørk oransje',
-        sv: 'Mörkorange',
-      },
-    },
-    {
-      value: 'var(--brown-color)',
-      label: {
-        en: 'Brown',
-        fr: 'Marron',
-        es: 'Marrón',
-        it: 'Marrone',
-        de: 'Braun',
-        nl: 'Bruin',
-        hr: 'Smeđa',
-        pl: 'Brązowy',
-        mk: 'Кафеава',
-        pt: 'Marrom',
-        da: 'Brun',
-        nb: 'Brun',
-        sv: 'Brun',
-      },
-    },
-    {
-      value: 'var(--light-grey-color)',
-      label: {
-        en: 'Light grey',
-        fr: 'Gris clair',
-        es: 'Gris claro',
-        it: 'Grigio chiaro',
-        de: 'Hellgrau',
-        nl: 'Lichtgrijs',
-        hr: 'Svijetlosiva',
-        pl: 'Jasnoszary',
-        mk: 'Светло сива',
-        pt: 'Cinza claro',
-        da: 'Lysegrå',
-        nb: 'Lysegrå',
-        sv: 'Ljusgrå',
-      },
-    },
-    {
-      value: 'var(--grey-color)',
-      label: {
-        en: 'Grey',
-        fr: 'Gris',
-        es: 'Gris',
-        it: 'Grigio',
-        de: 'Grau',
-        nl: 'Grijs',
-        hr: 'Siva',
-        pl: 'Szary',
-        mk: 'Сива',
-        pt: 'Cinza',
-        da: 'Grå',
-        nb: 'Grå',
-        sv: 'Grå',
-      },
-    },
-    {
-      value: 'var(--dark-grey-color)',
-      label: {
-        en: 'Dark grey',
-        fr: 'Gris foncé',
-        es: 'Gris oscuro',
-        it: 'Grigio scuro',
-        de: 'Dunkelgrau',
-        nl: 'Donkergrijs',
-        hr: 'Tamnosiva',
-        pl: 'Ciemnoszary',
-        mk: 'Темно сива',
-        pt: 'Cinza escuro',
-        da: 'Mørkegrå',
-        nb: 'Mørkegrå',
-        sv: 'Mörkgrå',
-      },
-    },
-    {
-      value: 'var(--blue-grey-color)',
-      label: {
-        en: 'Blue grey',
-        fr: 'Gris bleuté',
-        es: 'Gris azulado',
-        it: 'Grigio bluastro',
-        de: 'Blaugrau',
-        nl: 'Blauwgrijs',
-        hr: 'Plavosiva',
-        pl: 'Niebieskoszary',
-        mk: 'Сино сива',
-        pt: 'Cinza azulado',
-        da: 'Blågrå',
-        nb: 'Blågrå',
-        sv: 'Blågrå',
-      },
-    },
-    {
-      value: 'var(--black-color)',
-      label: {
-        en: 'Black',
-        fr: 'Noir',
-        es: 'Negro',
-        it: 'Nero',
-        de: 'Schwarz',
-        nl: 'Zwart',
-        hr: 'Crna',
-        pl: 'Czarny',
-        mk: 'Црна',
-        pt: 'Preto',
-        da: 'Sort',
-        nb: 'Svart',
-        sv: 'Svart',
-      },
-    },
-    {
-      value: 'var(--white-color)',
-      label: {
-        en: 'White',
-        fr: 'Blanc',
-        es: 'Blanco',
-        it: 'Bianco',
-        de: 'Weiß',
-        nl: 'Wit',
-        hr: 'Bijela',
-        pl: 'Biały',
-        mk: 'Бела',
-        pt: 'Branco',
-        da: 'Hvid',
-        nb: 'Hvit',
-        sv: 'Vit',
-      },
-    },
-  ],
   bar_size: [
     {
       value: CARD.style.bar.sizeOptions.small.label,
@@ -2161,98 +1362,6 @@ const FIELD_OPTIONS = {
         sv: 'Vertikal',
       },
       icon: CARD.layout.orientations.vertical.mdi,
-    },
-  ],
-  tap_action: [
-    {
-      value: CARD.interactions.tap_action.default,
-      label: {
-        en: 'Default',
-        fr: 'Par défaut',
-        es: 'Predeterminado',
-        it: 'Predefinito',
-        de: 'Standard',
-        nl: 'Standaard',
-        hr: 'Zadano',
-        pl: 'Domyślnie',
-        mk: 'стандардно',
-        pt: 'Padrão',
-        da: 'Standard',
-        nb: 'Standard',
-        sv: 'Standard',
-      },
-    },
-    {
-      value: CARD.interactions.tap_action.moreInfo.action,
-      label: {
-        en: 'More info',
-        fr: "Plus d'infos",
-        es: 'Más información',
-        it: 'Più informazioni',
-        de: 'Mehr Infos',
-        nl: 'Meer info',
-        hr: 'Više informacija',
-        pl: 'Więcej informacji',
-        mk: 'Повеќе информации',
-        pt: 'Mais informações',
-        da: 'Mere info',
-        nb: 'Mer info',
-        sv: 'Mer info',
-      },
-    },
-    {
-      value: CARD.interactions.tap_action.navigate.action,
-      label: {
-        en: 'Navigate to...',
-        fr: 'Naviguer vers...',
-        es: 'Navegar a...',
-        it: 'Naviga a...',
-        de: 'Zu navigieren...',
-        nl: 'Navigeer naar...',
-        hr: 'Navigiraj na...',
-        pl: 'Nawiguj do...',
-        mk: 'Навигирај до...',
-        pt: 'Navegar para...',
-        da: 'Naviger til...',
-        nb: 'Naviger til...',
-        sv: 'Navigera till...',
-      },
-    },
-    {
-      value: CARD.interactions.tap_action.url.action,
-      label: {
-        en: 'URL',
-        fr: 'URL',
-        es: 'URL',
-        it: 'URL',
-        de: 'URL',
-        nl: 'URL',
-        hr: 'URL',
-        pl: 'URL',
-        mk: 'URL',
-        pt: 'URL',
-        da: 'URL',
-        nb: 'URL',
-        sv: 'URL',
-      },
-    },
-    {
-      value: CARD.interactions.tap_action.none.action,
-      label: {
-        en: 'No action',
-        fr: 'Aucune action',
-        es: 'Sin acción',
-        it: 'Nessuna azione',
-        de: 'Keine Aktion',
-        nl: 'Geen actie',
-        hr: 'Nema akcije',
-        pl: 'Brak akcji',
-        mk: 'Нема акција',
-        pt: 'Sem ação',
-        da: 'Ingen handling',
-        nb: 'Ingen handling',
-        sv: 'Ingen åtgärd',
-      },
     },
   ],
 };
@@ -2573,26 +1682,13 @@ const CARD_CSS = `
         display: flex;
         flex-direction: column;
         gap: 25px;
-        padding-bottom: 150px;
-    }
-    .${CARD.editor.fields.fieldContainer.class} {
-        display: block;
-        height: 73px;
+        padding-bottom: 70px;
     }
 
     .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.attribute} .${CARD.editor.keyMappings.attribute},
     .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.max_value_attribute} .${CARD.editor.keyMappings.max_value_attribute},
-    .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.navigateTo} .${CARD.editor.keyMappings.navigateTo},
-    .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.url_path} .${CARD.editor.keyMappings.url_path},
-    .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.navigation_path} .${CARD.editor.keyMappings.navigation_path},
     .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.theme} .${CARD.editor.keyMappings.theme} {
         display: none;
-    }
-
-    .${CARD.editor.fields.fieldDescription.class} {
-        width: 90%;
-        font-size: 12px;
-        color: var(--secondary-text-color);
     }
 
     .${CARD.editor.fields.iconItem.class} {
@@ -2722,7 +1818,8 @@ const CARD_CSS = `
         flex-direction: row; /* Pour espacer les éléments verticalement */
         flex-wrap: wrap;
         align-content: flex-start;
-        gap: 10px;
+        column-gap: 10px;
+        row-gap: 20px;
         padding: 0px 18px;
         background-color: transparent;
         max-height: 0;
@@ -3283,30 +2380,6 @@ class HassProvider {
     if (!this.#hass || !this.#hass.config || !this.#hass.config.version) return false;
     const [year, month] = this.#hass.config.version.split('.').map(Number);
     return year > 2025 || (year === 2025 && month >= 3);
-  }
-  getLovelaceViews() {
-    debugLog('🔄 Récupération des vues Lovelace...');
-    
-    return this.#hass.callWS({ type: 'lovelace/config' })
-      .then(response => {
-        debugLog('✅ Réponse reçue :', response);
-
-        const views = response.views.map((view, index) => {
-          const title = view.title || view.path || index;
-          const value = '/lovelace/' + (view.path || index);
-          const label = `${title} (${value})`;
-          const icon = view.icon || 'mdi:page-layout-header';
-
-          return { label: label, value: value, icon: icon };
-        });
-
-        debugLog('📌 Vues formatées :', views);
-        return views;
-      })
-      .catch(error => {
-        console.error('❌ Erreur lors de la récupération des vues :', error);
-        return [];
-      });
   }
 }
 
@@ -4012,6 +3085,9 @@ class CardView {
             CARD.interactions.tap_action.navigate.action,
             CARD.interactions.tap_action.url.action,
             CARD.interactions.tap_action.moreInfo.action,
+            CARD.interactions.tap_action.assist.action,
+            CARD.interactions.tap_action.toggle.action,
+            CARD.interactions.tap_action.performaAction.action,
           ].includes(this.#configHelper.cardTapAction)
       : true;
   }
@@ -4125,41 +3201,23 @@ class EntityProgressCard extends HTMLElement {
       EntityProgressCard._moduleLoaded = true;
     }
 
-    this.addEventListener(CARD.interactions.event.click, this.#handleCardAction.bind(this));
+    this.addEventListener(CARD.interactions.event.click, this.#fireAction);
   }
 
-  #handleCardAction() {
-    if (this.#cardView.navigate_to) {
-      this.#navigateTo();
-    } else if (this.#cardView.show_more_info) {
-      this.#showMoreInfo();
-    }
-  }
+  #fireAction(originalEvent, action = 'tap') {
+    debugLog('👉 EntityProgressCard.#fireAction()');
+    //debugLog('  📎 type: ', type);
+    debugLog('  📎 originalEvent: ', originalEvent);
 
-  #navigateTo() {
-    if (/^https?:\/\//.test(this.#cardView.navigate_to)) {
-      window.location.href = this.#cardView.navigate_to;
-      return;
-    }
-
-    window.history.pushState(null, '', this.#cardView.navigate_to);
-    this.dispatchEvent(new CustomEvent('location-changed', { bubbles: true, composed: true }));
-
-    const anchor = this.#cardView.navigate_to.split('#')[1];
-    if (anchor) {
-      const element = document.querySelector(`#${anchor}`);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-  }
-
-  #showMoreInfo() {
     this.dispatchEvent(
-      new CustomEvent('hass-more-info', {
+      new CustomEvent('hass-action', {
         bubbles: true,
         composed: true,
-        detail: { entityId: this.#cardView.entity },
+        detail: {
+          config: this.#cardView.config,
+          action: action,
+          originalEvent,
+        },
       })
     );
   }
@@ -4175,10 +3233,6 @@ class EntityProgressCard extends HTMLElement {
 
   /**
    * Updates the component's configuration and triggers static changes.
-   *
-   * **Note:** Dynamic Updates will be done in set hass function.
-   *
-   * @param {Object} config - The new configuration object.
    */
   setConfig(config) {
     this.#cardView.config = config;
@@ -4451,6 +3505,8 @@ window.customCards.push({
 
 /** --------------------------------------------------------------------------
  * Custom editor component for configuring the `EntityProgressCard`.
+ * HA Components:
+ *  - https://github.com/home-assistant/frontend/blob/28304bb1dcebfddf3ab991e2f9e38f44427fe0f8/src/data/selector.ts
  */
 class EntityProgressCardEditor extends HTMLElement {
   #hassProvider = null;
@@ -4503,8 +3559,8 @@ class EntityProgressCardEditor extends HTMLElement {
           CARD.editor.keyMappings.tapAction,
           CARD.editor.keyMappings.attribute,
           CARD.editor.keyMappings.max_value_attribute,
-          CARD.editor.keyMappings.url_path,
-          CARD.editor.keyMappings.navigation_path,
+          EDITOR_INPUT_FIELDS.theme.field.color.name,
+          EDITOR_INPUT_FIELDS.theme.field.bar_color.name,
         ].includes(key) &&
         Object.hasOwn(this.#config, key) &&
         this.#elements[key].value !== this.#config[key]
@@ -4514,31 +3570,28 @@ class EntityProgressCardEditor extends HTMLElement {
       }
     });
 
-    // TapAction childElementCount
-    const curTapAction = this.#getTapActionValue();
-    if (this.#elements[CARD.editor.keyMappings.tapAction].value !== curTapAction) {
-      this.#elements[CARD.editor.keyMappings.tapAction].value = curTapAction;
-      debugLog('✅ updateFields - update tap_action');
-    }
-    if (
-      curTapAction === CARD.interactions.tap_action.url.action &&
-      this.#config.tap_action.url_path !== undefined &&
-      this.#elements['url_path'].value !== this.#config.tap_action.url_path
-    ) {
-      this.#elements['url_path'].value = this.#config.tap_action.url_path;
-      debugLog('✅ updateFields - update url_path');
-    }
-    if (
-      this.#elements['navigation_path'].childElementCount > 0 &&
-      curTapAction === CARD.interactions.tap_action.navigate.action &&
-      this.#config.tap_action.navigation_path !== undefined &&
-      this.#elements['navigation_path'].value !== this.#config.tap_action.navigation_path
-    ) {
-      this.#elements['navigation_path'].value = this.#config.tap_action.navigation_path;
-      debugLog('✅ updateFields - update navigation_path');
-    }
-    this.#toggleFieldDisable(CARD.editor.keyMappings.url_path, curTapAction !== CARD.interactions.tap_action.url.action);
-    this.#toggleFieldDisable(CARD.editor.keyMappings.navigation_path, curTapAction !== CARD.interactions.tap_action.navigate.action);
+    this.#updateHAForm(
+      CARD.editor.fields.tap_action.type,
+      EDITOR_INPUT_FIELDS.interaction.field.tap_action.label[this.#currentLanguage],
+      this.#elements[CARD.editor.fields.tap_action.type],
+      this.#config[CARD.editor.fields.tap_action.type]
+    );
+
+    // tapActionElem.requestUpdate();
+
+    this.#updateHAForm(
+      EDITOR_INPUT_FIELDS.theme.field.bar_color.name,
+      EDITOR_INPUT_FIELDS.theme.field.bar_color.label[this.#currentLanguage],
+      this.#elements[EDITOR_INPUT_FIELDS.theme.field.bar_color.name],
+      this.#config[EDITOR_INPUT_FIELDS.theme.field.bar_color.name]
+    );
+
+    this.#updateHAForm(
+      EDITOR_INPUT_FIELDS.theme.field.color.name,
+      EDITOR_INPUT_FIELDS.theme.field.color.label[this.#currentLanguage],
+      this.#elements[EDITOR_INPUT_FIELDS.theme.field.color.name],
+      this.#config[EDITOR_INPUT_FIELDS.theme.field.color.name]
+    );
 
     // Theme
     this.#toggleFieldDisable(CARD.editor.keyMappings.theme, !!this.#config.theme);
@@ -4613,6 +3666,36 @@ class EntityProgressCardEditor extends HTMLElement {
     }
   }
 
+  #extractColorName(cssVar) {
+    debugLog(cssVar);
+    const match = cssVar?.match(/^var\(--(.*?)-color\)$/);
+    debugLog(match);
+    return match && DEF_COLORS.includes(match[1]) ? match[1] : cssVar;
+  }
+
+  #updateHAForm(key, label, form, newValue) {
+    debugLog('👉 editor.#updateHAForm()');
+    debugLog('        ✅ Update HA Form (Before) ------> ', form.data);
+    newValue = key.includes('color') && newValue !== undefined ? this.#extractColorName(newValue) : newValue;
+    debugLog('        ✅ NewValue: ', newValue);
+
+    if (newValue !== undefined && form.data[label] !== newValue) {
+      debugLog('        ✅ NewValue: update.');
+      form.data = {
+        ...form.data,
+        [label]: newValue,
+      };
+      debugLog(form.data);
+    } else if (newValue === undefined && form.data[label] !== undefined) {
+      debugLog('        ✅ key: set undef...');
+      form.data = {
+        ...form.data,
+        [label]: undefined,
+      };
+    }
+    debugLog('        ✅ Update HA Form (after) ------> ', form.data);
+  }
+
   #onChanged(event) {
     debugLog('👉 editor.#onChanged()');
     debugLog('  📎 event: ', event);
@@ -4654,7 +3737,7 @@ class EntityProgressCardEditor extends HTMLElement {
   #sendMessageForUpdate(changedEvent) {
     debugLog('👉 editor.#sendMessageForUpdate()');
     debugLog('  📎 ', changedEvent);
-    debugLog(`      ${changedEvent.target.id} -> ${changedEvent.target.value}`);
+    debugLog(`      ${changedEvent.target.id} -> ${changedEvent.target.value !== undefined ? changedEvent.target.value : changedEvent.detail}`);
     const newConfig = Object.assign({}, this.#config);
 
     switch (changedEvent.target.id) {
@@ -4663,9 +3746,7 @@ class EntityProgressCardEditor extends HTMLElement {
       case EDITOR_INPUT_FIELDS.content.field.max_value_attribute.name:
       case EDITOR_INPUT_FIELDS.content.field.name.name:
       case EDITOR_INPUT_FIELDS.content.field.unit.name:
-      case EDITOR_INPUT_FIELDS.theme.field.bar_color.name:
       case EDITOR_INPUT_FIELDS.theme.field.bar_size.name:
-      case EDITOR_INPUT_FIELDS.theme.field.color.name:
       case EDITOR_INPUT_FIELDS.theme.field.icon.name:
       case EDITOR_INPUT_FIELDS.theme.field.layout.name:
       case EDITOR_INPUT_FIELDS.theme.field.theme.name:
@@ -4694,29 +3775,24 @@ class EntityProgressCardEditor extends HTMLElement {
           delete newConfig[changedEvent.target.id];
         }
         break;
-      case EDITOR_INPUT_FIELDS.interaction.field.tap_action.name:
-        switch (changedEvent.target.value) {
-          case CARD.interactions.tap_action.default:
-            delete newConfig.tap_action;
-            break;
-          case CARD.interactions.tap_action.moreInfo.action:
-            newConfig.tap_action = CARD.interactions.tap_action.moreInfo;
-            break;
-          case CARD.interactions.tap_action.navigate.action:
-            newConfig.tap_action = CARD.interactions.tap_action.navigate;
-            break;
-          case CARD.interactions.tap_action.url.action:
-            newConfig.tap_action = CARD.interactions.tap_action.url;
-            break;
-          case CARD.interactions.tap_action.none.action:
-            newConfig.tap_action = CARD.interactions.tap_action.none;
-            break;
+      case EDITOR_INPUT_FIELDS.interaction.field.tap_action.name: {
+        const tapActionLabel = EDITOR_INPUT_FIELDS.interaction.field.tap_action.label[this.#currentLanguage];
+        const tapActionConfig = changedEvent.detail.value[tapActionLabel];
+        newConfig.tap_action = tapActionConfig;
+        break;
+      }
+      case EDITOR_INPUT_FIELDS.theme.field.bar_color.name:
+      case EDITOR_INPUT_FIELDS.theme.field.color.name: {
+        const curColor = Object.values(changedEvent?.detail?.value || {})[0];
+        if (curColor && typeof curColor === 'string' && curColor.trim() !== '') {
+          debugLog('  📌 color: ', curColor);
+          const cssColor = DEF_COLORS.includes(curColor) ? `var(--${curColor}-color)` : curColor;
+          newConfig[changedEvent.target.id] = cssColor;
+        } else {
+          delete newConfig[changedEvent.target.id];
         }
         break;
-      case EDITOR_INPUT_FIELDS.interaction.field.navigation_path.name:
-      case EDITOR_INPUT_FIELDS.interaction.field.url_path.name:
-        newConfig.tap_action[changedEvent.target.id] = changedEvent.target.value;
-        break;
+      }
       case EDITOR_INPUT_FIELDS.theme.field.toggleBar.name:
       case EDITOR_INPUT_FIELDS.theme.field.toggleIcon.name:
       case EDITOR_INPUT_FIELDS.theme.field.toggleName.name:
@@ -4774,6 +3850,7 @@ class EntityProgressCardEditor extends HTMLElement {
   }
 
   #sendNewConfig(newConfig) {
+    debugLog('👉 editor.#sendNewConfig()');
     if (newConfig.grid_options) {
       const { grid_options, ...rest } = newConfig;
       newConfig = { ...rest, grid_options };
@@ -4792,16 +3869,6 @@ class EntityProgressCardEditor extends HTMLElement {
   }
 
   /**
-   * Determines the tap action value based on the current configuration (this.#config).
-   */
-  #getTapActionValue() {
-    const result = (this.#config.tap_action?.action ?? null) === null 
-      ? CARD.interactions.tap_action.default 
-      : this.#config.tap_action?.action;
-    return result;
-  }
-
-  /**
    * Update a list of choices to a given `<select>` element based on the specified list type.
    *
    * This method populates the `<select>` element with options according to the provided `type`. The `type`
@@ -4811,7 +3878,7 @@ class EntityProgressCardEditor extends HTMLElement {
    * @param {string} type - The type of list to populate ('layout', 'color', 'theme', or 'tap_action').
    */
   #updateChoices(select, type, choices = null) {
-    debugLog('👉 editor.#updateChoices');
+    debugLog('👉 editor.#updateChoices()');
     debugLog(`  📎 select: ${select}`);
     debugLog(`  📎 type: ${type}`);
     debugLog(`  📎 choices: ${choices}`);
@@ -4882,7 +3949,8 @@ class EntityProgressCardEditor extends HTMLElement {
   /**
    * Creates a form field based on the provided configuration and appends it to a container.
    */
-  #createField({ name, label, type, required, isInGroup, description, width }) {
+  #createField({ name, label, type, required, isInGroup, width, schema = null }) {
+    debugLog('👉 editor.#createField()');
     let inputElement;
     const value = this.#config[name] ?? '';
 
@@ -4897,31 +3965,11 @@ class EntityProgressCardEditor extends HTMLElement {
       case CARD.editor.fields.layout.type:
       case CARD.editor.fields.bar_size.type:
       case CARD.editor.fields.theme.type:
-      case CARD.editor.fields.color.type:
-      case CARD.editor.fields.tap_action.type:
       case CARD.editor.fields.attribute.type:
       case CARD.editor.fields.max_value_attribute.type:
         inputElement = document.createElement(CARD.editor.fields[type].element);
         inputElement.popperOptions = '';
         this.#updateChoices(inputElement, type);
-        break;
-      case CARD.editor.fields.navigation_picker.type:
-        inputElement = document.createElement(CARD.editor.fields.navigation_picker.element);
-        inputElement.popperOptions = '';
-
-        this.#hassProvider
-          .getLovelaceViews()
-          .then((views) => {
-            debugLog('✅ Lovelace Views: ', views); // ✅ Affiche les vues une fois récupérées
-            this.#updateChoices(inputElement, CARD.editor.fields.navigation_picker.type, views);
-            if (this.#config.tap_action !== undefined && this.#config.tap_action.navigation_path !== undefined) {
-              inputElement.value = this.#config.tap_action.navigation_path;
-              debugLog('✅ Update navigate selection'); // ✅ Affiche les vues une fois récupérées
-            }
-          })
-          .catch((error) => {
-            debugLog('❌ Error:', error);
-          });
         break;
       case CARD.editor.fields.number.type:
         inputElement = document.createElement(CARD.editor.fields.number.element);
@@ -4946,6 +3994,30 @@ class EntityProgressCardEditor extends HTMLElement {
         this.#elements[name] = toggle;
         return inputElement; //break;
       }
+      case CARD.editor.fields.color.type:
+        inputElement = document.createElement(CARD.editor.fields.tap_action.element);
+        if (isInGroup) {
+          inputElement.classList.add(isInGroup);
+        }
+        inputElement.style.width = width;
+        inputElement.hass = this.#hassProvider.hass;
+        schema.name = label;
+        inputElement.schema = [schema];
+        inputElement.id = name;
+        inputElement.data = this.#config[name] !== undefined ? { [label]: this.#config[name] } : {};
+        this.#elements[name] = inputElement;
+        return inputElement; //break;
+      case CARD.editor.fields.tap_action.type: {
+        inputElement = document.createElement(CARD.editor.fields.tap_action.element);
+        inputElement.style.width = width;
+        inputElement.hass = this.#hassProvider.hass;
+        schema.name = label;
+        inputElement.schema = [schema];
+        inputElement.id = name;
+        inputElement.data = this.#config.tap_action !== undefined ? { [label]: this.#config.tap_action } : {};
+        this.#elements[type] = inputElement;
+        return inputElement; //break;
+      }
       default:
         inputElement = document.createElement(CARD.editor.fields.default.element);
         inputElement.type = CARD.editor.fields.default.type;
@@ -4953,27 +4025,17 @@ class EntityProgressCardEditor extends HTMLElement {
     }
 
     this.#elements[name] = inputElement;
-    inputElement.style.width = '100%';
+    inputElement.style.width = width;
     inputElement.required = required;
     inputElement.label = label;
     inputElement.value = value;
     inputElement.id = name;
 
-    const fieldContainer = document.createElement(CARD.editor.fields.fieldContainer.element);
     if (isInGroup) {
-      fieldContainer.classList.add(isInGroup);
+      inputElement.classList.add(isInGroup);
     }
-    fieldContainer.classList.add(CARD.editor.fields.fieldContainer.class);
-    fieldContainer.style.width = width;
 
-    const fieldDescription = document.createElement(CARD.editor.fields.fieldDescription.element);
-    fieldDescription.classList.add(CARD.editor.fields.fieldDescription.class);
-    fieldDescription.innerText = description;
-
-    fieldContainer.appendChild(inputElement);
-    fieldContainer.appendChild(fieldDescription);
-
-    return fieldContainer;
+    return inputElement;
   }
 
   #makeHelpIcon() {
@@ -5035,13 +4097,13 @@ class EntityProgressCardEditor extends HTMLElement {
       debugLog('#renderFields - field: ', field);
       parent.appendChild(
         this.#createField({
-          name: field.name,
-          label: field.label[this.#currentLanguage],
+          name: typeof field.name === 'string' ? field.name : field.name[this.#currentLanguage],
+          label: field.label !== undefined ? field.label[this.#currentLanguage] : null,
           type: field.type,
           required: field.required,
           isInGroup: field.isInGroup,
-          description: field.description !== undefined ? field.description[this.#currentLanguage] : null,
           width: field.width,
+          schema: field.schema !== undefined ? field.schema : null,
         })
       );
     });

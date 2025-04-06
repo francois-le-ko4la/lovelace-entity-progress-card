@@ -262,28 +262,38 @@ The Home Assistant `max_value`'s attribute to display.
 
 #### `tap_action`
 
-> **`tap_action`** OBJ[action: {`more-info` | `navigate` | `url` | `none`} [`navigation_path`: /str/to/lovelace] [`url_path`: <https://example.com>]] _(optional)_
+> **`tap_action`** OBJ[action: {`more-info` | `toggle` | `perform-action` | `navigate` | `url` | `assist` | `none`} [`navigation_path`: /str/to/lovelace] [`url_path`: <https://example.com>] [····]] _(optional)_
 
-The tap_action property defines what happens when a user taps on the card. There are multiple possible actions:
+The tap_action property defines the behavior when a user taps on the card. There are several possible actions.
 
-- `more-info`: Opens the entity's information dialog.
-- `navigate`: Navigates to a Lovelace view (requires `navigation_path`).
-- `url`: Opens a URL (requires `url_path`).
-- `none`: Disables the tap action.
+> [!NOTE]
+>
+> `tap_action` ensures consistency with standard Home Assistant cards, allowing users to switch efficiently and seamlessly to this card.
+> All available options and usage details can be found in the official Home Assistant documentation for actions:
+> <https://www.home-assistant.io/dashboards/actions/>.
+>
+
+_Available actions_:
+
+- **`default`**: The default action.
+- **`more-info`**: Opens the entity's information dialog.
+- **`toggle`**: Toggles the state of the entity (e.g., turning a light on or off).
+- **`perform-action`**: Executes a specific Home Assistant service call or action.
+- **`navigate`**: Navigates to a specific Lovelace view (requires `navigation_path`).
+- **`url`**: Opens a URL in the browser (requires `url_path`).
+- **`assist`**: Triggers a Home Assistant assistant action (like voice interaction).
+- **`none`**: Disables the tap action, meaning no action will be triggered.
 
 _Options:_
 
 - `navigation_path` _path_: Lovelace path to navigate to (e.g., /lovelace/lights).
 - `url_path` _url_: URL to open when action is 'url' (e.g., <https://example.com>).
+...
 
 > [!CAUTION]
 > We have merged the functionalities of `navigate_to` and `show_more_info` into `tap_action`.
 > Consequently, these two options have been **deprecated**, **disabled**, and will no longer
-> be supported in **v1.2.0**.
-
-> [!NOTE]
->
-> `tap_action` ensures consistency with standard Home Assistant cards, allowing users to switch efficiently and seamlessly to this card.
+> be supported in **v1.2.0**. We provide the following examples to facilitate a simple migration.
 >
 > <details>
 >   <summary>👉 examples</summary>
@@ -343,7 +353,7 @@ tap_action:
 
 #### `theme`
 
-> **`theme`** [string {`optimal_when_low`|`optimal_when_high`|`battery`|`cpu`|`light`|`memory`|`temperature`|`humidity`|`pm25`|`voc`}] _(optional)_
+> **`theme`** [string {`optimal_when_low`|`optimal_when_high`|`battery`⚠️|`cpu`⚠️|`light`|`memory`⚠️|`temperature`|`humidity`|`pm25`|`voc`}] _(optional)_
 
 Allows customization of the progress bar's appearance using a predefined theme.
 This theme dynamically adjusts the `icon`, `color` and `bar-color` parameters based on the battery level, eliminating the need for manual adjustments or complex Jinja2 templates.
