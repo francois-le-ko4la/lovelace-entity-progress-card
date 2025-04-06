@@ -110,7 +110,7 @@ const CARD = {
       'zh-tw': 'zh-TW',
       'zh-Hant': 'zh-TW',
     },
-    debug: true,
+    debug: false,
   },
   htmlStructure: {
     card: { element: 'ha-card' },
