@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.2.1
+ * @version 1.2.2
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.2.1';
+const VERSION = '1.2.2';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
@@ -260,7 +260,7 @@ const CARD = {
       secondaryInfoError: { class: 'secondary-info-error' },
       show: 'show',
       hide: 'hide',
-      clickable: 'clickable',
+      clickable: { card: 'clickableCard', icon: 'clickableIcon'},
       hiddenComponent: {
         icon: { label: 'icon', class: 'hide_icon' },
         shape: { label: 'shape', class: 'hide_shape' },
@@ -287,29 +287,39 @@ const CARD = {
     },
   },
   interactions: {
-    event: { HASelect: ['selected'], other: ['value-changed', 'input'], closed: 'closed', click: 'click', configChanged: 'config-changed' },
-    tap_action: {
+    event: {
+      HASelect: ['selected'],
+      toggle: ['change'],
+      other: ['value-changed', 'input'],
+      closed: 'closed',
+      click: 'click',
+      configChanged: 'config-changed',
+      originalTarget: { icon: ['ha-shape', 'ha-svg-icon'] },
+      from: { icon: 'icon', card: 'card' },
+    },
+    action: {
       default: 'default',
       navigate: { action: 'navigate' },
       moreInfo: { action: 'more-info' },
       url: { action: 'url' },
       assist: { action: 'assist' },
       toggle: { action: 'toggle' },
-      performaAction: { action: 'performa-action' },
+      performAction: { action: 'perform-action' },
       none: { action: 'none' },
     },
   },
   editor: {
     fields: {
       container: { element: 'div', class: 'editor' },
-      entity: { type: 'entity', element: 'ha-entity-picker' },
+      entity: { type: 'entity', element: 'ha-form' },
       attribute: { type: 'attribute', element: 'ha-select' },
       max_value_attribute: { type: 'max_value_attribute', element: 'ha-select' },
-      icon: { type: 'icon', element: 'ha-icon-picker' },
+      icon: { type: 'icon', element: 'ha-form' },
       layout: { type: 'layout', element: 'ha-select' },
       bar_size: { type: 'bar_size', element: 'ha-select' },
       tap_action: { type: 'tap_action', element: 'ha-form' },
-      navigation_picker: { type: 'navigation_picker', element: 'ha-select' },
+      hold_action: { type: 'hold_action', element: 'ha-form' },
+      icon_tap_action: { type: 'icon_tap_action', element: 'ha-form' },
       theme: { type: 'theme', element: 'ha-select' },
       color: { type: 'color', element: 'ha-form' },
       number: { type: 'number', element: 'ha-textfield' },
@@ -318,7 +328,6 @@ const CARD = {
       iconItem: { element: 'ha-icon', attribute: 'icon', class: 'editor-icon-list' },
       select: { element: 'ha-select' },
       toggle: { type: 'toggle', element: 'ha-switch' },
-      colorDot: { element: 'span', class: 'select-color-item' },
       text: { element: 'span' },
       accordion: {
         item: { element: 'div', class: 'accordion' },
@@ -331,7 +340,6 @@ const CARD = {
     keyMappings: {
       attribute: 'attribute',
       max_value_attribute: 'max_value_attribute',
-      navigateTo: 'navigate_to', // keep it
       url_path: 'url_path',
       navigation_path: 'navigation_path',
       theme: 'theme',
@@ -365,7 +373,6 @@ CARD.console = {
   css: 'color:orange; background-color:black; font-weight: bold;',
   link: '      For more details, check the README: https://github.com/francois-le-ko4la/lovelace-entity-progress-card',
 };
-
 
 const DEF_COLORS = [
   'primary',
@@ -485,126 +492,1414 @@ const THEME = {
   },
 };
 
-const MSG = {
-  entityError: {
-    en: "entity: The 'entity' parameter is required!",
-    fr: "entity: Le paramètre 'entity' est requis !",
-    es: "entity: ¡El parámetro 'entity' es obligatorio!",
-    it: "entity: Il parametro 'entity' è obbligatorio!",
-    de: "entity: Der Parameter 'entity' ist erforderlich!",
-    nl: "entity: De parameter 'entity' is verplicht!",
-    hr: "entity: Parametar 'entity' je obavezan!",
-    pl: "entity: Parametr 'entity' jest wymagany!",
-    mk: "entity: Параметарот 'entity' е задолжителен!",
-    pt: "entity: O parâmetro 'entity' é obrigatório!",
-    da: "entity: Parameteren 'entity' er påkrævet!",
-    nb: "entity: Parameteret 'entity' er påkrevd!",
-    sv: "entity: Parametern 'entity' är obligatorisk!",
+
+const LANGUAGES = {
+  en: {
+    card: {
+      msg: {
+        entityError: "entity: The 'entity' parameter is required!",
+        entityNotFound: 'Entity not found',
+        entityUnknown: 'Unknown',
+        entityUnavailable: 'Unavailable',
+        attributeNotFound: 'attribute: Attribute not found in HA.',
+        minValueError: 'min_value: Check your min_value.',
+        maxValueError: 'max_value: Check your max_value.',
+        decimalError: 'decimal: This value cannot be negative.',
+      },
+    },
+    editor: {
+      title: {
+        content: 'Content',
+        interaction: 'Interactions',
+        theme: 'Look & Feel',
+      },
+      field: {
+        entity: 'Entity',
+        attribute: 'Attribute',
+        name: 'Name',
+        unit: 'Unit',
+        decimal: 'decimal',
+        min_value: 'Minimum value',
+        max_value: 'Maximum value',
+        max_value_attribute: 'Attribute (max_value)',
+        tap_action: 'Tap behavior',
+        hold_action: 'Hold behavior',
+        icon_tap_action: 'Icon tap behavior',
+        toggle_icon: 'Icon',
+        toggle_name: 'Name',
+        toggle_unit: 'Unit',
+        toggle_secondary_info: 'Info',
+        toggle_progress_bar: 'Bar',
+        toggle_force_circular_background: 'Force circular background',
+        theme: 'Theme',
+        bar_size: 'Bar size',
+        bar_color: 'Color for the bar',
+        icon: 'Icon',
+        color: 'Primary color',
+        layout: 'Card layout',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: 'Optimal when Low (CPU, RAM,...)',
+          optimal_when_high: 'Optimal when High (Battery...)',
+          light: 'Light',
+          temperature: 'Temperature',
+          humidity: 'Humidity',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'Small',
+          medium: 'Medium',
+          large: 'Large',
+        },
+        layout: {
+          horizontal: 'Horizontal (default)',
+          vertical: 'Vertical',
+        },
+      },
+    },
   },
-  entityNotFound: {
-    en: 'Entity not found',
-    fr: 'Entité introuvable',
-    es: 'Entidad no encontrada',
-    it: 'Entità non trovata',
-    de: 'Entität nicht gefunden',
-    nl: 'Entiteit niet gevonden',
-    hr: 'Entitet nije pronađen',
-    pl: 'Encji nie znaleziono',
-    mk: 'Ентитетот не е пронајден',
-    pt: 'Entidade não encontrada',
-    da: 'Enheden blev ikke fundet',
-    nb: 'Enheten ble ikke funnet',
-    sv: 'Enhet ej funnen',
+  fr: {
+    card: {
+      msg: {
+        entityError: "entity: Le paramètre 'entity' est requis !",
+        entityNotFound: 'Entité introuvable',
+        entityUnknown: 'Inconnu',
+        entityUnavailable: 'Indisponible',
+        attributeNotFound: 'attribute: Attribut introuvable dans HA.',
+        minValueError: 'min_value: Vérifiez votre min_value.',
+        maxValueError: 'max_value: Vérifiez votre max_value.',
+        decimalError: 'decimal: La valeur ne peut pas être négative.',
+      },
+    },
+    editor: {
+      title: {
+        content: 'Contenu',
+        interaction: 'Interactions',
+        theme: 'Aspect visuel et convivialité',
+      },
+      field: {
+        entity: 'Entité',
+        attribute: 'Attribut',
+        name: 'Nom',
+        unit: 'Unité',
+        decimal: 'décimal',
+        min_value: 'Valeur minimum',
+        max_value: 'Valeur maximum',
+        max_value_attribute: 'Attribut (max_value)',
+        tap_action: "Comportement lors d'un appui court",
+        hold_action: "Comportement lors d'un appui long",
+        icon_tap_action: "Comportement lors de l'appui sur l'icône",
+        toggle_icon: 'Icône',
+        toggle_name: 'Nom',
+        toggle_unit: 'Unité',
+        toggle_secondary_info: 'Info',
+        toggle_progress_bar: 'Barre',
+        toggle_force_circular_background: 'Forcer le fond circulaire',
+        theme: 'Thème',
+        bar_size: 'Taille de la barre',
+        bar_color: 'Couleur de la barre',
+        icon: 'Icône',
+        color: "Couleur de l'icône",
+        layout: 'Disposition de la carte',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: "Optimal quand c'est bas (CPU, RAM,...)",
+          optimal_when_high: "Optimal quand c'est élevé (Batterie...)",
+          light: 'Lumière',
+          temperature: 'Température',
+          humidity: 'Humidité',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'Petite',
+          medium: 'Moyenne',
+          large: 'Grande',
+        },
+        layout: {
+          horizontal: 'Horizontal (par défaut)',
+          vertical: 'Vertical',
+        },
+      },
+    },
   },
-  entityUnknown: {
-    en: 'Unknown',
-    fr: 'Inconnu',
-    es: 'Desconocido',
-    it: 'Sconosciuto',
-    de: 'Unbekannt',
-    nl: 'Onbekend',
-    hr: 'Nepoznat',
-    pl: 'Nieznany',
-    mk: 'Непознат',
-    pt: 'Desconhecido',
-    da: 'Ukendt',
-    nb: 'Ukjent',
-    sv: 'Okänd',
+  es: {
+    card: {
+      msg: {
+        entityError: "entity: ¡El parámetro 'entity' es obligatorio!",
+        entityNotFound: 'Entidad no encontrada',
+        entityUnknown: 'Desconocido',
+        entityUnavailable: 'No disponible',
+        attributeNotFound: 'attribute: Atributo no encontrado en HA.',
+        minValueError: 'min_value: Verifique su min_value.',
+        maxValueError: 'max_value: Verifique su max_value.',
+        decimalError: 'decimal: El valor no puede ser negativo.',
+      },
+    },
+    editor: {
+      title: {
+        content: 'Contenido',
+        interaction: 'Interacciones',
+        theme: 'Apariencia y funcionamiento',
+      },
+      field: {
+        entity: 'Entidad',
+        attribute: 'Atributo',
+        name: 'Nombre',
+        unit: 'Unidad',
+        decimal: 'decimal',
+        min_value: 'Valor mínimo',
+        max_value: 'Valor máximo',
+        max_value_attribute: 'Atributo (max_value)',
+        tap_action: 'Acción al pulsar brevemente',
+        hold_action: 'Acción al mantener pulsado',
+        icon_tap_action: 'Acción al pulsar el icono',
+        toggle_icon: 'Icono',
+        toggle_name: 'Nombre',
+        toggle_unit: 'Unidad',
+        toggle_secondary_info: 'Info',
+        toggle_progress_bar: 'Barra',
+        toggle_force_circular_background: 'Forzar fondo circular',
+        theme: 'Tema',
+        bar_size: 'Tamaño de la barra',
+        bar_color: 'Color de la barra',
+        icon: 'Icono',
+        color: 'Color del icono',
+        layout: 'Disposición de la tarjeta',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: 'Óptimo cuando es bajo (CPU, RAM,...)',
+          optimal_when_high: 'Óptimo cuando es alto (Batería...)',
+          light: 'Luz',
+          temperature: 'Temperatura',
+          humidity: 'Humedad',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'Pequeña',
+          medium: 'Media',
+          large: 'Grande',
+        },
+        layout: {
+          horizontal: 'Horizontal (predeterminado)',
+          vertical: 'Vertical',
+        },
+      },
+    },
   },
-  entityUnavailable: {
-    en: 'Unavailable',
-    fr: 'Indisponible',
-    es: 'No disponible',
-    it: 'Non disponibile',
-    de: 'Nicht verfügbar',
-    nl: 'Niet beschikbaar',
-    hr: 'Nedostupno',
-    pl: 'Niedostępny',
-    mk: 'Недостапно',
-    pt: 'Indisponível',
-    da: 'Utilgængelig',
-    nb: 'Utilgjengelig',
-    sv: 'Otillgänglig',
+  it: {
+    card: {
+      msg: {
+        entityError: "entity: Il parametro 'entity' è obbligatorio!",
+        entityNotFound: 'Entità non trovata',
+        entityUnknown: 'Sconosciuto',
+        entityUnavailable: 'Non disponibile',
+        attributeNotFound: 'attribute: Attributo non trovato in HA.',
+        minValueError: 'min_value: Controlla il tuo min_value.',
+        maxValueError: 'max_value: Controlla il tuo max_value.',
+        decimalError: 'decimal: Questo valore non può essere negativo.',
+      },
+    },
+    editor: {
+      title: {
+        content: 'Contenuto',
+        interaction: 'Interazioni',
+        theme: 'Aspetto e funzionalità',
+      },
+      field: {
+        entity: 'Entità',
+        attribute: 'Attributo',
+        name: 'Nome',
+        unit: 'Unità',
+        decimal: 'Decimale',
+        min_value: 'Valore minimo',
+        max_value: 'Valore massimo',
+        max_value_attribute: 'Attributo (max_value)',
+        tap_action: 'Azione al tocco breve',
+        hold_action: 'Azione al tocco prolungato',
+        icon_tap_action: 'Azione al tocco dell’icona',
+        toggle_icon: 'Icona',
+        toggle_name: 'Nome',
+        toggle_unit: 'Unità',
+        toggle_secondary_info: 'Info',
+        toggle_progress_bar: 'Barra',
+        toggle_force_circular_background: 'Forza sfondo circolare',
+        theme: 'Tema',
+        bar_size: 'Dimensione della barra',
+        bar_color: 'Colore per la barra',
+        icon: 'Icona',
+        color: "Colore dell'icona",
+        layout: 'Layout della carta',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: 'Ottimale quando è basso (CPU, RAM,...)',
+          optimal_when_high: 'Ottimale quando è alto (Batteria...)',
+          light: 'Luce',
+          temperature: 'Temperatura',
+          humidity: 'Umidità',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'Piccola',
+          medium: 'Media',
+          large: 'Grande',
+        },
+        layout: {
+          horizontal: 'Orizzontale (predefinito)',
+          vertical: 'Verticale',
+        },
+      },
+    },
   },
-  attributeNotFound: {
-    en: 'attribute: Attribute not found in HA.',
-    fr: 'attribute: Attribut introuvable dans HA.',
-    es: 'attribute: Atributo no encontrado en HA.',
-    it: 'attribute: Attributo non trovato in HA.',
-    de: 'attribute: Attribut in HA nicht gefunden.',
-    nl: 'attribute: Attribuut niet gevonden in HA.',
-    hr: 'attribute: Atribut nije pronađen u HA.',
-    pl: 'attribute: Atrybut nie znaleziony w HA.',
-    mk: 'attribute: Атрибутот не е пронајден во HA.',
-    pt: 'attribute: Atributo não encontrado no HA.',
-    da: 'attribute: Attribut ikke fundet i HA.',
-    nb: 'attribute: Attributt ikke funnet i HA.',
-    sv: 'attribute: Attributet hittades inte i HA.',
+  de: {
+    card: {
+      msg: {
+        entityError: "entity: Der Parameter 'entity' ist erforderlich!",
+        entityNotFound: 'Entität nicht gefunden',
+        entityUnknown: 'Unbekannt',
+        entityUnavailable: 'Nicht verfügbar',
+        attributeNotFound: 'attribute: Attribut in HA nicht gefunden.',
+        minValueError: 'min_value: Überprüfen Sie Ihren min_value.',
+        maxValueError: 'max_value: Überprüfen Sie Ihren max_value.',
+        decimalError: 'decimal: Negative Werte sind nicht zulässig.',
+      },
+    },
+    editor: {
+      title: {
+        content: 'Inhalt',
+        interaction: 'Interaktionen',
+        theme: 'Aussehen und Bedienung',
+      },
+      field: {
+        entity: 'Entität',
+        attribute: 'Attribut',
+        name: 'Name',
+        unit: 'Einheit',
+        decimal: 'dezimal',
+        min_value: 'Mindestwert',
+        max_value: 'Höchstwert',
+        max_value_attribute: 'Attribut (max_value)',
+        tap_action: 'Aktion bei kurzem Tippen',
+        hold_action: 'Aktion bei langem Tippen',
+        icon_tap_action: 'Aktion beim Tippen auf das Symbol',
+        toggle_icon: 'Icon',
+        toggle_name: 'Name',
+        toggle_unit: 'Einheit',
+        toggle_secondary_info: 'Info',
+        toggle_progress_bar: 'Balken',
+        toggle_force_circular_background: 'Kreisförmigen Hintergrund erzwingen',
+        theme: 'Thema',
+        bar_size: 'Größe der Bar',
+        bar_color: 'Farbe für die Leiste',
+        icon: 'Symbol',
+        color: 'Primärfarbe',
+        layout: 'Kartenlayout',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: 'Optimal bei niedrig (CPU, RAM,...)',
+          optimal_when_high: 'Optimal bei hoch (Batterie...)',
+          light: 'Licht',
+          temperature: 'Temperatur',
+          humidity: 'Feuchtigkeit',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'Klein',
+          medium: 'Mittel',
+          large: 'Groß',
+        },
+        layout: {
+          horizontal: 'Horizontal (Standard)',
+          vertical: 'Vertikal',
+        },
+      },
+    },
   },
-  minValueError: {
-    en: 'min_value: Check your min_value.',
-    fr: 'min_value: Vérifiez votre min_value.',
-    es: 'min_value: Verifique su min_value.',
-    it: 'min_value: Controlla il tuo min_value.',
-    de: 'min_value: Überprüfen Sie Ihren min_value.',
-    nl: 'min_value: Controleer je min_value.',
-    hr: 'min_value: Provjerite svoj min_value.',
-    pl: 'min_value: Sprawdź swój min_value.',
-    mk: 'min_value: Проверете го вашиот min_value.',
-    pt: 'min_value: Verifique o seu min_value.',
-    da: 'min_value: Tjekk din min_value.',
-    nb: 'min_value: Sjekk din min_value.',
-    sv: 'min_value: Kontrollera ditt min_value.',
+  nl: {
+    card: {
+      msg: {
+        entityError: "entity: De parameter 'entity' is verplicht!",
+        entityNotFound: 'Entiteit niet gevonden',
+        entityUnknown: 'Onbekend',
+        entityUnavailable: 'Niet beschikbaar',
+        attributeNotFound: 'attribute: Attribuut niet gevonden in HA.',
+        minValueError: 'min_value: Controleer je min_value.',
+        maxValueError: 'max_value: Controleer je max_value.',
+        decimalError: 'decimal: Deze waarde kan niet negatief zijn.',
+      },
+    },
+    editor: {
+      title: {
+        content: 'Inhoud',
+        interaction: 'Interactie',
+        theme: 'Uiterlijk en gebruiksgemak',
+      },
+      field: {
+        entity: 'Entiteit',
+        attribute: 'Attribuut',
+        name: 'Naam',
+        unit: 'Eenheid',
+        decimal: 'decimaal',
+        min_value: 'Minimale waarde',
+        max_value: 'Maximale waarde',
+        max_value_attribute: 'Attribuut (max_value)',
+        tap_action: 'Actie bij korte tik',
+        hold_action: 'Actie bij lang ingedrukt houden',
+        icon_tap_action: 'Actie bij tikken op pictogram',
+        toggle_icon: 'Icoon',
+        toggle_name: 'Naam',
+        toggle_unit: 'Eenheid',
+        toggle_secondary_info: 'Info',
+        toggle_progress_bar: 'Balk',
+        toggle_force_circular_background: 'Geforceerde cirkelvormige achtergrond',
+        theme: 'Thema',
+        bar_size: 'Balkgrootte',
+        bar_color: 'Kleur voor de balk',
+        icon: 'Pictogram',
+        color: 'Primaire kleur',
+        layout: 'Kaartindeling',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: 'Optimaal wanneer laag (CPU, RAM,...)',
+          optimal_when_high: 'Optimaal wanneer hoog (Batterij...)',
+          light: 'Licht',
+          temperature: 'Temperatuur',
+          humidity: 'Vochtigheid',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'Klein',
+          medium: 'Middel',
+          large: 'Groot',
+        },
+        layout: {
+          horizontal: 'Horizontaal (standaard)',
+          vertical: 'Verticaal',
+        },
+      },
+    },
   },
-  maxValueError: {
-    en: 'max_value: Check your max_value.',
-    fr: 'max_value: Vérifiez votre max_value.',
-    es: 'max_value: Verifique su max_value.',
-    it: 'max_value: Controlla il tuo max_value.',
-    de: 'max_value: Überprüfen Sie Ihren max_value.',
-    nl: 'max_value: Controleer je max_value.',
-    hr: 'max_value: Provjerite svoj max_value.',
-    pl: 'max_value: Sprawdź swój max_value.',
-    mk: 'max_value: Проверете го вашиот max_value.',
-    pt: 'max_value: Verifique o seu max_value.',
-    da: 'max_value: Tjekk din max_value.',
-    nb: 'max_value: Sjekk din max_value.',
-    sv: 'max_value: Kontrollera ditt max_value.',
+  hr: {
+    card: {
+      msg: {
+        entityError: "entity: Parametar 'entity' je obavezan!",
+        entityNotFound: 'Entitet nije pronađen',
+        entityUnknown: 'Nepoznat',
+        entityUnavailable: 'Nedostupno',
+        attributeNotFound: 'attribute: Atribut nije pronađen u HA.',
+        minValueError: 'min_value: Provjerite svoj min_value.',
+        maxValueError: 'max_value: Provjerite svoj max_value.',
+        decimalError: 'decimal: Ova vrijednost ne može biti negativna.',
+      },
+    },
+    editor: {
+      title: {
+        content: 'Sadržaj',
+        interaction: 'Interakcije',
+        theme: 'Izgled i funkcionalnost',
+      },
+      field: {
+        entity: 'Entitet',
+        attribute: 'Atribut',
+        name: 'Ime',
+        unit: 'Jedinica',
+        decimal: 'decimalni',
+        min_value: 'Minimalna vrijednost',
+        max_value: 'Maksimalna vrijednost',
+        max_value_attribute: 'Atribut (max_value)',
+        tap_action: 'Radnja na kratki dodir',
+        hold_action: 'Radnja na dugi dodir',
+        icon_tap_action: 'Radnja na dodir ikone',
+        toggle_icon: 'Ikona',
+        toggle_name: 'Ime',
+        toggle_unit: 'Jedinica',
+        toggle_secondary_info: 'Info',
+        toggle_progress_bar: 'Traka',
+        toggle_force_circular_background: 'Prisili kružnu pozadinu',
+        theme: 'Tema',
+        bar_size: 'Veličina trake',
+        bar_color: 'Boja za traku',
+        icon: 'Ikona',
+        color: 'Primarna boja',
+        layout: 'Izgled kartice',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: 'Optimalno kada je nisko (CPU, RAM,...)',
+          optimal_when_high: 'Optimalno kada je visoko (Baterija...)',
+          light: 'Svjetlo',
+          temperature: 'Temperatura',
+          humidity: 'Vlažnost',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'Mali',
+          medium: 'Srednje',
+          large: 'Veliko',
+        },
+        layout: {
+          horizontal: 'Horizontalno (zadano)',
+          vertical: 'Vertikalno',
+        },
+      },
+    },
   },
-  decimalError: {
-    en: 'decimal: This value cannot be negative.',
-    fr: 'decimal: La valeur ne peut pas être négative.',
-    es: 'decimal: El valor no puede ser negativo.',
-    it: 'decimal: Questo valore non può essere negativo.',
-    de: 'decimal: Negative Werte sind nicht zulässig.',
-    nl: 'decimal: Deze waarde kan niet negatief zijn.',
-    hr: 'decimal: Ova vrijednost ne može biti negativna.',
-    pl: 'decimal: Ta wartość nie może być ujemna.',
-    mk: 'decimal: Ова вредност не може да биде негативна.',
-    pt: 'decimal: Este valor não pode ser negativo.',
-    da: 'decimal: Denne værdi kan ikke være negativ.',
-    nb: 'decimal: Denne verdien kan ikke være negativ.',
-    sv: 'decimal: Detta värde kan inte vara negativt.',
+  pl: {
+    card: {
+      msg: {
+        entityError: "entity: Parametr 'entity' jest wymagany!",
+        entityNotFound: 'Encji nie znaleziono',
+        entityUnknown: 'Nieznany',
+        entityUnavailable: 'Niedostępny',
+        attributeNotFound: 'attribute: Atrybut nie znaleziony w HA.',
+        minValueError: 'min_value: Sprawdź swój min_value.',
+        maxValueError: 'max_value: Sprawdź swój max_value.',
+        decimalError: 'decimal: Ta wartość nie może być ujemna.',
+      },
+    },
+    editor: {
+      title: {
+        content: 'Zawartość',
+        interaction: 'Interakcje',
+        theme: 'Wygląd i funkcjonalność',
+      },
+      field: {
+        entity: 'Encja',
+        attribute: 'Atrybut',
+        name: 'Nazwa',
+        unit: 'Jednostka',
+        decimal: 'dziesiętny',
+        min_value: 'Wartość minimalna',
+        max_value: 'Wartość maksymalna',
+        max_value_attribute: 'Atrybut (max_value)',
+        tap_action: 'Akcja przy krótkim naciśnięciu',
+        hold_action: 'Akcja przy długim naciśnięciu',
+        icon_tap_action: 'Akcja przy naciśnięciu ikony',
+        toggle_icon: 'Ikona',
+        toggle_name: 'Nazwa',
+        toggle_unit: 'Jednostka',
+        toggle_secondary_info: 'Info',
+        toggle_progress_bar: 'Pasek',
+        toggle_force_circular_background: 'Wymuś okrągłe tło',
+        theme: 'Motyw',
+        bar_size: 'Rozmiar paska',
+        bar_color: 'Kolor paska',
+        icon: 'Ikona',
+        color: 'Kolor podstawowy',
+        layout: 'Układ karty',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: 'Optymalny, gdy niskie (CPU, RAM,...)',
+          optimal_when_high: 'Optymalny, gdy wysokie (Bateria...)',
+          light: 'Światło',
+          temperature: 'Temperatura',
+          humidity: 'Wilgotność',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'Mały',
+          medium: 'Średni',
+          large: 'Duży',
+        },
+        layout: {
+          horizontal: 'Poziomo (domyślnie)',
+          vertical: 'Pionowy',
+        },
+      },
+    },
+  },
+  mk: {
+    card: {
+      msg: {
+        entityError: "entity: Параметарот 'entity' е задолжителен!",
+        entityNotFound: 'Ентитетот не е пронајден',
+        entityUnknown: 'Непознат',
+        entityUnavailable: 'Недостапно',
+        attributeNotFound: 'attribute: Атрибутот не е пронајден во HA.',
+        minValueError: 'min_value: Проверете го вашиот min_value.',
+        maxValueError: 'max_value: Проверете го вашиот max_value.',
+        decimalError: 'decimal: Ова вредност не може да биде негативна.',
+      },
+    },
+    editor: {
+      title: {
+        content: 'Содржина',
+        interaction: 'Интеракции',
+        theme: 'Изглед и функционалност',
+      },
+      field: {
+        entity: 'Ентитет',
+        attribute: 'Атрибут',
+        name: 'Име',
+        unit: 'Јединство',
+        decimal: 'децемален',
+        min_value: 'Минимална вредност',
+        max_value: 'Максимална вредност',
+        max_value_attribute: 'Атрибут (max_value)',
+        tap_action: 'Дејство при краток допир',
+        hold_action: 'Дејство при долг допир',
+        icon_tap_action: 'Дејство при допир на иконата',
+        toggle_icon: 'Икона',
+        toggle_name: 'Име',
+        toggle_unit: 'Јединство',
+        toggle_secondary_info: 'Инфо',
+        toggle_progress_bar: 'Лента',
+        toggle_force_circular_background: 'Принуди кружна позадина',
+        theme: 'Тема',
+        bar_size: 'Големина на лента',
+        bar_color: 'Боја за лентата',
+        icon: 'Икона',
+        color: 'Примарна боја',
+        layout: 'Распоред на карта',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: 'Оптимално кога е ниско(CPU, RAM,...)',
+          optimal_when_high: 'Оптимално кога е високо (Батерија...)',
+          light: 'Светлина',
+          temperature: 'Температура',
+          humidity: 'Влажност',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'Мало',
+          medium: 'Средно',
+          large: 'Големо',
+        },
+        layout: {
+          horizontal: 'Хоризонтално (стандардно)',
+          vertical: 'Вертикално',
+        },
+      },
+    },
+  },
+  pt: {
+    card: {
+      msg: {
+        entityError: "entity: O parâmetro 'entity' é obrigatório!",
+        entityNotFound: 'Entidade não encontrada',
+        entityUnknown: 'Desconhecido',
+        entityUnavailable: 'Indisponível',
+        attributeNotFound: 'attribute: Atributo não encontrado no HA.',
+        minValueError: 'min_value: Verifique o seu min_value.',
+        maxValueError: 'max_value: Verifique o seu max_value.',
+        decimalError: 'decimal: Este valor não pode ser negativo.',
+      },
+    },
+    editor: {
+      title: {
+        content: 'Conteúdo',
+        interaction: 'Interações',
+        theme: 'Aparência e usabilidade',
+      },
+      field: {
+        entity: 'Entidade',
+        attribute: 'Atributo',
+        name: 'Nome',
+        unit: 'Unidade',
+        decimal: 'decimal',
+        min_value: 'Valor mínimo',
+        max_value: 'Valor máximo',
+        max_value_attribute: 'Atributo (max_value)',
+        tap_action: 'Ação ao toque curto',
+        hold_action: 'Ação ao toque longo',
+        icon_tap_action: 'Ação ao tocar no ícone',
+        toggle_icon: 'Ícone',
+        toggle_name: 'Nome',
+        toggle_unit: 'Unidade',
+        toggle_secondary_info: 'Info',
+        toggle_progress_bar: 'Barra',
+        toggle_force_circular_background: 'Forçar fundo circular',
+        theme: 'Tema',
+        bar_size: 'Tamanho da barra',
+        bar_color: 'Cor para a barra',
+        icon: 'Ícone',
+        color: 'Cor primária',
+        layout: 'Layout do cartão',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: 'Ótimo quando é baixo (CPU, RAM,...)',
+          optimal_when_high: 'Ótimo quando é alto (Bateria...)',
+          light: 'Luz',
+          temperature: 'Temperatura',
+          humidity: 'Humidade',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'Pequeno',
+          medium: 'Médio',
+          large: 'Grande',
+        },
+        layout: {
+          horizontal: 'Horizontal (padrão)',
+          vertical: 'Vertical',
+        },
+      },
+    },
+  },
+  da: {
+    card: {
+      msg: {
+        entityError: "entity: Parameteren 'entity' er påkrævet!",
+        entityNotFound: 'Enheden blev ikke fundet',
+        entityUnknown: 'Ukendt',
+        entityUnavailable: 'Utilgængelig',
+        attributeNotFound: 'attribute: Attribut ikke fundet i HA.',
+        minValueError: 'min_value: Tjekk din min_value.',
+        maxValueError: 'max_value: Tjekk din max_value.',
+        decimalError: 'decimal: Denne værdi kan ikke være negativ.',
+      },
+    },
+    editor: {
+      title: {
+        content: 'Indhold',
+        interaction: 'Interaktioner',
+        theme: 'Udseende og funktionalitet',
+      },
+      field: {
+        entity: 'Enhed',
+        attribute: 'Attribut',
+        name: 'Navn',
+        unit: 'Enhed',
+        decimal: 'decimal',
+        min_value: 'Minimumsværdi',
+        max_value: 'Maksimal værdi',
+        max_value_attribute: 'Attribut (max_value)',
+        tap_action: 'Handling ved kort tryk',
+        hold_action: 'Handling ved langt tryk',
+        icon_tap_action: 'Handling ved tryk på ikonet',
+        toggle_icon: 'Ikon',
+        toggle_name: 'Navn',
+        toggle_unit: 'Enhed',
+        toggle_secondary_info: 'Info',
+        toggle_progress_bar: 'Bar',
+        toggle_force_circular_background: 'Tving cirkulær baggrund',
+        theme: 'Tema',
+        bar_size: 'Bar størrelse',
+        bar_color: 'Farve til bar',
+        icon: 'Ikon',
+        color: 'Primær farve',
+        layout: 'Kort layout',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: 'Optimal når lavt (CPU, RAM,...)',
+          optimal_when_high: 'Optimal når højt (Batteri...)',
+          light: 'Lys',
+          temperature: 'Temperatur',
+          humidity: 'Fugtighed',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'Lille',
+          medium: 'Mellem',
+          large: 'Stor',
+        },
+        layout: {
+          horizontal: 'Horisontal (standard)',
+          vertical: 'Vertikal',
+        },
+      },
+    },
+  },
+  nb: {
+    card: {
+      msg: {
+        entityError: "entity: Parameteret 'entity' er påkrevd!",
+        entityNotFound: 'Enheten ble ikke funnet',
+        entityUnknown: 'Ukjent',
+        entityUnavailable: 'Utilgjengelig',
+        attributeNotFound: 'attribute: Attributt ikke funnet i HA.',
+        minValueError: 'min_value: Sjekk din min_value.',
+        maxValueError: 'max_value: Sjekk din max_value.',
+        decimalError: 'decimal: Denne verdien kan ikke være negativ.',
+      },
+    },
+    editor: {
+      title: {
+        content: 'Innhold',
+        interaction: 'Interaksjoner',
+        theme: 'Utseende og funksjonalitet',
+      },
+      field: {
+        entity: 'Enhet',
+        attribute: 'Attributt',
+        name: 'Navn',
+        unit: 'Enhet',
+        decimal: 'desimal',
+        min_value: 'Minste verdi',
+        max_value: 'Maksimal verdi',
+        max_value_attribute: 'Attributt (max_value)',
+        tap_action: 'Handling ved kort trykk',
+        hold_action: 'Handling ved langt trykk',
+        icon_tap_action: 'Handling ved trykk på ikonet',
+        toggle_icon: 'Ikon',
+        toggle_name: 'Navn',
+        toggle_unit: 'Enhet',
+        toggle_secondary_info: 'Info',
+        toggle_progress_bar: 'Bar',
+        toggle_force_circular_background: 'Tving sirkulær bakgrunn',
+        theme: 'Tema',
+        bar_size: 'Bar størrelse',
+        bar_color: 'Farge for baren',
+        icon: 'Ikon',
+        color: 'Primærfarge',
+        layout: 'Kortlayout',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: 'Optimal når lavt (CPU, RAM,...)',
+          optimal_when_high: 'Optimal når høyt (Batteri...)',
+          light: 'Lys',
+          temperature: 'Temperatur',
+          humidity: 'Fuktighet',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'Liten',
+          medium: 'Middels',
+          large: 'Stor',
+        },
+        layout: {
+          horizontal: 'Horisontal (standard)',
+          vertical: 'Vertikal',
+        },
+      },
+    },
+  },
+  sv: {
+    card: {
+      msg: {
+        entityError: "entity: Parametern 'entity' är obligatorisk!",
+        entityNotFound: 'Enhet ej funnen',
+        entityUnknown: 'Okänd',
+        entityUnavailable: 'Otillgänglig',
+        attributeNotFound: 'attribute: Attributet hittades inte i HA.',
+        minValueError: 'min_value: Kontrollera ditt min_value.',
+        maxValueError: 'max_value: Kontrollera ditt max_value.',
+        decimalError: 'decimal: Detta värde kan inte vara negativt.',
+      },
+    },
+    editor: {
+      title: {
+        content: 'Innehåll',
+        interaction: 'Interaktioner',
+        theme: 'Utseende och funktionalitet',
+      },
+      field: {
+        entity: 'Enhet',
+        attribute: 'Attribut',
+        name: 'Namn',
+        unit: 'Enhet',
+        decimal: 'decimal',
+        min_value: 'Minsta värde',
+        max_value: 'Maximalt värde',
+        max_value_attribute: 'Attribut (max_value)',
+        tap_action: 'Åtgärd vid kort tryck',
+        hold_action: 'Åtgärd vid långt tryck',
+        icon_tap_action: 'Åtgärd vid tryck på ikonen',
+        toggle_icon: 'Ikon',
+        toggle_name: 'Namn',
+        toggle_unit: 'Enhet',
+        toggle_secondary_info: 'Info',
+        toggle_progress_bar: 'Bar',
+        toggle_force_circular_background: 'Tvinga cirkulär bakgrund',
+        theme: 'Tema',
+        bar_size: 'Barstorlek',
+        bar_color: 'Färg för baren',
+        icon: 'Ikon',
+        color: 'Primärfärg',
+        layout: 'Kortlayout',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: 'Optimal när det är lågt (CPU, RAM,...)',
+          optimal_when_high: 'Optimal när det är högt (Batteri...)',
+          light: 'Ljus',
+          temperature: 'Temperatur',
+          humidity: 'Luftfuktighet',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'Liten',
+          medium: 'Medium',
+          large: 'Stor',
+        },
+        layout: {
+          horizontal: 'Horisontell (standard)',
+          vertical: 'Vertikal',
+        },
+      },
+    },
+  },
+  el: {
+    card: {
+      msg: {
+        entityError: "οντότητα: Η παράμετρος 'entity' είναι υποχρεωτική!",
+        entityNotFound: 'Η οντότητα δεν βρέθηκε',
+        entityUnknown: 'Άγνωστο',
+        entityUnavailable: 'Μη διαθέσιμο',
+        attributeNotFound: 'χαρακτηριστικό: Το χαρακτηριστικό δεν βρέθηκε στο HA.',
+        minValueError: 'min_value: Ελέγξτε την ελάχιστη τιμή.',
+        maxValueError: 'max_value: Ελέγξτε τη μέγιστη τιμή.',
+        decimalError: 'decimal: Αυτή η τιμή δεν μπορεί να είναι αρνητική.',
+      },
+    },
+    editor: {
+      title: {
+        content: 'Περιεχόμενο',
+        interaction: 'Αλληλεπιδράσεις',
+        theme: 'Εμφάνιση',
+      },
+      field: {
+        entity: 'Οντότητα',
+        attribute: 'Χαρακτηριστικό',
+        name: 'Όνομα',
+        unit: 'Μονάδα',
+        decimal: 'δεκαδικά',
+        min_value: 'Ελάχιστη τιμή',
+        max_value: 'Μέγιστη τιμή',
+        max_value_attribute: 'Χαρακτηριστικό (max_value)',
+        tap_action: 'Ενέργεια κατά το σύντομο πάτημα',
+        hold_action: 'Ενέργεια κατά το παρατεταμένο πάτημα',
+        icon_tap_action: 'Ενέργεια στο πάτημα του εικονιδίου',
+        toggle_icon: 'Εικονίδιο',
+        toggle_name: 'Όνομα',
+        toggle_unit: 'Μονάδα',
+        toggle_secondary_info: 'Πληροφορίες',
+        toggle_progress_bar: 'Γραμμή',
+        toggle_force_circular_background: 'Εξαναγκασμός κυκλικού φόντου',
+        theme: 'Θέμα',
+        bar_size: 'Μέγεθος γραμμής',
+        bar_color: 'Χρώμα γραμμής',
+        icon: 'Εικονίδιο',
+        color: 'Κύριο χρώμα',
+        layout: 'Διάταξη κάρτας',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: 'Βέλτιστο όταν είναι χαμηλό (CPU, RAM...)',
+          optimal_when_high: 'Βέλτιστο όταν είναι υψηλό (Μπαταρία...)',
+          light: 'Φωτεινότητα',
+          temperature: 'Θερμοκρασία',
+          humidity: 'Υγρασία',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'Μικρό',
+          medium: 'Μεσαίο',
+          large: 'Μεγάλο',
+        },
+        layout: {
+          horizontal: 'Οριζόντια (προεπιλογή)',
+          vertical: 'Κατακόρυφη',
+        },
+      },
+    },
+  },
+  fi: {
+    card: {
+      msg: {
+        entityError: "entiteetti: 'entity'-parametri on pakollinen!",
+        entityNotFound: 'Entiteettiä ei löydy',
+        entityUnknown: 'Tuntematon',
+        entityUnavailable: 'Ei saatavilla',
+        attributeNotFound: 'attribuutti: Attribuuttia ei löydy HA:sta.',
+        minValueError: 'min_value: Tarkista minimiarvo.',
+        maxValueError: 'max_value: Tarkista maksimiarvo.',
+        decimalError: 'decimal: Arvo ei voi olla negatiivinen.',
+      },
+    },
+    editor: {
+      title: {
+        content: 'Sisältö',
+        interaction: 'Vuorovaikutukset',
+        theme: 'Ulkoasu',
+      },
+      field: {
+        entity: 'Entiteetti',
+        attribute: 'Attribuutti',
+        name: 'Nimi',
+        unit: 'Yksikkö',
+        decimal: 'desimaali',
+        min_value: 'Minimiarvo',
+        max_value: 'Maksimiarvo',
+        max_value_attribute: 'Attribuutti (max_value)',
+        tap_action: 'Toiminto lyhyellä napautuksella',
+        hold_action: 'Toiminto pitkällä painalluksella',
+        icon_tap_action: 'Toiminto kuvaketta napautettaessa',
+        toggle_icon: 'Ikoni',
+        toggle_name: 'Nimi',
+        toggle_unit: 'Yksikkö',
+        toggle_secondary_info: 'Tiedot',
+        toggle_progress_bar: 'Palkki',
+        toggle_force_circular_background: 'Pakota pyöreä tausta',
+        theme: 'Teema',
+        bar_size: 'Palkin koko',
+        bar_color: 'Palkin väri',
+        icon: 'Ikoni',
+        color: 'Pääväri',
+        layout: 'Kortin asettelu',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: 'Optimaalinen alhaisena (CPU, RAM...)',
+          optimal_when_high: 'Optimaalinen korkeana (Akku...)',
+          light: 'Valoisuus',
+          temperature: 'Lämpötila',
+          humidity: 'Kosteus',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'Pieni',
+          medium: 'Keskikokoinen',
+          large: 'Suuri',
+        },
+        layout: {
+          horizontal: 'Vaakasuora (oletus)',
+          vertical: 'Pystysuora',
+        },
+      },
+    },
+  },
+  ro: {
+    card: {
+      msg: {
+        entityError: "entitate: Parametrul 'entity' este obligatoriu!",
+        entityNotFound: 'Entitatea nu a fost găsită',
+        entityUnknown: 'Necunoscut',
+        entityUnavailable: 'Indisponibil',
+        attributeNotFound: 'atribut: Atributul nu a fost găsit în HA.',
+        minValueError: 'min_value: Verifică valoarea minimă.',
+        maxValueError: 'max_value: Verifică valoarea maximă.',
+        decimalError: 'decimal: Această valoare nu poate fi negativă.',
+      },
+    },
+    editor: {
+      title: {
+        content: 'Conținut',
+        interaction: 'Interacțiuni',
+        theme: 'Aspect & Stil',
+      },
+      field: {
+        entity: 'Entitate',
+        attribute: 'Atribut',
+        name: 'Nume',
+        unit: 'Unitate',
+        decimal: 'zecimal',
+        min_value: 'Valoare minimă',
+        max_value: 'Valoare maximă',
+        max_value_attribute: 'Atribut (max_value)',
+        tap_action: 'Acțiune la apăsare scurtă',
+        hold_action: 'Acțiune la apăsare lungă',
+        icon_tap_action: 'Acțiune la apăsarea pictogramei',
+        toggle_icon: 'Pictogramă',
+        toggle_name: 'Nume',
+        toggle_unit: 'Unitate',
+        toggle_secondary_info: 'Info',
+        toggle_progress_bar: 'Bară',
+        toggle_force_circular_background: 'Forțează fundal circular',
+        theme: 'Temă',
+        bar_size: 'Dimensiunea barei',
+        bar_color: 'Culoare bară',
+        icon: 'Pictogramă',
+        color: 'Culoare principală',
+        layout: 'Aspectul cardului',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: 'Optim când este scăzut (CPU, RAM...)',
+          optimal_when_high: 'Optim când este ridicat (Baterie...)',
+          light: 'Luminozitate',
+          temperature: 'Temperatură',
+          humidity: 'Umiditate',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'Mic',
+          medium: 'Mediu',
+          large: 'Mare',
+        },
+        layout: {
+          horizontal: 'Orizontal (implicit)',
+          vertical: 'Vertical',
+        },
+      },
+    },
+  },
+  zh: {
+    card: {
+      msg: {
+        entityError: "entity：必须提供 'entity' 参数！",
+        entityNotFound: '未找到实体',
+        entityUnknown: '未知',
+        entityUnavailable: '不可用',
+        attributeNotFound: 'attribute：HA 中未找到该属性。',
+        minValueError: 'min_value：请检查最小值。',
+        maxValueError: 'max_value：请检查最大值。',
+        decimalError: 'decimal：该值不能为负数。',
+      },
+    },
+    editor: {
+      title: {
+        content: '内容',
+        interaction: '交互',
+        theme: '外观',
+      },
+      field: {
+        entity: '实体',
+        attribute: '属性',
+        name: '名称',
+        unit: '单位',
+        decimal: '小数',
+        min_value: '最小值',
+        max_value: '最大值',
+        max_value_attribute: '属性（最大值）',
+        tap_action: '短按时的操作',
+        hold_action: '长按时的操作',
+        icon_tap_action: '点击图标时的操作',
+        toggle_icon: '图标',
+        toggle_name: '名称',
+        toggle_unit: '单位',
+        toggle_secondary_info: '信息',
+        toggle_progress_bar: '进度条',
+        toggle_force_circular_background: '强制圆形背景',
+        theme: '主题',
+        bar_size: '条形大小',
+        bar_color: '条形颜色',
+        icon: '图标',
+        color: '主色',
+        layout: '卡片布局',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: '低值最佳（CPU、内存等）',
+          optimal_when_high: '高值最佳（电池等）',
+          light: '亮度',
+          temperature: '温度',
+          humidity: '湿度',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: '小',
+          medium: '中',
+          large: '大',
+        },
+        layout: {
+          horizontal: '水平（默认）',
+          vertical: '垂直',
+        },
+      },
+    },
+  },
+  ja: {
+    card: {
+      msg: {
+        entityError: 'entity：「entity」パラメータは必須です！',
+        entityNotFound: 'エンティティが見つかりません',
+        entityUnknown: '不明',
+        entityUnavailable: '利用不可',
+        attributeNotFound: 'attribute：HA に属性が見つかりませんでした。',
+        minValueError: 'min_value：最小値を確認してください。',
+        maxValueError: 'max_value：最大値を確認してください。',
+        decimalError: 'decimal：負の値は使用できません。',
+      },
+    },
+    editor: {
+      title: {
+        content: 'コンテンツ',
+        interaction: 'インタラクション',
+        theme: '外観',
+      },
+      field: {
+        entity: 'エンティティ',
+        attribute: '属性',
+        name: '名前',
+        unit: '単位',
+        decimal: '小数点',
+        min_value: '最小値',
+        max_value: '最大値',
+        max_value_attribute: '属性（最大値）',
+        tap_action: '短くタップしたときの動作',
+        hold_action: '長押ししたときの動作',
+        icon_tap_action: 'アイコンをタップしたときの動作',
+        toggle_icon: 'アイコン',
+        toggle_name: '名前',
+        toggle_unit: '単位',
+        toggle_secondary_info: '情報',
+        toggle_progress_bar: 'バー',
+        toggle_force_circular_background: '円形の背景を強制する',
+        theme: 'テーマ',
+        bar_size: 'バーサイズ',
+        bar_color: 'バーの色',
+        icon: 'アイコン',
+        color: 'メインカラー',
+        layout: 'カードレイアウト',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: '低い時が最適（CPU、RAMなど）',
+          optimal_when_high: '高い時が最適（バッテリーなど）',
+          light: '明るさ',
+          temperature: '温度',
+          humidity: '湿度',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: '小',
+          medium: '中',
+          large: '大',
+        },
+        layout: {
+          horizontal: '水平（デフォルト）',
+          vertical: '垂直',
+        },
+      },
+    },
+  },
+  ko: {
+    card: {
+      msg: {
+        entityError: "entity: 'entity' 매개변수는 필수입니다!",
+        entityNotFound: '엔티티를 찾을 수 없습니다',
+        entityUnknown: '알 수 없음',
+        entityUnavailable: '사용 불가',
+        attributeNotFound: 'attribute: HA에서 속성을 찾을 수 없습니다.',
+        minValueError: 'min_value: 최소값을 확인하세요.',
+        maxValueError: 'max_value: 최대값을 확인하세요.',
+        decimalError: 'decimal: 음수는 허용되지 않습니다.',
+      },
+    },
+    editor: {
+      title: {
+        content: '콘텐츠',
+        interaction: '상호작용',
+        theme: '테마 및 스타일',
+      },
+      field: {
+        entity: '엔티티',
+        attribute: '속성',
+        name: '이름',
+        unit: '단위',
+        decimal: '소수점',
+        min_value: '최소값',
+        max_value: '최대값',
+        max_value_attribute: '속성 (최대값)',
+        tap_action: '짧게 탭 시 동작',
+        hold_action: '길게 누를 시 동작',
+        icon_tap_action: '아이콘 탭 시 동작',
+        toggle_icon: '아이콘',
+        toggle_name: '이름',
+        toggle_unit: '단위',
+        toggle_secondary_info: '정보',
+        toggle_progress_bar: '진행 바',
+        toggle_force_circular_background: '원형 배경 강제 적용',
+        theme: '테마',
+        bar_size: '바 크기',
+        bar_color: '바 색상',
+        icon: '아이콘',
+        color: '기본 색상',
+        layout: '카드 레이아웃',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: '낮을 때 최적 (CPU, RAM 등)',
+          optimal_when_high: '높을 때 최적 (배터리 등)',
+          light: '조도',
+          temperature: '온도',
+          humidity: '습도',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: '작음',
+          medium: '보통',
+          large: '큼',
+        },
+        layout: {
+          horizontal: '수평 (기본)',
+          vertical: '수직',
+        },
+      },
+    },
+  },
+  tr: {
+    card: {
+      msg: {
+        entityError: "entity: 'entity' parametresi gereklidir!",
+        entityNotFound: 'Varlık bulunamadı',
+        entityUnknown: 'Bilinmeyen',
+        entityUnavailable: 'Kullanılamıyor',
+        attributeNotFound: 'attribute: HA içinde öznitelik bulunamadı.',
+        minValueError: 'min_value: Minimum değeri kontrol edin.',
+        maxValueError: 'max_value: Maksimum değeri kontrol edin.',
+        decimalError: 'decimal: Bu değer negatif olamaz.',
+      },
+    },
+    editor: {
+      title: {
+        content: 'İçerik',
+        interaction: 'Etkileşimler',
+        theme: 'Görünüm',
+      },
+      field: {
+        entity: 'Varlık',
+        attribute: 'Öznitelik',
+        name: 'Ad',
+        unit: 'Birim',
+        decimal: 'ondalık',
+        min_value: 'Minimum değer',
+        max_value: 'Maksimum değer',
+        max_value_attribute: 'Öznitelik (max_value)',
+        tap_action: 'Kısa dokunma davranışı',
+        hold_action: 'Uzun basma davranışı',
+        icon_tap_action: 'Simgeye dokunma davranışı',
+        toggle_icon: 'Simge',
+        toggle_name: 'Ad',
+        toggle_unit: 'Birim',
+        toggle_secondary_info: 'Bilgi',
+        toggle_progress_bar: 'Çubuk',
+        toggle_force_circular_background: 'Dairesel arka planı zorla',
+        theme: 'Tema',
+        bar_size: 'Çubuk boyutu',
+        bar_color: 'Çubuk rengi',
+        icon: 'Simge',
+        color: 'Birincil renk',
+        layout: 'Kart düzeni',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: 'Düşükken en iyi (CPU, RAM...)',
+          optimal_when_high: 'Yüksekken en iyi (Pil...)',
+          light: 'Işık',
+          temperature: 'Sıcaklık',
+          humidity: 'Nem',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'Küçük',
+          medium: 'Orta',
+          large: 'Büyük',
+        },
+        layout: {
+          horizontal: 'Yatay (varsayılan)',
+          vertical: 'Dikey',
+        },
+      },
+    },
+  },
+  ar: {
+    card: {
+      msg: {
+        entityError: "الكيان: المعامل 'entity' مطلوب!",
+        entityNotFound: 'لم يتم العثور على الكيان',
+        entityUnknown: 'غير معروف',
+        entityUnavailable: 'غير متاح',
+        attributeNotFound: 'السمة: السمة غير موجودة في HA.',
+        minValueError: 'min_value: تحقق من القيمة الدنيا.',
+        maxValueError: 'max_value: تحقق من القيمة القصوى.',
+        decimalError: 'decimal: لا يمكن أن تكون هذه القيمة سالبة.',
+      },
+    },
+    editor: {
+      title: {
+        content: 'المحتوى',
+        interaction: 'التفاعلات',
+        theme: 'المظهر',
+      },
+      field: {
+        entity: 'الكيان',
+        attribute: 'السمة',
+        name: 'الاسم',
+        unit: 'الوحدة',
+        decimal: 'عشري',
+        min_value: 'القيمة الدنيا',
+        max_value: 'القيمة القصوى',
+        max_value_attribute: 'السمة (max_value)',
+        tap_action: 'الإجراء عند النقر القصير',
+        hold_action: 'الإجراء عند الضغط المطول',
+        icon_tap_action: 'الإجراء عند النقر على الأيقونة',
+        toggle_icon: 'أيقونة',
+        toggle_name: 'الاسم',
+        toggle_unit: 'الوحدة',
+        toggle_secondary_info: 'معلومات',
+        toggle_progress_bar: 'شريط',
+        toggle_force_circular_background: 'فرض خلفية دائرية',
+        theme: 'السمة',
+        bar_size: 'حجم الشريط',
+        bar_color: 'لون الشريط',
+        icon: 'أيقونة',
+        color: 'اللون الأساسي',
+        layout: 'تخطيط البطاقة',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: 'مثالي عند الانخفاض (CPU، RAM...)',
+          optimal_when_high: 'مثالي عند الارتفاع (البطارية...)',
+          light: 'الضوء',
+          temperature: 'درجة الحرارة',
+          humidity: 'الرطوبة',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'صغير',
+          medium: 'متوسط',
+          large: 'كبير',
+        },
+        layout: {
+          horizontal: 'أفقي (افتراضي)',
+          vertical: 'رأسي',
+        },
+      },
+    },
   },
 };
 
@@ -612,512 +1907,171 @@ const EDITOR_INPUT_FIELDS = {
   basicConfiguration: {
     entity: {
       name: 'entity',
-      label: {
-        en: 'Entity',
-        fr: 'Entité',
-        es: 'Entidad',
-        it: 'Entità',
-        de: 'Entität',
-        nl: 'Entiteit',
-        hr: 'Entitet',
-        pl: 'Encja',
-        mk: 'Ентитет',
-        pt: 'Entidade',
-        da: 'Enhed',
-        nb: 'Enhet',
-        sv: 'Enhet',
-      },
       type: CARD.editor.fields.entity.type,
       width: '100%',
-      required: true,
       isInGroup: null,
+      schema: [{ name: 'entity', required: true, selector: { entity: {} } }],
     },
     attribute: {
       name: 'attribute',
-      label: {
-        en: 'Attribute',
-        fr: 'Attribut',
-        es: 'Atributo',
-        it: 'Attributo',
-        de: 'Attribut',
-        nl: 'Attribuut',
-        hr: 'Atribut',
-        pl: 'Atrybut',
-        mk: 'Атрибут',
-        pt: 'Atributo',
-        da: 'Attribut',
-        nb: 'Attribut',
-        sv: 'Attribut',
-      },
       type: CARD.editor.fields.attribute.type,
       width: '100%',
-      required: false,
       isInGroup: CARD.editor.keyMappings.attribute,
     },
   },
-
   content: {
     title: {
-      label: {
-        en: 'Content',
-        fr: 'Contenu',
-        es: 'Contenido',
-        it: 'Contenuto',
-        de: 'Inhalt',
-        nl: 'Inhoud',
-        hr: 'Sadržaj',
-        pl: 'Zawartość',
-        mk: 'Cодржина',
-        pt: 'Conteúdo',
-        da: 'Indhold',
-        nb: 'Innhold',
-        sv: 'Innehåll',
-      },
+      name: 'content',
       icon: 'mdi:text-short',
     },
     field: {
       name: {
         name: 'name',
-        label: {
-          en: 'Name',
-          fr: 'Nom',
-          es: 'Nombre',
-          it: 'Nome',
-          de: 'Name',
-          nl: 'Naam',
-          hr: 'Ime',
-          pl: 'Nazwa',
-          mk: 'Име',
-          pt: 'Nome',
-          da: 'Navn',
-          nb: 'Navn',
-          sv: 'Namn',
-        },
         type: CARD.editor.fields.default.type,
         width: '100%',
-        required: false,
         isInGroup: null,
       },
       unit: {
         name: 'unit',
-        label: {
-          en: 'Unit',
-          fr: 'Unité',
-          es: 'Unidad',
-          it: 'Unità',
-          de: 'Einheit',
-          nl: 'Eenheid',
-          hr: 'Jedinica',
-          pl: 'Jednostka',
-          mk: 'Јединство',
-          pt: 'Unidade',
-          da: 'Enhed',
-          nb: 'Enhet',
-          sv: 'Enhet',
-        },
         type: CARD.editor.fields.default.type,
         width: 'calc((100% - 20px) * 0.2)',
-        required: false,
         isInGroup: null,
       },
 
       decimal: {
         name: 'decimal',
-        label: {
-          en: 'decimal',
-          fr: 'décimal',
-          es: 'decimal',
-          it: 'Decimale',
-          de: 'dezimal',
-          nl: 'decimaal',
-          hr: 'decimalni',
-          pl: 'dziesiętny',
-          mk: 'децемален',
-          pt: 'decimal',
-          da: 'decimal',
-          nb: 'desimal',
-          sv: 'decimal',
-        },
         type: CARD.editor.fields.number.type,
         width: 'calc((100% - 20px) * 0.2)',
-        required: false,
         isInGroup: null,
       },
       min_value: {
         name: 'min_value',
-        label: {
-          en: 'Minimum value',
-          fr: 'Valeur minimum',
-          es: 'Valor mínimo',
-          it: 'Valore minimo',
-          de: 'Mindestwert',
-          nl: 'Minimale waarde',
-          hr: 'Minimalna vrijednost',
-          pl: 'Wartość minimalna',
-          mk: 'Минимална вредност',
-          pt: 'Valor mínimo',
-          da: 'Minimum værdi',
-          nb: 'Minimum verdi',
-          sv: 'Minsta värde',
-        },
         type: CARD.editor.fields.number.type,
         width: 'calc((100% - 20px) * 0.6)',
-        required: false,
         isInGroup: null,
       },
       max_value: {
         name: 'max_value',
-        label: {
-          en: 'Maximum value',
-          fr: 'Valeur maximum',
-          es: 'Valor máximo',
-          it: 'Valore massimo',
-          de: 'Höchstwert',
-          nl: 'Maximale waarde',
-          hr: 'Maksimalna vrijednost',
-          pl: 'Wartość maksymalna',
-          mk: 'Максимална вредност',
-          pt: 'Valor máximo',
-          da: 'Maksimal værdi',
-          nb: 'Maksimal verdi',
-          sv: 'Högsta värde',
-        },
         type: CARD.editor.fields.default.type,
         width: '100%',
-        required: false,
         isInGroup: null,
       },
       max_value_attribute: {
         name: 'max_value_attribute',
-        label: {
-          en: 'Attribute (max_value)',
-          fr: 'Attribut (max_value)',
-          es: 'Atributo (max_value)',
-          it: 'Attributo (max_value)',
-          de: 'Attribut (max_value)',
-          nl: 'Attribuut (max_value)',
-          hr: 'Atribut (max_value)',
-          pl: 'Atrybut (max_value)',
-          mk: 'Атрибут (max_value)',
-          pt: 'Atributo (max_value)',
-          da: 'Attribut (max_value)',
-          nb: 'Attribut (max_value)',
-          sv: 'Attribut (max_value)',
-        },
         type: CARD.editor.fields.max_value_attribute.type,
         width: '100%',
-        required: false,
         isInGroup: CARD.editor.keyMappings.max_value_attribute,
       },
     },
   },
   interaction: {
     title: {
-      label: {
-        en: 'Interactions',
-        fr: 'Interactions',
-        es: 'Interacciones',
-        it: 'Interazioni',
-        de: 'Interaktionen',
-        nl: 'Interactie',
-        hr: 'Interakcije',
-        pl: 'Interakcje',
-        mk: 'Интеракции',
-        pt: 'Interações',
-        da: 'Interaktioner',
-        nb: 'Interaksjoner',
-        sv: 'Interaktioner',
-      },
+      name: 'interaction',
       icon: 'mdi:gesture-tap-hold',
     },
     field: {
       tap_action: {
         name: 'tap_action',
-        label: {
-          en: 'Tap behavior',
-          fr: "Comportement lors d'un appui court",
-          es: 'Comportamiento al tocar',
-          it: 'Comportamento al tocco',
-          de: 'Tippen-Verhalten',
-          nl: 'Tikgedrag',
-          hr: 'Ponašanje pri dodiru',
-          pl: 'Zachowanie przy dotknięciu',
-          mk: 'Однесување при допир',
-          pt: 'Comportamento ao toque',
-          da: 'Tryk-adfærd',
-          nb: 'Trykkoppførsel',
-          sv: 'Tryckbeteende',
-        },
         type: CARD.editor.fields.tap_action.type,
-        required: false,
         isInGroup: null,
         width: '100%',
-        schema: { name: 'new_tap_action', selector: { 'ui-action': {} } },
+        schema: [{ name: 'tap_action', selector: { 'ui-action': {} } }],
+      },
+      hold_action: {
+        name: 'hold_action',
+        type: CARD.editor.fields.tap_action.type,
+        isInGroup: null,
+        width: '100%',
+        schema: [{ name: 'hold_action', selector: { 'ui-action': {} } }],
+      },
+      icon_tap_action: {
+        name: 'icon_tap_action',
+        type: CARD.editor.fields.icon_tap_action.type,
+        isInGroup: null,
+        width: '100%',
+        schema: [{ name: 'icon_tap_action', selector: { 'ui-action': {} }}],
       },
     },
   },
   theme: {
     title: {
-      label: {
-        en: 'Look & Feel',
-        fr: 'Aspect visuel et convivialité',
-        es: 'Apariencia y funcionamiento',
-        it: 'Aspetto e funzionalità',
-        de: 'Aussehen und Bedienung',
-        nl: 'Uiterlijk en gebruiksgemak',
-        hr: 'Izgled i funkcionalnost',
-        pl: 'Wygląd i funkcjonalność',
-        mk: 'Изглед и функционалност',
-        pt: 'Aparência e usabilidade',
-        da: 'Udseende og funktionalitet',
-        nb: 'Utseende og funksjonalitet',
-        sv: 'Utseende och funktion',
-      },
+      name: 'theme',
       icon: 'mdi:list-box',
     },
     field: {
       toggleIcon: {
         name: 'toggle_icon',
-        label: {
-          en: 'Icon',
-          fr: 'Icône',
-          es: 'Icono',
-          it: 'Icona',
-          de: 'Icon',
-          nl: 'Icoon',
-          hr: 'Ikona',
-          pl: 'Ikona',
-          mk: 'Икона',
-          pt: 'Ícone',
-          da: 'Ikon',
-          nb: 'Ikon',
-          sv: 'Ikon',
-        },
         type: CARD.editor.fields.toggle.type,
         width: '100%',
-        required: false,
         isInGroup: null,
       },
       toggleName: {
         name: 'toggle_name',
-        label: {
-          en: 'Name',
-          fr: 'Nom',
-          es: 'Nombre',
-          it: 'Nome',
-          de: 'Name',
-          nl: 'Naam',
-          hr: 'Ime',
-          pl: 'Nazwa',
-          mk: 'Име',
-          pt: 'Nome',
-          da: 'Navn',
-          nb: 'Navn',
-          sv: 'Namn',
-        },
         type: CARD.editor.fields.toggle.type,
         width: '100%',
-        required: false,
         isInGroup: null,
       },
       toggleUnit: {
         name: 'toggle_unit',
-        label: {
-          en: 'Unit',
-          fr: 'Unité',
-          es: 'Unidad',
-          it: 'Unità',
-          de: 'Einheit',
-          nl: 'Eenheid',
-          hr: 'Jedinica',
-          pl: 'Jednostka',
-          mk: 'Единица',
-          pt: 'Unidade',
-          da: 'Enhed',
-          nb: 'Enhet',
-          sv: 'Enhet',
-        },
         type: CARD.editor.fields.toggle.type,
         width: '100%',
-        required: false,
         isInGroup: null,
       },
       toggleSecondaryInfo: {
         name: 'toggle_secondary_info',
-        label: {
-          en: 'Info',
-          fr: 'Info',
-          es: 'Info',
-          it: 'Info',
-          de: 'Info',
-          nl: 'Info',
-          hr: 'Info',
-          pl: 'Info',
-          mk: 'Инфо',
-          pt: 'Info',
-          da: 'Info',
-          nb: 'Info',
-          sv: 'Info',
-        },
         type: CARD.editor.fields.toggle.type,
         width: '100%',
-        required: false,
         isInGroup: null,
       },
       toggleBar: {
         name: 'toggle_progress_bar',
-        label: {
-          en: 'Bar',
-          fr: 'Barre',
-          es: 'Barra',
-          it: 'Barra',
-          de: 'Balken',
-          nl: 'Balk',
-          hr: 'Traka',
-          pl: 'Pasek',
-          mk: 'Лента',
-          pt: 'Barra',
-          da: 'Linje',
-          nb: 'Linje',
-          sv: 'Fält',
-        },
         type: CARD.editor.fields.toggle.type,
         width: '100%',
-        required: false,
+        isInGroup: null,
+      },
+      toggleCircular: {
+        name: 'toggle_force_circular_background',
+        type: CARD.editor.fields.toggle.type,
+        width: '100%',
         isInGroup: null,
       },
       theme: {
         name: 'theme',
-        label: {
-          en: 'Theme',
-          fr: 'Thème',
-          es: 'Tema',
-          it: 'Tema',
-          de: 'Thema',
-          nl: 'Thema',
-          hr: 'Tema',
-          pl: 'Motyw',
-          mk: 'Тема',
-          pt: 'Tema',
-          da: 'Tema',
-          nb: 'Tema',
-          sv: 'Tema',
-        },
         type: CARD.editor.fields.theme.type,
         width: '100%',
-        required: false,
         isInGroup: null,
       },
       bar_size: {
         name: 'bar_size',
-        label: {
-          en: 'Bar size',
-          fr: 'Taille de la barre',
-          es: 'Tamaño de la barra',
-          it: 'Dimensione della barra',
-          de: 'Größe der Bar',
-          nl: 'Balkgrootte',
-          hr: 'Veličina trake',
-          pl: 'Rozmiar paska',
-          mk: 'Големина на лента',
-          pt: 'Tamanho da barra',
-          da: 'Bark størrelse',
-          nb: 'Barstørrelse',
-          sv: 'Barstorlek',
-        },
         type: CARD.editor.fields.bar_size.type,
         width: 'calc((100% - 10px) * 0.5)',
-        required: false,
         isInGroup: null,
       },
       bar_color: {
         name: 'bar_color',
-        label: {
-          en: 'Color for the bar',
-          fr: 'Couleur de la barre',
-          es: 'Color de la barra',
-          it: 'Colore per la barra',
-          de: 'Farbe für die Leiste',
-          nl: 'Kleur voor de balk',
-          hr: 'Boja za traku',
-          pl: 'Kolor paska',
-          mk: 'Боја за лентата',
-          pt: 'Cor para a barra',
-          da: 'Farve til baren',
-          nb: 'Farge for baren',
-          sv: 'Färg för baren',
-        },
         type: CARD.editor.fields.color.type,
         width: 'calc((100% - 10px) * 0.5)',
-        required: false,
         isInGroup: CARD.editor.keyMappings.theme,
-        schema: { name: 'bar_color', selector: { 'ui-color': {} } },
+        schema: [{ name: 'bar_color', selector: { 'ui-color': {} } }],
       },
       icon: {
         name: 'icon',
-        label: {
-          en: 'Icon',
-          fr: 'Icône',
-          es: 'Icono',
-          it: 'Icona',
-          de: 'Symbol',
-          nl: 'Pictogram',
-          hr: 'Ikona',
-          pl: 'Ikona',
-          mk: 'Икона',
-          pt: 'Ícone',
-          da: 'Ikon',
-          nb: 'Ikon',
-          sv: 'Ikon',
-        },
         type: CARD.editor.fields.icon.type,
         width: 'calc((100% - 10px) * 0.5)',
-        required: false,
         isInGroup: null,
+        schema: [{ name: 'icon', selector: { icon: { icon_set: ['mdi'] } } }],
       },
       color: {
         name: 'color',
-        label: {
-          en: 'Primary color',
-          fr: "Couleur de l'icône",
-          es: 'Color del icono',
-          it: "Colore dell'icona",
-          de: 'Primärfarbe',
-          nl: 'Primaire kleur',
-          hr: 'Primarna boja',
-          pl: 'Kolor podstawowy',
-          mk: 'Примарна боја',
-          pt: 'Cor primária',
-          da: 'Primærfarve',
-          nb: 'Primærfarge',
-          sv: 'Primärfärg',
-        },
         type: CARD.editor.fields.color.type,
         width: 'calc((100% - 10px) * 0.5)',
-        required: false,
         isInGroup: CARD.editor.keyMappings.theme,
-        schema: { name: 'bar_color', selector: { 'ui-color': {} } },
+        schema: [{ name: 'color', selector: { 'ui-color': {} } }],
       },
       layout: {
         name: 'layout',
-        label: {
-          en: 'Card layout',
-          fr: 'Disposition de la carte',
-          es: 'Disposición de la tarjeta',
-          it: 'Layout della carta',
-          de: 'Kartenlayout',
-          nl: 'Kaartindeling',
-          hr: 'Izgled kartice',
-          pl: 'Układ karty',
-          mk: 'Распоред на карта',
-          pt: 'Layout do cartão',
-          da: 'Kortlayout',
-          nb: 'Kortoppsett',
-          sv: 'Kortlayout',
-        },
         type: CARD.editor.fields.layout.type,
         width: '100%',
-        required: false,
         isInGroup: null,
       },
     },
@@ -1128,239 +2082,58 @@ const FIELD_OPTIONS = {
   theme: [
     {
       value: '',
-      label: { en: '', fr: '', es: '', it: '', de: '', nl: '', hr: '', pl: '', mk: '', pt: '', da: '', nb: '', sv: '' },
       icon: 'mdi:cancel',
     },
     {
       value: 'optimal_when_low',
-      label: {
-        en: 'Optimal when Low (CPU, RAM,...)',
-        fr: "Optimal quand c'est bas (CPU, RAM,...)",
-        es: 'Óptimo cuando es bajo (CPU, RAM,...)',
-        it: 'Ottimale quando è basso (CPU, RAM,...)',
-        de: 'Optimal bei niedrig (CPU, RAM,...)',
-        nl: 'Optimaal wanneer laag (CPU, RAM,...)',
-        hr: 'Optimalno kada je nisko (CPU, RAM,...)',
-        pl: 'Optymalny, gdy niskie (CPU, RAM,...)',
-        mk: 'Оптимално кога е ниско(CPU, RAM,...)',
-        pt: 'Ótimo quando é baixo (CPU, RAM,...)',
-        da: 'Optimal når lavt (CPU, RAM,...)',
-        nb: 'Optimal når lavt (CPU, RAM,...)',
-        sv: 'Optimal när det är lågt (CPU, RAM,...)',
-      },
       icon: 'mdi:arrow-collapse-down',
     },
     {
       value: 'optimal_when_high',
-      label: {
-        en: 'Optimal when High (Battery...)',
-        fr: "Optimal quand c'est élevé (Batterie...)",
-        es: 'Óptimo cuando es alto (Batería...)',
-        it: 'Ottimale quando è alto (Batteria...)',
-        de: 'Optimal bei hoch (Batterie...)',
-        nl: 'Optimaal wanneer hoog (Batterij...)',
-        hr: 'Optimalno kada je visoko (Baterija...)',
-        pl: 'Optymalny, gdy wysokie (Bateria...)',
-        mk: 'Оптимално кога е високо (Батерија...)',
-        pt: 'Ótimo quando é alto (Bateria...)',
-        da: 'Optimal når højt (Batteri...)',
-        nb: 'Optimal når høyt (Batteri...)',
-        sv: 'Optimal när det är högt (Batteri...)',
-      },
       icon: 'mdi:arrow-collapse-up',
     },
     {
       value: 'light',
-      label: {
-        en: 'Light',
-        fr: 'Lumière',
-        es: 'Luz',
-        it: 'Luce',
-        de: 'Licht',
-        nl: 'Licht',
-        hr: 'Svjetlo',
-        pl: 'Światło',
-        mk: 'Светлина',
-        pt: 'Luz',
-        da: 'Lys',
-        nb: 'Lys',
-        sv: 'Ljus',
-      },
       icon: 'mdi:lightbulb',
     },
     {
       value: 'temperature',
-      label: {
-        en: 'Temperature',
-        fr: 'Température',
-        es: 'Temperatura',
-        it: 'Temperatura',
-        de: 'Temperatur',
-        nl: 'Temperatuur',
-        hr: 'Temperatura',
-        pl: 'Temperatura',
-        mk: 'Температура',
-        pt: 'Temperatura',
-        da: 'Temperatur',
-        nb: 'Temperatur',
-        sv: 'Temperatur',
-      },
       icon: 'mdi:thermometer',
     },
     {
       value: 'humidity',
-      label: {
-        en: 'Humidity',
-        fr: 'Humidité',
-        es: 'Humedad',
-        it: 'Umidità',
-        de: 'Feuchtigkeit',
-        nl: 'Vochtigheid',
-        hr: 'Vlažnost',
-        pl: 'Wilgotność',
-        mk: 'Влажност',
-        pt: 'Humidade',
-        da: 'Fugtighed',
-        nb: 'Fuktighet',
-        sv: 'Luftfuktighet',
-      },
       icon: 'mdi:water-percent',
     },
     {
       value: 'pm25',
-      label: {
-        en: 'PM2.5',
-        fr: 'PM2.5',
-        es: 'PM2.5',
-        it: 'PM2.5',
-        de: 'PM2.5',
-        nl: 'PM2.5',
-        hr: 'PM2.5',
-        pl: 'PM2.5',
-        mk: 'PM2.5',
-        pt: 'PM2.5',
-        da: 'PM2.5',
-        nb: 'PM2.5',
-        sv: 'PM2.5',
-      },
       icon: 'mdi:air-filter',
     },
     {
       value: 'voc',
-      label: {
-        en: 'VOC',
-        fr: 'VOC',
-        es: 'VOC',
-        it: 'VOC',
-        de: 'VOC',
-        nl: 'VOC',
-        hr: 'VOC',
-        pl: 'VOC',
-        mk: 'VOC',
-        pt: 'VOC',
-        da: 'VOC',
-        nb: 'VOC',
-        sv: 'VOC',
-      },
       icon: 'mdi:air-filter',
     },
   ],
   bar_size: [
     {
       value: CARD.style.bar.sizeOptions.small.label,
-      label: {
-        en: 'Small',
-        fr: 'Petite',
-        es: 'Pequeña',
-        it: 'Piccola',
-        de: 'Klein',
-        nl: 'Klein',
-        hr: 'Mali',
-        pl: 'Mały',
-        mk: 'Мало',
-        pt: 'Pequeno',
-        da: 'Lille',
-        nb: 'Liten',
-        sv: 'Liten',
-      },
       icon: CARD.style.bar.sizeOptions.small.mdi,
     },
     {
       value: CARD.style.bar.sizeOptions.medium.label,
-      label: {
-        en: 'Medium',
-        fr: 'Moyenne',
-        es: 'Media',
-        it: 'Media',
-        de: 'Mittel',
-        nl: 'Middel',
-        hr: 'Srednje',
-        pl: 'Średni',
-        mk: 'Средно',
-        pt: 'Médio',
-        da: 'Mellem',
-        nb: 'Middels',
-        sv: 'Medium',
-      },
       icon: CARD.style.bar.sizeOptions.medium.mdi,
     },
     {
       value: CARD.style.bar.sizeOptions.large.label,
-      label: {
-        en: 'Large',
-        fr: 'Grande',
-        es: 'Grande',
-        it: 'Grande',
-        de: 'Groß',
-        nl: 'Groot',
-        hr: 'Veliko',
-        pl: 'Duży',
-        mk: 'Големо',
-        pt: 'Grande',
-        da: 'Stor',
-        nb: 'Stor',
-        sv: 'Stor',
-      },
       icon: CARD.style.bar.sizeOptions.large.mdi,
     },
   ],
   layout: [
     {
       value: CARD.layout.orientations.horizontal.label,
-      label: {
-        en: 'Horizontal (default)',
-        fr: 'Horizontal (par défaut)',
-        es: 'Horizontal (predeterminado)',
-        it: 'Orizzontale (predefinito)',
-        de: 'Horizontal (Standard)',
-        nl: 'Horizontaal (standaard)',
-        hr: 'Horizontalno (zadano)',
-        pl: 'Poziomo (domyślnie)',
-        mk: 'Хоризонтално (стандардно)',
-        pt: 'Horizontal (padrão)',
-        da: 'Horisontal (standard)',
-        nb: 'Horisontal (standard)',
-        sv: 'Horisontell (standard)',
-      },
       icon: CARD.layout.orientations.horizontal.mdi,
     },
     {
       value: CARD.layout.orientations.vertical.label,
-      label: {
-        en: 'Vertical',
-        fr: 'Vertical',
-        es: 'Vertical',
-        it: 'Verticale',
-        de: 'Vertikal',
-        nl: 'Verticaal',
-        hr: 'Vertikalno',
-        pl: 'Pionowy',
-        mk: 'Вертикално',
-        pt: 'Vertical',
-        da: 'Vertikal',
-        nb: 'Vertikal',
-        sv: 'Vertikal',
-      },
       icon: CARD.layout.orientations.vertical.mdi,
     },
   ],
@@ -1423,15 +2196,15 @@ const CARD_CSS = `
         overflow: hidden;
     }
 
-    .${CARD.style.dynamic.clickable} {
+    .${CARD.style.dynamic.clickable.card} {
         cursor: pointer;
     }
 
-    .${CARD.style.dynamic.clickable}:hover {
+    .${CARD.style.dynamic.clickable.card}:hover {
         background-color: color-mix(in srgb, var(--card-background-color) 96%, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) 4%);
     }
 
-    .${CARD.style.dynamic.clickable}:active {
+    .${CARD.style.dynamic.clickable.card}:active {
         background-color: color-mix(in srgb, var(--card-background-color) 85%, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) 15%);
         transition: background-color 0.5s ease;
     }
@@ -1493,13 +2266,20 @@ const CARD_CSS = `
         background-color: var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default});
         opacity: 0.2;
     }
-
+    
     .${CARD.htmlStructure.elements.icon.class} {
         position: relative;
         z-index: 1;
         width: 24px;
         height: 24px;
         color: var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default});
+    }
+    .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.left.class}:hover {
+        cursor: pointer;
+    }   
+        
+    .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.left.class}:hover .${CARD.htmlStructure.elements.shape.class} {
+        opacity: 0.4;
     }
 
     /* .right: name & percentage */
@@ -1841,13 +2621,6 @@ const CARD_CSS = `
     }
     .${CARD.editor.fields.accordion.content.class} > * {
         opacity: 1;
-    }
-    .${CARD.editor.fields.colorDot.class} {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        margin-right: 8px;
     }
     ha-select {
       --mdc-menu-max-height: 250px; /* Définit la hauteur maximale */
@@ -2352,10 +3125,10 @@ class HassProvider {
     return this.#hass;
   }
   get systemLanguage() {
-    return this.#isValid && MSG.decimalError[this.#hass.config.language] ? this.#hass.config.language : CARD.config.language;
+    return this.#isValid && LANGUAGES[this.#hass.config.language] ? this.#hass.config.language : CARD.config.language;
   }
   get language() {
-    return this.#isValid && MSG.decimalError[this.#hass.language] ? this.#hass.language : CARD.config.language;
+    return this.#isValid && LANGUAGES[this.#hass.language] ? this.#hass.language : CARD.config.language;
   }
   get numberFormat() {
     if (!this.#isValid || !this.#hass?.locale?.number_format) {
@@ -2571,7 +3344,7 @@ class EntityHelper {
     return this.#domain === CARD.config.entity.type.timer;
   }
   get hasShapeByDefault() {
-    return this.#domain === CARD.config.entity.type.light || this.#domain === CARD.config.entity.type.fan;
+    return [CARD.config.entity.type.light, CARD.config.entity.type.fan].includes(this.#domain);
   }
 
   #getClimateColor() {
@@ -2792,6 +3565,9 @@ class ConfigHelper {
   get name() {
     return this.#config.name;
   }
+  get force_circular_background() {
+    return this.#config.force_circular_background === undefined || this.#config.force_circular_background === false ? false : true;
+  }
   get min_value() {
     return this.#config.min_value ? this.#config.min_value : CARD.config.value.min;
   }
@@ -2819,12 +3595,12 @@ class ConfigHelper {
     return this.#config.disable_unit;
   }
   get urlPath() {
-    return this.cardTapAction === CARD.interactions.tap_action.url.action && this.#config.tap_action.url_path !== undefined
+    return this.cardTapAction === CARD.interactions.action.url.action && this.#config.tap_action.url_path !== undefined
       ? this.#config.tap_action.url_path
       : null;
   }
   get navigationPath() {
-    return this.cardTapAction === CARD.interactions.tap_action.navigate.action && this.#config.tap_action.navigation_path !== undefined
+    return this.cardTapAction === CARD.interactions.action.navigate.action && this.#config.tap_action.navigation_path !== undefined
       ? this.#config.tap_action.navigation_path
       : null;
   }
@@ -2832,7 +3608,15 @@ class ConfigHelper {
     return this.urlPath || this.navigationPath;
   }
   get cardTapAction() {
-    const result = (this.#config.tap_action?.action ?? null) === null ? CARD.interactions.tap_action.default : this.#config.tap_action?.action;
+    const result = (this.#config.tap_action?.action ?? null) === null ? CARD.interactions.action.default : this.#config.tap_action?.action;
+    return result;
+  }
+  get cardHoldAction() {
+    const result = (this.#config.hold_action?.action ?? null) === null ? CARD.interactions.action.default : this.#config.tap_action?.action;
+    return result;
+  }
+  get iconTapAction() {
+    const result = (this.#config.icon_tap_action?.action ?? null) === null ? CARD.interactions.action.default : this.#config.icon_tap_action?.action;
     return result;
   }
   get theme() {
@@ -2860,25 +3644,25 @@ class ConfigHelper {
     const validationRules = [
       {
         valid: !!this.#config.entity,
-        msg: MSG.entityError,
+        msg: LANGUAGES[this.#hassProvider.language].card.msg.entityError,
       },
       {
         valid: !this.#config.attribute || (entityState && Object.hasOwn(entityState.attributes, this.#config.attribute)),
-        msg: MSG.attributeNotFound,
+        msg: LANGUAGES[this.#hassProvider.language].card.msg.attributeNotFound,
       },
       {
         valid: Number.isFinite(this.min_value),
-        msg: MSG.minValueError,
+        msg: LANGUAGES[this.#hassProvider.language].card.msg.minValueError,
       },
       {
         valid:
           Number.isFinite(this.max_value) ||
           (maxValueState && (this.#config.max_value_attribute ? Object.hasOwn(maxValueState.attributes, this.#config.max_value_attribute) : true)),
-        msg: MSG.maxValueError,
+        msg: LANGUAGES[this.#hassProvider.language].card.msg.maxValueError,
       },
       {
         valid: Number.isFinite(this.decimal),
-        msg: MSG.decimalError,
+        msg: LANGUAGES[this.#hassProvider.language].card.msg.decimalError,
       },
     ];
 
@@ -2922,7 +3706,7 @@ class CardView {
   }
 
   get msg() {
-    return this.#configHelper.msg[this.currentLanguage];
+    return this.#configHelper.msg;
   }
 
   get config() {
@@ -2946,7 +3730,7 @@ class CardView {
   }
 
   set currentLanguage(newLanguage) {
-    if (Object.keys(MSG.entityError).includes(newLanguage)) {
+    if (Object.keys(LANGUAGES).includes(newLanguage)) {
       this.#currentLanguage = newLanguage;
     }
   }
@@ -2976,12 +3760,14 @@ class CardView {
     if (this.isNotFound) {
       return CARD.style.color.notFound;
     }
-    return this.#theme.color || this.#configHelper.color || this.#currentValue.defaultColor || CARD.style.color.default;
+    return this.#theme.color || this.#convertColorFromConfig(this.#configHelper.color) || this.#currentValue.defaultColor || CARD.style.color.default;
   }
 
   get bar_color() {
     if (this.isAvailable) {
-      return this.#theme.color || this.#configHelper.bar.color || this.#currentValue.defaultColor || CARD.style.color.default;
+      return (
+        this.#theme.color || this.#convertColorFromConfig(this.#configHelper.bar.color) || this.#currentValue.defaultColor || CARD.style.color.default
+      );
     }
     if (this.isUnknown) {
       return CARD.style.color.default;
@@ -2998,13 +3784,13 @@ class CardView {
 
   get description() {
     if (this.isNotFound) {
-      return MSG.entityNotFound[this.currentLanguage];
+      return LANGUAGES[this.#hassProvider.language].card.msg.entityNotFound;
     }
     if (this.isUnknown) {
-      return MSG.entityUnknown[this.currentLanguage];
+      return LANGUAGES[this.#hassProvider.language].card.msg.entityUnknown;
     }
     if (this.isUnavailable) {
-      return MSG.entityUnavailable[this.currentLanguage];
+      return LANGUAGES[this.#hassProvider.language].card.msg.entityUnavailable;
     }
     return this.#percentHelper.toString();
   }
@@ -3064,10 +3850,7 @@ class CardView {
     return roundedSpeed;
   }
   get show_more_info() {
-    return [
-      CARD.interactions.tap_action.default,
-      CARD.interactions.tap_action.moreInfo.action,
-    ].includes(this.#configHelper.cardTapAction);
+    return [CARD.interactions.action.default, CARD.interactions.action.moreInfo.action].includes(this.#configHelper.cardTapAction);
   }
   get navigate_to() {
     return this.#configHelper.navigate_to;
@@ -3075,20 +3858,31 @@ class CardView {
   get bar() {
     return this.#configHelper.bar;
   }
+  get hasClickableIcon() {
+    return this.#configHelper.iconTapAction !== CARD.interactions.action.none.action;
+  }
+  get hasClickableCard() {
+    return (
+      this.#configHelper.cardTapAction !== CARD.interactions.action.none.action ||
+      this.#configHelper.cardHoldAction !== CARD.interactions.action.none.action
+    );
+  }
+
   get isClickable() {
-    return this.#configHelper.cardTapAction !== CARD.interactions.tap_action.none.action;
+    return this.#configHelper.cardTapAction !== CARD.interactions.action.none.action;
   }
   get hasVisibleShape() {
     return this.#hassProvider.hasNewShapeStrategy
-      ? this.#currentValue.hasShapeByDefault ||
+      ? this.#configHelper.force_circular_background ||
+          (this.#currentValue.hasShapeByDefault && this.#configHelper.iconTapAction !== CARD.interactions.action.none.action) ||
           [
-            CARD.interactions.tap_action.navigate.action,
-            CARD.interactions.tap_action.url.action,
-            CARD.interactions.tap_action.moreInfo.action,
-            CARD.interactions.tap_action.assist.action,
-            CARD.interactions.tap_action.toggle.action,
-            CARD.interactions.tap_action.performaAction.action,
-          ].includes(this.#configHelper.cardTapAction)
+            CARD.interactions.action.navigate.action,
+            CARD.interactions.action.url.action,
+            CARD.interactions.action.moreInfo.action,
+            CARD.interactions.action.assist.action,
+            CARD.interactions.action.toggle.action,
+            CARD.interactions.action.performAction.action,
+          ].includes(this.#configHelper.iconTapAction)
       : true;
   }
   get hasHiddenIcon() {
@@ -3173,6 +3967,10 @@ class CardView {
 
     return CARD.config.decimal.other;
   }
+  #convertColorFromConfig(curColor) {
+    if (curColor == null) return null;
+    return DEF_COLORS.includes(curColor) ? `var(--${curColor}-color)` : curColor;
+  }
 }
 
 /** --------------------------------------------------------------------------
@@ -3190,6 +3988,22 @@ class EntityProgressCard extends HTMLElement {
   #lastHass = null;
   #autoRefreshInterval = null;
 
+  #holdTimeout = null;
+  #downTime = null;
+  #isHolding = null;
+  #clickSource = null;
+  #startX = 0;
+  #startY = 0;
+  #clickableTarget = null;
+  #boundHandlers = {
+    mousedown: (e) => this.#handleMouseDown(e),
+    mouseup: (e) => this.#handleMouseUp(e),
+    mousemove: (e) => this.#handleMouseMove(e),
+    touchstart: (e) => this.#handleMouseDown(e),
+    touchend: (e) => this.#handleMouseUp(e),
+    touchmove: (e) => this.#handleMouseMove(e),
+  };
+
   constructor() {
     super();
     this.attachShadow({ mode: CARD.config.shadowMode });
@@ -3198,16 +4012,100 @@ class EntityProgressCard extends HTMLElement {
       console.groupCollapsed(CARD.console.message, CARD.console.css);
       console.log(CARD.console.link);
       console.groupEnd();
+      debugLog(Object.keys(LANGUAGES));
       EntityProgressCard._moduleLoaded = true;
     }
+    // this.addEventListener(CARD.interactions.event.click, this.#fireAction);
+  }
 
-    this.addEventListener(CARD.interactions.event.click, this.#fireAction);
+  connectedCallback() {
+    debugLog('👉 connectedCallback()');
+
+    this.#clickableTarget = this.#cardView.hasClickableCard
+      ? this
+      : this.#cardView.hasClickableIcon
+        ? this.#elements[CARD.htmlStructure.elements.icon.class]
+        : null;
+
+    if (this.#clickableTarget) {
+      this.#attachListener(this.#clickableTarget);
+    }
+  }
+  #attachListener(elem) {
+    debugLog('👉 #attachListener()');
+    elem.addEventListener('mousedown', this.#boundHandlers.mousedown);
+    elem.addEventListener('mouseup', this.#boundHandlers.mouseup);
+    elem.addEventListener('mousemove', this.#boundHandlers.mousemove);
+    elem.addEventListener('touchstart', this.#boundHandlers.touchstart, { passive: true });
+    elem.addEventListener('touchend', this.#boundHandlers.touchend);
+    elem.addEventListener('touchmove', this.#boundHandlers.touchmove, { passive: true });
+  }
+
+  disconnectedCallback() {
+    debugLog('👉 disconnectedCallback()');
+    if (this.#clickableTarget) {
+      this.#detachListener(this.#clickableTarget);
+    }
+  }
+
+  #detachListener(elem) {
+    debugLog('👉 #detachListener()');
+    elem.removeEventListener('mousedown', this.#boundHandlers.mousedown);
+    elem.removeEventListener('mouseup', this.#boundHandlers.mouseup);
+    elem.removeEventListener('mousemove', this.#boundHandlers.mousemove);
+    elem.removeEventListener('touchstart', this.#boundHandlers.touchstart);
+    elem.removeEventListener('touchend', this.#boundHandlers.touchend);
+    elem.removeEventListener('touchmove', this.#boundHandlers.touchmove);
+    clearTimeout(this.#holdTimeout);
+  }
+
+  #handleMouseDown(ev) {
+    debugLog('👉 handleMouseDown()');
+    debugLog('    ', ev.originalTarget.localName);
+
+    this.#clickSource = CARD.interactions.event.originalTarget.icon.includes(ev.originalTarget.localName)
+      ? CARD.interactions.event.from.icon
+      : CARD.interactions.event.from.card;
+
+    this.#downTime = Date.now();
+    this.#startX = ev.clientX;
+    this.#startY = ev.clientY;
+    this.#isHolding = false;
+
+    this.#holdTimeout = setTimeout(() => {
+      this.#isHolding = true; // Marquer comme un "hold" potentiel si le délai est atteint
+    }, 500); // Seuil de 500ms pour considérer comme un hold
+  }
+
+  #handleMouseUp(ev) {
+    clearTimeout(this.#holdTimeout);
+    const upTime = Date.now();
+    const deltaTime = upTime - this.#downTime;
+
+    if (this.#isHolding) {
+      this.#fireAction(ev, 'hold'); // Déclencher l'action de "hold" au relâchement après le délai
+    } else if (deltaTime < 500 && Math.abs(ev.clientX - this.#startX) < 5 && Math.abs(ev.clientY - this.#startY) < 5) {
+      this.#fireAction(ev, 'tap'); // Gérer l'action du simple clic (tap)
+    }
+    this.#downTime = null;
+    this.#clickSource = null;
+    this.#isHolding = false; // Réinitialiser l'état
+  }
+
+  #handleMouseMove(ev) {
+    // Si la souris bouge de plus de 5 pixels pendant le maintien, annuler le timeout du hold potentiel
+    if (this.#downTime && (Math.abs(ev.clientX - this.#startX) > 5 || Math.abs(ev.clientY - this.#startY) > 5)) {
+      clearTimeout(this.#holdTimeout);
+      this.#isHolding = false;
+      this.#downTime = null;
+    }
   }
 
   #fireAction(originalEvent, action = 'tap') {
     debugLog('👉 EntityProgressCard.#fireAction()');
-    //debugLog('  📎 type: ', type);
     debugLog('  📎 originalEvent: ', originalEvent);
+    action = this.#clickSource === CARD.interactions.event.from.icon ? 'icon_tap' : action;
+    debugLog('  📎 action: ', action);
 
     this.dispatchEvent(
       new CustomEvent('hass-action', {
@@ -3293,7 +4191,8 @@ class EntityProgressCard extends HTMLElement {
   #buildCard() {
     const card = document.createElement(CARD.htmlStructure.card.element);
     card.classList.add(CARD.meta.typeName);
-    card.classList.toggle(CARD.style.dynamic.clickable, this.#cardView.isClickable);
+    card.classList.toggle(CARD.style.dynamic.clickable.card, this.#cardView.hasClickableCard);
+    card.classList.toggle(CARD.style.dynamic.clickable.icon, this.#cardView.hasClickableIcon);
     card.classList.toggle(this.#cardView.bar.orientation, this.#cardView.bar.changed);
     card.classList.add(this.#cardView.layout);
     card.classList.add(this.#cardView.bar.size);
@@ -3315,6 +4214,7 @@ class EntityProgressCard extends HTMLElement {
     this.#elements = {
       [CARD.htmlStructure.card.element]: card,
       [CARD.htmlStructure.elements.icon.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.icon.class}`),
+      [CARD.htmlStructure.elements.shape.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.shape.class}`),
       [CARD.htmlStructure.elements.badge.icon.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.badge.icon.class}`),
       [CARD.htmlStructure.elements.name.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.name.class}`),
       [CARD.htmlStructure.elements.percentage.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.percentage.class}`),
@@ -3326,16 +4226,6 @@ class EntityProgressCard extends HTMLElement {
 
   /**
    * Updates the specified DOM element based on a provided callback function.
-   *
-   * This method accepts a `key` (which corresponds to an element stored in
-   * the `_elements` object) and a `callback` function. The callback is executed
-   * on the specified element, and its current value (either `textContent` or
-   * `style.width`) is compared with the new value returned by the callback.
-   *
-   * @param {string} key - The key that identifies the element to be updated
-   *                       in the `_elements` object.
-   * @param {function} callback - A function that is applied to the element.
-   *                              It should return the new value for the element.
    */
   #updateElement(key, updateCallback) {
     const element = this.#elements[key];
@@ -3365,10 +4255,6 @@ class EntityProgressCard extends HTMLElement {
 
   /**
    * Updates dynamic card elements based on the entity's state and configuration.
-   *
-   * Handles errors gracefully (e.g., invalid config, unavailable entity).
-   *
-   * @returns {void}
    */
   #updateDynamicElements() {
     this.#manageErrorMessage();
@@ -3542,7 +4428,6 @@ class EntityProgressCardEditor extends HTMLElement {
       return;
     }
     if (!this.#isRendered) {
-      this.loadEntityPicker();
       this.render();
       this.#addEventListener();
       this.#isRendered = true;
@@ -3556,144 +4441,137 @@ class EntityProgressCardEditor extends HTMLElement {
     keys.forEach((key) => {
       if (
         ![
-          CARD.editor.keyMappings.tapAction,
+          CARD.editor.fields.tap_action.type,
+          CARD.editor.fields.hold_action.type,
+          CARD.editor.fields.icon_tap_action.type,
           CARD.editor.keyMappings.attribute,
           CARD.editor.keyMappings.max_value_attribute,
+          EDITOR_INPUT_FIELDS.theme.field.icon.name,
           EDITOR_INPUT_FIELDS.theme.field.color.name,
           EDITOR_INPUT_FIELDS.theme.field.bar_color.name,
+          EDITOR_INPUT_FIELDS.basicConfiguration.entity.name,
         ].includes(key) &&
         Object.hasOwn(this.#config, key) &&
         this.#elements[key].value !== this.#config[key]
       ) {
         this.#elements[key].value = this.#config[key];
-        debugLog('✅ updateFields - update de la clef: ', key);
+        debugLog('✅ updateFields - update: ', [key, this.#config[key]]);
       }
     });
 
-    this.#updateHAForm(
+    const updateHAFormTypes = [
+      CARD.editor.fields.entity.type,
       CARD.editor.fields.tap_action.type,
-      EDITOR_INPUT_FIELDS.interaction.field.tap_action.label[this.#currentLanguage],
-      this.#elements[CARD.editor.fields.tap_action.type],
-      this.#config[CARD.editor.fields.tap_action.type]
-    );
-
-    // tapActionElem.requestUpdate();
-
-    this.#updateHAForm(
+      CARD.editor.fields.hold_action.type,
+      CARD.editor.fields.icon_tap_action.type,
+      CARD.editor.fields.icon.type,
       EDITOR_INPUT_FIELDS.theme.field.bar_color.name,
-      EDITOR_INPUT_FIELDS.theme.field.bar_color.label[this.#currentLanguage],
-      this.#elements[EDITOR_INPUT_FIELDS.theme.field.bar_color.name],
-      this.#config[EDITOR_INPUT_FIELDS.theme.field.bar_color.name]
-    );
-
-    this.#updateHAForm(
       EDITOR_INPUT_FIELDS.theme.field.color.name,
-      EDITOR_INPUT_FIELDS.theme.field.color.label[this.#currentLanguage],
-      this.#elements[EDITOR_INPUT_FIELDS.theme.field.color.name],
-      this.#config[EDITOR_INPUT_FIELDS.theme.field.color.name]
-    );
+    ];
+
+    for (const updateHAFormType of updateHAFormTypes) {
+      this.#updateHAForm(this.#elements[updateHAFormType], updateHAFormType, this.#config[updateHAFormType]);
+    }
 
     // Theme
     this.#toggleFieldDisable(CARD.editor.keyMappings.theme, !!this.#config.theme);
 
-    // Entity & max_value
-    const curEntity = new EntityOrValue();
-    curEntity.value = this.#config.entity; // 1st Entity management
-    if (this.#previous.entity !== this.#config.entity && curEntity.hasAttribute) {
-      this.#previous.entity = this.#config.entity;
-      this.#updateChoices(this.#elements[CARD.editor.keyMappings.attribute], CARD.editor.fields.attribute.type, Object.keys(curEntity.attributes));
-    }
-    if (
-      this.#config.attribute &&
-      curEntity.hasAttribute &&
-      Object.hasOwn(curEntity.attributes, this.#config.attribute) &&
-      this.#elements[CARD.editor.keyMappings.attribute].value !== this.#config.attribute
-    ) {
-      this.#elements[CARD.editor.keyMappings.attribute].value = this.#config.attribute;
-    }
-    if (
-      this.#config.attribute === undefined &&
-      curEntity.hasAttribute &&
-      this.#elements[CARD.editor.keyMappings.attribute].value !== curEntity.defaultAttribute
-    ) {
-      const newConfig = Object.assign({}, this.#config);
-      newConfig[CARD.editor.keyMappings.attribute] = curEntity.defaultAttribute;
-      this.#sendNewConfig(newConfig);
-    }
-    this.#toggleFieldDisable(EDITOR_INPUT_FIELDS.basicConfiguration.attribute.isInGroup, !curEntity.hasAttribute);
+    const entityHasAttribute = this.#updateAttributFromEntity('entity', 'attribute');
+    this.#toggleFieldDisable(EDITOR_INPUT_FIELDS.basicConfiguration.attribute.isInGroup, !entityHasAttribute);
 
-    curEntity.value = this.#config.max_value; // max value
-    if (this.#previous.max_value !== this.#config.max_value && curEntity.hasAttribute) {
-      this.#previous.max_value = this.#config.max_value;
-      this.#updateChoices(
-        this.#elements[CARD.editor.keyMappings.max_value_attribute],
-        CARD.editor.fields.max_value_attribute.type,
-        Object.keys(curEntity.attributes)
-      );
-    }
-    if (
-      this.#config.max_value_attribute &&
-      curEntity.hasAttribute &&
-      Object.hasOwn(curEntity.attributes, this.#config.max_value_attribute) &&
-      this.#elements[CARD.editor.keyMappings.max_value_attribute].value !== this.#config.max_value_attribute
-    ) {
-      this.#elements[CARD.editor.keyMappings.max_value_attribute].value = this.#config.max_value_attribute;
-    }
-    if (
-      this.#config.max_value_attribute === undefined &&
-      curEntity.hasAttribute &&
-      this.#elements[CARD.editor.keyMappings.max_value_attribute].value !== curEntity.defaultAttribute
-    ) {
-      const newConfig = Object.assign({}, this.#config);
-      newConfig[CARD.editor.keyMappings.max_value_attribute] = curEntity.defaultAttribute;
-      this.#sendNewConfig(newConfig);
-    }
-    this.#toggleFieldDisable(EDITOR_INPUT_FIELDS.content.field.max_value_attribute.isInGroup, !curEntity.hasAttribute);
+    const maxVlueHasAttribute = this.#updateAttributFromEntity('max_value', 'max_value_attribute');
+    this.#toggleFieldDisable(EDITOR_INPUT_FIELDS.content.field.max_value_attribute.isInGroup, !maxVlueHasAttribute);
 
-    const keysArray = ['icon', 'name', 'secondary_info', 'progress_bar'];
-    keysArray.forEach((currentKey) => {
-      if (this.#config.hide && this.#config.hide.includes(currentKey)) {
-        this.#elements['toggle_' + currentKey].checked = false;
-      } else {
-        this.#elements['toggle_' + currentKey].checked = true;
-      }
-    });
-
-    if (this.#config.disable_unit !== undefined && this.#config.disable_unit === true) {
-      this.#elements.toggle_unit.checked = false;
-    } else {
-      this.#elements.toggle_unit.checked = true;
-    }
+    // hide
+    this.#updateToggleFields();
   }
 
-  #extractColorName(cssVar) {
-    debugLog(cssVar);
-    const match = cssVar?.match(/^var\(--(.*?)-color\)$/);
-    debugLog(match);
-    return match && DEF_COLORS.includes(match[1]) ? match[1] : cssVar;
-  }
-
-  #updateHAForm(key, label, form, newValue) {
+  #updateHAForm(form, key, newValue) {
     debugLog('👉 editor.#updateHAForm()');
     debugLog('        ✅ Update HA Form (Before) ------> ', form.data);
-    newValue = key.includes('color') && newValue !== undefined ? this.#extractColorName(newValue) : newValue;
     debugLog('        ✅ NewValue: ', newValue);
 
-    if (newValue !== undefined && form.data[label] !== newValue) {
+    if (form.data === undefined || (newValue !== undefined && form.data[key] !== newValue)) {
       debugLog('        ✅ NewValue: update.');
       form.data = {
         ...form.data,
-        [label]: newValue,
+        [key]: newValue,
       };
       debugLog(form.data);
-    } else if (newValue === undefined && form.data[label] !== undefined) {
+    } else if (newValue === undefined && form.data[key] !== undefined) {
       debugLog('        ✅ key: set undef...');
       form.data = {
         ...form.data,
-        [label]: undefined,
+        [key]: undefined,
       };
     }
     debugLog('        ✅ Update HA Form (after) ------> ', form.data);
+  }
+
+  #updateAttributFromEntity(entity, attribute) {
+    debugLog('👉 editor.#updateAttributFromEntity()');
+    debugLog(`  📎 entity: ${entity}`);
+    debugLog(`  📎 attribute: ${attribute}`);
+
+    // Création d'une instance EntityOrValue pour l'entité courante
+    const curEntity = new EntityOrValue();
+    curEntity.value = this.#config[entity];
+
+    // Si l'entité a changé et que l'entité courante a des attributs, on régénère la liste.
+    if (this.#previous[entity] !== this.#config[entity] && curEntity.hasAttribute) {
+      this.#previous[entity] = this.#config[entity];
+      this.#updateChoices(this.#elements[attribute], attribute, Object.keys(curEntity.attributes));
+      debugLog(`        ✅ updateFields - ${entity} attributes list: `, curEntity.attributes);
+    }
+
+    // Si l'attribut n'est pas défini dans la config ET
+    // que l'entité possède des attributs ET
+    // que la valeur du select ne correspond pas encore au defaultAttribute :
+    if (this.#config[attribute] === undefined && curEntity.hasAttribute) {
+      debugLog(`        ✅ updateFields - Attribute ${attribute} (default): in progress...`);
+      this.#applySelectValueOnUpdate(this.#elements[attribute], curEntity.defaultAttribute);
+    }
+
+    if (
+      this.#config[attribute] &&
+      curEntity.hasAttribute &&
+      Object.hasOwn(curEntity.attributes, this.#config[attribute]) &&
+      this.#elements[attribute].value !== this.#config[attribute]
+    ) {
+      this.#elements[attribute].value = this.#config[attribute];
+      debugLog(`        ✅ updateFields - Attribute ${attribute}: `, curEntity.attributes);
+    }
+
+    return curEntity.hasAttribute;
+  }
+  async #applySelectValueOnUpdate(select, value) {
+    await select.updateComplete;
+
+    const values = Array.from(select.children).map((el) => el.getAttribute('value'));
+    if (values.includes(value)) {
+      select.value = value;
+      debugLog('        ✅ applySelectValueOnUpdate - Entity attribute (default): ', value);
+    } else {
+      debugLog('        ❌ applySelectValueOnUpdate - Default attribute not found in select options', values);
+    }
+  }
+  #updateToggleFields() {
+    const hide = this.#config.hide || [];
+    const toggleMappings = {
+      toggle_force_circular_background: this.#config.force_circular_background === true,
+      toggle_unit: this.#config.disable_unit !== true,
+      toggle_icon: !hide.includes('icon'),
+      toggle_name: !hide.includes('name'),
+      toggle_secondary_info: !hide.includes('secondary_info'),
+      toggle_progress_bar: !hide.includes('progress_bar'),
+    };
+
+    for (const [toggleKey, shouldBeChecked] of Object.entries(toggleMappings)) {
+      const toggle = this.#elements[toggleKey];
+      if (toggle && toggle.checked !== shouldBeChecked) {
+        toggle.checked = shouldBeChecked;
+      }
+    }
   }
 
   #onChanged(event) {
@@ -3721,8 +4599,15 @@ class EntityProgressCardEditor extends HTMLElement {
 
   #addEventListenerFor(name, type) {
     debugLog(`👉 Editor.#addEventListenerFor(${name}, ${type})`);
+    if (!this.#elements[name]) {
+      console.error(`Element ${name} not found!`);
+      return;
+    }
     const isHASelect = CARD.editor.fields[type]?.element === CARD.editor.fields.select.element;
-    const events = isHASelect ? CARD.interactions.event.HASelect : CARD.interactions.event.other;
+    const isToggle = CARD.editor.fields[type]?.element === CARD.editor.fields.toggle.element;
+    const events = isHASelect ? CARD.interactions.event.HASelect : (isToggle ? CARD.interactions.event.toggle : CARD.interactions.event.other);
+
+    debugLog(`Event: ${events}`);
 
     if (isHASelect) {
       this.#elements[name].addEventListener(CARD.interactions.event.closed, (event) => {
@@ -3737,17 +4622,15 @@ class EntityProgressCardEditor extends HTMLElement {
   #sendMessageForUpdate(changedEvent) {
     debugLog('👉 editor.#sendMessageForUpdate()');
     debugLog('  📎 ', changedEvent);
-    debugLog(`      ${changedEvent.target.id} -> ${changedEvent.target.value !== undefined ? changedEvent.target.value : changedEvent.detail}`);
+    debugLog(`  📎 ${changedEvent.target.id} -> ${changedEvent.target.value !== undefined ? changedEvent.target.value : changedEvent.detail}`);
     const newConfig = Object.assign({}, this.#config);
 
     switch (changedEvent.target.id) {
-      case EDITOR_INPUT_FIELDS.basicConfiguration.entity.name:
       case EDITOR_INPUT_FIELDS.basicConfiguration.attribute.name:
       case EDITOR_INPUT_FIELDS.content.field.max_value_attribute.name:
       case EDITOR_INPUT_FIELDS.content.field.name.name:
       case EDITOR_INPUT_FIELDS.content.field.unit.name:
       case EDITOR_INPUT_FIELDS.theme.field.bar_size.name:
-      case EDITOR_INPUT_FIELDS.theme.field.icon.name:
       case EDITOR_INPUT_FIELDS.theme.field.layout.name:
       case EDITOR_INPUT_FIELDS.theme.field.theme.name:
         if (changedEvent.target.value === undefined || changedEvent.target.value === null || changedEvent.target.value.trim() === '') {
@@ -3775,19 +4658,22 @@ class EntityProgressCardEditor extends HTMLElement {
           delete newConfig[changedEvent.target.id];
         }
         break;
+      case EDITOR_INPUT_FIELDS.interaction.field.hold_action.name:
+      case EDITOR_INPUT_FIELDS.interaction.field.icon_tap_action.name:
       case EDITOR_INPUT_FIELDS.interaction.field.tap_action.name: {
-        const tapActionLabel = EDITOR_INPUT_FIELDS.interaction.field.tap_action.label[this.#currentLanguage];
-        const tapActionConfig = changedEvent.detail.value[tapActionLabel];
-        newConfig.tap_action = tapActionConfig;
+        newConfig[changedEvent.target.id] = changedEvent.detail.value[changedEvent.target.id];
         break;
       }
+      case EDITOR_INPUT_FIELDS.basicConfiguration.entity.name:
+      case EDITOR_INPUT_FIELDS.theme.field.icon.name:
       case EDITOR_INPUT_FIELDS.theme.field.bar_color.name:
       case EDITOR_INPUT_FIELDS.theme.field.color.name: {
-        const curColor = Object.values(changedEvent?.detail?.value || {})[0];
-        if (curColor && typeof curColor === 'string' && curColor.trim() !== '') {
-          debugLog('  📌 color: ', curColor);
-          const cssColor = DEF_COLORS.includes(curColor) ? `var(--${curColor}-color)` : curColor;
-          newConfig[changedEvent.target.id] = cssColor;
+        if (
+          changedEvent?.detail?.value &&
+          typeof changedEvent.detail.value[changedEvent.target.id] === 'string' &&
+          changedEvent.detail.value[changedEvent.target.id].trim() !== ''
+        ) {
+          newConfig[changedEvent.target.id] = changedEvent.detail.value[changedEvent.target.id];
         } else {
           delete newConfig[changedEvent.target.id];
         }
@@ -3797,17 +4683,16 @@ class EntityProgressCardEditor extends HTMLElement {
       case EDITOR_INPUT_FIELDS.theme.field.toggleIcon.name:
       case EDITOR_INPUT_FIELDS.theme.field.toggleName.name:
       case EDITOR_INPUT_FIELDS.theme.field.toggleSecondaryInfo.name: {
-        const newState = !changedEvent.srcElement.checked;
         const key = changedEvent.target.id.replace('toggle_', '');
-        debugLog('  📌 ', newState);
-        if (changedEvent.srcElement.checked) {
-          if (!Object.hasOwn(newConfig, 'hide')) {
-            newConfig.hide = [];
-          }
+        newConfig.hide ??= [];
+
+        if (!changedEvent.target.checked) {
+          // Toggle désactivé → on cache
           if (!newConfig.hide.includes(key)) {
             newConfig.hide.push(key);
           }
-        } else if (Object.hasOwn(newConfig, 'hide')) {
+        } else {
+          // Toggle activé → on montre
           const index = newConfig.hide.indexOf(key);
           if (index !== -1) {
             newConfig.hide.splice(index, 1);
@@ -3818,12 +4703,17 @@ class EntityProgressCardEditor extends HTMLElement {
         }
         break;
       }
+      case EDITOR_INPUT_FIELDS.theme.field.toggleCircular.name:
+        if (changedEvent.target.checked) {
+          newConfig.force_circular_background = true;
+        } else {
+          delete newConfig.force_circular_background;
+        }
+        break;
       case EDITOR_INPUT_FIELDS.theme.field.toggleUnit.name:
-        if (changedEvent.srcElement.checked) {
-          if (newConfig.disable_unit === undefined || newConfig.disable_unit !== true) {
-            newConfig.disable_unit = true;
-          }
-        } else if (newConfig.disable_unit !== undefined) {
+        if (!changedEvent.srcElement.checked) {
+          newConfig.disable_unit = true;
+        } else {
           delete newConfig.disable_unit;
         }
         break;
@@ -3870,62 +4760,31 @@ class EntityProgressCardEditor extends HTMLElement {
 
   /**
    * Update a list of choices to a given `<select>` element based on the specified list type.
-   *
-   * This method populates the `<select>` element with options according to the provided `type`. The `type`
-   * determines the kind of list (e.g., colors, layout, theme, tap actions) and how the options will be displayed.
-   *
-   * @param {HTMLElement} select - The `<select>` element to which the choices will be added.
-   * @param {string} type - The type of list to populate ('layout', 'color', 'theme', or 'tap_action').
    */
   #updateChoices(select, type, choices = null) {
     debugLog('👉 editor.#updateChoices()');
     debugLog(`  📎 select: ${select}`);
     debugLog(`  📎 type: ${type}`);
     debugLog(`  📎 choices: ${choices}`);
+
     select.innerHTML = '';
-    
-    const list = [CARD.editor.fields.navigation_picker.type, CARD.editor.fields.attribute.type, CARD.editor.fields.max_value_attribute.type].includes(
-      type
-    )
-      ? choices
-      : FIELD_OPTIONS[type];
+
+    const list = [CARD.editor.fields.attribute.type, CARD.editor.fields.max_value_attribute.type].includes(type) ? choices : FIELD_OPTIONS[type];
     if (!list) {
       return;
     }
     debugLog('  📌 list: ', list);
 
     list.forEach((optionData) => {
-      if (type === CARD.editor.fields.tap_action.type) {
-        debugLog(optionData);
-      }
       const option = document.createElement(CARD.editor.fields.listItem.element);
       const value = optionData.value !== undefined ? optionData.value : optionData;
       option.setAttribute('value', String(value));
 
-
       switch (type) {
-        case CARD.editor.fields.color.type: {
-          const container = document.createElement('div');
-          Object.assign(container.style, {
-            display: 'flex',
-            alignItems: 'center',
-          });
-          const colorDot = document.createElement(CARD.editor.fields.colorDot.element);
-          colorDot.classList.add(CARD.editor.fields.colorDot.class);
-          colorDot.style.backgroundColor = optionData.value;
-          const label = document.createElement(CARD.editor.fields.text.element);
-          label.textContent = optionData.label[this.#currentLanguage];
-          container.appendChild(colorDot);
-          container.appendChild(label);
-          option.innerHTML = '';
-          option.appendChild(container);
-          break;
-        }
         case CARD.editor.fields.layout.type:
         case CARD.editor.fields.theme.type:
-        case CARD.editor.fields.bar_size.type:
-        case CARD.editor.fields.navigation_picker.type: {
-          const label = type !== CARD.editor.fields.navigation_picker.type ? optionData.label[this.#currentLanguage] : optionData.label;
+        case CARD.editor.fields.bar_size.type: {
+          const label = LANGUAGES[this.#currentLanguage].editor.option[type][optionData.value];
           const haIcon = document.createElement(CARD.editor.fields.iconItem.element);
           haIcon.setAttribute(CARD.editor.fields.iconItem.attribute, optionData.icon);
           haIcon.classList.add(CARD.editor.fields.iconItem.class);
@@ -3933,9 +4792,6 @@ class EntityProgressCardEditor extends HTMLElement {
           option.append(label);
           break;
         }
-        case CARD.editor.fields.tap_action.type:
-          option.innerHTML = `${optionData.label[this.#currentLanguage]}`;
-          break;
         case CARD.editor.fields.attribute.type:
         case CARD.editor.fields.max_value_attribute.type:
           option.innerHTML = `${optionData}`;
@@ -3943,7 +4799,13 @@ class EntityProgressCardEditor extends HTMLElement {
       }
       select.appendChild(option);
     });
+  }
 
+  #computeCustomLabel(s, label) {
+    debugLog('👉 computeCustomLabel()');
+    debugLog('  📎 name: ', s.name);
+    debugLog('  📎 label: ', label);
+    return label;
   }
 
   /**
@@ -3956,12 +4818,24 @@ class EntityProgressCardEditor extends HTMLElement {
 
     switch (type) {
       case CARD.editor.fields.entity.type:
-        inputElement = document.createElement(CARD.editor.fields.entity.element);
-        inputElement.hass = this.#hassProvider.hass;
-        break;
+      case CARD.editor.fields.color.type:
       case CARD.editor.fields.icon.type:
-        inputElement = document.createElement(CARD.editor.fields.icon.element);
-        break;
+      case CARD.editor.fields.tap_action.type:
+      case CARD.editor.fields.icon_tap_action.type:
+      case CARD.editor.fields.hold_action.type: {
+        inputElement = document.createElement(CARD.editor.fields.tap_action.element);
+        if (isInGroup) {
+          inputElement.classList.add(isInGroup);
+        }
+        inputElement.style.width = width;
+        inputElement.id = name;
+        inputElement.hass = this.#hassProvider.hass;
+        inputElement.schema = schema;
+        inputElement.computeLabel = (s) => this.#computeCustomLabel(s, label);
+        inputElement.data = {};
+        this.#elements[name] = inputElement;
+        return inputElement; //break;
+      }
       case CARD.editor.fields.layout.type:
       case CARD.editor.fields.bar_size.type:
       case CARD.editor.fields.theme.type:
@@ -3985,6 +4859,7 @@ class EntityProgressCardEditor extends HTMLElement {
         toggleLabel.textContent = label;
 
         const toggle = document.createElement(CARD.editor.fields.toggle.element);
+
         toggle.setAttribute('checked', true);
         toggle.id = name;
 
@@ -3992,30 +4867,6 @@ class EntityProgressCardEditor extends HTMLElement {
         inputElement.appendChild(toggle);
 
         this.#elements[name] = toggle;
-        return inputElement; //break;
-      }
-      case CARD.editor.fields.color.type:
-        inputElement = document.createElement(CARD.editor.fields.tap_action.element);
-        if (isInGroup) {
-          inputElement.classList.add(isInGroup);
-        }
-        inputElement.style.width = width;
-        inputElement.hass = this.#hassProvider.hass;
-        schema.name = label;
-        inputElement.schema = [schema];
-        inputElement.id = name;
-        inputElement.data = this.#config[name] !== undefined ? { [label]: this.#config[name] } : {};
-        this.#elements[name] = inputElement;
-        return inputElement; //break;
-      case CARD.editor.fields.tap_action.type: {
-        inputElement = document.createElement(CARD.editor.fields.tap_action.element);
-        inputElement.style.width = width;
-        inputElement.hass = this.#hassProvider.hass;
-        schema.name = label;
-        inputElement.schema = [schema];
-        inputElement.id = name;
-        inputElement.data = this.#config.tap_action !== undefined ? { [label]: this.#config.tap_action } : {};
-        this.#elements[type] = inputElement;
         return inputElement; //break;
       }
       default:
@@ -4061,46 +4912,14 @@ class EntityProgressCardEditor extends HTMLElement {
     accordionContent.classList.toggle('expanded');
   }
 
-  /**
-   * Author: Thomas Loven
-   * see:
-   *  - https://github.com/thomasloven/hass-config/wiki/PreLoading-Lovelace-Elements
-   *  - https://gist.github.com/thomasloven/5f965bd26e5f69876890886c09dd9ba8
-   *
-   * Dynamically loads the `ha-entity-picker` component if it is not already defined.
-   *
-   * This function checks if the `ha-entity-picker` custom element is already registered
-   * in the browser. If it is not registered, it dynamically loads it by using
-   * Home Assistant's `loadCardHelpers` utility. Once loaded, it creates a temporary
-   * `entities` card element to ensure that the `ha-entity-picker` element is properly
-   * defined and ready for use. Afterward, it retrieves the configuration element
-   * for the picker by calling `getConfigElement()`.
-   *
-   * This is typically done when the editor is being initialized and the entity picker
-   * is required but hasn't been loaded yet.
-   *
-   * @returns {Promise<void>} A promise that resolves when the `ha-entity-picker`
-   *         component is successfully loaded and available.
-   */
-  async loadEntityPicker() {
-    if (!window.customElements.get(CARD.editor.fields.entity.element)) {
-      const ch = await window.loadCardHelpers();
-      const c = await ch.createCardElement({ type: 'entities', entities: [] });
-      await c.constructor.getConfigElement();
-      // eslint-disable-next-line no-unused-vars
-      const haEntityPicker = window.customElements.get(CARD.editor.fields.entity.element);
-    }
-  }
-
   #renderFields(parent, inputFields) {
     Object.values(inputFields).forEach((field) => {
       debugLog('#renderFields - field: ', field);
       parent.appendChild(
         this.#createField({
-          name: typeof field.name === 'string' ? field.name : field.name[this.#currentLanguage],
-          label: field.label !== undefined ? field.label[this.#currentLanguage] : null,
+          name: field.name,
+          label: LANGUAGES[this.#currentLanguage].editor.field[field.name],
           type: field.type,
-          required: field.required,
           isInGroup: field.isInGroup,
           width: field.width,
           schema: field.schema !== undefined ? field.schema : null,
@@ -4121,7 +4940,7 @@ class EntityProgressCardEditor extends HTMLElement {
     icon.classList.add(CARD.editor.fields.accordion.icon.class);
     accordionTitle.appendChild(icon);
 
-    const title = document.createTextNode(inputFields.title.label[this.#currentLanguage]);
+    const title = document.createTextNode(LANGUAGES[this.#currentLanguage].editor.title[inputFields.title.name]);
     accordionTitle.appendChild(title);
 
     const accordionArrow = document.createElement(CARD.editor.fields.accordion.arrow.element);
@@ -4171,3 +4990,4 @@ class EntityProgressCardEditor extends HTMLElement {
  * Registers the custom element for the EntityProgressCardEditor editor.
  */
 customElements.define(CARD.meta.editor, EntityProgressCardEditor);
+

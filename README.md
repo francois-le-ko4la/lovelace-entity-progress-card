@@ -23,7 +23,8 @@ This custom version of the **Bar Card** for Home Assistant allows you to display
 - **Smooth Animations**: Provides HTML elements that facilitate smooth, visually appealing animations, leveraging well-known mechanisms for easy implementation.
 - **Interactive Features**: Includes a "More Info" option, enabling users to view additional entity details or navigate to another dashboard with a simple click, improving accessibility and usability.
 - **Performance Optimized**: Code enhancements ensure better performance and maintainability, offering a more stable and responsive experience.
-- **Multi-Language Support**: Provides localized error messages and descriptions, supporting multiple languages 🇬🇧 🇪🇸 🇩🇪 🇮🇹 🇫🇷 🇵🇱 🇳🇱 🇲🇰 🇵🇹 🇩🇰 🇸🇪 🇳🇴 (bokmål).
+- **Multi-Language Support**: Provides localized error messages and descriptions, supporting multiple languages 🇬🇧 🇪🇸 🇩🇪 🇮🇹 🇫🇷 🇵🇱 🇳🇱 🇭🇷 🇲🇰 🇵🇹 🇩🇰 🇸🇪 🇳🇴 (bokmål) 🇫🇮 🇷🇴 🇬🇷 🇯🇵 🇰🇷 🇨🇳 🇹🇷 🇸🇦.
+
 
 ## ⚙️ Prerequisites
 
@@ -351,6 +352,26 @@ tap_action:
   navigation_path: /lovelace/lights
 ```
 
+#### `hold_action`
+
+> **`hold_action`** OBJ[action: {`more-info` | `toggle` | `perform-action` | `navigate` | `url` | `assist` | `none`} [`navigation_path`: /str/to/lovelace] [`url_path`: <https://example.com>] [····]] _(optional)_
+
+The `hold_action` property specifies the behavior triggered when the user performs a long press on the card. Multiple action types are supported.
+
+See `tap_action`.
+
+#### `icon_tap_action`
+
+> **`icon_tap_action`** OBJ[action: {`more-info` | `toggle` | `perform-action` | `navigate` | `url` | `assist` | `none`} [`navigation_path`: /str/to/lovelace] [`url_path`: <https://example.com>] [····]] _(optional)_
+
+The `icon_tap_action` property specifies the behavior triggered when the user taps the icon. Multiple action types are supported.
+
+See `tap_action`.
+
+> [!NOTE]
+> When `icon_tap_action` is enabled, the icon will show a circular background, following the updated design standards introduced in Home Assistant 2025.3.
+>
+
 #### `theme`
 
 > **`theme`** [string {`optimal_when_low`|`optimal_when_high`|`battery`⚠️|`cpu`⚠️|`light`|`memory`⚠️|`temperature`|`humidity`|`pm25`|`voc`}] _(optional)_
@@ -395,6 +416,40 @@ bar_size: medium
 > **`bar_color`** [string] _(optional)_
 
 The color of the progress bar. Accepts color names, RGB values, or HEX codes.
+
+When defining a color by name, we utilize the standard CSS color palette, which has evolved over time to include extended color keywords, X11 colors, and SVG colors (updated in 2022: https://www.w3.org/TR/css-color-3/#svg-color).
+
+To maintain a consistent look & feel, we translate color names to Home Assistant's color definitions. We provide a list of these colors below. If a color is missing, please do not hesitate to let us know. If you choose a CSS-compatible color name that is not part of this list, the rendering will be as defined by the CSS standard.
+
+_Color name (HA)_:
+| Color name | Card will use |
+|---|---|
+| primary | var(--primary-color) |
+| accent | var(--accent-color) |
+| red | var(--red-color) |
+| pink | var(--pink-color) |
+| purple | var(--purple-color) |
+| deep-purple | var(--deep-purple-color) |
+| indigo | var(--indigo-color) |
+| blue | var(--blue-color) |
+| light-blue | var(--light-blue-color) |
+| cyan | var(--cyan-color) |
+| teal | var(--teal-color) |
+| green | var(--green-color) |
+| light-green | var(--light-green-color) |
+| lime | var(--lime-color) |
+| yellow | var(--yellow-color) |
+| amber | var(--amber-color) |
+| orange | var(--orange-color) |
+| deep-orange | var(--deep-orange-color) |
+| brown | var(--brown-color) |
+| light-grey | var(--light-grey-color) |
+| grey | var(--grey-color) |
+| dark-grey | var(--dark-grey-color) |
+| blue-grey | var(--blue-grey-color) |
+| black | var(--black-color) |
+| white | var(--white-color) |
+| disabled | var(--disabled-color) |
 
 _Default_:
 
@@ -494,11 +549,66 @@ _Order of Priority for the Icon:_
 - Icon Associated with the Entity's device domain
 - Default: The icon used by default if no other is specified.
 
+
+### `force_circular_background`
+
+> **`force_circular_background`** [boolean] _(optional)_
+
+This option forces a **circular background** to be displayed behind the icon shown on the card.
+
+HA 2025.3 bring a lot of improvement and change the circular background strategy: <https://www.home-assistant.io/blog/2025/03/05/release-20253/>
+
+This card evaluate HA version and adapt it according to your entity domain and your action strategy. If you want to avoid this strategy you can use this parameter.
+
+When set to `true`, a circular shape will appear behind the icon, regardless of the HA version, entity domain or action defined. This helps create a cleaner, more consistent visual appearance with Mushroom card.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+entity: timer.living_room
+force_circular_background: true
+```
+
 #### `color`
 
 > **`color`** [string] _(optional)_
 
 The color of the icon. Accepts color names, RGB values, or HEX codes.
+
+When defining a color by name, we utilize the standard CSS color palette, which has evolved over time to include extended color keywords, X11 colors, and SVG colors (updated in 2022: https://www.w3.org/TR/css-color-3/#svg-color).
+
+To maintain a consistent look & feel, we translate color names to Home Assistant's color definitions. We provide a list of these colors below. If a color is missing, please do not hesitate to let us know. If you choose a CSS-compatible color name that is not part of this list, the rendering will be as defined by the CSS standard.
+
+_Color name (HA)_:
+| Color name | Card will use |
+|---|---|
+| primary | var(--primary-color) |
+| accent | var(--accent-color) |
+| red | var(--red-color) |
+| pink | var(--pink-color) |
+| purple | var(--purple-color) |
+| deep-purple | var(--deep-purple-color) |
+| indigo | var(--indigo-color) |
+| blue | var(--blue-color) |
+| light-blue | var(--light-blue-color) |
+| cyan | var(--cyan-color) |
+| teal | var(--teal-color) |
+| green | var(--green-color) |
+| light-green | var(--light-green-color) |
+| lime | var(--lime-color) |
+| yellow | var(--yellow-color) |
+| amber | var(--amber-color) |
+| orange | var(--orange-color) |
+| deep-orange | var(--deep-orange-color) |
+| brown | var(--brown-color) |
+| light-grey | var(--light-grey-color) |
+| grey | var(--grey-color) |
+| dark-grey | var(--dark-grey-color) |
+| blue-grey | var(--blue-grey-color) |
+| black | var(--black-color) |
+| white | var(--white-color) |
+| disabled | var(--disabled-color) |
 
 _Default_:
 
@@ -724,7 +834,7 @@ name: RVB
 icon: mdi:grain
 color: rgb(110, 65, 171)
 bar_color: rgb(110, 65, 171)
-tap_action:
+icon_tap_action:
   action: more-info
 ```
 
@@ -739,7 +849,7 @@ name: RVB
 icon: mdi:grain
 color: yellow
 bar_color: green
-tap_action:
+icon_tap_action:
   action: more-info
 layout: vertical
 grid_options:
@@ -779,7 +889,7 @@ filter:
         type: custom:entity-progress-card
         entity: this.entity_id
         theme: optimal_when_high
-        tap_action:
+        icon_tap_action:
           action: more-info
 card:
   square: false
@@ -858,7 +968,7 @@ type: custom:entity-progress-card
 entity: light.bandeau_led
 attribute: brightness
 theme: light
-tap_action:
+icon_tap_action:
   action: more-info
 ```
 
@@ -888,7 +998,7 @@ unit: °C
 min_value: -20
 max_value: 45
 theme: temperature
-tap_action:
+icon_tap_action:
   action: more-info
 ```
 
@@ -923,7 +1033,7 @@ type: custom:entity-progress-card
 entity: sensor.xxx
 attribute: humidity
 theme: humidity
-tap_action:
+icon_tap_action:
   action: more-info
 ```
 
@@ -954,7 +1064,7 @@ unit: ppb
 decimal: 0
 max_value: 300
 theme: voc
-tap_action:
+icon_tap_action:
   action: more-info
 ```
 
@@ -989,7 +1099,7 @@ unit: µg/m³
 decimal: 0
 max_value: 50
 theme: pm25
-tap_action:
+icon_tap_action:
   action: more-info
 ```
 
@@ -1170,7 +1280,29 @@ This card supports multiple languages to provide:
 - Context-specific error messages
 
 We strive to make this card as inclusive as possible, with support for:
-🇬🇧 English, 🇪🇸 Spanish, 🇩🇪 German, 🇮🇹 Italian, 🇫🇷 French, 🇵🇱 Polish, 🇳🇱 Dutch, 🇲🇰 Macedonian, 🇵🇹 Portuguese, 🇩🇰 Danish, 🇸🇪 Swedish, and 🇳🇴 Norwegian (Bokmål).
+
+- 🇸🇦 `ar` - العربية (Arabic)
+- 🇩🇰 `da` - Dansk
+- 🇩🇪 `de` - Deutsch
+- 🇬🇷 `el` - Ελληνικά
+- 🇬🇧 `en` - English
+- 🇫🇮 `fi` - Suomi
+- 🇫🇷 `fr` - Français
+- 🇭🇷 `hr` - Hrvatski
+- 🇮🇹 `it` - Italiano
+- 🇯🇵 `ja` - 日本語 (Japanese)
+- 🇰🇷 `ko` - 한국어 (Korean)
+- 🇲🇰 `mk` - Македонски
+- 🇳🇴 `nb` - Norsk Bokmål
+- 🇳🇱 `nl` - Nederlands
+- 🇵🇱 `pl` - Polski
+- 🇵🇹 `pt` - Português
+- 🇷🇴 `ro` - Română
+- 🇪🇸 `es` - Español
+- 🇸🇪 `sv` - Svenska
+- 🇹🇷 `tr` - Türkçe
+- 🇨🇳 `zh` - 中文 (Chinese)
+
 More languages may be added in the future to enhance accessibility!
 
 ### 🔢 Intelligent Number Formatting
