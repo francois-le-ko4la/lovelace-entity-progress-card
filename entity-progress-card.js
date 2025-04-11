@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.2.2
+ * @version 1.2.4
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.2.2';
+const VERSION = '1.2.4';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
@@ -296,6 +296,7 @@ const CARD = {
       configChanged: 'config-changed',
       originalTarget: { icon: ['ha-shape', 'ha-svg-icon'] },
       from: { icon: 'icon', card: 'card' },
+      tap: { tapAction: 'tap', holdAction: 'hold', iconTapAction: 'icon_tap' },
     },
     action: {
       default: 'default',
@@ -4084,9 +4085,9 @@ class EntityProgressCard extends HTMLElement {
     const deltaTime = upTime - this.#downTime;
 
     if (this.#isHolding) {
-      this.#fireAction(ev, 'hold'); // Déclencher l'action de "hold" au relâchement après le délai
+      this.#fireAction(ev, CARD.interactions.event.tap.holdAction); // Déclencher l'action de "hold" au relâchement après le délai
     } else if (deltaTime < 500 && Math.abs(ev.clientX - this.#startX) < 5 && Math.abs(ev.clientY - this.#startY) < 5) {
-      this.#fireAction(ev, 'tap'); // Gérer l'action du simple clic (tap)
+      this.#fireAction(ev, CARD.interactions.event.tap.tapAction); // Gérer l'action du simple clic (tap)
     }
     this.#downTime = null;
     this.#clickSource = null;
@@ -4102,18 +4103,21 @@ class EntityProgressCard extends HTMLElement {
     }
   }
 
-  #fireAction(originalEvent, action = 'tap') {
+  #fireAction(originalEvent, action) {
     debugLog('👉 EntityProgressCard.#fireAction()');
     debugLog('  📎 originalEvent: ', originalEvent);
-    action = this.#clickSource === CARD.interactions.event.from.icon ? 'icon_tap' : action;
+    action = this.#clickSource === CARD.interactions.event.from.icon ? CARD.interactions.event.tap.iconTapAction : action;
     debugLog('  📎 action: ', action);
+
+    const config = action === CARD.interactions.event.tap.iconTapAction ? { entity: this.#cardView.config.entity, tap_action: this.#cardView.config[`${action}_action`] } : this.#cardView.config;
+    action = action === CARD.interactions.event.tap.iconTapAction ? CARD.interactions.event.tap.tapAction : action;
 
     this.dispatchEvent(
       new CustomEvent('hass-action', {
         bubbles: true,
         composed: true,
         detail: {
-          config: this.#cardView.config,
+          config: config,
           action: action,
           originalEvent,
         },
