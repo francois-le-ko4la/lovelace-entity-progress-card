@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.2.4
+ * @version 1.2.5
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.2.4';
+const VERSION = '1.2.5';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
@@ -260,7 +260,7 @@ const CARD = {
       secondaryInfoError: { class: 'secondary-info-error' },
       show: 'show',
       hide: 'hide',
-      clickable: { card: 'clickableCard', icon: 'clickableIcon'},
+      clickable: { card: 'clickableCard', icon: 'clickableIcon' },
       hiddenComponent: {
         icon: { label: 'icon', class: 'hide_icon' },
         shape: { label: 'shape', class: 'hide_shape' },
@@ -296,7 +296,14 @@ const CARD = {
       configChanged: 'config-changed',
       originalTarget: { icon: ['ha-shape', 'ha-svg-icon'] },
       from: { icon: 'icon', card: 'card' },
-      tap: { tapAction: 'tap', holdAction: 'hold', iconTapAction: 'icon_tap' },
+      tap: {
+        tapAction: 'tap',
+        holdAction: 'hold',
+        doubleTapAction: 'double_tap',
+        iconTapAction: 'icon_tap',
+        iconHoldAction: 'icon_hold',
+        iconDoubleTapAction: 'icon_double_tap',
+      },
     },
     action: {
       default: 'default',
@@ -319,8 +326,11 @@ const CARD = {
       layout: { type: 'layout', element: 'ha-select' },
       bar_size: { type: 'bar_size', element: 'ha-select' },
       tap_action: { type: 'tap_action', element: 'ha-form' },
+      double_tap_action: { type: 'double_tap_action', element: 'ha-form' },
       hold_action: { type: 'hold_action', element: 'ha-form' },
       icon_tap_action: { type: 'icon_tap_action', element: 'ha-form' },
+      icon_double_tap_action: { type: 'icon_double_tap_action', element: 'ha-form' },
+      icon_hold_action: { type: 'icon_hold_action', element: 'ha-form' },
       theme: { type: 'theme', element: 'ha-select' },
       color: { type: 'color', element: 'ha-form' },
       number: { type: 'number', element: 'ha-textfield' },
@@ -524,8 +534,11 @@ const LANGUAGES = {
         max_value: 'Maximum value',
         max_value_attribute: 'Attribute (max_value)',
         tap_action: 'Tap behavior',
+        double_tap_action: 'Double tap behavior',
         hold_action: 'Hold behavior',
         icon_tap_action: 'Icon tap behavior',
+        icon_double_tap_action: 'Icon double tap behavior',
+        icon_hold_action: 'Icon hold behavior',
         toggle_icon: 'Icon',
         toggle_name: 'Name',
         toggle_unit: 'Unit',
@@ -591,8 +604,11 @@ const LANGUAGES = {
         max_value: 'Valeur maximum',
         max_value_attribute: 'Attribut (max_value)',
         tap_action: "Comportement lors d'un appui court",
+        double_tap_action: "Comportement lors d'un double appui",
         hold_action: "Comportement lors d'un appui long",
         icon_tap_action: "Comportement lors de l'appui sur l'icône",
+        icon_double_tap_action: "Comportement lors d'un double appui sur l'icône",
+        icon_hold_action: "Comportement lors d'un appui long sur l'icône",
         toggle_icon: 'Icône',
         toggle_name: 'Nom',
         toggle_unit: 'Unité',
@@ -658,8 +674,11 @@ const LANGUAGES = {
         max_value: 'Valor máximo',
         max_value_attribute: 'Atributo (max_value)',
         tap_action: 'Acción al pulsar brevemente',
+        double_tap_action: 'Acción al pulsar dos veces',
         hold_action: 'Acción al mantener pulsado',
         icon_tap_action: 'Acción al pulsar el icono',
+        icon_double_tap_action: 'Acción al pulsar dos veces el icono',
+        icon_hold_action: 'Acción al mantener pulsado el icono',
         toggle_icon: 'Icono',
         toggle_name: 'Nombre',
         toggle_unit: 'Unidad',
@@ -725,8 +744,11 @@ const LANGUAGES = {
         max_value: 'Valore massimo',
         max_value_attribute: 'Attributo (max_value)',
         tap_action: 'Azione al tocco breve',
+        double_tap_action: 'Azione al doppio tocco',
         hold_action: 'Azione al tocco prolungato',
-        icon_tap_action: 'Azione al tocco dell’icona',
+        icon_tap_action: "Azione al tocco dell'icona",
+        icon_double_tap_action: "Azione al doppio tocco dell'icona",
+        icon_hold_action: "Azione al tocco prolungato dell'icona",
         toggle_icon: 'Icona',
         toggle_name: 'Nome',
         toggle_unit: 'Unità',
@@ -792,8 +814,11 @@ const LANGUAGES = {
         max_value: 'Höchstwert',
         max_value_attribute: 'Attribut (max_value)',
         tap_action: 'Aktion bei kurzem Tippen',
+        double_tap_action: 'Aktion bei doppelt Tippen',
         hold_action: 'Aktion bei langem Tippen',
         icon_tap_action: 'Aktion beim Tippen auf das Symbol',
+        icon_double_tap_action: 'Aktion bei doppelt Tippen auf das Symbol',
+        icon_hold_action: 'Aktion bei langem Tippen auf das Symbol',
         toggle_icon: 'Icon',
         toggle_name: 'Name',
         toggle_unit: 'Einheit',
@@ -859,8 +884,11 @@ const LANGUAGES = {
         max_value: 'Maximale waarde',
         max_value_attribute: 'Attribuut (max_value)',
         tap_action: 'Actie bij korte tik',
+        double_tap_action: 'Actie bij dubbel tikken',
         hold_action: 'Actie bij lang ingedrukt houden',
         icon_tap_action: 'Actie bij tikken op pictogram',
+        icon_double_tap_action: 'Actie bij dubbel tikken op pictogram',
+        icon_hold_action: 'Actie bij lang ingedrukt houden op pictogram',
         toggle_icon: 'Icoon',
         toggle_name: 'Naam',
         toggle_unit: 'Eenheid',
@@ -926,8 +954,11 @@ const LANGUAGES = {
         max_value: 'Maksimalna vrijednost',
         max_value_attribute: 'Atribut (max_value)',
         tap_action: 'Radnja na kratki dodir',
+        double_tap_action: 'Radnja na dupli dodir',
         hold_action: 'Radnja na dugi dodir',
         icon_tap_action: 'Radnja na dodir ikone',
+        icon_double_tap_action: 'Radnja na dupli dodir ikone',
+        icon_hold_action: 'Radnja na dugi dodir ikone',
         toggle_icon: 'Ikona',
         toggle_name: 'Ime',
         toggle_unit: 'Jedinica',
@@ -993,8 +1024,11 @@ const LANGUAGES = {
         max_value: 'Wartość maksymalna',
         max_value_attribute: 'Atrybut (max_value)',
         tap_action: 'Akcja przy krótkim naciśnięciu',
+        double_tap_action: 'Akcja przy podwójnym naciśnięciu',
         hold_action: 'Akcja przy długim naciśnięciu',
         icon_tap_action: 'Akcja przy naciśnięciu ikony',
+        icon_double_tap_action: 'Akcja przy podwójnym naciśnięciu ikony',
+        icon_hold_action: 'Akcja przy długim naciśnięciu ikony',
         toggle_icon: 'Ikona',
         toggle_name: 'Nazwa',
         toggle_unit: 'Jednostka',
@@ -1060,8 +1094,11 @@ const LANGUAGES = {
         max_value: 'Максимална вредност',
         max_value_attribute: 'Атрибут (max_value)',
         tap_action: 'Дејство при краток допир',
+        double_tap_action: 'Дејство при двоен допир',
         hold_action: 'Дејство при долг допир',
         icon_tap_action: 'Дејство при допир на иконата',
+        icon_double_tap_action: 'Дејство при двоен допир на иконата',
+        icon_hold_action: 'Дејство при долг допир на иконата',
         toggle_icon: 'Икона',
         toggle_name: 'Име',
         toggle_unit: 'Јединство',
@@ -1127,8 +1164,11 @@ const LANGUAGES = {
         max_value: 'Valor máximo',
         max_value_attribute: 'Atributo (max_value)',
         tap_action: 'Ação ao toque curto',
+        double_tap_action: 'Ação ao toque duplo',
         hold_action: 'Ação ao toque longo',
         icon_tap_action: 'Ação ao tocar no ícone',
+        icon_double_tap_action: 'Ação ao tocar duplamente no ícone',
+        icon_hold_action: 'Ação ao manter o toque no ícone',
         toggle_icon: 'Ícone',
         toggle_name: 'Nome',
         toggle_unit: 'Unidade',
@@ -1194,8 +1234,11 @@ const LANGUAGES = {
         max_value: 'Maksimal værdi',
         max_value_attribute: 'Attribut (max_value)',
         tap_action: 'Handling ved kort tryk',
+        double_tap_action: 'Handling ved dobbelt tryk',
         hold_action: 'Handling ved langt tryk',
         icon_tap_action: 'Handling ved tryk på ikonet',
+        icon_double_tap_action: 'Handling ved dobbelt tryk på ikonet',
+        icon_hold_action: 'Handling ved langt tryk på ikonet',
         toggle_icon: 'Ikon',
         toggle_name: 'Navn',
         toggle_unit: 'Enhed',
@@ -1261,8 +1304,11 @@ const LANGUAGES = {
         max_value: 'Maksimal verdi',
         max_value_attribute: 'Attributt (max_value)',
         tap_action: 'Handling ved kort trykk',
+        double_tap_action: 'Handling ved dobbelt trykk',
         hold_action: 'Handling ved langt trykk',
         icon_tap_action: 'Handling ved trykk på ikonet',
+        icon_double_tap_action: 'Handling ved dobbelt trykk på ikonet',
+        icon_hold_action: 'Handling ved langt trykk på ikonet',
         toggle_icon: 'Ikon',
         toggle_name: 'Navn',
         toggle_unit: 'Enhet',
@@ -1328,8 +1374,11 @@ const LANGUAGES = {
         max_value: 'Maximalt värde',
         max_value_attribute: 'Attribut (max_value)',
         tap_action: 'Åtgärd vid kort tryck',
+        double_tap_action: 'Åtgärd vid dubbeltryck',
         hold_action: 'Åtgärd vid långt tryck',
         icon_tap_action: 'Åtgärd vid tryck på ikonen',
+        icon_double_tap_action: 'Åtgärd vid dubbeltryck på ikonen',
+        icon_hold_action: 'Åtgärd vid långt tryck på ikonen',
         toggle_icon: 'Ikon',
         toggle_name: 'Namn',
         toggle_unit: 'Enhet',
@@ -1395,8 +1444,11 @@ const LANGUAGES = {
         max_value: 'Μέγιστη τιμή',
         max_value_attribute: 'Χαρακτηριστικό (max_value)',
         tap_action: 'Ενέργεια κατά το σύντομο πάτημα',
+        double_tap_action: 'Ενέργεια κατά το διπλό πάτημα',
         hold_action: 'Ενέργεια κατά το παρατεταμένο πάτημα',
         icon_tap_action: 'Ενέργεια στο πάτημα του εικονιδίου',
+        icon_double_tap_action: 'Ενέργεια στο διπλό πάτημα του εικονιδίου',
+        icon_hold_action: 'Ενέργεια στο παρατεταμένο πάτημα του εικονιδίου',
         toggle_icon: 'Εικονίδιο',
         toggle_name: 'Όνομα',
         toggle_unit: 'Μονάδα',
@@ -1462,8 +1514,11 @@ const LANGUAGES = {
         max_value: 'Maksimiarvo',
         max_value_attribute: 'Attribuutti (max_value)',
         tap_action: 'Toiminto lyhyellä napautuksella',
+        double_tap_action: 'Toiminto kahdella napautuksella',
         hold_action: 'Toiminto pitkällä painalluksella',
         icon_tap_action: 'Toiminto kuvaketta napautettaessa',
+        icon_double_tap_action: 'Toiminto kahdella napautuksella kuvaketta',
+        icon_hold_action: 'Toiminto pitkällä painalluksella kuvaketta',
         toggle_icon: 'Ikoni',
         toggle_name: 'Nimi',
         toggle_unit: 'Yksikkö',
@@ -1529,8 +1584,11 @@ const LANGUAGES = {
         max_value: 'Valoare maximă',
         max_value_attribute: 'Atribut (max_value)',
         tap_action: 'Acțiune la apăsare scurtă',
+        double_tap_action: 'Acțiune la apăsare dublă',
         hold_action: 'Acțiune la apăsare lungă',
         icon_tap_action: 'Acțiune la apăsarea pictogramei',
+        icon_double_tap_action: 'Acțiune la apăsare dublă a pictogramei',
+        icon_hold_action: 'Acțiune la apăsare lungă a pictogramei',
         toggle_icon: 'Pictogramă',
         toggle_name: 'Nume',
         toggle_unit: 'Unitate',
@@ -1596,8 +1654,11 @@ const LANGUAGES = {
         max_value: '最大值',
         max_value_attribute: '属性（最大值）',
         tap_action: '短按时的操作',
+        double_tap_action: '双击时的操作',
         hold_action: '长按时的操作',
         icon_tap_action: '点击图标时的操作',
+        icon_double_tap_action: '双击图标时的操作',
+        icon_hold_action: '长按图标时的操作',
         toggle_icon: '图标',
         toggle_name: '名称',
         toggle_unit: '单位',
@@ -1663,8 +1724,11 @@ const LANGUAGES = {
         max_value: '最大値',
         max_value_attribute: '属性（最大値）',
         tap_action: '短くタップしたときの動作',
+        double_tap_action: 'ダブルタップしたときの動作',
         hold_action: '長押ししたときの動作',
         icon_tap_action: 'アイコンをタップしたときの動作',
+        icon_double_tap_action: 'アイコンをダブルタップしたときの動作',
+        icon_hold_action: 'アイコンを長押ししたときの動作',
         toggle_icon: 'アイコン',
         toggle_name: '名前',
         toggle_unit: '単位',
@@ -1730,8 +1794,11 @@ const LANGUAGES = {
         max_value: '최대값',
         max_value_attribute: '속성 (최대값)',
         tap_action: '짧게 탭 시 동작',
+        double_tap_action: '더블 탭 시 동작',
         hold_action: '길게 누를 시 동작',
         icon_tap_action: '아이콘 탭 시 동작',
+        icon_double_tap_action: '아이콘 더블 탭 시 동작',
+        icon_hold_action: '아이콘 길게 누를 시 동작',
         toggle_icon: '아이콘',
         toggle_name: '이름',
         toggle_unit: '단위',
@@ -1797,8 +1864,11 @@ const LANGUAGES = {
         max_value: 'Maksimum değer',
         max_value_attribute: 'Öznitelik (max_value)',
         tap_action: 'Kısa dokunma davranışı',
+        double_tap_action: 'Çift dokunma davranışı',
         hold_action: 'Uzun basma davranışı',
         icon_tap_action: 'Simgeye dokunma davranışı',
+        icon_double_tap_action: 'Simgeye çift dokunma davranışı',
+        icon_hold_action: 'Simgeye uzun basma davranışı',
         toggle_icon: 'Simge',
         toggle_name: 'Ad',
         toggle_unit: 'Birim',
@@ -1864,8 +1934,11 @@ const LANGUAGES = {
         max_value: 'القيمة القصوى',
         max_value_attribute: 'السمة (max_value)',
         tap_action: 'الإجراء عند النقر القصير',
+        double_tap_action: 'الإجراء عند النقر المزدوج',
         hold_action: 'الإجراء عند الضغط المطول',
         icon_tap_action: 'الإجراء عند النقر على الأيقونة',
+        icon_double_tap_action: 'الإجراء عند النقر المزدوج على الأيقونة',
+        icon_hold_action: 'الإجراء عند الضغط المطول على الأيقونة',
         toggle_icon: 'أيقونة',
         toggle_name: 'الاسم',
         toggle_unit: 'الوحدة',
@@ -1985,12 +2058,33 @@ const EDITOR_INPUT_FIELDS = {
         width: '100%',
         schema: [{ name: 'hold_action', selector: { 'ui-action': {} } }],
       },
+      double_tap_action: {
+        name: 'double_tap_action',
+        type: CARD.editor.fields.double_tap_action.type,
+        isInGroup: null,
+        width: '100%',
+        schema: [{ name: 'double_tap_action', selector: { 'ui-action': {} } }],
+      },
       icon_tap_action: {
         name: 'icon_tap_action',
         type: CARD.editor.fields.icon_tap_action.type,
         isInGroup: null,
         width: '100%',
         schema: [{ name: 'icon_tap_action', selector: { 'ui-action': {} }}],
+      },
+      icon_hold_action: {
+        name: 'icon_hold_action',
+        type: CARD.editor.fields.icon_hold_action.type,
+        isInGroup: null,
+        width: '100%',
+        schema: [{ name: 'icon_hold_action', selector: { 'ui-action': {} }}],
+      },
+      icon_double_tap_action: {
+        name: 'icon_double_tap_action',
+        type: CARD.editor.fields.icon_double_tap_action.type,
+        isInGroup: null,
+        width: '100%',
+        schema: [{ name: 'icon_double_tap_action', selector: { 'ui-action': {} }}],
       },
     },
   },
@@ -3595,31 +3689,34 @@ class ConfigHelper {
   get hasDisabledUnit() {
     return this.#config.disable_unit;
   }
-  get urlPath() {
-    return this.cardTapAction === CARD.interactions.action.url.action && this.#config.tap_action.url_path !== undefined
-      ? this.#config.tap_action.url_path
-      : null;
-  }
-  get navigationPath() {
-    return this.cardTapAction === CARD.interactions.action.navigate.action && this.#config.tap_action.navigation_path !== undefined
-      ? this.#config.tap_action.navigation_path
-      : null;
-  }
-  get navigate_to() {
-    return this.urlPath || this.navigationPath;
-  }
   get cardTapAction() {
     const result = (this.#config.tap_action?.action ?? null) === null ? CARD.interactions.action.default : this.#config.tap_action?.action;
     return result;
   }
+  get cardDoubleTapAction() {
+    const result =
+      (this.#config.double_tap_action?.action ?? null) === null ? CARD.interactions.action.default : this.#config.double_tap_action?.action;
+    return result;
+  }
   get cardHoldAction() {
-    const result = (this.#config.hold_action?.action ?? null) === null ? CARD.interactions.action.default : this.#config.tap_action?.action;
+    const result = (this.#config.hold_action?.action ?? null) === null ? CARD.interactions.action.default : this.#config.hold_action?.action;
     return result;
   }
   get iconTapAction() {
     const result = (this.#config.icon_tap_action?.action ?? null) === null ? CARD.interactions.action.default : this.#config.icon_tap_action?.action;
     return result;
   }
+  get iconDoubleTapAction() {
+    const result =
+      (this.#config.icon_double_tap_action?.action ?? null) === null ? CARD.interactions.action.default : this.#config.icon_double_tap_action?.action;
+    return result;
+  }
+  get iconHoldAction() {
+    const result =
+      (this.#config.icon_hold_action?.action ?? null) === null ? CARD.interactions.action.default : this.#config.icon_hold_action?.action;
+    return result;
+  }
+
   get theme() {
     return this.#config.theme;
   }
@@ -3853,19 +3950,20 @@ class CardView {
   get show_more_info() {
     return [CARD.interactions.action.default, CARD.interactions.action.moreInfo.action].includes(this.#configHelper.cardTapAction);
   }
-  get navigate_to() {
-    return this.#configHelper.navigate_to;
-  }
   get bar() {
     return this.#configHelper.bar;
   }
   get hasClickableIcon() {
-    return this.#configHelper.iconTapAction !== CARD.interactions.action.none.action;
+    return (this.#configHelper.iconTapAction !== CARD.interactions.action.none.action ||
+      this.#configHelper.iconHoldAction !== CARD.interactions.action.none.action ||
+      this.#configHelper.iconDoubleTapAction !== CARD.interactions.action.none.action);
+
   }
   get hasClickableCard() {
     return (
       this.#configHelper.cardTapAction !== CARD.interactions.action.none.action ||
-      this.#configHelper.cardHoldAction !== CARD.interactions.action.none.action
+      this.#configHelper.cardHoldAction !== CARD.interactions.action.none.action ||
+      this.#configHelper.cardDoubleTapAction !== CARD.interactions.action.none.action
     );
   }
 
@@ -3989,6 +4087,8 @@ class EntityProgressCard extends HTMLElement {
   #lastHass = null;
   #autoRefreshInterval = null;
 
+  #tapTimeout = null;
+  #clickCount = 0;
   #holdTimeout = null;
   #downTime = null;
   #isHolding = null;
@@ -4063,11 +4163,13 @@ class EntityProgressCard extends HTMLElement {
   #handleMouseDown(ev) {
     debugLog('👉 handleMouseDown()');
     debugLog('    ', ev.composedPath());
+
     const orginalTarget = ev.composedPath()[0].localName;
 
     this.#clickSource = CARD.interactions.event.originalTarget.icon.includes(orginalTarget)
       ? CARD.interactions.event.from.icon
       : CARD.interactions.event.from.card;
+    debugLog('    clickSource: ', this.#clickSource);
 
     this.#downTime = Date.now();
     this.#startX = ev.clientX;
@@ -4075,27 +4177,53 @@ class EntityProgressCard extends HTMLElement {
     this.#isHolding = false;
 
     this.#holdTimeout = setTimeout(() => {
-      this.#isHolding = true; // Marquer comme un "hold" potentiel si le délai est atteint
-    }, 500); // Seuil de 500ms pour considérer comme un hold
+      this.#isHolding = true; // juste armer le hold
+    }, 500);
+  }
+
+  #resetClickState() {
+    this.#downTime = null;
+    this.#isHolding = false;
   }
 
   #handleMouseUp(ev) {
     clearTimeout(this.#holdTimeout);
+
     const upTime = Date.now();
     const deltaTime = upTime - this.#downTime;
+    const moveThreshold = 5;
+
+    const isClick = deltaTime < 500 && Math.abs(ev.clientX - this.#startX) < moveThreshold && Math.abs(ev.clientY - this.#startY) < moveThreshold;
 
     if (this.#isHolding) {
-      this.#fireAction(ev, CARD.interactions.event.tap.holdAction); // Déclencher l'action de "hold" au relâchement après le délai
-    } else if (deltaTime < 500 && Math.abs(ev.clientX - this.#startX) < 5 && Math.abs(ev.clientY - this.#startY) < 5) {
-      this.#fireAction(ev, CARD.interactions.event.tap.tapAction); // Gérer l'action du simple clic (tap)
+      this.#fireAction(ev, CARD.interactions.event.tap.holdAction);
+      this.#resetClickState();
+      this.#clickCount = 0;
+      return;
     }
-    this.#downTime = null;
-    this.#clickSource = null;
-    this.#isHolding = false; // Réinitialiser l'état
+
+    if (!isClick) {
+      this.#resetClickState();
+      return;
+    }
+
+    this.#clickCount++;
+
+    if (this.#clickCount === 1) {
+      this.#tapTimeout = setTimeout(() => {
+        this.#fireAction(ev, CARD.interactions.event.tap.tapAction);
+        this.#clickCount = 0;
+      }, 300);
+    } else if (this.#clickCount === 2) {
+      clearTimeout(this.#tapTimeout);
+      this.#fireAction(ev, CARD.interactions.event.tap.doubleTapAction);
+      this.#clickCount = 0;
+    }
+
+    this.#resetClickState();
   }
 
   #handleMouseMove(ev) {
-    // Si la souris bouge de plus de 5 pixels pendant le maintien, annuler le timeout du hold potentiel
     if (this.#downTime && (Math.abs(ev.clientX - this.#startX) > 5 || Math.abs(ev.clientY - this.#startY) > 5)) {
       clearTimeout(this.#holdTimeout);
       this.#isHolding = false;
@@ -4106,11 +4234,28 @@ class EntityProgressCard extends HTMLElement {
   #fireAction(originalEvent, action) {
     debugLog('👉 EntityProgressCard.#fireAction()');
     debugLog('  📎 originalEvent: ', originalEvent);
-    action = this.#clickSource === CARD.interactions.event.from.icon ? CARD.interactions.event.tap.iconTapAction : action;
+    debugLog('  📎 original action: ', action);
+    debugLog('    clickSource: ', this.#clickSource);
+
+    const prefixAction = this.#clickSource === CARD.interactions.event.from.icon ? `${CARD.interactions.event.from.icon}_` : '';
+    action = `${prefixAction}${action}`;
     debugLog('  📎 action: ', action);
 
-    const config = action === CARD.interactions.event.tap.iconTapAction ? { entity: this.#cardView.config.entity, tap_action: this.#cardView.config[`${action}_action`] } : this.#cardView.config;
-    action = action === CARD.interactions.event.tap.iconTapAction ? CARD.interactions.event.tap.tapAction : action;
+    let config = null;
+
+    if (
+      [
+        CARD.interactions.event.tap.iconTapAction,
+        CARD.interactions.event.tap.iconHoldAction,
+        CARD.interactions.event.tap.iconDoubleTapAction,
+        CARD.interactions.event.tap.doubleTapAction,
+      ].includes(action)
+    ) {
+      config = { entity: this.#cardView.config.entity, tap_action: this.#cardView.config[`${action}_action`] };
+      action = 'tap';
+    } else {
+      config = this.#cardView.config;
+    }
 
     this.dispatchEvent(
       new CustomEvent('hass-action', {
@@ -4447,8 +4592,11 @@ class EntityProgressCardEditor extends HTMLElement {
       if (
         ![
           CARD.editor.fields.tap_action.type,
+          CARD.editor.fields.double_tap_action.type,
           CARD.editor.fields.hold_action.type,
           CARD.editor.fields.icon_tap_action.type,
+          CARD.editor.fields.icon_double_tap_action.type,
+          CARD.editor.fields.icon_hold_action.type,
           CARD.editor.keyMappings.attribute,
           CARD.editor.keyMappings.max_value_attribute,
           EDITOR_INPUT_FIELDS.theme.field.icon.name,
@@ -4467,8 +4615,11 @@ class EntityProgressCardEditor extends HTMLElement {
     const updateHAFormTypes = [
       CARD.editor.fields.entity.type,
       CARD.editor.fields.tap_action.type,
+      CARD.editor.fields.double_tap_action.type,
       CARD.editor.fields.hold_action.type,
       CARD.editor.fields.icon_tap_action.type,
+      CARD.editor.fields.icon_double_tap_action.type,
+      CARD.editor.fields.icon_hold_action.type,
       CARD.editor.fields.icon.type,
       EDITOR_INPUT_FIELDS.theme.field.bar_color.name,
       EDITOR_INPUT_FIELDS.theme.field.color.name,
@@ -4663,9 +4814,13 @@ class EntityProgressCardEditor extends HTMLElement {
           delete newConfig[changedEvent.target.id];
         }
         break;
-      case EDITOR_INPUT_FIELDS.interaction.field.hold_action.name:
+
       case EDITOR_INPUT_FIELDS.interaction.field.icon_tap_action.name:
-      case EDITOR_INPUT_FIELDS.interaction.field.tap_action.name: {
+      case EDITOR_INPUT_FIELDS.interaction.field.icon_double_tap_action.name:
+      case EDITOR_INPUT_FIELDS.interaction.field.icon_hold_action.name:
+      case EDITOR_INPUT_FIELDS.interaction.field.tap_action.name:
+      case EDITOR_INPUT_FIELDS.interaction.field.double_tap_action.name:
+      case EDITOR_INPUT_FIELDS.interaction.field.hold_action.name: {
         newConfig[changedEvent.target.id] = changedEvent.detail.value[changedEvent.target.id];
         break;
       }
@@ -4826,8 +4981,11 @@ class EntityProgressCardEditor extends HTMLElement {
       case CARD.editor.fields.color.type:
       case CARD.editor.fields.icon.type:
       case CARD.editor.fields.tap_action.type:
+      case CARD.editor.fields.double_tap_action.type:
+      case CARD.editor.fields.hold_action.type:
       case CARD.editor.fields.icon_tap_action.type:
-      case CARD.editor.fields.hold_action.type: {
+      case CARD.editor.fields.icon_double_tap_action.type:
+      case CARD.editor.fields.icon_hold_action.type: {
         inputElement = document.createElement(CARD.editor.fields.tap_action.element);
         if (isInGroup) {
           inputElement.classList.add(isInGroup);

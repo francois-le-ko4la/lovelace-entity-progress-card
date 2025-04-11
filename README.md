@@ -261,15 +261,23 @@ max_value: 255
 The Home Assistant `max_value`'s attribute to display.  
 `max_value` must be an entity.
 
-#### `tap_action`
+#### `xyz_action` (`tap_action`, `double_tap_action`, `hold_action`, `icon_tap_action`, `icon_double_tap_action`, `icon_hold_action`)
 
-> **`tap_action`** OBJ[action: {`more-info` | `toggle` | `perform-action` | `navigate` | `url` | `assist` | `none`} [`navigation_path`: /str/to/lovelace] [`url_path`: <https://example.com>] [····]] _(optional)_
+> **`xyz_action`** OBJ[action: {`more-info` | `toggle` | `perform-action` | `navigate` | `url` | `assist` | `none`} [`navigation_path`: /str/to/lovelace] [`url_path`: <https://example.com>] [····]] _(optional)_
 
-The tap_action property defines the behavior when a user taps on the card. There are several possible actions.
+_`xyz_action`_:
+
+- `tap_action`: Defines the behavior when a user taps on the card. The action could be a navigation, toggle, or any other pre-defined action.
+- `double_tap_action`: Defines the behavior when a user double-taps on the card. This can be used to trigger a different action from the regular tap.
+- `hold_action`: Defines the behavior when the user holds down (long press) on the card. This is often used for actions that should only be triggered with a longer press.
+- `icon_tap_action`: Defines the behavior when the user taps on the icon (typically an icon on a card). This action can be different from the general tap_action of the card.
+- `icon_double_tap_action`: Defines the behavior when the user double-taps on the icon. This can be used to trigger an alternative action from the regular icon_tap_action.
+- `icon_hold_action`: Defines the behavior when the user holds down (long press) on the icon. This action might be used for a different, more powerful interaction compared to the regular tap or double tap.
+
 
 > [!NOTE]
 >
-> `tap_action` ensures consistency with standard Home Assistant cards, allowing users to switch efficiently and seamlessly to this card.
+> `xyz_action` ensures consistency with standard Home Assistant cards, allowing users to switch efficiently and seamlessly to this card.
 > All available options and usage details can be found in the official Home Assistant documentation for actions:
 > <https://www.home-assistant.io/dashboards/actions/>.
 >
@@ -351,26 +359,6 @@ tap_action:
   action: navigate
   navigation_path: /lovelace/lights
 ```
-
-#### `hold_action`
-
-> **`hold_action`** OBJ[action: {`more-info` | `toggle` | `perform-action` | `navigate` | `url` | `assist` | `none`} [`navigation_path`: /str/to/lovelace] [`url_path`: <https://example.com>] [····]] _(optional)_
-
-The `hold_action` property specifies the behavior triggered when the user performs a long press on the card. Multiple action types are supported.
-
-See `tap_action`.
-
-#### `icon_tap_action`
-
-> **`icon_tap_action`** OBJ[action: {`more-info` | `toggle` | `perform-action` | `navigate` | `url` | `assist` | `none`} [`navigation_path`: /str/to/lovelace] [`url_path`: <https://example.com>] [····]] _(optional)_
-
-The `icon_tap_action` property specifies the behavior triggered when the user taps the icon. Multiple action types are supported.
-
-See `tap_action`.
-
-> [!NOTE]
-> When `icon_tap_action` is enabled, the icon will show a circular background, following the updated design standards introduced in Home Assistant 2025.3.
->
 
 #### `theme`
 
