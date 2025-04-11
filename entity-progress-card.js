@@ -4061,9 +4061,10 @@ class EntityProgressCard extends HTMLElement {
 
   #handleMouseDown(ev) {
     debugLog('👉 handleMouseDown()');
-    debugLog('    ', ev.originalTarget.localName);
+    debugLog('    ', ev.composedPath());
+    const orginalTarget = ev.composedPath()[0].localName;
 
-    this.#clickSource = CARD.interactions.event.originalTarget.icon.includes(ev.originalTarget.localName)
+    this.#clickSource = CARD.interactions.event.originalTarget.icon.includes(orginalTarget)
       ? CARD.interactions.event.from.icon
       : CARD.interactions.event.from.card;
 
