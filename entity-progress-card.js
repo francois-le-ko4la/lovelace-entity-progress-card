@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.2.5
+ * @version 1.2.6
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.2.5';
+const VERSION = '1.2.6';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
@@ -129,6 +129,9 @@ const CARD = {
         container: { element: 'div', class: 'progress-bar-container' },
         bar: { element: 'div', class: 'progress-bar' },
         inner: { element: 'div', class: 'progress-bar-inner' },
+        lowWatermark: { element: 'div', class: 'progress-bar-low-wm' },
+        highWatermark: { element: 'div', class: 'progress-bar-high-wm' },
+        watermark: { class: 'progress-bar-wm' }
       },
       badge: {
         container: { element: 'div', class: 'badge' },
@@ -256,6 +259,10 @@ const CARD = {
         color: { var: '--epb-progress-bar-color', default: 'var(--state-icon-color)' },
         size: { var: '--epb-progress-bar-size', default: '0%' },
         orientation: { rtl: 'rtl_orientation' },
+      },
+      watermark: {
+        low: { value: { var: '--epb-low-watermark-value', default: 20 }, color: { var: '--epb-low-watermark-color', default: 'red' }},
+        high: { value: { var: '--epb-high-watermark-value', default: 80 }, color: { var: '--epb-high-watermark-color', default: 'red' }}
       },
       secondaryInfoError: { class: 'secondary-info-error' },
       show: 'show',
@@ -2266,6 +2273,8 @@ const CARD_HTML = `
                 <${CARD.htmlStructure.elements.progressBar.container.element} class="${CARD.htmlStructure.elements.progressBar.container.class}">
                     <${CARD.htmlStructure.elements.progressBar.bar.element} class="${CARD.htmlStructure.elements.progressBar.bar.class}">
                         <${CARD.htmlStructure.elements.progressBar.inner.element} class="${CARD.htmlStructure.elements.progressBar.inner.class}"></${CARD.htmlStructure.elements.progressBar.inner.element}>
+                        <${CARD.htmlStructure.elements.progressBar.lowWatermark.element} class="${CARD.htmlStructure.elements.progressBar.lowWatermark.class}"></${CARD.htmlStructure.elements.progressBar.lowWatermark.element}>
+                        <${CARD.htmlStructure.elements.progressBar.highWatermark.element} class="${CARD.htmlStructure.elements.progressBar.highWatermark.class}"></${CARD.htmlStructure.elements.progressBar.highWatermark.element}>
                     </${CARD.htmlStructure.elements.progressBar.bar.element}>
                 </${CARD.htmlStructure.elements.progressBar.container.element}>
             </${CARD.htmlStructure.elements.secondaryInfo.element}>
@@ -2359,6 +2368,7 @@ const CARD_CSS = `
         height: 36px;
         border-radius: 50%;
         background-color: var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default});
+        isolation: isolate;
         opacity: 0.2;
     }
     
@@ -2486,6 +2496,35 @@ const CARD_CSS = `
         background-color: var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default});
         transition: width 0.3s ease;
         will-change: width;
+    }
+    
+    .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+        display: none;
+        position: absolute;
+        height: 100%;
+        background-color: red;
+        top: 0;
+        left: 0;
+        width: var(--epb-low-watermark-value, 20%);
+        background-color: var(--epb-low-watermark-color, red);
+        isolation: isolate;
+        opacity: 0.4;
+    }
+    .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+        display: none;
+        position: absolute;
+        height: 100%;
+        background-color: red;
+        top: 0;
+        right: 0;
+        width: calc(100% - var(--epb-high-watermark-value, 80%));
+        background-color: var(--epb-high-watermark-color, orange);
+        isolation: isolate;
+        opacity: 0.4;
+    }
+    .${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
+    .${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+        display: flex;
     }
 
     .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.name.class} {
@@ -3723,6 +3762,14 @@ class ConfigHelper {
   get custom_theme() {
     return this.#config.custom_theme;
   }
+  get watermark() {
+    return {
+      low: this.#config?.watermark?.low ?? 20,
+      low_color: this.#config?.watermark?.low_color ?? 'red',
+      high: this.#config?.watermark?.high ?? 80,
+      high_color: this.#config?.watermark?.high_color ?? 'red',
+    };
+  }
   get reverse() {
     return this.#config.reverse;
   }
@@ -3983,6 +4030,16 @@ class CardView {
             CARD.interactions.action.performAction.action,
           ].includes(this.#configHelper.iconTapAction)
       : true;
+  }
+  get hasWatermark() {
+    return this.#configHelper.config.watermark !== undefined;
+  }
+  get watermark() {
+    const result = this.#configHelper.watermark;
+    result.high_color = this.#convertColorFromConfig(result.high_color);
+    result.low_color = this.#convertColorFromConfig(result.low_color);
+
+    return result;
   }
   get hasHiddenIcon() {
     return this.#isComponentConfiguredAsHidden(CARD.style.dynamic.hiddenComponent.icon.label);
@@ -4351,6 +4408,10 @@ class EntityProgressCard extends HTMLElement {
     card.classList.toggle(CARD.style.dynamic.hiddenComponent.name.class, this.#cardView.hasHiddenName);
     card.classList.toggle(CARD.style.dynamic.hiddenComponent.secondary_info.class, this.#cardView.hasHiddenSecondaryInfo);
     card.classList.toggle(CARD.style.dynamic.hiddenComponent.progress_bar.class, this.#cardView.hasHiddenProgressBar);
+    card.classList.toggle(
+      `${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.progressBar.watermark.class}`,
+      this.#cardView.hasWatermark
+    );
 
     card.innerHTML = CARD_HTML;
     const style = document.createElement(CARD.style.element);
@@ -4400,6 +4461,10 @@ class EntityProgressCard extends HTMLElement {
       el.style.setProperty(CARD.style.dynamic.progressBar.color.var, this.#cardView.bar_color);
       el.style.setProperty(CARD.style.dynamic.progressBar.size.var, `${this.#cardView.percent}%`);
       el.style.setProperty(CARD.style.dynamic.iconAndShape.color.var, this.#cardView.color);
+      el.style.setProperty(CARD.style.dynamic.watermark.high.value.var, `${this.#cardView.watermark.high}%`);
+      el.style.setProperty(CARD.style.dynamic.watermark.high.color.var, this.#cardView.watermark.high_color);
+      el.style.setProperty(CARD.style.dynamic.watermark.low.value.var, `${this.#cardView.watermark.low}%`);
+      el.style.setProperty(CARD.style.dynamic.watermark.low.color.var, this.#cardView.watermark.low_color);
     });
   }
 
