@@ -13,9 +13,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - name: Copy sources to temp
+        run: |
+          mkdir temp
+          cp *.js temp/
+      - name: Clean debugLog calls and function
+        run: |
+          for file in temp/*.js; do
+            sed -i '/^\s*debugLog(.*);/d' "$file"
+            sed -i '/function debugLog(.*)/,/^}/d' "$file"
+          done
       - name: Process JS Files
         run: |
-          npx esbuild *.js --minify --outdir=dist
+          npx esbuild temp/*.js --minify --outdir=dist
       - name: Upload to Release
         uses: svenstaro/upload-release-action@v2
         with:
