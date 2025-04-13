@@ -2744,7 +2744,7 @@ const CARD_CSS = `
     }
 
     .accordion.expanded .${CARD.editor.fields.accordion.content.class} {
-        max-height: 1000px;
+        max-height: 500000px;
         overflow: visible;
         padding-top: 30px;
         padding-bottom: 30px;
@@ -3067,6 +3067,11 @@ class PercentHelper {
     }
 
     return this.#unit.value ? `${formattedValue}${this.#unit.value}` : formattedValue;
+  }
+  calcWatermark(value) {
+    return [CARD.config.unit.default, CARD.config.unit.disable].includes(this.#unit.value)
+      ? value
+      : ((value - this.#min.value) / this.range) * 100;
   }
 }
 
@@ -4036,10 +4041,12 @@ class CardView {
   }
   get watermark() {
     const result = this.#configHelper.watermark;
-    result.high_color = this.#convertColorFromConfig(result.high_color);
-    result.low_color = this.#convertColorFromConfig(result.low_color);
-
-    return result;
+    return {
+      low: this.#percentHelper.calcWatermark(result.low),
+      low_color: this.#convertColorFromConfig(result.low_color),
+      high: this.#percentHelper.calcWatermark(result.high),
+      high_color: this.#convertColorFromConfig(result.high_color),
+    };
   }
   get hasHiddenIcon() {
     return this.#isComponentConfiguredAsHidden(CARD.style.dynamic.hiddenComponent.icon.label);

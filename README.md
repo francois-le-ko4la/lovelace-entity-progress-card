@@ -819,9 +819,9 @@ The `watermark` option allows you to visually highlight specific value threshold
 
 _Options_:
 
-- `high` (number/%): The upper value where the bar will start indicating a high zone (0–100).
+- `high` (number): The upper value where the bar will start indicating a high zone (0–100).
 - `high_color` (string): The CSS color used for the high watermark zone (can be a name or hex).
-- `low` (number/%): The lower value where the bar starts highlighting a low zone (0–100).
+- `low` (number): The lower value where the bar starts highlighting a low zone (0–100).
 - `low_color` (string): The CSS color used for the low watermark zone.
 
 _Example_:
@@ -835,6 +835,8 @@ watermark:
   low: 10           # 🔻 Lower threshold (e.g., minimum safe battery level)
   low_color: yellow # 🎨 Color to indicate the low watermark zone
 ```
+
+Thanks to automatic **unit detection**, the card intelligently interprets your thresholds depending on the entity’s native unit.
 
 
 ### 📎 YAML
