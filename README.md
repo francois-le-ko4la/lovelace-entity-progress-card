@@ -825,7 +825,7 @@ _Options_:
 - `low_color` (string): The CSS color used for the low watermark zone.
 - `type` (string): Defines the style of the watermark overlay.
   - `block` (default): Flat color over the bar
-  - `lines`: Vertical lines pattern (like a hatch effect)
+  - `line`: Vertical lines pattern (like a hatch effect)
 - `opacity` (number): Adjusts the transparency of the watermark overlay (from 0 = fully transparent to 1 = fully opaque).
 
 _Example_:
