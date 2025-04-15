@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.2.6
+ * @version 1.2.8
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.2.6';
+const VERSION = '1.2.8';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
@@ -262,7 +262,8 @@ const CARD = {
       },
       watermark: {
         low: { value: { var: '--epb-low-watermark-value', default: 20 }, color: { var: '--epb-low-watermark-color', default: 'red' }},
-        high: { value: { var: '--epb-high-watermark-value', default: 80 }, color: { var: '--epb-high-watermark-color', default: 'red' }}
+        high: { value: { var: '--epb-high-watermark-value', default: 80 }, color: { var: '--epb-high-watermark-color', default: 'red' }},
+        opacity: { var: '--epb-watermark-opacity-value', default: 0.8 },
       },
       secondaryInfoError: { class: 'secondary-info-error' },
       show: 'show',
@@ -2502,29 +2503,38 @@ const CARD_CSS = `
         display: none;
         position: absolute;
         height: 100%;
-        background-color: red;
         top: 0;
         left: 0;
         width: var(--epb-low-watermark-value, 20%);
-        background-color: var(--epb-low-watermark-color, red);
-        isolation: isolate;
-        opacity: 0.4;
+        background-color: var(--epb-low-watermark-color, var(--red-color));
+        mix-blend-mode: hard-light;
+        opacity: var(--epb-watermark-opacity-value, 0.8);  
     }
     .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
         display: none;
         position: absolute;
         height: 100%;
-        background-color: red;
         top: 0;
         right: 0;
         width: calc(100% - var(--epb-high-watermark-value, 80%));
-        background-color: var(--epb-high-watermark-color, orange);
-        isolation: isolate;
-        opacity: 0.4;
+        background-color: var(--epb-high-watermark-color, var(--red-color));
+        mix-blend-mode: hard-light;
+        opacity: var(--epb-watermark-opacity-value, 0.8);  
     }
+    .${CARD.style.dynamic.show}-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
+    .${CARD.style.dynamic.show}-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
     .${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
     .${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
         display: flex;
+    }
+
+    .${CARD.style.dynamic.show}-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+        right: calc(100% - var(--epb-high-watermark-value, 80%));
+        width: 1px;
+    }
+    .${CARD.style.dynamic.show}-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class}  {
+        left: var(--epb-low-watermark-value, 20%);
+        width: 1px;
     }
 
     .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.name.class} {
@@ -2767,9 +2777,9 @@ const CARD_CSS = `
 function debugLog(message, variable) {
   if (CARD.config.debug) {
     if (variable !== undefined) {
-      console.debug(message, variable);
+      console.debug(`${message}`, variable);
     } else {
-      console.debug(message);
+      console.debug(`${message}`);
     }
   }
 }
@@ -2903,7 +2913,7 @@ class PercentHelper {
   #isReversed = false;
 
   constructor() {
-    this.#hassProvider = new HassProvider(this.constructor.name);
+    this.#hassProvider = new HassProvider();
   }
 
   /******************************************************************************************
@@ -3242,8 +3252,8 @@ class HassProvider {
   #hass = null;
   #isValid = false;
 
-  constructor(callerName) {
-    debugLog(`👉 HassProvider(${callerName})`);
+  constructor() {
+    debugLog('👉 HassProvider()');
     if (HassProvider.#instance) {
       return HassProvider.#instance;
     }
@@ -3308,16 +3318,18 @@ class EntityHelper {
   #isAvailable = false;
   #id = null;
   #attribute = null;
+  #attributes = null;
   #state = null;
   #domain = null;
 
   constructor() {
-    this.#hassProvider = new HassProvider(this.constructor.name);
+    this.#hassProvider = new HassProvider();
   }
 
   set id(id) {
     this.#id = id;
     this.#isValid = false;
+    this.#attributes = null;
     this.#value = 0;
     if (!(typeof this.#id === 'string' && this.#id)) {
       return;
@@ -3381,7 +3393,7 @@ class EntityHelper {
     return;
   }
   #manageStdEntity() {
-    if (this.hasAttribute) {
+    if (this.#attribute || ATTRIBUTE_MAPPING[this.#domain]?.attribute) {
       const attribute = this.#attribute ?? ATTRIBUTE_MAPPING[this.#domain].attribute;
       if (attribute && Object.hasOwn(this.states.attributes, attribute)) {
         this.#value = this.states.attributes[attribute] ?? 0;
@@ -3448,6 +3460,13 @@ class EntityHelper {
   #getIconByDomain() {
     return this.#domain && Object.hasOwn(CARD.style.icon.byDeviceDomain, this.#domain) ? CARD.style.icon.byDeviceDomain[this.#domain] : null;
   }
+  get #numericAttributes() {
+    const state = this.#hassProvider.hass.states[this.#id];
+    if (!state?.attributes) return null;
+
+    /* eslint-disable no-unused-vars */
+    return Object.fromEntries(Object.entries(state.attributes).filter(([_, value]) => typeof value === 'number'));
+  }
 
   /**
    * Returns the icon of the entity, if valid.
@@ -3459,10 +3478,10 @@ class EntityHelper {
    *
    */
   get hasAttribute() {
-    return this.#isValid ? !!ATTRIBUTE_MAPPING[this.#domain] : false;
+    return this.#isValid && this.states && this.states.attributes !== undefined && Object.keys(this.attributes ?? {}).length > 0 ? true : false;
   }
   get defaultAttribute() {
-    return this.#isValid && this.hasAttribute ? ATTRIBUTE_MAPPING[this.#domain].attribute : null;
+    return this.#isValid && !!ATTRIBUTE_MAPPING[this.#domain] ? ATTRIBUTE_MAPPING[this.#domain].attribute : null;
   }
   get name() {
     return this.#isValid ? this.#hassProvider.hass.states[this.#id]?.attributes?.friendly_name : null;
@@ -3477,7 +3496,10 @@ class EntityHelper {
     return this.#isValid ? this.#hassProvider?.hass?.entities?.[this.#id]?.display_precision ?? null : null;
   }
   get attributes() {
-    return this.#isValid ? this.#hassProvider.hass.states[this.#id]?.attributes ?? null : null;
+    if (this.#attributes === null) {
+      this.#attributes = this.#isValid ? this.#numericAttributes : null;
+    }
+    return this.#attributes;
   }
   get isTimer() {
     return this.#domain === CARD.config.entity.type.timer;
@@ -3636,7 +3658,7 @@ class ConfigHelper {
   #hassProvider = null;
 
   constructor() {
-    this.#hassProvider = new HassProvider(this.constructor.name);
+    this.#hassProvider = new HassProvider();
   }
 
   /******************************************************************************************
@@ -3773,6 +3795,8 @@ class ConfigHelper {
       low_color: this.#config?.watermark?.low_color ?? 'red',
       high: this.#config?.watermark?.high ?? 80,
       high_color: this.#config?.watermark?.high_color ?? 'red',
+      opacity: this.#config?.watermark?.opacity ?? 0.8,
+      type: this.#config?.watermark?.type ?? 'block', // 'line' | 'block'
     };
   }
   get reverse() {
@@ -3845,7 +3869,7 @@ class CardView {
   #isReversed = false;
 
   constructor() {
-    this.#hassProvider = new HassProvider(this.constructor.name);
+    this.#hassProvider = new HassProvider();
   }
 
   /******************************************************************************************
@@ -4046,6 +4070,8 @@ class CardView {
       low_color: this.#convertColorFromConfig(result.low_color),
       high: this.#percentHelper.calcWatermark(result.high),
       high_color: this.#convertColorFromConfig(result.high_color),
+      opacity: result.opacity,
+      type: result.type,
     };
   }
   get hasHiddenIcon() {
@@ -4415,8 +4441,9 @@ class EntityProgressCard extends HTMLElement {
     card.classList.toggle(CARD.style.dynamic.hiddenComponent.name.class, this.#cardView.hasHiddenName);
     card.classList.toggle(CARD.style.dynamic.hiddenComponent.secondary_info.class, this.#cardView.hasHiddenSecondaryInfo);
     card.classList.toggle(CARD.style.dynamic.hiddenComponent.progress_bar.class, this.#cardView.hasHiddenProgressBar);
+    const type = this.#cardView.watermark.type === 'line' ? 'line-' : '';
     card.classList.toggle(
-      `${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.progressBar.watermark.class}`,
+      `${CARD.style.dynamic.show}-${type}${CARD.htmlStructure.elements.progressBar.watermark.class}`,
       this.#cardView.hasWatermark
     );
 
@@ -4472,6 +4499,7 @@ class EntityProgressCard extends HTMLElement {
       el.style.setProperty(CARD.style.dynamic.watermark.high.color.var, this.#cardView.watermark.high_color);
       el.style.setProperty(CARD.style.dynamic.watermark.low.value.var, `${this.#cardView.watermark.low}%`);
       el.style.setProperty(CARD.style.dynamic.watermark.low.color.var, this.#cardView.watermark.low_color);
+      el.style.setProperty(CARD.style.dynamic.watermark.opacity.var, this.#cardView.watermark.opacity);
     });
   }
 
@@ -4629,7 +4657,7 @@ class EntityProgressCardEditor extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: CARD.config.shadowMode });
-    this.#hassProvider = new HassProvider(this.constructor.name);
+    this.#hassProvider = new HassProvider();
   }
 
   set hass(hass) {
