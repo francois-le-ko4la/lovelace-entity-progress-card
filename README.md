@@ -538,7 +538,7 @@ _Order of Priority for the Icon:_
 - Default: The icon used by default if no other is specified.
 
 
-### `force_circular_background`
+### `force_circular_background` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#reverse-)
 
 > **`force_circular_background`** [boolean] _(optional)_
 
