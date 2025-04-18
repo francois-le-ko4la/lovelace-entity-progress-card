@@ -812,9 +812,9 @@ disable_unit: true
 
 #### `badge` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#badge-)
 
-> **`badge`** [JINJA] _(optional)_:
+> **`badge_icon`** [JINJA] _(optional)_:
 
-The `badge` option lets you display a dynamic badge, offering a quick status hint or symbolic representation based on logic or sensor values.
+The `badge_icon` option lets you display a dynamic badge, offering a quick status hint or symbolic representation based on logic or sensor values.
 
 This field supports templating using [Home Assistant Jinja2 templates](https://www.home-assistant.io/docs/configuration/templating/), allowing the icon to be conditionally rendered.
 
@@ -823,7 +823,7 @@ _Example_:
 ```yaml
 type: custom:entity-progress-card
 ····
-badge: >-
+badge_icon: >-
   {% if states('sensor.temperature') | float > 30 %}
     mdi:weather-sunny-alert
   {% else %}
@@ -834,6 +834,25 @@ badge: >-
 > [!NOTE]
 >
 > If the template returns nothing (i.e., empty string or None), the badge will not be displayed.
+
+> **`badge_color`** [JINJA] _(optional)_:
+
+The `badge_color` option lets you setup a dynamic badge's background color, offering a quick status hint or symbolic representation based on logic or sensor values.
+
+This field supports templating using [Home Assistant Jinja2 templates](https://www.home-assistant.io/docs/configuration/templating/), allowing the icon to be conditionally rendered.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+····
+badge_color: >-
+  {% if states('sensor.temperature') | float > 30 %}
+    red
+  {% else %}
+    green
+  {% endif %}
+```
 
 #### `custom_info` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#custom_info-)
 

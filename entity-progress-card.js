@@ -3994,7 +3994,7 @@ class CardView {
       !(
         this.isUnavailable ||
         this.isNotFound ||
-        (this.#configHelper.config.badge !== undefined) ||
+        (this.#configHelper.config.badge_icon !== undefined) ||
         (this.#currentValue.isTimer &&
           (this.#currentValue.value.state === CARD.config.entity.state.paused || this.#currentValue.value.state === CARD.config.entity.state.active))
       )
@@ -4535,7 +4535,7 @@ class EntityProgressCard extends HTMLElement {
           }
         });
         break;
-      case 'badge': {
+      case 'badge_icon': {
         const badgeInfo = this.#cardView.badgeInfo;
         const isBadgeEnable = this.#cardView.isBadgeEnable;
         const isMdiIcon = content.includes('mdi:');
@@ -4545,8 +4545,14 @@ class EntityProgressCard extends HTMLElement {
             `${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class}`,
             isBadgeEnable
           );
-          this.#setBadge(content, 'var(--white-color)', 'var(--success-color)');
+          this.#setBadgeIcon(content);
         }
+        break;
+      }
+      case 'badge_color': {
+        const backgroundColor = DEF_COLORS.includes(content) ? `var(--${content}-color)` : content;
+        const color = 'var(--white-color)';
+        this.#setBadgeColor(color, backgroundColor);
         break;
       }
     }
@@ -4566,7 +4572,8 @@ class EntityProgressCard extends HTMLElement {
   async #processJinja() {
     const templates = [];
     templates['custom_info'] = this.#cardView.config.custom_info || '';
-    templates['badge'] = this.#cardView.config.badge || '';
+    templates['badge_icon'] = this.#cardView.config.badge_icon || '';
+    templates['badge_color'] = this.#cardView.config.badge_color || '';
 
     this.#cleanUpSubscribeTemplate();
 
@@ -4637,6 +4644,11 @@ class EntityProgressCard extends HTMLElement {
   }
 
   #setBadge(icon, color, backgroundColor) {
+    this.#setBadgeIcon(icon);
+    this.#setBadgeColor(color, backgroundColor);
+  }
+
+  #setBadgeIcon(icon) {
     // Vérifie si l'icône a réellement changé
     this.#updateElement(CARD.htmlStructure.elements.badge.icon.class, (el) => {
       const currentIcon = el.getAttribute(CARD.style.icon.badge.default.attribute);
@@ -4644,7 +4656,8 @@ class EntityProgressCard extends HTMLElement {
         el.setAttribute(CARD.style.icon.badge.default.attribute, icon);
       }
     });
-
+  }
+  #setBadgeColor(color, backgroundColor) {
     // Vérifie si la couleur ou l'arrière-plan a changé avant d'appliquer la mise à jour
     this.#updateElement(CARD.htmlStructure.card.element, (el) => {
       const currentBackgroundColor = el.style.getPropertyValue(CARD.style.dynamic.badge.backgroundColor.var);
@@ -4656,7 +4669,6 @@ class EntityProgressCard extends HTMLElement {
       }
     });
   }
-
   /**
    * Displays an error alert with the provided message.
    *
