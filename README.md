@@ -111,17 +111,16 @@ attribute: brightness
 
 _Supported entities:_
 
+All entities that have an attribute containing a numeric value are supported.
+This allows the card to work with a wide range of sensors, statistics, or other entities exposing numeric data through their attributes.
+
+_default attribute:_
+
 | entity (supported) | default attribute |
 | ------------------ | ----------------- |
 | cover.xxx          | current_position  |
 | light.xxx          | brightness (%)    |
 | fan.xxx            | percentage        |
-| climate.xxx        | N/A               |
-| humidifier.xxx     | N/A               |
-| media_player.xxx   | N/A               |
-| vacuum.xxx         | N/A               |
-| device_tracker.xxx | N/A               |
-| weather.xxx        | N/A               |
 
 #### `name`
 
