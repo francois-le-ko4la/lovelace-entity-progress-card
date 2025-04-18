@@ -811,6 +811,62 @@ type: custom:entity-progress-card
 disable_unit: true
 ```
 
+#### `badge`
+
+> **`badge`** [JINJA] _(optional)_:
+
+The `badge` option lets you display a dynamic badge, offering a quick status hint or symbolic representation based on logic or sensor values.
+
+This field supports templating using [Home Assistant Jinja2 templates](https://www.home-assistant.io/docs/configuration/templating/), allowing the icon to be conditionally rendered.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+····
+badge: >-
+  {% if states('sensor.temperature') | float > 30 %}
+    mdi:weather-sunny-alert
+  {% else %}
+    mdi:thermometer
+  {% endif %}
+```
+
+> [!NOTE]
+>
+> If the template returns nothing (i.e., empty string or None), the badge will not be displayed.
+
+#### `custom_info`
+
+> **`custom_info`** [JINJA] _(optional)_:
+
+The `custom_info` option allows you to display additional, customizable text or HTML next to the entity’s name or value. It supports full [Home Assistant Jinja2 templates](https://www.home-assistant.io/docs/configuration/templating/) and inline HTML, enabling you to style or conditionally format the information based on sensor states or logic.
+
+_Useful for adding_:
+
+- Supplementary sensor data
+- Conditional status messages
+- Inline styling (colors, emphasis, etc.)
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+····
+custom_info: >-
+  {% if states('sensor.temperature') | float > 25 %}
+    <span style="color: red;">{{ states('sensor.temperature') }} °C – Hot</span>
+  {% else %}
+    <span style="color: blue;">{{ states('sensor.temperature') }} °C – Cool</span>
+  {% endif %}
+```
+
+> [!NOTE]
+>
+> - This field supports HTML for advanced formatting.
+> - If the template evaluates to an empty string, nothing will be displayed.
+> - If the card is showing an error badge (e.g. due to an unavailable or invalid entity), the custom_info content will not be evaluated.
+
 #### `watermark`
 
 > **`watermark`** [array] _(optional)_:
@@ -827,6 +883,8 @@ _Options_:
   - `block` (default): Flat color over the bar
   - `line`: Vertical lines pattern (like a hatch effect)
 - `opacity` (number): Adjusts the transparency of the watermark overlay (from 0 = fully transparent to 1 = fully opaque).
+- `disable_low` (boolean): If set to true, disables the low watermark display.
+- `disable_high` (boolean): If set to true, disables the high watermark display.
 
 _Example_:
 

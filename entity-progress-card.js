@@ -125,13 +125,15 @@ const CARD = {
       name: { element: 'div', class: 'name' },
       percentage: { element: 'div', class: 'percentage' },
       secondaryInfo: { element: 'div', class: 'secondary-info' },
+      detailGroup: { element: 'div', class: 'secondary-info-detail-group' },
+      customInfo: { element: 'div', class: 'secondary-info-custom-info' },
       progressBar: {
         container: { element: 'div', class: 'progress-bar-container' },
         bar: { element: 'div', class: 'progress-bar' },
         inner: { element: 'div', class: 'progress-bar-inner' },
         lowWatermark: { element: 'div', class: 'progress-bar-low-wm' },
         highWatermark: { element: 'div', class: 'progress-bar-high-wm' },
-        watermark: { class: 'progress-bar-wm' }
+        watermark: { class: 'progress-bar-wm' },
       },
       badge: {
         container: { element: 'div', class: 'badge' },
@@ -173,6 +175,7 @@ const CARD = {
       alert: { icon: 'mdi:alert-circle-outline', color: '#0080ff', attribute: 'icon' },
       notFound: { icon: 'mdi:help' },
       badge: {
+        default: { attribute: 'icon' },
         unavailable: { icon: 'mdi:exclamation-thick', color: 'white', backgroundColor: 'var(--orange-color)', attribute: 'icon' },
         notFound: { icon: 'mdi:exclamation-thick', color: 'white', backgroundColor: 'var(--red-color)', attribute: 'icon' },
         timer: {
@@ -261,8 +264,8 @@ const CARD = {
         orientation: { rtl: 'rtl_orientation' },
       },
       watermark: {
-        low: { value: { var: '--epb-low-watermark-value', default: 20 }, color: { var: '--epb-low-watermark-color', default: 'red' }},
-        high: { value: { var: '--epb-high-watermark-value', default: 80 }, color: { var: '--epb-high-watermark-color', default: 'red' }},
+        low: { value: { var: '--epb-low-watermark-value', default: 20 }, color: { var: '--epb-low-watermark-color', default: 'red' } },
+        high: { value: { var: '--epb-high-watermark-value', default: 80 }, color: { var: '--epb-high-watermark-color', default: 'red' } },
         opacity: { var: '--epb-watermark-opacity-value', default: 0.8 },
       },
       secondaryInfoError: { class: 'secondary-info-error' },
@@ -510,7 +513,6 @@ const THEME = {
     ],
   },
 };
-
 
 const LANGUAGES = {
   en: {
@@ -2270,7 +2272,10 @@ const CARD_HTML = `
         <${CARD.htmlStructure.sections.right.element} class="${CARD.htmlStructure.sections.right.class}">
             <${CARD.htmlStructure.elements.name.element} class="${CARD.htmlStructure.elements.name.class}"></${CARD.htmlStructure.elements.name.element}>
             <${CARD.htmlStructure.elements.secondaryInfo.element} class="${CARD.htmlStructure.elements.secondaryInfo.class}">
-                <${CARD.htmlStructure.elements.percentage.element} class="${CARD.htmlStructure.elements.percentage.class}"></${CARD.htmlStructure.elements.percentage.element}>
+                <${CARD.htmlStructure.elements.detailGroup.element} class="${CARD.htmlStructure.elements.detailGroup.class}">
+                  <${CARD.htmlStructure.elements.customInfo.element} class="${CARD.htmlStructure.elements.customInfo.class}"></${CARD.htmlStructure.elements.customInfo.element}>
+                  <${CARD.htmlStructure.elements.percentage.element} class="${CARD.htmlStructure.elements.percentage.class}"></${CARD.htmlStructure.elements.percentage.element}>
+                </${CARD.htmlStructure.elements.detailGroup.element}>
                 <${CARD.htmlStructure.elements.progressBar.container.element} class="${CARD.htmlStructure.elements.progressBar.container.class}">
                     <${CARD.htmlStructure.elements.progressBar.bar.element} class="${CARD.htmlStructure.elements.progressBar.bar.class}">
                         <${CARD.htmlStructure.elements.progressBar.inner.element} class="${CARD.htmlStructure.elements.progressBar.inner.class}"></${CARD.htmlStructure.elements.progressBar.inner.element}>
@@ -2421,6 +2426,13 @@ const CARD_CSS = `
         color: var(--primary-text-color);
     }
 
+    .${CARD.htmlStructure.elements.detailGroup.class} {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        height: 16px;
+        min-width: 45px;
+    }
     .${CARD.htmlStructure.elements.secondaryInfo.class} {
         display: flex;
         flex-direction: row;
@@ -2433,11 +2445,11 @@ const CARD_CSS = `
         display: block;
     }
 
+    .${CARD.htmlStructure.elements.customInfo.class},
     .${CARD.htmlStructure.elements.percentage.class} {
         display: flex;
         align-items: center;
         height: 16px;
-        min-width: 45px;
         text-align: left;
         font-size: 12px;
         font-weight: 400;
@@ -2521,18 +2533,12 @@ const CARD_CSS = `
         mix-blend-mode: hard-light;
         opacity: var(--epb-watermark-opacity-value, 0.8);  
     }
-    .${CARD.style.dynamic.show}-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
-    .${CARD.style.dynamic.show}-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-    .${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
-    .${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-        display: flex;
-    }
 
-    .${CARD.style.dynamic.show}-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+    .${CARD.style.dynamic.show}-HWM-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
         right: calc(100% - var(--epb-high-watermark-value, 80%));
         width: 1px;
     }
-    .${CARD.style.dynamic.show}-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class}  {
+    .${CARD.style.dynamic.show}-LWM-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class}  {
         left: var(--epb-low-watermark-value, 20%);
         width: 1px;
     }
@@ -2545,6 +2551,7 @@ const CARD_CSS = `
         height: 18px;
     }
 
+    .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class},
     .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.percentage.class} {
         align-items: center;
         justify-content: center;
@@ -2573,9 +2580,6 @@ const CARD_CSS = `
         margin: 0;
     }
 
-    .${CARD.style.dynamic.show}-${CARD.htmlStructure.alert.container.element} ${CARD.htmlStructure.alert.container.element}{
-        display: flex;
-    }
 
     .${CARD.htmlStructure.alert.icon.class} {
         color: ${CARD.style.icon.alert.color};
@@ -2607,12 +2611,6 @@ const CARD_CSS = `
         flex-direction: column;
         gap: 25px;
         padding-bottom: 70px;
-    }
-
-    .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.attribute} .${CARD.editor.keyMappings.attribute},
-    .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.max_value_attribute} .${CARD.editor.keyMappings.max_value_attribute},
-    .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.theme} .${CARD.editor.keyMappings.theme} {
-        display: none;
     }
 
     .${CARD.editor.fields.iconItem.class} {
@@ -2663,10 +2661,6 @@ const CARD_CSS = `
         justify-content: center;
     }
 
-    .${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class} .${CARD.htmlStructure.elements.badge.container.class} {
-        display: flex;
-    }
-
     .${CARD.htmlStructure.elements.badge.container.class} .${CARD.htmlStructure.elements.badge.icon.class} {
         height: 12px;
         width: 12px;
@@ -2674,14 +2668,6 @@ const CARD_CSS = `
         align-items: center;
         justify-content: center;
         color: var(${CARD.style.dynamic.badge.color.var}, ${CARD.style.dynamic.badge.color.default});
-    }
-
-    .${CARD.style.dynamic.hiddenComponent.icon.class} .${CARD.htmlStructure.sections.left.class},
-    .${CARD.style.dynamic.hiddenComponent.name.class} .${CARD.htmlStructure.elements.name.class},
-    .${CARD.style.dynamic.hiddenComponent.shape.class} .${CARD.htmlStructure.elements.shape.class},
-    .${CARD.style.dynamic.hiddenComponent.progress_bar.class} .${CARD.htmlStructure.elements.progressBar.bar.class},
-    .${CARD.style.dynamic.hiddenComponent.secondary_info.class} .${CARD.htmlStructure.elements.percentage.class} {
-        display: none;
     }
 
     .${CARD.style.dynamic.hiddenComponent.icon.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.left.class},
@@ -2768,6 +2754,27 @@ const CARD_CSS = `
     }
     ha-select {
       --mdc-menu-max-height: 250px; /* Définit la hauteur maximale */
+    }
+
+    /* show/hide */
+    .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.attribute} .${CARD.editor.keyMappings.attribute},
+    .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.max_value_attribute} .${CARD.editor.keyMappings.max_value_attribute},
+    .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.theme} .${CARD.editor.keyMappings.theme},
+    .${CARD.style.dynamic.hiddenComponent.icon.class} .${CARD.htmlStructure.sections.left.class},
+    .${CARD.style.dynamic.hiddenComponent.name.class} .${CARD.htmlStructure.elements.name.class},
+    .${CARD.style.dynamic.hiddenComponent.shape.class} .${CARD.htmlStructure.elements.shape.class},
+    .${CARD.style.dynamic.hiddenComponent.progress_bar.class} .${CARD.htmlStructure.elements.progressBar.bar.class},
+    .${CARD.style.dynamic.hiddenComponent.secondary_info.class} .${CARD.htmlStructure.elements.percentage.class} {
+        display: none;
+    }
+
+    .${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class} .${CARD.htmlStructure.elements.badge.container.class},
+    .${CARD.style.dynamic.show}-${CARD.htmlStructure.alert.container.element} ${CARD.htmlStructure.alert.container.element},
+    .${CARD.style.dynamic.show}-HWM-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
+    .${CARD.style.dynamic.show}-LWM-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+    .${CARD.style.dynamic.show}-HWM-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
+    .${CARD.style.dynamic.show}-LWM-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+        display: flex;
     }
 `;
 
@@ -3797,6 +3804,8 @@ class ConfigHelper {
       high_color: this.#config?.watermark?.high_color ?? 'red',
       opacity: this.#config?.watermark?.opacity ?? 0.8,
       type: this.#config?.watermark?.type ?? 'block', // 'line' | 'block'
+      disable_low: this.#config?.watermark?.disable_low ?? false,
+      disable_high: this.#config?.watermark?.disable_high ?? false,
     };
   }
   get reverse() {
@@ -3985,6 +3994,7 @@ class CardView {
       !(
         this.isUnavailable ||
         this.isNotFound ||
+        (this.#configHelper.config.badge !== undefined) ||
         (this.#currentValue.isTimer &&
           (this.#currentValue.value.state === CARD.config.entity.state.paused || this.#currentValue.value.state === CARD.config.entity.state.active))
       )
@@ -4072,6 +4082,8 @@ class CardView {
       high_color: this.#convertColorFromConfig(result.high_color),
       opacity: result.opacity,
       type: result.type,
+      disable_low: result.disable_low,
+      disable_high: result.disable_high,
     };
   }
   get hasHiddenIcon() {
@@ -4177,6 +4189,8 @@ class EntityProgressCard extends HTMLElement {
   #lastHass = null;
   #autoRefreshInterval = null;
 
+  #unsubscribeTemplates = {};
+
   #tapTimeout = null;
   #clickCount = 0;
   #holdTimeout = null;
@@ -4237,6 +4251,7 @@ class EntityProgressCard extends HTMLElement {
     if (this.#clickableTarget) {
       this.#detachListener(this.#clickableTarget);
     }
+    this.#cleanUpSubscribeTemplate(); // memory... :)
   }
 
   #detachListener(elem) {
@@ -4443,8 +4458,12 @@ class EntityProgressCard extends HTMLElement {
     card.classList.toggle(CARD.style.dynamic.hiddenComponent.progress_bar.class, this.#cardView.hasHiddenProgressBar);
     const type = this.#cardView.watermark.type === 'line' ? 'line-' : '';
     card.classList.toggle(
-      `${CARD.style.dynamic.show}-${type}${CARD.htmlStructure.elements.progressBar.watermark.class}`,
-      this.#cardView.hasWatermark
+      `${CARD.style.dynamic.show}-HWM-${type}${CARD.htmlStructure.elements.progressBar.watermark.class}`,
+      this.#cardView.hasWatermark && !this.#cardView.watermark.disable_high
+    );
+    card.classList.toggle(
+      `${CARD.style.dynamic.show}-LWM-${type}${CARD.htmlStructure.elements.progressBar.watermark.class}`,
+      this.#cardView.hasWatermark && !this.#cardView.watermark.disable_low
     );
 
     card.innerHTML = CARD_HTML;
@@ -4462,6 +4481,7 @@ class EntityProgressCard extends HTMLElement {
       [CARD.htmlStructure.elements.shape.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.shape.class}`),
       [CARD.htmlStructure.elements.badge.icon.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.badge.icon.class}`),
       [CARD.htmlStructure.elements.name.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.name.class}`),
+      [CARD.htmlStructure.elements.customInfo.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.customInfo.class}`),
       [CARD.htmlStructure.elements.percentage.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.percentage.class}`),
       [CARD.htmlStructure.alert.container.element]: this.shadowRoot.querySelector(`${CARD.htmlStructure.alert.container.element}`),
       [CARD.htmlStructure.alert.icon.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.alert.icon.class}`),
@@ -4503,6 +4523,66 @@ class EntityProgressCard extends HTMLElement {
     });
   }
 
+  #renderJinja(key, content) {
+    console.log(key);
+    console.log(content);
+    switch (key) {
+      case 'custom_info':
+        content = `${content}&nbsp;`;
+        this.#updateElement(CARD.htmlStructure.elements.customInfo.class, (el) => {
+          if (el.innerHTML !== content) {
+            el.innerHTML = content;
+          }
+        });
+        break;
+      case 'badge': {
+        const badgeInfo = this.#cardView.badgeInfo;
+        const isBadgeEnable = this.#cardView.isBadgeEnable;
+        const isMdiIcon = content.includes('mdi:');
+        if (badgeInfo !== null) return; // alert -> cancel custom badge
+        if (isMdiIcon) {
+          this.#elements[CARD.htmlStructure.card.element].classList.toggle(
+            `${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class}`,
+            isBadgeEnable
+          );
+          this.#setBadge(content, 'var(--white-color)', 'var(--success-color)');
+        }
+        break;
+      }
+    }
+  }
+
+  #cleanUpSubscribeTemplate() {
+    if (!this.#unsubscribeTemplates || Object.keys(this.#unsubscribeTemplates).length === 0) {
+      return;
+    }
+    // cleanup
+    for (const key in this.#unsubscribeTemplates) {
+      this.#unsubscribeTemplates[key]();
+    }
+    this.#unsubscribeTemplates = {};
+  }
+
+  async #processJinja() {
+    const templates = [];
+    templates['custom_info'] = this.#cardView.config.custom_info || '';
+    templates['badge'] = this.#cardView.config.badge || '';
+
+    this.#cleanUpSubscribeTemplate();
+
+    for (const key in templates) {
+      const template = templates[key];
+      // Skip empty templates
+      if (!template.trim()) continue;
+      const unsub = await this.#lastHass.connection.subscribeMessage((msg) => this.#renderJinja(key, msg.result), {
+        type: 'render_template',
+        template: template,
+      });
+      // keep it
+      this.#unsubscribeTemplates[key] = unsub;
+    }
+  }
+
   /**
    * Updates dynamic card elements based on the entity's state and configuration.
    */
@@ -4511,6 +4591,7 @@ class EntityProgressCard extends HTMLElement {
     this.#showBadge();
     this.#manageShape();
     this.#updateCSS();
+    this.#processJinja();
 
     this.#updateElement(CARD.htmlStructure.elements.icon.class, (el) => {
       if (el.getAttribute(CARD.htmlStructure.elements.icon.class) !== this.#cardView.icon) {
@@ -4539,26 +4620,41 @@ class EntityProgressCard extends HTMLElement {
    * Displays a badge
    */
   #showBadge() {
+    const badgeInfo = this.#cardView.badgeInfo;
     const isBadgeEnable = this.#cardView.isBadgeEnable;
+    if (isBadgeEnable && badgeInfo === null) return; // custom
+
     this.#elements[CARD.htmlStructure.card.element].classList.toggle(
       `${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class}`,
       isBadgeEnable
     );
     if (isBadgeEnable) {
-      const badgeInfo = this.#cardView.badgeInfo;
       if (!badgeInfo) {
         return;
       }
-      this.#updateElement(CARD.htmlStructure.elements.badge.icon.class, (el) => {
-        if (el.getAttribute(badgeInfo.attribute) !== badgeInfo.icon) {
-          el.setAttribute(badgeInfo.attribute, badgeInfo.icon);
-        }
-      });
-      this.#updateElement(CARD.htmlStructure.card.element, (el) => {
-        el.style.setProperty(CARD.style.dynamic.badge.backgroundColor.var, badgeInfo.backgroundColor);
-        el.style.setProperty(CARD.style.dynamic.badge.color.var, badgeInfo.color);
-      });
+      this.#setBadge(badgeInfo.icon, badgeInfo.color, badgeInfo.backgroundColor);
     }
+  }
+
+  #setBadge(icon, color, backgroundColor) {
+    // Vérifie si l'icône a réellement changé
+    this.#updateElement(CARD.htmlStructure.elements.badge.icon.class, (el) => {
+      const currentIcon = el.getAttribute(CARD.style.icon.badge.default.attribute);
+      if (currentIcon !== icon) {
+        el.setAttribute(CARD.style.icon.badge.default.attribute, icon);
+      }
+    });
+
+    // Vérifie si la couleur ou l'arrière-plan a changé avant d'appliquer la mise à jour
+    this.#updateElement(CARD.htmlStructure.card.element, (el) => {
+      const currentBackgroundColor = el.style.getPropertyValue(CARD.style.dynamic.badge.backgroundColor.var);
+      const currentColor = el.style.getPropertyValue(CARD.style.dynamic.badge.color.var);
+
+      if (currentBackgroundColor !== backgroundColor || currentColor !== color) {
+        el.style.setProperty(CARD.style.dynamic.badge.backgroundColor.var, backgroundColor);
+        el.style.setProperty(CARD.style.dynamic.badge.color.var, color);
+      }
+    });
   }
 
   /**
