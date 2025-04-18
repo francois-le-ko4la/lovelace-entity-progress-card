@@ -811,7 +811,7 @@ type: custom:entity-progress-card
 disable_unit: true
 ```
 
-#### `badge`
+#### `badge` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#badge-)
 
 > **`badge`** [JINJA] _(optional)_:
 
@@ -836,7 +836,7 @@ badge: >-
 >
 > If the template returns nothing (i.e., empty string or None), the badge will not be displayed.
 
-#### `custom_info`
+#### `custom_info` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#custom_info-)
 
 > **`custom_info`** [JINJA] _(optional)_:
 
@@ -867,7 +867,7 @@ custom_info: >-
 > - If the template evaluates to an empty string, nothing will be displayed.
 > - If the card is showing an error badge (e.g. due to an unavailable or invalid entity), the custom_info content will not be evaluated.
 
-#### `watermark`
+#### `watermark` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#watermark-)
 
 > **`watermark`** [array] _(optional)_:
 
