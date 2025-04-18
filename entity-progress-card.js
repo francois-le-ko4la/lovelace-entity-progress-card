@@ -4524,8 +4524,8 @@ class EntityProgressCard extends HTMLElement {
   }
 
   #renderJinja(key, content) {
-    console.log(key);
-    console.log(content);
+    debugLog(key);
+    debugLog(content);
     switch (key) {
       case 'custom_info':
         content = `${content}&nbsp;`;
