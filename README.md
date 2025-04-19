@@ -858,7 +858,7 @@ badge_color: >-
 
 > **`custom_info`** [JINJA] _(optional)_:
 
-The `custom_info` option allows you to display additional, customizable text or HTML next to the entity’s name or value. It supports full [Home Assistant Jinja2 templates](https://www.home-assistant.io/docs/configuration/templating/) and inline HTML, enabling you to style or conditionally format the information based on sensor states or logic.
+The `custom_info` option allows you to display additional, customizable text or HTML next to the entity’s value (name soon). It supports full [Home Assistant Jinja2 templates](https://www.home-assistant.io/docs/configuration/templating/) and inline HTML, enabling you to style or conditionally format the information based on sensor states or logic.
 
 _Useful for adding_:
 
