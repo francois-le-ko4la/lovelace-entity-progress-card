@@ -810,7 +810,7 @@ type: custom:entity-progress-card
 disable_unit: true
 ```
 
-#### `badge` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#badge-)
+#### `badge_icon` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#badge-)
 
 > **`badge_icon`** [JINJA] _(optional)_:
 
@@ -835,6 +835,8 @@ badge_icon: >-
 >
 > If the template returns nothing (i.e., empty string or None), the badge will not be displayed.
 
+#### `badge_color` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#badge-)
+
 > **`badge_color`** [JINJA] _(optional)_:
 
 The `badge_color` option lets you setup a dynamic badge's background color, offering a quick status hint or symbolic representation based on logic or sensor values.
@@ -854,11 +856,41 @@ badge_color: >-
   {% endif %}
 ```
 
+#### `name_info` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#name_info-)
+
+> **`name_info`** [JINJA] _(optional)_:
+
+The `name_info` option allows you to display additional, customizable text or HTML next to the entity’s name. It supports full [Home Assistant Jinja2 templates](https://www.home-assistant.io/docs/configuration/templating/) and inline HTML, enabling you to style or conditionally format the information based on sensor states or logic.
+
+_Useful for adding_:
+
+- Supplementary sensor data
+- Conditional status messages
+- Inline styling (colors, emphasis, etc.)
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+····
+name_info: >-
+  {% if states('sensor.temperature') | float > 25 %}
+    <span style="color: red;">{{ states('sensor.temperature') }} °C – Hot</span>
+  {% else %}
+    <span style="color: blue;">{{ states('sensor.temperature') }} °C – Cool</span>
+  {% endif %}
+```
+
+> [!NOTE]
+>
+> - This field supports HTML for advanced formatting.
+> - If the template evaluates to an empty string, nothing will be displayed.
+
 #### `custom_info` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#custom_info-)
 
 > **`custom_info`** [JINJA] _(optional)_:
 
-The `custom_info` option allows you to display additional, customizable text or HTML next to the entity’s value (name soon). It supports full [Home Assistant Jinja2 templates](https://www.home-assistant.io/docs/configuration/templating/) and inline HTML, enabling you to style or conditionally format the information based on sensor states or logic.
+The `custom_info` option allows you to display additional, customizable text or HTML next to the entity’s value. It supports full [Home Assistant Jinja2 templates](https://www.home-assistant.io/docs/configuration/templating/) and inline HTML, enabling you to style or conditionally format the information based on sensor states or logic.
 
 _Useful for adding_:
 
@@ -883,7 +915,6 @@ custom_info: >-
 >
 > - This field supports HTML for advanced formatting.
 > - If the template evaluates to an empty string, nothing will be displayed.
-> - If the card is showing an error badge (e.g. due to an unavailable or invalid entity), the custom_info content will not be evaluated.
 
 #### `watermark` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#watermark-)
 
@@ -1362,6 +1393,34 @@ We'll use a Helper (Number) to handle this calculation. It’s simple to define 
 ### Conclusion
 
 By implementing this model through the helper, we can accurately calculate and display the percentage of remaining time for any task. This approach provides a dynamic and intuitive way to monitor progress, ensuring that the displayed percentage accurately reflects the time remaining regardless of the task’s total duration. This solution effectively extend our card usage vision, and enhances the user experience.
+
+## 🎨 Theme
+
+This card leverages Home Assistant’s default color system to seamlessly align with your active theme preferences.
+By default, the progress bar uses a neutral/semi-transparent background color. However, depending on the theme in use, the color
+`var(--divider-color)` might not provide enough contrast or might clash with your design (e.g., if your theme heavily uses greens or
+dark shades).
+
+We can define the `--epb-progress-bar-background-color` CSS variable. It allows you to customize the background color of the
+progress bar, making it easier to visually integrate the card with your Home Assistant theme.
+
+You can define this variable globally in your Home Assistant theme file, so it automatically applies to all instances of the card without needing to configure each one manually.
+
+In your theme YAML:
+
+```yaml
+my_custom_theme:
+  ····
+  # Define a custom background color for the progress bar
+  epb-progress-bar-background-color: "rgba(255, 255, 255, 0.12)"
+```
+
+> [!NOTE]
+>
+> When declaring it in your YAML theme file, do not prefix the variable name with `--`.
+> Home Assistant handles this automatically.
+
+Once set, the progress bar background will reflect the new color consistently across all cards using this variable.
 
 ## 🌍 Universal Language & Number Support
 

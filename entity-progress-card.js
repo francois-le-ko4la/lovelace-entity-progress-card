@@ -122,7 +122,9 @@ const CARD = {
     elements: {
       icon: { element: 'ha-icon', class: 'icon' },
       shape: { element: 'ha-shape', class: 'shape' },
+      nameGroup: { element: 'div', class: 'name-group' },
       name: { element: 'div', class: 'name' },
+      nameCustomInfo: { element: 'div', class: 'name-custom-info' },
       percentage: { element: 'div', class: 'percentage' },
       secondaryInfo: { element: 'div', class: 'secondary-info' },
       detailGroup: { element: 'div', class: 'secondary-info-detail-group' },
@@ -261,6 +263,7 @@ const CARD = {
       progressBar: {
         color: { var: '--epb-progress-bar-color', default: 'var(--state-icon-color)' },
         size: { var: '--epb-progress-bar-size', default: '0%' },
+        background: { var: '--epb-progress-bar-background-color' },
         orientation: { rtl: 'rtl_orientation' },
       },
       watermark: {
@@ -2270,7 +2273,10 @@ const CARD_HTML = `
 
         <!-- infos/progress bar -->
         <${CARD.htmlStructure.sections.right.element} class="${CARD.htmlStructure.sections.right.class}">
-            <${CARD.htmlStructure.elements.name.element} class="${CARD.htmlStructure.elements.name.class}"></${CARD.htmlStructure.elements.name.element}>
+            <${CARD.htmlStructure.elements.nameGroup.element} class="${CARD.htmlStructure.elements.nameGroup.class}">
+              <${CARD.htmlStructure.elements.name.element} class="${CARD.htmlStructure.elements.name.class}"></${CARD.htmlStructure.elements.name.element}>
+              <${CARD.htmlStructure.elements.nameCustomInfo.element} class="${CARD.htmlStructure.elements.nameCustomInfo.class}"></${CARD.htmlStructure.elements.nameCustomInfo.element}>
+            </${CARD.htmlStructure.elements.nameGroup.element}>
             <${CARD.htmlStructure.elements.secondaryInfo.element} class="${CARD.htmlStructure.elements.secondaryInfo.class}">
                 <${CARD.htmlStructure.elements.detailGroup.element} class="${CARD.htmlStructure.elements.detailGroup.class}">
                   <${CARD.htmlStructure.elements.customInfo.element} class="${CARD.htmlStructure.elements.customInfo.class}"></${CARD.htmlStructure.elements.customInfo.element}>
@@ -2408,11 +2414,18 @@ const CARD_CSS = `
         flex-grow: 0;
     }
 
-    .${CARD.htmlStructure.elements.name.class} {
+    .${CARD.htmlStructure.elements.nameGroup.class} {
+        display: flex;
+        flex-direction: row;
+
         width: 100%;
         min-width: 0;
         height: 20px;
 
+        color: var(--primary-text-color);
+    }
+    .${CARD.htmlStructure.elements.nameCustomInfo.class},
+    .${CARD.htmlStructure.elements.name.class} {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -2422,8 +2435,6 @@ const CARD_CSS = `
         line-height: 20px;
         letter-spacing: 0.1px;
         text-align: left;
-
-        color: var(--primary-text-color);
     }
 
     .${CARD.htmlStructure.elements.detailGroup.class} {
@@ -2478,7 +2489,7 @@ const CARD_CSS = `
         width: 100%;
         height: ${CARD.style.bar.sizeOptions.small.size};
         max-height: ${CARD.style.bar.sizeOptions.large.size};
-        background-color: var(--divider-color);
+        background-color: var(${CARD.style.dynamic.progressBar.background.var}, var(--divider-color));
         border-radius: ${CARD.style.bar.radius};
         overflow: hidden;
         position: relative;
@@ -2543,14 +2554,12 @@ const CARD_CSS = `
         width: 1px;
     }
 
-    .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.name.class} {
-        text-align: center;
-    }
-
-    .${CARD.layout.orientations.vertical.label} .${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.name.class} {
+    
+    .${CARD.layout.orientations.vertical.label} .${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.nameGroup.class} {
         height: 18px;
     }
 
+    .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.nameGroup.class},
     .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class},
     .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.percentage.class} {
         align-items: center;
@@ -2592,18 +2601,18 @@ const CARD_CSS = `
     }
 
     .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.alert.icon.class} {
-      margin-top: 10px;
-      margin-left: 0px;
-      width: auto;
-      height: auto;
+        margin-top: 10px;
+        margin-left: 0px;
+        width: auto;
+        height: auto;
     }
     .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.alert.message.class} {
-      margin: 0px;
-      padding: 0px 10px;
-      width: auto;
-      height: auto;
-      display: flex;
-      justify-content: flex-start;
+        margin: 0px;
+        padding: 0px 10px;
+        width: auto;
+        height: auto;
+        display: flex;
+        justify-content: flex-start;
     }
 
     .${CARD.editor.fields.container.class} {
@@ -2671,10 +2680,10 @@ const CARD_CSS = `
     }
 
     .${CARD.style.dynamic.hiddenComponent.icon.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.left.class},
-    .${CARD.style.dynamic.hiddenComponent.name.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.name.class},
+    .${CARD.style.dynamic.hiddenComponent.name.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.nameGroup.class},
     .${CARD.style.dynamic.hiddenComponent.shape.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.shape.class},
     .${CARD.style.dynamic.hiddenComponent.progress_bar.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.progressBar.bar.class},
-    .${CARD.style.dynamic.hiddenComponent.secondary_info.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.percentage.class} {
+    .${CARD.style.dynamic.hiddenComponent.secondary_info.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
         display: flex;
         visibility: hidden;
     }
@@ -2761,10 +2770,10 @@ const CARD_CSS = `
     .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.max_value_attribute} .${CARD.editor.keyMappings.max_value_attribute},
     .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.theme} .${CARD.editor.keyMappings.theme},
     .${CARD.style.dynamic.hiddenComponent.icon.class} .${CARD.htmlStructure.sections.left.class},
-    .${CARD.style.dynamic.hiddenComponent.name.class} .${CARD.htmlStructure.elements.name.class},
+    .${CARD.style.dynamic.hiddenComponent.name.class} .${CARD.htmlStructure.elements.nameGroup.class},
     .${CARD.style.dynamic.hiddenComponent.shape.class} .${CARD.htmlStructure.elements.shape.class},
     .${CARD.style.dynamic.hiddenComponent.progress_bar.class} .${CARD.htmlStructure.elements.progressBar.bar.class},
-    .${CARD.style.dynamic.hiddenComponent.secondary_info.class} .${CARD.htmlStructure.elements.percentage.class} {
+    .${CARD.style.dynamic.hiddenComponent.secondary_info.class} .${CARD.htmlStructure.elements.detailGroup.class} {
         display: none;
     }
 
@@ -4481,6 +4490,7 @@ class EntityProgressCard extends HTMLElement {
       [CARD.htmlStructure.elements.shape.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.shape.class}`),
       [CARD.htmlStructure.elements.badge.icon.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.badge.icon.class}`),
       [CARD.htmlStructure.elements.name.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.name.class}`),
+      [CARD.htmlStructure.elements.nameCustomInfo.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.nameCustomInfo.class}`),
       [CARD.htmlStructure.elements.customInfo.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.customInfo.class}`),
       [CARD.htmlStructure.elements.percentage.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.percentage.class}`),
       [CARD.htmlStructure.alert.container.element]: this.shadowRoot.querySelector(`${CARD.htmlStructure.alert.container.element}`),
@@ -4535,6 +4545,14 @@ class EntityProgressCard extends HTMLElement {
           }
         });
         break;
+      case 'name_info':
+        content = `&nbsp;${content}`;
+        this.#updateElement(CARD.htmlStructure.elements.nameCustomInfo.class, (el) => {
+          if (el.innerHTML !== content) {
+            el.innerHTML = content;
+          }
+        });
+        break;
       case 'badge_icon': {
         const badgeInfo = this.#cardView.badgeInfo;
         const isBadgeEnable = this.#cardView.isBadgeEnable;
@@ -4571,6 +4589,7 @@ class EntityProgressCard extends HTMLElement {
 
   async #processJinja() {
     const templates = [];
+    templates['name_info'] = this.#cardView.config.name_info || '';
     templates['custom_info'] = this.#cardView.config.custom_info || '';
     templates['badge_icon'] = this.#cardView.config.badge_icon || '';
     templates['badge_color'] = this.#cardView.config.badge_color || '';
