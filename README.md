@@ -641,7 +641,7 @@ _Properties of each item:_
 
 - min [number] (required): The minimum value for this range.
 - max [number] (required): The maximum value for this range.
-- color [string] (required): The color of the icon.
+- color [string] (required): The color of the icon and the progress bar.
 - icon [string] (optional): The icon to display.
 
 _Order of Priority for the Icon:_
