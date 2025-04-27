@@ -144,13 +144,38 @@ name: ABC
 
 > **`unit`** [string] _(optional)_
 
-Allows representing standard unit.  
-By default, the unit is % and allow you to get a ratio.  
-Specifies the unit to display the entity's actual value, ignoring max_value. The max_value is still used for the progress bar representation.
+Allows representing standard unit.
+
+_Unit selection_:
+
+- If a `unit` is manually specified in the configuration, it will be used.
+- Otherwise, if `max_value` is an entity, the default unit (%) will be used.
+- Otherwise, the `unit` is automatically determined based on the current value:
+  - If the entity is a `timer` the unit will be 's' (seconds).
+  - If the entity is a `duration`:
+    By default, the internal value in the card is expressed in seconds.
+    If you do not specify a unit, we will display the duration based on what is defined in the Home Assistant entity, using a natural format (e.g., 2h 32min).
+    If you want to display the value in seconds, set the unit to 's'.
+    If you prefer a HH:MM:SS format, you can use either timer or flextimer.
+  - If the entity is a `counter`, no unit ('') will be displayed.
+  - Otherwise, the `unit` defined in Home Assistant for the entity will be used (e.g., °C, kWh, etc.).
+
+> [!NOTE]
+>
+> Specifies the `unit` to display the entity's actual value, ignoring `max_value`. Even if the displayed
+> value uses an automatically detected unit, the progress bar still relies on max_value to calculate the
+> percentage.
+
+> [!WARNING]
+> Setting the unit to % will display the percentage value, while using a different unit will show the value
+> of the primary entity.
+> Switching between non-percentage units does not affect the displayed numeric value.
+> For example, by default, a timer is shown in seconds. If the unit is changed from s (seconds) to min (minutes),
+> no conversion is performed (for now), and the value remains unchanged.
 
 _Default_:
 
-- `%`
+- `%` if nothing is specified or automatically determined.
 
 _Example_:
 
@@ -166,6 +191,10 @@ unit: ABC
 - `timer` for timer (display HH:MM:SS without unit)
 - `flextimer` for timer (same than timer but truncate the display according to the current value)
 
+> [!TIP]
+>
+> Disabling the Unit: To completely hide the unit from display, set the disable_unit option to true.
+
 #### `decimal`
 
 > **`decimal`** [int >=0] _(optional)_
@@ -174,14 +203,20 @@ Defines the number of decimal places to display for numerical values.
 
 The `decimal` value will be determined based on the following priority:
 
-- `Display Precision` from the entity (if defined in Home Assistant).
-- `decimal` setting in the YAML configuration.
-- `Default Value` (if no other value is set).
+- If `decimal` is explicitly set in the YAML configuration, it is used.
+- Otherwise, if the entity has a custom `Display Precision` set in Home Assistant (i.e., a value manually configured by the user and different from the default), it is used.
+- Otherwise, the `default` number of decimals is selected based on the type of value:
+  - If the value represents a `timer`, the timer default is used.
+  - If the value represents a `counter`, the counter default is used.
+  - If the value represents a `duration`, or if the unit is one of j, d, h, min, s, or ms, the duration default is used.
+  - If the unit is `%` (the default unit), the `percentage` default is used.
+  - Otherwise, the other default is applied (for units like °C, kWh, etc.).
 
 _Default values:_
 
 - `decimal` = 0 for percentage (%)
-- `decimal` = 0 for timer (1.1.6)
+- `decimal` = 0 for timers, durations, or time-based units (seconds, minutes, hours, etc.)
+- `decimal` = 0 for Counter
 - `decimal` = 2 for other unit (°C, kWh...)
 
 _Example_:
@@ -272,7 +307,6 @@ _`xyz_action`_:
 - `icon_tap_action`: Defines the behavior when the user taps on the icon (typically an icon on a card). This action can be different from the general tap_action of the card.
 - `icon_double_tap_action`: Defines the behavior when the user double-taps on the icon. This can be used to trigger an alternative action from the regular icon_tap_action.
 - `icon_hold_action`: Defines the behavior when the user holds down (long press) on the icon. This action might be used for a different, more powerful interaction compared to the regular tap or double tap.
-
 
 > [!NOTE]
 >
@@ -734,9 +768,12 @@ custom_theme:
 
 > **`reverse`** [boolean] _(optional)_
 
-Used only for entities of type timer.
+If set to true, it enables a countdown behavior (typically in seconds or percentage), which is the standard use case for timers.
 
-If set to true, the timer functions as a countdown (in seconds or percentage).
+_default value_:
+
+- If the entity is a `timer` the `reverse` will be 'true'
+- Otherwise, the `reverse` will be 'false'
 
 _Example_:
 
@@ -751,11 +788,16 @@ reverse: true
 
 #### `bar_orientation` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#)
 
-> **`bar_orientation`** [string {`rtl`}] _(optional)_
+> **`bar_orientation`** [string {`rtl|ltr`}] _(optional)_
 
 Adjusts the progress bar direction to display from right to left.
 
 This is especially useful for timers to visually represent the remaining time.
+
+_default value_:
+
+- If the entity is a `timer` the `bar_orientation` will be 'rtl'
+- Otherwise, the `bar_orientation` will be 'ltr'
 
 _Example_:
 
@@ -780,10 +822,11 @@ Defines which elements should be hidden in the card.
 
 The array can contain any of the following values:
 
-- icon → Hides the entity's icon.
-- name → Hides the entity's name.
-- secondary_info → Hides secondary information related to the entity.
-- progress_bar → Hides the progress bar display.
+- icon: Hides the entity's icon.
+- name: Hides the entity's name.
+- value: Hides the current value.
+- secondary_info: Hides secondary information related to the entity.
+- progress_bar: Hides the progress bar display.
 
 _Example_:
 
@@ -898,6 +941,12 @@ _Useful for adding_:
 - Conditional status messages
 - Inline styling (colors, emphasis, etc.)
 
+> [!TIP]
+>
+> The real benefit of using `custom_info` lies in the advanced flexibility of Jinja, which allows for implementing complex logic
+> or data transformations around the displayed value. This enables dynamic content tailored to the specific needs of your card and data.
+> For simpler cases, however, consider using the `state_content` parameter, which offers a more straightforward solution.
+
 _Example_:
 
 ```yaml
@@ -915,6 +964,48 @@ custom_info: >-
 >
 > - This field supports HTML for advanced formatting.
 > - If the template evaluates to an empty string, nothing will be displayed.
+
+#### `state_content` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#custom_info-)
+
+> **`state_content`** [Array] _(optional)_:
+
+Specifies which attribute(s) of the entity should be displayed before the main numeric value on the card.
+
+_Behavior_:
+
+- If `state_content` is defined, the card will attempt to use the first listed attribute.
+- If the attribute does not exist on the entity, `unknown` will be displayed immediately, and the card will check the next attributes.
+
+_Accepted values_:
+
+- state — Displays the entity's main state.
+- current_position — Displays the current position attribute (commonly used for covers, blinds, etc.).
+- Other custom attributes from the entity can also be listed.
+
+> [!TIP]
+>
+> The use of this variable allows for adjusting the displayed information by simply specifying the attributes to
+> be shown. This ensures the displayed information aligns with the user's language-specific preferences and is
+> coherent with their localization settings.
+> For complex cases, however, consider using the `custom_info` parameter, which offers a more straightforward solution.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+····
+state_content:
+  - state
+  - current_position
+```
+
+> [!NOTE]
+>
+> - The selected attribute is shown before the main numerical display on the card.
+>
+> - If an attribute listed does not exist, the card immediately displays unknown.
+>
+> - This feature is useful for adding additional context (e.g., position, status...) to the main progress value.
 
 #### `watermark` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#watermark-)
 
@@ -1329,7 +1420,74 @@ cards:
 
 ## 🗒️ Advanced usage
 
-### Use case example
+### The Laundry Mystery: Decoding Washer Entities Across Brands
+
+#### Why?
+
+Each washing machine brand has its own way of providing entities in Home Assistant. As a result, you often end up
+with multiple entities that have different names depending on the integration used. This can make managing these
+entities tricky, especially if you want a simple and clear card to track the standard elements of your washing machine.
+
+The goal here is to simplify the display of important information related to your washing machine, regardless of the brand,
+by centralizing key data such as operational status, progress percentage, and remaining time, while maintaining flexibility
+to adapt to entity variations based on the integration used.
+
+#### Searching for Entities
+
+Before configuring your card, it's essential to research the specific entities for your washing machine integration.
+To do this, you will need to explore Home Assistant's developer tools to pinpoint the necessary information.
+Let’s take this personal integration as an example:
+
+- **`sensor.washing_machine_operation_state`**: This entity is very specific to my washing machine brand and the **Home Connect** integration that comes with it. It tracks the machine's operation state (running, paused, etc.).
+- **`sensor.washing_machine_progress_current_percentage`**: This is a custom sensor defined in `configuration.yaml`. The integration only reports a percentage when the machine is running. The template sets it to 0% when the integration reports 'unavailable'.
+- **`sensor.washing_machine_remaining_program_time`**: This entity shows the estimated time left until the program finishes. However, the entity's name doesn't exactly match what the integration provides.
+
+These entities are crucial for getting a complete overview of the washing machine’s status, but they vary significantly depending on the brand and integration.
+
+#### Setting Up the Card
+
+Once the entities are identified, you can configure your card in YAML to display the necessary information.
+
+Below an example that is currently used:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.washing_machine_progress_current_percentage
+name: Washing Machine
+color: primary
+tap_action:
+  action: more-info
+icon_tap_action:
+  action: more-info
+bar_color: primary
+bar_size: large
+badge_icon: >-
+  {% if states('sensor.washing_machine_operation_state') == 'run'
+  %}mdi:power-on{% else %}mdi:power-off {% endif %}
+badge_color: >-
+  {% if states('sensor.washing_machine_operation_state') == 'run' %} blue {%
+  else %} disabled {% endif %}
+name_info: >-
+  {% if has_value('sensor.washing_machine_remaining_program_time') %} ready at
+  {{ as_timestamp( states('sensor.washing_machine_remaining_program_time') ) |
+  timestamp_custom('%H:%M', true) }}{% endif %}
+```
+
+In this example, the card displays:
+
+- The progress percentage
+- The operational status
+- The remaining time
+
+#### Conclusion
+
+Using Jinja and custom entity configurations in Home Assistant provides advanced flexibility for adapting the card to the specifics of each washing machine.
+With this approach, you can create a single card that works with different integrations while displaying relevant information in a clear and consistent
+manner.
+
+### Cracking a Complex Case with a Simple Helper
+
+#### Why ?
 
 We want to monitor a process and we have entities for:
 
@@ -1354,7 +1512,7 @@ Where:
 
 The good news is that we can use an entity to define the `max_value` and dynamically calculate the percentage. Therefore, we need to find a way to determine $\Delta T$.
 
-### Solution
+### How ?
 
 We'll use a Helper (Number) to handle this calculation. It’s simple to define and can be set up according to various needs.
 

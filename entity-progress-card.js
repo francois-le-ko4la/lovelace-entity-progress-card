@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.3.0
+ * @version 1.3.3
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.3.0';
+const VERSION = '1.3.3';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
@@ -34,10 +34,10 @@ const CARD = {
   config: {
     language: 'en',
     value: { min: 0, max: 100 },
-    unit: { default: '%', fahrenheit: '°F', timer: 'timer', flexTimer: 'flextimer', disable: '' },
+    unit: { default: '%', fahrenheit: '°F', timer: 'timer', flexTimer: 'flextimer', second: 's', disable: '' },
     showMoreInfo: true,
     reverse: false,
-    decimal: { percentage: 0, timer: 0, other: 2 },
+    decimal: { percentage: 0, timer: 0, counter: 0, duration:0, other: 2 },
     entity: {
       state: { unavailable: 'unavailable', unknown: 'unknown', notFound: 'notFound', idle: 'idle', active: 'active', paused: 'paused' },
       type: { timer: 'timer', light: 'light', cover: 'cover', fan: 'fan', climate: 'climate', counter: 'counter' },
@@ -110,6 +110,7 @@ const CARD = {
       'zh-tw': 'zh-TW',
       'zh-Hant': 'zh-TW',
     },
+    separator: ' · ',
     debug: false,
   },
   htmlStructure: {
@@ -123,9 +124,10 @@ const CARD = {
       icon: { element: 'ha-icon', class: 'icon' },
       shape: { element: 'ha-shape', class: 'shape' },
       nameGroup: { element: 'div', class: 'name-group' },
-      name: { element: 'div', class: 'name' },
-      nameCustomInfo: { element: 'div', class: 'name-custom-info' },
-      percentage: { element: 'div', class: 'percentage' },
+      nameCombined: { element: 'span', class: 'name-combined' },
+      name: { element: 'span', class: 'name' },
+      nameCustomInfo: { element: 'span', class: 'name-custom-info' },
+      stateAndProgressInfo: { element: 'div', class: 'state-and-progress-info' },
       secondaryInfo: { element: 'div', class: 'secondary-info' },
       detailGroup: { element: 'div', class: 'secondary-info-detail-group' },
       customInfo: { element: 'div', class: 'secondary-info-custom-info' },
@@ -141,11 +143,6 @@ const CARD = {
         container: { element: 'div', class: 'badge' },
         icon: { element: 'ha-icon', class: 'badge-icon' },
       },
-    },
-    alert: {
-      container: { element: 'progress-alert' },
-      icon: { element: 'ha-icon', class: 'progress-alert-icon' },
-      message: { element: 'div', class: 'progress-alert-message' },
     },
   },
   style: {
@@ -264,7 +261,7 @@ const CARD = {
         color: { var: '--epb-progress-bar-color', default: 'var(--state-icon-color)' },
         size: { var: '--epb-progress-bar-size', default: '0%' },
         background: { var: '--epb-progress-bar-background-color' },
-        orientation: { rtl: 'rtl_orientation' },
+        orientation: { rtl: 'rtl_orientation', ltr: 'ltr_orientation' },
       },
       watermark: {
         low: { value: { var: '--epb-low-watermark-value', default: 20 }, color: { var: '--epb-low-watermark-color', default: 'red' } },
@@ -280,6 +277,7 @@ const CARD = {
         shape: { label: 'shape', class: 'hide_shape' },
         name: { label: 'name', class: 'hide_name' },
         secondary_info: { label: 'secondary_info', class: 'hide_secondary_info' },
+        value: { label: 'value' },
         progress_bar: { label: 'progress_bar', class: 'hide_progress_bar' },
       },
     },
@@ -554,6 +552,7 @@ const LANGUAGES = {
         icon_hold_action: 'Icon hold behavior',
         toggle_icon: 'Icon',
         toggle_name: 'Name',
+        toggle_value: 'Value',
         toggle_unit: 'Unit',
         toggle_secondary_info: 'Info',
         toggle_progress_bar: 'Bar',
@@ -624,6 +623,7 @@ const LANGUAGES = {
         icon_hold_action: "Comportement lors d'un appui long sur l'icône",
         toggle_icon: 'Icône',
         toggle_name: 'Nom',
+        toggle_value: 'Valeur',
         toggle_unit: 'Unité',
         toggle_secondary_info: 'Info',
         toggle_progress_bar: 'Barre',
@@ -694,6 +694,7 @@ const LANGUAGES = {
         icon_hold_action: 'Acción al mantener pulsado el icono',
         toggle_icon: 'Icono',
         toggle_name: 'Nombre',
+        toggle_value: 'Valor',
         toggle_unit: 'Unidad',
         toggle_secondary_info: 'Info',
         toggle_progress_bar: 'Barra',
@@ -764,6 +765,7 @@ const LANGUAGES = {
         icon_hold_action: "Azione al tocco prolungato dell'icona",
         toggle_icon: 'Icona',
         toggle_name: 'Nome',
+        toggle_value: 'Valore',
         toggle_unit: 'Unità',
         toggle_secondary_info: 'Info',
         toggle_progress_bar: 'Barra',
@@ -834,6 +836,7 @@ const LANGUAGES = {
         icon_hold_action: 'Aktion bei langem Tippen auf das Symbol',
         toggle_icon: 'Icon',
         toggle_name: 'Name',
+        toggle_value: 'Wert',
         toggle_unit: 'Einheit',
         toggle_secondary_info: 'Info',
         toggle_progress_bar: 'Balken',
@@ -904,6 +907,7 @@ const LANGUAGES = {
         icon_hold_action: 'Actie bij lang ingedrukt houden op pictogram',
         toggle_icon: 'Icoon',
         toggle_name: 'Naam',
+        toggle_value: 'Waarde',
         toggle_unit: 'Eenheid',
         toggle_secondary_info: 'Info',
         toggle_progress_bar: 'Balk',
@@ -974,6 +978,7 @@ const LANGUAGES = {
         icon_hold_action: 'Radnja na dugi dodir ikone',
         toggle_icon: 'Ikona',
         toggle_name: 'Ime',
+        toggle_value: 'Vrijednost',
         toggle_unit: 'Jedinica',
         toggle_secondary_info: 'Info',
         toggle_progress_bar: 'Traka',
@@ -1044,6 +1049,7 @@ const LANGUAGES = {
         icon_hold_action: 'Akcja przy długim naciśnięciu ikony',
         toggle_icon: 'Ikona',
         toggle_name: 'Nazwa',
+        toggle_value: 'Wartość',
         toggle_unit: 'Jednostka',
         toggle_secondary_info: 'Info',
         toggle_progress_bar: 'Pasek',
@@ -1114,6 +1120,7 @@ const LANGUAGES = {
         icon_hold_action: 'Дејство при долг допир на иконата',
         toggle_icon: 'Икона',
         toggle_name: 'Име',
+        toggle_value: 'Вредност',
         toggle_unit: 'Јединство',
         toggle_secondary_info: 'Инфо',
         toggle_progress_bar: 'Лента',
@@ -1184,6 +1191,7 @@ const LANGUAGES = {
         icon_hold_action: 'Ação ao manter o toque no ícone',
         toggle_icon: 'Ícone',
         toggle_name: 'Nome',
+        toggle_value: 'Valor',
         toggle_unit: 'Unidade',
         toggle_secondary_info: 'Info',
         toggle_progress_bar: 'Barra',
@@ -1254,6 +1262,7 @@ const LANGUAGES = {
         icon_hold_action: 'Handling ved langt tryk på ikonet',
         toggle_icon: 'Ikon',
         toggle_name: 'Navn',
+        toggle_value: 'Værdi',
         toggle_unit: 'Enhed',
         toggle_secondary_info: 'Info',
         toggle_progress_bar: 'Bar',
@@ -1324,6 +1333,7 @@ const LANGUAGES = {
         icon_hold_action: 'Handling ved langt trykk på ikonet',
         toggle_icon: 'Ikon',
         toggle_name: 'Navn',
+        toggle_value: 'Verdi',
         toggle_unit: 'Enhet',
         toggle_secondary_info: 'Info',
         toggle_progress_bar: 'Bar',
@@ -1394,6 +1404,7 @@ const LANGUAGES = {
         icon_hold_action: 'Åtgärd vid långt tryck på ikonen',
         toggle_icon: 'Ikon',
         toggle_name: 'Namn',
+        toggle_value: 'Värde',
         toggle_unit: 'Enhet',
         toggle_secondary_info: 'Info',
         toggle_progress_bar: 'Bar',
@@ -1464,6 +1475,7 @@ const LANGUAGES = {
         icon_hold_action: 'Ενέργεια στο παρατεταμένο πάτημα του εικονιδίου',
         toggle_icon: 'Εικονίδιο',
         toggle_name: 'Όνομα',
+        toggle_value: 'Τιμή',
         toggle_unit: 'Μονάδα',
         toggle_secondary_info: 'Πληροφορίες',
         toggle_progress_bar: 'Γραμμή',
@@ -1534,6 +1546,7 @@ const LANGUAGES = {
         icon_hold_action: 'Toiminto pitkällä painalluksella kuvaketta',
         toggle_icon: 'Ikoni',
         toggle_name: 'Nimi',
+        toggle_value: 'Arvo',
         toggle_unit: 'Yksikkö',
         toggle_secondary_info: 'Tiedot',
         toggle_progress_bar: 'Palkki',
@@ -1604,6 +1617,7 @@ const LANGUAGES = {
         icon_hold_action: 'Acțiune la apăsare lungă a pictogramei',
         toggle_icon: 'Pictogramă',
         toggle_name: 'Nume',
+        toggle_value: 'Valoare',
         toggle_unit: 'Unitate',
         toggle_secondary_info: 'Info',
         toggle_progress_bar: 'Bară',
@@ -1674,6 +1688,7 @@ const LANGUAGES = {
         icon_hold_action: '长按图标时的操作',
         toggle_icon: '图标',
         toggle_name: '名称',
+        toggle_value: '数值',
         toggle_unit: '单位',
         toggle_secondary_info: '信息',
         toggle_progress_bar: '进度条',
@@ -1744,6 +1759,7 @@ const LANGUAGES = {
         icon_hold_action: 'アイコンを長押ししたときの動作',
         toggle_icon: 'アイコン',
         toggle_name: '名前',
+        toggle_value: '値',
         toggle_unit: '単位',
         toggle_secondary_info: '情報',
         toggle_progress_bar: 'バー',
@@ -1814,6 +1830,7 @@ const LANGUAGES = {
         icon_hold_action: '아이콘 길게 누를 시 동작',
         toggle_icon: '아이콘',
         toggle_name: '이름',
+        toggle_value: '값',
         toggle_unit: '단위',
         toggle_secondary_info: '정보',
         toggle_progress_bar: '진행 바',
@@ -1884,6 +1901,7 @@ const LANGUAGES = {
         icon_hold_action: 'Simgeye uzun basma davranışı',
         toggle_icon: 'Simge',
         toggle_name: 'Ad',
+        toggle_value: 'Değer',
         toggle_unit: 'Birim',
         toggle_secondary_info: 'Bilgi',
         toggle_progress_bar: 'Çubuk',
@@ -1954,6 +1972,7 @@ const LANGUAGES = {
         icon_hold_action: 'الإجراء عند الضغط المطول على الأيقونة',
         toggle_icon: 'أيقونة',
         toggle_name: 'الاسم',
+        toggle_value: 'قيمة',
         toggle_unit: 'الوحدة',
         toggle_secondary_info: 'معلومات',
         toggle_progress_bar: 'شريط',
@@ -2119,6 +2138,12 @@ const EDITOR_INPUT_FIELDS = {
         width: '100%',
         isInGroup: null,
       },
+      toggleValue: {
+        name: 'toggle_value',
+        type: CARD.editor.fields.toggle.type,
+        width: '100%',
+        isInGroup: null,
+      },
       toggleUnit: {
         name: 'toggle_unit',
         type: CARD.editor.fields.toggle.type,
@@ -2274,13 +2299,15 @@ const CARD_HTML = `
         <!-- infos/progress bar -->
         <${CARD.htmlStructure.sections.right.element} class="${CARD.htmlStructure.sections.right.class}">
             <${CARD.htmlStructure.elements.nameGroup.element} class="${CARD.htmlStructure.elements.nameGroup.class}">
-              <${CARD.htmlStructure.elements.name.element} class="${CARD.htmlStructure.elements.name.class}"></${CARD.htmlStructure.elements.name.element}>
-              <${CARD.htmlStructure.elements.nameCustomInfo.element} class="${CARD.htmlStructure.elements.nameCustomInfo.class}"></${CARD.htmlStructure.elements.nameCustomInfo.element}>
+              <${CARD.htmlStructure.elements.nameCombined.element} class="${CARD.htmlStructure.elements.nameCombined.class}">
+                <${CARD.htmlStructure.elements.name.element} class="${CARD.htmlStructure.elements.name.class}"></${CARD.htmlStructure.elements.name.element}>
+                <${CARD.htmlStructure.elements.nameCustomInfo.element} class="${CARD.htmlStructure.elements.nameCustomInfo.class}"></${CARD.htmlStructure.elements.nameCustomInfo.element}>
+              </${CARD.htmlStructure.elements.nameCombined.element}>
             </${CARD.htmlStructure.elements.nameGroup.element}>
             <${CARD.htmlStructure.elements.secondaryInfo.element} class="${CARD.htmlStructure.elements.secondaryInfo.class}">
                 <${CARD.htmlStructure.elements.detailGroup.element} class="${CARD.htmlStructure.elements.detailGroup.class}">
                   <${CARD.htmlStructure.elements.customInfo.element} class="${CARD.htmlStructure.elements.customInfo.class}"></${CARD.htmlStructure.elements.customInfo.element}>
-                  <${CARD.htmlStructure.elements.percentage.element} class="${CARD.htmlStructure.elements.percentage.class}"></${CARD.htmlStructure.elements.percentage.element}>
+                  <${CARD.htmlStructure.elements.stateAndProgressInfo.element} class="${CARD.htmlStructure.elements.stateAndProgressInfo.class}"></${CARD.htmlStructure.elements.stateAndProgressInfo.element}>
                 </${CARD.htmlStructure.elements.detailGroup.element}>
                 <${CARD.htmlStructure.elements.progressBar.container.element} class="${CARD.htmlStructure.elements.progressBar.container.class}">
                     <${CARD.htmlStructure.elements.progressBar.bar.element} class="${CARD.htmlStructure.elements.progressBar.bar.class}">
@@ -2292,11 +2319,6 @@ const CARD_HTML = `
             </${CARD.htmlStructure.elements.secondaryInfo.element}>
         </${CARD.htmlStructure.sections.right.element}>
     </${CARD.htmlStructure.sections.container.element}>
-    <!-- HA Alert -->
-    <${CARD.htmlStructure.alert.container.element}>
-        <${CARD.htmlStructure.alert.icon.element} class="${CARD.htmlStructure.alert.icon.class}"></${CARD.htmlStructure.alert.icon.element}>
-        <${CARD.htmlStructure.alert.message.element} class="${CARD.htmlStructure.alert.message.class}"></${CARD.htmlStructure.alert.message.element}>
-    </${CARD.htmlStructure.alert.container.element}>
 `;
 
 const CARD_CSS = `
@@ -2326,8 +2348,7 @@ const CARD_CSS = `
     }
 
     /* main container */
-    .${CARD.htmlStructure.sections.container.class},
-    ${CARD.htmlStructure.alert.container.element} {
+    .${CARD.htmlStructure.sections.container.class} {
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -2340,17 +2361,17 @@ const CARD_CSS = `
         overflow: hidden;
     }
 
-    .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.container.class}, .${CARD.layout.orientations.vertical.label} ${CARD.htmlStructure.alert.container.element} {
+    .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.container.class} {
         min-height: ${CARD.layout.orientations.vertical.minHeight};
         flex-direction: column;
     }
-    .${CARD.layout.orientations.horizontal.label} .${CARD.htmlStructure.sections.container.class}, .${CARD.layout.orientations.horizontal.label} ${CARD.htmlStructure.alert.container.element} {
+    .${CARD.layout.orientations.horizontal.label} .${CARD.htmlStructure.sections.container.class} {
         min-height: ${CARD.layout.orientations.horizontal.minHeight};
         flex-direction: row;
     }
 
     /* .left: icon & shape */
-    .${CARD.htmlStructure.sections.left.class}, .${CARD.htmlStructure.alert.icon.class} {
+    .${CARD.htmlStructure.sections.left.class} {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -2399,9 +2420,8 @@ const CARD_CSS = `
         opacity: 0.4;
     }
 
-    /* .right: name & percentage */
-    .${CARD.htmlStructure.sections.right.class},
-    .${CARD.htmlStructure.alert.message.class} {
+    /* .right: name & secondary info */
+    .${CARD.htmlStructure.sections.right.class} {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -2421,15 +2441,14 @@ const CARD_CSS = `
         width: 100%;
         min-width: 0;
         height: 20px;
-
-        color: var(--primary-text-color);
     }
-    .${CARD.htmlStructure.elements.nameCustomInfo.class},
-    .${CARD.htmlStructure.elements.name.class} {
+
+    .${CARD.htmlStructure.elements.nameCombined.class} {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
 
+        color: var(--primary-text-color);
         font-size: 14px;
         font-weight: 500;
         line-height: 20px;
@@ -2457,7 +2476,7 @@ const CARD_CSS = `
     }
 
     .${CARD.htmlStructure.elements.customInfo.class},
-    .${CARD.htmlStructure.elements.percentage.class} {
+    .${CARD.htmlStructure.elements.stateAndProgressInfo.class} {
         display: flex;
         align-items: center;
         height: 16px;
@@ -2469,7 +2488,7 @@ const CARD_CSS = `
         color: var(--primary-text-color);
     }
 
-    .${CARD.style.dynamic.secondaryInfoError.class} .${CARD.htmlStructure.elements.percentage.class} {
+    .${CARD.style.dynamic.secondaryInfoError.class} .${CARD.htmlStructure.elements.stateAndProgressInfo.class} {
         display: inline-block; /* Change de flex à inline-block */
         overflow: hidden;
         text-overflow: ellipsis;
@@ -2561,58 +2580,23 @@ const CARD_CSS = `
 
     .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.nameGroup.class},
     .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class},
-    .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.percentage.class} {
+    .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.stateAndProgressInfo.class} {
         align-items: center;
         justify-content: center;
     }
 
-    .${CARD.style.bar.sizeOptions.small.label} .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.percentage.class} {
+    .${CARD.style.bar.sizeOptions.small.label} .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.stateAndProgressInfo.class} {
         margin-bottom: 1px;
     }
 
-    .${CARD.style.bar.sizeOptions.medium.label} .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.percentage.class} {
+    .${CARD.style.bar.sizeOptions.medium.label} .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.stateAndProgressInfo.class} {
         height: 15px;
         font-size: 0.8em;
     }
 
-    .${CARD.style.bar.sizeOptions.large.label} .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.percentage.class} {
+    .${CARD.style.bar.sizeOptions.large.label} .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.stateAndProgressInfo.class} {
         height: 13px;
         font-size: 0.8em;
-    }
-
-    ${CARD.htmlStructure.alert.container.element} {
-        display: none;
-        position: absolute;
-        z-index: 3;
-        background-color: color-mix(in srgb, var(--card-background-color) 80%, var(--state-icon-color) 20%);
-        border-radius: var(ha-card-border-radius);
-        margin: 0;
-    }
-
-
-    .${CARD.htmlStructure.alert.icon.class} {
-        color: ${CARD.style.icon.alert.color};
-        margin-left: 10px;
-    }
-
-    .${CARD.htmlStructure.alert.message.class} {
-        margin-right: 8px;
-        letter-spacing: 0.1px;
-    }
-
-    .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.alert.icon.class} {
-        margin-top: 10px;
-        margin-left: 0px;
-        width: auto;
-        height: auto;
-    }
-    .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.alert.message.class} {
-        margin: 0px;
-        padding: 0px 10px;
-        width: auto;
-        height: auto;
-        display: flex;
-        justify-content: flex-start;
     }
 
     .${CARD.editor.fields.container.class} {
@@ -2778,7 +2762,6 @@ const CARD_CSS = `
     }
 
     .${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class} .${CARD.htmlStructure.elements.badge.container.class},
-    .${CARD.style.dynamic.show}-${CARD.htmlStructure.alert.container.element} ${CARD.htmlStructure.alert.container.element},
     .${CARD.style.dynamic.show}-HWM-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
     .${CARD.style.dynamic.show}-LWM-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
     .${CARD.style.dynamic.show}-HWM-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
@@ -2788,15 +2771,94 @@ const CARD_CSS = `
 `;
 
 /******************************************************************************************
- *  Debug
+ * Debug
+ * 
+ * @param {string} msg
+ * @param {any} val
  */
-function debugLog(message, variable) {
+function debugLog(msg, val) {
   if (CARD.config.debug) {
-    if (variable !== undefined) {
-      console.debug(`${message}`, variable);
+    if (val !== undefined) {
+      console.debug(`${msg}`, val);
     } else {
-      console.debug(`${message}`);
+      console.debug(`${msg}`);
     }
+  }
+}
+
+/******************************************************************************************
+ * Helper class for formatting value && unit.
+ * This class uses `Value`, `Unit`, and `Decimal` objects to manage and validate its internal data.
+ *
+ * @class NumberFormatter
+ */
+
+class NumberFormatter {
+  static unitsNoSpace = {
+    'fr-FR': new Set(['j', 'd', 'h', 'min', '°']),
+    'de-DE': new Set(['d', 'h', 'min', '°']),
+    'en-US': new Set(['d', 'h', 'min', '°', '%']),
+  };
+
+  static getSpaceCharacter(locale, unit) {
+    const set = this.unitsNoSpace[locale] || this.unitsNoSpace['en-US'];
+    return set.has(unit.toLowerCase()) ? '' : '\u202F'; // espace fine insécable si besoin
+  }
+
+  static formatValueAndUnit(value, decimal = 2, unit = '', locale = 'en-US') {
+    if (value === undefined || value === null) return '';
+
+    const formattedValue = new Intl.NumberFormat(locale, {
+      minimumFractionDigits: decimal,
+      maximumFractionDigits: decimal,
+    }).format(value);
+
+    if (!unit) return formattedValue;
+
+    const space = this.getSpaceCharacter(locale, unit);
+    return `${formattedValue}${space}${unit}`;
+  }
+  static formatTiming(seconds, decimal = 0, locale = 'en-US', flex = false) {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    let s = (seconds % 60).toFixed(decimal);
+
+    const pad = (value, length = 2) => String(value).padStart(length, '0');
+
+    const [intPart, decimalPart] = s.split('.');
+    s = decimalPart !== undefined ? `${pad(intPart)}.${decimalPart}` : pad(s);
+
+    if (flex) {
+      if (seconds < 60) return this.formatValueAndUnit(parseFloat(s), decimal, 's', locale);
+      if (seconds < 3600) return `${pad(m)}:${s}`;
+    }
+
+    // Formatage final avec heure, minute et seconde
+    return [pad(h), pad(m), s].join(':');
+  }
+  static durationToSeconds(value, unit) {
+    switch (unit) {
+      case 'd': // Jour
+        return value * 86400; // 1 jour = 86400 secondes
+      case 'h': // Heure
+        return value * 3600; // 1 heure = 3600 secondes
+      case 'min': // Minute
+        return value * 60; // 1 minute = 60 secondes
+      case 's': // Seconde
+        return value; // 1 seconde = 1 seconde
+      case 'ms': // Milliseconde
+        return value * 0.001; // 1 milliseconde = 0.001 seconde
+      case 'μs': // Microseconde
+        return value * 0.000001; // 1 microseconde = 0.000001 seconde
+      default:
+        throw new Error('Unité non reconnue');
+    }
+  }
+  static convertDuration(duration) {
+    const parts = duration.split(':').map(Number);
+    const [hours, minutes, seconds] = parts;
+
+    return (hours * 3600 + minutes * 60 + seconds) * CARD.config.msFactor;
   }
 }
 
@@ -2807,8 +2869,8 @@ function debugLog(message, variable) {
  * @class ValueHelper
  */
 class ValueHelper {
-  #_value = null;
-  #_isValid = false;
+  #value = null;
+  #isValid = false;
 
   constructor(initialValue = null) {
     if (initialValue !== null) {
@@ -2820,16 +2882,14 @@ class ValueHelper {
    * Getter/Setter
    */
   set value(newValue) {
-    this.#_isValid = this.#validate(newValue);
-    this.#_value = this.#_isValid ? newValue : null;
+    this.#isValid = this.#validate(newValue);
+    this.#value = this.#isValid ? newValue : null;
   }
-
   get value() {
-    return this.#_value;
+    return this.#value;
   }
-
   get isValid() {
-    return this.#_isValid;
+    return this.#isValid;
   }
 
   /******************************************************************************************
@@ -2856,11 +2916,9 @@ class DecimalHelper {
     this.#isValid = this.#validate(newValue);
     this.#value = this.#isValid ? newValue : null;
   }
-
   get value() {
     return this.#value;
   }
-
   get isValid() {
     return this.#isValid;
   }
@@ -2872,7 +2930,7 @@ class DecimalHelper {
    * @returns {boolean} True if the value is a valid non-negative integer, false otherwise.
    */
   #validate(value) {
-    return typeof value === 'number' && !isNaN(value) && value >= 0 && Number.isInteger(value);
+    return Number.isInteger(value) && value >= 0;
   }
 }
 
@@ -2889,7 +2947,7 @@ class UnitHelper {
    * Getter/Setter
    */
   set value(newValue) {
-    this.#value = newValue ?? CARD.config.unit.default;
+    this.#value = newValue.trim() ?? CARD.config.unit.default;
   }
   get value() {
     return this.#isDisabled ? '' : this.#value;
@@ -2901,10 +2959,10 @@ class UnitHelper {
     return this.#isDisabled;
   }
   get isTimerUnit() {
-    return this.#value.trim().toLowerCase() === CARD.config.unit.timer;
+    return this.#value.toLowerCase() === CARD.config.unit.timer;
   }
   get isFlexTimerUnit() {
-    return this.#value.trim().toLowerCase() === CARD.config.unit.flexTimer;
+    return this.#value.toLowerCase() === CARD.config.unit.flexTimer;
   }
   toString() {
     return this.#isDisabled ? '' : this.#value;
@@ -2938,166 +2996,86 @@ class PercentHelper {
   set isTimer(isTimer) {
     this.#isTimer = typeof isTimer === 'boolean' ? isTimer : false;
   }
-
   set isReversed(isReversed) {
     this.#isReversed = typeof isReversed === 'boolean' ? isReversed : CARD.config.reverse;
   }
-
   set min(newMin) {
     this.#min.value = Number.isFinite(newMin) ? newMin : CARD.config.value.min;
   }
-
   set max(newMax) {
     this.#max.value = Number.isFinite(newMax) ? newMax : CARD.config.value.min;
   }
-
   set current(newCurrent) {
     this.#current.value = newCurrent;
   }
-
   get actual() {
     return this.#isReversed ? this.#max.value - this.#current.value : this.#current.value;
   }
-
   get unit() {
     return this.#unit.value;
   }
-
   set unit(newUnit) {
-    this.#unit.value = newUnit;
+    this.#unit.value = newUnit ?? '';
   }
-
   set hasDisabledUnit(disabled) {
     this.#unit.isDisabled = disabled;
   }
-
   set decimal(newDecimal) {
     this.#decimal.value = Number.isFinite(newDecimal) ? newDecimal : CARD.config.decimal.percentage;
   }
-
   get isValid() {
-    return this.#max.value === this.#min.value || !this.#min.isValid || !this.#max.isValid || !this.#current.isValid || !this.#decimal.isValid
-      ? false
-      : true;
+    return this.#min.isValid && this.#max.isValid && this.#current.isValid && this.#decimal.isValid && this.range !== 0;
   }
-
   get range() {
     return this.#max.value - this.#min.value;
   }
-
   get correctedValue() {
     return this.actual - this.#min.value;
   }
-
   get percent() {
-    if (!this.isValid) {
-      return null;
-    }
-    return this.#percent;
+    return this.isValid ? this.#percent : null;
   }
-
   get hasTimerUnit() {
     return this.#isTimer && this.#unit.isTimerUnit;
   }
-
   get hasFlexTimerUnit() {
     return this.#isTimer && this.#unit.isFlexTimerUnit;
   }
-
   get hasTimerOrFlexTimerUnit() {
     return this.hasTimerUnit || this.hasFlexTimerUnit;
   }
-
   get processedValue() {
-    let value = this.actual;
-
-    if (this.#isTimer) {
-      value = this.actual / 1000;
-    } else if (this.#unit.value === CARD.config.unit.default) {
-      value = this.percent;
-    }
-
-    return value;
+    return this.#unit.value === CARD.config.unit.default ? this.percent : this.actual;
   }
-
-  /******************************************************************************************
-   * Calculates the value to display based on the selected theme and unit system.
-   *
-   * @param {boolean} themeIsLinear - Indicates whether the theme uses a linear scale.
-   * @returns {number} - The percentage value if the theme is linear or if the unit is the default,
-   *                     otherwise returns the temperature value converted to Celsius if the unit is Fahrenheit.
-   *
-   * - If the unit is Fahrenheit, the temperature is converted to Celsius before returning.
-   * - If the theme is linear or the unit is the default, the percentage value is returned.
-   */
   valueForThemes(valueBasedOnPercentage) {
+    /****************************************************************************************
+     * Calculates the value to display based on the selected theme and unit system.
+     *
+     * - If the unit is Fahrenheit, the temperature is converted to Celsius before returning.
+     * - If the theme is linear or the unit is the default, the percentage value is returned.
+     */
     let value = this.actual;
     if (this.#unit.value === CARD.config.unit.fahrenheit) {
       value = ((value - 32) * 5) / 9;
     }
     return valueBasedOnPercentage || [CARD.config.unit.default, CARD.config.unit.disable].includes(this.#unit.value) ? this.#percent : value;
   }
-
-  /**
-   * Calculates and updates the percentage value based on the current, minimum, and maximum values.
-   */
   refresh() {
     this.#percent = this.isValid ? +((this.correctedValue / this.range) * 100).toFixed(this.#decimal.value) : 0;
   }
-  _getTiming() {
-    const seconds = this.actual / 1000;
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    let s = (seconds % 60).toFixed(this.#decimal.value);
-
-    // Fonction utilitaire pour padStart
-    const pad = (value, length = 2) => String(value).padStart(length, '0');
-
-    // Si des décimales existent
-    if (s.includes('.')) {
-      const [intPart, decimalPart] = s.split('.');
-      s = `${pad(intPart)}.${decimalPart}`;
-    } else {
-      s = pad(s); // Assure que les secondes sont toujours en 2 chiffres
-    }
-
-    if (this.hasFlexTimerUnit) {
-      if (seconds < 60) {
-        return `${parseFloat(s)}s`;
-      } else if (seconds < 3600) {
-        return `${pad(m)}:${s}`;
-      }
-    }
-
-    // Formatage final avec heure, minute et seconde
-    return [pad(h), pad(m), s].join(':');
+  calcWatermark(value) {
+    return [CARD.config.unit.default, CARD.config.unit.disable].includes(this.#unit.value)
+      ? value
+      : ((value - this.#min.value) / this.range) * 100;
   }
   toString() {
     if (!this.isValid) {
       return 'Div0';
     } else if (this.hasTimerOrFlexTimerUnit) {
       // timer with time format
-      return this._getTiming();
+      return NumberFormatter.formatTiming(this.actual, this.#decimal.value, this.#hassProvider.numberFormat, this.hasFlexTimerUnit);
     }
-
-    let formattedValue;
-    const numberFormat = this.#hassProvider.numberFormat;
-    if (numberFormat) {
-      formattedValue = new Intl.NumberFormat(numberFormat, {
-        style: 'decimal',
-        minimumFractionDigits: this.#decimal.value,
-        maximumFractionDigits: this.#decimal.value,
-      }).format(this.processedValue);
-    } else {
-      formattedValue = `${this.processedValue}`;
-    }
-
-    return this.#unit.value ? `${formattedValue}${this.#unit.value}` : formattedValue;
-  }
-  calcWatermark(value) {
-    return [CARD.config.unit.default, CARD.config.unit.disable].includes(this.#unit.value)
-      ? value
-      : ((value - this.#min.value) / this.range) * 100;
+    return NumberFormatter.formatValueAndUnit(this.processedValue, this.#decimal.value, this.#unit.value, this.#hassProvider.numberFormat);
   }
 }
 
@@ -3120,16 +3098,14 @@ class ThemeManager {
    * Getter/Setter
    */
   set theme(newTheme) {
-    if (newTheme === 'battery') {
-      newTheme = 'optimal_when_high';
-    }
-    if (newTheme === 'memory' || newTheme === 'cpu') {
-      newTheme = 'optimal_when_low';
-    }
+    const themeMap = {
+      battery: 'optimal_when_high',
+      memory: 'optimal_when_low',
+      cpu: 'optimal_when_low',
+    };
+    newTheme = themeMap[newTheme] || newTheme;
     if (!newTheme || !Object.hasOwn(THEME, newTheme)) {
-      this.#icon = null;
-      this.#color = null;
-      this.#theme = null;
+      [this.#icon, this.#color, this.#theme] = [null, null, null];
       return;
     }
     this.#isValid = true;
@@ -3138,11 +3114,9 @@ class ThemeManager {
     this.#isLinear = THEME[newTheme].linear;
     this.#isBasedOnPercentage = THEME[newTheme].percent;
   }
-
   get theme() {
     return this.#theme;
   }
-
   set customTheme(newTheme) {
     if (!this.#validateCustomTheme(newTheme)) {
       return;
@@ -3152,28 +3126,22 @@ class ThemeManager {
     this.#isValid = true;
     this.#isLinear = false;
   }
-
   get isLinear() {
     return this.#isLinear;
   }
-
   get isBasedOnPercentage() {
     return this.#isBasedOnPercentage;
   }
-
   get isValid() {
     return this.#isValid;
   }
-
   set value(newValue) {
     this.#value = newValue;
     this.#refresh();
   }
-
   get icon() {
     return this.#icon;
   }
-
   get color() {
     return this.#color;
   }
@@ -3185,14 +3153,9 @@ class ThemeManager {
    * @private
    */
   #refresh() {
-    if (!this.#isValid) {
-      return;
-    }
-    if (this.isLinear) {
-      this.#setLinearStyle();
-    } else {
-      this.#setStyle();
-    }
+    if (!this.#isValid) return;
+    const applyStyle = this.isLinear ? this.#setLinearStyle : this.#setStyle;
+    applyStyle.call(this);
   }
 
   #setLinearStyle() {
@@ -3220,34 +3183,16 @@ class ThemeManager {
   }
 
   #validateCustomTheme(customTheme) {
-    // array with 1 element
-    if (!Array.isArray(customTheme) || customTheme.length === 0) {
-      return false;
-    }
+    if (!Array.isArray(customTheme) || customTheme.length === 0) return false;
 
-    // check all elements
     let isFirstItem = true;
     let lastMax = null;
 
     return customTheme.every((item) => {
-      if (item === null || typeof item !== 'object') {
-        return false;
-      }
-
-      // check keys
-      if (!CARD.theme.customTheme.expectedKeys.every((key) => key in item)) {
-        return false;
-      }
-
-      // min < max
-      if (item.min >= item.max) {
-        return false;
-      }
-
-      // check continuity
-      if (!isFirstItem && item.min !== lastMax) {
-        return false;
-      }
+      if (item === null || typeof item !== 'object') return false;
+      if (!CARD.theme.customTheme.expectedKeys.every((key) => key in item)) return false;
+      if (item.min >= item.max) return false;
+      if (!isFirstItem && item.min !== lastMax) return false;
 
       isFirstItem = false;
       lastMax = item.max;
@@ -3277,9 +3222,7 @@ class HassProvider {
   }
 
   set hass(hass) {
-    if (!hass) {
-      return;
-    }
+    if (!hass) return;
     this.#hass = hass;
     this.#isValid = true;
   }
@@ -3290,34 +3233,96 @@ class HassProvider {
     return this.#hass;
   }
   get systemLanguage() {
-    return this.#isValid && LANGUAGES[this.#hass.config.language] ? this.#hass.config.language : CARD.config.language;
+    return this.#hass?.config?.language in LANGUAGES ? this.#hass.config.language : CARD.config.language;
   }
   get language() {
-    return this.#isValid && LANGUAGES[this.#hass.language] ? this.#hass.language : CARD.config.language;
+    return this.#hass?.language in LANGUAGES ? this.#hass.language : CARD.config.language;
   }
   get numberFormat() {
-    if (!this.#isValid || !this.#hass?.locale?.number_format) {
-      return CARD.config.languageMap[CARD.config.language]; // if unavailable return default
-    }
-    if (this.#hass?.locale?.number_format === 'none') {
-      return null;
-    }
+    const format = this.#hass?.locale?.number_format;
+    if (!format) return CARD.config.languageMap[CARD.config.language];
+    if (format === 'none') return null;
+
     const formatMap = {
       decimal_comma: 'de-DE', // 1.234,56 (Allemagne, France, etc.)
       comma_decimal: 'en-US', // 1,234.56 (USA, UK, etc.)
       space_comma: 'fr-FR', // 1 234,56 (France, Norvège, etc.)
-      language: CARD.config.languageMap[this.#hass.language]
-        ? CARD.config.languageMap[this.#hass.language]
-        : CARD.config.languageMap[CARD.config.language],
+      language: CARD.config.languageMap[this.language],
       system: Intl.NumberFormat().resolvedOptions().locale,
     };
 
-    return formatMap[this.#hass.locale.number_format] || CARD.config.languageMap[CARD.config.language];
+    return formatMap[format] || CARD.config.languageMap[CARD.config.language];
+  }
+  get version() {
+    return this.#hass?.config?.version ?? null;
   }
   get hasNewShapeStrategy() {
-    if (!this.#hass || !this.#hass.config || !this.#hass.config.version) return false;
-    const [year, month] = this.#hass.config.version.split('.').map(Number);
+    const [year, month] = (this.version ?? '0.0').split('.').map(Number);
     return year > 2025 || (year === 2025 && month >= 3);
+  }
+  getEntityState(entityId) {
+    return this.#hass?.states?.[entityId] ?? null;
+  }
+  getEntityStateValue(entityId) {
+    return this.getEntityState(entityId)?.state ?? null;
+  }
+  getEntityAttribute(entityId, attribute) {
+    if (!attribute) return undefined;
+    const attributes = this.getEntityState(entityId)?.attributes;
+    return attributes && attribute in attributes ? attributes[attribute] : undefined;
+  }
+  hasEntity(entityId) {
+    return !!this.#hass?.states?.[entityId];
+  }
+  isEntityAvailable(entityId) {
+    const state = this.getEntityState(entityId)?.state;
+    return state !== 'unavailable' && state !== 'unknown';
+  }
+  getEntityDomain(entityId) {
+    return typeof entityId === 'string' && entityId.includes('.') ? entityId.split('.')[0] : null;
+  }
+  getDeviceClass(entityId) {
+    return this.getEntityAttribute(entityId, 'device_class') ?? null;
+  }
+  getEntityName(entityId) {
+    return this.getEntityAttribute(entityId, 'friendly_name') ?? null;
+  }
+  getEntityIcon(entityId) {
+    return this.getEntityAttribute(entityId, 'icon') ?? null;
+  }
+  getFormatedEntityState(entityId) {
+    const stateObj = this.getEntityState(entityId);
+    return stateObj ? this.#hass?.formatEntityState?.(stateObj) : LANGUAGES[this.language].card.msg.entityNotFound;
+  }
+  getFormatedEntityAttributeName(entityId, attribute) {
+    const stateObj = this.getEntityState(entityId);
+    return this.#hass?.formatEntityAttributeName?.(stateObj, attribute) ?? '';
+  }
+  getFormatedAttributeValue(entityId, attribute) {
+    const stateObj = this.getEntityState(entityId);
+    return this.#hass?.formatEntityAttributeValue?.(stateObj, attribute) ?? '';
+  }
+  isTimerEntity(entityId) {
+    return this.getEntityDomain(entityId) === CARD.config.entity.type.timer;
+  }
+  getTimerFinishAt(entityId) {
+    return this.getEntityAttribute(entityId, 'finishes_at') ?? null;
+  }
+  getTimerDuration(entityId) {
+    return this.getEntityAttribute(entityId, 'duration') ?? null;
+  }
+  getTimerRemaining(entityId) {
+    return this.getEntityAttribute(entityId, 'remaining') ?? null;
+  }
+  getUnit(entityId) {
+    return this.getEntityAttribute(entityId, 'unit_of_measurement') ?? null;
+  }
+  getPrecision(entityId) {
+    return this.getEntityAttribute(entityId, 'display_precision') ?? null;
+  }
+  getNumericAttributes(entityId) {
+    const attributes = this.getEntityState(entityId)?.attributes ?? {};
+    return Object.fromEntries(Object.entries(attributes).filter(([_, val]) => typeof val === 'number')); // eslint-disable-line no-unused-vars
   }
 }
 
@@ -3331,38 +3336,34 @@ class EntityHelper {
   #hassProvider = null;
   #isValid = false;
   #value = {};
-  #isAvailable = false;
-  #id = null;
+  #entityId = null;
   #attribute = null;
-  #attributes = null;
   #state = null;
   #domain = null;
+  stateContent = [];
 
   constructor() {
     this.#hassProvider = new HassProvider();
   }
 
-  set id(id) {
-    this.#id = id;
-    this.#isValid = false;
-    this.#attributes = null;
+  /**
+   * @param {String} entityId
+   */
+  set entityId(entityId) {
+    this.#entityId = entityId;
     this.#value = 0;
-    if (!(typeof this.#id === 'string' && this.#id)) {
-      return;
-    }
-    this.#validate();
-    this.#domain = this.#id.split('.')[0];
+    this.#domain = this.#hassProvider.getEntityDomain(entityId);
+    this.#isValid = this.#hassProvider.hasEntity(this.#entityId); // for editor
   }
-  get value() {
-    if (this.#isValid) {
-      return this.#value;
-    } else {
-      return null;
-    }
-  }
+
+  /**
+   * @param {String} newAttribute
+   */
   set attribute(newAttribute) {
     this.#attribute = newAttribute;
-    this.#isValid = false;
+  }
+  get value() {
+    return this.#isValid ? this.#value : 0;
   }
   get state() {
     return this.#state;
@@ -3371,68 +3372,52 @@ class EntityHelper {
     return this.#isValid;
   }
   get isAvailable() {
-    return this.#isAvailable;
+    return this.#hassProvider.isEntityAvailable(this.#entityId);
   }
-  #validate() {
-    if (!this.#hassProvider.hass || !this.#hassProvider.hass.states) {
-      return;
-    }
-    if (!this.#hassProvider.hass.states[this.#id]) {
+
+  refresh() {
+    this.#isValid = this.#hassProvider.hasEntity(this.#entityId);
+
+    if (!this.#isValid) {
       this.#state = CARD.config.entity.state.notFound;
       return;
     }
-    this.#isValid = true;
-  }
-  refresh() {
-    this.#state = null;
-    this.#isAvailable = false;
 
-    this.#validate();
-    if (!this.#isValid) {
-      return;
-    }
+    this.#isValid = this.#attribute
+      ? this.#isValid && this.#hassProvider.getEntityAttribute(this.#entityId, this.#attribute) !== undefined
+      : this.#isValid;
 
-    const entityState = this.states;
-    this.#state = entityState.state;
-    if (this.#state === CARD.config.entity.state.unavailable || this.#state === CARD.config.entity.state.unknown) {
-      this.#value = 0;
-      return;
-    }
-    this.#isAvailable = true;
-
-    // timer
-    if (this.#domain !== CARD.config.entity.type.timer) {
-      this.#manageStdEntity();
-    } else {
+    this.#state = this.#hassProvider.getEntityStateValue(this.#entityId);
+    if (!this.isValid || !this.isAvailable) return;
+    if (this.isTimer) {
       this.#manageTimerEntity();
+    } else if (this.isDuration) {
+      this.#manageDurationEntity();
+    } else if (this.isCounter) {
+      this.#manageCounterEntity();
+    } else {
+      this.#manageStdEntity();
     }
-    return;
   }
   #manageStdEntity() {
-    if (this.#attribute || ATTRIBUTE_MAPPING[this.#domain]?.attribute) {
-      const attribute = this.#attribute ?? ATTRIBUTE_MAPPING[this.#domain].attribute;
-      if (attribute && Object.hasOwn(this.states.attributes, attribute)) {
-        this.#value = this.states.attributes[attribute] ?? 0;
-        if (this.#domain === ATTRIBUTE_MAPPING.light.label && attribute === ATTRIBUTE_MAPPING.light.attribute) {
-          this.#value = (100 * this.#value) / 255;
-        }
-      } else {
-        // attribute not supported
-        this.#value = 0;
-        this.#isValid = false;
-        this.#isAvailable = false;
+    this.#attribute = this.#attribute || ATTRIBUTE_MAPPING[this.#domain]?.attribute;
+    if (!this.#attribute) {
+      this.#value = parseFloat(this.#state) || 0;
+      return;
+    }
+
+    const attrValue = this.#hassProvider.getEntityAttribute(this.#entityId, this.#attribute);
+
+    if (attrValue !== undefined) {
+      this.#value = attrValue;
+      if (this.#domain === ATTRIBUTE_MAPPING.light.label && this.#attribute === ATTRIBUTE_MAPPING.light.attribute) {
+        this.#value = (100 * this.#value) / 255;
       }
     } else {
-      this.#value = parseFloat(this.#state) || 0;
+      // Si l'attribut n'est pas trouvé, définir un comportement
+      this.#value = 0;
+      this.#isValid = false;
     }
-  }
-  #parseDuration(duration) {
-    const parts = duration.split(':').map(Number);
-    const hours = parts[0] || 0;
-    const minutes = parts[1] || 0;
-    const seconds = parts[2] || 0;
-
-    return (hours * 3600 + minutes * 60 + seconds) * CARD.config.msFactor;
   }
   #manageTimerEntity() {
     let duration = null;
@@ -3444,81 +3429,99 @@ class EntityHelper {
         break;
       }
       case CARD.config.entity.state.active: {
-        const finished_at = new Date(this.states.attributes.finishes_at).getTime();
-        duration = this.#parseDuration(this.states.attributes.duration);
+        const finished_at = new Date(this.#hassProvider.getTimerFinishAt(this.#entityId)).getTime();
+        duration = NumberFormatter.convertDuration(this.#hassProvider.getTimerDuration(this.#entityId));
         const started_at = finished_at - duration;
         const now = new Date().getTime();
         elapsed = now - started_at;
         break;
       }
       case CARD.config.entity.state.paused: {
-        const remaining = this.#parseDuration(this.states.attributes.remaining);
-        duration = this.#parseDuration(this.states.attributes.duration);
+        const remaining = NumberFormatter.convertDuration(this.#hassProvider.getTimerRemaining(this.#entityId));
+        duration = NumberFormatter.convertDuration(this.#hassProvider.getTimerDuration(this.#entityId));
         elapsed = duration - remaining;
         break;
       }
     }
-    this.#value = { elapsed: elapsed, duration: duration, state: this.#state };
+    this.#value = { current: elapsed / CARD.config.msFactor, min: CARD.config.value.min, max: duration / CARD.config.msFactor, state: this.#state };
   }
-  #getDeviceClass() {
-    const entityState = this.states;
+  #manageCounterEntity() {
+    this.#value = {
+      current: parseFloat(this.state),
+      min: this.#hassProvider.getEntityAttribute(this.#entityId, 'minimum'),
+      max: this.#hassProvider.getEntityAttribute(this.#entityId, 'maximum'),
+    };
+  }
+  #manageDurationEntity() {
+    const unit = this.#hassProvider.getEntityAttribute(this.#entityId, 'unit_of_measurement');
+    const value = parseFloat(this.#state);
+    this.#value = unit === undefined ? 0 : NumberFormatter.durationToSeconds(value, unit);
+    this.#isValid = unit !== undefined;
+  }
+  #getIconByDomainOrDeviceClass() {
+    const deviceClass = this.#hassProvider.getDeviceClass(this.#entityId);
+    const domainIcon =
+      this.#domain && Object.hasOwn(CARD.style.icon.byDeviceDomain, this.#domain) ? CARD.style.icon.byDeviceDomain[this.#domain] : null;
+    const deviceClassIcon =
+      deviceClass && Object.hasOwn(CARD.style.icon.byDeviceClass, deviceClass) ? CARD.style.icon.byDeviceClass[deviceClass] : null;
 
-    if (entityState.attributes?.device_class) {
-      return entityState.attributes.device_class;
-    }
-    return null;
-  }
-  #getIconByDeviceClass() {
-    const deviceClass = this.#getDeviceClass();
-    const suffix = deviceClass === CARD.config.entity.class.shutter && this.states.attributes.current_position > 0 ? CARD.style.icon.suffix.open : '';
-    return deviceClass && Object.hasOwn(CARD.style.icon.byDeviceClass, deviceClass) ? `${CARD.style.icon.byDeviceClass[deviceClass]}${suffix}` : null;
-  }
-  #getIconByDomain() {
-    return this.#domain && Object.hasOwn(CARD.style.icon.byDeviceDomain, this.#domain) ? CARD.style.icon.byDeviceDomain[this.#domain] : null;
-  }
-  get #numericAttributes() {
-    const state = this.#hassProvider.hass.states[this.#id];
-    if (!state?.attributes) return null;
-
-    /* eslint-disable no-unused-vars */
-    return Object.fromEntries(Object.entries(state.attributes).filter(([_, value]) => typeof value === 'number'));
+    return deviceClassIcon || domainIcon || null;
   }
 
   /**
    * Returns the icon of the entity, if valid.
    */
   get icon() {
-    return this.#isValid && this.states ? this.states.attributes?.icon || this.#getIconByDeviceClass() || this.#getIconByDomain() : null;
+    return this.#isValid ? this.#hassProvider.getEntityIcon(this.#entityId) || this.#getIconByDomainOrDeviceClass() : null;
   }
   /******************************************************************************************
    *
    */
+  get attributes() {
+    return this.#isValid ? this.#hassProvider.getNumericAttributes(this.#entityId) : {};
+  }
+  get attributesListForEditor() {
+    const attributes = this.#hassProvider.getNumericAttributes(this.#entityId);
+
+    return Object.keys(attributes).map((attr) => ({
+      value: attr,
+      label: this.#hassProvider.getFormatedEntityAttributeName(this.#entityId, attr),
+    }));
+  }
   get hasAttribute() {
-    return this.#isValid && this.states && this.states.attributes !== undefined && Object.keys(this.attributes ?? {}).length > 0 ? true : false;
+    return this.#isValid && Object.keys(this.attributes ?? {}).length > 0;
   }
   get defaultAttribute() {
     return this.#isValid && !!ATTRIBUTE_MAPPING[this.#domain] ? ATTRIBUTE_MAPPING[this.#domain].attribute : null;
   }
   get name() {
-    return this.#isValid ? this.#hassProvider.hass.states[this.#id]?.attributes?.friendly_name : null;
+    return this.#isValid ? this.#hassProvider.getEntityName(this.#entityId) : null;
   }
   get states() {
-    return this.#isValid ? this.#hassProvider.hass.states[this.#id] : null;
+    return this.#isValid ? this.#hassProvider.getEntityState(this.#entityId) : null;
+  }
+  get formatedEntityState() {
+    return this.#hassProvider.getFormatedEntityState(this.#entityId);
   }
   get unit() {
-    return this.#isValid ? this.#hassProvider.hass.states[this.#id]?.attributes?.unit_of_measurement : null;
+    if (!this.#isValid) return null;
+    if (this.isTimer) return CARD.config.unit.flexTimer;
+    if (this.isDuration) return CARD.config.unit.second;
+    if (this.isCounter) return CARD.config.unit.disable;
+
+    return this.#hassProvider.getUnit(this.#entityId);
   }
   get precision() {
-    return this.#isValid ? this.#hassProvider?.hass?.entities?.[this.#id]?.display_precision ?? null : null;
-  }
-  get attributes() {
-    if (this.#attributes === null) {
-      this.#attributes = this.#isValid ? this.#numericAttributes : null;
-    }
-    return this.#attributes;
+    return this.#isValid ? this.#hassProvider.getPrecision(this.#entityId) ?? null : null;
   }
   get isTimer() {
     return this.#domain === CARD.config.entity.type.timer;
+  }
+  get isDuration() {
+    return !this.isTimer && this.#hassProvider.getDeviceClass(this.#entityId) === 'duration' && this.#attribute === null;
+  }
+  get isCounter() {
+    return this.#domain === CARD.config.entity.type.counter;
   }
   get hasShapeByDefault() {
     return [CARD.config.entity.type.light, CARD.config.entity.type.fan].includes(this.#domain);
@@ -3536,12 +3539,8 @@ class EntityHelper {
   }
 
   #getBatteryColor() {
-    if (!this.#value || this.#value <= 30) {
-      return CARD.style.color.battery.low;
-    }
-    if (this.#value <= 70) {
-      return CARD.style.color.battery.medium;
-    }
+    if (!this.#value || this.#value <= 30) return CARD.style.color.battery.low;
+    if (this.#value <= 70) return CARD.style.color.battery.medium;
     return CARD.style.color.battery.high;
   }
 
@@ -3556,7 +3555,23 @@ class EntityHelper {
       [CARD.config.entity.class.battery]: this.#getBatteryColor(),
     };
 
-    return typeColorMap[this.#domain] ?? typeColorMap[this.#getDeviceClass()] ?? null;
+    return typeColorMap[this.#domain] ?? typeColorMap[this.#hassProvider.getDeviceClass(this.#entityId)] ?? null;
+  }
+  get stateContentToString() {
+    const results = [];
+
+    for (const attr of this.stateContent) {
+      switch (attr) {
+        case 'state':
+          results.push(this.#hassProvider.getFormatedEntityState(this.#entityId));
+          break;
+        default:
+          results.push(this.#hassProvider.getFormatedAttributeValue(this.#entityId, attr));
+          break;
+      }
+    }
+
+    return results.length !== 0 ? results.join(CARD.config.separator) : '';
   }
 }
 
@@ -3568,18 +3583,14 @@ class EntityHelper {
  */
 class EntityOrValue {
   #activeHelper = null; // Dynamically set to EntityHelper or ValueHelper
+  #helperType = { entity: 'entity', value: 'value' };
   #isEntity = null;
 
-  #createValueHelper() {
-    if (!this.#activeHelper || !(this.#activeHelper instanceof ValueHelper)) {
-      this.#activeHelper = new ValueHelper();
-      this.#isEntity = false;
-    }
-  }
-  #createEntityHelper() {
-    if (!this.#activeHelper || !(this.#activeHelper instanceof EntityHelper)) {
-      this.#activeHelper = new EntityHelper();
-      this.#isEntity = true;
+  #createHelper(helperType) {
+    const HelperClass = helperType === this.#helperType.entity ? EntityHelper : ValueHelper;
+    if (!(this.#activeHelper instanceof HelperClass)) {
+      this.#activeHelper = new HelperClass();
+      this.#isEntity = helperType === this.#helperType.entity;
     }
   }
 
@@ -3590,10 +3601,10 @@ class EntityOrValue {
    */
   set value(input) {
     if (typeof input === 'string') {
-      this.#createEntityHelper();
-      this.#activeHelper.id = input;
+      this.#createHelper(this.#helperType.entity);
+      this.#activeHelper.entityId = input;
     } else if (Number.isFinite(input)) {
-      this.#createValueHelper();
+      this.#createHelper(this.#helperType.value);
       this.#activeHelper.value = input;
     } else {
       this.#activeHelper = null;
@@ -3610,9 +3621,7 @@ class EntityOrValue {
     return this.#activeHelper ? this.#activeHelper.value : null;
   }
   set attribute(newAttribute) {
-    if (this.#isEntity) {
-      this.#activeHelper.attribute = newAttribute;
-    }
+    if (this.#isEntity) this.#activeHelper.attribute = newAttribute;
   }
   get state() {
     return this.#activeHelper && this.#isEntity ? this.#activeHelper.state : null;
@@ -3629,11 +3638,26 @@ class EntityOrValue {
   get name() {
     return this.#activeHelper && this.#isEntity ? this.#activeHelper.name : null;
   }
+  get formatedEntityState() {
+    return this.#activeHelper && this.#isEntity ? this.#activeHelper.formatedEntityState : null;
+  }
+  set stateContent(newstateContent) {
+    if (this.#activeHelper && this.#isEntity) this.#activeHelper.stateContent = newstateContent;
+  }
+  get stateContentToString() {
+    return this.#activeHelper && this.#isEntity ? this.#activeHelper.stateContentToString : null;
+  }
   get icon() {
     return this.#activeHelper && this.#isEntity ? this.#activeHelper.icon : null;
   }
   get isTimer() {
     return this.#activeHelper && this.#isEntity ? this.#activeHelper.isTimer : false;
+  }
+  get isDuration() {
+    return this.#activeHelper && this.#isEntity ? this.#activeHelper.isDuration : false;
+  }
+  get isCounter() {
+    return this.#activeHelper && this.#isEntity ? this.#activeHelper.isCounter : false;
   }
   get hasShapeByDefault() {
     return this.#activeHelper && this.#isEntity ? this.#activeHelper.hasShapeByDefault : false;
@@ -3650,13 +3674,14 @@ class EntityOrValue {
   get attributes() {
     return this.#activeHelper && this.#isEntity ? this.#activeHelper.attributes : null;
   }
+  get attributesListForEditor() {
+    return this.#activeHelper && this.#isEntity ? this.#activeHelper.attributesListForEditor : null;
+  }
   get unit() {
     return this.#activeHelper && this.#isEntity ? this.#activeHelper.unit : null;
   }
   refresh() {
-    if (this.#activeHelper && this.#isEntity) {
-      this.#activeHelper.refresh();
-    }
+    if (this.#activeHelper && this.#isEntity) this.#activeHelper.refresh();
   }
 }
 
@@ -3702,11 +3727,7 @@ class ConfigHelper {
 
   get decimal() {
     if (this.#config.decimal === undefined) {
-      if (this.unit === CARD.config.unit.default) {
-        return CARD.config.decimal.percentage;
-      } else {
-        return CARD.config.decimal.other;
-      }
+      return this.unit === CARD.config.unit.default ? CARD.config.decimal.percentage : CARD.config.decimal.other;
     }
     if (Number.isInteger(this.#config.decimal) && this.#config.decimal >= 0) {
       return this.#config.decimal;
@@ -3717,11 +3738,9 @@ class ConfigHelper {
   get isValid() {
     return this.#isValid;
   }
-
   get msg() {
     return this.#msg;
   }
-
   get color() {
     return this.#config.color;
   }
@@ -3749,56 +3768,39 @@ class ConfigHelper {
     return this.#config.min_value ? this.#config.min_value : CARD.config.value.min;
   }
   get max_value() {
-    if (!this.#config.max_value) {
-      return CARD.config.value.max;
-    }
-    if (Number.isFinite(this.#config.max_value)) {
-      return this.#config.max_value;
-    }
+    if (!this.#config.max_value) return CARD.config.value.max;
+    if (Number.isFinite(this.#config.max_value)) return this.#config.max_value;
     if (typeof this.#config.max_value === 'string') {
       const state = this.#hassProvider.hass.states[this.#config.max_value]?.state;
       const parsedState = parseFloat(state);
-
-      if (!isNaN(parsedState)) {
-        return parsedState;
-      }
+      if (!isNaN(parsedState)) return parsedState;
     }
     return null;
   }
   get unit() {
-    return this.#config.unit ? this.#config.unit : CARD.config.unit.default;
+    return this.#config.unit ? this.#config.unit : null;
   }
   get hasDisabledUnit() {
     return this.#config.disable_unit;
   }
   get cardTapAction() {
-    const result = (this.#config.tap_action?.action ?? null) === null ? CARD.interactions.action.default : this.#config.tap_action?.action;
-    return result;
+    return this.#getCardAction('tap_action');
   }
   get cardDoubleTapAction() {
-    const result =
-      (this.#config.double_tap_action?.action ?? null) === null ? CARD.interactions.action.default : this.#config.double_tap_action?.action;
-    return result;
+    return this.#getCardAction('double_tap_action');
   }
   get cardHoldAction() {
-    const result = (this.#config.hold_action?.action ?? null) === null ? CARD.interactions.action.default : this.#config.hold_action?.action;
-    return result;
+    return this.#getCardAction('hold_action');
   }
   get iconTapAction() {
-    const result = (this.#config.icon_tap_action?.action ?? null) === null ? CARD.interactions.action.default : this.#config.icon_tap_action?.action;
-    return result;
+    return this.#getCardAction('icon_tap_action');
   }
   get iconDoubleTapAction() {
-    const result =
-      (this.#config.icon_double_tap_action?.action ?? null) === null ? CARD.interactions.action.default : this.#config.icon_double_tap_action?.action;
-    return result;
+    return this.#getCardAction('icon_double_tap_action');
   }
   get iconHoldAction() {
-    const result =
-      (this.#config.icon_hold_action?.action ?? null) === null ? CARD.interactions.action.default : this.#config.icon_hold_action?.action;
-    return result;
+    return this.#getCardAction('icon_hold_action');
   }
-
   get theme() {
     return this.#config.theme;
   }
@@ -3817,8 +3819,19 @@ class ConfigHelper {
       disable_high: this.#config?.watermark?.disable_high ?? false,
     };
   }
+  get stateContent() {
+    const content = typeof this.#config?.state_content === 'string' ? [this.#config?.state_content] : this.#config?.state_content ?? [];
+    return content.filter(item => typeof item === 'string' && item !== null && item !== undefined);
+  }
   get reverse() {
     return this.#config.reverse;
+  }
+
+  /******************************************************************************************
+   * optimization
+   */
+  #getCardAction(action) {
+    return (this.#config[action]?.action ?? null) === null ? CARD.interactions.action.default : this.#config[action]?.action;
   }
 
   /******************************************************************************************
@@ -3836,25 +3849,25 @@ class ConfigHelper {
     const validationRules = [
       {
         valid: !!this.#config.entity,
-        msg: LANGUAGES[this.#hassProvider.language].card.msg.entityError,
+        msg: { content: LANGUAGES[this.#hassProvider.language].card.msg.entityError, sev: 'info' },
       },
       {
         valid: !this.#config.attribute || (entityState && Object.hasOwn(entityState.attributes, this.#config.attribute)),
-        msg: LANGUAGES[this.#hassProvider.language].card.msg.attributeNotFound,
+        msg: { content: LANGUAGES[this.#hassProvider.language].card.msg.attributeNotFound, sev: 'error' },
       },
       {
         valid: Number.isFinite(this.min_value),
-        msg: LANGUAGES[this.#hassProvider.language].card.msg.minValueError,
+        msg: { content: LANGUAGES[this.#hassProvider.language].card.msg.minValueError, sev: 'error' },
       },
       {
         valid:
           Number.isFinite(this.max_value) ||
           (maxValueState && (this.#config.max_value_attribute ? Object.hasOwn(maxValueState.attributes, this.#config.max_value_attribute) : true)),
-        msg: LANGUAGES[this.#hassProvider.language].card.msg.maxValueError,
+        msg: { content: LANGUAGES[this.#hassProvider.language].card.msg.maxValueError, sev: 'warning' },
       },
       {
         valid: Number.isFinite(this.decimal),
-        msg: LANGUAGES[this.#hassProvider.language].card.msg.decimalError,
+        msg: { content: LANGUAGES[this.#hassProvider.language].card.msg.decimalError, sev: 'error' },
       },
     ];
 
@@ -3896,65 +3909,47 @@ class CardView {
   get hasValidatedConfig() {
     return this.#configHelper.isValid;
   }
-
   get msg() {
     return this.#configHelper.msg;
   }
-
   get config() {
     return this.#configHelper.config;
   }
-
   get isUnknown() {
     return this.#currentValue.state === CARD.config.entity.state.unknown || this.#max_value.state === CARD.config.entity.state.unknown;
   }
-
   get isUnavailable() {
     return this.#currentValue.state === CARD.config.entity.state.unavailable || this.#max_value.state === CARD.config.entity.state.unavailable;
   }
-
   get isNotFound() {
     return this.#currentValue.state === CARD.config.entity.state.notFound || this.#max_value.state === CARD.config.entity.state.notFound;
   }
-
   get isAvailable() {
     return !(!this.#currentValue.isAvailable || (!this.#max_value.isAvailable && this.#configHelper.max_value));
   }
-
   set currentLanguage(newLanguage) {
     if (Object.keys(LANGUAGES).includes(newLanguage)) {
       this.#currentLanguage = newLanguage;
     }
   }
-
   get currentLanguage() {
     return this.#currentLanguage;
   }
-
   get entity() {
     return this.#configHelper.entity;
   }
-
   get icon() {
-    if (this.isNotFound) {
-      return CARD.style.icon.notFound.icon;
-    }
+    if (this.isNotFound) return CARD.style.icon.notFound.icon;
     if (this.#theme.theme === CARD.theme.battery.label && this.#currentValue.icon && this.#currentValue.icon.includes(CARD.theme.battery.icon)) {
       return this.#currentValue.icon;
     }
     return this.#theme.icon || this.#configHelper.icon || this.#currentValue.icon || CARD.style.icon.default.icon;
   }
-
   get color() {
-    if (this.isUnavailable) {
-      return CARD.style.color.unavailable;
-    }
-    if (this.isNotFound) {
-      return CARD.style.color.notFound;
-    }
+    if (this.isUnavailable) return CARD.style.color.unavailable;
+    if (this.isNotFound) return CARD.style.color.notFound;
     return this.#theme.color || this.#convertColorFromConfig(this.#configHelper.color) || this.#currentValue.defaultColor || CARD.style.color.default;
   }
-
   get bar_color() {
     if (this.isAvailable) {
       return (
@@ -3966,53 +3961,42 @@ class CardView {
     }
     return CARD.style.color.disabled;
   }
-
   get percent() {
     if (this.isAvailable) {
       return Math.min(CARD.config.value.max, Math.max(0, this.#percentHelper.percent));
     }
     return CARD.config.value.min;
   }
+  get stateAndProgressInfo() {
+    if (
+      this.isNotFound ||
+      this.isUnavailable ||
+      this.isUnknown ||
+      (this.#currentValue.isTimer && this.#currentValue.value.state === CARD.config.entity.state.idle)
+    )
+      return this.#currentValue.formatedEntityState;
 
-  get description() {
-    if (this.isNotFound) {
-      return LANGUAGES[this.#hassProvider.language].card.msg.entityNotFound;
-    }
-    if (this.isUnknown) {
-      return LANGUAGES[this.#hassProvider.language].card.msg.entityUnknown;
-    }
-    if (this.isUnavailable) {
-      return LANGUAGES[this.#hassProvider.language].card.msg.entityUnavailable;
-    }
-    return this.#percentHelper.toString();
+    const additionalInfo = this.#currentValue.stateContentToString;
+    if (this.componentIsHidden(CARD.style.dynamic.hiddenComponent.value.label)) return additionalInfo;
+    const valueInfo =
+      this.#currentValue.isDuration && !this.#configHelper.unit ? this.#currentValue.formatedEntityState : this.#percentHelper.toString();
+    
+    return additionalInfo === '' ? valueInfo : [additionalInfo, valueInfo].join(CARD.config.separator);
   }
-
   get name() {
     return this.#configHelper.name || this.#currentValue.name || this.#configHelper.entity;
   }
-
   get hasStandardEntityError() {
-    if (this.isUnavailable || this.isNotFound || this.isUnknown) {
-      return true;
-    }
-    return false;
+    return this.isUnavailable || this.isNotFound || this.isUnknown;
   }
-
   get isBadgeEnable() {
-    if (
-      !(
-        this.isUnavailable ||
-        this.isNotFound ||
-        (this.#configHelper.config.badge_icon !== undefined) ||
-        (this.#currentValue.isTimer &&
-          (this.#currentValue.value.state === CARD.config.entity.state.paused || this.#currentValue.value.state === CARD.config.entity.state.active))
-      )
-    ) {
-      return false;
-    }
-    return true;
+    return (
+      this.isUnavailable ||
+      this.isNotFound ||
+      this.#configHelper.config.badge_icon !== undefined ||
+      (this.#currentValue.isTimer && [CARD.config.entity.state.paused, CARD.config.entity.state.active].includes(this.#currentValue.value.state))
+    );
   }
-
   get badgeInfo() {
     if (this.isNotFound) {
       return CARD.style.icon.badge.notFound;
@@ -4046,13 +4030,19 @@ class CardView {
     return [CARD.interactions.action.default, CARD.interactions.action.moreInfo.action].includes(this.#configHelper.cardTapAction);
   }
   get bar() {
-    return this.#configHelper.bar;
+    const result = this.#configHelper.bar;
+    if (this.#currentValue.isTimer && result.orientation === null) {
+      result.orientation = CARD.style.dynamic.progressBar.orientation.rtl;
+      result.changed = true;
+    }
+    return result;
   }
   get hasClickableIcon() {
-    return (this.#configHelper.iconTapAction !== CARD.interactions.action.none.action ||
+    return (
+      this.#configHelper.iconTapAction !== CARD.interactions.action.none.action ||
       this.#configHelper.iconHoldAction !== CARD.interactions.action.none.action ||
-      this.#configHelper.iconDoubleTapAction !== CARD.interactions.action.none.action);
-
+      this.#configHelper.iconDoubleTapAction !== CARD.interactions.action.none.action
+    );
   }
   get hasClickableCard() {
     return (
@@ -4061,7 +4051,6 @@ class CardView {
       this.#configHelper.cardDoubleTapAction !== CARD.interactions.action.none.action
     );
   }
-
   get isClickable() {
     return this.#configHelper.cardTapAction !== CARD.interactions.action.none.action;
   }
@@ -4095,17 +4084,8 @@ class CardView {
       disable_high: result.disable_high,
     };
   }
-  get hasHiddenIcon() {
-    return this.#isComponentConfiguredAsHidden(CARD.style.dynamic.hiddenComponent.icon.label);
-  }
-  get hasHiddenName() {
-    return this.#isComponentConfiguredAsHidden(CARD.style.dynamic.hiddenComponent.name.label);
-  }
-  get hasHiddenSecondaryInfo() {
-    return this.#isComponentConfiguredAsHidden(CARD.style.dynamic.hiddenComponent.secondary_info.label);
-  }
-  get hasHiddenProgressBar() {
-    return this.#isComponentConfiguredAsHidden(CARD.style.dynamic.hiddenComponent.progress_bar.label);
+  componentIsHidden(component) {
+    return Array.isArray(this.#configHelper.config?.hide) && this.#configHelper.config.hide.includes(component);
   }
 
   /******************************************************************************************
@@ -4115,14 +4095,14 @@ class CardView {
    */
   set config(config) {
     this.#configHelper.config = config;
-    this.#percentHelper.unit = this.#configHelper.unit;
     this.#percentHelper.hasDisabledUnit = this.#configHelper.hasDisabledUnit;
     this.#theme.theme = this.#configHelper.theme;
     this.#theme.customTheme = this.#configHelper.custom_theme;
     this.#currentValue.value = this.#configHelper.entity;
-    this.#percentHelper.isTimer = this.#currentValue.isTimer;
+    this.#currentValue.stateContent = this.#configHelper.stateContent;
     if (this.#currentValue.isTimer) {
-      this.#isReversed = this.#configHelper.reverse;
+      // FMR
+      this.#isReversed = this.#configHelper.reverse === undefined ? true : this.#configHelper.reverse;
       this.#max_value.value = CARD.config.value.max;
     } else {
       this.#currentValue.attribute = config.attribute || null;
@@ -4143,19 +4123,23 @@ class CardView {
     this.#max_value.refresh();
     this.#configHelper.checkConfig();
 
-    if (!this.isAvailable) {
-      return;
-    }
+    if (!this.isAvailable) return;
 
     // update
+    this.#percentHelper.isTimer = this.#currentValue.isTimer || this.#currentValue.isDuration;
+    this.#percentHelper.unit = this.#getCurrentUnit();
     this.#percentHelper.decimal = this.#getCurrentDecimal();
 
     if (this.#currentValue.isTimer) {
       this.#percentHelper.isReversed =
         typeof this.#isReversed === 'boolean' && this.#isReversed && this.#currentValue.value.state !== CARD.config.entity.state.idle;
-      this.#percentHelper.current = this.#currentValue.value.elapsed;
-      this.#percentHelper.min = CARD.config.value.min;
-      this.#percentHelper.max = this.#currentValue.value.duration;
+      this.#percentHelper.current = this.#currentValue.value.current;
+      this.#percentHelper.min = this.#currentValue.value.min;
+      this.#percentHelper.max = this.#currentValue.value.max;
+    } else if (this.#currentValue.isCounter) {
+      this.#percentHelper.current = this.#currentValue.value.current;
+      this.#percentHelper.min = this.#currentValue.value.min;
+      this.#percentHelper.max = this.#currentValue.value.max;
     } else {
       this.#percentHelper.current = this.#currentValue.value;
       this.#percentHelper.min = this.#configHelper.min_value;
@@ -4164,22 +4148,26 @@ class CardView {
     this.#percentHelper.refresh();
     this.#theme.value = this.#percentHelper.valueForThemes(this.#theme.isBasedOnPercentage);
   }
+  #getCurrentUnit() {
+    if (this.#configHelper.unit) return this.#configHelper.unit;
+    if (this.#max_value.isEntity) return CARD.config.unit.default;
 
-  #isComponentConfiguredAsHidden(component) {
-    return Array.isArray(this.#configHelper.config?.hide) && this.#configHelper.config.hide.includes(component);
+    const unit = this.#currentValue.unit;
+    return unit === null ? CARD.config.unit.default : unit;
   }
-
   #getCurrentDecimal() {
     if (this.#configHelper.config.decimal !== undefined) return this.#configHelper.config.decimal;
     if (this.#currentValue.precision) return this.#currentValue.precision;
     if (this.#currentValue.isTimer) return CARD.config.decimal.timer;
+    if (this.#currentValue.isCounter) return CARD.config.decimal.counter;
+    if (this.#currentValue.isDuration) return CARD.config.decimal.duration;
+    if (['j', 'd', 'h', 'min', 's', 'ms'].includes(this.#currentValue.unit)) return CARD.config.decimal.duration;
     if (this.#configHelper.unit === CARD.config.unit.default) return CARD.config.decimal.percentage;
 
     return CARD.config.decimal.other;
   }
   #convertColorFromConfig(curColor) {
-    if (curColor == null) return null;
-    return DEF_COLORS.includes(curColor) ? `var(--${curColor}-color)` : curColor;
+    return curColor == null ? null : DEF_COLORS.includes(curColor) ? `var(--${curColor}-color)` : curColor;
   }
 }
 
@@ -4194,7 +4182,7 @@ class CardView {
 class EntityProgressCard extends HTMLElement {
   #cardView = new CardView();
   #elements = {};
-  #errorVisible = false;
+  #lastMessage = null;
   #lastHass = null;
   #autoRefreshInterval = null;
 
@@ -4229,7 +4217,6 @@ class EntityProgressCard extends HTMLElement {
       debugLog(Object.keys(LANGUAGES));
       EntityProgressCard._moduleLoaded = true;
     }
-    // this.addEventListener(CARD.interactions.event.click, this.#fireAction);
   }
 
   connectedCallback() {
@@ -4424,8 +4411,20 @@ class EntityProgressCard extends HTMLElement {
   }
 
   refresh(hass) {
+    debugLog('👉 EntityProgressCard.refresh()');
+
     this.#cardView.refresh(hass);
+    if (this.#manageErrorMessage()) return;
     this.#updateDynamicElements();
+  }
+
+  #manageErrorMessage() {
+    if (this.#cardView.entity === undefined || (this.#cardView.isAvailable && !this.#cardView.hasValidatedConfig)) {
+      this.#renderMessage(this.#cardView.msg);
+      return true;
+    }
+    this.#lastMessage = null;
+    return false;
   }
 
   #startAutoRefresh() {
@@ -4446,6 +4445,10 @@ class EntityProgressCard extends HTMLElement {
     }
   }
 
+  #toggleHiddenComponent(card, component) {
+    card.classList.toggle(component.class, this.#cardView.componentIsHidden(component.label));
+  }
+
   /**
    * Builds and initializes the structure of the custom card component.
    *
@@ -4453,6 +4456,8 @@ class EntityProgressCard extends HTMLElement {
    * them into the component's Shadow DOM.
    */
   #buildCard() {
+    debugLog('👉 EntityProgressCard.#buildCard()');
+
     const card = document.createElement(CARD.htmlStructure.card.element);
     card.classList.add(CARD.meta.typeName);
     card.classList.toggle(CARD.style.dynamic.clickable.card, this.#cardView.hasClickableCard);
@@ -4461,10 +4466,10 @@ class EntityProgressCard extends HTMLElement {
     card.classList.add(this.#cardView.layout);
     card.classList.add(this.#cardView.bar.size);
     card.classList.toggle(CARD.style.dynamic.secondaryInfoError.class, this.#cardView.hasStandardEntityError);
-    card.classList.toggle(CARD.style.dynamic.hiddenComponent.icon.class, this.#cardView.hasHiddenIcon);
-    card.classList.toggle(CARD.style.dynamic.hiddenComponent.name.class, this.#cardView.hasHiddenName);
-    card.classList.toggle(CARD.style.dynamic.hiddenComponent.secondary_info.class, this.#cardView.hasHiddenSecondaryInfo);
-    card.classList.toggle(CARD.style.dynamic.hiddenComponent.progress_bar.class, this.#cardView.hasHiddenProgressBar);
+    this.#toggleHiddenComponent(card, CARD.style.dynamic.hiddenComponent.icon);
+    this.#toggleHiddenComponent(card, CARD.style.dynamic.hiddenComponent.name);
+    this.#toggleHiddenComponent(card, CARD.style.dynamic.hiddenComponent.secondary_info);
+    this.#toggleHiddenComponent(card, CARD.style.dynamic.hiddenComponent.progress_bar);
     const type = this.#cardView.watermark.type === 'line' ? 'line-' : '';
     card.classList.toggle(
       `${CARD.style.dynamic.show}-HWM-${type}${CARD.htmlStructure.elements.progressBar.watermark.class}`,
@@ -4492,10 +4497,9 @@ class EntityProgressCard extends HTMLElement {
       [CARD.htmlStructure.elements.name.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.name.class}`),
       [CARD.htmlStructure.elements.nameCustomInfo.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.nameCustomInfo.class}`),
       [CARD.htmlStructure.elements.customInfo.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.customInfo.class}`),
-      [CARD.htmlStructure.elements.percentage.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.percentage.class}`),
-      [CARD.htmlStructure.alert.container.element]: this.shadowRoot.querySelector(`${CARD.htmlStructure.alert.container.element}`),
-      [CARD.htmlStructure.alert.icon.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.alert.icon.class}`),
-      [CARD.htmlStructure.alert.message.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.alert.message.class}`),
+      [CARD.htmlStructure.elements.stateAndProgressInfo.class]: this.shadowRoot.querySelector(
+        `.${CARD.htmlStructure.elements.stateAndProgressInfo.class}`
+      ),
     };
   }
 
@@ -4506,17 +4510,6 @@ class EntityProgressCard extends HTMLElement {
     const element = this.#elements[key];
     if (element) {
       updateCallback(element);
-    }
-  }
-
-  #manageErrorMessage() {
-    if (!this.#cardView.hasValidatedConfig) {
-      this.#showError(this.#cardView.msg);
-      this.#errorVisible = true;
-      return;
-    } else if (this.#errorVisible) {
-      this.#hideError();
-      this.#errorVisible = false;
     }
   }
 
@@ -4534,6 +4527,7 @@ class EntityProgressCard extends HTMLElement {
   }
 
   #renderJinja(key, content) {
+    debugLog('👉 EntityProgressCard.#renderJinja()');
     debugLog(key);
     debugLog(content);
     switch (key) {
@@ -4577,6 +4571,8 @@ class EntityProgressCard extends HTMLElement {
   }
 
   #cleanUpSubscribeTemplate() {
+    debugLog('👉 EntityProgressCard.#cleanUpSubscribeTemplate()');
+
     if (!this.#unsubscribeTemplates || Object.keys(this.#unsubscribeTemplates).length === 0) {
       return;
     }
@@ -4587,55 +4583,16 @@ class EntityProgressCard extends HTMLElement {
     this.#unsubscribeTemplates = {};
   }
 
-  async #processJinja() {
-    const templates = [];
-    templates['name_info'] = this.#cardView.config.name_info || '';
-    templates['custom_info'] = this.#cardView.config.custom_info || '';
-    templates['badge_icon'] = this.#cardView.config.badge_icon || '';
-    templates['badge_color'] = this.#cardView.config.badge_color || '';
-
-    this.#cleanUpSubscribeTemplate();
-
-    for (const key in templates) {
-      const template = templates[key];
-      // Skip empty templates
-      if (!template.trim()) continue;
-      const unsub = await this.#lastHass.connection.subscribeMessage((msg) => this.#renderJinja(key, msg.result), {
-        type: 'render_template',
-        template: template,
-      });
-      // keep it
-      this.#unsubscribeTemplates[key] = unsub;
-    }
-  }
-
   /**
    * Updates dynamic card elements based on the entity's state and configuration.
    */
   #updateDynamicElements() {
-    this.#manageErrorMessage();
+    debugLog('👉 EntityProgressCard.#updateDynamicElements()');
     this.#showBadge();
     this.#manageShape();
     this.#updateCSS();
-    this.#processJinja();
-
-    this.#updateElement(CARD.htmlStructure.elements.icon.class, (el) => {
-      if (el.getAttribute(CARD.htmlStructure.elements.icon.class) !== this.#cardView.icon) {
-        el.setAttribute(CARD.htmlStructure.elements.icon.class, this.#cardView.icon);
-      }
-    });
-
-    this.#updateElement(CARD.htmlStructure.elements.name.class, (el) => {
-      if (el.textContent !== this.#cardView.name) {
-        el.textContent = this.#cardView.name;
-      }
-    });
-
-    this.#updateElement(CARD.htmlStructure.elements.percentage.class, (el) => {
-      if (el.textContent !== this.#cardView.description) {
-        el.textContent = this.#cardView.description;
-      }
-    });
+    this.#processJinjaFields();
+    this.#processStandardFields();
   }
 
   #manageShape() {
@@ -4688,38 +4645,71 @@ class EntityProgressCard extends HTMLElement {
       }
     });
   }
-  /**
-   * Displays an error alert with the provided message.
-   *
-   * @param {string} message - The error message to display in the alert.
-   */
-  #showError(message) {
-    this.#elements[CARD.htmlStructure.card.element].classList.toggle(
-      `${CARD.style.dynamic.show}-${CARD.htmlStructure.alert.container.element}`,
-      true
-    );
-    this.#updateElement(CARD.htmlStructure.alert.icon.class, (el) => {
-      if (el.getAttribute(CARD.style.icon.alert.attribute) !== CARD.style.icon.alert.icon) {
-        el.setAttribute(CARD.style.icon.alert.attribute, CARD.style.icon.alert.icon);
+  async #processJinjaFields() {
+    if (this.#cardView.hasStandardEntityError) return;
+    const templates = {};
+    templates['name_info'] = this.#cardView.config.name_info || '';
+    templates['custom_info'] = this.#cardView.config.custom_info || '';
+    templates['badge_icon'] = this.#cardView.config.badge_icon || '';
+    templates['badge_color'] = this.#cardView.config.badge_color || '';
+
+    this.#cleanUpSubscribeTemplate();
+
+    for (const key in templates) {
+      const template = templates[key];
+      // Skip empty templates
+      if (!template.trim()) continue;
+      const unsub = await this.#lastHass.connection.subscribeMessage((msg) => this.#renderJinja(key, msg.result), {
+        type: 'render_template',
+        template: template,
+      });
+      // keep it
+      this.#unsubscribeTemplates[key] = unsub;
+    }
+  }
+
+  #processStandardFields() {
+    this.#updateElement(CARD.htmlStructure.elements.icon.class, (el) => {
+      if (el.getAttribute(CARD.htmlStructure.elements.icon.class) !== this.#cardView.icon) {
+        el.setAttribute(CARD.htmlStructure.elements.icon.class, this.#cardView.icon);
       }
     });
-    this.#updateElement(CARD.htmlStructure.alert.message.class, (el) => {
-      if (el.textContent !== message) {
-        el.textContent = message;
+
+    this.#updateElement(CARD.htmlStructure.elements.name.class, (el) => {
+      const newContent = this.#cardView.name;
+      if (el.textContent !== newContent) {
+        el.textContent = newContent;
+      }
+    });
+
+    this.#updateElement(CARD.htmlStructure.elements.stateAndProgressInfo.class, (el) => {
+      const newContent = this.#cardView.stateAndProgressInfo;
+      if (el.textContent !== newContent) {
+        el.textContent = newContent;
       }
     });
   }
 
   /**
-   * Hides the error alert by setting its display style to hide.
-   *
-   * @returns {void}
+   * Displays an error alert with the provided message.
+   *   'info', 'warning', 'error'
    */
-  #hideError() {
-    this.#elements[CARD.htmlStructure.card.element].classList.toggle(
-      `${CARD.style.dynamic.show}-${CARD.htmlStructure.alert.container.element}`,
-      false
-    );
+  #renderMessage(msg) {
+    if (msg === this.#lastMessage) return;
+    this.#lastMessage = msg;
+
+    // Vérifier si on a déjà un ha-alert
+    let alert = this.shadowRoot.querySelector('ha-alert');
+
+    if (!alert) {
+      alert = document.createElement('ha-alert');
+      this.shadowRoot.innerHTML = ''; // Clear shadow DOM
+      this.shadowRoot.appendChild(alert);
+    }
+
+    // Ensuite on met à jour le message et la sévérité
+    alert.setAttribute('alert-type', msg.sev); // IMPORTANT: attribut
+    alert.textContent = msg.content;
   }
 
   /**
@@ -4899,12 +4889,13 @@ class EntityProgressCardEditor extends HTMLElement {
     // Création d'une instance EntityOrValue pour l'entité courante
     const curEntity = new EntityOrValue();
     curEntity.value = this.#config[entity];
+    const attributeList = curEntity.attributesListForEditor;
 
     // Si l'entité a changé et que l'entité courante a des attributs, on régénère la liste.
     if (this.#previous[entity] !== this.#config[entity] && curEntity.hasAttribute) {
       this.#previous[entity] = this.#config[entity];
-      this.#updateChoices(this.#elements[attribute], attribute, Object.keys(curEntity.attributes));
-      debugLog(`        ✅ updateFields - ${entity} attributes list: `, curEntity.attributes);
+      this.#updateChoices(this.#elements[attribute], attribute, attributeList);
+      debugLog(`        ✅ updateFields - ${entity} attributes list: `, attributeList);
     }
 
     // Si l'attribut n'est pas défini dans la config ET
@@ -4945,6 +4936,7 @@ class EntityProgressCardEditor extends HTMLElement {
       toggle_unit: this.#config.disable_unit !== true,
       toggle_icon: !hide.includes('icon'),
       toggle_name: !hide.includes('name'),
+      toggle_value: !hide.includes('value'),
       toggle_secondary_info: !hide.includes('secondary_info'),
       toggle_progress_bar: !hide.includes('progress_bar'),
     };
@@ -5069,6 +5061,7 @@ class EntityProgressCardEditor extends HTMLElement {
       case EDITOR_INPUT_FIELDS.theme.field.toggleBar.name:
       case EDITOR_INPUT_FIELDS.theme.field.toggleIcon.name:
       case EDITOR_INPUT_FIELDS.theme.field.toggleName.name:
+      case EDITOR_INPUT_FIELDS.theme.field.toggleValue.name:
       case EDITOR_INPUT_FIELDS.theme.field.toggleSecondaryInfo.name: {
         const key = changedEvent.target.id.replace('toggle_', '');
         newConfig.hide ??= [];
@@ -5181,7 +5174,7 @@ class EntityProgressCardEditor extends HTMLElement {
         }
         case CARD.editor.fields.attribute.type:
         case CARD.editor.fields.max_value_attribute.type:
-          option.innerHTML = `${optionData}`;
+          option.innerHTML = `${optionData.label}`;
           break;
       }
       select.appendChild(option);
