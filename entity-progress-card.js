@@ -4142,8 +4142,9 @@ class CardView {
 
     // update
     this.#percentHelper.isTimer = this.#currentValue.isTimer || this.#currentValue.isDuration;
-    this.#percentHelper.unit = this.#getCurrentUnit();
-    this.#percentHelper.decimal = this.#getCurrentDecimal();
+    const currentUnit = this.#getCurrentUnit();
+    this.#percentHelper.unit = currentUnit;
+    this.#percentHelper.decimal = this.#getCurrentDecimal(currentUnit);
 
     if (this.#currentValue.isTimer) {
       this.#percentHelper.isReversed =
@@ -4170,14 +4171,14 @@ class CardView {
     const unit = this.#currentValue.unit;
     return unit === null ? CARD.config.unit.default : unit;
   }
-  #getCurrentDecimal() {
+  #getCurrentDecimal(unit) {
     if (this.#configHelper.config.decimal !== undefined) return this.#configHelper.config.decimal;
     if (this.#currentValue.precision) return this.#currentValue.precision;
     if (this.#currentValue.isTimer) return CARD.config.decimal.timer;
     if (this.#currentValue.isCounter) return CARD.config.decimal.counter;
     if (this.#currentValue.isDuration) return CARD.config.decimal.duration;
     if (['j', 'd', 'h', 'min', 's', 'ms'].includes(this.#currentValue.unit)) return CARD.config.decimal.duration;
-    if (this.#configHelper.unit === CARD.config.unit.default) return CARD.config.decimal.percentage;
+    if (unit === CARD.config.unit.default) return CARD.config.decimal.percentage;
 
     return CARD.config.decimal.other;
   }
