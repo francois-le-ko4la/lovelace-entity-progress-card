@@ -4171,14 +4171,14 @@ class CardView {
     const unit = this.#currentValue.unit;
     return unit === null ? CARD.config.unit.default : unit;
   }
-  #getCurrentDecimal(unit) {
+  #getCurrentDecimal(currentUnit) {
     if (this.#configHelper.config.decimal !== undefined) return this.#configHelper.config.decimal;
     if (this.#currentValue.precision) return this.#currentValue.precision;
     if (this.#currentValue.isTimer) return CARD.config.decimal.timer;
     if (this.#currentValue.isCounter) return CARD.config.decimal.counter;
     if (this.#currentValue.isDuration) return CARD.config.decimal.duration;
     if (['j', 'd', 'h', 'min', 's', 'ms'].includes(this.#currentValue.unit)) return CARD.config.decimal.duration;
-    if (unit === CARD.config.unit.default) return CARD.config.decimal.percentage;
+    if (currentUnit === CARD.config.unit.default) return CARD.config.decimal.percentage;
 
     return CARD.config.decimal.other;
   }
