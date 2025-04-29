@@ -3471,9 +3471,9 @@ class EntityHelper {
   #getIconByDomainOrDeviceClass() {
     const deviceClass = this.#hassProvider.getDeviceClass(this.#entityId);
     const domainIcon = CARD.style.icon.byDeviceDomain.get(this.#domain) || null;
-    const deviceClassIcon = CARD.style.icon.byDynamicDeviceClass.get(deviceClass) || null;
+    const deviceClassIcon = CARD.style.icon.byDeviceClass.get(deviceClass) || null;
 
-    const dynIconMap = CARD.style.icon.byDynamicClass.get(deviceClass) || null;
+    const dynIconMap = CARD.style.icon.byDynamicDeviceClass.get(deviceClass) || null;
     let dynIcon = null;
     if (dynIconMap) {
       const state = this.#hassProvider.getEntityStateValue(this.#entityId);
