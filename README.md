@@ -530,7 +530,6 @@ _Default by device class:_
 | cold                             | mdi:snowflake      |
 | connectivity                     | mdi:wifi           |
 | current                          | mdi:current-ac     |
-| door                             | mdi:door-open      |
 | duration                         | mdi:timer-outline  |
 | energy                           | mdi:flash          |
 | gas                              | mdi:fire           |
@@ -549,7 +548,6 @@ _Default by device class:_
 | pressure                         | mdi:gauge          |
 | problem                          | mdi:alert          |
 | safety                           | mdi:shield-check   |
-| shutter                          | mdi:window-shutter |
 | smoke                            | mdi:smoke-detector |
 | sound                            | mdi:volume-high    |
 | switch                           | mdi:power-socket   |
@@ -561,6 +559,20 @@ _Default by device class:_
 | voltage                          | mdi:flash          |
 | window                           | mdi:window-open    |
 
+_Default by device class and by state:_
+
+| Device Class | `open`                       | `closed`                            |
+|--------------|------------------------------|-------------------------------------|
+| curtain      | `mdi:curtains`               | `mdi:curtains-closed`               |
+| blind        | `mdi:blinds-horizontal`      | `mdi:blinds-horizontal-closed`      |
+| garage       | `mdi:garage-open`            | `mdi:garage`                        |
+| gate         | `mdi:gate-open`              | `mdi:gate`                          |
+| shutter      | `mdi:window-shutter-open`    | `mdi:window-shutter`                |
+| window       | `mdi:window-open`            | `mdi:window-closed`                 |
+| door         | `mdi:door-open`              | `mdi:door-closed`                   |
+| shade        | `mdi:roller-shade`           | `mdi:roller-shade-closed`           |
+| damper       | `mdi:circle`                 | `mdi:circle-slice-8`                |
+
 _Order of Priority for the Icon:_
 
 - Theme/Custom Theme: The icon derived from the theme or style applied to the item.
@@ -569,7 +581,6 @@ _Order of Priority for the Icon:_
 - Icon Associated with the Entity's device_class: temperature, humidity...
 - Icon Associated with the Entity's device domain
 - Default: The icon used by default if no other is specified.
-
 
 ### `force_circular_background` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#reverse-)
 

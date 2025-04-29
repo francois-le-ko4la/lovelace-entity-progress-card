@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.3.3
+ * @version 1.3.4
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.3.3';
+const VERSION = '1.3.4';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
@@ -37,7 +37,7 @@ const CARD = {
     unit: { default: '%', fahrenheit: '°F', timer: 'timer', flexTimer: 'flextimer', second: 's', disable: '' },
     showMoreInfo: true,
     reverse: false,
-    decimal: { percentage: 0, timer: 0, counter: 0, duration:0, other: 2 },
+    decimal: { percentage: 0, timer: 0, counter: 0, duration: 0, other: 2 },
     entity: {
       state: { unavailable: 'unavailable', unknown: 'unknown', notFound: 'notFound', idle: 'idle', active: 'active', paused: 'paused' },
       type: { timer: 'timer', light: 'light', cover: 'cover', fan: 'fan', climate: 'climate', counter: 'counter' },
@@ -182,63 +182,71 @@ const CARD = {
           paused: { icon: 'mdi:pause', color: 'white', backgroundColor: 'var(--state-icon-color)', attribute: 'icon' },
         },
       },
-      byDeviceDomain: {
-        binary_sensor: 'mdi:circle-outline',
-        climate: 'mdi:thermostat',
-        counter: 'mdi:counter',
-        cover: 'mdi:garage',
-        fan: 'mdi:fan',
-        input_boolean: 'mdi:toggle-switch',
-        input_number: 'mdi:numeric',
-        input_select: 'mdi:form-dropdown',
-        media_player: 'mdi:speaker',
-        light: 'mdi:lightbulb',
-        lock: 'mdi:lock',
-        person: 'mdi:account',
-        sensor: 'mdi:eye',
-        scene: 'mdi:palette',
-        switch: 'mdi:toggle-switch',
-        timer: 'mdi:timer-outline',
-        weather: 'mdi:weather-cloudy',
-        sun: 'mdi:white-balance-sunny',
-      },
-      byDeviceClass: {
-        battery: 'mdi:battery',
-        carbon_dioxide: 'mdi:molecule-co2',
-        cold: 'mdi:snowflake',
-        connectivity: 'mdi:wifi',
-        current: 'mdi:current-ac',
-        door: 'mdi:door-open',
-        duration: 'mdi:timer-outline',
-        energy: 'mdi:flash',
-        gas: 'mdi:fire',
-        heat: 'mdi:fire',
-        humidity: 'mdi:water-percent',
-        illuminance: 'mdi:brightness-5',
-        lock: 'mdi:lock',
-        moisture: 'mdi:water',
-        motion: 'mdi:motion-sensor',
-        occupancy: 'mdi:account',
-        opening: 'mdi:window-open',
-        plug: 'mdi:power-plug',
-        pm25: 'mdi:molecule',
-        power: 'mdi:flash',
-        power_factor: 'mdi:flash',
-        pressure: 'mdi:gauge',
-        problem: 'mdi:alert',
-        safety: 'mdi:shield-check',
-        shutter: 'mdi:window-shutter',
-        smoke: 'mdi:smoke-detector',
-        sound: 'mdi:volume-high',
-        switch: 'mdi:power-socket',
-        temperature: 'mdi:thermometer',
-        timestamp: 'mdi:calendar-clock',
-        tv: 'mdi:television',
-        vibration: 'mdi:vibrate',
-        volatile_organic_compounds_parts: 'mdi:molecule',
-        voltage: 'mdi:flash',
-        window: 'mdi:window-open',
-      },
+      byDeviceDomain: new Map([
+        ['binary_sensor', 'mdi:circle-outline'],
+        ['climate', 'mdi:thermostat'],
+        ['counter', 'mdi:counter'],
+        ['cover', 'mdi:window-shutter'],
+        ['fan', 'mdi:fan'],
+        ['input_boolean', 'mdi:toggle-switch'],
+        ['input_number', 'mdi:numeric'],
+        ['input_select', 'mdi:form-dropdown'],
+        ['media_player', 'mdi:speaker'],
+        ['light', 'mdi:lightbulb'],
+        ['lock', 'mdi:lock'],
+        ['person', 'mdi:account'],
+        ['sensor', 'mdi:eye'],
+        ['scene', 'mdi:palette'],
+        ['switch', 'mdi:toggle-switch'],
+        ['timer', 'mdi:timer-outline'],
+        ['weather', 'mdi:weather-cloudy'],
+        ['sun', 'mdi:white-balance-sunny'],
+      ]),
+      byDeviceClass: new Map([
+        ['battery', 'mdi:battery'],
+        ['carbon_dioxide', 'mdi:molecule-co2'],
+        ['cold', 'mdi:snowflake'],
+        ['connectivity', 'mdi:wifi'],
+        ['current', 'mdi:current-ac'],
+        ['duration', 'mdi:timer-outline'],
+        ['energy', 'mdi:flash'],
+        ['gas', 'mdi:fire'],
+        ['heat', 'mdi:fire'],
+        ['humidity', 'mdi:water-percent'],
+        ['illuminance', 'mdi:brightness-5'],
+        ['lock', 'mdi:lock'],
+        ['moisture', 'mdi:water'],
+        ['motion', 'mdi:motion-sensor'],
+        ['occupancy', 'mdi:account'],
+        ['opening', 'mdi:window-open'],
+        ['plug', 'mdi:power-plug'],
+        ['pm25', 'mdi:molecule'],
+        ['power', 'mdi:flash'],
+        ['power_factor', 'mdi:flash'],
+        ['pressure', 'mdi:gauge'],
+        ['problem', 'mdi:alert'],
+        ['safety', 'mdi:shield-check'],
+        ['smoke', 'mdi:smoke-detector'],
+        ['sound', 'mdi:volume-high'],
+        ['switch', 'mdi:power-socket'],
+        ['temperature', 'mdi:thermometer'],
+        ['timestamp', 'mdi:calendar-clock'],
+        ['tv', 'mdi:television'],
+        ['vibration', 'mdi:vibrate'],
+        ['volatile_organic_compounds_parts', 'mdi:molecule'],
+        ['voltage', 'mdi:flash'],
+      ]),
+      byDynamicDeviceClass: new Map([
+        ['curtain',       { open: 'mdi:curtains', closed: 'mdi:curtains-closed' }],
+        ['blind',         { open: 'mdi:blinds-horizontal', closed: 'mdi:blinds-horizontal-closed' }],
+        ['garage',        { open: 'mdi:garage-open', closed: 'mdi:garage' }],
+        ['gate',          { open: 'mdi:gate-open', closed: 'mdi:gate' }],
+        ['shutter',       { open: 'mdi:window-shutter-open', closed: 'mdi:window-shutter' }],
+        ['window',        { open: 'mdi:window-open', closed: 'mdi:window-closed' }],
+        ['door',          { open: 'mdi:door-open', closed: 'mdi:door-closed' }],
+        ['shade',         { open: 'mdi:roller-shade', closed: 'mdi:roller-shade-closed' }],
+        ['damper',        { open: 'mdi:circle', closed: 'mdi:circle-slice-8' }],
+      ]),
       suffix: { open: '-open' },
     },
     bar: {
@@ -397,7 +405,7 @@ CARD.console = {
   link: '      For more details, check the README: https://github.com/francois-le-ko4la/lovelace-entity-progress-card',
 };
 
-const DEF_COLORS = [
+const DEF_COLORS = new Set([
   'primary',
   'accent',
   'red',
@@ -424,7 +432,7 @@ const DEF_COLORS = [
   'black',
   'white',
   'disabled',
-];
+]);
 
 const THEME = {
   optimal_when_low: {
@@ -2851,7 +2859,7 @@ class NumberFormatter {
       case 'μs': // Microseconde
         return value * 0.000001; // 1 microseconde = 0.000001 seconde
       default:
-        throw new Error('Unité non reconnue');
+        throw new Error('Unknown case');
     }
   }
   static convertDuration(duration) {
@@ -3318,7 +3326,7 @@ class HassProvider {
     return this.getEntityAttribute(entityId, 'unit_of_measurement') ?? null;
   }
   getPrecision(entityId) {
-    return this.getEntityAttribute(entityId, 'display_precision') ?? null;
+    return this.#hass?.entities?.[entityId]?.display_precision ?? null;
   }
   getNumericAttributes(entityId) {
     const attributes = this.getEntityState(entityId)?.attributes ?? {};
@@ -3442,6 +3450,8 @@ class EntityHelper {
         elapsed = duration - remaining;
         break;
       }
+      default:
+        throw new Error('Timer entity - Unknown case');
     }
     this.#value = { current: elapsed / CARD.config.msFactor, min: CARD.config.value.min, max: duration / CARD.config.msFactor, state: this.#state };
   }
@@ -3460,12 +3470,17 @@ class EntityHelper {
   }
   #getIconByDomainOrDeviceClass() {
     const deviceClass = this.#hassProvider.getDeviceClass(this.#entityId);
-    const domainIcon =
-      this.#domain && Object.hasOwn(CARD.style.icon.byDeviceDomain, this.#domain) ? CARD.style.icon.byDeviceDomain[this.#domain] : null;
-    const deviceClassIcon =
-      deviceClass && Object.hasOwn(CARD.style.icon.byDeviceClass, deviceClass) ? CARD.style.icon.byDeviceClass[deviceClass] : null;
+    const domainIcon = CARD.style.icon.byDeviceDomain.get(this.#domain) || null;
+    const deviceClassIcon = CARD.style.icon.byDynamicDeviceClass.get(deviceClass) || null;
 
-    return deviceClassIcon || domainIcon || null;
+    const dynIconMap = CARD.style.icon.byDynamicClass.get(deviceClass) || null;
+    let dynIcon = null;
+    if (dynIconMap) {
+      const state = this.#hassProvider.getEntityStateValue(this.#entityId);
+      dynIcon = state === 'open' || state === 'opening' ? dynIconMap.open : dynIconMap.closed;
+    }
+    
+    return dynIcon || deviceClassIcon || domainIcon || null;
   }
 
   /**
@@ -3948,12 +3963,12 @@ class CardView {
   get color() {
     if (this.isUnavailable) return CARD.style.color.unavailable;
     if (this.isNotFound) return CARD.style.color.notFound;
-    return this.#theme.color || this.#convertColorFromConfig(this.#configHelper.color) || this.#currentValue.defaultColor || CARD.style.color.default;
+    return this.#convertColorFromConfig(this.#theme.color || this.#configHelper.color) || this.#currentValue.defaultColor || CARD.style.color.default;
   }
   get bar_color() {
     if (this.isAvailable) {
       return (
-        this.#theme.color || this.#convertColorFromConfig(this.#configHelper.bar.color) || this.#currentValue.defaultColor || CARD.style.color.default
+        this.#convertColorFromConfig(this.#theme.color || this.#configHelper.bar.color) || this.#currentValue.defaultColor || CARD.style.color.default
       );
     }
     if (this.isUnknown) {
@@ -4167,7 +4182,108 @@ class CardView {
     return CARD.config.decimal.other;
   }
   #convertColorFromConfig(curColor) {
-    return curColor == null ? null : DEF_COLORS.includes(curColor) ? `var(--${curColor}-color)` : curColor;
+    return curColor == null ? null : DEF_COLORS.has(curColor) ? `var(--${curColor}-color)` : curColor;
+  }
+}
+
+
+class ResourceManager {
+  #resources = new Map();
+  #debug = false;
+
+  constructor(options = { debug: false }) {
+    this.#debug = options.debug || false;
+  }
+
+  #generateUniqueId() {
+    let id;
+    do {
+      id = Math.random().toString(36).slice(2, 8);
+    } while (this.#resources.has(id));
+    return id;
+  }
+
+  add(cleanupFn, id) {
+    if (typeof cleanupFn !== 'function') {
+      throw new Error('Resource must be a function');
+    }
+    const finalId = id || this.#generateUniqueId();
+    if (this.#resources.has(finalId)) {
+      this.remove(finalId); // <-- on supprime proprement l'ancien !
+    }
+    this.#resources.set(finalId, cleanupFn);
+    if (this.#debug) debugLog(`[ResourceManager] Added: ${finalId}`);
+
+    return finalId;
+  }
+
+  setInterval(handler, timeout, id) {
+    if (this.#debug) debugLog('Starting interval with id:', id);
+    const timerId = setInterval(handler, timeout);
+    if (this.#debug) debugLog('Timer started with timerId:', timerId);
+
+    this.add(() => {
+      if (this.#debug) debugLog('Stopping interval with id:', id);
+      clearInterval(timerId);
+    }, id);
+
+    return id;
+  }
+
+  hasInterval(id) {
+    return this.#resources.has(id); // Vérifie si un ID existe dans la Map
+  }
+
+  setTimeout(handler, timeout, id) {
+    if (this.#debug) debugLog('Starting timeout with id:', id);
+    const timerId = setTimeout(handler, timeout);
+    if (this.#debug) debugLog('Timeout started with timerId:', timerId);
+    return this.add(() => clearTimeout(timerId), id);
+  }
+
+  addEventListener(target, event, handler, options, id) {
+    target.addEventListener(event, handler, options);
+    return this.add(() => target.removeEventListener(event, handler, options), id);
+  }
+
+  addSubscription(unsubscribeFn, id) {
+    return this.add(() => {
+      unsubscribeFn();
+    }, id);
+  }
+
+  remove(id) {
+    const cleanupFn = this.#resources.get(id);
+    if (cleanupFn) {
+      try {
+        cleanupFn();
+      } catch (e) {
+        console.error(`[ResourceManager] Error while removing '${id}'`, e);
+      }
+      this.#resources.delete(id);
+      if (this.#debug) debugLog(`[ResourceManager] Removed: ${id}`);
+    }
+  }
+
+  clear() {
+    for (const [id, cleanupFn] of this.#resources) {
+      try {
+        cleanupFn();
+      } catch (e) {
+        console.error(`[ResourceManager] Error while clearing '${id}'`, e);
+      }
+      if (this.#debug) debugLog(`[ResourceManager] Cleared: ${id}`);
+    }
+    this.#resources.clear();
+    if (this.#debug) debugLog('[ResourceManager] All resources cleared.');
+  }
+
+  get list() {
+    return [...this.#resources.keys()];
+  }
+
+  get count() {
+    return this.#resources.size;
   }
 }
 
@@ -4180,17 +4296,12 @@ class CardView {
  * state.
  */
 class EntityProgressCard extends HTMLElement {
+  #resourceManager = null;
   #cardView = new CardView();
   #elements = {};
   #lastMessage = null;
   #lastHass = null;
-  #autoRefreshInterval = null;
-
-  #unsubscribeTemplates = {};
-
-  #tapTimeout = null;
   #clickCount = 0;
-  #holdTimeout = null;
   #downTime = null;
   #isHolding = null;
   #clickSource = null;
@@ -4221,7 +4332,7 @@ class EntityProgressCard extends HTMLElement {
 
   connectedCallback() {
     debugLog('👉 connectedCallback()');
-
+    this.#resourceManager = new ResourceManager();
     this.#clickableTarget = this.#cardView.hasClickableCard
       ? this
       : this.#cardView.hasClickableIcon
@@ -4234,31 +4345,17 @@ class EntityProgressCard extends HTMLElement {
   }
   #attachListener(elem) {
     debugLog('👉 #attachListener()');
-    elem.addEventListener('mousedown', this.#boundHandlers.mousedown);
-    elem.addEventListener('mouseup', this.#boundHandlers.mouseup);
-    elem.addEventListener('mousemove', this.#boundHandlers.mousemove);
-    elem.addEventListener('touchstart', this.#boundHandlers.touchstart, { passive: true });
-    elem.addEventListener('touchend', this.#boundHandlers.touchend);
-    elem.addEventListener('touchmove', this.#boundHandlers.touchmove, { passive: true });
+    this.#resourceManager.addEventListener(elem, 'mousedown', this.#boundHandlers.mousedown);
+    this.#resourceManager.addEventListener(elem, 'mouseup', this.#boundHandlers.mouseup);
+    this.#resourceManager.addEventListener(elem, 'mousemove', this.#boundHandlers.mousemove);
+    this.#resourceManager.addEventListener(elem, 'touchstart', this.#boundHandlers.touchstart, { passive: true });
+    this.#resourceManager.addEventListener(elem, 'touchend', this.#boundHandlers.touchend);
+    this.#resourceManager.addEventListener(elem, 'touchmove', this.#boundHandlers.touchmove, { passive: true });
   }
 
   disconnectedCallback() {
     debugLog('👉 disconnectedCallback()');
-    if (this.#clickableTarget) {
-      this.#detachListener(this.#clickableTarget);
-    }
-    this.#cleanUpSubscribeTemplate(); // memory... :)
-  }
-
-  #detachListener(elem) {
-    debugLog('👉 #detachListener()');
-    elem.removeEventListener('mousedown', this.#boundHandlers.mousedown);
-    elem.removeEventListener('mouseup', this.#boundHandlers.mouseup);
-    elem.removeEventListener('mousemove', this.#boundHandlers.mousemove);
-    elem.removeEventListener('touchstart', this.#boundHandlers.touchstart);
-    elem.removeEventListener('touchend', this.#boundHandlers.touchend);
-    elem.removeEventListener('touchmove', this.#boundHandlers.touchmove);
-    clearTimeout(this.#holdTimeout);
+    this.#resourceManager?.clear();
   }
 
   #handleMouseDown(ev) {
@@ -4277,9 +4374,11 @@ class EntityProgressCard extends HTMLElement {
     this.#startY = ev.clientY;
     this.#isHolding = false;
 
-    this.#holdTimeout = setTimeout(() => {
+    this.#resourceManager.setTimeout(() => {
       this.#isHolding = true; // juste armer le hold
-    }, 500);
+    },
+    500,
+    'holdTimeout');
   }
 
   #resetClickState() {
@@ -4288,7 +4387,7 @@ class EntityProgressCard extends HTMLElement {
   }
 
   #handleMouseUp(ev) {
-    clearTimeout(this.#holdTimeout);
+    this.#resourceManager.remove('holdTimeout');
 
     const upTime = Date.now();
     const deltaTime = upTime - this.#downTime;
@@ -4311,12 +4410,12 @@ class EntityProgressCard extends HTMLElement {
     this.#clickCount++;
 
     if (this.#clickCount === 1) {
-      this.#tapTimeout = setTimeout(() => {
+      this.#resourceManager.setTimeout(() => {
         this.#fireAction(ev, CARD.interactions.event.tap.tapAction);
         this.#clickCount = 0;
-      }, 300);
+      }, 300, 'tapTimeout');
     } else if (this.#clickCount === 2) {
-      clearTimeout(this.#tapTimeout);
+      this.#resourceManager.remove('tapTimeout');
       this.#fireAction(ev, CARD.interactions.event.tap.doubleTapAction);
       this.#clickCount = 0;
     }
@@ -4326,7 +4425,7 @@ class EntityProgressCard extends HTMLElement {
 
   #handleMouseMove(ev) {
     if (this.#downTime && (Math.abs(ev.clientX - this.#startX) > 5 || Math.abs(ev.clientY - this.#startY) > 5)) {
-      clearTimeout(this.#holdTimeout);
+      this.#resourceManager.remove('holdTimeout');
       this.#isHolding = false;
       this.#downTime = null;
     }
@@ -4404,7 +4503,7 @@ class EntityProgressCard extends HTMLElement {
       this.#stopAutoRefresh();
       return;
     }
-    if (!this.#autoRefreshInterval) {
+    if (!this.#resourceManager.hasInterval('autoRefresh')) {
       this.refresh(hass);
       this.#startAutoRefresh();
     }
@@ -4428,21 +4527,22 @@ class EntityProgressCard extends HTMLElement {
   }
 
   #startAutoRefresh() {
-    this.#autoRefreshInterval = setInterval(() => {
-      this.refresh(this.#lastHass);
-      debugLog('👉 EntityProgressCard.#startAutoRefresh()');
-      if (!this.#cardView.isActiveTimer) {
-        this.#stopAutoRefresh();
-        return;
-      }
-    }, this.#cardView.refreshSpeed);
+    if(!this.#resourceManager) return;
+    this.#resourceManager.setInterval(
+      () => {
+        this.refresh(this.#lastHass);
+        debugLog('👉 EntityProgressCard.#startAutoRefresh()');
+        if (!this.#cardView.isActiveTimer) {
+          this.#stopAutoRefresh();
+        }
+      },
+      this.#cardView.refreshSpeed,
+      'autoRefresh'
+    );
   }
 
   #stopAutoRefresh() {
-    if (this.#autoRefreshInterval) {
-      clearInterval(this.#autoRefreshInterval);
-      this.#autoRefreshInterval = null;
-    }
+    if (this.#resourceManager) this.#resourceManager.remove('autoRefresh');
   }
 
   #toggleHiddenComponent(card, component) {
@@ -4562,25 +4662,14 @@ class EntityProgressCard extends HTMLElement {
         break;
       }
       case 'badge_color': {
-        const backgroundColor = DEF_COLORS.includes(content) ? `var(--${content}-color)` : content;
+        const backgroundColor = DEF_COLORS.has(content) ? `var(--${content}-color)` : content;
         const color = 'var(--white-color)';
         this.#setBadgeColor(color, backgroundColor);
         break;
       }
+      default:
+        throw new Error('Jinja - Unknown case');
     }
-  }
-
-  #cleanUpSubscribeTemplate() {
-    debugLog('👉 EntityProgressCard.#cleanUpSubscribeTemplate()');
-
-    if (!this.#unsubscribeTemplates || Object.keys(this.#unsubscribeTemplates).length === 0) {
-      return;
-    }
-    // cleanup
-    for (const key in this.#unsubscribeTemplates) {
-      this.#unsubscribeTemplates[key]();
-    }
-    this.#unsubscribeTemplates = {};
   }
 
   /**
@@ -4646,14 +4735,12 @@ class EntityProgressCard extends HTMLElement {
     });
   }
   async #processJinjaFields() {
-    if (this.#cardView.hasStandardEntityError) return;
+    if (this.#cardView.hasStandardEntityError || !this.#resourceManager) return;
     const templates = {};
-    templates['name_info'] = this.#cardView.config.name_info || '';
-    templates['custom_info'] = this.#cardView.config.custom_info || '';
-    templates['badge_icon'] = this.#cardView.config.badge_icon || '';
-    templates['badge_color'] = this.#cardView.config.badge_color || '';
-
-    this.#cleanUpSubscribeTemplate();
+    templates.name_info = this.#cardView.config.name_info || '';
+    templates.custom_info = this.#cardView.config.custom_info || '';
+    templates.badge_icon = this.#cardView.config.badge_icon || '';
+    templates.badge_color = this.#cardView.config.badge_color || '';
 
     for (const key in templates) {
       const template = templates[key];
@@ -4664,7 +4751,7 @@ class EntityProgressCard extends HTMLElement {
         template: template,
       });
       // keep it
-      this.#unsubscribeTemplates[key] = unsub;
+      this.#resourceManager.addSubscription(unsub, `template-${key}`);
     }
   }
 
@@ -4703,8 +4790,9 @@ class EntityProgressCard extends HTMLElement {
 
     if (!alert) {
       alert = document.createElement('ha-alert');
-      this.shadowRoot.innerHTML = ''; // Clear shadow DOM
-      this.shadowRoot.appendChild(alert);
+      // this.shadowRoot.innerHTML = ''; // Clear shadow DOM
+      // this.shadowRoot.appendChild(alert);
+      this.shadowRoot.replaceChildren(alert);
     }
 
     // Ensuite on met à jour le message et la sévérité
@@ -4763,18 +4851,40 @@ window.customCards.push({
  */
 class EntityProgressCardEditor extends HTMLElement {
   #hassProvider = null;
+  #resourceManager = null;
   #container = null;
   #config = {};
   #previous = { entity: null, max_value: null };
   #isRendered = false;
+  #isYAML = false;
   #elements = {};
-  #accordionContent = [];
+  #accordionList = [];
+  #accordionTitleList = [];
   #currentLanguage = CARD.config.language;
+  #isListenersAttached = false;
 
   constructor() {
     super();
     this.attachShadow({ mode: CARD.config.shadowMode });
     this.#hassProvider = new HassProvider();
+  }
+
+  connectedCallback() {
+    debugLog('👉 Editor.connectedCallback()');
+    if (!this.#resourceManager) this.#resourceManager = new ResourceManager();
+    if (this.#isRendered && !this.#isListenersAttached && this.#isYAML) {
+      this.#addEventListener();
+      this.#isListenersAttached = true;
+      this.#isYAML = false;
+    }
+
+  }
+
+  disconnectedCallback() {
+    debugLog('👉 Editor.disconnectedCallback()');
+    this.#resourceManager?.clear();
+    this.#isListenersAttached = false;
+    this.#isYAML = true;
   }
 
   set hass(hass) {
@@ -4796,40 +4906,45 @@ class EntityProgressCardEditor extends HTMLElement {
     }
     if (!this.#isRendered) {
       this.render();
-      this.#addEventListener();
       this.#isRendered = true;
+      this.#isListenersAttached = false;
+    }
+    if (!this.#isListenersAttached) {
+      this.#addEventListener();
+      this.#isListenersAttached = true;
     }
     this.#updateFields();
   }
 
   #updateFields() {
     debugLog('👉 editor.#updateFields()');
-    const keys = Object.keys(this.#elements);
-    keys.forEach((key) => {
-      if (
-        ![
-          CARD.editor.fields.tap_action.type,
-          CARD.editor.fields.double_tap_action.type,
-          CARD.editor.fields.hold_action.type,
-          CARD.editor.fields.icon_tap_action.type,
-          CARD.editor.fields.icon_double_tap_action.type,
-          CARD.editor.fields.icon_hold_action.type,
-          CARD.editor.keyMappings.attribute,
-          CARD.editor.keyMappings.max_value_attribute,
-          EDITOR_INPUT_FIELDS.theme.field.icon.name,
-          EDITOR_INPUT_FIELDS.theme.field.color.name,
-          EDITOR_INPUT_FIELDS.theme.field.bar_color.name,
-          EDITOR_INPUT_FIELDS.basicConfiguration.entity.name,
-        ].includes(key) &&
-        Object.hasOwn(this.#config, key) &&
-        this.#elements[key].value !== this.#config[key]
-      ) {
-        this.#elements[key].value = this.#config[key];
-        debugLog('✅ updateFields - update: ', [key, this.#config[key]]);
-      }
-    });
 
-    const updateHAFormTypes = [
+    const excludedKeys = new Set([
+      CARD.editor.fields.tap_action.type,
+      CARD.editor.fields.double_tap_action.type,
+      CARD.editor.fields.hold_action.type,
+      CARD.editor.fields.icon_tap_action.type,
+      CARD.editor.fields.icon_double_tap_action.type,
+      CARD.editor.fields.icon_hold_action.type,
+      CARD.editor.keyMappings.attribute,
+      CARD.editor.keyMappings.max_value_attribute,
+      EDITOR_INPUT_FIELDS.theme.field.icon.name,
+      EDITOR_INPUT_FIELDS.theme.field.color.name,
+      EDITOR_INPUT_FIELDS.theme.field.bar_color.name,
+      EDITOR_INPUT_FIELDS.basicConfiguration.entity.name,
+    ]);
+
+    for (const [key, element] of Object.entries(this.#elements)) {
+      if (!excludedKeys.has(key) && Object.hasOwn(this.#config, key)) {
+        const newValue = this.#config[key];
+        if (element.value !== newValue) {
+          element.value = newValue;
+          debugLog('✅ updateFields - update: ', [key, newValue]);
+        }
+      }
+    }
+
+    const haFormTypes = [
       CARD.editor.fields.entity.type,
       CARD.editor.fields.tap_action.type,
       CARD.editor.fields.double_tap_action.type,
@@ -4842,8 +4957,11 @@ class EntityProgressCardEditor extends HTMLElement {
       EDITOR_INPUT_FIELDS.theme.field.color.name,
     ];
 
-    for (const updateHAFormType of updateHAFormTypes) {
-      this.#updateHAForm(this.#elements[updateHAFormType], updateHAFormType, this.#config[updateHAFormType]);
+    for (const type of haFormTypes) {
+      const element = this.#elements[type];
+      if (element) {
+        this.#updateHAForm(element, type, this.#config[type]);
+      }
     }
 
     // Theme
@@ -4970,6 +5088,18 @@ class EntityProgressCardEditor extends HTMLElement {
         this.#addEventListenerFor(value.name, value.type);
       });
     });
+    this.#accordionTitleList.forEach((title, index) => {
+      this.#resourceManager.addEventListener(
+        title,
+        CARD.interactions.event.click,
+        () => {
+          this.toggleAccordion(index);
+        },
+        undefined, // options
+        `accordionTitle-${index}`
+      );
+    });
+
   }
 
   #addEventListenerFor(name, type) {
@@ -4980,17 +5110,31 @@ class EntityProgressCardEditor extends HTMLElement {
     }
     const isHASelect = CARD.editor.fields[type]?.element === CARD.editor.fields.select.element;
     const isToggle = CARD.editor.fields[type]?.element === CARD.editor.fields.toggle.element;
-    const events = isHASelect ? CARD.interactions.event.HASelect : (isToggle ? CARD.interactions.event.toggle : CARD.interactions.event.other);
+    const events = isHASelect ? CARD.interactions.event.HASelect : isToggle ? CARD.interactions.event.toggle : CARD.interactions.event.other;
 
     debugLog(`Event: ${events}`);
 
     if (isHASelect) {
-      this.#elements[name].addEventListener(CARD.interactions.event.closed, (event) => {
-        event.stopPropagation();
-      });
+      this.#resourceManager.addEventListener(
+        this.#elements[name],
+        CARD.interactions.event.closed,
+        (event) => {
+          event.stopPropagation();
+        },
+        undefined, // options
+        `close-StopPropa-${name}`
+      );
     }
     events.forEach((eventType) => {
-      this.#elements[name].addEventListener(eventType, this.#onChanged.bind(this));
+
+      this.#resourceManager.addEventListener(
+        this.#elements[name],
+        eventType,
+        this.#onChanged.bind(this),
+        undefined,
+        `${eventType}-${name}`
+      );
+
     });
   }
 
@@ -5097,6 +5241,8 @@ class EntityProgressCardEditor extends HTMLElement {
           delete newConfig.disable_unit;
         }
         break;
+      default:
+        throw new Error('Message update - Unknown case');
     }
     if (
       changedEvent.target.id === EDITOR_INPUT_FIELDS.basicConfiguration.entity.name ||
@@ -5176,6 +5322,8 @@ class EntityProgressCardEditor extends HTMLElement {
         case CARD.editor.fields.max_value_attribute.type:
           option.innerHTML = `${optionData.label}`;
           break;
+        default:
+          throw new Error('Choices: Unknown case');
       }
       select.appendChild(option);
     });
@@ -5291,7 +5439,7 @@ class EntityProgressCardEditor extends HTMLElement {
   }
 
   toggleAccordion(index) {
-    const accordionContent = this.#accordionContent[index];
+    const accordionContent = this.#accordionList[index];
     accordionContent.classList.toggle('expanded');
   }
 
@@ -5314,9 +5462,10 @@ class EntityProgressCardEditor extends HTMLElement {
   #renderAccordion(parent, inputFields) {
     const accordionItem = document.createElement(CARD.editor.fields.accordion.item.element);
     accordionItem.classList.add(CARD.editor.fields.accordion.item.class);
-    const index = this.#accordionContent.push(accordionItem) - 1;
+    this.#accordionList.push(accordionItem) - 1;
 
     const accordionTitle = document.createElement(CARD.editor.fields.accordion.title.element);
+    this.#accordionTitleList.push(accordionTitle);
     accordionTitle.classList.add(CARD.editor.fields.accordion.title.class);
     const icon = document.createElement(CARD.editor.fields.accordion.icon.element);
     icon.setAttribute('icon', inputFields.title.icon);
@@ -5330,10 +5479,6 @@ class EntityProgressCardEditor extends HTMLElement {
     accordionArrow.classList.add(CARD.editor.fields.accordion.arrow.class);
     accordionArrow.setAttribute('icon', CARD.editor.fields.accordion.arrow.icon);
     accordionTitle.appendChild(accordionArrow);
-
-    accordionTitle.addEventListener(CARD.interactions.event.click, () => {
-      this.toggleAccordion(index);
-    });
     accordionItem.appendChild(accordionTitle);
 
     const accordionContent = document.createElement(CARD.editor.fields.accordion.content.element);
@@ -5373,4 +5518,3 @@ class EntityProgressCardEditor extends HTMLElement {
  * Registers the custom element for the EntityProgressCardEditor editor.
  */
 customElements.define(CARD.meta.editor, EntityProgressCardEditor);
-
