@@ -4190,10 +4190,8 @@ class CardView {
 
 class ResourceManager {
   #resources = new Map();
-  #debug = false;
 
-  constructor(options = { debug: false }) {
-    this.#debug = options.debug || false;
+  constructor() {
   }
 
   #generateUniqueId() {
@@ -4213,18 +4211,18 @@ class ResourceManager {
       this.remove(finalId); // <-- on supprime proprement l'ancien !
     }
     this.#resources.set(finalId, cleanupFn);
-    if (this.#debug) debugLog(`[ResourceManager] Added: ${finalId}`);
+    debugLog(`[ResourceManager] Added: ${finalId}`);
 
     return finalId;
   }
 
   setInterval(handler, timeout, id) {
-    if (this.#debug) debugLog('Starting interval with id:', id);
+    debugLog('Starting interval with id:', id);
     const timerId = setInterval(handler, timeout);
-    if (this.#debug) debugLog('Timer started with timerId:', timerId);
+    debugLog('Timer started with timerId:', timerId);
 
     this.add(() => {
-      if (this.#debug) debugLog('Stopping interval with id:', id);
+      debugLog('Stopping interval with id:', id);
       clearInterval(timerId);
     }, id);
 
@@ -4236,9 +4234,9 @@ class ResourceManager {
   }
 
   setTimeout(handler, timeout, id) {
-    if (this.#debug) debugLog('Starting timeout with id:', id);
+    debugLog('Starting timeout with id:', id);
     const timerId = setTimeout(handler, timeout);
-    if (this.#debug) debugLog('Timeout started with timerId:', timerId);
+    debugLog('Timeout started with timerId:', timerId);
     return this.add(() => clearTimeout(timerId), id);
   }
 
@@ -4262,7 +4260,7 @@ class ResourceManager {
         console.error(`[ResourceManager] Error while removing '${id}'`, e);
       }
       this.#resources.delete(id);
-      if (this.#debug) debugLog(`[ResourceManager] Removed: ${id}`);
+      debugLog(`[ResourceManager] Removed: ${id}`);
     }
   }
 
@@ -4273,10 +4271,10 @@ class ResourceManager {
       } catch (e) {
         console.error(`[ResourceManager] Error while clearing '${id}'`, e);
       }
-      if (this.#debug) debugLog(`[ResourceManager] Cleared: ${id}`);
+      debugLog(`[ResourceManager] Cleared: ${id}`);
     }
     this.#resources.clear();
-    if (this.#debug) debugLog('[ResourceManager] All resources cleared.');
+    debugLog('[ResourceManager] All resources cleared.');
   }
 
   get list() {
