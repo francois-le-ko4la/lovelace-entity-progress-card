@@ -195,6 +195,18 @@ unit: ABC
 >
 > Disabling the Unit: To completely hide the unit from display, set the disable_unit option to true.
 
+#### `unit_spacing`
+
+Defines whether a space should appear between numeric values and units, either following locale rules or overriding them explicitly.
+
+- `auto`: Uses locale-specific formatting rules (e.g., France → space, US → no space)
+- `space`: Forces a space between number and unit (e.g., 80 %), regardless of locale
+- `no-space`: Forces no space between number and unit (e.g., 80%), regardless of locale
+
+_Default_:
+
+- `auto`
+
 #### `decimal`
 
 > **`decimal`** [int >=0] _(optional)_

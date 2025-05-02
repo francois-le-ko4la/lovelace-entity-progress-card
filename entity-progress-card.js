@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.3.5
+ * @version 1.3.6
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.3.5';
+const VERSION = '1.3.6';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
@@ -34,7 +34,16 @@ const CARD = {
   config: {
     language: 'en',
     value: { min: 0, max: 100 },
-    unit: { default: '%', fahrenheit: '°F', timer: 'timer', flexTimer: 'flextimer', second: 's', disable: '', space: ' ' }, // HA dont use '\u202F'
+    unit: {
+      default: '%',
+      fahrenheit: '°F',
+      timer: 'timer',
+      flexTimer: 'flextimer',
+      second: 's',
+      disable: '',
+      space: ' ', // HA dont use '\u202F'
+      unitSpacing: { auto: 'auto', space: 'space', noSpace: 'no-space' },
+    },
     showMoreInfo: true,
     reverse: false,
     decimal: { percentage: 0, timer: 0, counter: 0, duration: 0, other: 2 },
@@ -2813,7 +2822,7 @@ class NumberFormatter {
     return set.has(unit.toLowerCase()) ? '' : CARD.config.unit.space;
   }
 
-  static formatValueAndUnit(value, decimal = 2, unit = '', locale = 'en-US') {
+  static formatValueAndUnit(value, decimal = 2, unit = '', locale = 'en-US', unitSpacing = CARD.config.unit.unitSpacing.auto) {
     if (value === undefined || value === null) return '';
 
     const formattedValue = new Intl.NumberFormat(locale, {
@@ -2823,10 +2832,16 @@ class NumberFormatter {
 
     if (!unit) return formattedValue;
 
-    const space = this.getSpaceCharacter(locale, unit);
+    const spaceMap = {
+      'space': CARD.config.unit.space,
+      'no-space': '',
+      auto: () => this.getSpaceCharacter(locale, unit),
+    };
+    const space = typeof spaceMap[unitSpacing] === 'function' ? spaceMap[unitSpacing]() : spaceMap[unitSpacing];
+
     return `${formattedValue}${space}${unit}`;
   }
-  static formatTiming(totalSeconds, decimal = 0, locale = 'en-US', flex = false) {
+  static formatTiming(totalSeconds, decimal = 0, locale = 'en-US', flex = false, unitSpacing = CARD.config.unit.unitSpacing.auto) {
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     let seconds = (totalSeconds % 60).toFixed(decimal);
@@ -2837,7 +2852,7 @@ class NumberFormatter {
     seconds = decimalPart !== undefined ? `${pad(intPart)}.${decimalPart}` : pad(seconds);
 
     if (flex) {
-      if (totalSeconds < 60) return this.formatValueAndUnit(parseFloat(seconds), decimal, 's', locale);
+      if (totalSeconds < 60) return this.formatValueAndUnit(parseFloat(seconds), decimal, 's', locale, unitSpacing);
       if (totalSeconds < 3600) return `${pad(minutes)}:${seconds}`;
     }
 
@@ -2983,6 +2998,7 @@ class PercentHelper {
   #percent = 0;
   #isTimer = false;
   #isReversed = false;
+  unitSpacing = CARD.config.unit.unitSpacing.auto;
 
   constructor() {
     this.#hassProvider = HassProviderSingleton.getInstance();
@@ -3090,9 +3106,9 @@ class PercentHelper {
       return 'Div0';
     } else if (this.hasTimerOrFlexTimerUnit) {
       // timer with time format
-      return NumberFormatter.formatTiming(this.actual, this.decimal, this.#hassProvider.numberFormat, this.hasFlexTimerUnit);
+      return NumberFormatter.formatTiming(this.actual, this.decimal, this.#hassProvider.numberFormat, this.hasFlexTimerUnit, this.unitSpacing);
     }
-    return NumberFormatter.formatValueAndUnit(this.processedValue, this.decimal, this.unit, this.#hassProvider.numberFormat);
+    return NumberFormatter.formatValueAndUnit(this.processedValue, this.decimal, this.unit, this.#hassProvider.numberFormat, this.unitSpacing);
   }
 }
 
@@ -3820,7 +3836,7 @@ class ConfigHelper {
     if (!this.#config.max_value) return CARD.config.value.max;
     if (Number.isFinite(this.#config.max_value)) return this.#config.max_value;
     if (typeof this.#config.max_value === 'string') {
-      const state = this.#hassProvider.hass.states[this.#config.max_value]?.state;
+      const state = this.#hassProvider.getEntityStateValue(this.#config.max_value);
       const parsedState = parseFloat(state);
       if (!isNaN(parsedState)) return parsedState;
     }
@@ -3875,6 +3891,16 @@ class ConfigHelper {
   get reverse() {
     return this.#config.reverse;
   }
+  get unitSpacing() {
+    const validValues = Object.values(CARD.config.unit.unitSpacing);
+    const configValue = this.#config.unit_spacing;
+
+    if (validValues.includes(configValue)) {
+      return configValue;
+    }
+
+    return CARD.config.unit.unitSpacing.auto;
+  }
 
   /******************************************************************************************
    * optimization
@@ -3892,9 +3918,9 @@ class ConfigHelper {
     }
     this.#isChanged = false;
     this.#isValid = false;
-    const entityState = this.#hassProvider.hass.states[this.#config.entity];
+    const entityState = this.#hassProvider.getEntityState(this.#config.entity);
     const maxValueState =
-      typeof this.#config.max_value === 'string' && this.#config.max_value.trim() ? this.#hassProvider.hass.states[this.#config.max_value] : null;
+      typeof this.#config.max_value === 'string' && this.#config.max_value.trim() ? this.#hassProvider.getEntityState(this.#config.max_value) : null;
     const validationRules = [
       {
         valid: this.#config.entity !== undefined,
@@ -3962,6 +3988,7 @@ class CardView {
   }
   set config(config) {
     this.#configHelper.config = config;
+    this.#percentHelper.unitSpacing = this.#configHelper.unitSpacing;
     this.#percentHelper.hasDisabledUnit = this.#configHelper.hasDisabledUnit;
     this.#theme.theme = this.#configHelper.theme;
     this.#theme.customTheme = this.#configHelper.custom_theme;
