@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.3.4
+ * @version 1.3.5
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.3.4';
+const VERSION = '1.3.5';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
@@ -34,7 +34,7 @@ const CARD = {
   config: {
     language: 'en',
     value: { min: 0, max: 100 },
-    unit: { default: '%', fahrenheit: '°F', timer: 'timer', flexTimer: 'flextimer', second: 's', disable: '' },
+    unit: { default: '%', fahrenheit: '°F', timer: 'timer', flexTimer: 'flextimer', second: 's', disable: '', space: ' ' }, // HA dont use '\u202F'
     showMoreInfo: true,
     reverse: false,
     decimal: { percentage: 0, timer: 0, counter: 0, duration: 0, other: 2 },
@@ -237,15 +237,15 @@ const CARD = {
         ['voltage', 'mdi:flash'],
       ]),
       byDynamicDeviceClass: new Map([
-        ['curtain',       { open: 'mdi:curtains', closed: 'mdi:curtains-closed' }],
-        ['blind',         { open: 'mdi:blinds-horizontal', closed: 'mdi:blinds-horizontal-closed' }],
-        ['garage',        { open: 'mdi:garage-open', closed: 'mdi:garage' }],
-        ['gate',          { open: 'mdi:gate-open', closed: 'mdi:gate' }],
-        ['shutter',       { open: 'mdi:window-shutter-open', closed: 'mdi:window-shutter' }],
-        ['window',        { open: 'mdi:window-open', closed: 'mdi:window-closed' }],
-        ['door',          { open: 'mdi:door-open', closed: 'mdi:door-closed' }],
-        ['shade',         { open: 'mdi:roller-shade', closed: 'mdi:roller-shade-closed' }],
-        ['damper',        { open: 'mdi:circle', closed: 'mdi:circle-slice-8' }],
+        ['curtain', { open: 'mdi:curtains', closed: 'mdi:curtains-closed' }],
+        ['blind', { open: 'mdi:blinds-horizontal', closed: 'mdi:blinds-horizontal-closed' }],
+        ['garage', { open: 'mdi:garage-open', closed: 'mdi:garage' }],
+        ['gate', { open: 'mdi:gate-open', closed: 'mdi:gate' }],
+        ['shutter', { open: 'mdi:window-shutter-open', closed: 'mdi:window-shutter' }],
+        ['window', { open: 'mdi:window-open', closed: 'mdi:window-closed' }],
+        ['door', { open: 'mdi:door-open', closed: 'mdi:door-closed' }],
+        ['shade', { open: 'mdi:roller-shade', closed: 'mdi:roller-shade-closed' }],
+        ['damper', { open: 'mdi:circle', closed: 'mdi:circle-slice-8' }],
       ]),
       suffix: { open: '-open' },
     },
@@ -2284,12 +2284,6 @@ const ATTRIBUTE_MAPPING = {
   cover: { label: 'cover', attribute: 'current_position' },
   light: { label: 'light', attribute: 'brightness' },
   fan: { label: 'fan', attribute: 'percentage' },
-  climate: { label: 'climate', attribute: null },
-  humidifier: { label: 'humidifier', attribute: null },
-  media_player: { label: 'media_player', attribute: null },
-  vacuum: { label: 'vacuum', attribute: null },
-  device_tracker: { label: 'device_tracker', attribute: null },
-  weather: { label: 'weather', attribute: null },
 };
 
 const CARD_HTML = `
@@ -2726,32 +2720,39 @@ const CARD_CSS = `
     }
     .${CARD.editor.fields.accordion.content.class} {
         display: flex;
-        flex-direction: row; /* Pour espacer les éléments verticalement */
+        flex-direction: row;
         flex-wrap: wrap;
         align-content: flex-start;
         column-gap: 10px;
         row-gap: 20px;
-        padding: 0px 18px;
+        padding: 0 18px;
         background-color: transparent;
+
         max-height: 0;
-        transition:
-            max-height 0.2s cubic-bezier(0.33, 0, 0.2, 1),
-            padding 0.4s cubic-bezier(0.33, 0, 0.2, 1);
-        overflow: hidden;
+        transform: scaleY(0);
+        transform-origin: top;
+        transition: transform 0.4s ease-out;
     }
 
     .accordion.expanded .${CARD.editor.fields.accordion.content.class} {
         max-height: 500000px;
-        overflow: visible;
         padding-top: 30px;
         padding-bottom: 30px;
+        opacity: 1;
+        transform: scaleY(1);
     }
+
+    /* Enfants avec transition douce */
     .${CARD.editor.fields.accordion.content.class} > * {
         opacity: 0;
-        transition: opacity 0.3s ease;
+        transform: scaleY(0);
+        transform-origin: top;
+        transition: transform 0.4s ease-out, opacity 0.4s ease-out;
     }
-    .${CARD.editor.fields.accordion.content.class} > * {
+
+    .accordion.expanded .${CARD.editor.fields.accordion.content.class} > * {
         opacity: 1;
+        transform: scaleY(1);
     }
     ha-select {
       --mdc-menu-max-height: 250px; /* Définit la hauteur maximale */
@@ -2784,15 +2785,14 @@ const CARD_CSS = `
  * @param {string} msg
  * @param {any} val
  */
-function debugLog(msg, val) {
-  if (CARD.config.debug) {
-    if (val !== undefined) {
-      console.debug(`${msg}`, val);
-    } else {
-      console.debug(`${msg}`);
-    }
+const debugLog = (msg, val) => {
+  if (!CARD.config?.debug) return;
+  if (val !== undefined && val !== null) {
+    console.debug(msg, val);
+  } else {
+    console.debug(msg);
   }
-}
+};
 
 /******************************************************************************************
  * Helper class for formatting value && unit.
@@ -2810,7 +2810,7 @@ class NumberFormatter {
 
   static getSpaceCharacter(locale, unit) {
     const set = this.unitsNoSpace[locale] || this.unitsNoSpace['en-US'];
-    return set.has(unit.toLowerCase()) ? '' : '\u202F'; // espace fine insécable si besoin
+    return set.has(unit.toLowerCase()) ? '' : CARD.config.unit.space;
   }
 
   static formatValueAndUnit(value, decimal = 2, unit = '', locale = 'en-US') {
@@ -2826,23 +2826,22 @@ class NumberFormatter {
     const space = this.getSpaceCharacter(locale, unit);
     return `${formattedValue}${space}${unit}`;
   }
-  static formatTiming(seconds, decimal = 0, locale = 'en-US', flex = false) {
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    let s = (seconds % 60).toFixed(decimal);
+  static formatTiming(totalSeconds, decimal = 0, locale = 'en-US', flex = false) {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    let seconds = (totalSeconds % 60).toFixed(decimal);
 
     const pad = (value, length = 2) => String(value).padStart(length, '0');
 
-    const [intPart, decimalPart] = s.split('.');
-    s = decimalPart !== undefined ? `${pad(intPart)}.${decimalPart}` : pad(s);
+    const [intPart, decimalPart] = seconds.split('.');
+    seconds = decimalPart !== undefined ? `${pad(intPart)}.${decimalPart}` : pad(seconds);
 
     if (flex) {
-      if (seconds < 60) return this.formatValueAndUnit(parseFloat(s), decimal, 's', locale);
-      if (seconds < 3600) return `${pad(m)}:${s}`;
+      if (totalSeconds < 60) return this.formatValueAndUnit(parseFloat(seconds), decimal, 's', locale);
+      if (totalSeconds < 3600) return `${pad(minutes)}:${seconds}`;
     }
 
-    // Formatage final avec heure, minute et seconde
-    return [pad(h), pad(m), s].join(':');
+    return [pad(hours), pad(minutes), seconds].join(':');
   }
   static durationToSeconds(value, unit) {
     switch (unit) {
@@ -2879,22 +2878,18 @@ class NumberFormatter {
 class ValueHelper {
   #value = null;
   #isValid = false;
+  #defaultValue = null;
 
-  constructor(initialValue = null) {
-    if (initialValue !== null) {
-      this.value = initialValue;
-    }
+  constructor(newValue = null) {
+    if (ValueHelper.#validate(newValue)) this.#defaultValue = newValue;
   }
 
-  /******************************************************************************************
-   * Getter/Setter
-   */
   set value(newValue) {
-    this.#isValid = this.#validate(newValue);
+    this.#isValid = ValueHelper.#validate(newValue);  // Appel à la méthode statique
     this.#value = this.#isValid ? newValue : null;
   }
   get value() {
-    return this.#value;
+    return this.#isValid ? this.#value : this.#defaultValue;
   }
   get isValid() {
     return this.#isValid;
@@ -2903,7 +2898,7 @@ class ValueHelper {
   /******************************************************************************************
    * Validates if a value is a valid float.
    */
-  #validate(value) {
+  static #validate(value) {
     return Number.isFinite(value);
   }
 }
@@ -2916,16 +2911,17 @@ class ValueHelper {
 class DecimalHelper {
   #value = CARD.config.decimal.percentage;
   #isValid = false;
+  #defaultValue = null;
 
-  /******************************************************************************************
-   * Getter/Setter
-   */
+  constructor(newValue = null) {
+    if (DecimalHelper.#validate(newValue)) this.#defaultValue = newValue;
+  }
   set value(newValue) {
-    this.#isValid = this.#validate(newValue);
+    this.#isValid = DecimalHelper.#validate(newValue);
     this.#value = this.#isValid ? newValue : null;
   }
   get value() {
-    return this.#value;
+    return this.#isValid ? this.#value : this.#defaultValue;
   }
   get isValid() {
     return this.#isValid;
@@ -2933,11 +2929,8 @@ class DecimalHelper {
 
   /******************************************************************************************
    * Validates if a value is a valid non-negative integer.
-   *
-   * @param {number} value - The value to validate.
-   * @returns {boolean} True if the value is a valid non-negative integer, false otherwise.
    */
-  #validate(value) {
+  static #validate(value) {
     return Number.isInteger(value) && value >= 0;
   }
 }
@@ -2951,17 +2944,14 @@ class UnitHelper {
   #value = CARD.config.unit.default;
   #isDisabled = false;
 
-  /******************************************************************************************
-   * Getter/Setter
-   */
   set value(newValue) {
     this.#value = newValue.trim() ?? CARD.config.unit.default;
   }
   get value() {
     return this.#isDisabled ? '' : this.#value;
   }
-  set isDisabled(disabled) {
-    this.#isDisabled = disabled === true;
+  set isDisabled(newValue) {
+    this.#isDisabled = typeof newValue === 'boolean' ? newValue : false;
   }
   get isDisabled() {
     return this.#isDisabled;
@@ -2989,56 +2979,77 @@ class PercentHelper {
   #max = new ValueHelper(CARD.config.value.max);
   #current = new ValueHelper(0);
   #unit = new UnitHelper();
-  #decimal = new DecimalHelper();
+  #decimal = new DecimalHelper(CARD.config.decimal.percentage);
   #percent = 0;
   #isTimer = false;
   #isReversed = false;
 
   constructor() {
-    this.#hassProvider = new HassProvider();
+    this.#hassProvider = HassProviderSingleton.getInstance();
   }
 
   /******************************************************************************************
    * Getter/Setter
    */
-  set isTimer(isTimer) {
-    this.#isTimer = typeof isTimer === 'boolean' ? isTimer : false;
+  set isTimer(newValue) {
+    this.#isTimer = typeof newValue === 'boolean' ? newValue : false;
   }
-  set isReversed(isReversed) {
-    this.#isReversed = typeof isReversed === 'boolean' ? isReversed : CARD.config.reverse;
+  get isTimer() {
+    return this.#isTimer;
   }
-  set min(newMin) {
-    this.#min.value = Number.isFinite(newMin) ? newMin : CARD.config.value.min;
+  set isReversed(newValue) {
+    this.#isReversed = typeof newValue === 'boolean' ? newValue : CARD.config.reverse;
   }
-  set max(newMax) {
-    this.#max.value = Number.isFinite(newMax) ? newMax : CARD.config.value.min;
+  get isReversed() {
+    return this.#isReversed;
+  }
+  set min(newValue) {
+    this.#min.value = newValue;
+  }
+  get min() {
+    return this.#min.value;
+  }
+  set max(newValue) {
+    this.#max.value = newValue;
+  }
+  get max() {
+    return this.#max.value;
   }
   set current(newCurrent) {
     this.#current.value = newCurrent;
   }
+  get current() {
+    return this.#current.value;
+  }
   get actual() {
-    return this.#isReversed ? this.#max.value - this.#current.value : this.#current.value;
+    return this.#isReversed ? this.max - this.current : this.current;
   }
   get unit() {
     return this.#unit.value;
   }
-  set unit(newUnit) {
-    this.#unit.value = newUnit ?? '';
+  set unit(newValue) {
+    this.#unit.value = newValue ?? '';
   }
-  set hasDisabledUnit(disabled) {
-    this.#unit.isDisabled = disabled;
+  set hasDisabledUnit(newValue) {
+    this.#unit.isDisabled = newValue;
   }
-  set decimal(newDecimal) {
-    this.#decimal.value = Number.isFinite(newDecimal) ? newDecimal : CARD.config.decimal.percentage;
+  get hasDisabledUnit() {
+    return this.#unit.isDisabled;
+  }
+  set decimal(newValue) {
+    this.#decimal.value = newValue;
+  }
+  get decimal() {
+    return this.#decimal.value;
   }
   get isValid() {
-    return this.#min.isValid && this.#max.isValid && this.#current.isValid && this.#decimal.isValid && this.range !== 0;
+    return this.range !== 0;
   }
   get range() {
-    return this.#max.value - this.#min.value;
+    return this.max - this.min;
   }
   get correctedValue() {
-    return this.actual - this.#min.value;
+    return this.actual - this.min;
   }
   get percent() {
     return this.isValid ? this.#percent : null;
@@ -3053,7 +3064,7 @@ class PercentHelper {
     return this.hasTimerUnit || this.hasFlexTimerUnit;
   }
   get processedValue() {
-    return this.#unit.value === CARD.config.unit.default ? this.percent : this.actual;
+    return this.unit === CARD.config.unit.default ? this.percent : this.actual;
   }
   valueForThemes(valueBasedOnPercentage) {
     /****************************************************************************************
@@ -3063,27 +3074,25 @@ class PercentHelper {
      * - If the theme is linear or the unit is the default, the percentage value is returned.
      */
     let value = this.actual;
-    if (this.#unit.value === CARD.config.unit.fahrenheit) {
+    if (this.unit === CARD.config.unit.fahrenheit) {
       value = ((value - 32) * 5) / 9;
     }
-    return valueBasedOnPercentage || [CARD.config.unit.default, CARD.config.unit.disable].includes(this.#unit.value) ? this.#percent : value;
+    return valueBasedOnPercentage || [CARD.config.unit.default, CARD.config.unit.disable].includes(this.unit) ? this.percent : value;
   }
   refresh() {
-    this.#percent = this.isValid ? +((this.correctedValue / this.range) * 100).toFixed(this.#decimal.value) : 0;
+    this.#percent = this.isValid ? Number(((this.correctedValue / this.range) * 100).toFixed(this.decimal)) : 0;
   }
   calcWatermark(value) {
-    return [CARD.config.unit.default, CARD.config.unit.disable].includes(this.#unit.value)
-      ? value
-      : ((value - this.#min.value) / this.range) * 100;
+    return [CARD.config.unit.default, CARD.config.unit.disable].includes(this.unit) ? value : ((value - this.min) / this.range) * 100;
   }
   toString() {
     if (!this.isValid) {
       return 'Div0';
     } else if (this.hasTimerOrFlexTimerUnit) {
       // timer with time format
-      return NumberFormatter.formatTiming(this.actual, this.#decimal.value, this.#hassProvider.numberFormat, this.hasFlexTimerUnit);
+      return NumberFormatter.formatTiming(this.actual, this.decimal, this.#hassProvider.numberFormat, this.hasFlexTimerUnit);
     }
-    return NumberFormatter.formatValueAndUnit(this.processedValue, this.#decimal.value, this.#unit.value, this.#hassProvider.numberFormat);
+    return NumberFormatter.formatValueAndUnit(this.processedValue, this.decimal, this.unit, this.#hassProvider.numberFormat);
   }
 }
 
@@ -3126,13 +3135,16 @@ class ThemeManager {
     return this.#theme;
   }
   set customTheme(newTheme) {
-    if (!this.#validateCustomTheme(newTheme)) {
+    if (!ThemeManager.#validateCustomTheme(newTheme)) {
       return;
     }
     this.#theme = CARD.theme.default;
     this.#currentStyle = newTheme;
     this.#isValid = true;
     this.#isLinear = false;
+  }
+  get customTheme() {
+    return this.#currentStyle;
   }
   get isLinear() {
     return this.#isLinear;
@@ -3146,6 +3158,9 @@ class ThemeManager {
   set value(newValue) {
     this.#value = newValue;
     this.#refresh();
+  }
+  get value() {
+    return this.#value;
   }
   get icon() {
     return this.#icon;
@@ -3189,8 +3204,7 @@ class ThemeManager {
       this.#color = themeData.color;
     }
   }
-
-  #validateCustomTheme(customTheme) {
+  static #validateCustomTheme(customTheme) {
     if (!Array.isArray(customTheme) || customTheme.length === 0) return false;
 
     let isFirstItem = true;
@@ -3208,6 +3222,9 @@ class ThemeManager {
       return true;
     });
   }
+  static adaptColor(curColor) {
+    return curColor == null ? null : DEF_COLORS.has(curColor) ? `var(--${curColor}-color)` : curColor;
+  }
 }
 
 /**
@@ -3216,17 +3233,26 @@ class ThemeManager {
  *
  * @class HassProvider
  */
-class HassProvider {
+class HassProviderSingleton {
   static #instance = null;
+  static #allowInit = false;
+
   #hass = null;
   #isValid = false;
 
   constructor() {
-    debugLog('👉 HassProvider()');
-    if (HassProvider.#instance) {
-      return HassProvider.#instance;
+    if (!HassProviderSingleton.#allowInit) {
+      throw new Error('Use HassProviderSingleton.getInstance() instead of new.');
     }
-    HassProvider.#instance = this;
+    HassProviderSingleton.#allowInit = false;
+  }
+
+  static getInstance() {
+    if (!HassProviderSingleton.#instance) {
+      HassProviderSingleton.#allowInit = true;
+      HassProviderSingleton.#instance = new HassProviderSingleton();
+    }
+    return HassProviderSingleton.#instance;
   }
 
   set hass(hass) {
@@ -3234,11 +3260,11 @@ class HassProvider {
     this.#hass = hass;
     this.#isValid = true;
   }
-  get isValid() {
-    return this.#isValid;
-  }
   get hass() {
     return this.#hass;
+  }
+  get isValid() {
+    return this.#isValid;
   }
   get systemLanguage() {
     return this.#hass?.config?.language in LANGUAGES ? this.#hass.config.language : CARD.config.language;
@@ -3280,13 +3306,13 @@ class HassProvider {
     return attributes && attribute in attributes ? attributes[attribute] : undefined;
   }
   hasEntity(entityId) {
-    return !!this.#hass?.states?.[entityId];
+    return entityId in (this.#hass?.states || {});
   }
   isEntityAvailable(entityId) {
     const state = this.getEntityState(entityId)?.state;
     return state !== 'unavailable' && state !== 'unknown';
   }
-  getEntityDomain(entityId) {
+  static getEntityDomain(entityId) {
     return typeof entityId === 'string' && entityId.includes('.') ? entityId.split('.')[0] : null;
   }
   getDeviceClass(entityId) {
@@ -3309,9 +3335,6 @@ class HassProvider {
   getFormatedAttributeValue(entityId, attribute) {
     const stateObj = this.getEntityState(entityId);
     return this.#hass?.formatEntityAttributeValue?.(stateObj, attribute) ?? '';
-  }
-  isTimerEntity(entityId) {
-    return this.getEntityDomain(entityId) === CARD.config.entity.type.timer;
   }
   getTimerFinishAt(entityId) {
     return this.getEntityAttribute(entityId, 'finishes_at') ?? null;
@@ -3351,24 +3374,29 @@ class EntityHelper {
   stateContent = [];
 
   constructor() {
-    this.#hassProvider = new HassProvider();
+    this.#hassProvider = HassProviderSingleton.getInstance();
   }
 
   /**
    * @param {String} entityId
    */
-  set entityId(entityId) {
-    this.#entityId = entityId;
+  set entityId(newValue) {
+    this.#entityId = newValue;
     this.#value = 0;
-    this.#domain = this.#hassProvider.getEntityDomain(entityId);
+    this.#domain = HassProviderSingleton.getEntityDomain(newValue);
     this.#isValid = this.#hassProvider.hasEntity(this.#entityId); // for editor
   }
-
+  get entityId() {
+    return this.#entityId;
+  }
   /**
    * @param {String} newAttribute
    */
-  set attribute(newAttribute) {
-    this.#attribute = newAttribute;
+  set attribute(newValue) {
+    this.#attribute = newValue;
+  }
+  get attribute() {
+    return this.#attribute;
   }
   get value() {
     return this.#isValid ? this.#value : 0;
@@ -3479,7 +3507,7 @@ class EntityHelper {
       const state = this.#hassProvider.getEntityStateValue(this.#entityId);
       dynIcon = state === 'open' || state === 'opening' ? dynIconMap.open : dynIconMap.closed;
     }
-    
+
     return dynIcon || deviceClassIcon || domainIcon || null;
   }
 
@@ -3507,7 +3535,7 @@ class EntityHelper {
     return this.#isValid && Object.keys(this.attributes ?? {}).length > 0;
   }
   get defaultAttribute() {
-    return this.#isValid && !!ATTRIBUTE_MAPPING[this.#domain] ? ATTRIBUTE_MAPPING[this.#domain].attribute : null;
+    return ATTRIBUTE_MAPPING[this.#domain]?.attribute ?? null;
   }
   get name() {
     return this.#isValid ? this.#hassProvider.getEntityName(this.#entityId) : null;
@@ -3614,13 +3642,13 @@ class EntityOrValue {
    * Dynamically delegates to the appropriate helper.
    * @param {string|number} input - The value or entity ID.
    */
-  set value(input) {
-    if (typeof input === 'string') {
+  set value(newValue) {
+    if (typeof newValue === 'string') {
       this.#createHelper(this.#helperType.entity);
-      this.#activeHelper.entityId = input;
-    } else if (Number.isFinite(input)) {
+      this.#activeHelper.entityId = newValue;
+    } else if (Number.isFinite(newValue)) {
       this.#createHelper(this.#helperType.value);
-      this.#activeHelper.value = input;
+      this.#activeHelper.value = newValue;
     } else {
       this.#activeHelper = null;
     }
@@ -3629,14 +3657,17 @@ class EntityOrValue {
   /******************************************************************************************
    * Proxy function
    */
-  get isEntity() {
-    return this.#isEntity;
-  }
   get value() {
     return this.#activeHelper ? this.#activeHelper.value : null;
   }
-  set attribute(newAttribute) {
-    if (this.#isEntity) this.#activeHelper.attribute = newAttribute;
+  get isEntity() {
+    return this.#isEntity;
+  }
+  set attribute(newValue) {
+    if (this.#isEntity) this.#activeHelper.attribute = newValue;
+  }
+  get attribute() {
+    return this.#isEntity ? this.#activeHelper.attribute : null;
   }
   get state() {
     return this.#activeHelper && this.#isEntity ? this.#activeHelper.state : null;
@@ -3656,8 +3687,11 @@ class EntityOrValue {
   get formatedEntityState() {
     return this.#activeHelper && this.#isEntity ? this.#activeHelper.formatedEntityState : null;
   }
-  set stateContent(newstateContent) {
-    if (this.#activeHelper && this.#isEntity) this.#activeHelper.stateContent = newstateContent;
+  set stateContent(newValue) {
+    if (this.#activeHelper && this.#isEntity) this.#activeHelper.stateContent = newValue;
+  }
+  get stateContent() {
+    return this.#activeHelper && this.#isEntity ? this.#activeHelper.stateContent : null;
   }
   get stateContentToString() {
     return this.#activeHelper && this.#isEntity ? this.#activeHelper.stateContentToString : null;
@@ -3714,7 +3748,7 @@ class ConfigHelper {
   #hassProvider = null;
 
   constructor() {
-    this.#hassProvider = new HassProvider();
+    this.#hassProvider = HassProviderSingleton.getInstance();
   }
 
   /******************************************************************************************
@@ -3863,7 +3897,7 @@ class ConfigHelper {
       typeof this.#config.max_value === 'string' && this.#config.max_value.trim() ? this.#hassProvider.hass.states[this.#config.max_value] : null;
     const validationRules = [
       {
-        valid: !!this.#config.entity,
+        valid: this.#config.entity !== undefined,
         msg: { content: LANGUAGES[this.#hassProvider.language].card.msg.entityError, sev: 'info' },
       },
       {
@@ -3912,10 +3946,9 @@ class CardView {
   #currentValue = new EntityOrValue();
   #max_value = new EntityOrValue();
   #currentLanguage = CARD.config.language;
-  #isReversed = false;
 
   constructor() {
-    this.#hassProvider = new HassProvider();
+    this.#hassProvider = HassProviderSingleton.getInstance();
   }
 
   /******************************************************************************************
@@ -3926,6 +3959,21 @@ class CardView {
   }
   get msg() {
     return this.#configHelper.msg;
+  }
+  set config(config) {
+    this.#configHelper.config = config;
+    this.#percentHelper.hasDisabledUnit = this.#configHelper.hasDisabledUnit;
+    this.#theme.theme = this.#configHelper.theme;
+    this.#theme.customTheme = this.#configHelper.custom_theme;
+    this.#currentValue.value = this.#configHelper.entity;
+    this.#currentValue.stateContent = this.#configHelper.stateContent;
+    if (this.#currentValue.isTimer) {
+      this.#max_value.value = CARD.config.value.max;
+    } else {
+      this.#currentValue.attribute = config.attribute;
+      this.#max_value.value = config.max_value ?? CARD.config.value.max;
+      this.#max_value.attribute = config.max_value_attribute;
+    }
   }
   get config() {
     return this.#configHelper.config;
@@ -3942,9 +3990,9 @@ class CardView {
   get isAvailable() {
     return !(!this.#currentValue.isAvailable || (!this.#max_value.isAvailable && this.#configHelper.max_value));
   }
-  set currentLanguage(newLanguage) {
-    if (Object.keys(LANGUAGES).includes(newLanguage)) {
-      this.#currentLanguage = newLanguage;
+  set currentLanguage(newValue) {
+    if (Object.keys(LANGUAGES).includes(newValue)) {
+      this.#currentLanguage = newValue;
     }
   }
   get currentLanguage() {
@@ -3963,12 +4011,12 @@ class CardView {
   get color() {
     if (this.isUnavailable) return CARD.style.color.unavailable;
     if (this.isNotFound) return CARD.style.color.notFound;
-    return this.#convertColorFromConfig(this.#theme.color || this.#configHelper.color) || this.#currentValue.defaultColor || CARD.style.color.default;
+    return ThemeManager.adaptColor(this.#theme.color || this.#configHelper.color) || this.#currentValue.defaultColor || CARD.style.color.default;
   }
   get bar_color() {
     if (this.isAvailable) {
       return (
-        this.#convertColorFromConfig(this.#theme.color || this.#configHelper.bar.color) || this.#currentValue.defaultColor || CARD.style.color.default
+        ThemeManager.adaptColor(this.#theme.color || this.#configHelper.bar.color) || this.#currentValue.defaultColor || CARD.style.color.default
       );
     }
     if (this.isUnknown) {
@@ -3995,7 +4043,7 @@ class CardView {
     if (this.componentIsHidden(CARD.style.dynamic.hiddenComponent.value.label)) return additionalInfo;
     const valueInfo =
       this.#currentValue.isDuration && !this.#configHelper.unit ? this.#currentValue.formatedEntityState : this.#percentHelper.toString();
-    
+
     return additionalInfo === '' ? valueInfo : [additionalInfo, valueInfo].join(CARD.config.separator);
   }
   get name() {
@@ -4083,6 +4131,9 @@ class CardView {
           ].includes(this.#configHelper.iconTapAction)
       : true;
   }
+  get timerIsReversed() {
+    return this.#configHelper.reverse !== false && this.#currentValue.value.state !== CARD.config.entity.state.idle;
+  }
   get hasWatermark() {
     return this.#configHelper.config.watermark !== undefined;
   }
@@ -4090,9 +4141,9 @@ class CardView {
     const result = this.#configHelper.watermark;
     return {
       low: this.#percentHelper.calcWatermark(result.low),
-      low_color: this.#convertColorFromConfig(result.low_color),
+      low_color: ThemeManager.adaptColor(result.low_color),
       high: this.#percentHelper.calcWatermark(result.high),
-      high_color: this.#convertColorFromConfig(result.high_color),
+      high_color: ThemeManager.adaptColor(result.high_color),
       opacity: result.opacity,
       type: result.type,
       disable_low: result.disable_low,
@@ -4101,29 +4152,6 @@ class CardView {
   }
   componentIsHidden(component) {
     return Array.isArray(this.#configHelper.config?.hide) && this.#configHelper.config.hide.includes(component);
-  }
-
-  /******************************************************************************************
-   * Sets the card configuration and updates related properties.
-   *
-   * @param {object} config - The new card configuration.
-   */
-  set config(config) {
-    this.#configHelper.config = config;
-    this.#percentHelper.hasDisabledUnit = this.#configHelper.hasDisabledUnit;
-    this.#theme.theme = this.#configHelper.theme;
-    this.#theme.customTheme = this.#configHelper.custom_theme;
-    this.#currentValue.value = this.#configHelper.entity;
-    this.#currentValue.stateContent = this.#configHelper.stateContent;
-    if (this.#currentValue.isTimer) {
-      // FMR
-      this.#isReversed = this.#configHelper.reverse === undefined ? true : this.#configHelper.reverse;
-      this.#max_value.value = CARD.config.value.max;
-    } else {
-      this.#currentValue.attribute = config.attribute || null;
-      this.#max_value.value = config.max_value ?? CARD.config.value.max;
-      this.#max_value.attribute = config.max_value_attribute || null;
-    }
   }
 
   /**
@@ -4147,8 +4175,7 @@ class CardView {
     this.#percentHelper.decimal = this.#getCurrentDecimal(currentUnit);
 
     if (this.#currentValue.isTimer) {
-      this.#percentHelper.isReversed =
-        typeof this.#isReversed === 'boolean' && this.#isReversed && this.#currentValue.value.state !== CARD.config.entity.state.idle;
+      this.#percentHelper.isReversed = this.timerIsReversed;
       this.#percentHelper.current = this.#currentValue.value.current;
       this.#percentHelper.min = this.#currentValue.value.min;
       this.#percentHelper.max = this.#currentValue.value.max;
@@ -4182,20 +4209,13 @@ class CardView {
 
     return CARD.config.decimal.other;
   }
-  #convertColorFromConfig(curColor) {
-    return curColor == null ? null : DEF_COLORS.has(curColor) ? `var(--${curColor}-color)` : curColor;
-  }
 }
-
 
 class ResourceManager {
   #resources = new Map();
 
-  constructor() {
-  }
-
   #generateUniqueId() {
-    let id;
+    let id = null;
     do {
       id = Math.random().toString(36).slice(2, 8);
     } while (this.#resources.has(id));
@@ -4299,7 +4319,7 @@ class EntityProgressCard extends HTMLElement {
   #cardView = new CardView();
   #elements = {};
   #lastMessage = null;
-  #lastHass = null;
+  #hass = null;
   #clickCount = 0;
   #downTime = null;
   #isHolding = null;
@@ -4430,17 +4450,17 @@ class EntityProgressCard extends HTMLElement {
     }
   }
 
-  #fireAction(originalEvent, action) {
+  #fireAction(originalEvent, currentAction) {
     debugLog('👉 EntityProgressCard.#fireAction()');
     debugLog('  📎 originalEvent: ', originalEvent);
-    debugLog('  📎 original action: ', action);
+    debugLog('  📎 original action: ', currentAction);
     debugLog('    clickSource: ', this.#clickSource);
 
     const prefixAction = this.#clickSource === CARD.interactions.event.from.icon ? `${CARD.interactions.event.from.icon}_` : '';
-    action = `${prefixAction}${action}`;
-    debugLog('  📎 action: ', action);
+    currentAction = `${prefixAction}${currentAction}`;
+    debugLog('  📎 action: ', currentAction);
 
-    let config = null;
+    let currentConfig = null;
 
     if (
       [
@@ -4448,12 +4468,12 @@ class EntityProgressCard extends HTMLElement {
         CARD.interactions.event.tap.iconHoldAction,
         CARD.interactions.event.tap.iconDoubleTapAction,
         CARD.interactions.event.tap.doubleTapAction,
-      ].includes(action)
+      ].includes(currentAction)
     ) {
-      config = { entity: this.#cardView.config.entity, tap_action: this.#cardView.config[`${action}_action`] };
-      action = 'tap';
+      currentConfig = { entity: this.#cardView.config.entity, tap_action: this.#cardView.config[`${currentAction}_action`] };
+      currentAction = 'tap';
     } else {
-      config = this.#cardView.config;
+      currentConfig = this.#cardView.config;
     }
 
     this.dispatchEvent(
@@ -4461,8 +4481,8 @@ class EntityProgressCard extends HTMLElement {
         bubbles: true,
         composed: true,
         detail: {
-          config: config,
-          action: action,
+          config: currentConfig,
+          action: currentAction,
           originalEvent,
         },
       })
@@ -4494,24 +4514,28 @@ class EntityProgressCard extends HTMLElement {
    */
   set hass(hass) {
     // On garde toujours la dernière valeur de hass
-    this.#lastHass = hass;
+    this.#hass = hass;
 
     // Si ce n'est pas un timer actif, on fait un rafraîchissement immédiat
     if (!this.#cardView.isActiveTimer) {
-      this.refresh(hass);
+      this.refresh();
       this.#stopAutoRefresh();
       return;
     }
     if (!this.#resourceManager.hasInterval('autoRefresh')) {
-      this.refresh(hass);
+      this.refresh();
       this.#startAutoRefresh();
     }
   }
 
-  refresh(hass) {
+  get hass() {
+    return this.#hass;
+  }
+
+  refresh() {
     debugLog('👉 EntityProgressCard.refresh()');
 
-    this.#cardView.refresh(hass);
+    this.#cardView.refresh(this.hass);
     if (this.#manageErrorMessage()) return;
     this.#updateDynamicElements();
   }
@@ -4529,7 +4553,7 @@ class EntityProgressCard extends HTMLElement {
     if(!this.#resourceManager) return;
     this.#resourceManager.setInterval(
       () => {
-        this.refresh(this.#lastHass);
+        this.refresh(this.hass);
         debugLog('👉 EntityProgressCard.#startAutoRefresh()');
         if (!this.#cardView.isActiveTimer) {
           this.#stopAutoRefresh();
@@ -4661,7 +4685,7 @@ class EntityProgressCard extends HTMLElement {
         break;
       }
       case 'badge_color': {
-        const backgroundColor = DEF_COLORS.has(content) ? `var(--${content}-color)` : content;
+        const backgroundColor = ThemeManager.adaptColor(content);
         const color = 'var(--white-color)';
         this.#setBadgeColor(color, backgroundColor);
         break;
@@ -4742,12 +4766,13 @@ class EntityProgressCard extends HTMLElement {
     templates.badge_color = this.#cardView.config.badge_color || '';
 
     for (const key in templates) {
-      const template = templates[key];
+      if (!Object.hasOwn(templates, key)) continue;
+      const curTmpl = templates[key];
       // Skip empty templates
-      if (!template.trim()) continue;
-      const unsub = await this.#lastHass.connection.subscribeMessage((msg) => this.#renderJinja(key, msg.result), {
+      if (!curTmpl.trim()) continue;
+      const unsub = await this.hass.connection.subscribeMessage((msg) => this.#renderJinja(key, msg.result), {
         type: 'render_template',
-        template: template,
+        template: curTmpl,
       });
       // keep it
       this.#resourceManager.addSubscription(unsub, `template-${key}`);
@@ -4844,6 +4869,165 @@ window.customCards.push({
 });
 
 /** --------------------------------------------------------------------------
+ * EDITOR PART
+ */
+
+class ConfigUpdateEventHandler {
+  constructor(newConfig) {
+    this.config = { ...newConfig };
+
+    this.updateFunctions = new Map([
+      [EDITOR_INPUT_FIELDS.basicConfiguration.attribute.name, this.updateField],
+      [EDITOR_INPUT_FIELDS.content.field.max_value_attribute.name, this.updateField],
+      [EDITOR_INPUT_FIELDS.content.field.name.name, this.updateField],
+      [EDITOR_INPUT_FIELDS.content.field.unit.name, this.updateField],
+      [EDITOR_INPUT_FIELDS.theme.field.bar_size.name, this.updateField],
+      [EDITOR_INPUT_FIELDS.theme.field.layout.name, this.updateField],
+      [EDITOR_INPUT_FIELDS.theme.field.theme.name, this.updateField],
+
+      [EDITOR_INPUT_FIELDS.content.field.decimal.name, this.updateNumericField],
+      [EDITOR_INPUT_FIELDS.content.field.min_value.name, this.updateNumericField],
+
+      [EDITOR_INPUT_FIELDS.content.field.max_value.name, this.updateMaxValueField],
+
+      [EDITOR_INPUT_FIELDS.interaction.field.icon_tap_action.name, this.updateInteractionField],
+      [EDITOR_INPUT_FIELDS.interaction.field.icon_double_tap_action.name, this.updateInteractionField],
+      [EDITOR_INPUT_FIELDS.interaction.field.icon_hold_action.name, this.updateInteractionField],
+      [EDITOR_INPUT_FIELDS.interaction.field.tap_action.name, this.updateInteractionField],
+      [EDITOR_INPUT_FIELDS.interaction.field.double_tap_action.name, this.updateInteractionField],
+      [EDITOR_INPUT_FIELDS.interaction.field.hold_action.name, this.updateInteractionField],
+
+      [EDITOR_INPUT_FIELDS.basicConfiguration.entity.name, this.updateEntityOrValueField],
+      [EDITOR_INPUT_FIELDS.theme.field.icon.name, this.updateEntityOrValueField],
+      [EDITOR_INPUT_FIELDS.theme.field.bar_color.name, this.updateEntityOrValueField],
+      [EDITOR_INPUT_FIELDS.theme.field.color.name, this.updateEntityOrValueField],
+
+      [EDITOR_INPUT_FIELDS.theme.field.toggleBar.name, this.updateToggleField],
+      [EDITOR_INPUT_FIELDS.theme.field.toggleIcon.name, this.updateToggleField],
+      [EDITOR_INPUT_FIELDS.theme.field.toggleName.name, this.updateToggleField],
+      [EDITOR_INPUT_FIELDS.theme.field.toggleValue.name, this.updateToggleField],
+      [EDITOR_INPUT_FIELDS.theme.field.toggleSecondaryInfo.name, this.updateToggleField],
+
+      [EDITOR_INPUT_FIELDS.theme.field.toggleCircular.name, this.updateCircularField],
+      [EDITOR_INPUT_FIELDS.theme.field.toggleUnit.name, this.updateUnitField],
+    ]);
+  }
+
+  updateConfig(changedEvent) {
+    debugLog('👉 ConfigUpdateEventHandler.updateConfig()');
+    debugLog('  📎 ', changedEvent);
+    debugLog(`  📎 ${changedEvent.target.id} -> ${changedEvent.target.value !== undefined ? changedEvent.target.value : changedEvent.detail}`);
+
+    const targetId = changedEvent.target.id;
+
+    if (this.updateFunctions.has(targetId)) {
+      const updateFunction = this.updateFunctions.get(targetId);
+      updateFunction.call(this, targetId, changedEvent);
+    } else {
+      throw new Error('Unknown case in message update');
+    }
+    if (
+      changedEvent.target.id === EDITOR_INPUT_FIELDS.basicConfiguration.entity.name ||
+      changedEvent.target.id === EDITOR_INPUT_FIELDS.content.field.max_value.name
+    ) {
+      const curAttribute =
+        changedEvent.target.id === EDITOR_INPUT_FIELDS.basicConfiguration.entity.name
+          ? EDITOR_INPUT_FIELDS.basicConfiguration.attribute.name
+          : EDITOR_INPUT_FIELDS.content.field.max_value_attribute.name;
+      const curEntity = new EntityOrValue();
+      curEntity.value = changedEvent.target.value;
+      if (!curEntity.hasAttribute) {
+        delete this.config[curAttribute];
+      }
+      if (changedEvent.target.id === EDITOR_INPUT_FIELDS.basicConfiguration.entity.name && curEntity.unit && this.config.unit === undefined) {
+        this.config.unit = curEntity.unit;
+      }
+    }
+
+    return this.config;
+  }
+
+  updateField(targetId, changedEvent) {
+    if (changedEvent.target.value === undefined || changedEvent.target.value === null || changedEvent.target.value.trim() === '') {
+      delete this.config[targetId];
+    } else {
+      this.config[targetId] = changedEvent.target.value;
+    }
+  }
+
+  updateNumericField(targetId, changedEvent) {
+    const curValue = parseFloat(changedEvent.target.value);
+    if (isNaN(curValue)) {
+      delete this.config[targetId];
+    } else {
+      this.config[targetId] = curValue;
+    }
+  }
+
+  updateMaxValueField(targetId, changedEvent) {
+    if (!isNaN(changedEvent.target.value) && changedEvent.target.value.trim() !== '') {
+      this.config[targetId] = parseFloat(changedEvent.target.value);
+    } else if (changedEvent.target.value.trim() !== '') {
+      this.config[targetId] = changedEvent.target.value;
+    } else {
+      delete this.config[targetId];
+    }
+  }
+
+  updateInteractionField(targetId, changedEvent) {
+    this.config[targetId] = changedEvent.detail.value[targetId];
+  }
+
+  updateEntityOrValueField(targetId, changedEvent) {
+    if (
+      changedEvent?.detail?.value &&
+      typeof changedEvent.detail.value[targetId] === 'string' &&
+      changedEvent.detail.value[targetId].trim() !== ''
+    ) {
+      this.config[targetId] = changedEvent.detail.value[targetId];
+    } else {
+      delete this.config[targetId];
+    }
+  }
+
+  updateToggleField(targetId, changedEvent) {
+    const key = targetId.replace('toggle_', '');
+    this.config.hide ??= [];
+
+    if (!changedEvent.target.checked) {
+      if (!this.config.hide.includes(key)) {
+        this.config.hide.push(key);
+      }
+    } else {
+      const index = this.config.hide.indexOf(key);
+      if (index !== -1) {
+        this.config.hide.splice(index, 1);
+      }
+      if (this.config.hide.length === 0) {
+        delete this.config.hide;
+      }
+    }
+  }
+
+  updateCircularField(targetId, changedEvent) {
+    if (changedEvent.target.checked) {
+      this.config.force_circular_background = true;
+    } else {
+      delete this.config.force_circular_background;
+    }
+  }
+
+  updateUnitField(targetId, changedEvent) {
+    if (!changedEvent.srcElement.checked) {
+      this.config.disable_unit = true;
+    } else {
+      delete this.config.disable_unit;
+    }
+  }
+
+}
+
+/* 
  * Custom editor component for configuring the `EntityProgressCard`.
  * HA Components:
  *  - https://github.com/home-assistant/frontend/blob/28304bb1dcebfddf3ab991e2f9e38f44427fe0f8/src/data/selector.ts
@@ -4865,7 +5049,7 @@ class EntityProgressCardEditor extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: CARD.config.shadowMode });
-    this.#hassProvider = new HassProvider();
+    this.#hassProvider = HassProviderSingleton.getInstance();
   }
 
   connectedCallback() {
@@ -4876,7 +5060,6 @@ class EntityProgressCardEditor extends HTMLElement {
       this.#isListenersAttached = true;
       this.#isYAML = false;
     }
-
   }
 
   disconnectedCallback() {
@@ -4894,6 +5077,10 @@ class EntityProgressCardEditor extends HTMLElement {
       this.#hassProvider.hass = hass;
     }
     this.#currentLanguage = this.#hassProvider.language;
+  }
+
+  get hass() {
+    return this.#hassProvider.hass;
   }
 
   setConfig(config) {
@@ -4959,12 +5146,12 @@ class EntityProgressCardEditor extends HTMLElement {
     for (const type of haFormTypes) {
       const element = this.#elements[type];
       if (element) {
-        this.#updateHAForm(element, type, this.#config[type]);
+        EntityProgressCardEditor.#updateHAForm(element, type, this.#config[type]);
       }
     }
 
     // Theme
-    this.#toggleFieldDisable(CARD.editor.keyMappings.theme, !!this.#config.theme);
+    this.#toggleFieldDisable(CARD.editor.keyMappings.theme, this.#config.theme !== undefined);
 
     const entityHasAttribute = this.#updateAttributFromEntity('entity', 'attribute');
     this.#toggleFieldDisable(EDITOR_INPUT_FIELDS.basicConfiguration.attribute.isInGroup, !entityHasAttribute);
@@ -4976,7 +5163,7 @@ class EntityProgressCardEditor extends HTMLElement {
     this.#updateToggleFields();
   }
 
-  #updateHAForm(form, key, newValue) {
+  static #updateHAForm(form, key, newValue) {
     debugLog('👉 editor.#updateHAForm()');
     debugLog('        ✅ Update HA Form (Before) ------> ', form.data);
     debugLog('        ✅ NewValue: ', newValue);
@@ -5020,7 +5207,7 @@ class EntityProgressCardEditor extends HTMLElement {
     // que la valeur du select ne correspond pas encore au defaultAttribute :
     if (this.#config[attribute] === undefined && curEntity.hasAttribute) {
       debugLog(`        ✅ updateFields - Attribute ${attribute} (default): in progress...`);
-      this.#applySelectValueOnUpdate(this.#elements[attribute], curEntity.defaultAttribute);
+      EntityProgressCardEditor.#applySelectValueOnUpdate(this.#elements[attribute], curEntity.defaultAttribute);
     }
 
     if (
@@ -5035,7 +5222,7 @@ class EntityProgressCardEditor extends HTMLElement {
 
     return curEntity.hasAttribute;
   }
-  async #applySelectValueOnUpdate(select, value) {
+  static async #applySelectValueOnUpdate(select, value) {
     await select.updateComplete;
 
     const values = Array.from(select.children).map((el) => el.getAttribute('value'));
@@ -5066,13 +5253,6 @@ class EntityProgressCardEditor extends HTMLElement {
     }
   }
 
-  #onChanged(event) {
-    debugLog('👉 editor.#onChanged()');
-    debugLog('  📎 event: ', event);
-    debugLog('  📎 event.target.id: ', event.target.id);
-    this.#sendMessageForUpdate(event);
-  }
-
   #addEventListener() {
     debugLog('👉 editor.#addEventListener');
     const fieldsToProcess = [
@@ -5098,7 +5278,6 @@ class EntityProgressCardEditor extends HTMLElement {
         `accordionTitle-${index}`
       );
     });
-
   }
 
   #addEventListenerFor(name, type) {
@@ -5125,141 +5304,17 @@ class EntityProgressCardEditor extends HTMLElement {
       );
     }
     events.forEach((eventType) => {
-
-      this.#resourceManager.addEventListener(
-        this.#elements[name],
-        eventType,
-        this.#onChanged.bind(this),
-        undefined,
-        `${eventType}-${name}`
-      );
-
+      this.#resourceManager.addEventListener(this.#elements[name], eventType, this.#onChanged.bind(this), undefined, `${eventType}-${name}`);
     });
   }
 
-  #sendMessageForUpdate(changedEvent) {
-    debugLog('👉 editor.#sendMessageForUpdate()');
+  #onChanged(changedEvent) {
+    debugLog('👉 editor.#onChanged()');
     debugLog('  📎 ', changedEvent);
     debugLog(`  📎 ${changedEvent.target.id} -> ${changedEvent.target.value !== undefined ? changedEvent.target.value : changedEvent.detail}`);
-    const newConfig = Object.assign({}, this.#config);
 
-    switch (changedEvent.target.id) {
-      case EDITOR_INPUT_FIELDS.basicConfiguration.attribute.name:
-      case EDITOR_INPUT_FIELDS.content.field.max_value_attribute.name:
-      case EDITOR_INPUT_FIELDS.content.field.name.name:
-      case EDITOR_INPUT_FIELDS.content.field.unit.name:
-      case EDITOR_INPUT_FIELDS.theme.field.bar_size.name:
-      case EDITOR_INPUT_FIELDS.theme.field.layout.name:
-      case EDITOR_INPUT_FIELDS.theme.field.theme.name:
-        if (changedEvent.target.value === undefined || changedEvent.target.value === null || changedEvent.target.value.trim() === '') {
-          delete newConfig[changedEvent.target.id];
-        } else {
-          newConfig[changedEvent.target.id] = changedEvent.target.value;
-        }
-        break;
-      case EDITOR_INPUT_FIELDS.content.field.decimal.name:
-      case EDITOR_INPUT_FIELDS.content.field.min_value.name: {
-        const curValue = parseFloat(changedEvent.target.value);
-        if (isNaN(curValue)) {
-          delete newConfig[changedEvent.target.id];
-        } else {
-          newConfig[changedEvent.target.id] = curValue;
-        }
-        break;
-      }
-      case EDITOR_INPUT_FIELDS.content.field.max_value.name:
-        if (!isNaN(changedEvent.target.value) && changedEvent.target.value.trim() !== '') {
-          newConfig[changedEvent.target.id] = parseFloat(changedEvent.target.value);
-        } else if (changedEvent.target.value.trim() !== '') {
-          newConfig[changedEvent.target.id] = changedEvent.target.value;
-        } else {
-          delete newConfig[changedEvent.target.id];
-        }
-        break;
-
-      case EDITOR_INPUT_FIELDS.interaction.field.icon_tap_action.name:
-      case EDITOR_INPUT_FIELDS.interaction.field.icon_double_tap_action.name:
-      case EDITOR_INPUT_FIELDS.interaction.field.icon_hold_action.name:
-      case EDITOR_INPUT_FIELDS.interaction.field.tap_action.name:
-      case EDITOR_INPUT_FIELDS.interaction.field.double_tap_action.name:
-      case EDITOR_INPUT_FIELDS.interaction.field.hold_action.name: {
-        newConfig[changedEvent.target.id] = changedEvent.detail.value[changedEvent.target.id];
-        break;
-      }
-      case EDITOR_INPUT_FIELDS.basicConfiguration.entity.name:
-      case EDITOR_INPUT_FIELDS.theme.field.icon.name:
-      case EDITOR_INPUT_FIELDS.theme.field.bar_color.name:
-      case EDITOR_INPUT_FIELDS.theme.field.color.name: {
-        if (
-          changedEvent?.detail?.value &&
-          typeof changedEvent.detail.value[changedEvent.target.id] === 'string' &&
-          changedEvent.detail.value[changedEvent.target.id].trim() !== ''
-        ) {
-          newConfig[changedEvent.target.id] = changedEvent.detail.value[changedEvent.target.id];
-        } else {
-          delete newConfig[changedEvent.target.id];
-        }
-        break;
-      }
-      case EDITOR_INPUT_FIELDS.theme.field.toggleBar.name:
-      case EDITOR_INPUT_FIELDS.theme.field.toggleIcon.name:
-      case EDITOR_INPUT_FIELDS.theme.field.toggleName.name:
-      case EDITOR_INPUT_FIELDS.theme.field.toggleValue.name:
-      case EDITOR_INPUT_FIELDS.theme.field.toggleSecondaryInfo.name: {
-        const key = changedEvent.target.id.replace('toggle_', '');
-        newConfig.hide ??= [];
-
-        if (!changedEvent.target.checked) {
-          // Toggle désactivé → on cache
-          if (!newConfig.hide.includes(key)) {
-            newConfig.hide.push(key);
-          }
-        } else {
-          // Toggle activé → on montre
-          const index = newConfig.hide.indexOf(key);
-          if (index !== -1) {
-            newConfig.hide.splice(index, 1);
-          }
-          if (newConfig.hide.length === 0) {
-            delete newConfig.hide;
-          }
-        }
-        break;
-      }
-      case EDITOR_INPUT_FIELDS.theme.field.toggleCircular.name:
-        if (changedEvent.target.checked) {
-          newConfig.force_circular_background = true;
-        } else {
-          delete newConfig.force_circular_background;
-        }
-        break;
-      case EDITOR_INPUT_FIELDS.theme.field.toggleUnit.name:
-        if (!changedEvent.srcElement.checked) {
-          newConfig.disable_unit = true;
-        } else {
-          delete newConfig.disable_unit;
-        }
-        break;
-      default:
-        throw new Error('Message update - Unknown case');
-    }
-    if (
-      changedEvent.target.id === EDITOR_INPUT_FIELDS.basicConfiguration.entity.name ||
-      changedEvent.target.id === EDITOR_INPUT_FIELDS.content.field.max_value.name
-    ) {
-      const curAttribute =
-        changedEvent.target.id === EDITOR_INPUT_FIELDS.basicConfiguration.entity.name
-          ? EDITOR_INPUT_FIELDS.basicConfiguration.attribute.name
-          : EDITOR_INPUT_FIELDS.content.field.max_value_attribute.name;
-      const curEntity = new EntityOrValue();
-      curEntity.value = changedEvent.target.value;
-      if (!curEntity.hasAttribute) {
-        delete newConfig[curAttribute];
-      }
-      if (changedEvent.target.id === EDITOR_INPUT_FIELDS.basicConfiguration.entity.name && curEntity.unit && newConfig.unit === undefined) {
-        newConfig.unit = curEntity.unit;
-      }
-    }
+    const configUpdateEventHandler = new ConfigUpdateEventHandler(Object.assign({}, this.#config));
+    const newConfig = configUpdateEventHandler.updateConfig(changedEvent);
 
     this.#sendNewConfig(newConfig);
   }
@@ -5328,7 +5383,7 @@ class EntityProgressCardEditor extends HTMLElement {
     });
   }
 
-  #computeCustomLabel(s, label) {
+  static #computeCustomLabel(s, label) {
     debugLog('👉 computeCustomLabel()');
     debugLog('  📎 name: ', s.name);
     debugLog('  📎 label: ', label);
@@ -5340,7 +5395,7 @@ class EntityProgressCardEditor extends HTMLElement {
    */
   #createField({ name, label, type, required, isInGroup, width, schema = null }) {
     debugLog('👉 editor.#createField()');
-    let inputElement;
+    let inputElement = null;
     const value = this.#config[name] ?? '';
 
     switch (type) {
@@ -5361,7 +5416,7 @@ class EntityProgressCardEditor extends HTMLElement {
         inputElement.id = name;
         inputElement.hass = this.#hassProvider.hass;
         inputElement.schema = schema;
-        inputElement.computeLabel = (s) => this.#computeCustomLabel(s, label);
+        inputElement.computeLabel = (s) => EntityProgressCardEditor.#computeCustomLabel(s, label);
         inputElement.data = {};
         this.#elements[name] = inputElement;
         return inputElement; //break;
@@ -5418,8 +5473,7 @@ class EntityProgressCardEditor extends HTMLElement {
 
     return inputElement;
   }
-
-  #makeHelpIcon() {
+  static #makeHelpIcon() {
     const link = document.createElement(CARD.documentation.link.element);
     link.href = CARD.documentation.link.documentationUrl;
     link.target = CARD.documentation.link.linkTarget;
@@ -5461,7 +5515,7 @@ class EntityProgressCardEditor extends HTMLElement {
   #renderAccordion(parent, inputFields) {
     const accordionItem = document.createElement(CARD.editor.fields.accordion.item.element);
     accordionItem.classList.add(CARD.editor.fields.accordion.item.class);
-    this.#accordionList.push(accordionItem) - 1;
+    this.#accordionList.push(accordionItem);
 
     const accordionTitle = document.createElement(CARD.editor.fields.accordion.title.element);
     this.#accordionTitleList.push(accordionTitle);
@@ -5507,7 +5561,7 @@ class EntityProgressCardEditor extends HTMLElement {
     this.#renderAccordion(this.#container, EDITOR_INPUT_FIELDS.interaction);
     this.#renderAccordion(this.#container, EDITOR_INPUT_FIELDS.theme);
 
-    this.#container.appendChild(this.#makeHelpIcon());
+    this.#container.appendChild(EntityProgressCardEditor.#makeHelpIcon());
     fragment.appendChild(this.#container);
     this.shadowRoot.appendChild(fragment);
   }
