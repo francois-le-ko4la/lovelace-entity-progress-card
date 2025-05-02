@@ -21,7 +21,7 @@ jobs:
         run: |
           for file in temp/*.js; do
             sed -i '/^\s*debugLog(.*);/d' "$file"
-            sed -i '/function debugLog(.*)/,/^}/d' "$file"
+            sed -i '/const debugLog = (msg, val) => {/,/^};/d' "$file"
           done
       - name: Process JS Files
         run: |
