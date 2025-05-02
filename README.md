@@ -197,6 +197,8 @@ unit: ABC
 
 #### `unit_spacing`
 
+> **`unit_spacing`** [string {auto|space|no-sspace}] _(optional)_
+
 Defines whether a space should appear between numeric values and units, either following locale rules or overriding them explicitly.
 
 - `auto`: Uses locale-specific formatting rules (e.g., France → space, US → no space)
