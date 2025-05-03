@@ -1424,7 +1424,9 @@ cards:
             type: custom:entity-progress-card
             entity: this.entity_id
             name: sample
-            theme: battery
+            theme: optimal_when_high
+            icon_tap_action:
+              action: more-info
             card_mod:
               style:
                 .: |-
