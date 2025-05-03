@@ -1331,7 +1331,7 @@ The ranges and their corresponding colors are as follows:
 
 Each range is visually represented using the `mdi:air-filter` icon, ensuring a clear and intuitive display of VOC levels.
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/voc.png" alt="Image title" width="500"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/voc.png" alt="Image title" width="250"/>
 
 #### 🦠 PM 2.5
 
@@ -1366,7 +1366,7 @@ The ranges and their corresponding colors are as follows:
 
 Each range is visually represented using the `mdi:air-filter` icon, ensuring a clear and intuitive display of PM2.5 pollution levels.
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/voc.png" alt="Image title" width="500"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/pm.png" alt="Image title" width="250"/>
 
 ### 🕹️ card_mod / animation
 
