@@ -596,7 +596,7 @@ _Order of Priority for the Icon:_
 - Icon Associated with the Entity's device domain
 - Default: The icon used by default if no other is specified.
 
-### `force_circular_background` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#reverse-)
+#### `force_circular_background` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#reverse-)
 
 > **`force_circular_background`** [boolean] _(optional)_
 
@@ -1523,7 +1523,7 @@ We want to monitor a process and we have entities for:
 Our goal is to display the percentage of remaining time and show the remaining time in minutes. Unfortunately, the standard usage of this card cannot achieve what we need.
 We read the README it seems to be impossible but...
 
-### Mathematical Model
+#### Mathematical Model
 
 Using a simple model, we can calculate the percentage of remaining time with:
 
@@ -1537,7 +1537,7 @@ Where:
 
 The good news is that we can use an entity to define the `max_value` and dynamically calculate the percentage. Therefore, we need to find a way to determine $\Delta T$.
 
-### How ?
+#### How ?
 
 We'll use a Helper (Number) to handle this calculation. It’s simple to define and can be set up according to various needs.
 
@@ -1573,7 +1573,7 @@ We'll use a Helper (Number) to handle this calculation. It’s simple to define 
   icon: mdi:clock-end
   ```
 
-### Conclusion
+#### Conclusion
 
 By implementing this model through the helper, we can accurately calculate and display the percentage of remaining time for any task. This approach provides a dynamic and intuitive way to monitor progress, ensuring that the displayed percentage accurately reflects the time remaining regardless of the task’s total duration. This solution effectively extend our card usage vision, and enhances the user experience.
 
@@ -1605,7 +1605,7 @@ my_custom_theme:
 
 Once set, the progress bar background will reflect the new color consistently across all cards using this variable.
 
-## 🌍 Universal Language & Number Support
+## 🌍 Language & Number Support
 
 🌟 Our goal is to make this card a seamless and intuitive tool for users worldwide, eliminating language barriers and ensuring proper data formatting for every region. If you have suggestions for additional languages or formatting improvements, we’re always open to feedback!
 To accommodate multilingual environments, the card defaults to the language set in the user's profile for optimal consistency and localization.
