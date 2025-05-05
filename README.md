@@ -195,7 +195,7 @@ unit: ABC
 >
 > Disabling the Unit: To completely hide the unit from display, set the disable_unit option to true.
 
-#### `unit_spacing`
+#### `unit_spacing` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#unit_spacing-)
 
 > **`unit_spacing`** [string {auto|space|no-sspace}] _(optional)_
 
@@ -1655,7 +1655,28 @@ Numbers are displayed based on your regional preferences, using:
 
 By default, the card uses standard Arabic numerals (0-9) for maximum compatibility.
 
-## ❓ Troubleshooting
+## Error handling & Troubleshooting
+
+### Error handling
+
+This card includes error handling to prevent visual issues and ensure the UI stays clean and stable.
+We handle two main categories of errors in the card:
+
+1. **Configuration Errors**  
+   These occur when the card is incorrectly set up in the Lovelace config.  
+   Examples:
+   - Missing entity ID
+   - Invalid or unsupported attributes
+   - Incorrect min/max values
+
+2. **Runtime Errors (Entity State Issues)**  
+   These happen while the card is running and are related to the entity’s current state.  
+   Examples:
+   - Entity is not found, unavailable or offline
+
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/errors.png" alt="Image title" width="500px"/>
+
+### Troubleshooting
 
 - Card not loading? Ensure the resource is correctly added to Lovelace.
 - HACS not detecting the card? Clear your browser cache or restart Home Assistant.
