@@ -502,7 +502,9 @@ bar_color: rgb(110, 65, 171)
 
 > **`icon`** [string] _(optional)_
 
-The icon associated with the entity. Supports Material Design Icons (MDI).
+Custom icon to display alongside the entity. Supports Material Design Icons (MDI).
+
+If not specified, the default icon provided by Home Assistant for the entity will be used.
 
 _Examples:_ `mdi:lightbulb`, `mdi:thermometer`...
 
@@ -512,89 +514,11 @@ type: custom:entity-progress-card
 icon: mdi:grain
 ```
 
-_Default by device domain:_
-
-| Device domain | Icon (MDI)              |
-| ------------- | ----------------------- |
-| binary_sensor | mdi:circle-outline      |
-| climate       | mdi:thermostat          |
-| counter       | mdi:counter             |
-| cover         | mdi:garage              |
-| fan           | mdi:fan                 |
-| input_boolean | mdi:toggle-switch       |
-| input_number  | mdi:numeric             |
-| input_select  | mdi:form-dropdown       |
-| media_player  | mdi:speaker             |
-| light         | mdi:lightbulb           |
-| lock          | mdi:lock                |
-| person        | mdi:account             |
-| sensor        | mdi:eye                 |
-| scene         | mdi:palette             |
-| timer         | mdi:timer-outline       |
-| switch        | mdi:toggle-switch       |
-| weather       | mdi:weather-cloudy      |
-| sun           | mdi:white-balance-sunny |
-
-_Default by device class:_
-
-| Device Class                     | Icon (MDI)         |
-| -------------------------------- | ------------------ |
-| battery                          | mdi:battery        |
-| carbon_dioxide                   | mdi:molecule-co2   |
-| cold                             | mdi:snowflake      |
-| connectivity                     | mdi:wifi           |
-| current                          | mdi:current-ac     |
-| duration                         | mdi:timer-outline  |
-| energy                           | mdi:flash          |
-| gas                              | mdi:fire           |
-| heat                             | mdi:fire           |
-| humidity                         | mdi:water-percent  |
-| illuminance                      | mdi:brightness-5   |
-| lock                             | mdi:lock           |
-| moisture                         | mdi:water          |
-| motion                           | mdi:motion-sensor  |
-| occupancy                        | mdi:account        |
-| opening                          | mdi:window-open    |
-| plug                             | mdi:power-plug     |
-| pm25                             | mdi:molecule       |
-| power                            | mdi:flash          |
-| power_factor                     | mdi:flash          |
-| pressure                         | mdi:gauge          |
-| problem                          | mdi:alert          |
-| safety                           | mdi:shield-check   |
-| smoke                            | mdi:smoke-detector |
-| sound                            | mdi:volume-high    |
-| switch                           | mdi:power-socket   |
-| temperature                      | mdi:thermometer    |
-| timestamp                        | mdi:calendar-clock |
-| tv                               | mdi:television     |
-| vibration                        | mdi:vibrate        |
-| volatile_organic_compounds_parts | mdi:molecule       |
-| voltage                          | mdi:flash          |
-| window                           | mdi:window-open    |
-
-_Default by device class and by state:_
-
-| Device Class | `open`                       | `closed`                            |
-|--------------|------------------------------|-------------------------------------|
-| curtain      | `mdi:curtains`               | `mdi:curtains-closed`               |
-| blind        | `mdi:blinds-horizontal`      | `mdi:blinds-horizontal-closed`      |
-| garage       | `mdi:garage-open`            | `mdi:garage`                        |
-| gate         | `mdi:gate-open`              | `mdi:gate`                          |
-| shutter      | `mdi:window-shutter-open`    | `mdi:window-shutter`                |
-| window       | `mdi:window-open`            | `mdi:window-closed`                 |
-| door         | `mdi:door-open`              | `mdi:door-closed`                   |
-| shade        | `mdi:roller-shade`           | `mdi:roller-shade-closed`           |
-| damper       | `mdi:circle`                 | `mdi:circle-slice-8`                |
-
 _Order of Priority for the Icon:_
 
 - Theme/Custom Theme: The icon derived from the theme or style applied to the item.
 - Icon Parameter: A custom icon specifically defined for the item.
-- Icon Associated with the Entity: The icon directly linked or representative of the entity.
-- Icon Associated with the Entity's device_class: temperature, humidity...
-- Icon Associated with the Entity's device domain
-- Default: The icon used by default if no other is specified.
+- Default icon provided by HA.
 
 #### `force_circular_background` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#reverse-)
 
