@@ -132,7 +132,7 @@ const CARD = {
     },
     elements: {
       icon: { element: 'div', class: 'icon' },
-      shape: { element: 'ha-shape', class: 'shape' },
+      shape: { element: 'div', class: 'shape' },
       nameGroup: { element: 'div', class: 'name-group' },
       nameCombined: { element: 'span', class: 'name-combined' },
       name: { element: 'span', class: 'name' },

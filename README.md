@@ -520,7 +520,7 @@ _Order of Priority for the Icon:_
 - Icon Parameter: A custom icon specifically defined for the item.
 - Default icon provided by HA.
 
-#### `force_circular_background` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#reverse-)
+#### `force_circular_background`
 
 > **`force_circular_background`** [boolean] _(optional)_
 
@@ -1054,7 +1054,7 @@ filter:
         device_class: battery
       options:
         type: custom:entity-progress-card
-        entity: this.entity_id
+        entity: this.entity_id # remove this line with auto-entities v1.14.1+
         theme: optimal_when_high
         icon_tap_action:
           action: more-info
@@ -1307,7 +1307,7 @@ color: rgb(110, 65, 171)
 bar_color: rgb(110, 65, 171)
 card_mod:
   style: |-
-    ha-icon {
+    .icon {
       animation: boing 3s ease infinite;
       transform-origin: 50% 90%;
     }
@@ -1323,7 +1323,7 @@ card_mod:
 ```
 
 > [!TIP]
-> We expose the `ha-icon` and `ha-shape` elements to properly animate the card.
+> We expose the `.icon` and `.shape` to properly animate the card.
 
 ### 🗃️ vertical-stack-in-card
 
@@ -1346,7 +1346,7 @@ cards:
             device_class: battery
           options:
             type: custom:entity-progress-card
-            entity: this.entity_id
+            entity: this.entity_id # remove this line with auto-entities v1.14.1+
             name: sample
             theme: optimal_when_high
             icon_tap_action:
