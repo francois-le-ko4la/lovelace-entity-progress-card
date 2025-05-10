@@ -21,10 +21,9 @@ This custom version of the **Bar Card** for Home Assistant allows you to display
 - **Dynamic Theme**: Automatically adjusts icons and colors based on the context (e.g., Battery Theme), reflecting the entity's state.
 - **Enhanced Customization**: Offers a balanced default setup while allowing users to further tailor the card's behavior and appearance through YAML or the card editor (full details below).
 - **Smooth Animations**: Provides HTML elements that facilitate smooth, visually appealing animations, leveraging well-known mechanisms for easy implementation.
-- **Interactive Features**: Includes a "More Info" option, enabling users to view additional entity details or navigate to another dashboard with a simple click, improving accessibility and usability.
+- **Interactive Features**: Includes all "xyz_action" option, enabling users to view additional entity details or navigate to another dashboard with a simple click, improving accessibility and usability.
 - **Performance Optimized**: Code enhancements ensure better performance and maintainability, offering a more stable and responsive experience.
 - **Multi-Language Support**: Provides localized error messages and descriptions, supporting multiple languages 🇬🇧 🇪🇸 🇩🇪 🇮🇹 🇫🇷 🇵🇱 🇳🇱 🇭🇷 🇲🇰 🇵🇹 🇩🇰 🇸🇪 🇳🇴 (bokmål) 🇫🇮 🇷🇴 🇬🇷 🇯🇵 🇰🇷 🇨🇳 🇹🇷 🇸🇦.
-
 
 ## ⚙️ Prerequisites
 
@@ -53,7 +52,7 @@ Use this button to add the repository to your HACS:
 
 ### Manual Installation
 
-1. Download the file `entity-progress-card.js` to the `/config/www/` directory in your Home Assistant setup.
+1. Download the file `entity-progress-card.js` (from the last version) to the `/config/www/` directory in your Home Assistant setup.
 2. Add `/local/entity-progress-card.js` to your Lovelace resources
 
 ```yaml
@@ -75,9 +74,9 @@ You can customize the card using the following parameters:
 
 #### `entity`
 
-> **`entity`** [entity] _(required)_
+> **`entity`** string _(required)_
 
-The Home Assistant entity to display.
+Entity ID.
 
 _Example_:
 
@@ -97,7 +96,7 @@ entity: sensor.hp_envy_6400_series_tri_color_cartridge
 
 #### `attribute`
 
-> **`attribute`** [string] _(optional)_
+> **`attribute`** string _(optional)_
 
 The Home Assistant entity's attribute to display.
 
@@ -114,6 +113,13 @@ _Supported entities:_
 All entities that have an attribute containing a numeric value are supported.
 This allows the card to work with a wide range of sensors, statistics, or other entities exposing numeric data through their attributes.
 
+Defining the attribute with the following is not supported:
+
+- counter
+- number
+- duration
+- timer
+
 _default attribute:_
 
 | entity (supported) | default attribute |
@@ -124,7 +130,7 @@ _default attribute:_
 
 #### `name`
 
-> **`name`** [string] _(optional)_
+> **`name`** string _(optional)_
 
 The name displayed on the progress bar. If omitted, the entity's friendly name will be used.
 
@@ -142,7 +148,7 @@ name: ABC
 
 #### `unit`
 
-> **`unit`** [string] _(optional)_
+> **`unit`** string _(optional)_
 
 Allows representing standard unit.
 
@@ -173,10 +179,6 @@ _Unit selection_:
 > For example, by default, a timer is shown in seconds. If the unit is changed from s (seconds) to min (minutes),
 > no conversion is performed (for now), and the value remains unchanged.
 
-_Default_:
-
-- `%` if nothing is specified or automatically determined.
-
 _Example_:
 
 ```yaml
@@ -197,7 +199,7 @@ unit: ABC
 
 #### `unit_spacing` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#unit_spacing-)
 
-> **`unit_spacing`** [string {auto|space|no-sspace}] _(optional)_
+> **`unit_spacing`** string ➡️ {`auto`|`space`|`no-sspace`} _(optional, default: `auto`)_
 
 Defines whether a space should appear between numeric values and units, either following locale rules or overriding them explicitly.
 
@@ -205,13 +207,9 @@ Defines whether a space should appear between numeric values and units, either f
 - `space`: Forces a space between number and unit (e.g., 80 %), regardless of locale
 - `no-space`: Forces no space between number and unit (e.g., 80%), regardless of locale
 
-_Default_:
-
-- `auto`
-
 #### `decimal`
 
-> **`decimal`** [int >=0] _(optional)_
+> **`decimal`** integer _(optional)_
 
 Defines the number of decimal places to display for numerical values.
 
@@ -253,17 +251,13 @@ decimal: 1
 
 #### `min_value`
 
-> **`min_value`** [numeric] _(optional)_
+> **`min_value`** float _(optional, default: `0`)_
 
 Defines the minimum value to be used when calculating the percentage.
 
 This allows the percentage to be relative to both a minimum (min_value, which represents 0%) and a maximum (max_value, which represents 100%).
 
 This value must be numeric (either a float or an integer).
-
-_Default_:
-
-- 0
 
 _Example_:
 
@@ -282,7 +276,7 @@ Suppose you are measuring the weight of a connected litter box, where:
 
 #### `max_value`
 
-> **`max_value`** [numeric/entity] _(optional)_
+> **`max_value`** float|string _(optional, default: `100`)_
 
 Allows representing standard values and calculating the percentage relative to the maximum value.
 This value can be numeric (float/int) or an entity and real value must be > 0.
@@ -304,14 +298,14 @@ max_value: 255
 
 #### `max_value_attribute`
 
-> **`max_value_attribute`** [string] _(optional)_
+> **`max_value_attribute`** string _(optional)_
 
 The Home Assistant `max_value`'s attribute to display.  
-`max_value` must be an entity.
+`max_value` must be an entity. See `attribute`.
 
 #### `xyz_action` (`tap_action`, `double_tap_action`, `hold_action`, `icon_tap_action`, `icon_double_tap_action`, `icon_hold_action`)
 
-> **`xyz_action`** OBJ[action: {`more-info` | `toggle` | `perform-action` | `navigate` | `url` | `assist` | `none`} [`navigation_path`: /str/to/lovelace] [`url_path`: <https://example.com>] [····]] _(optional)_
+> **`xyz_action`** map ➡️ {action: {`more-info` | `toggle` | `perform-action` | `navigate` | `url` | `assist` | `none`}...} _(optional)_
 
 _`xyz_action`_:
 
@@ -346,55 +340,21 @@ _Options:_
 - `url_path` _url_: URL to open when action is 'url' (e.g., <https://example.com>).
 ...
 
-> [!CAUTION]
+_Default:_
+
+- tap_action: `more-info`
+- hold_action: `none`
+- double_tap_action: `none`
+- icon_tap_action:
+  - `toggle` if the entity is a `light`, `switch`, `fan`, `input_boolean`, or `media_player`
+  - `none` otherwise
+- icon_hold_action: `none`
+- icon_double_tap_action: `none`
+
+> [!NOTE]
 > We have merged the functionalities of `navigate_to` and `show_more_info` into `tap_action`.
 > Consequently, these two options have been **deprecated**, **disabled**, and will no longer
-> be supported in **v1.2.0**. We provide the following examples to facilitate a simple migration.
->
-> <details>
->   <summary>👉 examples</summary>
->
-> ✅ Navigate to a Lovelace View
->
-> ```yaml
-> tap_action:
->   action: navigate
->   navigation_path: /config
-> ```
->
-> ✅ Navigate to a Lovelace View
->
-> ```yaml
-> tap_action:
->   action: navigate
->   navigation_path: /config
-> ```
->
-> ✅ Open More Info Dialog:
->
-> ```yaml
-> tap_action:
->   action: more-info
-> ```
->
-> ✅ Open an External URL
->
-> ```yaml
-> tap_action:
->   action: url
->   url_path: https://example.com
-> ```
->
-> ✅ Disable Tap Action
->
-> ```yaml
-> type: custom:entity-progress-card
-> ····
-> tap_action:
->   action: none
-> ```
->
-> </details>
+> be supported in **v1.2.0**.
 
 _Example_:
 
@@ -409,7 +369,7 @@ tap_action:
 
 #### `theme`
 
-> **`theme`** [string {`optimal_when_low`|`optimal_when_high`|`battery`⚠️|`cpu`⚠️|`light`|`memory`⚠️|`temperature`|`humidity`|`pm25`|`voc`}] _(optional)_
+> **`theme`** string ➡️ {`optimal_when_low`|`optimal_when_high`|`light`|`temperature`|`humidity`|`pm25`|`voc`} _(optional)_
 
 Allows customization of the progress bar's appearance using a predefined theme.
 This theme dynamically adjusts the `icon`, `color` and `bar-color` parameters based on the battery level, eliminating the need for manual adjustments or complex Jinja2 templates.
@@ -429,14 +389,10 @@ theme: light
 
 #### `bar_size`
 
-> **`bar_size`** [string {`small`|`medium`|`large`}] _(optional)_
+> **`bar_size`** string ➡️ {`small`|`medium`|`large`} _(optional, default: `small`)_
 
 Customizes the appearance of the progress bar by selecting a predefined size.
 Choose from small, medium, or large to adjust the visual scale of the bar.
-
-_Default_:
-
-- `small`
 
 _Example_:
 
@@ -448,47 +404,9 @@ bar_size: medium
 
 #### `bar_color`
 
-> **`bar_color`** [string] _(optional)_
+> **`bar_color`** string _(optional, default: `var(--state-icon-color)`)_
 
-The color of the progress bar. Accepts color names, RGB values, or HEX codes.
-
-When defining a color by name, we utilize the standard CSS color palette, which has evolved over time to include extended color keywords, X11 colors, and SVG colors (updated in 2022: https://www.w3.org/TR/css-color-3/#svg-color).
-
-To maintain a consistent look & feel, we translate color names to Home Assistant's color definitions. We provide a list of these colors below. If a color is missing, please do not hesitate to let us know. If you choose a CSS-compatible color name that is not part of this list, the rendering will be as defined by the CSS standard.
-
-_Color name (HA)_:
-| Color name | Card will use |
-|---|---|
-| primary | var(--primary-color) |
-| accent | var(--accent-color) |
-| red | var(--red-color) |
-| pink | var(--pink-color) |
-| purple | var(--purple-color) |
-| deep-purple | var(--deep-purple-color) |
-| indigo | var(--indigo-color) |
-| blue | var(--blue-color) |
-| light-blue | var(--light-blue-color) |
-| cyan | var(--cyan-color) |
-| teal | var(--teal-color) |
-| green | var(--green-color) |
-| light-green | var(--light-green-color) |
-| lime | var(--lime-color) |
-| yellow | var(--yellow-color) |
-| amber | var(--amber-color) |
-| orange | var(--orange-color) |
-| deep-orange | var(--deep-orange-color) |
-| brown | var(--brown-color) |
-| light-grey | var(--light-grey-color) |
-| grey | var(--grey-color) |
-| dark-grey | var(--dark-grey-color) |
-| blue-grey | var(--blue-grey-color) |
-| black | var(--black-color) |
-| white | var(--white-color) |
-| disabled | var(--disabled-color) |
-
-_Default_:
-
-- `var(--state-icon-color)`
+The color of the progress bar. Accepts [Token color](#token-color), color names, RGB values, or HEX codes.
 
 _Examples:_ `"blue"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`
 
@@ -500,11 +418,9 @@ bar_color: rgb(110, 65, 171)
 
 #### `icon`
 
-> **`icon`** [string] _(optional)_
+> **`icon`** string _(optional)_
 
-Custom icon to display alongside the entity. Supports Material Design Icons (MDI).
-
-If not specified, the default icon provided by Home Assistant for the entity will be used.
+Overwrites the entity icon.
 
 _Examples:_ `mdi:lightbulb`, `mdi:thermometer`...
 
@@ -518,11 +434,11 @@ _Order of Priority for the Icon:_
 
 - Theme/Custom Theme: The icon derived from the theme or style applied to the item.
 - Icon Parameter: A custom icon specifically defined for the item.
-- Default icon provided by HA.
+- Entity icon.
 
 #### `force_circular_background`
 
-> **`force_circular_background`** [boolean] _(optional)_
+> **`force_circular_background`** boolean _(optional)_
 
 This option forces a **circular background** to be displayed behind the icon shown on the card.
 
@@ -542,47 +458,9 @@ force_circular_background: true
 
 #### `color`
 
-> **`color`** [string] _(optional)_
+> **`color`** string _(optional)_
 
-The color of the icon. Accepts color names, RGB values, or HEX codes.
-
-When defining a color by name, we utilize the standard CSS color palette, which has evolved over time to include extended color keywords, X11 colors, and SVG colors (updated in 2022: https://www.w3.org/TR/css-color-3/#svg-color).
-
-To maintain a consistent look & feel, we translate color names to Home Assistant's color definitions. We provide a list of these colors below. If a color is missing, please do not hesitate to let us know. If you choose a CSS-compatible color name that is not part of this list, the rendering will be as defined by the CSS standard.
-
-_Color name (HA)_:
-| Color name | Card will use |
-|---|---|
-| primary | var(--primary-color) |
-| accent | var(--accent-color) |
-| red | var(--red-color) |
-| pink | var(--pink-color) |
-| purple | var(--purple-color) |
-| deep-purple | var(--deep-purple-color) |
-| indigo | var(--indigo-color) |
-| blue | var(--blue-color) |
-| light-blue | var(--light-blue-color) |
-| cyan | var(--cyan-color) |
-| teal | var(--teal-color) |
-| green | var(--green-color) |
-| light-green | var(--light-green-color) |
-| lime | var(--lime-color) |
-| yellow | var(--yellow-color) |
-| amber | var(--amber-color) |
-| orange | var(--orange-color) |
-| deep-orange | var(--deep-orange-color) |
-| brown | var(--brown-color) |
-| light-grey | var(--light-grey-color) |
-| grey | var(--grey-color) |
-| dark-grey | var(--dark-grey-color) |
-| blue-grey | var(--blue-grey-color) |
-| black | var(--black-color) |
-| white | var(--white-color) |
-| disabled | var(--disabled-color) |
-
-_Default_:
-
-- `var(--state-icon-color)`
+The color of the icon. Accepts [Token color](#token-color), color names, RGB values, or HEX codes. By default, the color is based on state, domain, and device_class of your entity for `timer`, `cover`, `light`, `fan`, `climate` and `battery`.
 
 _Examples:_ `"green"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`...
 
@@ -594,13 +472,12 @@ color: rgb(110, 65, 171)
 
 #### `layout`
 
-> **`layout`** [string {`horizontal`| `vertical`}] _(optional)_:
+> **`layout`** string ➡️ {`horizontal`| `vertical`} _(optional, default: `horizontal`)_:
 
-Determines the layout of the elements inside the card. You can choose between different layouts based on your visual preferences.
+Determines the layout of the elements inside the card. You can choose between different layouts based on your visual preferences:
 
-_Default_:
-
-- `horizontal`
+- `horizontal`: Displays the elements horizontally, with a row layout.
+- `vertical`: Displays the elements vertically, with a column layout.
 
 _Examples:_
 
@@ -610,17 +487,14 @@ type: custom:entity-progress-card
 layout: vertical
 ```
 
-- `horizontal`: Displays the elements horizontally, with a row layout (by default, the text and progress bar will be displayed side by side).
-- `vertical`: Displays the elements vertically, with a column layout (by default, the text and progress bar will be stacked one below the other).
-
 #### `custom_theme` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#custom_theme-)
 
-> **`custom_theme`** [array] _(optional)_
+> **`custom_theme`** map list _(optional)_
 
 Defines a list of custom theme rules based on value ranges. Setting this variable disables the theme variable.  
 This variable can only be defined in YAML.
 
-_Properties of each item:_
+_Map definition:_
 
 - min [number] (required): The minimum value for this range.
 - max [number] (required): The maximum value for this range.
@@ -629,11 +503,7 @@ _Properties of each item:_
 
 _Order of Priority for the Icon:_
 
-- Theme/Custom Theme: The icon derived from the theme or style applied to the item.
-- Icon Parameter: A custom icon specifically defined for the item.
-- Icon Associated with the Entity: The icon directly linked or representative of the entity.
-- Icon Associated with the Entity's device_class: temperature, humidity...
-- Default: The icon used by default if no other is specified.
+- see [`icon`](#icon) parameter.
 
 _Example_:
 
@@ -715,14 +585,14 @@ custom_theme:
 
 #### `reverse` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#reverse-)
 
-> **`reverse`** [boolean] _(optional)_
+> **`reverse`** boolean _(optional, default: `false`)_
 
 If set to true, it enables a countdown behavior (typically in seconds or percentage), which is the standard use case for timers.
 
 _default value_:
 
-- If the entity is a `timer` the `reverse` will be 'true'
-- Otherwise, the `reverse` will be 'false'
+- If the entity is a `timer` the `reverse` will be `true`
+- Otherwise, the `reverse` will be `false`
 
 _Example_:
 
@@ -735,9 +605,9 @@ name: Remaining Time reverse
 reverse: true
 ```
 
-#### `bar_orientation` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#)
+#### `bar_orientation` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#bar_orientation-)
 
-> **`bar_orientation`** [string {`rtl|ltr`}] _(optional)_
+> **`bar_orientation`** string {`rtl`|`ltr`} _(optional, default: `ltr`)_
 
 Adjusts the progress bar direction to display from right to left.
 
@@ -765,17 +635,17 @@ reverse: true
 
 #### `hide`
 
-> **`hide`** [array] _(optional)_:
+> **`hide`** list _(optional)_:
 
 Defines which elements should be hidden in the card.
 
-The array can contain any of the following values:
+The list can contain any of the following elments:
 
-- icon: Hides the entity's icon.
-- name: Hides the entity's name.
-- value: Hides the current value.
-- secondary_info: Hides secondary information related to the entity.
-- progress_bar: Hides the progress bar display.
+- `icon`: Hides the entity's icon.
+- `name`: Hides the entity's name.
+- `value`: Hides the current value.
+- `secondary_info`: Hides secondary information.
+- `progress_bar`: Hides the visual progress bar.
 
 _Example_:
 
@@ -790,7 +660,7 @@ hide:
 
 #### `disable_unit`
 
-> **`disable_unit`** [boolean] _(optional)_
+> **`disable_unit`** boolean _(optional, default: `false`)_
 
 Disables the display of the unit when set to `true`. If not defined or set to `false`, the unit will be shown.
 
@@ -802,9 +672,9 @@ type: custom:entity-progress-card
 disable_unit: true
 ```
 
-#### `badge_icon` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#badge-)
+#### `badge_icon` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#badge_icon-)
 
-> **`badge_icon`** [JINJA] _(optional)_:
+> **`badge_icon`** JINJA _(optional)_:
 
 The `badge_icon` option lets you display a dynamic badge, offering a quick status hint or symbolic representation based on logic or sensor values.
 
@@ -827,9 +697,9 @@ badge_icon: >-
 >
 > If the template returns nothing (i.e., empty string or None), the badge will not be displayed.
 
-#### `badge_color` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#badge-)
+#### `badge_color` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#badge_color-)
 
-> **`badge_color`** [JINJA] _(optional)_:
+> **`badge_color`** JINJA _(optional)_:
 
 The `badge_color` option lets you setup a dynamic badge's background color, offering a quick status hint or symbolic representation based on logic or sensor values.
 
@@ -850,7 +720,7 @@ badge_color: >-
 
 #### `name_info` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#name_info-)
 
-> **`name_info`** [JINJA] _(optional)_:
+> **`name_info`** JINJA _(optional)_:
 
 The `name_info` option allows you to display additional, customizable text or HTML next to the entity’s name. It supports full [Home Assistant Jinja2 templates](https://www.home-assistant.io/docs/configuration/templating/) and inline HTML, enabling you to style or conditionally format the information based on sensor states or logic.
 
@@ -880,7 +750,7 @@ name_info: >-
 
 #### `custom_info` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#custom_info-)
 
-> **`custom_info`** [JINJA] _(optional)_:
+> **`custom_info`** JINJA _(optional)_:
 
 The `custom_info` option allows you to display additional, customizable text or HTML next to the entity’s value. It supports full [Home Assistant Jinja2 templates](https://www.home-assistant.io/docs/configuration/templating/) and inline HTML, enabling you to style or conditionally format the information based on sensor states or logic.
 
@@ -916,9 +786,9 @@ custom_info: >-
 
 #### `state_content` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#custom_info-)
 
-> **`state_content`** [Array] _(optional)_:
+> **`state_content`** string|list _(optional)_:
 
-Specifies which attribute(s) of the entity should be displayed before the main numeric value on the card.
+Content to display for the state. Can be state, last_changed, last_updated, or any attribute of the entity. Can be either a string with a single item, or a list of string items. Default depends on the entity domain.
 
 _Behavior_:
 
@@ -951,18 +821,16 @@ state_content:
 > [!NOTE]
 >
 > - The selected attribute is shown before the main numerical display on the card.
->
 > - If an attribute listed does not exist, the card immediately displays unknown.
->
 > - This feature is useful for adding additional context (e.g., position, status...) to the main progress value.
 
 #### `watermark` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#watermark-)
 
-> **`watermark`** [array] _(optional)_:
+> **`watermark`** map _(optional)_:
 
 The `watermark` option allows you to visually highlight specific value thresholds (low and high) within the progress bar, helping you better interpret the current state at a glance.
 
-_Options_:
+_Map definition_:
 
 - `high` (number): The upper value where the bar will start indicating a high zone (0–100).
 - `high_color` (string): The CSS color used for the high watermark zone (can be a name or hex).
@@ -988,7 +856,6 @@ watermark:
 ```
 
 Thanks to automatic **unit detection**, the card intelligently interprets your thresholds depending on the entity’s native unit.
-
 
 ### 📎 YAML
 
@@ -1025,6 +892,21 @@ grid_options:
 ```
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/RVB_vertical.png" alt="Image title" width="118px"/>
+
+## Percentage Calculation
+
+This card automatically calculates progress percentages based on the current entity, depending on the type of input it receives:
+
+- Timer:
+  If the value represents a timer, the range (min, max) and the current value are taken directly from the timer entity.
+  Attribute will not be used.
+
+- Counter or Number value:
+  If the value is a counter or a Number ({ value, min, max }), it uses the provided value directly from the entity. The max value can also come from another entity by using max_value.
+  Attribute will not be used.
+
+- Other entity:
+  If the entity value is a number, it’s treated as the current value. The min and max boundaries are taken from default value (0/100) or configuration or external entities depending on the setup. If max_value is an entity, its current value is used.
 
 ## 🧐 Sample Usage
 
@@ -1078,11 +960,11 @@ Do you want a percentage based on a minimum and maximum quantity? Here’s an ex
 
 ```yaml
 type: custom:entity-progress-card
-entity: sensor.petkit_puramax_2_litter_weight
-max_value: 12
+entity: sensor.petkit_puramax_2_poids_litiere
 min_value: 6
-name: Litière
-bar_color: var(--disabled-color)
+max_value: 12
+name: Litter
+theme: optimal_when_high
 grid_options:
   columns: 6
   rows: 1
@@ -1248,7 +1130,7 @@ The ranges and their corresponding colors are as follows:
 
 > [!IMPORTANT]
 >
-> The information provided in this HA card is based on thresholds from the following [source](https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element).
+> The information provided in this HA card is based on thresholds from the following [source](<https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element>).
 > This color code is for informational purposes only and should not be taken as professional advice or a standard to follow. It is crucial to consult the device's official documentation or current standards for the most accurate and up-to-date information. In case of any discrepancy between the information provided here and the device's documentation or current standards, the latter shall prevail.
 > The lower the value, the better it is generally considered to be.
 > With this card you can use `custom_theme` to define your own ranges.
@@ -1283,7 +1165,7 @@ The ranges and their corresponding colors are as follows:
 
 > [!IMPORTANT]
 >
-> The information provided in this HA card is based on thresholds from the following [source](https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element).
+> The information provided in this HA card is based on thresholds from the following [source](<https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element>).
 > This color code is for informational purposes only and should not be taken as professional advice or a standard to follow. It is crucial to consult the device's official documentation or current standards for the most accurate and up-to-date information. In case of any discrepancy between the information provided here and the device's documentation or current standards, the latter shall prevail.
 > The lower the value, the better it is generally considered to be.
 > With this card you can use `custom_theme` to define your own ranges.
@@ -1495,7 +1377,7 @@ We'll use a Helper (Number) to handle this calculation. It’s simple to define 
   max_value: number.totaldurationofthetask
   unit: min
   decimal: 0
-  bar_color: var(--success-color)
+  bar_color: green
   icon: mdi:clock-end
   ```
 
@@ -1503,9 +1385,181 @@ We'll use a Helper (Number) to handle this calculation. It’s simple to define 
 
 By implementing this model through the helper, we can accurately calculate and display the percentage of remaining time for any task. This approach provides a dynamic and intuitive way to monitor progress, ensuring that the displayed percentage accurately reflects the time remaining regardless of the task’s total duration. This solution effectively extend our card usage vision, and enhances the user experience.
 
+### Don't Let It Expire !
+
+This example is similar to the previous one that used a Home Assistant helper but relies more on system-level tools—offering potentially greater efficiency at the cost of increased system dependency.
+We provide this example for illustration purposes only. Make sure to verify that no integration already exists before attempting this type of deployment. In the epilogue, I’ll suggest a more universal way to achieve the same result.
+
+#### Why?
+
+SSL certificates are critical for securing HTTPS connections. If one expires, it can make your services inaccessible — including your Home Assistant interface when accessed remotely.
+
+The challenge?
+Certificates (especially Let's Encrypt) usually last only 90 days, and it's easy to forget when they expire.
+
+👉 The goal here is to automatically track how many days are left (countdown) before your SSL certificate expires and visually display this countdown as a color-coded progress bar in the Lovelace dashboard.
+
+#### How?
+
+Here, we're using a Home Assistant instance running in Docker with access to Linux commands.
+
+We will:
+
+- Create a custom command_line sensor that calculates the number of days until the certificate expires.
+- Setup the card with the new sensor.
+- Add dynamic color coding to indicate urgency (red when close to expiry, green when safe).
+
+#### Implementation
+
+- Create the command_line sensor, add this to your configuration.yaml (or sensors.yaml if split):
+
+  ```yaml
+  sensor:
+    - platform: command_line
+      name: "SSL Certificate Expiry"
+      command: >
+        echo $(( ($(date -u -d "$(curl -vI --insecure https://<hostname>:<port> 2>&1 | grep -i 'expire date' | awk -F': ' '{print $2}' | sed -E 's/Jan/01/; s/Feb/02/; s/Mar/03/; s/Apr/04/; s/May/05/; s/Jun/06/; s/Jul/07/; s/Aug/08/; s/Sep/09/; s/Oct/10/; s/Nov/11/; s/Dec/12/' | awk '{print $4"-"$1"-"$2" "$3}')" +%s) - $(date +%s) ) / 86400 ))
+      unit_of_measurement: "days"
+      scan_interval: 3600
+  ```
+
+  You'll need to adjust this part to match your specific environment.
+
+- Add this card to your Lovelace dashboard:
+
+  ```yaml
+  type: custom:entity-progress-card
+  entity: sensor.ssl_certificate_expiry
+  name: SSL Certificate Expiry
+  icon: mdi:certificate
+  decimal: 0
+  min_value: 0
+  max_value: 90
+  bar_orientation: rtl
+  custom_theme:
+    - min: 0
+      max: 10
+      color: red
+    - min: 10
+      max: 20
+      color: yellow-color
+    - min: 20
+      max: 90
+      color: green
+  grid_options:
+    columns: 12
+    rows: 1
+  ```
+
+#### Conclusion
+
+With this setup, Home Assistant becomes a proactive security monitor for your SSL certificates. You get a clear visual on how much time is left — and can renew in time to avoid downtime.
+
+This method is reusable for any use case that can be monitored at the system level.
+
+#### Epilogue
+
+It was fun to develop and can certainly be used as-is, but in practice, it relies on Linux system commands, which makes it less portable than the previous examples.
+
+Ultimately, to meet the original goal, we can simply enable the `cert_expiry` integration, which provides the certificate's expiration timestamp in a more standardized and platform-independent way. Home Assistant helpers are powerful tools, and whenever possible, they should be preferred to simplify implementation.
+
+With `cert_expiry` entity we can define a template helper (number) to generate a countdown with :
+
+- create the template helper
+- define a name (number.cert_expiry_entity_id)
+- define state template
+
+  ```text
+  {% set target = states('sensor.<cert_expiry_entity_id>') %}
+  {% if target not in ['unknown', 'unavailable'] %}
+    {% set target_ts = as_timestamp(target) %}
+    {% set now_ts = as_timestamp(now()) %}
+    {% set diff = (target_ts - now_ts) / 86400 %}
+    {{ diff | round(1) if diff > 0 else 0 }}
+  {% else %}
+    unknown
+  {% endif %}
+  ```
+
+- define min/max value: 0 and 90
+- step: 1
+- unit_of_measurement: days
+
+Create the card:
+
+```yaml
+type: custom:entity-progress-card
+entity: number.cert_expiry_entity_id
+name: SSL Certificate Expiry
+icon: mdi:certificate
+decimal: 0
+bar_orientation: rtl
+custom_theme:
+  - min: 0
+    max: 10
+    color: red
+  - min: 10
+    max: 20
+    color: yellow
+  - min: 20
+    max: 90
+    color: green
+unit: "%"
+state_content: state
+grid_options:
+  columns: 12
+  rows: 1
+```
+
+Now you have a working solution that avoids operating system dependencies and is more efficient within Home Assistant's ecosystem.
+Obviously, in the case of a Let's Encrypt certificate, it's recommended to :
+
+- have a renewal process in place
+- add a trigger to generate an alert before the certificate expires
+
+This topics are beyond the scope of this guide.
+
 ## 🎨 Theme
 
+### Token color
+
 This card leverages Home Assistant’s default color system to seamlessly align with your active theme preferences.
+
+When defining a color by name, we utilize the standard CSS color palette, which has evolved over time to include extended color keywords, X11 colors, and SVG colors (updated in 2022: <https://www.w3.org/TR/css-color-3/#svg-color>).
+
+To maintain a consistent look & feel, we translate color names to Home Assistant's color definitions. We provide a list of these colors below. If a color is missing, please do not hesitate to let us know. If you choose a CSS-compatible color name that is not part of this list, the rendering will be as defined by the CSS standard.
+
+| Color name | Card will use |
+|---|---|
+| primary | var(--primary-color) |
+| accent | var(--accent-color) |
+| red | var(--red-color) |
+| pink | var(--pink-color) |
+| purple | var(--purple-color) |
+| deep-purple | var(--deep-purple-color) |
+| indigo | var(--indigo-color) |
+| blue | var(--blue-color) |
+| light-blue | var(--light-blue-color) |
+| cyan | var(--cyan-color) |
+| teal | var(--teal-color) |
+| green | var(--green-color) |
+| light-green | var(--light-green-color) |
+| lime | var(--lime-color) |
+| yellow | var(--yellow-color) |
+| amber | var(--amber-color) |
+| orange | var(--orange-color) |
+| deep-orange | var(--deep-orange-color) |
+| brown | var(--brown-color) |
+| light-grey | var(--light-grey-color) |
+| grey | var(--grey-color) |
+| dark-grey | var(--dark-grey-color) |
+| blue-grey | var(--blue-grey-color) |
+| black | var(--black-color) |
+| white | var(--white-color) |
+| disabled | var(--disabled-color) |
+
+### Adapt to HA custom theme
+
 By default, the progress bar uses a neutral/semi-transparent background color. However, depending on the theme in use, the color
 `var(--divider-color)` might not provide enough contrast or might clash with your design (e.g., if your theme heavily uses greens or
 dark shades).
@@ -1575,7 +1629,7 @@ Numbers are displayed based on your regional preferences, using:
 
 - Your selected language settings (auto)
 - Your specific format (manual selection)
-- Or the system-defined format from your Home Assistant user profile (system/navigator)
+- Or the system-defined format from your Home Assistant user profile
 
 By default, the card uses standard Arabic numerals (0-9) for maximum compatibility.
 
