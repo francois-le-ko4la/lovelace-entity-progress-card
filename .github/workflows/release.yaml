@@ -20,7 +20,7 @@ jobs:
       - name: Clean debugLog calls and function
         run: |
           for file in temp/*.js; do
-            sed -i '/^\s*debugLog(.*);/d' "$file"
+            sed -i '/debugLog(.*);/d' "$file"
             sed -i '/const debugLog = (msg, val) => {/,/^};/d' "$file"
           done
       - name: Process JS Files
