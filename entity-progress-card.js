@@ -5406,8 +5406,7 @@ class EntityProgressCardEditor extends HTMLElement {
   #onChanged(changedEvent) {
     if (EntityProgressCardEditor.#debug) debugLog('👉 editor.#onChanged()');
     if (EntityProgressCardEditor.#debug) debugLog('  📎 ', changedEvent);
-    if (EntityProgressCardEditor.#debug)
-      debugLog(`  📎 ${changedEvent.target.id} -> ${changedEvent.target.value !== undefined ? changedEvent.target.value : changedEvent.detail}`);
+    if (EntityProgressCardEditor.#debug) debugLog(`  📎 ${changedEvent.target.id} -> ${changedEvent.target.value !== undefined ? changedEvent.target.value : changedEvent.detail}`);
 
     const configUpdateEventHandler = new ConfigUpdateEventHandler(Object.assign({}, this.#config));
     const newConfig = configUpdateEventHandler.updateConfig(changedEvent);
