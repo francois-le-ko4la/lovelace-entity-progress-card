@@ -1375,7 +1375,6 @@ We'll use a Helper (Number) to handle this calculation. It’s simple to define 
   type: custom:entity-progress-card
   entity: sensor.print_puppy_remaining_time
   max_value: number.totaldurationofthetask
-  unit: min
   decimal: 0
   bar_color: green
   icon: mdi:clock-end

@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.3.8
+ * @version 1.3.9
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.3.8';
+const VERSION = '1.3.9';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
@@ -121,7 +121,7 @@ const CARD = {
     },
     separator: ' · ',
     debug: { card: false, editor: false, ressourceManager: false },
-    dev: false,
+    dev: true,
   },
   htmlStructure: {
     card: { element: 'ha-card' },
@@ -305,7 +305,7 @@ const CARD = {
       listItem: { type: 'list item', element: 'mwc-list-item' },
       iconItem: { element: 'ha-icon', attribute: 'icon', class: 'editor-icon-list' },
       select: { element: 'ha-select' },
-      toggle: { type: 'toggle', element: 'ha-switch' },
+      toggle: { type: 'toggle', element: 'ha-switch', class: 'editor-toggle' },
       text: { element: 'span' },
       accordion: {
         item: { element: 'div', class: 'accordion' },
@@ -2276,471 +2276,489 @@ const CARD_HTML = `
 `;
 
 const CARD_CSS = `
-    ${CARD.htmlStructure.card.element} {
-        height: 100%;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: flex-start;
-        padding: 0;
-        box-sizing: border-box;
-        margin: 0 auto;
-        overflow: hidden;
-        font-family: var(--ha-font-family-body);
-    }
+  ${CARD.htmlStructure.card.element} {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0;
+    box-sizing: border-box;
+    margin: 0 auto;
+    overflow: hidden;
+    font-family: var(--ha-font-family-body);
+  }
 
-    .${CARD.style.dynamic.clickable.card} {
-        cursor: pointer;
-    }
+  .${CARD.style.dynamic.clickable.card} {
+    cursor: pointer;
+  }
 
-    .${CARD.style.dynamic.clickable.card}:hover {
-        background-color: color-mix(in srgb, var(--card-background-color) 96%, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) 4%);
-    }
+  .${CARD.style.dynamic.clickable.card}:hover {
+    background-color: color-mix(in srgb, var(--card-background-color) 96%, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) 4%);
+  }
 
-    .${CARD.style.dynamic.clickable.card}:active {
-        background-color: color-mix(in srgb, var(--card-background-color) 85%, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) 15%);
-        transition: background-color 0.5s ease;
-    }
+  .${CARD.style.dynamic.clickable.card}:active {
+    background-color: color-mix(in srgb, var(--card-background-color) 85%, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) 15%);
+    transition: background-color 0.5s ease;
+  }
 
-    /* main container */
-    .${CARD.htmlStructure.sections.container.class} {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-        margin: 0px 10px;
-        gap: 10px;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-    }
+  /* main container */
+  .${CARD.htmlStructure.sections.container.class} {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0px 10px;
+    gap: 10px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
 
-    .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.container.class} {
-        min-height: ${CARD.layout.orientations.vertical.minHeight};
-        flex-direction: column;
-    }
-    .${CARD.layout.orientations.horizontal.label} .${CARD.htmlStructure.sections.container.class} {
-        min-height: ${CARD.layout.orientations.horizontal.minHeight};
-        flex-direction: row;
-    }
+  .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.container.class} {
+    min-height: ${CARD.layout.orientations.vertical.minHeight};
+    flex-direction: column;
+  }
+  .${CARD.layout.orientations.horizontal.label} .${CARD.htmlStructure.sections.container.class} {
+    min-height: ${CARD.layout.orientations.horizontal.minHeight};
+    flex-direction: row;
+  }
 
-    /* .left: icon & shape */
-    .${CARD.htmlStructure.sections.left.class} {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        width: 36px;
-        height: 36px;
-        flex-shrink: 0;
-    }
+  /* .left: icon & shape */
+  .${CARD.htmlStructure.sections.left.class} {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+  }
 
-    .${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.sections.left.class} {
-        margin-top: 10px;
-    }
+  .${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.sections.left.class} {
+    margin-top: 10px;
+  }
 
-    .${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.sections.left.class} {
-        margin-top: 12px;
-    }
+  .${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.sections.left.class} {
+    margin-top: 12px;
+  }
 
-    .${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.sections.left.class} {
-        margin-top: 14px;
-    }
+  .${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.sections.left.class} {
+    margin-top: 14px;
+  }
 
-    .${CARD.htmlStructure.elements.shape.class} {
-        display: block;
-        position: absolute;
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background-color: var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default});
-        isolation: isolate;
-        opacity: 0.2;
-    }
-    
-    .${CARD.htmlStructure.elements.icon.class} {
-        position: relative;
-        z-index: 1;
-        width: 24px;
-        height: 24px;
-        color: var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default});
-    }
-    .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.left.class}:hover {
-        cursor: pointer;
-    }   
-        
-    .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.left.class}:hover .${CARD.htmlStructure.elements.shape.class} {
-        opacity: 0.4;
-    }
+  .${CARD.htmlStructure.elements.shape.class} {
+    display: block;
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default});
+    isolation: isolate;
+    opacity: 0.2;
+  }
 
-    /* .right: name & secondary info */
-    .${CARD.htmlStructure.sections.right.class} {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        flex-grow: 1;
-        overflow: hidden;
-        width:100%;
-    }
-
-    .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.right.class} {
-        flex-grow: 0;
-    }
-
-    .${CARD.htmlStructure.elements.nameGroup.class} {
-        display: flex;
-        flex-direction: row;
-
-        width: 100%;
-        min-width: 0;
-        height: 20px;
-    }
-
-    .${CARD.htmlStructure.elements.nameCombined.class} {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-
-        color: var(--primary-text-color);
-        font-size: var(--ha-font-size-m);
-        font-weight: var(--ha-font-weight-medium);
-        line-height: 20px;
-        letter-spacing: 0.1px;
-        text-align: left;
-    }
-
-    .${CARD.htmlStructure.elements.detailGroup.class} {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        height: 16px;
-        min-width: 45px;
-        max-width: 60%;
-        text-align: left;
-        line-height: 16px;
-        color: var(--primary-text-color);
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .${CARD.htmlStructure.elements.detailCombined.class} {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-
-        color: var(--primary-text-color);
-        font-size: var(--ha-font-size-s);
-        font-weight: var(--ha-font-weight-body);
-        line-height: 16px;
-        letter-spacing: 0.4px;
-        text-align: left;
-    }
-
-
-    .${CARD.htmlStructure.elements.secondaryInfo.class} {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-    }
-
-    .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.secondaryInfo.class} {
-        display: block;
-    }
+  .${CARD.htmlStructure.elements.icon.class} {
+    position: relative;
+    z-index: 1;
+    width: 24px;
+    height: 24px;
+    color: var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default});
+  }
+  .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.left.class}:hover {
+    cursor: pointer;
+  }   
       
-    /* Progress bar */
-    .${CARD.htmlStructure.elements.progressBar.container.class} {
-        flex-grow: 1;
-        height: 16px; /* Même hauteur que le pourcentage */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .${CARD.htmlStructure.elements.progressBar.bar.class} {
-        width: 100%;
-        height: ${CARD.style.bar.sizeOptions.small.size};
-        max-height: ${CARD.style.bar.sizeOptions.large.size};
-        background-color: var(${CARD.style.dynamic.progressBar.background.var}, var(--divider-color));
-        border-radius: ${CARD.style.bar.radius};
-        overflow: hidden;
-        position: relative;
-    }
+  .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.left.class}:hover .${CARD.htmlStructure.elements.shape.class} {
+    opacity: 0.4;
+  }
+
+  /* .right: name & secondary info */
+  .${CARD.htmlStructure.sections.right.class} {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-grow: 1;
+    overflow: hidden;
+    width:100%;
+  }
+
+  .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.right.class} {
+    flex-grow: 0;
+  }
+
+  .${CARD.htmlStructure.elements.nameGroup.class} {
+    display: flex;
+    flex-direction: row;
+
+    width: 100%;
+    min-width: 0;
+    height: 20px;
+  }
+
+  .${CARD.htmlStructure.elements.nameCombined.class} {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    color: var(--primary-text-color);
+    font-size: var(--ha-font-size-m);
+    font-weight: var(--ha-font-weight-medium);
+    line-height: 20px;
+    letter-spacing: 0.1px;
+    text-align: left;
+  }
+
+  .${CARD.htmlStructure.elements.detailGroup.class} {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 16px;
+    min-width: 45px;
+    max-width: 60%;
+    text-align: left;
+    line-height: 16px;
+    color: var(--primary-text-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .${CARD.htmlStructure.elements.detailCombined.class} {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    color: var(--primary-text-color);
+    font-size: var(--ha-font-size-s);
+    font-weight: var(--ha-font-weight-body);
+    line-height: 16px;
+    letter-spacing: 0.4px;
+    text-align: left;
+  }
+
+
+  .${CARD.htmlStructure.elements.secondaryInfo.class} {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.secondaryInfo.class} {
+    display: block;
+  }
     
-    .${CARD.style.dynamic.progressBar.orientation.rtl} .${CARD.htmlStructure.elements.progressBar.bar.class} {
-        transform: scaleX(-1);
-    }
+  /* Progress bar */
+  .${CARD.htmlStructure.elements.progressBar.container.class} {
+    flex-grow: 1;
+    height: 16px; /* Même hauteur que le pourcentage */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .${CARD.htmlStructure.elements.progressBar.bar.class} {
+    width: 100%;
+    height: ${CARD.style.bar.sizeOptions.small.size};
+    max-height: ${CARD.style.bar.sizeOptions.large.size};
+    background-color: var(${CARD.style.dynamic.progressBar.background.var}, var(--divider-color));
+    border-radius: ${CARD.style.bar.radius};
+    overflow: hidden;
+    position: relative;
+  }
 
-    .${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
-        height: ${CARD.style.bar.sizeOptions.small.size};
-        max-height: ${CARD.style.bar.sizeOptions.small.size};
-    }
+  .${CARD.style.dynamic.progressBar.orientation.rtl} .${CARD.htmlStructure.elements.progressBar.bar.class} {
+    transform: scaleX(-1);
+  }
 
-    .${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
-        height: ${CARD.style.bar.sizeOptions.medium.size};
-        max-height: ${CARD.style.bar.sizeOptions.medium.size};
-   }
+  .${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
+    height: ${CARD.style.bar.sizeOptions.small.size};
+    max-height: ${CARD.style.bar.sizeOptions.small.size};
+  }
 
-    .${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
-        height: ${CARD.style.bar.sizeOptions.large.size};
-        max-height: ${CARD.style.bar.sizeOptions.large.size};
-   }
+  .${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
+    height: ${CARD.style.bar.sizeOptions.medium.size};
+    max-height: ${CARD.style.bar.sizeOptions.medium.size};
+  }
 
-    .${CARD.htmlStructure.elements.progressBar.inner.class} {
-        height: 100%;
-        width: var(${CARD.style.dynamic.progressBar.size.var}, ${CARD.style.dynamic.progressBar.size.default});
-        background-color: var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default});
-        transition: width 0.3s ease;
-        will-change: width;
-    }
-    
-    .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-        display: none;
-        position: absolute;
-        height: 100%;
-        top: 0;
-        left: 0;
-        width: var(--epb-low-watermark-value, 20%);
-        background-color: var(--epb-low-watermark-color, var(--red-color));
-        mix-blend-mode: hard-light;
-        opacity: var(--epb-watermark-opacity-value, 0.8);  
-    }
-    .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-        display: none;
-        position: absolute;
-        height: 100%;
-        top: 0;
-        right: 0;
-        width: calc(100% - var(--epb-high-watermark-value, 80%));
-        background-color: var(--epb-high-watermark-color, var(--red-color));
-        mix-blend-mode: hard-light;
-        opacity: var(--epb-watermark-opacity-value, 0.8);  
-    }
+  .${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
+    height: ${CARD.style.bar.sizeOptions.large.size};
+    max-height: ${CARD.style.bar.sizeOptions.large.size};
+  }
 
-    .${CARD.style.dynamic.show}-HWM-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-        right: calc(100% - var(--epb-high-watermark-value, 80%));
-        width: 1px;
-    }
-    .${CARD.style.dynamic.show}-LWM-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class}  {
-        left: var(--epb-low-watermark-value, 20%);
-        width: 1px;
-    }
+  .${CARD.htmlStructure.elements.progressBar.inner.class} {
+    height: 100%;
+    width: var(${CARD.style.dynamic.progressBar.size.var}, ${CARD.style.dynamic.progressBar.size.default});
+    background-color: var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default});
+    transition: width 0.3s ease;
+    will-change: width;
+  }
 
-    
-    .${CARD.layout.orientations.vertical.label} .${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.nameGroup.class} {
-        height: 18px;
-    }
+  .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+    display: none;
+    position: absolute;
+    height: 100%;
+    top: 0;
+    left: 0;
+    width: var(--epb-low-watermark-value, 20%);
+    background-color: var(--epb-low-watermark-color, var(--red-color));
+    mix-blend-mode: hard-light;
+    opacity: var(--epb-watermark-opacity-value, 0.8);  
+  }
+  .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+    display: none;
+    position: absolute;
+    height: 100%;
+    top: 0;
+    right: 0;
+    width: calc(100% - var(--epb-high-watermark-value, 80%));
+    background-color: var(--epb-high-watermark-color, var(--red-color));
+    mix-blend-mode: hard-light;
+    opacity: var(--epb-watermark-opacity-value, 0.8);  
+  }
 
-    .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.nameGroup.class} {
-        align-items: center;
-        justify-content: center;
-    }
+  .${CARD.style.dynamic.show}-HWM-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+    right: calc(100% - var(--epb-high-watermark-value, 80%));
+    width: 1px;
+  }
+  .${CARD.style.dynamic.show}-LWM-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class}  {
+    left: var(--epb-low-watermark-value, 20%);
+    width: 1px;
+  }
 
-    .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
-        align-items: center;
-        justify-content: center;
-        width: 100%; /* ou 100% de son parent */
-        max-width: none; /* si tu veux supprimer la limite */
-    }
 
-    .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} > span {
-        display: inline-block;
-        flex-shrink: 0;
-    }
+  .${CARD.layout.orientations.vertical.label} .${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.nameGroup.class} {
+    height: 18px;
+  }
 
-    .${CARD.style.bar.sizeOptions.small.label} .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
-        margin-bottom: 1px;
-    }
+  .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.nameGroup.class} {
+    align-items: center;
+    justify-content: center;
+  }
 
-    .${CARD.style.bar.sizeOptions.medium.label} .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
-        height: 15px;
-        font-size: 0.8em;
-    }
+  .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
+    align-items: center;
+    justify-content: center;
+    width: 100%; /* ou 100% de son parent */
+    max-width: none; /* si tu veux supprimer la limite */
+  }
 
-    .${CARD.style.bar.sizeOptions.large.label} .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
-        height: 13px;
-        font-size: 0.8em;
-    }
+  .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} > span {
+    display: inline-block;
+    flex-shrink: 0;
+  }
 
-    .${CARD.editor.fields.container.class} {
-        display: flex;
-        flex-direction: column;
-        gap: 25px;
-        padding-bottom: 70px;
-    }
+  .${CARD.style.bar.sizeOptions.small.label} .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
+    margin-bottom: 1px;
+  }
 
-    .${CARD.editor.fields.iconItem.class} {
-        margin-right: 8px;
-        width: 20px;
-        height: 20px;
-    }
+  .${CARD.style.bar.sizeOptions.medium.label} .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
+    height: 15px;
+    font-size: 0.8em;
+  }
 
-    .${CARD.documentation.link.class} {
-        text-decoration: none;
-        display: flex;
-        position: absolute;
-        top: 0;
-        right: 0;
-        z-index: 600;
-    }
+  .${CARD.style.bar.sizeOptions.large.label} .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
+    height: 13px;
+    font-size: 0.8em;
+  }
 
-    .${CARD.documentation.shape.class} {
-        width: 48px;
-        height: 48px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        cursor: pointer;
-    }
-    .${CARD.documentation.shape.class}:hover {
-        background-color: color-mix(in srgb, var(--card-background-color) 90%, var(--secondary-text-color) 10%);
-    }
+  .${CARD.editor.fields.container.class} {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    padding-bottom: 70px;
+  }
 
-    .${CARD.documentation.questionMark.class} {
-        color: var(--primary-text-color);
-    }
+  .${CARD.editor.fields.iconItem.class} {
+    margin-right: 8px;
+    width: 20px;
+    height: 20px;
+  }
 
-    .${CARD.htmlStructure.elements.badge.container.class} {
-        position: absolute;
-        z-index: 2;
-        top: -3px;
-        right: -3px;
-        inset-inline-end: -3px;
-        inset-inline-start: initial;
-        height: 16px;
-        width: 16px;
-        border-radius: 50%;
-        background-color: var(${CARD.style.dynamic.badge.backgroundColor.var}, ${CARD.style.dynamic.badge.backgroundColor.default});
-        display: none;
-        align-items: center;
-        justify-content: center;
-    }
+  .${CARD.documentation.link.class} {
+    text-decoration: none;
+    display: flex;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 600;
+  }
 
-    .${CARD.htmlStructure.elements.badge.container.class} .${CARD.htmlStructure.elements.badge.icon.class} {
-        height: 12px;
-        width: 12px;
-        display: flex; /* h/w ratio */
-        align-items: center;
-        justify-content: center;
-        color: var(${CARD.style.dynamic.badge.color.var}, ${CARD.style.dynamic.badge.color.default});
-    }
+  .${CARD.documentation.shape.class} {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  .${CARD.documentation.shape.class}:hover {
+    background-color: color-mix(in srgb, var(--card-background-color) 90%, var(--secondary-text-color) 10%);
+  }
 
-    .${CARD.style.dynamic.hiddenComponent.icon.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.left.class},
-    .${CARD.style.dynamic.hiddenComponent.name.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.nameGroup.class},
-    .${CARD.style.dynamic.hiddenComponent.shape.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.shape.class},
-    .${CARD.style.dynamic.hiddenComponent.progress_bar.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.progressBar.bar.class},
-    .${CARD.style.dynamic.hiddenComponent.secondary_info.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
-        display: flex;
-        visibility: hidden;
-    }
+  .${CARD.documentation.questionMark.class} {
+    color: var(--primary-text-color);
+  }
 
-    .${CARD.editor.fields.accordion.item.class} {
-        display: block;
-        width: 100%;
-        border: 1px solid color-mix(in srgb, var(--card-background-color) 80%, var(--secondary-text-color) 20%);
-        border-radius: 6px;
-        overflow: visible;
-    }
-    .${CARD.editor.fields.accordion.icon.class} {
-        color: var(--secondary-text-color);
-        margin-right: 8px;
-    }
-    .${CARD.editor.fields.accordion.title.class} {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        gap: 10px;
-        position: relative;
-        background-color: transparent;
-        color: var(--primary-text-color);
-        cursor: pointer;
-        padding: 18px;
-        width: 100%;
-        height: 48px;
-        border: none;
-        text-align: left;
-        font-size: 15px;
-        transition: 0.4s;
-    }
-    
-    .${CARD.editor.fields.accordion.title.class}:focus {
-        background-color: var(--secondary-background-color);
-    }
-    
-    .${CARD.editor.fields.accordion.arrow.class} {
-        display: inline-block;
-        width: 24px;
-        height: 24px;
-        margin-left: auto;
-        color: var(--primary-text-color);
-        transition: transform 0.2s ease-out;
-    }
-    .accordion.expanded .${CARD.editor.fields.accordion.arrow.class} {
-        transform: rotate(180deg);
-    }
-    .${CARD.editor.fields.accordion.content.class} {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        align-content: flex-start;
-        column-gap: 10px;
-        row-gap: 20px;
-        padding: 0px 18px;
-        background-color: transparent;
-        max-height: 0;
-        opacity: 0;
-        overflow: hidden;
-        transition:
-          max-height 0.5s cubic-bezier(0.33, 0, 0.2, 1),
-          padding 0.5s cubic-bezier(0.33, 0, 0.2, 1),
-          opacity 0.5s ease;
-    }
+  .${CARD.htmlStructure.elements.badge.container.class} {
+    position: absolute;
+    z-index: 2;
+    top: -3px;
+    right: -3px;
+    inset-inline-end: -3px;
+    inset-inline-start: initial;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background-color: var(${CARD.style.dynamic.badge.backgroundColor.var}, ${CARD.style.dynamic.badge.backgroundColor.default});
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
 
-    .accordion.expanded .${CARD.editor.fields.accordion.content.class} {
-        /* max-height: défini par script JS */
-        padding-top: 30px;
-        padding-bottom: 30px;
-        opacity: 1;
-        overflow: visible;
-    }
+  .${CARD.htmlStructure.elements.badge.container.class} .${CARD.htmlStructure.elements.badge.icon.class} {
+    height: 12px;
+    width: 12px;
+    display: flex; /* h/w ratio */
+    align-items: center;
+    justify-content: center;
+    color: var(${CARD.style.dynamic.badge.color.var}, ${CARD.style.dynamic.badge.color.default});
+  }
 
-    .${CARD.editor.fields.accordion.content.class} > * {
-        opacity: 0;
-        transition: opacity 0.4s ease 0.15s;
-    }
+  .${CARD.style.dynamic.hiddenComponent.icon.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.left.class},
+  .${CARD.style.dynamic.hiddenComponent.name.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.nameGroup.class},
+  .${CARD.style.dynamic.hiddenComponent.shape.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.shape.class},
+  .${CARD.style.dynamic.hiddenComponent.progress_bar.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.progressBar.bar.class},
+  .${CARD.style.dynamic.hiddenComponent.secondary_info.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
+    display: flex;
+    visibility: hidden;
+  }
 
-    .accordion.expanded .${CARD.editor.fields.accordion.content.class} > * {
-        opacity: 1;
-    }
-    ha-select {
-      --mdc-menu-max-height: 250px; /* Définit la hauteur maximale */
-    }
+  .${CARD.editor.fields.accordion.item.class} {
+    display: block;
+    width: 100%;
+    border: 1px solid color-mix(in srgb, var(--card-background-color) 80%, var(--secondary-text-color) 20%);
+    border-radius: 6px;
+    overflow: visible;
+  }
+  .${CARD.editor.fields.accordion.icon.class} {
+    color: var(--secondary-text-color);
+    margin-right: 8px;
+  }
+  .${CARD.editor.fields.accordion.title.class} {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    position: relative;
+    background-color: transparent;
+    color: var(--primary-text-color);
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    height: 48px;
+    border: none;
+    text-align: left;
+    font-size: 15px;
+    transition: 0.4s;
+  }
 
-    /* show/hide */
-    .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.attribute} .${CARD.editor.keyMappings.attribute},
-    .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.max_value_attribute} .${CARD.editor.keyMappings.max_value_attribute},
-    .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.theme} .${CARD.editor.keyMappings.theme},
-    .${CARD.style.dynamic.hiddenComponent.icon.class} .${CARD.htmlStructure.sections.left.class},
-    .${CARD.style.dynamic.hiddenComponent.name.class} .${CARD.htmlStructure.elements.nameGroup.class},
-    .${CARD.style.dynamic.hiddenComponent.shape.class} .${CARD.htmlStructure.elements.shape.class},
-    .${CARD.style.dynamic.hiddenComponent.progress_bar.class} .${CARD.htmlStructure.elements.progressBar.bar.class},
-    .${CARD.style.dynamic.hiddenComponent.secondary_info.class} .${CARD.htmlStructure.elements.detailGroup.class} {
-        display: none;
-    }
+  .${CARD.editor.fields.accordion.title.class}:focus {
+    background-color: var(--secondary-background-color);
+  }
 
-    .${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class} .${CARD.htmlStructure.elements.badge.container.class},
-    .${CARD.style.dynamic.show}-HWM-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
-    .${CARD.style.dynamic.show}-LWM-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-    .${CARD.style.dynamic.show}-HWM-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
-    .${CARD.style.dynamic.show}-LWM-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-        display: flex;
-    }
-`;
+  .${CARD.editor.fields.accordion.arrow.class} {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin-left: auto;
+    color: var(--primary-text-color);
+    transition: transform 0.2s ease-out;
+  }
+  .accordion.expanded .${CARD.editor.fields.accordion.arrow.class} {
+    transform: rotate(180deg);
+  }
+  .${CARD.editor.fields.accordion.content.class} {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    column-gap: 10px;
+    row-gap: 20px;
+    padding: 0px 18px;
+    background-color: transparent;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition:
+      max-height 0.2s cubic-bezier(0.33, 0, 0.2, 1),
+      padding 0.2s cubic-bezier(0.33, 0, 0.2, 1),
+      opacity 0.2s ease;
+  }
 
+  .accordion.expanded .${CARD.editor.fields.accordion.content.class} {
+    /* max-height: défini par script JS */
+    padding-top: 30px;
+    padding-bottom: 30px;
+    opacity: 1;
+    overflow: visible;
+  }
+
+  .${CARD.editor.fields.accordion.content.class} > * {
+    opacity: 0;
+    transition: opacity 0.2s ease 0.15s;
+  }
+  .accordion.expanded .${CARD.editor.fields.accordion.content.class} > * {
+    opacity: 1;
+  }
+  .accordion.collapsing .${CARD.editor.fields.accordion.content.class} > * {
+    opacity: 0 !important;
+    transition: opacity 0.1s; /* désactive transition pendant repli */
+  }
+
+  ha-select {
+    --mdc-menu-max-height: 250px; /* Définit la hauteur maximale */
+  }
+
+  /* show/hide */
+  .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.attribute} .${CARD.editor.keyMappings.attribute},
+  .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.max_value_attribute} .${CARD.editor.keyMappings.max_value_attribute},
+  .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.theme} .${CARD.editor.keyMappings.theme},
+  .${CARD.style.dynamic.hiddenComponent.icon.class} .${CARD.htmlStructure.sections.left.class},
+  .${CARD.style.dynamic.hiddenComponent.name.class} .${CARD.htmlStructure.elements.nameGroup.class},
+  .${CARD.style.dynamic.hiddenComponent.shape.class} .${CARD.htmlStructure.elements.shape.class},
+  .${CARD.style.dynamic.hiddenComponent.progress_bar.class} .${CARD.htmlStructure.elements.progressBar.bar.class},
+  .${CARD.style.dynamic.hiddenComponent.secondary_info.class} .${CARD.htmlStructure.elements.detailGroup.class} {
+    display: none;
+  }
+
+  .${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class} .${CARD.htmlStructure.elements.badge.container.class},
+  .${CARD.style.dynamic.show}-HWM-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
+  .${CARD.style.dynamic.show}-LWM-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+  .${CARD.style.dynamic.show}-HWM-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
+  .${CARD.style.dynamic.show}-LWM-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+    display: flex;
+  }
+
+  .${CARD.editor.fields.toggle.class} {
+    display: flex;
+    align-item: center;
+    gap: 8px;
+  }`;
+
+/******************************************************************************************
+ * Dev mode
+ */
+
+if (CARD.config.dev) {
+  CARD.meta.typeName = `${CARD.meta.typeName}-dev`;
+  CARD.meta.name = `${CARD.meta.typeName} (dev)`;
+  CARD.meta.editor = `${CARD.meta.editor}-dev`;
+}
 /******************************************************************************************
  * Debug
  *
@@ -3321,7 +3339,15 @@ class HassProviderSingleton {
   }
   getNumericAttributes(entityId) {
     const attributes = this.getEntityStateObj(entityId)?.attributes ?? {};
-    return Object.fromEntries(Object.entries(attributes).filter(([_, val]) => typeof val === 'number')); // eslint-disable-line no-unused-vars
+
+    return Object.fromEntries(
+      Object.entries(attributes).filter(([_, val]) => { // eslint-disable-line no-unused-vars
+        return typeof val === 'number' || (typeof val === 'string' && !isNaN(val) && val.trim() !== '');
+      }).map(([key, val]) => {
+        const num = typeof val === 'number' ? val : parseFloat(val);
+        return [key, num];
+      })
+    );
   }
 }
 
@@ -3414,8 +3440,8 @@ class EntityHelper {
 
     const attrValue = this.#hassProvider.getEntityAttribute(this.#entityId, this.#attribute);
 
-    if (attrValue !== undefined) {
-      this.#value = attrValue;
+    if (attrValue !== undefined && !isNaN(parseFloat(attrValue))) {
+      this.#value = parseFloat(attrValue);
       if (this.#domain === ATTRIBUTE_MAPPING.light.label && this.#attribute === ATTRIBUTE_MAPPING.light.attribute) {
         this.#value = (100 * this.#value) / 255;
       }
@@ -3478,10 +3504,13 @@ class EntityHelper {
   get attributesListForEditor() {
     const attributes = this.attributes;
 
-    return Object.keys(attributes).map((attr) => ({
-      value: attr,
-      label: this.#hassProvider.getFormatedEntityAttributeName(this.#entityId, attr),
-    }));
+    return [
+      { value: '', label: '' },
+      ...Object.keys(attributes).map((attr) => ({
+        value: attr,
+        label: this.#hassProvider.getFormatedEntityAttributeName(this.#entityId, attr),
+      }))
+    ];
   }
   get hasAttribute() {
     return this.#isValid && Object.keys(this.attributes ?? {}).length > 0;
@@ -3908,18 +3937,30 @@ class CardView {
   }
   set config(config) {
     this.#configHelper.config = config;
-    this.#percentHelper.unitSpacing = this.#configHelper.config.unitSpacing;
-    this.#percentHelper.hasDisabledUnit = this.#configHelper.hasDisabledUnit;
-    this.#theme.theme = this.#configHelper.config.theme;
-    this.#theme.customTheme = this.#configHelper.config.custom_theme;
-    this.#currentValue.value = this.#configHelper.config.entity;
-    this.#currentValue.stateContent = this.#configHelper.stateContent;
+
+    Object.assign(this.#percentHelper, {
+      unitSpacing: config.unitSpacing,
+      hasDisabledUnit: this.#configHelper.hasDisabledUnit,
+    });
+
+    Object.assign(this.#theme, {
+      theme: config.theme,
+      customTheme: config.custom_theme,
+    });
+
+    Object.assign(this.#currentValue, {
+      value: config.entity,
+      stateContent: this.#configHelper.stateContent,
+    });
+
     if (this.#currentValue.isTimer) {
       this.#max_value.value = CARD.config.value.max;
     } else {
       this.#currentValue.attribute = config.attribute;
-      this.#max_value.value = config.max_value ?? CARD.config.value.max;
-      this.#max_value.attribute = config.max_value_attribute;
+      Object.assign(this.#max_value, {
+        value: config.max_value ?? CARD.config.value.max,
+        attribute: config.max_value_attribute,
+      });
     }
   }
   get config() {
@@ -4135,20 +4176,25 @@ class CardView {
     this.#percentHelper.unit = currentUnit;
     this.#percentHelper.decimal = this.#getCurrentDecimal(currentUnit);
 
-
     if (this.#currentValue.isTimer) {
-      this.#percentHelper.isReversed = this.timerIsReversed;
-      this.#percentHelper.current = this.#currentValue.value.current;
-      this.#percentHelper.min = this.#currentValue.value.min;
-      this.#percentHelper.max = this.#currentValue.value.max;
+      Object.assign(this.#percentHelper, {
+        isReversed: this.timerIsReversed,
+        current: this.#currentValue.value.current,
+        min: this.#currentValue.value.min,
+        max: this.#currentValue.value.max,
+      });
     } else if (this.#currentValue.isCounter || this.#currentValue.isNumber) {
-      this.#percentHelper.current = this.#currentValue.value.current;
-      this.#percentHelper.min = this.#currentValue.value.min;
-      this.#percentHelper.max = this.#max_value.isEntity ?  this.#max_value.value?.current ?? this.#max_value.value : this.#currentValue.value.max;
+      Object.assign(this.#percentHelper, {
+        current: this.#currentValue.value.current,
+        min: this.#currentValue.value.min,
+        max: this.#max_value.isEntity ? this.#max_value.value?.current ?? this.#max_value.value : this.#currentValue.value.max,
+      });
     } else {
-      this.#percentHelper.current = this.#currentValue.value;
-      this.#percentHelper.min = this.#configHelper.min_value;
-      this.#percentHelper.max = this.#max_value.value?.current ?? this.#max_value.value;
+      Object.assign(this.#percentHelper, {
+        current: this.#currentValue.value,
+        min: this.#configHelper.min_value,
+        max: this.#max_value.value?.current ?? this.#max_value.value,
+      });
     }
     this.#percentHelper.refresh();
     this.#theme.value = this.#percentHelper.valueForThemes(this.#theme.isBasedOnPercentage);
@@ -4320,11 +4366,12 @@ class EntityProgressCard extends HTMLElement {
 
   connectedCallback() {
     if (this.#debug) debugLog('👉 connectedCallback()');
+    const selector = CARD.htmlStructure.elements;
     this.#resourceManager = new ResourceManager();
     this.#clickableTarget = this.#cardView.hasClickableCard
       ? this
       : this.#cardView.hasClickableIcon
-        ? [this.#elements[CARD.htmlStructure.elements.shape.class], this.#elements[CARD.htmlStructure.elements.icon.class]]
+        ? [this.#elements[selector.shape.class], this.#elements[selector.icon.class]]
         : null;
 
     if (!this.#clickableTarget) return;
@@ -4368,11 +4415,13 @@ class EntityProgressCard extends HTMLElement {
     this.#startY = ev.clientY;
     this.#isHolding = false;
 
-    this.#resourceManager.setTimeout(() => {
-      this.#isHolding = true; // juste armer le hold
-    },
-    500,
-    'holdTimeout');
+    this.#resourceManager.setTimeout(
+      () => {
+        this.#isHolding = true; // juste armer le hold
+      },
+      500,
+      'holdTimeout'
+    );
   }
 
   #resetClickState() {
@@ -4404,10 +4453,14 @@ class EntityProgressCard extends HTMLElement {
     this.#clickCount++;
 
     if (this.#clickCount === 1) {
-      this.#resourceManager.setTimeout(() => {
-        this.#fireAction(ev, CARD.interactions.event.tap.tapAction);
-        this.#clickCount = 0;
-      }, 300, 'tapTimeout');
+      this.#resourceManager.setTimeout(
+        () => {
+          this.#fireAction(ev, CARD.interactions.event.tap.tapAction);
+          this.#clickCount = 0;
+        },
+        300,
+        'tapTimeout'
+      );
     } else if (this.#clickCount === 2) {
       this.#resourceManager.remove('tapTimeout');
       this.#fireAction(ev, CARD.interactions.event.tap.doubleTapAction);
@@ -4479,6 +4532,25 @@ class EntityProgressCard extends HTMLElement {
     return document.createElement(CARD.meta.editor);
   }
 
+  static getStubConfig(hass) {
+    const wantedDomains = ['fan', 'cover', 'light', 'sensor'];
+    const batteryRegex = /battery/i;
+
+    const entity = Object.keys(hass.states).find((eid) => {
+      const domain = HassProviderSingleton.getEntityDomain(eid);
+      if (wantedDomains.includes(domain)) {
+        if (domain === 'sensor') {
+          return batteryRegex.test(eid);
+        }
+        return true;
+      }
+      return false;
+    });
+    return {
+      type: `custom:${CARD.meta.typeName}`,
+      entity: entity || 'sensor.temperature',
+    };
+  }
   /**
    * Updates the component's configuration and triggers static changes.
    */
@@ -4561,13 +4633,26 @@ class EntityProgressCard extends HTMLElement {
    */
   #buildCard() {
     if (this.#debug) debugLog('👉 EntityProgressCard.#buildCard()');
-
+    
     const card = document.createElement(CARD.htmlStructure.card.element);
+    this.#buildStyle(card);
+    card.innerHTML = CARD_HTML;
+    const style = document.createElement(CARD.style.element);
+    style.textContent = CARD_CSS;
+
+    // Inject in the DOM
+    this.shadowRoot.innerHTML = '';
+    this.shadowRoot.appendChild(style);
+    this.shadowRoot.appendChild(card);
+    // store DOM ref to update
+    this.#storeDOM(card);
+  }
+
+  #buildStyle(card) {
     card.classList.add(CARD.meta.typeName);
     card.classList.toggle(CARD.style.dynamic.clickable.card, this.#cardView.hasClickableCard);
     card.classList.toggle(CARD.style.dynamic.clickable.icon, this.#cardView.hasClickableIcon);
-    if (this.#cardView.bar_orientation)
-      card.classList.add(CARD.style.dynamic.progressBar.orientation[this.#cardView.bar_orientation]);
+    if (this.#cardView.bar_orientation) card.classList.add(CARD.style.dynamic.progressBar.orientation[this.#cardView.bar_orientation]);
     card.classList.add(this.#cardView.layout);
     card.classList.add(this.#cardView.bar_size);
     card.classList.toggle(CARD.style.dynamic.secondaryInfoError.class, this.#cardView.hasStandardEntityError);
@@ -4584,30 +4669,29 @@ class EntityProgressCard extends HTMLElement {
       `${CARD.style.dynamic.show}-LWM-${type}${CARD.htmlStructure.elements.progressBar.watermark.class}`,
       this.#cardView.hasWatermark && !this.#cardView.watermark.disable_low
     );
-
-    card.innerHTML = CARD_HTML;
-    const style = document.createElement(CARD.style.element);
-    style.textContent = CARD_CSS;
-
-    // Inject in the DOM
-    this.shadowRoot.innerHTML = '';
-    this.shadowRoot.appendChild(style);
-    this.shadowRoot.appendChild(card);
-    // store DOM ref to update
-    this.#elements = {
-      [CARD.htmlStructure.card.element]: card,
-      [CARD.htmlStructure.elements.icon.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.icon.class}`),
-      [CARD.htmlStructure.elements.shape.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.shape.class}`),
-      [CARD.htmlStructure.elements.badge.icon.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.badge.icon.class}`),
-      [CARD.htmlStructure.elements.name.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.name.class}`),
-      [CARD.htmlStructure.elements.nameCustomInfo.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.nameCustomInfo.class}`),
-      [CARD.htmlStructure.elements.customInfo.class]: this.shadowRoot.querySelector(`.${CARD.htmlStructure.elements.customInfo.class}`),
-      [CARD.htmlStructure.elements.stateAndProgressInfo.class]: this.shadowRoot.querySelector(
-        `.${CARD.htmlStructure.elements.stateAndProgressInfo.class}`
-      ),
-    };
   }
 
+  #storeDOM(card) {
+    const selectors = CARD.htmlStructure.elements;
+
+    this.#elements = {
+      [CARD.htmlStructure.card.element]: card,
+    };
+
+    const keys = [
+      selectors.icon,
+      selectors.shape,
+      selectors.badge.icon,
+      selectors.name,
+      selectors.nameCustomInfo,
+      selectors.customInfo,
+      selectors.stateAndProgressInfo,
+    ];
+
+    for (const { class: className } of keys) {
+      this.#elements[className] = this.shadowRoot.querySelector(`.${className}`);
+    }
+  }
   /**
    * Updates the specified DOM element based on a provided callback function.
    */
@@ -4620,15 +4704,30 @@ class EntityProgressCard extends HTMLElement {
 
   #updateCSS() {
     this.#updateElement(CARD.htmlStructure.card.element, (el) => {
-      el.style.setProperty(CARD.style.dynamic.progressBar.color.var, this.#cardView.bar_color);
-      el.style.setProperty(CARD.style.dynamic.progressBar.size.var, `${this.#cardView.percent}%`);
-      el.style.setProperty(CARD.style.dynamic.iconAndShape.color.var, this.#cardView.color);
-      if (!this.#cardView.hasWatermark) return;
-      el.style.setProperty(CARD.style.dynamic.watermark.high.value.var, `${this.#cardView.watermark.high}%`);
-      el.style.setProperty(CARD.style.dynamic.watermark.high.color.var, this.#cardView.watermark.high_color);
-      el.style.setProperty(CARD.style.dynamic.watermark.low.value.var, `${this.#cardView.watermark.low}%`);
-      el.style.setProperty(CARD.style.dynamic.watermark.low.color.var, this.#cardView.watermark.low_color);
-      el.style.setProperty(CARD.style.dynamic.watermark.opacity.var, this.#cardView.watermark.opacity);
+      const style = el.style;
+      const bar = this.#cardView;
+
+      const properties = [
+        [CARD.style.dynamic.progressBar.color.var, bar.bar_color],
+        [CARD.style.dynamic.progressBar.size.var, `${bar.percent}%`],
+        [CARD.style.dynamic.iconAndShape.color.var, bar.color],
+      ];
+
+      if (bar.hasWatermark) {
+        const wm = bar.watermark;
+        properties.push(
+          [CARD.style.dynamic.watermark.high.value.var, `${wm.high}%`],
+          [CARD.style.dynamic.watermark.high.color.var, wm.high_color],
+          [CARD.style.dynamic.watermark.low.value.var, `${wm.low}%`],
+          [CARD.style.dynamic.watermark.low.color.var, wm.low_color],
+          [CARD.style.dynamic.watermark.opacity.var, wm.opacity]
+        );
+      }
+      properties.forEach(([variable, value]) => {
+        if (style.getPropertyValue(variable) !== value) {
+          style.setProperty(variable, value);
+        }
+      });
     });
   }
 
@@ -4692,8 +4791,7 @@ class EntityProgressCard extends HTMLElement {
   }
 
   #showIcon() {
-    const stateObj = this.#cardView.EntityStateObj;
-    const curIcon = this.#cardView.icon;
+    const { EntityStateObj: stateObj, icon: curIcon } = this.#cardView;
     const hasIconOverride = curIcon !== null;
     const hasPicture = stateObj?.attributes?.entity_picture;
 
@@ -4744,8 +4842,8 @@ class EntityProgressCard extends HTMLElement {
    * Displays a badge
    */
   #showBadge() {
-    const badgeInfo = this.#cardView.badgeInfo;
-    const isBadgeEnable = this.#cardView.isBadgeEnable;
+    const { badgeInfo, isBadgeEnable } = this.#cardView;
+
     if (isBadgeEnable && badgeInfo === null) return; // custom
 
     this.#elements[CARD.htmlStructure.card.element].classList.toggle(
@@ -4888,6 +4986,7 @@ window.customCards = window.customCards || []; // Create the list if it doesn't 
 window.customCards.push({
   type: CARD.meta.typeName,
   name: CARD.meta.name,
+  preview: true,
   description: CARD.meta.description,
 });
 
@@ -5120,7 +5219,8 @@ class EntityProgressCardEditor extends HTMLElement {
     if (EntityProgressCardEditor.#debug) debugLog('  📎 connected ?: ', this.isConnected);
 
     if (!this.isConnected) this.#isYAML = true; // YAML editor
-    if (!this.#isListenersAttached && this.isConnected) { // GUI editor
+    if (!this.#isListenersAttached && this.isConnected) {
+      // GUI editor
       this.#addEventListener();
       this.#isListenersAttached = true;
     }
@@ -5306,7 +5406,8 @@ class EntityProgressCardEditor extends HTMLElement {
   #onChanged(changedEvent) {
     if (EntityProgressCardEditor.#debug) debugLog('👉 editor.#onChanged()');
     if (EntityProgressCardEditor.#debug) debugLog('  📎 ', changedEvent);
-    if (EntityProgressCardEditor.#debug) debugLog(`  📎 ${changedEvent.target.id} -> ${changedEvent.target.value !== undefined ? changedEvent.target.value : changedEvent.detail}`);
+    if (EntityProgressCardEditor.#debug)
+      debugLog(`  📎 ${changedEvent.target.id} -> ${changedEvent.target.value !== undefined ? changedEvent.target.value : changedEvent.detail}`);
 
     const configUpdateEventHandler = new ConfigUpdateEventHandler(Object.assign({}, this.#config));
     const newConfig = configUpdateEventHandler.updateConfig(changedEvent);
@@ -5408,11 +5509,13 @@ class EntityProgressCardEditor extends HTMLElement {
           inputElement.classList.add(isInGroup);
         }
         inputElement.style.width = width;
-        inputElement.id = name;
-        inputElement.hass = this.#hassProvider.hass;
-        inputElement.schema = schema;
-        inputElement.computeLabel = (s) => EntityProgressCardEditor.#computeCustomLabel(s, label);
-        inputElement.data = {};
+        Object.assign(inputElement, {
+          id: name,
+          hass: this.#hassProvider.hass,
+          schema,
+          computeLabel: (s) => EntityProgressCardEditor.#computeCustomLabel(s, label),
+          data: {},
+        });
         this.#elements[name] = inputElement;
         return inputElement; //break;
       }
@@ -5431,9 +5534,12 @@ class EntityProgressCardEditor extends HTMLElement {
         break;
       case CARD.editor.fields.toggle.type: {
         inputElement = document.createElement(CARD.editor.fields.container.element);
-        inputElement.style.display = 'flex';
-        inputElement.style.alignItems = 'center';
-        inputElement.style.gap = '8px';
+        inputElement.classList.add(CARD.editor.fields.toggle.class);
+        Object.assign(inputElement.style, {
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+        });
 
         const toggleLabel = document.createElement(CARD.editor.fields.text.element);
         toggleLabel.textContent = label;
@@ -5457,10 +5563,12 @@ class EntityProgressCardEditor extends HTMLElement {
 
     this.#elements[name] = inputElement;
     inputElement.style.width = width;
-    inputElement.required = required;
-    inputElement.label = label;
-    inputElement.value = value;
-    inputElement.id = name;
+    Object.assign(inputElement, {
+      required,
+      label,
+      value,
+      id: name,
+    });
 
     if (isInGroup) {
       inputElement.classList.add(isInGroup);
@@ -5487,25 +5595,52 @@ class EntityProgressCardEditor extends HTMLElement {
   }
 
   toggleAccordion(index) {
-    const accordionContent = this.#accordionList[index];
-    const panel = accordionContent.querySelector('.accordion-content');
+    const accordion = this.#accordionList[index];
+    const panel = accordion.querySelector('.accordion-content');
     if (!panel) return;
 
-    accordionContent.classList.toggle('expanded');
-
-    const isExpanding = accordionContent.classList.contains('expanded');
+    const isExpanding = !accordion.classList.contains('expanded');
 
     if (isExpanding) {
+      // Préparation à l'expansion
+      panel.style.display = 'flex'; // pour éviter une disparition instantanée
       panel.style.maxHeight = `${panel.scrollHeight}px`;
+      panel.style.paddingTop = '30px';
+      panel.style.paddingBottom = '30px';
+      panel.style.opacity = '1';
 
+      const _ = panel.offsetHeight; // eslint-disable-line no-unused-vars
+
+      accordion.classList.add('expanded');
+
+      // Supprime max-height après la transition
       const onTransitionEnd = () => {
         panel.removeEventListener('transitionend', onTransitionEnd);
         panel.style.maxHeight = 'none';
       };
-
       panel.addEventListener('transitionend', onTransitionEnd);
     } else {
-      panel.style.maxHeight = null;
+      // Ajoute une classe temporaire pour désactiver l'opacité des enfants
+      accordion.classList.add('collapsing');
+
+      // Commence par réinitialiser le max-height pour animer proprement
+      panel.style.maxHeight = `${panel.scrollHeight}px`;
+
+      // Reflow forcé avant de mettre max-height à 0
+      const _ = panel.offsetHeight; // eslint-disable-line no-unused-vars
+
+      panel.style.maxHeight = '0';
+      panel.style.paddingTop = '0';
+      panel.style.paddingBottom = '0';
+      panel.style.opacity = '0';
+
+      const onTransitionEnd = () => {
+        panel.removeEventListener('transitionend', onTransitionEnd);
+        accordion.classList.remove('expanded');
+        accordion.classList.remove('collapsing');
+        panel.style.display = '';
+      };
+      panel.addEventListener('transitionend', onTransitionEnd);
     }
   }
 
@@ -5570,9 +5705,10 @@ class EntityProgressCardEditor extends HTMLElement {
     this.#container.classList.add(CARD.editor.fields.container.class);
 
     this.#renderFields(this.#container, EDITOR_INPUT_FIELDS.basicConfiguration);
-    this.#renderAccordion(this.#container, EDITOR_INPUT_FIELDS.content);
-    this.#renderAccordion(this.#container, EDITOR_INPUT_FIELDS.interaction);
-    this.#renderAccordion(this.#container, EDITOR_INPUT_FIELDS.theme);
+    for (const section of Object.keys(EDITOR_INPUT_FIELDS)) {
+      if (section === 'basicConfiguration') continue;
+      this.#renderAccordion(this.#container, EDITOR_INPUT_FIELDS[section]);
+    }
 
     this.#container.appendChild(EntityProgressCardEditor.#makeHelpIcon());
     fragment.appendChild(this.#container);
