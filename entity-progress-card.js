@@ -121,7 +121,7 @@ const CARD = {
     },
     separator: ' · ',
     debug: { card: false, editor: false, ressourceManager: false },
-    dev: true,
+    dev: false,
   },
   htmlStructure: {
     card: { element: 'ha-card' },
