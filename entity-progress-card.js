@@ -3519,7 +3519,7 @@ class EntityHelper {
     return ATTRIBUTE_MAPPING[this.#domain]?.attribute ?? null;
   }
   get name() {
-    return this.#isValid ? this.#hassProvider.getEntityName(this.#entityId) : null;
+    return this.#hassProvider.getEntityName(this.#entityId);
   }
   get stateObj() {
     return this.#hassProvider.getEntityStateObj(this.#entityId);
