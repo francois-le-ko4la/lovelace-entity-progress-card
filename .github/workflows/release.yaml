@@ -25,7 +25,7 @@ jobs:
           done
       - name: Process JS Files
         run: |
-          npx esbuild temp/*.js --minify --outdir=dist
+          npx esbuild temp/*.js --minify --target=es2022 --outdir=dist
       - name: Upload to Release
         uses: svenstaro/upload-release-action@v2
         with:
