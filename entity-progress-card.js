@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.3.10
+ * @version 1.3.11
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.3.10';
+const VERSION = '1.3.11';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
@@ -3522,7 +3522,7 @@ class EntityHelper {
     return this.#isValid ? this.#hassProvider.getEntityName(this.#entityId) : null;
   }
   get stateObj() {
-    return this.#isValid ? this.#hassProvider.getEntityStateObj(this.#entityId) : null;
+    return this.#hassProvider.getEntityStateObj(this.#entityId);
   }
   get formatedEntityState() {
     return this.#hassProvider.getFormatedEntityState(this.#entityId);
@@ -4633,7 +4633,7 @@ class EntityProgressCard extends HTMLElement {
    */
   #buildCard() {
     if (this.#debug) debugLog('👉 EntityProgressCard.#buildCard()');
-    
+
     const card = document.createElement(CARD.htmlStructure.card.element);
     this.#buildStyle(card);
     card.innerHTML = CARD_HTML;
