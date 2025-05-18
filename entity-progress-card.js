@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.3.9
+ * @version 1.3.10
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.3.9';
+const VERSION = '1.3.10';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
@@ -4505,7 +4505,7 @@ class EntityProgressCard extends HTMLElement {
         entity: this.#cardView.config.entity,
         tap_action: this.#cardView.config[`${fullAction}_action`],
       };
-      fullAction = 'tap';
+      currentAction = 'tap';
     } else {
       currentConfig = this.#cardView.config;
     }
