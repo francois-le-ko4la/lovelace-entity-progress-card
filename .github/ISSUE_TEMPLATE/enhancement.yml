@@ -1,5 +1,5 @@
 name: ✨ Enhancement
-description: Suggest an idea for this project
+description: Suggest an improvement for an existing feature
 title: "[Enhancement]: <title>"
 labels: ["enhancement"]
 body:
