@@ -1,0 +1,43 @@
+name: ✨ Enhancement
+description: Suggest an idea for this project
+title: "[Enhancement]: <title>"
+labels: ["enhancement"]
+body:
+    - type: checkboxes
+      attributes:
+          label: Requirements
+          options:
+              - label: I checked the README.
+                required: true
+              - label: I have updated entity-progress-card to the latest available version.
+                required: true
+              - label: I did a search to see if there is a similar issue.
+                required: true
+    - type: textarea
+      attributes:
+          label: What would you like to improve?
+          description: >
+              Describe clearly what part of the current feature you'd like to see improved or refined.
+      validations:
+          required: true
+    - type: textarea
+      attributes:
+          label: Why is this improvement helpful?
+          description: >
+              Let us know how this change would enhance your experience or solve a pain point.
+      validations:
+          required: true
+    - type: textarea
+      attributes:
+          label: Describe alternatives you've considered
+          description: >
+              A clear and concise description of any alternative solutions or features you've considered.
+    - type: textarea
+      attributes:
+          label: Additional context
+          description: >
+              Add any other context or screenshots about the feature request.
+    - type: markdown
+      attributes:
+          value: >
+              Thanks for contributing 🎉
