@@ -4192,7 +4192,7 @@ class CardView {
     } else {
       Object.assign(this.#percentHelper, {
         current: this.#currentValue.value,
-        min: this.#configHelper.min_value,
+        min: this.#configHelper.config.min_value,
         max: this.#max_value.value?.current ?? this.#max_value.value,
       });
     }
