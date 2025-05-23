@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.3.11
+ * @version 1.3.13-RC1
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.3.11';
+const VERSION = '1.3.13-RC1';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
@@ -120,7 +120,7 @@ const CARD = {
       'zh-Hant': 'zh-TW',
     },
     separator: ' · ',
-    debug: { card: false, editor: false, ressourceManager: false },
+    debug: { card: false, editor: true, ressourceManager: false },
     dev: false,
   },
   htmlStructure: {
@@ -4998,7 +4998,7 @@ class ConfigUpdateEventHandler {
   #debug = CARD.config.debug.editor;
 
   constructor(newConfig) {
-    this.config = { ...newConfig };
+    this.config = structuredClone(newConfig);
 
     this.updateFunctions = new Map([
       [EDITOR_INPUT_FIELDS.basicConfiguration.attribute.name, this.updateField],
@@ -5111,12 +5111,15 @@ class ConfigUpdateEventHandler {
 
   updateToggleField(targetId, changedEvent) {
     const key = targetId.replace('toggle_', '');
-    this.config.hide ??= [];
 
-    if (!changedEvent.target.checked) {
-      if (!this.config.hide.includes(key)) {
-        this.config.hide.push(key);
-      }
+    if (!Array.isArray(this.config.hide)) {
+      this.config.hide = [];
+    } else if (!Object.isExtensible(this.config.hide)) {
+      this.config.hide = [...this.config.hide];
+    }
+
+    if (!changedEvent.target.checked && !this.config.hide.includes(key)) {
+      this.config.hide.push(key);
     } else {
       const index = this.config.hide.indexOf(key);
       if (index !== -1) {
