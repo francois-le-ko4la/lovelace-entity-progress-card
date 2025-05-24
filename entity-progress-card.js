@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.3.13-RC1
+ * @version 1.3.13-RC2
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.3.13-RC1';
+const VERSION = '1.3.13-RC2';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
@@ -5071,6 +5071,8 @@ class ConfigUpdateEventHandler {
   }
 
   updateField(targetId, changedEvent) {
+    if (this.#debug) debugLog('👉 ConfigUpdateEventHandler.updateField()');
+
     if (changedEvent.target.value == null || changedEvent.target.value.trim() === '') {
       delete this.config[targetId];
     } else {
@@ -5079,6 +5081,8 @@ class ConfigUpdateEventHandler {
   }
 
   updateNumericField(targetId, changedEvent) {
+    if (this.#debug) debugLog('👉 ConfigUpdateEventHandler.updateNumericField()');
+
     const curValue = parseFloat(changedEvent.target.value);
     if (isNaN(curValue)) {
       delete this.config[targetId];
@@ -5088,6 +5092,8 @@ class ConfigUpdateEventHandler {
   }
 
   updateMaxValueField(targetId, changedEvent) {
+    if (this.#debug) debugLog('👉 ConfigUpdateEventHandler.updateMaxValueField()');
+
     if (!isNaN(changedEvent.target.value) && changedEvent.target.value.trim() !== '') {
       this.config[targetId] = parseFloat(changedEvent.target.value);
     } else if (changedEvent.target.value.trim() !== '') {
@@ -5098,10 +5104,13 @@ class ConfigUpdateEventHandler {
   }
 
   updateInteractionField(targetId, changedEvent) {
+    if (this.#debug) debugLog('👉 ConfigUpdateEventHandler.updateInteractionField()');
+
     this.config[targetId] = changedEvent.detail.value[targetId];
   }
 
   updateEntityOrValueField(targetId, changedEvent) {
+    if (this.#debug) debugLog('👉 ConfigUpdateEventHandler.updateEntityOrValueField()');
     if (changedEvent?.detail?.value && typeof changedEvent.detail.value[targetId] === 'string' && changedEvent.detail.value[targetId].trim() !== '') {
       this.config[targetId] = changedEvent.detail.value[targetId];
     } else {
@@ -5110,25 +5119,27 @@ class ConfigUpdateEventHandler {
   }
 
   updateToggleField(targetId, changedEvent) {
+    if (this.#debug) debugLog('👉 ConfigUpdateEventHandler.updateToggleField()');
     const key = targetId.replace('toggle_', '');
+    const newConfig = structuredClone(this.config);
 
-    if (!Array.isArray(this.config.hide)) {
-      this.config.hide = [];
-    } else if (!Object.isExtensible(this.config.hide)) {
-      this.config.hide = [...this.config.hide];
+    if (!Array.isArray(newConfig.hide)) {
+      newConfig.hide = [];
     }
 
-    if (!changedEvent.target.checked && !this.config.hide.includes(key)) {
-      this.config.hide.push(key);
-    } else {
-      const index = this.config.hide.indexOf(key);
-      if (index !== -1) {
-        this.config.hide.splice(index, 1);
-      }
-      if (this.config.hide.length === 0) {
-        delete this.config.hide;
-      }
+    const isChecked = changedEvent.target.checked;
+
+    if (isChecked) {
+      newConfig.hide = newConfig.hide.filter((item) => item !== key);
+    } else if (!newConfig.hide.includes(key)) {
+      newConfig.hide.push(key);
     }
+
+    if (newConfig.hide.length === 0) {
+      delete newConfig.hide;
+    }
+
+    this.config = newConfig;
   }
 
   updateCircularField(targetId, changedEvent) {
@@ -5213,6 +5224,9 @@ class EntityProgressCardEditor extends HTMLElement {
       return;
     }
     if (!this.#isRendered) {
+      this.#elements = {};
+      this.#accordionList = [];
+      this.#accordionTitleList = [];
       this.render();
       this.#isRendered = true;
       this.#isListenersAttached = false;
@@ -5238,11 +5252,7 @@ class EntityProgressCardEditor extends HTMLElement {
 
     for (const [key, element] of Object.entries(this.#elements)) {
       if (standardFieldType.has(element.localName) && !excludeStandardType.has(key)) {
-        const newValue = Object.hasOwn(this.#config, key) ? this.#config[key] : '';
-        if (element.value !== newValue) {
-          element.value = newValue;
-          if (EntityProgressCardEditor.#debug) debugLog('✅ updateFields - update: ', [key, newValue]);
-        }
+        this.#updateStandardField(key, element);
       } else if (element.localName === 'ha-form') {
         EntityProgressCardEditor.#updateHAForm(element, key, this.#config[key]);
       }
@@ -5261,20 +5271,35 @@ class EntityProgressCardEditor extends HTMLElement {
     this.#updateToggleFields();
   }
 
+  #updateStandardField(key, element) {
+    if (EntityProgressCardEditor.#debug) debugLog('👉 editor.#updateStandardField()');
+    if (EntityProgressCardEditor.#debug) debugLog('        ✅ key ', key);
+    if (EntityProgressCardEditor.#debug) debugLog('        ✅ element: ', element);
+    const newValue = Object.hasOwn(this.#config, key) ? this.#config[key] : '';
+    const currentValue = element.value;
+    const shouldUpdate = typeof currentValue === 'string' ? currentValue !== String(newValue) : currentValue !== newValue;
+
+    if (shouldUpdate) {
+      element.value = newValue;
+      if (EntityProgressCardEditor.#debug) debugLog('        🆕 updateFields - update: ', [key, newValue]);
+    }
+    if (EntityProgressCardEditor.#debug) debugLog('        ✅ done');
+  }
+
   static #updateHAForm(form, key, newValue) {
     if (EntityProgressCardEditor.#debug) debugLog('👉 editor.#updateHAForm()');
     if (EntityProgressCardEditor.#debug) debugLog('        ✅ Update HA Form (Before) ------> ', form.data);
     if (EntityProgressCardEditor.#debug) debugLog('        ✅ NewValue: ', newValue);
 
     if (form.data === undefined || (newValue !== undefined && form.data[key] !== newValue)) {
-      if (EntityProgressCardEditor.#debug) debugLog('        ✅ NewValue: update.');
+      if (EntityProgressCardEditor.#debug) debugLog('        🆕 NewValue: update.');
       form.data = {
         ...form.data,
         [key]: newValue,
       };
       if (EntityProgressCardEditor.#debug) debugLog(form.data);
     } else if (newValue === undefined && form.data[key] !== undefined) {
-      if (EntityProgressCardEditor.#debug) debugLog('        ✅ key: set undef...');
+      if (EntityProgressCardEditor.#debug) debugLog('        🆕 key: set undef...');
       form.data = {
         ...form.data,
         [key]: undefined,
@@ -5296,7 +5321,10 @@ class EntityProgressCardEditor extends HTMLElement {
     // Si l'entité a changé et que l'entité courante a des attributs, on régénère la liste.
     if (this.#previous[entity] !== this.#config[entity] && curEntity.hasAttribute) {
       this.#previous[entity] = this.#config[entity];
-      this.#updateChoices(this.#elements[attribute], attribute, attributeList);
+      const targetElement = this.#elements[attribute];
+      if (targetElement) {
+        this.#updateChoices(targetElement, attribute, attributeList);
+      }
       if (EntityProgressCardEditor.#debug) debugLog(`        ✅ updateFields - ${entity} attributes list: `, attributeList);
     }
 
@@ -5445,7 +5473,7 @@ class EntityProgressCardEditor extends HTMLElement {
     if (EntityProgressCardEditor.#debug) debugLog(`  📎 type: ${type}`);
     if (EntityProgressCardEditor.#debug) debugLog(`  📎 choices: ${choices}`);
 
-    select.innerHTML = '';
+    // select.innerHTML = '';
 
     const list = [CARD.editor.fields.attribute.type, CARD.editor.fields.max_value_attribute.type].includes(type) ? choices : FIELD_OPTIONS[type];
     if (!list) {
@@ -5477,7 +5505,8 @@ class EntityProgressCardEditor extends HTMLElement {
         default:
           throw new Error('Choices: Unknown case');
       }
-      select.appendChild(option);
+      // select.appendChild(option);
+      select.replaceChildren(option);
     });
   }
 
