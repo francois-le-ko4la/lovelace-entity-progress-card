@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.3.13-RC3
+ * @version 1.3.13
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.3.13-RC3';
+const VERSION = '1.3.13';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
@@ -120,7 +120,7 @@ const CARD = {
       'zh-Hant': 'zh-TW',
     },
     separator: ' · ',
-    debug: { card: false, editor: true, ressourceManager: false },
+    debug: { card: false, editor: false, ressourceManager: false },
     dev: false,
   },
   htmlStructure: {
