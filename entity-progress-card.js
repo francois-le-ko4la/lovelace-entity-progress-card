@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.3.13-RC2
+ * @version 1.3.13-RC3
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.3.13-RC2';
+const VERSION = '1.3.13-RC3';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
@@ -4555,7 +4555,7 @@ class EntityProgressCard extends HTMLElement {
    * Updates the component's configuration and triggers static changes.
    */
   setConfig(config) {
-    this.#cardView.config = config;
+    this.#cardView.config = { ...config };
     this.#buildCard();
   }
 
@@ -5123,23 +5123,35 @@ class ConfigUpdateEventHandler {
     const key = targetId.replace('toggle_', '');
     const newConfig = structuredClone(this.config);
 
+    if (this.#debug) debugLog('    📌 *** CONFIG before ***:', JSON.stringify(this.config, null, 2));
+    if (this.#debug) debugLog('    📌 *** NEWCONFIG before ***:', JSON.stringify(newConfig, null, 2));
+
     if (!Array.isArray(newConfig.hide)) {
       newConfig.hide = [];
+    } else {
+      newConfig.hide = [...newConfig.hide];
     }
+    if (this.#debug) debugLog('    📌 *** NEWCONFIG (Hide Management) ***:', JSON.stringify(newConfig, null, 2));
 
     const isChecked = changedEvent.target.checked;
-
+    if (this.#debug) debugLog('    📌 *** key ***:', key);
+    if (this.#debug) debugLog('    📌 *** is checked ***:', isChecked);
+    
     if (isChecked) {
       newConfig.hide = newConfig.hide.filter((item) => item !== key);
-    } else if (!newConfig.hide.includes(key)) {
-      newConfig.hide.push(key);
+    } else {
+      if (!newConfig.hide.includes(key)) {
+        newConfig.hide.push(key);
+      }
     }
-
+    
     if (newConfig.hide.length === 0) {
       delete newConfig.hide;
     }
 
     this.config = newConfig;
+    if (this.#debug) debugLog('    📌 *** CONFIG after ***:', JSON.stringify(this.config, null, 2));
+    if (this.#debug) debugLog('    📌 *** NEWCONFIG after ***:', JSON.stringify(newConfig, null, 2));
   }
 
   updateCircularField(targetId, changedEvent) {
@@ -5183,6 +5195,7 @@ class EntityProgressCardEditor extends HTMLElement {
     super();
     this.attachShadow({ mode: CARD.config.shadowMode });
     this.#hassProvider = HassProviderSingleton.getInstance();
+    if (EntityProgressCardEditor.#debug) debugLog('📌 Navigator: ', navigator.userAgent);
   }
 
   connectedCallback() {
@@ -5219,7 +5232,7 @@ class EntityProgressCardEditor extends HTMLElement {
   setConfig(config) {
     if (EntityProgressCardEditor.#debug) debugLog('👉 editor.setConfig()');
     if (EntityProgressCardEditor.#debug) debugLog('  📎 config: ', config);
-    this.#config = config;
+    this.#config = { ...config };
     if (!this.#hassProvider.isValid) {
       return;
     }
