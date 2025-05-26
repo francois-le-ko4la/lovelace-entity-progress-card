@@ -4947,7 +4947,7 @@ class EntityProgressCard extends HTMLElement {
 
   #renderJinja(key, content) {
     if (this.#debug) {
-      debugLog('👉 EntityProgressCard.#renderJinja()', key, content);
+      debugLog('👉 EntityProgressCard.#renderJinja()', key);
     }
 
     const renderHandlers = this.#getRenderHandlers(content);
@@ -5472,14 +5472,14 @@ class EntityProgressTemplate extends HTMLElement {
     if (!this.#cardView.hasWatermark) return;
 
     const wm = this.#cardView.watermark;
-    const properties = this.#getWatermarkProperties(wm);
+    const properties = EntityProgressTemplate.#getWatermarkProperties(wm);
 
     properties.forEach(([key, value]) => {
       this.#updateCSSValue(key, value);
     });
   }
 
-  #getWatermarkProperties(watermark) {
+  static #getWatermarkProperties(watermark) {
     return [
       [CARD.style.dynamic.watermark.high.value.var, `${watermark.high}%`],
       [CARD.style.dynamic.watermark.high.color.var, watermark.high_color],
@@ -5542,13 +5542,13 @@ class EntityProgressTemplate extends HTMLElement {
 
   #createStateObjForIcon(stateObj, curIcon) {
     if (stateObj) {
-      return this.#createStateObjFromExisting(stateObj, curIcon);
+      return EntityProgressTemplate.#createStateObjFromExisting(stateObj, curIcon);
     } else {
-      return this.#createFallbackStateObj(curIcon);
+      return EntityProgressTemplate.#createFallbackStateObj(curIcon);
     }
   }
 
-  #createStateObjFromExisting(stateObj, curIcon) {
+  static #createStateObjFromExisting(stateObj, curIcon) {
     const hasIconOverride = curIcon !== null;
     const hasPicture = stateObj?.attributes?.entity_picture;
 
@@ -5566,7 +5566,7 @@ class EntityProgressTemplate extends HTMLElement {
     };
   }
 
-  #createFallbackStateObj(curIcon) {
+  static #createFallbackStateObj(curIcon) {
     return {
       entity_id: 'notfound.entity',
       state: 'notfound',
@@ -5597,7 +5597,7 @@ class EntityProgressTemplate extends HTMLElement {
 
   #renderJinja(key, content) {
     if (this.#debug) {
-      debugLog('👉 EntityProgressCard.#renderJinja()', key, content);
+      debugLog('👉 EntityProgressCardTemplate.#renderJinja()', key);
     }
 
     const renderHandlers = this.#getRenderHandlers(content);
@@ -5675,8 +5675,6 @@ class EntityProgressTemplate extends HTMLElement {
       const unsub = await this.hass.connection.subscribeMessage((msg) => this.#renderJinja(key, msg.result), {
         type: 'render_template',
         template: template,
-        variables: {},
-        timeout: 5.0,
       });
 
       this.#resourceManager.addSubscription(unsub, `template-${key}`);
