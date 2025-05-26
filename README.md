@@ -1599,11 +1599,11 @@ progress bar, using dynamic content and calculations defined within your sensors
 
 | Variable      | Description                                                                  |
 | ------------- | ---------------------------------------------------------------------------- |
-| `secondary`   | Renders the secondary content (e.g., unit, status)                           |
 | `name`        | Renders the customized entity name                                           |
+| `icon`        | Main icon                                                                    |
+| `secondary`   | Renders the secondary content (e.g., unit, status)                           |
 | `badge_icon`  | Icon shown in the badge (can differ from the main icon)                      |
 | `badge_color` | Color of the badge                                                           |
-| `icon`        | Main icon                                                                    |
 | `percent`     | Numerical value defining the progress (as a percentage)                      |
 | `color`       | Dynamic color for icon and shape, adapted automatically using `ThemeManager` |
 | `bar_color`   | Progress bar color, also dynamically adapted using `ThemeManager`            |
