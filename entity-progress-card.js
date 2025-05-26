@@ -4946,9 +4946,7 @@ class EntityProgressCard extends HTMLElement {
   // === JINJA TEMPLATE RENDERING ===
 
   #renderJinja(key, content) {
-    if (this.#debug) {
-      debugLog('👉 EntityProgressCard.#renderJinja()', key);
-    }
+    if (this.#debug) debugLog('👉 EntityProgressCard.#renderJinja()', key);
 
     const renderHandlers = this.#getRenderHandlers(content);
     const handler = renderHandlers[key];
@@ -5447,7 +5445,7 @@ class EntityProgressTemplate extends HTMLElement {
 
       if (element) {
         this.#domElements[className] = element;
-      } else if (this.#debug) {
+      } else {
         console.warn(`Element with class '${className}' not found in shadow DOM.`);
       }
     });
@@ -5596,9 +5594,7 @@ class EntityProgressTemplate extends HTMLElement {
   // === JINJA TEMPLATE RENDERING ===
 
   #renderJinja(key, content) {
-    if (this.#debug) {
-      debugLog('👉 EntityProgressCardTemplate.#renderJinja()', key);
-    }
+    if (this.#debug) debugLog('👉 EntityProgressCardTemplate.#renderJinja()', key);
 
     const renderHandlers = this.#getRenderHandlers(content);
     const handler = renderHandlers[key];
