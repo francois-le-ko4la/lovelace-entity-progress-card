@@ -982,10 +982,12 @@ entity: sensor.in2013_battery_level
 theme: optimal_when_high
 ```
 
-- 0% -> 20%: `red`
-- 20% -> 50%: `amber`
-- 50% -> 80%: `yellow`
-- 80% -> 100%: `green`
+| **Percentage Range** | **Color** | **Description** *(optional)* |
+| -------------------- | --------- | ---------------------------- |
+| 0% – 20%             | `red`     | Critical / Very low          |
+| 20% – 50%            | `amber`   | Low                          |
+| 50% – 80%            | `yellow`  | Moderate                     |
+| 80% – 100%           | `green`   | Optimal / High               |
 
 > [!NOTE]
 >
@@ -1001,10 +1003,12 @@ entity: sensor.system_monitor_cpu_usage
 theme: optimal_when_low
 ```
 
-- 0% -> 20%: `green`
-- 20% -> 50%: `yellow`
-- 50% -> 80%: `amber`
-- 80% -> 100%: `red`
+| **Percentage Range** | **Color** | **Description** *(optional)* |
+| -------------------- | --------- | ---------------------------- |
+| 0% – 20%             | `green`   | Low level / Safe             |
+| 20% – 50%            | `yellow`  | Moderate                     |
+| 50% – 80%            | `amber`   | Elevated                     |
+| 80% – 100%           | `red`     | High / Critical              |
 
 > [!NOTE]
 >
@@ -1026,11 +1030,13 @@ This system uses a **linear gradient**, meaning the color transitions smoothly a
 
 The brightness levels and their corresponding colors are as follows:
 
-- **< 25%**: `#4B4B4B` → Dim light (`mdi:lightbulb-outline`)
-- **≥ 25%**: `#877F67` → Soft warm light (`mdi:lightbulb-outline`)
-- **≥ 50%**: `#C3B382` → Medium warm light (`mdi:lightbulb`)
-- **≥ 75%**: `#FFE79E` → Bright warm light (`mdi:lightbulb`)
-- **≥ 100%**: `#FFE79E` → Maximum brightness (`mdi:lightbulb`)
+| **Brightness Level** | **Color Code** | **Description**    | **Icon**                |
+| -------------------- | -------------- | ------------------ | ----------------------- |
+| < 25%                | `#4B4B4B`      | Dim light          | `mdi:lightbulb-outline` |
+| ≥ 25%                | `#877F67`      | Soft warm light    | `mdi:lightbulb-outline` |
+| ≥ 50%                | `#C3B382`      | Medium warm light  | `mdi:lightbulb`         |
+| ≥ 75%                | `#FFE79E`      | Bright warm light  | `mdi:lightbulb`         |
+| ≥ 100%               | `#FFE79E`      | Maximum brightness | `mdi:lightbulb`         |
 
 The `mdi:lightbulb-outline` icon is used for lower brightness levels, while `mdi:lightbulb` is displayed when the light intensity increases.  
 Thanks to the **linear** approach, the brightness smoothly transitions between these levels.
@@ -1054,19 +1060,21 @@ icon_tap_action:
 We can use `min_value` and `max_value` to define the range of values we want to represent with our color gradient.
 We use predefined intervals, each associated with a specific color:
 
-- -50°C - -30°C / -58°F - -22°F: `var(--deep-purple-color)`
-- -30°C - -15°C / -22°F - 5°F: `var(--dark-blue-color)`
-- -15°C - -2°C / 5°F - 28.4°F: `var(--blue-color)`
-- -2°C - 2°C / 28.4°F - 35.6°F: `var(--light-blue-color)`
-- 2°C - 8°C / 35.6°F - 46.4°F: `var(--cyan-color)`
-- 8°C - 16°C / 46.4°F - 60.8°F: `var(--teal-color)`
-- 16°C - 18°C / 60.8°F - 64.4°F: `var(--green-teal-color)`
-- 18°C - 20°C / 64.4°F - 68°F: `var(--light-green-color)`
-- 20°C - 25°C / 68°F - 77°F: `var(--success-color)`
-- 25°C - 27°C / 77°F - 80.6°F: `var(--yellow-color)`
-- 27°C - 29°C / 80.6°F - 84.2°F: `var(--amber-color)`
-- 29°C - 34°C / 84.2°F - 93.2°F: `var(--deep-orange-color)`
-- 34°C - 50°C / 93.2°F - 122°F: `var(--red-color)`
+| **Temperature Range (°C / °F)** | **Color Variable**         | **Description**              |
+| ------------------------------- | -------------------------- | ---------------------------- |
+| -50°C – -30°C / -58°F – -22°F   | `var(--deep-purple-color)` | Extremely cold               |
+| -30°C – -15°C / -22°F – 5°F     | `var(--dark-blue-color)`   | Very cold                    |
+| -15°C – -2°C / 5°F – 28.4°F     | `var(--blue-color)`        | Cold                         |
+| -2°C – 2°C / 28.4°F – 35.6°F    | `var(--light-blue-color)`  | Chilly                       |
+| 2°C – 8°C / 35.6°F – 46.4°F     | `var(--cyan-color)`        | Cool                         |
+| 8°C – 16°C / 46.4°F – 60.8°F    | `var(--teal-color)`        | Mild                         |
+| 16°C – 18°C / 60.8°F – 64.4°F   | `var(--green-teal-color)`  | Slightly warm                |
+| 18°C – 20°C / 64.4°F – 68°F     | `var(--light-green-color)` | Comfortable                  |
+| 20°C – 25°C / 68°F – 77°F       | `var(--success-color)`     | Optimal                      |
+| 25°C – 27°C / 77°F – 80.6°F     | `var(--yellow-color)`      | Warm                         |
+| 27°C – 29°C / 80.6°F – 84.2°F   | `var(--amber-color)`       | Hot                          |
+| 29°C – 34°C / 84.2°F – 93.2°F   | `var(--deep-orange-color)` | Very hot                     |
+| 34°C – 50°C / 93.2°F – 122°F    | `var(--red-color)`         | Extremely hot                |
 
 > [!IMPORTANT]
 >
@@ -1091,14 +1099,17 @@ Unlike a linear gradient, this system uses predefined humidity ranges, each asso
 
 The ranges and their corresponding colors are as follows:
 
-- 0% - 23%: `var(--red-color)` → Very dry air
-- 23% - 30%: `var(--accent-color)` → Dry air
-- 30% - 40%: `var(--yellow-color)` → Slightly dry air
-- 40% - 50%: `var(--success-color)` → Optimal humidity
-- 50% - 60%: `var(--teal-color)` → Comfortable humidity
-- 60% - 65%: `var(--light-blue-color)` → Slightly humid air
-- 65% - 80%: `var(--indigo-color)` → Humid air
-- 80% - 100%: `var(--deep-purple-color)` → Very humid air
+| **Humidity Range** | **Color Variable**         | **Description**      |
+| ------------------ | -------------------------- | -------------------- |
+| 0% – 23%           | `var(--red-color)`         | Very dry air         |
+| 23% – 30%          | `var(--accent-color)`      | Dry air              |
+| 30% – 40%          | `var(--yellow-color)`      | Slightly dry air     |
+| 40% – 50%          | `var(--success-color)`     | Optimal humidity     |
+| 50% – 60%          | `var(--teal-color)`        | Comfortable humidity |
+| 60% – 65%          | `var(--light-blue-color)`  | Slightly humid air   |
+| 65% – 80%          | `var(--indigo-color)`      | Humid air            |
+| 80% – 100%         | `var(--deep-purple-color)` | Very humid air       |
+
 
 Each range is visually represented using the `mdi:water-percent` icon, ensuring a clear and intuitive display of humidity levels.
 
@@ -1122,11 +1133,13 @@ Instead of a linear gradient, this system categorizes VOC levels into predefined
 
 The ranges and their corresponding colors are as follows:
 
-- 0 - 300 ppb: `var(--success-color)` → Good air quality
-- 300 - 500 ppb: `var(--yellow-color)` → Acceptable air quality
-- 500 - 3000 ppb: `var(--accent-color)` → Moderate air quality
-- 3000 - 25000 ppb: `var(--red-color)` → Poor air quality
-- 25000 - 50000 ppb: `var(--deep-purple-color)` → Hazardous
+| **TVOC Range (ppb)** | **Color Variable**         | **Description**        |
+| -------------------- | -------------------------- | ---------------------- |
+| 0 – 300              | `var(--success-color)`     | Good air quality       |
+| 300 – 500            | `var(--yellow-color)`      | Acceptable air quality |
+| 500 – 3000           | `var(--accent-color)`      | Moderate air quality   |
+| 3000 – 25,000        | `var(--red-color)`         | Poor air quality       |
+| 25,000 – 50,000      | `var(--deep-purple-color)` | Hazardous              |
 
 > [!IMPORTANT]
 >
@@ -1157,11 +1170,15 @@ Rather than a linear gradient, this system categorizes PM2.5 levels into predefi
 
 The ranges and their corresponding colors are as follows:
 
-- 0 - 12 µg/m³: `var(--success-color)` → Good air quality
-- 12 - 35 µg/m³: `var(--yellow-color)` → Moderate air quality
-- 35 - 55 µg/m³: `var(--accent-color)` → Unhealthy for sensitive groups
-- 55 - 150 µg/m³: `var(--red-color)` → Unhealthy air quality
-- 150 - 200 µg/m³: `var(--deep-purple-color)` → Very unhealthy air quality
+| **PM2.5 Range (µg/m³)** | **Color Variable**         | **Description**                |
+| ----------------------- | -------------------------- | ------------------------------ |
+| 0 – 12                  | `var(--success-color)`     | Good air quality               |
+| 12 – 35                 | `var(--yellow-color)`      | Moderate air quality           |
+| 35 – 55                 | `var(--accent-color)`      | Unhealthy for sensitive groups |
+| 55 – 150                | `var(--red-color)`         | Unhealthy air quality          |
+| 150 – 200               | `var(--deep-purple-color)` | Very unhealthy air quality     |
+
+
 
 > [!IMPORTANT]
 >
@@ -1468,7 +1485,7 @@ With `cert_expiry` entity we can define a template helper (number) to generate a
 - define a name (number.cert_expiry_entity_id)
 - define state template
 
-  ```text
+  ```yaml
   {% set target = states('sensor.<cert_expiry_entity_id>') %}
   {% if target not in ['unknown', 'unavailable'] %}
     {% set target_ts = as_timestamp(target) %}
@@ -1528,34 +1545,34 @@ When defining a color by name, we utilize the standard CSS color palette, which 
 
 To maintain a consistent look & feel, we translate color names to Home Assistant's color definitions. We provide a list of these colors below. If a color is missing, please do not hesitate to let us know. If you choose a CSS-compatible color name that is not part of this list, the rendering will be as defined by the CSS standard.
 
-| Color name | Card will use |
-|---|---|
-| primary | var(--primary-color) |
-| accent | var(--accent-color) |
-| red | var(--red-color) |
-| pink | var(--pink-color) |
-| purple | var(--purple-color) |
-| deep-purple | var(--deep-purple-color) |
-| indigo | var(--indigo-color) |
-| blue | var(--blue-color) |
-| light-blue | var(--light-blue-color) |
-| cyan | var(--cyan-color) |
-| teal | var(--teal-color) |
-| green | var(--green-color) |
-| light-green | var(--light-green-color) |
-| lime | var(--lime-color) |
-| yellow | var(--yellow-color) |
-| amber | var(--amber-color) |
-| orange | var(--orange-color) |
-| deep-orange | var(--deep-orange-color) |
-| brown | var(--brown-color) |
-| light-grey | var(--light-grey-color) |
-| grey | var(--grey-color) |
-| dark-grey | var(--dark-grey-color) |
-| blue-grey | var(--blue-grey-color) |
-| black | var(--black-color) |
-| white | var(--white-color) |
-| disabled | var(--disabled-color) |
+| **Color Name** | **Mapped CSS Variable**    |
+| -------------- | -------------------------- |
+| `primary`      | `var(--primary-color)`     |
+| `accent`       | `var(--accent-color)`      |
+| `red`          | `var(--red-color)`         |
+| `pink`         | `var(--pink-color)`        |
+| `purple`       | `var(--purple-color)`      |
+| `deep-purple`  | `var(--deep-purple-color)` |
+| `indigo`       | `var(--indigo-color)`      |
+| `blue`         | `var(--blue-color)`        |
+| `light-blue`   | `var(--light-blue-color)`  |
+| `cyan`         | `var(--cyan-color)`        |
+| `teal`         | `var(--teal-color)`        |
+| `green`        | `var(--green-color)`       |
+| `light-green`  | `var(--light-green-color)` |
+| `lime`         | `var(--lime-color)`        |
+| `yellow`       | `var(--yellow-color)`      |
+| `amber`        | `var(--amber-color)`       |
+| `orange`       | `var(--orange-color)`      |
+| `deep-orange`  | `var(--deep-orange-color)` |
+| `brown`        | `var(--brown-color)`       |
+| `light-grey`   | `var(--light-grey-color)`  |
+| `grey`         | `var(--grey-color)`        |
+| `dark-grey`    | `var(--dark-grey-color)`   |
+| `blue-grey`    | `var(--blue-grey-color)`   |
+| `black`        | `var(--black-color)`       |
+| `white`        | `var(--white-color)`       |
+| `disabled`     | `var(--disabled-color)`    |
 
 ### Adapt to HA custom theme
 
@@ -1597,23 +1614,29 @@ progress bar, using dynamic content and calculations defined within your sensors
 
 ### 🛠️ Available Jinja Variables
 
-| Variable      | Description                                                                  |
-| ------------- | ---------------------------------------------------------------------------- |
-| `name`        | Renders the customized entity name                                           |
-| `icon`        | Main icon                                                                    |
-| `secondary`   | Renders the secondary content (e.g., unit, status)                           |
-| `badge_icon`  | Icon shown in the badge (can differ from the main icon)                      |
-| `badge_color` | Color of the badge                                                           |
-| `percent`     | Numerical value defining the progress (as a percentage)                      |
-| `color`       | Dynamic color for icon and shape, adapted automatically using `ThemeManager` |
-| `bar_color`   | Progress bar color, also dynamically adapted using `ThemeManager`            |
+| **Variable**  | **Description**                                                            |
+| ------------- | -------------------------------------------------------------------------- |
+| `name`        | Renders the customized entity name                                         |
+| `icon`        | Main icon shown on the card                                                |
+| `secondary`   | Renders the secondary content (e.g., unit, status, additional info)        |
+| `badge_icon`  | Icon displayed in the badge (can differ from the main icon)                |
+| `badge_color` | Sets the badge color                                                       |
+| `percent`     | Numerical value representing progress (0–100%), affects progress bar width |
+| `color`       | Dynamic color for the icon and shape, adapted using `ThemeManager`         |
+| `bar_color`   | Dynamic progress bar color, also handled through `ThemeManager`            |
 
 ### ⚙️ Still Supported
 
 The following options remain fully compatible with this new card:
 
-- hide: Hide elements conditionally
-- xyz_action: Configure custom actions (tap, hold, etc.)
+| **Variable**     | **Description**                                                  |
+|------------------|------------------------------------------------------------------|
+| `hide`           | Hide elements conditionally                                      |
+| `xyz_action`     | Configure custom actions (e.g., `tap`, `hold`, etc.)             |
+| `bar_orientation`| Define the direction of the progress bar (e.g., `ltr`, `rtl`)    |
+| `bar_size`       | Customize the size or thickness of the progress bar              |
+| `layout`         | Adjust the overall layout (e.g., `horizontal`, `vertical`)       |
+| `watermark`      | Add a background watermark or overlay element                    |
 
 ### 🧠 Why Use This Card?
 

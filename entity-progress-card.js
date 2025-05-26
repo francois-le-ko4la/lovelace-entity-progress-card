@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.4.0
+ * @version 1.4.1
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.4.0';
+const VERSION = '1.4.1';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
@@ -4733,26 +4733,57 @@ class EntityProgressCard extends HTMLElement {
   }
 
   #buildStyle(card) {
-    card.classList.add(CARD.meta.typeName);
-    card.classList.toggle(CARD.style.dynamic.clickable.card, this.#cardView.hasClickableCard);
-    card.classList.toggle(CARD.style.dynamic.clickable.icon, this.#cardView.hasClickableIcon);
-    if (this.#cardView.bar_orientation) card.classList.add(CARD.style.dynamic.progressBar.orientation[this.#cardView.bar_orientation]);
-    card.classList.add(this.#cardView.layout);
-    card.classList.add(this.#cardView.bar_size);
-    card.classList.toggle(CARD.style.dynamic.secondaryInfoError.class, this.#cardView.hasStandardEntityError);
-    this.#toggleHiddenComponent(card, CARD.style.dynamic.hiddenComponent.icon);
-    this.#toggleHiddenComponent(card, CARD.style.dynamic.hiddenComponent.name);
-    this.#toggleHiddenComponent(card, CARD.style.dynamic.hiddenComponent.secondary_info);
-    this.#toggleHiddenComponent(card, CARD.style.dynamic.hiddenComponent.progress_bar);
-    const type = this.#cardView.hasWatermark && this.#cardView.watermark.type === 'line' ? 'line-' : '';
-    card.classList.toggle(
-      `${CARD.style.dynamic.show}-HWM-${type}${CARD.htmlStructure.elements.progressBar.watermark.class}`,
-      this.#cardView.hasWatermark && !this.#cardView.watermark.disable_high
-    );
-    card.classList.toggle(
-      `${CARD.style.dynamic.show}-LWM-${type}${CARD.htmlStructure.elements.progressBar.watermark.class}`,
-      this.#cardView.hasWatermark && !this.#cardView.watermark.disable_low
-    );
+    this.#addBaseClasses(card);
+    this.#applyConditionalClasses(card);
+    this.#handleHiddenComponents(card);
+    this.#handleWatermarkClasses(card);
+  }
+
+  #addBaseClasses(card) {
+    const classesToAdd = [CARD.meta.typeName];
+
+    if (this.#cardView.bar_orientation) {
+      classesToAdd.push(CARD.style.dynamic.progressBar.orientation[this.#cardView.bar_orientation]);
+    }
+
+    classesToAdd.push(this.#cardView.layout, this.#cardView.bar_size);
+    card.classList.add(...classesToAdd);
+  }
+
+  #applyConditionalClasses(card) {
+    const conditionalClasses = new Map([
+      [CARD.style.dynamic.clickable.card, this.#cardView.hasClickableCard],
+      [CARD.style.dynamic.clickable.icon, this.#cardView.hasClickableIcon],
+      [CARD.style.dynamic.secondaryInfoError.class, this.#cardView.hasStandardEntityError],
+    ]);
+
+    conditionalClasses.forEach((condition, className) => {
+      card.classList.toggle(className, condition);
+    });
+  }
+
+  #handleHiddenComponents(card) {
+    const components = [
+      CARD.style.dynamic.hiddenComponent.icon,
+      CARD.style.dynamic.hiddenComponent.name,
+      CARD.style.dynamic.hiddenComponent.secondary_info,
+      CARD.style.dynamic.hiddenComponent.progress_bar,
+    ];
+
+    components.forEach((component) => {
+      this.#toggleHiddenComponent(card, component);
+    });
+  }
+
+  #handleWatermarkClasses(card) {
+    if (!this.#cardView.hasWatermark) return;
+
+    const type = this.#cardView.watermark.type === 'line' ? 'line-' : '';
+    const baseClass = CARD.htmlStructure.elements.progressBar.watermark.class;
+    const showClass = CARD.style.dynamic.show;
+
+    card.classList.toggle(`${showClass}-HWM-${type}${baseClass}`, !this.#cardView.watermark.disable_high);
+    card.classList.toggle(`${showClass}-LWM-${type}${baseClass}`, !this.#cardView.watermark.disable_low);
   }
 
   #toggleHiddenComponent(card, component) {
@@ -5290,7 +5321,7 @@ class EntityProgressTemplate extends HTMLElement {
    * @returns {number} - The number of grid rows for the current card layout.
    */
   getCardSize() {
-    if (this.#cardView.layout === CARD.layout.orientations.vertical.label) {
+    if (this.#cardView.config.layout === CARD.layout.orientations.vertical.label) {
       return CARD.layout.orientations.vertical.grid.grid_rows;
     }
     return CARD.layout.orientations.horizontal.grid.grid_rows;
@@ -5302,7 +5333,7 @@ class EntityProgressTemplate extends HTMLElement {
    * @returns {object} - The layout options for the current layout configuration.
    */
   getLayoutOptions() {
-    if (this.#cardView.layout === CARD.layout.orientations.vertical.label) {
+    if (this.#cardView.config.layout === CARD.layout.orientations.vertical.label) {
       return CARD.layout.orientations.vertical.grid;
     }
     return CARD.layout.orientations.horizontal.grid;
@@ -5373,11 +5404,11 @@ class EntityProgressTemplate extends HTMLElement {
   #addBaseClasses(card) {
     const classesToAdd = [CARD.meta.typeName];
 
-    if (this.#cardView.bar_orientation) {
-      classesToAdd.push(CARD.style.dynamic.progressBar.orientation[this.#cardView.bar_orientation]);
+    if (this.#cardView.config.bar_orientation) {
+      classesToAdd.push(CARD.style.dynamic.progressBar.orientation[this.#cardView.config.bar_orientation]);
     }
 
-    classesToAdd.push(this.#cardView.layout, this.#cardView.bar_size);
+    classesToAdd.push(this.#cardView.config.layout, this.#cardView.config.bar_size);
     card.classList.add(...classesToAdd);
   }
 
@@ -5385,7 +5416,6 @@ class EntityProgressTemplate extends HTMLElement {
     const conditionalClasses = new Map([
       [CARD.style.dynamic.clickable.card, this.#cardView.hasClickableCard],
       [CARD.style.dynamic.clickable.icon, this.#cardView.hasClickableIcon],
-      [CARD.style.dynamic.secondaryInfoError.class, this.#cardView.hasStandardEntityError],
     ]);
 
     conditionalClasses.forEach((condition, className) => {
