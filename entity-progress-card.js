@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.3.13
+ * @version 1.3.14
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.3.13';
+const VERSION = '1.3.14';
 const CARD = {
   meta: {
     typeName: 'entity-progress-card',
@@ -120,7 +120,7 @@ const CARD = {
       'zh-Hant': 'zh-TW',
     },
     separator: ' · ',
-    debug: { card: false, editor: false, ressourceManager: false },
+    debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false },
     dev: false,
   },
   htmlStructure: {
@@ -4114,9 +4114,6 @@ class CardView {
       this.#configHelper.cardDoubleTapAction !== CARD.interactions.action.none.action
     );
   }
-  get isClickable() {
-    return this.#configHelper.cardTapAction !== CARD.interactions.action.none.action;
-  }
   get hasVisibleShape() {
     return this.#hassProvider.hasNewShapeStrategy
       ? this.#configHelper.config.force_circular_background ||
@@ -4297,7 +4294,7 @@ class ResourceManager {
     }
   }
 
-  clear() {
+  cleanup() {
     for (const [id, cleanupFn] of this.#resources) {
       try {
         cleanupFn();
@@ -4319,29 +4316,18 @@ class ResourceManager {
   }
 }
 
-/** --------------------------------------------------------------------------
- *
- * Represents a custom card element displaying the progress of an entity.
- *
- * The `EntityProgressCard` class extends the base `HTMLElement` class and
- * implements a custom web component that displays information about an entity's
- * state.
- */
-class EntityProgressCard extends HTMLElement {
-  #debug = CARD.config.debug.card;
+class ActionHelper {
+  #debug = CARD.config.debug.interactionHandler;
   #resourceManager = null;
-  #icon = null;
-  #cardView = new CardView();
-  #elements = {};
-  #lastMessage = null;
-  #hass = null;
+  #config = null;
+  #element = null;
   #clickCount = 0;
   #downTime = null;
   #isHolding = null;
   #clickSource = null;
   #startX = 0;
   #startY = 0;
-  #clickableTarget = null;
+  
   #boundHandlers = {
     mousedown: (e) => this.#handleMouseDown(e),
     mouseup: (e) => this.#handleMouseUp(e),
@@ -4351,41 +4337,30 @@ class EntityProgressCard extends HTMLElement {
     touchmove: (e) => this.#handleMouseMove(e),
   };
 
-  constructor() {
-    super();
-    this.attachShadow({ mode: CARD.config.shadowMode });
-
-    if (!EntityProgressCard._moduleLoaded) {
-      console.groupCollapsed(CARD.console.message, CARD.console.css);
-      console.log(CARD.console.link);
-      console.groupEnd();
-      if (this.#debug) debugLog(Object.keys(LANGUAGES));
-      EntityProgressCard._moduleLoaded = true;
-    }
+  constructor(element) {
+    this.#element = element;
   }
 
-  connectedCallback() {
-    if (this.#debug) debugLog('👉 connectedCallback()');
-    const selector = CARD.htmlStructure.elements;
-    this.#resourceManager = new ResourceManager();
-    this.#clickableTarget = this.#cardView.hasClickableCard
-      ? this
-      : this.#cardView.hasClickableIcon
-        ? [this.#elements[selector.shape.class], this.#elements[selector.icon.class]]
-        : null;
+  init(resourceManager, config, clickableTarget) {
+    this.#resourceManager = resourceManager;
+    this.#config = config;
+    this.#attachToTargets(clickableTarget);
+  }
 
-    if (!this.#clickableTarget) return;
+  #attachToTargets(clickableTarget) {
+    if (!clickableTarget) return;
 
-    if (Array.isArray(this.#clickableTarget)) {
-      for (const target of this.#clickableTarget) {
+    if (Array.isArray(clickableTarget)) {
+      for (const target of clickableTarget) {
         if (target) this.#attachListener(target);
       }
     } else {
-      this.#attachListener(this.#clickableTarget);
+      this.#attachListener(clickableTarget);
     }
   }
+
   #attachListener(elem) {
-    if (this.#debug) debugLog('👉 #attachListener()');
+    if (this.#debug) console.log('👉 ActionHelper.#attachListener()');
     this.#resourceManager.addEventListener(elem, 'mousedown', this.#boundHandlers.mousedown);
     this.#resourceManager.addEventListener(elem, 'mouseup', this.#boundHandlers.mouseup);
     this.#resourceManager.addEventListener(elem, 'mousemove', this.#boundHandlers.mousemove);
@@ -4394,21 +4369,16 @@ class EntityProgressCard extends HTMLElement {
     this.#resourceManager.addEventListener(elem, 'touchmove', this.#boundHandlers.touchmove, { passive: true });
   }
 
-  disconnectedCallback() {
-    if (this.#debug) debugLog('👉 disconnectedCallback()');
-    this.#resourceManager?.clear();
-  }
-
   #handleMouseDown(ev) {
-    if (this.#debug) debugLog('👉 handleMouseDown()');
-    if (this.#debug) debugLog('    ', ev.composedPath());
+    if (this.#debug) console.log('👉 ActionHelper.handleMouseDown()');
+    if (this.#debug) console.log('    ', ev.composedPath());
 
     const orginalTarget = ev.composedPath()[0].localName;
 
     this.#clickSource = CARD.interactions.event.originalTarget.icon.includes(orginalTarget)
       ? CARD.interactions.event.from.icon
       : CARD.interactions.event.from.card;
-    if (this.#debug) debugLog('    clickSource: ', this.#clickSource);
+    if (this.#debug) console.log('    clickSource: ', this.#clickSource);
 
     this.#downTime = Date.now();
     this.#startX = ev.clientX;
@@ -4417,7 +4387,7 @@ class EntityProgressCard extends HTMLElement {
 
     this.#resourceManager.setTimeout(
       () => {
-        this.#isHolding = true; // juste armer le hold
+        this.#isHolding = true;
       },
       500,
       'holdTimeout'
@@ -4479,14 +4449,14 @@ class EntityProgressCard extends HTMLElement {
   }
 
   #fireAction(originalEvent, currentAction) {
-    if (this.#debug) debugLog('👉 EntityProgressCard.#fireAction()');
-    if (this.#debug) debugLog('  📎 originalEvent: ', originalEvent);
-    if (this.#debug) debugLog('  📎 original action: ', currentAction);
-    if (this.#debug) debugLog('    clickSource: ', this.#clickSource);
+    if (this.#debug) console.log('👉 ActionHelper.#fireAction()');
+    if (this.#debug) console.log('  📎 originalEvent: ', originalEvent);
+    if (this.#debug) console.log('  📎 original action: ', currentAction);
+    if (this.#debug) console.log('    clickSource: ', this.#clickSource);
 
     const prefixAction = this.#clickSource === CARD.interactions.event.from.icon ? `${CARD.interactions.event.from.icon}_` : '';
     let fullAction = `${prefixAction}${currentAction}`;
-    if (this.#debug) debugLog('  📎 fullAction: ', fullAction);
+    if (this.#debug) console.log('  📎 fullAction: ', fullAction);
 
     let currentConfig = null;
 
@@ -4498,19 +4468,19 @@ class EntityProgressCard extends HTMLElement {
         CARD.interactions.event.tap.doubleTapAction,
       ].includes(fullAction)
     ) {
-      if (fullAction !== CARD.interactions.event.tap.doubleTapAction && this.#cardView.config[`${fullAction}_action`].action === 'none')
+      if (fullAction !== CARD.interactions.event.tap.doubleTapAction && this.#config[`${fullAction}_action`].action === 'none')
         fullAction = currentAction; // if icon and 'none' -> failback to card action
 
       currentConfig = {
-        entity: this.#cardView.config.entity,
-        tap_action: this.#cardView.config[`${fullAction}_action`],
+        entity: this.#config.entity,
+        tap_action: this.#config[`${fullAction}_action`],
       };
       currentAction = 'tap';
     } else {
-      currentConfig = this.#cardView.config;
+      currentConfig = this.#config;
     }
 
-    this.dispatchEvent(
+    this.#element.dispatchEvent(
       new CustomEvent('hass-action', {
         bubbles: true,
         composed: true,
@@ -4522,6 +4492,65 @@ class EntityProgressCard extends HTMLElement {
       })
     );
   }
+
+  cleanup() {
+    this.#resourceManager?.cleanup();
+  }
+}
+
+/** --------------------------------------------------------------------------
+ *
+ * Represents a custom card element displaying the progress of an entity.
+ *
+ * The `EntityProgressCard` class extends the base `HTMLElement` class and
+ * implements a custom web component that displays information about an entity's
+ * state.
+ */
+class EntityProgressCard extends HTMLElement {
+  #debug = CARD.config.debug.card;
+  #resourceManager = null;
+  #icon = null;
+  #cardView = new CardView();
+  #elements = {};
+  #lastMessage = null;
+  #hass = null;
+  #clickableTarget = null;
+  #actionHelper = null;
+
+  constructor() {
+    super();
+    this.attachShadow({ mode: CARD.config.shadowMode });
+
+    this.#actionHelper = new ActionHelper(this);
+
+    if (!EntityProgressCard._moduleLoaded) {
+      console.groupCollapsed(CARD.console.message, CARD.console.css);
+      console.log(CARD.console.link);
+      console.groupEnd();
+      if (this.#debug) debugLog(Object.keys(LANGUAGES));
+      EntityProgressCard._moduleLoaded = true;
+    }
+  }
+
+  connectedCallback() {
+    if (this.#debug) debugLog('👉 connectedCallback()');
+    const selector = CARD.htmlStructure.elements;
+    this.#resourceManager = new ResourceManager();
+
+    this.#clickableTarget = this.#cardView.hasClickableCard
+      ? this
+      : this.#cardView.hasClickableIcon
+        ? [this.#elements[selector.shape.class], this.#elements[selector.icon.class]]
+        : null;
+
+    this.#actionHelper.init(this.#resourceManager, this.#cardView.config, this.#clickableTarget);
+  }
+
+  disconnectedCallback() {
+    if (this.#debug) debugLog('👉 disconnectedCallback()');
+    this.#resourceManager?.cleanup();
+  }
+
 
   /**
    * Creates and returns a new configuration element for the component.
@@ -5210,7 +5239,7 @@ class EntityProgressCardEditor extends HTMLElement {
 
   disconnectedCallback() {
     if (EntityProgressCardEditor.#debug) debugLog('👉 Editor.disconnectedCallback()');
-    this.#resourceManager?.clear();
+    this.#resourceManager?.cleanup();
     this.#isListenersAttached = false;
     this.#isYAML = true;
   }
@@ -5330,6 +5359,7 @@ class EntityProgressCardEditor extends HTMLElement {
     const curEntity = new EntityOrValue();
     curEntity.value = this.#config[entity];
     const attributeList = curEntity.attributesListForEditor;
+    if (EntityProgressCardEditor.#debug) debugLog('  📎 attribute liste:', attributeList);
 
     // Si l'entité a changé et que l'entité courante a des attributs, on régénère la liste.
     if (this.#previous[entity] !== this.#config[entity] && curEntity.hasAttribute) {
@@ -5487,6 +5517,7 @@ class EntityProgressCardEditor extends HTMLElement {
     if (EntityProgressCardEditor.#debug) debugLog(`  📎 choices: ${choices}`);
 
     // select.innerHTML = '';
+    const fragment = document.createDocumentFragment();
 
     const list = [CARD.editor.fields.attribute.type, CARD.editor.fields.max_value_attribute.type].includes(type) ? choices : FIELD_OPTIONS[type];
     if (!list) {
@@ -5519,8 +5550,9 @@ class EntityProgressCardEditor extends HTMLElement {
           throw new Error('Choices: Unknown case');
       }
       // select.appendChild(option);
-      select.replaceChildren(option);
+      fragment.appendChild(option);
     });
+    select.replaceChildren(fragment);
   }
 
   static #computeCustomLabel(s, label) {
