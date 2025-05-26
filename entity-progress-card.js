@@ -5535,12 +5535,12 @@ class EntityProgressTemplate extends HTMLElement {
   #showIcon(iconFromJinja = null) {
     const stateObj = this.#cardView.EntityStateObj;
     const curIcon = iconFromJinja || this.#cardView.config.icon;
-    const stateObjIcon = this.#createStateObjForIcon(stateObj, curIcon);
+    const stateObjIcon = EntityProgressTemplate.#createStateObjForIcon(stateObj, curIcon);
 
     this.#createAndSetIcon(stateObjIcon);
   }
 
-  #createStateObjForIcon(stateObj, curIcon) {
+  static #createStateObjForIcon(stateObj, curIcon) {
     if (stateObj) {
       return EntityProgressTemplate.#createStateObjFromExisting(stateObj, curIcon);
     } else {
