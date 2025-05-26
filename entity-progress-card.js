@@ -4517,6 +4517,8 @@ class EntityProgressCard extends HTMLElement {
   #clickableTarget = null;
   #actionHelper = null;
 
+  // === LIFECYCLE METHODS ===
+
   constructor() {
     super();
     this.attachShadow({ mode: CARD.config.shadowMode });
@@ -4551,6 +4553,8 @@ class EntityProgressCard extends HTMLElement {
     this.#resourceManager?.cleanup();
   }
 
+  // === STATIC METHODS ===
+
   /**
    * Creates and returns a new configuration element for the component.
    *
@@ -4579,6 +4583,9 @@ class EntityProgressCard extends HTMLElement {
       entity: entity || 'sensor.temperature',
     };
   }
+
+  // === PUBLIC API METHODS ===
+
   /**
    * Updates the component's configuration and triggers static changes.
    */
@@ -4621,14 +4628,35 @@ class EntityProgressCard extends HTMLElement {
     this.#updateDynamicElements();
   }
 
-  #manageErrorMessage() {
-    if (this.#cardView.entity === null || (this.#cardView.isAvailable && !this.#cardView.hasValidatedConfig)) {
-      this.#renderMessage(this.#cardView.msg);
-      return true;
+  /**
+   * Returns the number of grid rows for the card size based on the current layout.
+   *
+   * @returns {number} - The number of grid rows for the current card layout.
+   */
+  getCardSize() {
+    if (this.#cardView.layout === CARD.layout.orientations.vertical.label) {
+      return CARD.layout.orientations.vertical.grid.grid_rows;
     }
-    this.#lastMessage = null;
-    return false;
+    return CARD.layout.orientations.horizontal.grid.grid_rows;
   }
+
+  /**
+   * Returns the layout options based on the current layout configuration.
+   *
+   * @returns {object} - The layout options for the current layout configuration.
+   */
+  getLayoutOptions() {
+    if (this.#cardView.layout === CARD.layout.orientations.vertical.label) {
+      return CARD.layout.orientations.vertical.grid;
+    }
+    return CARD.layout.orientations.horizontal.grid;
+  }
+
+  /** --------------------------------------------------------------------------
+   * Private methods organized by functionality
+   */
+
+  // === AUTO-REFRESH MANAGEMENT ===
 
   #startAutoRefresh() {
     if (!this.#resourceManager) return;
@@ -4649,9 +4677,39 @@ class EntityProgressCard extends HTMLElement {
     if (this.#resourceManager) this.#resourceManager.remove('autoRefresh');
   }
 
-  #toggleHiddenComponent(card, component) {
-    card.classList.toggle(component.class, this.#cardView.componentIsHidden(component.label));
+  // === ERROR MESSAGE MANAGEMENT ===
+
+  #manageErrorMessage() {
+    if (this.#cardView.entity === null || (this.#cardView.isAvailable && !this.#cardView.hasValidatedConfig)) {
+      this.#renderMessage(this.#cardView.msg);
+      return true;
+    }
+    this.#lastMessage = null;
+    return false;
   }
+
+  /**
+   * Displays an error alert with the provided message.
+   *   'info', 'warning', 'error'
+   */
+  #renderMessage(msg) {
+    if (msg === this.#lastMessage) return;
+    this.#lastMessage = msg;
+
+    // Vérifier si on a déjà un ha-alert
+    let alert = this.shadowRoot.querySelector('ha-alert');
+
+    if (!alert) {
+      alert = document.createElement('ha-alert');
+      this.shadowRoot.replaceChildren(alert);
+    }
+
+    // Ensuite on met à jour le message et la sévérité
+    alert.setAttribute('alert-type', msg.sev); // IMPORTANT: attribut
+    alert.textContent = msg.content;
+  }
+
+  // === CARD BUILDING ===
 
   /**
    * Builds and initializes the structure of the custom card component.
@@ -4697,6 +4755,12 @@ class EntityProgressCard extends HTMLElement {
     );
   }
 
+  #toggleHiddenComponent(card, component) {
+    card.classList.toggle(component.class, this.#cardView.componentIsHidden(component.label));
+  }
+
+  // === DOM MANAGEMENT ===
+
   #storeDOM(card) {
     const selectors = CARD.htmlStructure.elements;
 
@@ -4718,6 +4782,7 @@ class EntityProgressCard extends HTMLElement {
       this.#domElements[className] = this.shadowRoot.querySelector(`.${className}`);
     }
   }
+
   /**
    * Updates the specified DOM element based on a provided callback function.
    */
@@ -4727,6 +4792,23 @@ class EntityProgressCard extends HTMLElement {
       updateCallback(element);
     }
   }
+
+  // === DYNAMIC ELEMENTS UPDATE ===
+
+  /**
+   * Updates dynamic card elements based on the entity's state and configuration.
+   */
+  #updateDynamicElements() {
+    if (this.#debug) debugLog('👉 EntityProgressCard.#updateDynamicElements()');
+    this.#showIcon();
+    this.#showBadge();
+    this.#manageShape();
+    this.#updateCSS();
+    this.#processJinjaFields();
+    this.#processStandardFields();
+  }
+
+  // === CSS MANAGEMENT ===
 
   #updateCSS() {
     this.#updateElement(CARD.htmlStructure.card.element, (el) => {
@@ -4757,64 +4839,7 @@ class EntityProgressCard extends HTMLElement {
     });
   }
 
-  #renderJinja(key, content) {
-    if (this.#debug) debugLog('👉 EntityProgressCard.#renderJinja()');
-    if (this.#debug) debugLog(key);
-    if (this.#debug) debugLog(content);
-    switch (key) {
-      case 'custom_info':
-        content = `${content}&nbsp;`;
-        this.#updateElement(CARD.htmlStructure.elements.customInfo.class, (el) => {
-          if (el.innerHTML !== content) {
-            el.innerHTML = content;
-          }
-        });
-        break;
-      case 'name_info':
-        content = `&nbsp;${content}`;
-        this.#updateElement(CARD.htmlStructure.elements.nameCustomInfo.class, (el) => {
-          if (el.innerHTML !== content) {
-            el.innerHTML = content;
-          }
-        });
-        break;
-      case 'badge_icon': {
-        const badgeInfo = this.#cardView.badgeInfo;
-        const isBadgeEnable = this.#cardView.isBadgeEnable;
-        const isMdiIcon = content.includes('mdi:');
-        if (badgeInfo !== null) return; // alert -> cancel custom badge
-        if (isMdiIcon) {
-          this.#domElements[CARD.htmlStructure.card.element].classList.toggle(
-            `${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class}`,
-            isBadgeEnable
-          );
-          this.#setBadgeIcon(content);
-        }
-        break;
-      }
-      case 'badge_color': {
-        const backgroundColor = ThemeManager.adaptColor(content);
-        const color = 'var(--white-color)';
-        this.#setBadgeColor(color, backgroundColor);
-        break;
-      }
-      default:
-        throw new Error('Jinja - Unknown case');
-    }
-  }
-
-  /**
-   * Updates dynamic card elements based on the entity's state and configuration.
-   */
-  #updateDynamicElements() {
-    if (this.#debug) debugLog('👉 EntityProgressCard.#updateDynamicElements()');
-    this.#showIcon();
-    this.#showBadge();
-    this.#manageShape();
-    this.#updateCSS();
-    this.#processJinjaFields();
-    this.#processStandardFields();
-  }
+  // === ICON MANAGEMENT ===
 
   #showIcon() {
     const { EntityStateObj: stateObj, icon: curIcon } = this.#cardView;
@@ -4859,12 +4884,16 @@ class EntityProgressCard extends HTMLElement {
     }
   }
 
+  // === SHAPE MANAGEMENT ===
+
   #manageShape() {
     this.#domElements[CARD.htmlStructure.card.element].classList.toggle(
       CARD.style.dynamic.hiddenComponent.shape.class,
       !this.#cardView.hasVisibleShape
     );
   }
+
+  // === BADGE MANAGEMENT ===
 
   /**
    * Displays a badge
@@ -4900,6 +4929,7 @@ class EntityProgressCard extends HTMLElement {
       }
     });
   }
+
   #setBadgeColor(color, backgroundColor) {
     // Vérifie si la couleur ou l'arrière-plan a changé avant d'appliquer la mise à jour
     this.#updateElement(CARD.htmlStructure.card.element, (el) => {
@@ -4912,25 +4942,110 @@ class EntityProgressCard extends HTMLElement {
       }
     });
   }
-  async #processJinjaFields() {
-    if (this.#cardView.hasStandardEntityError || !this.#resourceManager) return;
-    const templates = {};
-    templates.name_info = this.#cardView.config.name_info || '';
-    templates.custom_info = this.#cardView.config.custom_info || '';
-    templates.badge_icon = this.#cardView.config.badge_icon || '';
-    templates.badge_color = this.#cardView.config.badge_color || '';
 
-    for (const key in templates) {
-      if (!Object.hasOwn(templates, key)) continue;
-      const curTmpl = templates[key];
-      // Skip empty templates
-      if (!curTmpl.trim()) continue;
+  // === JINJA TEMPLATE RENDERING ===
+
+  #renderJinja(key, content) {
+    if (this.#debug) {
+      debugLog('👉 EntityProgressCard.#renderJinja()', key, content);
+    }
+
+    const renderHandlers = this.#getRenderHandlers(content);
+    const handler = renderHandlers[key];
+
+    if (handler) {
+      handler();
+    } else {
+      console.error(`Jinja - Unknown case: ${key}`);
+    }
+  }
+
+  #getRenderHandlers(content) {
+    return {
+      custom_info: () => this.#renderCustomInfo(content),
+      name_info: () => this.#renderNameInfo(content),
+      badge_icon: () => this.#renderBadgeIcon(content),
+      badge_color: () => this.#renderBadgeColor(content),
+    };
+  }
+
+  #renderCustomInfo(content) {
+    const formattedContent = `${content}&nbsp;`;
+    this.#updateElement(CARD.htmlStructure.elements.customInfo.class, (el) => {
+      if (el.innerHTML !== formattedContent) {
+        el.innerHTML = formattedContent;
+      }
+    });
+  }
+
+  #renderNameInfo(content) {
+    const formattedContent = `&nbsp;${content}`;
+    this.#updateElement(CARD.htmlStructure.elements.nameCustomInfo.class, (el) => {
+      if (el.innerHTML !== formattedContent) {
+        el.innerHTML = formattedContent;
+      }
+    });
+  }
+
+  #renderBadgeIcon(content) {
+    const badgeInfo = this.#cardView.badgeInfo;
+    const isBadgeEnable = this.#cardView.isBadgeEnable;
+    const isMdiIcon = content.includes('mdi:');
+
+    if (badgeInfo !== null) return; // alert -> cancel custom badge
+
+    if (isMdiIcon) {
+      this.#domElements[CARD.htmlStructure.card.element].classList.toggle(
+        `${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class}`,
+        isBadgeEnable
+      );
+      this.#setBadgeIcon(content);
+    }
+  }
+
+  #renderBadgeColor(content) {
+    const backgroundColor = ThemeManager.adaptColor(content);
+    const color = 'var(--white-color)';
+    this.#setBadgeColor(color, backgroundColor);
+  }
+
+  // === TEMPLATE PROCESSING ===
+
+  async #processJinjaFields() {
+    if (this.#cardView.hasStandardEntityError || !this.#resourceManager) {
+      return;
+    }
+
+    const templates = this.#getTemplateFields();
+
+    for (const [key, template] of Object.entries(templates)) {
+      if (!template.trim()) continue;
+
+      await this.#subscribeToTemplate(key, template);
+    }
+  }
+
+  #getTemplateFields() {
+    const config = this.#cardView.config;
+
+    return {
+      name_info: config.name_info || '',
+      custom_info: config.custom_info || '',
+      badge_icon: config.badge_icon || '',
+      badge_color: config.badge_color || '',
+    };
+  }
+
+  async #subscribeToTemplate(key, template) {
+    try {
       const unsub = await this.hass.connection.subscribeMessage((msg) => this.#renderJinja(key, msg.result), {
         type: 'render_template',
-        template: curTmpl,
+        template: template,
       });
-      // keep it
+
       this.#resourceManager.addSubscription(unsub, `template-${key}`);
+    } catch (error) {
+      console.error(`Failed to subscribe to template ${key}:`, error);
     }
   }
 
@@ -4948,51 +5063,6 @@ class EntityProgressCard extends HTMLElement {
         el.textContent = newContent;
       }
     });
-  }
-
-  /**
-   * Displays an error alert with the provided message.
-   *   'info', 'warning', 'error'
-   */
-  #renderMessage(msg) {
-    if (msg === this.#lastMessage) return;
-    this.#lastMessage = msg;
-
-    // Vérifier si on a déjà un ha-alert
-    let alert = this.shadowRoot.querySelector('ha-alert');
-
-    if (!alert) {
-      alert = document.createElement('ha-alert');
-      this.shadowRoot.replaceChildren(alert);
-    }
-
-    // Ensuite on met à jour le message et la sévérité
-    alert.setAttribute('alert-type', msg.sev); // IMPORTANT: attribut
-    alert.textContent = msg.content;
-  }
-
-  /**
-   * Returns the number of grid rows for the card size based on the current layout.
-   *
-   * @returns {number} - The number of grid rows for the current card layout.
-   */
-  getCardSize() {
-    if (this.#cardView.layout === CARD.layout.orientations.vertical.label) {
-      return CARD.layout.orientations.vertical.grid.grid_rows;
-    }
-    return CARD.layout.orientations.horizontal.grid.grid_rows;
-  }
-
-  /**
-   * Returns the layout options based on the current layout configuration.
-   *
-   * @returns {object} - The layout options for the current layout configuration.
-   */
-  getLayoutOptions() {
-    if (this.#cardView.layout === CARD.layout.orientations.vertical.label) {
-      return CARD.layout.orientations.vertical.grid;
-    }
-    return CARD.layout.orientations.horizontal.grid;
   }
 }
 
@@ -5173,37 +5243,24 @@ class EntityProgressTemplate extends HTMLElement {
   #clickableTarget = null;
   #actionHelper = null;
 
+  // === LIFECYCLE METHODS ===
+
   constructor() {
     super();
     this.attachShadow({ mode: CARD.config.shadowMode });
-
     this.#actionHelper = new ActionHelper(this);
-
-    if (!EntityProgressCard._moduleLoaded) {
-      console.groupCollapsed(CARD.console.message, CARD.console.css);
-      console.log(CARD.console.link);
-      console.groupEnd();
-      if (this.#debug) debugLog(Object.keys(LANGUAGES));
-      EntityProgressCard._moduleLoaded = true;
-    }
+    this.#initializeModule();
   }
 
   connectedCallback() {
     if (this.#debug) debugLog('👉 connectedCallback()');
-    const selector = CARD.htmlStructure.elements;
-    this.#resourceManager = new ResourceManager();
 
+    this.#resourceManager = new ResourceManager();
     this.#buildCard();
     this.#showIcon();
     this.#updateWatermark();
     this.#manageShape();
-
-    this.#clickableTarget = this.#cardView.hasClickableCard
-      ? this
-      : this.#cardView.hasClickableIcon
-        ? [this.#domElements[selector.shape.class], this.#domElements[selector.icon.class]]
-        : null;
-
+    this.#setupClickableTarget();
     this.#actionHelper.init(this.#resourceManager, this.#cardView.config, this.#clickableTarget);
   }
 
@@ -5212,21 +5269,13 @@ class EntityProgressTemplate extends HTMLElement {
     this.#resourceManager?.cleanup();
   }
 
-  /**
-   * Updates the component's configuration and triggers static changes.
-   */
+  // === PUBLIC API METHODS ===
+
   setConfig(config) {
     this.#cardView.config = { ...config };
   }
 
-  /**
-   * Sets the Home Assistant (`hass`) instance and updates dynamic elements.
-   *
-   * @param {Object} hass - The Home Assistant instance containing the current
-   *                        state and services.
-   */
   set hass(hass) {
-    // On garde toujours la dernière valeur de hass
     this.#hassProvider.hass = hass;
     this.#processJinjaFields();
   }
@@ -5235,275 +5284,7 @@ class EntityProgressTemplate extends HTMLElement {
     return this.#hassProvider.hass;
   }
 
-  #toggleHiddenComponent(card, component) {
-    card.classList.toggle(component.class, this.#cardView.componentIsHidden(component.label));
-  }
-
-  /**
-   * Builds and initializes the structure of the custom card component.
-   *
-   * This method creates the visual and structural elements of the card and injects
-   * them into the component's Shadow DOM.
-   */
-  #buildCard() {
-    if (this.#debug) debugLog('👉 EntityProgressCard.#buildCard()');
-
-    const style = document.createElement(CARD.style.element);
-    style.textContent = CARD_CSS;
-
-    const card = document.createElement(CARD.htmlStructure.card.element);
-    this.#buildStyle(card);
-    card.innerHTML = CARD_HTML;
-
-    this.shadowRoot.replaceChildren(style, card);
-    this.#storeDOM(card);
-  }
-
-  #buildStyle(card) {
-    card.classList.add(CARD.meta.typeName);
-    card.classList.toggle(CARD.style.dynamic.clickable.card, this.#cardView.hasClickableCard);
-    card.classList.toggle(CARD.style.dynamic.clickable.icon, this.#cardView.hasClickableIcon);
-    if (this.#cardView.bar_orientation) card.classList.add(CARD.style.dynamic.progressBar.orientation[this.#cardView.bar_orientation]);
-    card.classList.add(this.#cardView.layout);
-    card.classList.add(this.#cardView.bar_size);
-    card.classList.toggle(CARD.style.dynamic.secondaryInfoError.class, this.#cardView.hasStandardEntityError);
-    this.#toggleHiddenComponent(card, CARD.style.dynamic.hiddenComponent.icon);
-    this.#toggleHiddenComponent(card, CARD.style.dynamic.hiddenComponent.name);
-    this.#toggleHiddenComponent(card, CARD.style.dynamic.hiddenComponent.secondary_info);
-    this.#toggleHiddenComponent(card, CARD.style.dynamic.hiddenComponent.progress_bar);
-    const type = this.#cardView.hasWatermark && this.#cardView.watermark.type === 'line' ? 'line-' : '';
-    card.classList.toggle(
-      `${CARD.style.dynamic.show}-HWM-${type}${CARD.htmlStructure.elements.progressBar.watermark.class}`,
-      this.#cardView.hasWatermark && !this.#cardView.watermark.disable_high
-    );
-    card.classList.toggle(
-      `${CARD.style.dynamic.show}-LWM-${type}${CARD.htmlStructure.elements.progressBar.watermark.class}`,
-      this.#cardView.hasWatermark && !this.#cardView.watermark.disable_low
-    );
-  }
-
-  #storeDOM(card) {
-    const selectors = CARD.htmlStructure.elements;
-
-    this.#domElements = {
-      [CARD.htmlStructure.card.element]: card,
-    };
-
-    const keys = [
-      selectors.icon,
-      selectors.shape,
-      selectors.badge.icon,
-      selectors.name,
-      selectors.nameCustomInfo,
-      selectors.customInfo,
-      selectors.stateAndProgressInfo,
-    ];
-
-    for (const { class: className } of keys) {
-      const el = this.shadowRoot.querySelector(`.${className}`);
-      if (el) {
-        this.#domElements[className] = el;
-      } else {
-        console.warn(`Element with class '${className}' not found in shadow DOM.`);
-      }
-    }
-  }
-
-  /**
-   * Updates the specified DOM element based on a provided callback function.
-   */
-  #updateElement(key, updateCallback) {
-    const element = this.#domElements[key];
-    if (element) {
-      updateCallback(element);
-    }
-  }
-
-  #updateCSSValue(key, value) {
-    this.#updateElement(CARD.htmlStructure.card.element, (el) => {
-      const style = el.style;
-      style.setProperty(key, value);
-    });
-  }
-
-  #updateWatermark() {
-    if (!this.#cardView.hasWatermark) return;
-    const wm = this.#cardView.watermark;
-    const properties = [
-      [CARD.style.dynamic.watermark.high.value.var, `${wm.high}%`],
-      [CARD.style.dynamic.watermark.high.color.var, wm.high_color],
-      [CARD.style.dynamic.watermark.low.value.var, `${wm.low}%`],
-      [CARD.style.dynamic.watermark.low.color.var, wm.low_color],
-      [CARD.style.dynamic.watermark.opacity.var, wm.opacity],
-    ];
-    properties.forEach(([key, value]) => {
-      this.#updateCSSValue(key, value);
-    });
-  }
-
-  #renderJinja(key, content) {
-    if (this.#debug) debugLog('👉 EntityProgressCard.#renderJinja()');
-    if (this.#debug) debugLog(key);
-    if (this.#debug) debugLog(content);
-    switch (key) {
-      case 'secondary':
-        this.#updateElement(CARD.htmlStructure.elements.customInfo.class, (el) => {
-          if (el.innerHTML !== content) {
-            el.innerHTML = content.trim();
-          }
-        });
-        break;
-      case 'name':
-        this.#updateElement(CARD.htmlStructure.elements.name.class, (el) => {
-          if (el.innerHTML !== content) {
-            el.innerHTML = content.trim();
-          }
-        });
-        break;
-      case 'badge_icon': {
-        const isMdiIcon = content.includes('mdi:');
-        if (isMdiIcon) {
-          this.#domElements[CARD.htmlStructure.card.element].classList.toggle(
-            `${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class}`,
-            true
-          );
-          this.#setBadgeIcon(content);
-        } else {
-          this.#domElements[CARD.htmlStructure.card.element].classList.toggle(
-            `${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class}`,
-            false
-          );
-        }
-
-        break;
-      }
-      case 'badge_color': {
-        const backgroundColor = ThemeManager.adaptColor(content);
-        const color = 'var(--white-color)';
-        this.#setBadgeColor(color, backgroundColor);
-        break;
-      }
-      case 'icon': {
-        this.#showIcon(content);
-        break;
-      }
-      case 'percent': {
-        this.#updateCSSValue(CARD.style.dynamic.progressBar.size.var, `${content}%`);
-        break;
-      }
-      case 'color': {
-        this.#updateCSSValue(CARD.style.dynamic.iconAndShape.color.var, ThemeManager.adaptColor(content));
-        break;
-      }
-      case 'bar_color': {
-        this.#updateCSSValue(CARD.style.dynamic.progressBar.color.var, ThemeManager.adaptColor(content));
-        break;
-      }
-
-      default:
-        throw new Error('Jinja - Unknown case');
-    }
-  }
-
-  #showIcon(iconFromJinja = null) {
-    const stateObj = this.#cardView.EntityStateObj;
-    const curIcon = iconFromJinja || this.#cardView.config.icon;
-    const hasIconOverride = curIcon !== null;
-    const hasPicture = stateObj?.attributes?.entity_picture;
-
-    let stateObjIcon = null;
-
-    if (stateObj) {
-      const clonedAttributes = { ...stateObj.attributes };
-
-      if (hasPicture) {
-        delete clonedAttributes.icon; // Supprimer l'icône
-      } else if (hasIconOverride) {
-        clonedAttributes.icon = curIcon;
-      }
-
-      stateObjIcon = {
-        ...stateObj,
-        attributes: clonedAttributes,
-      };
-    } else {
-      stateObjIcon = {
-        entity_id: 'notfound.entity',
-        state: 'notfound',
-        attributes: {
-          icon: curIcon,
-        },
-      };
-    }
-
-    this.#icon = document.createElement('ha-state-icon');
-    this.#icon.hass = this.hass;
-    this.#icon.stateObj = stateObjIcon;
-    this.#domElements[CARD.htmlStructure.elements.icon.class].replaceChildren(this.#icon);
-  }
-
-  #manageShape() {
-    this.#domElements[CARD.htmlStructure.card.element].classList.toggle(
-      CARD.style.dynamic.hiddenComponent.shape.class,
-      !this.#cardView.hasVisibleShape
-    );
-  }
-
-  #setBadgeIcon(icon) {
-    // Vérifie si l'icône a réellement changé
-    this.#updateElement(CARD.htmlStructure.elements.badge.icon.class, (el) => {
-      const currentIcon = el.getAttribute(CARD.style.icon.badge.default.attribute);
-      if (currentIcon !== icon) {
-        el.setAttribute(CARD.style.icon.badge.default.attribute, icon);
-      }
-    });
-  }
-  #setBadgeColor(color, backgroundColor) {
-    // Vérifie si la couleur ou l'arrière-plan a changé avant d'appliquer la mise à jour
-    this.#updateElement(CARD.htmlStructure.card.element, (el) => {
-      const currentBackgroundColor = el.style.getPropertyValue(CARD.style.dynamic.badge.backgroundColor.var);
-      const currentColor = el.style.getPropertyValue(CARD.style.dynamic.badge.color.var);
-
-      if (currentBackgroundColor !== backgroundColor || currentColor !== color) {
-        el.style.setProperty(CARD.style.dynamic.badge.backgroundColor.var, backgroundColor);
-        el.style.setProperty(CARD.style.dynamic.badge.color.var, color);
-      }
-    });
-  }
-
-  async #processJinjaFields() {
-    if (this.#cardView.hasStandardEntityError || !this.#resourceManager) return;
-
-    const templates = {};
-    templates.name = this.#cardView.config.name || '';
-    templates.secondary = this.#cardView.config.secondary || '';
-    templates.badge_icon = this.#cardView.config.badge_icon || '';
-    templates.badge_color = this.#cardView.config.badge_color || '';
-    templates.icon = this.#cardView.config.icon || '';
-    templates.percent = this.#cardView.config.percent || '';
-    templates.color = this.#cardView.config.color || '';
-    templates.bar_color = this.#cardView.config.bar_color || '';
-
-    for (const key in templates) {
-      if (!Object.hasOwn(templates, key)) continue;
-      const curTmpl = templates[key];
-      // Skip empty templates
-      if (!curTmpl.trim()) continue;
-
-      try {
-        const unsub = await this.hass.connection.subscribeMessage((msg) => this.#renderJinja(key, msg.result), {
-          type: 'render_template',
-          template: curTmpl,
-          variables: {},
-          timeout: 5.0,
-        });
-        // keep it
-        this.#resourceManager.addSubscription(unsub, `template-${key}`);
-      } catch (error) {
-        console.error(`Failed to subscribe to template ${key}:`, error);
-      }
-    }
-  }
+  // === PUBLIC API METHODS ===
 
   /**
    * Returns the number of grid rows for the card size based on the current layout.
@@ -5527,6 +5308,381 @@ class EntityProgressTemplate extends HTMLElement {
       return CARD.layout.orientations.vertical.grid;
     }
     return CARD.layout.orientations.horizontal.grid;
+  }
+
+  /** --------------------------------------------------------------------------
+   * Private methods organized by functionality
+   */
+
+  // === INITIALIZATION ===
+
+  #initializeModule() {
+    if (!EntityProgressCard._moduleLoaded) {
+      console.groupCollapsed(CARD.console.message, CARD.console.css);
+      console.log(CARD.console.link);
+      console.groupEnd();
+      if (this.#debug) debugLog(Object.keys(LANGUAGES));
+      EntityProgressCard._moduleLoaded = true;
+    }
+  }
+
+  #setupClickableTarget() {
+    const selector = CARD.htmlStructure.elements;
+
+    if (this.#cardView.hasClickableCard) {
+      this.#clickableTarget = this;
+    } else if (this.#cardView.hasClickableIcon) {
+      this.#clickableTarget = [this.#domElements[selector.shape.class], this.#domElements[selector.icon.class]];
+    } else {
+      this.#clickableTarget = null;
+    }
+  }
+
+  // === CARD BUILDING ===
+
+  /**
+   * Builds and initializes the structure of the custom card component.
+   *
+   * This method creates the visual and structural elements of the card and injects
+   * them into the component's Shadow DOM.
+   */
+  #buildCard() {
+    if (this.#debug) debugLog('👉 EntityProgressCard.#buildCard()');
+
+    const { style, card } = this.#createCardElements();
+    this.shadowRoot.replaceChildren(style, card);
+    this.#storeDOM(card);
+  }
+
+  #createCardElements() {
+    const style = document.createElement(CARD.style.element);
+    style.textContent = CARD_CSS;
+
+    const card = document.createElement(CARD.htmlStructure.card.element);
+    this.#buildStyle(card);
+    card.innerHTML = CARD_HTML;
+
+    return { style, card };
+  }
+
+  #buildStyle(card) {
+    this.#addBaseClasses(card);
+    this.#applyConditionalClasses(card);
+    this.#handleHiddenComponents(card);
+    this.#handleWatermarkClasses(card);
+  }
+
+  #addBaseClasses(card) {
+    const classesToAdd = [CARD.meta.typeName];
+
+    if (this.#cardView.bar_orientation) {
+      classesToAdd.push(CARD.style.dynamic.progressBar.orientation[this.#cardView.bar_orientation]);
+    }
+
+    classesToAdd.push(this.#cardView.layout, this.#cardView.bar_size);
+    card.classList.add(...classesToAdd);
+  }
+
+  #applyConditionalClasses(card) {
+    const conditionalClasses = new Map([
+      [CARD.style.dynamic.clickable.card, this.#cardView.hasClickableCard],
+      [CARD.style.dynamic.clickable.icon, this.#cardView.hasClickableIcon],
+      [CARD.style.dynamic.secondaryInfoError.class, this.#cardView.hasStandardEntityError],
+    ]);
+
+    conditionalClasses.forEach((condition, className) => {
+      card.classList.toggle(className, condition);
+    });
+  }
+
+  #handleHiddenComponents(card) {
+    const components = [
+      CARD.style.dynamic.hiddenComponent.icon,
+      CARD.style.dynamic.hiddenComponent.name,
+      CARD.style.dynamic.hiddenComponent.secondary_info,
+      CARD.style.dynamic.hiddenComponent.progress_bar,
+    ];
+
+    components.forEach((component) => {
+      this.#toggleHiddenComponent(card, component);
+    });
+  }
+
+  #toggleHiddenComponent(card, component) {
+    card.classList.toggle(component.class, this.#cardView.componentIsHidden(component.label));
+  }
+
+  #handleWatermarkClasses(card) {
+    if (!this.#cardView.hasWatermark) return;
+
+    const type = this.#cardView.watermark.type === 'line' ? 'line-' : '';
+    const baseClass = CARD.htmlStructure.elements.progressBar.watermark.class;
+    const showClass = CARD.style.dynamic.show;
+
+    card.classList.toggle(`${showClass}-HWM-${type}${baseClass}`, !this.#cardView.watermark.disable_high);
+    card.classList.toggle(`${showClass}-LWM-${type}${baseClass}`, !this.#cardView.watermark.disable_low);
+  }
+
+  // === DOM MANAGEMENT ===
+
+  #storeDOM(card) {
+    const selectors = CARD.htmlStructure.elements;
+
+    this.#domElements = {
+      [CARD.htmlStructure.card.element]: card,
+    };
+
+    const elementsToFind = [
+      selectors.icon,
+      selectors.shape,
+      selectors.badge.icon,
+      selectors.name,
+      selectors.nameCustomInfo,
+      selectors.customInfo,
+      selectors.stateAndProgressInfo,
+    ];
+
+    elementsToFind.forEach(({ class: className }) => {
+      const element = this.shadowRoot.querySelector(`.${className}`);
+
+      if (element) {
+        this.#domElements[className] = element;
+      } else if (this.#debug) {
+        console.warn(`Element with class '${className}' not found in shadow DOM.`);
+      }
+    });
+  }
+
+  #updateElement(key, updateCallback) {
+    const element = this.#domElements[key];
+    if (element) {
+      updateCallback(element);
+    }
+  }
+
+  #updateCSSValue(key, value) {
+    this.#updateElement(CARD.htmlStructure.card.element, (el) => {
+      el.style.setProperty(key, value);
+    });
+  }
+
+  // === WATERMARK MANAGEMENT ===
+
+  #updateWatermark() {
+    if (!this.#cardView.hasWatermark) return;
+
+    const wm = this.#cardView.watermark;
+    const properties = this.#getWatermarkProperties(wm);
+
+    properties.forEach(([key, value]) => {
+      this.#updateCSSValue(key, value);
+    });
+  }
+
+  #getWatermarkProperties(watermark) {
+    return [
+      [CARD.style.dynamic.watermark.high.value.var, `${watermark.high}%`],
+      [CARD.style.dynamic.watermark.high.color.var, watermark.high_color],
+      [CARD.style.dynamic.watermark.low.value.var, `${watermark.low}%`],
+      [CARD.style.dynamic.watermark.low.color.var, watermark.low_color],
+      [CARD.style.dynamic.watermark.opacity.var, watermark.opacity],
+    ];
+  }
+
+  // === BADGE MANAGEMENT ===
+
+  #renderBadgeIcon(content) {
+    const isMdiIcon = content.includes('mdi:');
+    const containerClass = `${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class}`;
+
+    this.#domElements[CARD.htmlStructure.card.element].classList.toggle(containerClass, isMdiIcon);
+
+    if (isMdiIcon) {
+      this.#setBadgeIcon(content);
+    }
+  }
+
+  #renderBadgeColor(content) {
+    const backgroundColor = ThemeManager.adaptColor(content);
+    const color = 'var(--white-color)';
+    this.#setBadgeColor(color, backgroundColor);
+  }
+
+  #setBadgeIcon(icon) {
+    this.#updateElement(CARD.htmlStructure.elements.badge.icon.class, (el) => {
+      const currentIcon = el.getAttribute(CARD.style.icon.badge.default.attribute);
+      if (currentIcon !== icon) {
+        el.setAttribute(CARD.style.icon.badge.default.attribute, icon);
+      }
+    });
+  }
+
+  #setBadgeColor(color, backgroundColor) {
+    this.#updateElement(CARD.htmlStructure.card.element, (el) => {
+      const style = el.style;
+      const currentBgColor = style.getPropertyValue(CARD.style.dynamic.badge.backgroundColor.var);
+      const currentColor = style.getPropertyValue(CARD.style.dynamic.badge.color.var);
+
+      if (currentBgColor !== backgroundColor || currentColor !== color) {
+        style.setProperty(CARD.style.dynamic.badge.backgroundColor.var, backgroundColor);
+        style.setProperty(CARD.style.dynamic.badge.color.var, color);
+      }
+    });
+  }
+
+  // === ICON MANAGEMENT ===
+
+  #showIcon(iconFromJinja = null) {
+    const stateObj = this.#cardView.EntityStateObj;
+    const curIcon = iconFromJinja || this.#cardView.config.icon;
+    const stateObjIcon = this.#createStateObjForIcon(stateObj, curIcon);
+
+    this.#createAndSetIcon(stateObjIcon);
+  }
+
+  #createStateObjForIcon(stateObj, curIcon) {
+    if (stateObj) {
+      return this.#createStateObjFromExisting(stateObj, curIcon);
+    } else {
+      return this.#createFallbackStateObj(curIcon);
+    }
+  }
+
+  #createStateObjFromExisting(stateObj, curIcon) {
+    const hasIconOverride = curIcon !== null;
+    const hasPicture = stateObj?.attributes?.entity_picture;
+
+    const clonedAttributes = { ...stateObj.attributes };
+
+    if (hasPicture) {
+      delete clonedAttributes.icon;
+    } else if (hasIconOverride) {
+      clonedAttributes.icon = curIcon;
+    }
+
+    return {
+      ...stateObj,
+      attributes: clonedAttributes,
+    };
+  }
+
+  #createFallbackStateObj(curIcon) {
+    return {
+      entity_id: 'notfound.entity',
+      state: 'notfound',
+      attributes: {
+        icon: curIcon,
+      },
+    };
+  }
+
+  #createAndSetIcon(stateObjIcon) {
+    this.#icon = document.createElement('ha-state-icon');
+    this.#icon.hass = this.hass;
+    this.#icon.stateObj = stateObjIcon;
+
+    this.#domElements[CARD.htmlStructure.elements.icon.class].replaceChildren(this.#icon);
+  }
+
+  // === SHAPE MANAGEMENT ===
+
+  #manageShape() {
+    this.#domElements[CARD.htmlStructure.card.element].classList.toggle(
+      CARD.style.dynamic.hiddenComponent.shape.class,
+      !this.#cardView.hasVisibleShape
+    );
+  }
+
+  // === JINJA TEMPLATE RENDERING ===
+
+  #renderJinja(key, content) {
+    if (this.#debug) {
+      debugLog('👉 EntityProgressCard.#renderJinja()', key, content);
+    }
+
+    const renderHandlers = this.#getRenderHandlers(content);
+    const handler = renderHandlers[key];
+
+    if (handler) {
+      handler();
+    } else {
+      console.error(`Jinja - Unknown case: ${key}`);
+    }
+  }
+
+  #getRenderHandlers(content) {
+    return {
+      secondary: () => this.#renderSecondary(content),
+      name: () => this.#renderName(content),
+      badge_icon: () => this.#renderBadgeIcon(content),
+      badge_color: () => this.#renderBadgeColor(content),
+      icon: () => this.#showIcon(content),
+      percent: () => this.#updateCSSValue(CARD.style.dynamic.progressBar.size.var, `${content}%`),
+      color: () => this.#updateCSSValue(CARD.style.dynamic.iconAndShape.color.var, ThemeManager.adaptColor(content)),
+      bar_color: () => this.#updateCSSValue(CARD.style.dynamic.progressBar.color.var, ThemeManager.adaptColor(content)),
+    };
+  }
+
+  #renderSecondary(content) {
+    this.#renderTextContent(CARD.htmlStructure.elements.customInfo.class, `${content}`);
+  }
+
+  #renderName(content) {
+    this.#renderTextContent(CARD.htmlStructure.elements.name.class, `${content}`);
+  }
+
+  #renderTextContent(className, formattedContent) {
+    this.#updateElement(className, (el) => {
+      if (el.innerHTML !== formattedContent) {
+        el.innerHTML = formattedContent.trim();
+      }
+    });
+  }
+
+  // === TEMPLATE PROCESSING ===
+
+  async #processJinjaFields() {
+    if (!this.#resourceManager) {
+      return;
+    }
+
+    const templates = this.#getTemplateFields();
+
+    for (const [key, template] of Object.entries(templates)) {
+      if (!template.trim()) continue;
+
+      await this.#subscribeToTemplate(key, template);
+    }
+  }
+
+  #getTemplateFields() {
+    const config = this.#cardView.config;
+
+    return {
+      name: config.name || '',
+      secondary: config.secondary || '',
+      badge_icon: config.badge_icon || '',
+      badge_color: config.badge_color || '',
+      icon: config.icon || '',
+      percent: config.percent || '',
+      color: config.color || '',
+      bar_color: config.bar_color || '',
+    };
+  }
+
+  async #subscribeToTemplate(key, template) {
+    try {
+      const unsub = await this.hass.connection.subscribeMessage((msg) => this.#renderJinja(key, msg.result), {
+        type: 'render_template',
+        template: template,
+        variables: {},
+        timeout: 5.0,
+      });
+
+      this.#resourceManager.addSubscription(unsub, `template-${key}`);
+    } catch (error) {
+      console.error(`Failed to subscribe to template ${key}:`, error);
+    }
   }
 }
 
