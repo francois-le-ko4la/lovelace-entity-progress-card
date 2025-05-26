@@ -120,8 +120,8 @@ const CARD = {
       'zh-Hant': 'zh-TW',
     },
     separator: ' · ',
-    debug: { card: false, editor: true, interactionHandler: false, ressourceManager: false },
-    dev: true,
+    debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false },
+    dev: false,
   },
   htmlStructure: {
     card: { element: 'ha-card' },

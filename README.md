@@ -1584,6 +1584,95 @@ my_custom_theme:
 
 Once set, the progress bar background will reflect the new color consistently across all cards using this variable.
 
+## Entity Progress Card Template
+
+This card is designed to handle more advanced use cases that aren't fully supported by the base card.
+It avoids the need for custom helpers by allowing you to implement your desired mathematical modeling
+directly through templating.
+
+### 🎯 Purpose
+
+The Entity Progress Card Template provides maximum flexibility for rendering entities with a customizable
+progress bar, using dynamic content and calculations defined within your sensors or templates.
+
+### 🛠️ Available Jinja Variables
+
+| Variable      | Description                                                                  |
+| ------------- | ---------------------------------------------------------------------------- |
+| `secondary`   | Renders the secondary content (e.g., unit, status)                           |
+| `name`        | Renders the customized entity name                                           |
+| `badge_icon`  | Icon shown in the badge (can differ from the main icon)                      |
+| `badge_color` | Color of the badge                                                           |
+| `icon`        | Main icon                                                                    |
+| `percent`     | Numerical value defining the progress (as a percentage)                      |
+| `color`       | Dynamic color for icon and shape, adapted automatically using `ThemeManager` |
+| `bar_color`   | Progress bar color, also dynamically adapted using `ThemeManager`            |
+
+### ⚙️ Still Supported
+
+The following options remain fully compatible with this new card:
+
+- hide: Hide elements conditionally
+- xyz_action: Configure custom actions (tap, hold, etc.)
+
+### 🧠 Why Use This Card?
+
+This card is ideal for situations where:
+
+- You want to show calculated progress (e.g., level, usage, battery life)
+- You need to apply dynamic logic or math modeling directly in the card
+- The base card doesn't offer the required level of customization
+
+### 👉 Example
+
+```yaml
+type: custom:entity-progress-card-dev-template
+entity: light.led0
+icon: |-
+  {% if states('automation.secuswitch') == 'on' %}
+    mdi:ab-testing
+  {% else %}
+    mdi:abacus
+  {% endif %}
+name: "{{ state_attr('light.led0', 'friendly_name') }}"
+secondary: "{{ states('light.led0') }}"
+badge_icon: |-
+  {% if states('light.led0') == 'on' %}
+    mdi:ab-testing
+  {% else %}
+    mdi:library
+  {% endif %}
+badge_color: |-
+  {% if states('light.led0') == 'on' %}
+    green
+  {% else %}
+    grey
+  {% endif %}
+percent: |-
+  {% if states('light.led0') == 'on' %}
+    {{ (state_attr('light.led0', 'brightness') | float * 100 / 255) | round(2) }}
+  {% else %}
+    0
+  {% endif %}
+color: |-
+  {% if states('light.led0') == 'on' %}
+    orange
+  {% else %}
+    grey
+  {% endif %}
+bar_color: |-
+  {% if states('automation.secuswitch') == 'on' %}
+    yellow
+  {% else %}
+    red
+  {% endif %}
+watermark:
+  low: 10
+tap_action:
+  action: navigate
+  navigation_path: /config
+```
+
 ## 🌍 Language & Number Support
 
 🌟 Our goal is to make this card a seamless and intuitive tool for users worldwide, eliminating language barriers and ensuring proper data formatting for every region. If you have suggestions for additional languages or formatting improvements, we’re always open to feedback!
