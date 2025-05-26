@@ -1626,7 +1626,7 @@ This card is ideal for situations where:
 ### 👉 Example
 
 ```yaml
-type: custom:entity-progress-card-dev-template
+type: custom:entity-progress-card-template
 entity: light.led0
 icon: |-
   {% if states('automation.secuswitch') == 'on' %}
