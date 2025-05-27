@@ -5283,7 +5283,7 @@ class EntityProgressTemplate extends HTMLElement {
     this.#manageShape();
     this.#setupClickableTarget();
     this.#actionHelper.init(this.#resourceManager, this.#cardView.config, this.#clickableTarget);
-    if (this.#isDemoMode()) this.#processDemoValue();
+    if (EntityProgressTemplate.#isDemoMode()) this.#processDemoValue();
   }
 
   disconnectedCallback() {
@@ -5685,7 +5685,7 @@ class EntityProgressTemplate extends HTMLElement {
   }
 
   async #processJinjaFields() {
-    if (!this.#resourceManager || this.#isDemoMode()) {
+    if (!this.#resourceManager || EntityProgressTemplate.#isDemoMode()) {
       return;
     }
 
@@ -5725,7 +5725,7 @@ class EntityProgressTemplate extends HTMLElement {
       console.error(`Failed to subscribe to template ${key}:`, error);
     }
   }
-  #isDemoMode() {
+  static #isDemoMode() {
     return EntityProgressTemplate.#demoMode;
   }
 }
