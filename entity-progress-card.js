@@ -4564,23 +4564,14 @@ class EntityProgressCard extends HTMLElement {
     return document.createElement(CARD.meta.editor);
   }
 
-  static getStubConfig(hass) {
-    const wantedDomains = ['fan', 'cover', 'light', 'sensor'];
-    const batteryRegex = /battery/i;
+  static getStubEntity(hass) {
+    return Object.keys(hass.states).find((id) => /^(sensor\..*battery|fan\.|cover\.|light\.)/i.test(id)) || 'sensor.temperature';
+  }
 
-    const entity = Object.keys(hass.states).find((eid) => {
-      const domain = HassProviderSingleton.getEntityDomain(eid);
-      if (wantedDomains.includes(domain)) {
-        if (domain === 'sensor') {
-          return batteryRegex.test(eid);
-        }
-        return true;
-      }
-      return false;
-    });
+  static getStubConfig(hass) {
     return {
       type: `custom:${CARD.meta.typeName}`,
-      entity: entity || 'sensor.temperature',
+      entity: EntityProgressCard.getStubEntity(hass),
     };
   }
 
@@ -5263,6 +5254,7 @@ class TemplateCardView {
 }
 
 class EntityProgressTemplate extends HTMLElement {
+  static #demoMode = false;
   #debug = CARD.config.debug.card;
   #resourceManager = null;
   #icon = null;
@@ -5291,6 +5283,7 @@ class EntityProgressTemplate extends HTMLElement {
     this.#manageShape();
     this.#setupClickableTarget();
     this.#actionHelper.init(this.#resourceManager, this.#cardView.config, this.#clickableTarget);
+    if (this.#isDemoMode()) this.#processDemoValue();
   }
 
   disconnectedCallback() {
@@ -5314,16 +5307,17 @@ class EntityProgressTemplate extends HTMLElement {
   }
 
   static getStubConfig(hass) {
+    EntityProgressTemplate.#demoMode = true;
     return {
       type: `custom:${CARD.meta.typeName}-template`,
+      entity: EntityProgressCard.getStubEntity(hass),
       icon: 'mdi:washing-machine',
       name: 'Entity Progress Card',
       secondary: 'Template',
       badge_icon: 'mdi:update',
       badge_color: 'green',
-      percent: '50',
+      percent: 50,
       force_circular_background: true,
-      _gallery_mode: true,
     };
   }
   /**
@@ -5678,8 +5672,20 @@ class EntityProgressTemplate extends HTMLElement {
 
   // === TEMPLATE PROCESSING ===
 
+  #processDemoValue() {
+    if (this.#debug) debugLog('👉 Applying demo values');
+
+    const templates = this.#getTemplateFields();
+
+    Object.entries(templates).forEach(([key, value]) => {
+      if (value !== null && value !== undefined) {
+        this.#renderJinja(key, value);
+      }
+    });
+  }
+
   async #processJinjaFields() {
-    if (!this.#resourceManager || this.#isGalleryMode()) {
+    if (!this.#resourceManager || this.#isDemoMode()) {
       return;
     }
 
@@ -5687,7 +5693,7 @@ class EntityProgressTemplate extends HTMLElement {
 
     for (const [key, template] of Object.entries(templates)) {
       if (!template.trim()) continue;
-      
+
       await this.#subscribeToTemplate(key, template);
     }
   }
@@ -5719,8 +5725,8 @@ class EntityProgressTemplate extends HTMLElement {
       console.error(`Failed to subscribe to template ${key}:`, error);
     }
   }
-  #isGalleryMode() {
-    return this.#cardView?.config?._gallery_mode === true;
+  #isDemoMode() {
+    return EntityProgressTemplate.#demoMode;
   }
 }
 
