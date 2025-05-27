@@ -5313,8 +5313,19 @@ class EntityProgressTemplate extends HTMLElement {
     return this.#hassProvider.hass;
   }
 
-  // === PUBLIC API METHODS ===
-
+  static getStubConfig(hass) {
+    return {
+      type: `custom:${CARD.meta.typeName}-template`,
+      icon: 'mdi:washing-machine',
+      name: 'Entity Progress Card',
+      secondary: 'Template',
+      badge_icon: 'mdi:update',
+      badge_color: 'green',
+      percent: '50',
+      force_circular_background: true,
+      _gallery_mode: true,
+    };
+  }
   /**
    * Returns the number of grid rows for the card size based on the current layout.
    *
@@ -5624,7 +5635,7 @@ class EntityProgressTemplate extends HTMLElement {
   // === JINJA TEMPLATE RENDERING ===
 
   #renderJinja(key, content) {
-    if (this.#debug) debugLog('👉 EntityProgressCardTemplate.#renderJinja()', key);
+    if (this.#debug) debugLog('👉 EntityProgressTemplate.#renderJinja()', key);
 
     const renderHandlers = this.#getRenderHandlers(content);
     const handler = renderHandlers[key];
@@ -5668,7 +5679,7 @@ class EntityProgressTemplate extends HTMLElement {
   // === TEMPLATE PROCESSING ===
 
   async #processJinjaFields() {
-    if (!this.#resourceManager) {
+    if (!this.#resourceManager || this.#isGalleryMode()) {
       return;
     }
 
@@ -5676,7 +5687,7 @@ class EntityProgressTemplate extends HTMLElement {
 
     for (const [key, template] of Object.entries(templates)) {
       if (!template.trim()) continue;
-
+      
       await this.#subscribeToTemplate(key, template);
     }
   }
@@ -5707,6 +5718,9 @@ class EntityProgressTemplate extends HTMLElement {
     } catch (error) {
       console.error(`Failed to subscribe to template ${key}:`, error);
     }
+  }
+  #isGalleryMode() {
+    return this.#cardView?.config?._gallery_mode === true;
   }
 }
 
