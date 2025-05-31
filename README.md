@@ -438,7 +438,7 @@ _Order of Priority for the Icon:_
 
 #### `force_circular_background`
 
-> **`force_circular_background`** boolean _(optional)_
+> **`force_circular_background`** boolean _(optional: false)_
 
 This option forces a **circular background** to be displayed behind the icon shown on the card.
 
@@ -454,6 +454,22 @@ _Example_:
 type: custom:entity-progress-card
 entity: timer.living_room
 force_circular_background: true
+```
+
+#### `frameless` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#frameless-)
+
+> **`frameless`** boolean _(optional, default: false)_
+
+Allows you to remove the default Lovelace card styling: the border and background color.
+When set to `true`, the card blends seamlessly into the interface or can be embedded in other designs
+without visual interference.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+entity: timer.living_room
+frameless: true
 ```
 
 #### `color`
@@ -498,8 +514,12 @@ _Map definition:_
 
 - min [number] (required): The minimum value for this range.
 - max [number] (required): The maximum value for this range.
-- color [string] (required): The color of the icon and the progress bar.
+- color [string] (*): The color of the icon and the progress bar.
+- icon_color [string] (*): Color specifically for the icon.
+- bar_color [string] (*): Color specifically for the progress bar.
 - icon [string] (optional): The icon to display.
+
+(*): each object in the custom_theme list must contain at least one of this following color-related keys.
 
 _Order of Priority for the Icon:_
 
@@ -1629,14 +1649,15 @@ progress bar, using dynamic content and calculations defined within your sensors
 
 The following options remain fully compatible with this new card:
 
-| **Variable**     | **Description**                                                  |
-|------------------|------------------------------------------------------------------|
-| `hide`           | Hide elements conditionally                                      |
-| `xyz_action`     | Configure custom actions (e.g., `tap`, `hold`, etc.)             |
-| `bar_orientation`| Define the direction of the progress bar (e.g., `ltr`, `rtl`)    |
-| `bar_size`       | Customize the size or thickness of the progress bar              |
-| `layout`         | Adjust the overall layout (e.g., `horizontal`, `vertical`)       |
-| `watermark`      | Add a background watermark or overlay element                    |
+| **Variable**      | **Description**                                                               |
+| ----------------- | ----------------------------------------------------------------------------- |
+| `hide`            | Hide elements conditionally                                                   |
+| `xyz_action`      | Configure custom actions (e.g., `tap`, `hold`, etc.)                          |
+| `bar_orientation` | Define the direction of the progress bar (e.g., `ltr`, `rtl`)                 |
+| `bar_size`        | Customize the size or thickness of the progress bar                           |
+| `layout`          | Adjust the overall layout (e.g., `horizontal`, `vertical`)                    |
+| `watermark`       | Add a background watermark or overlay element                                 |
+| `frameless`       | Remove the default card border and background for a seamless, flat appearance |
 
 ### 🧠 Why Use This Card?
 
