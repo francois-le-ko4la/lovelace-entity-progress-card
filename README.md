@@ -1717,6 +1717,47 @@ tap_action:
   navigation_path: /config
 ```
 
+## Entity Progress Badge
+
+This badge is designed to display the progress of an entity in a compact and customizable badge format
+with a dynamic progress bar.
+
+### 🎯 Purpose
+
+The Entity Progress Badge provides a clear visual representation of an entity’s progress (e.g., battery
+level, usage percentage, completion status) in a small badge format.
+
+It’s perfect for dashboards or views where space is limited but you still want an informative and
+dynamic progress indicator.
+
+### ⚙️ Supported Options
+
+| Option              | Description                                                       |
+| ------------------- | ----------------------------------------------------------------- |
+| `entity`            | The entity to display (e.g., `fan.kitchen`)                       |
+| `name`              | Custom name to display (e.g., `"kitchen"`)                        |
+| `unit`              | Unit to show next to the value (e.g., `"%"`)                      |
+| `decimal`           | Number of decimal places to display (e.g., `1`)                   |
+| `min_value`         | Minimum value for the progress calculation or scale (e.g., `0`)   |
+| `max_value`         | Maximum value for the progress calculation or scale (e.g., `100`) |
+| `hide`              | List of elements to hide (e.g., `["icon", "value"...]`)           |
+| `theme`             | Theme to apply (e.g., `"light"`)                                  |
+| `icon`              | Icon to display on the badge (e.g., `mdi:account-group`)          |
+| `tap_action`        | Define an action on badge tap                                     |
+| `hold_action`       | Define an action on long press                                    |
+| `double_tap_action` | Define an action on double tap                                    |
+| `bar_orientation`   | Orientation of the progress bar (e.g., ltr, rtl.                  |
+| `layout`            | Overall badge layout (e.g., icon + bar, icon only)                |
+| `frameless`         | Remove border and background for a cleaner appearance             |
+
+### 🧠 Why Use This Badge?
+
+Use this badge when:
+
+- You need to embed progress directly into a badge that’s easy to read
+- You want flexible customization with dynamic colors
+- The default badge doesn’t offer enough flexibility or features
+
 ## 🌍 Language & Number Support
 
 🌟 Our goal is to make this card a seamless and intuitive tool for users worldwide, eliminating language barriers and ensuring proper data formatting for every region. If you have suggestions for additional languages or formatting improvements, we’re always open to feedback!
