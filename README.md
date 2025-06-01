@@ -1746,9 +1746,21 @@ dynamic progress indicator.
 | `tap_action`        | Define an action on badge tap                                     |
 | `hold_action`       | Define an action on long press                                    |
 | `double_tap_action` | Define an action on double tap                                    |
-| `bar_orientation`   | Orientation of the progress bar (e.g., ltr, rtl.                  |
+| `bar_orientation`   | Orientation of the progress bar (e.g., ltr, rtl)                  |
 | `layout`            | Overall badge layout (e.g., icon + bar, icon only)                |
 | `frameless`         | Remove border and background for a cleaner appearance             |
+
+We use the same syntaxe than the card.
+
+### 👉 Example
+
+```yaml
+type: custom:entity-progress-badge
+entity: sensor.xxx
+name: Kitchen
+decimal: 1
+icon: mdi:air-conditioner
+```
 
 ### 🧠 Why Use This Badge?
 

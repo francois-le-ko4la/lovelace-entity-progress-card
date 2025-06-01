@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.4.2-RC2
+ * @version 1.4.2
  *
  */
 
@@ -23,13 +23,24 @@
  * PARAMETERS
  */
 
-const VERSION = '1.4.2-RC2';
+const VERSION = '1.4.2';
 const CARD = {
   meta: {
-    typeName: 'entity-progress-card',
-    name: 'Entity Progress Card',
-    description: 'A cool custom card to show current entity status with a progress bar.',
-    editor: 'entity-progress-card-editor',
+    card: {
+      typeName: 'entity-progress-card',
+      name: 'Entity Progress Card',
+      description: 'A cool custom card to show current entity status with a progress bar.',
+      editor: 'entity-progress-card-editor',
+    },
+    template: {
+      typeName: 'entity-progress-card-template',
+      name: 'Entity Progress Card (Template)',
+      description: 'A cool custom card to show current entity status with a progress bar.',
+    },
+    badge: {
+      typeName: 'entity-progress-badge',
+      editor: 'entity-progress-badge-editor',
+    },
   },
   config: {
     language: 'en',
@@ -120,8 +131,8 @@ const CARD = {
       'zh-Hant': 'zh-TW',
     },
     separator: ' · ',
-    debug: { card: true, editor: false, interactionHandler: false, ressourceManager: false },
-    dev: true,
+    debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false },
+    dev: false,
   },
   htmlStructure: {
     card: { element: 'ha-card' },
@@ -397,7 +408,7 @@ CARD.config.defaults = {
 };
 
 CARD.console = {
-  message: `%c✨${CARD.meta.typeName.toUpperCase()} ${VERSION} IS INSTALLED.`,
+  message: `%c✨${CARD.meta.card.typeName.toUpperCase()} ${VERSION} IS INSTALLED.`,
   css: 'color:orange; background-color:black; font-weight: bold;',
   link: '      For more details, check the README: https://github.com/francois-le-ko4la/lovelace-entity-progress-card',
 };
@@ -2771,9 +2782,14 @@ const CARD_EDITOR_CSS = `
  */
 
 if (CARD.config.dev) {
-  CARD.meta.typeName = `${CARD.meta.typeName}-dev`;
-  CARD.meta.name = `${CARD.meta.typeName} (dev)`;
-  CARD.meta.editor = `${CARD.meta.editor}-dev`;
+  CARD.meta.card.typeName = `${CARD.meta.card.typeName}-dev`;
+  CARD.meta.card.name = `${CARD.meta.card.typeName} (dev)`;
+  CARD.meta.card.editor = `${CARD.meta.card.editor}-dev`;
+  CARD.meta.template.typeName = `${CARD.meta.template.typeName}-dev`;
+  CARD.meta.template.name = `${CARD.meta.template.typeName} (dev)`;
+  CARD.meta.badge.typeName = `${CARD.meta.badge.typeName}-dev`;
+  CARD.meta.badge.editor = `${CARD.meta.badge.editor}-dev`;
+
 }
 /******************************************************************************************
  * Debug
@@ -4385,7 +4401,7 @@ class ActionHelper {
   }
 
   #attachListener(elem) {
-    if (this.#debug) console.log('👉 ActionHelper.#attachListener()');
+    if (this.#debug) debugLog('👉 ActionHelper.#attachListener()');
     this.#resourceManager.addEventListener(elem, 'mousedown', this.#boundHandlers.mousedown);
     this.#resourceManager.addEventListener(elem, 'mouseup', this.#boundHandlers.mouseup);
     this.#resourceManager.addEventListener(elem, 'mousemove', this.#boundHandlers.mousemove);
@@ -4395,15 +4411,15 @@ class ActionHelper {
   }
 
   #handleMouseDown(ev) {
-    if (this.#debug) console.log('👉 ActionHelper.handleMouseDown()');
+    if (this.#debug) debugLog('👉 ActionHelper.handleMouseDown()');
     const localName = ev.composedPath()[0].localName;
-    if (this.#debug) console.log('    localName', localName);
+    if (this.#debug) debugLog('    localName', localName);
     this.#clickSource = !this.#disableIconTap
       ? this.#iconClickSources.has(localName)
         ? CARD.interactions.event.from.icon
         : CARD.interactions.event.from.card
       : CARD.interactions.event.from.card;
-    if (this.#debug) console.log('    clickSource: ', this.#clickSource);
+    if (this.#debug) debugLog('    clickSource: ', this.#clickSource);
 
     this.#downTime = Date.now();
     this.#startX = ev.clientX;
@@ -4474,14 +4490,14 @@ class ActionHelper {
   }
 
   #fireAction(originalEvent, currentAction) {
-    if (this.#debug) console.log('👉 ActionHelper.#fireAction()');
-    if (this.#debug) console.log('  📎 originalEvent: ', originalEvent);
-    if (this.#debug) console.log('  📎 original action: ', currentAction);
-    if (this.#debug) console.log('    clickSource: ', this.#clickSource);
+    if (this.#debug) debugLog('👉 ActionHelper.#fireAction()');
+    if (this.#debug) debugLog('  📎 originalEvent: ', originalEvent);
+    if (this.#debug) debugLog('  📎 original action: ', currentAction);
+    if (this.#debug) debugLog('    clickSource: ', this.#clickSource);
 
     const prefixAction = this.#clickSource === CARD.interactions.event.from.icon ? `${CARD.interactions.event.from.icon}_` : '';
     let fullAction = `${prefixAction}${currentAction}`;
-    if (this.#debug) console.log('  📎 fullAction: ', fullAction);
+    if (this.#debug) debugLog('  📎 fullAction: ', fullAction);
 
     let currentConfig = null;
 
@@ -4536,7 +4552,7 @@ class EntityProgressCardBase extends HTMLElement {
   static _cardStyle = CARD_CSS;
   static _hasDisabledIconTap = false;
   static _hasDisabledBadge = false;
-  static _baseClass = CARD.meta.typeName;
+  static _baseClass = CARD.meta.card.typeName;
   static _cardLayout = CARD.layout.orientations;
   _debug = CARD.config.debug.card;
   _resourceManager = null;
@@ -5259,12 +5275,12 @@ class EntityProgressCardBase extends HTMLElement {
 }
 
 class EntityProgressCard extends EntityProgressCardBase {
-  static _baseClass = CARD.meta.typeName;
+  static _baseClass = CARD.meta.card.typeName;
 
   // === STATIC METHODS ===
 
   static getConfigElement() {
-    return document.createElement(CARD.meta.editor);
+    return document.createElement(CARD.meta.card.editor);
   }
 
   static getStubEntity(hass) {
@@ -5273,14 +5289,14 @@ class EntityProgressCard extends EntityProgressCardBase {
 
   static getStubConfig(hass) {
     return {
-      type: `custom:${CARD.meta.typeName}`,
+      type: `custom:${CARD.meta.card.typeName}`,
       entity: EntityProgressCard.getStubEntity(hass),
     };
   }
 }
 
 class EntityProgressBadge extends EntityProgressCardBase {
-  static _baseClass = `${CARD.meta.typeName}-badge`;
+  static _baseClass = CARD.meta.badge.typeName;
   static _hasDisabledIconTap = true;
   static _hasDisabledBadge = true;
   static _cardLayout = CARD.layout.orientations.horizontal.grid;
@@ -5364,7 +5380,7 @@ class EntityProgressBadge extends EntityProgressCardBase {
   }
 
   static getConfigElement() {
-    return document.createElement(`${CARD.meta.editor}-badge`);
+    return document.createElement(CARD.meta.badge.editor);
   }
 
   getCardSize() {
@@ -5383,8 +5399,8 @@ class EntityProgressBadge extends EntityProgressCardBase {
  */
 EntityProgressCardBase.version = VERSION;
 EntityProgressCardBase._moduleLoaded = false;
-customElements.define(CARD.meta.typeName, EntityProgressCard);
-customElements.define(`${CARD.meta.typeName}-badge`, EntityProgressBadge);
+customElements.define(CARD.meta.card.typeName, EntityProgressCard);
+customElements.define(CARD.meta.badge.typeName, EntityProgressBadge);
 
 
 /** --------------------------------------------------------------------------
@@ -5392,10 +5408,10 @@ customElements.define(`${CARD.meta.typeName}-badge`, EntityProgressBadge);
  */
 window.customCards = window.customCards || []; // Create the list if it doesn't exist. Careful not to overwrite it
 window.customCards.push({
-  type: CARD.meta.typeName,
-  name: CARD.meta.name,
+  type: CARD.meta.card.typeName,
+  name: CARD.meta.card.name,
   preview: true,
-  description: CARD.meta.description,
+  description: CARD.meta.card.description,
 });
 
 
@@ -5593,7 +5609,7 @@ class EntityProgressTemplate extends EntityProgressCardBase {
   static getStubConfig(hass) {
     EntityProgressTemplate._demoMode = true;
     return {
-      type: `custom:${CARD.meta.typeName}-template`,
+      type: `custom:${CARD.meta.template.typeName}`,
       entity: EntityProgressCard.getStubEntity(hass),
       icon: 'mdi:washing-machine',
       name: 'Entity Progress Card',
@@ -5792,16 +5808,16 @@ class EntityProgressTemplate extends EntityProgressCardBase {
  */
 EntityProgressTemplate.version = VERSION;
 EntityProgressTemplate._moduleLoaded = false;
-customElements.define(`${CARD.meta.typeName}-template`, EntityProgressTemplate);
+customElements.define(CARD.meta.template.typeName, EntityProgressTemplate);
 
 /** --------------------------------------------------------------------------
  * Registers the custom card in the global `customCards` array for use in Home Assistant.
  */
 window.customCards.push({
-  type: `${CARD.meta.typeName}-template`,
-  name: `${CARD.meta.name} Template`,
+  type: CARD.meta.template.typeName,
+  name: CARD.meta.template.name,
   preview: true,
-  description: CARD.meta.description,
+  description: CARD.meta.template.description,
 });
 
 /** --------------------------------------------------------------------------
@@ -6268,8 +6284,6 @@ class EntityProgressCardEditor extends HTMLElement {
   #onChanged(changedEvent) {
     if (EntityProgressCardEditor.#debug) debugLog('👉 editor.#onChanged()');
     if (EntityProgressCardEditor.#debug) debugLog('  📎 ', changedEvent);
-    if (EntityProgressCardEditor.#debug)
-      debugLog(`  📎 ${changedEvent.target.id} -> ${changedEvent.target.value !== undefined ? changedEvent.target.value : changedEvent.detail}`);
 
     const configUpdateEventHandler = new ConfigUpdateEventHandler(Object.assign({}, this.#config));
     const newConfig = configUpdateEventHandler.updateConfig(changedEvent);
@@ -6615,5 +6629,5 @@ class EntityProgressBadgeEditor extends EntityProgressCardEditor {
 /** --------------------------------------------------------------------------
  * Registers the custom element for the EntityProgressCardEditor editor.
  */
-customElements.define(CARD.meta.editor, EntityProgressCardEditor);
-customElements.define(`${CARD.meta.editor}-badge`, EntityProgressBadgeEditor);
+customElements.define(CARD.meta.card.editor, EntityProgressCardEditor);
+customElements.define(CARD.meta.badge.editor, EntityProgressBadgeEditor);
