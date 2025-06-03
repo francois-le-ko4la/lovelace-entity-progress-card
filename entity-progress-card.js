@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.4.2
+ * @version 1.4.3
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.4.2';
+const VERSION = '1.4.3';
 const CARD = {
   meta: {
     card: {
@@ -131,7 +131,7 @@ const CARD = {
       'zh-Hant': 'zh-TW',
     },
     separator: ' · ',
-    debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false },
+    debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false, hass: false },
     dev: false,
   },
   htmlStructure: {
@@ -2778,7 +2778,7 @@ const CARD_EDITOR_CSS = `
 `;
 
 /******************************************************************************************
- * Dev mode
+ * 🛠️ Dev mode
  */
 
 if (CARD.config.dev) {
@@ -2791,27 +2791,136 @@ if (CARD.config.dev) {
   CARD.meta.badge.editor = `${CARD.meta.badge.editor}-dev`;
 
 }
+
 /******************************************************************************************
- * Debug
- *
- * @param {string} msg
- * @param {any} val
+ * 📦 Logging utils
+ ******************************************************************************************/
+
+/******************************************************************************************
+ * 🛠️ Logger
  */
-const debugLog = (msg, val) => {
-  if (val !== undefined && val !== null) {
-    console.debug(msg, val);
-  } else {
-    console.debug(msg);
-  }
+
+const Logger = {
+  create(name, level = 'debug') {
+    const levels = { error: 0, warn: 1, info: 2, debug: 3 };
+    const currentLevel = levels[level] || 3;
+
+    const shouldLog = (logLevel) => levels[logLevel] <= currentLevel;
+
+    const loggerInstance = {
+      name,
+      level,
+
+      debug: (msg, data) => shouldLog('debug') && console.debug(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
+      info: (msg, data) => shouldLog('info') && console.info(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
+      warn: (msg, data) => shouldLog('warn') && console.warn(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
+      error: (msg, data) => shouldLog('error') && console.error(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
+
+      wrap: (fn, fnName) => {
+        return async (...args) => {
+          shouldLog('debug') && console.debug(`[${name}] 👉 ${fnName}`);
+          const start = performance.now();
+
+          try {
+            const result = await fn(...args);
+            const duration = (performance.now() - start).toFixed(2);
+            shouldLog('debug') && console.debug(`[${name}] ✅ ${fnName} (${duration}ms)`);
+            return result;
+          } catch (error) {
+            const duration = (performance.now() - start).toFixed(2);
+            shouldLog('error') && console.error(`[${name}] ❌ ${fnName} failed (${duration}ms)`, error);
+            throw error;
+          }
+        };
+      },
+
+      wrapAll: (ctx, methodNames) => {
+        methodNames.forEach((method) => {
+          if (typeof ctx[method] === 'function') {
+            ctx[method] = loggerInstance.wrap(ctx[method].bind(ctx), method);
+          }
+        });
+      },
+
+      state: (label, hass, config) => {
+        if (!shouldLog('debug')) return;
+        console.debug(`[${name}] 📊 ${label}`, {
+          hasHass: !!hass,
+          hasConfig: !!config,
+          entities: config?.entities?.length || 0,
+          connected: document.body.contains ? 'unknown' : 'checking',
+        });
+      },
+    };
+
+    return loggerInstance;
+  },
 };
 
-/******************************************************************************************
- * Helper class for formatting value && unit.
- * This class uses `Value`, `Unit`, and `Decimal` objects to manage and validate its internal data.
- *
- * @class NumberFormatter
- */
+function initLogger(ctx, debugFlag, methodNames = []) {
+  const className = ctx.constructor.name;
+  const logger = Logger.create(className, debugFlag ? 'debug' : 'info');
 
+  if (debugFlag) {
+    logger.wrapAll(ctx, methodNames);
+    logger.debug(`${className} initialized`);
+  }
+
+  return logger;
+}
+
+/******************************************************************************************
+ * 📦 Components registration
+ ******************************************************************************************/
+
+/******************************************************************************************
+ * 🛠️ RegistrationHelper
+ * ========================================================================================
+ * 
+ * ✅ Helper to register component.
+ * 
+ * @class
+ */
+class RegistrationHelper {
+  static #targetKey = {
+    customCards: 'customCards',
+    customBadges: 'customBadges',
+  };
+
+  static #registerComponent(component, targetKey) {
+    window[targetKey] = window[targetKey] || [];
+    window[targetKey].push({
+      type: component.typeName,
+      name: component.name,
+      preview: true,
+      description: component.description,
+    });
+  }
+
+  static registerCard(card) {
+    RegistrationHelper.#registerComponent(card, RegistrationHelper.#targetKey.customCards);
+  }
+
+  static registerBadge(badge) {
+    RegistrationHelper.#registerComponent(badge, RegistrationHelper.#targetKey.customBadges);
+  }
+}
+
+/******************************************************************************************
+ * 📦 CARD LIB
+ ******************************************************************************************/
+
+/******************************************************************************************
+ * 🛠️ NumberFormatter
+ * ========================================================================================
+ * 
+ * ✅ class for formatting value && unit.
+ * 
+ * This class uses `Value`, `Unit`, and `Decimal` objects to manage and validate its
+ * internal data.
+ * 
+ * @class
+ */
 class NumberFormatter {
   static unitsNoSpace = {
     'fr-FR': new Set(['j', 'd', 'h', 'min', 'ms', 'μs', '°']),
@@ -2886,12 +2995,16 @@ class NumberFormatter {
   }
 }
 
-/**
- * Helper class for managing numeric values.
+/******************************************************************************************
+ * 🛠️ ValueHelper
+ * ========================================================================================
+ * 
+ * ✅ Helper class for managing numeric values.
  * This class validates and stor a numeric value.
- *
- * @class ValueHelper
+ * 
+ * @class
  */
+
 class ValueHelper {
   #value = null;
   #isValid = false;
@@ -2900,6 +3013,8 @@ class ValueHelper {
   constructor(newValue = null) {
     if (ValueHelper.#validate(newValue)) this.#defaultValue = newValue;
   }
+
+  // === PUBLIC GETTERS / SETTERS ===
 
   set value(newValue) {
     this.#isValid = ValueHelper.#validate(newValue); // Appel à la méthode statique
@@ -2912,18 +3027,20 @@ class ValueHelper {
     return this.#isValid;
   }
 
-  /******************************************************************************************
-   * Validates if a value is a valid float.
-   */
+  // === VALIDATION ===
+
   static #validate(value) {
     return Number.isFinite(value);
   }
 }
 
-/**
- * Represents a non-negative integer value that can be valid or invalid.
- *
- * @class Decimal
+/******************************************************************************************
+ * 🛠️ DecimalHelper
+ * ========================================================================================
+ * 
+ * ✅ Represents a non-negative integer value that can be valid or invalid.
+ * 
+ * @class
  */
 class DecimalHelper {
   #value = CARD.config.decimal.percentage;
@@ -2933,6 +3050,9 @@ class DecimalHelper {
   constructor(newValue = null) {
     if (DecimalHelper.#validate(newValue)) this.#defaultValue = newValue;
   }
+
+  // === PUBLIC GETTERS / SETTERS ===
+
   set value(newValue) {
     this.#isValid = DecimalHelper.#validate(newValue);
     this.#value = this.#isValid ? newValue : null;
@@ -2944,22 +3064,26 @@ class DecimalHelper {
     return this.#isValid;
   }
 
-  /******************************************************************************************
-   * Validates if a value is a valid non-negative integer.
-   */
+  // === VALIDATION ===
+
   static #validate(value) {
     return Number.isInteger(value) && value >= 0;
   }
 }
 
-/**
- * Represents a unit of measurement, stored as a string.
- *
- * @class Unit
+/******************************************************************************************
+ * 🛠️ UnitHelper
+ * ========================================================================================
+ * 
+ * ✅ Represents a unit of measurement, stored as a string.
+ * 
+ * @class
  */
 class UnitHelper {
   #value = CARD.config.unit.default;
   #isDisabled = false;
+
+  // === PUBLIC GETTERS / SETTERS ===
 
   set value(newValue) {
     this.#value = newValue.trim() ?? CARD.config.unit.default;
@@ -2979,16 +3103,21 @@ class UnitHelper {
   get isFlexTimerUnit() {
     return this.#value.toLowerCase() === CARD.config.unit.flexTimer;
   }
+
+  // === PUBLIC API METHODS ===
+
   toString() {
     return this.#isDisabled ? '' : this.#value;
   }
 }
 
-/**
- * Helper class for calculating and formatting percentages.
- * This class uses `Value`, `Unit`, and `Decimal` objects to manage and validate its internal data.
- *
- * @class PercentHelper
+/******************************************************************************************
+ * 🛠️ PercentHelper
+ * ========================================================================================
+ * 
+ * ✅ class for calculating and formatting percentages.
+ * 
+ * @class
  */
 class PercentHelper {
   #hassProvider = null;
@@ -3006,9 +3135,8 @@ class PercentHelper {
     this.#hassProvider = HassProviderSingleton.getInstance();
   }
 
-  /******************************************************************************************
-   * Getter/Setter
-   */
+  // === PUBLIC GETTERS / SETTERS ===
+
   set isTimer(newValue) {
     this.#isTimer = typeof newValue === 'boolean' ? newValue : false;
   }
@@ -3084,6 +3212,9 @@ class PercentHelper {
   get processedValue() {
     return this.unit === CARD.config.unit.default ? this.percent : this.actual;
   }
+
+  // === PUBLIC API METHODS ===
+
   valueForThemes(valueBasedOnPercentage) {
     /****************************************************************************************
      * Calculates the value to display based on the selected theme and unit system.
@@ -3114,10 +3245,13 @@ class PercentHelper {
   }
 }
 
-/**
- * Manages the theme and its associated icon and color based on a percentage value.
- *
- * @class ThemeManager
+/******************************************************************************************
+ * 🛠️ ThemeManager
+ * ========================================================================================
+ * 
+ * ✅ Manages the theme and its associated icon and color based on a percentage value.
+ * 
+ * @class
  */
 class ThemeManager {
   #theme = null;
@@ -3130,9 +3264,8 @@ class ThemeManager {
   #isBasedOnPercentage = false;
   #currentStyle = null;
 
-  /******************************************************************************************
-   * Getter/Setter
-   */
+  // === PUBLIC GETTERS / SETTERS ===
+
   set theme(newTheme) {
     const themeMap = {
       battery: 'optimal_when_high',
@@ -3191,12 +3324,8 @@ class ThemeManager {
     return this.#barColor;
   }
 
-  /******************************************************************************************
-   * Updates the icon and color based on the current theme and percentage.
-   * This method calculates the appropriate icon and color from the `THEME` object based on the percentage value.
-   *
-   * @private
-   */
+  // === PRIVATE METHODS ===
+
   #refresh() {
     if (!this.#isValid) return;
     const applyStyle = this.isLinear ? this.#setLinearStyle : this.#setStyle;
@@ -3246,21 +3375,28 @@ class ThemeManager {
       return true;
     });
   }
+
+  // === PUBLIC API METHODS ===
+
   static adaptColor(curColor) {
     return curColor == null ? null : DEF_COLORS.has(curColor) ? `var(--${curColor}-color)` : curColor;
   }
 }
 
-/**
- * Provides access to the Home Assistant object.
+/******************************************************************************************
+ * 🛠️ HassProviderSingleton
+ * ========================================================================================
+ * 
+ * ✅ Provides access to the Home Assistant object.
  * This class implements a singleton pattern to ensure only one instance exists.
- *
- * @class HassProvider
+ * 
+ * @class
  */
 class HassProviderSingleton {
   static #instance = null;
   static #allowInit = false;
-
+  #debug = CARD.config.debug.hass;
+  #log = null;
   #hass = null;
   #isValid = false;
 
@@ -3268,21 +3404,17 @@ class HassProviderSingleton {
     if (!HassProviderSingleton.#allowInit) {
       throw new Error('Use HassProviderSingleton.getInstance() instead of new.');
     }
+    this.#log = Logger.create('HassProviderSingleton', this.#debug ? 'debug' : 'info');
     HassProviderSingleton.#allowInit = false;
   }
 
-  static getInstance() {
-    if (!HassProviderSingleton.#instance) {
-      HassProviderSingleton.#allowInit = true;
-      HassProviderSingleton.#instance = new HassProviderSingleton();
-    }
-    return HassProviderSingleton.#instance;
-  }
+  // === PUBLIC GETTERS / SETTERS ===
 
   set hass(hass) {
     if (!hass) return;
     this.#hass = hass;
     this.#isValid = true;
+    this.#log.debug('HASS updated!');
   }
   get hass() {
     return this.#hass;
@@ -3318,6 +3450,17 @@ class HassProviderSingleton {
     const [year, month] = (this.version ?? '0.0').split('.').map(Number);
     return year > 2025 || (year === 2025 && month >= 3);
   }
+
+  // === PUBLIC API METHODS ===
+
+  static getInstance() {
+    if (!HassProviderSingleton.#instance) {
+      HassProviderSingleton.#allowInit = true;
+      HassProviderSingleton.#instance = new HassProviderSingleton();
+    }
+    return HassProviderSingleton.#instance;
+  }
+
   getEntityStateObj(entityId) {
     return this.#hass?.states?.[entityId] ?? null;
   }
@@ -3379,21 +3522,92 @@ class HassProviderSingleton {
     const attributes = this.getEntityStateObj(entityId)?.attributes ?? {};
 
     return Object.fromEntries(
-      Object.entries(attributes).filter(([_, val]) => { // eslint-disable-line no-unused-vars
-        return typeof val === 'number' || (typeof val === 'string' && !isNaN(val) && val.trim() !== '');
-      }).map(([key, val]) => {
-        const num = typeof val === 'number' ? val : parseFloat(val);
-        return [key, num];
-      })
+      Object.entries(attributes)
+        .filter(([_, val]) => { // eslint-disable-line no-unused-vars
+          return typeof val === 'number' || (typeof val === 'string' && !isNaN(val) && val.trim() !== '');
+        })
+        .map(([key, val]) => {
+          const num = typeof val === 'number' ? val : parseFloat(val);
+          return [key, num];
+        })
     );
   }
 }
 
-/**
- * Helper class for managing entities.
+class ChangeTracker {
+  #debug = CARD.config.debug.hass;
+  #log = null;
+  #firstTime = true;
+  #watchedEntities = new Set();
+  #entityCache = {};
+  #updated = false;
+
+  constructor() {
+    this.#log = Logger.create('ChangeTracker', this.#debug ? 'debug' : 'info');
+  }
+  // === PUBLIC GETTERS / SETTERS ===
+
+  set hass(hass) {
+    this.#updated = false;
+    if (!hass) return;
+
+    if (this._hasChanged(hass)) {
+      this._updateCache(hass);
+      this.#updated = true;
+      this.#log.debug('HASS need update...!');
+    }
+  }
+
+  get isUpdated() {
+    return this.#updated;
+  }
+
+  // === PRIVATE METHODS ===
+
+  _hasChanged(newHass) {
+    if (this.#firstTime) {
+      this.#firstTime = false;
+      return true;
+    }
+    if (!this.#watchedEntities || this.#watchedEntities.size === 0) return true;
+
+    for (const entityId of this.#watchedEntities) {
+      const newState = newHass?.states?.[entityId];
+      const oldState = this.#entityCache?.[entityId];
+
+      if (!newState) return true;
+      if (!oldState || JSON.stringify(newState) !== JSON.stringify(oldState)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  _updateCache(hass) {
+    this.#entityCache = {};
+    for (const entityId of this.#watchedEntities) {
+      this.#entityCache[entityId] = hass.states?.[entityId] ?? null;
+    }
+  }
+
+  // === PUBLIC API METHODS ===
+
+  watchEntity(entityId) {
+    if (entityId) {
+      this.#watchedEntities.add(entityId);
+    }
+  }
+}
+
+/******************************************************************************************
+ * 🛠️ EntityHelper
+ * ========================================================================================
+ * 
+ * ✅ Helper class for managing entities.
  * This class validates and retrieves information from Home Assistant if it's an entity.
- *
- * @class EntityHelper
+ * 
+ * @class
  */
 class EntityHelper {
   #hassProvider = null;
@@ -3409,21 +3623,17 @@ class EntityHelper {
     this.#hassProvider = HassProviderSingleton.getInstance();
   }
 
-  /**
-   * @param {String} entityId
-   */
   set entityId(newValue) {
     this.#entityId = newValue;
     this.#value = 0;
     this.#domain = HassProviderSingleton.getEntityDomain(newValue);
-    this.#isValid = this.#hassProvider.hasEntity(this.#entityId); // for editor
+    this.#isValid = (this.#hassProvider.hasEntity(this.#entityId));
   }
+
   get entityId() {
     return this.#entityId;
   }
-  /**
-   * @param {String} newAttribute
-   */
+
   set attribute(newValue) {
     this.#attribute = newValue;
   }
@@ -3469,6 +3679,7 @@ class EntityHelper {
       this.#manageStdEntity();
     }
   }
+
   #manageStdEntity() {
     this.#attribute = this.#attribute || ATTRIBUTE_MAPPING[this.#domain]?.attribute;
     if (!this.#attribute) {
@@ -3531,9 +3742,6 @@ class EntityHelper {
     this.#isValid = unit !== undefined;
   }
 
-  /******************************************************************************************
-   *
-   */
   get attributes() {
     return this.#isValid && !this.isCounter && !this.isNumber && !this.isDuration && !this.isTimer
       ? this.#hassProvider.getNumericAttributes(this.#entityId)
@@ -3547,7 +3755,7 @@ class EntityHelper {
       ...Object.keys(attributes).map((attr) => ({
         value: attr,
         label: this.#hassProvider.getFormatedEntityAttributeName(this.#entityId, attr),
-      }))
+      })),
     ];
   }
   get hasAttribute() {
@@ -3640,16 +3848,21 @@ class EntityHelper {
   }
 }
 
-/**
- * Represents either an entity ID or a direct value.
+/******************************************************************************************
+ * 🛠️ EntityOrValue
+ * ========================================================================================
+ * 
+ * ✅ Represents either an entity ID or a direct value.
  * This class validates the provided value and retrieves information from Home Assistant if it's an entity.
  *
- * @class EntityOrValue
+ * @class
  */
 class EntityOrValue {
   #activeHelper = null; // Dynamically set to EntityHelper or ValueHelper
   #helperType = { entity: 'entity', value: 'value' };
   #isEntity = null;
+
+  // === PRIVATE METHODS (CREATION) ===
 
   #createHelper(helperType) {
     const HelperClass = helperType === this.#helperType.entity ? EntityHelper : ValueHelper;
@@ -3659,11 +3872,8 @@ class EntityOrValue {
     }
   }
 
-  /******************************************************************************************
-   * Sets the value, which can be an entity ID or a direct value.
-   * Dynamically delegates to the appropriate helper.
-   * @param {string|number} input - The value or entity ID.
-   */
+  // === PUBLIC GETTERS / SETTERS ===
+
   set value(newValue) {
     if (typeof newValue === 'string') {
       this.#createHelper(this.#helperType.entity);
@@ -3676,9 +3886,6 @@ class EntityOrValue {
     }
   }
 
-  /******************************************************************************************
-   * Proxy function
-   */
   get value() {
     return this.#activeHelper ? this.#activeHelper.value : null;
   }
@@ -3754,15 +3961,21 @@ class EntityOrValue {
   get stateObj() {
     return this.#activeHelper && this.#isEntity ? this.#activeHelper.stateObj : null;
   }
+
+  // === PUBLIC API METHODS ===
+
   refresh() {
     if (this.#activeHelper && this.#isEntity) this.#activeHelper.refresh();
   }
 }
 
-/**
- * Helper class for managing and validating card configuration.
+/******************************************************************************************
+ * 🛠️ ConfigHelper
+ * ========================================================================================
+ * 
+ * ✅ class for managing and validating card configuration.
  *
- * @class ConfigHelper
+ * @class
  */
 class ConfigHelper {
   #config = {};
@@ -3775,9 +3988,8 @@ class ConfigHelper {
     this.#hassProvider = HassProviderSingleton.getInstance();
   }
 
-  /******************************************************************************************
-   * Getter/Setter
-   */
+  // === PUBLIC GETTERS / SETTERS ===
+
   get config() {
     return this.#config;
   }
@@ -3785,48 +3997,6 @@ class ConfigHelper {
   set config(config) {
     this.#isChanged = true;
     this.#config = ConfigHelper.#applyDefaults(config);
-  }
-
-  static #applyDefaults(config) {
-    const domain = HassProviderSingleton.getEntityDomain(config.entity);
-    const toggleableDomains = ['light', 'switch', 'fan', 'input_boolean', 'media_player'];
-    const isToggleable = toggleableDomains.includes(domain);
-    const { watermark, ...baseDefaults } = CARD.config.defaults;
-
-    const merged = {
-      ...baseDefaults,
-      ...(isToggleable && { icon_tap_action: { action: 'toggle' } }),
-      ...config,
-    };
-
-    // -- VALIDATION ENUMS --
-
-    // bar orientation
-    if (config.bar_orientation && !Object.hasOwn(CARD.style.dynamic.progressBar.orientation, config.bar_orientation))
-      merged.bar_orientation = null;
-
-    // bar size
-    if (config.bar_size && !Object.hasOwn(CARD.style.bar.sizeOptions, config.bar_size))
-      merged.bar_size = CARD.style.bar.sizeOptions.small.label;
-
-    // unit spacing
-    const validUnitSpacing = Object.values(CARD.config.unit.unitSpacing);
-    if (config.unit_spacing && !validUnitSpacing.includes(config.unit_spacing))
-      merged.unit_spacing = CARD.config.unit.unitSpacing.auto;
-
-    // Layout
-    if (config.layout && !Object.hasOwn(CARD.layout.orientations, config.layout))
-      merged.layout = CARD.layout.orientations.horizontal.label;
-
-    // Watermark uniquement si défini
-    if (config.watermark !== undefined) {
-      merged.watermark = {
-        ...watermark,
-        ...config.watermark,
-      };
-    }
-
-    return merged;
   }
 
   get isValid() {
@@ -3871,16 +4041,53 @@ class ConfigHelper {
     return content.filter((item) => typeof item === 'string' && item !== null && item !== undefined);
   }
 
-  /******************************************************************************************
-   * optimization
-   */
+  // === PRIVATE METHODS (VALIDATION) ===
+
+  static #applyDefaults(config) {
+    const domain = HassProviderSingleton.getEntityDomain(config.entity);
+    const toggleableDomains = ['light', 'switch', 'fan', 'input_boolean', 'media_player'];
+    const isToggleable = toggleableDomains.includes(domain);
+    const { watermark, ...baseDefaults } = CARD.config.defaults;
+
+    const merged = {
+      ...baseDefaults,
+      ...(isToggleable && { icon_tap_action: { action: 'toggle' } }),
+      ...config,
+    };
+
+    // -- VALIDATION ENUMS --
+
+    // bar orientation
+    if (config.bar_orientation && !Object.hasOwn(CARD.style.dynamic.progressBar.orientation, config.bar_orientation)) merged.bar_orientation = null;
+
+    // bar size
+    if (config.bar_size && !Object.hasOwn(CARD.style.bar.sizeOptions, config.bar_size)) merged.bar_size = CARD.style.bar.sizeOptions.small.label;
+
+    // unit spacing
+    const validUnitSpacing = Object.values(CARD.config.unit.unitSpacing);
+    if (config.unit_spacing && !validUnitSpacing.includes(config.unit_spacing)) merged.unit_spacing = CARD.config.unit.unitSpacing.auto;
+
+    // Layout
+    if (config.layout && !Object.hasOwn(CARD.layout.orientations, config.layout)) merged.layout = CARD.layout.orientations.horizontal.label;
+
+    // Watermark uniquement si défini
+    if (config.watermark !== undefined) {
+      merged.watermark = {
+        ...watermark,
+        ...config.watermark,
+      };
+    }
+
+    return merged;
+  }
+  // === PRIVATE METHODS (opti) ===
+
   #getCardAction(action) {
     return (this.#config[action]?.action ?? null) === null ? CARD.interactions.action.default : this.#config[action]?.action;
   }
 
-  /******************************************************************************************
-   * Validates the card configuration and returns the validation status and error messages.
-   */
+  // === PUBLIC API METHODS (check) ===
+
   checkConfig() {
     if (!this.#isChanged) {
       return;
@@ -3945,13 +4152,15 @@ class ConfigHelper {
   }
 }
 
-/**
- * A card view that manage all informations to create the card.
+/******************************************************************************************
+ * 🛠️ CardView
+ * ========================================================================================
+ * 
+ * ✅ A card view that manage all informations to create the card.
  *
- * @class CardView
+ * @class
  */
 class CardView {
-  #debug = CARD.config.debug.card;
   #hassProvider = null;
   #configHelper = new ConfigHelper();
   #percentHelper = new PercentHelper();
@@ -3964,9 +4173,8 @@ class CardView {
     this.#hassProvider = HassProviderSingleton.getInstance();
   }
 
-  /******************************************************************************************
-   * Getter/Setter
-   */
+  // === PUBLIC GETTERS / SETTERS ===
+
   get hasValidatedConfig() {
     return this.#configHelper.isValid;
   }
@@ -4123,7 +4331,6 @@ class CardView {
     const rawSpeed = this.#currentValue.value.duration / CARD.config.refresh.ratio;
     const clampedSpeed = Math.min(CARD.config.refresh.max, Math.max(CARD.config.refresh.min, rawSpeed));
     const roundedSpeed = Math.max(100, Math.round(clampedSpeed / 100) * 100);
-    if (this.#debug) debugLog(roundedSpeed);
 
     return roundedSpeed;
   }
@@ -4187,15 +4394,13 @@ class CardView {
       disable_high: result.disable_high,
     };
   }
+
+  // === PUBLIC API METHODS ===
+
   componentIsHidden(component) {
     return Array.isArray(this.#configHelper.config?.hide) && this.#configHelper.config.hide.includes(component);
   }
 
-  /**
-   * Refreshes the card by updating the current value and checking for availability.
-   *
-   * @param {object} hass - The Home Assistant object.
-   */
   refresh(hass) {
     this.#hassProvider.hass = hass;
     this.currentLanguage = this.#hassProvider.language;
@@ -4234,6 +4439,9 @@ class CardView {
     this.#percentHelper.refresh();
     this.#theme.value = this.#percentHelper.valueForThemes(this.#theme.isBasedOnPercentage);
   }
+
+  // === PRIVATE METHODS ===
+
   #getCurrentUnit() {
     if (this.#configHelper.config.unit) return this.#configHelper.config.unit;
     if (this.#max_value.isEntity) return CARD.config.unit.default;
@@ -4258,17 +4466,34 @@ class CardView {
   }
 }
 
+/******************************************************************************************
+ * 🛠️ ResourceManager
+ * ========================================================================================
+ * 
+ * ✅ Manage ressources: interval, timeout, listener, subscription.
+ *
+ * @class
+ */
 class ResourceManager {
   #debug = CARD.config.debug.ressourceManager;
+  #log = null;
   #resources = new Map();
 
-  #generateUniqueId() {
-    let id = null;
-    do {
-      id = Math.random().toString(36).slice(2, 8);
-    } while (this.#resources.has(id));
-    return id;
+  constructor() {
+    this.#log = initLogger(this, this.#debug, ['add', 'remove', 'cleanup']);
   }
+
+  // === PUBLIC GETTERS / SETTERS ===
+
+  get list() {
+    return [...this.#resources.keys()];
+  }
+
+  get count() {
+    return this.#resources.size;
+  }
+
+  // === PUBLIC API METHODS ===
 
   add(cleanupFn, id) {
     if (typeof cleanupFn !== 'function') {
@@ -4277,20 +4502,21 @@ class ResourceManager {
     const finalId = id || this.#generateUniqueId();
     if (this.#resources.has(finalId)) {
       this.remove(finalId); // <-- on supprime proprement l'ancien !
+      this.#log.debug(`Remove: ${finalId}`);
     }
     this.#resources.set(finalId, cleanupFn);
-    if (this.#debug) debugLog(`[ResourceManager] Added: ${finalId}`);
+    this.#log.debug(`Set: ${finalId}`);
 
     return finalId;
   }
 
   setInterval(handler, timeout, id) {
-    if (this.#debug) debugLog('Starting interval with id:', id);
+    this.#log.debug('Starting interval with id:', id);
     const timerId = setInterval(handler, timeout);
-    if (this.#debug) debugLog('Timer started with timerId:', timerId);
+    this.#log.debug('Timer started with timerId:', timerId);
 
     this.add(() => {
-      if (this.#debug) debugLog('Stopping interval with id:', id);
+      this.#log.debug('Stopping interval with id:', id);
       clearInterval(timerId);
     }, id);
 
@@ -4302,9 +4528,9 @@ class ResourceManager {
   }
 
   setTimeout(handler, timeout, id) {
-    if (this.#debug) debugLog('Starting timeout with id:', id);
+    this.#log.debug('Starting timeout with id:', id);
     const timerId = setTimeout(handler, timeout);
-    if (this.#debug) debugLog('Timeout started with timerId:', timerId);
+    this.#log.debug('Timeout started with timerId:', timerId);
     return this.add(() => clearTimeout(timerId), id);
   }
 
@@ -4328,7 +4554,7 @@ class ResourceManager {
         console.error(`[ResourceManager] Error while removing '${id}'`, e);
       }
       this.#resources.delete(id);
-      if (this.#debug) debugLog(`[ResourceManager] Removed: ${id}`);
+      this.#log.debug(`Removed: ${id}`);
     }
   }
 
@@ -4339,23 +4565,36 @@ class ResourceManager {
       } catch (e) {
         console.error(`[ResourceManager] Error while clearing '${id}'`, e);
       }
-      if (this.#debug) debugLog(`[ResourceManager] Cleared: ${id}`);
+      this.#log.debug(`Cleared: ${id}`);
     }
     this.#resources.clear();
-    if (this.#debug) debugLog('[ResourceManager] All resources cleared.');
+    this.#log.debug('All resources cleared.');
   }
 
-  get list() {
-    return [...this.#resources.keys()];
-  }
+  // === PRIVATE METHODS ===
 
-  get count() {
-    return this.#resources.size;
+  #generateUniqueId() {
+    let id = null;
+    do {
+      id = Math.random().toString(36).slice(2, 8);
+    } while (this.#resources.has(id));
+    return id;
   }
 }
 
+/******************************************************************************************
+ * 🛠️ ActionHelper — Utility Class
+ * ========================================================================================
+ * 
+ * ✅ Centralized handler for `xyz_action` logic.
+ * 
+ * 📌 Purpose:
+ *   - Encapsulates and manages the execution, validation, and dispatch of `xyz_action`.
+ *   - Promotes reusable, maintainable logic for action-related features.
+ */
 class ActionHelper {
   #debug = CARD.config.debug.interactionHandler;
+  #log = null;
   #resourceManager = null;
   #config = null;
   #element = null;
@@ -4379,7 +4618,10 @@ class ActionHelper {
 
   constructor(element) {
     this.#element = element;
+    this.#log = initLogger(this, this.#debug, ['init', 'cleanup']);
   }
+
+  // === PUBLIC API METHODS ===
 
   init(resourceManager, config, clickableTarget, disableIconTap) {
     this.#resourceManager = resourceManager;
@@ -4387,6 +4629,12 @@ class ActionHelper {
     this.#disableIconTap = disableIconTap;
     this.#attachToTargets(clickableTarget);
   }
+
+  cleanup() {
+    this.#resourceManager?.cleanup();
+  }
+
+  // === PRIVATE METHODS ===
 
   #attachToTargets(clickableTarget) {
     if (!clickableTarget) return;
@@ -4401,7 +4649,6 @@ class ActionHelper {
   }
 
   #attachListener(elem) {
-    if (this.#debug) debugLog('👉 ActionHelper.#attachListener()');
     this.#resourceManager.addEventListener(elem, 'mousedown', this.#boundHandlers.mousedown);
     this.#resourceManager.addEventListener(elem, 'mouseup', this.#boundHandlers.mouseup);
     this.#resourceManager.addEventListener(elem, 'mousemove', this.#boundHandlers.mousemove);
@@ -4411,15 +4658,14 @@ class ActionHelper {
   }
 
   #handleMouseDown(ev) {
-    if (this.#debug) debugLog('👉 ActionHelper.handleMouseDown()');
     const localName = ev.composedPath()[0].localName;
-    if (this.#debug) debugLog('    localName', localName);
+    this.#log.debug('localName', localName);
     this.#clickSource = !this.#disableIconTap
       ? this.#iconClickSources.has(localName)
         ? CARD.interactions.event.from.icon
         : CARD.interactions.event.from.card
       : CARD.interactions.event.from.card;
-    if (this.#debug) debugLog('    clickSource: ', this.#clickSource);
+    this.#log.debug('clickSource: ', this.#clickSource);
 
     this.#downTime = Date.now();
     this.#startX = ev.clientX;
@@ -4490,14 +4736,13 @@ class ActionHelper {
   }
 
   #fireAction(originalEvent, currentAction) {
-    if (this.#debug) debugLog('👉 ActionHelper.#fireAction()');
-    if (this.#debug) debugLog('  📎 originalEvent: ', originalEvent);
-    if (this.#debug) debugLog('  📎 original action: ', currentAction);
-    if (this.#debug) debugLog('    clickSource: ', this.#clickSource);
+    this.#log.debug('  📎 originalEvent: ', originalEvent);
+    this.#log.debug('  📎 original action: ', currentAction);
+    this.#log.debug('  📎 clickSource: ', this.#clickSource);
 
     const prefixAction = this.#clickSource === CARD.interactions.event.from.icon ? `${CARD.interactions.event.from.icon}_` : '';
     let fullAction = `${prefixAction}${currentAction}`;
-    if (this.#debug) debugLog('  📎 fullAction: ', fullAction);
+    this.#log.debug('  📎 fullAction: ', fullAction);
 
     let currentConfig = null;
 
@@ -4533,19 +4778,27 @@ class ActionHelper {
       })
     );
   }
-
-  cleanup() {
-    this.#resourceManager?.cleanup();
-  }
 }
 
-/** --------------------------------------------------------------------------
- *
- * Represents a custom card element displaying the progress of an entity.
- *
- * The `EntityProgressCard` class extends the base `HTMLElement` class and
- * implements a custom web component that displays information about an entity's
- * state.
+/******************************************************************************************
+ * 🛠️ EntityProgressCardBase
+ * ========================================================================================
+ * 
+ * ✅ Represents the base class for all custom "entity-progress" cards.
+ * 
+ * 📌 Purpose:
+ *   - Provides shared structure, lifecycle hooks, and utility logic for custom Lovelace cards.
+ *   - Serves as the foundation for building consistent and reusable UI components.
+ * 
+ * 🛠️ Example:
+ *   class MyCustomCard extends EntityProgressCardBase { ... }
+ * 
+ * 📚 Context:
+ *   - Designed for use in Home Assistant dashboards.
+ *   - Enables unified behavior across multiple card implementations.
+ * 
+ * @class
+ * @extends HTMLElement
  */
 class EntityProgressCardBase extends HTMLElement {
   static _cardInnerHTML = CARD_HTML;
@@ -4555,6 +4808,7 @@ class EntityProgressCardBase extends HTMLElement {
   static _baseClass = CARD.meta.card.typeName;
   static _cardLayout = CARD.layout.orientations;
   _debug = CARD.config.debug.card;
+  _log = null;
   _resourceManager = null;
   _icon = null;
   _cardView = new CardView();
@@ -4563,6 +4817,7 @@ class EntityProgressCardBase extends HTMLElement {
   _firstHass = true;
   _clickableTarget = null;
   _actionHelper = null;
+  _changeTracker = new ChangeTracker;
   #lastMessage = null;
   #isRendered = false;
 
@@ -4570,13 +4825,26 @@ class EntityProgressCardBase extends HTMLElement {
 
   constructor() {
     super();
+
+    this._log = initLogger(this, this._debug, [
+      'connectedCallback',
+      'disconnectedCallback',
+      'setConfig',
+      'refresh',
+      'getCardSize',
+      'render',
+      '_assignHass',
+      '_handleHassUpdate',
+      '_storeDOM',
+      '_renderJinja',
+    ]);
+    
     this.attachShadow({ mode: CARD.config.shadowMode });
     this._actionHelper = new ActionHelper(this);
     this._initializeModule();
   }
 
   connectedCallback() {
-    if (this._debug) debugLog('👉 connectedCallback()');
     this.render();
     this._updateDynamicElementsSync();
     if (!this._resourceManager) this._resourceManager = new ResourceManager();
@@ -4586,7 +4854,6 @@ class EntityProgressCardBase extends HTMLElement {
   }
 
   disconnectedCallback() {
-    if (this._debug) debugLog('👉 disconnectedCallback()');
     this._resourceManager?.cleanup();
     this._resourceManager = null;
   }
@@ -4597,12 +4864,14 @@ class EntityProgressCardBase extends HTMLElement {
    * Updates the component's configuration and triggers static changes.
    */
   setConfig(config) {
-    if (this._debug) debugLog('👉 setConfig()');
     if (!config) {
       throw new Error('setConfig: invalid config');
     }
 
     this._cardView.config = { ...config };
+    if (typeof config.entity === 'string') this._changeTracker.watchEntity(config.entity);
+    if (typeof config.max_value === 'string') this._changeTracker.watchEntity(config.max_value);
+
     this.render();
   }
 
@@ -4613,10 +4882,14 @@ class EntityProgressCardBase extends HTMLElement {
    *                        state and services.
    */
   set hass(hass) {
-    if (this._debug) debugLog('👉 set hass()');
+    this._log.debug('👉 set hass()');
 
-    this._assignHass(hass);
-    this._handleHassUpdate();
+    this._changeTracker.hass = hass;
+    if (this._changeTracker.isUpdated) {
+      this._assignHass(hass);
+      this._handleHassUpdate();
+    }
+
     if (this._firstHass) {
       this._firstHass = false;
       this._watchWebSocket();
@@ -4628,13 +4901,10 @@ class EntityProgressCardBase extends HTMLElement {
   }
 
   _assignHass(hass) {
-    if (this._debug) debugLog('👉 _assignHass()');
     this._hass = hass; // assignation standard dans la classe mère
   }
 
   _handleHassUpdate() {
-    if (this._debug) debugLog('👉 _handleHassUpdate()');
-
     const timeoutId = 'hass-update-throttle';
     if (!this._resourceManager) this._resourceManager = new ResourceManager();
 
@@ -4651,8 +4921,6 @@ class EntityProgressCardBase extends HTMLElement {
   }
 
   _doHandleHassUpdate() {
-    if (this._debug) debugLog('👉 _doHandleHassUpdate()');
-
     this.refresh();
 
     if (!this._cardView.isActiveTimer) {
@@ -4663,8 +4931,6 @@ class EntityProgressCardBase extends HTMLElement {
   }
 
   refresh() {
-    if (this._debug) debugLog('👉 refresh()');
-
     this._cardView.refresh(this.hass);
     if (this._manageErrorMessage()) return;
     this._updateDynamicElements();
@@ -4677,6 +4943,8 @@ class EntityProgressCardBase extends HTMLElement {
    */
   getCardSize() {
     const layout = this.constructor._cardLayout[this._cardView.layout];
+    this._log.debug('getCardSize -> ', layout.grid.grid_rows);
+
     return layout.grid.grid_rows;
   }
 
@@ -4686,7 +4954,10 @@ class EntityProgressCardBase extends HTMLElement {
    * @returns {object} - The layout options for the current layout configuration.
    */
   getLayoutOptions() {
-    const layout = this.constructor._cardLayout[this._cardView.layout];
+    const layout = structuredClone(this.constructor._cardLayout[this._cardView.layout]);
+    if (this._cardView.componentIsHidden(CARD.style.dynamic.hiddenComponent.icon.label)) layout.grid.grid_min_rows = 1;    
+    this._log.debug('getLayoutOptions -> ', layout.grid);
+
     return layout.grid;
   }
 
@@ -4710,17 +4981,13 @@ class EntityProgressCardBase extends HTMLElement {
     return this.constructor._baseClass;
   }
 
-  /** --------------------------------------------------------------------------
-   * Private methods organized by functionality
-   */
-
   // === INITIALIZATION ===
+
   _initializeModule() {
     if (!EntityProgressCardBase._moduleLoaded) {
       console.groupCollapsed(CARD.console.message, CARD.console.css);
       console.log(CARD.console.link);
       console.groupEnd();
-      if (this._debug) debugLog(Object.keys(LANGUAGES));
       EntityProgressCardBase._moduleLoaded = true;
     }
   }
@@ -4734,7 +5001,6 @@ class EntityProgressCardBase extends HTMLElement {
     this._resourceManager.setInterval(
       () => {
         this.refresh(this.hass);
-        if (this._debug) debugLog('👉 EntityProgressCard._startAutoRefresh()');
         if (!this._cardView.isActiveTimer) {
           this._stopAutoRefresh();
         }
@@ -4789,8 +5055,6 @@ class EntityProgressCardBase extends HTMLElement {
    * them into the component's Shadow DOM.
    */
   render() {
-    if (this._debug) debugLog('👉 render()');
-
     if (this.isRendered) return;
     this.#isRendered = true;
 
@@ -4871,6 +5135,7 @@ class EntityProgressCardBase extends HTMLElement {
   }
 
   // === DOM MANAGEMENT ===
+
   _setStylePropertyIfChanged(style, variable, value) {
     if (style.getPropertyValue(variable) !== value) {
       style.setProperty(variable, value);
@@ -4894,8 +5159,6 @@ class EntityProgressCardBase extends HTMLElement {
   }
 
   _storeDOM(card) {
-    if (this._debug) debugLog('👉 _storeDOM');
-
     const elements = CARD.htmlStructure.elements;
 
     this._domElements.clear();
@@ -4938,7 +5201,6 @@ class EntityProgressCardBase extends HTMLElement {
   /**
    * Updates dynamic card elements based on the entity's state and configuration.
    */
-
   _updateDynamicElementsSync() {
     this._showIcon();
     this._showBadge();
@@ -4949,7 +5211,7 @@ class EntityProgressCardBase extends HTMLElement {
   }
 
   _updateDynamicElements() {
-    if (this._debug) debugLog('👉 EntityProgressCard._updateDynamicElements()');
+    this._log.debug('👉 EntityProgressCard._updateDynamicElements()');
     EntityProgressCardBase._batchDOMUpdates([() => this._showIcon(), () => this._showBadge(), () => this._manageShape(), () => this._updateCSS()]);
     this._processJinjaFields();
     this._processStandardFields();
@@ -5069,7 +5331,7 @@ class EntityProgressCardBase extends HTMLElement {
   }
 
   _setBadgeIcon(icon) {
-    // Vérifie si l'icône a réellement changé
+    // Make sure the icon has really changed
     this._updateElement(CARD.htmlStructure.elements.badge.icon.class, (el) => {
       const currentIcon = el.getAttribute(CARD.style.icon.badge.default.attribute);
       if (currentIcon !== icon) {
@@ -5089,7 +5351,7 @@ class EntityProgressCardBase extends HTMLElement {
   // === JINJA TEMPLATE RENDERING ===
 
   _renderJinja(key, content) {
-    if (this._debug) debugLog('👉 EntityProgressCard._renderJinja()', key);
+    this._log.debug('_renderJinja():', {key, content});
 
     const renderHandlers = this._getRenderHandlers(content);
     const handler = renderHandlers[key];
@@ -5161,7 +5423,7 @@ class EntityProgressCardBase extends HTMLElement {
       this.hass.connection,
       'disconnected',
       () => {
-        if (this._debug) debugLog('🔌 WebSocket disconnected');
+        this._log.debug('🔌 WebSocket disconnected');
         const templates = this._getTemplateFields();
         for (const key of Object.keys(templates)) {
           this._resourceManager.remove(`template-${key}`);
@@ -5175,7 +5437,7 @@ class EntityProgressCardBase extends HTMLElement {
       this.hass.connection,
       'ready',
       () => {
-        if (this._debug) debugLog('🔁 WebSocket ready — reprocessing templates');
+        this._log.debug('🔁 WebSocket ready — reprocessing templates');
         if (!this._resourceManager) this._resourceManager = new ResourceManager(); // net reconnect
         this._processJinjaFields();
       },
@@ -5212,15 +5474,13 @@ class EntityProgressCardBase extends HTMLElement {
   }
 
   async _subscribeToTemplate(key, template) {
-    if (this._debug) debugLog('👉 _subscribeToTemplate()', key);
-
     const subscriptionKey = `template-${key}`;
 
     if (!this.hass?.connection?.connected) {
-      if (this._debug) debugLog(`    [Template ${key}] WebSocket not connected, skipping subscription.`);
+      this._log.debug(`[Template ${key}] WebSocket not connected, skipping subscription.`);
       return;
     }
-    if (this._debug) debugLog('    network ok...');
+    this._log.debug('network ok...');
 
     // Add null check right before using _resourceManager
     if (!this._resourceManager) {
@@ -5274,6 +5534,19 @@ class EntityProgressCardBase extends HTMLElement {
   }
 }
 
+/******************************************************************************************
+ * 📦 CARDS
+ ******************************************************************************************/
+
+/******************************************************************************************
+ * 🛠️ EntityProgressCard
+ * ========================================================================================
+ * 
+ * ✅ HA CARD "entity-progress-card"
+ * 
+ * @class
+ * @extends EntityProgressCardBase
+ */
 class EntityProgressCard extends EntityProgressCardBase {
   static _baseClass = CARD.meta.card.typeName;
 
@@ -5295,6 +5568,15 @@ class EntityProgressCard extends EntityProgressCardBase {
   }
 }
 
+/******************************************************************************************
+ * 🛠️ EntityProgressBadge
+ * ========================================================================================
+ * 
+ * ✅ HA CARD "entity-progress-badge"
+ * 
+ * @class
+ * @extends EntityProgressCardBase
+ */
 class EntityProgressBadge extends EntityProgressCardBase {
   static _baseClass = CARD.meta.badge.typeName;
   static _hasDisabledIconTap = true;
@@ -5359,7 +5641,6 @@ class EntityProgressBadge extends EntityProgressCardBase {
   `;
 
   setConfig(config) {
-    if (this._debug) debugLog('👉 setConfig()');
     if (!config) {
       throw new Error('setConfig: invalid config');
     }
@@ -5390,35 +5671,46 @@ class EntityProgressBadge extends EntityProgressCardBase {
   getLayoutOptions() {
     return this._cardLayout;
   }
+
+  static getStubConfig(hass) {
+    EntityProgressTemplate._demoMode = true;
+    return {
+      type: `custom:${CARD.meta.badge.typeName}`,
+      entity: EntityProgressCard.getStubEntity(hass),
+    };
+  }
 }
 
-/** --------------------------------------------------------------------------
- * Define static properties and register the custom element for the card.
- *
- * @static
+/******************************************************************************************
+ * 🔧 Register card & badge
  */
+
 EntityProgressCardBase.version = VERSION;
 EntityProgressCardBase._moduleLoaded = false;
 customElements.define(CARD.meta.card.typeName, EntityProgressCard);
 customElements.define(CARD.meta.badge.typeName, EntityProgressBadge);
+RegistrationHelper.registerCard(CARD.meta.card);
+RegistrationHelper.registerBadge(CARD.meta.badge);
 
 
-/** --------------------------------------------------------------------------
- * Registers the custom card in the global `customCards` array for use in Home Assistant.
+/******************************************************************************************
+ * 📦 Template Card
+ ******************************************************************************************/
+
+/******************************************************************************************
+ * 🛠️ TemplateCardView
+ * ========================================================================================
+ * 
+ * ✅ Card view
+ * 
+ * 📌 Purpose:
+ *   - Manage card configuration.
+ *   - Process and apply parameters required to render the card.
+ *   - Serve as the interface between raw config and visual output.
+ * 
+ * @class
+ * @extends ConfigHelper
  */
-window.customCards = window.customCards || []; // Create the list if it doesn't exist. Careful not to overwrite it
-window.customCards.push({
-  type: CARD.meta.card.typeName,
-  name: CARD.meta.card.name,
-  preview: true,
-  description: CARD.meta.card.description,
-});
-
-
-/** --------------------------------------------------------------------------
- * Entity Progress Card Template 
- */
-
 class TemplateCardView extends ConfigHelper {
   #currentValue = new EntityOrValue();
   static #allowedKeys = new Set([
@@ -5443,6 +5735,8 @@ class TemplateCardView extends ConfigHelper {
     'icon_hold_action',
     'icon_double_tap_action',
   ]);
+
+  // === PRIVATE METHODS (DEF VALUE) ===
 
   static _applyDefaults(config) {
     const domain = HassProviderSingleton.getEntityDomain(config.entity);
@@ -5487,6 +5781,9 @@ class TemplateCardView extends ConfigHelper {
 
     return merged;
   }
+
+  // === PUBLIC GETTERS / SETTERS ===
+
   get layout() {
     return this.config.layout;
   }
@@ -5495,9 +5792,6 @@ class TemplateCardView extends ConfigHelper {
   }
   get bar_size() {
     return this.config.bar_size;
-  }
-  componentIsHidden(component) {
-    return Array.isArray(this.config?.hide) && this.config.hide.includes(component);
   }
   get EntityStateObj() {
     this.#currentValue.value = this.config.entity;
@@ -5549,8 +5843,23 @@ class TemplateCardView extends ConfigHelper {
       disable_high: result.disable_high,
     };
   }
+
+  // === PUBLIC API METHODS ===
+
+  componentIsHidden(component) {
+    return Array.isArray(this.config?.hide) && this.config.hide.includes(component);
+  }
 }
 
+/******************************************************************************************
+ * 🛠️ EntityProgressTemplate
+ * ========================================================================================
+ * 
+ * ✅ HA CARD "entity-progress-card-template"
+ * 
+ * @class
+ * @extends EntityProgressCardBase
+ */
 class EntityProgressTemplate extends EntityProgressCardBase {
   static _demoMode = false;
   _debug = CARD.config.debug.card;
@@ -5558,8 +5867,6 @@ class EntityProgressTemplate extends EntityProgressCardBase {
   _hassProvider = HassProviderSingleton.getInstance();
 
   connectedCallback() {
-    if (this._debug) debugLog('👉 connectedCallback()');
-
     if (!this._resourceManager) this._resourceManager = new ResourceManager();
     this.render();
     this._showIcon();
@@ -5570,8 +5877,6 @@ class EntityProgressTemplate extends EntityProgressCardBase {
     if (EntityProgressTemplate._isDemoMode) this._processDemoValue();
     if (this.hass) this._watchWebSocket();
   }
-
-  // === PUBLIC API METHODS ===
 
   setConfig(config) {
     this._cardView.config = { ...config };
@@ -5591,8 +5896,6 @@ class EntityProgressTemplate extends EntityProgressCardBase {
   }
 
   _handleHassUpdate() {
-    if (this._debug) debugLog('👉 _handleHassUpdate()');
-
     const timeoutId = 'hass-update-throttle';
     if (!this._resourceManager) this._resourceManager = new ResourceManager();
     if (this._resourceManager.hasInterval(timeoutId)) return;
@@ -5766,7 +6069,7 @@ class EntityProgressTemplate extends EntityProgressCardBase {
   // === TEMPLATE PROCESSING ===
 
   _processDemoValue() {
-    if (this._debug) debugLog('👉 Applying demo values');
+    this._log.debug('👉 Applying demo values');
 
     const templates = this._getTemplateFields();
 
@@ -5801,75 +6104,104 @@ class EntityProgressTemplate extends EntityProgressCardBase {
   }
 }
 
-/** --------------------------------------------------------------------------
- * Define static properties and register the custom element for the card.
- *
- * @static
+/******************************************************************************************
+ * 🔧 Register card & badge
  */
 EntityProgressTemplate.version = VERSION;
 EntityProgressTemplate._moduleLoaded = false;
 customElements.define(CARD.meta.template.typeName, EntityProgressTemplate);
+RegistrationHelper.registerCard(CARD.meta.template);
 
-/** --------------------------------------------------------------------------
- * Registers the custom card in the global `customCards` array for use in Home Assistant.
- */
-window.customCards.push({
-  type: CARD.meta.template.typeName,
-  name: CARD.meta.template.name,
-  preview: true,
-  description: CARD.meta.template.description,
-});
+/******************************************************************************************
+ * 📦 CARD/BADGE EDITOR
+ ******************************************************************************************/
 
-/** --------------------------------------------------------------------------
- * EDITOR PART
+/******************************************************************************************
+ * 🛠️ ConfigUpdateEventHandler: Configuration Update Manager
+ * ========================================================================================
+ * 
+ * ✅ Handles dynamic updates to the configuration object of a custom card via UI events.
+ *
+ * 📌 Purpose:
+ *   - Listens to input field changes from the editor UI.
+ *   - Dispatches the appropriate update logic based on field type.
+ *   - Ensures proper formatting, cleanup, and validation of config values.
+ *
+ * 🧠 Features:
+ *   - Centralized mapping between input field IDs and handler functions.
+ *   - Safely mutates or deletes config keys based on user input.
+ *   - Supports multiple types of updates:
+ *     - Text & basic fields
+ *     - Numeric fields
+ *     - Entity/value selectors
+ *     - Toggle states
+ *     - Complex interaction objects
+ *
+ * @class
  */
 
 class ConfigUpdateEventHandler {
   #debug = CARD.config.debug.editor;
+  #log = null;
 
   constructor(newConfig) {
+    this.#log = initLogger(this, this.#debug, [
+      'updateField',
+      'updateNumericField',
+      'updateMaxValueField',
+      'updateInteractionField',
+      'updateEntityOrValueField',
+      'updateToggleField',
+      'updateCircularField',
+      'updateUnitField',
+    ]);
+
     this.config = structuredClone(newConfig);
 
+    // Lier les méthodes au contexte 'this' pour éviter les erreurs de binding
     this.updateFunctions = new Map([
-      [EDITOR_INPUT_FIELDS.basicConfiguration.attribute.name, this.updateField],
-      [EDITOR_INPUT_FIELDS.content.field.max_value_attribute.name, this.updateField],
-      [EDITOR_INPUT_FIELDS.content.field.name.name, this.updateField],
-      [EDITOR_INPUT_FIELDS.content.field.unit.name, this.updateField],
-      [EDITOR_INPUT_FIELDS.theme.field.bar_size.name, this.updateField],
-      [EDITOR_INPUT_FIELDS.theme.field.layout.name, this.updateField],
-      [EDITOR_INPUT_FIELDS.theme.field.theme.name, this.updateField],
+      [EDITOR_INPUT_FIELDS.basicConfiguration.attribute.name, this.updateField.bind(this)],
+      [EDITOR_INPUT_FIELDS.content.field.max_value_attribute.name, this.updateField.bind(this)],
+      [EDITOR_INPUT_FIELDS.content.field.name.name, this.updateField.bind(this)],
+      [EDITOR_INPUT_FIELDS.content.field.unit.name, this.updateField.bind(this)],
+      [EDITOR_INPUT_FIELDS.theme.field.bar_size.name, this.updateField.bind(this)],
+      [EDITOR_INPUT_FIELDS.theme.field.layout.name, this.updateField.bind(this)],
+      [EDITOR_INPUT_FIELDS.theme.field.theme.name, this.updateField.bind(this)],
 
-      [EDITOR_INPUT_FIELDS.content.field.decimal.name, this.updateNumericField],
-      [EDITOR_INPUT_FIELDS.content.field.min_value.name, this.updateNumericField],
+      [EDITOR_INPUT_FIELDS.content.field.decimal.name, this.updateNumericField.bind(this)],
+      [EDITOR_INPUT_FIELDS.content.field.min_value.name, this.updateNumericField.bind(this)],
 
-      [EDITOR_INPUT_FIELDS.content.field.max_value.name, this.updateMaxValueField],
+      [EDITOR_INPUT_FIELDS.content.field.max_value.name, this.updateMaxValueField.bind(this)],
 
-      [EDITOR_INPUT_FIELDS.interaction.field.icon_tap_action.name, this.updateInteractionField],
-      [EDITOR_INPUT_FIELDS.interaction.field.icon_double_tap_action.name, this.updateInteractionField],
-      [EDITOR_INPUT_FIELDS.interaction.field.icon_hold_action.name, this.updateInteractionField],
-      [EDITOR_INPUT_FIELDS.interaction.field.tap_action.name, this.updateInteractionField],
-      [EDITOR_INPUT_FIELDS.interaction.field.double_tap_action.name, this.updateInteractionField],
-      [EDITOR_INPUT_FIELDS.interaction.field.hold_action.name, this.updateInteractionField],
+      [EDITOR_INPUT_FIELDS.interaction.field.icon_tap_action.name, this.updateInteractionField.bind(this)],
+      [EDITOR_INPUT_FIELDS.interaction.field.icon_double_tap_action.name, this.updateInteractionField.bind(this)],
+      [EDITOR_INPUT_FIELDS.interaction.field.icon_hold_action.name, this.updateInteractionField.bind(this)],
+      [EDITOR_INPUT_FIELDS.interaction.field.tap_action.name, this.updateInteractionField.bind(this)],
+      [EDITOR_INPUT_FIELDS.interaction.field.double_tap_action.name, this.updateInteractionField.bind(this)],
+      [EDITOR_INPUT_FIELDS.interaction.field.hold_action.name, this.updateInteractionField.bind(this)],
 
-      [EDITOR_INPUT_FIELDS.basicConfiguration.entity.name, this.updateEntityOrValueField],
-      [EDITOR_INPUT_FIELDS.theme.field.icon.name, this.updateEntityOrValueField],
-      [EDITOR_INPUT_FIELDS.theme.field.bar_color.name, this.updateEntityOrValueField],
-      [EDITOR_INPUT_FIELDS.theme.field.color.name, this.updateEntityOrValueField],
+      [EDITOR_INPUT_FIELDS.basicConfiguration.entity.name, this.updateEntityOrValueField.bind(this)],
+      [EDITOR_INPUT_FIELDS.theme.field.icon.name, this.updateEntityOrValueField.bind(this)],
+      [EDITOR_INPUT_FIELDS.theme.field.bar_color.name, this.updateEntityOrValueField.bind(this)],
+      [EDITOR_INPUT_FIELDS.theme.field.color.name, this.updateEntityOrValueField.bind(this)],
 
-      [EDITOR_INPUT_FIELDS.theme.field.toggleBar.name, this.updateToggleField],
-      [EDITOR_INPUT_FIELDS.theme.field.toggleIcon.name, this.updateToggleField],
-      [EDITOR_INPUT_FIELDS.theme.field.toggleName.name, this.updateToggleField],
-      [EDITOR_INPUT_FIELDS.theme.field.toggleValue.name, this.updateToggleField],
-      [EDITOR_INPUT_FIELDS.theme.field.toggleSecondaryInfo.name, this.updateToggleField],
+      [EDITOR_INPUT_FIELDS.theme.field.toggleBar.name, this.updateToggleField.bind(this)],
+      [EDITOR_INPUT_FIELDS.theme.field.toggleIcon.name, this.updateToggleField.bind(this)],
+      [EDITOR_INPUT_FIELDS.theme.field.toggleName.name, this.updateToggleField.bind(this)],
+      [EDITOR_INPUT_FIELDS.theme.field.toggleValue.name, this.updateToggleField.bind(this)],
+      [EDITOR_INPUT_FIELDS.theme.field.toggleSecondaryInfo.name, this.updateToggleField.bind(this)],
 
-      [EDITOR_INPUT_FIELDS.theme.field.toggleCircular.name, this.updateCircularField],
-      [EDITOR_INPUT_FIELDS.theme.field.toggleUnit.name, this.updateUnitField],
+      [EDITOR_INPUT_FIELDS.theme.field.toggleCircular.name, this.updateCircularField.bind(this)],
+      [EDITOR_INPUT_FIELDS.theme.field.toggleUnit.name, this.updateUnitField.bind(this)],
     ]);
+
+    this.#log.debug('Loaded');
   }
 
+  // === PUBLIC API METHODS ===
+
   updateConfig(changedEvent) {
-    if (this.#debug) debugLog('👉 ConfigUpdateEventHandler.updateConfig()');
-    if (this.#debug) debugLog('  📎 ', changedEvent);
+    this.#log.debug('  📎 ', changedEvent);
 
     const targetId = changedEvent.target.id;
 
@@ -5901,8 +6233,6 @@ class ConfigUpdateEventHandler {
   }
 
   updateField(targetId, changedEvent) {
-    if (this.#debug) debugLog('👉 ConfigUpdateEventHandler.updateField()');
-
     if (changedEvent.target.value == null || changedEvent.target.value.trim() === '') {
       delete this.config[targetId];
     } else {
@@ -5911,8 +6241,6 @@ class ConfigUpdateEventHandler {
   }
 
   updateNumericField(targetId, changedEvent) {
-    if (this.#debug) debugLog('👉 ConfigUpdateEventHandler.updateNumericField()');
-
     const curValue = parseFloat(changedEvent.target.value);
     if (isNaN(curValue)) {
       delete this.config[targetId];
@@ -5922,8 +6250,6 @@ class ConfigUpdateEventHandler {
   }
 
   updateMaxValueField(targetId, changedEvent) {
-    if (this.#debug) debugLog('👉 ConfigUpdateEventHandler.updateMaxValueField()');
-
     if (!isNaN(changedEvent.target.value) && changedEvent.target.value.trim() !== '') {
       this.config[targetId] = parseFloat(changedEvent.target.value);
     } else if (changedEvent.target.value.trim() !== '') {
@@ -5934,13 +6260,10 @@ class ConfigUpdateEventHandler {
   }
 
   updateInteractionField(targetId, changedEvent) {
-    if (this.#debug) debugLog('👉 ConfigUpdateEventHandler.updateInteractionField()');
-
     this.config[targetId] = changedEvent.detail.value[targetId];
   }
 
   updateEntityOrValueField(targetId, changedEvent) {
-    if (this.#debug) debugLog('👉 ConfigUpdateEventHandler.updateEntityOrValueField()');
     if (changedEvent?.detail?.value && typeof changedEvent.detail.value[targetId] === 'string' && changedEvent.detail.value[targetId].trim() !== '') {
       this.config[targetId] = changedEvent.detail.value[targetId];
     } else {
@@ -5949,24 +6272,23 @@ class ConfigUpdateEventHandler {
   }
 
   updateToggleField(targetId, changedEvent) {
-    if (this.#debug) debugLog('👉 ConfigUpdateEventHandler.updateToggleField()');
     const key = targetId.replace('toggle_', '');
     const newConfig = structuredClone(this.config);
 
-    if (this.#debug) debugLog('    📌 *** CONFIG before ***:', JSON.stringify(this.config, null, 2));
-    if (this.#debug) debugLog('    📌 *** NEWCONFIG before ***:', JSON.stringify(newConfig, null, 2));
+    this.#log.debug(' 📌 *** CONFIG before ***:', JSON.stringify(this.config, null, 2));
+    this.#log.debug(' 📌 *** NEWCONFIG before ***:', JSON.stringify(newConfig, null, 2));
 
     if (!Array.isArray(newConfig.hide)) {
       newConfig.hide = [];
     } else {
       newConfig.hide = [...newConfig.hide];
     }
-    if (this.#debug) debugLog('    📌 *** NEWCONFIG (Hide Management) ***:', JSON.stringify(newConfig, null, 2));
+    this.#log.debug(' 📌 *** NEWCONFIG (Hide Management) ***:', JSON.stringify(newConfig, null, 2));
 
     const isChecked = changedEvent.target.checked;
-    if (this.#debug) debugLog('    📌 *** key ***:', key);
-    if (this.#debug) debugLog('    📌 *** is checked ***:', isChecked);
-    
+    this.#log.debug(' 📌 *** key ***:', key);
+    this.#log.debug(' 📌 *** is checked ***:', isChecked);
+
     if (isChecked) {
       newConfig.hide = newConfig.hide.filter((item) => item !== key);
     } else {
@@ -5974,14 +6296,14 @@ class ConfigUpdateEventHandler {
         newConfig.hide.push(key);
       }
     }
-    
+
     if (newConfig.hide.length === 0) {
       delete newConfig.hide;
     }
 
     this.config = newConfig;
-    if (this.#debug) debugLog('    📌 *** CONFIG after ***:', JSON.stringify(this.config, null, 2));
-    if (this.#debug) debugLog('    📌 *** NEWCONFIG after ***:', JSON.stringify(newConfig, null, 2));
+    this.#log.debug(' 📌 *** CONFIG after ***:', JSON.stringify(this.config, null, 2));
+    this.#log.debug(' 📌 *** NEWCONFIG after ***:', JSON.stringify(newConfig, null, 2));
   }
 
   updateCircularField(targetId, changedEvent) {
@@ -6001,15 +6323,41 @@ class ConfigUpdateEventHandler {
   }
 }
 
-/*
- * Custom editor component for configuring the `EntityProgressCard`.
- * HA Components:
- *  - https://github.com/home-assistant/frontend/blob/28304bb1dcebfddf3ab991e2f9e38f44427fe0f8/src/data/selector.ts
+/******************************************************************************************
+ * 🛠️ EntityProgressCardEditor
+ * ========================================================================================
+ * ✅ Custom Editor for configuring the `EntityProgressCard`.
+ *
+ * 📌 Purpose:
+ * 
+ * This class defines a custom web component responsible for rendering
+ * a user interface in the Home Assistant Lovelace GUI editor. It allows
+ * users to interactively configure the card's settings and manage
+ * internal state and synchronization with Home Assistant entities.
+ *
+ * Inspired by Home Assistant component structure:
+ * @see https://github.com/home-assistant/frontend/blob/dev/src/data/selector.ts
+ *
+ * 🧠 Responsibilities:
+ * - Dynamically build form elements based on a predefined schema.
+ * - Sync form inputs with the YAML configuration.
+ * - Listen to and handle UI changes and emit valid config objects.
+ * - Manage DOM and event listener lifecycle.
+ *
+ * Core Concepts:
+ * - Shadow DOM is used for encapsulation.
+ * - Internal state is managed with private class fields (#).
+ * - Entity attributes are automatically extracted to populate select fields.
+ * - Supports both YAML and GUI editing modes.
+ * 
+ * @class
+ * @extends HTMLElement
  */
 class EntityProgressCardEditor extends HTMLElement {
   static #debug = CARD.config.debug.editor;
   static _editorStyle = CARD_EDITOR_CSS;
   static _editorFields = EDITOR_INPUT_FIELDS;
+  #log = null;
   #hassProvider = null;
   #resourceManager = null;
   #container = null;
@@ -6025,13 +6373,19 @@ class EntityProgressCardEditor extends HTMLElement {
 
   constructor() {
     super();
+    this.#log = initLogger(this, EntityProgressCardEditor.#debug, [
+      'connectedCallback',
+      'disconnectedCallback',
+      'setConfig',
+      'toggleAccordion',
+      'render',
+    ]);    
     this.attachShadow({ mode: CARD.config.shadowMode });
     this.#hassProvider = HassProviderSingleton.getInstance();
-    if (EntityProgressCardEditor.#debug) debugLog('📌 Navigator: ', navigator.userAgent);
+    this.#log.debug('Loaded');
   }
 
   connectedCallback() {
-    if (EntityProgressCardEditor.#debug) debugLog('👉 Editor.connectedCallback()');
     if (!this.#resourceManager) this.#resourceManager = new ResourceManager();
     if (this.#isRendered && !this.#isListenersAttached && this.#isYAML) {
       this.#addEventListener();
@@ -6041,7 +6395,6 @@ class EntityProgressCardEditor extends HTMLElement {
   }
 
   disconnectedCallback() {
-    if (EntityProgressCardEditor.#debug) debugLog('👉 Editor.disconnectedCallback()');
     this.#resourceManager?.cleanup();
     this.#resourceManager = null;
     this.#isListenersAttached = false;
@@ -6063,8 +6416,7 @@ class EntityProgressCardEditor extends HTMLElement {
   }
 
   setConfig(config) {
-    if (EntityProgressCardEditor.#debug) debugLog('👉 editor.setConfig()');
-    if (EntityProgressCardEditor.#debug) debugLog('  📎 config: ', config);
+    this.#log.debug('  📎 config: ', config);
     this.#config = { ...config };
     if (!this.#hassProvider.isValid) {
       return;
@@ -6078,8 +6430,8 @@ class EntityProgressCardEditor extends HTMLElement {
       this.#isListenersAttached = false;
     }
 
-    if (EntityProgressCardEditor.#debug) debugLog('  📎 container GUI: ', this.#container);
-    if (EntityProgressCardEditor.#debug) debugLog('  📎 connected ?: ', this.isConnected);
+    this.#log.debug('  📎 container GUI: ', this.#container);
+    this.#log.debug('  📎 connected ?: ', this.isConnected);
 
     if (!this.isConnected) this.#isYAML = true; // YAML editor
     if (!this.#isListenersAttached && this.isConnected) {
@@ -6091,7 +6443,7 @@ class EntityProgressCardEditor extends HTMLElement {
   }
 
   #updateFields() {
-    if (EntityProgressCardEditor.#debug) debugLog('👉 editor.#updateFields()');
+    this.#log.debug('#updateFields()');
 
     const standardFieldType = new Set(['ha-select', 'ha-textfield']);
     const excludeStandardType = new Set([CARD.editor.keyMappings.attribute, CARD.editor.keyMappings.max_value_attribute]);
@@ -6100,7 +6452,7 @@ class EntityProgressCardEditor extends HTMLElement {
       if (standardFieldType.has(element.localName) && !excludeStandardType.has(key)) {
         this.#updateStandardField(key, element);
       } else if (element.localName === 'ha-form') {
-        EntityProgressCardEditor.#updateHAForm(element, key, this.#config[key]);
+        this.#updateHAForm(element, key, this.#config[key]);
       }
     }
 
@@ -6118,52 +6470,52 @@ class EntityProgressCardEditor extends HTMLElement {
   }
 
   #updateStandardField(key, element) {
-    if (EntityProgressCardEditor.#debug) debugLog('👉 editor.#updateStandardField()');
-    if (EntityProgressCardEditor.#debug) debugLog('        ✅ key ', key);
-    if (EntityProgressCardEditor.#debug) debugLog('        ✅ element: ', element);
+    this.#log.debug('editor.#updateStandardField()');
+    this.#log.debug('  ✅ key ', key);
+    this.#log.debug('  ✅ element: ', element);
     const newValue = Object.hasOwn(this.#config, key) ? this.#config[key] : '';
     const currentValue = element.value;
     const shouldUpdate = typeof currentValue === 'string' ? currentValue !== String(newValue) : currentValue !== newValue;
 
     if (shouldUpdate) {
       element.value = newValue;
-      if (EntityProgressCardEditor.#debug) debugLog('        🆕 updateFields - update: ', [key, newValue]);
+      this.#log.debug('  🆕 updateFields - update: ', [key, newValue]);
     }
-    if (EntityProgressCardEditor.#debug) debugLog('        ✅ done');
+    this.#log.debug('  ✅ done');
   }
 
-  static #updateHAForm(form, key, newValue) {
-    if (EntityProgressCardEditor.#debug) debugLog('👉 editor.#updateHAForm()');
-    if (EntityProgressCardEditor.#debug) debugLog('        ✅ Update HA Form (Before) ------> ', form.data);
-    if (EntityProgressCardEditor.#debug) debugLog('        ✅ NewValue: ', newValue);
+  #updateHAForm(form, key, newValue) {
+    this.#log.debug('👉 editor.#updateHAForm()');
+    this.#log.debug('  ✅ Update HA Form (Before) ------> ', form.data);
+    this.#log.debug('  ✅ NewValue: ', newValue);
 
     if (form.data === undefined || (newValue !== undefined && form.data[key] !== newValue)) {
-      if (EntityProgressCardEditor.#debug) debugLog('        🆕 NewValue: update.');
+      this.#log.debug('  🆕 NewValue: update.');
       form.data = {
         ...form.data,
         [key]: newValue,
       };
-      if (EntityProgressCardEditor.#debug) debugLog(form.data);
+      this.#log.debug(form.data);
     } else if (newValue === undefined && form.data[key] !== undefined) {
-      if (EntityProgressCardEditor.#debug) debugLog('        🆕 key: set undef...');
+      this.#log.debug('  🆕 key: set undef...');
       form.data = {
         ...form.data,
         [key]: undefined,
       };
     }
-    if (EntityProgressCardEditor.#debug) debugLog('        ✅ Update HA Form (after) ------> ', form.data);
+    this.#log.debug('  ✅ Update HA Form (after) ------> ', form.data);
   }
 
   #updateAttributFromEntity(entity, attribute) {
-    if (EntityProgressCardEditor.#debug) debugLog('👉 editor.#updateAttributFromEntity()');
-    if (EntityProgressCardEditor.#debug) debugLog(`  📎 entity: ${entity}`);
-    if (EntityProgressCardEditor.#debug) debugLog(`  📎 attribute: ${attribute}`);
+    this.#log.debug('#updateAttributFromEntity()');
+    this.#log.debug(`  📎 entity: ${entity}`);
+    this.#log.debug(`  📎 attribute: ${attribute}`);
 
     // Création d'une instance EntityOrValue pour l'entité courante
     const curEntity = new EntityOrValue();
     curEntity.value = this.#config[entity];
     const attributeList = curEntity.attributesListForEditor;
-    if (EntityProgressCardEditor.#debug) debugLog('  📎 attribute liste:', attributeList);
+    this.#log.debug('  📎 attribute liste:', attributeList);
 
     // Si l'entité a changé et que l'entité courante a des attributs, on régénère la liste.
     if (this.#previous[entity] !== this.#config[entity] && curEntity.hasAttribute) {
@@ -6172,15 +6524,15 @@ class EntityProgressCardEditor extends HTMLElement {
       if (targetElement) {
         this.#updateChoices(targetElement, attribute, attributeList);
       }
-      if (EntityProgressCardEditor.#debug) debugLog(`        ✅ updateFields - ${entity} attributes list: `, attributeList);
+      this.#log.debug(`  ✅ updateFields - ${entity} attributes list: `, attributeList);
     }
 
     // Si l'attribut n'est pas défini dans la config ET
     // que l'entité possède des attributs ET
     // que la valeur du select ne correspond pas encore au defaultAttribute :
     if (this.#config[attribute] === undefined && curEntity.hasAttribute) {
-      if (EntityProgressCardEditor.#debug) debugLog(`        ✅ updateFields - Attribute ${attribute} (default): in progress...`);
-      EntityProgressCardEditor.#applySelectValueOnUpdate(this.#domElements.get(attribute), curEntity.defaultAttribute);
+      this.#log.debug(`  ✅ updateFields - Attribute ${attribute} (default): in progress...`);
+      this.#applySelectValueOnUpdate(this.#domElements.get(attribute), curEntity.defaultAttribute);
     }
 
     if (
@@ -6190,20 +6542,20 @@ class EntityProgressCardEditor extends HTMLElement {
       this.#domElements.get(attribute).value !== this.#config[attribute]
     ) {
       this.#domElements.get(attribute).value = this.#config[attribute];
-      if (EntityProgressCardEditor.#debug) debugLog(`        ✅ updateFields - Attribute ${attribute}: `, curEntity.attributes);
+      this.#log.debug(`  ✅ updateFields - Attribute ${attribute}: `, curEntity.attributes);
     }
 
     return curEntity.hasAttribute;
   }
-  static async #applySelectValueOnUpdate(select, value) {
+  async #applySelectValueOnUpdate(select, value) {
     await select.updateComplete;
 
     const values = Array.from(select.children).map((el) => el.getAttribute('value'));
     if (values.includes(value)) {
       select.value = value;
-      if (this.#debug) debugLog('        ✅ applySelectValueOnUpdate - Entity attribute (default): ', value);
+      this.#log.debug('  ✅ applySelectValueOnUpdate - Entity attribute (default): ', value);
     } else {
-      if (this.#debug) debugLog('        ❌ applySelectValueOnUpdate - Default attribute not found in select options', values);
+      this.#log.debug('  ❌ applySelectValueOnUpdate - Default attribute not found in select options', values);
     }
   }
   #updateToggleFields() {
@@ -6227,7 +6579,7 @@ class EntityProgressCardEditor extends HTMLElement {
   }
 
   #addEventListener() {
-    if (EntityProgressCardEditor.#debug) debugLog('👉 editor.#addEventListener');
+    this.#log.debug('#addEventListener');
     const fieldsToProcess = [
       this.editorFields.basicConfiguration,
       this.editorFields.content.field,
@@ -6254,7 +6606,7 @@ class EntityProgressCardEditor extends HTMLElement {
   }
 
   #addEventListenerFor(name, type) {
-    if (EntityProgressCardEditor.#debug) debugLog(`👉 Editor.#addEventListenerFor(${name}, ${type})`);
+    this.#log.debug(`#addEventListenerFor(${name}, ${type})`);
     if (!this.#domElements.get(name)) {
       console.error(`Element ${name} not found!`);
       return;
@@ -6263,7 +6615,7 @@ class EntityProgressCardEditor extends HTMLElement {
     const isToggle = CARD.editor.fields[type]?.element === CARD.editor.fields.toggle.element;
     const events = isHASelect ? CARD.interactions.event.HASelect : isToggle ? CARD.interactions.event.toggle : CARD.interactions.event.other;
 
-    if (EntityProgressCardEditor.#debug) debugLog(`Event: ${events}`);
+    this.#log.debug('Event:', events);
 
     if (isHASelect) {
       this.#resourceManager.addEventListener(
@@ -6282,8 +6634,8 @@ class EntityProgressCardEditor extends HTMLElement {
   }
 
   #onChanged(changedEvent) {
-    if (EntityProgressCardEditor.#debug) debugLog('👉 editor.#onChanged()');
-    if (EntityProgressCardEditor.#debug) debugLog('  📎 ', changedEvent);
+    this.#log.debug('#onChanged()');
+    this.#log.debug('  📎 ', changedEvent);
 
     const configUpdateEventHandler = new ConfigUpdateEventHandler(Object.assign({}, this.#config));
     const newConfig = configUpdateEventHandler.updateConfig(changedEvent);
@@ -6292,12 +6644,12 @@ class EntityProgressCardEditor extends HTMLElement {
   }
 
   #sendNewConfig(newConfig) {
-    if (EntityProgressCardEditor.#debug) debugLog('👉 editor.#sendNewConfig()');
+    this.#log.debug('#sendNewConfig()');
     if (newConfig.grid_options) {
       const { grid_options, ...rest } = newConfig;
       newConfig = { ...rest, grid_options };
     }
-    if (EntityProgressCardEditor.#debug) debugLog('  📎 newConfig: ', newConfig);
+    this.#log.debug('  📎 newConfig: ', newConfig);
     const messageEvent = new CustomEvent(CARD.interactions.event.configChanged, {
       detail: { config: newConfig },
       bubbles: true,
@@ -6314,18 +6666,14 @@ class EntityProgressCardEditor extends HTMLElement {
    * Update a list of choices to a given `<select>` element based on the specified list type.
    */
   #updateChoices(select, type, choices = null) {
-    if (EntityProgressCardEditor.#debug) debugLog('👉 editor.#updateChoices()');
-    if (EntityProgressCardEditor.#debug) debugLog(`  📎 select: ${select}`);
-    if (EntityProgressCardEditor.#debug) debugLog(`  📎 type: ${type}`);
-    if (EntityProgressCardEditor.#debug) debugLog(`  📎 choices: ${choices}`);
-
+    this.#log.debug('#updateChoices() ', {select, type, choices});
     const fragment = document.createDocumentFragment();
 
     const list = [CARD.editor.fields.attribute.type, CARD.editor.fields.max_value_attribute.type].includes(type) ? choices : FIELD_OPTIONS[type];
     if (!list) {
       return;
     }
-    if (EntityProgressCardEditor.#debug) debugLog('  📌 list: ', list);
+    this.#log.debug('  📌 list: ', list);
 
     list.forEach((optionData) => {
       const option = document.createElement(CARD.editor.fields.listItem.element);
@@ -6358,9 +6706,6 @@ class EntityProgressCardEditor extends HTMLElement {
   }
 
   static #computeCustomLabel(s, label) {
-    if (this.#debug) debugLog('👉 computeCustomLabel()');
-    if (this.#debug) debugLog('  📎 name: ', s.name);
-    if (this.#debug) debugLog('  📎 label: ', label);
     return label;
   }
 
@@ -6368,7 +6713,7 @@ class EntityProgressCardEditor extends HTMLElement {
    * Creates a form field based on the provided configuration and appends it to a container.
    */
   #createField({ name, label, type, required, isInGroup, width, schema = null }) {
-    if (EntityProgressCardEditor.#debug) debugLog('👉 editor.#createField()');
+    this.#log.debug('#createField()');
     let inputElement = null;
     const value = this.#config[name] ?? '';
 
@@ -6529,7 +6874,7 @@ class EntityProgressCardEditor extends HTMLElement {
 
   #renderFields(parent, inputFields) {
     Object.values(inputFields).forEach((field) => {
-      if (EntityProgressCardEditor.#debug) debugLog('#renderFields - field: ', field);
+      this.#log.debug('#renderFields - field: ', field);
       parent.appendChild(
         this.#createField({
           name: field.name,
@@ -6605,6 +6950,20 @@ class EntityProgressCardEditor extends HTMLElement {
   }
 }
 
+/******************************************************************************************
+ * 🛠️ EntityProgressBadgeEditor
+ * ========================================================================================
+ * ✅ Manage the badge editor.
+ * 
+ * This class extends `EntityProgressCardEditor` and provides a specialized version of the editor
+ * for a progress badge (circular badge), with a reduced set of configurable fields.
+ *
+ * It is used in card editor interfaces, where the user can configure the display and behavior
+ * options of a badge that represents the state of an entity.
+ *
+ * @class
+ * @extends EntityProgressCardEditor
+ */
 class EntityProgressBadgeEditor extends EntityProgressCardEditor {
   static _editorStyle = `
   ${CARD_EDITOR_CSS}
@@ -6626,8 +6985,8 @@ class EntityProgressBadgeEditor extends EntityProgressCardEditor {
   })();
 }
 
-/** --------------------------------------------------------------------------
- * Registers the custom element for the EntityProgressCardEditor editor.
+/******************************************************************************************
+ * 🔧 Register card & badge editors
  */
 customElements.define(CARD.meta.card.editor, EntityProgressCardEditor);
 customElements.define(CARD.meta.badge.editor, EntityProgressBadgeEditor);

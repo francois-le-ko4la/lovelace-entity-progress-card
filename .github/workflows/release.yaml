@@ -17,11 +17,30 @@ jobs:
         run: |
           mkdir temp
           cp *.js temp/
-      - name: Clean debugLog calls and function
+      - name: Clean debug Log calls and function
         run: |
+          set -euo pipefail
           for file in temp/*.js; do
-            sed -i '/debugLog(.*);/d' "$file"
-            sed -i '/const debugLog = (msg, val) => {/,/^};/d' "$file"
+            patterns=(
+              's/;[[:space:]]*$/;/g'                                      # Remove space 
+              '/this\.[_#]log = initLogger(.*);$/d'                       # Remove single-line initLogger assignments
+              '/this\.[_#]log = initLogger(/,/);$/d'                      # Remove multi-line initLogger assignments
+              '/this\.[_#]log = Logger\.create/d'                         # Remove Logger.create assignments
+              '/[_#]log = null;/d'                                        # Remove null log declarations
+              '/this\.[_#]log\.debug/d'                                   # Remove debug calls
+              '/[_#]debug = CARD\.config\.debug\./d'                      # Remove debug variable assignments
+              '/static [_#]debug = CARD\.config\.debug\./d'               # Remove static debug variable assignments
+              '/^const Logger = {$/,/^};$/d'                              # Remove Logger class block
+              '/^function initLogger(/,/^}$/d'                            # Remove initLogger function block
+            )
+        
+            for pattern in "${patterns[@]}"; do
+              sed -i "$pattern" "$file"
+            done
+        
+            sed -i 's/debug: { card: [^,]*, editor: [^,]*, interactionHandler: [^,]*, ressourceManager: [^,]*, hass: [^}]* }/debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false, hass: false }/g' "$file"
+            sed -i 's/^[[:space:]]*dev: true,$/    dev: false,/g' "$file"
+            sed -i '/^$/N;/^\n$/d' "$file"
           done
       - name: Process JS Files
         run: |
