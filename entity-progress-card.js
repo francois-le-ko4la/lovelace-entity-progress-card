@@ -2845,8 +2845,8 @@ const Logger = {
       state: (label, hass, config) => {
         if (!shouldLog('debug')) return;
         console.debug(`[${name}] 📊 ${label}`, {
-          hasHass: !!hass,
-          hasConfig: !!config,
+          hasHass: Boolean(hass),
+          hasConfig: Boolean(config),
           entities: config?.entities?.length || 0,
           connected: document.body.contains ? 'unknown' : 'checking',
         });
@@ -3541,13 +3541,14 @@ class ChangeTracker {
   #watchedEntities = new Set();
   #entityCache = {};
   #updated = false;
+  #hassState = { isUpdated: false };
 
   constructor() {
     this.#log = Logger.create('ChangeTracker', this.#debug ? 'debug' : 'info');
   }
   // === PUBLIC GETTERS / SETTERS ===
 
-  set hass(hass) {
+  set hassState(hass) {
     this.#updated = false;
     if (!hass) return;
 
@@ -3556,6 +3557,11 @@ class ChangeTracker {
       this.#updated = true;
       this.#log.debug('HASS need update...!');
     }
+    this.#hassState = { isUpdated: this.#updated };
+  }
+
+  get hassState() {
+    return this.#hassState;
   }
 
   get isUpdated() {
@@ -4841,7 +4847,7 @@ class EntityProgressCardBase extends HTMLElement {
     
     this.attachShadow({ mode: CARD.config.shadowMode });
     this._actionHelper = new ActionHelper(this);
-    this._initializeModule();
+    EntityProgressCardBase._initializeModule();
   }
 
   connectedCallback() {
@@ -4884,8 +4890,8 @@ class EntityProgressCardBase extends HTMLElement {
   set hass(hass) {
     this._log.debug('👉 set hass()');
 
-    this._changeTracker.hass = hass;
-    if (this._changeTracker.isUpdated) {
+    this._changeTracker.hassState = hass;
+    if (this._changeTracker.hassState.isUpdated) {
       this._assignHass(hass);
       this._handleHassUpdate();
     }
@@ -4983,7 +4989,7 @@ class EntityProgressCardBase extends HTMLElement {
 
   // === INITIALIZATION ===
 
-  _initializeModule() {
+  static _initializeModule() {
     if (!EntityProgressCardBase._moduleLoaded) {
       console.groupCollapsed(CARD.console.message, CARD.console.css);
       console.log(CARD.console.link);
