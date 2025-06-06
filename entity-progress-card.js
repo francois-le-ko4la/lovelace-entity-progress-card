@@ -5547,19 +5547,11 @@ class EntityProgressCardBase extends HTMLElement {
 
   async _processJinjaFields() {
     if (!this._validateProcessJinjaFields()) {
-      this._log.debug('❌ Jinja processing skipped - validation failed', {
-        hasResourceManager: Boolean(this._resourceManager),
-        isDemoMode: EntityProgressTemplate._isDemoMode,
-        hasHass: Boolean(this.hass),
-      });
+      this._log.debug('❌ Jinja processing skipped - validation failed');
       return;
     }
 
-    this._log.debug('✅ Processing Jinja fields', {
-      hasResourceManager: Boolean(this._resourceManager),
-      isDemoMode: EntityProgressTemplate._isDemoMode,
-      hasHass: Boolean(this.hass),
-    });
+    this._log.debug('✅ Processing Jinja fields');
 
     const templates = this._getTemplateFields();
 
