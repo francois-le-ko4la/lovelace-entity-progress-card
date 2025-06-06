@@ -131,8 +131,8 @@ const CARD = {
       'zh-Hant': 'zh-TW',
     },
     separator: ' · ',
-    debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false, hass: false },
-    dev: false,
+    debug: { card: true, editor: false, interactionHandler: false, ressourceManager: true, hass: true },
+    dev: true,
   },
   htmlStructure: {
     card: { element: 'ha-card' },
@@ -2293,61 +2293,81 @@ const CARD_HTML = `
 `;
 
 const CARD_CSS = `
+  /* === BASE CARD STYLES === */
   ${CARD.htmlStructure.card.element} {
     height: 100%;
     display: flex;
-    flex-direction: row;
     align-items: center;
-    justify-content: flex-start;
-    padding: 0;
-    box-sizing: border-box;
+    justify-content: center;
+    padding: 0 10px;
     margin: 0 auto;
     overflow: hidden;
+    box-sizing: border-box;
     font-family: var(--ha-font-family-body);
+    -moz-osx-font-smoothing: var(--ha-font-smoothing);    
   }
 
+  /* === FRAMELESS & ENTITIES STYLES === */
+  .type-entities,
   .${CARD.style.dynamic.frameless.class} {
-    border: 0;
-    background-color: transparent;
+    background: transparent;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  
+  .type-entities {
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    transition: none !important;
   }
 
-  .${CARD.style.dynamic.clickable.card} {
+  /* === INTERACTIVE STATES === */
+  .${CARD.style.dynamic.clickable.card}:hover,
+  /*.${CARD.style.dynamic.clickable.card}.${CARD.style.dynamic.frameless.class}:hover,*/
+  .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.left.class}:hover {
     cursor: pointer;
-  }
-
-  .${CARD.style.dynamic.clickable.card}:hover {
     background-color: color-mix(in srgb, var(--card-background-color) 96%, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) 4%);
   }
-
+  
   .${CARD.style.dynamic.clickable.card}:active {
     background-color: color-mix(in srgb, var(--card-background-color) 85%, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) 15%);
     transition: background-color 0.5s ease;
   }
 
-  /* main container */
+  .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.left.class}:hover .${CARD.htmlStructure.elements.shape.class} {
+    background-color: color-mix(in srgb, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) 40%, transparent);
+  }
+
+  /* === MAIN CONTAINER === */
   .${CARD.htmlStructure.sections.container.class} {
     display: flex;
-    flex-direction: row;
     align-items: center;
     justify-content: center;
-    padding: 0;
-    margin: 0px 10px;
     gap: 10px;
     width: 100%;
     height: 100%;
     overflow: hidden;
   }
 
+  .type-entities .${CARD.htmlStructure.sections.container.class} {
+    gap: 16px;
+  }
+
+  /* === LAYOUT ORIENTATIONS === */
   .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.container.class} {
     min-height: ${CARD.layout.orientations.vertical.minHeight};
     flex-direction: column;
   }
+  
   .${CARD.layout.orientations.horizontal.label} .${CARD.htmlStructure.sections.container.class} {
     min-height: ${CARD.layout.orientations.horizontal.minHeight};
     flex-direction: row;
   }
-
-  /* .left: icon & shape */
+  .type-entities .${CARD.htmlStructure.sections.container.class} {
+    min-height: 44.8px !important;
+  }
+  /* === LEFT SECTION (ICON & SHAPE) === */
   .${CARD.htmlStructure.sections.left.class} {
     display: flex;
     flex-direction: column;
@@ -2359,6 +2379,12 @@ const CARD_CSS = `
     flex-shrink: 0;
   }
 
+  .type-entities .${CARD.htmlStructure.sections.left.class} {
+    width: var(--epb-icon-and-shape-size, 40px) !important;
+    height: var(--epb-icon-and-shape-size, 40px) !important;
+  }
+
+  /* Vertical layout margins for different sizes */
   .${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.sections.left.class} {
     margin-top: 10px;
   }
@@ -2371,6 +2397,7 @@ const CARD_CSS = `
     margin-top: 14px;
   }
 
+  /* === SHAPE & ICON === */
   .${CARD.htmlStructure.elements.shape.class} {
     display: flex;
     align-items: center;
@@ -2386,82 +2413,88 @@ const CARD_CSS = `
     height: var(--epb-icon-and-shape-size, 24px);
     color: var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default});
   }
-  .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.left.class}:hover {
-    cursor: pointer;
-  }   
-      
-  .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.left.class}:hover .${CARD.htmlStructure.elements.shape.class} {
-    background-color: color-mix(in srgb, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) 40%, transparent);
-  }
 
-  /* .right: name & secondary info */
+  /* === RIGHT SECTION (TEXT CONTENT) === */
   .${CARD.htmlStructure.sections.right.class} {
     display: flex;
     flex-direction: column;
     justify-content: center;
     flex-grow: 1;
     overflow: hidden;
-    width:100%;
+    width: 100%;
   }
 
   .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.right.class} {
     flex-grow: 0;
   }
 
+  /* === TEXT ELEMENTS === */
   .${CARD.htmlStructure.elements.nameGroup.class} {
     display: flex;
-    flex-direction: row;
-
     width: 100%;
     min-width: 0;
     height: 20px;
   }
 
   .${CARD.htmlStructure.elements.nameCombined.class} {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
     color: var(--primary-text-color);
     font-size: var(--ha-font-size-m);
     font-weight: var(--ha-font-weight-medium);
     line-height: 20px;
     letter-spacing: 0.1px;
     text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .${CARD.htmlStructure.elements.detailGroup.class} {
     display: flex;
-    flex-direction: row;
     align-items: center;
     height: 16px;
     min-width: 45px;
     max-width: 60%;
-    text-align: left;
     line-height: 16px;
     color: var(--primary-text-color);
+    text-align: left;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   .${CARD.htmlStructure.elements.detailCombined.class} {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
     color: var(--primary-text-color);
     font-size: var(--ha-font-size-s);
     font-weight: var(--ha-font-weight-body);
     line-height: 16px;
     letter-spacing: 0.4px;
     text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
+  /* === ENTITIES TYPE SPECIFIC === */
+  .type-entities .${CARD.htmlStructure.elements.nameGroup.class},
+  .type-entities .${CARD.htmlStructure.elements.detailGroup.class} {
+    height: 22.4px !important;
+  }
 
+  .type-entities .${CARD.htmlStructure.elements.nameCombined.class} {
+    font-weight: var(--ha-font-weight-normal) !important;
+    line-height: var(--ha-line-height-normal) !important;
+  }
+
+  .type-entities .${CARD.htmlStructure.elements.detailCombined.class} {
+    color: var(--secondary-text-color) !important;
+    font-size: var(--ha-font-size-m) !important;
+    font-weight: var(--ha-font-weight-normal) !important;
+    line-height: var(--ha-line-height-normal) !important;
+  }
+
+  /* === SECONDARY INFO === */
   .${CARD.htmlStructure.elements.secondaryInfo.class} {
     display: flex;
-    flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: 10px;
@@ -2471,14 +2504,15 @@ const CARD_CSS = `
     display: block;
   }
     
-  /* Progress bar */
+  /* === PROGRESS BAR === */
   .${CARD.htmlStructure.elements.progressBar.container.class} {
     flex-grow: 1;
-    height: 16px; /* Même hauteur que le pourcentage */
+    height: 16px;
     display: flex;
     justify-content: center;
     align-items: center;
   }
+
   .${CARD.htmlStructure.elements.progressBar.bar.class} {
     width: 100%;
     height: ${CARD.style.bar.sizeOptions.small.size};
@@ -2489,10 +2523,7 @@ const CARD_CSS = `
     position: relative;
   }
 
-  .${CARD.style.dynamic.progressBar.orientation.rtl} .${CARD.htmlStructure.elements.progressBar.bar.class} {
-    transform: scaleX(-1);
-  }
-
+  /* Progress bar size variants */
   .${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
     height: ${CARD.style.bar.sizeOptions.small.size};
     max-height: ${CARD.style.bar.sizeOptions.small.size};
@@ -2508,6 +2539,10 @@ const CARD_CSS = `
     max-height: ${CARD.style.bar.sizeOptions.large.size};
   }
 
+  .${CARD.style.dynamic.progressBar.orientation.rtl} .${CARD.htmlStructure.elements.progressBar.bar.class} {
+    transform: scaleX(-1);
+  }
+
   .${CARD.htmlStructure.elements.progressBar.inner.class} {
     height: 100%;
     width: var(${CARD.style.dynamic.progressBar.size.var}, ${CARD.style.dynamic.progressBar.size.default});
@@ -2516,52 +2551,54 @@ const CARD_CSS = `
     will-change: width;
   }
 
-  .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-    display: none;
-    position: absolute;
-    height: 100%;
-    top: 0;
-    left: 0;
-    width: var(--epb-low-watermark-value, 20%);
-    background-color: var(--epb-low-watermark-color, var(--red-color));
-    mix-blend-mode: hard-light;
-    opacity: var(--epb-watermark-opacity-value, 0.8);  
-  }
+  /* === WATERMARKS === */
+  .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
   .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
     display: none;
     position: absolute;
     height: 100%;
     top: 0;
+    mix-blend-mode: hard-light;
+    opacity: var(--epb-watermark-opacity-value, 0.8);
+  }
+
+  .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+    left: 0;
+    width: var(--epb-low-watermark-value, 20%);
+    background-color: var(--epb-low-watermark-color, var(--red-color));
+  }
+
+  .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
     right: 0;
     width: calc(100% - var(--epb-high-watermark-value, 80%));
     background-color: var(--epb-high-watermark-color, var(--red-color));
-    mix-blend-mode: hard-light;
-    opacity: var(--epb-watermark-opacity-value, 0.8);  
   }
 
+  /* Watermark line styles */
   .${CARD.style.dynamic.show}-HWM-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
     right: calc(100% - var(--epb-high-watermark-value, 80%));
     width: 1px;
   }
-  .${CARD.style.dynamic.show}-LWM-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class}  {
+
+  .${CARD.style.dynamic.show}-LWM-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
     left: var(--epb-low-watermark-value, 20%);
     width: 1px;
   }
 
+  /* === VERTICAL LAYOUT ADJUSTMENTS === */
   .${CARD.layout.orientations.vertical.label} .${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.nameGroup.class} {
     height: 18px;
   }
 
-  .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.nameGroup.class} {
+  .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.nameGroup.class},
+  .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
     align-items: center;
     justify-content: center;
   }
 
   .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
-    align-items: center;
-    justify-content: center;
-    width: 100%; /* ou 100% de son parent */
-    max-width: none; /* si tu veux supprimer la limite */
+    width: 100%;
+    max-width: none;
   }
 
   .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} > span {
@@ -2569,6 +2606,7 @@ const CARD_CSS = `
     flex-shrink: 0;
   }
 
+  /* Size-specific vertical adjustments */
   .${CARD.style.bar.sizeOptions.small.label} .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
     margin-bottom: 1px;
   }
@@ -2583,6 +2621,7 @@ const CARD_CSS = `
     font-size: 0.8em;
   }
 
+  /* === BADGE === */
   .${CARD.htmlStructure.elements.badge.container.class} {
     position: absolute;
     z-index: 2;
@@ -2590,8 +2629,8 @@ const CARD_CSS = `
     right: -3px;
     inset-inline-end: -3px;
     inset-inline-start: initial;
-    height: 16px;
     width: 16px;
+    height: 16px;
     border-radius: 50%;
     background-color: var(${CARD.style.dynamic.badge.backgroundColor.var}, ${CARD.style.dynamic.badge.backgroundColor.default});
     display: none;
@@ -2600,18 +2639,15 @@ const CARD_CSS = `
   }
 
   .${CARD.htmlStructure.elements.badge.container.class} .${CARD.htmlStructure.elements.badge.icon.class} {
-    height: 12px;
     width: 12px;
-    display: flex; /* h/w ratio */
+    height: 12px;
+    display: flex;
     align-items: center;
     justify-content: center;
     color: var(${CARD.style.dynamic.badge.color.var}, ${CARD.style.dynamic.badge.color.default});
   }
 
-  .${CARD.style.dynamic.hiddenComponent.icon.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.left.class},
-  .${CARD.style.dynamic.hiddenComponent.name.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.nameGroup.class},
-  .${CARD.style.dynamic.hiddenComponent.progress_bar.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.progressBar.bar.class},
-  .${CARD.style.dynamic.hiddenComponent.secondary_info.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class},
+  /* === VISIBILITY CONTROLS === */
   .${CARD.style.dynamic.hiddenComponent.icon.class} .${CARD.htmlStructure.sections.left.class},
   .${CARD.style.dynamic.hiddenComponent.icon.class} .${CARD.htmlStructure.elements.shape.class},
   .${CARD.style.dynamic.hiddenComponent.name.class} .${CARD.htmlStructure.elements.nameGroup.class},
@@ -2620,12 +2656,21 @@ const CARD_CSS = `
     display: none;
   }
 
-  .${CARD.style.dynamic.hiddenComponent.shape.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.shape.class},
-  .${CARD.style.dynamic.hiddenComponent.shape.class} .${CARD.htmlStructure.elements.shape.class} {
+  /* Vertical layout visibility overrides */
+  .${CARD.style.dynamic.hiddenComponent.icon.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.left.class},
+  .${CARD.style.dynamic.hiddenComponent.name.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.nameGroup.class},
+  .${CARD.style.dynamic.hiddenComponent.progress_bar.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.progressBar.bar.class},
+  .${CARD.style.dynamic.hiddenComponent.secondary_info.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
+    display: none;
+  }
+
+  /* Shape transparency when hidden */
+  .${CARD.style.dynamic.hiddenComponent.shape.class} .${CARD.htmlStructure.elements.shape.class},
+  .${CARD.style.dynamic.hiddenComponent.shape.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.shape.class} {
     background-color: transparent;
   }
 
-
+  /* Show elements when needed */
   .${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class} .${CARD.htmlStructure.elements.badge.container.class},
   .${CARD.style.dynamic.show}-HWM-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
   .${CARD.style.dynamic.show}-LWM-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
@@ -2635,7 +2680,21 @@ const CARD_CSS = `
   }
 `;
 
+
+
 const CARD_EDITOR_CSS = `
+  :host {
+    --accordion-padding: 18px;
+    --accordion-gap: 10px;
+    --border-radius: 6px;
+    --transition-duration: 0.2s;
+    --transition-easing: cubic-bezier(0.33, 0, 0.2, 1);
+    --icon-size: 20px;
+    --button-size: 48px;
+    --small-icon-size: 24px;
+  }
+
+  /* Container principal */
   .${CARD.editor.fields.container.class} {
     display: flex;
     flex-direction: column;
@@ -2643,30 +2702,39 @@ const CARD_EDITOR_CSS = `
     padding-bottom: 70px;
   }
 
-  .${CARD.editor.fields.iconItem.class} {
+  /* Icônes communes */
+  .${CARD.editor.fields.iconItem.class},
+  .${CARD.editor.fields.accordion.icon.class} {
     margin-right: 8px;
-    width: 20px;
-    height: 20px;
+    color: var(--secondary-text-color);
   }
 
+  .${CARD.editor.fields.iconItem.class} {
+    width: var(--icon-size);
+    height: var(--icon-size);
+  }
+
+  /* Documentation */
   .${CARD.documentation.link.class} {
-    text-decoration: none;
-    display: flex;
     position: absolute;
     top: 0;
     right: 0;
     z-index: 600;
+    text-decoration: none;
+    display: flex;
   }
 
   .${CARD.documentation.shape.class} {
-    width: 48px;
-    height: 48px;
+    width: var(--button-size);
+    height: var(--button-size);
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
     cursor: pointer;
+    transition: background-color var(--transition-duration) ease;
   }
+
   .${CARD.documentation.shape.class}:hover {
     background-color: color-mix(in srgb, var(--card-background-color) 90%, var(--secondary-text-color) 10%);
   }
@@ -2675,35 +2743,30 @@ const CARD_EDITOR_CSS = `
     color: var(--primary-text-color);
   }
 
+  /* Accordéon */
   .${CARD.editor.fields.accordion.item.class} {
     display: block;
     width: 100%;
     border: 1px solid color-mix(in srgb, var(--card-background-color) 80%, var(--secondary-text-color) 20%);
-    border-radius: 6px;
+    border-radius: var(--border-radius);
     overflow: visible;
   }
-  
-  .${CARD.editor.fields.accordion.icon.class} {
-    color: var(--secondary-text-color);
-    margin-right: 8px;
-  }
-  
+
   .${CARD.editor.fields.accordion.title.class} {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    gap: 10px;
+    gap: var(--accordion-gap);
     position: relative;
     background-color: transparent;
     color: var(--primary-text-color);
     cursor: pointer;
-    padding: 18px;
+    padding: var(--accordion-padding);
     width: 100%;
-    height: 48px;
+    height: var(--button-size);
     border: none;
     text-align: left;
     font-size: 15px;
-    transition: 0.4s;
+    transition: background-color 0.4s ease;
   }
 
   .${CARD.editor.fields.accordion.title.class}:focus {
@@ -2712,31 +2775,33 @@ const CARD_EDITOR_CSS = `
 
   .${CARD.editor.fields.accordion.arrow.class} {
     display: inline-block;
-    width: 24px;
-    height: 24px;
+    width: var(--small-icon-size);
+    height: var(--small-icon-size);
     margin-left: auto;
     color: var(--primary-text-color);
-    transition: transform 0.2s ease-out;
+    transition: transform var(--transition-duration) ease-out;
   }
+
   .accordion.expanded .${CARD.editor.fields.accordion.arrow.class} {
     transform: rotate(180deg);
   }
+
   .${CARD.editor.fields.accordion.content.class} {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     align-content: flex-start;
-    column-gap: 10px;
+    column-gap: var(--accordion-gap);
     row-gap: 20px;
-    padding: 0px 18px;
+    padding: 0 var(--accordion-padding);
     background-color: transparent;
     max-height: 0;
     opacity: 0;
     overflow: hidden;
-    transition:
-      max-height 0.2s cubic-bezier(0.33, 0, 0.2, 1),
-      padding 0.2s cubic-bezier(0.33, 0, 0.2, 1),
-      opacity 0.2s ease;
+    transition: 
+      max-height var(--transition-duration) var(--transition-easing),
+      padding var(--transition-duration) var(--transition-easing),
+      opacity var(--transition-duration) ease;
   }
 
   .accordion.expanded .${CARD.editor.fields.accordion.content.class} {
@@ -2747,32 +2812,37 @@ const CARD_EDITOR_CSS = `
     overflow: visible;
   }
 
+  /* Animation des éléments enfants de l'accordéon */
   .${CARD.editor.fields.accordion.content.class} > * {
     opacity: 0;
-    transition: opacity 0.2s ease 0.15s;
+    transition: opacity var(--transition-duration) ease 0.15s;
   }
+
   .accordion.expanded .${CARD.editor.fields.accordion.content.class} > * {
     opacity: 1;
   }
+
   .accordion.collapsing .${CARD.editor.fields.accordion.content.class} > * {
     opacity: 0 !important;
-    transition: opacity 0.1s; /* désactive transition pendant repli */
+    transition: opacity 0.1s ease; /* Transition rapide pendant le repli */
   }
 
+  /* Sélecteur ha-select */
   ha-select {
-    --mdc-menu-max-height: 250px; /* Définit la hauteur maximale */
+    --mdc-menu-max-height: 250px;
   }
 
-  /* show/hide */
+  /* Classes show/hide optimisées */
   .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.attribute} .${CARD.editor.keyMappings.attribute},
   .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.max_value_attribute} .${CARD.editor.keyMappings.max_value_attribute},
   .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.theme} .${CARD.editor.keyMappings.theme} {
     display: none;
   }
 
+  /* Toggle corrigé */
   .${CARD.editor.fields.toggle.class} {
     display: flex;
-    align-item: center;
+    align-items: center; /* Correction du typo */
     gap: 8px;
   }
 `;
@@ -2789,7 +2859,6 @@ if (CARD.config.dev) {
   CARD.meta.template.name = `${CARD.meta.template.typeName} (dev)`;
   CARD.meta.badge.typeName = `${CARD.meta.badge.typeName}-dev`;
   CARD.meta.badge.editor = `${CARD.meta.badge.editor}-dev`;
-
 }
 
 /******************************************************************************************
@@ -2876,9 +2945,9 @@ function initLogger(ctx, debugFlag, methodNames = []) {
 /******************************************************************************************
  * 🛠️ RegistrationHelper
  * ========================================================================================
- * 
+ *
  * ✅ Helper to register component.
- * 
+ *
  * @class
  */
 class RegistrationHelper {
@@ -2913,12 +2982,12 @@ class RegistrationHelper {
 /******************************************************************************************
  * 🛠️ NumberFormatter
  * ========================================================================================
- * 
+ *
  * ✅ class for formatting value && unit.
- * 
+ *
  * This class uses `Value`, `Unit`, and `Decimal` objects to manage and validate its
  * internal data.
- * 
+ *
  * @class
  */
 class NumberFormatter {
@@ -2998,10 +3067,10 @@ class NumberFormatter {
 /******************************************************************************************
  * 🛠️ ValueHelper
  * ========================================================================================
- * 
+ *
  * ✅ Helper class for managing numeric values.
  * This class validates and stor a numeric value.
- * 
+ *
  * @class
  */
 
@@ -3037,9 +3106,9 @@ class ValueHelper {
 /******************************************************************************************
  * 🛠️ DecimalHelper
  * ========================================================================================
- * 
+ *
  * ✅ Represents a non-negative integer value that can be valid or invalid.
- * 
+ *
  * @class
  */
 class DecimalHelper {
@@ -3074,9 +3143,9 @@ class DecimalHelper {
 /******************************************************************************************
  * 🛠️ UnitHelper
  * ========================================================================================
- * 
+ *
  * ✅ Represents a unit of measurement, stored as a string.
- * 
+ *
  * @class
  */
 class UnitHelper {
@@ -3114,9 +3183,9 @@ class UnitHelper {
 /******************************************************************************************
  * 🛠️ PercentHelper
  * ========================================================================================
- * 
+ *
  * ✅ class for calculating and formatting percentages.
- * 
+ *
  * @class
  */
 class PercentHelper {
@@ -3248,9 +3317,9 @@ class PercentHelper {
 /******************************************************************************************
  * 🛠️ ThemeManager
  * ========================================================================================
- * 
+ *
  * ✅ Manages the theme and its associated icon and color based on a percentage value.
- * 
+ *
  * @class
  */
 class ThemeManager {
@@ -3352,6 +3421,7 @@ class ThemeManager {
       themeData = this.#currentStyle.find((level) => this.#value >= level.min && this.#value < level.max);
     }
     if (themeData) {
+      this.#icon = themeData.icon || null;
       this.#iconColor = themeData.icon_color || themeData.color || null;
       this.#barColor = themeData.bar_color || themeData.color || null;
     }
@@ -3386,10 +3456,10 @@ class ThemeManager {
 /******************************************************************************************
  * 🛠️ HassProviderSingleton
  * ========================================================================================
- * 
+ *
  * ✅ Provides access to the Home Assistant object.
  * This class implements a singleton pattern to ensure only one instance exists.
- * 
+ *
  * @class
  */
 class HassProviderSingleton {
@@ -3609,10 +3679,10 @@ class ChangeTracker {
 /******************************************************************************************
  * 🛠️ EntityHelper
  * ========================================================================================
- * 
+ *
  * ✅ Helper class for managing entities.
  * This class validates and retrieves information from Home Assistant if it's an entity.
- * 
+ *
  * @class
  */
 class EntityHelper {
@@ -3633,7 +3703,7 @@ class EntityHelper {
     this.#entityId = newValue;
     this.#value = 0;
     this.#domain = HassProviderSingleton.getEntityDomain(newValue);
-    this.#isValid = (this.#hassProvider.hasEntity(this.#entityId));
+    this.#isValid = this.#hassProvider.hasEntity(this.#entityId);
   }
 
   get entityId() {
@@ -3857,7 +3927,7 @@ class EntityHelper {
 /******************************************************************************************
  * 🛠️ EntityOrValue
  * ========================================================================================
- * 
+ *
  * ✅ Represents either an entity ID or a direct value.
  * This class validates the provided value and retrieves information from Home Assistant if it's an entity.
  *
@@ -3978,7 +4048,7 @@ class EntityOrValue {
 /******************************************************************************************
  * 🛠️ ConfigHelper
  * ========================================================================================
- * 
+ *
  * ✅ class for managing and validating card configuration.
  *
  * @class
@@ -4161,7 +4231,7 @@ class ConfigHelper {
 /******************************************************************************************
  * 🛠️ CardView
  * ========================================================================================
- * 
+ *
  * ✅ A card view that manage all informations to create the card.
  *
  * @class
@@ -4475,7 +4545,7 @@ class CardView {
 /******************************************************************************************
  * 🛠️ ResourceManager
  * ========================================================================================
- * 
+ *
  * ✅ Manage ressources: interval, timeout, listener, subscription.
  *
  * @class
@@ -4484,6 +4554,7 @@ class ResourceManager {
   #debug = CARD.config.debug.ressourceManager;
   #log = null;
   #resources = new Map();
+  #throttles = new Map();
 
   constructor() {
     this.#log = initLogger(this, this.#debug, ['add', 'remove', 'cleanup']);
@@ -4551,6 +4622,26 @@ class ResourceManager {
     }, id);
   }
 
+  throttle(fn, delay, id) {
+    if (!this.#throttles.has(id)) {
+      this.#throttles.set(id, { lastCall: 0 });
+      this.add(() => this.resetThrottle(id), id);
+    }
+
+    const context = this.#throttles.get(id);
+    const now = Date.now();
+
+    if (now - context.lastCall >= delay) {
+      context.lastCall = now;
+      fn();
+      this.#log.debug('Throttle function - ', id);
+    }
+  }
+
+  resetThrottle(id) {
+    this.#throttles.delete(id);
+  }
+
   remove(id) {
     const cleanupFn = this.#resources.get(id);
     if (cleanupFn) {
@@ -4574,6 +4665,7 @@ class ResourceManager {
       this.#log.debug(`Cleared: ${id}`);
     }
     this.#resources.clear();
+    this.#throttles.clear();
     this.#log.debug('All resources cleared.');
   }
 
@@ -4591,9 +4683,9 @@ class ResourceManager {
 /******************************************************************************************
  * 🛠️ ActionHelper — Utility Class
  * ========================================================================================
- * 
+ *
  * ✅ Centralized handler for `xyz_action` logic.
- * 
+ *
  * 📌 Purpose:
  *   - Encapsulates and manages the execution, validation, and dispatch of `xyz_action`.
  *   - Promotes reusable, maintainable logic for action-related features.
@@ -4789,20 +4881,20 @@ class ActionHelper {
 /******************************************************************************************
  * 🛠️ EntityProgressCardBase
  * ========================================================================================
- * 
+ *
  * ✅ Represents the base class for all custom "entity-progress" cards.
- * 
+ *
  * 📌 Purpose:
  *   - Provides shared structure, lifecycle hooks, and utility logic for custom Lovelace cards.
  *   - Serves as the foundation for building consistent and reusable UI components.
- * 
+ *
  * 🛠️ Example:
  *   class MyCustomCard extends EntityProgressCardBase { ... }
- * 
+ *
  * 📚 Context:
  *   - Designed for use in Home Assistant dashboards.
  *   - Enables unified behavior across multiple card implementations.
- * 
+ *
  * @class
  * @extends HTMLElement
  */
@@ -4823,7 +4915,7 @@ class EntityProgressCardBase extends HTMLElement {
   _firstHass = true;
   _clickableTarget = null;
   _actionHelper = null;
-  _changeTracker = new ChangeTracker;
+  _changeTracker = new ChangeTracker();
   #lastMessage = null;
   #isRendered = false;
 
@@ -4844,7 +4936,7 @@ class EntityProgressCardBase extends HTMLElement {
       '_storeDOM',
       '_renderJinja',
     ]);
-    
+
     this.attachShadow({ mode: CARD.config.shadowMode });
     this._actionHelper = new ActionHelper(this);
     EntityProgressCardBase._initializeModule();
@@ -4914,10 +5006,7 @@ class EntityProgressCardBase extends HTMLElement {
     const timeoutId = 'hass-update-throttle';
     if (!this._resourceManager) this._resourceManager = new ResourceManager();
 
-    // Au lieu de bloquer complètement, on reporte juste le timeout
-    this._resourceManager.remove(timeoutId); // Annule le précédent
-
-    this._resourceManager.setTimeout(
+    this._resourceManager.throttle(
       () => {
         this._doHandleHassUpdate();
       },
@@ -4961,7 +5050,7 @@ class EntityProgressCardBase extends HTMLElement {
    */
   getLayoutOptions() {
     const layout = structuredClone(this.constructor._cardLayout[this._cardView.layout]);
-    if (this._cardView.componentIsHidden(CARD.style.dynamic.hiddenComponent.icon.label)) layout.grid.grid_min_rows = 1;    
+    if (this._cardView.componentIsHidden(CARD.style.dynamic.hiddenComponent.icon.label)) layout.grid.grid_min_rows = 1;
     this._log.debug('getLayoutOptions -> ', layout.grid);
 
     return layout.grid;
@@ -5357,7 +5446,7 @@ class EntityProgressCardBase extends HTMLElement {
   // === JINJA TEMPLATE RENDERING ===
 
   _renderJinja(key, content) {
-    this._log.debug('_renderJinja():', {key, content});
+    this._log.debug('_renderJinja():', { key, content });
 
     const renderHandlers = this._getRenderHandlers(content);
     const handler = renderHandlers[key];
@@ -5457,7 +5546,20 @@ class EntityProgressCardBase extends HTMLElement {
   }
 
   async _processJinjaFields() {
-    if (!this._validateProcessJinjaFields()) return;
+    if (!this._validateProcessJinjaFields()) {
+      this._log.debug('❌ Jinja processing skipped - validation failed', {
+        hasResourceManager: !!this._resourceManager,
+        isDemoMode: EntityProgressTemplate._isDemoMode,
+        hasHass: !!this.hass,
+      });
+      return;
+    }
+
+    this._log.debug('✅ Processing Jinja fields', {
+      hasResourceManager: !!this._resourceManager,
+      isDemoMode: EntityProgressTemplate._isDemoMode,
+      hasHass: !!this.hass,
+    });
 
     const templates = this._getTemplateFields();
 
@@ -5547,9 +5649,9 @@ class EntityProgressCardBase extends HTMLElement {
 /******************************************************************************************
  * 🛠️ EntityProgressCard
  * ========================================================================================
- * 
+ *
  * ✅ HA CARD "entity-progress-card"
- * 
+ *
  * @class
  * @extends EntityProgressCardBase
  */
@@ -5577,9 +5679,9 @@ class EntityProgressCard extends EntityProgressCardBase {
 /******************************************************************************************
  * 🛠️ EntityProgressBadge
  * ========================================================================================
- * 
+ *
  * ✅ HA CARD "entity-progress-badge"
- * 
+ *
  * @class
  * @extends EntityProgressCardBase
  */
@@ -5698,7 +5800,6 @@ customElements.define(CARD.meta.badge.typeName, EntityProgressBadge);
 RegistrationHelper.registerCard(CARD.meta.card);
 RegistrationHelper.registerBadge(CARD.meta.badge);
 
-
 /******************************************************************************************
  * 📦 Template Card
  ******************************************************************************************/
@@ -5706,14 +5807,14 @@ RegistrationHelper.registerBadge(CARD.meta.badge);
 /******************************************************************************************
  * 🛠️ TemplateCardView
  * ========================================================================================
- * 
+ *
  * ✅ Card view
- * 
+ *
  * 📌 Purpose:
  *   - Manage card configuration.
  *   - Process and apply parameters required to render the card.
  *   - Serve as the interface between raw config and visual output.
- * 
+ *
  * @class
  * @extends ConfigHelper
  */
@@ -5860,14 +5961,13 @@ class TemplateCardView extends ConfigHelper {
 /******************************************************************************************
  * 🛠️ EntityProgressTemplate
  * ========================================================================================
- * 
+ *
  * ✅ HA CARD "entity-progress-card-template"
- * 
+ *
  * @class
  * @extends EntityProgressCardBase
  */
 class EntityProgressTemplate extends EntityProgressCardBase {
-  static _demoMode = false;
   _debug = CARD.config.debug.card;
   _cardView = new TemplateCardView();
   _hassProvider = HassProviderSingleton.getInstance();
@@ -5880,7 +5980,16 @@ class EntityProgressTemplate extends EntityProgressCardBase {
     this._manageShape();
     this._setupClickableTarget();
     this._actionHelper.init(this._resourceManager, this._cardView.config, this._clickableTarget);
-    if (EntityProgressTemplate._isDemoMode) this._processDemoValue();
+    if (this.isDemo) this._processDemoValue();
+
+    // AJOUT : Forcer le traitement Jinja après l'initialisation complète
+    if (this.hass && !this.isDemo) {
+      // Utiliser un micro-task pour s'assurer que tout est initialisé
+      Promise.resolve().then(() => {
+        this._processJinjaFields();
+      });
+    }
+
     if (this.hass) this._watchWebSocket();
   }
 
@@ -5902,21 +6011,19 @@ class EntityProgressTemplate extends EntityProgressCardBase {
   }
 
   _handleHassUpdate() {
-    const timeoutId = 'hass-update-throttle';
     if (!this._resourceManager) this._resourceManager = new ResourceManager();
-    if (this._resourceManager.hasInterval(timeoutId)) return;
+    const throttleId = 'hass-update-throttle';
 
-    this._resourceManager.setTimeout(
+    this._resourceManager.throttle(
       () => {
         this._processJinjaFields();
       },
-      100,
-      timeoutId
+      50,
+      throttleId
     );
   }
 
   static getStubConfig(hass) {
-    EntityProgressTemplate._demoMode = true;
     return {
       type: `custom:${CARD.meta.template.typeName}`,
       entity: EntityProgressCard.getStubEntity(hass),
@@ -5927,6 +6034,7 @@ class EntityProgressTemplate extends EntityProgressCardBase {
       badge_color: 'green',
       percent: 50,
       force_circular_background: true,
+      isDemo: true,
     };
   }
 
@@ -6044,6 +6152,12 @@ class EntityProgressTemplate extends EntityProgressCardBase {
   }
 
   // === JINJA TEMPLATE RENDERING ===
+  _forceJinjaProcessing() {
+    if (!this._resourceManager) {
+      this._resourceManager = new ResourceManager();
+    }
+    this._processJinjaFields();
+  }
 
   _getRenderHandlers(content) {
     return {
@@ -6087,7 +6201,7 @@ class EntityProgressTemplate extends EntityProgressCardBase {
   }
 
   _validateProcessJinjaFields() {
-    return !this._resourceManager || EntityProgressTemplate._isDemoMode ? false : true;
+    return !this.isDemo && this.hass;
   }
 
   _getTemplateFields() {
@@ -6105,8 +6219,8 @@ class EntityProgressTemplate extends EntityProgressCardBase {
     };
   }
 
-  static get _isDemoMode() {
-    return EntityProgressTemplate._demoMode;
+  get isDemo() {
+    return this._cardView.config.isDemo;
   }
 }
 
@@ -6125,7 +6239,7 @@ RegistrationHelper.registerCard(CARD.meta.template);
 /******************************************************************************************
  * 🛠️ ConfigUpdateEventHandler: Configuration Update Manager
  * ========================================================================================
- * 
+ *
  * ✅ Handles dynamic updates to the configuration object of a custom card via UI events.
  *
  * 📌 Purpose:
@@ -6335,7 +6449,7 @@ class ConfigUpdateEventHandler {
  * ✅ Custom Editor for configuring the `EntityProgressCard`.
  *
  * 📌 Purpose:
- * 
+ *
  * This class defines a custom web component responsible for rendering
  * a user interface in the Home Assistant Lovelace GUI editor. It allows
  * users to interactively configure the card's settings and manage
@@ -6355,7 +6469,7 @@ class ConfigUpdateEventHandler {
  * - Internal state is managed with private class fields (#).
  * - Entity attributes are automatically extracted to populate select fields.
  * - Supports both YAML and GUI editing modes.
- * 
+ *
  * @class
  * @extends HTMLElement
  */
@@ -6385,7 +6499,7 @@ class EntityProgressCardEditor extends HTMLElement {
       'setConfig',
       'toggleAccordion',
       'render',
-    ]);    
+    ]);
     this.attachShadow({ mode: CARD.config.shadowMode });
     this.#hassProvider = HassProviderSingleton.getInstance();
     this.#log.debug('Loaded');
@@ -6672,7 +6786,7 @@ class EntityProgressCardEditor extends HTMLElement {
    * Update a list of choices to a given `<select>` element based on the specified list type.
    */
   #updateChoices(select, type, choices = null) {
-    this.#log.debug('#updateChoices() ', {select, type, choices});
+    this.#log.debug('#updateChoices() ', { select, type, choices });
     const fragment = document.createDocumentFragment();
 
     const list = [CARD.editor.fields.attribute.type, CARD.editor.fields.max_value_attribute.type].includes(type) ? choices : FIELD_OPTIONS[type];
@@ -6960,7 +7074,7 @@ class EntityProgressCardEditor extends HTMLElement {
  * 🛠️ EntityProgressBadgeEditor
  * ========================================================================================
  * ✅ Manage the badge editor.
- * 
+ *
  * This class extends `EntityProgressCardEditor` and provides a specialized version of the editor
  * for a progress badge (circular badge), with a reduced set of configurable fields.
  *
