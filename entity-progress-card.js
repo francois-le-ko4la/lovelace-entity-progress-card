@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.4.3
+ * @version 1.4.4
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.4.3';
+const VERSION = '1.4.4';
 const CARD = {
   meta: {
     card: {
@@ -5548,17 +5548,17 @@ class EntityProgressCardBase extends HTMLElement {
   async _processJinjaFields() {
     if (!this._validateProcessJinjaFields()) {
       this._log.debug('❌ Jinja processing skipped - validation failed', {
-        hasResourceManager: !!this._resourceManager,
+        hasResourceManager: Boolean(this._resourceManager),
         isDemoMode: EntityProgressTemplate._isDemoMode,
-        hasHass: !!this.hass,
+        hasHass: Boolean(this.hass),
       });
       return;
     }
 
     this._log.debug('✅ Processing Jinja fields', {
-      hasResourceManager: !!this._resourceManager,
+      hasResourceManager: Boolean(this._resourceManager),
       isDemoMode: EntityProgressTemplate._isDemoMode,
-      hasHass: !!this.hass,
+      hasHass: Boolean(this.hass),
     });
 
     const templates = this._getTemplateFields();
