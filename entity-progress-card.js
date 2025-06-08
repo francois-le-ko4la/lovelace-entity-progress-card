@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.4.4
+ * @version 1.4.5
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.4.4';
+const VERSION = '1.4.5';
 const CARD = {
   meta: {
     card: {
@@ -131,8 +131,8 @@ const CARD = {
       'zh-Hant': 'zh-TW',
     },
     separator: ' · ',
-    debug: { card: true, editor: false, interactionHandler: true, ressourceManager: true, hass: true },
-    dev: true,
+    debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false, hass: false },
+    dev: false,
   },
   htmlStructure: {
     card: { element: 'ha-card' },
@@ -5445,7 +5445,7 @@ class EntityProgressCardBase extends HTMLElement {
     if (!iconContainer) return;
 
     // Si on a une image, créer un élément img
-    if (hasPicture) {
+    if (hasPicture && !hasIconOverride) {
       if (this._icon && this._icon.tagName !== 'IMG') {
         this._icon.remove();
         this._icon = null;
@@ -5953,6 +5953,7 @@ class TemplateCardView extends ConfigHelper {
     'icon_tap_action',
     'icon_hold_action',
     'icon_double_tap_action',
+    'reverse_secondary_info_row',
   ]);
 
   // === PRIVATE METHODS (DEF VALUE) ===
@@ -6030,7 +6031,9 @@ class TemplateCardView extends ConfigHelper {
       this.cardDoubleTapAction !== CARD.interactions.action.none.action
     );
   }
-
+  get hasReversedSecondaryInfoRow() {
+    return this.config.reverse_secondary_info_row === true;
+  }
   get hasVisibleShape() {
     return (
       this.config.force_circular_background === true ||

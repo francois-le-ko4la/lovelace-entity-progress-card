@@ -1673,15 +1673,16 @@ progress bar, using dynamic content and calculations defined within your sensors
 
 The following options remain fully compatible with this new card:
 
-| **Variable**      | **Description**                                                               |
-| ----------------- | ----------------------------------------------------------------------------- |
-| `hide`            | Hide elements conditionally                                                   |
-| `xyz_action`      | Configure custom actions (e.g., `tap`, `hold`, etc.)                          |
-| `bar_orientation` | Define the direction of the progress bar (e.g., `ltr`, `rtl`)                 |
-| `bar_size`        | Customize the size or thickness of the progress bar                           |
-| `layout`          | Adjust the overall layout (e.g., `horizontal`, `vertical`)                    |
-| `watermark`       | Add a background watermark or overlay element                                 |
-| `frameless`       | Remove the default card border and background for a seamless, flat appearance |
+| **Variable**                 | **Description**                                                                              |
+| ---------------------------- | -------------------------------------------------------------------------------------------- |
+| `hide`                       | Hide elements conditionally                                                                  |
+| `xyz_action`                 | Configure custom actions (e.g., `tap`, `hold`, etc.)                                         |
+| `bar_orientation`            | Define the direction of the progress bar (e.g., `ltr`, `rtl`)                                |
+| `bar_size`                   | Customize the size or thickness of the progress bar                                          |
+| `layout`                     | Adjust the overall layout (e.g., `horizontal`, `vertical`)                                   |
+| `watermark`                  | Add a background watermark or overlay element                                                |
+| `frameless`                  | Remove the default card border and background for a seamless, flat appearance                |
+| `reverse_secondary_info_row` | Reverses the order of the progress bar and the secondary info when using a horizontal layout |
 
 ### 🧠 Why Use This Card?
 
