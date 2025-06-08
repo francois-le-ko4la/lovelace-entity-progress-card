@@ -131,7 +131,7 @@ const CARD = {
       'zh-Hant': 'zh-TW',
     },
     separator: ' · ',
-    debug: { card: true, editor: false, interactionHandler: false, ressourceManager: true, hass: true },
+    debug: { card: true, editor: false, interactionHandler: true, ressourceManager: true, hass: true },
     dev: true,
   },
   htmlStructure: {
@@ -149,7 +149,6 @@ const CARD = {
       name: { element: 'span', class: 'name' },
       nameCustomInfo: { element: 'span', class: 'name-custom-info' },
       secondaryInfo: { element: 'div', class: 'secondary-info' },
-
       detailGroup: { element: 'div', class: 'secondary-info-detail-group' },
       detailCombined: { element: 'span', class: 'secondary-info-detail-combined' },
       stateAndProgressInfo: { element: 'span', class: 'state-and-progress-info' },
@@ -222,12 +221,14 @@ const CARD = {
       },
       iconAndShape: {
         color: { var: '--epb-icon-and-shape-color', default: 'var(--state-icon-color)' },
+        icon: { size: { var: '--epb-icon-size' } },
+        shape: { size: { var: '--epb-shape-size' } },
       },
       progressBar: {
         color: { var: '--epb-progress-bar-color', default: 'var(--state-icon-color)' },
         size: { var: '--epb-progress-bar-size', default: '0%' },
         background: { var: '--epb-progress-bar-background-color' },
-        orientation: { rtl: 'rtl_orientation', ltr: 'ltr_orientation' },
+        orientation: { rtl: 'rtl-orientation', ltr: 'ltr-orientation' },
       },
       watermark: {
         low: { value: { var: '--epb-low-watermark-value', default: 20 }, color: { var: '--epb-low-watermark-color', default: 'red' } },
@@ -237,14 +238,14 @@ const CARD = {
       secondaryInfoError: { class: 'secondary-info-error' },
       show: 'show',
       hide: 'hide',
-      clickable: { card: 'clickableCard', icon: 'clickableIcon' },
+      clickable: { card: 'clickable-card', icon: 'clickable-icon' },
       hiddenComponent: {
-        icon: { label: 'icon', class: 'hide_icon' },
-        shape: { label: 'shape', class: 'hide_shape' },
-        name: { label: 'name', class: 'hide_name' },
-        secondary_info: { label: 'secondary_info', class: 'hide_secondary_info' },
+        icon: { label: 'icon', class: 'hide-icon' },
+        shape: { label: 'shape', class: 'hide-shape' },
+        name: { label: 'name', class: 'hide-name' },
+        secondary_info: { label: 'secondary_info', class: 'hide-secondary-info' },
         value: { label: 'value' },
-        progress_bar: { label: 'progress_bar', class: 'hide_progress_bar' },
+        progress_bar: { label: 'progress_bar', class: 'hide-progress-bar' },
       },
       frameless: { class: 'frameless' },
     },
@@ -2253,599 +2254,674 @@ const ATTRIBUTE_MAPPING = {
 };
 
 const CARD_HTML = `
-    <!-- Main container -->
-    <${CARD.htmlStructure.sections.container.element} class="${CARD.htmlStructure.sections.container.class}">
-        <!-- icon/shape -->
-        <${CARD.htmlStructure.sections.left.element} class="${CARD.htmlStructure.sections.left.class}">
-            <${CARD.htmlStructure.elements.shape.element} class="${CARD.htmlStructure.elements.shape.class}">
-                <${CARD.htmlStructure.elements.icon.element} class="${CARD.htmlStructure.elements.icon.class}"></${CARD.htmlStructure.elements.icon.element}>
-            </${CARD.htmlStructure.elements.shape.element}>
-            <${CARD.htmlStructure.elements.badge.container.element} class="${CARD.htmlStructure.elements.badge.container.class}">
-                <${CARD.htmlStructure.elements.badge.icon.element} class="${CARD.htmlStructure.elements.badge.icon.class}"></${CARD.htmlStructure.elements.badge.icon.element}>
-            </${CARD.htmlStructure.elements.badge.container.element}>
-        </${CARD.htmlStructure.sections.left.element}>
-
-        <!-- infos/progress bar -->
-        <${CARD.htmlStructure.sections.right.element} class="${CARD.htmlStructure.sections.right.class}">
-            <${CARD.htmlStructure.elements.nameGroup.element} class="${CARD.htmlStructure.elements.nameGroup.class}">
-              <${CARD.htmlStructure.elements.nameCombined.element} class="${CARD.htmlStructure.elements.nameCombined.class}">
-                <${CARD.htmlStructure.elements.name.element} class="${CARD.htmlStructure.elements.name.class}"></${CARD.htmlStructure.elements.name.element}>
-                <${CARD.htmlStructure.elements.nameCustomInfo.element} class="${CARD.htmlStructure.elements.nameCustomInfo.class}"></${CARD.htmlStructure.elements.nameCustomInfo.element}>
-              </${CARD.htmlStructure.elements.nameCombined.element}>
-            </${CARD.htmlStructure.elements.nameGroup.element}>
-            <${CARD.htmlStructure.elements.secondaryInfo.element} class="${CARD.htmlStructure.elements.secondaryInfo.class}">
-                <${CARD.htmlStructure.elements.detailGroup.element} class="${CARD.htmlStructure.elements.detailGroup.class}">
-                  <${CARD.htmlStructure.elements.detailCombined.element} class="${CARD.htmlStructure.elements.detailCombined.class}">
-                    <${CARD.htmlStructure.elements.customInfo.element} class="${CARD.htmlStructure.elements.customInfo.class}"></${CARD.htmlStructure.elements.customInfo.element}>
-                    <${CARD.htmlStructure.elements.stateAndProgressInfo.element} class="${CARD.htmlStructure.elements.stateAndProgressInfo.class}"></${CARD.htmlStructure.elements.stateAndProgressInfo.element}>
-                  </${CARD.htmlStructure.elements.detailCombined.element}>
-                </${CARD.htmlStructure.elements.detailGroup.element}>
-                <${CARD.htmlStructure.elements.progressBar.container.element} class="${CARD.htmlStructure.elements.progressBar.container.class}">
-                    <${CARD.htmlStructure.elements.progressBar.bar.element} class="${CARD.htmlStructure.elements.progressBar.bar.class}">
-                        <${CARD.htmlStructure.elements.progressBar.inner.element} class="${CARD.htmlStructure.elements.progressBar.inner.class}"></${CARD.htmlStructure.elements.progressBar.inner.element}>
-                        <${CARD.htmlStructure.elements.progressBar.lowWatermark.element} class="${CARD.htmlStructure.elements.progressBar.lowWatermark.class}"></${CARD.htmlStructure.elements.progressBar.lowWatermark.element}>
-                        <${CARD.htmlStructure.elements.progressBar.highWatermark.element} class="${CARD.htmlStructure.elements.progressBar.highWatermark.class}"></${CARD.htmlStructure.elements.progressBar.highWatermark.element}>
-                    </${CARD.htmlStructure.elements.progressBar.bar.element}>
-                </${CARD.htmlStructure.elements.progressBar.container.element}>
-            </${CARD.htmlStructure.elements.secondaryInfo.element}>
-        </${CARD.htmlStructure.sections.right.element}>
-    </${CARD.htmlStructure.sections.container.element}>
-`;
+ <!-- Main container -->
+ <${CARD.htmlStructure.sections.container.element} class="${CARD.htmlStructure.sections.container.class}">
+   <!-- icon/shape -->
+   <${CARD.htmlStructure.sections.left.element} class="${CARD.htmlStructure.sections.left.class}">
+     <${CARD.htmlStructure.elements.shape.element} class="${CARD.htmlStructure.elements.shape.class}">
+       <${CARD.htmlStructure.elements.icon.element} class="${CARD.htmlStructure.elements.icon.class}"></${CARD.htmlStructure.elements.icon.element}>
+     </${CARD.htmlStructure.elements.shape.element}>
+     <${CARD.htmlStructure.elements.badge.container.element} class="${CARD.htmlStructure.elements.badge.container.class}">
+       <${CARD.htmlStructure.elements.badge.icon.element} class="${CARD.htmlStructure.elements.badge.icon.class}"></${CARD.htmlStructure.elements.badge.icon.element}>
+     </${CARD.htmlStructure.elements.badge.container.element}>
+   </${CARD.htmlStructure.sections.left.element}>
+ 
+   <!-- infos/progress bar -->
+   <${CARD.htmlStructure.sections.right.element} class="${CARD.htmlStructure.sections.right.class}">
+     <${CARD.htmlStructure.elements.nameGroup.element} class="${CARD.htmlStructure.elements.nameGroup.class}">
+       <${CARD.htmlStructure.elements.nameCombined.element} class="${CARD.htmlStructure.elements.nameCombined.class}">
+         <${CARD.htmlStructure.elements.name.element} class="${CARD.htmlStructure.elements.name.class}"></${CARD.htmlStructure.elements.name.element}>
+         <${CARD.htmlStructure.elements.nameCustomInfo.element} class="${CARD.htmlStructure.elements.nameCustomInfo.class}"></${CARD.htmlStructure.elements.nameCustomInfo.element}>
+       </${CARD.htmlStructure.elements.nameCombined.element}>
+     </${CARD.htmlStructure.elements.nameGroup.element}>
+     <${CARD.htmlStructure.elements.secondaryInfo.element} class="${CARD.htmlStructure.elements.secondaryInfo.class}">
+       <${CARD.htmlStructure.elements.detailGroup.element} class="${CARD.htmlStructure.elements.detailGroup.class}">
+         <${CARD.htmlStructure.elements.detailCombined.element} class="${CARD.htmlStructure.elements.detailCombined.class}">
+           <${CARD.htmlStructure.elements.customInfo.element} class="${CARD.htmlStructure.elements.customInfo.class}"></${CARD.htmlStructure.elements.customInfo.element}>
+           <${CARD.htmlStructure.elements.stateAndProgressInfo.element} class="${CARD.htmlStructure.elements.stateAndProgressInfo.class}"></${CARD.htmlStructure.elements.stateAndProgressInfo.element}>
+         </${CARD.htmlStructure.elements.detailCombined.element}>
+       </${CARD.htmlStructure.elements.detailGroup.element}>
+       <${CARD.htmlStructure.elements.progressBar.container.element} class="${CARD.htmlStructure.elements.progressBar.container.class}">
+           <${CARD.htmlStructure.elements.progressBar.bar.element} class="${CARD.htmlStructure.elements.progressBar.bar.class}">
+             <${CARD.htmlStructure.elements.progressBar.inner.element} class="${CARD.htmlStructure.elements.progressBar.inner.class}"></${CARD.htmlStructure.elements.progressBar.inner.element}>
+             <${CARD.htmlStructure.elements.progressBar.lowWatermark.element} class="${CARD.htmlStructure.elements.progressBar.lowWatermark.class}"></${CARD.htmlStructure.elements.progressBar.lowWatermark.element}>
+             <${CARD.htmlStructure.elements.progressBar.highWatermark.element} class="${CARD.htmlStructure.elements.progressBar.highWatermark.class}"></${CARD.htmlStructure.elements.progressBar.highWatermark.element}>
+           </${CARD.htmlStructure.elements.progressBar.bar.element}>
+       </${CARD.htmlStructure.elements.progressBar.container.element}>
+     </${CARD.htmlStructure.elements.secondaryInfo.element}>
+   </${CARD.htmlStructure.sections.right.element}>
+ </${CARD.htmlStructure.sections.container.element}>
+ `;
 
 const CARD_CSS = `
-  /* === BASE CARD STYLES === */
-  ${CARD.htmlStructure.card.element} {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 10px;
-    margin: 0 auto;
-    overflow: hidden;
-    box-sizing: border-box;
-    font-family: var(--ha-font-family-body);
-    -moz-osx-font-smoothing: var(--ha-font-smoothing);    
-  }
-
-  /* === FRAMELESS & ENTITIES STYLES === */
-  .type-entities,
-  .${CARD.style.dynamic.frameless.class} {
-    background: transparent;
-    border: none !important;
-    box-shadow: none !important;
-  }
+:host {
+  /* === SPACING VARIABLES === */
+  --epb-gap-default: 10px;
+  --epb-gap-entities: 16px;
+  --epb-padding-default: 10px;
+  --epb-margin-vertical-top: 18px;
   
-  .type-entities {
-    background: transparent !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    transition: none !important;
-  }
-
-  /* === INTERACTIVE STATES === */
-  .${CARD.style.dynamic.clickable.card}:hover,
-  /*.${CARD.style.dynamic.clickable.card}.${CARD.style.dynamic.frameless.class}:hover,*/
-  .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.left.class}:hover {
-    cursor: pointer;
-    background-color: color-mix(in srgb, var(--card-background-color) 96%, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) 4%);
-  }
+  /* === SIZE VARIABLES === */
+  --epb-shape-default-size: 36px;
+  --epb-icon-default-size: 24px;
+  --epb-entities-shape-size: 40px;
+  --epb-badge-size: 16px;
+  --epb-badge-icon-size: 12px;
+  --epb-badge-offset: -3px;
   
-  .${CARD.style.dynamic.clickable.card}:active {
-    background-color: color-mix(in srgb, var(--card-background-color) 85%, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) 15%);
-    transition: background-color 0.5s ease;
-  }
-
-  .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.left.class}:hover .${CARD.htmlStructure.elements.shape.class} {
-    background-color: color-mix(in srgb, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) 40%, transparent);
-  }
-
-  /* === MAIN CONTAINER === */
-  .${CARD.htmlStructure.sections.container.class} {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-  }
-
-  .type-entities .${CARD.htmlStructure.sections.container.class} {
-    gap: 16px;
-  }
-
-  /* === LAYOUT ORIENTATIONS === */
-  .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.container.class} {
-    min-height: ${CARD.layout.orientations.vertical.minHeight};
-    flex-direction: column;
-  }
+  /* === HEIGHT VARIABLES === */
+  --epb-name-height: 20px;
+  --epb-detail-height: 16px;
+  --epb-entities-height: 22.4px;
+  --epb-entities-card-min-height: 44.8px;
+  --epb-vertical-name-large-height: 18px;
+  --epb-progress-container-height: 16px;
   
-  .${CARD.layout.orientations.horizontal.label} .${CARD.htmlStructure.sections.container.class} {
-    min-height: ${CARD.layout.orientations.horizontal.minHeight};
-    flex-direction: row;
-  }
-  .type-entities .${CARD.htmlStructure.sections.container.class} {
-    min-height: 44.8px !important;
-  }
-  /* === LEFT SECTION (ICON & SHAPE) === */
-  .${CARD.htmlStructure.sections.left.class} {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    width: var(--epb-icon-and-shape-size, 36px);
-    height: var(--epb-icon-and-shape-size, 36px);
-    flex-shrink: 0;
-  }
+  /* === COLOR OPACITY VARIABLES === */
+  --epb-shape-opacity: 20%;
+  --epb-hover-opacity: 4%;
+  --epb-active-opacity: 15%;
+  --epb-icon-hover-opacity: 40%;
+  --epb-card-hover-mix: 96%;
+  --epb-card-active-mix: 85%;
+  
+  /* === TRANSITION VARIABLES === */
+  --epb-progress-transition-width: 0.3s ease;
+  --epb-click-transition-background: 0.5s ease;
+  
+  /* === TYPOGRAPHY VARIABLES === */
+  --epb-letter-spacing-name: 0.1px;
+  --epb-letter-spacing-detail: 0.4px;
+  
+  /* === LAYOUT VARIABLES === */
+  --epb-detail-max-width: 60%;
+  --epb-detail-min-width: 45px;
+  --epb-vertical-gap: 1px;
+}
 
-  .type-entities .${CARD.htmlStructure.sections.left.class} {
-    width: var(--epb-icon-and-shape-size, 40px) !important;
-    height: var(--epb-icon-and-shape-size, 40px) !important;
-  }
-
-  /* Vertical layout margins for different sizes */
-  .${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.sections.left.class} {
-    margin-top: 10px;
-  }
-
-  .${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.sections.left.class} {
-    margin-top: 12px;
-  }
-
-  .${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.sections.left.class} {
-    margin-top: 14px;
-  }
-
-  /* === SHAPE & ICON === */
-  .${CARD.htmlStructure.elements.shape.class} {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--epb-icon-and-shape-size, 36px);
-    height: var(--epb-icon-and-shape-size, 36px);
-    border-radius: 50%;
-    background-color: color-mix(in srgb, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) 20%, transparent);
-  }
-
-  .${CARD.htmlStructure.elements.icon.class} {
-    width: var(--epb-icon-and-shape-size, 24px);
-    height: var(--epb-icon-and-shape-size, 24px);
-    color: var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default});
-  }
-
-  /* === RIGHT SECTION (TEXT CONTENT) === */
-  .${CARD.htmlStructure.sections.right.class} {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    flex-grow: 1;
-    overflow: hidden;
-    width: 100%;
-  }
-
-  .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.right.class} {
-    flex-grow: 0;
-  }
-
-  /* === TEXT ELEMENTS === */
-  .${CARD.htmlStructure.elements.nameGroup.class} {
-    display: flex;
-    width: 100%;
-    min-width: 0;
-    height: 20px;
-  }
-
-  .${CARD.htmlStructure.elements.nameCombined.class} {
-    color: var(--primary-text-color);
-    font-size: var(--ha-font-size-m);
-    font-weight: var(--ha-font-weight-medium);
-    line-height: 20px;
-    letter-spacing: 0.1px;
-    text-align: left;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .${CARD.htmlStructure.elements.detailGroup.class} {
-    display: flex;
-    align-items: center;
-    height: 16px;
-    min-width: 45px;
-    max-width: 60%;
-    line-height: 16px;
-    color: var(--primary-text-color);
-    text-align: left;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .${CARD.htmlStructure.elements.detailCombined.class} {
-    color: var(--primary-text-color);
-    font-size: var(--ha-font-size-s);
-    font-weight: var(--ha-font-weight-body);
-    line-height: 16px;
-    letter-spacing: 0.4px;
-    text-align: left;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  /* === ENTITIES TYPE SPECIFIC === */
-  .type-entities .${CARD.htmlStructure.elements.nameGroup.class},
-  .type-entities .${CARD.htmlStructure.elements.detailGroup.class} {
-    height: 22.4px !important;
-  }
-
-  .type-entities .${CARD.htmlStructure.elements.nameCombined.class} {
-    font-weight: var(--ha-font-weight-normal) !important;
-    line-height: var(--ha-line-height-normal) !important;
-  }
-
-  .type-entities .${CARD.htmlStructure.elements.detailCombined.class} {
-    color: var(--secondary-text-color) !important;
-    font-size: var(--ha-font-size-m) !important;
-    font-weight: var(--ha-font-weight-normal) !important;
-    line-height: var(--ha-line-height-normal) !important;
-  }
-
-  /* === SECONDARY INFO === */
-  .${CARD.htmlStructure.elements.secondaryInfo.class} {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-  }
-
-  .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.secondaryInfo.class} {
-    display: block;
-  }
-    
-  /* === PROGRESS BAR === */
-  .${CARD.htmlStructure.elements.progressBar.container.class} {
-    flex-grow: 1;
-    height: 16px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .${CARD.htmlStructure.elements.progressBar.bar.class} {
-    width: 100%;
-    height: ${CARD.style.bar.sizeOptions.small.size};
-    max-height: ${CARD.style.bar.sizeOptions.large.size};
-    background-color: var(${CARD.style.dynamic.progressBar.background.var}, var(--divider-color));
-    border-radius: ${CARD.style.bar.radius};
-    overflow: hidden;
-    position: relative;
-  }
-
-  /* Progress bar size variants */
-  .${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
-    height: ${CARD.style.bar.sizeOptions.small.size};
-    max-height: ${CARD.style.bar.sizeOptions.small.size};
-  }
-
-  .${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
-    height: ${CARD.style.bar.sizeOptions.medium.size};
-    max-height: ${CARD.style.bar.sizeOptions.medium.size};
-  }
-
-  .${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
-    height: ${CARD.style.bar.sizeOptions.large.size};
-    max-height: ${CARD.style.bar.sizeOptions.large.size};
-  }
-
-  .${CARD.style.dynamic.progressBar.orientation.rtl} .${CARD.htmlStructure.elements.progressBar.bar.class} {
-    transform: scaleX(-1);
-  }
-
-  .${CARD.htmlStructure.elements.progressBar.inner.class} {
-    height: 100%;
-    width: var(${CARD.style.dynamic.progressBar.size.var}, ${CARD.style.dynamic.progressBar.size.default});
-    background-color: var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default});
-    transition: width 0.3s ease;
-    will-change: width;
-  }
-
-  /* === WATERMARKS === */
-  .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-  .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-    display: none;
-    position: absolute;
-    height: 100%;
-    top: 0;
-    mix-blend-mode: hard-light;
-    opacity: var(--epb-watermark-opacity-value, 0.8);
-  }
-
-  .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-    left: 0;
-    width: var(--epb-low-watermark-value, 20%);
-    background-color: var(--epb-low-watermark-color, var(--red-color));
-  }
-
-  .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-    right: 0;
-    width: calc(100% - var(--epb-high-watermark-value, 80%));
-    background-color: var(--epb-high-watermark-color, var(--red-color));
-  }
-
-  /* Watermark line styles */
-  .${CARD.style.dynamic.show}-HWM-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-    right: calc(100% - var(--epb-high-watermark-value, 80%));
-    width: 1px;
-  }
-
-  .${CARD.style.dynamic.show}-LWM-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-    left: var(--epb-low-watermark-value, 20%);
-    width: 1px;
-  }
-
-  /* === VERTICAL LAYOUT ADJUSTMENTS === */
-  .${CARD.layout.orientations.vertical.label} .${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.nameGroup.class} {
-    height: 18px;
-  }
-
-  .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.nameGroup.class},
-  .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
-    align-items: center;
-    justify-content: center;
-  }
-
-  .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
-    width: 100%;
-    max-width: none;
-  }
-
-  .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} > span {
-    display: inline-block;
-    flex-shrink: 0;
-  }
-
-  /* Size-specific vertical adjustments */
-  .${CARD.style.bar.sizeOptions.small.label} .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
-    margin-bottom: 1px;
-  }
-
-  .${CARD.style.bar.sizeOptions.medium.label} .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
-    height: 15px;
-    font-size: 0.8em;
-  }
-
-  .${CARD.style.bar.sizeOptions.large.label} .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
-    height: 13px;
-    font-size: 0.8em;
-  }
-
-  /* === BADGE === */
-  .${CARD.htmlStructure.elements.badge.container.class} {
-    position: absolute;
-    z-index: 2;
-    top: -3px;
-    right: -3px;
-    inset-inline-end: -3px;
-    inset-inline-start: initial;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background-color: var(${CARD.style.dynamic.badge.backgroundColor.var}, ${CARD.style.dynamic.badge.backgroundColor.default});
-    display: none;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .${CARD.htmlStructure.elements.badge.container.class} .${CARD.htmlStructure.elements.badge.icon.class} {
-    width: 12px;
-    height: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(${CARD.style.dynamic.badge.color.var}, ${CARD.style.dynamic.badge.color.default});
-  }
-
-  /* === VISIBILITY CONTROLS === */
-  .${CARD.style.dynamic.hiddenComponent.icon.class} .${CARD.htmlStructure.sections.left.class},
-  .${CARD.style.dynamic.hiddenComponent.icon.class} .${CARD.htmlStructure.elements.shape.class},
-  .${CARD.style.dynamic.hiddenComponent.name.class} .${CARD.htmlStructure.elements.nameGroup.class},
-  .${CARD.style.dynamic.hiddenComponent.progress_bar.class} .${CARD.htmlStructure.elements.progressBar.bar.class},
-  .${CARD.style.dynamic.hiddenComponent.secondary_info.class} .${CARD.htmlStructure.elements.detailGroup.class} {
-    display: none;
-  }
-
-  /* Vertical layout visibility overrides */
-  .${CARD.style.dynamic.hiddenComponent.icon.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.left.class},
-  .${CARD.style.dynamic.hiddenComponent.name.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.nameGroup.class},
-  .${CARD.style.dynamic.hiddenComponent.progress_bar.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.progressBar.bar.class},
-  .${CARD.style.dynamic.hiddenComponent.secondary_info.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
-    display: none;
-  }
-
-  /* Shape transparency when hidden */
-  .${CARD.style.dynamic.hiddenComponent.shape.class} .${CARD.htmlStructure.elements.shape.class},
-  .${CARD.style.dynamic.hiddenComponent.shape.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.shape.class} {
-    background-color: transparent;
-  }
-
-  /* Show elements when needed */
-  .${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class} .${CARD.htmlStructure.elements.badge.container.class},
-  .${CARD.style.dynamic.show}-HWM-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
-  .${CARD.style.dynamic.show}-LWM-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-  .${CARD.style.dynamic.show}-HWM-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
-  .${CARD.style.dynamic.show}-LWM-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-    display: flex;
-  }
-`;
-
-
+ /* === BASE CARD STYLES === */
+ ${CARD.htmlStructure.card.element} {
+   height: 100%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   padding: 0 var(--epb-padding-default);
+   margin: 0 auto;
+   overflow: hidden;
+   box-sizing: border-box;
+   font-family: var(--ha-font-family-body);
+   -moz-osx-font-smoothing: var(--ha-font-smoothing);
+   -webkit-font-smoothing: antialiased;
+ }
+ 
+ /* === FRAMELESS & ENTITIES STYLES === */
+ .type-entities,
+ .type-custom-vertical-stack-in-card,
+ .${CARD.style.dynamic.frameless.class} {
+   background: transparent;
+   border: none !important;
+   box-shadow: none !important;
+ }
+ 
+ .type-entities {
+   background: transparent !important;
+   padding: 0 !important;
+   margin: 0 !important;
+   transition: none !important;
+ }
+ 
+ /* === MAIN CONTAINER === */
+ .${CARD.htmlStructure.sections.container.class} {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   gap: var(--epb-gap-default);
+   width: 100%;
+   height: 100%;
+   overflow: hidden;
+ }
+ 
+ .type-entities .${CARD.htmlStructure.sections.container.class} {
+   gap: var(--epb-gap-entities);
+   min-height: var(--epb-entities-card-min-height) !important;
+ }
+ 
+ /* === LAYOUT ORIENTATIONS === */
+ .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.container.class} {
+   min-height: ${CARD.layout.orientations.vertical.minHeight};
+   flex-direction: column;
+ }
+ 
+ .${CARD.layout.orientations.horizontal.label} .${CARD.htmlStructure.sections.container.class} {
+   min-height: ${CARD.layout.orientations.horizontal.minHeight};
+   flex-direction: row;
+ }
+ 
+ /* === LEFT SECTION (ICON & SHAPE) === */
+ .${CARD.htmlStructure.sections.left.class} {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   position: relative;
+   width: var(--epb-shape-size, var(--epb-shape-default-size));
+   height: var(--epb-shape-size, var(--epb-shape-default-size));
+   flex-shrink: 0;
+ }
+ 
+ .${CARD.style.dynamic.hiddenComponent.icon.class} .${CARD.htmlStructure.sections.left.class} {
+   display: none;
+ }
+ 
+ .type-entities .${CARD.htmlStructure.sections.left.class} {
+   width: var(--epb-shape-size, var(--epb-entities-shape-size)) !important;
+   height: var(--epb-shape-size, var(--epb-entities-shape-size)) !important;
+ }
+ 
+ /* Vertical layout margins for different sizes */
+ .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.left.class} {
+   margin-top: var(--epb-margin-vertical-top);
+ }
+ 
+ /* === SHAPE & ICON === */
+ .${CARD.htmlStructure.elements.shape.class} {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   width: var(--epb-shape-size, var(--epb-shape-default-size));
+   height: var(--epb-shape-size, var(--epb-shape-default-size));
+   border-radius: 50%;
+   background-color: color-mix(in srgb, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) var(--epb-shape-opacity), transparent);
+ }
+ 
+ .${CARD.style.dynamic.hiddenComponent.icon.class} .${CARD.htmlStructure.elements.shape.class} {
+   display: none;
+ }
+ 
+ .${CARD.htmlStructure.elements.icon.class} {
+   width: var(--epb-icon-size, var(--epb-icon-default-size));
+   height: var(--epb-icon-size, var(--epb-icon-default-size));
+   color: var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default});
+ }
+ 
+ /* === RIGHT SECTION (TEXT CONTENT) === */
+ .${CARD.htmlStructure.sections.right.class} {
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   flex-grow: 1;
+   flex-shrink: 1;
+   min-width: 0;
+   overflow: hidden;
+   width: 100%;
+ }
+ 
+ /* === TEXT ELEMENTS === */
+ 
+ .${CARD.htmlStructure.elements.nameGroup.class},
+ .${CARD.htmlStructure.elements.detailGroup.class} {
+   display: flex;
+   align-items: center;
+   min-width: 0; /* Crucial pour flexbox + ellipsis */
+   overflow: hidden;
+ }
+ 
+ .${CARD.htmlStructure.elements.nameGroup.class} {
+   width: 100%;
+   height: var(--epb-name-height);
+   justify-content: flex-start;
+ }
+ 
+ .${CARD.htmlStructure.elements.detailGroup.class} {
+   height: var(--epb-detail-height);
+   line-height: var(--epb-detail-height);
+   min-width: var(--epb-detail-min-width);
+   max-width: var(--epb-detail-max-width);
+   justify-content: flex-start;
+ }
+ 
+ /* === UNIFIED ELLIPSIS === */
+ .${CARD.htmlStructure.elements.nameCombined.class},
+ .${CARD.htmlStructure.elements.detailCombined.class} {
+   flex: 1; /* Prend tout l'espace disponible */
+   min-width: 0; /* Permet l'ellipsis dans flexbox */
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   text-align: left;
+ }
+ 
+ .${CARD.htmlStructure.elements.nameCombined.class} {
+   color: var(--primary-text-color);
+   font-size: var(--ha-font-size-m);
+   font-weight: var(--ha-font-weight-medium);
+   height: var(--epb-name-height);
+   line-height: var(--epb-name-height);
+   letter-spacing: var(--epb-letter-spacing-name);
+ }
+ 
+ .${CARD.htmlStructure.elements.detailCombined.class} {
+   color: var(--primary-text-color);
+   font-size: var(--ha-font-size-s);
+   font-weight: var(--ha-font-weight-body);
+   height: var(--epb-detail-height);
+   line-height: var(--epb-detail-height);
+   vertical-align: middle;
+   letter-spacing: var(--epb-letter-spacing-detail);
+ }
+ 
+ .${CARD.style.dynamic.hiddenComponent.name.class} .${CARD.htmlStructure.elements.nameGroup.class},
+ .${CARD.style.dynamic.hiddenComponent.secondary_info.class} .${CARD.htmlStructure.elements.detailGroup.class} {
+   display: none;
+ }
+ 
+ /* === ENTITIES TYPE SPECIFIC === */
+ .type-entities .${CARD.htmlStructure.elements.nameGroup.class},
+ .type-entities .${CARD.htmlStructure.elements.nameGroup.class} > span,
+ .type-entities .${CARD.htmlStructure.elements.detailGroup.class},
+ .type-entities .${CARD.htmlStructure.elements.detailGroup.class} > span {
+   height: var(--epb-entities-height) !important;
+ }
+ 
+ .type-entities .${CARD.htmlStructure.elements.nameCombined.class} {
+   font-weight: var(--ha-font-weight-normal) !important;
+   line-height: var(--ha-line-height-normal) !important;
+ }
+ 
+ .type-entities .${CARD.htmlStructure.elements.detailCombined.class} {
+   color: var(--secondary-text-color) !important;
+   font-size: var(--ha-font-size-m) !important;
+   font-weight: var(--ha-font-weight-normal) !important;
+   line-height: var(--ha-line-height-normal) !important;
+ }
+ 
+ /* === SECONDARY INFO === */
+ .${CARD.htmlStructure.elements.secondaryInfo.class} {
+   display: flex;
+   flex-direction: var(--epb-secondary-info-row-reverse, row);
+   align-items: center;
+   justify-content: center;
+   gap: var(--epb-gap-default);
+ }
+ 
+ .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.secondaryInfo.class} {
+   flex-direction: column;  /* vertical layout */
+   align-items: stretch;    /* full width */
+   gap: var(--epb-vertical-gap);                /* vertical spacing between elements */
+   width: 100%;
+   min-width: 0;  
+ }
+ 
+ /* === PROGRESS BAR === */
+ .${CARD.htmlStructure.elements.progressBar.container.class} {
+   flex-grow: 1;
+   height: var(--epb-progress-container-height);
+   display: flex;
+   justify-content: center;
+   align-items: center;
+ }
+ 
+ .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.progressBar.container.class} {
+   justify-content: center;
+   align-items: center;
+ }
+ 
+ .${CARD.htmlStructure.elements.progressBar.bar.class} {
+   width: 100%;
+   height: ${CARD.style.bar.sizeOptions.small.size};
+   max-height: ${CARD.style.bar.sizeOptions.large.size};
+   background-color: var(${CARD.style.dynamic.progressBar.background.var}, var(--divider-color));
+   border-radius: ${CARD.style.bar.radius};
+   overflow: hidden;
+   position: relative;
+ }
+ 
+ .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.progressBar.bar.class}  {
+     flex-grow: 0;
+ }
+ 
+ .${CARD.style.dynamic.hiddenComponent.progress_bar.class} .${CARD.htmlStructure.elements.progressBar.bar.class} {
+   display: none;
+ }
+ 
+ /* Progress bar size variants */
+ .${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
+   height: ${CARD.style.bar.sizeOptions.small.size};
+   max-height: ${CARD.style.bar.sizeOptions.small.size};
+ }
+ 
+ .${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
+   height: ${CARD.style.bar.sizeOptions.medium.size};
+   max-height: ${CARD.style.bar.sizeOptions.medium.size};
+ }
+ 
+ .${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
+   height: ${CARD.style.bar.sizeOptions.large.size};
+   max-height: ${CARD.style.bar.sizeOptions.large.size};
+ }
+ 
+ .${CARD.style.dynamic.progressBar.orientation.rtl} .${CARD.htmlStructure.elements.progressBar.bar.class} {
+   transform: scaleX(-1);
+ }
+ 
+ .${CARD.htmlStructure.elements.progressBar.inner.class} {
+   height: 100%;
+   width: var(${CARD.style.dynamic.progressBar.size.var}, ${CARD.style.dynamic.progressBar.size.default});
+   background-color: var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default});
+   transition: width var(--epb-progress-transition-width);
+   will-change: width;
+ }
+ 
+ /* === WATERMARKS === */
+ .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+ .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+   display: none;
+   position: absolute;
+   height: 100%;
+   top: 0;
+   mix-blend-mode: hard-light;
+   opacity: var(--epb-watermark-opacity-value, 0.8);
+ }
+ 
+ .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+   left: 0;
+   width: var(--epb-low-watermark-value, 20%);
+   background-color: var(--epb-low-watermark-color, var(--red-color));
+ }
+ 
+ .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+   right: 0;
+   width: calc(100% - var(--epb-high-watermark-value, 80%));
+   background-color: var(--epb-high-watermark-color, var(--red-color));
+ }
+ 
+ /* Watermark line styles */
+ .${CARD.style.dynamic.show}-hwm-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+   right: calc(100% - var(--epb-high-watermark-value, 80%));
+   width: 1px;
+ }
+ 
+ .${CARD.style.dynamic.show}-lwm-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+   left: var(--epb-low-watermark-value, 20%);
+   width: 1px;
+ }
+ 
+ /* === VERTICAL LAYOUT ADJUSTMENTS === */
+ .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.right.class} {
+   flex-grow: 0;
+ }
+ 
+ .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.nameGroup.class},
+ .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
+   flex-grow: 0;
+   width: 100%;
+   max-width: none;
+   text-align: center;
+   align-items: center;
+   justify-content: center;
+   min-width: 0;
+   box-sizing: border-box;
+ }
+ 
+ .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
+   max-width: 100%;
+   overflow: hidden;
+ }
+   
+ .${CARD.layout.orientations.vertical.label} .${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.nameGroup.class} {
+   height: var(--epb-vertical-name-large-height);
+ }
+ 
+ .${CARD.htmlStructure.elements.nameGroup.class} > span,
+ .${CARD.htmlStructure.elements.detailGroup.class} > span,
+ .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.nameGroup.class} > span,
+ .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} > span {
+   flex-shrink: 1;
+   min-width: 0;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+ }
+ 
+ .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.nameCombined.class},
+ .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailCombined.class} {
+   text-align: center;
+   width: 100%;
+   display: block; /* Simplifie le layout vertical */
+ }
+ 
+ /* === BADGE === */
+ .${CARD.htmlStructure.elements.badge.container.class} {
+   position: absolute;
+   z-index: 2;
+   top: var(--epb-badge-offset);
+   right: var(--epb-badge-offset);
+   inset-inline-end: var(--epb-badge-offset);
+   inset-inline-start: initial;
+   width: var(--epb-badge-size);
+   height: var(--epb-badge-size);
+   border-radius: 50%;
+   background-color: var(${CARD.style.dynamic.badge.backgroundColor.var}, ${CARD.style.dynamic.badge.backgroundColor.default});
+   display: none;
+   align-items: center;
+   justify-content: center;
+ }
+ 
+ .${CARD.htmlStructure.elements.badge.container.class} .${CARD.htmlStructure.elements.badge.icon.class} {
+   width: var(--epb-badge-icon-size);
+   height: var(--epb-badge-icon-size);
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   color: var(${CARD.style.dynamic.badge.color.var}, ${CARD.style.dynamic.badge.color.default});
+ }
+ 
+ /* === VISIBILITY CONTROLS === */
+ 
+ /* Vertical layout visibility overrides */
+ .${CARD.style.dynamic.hiddenComponent.icon.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.left.class},
+ .${CARD.style.dynamic.hiddenComponent.name.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.nameGroup.class},
+ .${CARD.style.dynamic.hiddenComponent.progress_bar.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.progressBar.bar.class},
+ .${CARD.style.dynamic.hiddenComponent.secondary_info.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
+   display: none;
+ }
+ 
+ /* Shape transparency when hidden */
+ .${CARD.style.dynamic.hiddenComponent.shape.class} .${CARD.htmlStructure.elements.shape.class},
+ .${CARD.style.dynamic.hiddenComponent.shape.class}.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.shape.class} {
+   background-color: transparent;
+ }
+ 
+ /* Show elements when needed */
+ .${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class} .${CARD.htmlStructure.elements.badge.container.class},
+ .${CARD.style.dynamic.show}-hwm-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
+ .${CARD.style.dynamic.show}-lwm-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+ .${CARD.style.dynamic.show}-hwm-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
+ .${CARD.style.dynamic.show}-lwm-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+   display: flex;
+ }
+ 
+ /* === INTERACTIVE STATES === */
+ .${CARD.style.dynamic.clickable.card}:hover,
+ .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.left.class}:hover {
+   cursor: pointer;
+   background-color: color-mix(in srgb, var(--card-background-color) var(--epb-card-hover-mix), var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) var(--epb-hover-opacity));
+ }
+ 
+ .${CARD.style.dynamic.clickable.card}:active {
+   background-color: color-mix(in srgb, var(--card-background-color) var(--epb-card-active-mix), var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) var(--epb-active-opacity));
+   transition: background-color var(--epb-click-transition-background);
+ }
+ 
+ .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.left.class}:hover .${CARD.htmlStructure.elements.shape.class} {
+   background-color: color-mix(in srgb, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) var(--epb-icon-hover-opacity), transparent);
+ }
+ `;
 
 const CARD_EDITOR_CSS = `
-  :host {
-    --accordion-padding: 18px;
-    --accordion-gap: 10px;
-    --border-radius: 6px;
-    --transition-duration: 0.2s;
-    --transition-easing: cubic-bezier(0.33, 0, 0.2, 1);
-    --icon-size: 20px;
-    --button-size: 48px;
-    --small-icon-size: 24px;
-  }
-
-  /* Container principal */
-  .${CARD.editor.fields.container.class} {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-    padding-bottom: 70px;
-  }
-
-  /* Icônes communes */
-  .${CARD.editor.fields.iconItem.class},
-  .${CARD.editor.fields.accordion.icon.class} {
-    margin-right: 8px;
-    color: var(--secondary-text-color);
-  }
-
-  .${CARD.editor.fields.iconItem.class} {
-    width: var(--icon-size);
-    height: var(--icon-size);
-  }
-
-  /* Documentation */
-  .${CARD.documentation.link.class} {
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 600;
-    text-decoration: none;
-    display: flex;
-  }
-
-  .${CARD.documentation.shape.class} {
-    width: var(--button-size);
-    height: var(--button-size);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: background-color var(--transition-duration) ease;
-  }
-
-  .${CARD.documentation.shape.class}:hover {
-    background-color: color-mix(in srgb, var(--card-background-color) 90%, var(--secondary-text-color) 10%);
-  }
-
-  .${CARD.documentation.questionMark.class} {
-    color: var(--primary-text-color);
-  }
-
-  /* Accordéon */
-  .${CARD.editor.fields.accordion.item.class} {
-    display: block;
-    width: 100%;
-    border: 1px solid color-mix(in srgb, var(--card-background-color) 80%, var(--secondary-text-color) 20%);
-    border-radius: var(--border-radius);
-    overflow: visible;
-  }
-
-  .${CARD.editor.fields.accordion.title.class} {
-    display: flex;
-    align-items: center;
-    gap: var(--accordion-gap);
-    position: relative;
-    background-color: transparent;
-    color: var(--primary-text-color);
-    cursor: pointer;
-    padding: var(--accordion-padding);
-    width: 100%;
-    height: var(--button-size);
-    border: none;
-    text-align: left;
-    font-size: 15px;
-    transition: background-color 0.4s ease;
-  }
-
-  .${CARD.editor.fields.accordion.title.class}:focus {
-    background-color: var(--secondary-background-color);
-  }
-
-  .${CARD.editor.fields.accordion.arrow.class} {
-    display: inline-block;
-    width: var(--small-icon-size);
-    height: var(--small-icon-size);
-    margin-left: auto;
-    color: var(--primary-text-color);
-    transition: transform var(--transition-duration) ease-out;
-  }
-
-  .accordion.expanded .${CARD.editor.fields.accordion.arrow.class} {
-    transform: rotate(180deg);
-  }
-
-  .${CARD.editor.fields.accordion.content.class} {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-content: flex-start;
-    column-gap: var(--accordion-gap);
-    row-gap: 20px;
-    padding: 0 var(--accordion-padding);
-    background-color: transparent;
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transition: 
-      max-height var(--transition-duration) var(--transition-easing),
-      padding var(--transition-duration) var(--transition-easing),
-      opacity var(--transition-duration) ease;
-  }
-
-  .accordion.expanded .${CARD.editor.fields.accordion.content.class} {
-    /* max-height: défini par script JS */
-    padding-top: 30px;
-    padding-bottom: 30px;
-    opacity: 1;
-    overflow: visible;
-  }
-
-  /* Animation des éléments enfants de l'accordéon */
-  .${CARD.editor.fields.accordion.content.class} > * {
-    opacity: 0;
-    transition: opacity var(--transition-duration) ease 0.15s;
-  }
-
-  .accordion.expanded .${CARD.editor.fields.accordion.content.class} > * {
-    opacity: 1;
-  }
-
-  .accordion.collapsing .${CARD.editor.fields.accordion.content.class} > * {
-    opacity: 0 !important;
-    transition: opacity 0.1s ease; /* Transition rapide pendant le repli */
-  }
-
-  /* Sélecteur ha-select */
-  ha-select {
-    --mdc-menu-max-height: 250px;
-  }
-
-  /* Classes show/hide optimisées */
-  .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.attribute} .${CARD.editor.keyMappings.attribute},
-  .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.max_value_attribute} .${CARD.editor.keyMappings.max_value_attribute},
-  .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.theme} .${CARD.editor.keyMappings.theme} {
-    display: none;
-  }
-
-  /* Toggle corrigé */
-  .${CARD.editor.fields.toggle.class} {
-    display: flex;
-    align-items: center; /* Correction du typo */
-    gap: 8px;
-  }
-`;
+ :host {
+   --accordion-padding: 18px;
+   --accordion-gap: 10px;
+   --border-radius: 6px;
+   --transition-duration: 0.2s;
+   --transition-easing: cubic-bezier(0.33, 0, 0.2, 1);
+   --icon-size: 20px;
+   --button-size: 48px;
+   --small-icon-size: 24px;
+ }
+ 
+ /* Container principal */
+ .${CARD.editor.fields.container.class} {
+   display: flex;
+   flex-direction: column;
+   gap: 25px;
+   padding-bottom: 70px;
+ }
+ 
+ /* Icônes communes */
+ .${CARD.editor.fields.iconItem.class},
+ .${CARD.editor.fields.accordion.icon.class} {
+   margin-right: 8px;
+   color: var(--secondary-text-color);
+ }
+ 
+ .${CARD.editor.fields.iconItem.class} {
+   width: var(--icon-size);
+   height: var(--icon-size);
+ }
+ 
+ /* Documentation */
+ .${CARD.documentation.link.class} {
+   position: absolute;
+   top: 0;
+   right: 0;
+   z-index: 600;
+   text-decoration: none;
+   display: flex;
+ }
+ 
+ .${CARD.documentation.shape.class} {
+   width: var(--button-size);
+   height: var(--button-size);
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   border-radius: 50%;
+   cursor: pointer;
+   transition: background-color var(--transition-duration) ease;
+ }
+ 
+ .${CARD.documentation.shape.class}:hover {
+   background-color: color-mix(in srgb, var(--card-background-color) 90%, var(--secondary-text-color) 10%);
+ }
+ 
+ .${CARD.documentation.questionMark.class} {
+   color: var(--primary-text-color);
+ }
+ 
+ /* Accordéon */
+ .${CARD.editor.fields.accordion.item.class} {
+   display: block;
+   width: 100%;
+   border: 1px solid color-mix(in srgb, var(--card-background-color) 80%, var(--secondary-text-color) 20%);
+   border-radius: var(--border-radius);
+   overflow: visible;
+ }
+ 
+ .${CARD.editor.fields.accordion.title.class} {
+   display: flex;
+   align-items: center;
+   gap: var(--accordion-gap);
+   position: relative;
+   background-color: transparent;
+   color: var(--primary-text-color);
+   cursor: pointer;
+   padding: var(--accordion-padding);
+   width: 100%;
+   height: var(--button-size);
+   border: none;
+   text-align: left;
+   font-size: 15px;
+   transition: background-color 0.4s ease;
+ }
+ 
+ .${CARD.editor.fields.accordion.title.class}:focus {
+   background-color: var(--secondary-background-color);
+ }
+ 
+ .${CARD.editor.fields.accordion.arrow.class} {
+   display: inline-block;
+   width: var(--small-icon-size);
+   height: var(--small-icon-size);
+   margin-left: auto;
+   color: var(--primary-text-color);
+   transition: transform var(--transition-duration) ease-out;
+ }
+ 
+ .accordion.expanded .${CARD.editor.fields.accordion.arrow.class} {
+   transform: rotate(180deg);
+ }
+ 
+ .${CARD.editor.fields.accordion.content.class} {
+   display: flex;
+   flex-direction: row;
+   flex-wrap: wrap;
+   align-content: flex-start;
+   column-gap: var(--accordion-gap);
+   row-gap: 20px;
+   padding: 0 var(--accordion-padding);
+   background-color: transparent;
+   max-height: 0;
+   opacity: 0;
+   overflow: hidden;
+   transition: 
+     max-height var(--transition-duration) var(--transition-easing),
+     padding var(--transition-duration) var(--transition-easing),
+     opacity var(--transition-duration) ease;
+ }
+ 
+ .accordion.expanded .${CARD.editor.fields.accordion.content.class} {
+   /* max-height: défini par script JS */
+   padding-top: 30px;
+   padding-bottom: 30px;
+   opacity: 1;
+   overflow: visible;
+ }
+ 
+ /* Animation des éléments enfants de l'accordéon */
+ .${CARD.editor.fields.accordion.content.class} > * {
+   opacity: 0;
+   transition: opacity var(--transition-duration) ease 0.15s;
+ }
+ 
+ .accordion.expanded .${CARD.editor.fields.accordion.content.class} > * {
+   opacity: 1;
+ }
+ 
+ .accordion.collapsing .${CARD.editor.fields.accordion.content.class} > * {
+   opacity: 0 !important;
+   transition: opacity 0.1s ease; /* Transition rapide pendant le repli */
+ }
+ 
+ /* Sélecteur ha-select */
+ ha-select {
+   --mdc-menu-max-height: 250px;
+ }
+ 
+ /* Classes show/hide optimisées */
+ .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.attribute} .${CARD.editor.keyMappings.attribute},
+ .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.max_value_attribute} .${CARD.editor.keyMappings.max_value_attribute},
+ .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.theme} .${CARD.editor.keyMappings.theme} {
+   display: none;
+ }
+ 
+ /* Toggle corrigé */
+ .${CARD.editor.fields.toggle.class} {
+   display: flex;
+   align-items: center; /* Correction du typo */
+   gap: 8px;
+ }
+ `;
 
 /******************************************************************************************
  * 🛠️ Dev mode
@@ -3593,7 +3669,7 @@ class HassProviderSingleton {
 
     return Object.fromEntries(
       Object.entries(attributes)
-        .filter(([_, val]) => { // eslint-disable-line no-unused-vars
+        .filter(([, val]) => {
           return typeof val === 'number' || (typeof val === 'string' && !isNaN(val) && val.trim() !== '');
         })
         .map(([key, val]) => {
@@ -4435,6 +4511,9 @@ class CardView {
       this.#configHelper.cardDoubleTapAction !== CARD.interactions.action.none.action
     );
   }
+  get hasReversedSecondaryInfoRow() {
+    return this.#configHelper.config.reverse_secondary_info_row === true;
+  }
   get hasVisibleShape() {
     return this.#hassProvider.hasNewShapeStrategy
       ? this.#configHelper.config.force_circular_background ||
@@ -4702,7 +4781,7 @@ class ActionHelper {
   #clickSource = null;
   #startX = 0;
   #startY = 0;
-  #iconClickSources = new Set(['shape', 'ha-svg-icon']);
+  #iconClickSources = new Set(['shape', 'ha-svg-icon', 'img']);
   #disableIconTap = false;
 
   #boundHandlers = {
@@ -5171,6 +5250,7 @@ class EntityProgressCardBase extends HTMLElement {
 
   _buildStyle(card) {
     this._addBaseClasses(card);
+    this._addBaseParameter(card);
     this._applyConditionalClasses(card);
     this._handleHiddenComponents(card);
     this._handleWatermarkClasses(card);
@@ -5185,6 +5265,10 @@ class EntityProgressCardBase extends HTMLElement {
 
     classesToAdd.push(this._cardView.layout, this._cardView.bar_size);
     card.classList.add(...classesToAdd);
+  }
+
+  _addBaseParameter(card) {
+    if (this._cardView.hasReversedSecondaryInfoRow) this._setStylePropertyIfChanged(card.style, '--epb-secondary-info-row-reverse', 'row-reverse');
   }
 
   get conditionalStyle() {
@@ -5221,8 +5305,8 @@ class EntityProgressCardBase extends HTMLElement {
     const baseWMClass = CARD.htmlStructure.elements.progressBar.watermark.class;
     const showClass = CARD.style.dynamic.show;
 
-    card.classList.toggle(`${showClass}-HWM-${type}${baseWMClass}`, !this._cardView.watermark.disable_high);
-    card.classList.toggle(`${showClass}-LWM-${type}${baseWMClass}`, !this._cardView.watermark.disable_low);
+    card.classList.toggle(`${showClass}-hwm-${type}${baseWMClass}`, !this._cardView.watermark.disable_high);
+    card.classList.toggle(`${showClass}-lwm-${type}${baseWMClass}`, !this._cardView.watermark.disable_low);
   }
 
   _toggleHiddenComponent(card, component) {
@@ -5314,6 +5398,12 @@ class EntityProgressCardBase extends HTMLElement {
 
   // === CSS MANAGEMENT ===
 
+  _updateCSSValue(key, value) {
+    this._updateElement(CARD.htmlStructure.card.element, (el) => {
+      this._setStylePropertyIfChanged(el.style, key, value);
+    });
+  }
+
   _updateCSS() {
     this._updateElement(CARD.htmlStructure.card.element, (el) => {
       const style = el.style;
@@ -5350,43 +5440,72 @@ class EntityProgressCardBase extends HTMLElement {
     const hasIconOverride = curIcon !== null;
     const hasPicture = stateObj?.attributes?.entity_picture;
 
-    let stateObjIcon = null;
+    // Nettoyer l'ancien élément
+    const iconContainer = this._domElements.get(CARD.htmlStructure.elements.icon.class);
+    if (!iconContainer) return;
 
-    if (stateObj) {
-      const clonedAttributes = { ...stateObj.attributes };
-
-      if (hasPicture) {
-        delete clonedAttributes.icon; // Supprimer l'icône
-      } else if (hasIconOverride) {
-        clonedAttributes.icon = curIcon;
+    // Si on a une image, créer un élément img
+    if (hasPicture) {
+      if (this._icon && this._icon.tagName !== 'IMG') {
+        this._icon.remove();
+        this._icon = null;
       }
 
-      stateObjIcon = {
-        ...stateObj,
-        attributes: clonedAttributes,
-      };
-    } else if (this.isConnected) {
-      stateObjIcon = {
-        entity_id: 'sensor.dummy',
-        state: 'unknown',
-        attributes: {
-          icon: curIcon || 'mdi:help-circle-outline',
-          friendly_name: 'Unknown Entity',
-        },
-      };
-    } else {
-      return;
-    }
+      if (!this._icon) {
+        this._updateCSSValue(CARD.style.dynamic.iconAndShape.icon.size.var, '36px');
+        this._icon = document.createElement('img');
+        this._icon.style.width = '36px';
+        this._icon.style.height = '36px';
+        this._icon.style.borderRadius = '50%';
+        this._icon.style.objectFit = 'cover';
+        iconContainer.replaceChildren(this._icon);
+      }
 
-    const firstTime = this._icon === null;
-    if (firstTime) {
-      this._icon = document.createElement('ha-state-icon');
-      this._icon.hass = this._hass;
-      this._icon.stateObj = stateObjIcon;
-      this._domElements.get(CARD.htmlStructure.elements.icon.class)?.replaceChildren(this._icon);
+      this._icon.src = hasPicture;
+      this._icon.alt = stateObj.attributes?.friendly_name || 'Entity picture';
     } else {
-      this._icon.hass = this._hass;
-      this._icon.stateObj = stateObjIcon;
+      // Sinon, utiliser ha-state-icon comme avant
+      if (this._icon && this._icon.tagName === 'IMG') {
+        this._icon.remove();
+        this._icon = null;
+      }
+
+      let stateObjIcon = null;
+
+      if (stateObj) {
+        const clonedAttributes = { ...stateObj.attributes };
+
+        if (hasIconOverride) {
+          clonedAttributes.icon = curIcon;
+        }
+
+        stateObjIcon = {
+          ...stateObj,
+          attributes: clonedAttributes,
+        };
+      } else if (this.isConnected) {
+        stateObjIcon = {
+          entity_id: 'sensor.dummy',
+          state: 'unknown',
+          attributes: {
+            icon: curIcon || 'mdi:help-circle-outline',
+            friendly_name: 'Unknown Entity',
+          },
+        };
+      } else {
+        return;
+      }
+
+      const firstTime = this._icon === null;
+      if (firstTime) {
+        this._icon = document.createElement('ha-state-icon');
+        this._icon.hass = this._hass;
+        this._icon.stateObj = stateObjIcon;
+        iconContainer.replaceChildren(this._icon);
+      } else {
+        this._icon.hass = this._hass;
+        this._icon.stateObj = stateObjIcon;
+      }
     }
   }
 
@@ -5683,62 +5802,63 @@ class EntityProgressBadge extends EntityProgressCardBase {
   static _hasDisabledBadge = true;
   static _cardLayout = CARD.layout.orientations.horizontal.grid;
   static _cardStyle = `
-    :host {
-      --epb-icon-and-shape-size: 18px;
-    }
-
-    ${CARD_CSS}
-
-    ${CARD.htmlStructure.card.element},
-    .${CARD.htmlStructure.sections.container.class} {
-      min-height: 36px !important;
-      max-height: 36px !important;
-      height: var(--ha-badge-size, 36px);
-      min-width: var(--ha-badge-size, 110px);
-      width: 100%;
-      border-radius: var(--ha-badge-border-radius,calc(var(--ha-badge-size,36px)/ 2));
-    }
-
-    .icon ha-state-icon {
-      --mdc-icon-size: var(--epb-icon-and-shape-size);
-      --ha-icon-display: flex;
-      height: var(--epb-icon-and-shape-size);
-      width: var(--epb-icon-and-shape-size);
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-    }
-
-    .${CARD.htmlStructure.elements.nameGroup.class} {
-      height: 10px !important;
-    }
-    .${CARD.htmlStructure.elements.nameCombined.class} {
-      font-size: 10px !important;
-      font-style: normal !important;
-      font-weight: 500 !important;
-      line-height: 10px !important;
-      color: var(--secondary-text-color) !important;
-      margin-right: 5px !important;
-    }
-
-    .${CARD.htmlStructure.elements.detailCombined.class} {
-      font-size: var(--ha-badge-font-size, var(--ha-font-size-s)) !important;
-      font-style: normal !important;
-      font-weight: 500 !important;
-      letter-spacing: 0.1px !important;
-      color: var(--primary-text-color)
-    }
-    .${CARD.htmlStructure.elements.secondaryInfo.class} {
-      gap: 5px !important;
-    }
-    .${CARD.htmlStructure.elements.detailGroup.class} {
-      min-width: unset !important;
-      max-width: unset !important;
-    }
-    .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.left.class}:hover .${CARD.htmlStructure.elements.shape.class} {
-      background-color: unset !important;
-    }
-  `;
+     :host {
+       --epb-icon-size: 18px;
+       --epb-shape-size: 18px;
+     }
+ 
+     ${CARD_CSS}
+ 
+     ${CARD.htmlStructure.card.element},
+     .${CARD.htmlStructure.sections.container.class} {
+       min-height: 36px !important;
+       max-height: 36px !important;
+       height: var(--ha-badge-size, 36px);
+       min-width: var(--ha-badge-size, 110px);
+       width: 100%;
+       border-radius: var(--ha-badge-border-radius,calc(var(--ha-badge-size,36px)/ 2));
+     }
+ 
+     .icon ha-state-icon {
+       --mdc-icon-size: var(--epb-icon-size);
+       --ha-icon-display: flex;
+       height: var(--epb-icon-size);
+       width: var(--epb-icon-size);
+       display: flex !important;
+       align-items: center !important;
+       justify-content: center !important;
+     }
+ 
+     .${CARD.htmlStructure.elements.nameGroup.class} {
+       height: 10px !important;
+     }
+     .${CARD.htmlStructure.elements.nameCombined.class} {
+       font-size: 10px !important;
+       font-style: normal !important;
+       font-weight: 500 !important;
+       line-height: 10px !important;
+       color: var(--secondary-text-color) !important;
+       margin-right: 5px !important;
+     }
+ 
+     .${CARD.htmlStructure.elements.detailCombined.class} {
+       font-size: var(--ha-badge-font-size, var(--ha-font-size-s)) !important;
+       font-style: normal !important;
+       font-weight: 500 !important;
+       letter-spacing: 0.1px !important;
+       color: var(--primary-text-color)
+     }
+     .${CARD.htmlStructure.elements.secondaryInfo.class} {
+       gap: 5px !important;
+     }
+     .${CARD.htmlStructure.elements.detailGroup.class} {
+       min-width: unset !important;
+       max-width: unset !important;
+     }
+     .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.left.class}:hover .${CARD.htmlStructure.elements.shape.class} {
+       background-color: unset !important;
+     }
+   `;
 
   setConfig(config) {
     if (!config) {
@@ -5913,7 +6033,7 @@ class TemplateCardView extends ConfigHelper {
 
   get hasVisibleShape() {
     return (
-      this.config.force_circular_background ||
+      this.config.force_circular_background === true ||
       [
         CARD.interactions.action.navigate.action,
         CARD.interactions.action.url.action,
@@ -6043,14 +6163,6 @@ class EntityProgressTemplate extends EntityProgressCardBase {
       [CARD.style.dynamic.clickable.icon, this._cardView.hasClickableIcon],
       [CARD.style.dynamic.frameless.class, this._cardView.config.frameless === true],
     ]);
-  }
-
-  // === DOM MANAGEMENT ===
-
-  _updateCSSValue(key, value) {
-    this._updateElement(CARD.htmlStructure.card.element, (el) => {
-      this._setStylePropertyIfChanged(el.style, key, value);
-    });
   }
 
   // === WATERMARK MANAGEMENT ===
@@ -7078,11 +7190,11 @@ class EntityProgressCardEditor extends HTMLElement {
  */
 class EntityProgressBadgeEditor extends EntityProgressCardEditor {
   static _editorStyle = `
-  ${CARD_EDITOR_CSS}
-
-  .hide {
-    display: none;
-  }`;
+   ${CARD_EDITOR_CSS}
+ 
+   .hide {
+     display: none;
+   }`;
   static _editorFields = (() => {
     const baseFields = structuredClone(EntityProgressCardEditor._editorFields);
     const hide = 'hide';

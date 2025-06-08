@@ -456,22 +456,6 @@ entity: timer.living_room
 force_circular_background: true
 ```
 
-#### `frameless` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#frameless-)
-
-> **`frameless`** boolean _(optional, default: false)_
-
-Allows you to remove the default Lovelace card styling: the border and background color.
-When set to `true`, the card blends seamlessly into the interface or can be embedded in other designs
-without visual interference.
-
-_Example_:
-
-```yaml
-type: custom:entity-progress-card
-entity: timer.living_room
-frameless: true
-```
-
 #### `color`
 
 > **`color`** string _(optional)_
@@ -804,7 +788,7 @@ custom_info: >-
 > - This field supports HTML for advanced formatting.
 > - If the template evaluates to an empty string, nothing will be displayed.
 
-#### `state_content` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#custom_info-)
+#### `state_content` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#state_content-)
 
 > **`state_content`** string|list _(optional)_:
 
@@ -843,6 +827,46 @@ state_content:
 > - The selected attribute is shown before the main numerical display on the card.
 > - If an attribute listed does not exist, the card immediately displays unknown.
 > - This feature is useful for adding additional context (e.g., position, status...) to the main progress value.
+
+#### `frameless` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#frameless-)
+
+> **`frameless`** boolean _(optional, default: false)_
+
+Allows you to remove the default Lovelace card styling: the border and background color.
+When set to `true`, the card blends seamlessly into the interface or can be embedded in other designs
+without visual interference.
+
+_Compatibility_:
+
+| **Card**                 | **Compatible**        | **Notes**                                                                                          |
+| ------------------------ | --------------------- | -------------------------------------------------------------------------------------------------- |
+| `entities`               | ✅ Yes                | Automatically detected and styled. No need to set `frameless`.                                     |
+| `vertical-stack-in-card` | ✅ Yes                | Automatically detected and styled. No need to set `frameless`.                                     |
+| `vertical-stack`         | ✅ Yes                | Rendered with a frame by default — use `frameless` to remove it if desired.                        |
+| `horizontal-stack`       | ⚠️ Yes, with caveats  | Only works reliably in Masonry view. Rendered with a frame by default — use `frameless` if needed. |
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+entity: timer.living_room
+frameless: true
+```
+
+#### `reverse_secondary_info_row` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#reverse_secondary_info_row-)
+
+> **`reverse_secondary_info_row`** boolean _(optional, default: false)_
+
+Reverses the order of the progress bar and the secondary info when using a horizontal layout.
+
+When set to `true`, the secondary info appears to the right of the progress bar instead of the left.
+Useful for emphasizing the progress visually by aligning it first, or for adapting to specific design preferences.
+
+```yaml
+type: custom:entity-progress-card
+entity: timer.living_room
+reverse_secondary_info_row: true
+```
 
 #### `watermark` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#watermark-)
 
