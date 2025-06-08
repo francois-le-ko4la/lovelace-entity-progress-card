@@ -209,9 +209,9 @@ const CARD = {
     bar: {
       radius: '4px',
       sizeOptions: {
-        small: { label: 'small', mdi: 'mdi:size-s', size: '8px' },
-        medium: { label: 'medium', mdi: 'mdi:size-m', size: '12px' },
-        large: { label: 'large', mdi: 'mdi:size-l', size: '16px' },
+        small: { label: 'small', mdi: 'mdi:size-s' },
+        medium: { label: 'medium', mdi: 'mdi:size-m' },
+        large: { label: 'large', mdi: 'mdi:size-l' },
       },
     },
     dynamic: {
@@ -2308,6 +2308,9 @@ const CARD_CSS = `
   --epb-badge-size: 16px;
   --epb-badge-icon-size: 12px;
   --epb-badge-offset: -3px;
+  --epb-progress-small: 8px;
+  --epb-progress-medium: 12px;
+  --epb-progress-large: 16px;
   
   /* === HEIGHT VARIABLES === */
   --epb-name-height: 20px;
@@ -2568,8 +2571,8 @@ const CARD_CSS = `
  
  .${CARD.htmlStructure.elements.progressBar.bar.class} {
    width: 100%;
-   height: ${CARD.style.bar.sizeOptions.small.size};
-   max-height: ${CARD.style.bar.sizeOptions.large.size};
+   height: var(--epb-progress-small);
+   max-height: var(--epb-progress-large);
    background-color: var(${CARD.style.dynamic.progressBar.background.var}, var(--divider-color));
    border-radius: ${CARD.style.bar.radius};
    overflow: hidden;
@@ -2586,18 +2589,18 @@ const CARD_CSS = `
  
  /* Progress bar size variants */
  .${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
-   height: ${CARD.style.bar.sizeOptions.small.size};
-   max-height: ${CARD.style.bar.sizeOptions.small.size};
+   height: var(--epb-progress-small);
+   max-height: var(--epb-progress-small);
  }
  
  .${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
-   height: ${CARD.style.bar.sizeOptions.medium.size};
-   max-height: ${CARD.style.bar.sizeOptions.medium.size};
+   height: var(--epb-progress-medium);
+   max-height: var(--epb-progress-medium);
  }
  
  .${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
-   height: ${CARD.style.bar.sizeOptions.large.size};
-   max-height: ${CARD.style.bar.sizeOptions.large.size};
+   height: var(--epb-progress-large);
+   max-height: var(--epb-progress-large);
  }
  
  .${CARD.style.dynamic.progressBar.orientation.rtl} .${CARD.htmlStructure.elements.progressBar.bar.class} {
