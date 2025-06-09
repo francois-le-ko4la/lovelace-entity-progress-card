@@ -7029,9 +7029,9 @@ class EntityProgressCardEditor extends HTMLElement {
     const shouldUpdate = typeof currentValue === 'string' ? currentValue !== String(newValue) : currentValue !== newValue;
 
     if (shouldUpdate) {
+      this.#log.debug('🆕 updateFields - update: ', [key, newValue]);
       return () => {
         element.value = newValue;
-        this.#log.debug('🆕 updateFields - update: ', [key, newValue]);
       };
     }
     return null;
@@ -7045,6 +7045,7 @@ class EntityProgressCardEditor extends HTMLElement {
       (newValue === undefined && currentData[key] !== undefined);
 
     if (needsUpdate) {
+      this.#log.debug('🆕 updateFields - update: ', [key, newValue]);
       return () => {
         form.data = {
           ...currentData,
@@ -7194,7 +7195,7 @@ class EntityProgressCardEditor extends HTMLElement {
     });
 
     // Force reflow
-    panel.offsetHeight;
+    const _ = panel.offsetHeight; // eslint-disable-line no-unused-vars
 
     accordion.classList.add('expanded');
 
@@ -7218,7 +7219,7 @@ class EntityProgressCardEditor extends HTMLElement {
 
     // Set current height
     panel.style.maxHeight = `${panel.scrollHeight}px`;
-    panel.offsetHeight; // Force reflow
+    const _ = panel.offsetHeight; // eslint-disable-line no-unused-vars
 
     requestAnimationFrame(() => {
       Object.assign(panel.style, {
