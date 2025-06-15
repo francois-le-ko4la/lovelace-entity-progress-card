@@ -416,6 +416,36 @@ type: custom:entity-progress-card
 bar_color: rgb(110, 65, 171)
 ```
 
+#### `bar_effect`
+
+> **`bar_effect`** string or list _(optional)_
+
+Defines visual effects applied to the progress bar. You can use a single effect or combine multiple in a list.
+
+_Available options_:
+
+- radius: rounds the corners of the progress bar
+- glass: adds a frosted glass effect to the progress bar
+- gradient: applies a color gradient to the progress bar
+- shimmer: adds a shimmering light animation across the bar
+
+_Examples_:
+
+```yaml
+type: custom:entity-progress-card
+····
+bar_effect: radius
+```
+
+```yaml
+type: custom:entity-progress-card
+····
+bar_effect:
+  - radius
+  - shimmer
+  - gradient
+```
+
 #### `icon`
 
 > **`icon`** string _(optional)_
@@ -881,8 +911,12 @@ _Map definition_:
 - `low` (number): The lower value where the bar starts highlighting a low zone (0–100).
 - `low_color` (string): The CSS color used for the low watermark zone.
 - `type` (string): Defines the style of the watermark overlay.
-  - `block` (default): Flat color over the bar
-  - `line`: Vertical lines pattern (like a hatch effect)
+  - `blended` (default): A subtle colored overlay that merges with the bar’s colors for a more integrated look.
+  - `area`: A soft transparent shape placed over the bar, without blending into the bar's colors.
+  - `striped`: Diagonal stripes for a patterned effect.
+  - `triangle`: Triangle shapes as a watermark.
+  - `round`: Rounded shapes applied as a watermark.  
+  - `line`: Vertical lines pattern (like a hatch effect).
 - `opacity` (number): Adjusts the transparency of the watermark overlay (from 0 = fully transparent to 1 = fully opaque).
 - `disable_low` (boolean): If set to true, disables the low watermark display.
 - `disable_high` (boolean): If set to true, disables the high watermark display.
@@ -893,6 +927,7 @@ _Example_:
 type: custom:entity-progress-card
 ····
 watermark:
+  type: striped.    # red and yellow stripes
   high: 80          # 🔺 Upper threshold (e.g., max recommended battery level)
   high_color: red   # 🎨 Color to indicate the high watermark zone
   low: 10           # 🔻 Lower threshold (e.g., minimum safe battery level)

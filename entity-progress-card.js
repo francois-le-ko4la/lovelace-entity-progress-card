@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.4.6
+ * @version 1.4.7
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.4.6';
+const VERSION = '1.4.7';
 const CARD = {
   meta: {
     card: {
@@ -43,6 +43,8 @@ const CARD = {
     },
   },
   config: {
+    dev: false,
+    debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false, hass: false },
     language: 'en',
     value: { min: 0, max: 100 },
     unit: {
@@ -66,6 +68,18 @@ const CARD = {
     msFactor: 1000,
     shadowMode: 'open',
     refresh: { ratio: 500, min: 250, max: 1000 },
+    stub: {
+      template: {
+        icon: 'mdi:washing-machine',
+        name: 'Entity Progress Card',
+        secondary: 'Template',
+        badge_icon: 'mdi:update',
+        badge_color: 'green',
+        percent: 50,
+        force_circular_background: true,
+        isDemo: true,
+      },
+    },
     languageMap: {
       af: 'af-ZA',
       ar: 'ar',
@@ -131,8 +145,6 @@ const CARD = {
       'zh-Hant': 'zh-TW',
     },
     separator: ' · ',
-    debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false, hass: false },
-    dev: false,
   },
   htmlStructure: {
     card: { element: 'ha-card' },
@@ -207,7 +219,6 @@ const CARD = {
       },
     },
     bar: {
-      radius: '4px',
       sizeOptions: {
         small: { label: 'small', mdi: 'mdi:size-s' },
         medium: { label: 'medium', mdi: 'mdi:size-m' },
@@ -229,11 +240,18 @@ const CARD = {
         size: { var: '--epb-progress-bar-size', default: '0%' },
         background: { var: '--epb-progress-bar-background-color' },
         orientation: { rtl: 'rtl-orientation', ltr: 'ltr-orientation' },
+        effect: {
+          radius: { label: 'radius', class: 'progress-bar-effect-radius' },
+          glass: { label: 'glass', class: 'progress-bar-effect-glass' },
+          gradient: { label: 'gradient', class: 'progress-bar-effect-gradient' },
+          shimmer: { label: 'shimmer', class: 'progress-bar-effect-shimmer' },
+        },
       },
       watermark: {
         low: { value: { var: '--epb-low-watermark-value', default: 20 }, color: { var: '--epb-low-watermark-color', default: 'red' } },
         high: { value: { var: '--epb-high-watermark-value', default: 80 }, color: { var: '--epb-high-watermark-color', default: 'red' } },
-        opacity: { var: '--epb-watermark-opacity-value', default: 0.8 },
+        lineSize: { var: '--epb-watermark-line-size' },
+        opacity: { var: '--epb-watermark-opacity-value' },
       },
       secondaryInfoError: { class: 'secondary-info-error' },
       show: 'show',
@@ -385,6 +403,7 @@ CARD.config.defaults = {
   custom_theme: null,
   bar_size: CARD.style.bar.sizeOptions.small.label,
   bar_color: null,
+  bar_effect: [],
   bar_orientation: null,
   reverse: null,
   min_value: CARD.config.value.min,
@@ -402,7 +421,8 @@ CARD.config.defaults = {
     high: 80,
     high_color: 'red',
     opacity: 0.8,
-    type: 'block',
+    type: 'blended',
+    line_size: '1px',
     disable_low: false,
     disable_high: false,
   },
@@ -2253,46 +2273,6 @@ const ATTRIBUTE_MAPPING = {
   fan: { label: 'fan', attribute: 'percentage' },
 };
 
-const CARD_HTML = `
- <!-- Main container -->
- <${CARD.htmlStructure.sections.container.element} class="${CARD.htmlStructure.sections.container.class}">
-   <!-- icon/shape -->
-   <${CARD.htmlStructure.sections.left.element} class="${CARD.htmlStructure.sections.left.class}">
-     <${CARD.htmlStructure.elements.shape.element} class="${CARD.htmlStructure.elements.shape.class}">
-       <${CARD.htmlStructure.elements.icon.element} class="${CARD.htmlStructure.elements.icon.class}"></${CARD.htmlStructure.elements.icon.element}>
-     </${CARD.htmlStructure.elements.shape.element}>
-     <${CARD.htmlStructure.elements.badge.container.element} class="${CARD.htmlStructure.elements.badge.container.class}">
-       <${CARD.htmlStructure.elements.badge.icon.element} class="${CARD.htmlStructure.elements.badge.icon.class}"></${CARD.htmlStructure.elements.badge.icon.element}>
-     </${CARD.htmlStructure.elements.badge.container.element}>
-   </${CARD.htmlStructure.sections.left.element}>
- 
-   <!-- infos/progress bar -->
-   <${CARD.htmlStructure.sections.right.element} class="${CARD.htmlStructure.sections.right.class}">
-     <${CARD.htmlStructure.elements.nameGroup.element} class="${CARD.htmlStructure.elements.nameGroup.class}">
-       <${CARD.htmlStructure.elements.nameCombined.element} class="${CARD.htmlStructure.elements.nameCombined.class}">
-         <${CARD.htmlStructure.elements.name.element} class="${CARD.htmlStructure.elements.name.class}"></${CARD.htmlStructure.elements.name.element}>
-         <${CARD.htmlStructure.elements.nameCustomInfo.element} class="${CARD.htmlStructure.elements.nameCustomInfo.class}"></${CARD.htmlStructure.elements.nameCustomInfo.element}>
-       </${CARD.htmlStructure.elements.nameCombined.element}>
-     </${CARD.htmlStructure.elements.nameGroup.element}>
-     <${CARD.htmlStructure.elements.secondaryInfo.element} class="${CARD.htmlStructure.elements.secondaryInfo.class}">
-       <${CARD.htmlStructure.elements.detailGroup.element} class="${CARD.htmlStructure.elements.detailGroup.class}">
-         <${CARD.htmlStructure.elements.detailCombined.element} class="${CARD.htmlStructure.elements.detailCombined.class}">
-           <${CARD.htmlStructure.elements.customInfo.element} class="${CARD.htmlStructure.elements.customInfo.class}"></${CARD.htmlStructure.elements.customInfo.element}>
-           <${CARD.htmlStructure.elements.stateAndProgressInfo.element} class="${CARD.htmlStructure.elements.stateAndProgressInfo.class}"></${CARD.htmlStructure.elements.stateAndProgressInfo.element}>
-         </${CARD.htmlStructure.elements.detailCombined.element}>
-       </${CARD.htmlStructure.elements.detailGroup.element}>
-       <${CARD.htmlStructure.elements.progressBar.container.element} class="${CARD.htmlStructure.elements.progressBar.container.class}">
-           <${CARD.htmlStructure.elements.progressBar.bar.element} class="${CARD.htmlStructure.elements.progressBar.bar.class}">
-             <${CARD.htmlStructure.elements.progressBar.inner.element} class="${CARD.htmlStructure.elements.progressBar.inner.class}"></${CARD.htmlStructure.elements.progressBar.inner.element}>
-             <${CARD.htmlStructure.elements.progressBar.lowWatermark.element} class="${CARD.htmlStructure.elements.progressBar.lowWatermark.class}"></${CARD.htmlStructure.elements.progressBar.lowWatermark.element}>
-             <${CARD.htmlStructure.elements.progressBar.highWatermark.element} class="${CARD.htmlStructure.elements.progressBar.highWatermark.class}"></${CARD.htmlStructure.elements.progressBar.highWatermark.element}>
-           </${CARD.htmlStructure.elements.progressBar.bar.element}>
-       </${CARD.htmlStructure.elements.progressBar.container.element}>
-     </${CARD.htmlStructure.elements.secondaryInfo.element}>
-   </${CARD.htmlStructure.sections.right.element}>
- </${CARD.htmlStructure.sections.container.element}>
- `;
-
 const CARD_CSS = `
 :host {
   /* === SPACING VARIABLES === */
@@ -2574,7 +2554,6 @@ ${CARD.htmlStructure.card.element} {
   height: var(--epb-progress-small);
   max-height: var(--epb-progress-large);
   background-color: var(${CARD.style.dynamic.progressBar.background.var}, var(--divider-color));
-  border-radius: ${CARD.style.bar.radius};
   overflow: hidden;
   position: relative;
 }
@@ -2591,16 +2570,19 @@ ${CARD.htmlStructure.card.element} {
 .${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
   height: var(--epb-progress-small);
   max-height: var(--epb-progress-small);
+  border-radius: 4px;
 }
 
 .${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
   height: var(--epb-progress-medium);
   max-height: var(--epb-progress-medium);
+  border-radius: 6px;
 }
 
 .${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
   height: var(--epb-progress-large);
   max-height: var(--epb-progress-large);
+  border-radius: 8px;
 }
 
 .${CARD.style.dynamic.progressBar.orientation.rtl} .${CARD.htmlStructure.elements.progressBar.bar.class} {
@@ -2615,38 +2597,173 @@ ${CARD.htmlStructure.card.element} {
   will-change: width;
 }
 
+.${CARD.style.dynamic.progressBar.effect.glass.class} .${CARD.htmlStructure.elements.progressBar.inner.class} {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+}
+.${CARD.style.dynamic.progressBar.effect.radius.class}.${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.elements.progressBar.inner.class} {
+  border-radius: 4px;
+}
+.${CARD.style.dynamic.progressBar.effect.radius.class}.${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.inner.class} {
+  border-radius: 6px;
+}
+.${CARD.style.dynamic.progressBar.effect.radius.class}.${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.inner.class} {
+  border-radius: 8px;
+}
+
+.${CARD.style.dynamic.progressBar.effect.gradient.class} .${CARD.htmlStructure.elements.progressBar.inner.class} {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, white 40%, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})),
+    var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})
+  );
+} 
+
+.${CARD.style.dynamic.progressBar.effect.shimmer.class} .${CARD.htmlStructure.elements.progressBar.inner.class} {
+  overflow: hidden;
+  position: relative;
+}
+
+.${CARD.style.dynamic.progressBar.effect.shimmer.class} .${CARD.htmlStructure.elements.progressBar.inner.class}::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
 /* === WATERMARKS === */
+/* basic stuff */
 .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
 .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   display: none;
   position: absolute;
   height: 100%;
   top: 0;
-  mix-blend-mode: hard-light;
   opacity: var(--epb-watermark-opacity-value, 0.8);
 }
 
 .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-  left: 0;
-  width: var(--epb-low-watermark-value, 20%);
   background-color: var(--epb-low-watermark-color, var(--red-color));
 }
 
 .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+  background-color: var(--epb-high-watermark-color, var(--red-color));
+}
+
+/* Watermark area styles */
+.${CARD.style.dynamic.show}-lwm-area-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+  left: 0;
+  width: var(--epb-low-watermark-value, 20%);
+}
+
+.${CARD.style.dynamic.show}-hwm-area-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   right: 0;
   width: calc(100% - var(--epb-high-watermark-value, 80%));
-  background-color: var(--epb-high-watermark-color, var(--red-color));
+}
+
+/* Watermark blended styles */
+
+.${CARD.style.dynamic.show}-lwm-blended-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+  left: 0;
+  width: var(--epb-low-watermark-value, 20%);
+  mix-blend-mode: hard-light;
+}
+
+.${CARD.style.dynamic.show}-hwm-blended-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+  right: 0;
+  width: calc(100% - var(--epb-high-watermark-value, 80%));
+  mix-blend-mode: hard-light;
+}
+
+/* Watermark striped styles */
+.${CARD.style.dynamic.show}-lwm-striped-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+  left: 0;
+  width: var(--epb-low-watermark-value, 20%);
+  background: repeating-linear-gradient( -45deg, var(--epb-low-watermark-color, var(--red-color)) 0px, var(--epb-low-watermark-color, var(--red-color)) 3px, transparent 3px, transparent 6px );
+}
+
+.${CARD.style.dynamic.show}-hwm-striped-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+  right: 0;
+  width: calc(100% - var(--epb-high-watermark-value, 80%));
+  background: repeating-linear-gradient( -45deg, var(--epb-high-watermark-color, var(--red-color)) 0px, var(--epb-high-watermark-color, var(--red-color)) 3px, transparent 3px, transparent 6px );
 }
 
 /* Watermark line styles */
 .${CARD.style.dynamic.show}-hwm-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  right: calc(100% - var(--epb-high-watermark-value, 80%));
-  width: 1px;
+  right: calc(100% - var(--epb-high-watermark-value, 80%) + var(--epb-watermark-line-size, 1px) / 2);
+  width: var(--epb-watermark-line-size, 1px);
+  height: 100%; /* Gardons 100% pour la ligne complète */
+  background-color: var(--epb-high-watermark-color, var(--red-color));
+  top: 0;       /* Retour au top: 0 pour ligne complète */
+  transform: none; /* Pas de transform pour ligne complète */
+  border: none;
+  position: absolute; /* Force le positionnement */
 }
 
 .${CARD.style.dynamic.show}-lwm-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-  left: var(--epb-low-watermark-value, 20%);
-  width: 1px;
+  left: calc(var(--epb-low-watermark-value, 20%) - var(--epb-watermark-line-size, 1px) / 2);
+  width: var(--epb-watermark-line-size, 1px);
+  height: 100%;
+  background-color: var(--epb-low-watermark-color, var(--red-color));
+  top: 0;
+  transform: none;
+  border: none;
+  position: absolute;
+}
+
+/* Watermark round style */
+.${CARD.style.dynamic.show}-hwm-round-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+  right: calc(100% - var(--epb-high-watermark-value, 80%) + var(--epb-watermark-circle-size, 5px) / 2);
+  width: var(--epb-watermark-circle-size, 5px);
+  height: var(--epb-watermark-circle-size, 5px);
+  background-color: var(--epb-high-watermark-color, var(--red-color));
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+}
+
+.${CARD.style.dynamic.show}-lwm-round-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+  left: calc(var(--epb-low-watermark-value, 20%) - var(--epb-watermark-circle-size, 5px) / 2);
+  width: var(--epb-watermark-circle-size, 5px);
+  height: var(--epb-watermark-circle-size, 5px);
+  background-color: var(--epb-low-watermark-color, var(--red-color));
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+}
+
+/* Watermark triangle styles */
+/* show-hwm-triangle-progress-bar-wm show-lwm-triangle-progress-bar-wm */
+.${CARD.style.dynamic.show}-hwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+  right: calc(100% - var(--epb-high-watermark-value, 80%) + var(--epb-watermark-triangle-size, 8px) / 2);
+  width: 0;
+  height: 0;
+  background-color: transparent;
+  border-left: calc(var(--epb-watermark-triangle-size, 8px) / 2) solid transparent;
+  border-right: calc(var(--epb-watermark-triangle-size, 8px) / 2) solid transparent;
+  border-top: var(--epb-watermark-triangle-size, 8px) solid var(--epb-high-watermark-color, var(--red-color));
+  top: 0;
+}
+
+.${CARD.style.dynamic.show}-lwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+  left: calc(var(--epb-low-watermark-value, 20%) - var(--epb-watermark-triangle-size, 8px) / 2);
+  width: 0;
+  height: 0;
+  background-color: transparent;
+  border-left: calc(var(--epb-watermark-triangle-size, 8px) / 2) solid transparent;
+  border-right: calc(var(--epb-watermark-triangle-size, 8px) / 2) solid transparent;
+  border-top: var(--epb-watermark-triangle-size, 8px) solid var(--epb-low-watermark-color, var(--red-color));
+  top: 0;
 }
 
 /* === VERTICAL LAYOUT ADJUSTMENTS === */
@@ -2737,10 +2854,18 @@ ${CARD.htmlStructure.card.element} {
 
 /* Show elements when needed */
 .${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class} .${CARD.htmlStructure.elements.badge.container.class},
+.${CARD.style.dynamic.show}-hwm-area-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
+.${CARD.style.dynamic.show}-lwm-area-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+.${CARD.style.dynamic.show}-hwm-blended-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
+.${CARD.style.dynamic.show}-lwm-blended-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+.${CARD.style.dynamic.show}-hwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
+.${CARD.style.dynamic.show}-lwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
 .${CARD.style.dynamic.show}-hwm-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
 .${CARD.style.dynamic.show}-lwm-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-.${CARD.style.dynamic.show}-hwm-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
-.${CARD.style.dynamic.show}-lwm-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+.${CARD.style.dynamic.show}-hwm-round-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
+.${CARD.style.dynamic.show}-lwm-round-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+.${CARD.style.dynamic.show}-hwm-striped-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
+.${CARD.style.dynamic.show}-lwm-striped-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
   display: flex;
 }
 
@@ -3057,6 +3182,77 @@ class RegistrationHelper {
 /******************************************************************************************
  * 📦 CARD LIB
  ******************************************************************************************/
+
+const Element = (obj) => {
+  return {
+    tag: obj.element,
+    class: obj.class,
+    html: (content = '', attrs = '') => `<${obj.element} class="${obj.class}" ${attrs}>${content}</${obj.element}>`,
+  };
+};
+
+const StructureElements = {
+  container: () => Element(CARD.htmlStructure.sections.container).html('{{content}}'),
+  left: () => Element(CARD.htmlStructure.sections.left).html('{{content}}'),
+
+  iconAndShape: () => Element(CARD.htmlStructure.elements.shape).html(Element(CARD.htmlStructure.elements.icon).html()),
+  badge: () => Element(CARD.htmlStructure.elements.badge.container).html(Element(CARD.htmlStructure.elements.badge.icon).html()),
+
+  right: () => Element(CARD.htmlStructure.sections.right).html('{{content}}'),
+
+  nameGroup: () =>
+    Element(CARD.htmlStructure.elements.nameGroup).html(
+      Element(CARD.htmlStructure.elements.nameCombined).html(
+        Element(CARD.htmlStructure.elements.name).html() + Element(CARD.htmlStructure.elements.nameCustomInfo).html()
+      )
+    ),
+  nameGroupMinimal: () =>
+    Element(CARD.htmlStructure.elements.nameGroup).html(
+      Element(CARD.htmlStructure.elements.nameCombined).html(Element(CARD.htmlStructure.elements.name).html())
+    ),
+
+  detailGroup: () =>
+    Element(CARD.htmlStructure.elements.detailGroup).html(
+      Element(CARD.htmlStructure.elements.detailCombined).html(
+        Element(CARD.htmlStructure.elements.customInfo).html() + Element(CARD.htmlStructure.elements.stateAndProgressInfo).html()
+      )
+    ),
+
+  detailGroupMinimal: () =>
+    Element(CARD.htmlStructure.elements.detailGroup).html(
+      Element(CARD.htmlStructure.elements.detailCombined).html(Element(CARD.htmlStructure.elements.customInfo).html())
+    ),
+  progressBar: () =>
+    Element(CARD.htmlStructure.elements.progressBar.container).html(
+      Element(CARD.htmlStructure.elements.progressBar.bar).html(
+        Element(CARD.htmlStructure.elements.progressBar.inner).html() +
+          Element(CARD.htmlStructure.elements.progressBar.lowWatermark).html() +
+          Element(CARD.htmlStructure.elements.progressBar.highWatermark).html()
+      )
+    ),
+
+  secondaryInfo: () => Element(CARD.htmlStructure.elements.secondaryInfo).html(StructureElements.detailGroup() + StructureElements.progressBar()),
+  secondaryInfoMinimal: () =>
+    Element(CARD.htmlStructure.elements.secondaryInfo).html(StructureElements.detailGroupMinimal() + StructureElements.progressBar()),
+  rightFull: () => Element(CARD.htmlStructure.sections.right).html(StructureElements.nameGroup() + StructureElements.secondaryInfo()),
+  rightMinimal: () =>
+    Element(CARD.htmlStructure.sections.right).html(StructureElements.nameGroupMinimal() + StructureElements.secondaryInfoMinimal()),
+  leftFull: () => Element(CARD.htmlStructure.sections.left).html(StructureElements.iconAndShape() + StructureElements.badge()),
+  leftNoBadge: () => Element(CARD.htmlStructure.sections.left).html(StructureElements.iconAndShape()),
+};
+
+const StructureTemplates = {
+  card: () => StructureElements.container().replace('{{content}}', StructureElements.leftFull() + StructureElements.rightFull()),
+  badge: () => StructureElements.container().replace('{{content}}', StructureElements.leftNoBadge() + StructureElements.rightFull()),
+  template: () => StructureElements.container().replace('{{content}}', StructureElements.leftFull() + StructureElements.rightMinimal()),
+};
+
+const createHTMLStructure = {
+  card: () => StructureTemplates.card(),
+  badge: () => StructureTemplates.badge(),
+  template: () => StructureTemplates.template(),
+};
+
 
 /******************************************************************************************
  * 🛠️ NumberFormatter
@@ -4125,108 +4321,115 @@ class EntityOrValue {
 }
 
 /******************************************************************************************
- * 🛠️ ConfigHelper
+ * 🛠️ BaseConfigHelper
  * ========================================================================================
  *
- * ✅ class for managing and validating card configuration.
+ * ✅ base class for managing and validating all card configuration.
  *
  * @class
  */
-class ConfigHelper {
+
+class BaseConfigHelper {
   #config = {};
   #isValid = false;
   #msg = null;
   #isChanged = false;
-  #hassProvider = null;
+  #hassProvider = HassProviderSingleton.getInstance();
 
-  constructor() {
-    this.#hassProvider = HassProviderSingleton.getInstance();
-  }
-
-  // === PUBLIC GETTERS / SETTERS ===
-
+  // === GETTERS/SETTERS ===
   get config() {
     return this.#config;
   }
 
   set config(config) {
     this.#isChanged = true;
-    this.#config = ConfigHelper.#applyDefaults(config);
+    this.#config = this.constructor.applyDefaults(config);
   }
 
   get isValid() {
     return this.#isValid;
   }
+
   get msg() {
     return this.#msg;
   }
-  get max_value() {
-    if (!this.#config.max_value) return CARD.config.value.max;
-    if (Number.isFinite(this.#config.max_value)) return this.#config.max_value;
-    if (typeof this.#config.max_value === 'string') {
-      const state = this.#hassProvider.getEntityStateValue(this.#config.max_value);
-      const parsedState = parseFloat(state);
-      if (!isNaN(parsedState)) return parsedState;
-    }
-    return null;
-  }
+
   get hasDisabledUnit() {
     return this.#config.disable_unit;
   }
+
+  // === PUBLIC API METHODS ===
   get cardTapAction() {
     return this.#getCardAction('tap_action');
   }
+
   get cardDoubleTapAction() {
     return this.#getCardAction('double_tap_action');
   }
+
   get cardHoldAction() {
     return this.#getCardAction('hold_action');
   }
+
   get iconTapAction() {
     return this.#getCardAction('icon_tap_action');
   }
+
   get iconDoubleTapAction() {
     return this.#getCardAction('icon_double_tap_action');
   }
+
   get iconHoldAction() {
     return this.#getCardAction('icon_hold_action');
   }
-  get stateContent() {
-    const content = typeof this.#config?.state_content === 'string' ? [this.#config?.state_content] : this.#config?.state_content ?? [];
-    return content.filter((item) => typeof item === 'string' && item !== null && item !== undefined);
+
+  #getCardAction(action) {
+    return (this.#config[action]?.action ?? null) === null ? CARD.interactions.action.default : this.#config[action]?.action;
   }
 
-  // === PRIVATE METHODS (VALIDATION) ===
+  // Method to define allowed keys - to be overridden in subclasses
+  static get _allowedKeys() {
+    return new Set([
+      // Base keys common to all cards
+      'entity',
+    ]);
+  }
 
-  static #applyDefaults(config) {
-    const domain = HassProviderSingleton.getEntityDomain(config.entity);
-    const toggleableDomains = ['light', 'switch', 'fan', 'input_boolean', 'media_player'];
-    const isToggleable = toggleableDomains.includes(domain);
-    const { watermark, ...baseDefaults } = CARD.config.defaults;
+  // Method to filter the config based on allowed keys
+  static filterConfig(config) {
+    return Object.fromEntries(Object.entries(config).filter(([key]) => this._allowedKeys.has(key)));
+  }
 
-    const merged = {
-      ...baseDefaults,
-      ...(isToggleable && { icon_tap_action: { action: 'toggle' } }),
-      ...config,
+  // Method to define enum validations specific to each card
+  static getEnumValidations() {
+    return {
+      // Subclasses can override this method to define their own validations
+      // Example structure:
+      // bar_orientation: {
+      //   validValues: CARD.style.dynamic.progressBar.orientation,
+      //   defaultValue: null
+      // }
     };
+  }
 
-    // -- VALIDATION ENUMS --
+  static validateEnums(config, merged) {
+    const enumValidations = this.getEnumValidations();
 
-    // bar orientation
-    if (config.bar_orientation && !Object.hasOwn(CARD.style.dynamic.progressBar.orientation, config.bar_orientation)) merged.bar_orientation = null;
+    // Generic validation based on subclass configuration
+    Object.entries(enumValidations).forEach(([key, validation]) => {
+      if (config[key] && !Object.hasOwn(validation.validValues, config[key])) {
+        merged[key] = validation.defaultValue;
+      }
+    });
 
-    // bar size
-    if (config.bar_size && !Object.hasOwn(CARD.style.bar.sizeOptions, config.bar_size)) merged.bar_size = CARD.style.bar.sizeOptions.small.label;
+    // Normalize bar_effect to an array if it's a string
+    if (typeof merged.bar_effect === 'string') {
+      merged.bar_effect = [merged.bar_effect];
+    }
 
-    // unit spacing
-    const validUnitSpacing = Object.values(CARD.config.unit.unitSpacing);
-    if (config.unit_spacing && !validUnitSpacing.includes(config.unit_spacing)) merged.unit_spacing = CARD.config.unit.unitSpacing.auto;
-
-    // Layout
-    if (config.layout && !Object.hasOwn(CARD.layout.orientations, config.layout)) merged.layout = CARD.layout.orientations.horizontal.label;
-
-    // Watermark uniquement si défini
+    // Watermark - validation common to all cards
     if (config.watermark !== undefined) {
+      const { watermark } = CARD.config.defaults;
       merged.watermark = {
         ...watermark,
         ...config.watermark,
@@ -4235,64 +4438,20 @@ class ConfigHelper {
 
     return merged;
   }
-  // === PRIVATE METHODS (opti) ===
 
-  #getCardAction(action) {
-    return (this.#config[action]?.action ?? null) === null ? CARD.interactions.action.default : this.#config[action]?.action;
+  // === Validation and abstract method to be implemented in the subclass ===
+  static applyDefaults(config) {
+    console.error('applyDefaults must be implemented in subclass', config);
+    throw new Error('applyDefaults must be implemented in subclass');
   }
 
-  // === PUBLIC API METHODS (check) ===
-
   checkConfig() {
-    if (!this.#isChanged) {
-      return;
-    }
+    if (!this.#isChanged) return;
+
     this.#isChanged = false;
     this.#isValid = false;
-    const entityState = this.#hassProvider.getEntityStateObj(this.#config.entity);
-    const maxValueState =
-      typeof this.#config.max_value === 'string' && this.#config.max_value.trim()
-        ? this.#hassProvider.getEntityStateObj(this.#config.max_value)
-        : null;
-    const validationRules = [
-      {
-        valid: this.#config.entity !== null,
-        msg: {
-          content: LANGUAGES[this.#hassProvider.language].card.msg.entityError,
-          sev: 'info',
-        },
-      },
-      {
-        valid: !this.#config.attribute || (entityState && Object.hasOwn(entityState.attributes, this.#config.attribute)),
-        msg: {
-          content: LANGUAGES[this.#hassProvider.language].card.msg.attributeNotFound,
-          sev: 'error',
-        },
-      },
-      {
-        valid: Number.isFinite(this.#config.min_value),
-        msg: {
-          content: LANGUAGES[this.#hassProvider.language].card.msg.minValueError,
-          sev: 'error',
-        },
-      },
-      {
-        valid:
-          Number.isFinite(this.max_value) ||
-          (maxValueState && (this.#config.max_value_attribute ? Object.hasOwn(maxValueState.attributes, this.#config.max_value_attribute) : true)),
-        msg: {
-          content: LANGUAGES[this.#hassProvider.language].card.msg.maxValueError,
-          sev: 'warning',
-        },
-      },
-      {
-        valid: !this.#config.decimal || (Number.isFinite(this.#config.decimal) && this.#config.decimal > 0),
-        msg: {
-          content: LANGUAGES[this.#hassProvider.language].card.msg.decimalError,
-          sev: 'error',
-        },
-      },
-    ];
+
+    const validationRules = this.getValidationRules();
 
     for (const rule of validationRules) {
       if (!rule.valid) {
@@ -4300,48 +4459,408 @@ class ConfigHelper {
         return;
       }
     }
+
     this.#isValid = true;
     this.#msg = null;
+  }
 
-    return;
+  // skipcq: JS-0105
+  getValidationRules() {
+    return [];
+  }
+
+  // === HELPERS ===
+  get _hassProvider() {
+    return this.#hassProvider;
+  }
+
+  get _config() {
+    return this.#config;
+  }
+}
+
+
+/******************************************************************************************
+ * 🛠️ CardConfigHelper
+ * ========================================================================================
+ *
+ * ✅ class for managing and validating card configuration.
+ *
+ * @class
+ */
+
+class CardConfigHelper extends BaseConfigHelper {
+  get max_value() {
+    if (!this._config.max_value) return CARD.config.value.max;
+    if (Number.isFinite(this._config.max_value)) return this._config.max_value;
+    if (typeof this._config.max_value === 'string') {
+      const state = this._hassProvider.getEntityStateValue(this._config.max_value);
+      const parsedState = parseFloat(state);
+      if (!isNaN(parsedState)) return parsedState;
+    }
+    return null;
+  }
+
+  get stateContent() {
+    const content = typeof this._config?.state_content === 'string' ? [this._config?.state_content] : this._config?.state_content ?? [];
+    return content.filter((item) => typeof item === 'string' && item !== null && item !== undefined);
+  }
+
+  // Clés autorisées pour ce type de carte
+  static get _allowedKeys() {
+    return new Set([
+      'entity',
+      'attribute',
+      'name',
+      'unit',
+      'unit_spacing',
+      'decimal',
+      'min_value',
+      'max_value',
+      'max_value_attribute',
+      'bar_size',
+      'bar_color',
+      'icon',
+      'force_circular_background',
+      'color',
+      'layout',
+      'frameless',
+      'reverse',
+      'reverse_secondary_info_row',
+      'decimal',
+      'custom_theme',
+      'state_content',
+      'disable_unit',
+      'bar_orientation',
+      'hide',
+      'badge_icon',
+      'badge_color',
+      'name_info',
+      'custom_info',
+      'watermark',
+      'bar_effect',
+      'tap_action',
+      'double_tap_action',
+      'hold_action',
+      'icon_tap_action',
+      'icon_double_tap_action',
+      'icon_hold_action',
+    ]);
+  }
+
+  // Configuration des validations d'enum spécifiques à cette carte
+  static getEnumValidations() {
+    return {
+      bar_orientation: {
+        validValues: CARD.style.dynamic.progressBar.orientation,
+        defaultValue: null,
+      },
+      bar_size: {
+        validValues: CARD.style.bar.sizeOptions,
+        defaultValue: CARD.style.bar.sizeOptions.small.label,
+      },
+      layout: {
+        validValues: CARD.layout.orientations,
+        defaultValue: CARD.layout.orientations.horizontal.label,
+      },
+      unit_spacing: {
+        validValues: Object.fromEntries(Object.values(CARD.config.unit.unitSpacing).map((val) => [val, val])),
+        defaultValue: CARD.config.unit.unitSpacing.auto,
+      },
+    };
+  }
+
+  static applyDefaults(config) {
+    const domain = HassProviderSingleton.getEntityDomain(config.entity);
+    const toggleableDomains = ['light', 'switch', 'fan', 'input_boolean', 'media_player'];
+    const isToggleable = toggleableDomains.includes(domain);
+    // eslint-disable-next-line no-unused-vars
+    const { watermark, ...baseDefaults } = CARD.config.defaults;
+
+    // Filtrage de la configuration selon les clés autorisées
+    const cleanedConfig = this.filterConfig(config);
+
+    const merged = {
+      ...baseDefaults,
+      ...(isToggleable && { icon_tap_action: { action: 'toggle' } }),
+      ...cleanedConfig,
+    };
+
+    return this.validateEnums(config, merged);
+  }
+
+  getValidationRules() {
+    const entityState = this._hassProvider.getEntityStateObj(this._config.entity);
+    const maxValueState =
+      typeof this._config.max_value === 'string' && this._config.max_value.trim()
+        ? this._hassProvider.getEntityStateObj(this._config.max_value)
+        : null;
+
+    return [
+      {
+        valid: this._config.entity !== null,
+        msg: {
+          content: LANGUAGES[this._hassProvider.language].card.msg.entityError,
+          sev: 'info',
+        },
+      },
+      {
+        valid: !this._config.attribute || (entityState && Object.hasOwn(entityState.attributes, this._config.attribute)),
+        msg: {
+          content: LANGUAGES[this._hassProvider.language].card.msg.attributeNotFound,
+          sev: 'error',
+        },
+      },
+      {
+        valid: Number.isFinite(this._config.min_value),
+        msg: {
+          content: LANGUAGES[this._hassProvider.language].card.msg.minValueError,
+          sev: 'error',
+        },
+      },
+      {
+        valid:
+          Number.isFinite(this.max_value) ||
+          (maxValueState && (this._config.max_value_attribute ? Object.hasOwn(maxValueState.attributes, this._config.max_value_attribute) : true)),
+        msg: {
+          content: LANGUAGES[this._hassProvider.language].card.msg.maxValueError,
+          sev: 'warning',
+        },
+      },
+      {
+        valid: !this._config.decimal || (Number.isFinite(this._config.decimal) && this._config.decimal > 0),
+        msg: {
+          content: LANGUAGES[this._hassProvider.language].card.msg.decimalError,
+          sev: 'error',
+        },
+      },
+    ];
   }
 }
 
 /******************************************************************************************
- * 🛠️ CardView
+ * 🛠️ BadgeConfigHelper
  * ========================================================================================
  *
- * ✅ A card view that manage all informations to create the card.
+ * ✅ class for managing and validating badge configuration.
  *
  * @class
  */
-class CardView {
-  #hassProvider = null;
-  #configHelper = new ConfigHelper();
+
+class BadgeConfigHelper extends CardConfigHelper {
+  static get _allowedKeys() {
+    const parentKeys = super._allowedKeys;
+    const keysToRemove = new Set(['icon_tap_action', 'icon_double_tap_action', 'icon_hold_action']);
+    const filteredKeys = new Set([...parentKeys].filter((key) => !keysToRemove.has(key)));
+    return filteredKeys;
+  }
+}
+
+/******************************************************************************************
+ * 🛠️ MinimalCardView
+ * ========================================================================================
+ *
+ * ✅ A view class for rendering minimal cards in a user interface.
+ * This class manages configuration, entity states, user interactions, and visual 
+ * appearance of cards including layouts, orientations, watermarks, and interactive elements.
+ * 
+ * @class MinimalCardView
+ * @description Handles the display and behavior of minimal cards with support for
+ *              Home Assistant entities, user actions, and visual customization
+ *              (watermarks, shapes, orientations, clickable elements).
+ * 
+ * @example
+ * const cardView = new MinimalCardView();
+ * cardView.config = {
+ *   entity: 'sensor.temperature',
+ *   layout: 'vertical',
+ *   bar_orientation: 'rtl',
+ *   force_circular_background: true,
+ *   watermark: { low: 10, high: 30, type: 'gradient' }
+ * };
+ * 
+ * // Check if components are hidden
+ * if (!cardView.hasComponentHiddenFlag('icon')) {
+ *   // Render icon
+ * }
+ * 
+ * // Access computed properties
+ * const hasShape = cardView.hasVisibleShape;
+ * const isClickable = cardView.hasClickableCard;
+ */
+class MinimalCardView {
+  _configHelper = null;
+  _currentValue = new EntityOrValue();
+
+  // === GETTERS / SETTERS ===
+
+  set config(config) {
+    this._configHelper.config = config;
+  }
+
+  get config() {
+    return this._configHelper.config;
+  }
+
+  get layout() {
+    return this.config.layout;
+  }
+  get barOrientation() {
+    return this._currentValue.isTimer && this.config.bar_orientation === null ? 'rtl' : this.config.bar_orientation === 'rtl' ? 'rtl' : null;
+  }
+  get barSize() {
+    return this.config.bar_size;
+  }
+  get entityStateObj() {
+    this._currentValue.value = this.config.entity;
+    return this._currentValue.stateObj;
+  }
+  get hasClickableIcon() {
+    return this._hasAnyAction([this._configHelper.iconTapAction, this._configHelper.iconHoldAction, this._configHelper.iconDoubleTapAction]);
+  }
+  get hasClickableCard() {
+    return this._hasAnyAction([this._configHelper.cardTapAction, this._configHelper.cardHoldAction, this._configHelper.cardDoubleTapAction]);
+  }
+  get hasReversedSecondaryInfoRow() {
+    return this.config.reverse_secondary_info_row === true;
+  }
+  get hasVisibleShape() {
+    return this.config.force_circular_background === true || this._hasDefaultShape || this._hasInteractiveShape;
+  }
+
+  get _hasDefaultShape() {
+    return this._currentValue.hasShapeByDefault && this._hasAction(this._configHelper.iconTapAction);
+  }
+
+  get _hasInteractiveShape() {
+    return [
+      CARD.interactions.action.navigate.action,
+      CARD.interactions.action.url.action,
+      CARD.interactions.action.moreInfo.action,
+      CARD.interactions.action.assist.action,
+      CARD.interactions.action.toggle.action,
+      CARD.interactions.action.performAction.action,
+    ].includes(this._configHelper.iconTapAction);
+  }
+  get hasWatermark() {
+    return this.config.watermark !== undefined;
+  }
+  get barEffectsEnabled() {
+    return this.config.bar_effect !== undefined;
+  }
+  get watermark() {
+    if (!this.config.watermark) return null;
+
+    const { watermark } = this.config;
+    return {
+      low: watermark.low,
+      low_color: ThemeManager.adaptColor(watermark.low_color),
+      high: watermark.high,
+      high_color: ThemeManager.adaptColor(watermark.high_color),
+      opacity: watermark.opacity,
+      type: watermark.type,
+      line_size: watermark.line_size,
+      disable_low: watermark.disable_low,
+      disable_high: watermark.disable_high,
+    };
+  }
+
+  // === PUBLIC API METHODS ===
+
+  hasComponentHiddenFlag(component) {
+    return this._hasInConfigArray('hide', component);
+  }
+
+  hasBarEffect(component) {
+    return this._hasInConfigArray('bar_effect', component);
+  }
+
+  // === PRIVATE METHODS ===
+
+  _hasInConfigArray(key, value) {
+    return Array.isArray(this.config?.[key]) && this.config[key].includes(value);
+  }
+
+  // skipcq: JS-0105
+  _hasAction(action) {
+    return action !== CARD.interactions.action.none.action;
+  }
+
+  _hasAnyAction(actions) {
+    return actions.some((action) => this._hasAction(action));
+  }
+}
+/******************************************************************************************
+ * 🛠️ BaseCardView
+ * ========================================================================================
+ *
+ * ✅ A comprehensive base card view that extends MinimalCardView to manage all information 
+ * required for creating cards and badges. This class handles entity states, theme management,
+ * percentage calculations, timers, and provides a complete API for card rendering.
+ *
+ * @class BaseCardView
+ * @extends MinimalCardView
+ * @description Manages the complete lifecycle of card display including:
+ *              - Entity state management and validation
+ *              - Theme and color management
+ *              - Percentage and progress calculations  
+ *              - Timer and counter handling
+ *              - Badge and watermark rendering
+ *              - Multi-language support
+ *              - Error state handling (unavailable, not found, unknown)
+ *
+ * @example
+ * const cardView = new BaseCardView();
+ * cardView.config = {
+ *   entity: 'sensor.cpu_percent',
+ *   name: 'CPU Usage',
+ *   max_value: 100,
+ *   unit: '%',
+ *   color: '#ff6b6b',
+ *   watermark: { low: 30, high: 80, type: 'gradient' }
+ * };
+ * 
+ * // Refresh with Home Assistant data
+ * cardView.refresh(hass);
+ * 
+ * // Access computed properties
+ * const isReady = cardView.isAvailable;
+ * const progress = cardView.percent;
+ * const displayText = cardView.stateAndProgressInfo;
+ * const cardColor = cardView.iconColor;
+ * 
+ * // Handle error states
+ * if (cardView.hasStandardEntityError) {
+ *   console.log('Entity has errors:', cardView.msg);
+ * }
+ * 
+ * // Timer-specific usage
+ * if (cardView.isActiveTimer) {
+ *   const speed = cardView.refreshSpeed;
+ *   // Update UI at calculated refresh rate
+ * }
+ */
+class BaseCardView extends MinimalCardView {
+  #hassProvider = HassProviderSingleton.getInstance();
   #percentHelper = new PercentHelper();
   #theme = new ThemeManager();
-  #currentValue = new EntityOrValue();
-  #max_value = new EntityOrValue();
+  #maxValue = new EntityOrValue();
   #currentLanguage = CARD.config.language;
-
-  constructor() {
-    this.#hassProvider = HassProviderSingleton.getInstance();
-  }
 
   // === PUBLIC GETTERS / SETTERS ===
 
   get hasValidatedConfig() {
-    return this.#configHelper.isValid;
+    return this._configHelper.isValid;
   }
   get msg() {
-    return this.#configHelper.msg;
+    return this._configHelper.msg;
   }
   set config(config) {
-    this.#configHelper.config = config;
+    this._configHelper.config = config;
 
     Object.assign(this.#percentHelper, {
       unitSpacing: config.unitSpacing,
-      hasDisabledUnit: this.#configHelper.hasDisabledUnit,
+      hasDisabledUnit: this._configHelper.hasDisabledUnit,
     });
 
     Object.assign(this.#theme, {
@@ -4349,35 +4868,38 @@ class CardView {
       customTheme: config.custom_theme,
     });
 
-    Object.assign(this.#currentValue, {
+    Object.assign(this._currentValue, {
       value: config.entity,
-      stateContent: this.#configHelper.stateContent,
+      stateContent: this._configHelper.stateContent,
     });
 
-    if (this.#currentValue.isTimer) {
-      this.#max_value.value = CARD.config.value.max;
+    if (this._currentValue.isTimer) {
+      this.#maxValue.value = CARD.config.value.max;
     } else {
-      this.#currentValue.attribute = config.attribute;
-      Object.assign(this.#max_value, {
+      this._currentValue.attribute = config.attribute;
+      Object.assign(this.#maxValue, {
         value: config.max_value ?? CARD.config.value.max,
         attribute: config.max_value_attribute,
       });
     }
   }
   get config() {
-    return this.#configHelper.config;
+    return this._configHelper.config;
   }
   get isUnknown() {
-    return this.#currentValue.state === CARD.config.entity.state.unknown || this.#max_value.state === CARD.config.entity.state.unknown;
+    return this._currentValue.state === CARD.config.entity.state.unknown || this.#maxValue.state === CARD.config.entity.state.unknown;
   }
   get isUnavailable() {
-    return this.#currentValue.state === CARD.config.entity.state.unavailable || this.#max_value.state === CARD.config.entity.state.unavailable;
+    return this._currentValue.state === CARD.config.entity.state.unavailable || this.#maxValue.state === CARD.config.entity.state.unavailable;
   }
   get isNotFound() {
-    return this.#currentValue.state === CARD.config.entity.state.notFound || this.#max_value.state === CARD.config.entity.state.notFound;
+    return this._currentValue.state === CARD.config.entity.state.notFound || this.#maxValue.state === CARD.config.entity.state.notFound;
   }
   get isAvailable() {
-    return !(!this.#currentValue.isAvailable || (!this.#max_value.isAvailable && this.#configHelper.max_value));
+    return !(!this._currentValue.isAvailable || (!this.#maxValue.isAvailable && this._configHelper.maxValue));
+  }
+  get hasStandardEntityError() {
+    return this.isUnavailable || this.isNotFound || this.isUnknown;
   }
   set currentLanguage(newValue) {
     if (Object.keys(LANGUAGES).includes(newValue)) {
@@ -4388,240 +4910,236 @@ class CardView {
     return this.#currentLanguage;
   }
   get entity() {
-    return this.#configHelper.config.entity;
+    return this._configHelper.config.entity;
   }
+
+  /* === Getters for card === */
+
   get icon() {
     const notFound = this.isNotFound ? CARD.style.icon.notFound.icon : null;
-    return notFound || this.#theme.icon || this.#configHelper.config.icon;
+    return notFound || this.#theme.icon || this._configHelper.config.icon;
   }
   get iconColor() {
     if (this.isUnavailable) return CARD.style.color.unavailable;
     if (this.isNotFound) return CARD.style.color.notFound;
     return (
-      ThemeManager.adaptColor(this.#theme.iconColor || this.#configHelper.config.color) || this.#currentValue.defaultColor || CARD.style.color.default
+      ThemeManager.adaptColor(this.#theme.iconColor || this._configHelper.config.color) || this._currentValue.defaultColor || CARD.style.color.default
     );
   }
   get barColor() {
     if (this.isAvailable) {
       return (
-        ThemeManager.adaptColor(this.#theme.barColor || this.#configHelper.config.bar_color) ||
-        this.#currentValue.defaultColor ||
+        ThemeManager.adaptColor(this.#theme.barColor || this._configHelper.config.bar_color) ||
+        this._currentValue.defaultColor ||
         CARD.style.color.default
       );
     }
-    if (this.isUnknown) {
-      return CARD.style.color.default;
-    }
-    return CARD.style.color.disabled;
-  }
-  get bar_orientation() {
-    if (this.#currentValue.isTimer && this.#configHelper.config.bar_orientation === null) return 'rtl';
-
-    return this.#configHelper.config.bar_orientation === 'rtl' ? this.#configHelper.config.bar_orientation : null;
-  }
-  get bar_size() {
-    return this.#configHelper.config.bar_size;
+    return this.isUnknown ? CARD.style.color.default : CARD.style.color.disabled;
   }
   get percent() {
-    if (this.isAvailable) {
-      return Math.min(CARD.config.value.max, Math.max(0, this.#percentHelper.percent));
-    }
-    return CARD.config.value.min;
+    return this.isAvailable ? Math.min(CARD.config.value.max, Math.max(0, this.#percentHelper.percent)) : CARD.config.value.min;    
   }
   get stateAndProgressInfo() {
-    if (
-      this.isNotFound ||
-      this.isUnavailable ||
-      this.isUnknown ||
-      (this.#currentValue.isTimer && this.#currentValue.value.state === CARD.config.entity.state.idle)
-    )
-      return this.#currentValue.formatedEntityState;
+    if (this.hasStandardEntityError || (this._currentValue.isTimer && this._currentValue.value.state === CARD.config.entity.state.idle))
+      return this._currentValue.formatedEntityState;
 
-    const additionalInfo = this.#currentValue.stateContentToString;
-    if (this.componentIsHidden(CARD.style.dynamic.hiddenComponent.value.label)) return additionalInfo;
+    const additionalInfo = this._currentValue.stateContentToString;
+    if (this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.value.label)) return additionalInfo;
     const valueInfo =
-      this.#currentValue.isDuration && !this.#configHelper.config.unit ? this.#currentValue.formatedEntityState : this.#percentHelper.toString();
+      this._currentValue.isDuration && !this._configHelper.config.unit ? this._currentValue.formatedEntityState : this.#percentHelper.toString();
 
     return additionalInfo === '' ? valueInfo : [additionalInfo, valueInfo].join(CARD.config.separator);
   }
-  get EntityStateObj() {
-    return this.#currentValue.stateObj;
+  get entityStateObj() {
+    return this._currentValue.stateObj;
   }
   get name() {
-    return this.#configHelper.config.name || this.#currentValue.name || this.#configHelper.config.entity;
-  }
-  get hasStandardEntityError() {
-    return this.isUnavailable || this.isNotFound || this.isUnknown;
+    return this._configHelper.config.name || this._currentValue.name || this._configHelper.config.entity;
   }
   get isBadgeEnable() {
     return (
       this.isUnavailable ||
       this.isNotFound ||
-      this.#configHelper.config.badge_icon !== null ||
-      (this.#currentValue.isTimer && [CARD.config.entity.state.paused, CARD.config.entity.state.active].includes(this.#currentValue.value.state))
+      this._configHelper.config.badge_icon !== null ||
+      (this._currentValue.isTimer && [CARD.config.entity.state.paused, CARD.config.entity.state.active].includes(this._currentValue.value.state))
     );
   }
   get badgeInfo() {
-    if (this.isNotFound) {
-      return CARD.style.icon.badge.notFound;
-    }
-    if (this.isUnavailable) {
-      return CARD.style.icon.badge.unavailable;
-    }
-    if (this.#currentValue.isTimer) {
-      const { state } = this.#currentValue.value;
+    if (this.isNotFound) return CARD.style.icon.badge.notFound;
+    if (this.isUnavailable) return CARD.style.icon.badge.unavailable;
+    
+    if (this._currentValue.isTimer) {
+      const { state } = this._currentValue.value;
       const { paused, active } = CARD.config.entity.state;
       if (state === paused) return CARD.style.icon.badge.timer.paused;
       if (state === active) return CARD.style.icon.badge.timer.active;
     }
     return null;
   }
-  get layout() {
-    return this.#configHelper.config.layout;
-  }
   get isActiveTimer() {
-    return this.#currentValue.isTimer && this.#currentValue.state === CARD.config.entity.state.active;
+    return this._currentValue.isTimer && this._currentValue.state === CARD.config.entity.state.active;
   }
   get refreshSpeed() {
-    const rawSpeed = this.#currentValue.value.duration / CARD.config.refresh.ratio;
+    const rawSpeed = this._currentValue.value.duration / CARD.config.refresh.ratio;
     const clampedSpeed = Math.min(CARD.config.refresh.max, Math.max(CARD.config.refresh.min, rawSpeed));
     const roundedSpeed = Math.max(100, Math.round(clampedSpeed / 100) * 100);
 
     return roundedSpeed;
   }
   get show_more_info() {
-    return [CARD.interactions.action.default, CARD.interactions.action.moreInfo.action].includes(this.#configHelper.cardTapAction);
-  }
-  get bar() {
-    const result = this.#configHelper.bar;
-    if (this.#currentValue.isTimer && result.orientation === null) {
-      result.orientation = CARD.style.dynamic.progressBar.orientation.rtl;
-      result.changed = true;
-    }
-    return result;
-  }
-  get hasClickableIcon() {
-    return (
-      this.#configHelper.iconTapAction !== CARD.interactions.action.none.action ||
-      this.#configHelper.iconHoldAction !== CARD.interactions.action.none.action ||
-      this.#configHelper.iconDoubleTapAction !== CARD.interactions.action.none.action
-    );
-  }
-  get hasClickableCard() {
-    return (
-      this.#configHelper.cardTapAction !== CARD.interactions.action.none.action ||
-      this.#configHelper.cardHoldAction !== CARD.interactions.action.none.action ||
-      this.#configHelper.cardDoubleTapAction !== CARD.interactions.action.none.action
-    );
-  }
-  get hasReversedSecondaryInfoRow() {
-    return this.#configHelper.config.reverse_secondary_info_row === true;
+    return [CARD.interactions.action.default, CARD.interactions.action.moreInfo.action].includes(this._configHelper.cardTapAction);
   }
   get hasVisibleShape() {
-    return this.#hassProvider.hasNewShapeStrategy
-      ? this.#configHelper.config.force_circular_background ||
-          (this.#currentValue.hasShapeByDefault && this.#configHelper.iconTapAction !== CARD.interactions.action.none.action) ||
-          [
-            CARD.interactions.action.navigate.action,
-            CARD.interactions.action.url.action,
-            CARD.interactions.action.moreInfo.action,
-            CARD.interactions.action.assist.action,
-            CARD.interactions.action.toggle.action,
-            CARD.interactions.action.performAction.action,
-          ].includes(this.#configHelper.iconTapAction)
-      : true;
+    return this.#hassProvider.hasNewShapeStrategy ? super.hasVisibleShape : true;
   }
   get timerIsReversed() {
-    return this.#configHelper.config.reverse !== false && this.#currentValue.value.state !== CARD.config.entity.state.idle;
+    return this._configHelper.config.reverse !== false && this._currentValue.value.state !== CARD.config.entity.state.idle;
   }
   get hasWatermark() {
-    return this.#configHelper.config.watermark !== undefined;
+    return this._configHelper.config.watermark !== undefined;
   }
   get watermark() {
-    if (!this.#configHelper.config.watermark) return null;
+    if (!this._configHelper.config.watermark) return null;
 
-    const result = this.#configHelper.config.watermark;
+    const { watermark } = this._configHelper.config;
     return {
-      low: this.#percentHelper.calcWatermark(result.low),
-      low_color: ThemeManager.adaptColor(result.low_color),
-      high: this.#percentHelper.calcWatermark(result.high),
-      high_color: ThemeManager.adaptColor(result.high_color),
-      opacity: result.opacity,
-      type: result.type,
-      disable_low: result.disable_low,
-      disable_high: result.disable_high,
+      low: this.#percentHelper.calcWatermark(watermark.low),
+      low_color: ThemeManager.adaptColor(watermark.low_color),
+      high: this.#percentHelper.calcWatermark(watermark.high),
+      high_color: ThemeManager.adaptColor(watermark.high_color),
+      opacity: watermark.opacity,
+      type: watermark.type,
+      line_size: watermark.line_size,
+      disable_low: watermark.disable_low === true,
+      disable_high: watermark.disable_high === true,
     };
   }
 
   // === PUBLIC API METHODS ===
 
-  componentIsHidden(component) {
-    return Array.isArray(this.#configHelper.config?.hide) && this.#configHelper.config.hide.includes(component);
-  }
-
   refresh(hass) {
     this.#hassProvider.hass = hass;
     this.currentLanguage = this.#hassProvider.language;
-    this.#currentValue.refresh();
-    this.#max_value.refresh();
-    this.#configHelper.checkConfig();
+    this._currentValue.refresh();
+    this.#maxValue.refresh();
+    this._configHelper.checkConfig();
 
     if (!this.isAvailable) return;
 
-    // update
-    this.#percentHelper.isTimer = this.#currentValue.isTimer || this.#currentValue.isDuration;
-    const currentUnit = this.#getCurrentUnit();
-    this.#percentHelper.unit = currentUnit;
-    this.#percentHelper.decimal = this.#getCurrentDecimal(currentUnit);
-
-    if (this.#currentValue.isTimer) {
-      Object.assign(this.#percentHelper, {
-        isReversed: this.timerIsReversed,
-        current: this.#currentValue.value.current,
-        min: this.#currentValue.value.min,
-        max: this.#currentValue.value.max,
-      });
-    } else if (this.#currentValue.isCounter || this.#currentValue.isNumber) {
-      Object.assign(this.#percentHelper, {
-        current: this.#currentValue.value.current,
-        min: this.#currentValue.value.min,
-        max: this.#max_value.isEntity ? this.#max_value.value?.current ?? this.#max_value.value : this.#currentValue.value.max,
-      });
-    } else {
-      Object.assign(this.#percentHelper, {
-        current: this.#currentValue.value,
-        min: this.#configHelper.config.min_value,
-        max: this.#max_value.value?.current ?? this.#max_value.value,
-      });
-    }
-    this.#percentHelper.refresh();
+    this.#updatePercentHelper();
     this.#theme.value = this.#percentHelper.valueForThemes(this.#theme.isBasedOnPercentage);
   }
 
   // === PRIVATE METHODS ===
 
-  #getCurrentUnit() {
-    if (this.#configHelper.config.unit) return this.#configHelper.config.unit;
-    if (this.#max_value.isEntity) return CARD.config.unit.default;
+  #updatePercentHelper() {
+    // update
+    this.#percentHelper.isTimer = this._currentValue.isTimer || this._currentValue.isDuration;
+    const currentUnit = this.#getCurrentUnit();
+    this.#percentHelper.unit = currentUnit;
+    this.#percentHelper.decimal = this.#getCurrentDecimal(currentUnit);
 
-    const unit = this.#currentValue.unit;
+    if (this._currentValue.isTimer) {
+      this.#setTimerValues();
+    } else if (this._currentValue.isCounter || this._currentValue.isNumber) {
+      this.#setCounterValues();
+    } else {
+      this.#setDefaultValues();
+    }
+    this.#percentHelper.refresh();
+  }
+  #setTimerValues() {
+    Object.assign(this.#percentHelper, {
+      isReversed: this.timerIsReversed,
+      current: this._currentValue.value.current,
+      min: this._currentValue.value.min,
+      max: this._currentValue.value.max,
+    });
+  }
+
+  #setCounterValues() {
+    Object.assign(this.#percentHelper, {
+      current: this._currentValue.value.current,
+      min: this._currentValue.value.min,
+      max: this.#maxValue.isEntity 
+        ? (this.#maxValue.value?.current ?? this.#maxValue.value)
+        : this._currentValue.value.max,
+    });
+  }
+
+  #setDefaultValues() {
+    Object.assign(this.#percentHelper, {
+      current: this._currentValue.value,
+      min: this._configHelper.config.min_value,
+      max: this.#maxValue.value?.current ?? this.#maxValue.value,
+    });
+  }  
+
+  #getCurrentUnit() {
+    if (this._configHelper.config.unit) return this._configHelper.config.unit;
+    if (this.#maxValue.isEntity) return CARD.config.unit.default;
+
+    const unit = this._currentValue.unit;
     return unit === null ? CARD.config.unit.default : unit;
   }
   #getCurrentDecimal(currentUnit) {
-    if (this.#configHelper.config.decimal !== null) return this.#configHelper.config.decimal;
-    if (this.#currentValue.precision) return this.#currentValue.precision;
-    if (this.#currentValue.isTimer) return CARD.config.decimal.timer;
-    if (this.#currentValue.isCounter) return CARD.config.decimal.counter;
-    if (this.#currentValue.isDuration) return CARD.config.decimal.duration;
-    if (['j', 'd', 'h', 'min', 's', 'ms', 'μs'].includes(this.#currentValue.unit)) return CARD.config.decimal.duration;
+    if (this._configHelper.config.decimal !== null) return this._configHelper.config.decimal;
+    if (this._currentValue.precision) return this._currentValue.precision;
+    if (this._currentValue.isTimer) return CARD.config.decimal.timer;
+    if (this._currentValue.isCounter) return CARD.config.decimal.counter;
+    if (this._currentValue.isDuration) return CARD.config.decimal.duration;
+    if (['j', 'd', 'h', 'min', 's', 'ms', 'μs'].includes(this._currentValue.unit)) return CARD.config.decimal.duration;
 
-    if (this.#configHelper.config.unit)
-      return this.#configHelper.config.unit === CARD.config.unit.default ? CARD.config.decimal.percentage : CARD.config.decimal.other;
+    if (this._configHelper.config.unit)
+      return this._configHelper.config.unit === CARD.config.unit.default ? CARD.config.decimal.percentage : CARD.config.decimal.other;
 
-    if (currentUnit === CARD.config.unit.default) return CARD.config.decimal.percentage;
-
-    return CARD.config.decimal.other;
+    return currentUnit === CARD.config.unit.default ? CARD.config.decimal.percentage : CARD.config.decimal.other;    
   }
+}
+/******************************************************************************************
+ * 🛠️ CardView
+ * ========================================================================================
+ *
+ * A specialized card view implementation that extends BaseCardView specifically for 
+ * rendering full card components. This class provides the complete card functionality
+ * with proper configuration management through CardConfigHelper.
+ *
+ * @class CardView
+ * @extends BaseCardView
+ * @description A concrete implementation of BaseCardView designed for full card rendering.
+ *              This class uses CardConfigHelper to handle card-specific configuration
+ *              validation, processing, and management. It inherits all entity management,
+ *              theme handling, and state processing capabilities from BaseCardView while
+ *              providing card-specific configuration logic.
+ *
+ * @see BaseCardView For inherited functionality
+ * @see CardConfigHelper For configuration management details
+ */
+class CardView extends BaseCardView {
+  _configHelper = new CardConfigHelper();
+}
+
+/******************************************************************************************
+ * 🛠️ BadgeView
+ * ========================================================================================
+ *
+ * A specialized badge view implementation that extends BaseCardView specifically for 
+ * rendering compact badge components. This class provides complete badge functionality
+ * with proper configuration management through BadgeConfigHelper.
+ *
+ * @class BadgeView
+ * @extends BaseCardView
+ * @description A concrete implementation of BaseCardView designed for compact badge rendering.
+ *              Badges are smaller, more focused UI elements that display key information
+ *              in a condensed format. This class uses BadgeConfigHelper to handle badge-specific
+ *              configuration validation and processing while inheriting all entity management,
+ *              theme handling, and state processing capabilities from BaseCardView.
+ *
+ * @see BaseCardView For inherited functionality
+ * @see BadgeConfigHelper For badge configuration management details
+ */
+class BadgeView extends BaseCardView {
+  _configHelper = new BadgeConfigHelper();
 }
 
 /******************************************************************************************
@@ -4981,7 +5499,7 @@ class ActionHelper {
  * @extends HTMLElement
  */
 class EntityProgressCardBase extends HTMLElement {
-  static _cardInnerHTML = CARD_HTML;
+  static _cardInnerHTML = createHTMLStructure.card();
   static _cardStyle = CARD_CSS;
   static _hasDisabledIconTap = false;
   static _hasDisabledBadge = false;
@@ -5051,7 +5569,6 @@ class EntityProgressCardBase extends HTMLElement {
     this._cardView.config = { ...config };
     if (typeof config.entity === 'string') this._changeTracker.watchEntity(config.entity);
     if (typeof config.max_value === 'string') this._changeTracker.watchEntity(config.max_value);
-
     this.render();
   }
 
@@ -5132,7 +5649,7 @@ class EntityProgressCardBase extends HTMLElement {
    */
   getLayoutOptions() {
     const layout = structuredClone(this.constructor._cardLayout[this._cardView.layout]);
-    if (this._cardView.componentIsHidden(CARD.style.dynamic.hiddenComponent.icon.label)) layout.grid.grid_min_rows = 1;
+    if (this._cardView.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.icon.label)) layout.grid.grid_min_rows = 1;
     this._log.debug('getLayoutOptions -> ', layout.grid);
 
     return layout.grid;
@@ -5257,16 +5774,17 @@ class EntityProgressCardBase extends HTMLElement {
     this._applyConditionalClasses(card);
     this._handleHiddenComponents(card);
     this._handleWatermarkClasses(card);
+    this._handleBarEffect(card);
   }
 
   _addBaseClasses(card) {
     const classesToAdd = [this.baseClass];
 
-    if (this._cardView.bar_orientation) {
-      classesToAdd.push(CARD.style.dynamic.progressBar.orientation[this._cardView.bar_orientation]);
+    if (this._cardView.barOrientation) {
+      classesToAdd.push(CARD.style.dynamic.progressBar.orientation[this._cardView.barOrientation]);
     }
 
-    classesToAdd.push(this._cardView.layout, this._cardView.bar_size);
+    classesToAdd.push(this._cardView.layout, this._cardView.barSize);
     card.classList.add(...classesToAdd);
   }
 
@@ -5304,16 +5822,25 @@ class EntityProgressCardBase extends HTMLElement {
   _handleWatermarkClasses(card) {
     if (!this._cardView.hasWatermark) return;
 
-    const type = this._cardView.watermark.type === 'line' ? 'line-' : '';
+    const type = ['area', 'blended', 'striped', 'line', 'triangle', 'round'].includes(this._cardView.watermark.type) ? `${this._cardView.watermark.type}` : 'blended';
     const baseWMClass = CARD.htmlStructure.elements.progressBar.watermark.class;
     const showClass = CARD.style.dynamic.show;
 
-    card.classList.toggle(`${showClass}-hwm-${type}${baseWMClass}`, !this._cardView.watermark.disable_high);
-    card.classList.toggle(`${showClass}-lwm-${type}${baseWMClass}`, !this._cardView.watermark.disable_low);
+    card.classList.toggle(`${showClass}-hwm-${type}-${baseWMClass}`, !this._cardView.watermark.disable_high);
+    card.classList.toggle(`${showClass}-lwm-${type}-${baseWMClass}`, !this._cardView.watermark.disable_low);
+  }
+
+  _handleBarEffect(card) {
+    if (!this._cardView.barEffectsEnabled) return;
+
+    const effects = Object.values(CARD.style.dynamic.progressBar.effect);
+    effects.forEach((effect) => {
+      card.classList.toggle(effect.class, this._cardView.hasBarEffect(effect.label));
+    });
   }
 
   _toggleHiddenComponent(card, component) {
-    card.classList.toggle(component.class, this._cardView.componentIsHidden(component.label));
+    card.classList.toggle(component.class, this._cardView.hasComponentHiddenFlag(component.label));
   }
 
   // === DOM MANAGEMENT ===
@@ -5420,13 +5947,8 @@ class EntityProgressCardBase extends HTMLElement {
 
       if (bar.hasWatermark) {
         const wm = bar.watermark;
-        properties.push(
-          [CARD.style.dynamic.watermark.high.value.var, `${wm.high}%`],
-          [CARD.style.dynamic.watermark.high.color.var, wm.high_color],
-          [CARD.style.dynamic.watermark.low.value.var, `${wm.low}%`],
-          [CARD.style.dynamic.watermark.low.color.var, wm.low_color],
-          [CARD.style.dynamic.watermark.opacity.var, wm.opacity]
-        );
+        const wmProperties = EntityProgressCardBase._getWatermarkProperties(wm);
+        properties.push(...wmProperties);
       }
       properties.forEach(([variable, value]) => {
         this._setStylePropertyIfChanged(style, variable, value);
@@ -5434,10 +5956,23 @@ class EntityProgressCardBase extends HTMLElement {
     });
   }
 
+  // === WATERMARK MANAGEMENT ===
+
+  static _getWatermarkProperties(watermark) {
+    return [
+      [CARD.style.dynamic.watermark.high.value.var, `${watermark.high}%`],
+      [CARD.style.dynamic.watermark.high.color.var, watermark.high_color],
+      [CARD.style.dynamic.watermark.low.value.var, `${watermark.low}%`],
+      [CARD.style.dynamic.watermark.low.color.var, watermark.low_color],
+      [CARD.style.dynamic.watermark.opacity.var, watermark.opacity],
+      [CARD.style.dynamic.watermark.lineSize.var, watermark.line_size],
+    ];
+  }
+
   // === ICON MANAGEMENT ===
 
   _showIcon() {
-    const { EntityStateObj: stateObj, icon: curIcon } = this._cardView;
+    const { entityStateObj: stateObj, icon: curIcon } = this._cardView;
     if (!stateObj && !curIcon) return;
 
     const hasIconOverride = curIcon !== null;
@@ -5770,6 +6305,7 @@ class EntityProgressCardBase extends HTMLElement {
  * @extends EntityProgressCardBase
  */
 class EntityProgressCard extends EntityProgressCardBase {
+  _cardView = new CardView();
   static _baseClass = CARD.meta.card.typeName;
 
   // === STATIC METHODS ===
@@ -5800,10 +6336,12 @@ class EntityProgressCard extends EntityProgressCardBase {
  * @extends EntityProgressCardBase
  */
 class EntityProgressBadge extends EntityProgressCardBase {
+  _cardView = new BadgeView();
   static _baseClass = CARD.meta.badge.typeName;
   static _hasDisabledIconTap = true;
   static _hasDisabledBadge = true;
   static _cardLayout = CARD.layout.orientations.horizontal.grid;
+  static _cardInnerHTML = createHTMLStructure.badge();
   static _cardStyle = `
     :host {
       --epb-icon-size: 18px;
@@ -5845,21 +6383,21 @@ class EntityProgressBadge extends EntityProgressCardBase {
 
     .${CARD.htmlStructure.elements.detailGroup.class},
     .${CARD.htmlStructure.elements.detailGroup.class} > span {
-    font-size: var(--ha-badge-font-size, var(--ha-font-size-s)) !important;
-    font-style: normal !important;
-    font-weight: 500 !important;
-    letter-spacing: 0.1px !important;
-    color: var(--primary-text-color)
+      font-size: var(--ha-badge-font-size, var(--ha-font-size-s)) !important;
+      font-style: normal !important;
+      font-weight: 500 !important;
+      letter-spacing: 0.1px !important;
+      color: var(--primary-text-color)
     }
     .${CARD.htmlStructure.elements.secondaryInfo.class} {
     gap: 5px !important;
     }
     .${CARD.htmlStructure.elements.detailGroup.class} {
-    min-width: unset !important;
-    max-width: unset !important;
+      min-width: unset !important;
+      max-width: unset !important;
     }
     .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.left.class}:hover .${CARD.htmlStructure.elements.shape.class} {
-    background-color: unset !important;
+      background-color: unset !important;
     }
     `;
 
@@ -5880,7 +6418,9 @@ class EntityProgressBadge extends EntityProgressCardBase {
 
   _rebuildStyle() {
     const card = this._domElements.get(CARD.htmlStructure.card.element);
-    this._buildStyle(card);
+    if (card) {
+      this._buildStyle(card);
+    }
   }
 
   static getConfigElement() {
@@ -5896,7 +6436,6 @@ class EntityProgressBadge extends EntityProgressCardBase {
   }
 
   static getStubConfig(hass) {
-    EntityProgressTemplate._demoMode = true;
     return {
       type: `custom:${CARD.meta.badge.typeName}`,
       entity: EntityProgressCard.getStubEntity(hass),
@@ -5920,7 +6459,7 @@ RegistrationHelper.registerBadge(CARD.meta.badge);
  ******************************************************************************************/
 
 /******************************************************************************************
- * 🛠️ TemplateCardView
+ * 🛠️ TemplateConfigHelper
  * ========================================================================================
  *
  * ✅ Card view
@@ -5931,51 +6470,73 @@ RegistrationHelper.registerBadge(CARD.meta.badge);
  *   - Serve as the interface between raw config and visual output.
  *
  * @class
- * @extends ConfigHelper
+ * @extends BaseConfigHelper
  */
-class TemplateCardView extends ConfigHelper {
-  #currentValue = new EntityOrValue();
-  static #allowedKeys = new Set([
-    'name',
-    'icon',
-    'secondary',
-    'badge_icon',
-    'badge_color',
-    'percent',
-    'color',
-    'bar_color',
-    'hide',
-    'bar_orientation',
-    'bar_size',
-    'layout',
-    'watermark',
-    'frameless',
-    'tap_action',
-    'hold_action',
-    'double_tap_action',
-    'icon_tap_action',
-    'icon_hold_action',
-    'icon_double_tap_action',
-    'reverse_secondary_info_row',
-  ]);
 
-  // === PRIVATE METHODS (DEF VALUE) ===
 
-  static _applyDefaults(config) {
+class TemplateConfigHelper extends BaseConfigHelper {
+  // Clés autorisées pour ce type de carte
+  static get _allowedKeys() {
+    return new Set([
+      'entity',
+      'name',
+      'icon',
+      'secondary',
+      'badge_icon',
+      'badge_color',
+      'percent',
+      'color',
+      'bar_color',
+      'hide',
+      'bar_orientation',
+      'bar_size',
+      'layout',
+      'watermark',
+      'bar_effect',
+      'frameless',
+      'tap_action',
+      'hold_action',
+      'double_tap_action',
+      'icon_tap_action',
+      'icon_hold_action',
+      'icon_double_tap_action',
+      'reverse_secondary_info_row',
+    ]);
+  }
+
+  // Configuration des validations d'enum spécifiques à cette carte
+  static getEnumValidations() {
+    return {
+      bar_orientation: {
+        validValues: CARD.style.dynamic.progressBar.orientation,
+        defaultValue: null,
+      },
+      bar_size: {
+        validValues: CARD.style.bar.sizeOptions,
+        defaultValue: CARD.style.bar.sizeOptions.small.label,
+      },
+      layout: {
+        validValues: CARD.layout.orientations,
+        defaultValue: CARD.layout.orientations.horizontal.label,
+      },
+    };
+  }
+
+  static applyDefaults(config) {
     const domain = HassProviderSingleton.getEntityDomain(config.entity);
     const toggleableDomains = ['light', 'switch', 'fan', 'input_boolean', 'media_player'];
     const isToggleable = toggleableDomains.includes(domain);
+    // eslint-disable-next-line no-unused-vars
     const { watermark, ...baseDefaults } = CARD.config.defaults;
+
     const defaultConfig = {
-      name: 'Secondary Card',
-      secondary: '',
-      icon_color: '#03A9F4',
-      badge_icon: '',
-      badge_color: '#4CAF50',
-      percentage: '0',
+      name: 'Template Card',
+      layout: 'vertical',
     };
 
-    const cleanedConfig = Object.fromEntries(Object.entries(config).filter(([key]) => TemplateCardView.#allowedKeys.has(key)));
+    // Utilisation de la méthode filterConfig de la classe parent
+    const cleanedConfig = this.filterConfig(config);
+
     const merged = {
       ...baseDefaults,
       ...defaultConfig,
@@ -5983,97 +6544,23 @@ class TemplateCardView extends ConfigHelper {
       ...cleanedConfig,
     };
 
-    // -- VALIDATION ENUMS --
+    // Utilisation de la méthode validateEnums de la classe parent
+    return this.validateEnums(config, merged);
+  }
+}
 
-    // bar orientation
-    if (config.bar_orientation && !Object.hasOwn(CARD.style.dynamic.progressBar.orientation, config.bar_orientation)) merged.bar_orientation = null;
 
-    // bar size
-    if (config.bar_size && !Object.hasOwn(CARD.style.bar.sizeOptions, config.bar_size)) merged.bar_size = CARD.style.bar.sizeOptions.small.label;
 
-    // Layout
-    if (config.layout && !Object.hasOwn(CARD.layout.orientations, config.layout)) merged.layout = CARD.layout.orientations.horizontal.label;
-
-    // Watermark uniquement si défini
-    if (config.watermark !== undefined) {
-      merged.watermark = {
-        ...watermark,
-        ...config.watermark,
-      };
-    }
-
-    return merged;
-  }
-
-  // === PUBLIC GETTERS / SETTERS ===
-
-  get layout() {
-    return this.config.layout;
-  }
-  get bar_orientation() {
-    return this.config.bar_orientation;
-  }
-  get bar_size() {
-    return this.config.bar_size;
-  }
-  get EntityStateObj() {
-    this.#currentValue.value = this.config.entity;
-    return this.#currentValue.stateObj;
-  }
-  get hasClickableIcon() {
-    return (
-      this.iconTapAction !== CARD.interactions.action.none.action ||
-      this.iconHoldAction !== CARD.interactions.action.none.action ||
-      this.iconDoubleTapAction !== CARD.interactions.action.none.action
-    );
-  }
-  get hasClickableCard() {
-    return (
-      this.cardTapAction !== CARD.interactions.action.none.action ||
-      this.cardHoldAction !== CARD.interactions.action.none.action ||
-      this.cardDoubleTapAction !== CARD.interactions.action.none.action
-    );
-  }
-  get hasReversedSecondaryInfoRow() {
-    return this.config.reverse_secondary_info_row === true;
-  }
-  get hasVisibleShape() {
-    return (
-      this.config.force_circular_background === true ||
-      [
-        CARD.interactions.action.navigate.action,
-        CARD.interactions.action.url.action,
-        CARD.interactions.action.moreInfo.action,
-        CARD.interactions.action.assist.action,
-        CARD.interactions.action.toggle.action,
-        CARD.interactions.action.performAction.action,
-      ].includes(this.iconTapAction)
-    );
-  }
-  get hasWatermark() {
-    return this.config.watermark !== undefined;
-  }
-  get watermark() {
-    if (!this.config.watermark) return null;
-
-    const result = this.config.watermark;
-    return {
-      low: result.low,
-      low_color: ThemeManager.adaptColor(result.low_color),
-      high: result.high,
-      high_color: ThemeManager.adaptColor(result.high_color),
-      opacity: result.opacity,
-      type: result.type,
-      disable_low: result.disable_low,
-      disable_high: result.disable_high,
-    };
-  }
-
-  // === PUBLIC API METHODS ===
-
-  componentIsHidden(component) {
-    return Array.isArray(this.config?.hide) && this.config.hide.includes(component);
-  }
+/******************************************************************************************
+ * 🛠️ CardView
+ * ========================================================================================
+ *
+ * ✅ A view that manage all informations to create the card.
+ *
+ * @class
+ */
+class TemplateCardView extends MinimalCardView {
+  _configHelper = new TemplateConfigHelper();
 }
 
 /******************************************************************************************
@@ -6086,6 +6573,7 @@ class TemplateCardView extends ConfigHelper {
  * @extends EntityProgressCardBase
  */
 class EntityProgressTemplate extends EntityProgressCardBase {
+  static _cardInnerHTML = createHTMLStructure.template();
   _debug = CARD.config.debug.card;
   _cardView = new TemplateCardView();
   _hassProvider = HassProviderSingleton.getInstance();
@@ -6145,14 +6633,7 @@ class EntityProgressTemplate extends EntityProgressCardBase {
     return {
       type: `custom:${CARD.meta.template.typeName}`,
       entity: EntityProgressCard.getStubEntity(hass),
-      icon: 'mdi:washing-machine',
-      name: 'Entity Progress Card',
-      secondary: 'Template',
-      badge_icon: 'mdi:update',
-      badge_color: 'green',
-      percent: 50,
-      force_circular_background: true,
-      isDemo: true,
+      ...CARD.config.stub.template,
     };
   }
 
@@ -6177,21 +6658,11 @@ class EntityProgressTemplate extends EntityProgressCardBase {
     if (!this._cardView.hasWatermark) return;
 
     const wm = this._cardView.watermark;
-    const properties = EntityProgressTemplate._getWatermarkProperties(wm);
+    const properties = EntityProgressCardBase._getWatermarkProperties(wm);
 
     properties.forEach(([key, value]) => {
       this._updateCSSValue(key, value);
     });
-  }
-
-  static _getWatermarkProperties(watermark) {
-    return [
-      [CARD.style.dynamic.watermark.high.value.var, `${watermark.high}%`],
-      [CARD.style.dynamic.watermark.high.color.var, watermark.high_color],
-      [CARD.style.dynamic.watermark.low.value.var, `${watermark.low}%`],
-      [CARD.style.dynamic.watermark.low.color.var, watermark.low_color],
-      [CARD.style.dynamic.watermark.opacity.var, watermark.opacity],
-    ];
   }
 
   // === BADGE MANAGEMENT ===
@@ -6210,7 +6681,7 @@ class EntityProgressTemplate extends EntityProgressCardBase {
   // === ICON MANAGEMENT ===
 
   _showIcon(iconFromJinja = null) {
-    const stateObj = this._cardView.EntityStateObj;
+    const stateObj = this._cardView.entityStateObj;
     const curIcon = iconFromJinja || this._cardView.config.icon;
     const stateObjIcon = EntityProgressTemplate._createStateObjForIcon(stateObj, curIcon);
 
