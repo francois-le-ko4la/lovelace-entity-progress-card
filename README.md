@@ -917,6 +917,7 @@ _Map definition_:
   - `triangle`: Triangle shapes as a watermark.
   - `round`: Rounded shapes applied as a watermark.  
   - `line`: Vertical lines pattern (like a hatch effect).
+- `line_size` (string): Defines the thickness of the lines when the watermark type is 'line' (e.g., "3px").
 - `opacity` (number): Adjusts the transparency of the watermark overlay (from 0 = fully transparent to 1 = fully opaque).
 - `disable_low` (boolean): If set to true, disables the low watermark display.
 - `disable_high` (boolean): If set to true, disables the high watermark display.
