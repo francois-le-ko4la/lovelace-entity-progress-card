@@ -75,9 +75,8 @@ const CARD = {
         secondary: 'Template',
         badge_icon: 'mdi:update',
         badge_color: 'green',
-        percent: 50,
+        percent: '{{ 50 }}',
         force_circular_background: true,
-        isDemo: true,
       },
     },
     languageMap: {
@@ -4575,7 +4574,7 @@ class CardConfigHelper extends BaseConfigHelper {
     const toggleableDomains = ['light', 'switch', 'fan', 'input_boolean', 'media_player'];
     const isToggleable = toggleableDomains.includes(domain);
     // eslint-disable-next-line no-unused-vars
-    const { watermark, ...baseDefaults } = CARD.config.defaults;
+    const { watermark, ...baseDefaults } = this.filterConfig(CARD.config.defaults);
 
     // Filtrage de la configuration selon les clés autorisées
     const cleanedConfig = this.filterConfig(config);
@@ -6213,7 +6212,7 @@ class EntityProgressCardBase extends HTMLElement {
     const templates = this._getTemplateFields();
 
     for (const [key, template] of Object.entries(templates)) {
-      if (!template.trim()) continue;
+      if (typeof template !== 'string' || !template.trim()) continue;
 
       await this._subscribeToTemplate(key, template);
     }
@@ -6527,11 +6526,10 @@ class TemplateConfigHelper extends BaseConfigHelper {
     const toggleableDomains = ['light', 'switch', 'fan', 'input_boolean', 'media_player'];
     const isToggleable = toggleableDomains.includes(domain);
     // eslint-disable-next-line no-unused-vars
-    const { watermark, ...baseDefaults } = CARD.config.defaults;
+    const { watermark, ...baseDefaults } = this.filterConfig(CARD.config.defaults);
 
     const defaultConfig = {
       name: 'Template Card',
-      layout: 'vertical',
     };
 
     // Utilisation de la méthode filterConfig de la classe parent
@@ -6586,10 +6584,9 @@ class EntityProgressTemplate extends EntityProgressCardBase {
     this._manageShape();
     this._setupClickableTarget();
     this._actionHelper.init(this._resourceManager, this._cardView.config, this._clickableTarget);
-    if (this.isDemo) this._processDemoValue();
 
     // AJOUT : Forcer le traitement Jinja après l'initialisation complète
-    if (this.hass && !this.isDemo) {
+    if (this.hass) {
       // Utiliser un micro-task pour s'assurer que tout est initialisé
       Promise.resolve().then(() => {
         this._processJinjaFields();
@@ -6600,7 +6597,7 @@ class EntityProgressTemplate extends EntityProgressCardBase {
   }
 
   setConfig(config) {
-    this._cardView.config = { ...config };
+    this._cardView.config = config;
   }
 
   set hass(hass) {
@@ -6769,20 +6766,8 @@ class EntityProgressTemplate extends EntityProgressCardBase {
 
   // === TEMPLATE PROCESSING ===
 
-  _processDemoValue() {
-    this._log.debug('👉 Applying demo values');
-
-    const templates = this._getTemplateFields();
-
-    Object.entries(templates).forEach(([key, value]) => {
-      if (value !== null && value !== undefined) {
-        this._renderJinja(key, value);
-      }
-    });
-  }
-
   _validateProcessJinjaFields() {
-    return !this.isDemo && this.hass;
+    return Boolean(this.hass);
   }
 
   _getTemplateFields() {
@@ -6798,10 +6783,6 @@ class EntityProgressTemplate extends EntityProgressCardBase {
       color: config.color || '',
       bar_color: config.bar_color || '',
     };
-  }
-
-  get isDemo() {
-    return this._cardView.config.isDemo;
   }
 }
 
