@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.4.7
+ * @version 1.4.8
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.4.7';
+const VERSION = '1.4.8';
 const CARD = {
   meta: {
     card: {
@@ -169,6 +169,8 @@ const CARD = {
         container: { element: 'div', class: 'progress-bar-container' },
         bar: { element: 'div', class: 'progress-bar' },
         inner: { element: 'div', class: 'progress-bar-inner' },
+        positiveInner: { element: 'div', class: 'progress-bar-positive-inner' },
+        negativeInner: { element: 'div', class: 'progress-bar-negative-inner' },
         lowWatermark: { element: 'div', class: 'progress-bar-low-wm' },
         highWatermark: { element: 'div', class: 'progress-bar-high-wm' },
         watermark: { class: 'progress-bar-wm' },
@@ -225,6 +227,9 @@ const CARD = {
       },
     },
     dynamic: {
+      card: {
+        minWidth: { var: '--epb-card-min-width' },
+      },
       badge: {
         color: { var: '--epb-badge-color', default: 'var(--orange-color)' },
         backgroundColor: { var: '--epb-badge-bgcolor', default: 'white' },
@@ -237,6 +242,8 @@ const CARD = {
       progressBar: {
         color: { var: '--epb-progress-bar-color', default: 'var(--state-icon-color)' },
         size: { var: '--epb-progress-bar-size', default: '0%' },
+        pSize: { var: '--epb-progress-bar-psize', default: '0%' },
+        nSize: { var: '--epb-progress-bar-nsize', default: '0%' },
         background: { var: '--epb-progress-bar-background-color' },
         orientation: { rtl: 'rtl-orientation', ltr: 'ltr-orientation' },
         effect: {
@@ -265,6 +272,7 @@ const CARD = {
         progress_bar: { label: 'progress_bar', class: 'hide-progress-bar' },
       },
       frameless: { class: 'frameless' },
+      marginless: { class: 'marginless' },
     },
   },
   layout: {
@@ -414,6 +422,8 @@ CARD.config.defaults = {
   custom_info: null,
   state_content: [],
   frameless: false,
+  marginless: false,
+  center_zero: false,
   watermark: {
     low: 20,
     low_color: 'red',
@@ -2334,6 +2344,13 @@ ${CARD.htmlStructure.card.element} {
   font-family: var(--ha-font-family-body);
   -moz-osx-font-smoothing: var(--ha-font-smoothing);
   -webkit-font-smoothing: antialiased;
+  min-width: var(${CARD.style.dynamic.card.minWidth.var}, 100%);
+}
+
+/* type-picture-elements integration */
+
+.type-picture-elements {
+  min-width: var(${CARD.style.dynamic.card.minWidth.var}, 200px);
 }
 
 /* === FRAMELESS & ENTITIES STYLES === */
@@ -2534,6 +2551,31 @@ ${CARD.htmlStructure.card.element} {
   min-width: 0;  
 }
 
+.multiline {
+  display: inline-block;
+  height: 16px;
+  line-height: 0.95;
+  font-size: 8px;
+  margin: 0;
+  padding: 0;
+}
+
+@supports selector(.secondary-info:has(.multiline)) {
+  .secondary-info:has(.multiline),
+  .secondary-info:has(.multiline) * {
+    height: 18px;
+    font-size: 9px;
+  }
+  .vertical .secondary-info:has(.multiline),
+  .vertical .secondary-info:has(.multiline) .secondary-info-detail-group,
+  .vertical .secondary-info:has(.multiline) .secondary-info-custom-info {
+    height: unset !important;
+  }
+  .vertical .secondary-info:has(.multiline) .progress-bar-container {
+    height: 16px;
+  }
+}
+
 /* === PROGRESS BAR === */
 .${CARD.htmlStructure.elements.progressBar.container.class} {
   flex-grow: 1;
@@ -2588,12 +2630,31 @@ ${CARD.htmlStructure.card.element} {
   transform: scaleX(-1);
 }
 
-.${CARD.htmlStructure.elements.progressBar.inner.class} {
+.${CARD.htmlStructure.elements.progressBar.inner.class},
+.${CARD.htmlStructure.elements.progressBar.positiveInner.class},
+.${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
   height: 100%;
-  width: var(${CARD.style.dynamic.progressBar.size.var}, ${CARD.style.dynamic.progressBar.size.default});
-  background-color: var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default});
+  background: var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default});
   transition: width var(--epb-progress-transition-width);
   will-change: width;
+}
+
+.${CARD.htmlStructure.elements.progressBar.inner.class} {
+  width: var(${CARD.style.dynamic.progressBar.size.var}, ${CARD.style.dynamic.progressBar.size.default});
+}
+
+.${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
+  position: absolute;
+  right: 50%;
+  width: var(${CARD.style.dynamic.progressBar.nSize.var}, ${CARD.style.dynamic.progressBar.pSize.default});
+  transform-origin: left;
+}
+
+.${CARD.htmlStructure.elements.progressBar.positiveInner.class} {
+  position: absolute;
+  left: 50%;
+  width: var(${CARD.style.dynamic.progressBar.pSize.var}, ${CARD.style.dynamic.progressBar.nSize.default});
+  transform-origin: right;
 }
 
 .${CARD.style.dynamic.progressBar.effect.glass.class} .${CARD.htmlStructure.elements.progressBar.inner.class} {
@@ -2833,6 +2894,20 @@ ${CARD.htmlStructure.card.element} {
   align-items: center;
   justify-content: center;
   color: var(${CARD.style.dynamic.badge.color.var}, ${CARD.style.dynamic.badge.color.default});
+}
+
+/* === MARGINLESS === */
+
+.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class},
+.${CARD.layout.orientations.vertical.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class},
+.${CARD.layout.orientations.horizontal.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class} {
+  min-height: unset;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.${CARD.layout.orientations.vertical.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.left.class} {
+  margin-top: unset;
 }
 
 /* === VISIBILITY CONTROLS === */
@@ -3182,11 +3257,12 @@ class RegistrationHelper {
  * 📦 CARD LIB
  ******************************************************************************************/
 
-const Element = (obj) => {
+const Element = (obj, extraClass = '') => {
+  const className = `${obj.class} ${extraClass}`.trim();
   return {
     tag: obj.element,
-    class: obj.class,
-    html: (content = '', attrs = '') => `<${obj.element} class="${obj.class}" ${attrs}>${content}</${obj.element}>`,
+    class: className,
+    html: (content = '', attrs = '') => `<${obj.element} class="${className}" ${attrs}>${content}</${obj.element}>`,
   };
 };
 
@@ -3221,37 +3297,101 @@ const StructureElements = {
     Element(CARD.htmlStructure.elements.detailGroup).html(
       Element(CARD.htmlStructure.elements.detailCombined).html(Element(CARD.htmlStructure.elements.customInfo).html())
     ),
-  progressBar: () =>
+
+  // Progress bar standard
+  standardProgressBar: () =>
     Element(CARD.htmlStructure.elements.progressBar.container).html(
-      Element(CARD.htmlStructure.elements.progressBar.bar).html(
+      Element(CARD.htmlStructure.elements.progressBar.bar, 'default').html(
         Element(CARD.htmlStructure.elements.progressBar.inner).html() +
           Element(CARD.htmlStructure.elements.progressBar.lowWatermark).html() +
           Element(CARD.htmlStructure.elements.progressBar.highWatermark).html()
       )
     ),
 
-  secondaryInfo: () => Element(CARD.htmlStructure.elements.secondaryInfo).html(StructureElements.detailGroup() + StructureElements.progressBar()),
-  secondaryInfoMinimal: () =>
-    Element(CARD.htmlStructure.elements.secondaryInfo).html(StructureElements.detailGroupMinimal() + StructureElements.progressBar()),
-  rightFull: () => Element(CARD.htmlStructure.sections.right).html(StructureElements.nameGroup() + StructureElements.secondaryInfo()),
-  rightMinimal: () =>
-    Element(CARD.htmlStructure.sections.right).html(StructureElements.nameGroupMinimal() + StructureElements.secondaryInfoMinimal()),
+  // centerZero progress bar (corrigé l'orthographe)
+  centerZeroProgressBar: () =>
+    Element(CARD.htmlStructure.elements.progressBar.container).html(
+      Element(CARD.htmlStructure.elements.progressBar.bar, 'center-zero').html(
+        Element(CARD.htmlStructure.elements.progressBar.negativeInner).html() +
+          Element(CARD.htmlStructure.elements.progressBar.positiveInner).html() +
+          Element(CARD.htmlStructure.elements.progressBar.lowWatermark).html() +
+          Element(CARD.htmlStructure.elements.progressBar.highWatermark).html()
+      )
+    ),
+
+  // Fonction générique pour sélectionner le type de progress bar
+  progressBar: (barType = 'default') => {
+    switch (barType) {
+      case 'centerZero':
+        return StructureElements.centerZeroProgressBar();
+      case 'default':
+      default:
+        return StructureElements.standardProgressBar();
+    }
+  },
+
+  // Mise à jour des éléments secondaryInfo avec option barType
+  secondaryInfo: (barType = 'default') =>
+    Element(CARD.htmlStructure.elements.secondaryInfo).html(StructureElements.detailGroup() + StructureElements.progressBar(barType)),
+
+  secondaryInfoMinimal: (barType = 'default') =>
+    Element(CARD.htmlStructure.elements.secondaryInfo).html(StructureElements.detailGroupMinimal() + StructureElements.progressBar(barType)),
+
+  // Mise à jour des éléments right avec option barType
+  rightFull: (barType = 'default') =>
+    Element(CARD.htmlStructure.sections.right).html(StructureElements.nameGroup() + StructureElements.secondaryInfo(barType)),
+
+  rightMinimal: (barType = 'default') =>
+    Element(CARD.htmlStructure.sections.right).html(StructureElements.nameGroupMinimal() + StructureElements.secondaryInfoMinimal(barType)),
+
   leftFull: () => Element(CARD.htmlStructure.sections.left).html(StructureElements.iconAndShape() + StructureElements.badge()),
   leftNoBadge: () => Element(CARD.htmlStructure.sections.left).html(StructureElements.iconAndShape()),
 };
 
+// Templates mis à jour avec option barType
 const StructureTemplates = {
-  card: () => StructureElements.container().replace('{{content}}', StructureElements.leftFull() + StructureElements.rightFull()),
-  badge: () => StructureElements.container().replace('{{content}}', StructureElements.leftNoBadge() + StructureElements.rightFull()),
-  template: () => StructureElements.container().replace('{{content}}', StructureElements.leftFull() + StructureElements.rightMinimal()),
+  card: (options = {}) => {
+    const { barType = 'default' } = options;
+    return StructureElements.container().replace('{{content}}', StructureElements.leftFull() + StructureElements.rightFull(barType));
+  },
+
+  badge: (options = {}) => {
+    const { barType = 'default' } = options;
+    return StructureElements.container().replace('{{content}}', StructureElements.leftNoBadge() + StructureElements.rightFull(barType));
+  },
+
+  template: (options = {}) => {
+    const { barType = 'default' } = options;
+    return StructureElements.container().replace('{{content}}', StructureElements.leftFull() + StructureElements.rightMinimal(barType));
+  },
 };
 
-const createHTMLStructure = {
-  card: () => StructureTemplates.card(),
-  badge: () => StructureTemplates.badge(),
-  template: () => StructureTemplates.template(),
-};
+class ObjStructure {
+  _options = {};
+  _cardType = 'card';
 
+  get options() {
+    return this._options;
+  }
+  set options(newOptions) {
+    this._options = newOptions;
+  }
+  get innerHTML() {
+    return StructureTemplates[this._cardType](this.options);
+  }
+}
+
+class CardStructure extends ObjStructure {
+  _cardType = 'card';
+}
+
+class BadgeStructure extends ObjStructure {
+  _cardType = 'badge';
+}
+
+class TemplateStructure extends ObjStructure {
+  _cardType = 'template';
+}
 
 /******************************************************************************************
  * 🛠️ NumberFormatter
@@ -3472,6 +3612,7 @@ class PercentHelper {
   #percent = 0;
   #isTimer = false;
   #isReversed = false;
+  #isCenterZero = false;
   unitSpacing = CARD.config.unit.unitSpacing.auto;
 
   constructor() {
@@ -3535,10 +3676,11 @@ class PercentHelper {
     return this.range !== 0;
   }
   get range() {
-    return this.max - this.min;
+    if (!this.isCenterZero) return this.max - this.min;
+    return this.current >= 0 ? this.max : -this.min;
   }
   get correctedValue() {
-    return this.actual - this.min;
+    return this.isCenterZero ? this.current : this.actual - this.min;
   }
   get percent() {
     return this.isValid ? this.#percent : null;
@@ -3554,6 +3696,12 @@ class PercentHelper {
   }
   get processedValue() {
     return this.unit === CARD.config.unit.default ? this.percent : this.actual;
+  }
+  set isCenterZero(newValue) {
+    this.#isCenterZero = typeof newValue === 'boolean' ? newValue : false;
+  }
+  get isCenterZero() {
+    return this.#isCenterZero;
   }
 
   // === PUBLIC API METHODS ===
@@ -4199,6 +4347,106 @@ class EntityHelper {
 }
 
 /******************************************************************************************
+ * 🛠️ EntityCollectionHelper
+ * ========================================================================================
+ *
+ * ✅ Helper class for managing entities collection.
+ *
+ * @class
+ */
+
+class EntityCollectionHelper {
+  #entities = [];
+
+  addEntity(entityId, attribute = null) {
+    const helper = new EntityHelper();
+    helper.entityId = entityId;
+    if (attribute) helper.attribute = attribute;
+    this.#entities.push(helper);
+  }
+
+  refreshAll() {
+    this.#entities.forEach((helper) => helper.refresh());
+  }
+
+  getTotalValue() {
+    return this.#entities
+      .filter((helper) => helper.isValid && helper.isAvailable)
+      .reduce((sum, helper) => {
+        const value = helper.value;
+        return sum + (typeof value === 'number' ? value : value?.current ?? 0);
+      }, 0);
+  }
+  getAvailableEntities() {
+    return this.#entities.filter((helper) => helper.isValid && helper.isAvailable);
+  }
+
+  getPercentages() {
+    const total = this.getTotalValue();
+    if (total === 0) return [];
+
+    return this.getAvailableEntities().map((helper) => {
+      const rawValue = helper.value;
+      const value = typeof rawValue === 'number' ? rawValue : rawValue?.current ?? 0;
+      const percent = (value / total) * 100;
+
+      return {
+        entityId: helper.entityId,
+        value,
+        percent,
+      };
+    });
+  }
+
+  getEntitiesColor(curColor) {
+    const percentages = this.getPercentages();
+    if (!percentages.length || !curColor) return null;
+
+    const total = percentages.length;
+    const gradientStops = [];
+    let currentPosition = 0;
+
+    for (let i = 0; i < total; i++) {
+      const item = percentages[i];
+
+      const whitePercent = Math.round((1 - i / (total - 1 || 1)) * 50); // de 50 → 0
+      const basePercent = 100 - whitePercent;
+
+      const color = `color-mix(in srgb, ${curColor} ${basePercent}%, black ${whitePercent}%)`;
+
+      const start = currentPosition;
+      const end = currentPosition + item.percent;
+
+      gradientStops.push(`${color} ${start.toFixed(2)}%`, `${color} ${end.toFixed(2)}%`);
+
+      currentPosition = end;
+    }
+
+    return `linear-gradient(to right, ${gradientStops.join(', ')})`;
+  }
+
+  getAvailableCount() {
+    return this.getAvailableEntities().length;
+  }
+
+  get count() {
+    return this.#entities.length;
+  }
+
+  get validEntities() {
+    return this.#entities.filter((e) => e.isValid && e.isAvailable);
+  }
+
+  get all() {
+    return this.#entities;
+  }
+
+  clear() {
+    this.#entities = [];
+  }
+}
+
+/******************************************************************************************
  * 🛠️ EntityOrValue
  * ========================================================================================
  *
@@ -4478,7 +4726,6 @@ class BaseConfigHelper {
   }
 }
 
-
 /******************************************************************************************
  * 🛠️ CardConfigHelper
  * ========================================================================================
@@ -4524,6 +4771,9 @@ class CardConfigHelper extends BaseConfigHelper {
       'color',
       'layout',
       'frameless',
+      'additions',
+      'marginless',
+      'min_width',
       'reverse',
       'reverse_secondary_info_row',
       'decimal',
@@ -4544,6 +4794,7 @@ class CardConfigHelper extends BaseConfigHelper {
       'icon_tap_action',
       'icon_double_tap_action',
       'icon_hold_action',
+      'center_zero',
     ]);
   }
 
@@ -4660,14 +4911,14 @@ class BadgeConfigHelper extends CardConfigHelper {
  * ========================================================================================
  *
  * ✅ A view class for rendering minimal cards in a user interface.
- * This class manages configuration, entity states, user interactions, and visual 
+ * This class manages configuration, entity states, user interactions, and visual
  * appearance of cards including layouts, orientations, watermarks, and interactive elements.
- * 
+ *
  * @class MinimalCardView
  * @description Handles the display and behavior of minimal cards with support for
  *              Home Assistant entities, user actions, and visual customization
  *              (watermarks, shapes, orientations, clickable elements).
- * 
+ *
  * @example
  * const cardView = new MinimalCardView();
  * cardView.config = {
@@ -4677,12 +4928,12 @@ class BadgeConfigHelper extends CardConfigHelper {
  *   force_circular_background: true,
  *   watermark: { low: 10, high: 30, type: 'gradient' }
  * };
- * 
+ *
  * // Check if components are hidden
  * if (!cardView.hasComponentHiddenFlag('icon')) {
  *   // Render icon
  * }
- * 
+ *
  * // Access computed properties
  * const hasShape = cardView.hasVisibleShape;
  * const isClickable = cardView.hasClickableCard;
@@ -4752,9 +5003,9 @@ class MinimalCardView {
 
     const { watermark } = this.config;
     return {
-      low: watermark.low,
+      low: this.config.center_zero === true ? 50 + watermark.low / 2 : watermark.low,
       low_color: ThemeManager.adaptColor(watermark.low_color),
-      high: watermark.high,
+      high: this.config.center_zero === true ? 50 + watermark.high / 2 : watermark.high,
       high_color: ThemeManager.adaptColor(watermark.high_color),
       opacity: watermark.opacity,
       type: watermark.type,
@@ -4793,7 +5044,7 @@ class MinimalCardView {
  * 🛠️ BaseCardView
  * ========================================================================================
  *
- * ✅ A comprehensive base card view that extends MinimalCardView to manage all information 
+ * ✅ A comprehensive base card view that extends MinimalCardView to manage all information
  * required for creating cards and badges. This class handles entity states, theme management,
  * percentage calculations, timers, and provides a complete API for card rendering.
  *
@@ -4802,7 +5053,7 @@ class MinimalCardView {
  * @description Manages the complete lifecycle of card display including:
  *              - Entity state management and validation
  *              - Theme and color management
- *              - Percentage and progress calculations  
+ *              - Percentage and progress calculations
  *              - Timer and counter handling
  *              - Badge and watermark rendering
  *              - Multi-language support
@@ -4818,21 +5069,21 @@ class MinimalCardView {
  *   color: '#ff6b6b',
  *   watermark: { low: 30, high: 80, type: 'gradient' }
  * };
- * 
+ *
  * // Refresh with Home Assistant data
  * cardView.refresh(hass);
- * 
+ *
  * // Access computed properties
  * const isReady = cardView.isAvailable;
  * const progress = cardView.percent;
  * const displayText = cardView.stateAndProgressInfo;
  * const cardColor = cardView.iconColor;
- * 
+ *
  * // Handle error states
  * if (cardView.hasStandardEntityError) {
  *   console.log('Entity has errors:', cardView.msg);
  * }
- * 
+ *
  * // Timer-specific usage
  * if (cardView.isActiveTimer) {
  *   const speed = cardView.refreshSpeed;
@@ -4844,6 +5095,7 @@ class BaseCardView extends MinimalCardView {
   #percentHelper = new PercentHelper();
   #theme = new ThemeManager();
   #maxValue = new EntityOrValue();
+  #entityCollection = new EntityCollectionHelper();
   #currentLanguage = CARD.config.language;
 
   // === PUBLIC GETTERS / SETTERS ===
@@ -4857,9 +5109,18 @@ class BaseCardView extends MinimalCardView {
   set config(config) {
     this._configHelper.config = config;
 
+    if (this._configHelper.config.additions) {
+      //console.log(this._configHelper.config.additions);
+      this._configHelper.config.additions.forEach(({ entity, attribute }) => {
+        this.#entityCollection.addEntity(entity, attribute);
+      });
+      this.#entityCollection.addEntity(config.entity, config.attribute);
+    }
+    
     Object.assign(this.#percentHelper, {
-      unitSpacing: config.unitSpacing,
+      unitSpacing: this._configHelper.config.unit_spacing,
       hasDisabledUnit: this._configHelper.hasDisabledUnit,
+      isCenterZero: this._configHelper.config.center_zero === true,
     });
 
     Object.assign(this.#theme, {
@@ -4926,17 +5187,17 @@ class BaseCardView extends MinimalCardView {
     );
   }
   get barColor() {
-    if (this.isAvailable) {
-      return (
-        ThemeManager.adaptColor(this.#theme.barColor || this._configHelper.config.bar_color) ||
-        this._currentValue.defaultColor ||
-        CARD.style.color.default
-      );
-    }
-    return this.isUnknown ? CARD.style.color.default : CARD.style.color.disabled;
+    if (!this.isAvailable) return this.isUnknown ? CARD.style.color.default : CARD.style.color.disabled;
+    const curColor = ThemeManager.adaptColor(this.#theme.barColor || this._configHelper.config.bar_color) ||
+      this._currentValue.defaultColor ||
+      CARD.style.color.default;    
+    return this.hasEntityCollection ? this.#entityCollection.getEntitiesColor(curColor) : curColor;
   }
   get percent() {
-    return this.isAvailable ? Math.min(CARD.config.value.max, Math.max(0, this.#percentHelper.percent)) : CARD.config.value.min;    
+    if (!this.isAvailable) return 0;
+    return this.#percentHelper.isCenterZero
+      ? Math.max(-100, Math.min(100, this.#percentHelper.percent))
+      : Math.max(0, Math.min(100, this.#percentHelper.percent));
   }
   get stateAndProgressInfo() {
     if (this.hasStandardEntityError || (this._currentValue.isTimer && this._currentValue.value.state === CARD.config.entity.state.idle))
@@ -4966,7 +5227,7 @@ class BaseCardView extends MinimalCardView {
   get badgeInfo() {
     if (this.isNotFound) return CARD.style.icon.badge.notFound;
     if (this.isUnavailable) return CARD.style.icon.badge.unavailable;
-    
+
     if (this._currentValue.isTimer) {
       const { state } = this._currentValue.value;
       const { paused, active } = CARD.config.entity.state;
@@ -5013,6 +5274,13 @@ class BaseCardView extends MinimalCardView {
       disable_high: watermark.disable_high === true,
     };
   }
+  get hasEntityCollection() {
+    return this.#entityCollection.count >= 2;
+  }
+
+  get entityCollectionPercentage() {
+    return this.#entityCollection.getPercentages();
+  }
 
   // === PUBLIC API METHODS ===
 
@@ -5022,6 +5290,10 @@ class BaseCardView extends MinimalCardView {
     this._currentValue.refresh();
     this.#maxValue.refresh();
     this._configHelper.checkConfig();
+    // console.log(this.#entityCollection.count);
+    this.#entityCollection.refreshAll();
+    //console.log(this.#entityCollection.getTotalValue());
+    //console.log(this.#entityCollection.getPercentages());    
 
     if (!this.isAvailable) return;
 
@@ -5043,7 +5315,7 @@ class BaseCardView extends MinimalCardView {
     } else if (this._currentValue.isCounter || this._currentValue.isNumber) {
       this.#setCounterValues();
     } else {
-      this.#setDefaultValues();
+      this.#setStdValues();
     }
     this.#percentHelper.refresh();
   }
@@ -5060,19 +5332,18 @@ class BaseCardView extends MinimalCardView {
     Object.assign(this.#percentHelper, {
       current: this._currentValue.value.current,
       min: this._currentValue.value.min,
-      max: this.#maxValue.isEntity 
-        ? (this.#maxValue.value?.current ?? this.#maxValue.value)
-        : this._currentValue.value.max,
+      max: this.#maxValue.isEntity ? this.#maxValue.value?.current ?? this.#maxValue.value : this._currentValue.value.max,
     });
   }
 
-  #setDefaultValues() {
+  #setStdValues() {
+    const currentValue = this.hasEntityCollection ? this.#entityCollection.getTotalValue() : this._currentValue.value;
     Object.assign(this.#percentHelper, {
-      current: this._currentValue.value,
+      current: currentValue,
       min: this._configHelper.config.min_value,
       max: this.#maxValue.value?.current ?? this.#maxValue.value,
     });
-  }  
+  }
 
   #getCurrentUnit() {
     if (this._configHelper.config.unit) return this._configHelper.config.unit;
@@ -5092,14 +5363,14 @@ class BaseCardView extends MinimalCardView {
     if (this._configHelper.config.unit)
       return this._configHelper.config.unit === CARD.config.unit.default ? CARD.config.decimal.percentage : CARD.config.decimal.other;
 
-    return currentUnit === CARD.config.unit.default ? CARD.config.decimal.percentage : CARD.config.decimal.other;    
+    return currentUnit === CARD.config.unit.default ? CARD.config.decimal.percentage : CARD.config.decimal.other;
   }
 }
 /******************************************************************************************
  * 🛠️ CardView
  * ========================================================================================
  *
- * A specialized card view implementation that extends BaseCardView specifically for 
+ * A specialized card view implementation that extends BaseCardView specifically for
  * rendering full card components. This class provides the complete card functionality
  * with proper configuration management through CardConfigHelper.
  *
@@ -5122,7 +5393,7 @@ class CardView extends BaseCardView {
  * 🛠️ BadgeView
  * ========================================================================================
  *
- * A specialized badge view implementation that extends BaseCardView specifically for 
+ * A specialized badge view implementation that extends BaseCardView specifically for
  * rendering compact badge components. This class provides complete badge functionality
  * with proper configuration management through BadgeConfigHelper.
  *
@@ -5498,7 +5769,7 @@ class ActionHelper {
  * @extends HTMLElement
  */
 class EntityProgressCardBase extends HTMLElement {
-  static _cardInnerHTML = createHTMLStructure.card();
+  static _cardStructure = new CardStructure();
   static _cardStyle = CARD_CSS;
   static _hasDisabledIconTap = false;
   static _hasDisabledBadge = false;
@@ -5658,8 +5929,8 @@ class EntityProgressCardBase extends HTMLElement {
     return this.#isRendered;
   }
 
-  get cardInnerHTML() {
-    return this.constructor._cardInnerHTML;
+  get innerHTML() {
+    return this.constructor._cardStructure.innerHTML;
   }
 
   get cardStyle() {
@@ -5751,9 +6022,17 @@ class EntityProgressCardBase extends HTMLElement {
     if (this.isRendered) return;
     this.#isRendered = true;
 
+    this._manageStructureOptions();
     const { style, card } = this._createCardElements();
     this.shadowRoot.replaceChildren(style, card);
     this._storeDOM(card);
+  }
+
+  _manageStructureOptions() {
+    this.constructor._cardStructure.options = {};
+    if (this._cardView.config.center_zero === true) {
+      this.constructor._cardStructure.options = { barType: 'centerZero' };
+    }
   }
 
   _createCardElements() {
@@ -5762,7 +6041,7 @@ class EntityProgressCardBase extends HTMLElement {
 
     const card = document.createElement(CARD.htmlStructure.card.element);
     this._buildStyle(card);
-    card.innerHTML = this.cardInnerHTML;
+    card.innerHTML = this.innerHTML;
 
     return { style, card };
   }
@@ -5789,6 +6068,8 @@ class EntityProgressCardBase extends HTMLElement {
 
   _addBaseParameter(card) {
     if (this._cardView.hasReversedSecondaryInfoRow) this._setStylePropertyIfChanged(card.style, '--epb-secondary-info-row-reverse', 'row-reverse');
+    if (this._cardView.config.min_width)
+      this._setStylePropertyIfChanged(card.style, CARD.style.dynamic.card.minWidth.var, this._cardView.config.min_width);
   }
 
   get conditionalStyle() {
@@ -5797,6 +6078,7 @@ class EntityProgressCardBase extends HTMLElement {
       [CARD.style.dynamic.clickable.icon, this._cardView.hasClickableIcon],
       [CARD.style.dynamic.secondaryInfoError.class, this._cardView.hasStandardEntityError],
       [CARD.style.dynamic.frameless.class, this._cardView.config.frameless === true],
+      [CARD.style.dynamic.marginless.class, this._cardView.config.marginless === true],
     ]);
   }
   _applyConditionalClasses(card) {
@@ -5821,7 +6103,9 @@ class EntityProgressCardBase extends HTMLElement {
   _handleWatermarkClasses(card) {
     if (!this._cardView.hasWatermark) return;
 
-    const type = ['area', 'blended', 'striped', 'line', 'triangle', 'round'].includes(this._cardView.watermark.type) ? `${this._cardView.watermark.type}` : 'blended';
+    const type = ['area', 'blended', 'striped', 'line', 'triangle', 'round'].includes(this._cardView.watermark.type)
+      ? `${this._cardView.watermark.type}`
+      : 'blended';
     const baseWMClass = CARD.htmlStructure.elements.progressBar.watermark.class;
     const showClass = CARD.style.dynamic.show;
 
@@ -5937,16 +6221,26 @@ class EntityProgressCardBase extends HTMLElement {
     this._updateElement(CARD.htmlStructure.card.element, (el) => {
       const style = el.style;
       const bar = this._cardView;
+      const isCenterZero = bar.config.center_zero === true;
+      const isNegative = bar.percent < 0;
 
       const properties = [
         [CARD.style.dynamic.progressBar.color.var, bar.barColor],
-        [CARD.style.dynamic.progressBar.size.var, `${bar.percent}%`],
         [CARD.style.dynamic.iconAndShape.color.var, bar.iconColor],
       ];
 
+      if (isCenterZero) {
+        properties.push(
+          [isNegative ? CARD.style.dynamic.progressBar.nSize.var : CARD.style.dynamic.progressBar.pSize.var, `${Math.abs(bar.percent / 2)}%`],
+          [isNegative ? CARD.style.dynamic.progressBar.pSize.var : CARD.style.dynamic.progressBar.nSize.var, '0%']
+        );
+      } else {
+        properties.push([CARD.style.dynamic.progressBar.size.var, `${bar.percent}%`]);
+      }
+
       if (bar.hasWatermark) {
         const wm = bar.watermark;
-        const wmProperties = EntityProgressCardBase._getWatermarkProperties(wm);
+        const wmProperties = EntityProgressCardBase._getWatermarkProperties(wm, isCenterZero);
         properties.push(...wmProperties);
       }
       properties.forEach(([variable, value]) => {
@@ -5957,11 +6251,14 @@ class EntityProgressCardBase extends HTMLElement {
 
   // === WATERMARK MANAGEMENT ===
 
-  static _getWatermarkProperties(watermark) {
+  static _getWatermarkProperties(watermark, isCenterZero = false) {
+    const highWatermark = isCenterZero ? 50 + watermark.high / 2 : watermark.high;
+    const lowWatermark = isCenterZero ? 50 + watermark.low / 2 : watermark.low;
+
     return [
-      [CARD.style.dynamic.watermark.high.value.var, `${watermark.high}%`],
+      [CARD.style.dynamic.watermark.high.value.var, `${highWatermark}%`],
       [CARD.style.dynamic.watermark.high.color.var, watermark.high_color],
-      [CARD.style.dynamic.watermark.low.value.var, `${watermark.low}%`],
+      [CARD.style.dynamic.watermark.low.value.var, `${lowWatermark}%`],
       [CARD.style.dynamic.watermark.low.color.var, watermark.low_color],
       [CARD.style.dynamic.watermark.opacity.var, watermark.opacity],
       [CARD.style.dynamic.watermark.lineSize.var, watermark.line_size],
@@ -6340,7 +6637,7 @@ class EntityProgressBadge extends EntityProgressCardBase {
   static _hasDisabledIconTap = true;
   static _hasDisabledBadge = true;
   static _cardLayout = CARD.layout.orientations.horizontal.grid;
-  static _cardInnerHTML = createHTMLStructure.badge();
+  static _cardStructure = new BadgeStructure();
   static _cardStyle = `
     :host {
       --epb-icon-size: 18px;
@@ -6354,7 +6651,7 @@ class EntityProgressBadge extends EntityProgressCardBase {
       min-height: 36px !important;
       max-height: 36px !important;
       height: var(--ha-badge-size, 36px);
-      min-width: var(--ha-badge-size, 110px);
+      min-width: var(--epb-card-min-width, var(--ha-badge-size, 110px));
       width: 100%;
       border-radius: var(--ha-badge-border-radius,calc(var(--ha-badge-size,36px)/ 2));
     }
@@ -6472,7 +6769,6 @@ RegistrationHelper.registerBadge(CARD.meta.badge);
  * @extends BaseConfigHelper
  */
 
-
 class TemplateConfigHelper extends BaseConfigHelper {
   // Clés autorisées pour ce type de carte
   static get _allowedKeys() {
@@ -6493,6 +6789,8 @@ class TemplateConfigHelper extends BaseConfigHelper {
       'watermark',
       'bar_effect',
       'frameless',
+      'marginless',
+      'min_width',
       'tap_action',
       'hold_action',
       'double_tap_action',
@@ -6500,6 +6798,7 @@ class TemplateConfigHelper extends BaseConfigHelper {
       'icon_hold_action',
       'icon_double_tap_action',
       'reverse_secondary_info_row',
+      'center_zero',
     ]);
   }
 
@@ -6547,8 +6846,6 @@ class TemplateConfigHelper extends BaseConfigHelper {
   }
 }
 
-
-
 /******************************************************************************************
  * 🛠️ CardView
  * ========================================================================================
@@ -6571,7 +6868,7 @@ class TemplateCardView extends MinimalCardView {
  * @extends EntityProgressCardBase
  */
 class EntityProgressTemplate extends EntityProgressCardBase {
-  static _cardInnerHTML = createHTMLStructure.template();
+  static _cardStructure = new TemplateStructure();
   _debug = CARD.config.debug.card;
   _cardView = new TemplateCardView();
   _hassProvider = HassProviderSingleton.getInstance();
@@ -6646,6 +6943,7 @@ class EntityProgressTemplate extends EntityProgressCardBase {
       [CARD.style.dynamic.clickable.card, this._cardView.hasClickableCard],
       [CARD.style.dynamic.clickable.icon, this._cardView.hasClickableIcon],
       [CARD.style.dynamic.frameless.class, this._cardView.config.frameless === true],
+      [CARD.style.dynamic.marginless.class, this._cardView.config.marginless === true],
     ]);
   }
 
@@ -6744,14 +7042,32 @@ class EntityProgressTemplate extends EntityProgressCardBase {
       secondary: () => this._renderSecondary(content),
       name: () => this._renderName(content),
       icon: () => this._showIcon(content),
-      percent: () => this._updateCSSValue(CARD.style.dynamic.progressBar.size.var, `${content}%`),
+      percent: () => this._renderPercentCSS(content),
       color: () => this._updateCSSValue(CARD.style.dynamic.iconAndShape.color.var, ThemeManager.adaptColor(content)),
       bar_color: () => this._updateCSSValue(CARD.style.dynamic.progressBar.color.var, ThemeManager.adaptColor(content)),
     };
   }
 
+  _renderPercentCSS(percent) {
+    const isCenterZero = this._cardView.config.center_zero === true;
+    const absPercent = Math.abs(percent);
+    const half = `${absPercent / 2}%`;
+
+    if (isCenterZero) {
+      this._updateCSSValue(percent >= 0 ? CARD.style.dynamic.progressBar.pSize.var : CARD.style.dynamic.progressBar.nSize.var, half);
+      this._updateCSSValue(percent >= 0 ? CARD.style.dynamic.progressBar.nSize.var : CARD.style.dynamic.progressBar.pSize.var, '0%');
+    } else {
+      this._updateCSSValue(CARD.style.dynamic.progressBar.size.var, `${absPercent}%`);
+    }
+  }
   _renderSecondary(content) {
-    this._renderTextContent(CARD.htmlStructure.elements.customInfo.class, `${content}`);
+    // multiline
+    const hasLineBreak = /<br\s*\/?>/i.test(content);
+    const wrappedContent = hasLineBreak
+      ? `<span class="multiline">${content}</span>`
+      : content;
+
+    this._renderTextContent(CARD.htmlStructure.elements.customInfo.class, wrappedContent);
   }
 
   _renderName(content) {

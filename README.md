@@ -128,6 +128,24 @@ _default attribute:_
 | light.xxx          | brightness (%)    |
 | fan.xxx            | percentage        |
 
+
+#### `additions`
+
+> **`additions` list _(optional)_
+
+Displays multiple entities within the same card. Each entry follows the same structure (`entity`/`attribute`) as a primary entity. Used to show combined values and gradients.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.solar_power
+additions:
+  - entity: sensor.battery_power
+  - entity: sensor.grid_power
+    attribute: current_value
+```
+
 #### `name`
 
 > **`name`** string _(optional)_
@@ -444,6 +462,20 @@ bar_effect:
   - radius
   - shimmer
   - gradient
+```
+
+#### center_zero (https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#center-zero-)
+
+> **`center_zero`** boolean _(optional, default: `false`)_
+
+Centers the progress bar at zero, allowing for better visualization of values that fluctuate around zero (e.g., positive/negative changes).
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.energy_balance
+center_zero: true
 ```
 
 #### `icon`
@@ -881,6 +913,34 @@ _Example_:
 type: custom:entity-progress-card
 entity: timer.living_room
 frameless: true
+```
+
+#### `marginless` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#marginless-)
+
+> **`marginless`** boolean _(optional, default: false)_
+
+Removes vertical margin, creating a more compact layout.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.cpu_usage
+marginless: true
+```
+
+#### `min_width` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#min-width-)
+
+> **`min_width`** string (optional)
+
+Sets a minimum width (e.g., 120px, 10em, 30%) for the card, badge or template. Useful for ensuring consistent layout in horizontal stacks or grids.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.temperature
+min_width: 140px
 ```
 
 #### `reverse_secondary_info_row` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#reverse_secondary_info_row-)
@@ -1718,7 +1778,10 @@ The following options remain fully compatible with this new card:
 | `layout`                     | Adjust the overall layout (e.g., `horizontal`, `vertical`)                                   |
 | `watermark`                  | Add a background watermark or overlay element                                                |
 | `frameless`                  | Remove the default card border and background for a seamless, flat appearance                |
+| `marginless`                 | Remove vertical margin for a more compact template display                                   |
 | `reverse_secondary_info_row` | Reverses the order of the progress bar and the secondary info when using a horizontal layout |
+| `center_zero`                | Center the progress bar at zero for visualizing values that range around zero                |
+| `min_width`                  | Set a minimum width for the template to ensure consistent layout                             |
 
 ### 🧠 Why Use This Card?
 
@@ -1778,12 +1841,129 @@ tap_action:
   navigation_path: /config
 ```
 
+### Advanced usage
+
+#### Follow the sun
+
+##### 🧐 Why?
+
+You want a visual representation of the sun's next event (sunrise or sunset) and the progress until it happens, directly in your Home Assistant dashboard. Instead of showing static time values, you aim to give users contextual, visual feedback on when the next sun transition will occur, and how far along we are toward it.
+
+##### ⚙️ How?
+
+This card uses custom:entity-progress-card-template and dynamic Jinja2 templates to show:
+
+- 📛 name
+  Dynamically shows:
+  - Next Rise: HH:MM if sunrise is next,
+  - Next Setting: HH:MM if sunset is next,
+  - or a fallback if sun data isn't available.
+- 🎨 bar_color & color
+  - Bar turns orange when the sun is above the horizon.
+  - Turns light gray / invisible when it's below the horizon.
+- 📄 secondary
+  Displays a live countdown (e.g., in 02:34:12) until the next sun event, accounting for whether sunrise or sunset is next.
+- 📊 percent
+  Calculates progress between the last and the next sun event.
+  - For example, at 50%: you're halfway between yesterday's and today's sunrise.
+  - Or halfway between yesterday's and today's sunset, depending on current time.
+- 🖱️ tap_action
+  Opens the standard more-info view for the sun.sun entity when tapped.
+
+```yaml
+type: custom:entity-progress-card-template
+name: >
+  {% set sunrise = as_datetime(states('sensor.sun_next_rising')) %} {% set
+  sunset = as_datetime(states('sensor.sun_next_setting')) %} {% if sunrise and
+  sunset %}
+    {% if sunrise < sunset %}
+      Next Rise: {{ sunrise.timestamp() | timestamp_custom('%H:%M', true) }}
+    {% else %}
+      Next Setting: {{ sunset.timestamp() | timestamp_custom('%H:%M', true) }}
+    {% endif %}
+  {% else %}
+    Suninformation not available
+  {% endif %}
+entity: sun.sun
+bar_color: |
+  {% if states('sun.sun') == 'below_horizon' %}
+    lightgray
+  {% else %}
+    orange
+  {% endif %}
+color: |
+  {% if states('sun.sun') == 'below_horizon' %}
+    none
+  {% else %}
+    orange
+  {% endif %}
+secondary: >
+  {% set sunrise = as_datetime(states('sensor.sun_next_rising')) %} {% set
+  sunset = as_datetime(states('sensor.sun_next_setting')) %} {% set now_time =
+  now() %} {% if sunrise and sunset %}
+    {% if sunrise < sunset %}
+      {% set next_event = sunrise %}
+      {% set last_event = sunrise - timedelta(days=1) %}
+    {% else %}
+      {% set next_event = sunset %}
+      {% set last_event = sunset - timedelta(days=1) %}
+    {% endif %}
+    {% set delta = next_event - now_time %}
+    {% set total_seconds = delta.total_seconds() %}
+    {% if total_seconds > 1 %}
+      {% set days = (total_seconds // 86400) | int %}
+      {% set hours = (total_seconds % 86400) // 3600 %}
+      {% set minutes = (total_seconds % 3600) // 60 %}
+      {% set seconds = (total_seconds % 60) %}
+      in
+      {% if days > 0 %}
+        {{ days }}d
+      {% endif %}
+      {{ '%02d:%02d:%02d' | format(hours | int, minutes | int, seconds | int) }}
+    {% else %}
+      now
+    {% endif %}
+  {% else %}
+    --:--:--
+  {% endif %}
+percent: >
+  {% set sunrise = as_datetime(states('sensor.sun_next_rising')) %} {% set
+  sunset = as_datetime(states('sensor.sun_next_setting')) %} {% set now_time =
+  now() %} {% if sunrise and sunset %}
+    {% if sunrise < sunset %}
+      {% set next_event = sunrise %}
+      {% set last_event = sunrise - timedelta(days=1) %}
+    {% else %}
+      {% set next_event = sunset %}
+      {% set last_event = sunset - timedelta(days=1) %}
+    {% endif %}
+    {% set total = (next_event - last_event).total_seconds() %}
+    {% set elapsed = (now_time - last_event).total_seconds() %}
+    {% if total > 0 %}
+      {{ ((elapsed / total) * 100) | round(2) }}
+    {% else %}
+      0
+    {% endif %}
+  {% else %}
+    0
+  {% endif %}
+tap_action:
+  action: more-info
+grid_options:
+  columns: 12
+  rows: 1
+```
+
+##### ✅ Conclusion
+
+This card provides a beautiful and intuitive sun progress indicator, using both visual (progress bar + color) and textual (countdown + time) information. It adapts based on current time and sun data, making it a smart and engaging way to track solar cycles from your dashboard.
+
 ## Entity Progress Badge
 
 This badge is designed to display the progress of an entity in a compact and customizable badge format
 with a dynamic progress bar.
 
-### 🎯 Purpose
+### 🎯 Badge purpose
 
 The Entity Progress Badge provides a clear visual representation of an entity’s progress (e.g., battery
 level, usage percentage, completion status) in a small badge format.
@@ -1793,23 +1973,24 @@ dynamic progress indicator.
 
 ### ⚙️ Supported Options
 
-| Option              | Description                                                       |
-| ------------------- | ----------------------------------------------------------------- |
-| `entity`            | The entity to display (e.g., `fan.kitchen`)                       |
-| `name`              | Custom name to display (e.g., `"kitchen"`)                        |
-| `unit`              | Unit to show next to the value (e.g., `"%"`)                      |
-| `decimal`           | Number of decimal places to display (e.g., `1`)                   |
-| `min_value`         | Minimum value for the progress calculation or scale (e.g., `0`)   |
-| `max_value`         | Maximum value for the progress calculation or scale (e.g., `100`) |
-| `hide`              | List of elements to hide (e.g., `["icon", "value"...]`)           |
-| `theme`             | Theme to apply (e.g., `"light"`)                                  |
-| `icon`              | Icon to display on the badge (e.g., `mdi:account-group`)          |
-| `tap_action`        | Define an action on badge tap                                     |
-| `hold_action`       | Define an action on long press                                    |
-| `double_tap_action` | Define an action on double tap                                    |
-| `bar_orientation`   | Orientation of the progress bar (e.g., ltr, rtl)                  |
-| `layout`            | Overall badge layout (e.g., icon + bar, icon only)                |
-| `frameless`         | Remove border and background for a cleaner appearance             |
+| Option              | Description                                                               |
+| ------------------- | ------------------------------------------------------------------------- |
+| `entity`            | The entity to display (e.g., `fan.kitchen`)                               |
+| `name`              | Custom name to display (e.g., `"kitchen"`)                                |
+| `unit`              | Unit to show next to the value (e.g., `"%"`)                              |
+| `decimal`           | Number of decimal places to display (e.g., `1`)                           |
+| `min_value`         | Minimum value for the progress calculation or scale (e.g., `0`)           |
+| `max_value`         | Maximum value for the progress calculation or scale (e.g., `100`)         |
+| `hide`              | List of elements to hide (e.g., `["icon", "value"...]`)                   |
+| `theme`             | Theme to apply (e.g., `"light"`)                                          |
+| `icon`              | Icon to display on the badge (e.g., `mdi:account-group`)                  |
+| `tap_action`        | Define an action on badge tap                                             |
+| `hold_action`       | Define an action on long press                                            |
+| `double_tap_action` | Define an action on double tap                                            |
+| `bar_orientation`   | Orientation of the progress bar (e.g., ltr, rtl)                          |
+| `layout`            | Overall badge layout (e.g., icon + bar, icon only)                        |
+| `frameless`         | Remove border and background for a cleaner appearance                     |
+| `min_width`         | Set a minimum width for the template to ensure consistent layout          |
 
 We use the same syntaxe than the card.
 
