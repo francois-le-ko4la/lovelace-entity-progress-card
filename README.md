@@ -129,9 +129,9 @@ _default attribute:_
 | fan.xxx            | percentage        |
 
 
-#### `additions`
+#### `additions` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#additions-)
 
-> **`additions` list _(optional)_
+> **`additions`** list _(optional)_
 
 Displays multiple entities within the same card. Each entry follows the same structure (`entity`/`attribute`) as a primary entity. Used to show combined values and gradients.
 
@@ -217,7 +217,7 @@ unit: ABC
 
 #### `unit_spacing` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#unit_spacing-)
 
-> **`unit_spacing`** string ➡️ {`auto`|`space`|`no-sspace`} _(optional, default: `auto`)_
+> **`unit_spacing`** string ➡️ {`auto`|`space`|`no-space`} _(optional, default: `auto`)_
 
 Defines whether a space should appear between numeric values and units, either following locale rules or overriding them explicitly.
 
@@ -464,7 +464,7 @@ bar_effect:
   - gradient
 ```
 
-#### center_zero (https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#center-zero-)
+#### `center_zero` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#center-zero-)
 
 > **`center_zero`** boolean _(optional, default: `false`)_
 
