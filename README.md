@@ -1,4 +1,5 @@
 <a id="top"></a>
+
 # Lovelace Entity Progress Card [![ReadMe](https://img.shields.io/badge/ReadMe-018EF5?logo=readme&logoColor=fff)](https://github.com/francois-le-ko4la/lovelace-entity-progress-card)
 
 [![Static Badge](https://img.shields.io/badge/Home%20Assistant-blue?style=for-the-badge&logo=homeassistant&logoColor=white&color=blue)](https://github.com/francois-le-ko4la/lovelace-entity-progress-card)
@@ -13,40 +14,41 @@ A modern Entity progress card for Home Assistant's Lovelace UI.
 
 Jump to the specific section:
 
-*   [⚡ Description](#description)
-*   [🚀 Features](#features)
-*   [⚙️ Prerequisites](#prerequisites)
-*   [📦 Installation Steps](#installation-steps)
-*   [📝 Usage](#usage)
-    *   [🪄 Card Editor](#card-editor)
-*   [Standard Lovelace Entity Progress Card](#standard-lovelace-entity-progress-card)
-    *   [Parameters and Configuration](#standard-lovelace-entity-progress-card-parameters)
-    *   [Why Use This Card?](#standard-card-why-use-this)
-    *   [Basic Usage](#standard-card-example-basic)
-    *   [Grid Option and Vertical Layout](#standard-card-example-grid-vertical)
-    *   [Percentage Calculation](#standard-card-percentage-calculation)
-    *   [Examples](#standard-card-examples)
-        *   [Battery Dashboard](#standard-card-example-battery-dashboard)
-        *   [Litter Box](#standard-card-example-litter-box)
-        *   [Themes](#standard-card-example-themes)
-        *   [card_mod / animation](#standard-card-example-card-mod-animation)
-        *   [vertical-stack-in-card](#standard-card-example-vertical-stack)
-*   [Lovelace Entity Progress Card Template](#lovelace-entity-progress-card-template)
-    *   [Available Jinja Variables and Supported Options](#template-jinja-variables-supported-options)
-    *   [Why Use This Card?](#template-card-why-use-this)
-    *   [Example](#template-card-example-basic)
-    *   [Follow the Sun](#template-card-example-follow-the-sun)
-*   [Badge Entity Progress Card](#entity-progress-badge)
-    *   [Supported Options and Configuration](#badge-supported-options)
-    *   [Why Use This Card?](#badge-card-why-use-this)
-    *   [Example](#badge-card-example-basic)
-*   [🎨 Theme](#theme)
-*   [🌍 Language & Number Support](#language-number-support)
-*   [Error handling & Troubleshooting](#error-handling-troubleshooting)
+- [⚡ Description](#description)
+- [🚀 Features](#features)
+- [⚙️ Prerequisites](#prerequisites)
+- [📦 Installation Steps](#installation-steps)
+- [📝 Usage](#usage)
+  - [🪄 Card Editor](#card-editor)
+- [Standard Lovelace Entity Progress Card](#standard-lovelace-entity-progress-card)
+  - [Parameters and Configuration](#standard-lovelace-entity-progress-card-parameters)
+  - [Why Use This Card?](#standard-card-why-use-this)
+  - [Basic Usage](#standard-card-example-basic)
+  - [Grid Option and Vertical Layout](#standard-card-example-grid-vertical)
+  - [Percentage Calculation](#standard-card-percentage-calculation)
+  - [Examples](#standard-card-examples)
+    - [Battery Dashboard](#standard-card-example-battery-dashboard)
+    - [Litter Box](#standard-card-example-litter-box)
+    - [Themes](#standard-card-example-themes)
+    - [card_mod / animation](#standard-card-example-card-mod-animation)
+    - [vertical-stack-in-card](#standard-card-example-vertical-stack)
+- [Lovelace Entity Progress Card Template](#lovelace-entity-progress-card-template)
+  - [Available Jinja Variables and Supported Options](#template-jinja-variables-supported-options)
+  - [Why Use This Card?](#template-card-why-use-this)
+  - [Example](#template-card-example-basic)
+  - [Follow the Sun](#template-card-example-follow-the-sun)
+- [Badge Entity Progress Card](#entity-progress-badge)
+  - [Supported Options and Configuration](#badge-supported-options)
+  - [Why Use This Card?](#badge-card-why-use-this)
+  - [Example](#badge-card-example-basic)
+- [🎨 Theme](#theme)
+- [🌍 Language & Number Support](#language-number-support)
+- [Error handling & Troubleshooting](#error-handling-troubleshooting)
 
 ---
 
 <a id="description"></a>
+
 ## ⚡ Description
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/example.png" alt="Default" width="400"/>
@@ -57,38 +59,41 @@ seamlessly with the `Tile`/`Mushroom` look & feel of the latest Home Assistant v
 This card is based on custom CSS and leverages existing code to fine-tune the appearance.
 
 <a id="features"></a>
+
 ## 🚀 Features
 
--   **Percentage Progress Bar**: Displays the progress of a specified entity in percentage.
--   **Seamless Integration with Home Assistant's Modern UI**: Fully aligns with the "Tile"
-    look & feel of recent Home Assistant versions.
--   **Dynamic Theme**: Automatically adjusts icons and colors based on the context (e.g.,
-    Battery Theme), reflecting the entity's state.
--   **Enhanced Customization**: Offers a balanced default setup while allowing users to
-    further tailor the card's behavior and appearance through YAML or the card editor
-    (full details below).
--   **Smooth Animations**: Provides HTML elements that facilitate smooth, visually
-    appealing animations, leveraging well-known mechanisms for easy implementation.
--   **Interactive Features**: Includes all "xyz_action" option, enabling users to view
-    additional entity details or navigate to another dashboard with a simple click,
-    improving accessibility and usability.
--   **Performance Optimized**: Code enhancements ensure better performance and
-    maintainability, offering a more stable and responsive experience.
--   **Multi-Language Support**: Provides localized error messages and descriptions,
-    supporting multiple languages 🇬🇧 🇪🇸 🇩🇪 🇮🇹 🇫🇷 🇵🇱 🇳🇱 🇭🇷 🇲🇰 🇵🇹 🇩🇰 🇸🇪 🇳🇴 (bokmål)
-    🇫🇮 🇷🇴 🇬🇷 🇯🇵 🇰🇷 🇨🇳 🇹🇷 🇸🇦.
+- **Percentage Progress Bar**: Displays the progress of a specified entity in percentage.
+- **Seamless Integration with Home Assistant's Modern UI**: Fully aligns with the "Tile"
+  look & feel of recent Home Assistant versions.
+- **Dynamic Theme**: Automatically adjusts icons and colors based on the context (e.g.,
+  Battery Theme), reflecting the entity's state.
+- **Enhanced Customization**: Offers a balanced default setup while allowing users to
+  further tailor the card's behavior and appearance through YAML or the card editor
+  (full details below).
+- **Smooth Animations**: Provides HTML elements that facilitate smooth, visually
+  appealing animations, leveraging well-known mechanisms for easy implementation.
+- **Interactive Features**: Includes all "xyz_action" option, enabling users to view
+  additional entity details or navigate to another dashboard with a simple click,
+  improving accessibility and usability.
+- **Performance Optimized**: Code enhancements ensure better performance and
+  maintainability, offering a more stable and responsive experience.
+- **Multi-Language Support**: Provides localized error messages and descriptions,
+  supporting multiple languages 🇬🇧 🇪🇸 🇩🇪 🇮🇹 🇫🇷 🇵🇱 🇳🇱 🇭🇷 🇲🇰 🇵🇹 🇩🇰 🇸🇪 🇳🇴 (bokmål)
+  🇫🇮 🇷🇴 🇬🇷 🇯🇵 🇰🇷 🇨🇳 🇹🇷 🇸🇦.
 
 <a id="prerequisites"></a>
+
 ## ⚙️ Prerequisites
 
--   HA version: 2024+
--   Chrome 92+, Edge 92+, Firefox 90+, Safari 15.4+, Opera 78+
+- HA version: 2024+
+- Chrome 92+, Edge 92+, Firefox 90+, Safari 15.4+, Opera 78+
 
 > [!IMPORTANT]
 >
 > Ensure your Home Assistant instance is up to date to support this custom card.
 
 <a id="installation-steps"></a>
+
 ## 📦 Installation Steps
 
 ### HACS Installation (Recommended)
@@ -101,10 +106,10 @@ Use this button to add the repository to your HACS:
 >
 > If you are unable to use the button above, follow the steps below:
 >
-> -   Add this repository to HACS: Go to `HACS` > `Integrations` > `⋮` >
->     `Custom repositories`.
-> -   Paste the URL of this repository and select `Dashboard` as the category.
-> -   Install the Entity Progress Card from HACS.
+> - Add this repository to HACS: Go to `HACS` > `Integrations` > `⋮` >
+>   `Custom repositories`.
+> - Paste the URL of this repository and select `Dashboard` as the category.
+> - Install the Entity Progress Card from HACS.
 
 ### Manual Installation
 
@@ -118,9 +123,11 @@ type: module
 ```
 
 <a id="usage"></a>
+
 ## 📝 Usage
 
 <a id="card-editor"></a>
+
 ### 🪄 Card Editor
 
 The card editor allows you to quickly set up and customize the card.
@@ -130,11 +137,13 @@ The card editor allows you to quickly set up and customize the card.
 ---
 
 <a id="standard-lovelace-entity-progress-card"></a>
+
 ## Standard Lovelace Entity Progress Card [🔼 Back to top](#top)
 
 This is the primary card for displaying entity progress.
 
 <a id="standard-lovelace-entity-progress-card-parameters"></a>
+
 <details>
 <summary><strong>🔧 Parameters and Configuration</strong></summary>
 
@@ -183,10 +192,10 @@ entities exposing numeric data through their attributes.
 
 Defining the attribute with the following is not supported:
 
--   counter
--   number
--   duration
--   timer
+- counter
+- number
+- duration
+- timer
 
 _default attribute:_
 
@@ -224,7 +233,7 @@ will be used.
 
 _Default_:
 
--   `<entity_name>`
+- `<entity_name>`
 
 _Example_:
 
@@ -242,20 +251,20 @@ Allows representing standard unit.
 
 _Unit selection_:
 
--   If a `unit` is manually specified in the configuration, it will be used.
--   Otherwise, if `max_value` is an entity, the default unit (%) will be used.
--   Otherwise, the `unit` is automatically determined based on the current value:
-    -   If the entity is a `timer` the unit will be 's' (seconds).
-    -   If the entity is a `duration`:
-        By default, the internal value in the card is expressed in seconds. If
-        you do not specify a unit, we will display the duration based on what
-        is defined in the Home Assistant entity, using a natural format (e.g.,
-        2h 32min). If you want to display the value in seconds, set the unit
-        to 's'. If you prefer a HH:MM:SS format, you can use either timer or
-        flextimer.
-    -   If the entity is a `counter`, no unit ('') will be displayed.
-    -   Otherwise, the `unit` defined in Home Assistant for the entity will be
-        used (e.g., °C, kWh, etc.).
+- If a `unit` is manually specified in the configuration, it will be used.
+- Otherwise, if `max_value` is an entity, the default unit (%) will be used.
+- Otherwise, the `unit` is automatically determined based on the current value:
+  - If the entity is a `timer` the unit will be 's' (seconds).
+  - If the entity is a `duration`:
+    By default, the internal value in the card is expressed in seconds. If
+    you do not specify a unit, we will display the duration based on what
+    is defined in the Home Assistant entity, using a natural format (e.g.,
+    2h 32min). If you want to display the value in seconds, set the unit
+    to 's'. If you prefer a HH:MM:SS format, you can use either timer or
+    flextimer.
+  - If the entity is a `counter`, no unit ('') will be displayed.
+  - Otherwise, the `unit` defined in Home Assistant for the entity will be
+    used (e.g., °C, kWh, etc.).
 
 > [!NOTE]
 >
@@ -279,12 +288,12 @@ type: custom:entity-progress-card
 unit: ABC
 ```
 
--   `°C` for temperature.
--   `kWh` for energy consumption.
--   `s` for timer
--   `timer` for timer (display HH:MM:SS without unit)
--   `flextimer` for timer (same than timer but truncate the display according to
-    the current value)
+- `°C` for temperature.
+- `kWh` for energy consumption.
+- `s` for timer
+- `timer` for timer (display HH:MM:SS without unit)
+- `flextimer` for timer (same than timer but truncate the display according to
+  the current value)
 
 > [!TIP]
 >
@@ -298,12 +307,12 @@ unit: ABC
 Defines whether a space should appear between numeric values and units, either
 following locale rules or overriding them explicitly.
 
--   `auto`: Uses locale-specific formatting rules (e.g., France → space, US → no
-    space)
--   `space`: Forces a space between number and unit (e.g., 80 %), regardless of
-    locale
--   `no-space`: Forces no space between number and unit (e.g., 80%), regardless
-    of locale
+- `auto`: Uses locale-specific formatting rules (e.g., France → space, US → no
+  space)
+- `space`: Forces a space between number and unit (e.g., 80 %), regardless of
+  locale
+- `no-space`: Forces no space between number and unit (e.g., 80%), regardless
+  of locale
 
 #### `decimal`
 
@@ -313,27 +322,27 @@ Defines the number of decimal places to display for numerical values.
 
 The `decimal` value will be determined based on the following priority:
 
--   If `decimal` is explicitly set in the YAML configuration, it is used.
--   Otherwise, if the entity has a custom `Display Precision` set in Home
-    Assistant (i.e., a value manually configured by the user and different from
-    the default), it is used.
--   Otherwise, the `default` number of decimals is selected based on the type
-    of value:
-    -   If the value represents a `timer`, the timer default is used.
-    -   If the value represents a `counter`, the counter default is used.
-    -   If the value represents a `duration`, or if the unit is one of j, d, h,
-        min, s, or ms, the duration default is used.
-    -   If the unit is `%` (the default unit), the `percentage` default is
-        used.
-    -   Otherwise, the other default is applied (for units like °C, kWh, etc.).
+- If `decimal` is explicitly set in the YAML configuration, it is used.
+- Otherwise, if the entity has a custom `Display Precision` set in Home
+  Assistant (i.e., a value manually configured by the user and different from
+  the default), it is used.
+- Otherwise, the `default` number of decimals is selected based on the type
+  of value:
+  - If the value represents a `timer`, the timer default is used.
+  - If the value represents a `counter`, the counter default is used.
+  - If the value represents a `duration`, or if the unit is one of j, d, h,
+    min, s, or ms, the duration default is used.
+  - If the unit is `%` (the default unit), the `percentage` default is
+    used.
+  - Otherwise, the other default is applied (for units like °C, kWh, etc.).
 
 _Default values:_
 
--   `decimal` = 0 for percentage (%)
--   `decimal` = 0 for timers, durations, or time-based units (seconds, minutes,
-    hours, etc.)
--   `decimal` = 0 for Counter
--   `decimal` = 2 for other unit (°C, kWh...)
+- `decimal` = 0 for percentage (%)
+- `decimal` = 0 for timers, durations, or time-based units (seconds, minutes,
+  hours, etc.)
+- `decimal` = 0 for Counter
+- `decimal` = 2 for other unit (°C, kWh...)
 
 _Example_:
 
@@ -343,9 +352,9 @@ type: custom:entity-progress-card
 decimal: 1
 ```
 
--   `1` for displaying 50.6%.
--   `0` for displaying 51%
--   `1` for displaying 20.7°C
+- `1` for displaying 50.6%.
+- `0` for displaying 51%
+- `1` for displaying 20.7°C
 
 > [!IMPORTANT]
 >
@@ -374,10 +383,10 @@ min_value: 10
 
 Suppose you are measuring the weight of a connected litter box, where:
 
--   `min_value` = 6 (the minimum weight representing an empty box, i.e., 0%).
--   `max_value` = 11 (the maximum weight representing a full box, i.e., 100%).
--   `value` = 8 (the current weight).
--   `percentage` = 40%
+- `min_value` = 6 (the minimum weight representing an empty box, i.e., 0%).
+- `max_value` = 11 (the maximum weight representing a full box, i.e., 100%).
+- `value` = 8 (the current weight).
+- `percentage` = 40%
 
 #### `max_value`
 
@@ -389,7 +398,7 @@ value must be > 0.
 
 _Default_:
 
--   `100%`
+- `100%`
 
 _Example_:
 
@@ -399,8 +408,8 @@ type: custom:entity-progress-card
 max_value: 255
 ```
 
--   LQI @ 150 (entity) with max_value @ 255 (static value -> max_value = 255)
--   A (entity_a) with max_value (entity_b)
+- LQI @ 150 (entity) with max_value @ 255 (static value -> max_value = 255)
+- A (entity_a) with max_value (entity_b)
 
 #### `max_value_attribute`
 
@@ -415,22 +424,22 @@ entity. See `attribute`.
 
 _`xyz_action`_:
 
--   `tap_action`: Defines the behavior when a user taps on the card. The action
-    could be a navigation, toggle, or any other pre-defined action.
--   `double_tap_action`: Defines the behavior when a user double-taps on the
-    card. This can be used to trigger a different action from the regular tap.
--   `hold_action`: Defines the behavior when the user holds down (long press) on
-    the card. This is often used for actions that should only be triggered with a
-    longer press.
--   `icon_tap_action`: Defines the behavior when the user taps on the icon
-    (typically an icon on a card). This action can be different from the
-    general tap_action of the card.
--   `icon_double_tap_action`: Defines the behavior when the user double-taps on
-    the icon. This can be used to trigger an alternative action from the regular
-    icon_tap_action.
--   `icon_hold_action`: Defines the behavior when the user holds down (long
-    press) on the icon. This action might be used for a different, more powerful
-    interaction compared to the regular tap or double tap.
+- `tap_action`: Defines the behavior when a user taps on the card. The action
+  could be a navigation, toggle, or any other pre-defined action.
+- `double_tap_action`: Defines the behavior when a user double-taps on the
+  card. This can be used to trigger a different action from the regular tap.
+- `hold_action`: Defines the behavior when the user holds down (long press) on
+  the card. This is often used for actions that should only be triggered with a
+  longer press.
+- `icon_tap_action`: Defines the behavior when the user taps on the icon
+  (typically an icon on a card). This action can be different from the
+  general tap_action of the card.
+- `icon_double_tap_action`: Defines the behavior when the user double-taps on
+  the icon. This can be used to trigger an alternative action from the regular
+  icon_tap_action.
+- `icon_hold_action`: Defines the behavior when the user holds down (long
+  press) on the icon. This action might be used for a different, more powerful
+  interaction compared to the regular tap or double tap.
 
 > [!NOTE]
 >
@@ -438,42 +447,41 @@ _`xyz_action`_:
 > users to switch efficiently and seamlessly to this card. All available options
 > and usage details can be found in the official Home Assistant documentation
 > for actions: <https://www.home-assistant.io/dashboards/actions/>.
->
 
 _Available actions_:
 
--   **`default`**: The default action.
--   **`more-info`**: Opens the entity's information dialog.
--   **`toggle`**: Toggles the state of the entity (e.g., turning a light on or
-    off).
--   **`perform-action`**: Executes a specific Home Assistant service call or
-    action.
--   **`navigate`**: Navigates to a specific Lovelace view (requires
-    `navigation_path`).
--   **`url`**: Opens a URL in the browser (requires `url_path`).
--   **`assist`**: Triggers a Home Assistant assistant action (like voice
-    interaction).
--   **`none`**: Disables the tap action, meaning no action will be triggered.
+- **`default`**: The default action.
+- **`more-info`**: Opens the entity's information dialog.
+- **`toggle`**: Toggles the state of the entity (e.g., turning a light on or
+  off).
+- **`perform-action`**: Executes a specific Home Assistant service call or
+  action.
+- **`navigate`**: Navigates to a specific Lovelace view (requires
+  `navigation_path`).
+- **`url`**: Opens a URL in the browser (requires `url_path`).
+- **`assist`**: Triggers a Home Assistant assistant action (like voice
+  interaction).
+- **`none`**: Disables the tap action, meaning no action will be triggered.
 
 _Options:_
 
--   `navigation_path` _path_: Lovelace path to navigate to (e.g.,
-    /lovelace/lights).
--   `url_path` _url_: URL to open when action is 'url' (e.g.,
-    <https://example.com>).
-...
+- `navigation_path` _path_: Lovelace path to navigate to (e.g.,
+  /lovelace/lights).
+- `url_path` _url_: URL to open when action is 'url' (e.g.,
+  <https://example.com>).
+  ...
 
 _Default:_
 
--   tap_action: `more-info`
--   hold_action: `none`
--   double_tap_action: `none`
--   icon_tap_action:
-    -   `toggle` if the entity is a `light`, `switch`, `fan`, `input_boolean`,
-        or `media_player`
-    -   `none` otherwise
--   icon_hold_action: `none`
--   icon_double_tap_action: `none`
+- tap_action: `more-info`
+- hold_action: `none`
+- double_tap_action: `none`
+- icon_tap_action:
+  - `toggle` if the entity is a `light`, `switch`, `fan`, `input_boolean`,
+    or `media_player`
+  - `none` otherwise
+- icon_hold_action: `none`
+- icon_double_tap_action: `none`
 
 > [!NOTE]
 >
@@ -555,10 +563,10 @@ or combine multiple in a list.
 
 _Available options_:
 
--   radius: rounds the corners of the progress bar
--   glass: adds a frosted glass effect to the progress bar
--   gradient: applies a color gradient to the progress bar
--   shimmer: adds a shimmering light animation across the bar
+- radius: rounds the corners of the progress bar
+- glass: adds a frosted glass effect to the progress bar
+- gradient: applies a color gradient to the progress bar
+- shimmer: adds a shimmering light animation across the bar
 
 _Examples_:
 
@@ -608,10 +616,10 @@ icon: mdi:grain
 
 _Order of Priority for the Icon:_
 
--   Theme/Custom Theme: The icon derived from the theme or style applied to the
-    item.
--   Icon Parameter: A custom icon specifically defined for the item.
--   Entity icon.
+- Theme/Custom Theme: The icon derived from the theme or style applied to the
+  item.
+- Icon Parameter: A custom icon specifically defined for the item.
+- Entity icon.
 
 #### `force_circular_background`
 
@@ -663,8 +671,8 @@ color: rgb(110, 65, 171)
 Determines the layout of the elements inside the card. You can choose between
 different layouts based on your visual preferences:
 
--   `horizontal`: Displays the elements horizontally, with a row layout.
--   `vertical`: Displays the elements vertically, with a column layout.
+- `horizontal`: Displays the elements horizontally, with a row layout.
+- `vertical`: Displays the elements vertically, with a column layout.
 
 _Examples:_
 
@@ -684,19 +692,19 @@ YAML.
 
 _Map definition:_
 
--   min [number] (required): The minimum value for this range.
--   max [number] (required): The maximum value for this range.
--   color [string] (\*): The color of the icon and the progress bar.
--   icon_color [string] (\*): Color specifically for the icon.
--   bar_color [string] (\*): Color specifically for the progress bar.
--   icon [string] (optional): The icon to display.
+- min [number] (required): The minimum value for this range.
+- max [number] (required): The maximum value for this range.
+- color [string] (\*): The color of the icon and the progress bar.
+- icon_color [string] (\*): Color specifically for the icon.
+- bar_color [string] (\*): Color specifically for the progress bar.
+- icon [string] (optional): The icon to display.
 
 (\*): each object in the custom_theme list must contain at least one of this
 following color-related keys.
 
 _Order of Priority for the Icon:_
 
--   see [`icon`](#icon) parameter.
+- see [`icon`](#icon) parameter.
 
 _Example_:
 
@@ -790,8 +798,8 @@ percentage), which is the standard use case for timers.
 
 _default value_:
 
--   If the entity is a `timer` the `reverse` will be `true`
--   Otherwise, the `reverse` will be `false`
+- If the entity is a `timer` the `reverse` will be `true`
+- Otherwise, the `reverse` will be `false`
 
 _Example_:
 
@@ -814,8 +822,8 @@ This is especially useful for timers to visually represent the remaining time.
 
 _default value_:
 
--   If the entity is a `timer` the `bar_orientation` will be 'rtl'
--   Otherwise, the `bar_orientation` will be 'ltr'
+- If the entity is a `timer` the `bar_orientation` will be 'rtl'
+- Otherwise, the `bar_orientation` will be 'ltr'
 
 _Example_:
 
@@ -842,11 +850,11 @@ Defines which elements should be hidden in the card.
 
 The list can contain any of the following elments:
 
--   `icon`: Hides the entity's icon.
--   `name`: Hides the entity's name.
--   `value`: Hides the current value.
--   `secondary_info`: Hides secondary information.
--   `progress_bar`: Hides the visual progress bar.
+- `icon`: Hides the entity's icon.
+- `name`: Hides the entity's name.
+- `value`: Hides the current value.
+- `secondary_info`: Hides secondary information.
+- `progress_bar`: Hides the visual progress bar.
 
 _Example_:
 
@@ -898,7 +906,7 @@ badge_icon: >-
 
 > [!NOTE]
 >
-> If the  returns nothing (i.e., empty string or None), the badge will
+> If the returns nothing (i.e., empty string or None), the badge will
 > not be displayed.
 
 #### `badge_color` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#badge_color-)
@@ -934,9 +942,9 @@ information based on sensor states or logic.
 
 _Useful for adding_:
 
--   Supplementary sensor data
--   Conditional status messages
--   Inline styling (colors, emphasis, etc.)
+- Supplementary sensor data
+- Conditional status messages
+- Inline styling (colors, emphasis, etc.)
 
 _Example_:
 
@@ -953,8 +961,8 @@ name_info: >-
 
 > [!NOTE]
 >
-> -   This field supports HTML for advanced formatting.
-> -   If the template evaluates to an empty string, nothing will be displayed.
+> - This field supports HTML for advanced formatting.
+> - If the template evaluates to an empty string, nothing will be displayed.
 
 #### `custom_info` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#custom_info-)
 
@@ -966,9 +974,9 @@ information based on sensor states or logic.
 
 _Useful for adding_:
 
--   Supplementary sensor data
--   Conditional status messages
--   Inline styling (colors, emphasis, etc.)
+- Supplementary sensor data
+- Conditional status messages
+- Inline styling (colors, emphasis, etc.)
 
 > [!TIP]
 >
@@ -994,8 +1002,8 @@ custom_info: >-
 
 > [!NOTE]
 >
-> -   This field supports HTML for advanced formatting.
-> -   If the template evaluates to an empty string, nothing will be displayed.
+> - This field supports HTML for advanced formatting.
+> - If the template evaluates to an empty string, nothing will be displayed.
 
 #### `state_content` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#state_content-)
 
@@ -1007,17 +1015,17 @@ list of string items. Default depends on the entity domain.
 
 _Behavior_:
 
--   If `state_content` is defined, the card will attempt to use the first listed
-    attribute.
--   If the attribute does not exist on the entity, `unknown` will be displayed
-    immediately, and the card will check the next attributes.
+- If `state_content` is defined, the card will attempt to use the first listed
+  attribute.
+- If the attribute does not exist on the entity, `unknown` will be displayed
+  immediately, and the card will check the next attributes.
 
 _Accepted values_:
 
--   state — Displays the entity's main state.
--   current_position — Displays the current position attribute (commonly used
-    for covers, blinds, etc.).
--   Other custom attributes from the entity can also be listed.
+- state — Displays the entity's main state.
+- current_position — Displays the current position attribute (commonly used
+  for covers, blinds, etc.).
+- Other custom attributes from the entity can also be listed.
 
 > [!TIP]
 >
@@ -1040,12 +1048,13 @@ state_content:
 
 > [!NOTE]
 >
-> -   The selected attribute is shown before the main numerical display on the
->     card.
--   If an attribute listed does not exist, the card immediately displays
-    unknown.
--   This feature is useful for adding additional context (e.g., position,
-    status...) to the main progress value.
+> - The selected attribute is shown before the main numerical display on the
+>   card.
+
+- If an attribute listed does not exist, the card immediately displays
+  unknown.
+- This feature is useful for adding additional context (e.g., position,
+  status...) to the main progress value.
 
 #### `frameless` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#frameless-)
 
@@ -1057,12 +1066,12 @@ be embedded in other designs without visual interference.
 
 _Compatibility_:
 
-| **Card**                 | **Compatible**        | **Notes**                                                                                          |
-| :----------------------- | :-------------------- | :------------------------------------------------------------------------------------------------- |
-| `entities`               | ✅ Yes                | Automatically detected and styled. No need to set `frameless`.                                     |
-| `vertical-stack-in-card` | ✅ Yes                | Automatically detected and styled. No need to set `frameless`.                                     |
-| `vertical-stack`         | ✅ Yes                | Rendered with a frame by default — use `frameless` to remove it if desired.                        |
-| `horizontal-stack`       | ⚠️ Yes, with caveats  | Only works reliably in Masonry view. Rendered with a frame by default — use `frameless` if needed. |
+| **Card**                 | **Compatible**       | **Notes**                                                                                          |
+| :----------------------- | :------------------- | :------------------------------------------------------------------------------------------------- |
+| `entities`               | ✅ Yes               | Automatically detected and styled. No need to set `frameless`.                                     |
+| `vertical-stack-in-card` | ✅ Yes               | Automatically detected and styled. No need to set `frameless`.                                     |
+| `vertical-stack`         | ✅ Yes               | Rendered with a frame by default — use `frameless` to remove it if desired.                        |
+| `horizontal-stack`       | ⚠️ Yes, with caveats | Only works reliably in Masonry view. Rendered with a frame by default — use `frameless` if needed. |
 
 _Example_:
 
@@ -1084,6 +1093,26 @@ _Example_:
 type: custom:entity-progress-card
 entity: sensor.cpu_usage
 marginless: true
+```
+
+
+#### `height` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#min-width-)
+
+> **`height`** string (optional)
+
+Sets the height (e.g., 120px, 10em, 30%) for the card.
+Useful for ensuring consistent layout in horizontal stacks or grids.
+
+> [!NOTE]
+>
+> If the main objective is to reduce the size, test the `marginless` parameter before adjusting the `height`.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.temperature
+height: 140px
 ```
 
 #### `min_width` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#min-width-)
@@ -1128,29 +1157,29 @@ the current state at a glance.
 
 _Map definition_:
 
--   `high` (number): The upper value where the bar will start indicating a high
-    zone (0–100).
--   `high_color` (string): The CSS color used for the high watermark zone (can
-    be a name or hex).
--   `low` (number): The lower value where the bar starts highlighting a low zone
-    (0–100).
--   `low_color` (string): The CSS color used for the low watermark zone.
--   `type` (string): Defines the style of the watermark overlay.
-    -   `blended` (default): A subtle colored overlay that merges with the
-        bar’s colors for a more integrated look.
-    -   `area`: A soft transparent shape placed over the bar, without blending
-        into the bar's colors.
-    -   `striped`: Diagonal stripes for a patterned effect.
-    -   `triangle`: Triangle shapes as a watermark.
-    -   `round`: Rounded shapes applied as a watermark.
-    -   `line`: Vertical lines pattern (like a hatch effect).
--   `line_size` (string): Defines the thickness of the lines when the watermark
-    type is 'line' (e.g., "3px").
--   `opacity` (number): Adjusts the transparency of the watermark overlay (from
-    0 = fully transparent to 1 = fully opaque).
--   `disable_low` (boolean): If set to true, disables the low watermark display.
--   `disable_high` (boolean): If set to true, disables the high watermark
-    display.
+- `high` (number): The upper value where the bar will start indicating a high
+  zone (0–100).
+- `high_color` (string): The CSS color used for the high watermark zone (can
+  be a name or hex).
+- `low` (number): The lower value where the bar starts highlighting a low zone
+  (0–100).
+- `low_color` (string): The CSS color used for the low watermark zone.
+- `type` (string): Defines the style of the watermark overlay.
+  - `blended` (default): A subtle colored overlay that merges with the
+    bar’s colors for a more integrated look.
+  - `area`: A soft transparent shape placed over the bar, without blending
+    into the bar's colors.
+  - `striped`: Diagonal stripes for a patterned effect.
+  - `triangle`: Triangle shapes as a watermark.
+  - `round`: Rounded shapes applied as a watermark.
+  - `line`: Vertical lines pattern (like a hatch effect).
+- `line_size` (string): Defines the thickness of the lines when the watermark
+  type is 'line' (e.g., "3px").
+- `opacity` (number): Adjusts the transparency of the watermark overlay (from
+  0 = fully transparent to 1 = fully opaque).
+- `disable_low` (boolean): If set to true, disables the low watermark display.
+- `disable_high` (boolean): If set to true, disables the high watermark
+  display.
 
 _Example_:
 
@@ -1171,15 +1200,16 @@ thresholds depending on the entity’s native unit.
 </details>
 
 <a id="standard-card-why-use-this"></a>
+
 ### 🧠 Why Use This Card?
 
 The Standard Lovelace Entity Progress Card is ideal for situations where you need a straightforward, percentage-based progress visualization. It's best used when:
 
-*   You want to display the progress of a single entity.
-*   The entity's value directly translates to a percentage (e.g., battery level, completion percentage).
-*   You need seamless integration with Home Assistant's modern "Tile" or "Mushroom" UI.
-*   You appreciate dynamic theme adjustments (like battery or temperature themes) without complex templating.
-*   You want interactive elements like `tap_action` for more-info or toggling.
+- You want to display the progress of a single entity.
+- The entity's value directly translates to a percentage (e.g., battery level, completion percentage).
+- You need seamless integration with Home Assistant's modern "Tile" or "Mushroom" UI.
+- You appreciate dynamic theme adjustments (like battery or temperature themes) without complex templating.
+- You want interactive elements like `tap_action` for more-info or toggling.
 
 Essentially, if you need a clear, visually appealing progress bar that's easy to configure and fits well into the Home Assistant ecosystem, this is your go-to card.
 
@@ -1188,6 +1218,7 @@ Essentially, if you need a clear, visually appealing progress bar that's easy to
 Here are some examples of how to use the Standard Lovelace Entity Progress Card:
 
 <a id="standard-card-example-basic"></a>
+
 <details>
 <summary><strong>Basic Usage (YAML Example)</strong></summary>
 
@@ -1208,6 +1239,7 @@ icon_tap_action:
 </details>
 
 <a id="standard-card-example-grid-vertical"></a>
+
 <details>
 <summary><strong>Grid Option and Vertical Layout Example</strong></summary>
 
@@ -1232,27 +1264,29 @@ grid_options:
 </details>
 
 <a id="standard-card-percentage-calculation"></a>
+
 ## Percentage Calculation
 
 This card automatically calculates progress percentages based on the current
 entity, depending on the type of input it receives:
 
--   Timer:
-    If the value represents a timer, the range (min, max) and the current value
-    are taken directly from the timer entity. Attribute will not be used.
+- Timer:
+  If the value represents a timer, the range (min, max) and the current value
+  are taken directly from the timer entity. Attribute will not be used.
 
--   Counter or Number value:
-    If the value is a counter or a Number ({ value, min, max }), it uses the
-    provided value directly from the entity. The max value can also come from
-    another entity by using max_value. Attribute will not be used.
+- Counter or Number value:
+  If the value is a counter or a Number ({ value, min, max }), it uses the
+  provided value directly from the entity. The max value can also come from
+  another entity by using max_value. Attribute will not be used.
 
--   Other entity:
-    If the entity value is a number, it’s treated as the current value. The min
-    and max boundaries are taken from default value (0/100) or configuration or
-    external entities depending on the setup. If max_value is an entity, its
-    current value is used.
+- Other entity:
+  If the entity value is a number, it’s treated as the current value. The min
+  and max boundaries are taken from default value (0/100) or configuration or
+  external entities depending on the setup. If max_value is an entity, its
+  current value is used.
 
 <a id="standard-card-examples"></a>
+
 ### Examples
 
 > [!TIP]
@@ -1272,6 +1306,7 @@ entity, depending on the type of input it receives:
 > 📌 card_mod ([GitHub link](https://github.com/thomasloven/lovelace-card-mod))
 
 <a id="standard-card-example-battery-dashboard"></a>
+
 <details>
 <summary><strong>Battery dashboard Example</strong></summary>
 
@@ -1306,6 +1341,7 @@ sort:
 </details>
 
 <a id="standard-card-example-litter-box"></a>
+
 <details>
 <summary><strong>Litter box Example</strong></summary>
 
@@ -1323,9 +1359,11 @@ grid_options:
   columns: 6
   rows: 1
 ```
+
 </details>
 
 <a id="standard-card-example-themes"></a>
+
 <details>
 <summary><strong>Themes Examples</strong></summary>
 
@@ -1431,21 +1469,21 @@ We can use `min_value` and `max_value` to define the range of values we want
 to represent with our color gradient. We use predefined intervals, each
 associated with a specific color:
 
-| **Temperature Range (°C / °F)** | **Color Variable**         | **Description**   |
-| :------------------------------ | :------------------------- | :---------------- |
-| -50°C – -30°C / -58°F – -22°F   | `var(--deep-purple-color)` | Extremely cold    |
-| -30°C – -15°C / -22°F – 5°F     | `var(--dark-blue-color)`   | Very cold         |
-| -15°C – -2°C / 5°F – 28.4°F     | `var(--blue-color)`        | Cold              |
-| -2°C – 2°C / 28.4°F – 35.6°F    | `var(--light-blue-color)`  | Chilly            |
-| 2°C – 8°C / 35.6°F – 46.4°F     | `var(--cyan-color)`        | Cool              |
-| 8°C – 16°C / 46.4°F – 60.8°F    | `var(--teal-color)`        | Mild              |
-| 16°C – 18°C / 60.8°F – 64.4°F   | `var(--green-teal-color)`  | Slightly warm     |
-| 18°C – 20°C / 64.4°F – 68°F     | `var(--light-green-color)` | Comfortable       |
-| 20°C – 25°C / 68°F – 77°F       | `var(--success-color)`     | Optimal           |
-| 25°C – 27°C / 77°F – 80.6°F     | `var(--yellow-color)`      | Warm              |
-| 27°C – 29°C / 80.6°F – 84.2°F   | `var(--amber-color)`       | Hot               |
-| 29°C – 34°C / 84.2°F – 93.2°F   | `var(--deep-orange-color)` | Very hot          |
-| 34°C – 50°C / 93.2°F – 122°F    | `var(--red-color)`         | Extremely hot     |
+| **Temperature Range (°C / °F)** | **Color Variable**         | **Description** |
+| :------------------------------ | :------------------------- | :-------------- |
+| -50°C – -30°C / -58°F – -22°F   | `var(--deep-purple-color)` | Extremely cold  |
+| -30°C – -15°C / -22°F – 5°F     | `var(--dark-blue-color)`   | Very cold       |
+| -15°C – -2°C / 5°F – 28.4°F     | `var(--blue-color)`        | Cold            |
+| -2°C – 2°C / 28.4°F – 35.6°F    | `var(--light-blue-color)`  | Chilly          |
+| 2°C – 8°C / 35.6°F – 46.4°F     | `var(--cyan-color)`        | Cool            |
+| 8°C – 16°C / 46.4°F – 60.8°F    | `var(--teal-color)`        | Mild            |
+| 16°C – 18°C / 60.8°F – 64.4°F   | `var(--green-teal-color)`  | Slightly warm   |
+| 18°C – 20°C / 64.4°F – 68°F     | `var(--light-green-color)` | Comfortable     |
+| 20°C – 25°C / 68°F – 77°F       | `var(--success-color)`     | Optimal         |
+| 25°C – 27°C / 77°F – 80.6°F     | `var(--yellow-color)`      | Warm            |
+| 27°C – 29°C / 80.6°F – 84.2°F   | `var(--amber-color)`       | Hot             |
+| 29°C – 34°C / 84.2°F – 93.2°F   | `var(--deep-orange-color)` | Very hot        |
+| 34°C – 50°C / 93.2°F – 122°F    | `var(--red-color)`         | Extremely hot   |
 
 > [!IMPORTANT]
 >
@@ -1519,7 +1557,7 @@ The ranges and their corresponding colors are as follows:
 > [!IMPORTANT]
 >
 > The information provided in this HA card is based on thresholds from the
-> following [source](<https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element>).
+> following [source](https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element).
 > This color code is for informational purposes only and should not be taken as
 > professional advice or a standard to follow. It is crucial to consult the
 > device's official documentation or current standards for the most accurate and
@@ -1564,7 +1602,7 @@ The ranges and their corresponding colors are as follows:
 > [!IMPORTANT]
 >
 > The information provided in this HA card is based on thresholds from the
-> following [source](<https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element>).
+> following [source](https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element).
 > This color code is for informational purposes only and should not be taken as
 > professional advice or a standard to follow. It is crucial to consult the
 > device's official documentation or current standards for the most accurate and
@@ -1580,6 +1618,7 @@ clear and intuitive display of PM2.5 pollution levels.
 </details>
 
 <a id="standard-card-example-card-mod-animation"></a>
+
 <details>
 <summary><strong>card_mod / animation Example</strong></summary>
 
@@ -1614,9 +1653,11 @@ card_mod:
 
 > [!TIP]
 > We expose the `.icon` and `.shape` to properly animate the card.
+
 </details>
 
 <a id="standard-card-example-vertical-stack"></a>
+
 <details>
 <summary><strong>vertical-stack-in-card Example</strong></summary>
 
@@ -1664,6 +1705,7 @@ cards:
 </details>
 
 <a id="advanced-usage"></a>
+
 ## 🗒️ Advanced usage for Standard Card
 
 <details>
@@ -1679,9 +1721,9 @@ The goal here is to simplify the display of important information related to you
 
 Before configuring your card, it's essential to research the specific entities for your washing machine integration. To do this, you will need to explore Home Assistant's developer tools to pinpoint the necessary information. Let’s take this personal integration as an example:
 
--   **`sensor.washing_machine_operation_state`**: This entity is very specific to my washing machine brand and the **Home Connect** integration that comes with it. It tracks the machine's operation state (running, paused, etc.).
--   **`sensor.washing_machine_progress_current_percentage`**: This is a custom sensor defined in `configuration.yaml`. The integration only reports a percentage when the machine is running. The template sets it to 0% when the integration reports 'unavailable'.
--   **`sensor.washing_machine_remaining_program_time`**: This entity shows the estimated time left until the program finishes. However, the entity's name doesn't exactly match what the integration provides.
+- **`sensor.washing_machine_operation_state`**: This entity is very specific to my washing machine brand and the **Home Connect** integration that comes with it. It tracks the machine's operation state (running, paused, etc.).
+- **`sensor.washing_machine_progress_current_percentage`**: This is a custom sensor defined in `configuration.yaml`. The integration only reports a percentage when the machine is running. The template sets it to 0% when the integration reports 'unavailable'.
+- **`sensor.washing_machine_remaining_program_time`**: This entity shows the estimated time left until the program finishes. However, the entity's name doesn't exactly match what the integration provides.
 
 These entities are crucial for getting a complete overview of the washing machine’s status, but they vary significantly depending on the brand and integration.
 
@@ -1716,9 +1758,9 @@ name_info: >-
 
 In this example, the card displays:
 
--   The progress percentage
--   The operational status
--   The remaining time
+- The progress percentage
+- The operational status
+- The remaining time
 
 #### Conclusion
 
@@ -1727,6 +1769,7 @@ flexibility for adapting the card to the specifics of each washing machine.
 With this approach, you can create a single card that works with different
 integrations while displaying relevant information in a clear and consistent
 manner.
+
 </details>
 
 <details>
@@ -1736,9 +1779,9 @@ manner.
 
 We want to monitor a process and we have entities for:
 
--   start time: states.sensor.print_puppy_start_time (time)
--   finish time: states.sensor.print_puppy_end_time (time)
--   and remaining time: sensor.print_puppy_remaining_time (min)
+- start time: states.sensor.print_puppy_start_time (time)
+- finish time: states.sensor.print_puppy_end_time (time)
+- and remaining time: sensor.print_puppy_remaining_time (min)
 
 Our goal is to display the percentage of remaining time and show the remaining time
 in minutes. Unfortunately, the standard usage of this card cannot achieve what we
@@ -1752,9 +1795,9 @@ $$P_{\text{remain}} = \frac{t_{\text{remain}}}{\Delta T} \times 100$$
 
 Where:
 
--   $P_{\text{remain}}$: Percentage of remaining time (the expected result).
--   $t_{\text{remain}}$: Remaining time (in minutes).
--   $\Delta T$: Total duration of the task (in minutes).
+- $P_{\text{remain}}$: Percentage of remaining time (the expected result).
+- $t_{\text{remain}}$: Remaining time (in minutes).
+- $\Delta T$: Total duration of the task (in minutes).
 
 The good news is that we can use an entity to define the `max_value` and dynamically
 calculate the percentage. Therefore, we need to find a way to determine $\Delta T$.
@@ -1764,39 +1807,39 @@ calculate the percentage. Therefore, we need to find a way to determine $\Delta 
 We'll use a Helper (Number) to handle this calculation. It’s simple to define and can
 be set up according to various needs.
 
--   Go to `settings` > `Devices and services` > `Helpers` > `Create Helper` >
-    `Template` > `Template a number`
--   Define the template to do the delta automatically
+- Go to `settings` > `Devices and services` > `Helpers` > `Create Helper` >
+  `Template` > `Template a number`
+- Define the template to do the delta automatically
 
-    -   Choose a name and define your state template:
-
-        ```yaml
-        {% set start_time = states.sensor.print_puppy_start_time.state %}
-        {% set end_time = states.sensor.print_puppy_end_time.state %}
-        {% if start_time and end_time %}
-          {{ ((as_datetime(end_time) - as_datetime(start_time)).days * 1440) + ((as_datetime(end_time) - as_datetime(start_time)).seconds / 60) | int }}
-        {% else %}
-          unknown
-        {% endif %}
-        ```
-
-        > Check your syntax. Here, we are using entity values; therefore, we
-        > access the value through xxx.state. Sometimes, the value will be an
-        > attribute.
-
-    -   Set the minimum, maximum, step value, and unit accordingly.
-    -   Check the current value to ensure it’s working properly.
-
--   Define the card:
+  - Choose a name and define your state template:
 
     ```yaml
-    type: custom:entity-progress-card
-    entity: sensor.print_puppy_remaining_time
-    max_value: number.totaldurationofthetask
-    decimal: 0
-    bar_color: green
-    icon: mdi:clock-end
+    {% set start_time = states.sensor.print_puppy_start_time.state %}
+    {% set end_time = states.sensor.print_puppy_end_time.state %}
+    {% if start_time and end_time %}
+      {{ ((as_datetime(end_time) - as_datetime(start_time)).days * 1440) + ((as_datetime(end_time) - as_datetime(start_time)).seconds / 60) | int }}
+    {% else %}
+      unknown
+    {% endif %}
     ```
+
+    > Check your syntax. Here, we are using entity values; therefore, we
+    > access the value through xxx.state. Sometimes, the value will be an
+    > attribute.
+
+  - Set the minimum, maximum, step value, and unit accordingly.
+  - Check the current value to ensure it’s working properly.
+
+- Define the card:
+
+  ```yaml
+  type: custom:entity-progress-card
+  entity: sensor.print_puppy_remaining_time
+  max_value: number.totaldurationofthetask
+  decimal: 0
+  bar_color: green
+  icon: mdi:clock-end
+  ```
 
 #### Conclusion
 
@@ -1806,6 +1849,7 @@ dynamic and intuitive way to monitor progress, ensuring that the displayed
 percentage accurately reflects the time remaining regardless of the task’s total
 duration. This solution effectively extend our card usage vision, and enhances
 the user experience.
+
 </details>
 
 <details>
@@ -1838,54 +1882,54 @@ commands.
 
 We will:
 
--   Create a custom command_line sensor that calculates the number of days until
-    the certificate expires.
--   Setup the card with the new sensor.
--   Add dynamic color coding to indicate urgency (red when close to expiry, green
-    when safe).
+- Create a custom command_line sensor that calculates the number of days until
+  the certificate expires.
+- Setup the card with the new sensor.
+- Add dynamic color coding to indicate urgency (red when close to expiry, green
+  when safe).
 
 #### Implementation
 
--   Create the command_line sensor, add this to your configuration.yaml (or
-    sensors.yaml if split):
+- Create the command_line sensor, add this to your configuration.yaml (or
+  sensors.yaml if split):
 
-    ```yaml
-    sensor:
-      - platform: command_line
-        name: "SSL Certificate Expiry"
-        command: >
-          echo $(( ($(date -u -d "$(curl -vI --insecure https://<hostname>:<port> 2>&1 | grep -i 'expire date' | awk -F': ' '{print $2}' | sed -E 's/Jan/01/; s/Feb/02/; s/Mar/03/; s/Apr/04/; s/May/05/; s/Jun/06/; s/Jul/07/; s/Aug/08/; s/Sep/09/; s/Oct/10/; s/Nov/11/; s/Dec/12/' | awk '{print $4"-"$1"-"$2" "$3}')" +%s) - $(date +%s) ) / 86400 ))
-        unit_of_measurement: "days"
-        scan_interval: 3600
-    ```
+  ```yaml
+  sensor:
+    - platform: command_line
+      name: 'SSL Certificate Expiry'
+      command: >
+        echo $(( ($(date -u -d "$(curl -vI --insecure https://<hostname>:<port> 2>&1 | grep -i 'expire date' | awk -F': ' '{print $2}' | sed -E 's/Jan/01/; s/Feb/02/; s/Mar/03/; s/Apr/04/; s/May/05/; s/Jun/06/; s/Jul/07/; s/Aug/08/; s/Sep/09/; s/Oct/10/; s/Nov/11/; s/Dec/12/' | awk '{print $4"-"$1"-"$2" "$3}')" +%s) - $(date +%s) ) / 86400 ))
+      unit_of_measurement: 'days'
+      scan_interval: 3600
+  ```
 
-    You'll need to adjust this part to match your specific environment.
+  You'll need to adjust this part to match your specific environment.
 
--   Add this card to your Lovelace dashboard:
+- Add this card to your Lovelace dashboard:
 
-    ```yaml
-    type: custom:entity-progress-card
-    entity: sensor.ssl_certificate_expiry
-    name: SSL Certificate Expiry
-    icon: mdi:certificate
-    decimal: 0
-    min_value: 0
-    max_value: 90
-    bar_orientation: rtl
-    custom_theme:
-      - min: 0
-        max: 10
-        color: red
-      - min: 10
-        max: 20
-        color: yellow-color
-      - min: 20
-        max: 90
-        color: green
-    grid_options:
-      columns: 12
-      rows: 1
-    ```
+  ```yaml
+  type: custom:entity-progress-card
+  entity: sensor.ssl_certificate_expiry
+  name: SSL Certificate Expiry
+  icon: mdi:certificate
+  decimal: 0
+  min_value: 0
+  max_value: 90
+  bar_orientation: rtl
+  custom_theme:
+    - min: 0
+      max: 10
+      color: red
+    - min: 10
+      max: 20
+      color: yellow-color
+    - min: 20
+      max: 90
+      color: green
+  grid_options:
+    columns: 12
+    rows: 1
+  ```
 
 #### Conclusion
 
@@ -1909,25 +1953,25 @@ implementation.
 With `cert_expiry` entity we can define a template helper (number) to generate a
 countdown with :
 
--   create the template helper
--   define a name (number.cert_expiry_entity_id)
--   define state template
+- create the template helper
+- define a name (number.cert_expiry_entity_id)
+- define state template
 
-    ```yaml
-    {% set target = states('sensor.<cert_expiry_entity_id>') %}
-    {% if target not in ['unknown', 'unavailable'] %}
-      {% set target_ts = as_timestamp(target) %}
-      {% set now_ts = as_timestamp(now()) %}
-      {% set diff = (target_ts - now_ts) / 86400 %}
-      {{ diff | round(1) if diff > 0 else 0 }}
-    {% else %}
-      unknown
-    {% endif %}
-    ```
+  ```yaml
+  {% set target = states('sensor.<cert_expiry_entity_id>') %}
+  {% if target not in ['unknown', 'unavailable'] %}
+    {% set target_ts = as_timestamp(target) %}
+    {% set now_ts = as_timestamp(now()) %}
+    {% set diff = (target_ts - now_ts) / 86400 %}
+    {{ diff | round(1) if diff > 0 else 0 }}
+  {% else %}
+    unknown
+  {% endif %}
+  ```
 
--   define min/max value: 0 and 90
--   step: 1
--   unit_of_measurement: days
+- define min/max value: 0 and 90
+- step: 1
+- unit_of_measurement: days
 
 Create the card:
 
@@ -1948,7 +1992,7 @@ custom_theme:
   - min: 20
     max: 90
     color: green
-unit: "%"
+unit: '%'
 state_content: state
 grid_options:
   columns: 12
@@ -1959,17 +2003,18 @@ Now you have a working solution that avoids operating system dependencies and is
 more efficient within Home Assistant's ecosystem. Obviously, in the case of a
 Let's Encrypt certificate, it's recommended to :
 
--   have a renewal process in place
--   add a trigger to generate an alert before the certificate expires
+- have a renewal process in place
+- add a trigger to generate an alert before the certificate expires
 
 This topics are beyond the scope of this guide.
+
 </details>
 
 ---
 
-
 <a id="lovelace-entity-progress-card-template"></a>
-## Lovelace Entity Progress Card Template  [🔼 Back to top](#top)
+
+## Lovelace Entity Progress Card Template [🔼 Back to top](#top)
 
 This card is designed to handle more advanced use cases that aren't fully
 supported by the base card. It avoids the need for custom helpers by allowing
@@ -1982,6 +2027,7 @@ entities with a customizable progress bar, using dynamic content and calculation
 defined within your sensors or templates.
 
 <a id="template-jinja-variables-supported-options"></a>
+
 <details>
 <summary><strong>🛠️ Available Jinja Variables and Supported Options</strong></summary>
 
@@ -2015,18 +2061,21 @@ The following options remain fully compatible with this new card:
 | `reverse_secondary_info_row` | Reverses the order of the progress bar and the secondary info when using a horizontal layout |
 | `center_zero`                | Center the progress bar at zero for visualizing values that range around zero                |
 | `min_width`                  | Set a minimum width for the template to ensure consistent layout                             |
+
 </details>
 
 <a id="template-card-why-use-this"></a>
+
 ### 🧠 Why Use This Card?
 
 This card is ideal for situations where:
 
--   You want to show calculated progress (e.g., level, usage, battery life)
--   You need to apply dynamic logic or math modeling directly in the card
--   The base card doesn't offer the required level of customization
+- You want to show calculated progress (e.g., level, usage, battery life)
+- You need to apply dynamic logic or math modeling directly in the card
+- The base card doesn't offer the required level of customization
 
 <a id="template-card-example-basic"></a>
+
 ### 👉 Example
 
 ```yaml
@@ -2078,7 +2127,9 @@ tap_action:
 ```
 
 <a id="template-card-example-follow-the-sun"></a>
+
 ### Advanced usage
+
 <details>
 <summary>Follow the sun</summary>
 
@@ -2094,25 +2145,25 @@ on when the next sun transition will occur, and how far along we are toward it.
 This card uses custom:entity-progress-card-template and dynamic Jinja2 templates
 to show:
 
--   📛 name
-    Dynamically shows:
-    -   Next Rise: HH:MM if sunrise is next,
-    -   Next Setting: HH:MM if sunset is next,
-    -   or a fallback if sun data isn't available.
--   🎨 bar_color & color
-    -   Bar turns orange when the sun is above the horizon.
-    -   Turns light gray / invisible when it's below the horizon.
--   📄 secondary
-    Displays a live countdown (e.g., in 02:34:12) until the next sun event,
-    accounting for whether sunrise or sunset is next.
--   📊 percent
-    Calculates progress between the last and the next sun event.
-    -   For example, at 50%: you're halfway between yesterday's and today's
-        sunrise.
-    -   Or halfway between yesterday's and today's sunset, depending on current
-        time.
--   🖱️ tap_action
-    Opens the standard more-info view for the sun.sun entity when tapped.
+- 📛 name
+  Dynamically shows:
+  - Next Rise: HH:MM if sunrise is next,
+  - Next Setting: HH:MM if sunset is next,
+  - or a fallback if sun data isn't available.
+- 🎨 bar_color & color
+  - Bar turns orange when the sun is above the horizon.
+  - Turns light gray / invisible when it's below the horizon.
+- 📄 secondary
+  Displays a live countdown (e.g., in 02:34:12) until the next sun event,
+  accounting for whether sunrise or sunset is next.
+- 📊 percent
+  Calculates progress between the last and the next sun event.
+  - For example, at 50%: you're halfway between yesterday's and today's
+    sunrise.
+  - Or halfway between yesterday's and today's sunset, depending on current
+    time.
+- 🖱️ tap_action
+  Opens the standard more-info view for the sun.sun entity when tapped.
 
 ```yaml
 type: custom:entity-progress-card-template
@@ -2210,6 +2261,7 @@ track solar cycles from your dashboard.
 ---
 
 <a id="entity-progress-badge"></a>
+
 ## Entity Progress Badge [🔼 Back to top](#top)
 
 This badge is designed to display the progress of an entity in a compact and
@@ -2225,41 +2277,45 @@ It’s perfect for dashboards or views where space is limited but you still want
 an informative and dynamic progress indicator.
 
 <a id="badge-supported-options"></a>
+
 <details>
 <summary><strong>⚙️ Supported Options and Configuration</strong></summary>
 
-| Option              | Description                                               |
-| :------------------ | :-------------------------------------------------------- |
-| `entity`            | The entity to display (e.g., `fan.kitchen`)               |
-| `name`              | Custom name to display (e.g., `"kitchen"`)                |
-| `unit`              | Unit to show next to the value (e.g., `"%"`)              |
-| `decimal`           | Number of decimal places to display (e.g., `1`)           |
-| `min_value`         | Minimum value for the progress calculation or scale (e.g., `0`) |
+| Option              | Description                                                       |
+| :------------------ | :---------------------------------------------------------------- |
+| `entity`            | The entity to display (e.g., `fan.kitchen`)                       |
+| `name`              | Custom name to display (e.g., `"kitchen"`)                        |
+| `unit`              | Unit to show next to the value (e.g., `"%"`)                      |
+| `decimal`           | Number of decimal places to display (e.g., `1`)                   |
+| `min_value`         | Minimum value for the progress calculation or scale (e.g., `0`)   |
 | `max_value`         | Maximum value for the progress calculation or scale (e.g., `100`) |
-| `hide`              | List of elements to hide (e.g., `["icon", "value"...]`)   |
-| `theme`             | Theme to apply (e.g., `"light"`)                          |
-| `icon`              | Icon to display on the badge (e.g., `mdi:account-group`)  |
-| `tap_action`        | Define an action on badge tap                               |
-| `hold_action`       | Define an action on long press                              |
-| `double_tap_action` | Define an action on double tap                              |
-| `bar_orientation`   | Orientation of the progress bar (e.g., ltr, rtl)          |
-| `layout`            | Overall badge layout (e.g., icon + bar, icon only)        |
-| `frameless`         | Remove border and background for a cleaner appearance     |
-| `min_width`         | Set a minimum width for the template to ensure consistent layout |
+| `hide`              | List of elements to hide (e.g., `["icon", "value"...]`)           |
+| `theme`             | Theme to apply (e.g., `"light"`)                                  |
+| `icon`              | Icon to display on the badge (e.g., `mdi:account-group`)          |
+| `tap_action`        | Define an action on badge tap                                     |
+| `hold_action`       | Define an action on long press                                    |
+| `double_tap_action` | Define an action on double tap                                    |
+| `bar_orientation`   | Orientation of the progress bar (e.g., ltr, rtl)                  |
+| `layout`            | Overall badge layout (e.g., icon + bar, icon only)                |
+| `frameless`         | Remove border and background for a cleaner appearance             |
+| `min_width`         | Set a minimum width for the template to ensure consistent layout  |
 
 We use the same syntax as the card.
+
 </details>
 
 <a id="badge-card-why-use-this"></a>
+
 ### 🧠 Why Use This Badge?
 
 Use this badge when:
 
--   You need to embed progress directly into a badge that’s easy to read
--   You want flexible customization with dynamic colors
--   The default badge doesn’t offer enough flexibility or features
+- You need to embed progress directly into a badge that’s easy to read
+- You want flexible customization with dynamic colors
+- The default badge doesn’t offer enough flexibility or features
 
 <a id="badge-card-example-basic"></a>
+
 ### 👉 Example
 
 ```yaml
@@ -2273,6 +2329,7 @@ icon: mdi:air-conditioner
 ---
 
 <a id="theme"></a>
+
 ## 🎨 Theme [🔼 Back to top](#top)
 
 ### Token color
@@ -2352,6 +2409,7 @@ Once set, the progress bar background will reflect the new color consistently
 across all cards using this variable.
 
 <a id="language-number-support"></a>
+
 ## 🌍 Language & Number Support [🔼 Back to top](#top)
 
 🌟 Our goal is to make this card a seamless and intuitive tool for users
@@ -2365,32 +2423,32 @@ optimal consistency and localization.
 
 This card supports multiple languages to provide:
 
--   Clear and localized information
--   Context-specific error messages
+- Clear and localized information
+- Context-specific error messages
 
 We strive to make this card as inclusive as possible, with support for:
 
--   🇸🇦 `ar` - العربية (Arabic)
--   🇩🇰 `da` - Dansk
--   🇩🇪 `de` - Deutsch
--   🇬🇷 `el` - Ελληνικά
--   🇬🇧 `en` - English
--   🇫🇮 `fi` - Suomi
--   🇫🇷 `fr` - Français
--   🇭🇷 `hr` - Hrvatski
--   🇮🇹 `it` - Italiano
--   🇯🇵 `ja` - 日本語 (Japanese)
--   🇰🇷 `ko` - 한국어 (Korean)
--   🇲🇰 `mk` - Македонски
--   🇳🇴 `nb` - Norsk Bokmål
--   🇳🇱 `nl` - Nederlands
--   🇵🇱 `pl` - Polski
--   🇵🇹 `pt` - Português
--   🇷🇴 `ro` - Română
--   🇪🇸 `es` - Español
--   🇸🇪 `sv` - Svenska
--   🇹🇷 `tr` - Türkçe
--   🇨🇳 `zh` - 中文 (Chinese)
+- 🇸🇦 `ar` - العربية (Arabic)
+- 🇩🇰 `da` - Dansk
+- 🇩🇪 `de` - Deutsch
+- 🇬🇷 `el` - Ελληνικά
+- 🇬🇧 `en` - English
+- 🇫🇮 `fi` - Suomi
+- 🇫🇷 `fr` - Français
+- 🇭🇷 `hr` - Hrvatski
+- 🇮🇹 `it` - Italiano
+- 🇯🇵 `ja` - 日本語 (Japanese)
+- 🇰🇷 `ko` - 한국어 (Korean)
+- 🇲🇰 `mk` - Македонски
+- 🇳🇴 `nb` - Norsk Bokmål
+- 🇳🇱 `nl` - Nederlands
+- 🇵🇱 `pl` - Polski
+- 🇵🇹 `pt` - Português
+- 🇷🇴 `ro` - Română
+- 🇪🇸 `es` - Español
+- 🇸🇪 `sv` - Svenska
+- 🇹🇷 `tr` - Türkçe
+- 🇨🇳 `zh` - 中文 (Chinese)
 
 More languages may be added in the future to enhance accessibility!
 
@@ -2398,14 +2456,15 @@ More languages may be added in the future to enhance accessibility!
 
 Numbers are displayed based on your regional preferences, using:
 
--   Your selected language settings (auto)
--   Your specific format (manual selection)
--   Or the system-defined format from your Home Assistant user profile
+- Your selected language settings (auto)
+- Your specific format (manual selection)
+- Or the system-defined format from your Home Assistant user profile
 
 By default, the card uses standard Arabic numerals (0-9) for maximum
 compatibility.
 
 <a id="error-handling-troubleshooting"></a>
+
 ## Error handling & Troubleshooting [🔼 Back to top](#top)
 
 ### Error handling
@@ -2413,30 +2472,63 @@ compatibility.
 This card includes error handling to prevent visual issues and ensure the UI
 stays clean and stable. We handle two main categories of errors in the card:
 
-1.  **Configuration Errors**
+1. **Configuration Errors**
     These occur when the card is incorrectly set up in the Lovelace config.
     Examples:
-    -   Missing entity ID
-    -   Invalid or unsupported attributes
-    -   Incorrect min/max values
 
-2.  **Runtime Errors (Entity State Issues)**
+    - Missing entity ID
+    - Invalid or unsupported attributes
+    - Incorrect min/max values
+
+2. **Runtime Errors (Entity State Issues)**
     These happen while the card is running and are related to the entity’s
     current state. Examples:
-    -   Entity is not found, unavailable or offline
+    - Entity is not found, unavailable or offline
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/errors.png" alt="Image title" width="500px"/>
 
 ### Troubleshooting
 
--   Card not loading? Ensure the resource is correctly added to Lovelace.
--   HACS not detecting the card? Clear your browser cache or restart Hom
-    Assistant.
--   Want more features? Open a GitHub issue with your request!
+- Card not loading?
+  ➡️ Ensure the resource is properly added to Lovelace.
+- HACS not detecting the card?
+  ➡️ Try clearing your browser cache or restarting Home Assistant.
+
+- Still not working?
+  ➡️ Open your browser’s JavaScript console to check for any errors.
+  This can help identify issues, or other integration problems (see below for instructions).
+
+🔧 How to Open the JavaScript Console
+🦊 Firefox
+Method 1: Keyboard Shortcut
+
+- Open your web page in Firefox.
+- Press F12 or Ctrl + Shift + K (on Mac: Cmd + Option + K).
+- The JavaScript Console will appear at the bottom or side of the screen.
+
+Method 2: Menu Navigation
+
+- Click the ≡ menu button (top-right corner).
+- Go to Web Developer.
+- Click Web Console.
+
+
+🌐 Chrome (Google Chrome or Chromium)
+Method 1: Keyboard Shortcut
+
+- Open your web page in Chrome.
+- Press F12 or Ctrl + Shift + J (on Mac: Cmd + Option + J).
+- The Console tab will open in the Developer Tools pane.
+
+Method 2: Menu Navigation
+
+- Click the ⋮ three-dot menu (top-right corner).
+- Go to More tools > Developer tools.
+- Select the Console tab.
 
 ## 👥 Contributing
 
-Want to improve this card? Contributions are welcome! 🚀
+Want more features? Want to improve this card? Contributions are welcome! 🚀
 
 ## 📄 License
 
