@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.4.8
+ * @version 1.4.9
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.4.8';
+const VERSION = '1.4.9';
 const CARD = {
   meta: {
     card: {
@@ -229,6 +229,7 @@ const CARD = {
     dynamic: {
       card: {
         minWidth: { var: '--epb-card-min-width' },
+        height: { var: '--epb-card-height' },
       },
       badge: {
         color: { var: '--epb-badge-color', default: 'var(--orange-color)' },
@@ -2329,11 +2330,12 @@ const CARD_CSS = `
   --epb-detail-max-width: 60%;
   --epb-detail-min-width: 45px;
   --epb-vertical-gap: 1px;
+
 }
 
  /* === BASE CARD STYLES === */
 ${CARD.htmlStructure.card.element} {
-  height: 100%;
+  height: var (${CARD.style.dynamic.card.height.var}, 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2387,12 +2389,14 @@ ${CARD.htmlStructure.card.element} {
 
 /* === LAYOUT ORIENTATIONS === */
 .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.container.class} {
-  min-height: ${CARD.layout.orientations.vertical.minHeight};
+  min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.vertical.minHeight});
+  height: var(${CARD.style.dynamic.card.height.var}, unset);
   flex-direction: column;
 }
 
 .${CARD.layout.orientations.horizontal.label} .${CARD.htmlStructure.sections.container.class} {
-  min-height: ${CARD.layout.orientations.horizontal.minHeight};
+  min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.horizontal.minHeight});
+  height: var(${CARD.style.dynamic.card.height.var}, unset);
   flex-direction: row;
 }
 
@@ -2902,8 +2906,6 @@ ${CARD.htmlStructure.card.element} {
 .${CARD.layout.orientations.vertical.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class},
 .${CARD.layout.orientations.horizontal.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class} {
   min-height: unset;
-  padding-top: 4px;
-  padding-bottom: 4px;
 }
 
 .${CARD.layout.orientations.vertical.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.left.class} {
@@ -3412,7 +3414,7 @@ class NumberFormatter {
   };
 
   static getSpaceCharacter(locale, unit) {
-    const set = this.unitsNoSpace[locale] || this.unitsNoSpace['en-US'];
+    const set = NumberFormatter.unitsNoSpace[locale] || NumberFormatter.unitsNoSpace['en-US'];
     return set.has(unit.toLowerCase()) ? '' : CARD.config.unit.space;
   }
 
@@ -3422,6 +3424,7 @@ class NumberFormatter {
     const formattedValue = new Intl.NumberFormat(locale, {
       minimumFractionDigits: decimal,
       maximumFractionDigits: decimal,
+      useGrouping: locale !== 'en',
     }).format(value);
 
     if (!unit) return formattedValue;
@@ -3429,7 +3432,7 @@ class NumberFormatter {
     const spaceMap = {
       space: CARD.config.unit.space,
       'no-space': '',
-      auto: () => this.getSpaceCharacter(locale, unit),
+      auto: () => NumberFormatter.getSpaceCharacter(locale, unit),
     };
     const space = typeof spaceMap[unitSpacing] === 'function' ? spaceMap[unitSpacing]() : spaceMap[unitSpacing];
 
@@ -3446,7 +3449,7 @@ class NumberFormatter {
     seconds = decimalPart !== undefined ? `${pad(intPart)}.${decimalPart}` : pad(seconds);
 
     if (flex) {
-      if (totalSeconds < 60) return this.formatValueAndUnit(parseFloat(seconds), decimal, 's', locale, unitSpacing);
+      if (totalSeconds < 60) return NumberFormatter.formatValueAndUnit(parseFloat(seconds), decimal, 's', locale, unitSpacing);
       if (totalSeconds < 3600) return `${pad(minutes)}:${seconds}`;
     }
 
@@ -3706,7 +3709,7 @@ class PercentHelper {
 
   // === PUBLIC API METHODS ===
 
-  valueForThemes(valueBasedOnPercentage) {
+  valueForThemes(isCustomTheme, valueBasedOnPercentage) {
     /****************************************************************************************
      * Calculates the value to display based on the selected theme and unit system.
      *
@@ -3714,9 +3717,10 @@ class PercentHelper {
      * - If the theme is linear or the unit is the default, the percentage value is returned.
      */
     let value = this.actual;
-    if (this.unit === CARD.config.unit.fahrenheit) {
-      value = ((value - 32) * 5) / 9;
-    }
+
+    if (isCustomTheme) return value;
+    if (this.unit === CARD.config.unit.fahrenheit) value = ((value - 32) * 5) / 9;
+
     return valueBasedOnPercentage || [CARD.config.unit.default, CARD.config.unit.disable].includes(this.unit) ? this.percent : value;
   }
   refresh() {
@@ -3753,6 +3757,7 @@ class ThemeManager {
   #isValid = false;
   #isLinear = false;
   #isBasedOnPercentage = false;
+  #isCustomTheme = false;
   #currentStyle = null;
 
   // === PUBLIC GETTERS / SETTERS ===
@@ -3785,6 +3790,7 @@ class ThemeManager {
     this.#currentStyle = newTheme;
     this.#isValid = true;
     this.#isLinear = false;
+    this.#isCustomTheme = true;
   }
   get customTheme() {
     return this.#currentStyle;
@@ -3794,6 +3800,9 @@ class ThemeManager {
   }
   get isBasedOnPercentage() {
     return this.#isBasedOnPercentage;
+  }
+  get isCustomTheme() {
+    return this.#isCustomTheme;
   }
   get isValid() {
     return this.#isValid;
@@ -3923,7 +3932,6 @@ class HassProviderSingleton {
   get numberFormat() {
     const format = this.#hass?.locale?.number_format;
     if (!format) return CARD.config.languageMap[CARD.config.language];
-    if (format === 'none') return null;
 
     const formatMap = {
       decimal_comma: 'de-DE', // 1.234,56 (Allemagne, France, etc.)
@@ -3931,6 +3939,7 @@ class HassProviderSingleton {
       space_comma: 'fr-FR', // 1 234,56 (France, Norvège, etc.)
       language: CARD.config.languageMap[this.language],
       system: Intl.NumberFormat().resolvedOptions().locale,
+      none: 'en',
     };
 
     return formatMap[format] || CARD.config.languageMap[CARD.config.language];
@@ -4774,6 +4783,7 @@ class CardConfigHelper extends BaseConfigHelper {
       'additions',
       'marginless',
       'min_width',
+      'height',
       'reverse',
       'reverse_secondary_info_row',
       'decimal',
@@ -5298,7 +5308,7 @@ class BaseCardView extends MinimalCardView {
     if (!this.isAvailable) return;
 
     this.#updatePercentHelper();
-    this.#theme.value = this.#percentHelper.valueForThemes(this.#theme.isBasedOnPercentage);
+    this.#theme.value = this.#percentHelper.valueForThemes(this.#theme.isCustomTheme, this.#theme.isBasedOnPercentage);
   }
 
   // === PRIVATE METHODS ===
@@ -5617,11 +5627,11 @@ class ActionHelper {
   }
 
   #attachListener(elem) {
-    this.#resourceManager.addEventListener(elem, 'mousedown', this.#boundHandlers.mousedown);
-    this.#resourceManager.addEventListener(elem, 'mouseup', this.#boundHandlers.mouseup);
-    this.#resourceManager.addEventListener(elem, 'mousemove', this.#boundHandlers.mousemove);
+    this.#resourceManager.addEventListener(elem, 'mousedown', this.#boundHandlers.mousedown, { passive: true });
+    this.#resourceManager.addEventListener(elem, 'mouseup', this.#boundHandlers.mouseup, { passive: true });
+    this.#resourceManager.addEventListener(elem, 'mousemove', this.#boundHandlers.mousemove, { passive: true });
     this.#resourceManager.addEventListener(elem, 'touchstart', this.#boundHandlers.touchstart, { passive: true });
-    this.#resourceManager.addEventListener(elem, 'touchend', this.#boundHandlers.touchend);
+    this.#resourceManager.addEventListener(elem, 'touchend', this.#boundHandlers.touchend, { passive: true });
     this.#resourceManager.addEventListener(elem, 'touchmove', this.#boundHandlers.touchmove, { passive: true });
   }
 
@@ -5813,6 +5823,8 @@ class EntityProgressCardBase extends HTMLElement {
   }
 
   connectedCallback() {
+    // console.log('Connected - Parent chain:', this._getParentChain());
+    // setTimeout(() => this._debugCardModIntegration(), 500);
     this.render();
     this._updateDynamicElementsSync();
     if (!this._resourceManager) this._resourceManager = new ResourceManager();
@@ -6070,6 +6082,8 @@ class EntityProgressCardBase extends HTMLElement {
     if (this._cardView.hasReversedSecondaryInfoRow) this._setStylePropertyIfChanged(card.style, '--epb-secondary-info-row-reverse', 'row-reverse');
     if (this._cardView.config.min_width)
       this._setStylePropertyIfChanged(card.style, CARD.style.dynamic.card.minWidth.var, this._cardView.config.min_width);
+    if (this._cardView.config.height)
+      this._setStylePropertyIfChanged(card.style, CARD.style.dynamic.card.height.var, this._cardView.config.height);
   }
 
   get conditionalStyle() {
@@ -6477,7 +6491,7 @@ class EntityProgressCardBase extends HTMLElement {
           this._resourceManager.remove(`template-${key}`);
         }
       },
-      undefined,
+      { passive: true },
       'ws-disconnected'
     );
 
@@ -6489,7 +6503,7 @@ class EntityProgressCardBase extends HTMLElement {
         if (!this._resourceManager) this._resourceManager = new ResourceManager(); // net reconnect
         this._processJinjaFields();
       },
-      undefined,
+      { passive: true },
       'ws-ready'
     );
   }
@@ -6537,11 +6551,14 @@ class EntityProgressCardBase extends HTMLElement {
 
     // Add null check right before using _resourceManager
     if (!this._resourceManager) {
-      console.warn(`[Template ${key}] ResourceManager is null, skipping subscription.`);
+      this._log.debug(`[Template ${key}] ResourceManager is null, skipping subscription.`);
       return;
     }
 
     try {
+      this._log.debug('key:', key);
+      this._log.debug('template:', template);
+      
       const unsub = await this.hass.connection.subscribeMessage((msg) => this._renderJinja(key, msg.result), {
         type: 'render_template',
         template: template,
@@ -6549,7 +6566,7 @@ class EntityProgressCardBase extends HTMLElement {
 
       // Check again after the async operation
       if (!this._resourceManager) {
-        console.warn(`[Template ${key}] ResourceManager became null during subscription, cleaning up.`);
+        this._log.debug(`[Template ${key}] ResourceManager became null during subscription, cleaning up.`);
         unsub(); // Clean up the subscription
         return;
       } else if (!this.isConnected) {
@@ -6561,7 +6578,7 @@ class EntityProgressCardBase extends HTMLElement {
         this._resourceManager.addSubscription(unsub, subscriptionKey);
       }
     } catch (error) {
-      console.error(`Failed to subscribe to template ${key}:`, error);
+      this._log.error(`Failed to subscribe to template ${key}:`, error);
     }
   }
 
@@ -6791,6 +6808,7 @@ class TemplateConfigHelper extends BaseConfigHelper {
       'frameless',
       'marginless',
       'min_width',
+      'height',
       'tap_action',
       'hold_action',
       'double_tap_action',
@@ -7063,9 +7081,7 @@ class EntityProgressTemplate extends EntityProgressCardBase {
   _renderSecondary(content) {
     // multiline
     const hasLineBreak = /<br\s*\/?>/i.test(content);
-    const wrappedContent = hasLineBreak
-      ? `<span class="multiline">${content}</span>`
-      : content;
+    const wrappedContent = hasLineBreak ? `<span class="multiline">${content}</span>` : `${content}`;
 
     this._renderTextContent(CARD.htmlStructure.elements.customInfo.class, wrappedContent);
   }
@@ -7076,7 +7092,8 @@ class EntityProgressTemplate extends EntityProgressCardBase {
 
   _renderTextContent(className, formattedContent) {
     this._updateElement(className, (el) => {
-      EntityProgressCardBase._setInnerHTMLIfChanged(el, formattedContent.trim());
+      const safeContent = typeof formattedContent === 'string' ? formattedContent.trim() : '';
+      EntityProgressCardBase._setInnerHTMLIfChanged(el, safeContent);
     });
   }
 
@@ -7702,7 +7719,7 @@ class EntityProgressCardEditor extends HTMLElement {
         () => {
           this.toggleAccordion(index);
         },
-        undefined, // options
+        { passive: true }, // options
         `accordionTitle-${index}`
       );
     });
@@ -7727,12 +7744,18 @@ class EntityProgressCardEditor extends HTMLElement {
         (event) => {
           event.stopPropagation();
         },
-        undefined, // options
+        { passive: true }, // options
         `close-StopPropa-${name}`
       );
     }
     events.forEach((eventType) => {
-      this.#resourceManager.addEventListener(this.#domElements.get(name), eventType, this.#onChanged.bind(this), undefined, `${eventType}-${name}`);
+      this.#resourceManager.addEventListener(
+        this.#domElements.get(name),
+        eventType,
+        this.#onChanged.bind(this),
+        { passive: true },
+        `${eventType}-${name}`
+      );
     });
   }
 
@@ -8021,7 +8044,7 @@ class EntityProgressCardEditor extends HTMLElement {
         callback();
         this.#resourceManager.remove(`accordionTransition-${index}`);
       },
-      undefined,
+      { passive: true },
       `accordionTransition-${index}`
     );
   }
