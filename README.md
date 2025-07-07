@@ -85,8 +85,11 @@ This card is based on custom CSS and leverages existing code to fine-tune the ap
 
 ## ⚙️ Prerequisites
 
-- HA version: 2024+
-- Chrome 92+, Edge 92+, Firefox 90+, Safari 15.4+, Opera 78+
+| Platform       | Browsers |        |         |         |        |
+|:--------------:|:--------:|:------:|:-------:|:-------:|:------:|
+| ![HA](https://avatars.githubusercontent.com/u/13844975?s=64&v=4) | ![Chrome](https://raw.githubusercontent.com/alrra/browser-logos/main/src/chrome/chrome_64x64.png) | ![Edge](https://raw.githubusercontent.com/alrra/browser-logos/main/src/edge/edge_64x64.png) | ![Firefox](https://raw.githubusercontent.com/alrra/browser-logos/main/src/firefox/firefox_64x64.png) | ![Safari](https://raw.githubusercontent.com/alrra/browser-logos/main/src/safari/safari_64x64.png) | ![Opera](https://raw.githubusercontent.com/alrra/browser-logos/main/src/opera/opera_64x64.png) |
+| **Home Assistant** | **Chrome** | **Edge** | **Firefox** | **Safari** | **Opera** |
+| `2024.0+`      | `98+`     | `98+`   | `94+`     | `15.4+`   | `84+`    |
 
 > [!IMPORTANT]
 >
@@ -364,12 +367,14 @@ decimal: 1
 
 #### `min_value`
 
-> **`min_value`** float _(optional, default: `0`)_
+> **`min_value`** float _(optional, default: `0` or `-100`)_
 
 Defines the minimum value to be used when calculating the percentage.
 
-This allows the percentage to be relative to both a minimum (min_value, which
-represents 0%) and a maximum (max_value, which represents 100%).
+This allows the percentage to be relative to both a minimum (`min_value`, which
+represents 0%) and a maximum (`max_value`, which represents 100%).
+
+When `center_zero` is enabled, the default `min_value` is -100, offering a clearer and more intuitive display.
 
 This value must be numeric (either a float or an integer).
 
@@ -526,7 +531,7 @@ theme: light
 
 #### `bar_size`
 
-> **`bar_size`** string ➡️ {`small`|`medium`|`large`} _(optional, default: `small`)_
+> **`bar_size`** string ➡️ {`small`|`medium`|`large`|`xlarge`} _(optional, default: `small`)_
 
 Customizes the appearance of the progress bar by selecting a predefined size.
 Choose from small, medium, or large to adjust the visual scale of the bar.
@@ -538,6 +543,8 @@ type: custom:entity-progress-card
 ····
 bar_size: medium
 ```
+
+`xlarge` can only be configured via YAML, and the interface automatically adjusts to accommodate the size of the progress bar.
 
 #### `bar_color`
 

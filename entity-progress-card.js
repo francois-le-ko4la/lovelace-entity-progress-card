@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.4.9
+ * @version 1.4.10
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.4.9';
+const VERSION = '1.4.10';
 const CARD = {
   meta: {
     card: {
@@ -149,6 +149,7 @@ const CARD = {
     card: { element: 'ha-card' },
     sections: {
       container: { element: 'div', class: 'container' },
+      belowContainer: { element: 'div', class: 'below-container' },
       left: { element: 'div', class: 'left' },
       right: { element: 'div', class: 'right' },
     },
@@ -224,6 +225,7 @@ const CARD = {
         small: { label: 'small', mdi: 'mdi:size-s' },
         medium: { label: 'medium', mdi: 'mdi:size-m' },
         large: { label: 'large', mdi: 'mdi:size-l' },
+        xlarge: { label: 'xlarge', mdi: 'mdi:size-xl' },
       },
     },
     dynamic: {
@@ -2289,7 +2291,6 @@ const CARD_CSS = `
   --epb-gap-default: 10px;
   --epb-gap-entities: 16px;
   --epb-padding-default: 10px;
-  --epb-margin-vertical-top: 18px;
   
   /* === SIZE VARIABLES === */
   --epb-shape-default-size: 36px;
@@ -2298,9 +2299,10 @@ const CARD_CSS = `
   --epb-badge-size: 16px;
   --epb-badge-icon-size: 12px;
   --epb-badge-offset: -3px;
-  --epb-progress-small: 8px;
-  --epb-progress-medium: 12px;
-  --epb-progress-large: 16px;
+  --epb-progress-size-s: 8px;
+  --epb-progress-size-m: 12px;
+  --epb-progress-size-l: 16px;
+  --epb-progress-size-xl: 42px;
   
   /* === HEIGHT VARIABLES === */
   --epb-name-height: 20px;
@@ -2335,7 +2337,7 @@ const CARD_CSS = `
 
  /* === BASE CARD STYLES === */
 ${CARD.htmlStructure.card.element} {
-  height: var (${CARD.style.dynamic.card.height.var}, 100%);
+  height: var(${CARD.style.dynamic.card.height.var}, 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2382,6 +2384,27 @@ ${CARD.htmlStructure.card.element} {
   overflow: hidden;
 }
 
+.below-container {
+  flex-basis: 100%;
+  width: 100%;
+  display: flex;
+  overflow: hidden;
+  height: var(--epb-progress-size-xl);
+}
+
+.horizontal.xlarge .right  {
+  width: calc(100% - 56px);
+}
+.xlarge .progress-bar-container {
+  height: var(--epb-progress-size-xl);
+}
+
+.horizontal.xlarge .container {
+  flex-wrap: wrap;
+  overflow: unset;
+  row-gap: 7px;
+}
+
 .type-entities .${CARD.htmlStructure.sections.container.class} {
   gap: var(--epb-gap-entities);
   min-height: var(--epb-entities-card-min-height) !important;
@@ -2421,11 +2444,6 @@ ${CARD.htmlStructure.card.element} {
   height: var(--epb-shape-size, var(--epb-entities-shape-size)) !important;
 }
 
-/* Vertical layout margins for different sizes */
-.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.left.class} {
-  margin-top: var(--epb-margin-vertical-top);
-}
-
 /* === SHAPE & ICON === */
 .${CARD.htmlStructure.elements.shape.class} {
   display: flex;
@@ -2446,6 +2464,13 @@ ${CARD.htmlStructure.card.element} {
   height: var(--epb-icon-size, var(--epb-icon-default-size));
   color: var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default});
 }
+
+.custom-icon-img {
+  width: var(--epb-icon-size, var(--epb-icon-default-size));
+  height: var(--epb-icon-size, var(--epb-icon-default-size));
+  border-radius: 50%;
+  object-fit: cover;
+}  
 
 /* === RIGHT SECTION (TEXT CONTENT) === */
 .${CARD.htmlStructure.sections.right.class} {
@@ -2543,16 +2568,20 @@ ${CARD.htmlStructure.card.element} {
   display: flex;
   flex-direction: var(--epb-secondary-info-row-reverse, row);
   align-items: center;
-  justify-content: center;
+  /*justify-content: center;*/
   gap: var(--epb-gap-default);
 }
 
 .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.secondaryInfo.class} {
   flex-direction: column;  /* vertical layout */
   align-items: stretch;    /* full width */
-  gap: var(--epb-vertical-gap);                /* vertical spacing between elements */
   width: 100%;
-  min-width: 0;  
+  min-width: 0;
+  gap: unset;
+}
+
+.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.right.class} {
+  gap: var(--epb-vertical-gap);
 }
 
 .multiline {
@@ -2596,8 +2625,8 @@ ${CARD.htmlStructure.card.element} {
 
 .${CARD.htmlStructure.elements.progressBar.bar.class} {
   width: 100%;
-  height: var(--epb-progress-small);
-  max-height: var(--epb-progress-large);
+  height: var(--epb-progress-size-s);
+  max-height: var(--epb-progress-size-s);
   background-color: var(${CARD.style.dynamic.progressBar.background.var}, var(--divider-color));
   overflow: hidden;
   position: relative;
@@ -2612,22 +2641,63 @@ ${CARD.htmlStructure.card.element} {
 }
 
 /* Progress bar size variants */
+
+.${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.elements.progressBar.container.class} {
+  height: var(--epb-progress-size-s); /* 8px */
+}
+
+.${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.sections.container.class} {
+  padding-top: var(--epb-progress-size-s); /* center the content */
+}
+
 .${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
-  height: var(--epb-progress-small);
-  max-height: var(--epb-progress-small);
-  border-radius: 4px;
+  height: var(--epb-progress-size-s);
+  max-height: var(--epb-progress-size-s);
+  border-radius: calc(var(--epb-progress-size-s) / 2);;
+}
+
+.${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.container.class}  {
+  height: var(--epb-progress-size-m); /* 12px */
+}
+
+.${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.sections.container.class} {
+  padding-top: var(--epb-progress-size-m); /* center the content */
 }
 
 .${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
-  height: var(--epb-progress-medium);
-  max-height: var(--epb-progress-medium);
-  border-radius: 6px;
+  height: var(--epb-progress-size-m);
+  max-height: var(--epb-progress-size-m);
+  border-radius: calc(var(--epb-progress-size-m) / 2);
+}
+
+.${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.container.class} {
+  height: var(--epb-progress-size-l); /* 16px */
+}
+
+.${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.sections.container.class} {
+  padding-top: var(--epb-progress-size-l); /* center the content */
 }
 
 .${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
-  height: var(--epb-progress-large);
-  max-height: var(--epb-progress-large);
-  border-radius: 8px;
+  height: var(--epb-progress-size-l);
+  max-height: var(--epb-progress-size-l);
+  border-radius: calc(var(--epb-progress-size-l) / 2);
+}
+
+.${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.elements.progressBar.container.class} {
+  margin-top: 23px;
+  height: var(--epb-progress-size-xl);
+}
+
+.${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.sections.container.class} {
+  justify-content: center;
+  align-items: center;  
+}
+
+.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
+  height: var(--epb-progress-size-xl);
+  max-height: var(--epb-progress-size-xl);
+  border-radius: calc(var(--epb-progress-size-xl) / 2);
 }
 
 .${CARD.style.dynamic.progressBar.orientation.rtl} .${CARD.htmlStructure.elements.progressBar.bar.class} {
@@ -2665,13 +2735,16 @@ ${CARD.htmlStructure.card.element} {
   background: linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
 }
 .${CARD.style.dynamic.progressBar.effect.radius.class}.${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.elements.progressBar.inner.class} {
-  border-radius: 4px;
+  border-radius: calc(var(--epb-progress-size-s) / 2);
 }
 .${CARD.style.dynamic.progressBar.effect.radius.class}.${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.inner.class} {
-  border-radius: 6px;
+  border-radius: calc(var(--epb-progress-size-m) / 2);
 }
 .${CARD.style.dynamic.progressBar.effect.radius.class}.${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.inner.class} {
-  border-radius: 8px;
+  border-radius: calc(var(--epb-progress-size-l) / 2);
+}
+.${CARD.style.dynamic.progressBar.effect.radius.class}.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.elements.progressBar.inner.class} {
+  border-radius: calc(var(--epb-progress-size-xl) / 2);
 }
 
 .${CARD.style.dynamic.progressBar.effect.gradient.class} .${CARD.htmlStructure.elements.progressBar.inner.class} {
@@ -2906,6 +2979,7 @@ ${CARD.htmlStructure.card.element} {
 .${CARD.layout.orientations.vertical.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class},
 .${CARD.layout.orientations.horizontal.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class} {
   min-height: unset;
+  padding-top: unset;
 }
 
 .${CARD.layout.orientations.vertical.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.left.class} {
@@ -3142,6 +3216,30 @@ if (CARD.config.dev) {
 }
 
 /******************************************************************************************
+ * 📦 Test utils
+ ******************************************************************************************/
+
+const is = {
+  nullish: (val) => val == null, // null or undefined
+  boolean: (val) => typeof val === 'boolean',
+  string: (val) => typeof val === 'string',
+  nonEmptyString: (val) => typeof val === 'string' && val.trim() !== '',
+  nullishOrEmptyString: (val) => val == null || (typeof val === 'string' && val.trim() === ''),
+  numericString: (val) => typeof val === 'string' && val.trim() !== '' && !isNaN(parseFloat(val)),
+  number: (val) => Number.isFinite(val),
+  func: (val) => typeof val === 'function',
+  array: (val) => Array.isArray(val),
+  nonEmptyArray: (val) => Array.isArray(val) && val.length > 0,
+  nonEmptySet: (val) => val instanceof Set && val.size > 0,
+};
+
+const has = {
+  own: (obj, key) => Object.hasOwn(obj, key),
+  method: (obj, key) => typeof obj?.[key] === 'function',
+  validKey: (obj, key) => typeof key === 'string' && key !== '' && has.own(obj, key),
+};
+
+/******************************************************************************************
  * 📦 Logging utils
  ******************************************************************************************/
 
@@ -3185,7 +3283,7 @@ const Logger = {
 
       wrapAll: (ctx, methodNames) => {
         methodNames.forEach((method) => {
-          if (typeof ctx[method] === 'function') {
+          if (has.method(ctx, method)) {
             ctx[method] = loggerInstance.wrap(ctx[method].bind(ctx), method);
           }
         });
@@ -3270,6 +3368,7 @@ const Element = (obj, extraClass = '') => {
 
 const StructureElements = {
   container: () => Element(CARD.htmlStructure.sections.container).html('{{content}}'),
+  belowContainer: () => Element(CARD.htmlStructure.sections.belowContainer).html('{{content}}'),
   left: () => Element(CARD.htmlStructure.sections.left).html('{{content}}'),
 
   iconAndShape: () => Element(CARD.htmlStructure.elements.shape).html(Element(CARD.htmlStructure.elements.icon).html()),
@@ -3300,7 +3399,6 @@ const StructureElements = {
       Element(CARD.htmlStructure.elements.detailCombined).html(Element(CARD.htmlStructure.elements.customInfo).html())
     ),
 
-  // Progress bar standard
   standardProgressBar: () =>
     Element(CARD.htmlStructure.elements.progressBar.container).html(
       Element(CARD.htmlStructure.elements.progressBar.bar, 'default').html(
@@ -3310,7 +3408,6 @@ const StructureElements = {
       )
     ),
 
-  // centerZero progress bar (corrigé l'orthographe)
   centerZeroProgressBar: () =>
     Element(CARD.htmlStructure.elements.progressBar.container).html(
       Element(CARD.htmlStructure.elements.progressBar.bar, 'center-zero').html(
@@ -3321,9 +3418,8 @@ const StructureElements = {
       )
     ),
 
-  // Fonction générique pour sélectionner le type de progress bar
-  progressBar: (barType = 'default') => {
-    switch (barType) {
+  progressBar: (options) => {
+    switch (options.barType) {
       case 'centerZero':
         return StructureElements.centerZeroProgressBar();
       case 'default':
@@ -3332,39 +3428,63 @@ const StructureElements = {
     }
   },
 
-  // Mise à jour des éléments secondaryInfo avec option barType
-  secondaryInfo: (barType = 'default') =>
-    Element(CARD.htmlStructure.elements.secondaryInfo).html(StructureElements.detailGroup() + StructureElements.progressBar(barType)),
+  secondaryInfo: (options) => {
+    const isVertical = options.layout === 'vertical';
+    
+    if (isVertical) {
+      return Element(CARD.htmlStructure.elements.secondaryInfo).html(StructureElements.detailGroup()) + StructureElements.progressBar(options);
+    } else if (options.barPosition === 'below') {
+      return Element(CARD.htmlStructure.elements.secondaryInfo).html(StructureElements.detailGroup());
+    } else {
+      return Element(CARD.htmlStructure.elements.secondaryInfo).html(StructureElements.detailGroup() + StructureElements.progressBar(options));
+    }
+  },
 
-  secondaryInfoMinimal: (barType = 'default') =>
-    Element(CARD.htmlStructure.elements.secondaryInfo).html(StructureElements.detailGroupMinimal() + StructureElements.progressBar(barType)),
+  secondaryInfoMinimal: (options) => {
+    const isVertical = options.layout === 'vertical';
+    
+    if (isVertical) {
+      return Element(CARD.htmlStructure.elements.secondaryInfo).html(StructureElements.detailGroupMinimal()) + StructureElements.progressBar(options);
+    } else if (options.barPosition === 'below') {
+      return Element(CARD.htmlStructure.elements.secondaryInfo).html(StructureElements.detailGroupMinimal());
+    } else {
+      return Element(CARD.htmlStructure.elements.secondaryInfo).html(StructureElements.detailGroupMinimal() + StructureElements.progressBar(options));
+    }
+  },
 
-  // Mise à jour des éléments right avec option barType
-  rightFull: (barType = 'default') =>
-    Element(CARD.htmlStructure.sections.right).html(StructureElements.nameGroup() + StructureElements.secondaryInfo(barType)),
+  rightFull: (options) => Element(CARD.htmlStructure.sections.right).html(StructureElements.nameGroup() + StructureElements.secondaryInfo(options)),
 
-  rightMinimal: (barType = 'default') =>
-    Element(CARD.htmlStructure.sections.right).html(StructureElements.nameGroupMinimal() + StructureElements.secondaryInfoMinimal(barType)),
+  rightMinimal: (options) =>
+    Element(CARD.htmlStructure.sections.right).html(StructureElements.nameGroupMinimal() + StructureElements.secondaryInfoMinimal(options)),
 
   leftFull: () => Element(CARD.htmlStructure.sections.left).html(StructureElements.iconAndShape() + StructureElements.badge()),
   leftNoBadge: () => Element(CARD.htmlStructure.sections.left).html(StructureElements.iconAndShape()),
 };
 
-// Templates mis à jour avec option barType
 const StructureTemplates = {
   card: (options = {}) => {
-    const { barType = 'default' } = options;
-    return StructureElements.container().replace('{{content}}', StructureElements.leftFull() + StructureElements.rightFull(barType));
+    if (options.barPosition === 'below')
+      return (
+        StructureElements.container().replace('{{content}}', StructureElements.leftFull() + StructureElements.rightFull(options) + StructureElements.belowContainer().replace('{{content}}', StructureElements.progressBar(options)))
+      );
+
+    return StructureElements.container().replace('{{content}}', StructureElements.leftFull() + StructureElements.rightFull(options));
   },
 
   badge: (options = {}) => {
-    const { barType = 'default' } = options;
-    return StructureElements.container().replace('{{content}}', StructureElements.leftNoBadge() + StructureElements.rightFull(barType));
+    return StructureElements.container().replace('{{content}}', StructureElements.leftNoBadge() + StructureElements.rightFull(options));
   },
 
   template: (options = {}) => {
-    const { barType = 'default' } = options;
-    return StructureElements.container().replace('{{content}}', StructureElements.leftFull() + StructureElements.rightMinimal(barType));
+    if (options.barPosition === 'below')
+      return StructureElements.container().replace(
+        '{{content}}',
+        StructureElements.leftFull() +
+          StructureElements.rightMinimal(options) +
+          StructureElements.belowContainer().replace('{{content}}', StructureElements.progressBar(options))
+      );
+
+    return StructureElements.container().replace('{{content}}', StructureElements.leftFull() + StructureElements.rightMinimal(options));
   },
 };
 
@@ -3419,7 +3539,7 @@ class NumberFormatter {
   }
 
   static formatValueAndUnit(value, decimal = 2, unit = '', locale = 'en-US', unitSpacing = CARD.config.unit.unitSpacing.auto) {
-    if (value === undefined || value === null) return '';
+    if (is.nullish(value)) return '';
 
     const formattedValue = new Intl.NumberFormat(locale, {
       minimumFractionDigits: decimal,
@@ -3434,7 +3554,7 @@ class NumberFormatter {
       'no-space': '',
       auto: () => NumberFormatter.getSpaceCharacter(locale, unit),
     };
-    const space = typeof spaceMap[unitSpacing] === 'function' ? spaceMap[unitSpacing]() : spaceMap[unitSpacing];
+    const space = has.method(spaceMap, unitSpacing) ? spaceMap[unitSpacing]() : spaceMap[unitSpacing];
 
     return `${formattedValue}${space}${unit}`;
   }
@@ -3578,7 +3698,7 @@ class UnitHelper {
     return this.#isDisabled ? '' : this.#value;
   }
   set isDisabled(newValue) {
-    this.#isDisabled = typeof newValue === 'boolean' ? newValue : false;
+    this.#isDisabled = is.boolean(newValue) ? newValue : false;
   }
   get isDisabled() {
     return this.#isDisabled;
@@ -3625,13 +3745,13 @@ class PercentHelper {
   // === PUBLIC GETTERS / SETTERS ===
 
   set isTimer(newValue) {
-    this.#isTimer = typeof newValue === 'boolean' ? newValue : false;
+    this.#isTimer = is.boolean(newValue) ? newValue : false;
   }
   get isTimer() {
     return this.#isTimer;
   }
   set isReversed(newValue) {
-    this.#isReversed = typeof newValue === 'boolean' ? newValue : CARD.config.reverse;
+    this.#isReversed = is.boolean(newValue) ? newValue : CARD.config.reverse;
   }
   get isReversed() {
     return this.#isReversed;
@@ -3701,7 +3821,7 @@ class PercentHelper {
     return this.unit === CARD.config.unit.default ? this.percent : this.actual;
   }
   set isCenterZero(newValue) {
-    this.#isCenterZero = typeof newValue === 'boolean' ? newValue : false;
+    this.#isCenterZero = is.boolean(newValue) ? newValue : false;
   }
   get isCenterZero() {
     return this.#isCenterZero;
@@ -3769,7 +3889,7 @@ class ThemeManager {
       cpu: 'optimal_when_low',
     };
     newTheme = themeMap[newTheme] || newTheme;
-    if (!newTheme || !Object.hasOwn(THEME, newTheme)) {
+    if (!has.validKey(THEME, newTheme)) {
       [this.#icon, this.#barColor, this.#iconColor, this.#theme] = [null, null, null, null];
       return;
     }
@@ -3858,7 +3978,7 @@ class ThemeManager {
     }
   }
   static #validateCustomTheme(customTheme) {
-    if (!Array.isArray(customTheme) || customTheme.length === 0) return false;
+    if (!is.nonEmptyArray(customTheme)) return false;
 
     let isFirstItem = true;
     let lastMax = null;
@@ -3981,7 +4101,7 @@ class HassProviderSingleton {
     return state !== 'unavailable' && state !== 'unknown';
   }
   static getEntityDomain(entityId) {
-    return typeof entityId === 'string' && entityId.includes('.') ? entityId.split('.')[0] : null;
+    return is.string(entityId) && entityId.includes('.') ? entityId.split('.')[0] : null;
   }
   getDeviceClass(entityId) {
     return this.getEntityAttribute(entityId, 'device_class') ?? null;
@@ -4025,10 +4145,10 @@ class HassProviderSingleton {
     return Object.fromEntries(
       Object.entries(attributes)
         .filter(([, val]) => {
-          return typeof val === 'number' || (typeof val === 'string' && !isNaN(val) && val.trim() !== '');
+          return is.number(val) || is.numericString(val);
         })
         .map(([key, val]) => {
-          const num = typeof val === 'number' ? val : parseFloat(val);
+          const num = is.number(val) ? val : parseFloat(val);
           return [key, num];
         })
     );
@@ -4076,7 +4196,7 @@ class ChangeTracker {
       this.#firstTime = false;
       return true;
     }
-    if (!this.#watchedEntities || this.#watchedEntities.size === 0) return true;
+    if (!is.nonEmptySet(this.#watchedEntities)) return true;
 
     for (const entityId of this.#watchedEntities) {
       const newState = newHass?.states?.[entityId];
@@ -4196,7 +4316,7 @@ class EntityHelper {
 
     const attrValue = this.#hassProvider.getEntityAttribute(this.#entityId, this.#attribute);
 
-    if (attrValue !== undefined && !isNaN(parseFloat(attrValue))) {
+    if (is.numericString(attrValue) || is.number(attrValue)) {
       this.#value = parseFloat(attrValue);
       if (this.#domain === ATTRIBUTE_MAPPING.light.label && this.#attribute === ATTRIBUTE_MAPPING.light.attribute) {
         this.#value = (100 * this.#value) / 255;
@@ -4383,7 +4503,7 @@ class EntityCollectionHelper {
       .filter((helper) => helper.isValid && helper.isAvailable)
       .reduce((sum, helper) => {
         const value = helper.value;
-        return sum + (typeof value === 'number' ? value : value?.current ?? 0);
+        return sum + (is.number(value) ? value : value?.current ?? 0);
       }, 0);
   }
   getAvailableEntities() {
@@ -4396,7 +4516,7 @@ class EntityCollectionHelper {
 
     return this.getAvailableEntities().map((helper) => {
       const rawValue = helper.value;
-      const value = typeof rawValue === 'number' ? rawValue : rawValue?.current ?? 0;
+      const value = is.number(rawValue) ? rawValue : rawValue?.current ?? 0;
       const percent = (value / total) * 100;
 
       return {
@@ -4482,10 +4602,10 @@ class EntityOrValue {
   // === PUBLIC GETTERS / SETTERS ===
 
   set value(newValue) {
-    if (typeof newValue === 'string') {
+    if (is.string(newValue)) {
       this.#createHelper(this.#helperType.entity);
       this.#activeHelper.entityId = newValue;
-    } else if (Number.isFinite(newValue)) {
+    } else if (is.number(newValue)) {
       this.#createHelper(this.#helperType.value);
       this.#activeHelper.value = newValue;
     } else {
@@ -4500,7 +4620,7 @@ class EntityOrValue {
     return this.#isEntity;
   }
   set attribute(newValue) {
-    if (this.#isEntity) this.#activeHelper.attribute = newValue;
+    if (this.#activeHelper && this.#isEntity) this.#activeHelper.attribute = newValue;
   }
   get attribute() {
     return this.#isEntity ? this.#activeHelper.attribute : null;
@@ -4673,13 +4793,13 @@ class BaseConfigHelper {
 
     // Generic validation based on subclass configuration
     Object.entries(enumValidations).forEach(([key, validation]) => {
-      if (config[key] && !Object.hasOwn(validation.validValues, config[key])) {
+      if (config[key] && !has.own(validation.validValues, config[key])) {
         merged[key] = validation.defaultValue;
       }
     });
 
     // Normalize bar_effect to an array if it's a string
-    if (typeof merged.bar_effect === 'string') {
+    if (is.string(merged.bar_effect)) {
       merged.bar_effect = [merged.bar_effect];
     }
 
@@ -4748,7 +4868,7 @@ class CardConfigHelper extends BaseConfigHelper {
   get max_value() {
     if (!this._config.max_value) return CARD.config.value.max;
     if (Number.isFinite(this._config.max_value)) return this._config.max_value;
-    if (typeof this._config.max_value === 'string') {
+    if (is.string(this._config.max_value)) {
       const state = this._hassProvider.getEntityStateValue(this._config.max_value);
       const parsedState = parseFloat(state);
       if (!isNaN(parsedState)) return parsedState;
@@ -4757,8 +4877,8 @@ class CardConfigHelper extends BaseConfigHelper {
   }
 
   get stateContent() {
-    const content = typeof this._config?.state_content === 'string' ? [this._config?.state_content] : this._config?.state_content ?? [];
-    return content.filter((item) => typeof item === 'string' && item !== null && item !== undefined);
+    const content = is.string(this._config?.state_content) ? [this._config?.state_content] : this._config?.state_content ?? [];
+    return content.filter((item) => is.string(item));
   }
 
   // Clés autorisées pour ce type de carte
@@ -4837,9 +4957,8 @@ class CardConfigHelper extends BaseConfigHelper {
     // eslint-disable-next-line no-unused-vars
     const { watermark, ...baseDefaults } = this.filterConfig(CARD.config.defaults);
 
-    // Filtrage de la configuration selon les clés autorisées
+    if (config.center_zero === true && typeof config.min_value === 'undefined') baseDefaults.min_value = -100;
     const cleanedConfig = this.filterConfig(config);
-
     const merged = {
       ...baseDefaults,
       ...(isToggleable && { icon_tap_action: { action: 'toggle' } }),
@@ -4852,7 +4971,7 @@ class CardConfigHelper extends BaseConfigHelper {
   getValidationRules() {
     const entityState = this._hassProvider.getEntityStateObj(this._config.entity);
     const maxValueState =
-      typeof this._config.max_value === 'string' && this._config.max_value.trim()
+      is.nonEmptyString(this._config.max_value)
         ? this._hassProvider.getEntityStateObj(this._config.max_value)
         : null;
 
@@ -4865,7 +4984,7 @@ class CardConfigHelper extends BaseConfigHelper {
         },
       },
       {
-        valid: !this._config.attribute || (entityState && Object.hasOwn(entityState.attributes, this._config.attribute)),
+        valid: !this._config.attribute || (entityState && has.own(entityState.attributes, this._config.attribute)),
         msg: {
           content: LANGUAGES[this._hassProvider.language].card.msg.attributeNotFound,
           sev: 'error',
@@ -4881,7 +5000,7 @@ class CardConfigHelper extends BaseConfigHelper {
       {
         valid:
           Number.isFinite(this.max_value) ||
-          (maxValueState && (this._config.max_value_attribute ? Object.hasOwn(maxValueState.attributes, this._config.max_value_attribute) : true)),
+          (maxValueState && (this._config.max_value_attribute ? has.own(maxValueState.attributes, this._config.max_value_attribute) : true)),
         msg: {
           content: LANGUAGES[this._hassProvider.language].card.msg.maxValueError,
           sev: 'warning',
@@ -5038,7 +5157,7 @@ class MinimalCardView {
   // === PRIVATE METHODS ===
 
   _hasInConfigArray(key, value) {
-    return Array.isArray(this.config?.[key]) && this.config[key].includes(value);
+    return is.array(this.config?.[key]) && this.config[key].includes(value);
   }
 
   // skipcq: JS-0105
@@ -5453,7 +5572,7 @@ class ResourceManager {
   // === PUBLIC API METHODS ===
 
   add(cleanupFn, id) {
-    if (typeof cleanupFn !== 'function') {
+    if (!is.func(cleanupFn)) {
       throw new Error('Resource must be a function');
     }
     const finalId = id || this.#generateUniqueId();
@@ -5480,7 +5599,7 @@ class ResourceManager {
     return id;
   }
 
-  hasInterval(id) {
+  has(id) {
     return this.#resources.has(id); // Vérifie si un ID existe dans la Map
   }
 
@@ -5617,7 +5736,7 @@ class ActionHelper {
   #attachToTargets(clickableTarget) {
     if (!clickableTarget) return;
 
-    if (Array.isArray(clickableTarget)) {
+    if (is.array(clickableTarget)) {
       for (const target of clickableTarget) {
         if (target) this.#attachListener(target);
       }
@@ -5792,7 +5911,6 @@ class EntityProgressCardBase extends HTMLElement {
   _cardView = new CardView();
   _domElements = new Map();
   _hass = null;
-  _firstHass = true;
   _clickableTarget = null;
   _actionHelper = null;
   _changeTracker = new ChangeTracker();
@@ -5830,7 +5948,10 @@ class EntityProgressCardBase extends HTMLElement {
     if (!this._resourceManager) this._resourceManager = new ResourceManager();
     this._setupClickableTarget();
     this._actionHelper.init(this._resourceManager, this._cardView.config, this._clickableTarget, this.hasDisabledIconTap);
-    if (this.hass) this._watchWebSocket();
+    if (this.hass) {
+      this._handleHassUpdate();
+      this._watchWebSocket();
+    }
   }
 
   disconnectedCallback() {
@@ -5848,9 +5969,11 @@ class EntityProgressCardBase extends HTMLElement {
       throw new Error('setConfig: invalid config');
     }
 
+    if (this.isRendered) this.reset();
+
     this._cardView.config = { ...config };
-    if (typeof config.entity === 'string') this._changeTracker.watchEntity(config.entity);
-    if (typeof config.max_value === 'string') this._changeTracker.watchEntity(config.max_value);
+    if (is.string(config.entity)) this._changeTracker.watchEntity(config.entity);
+    if (is.string(config.max_value)) this._changeTracker.watchEntity(config.max_value);
     this.render();
   }
 
@@ -5862,17 +5985,14 @@ class EntityProgressCardBase extends HTMLElement {
    */
   set hass(hass) {
     this._log.debug('👉 set hass()');
-
+    const isFirstHass = !this.hass;
     this._changeTracker.hassState = hass;
-    if (this._changeTracker.hassState.isUpdated) {
+    if (isFirstHass || this._changeTracker.hassState.isUpdated) {
       this._assignHass(hass);
       this._handleHassUpdate();
     }
 
-    if (this._firstHass) {
-      this._firstHass = false;
-      this._watchWebSocket();
-    }
+    if (!this._wsInitialized) this._watchWebSocket();
   }
 
   get hass() {
@@ -5901,7 +6021,7 @@ class EntityProgressCardBase extends HTMLElement {
 
     if (!this._cardView.isActiveTimer) {
       this._stopAutoRefresh();
-    } else if (!this._resourceManager.hasInterval('autoRefresh')) {
+    } else if (!this._resourceManager.has('autoRefresh')) {
       this._startAutoRefresh();
     }
   }
@@ -5932,6 +6052,7 @@ class EntityProgressCardBase extends HTMLElement {
   getLayoutOptions() {
     const layout = structuredClone(this.constructor._cardLayout[this._cardView.layout]);
     if (this._cardView.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.icon.label)) layout.grid.grid_min_rows = 1;
+    if (this._cardView.config.bar_size === CARD.style.bar.sizeOptions.xlarge.label) layout.grid.grid_min_rows = layout.grid.grid_min_rows + 1;
     this._log.debug('getLayoutOptions -> ', layout.grid);
 
     return layout.grid;
@@ -5939,6 +6060,15 @@ class EntityProgressCardBase extends HTMLElement {
 
   get isRendered() {
     return this.#isRendered;
+  }
+
+  reset() {
+    this.#isRendered = false;
+    this._domElements.clear();
+    this._icon = null;
+    if (this.shadowRoot) {
+      this.shadowRoot.innerHTML = ''; // purge le contenu shadow DOM
+    }
   }
 
   get innerHTML() {
@@ -6041,10 +6171,15 @@ class EntityProgressCardBase extends HTMLElement {
   }
 
   _manageStructureOptions() {
-    this.constructor._cardStructure.options = {};
-    if (this._cardView.config.center_zero === true) {
-      this.constructor._cardStructure.options = { barType: 'centerZero' };
-    }
+    this.constructor._cardStructure.options = {
+      barType: this._cardView.config.center_zero === true ? 'centerZero' : 'default',
+      layout: this._cardView.config.layout,
+      barPosition:
+        this._cardView.config.layout === CARD.layout.orientations.horizontal.label &&
+        this._cardView.config.bar_size === CARD.style.bar.sizeOptions.xlarge.label
+          ? 'below'
+          : 'default',
+    };
   }
 
   _createCardElements() {
@@ -6082,8 +6217,7 @@ class EntityProgressCardBase extends HTMLElement {
     if (this._cardView.hasReversedSecondaryInfoRow) this._setStylePropertyIfChanged(card.style, '--epb-secondary-info-row-reverse', 'row-reverse');
     if (this._cardView.config.min_width)
       this._setStylePropertyIfChanged(card.style, CARD.style.dynamic.card.minWidth.var, this._cardView.config.min_width);
-    if (this._cardView.config.height)
-      this._setStylePropertyIfChanged(card.style, CARD.style.dynamic.card.height.var, this._cardView.config.height);
+    if (this._cardView.config.height) this._setStylePropertyIfChanged(card.style, CARD.style.dynamic.card.height.var, this._cardView.config.height);
   }
 
   get conditionalStyle() {
@@ -6281,80 +6415,112 @@ class EntityProgressCardBase extends HTMLElement {
 
   // === ICON MANAGEMENT ===
 
-  _showIcon() {
-    const { entityStateObj: stateObj, icon: curIcon } = this._cardView;
-    if (!stateObj && !curIcon) return;
+  _createImgIcon(altText, className = 'custom-icon-img') {
+    this._log.debug('_createImgIcon');
+    const img = document.createElement('img');
+    img.className = className;
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.alt = altText;
+    return img;
+  }
 
-    const hasIconOverride = curIcon !== null;
-    const hasPicture = stateObj?.attributes?.entity_picture;
+  _handleImgIcon(stateObj, iconContainer, srcPicture) {
+    const pictureAlt = stateObj?.attributes?.friendly_name || 'Entity picture';
 
-    // Nettoyer l'ancien élément
-    const iconContainer = this._domElements.get(CARD.htmlStructure.elements.icon.class);
-    if (!iconContainer) return;
+    if (this._icon?.tagName !== 'IMG') {
+      this._icon?.remove();
+      this._icon = this._createImgIcon(pictureAlt);
+      iconContainer.replaceChildren(this._icon);
+      this._updateCSSValue(CARD.style.dynamic.iconAndShape.icon.size.var, '36px');
+    }
+    this._icon.src = srcPicture;
+    this._icon.alt = pictureAlt;
+  }
 
-    // Si on a une image, créer un élément img
-    if (hasPicture && !hasIconOverride) {
-      if (this._icon && this._icon.tagName !== 'IMG') {
-        this._icon.remove();
-        this._icon = null;
-      }
-
-      if (!this._icon) {
-        this._updateCSSValue(CARD.style.dynamic.iconAndShape.icon.size.var, '36px');
-        this._icon = document.createElement('img');
-        this._icon.style.width = '36px';
-        this._icon.style.height = '36px';
-        this._icon.style.borderRadius = '50%';
-        this._icon.style.objectFit = 'cover';
-        iconContainer.replaceChildren(this._icon);
-      }
-
-      this._icon.src = hasPicture;
-      this._icon.alt = stateObj.attributes?.friendly_name || 'Entity picture';
-    } else {
-      // Sinon, utiliser ha-state-icon comme avant
-      if (this._icon && this._icon.tagName === 'IMG') {
-        this._icon.remove();
-        this._icon = null;
-      }
-
-      let stateObjIcon = null;
-
-      if (stateObj) {
-        const clonedAttributes = { ...stateObj.attributes };
-
-        if (hasIconOverride) {
-          clonedAttributes.icon = curIcon;
-        }
-
-        stateObjIcon = {
-          ...stateObj,
-          attributes: clonedAttributes,
-        };
-      } else if (this.isConnected) {
-        stateObjIcon = {
+  _createStateObjIcon(stateObj, curIcon, hasIconOverride, hasPicture) {
+    if (!stateObj) {
+      return this.isConnected
+        ? {
           entity_id: 'sensor.dummy',
           state: 'unknown',
           attributes: {
             icon: curIcon || 'mdi:help-circle-outline',
             friendly_name: 'Unknown Entity',
           },
-        };
-      } else {
-        return;
-      }
-
-      const firstTime = this._icon === null;
-      if (firstTime) {
-        this._icon = document.createElement('ha-state-icon');
-        this._icon.hass = this._hass;
-        this._icon.stateObj = stateObjIcon;
-        iconContainer.replaceChildren(this._icon);
-      } else {
-        this._icon.hass = this._hass;
-        this._icon.stateObj = stateObjIcon;
-      }
+        }
+        : null;
     }
+
+    if (!hasIconOverride && !hasPicture) {
+      return stateObj;
+    }
+
+    const attributes = { ...stateObj.attributes };
+
+    if (hasIconOverride) {
+      attributes.icon = curIcon;
+    }
+
+    if (hasPicture && !hasIconOverride) {
+      delete attributes.entity_picture;
+    }
+
+    return {
+      ...stateObj,
+      attributes,
+    };
+  }
+
+  _cleanupImgIcon() {
+    if (this._icon?.tagName === 'IMG') {
+      this._icon.remove();
+      this._icon = null;
+    }
+  }
+
+  _handleStateIcon(iconContainer, stateObjIcon) {
+    this._cleanupImgIcon();
+
+    if (!this._icon) {
+      this._icon = document.createElement('ha-state-icon');
+      iconContainer.replaceChildren(this._icon);
+    }
+
+    this._icon.hass = this._hass;
+    this._icon.stateObj = stateObjIcon;
+  }
+
+  _showIcon() {
+    if (!this._cardView || !this._domElements) return;
+
+    const { entityStateObj: stateObj, icon: curIcon } = this._cardView;
+    const hasIconOverride = is.nonEmptyString(curIcon);
+    const srcPicture = stateObj?.attributes?.entity_picture;
+    const hasPicture = is.nonEmptyString(srcPicture);
+
+    const iconContainer = this._domElements.get(CARD.htmlStructure.elements.icon.class);
+    if (!iconContainer) {
+      console.error('Icon container not found for _showIcon.');
+      return;
+    }
+
+    if (hasIconOverride) {
+      const stateObjIcon = this._createStateObjIcon(stateObj, curIcon, hasIconOverride, hasPicture);
+      if (stateObjIcon) {
+        this._handleStateIcon(iconContainer, stateObjIcon);
+      }
+      return;
+    }
+
+    if (hasPicture) {
+      this._handleImgIcon(stateObj, iconContainer, srcPicture);
+      return;
+    }
+
+    const stateObjIcon = this._createStateObjIcon(stateObj, curIcon, hasIconOverride, hasPicture);
+    if (!stateObjIcon) return;
+    this._handleStateIcon(iconContainer, stateObjIcon);
   }
 
   // === SHAPE MANAGEMENT ===
@@ -6471,6 +6637,10 @@ class EntityProgressCardBase extends HTMLElement {
 
   // === TEMPLATE PROCESSING ===
 
+  get _wsInitialized() {
+    return this._resourceManager?.has('ws-disconnected') && this._resourceManager?.has('ws-ready');
+  }
+
   _unwatchWebSocket() {
     if (this._resourceManager) {
       this._resourceManager.remove('ws-disconnected');
@@ -6523,8 +6693,7 @@ class EntityProgressCardBase extends HTMLElement {
     const templates = this._getTemplateFields();
 
     for (const [key, template] of Object.entries(templates)) {
-      if (typeof template !== 'string' || !template.trim()) continue;
-
+      if (!is.nonEmptyString(template)) continue;
       await this._subscribeToTemplate(key, template);
     }
   }
@@ -6558,7 +6727,7 @@ class EntityProgressCardBase extends HTMLElement {
     try {
       this._log.debug('key:', key);
       this._log.debug('template:', template);
-      
+
       const unsub = await this.hass.connection.subscribeMessage((msg) => this._renderJinja(key, msg.result), {
         type: 'render_template',
         template: template,
@@ -6715,18 +6884,12 @@ class EntityProgressBadge extends EntityProgressCardBase {
     `;
 
   setConfig(config) {
-    if (!config) {
-      throw new Error('setConfig: invalid config');
+    super.setConfig(config);
+    
+    // Force un refresh pour les badges dans l'éditeur
+    if (this._hass) {
+      setTimeout(() => this.refresh(), 0);
     }
-
-    this._cardView.config = { ...config };
-
-    if (!this.isRendered) {
-      this.render();
-      return;
-    }
-    this._rebuildStyle();
-    this._updateDynamicElementsSync();
   }
 
   _rebuildStyle() {
@@ -6908,7 +7071,7 @@ class EntityProgressTemplate extends EntityProgressCardBase {
       });
     }
 
-    if (this.hass) this._watchWebSocket();
+    if (this.hass && !this._wsInitialized) this._watchWebSocket();
   }
 
   setConfig(config) {
@@ -6916,12 +7079,10 @@ class EntityProgressTemplate extends EntityProgressCardBase {
   }
 
   set hass(hass) {
+    const isFirstHass = !this.hass;
     this._hassProvider.hass = hass;
     this._handleHassUpdate();
-    if (this._firstHass) {
-      this._firstHass = false;
-      this._watchWebSocket();
-    }
+    if (isFirstHass && !this._wsInitialized) this._watchWebSocket();
   }
 
   get hass() {
@@ -7092,7 +7253,7 @@ class EntityProgressTemplate extends EntityProgressCardBase {
 
   _renderTextContent(className, formattedContent) {
     this._updateElement(className, (el) => {
-      const safeContent = typeof formattedContent === 'string' ? formattedContent.trim() : '';
+      const safeContent = is.string(formattedContent) ? formattedContent.trim() : '';
       EntityProgressCardBase._setInnerHTMLIfChanged(el, safeContent);
     });
   }
@@ -7248,7 +7409,7 @@ class ConfigUpdateEventHandler {
   }
 
   updateField(targetId, changedEvent) {
-    if (changedEvent.target.value == null || changedEvent.target.value.trim() === '') {
+    if (is.nullishOrEmptyString(changedEvent.target.value)) {
       delete this.config[targetId];
     } else {
       this.config[targetId] = changedEvent.target.value;
@@ -7265,9 +7426,9 @@ class ConfigUpdateEventHandler {
   }
 
   updateMaxValueField(targetId, changedEvent) {
-    if (!isNaN(changedEvent.target.value) && changedEvent.target.value.trim() !== '') {
+    if (is.numericString(changedEvent.target.value)) {
       this.config[targetId] = parseFloat(changedEvent.target.value);
-    } else if (changedEvent.target.value.trim() !== '') {
+    } else if (is.number(changedEvent.target.value)) {
       this.config[targetId] = changedEvent.target.value;
     } else {
       delete this.config[targetId];
@@ -7279,7 +7440,7 @@ class ConfigUpdateEventHandler {
   }
 
   updateEntityOrValueField(targetId, changedEvent) {
-    if (changedEvent?.detail?.value && typeof changedEvent.detail.value[targetId] === 'string' && changedEvent.detail.value[targetId].trim() !== '') {
+    if (changedEvent?.detail?.value && is.nonEmptyString(changedEvent.detail.value[targetId])) {
       this.config[targetId] = changedEvent.detail.value[targetId];
     } else {
       delete this.config[targetId];
@@ -7292,12 +7453,8 @@ class ConfigUpdateEventHandler {
 
     this.#log.debug(' 📌 *** CONFIG before ***:', JSON.stringify(this.config, null, 2));
     this.#log.debug(' 📌 *** NEWCONFIG before ***:', JSON.stringify(newConfig, null, 2));
+    newConfig.hide = is.nonEmptyArray(newConfig.hide) ? [...newConfig.hide] : [];
 
-    if (!Array.isArray(newConfig.hide)) {
-      newConfig.hide = [];
-    } else {
-      newConfig.hide = [...newConfig.hide];
-    }
     this.#log.debug(' 📌 *** NEWCONFIG (Hide Management) ***:', JSON.stringify(newConfig, null, 2));
 
     const isChecked = changedEvent.target.checked;
@@ -7815,9 +7972,9 @@ class EntityProgressCardEditor extends HTMLElement {
   }
 
   #prepareStandardFieldUpdate(key, element) {
-    const newValue = Object.hasOwn(this.#config, key) ? this.#config[key] : '';
+    const newValue = has.own(this.#config, key) ? this.#config[key] : '';
     const currentValue = element.value;
-    const shouldUpdate = typeof currentValue === 'string' ? currentValue !== String(newValue) : currentValue !== newValue;
+    const shouldUpdate = is.string(currentValue) ? currentValue !== String(newValue) : currentValue !== newValue;
 
     if (shouldUpdate) {
       this.#log.debug('🆕 updateFields - update: ', [key, newValue]);
@@ -7903,9 +8060,8 @@ class EntityProgressCardEditor extends HTMLElement {
     }
 
     if (
-      this.#config[attribute] &&
       curEntity.hasAttribute &&
-      Object.hasOwn(curEntity.attributes, this.#config[attribute]) &&
+      has.validKey(curEntity.attributes, this.#config[attribute]) &&
       this.#domElements.get(attribute).value !== this.#config[attribute]
     ) {
       this.#domElements.get(attribute).value = this.#config[attribute];
