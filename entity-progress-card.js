@@ -2625,8 +2625,6 @@ ${CARD.htmlStructure.card.element} {
 
 .${CARD.htmlStructure.elements.progressBar.bar.class} {
   width: 100%;
-  height: var(--epb-progress-size-s);
-  max-height: var(--epb-progress-size-s);
   background-color: var(${CARD.style.dynamic.progressBar.background.var}, var(--divider-color));
   overflow: hidden;
   position: relative;
@@ -2642,62 +2640,46 @@ ${CARD.htmlStructure.card.element} {
 
 /* Progress bar size variants */
 
-.${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.elements.progressBar.container.class} {
-  height: var(--epb-progress-size-s); /* 8px */
+.${CARD.style.bar.sizeOptions.small.label} {
+  --epb-progress-size: var(--epb-progress-size-s);
 }
 
-.${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.sections.container.class} {
-  padding-top: var(--epb-progress-size-s); /* center the content */
+.${CARD.style.bar.sizeOptions.medium.label} {
+  --epb-progress-size: var(--epb-progress-size-m);
 }
 
-.${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
-  height: var(--epb-progress-size-s);
-  max-height: var(--epb-progress-size-s);
-  border-radius: calc(var(--epb-progress-size-s) / 2);;
+.${CARD.style.bar.sizeOptions.large.label} {
+  --epb-progress-size: var(--epb-progress-size-l);
 }
 
-.${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.container.class}  {
-  height: var(--epb-progress-size-m); /* 12px */
+.${CARD.style.bar.sizeOptions.xlarge.label} {
+  --epb-progress-size: var(--epb-progress-size-xl);
 }
 
-.${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.sections.container.class} {
-  padding-top: var(--epb-progress-size-m); /* center the content */
+.${CARD.htmlStructure.elements.progressBar.inner.class},
+.${CARD.htmlStructure.elements.progressBar.positiveInner.class},
+.${CARD.htmlStructure.elements.progressBar.negativeInner.class},
+.${CARD.htmlStructure.elements.progressBar.bar.class} {
+  height: var(--epb-progress-size);
+  max-height: var(--epb-progress-size);
 }
 
-.${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
-  height: var(--epb-progress-size-m);
-  max-height: var(--epb-progress-size-m);
-  border-radius: calc(var(--epb-progress-size-m) / 2);
+.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.progressBar.container.class} {
+  height: var(--epb-progress-size); /* 8px */
 }
 
-.${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.container.class} {
-  height: var(--epb-progress-size-l); /* 16px */
-}
-
-.${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.sections.container.class} {
-  padding-top: var(--epb-progress-size-l); /* center the content */
-}
-
-.${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
-  height: var(--epb-progress-size-l);
-  max-height: var(--epb-progress-size-l);
-  border-radius: calc(var(--epb-progress-size-l) / 2);
+.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.container.class} {
+  padding-top: var(--epb-progress-size); /* center the content */
 }
 
 .${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.elements.progressBar.container.class} {
   margin-top: 23px;
-  height: var(--epb-progress-size-xl);
 }
 
 .${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.sections.container.class} {
+  padding-top: unset;
   justify-content: center;
   align-items: center;  
-}
-
-.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
-  height: var(--epb-progress-size-xl);
-  max-height: var(--epb-progress-size-xl);
-  border-radius: calc(var(--epb-progress-size-xl) / 2);
 }
 
 .${CARD.style.dynamic.progressBar.orientation.rtl} .${CARD.htmlStructure.elements.progressBar.bar.class} {
@@ -2707,7 +2689,6 @@ ${CARD.htmlStructure.card.element} {
 .${CARD.htmlStructure.elements.progressBar.inner.class},
 .${CARD.htmlStructure.elements.progressBar.positiveInner.class},
 .${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
-  height: 100%;
   background: var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default});
   transition: width var(--epb-progress-transition-width);
   will-change: width;
@@ -2731,20 +2712,13 @@ ${CARD.htmlStructure.card.element} {
   transform-origin: right;
 }
 
+.${CARD.htmlStructure.elements.progressBar.bar.class},
+.${CARD.style.dynamic.progressBar.effect.radius.class} .${CARD.htmlStructure.elements.progressBar.inner.class} {
+  border-radius: calc(var(--epb-progress-size) / 2);
+}
+
 .${CARD.style.dynamic.progressBar.effect.glass.class} .${CARD.htmlStructure.elements.progressBar.inner.class} {
   background: linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
-}
-.${CARD.style.dynamic.progressBar.effect.radius.class}.${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.elements.progressBar.inner.class} {
-  border-radius: calc(var(--epb-progress-size-s) / 2);
-}
-.${CARD.style.dynamic.progressBar.effect.radius.class}.${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.inner.class} {
-  border-radius: calc(var(--epb-progress-size-m) / 2);
-}
-.${CARD.style.dynamic.progressBar.effect.radius.class}.${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.inner.class} {
-  border-radius: calc(var(--epb-progress-size-l) / 2);
-}
-.${CARD.style.dynamic.progressBar.effect.radius.class}.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.elements.progressBar.inner.class} {
-  border-radius: calc(var(--epb-progress-size-xl) / 2);
 }
 
 .${CARD.style.dynamic.progressBar.effect.gradient.class} .${CARD.htmlStructure.elements.progressBar.inner.class} {
@@ -2782,7 +2756,8 @@ ${CARD.htmlStructure.card.element} {
 .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   display: none;
   position: absolute;
-  height: 100%;
+  height: var(--epb-progress-size);
+  max-height: var(--epb-progress-size);
   top: 0;
   opacity: var(--epb-watermark-opacity-value, 0.8);
 }
