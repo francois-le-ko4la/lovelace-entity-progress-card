@@ -896,7 +896,7 @@ disable_unit: true
 The `badge_icon` option lets you display a dynamic badge, offering a quick
 status hint or symbolic representation based on logic or sensor values.
 
-This field supports templating using [Home Assistant Jinja2 s](https://www.home-assistant.io/docs/configuration/templating/), allowing the icon to be conditionally rendered.
+This field supports templating using [Home Assistant Jinja2 s](https://www.home-assistant.io/docs/configuration/templating/), allowing the icon to be conditionally rendered. The keyword `entity` can be used to represent the entity defined at the card level.
 
 _Example_:
 
@@ -924,7 +924,7 @@ The `badge_color` option lets you setup a dynamic badge's background color,
 offering a quick status hint or symbolic representation based on logic or
 sensor values.
 
-This field supports templating using [Home Assistant Jinja2 templates](https://www.home-assistant.io/docs/configuration/templating/), allowing the icon to be conditionally rendered.
+This field supports templating using [Home Assistant Jinja2 templates](https://www.home-assistant.io/docs/configuration/templating/), allowing the icon to be conditionally rendered. The keyword `entity` can be used to represent the entity defined at the card level.
 
 _Example_:
 
@@ -946,6 +946,7 @@ badge_color: >-
 The `name_info` option allows you to display additional, customizable text or
 HTML next to the entity’s name. It supports full [Home Assistant Jinja2 templates](https://www.home-assistant.io/docs/configuration/templating/) and inline HTML, enabling you to style or conditionally format the
 information based on sensor states or logic.
+The keyword `entity` can be used to represent the entity defined at the card level.
 
 _Useful for adding_:
 
@@ -978,6 +979,7 @@ name_info: >-
 The `custom_info` option allows you to display additional, customizable text or
 HTML next to the entity’s value. It supports full [Home Assistant Jinja2 templates](https://www.home-assistant.io/docs/configuration/templating/) and inline HTML, enabling you to style or conditionally format the
 information based on sensor states or logic.
+The keyword `entity` can be used to represent the entity defined at the card level.
 
 _Useful for adding_:
 
@@ -2050,6 +2052,11 @@ defined within your sensors or templates.
 | `percent`     | Numerical value representing progress (0–100%), affects progress bar width |
 | `color`       | Dynamic color for the icon and shape, adapted using `ThemeManager`         |
 | `bar_color`   | Dynamic progress bar color, also handled through `ThemeManager`            |
+
+> [!NOTE]
+>
+> The keyword `entity` can be used in Jinja to represent the entity defined at the card level.
+>
 
 ### ⚙️ Still Supported
 
