@@ -27,7 +27,7 @@ jobs:
             No worries though — if you still need assistance or want to continue the discussion, 
             just reply here and we’ll gladly reopen the issue and pick things back up with you!
   
-          exempt-issue-labels: 'pinned'
+          exempt-issue-labels: 'planned'
 
           stale-pr-message: ''
           operations-per-run: 30
