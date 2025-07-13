@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.4.11
+ * @version 1.4.12
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.4.11';
+const VERSION = '1.4.12';
 const CARD = {
   meta: {
     card: {
@@ -3202,6 +3202,11 @@ const is = {
   array: (val) => Array.isArray(val),
   nonEmptyArray: (val) => Array.isArray(val) && val.length > 0,
   nonEmptySet: (val) => val instanceof Set && val.size > 0,
+  jinja: (val) => {
+    if (typeof val !== 'string') return false;
+    const jinjaPattern = /({{.*?}}|{#.*?#}|{%.+?%})/s;
+    return jinjaPattern.test(val);
+  },
 };
 
 const has = {
@@ -4770,8 +4775,8 @@ class BaseConfigHelper {
       }
     });
 
-    // Normalize bar_effect to an array if it's a string
-    if (is.string(merged.bar_effect)) {
+    // Normalize bar_effect to an array if it's a string 
+    if (!is.jinja(merged.bar_effect) && is.string(merged.bar_effect)) {
       merged.bar_effect = [merged.bar_effect];
     }
 
@@ -4783,7 +4788,7 @@ class BaseConfigHelper {
         ...config.watermark,
       };
     }
-
+    
     return merged;
   }
 
@@ -6233,12 +6238,18 @@ class EntityProgressCardBase extends HTMLElement {
     card.classList.toggle(`${showClass}-lwm-${type}-${baseWMClass}`, !this._cardView.watermark.disable_low);
   }
 
-  _handleBarEffect(card) {
+  _handleBarEffect(card, jinjaEffect = null) {
     if (!this._cardView.barEffectsEnabled) return;
+    const isJinja = is.jinja(this._cardView.config.bar_effect);
+    if (isJinja && !jinjaEffect) return;
 
     const effects = Object.values(CARD.style.dynamic.progressBar.effect);
     effects.forEach((effect) => {
-      card.classList.toggle(effect.class, this._cardView.hasBarEffect(effect.label));
+      if (isJinja) {
+        card.classList.toggle(effect.class, jinjaEffect.includes(effect.label));
+      } else {
+        card.classList.toggle(effect.class, this._cardView.hasBarEffect(effect.label));
+      }
     });
   }
 
@@ -6573,6 +6584,7 @@ class EntityProgressCardBase extends HTMLElement {
       badge_color: () => this._renderBadgeColor(content),
       custom_info: () => this._renderCustomInfo(content),
       name_info: () => this._renderNameInfo(content),
+      bar_effect: () => this._refreshBarEffect(content),
     };
   }
 
@@ -6609,6 +6621,12 @@ class EntityProgressCardBase extends HTMLElement {
     const backgroundColor = ThemeManager.adaptColor(content);
     const color = 'var(--white-color)';
     this._setBadgeColor(color, backgroundColor);
+  }
+
+  _refreshBarEffect(content) {
+    const card = this._domElements.get(CARD.htmlStructure.card.element);
+    const jinjaEffect = content.split(',').map(s => s.trim());
+    this._handleBarEffect(card, jinjaEffect);
   }
 
   // === TEMPLATE PROCESSING ===
@@ -6669,8 +6687,7 @@ class EntityProgressCardBase extends HTMLElement {
     const templates = this._getTemplateFields();
 
     for (const [key, template] of Object.entries(templates)) {
-      if (!is.nonEmptyString(template)) continue;
-      await this._subscribeToTemplate(key, template);
+      if (is.nonEmptyString(template)) await this._subscribeToTemplate(key, template);
     }
   }
 
@@ -6687,6 +6704,7 @@ class EntityProgressCardBase extends HTMLElement {
       custom_info: config.custom_info || '',
       badge_icon: config.badge_icon || '',
       badge_color: config.badge_color || '',
+      bar_effect: config.bar_effect || '',
     };
   }
 
@@ -7167,6 +7185,7 @@ class EntityProgressTemplate extends EntityProgressCardBase {
       percent: () => this._renderPercentCSS(content),
       color: () => this._updateCSSValue(CARD.style.dynamic.iconAndShape.color.var, ThemeManager.adaptColor(content)),
       bar_color: () => this._updateCSSValue(CARD.style.dynamic.progressBar.color.var, ThemeManager.adaptColor(content)),
+      bar_effect: () => this._refreshBarEffect(content),
     };
   }
 
@@ -7219,6 +7238,7 @@ class EntityProgressTemplate extends EntityProgressCardBase {
       percent: config.percent || '',
       color: config.color || '',
       bar_color: config.bar_color || '',
+      bar_effect: config.bar_effect || '',
     };
   }
 }
@@ -7371,7 +7391,7 @@ class ConfigUpdateEventHandler {
   updateMaxValueField(targetId, changedEvent) {
     if (is.numericString(changedEvent.target.value)) {
       this.config[targetId] = parseFloat(changedEvent.target.value);
-    } else if (is.number(changedEvent.target.value)) {
+    } else if (is.nonEmptyString(changedEvent.target.value)) {
       this.config[targetId] = changedEvent.target.value;
     } else {
       delete this.config[targetId];

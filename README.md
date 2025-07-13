@@ -563,7 +563,7 @@ bar_color: rgb(110, 65, 171)
 
 #### `bar_effect`
 
-> **`bar_effect`** string or list _(optional)_
+> **`bar_effect`** string or list or Jinja _(optional)_
 
 Defines visual effects applied to the progress bar. You can use a single effect
 or combine multiple in a list.
@@ -590,6 +590,16 @@ bar_effect:
   - radius
   - shimmer
   - gradient
+```
+
+```yaml
+····
+bar_effect: |-
+  {% if states(xxx) | float > 22 %}
+    shimmer, gradient
+  {% else %}
+    gradient
+  {% endif %}
 ```
 
 #### `center_zero` [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#center-zero-)
