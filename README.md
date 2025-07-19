@@ -505,6 +505,21 @@ tap_action:
   navigation_path: /lovelace/lights
 ```
 
+It's possible to specify a different entity for an action. For example, this can be useful if you want the `more-info` popup to display information for a different entity to the one used in the progress card. As shown below, the progress card shows a stacked bar chart with `pv1_power` and `pv2_power`, but displays `pv_total_power` when tapped.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.pv1_power
+additions:
+  - entity: sensor.pv2_power
+····
+tap_action:
+  action: more-info
+  entity: sensor.pv_total_power
+```
+
 #### `theme`
 
 > **`theme`** string ➡️ {`optimal_when_low`|`optimal_when_high`|`light`|`temperature`|`humidity`|`pm25`|`voc`} _(optional)_
