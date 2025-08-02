@@ -1,4 +1,19 @@
+<a id="top"></a>
+
 # 🎨 Themes
+
+Jump to the specific section:
+
+- [Token color](#token-color)
+- [Predefined theme](#predefined-theme)
+  - 🔋 [Optimal when high (Battery...)](#optimal-high)
+  - 💽 [Optimal when low (CPU, RAM, disk...)](#optimal-low)
+  - 💡 [Light](#light) 
+  - 🌡️ [Temperature](#temperature)
+  - 💧 [Humidity](#humidity)
+  - 🦠 [VOC](#voc)
+  - 🦠 [PM 2.5](#pm25)
+- [Adapt to HA custom theme](#adapt-to-ha-custom-theme)  
 
 ## Token color
 
@@ -44,12 +59,15 @@ as defined by the CSS standard.
 | `white`        | `var(--white-color)`       |
 | `disabled`     | `var(--disabled-color)`    |
 
-## Predefined theme (card & badge)
+[🔼 Back to top](#top)
 
-Predefined themes are built-in Lovelace themes provided by default. They allow you to quickly apply a consistent and
+## Predefined theme
+
+Predefined themes (Card and Badge) are built-in Lovelace themes provided by default. They allow you to quickly apply a consistent and
 visually appealing style to your dashboard or badge without any manual configuration. These themes are ideal for getting
 an immediate result and improving the look and feel of your interface with minimal effort.
 
+<a id="optimal-high"></a>
 
 ### 🔋 Optimal when high (Battery...)
 
@@ -78,6 +96,10 @@ theme: optimal_when_high
 > The icon is automatically retrieved from the entity but can be overridden
 > using the `icon` parameter.
 
+[🔼 Back to top](#top)
+
+<a id="optimal-low"></a>
+
 ### 💽 Optimal when low (CPU, RAM, disk...)
 
 The "Optimal when Low" parameter is particularly valuable for monitoring systems
@@ -102,6 +124,10 @@ theme: optimal_when_low
 >
 > The icon is automatically retrieved from the entity but can be overridden
 > using the `icon` parameter.
+
+[🔼 Back to top](#top)
+
+<a id="light"></a>
 
 ### 💡 Light
 
@@ -134,6 +160,10 @@ The `mdi:lightbulb-outline` icon is used for lower brightness levels, while
 **linear** approach, the brightness smoothly transitions between these levels.
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/light.png" alt="Image title" width="500"/>
+
+[🔼 Back to top](#top)
+
+<a id="temperature"></a>
 
 ### 🌡️ Temperature
 
@@ -177,6 +207,11 @@ associated with a specific color:
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/temperature.png" alt="Image title" width="500"/>
 
+
+[🔼 Back to top](#top)
+
+<a id="humidity"></a>
+
 ### 💧 Humidity
 
 ```yaml
@@ -209,6 +244,10 @@ Each range is visually represented using the `mdi:water-percent` icon, ensuring
 a clear and intuitive display of humidity levels.
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/humidity.png" alt="Image title" width="500"/>
+
+[🔼 Back to top](#top)
+
+<a id="voc"></a>
 
 ### 🦠 VOC
 
@@ -254,6 +293,10 @@ Each range is visually represented using the `mdi:air-filter` icon, ensuring a
 clear and intuitive display of VOC levels.
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/voc.png" alt="Image title" width="250"/>
+
+[🔼 Back to top](#top)
+
+<a id="pm25"></a>
 
 ### 🦠 PM 2.5
 
@@ -301,6 +344,8 @@ clear and intuitive display of PM2.5 pollution levels.
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/pm.png" alt="Image title" width="250"/>
 </details>
 
+[🔼 Back to top](#top)
+
 ## Adapt to HA custom theme
 
 By default, the progress bar uses a neutral/semi-transparent background color.
@@ -332,3 +377,6 @@ my_custom_theme:
 
 Once set, the progress bar background will reflect the new color consistently
 across all cards using this variable.
+
+[🔼 Back to top](#top)
+

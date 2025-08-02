@@ -29,7 +29,7 @@ Jump to the specific section:
 - 📝 [Usage](#usage)
   - 🪄 [Card and badge Editor](#card-and-badge-editor)
   - 🧩 [Entity Progress Card](#entity-progress-card)
-  - 🧩 [Entity Progress Card Template](#entity-progress-card-template)
+  - 🧩 [Entity Progress Card Template](#entity-progress-card-template) 
   - 🧩 [Entity Progress Badge](#entity-progress-badge)
 - 🎨 [Theme](#theme)
 - 🌍 [Language \& Number Support](#language-number-support)
@@ -1227,7 +1227,7 @@ Want more features? Want to improve this card? Contributions are welcome! 🚀
   ➡️ Structural validation ideas to manage inputs (v1.5+). This implementation is original and does not reuse code from the library.
 
 - **Special thanks to [@harmonie-durrant](https://github.com/harmonie-durrant)**  
-  ➡️ PRs, HACS testing, debugging, and illustrations:  
+  ➡️ PRs, HACS testing, debugging, `Light` theme and illustrations:  
   - `doc/example.png`  
   - `doc/thumbnail.png`
 
