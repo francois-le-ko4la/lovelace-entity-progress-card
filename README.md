@@ -8,7 +8,7 @@
 >
 > 🚧 This version is **not yet released on HACS**.
 >
-> 👉 To view the documentation corresponding to the version currently available on HACS, please refer to the [stable README here](https://github.com/your-username/your-repo/blob/main/README.md).
+> 👉 To view the documentation corresponding to the version currently available on HACS, please refer to the [stable README here](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/1.4.12/README.md).
 
 # Lovelace Entity Progress Card [![ReadMe](https://img.shields.io/badge/ReadMe-018EF5?logo=readme&logoColor=fff)](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/1.4.12/README.md)
 
