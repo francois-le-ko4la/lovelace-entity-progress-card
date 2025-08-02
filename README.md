@@ -24,19 +24,19 @@ A modern Entity progress card for Home Assistant's Lovelace UI.
 
 Jump to the specific section:
 
-- [⚡ Description \& features](#description)
-- [📦 Installation](#installation)
-- [📝 Usage](#usage)
-  - [🪄 Card and badge Editor](#card-and-badge-editor)
-  - [🧩 Entity Progress Card](#entity-progress-card)
-  - [🧩 Entity Progress Card Template](#entity-progress-card-template)
-  - [🧩 Entity Progress Badge](#entity-progress-badge)
-- [🎨 Theme](#theme)
-- [🌍 Language \& Number Support](#language-number-support)
-- [🚨 Error handling \& Troubleshooting](#troubleshooting)
-- [👥 Contributing](#contributing)
-- [🙏 Credits & Acknowledgements](#credits)
-- [📄 License](#license)
+- ⚡ [Description \& features](#description)
+- 📦 [Installation](#installation)
+- 📝 [Usage](#usage)
+  - 🪄 [Card and badge Editor](#card-and-badge-editor)
+  - 🧩 [Entity Progress Card](#entity-progress-card)
+  - 🧩 [Entity Progress Card Template](#entity-progress-card-template)
+  - 🧩 [Entity Progress Badge](#entity-progress-badge)
+- 🎨 [Theme](#theme)
+- 🌍 [Language \& Number Support](#language-number-support)
+- 🚨 [Errors, Deprecations \& Troubleshooting](#troubleshooting)
+- 👥 [Contributing](#contributing)
+- 🙏 [Credits & Acknowledgements](#credits)
+- 📄 [License](#license)
 
 ---
 
@@ -1167,7 +1167,7 @@ compatibility.
 
 <a id="troubleshooting"></a>
 
-## 🚨 Error handling & Troubleshooting
+## 🚨 Errors, Deprecations & Troubleshooting
 
 [Read this document.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/troubleshooting.md)  
 

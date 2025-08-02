@@ -1,4 +1,4 @@
-# 🚨 Error handling & Troubleshooting
+# 🚨 Errors, Deprecations & Troubleshooting
 
 Not all errors are the same — and not every issue means something is broken.
 
@@ -25,6 +25,38 @@ stays clean and stable. We handle two main categories of errors in the card:
     - Entity is not found, unavailable or offline
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/errors.png" alt="Image title" width="500px"/>
+
+## ⚠️ Deprecated Options
+
+Over time, some configuration options have been deprecated in favor of more flexible or clearer alternatives.
+While the card tries to maintain backward compatibility, these options may stop working in future releases.
+
+In the development of this card, we strive to avoid breaking changes as much as possible. When such changes are unavoidable, we do our best to support
+and guide users through the transition.
+
+In this context, we have two types of deprecated options:
+
+- **Removed**: These were removed to prevent duplication and potential conflicts with the new system.
+  It was important to remove them for stability reasons.
+- **Deprecated** but still active options: These options may have been used in many different cards, and migrating them requires reviewing the configurations
+  of all those cards. Therefore, we allow time before disabling them, provide a system to detect if you are affected, and will remove them later.
+
+
+| Option / Value     | Status         | Replacement / Recommended Action | Since version | Current Behavior           |
+| ------------------ | -------------- | -------------------------------- | ------------- | -------------------------- |
+| `navigate_to`      | **Removed**    | Use `tap_action: navigate`       | `v1.2.0`      | Ignored, console warning   |
+| `show_more_info`   | **Removed**    | Use `tap_action: more-info`      | `v1.2.0`      | Ignored, console warning   |
+| `theme: 'battery'` | **Deprecated** | Use `optimal_when_xxx`           | `v1.1.8-11`   | Still works, shows warning |
+| `theme: 'cpu'`     | **Deprecated** | Same as above                    | `v1.1.8-11`   | Still works, shows warning |
+| `theme: 'memory'`  | **Deprecated** | Same as above                    | `v1.1.8-11`.  | Still works, shows warning |
+
+<details>
+<summary><strong>Show the screenshot (click to expand)</strong></summary>
+
+![Deprecated warnings](https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/deprecated.png)
+
+</details>
+
 
 ## 🐞 Troubleshooting
 

@@ -5938,7 +5938,8 @@ const types = {
     throw new ValidationError(path, ERROR_CODES.invalidUnionType.code, ERROR_CODES.invalidUnionType.severity);
   },
 
-  arrayWithValidatedElem: (allowedValues) => (value, path = []) => {
+  // eslint-disable-next-line no-unused-vars
+  arrayWithValidatedElem: (allowedValues) => (value, _path = []) => {
     if (is.nullish(value)) return SKIP_PROPERTY;
 
     const valueArray = is.array(value) ? value : [value];
@@ -5949,6 +5950,7 @@ const types = {
     return validItems;
   },
 
+  // eslint-disable-next-line no-unused-vars
   effectArray: (allowedValues) => (value, path = []) => {
     if (is.nullish(value)) return SKIP_PROPERTY;
     if (is.jinja(value)) return value;
@@ -6396,14 +6398,14 @@ class BaseConfigHelper {
 
   set config(config) {
     this._isDefined = true;
-    this.#logDeprecatedOption(config);
+    BaseConfigHelper.#logDeprecatedOption(config);
     this._configParsed = this._yamlSchema.parse(config);
     console.log(this.config);
     console.log(this._configParsed);
     console.log(this._hassProvider.language);
   }
 
-  #logDeprecatedOption(config) {
+  static #logDeprecatedOption(config) {
     if (config.navigate_to !== undefined)
       console.warn(`${CARD.meta.card.typeName.toUpperCase()} - navigate_to option is deprecated and has been removed.`);
     if (config.show_more_info !== undefined)
@@ -7697,10 +7699,11 @@ class EntityProgressCardBase extends HTMLElement {
   }
 
   _addBaseParameter(card) {
-    if (this._cardView.hasReversedSecondaryInfoRow) this._setStylePropertyIfChanged(card.style, '--epb-secondary-info-row-reverse', 'row-reverse');
+    if (this._cardView.hasReversedSecondaryInfoRow) EntityProgressCardBase._setStylePropertyIfChanged(card.style, '--epb-secondary-info-row-reverse', 'row-reverse');
     if (this._cardView.config.min_width)
-      this._setStylePropertyIfChanged(card.style, CARD.style.dynamic.card.minWidth.var, this._cardView.config.min_width);
-    if (this._cardView.config.height) this._setStylePropertyIfChanged(card.style, CARD.style.dynamic.card.height.var, this._cardView.config.height);
+      EntityProgressCardBase._setStylePropertyIfChanged(card.style, CARD.style.dynamic.card.minWidth.var, this._cardView.config.min_width);
+    if (this._cardView.config.height)
+      EntityProgressCardBase._setStylePropertyIfChanged(card.style, CARD.style.dynamic.card.height.var, this._cardView.config.height);
   }
 
   get conditionalStyle() {
@@ -7765,7 +7768,7 @@ class EntityProgressCardBase extends HTMLElement {
 
   // === DOM MANAGEMENT ===
 
-  _setStylePropertyIfChanged(style, variable, value) {
+  static _setStylePropertyIfChanged(style, variable, value) {
     if (style.getPropertyValue(variable) !== value) {
       style.setProperty(variable, value);
     }
@@ -7850,7 +7853,7 @@ class EntityProgressCardBase extends HTMLElement {
 
   _updateCSSValue(key, value) {
     this._updateElement(CARD.htmlStructure.card.element, (el) => {
-      this._setStylePropertyIfChanged(el.style, key, value);
+      EntityProgressCardBase._setStylePropertyIfChanged(el.style, key, value);
     });
   }
 
@@ -7881,7 +7884,7 @@ class EntityProgressCardBase extends HTMLElement {
         properties.push(...wmProperties);
       }
       properties.forEach(([variable, value]) => {
-        this._setStylePropertyIfChanged(style, variable, value);
+        EntityProgressCardBase._setStylePropertyIfChanged(style, variable, value);
       });
     });
   }
@@ -8064,8 +8067,8 @@ class EntityProgressCardBase extends HTMLElement {
   _setBadgeColor(color, backgroundColor) {
     this._updateElement(CARD.htmlStructure.card.element, (el) => {
       const style = el.style;
-      this._setStylePropertyIfChanged(style, CARD.style.dynamic.badge.backgroundColor.var, backgroundColor);
-      this._setStylePropertyIfChanged(style, CARD.style.dynamic.badge.color.var, color);
+      EntityProgressCardBase._setStylePropertyIfChanged(style, CARD.style.dynamic.badge.backgroundColor.var, backgroundColor);
+      EntityProgressCardBase._setStylePropertyIfChanged(style, CARD.style.dynamic.badge.color.var, color);
     });
   }
 
