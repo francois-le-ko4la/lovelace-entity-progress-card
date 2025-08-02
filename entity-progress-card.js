@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.4.12
+ * @version 1.5.0
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.4.12';
+const VERSION = '1.5.0-beta1';
 const CARD = {
   meta: {
     card: {
@@ -43,7 +43,7 @@ const CARD = {
     },
   },
   config: {
-    dev: false,
+    dev: true,
     debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false, hass: false },
     language: 'en',
     value: { min: 0, max: 100 },
@@ -564,16 +564,43 @@ const THEME = {
   },
 };
 
+const SEV = {
+  info: 'info',
+  warn: 'warning',
+  error: 'error',
+  debug: 'debug'
+};
+
 const LANGUAGES = {
   en: {
     card: {
       msg: {
-        entityError: "entity: The 'entity' parameter is required!",
-        entityNotFound: 'Entity not found',
-        attributeNotFound: 'attribute: Attribute not found in HA.',
-        minValueError: 'min_value: Check your min_value.',
-        maxValueError: 'max_value: Check your max_value.',
-        decimalError: 'decimal: This value cannot be negative.',
+        entityNotFound: 'Entity not found in HA.',
+        attributeNotFound: 'Attribute not found in HA.',
+        missingRequiredProperty: 'Required property is missing.',
+        invalidTypeString: 'Expected a value of type string.',
+        invalidTypeNumber: 'Expected a value of type number.',
+        invalidTypeBoolean: 'Expected a value of type boolean.',
+        invalidTypeArray: 'Expected a value of type array.',
+        invalidTypeObject: 'Expected a value of type object.',
+        invalidEnumValue: 'The provided value is not one of the allowed options.',
+        invalidUnionType: 'The value does not match any of the allowed types.',
+        invalidEntityId: 'The entity ID is invalid or malformed.',
+        invalidDecimal: 'The value must be a valid decimal number.',
+        invalidActionObject: 'The action object is invalid or improperly structured.',
+        missingActionKey: 'A required key is missing in the action object.',
+        invalidCustomThemeArray: 'The custom theme must be an array.',
+        invalidCustomThemeEntry: 'One or more entries in the custom theme are invalid.',
+        invalidMinValue: 'The minimum value is invalid or below allowed limits.',
+        invalidMaxValue: 'The maximum value is invalid or above allowed limits.',
+        minGreaterThanMax: 'Minimum value cannot be greater than maximum value.',
+        discontinuousRange: 'The defined range is discontinuous.',
+        missingColorProperty: 'A required color property is missing.',
+        invalidIconType: 'The specified icon type is invalid or unrecognized.',
+        invalidStateContent: 'The state content is invalid or malformed.',
+        invalidStateContentEntry: 'One or more entries in the state content are invalid.',
+        invalidTheme: 'The specified theme is unknown. Default theme will be used.',
+        appliedDefaultValue: 'A default value has been applied automatically.',
       },
     },
     editor: {
@@ -601,7 +628,7 @@ const LANGUAGES = {
         toggle_name: 'Name',
         toggle_value: 'Value',
         toggle_unit: 'Unit',
-        toggle_secondary_info: 'Info',
+        toggle_secondary_info: SEV.info,
         toggle_progress_bar: 'Bar',
         toggle_force_circular_background: 'Force circular background',
         theme: 'Theme',
@@ -637,12 +664,32 @@ const LANGUAGES = {
   fr: {
     card: {
       msg: {
-        entityError: "entity: Le paramètre 'entity' est requis !",
-        entityNotFound: 'Entité introuvable',
-        attributeNotFound: 'attribute: Attribut introuvable dans HA.',
-        minValueError: 'min_value: Vérifiez votre min_value.',
-        maxValueError: 'max_value: Vérifiez votre max_value.',
-        decimalError: 'decimal: La valeur ne peut pas être négative.',
+        entityNotFound: 'Entité introuvable dans Home Assistant.',
+        attributeNotFound: 'Attribut introuvable dans Home Assistant.',
+        missingRequiredProperty: 'Une propriété requise est manquante.',
+        invalidTypeString: 'Une valeur de type chaîne de caractères était attendue.',
+        invalidTypeNumber: 'Une valeur de type nombre était attendue.',
+        invalidTypeBoolean: 'Une valeur de type booléen était attendue.',
+        invalidTypeArray: 'Une valeur de type tableau était attendue.',
+        invalidTypeObject: 'Une valeur de type objet était attendue.',
+        invalidEnumValue: 'La valeur fournie ne fait pas partie des options autorisées.',
+        invalidUnionType: 'La valeur ne correspond à aucun des types autorisés.',
+        invalidEntityId: 'L’identifiant de l’entité est invalide ou mal formé.',
+        invalidDecimal: 'La valeur doit être un nombre entier positif.',
+        invalidActionObject: 'L’objet action est invalide ou mal structuré.',
+        missingActionKey: 'Une clé requise est manquante dans l’objet action.',
+        invalidCustomThemeArray: 'Le thème personnalisé doit être un tableau.',
+        invalidCustomThemeEntry: 'Une ou plusieurs entrées du thème personnalisé sont invalides.',
+        invalidMinValue: 'La valeur minimale est invalide ou en dessous des limites autorisées.',
+        invalidMaxValue: 'La valeur maximale est invalide ou au-dessus des limites autorisées.',
+        minGreaterThanMax: 'La valeur minimale ne peut pas être supérieure à la valeur maximale.',
+        discontinuousRange: 'L’intervalle défini est discontinu.',
+        missingColorProperty: 'Une propriété de couleur requise est manquante.',
+        invalidIconType: 'Le type d’icône spécifié est invalide ou non reconnu.',
+        invalidStateContent: 'Le contenu d’état est invalide ou mal formé.',
+        invalidStateContentEntry: 'Une ou plusieurs entrées du contenu d’état sont invalides.',
+        invalidTheme: 'Le thème spécifié est inconnu. Le thème par défaut sera utilisé.',
+        appliedDefaultValue: 'Une valeur par défaut a été appliquée automatiquement.',
       },
     },
     editor: {
@@ -706,12 +753,32 @@ const LANGUAGES = {
   es: {
     card: {
       msg: {
-        entityError: "entity: ¡El parámetro 'entity' es obligatorio!",
-        entityNotFound: 'Entidad no encontrada',
-        attributeNotFound: 'attribute: Atributo no encontrado en HA.',
-        minValueError: 'min_value: Verifique su min_value.',
-        maxValueError: 'max_value: Verifique su max_value.',
-        decimalError: 'decimal: El valor no puede ser negativo.',
+        entityNotFound: 'Entidad no encontrada en Home Assistant.',
+        attributeNotFound: 'Atributo no encontrado en Home Assistant.',
+        missingRequiredProperty: 'Falta una propiedad obligatoria.',
+        invalidTypeString: 'Se esperaba un valor de tipo cadena.',
+        invalidTypeNumber: 'Se esperaba un valor de tipo número.',
+        invalidTypeBoolean: 'Se esperaba un valor de tipo booleano.',
+        invalidTypeArray: 'Se esperaba un valor de tipo arreglo.',
+        invalidTypeObject: 'Se esperaba un valor de tipo objeto.',
+        invalidEnumValue: 'El valor proporcionado no es una opción válida.',
+        invalidUnionType: 'El valor no coincide con ninguno de los tipos permitidos.',
+        invalidEntityId: 'El ID de la entidad no es válido o está mal formado.',
+        invalidDecimal: 'El valor debe ser un número decimal válido.',
+        invalidActionObject: 'El objeto de acción es inválido o está mal estructurado.',
+        missingActionKey: 'Falta una clave obligatoria en el objeto de acción.',
+        invalidCustomThemeArray: 'El tema personalizado debe ser un arreglo.',
+        invalidCustomThemeEntry: 'Una o más entradas en el tema personalizado son inválidas.',
+        invalidMinValue: 'El valor mínimo es inválido o está por debajo del límite permitido.',
+        invalidMaxValue: 'El valor máximo es inválido o excede el límite permitido.',
+        minGreaterThanMax: 'El valor mínimo no puede ser mayor que el valor máximo.',
+        discontinuousRange: 'El rango definido es discontinuo.',
+        missingColorProperty: 'Falta una propiedad de color obligatoria.',
+        invalidIconType: 'El tipo de icono especificado es inválido o no reconocido.',
+        invalidStateContent: 'El contenido del estado es inválido o está mal formado.',
+        invalidStateContentEntry: 'Una o más entradas en el contenido del estado son inválidas.',
+        invalidTheme: 'El tema especificado es desconocido. Se usará el tema por defecto.',
+        appliedDefaultValue: 'Se ha aplicado un valor predeterminado automáticamente.',
       },
     },
     editor: {
@@ -775,12 +842,32 @@ const LANGUAGES = {
   it: {
     card: {
       msg: {
-        entityError: "entity: Il parametro 'entity' è obbligatorio!",
-        entityNotFound: 'Entità non trovata',
-        attributeNotFound: 'attribute: Attributo non trovato in HA.',
-        minValueError: 'min_value: Controlla il tuo min_value.',
-        maxValueError: 'max_value: Controlla il tuo max_value.',
-        decimalError: 'decimal: Questo valore non può essere negativo.',
+        entityNotFound: 'Entità non trovata in Home Assistant.',
+        attributeNotFound: 'Attributo non trovato in Home Assistant.',
+        missingRequiredProperty: 'Proprietà obbligatoria mancante.',
+        invalidTypeString: 'Atteso un valore di tipo stringa.',
+        invalidTypeNumber: 'Atteso un valore di tipo numero.',
+        invalidTypeBoolean: 'Atteso un valore di tipo booleano.',
+        invalidTypeArray: 'Atteso un valore di tipo array.',
+        invalidTypeObject: 'Atteso un valore di tipo oggetto.',
+        invalidEnumValue: 'Il valore fornito non è tra quelli consentiti.',
+        invalidUnionType: 'Il valore non corrisponde a nessuno dei tipi consentiti.',
+        invalidEntityId: "L'ID dell'entità non è valido o è mal formattato.",
+        invalidDecimal: 'Il valore deve essere un numero decimale valido.',
+        invalidActionObject: "L'oggetto azione non è valido o è strutturato in modo errato.",
+        missingActionKey: "Manca una chiave obbligatoria nell'oggetto azione.",
+        invalidCustomThemeArray: 'Il tema personalizzato deve essere un array.',
+        invalidCustomThemeEntry: 'Una o più voci del tema personalizzato non sono valide.',
+        invalidMinValue: 'Il valore minimo non è valido o è al di sotto del limite consentito.',
+        invalidMaxValue: 'Il valore massimo non è valido o supera il limite consentito.',
+        minGreaterThanMax: 'Il valore minimo non può essere superiore al valore massimo.',
+        discontinuousRange: "L'intervallo definito è discontinuo.",
+        missingColorProperty: 'Manca una proprietà colore obbligatoria.',
+        invalidIconType: 'Il tipo di icona specificato non è valido o non è riconosciuto.',
+        invalidStateContent: 'Il contenuto dello stato non è valido o è mal formattato.',
+        invalidStateContentEntry: 'Una o più voci nel contenuto dello stato non sono valide.',
+        invalidTheme: 'Il tema specificato è sconosciuto. Verrà utilizzato il tema predefinito.',
+        appliedDefaultValue: 'È stato applicato automaticamente un valore predefinito.',
       },
     },
     editor: {
@@ -844,12 +931,32 @@ const LANGUAGES = {
   de: {
     card: {
       msg: {
-        entityError: "entity: Der Parameter 'entity' ist erforderlich!",
-        entityNotFound: 'Entität nicht gefunden',
-        attributeNotFound: 'attribute: Attribut in HA nicht gefunden.',
-        minValueError: 'min_value: Überprüfen Sie Ihren min_value.',
-        maxValueError: 'max_value: Überprüfen Sie Ihren max_value.',
-        decimalError: 'decimal: Negative Werte sind nicht zulässig.',
+        entityNotFound: 'Entität in Home Assistant nicht gefunden.',
+        attributeNotFound: 'Attribut in Home Assistant nicht gefunden.',
+        missingRequiredProperty: 'Eine erforderliche Eigenschaft fehlt.',
+        invalidTypeString: 'Ein Wert vom Typ Zeichenkette wurde erwartet.',
+        invalidTypeNumber: 'Ein Wert vom Typ Zahl wurde erwartet.',
+        invalidTypeBoolean: 'Ein Wert vom Typ Boolesch wurde erwartet.',
+        invalidTypeArray: 'Ein Wert vom Typ Array wurde erwartet.',
+        invalidTypeObject: 'Ein Wert vom Typ Objekt wurde erwartet.',
+        invalidEnumValue: 'Der angegebene Wert gehört nicht zu den erlaubten Optionen.',
+        invalidUnionType: 'Der Wert entspricht keinem der erlaubten Typen.',
+        invalidEntityId: 'Die Entity-ID ist ungültig oder fehlerhaft.',
+        invalidDecimal: 'Der Wert muss eine gültige Dezimalzahl sein.',
+        invalidActionObject: 'Das Aktionsobjekt ist ungültig oder falsch strukturiert.',
+        missingActionKey: 'Ein erforderlicher Schlüssel fehlt im Aktionsobjekt.',
+        invalidCustomThemeArray: 'Das benutzerdefinierte Theme muss ein Array sein.',
+        invalidCustomThemeEntry: 'Eine oder mehrere Einträge im benutzerdefinierten Theme sind ungültig.',
+        invalidMinValue: 'Der Minimalwert ist ungültig oder liegt unterhalb des erlaubten Bereichs.',
+        invalidMaxValue: 'Der Maximalwert ist ungültig oder überschreitet den erlaubten Bereich.',
+        minGreaterThanMax: 'Der Minimalwert darf nicht größer als der Maximalwert sein.',
+        discontinuousRange: 'Der definierte Bereich ist nicht kontinuierlich.',
+        missingColorProperty: 'Eine erforderliche Farbeigenschaft fehlt.',
+        invalidIconType: 'Der angegebene Symboltyp ist ungültig oder nicht erkannt.',
+        invalidStateContent: 'Der Statusinhalt ist ungültig oder fehlerhaft.',
+        invalidStateContentEntry: 'Ein oder mehrere Einträge im Statusinhalt sind ungültig.',
+        invalidTheme: 'Das angegebene Theme ist unbekannt. Das Standard-Theme wird verwendet.',
+        appliedDefaultValue: 'Ein Standardwert wurde automatisch angewendet.',
       },
     },
     editor: {
@@ -913,12 +1020,32 @@ const LANGUAGES = {
   nl: {
     card: {
       msg: {
-        entityError: "entity: De parameter 'entity' is verplicht!",
-        entityNotFound: 'Entiteit niet gevonden',
-        attributeNotFound: 'attribute: Attribuut niet gevonden in HA.',
-        minValueError: 'min_value: Controleer je min_value.',
-        maxValueError: 'max_value: Controleer je max_value.',
-        decimalError: 'decimal: Deze waarde kan niet negatief zijn.',
+        entityNotFound: 'Entiteit niet gevonden in Home Assistant.',
+        attributeNotFound: 'Attribuut niet gevonden in Home Assistant.',
+        missingRequiredProperty: 'Vereiste eigenschap ontbreekt.',
+        invalidTypeString: 'Verwachte waarde van het type string.',
+        invalidTypeNumber: 'Verwachte waarde van het type nummer.',
+        invalidTypeBoolean: 'Verwachte waarde van het type boolean.',
+        invalidTypeArray: 'Verwachte waarde van het type array.',
+        invalidTypeObject: 'Verwachte waarde van het type object.',
+        invalidEnumValue: 'De opgegeven waarde is geen geldige optie.',
+        invalidUnionType: 'De waarde komt niet overeen met toegestane types.',
+        invalidEntityId: 'De entity ID is ongeldig of foutief geformatteerd.',
+        invalidDecimal: 'De waarde moet een geldig decimaal getal zijn.',
+        invalidActionObject: 'Het actieobject is ongeldig of onjuist gestructureerd.',
+        missingActionKey: 'Er ontbreekt een verplichte sleutel in het actieobject.',
+        invalidCustomThemeArray: 'Het aangepaste thema moet een array zijn.',
+        invalidCustomThemeEntry: 'Een of meer invoeren in het aangepaste thema zijn ongeldig.',
+        invalidMinValue: 'De minimumwaarde is ongeldig of te laag.',
+        invalidMaxValue: 'De maximumwaarde is ongeldig of te hoog.',
+        minGreaterThanMax: 'Minimumwaarde kan niet groter zijn dan de maximumwaarde.',
+        discontinuousRange: 'Het opgegeven bereik is niet aaneengesloten.',
+        missingColorProperty: 'Een verplichte kleur-eigenschap ontbreekt.',
+        invalidIconType: 'Het opgegeven pictogramtype is ongeldig of niet herkend.',
+        invalidStateContent: 'De statusinhoud is ongeldig of foutief.',
+        invalidStateContentEntry: 'Een of meer onderdelen van de statusinhoud zijn ongeldig.',
+        invalidTheme: 'Het opgegeven thema is onbekend. Het standaardthema wordt gebruikt.',
+        appliedDefaultValue: 'Een standaardwaarde is automatisch toegepast.',
       },
     },
     editor: {
@@ -982,12 +1109,32 @@ const LANGUAGES = {
   hr: {
     card: {
       msg: {
-        entityError: "entity: Parametar 'entity' je obavezan!",
-        entityNotFound: 'Entitet nije pronađen',
-        attributeNotFound: 'attribute: Atribut nije pronađen u HA.',
-        minValueError: 'min_value: Provjerite svoj min_value.',
-        maxValueError: 'max_value: Provjerite svoj max_value.',
-        decimalError: 'decimal: Ova vrijednost ne može biti negativna.',
+        entityNotFound: 'Entitet nije pronađen u Home Assistantu.',
+        attributeNotFound: 'Atribut nije pronađen u Home Assistantu.',
+        missingRequiredProperty: 'Nedostaje obavezno svojstvo.',
+        invalidTypeString: 'Očekivana je vrijednost tipa string.',
+        invalidTypeNumber: 'Očekivana je vrijednost tipa broj.',
+        invalidTypeBoolean: 'Očekivana je vrijednost tipa boolean.',
+        invalidTypeArray: 'Očekivana je vrijednost tipa polje.',
+        invalidTypeObject: 'Očekivana je vrijednost tipa objekt.',
+        invalidEnumValue: 'Navedena vrijednost nije među dopuštenim opcijama.',
+        invalidUnionType: 'Vrijednost ne odgovara nijednom dopuštenom tipu.',
+        invalidEntityId: 'ID entiteta je nevažeći ili pogrešno formatiran.',
+        invalidDecimal: 'Vrijednost mora biti valjani decimalni broj.',
+        invalidActionObject: 'Objekt radnje je nevažeći ili loše strukturiran.',
+        missingActionKey: 'Nedostaje obavezni ključ u objektu radnje.',
+        invalidCustomThemeArray: 'Prilagođena tema mora biti polje.',
+        invalidCustomThemeEntry: 'Jedan ili više unosa u temi su nevažeći.',
+        invalidMinValue: 'Minimalna vrijednost je nevažeća ili preniska.',
+        invalidMaxValue: 'Maksimalna vrijednost je nevažeća ili previsoka.',
+        minGreaterThanMax: 'Minimalna vrijednost ne može biti veća od maksimalne.',
+        discontinuousRange: 'Definirani raspon nije kontinuiran.',
+        missingColorProperty: 'Nedostaje obavezno svojstvo boje.',
+        invalidIconType: 'Naveden tip ikone je nevažeći ili neprepoznatljiv.',
+        invalidStateContent: 'Sadržaj stanja je nevažeći ili pogrešno formatiran.',
+        invalidStateContentEntry: 'Jedan ili više unosa stanja su nevažeći.',
+        invalidTheme: 'Navedena tema je nepoznata. Koristi se zadana tema.',
+        appliedDefaultValue: 'Zadana vrijednost automatski je primijenjena.',
       },
     },
     editor: {
@@ -1051,12 +1198,32 @@ const LANGUAGES = {
   pl: {
     card: {
       msg: {
-        entityError: "entity: Parametr 'entity' jest wymagany!",
-        entityNotFound: 'Encji nie znaleziono',
-        attributeNotFound: 'attribute: Atrybut nie znaleziony w HA.',
-        minValueError: 'min_value: Sprawdź swój min_value.',
-        maxValueError: 'max_value: Sprawdź swój max_value.',
-        decimalError: 'decimal: Ta wartość nie może być ujemna.',
+        entityNotFound: 'Nie znaleziono encji w Home Assistant.',
+        attributeNotFound: 'Nie znaleziono atrybutu w Home Assistant.',
+        missingRequiredProperty: 'Brakuje wymaganej właściwości.',
+        invalidTypeString: 'Oczekiwano wartości typu string.',
+        invalidTypeNumber: 'Oczekiwano wartości typu liczba.',
+        invalidTypeBoolean: 'Oczekiwano wartości typu boolean.',
+        invalidTypeArray: 'Oczekiwano wartości typu tablica.',
+        invalidTypeObject: 'Oczekiwano wartości typu obiekt.',
+        invalidEnumValue: 'Podana wartość nie jest jedną z dozwolonych opcji.',
+        invalidUnionType: 'Wartość nie pasuje do żadnego z dozwolonych typów.',
+        invalidEntityId: 'ID encji jest nieprawidłowe lub ma zły format.',
+        invalidDecimal: 'Wartość musi być poprawną liczbą dziesiętną.',
+        invalidActionObject: 'Obiekt akcji jest nieprawidłowy lub ma złą strukturę.',
+        missingActionKey: 'W obiekcie akcji brakuje wymaganej właściwości.',
+        invalidCustomThemeArray: 'Własny motyw musi być tablicą.',
+        invalidCustomThemeEntry: 'Jedna lub więcej pozycji motywu jest nieprawidłowa.',
+        invalidMinValue: 'Minimalna wartość jest nieprawidłowa lub zbyt niska.',
+        invalidMaxValue: 'Maksymalna wartość jest nieprawidłowa lub zbyt wysoka.',
+        minGreaterThanMax: 'Wartość minimalna nie może być większa niż maksymalna.',
+        discontinuousRange: 'Zdefiniowany zakres jest nieciągły.',
+        missingColorProperty: 'Brakuje wymaganej właściwości koloru.',
+        invalidIconType: 'Określony typ ikony jest nieprawidłowy lub nieznany.',
+        invalidStateContent: 'Zawartość stanu jest nieprawidłowa lub uszkodzona.',
+        invalidStateContentEntry: 'Jedna lub więcej pozycji zawartości stanu jest nieprawidłowa.',
+        invalidTheme: 'Podany motyw jest nieznany. Zostanie użyty domyślny motyw.',
+        appliedDefaultValue: 'Zastosowano domyślną wartość automatycznie.',
       },
     },
     editor: {
@@ -1120,12 +1287,32 @@ const LANGUAGES = {
   mk: {
     card: {
       msg: {
-        entityError: "entity: Параметарот 'entity' е задолжителен!",
-        entityNotFound: 'Ентитетот не е пронајден',
-        attributeNotFound: 'attribute: Атрибутот не е пронајден во HA.',
-        minValueError: 'min_value: Проверете го вашиот min_value.',
-        maxValueError: 'max_value: Проверете го вашиот max_value.',
-        decimalError: 'decimal: Ова вредност не може да биде негативна.',
+        entityNotFound: 'Ентитетот не е пронајден во Home Assistant.',
+        attributeNotFound: 'Атрибутот не е пронајден во Home Assistant.',
+        missingRequiredProperty: 'Недостасува потребно својство.',
+        invalidTypeString: 'Се очекуваше вредност од тип string.',
+        invalidTypeNumber: 'Се очекуваше вредност од тип број.',
+        invalidTypeBoolean: 'Се очекуваше вредност од тип boolean.',
+        invalidTypeArray: 'Се очекуваше вредност од тип низа.',
+        invalidTypeObject: 'Се очекуваше вредност од тип објект.',
+        invalidEnumValue: 'Дадената вредност не е дозволена опција.',
+        invalidUnionType: 'Вредноста не одговара на дозволените типови.',
+        invalidEntityId: 'ID-то на ентитетот е невалидно или лошо форматирано.',
+        invalidDecimal: 'Вредноста мора да биде валиден децимален број.',
+        invalidActionObject: 'Објектот за акција е невалиден или неправилно структуриран.',
+        missingActionKey: 'Недостасува потребен клуч во објектот за акција.',
+        invalidCustomThemeArray: 'Прилагодената тема мора да биде низа.',
+        invalidCustomThemeEntry: 'Еден или повеќе елементи во прилагодената тема се невалидни.',
+        invalidMinValue: 'Минималната вредност е невалидна или под дозволеното.',
+        invalidMaxValue: 'Максималната вредност е невалидна или над дозволеното.',
+        minGreaterThanMax: 'Минималната вредност не може да биде поголема од максималната.',
+        discontinuousRange: 'Дефинираниот опсег е дисконинуиран.',
+        missingColorProperty: 'Недостасува потребна карактеристика за боја.',
+        invalidIconType: 'Типот на икона е невалиден или непознат.',
+        invalidStateContent: 'Состојбата е невалидна или лошо форматирана.',
+        invalidStateContentEntry: 'Еден или повеќе елементи во состојбата се невалидни.',
+        invalidTheme: 'Темата е непозната. Ќе се користи стандардна тема.',
+        appliedDefaultValue: 'Автоматски е применета стандардна вредност.',
       },
     },
     editor: {
@@ -1189,12 +1376,32 @@ const LANGUAGES = {
   pt: {
     card: {
       msg: {
-        entityError: "entity: O parâmetro 'entity' é obrigatório!",
-        entityNotFound: 'Entidade não encontrada',
-        attributeNotFound: 'attribute: Atributo não encontrado no HA.',
-        minValueError: 'min_value: Verifique o seu min_value.',
-        maxValueError: 'max_value: Verifique o seu max_value.',
-        decimalError: 'decimal: Este valor não pode ser negativo.',
+        entityNotFound: 'Entidade não encontrada no Home Assistant.',
+        attributeNotFound: 'Atributo não encontrado no Home Assistant.',
+        missingRequiredProperty: 'Propriedade obrigatória ausente.',
+        invalidTypeString: 'Esperava-se um valor do tipo string.',
+        invalidTypeNumber: 'Esperava-se um valor do tipo número.',
+        invalidTypeBoolean: 'Esperava-se um valor do tipo booleano.',
+        invalidTypeArray: 'Esperava-se um valor do tipo array.',
+        invalidTypeObject: 'Esperava-se um valor do tipo objeto.',
+        invalidEnumValue: 'O valor fornecido não é uma opção válida.',
+        invalidUnionType: 'O valor não corresponde a nenhum dos tipos permitidos.',
+        invalidEntityId: 'O ID da entidade é inválido ou mal formatado.',
+        invalidDecimal: 'O valor deve ser um número decimal válido.',
+        invalidActionObject: 'O objeto de ação é inválido ou mal estruturado.',
+        missingActionKey: 'Uma chave obrigatória está faltando no objeto de ação.',
+        invalidCustomThemeArray: 'O tema personalizado deve ser um array.',
+        invalidCustomThemeEntry: 'Uma ou mais entradas no tema personalizado são inválidas.',
+        invalidMinValue: 'O valor mínimo é inválido ou abaixo do permitido.',
+        invalidMaxValue: 'O valor máximo é inválido ou acima do permitido.',
+        minGreaterThanMax: 'O valor mínimo não pode ser maior que o valor máximo.',
+        discontinuousRange: 'O intervalo definido é descontínuo.',
+        missingColorProperty: 'Uma propriedade de cor obrigatória está faltando.',
+        invalidIconType: 'O tipo de ícone especificado é inválido ou desconhecido.',
+        invalidStateContent: 'O conteúdo do estado é inválido ou mal formatado.',
+        invalidStateContentEntry: 'Uma ou mais entradas do conteúdo do estado são inválidas.',
+        invalidTheme: 'O tema especificado é desconhecido. Tema padrão será usado.',
+        appliedDefaultValue: 'Um valor padrão foi aplicado automaticamente.',
       },
     },
     editor: {
@@ -1258,12 +1465,32 @@ const LANGUAGES = {
   da: {
     card: {
       msg: {
-        entityError: "entity: Parameteren 'entity' er påkrævet!",
-        entityNotFound: 'Enheden blev ikke fundet',
-        attributeNotFound: 'attribute: Attribut ikke fundet i HA.',
-        minValueError: 'min_value: Tjekk din min_value.',
-        maxValueError: 'max_value: Tjekk din max_value.',
-        decimalError: 'decimal: Denne værdi kan ikke være negativ.',
+        entityNotFound: 'Enheden blev ikke fundet i Home Assistant.',
+        attributeNotFound: 'Egenskab blev ikke fundet i Home Assistant.',
+        missingRequiredProperty: 'En påkrævet egenskab mangler.',
+        invalidTypeString: 'Forventede en strengværdi.',
+        invalidTypeNumber: 'Forventede en numerisk værdi.',
+        invalidTypeBoolean: 'Forventede en boolesk værdi.',
+        invalidTypeArray: 'Forventede en array-værdi.',
+        invalidTypeObject: 'Forventede en objektværdi.',
+        invalidEnumValue: 'Den angivne værdi er ikke en tilladt mulighed.',
+        invalidUnionType: 'Værdien matcher ingen af de tilladte typer.',
+        invalidEntityId: 'Enheds-ID er ugyldigt eller forkert formateret.',
+        invalidDecimal: 'Værdien skal være et gyldigt decimaltal.',
+        invalidActionObject: 'Handlingsobjektet er ugyldigt eller forkert struktureret.',
+        missingActionKey: 'En påkrævet nøgle mangler i handlingsobjektet.',
+        invalidCustomThemeArray: 'Det brugerdefinerede tema skal være en array.',
+        invalidCustomThemeEntry: 'En eller flere indgange i det brugerdefinerede tema er ugyldige.',
+        invalidMinValue: 'Mindsteværdi er ugyldig eller under den tilladte grænse.',
+        invalidMaxValue: 'Maksimumværdi er ugyldig eller overstiger den tilladte grænse.',
+        minGreaterThanMax: 'Mindsteværdi kan ikke være større end maksimumværdi.',
+        discontinuousRange: 'Det definerede interval er usammenhængende.',
+        missingColorProperty: 'En påkrævet farveegenskab mangler.',
+        invalidIconType: 'Den angivne ikontype er ugyldig eller ukendt.',
+        invalidStateContent: 'Tilstandsindholdet er ugyldigt eller fejlbehæftet.',
+        invalidStateContentEntry: 'En eller flere poster i tilstandsindholdet er ugyldige.',
+        invalidTheme: 'Det angivne tema er ukendt. Standardtema anvendes.',
+        appliedDefaultValue: 'Standardværdi er blevet anvendt automatisk.',
       },
     },
     editor: {
@@ -1327,12 +1554,32 @@ const LANGUAGES = {
   nb: {
     card: {
       msg: {
-        entityError: "entity: Parameteret 'entity' er påkrevd!",
-        entityNotFound: 'Enheten ble ikke funnet',
-        attributeNotFound: 'attribute: Attributt ikke funnet i HA.',
-        minValueError: 'min_value: Sjekk din min_value.',
-        maxValueError: 'max_value: Sjekk din max_value.',
-        decimalError: 'decimal: Denne verdien kan ikke være negativ.',
+        entityNotFound: 'Enheten ble ikke funnet i Home Assistant.',
+        attributeNotFound: 'Attributtet ble ikke funnet i Home Assistant.',
+        missingRequiredProperty: 'En påkrevd egenskap mangler.',
+        invalidTypeString: 'Forventet en verdi av typen string.',
+        invalidTypeNumber: 'Forventet en numerisk verdi.',
+        invalidTypeBoolean: 'Forventet en boolsk verdi.',
+        invalidTypeArray: 'Forventet en verdi av typen array.',
+        invalidTypeObject: 'Forventet en verdi av typen objekt.',
+        invalidEnumValue: 'Den oppgitte verdien er ikke en gyldig mulighet.',
+        invalidUnionType: 'Verdien samsvarer ikke med noen av de tillatte typene.',
+        invalidEntityId: 'Enhets-ID er ugyldig eller feil formatert.',
+        invalidDecimal: 'Verdien må være et gyldig desimaltall.',
+        invalidActionObject: 'Handlingsobjektet er ugyldig eller feil strukturert.',
+        missingActionKey: 'En påkrevd nøkkel mangler i handlingsobjektet.',
+        invalidCustomThemeArray: 'Tilpasset tema må være en array.',
+        invalidCustomThemeEntry: 'Én eller flere oppføringer i temaet er ugyldige.',
+        invalidMinValue: 'Minsteverdi er ugyldig eller for lav.',
+        invalidMaxValue: 'Maksverdi er ugyldig eller for høy.',
+        minGreaterThanMax: 'Minsteverdi kan ikke være større enn maksverdi.',
+        discontinuousRange: 'Det definerte området er ikke sammenhengende.',
+        missingColorProperty: 'En nødvendig fargeegenskap mangler.',
+        invalidIconType: 'Angitt ikon-type er ugyldig eller ukjent.',
+        invalidStateContent: 'Tilstandsinnholdet er ugyldig eller feil formatert.',
+        invalidStateContentEntry: 'En eller flere oppføringer i tilstandsinnholdet er ugyldige.',
+        invalidTheme: 'Angitt tema er ukjent. Standardtema vil bli brukt.',
+        appliedDefaultValue: 'En standardverdi har blitt brukt automatisk.',
       },
     },
     editor: {
@@ -1396,12 +1643,32 @@ const LANGUAGES = {
   sv: {
     card: {
       msg: {
-        entityError: "entity: Parametern 'entity' är obligatorisk!",
-        entityNotFound: 'Enhet ej funnen',
-        attributeNotFound: 'attribute: Attributet hittades inte i HA.',
-        minValueError: 'min_value: Kontrollera ditt min_value.',
-        maxValueError: 'max_value: Kontrollera ditt max_value.',
-        decimalError: 'decimal: Detta värde kan inte vara negativt.',
+        entityNotFound: 'Enheten kunde inte hittas i Home Assistant.',
+        attributeNotFound: 'Attributet kunde inte hittas i Home Assistant.',
+        missingRequiredProperty: 'En obligatorisk egenskap saknas.',
+        invalidTypeString: 'Förväntade ett värde av typen sträng.',
+        invalidTypeNumber: 'Förväntade ett värde av typen nummer.',
+        invalidTypeBoolean: 'Förväntade ett värde av typen boolean.',
+        invalidTypeArray: 'Förväntade ett värde av typen array.',
+        invalidTypeObject: 'Förväntade ett värde av typen objekt.',
+        invalidEnumValue: 'Det angivna värdet är inte ett giltigt alternativ.',
+        invalidUnionType: 'Värdet matchar inte något av de tillåtna typerna.',
+        invalidEntityId: 'Enhets-ID är ogiltigt eller felaktigt formaterat.',
+        invalidDecimal: 'Värdet måste vara ett giltigt decimaltal.',
+        invalidActionObject: 'Åtgärdsobjektet är ogiltigt eller felstrukturerat.',
+        missingActionKey: 'En obligatorisk nyckel saknas i åtgärdsobjektet.',
+        invalidCustomThemeArray: 'Det anpassade temat måste vara en array.',
+        invalidCustomThemeEntry: 'En eller flera poster i det anpassade temat är ogiltiga.',
+        invalidMinValue: 'Minimivärdet är ogiltigt eller för lågt.',
+        invalidMaxValue: 'Maximivärdet är ogiltigt eller för högt.',
+        minGreaterThanMax: 'Minimivärdet kan inte vara större än maximivärdet.',
+        discontinuousRange: 'Det angivna intervallet är inte sammanhängande.',
+        missingColorProperty: 'En obligatorisk färgegenskap saknas.',
+        invalidIconType: 'Den angivna ikontypen är ogiltig eller okänd.',
+        invalidStateContent: 'Tillståndsinnehållet är ogiltigt eller felaktigt.',
+        invalidStateContentEntry: 'En eller flera poster i tillståndsinnehållet är ogiltiga.',
+        invalidTheme: 'Det angivna temat är okänt. Standardtema används.',
+        appliedDefaultValue: 'Ett standardvärde har tillämpats automatiskt.',
       },
     },
     editor: {
@@ -1465,12 +1732,32 @@ const LANGUAGES = {
   el: {
     card: {
       msg: {
-        entityError: "οντότητα: Η παράμετρος 'entity' είναι υποχρεωτική!",
-        entityNotFound: 'Η οντότητα δεν βρέθηκε',
-        attributeNotFound: 'χαρακτηριστικό: Το χαρακτηριστικό δεν βρέθηκε στο HA.',
-        minValueError: 'min_value: Ελέγξτε την ελάχιστη τιμή.',
-        maxValueError: 'max_value: Ελέγξτε τη μέγιστη τιμή.',
-        decimalError: 'decimal: Αυτή η τιμή δεν μπορεί να είναι αρνητική.',
+        entityNotFound: 'Η οντότητα δεν βρέθηκε στο Home Assistant.',
+        attributeNotFound: 'Το χαρακτηριστικό δεν βρέθηκε στο Home Assistant.',
+        missingRequiredProperty: 'Λείπει μια απαιτούμενη ιδιότητα.',
+        invalidTypeString: 'Αναμενόταν τιμή τύπου συμβολοσειράς.',
+        invalidTypeNumber: 'Αναμενόταν τιμή τύπου αριθμού.',
+        invalidTypeBoolean: 'Αναμενόταν τιμή τύπου boolean.',
+        invalidTypeArray: 'Αναμενόταν τιμή τύπου πίνακα.',
+        invalidTypeObject: 'Αναμενόταν τιμή τύπου αντικειμένου.',
+        invalidEnumValue: 'Η παρεχόμενη τιμή δεν είναι αποδεκτή επιλογή.',
+        invalidUnionType: 'Η τιμή δεν ταιριάζει σε κανέναν από τους επιτρεπόμενους τύπους.',
+        invalidEntityId: 'Το αναγνωριστικό οντότητας δεν είναι έγκυρο ή είναι κακώς διαμορφωμένο.',
+        invalidDecimal: 'Η τιμή πρέπει να είναι έγκυρος δεκαδικός αριθμός.',
+        invalidActionObject: 'Το αντικείμενο ενέργειας δεν είναι έγκυρο ή είναι κακώς δομημένο.',
+        missingActionKey: 'Λείπει απαιτούμενο κλειδί στο αντικείμενο ενέργειας.',
+        invalidCustomThemeArray: 'Το προσαρμοσμένο θέμα πρέπει να είναι πίνακας.',
+        invalidCustomThemeEntry: 'Μία ή περισσότερες καταχωρήσεις στο προσαρμοσμένο θέμα δεν είναι έγκυρες.',
+        invalidMinValue: 'Η ελάχιστη τιμή δεν είναι έγκυρη ή είναι εκτός επιτρεπόμενων ορίων.',
+        invalidMaxValue: 'Η μέγιστη τιμή δεν είναι έγκυρη ή ξεπερνά τα όρια.',
+        minGreaterThanMax: 'Η ελάχιστη τιμή δεν μπορεί να είναι μεγαλύτερη από τη μέγιστη.',
+        discontinuousRange: 'Το καθορισμένο εύρος δεν είναι συνεχές.',
+        missingColorProperty: 'Λείπει απαιτούμενη ιδιότητα χρώματος.',
+        invalidIconType: 'Ο καθορισμένος τύπος εικονιδίου δεν είναι έγκυρος ή αναγνωρίσιμος.',
+        invalidStateContent: 'Το περιεχόμενο κατάστασης δεν είναι έγκυρο ή είναι κακώς διαμορφωμένο.',
+        invalidStateContentEntry: 'Μία ή περισσότερες καταχωρήσεις στο περιεχόμενο κατάστασης είναι άκυρες.',
+        invalidTheme: 'Το καθορισμένο θέμα είναι άγνωστο. Θα χρησιμοποιηθεί το προεπιλεγμένο θέμα.',
+        appliedDefaultValue: 'Εφαρμόστηκε αυτόματα προεπιλεγμένη τιμή.',
       },
     },
     editor: {
@@ -1534,12 +1821,32 @@ const LANGUAGES = {
   fi: {
     card: {
       msg: {
-        entityError: "entiteetti: 'entity'-parametri on pakollinen!",
-        entityNotFound: 'Entiteettiä ei löydy',
-        attributeNotFound: 'attribuutti: Attribuuttia ei löydy HA:sta.',
-        minValueError: 'min_value: Tarkista minimiarvo.',
-        maxValueError: 'max_value: Tarkista maksimiarvo.',
-        decimalError: 'decimal: Arvo ei voi olla negatiivinen.',
+        entityNotFound: 'Entiteettiä ei löytynyt Home Assistantista.',
+        attributeNotFound: 'Attribuuttia ei löytynyt Home Assistantista.',
+        missingRequiredProperty: 'Pakollinen ominaisuus puuttuu.',
+        invalidTypeString: 'Odotettiin merkkijonotyyppistä arvoa.',
+        invalidTypeNumber: 'Odotettiin numeerista arvoa.',
+        invalidTypeBoolean: 'Odotettiin totuusarvoa (boolean).',
+        invalidTypeArray: 'Odotettiin taulukkoarvoa.',
+        invalidTypeObject: 'Odotettiin objektityyppistä arvoa.',
+        invalidEnumValue: 'Annettu arvo ei ole sallituista vaihtoehdoista.',
+        invalidUnionType: 'Arvo ei vastaa mitään sallituista tyypeistä.',
+        invalidEntityId: 'Entiteetin tunniste on virheellinen tai väärin muotoiltu.',
+        invalidDecimal: 'Arvon on oltava kelvollinen desimaaliluku.',
+        invalidActionObject: 'Toiminto-objekti on virheellinen tai huonosti rakennettu.',
+        missingActionKey: 'Toiminto-objektista puuttuu vaadittu avain.',
+        invalidCustomThemeArray: 'Mukautetun teeman on oltava taulukko.',
+        invalidCustomThemeEntry: 'Yksi tai useampi mukautetun teeman merkintä on virheellinen.',
+        invalidMinValue: 'Vähimmäisarvo on virheellinen tai liian pieni.',
+        invalidMaxValue: 'Enimmäisarvo on virheellinen tai liian suuri.',
+        minGreaterThanMax: 'Vähimmäisarvo ei voi olla suurempi kuin enimmäisarvo.',
+        discontinuousRange: 'Määritetty alue on katkonainen.',
+        missingColorProperty: 'Pakollinen väriominaisuus puuttuu.',
+        invalidIconType: 'Annettu kuvaketyyppi on virheellinen tai tuntematon.',
+        invalidStateContent: 'Tilasisältö on virheellinen tai väärässä muodossa.',
+        invalidStateContentEntry: 'Yksi tai useampi tilasisällön merkintä on virheellinen.',
+        invalidTheme: 'Määritetty teema on tuntematon. Käytetään oletusteemaa.',
+        appliedDefaultValue: 'Oletusarvo on asetettu automaattisesti.',
       },
     },
     editor: {
@@ -1603,12 +1910,32 @@ const LANGUAGES = {
   ro: {
     card: {
       msg: {
-        entityError: "entitate: Parametrul 'entity' este obligatoriu!",
-        entityNotFound: 'Entitatea nu a fost găsită',
-        attributeNotFound: 'atribut: Atributul nu a fost găsit în HA.',
-        minValueError: 'min_value: Verifică valoarea minimă.',
-        maxValueError: 'max_value: Verifică valoarea maximă.',
-        decimalError: 'decimal: Această valoare nu poate fi negativă.',
+        entityNotFound: 'Entitatea nu a fost găsită în Home Assistant.',
+        attributeNotFound: 'Atributul nu a fost găsit în Home Assistant.',
+        missingRequiredProperty: 'Lipsește o proprietate necesară.',
+        invalidTypeString: 'Se aștepta o valoare de tip șir.',
+        invalidTypeNumber: 'Se aștepta o valoare de tip număr.',
+        invalidTypeBoolean: 'Se aștepta o valoare de tip boolean.',
+        invalidTypeArray: 'Se aștepta o valoare de tip array.',
+        invalidTypeObject: 'Se aștepta o valoare de tip obiect.',
+        invalidEnumValue: 'Valoarea furnizată nu este una dintre opțiunile permise.',
+        invalidUnionType: 'Valoarea nu se potrivește niciunui tip permis.',
+        invalidEntityId: 'ID-ul entității este invalid sau formatat greșit.',
+        invalidDecimal: 'Valoarea trebuie să fie un număr zecimal valid.',
+        invalidActionObject: 'Obiectul acțiune este invalid sau structurat incorect.',
+        missingActionKey: 'Lipsește o cheie necesară în obiectul acțiune.',
+        invalidCustomThemeArray: 'Tema personalizată trebuie să fie un array.',
+        invalidCustomThemeEntry: 'Una sau mai multe intrări din temă sunt invalide.',
+        invalidMinValue: 'Valoarea minimă este invalidă sau prea mică.',
+        invalidMaxValue: 'Valoarea maximă este invalidă sau prea mare.',
+        minGreaterThanMax: 'Valoarea minimă nu poate fi mai mare decât valoarea maximă.',
+        discontinuousRange: 'Intervalul definit este discontinuu.',
+        missingColorProperty: 'Lipsește o proprietate de culoare necesară.',
+        invalidIconType: 'Tipul de pictogramă specificat este invalid sau necunoscut.',
+        invalidStateContent: 'Conținutul stării este invalid sau formatat greșit.',
+        invalidStateContentEntry: 'Una sau mai multe intrări în conținutul stării sunt invalide.',
+        invalidTheme: 'Tema specificată este necunoscută. Va fi utilizată tema implicită.',
+        appliedDefaultValue: 'A fost aplicată automat o valoare implicită.',
       },
     },
     editor: {
@@ -1672,12 +1999,32 @@ const LANGUAGES = {
   zh: {
     card: {
       msg: {
-        entityError: "entity：必须提供 'entity' 参数！",
-        entityNotFound: '未找到实体',
-        attributeNotFound: 'attribute：HA 中未找到该属性。',
-        minValueError: 'min_value：请检查最小值。',
-        maxValueError: 'max_value：请检查最大值。',
-        decimalError: 'decimal：该值不能为负数。',
+        entityNotFound: '在 Home Assistant 中找不到实体。',
+        attributeNotFound: '在 Home Assistant 中找不到属性。',
+        missingRequiredProperty: '缺少必需的属性。',
+        invalidTypeString: '应为字符串类型的值。',
+        invalidTypeNumber: '应为数字类型的值。',
+        invalidTypeBoolean: '应为布尔类型的值。',
+        invalidTypeArray: '应为数组类型的值。',
+        invalidTypeObject: '应为对象类型的值。',
+        invalidEnumValue: '提供的值不是允许的选项之一。',
+        invalidUnionType: '该值不符合任何允许的类型。',
+        invalidEntityId: '实体 ID 无效或格式错误。',
+        invalidDecimal: '该值必须是有效的小数。',
+        invalidActionObject: '操作对象无效或结构不正确。',
+        missingActionKey: '操作对象中缺少必需的键。',
+        invalidCustomThemeArray: '自定义主题必须是数组。',
+        invalidCustomThemeEntry: '自定义主题中有一个或多个无效条目。',
+        invalidMinValue: '最小值无效或低于允许的限制。',
+        invalidMaxValue: '最大值无效或超过允许的限制。',
+        minGreaterThanMax: '最小值不能大于最大值。',
+        discontinuousRange: '定义的范围不连续。',
+        missingColorProperty: '缺少必需的颜色属性。',
+        invalidIconType: '指定的图标类型无效或无法识别。',
+        invalidStateContent: '状态内容无效或格式错误。',
+        invalidStateContentEntry: '状态内容中有一个或多个无效条目。',
+        invalidTheme: '指定的主题未知，将使用默认主题。',
+        appliedDefaultValue: '已自动应用默认值。',
       },
     },
     editor: {
@@ -1741,12 +2088,32 @@ const LANGUAGES = {
   ja: {
     card: {
       msg: {
-        entityError: 'entity：「entity」パラメータは必須です！',
-        entityNotFound: 'エンティティが見つかりません',
-        attributeNotFound: 'attribute：HA に属性が見つかりませんでした。',
-        minValueError: 'min_value：最小値を確認してください。',
-        maxValueError: 'max_value：最大値を確認してください。',
-        decimalError: 'decimal：負の値は使用できません。',
+        entityNotFound: 'Home Assistant にエンティティが見つかりません。',
+        attributeNotFound: 'Home Assistant に属性が見つかりません。',
+        missingRequiredProperty: '必要なプロパティが欠落しています。',
+        invalidTypeString: '文字列型の値が必要です。',
+        invalidTypeNumber: '数値型の値が必要です。',
+        invalidTypeBoolean: 'ブール型の値が必要です。',
+        invalidTypeArray: '配列型の値が必要です。',
+        invalidTypeObject: 'オブジェクト型の値が必要です。',
+        invalidEnumValue: '指定された値は許可されたオプションのいずれでもありません。',
+        invalidUnionType: '値が許可された型のいずれにも一致しません。',
+        invalidEntityId: 'エンティティ ID が無効か、形式が正しくありません。',
+        invalidDecimal: '値は有効な小数である必要があります。',
+        invalidActionObject: 'アクションオブジェクトが無効または構造が不正です。',
+        missingActionKey: 'アクションオブジェクトに必要なキーが欠落しています。',
+        invalidCustomThemeArray: 'カスタムテーマは配列である必要があります。',
+        invalidCustomThemeEntry: 'カスタムテーマの1つ以上のエントリが無効です。',
+        invalidMinValue: '最小値が無効か、許容範囲を下回っています。',
+        invalidMaxValue: '最大値が無効か、許容範囲を超えています。',
+        minGreaterThanMax: '最小値は最大値より大きくできません。',
+        discontinuousRange: '定義された範囲が連続していません。',
+        missingColorProperty: '必要な色のプロパティが欠落しています。',
+        invalidIconType: '指定されたアイコンタイプが無効または認識されません。',
+        invalidStateContent: '状態の内容が無効または形式が不正です。',
+        invalidStateContentEntry: '状態の内容の1つ以上のエントリが無効です。',
+        invalidTheme: '指定されたテーマは不明です。デフォルトのテーマが使用されます。',
+        appliedDefaultValue: 'デフォルト値が自動的に適用されました。',
       },
     },
     editor: {
@@ -1810,12 +2177,32 @@ const LANGUAGES = {
   ko: {
     card: {
       msg: {
-        entityError: "entity: 'entity' 매개변수는 필수입니다!",
-        entityNotFound: '엔티티를 찾을 수 없습니다',
-        attributeNotFound: 'attribute: HA에서 속성을 찾을 수 없습니다.',
-        minValueError: 'min_value: 최소값을 확인하세요.',
-        maxValueError: 'max_value: 최대값을 확인하세요.',
-        decimalError: 'decimal: 음수는 허용되지 않습니다.',
+        entityNotFound: 'Home Assistant에서 엔티티를 찾을 수 없습니다.',
+        attributeNotFound: 'Home Assistant에서 속성을 찾을 수 없습니다.',
+        missingRequiredProperty: '필수 속성이 누락되었습니다.',
+        invalidTypeString: '문자열 유형의 값이 필요합니다.',
+        invalidTypeNumber: '숫자 유형의 값이 필요합니다.',
+        invalidTypeBoolean: '불리언 유형의 값이 필요합니다.',
+        invalidTypeArray: '배열 유형의 값이 필요합니다.',
+        invalidTypeObject: '객체 유형의 값이 필요합니다.',
+        invalidEnumValue: '제공된 값이 허용된 옵션 중 하나가 아닙니다.',
+        invalidUnionType: '값이 허용된 유형 중 어떤 것과도 일치하지 않습니다.',
+        invalidEntityId: '엔티티 ID가 잘못되었거나 형식이 잘못되었습니다.',
+        invalidDecimal: '값은 유효한 소수여야 합니다.',
+        invalidActionObject: '액션 객체가 잘못되었거나 구조가 올바르지 않습니다.',
+        missingActionKey: '액션 객체에 필수 키가 없습니다.',
+        invalidCustomThemeArray: '사용자 정의 테마는 배열이어야 합니다.',
+        invalidCustomThemeEntry: '사용자 정의 테마에 하나 이상의 잘못된 항목이 있습니다.',
+        invalidMinValue: '최소값이 유효하지 않거나 허용된 범위보다 작습니다.',
+        invalidMaxValue: '최대값이 유효하지 않거나 허용된 범위를 초과합니다.',
+        minGreaterThanMax: '최소값은 최대값보다 클 수 없습니다.',
+        discontinuousRange: '정의된 범위가 연속적이지 않습니다.',
+        missingColorProperty: '필수 색상 속성이 누락되었습니다.',
+        invalidIconType: '지정된 아이콘 유형이 잘못되었거나 인식되지 않습니다.',
+        invalidStateContent: '상태 콘텐츠가 잘못되었거나 형식이 잘못되었습니다.',
+        invalidStateContentEntry: '상태 콘텐츠에 하나 이상의 잘못된 항목이 있습니다.',
+        invalidTheme: '지정된 테마를 알 수 없습니다. 기본 테마가 사용됩니다.',
+        appliedDefaultValue: '기본값이 자동으로 적용되었습니다.',
       },
     },
     editor: {
@@ -1879,12 +2266,32 @@ const LANGUAGES = {
   tr: {
     card: {
       msg: {
-        entityError: "entity: 'entity' parametresi gereklidir!",
-        entityNotFound: 'Varlık bulunamadı',
-        attributeNotFound: 'attribute: HA içinde öznitelik bulunamadı.',
-        minValueError: 'min_value: Minimum değeri kontrol edin.',
-        maxValueError: 'max_value: Maksimum değeri kontrol edin.',
-        decimalError: 'decimal: Bu değer negatif olamaz.',
+        entityNotFound: "Varlık Home Assistant'ta bulunamadı.",
+        attributeNotFound: "Öznitelik Home Assistant'ta bulunamadı.",
+        missingRequiredProperty: 'Gerekli bir özellik eksik.',
+        invalidTypeString: 'Dize (string) türünde bir değer bekleniyordu.',
+        invalidTypeNumber: 'Sayı türünde bir değer bekleniyordu.',
+        invalidTypeBoolean: 'Boolean türünde bir değer bekleniyordu.',
+        invalidTypeArray: 'Dizi türünde bir değer bekleniyordu.',
+        invalidTypeObject: 'Nesne türünde bir değer bekleniyordu.',
+        invalidEnumValue: 'Sağlanan değer izin verilen seçeneklerden biri değil.',
+        invalidUnionType: 'Değer izin verilen türlerden hiçbirine uymuyor.',
+        invalidEntityId: 'Varlık kimliği geçersiz veya hatalı biçimlendirilmiş.',
+        invalidDecimal: 'Değer geçerli bir ondalık sayı olmalıdır.',
+        invalidActionObject: 'Eylem nesnesi geçersiz veya hatalı yapılandırılmış.',
+        missingActionKey: 'Eylem nesnesinde gerekli bir anahtar eksik.',
+        invalidCustomThemeArray: 'Özel tema bir dizi olmalıdır.',
+        invalidCustomThemeEntry: 'Özel temadaki bir veya daha fazla giriş geçersiz.',
+        invalidMinValue: 'Minimum değer geçersiz veya sınırların altında.',
+        invalidMaxValue: 'Maksimum değer geçersiz veya sınırların üzerinde.',
+        minGreaterThanMax: 'Minimum değer maksimum değerden büyük olamaz.',
+        discontinuousRange: 'Tanımlanan aralık süreksizdir.',
+        missingColorProperty: 'Gerekli bir renk özelliği eksik.',
+        invalidIconType: 'Belirtilen simge türü geçersiz veya tanınmıyor.',
+        invalidStateContent: 'Durum içeriği geçersiz veya hatalı biçimlendirilmiş.',
+        invalidStateContentEntry: 'Durum içeriğindeki bir veya daha fazla giriş geçersiz.',
+        invalidTheme: 'Belirtilen tema bilinmiyor. Varsayılan tema kullanılacak.',
+        appliedDefaultValue: 'Varsayılan değer otomatik olarak uygulandı.',
       },
     },
     editor: {
@@ -1948,12 +2355,32 @@ const LANGUAGES = {
   ar: {
     card: {
       msg: {
-        entityError: "الكيان: المعامل 'entity' مطلوب!",
-        entityNotFound: 'لم يتم العثور على الكيان',
-        attributeNotFound: 'السمة: السمة غير موجودة في HA.',
-        minValueError: 'min_value: تحقق من القيمة الدنيا.',
-        maxValueError: 'max_value: تحقق من القيمة القصوى.',
-        decimalError: 'decimal: لا يمكن أن تكون هذه القيمة سالبة.',
+        entityNotFound: 'لم يتم العثور على الكيان في Home Assistant.',
+        attributeNotFound: 'لم يتم العثور على الخاصية في Home Assistant.',
+        missingRequiredProperty: 'خاصية مطلوبة مفقودة.',
+        invalidTypeString: 'كان من المتوقع قيمة من نوع سلسلة.',
+        invalidTypeNumber: 'كان من المتوقع قيمة من نوع رقم.',
+        invalidTypeBoolean: 'كان من المتوقع قيمة من نوع منطقي.',
+        invalidTypeArray: 'كان من المتوقع قيمة من نوع مصفوفة.',
+        invalidTypeObject: 'كان من المتوقع قيمة من نوع كائن.',
+        invalidEnumValue: 'القيمة المُقدمة ليست من الخيارات المسموح بها.',
+        invalidUnionType: 'القيمة لا تطابق أي نوع مسموح.',
+        invalidEntityId: 'معرّف الكيان غير صالح أو به خلل.',
+        invalidDecimal: 'يجب أن تكون القيمة رقمًا عشريًا صحيحًا.',
+        invalidActionObject: 'كائن الإجراء غير صالح أو غير منظم بشكل صحيح.',
+        missingActionKey: 'مفتاح مطلوب مفقود في كائن الإجراء.',
+        invalidCustomThemeArray: 'يجب أن يكون السمة المخصصة عبارة عن مصفوفة.',
+        invalidCustomThemeEntry: 'إدخال أو أكثر في السمة المخصصة غير صالحة.',
+        invalidMinValue: 'القيمة الدنيا غير صالحة أو أقل من الحدود المسموح بها.',
+        invalidMaxValue: 'القيمة القصوى غير صالحة أو أعلى من الحد المسموح به.',
+        minGreaterThanMax: 'لا يمكن أن تكون القيمة الدنيا أكبر من القيمة القصوى.',
+        discontinuousRange: 'النطاق المحدد غير متصل.',
+        missingColorProperty: 'خاصية اللون المطلوبة مفقودة.',
+        invalidIconType: 'نوع الأيقونة المحدد غير صالح أو غير معروف.',
+        invalidStateContent: 'محتوى الحالة غير صالح أو معيب.',
+        invalidStateContentEntry: 'إدخال أو أكثر في محتوى الحالة غير صالحة.',
+        invalidTheme: 'السمة المحددة غير معروفة. سيتم استخدام السمة الافتراضية.',
+        appliedDefaultValue: 'تم تطبيق قيمة افتراضية تلقائيًا.',
       },
     },
     editor: {
@@ -2010,6 +2437,629 @@ const LANGUAGES = {
         layout: {
           horizontal: 'أفقي (افتراضي)',
           vertical: 'رأسي',
+        },
+      },
+    },
+  },
+  vi: {
+    card: {
+      msg: {
+        entityNotFound: 'Không tìm thấy thực thể trong HA.',
+        attributeNotFound: 'Không tìm thấy thuộc tính trong HA.',
+        missingRequiredProperty: 'Thuộc tính bắt buộc bị thiếu.',
+        invalidTypeString: 'Mong đợi một giá trị kiểu chuỗi.',
+        invalidTypeNumber: 'Mong đợi một giá trị kiểu số.',
+        invalidTypeBoolean: 'Mong đợi một giá trị kiểu boolean.',
+        invalidTypeArray: 'Mong đợi một giá trị kiểu mảng.',
+        invalidTypeObject: 'Mong đợi một giá trị kiểu đối tượng.',
+        invalidEnumValue: 'Giá trị được cung cấp không nằm trong các tùy chọn được phép.',
+        invalidUnionType: 'Giá trị không khớp với bất kỳ loại nào được phép.',
+        invalidEntityId: 'ID thực thể không hợp lệ hoặc không đúng định dạng.',
+        invalidDecimal: 'Giá trị phải là một số thập phân hợp lệ.',
+        invalidActionObject: 'Đối tượng hành động không hợp lệ hoặc cấu trúc không đúng.',
+        missingActionKey: 'Một khóa bắt buộc bị thiếu trong đối tượng hành động.',
+        invalidCustomThemeArray: 'Chủ đề tùy chỉnh phải là một mảng.',
+        invalidCustomThemeEntry: 'Một hoặc nhiều mục trong chủ đề tùy chỉnh không hợp lệ.',
+        invalidMinValue: 'Giá trị tối thiểu không hợp lệ hoặc dưới giới hạn cho phép.',
+        invalidMaxValue: 'Giá trị tối đa không hợp lệ hoặc trên giới hạn cho phép.',
+        minGreaterThanMax: 'Giá trị tối thiểu không thể lớn hơn giá trị tối đa.',
+        discontinuousRange: 'Phạm vi được xác định không liên tục.',
+        missingColorProperty: 'Một thuộc tính màu bắt buộc bị thiếu.',
+        invalidIconType: 'Loại biểu tượng được chỉ định không hợp lệ hoặc không được nhận dạng.',
+        invalidStateContent: 'Nội dung trạng thái không hợp lệ hoặc không đúng định dạng.',
+        invalidStateContentEntry: 'Một hoặc nhiều mục trong nội dung trạng thái không hợp lệ.',
+        invalidTheme: 'Chủ đề được chỉ định không xác định. Chủ đề mặc định sẽ được sử dụng.',
+        appliedDefaultValue: 'Một giá trị mặc định đã được áp dụng tự động.',
+      },
+    },
+    editor: {
+      title: {
+        content: 'Nội dung',
+        interaction: 'Tương tác',
+        theme: 'Giao diện & Trải nghiệm',
+      },
+      field: {
+        entity: 'Thực thể',
+        attribute: 'Thuộc tính',
+        name: 'Tên',
+        unit: 'Đơn vị',
+        decimal: 'thập phân',
+        min_value: 'Giá trị tối thiểu',
+        max_value: 'Giá trị tối đa',
+        max_value_attribute: 'Thuộc tính (max_value)',
+        tap_action: 'Hành vi chạm',
+        double_tap_action: 'Hành vi chạm đôi',
+        hold_action: 'Hành vi giữ',
+        icon_tap_action: 'Hành vi chạm biểu tượng',
+        icon_double_tap_action: 'Hành vi chạm đôi biểu tượng',
+        icon_hold_action: 'Hành vi giữ biểu tượng',
+        toggle_icon: 'Biểu tượng',
+        toggle_name: 'Tên',
+        toggle_value: 'Giá trị',
+        toggle_unit: 'Đơn vị',
+        toggle_secondary_info: 'Thông tin',
+        toggle_progress_bar: 'Thanh tiến trình',
+        toggle_force_circular_background: 'Buộc nền hình tròn',
+        theme: 'Chủ đề',
+        bar_size: 'Kích thước thanh',
+        bar_color: 'Màu thanh',
+        icon: 'Biểu tượng',
+        color: 'Màu chính',
+        layout: 'Bố cục thẻ',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: 'Tối ưu khi thấp (CPU, RAM,...)',
+          optimal_when_high: 'Tối ưu khi cao (Pin...)',
+          light: 'Ánh sáng',
+          temperature: 'Nhiệt độ',
+          humidity: 'Độ ẩm',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'Nhỏ',
+          medium: 'Trung bình',
+          large: 'Lớn',
+        },
+        layout: {
+          horizontal: 'Ngang (mặc định)',
+          vertical: 'Dọc',
+        },
+      },
+    },
+  },
+  th: {
+    card: {
+      msg: {
+        entityNotFound: 'ไม่พบเอนทิตีใน HA',
+        attributeNotFound: 'ไม่พบแอตทริบิวต์ใน HA',
+        missingRequiredProperty: 'ขาดคุณสมบัติที่จำเป็น',
+        invalidTypeString: 'คาดหวังค่าประเภทสตริง',
+        invalidTypeNumber: 'คาดหวังค่าประเภทตัวเลข',
+        invalidTypeBoolean: 'คาดหวังค่าประเภทบูลีน',
+        invalidTypeArray: 'คาดหวังค่าประเภทอาร์เรย์',
+        invalidTypeObject: 'คาดหวังค่าประเภทออบเจ็กต์',
+        invalidEnumValue: 'ค่าที่ให้มาไม่ใช่หนึ่งในตัวเลือกที่อนุญาต',
+        invalidUnionType: 'ค่าไม่ตรงกับประเภทที่อนุญาตใด ๆ',
+        invalidEntityId: 'ID เอนทิตีไม่ถูกต้องหรือรูปแบบผิด',
+        invalidDecimal: 'ค่าต้องเป็นตัวเลขทศนิยมที่ถูกต้อง',
+        invalidActionObject: 'ออบเจ็กต์แอ็กชันไม่ถูกต้องหรือโครงสร้างผิด',
+        missingActionKey: 'ขาดคีย์ที่จำเป็นในออบเจ็กต์แอ็กชัน',
+        invalidCustomThemeArray: 'ธีมกำหนดเองต้องเป็นอาร์เรย์',
+        invalidCustomThemeEntry: 'หนึ่งหรือหลายรายการในธีมกำหนดเองไม่ถูกต้อง',
+        invalidMinValue: 'ค่าต่ำสุดไม่ถูกต้องหรือต่ำกว่าขีดจำกัดที่อนุญาต',
+        invalidMaxValue: 'ค่าสูงสุดไม่ถูกต้องหรือสูงกว่าขีดจำกัดที่อนุญาต',
+        minGreaterThanMax: 'ค่าต่ำสุดไม่สามารถมากกว่าค่าสูงสุด',
+        discontinuousRange: 'ช่วงที่กำหนดไม่ต่อเนื่อง',
+        missingColorProperty: 'ขาดคุณสมบัติสีที่จำเป็น',
+        invalidIconType: 'ประเภทไอคอนที่ระบุไม่ถูกต้องหรือไม่รู้จัก',
+        invalidStateContent: 'เนื้อหาสถานะไม่ถูกต้องหรือรูปแบบผิด',
+        invalidStateContentEntry: 'หนึ่งหรือหลายรายการในเนื้อหาสถานะไม่ถูกต้อง',
+        invalidTheme: 'ธีมที่ระบุไม่รู้จัก จะใช้ธีมเริ่มต้น',
+        appliedDefaultValue: 'ค่าเริ่มต้นถูกนำไปใช้โดยอัตโนมัติ',
+      },
+    },
+    editor: {
+      title: {
+        content: 'เนื้อหา',
+        interaction: 'การโต้ตอบ',
+        theme: 'รูปลักษณ์และความรู้สึก',
+      },
+      field: {
+        entity: 'เอนทิตี',
+        attribute: 'แอตทริบิวต์',
+        name: 'ชื่อ',
+        unit: 'หน่วย',
+        decimal: 'ทศนิยม',
+        min_value: 'ค่าต่ำสุด',
+        max_value: 'ค่าสูงสุด',
+        max_value_attribute: 'แอตทริบิวต์ (max_value)',
+        tap_action: 'พฤติกรรมการแตะ',
+        double_tap_action: 'พฤติกรรมการแตะสองครั้ง',
+        hold_action: 'พฤติกรรมการกด',
+        icon_tap_action: 'พฤติกรรมการแตะไอคอน',
+        icon_double_tap_action: 'พฤติกรรมการแตะไอคอนสองครั้ง',
+        icon_hold_action: 'พฤติกรรมการกดไอคอน',
+        toggle_icon: 'ไอคอน',
+        toggle_name: 'ชื่อ',
+        toggle_value: 'ค่า',
+        toggle_unit: 'หน่วย',
+        toggle_secondary_info: 'ข้อมูล',
+        toggle_progress_bar: 'แถบ',
+        toggle_force_circular_background: 'บังคับพื้นหลังวงกลม',
+        theme: 'ธีม',
+        bar_size: 'ขนาดแถบ',
+        bar_color: 'สีแถบ',
+        icon: 'ไอคอน',
+        color: 'สีหลัก',
+        layout: 'เลย์เอาต์การ์ด',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: 'เหมาะสมเมื่อต่ำ (CPU, RAM,...)',
+          optimal_when_high: 'เหมาะสมเมื่อสูง (แบตเตอรี่...)',
+          light: 'แสง',
+          temperature: 'อุณหภูมิ',
+          humidity: 'ความชื้น',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'เล็ก',
+          medium: 'กลาง',
+          large: 'ใหญ่',
+        },
+        layout: {
+          horizontal: 'แนวนอน (เริ่มต้น)',
+          vertical: 'แนวตั้ง',
+        },
+      },
+    },
+  },
+  id: {
+    card: {
+      msg: {
+        entityNotFound: 'Entitas tidak ditemukan di HA.',
+        attributeNotFound: 'Atribut tidak ditemukan di HA.',
+        missingRequiredProperty: 'Properti yang diperlukan hilang.',
+        invalidTypeString: 'Mengharapkan nilai bertipe string.',
+        invalidTypeNumber: 'Mengharapkan nilai bertipe angka.',
+        invalidTypeBoolean: 'Mengharapkan nilai bertipe boolean.',
+        invalidTypeArray: 'Mengharapkan nilai bertipe array.',
+        invalidTypeObject: 'Mengharapkan nilai bertipe object.',
+        invalidEnumValue: 'Nilai yang diberikan bukan salah satu dari opsi yang diizinkan.',
+        invalidUnionType: 'Nilai tidak cocok dengan tipe yang diizinkan.',
+        invalidEntityId: 'ID entitas tidak valid atau salah format.',
+        invalidDecimal: 'Nilai harus berupa angka desimal yang valid.',
+        invalidActionObject: 'Objek aksi tidak valid atau struktur salah.',
+        missingActionKey: 'Kunci yang diperlukan hilang dalam objek aksi.',
+        invalidCustomThemeArray: 'Tema kustom harus berupa array.',
+        invalidCustomThemeEntry: 'Satu atau lebih entri dalam tema kustom tidak valid.',
+        invalidMinValue: 'Nilai minimum tidak valid atau di bawah batas yang diizinkan.',
+        invalidMaxValue: 'Nilai maksimum tidak valid atau di atas batas yang diizinkan.',
+        minGreaterThanMax: 'Nilai minimum tidak boleh lebih besar dari nilai maksimum.',
+        discontinuousRange: 'Range yang didefinisikan tidak kontinu.',
+        missingColorProperty: 'Properti warna yang diperlukan hilang.',
+        invalidIconType: 'Tipe ikon yang ditentukan tidak valid atau tidak dikenali.',
+        invalidStateContent: 'Konten state tidak valid atau salah format.',
+        invalidStateContentEntry: 'Satu atau lebih entri dalam konten state tidak valid.',
+        invalidTheme: 'Tema yang ditentukan tidak dikenal. Tema default akan digunakan.',
+        appliedDefaultValue: 'Nilai default telah diterapkan secara otomatis.',
+      },
+    },
+    editor: {
+      title: {
+        content: 'Konten',
+        interaction: 'Interaksi',
+        theme: 'Tampilan & Nuansa',
+      },
+      field: {
+        entity: 'Entitas',
+        attribute: 'Atribut',
+        name: 'Nama',
+        unit: 'Unit',
+        decimal: 'desimal',
+        min_value: 'Nilai minimum',
+        max_value: 'Nilai maksimum',
+        max_value_attribute: 'Atribut (max_value)',
+        tap_action: 'Perilaku ketuk',
+        double_tap_action: 'Perilaku ketuk ganda',
+        hold_action: 'Perilaku tahan',
+        icon_tap_action: 'Perilaku ketuk ikon',
+        icon_double_tap_action: 'Perilaku ketuk ganda ikon',
+        icon_hold_action: 'Perilaku tahan ikon',
+        toggle_icon: 'Ikon',
+        toggle_name: 'Nama',
+        toggle_value: 'Nilai',
+        toggle_unit: 'Unit',
+        toggle_secondary_info: 'Info',
+        toggle_progress_bar: 'Bar',
+        toggle_force_circular_background: 'Paksa latar belakang melingkar',
+        theme: 'Tema',
+        bar_size: 'Ukuran bar',
+        bar_color: 'Warna bar',
+        icon: 'Ikon',
+        color: 'Warna utama',
+        layout: 'Tata letak kartu',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: 'Optimal saat Rendah (CPU, RAM,...)',
+          optimal_when_high: 'Optimal saat Tinggi (Baterai...)',
+          light: 'Cahaya',
+          temperature: 'Suhu',
+          humidity: 'Kelembaban',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'Kecil',
+          medium: 'Sedang',
+          large: 'Besar',
+        },
+        layout: {
+          horizontal: 'Horizontal (default)',
+          vertical: 'Vertikal',
+        },
+      },
+    },
+  },
+  uk: {
+    card: {
+      msg: {
+        entityNotFound: 'Сутність не знайдена в HA.',
+        attributeNotFound: 'Атрибут не знайдено в HA.',
+        missingRequiredProperty: "Відсутня обов'язкова властивість.",
+        invalidTypeString: 'Очікується значення типу рядок.',
+        invalidTypeNumber: 'Очікується значення типу число.',
+        invalidTypeBoolean: 'Очікується значення типу булевий.',
+        invalidTypeArray: 'Очікується значення típу масив.',
+        invalidTypeObject: "Очікується значення типу об'єкт.",
+        invalidEnumValue: 'Надане значення не є одним з дозволених варіантів.',
+        invalidUnionType: 'Значення не відповідає жодному з дозволених типів.',
+        invalidEntityId: 'ID сутності недійсний або неправильно сформований.',
+        invalidDecimal: 'Значення повинно бути дійсним десятковим числом.',
+        invalidActionObject: "Об'єкт дії недійсний або неправильно структурований.",
+        missingActionKey: "Відсутній обов'язковий ключ в об'єкті дії.",
+        invalidCustomThemeArray: 'Користувацька тема повинна бути масивом.',
+        invalidCustomThemeEntry: 'Один або кілька записів у користувацькій темі недійсні.',
+        invalidMinValue: 'Мінімальне значення недійсне або нижче дозволених меж.',
+        invalidMaxValue: 'Максимальне значення недійсне або вище дозволених меж.',
+        minGreaterThanMax: 'Мінімальне значення не може бути більшим за максимальне.',
+        discontinuousRange: 'Визначений діапазон є розривним.',
+        missingColorProperty: "Відсутня обов'язкова властивість кольору.",
+        invalidIconType: 'Зазначений тип іконки недійсний або нерозпізнаний.',
+        invalidStateContent: 'Вміст стану недійсний або неправильно сформований.',
+        invalidStateContentEntry: 'Один або кілька записів у вмісті стану недійсні.',
+        invalidTheme: 'Зазначена тема невідома. Буде використана тема за замовчуванням.',
+        appliedDefaultValue: 'Значення за замовчуванням було застосовано автоматично.',
+      },
+    },
+    editor: {
+      title: {
+        content: 'Вміст',
+        interaction: 'Взаємодії',
+        theme: 'Вигляд та відчуття',
+      },
+      field: {
+        entity: 'Сутність',
+        attribute: 'Атрибут',
+        name: 'Назва',
+        unit: 'Одиниця',
+        decimal: 'десятковий',
+        min_value: 'Мінімальне значення',
+        max_value: 'Максимальне значення',
+        max_value_attribute: 'Атрибут (max_value)',
+        tap_action: 'Поведінка при дотику',
+        double_tap_action: 'Поведінка при подвійному дотику',
+        hold_action: 'Поведінка при утриманні',
+        icon_tap_action: 'Поведінка дотику іконки',
+        icon_double_tap_action: 'Поведінка подвійного дотику іконки',
+        icon_hold_action: 'Поведінка утримання іконки',
+        toggle_icon: 'Іконка',
+        toggle_name: 'Назва',
+        toggle_value: 'Значення',
+        toggle_unit: 'Одиниця',
+        toggle_secondary_info: 'Інформація',
+        toggle_progress_bar: 'Панель',
+        toggle_force_circular_background: 'Примусовий круглий фон',
+        theme: 'Тема',
+        bar_size: 'Розмір панелі',
+        bar_color: 'Колір панелі',
+        icon: 'Іконка',
+        color: 'Основний колір',
+        layout: 'Розташування картки',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: 'Оптимально при низьких значеннях (CPU, RAM,...)',
+          optimal_when_high: 'Оптимально при високих значеннях (Батарея...)',
+          light: 'Світло',
+          temperature: 'Температура',
+          humidity: 'Вологість',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'Маленький',
+          medium: 'Середній',
+          large: 'Великий',
+        },
+        layout: {
+          horizontal: 'Горизонтальний (за замовчуванням)',
+          vertical: 'Вертикальний',
+        },
+      },
+    },
+  },
+  hi: {
+    card: {
+      msg: {
+        entityNotFound: 'HA में एंटिटी नहीं मिली।',
+        attributeNotFound: 'HA में एट्रिब्यूट नहीं मिला।',
+        missingRequiredProperty: 'आवश्यक गुण गायब है।',
+        invalidTypeString: 'स्ट्रिंग प्रकार का मान अपेक्षित है।',
+        invalidTypeNumber: 'संख्या प्रकार का मान अपेक्षित है।',
+        invalidTypeBoolean: 'बूलियन प्रकार का मान अपेक्षित है।',
+        invalidTypeArray: 'एरे प्रकार का मान अपेक्षित है।',
+        invalidTypeObject: 'ऑब्जेक्ट प्रकार का मान अपेक्षित है।',
+        invalidEnumValue: 'प्रदान किया गया मान अनुमतित विकल्पों में से एक नहीं है।',
+        invalidUnionType: 'मान अनुमतित प्रकारों में से किसी से मेल नहीं खाता।',
+        invalidEntityId: 'एंटिटी आईडी अमान्य या गलत तरीके से बनाई गई है।',
+        invalidDecimal: 'मान एक वैध दशमलव संख्या होना चाहिए।',
+        invalidActionObject: 'एक्शन ऑब्जेक्ट अमान्य या गलत तरीके से संरचित है।',
+        missingActionKey: 'एक्शन ऑब्जेक्ट में एक आवश्यक कुंजी गायब है।',
+        invalidCustomThemeArray: 'कस्टम थीम एक एरे होना चाहिए।',
+        invalidCustomThemeEntry: 'कस्टम थीम में एक या अधिक प्रविष्टियां अमान्य हैं।',
+        invalidMinValue: 'न्यूनतम मान अमान्य है या अनुमतित सीमा से नीचे है।',
+        invalidMaxValue: 'अधिकतम मान अमान्य है या अनुमतित सीमा से ऊपर है।',
+        minGreaterThanMax: 'न्यूनतम मान अधिकतम मान से अधिक नहीं हो सकता।',
+        discontinuousRange: 'परिभाषित रेंज असतत है।',
+        missingColorProperty: 'एक आवश्यक रंग गुण गायब है।',
+        invalidIconType: 'निर्दिष्ट आइकन प्रकार अमान्य या अपरिचित है।',
+        invalidStateContent: 'स्थिति सामग्री अमान्य या गलत तरीके से बनाई गई है।',
+        invalidStateContentEntry: 'स्थिति सामग्री में एक या अधिक प्रविष्टियां अमान्य हैं।',
+        invalidTheme: 'निर्दिष्ट थीम अज्ञात है। डिफ़ॉल्ट थीम का उपयोग किया जाएगा।',
+        appliedDefaultValue: 'एक डिफ़ॉल्ट मान स्वचालित रूप से लागू किया गया है।',
+      },
+    },
+    editor: {
+      title: {
+        content: 'सामग्री',
+        interaction: 'बातचीत',
+        theme: 'रूप और अनुभव',
+      },
+      field: {
+        entity: 'एंटिटी',
+        attribute: 'एट्रिब्यूट',
+        name: 'नाम',
+        unit: 'इकाई',
+        decimal: 'दशमलव',
+        min_value: 'न्यूनतम मान',
+        max_value: 'अधिकतम मान',
+        max_value_attribute: 'एट्रिब्यूट (max_value)',
+        tap_action: 'टैप व्यवहार',
+        double_tap_action: 'डबल टैप व्यवहार',
+        hold_action: 'होल्ड व्यवहार',
+        icon_tap_action: 'आइकन टैप व्यवहार',
+        icon_double_tap_action: 'आइकन डबल टैप व्यवहार',
+        icon_hold_action: 'आइकन होल्ड व्यवहार',
+        toggle_icon: 'आइकन',
+        toggle_name: 'नाम',
+        toggle_value: 'मान',
+        toggle_unit: 'इकाई',
+        toggle_secondary_info: 'जानकारी',
+        toggle_progress_bar: 'बार',
+        toggle_force_circular_background: 'गोलाकार पृष्ठभूमि को बाध्य करें',
+        theme: 'थीम',
+        bar_size: 'बार का आकार',
+        bar_color: 'बार का रंग',
+        icon: 'आइकन',
+        color: 'मुख्य रंग',
+        layout: 'कार्ड लेआउट',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: 'कम होने पर इष्टतम (CPU, RAM,...)',
+          optimal_when_high: 'उच्च होने पर इष्टतम (बैटरी...)',
+          light: 'प्रकाश',
+          temperature: 'तापमान',
+          humidity: 'आर्द्रता',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'छोटा',
+          medium: 'मध्यम',
+          large: 'बड़ा',
+        },
+        layout: {
+          horizontal: 'क्षैतिज (डिफ़ॉल्ट)',
+          vertical: 'लंबवत',
+        },
+      },
+    },
+  },
+  cs: {
+    card: {
+      msg: {
+        entityNotFound: 'Entita nebyla nalezena v HA.',
+        attributeNotFound: 'Atribut nebyl nalezen v HA.',
+        missingRequiredProperty: 'Chybí povinná vlastnost.',
+        invalidTypeString: 'Očekávána hodnota typu řetězec.',
+        invalidTypeNumber: 'Očekávána hodnota typu číslo.',
+        invalidTypeBoolean: 'Očekávána hodnota typu boolean.',
+        invalidTypeArray: 'Očekávána hodnota typu pole.',
+        invalidTypeObject: 'Očekávána hodnota typu objekt.',
+        invalidEnumValue: 'Poskytnutá hodnota není jednou z povolených možností.',
+        invalidUnionType: 'Hodnota neodpovídá žádnému z povolených typů.',
+        invalidEntityId: 'ID entity je neplatné nebo špatně formátované.',
+        invalidDecimal: 'Hodnota musí být platné desítkové číslo.',
+        invalidActionObject: 'Objekt akce je neplatný nebo špatně strukturovaný.',
+        missingActionKey: 'V objektu akce chybí požadovaný klíč.',
+        invalidCustomThemeArray: 'Vlastní motiv musí být pole.',
+        invalidCustomThemeEntry: 'Jedna nebo více položek ve vlastním motivu je neplatných.',
+        invalidMinValue: 'Minimální hodnota je neplatná nebo pod povolenými limity.',
+        invalidMaxValue: 'Maximální hodnota je neplatná nebo nad povolenými limity.',
+        minGreaterThanMax: 'Minimální hodnota nemůže být větší než maximální hodnota.',
+        discontinuousRange: 'Definovaný rozsah je nespojitý.',
+        missingColorProperty: 'Chybí povinná vlastnost barvy.',
+        invalidIconType: 'Zadaný typ ikony je neplatný nebo nerozpoznaný.',
+        invalidStateContent: 'Obsah stavu je neplatný nebo špatně formátovaný.',
+        invalidStateContentEntry: 'Jedna nebo více položek v obsahu stavu je neplatných.',
+        invalidTheme: 'Zadaný motiv je neznámý. Bude použit výchozí motiv.',
+        appliedDefaultValue: 'Výchozí hodnota byla automaticky aplikována.',
+      },
+    },
+    editor: {
+      title: {
+        content: 'Obsah',
+        interaction: 'Interakce',
+        theme: 'Vzhled a pocit',
+      },
+      field: {
+        entity: 'Entita',
+        attribute: 'Atribut',
+        name: 'Název',
+        unit: 'Jednotka',
+        decimal: 'desetinný',
+        min_value: 'Minimální hodnota',
+        max_value: 'Maximální hodnota',
+        max_value_attribute: 'Atribut (max_value)',
+        tap_action: 'Chování při klepnutí',
+        double_tap_action: 'Chování při dvojitém klepnutí',
+        hold_action: 'Chování při podržení',
+        icon_tap_action: 'Chování při klepnutí na ikonu',
+        icon_double_tap_action: 'Chování při dvojitém klepnutí na ikonu',
+        icon_hold_action: 'Chování při podržení ikony',
+        toggle_icon: 'Ikona',
+        toggle_name: 'Název',
+        toggle_value: 'Hodnota',
+        toggle_unit: 'Jednotka',
+        toggle_secondary_info: 'Informace',
+        toggle_progress_bar: 'Lišta',
+        toggle_force_circular_background: 'Vynutit kruhové pozadí',
+        theme: 'Motiv',
+        bar_size: 'Velikost lišty',
+        bar_color: 'Barva lišty',
+        icon: 'Ikona',
+        color: 'Hlavní barva',
+        layout: 'Rozložení karty',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: 'Optimální při nízkých hodnotách (CPU, RAM,...)',
+          optimal_when_high: 'Optimální při vysokých hodnotách (Baterie...)',
+          light: 'Světlo',
+          temperature: 'Teplota',
+          humidity: 'Vlhkost',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'Malá',
+          medium: 'Střední',
+          large: 'Velká',
+        },
+        layout: {
+          horizontal: 'Horizontální (výchozí)',
+          vertical: 'Vertikální',
+        },
+      },
+    },
+  },
+  bn: {
+    card: {
+      msg: {
+        entityNotFound: 'HA তে সত্তা পাওয়া যায়নি।',
+        attributeNotFound: 'HA তে বৈশিষ্ট্য পাওয়া যায়নি।',
+        missingRequiredProperty: 'প্রয়োজনীয় বৈশিষ্ট্য অনুপস্থিত।',
+        invalidTypeString: 'স্ট্রিং ধরনের একটি মান প্রত্যাশিত।',
+        invalidTypeNumber: 'সংখ্যা ধরনের একটি মান প্রত্যাশিত।',
+        invalidTypeBoolean: 'বুলিয়ান ধরনের একটি মান প্রত্যাশিত।',
+        invalidTypeArray: 'অ্যারে ধরনের একটি মান প্রত্যাশিত।',
+        invalidTypeObject: 'অবজেক্ট ধরনের একটি মান প্রত্যাশিত।',
+        invalidEnumValue: 'প্রদত্ত মানটি অনুমোদিত বিকল্পগুলির মধ্যে একটি নয়।',
+        invalidUnionType: 'মানটি অনুমোদিত ধরনগুলির কোনোটির সাথে মেলে না।',
+        invalidEntityId: 'সত্তার আইডি অবৈধ বা ভুলভাবে গঠিত।',
+        invalidDecimal: 'মানটি একটি বৈধ দশমিক সংখ্যা হতে হবে।',
+        invalidActionObject: 'অ্যাকশন অবজেক্ট অবৈধ বা ভুলভাবে গঠিত।',
+        missingActionKey: 'অ্যাকশন অবজেক্টে একটি প্রয়োজনীয় কী অনুপস্থিত।',
+        invalidCustomThemeArray: 'কাস্টম থিম একটি অ্যারে হতে হবে।',
+        invalidCustomThemeEntry: 'কাস্টম থিমে একটি বা একাধিক এন্ট্রি অবৈধ।',
+        invalidMinValue: 'ন্যূনতম মান অবৈধ বা অনুমোদিত সীমার নিচে।',
+        invalidMaxValue: 'সর্বোচ্চ মান অবৈধ বা অনুমোদিত সীমার উপরে।',
+        minGreaterThanMax: 'ন্যূনতম মান সর্বোচ্চ মানের চেয়ে বড় হতে পারে না।',
+        discontinuousRange: 'নির্ধারিত পরিসর অবিচ্ছিন্ন নয়।',
+        missingColorProperty: 'একটি প্রয়োজনীয় রঙের বৈশিষ্ট্য অনুপস্থিত।',
+        invalidIconType: 'নির্দিষ্ট আইকন প্রকার অবৈধ বা অচেনা।',
+        invalidStateContent: 'অবস্থার বিষয়বস্তু অবৈধ বা ভুলভাবে গঠিত।',
+        invalidStateContentEntry: 'অবস্থার বিষয়বস্তুতে একটি বা একাধিক এন্ট্রি অবৈধ।',
+        invalidTheme: 'নির্দিষ্ট থিম অজানা। ডিফল্ট থিম ব্যবহার করা হবে।',
+        appliedDefaultValue: 'একটি ডিফল্ট মান স্বয়ংক্রিয়ভাবে প্রয়োগ করা হয়েছে।',
+      },
+    },
+    editor: {
+      title: {
+        content: 'বিষয়বস্তু',
+        interaction: 'মিথস্ক্রিয়া',
+        theme: 'চেহারা এবং অনুভূতি',
+      },
+      field: {
+        entity: 'সত্তা',
+        attribute: 'বৈশিষ্ট্য',
+        name: 'নাম',
+        unit: 'একক',
+        decimal: 'দশমিক',
+        min_value: 'ন্যূনতম মান',
+        max_value: 'সর্বোচ্চ মান',
+        max_value_attribute: 'বৈশিষ্ট্য (max_value)',
+        tap_action: 'ট্যাপ আচরণ',
+        double_tap_action: 'ডাবল ট্যাপ আচরণ',
+        hold_action: 'হোল্ড আচরণ',
+        icon_tap_action: 'আইকন ট্যাপ আচরণ',
+        icon_double_tap_action: 'আইকন ডাবল ট্যাপ আচরণ',
+        icon_hold_action: 'আইকন হোল্ড আচরণ',
+        toggle_icon: 'আইকন',
+        toggle_name: 'নাম',
+        toggle_value: 'মান',
+        toggle_unit: 'একক',
+        toggle_secondary_info: 'তথ্য',
+        toggle_progress_bar: 'বার',
+        toggle_force_circular_background: 'বৃত্তাকার পটভূমি জোর করুন',
+        theme: 'থিম',
+        bar_size: 'বারের আকার',
+        bar_color: 'বারের রঙ',
+        icon: 'আইকন',
+        color: 'প্রাথমিক রঙ',
+        layout: 'কার্ড লেআউট',
+      },
+      option: {
+        theme: {
+          '': '',
+          optimal_when_low: 'কম হলে সর্বোত্তম (CPU, RAM,...)',
+          optimal_when_high: 'বেশি হলে সর্বোত্তম (ব্যাটারি...)',
+          light: 'আলো',
+          temperature: 'তাপমাত্রা',
+          humidity: 'আর্দ্রতা',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+        },
+        bar_size: {
+          small: 'ছোট',
+          medium: 'মধ্যম',
+          large: 'বড়',
+        },
+        layout: {
+          horizontal: 'অনুভূমিক (ডিফল্ট)',
+          vertical: 'উল্লম্ব',
         },
       },
     },
@@ -3194,11 +4244,15 @@ const is = {
   nullish: (val) => val == null, // null or undefined
   boolean: (val) => typeof val === 'boolean',
   string: (val) => typeof val === 'string',
+  emptyString: (val) => typeof val === 'string' && val.trim() === '',
   nonEmptyString: (val) => typeof val === 'string' && val.trim() !== '',
   nullishOrEmptyString: (val) => val == null || (typeof val === 'string' && val.trim() === ''),
   numericString: (val) => typeof val === 'string' && val.trim() !== '' && !isNaN(parseFloat(val)),
   number: (val) => Number.isFinite(val),
+  integer: (val) => typeof val === 'number' && Number.isInteger(val) && val >= 0,
   func: (val) => typeof val === 'function',
+  object: (val) => typeof val === 'object',
+  plainObject: (val) => typeof val === 'object' && val !== null && !Array.isArray(val),
   array: (val) => Array.isArray(val),
   nonEmptyArray: (val) => Array.isArray(val) && val.length > 0,
   nonEmptySet: (val) => val instanceof Set && val.size > 0,
@@ -3224,7 +4278,7 @@ const has = {
  */
 
 const Logger = {
-  create(name, level = 'debug') {
+  create(name, level = SEV.debug) {
     const levels = { error: 0, warn: 1, info: 2, debug: 3 };
     const currentLevel = levels[level] || 3;
 
@@ -3234,24 +4288,24 @@ const Logger = {
       name,
       level,
 
-      debug: (msg, data) => shouldLog('debug') && console.debug(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
-      info: (msg, data) => shouldLog('info') && console.info(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
-      warn: (msg, data) => shouldLog('warn') && console.warn(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
-      error: (msg, data) => shouldLog('error') && console.error(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
+      debug: (msg, data) => shouldLog(SEV.debug) && console.debug(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
+      info: (msg, data) => shouldLog(SEV.info) && console.info(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
+      warn: (msg, data) => shouldLog(SEV.warn) && console.warn(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
+      error: (msg, data) => shouldLog(SEV.error) && console.error(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
 
       wrap: (fn, fnName) => {
         return async (...args) => {
-          shouldLog('debug') && console.debug(`[${name}] 👉 ${fnName}`);
+          shouldLog(SEV.debug) && console.debug(`[${name}] 👉 ${fnName}`);
           const start = performance.now();
 
           try {
             const result = await fn(...args);
             const duration = (performance.now() - start).toFixed(2);
-            shouldLog('debug') && console.debug(`[${name}] ✅ ${fnName} (${duration}ms)`);
+            shouldLog(SEV.debug) && console.debug(`[${name}] ✅ ${fnName} (${duration}ms)`);
             return result;
           } catch (error) {
             const duration = (performance.now() - start).toFixed(2);
-            shouldLog('error') && console.error(`[${name}] ❌ ${fnName} failed (${duration}ms)`, error);
+            shouldLog(SEV.error) && console.error(`[${name}] ❌ ${fnName} failed (${duration}ms)`, error);
             throw error;
           }
         };
@@ -3266,7 +4320,7 @@ const Logger = {
       },
 
       state: (label, hass, config) => {
-        if (!shouldLog('debug')) return;
+        if (!shouldLog(SEV.debug)) return;
         console.debug(`[${name}] 📊 ${label}`, {
           hasHass: Boolean(hass),
           hasConfig: Boolean(config),
@@ -3282,7 +4336,7 @@ const Logger = {
 
 function initLogger(ctx, debugFlag, methodNames = []) {
   const className = ctx.constructor.name;
-  const logger = Logger.create(className, debugFlag ? 'debug' : 'info');
+  const logger = Logger.create(className, debugFlag ? SEV.debug : SEV.info);
 
   if (debugFlag) {
     logger.wrapAll(ctx, methodNames);
@@ -3860,14 +4914,8 @@ class ThemeManager {
   // === PUBLIC GETTERS / SETTERS ===
 
   set theme(newTheme) {
-    const themeMap = {
-      battery: 'optimal_when_high',
-      memory: 'optimal_when_low',
-      cpu: 'optimal_when_low',
-    };
-    newTheme = themeMap[newTheme] || newTheme;
-    if (!has.validKey(THEME, newTheme)) {
-      [this.#icon, this.#barColor, this.#iconColor, this.#theme] = [null, null, null, null];
+    if (is.nullish(newTheme) || !has.validKey(THEME, newTheme)) {
+      this.#reset();
       return;
     }
     this.#isValid = true;
@@ -3923,6 +4971,20 @@ class ThemeManager {
 
   // === PRIVATE METHODS ===
 
+  #reset() {
+    [
+      this.#icon,
+      this.#barColor,
+      this.#iconColor,
+      this.#theme,
+      this.#currentStyle,
+      this.#value,
+      this.#isValid,
+      this.#isLinear,
+      this.#isBasedOnPercentage,
+      this.#isCustomTheme,
+    ] = [null, null, null, null, null, 0, false, false, false, false];
+  }
   #refresh() {
     if (!this.#isValid) return;
     const applyStyle = this.isLinear ? this.#setLinearStyle : this.#setStyle;
@@ -4002,7 +5064,7 @@ class HassProviderSingleton {
     if (!HassProviderSingleton.#allowInit) {
       throw new Error('Use HassProviderSingleton.getInstance() instead of new.');
     }
-    this.#log = Logger.create('HassProviderSingleton', this.#debug ? 'debug' : 'info');
+    this.#log = Logger.create('HassProviderSingleton', this.#debug ? SEV.debug : SEV.info);
     HassProviderSingleton.#allowInit = false;
   }
 
@@ -4025,6 +5087,11 @@ class HassProviderSingleton {
   }
   get language() {
     return this.#hass?.language in LANGUAGES ? this.#hass.language : CARD.config.language;
+  }
+  getMessage(code) {
+    const fallback = LANGUAGES.en.card.msg[code];
+    const localized = LANGUAGES[this.language]?.card?.msg?.[code];
+    return localized || fallback || `Unknown message code: ${code}`;
   }
   get numberFormat() {
     const format = this.#hass?.locale?.number_format;
@@ -4142,7 +5209,7 @@ class ChangeTracker {
   #hassState = { isUpdated: false };
 
   constructor() {
-    this.#log = Logger.create('ChangeTracker', this.#debug ? 'debug' : 'info');
+    this.#log = Logger.create('ChangeTracker', this.#debug ? SEV.debug : SEV.info);
   }
   // === PUBLIC GETTERS / SETTERS ===
 
@@ -4257,6 +5324,21 @@ class EntityHelper {
     return this.#hassProvider.isEntityAvailable(this.#entityId);
   }
 
+  static #handleRefreshType = new Map([
+    ['timer', (self) => self._manageTimerEntity()],
+    ['duration', (self) => self._manageDurationEntity()],
+    ['counter', (self) => self._manageCounterAndNumberEntity('minimum', 'maximum')],
+    ['number', (self) => self._manageCounterAndNumberEntity('min', 'max')],
+    ['default', (self) => self._manageStdEntity()],
+  ]);
+
+  getEntityType() {
+    if (EntityHelper.#handleRefreshType.has(this.#domain)) return this.#domain;
+    if (this.#hassProvider.getDeviceClass(this.#entityId) === 'duration' && !this.#attribute) return 'duration';
+
+    return 'default';
+  }
+
   refresh() {
     this.#isValid = this.#hassProvider.hasEntity(this.#entityId);
 
@@ -4271,20 +5353,14 @@ class EntityHelper {
 
     this.#state = this.#hassProvider.getEntityStateValue(this.#entityId);
     if (!this.isValid || !this.isAvailable) return;
-    if (this.isTimer) {
-      this.#manageTimerEntity();
-    } else if (this.isDuration) {
-      this.#manageDurationEntity();
-    } else if (this.isCounter) {
-      this.#manageCounterAndNumberEntity('minimum', 'maximum');
-    } else if (this.isNumber) {
-      this.#manageCounterAndNumberEntity('min', 'max');
-    } else {
-      this.#manageStdEntity();
-    }
+    
+    const type = this.getEntityType();
+    const handler = EntityHelper.#handleRefreshType.get(type) ?? EntityHelper.#handleRefreshType.get('default');
+    handler(this);
+
   }
 
-  #manageStdEntity() {
+  _manageStdEntity() {
     this.#attribute = this.#attribute || ATTRIBUTE_MAPPING[this.#domain]?.attribute;
     if (!this.#attribute) {
       this.#value = parseFloat(this.#state) || 0;
@@ -4304,7 +5380,7 @@ class EntityHelper {
       this.#isValid = false;
     }
   }
-  #manageTimerEntity() {
+  _manageTimerEntity() {
     let duration = null;
     let elapsed = null;
     switch (this.#state) {
@@ -4332,14 +5408,14 @@ class EntityHelper {
     }
     this.#value = { current: elapsed / CARD.config.msFactor, min: CARD.config.value.min, max: duration / CARD.config.msFactor, state: this.#state };
   }
-  #manageCounterAndNumberEntity(min, max) {
+  _manageCounterAndNumberEntity(min, max) {
     this.#value = {
       current: parseFloat(this.state),
       min: this.#hassProvider.getEntityAttribute(this.#entityId, min),
       max: this.#hassProvider.getEntityAttribute(this.#entityId, max),
     };
   }
-  #manageDurationEntity() {
+  _manageDurationEntity() {
     const unit = this.#hassProvider.getEntityAttribute(this.#entityId, 'unit_of_measurement');
     const value = parseFloat(this.#state);
     this.#value = unit === undefined ? 0 : NumberFormatter.durationToSeconds(value, unit);
@@ -4389,16 +5465,16 @@ class EntityHelper {
     return this.#isValid ? this.#hassProvider.getPrecision(this.#entityId) ?? null : null;
   }
   get isTimer() {
-    return this.#domain === CARD.config.entity.type.timer;
+    return this.getEntityType() === 'timer';
   }
   get isDuration() {
-    return !this.isTimer && this.#hassProvider.getDeviceClass(this.#entityId) === 'duration' && this.#attribute == null;
+    return this.getEntityType() === 'duration';
   }
   get isNumber() {
-    return this.#domain === CARD.config.entity.type.number;
+    return this.getEntityType() === 'number';
   }
   get isCounter() {
-    return this.#domain === CARD.config.entity.type.counter;
+    return this.getEntityType() === 'counter';
   }
   get hasShapeByDefault() {
     return [CARD.config.entity.type.light, CARD.config.entity.type.fan].includes(this.#domain);
@@ -4422,17 +5498,16 @@ class EntityHelper {
   }
 
   get defaultColor() {
-    const typeColorMap = {
-      [CARD.config.entity.type.timer]:
-        this.value && this.value.state === CARD.config.entity.state.active ? CARD.style.color.active : CARD.style.color.inactive,
-      [CARD.config.entity.type.cover]: this.value && this.value > 0 ? CARD.style.color.coverActive : CARD.style.color.inactive,
-      [CARD.config.entity.type.light]: this.value && this.value > 0 ? CARD.style.color.lightActive : CARD.style.color.inactive,
-      [CARD.config.entity.type.fan]: this.value && this.value > 0 ? CARD.style.color.fanActive : CARD.style.color.inactive,
+    const colorMap = {
+      [CARD.config.entity.type.timer]: this.value?.state === CARD.config.entity.state.active ? CARD.style.color.active : CARD.style.color.inactive,
+      [CARD.config.entity.type.cover]: this.value > 0 ? CARD.style.color.coverActive : CARD.style.color.inactive,
+      [CARD.config.entity.type.light]: this.value > 0 ? CARD.style.color.lightActive : CARD.style.color.inactive,
+      [CARD.config.entity.type.fan]: this.value > 0 ? CARD.style.color.fanActive : CARD.style.color.inactive,
       [CARD.config.entity.type.climate]: this.#getClimateColor(),
       [CARD.config.entity.class.battery]: this.#getBatteryColor(),
     };
 
-    return typeColorMap[this.#domain] ?? typeColorMap[this.#hassProvider.getDeviceClass(this.#entityId)] ?? null;
+    return colorMap[this.#domain] ?? colorMap[this.#hassProvider.getDeviceClass(this.#entityId)] ?? null;
   }
   get stateContentToString() {
     const results = [];
@@ -4674,6 +5749,631 @@ class EntityOrValue {
 }
 
 /******************************************************************************************
+ * 🛠️ Manage YAML options
+ * ========================================================================================
+ * Inspired by superstruct (https://github.com/ianstormtaylor/superstruct) by @ianstormtaylor
+ * structural validation ideas to manage inputs (1.5+)
+ */
+
+class ValidationError extends Error {
+  constructor(path = [], errorCode, severity = SEV.error, fallback = null, partialConfig = null, allErrors = []) {
+    super();
+    this.name = 'ValidationError';
+    this.path = path;
+    this.errorCode = errorCode;
+    this.severity = severity;
+    this.partialConfig = partialConfig;
+    this.errors = allErrors;
+    this.fallback = fallback;
+  }
+}
+
+const SKIP_PROPERTY = Symbol('SKIP_PROPERTY');
+
+const ERROR_CODES = {
+  missingRequiredProperty: { code: 'missingRequiredProperty', severity: SEV.error },
+  invalidTypeString: { code: 'invalidTypeString', severity: SEV.error },
+  invalidTypeNumber: { code: 'invalidTypeNumber', severity: SEV.error },
+  invalidTypeBoolean: { code: 'invalidTypeBoolean', severity: SEV.error },
+  invalidTypeArray: { code: 'invalidTypeArray', severity: SEV.error },
+  invalidTypeObject: { code: 'invalidTypeObject', severity: SEV.error },
+  invalidEnumValue: { code: 'invalidEnumValue', severity: SEV.error },
+  invalidUnionType: { code: 'invalidUnionType', severity: SEV.error },
+  invalidEntityId: { code: 'invalidEntityId', severity: SEV.error },
+  invalidDecimal: { code: 'invalidDecimal', severity: SEV.error },
+  invalidActionObject: { code: 'invalidActionObject', severity: SEV.error },
+  missingActionKey: { code: 'missingActionKey', severity: SEV.error },
+  invalidCustomThemeArray: { code: 'invalidCustomThemeArray', severity: SEV.error },
+  invalidCustomThemeEntry: { code: 'invalidCustomThemeEntry', severity: SEV.error },
+  invalidMinValue: { code: 'invalidMinValue', severity: SEV.error },
+  invalidMaxValue: { code: 'invalidMaxValue', severity: SEV.error },
+  invalidTheme: { code: 'invalidTheme', severity: SEV.info },
+  minGreaterThanMax: { code: 'minGreaterThanMax', severity: SEV.error },
+  discontinuousRange: { code: 'discontinuousRange', severity: SEV.error },
+  missingColorProperty: { code: 'missingColorProperty', severity: SEV.error },
+  invalidIconType: { code: 'invalidIconType', severity: SEV.error },
+  invalidStateContent: { code: 'invalidStateContent', severity: SEV.error },
+  invalidStateContentEntry: { code: 'invalidStateContentEntry', severity: SEV.error },
+  appliedDefaultValue: { code: 'appliedDefaultValue', severity: SEV.info },
+};
+
+
+const validateType = (typeCheck, errorCode) => (value, path = []) => {
+  if (is.nullish(value)) throw new ValidationError(path, ERROR_CODES.missingRequiredProperty.code, ERROR_CODES.missingRequiredProperty.severity);
+  if (!typeCheck(value)) throw new ValidationError(path, errorCode.code, errorCode.severity);
+  return value;
+};
+
+const types = {
+  string: validateType(is.string, ERROR_CODES.invalidTypeString),
+  number: validateType(is.number, ERROR_CODES.invalidTypeNumber),
+  boolean: validateType(is.boolean, ERROR_CODES.invalidTypeBoolean),
+
+  array: (itemValidator) => (value, path = []) => {
+    if (!is.array(value)) throw new ValidationError(path, ERROR_CODES.invalidTypeArray.code, ERROR_CODES.invalidTypeArray.severity);
+
+    const validItems = [];
+    value.forEach((item, index) => {
+      const validatedItem = itemValidator(item, [...path, index]);
+      if (validatedItem !== SKIP_PROPERTY) {
+        validItems.push(validatedItem);
+      }
+    });
+    return validItems;
+  },
+
+  object: (schema) => {
+    const validator = (value, path = []) => {
+      if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+        throw new ValidationError(path, ERROR_CODES.invalidTypeObject.code, ERROR_CODES.invalidTypeObject.severity);
+      }
+
+      const result = {};
+      const errors = [];
+
+      for (const [key, fieldValidator] of Object.entries(schema)) {
+        try {
+          const validatedValue = fieldValidator(value[key], [...path, key]);
+          if (validatedValue !== SKIP_PROPERTY) {
+            result[key] = validatedValue;
+          }
+        } catch (error) {
+          if (error instanceof ValidationError) {
+            if (error.fallback !== null) {
+              result[key] = error.fallback;
+            }
+            errors.push(error);
+          } else {
+            throw error;
+          }
+        }
+      }
+
+      if (errors.length > 0) {
+        throw new ValidationError(errors[0].path, errors[0].errorCode, errors[0].severity, null, result, errors);
+      }
+
+      return result;
+    };
+
+    validator._schema = schema;
+    return validator;
+  },
+
+  optional: (validator) => (value, path = []) => {
+    if (is.nullish(value)) return SKIP_PROPERTY;
+    try {
+      return validator(value, path);
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        // Si c'est optional, on change la sévérité en INFO
+        error.severity = SEV.info;
+      }
+      throw error;
+    }
+  },
+
+  fallbackTo:  (validator, defaultVal) => (value, path = []) => {
+    if (value === undefined) return defaultVal;
+    try {
+      return validator(value, path);
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        if (is.nullish(value)) {
+          error.severity = SEV.info;
+          error.errorCode = ERROR_CODES.appliedDefaultValue.code;
+        } else {
+          error.severity = SEV.warn;
+        }
+        error.fallback = defaultVal;
+      }
+      throw error;
+    }
+  },
+
+  optionalString: () => types.optional(types.string),
+  optionalNumber: () => types.optional(types.number),
+  optionalBoolean: () => types.optional(types.boolean),
+
+  optionalWithDefault: (baseValidator, defaultVal) => types.fallbackTo(types.optional(baseValidator), defaultVal),
+  optionalStringWithDefault: (defaultVal) => types.optionalWithDefault(types.string, defaultVal),
+  optionalNumberWithDefault: (defaultVal) => types.optionalWithDefault(types.number, defaultVal),
+  optionalBooleanWithDefault: (defaultVal) => types.optionalWithDefault(types.boolean, defaultVal),
+
+  enums: (allowedValues) => (value, path = []) => {
+    if (is.nullish(value)) {
+      throw new ValidationError(path, ERROR_CODES.missingRequiredProperty.code, ERROR_CODES.missingRequiredProperty.severity);
+    }
+    if (!allowedValues.includes(value)) {
+      throw new ValidationError(path, ERROR_CODES.invalidEnumValue.code, ERROR_CODES.invalidEnumValue.severity);
+    }
+    return value;
+  },
+
+  enumsWithDefault: (allowedValues, defaultVal) => types.fallbackTo(types.enums(allowedValues), defaultVal),
+
+  theme: (allowedValues) => (value, path = []) => {
+    if (is.nullish(value) || is.emptyString(value)) return SKIP_PROPERTY;
+    const themeMap = {
+      battery: 'optimal_when_high',
+      memory: 'optimal_when_low',
+      cpu: 'optimal_when_low',
+    };
+    value = themeMap[value] || value;
+    if (!allowedValues.includes(value)) throw new ValidationError(path, ERROR_CODES.invalidTheme.code, ERROR_CODES.invalidTheme.severity);
+    return value;
+  },
+
+  union: (...validators) => (value, path = []) => {
+    const errors = [];
+
+    for (const validator of validators) {
+      try {
+        return validator(value, path);
+      } catch (error) {
+        errors.push(error.message || error.errorCode);
+      }
+    }
+
+    throw new ValidationError(path, ERROR_CODES.invalidUnionType.code, ERROR_CODES.invalidUnionType.severity);
+  },
+
+  arrayWithValidatedElem: (allowedValues) => (value, path = []) => {
+    if (is.nullish(value)) return SKIP_PROPERTY;
+
+    const valueArray = is.array(value) ? value : [value];
+    const validItems = valueArray.filter((item) => allowedValues.includes(item));
+
+    if (validItems.length === 0) return SKIP_PROPERTY;
+
+    return validItems;
+  },
+
+  effectArray: (allowedValues) => (value, path = []) => {
+    if (is.nullish(value)) return SKIP_PROPERTY;
+    if (is.jinja(value)) return value;
+
+    const valueArray = is.array(value) ? value : [value];
+    const validItems = valueArray.filter((item) => allowedValues.includes(item));
+
+    if (validItems.length === 0) return SKIP_PROPERTY;
+
+    return validItems;
+  },
+
+  watermarkObject: (schema) => (value, path = []) => {
+    if (is.nullish(value) || !is.plainObject(value)) return SKIP_PROPERTY;
+
+    const result = {};
+    const errors = [];
+
+    for (const [key, validator] of Object.entries(schema)) {
+      try {
+        const validatedValue = validator(value[key], [...path, key]);
+        if (validatedValue !== SKIP_PROPERTY) {
+          result[key] = validatedValue;
+        }
+      } catch (error) {
+        if (error instanceof ValidationError) {
+          // ✅ Appliquer fallback s'il existe
+          if (error.fallback !== null && error.fallback !== undefined) {
+            result[key] = error.fallback;
+          }
+          errors.push(error);
+        } else {
+          throw error;
+        }
+      }
+    }
+
+    // ✅ Si il y a des erreurs, lever une erreur avec le résultat complet comme fallback
+    if (errors.length > 0) {
+      throw new ValidationError(
+        path, // chemin vers watermark
+        'watermarkValidation', // code d'erreur
+        SEV.warn, // sévérité
+        result, // ✅ failback
+        null, // pas de partialConfig ici
+        errors // toutes les erreurs individuelles
+      );
+    }
+
+    return result;
+  },
+
+  entityId: (value, path = []) => {
+    if (is.nullish(value)) throw new ValidationError(path, ERROR_CODES.missingRequiredProperty.code, ERROR_CODES.missingRequiredProperty.severity);
+    if (typeof value !== 'string') throw new ValidationError(path, ERROR_CODES.invalidTypeString.code, ERROR_CODES.invalidTypeString.severity);
+    if (!/^[a-z_]+\.[a-z0-9_]+$/.test(value)) throw new ValidationError(path, ERROR_CODES.invalidEntityId.code, ERROR_CODES.invalidEntityId.severity);
+
+    return value;
+  },
+
+  decimal: (value, path = []) => {
+    if (is.nullish(value)) return SKIP_PROPERTY;
+    if (!is.integer(value)) throw new ValidationError(path, ERROR_CODES.invalidDecimal.code, ERROR_CODES.invalidDecimal.severity);
+
+    return value;
+  },
+
+  tapAction: (value, path = []) => {
+    if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+      throw new ValidationError(path, ERROR_CODES.invalidActionObject.code, ERROR_CODES.invalidActionObject.severity);
+    }
+    if (!is.string(value.action)) {
+      throw new ValidationError([...path, 'action'], ERROR_CODES.missingActionKey.code, ERROR_CODES.missingActionKey.severity);
+    }
+
+    return value;
+  },
+
+  tapActionWithDefault: (defaultVal) => types.fallbackTo(types.tapAction, defaultVal),
+
+  customTheme: (value, path = []) => {
+    if (is.nullish(value)) return SKIP_PROPERTY;
+    if (!is.array(value)) throw new ValidationError(path, ERROR_CODES.invalidCustomThemeArray.code, ERROR_CODES.invalidCustomThemeArray.severity);
+
+    let previousMax = null;
+
+    return value.map((item, index) => {
+      const itemPath = [...path, index];
+      if (!is.plainObject(item))
+        throw new ValidationError(itemPath, ERROR_CODES.invalidCustomThemeEntry.code, ERROR_CODES.invalidCustomThemeEntry.severity);
+
+      const { min, max, color, icon_color, bar_color, icon } = item;
+      if (!is.number(min)) throw new ValidationError([...itemPath, 'min'], ERROR_CODES.invalidMinValue.code, ERROR_CODES.invalidMinValue.severity);
+      if (!is.number(max)) throw new ValidationError([...itemPath, 'max'], ERROR_CODES.invalidMaxValue.code, ERROR_CODES.invalidMaxValue.severity);
+
+      if (min >= max) throw new ValidationError(itemPath, ERROR_CODES.minGreaterThanMax.code, ERROR_CODES.minGreaterThanMax.severity);
+
+      if (previousMax !== null && min !== previousMax) {
+        throw new ValidationError([...itemPath, 'min'], ERROR_CODES.discontinuousRange.code, ERROR_CODES.discontinuousRange.severity);
+      }
+
+      const hasColor = is.string(color) || is.string(icon_color) || is.string(bar_color);
+
+      if (!hasColor) {
+        throw new ValidationError(itemPath, ERROR_CODES.missingColorProperty.code, ERROR_CODES.missingColorProperty.severity);
+      }
+
+      if (icon !== undefined && !is.string(icon)) {
+        throw new ValidationError([...itemPath, 'icon'], ERROR_CODES.invalidIconType.code, ERROR_CODES.invalidIconType.severity);
+      }
+
+      previousMax = max;
+
+      return {
+        min,
+        max,
+        ...(color !== undefined && { color }),
+        ...(icon_color !== undefined && { icon_color }),
+        ...(bar_color !== undefined && { bar_color }),
+        ...(icon !== undefined && { icon }),
+      };
+    });
+  },
+
+  stateContent: (value, path = []) => {
+    if (is.nullishOrEmptyString(value)) return SKIP_PROPERTY;
+    if (is.string(value)) return [value];
+
+    if (is.array(value)) {
+      const invalidIndex = value.findIndex((v) => typeof v !== 'string');
+      if (invalidIndex !== -1) {
+        throw new ValidationError([...path, invalidIndex], ERROR_CODES.invalidStateContentEntry.code, ERROR_CODES.invalidStateContentEntry.severity);
+      }
+      return value;
+    }
+
+    throw new ValidationError(path, ERROR_CODES.invalidStateContent.code, ERROR_CODES.invalidStateContent.severity);
+  },
+};
+
+function struct(validator) {
+  const preprocess = (data) => {
+    const result = { ...data };
+
+    if (is.nullish(result.icon_tap_action) && is.string(result.entity)) {
+      const domain = HassProviderSingleton.getEntityDomain(result.entity);
+      const shouldPatch = ['light', 'switch', 'fan', 'input_boolean', 'media_player'].includes(domain);
+      if (shouldPatch) result.icon_tap_action = { action: 'toggle' };
+    }
+
+    return result;
+  };
+  const structInstance = {
+    validate: (data) => {
+      try {
+        const preprocessed = preprocess(data);
+        return { isValid: true, config: validator(preprocessed), error: null, path: null };
+      } catch (error) {
+        return { isValid: false, config: null, error: error.message, path: error.path };
+      }
+    },
+
+    parse: (data) => {
+      try {
+        const preprocessed = preprocess(data);
+        const result = validator(preprocessed);
+        return {
+          isValid: true,
+          config: result,
+          path: null,
+          errorCode: null,
+          severity: null,
+          errors: [],
+        };
+      } catch (error) {
+        // ✅ Fonction pour extraire les erreurs en évitant les doublons
+        const extractAllErrors = (error) => {
+          const allErrors = [];
+          const seen = new Set(); // Pour éviter les doublons
+
+          const addError = (err) => {
+            const key = `${JSON.stringify(err.path)}-${err.errorCode}`;
+            if (!seen.has(key)) {
+              seen.add(key);
+              allErrors.push({
+                path: err.path,
+                errorCode: err.errorCode,
+                severity: err.severity,
+              });
+            }
+          };
+
+          // ✅ Si l'erreur a des sous-erreurs (errors), prendre seulement celles-ci
+          if (error.errors && Array.isArray(error.errors) && error.errors.length > 0) {
+            error.errors.forEach((subError) => {
+              if (subError instanceof ValidationError) {
+                // Récursion pour les erreurs complexes
+                extractAllErrors(subError).forEach(addError);
+              } else if (subError.errorCode) {
+                // Erreur simple
+                addError(subError);
+              }
+            });
+          } else if (error.errorCode) {
+            // ✅ Sinon, prendre l'erreur principale
+            addError(error);
+          }
+
+          return allErrors;
+        };
+
+        const allErrors = extractAllErrors(error);
+        const mainError =
+          allErrors.find((e) => e.severity === 'error') || allErrors[0] || null;
+
+        return {
+          isValid: !mainError || mainError.severity !== 'error',
+          config: error.partialResult ?? error.partialConfig ?? null,
+          path: mainError?.path ?? null,
+          errorCode: mainError?.errorCode ?? null,
+          severity: mainError?.severity ?? null,
+          errors: allErrors,
+        };
+      }
+    },
+
+    extend: (additionalFields) => {
+      if (!validator._schema) {
+        throw new Error('Can only extend object schemas created with types.object');
+      }
+
+      const newSchema = {
+        ...validator._schema,
+        ...additionalFields,
+      };
+
+      return struct(types.object(newSchema));
+    },
+
+    delete: (fieldsToDelete) => {
+      if (!validator._schema) {
+        throw new Error('Can only delete from object schemas created with types.object');
+      }
+
+      const fieldsArray = Array.isArray(fieldsToDelete) ? fieldsToDelete : [fieldsToDelete];
+      const newSchema = { ...validator._schema };
+      fieldsArray.forEach((field) => {
+        delete newSchema[field];
+      });
+
+      return struct(types.object(newSchema));
+    },
+
+    fields: () => {
+      if (!validator._schema) {
+        throw new Error('Can only get fields from object schemas created with types.object');
+      }
+      return Object.keys(validator._schema);
+    },
+  };
+
+  return structInstance;
+}
+
+const additionItem = types.fallbackTo(types.object({
+  entity: types.entityId,
+  attribute: types.optional(types.string)
+}), SKIP_PROPERTY);
+
+const watermarkSchema = {
+  low: types.optionalNumberWithDefault(CARD.config.defaults.watermark.low),
+  low_color: types.optionalStringWithDefault(CARD.config.defaults.watermark.low_color),
+  high: types.optionalNumberWithDefault(CARD.config.defaults.watermark.high),
+  high_color: types.optionalStringWithDefault(CARD.config.defaults.watermark.high_color),
+  opacity: types.optionalNumberWithDefault(CARD.config.defaults.watermark.opacity),
+  type: types.enumsWithDefault(['blended', 'area', 'striped', 'triangle', 'round', 'line'], CARD.config.defaults.watermark.type),
+  line_size: types.optionalStringWithDefault(CARD.config.defaults.watermark.line_size),
+  disable_low: types.optionalBooleanWithDefault(CARD.config.defaults.watermark.disable_low),
+  disable_high: types.optionalBooleanWithDefault(CARD.config.defaults.watermark.disable_high),
+};
+
+
+class yamlSchemaFactory {
+  static get card() {
+    return struct(
+      types.object({
+        // === Entity & Data ===
+        entity: types.entityId,
+        attribute: types.optionalString(),
+        name: types.optionalString(),
+        decimal: types.decimal,
+        unit: types.optionalString(),
+        disable_unit: types.optionalBooleanWithDefault(false),
+        unit_spacing: types.enumsWithDefault(['auto', 'space', 'no-space'], 'auto'),
+        min_value: types.optionalNumber(0),
+        max_value: types.fallbackTo(types.union(types.number, types.string), 100),
+        max_value_attribute: types.optionalString(),
+
+        // === Appearance ===
+        icon: types.optionalString(),
+        color: types.optionalString(),
+        bar_color: types.optionalString(),
+        bar_size: types.enumsWithDefault(['small', 'medium', 'large', 'xlarge'], 'small'),
+        bar_orientation: types.enumsWithDefault(['ltr', 'rtl'], 'ltr'),
+        bar_effect: types.effectArray(['radius', 'glass', 'gradient', 'shimmer']),
+        layout: types.enumsWithDefault(['horizontal', 'vertical'], 'horizontal'),
+        min_width: types.optionalString(),
+        height: types.optionalString(),
+        frameless: types.optionalBooleanWithDefault(false),
+        marginless: types.optionalBooleanWithDefault(false),
+        reverse: types.optionalBooleanWithDefault(false),
+        reverse_secondary_info_row: types.optionalBooleanWithDefault(false),
+        force_circular_background: types.optionalBooleanWithDefault(false),
+        center_zero: types.optionalBooleanWithDefault(false),
+
+        // === Visibility & Content ===
+        hide: types.arrayWithValidatedElem(['icon', 'name', 'value', 'secondary_info', 'progress_bar']),
+        name_info: types.optionalString(),
+        custom_info: types.optionalString(),
+        state_content: types.optional(types.fallbackTo(types.stateContent, SKIP_PROPERTY)),
+
+        // === Badges ===
+        badge_icon: types.optionalString(),
+        badge_color: types.optionalString(),
+
+        // === Theme & Watermark ===
+        theme: types.theme(['optimal_when_low', 'optimal_when_high', 'light', 'temperature', 'humidity', 'pm25', 'voc']),
+        custom_theme: types.fallbackTo(types.customTheme, SKIP_PROPERTY),
+        watermark: types.watermarkObject(watermarkSchema, CARD.config.defaults.watermark),
+
+        // === Additions ===
+        additions: types.optional(types.array(additionItem)),
+
+        // === Actions ===
+        tap_action: types.tapActionWithDefault({ action: 'more-info' }),
+        hold_action: types.tapActionWithDefault({ action: 'none' }),
+        double_tap_action: types.tapActionWithDefault({ action: 'none' }),
+        icon_tap_action: types.tapActionWithDefault({ action: 'none' }),
+        icon_hold_action: types.tapActionWithDefault({ action: 'none' }),
+        icon_double_tap_action: types.tapActionWithDefault({ action: 'none' }),
+      })
+    );
+  }
+
+  static get badge() {
+    return yamlSchemaFactory.card.delete(['badge_icon', 'badge_color', 'force_circular_background', 'layout', 'height', 'icon_tap_action', 'icon_hold_action', 'icon_double_tap_action']);
+  }
+
+  static get template() {
+    return struct(
+      types.object({
+        // === Entity & Data ===
+        entity: types.optional(types.entityId),
+        name: types.optionalString(),
+        secondary: types.optionalString(),
+        percent: types.optionalString(),
+
+        // === Appearance ===
+        icon: types.optionalString(),
+        color: types.optionalString(),
+        bar_color: types.optionalString(),
+        bar_size: types.enumsWithDefault(['small', 'medium', 'large', 'xlarge'], 'small'),
+        bar_orientation: types.enumsWithDefault(['ltr', 'rtl'], 'ltr'),
+        bar_effect: types.effectArray(['radius', 'glass', 'gradient', 'shimmer']),
+        layout: types.enumsWithDefault(['horizontal', 'vertical'], 'horizontal'),
+        min_width: types.optionalString(),
+        height: types.optionalString(),
+        frameless: types.optionalBooleanWithDefault(false),
+        marginless: types.optionalBooleanWithDefault(false),
+        reverse_secondary_info_row: types.optionalBooleanWithDefault(false),
+        force_circular_background: types.optionalBooleanWithDefault(false),
+        center_zero: types.optionalBooleanWithDefault(false),
+        hide: types.arrayWithValidatedElem(['icon', 'name', 'value', 'secondary_info', 'progress_bar']),
+        badge_icon: types.optionalString(),
+        badge_color: types.optionalString(),
+        watermark: types.watermarkObject(watermarkSchema, CARD.config.defaults.watermark),
+
+        // === Actions ===
+        tap_action: types.tapActionWithDefault({ action: 'more-info' }),
+        hold_action: types.tapActionWithDefault({ action: 'none' }),
+        double_tap_action: types.tapActionWithDefault({ action: 'none' }),
+        icon_tap_action: types.tapActionWithDefault({ action: 'none' }),
+        icon_hold_action: types.tapActionWithDefault({ action: 'none' }),
+        icon_double_tap_action: types.tapActionWithDefault({ action: 'none' }),
+      })
+    );
+  }
+
+  // new !
+  static get badgeTemplate() {
+    return yamlSchemaFactory.template.delete(['badge_icon', 'badge_color', 'icon_tap_action', 'icon_hold_action', 'icon_double_tap_action']);
+  }
+}
+
+
+/**
+ * @typedef {Object} EntityProxy
+ * @property {*} state
+ * @property {string} name
+ * @property {string} unit
+ * @property {string} icon
+ * @property {*} [key]
+ */
+
+/**
+ * @param {Object} hassProvider
+ * @param {string} entityId
+ * @returns {EntityProxy}
+ */
+const createEntityProxy = (hassProvider, entityId) => new Proxy({}, {
+  get(target, prop) {
+    switch (prop) {
+      case 'state': return hassProvider.getEntityState(entityId);
+      case 'name': return hassProvider.getEntityAttribute(entityId, 'friendly_name');
+      case 'unit': return hassProvider.getEntityAttribute(entityId, 'unit_of_measurement');
+      case 'icon': return hassProvider.getEntityAttribute(entityId, 'icon');
+      default: return hassProvider.getEntityAttribute(entityId, prop);
+    }
+  }
+});
+
+// const entity = createEntityProxy(hassProvider, 'sensor.temperature');
+
+
+/******************************************************************************************
  * 🛠️ BaseConfigHelper
  * ========================================================================================
  *
@@ -4683,154 +6383,99 @@ class EntityOrValue {
  */
 
 class BaseConfigHelper {
-  #config = {};
-  #isValid = false;
-  #msg = null;
-  #isChanged = false;
   #hassProvider = HassProviderSingleton.getInstance();
+  #HAError = null;
+  _isDefined = false;
+  _configParsed = {};
+  _yamlSchema = null;
 
   // === GETTERS/SETTERS ===
   get config() {
-    return this.#config;
+    return this._configParsed?.config;
   }
 
   set config(config) {
-    this.#isChanged = true;
-    this.#config = this.constructor.applyDefaults(config);
+    this._isDefined = true;
+    this.#logDeprecatedOption(config);
+    this._configParsed = this._yamlSchema.parse(config);
+    console.log(this.config);
+    console.log(this._configParsed);
+    console.log(this._hassProvider.language);
+  }
+
+  #logDeprecatedOption(config) {
+    if (config.navigate_to !== undefined)
+      console.warn(`${CARD.meta.card.typeName.toUpperCase()} - navigate_to option is deprecated and has been removed.`);
+    if (config.show_more_info !== undefined)
+      console.warn(`${CARD.meta.card.typeName.toUpperCase()} - show_more_info option is deprecated and has been removed.`);
+    if (['battery', 'cpu', 'memory'].includes(config.theme))
+      console.warn(
+        `${CARD.meta.card.typeName.toUpperCase()} - theme: ${
+          config.theme
+        } is deprecated and will be removed in a future release. Please migrate to the recommended alternative...`
+      );
   }
 
   get isValid() {
-    return this.#isValid;
+    return this._isDefined ? this._configParsed.isValid && this.#HAError === null : false;
   }
 
+  get _errorMessage() {
+    const errorSrc = this.#HAError ? this.#HAError : this._configParsed;
+    return {
+      content: `${errorSrc.path}: ${this.#hassProvider.getMessage(errorSrc.errorCode)}`,
+      sev: errorSrc.severity,
+    };
+  }
   get msg() {
-    return this.#msg;
+    return this._isDefined && (this._configParsed.errorCode || this.#HAError) ? this._errorMessage : null;
   }
-
   get hasDisabledUnit() {
-    return this.#config.disable_unit;
+    return this.config?.disable_unit;
   }
 
   // === PUBLIC API METHODS ===
   get cardTapAction() {
-    return this.#getCardAction('tap_action');
+    return this.#getAction('tap_action');
   }
-
   get cardDoubleTapAction() {
-    return this.#getCardAction('double_tap_action');
+    return this.#getAction('double_tap_action');
   }
-
   get cardHoldAction() {
-    return this.#getCardAction('hold_action');
+    return this.#getAction('hold_action');
   }
-
   get iconTapAction() {
-    return this.#getCardAction('icon_tap_action');
+    return this.#getAction('icon_tap_action');
   }
-
   get iconDoubleTapAction() {
-    return this.#getCardAction('icon_double_tap_action');
+    return this.#getAction('icon_double_tap_action');
   }
-
   get iconHoldAction() {
-    return this.#getCardAction('icon_hold_action');
+    return this.#getAction('icon_hold_action');
   }
 
-  #getCardAction(action) {
-    return (this.#config[action]?.action ?? null) === null ? CARD.interactions.action.default : this.#config[action]?.action;
-  }
-
-  // Method to define allowed keys - to be overridden in subclasses
-  static get _allowedKeys() {
-    return new Set([
-      // Base keys common to all cards
-      'entity',
-    ]);
-  }
-
-  // Method to filter the config based on allowed keys
-  static filterConfig(config) {
-    return Object.fromEntries(Object.entries(config).filter(([key]) => this._allowedKeys.has(key)));
-  }
-
-  // Method to define enum validations specific to each card
-  static getEnumValidations() {
-    return {
-      // Subclasses can override this method to define their own validations
-      // Example structure:
-      // bar_orientation: {
-      //   validValues: CARD.style.dynamic.progressBar.orientation,
-      //   defaultValue: null
-      // }
-    };
-  }
-
-  static validateEnums(config, merged) {
-    const enumValidations = this.getEnumValidations();
-
-    // Generic validation based on subclass configuration
-    Object.entries(enumValidations).forEach(([key, validation]) => {
-      if (config[key] && !has.own(validation.validValues, config[key])) {
-        merged[key] = validation.defaultValue;
-      }
-    });
-
-    // Normalize bar_effect to an array if it's a string 
-    if (!is.jinja(merged.bar_effect) && is.string(merged.bar_effect)) {
-      merged.bar_effect = [merged.bar_effect];
-    }
-
-    // Watermark - validation common to all cards
-    if (config.watermark !== undefined) {
-      const { watermark } = CARD.config.defaults;
-      merged.watermark = {
-        ...watermark,
-        ...config.watermark,
-      };
-    }
-    
-    return merged;
-  }
-
-  // === Validation and abstract method to be implemented in the subclass ===
-  static applyDefaults(config) {
-    console.error('applyDefaults must be implemented in subclass', config);
-    throw new Error('applyDefaults must be implemented in subclass');
+  #getAction(action) {
+    return this.isValid ? this.config?.[action]?.action : null;
   }
 
   checkConfig() {
-    if (!this.#isChanged) return;
+    const entityState = this._hassProvider.getEntityStateObj(this.config.entity);
+    const maxValueState = is.nonEmptyString(this.config.max_value) ? this._hassProvider.getEntityStateObj(this.config.max_value) : null;
 
-    this.#isChanged = false;
-    this.#isValid = false;
-
-    const validationRules = this.getValidationRules();
-
-    for (const rule of validationRules) {
-      if (!rule.valid) {
-        this.#msg = rule.msg;
-        return;
-      }
-    }
-
-    this.#isValid = true;
-    this.#msg = null;
+    if (is.string(this.config.attribute) && entityState && !has.own(entityState.attributes, this.config.attribute))
+      this.#HAError = { path: 'attribute', errorCode: 'attributeNotFound', severity: SEV.error };
+    else if (is.string(this.config.max_value) && !maxValueState)
+      this.#HAError = { path: 'max_value', errorCode: 'entityNotFound', severity: SEV.error };
+    else if (is.string(this.config.max_value_attribute) && maxValueState && !has.own(maxValueState.attributes, this.config.max_value_attribute))
+      this.#HAError = { path: 'max_value_attribute', errorCode: 'attributeNotFound', severity: SEV.error };
+    else this.#HAError = null;
   }
 
-  // skipcq: JS-0105
-  getValidationRules() {
-    return [];
-  }
-
-  // === HELPERS ===
   get _hassProvider() {
     return this.#hassProvider;
   }
-
-  get _config() {
-    return this.#config;
-  }
 }
+
 
 /******************************************************************************************
  * 🛠️ CardConfigHelper
@@ -4842,155 +6487,20 @@ class BaseConfigHelper {
  */
 
 class CardConfigHelper extends BaseConfigHelper {
+  _yamlSchema = yamlSchemaFactory.card;
+
   get max_value() {
-    if (!this._config.max_value) return CARD.config.value.max;
-    if (Number.isFinite(this._config.max_value)) return this._config.max_value;
-    if (is.string(this._config.max_value)) {
-      const state = this._hassProvider.getEntityStateValue(this._config.max_value);
+    if (!this.config.max_value) return CARD.config.value.max;
+    if (Number.isFinite(this.config.max_value)) return this.config.max_value;
+    if (is.string(this.config.max_value)) {
+      const state = this._hassProvider.getEntityStateValue(this.config.max_value);
       const parsedState = parseFloat(state);
       if (!isNaN(parsedState)) return parsedState;
     }
     return null;
   }
-
   get stateContent() {
-    const content = is.string(this._config?.state_content) ? [this._config?.state_content] : this._config?.state_content ?? [];
-    return content.filter((item) => is.string(item));
-  }
-
-  // Clés autorisées pour ce type de carte
-  static get _allowedKeys() {
-    return new Set([
-      'entity',
-      'attribute',
-      'name',
-      'unit',
-      'unit_spacing',
-      'decimal',
-      'min_value',
-      'max_value',
-      'max_value_attribute',
-      'bar_size',
-      'bar_color',
-      'icon',
-      'force_circular_background',
-      'color',
-      'layout',
-      'frameless',
-      'additions',
-      'marginless',
-      'min_width',
-      'height',
-      'reverse',
-      'reverse_secondary_info_row',
-      'decimal',
-      'custom_theme',
-      'state_content',
-      'disable_unit',
-      'bar_orientation',
-      'hide',
-      'badge_icon',
-      'badge_color',
-      'name_info',
-      'custom_info',
-      'watermark',
-      'bar_effect',
-      'tap_action',
-      'double_tap_action',
-      'hold_action',
-      'icon_tap_action',
-      'icon_double_tap_action',
-      'icon_hold_action',
-      'center_zero',
-    ]);
-  }
-
-  // Configuration des validations d'enum spécifiques à cette carte
-  static getEnumValidations() {
-    return {
-      bar_orientation: {
-        validValues: CARD.style.dynamic.progressBar.orientation,
-        defaultValue: null,
-      },
-      bar_size: {
-        validValues: CARD.style.bar.sizeOptions,
-        defaultValue: CARD.style.bar.sizeOptions.small.label,
-      },
-      layout: {
-        validValues: CARD.layout.orientations,
-        defaultValue: CARD.layout.orientations.horizontal.label,
-      },
-      unit_spacing: {
-        validValues: Object.fromEntries(Object.values(CARD.config.unit.unitSpacing).map((val) => [val, val])),
-        defaultValue: CARD.config.unit.unitSpacing.auto,
-      },
-    };
-  }
-
-  static applyDefaults(config) {
-    const domain = HassProviderSingleton.getEntityDomain(config.entity);
-    const toggleableDomains = ['light', 'switch', 'fan', 'input_boolean', 'media_player'];
-    const isToggleable = toggleableDomains.includes(domain);
-    // eslint-disable-next-line no-unused-vars
-    const { watermark, ...baseDefaults } = this.filterConfig(CARD.config.defaults);
-
-    if (config.center_zero === true && typeof config.min_value === 'undefined') baseDefaults.min_value = -100;
-    const cleanedConfig = this.filterConfig(config);
-    const merged = {
-      ...baseDefaults,
-      ...(isToggleable && { icon_tap_action: { action: 'toggle' } }),
-      ...cleanedConfig,
-    };
-
-    return this.validateEnums(config, merged);
-  }
-
-  getValidationRules() {
-    const entityState = this._hassProvider.getEntityStateObj(this._config.entity);
-    const maxValueState =
-      is.nonEmptyString(this._config.max_value)
-        ? this._hassProvider.getEntityStateObj(this._config.max_value)
-        : null;
-
-    return [
-      {
-        valid: this._config.entity !== null,
-        msg: {
-          content: LANGUAGES[this._hassProvider.language].card.msg.entityError,
-          sev: 'info',
-        },
-      },
-      {
-        valid: !this._config.attribute || (entityState && has.own(entityState.attributes, this._config.attribute)),
-        msg: {
-          content: LANGUAGES[this._hassProvider.language].card.msg.attributeNotFound,
-          sev: 'error',
-        },
-      },
-      {
-        valid: Number.isFinite(this._config.min_value),
-        msg: {
-          content: LANGUAGES[this._hassProvider.language].card.msg.minValueError,
-          sev: 'error',
-        },
-      },
-      {
-        valid:
-          Number.isFinite(this.max_value) ||
-          (maxValueState && (this._config.max_value_attribute ? has.own(maxValueState.attributes, this._config.max_value_attribute) : true)),
-        msg: {
-          content: LANGUAGES[this._hassProvider.language].card.msg.maxValueError,
-          sev: 'warning',
-        },
-      },
-      {
-        valid: !this._config.decimal || (Number.isFinite(this._config.decimal) && this._config.decimal > 0),
-        msg: {
-          content: LANGUAGES[this._hassProvider.language].card.msg.decimalError,
-          sev: 'error',
-        },
-      },
-    ];
+    return this.config?.state_content ?? [];
   }
 }
 
@@ -5004,13 +6514,9 @@ class CardConfigHelper extends BaseConfigHelper {
  */
 
 class BadgeConfigHelper extends CardConfigHelper {
-  static get _allowedKeys() {
-    const parentKeys = super._allowedKeys;
-    const keysToRemove = new Set(['icon_tap_action', 'icon_double_tap_action', 'icon_hold_action']);
-    const filteredKeys = new Set([...parentKeys].filter((key) => !keysToRemove.has(key)));
-    return filteredKeys;
-  }
+  _yamlSchema = yamlSchemaFactory.badge;
 }
+
 
 /******************************************************************************************
  * 🛠️ MinimalCardView
@@ -5078,10 +6584,10 @@ class MinimalCardView {
     return this._hasAnyAction([this._configHelper.cardTapAction, this._configHelper.cardHoldAction, this._configHelper.cardDoubleTapAction]);
   }
   get hasReversedSecondaryInfoRow() {
-    return this.config.reverse_secondary_info_row === true;
+    return this.config.reverse_secondary_info_row; // === true
   }
   get hasVisibleShape() {
-    return this.config.force_circular_background === true || this._hasDefaultShape || this._hasInteractiveShape;
+    return this.config.force_circular_background || this._hasDefaultShape || this._hasInteractiveShape; // this.config.force_circular_background === true
   }
 
   get _hasDefaultShape() {
@@ -5109,9 +6615,9 @@ class MinimalCardView {
 
     const { watermark } = this.config;
     return {
-      low: this.config.center_zero === true ? 50 + watermark.low / 2 : watermark.low,
+      low: this.config.center_zero ? 50 + watermark.low / 2 : watermark.low, // === true
       low_color: ThemeManager.adaptColor(watermark.low_color),
-      high: this.config.center_zero === true ? 50 + watermark.high / 2 : watermark.high,
+      high: this.config.center_zero ? 50 + watermark.high / 2 : watermark.high, // === true
       high_color: ThemeManager.adaptColor(watermark.high_color),
       opacity: watermark.opacity,
       type: watermark.type,
@@ -5226,7 +6732,7 @@ class BaseCardView extends MinimalCardView {
     Object.assign(this.#percentHelper, {
       unitSpacing: this._configHelper.config.unit_spacing,
       hasDisabledUnit: this._configHelper.hasDisabledUnit,
-      isCenterZero: this._configHelper.config.center_zero === true,
+      isCenterZero: this._configHelper.config.center_zero, //  === true
     });
 
     Object.assign(this.#theme, {
@@ -5376,8 +6882,8 @@ class BaseCardView extends MinimalCardView {
       opacity: watermark.opacity,
       type: watermark.type,
       line_size: watermark.line_size,
-      disable_low: watermark.disable_low === true,
-      disable_high: watermark.disable_high === true,
+      disable_low: watermark.disable_low, // === true,
+      disable_high: watermark.disable_high, // === true,
     };
   }
   get hasEntityCollection() {
@@ -6100,7 +7606,7 @@ class EntityProgressCardBase extends HTMLElement {
   // === ERROR MESSAGE MANAGEMENT ===
 
   _manageErrorMessage() {
-    if (this._cardView.entity === null || (this._cardView.isAvailable && !this._cardView.hasValidatedConfig)) {
+    if (is.nullish(this._cardView.entity) || (this._cardView.isAvailable && !this._cardView.hasValidatedConfig)) {
       this._renderMessage(this._cardView.msg);
       return true;
     }
@@ -6149,7 +7655,7 @@ class EntityProgressCardBase extends HTMLElement {
 
   _manageStructureOptions() {
     this.constructor._cardStructure.options = {
-      barType: this._cardView.config.center_zero === true ? 'centerZero' : 'default',
+      barType: this._cardView.config.center_zero ? 'centerZero' : 'default', // === true
       layout: this._cardView.config.layout,
       barPosition:
         this._cardView.config.layout === CARD.layout.orientations.horizontal.label &&
@@ -6202,8 +7708,8 @@ class EntityProgressCardBase extends HTMLElement {
       [CARD.style.dynamic.clickable.card, this._cardView.hasClickableCard],
       [CARD.style.dynamic.clickable.icon, this._cardView.hasClickableIcon],
       [CARD.style.dynamic.secondaryInfoError.class, this._cardView.hasStandardEntityError],
-      [CARD.style.dynamic.frameless.class, this._cardView.config.frameless === true],
-      [CARD.style.dynamic.marginless.class, this._cardView.config.marginless === true],
+      [CARD.style.dynamic.frameless.class, this._cardView.config.frameless], // === true,
+      [CARD.style.dynamic.marginless.class, this._cardView.config.marginless], // === true,
     ]);
   }
   _applyConditionalClasses(card) {
@@ -6352,7 +7858,7 @@ class EntityProgressCardBase extends HTMLElement {
     this._updateElement(CARD.htmlStructure.card.element, (el) => {
       const style = el.style;
       const bar = this._cardView;
-      const isCenterZero = bar.config.center_zero === true;
+      const isCenterZero = bar.config.center_zero; // === true,
       const isNegative = bar.percent < 0;
 
       const properties = [
@@ -6402,7 +7908,7 @@ class EntityProgressCardBase extends HTMLElement {
     this._log.debug('_createImgIcon');
     const img = document.createElement('img');
     img.className = className;
-    img.loading = 'lazy';
+    // img.loading = 'lazy'; - avoid issue
     img.decoding = 'async';
     img.alt = altText;
     return img;
@@ -6938,93 +8444,17 @@ RegistrationHelper.registerBadge(CARD.meta.badge);
  * 🛠️ TemplateConfigHelper
  * ========================================================================================
  *
- * ✅ Card view
+ * ✅ Config Helper
  *
  * 📌 Purpose:
  *   - Manage card configuration.
- *   - Process and apply parameters required to render the card.
- *   - Serve as the interface between raw config and visual output.
  *
  * @class
  * @extends BaseConfigHelper
  */
 
 class TemplateConfigHelper extends BaseConfigHelper {
-  // Clés autorisées pour ce type de carte
-  static get _allowedKeys() {
-    return new Set([
-      'entity',
-      'name',
-      'icon',
-      'secondary',
-      'badge_icon',
-      'badge_color',
-      'percent',
-      'color',
-      'bar_color',
-      'hide',
-      'bar_orientation',
-      'bar_size',
-      'layout',
-      'watermark',
-      'bar_effect',
-      'frameless',
-      'marginless',
-      'min_width',
-      'height',
-      'tap_action',
-      'hold_action',
-      'double_tap_action',
-      'icon_tap_action',
-      'icon_hold_action',
-      'icon_double_tap_action',
-      'reverse_secondary_info_row',
-      'center_zero',
-    ]);
-  }
-
-  // Configuration des validations d'enum spécifiques à cette carte
-  static getEnumValidations() {
-    return {
-      bar_orientation: {
-        validValues: CARD.style.dynamic.progressBar.orientation,
-        defaultValue: null,
-      },
-      bar_size: {
-        validValues: CARD.style.bar.sizeOptions,
-        defaultValue: CARD.style.bar.sizeOptions.small.label,
-      },
-      layout: {
-        validValues: CARD.layout.orientations,
-        defaultValue: CARD.layout.orientations.horizontal.label,
-      },
-    };
-  }
-
-  static applyDefaults(config) {
-    const domain = HassProviderSingleton.getEntityDomain(config.entity);
-    const toggleableDomains = ['light', 'switch', 'fan', 'input_boolean', 'media_player'];
-    const isToggleable = toggleableDomains.includes(domain);
-    // eslint-disable-next-line no-unused-vars
-    const { watermark, ...baseDefaults } = this.filterConfig(CARD.config.defaults);
-
-    const defaultConfig = {
-      name: 'Template Card',
-    };
-
-    // Utilisation de la méthode filterConfig de la classe parent
-    const cleanedConfig = this.filterConfig(config);
-
-    const merged = {
-      ...baseDefaults,
-      ...defaultConfig,
-      ...(isToggleable && { icon_tap_action: { action: 'toggle' } }),
-      ...cleanedConfig,
-    };
-
-    // Utilisation de la méthode validateEnums de la classe parent
-    return this.validateEnums(config, merged);
-  }
+  _yamlSchema = yamlSchemaFactory.template;
 }
 
 /******************************************************************************************
@@ -7123,8 +8553,8 @@ class EntityProgressTemplate extends EntityProgressCardBase {
     return new Map([
       [CARD.style.dynamic.clickable.card, this._cardView.hasClickableCard],
       [CARD.style.dynamic.clickable.icon, this._cardView.hasClickableIcon],
-      [CARD.style.dynamic.frameless.class, this._cardView.config.frameless === true],
-      [CARD.style.dynamic.marginless.class, this._cardView.config.marginless === true],
+      [CARD.style.dynamic.frameless.class, this._cardView.config.frameless], // === true,
+      [CARD.style.dynamic.marginless.class, this._cardView.config.marginless], // === true,
     ]);
   }
 
@@ -7157,7 +8587,7 @@ class EntityProgressTemplate extends EntityProgressCardBase {
   // === ICON MANAGEMENT ===
 
   _showIcon(iconFromJinja = null) {
-    const hasBadIcon = this._cardView.config.icon !== null && iconFromJinja === null;
+    const hasBadIcon = this._cardView.config.icon !== undefined && iconFromJinja === null;
 
     if (this._firstIconRefresh && hasBadIcon) {
       this._firstIconRefresh = false;
@@ -7190,7 +8620,7 @@ class EntityProgressTemplate extends EntityProgressCardBase {
   }
 
   _renderPercentCSS(percent) {
-    const isCenterZero = this._cardView.config.center_zero === true;
+    const isCenterZero = this._cardView.config.center_zero; // === true,
     const absPercent = Math.abs(percent);
     const half = `${absPercent / 2}%`;
 
@@ -8056,8 +9486,8 @@ class EntityProgressCardEditor extends HTMLElement {
   #updateToggleFields() {
     const hide = this.#config.hide || [];
     const toggleMappings = {
-      toggle_force_circular_background: this.#config.force_circular_background === true,
-      toggle_unit: this.#config.disable_unit !== true,
+      toggle_force_circular_background: this.#config.force_circular_background, // === true,
+      toggle_unit: !this.#config.disable_unit, // !== true
       toggle_icon: !hide.includes('icon'),
       toggle_name: !hide.includes('name'),
       toggle_value: !hide.includes('value'),
