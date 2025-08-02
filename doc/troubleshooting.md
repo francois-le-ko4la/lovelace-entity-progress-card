@@ -147,13 +147,15 @@ Whether you're a beginner or an advanced user, your feedback is valuable!
 - Before creating a new issue, please first **[check existing issues](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues)**
   to see if the problem has already been reported.  
 - If not, feel free to **[submit a new issues](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues)** with all the relevant information.
-  > [!NOTE]
-  > When opening an issue, try to include as much information as possible.
-  >
-  > The more context you provide, the faster and more accurately I can help — we’ll troubleshoot it together!
-  >
-  > To help you out, I’ve set up a simple system that asks you the right questions and guides you through the process
-  > of creating a useful issue.
+  
+> [!NOTE]
+> When opening an issue, try to include as much information as possible.
+>
+> The more context you provide, the faster and more accurately I can help — we’ll troubleshoot it together!
+>
+> To help you out, I’ve set up a simple system that asks you the right questions and guides you through the process
+> of creating a useful issue.
+  
   <details>
   <summary><strong>Show the screenshot (click to expand)</strong></summary>
 
