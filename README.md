@@ -29,7 +29,7 @@ Jump to the specific section:
 - 📝 [Usage](#usage)
   - 🪄 [Card and badge Editor](#card-and-badge-editor)
   - 🧩 [Entity Progress Card](#entity-progress-card)
-  - 🧩 [Entity Progress Card Template](#entity-progress-card-template) 
+  - 🧩 [Entity Progress Card Template](#entity-progress-card-template)
   - 🧩 [Entity Progress Badge](#entity-progress-badge)
 - 🎨 [Theme](#theme)
 - 🌍 [Language \& Number Support](#language-number-support)

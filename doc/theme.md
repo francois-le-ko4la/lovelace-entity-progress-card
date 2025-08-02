@@ -8,7 +8,7 @@ Jump to the specific section:
 - [Predefined theme](#predefined-theme)
   - 🔋 [Optimal when high (Battery...)](#optimal-high)
   - 💽 [Optimal when low (CPU, RAM, disk...)](#optimal-low)
-  - 💡 [Light](#light) 
+  - 💡 [Light](#light)
   - 🌡️ [Temperature](#temperature)
   - 💧 [Humidity](#humidity)
   - 🦠 [VOC](#voc)
@@ -207,7 +207,6 @@ associated with a specific color:
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/temperature.png" alt="Image title" width="500"/>
 
-
 [🔼 Back to top](#top)
 
 <a id="humidity"></a>
@@ -379,4 +378,3 @@ Once set, the progress bar background will reflect the new color consistently
 across all cards using this variable.
 
 [🔼 Back to top](#top)
-

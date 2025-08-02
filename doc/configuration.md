@@ -400,7 +400,7 @@ state_content:
   status...) to the main progress value.
 
 [🔼 Back to top](#top)
-x
+
 #### `custom_info`
 
 [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#custom_info)
@@ -614,7 +614,7 @@ badge_color: >-
 
 > **`bar_color`** string _(optional, default: `var(--state-icon-color)`)_
 
-The color of the progress bar. Accepts [Token color](#token-color), color names,
+The color of the progress bar. Accepts [Token color](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/theme.md#token-color), color names,
 RGB values, or HEX codes.
 
 _Examples:_ `"blue"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`
