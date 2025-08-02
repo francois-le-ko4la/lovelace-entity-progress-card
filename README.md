@@ -18,7 +18,7 @@
 
 A modern Entity progress card for Home Assistant's Lovelace UI.
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/thumbnail.png" alt="Default" width="700"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/thumbnail.png" alt="thumbnail" width="700"/>
 
 ## Table of Contents
 
@@ -46,7 +46,7 @@ Jump to the specific section:
 
 ### 🔍 Description
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/example.png" alt="Default" width="400"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/example.png" alt="example" width="400"/>
 
 This custom version of the **Bar Card** for Home Assistant allows you to display a simple
 percentage bar that is quick and easy to integrate into your Lovelace cards. It blends
@@ -71,8 +71,8 @@ This card is based on custom CSS and leverages existing code to fine-tune the ap
 - **Performance Optimized**: Code enhancements ensure better performance and
   maintainability, offering a more stable and responsive experience.
 - **Multi-Language Support**: Provides localized error messages and descriptions,
-  supporting multiple languages 🇬🇧 🇪🇸 🇩🇪 🇮🇹 🇫🇷 🇵🇱 🇳🇱 🇭🇷 🇲🇰 🇵🇹 🇩🇰 🇸🇪 🇳🇴 (bokmål)
-  🇫🇮 🇷🇴 🇬🇷 🇯🇵 🇰🇷 🇨🇳 🇹🇷 🇸🇦.
+  supporting multiple languages 🇸🇦 🇧🇩 🇨🇿 🇩🇰 🇩🇪 🇬🇷 🇬🇧 🇪🇸 🇫🇮 🇫🇷 🇮🇳 🇭🇷 🇮🇩 🇮🇹 🇯🇵
+  🇰🇷 🇲🇰 🇳🇴 (bokmål) 🇳🇱 🇵🇱 🇵🇹 🇷🇴 🇸🇪 🇹🇭 🇹🇷 🇺🇦 🇻🇳 🇨🇳.
 
 [🔼 Back to top](#top)
 
@@ -112,14 +112,15 @@ Use this link to directly go to the repository in HACS
 <details>
 <summary><strong>Manual Installation (click to expand)</strong></summary>
 
-1.  Download the file `entity-progress-card.js` (from the last version) to the
+1. Download the file `entity-progress-card.js` (from the last version) to the
     `/config/www/` directory in your Home Assistant setup.
-2.  Add `/local/entity-progress-card.js` to your Lovelace resources
+2. Add `/local/entity-progress-card.js` to your Lovelace resources
 
-```yaml
-url: /local/entity-progress-card.js
-type: module
-```
+  ```yaml
+  url: /local/entity-progress-card.js
+  type: module
+  ```
+
 </details>
 
 [🔼 Back to top](#top)
@@ -148,9 +149,9 @@ The card editor allows you to quickly set up and customize the card.
 
 This is the primary card for displaying entity progress.
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/pm.png" alt="Image title" width="250"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/pm.png" alt="Example PM" width="250"/>
 
-#### 🎯 Purpose
+#### 🎯 Card Purpose
 
 The Standard Lovelace Entity Progress Card is ideal for situations where you need a straightforward, percentage-based progress visualization. It's best used when:
 
@@ -167,47 +168,47 @@ Essentially, if you need a clear, visually appealing progress bar that's easy to
 <details>
 <summary><strong>Options and Configuration (click to expand)</strong></summary>
 
-| Option                | Type                    | Default           | Description                       | Documentation                                                                                                                 |
-| --------------------- | ----------------------- | ----------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| **Option**                   | **Type**                | **Default**               | **Description**                       | **Link**                                                                                                                                    |
+| ---------------------------- | ----------------------- | ------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Data Options** |||||
-| `entity`              | string (required)       | —                 | Main entity ID                    | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#entity)              |
-| `attribute`           | string (optional)       | depends on entity | Attribute to use as value         | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#attribute)           |
-| `name`                | string (optional)       | entity name       | Custom name to show               | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#name)                |
-| `unit`                | string (optional)       | `auto`            | Unit displayed                    | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#unit)                |
-| `decimal`             | integer (optional)      | context-based     | Number of decimal places          | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#decimal)             |
-| `min_value`           | float (optional)        | `0` or `-100`     | Min for progress calculation      | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#min_value)           |
-| `max_value`           | float/string (optional) | `100`             | Max for progress calculation      | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#max_value)           |
-| `max_value_attribute` | string (optional)       | —                 | Attribute from `max_value` entity | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#max_value_attribute) |
-| `reverse`             | boolean (optional)      | depends on entity | Countdown-style behavior          | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#reverse)             |
-| `state_content`       | string/list (optional)  | depends on domain | Attribute to show near value      | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#state_content)       |
-| `custom_info`         | Jinja (optional)        | —                 | Extra info near value             | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#custom_info)         |
-| `name_info`           | Jinja (optional)        | —                 | Extra info near name              | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#name_info)           |
-| `additions`           | list (optional)         | —                 | Additional entities to display    | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#additions)           |
+| `entity`                     | string (required)       | —                         | Main entity ID                        | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#entity)                     |
+| `attribute`                  | string (optional)       | depends on entity         | Attribute to use as value             | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#attribute)                  |
+| `name`                       | string (optional)       | entity name               | Custom name to show                   | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#name)                       |
+| `unit`                       | string (optional)       | `auto`                    | Unit displayed                        | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#unit)                       |
+| `decimal`                    | integer (optional)      | context-based             | Number of decimal places              | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#decimal)                    |
+| `min_value`                  | float (optional)        | `0` or `-100`             | Min for progress calculation          | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#min_value)                  |
+| `max_value`                  | float/string (optional) | `100`                     | Max for progress calculation          | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#max_value)                  |
+| `max_value_attribute`        | string (optional)       | —                         | Attribute from `max_value` entity     | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#max_value_attribute)        |
+| `reverse`                    | boolean (optional)      | depends on entity         | Countdown-style behavior              | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#reverse)                    |
+| `state_content`              | string/list (optional)  | depends on domain         | Attribute to show near value          | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#state_content)              |
+| `custom_info`                | Jinja (optional)        | —                         | Extra info near value                 | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#custom_info)                |
+| `name_info`                  | Jinja (optional)        | —                         | Extra info near name                  | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#name_info)                  |
+| `additions`                  | list (optional)         | —                         | Additional entities to display        | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#additions)                  |
 | **Styling Options** |||||
-| `icon`                       | string (optional)  | —                         | Icon override                         | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#icon)                       |
-| `color`                      | string (optional)  | based on entity           | Icon color                            | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#color)                      |
-| `badge_icon`                 | Jinja (optional)   | —                         | Dynamic badge icon                    | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#badge_icon)                 |
-| `badge_color`                | Jinja (optional)   | —                         | Dynamic badge color                   | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#badge_color)                |
-| `bar_color`                  | string (optional)  | `var(--state-icon-color)` | Color of progress bar                 | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_color)                  |
-| `bar_size`                   | string (optional)  | `small`                   | Size of the progress bar              | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_size)                   |
-| `bar_effect`                 | string/list/jinja  | —                         | Visual effects for the bar            | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_effect)                 |
-| `bar_orientation`            | string (optional)  | `ltr`                     | Bar direction                         | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_orientation)            |
-| `force_circular_background`  | boolean (optional) | `false`                   | Force icon circle background          | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#force_circular_background)  |
-| `layout`                     | string (optional)  | `horizontal`              | Layout direction                      | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#layout)                     |
-| `frameless`                  | boolean (optional) | `false`                   | Remove card frame                     | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#frameless)                  |
-| `marginless`                 | boolean (optional) | `false`                   | Remove top/bottom margin              | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#marginless)                 |
-| `height`                     | string (optional)  | —                         | Card height                           | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#height)                     |
-| `min_width`                  | string (optional)  | —                         | Minimum width                         | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#min_width)                  |
-| `reverse_secondary_info_row` | boolean (optional) | `false`                   | Flip info bar layout                  | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#reverse_secondary_info_row) |
-| `unit_spacing`               | string (optional)  | `auto`                    | Controls space between value and unit | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#unit_spacing)               |
-| `center_zero`                | boolean (optional) | `false`                   | Center the bar on 0                   | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#center_zero)                |
-| `theme`                      | string (optional)  | —                         | Applies a preset theme                | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#theme)                      |
-| `custom_theme`               | list (optional)    | —                         | Define color thresholds               | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#custom_theme)               |
-| `hide`                       | list (optional)    | —                         | Hide parts of the card                | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#hide)                       |
-| `disable_unit`               | boolean (optional) | `false`                   | Hide the unit text                    | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#disable_unit)               |
-| `watermark`                  | map (optional)     | —                         | Adds min/max overlays                 | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#watermark)                  |
+| `icon`                       | string (optional)       | —                         | Icon override                         | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#icon)                       |
+| `color`                      | string (optional)       | based on entity           | Icon color                            | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#color)                      |
+| `badge_icon`                 | Jinja (optional)        | —                         | Dynamic badge icon                    | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#badge_icon)                 |
+| `badge_color`                | Jinja (optional)        | —                         | Dynamic badge color                   | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#badge_color)                |
+| `bar_color`                  | string (optional)       | `var(--state-icon-color)` | Color of progress bar                 | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_color)                  |
+| `bar_size`                   | string (optional)       | `small`                   | Size of the progress bar              | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_size)                   |
+| `bar_effect`                 | string/list/jinja       | —                         | Visual effects for the bar            | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_effect)                 |
+| `bar_orientation`            | string (optional)       | `ltr`                     | Bar direction                         | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_orientation)            |
+| `force_circular_background`  | boolean (optional)      | `false`                   | Force icon circle background          | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#force_circular_background)  |
+| `layout`                     | string (optional)       | `horizontal`              | Layout direction                      | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#layout)                     |
+| `frameless`                  | boolean (optional)      | `false`                   | Remove card frame                     | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#frameless)                  |
+| `marginless`                 | boolean (optional)      | `false`                   | Remove top/bottom margin              | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#marginless)                 |
+| `height`                     | string (optional)       | —                         | Card height                           | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#height)                     |
+| `min_width`                  | string (optional)       | —                         | Minimum width                         | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#min_width)                  |
+| `reverse_secondary_info_row` | boolean (optional)      | `false`                   | Flip info bar layout                  | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#reverse_secondary_info_row) |
+| `unit_spacing`               | string (optional)       | `auto`                    | Controls space between value and unit | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#unit_spacing)               |
+| `center_zero`                | boolean (optional)      | `false`                   | Center the bar on 0                   | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#center_zero)                |
+| `theme`                      | string (optional)       | —                         | Applies a preset theme                | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#theme)                      |
+| `custom_theme`               | list (optional)         | —                         | Define color thresholds               | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#custom_theme)               |
+| `hide`                       | list (optional)         | —                         | Hide parts of the card                | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#hide)                       |
+| `disable_unit`               | boolean (optional)      | `false`                   | Hide the unit text                    | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#disable_unit)               |
+| `watermark`                  | map (optional)          | —                         | Adds min/max overlays                 | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#watermark)                  |
 | **Behavior And Actions** |||||
-| `xyz_action` | map (optional) | see defaults | Tap/double/hold actions | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#xyz_action-tap_action-double_tap_action-hold_action-icon_tap_action-icon_double_tap_action-icon_hold_action) |
+| `xyz_action`                 | map (optional)          | see defaults              | Tap/double/hold actions               | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#xyz_action).                |
 
 See [Full Configuration Reference](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md).
 
@@ -246,6 +247,8 @@ Here are some examples of how to use the Standard Lovelace Entity Progress Card.
 > customization. Combine with other Lovelace cards to create a visually
 > cohesive dashboard.
 
+In addition to styling tips, it’s important to understand how this card interacts with other powerful Lovelace tools.
+
 > [!IMPORTANT]
 >
 > Below, you'll find examples that highlight the interoperability of this card
@@ -272,7 +275,7 @@ icon_tap_action:
   action: more-info
 ```
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/RVB.png" alt="Image title" width="250px"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/RVB.png" alt="Example RVB" width="250px"/>
 </details>
 
 <details>
@@ -295,7 +298,7 @@ grid_options:
   rows: 2
 ```
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/RVB_vertical.png" alt="Image title" width="118px"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/RVB_vertical.png" alt="Example vertical" width="118px"/>
 </details>
 
 <details>
@@ -328,7 +331,7 @@ sort:
   ignore_case: false
 ```
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/battery_dashboard.png" alt="Image title" width="500"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/battery_dashboard.png" alt="battery dashboard" width="500"/>
 </details>
 
 <details>
@@ -431,7 +434,7 @@ cards:
     card_param: cards
 ```
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/stack.png" alt="Image title" width="500"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/stack.png" alt="Stack" width="500"/>
 </details>
 
 ##### 🚀 Power Features
@@ -441,23 +444,43 @@ cards:
 
 **Why?**
 
-Each washing machine brand has its own way of providing entities in Home Assistant. As a result, you often end up with multiple entities that have different names depending on the integration used. This can make managing these entities tricky, especially if you want a simple and clear card to track the standard elements of your washing machine.
+Each washing machine brand has its own way of providing entities in Home
+Assistant. As a result, you often end up with multiple entities that have
+different names depending on the integration used. This can make managing these
+entities tricky, especially if you want a simple and clear card to track the
+standard elements of your washing machine.
 
-The goal here is to simplify the display of important information related to your washing machine, regardless of the brand, by centralizing key data such as operational status, progress percentage, and remaining time, while maintaining flexibility to adapt to entity variations based on the integration used.
+The goal here is to simplify the display of important information related to
+your washing machine, regardless of the brand, by centralizing key data such as
+operational status, progress percentage, and remaining time, while maintaining
+flexibility to adapt to entity variations based on the integration used.
 
 **Searching for Entities**
 
-Before configuring your card, it's essential to research the specific entities for your washing machine integration. To do this, you will need to explore Home Assistant's developer tools to pinpoint the necessary information. Let’s take this personal integration as an example:
+Before configuring your card, it's essential to research the specific entities
+for your washing machine integration. To do this, you will need to explore
+Home Assistant's developer tools to pinpoint the necessary information.
+Let’s take this personal integration as an example:
 
-- **`sensor.washing_machine_operation_state`**: This entity is very specific to my washing machine brand and the **Home Connect** integration that comes with it. It tracks the machine's operation state (running, paused, etc.).
-- **`sensor.washing_machine_progress_current_percentage`**: This is a custom sensor defined in `configuration.yaml`. The integration only reports a percentage when the machine is running. The template sets it to 0% when the integration reports 'unavailable'.
-- **`sensor.washing_machine_remaining_program_time`**: This entity shows the estimated time left until the program finishes. However, the entity's name doesn't exactly match what the integration provides.
+- **`sensor.washing_machine_operation_state`**: This entity is very specific
+  to my washing machine brand and the **Home Connect** integration that comes
+  with it. It tracks the machine's operation state (running, paused, etc.).
+- **`sensor.washing_machine_progress_current_percentage`**: This is a custom
+  sensor defined in `configuration.yaml`. The integration only reports a
+  percentage when the machine is running. The template sets it to 0% when
+  the integration reports 'unavailable'.
+- **`sensor.washing_machine_remaining_program_time`**: This entity shows the
+  estimated time left until the program finishes. However, the entity's name
+  doesn't exactly match what the integration provides.
 
-These entities are crucial for getting a complete overview of the washing machine’s status, but they vary significantly depending on the brand and integration.
+These entities are crucial for getting a complete overview of the washing
+machine’s status, but they vary significantly depending on the brand and
+integration.
 
 **Setting Up the Card**
 
-Once the entities are identified, you can configure your card in YAML to display the necessary information.
+Once the entities are identified, you can configure your card in YAML to
+display the necessary information.
 
 Below an example that is currently used:
 
@@ -693,7 +716,7 @@ countdown with :
     {% set diff = (target_ts - now_ts) / 86400 %}
     {{ diff | round(1) if diff > 0 else 0 }}
   {% else %}
-    unknown
+    unknown # 0 to avoid error in HA log
   {% endif %}
   ```
 
@@ -749,15 +772,13 @@ This card is designed to handle more advanced use cases that aren't fully
 supported by the base card. It avoids the need for custom helpers by allowing
 you to implement your desired mathematical modeling directly through templating.
 
-#### 🎯 Purpose
+#### 🎯 Template Purpose
 
 The Entity Progress Card Template provides maximum flexibility for rendering
 entities with a customizable progress bar, using dynamic content and calculations
 defined within your sensors or templates.
 
 #### 🛠️ Available Jinja Options and Supported Options
-
-##### Available Jinja Options
 
 <details>
 <summary><strong>Available Jinja Options (click to expand)</strong></summary>
@@ -773,7 +794,7 @@ defined within your sensors or templates.
 | `color`       | Dynamic color for the icon and shape, adapted using `ThemeManager`         |
 | `bar_color`   | Dynamic progress bar color, also handled through `ThemeManager`            |
 
-See [Full Configuration Reference](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md).
+See [Full Configuration Reference](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#-entity-progress-card-template).
 
 </details>
 
@@ -782,33 +803,31 @@ See [Full Configuration Reference](https://github.com/francois-le-ko4la/lovelace
 > The keyword `entity` can be used in Jinja to represent the entity defined at the card level.
 >
 
-##### ⚙️ Still Supported
-
 <details>
 <summary><strong>Supported Options (click to expand)</strong></summary>
 
 The following options remain fully compatible with this new card:
 
-| **Option**                  | **Description**                                                                              | **Documentation**                   |
-| :-------------------------- | :------------------------------------------------------------------------------------------- | :---------------------------------- |
-| **Data Options**            |                                                                                              |                                     |
-| `entity`                    | Entity ID.                                                                                   | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#entity)                     |
-| **Styling Options**         |                                                                                              |                                     |
-| `bar_size`                  | Customize the size or thickness of the progress bar.                                         | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_size)                   |
-| `bar_orientation`           | Define the direction of the progress bar (e.g., `ltr`, `rtl`).                               | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_orientation)            |
-| `force_circular_background` | Force icon circle background.                                                                | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#force_circular_background)  |
-| `layout`                    | Adjust the overall layout (e.g., `horizontal`, `vertical`).                                  | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#layout)                     |
-| `frameless`                 | Remove the default card border and background for a seamless, flat appearance.               | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#frameless)                  |
-| `marginless`                | Remove vertical margin for a more compact template display.                                  | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#marginless)                 |
-| `min_width`                 | Set a minimum width for the template to ensure consistent layout.                            | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#min_width)                  |
-| `reverse_secondary_info_row`| Flip info bar layout.                                                                        | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#reverse_secondary_info_row) |
-| `center_zero`               | Center the bar on 0.                                                                         | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#center_zero)                |
-| `hide`                      | Hide parts of the card.                                                                      | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#hide)                       |
-| `watermark`                 | Adds min/max overlays.                                                                       | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#watermark)                  |
-| **Behavior & Actions**      |                                                                                              |                                     |
-| `xyz_action`                | Configure custom actions (e.g., `tap`, `hold`, etc.).                                        | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#xyz_action)                 |
+| **Option**                  | **Description**                                                                              | **Link**                                                                                                                                    |
+| :-------------------------- | :------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Data Options**            |                                                                                              |                                                                                                                                             |
+| `entity`                    | Entity ID.                                                                                   | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#entity)                     |
+| **Styling Options**         |                                                                                              |                                                                                                                                             |
+| `bar_size`                  | Customize the size or thickness of the progress bar.                                         | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_size)                   |
+| `bar_orientation`           | Define the direction of the progress bar (e.g., `ltr`, `rtl`).                               | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_orientation)            |
+| `force_circular_background` | Force icon circle background.                                                                | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#force_circular_background)  |
+| `layout`                    | Adjust the overall layout (e.g., `horizontal`, `vertical`).                                  | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#layout)                     |
+| `frameless`                 | Remove the default card border and background for a seamless, flat appearance.               | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#frameless)                  |
+| `marginless`                | Remove vertical margin for a more compact template display.                                  | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#marginless)                 |
+| `min_width`                 | Set a minimum width for the template to ensure consistent layout.                            | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#min_width)                  |
+| `reverse_secondary_info_row`| Flip info bar layout.                                                                        | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#reverse_secondary_info_row) |
+| `center_zero`               | Center the bar on 0.                                                                         | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#center_zero)                |
+| `hide`                      | Hide parts of the card.                                                                      | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#hide)                       |
+| `watermark`                 | Adds min/max overlays.                                                                       | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#watermark)                  |
+| **Behavior & Actions**      |                                                                                              |                                                                                                                                             |
+| `xyz_action`                | Configure custom actions (e.g., `tap`, `hold`, etc.).                                        | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#xyz_action)                 |
 
-See [Full Configuration Reference](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md).
+See [Full Configuration Reference](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#-entity-progress-card-template).
 
 </details>
 
@@ -1031,42 +1050,42 @@ an informative and dynamic progress indicator.
 <details>
 <summary><strong>Supported Options and Configuration (click to expand)</strong></summary>
 
-| Option                | Type                    | Default           | Description                       | Documentation                                                                                                                 |
-| --------------------- | ----------------------- | ----------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| **Option**                   | **Type**                | **Default**               | **Description**                       | **Link**                                                                                                                                    |
+| ---------------------------- | ----------------------- | ------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Data Options** |||||
-| `entity`              | string (required)       | —                 | Main entity ID                    | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#entity)              |
-| `attribute`           | string (optional)       | depends on entity | Attribute to use as value         | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#attribute)           |
-| `name`                | string (optional)       | entity name       | Custom name to show               | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#name)                |
-| `unit`                | string (optional)       | `auto`            | Unit displayed                    | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#unit)                |
-| `decimal`             | integer (optional)      | context-based     | Number of decimal places          | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#decimal)             |
-| `min_value`           | float (optional)        | `0` or `-100`     | Min for progress calculation      | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#min_value)           |
-| `max_value`           | float/string (optional) | `100`             | Max for progress calculation      | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#max_value)           |
-| `max_value_attribute` | string (optional)       | —                 | Attribute from `max_value` entity | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#max_value_attribute) |
-| `reverse`             | boolean (optional)      | depends on entity | Countdown-style behavior          | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#reverse)             |
-| `state_content`       | string/list (optional)  | depends on domain | Attribute to show near value      | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#state_content)       |
-| `custom_info`         | Jinja (optional)        | —                 | Extra info near value             | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#custom_info)         |
-| `name_info`           | Jinja (optional)        | —                 | Extra info near name              | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#name_info)           |
-| `additions`           | list (optional)         | —                 | Additional entities to display    | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#additions)           |
+| `entity`                     | string (required)       | —                         | Main entity ID                        | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#entity)                     |
+| `attribute`                  | string (optional)       | depends on entity         | Attribute to use as value             | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#attribute)                  |
+| `name`                       | string (optional)       | entity name               | Custom name to show                   | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#name)                       |
+| `unit`                       | string (optional)       | `auto`                    | Unit displayed                        | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#unit)                       |
+| `decimal`                    | integer (optional)      | context-based             | Number of decimal places              | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#decimal)                    |
+| `min_value`                  | float (optional)        | `0` or `-100`             | Min for progress calculation          | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#min_value)                  |
+| `max_value`                  | float/string (optional) | `100`                     | Max for progress calculation          | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#max_value)                  |
+| `max_value_attribute`        | string (optional)       | —                         | Attribute from `max_value` entity     | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#max_value_attribute)        |
+| `reverse`                    | boolean (optional)      | depends on entity         | Countdown-style behavior              | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#reverse)                    |
+| `state_content`              | string/list (optional)  | depends on domain         | Attribute to show near value          | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#state_content)              |
+| `custom_info`                | Jinja (optional)        | —                         | Extra info near value                 | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#custom_info)                |
+| `name_info`                  | Jinja (optional)        | —                         | Extra info near name                  | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#name_info)                  |
+| `additions`                  | list (optional)         | —                         | Additional entities to display        | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#additions)                  |
 | **Styling Options** |||||
-| `icon`                       | string (optional)  | —                         | Icon override                         | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#icon)                       |
-| `color`                      | string (optional)  | based on entity           | Icon color                            | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#color)                      |
-| `bar_color`                  | string (optional)  | `var(--state-icon-color)` | Color of progress bar                 | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_color)                  |
-| `bar_size`(*)                | string (optional)  | `small`                   | Size of the progress bar              | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_size)                   |
-| `bar_effect`                 | string/list/jinja  | —                         | Visual effects for the bar            | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_effect)                 |
-| `bar_orientation`            | string (optional)  | `ltr`                     | Bar direction                         | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#layout)                     |
-| `frameless`                  | boolean (optional) | `false`                   | Remove card frame                     | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#frameless)                  |
-| `marginless`                 | boolean (optional) | `false`                   | Remove top/bottom margin              | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#marginless)                 |
-| `min_width`                  | string (optional)  | —                         | Minimum width                         | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#min_width)                  |
-| `reverse_secondary_info_row` | boolean (optional) | `false`                   | Flip info bar layout                  | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#reverse_secondary_info_row) |
-| `unit_spacing`               | string (optional)  | `auto`                    | Controls space between value and unit | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#unit_spacing)               |
-| `center_zero`                | boolean (optional) | `false`                   | Center the bar on 0                   | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#center_zero)                |
-| `theme`                      | string (optional)  | —                         | Applies a preset theme                | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#theme)                      |
-| `custom_theme`               | list (optional)    | —                         | Define color thresholds               | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#custom_theme)               |
-| `hide`                       | list (optional)    | —                         | Hide parts of the card                | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#hide)                       |
-| `disable_unit`               | boolean (optional) | `false`                   | Hide the unit text                    | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#disable_unit)               |
-| `watermark`                  | map (optional)     | —                         | Adds min/max overlays                 | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#watermark)                  |
+| `icon`                       | string (optional)       | —                         | Icon override                         | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#icon)                       |
+| `color`                      | string (optional)       | based on entity           | Icon color                            | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#color)                      |
+| `bar_color`                  | string (optional)       | `var(--state-icon-color)` | Color of progress bar                 | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_color)                  |
+| `bar_size`(*)                | string (optional)       | `small`                   | Size of the progress bar              | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_size)                   |
+| `bar_effect`                 | string/list/jinja       | —                         | Visual effects for the bar            | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_effect)                 |
+| `bar_orientation`            | string (optional)       | `ltr`                     | Bar direction                         | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#layout)                     |
+| `frameless`                  | boolean (optional)      | `false`                   | Remove card frame                     | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#frameless)                  |
+| `marginless`                 | boolean (optional)      | `false`                   | Remove top/bottom margin              | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#marginless)                 |
+| `min_width`                  | string (optional)       | —                         | Minimum width                         | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#min_width)                  |
+| `reverse_secondary_info_row` | boolean (optional)      | `false`                   | Flip info bar layout                  | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#reverse_secondary_info_row) |
+| `unit_spacing`               | string (optional)       | `auto`                    | Controls space between value and unit | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#unit_spacing)               |
+| `center_zero`                | boolean (optional)      | `false`                   | Center the bar on 0                   | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#center_zero)                |
+| `theme`                      | string (optional)       | —                         | Applies a preset theme                | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#theme)                      |
+| `custom_theme`               | list (optional)         | —                         | Define color thresholds               | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#custom_theme)               |
+| `hide`                       | list (optional)         | —                         | Hide parts of the card                | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#hide)                       |
+| `disable_unit`               | boolean (optional)      | `false`                   | Hide the unit text                    | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#disable_unit)               |
+| `watermark`                  | map (optional)          | —                         | Adds min/max overlays                 | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#watermark)                  |
 | **Behavior And Actions** |||||
-| `xyz_action` | map (optional) | see defaults | Tap/double/hold actions | [Link](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#xyz_action-tap_action-double_tap_action-hold_action-icon_tap_action-icon_double_tap_action-icon_hold_action) |
+| `xyz_action`                 | map (optional)          | see defaults              | Tap/double/hold actions               | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#xyz_action)                 |
 
 See [Full Configuration Reference](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md).  
 We use the same syntax as the card.
@@ -1121,34 +1140,40 @@ This card supports multiple languages to provide:
 
 We strive to make this card as inclusive as possible, with support for:
 
-- 🇸🇦 `ar` - العربية (Arabic)
-- 🇧🇩 `bn` - বাংলা (Bengali)
-- 🇨🇿 `cs` - Čeština (Czech)
-- 🇩🇰 `da` - Dansk
-- 🇩🇪 `de` - Deutsch
-- 🇬🇷 `el` - Ελληνικά
-- 🇬🇧 `en` - English
-- 🇪🇸 `es` - Español
-- 🇫🇮 `fi` - Suomi
-- 🇫🇷 `fr` - Français
-- 🇮🇳 `hi` - हिन्दी (Hindi)
-- 🇭🇷 `hr` - Hrvatski
-- 🇮🇩 `id` - Bahasa Indonesia (Indonesian)
-- 🇮🇹 `it` - Italiano
-- 🇯🇵 `ja` - 日本語 (Japanese)
-- 🇰🇷 `ko` - 한국어 (Korean)
-- 🇲🇰 `mk` - Македонски
-- 🇳🇴 `nb` - Norsk Bokmål
-- 🇳🇱 `nl` - Nederlands
-- 🇵🇱 `pl` - Polski
-- 🇵🇹 `pt` - Português
-- 🇷🇴 `ro` - Română
-- 🇸🇪 `sv` - Svenska
-- 🇹🇭 `th` - ไทย (Thai)
-- 🇹🇷 `tr` - Türkçe
-- 🇺🇦 `uk` - Українська (Ukrainian)
-- 🇻🇳 `vi` - Tiếng Việt (Vietnamese)
-- 🇨🇳 `zh` - 中文 (Chinese)
+- 🇸🇦 ar - العربية (Arabic)
+- 🇧🇩 bn - বাংলা (Bengali)
+- 🇨🇿 cs - Čeština (Czech)
+- 🇩🇰 da - Dansk (Danish)
+- 🇩🇪 de - Deutsch (German)
+- 🇬🇷 el - Ελληνικά (Greek)
+- 🇬🇧 en - English
+- 🇪🇸 es - Español (Spanish)
+- 🇫🇮 fi - Suomi (Finnish)
+- 🇫🇷 fr - Français (French)
+- 🇮🇳 hi - हिन्दी (Hindi)
+- 🇭🇷 hr - Hrvatski (Croatian)
+- 🇮🇩 id - Bahasa Indonesia (Indonesian)
+- 🇮🇹 it - Italiano (Italian)
+- 🇯🇵 ja - 日本語 (Japanese)
+- 🇰🇷 ko - 한국어 (Korean)
+- 🇲🇰 mk - Македонски (Macedonian)
+- 🇳🇴 nb - Norsk Bokmål (Norwegian Bokmål)
+- 🇳🇱 nl - Nederlands (Dutch)
+- 🇵🇱 pl - Polski (Polish)
+- 🇵🇹 pt - Português (Portuguese)
+- 🇷🇴 ro - Română (Romanian)
+- 🇷🇺 ru - Русский (Russian)
+- 🇸🇪 sv - Svenska (Swedish)
+- 🇹🇭 th - ไทย (Thai)
+- 🇹🇷 tr - Türkçe (Turkish)
+- 🇺🇦 uk - Українська (Ukrainian)
+- 🇻🇳 vi - Tiếng Việt (Vietnamese)
+- 🇨🇳 zh - 中文 (Chinese)
+
+> [!IMPORTANT]
+> I use translation tools to help bridge language gaps, as I'm not fluent in every language.
+>
+> If you notice any mistakes, please understand they are **purely unintentional** — feel free to reach out on GitHub or Discord to fix it.
 
 More languages may be added in the future to enhance accessibility!
 
@@ -1188,7 +1213,7 @@ Want more features? Want to improve this card? Contributions are welcome! 🚀
 - **Resources from Home Assistant**  
   ➡️ [Custom Card Documentation](https://developers.home-assistant.io/docs/frontend/custom-ui/custom-card/)
 
-- **Resources from [@thomasloven](https://github.com/thomasloven)** – *thank you!*  
+- **Resources from [@thomasloven](https://github.com/thomasloven)** – _thank you!_  
   ➡️ [PreLoading Lovelace Elements](https://github.com/thomasloven/hass-config/wiki/PreLoading-Lovelace-Elements)  
   ➡️ [Custom Element Loader Gist](https://gist.github.com/thomasloven/5f965bd26e5f69876890886c09dd9ba8)
 

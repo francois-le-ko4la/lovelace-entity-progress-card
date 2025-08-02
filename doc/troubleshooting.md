@@ -23,8 +23,12 @@ stays clean and stable. We handle two main categories of errors in the card:
     These happen while the card is running and are related to the entity’s
     current state. Examples:
     - Entity is not found, unavailable or offline
+    <details>
+    <summary><strong>Show the screenshot (click to expand)</strong></summary>
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/errors.png" alt="Image title" width="500px"/>
+    <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/errors.png" alt="error" width="500px"/>
+
+    </details>
 
 ## ⚠️ Deprecated Options
 
@@ -41,7 +45,6 @@ In this context, we have two types of deprecated options:
 - **Deprecated** but still active options: These options may have been used in many different cards, and migrating them requires reviewing the configurations
   of all those cards. Therefore, we allow time before disabling them, provide a system to detect if you are affected, and will remove them later.
 
-
 | Option / Value     | Status         | Replacement / Recommended Action | Since version | Current Behavior           |
 | ------------------ | -------------- | -------------------------------- | ------------- | -------------------------- |
 | `navigate_to`      | **Removed**    | Use `tap_action: navigate`       | `v1.2.0`      | Ignored, console warning   |
@@ -56,7 +59,6 @@ In this context, we have two types of deprecated options:
 ![Deprecated warnings](https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/deprecated.png)
 
 </details>
-
 
 ## 🐞 Troubleshooting
 
@@ -91,7 +93,6 @@ Despite all efforts to provide a stable and bug-free card, you might still encou
     - Click the ≡ menu button (top-right)
     - Go to **Web Developer** → **Web Console**
 
-
   #### 🌐 Chrome / Chromium
 
   - **Method 1: Keyboard Shortcut**
@@ -101,6 +102,34 @@ Despite all efforts to provide a stable and bug-free card, you might still encou
     - Go to **More tools** → **Developer tools**
     - Select the **Console** tab
 
+  #### 🧭 Safari
+
+  - **Method 1: Keyboard Shortcut**  
+    Press `Cmd + Option + C`  
+  - **Method 2: Menu Navigation**  
+    Enable the Develop menu first (if not already enabled):  
+    - Go to **Safari** → **Preferences** → **Advanced**  
+    - Check **Show Develop menu in menu bar**  
+    Then:  
+    Click **Develop** → **Show JavaScript Console**
+
+  #### 🐘 Opera
+
+  - **Method 1: Keyboard Shortcut**  
+    Press `Ctrl + Shift + I` (Mac: `Cmd + Option + I`)  
+  - **Method 2: Menu Navigation**  
+    Click the O menu button (top-left)  
+    Go to **Developer** → **Developer tools**  
+    Select the **Console** tab
+
+  #### 🧱 Edge
+
+  - **Method 1: Keyboard Shortcut**  
+    Press `F12` or `Ctrl + Shift + I` (Mac: `Cmd + Option + I`)  
+  - **Method 2: Menu Navigation**  
+    Click the ⋯ three-dot menu (top-right)  
+    Go to **More tools** → **Developer tools**  
+    Select the **Console** tab
   </details>
 
 #### Gather some useful information
@@ -112,12 +141,27 @@ Despite all efforts to provide a stable and bug-free card, you might still encou
 
 #### Open an issue on GitHub
 
-- Before creating a new issue, please first **check existing issues**
- [here](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues) to see if the problem has
- already been reported.  
-- If not, feel free to submit a new issue with all the relevant information.
+You don’t need to be a developer to report an issue!
+Whether you're a beginner or an advanced user, your feedback is valuable!
 
-#### (Optional)
+- Before creating a new issue, please first **[check existing issues](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues)**
+  to see if the problem has already been reported.  
+- If not, feel free to **[submit a new issues](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues)** with all the relevant information.
+  > [!NOTE]
+  > When opening an issue, try to include as much information as possible.
+  >
+  > The more context you provide, the faster and more accurately I can help — we’ll troubleshoot it together!
+  >
+  > To help you out, I’ve set up a simple system that asks you the right questions and guides you through the process
+  > of creating a useful issue.
+  <details>
+  <summary><strong>Show the screenshot (click to expand)</strong></summary>
+
+  <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/create_issue.png" alt="create issue" width="500px"/>
+
+  </details>
+
+#### (Optional) roll back
 
 If you recently **updated** the card and the issue started afterward, you can:
 
