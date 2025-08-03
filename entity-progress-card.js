@@ -41,10 +41,15 @@ const CARD = {
       typeName: 'entity-progress-badge',
       editor: 'entity-progress-badge-editor',
     },
+    badgeTemplate: {
+      typeName: 'entity-progress-badge-template',
+      name: 'Entity Progress Badge (Template)',
+      description: 'A cool custom card to show current entity status with a progress bar.',
+    },
   },
   config: {
     dev: true,
-    debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false, hass: false },
+    debug: { card: true, editor: true, interactionHandler: false, ressourceManager: false, hass: false },
     language: 'en',
     value: { min: 0, max: 100 },
     unit: {
@@ -4323,6 +4328,7 @@ if (CARD.config.dev) {
   CARD.meta.template.name = `${CARD.meta.template.typeName} (dev)`;
   CARD.meta.badge.typeName = `${CARD.meta.badge.typeName}-dev`;
   CARD.meta.badge.editor = `${CARD.meta.badge.editor}-dev`;
+  CARD.meta.badgeTemplate.typeName = `${CARD.meta.badgeTemplate.typeName}-dev`;
 }
 
 /******************************************************************************************
@@ -5128,7 +5134,8 @@ class ThemeManager {
   // === PUBLIC API METHODS ===
 
   static adaptColor(curColor) {
-    return curColor == null ? null : DEF_COLORS.has(curColor) ? `var(--${curColor}-color)` : curColor;
+    if (!curColor) return null;
+    return DEF_COLORS.has(curColor) ? `var(--${curColor}-color)` : curColor;
   }
 }
 
@@ -6430,7 +6437,7 @@ class yamlSchemaFactory {
 
   // new !
   static get badgeTemplate() {
-    return yamlSchemaFactory.template.delete(['badge_icon', 'badge_color', 'icon_tap_action', 'icon_hold_action', 'icon_double_tap_action']);
+    return yamlSchemaFactory.template.delete(['badge_icon', 'badge_color', 'force_circular_background', 'layout', 'height', 'icon_tap_action', 'icon_hold_action', 'icon_double_tap_action']);
   }
 }
 
@@ -7056,7 +7063,7 @@ class BaseCardView extends MinimalCardView {
     return unit === null ? CARD.config.unit.default : unit;
   }
   #getCurrentDecimal(currentUnit) {
-    if (this._configHelper.config.decimal !== null) return this._configHelper.config.decimal;
+    if (this._configHelper.config.decimal) return this._configHelper.config.decimal; // !== null
     if (this._currentValue.precision) return this._currentValue.precision;
     if (this._currentValue.isTimer) return CARD.config.decimal.timer;
     if (this._currentValue.isCounter) return CARD.config.decimal.counter;
@@ -7407,43 +7414,24 @@ class ActionHelper {
   }
 
   #fireAction(originalEvent, currentAction) {
-    this.#log.debug('  📎 originalEvent: ', originalEvent);
-    this.#log.debug('  📎 original action: ', currentAction);
-    this.#log.debug('  📎 clickSource: ', this.#clickSource);
+    const eventFromIcon = this.#clickSource === CARD.interactions.event.from.icon;
+    const fullAction = eventFromIcon ? `${this.#clickSource}_${currentAction}` : currentAction;
 
-    const prefixAction = this.#clickSource === CARD.interactions.event.from.icon ? `${CARD.interactions.event.from.icon}_` : '';
-    let fullAction = `${prefixAction}${currentAction}`;
-    this.#log.debug('  📎 fullAction: ', fullAction);
+    const actionConfig =
+      eventFromIcon && (!this.#config?.[`${fullAction}_action`] || this.#config[`${fullAction}_action`].action === 'none')
+        ? this.#config?.[`${currentAction}_action`]
+        : this.#config?.[`${fullAction}_action`];
 
-    let currentConfig = null;
-
-    if (
-      [
-        CARD.interactions.event.tap.iconTapAction,
-        CARD.interactions.event.tap.iconHoldAction,
-        CARD.interactions.event.tap.iconDoubleTapAction,
-        CARD.interactions.event.tap.doubleTapAction,
-      ].includes(fullAction)
-    ) {
-      if (fullAction !== CARD.interactions.event.tap.doubleTapAction && this.#config[`${fullAction}_action`].action === 'none')
-        fullAction = currentAction; // if icon and 'none' -> failback to card action
-
-      currentConfig = {
-        entity: this.#config.entity,
-        tap_action: this.#config[`${fullAction}_action`],
-      };
-      currentAction = 'tap';
-    } else {
-      currentConfig = this.#config;
-    }
+    if (!actionConfig) return;
+    const config = { entity: this.#config.entity, tap_action: actionConfig };
 
     this.#element.dispatchEvent(
       new CustomEvent('hass-action', {
         bubbles: true,
         composed: true,
         detail: {
-          config: currentConfig,
-          action: currentAction,
+          config,
+          action: 'tap',
           originalEvent,
         },
       })
@@ -7517,9 +7505,9 @@ class EntityProgressCardBase extends HTMLElement {
   connectedCallback() {
     // console.log('Connected - Parent chain:', this._getParentChain());
     // setTimeout(() => this._debugCardModIntegration(), 500);
+    if (!this._resourceManager) this._resourceManager = new ResourceManager();
     this.render();
     this._updateDynamicElementsSync();
-    if (!this._resourceManager) this._resourceManager = new ResourceManager();
     this._setupClickableTarget();
     this._actionHelper.init(this._resourceManager, this._cardView.config, this._clickableTarget, this.hasDisabledIconTap);
     if (this.hass) {
@@ -7565,7 +7553,7 @@ class EntityProgressCardBase extends HTMLElement {
       this._assignHass(hass);
       this._handleHassUpdate();
     }
-
+    if (!this._resourceManager) this._resourceManager = new ResourceManager();
     if (!this._wsInitialized) this._watchWebSocket();
   }
 
@@ -8234,15 +8222,14 @@ class EntityProgressCardBase extends HTMLElement {
   }
 
   _unwatchWebSocket() {
-    if (this._resourceManager) {
-      this._resourceManager.remove('ws-disconnected');
-      this._resourceManager.remove('ws-ready');
-    }
+    if (!this._resourceManager) return;
+    this._resourceManager.remove('ws-disconnected');
+    this._resourceManager.remove('ws-ready');
   }
 
   _watchWebSocket() {
+    if (!this._resourceManager) return; // ISSUE 87
     this._unwatchWebSocket();
-
     this._resourceManager.addEventListener(
       this.hass.connection,
       'disconnected',
@@ -8550,7 +8537,7 @@ class TemplateConfigHelper extends BaseConfigHelper {
 }
 
 /******************************************************************************************
- * 🛠️ CardView
+ * 🛠️ TemplateCardView
  * ========================================================================================
  *
  * ✅ A view that manage all informations to create the card.
@@ -8598,9 +8585,11 @@ class EntityProgressTemplate extends EntityProgressCardBase {
     if (this.hass && !this._wsInitialized) this._watchWebSocket();
   }
 
-  setConfig(config) {
-    this._cardView.config = config;
-  }
+  //setConfig(config) {
+  //
+  //  super.setConfig(config);
+  //  new this._cardView.config = config;
+  //}
 
   set hass(hass) {
     const isFirstHass = !this.hass;
@@ -8765,6 +8754,154 @@ class EntityProgressTemplate extends EntityProgressCardBase {
   }
 }
 
+/* NEW */
+/******************************************************************************************
+ * 📦 Badge Template card
+ ******************************************************************************************/
+
+/******************************************************************************************
+ * 🛠️ BadgeTemplateConfigHelper
+ * ========================================================================================
+ *
+ * ✅ Config Helper
+ *
+ * 📌 Purpose:
+ *   - Manage card configuration.
+ *
+ * @class
+ * @extends BaseConfigHelper
+ */
+
+class BadgeTemplateConfigHelper extends BaseConfigHelper {
+  _yamlSchema = yamlSchemaFactory.badgeTemplate;
+}
+  
+/******************************************************************************************
+ * 🛠️ BadgeTemplateCardView
+ * ========================================================================================
+ *
+ * ✅ A view that manage all informations to create the card.
+ *
+ * @class
+ */
+class BadgeTemplateCardView extends MinimalCardView {
+  _configHelper = new BadgeTemplateConfigHelper();
+  icon = null;
+}
+
+/******************************************************************************************
+ * 🛠️ EntityProgressBadge
+ * ========================================================================================
+ *
+ * ✅ HA CARD "entity-progress-badge"
+ *
+ * @class
+ * @extends EntityProgressCardBase
+ */
+class EntityProgressBadgeTemplate extends EntityProgressTemplate {
+  _cardView = new BadgeTemplateCardView();
+  static _baseClass = CARD.meta.badgeTemplate.typeName;
+  static _hasDisabledIconTap = true;
+  static _hasDisabledBadge = true;
+  static _cardLayout = CARD.layout.orientations.horizontal.grid;
+  static _cardStructure = new BadgeStructure();
+  static _cardStyle = `
+    :host {
+      --epb-icon-size: 18px;
+      --epb-shape-size: 18px;
+    }
+
+    ${CARD_CSS}
+
+    ${CARD.htmlStructure.card.element},
+    .${CARD.htmlStructure.sections.container.class} {
+      min-height: 36px !important;
+      max-height: 36px !important;
+      height: var(--ha-badge-size, 36px);
+      min-width: var(--epb-card-min-width, var(--ha-badge-size, 110px));
+      width: 100%;
+      border-radius: var(--ha-badge-border-radius,calc(var(--ha-badge-size,36px)/ 2));
+    }
+
+    .icon ha-state-icon {
+      --mdc-icon-size: var(--epb-icon-size);
+      --ha-icon-display: flex;
+      height: var(--epb-icon-size);
+      width: var(--epb-icon-size);
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+
+    .${CARD.htmlStructure.elements.nameGroup.class},
+    .${CARD.htmlStructure.elements.nameGroup.class} > span {
+      height: 10px !important;
+      font-size: 10px !important;
+      font-style: normal !important;
+      font-weight: 500 !important;
+      line-height: 10px !important;
+      color: var(--secondary-text-color) !important;
+      margin-right: 5px !important;
+    }
+
+    .${CARD.htmlStructure.elements.detailGroup.class},
+    .${CARD.htmlStructure.elements.detailGroup.class} > span {
+      font-size: var(--ha-badge-font-size, var(--ha-font-size-s)) !important;
+      font-style: normal !important;
+      font-weight: 500 !important;
+      letter-spacing: 0.1px !important;
+      color: var(--primary-text-color)
+    }
+    .${CARD.htmlStructure.elements.secondaryInfo.class} {
+    gap: 5px !important;
+    }
+    .${CARD.htmlStructure.elements.detailGroup.class} {
+      min-width: unset !important;
+      max-width: unset !important;
+    }
+    .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.left.class}:hover .${CARD.htmlStructure.elements.shape.class} {
+      background-color: unset !important;
+    }
+    `;
+
+  setConfig(config) {
+    super.setConfig(config);
+    
+    // Force un refresh pour les badges dans l'éditeur
+    if (this._hass) {
+      setTimeout(() => this.refresh(), 0);
+    }
+  }
+
+  _rebuildStyle() {
+    const card = this._domElements.get(CARD.htmlStructure.card.element);
+    if (card) {
+      this._buildStyle(card);
+    }
+  }
+
+  static getConfigElement() {
+    return null; //document.createElement(CARD.meta.badge.editor);
+  }
+
+  getCardSize() {
+    return this._cardLayout.grid_rows;
+  }
+
+  getLayoutOptions() {
+    return this._cardLayout;
+  }
+
+  static getStubConfig(hass) {
+    return {
+      type: `custom:${CARD.meta.badgeTemplate.typeName}`,
+      entity: EntityProgressCard.getStubEntity(hass),
+    };
+  }
+}
+
+
+
 /******************************************************************************************
  * 🔧 Register card & badge
  */
@@ -8772,6 +8909,11 @@ EntityProgressTemplate.version = VERSION;
 EntityProgressTemplate._moduleLoaded = false;
 customElements.define(CARD.meta.template.typeName, EntityProgressTemplate);
 RegistrationHelper.registerCard(CARD.meta.template);
+
+/* NEW */
+customElements.define(CARD.meta.badgeTemplate.typeName, EntityProgressBadgeTemplate);
+RegistrationHelper.registerBadge(CARD.meta.badgeTemplate);
+
 
 /******************************************************************************************
  * 📦 CARD/BADGE EDITOR

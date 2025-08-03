@@ -26,11 +26,18 @@ Jump to the specific section:
 
 - ⚡ [Description \& features](#description)
 - 📦 [Installation](#installation)
+- 🧱 [Entity Progress Components](#components)
+  - 📚 [Component Overview](#components-overview)
+  - 🎯 [Purpose \& Use Cases](#purpose)
+    - ✅ [Entity Progress Card](#purpose-progress-card)
+    - 🧠 [When to Use the Template Version?](#purpose-template)
+    - 🔳 [Badge vs. Card – Which One?](#purpose-badge)
 - 📝 [Usage](#usage)
   - 🪄 [Card and badge Editor](#card-and-badge-editor)
   - 🧩 [Entity Progress Card](#entity-progress-card)
   - 🧩 [Entity Progress Card Template](#entity-progress-card-template)
   - 🧩 [Entity Progress Badge](#entity-progress-badge)
+  - 🧩 [Entity Progress Badge Template](#entity-progress-badge-template)
 - 🎨 [Theme](#theme)
 - 🌍 [Language \& Number Support](#language-number-support)
 - 🚨 [Errors, Deprecations \& Troubleshooting](#troubleshooting)
@@ -125,6 +132,81 @@ Use this link to directly go to the repository in HACS
 
 [🔼 Back to top](#top)
 
+<a id="components"></a>
+
+## 🧱 Entity Progress Components
+
+This documentation is meant to help you understand and use the different
+Entity Progress components in Home Assistant (cards and badges, both
+standard and template versions), providing clear guidance.
+
+<a id="components-overview"></a>
+
+### 📚 Component Overview
+
+| Component                          | Description                                                  |
+| ---------------------------------- | ------------------------------------------------------------ |
+| **Entity Progress Card**           | A simple card displaying a progress bar for a single entity. |
+| **Entity Progress Card Template**  | A more advanced version with full Jinja templating support.  |
+| **Entity Progress Badge**          | A compact badge with a mini progress bar.                    |
+| **Entity Progress Badge Template** | A templatable badge version for advanced use cases.          |
+
+Each component is suited for different use cases, depending on display needs, complexity, and UI layout.
+
+<a id="purpose"></a>
+
+### 🎯 Purpose & Use Cases
+
+<a id="purpose-progress-card"></a>
+
+#### ✅ Entity Progress Card
+
+This card is ideal when:
+
+- You want to display the progress of a single entity (e.g., battery level, completion percentage, charging status).
+- You want easy visual representation with minimal configuration.
+- You want to enable quick interactions via tap_action, hold_action, or double_tap_action.
+
+_Examples_:
+
+- Show a vacuum cleaner's cleaning progress.
+- Display remaining battery percentage for a device.
+- Monitor the progress of a running script or automation.
+
+Essentially, if you need a clear, visually appealing progress bar that's easy to
+configure and fits well into the Home Assistant ecosystem, this is your go-to card.
+
+<a id="purpose-template"></a>
+
+#### 🧠 When to Use the Template Version ?
+
+Use the Template version (card or badge) when:
+
+- You need to calculate the percentage manually from multiple sensor values (e.g., water tank level from height readings).
+- Your use case involves conditional logic, math, or non-linear scales.
+- You want to use Jinja2 templates directly in the YAML, without creating extra helpers or sensors.
+- You need maximum flexibility without being restricted by the standard options.
+
+_Examples_:
+
+- Calculate energy usage progress from a total daily quota.
+- Dynamically adjust color or shape based on a formula.
+- Show remaining laundry time based on a template sensor.
+
+<a id="purpose-badge"></a>
+
+#### 🔳 Badge vs. Card – Which One?
+
+| Use a **Card** when…                         | Use a **Badge** when…                      |
+| -------------------------------------------- | ------------------------------------------ |
+| You want rich layout and interactivity       | Space is limited (e.g., header views)      |
+| You need to show actions, icons, and text    | You just need quick-glance visuals         |
+| You rely on theme integration and animations | You want to embed progress in compact form |
+
+<br />
+
+[🔼 Back to top](#top)
+
 <a id="usage"></a>
 
 ## 📝 Usage
@@ -141,6 +223,8 @@ The card editor allows you to quickly set up and customize the card.
 
 </details>
 
+<br />
+
 [🔼 Back to top](#top)
 
 <a id="entity-progress-card"></a>
@@ -150,18 +234,6 @@ The card editor allows you to quickly set up and customize the card.
 This is the primary card for displaying entity progress.
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/pm.png" alt="Example PM" width="250"/>
-
-#### 🎯 Card Purpose
-
-The Standard Lovelace Entity Progress Card is ideal for situations where you need a straightforward, percentage-based progress visualization. It's best used when:
-
-- You want to display the progress of a single entity.
-- The entity's value directly translates to a percentage (e.g., battery level, completion percentage).
-- You need seamless integration with Home Assistant's modern "Tile" or "Mushroom" UI.
-- You appreciate dynamic theme adjustments (like battery or temperature themes) without complex templating.
-- You want interactive elements like `tap_action` for more-info or toggling.
-
-Essentially, if you need a clear, visually appealing progress bar that's easy to configure and fits well into the Home Assistant ecosystem, this is your go-to card.
 
 #### 🛠️ Options and percentage ?
 
@@ -437,6 +509,30 @@ cards:
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/stack.png" alt="Stack" width="500"/>
 </details>
 
+<details>
+<summary><strong>vertical-stack Example (click to expand)</strong></summary>
+
+We can use native `vertical-stack` to group multiple cards into a cohesive
+layout.
+
+```yaml
+type: vertical-stack
+cards:
+  - type: custom:entity-progress-card
+    name: Sofa
+    icon: mdi:sofa
+    entity: sensor.xyz
+grid_options:
+  columns: 6
+  rows: auto
+visibility:
+  - condition: numeric_state
+    entity: input_number.xyz
+    above: 0
+```
+
+</details>
+
 ##### 🚀 Power Features
 
 <details>
@@ -575,7 +671,7 @@ be set up according to various needs.
     ```
 
     > Check your syntax. Here, we are using entity values; therefore, we
-    > access the value through xxx.state. Sometimes, the value will be an
+    > access the value through xyz.state. Sometimes, the value will be an
     > attribute.
 
   - Set the minimum, maximum, step value, and unit accordingly.
@@ -772,12 +868,6 @@ This card is designed to handle more advanced use cases that aren't fully
 supported by the base card. It avoids the need for custom helpers by allowing
 you to implement your desired mathematical modeling directly through templating.
 
-#### 🎯 Template Purpose
-
-The Entity Progress Card Template provides maximum flexibility for rendering
-entities with a customizable progress bar, using dynamic content and calculations
-defined within your sensors or templates.
-
 #### 🛠️ Available Jinja Options and Supported Options
 
 <details>
@@ -830,14 +920,6 @@ The following options remain fully compatible with this new card:
 See [Full Configuration Reference](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#-entity-progress-card-template).
 
 </details>
-
-#### 💡 Why Use This Template?
-
-This card is ideal for situations where:
-
-- You want to show calculated progress (e.g., level, usage, battery life)
-- You need to apply dynamic logic or math modeling directly in the card
-- The base card doesn't offer the required level of customization
 
 #### 👉 Template Card Usage
 
@@ -1036,15 +1118,6 @@ track solar cycles from your dashboard.
 This badge is designed to display the progress of an entity in a compact and
 customizable badge format with a dynamic progress bar.
 
-#### 🎯 Badge purpose
-
-The Entity Progress Badge provides a clear visual representation of an entity’s
-progress (e.g., battery level, usage percentage, completion status) in a small
-badge format.
-
-It’s perfect for dashboards or views where space is limited but you still want
-an informative and dynamic progress indicator.
-
 #### 🛠️ Options
 
 <details>
@@ -1092,23 +1165,109 @@ We use the same syntax as the card.
 
 </details>
 
-### 💡 Why Use This Badge?
+#### 👉 Badge Usage
 
-Use this badge when:
-
-- You need to embed progress directly into a badge that’s easy to read
-- You want flexible customization with dynamic colors
-- The default badge doesn’t offer enough flexibility or features
-
-### 👉 Badge Usage
+<details>
+<summary><strong>Simple example (click to expand)</strong></summary>
 
 ```yaml
 type: custom:entity-progress-badge
-entity: sensor.xxx
+entity: sensor.xyz
 name: Kitchen
 decimal: 1
 icon: mdi:air-conditioner
 ```
+
+</details>
+
+<br />
+
+[🔼 Back to top](#top)
+
+<a id="entity-progress-badge-template"></a>
+
+### 🧩 Entity Progress Badge Template
+
+This badge is designed to display the progress of an entity in a compact, customizable format with
+a dynamic progress bar. The entire template is now written in Jinja, offering significantly more
+flexibility and dynamic behavior.
+
+#### 🛠️ Available Jinja Options and Supported Options
+
+<details>
+<summary><strong>Available Jinja Options (click to expand)</strong></summary>
+
+| **Options**   | **Description**                                                            |
+| :------------ | :------------------------------------------------------------------------- |
+| `name`        | Renders the customized entity name                                         |
+| `icon`        | Main icon shown on the card                                                |
+| `secondary`   | Renders the secondary content (e.g., unit, status, additional info)        |
+| `percent`     | Numerical value representing progress (0–100%), affects progress bar width |
+| `color`       | Dynamic color for the icon and shape, adapted using `ThemeManager`         |
+| `bar_color`   | Dynamic progress bar color, also handled through `ThemeManager`            |
+
+See [Full Configuration Reference](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#-entity-progress-card-template).
+
+</details>
+
+> [!NOTE]
+>
+> The keyword `entity` can be used in Jinja to represent the entity defined at the card level.
+>
+
+<details>
+<summary><strong>Supported Options (click to expand)</strong></summary>
+
+The following options remain fully compatible with this new card:
+
+| **Option**                  | **Description**                                                                              | **Link**                                                                                                                                    |
+| :-------------------------- | :------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Data Options**            |                                                                                              |                                                                                                                                             |
+| `entity`                    | Entity ID.                                                                                   | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#entity)                     |
+| **Styling Options**         |                                                                                              |                                                                                                                                             |
+| `bar_size`                  | Customize the size or thickness of the progress bar.                                         | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_size)                   |
+| `bar_orientation`           | Define the direction of the progress bar (e.g., `ltr`, `rtl`).                               | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_orientation)            |
+| `frameless`                 | Remove the default card border and background for a seamless, flat appearance.               | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#frameless)                  |
+| `marginless`                | Remove vertical margin for a more compact template display.                                  | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#marginless)                 |
+| `min_width`                 | Set a minimum width for the template to ensure consistent layout.                            | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#min_width)                  |
+| `reverse_secondary_info_row`| Flip info bar layout.                                                                        | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#reverse_secondary_info_row) |
+| `center_zero`               | Center the bar on 0.                                                                         | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#center_zero)                |
+| `hide`                      | Hide parts of the card.                                                                      | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#hide)                       |
+| `watermark`                 | Adds min/max overlays.                                                                       | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#watermark)                  |
+| **Behavior & Actions**      |                                                                                              |                                                                                                                                             |
+| `xyz_action`                | Configure custom actions (e.g., `tap`, `hold`, etc.).                                        | [Config Ref.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#xyz_action)                 |
+
+See [Full Configuration Reference](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#-entity-progress-card-template).
+
+</details>
+
+#### 👉 Badge Template Usage
+
+<details>
+<summary><strong>Simple example (click to expand)</strong></summary>
+
+```yaml
+type: custom:entity-progress-badge-template
+entity: light.led0
+icon: |-
+  {% if states('automation.secuswitch') == 'on' %}
+    mdi:ab-testing
+  {% else %}
+    mdi:abacus
+  {% endif %}
+name: "{{ state_attr('light.led0', 'friendly_name') }}"
+secondary: "{{ states('light.led0') }}"
+percent: |-
+  {% if states('light.led0') == 'on' %}
+    {{ (state_attr('light.led0', 'brightness') | float * 100 / 255) | round(2) }}
+  {% else %}
+    0
+  {% endif %}
+```
+
+</details>
+
+<br />
 
 [🔼 Back to top](#top)
 
