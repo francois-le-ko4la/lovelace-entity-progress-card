@@ -88,47 +88,46 @@ Despite all efforts to provide a stable and bug-free card, you might still encou
   #### 🦊 Firefox
 
   - **Method 1: Keyboard Shortcut**
-    - Press `F12` or `Ctrl + Shift + K` (Mac: `Cmd + Option + K`)
+    - Press **`F12`** or **`Ctrl`** + **`Shift`** + **`K`** (Mac: **`⌘`** + **`⌥`** + **`K`**)
   - **Method 2: Menu Navigation**
-    - Click the ≡ menu button (top-right)
+    - Click the **`≡`** menu button (top-right)
     - Go to **Web Developer** → **Web Console**
 
   #### 🌐 Chrome / Chromium
 
   - **Method 1: Keyboard Shortcut**
-    - Press `F12` or `Ctrl + Shift + J` (Mac: `Cmd + Option + J`)
+    - Press **`F12`** or **`Ctrl`** + **`Shift`** + **`J`** (Mac: **`⌘`** + **`⌥`** + **`J`**)
   - **Method 2: Menu Navigation**
-    - Click the ⋮ three-dot menu (top-right)
-    - Go to **More tools** → **Developer tools**
+    - Click the **`⋮`** three-dot menu (top-right)
+    - Go to **More tools** ➡️ **Developer tools**
     - Select the **Console** tab
 
   #### 🧭 Safari
 
   - **Method 1: Keyboard Shortcut**  
-    Press `Cmd + Option + C`  
+    - Press Mac: **`⌘`** + **`⌥`** + **`C`**  
   - **Method 2: Menu Navigation**  
     Enable the Develop menu first (if not already enabled):  
-    - Go to **Safari** → **Preferences** → **Advanced**  
+    - Go to **Safari** ➡️ **Preferences** ➡️ **Advanced**  
     - Check **Show Develop menu in menu bar**  
-    Then:  
-    Click **Develop** → **Show JavaScript Console**
+    - Click **Develop** ➡️ **Show JavaScript Console**
 
   #### 🐘 Opera
 
   - **Method 1: Keyboard Shortcut**  
-    Press `Ctrl + Shift + I` (Mac: `Cmd + Option + I`)  
+    Press **`Ctrl`** + **`Shift`** + **`I`** (Mac: **`⌘`** + **`⌥`** + **`I`**)  
   - **Method 2: Menu Navigation**  
     Click the O menu button (top-left)  
-    Go to **Developer** → **Developer tools**  
+    Go to **Developer** ➡️ **Developer tools**  
     Select the **Console** tab
 
   #### 🧱 Edge
 
   - **Method 1: Keyboard Shortcut**  
-    Press `F12` or `Ctrl + Shift + I` (Mac: `Cmd + Option + I`)  
+    Press **`F12`** or **`Ctrl`** + **`Shift`** + **`I`** (Mac: **`⌘`** + **`⌥`** + **`I`**)  
   - **Method 2: Menu Navigation**  
-    Click the ⋯ three-dot menu (top-right)  
-    Go to **More tools** → **Developer tools**  
+    Click the **`⋯`** three-dot menu (top-right)  
+    Go to **More tools** ➡️ **Developer tools**  
     Select the **Console** tab
   </details>
 

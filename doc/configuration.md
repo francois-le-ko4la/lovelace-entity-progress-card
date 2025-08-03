@@ -3,6 +3,20 @@
 # ⚙️ Full Configuration Reference
 
 - [⚙️ Full Configuration Reference](#️-full-configuration-reference)
+  - [Conventions](#conventions)
+    - [Input types](#input-types)
+      - [String](#string)
+      - [Float](#float)
+      - [Integer](#integer)
+      - [Boolean](#boolean)
+      - [List (Array)](#list-array)
+      - [Map (Object))](#map-object)
+      - [JINJA](#jinja)
+    - [Option description](#option-description)
+      - [Structure](#structure)
+      - [Typical description](#typical-description)
+    - [Supported values](#supported-values)
+    - [Jinja](#jinja-1)
   - [🧩 entity-progress-card / entity-progress-badge](#-entity-progress-card--entity-progress-badge)
     - [Data Options](#data-options)
       - [`entity`](#entity)
@@ -57,6 +71,146 @@
 
 <a id="-entity-progress-card--entity-progress-badge"></a>
 
+## Conventions
+
+In this documentation, the following types are used to describe configuration parameters. Here is what they mean:
+
+### Input types
+
+#### String
+
+A sequence of characters, including letters, numbers, or symbols.
+
+Example:
+
+```yaml
+option: "xyz"
+```
+
+#### Float
+
+A number that may include a decimal point (e.g., 3.14). Can also represent negative values.
+
+_Example_:
+
+```yaml
+option: -1.3
+```
+
+#### Integer
+
+A whole number. In this context, only positive integers are allowed (i.e., no decimals, no negatives).
+
+_Example_:
+
+```yaml
+option: 1
+```
+
+#### Boolean
+
+A value that can be either `true` or `false`. It is typically used for toggling features on or off.
+
+_Example_:
+
+```yaml
+option: true
+```
+
+#### List (Array)
+
+An ordered collection of elements, which can contain multiple values. Each element can be of any type. In YAML, this corresponds to a list indicated with dashes (`-`).  
+
+_Example_:
+
+```yaml
+option:
+  - item1
+  - item2
+  - item3
+```
+
+#### Map (Object)
+
+A set of key-value pairs, also called a dictionary or map. Each key is associated with a value that can be of any type.
+
+_Example_:
+
+```yaml
+object:
+  key1: value1
+  key2: value2
+```
+
+#### JINJA
+
+A static string or a Jinja template. The expression is evaluated in the context of the entity's state and attributes.
+The keyword `entity` represente the current entity id.
+
+_Example_:
+
+```yaml
+option: "{{ state_attr('sensor.temperature', 'unit_of_measurement') }}"
+```
+
+See [Home Assistant Templating](https://www.home-assistant.io/docs/configuration/templating/).
+
+### Option description
+
+Each configuration option in this documentation follows a consistent structure to ensure clarity and ease of use:
+
+#### Structure
+
+- **Title**  
+  The name of the option, as used in the configuration file.
+
+- **Usage summary**  
+  A short sentence that describes the purpose of the option at a glance.
+
+- **Description**  
+  A detailed explanation of what the option does, how it behaves, and any specific behavior or rules. If the option supports special values (e.g., `auto`, `null`, etc.), they should be mentioned here.
+
+- **Example**  
+  A concrete configuration snippet in YAML showing how the option is typically used. When possible, the example should reflect a realistic or common use case.
+
+- **Notes** _(optional)_  
+  Any additional details, edge cases, limitations, or version compatibility notes that may help advanced users or clarify uncommon behavior.
+
+### Typical description
+
+**`title`**
+
+> **`option`** type _(required/optional, default: xyz)_
+
+Description of this awesome option.
+
+_Example_:
+
+```yaml
+option: sensor.hp_envy_6400_series_tri_color_cartridge
+```
+
+> [!NOTE]
+>
+> the most important note !
+
+### Supported values
+
+When an option only accepts a predefined set of values, we indicate it using the ➡️ symbol, followed by the list of allowed choices.
+
+_Example_:
+
+> **`layout`** [String] ➡️ {`horizontal`| `vertical`} _(optional, default: `horizontal`)_:
+
+### Jinja
+
+When an option supports a Jinja template, we use the ➡️ symbol to indicate the type of value that the Jinja expression must return. This helps ensure the template produces the correct data type expected by the configuration.
+
+_Example_:
+
+> **`name`** [JINJA] ➡️ string
+
+
 ## 🧩 entity-progress-card / entity-progress-badge
 
 ### Data Options
@@ -65,7 +219,7 @@ Options related to entity data, attributes, value display logic, and metadata.
 
 #### `entity`
 
-> **`entity`** string _(required)_
+> **`entity`** [String] _(required)_
 
 Entity ID.
 
@@ -90,7 +244,7 @@ entity: sensor.hp_envy_6400_series_tri_color_cartridge
 
 #### `attribute`
 
-> **`attribute`** string _(optional)_
+> **`attribute`** [String] _(optional)_
 
 The Home Assistant entity's attribute to display.
 
@@ -127,7 +281,7 @@ _default attribute:_
 
 #### `name`
 
-> **`name`** string _(optional)_
+> **`name`** [String] _(optional)_
 
 The name displayed on the progress bar. If omitted, the entity's friendly name
 will be used.
@@ -148,7 +302,7 @@ name: ABC
 
 #### `unit`
 
-> **`unit`** string _(optional)_
+> **`unit`** [String] _(optional)_
 
 Allows representing standard unit.
 
@@ -207,7 +361,7 @@ unit: ABC
 
 #### `decimal`
 
-> **`decimal`** integer _(optional)_
+> **`decimal`** [Integer] _(optional)_
 
 Defines the number of decimal places to display for numerical values.
 
@@ -257,7 +411,7 @@ decimal: 1
 
 #### `min_value`
 
-> **`min_value`** float _(optional, default: `0` or `-100`)_
+> **`min_value`** [Float] _(optional, default: `0` or `-100`)_
 
 Defines the minimum value to be used when calculating the percentage.
 
@@ -287,7 +441,7 @@ Suppose you are measuring the weight of a connected litter box, where:
 
 #### `max_value`
 
-> **`max_value`** float|string _(optional, default: `100`)_
+> **`max_value`** [Float]|[String] _(optional, default: `100`)_
 
 Allows representing standard values and calculating the percentage relative to
 the maximum value. This value can be numeric (float/int) or an entity and real
@@ -312,7 +466,7 @@ max_value: 255
 
 #### `max_value_attribute`
 
-> **`max_value_attribute`** string _(optional)_
+> **`max_value_attribute`** [String] _(optional)_
 
 The Home Assistant `max_value`'s attribute to display. `max_value` must be an
 entity. See `attribute`.
@@ -323,7 +477,7 @@ entity. See `attribute`.
 
 [![Static Badge - reverse](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#reverse)
 
-> **`reverse`** boolean _(optional, default: `false`)_
+> **`reverse`** [Boolean] _(optional, default: `false`)_
 
 If set to true, it enables a countdown behavior (typically in seconds or
 percentage), which is the standard use case for timers.
@@ -350,7 +504,7 @@ reverse: true
 
 [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#state_content)
 
-> **`state_content`** string|list _(optional)_:
+> **`state_content`** [String]|[List] _(optional)_:
 
 Content to display for the state. Can be state, last_changed, last_updated, or
 any attribute of the entity. Can be either a string with a single item, or a
@@ -405,7 +559,7 @@ state_content:
 
 [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#custom_info)
 
-> **`custom_info`** JINJA _(optional)_:
+> **`custom_info`** [JINJA] _(optional)_:
 
 The `custom_info` option allows you to display additional, customizable text or
 HTML next to the entity’s value. It supports full [Home Assistant Jinja2 templates](https://www.home-assistant.io/docs/configuration/templating/) and inline HTML, enabling you to style or conditionally format the
@@ -451,7 +605,7 @@ custom_info: >-
 
 [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#name_info)
 
-> **`name_info`** JINJA _(optional)_:
+> **`name_info`** [JINJA] _(optional)_:
 
 The `name_info` option allows you to display additional, customizable text or
 HTML next to the entity’s name. It supports full [Home Assistant Jinja2 templates](https://www.home-assistant.io/docs/configuration/templating/) and inline HTML, enabling you to style or conditionally format the
@@ -488,7 +642,7 @@ name_info: >-
 
 [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#additions)
 
-> **`additions`** list _(optional)_
+> **`additions`** [List] _(optional)_
 
 Displays multiple entities within the same card. Each entry follows the same
 structure (`entity`/`attribute`) as a primary entity. Used to show combined
@@ -513,7 +667,7 @@ Customize the look and feel: icons, layout, colors, sizes, and visual themes.
 
 #### `icon`
 
-> **`icon`** string _(optional)_
+> **`icon`** [String] _(optional)_
 
 Overwrites the entity icon.
 
@@ -536,7 +690,7 @@ _Order of Priority for the Icon:_
 
 #### `color`
 
-> **`color`** string _(optional)_
+> **`color`** [String] _(optional)_
 
 The color of the icon. Accepts [Token color](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/theme.md#token-color),
 color names, RGB values, or HEX codes. By default, the color is based on state, domain, and
@@ -556,7 +710,7 @@ color: rgb(110, 65, 171)
 
 [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#badge_icon)
 
-> **`badge_icon`** JINJA _(optional)_:
+> **`badge_icon`** [JINJA] _(optional)_:
 
 The `badge_icon` option lets you display a dynamic badge, offering a quick
 status hint or symbolic representation based on logic or sensor values.
@@ -587,7 +741,7 @@ badge_icon: >-
 
 [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#badge_color)
 
-> **`badge_color`** JINJA _(optional)_:
+> **`badge_color`** [JINJA] _(optional)_:
 
 The `badge_color` option lets you setup a dynamic badge's background color,
 offering a quick status hint or symbolic representation based on logic or
@@ -612,7 +766,7 @@ badge_color: >-
 
 #### `bar_color`
 
-> **`bar_color`** string _(optional, default: `var(--state-icon-color)`)_
+> **`bar_color`** [String] _(optional, default: `var(--state-icon-color)`)_
 
 The color of the progress bar. Accepts [Token color](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/theme.md#token-color), color names,
 RGB values, or HEX codes.
@@ -629,7 +783,7 @@ bar_color: rgb(110, 65, 171)
 
 #### `bar_size`
 
-> **`bar_size`** string ➡️ {`small`|`medium`|`large`|`xlarge`} _(optional, default: `small`)_
+> **`bar_size`** [String] ➡️ {`small`|`medium`|`large`|`xlarge`} _(optional, default: `small`)_
 
 Customizes the appearance of the progress bar by selecting a predefined size.
 Choose from small, medium, or large to adjust the visual scale of the bar.
@@ -648,7 +802,7 @@ bar_size: medium
 
 #### `bar_effect`
 
-> **`bar_effect`** string or list or JINJA _(optional)_
+> **`bar_effect`** [String] or list or JINJA _(optional)_
 
 Defines visual effects applied to the progress bar. You can use a single effect
 or combine multiple in a list.
@@ -693,7 +847,7 @@ bar_effect: |-
 
 [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#bar_orientation)
 
-> **`bar_orientation`** string {`rtl`|`ltr`} _(optional, default: `ltr`)_
+> **`bar_orientation`** [String] {`rtl`|`ltr`} _(optional, default: `ltr`)_
 
 Adjusts the progress bar direction to display from right to left.
 
@@ -725,7 +879,7 @@ reverse: true
 
 #### `force_circular_background`
 
-> **`force_circular_background`** boolean _(optional: false)_
+> **`force_circular_background`** [String] _(optional: false)_
 
 This option forces a **circular background** to be displayed behind the icon shown
 on the card.
@@ -753,7 +907,7 @@ force_circular_background: true
 
 #### `layout`
 
-> **`layout`** string ➡️ {`horizontal`| `vertical`} _(optional, default: `horizontal`)_:
+> **`layout`** [String] ➡️ {`horizontal`| `vertical`} _(optional, default: `horizontal`)_:
 
 Determines the layout of the elements inside the card. You can choose between
 different layouts based on your visual preferences:
@@ -775,7 +929,7 @@ layout: vertical
 
 [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#frameless)
 
-> **`frameless`** boolean _(optional, default: false)_
+> **`frameless`** [Boolean] _(optional, default: false)_
 
 Allows you to remove the default Lovelace card styling: the border and background
 color. When set to `true`, the card blends seamlessly into the interface or can
@@ -804,7 +958,7 @@ frameless: true
 
 [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#marginless)
 
-> **`marginless`** boolean _(optional, default: false)_
+> **`marginless`** [Boolean] _(optional, default: false)_
 
 Removes vertical margin, creating a more compact layout.
 
@@ -822,7 +976,7 @@ marginless: true
 
 [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#height)
 
-> **`height`** string (optional)
+> **`height`** [String] (optional)
 
 Sets the height (e.g., 120px, 10em, 30%) for the card.
 Useful for ensuring consistent layout in horizontal stacks or grids.
@@ -845,7 +999,7 @@ height: 140px
 
 [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#min_width)
 
-> **`min_width`** string (optional)
+> **`min_width`** [String] (optional)
 
 Sets a minimum width (e.g., 120px, 10em, 30%) for the card, badge or template.
 Useful for ensuring consistent layout in horizontal stacks or grids.
@@ -864,7 +1018,7 @@ min_width: 140px
 
 [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#reverse_secondary_info_row)
 
-> **`reverse_secondary_info_row`** boolean _(optional, default: false)_
+> **`reverse_secondary_info_row`** [Boolean] _(optional, default: false)_
 
 Reverses the order of the progress bar and the secondary info when using a
 horizontal layout.
@@ -885,7 +1039,7 @@ reverse_secondary_info_row: true
 
 [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#unit_spacing)
 
-> **`unit_spacing`** string ➡️ {`auto`|`space`|`no-space`} _(optional, default: `auto`)_
+> **`unit_spacing`** [String] ➡️ {`auto`|`space`|`no-space`} _(optional, default: `auto`)_
 
 Defines whether a space should appear between numeric values and units, either
 following locale rules or overriding them explicitly.
@@ -903,7 +1057,7 @@ following locale rules or overriding them explicitly.
 
 [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#center_zero)
 
-> **`center_zero`** boolean _(optional, default: `false`)_
+> **`center_zero`** [Boolean] _(optional, default: `false`)_
 
 Centers the progress bar at zero, allowing for better visualization of values that
 fluctuate around zero (e.g., positive/negative changes).
@@ -920,7 +1074,7 @@ center_zero: true
 
 #### `theme`
 
-> **`theme`** string ➡️ {`optimal_when_low`|`optimal_when_high`|`light`|`temperature`|`humidity`|`pm25`|`voc`} _(optional)_
+> **`theme`** [String] ➡️ {`optimal_when_low`|`optimal_when_high`|`light`|`temperature`|`humidity`|`pm25`|`voc`} _(optional)_
 
 Allows customization of the progress bar's appearance using a predefined theme.
 This theme dynamically adjusts the `icon`, `color` and `bar-color` parameters
@@ -948,7 +1102,7 @@ theme: light
 
 [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#custom_theme)
 
-> **`custom_theme`** map list _(optional)_
+> **`custom_theme`** [List] of [Map] _(optional)_
 
 Defines a list of custom theme rules based on value ranges. Setting this
 variable disables the theme variable. This variable can only be defined in
@@ -1057,7 +1211,7 @@ custom_theme:
 
 #### `hide`
 
-> **`hide`** list _(optional)_:
+> **`hide`** [List] (optional)_:
 
 Defines which elements should be hidden in the card.
 
@@ -1084,7 +1238,7 @@ hide:
 
 #### `disable_unit`
 
-> **`disable_unit`** boolean _(optional, default: `false`)_
+> **`disable_unit`** [Boolean] _(optional, default: `false`)_
 
 Disables the display of the unit when set to `true`. If not defined or set to
 `false`, the unit will be shown.
@@ -1103,7 +1257,7 @@ disable_unit: true
 
 [![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#watermark)
 
-> **`watermark`** map _(optional)_:
+> **`watermark`** [Map] (optional)_:
 
 The `watermark` option allows you to visually highlight specific value
 thresholds (low and high) within the progress bar, helping you better interpret
@@ -1159,7 +1313,7 @@ Define interactions on tap, double tap, or hold gestures.
 
 #### `xyz_action`
 
-> **`xyz_action`** map ➡️ {action: {`more-info` | `toggle` | `perform-action` | `navigate` | `url` | `assist` | `none`}...} _(optional)_
+> **`xyz_action`** [map] ➡️ {action: {`more-info` | `toggle` | `perform-action` | `navigate` | `url` | `assist` | `none`}...} _(optional)_
 
 _`xyz_action`_:
 
@@ -1290,76 +1444,72 @@ These options are the same as those of the `entity-progress-card` and are availa
 
 #### `name` (Jinja)
 
-> **`name`** JINJA ➡️ string
+> **`name`** [JINJA] ➡️ [String]
 
-See [Home Assistant Templating](https://www.home-assistant.io/docs/configuration/templating/).  
 See [`name`](#name).
 
 [🔼 Back to top](#top)
 
 #### `icon` (Jinja)
 
-> **`icon`** JINJA ➡️ string  
+> **`icon`** [JINJA] ➡️ [String]  
 
-See [Home Assistant Templating](https://www.home-assistant.io/docs/configuration/templating/).  
 See [`icon`](#icon).
 
 [🔼 Back to top](#top)
 
 #### `secondary` (Jinja)
 
-> **`secondary`** JINJA ➡️ string
+> **`secondary`** [JINJA] ➡️ [String]
 
 Renders the secondary content (e.g., unit, status, additional info).
-
-See [Home Assistant Templating](https://www.home-assistant.io/docs/configuration/templating/).
 
 [🔼 Back to top](#top)
 
 #### `badge_icon` (Jinja)
 
-> **`badge_icon`** JINJA ➡️ string
+> **`badge_icon`** [JINJA] ➡️ [String]
 
-See [Home Assistant Templating](https://www.home-assistant.io/docs/configuration/templating/).  
 See [`badge_icon`](#badge_icon).
 
 [🔼 Back to top](#top)
 
 #### `badge_color` (Jinja)
 
-> **`badge_color`** JINJA ➡️ string
+> **`badge_color`** [JINJA] ➡️ [String]
 
-See [Home Assistant Templating](https://www.home-assistant.io/docs/configuration/templating/).  
 See [`badge_color`](#badge_color).
 
 [🔼 Back to top](#top)
 
 #### `percent` (Jinja)
 
-> **`percent`** JINJA ➡️ numeric
+> **`percent`** [JINJA] ➡️ [Float]
 
 Numerical value representing the progress state.
-
-See [Home Assistant Templating](https://www.home-assistant.io/docs/configuration/templating/).
 
 [🔼 Back to top](#top)
 
 #### `color` (Jinja)
 
-> **`color`** JINJA ➡️ string
+> **`color`** [JINJA] ➡️ [String]
 
-See [Home Assistant Templating](https://www.home-assistant.io/docs/configuration/templating/).  
 See [`color`](#color).
 
 [🔼 Back to top](#top)
 
 #### `bar_color` (Jinja)
 
-> **`bar_color`** JINJA ➡️ string
+> **`bar_color`** [JINJA] ➡️ [String]
 
-The result of jinja expression should be a string.
-
-See [Home Assistant Templating](https://www.home-assistant.io/docs/configuration/templating/).  
 See [`bar_color`](#bar_color).
 
 [🔼 Back to top](#top)
+
+[String]: #string
+[Float]: #float
+[Integer]: #integer
+[Boolean]: #boolean
+[List]: #list-array
+[Map]: #map-object
+[JINJA]: #jinja
