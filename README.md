@@ -18,7 +18,7 @@
 
 A modern Entity progress card for Home Assistant's Lovelace UI.
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/thumbnail.png" alt="thumbnail" width="700"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/thumbnail.png" alt="thumbnail" width="700"/>
 
 ## Table of Contents
 
@@ -53,7 +53,7 @@ Jump to the specific section:
 
 ### 🔍 Description
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/example.png" alt="example" width="400"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/example.png" alt="example" width="400"/>
 
 This custom version of the **Bar Card** for Home Assistant allows you to display a simple
 percentage bar that is quick and easy to integrate into your Lovelace cards. It blends
@@ -219,7 +219,7 @@ The card editor allows you to quickly set up and customize the card.
 <details>
 <summary><strong>Show the screenshot (click to expand)</strong></summary>
 
-![Editor](https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/editor.png)
+![Editor](https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/editor.png)
 
 </details>
 
@@ -233,7 +233,7 @@ The card editor allows you to quickly set up and customize the card.
 
 This is the primary card for displaying entity progress.
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/pm.png" alt="Example PM" width="250"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/pm.png" alt="Example PM" width="250"/>
 
 #### 🛠️ Options and percentage ?
 
@@ -347,7 +347,7 @@ icon_tap_action:
   action: more-info
 ```
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/RVB.png" alt="Example RVB" width="250px"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/RVB.png" alt="Example RVB" width="250px"/>
 </details>
 
 <details>
@@ -370,7 +370,7 @@ grid_options:
   rows: 2
 ```
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/RVB_vertical.png" alt="Example vertical" width="118px"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/RVB_vertical.png" alt="Example vertical" width="118px"/>
 </details>
 
 <details>
@@ -403,7 +403,7 @@ sort:
   ignore_case: false
 ```
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/battery_dashboard.png" alt="battery dashboard" width="500"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/battery_dashboard.png" alt="battery dashboard" width="500"/>
 </details>
 
 <details>
@@ -506,7 +506,7 @@ cards:
     card_param: cards
 ```
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/stack.png" alt="Stack" width="500"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/stack.png" alt="Stack" width="500"/>
 </details>
 
 <details>
@@ -1275,7 +1275,7 @@ percent: |-
 
 ## 🎨 Theme
 
-[Read this document.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/theme.md)  
+[Read this document.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/theme.md)  
 
 [🔼 Back to top](#top)
 
@@ -1353,7 +1353,7 @@ compatibility.
 
 ## 🚨 Errors, Deprecations & Troubleshooting
 
-[Read this document.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/troubleshooting.md)  
+[Read this document.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/troubleshooting.md)  
 
 [🔼 Back to top](#top)
 
@@ -1387,8 +1387,8 @@ Want more features? Want to improve this card? Contributions are welcome! 🚀
 
 - **Special thanks to [@harmonie-durrant](https://github.com/harmonie-durrant)**  
   ➡️ PRs, HACS testing, debugging, `Light` theme and illustrations:  
-  - `doc/example.png`  
-  - `doc/thumbnail.png`
+  - `docs/example.png`  
+  - `docs/thumbnail.png`
 
 - **Special thanks to [@jam3sward](https://github.com/jam3sward) & [@Duncan1106](https://github.com/Duncan1106)**  
   ➡️ README proofreading and improvements
@@ -1409,48 +1409,48 @@ This project is licensed under the GPL-3.0 license.
 
 <!-- Links -->
 
-[FCR]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md>
-[config-entity]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#entity>
-[config-attribute]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#attribute>
-[config-name]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#name>
-[config-unit]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#unit>
-[config-decimal]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#decimal>
-[config-min_value]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#min_value>
-[config-max_value]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#max_value>
-[config-max_value_attribute]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#max_value_attribute>
-[config-reverse]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#reverse>
-[config-state_content]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#state_content>
-[config-custom_info]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#custom_info>
-[config-name_info]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#name_info>
-[config-additions]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#additions>
-[config-icon]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#icon>
-[config-color]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#color>
-[config-badge_icon]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#badge_icon>
-[config-badge_color]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#badge_color>
-[config-bar_color]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_color>
-[config-bar_size]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_size>
-[config-bar_effect]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_effect>
-[config-bar_orientation]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_orientation>
-[config-force_circular_background]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#force_circular_background>
-[config-layout]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#layout>
-[config-frameless]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#frameless>
-[config-marginless]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#marginless>
-[config-height]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#height>
-[config-min_width]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#min_width>
-[config-reverse_secondary_info_row]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#reverse_secondary_info_row>
-[config-unit_spacing]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#unit_spacing>
-[config-center_zero]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#center_zero>
-[config-theme]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#theme>
-[config-custom_theme]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#custom_theme>
-[config-hide]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#hide>
-[config-disable_unit]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#disable_unit>
-[config-watermark]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#watermark>
-[config-xyz_action]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#xyz_action>
-[name-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#name-jinja>
-[icon-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#icon-jinja>
-[secondary-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#secondary-jinja>
-[badge_icon-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#badge_icon-jinja>
-[badge_color-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#badge_color-jinja>
-[percent-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#percent-jinja>
-[color-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#color-jinja>
-[bar_color-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/configuration.md#bar_color-jinja>
+[FCR]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md>
+[config-entity]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#entity>
+[config-attribute]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#attribute>
+[config-name]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#name>
+[config-unit]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#unit>
+[config-decimal]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#decimal>
+[config-min_value]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#min_value>
+[config-max_value]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#max_value>
+[config-max_value_attribute]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#max_value_attribute>
+[config-reverse]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#reverse>
+[config-state_content]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#state_content>
+[config-custom_info]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#custom_info>
+[config-name_info]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#name_info>
+[config-additions]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#additions>
+[config-icon]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#icon>
+[config-color]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#color>
+[config-badge_icon]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#badge_icon>
+[config-badge_color]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#badge_color>
+[config-bar_color]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_color>
+[config-bar_size]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_size>
+[config-bar_effect]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_effect>
+[config-bar_orientation]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_orientation>
+[config-force_circular_background]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#force_circular_background>
+[config-layout]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#layout>
+[config-frameless]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#frameless>
+[config-marginless]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#marginless>
+[config-height]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#height>
+[config-min_width]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#min_width>
+[config-reverse_secondary_info_row]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#reverse_secondary_info_row>
+[config-unit_spacing]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#unit_spacing>
+[config-center_zero]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#center_zero>
+[config-theme]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#theme>
+[config-custom_theme]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#custom_theme>
+[config-hide]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#hide>
+[config-disable_unit]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#disable_unit>
+[config-watermark]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#watermark>
+[config-xyz_action]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#xyz_action>
+[name-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#name-jinja>
+[icon-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#icon-jinja>
+[secondary-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#secondary-jinja>
+[badge_icon-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#badge_icon-jinja>
+[badge_color-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#badge_color-jinja>
+[percent-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#percent-jinja>
+[color-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#color-jinja>
+[bar_color-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_color-jinja>

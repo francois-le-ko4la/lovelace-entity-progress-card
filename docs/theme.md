@@ -159,7 +159,7 @@ The `mdi:lightbulb-outline` icon is used for lower brightness levels, while
 `mdi:lightbulb` is displayed when the light intensity increases. Thanks to the
 **linear** approach, the brightness smoothly transitions between these levels.
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/light.png" alt="Image title" width="500"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/light.png" alt="Image title" width="500"/>
 
 [🔼 Back to top](#top)
 
@@ -205,7 +205,7 @@ associated with a specific color:
 > your unit to `°F` correctly in order to see the accurate color
 > representation.
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/temperature.png" alt="Image title" width="500"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/temperature.png" alt="Image title" width="500"/>
 
 [🔼 Back to top](#top)
 
@@ -242,7 +242,7 @@ The ranges and their corresponding colors are as follows:
 Each range is visually represented using the `mdi:water-percent` icon, ensuring
 a clear and intuitive display of humidity levels.
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/humidity.png" alt="Image title" width="500"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/humidity.png" alt="Image title" width="500"/>
 
 [🔼 Back to top](#top)
 
@@ -291,7 +291,7 @@ The ranges and their corresponding colors are as follows:
 Each range is visually represented using the `mdi:air-filter` icon, ensuring a
 clear and intuitive display of VOC levels.
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/voc.png" alt="Image title" width="250"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/voc.png" alt="Image title" width="250"/>
 
 [🔼 Back to top](#top)
 
@@ -340,7 +340,7 @@ The ranges and their corresponding colors are as follows:
 Each range is visually represented using the `mdi:air-filter` icon, ensuring a
 clear and intuitive display of PM2.5 pollution levels.
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/pm.png" alt="Image title" width="250"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/pm.png" alt="Image title" width="250"/>
 </details>
 
 [🔼 Back to top](#top)

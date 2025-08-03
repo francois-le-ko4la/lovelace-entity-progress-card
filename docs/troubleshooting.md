@@ -26,7 +26,7 @@ stays clean and stable. We handle two main categories of errors in the card:
     <details>
     <summary><strong>Show the screenshot (click to expand)</strong></summary>
 
-    <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/errors.png" alt="error" width="500px"/>
+    <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/errors.png" alt="error" width="500px"/>
 
     </details>
 
@@ -56,7 +56,7 @@ In this context, we have two types of deprecated options:
 <details>
 <summary><strong>Show the screenshot (click to expand)</strong></summary>
 
-![Deprecated warnings](https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/deprecated.png)
+![Deprecated warnings](https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/deprecated.png)
 
 </details>
 
@@ -158,7 +158,7 @@ Whether you're a beginner or an advanced user, your feedback is valuable!
   <details>
   <summary><strong>Show the screenshot (click to expand)</strong></summary>
 
-  <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/doc/create_issue.png" alt="create issue" width="500px"/>
+  <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/create_issue.png" alt="create issue" width="500px"/>
 
   </details>
 

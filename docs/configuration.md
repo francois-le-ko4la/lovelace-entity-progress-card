@@ -692,9 +692,9 @@ _Order of Priority for the Icon:_
 
 > **`color`** [String] _(optional)_
 
-The color of the icon. Accepts [Token color](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/theme.md#token-color),
-color names, RGB values, or HEX codes. By default, the color is based on state, domain, and
-device_class of your entity for `timer`, `cover`, `light`, `fan`, `climate` and `battery`.
+The color of the icon. Accepts [Token color][token-color], color names, RGB values,
+or HEX codes. By default, the color is based on state, domain, and device_class of
+your entity for `timer`, `cover`, `light`, `fan`, `climate` and `battery`.
 
 _Examples:_ `"green"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`...
 
@@ -768,7 +768,7 @@ badge_color: >-
 
 > **`bar_color`** [String] _(optional, default: `var(--state-icon-color)`)_
 
-The color of the progress bar. Accepts [Token color](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/doc/theme.md#token-color), color names,
+The color of the progress bar. Accepts [Token color][token-color], color names,
 RGB values, or HEX codes.
 
 _Examples:_ `"blue"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`
@@ -1513,3 +1513,4 @@ See [`bar_color`](#bar_color).
 [List]: #list-array
 [Map]: #map-object
 [JINJA]: #jinja
+[token-color]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/theme.md#token-color

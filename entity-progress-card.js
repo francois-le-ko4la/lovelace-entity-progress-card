@@ -633,7 +633,7 @@ const LANGUAGES = {
         toggle_name: 'Name',
         toggle_value: 'Value',
         toggle_unit: 'Unit',
-        toggle_secondary_info: SEV.info,
+        toggle_secondary_info: 'Info',
         toggle_progress_bar: 'Bar',
         toggle_force_circular_background: 'Force circular background',
         theme: 'Theme',
@@ -658,6 +658,7 @@ const LANGUAGES = {
           small: 'Small',
           medium: 'Medium',
           large: 'Large',
+          xlarge: 'Extra Large',
         },
         layout: {
           horizontal: 'Horizontal (default)',
@@ -747,6 +748,7 @@ const LANGUAGES = {
           small: 'Petite',
           medium: 'Moyenne',
           large: 'Grande',
+          xlarge: 'Très grande',
         },
         layout: {
           horizontal: 'Horizontal (par défaut)',
@@ -834,8 +836,9 @@ const LANGUAGES = {
         },
         bar_size: {
           small: 'Pequeña',
-          medium: 'Media',
+          medium: 'Mediana',
           large: 'Grande',
+          xlarge: 'Extra grande',
         },
         layout: {
           horizontal: 'Horizontal (predeterminado)',
@@ -925,6 +928,7 @@ const LANGUAGES = {
           small: 'Piccola',
           medium: 'Media',
           large: 'Grande',
+          xlarge: 'Extra grande',
         },
         layout: {
           horizontal: 'Orizzontale (predefinito)',
@@ -1014,6 +1018,7 @@ const LANGUAGES = {
           small: 'Klein',
           medium: 'Mittel',
           large: 'Groß',
+          xlarge: 'Extra groß',
         },
         layout: {
           horizontal: 'Horizontal (Standard)',
@@ -1103,6 +1108,7 @@ const LANGUAGES = {
           small: 'Klein',
           medium: 'Middel',
           large: 'Groot',
+          xlarge: 'Extra groot',
         },
         layout: {
           horizontal: 'Horizontaal (standaard)',
@@ -1189,9 +1195,10 @@ const LANGUAGES = {
           voc: 'VOC',
         },
         bar_size: {
-          small: 'Mali',
-          medium: 'Srednje',
-          large: 'Veliko',
+          small: 'Mala',
+          medium: 'Srednja',
+          large: 'Velika',
+          xlarge: 'Vrlo velika',
         },
         layout: {
           horizontal: 'Horizontalno (zadano)',
@@ -1278,9 +1285,10 @@ const LANGUAGES = {
           voc: 'VOC',
         },
         bar_size: {
-          small: 'Mały',
-          medium: 'Średni',
-          large: 'Duży',
+          small: 'Mała',
+          medium: 'Średnia',
+          large: 'Duża',
+          xlarge: 'Bardzo duża',
         },
         layout: {
           horizontal: 'Poziomo (domyślnie)',
@@ -1367,9 +1375,10 @@ const LANGUAGES = {
           voc: 'VOC',
         },
         bar_size: {
-          small: 'Мало',
-          medium: 'Средно',
-          large: 'Големо',
+          small: 'Мала',
+          medium: 'Средна',
+          large: 'Голема',
+          xlarge: 'Многу голема',
         },
         layout: {
           horizontal: 'Хоризонтално (стандардно)',
@@ -1456,9 +1465,10 @@ const LANGUAGES = {
           voc: 'VOC',
         },
         bar_size: {
-          small: 'Pequeno',
-          medium: 'Médio',
+          small: 'Pequena',
+          medium: 'Média',
           large: 'Grande',
+          xlarge: 'Extra grande',
         },
         layout: {
           horizontal: 'Horizontal (padrão)',
@@ -1546,8 +1556,9 @@ const LANGUAGES = {
         },
         bar_size: {
           small: 'Lille',
-          medium: 'Mellem',
+          medium: 'Medium',
           large: 'Stor',
+          xlarge: 'Ekstra stor',
         },
         layout: {
           horizontal: 'Horisontal (standard)',
@@ -1635,8 +1646,9 @@ const LANGUAGES = {
         },
         bar_size: {
           small: 'Liten',
-          medium: 'Middels',
+          medium: 'Medium',
           large: 'Stor',
+          xlarge: 'Ekstra stor',
         },
         layout: {
           horizontal: 'Horisontal (standard)',
@@ -1726,6 +1738,7 @@ const LANGUAGES = {
           small: 'Liten',
           medium: 'Medium',
           large: 'Stor',
+          xlarge: 'Extra stor',
         },
         layout: {
           horizontal: 'Horisontell (standard)',
@@ -1812,9 +1825,10 @@ const LANGUAGES = {
           voc: 'VOC',
         },
         bar_size: {
-          small: 'Μικρό',
-          medium: 'Μεσαίο',
-          large: 'Μεγάλο',
+          small: 'Μικρή',
+          medium: 'Μεσαία',
+          large: 'Μεγάλη',
+          xlarge: 'Πολύ μεγάλη',
         },
         layout: {
           horizontal: 'Οριζόντια (προεπιλογή)',
@@ -1902,8 +1916,9 @@ const LANGUAGES = {
         },
         bar_size: {
           small: 'Pieni',
-          medium: 'Keskikokoinen',
+          medium: 'Keski',
           large: 'Suuri',
+          xlarge: 'Erittäin suuri',
         },
         layout: {
           horizontal: 'Vaakasuora (oletus)',
@@ -1990,9 +2005,10 @@ const LANGUAGES = {
           voc: 'VOC',
         },
         bar_size: {
-          small: 'Mic',
-          medium: 'Mediu',
+          small: 'Mică',
+          medium: 'Medie',
           large: 'Mare',
+          xlarge: 'Foarte mare',
         },
         layout: {
           horizontal: 'Orizontal (implicit)',
@@ -2082,6 +2098,7 @@ const LANGUAGES = {
           small: '小',
           medium: '中',
           large: '大',
+          xlarge: '超大',
         },
         layout: {
           horizontal: '水平（默认）',
@@ -2171,6 +2188,7 @@ const LANGUAGES = {
           small: '小',
           medium: '中',
           large: '大',
+          xlarge: '特大',
         },
         layout: {
           horizontal: '水平（デフォルト）',
@@ -2257,9 +2275,10 @@ const LANGUAGES = {
           voc: 'VOC',
         },
         bar_size: {
-          small: '작음',
-          medium: '보통',
-          large: '큼',
+          small: '작은',
+          medium: '중간',
+          large: '큰',
+          xlarge: '매우 큰',
         },
         layout: {
           horizontal: '수평 (기본)',
@@ -2349,6 +2368,7 @@ const LANGUAGES = {
           small: 'Küçük',
           medium: 'Orta',
           large: 'Büyük',
+          xlarge: 'Çok büyük',
         },
         layout: {
           horizontal: 'Yatay (varsayılan)',
@@ -2435,9 +2455,10 @@ const LANGUAGES = {
           voc: 'VOC',
         },
         bar_size: {
-          small: 'صغير',
-          medium: 'متوسط',
-          large: 'كبير',
+          small: 'صغيرة',
+          medium: 'متوسطة',
+          large: 'كبيرة',
+          xlarge: 'كبيرة جداً',
         },
         layout: {
           horizontal: 'أفقي (افتراضي)',
@@ -2527,6 +2548,7 @@ const LANGUAGES = {
           small: 'Nhỏ',
           medium: 'Trung bình',
           large: 'Lớn',
+          xlarge: 'Rất lớn',
         },
         layout: {
           horizontal: 'Ngang (mặc định)',
@@ -2616,6 +2638,7 @@ const LANGUAGES = {
           small: 'เล็ก',
           medium: 'กลาง',
           large: 'ใหญ่',
+          xlarge: 'ใหญ่พิเศษ',
         },
         layout: {
           horizontal: 'แนวนอน (เริ่มต้น)',
@@ -2705,6 +2728,7 @@ const LANGUAGES = {
           small: 'Kecil',
           medium: 'Sedang',
           large: 'Besar',
+          xlarge: 'Sangat besar',
         },
         layout: {
           horizontal: 'Horizontal (default)',
@@ -2791,9 +2815,10 @@ const LANGUAGES = {
           voc: 'VOC',
         },
         bar_size: {
-          small: 'Маленький',
-          medium: 'Середній',
-          large: 'Великий',
+          small: 'Мала',
+          medium: 'Середня',
+          large: 'Велика',
+          xlarge: 'Дуже велика',
         },
         layout: {
           horizontal: 'Горизонтальний (за замовчуванням)',
@@ -2880,9 +2905,10 @@ const LANGUAGES = {
           voc: 'VOC',
         },
         bar_size: {
-          small: 'छोटा',
+          small: 'छोटी',
           medium: 'मध्यम',
-          large: 'बड़ा',
+          large: 'बड़ी',
+          xlarge: 'अतिरिक्त बड़ी',
         },
         layout: {
           horizontal: 'क्षैतिज (डिफ़ॉल्ट)',
@@ -2972,6 +2998,7 @@ const LANGUAGES = {
           small: 'Malá',
           medium: 'Střední',
           large: 'Velká',
+          xlarge: 'Extra velká',
         },
         layout: {
           horizontal: 'Horizontální (výchozí)',
@@ -3059,8 +3086,9 @@ const LANGUAGES = {
         },
         bar_size: {
           small: 'ছোট',
-          medium: 'মধ্যম',
+          medium: 'মাঝারি',
           large: 'বড়',
+          xlarge: 'অতিরিক্ত বড়',
         },
         layout: {
           horizontal: 'অনুভূমিক (ডিফল্ট)',
@@ -3147,9 +3175,10 @@ const LANGUAGES = {
           voc: 'ЛОС',
         },
         bar_size: {
-          small: 'Маленький',
-          medium: 'Средний',
-          large: 'Большой',
+          small: 'Маленькая',
+          medium: 'Средняя',
+          large: 'Большая',
+          xlarge: 'Очень большая',
         },
         layout: {
           horizontal: 'Горизонтальный (по умолчанию)',
@@ -3409,6 +3438,10 @@ const FIELD_OPTIONS = {
     {
       value: CARD.style.bar.sizeOptions.large.label,
       icon: CARD.style.bar.sizeOptions.large.mdi,
+    },
+    {
+      value: CARD.style.bar.sizeOptions.xlarge.label,
+      icon: CARD.style.bar.sizeOptions.xlarge.mdi,
     },
   ],
   layout: [
@@ -6340,7 +6373,7 @@ class yamlSchemaFactory {
         decimal: types.decimal,
         unit: types.optionalString(),
         disable_unit: types.optionalBooleanWithDefault(false),
-        unit_spacing: types.enumsWithDefault(['auto', 'space', 'no-space'], 'auto'),
+        unit_spacing: types.enumsWithDefault(Object.values(CARD.config.unit.unitSpacing), 'auto'), //['auto', 'space', 'no-space']
         min_value: types.optionalNumber(0),
         max_value: types.fallbackTo(types.union(types.number, types.string), 100),
         max_value_attribute: types.optionalString(),
@@ -6349,10 +6382,16 @@ class yamlSchemaFactory {
         icon: types.optionalString(),
         color: types.optionalString(),
         bar_color: types.optionalString(),
-        bar_size: types.enumsWithDefault(['small', 'medium', 'large', 'xlarge'], 'small'),
-        bar_orientation: types.enumsWithDefault(['ltr', 'rtl'], 'ltr'),
-        bar_effect: types.effectArray(['radius', 'glass', 'gradient', 'shimmer']),
-        layout: types.enumsWithDefault(['horizontal', 'vertical'], 'horizontal'),
+        bar_size: types.enumsWithDefault(
+          Object.values(CARD.style.bar.sizeOptions).map((e) => e.label),
+          'small'
+        ), //[('small', 'medium', 'large', 'xlarge')]
+        bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
+        bar_effect: types.effectArray(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
+        layout: types.enumsWithDefault(
+          Object.values(CARD.layout).map((e) => e.label),
+          'horizontal'
+        ), // [('horizontal', 'vertical')]
         min_width: types.optionalString(),
         height: types.optionalString(),
         frameless: types.optionalBooleanWithDefault(false),
@@ -6373,7 +6412,8 @@ class yamlSchemaFactory {
         badge_color: types.optionalString(),
 
         // === Theme & Watermark ===
-        theme: types.theme(['optimal_when_low', 'optimal_when_high', 'light', 'temperature', 'humidity', 'pm25', 'voc']),
+        // theme: types.theme(['optimal_when_low', 'optimal_when_high', 'light', 'temperature', 'humidity', 'pm25', 'voc']),
+        theme: types.theme(Object.keys(THEME)),
         custom_theme: types.fallbackTo(types.customTheme, SKIP_PROPERTY),
         watermark: types.watermarkObject(watermarkSchema, CARD.config.defaults.watermark),
 
@@ -6408,10 +6448,16 @@ class yamlSchemaFactory {
         icon: types.optionalString(),
         color: types.optionalString(),
         bar_color: types.optionalString(),
-        bar_size: types.enumsWithDefault(['small', 'medium', 'large', 'xlarge'], 'small'),
-        bar_orientation: types.enumsWithDefault(['ltr', 'rtl'], 'ltr'),
-        bar_effect: types.effectArray(['radius', 'glass', 'gradient', 'shimmer']),
-        layout: types.enumsWithDefault(['horizontal', 'vertical'], 'horizontal'),
+        bar_size: types.enumsWithDefault(
+          Object.values(CARD.style.bar.sizeOptions).map((e) => e.label),
+          'small'
+        ), //[('small', 'medium', 'large', 'xlarge')]
+        bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
+        bar_effect: types.effectArray(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
+        layout: types.enumsWithDefault(
+          Object.values(CARD.layout).map((e) => e.label),
+          'horizontal'
+        ), // [('horizontal', 'vertical')]
         min_width: types.optionalString(),
         height: types.optionalString(),
         frameless: types.optionalBooleanWithDefault(false),
