@@ -18,7 +18,7 @@
 
 A modern Entity progress card for Home Assistant's Lovelace UI.
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/thumbnail.png" alt="thumbnail" width="700"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/thumbnail.png" alt="thumbnail" width="700"/>
 
 ## Table of Contents
 
@@ -53,7 +53,7 @@ Jump to the specific section:
 
 ### 🔍 Description
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/example.png" alt="example" width="400"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/example.png" alt="example" width="400"/>
 
 This custom version of the **Bar Card** for Home Assistant allows you to display a simple
 percentage bar that is quick and easy to integrate into your Lovelace cards. It blends
@@ -219,7 +219,7 @@ The card editor allows you to quickly set up and customize the card.
 <details>
 <summary><strong>Show the screenshot (click to expand)</strong></summary>
 
-![Editor](https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/editor.png)
+![Editor](https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/editor.png)
 
 </details>
 
@@ -233,7 +233,7 @@ The card editor allows you to quickly set up and customize the card.
 
 This is the primary card for displaying entity progress.
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/pm.png" alt="Example PM" width="250"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/pm.png" alt="Example PM" width="250"/>
 
 #### 🛠️ Options and percentage ?
 
@@ -347,7 +347,7 @@ icon_tap_action:
   action: more-info
 ```
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/RVB.png" alt="Example RVB" width="250px"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/RVB.png" alt="Example RVB" width="250px"/>
 </details>
 
 <details>
@@ -370,7 +370,7 @@ grid_options:
   rows: 2
 ```
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/RVB_vertical.png" alt="Example vertical" width="118px"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/RVB_vertical.png" alt="Example vertical" width="118px"/>
 </details>
 
 <details>
@@ -403,7 +403,7 @@ sort:
   ignore_case: false
 ```
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/battery_dashboard.png" alt="battery dashboard" width="500"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/battery_dashboard.png" alt="battery dashboard" width="500"/>
 </details>
 
 <details>
@@ -506,7 +506,7 @@ cards:
     card_param: cards
 ```
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/stack.png" alt="Stack" width="500"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/stack.png" alt="Stack" width="500"/>
 </details>
 
 <details>
@@ -1387,8 +1387,8 @@ Want more features? Want to improve this card? Contributions are welcome! 🚀
 
 - **Special thanks to [@harmonie-durrant](https://github.com/harmonie-durrant)**  
   ➡️ PRs, HACS testing, debugging, `Light` theme and illustrations:  
-  - `docs/example.png`  
-  - `docs/thumbnail.png`
+  - `docs/images/example.png`  
+  - `docs/images/thumbnail.png`
 
 - **Special thanks to [@jam3sward](https://github.com/jam3sward) & [@Duncan1106](https://github.com/Duncan1106)**  
   ➡️ README proofreading and improvements
