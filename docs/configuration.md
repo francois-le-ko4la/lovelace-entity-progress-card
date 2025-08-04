@@ -10,14 +10,18 @@
       - [Integer](#integer)
       - [Boolean](#boolean)
       - [List (Array)](#list-array)
-      - [Map (Object))](#map-object)
+      - [Map (Object)](#map-object)
       - [JINJA](#jinja)
     - [Option description](#option-description)
       - [Structure](#structure)
+      - [Badges](#badges)
+        - [Compatibility](#compatibility)
+        - [YAML Only](#yaml-only)
+      - [Parameter specification](#parameter-specification)
+        - [Supported values](#supported-values)
+        - [Jinja](#jinja-1)
       - [Typical description](#typical-description)
-    - [Supported values](#supported-values)
-    - [Jinja](#jinja-1)
-  - [🧩 entity-progress-card / entity-progress-badge](#-entity-progress-card--entity-progress-badge)
+  - [🧩 entity-progress-card / entity-progress-badge](#standard)
     - [Data Options](#data-options)
       - [`entity`](#entity)
       - [`attribute`](#attribute)
@@ -57,19 +61,15 @@
       - [`watermark`](#watermark)
     - [Behavior And Actions](#behavior-and-actions)
       - [`xyz_action`](#xyz_action)
-  - [🧩 entity-progress-card-template](#-entity-progress-card-template)
+  - [🧩 entity-progress-card-template / entity-progress-badge-template](#template)
     - [Common options](#common-options)
     - [Specific options](#specific-options)
       - [`name` (Jinja)](#name-jinja)
       - [`icon` (Jinja)](#icon-jinja)
       - [`secondary` (Jinja)](#secondary-jinja)
-      - [`badge_icon` (Jinja)](#badge_icon-jinja)
-      - [`badge_color` (Jinja)](#badge_color-jinja)
       - [`percent` (Jinja)](#percent-jinja)
       - [`color` (Jinja)](#color-jinja)
       - [`bar_color` (Jinja)](#bar_color-jinja)
-
-<a id="-entity-progress-card--entity-progress-badge"></a>
 
 ## Conventions
 
@@ -87,6 +87,8 @@ Example:
 option: "xyz"
 ```
 
+[🔼 Back to top]
+
 #### Float
 
 A number that may include a decimal point (e.g., 3.14). Can also represent negative values.
@@ -96,6 +98,8 @@ _Example_:
 ```yaml
 option: -1.3
 ```
+
+[🔼 Back to top]
 
 #### Integer
 
@@ -107,6 +111,8 @@ _Example_:
 option: 1
 ```
 
+[🔼 Back to top]
+
 #### Boolean
 
 A value that can be either `true` or `false`. It is typically used for toggling features on or off.
@@ -116,6 +122,8 @@ _Example_:
 ```yaml
 option: true
 ```
+
+[🔼 Back to top]
 
 #### List (Array)
 
@@ -132,6 +140,8 @@ option:
   - item3
 ```
 
+[🔼 Back to top]
+
 #### Map (Object)
 
 A set of key-value pairs, also called a dictionary or map.
@@ -144,6 +154,8 @@ object:
   key1: value1
   key2: value2
 ```
+
+[🔼 Back to top]
 
 #### JINJA
 
@@ -161,17 +173,22 @@ _Example_:
 option: "{{ state_attr('sensor.temperature', 'unit_of_measurement') }}"
 ```
 
+[🔼 Back to top]
+
 ### Option description
 
-Each configuration option in this documentation follows a consistent structure to ensure clarity and ease of use:
-
 #### Structure
+
+Each configuration option in this documentation follows a consistent structure to ensure clarity and ease of use:
 
 - **Title**  
   The name of the option, as used in the configuration file.
 
-- **Usage summary**  
-  A short sentence that describes the purpose of the option at a glance.
+- **Badge**  
+  Badge to identify the compatibility
+
+- **Parameter specification**  
+  This format provides a quick reference for parameter types, valid values, and default settings without reading full descriptions.
 
 - **Description**  
   A detailed explanation of what the option does, how it behaves, and any specific behavior or rules. If the option supports special values (e.g., `auto`, `null`, etc.), they should be mentioned here.
@@ -182,9 +199,58 @@ Each configuration option in this documentation follows a consistent structure t
 - **Notes** _(optional)_  
   Any additional details, edge cases, limitations, or version compatibility notes that may help advanced users or clarify uncommon behavior.
 
-### Typical description
+[🔼 Back to top]
+
+#### Badges
+
+##### Compatibility
+
+Throughout this documentation, compatibility badges indicate which components work with specific configuration options:
+
+| Badge | Component | Description |
+|:------|-----------|-------------|
+| [![Card OK][Card-OK]](#compatibility) | **Card Compatible** | This option works with the main card display |
+| [![Badge OK][Badge-OK]](#compatibility) | **Badge Compatible** | This option works with the card badge feature |
+| [![Template OK][Template-OK]](#compatibility) | **Template Compatible** | This option supports Jinja2 templating |
+| [![Badge Template OK][BadgeTemplate-OK]](#compatibility) | **Badge Template Compatible** | This option supports Jinja2 templating within badges |
+
+##### YAML Only
+
+The following badges is used throughout this documentation:
+
+[![YAML Only][yaml-only]](#yaml-only)
+
+These options are not available in the visual card editor and must be configured manually in YAML mode.
+
+[🔼 Back to top]
+
+#### Parameter specification
+
+This syntax provides an instant overview of configuration options, making it easier to set up parameters correctly.
+
+##### Supported values
+
+When an option only accepts a predefined set of values, we indicate it using the ➡️ symbol, followed by the list of allowed choices.
+
+_Example_:
+
+> **`layout`** [String] ➡️ {`horizontal`| `vertical`} _(optional, default: `horizontal`)_:
+
+##### Jinja
+
+When an option supports a Jinja template, we use the ➡️ symbol to indicate the type of value that the Jinja expression must return. This helps ensure the template produces the correct data type expected by the configuration.
+
+_Example_:
+
+> **`name`** [JINJA] ➡️ string
+
+[🔼 Back to top]
+
+#### Typical description
 
 **`title`**
+
+[![Card OK][Card-OK]](#compatibility)
 
 > **`option`** type _(required/optional, default: xyz)_
 
@@ -200,30 +266,9 @@ option: sensor.hp_envy_6400_series_tri_color_cartridge
 >
 > the most important note !
 
-### Supported values
+[🔼 Back to top]
 
-When an option only accepts a predefined set of values, we indicate it using the ➡️ symbol, followed by the list of allowed choices.
-
-_Example_:
-
-> **`layout`** [String] ➡️ {`horizontal`| `vertical`} _(optional, default: `horizontal`)_:
-
-### Jinja
-
-When an option supports a Jinja template, we use the ➡️ symbol to indicate the type of value that the Jinja expression must return. This helps ensure the template produces the correct data type expected by the configuration.
-
-_Example_:
-
-> **`name`** [JINJA] ➡️ string
-
-### YAML Only
-
-The following badges is used throughout this documentation:
-
-[![YAML Only][yaml-only]](#yaml-only)
-
-These options are not available in the visual card editor and must be configured manually in YAML mode.
-
+<a id="standard"></a>
 
 ## 🧩 entity-progress-card / entity-progress-badge
 
@@ -232,6 +277,8 @@ These options are not available in the visual card editor and must be configured
 Options related to entity data, attributes, value display logic, and metadata.
 
 #### `entity`
+
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
 > **`entity`** [String] _(required)_
 
@@ -246,6 +293,10 @@ entity: sensor.hp_envy_6400_series_tri_color_cartridge
 
 > [!NOTE]
 >
+> This parameter is optionnal with `entity-progress-card-template` and `entity-progress-badge-template`
+
+> [!NOTE]
+>
 > Supported entities are not hardcoded, ensuring flexibility. If you need a
 > specific attribute, use the `attribute` parameter.
 
@@ -257,6 +308,8 @@ entity: sensor.hp_envy_6400_series_tri_color_cartridge
 [🔼 Back to top]
 
 #### `attribute`
+
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 
 > **`attribute`** [String] _(optional)_
 
@@ -295,6 +348,8 @@ _default attribute:_
 
 #### `name`
 
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+
 > **`name`** [String] _(optional)_
 
 The name displayed on the progress bar. If omitted, the entity's friendly name
@@ -315,6 +370,8 @@ name: ABC
 [🔼 Back to top]
 
 #### `unit`
+
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 
 > **`unit`** [String] _(optional)_
 
@@ -375,6 +432,8 @@ unit: ABC
 
 #### `decimal`
 
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+
 > **`decimal`** [Integer] _(optional)_
 
 Defines the number of decimal places to display for numerical values.
@@ -425,6 +484,8 @@ decimal: 1
 
 #### `min_value`
 
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+
 > **`min_value`** [Float] _(optional, default: `0` or `-100`)_
 
 Defines the minimum value to be used when calculating the percentage.
@@ -455,6 +516,8 @@ Suppose you are measuring the weight of a connected litter box, where:
 
 #### `max_value`
 
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+
 > **`max_value`** [Float]|[String] _(optional, default: `100`)_
 
 Allows representing standard values and calculating the percentage relative to
@@ -480,6 +543,8 @@ max_value: 255
 
 #### `max_value_attribute`
 
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+
 > **`max_value_attribute`** [String] _(optional)_
 
 The Home Assistant `max_value`'s attribute to display. `max_value` must be an
@@ -489,7 +554,7 @@ entity. See `attribute`.
 
 #### `reverse`
 
-[![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
 
 > **`reverse`** [Boolean] _(optional, default: `false`)_
 
@@ -516,7 +581,7 @@ reverse: true
 
 #### `state_content`
 
-[![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
 
 > **`state_content`** [String]|[List] _(optional)_:
 
@@ -571,7 +636,7 @@ state_content:
 
 #### `custom_info`
 
-[![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
 
 > **`custom_info`** [JINJA] _(optional)_:
 
@@ -618,7 +683,7 @@ custom_info: >-
 
 #### `name_info`
 
-[![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
 
 > **`name_info`** [JINJA] _(optional)_:
 
@@ -656,7 +721,7 @@ name_info: >-
 
 #### `additions`
 
-[![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
 
 > **`additions`** [List] _(optional)_
 
@@ -683,6 +748,8 @@ Customize the look and feel: icons, layout, colors, sizes, and visual themes.
 
 #### `icon`
 
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+
 > **`icon`** [String] _(optional)_
 
 Overwrites the entity icon.
@@ -706,6 +773,8 @@ _Order of Priority for the Icon:_
 
 #### `color`
 
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+
 > **`color`** [String] _(optional)_
 
 The color of the icon. Accepts [Token color][token-color], color names, RGB values,
@@ -724,7 +793,7 @@ color: rgb(110, 65, 171)
 
 #### `badge_icon`
 
-[![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
 
 > **`badge_icon`** [JINJA] _(optional)_:
 
@@ -755,7 +824,7 @@ badge_icon: >-
 
 #### `badge_color`
 
-[![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
 
 > **`badge_color`** [JINJA] _(optional)_:
 
@@ -782,6 +851,8 @@ badge_color: >-
 
 #### `bar_color`
 
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+
 > **`bar_color`** [String] _(optional, default: `var(--state-icon-color)`)_
 
 The color of the progress bar. Accepts [Token color][token-color], color names,
@@ -798,6 +869,8 @@ bar_color: rgb(110, 65, 171)
 [🔼 Back to top]
 
 #### `bar_size`
+
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
 > **`bar_size`** [String] ➡️ {`small`|`medium`|`large`|`xlarge`} _(optional, default: `small`)_
 
@@ -818,10 +891,20 @@ bar_size: medium
 
 #### `bar_effect`
 
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+
 > **`bar_effect`** [String] or [List] or [JINJA] _(optional)_
 
 Defines visual effects applied to the progress bar. You can use a single effect
 or combine multiple in a list.
+
+Defines visual effects applied to the progress bar.
+
+- If a **[String]** is provided (e.g. `"gradient"`), only one effect is applied.
+- If a **[List]** is provided (e.g. `["radius", "shimmer"]`), effects are combined.
+- If using a **[JINJA] template**, it should return either:
+  - a single effect string (`shimmer`)
+  - or a comma-separated string (`"gradient, shimmer"`) which will be parsed as a list.
 
 _Available options_:
 
@@ -861,7 +944,7 @@ bar_effect: |-
 
 #### `bar_orientation`
 
-[![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
 
 > **`bar_orientation`** [String] {`rtl`|`ltr`} _(optional, default: `ltr`)_
 
@@ -895,6 +978,8 @@ reverse: true
 
 #### `force_circular_background`
 
+[![Card OK][Card-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility)
+
 > **`force_circular_background`** [String] _(optional: false)_
 
 This option forces a **circular background** to be displayed behind the icon shown
@@ -923,6 +1008,8 @@ force_circular_background: true
 
 #### `layout`
 
+[![Card OK][Card-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility)
+
 > **`layout`** [String] ➡️ {`horizontal`| `vertical`} _(optional, default: `horizontal`)_:
 
 Determines the layout of the elements inside the card. You can choose between
@@ -943,7 +1030,7 @@ layout: vertical
 
 #### `frameless`
 
-[![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
 
 > **`frameless`** [Boolean] _(optional, default: false)_
 
@@ -972,7 +1059,7 @@ frameless: true
 
 #### `marginless`
 
-[![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
 
 > **`marginless`** [Boolean] _(optional, default: false)_
 
@@ -990,7 +1077,7 @@ marginless: true
 
 #### `height`
 
-[![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
 
 > **`height`** [String] (optional)
 
@@ -1013,7 +1100,7 @@ height: 140px
 
 #### `min_width`
 
-[![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
 
 > **`min_width`** [String] (optional)
 
@@ -1032,7 +1119,7 @@ min_width: 140px
 
 #### `reverse_secondary_info_row`
 
-[![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
 
 > **`reverse_secondary_info_row`** [Boolean] _(optional, default: false)_
 
@@ -1053,7 +1140,7 @@ reverse_secondary_info_row: true
 
 #### `unit_spacing`
 
-[![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
 
 > **`unit_spacing`** [String] ➡️ {`auto`|`space`|`no-space`} _(optional, default: `auto`)_
 
@@ -1071,7 +1158,7 @@ following locale rules or overriding them explicitly.
 
 #### `center_zero`
 
-[![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
 
 > **`center_zero`** [Boolean] _(optional, default: `false`)_
 
@@ -1089,6 +1176,8 @@ center_zero: true
 [🔼 Back to top]
 
 #### `theme`
+
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 
 > **`theme`** [String] ➡️ {`optimal_when_low`|`optimal_when_high`|`light`|`temperature`|`humidity`|`pm25`|`voc`} _(optional)_
 
@@ -1116,7 +1205,7 @@ theme: light
 
 #### `custom_theme`
 
-[![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
 
 > **`custom_theme`** [List] of [Map] _(optional)_
 
@@ -1227,6 +1316,8 @@ custom_theme:
 
 #### `hide`
 
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+
 > **`hide`** [List] (optional)_:
 
 Defines which elements should be hidden in the card.
@@ -1254,6 +1345,8 @@ hide:
 
 #### `disable_unit`
 
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+
 > **`disable_unit`** [Boolean] _(optional, default: `false`)_
 
 Disables the display of the unit when set to `true`. If not defined or set to
@@ -1271,7 +1364,7 @@ disable_unit: true
 
 #### `watermark`
 
-[![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
 
 > **`watermark`** [Map] (optional)_:
 
@@ -1328,6 +1421,8 @@ Define interactions on tap, double tap, or hold gestures.
 [🔼 Back to top]
 
 #### `xyz_action`
+
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
 > **`xyz_action`** [map] ➡️ {action: {`more-info` | `toggle` | `perform-action` | `navigate` | `url` | `assist` | `none`}...} _(optional)_
 
@@ -1431,99 +1526,179 @@ tap_action:
   entity: sensor.pv_total_power
 ```
 
-## 🧩 entity-progress-card-template
+<a id="template"></a>
+
+## 🧩 entity-progress-card-template / entity-progress-badge-template
 
 ### Common options
 
-These options are the same as those of the `entity-progress-card` and are available for templates as well:
+These options are the same as those of the `entity-progress-card` and are available for Templates as well:
 
-| **Option**                  | **Description**                                                                              | **Documentation**                   |
-| :-------------------------- | :------------------------------------------------------------------------------------------- | :---------------------------------- |
-| **Data Options**            |                                                                                              |                                     |
-| `entity`                    | Entity ID.                                                                                   | [Link](#entity)                     |
-| **Styling Options**         |                                                                                              |                                     |
-| `bar_size`                  | Customize the size or thickness of the progress bar.                                         | [Link](#bar_size)                   |
-| `bar_orientation`           | Define the direction of the progress bar (e.g., `ltr`, `rtl`).                               | [Link](#bar_orientation)            |
-| `force_circular_background` | Force icon circle background.                                                                | [Link](#force_circular_background)  |
-| `layout`                    | Adjust the overall layout (e.g., `horizontal`, `vertical`).                                  | [Link](#layout)                     |
-| `frameless`                 | Remove the default card border and background for a seamless, flat appearance.               | [Link](#frameless)                  |
-| `marginless`                | Remove vertical margin for a more compact template display.                                  | [Link](#marginless)                 |
-| `min_width`                 | Set a minimum width for the template to ensure consistent layout.                            | [Link](#min_width)                  |
-| `reverse_secondary_info_row`| Flip info bar layout.                                                                        | [Link](#reverse_secondary_info_row) |
-| `center_zero`               | Center the bar on 0.                                                                         | [Link](#center_zero)                |
-| `hide`                      | Hide parts of the card.                                                                      | [Link](#hide)                       |
-| `watermark`                 | Adds min/max overlays.                                                                       | [Link](#watermark)                  |
-| **Behavior & Actions**      |                                                                                              |                                     |
-| `xyz_action`                | Configure custom actions (e.g., `tap`, `hold`, etc.).                                        | [Link](#xyz_action)                 |
+| **Option**                         | **Type**                 | **Default**                 | **Description**                         | **Link**                            |
+| :--------------------------------- |:------------------------ | :-------------------------- | :-------------------------------------- | :---------------------------------- |
+| **Data Options**                   |                          |                             |                                         |                                     |
+| `entity`                           | string (optional)        | —                           | Main entity ID                          | [Link](#entity)                     |
+| **Styling Options**                |                          |                             |                                         |                                     |
+| `badge_icon`                       | Jinja (optional)         | —                           | Dynamic badge icon                      | [Link](#badge_icon)                 |
+| `badge_color`                      | Jinja (optional)         | —                           | Dynamic badge color                     | [Link](#badge_color)                |
+| `bar_size`                         | string (optional)        | `small`                     | Size of the progress bar                | [Link](#bar_size)                   |
+| `bar_effect`                       | string/list/jinja        | —                           | Visual effects for the bar              | [Link](#bar_effect)                 |
+| `bar_orientation`                  | string (optional)        | `ltr`                       | Bar direction                           | [Link](#bar_orientation)            |
+| `force_circular_background`        | boolean (optional)       | `false`                     | Force icon circle background            | [Link](#force_circular_background)  |
+| `layout`                           | string (optional)        | `horizontal`                | Layout direction                        | [Link](#layout)                     |
+| `frameless`                        | boolean (optional)       | `false`                     | Remove card frame                       | [Link](#frameless)                  |
+| `marginless`                       | boolean (optional)       | `false`                     | Remove top/bottom margin                | [Link](#marginless)                 |
+| `height`                           | string (optional)        | —                           | Card height                             | [Link](#height)                     |
+| `min_width`                        | string (optional)        | —                           | Minimum width                           | [Link](#min_width)                  |
+| `reverse_secondary_info_row`       | boolean (optional)       | `false`                     | Flip info bar layout                    | [Link](#reverse_secondary_info_row) |
+| `center_zero`                      | boolean (optional)       | `false`                     | Center the bar on 0                     | [Link](#center_zero)                |
+| `hide`                             | list (optional)          | —                           | Hide parts of the card                  | [Link](#hide)                       |
+| `watermark`                        | map (optional)           | —                           | Adds min/max overlays                   | [Link](#watermark)                  |
+| **Behavior And Actions**           |                          |                             |                                         |                                     |
+| `xyz_action`                       | map (optional)           | see defaults                | Tap/double/hold actions                 | [Link](#xyz_action)                 |
+
+[🔼 Back to top]
 
 ### Specific options
 
 #### `name` (Jinja)
 
+[![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+
 > **`name`** [JINJA] ➡️ [String]
 
+Dynamically generates the name using [JINJA] templates.
+We can access entity states and attributes to create context-aware names.
+
 See [`name`](#name).
+See [JINJA].
+
+_Example_:
+
+```yaml
+name: "{{ state_attr('sensor.battery_level', 'friendly_name') }} ({{ states('sensor.battery_level') }}%)"
+```
 
 [🔼 Back to top]
 
 #### `icon` (Jinja)
 
+[![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+
 > **`icon`** [JINJA] ➡️ [String]  
 
+Conditionally sets the card icon based on entity state or attributes. Useful for dynamic icon changes.
+
 See [`icon`](#icon).
+See [JINJA].
+
+_Example_:
+
+```yaml
+icon: >-
+  {% if states('sensor.battery_level') | int > 50 %}
+    mdi:battery-high
+  {% else %}
+    mdi:battery-low
+  {% endif %}
+```
 
 [🔼 Back to top]
 
 #### `secondary` (Jinja)
 
+[![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+
 > **`secondary`** [JINJA] ➡️ [String]
 
-Renders the secondary content (e.g., unit, status, additional info).
+Renders the secondary content (e.g., unit, status, additional info) using templates for dynamic secondary text display.
 
-[🔼 Back to top]
+_Example_:
 
-#### `badge_icon` (Jinja)
-
-> **`badge_icon`** [JINJA] ➡️ [String]
-
-See [`badge_icon`](#badge_icon).
-
-[🔼 Back to top]
-
-#### `badge_color` (Jinja)
-
-> **`badge_color`** [JINJA] ➡️ [String]
-
-See [`badge_color`](#badge_color).
+```yaml
+secondary: >-
+  Last updated: {{ relative_time(states.sensor.temperature.last_changed) }} ago
+  ({{ states('sensor.temperature') }}°C)
+```
 
 [🔼 Back to top]
 
 #### `percent` (Jinja)
 
+[![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+
 > **`percent`** [JINJA] ➡️ [Float]
 
-Numerical value representing the progress state.
+Calculates the progress percentage using templates. Enables complex calculations from multiple entities or custom formulas.
+
+_Example_:
+
+```yaml
+percent: >-
+  {% set used = states('sensor.disk_used') | int %}
+  {% set total = states('sensor.disk_total') | int %}
+  {{ (used / total * 100) | round(1) }}
+```
 
 [🔼 Back to top]
 
 #### `color` (Jinja)
 
+[![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+
 > **`color`** [JINJA] ➡️ [String]
 
+Dynamically sets the icon color based on conditions. Useful for visual feedback based on entity states.
+
 See [`color`](#color).
+
+_Example_:
+
+```yaml
+color: >-
+  {% if states('sensor.xyz') | int > 100 %}
+    red
+  {% elif states('sensor.xyz') | int > 50 %}
+    orange
+  {% else %}
+    green
+  {% endif %}
+```
 
 [🔼 Back to top]
 
 #### `bar_color` (Jinja)
 
+[![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+
 > **`bar_color`** [JINJA] ➡️ [String]
 
+Conditionally sets the progress bar color using templates. Supports gradients and complex color logic.
+
 See [`bar_color`](#bar_color).
+
+_Example_:
+
+```yaml
+bar_color: >-
+  {% set level = states('sensor.battery_level') | int %}
+  {% if level > 80 %}
+    linear-gradient(90deg, lightgreen, green)
+  {% elif level > 20 %}
+    linear-gradient(90deg, yellow, orange)
+  {% else %}
+    linear-gradient(90deg, orange, red)
+  {% endif %}
+```
 
 [🔼 Back to top]
 
 [🔼 Back to top]: #top
 [yaml-only]: https://img.shields.io/badge/YAML-Only-orange.svg?style=flat
+[Card-OK]: https://img.shields.io/badge/Card-OK-green.svg?style=flat
+[Badge-OK]: https://img.shields.io/badge/Badge-OK-green.svg?style=flat
+[Template-OK]: https://img.shields.io/badge/Template-OK-green.svg?style=flat
+[BadgeTemplate-OK]: https://img.shields.io/badge/Badge%20Template-OK-green.svg?style=flat
 [String]: #string
 [Float]: #float
 [Integer]: #integer

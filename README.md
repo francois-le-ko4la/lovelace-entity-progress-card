@@ -878,8 +878,6 @@ you to implement your desired mathematical modeling directly through templating.
 | `name`        | JINJA    | Renders the customized entity name                                         | [Config Ref.][name-jinja]        |
 | `icon`        | JINJA    | Main icon shown on the card                                                | [Config Ref.][icon-jinja]        |
 | `secondary`   | JINJA    | Renders the secondary content (e.g., unit, status, additional info)        | [Config Ref.][secondary-jinja]   |
-| `badge_icon`  | JINJA    | Icon displayed in the badge (can differ from the main icon)                | [Config Ref.][badge_icon-jinja]  |
-| `badge_color` | JINJA    | Sets the badge color                                                       | [Config Ref.][badge_color-jinja] |
 | `percent`     | JINJA    | Numerical value representing progress (0–100%), affects progress bar width | [Config Ref.][percent-jinja]     |
 | `color`       | JINJA    | Dynamic color for the icon and shape, adapted using `ThemeManager`         | [Config Ref.][color-jinja]       |
 | `bar_color`   | JINJA    | Dynamic progress bar color, also handled through `ThemeManager`            | [Config Ref.][bar_color-jinja]   |
@@ -901,14 +899,18 @@ The following options remain fully compatible with this new card:
 | **Option**                   | **Type**           | **Description**                                                                | **Link**                                         |
 | :--------------------------- | :----------------- | :----------------------------------------------------------------------------- | :----------------------------------------------- |
 | **Data Options**             |                    |                                                                                |                                                  |
-| `entity`                     | string (required)  | Entity ID.                                                                     | [Config Ref.][config-entity]                     |
+| `entity`                     | string (optional)  | Entity ID.                                                                     | [Config Ref.][config-entity]                     |
 | **Styling Options**          |                    |                                                                                |                                                  |
+| `badge_icon`                 | Jinja (optional)   | Dynamic badge icon                                                             | [Config Ref.][config-badge_icon]                 |
+| `badge_color`                | Jinja (optional)   | Dynamic badge color                                                            | [Config Ref.][config-badge_color]                |
 | `bar_size`                   | string (optional)  | Customize the size or thickness of the progress bar.                           | [Config Ref.][config-bar_size]                   |
+| `bar_effect`                 | string/list/jinja  | Visual effects for the bar                                                     | [Config Ref.][config-bar_effect]                 |
 | `bar_orientation`            | string (optional)  | Define the direction of the progress bar (e.g., `ltr`, `rtl`).                 | [Config Ref.][config-bar_orientation]            |
 | `force_circular_background`  | boolean (optional) | Force icon circle background.                                                  | [Config Ref.][config-force_circular_background]  |
 | `layout`                     | string (optional)  | Adjust the overall layout (e.g., `horizontal`, `vertical`).                    | [Config Ref.][config-layout]                     |
 | `frameless`                  | boolean (optional) | Remove the default card border and background for a seamless, flat appearance. | [Config Ref.][config-frameless]                  |
 | `marginless`                 | boolean (optional) | Remove vertical margin for a more compact template display.                    | [Config Ref.][config-marginless]                 |
+| `height`                     | string (optional)  | Card height                                                                    | [Config Ref.][config-height]                     |
 | `min_width`                  | string (optional)  | Set a minimum width for the template to ensure consistent layout.              | [Config Ref.][config-min_width]                  |
 | `reverse_secondary_info_row` | boolean (optional) | Flip info bar layout.                                                          | [Config Ref.][config-reverse_secondary_info_row] |
 | `center_zero`                | boolean (optional) | Center the bar on 0.                                                           | [Config Ref.][config-center_zero]                |
@@ -1223,9 +1225,10 @@ The following options remain fully compatible with this new card:
 | **Option**                   | **Type**           | **Description**                                                                | **Link**                                         |
 | :--------------------------- | :----------------- | :----------------------------------------------------------------------------- | :----------------------------------------------- |
 | **Data Options**             |                    |                                                                                |                                                  |
-| `entity`                     | string (required)  | Entity ID.                                                                     | [Config Ref.][config-entity]                     |
+| `entity`                     | string (optional)  | Entity ID.                                                                     | [Config Ref.][config-entity]                     |
 | **Styling Options**          |                    |                                                                                |                                                  |
 | `bar_size`                   | string (optional)  | Customize the size or thickness of the progress bar.                           | [Config Ref.][config-bar_size]                   |
+| `bar_effect`                 | string/list/jinja  | Visual effects for the bar                                                     | [Config Ref.][config-bar_effect]                 |
 | `bar_orientation`            | string (optional)  | Define the direction of the progress bar (e.g., `ltr`, `rtl`).                 | [Config Ref.][config-bar_orientation]            |
 | `frameless`                  | boolean (optional) | Remove the default card border and background for a seamless, flat appearance. | [Config Ref.][config-frameless]                  |
 | `marginless`                 | boolean (optional) | Remove vertical margin for a more compact template display.                    | [Config Ref.][config-marginless]                 |
@@ -1460,8 +1463,6 @@ This project is licensed under the GPL-3.0 license.
 [name-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#name-jinja>
 [icon-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#icon-jinja>
 [secondary-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#secondary-jinja>
-[badge_icon-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#badge_icon-jinja>
-[badge_color-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#badge_color-jinja>
 [percent-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#percent-jinja>
 [color-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#color-jinja>
 [bar_color-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_color-jinja>
