@@ -59,7 +59,7 @@ as defined by the CSS standard.
 | `white`        | `var(--white-color)`       |
 | `disabled`     | `var(--disabled-color)`    |
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 ## Predefined theme
 
@@ -96,7 +96,7 @@ theme: optimal_when_high
 > The icon is automatically retrieved from the entity but can be overridden
 > using the `icon` parameter.
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 <a id="optimal-low"></a>
 
@@ -125,7 +125,7 @@ theme: optimal_when_low
 > The icon is automatically retrieved from the entity but can be overridden
 > using the `icon` parameter.
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 <a id="light"></a>
 
@@ -161,7 +161,7 @@ The `mdi:lightbulb-outline` icon is used for lower brightness levels, while
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/light.png" alt="Image title" width="500"/>
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 <a id="temperature"></a>
 
@@ -207,7 +207,7 @@ associated with a specific color:
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/temperature.png" alt="Image title" width="500"/>
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 <a id="humidity"></a>
 
@@ -244,7 +244,7 @@ a clear and intuitive display of humidity levels.
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/humidity.png" alt="Image title" width="500"/>
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 <a id="voc"></a>
 
@@ -293,7 +293,7 @@ clear and intuitive display of VOC levels.
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/voc.png" alt="Image title" width="250"/>
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 <a id="pm25"></a>
 
@@ -343,7 +343,7 @@ clear and intuitive display of PM2.5 pollution levels.
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/pm.png" alt="Image title" width="250"/>
 </details>
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 ## Adapt to HA custom theme
 
@@ -377,4 +377,6 @@ my_custom_theme:
 Once set, the progress bar background will reflect the new color consistently
 across all cards using this variable.
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
+
+[🔼 Back to top]: #top

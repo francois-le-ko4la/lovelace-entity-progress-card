@@ -119,7 +119,9 @@ option: true
 
 #### List (Array)
 
-An ordered collection of elements, which can contain multiple values. Each element can be of any type. In YAML, this corresponds to a list indicated with dashes (`-`).  
+An ordered collection of elements, which can contain multiple values.
+Each element can be of any type. In YAML, this corresponds to a list
+indicated with dashes (`-`).  
 
 _Example_:
 
@@ -132,7 +134,8 @@ option:
 
 #### Map (Object)
 
-A set of key-value pairs, also called a dictionary or map. Each key is associated with a value that can be of any type.
+A set of key-value pairs, also called a dictionary or map.
+Each key is associated with a value that can be of any type.
 
 _Example_:
 
@@ -144,16 +147,19 @@ object:
 
 #### JINJA
 
-A static string or a Jinja template. The expression is evaluated in the context of the entity's state and attributes.
-The keyword `entity` represente the current entity id.
+A static string or a Jinja template.
+
+This field supports templating using [Home Assistant Jinja2 templates][ha-jinja],
+allowing the option to be conditionally rendered.
+
+The expression is evaluated in the context of the entity's state and attributes.
+The keyword `entity` can be used to represent the entity defined at the card level.
 
 _Example_:
 
 ```yaml
 option: "{{ state_attr('sensor.temperature', 'unit_of_measurement') }}"
 ```
-
-See [Home Assistant Templating](https://www.home-assistant.io/docs/configuration/templating/).
 
 ### Option description
 
@@ -210,6 +216,14 @@ _Example_:
 
 > **`name`** [JINJA] ➡️ string
 
+### YAML Only
+
+The following badges is used throughout this documentation:
+
+[![YAML Only][yaml-only]](#yaml-only)
+
+These options are not available in the visual card editor and must be configured manually in YAML mode.
+
 
 ## 🧩 entity-progress-card / entity-progress-badge
 
@@ -240,7 +254,7 @@ entity: sensor.hp_envy_6400_series_tri_color_cartridge
 > Timer are supported (1.0.43). `attribute`, `min`, `max` parameters are not
 > considered.
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `attribute`
 
@@ -277,7 +291,7 @@ _default attribute:_
 | light.xxx          | brightness (%)    |
 | fan.xxx            | percentage        |
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `name`
 
@@ -298,7 +312,7 @@ type: custom:entity-progress-card
 name: ABC
 ```
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `unit`
 
@@ -357,7 +371,7 @@ unit: ABC
 > Disabling the Unit: To completely hide the unit from display, set the
 > disable_unit option to true.
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `decimal`
 
@@ -407,7 +421,7 @@ decimal: 1
 > and 0 for other units). When updating, you will need to adjust the parameter
 > according to your needs.
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `min_value`
 
@@ -437,7 +451,7 @@ Suppose you are measuring the weight of a connected litter box, where:
 - `value` = 8 (the current weight).
 - `percentage` = 40%
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `max_value`
 
@@ -462,7 +476,7 @@ max_value: 255
 - LQI @ 150 (entity) with max_value @ 255 (static value -> max_value = 255)
 - A (entity_a) with max_value (entity_b)
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `max_value_attribute`
 
@@ -471,11 +485,11 @@ max_value: 255
 The Home Assistant `max_value`'s attribute to display. `max_value` must be an
 entity. See `attribute`.
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `reverse`
 
-[![Static Badge - reverse](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#reverse)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`reverse`** [Boolean] _(optional, default: `false`)_
 
@@ -498,11 +512,11 @@ name: Remaining Time reverse
 reverse: true
 ```
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `state_content`
 
-[![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#state_content)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`state_content`** [String]|[List] _(optional)_:
 
@@ -553,18 +567,19 @@ state_content:
 - This feature is useful for adding additional context (e.g., position,
   status...) to the main progress value.
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `custom_info`
 
-[![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#custom_info)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`custom_info`** [JINJA] _(optional)_:
 
 The `custom_info` option allows you to display additional, customizable text or
-HTML next to the entity’s value. It supports full [Home Assistant Jinja2 templates](https://www.home-assistant.io/docs/configuration/templating/) and inline HTML, enabling you to style or conditionally format the
-information based on sensor states or logic.
-The keyword `entity` can be used to represent the entity defined at the card level.
+HTML next to the entity’s value. It supports full [JINJA] and inline HTML, enabling
+you to style or conditionally format the information based on sensor states or logic.
+
+See [JINJA].
 
 _Useful for adding_:
 
@@ -599,18 +614,19 @@ custom_info: >-
 > - This field supports HTML for advanced formatting.
 > - If the template evaluates to an empty string, nothing will be displayed.
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `name_info`
 
-[![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#name_info)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`name_info`** [JINJA] _(optional)_:
 
 The `name_info` option allows you to display additional, customizable text or
-HTML next to the entity’s name. It supports full [Home Assistant Jinja2 templates](https://www.home-assistant.io/docs/configuration/templating/) and inline HTML, enabling you to style or conditionally format the
-information based on sensor states or logic.
-The keyword `entity` can be used to represent the entity defined at the card level.
+HTML next to the entity’s name. It supports full [JINJA] and inline HTML,
+enabling you to style or conditionally format the information based on sensor states or logic.
+
+See [JINJA].
 
 _Useful for adding_:
 
@@ -636,11 +652,11 @@ name_info: >-
 > - This field supports HTML for advanced formatting.
 > - If the template evaluates to an empty string, nothing will be displayed.
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `additions`
 
-[![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#additions)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`additions`** [List] _(optional)_
 
@@ -663,7 +679,7 @@ additions:
 
 Customize the look and feel: icons, layout, colors, sizes, and visual themes.
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `icon`
 
@@ -686,7 +702,7 @@ _Order of Priority for the Icon:_
 - Icon Parameter: A custom icon specifically defined for the item.
 - Entity icon.
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `color`
 
@@ -704,18 +720,18 @@ type: custom:entity-progress-card
 color: rgb(110, 65, 171)
 ```
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `badge_icon`
 
-[![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#badge_icon)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`badge_icon`** [JINJA] _(optional)_:
 
 The `badge_icon` option lets you display a dynamic badge, offering a quick
 status hint or symbolic representation based on logic or sensor values.
 
-This field supports templating using [Home Assistant Jinja2 s](https://www.home-assistant.io/docs/configuration/templating/), allowing the icon to be conditionally rendered. The keyword `entity` can be used to represent the entity defined at the card level.
+See [JINJA].
 
 _Example_:
 
@@ -735,11 +751,11 @@ badge_icon: >-
 > If the returns nothing (i.e., empty string or None), the badge will
 > not be displayed.
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `badge_color`
 
-[![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#badge_color)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`badge_color`** [JINJA] _(optional)_:
 
@@ -747,7 +763,7 @@ The `badge_color` option lets you setup a dynamic badge's background color,
 offering a quick status hint or symbolic representation based on logic or
 sensor values.
 
-This field supports templating using [Home Assistant Jinja2 templates](https://www.home-assistant.io/docs/configuration/templating/), allowing the icon to be conditionally rendered. The keyword `entity` can be used to represent the entity defined at the card level.
+See [JINJA].
 
 _Example_:
 
@@ -762,7 +778,7 @@ badge_color: >-
   {% endif %}
 ```
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `bar_color`
 
@@ -779,7 +795,7 @@ type: custom:entity-progress-card
 bar_color: rgb(110, 65, 171)
 ```
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `bar_size`
 
@@ -798,11 +814,11 @@ bar_size: medium
 
 `xlarge` can only be configured via YAML, and the interface automatically adjusts to accommodate the size of the progress bar.
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `bar_effect`
 
-> **`bar_effect`** [String] or list or JINJA _(optional)_
+> **`bar_effect`** [String] or [List] or [JINJA] _(optional)_
 
 Defines visual effects applied to the progress bar. You can use a single effect
 or combine multiple in a list.
@@ -841,11 +857,11 @@ bar_effect: |-
   {% endif %}
 ```
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `bar_orientation`
 
-[![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#bar_orientation)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`bar_orientation`** [String] {`rtl`|`ltr`} _(optional, default: `ltr`)_
 
@@ -875,7 +891,7 @@ reverse: true
 > While this parameter was originally designed for timers, it can be applied to
 > any entity where a reversed progress bar is needed.
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `force_circular_background`
 
@@ -903,7 +919,7 @@ entity: timer.living_room
 force_circular_background: true
 ```
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `layout`
 
@@ -923,11 +939,11 @@ type: custom:entity-progress-card
 layout: vertical
 ```
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `frameless`
 
-[![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#frameless)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`frameless`** [Boolean] _(optional, default: false)_
 
@@ -952,11 +968,11 @@ entity: timer.living_room
 frameless: true
 ```
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `marginless`
 
-[![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#marginless)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`marginless`** [Boolean] _(optional, default: false)_
 
@@ -970,11 +986,11 @@ entity: sensor.cpu_usage
 marginless: true
 ```
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `height`
 
-[![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#height)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`height`** [String] (optional)
 
@@ -993,11 +1009,11 @@ entity: sensor.temperature
 height: 140px
 ```
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `min_width`
 
-[![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#min_width)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`min_width`** [String] (optional)
 
@@ -1012,11 +1028,11 @@ entity: sensor.temperature
 min_width: 140px
 ```
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `reverse_secondary_info_row`
 
-[![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#reverse_secondary_info_row)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`reverse_secondary_info_row`** [Boolean] _(optional, default: false)_
 
@@ -1033,11 +1049,11 @@ entity: timer.living_room
 reverse_secondary_info_row: true
 ```
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `unit_spacing`
 
-[![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#unit_spacing)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`unit_spacing`** [String] ➡️ {`auto`|`space`|`no-space`} _(optional, default: `auto`)_
 
@@ -1051,11 +1067,11 @@ following locale rules or overriding them explicitly.
 - `no-space`: Forces no space between number and unit (e.g., 80%), regardless
   of locale
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `center_zero`
 
-[![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#center_zero)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`center_zero`** [Boolean] _(optional, default: `false`)_
 
@@ -1070,7 +1086,7 @@ entity: sensor.energy_balance
 center_zero: true
 ```
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `theme`
 
@@ -1096,11 +1112,11 @@ theme: light
 > introduced in version `1.1.7`, eliminate the need for multiple theme
 > definitions and are sufficient to replace the deprecated themes.
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `custom_theme`
 
-[![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#custom_theme)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`custom_theme`** [List] of [Map] _(optional)_
 
@@ -1207,7 +1223,7 @@ custom_theme:
     icon: mdi:abacus
 ```
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `hide`
 
@@ -1234,7 +1250,7 @@ hide:
   - secondary_info
 ```
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `disable_unit`
 
@@ -1251,11 +1267,11 @@ type: custom:entity-progress-card
 disable_unit: true
 ```
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `watermark`
 
-[![Static Badge](https://img.shields.io/badge/YAML-Only-orange.svg?style=flat)](#watermark)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`watermark`** [Map] (optional)_:
 
@@ -1309,7 +1325,7 @@ thresholds depending on the entity’s native unit.
 
 Define interactions on tap, double tap, or hold gestures.
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `xyz_action`
 
@@ -1448,7 +1464,7 @@ These options are the same as those of the `entity-progress-card` and are availa
 
 See [`name`](#name).
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `icon` (Jinja)
 
@@ -1456,7 +1472,7 @@ See [`name`](#name).
 
 See [`icon`](#icon).
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `secondary` (Jinja)
 
@@ -1464,7 +1480,7 @@ See [`icon`](#icon).
 
 Renders the secondary content (e.g., unit, status, additional info).
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `badge_icon` (Jinja)
 
@@ -1472,7 +1488,7 @@ Renders the secondary content (e.g., unit, status, additional info).
 
 See [`badge_icon`](#badge_icon).
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `badge_color` (Jinja)
 
@@ -1480,7 +1496,7 @@ See [`badge_icon`](#badge_icon).
 
 See [`badge_color`](#badge_color).
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `percent` (Jinja)
 
@@ -1488,7 +1504,7 @@ See [`badge_color`](#badge_color).
 
 Numerical value representing the progress state.
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `color` (Jinja)
 
@@ -1496,7 +1512,7 @@ Numerical value representing the progress state.
 
 See [`color`](#color).
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 #### `bar_color` (Jinja)
 
@@ -1504,8 +1520,10 @@ See [`color`](#color).
 
 See [`bar_color`](#bar_color).
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
+[🔼 Back to top]: #top
+[yaml-only]: https://img.shields.io/badge/YAML-Only-orange.svg?style=flat
 [String]: #string
 [Float]: #float
 [Integer]: #integer
@@ -1513,4 +1531,5 @@ See [`bar_color`](#bar_color).
 [List]: #list-array
 [Map]: #map-object
 [JINJA]: #jinja
+[ha-jinja]: https://www.home-assistant.io/docs/configuration/templating/
 [token-color]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/theme.md#token-color

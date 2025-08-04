@@ -12,9 +12,9 @@
 
 # Lovelace Entity Progress Card [![ReadMe](https://img.shields.io/badge/ReadMe-018EF5?logo=readme&logoColor=fff)](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/1.4.12/README.md)
 
-[![Static Badge](https://img.shields.io/badge/Home%20Assistant-blue?style=for-the-badge&logo=homeassistant&logoColor=white&color=blue)](https://github.com/francois-le-ko4la/lovelace-entity-progress-card)
-[![Static Badge](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=Javascript&logoColor=black&color=%23F7DF1E)](https://github.com/francois-le-ko4la/lovelace-entity-progress-card)
-[![Static Badge](https://img.shields.io/badge/Discord-%235865F2?style=for-the-badge&logo=Discord&logoColor=white&color=%235865F2)](https://discord.gg/tyMQ2SfyNG)
+[![Home Assistant][ha-badge]][repo-link]
+[![JavaScript][js-badge]][repo-link]
+[![Discord][discord-badge]][discord-link]
 
 A modern Entity progress card for Home Assistant's Lovelace UI.
 
@@ -81,7 +81,7 @@ This card is based on custom CSS and leverages existing code to fine-tune the ap
   supporting multiple languages 🇸🇦 🇧🇩 🇨🇿 🇩🇰 🇩🇪 🇬🇷 🇬🇧 🇪🇸 🇫🇮 🇫🇷 🇮🇳 🇭🇷 🇮🇩 🇮🇹 🇯🇵
   🇰🇷 🇲🇰 🇳🇴 (bokmål) 🇳🇱 🇵🇱 🇵🇹 🇷🇴 🇸🇪 🇹🇭 🇹🇷 🇺🇦 🇻🇳 🇨🇳.
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 <a id="installation"></a>
 
@@ -89,11 +89,11 @@ This card is based on custom CSS and leverages existing code to fine-tune the ap
 
 ### ⚙️ Prerequisites
 
-| Platform       | Browsers |        |         |         |        |
-|:--------------:|:--------:|:------:|:-------:|:-------:|:------:|
-| ![HA](https://avatars.githubusercontent.com/u/13844975?s=64&v=4) | ![Chrome](https://raw.githubusercontent.com/alrra/browser-logos/main/src/chrome/chrome_64x64.png) | ![Edge](https://raw.githubusercontent.com/alrra/browser-logos/main/src/edge/edge_64x64.png) | ![Firefox](https://raw.githubusercontent.com/alrra/browser-logos/main/src/firefox/firefox_64x64.png) | ![Safari](https://raw.githubusercontent.com/alrra/browser-logos/main/src/safari/safari_64x64.png) | ![Opera](https://raw.githubusercontent.com/alrra/browser-logos/main/src/opera/opera_64x64.png) |
-| **Home Assistant** | **Chrome** | **Edge** | **Firefox** | **Safari** | **Opera** |
-| `2024.0+`      | `98+`     | `98+`   | `94+`     | `15.4+`   | `84+`    |
+| Platform           | Browsers               |                    |                          |                        |                      |
+|:------------------:|:----------------------:|:------------------:|:------------------------:|:----------------------:|:--------------------:|
+| ![HA][ha-logo]     | ![Chrome][chrome-logo] | ![Edge][edge-logo] | ![Firefox][firefox-logo] | ![Safari][safari-logo] | ![Opera][opera-logo] |
+| **Home Assistant** | **Chrome**             | **Edge**           | **Firefox**              | **Safari**             | **Opera**            |
+| `2024.0+`          | `98+`                  | `98+`              | `94+`                    | `15.4+`                | `84+`                |
 
 > [!IMPORTANT]
 >
@@ -130,7 +130,7 @@ Use this link to directly go to the repository in HACS
 
 </details>
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 <a id="components"></a>
 
@@ -205,7 +205,7 @@ _Examples_:
 
 <br />
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 <a id="usage"></a>
 
@@ -225,7 +225,7 @@ The card editor allows you to quickly set up and customize the card.
 
 <br />
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 <a id="entity-progress-card"></a>
 
@@ -858,7 +858,7 @@ This topics are beyond the scope of this guide.
 </details>
 <br />
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 <a id="entity-progress-card-template"></a>
 
@@ -1109,7 +1109,7 @@ track solar cycles from your dashboard.
 </details>
 <br />
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 <a id="entity-progress-badge"></a>
 
@@ -1182,7 +1182,7 @@ icon: mdi:air-conditioner
 
 <br />
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 <a id="entity-progress-badge-template"></a>
 
@@ -1269,7 +1269,7 @@ percent: |-
 
 <br />
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 <a id="theme"></a>
 
@@ -1277,7 +1277,7 @@ percent: |-
 
 [Read this document.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/theme.md)  
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 <a id="language-number-support"></a>
 
@@ -1347,7 +1347,7 @@ Numbers are displayed based on your regional preferences, using:
 By default, the card uses standard Arabic numerals (0-9) for maximum
 compatibility.  
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 <a id="troubleshooting"></a>
 
@@ -1355,7 +1355,7 @@ compatibility.
 
 [Read this document.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/troubleshooting.md)  
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 <a id="contributing"></a>
 
@@ -1363,7 +1363,7 @@ compatibility.
 
 Want more features? Want to improve this card? Contributions are welcome! 🚀  
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 <a id="credits"></a>
 
@@ -1405,10 +1405,21 @@ Want more features? Want to improve this card? Contributions are welcome! 🚀
 
 This project is licensed under the GPL-3.0 license.  
 
-[🔼 Back to top](#top)
+[🔼 Back to top]
 
 <!-- Links -->
-
+[🔼 Back to top]: #top
+[ha-badge]: https://img.shields.io/badge/Home%20Assistant-blue?style=for-the-badge&logo=homeassistant&logoColor=white&color=blue
+[js-badge]: https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=Javascript&logoColor=black&color=%23F7DF1E
+[discord-badge]: https://img.shields.io/badge/Discord-%235865F2?style=for-the-badge&logo=Discord&logoColor=white&color=%235865F2
+[repo-link]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card
+[discord-link]: https://discord.gg/tyMQ2SfyNG
+[ha-logo]: https://avatars.githubusercontent.com/u/13844975?s=64&v=4
+[chrome-logo]: https://raw.githubusercontent.com/alrra/browser-logos/main/src/chrome/chrome_64x64.png
+[edge-logo]: https://raw.githubusercontent.com/alrra/browser-logos/main/src/edge/edge_64x64.png
+[firefox-logo]: https://raw.githubusercontent.com/alrra/browser-logos/main/src/firefox/firefox_64x64.png
+[safari-logo]: https://raw.githubusercontent.com/alrra/browser-logos/main/src/safari/safari_64x64.png
+[opera-logo]: https://raw.githubusercontent.com/alrra/browser-logos/main/src/opera/opera_64x64.png
 [FCR]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md>
 [config-entity]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#entity>
 [config-attribute]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#attribute>
