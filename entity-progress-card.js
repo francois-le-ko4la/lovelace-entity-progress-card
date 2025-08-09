@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.5.0
+ * @version 1.5.0-RC1
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.5.0-beta1';
+const VERSION = '1.5.0-RC1';
 const CARD = {
   meta: {
     card: {
@@ -49,7 +49,7 @@ const CARD = {
   },
   config: {
     dev: true,
-    debug: { card: true, editor: true, interactionHandler: false, ressourceManager: false, hass: false },
+    debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false, hass: false },
     language: 'en',
     value: { min: 0, max: 100 },
     unit: {
@@ -571,7 +571,7 @@ const THEME = {
 
 const SEV = {
   info: 'info',
-  warn: 'warning',
+  warning: 'warning',
   error: 'error',
   debug: 'debug'
 };
@@ -4407,7 +4407,7 @@ const has = {
 
 const Logger = {
   create(name, level = SEV.debug) {
-    const levels = { error: 0, warn: 1, info: 2, debug: 3 };
+    const levels = { error: 0, warning: 1, info: 2, debug: 3 };
     const currentLevel = levels[level] || 3;
 
     const shouldLog = (logLevel) => levels[logLevel] <= currentLevel;
@@ -4418,7 +4418,7 @@ const Logger = {
 
       debug: (msg, data) => shouldLog(SEV.debug) && console.debug(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
       info: (msg, data) => shouldLog(SEV.info) && console.info(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
-      warn: (msg, data) => shouldLog(SEV.warn) && console.warn(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
+      warning: (msg, data) => shouldLog(SEV.warning) && console.warn(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
       error: (msg, data) => shouldLog(SEV.error) && console.error(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
 
       wrap: (fn, fnName) => {
@@ -4645,6 +4645,9 @@ const StructureTemplates = {
 
     return StructureElements.container().replace('{{content}}', StructureElements.leftFull() + StructureElements.rightMinimal(options));
   },
+  feature: (options = {}) => {
+    StructureElements.progressBar(options);
+  },
 };
 
 class ObjStructure {
@@ -4673,6 +4676,11 @@ class BadgeStructure extends ObjStructure {
 class TemplateStructure extends ObjStructure {
   _cardType = 'template';
 }
+
+class FeatureStructure extends ObjStructure {
+  _cardType = 'feature';
+}
+
 
 /******************************************************************************************
  * 🛠️ NumberFormatter
@@ -6012,7 +6020,7 @@ const types = {
           error.severity = SEV.info;
           error.errorCode = ERROR_CODES.appliedDefaultValue.code;
         } else {
-          error.severity = SEV.warn;
+          error.severity = SEV.warning;
         }
         error.fallback = defaultVal;
       }
@@ -6122,7 +6130,7 @@ const types = {
       throw new ValidationError(
         path, // chemin vers watermark
         'watermarkValidation', // code d'erreur
-        SEV.warn, // sévérité
+        SEV.warning, // sévérité
         result, // ✅ failback
         null, // pas de partialConfig ici
         errors // toutes les erreurs individuelles
@@ -6529,9 +6537,15 @@ const createEntityProxy = (hassProvider, entityId) => new Proxy({}, {
 class BaseConfigHelper {
   #hassProvider = HassProviderSingleton.getInstance();
   #HAError = null;
+  #lastMsgConsole = null;
+  #log = null;
   _isDefined = false;
   _configParsed = {};
   _yamlSchema = null;
+
+  constructor() {
+    this.#log = initLogger(this, false);
+  }
 
   // === GETTERS/SETTERS ===
   get config() {
@@ -6542,9 +6556,11 @@ class BaseConfigHelper {
     this._isDefined = true;
     BaseConfigHelper.#logDeprecatedOption(config);
     this._configParsed = this._yamlSchema.parse(config);
-    console.log(this.config);
+
+    // console.log(this.config);
     console.log(this._configParsed);
-    console.log(this._hassProvider.language);
+    // console.log(this._hassProvider.language);
+    this.#lastMsgConsole = null;
   }
 
   static #logDeprecatedOption(config) {
@@ -6603,6 +6619,22 @@ class BaseConfigHelper {
   }
 
   checkConfig() {
+    this._showConfigErrorConsole(); // structure, type...
+    this._checkHAEnvironment(); // ha env: entity, attribute ...
+  }
+
+  _showConfigErrorConsole() {
+    if (is.nonEmptyArray(this._configParsed.errors)) {
+      const curError = this._configParsed.errors[0];
+      const msgConsole = `${curError.path.join('.')} : ${this._hassProvider.getMessage(curError.errorCode)}`;
+      if (this.#lastMsgConsole !== msgConsole) {
+        this.#lastMsgConsole = msgConsole;
+        this.#log[curError.severity]?.(msgConsole);
+      }
+    }
+  }
+
+  _checkHAEnvironment() {
     const entityState = this._hassProvider.getEntityStateObj(this.config.entity);
     const maxValueState = is.nonEmptyString(this.config.max_value) ? this._hassProvider.getEntityStateObj(this.config.max_value) : null;
 

@@ -169,3 +169,7 @@ If you recently **updated** the card and the issue started afterward, you can:
 - roll back to the **previous working version** using HACS;
 - check if a **patch** or fix is already available;
 - wait for an update — your dashboards will remain intact.
+
+---
+
+_This troubleshooting guide is inspired by open source best practices and adapted for entity-progress-card._

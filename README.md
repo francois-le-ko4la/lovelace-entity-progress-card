@@ -1278,7 +1278,8 @@ percent: |-
 
 ## 🎨 Theme
 
-[Read this document.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/theme.md)  
+Explore all the customization options and learn how to style your setup by reading the [Theme Guide].
+
 
 [🔼 Back to top]
 
@@ -1356,7 +1357,7 @@ compatibility.
 
 ## 🚨 Errors, Deprecations & Troubleshooting
 
-[Read this document.](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/troubleshooting.md)  
+Need help? Find solutions and important updates in the [Errors, Deprecations & Troubleshooting Guide].
 
 [🔼 Back to top]
 
@@ -1365,6 +1366,7 @@ compatibility.
 ## 👥 Contributing
 
 Want more features? Want to improve this card? Contributions are welcome! 🚀  
+Check out the [Contributing Guide] to get started.
 
 [🔼 Back to top]
 
@@ -1400,7 +1402,7 @@ Want more features? Want to improve this card? Contributions are welcome! 🚀
   ➡️ Discord activity  
   ➡️ Regular tests & feedbacks
 
-- **Special thanks to all contributors** – including those who submitted pull requests, opened issues, and shared feedback (GitHub / Discord)!
+- **Special thanks to all contributors** – including those who submitted pull requests, opened issues, and shared feedback ([GitHub Issues] / [Discord])!
 
 <a id="license"></a>
 
@@ -1417,6 +1419,11 @@ This project is licensed under the GPL-3.0 license.
 [discord-badge]: https://img.shields.io/badge/Discord-%235865F2?style=for-the-badge&logo=Discord&logoColor=white&color=%235865F2
 [repo-link]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card
 [discord-link]: https://discord.gg/tyMQ2SfyNG
+[Discord]: https://discord.gg/tyMQ2SfyNG
+[GitHub Issues]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues
+[Errors, Deprecations & Troubleshooting Guide]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/troubleshooting.md
+[Contributing Guide]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/contributing.md
+[Theme Guide]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/theme.md 
 [ha-logo]: https://avatars.githubusercontent.com/u/13844975?s=64&v=4
 [chrome-logo]: https://raw.githubusercontent.com/alrra/browser-logos/main/src/chrome/chrome_64x64.png
 [edge-logo]: https://raw.githubusercontent.com/alrra/browser-logos/main/src/edge/edge_64x64.png

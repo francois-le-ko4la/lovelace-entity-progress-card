@@ -3,6 +3,7 @@
 # ⚙️ Full Configuration Reference
 
 - [⚙️ Full Configuration Reference](#️-full-configuration-reference)
+  - [Introduction](#introduction)
   - [Conventions](#conventions)
     - [Input types](#input-types)
       - [String](#string)
@@ -70,6 +71,12 @@
       - [`percent` (Jinja)](#percent-jinja)
       - [`color` (Jinja)](#color-jinja)
       - [`bar_color` (Jinja)](#bar_color-jinja)
+
+## Introduction
+
+This document provides an in-depth overview of all available options, accompanied by detailed examples to
+help you configure the system precisely to your needs. Whether you’re optimizing for customizing features,
+or ensuring compatibility, this guide will serve as your comprehensive reference.
 
 ## Conventions
 
@@ -1692,6 +1699,10 @@ bar_color: >-
 ```
 
 [🔼 Back to top]
+
+---
+
+_This reference guide is adapted for entity-progress-card._
 
 [🔼 Back to top]: #top
 [yaml-only]: https://img.shields.io/badge/YAML-Only-orange.svg?style=flat
