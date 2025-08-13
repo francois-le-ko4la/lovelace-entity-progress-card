@@ -263,9 +263,12 @@ This is the primary card for displaying entity progress.
 | `badge_color`                      | Jinja (optional)         | —                           | Dynamic badge color                     | [Config Ref.][config-badge_color]                |
 | `bar_color`                        | string (optional)        | `var(--state-icon-color)`   | Color of progress bar                   | [Config Ref.][config-bar_color]                  |
 | `bar_size`                         | string (optional)        | `small`                     | Size of the progress bar                | [Config Ref.][config-bar_size]                   |
+| `bar_position`                     | string (optional)        | `default`                   | Position of the progress bar            | [Config Ref.][config-bar_position]               |
+| `bar_single_line`                  | boolean (optional)       | `false`                     | single-line mode for overlay bars       | [Config Ref.][config-bar_single_line]            |
 | `bar_effect`                       | string/list/jinja        | —                           | Visual effects for the bar              | [Config Ref.][config-bar_effect]                 |
 | `bar_orientation`                  | string (optional)        | `ltr`                       | Bar direction                           | [Config Ref.][config-bar_orientation]            |
 | `force_circular_background`        | boolean (optional)       | `false`                     | Force icon circle background            | [Config Ref.][config-force_circular_background]  |
+| `trend_indicator`                  | string (optional)        | `false`                     | Displays trend icons.                   | [Config Ref.][config-trend_indicator]            |
 | `layout`                           | string (optional)        | `horizontal`                | Layout direction                        | [Config Ref.][config-layout]                     |
 | `frameless`                        | boolean (optional)       | `false`                     | Remove card frame                       | [Config Ref.][config-frameless]                  |
 | `marginless`                       | boolean (optional)       | `false`                     | Remove top/bottom margin                | [Config Ref.][config-marginless]                 |
@@ -904,9 +907,12 @@ The following options remain fully compatible with this new card:
 | `badge_icon`                 | Jinja (optional)   | Dynamic badge icon                                                             | [Config Ref.][config-badge_icon]                 |
 | `badge_color`                | Jinja (optional)   | Dynamic badge color                                                            | [Config Ref.][config-badge_color]                |
 | `bar_size`                   | string (optional)  | Customize the size or thickness of the progress bar.                           | [Config Ref.][config-bar_size]                   |
+| `bar_position`               | string (optional)  | Position of the progress bar                                                   | [Config Ref.][config-bar_position]               |
+| `bar_single_line`            | boolean (optional) | single-line mode for overlay bars                                              | [Config Ref.][config-bar_single_line]            |
 | `bar_effect`                 | string/list/jinja  | Visual effects for the bar                                                     | [Config Ref.][config-bar_effect]                 |
 | `bar_orientation`            | string (optional)  | Define the direction of the progress bar (e.g., `ltr`, `rtl`).                 | [Config Ref.][config-bar_orientation]            |
 | `force_circular_background`  | boolean (optional) | Force icon circle background.                                                  | [Config Ref.][config-force_circular_background]  |
+| `trend_indicator`            | string (optional)  | Displays trend icons.                                                          | [Config Ref.][config-trend_indicator]            |
 | `layout`                     | string (optional)  | Adjust the overall layout (e.g., `horizontal`, `vertical`).                    | [Config Ref.][config-layout]                     |
 | `frameless`                  | boolean (optional) | Remove the default card border and background for a seamless, flat appearance. | [Config Ref.][config-frameless]                  |
 | `marginless`                 | boolean (optional) | Remove vertical margin for a more compact template display.                    | [Config Ref.][config-marginless]                 |
@@ -1450,9 +1456,12 @@ This project is licensed under the GPL-3.0 license.
 [config-badge_color]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#badge_color>
 [config-bar_color]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_color>
 [config-bar_size]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_size>
+[config-bar_position]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_position>
+[config-bar_single_line]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_single_line>
 [config-bar_effect]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_effect>
 [config-bar_orientation]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_orientation>
 [config-force_circular_background]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#force_circular_background>
+[config-trend_indicator]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#trend_indicator>
 [config-layout]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#layout>
 [config-frameless]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#frameless>
 [config-marginless]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#marginless>

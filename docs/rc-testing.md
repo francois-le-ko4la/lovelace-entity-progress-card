@@ -4,6 +4,7 @@ We provide a process designed to be as safe as possible, but please always verif
 
 > [!WARNING]
 > **Development Status**
+>
 > - Release candidate version - not intended for production use / Avoid use on critical production machines
 > - Potential bugs and instabilities may occur
 > - Features subject to change before final release
@@ -27,6 +28,7 @@ We recommend separating the RC version from your main setup by creating a dedica
 ### 📁 Create a Test Directory
 
 In your Home Assistant config folder, create a `test` folder.
+
 ```sh
 mkdir -p config/www/test/
 ```
@@ -47,6 +49,7 @@ mkdir -p config/www/test/
   - reload the browser cache (**`CTRL`** + **`F5`** or clear cache).
 
 ## 🧪 Test the RC Card in Lovelace
+
 ### How to use the RC version
 
 We strongly recommend duplicating an existing card and modifying only the type.  
@@ -68,6 +71,7 @@ This allows side-by-side testing of the stable and RC versions.
 ### ✅ Testing Checklist
 
 A standard checklist:
+
 - [ ] Card loads without errors
 - [ ] All existing features work as expected
 - [ ] New RC features function properly
@@ -78,6 +82,7 @@ A standard checklist:
 ### 📝 Providing Feedback
 
 Feedback will be done on Discord only. When reporting issues, please include:
+
 - Home Assistant version
 - Browser type and version
 - Console error messages (if any)

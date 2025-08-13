@@ -44,9 +44,12 @@
       - [`badge_color`](#badge_color)
       - [`bar_color`](#bar_color)
       - [`bar_size`](#bar_size)
+      - [`bar_position`](#bar_position)
+      - [`bar_single_line`](#bar_single_line)
       - [`bar_effect`](#bar_effect)
       - [`bar_orientation`](#bar_orientation)
       - [`force_circular_background`](#force_circular_background)
+      - [`trend_indicator`](#trend_indicator)
       - [`layout`](#layout)
       - [`frameless`](#frameless)
       - [`marginless`](#marginless)
@@ -896,6 +899,67 @@ bar_size: medium
 
 [🔼 Back to top]
 
+#### `bar_position`
+
+[![Card OK][Card-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility)
+
+> **`bar_position`** [String] _(optional, default: "default")_
+
+Defines the position of the progress bar within the card.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+entity: light.led0
+bar_position: overlay
+```
+
+_Options:_
+
+| option    | description                    |
+| :-------- | :----------------------------- |
+| `default` | Standard position              |
+| `top`     | At the top of the card         |
+| `bottom`  | At the bottom of the card      |
+| `overlay` | Overlaid on top of the content |
+
+_Default value_:
+
+- `default`
+
+[🔼 Back to top]
+
+#### `bar_single_line`
+
+[![Card OK][Card-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility)
+
+> **`bar_single_line`** [Boolean] _(optional, default: false)_
+
+Enables single-line mode for overlay bars, showing the progress bar in a more compact layout.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+entity: light.led0
+bar_position: overlay
+bar_single_line: true
+```
+
+_Options_:
+
+| option  | description                                          |
+| :------ | :--------------------------------------------------- |
+| `true`  | Display the overlay bar in single-line mode          |
+| `false` | Display the overlay bar in default multi-line layout |
+
+_Default value_:
+
+- `false`
+
+[🔼 Back to top]
+
 #### `bar_effect`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
@@ -1010,6 +1074,36 @@ type: custom:entity-progress-card
 entity: timer.living_room
 force_circular_background: true
 ```
+
+[🔼 Back to top]
+
+#### `trend_indicator`
+
+[![Card OK][Card-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility)
+
+> **`trend_indicator`** [Boolean] _(optional, default: false)_
+
+Displays trend icons indicating the direction of the entity's value. Icons are automatically positioned at the top right of the card.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.temperature
+trend_indicator: true
+```
+
+_Icons_:
+
+| icon                   | meaning        |
+| :--------------------- | :------------- |
+| `mdi:chevron-up-box`   | Upward trend   |
+| `mdi:chevron-down-box` | Downward trend |
+| `mdi:equal-box`        | Stable trend   |
+
+_Default value_:
+
+- `false`
 
 [🔼 Back to top]
 
@@ -1595,6 +1689,11 @@ name: "{{ state_attr('sensor.battery_level', 'friendly_name') }} ({{ states('sen
 > **`icon`** [JINJA] ➡️ [String]  
 
 Conditionally sets the card icon based on entity state or attributes. Useful for dynamic icon changes.
+
+_Order of Priority for the Icon:_
+
+- Icon ([JINJA]): A custom icon specifically defined for the item through a [JINJA] expression.
+- Entity icon.
 
 See [`icon`](#icon).
 See [JINJA].

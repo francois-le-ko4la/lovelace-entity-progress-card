@@ -155,6 +155,8 @@ const CARD = {
     sections: {
       container: { element: 'div', class: 'container' },
       belowContainer: { element: 'div', class: 'below-container' },
+      topContainer: { element: 'div', class: 'top-container' },
+      bottomContainer: { element: 'div', class: 'bottom-container' },
       left: { element: 'div', class: 'left' },
       right: { element: 'div', class: 'right' },
     },
@@ -165,6 +167,10 @@ const CARD = {
       nameCombined: { element: 'span', class: 'name-combined' },
       name: { element: 'span', class: 'name' },
       nameCustomInfo: { element: 'span', class: 'name-custom-info' },
+      trendIndicator: {
+        container: { element: 'div', class: 'trend-indicator' },
+        icon: { element: 'ha-icon', class: 'trend-icon' },
+      },
       secondaryInfo: { element: 'div', class: 'secondary-info' },
       detailGroup: { element: 'div', class: 'secondary-info-detail-group' },
       detailCombined: { element: 'span', class: 'secondary-info-detail-combined' },
@@ -3526,6 +3532,7 @@ ${CARD.htmlStructure.card.element} {
   -moz-osx-font-smoothing: var(--ha-font-smoothing);
   -webkit-font-smoothing: antialiased;
   min-width: var(${CARD.style.dynamic.card.minWidth.var}, 100%);
+  position: relative; /* top/bottom*/
 }
 
 /* type-picture-elements integration */
@@ -3569,17 +3576,52 @@ ${CARD.htmlStructure.card.element} {
   height: var(--epb-progress-size-xl);
 }
 
-.horizontal.xlarge .right  {
+.horizontal .right  {
   width: calc(100% - 56px);
 }
 .xlarge .progress-bar-container {
   height: var(--epb-progress-size-xl);
 }
 
-.horizontal.xlarge .container {
+.horizontal .container {
   flex-wrap: wrap;
   overflow: unset;
   row-gap: 7px;
+}
+
+.bottom-container, .top-container {
+  position: absolute;
+  width: 100%;
+}
+
+.top-container {
+  top: 0;
+  left: 0;
+}
+
+.bottom-container {
+  bottom: 0;
+  left: 0;
+}
+
+.trend-indicator {
+  display: flex;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: var(--epb-badge-size);
+  height: var(--epb-badge-size);  
+  align-items: center;
+  justify-content: center;
+}
+
+.trend-icon {
+  display: flex;
+  width: var(--epb-badge-size);
+  height: var(--epb-badge-size);  
+  align-items: center;
+  justify-content: center;
+  color: var(--state-icon-color);
 }
 
 .type-entities .${CARD.htmlStructure.sections.container.class} {
@@ -3653,6 +3695,7 @@ ${CARD.htmlStructure.card.element} {
   min-width: 0;
   overflow: hidden;
   width: 100%;
+  position: relative; /* overlay */
 }
 
 /* === TEXT ELEMENTS === */
@@ -3663,6 +3706,7 @@ ${CARD.htmlStructure.card.element} {
   align-items: center;
   min-width: 0;
   overflow: hidden;
+  z-index: 10;
 }
 
 .${CARD.htmlStructure.elements.nameGroup.class} {
@@ -3924,8 +3968,8 @@ ${CARD.htmlStructure.card.element} {
   .${CARD.htmlStructure.elements.progressBar.highWatermark.class}
 ) {
   position: absolute;
-  height: var(--epb-progress-size);
-  max-height: var(--epb-progress-size);
+  height: 100%; /* var(--epb-progress-size); */
+  max-height: 100%; /* var(--epb-progress-size);*/
   top: 0;
   opacity: var(--epb-watermark-opacity-value, 0.8);
 }
@@ -4181,6 +4225,43 @@ ${CARD.htmlStructure.card.element} {
 
 .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.left.class}:hover .${CARD.htmlStructure.elements.shape.class} {
   background-color: color-mix(in srgb, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) var(--epb-icon-hover-opacity), transparent);
+}
+
+/* overlay */
+
+.progress-bar-container.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+
+
+.progress-bar-container.overlay .progress-bar,
+.progress-bar-container.overlay .progress-bar-effect-radius
+.progress-bar-container.overlay .progress-bar-inner {
+  border-radius: 10px;
+  height: 100%;
+}
+.progress-bar-container.overlay .progress-bar-inner,
+.progress-bar-container.overlay .progress-bar-positive-inner,
+.progress-bar-container.overlay .progress-bar-negative-inner,
+.progress-bar-container.overlay .progress-bar {
+  height: 100%;
+  max-height: 100%;
+}
+
+.horizontal .right.overlay .name-group,
+.horizontal .right.overlay .secondary-info {
+  margin-left: 5px;
+}
+
+.right.overlay.single-line  {
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
+  height: 36px;
 }
 `;
 
@@ -4527,6 +4608,8 @@ const Element = (obj, extraClass = '') => {
 const StructureElements = {
   container: () => Element(CARD.htmlStructure.sections.container).html('{{content}}'),
   belowContainer: () => Element(CARD.htmlStructure.sections.belowContainer).html('{{content}}'),
+  topContainer: () => Element(CARD.htmlStructure.sections.topContainer).html('{{content}}'),
+  bottomContainer: () => Element(CARD.htmlStructure.sections.bottomContainer).html('{{content}}'),
   left: () => Element(CARD.htmlStructure.sections.left).html('{{content}}'),
 
   iconAndShape: () => Element(CARD.htmlStructure.elements.shape).html(Element(CARD.htmlStructure.elements.icon).html()),
@@ -4557,8 +4640,8 @@ const StructureElements = {
       Element(CARD.htmlStructure.elements.detailCombined).html(Element(CARD.htmlStructure.elements.customInfo).html())
     ),
 
-  standardProgressBar: () =>
-    Element(CARD.htmlStructure.elements.progressBar.container).html(
+  standardProgressBar: (extraClass = '') =>
+    Element(CARD.htmlStructure.elements.progressBar.container, extraClass).html(
       Element(CARD.htmlStructure.elements.progressBar.bar, 'default').html(
         Element(CARD.htmlStructure.elements.progressBar.inner).html() +
           Element(CARD.htmlStructure.elements.progressBar.lowWatermark).html() +
@@ -4566,8 +4649,8 @@ const StructureElements = {
       )
     ),
 
-  centerZeroProgressBar: () =>
-    Element(CARD.htmlStructure.elements.progressBar.container).html(
+  centerZeroProgressBar: (extraClass = '') =>
+    Element(CARD.htmlStructure.elements.progressBar.container, extraClass).html(
       Element(CARD.htmlStructure.elements.progressBar.bar, 'center-zero').html(
         Element(CARD.htmlStructure.elements.progressBar.negativeInner).html() +
           Element(CARD.htmlStructure.elements.progressBar.positiveInner).html() +
@@ -4578,56 +4661,111 @@ const StructureElements = {
     ),
 
   progressBar: (options) => {
+    const extraClass = options.barPosition === 'overlay' ? 'overlay' : '';
+
     switch (options.barType) {
       case 'centerZero':
-        return StructureElements.centerZeroProgressBar();
+        return StructureElements.centerZeroProgressBar(extraClass);
       case 'default':
       default:
-        return StructureElements.standardProgressBar();
+        return StructureElements.standardProgressBar(extraClass);
     }
   },
 
   secondaryInfo: (options) => {
-    const isVertical = options.layout === 'vertical';
+    const { layout, barPosition } = options;
+    const isTopOrBottom = ['top', 'bottom'].includes(barPosition);
+    const isBelowHorizontal = layout === 'horizontal' && barPosition === 'below';
+    const isOverlay = barPosition === 'overlay';
 
-    if (isVertical) {
-      return Element(CARD.htmlStructure.elements.secondaryInfo).html(StructureElements.detailGroup()) + StructureElements.progressBar(options);
-    } else if (options.barPosition === 'below') {
-      return Element(CARD.htmlStructure.elements.secondaryInfo).html(StructureElements.detailGroup());
-    } else {
-      return Element(CARD.htmlStructure.elements.secondaryInfo).html(StructureElements.detailGroup() + StructureElements.progressBar(options));
+    let content = StructureElements.detailGroup();
+
+    if (!isTopOrBottom && !isBelowHorizontal && !isOverlay) {
+      content += StructureElements.progressBar(options);
     }
+
+    return Element(CARD.htmlStructure.elements.secondaryInfo).html(content);
   },
 
   secondaryInfoMinimal: (options) => {
-    const isVertical = options.layout === 'vertical';
+    const { layout, barPosition } = options;
+    const isTopOrBottom = ['top', 'bottom'].includes(barPosition);
+    const isBelowHorizontal = layout === 'horizontal' && barPosition === 'below';
+    const isOverlay = barPosition === 'overlay';
 
-    if (isVertical) {
-      return Element(CARD.htmlStructure.elements.secondaryInfo).html(StructureElements.detailGroupMinimal()) + StructureElements.progressBar(options);
-    } else if (options.barPosition === 'below') {
-      return Element(CARD.htmlStructure.elements.secondaryInfo).html(StructureElements.detailGroupMinimal());
-    } else {
-      return Element(CARD.htmlStructure.elements.secondaryInfo).html(StructureElements.detailGroupMinimal() + StructureElements.progressBar(options));
+    let content = StructureElements.detailGroupMinimal();
+
+    if (!isTopOrBottom && !isBelowHorizontal && !isOverlay) {
+      content += StructureElements.progressBar(options);
     }
+
+    return Element(CARD.htmlStructure.elements.secondaryInfo).html(content);
   },
 
-  rightFull: (options) => Element(CARD.htmlStructure.sections.right).html(StructureElements.nameGroup() + StructureElements.secondaryInfo(options)),
+  rightFull: (options) => {
+    const rightContent = StructureElements.nameGroup() + StructureElements.secondaryInfo(options);
+    const isOverlay = options.barPosition === 'overlay';
+    const isSingleLine = options.barSingleLine;
+    let extraClass = '';
+    if (isOverlay) extraClass += ' overlay';
+    if (isSingleLine) extraClass += ' single-line';
 
-  rightMinimal: (options) =>
-    Element(CARD.htmlStructure.sections.right).html(StructureElements.nameGroupMinimal() + StructureElements.secondaryInfoMinimal(options)),
+    const before = isOverlay ? StructureElements.progressBar(options) : '';
+    return Element(CARD.htmlStructure.sections.right, extraClass).html(before + rightContent);
+  },
+
+  rightMinimal: (options) => {
+    const rightContent = StructureElements.nameGroupMinimal() + StructureElements.secondaryInfoMinimal(options);
+    const isOverlay = options.barPosition === 'overlay';
+    const isSingleLine = options.barSingleLine;
+    let extraClass = '';
+    if (isOverlay) extraClass += ' overlay';
+    if (isSingleLine) extraClass += ' single-line';
+
+    const before = isOverlay ? StructureElements.progressBar(options) : '';
+    return Element(CARD.htmlStructure.sections.right, extraClass).html(before + rightContent);
+  },
 
   leftFull: () => Element(CARD.htmlStructure.sections.left).html(StructureElements.iconAndShape() + StructureElements.badge()),
   leftNoBadge: () => Element(CARD.htmlStructure.sections.left).html(StructureElements.iconAndShape()),
+
+  trendIndicator: (options) => options.trendIndicator ? Element(CARD.htmlStructure.elements.trendIndicator.container).html(Element(CARD.htmlStructure.elements.trendIndicator.icon).html()) : '',
+
+  wrapWithBarPosition: (content, options) => {
+    const { barPosition } = options;
+    let before = '';
+    let after = '';
+
+    switch (barPosition) {
+      case 'top':
+        before = StructureElements.topContainer().replace('{{content}}', StructureElements.progressBar(options));
+        break;
+      case 'bottom':
+        after = StructureElements.bottomContainer().replace('{{content}}', StructureElements.progressBar(options));
+        break;
+    }
+
+    return before + content + after;
+  },
 };
 
 const StructureTemplates = {
   card: (options = {}) => {
     if (options.barPosition === 'below')
-      return (
-        StructureElements.container().replace('{{content}}', StructureElements.leftFull() + StructureElements.rightFull(options) + StructureElements.belowContainer().replace('{{content}}', StructureElements.progressBar(options)))
+      return StructureElements.container().replace(
+        '{{content}}',
+        StructureElements.trendIndicator(options) +
+          StructureElements.leftFull() +
+          StructureElements.rightFull(options) +
+          StructureElements.belowContainer().replace('{{content}}', StructureElements.progressBar(options))
       );
-
-    return StructureElements.container().replace('{{content}}', StructureElements.leftFull() + StructureElements.rightFull(options));
+    return StructureElements.wrapWithBarPosition(
+      StructureElements.container().replace(
+        '{{content}}',
+        StructureElements.trendIndicator(options) + StructureElements.leftFull() + StructureElements.rightFull(options)
+      ),
+      options
+    );
   },
 
   badge: (options = {}) => {
@@ -4638,15 +4776,24 @@ const StructureTemplates = {
     if (options.barPosition === 'below')
       return StructureElements.container().replace(
         '{{content}}',
-        StructureElements.leftFull() +
+        StructureElements.trendIndicator(options) +
+          StructureElements.leftFull() +
           StructureElements.rightMinimal(options) +
           StructureElements.belowContainer().replace('{{content}}', StructureElements.progressBar(options))
       );
 
-    return StructureElements.container().replace('{{content}}', StructureElements.leftFull() + StructureElements.rightMinimal(options));
+    return StructureElements.wrapWithBarPosition(
+      StructureElements.container().replace(
+        '{{content}}',
+        StructureElements.trendIndicator(options) +
+          StructureElements.leftFull() +
+          StructureElements.rightMinimal(options)
+      ),
+      options
+    );
   },
   feature: (options = {}) => {
-    StructureElements.progressBar(options);
+    return StructureElements.progressBar(options);
   },
 };
 
@@ -6229,7 +6376,7 @@ const types = {
 };
 
 function struct(validator) {
-  const preprocess = (data) => {
+  const preProcess = (data) => {
     const result = { ...data };
 
     if (is.nullish(result.icon_tap_action) && is.string(result.entity)) {
@@ -6240,11 +6387,21 @@ function struct(validator) {
 
     return result;
   };
+  const postProcess = (data) => {
+    const result = { ...data };
+
+    if (result.layout === CARD.layout.orientations.horizontal.label && result.bar_size === CARD.style.bar.sizeOptions.xlarge.label)
+      result.bar_position = 'below';
+
+    if (result.bar_position !== 'overlay' && result.bar_single_line) result.bar_single_line = false;
+
+    return result;
+  };
   const structInstance = {
     validate: (data) => {
       try {
-        const preprocessed = preprocess(data);
-        return { isValid: true, config: validator(preprocessed), error: null, path: null };
+        const preProcessed = preProcess(data);
+        return { isValid: true, config: postProcess(validator(preProcessed)), error: null, path: null };
       } catch (error) {
         return { isValid: false, config: null, error: error.message, path: error.path };
       }
@@ -6252,8 +6409,8 @@ function struct(validator) {
 
     parse: (data) => {
       try {
-        const preprocessed = preprocess(data);
-        const result = validator(preprocessed);
+        const preProcessed = preProcess(data);
+        const result = postProcess(validator(preProcessed));
         return {
           isValid: true,
           config: result,
@@ -6303,9 +6460,12 @@ function struct(validator) {
         const mainError =
           allErrors.find((e) => e.severity === 'error') || allErrors[0] || null;
 
+        const partialConfig = error.partialResult ?? error.partialConfig ?? null;
+        const postProcessedPartialConfig = partialConfig !== null ? postProcess(partialConfig) : null;
+
         return {
           isValid: !mainError || mainError.severity !== 'error',
-          config: error.partialResult ?? error.partialConfig ?? null,
+          config: postProcessedPartialConfig,
           path: mainError?.path ?? null,
           errorCode: mainError?.errorCode ?? null,
           severity: mainError?.severity ?? null,
@@ -6396,8 +6556,10 @@ class yamlSchemaFactory {
         ), //[('small', 'medium', 'large', 'xlarge')]
         bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
         bar_effect: types.effectArray(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
+        bar_position: types.enumsWithDefault(['default', 'below', 'top', 'bottom', 'overlay'], 'default'),
+        bar_single_line: types.optionalBooleanWithDefault(false),
         layout: types.enumsWithDefault(
-          Object.values(CARD.layout).map((e) => e.label),
+          Object.values(CARD.layout.orientations).map((e) => e.label),
           'horizontal'
         ), // [('horizontal', 'vertical')]
         min_width: types.optionalString(),
@@ -6408,6 +6570,7 @@ class yamlSchemaFactory {
         reverse_secondary_info_row: types.optionalBooleanWithDefault(false),
         force_circular_background: types.optionalBooleanWithDefault(false),
         center_zero: types.optionalBooleanWithDefault(false),
+        trend_indicator: types.optionalBooleanWithDefault(false),
 
         // === Visibility & Content ===
         hide: types.arrayWithValidatedElem(['icon', 'name', 'value', 'secondary_info', 'progress_bar']),
@@ -6440,7 +6603,17 @@ class yamlSchemaFactory {
   }
 
   static get badge() {
-    return yamlSchemaFactory.card.delete(['badge_icon', 'badge_color', 'force_circular_background', 'layout', 'height', 'icon_tap_action', 'icon_hold_action', 'icon_double_tap_action']);
+    return yamlSchemaFactory.card.delete([
+      'bar_position',
+      'badge_icon',
+      'badge_color',
+      'force_circular_background',
+      'layout',
+      'height',
+      'icon_tap_action',
+      'icon_hold_action',
+      'icon_double_tap_action',
+    ]);
   }
 
   static get template() {
@@ -6462,8 +6635,10 @@ class yamlSchemaFactory {
         ), //[('small', 'medium', 'large', 'xlarge')]
         bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
         bar_effect: types.effectArray(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
+        bar_position: types.enumsWithDefault(['default', 'below', 'top', 'bottom', 'overlay'], 'default'),
+        bar_single_line: types.optionalBooleanWithDefault(false),
         layout: types.enumsWithDefault(
-          Object.values(CARD.layout).map((e) => e.label),
+          Object.values(CARD.layout.orientations).map((e) => e.label),
           'horizontal'
         ), // [('horizontal', 'vertical')]
         min_width: types.optionalString(),
@@ -6473,6 +6648,7 @@ class yamlSchemaFactory {
         reverse_secondary_info_row: types.optionalBooleanWithDefault(false),
         force_circular_background: types.optionalBooleanWithDefault(false),
         center_zero: types.optionalBooleanWithDefault(false),
+        trend_indicator: types.optionalBooleanWithDefault(false),
         hide: types.arrayWithValidatedElem(['icon', 'name', 'value', 'secondary_info', 'progress_bar']),
         badge_icon: types.optionalString(),
         badge_color: types.optionalString(),
@@ -6491,39 +6667,9 @@ class yamlSchemaFactory {
 
   // new !
   static get badgeTemplate() {
-    return yamlSchemaFactory.template.delete(['badge_icon', 'badge_color', 'force_circular_background', 'layout', 'height', 'icon_tap_action', 'icon_hold_action', 'icon_double_tap_action']);
+    return yamlSchemaFactory.template.delete(['bar_position', 'badge_icon', 'badge_color', 'force_circular_background', 'layout', 'height', 'icon_tap_action', 'icon_hold_action', 'icon_double_tap_action']);
   }
 }
-
-
-/**
- * @typedef {Object} EntityProxy
- * @property {*} state
- * @property {string} name
- * @property {string} unit
- * @property {string} icon
- * @property {*} [key]
- */
-
-/**
- * @param {Object} hassProvider
- * @param {string} entityId
- * @returns {EntityProxy}
- */
-const createEntityProxy = (hassProvider, entityId) => new Proxy({}, {
-  get(target, prop) {
-    switch (prop) {
-      case 'state': return hassProvider.getEntityState(entityId);
-      case 'name': return hassProvider.getEntityAttribute(entityId, 'friendly_name');
-      case 'unit': return hassProvider.getEntityAttribute(entityId, 'unit_of_measurement');
-      case 'icon': return hassProvider.getEntityAttribute(entityId, 'icon');
-      default: return hassProvider.getEntityAttribute(entityId, prop);
-    }
-  }
-});
-
-// const entity = createEntityProxy(hassProvider, 'sensor.temperature');
-
 
 /******************************************************************************************
  * 🛠️ BaseConfigHelper
@@ -6727,6 +6873,7 @@ class BadgeConfigHelper extends CardConfigHelper {
  * const isClickable = cardView.hasClickableCard;
  */
 class MinimalCardView {
+  _lastPercent = null;
   _configHelper = null;
   _currentValue = new EntityOrValue();
 
@@ -6804,6 +6951,14 @@ class MinimalCardView {
   }
 
   // === PUBLIC API METHODS ===
+
+  getTrend(currentPercent) {
+    const result =
+      this._lastPercent === null ? 'flat' : this._lastPercent < currentPercent ? 'up' : this._lastPercent > currentPercent ? 'down' : 'flat';
+    this._lastPercent = currentPercent;
+
+    return result;
+  }
 
   hasComponentHiddenFlag(component) {
     return this._hasInConfigArray('hide', component);
@@ -6987,6 +7142,11 @@ class BaseCardView extends MinimalCardView {
       ? Math.max(-100, Math.min(100, this.#percentHelper.percent))
       : Math.max(0, Math.min(100, this.#percentHelper.percent));
   }
+
+  getTrend() {
+    return super.getTrend(this.#percentHelper.percent);
+  }
+
   get stateAndProgressInfo() {
     if (this.hasStandardEntityError || (this._currentValue.isTimer && this._currentValue.value.state === CARD.config.entity.state.idle))
       return this._currentValue.formatedEntityState;
@@ -7544,6 +7704,11 @@ class EntityProgressCardBase extends HTMLElement {
   static _hasDisabledBadge = false;
   static _baseClass = CARD.meta.card.typeName;
   static _cardLayout = CARD.layout.orientations;
+  _trendIcons = {
+    up: 'mdi:chevron-up-box',
+    down: 'mdi:chevron-down-box',
+    flat: 'mdi:equal-box',
+  };
   _debug = CARD.config.debug.card;
   _log = null;
   _resourceManager = null;
@@ -7585,9 +7750,11 @@ class EntityProgressCardBase extends HTMLElement {
     // setTimeout(() => this._debugCardModIntegration(), 500);
     if (!this._resourceManager) this._resourceManager = new ResourceManager();
     this.render();
-    this._updateDynamicElementsSync();
-    this._setupClickableTarget();
-    this._actionHelper.init(this._resourceManager, this._cardView.config, this._clickableTarget, this.hasDisabledIconTap);
+    requestAnimationFrame(() => {
+      this._updateDynamicElementsSync();
+      this._setupClickableTarget();
+      this._actionHelper.init(this._resourceManager, this._cardView.config, this._clickableTarget, this.hasDisabledIconTap);
+    });
     if (this.hass) {
       this._handleHassUpdate();
       this._watchWebSocket();
@@ -7814,11 +7981,9 @@ class EntityProgressCardBase extends HTMLElement {
     this.constructor._cardStructure.options = {
       barType: this._cardView.config.center_zero ? 'centerZero' : 'default', // === true
       layout: this._cardView.config.layout,
-      barPosition:
-        this._cardView.config.layout === CARD.layout.orientations.horizontal.label &&
-        this._cardView.config.bar_size === CARD.style.bar.sizeOptions.xlarge.label
-          ? 'below'
-          : 'default',
+      barPosition: this._cardView.config.bar_position,
+      barSingleLine: this._cardView.config.bar_single_line,
+      trendIndicator: this._cardView.config.trend_indicator,
     };
   }
 
@@ -7955,6 +8120,7 @@ class EntityProgressCardBase extends HTMLElement {
       elements.icon,
       elements.shape,
       elements.badge.icon,
+      elements.trendIndicator.icon,
       elements.name,
       elements.nameCustomInfo,
       elements.customInfo,
@@ -7992,6 +8158,7 @@ class EntityProgressCardBase extends HTMLElement {
     this._showIcon();
     this._showBadge();
     this._manageShape();
+    this._updateTrend();
     this._updateCSS();
     this._processJinjaFields();
     this._processStandardFields();
@@ -7999,9 +8166,31 @@ class EntityProgressCardBase extends HTMLElement {
 
   _updateDynamicElements() {
     this._log.debug('👉 EntityProgressCard._updateDynamicElements()');
-    EntityProgressCardBase._batchDOMUpdates([() => this._showIcon(), () => this._showBadge(), () => this._manageShape(), () => this._updateCSS()]);
+    EntityProgressCardBase._batchDOMUpdates([
+      () => this._showIcon(),
+      () => this._showBadge(),
+      () => this._manageShape(),
+      () => this._updateTrend(),
+      () => this._updateCSS(),
+    ]);
     this._processJinjaFields();
     this._processStandardFields();
+  }
+
+  // === Update Trend ===
+  _updateTrend() {
+    if (!this._cardView.config.trend_indicator) return;
+    const icon = this._trendIcons[this._cardView.getTrend()];
+    this._updateIconTrend(icon);
+  }
+
+  _updateIconTrend(icon) {
+    this._updateElement(CARD.htmlStructure.elements.trendIndicator.icon.class, (el) => {
+      const currentIcon = el.getAttribute(CARD.style.icon.badge.default.attribute);
+      if (currentIcon !== icon) {
+        el.setAttribute(CARD.style.icon.badge.default.attribute, icon);
+      }
+    });
   }
 
   // === CSS MANAGEMENT ===
@@ -8231,6 +8420,7 @@ class EntityProgressCardBase extends HTMLElement {
 
   _renderJinja(key, content) {
     this._log.debug('_renderJinja():', { key, content });
+    // console.log(key);
 
     const renderHandlers = this._getRenderHandlers(content);
     const handler = renderHandlers[key];
@@ -8646,12 +8836,13 @@ class EntityProgressTemplate extends EntityProgressCardBase {
   connectedCallback() {
     if (!this._resourceManager) this._resourceManager = new ResourceManager();
     this.render();
-    this._showIcon();
-    this._updateWatermark();
-    this._manageShape();
-    this._setupClickableTarget();
-    this._actionHelper.init(this._resourceManager, this._cardView.config, this._clickableTarget);
-
+    requestAnimationFrame(() => {
+      this._showIcon();
+      this._updateWatermark();
+      this._manageShape();
+      this._setupClickableTarget();
+      this._actionHelper.init(this._resourceManager, this._cardView.config, this._clickableTarget);
+    });
     // AJOUT : Forcer le traitement Jinja après l'initialisation complète
     if (this.hass) {
       // Utiliser un micro-task pour s'assurer que tout est initialisé
@@ -8771,11 +8962,22 @@ class EntityProgressTemplate extends EntityProgressCardBase {
       secondary: () => this._renderSecondary(content),
       name: () => this._renderName(content),
       icon: () => this._showIcon(content),
-      percent: () => this._renderPercentCSS(content),
+      percent: () => this._managePercent(content),
       color: () => this._updateCSSValue(CARD.style.dynamic.iconAndShape.color.var, ThemeManager.adaptColor(content)),
       bar_color: () => this._updateCSSValue(CARD.style.dynamic.progressBar.color.var, ThemeManager.adaptColor(content)),
       bar_effect: () => this._refreshBarEffect(content),
     };
+  }
+
+  _managePercent(percent) {
+    this._updateTrend(percent);
+    this._renderPercentCSS(percent);
+  }
+
+  _updateTrend(percent) {
+    if (!this._cardView.config.trend_indicator) return;
+    const icon = this._trendIcons[this._cardView.getTrend(percent)];
+    this._updateIconTrend(icon);
   }
 
   _renderPercentCSS(percent) {
@@ -8874,7 +9076,7 @@ class BadgeTemplateCardView extends MinimalCardView {
  * ✅ HA CARD "entity-progress-badge"
  *
  * @class
- * @extends EntityProgressCardBase
+ * @extends EntityProgressTemplate
  */
 class EntityProgressBadgeTemplate extends EntityProgressTemplate {
   _cardView = new BadgeTemplateCardView();
