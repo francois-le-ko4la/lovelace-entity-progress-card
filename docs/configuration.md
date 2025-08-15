@@ -303,7 +303,7 @@ entity: sensor.hp_envy_6400_series_tri_color_cartridge
 
 > [!NOTE]
 >
-> This parameter is optionnal with `entity-progress-card-template` and `entity-progress-badge-template`
+> This parameter is optional with `entity-progress-card-template` and `entity-progress-badge-template`
 
 > [!NOTE]
 >
