@@ -16,7 +16,8 @@ It's people like you that make Entity Progress Card such a great tool for the co
 
 ## 🤝 Code of Conduct
 
-This project and everyone participating in it is governed by our Code of Conduct. By participating, you are expected to uphold this code.
+This project and everyone participating in it is governed by our [Code of Conduct].
+By participating, you are expected to uphold this code.  
 **In short: Be respectful, be inclusive, and help create a positive environment for everyone.**
 
 ## 🚀 How Can I Contribute?
@@ -182,4 +183,5 @@ _This contribution guide is inspired by open source best practices and adapted f
 
 [Discord]: https://discord.gg/tyMQ2SfyNG
 [GitHub Issues]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues
+[Code of Conduct]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/code_of_conduct.md
 [Errors, Deprecations & Troubleshooting Guide]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/troubleshooting.md

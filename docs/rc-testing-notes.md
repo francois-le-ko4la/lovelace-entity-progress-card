@@ -57,6 +57,7 @@
 - Card Template: Added the `force_circular_background` option in the template  
   ➡️ [Feature]: Add force_circular_background: true in the template card options #83
 - Editor: Added new `xlarge` size option for the bar.
+- Accessibility: respects the “Reduce Motion” setting (iOS/macOS, Android, Windows) to limit animations and prevent dizziness, migraines, or distractions.
 
 ### 🐞 Bug Fixes
 
@@ -66,6 +67,7 @@
 
 ### 📚 Documentation
 
+- migrate `doc/` to `docs/`
 - Navigation improvements:
   - New simplified table of contents
   - Clearer titles and structure throughout
@@ -73,14 +75,14 @@
     - All card types (Standard, Template, Badge) now live under one section
   - YAML options now shown in smart tables
   - Collapsible sections to keep things clean
-
 - Added: 🙏 Credits
-- Added: Theme documentation - `theme.md`
-- Added: Full Configuration Reference - `configuration.md`
+- Added: Theme documentation - `docs/theme.md`
+- Added: Full Configuration Reference - `docs/configuration.md`
   - full update with conventions, matrix, description to use it efficiently
-- Added: Troubleshooting Guide - `troubleshooting.md`
-
-- migrate `doc/` to `docs/`
+- Added: Troubleshooting Guide - `docs/troubleshooting.md`
+- Added: Code of Conduct - `docs/code_of_conduct.md`
+- Added: Code of Conduct - `docs/code_of_conduct.md`
+- Added: Release Candidate Guide - `docs/rc-testing.md`
 
 This docs update dramatically improves usability:
 

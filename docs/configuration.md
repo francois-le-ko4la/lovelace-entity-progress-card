@@ -907,6 +907,9 @@ bar_size: medium
 
 Defines the position of the progress bar within the card.
 
+> [!WARNING]
+> If bar_position is set (to any value other than "default"), the bar_size option will be ignored.
+
 _Example_:
 
 ```yaml
@@ -1643,9 +1646,12 @@ These options are the same as those of the `entity-progress-card` and are availa
 | `badge_icon`                       | Jinja (optional)         | —                           | Dynamic badge icon                      | [Link](#badge_icon)                 |
 | `badge_color`                      | Jinja (optional)         | —                           | Dynamic badge color                     | [Link](#badge_color)                |
 | `bar_size`                         | string (optional)        | `small`                     | Size of the progress bar                | [Link](#bar_size)                   |
+| `bar_position`                     | string (optional)        | `default`                   | Position of the progress bar            | [Link](#bar_position)               |
+| `bar_single_line`                  | boolean (optional)       | `false`                     | single-line mode for overlay bars       | [Link](#bar_single_line)            |
 | `bar_effect`                       | string/list/jinja        | —                           | Visual effects for the bar              | [Link](#bar_effect)                 |
 | `bar_orientation`                  | string (optional)        | `ltr`                       | Bar direction                           | [Link](#bar_orientation)            |
 | `force_circular_background`        | boolean (optional)       | `false`                     | Force icon circle background            | [Link](#force_circular_background)  |
+| `trend_indicator`                  | string (optional)        | `false`                     | Displays trend icons.                   | [Link](#trend_indicator)            |
 | `layout`                           | string (optional)        | `horizontal`                | Layout direction                        | [Link](#layout)                     |
 | `frameless`                        | boolean (optional)       | `false`                     | Remove card frame                       | [Link](#frameless)                  |
 | `marginless`                       | boolean (optional)       | `false`                     | Remove top/bottom margin                | [Link](#marginless)                 |

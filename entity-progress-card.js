@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.5.0-RC2
+ * @version 1.5.0-RC3
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.5.0-RC2';
+const VERSION = '1.5.0-RC3';
 const CARD = {
   meta: {
     card: {
@@ -39,12 +39,14 @@ const CARD = {
     },
     badge: {
       typeName: 'entity-progress-badge',
+      name: 'Entity Progress Badge (Template)',
+      description: 'A cool custom badge to show current entity status with a progress bar.',
       editor: 'entity-progress-badge-editor',
     },
     badgeTemplate: {
       typeName: 'entity-progress-badge-template',
       name: 'Entity Progress Badge (Template)',
-      description: 'A cool custom card to show current entity status with a progress bar.',
+      description: 'A cool custom badge to show current entity status with a progress bar.',
     },
   },
   config: {
@@ -157,8 +159,8 @@ const CARD = {
       belowContainer: { element: 'div', class: 'below-container' },
       topContainer: { element: 'div', class: 'top-container' },
       bottomContainer: { element: 'div', class: 'bottom-container' },
-      left: { element: 'div', class: 'left' },
-      right: { element: 'div', class: 'right' },
+      icon: { element: 'div', class: 'icon-section' },
+      content: { element: 'div', class: 'content-section' },
     },
     elements: {
       icon: { element: 'div', class: 'icon' },
@@ -3518,7 +3520,25 @@ const CARD_CSS = `
 
 }
 
- /* === BASE CARD STYLES === */
+.${CARD.style.bar.sizeOptions.small.label} {
+  --epb-progress-size: var(--epb-progress-size-s);
+}
+
+.${CARD.style.bar.sizeOptions.medium.label} {
+  --epb-progress-size: var(--epb-progress-size-m);
+}
+
+.${CARD.style.bar.sizeOptions.large.label} {
+  --epb-progress-size: var(--epb-progress-size-l);
+}
+
+.${CARD.style.bar.sizeOptions.xlarge.label} {
+  --epb-progress-size: var(--epb-progress-size-xl);
+}
+
+/* === /PARAM === */
+
+/* === BASE CARD STYLES === */
 ${CARD.htmlStructure.card.element} {
   height: var(${CARD.style.dynamic.card.height.var}, 100%);
   display: flex;
@@ -3564,8 +3584,38 @@ ${CARD.htmlStructure.card.element} {
   justify-content: center;
   gap: var(--epb-gap-default);
   width: 100%;
-  height: 100%;
+  height: var(${CARD.style.dynamic.card.height.var}, unset);
+}
+
+.${CARD.htmlStructure.sections.container.class}.${CARD.layout.orientations.vertical.label} {
+  flex-direction: column;
+  min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.vertical.minHeight});
   overflow: hidden;
+  padding-top: calc(var(--epb-progress-size) + 2px); /* center the content */
+  box-sizing: border-box;
+  gap: 11px;
+}
+
+ha-card:has(> .bottom-container) > .container,
+ha-card:has(> .top-container) > .container {
+  padding-top: 0px;
+}
+
+.${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.sections.container.class},
+.container.vertical:has(.content-section.overlay) {
+  padding-top: 3px;
+}
+
+.container.vertical:has(.content-section.overlay) {
+  gap: 10px;
+}
+
+.${CARD.layout.orientations.horizontal.label} .${CARD.htmlStructure.sections.container.class} {
+  flex-direction: row;
+  flex-wrap: wrap;
+  min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.horizontal.minHeight});
+  overflow: visible;
+  row-gap: 7px;
 }
 
 .below-container {
@@ -3576,22 +3626,14 @@ ${CARD.htmlStructure.card.element} {
   height: var(--epb-progress-size-xl);
 }
 
-.horizontal .right  {
-  width: calc(100% - 56px);
-}
 .xlarge .progress-bar-container {
   height: var(--epb-progress-size-xl);
-}
-
-.horizontal .container {
-  flex-wrap: wrap;
-  overflow: unset;
-  row-gap: 7px;
 }
 
 .bottom-container, .top-container {
   position: absolute;
   width: 100%;
+  height: 8px;
 }
 
 .top-container {
@@ -3602,6 +3644,11 @@ ${CARD.htmlStructure.card.element} {
 .bottom-container {
   bottom: 0;
   left: 0;
+}
+
+.bottom-container .progress-bar-container,
+.top-container .progress-bar-container {
+  height: var(--epb-progress-size-s);
 }
 
 .trend-indicator {
@@ -3629,23 +3676,8 @@ ${CARD.htmlStructure.card.element} {
   min-height: var(--epb-entities-card-min-height) !important;
 }
 
-/* === LAYOUT ORIENTATIONS === */
-.${CARD.htmlStructure.sections.container.class} {
-  height: var(${CARD.style.dynamic.card.height.var}, unset);
-}
-
-.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.container.class} {
-  min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.vertical.minHeight});
-  flex-direction: column;
-}
-
-.${CARD.layout.orientations.horizontal.label} .${CARD.htmlStructure.sections.container.class} {
-  min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.horizontal.minHeight});
-  flex-direction: row;
-}
-
-/* === LEFT SECTION (ICON & SHAPE) === */
-.${CARD.htmlStructure.sections.left.class} {
+/* === ICON SECTION (ICON, SHAPE, BADGE) === */
+.${CARD.htmlStructure.sections.icon.class} {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -3656,7 +3688,7 @@ ${CARD.htmlStructure.card.element} {
   flex-shrink: 0;
 }
 
-.type-entities .${CARD.htmlStructure.sections.left.class} {
+.type-entities .${CARD.htmlStructure.sections.icon.class} {
   width: var(--epb-shape-size, var(--epb-entities-shape-size)) !important;
   height: var(--epb-shape-size, var(--epb-entities-shape-size)) !important;
 }
@@ -3683,10 +3715,10 @@ ${CARD.htmlStructure.card.element} {
   height: var(--epb-icon-size, var(--epb-icon-default-size));
   border-radius: 50%;
   object-fit: cover;
-}  
+}
 
-/* === RIGHT SECTION (TEXT CONTENT) === */
-.${CARD.htmlStructure.sections.right.class} {
+/* === CONTENT SECTION (TEXT CONTENT) === */
+.${CARD.htmlStructure.sections.content.class} {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -3694,8 +3726,14 @@ ${CARD.htmlStructure.card.element} {
   flex-shrink: 1;
   min-width: 0;
   overflow: hidden;
-  width: 100%;
   position: relative; /* overlay */
+}
+
+.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.content.class} {
+  width: 100%;
+}
+.${CARD.layout.orientations.horizontal.label} .${CARD.htmlStructure.sections.content.class} {
+  width: calc(100% - 56px);
 }
 
 /* === TEXT ELEMENTS === */
@@ -3706,7 +3744,7 @@ ${CARD.htmlStructure.card.element} {
   align-items: center;
   min-width: 0;
   overflow: hidden;
-  z-index: 10;
+  z-index: 1;
 }
 
 .${CARD.htmlStructure.elements.nameGroup.class} {
@@ -3792,7 +3830,7 @@ ${CARD.htmlStructure.card.element} {
   gap: unset;
 }
 
-.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.right.class} {
+.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.content.class} {
   gap: var(--epb-vertical-gap);
 }
 
@@ -3832,11 +3870,6 @@ ${CARD.htmlStructure.card.element} {
   align-items: center;
 }
 
-.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.progressBar.container.class} {
-  justify-content: center;
-  align-items: center;
-}
-
 .${CARD.htmlStructure.elements.progressBar.bar.class} {
   width: 100%;
   background-color: var(${CARD.style.dynamic.progressBar.background.var}, var(--divider-color));
@@ -3850,22 +3883,6 @@ ${CARD.htmlStructure.card.element} {
 
 /* Progress bar size variants */
 
-.${CARD.style.bar.sizeOptions.small.label} {
-  --epb-progress-size: var(--epb-progress-size-s);
-}
-
-.${CARD.style.bar.sizeOptions.medium.label} {
-  --epb-progress-size: var(--epb-progress-size-m);
-}
-
-.${CARD.style.bar.sizeOptions.large.label} {
-  --epb-progress-size: var(--epb-progress-size-l);
-}
-
-.${CARD.style.bar.sizeOptions.xlarge.label} {
-  --epb-progress-size: var(--epb-progress-size-xl);
-}
-
 .${CARD.htmlStructure.elements.progressBar.inner.class},
 .${CARD.htmlStructure.elements.progressBar.positiveInner.class},
 .${CARD.htmlStructure.elements.progressBar.negativeInner.class},
@@ -3878,18 +3895,8 @@ ${CARD.htmlStructure.card.element} {
   height: var(--epb-progress-size); /* 8px */
 }
 
-.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.container.class} {
-  padding-top: var(--epb-progress-size); /* center the content */
-}
-
 .${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.elements.progressBar.container.class} {
   margin-top: 23px;
-}
-
-.${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.sections.container.class} {
-  padding-top: unset;
-  justify-content: center;
-  align-items: center;  
 }
 
 .${CARD.style.dynamic.progressBar.orientation.rtl} .${CARD.htmlStructure.elements.progressBar.bar.class} {
@@ -3920,6 +3927,13 @@ ${CARD.htmlStructure.card.element} {
   left: 50%;
   width: var(${CARD.style.dynamic.progressBar.pSize.var}, ${CARD.style.dynamic.progressBar.nSize.default});
   transform-origin: right;
+}
+
+:is(.top-container, .bottom-container) 
+.${CARD.htmlStructure.elements.progressBar.bar.class},
+:is(.top-container, .bottom-container) 
+.${CARD.style.dynamic.progressBar.effect.radius.class} .${CARD.htmlStructure.elements.progressBar.inner.class} {
+  border-radius: 0;
 }
 
 .${CARD.htmlStructure.elements.progressBar.bar.class},
@@ -3962,14 +3976,13 @@ ${CARD.htmlStructure.card.element} {
 
 /* === WATERMARKS === */
 
-:is(
-  .${CARD.htmlStructure.elements.progressBar.zeroMark.class},
-  .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-  .${CARD.htmlStructure.elements.progressBar.highWatermark.class}
-) {
+/* Base watermark styles */
+:is(.${CARD.htmlStructure.elements.progressBar.zeroMark.class},
+    .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+    .${CARD.htmlStructure.elements.progressBar.highWatermark.class}) {
   position: absolute;
-  height: 100%; /* var(--epb-progress-size); */
-  max-height: 100%; /* var(--epb-progress-size);*/
+  height: 100%;
+  max-height: 100%;
   top: 0;
   opacity: var(--epb-watermark-opacity-value, 0.8);
 }
@@ -3981,133 +3994,127 @@ ${CARD.htmlStructure.card.element} {
   left: 50%;
 }
 
-:is(
-  .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-  .${CARD.htmlStructure.elements.progressBar.highWatermark.class}
-) {
+/* Hide watermarks by default */
+:is(.${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+    .${CARD.htmlStructure.elements.progressBar.highWatermark.class}) {
   display: none;
   max-width: 100%;
   box-sizing: border-box;
   clip-path: inset(0);
 }
 
+/* Colors */
 .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
   background-color: var(--epb-low-watermark-color, var(--red-color));
 }
-
 .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   background-color: var(--epb-high-watermark-color, var(--red-color));
 }
 
-/* Watermark area styles */
-.${CARD.style.dynamic.show}-lwm-area-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+/* ---------- Area, Blended, Striped positioning ---------- */
+:is(.${CARD.style.dynamic.show}-lwm-area-${CARD.htmlStructure.elements.progressBar.watermark.class},
+    .${CARD.style.dynamic.show}-lwm-blended-${CARD.htmlStructure.elements.progressBar.watermark.class},
+    .${CARD.style.dynamic.show}-lwm-striped-${CARD.htmlStructure.elements.progressBar.watermark.class})
+.${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
   left: 0;
   width: var(--epb-low-watermark-value, 20%);
 }
-
-.${CARD.style.dynamic.show}-hwm-area-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+:is(.${CARD.style.dynamic.show}-hwm-area-${CARD.htmlStructure.elements.progressBar.watermark.class},
+    .${CARD.style.dynamic.show}-hwm-blended-${CARD.htmlStructure.elements.progressBar.watermark.class},
+    .${CARD.style.dynamic.show}-hwm-striped-${CARD.htmlStructure.elements.progressBar.watermark.class})
+.${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   right: 0;
   width: calc(100% - var(--epb-high-watermark-value, 80%));
 }
 
-/* Watermark blended styles */
-
-.${CARD.style.dynamic.show}-lwm-blended-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-  left: 0;
-  width: var(--epb-low-watermark-value, 20%);
+/* Blended effect */
+:is(.${CARD.style.dynamic.show}-lwm-blended-${CARD.htmlStructure.elements.progressBar.watermark.class},
+    .${CARD.style.dynamic.show}-hwm-blended-${CARD.htmlStructure.elements.progressBar.watermark.class})
+:is(.${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+    .${CARD.htmlStructure.elements.progressBar.highWatermark.class}) {
   mix-blend-mode: hard-light;
 }
 
-.${CARD.style.dynamic.show}-hwm-blended-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  right: 0;
-  width: calc(100% - var(--epb-high-watermark-value, 80%));
-  mix-blend-mode: hard-light;
+/* Striped effect */
+.${CARD.style.dynamic.show}-lwm-striped-${CARD.htmlStructure.elements.progressBar.watermark.class}
+.${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+  background: repeating-linear-gradient(-45deg,
+    var(--epb-low-watermark-color, var(--red-color)) 0px,
+    var(--epb-low-watermark-color, var(--red-color)) 3px,
+    transparent 3px, transparent 6px);
+}
+.${CARD.style.dynamic.show}-hwm-striped-${CARD.htmlStructure.elements.progressBar.watermark.class}
+.${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+  background: repeating-linear-gradient(-45deg,
+    var(--epb-high-watermark-color, var(--red-color)) 0px,
+    var(--epb-high-watermark-color, var(--red-color)) 3px,
+    transparent 3px, transparent 6px);
 }
 
-/* Watermark striped styles */
-.${CARD.style.dynamic.show}-lwm-striped-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-  left: 0;
-  width: var(--epb-low-watermark-value, 20%);
-  background: repeating-linear-gradient( -45deg, var(--epb-low-watermark-color, var(--red-color)) 0px, var(--epb-low-watermark-color, var(--red-color)) 3px, transparent 3px, transparent 6px );
-}
-
-.${CARD.style.dynamic.show}-hwm-striped-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  right: 0;
-  width: calc(100% - var(--epb-high-watermark-value, 80%));
-  background: repeating-linear-gradient( -45deg, var(--epb-high-watermark-color, var(--red-color)) 0px, var(--epb-high-watermark-color, var(--red-color)) 3px, transparent 3px, transparent 6px );
-}
-
-/* Watermark line styles */
-.${CARD.style.dynamic.show}-hwm-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  right: calc(100% - var(--epb-high-watermark-value, 80%) + var(--epb-watermark-line-size, 1px) / 2);
-  width: var(--epb-watermark-line-size, 1px);
-  height: 100%; /* Gardons 100% pour la ligne complète */
-  background-color: var(--epb-high-watermark-color, var(--red-color));
-  top: 0;       /* Retour au top: 0 pour ligne complète */
-  transform: none; /* Pas de transform pour ligne complète */
-  border: none;
-  position: absolute; /* Force le positionnement */
-}
-
-.${CARD.style.dynamic.show}-lwm-line-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-  left: calc(var(--epb-low-watermark-value, 20%) - var(--epb-watermark-line-size, 1px) / 2);
+/* ---------- Line ---------- */
+:is(.${CARD.style.dynamic.show}-lwm-line-${CARD.htmlStructure.elements.progressBar.watermark.class},
+    .${CARD.style.dynamic.show}-hwm-line-${CARD.htmlStructure.elements.progressBar.watermark.class})
+:is(.${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+    .${CARD.htmlStructure.elements.progressBar.highWatermark.class}) {
   width: var(--epb-watermark-line-size, 1px);
   height: 100%;
-  background-color: var(--epb-low-watermark-color, var(--red-color));
-  top: 0;
+  border: none;
   transform: none;
-  border: none;
-  position: absolute;
+}
+.${CARD.style.dynamic.show}-lwm-line-${CARD.htmlStructure.elements.progressBar.watermark.class}
+.${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+  left: calc(var(--epb-low-watermark-value, 20%) - var(--epb-watermark-line-size, 1px) / 2);
+}
+.${CARD.style.dynamic.show}-hwm-line-${CARD.htmlStructure.elements.progressBar.watermark.class}
+.${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+  right: calc(100% - var(--epb-high-watermark-value, 80%) + var(--epb-watermark-line-size, 1px) / 2);
 }
 
-/* Watermark round style */
-.${CARD.style.dynamic.show}-hwm-round-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  right: calc(100% - var(--epb-high-watermark-value, 80%) + var(--epb-watermark-circle-size, 5px) / 2);
+/* ---------- Round ---------- */
+:is(.${CARD.style.dynamic.show}-lwm-round-${CARD.htmlStructure.elements.progressBar.watermark.class},
+    .${CARD.style.dynamic.show}-hwm-round-${CARD.htmlStructure.elements.progressBar.watermark.class})
+:is(.${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+    .${CARD.htmlStructure.elements.progressBar.highWatermark.class}) {
   width: var(--epb-watermark-circle-size, 5px);
   height: var(--epb-watermark-circle-size, 5px);
-  background-color: var(--epb-high-watermark-color, var(--red-color));
   border-radius: 50%;
   top: 50%;
   transform: translateY(-50%);
   border: none;
 }
-
-.${CARD.style.dynamic.show}-lwm-round-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+.${CARD.style.dynamic.show}-lwm-round-${CARD.htmlStructure.elements.progressBar.watermark.class}
+.${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
   left: calc(var(--epb-low-watermark-value, 20%) - var(--epb-watermark-circle-size, 5px) / 2);
-  width: var(--epb-watermark-circle-size, 5px);
-  height: var(--epb-watermark-circle-size, 5px);
-  background-color: var(--epb-low-watermark-color, var(--red-color));
-  border-radius: 50%;
-  top: 50%;
-  transform: translateY(-50%);
-  border: none;
+}
+.${CARD.style.dynamic.show}-hwm-round-${CARD.htmlStructure.elements.progressBar.watermark.class}
+.${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+  right: calc(100% - var(--epb-high-watermark-value, 80%) + var(--epb-watermark-circle-size, 5px) / 2);
 }
 
-/* Watermark triangle styles */
-.${CARD.style.dynamic.show}-hwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  right: calc(100% - var(--epb-high-watermark-value, 80%) + var(--epb-watermark-triangle-size, 8px) / 2);
+/* ---------- Triangle ---------- */
+:is(.${CARD.style.dynamic.show}-lwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class},
+    .${CARD.style.dynamic.show}-hwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class})
+:is(.${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+    .${CARD.htmlStructure.elements.progressBar.highWatermark.class}) {
   width: 0;
   height: 0;
   background-color: transparent;
   border-left: calc(var(--epb-watermark-triangle-size, 8px) / 2) solid transparent;
   border-right: calc(var(--epb-watermark-triangle-size, 8px) / 2) solid transparent;
-  border-top: var(--epb-watermark-triangle-size, 8px) solid var(--epb-high-watermark-color, var(--red-color));
-  top: 0;
 }
-
-.${CARD.style.dynamic.show}-lwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+.${CARD.style.dynamic.show}-lwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class}
+.${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
   left: calc(var(--epb-low-watermark-value, 20%) - var(--epb-watermark-triangle-size, 8px) / 2);
-  width: 0;
-  height: 0;
-  background-color: transparent;
-  border-left: calc(var(--epb-watermark-triangle-size, 8px) / 2) solid transparent;
-  border-right: calc(var(--epb-watermark-triangle-size, 8px) / 2) solid transparent;
   border-top: var(--epb-watermark-triangle-size, 8px) solid var(--epb-low-watermark-color, var(--red-color));
-  top: 0;
+}
+.${CARD.style.dynamic.show}-hwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class}
+.${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+  right: calc(100% - var(--epb-high-watermark-value, 80%) + var(--epb-watermark-triangle-size, 8px) / 2);
+  border-top: var(--epb-watermark-triangle-size, 8px) solid var(--epb-high-watermark-color, var(--red-color));
 }
 
 /* === VERTICAL LAYOUT ADJUSTMENTS === */
-.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.right.class} {
+.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.content.class} {
   flex-grow: 0;
 }
 
@@ -4187,12 +4194,12 @@ ${CARD.htmlStructure.card.element} {
   padding-top: unset;
 }
 
-.${CARD.layout.orientations.vertical.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.left.class} {
+.${CARD.layout.orientations.vertical.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.icon.class} {
   margin-top: unset;
 }
 
 /* === VISIBILITY CONTROLS === */
-.${CARD.style.dynamic.hiddenComponent.icon.class} :is(.${CARD.htmlStructure.sections.left.class}, .${CARD.htmlStructure.elements.shape.class}),
+.${CARD.style.dynamic.hiddenComponent.icon.class} :is(.${CARD.htmlStructure.sections.icon.class}, .${CARD.htmlStructure.elements.shape.class}),
 .${CARD.style.dynamic.hiddenComponent.name.class} .${CARD.htmlStructure.elements.nameGroup.class},
 .${CARD.style.dynamic.hiddenComponent.secondary_info.class} .${CARD.htmlStructure.elements.detailGroup.class},
 .${CARD.style.dynamic.hiddenComponent.progress_bar.class} .${CARD.htmlStructure.elements.progressBar.bar.class} {
@@ -4213,7 +4220,7 @@ ${CARD.htmlStructure.card.element} {
 
 /* === INTERACTIVE STATES === */
 .${CARD.style.dynamic.clickable.card}:hover,
-.${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.left.class}:hover {
+.${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.icon.class}:hover {
   cursor: pointer;
   background-color: color-mix(in srgb, var(--card-background-color) var(--epb-card-hover-mix), var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) var(--epb-hover-opacity));
 }
@@ -4223,7 +4230,7 @@ ${CARD.htmlStructure.card.element} {
   transition: background-color var(--epb-click-transition-background);
 }
 
-.${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.left.class}:hover .${CARD.htmlStructure.elements.shape.class} {
+.${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.icon.class}:hover .${CARD.htmlStructure.elements.shape.class} {
   background-color: color-mix(in srgb, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) var(--epb-icon-hover-opacity), transparent);
 }
 
@@ -4236,7 +4243,6 @@ ${CARD.htmlStructure.card.element} {
   height: 100%;
   width: 100%;
 }
-
 
 .progress-bar-container.overlay .progress-bar,
 .progress-bar-container.overlay .progress-bar-effect-radius
@@ -4252,183 +4258,227 @@ ${CARD.htmlStructure.card.element} {
   max-height: 100%;
 }
 
-.horizontal .right.overlay .name-group,
-.horizontal .right.overlay .secondary-info {
-  margin-left: 5px;
+.${CARD.htmlStructure.sections.content.class}.overlay {
+  height: 40px;
 }
 
-.right.overlay.single-line  {
+.${CARD.htmlStructure.sections.content.class}.overlay .name-group,
+.${CARD.htmlStructure.sections.content.class}.overlay .secondary-info {
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.horizontal .${CARD.htmlStructure.sections.content.class}.overlay .name-group,
+.horizontal .${CARD.htmlStructure.sections.content.class}.overlay .secondary-info {
+  margin-left: 7px;
+}
+
+.${CARD.htmlStructure.sections.content.class}.overlay.single-line  {
   justify-content: space-between;
   flex-direction: row;
   align-items: center;
-  height: 36px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 `;
 
+/* ======= END CSS */
+
 const CARD_EDITOR_CSS = `
- :host {
-   --accordion-padding: 18px;
-   --accordion-gap: 10px;
-   --border-radius: 6px;
-   --transition-duration: 0.2s;
-   --transition-easing: cubic-bezier(0.33, 0, 0.2, 1);
-   --icon-size: 20px;
-   --button-size: 48px;
-   --small-icon-size: 24px;
- }
- 
- /* Container principal */
- .${CARD.editor.fields.container.class} {
-   display: flex;
-   flex-direction: column;
-   gap: 25px;
-   padding-bottom: 70px;
- }
- 
- /* Icônes communes */
- .${CARD.editor.fields.iconItem.class},
- .${CARD.editor.fields.accordion.icon.class} {
-   margin-right: 8px;
-   color: var(--secondary-text-color);
- }
- 
- .${CARD.editor.fields.iconItem.class} {
-   width: var(--icon-size);
-   height: var(--icon-size);
- }
- 
- /* Documentation */
- .${CARD.documentation.link.class} {
-   position: absolute;
-   top: 0;
-   right: 0;
-   z-index: 600;
-   text-decoration: none;
-   display: flex;
- }
- 
- .${CARD.documentation.shape.class} {
-   width: var(--button-size);
-   height: var(--button-size);
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   border-radius: 50%;
-   cursor: pointer;
-   transition: background-color var(--transition-duration) ease;
- }
- 
- .${CARD.documentation.shape.class}:hover {
-   background-color: color-mix(in srgb, var(--card-background-color) 90%, var(--secondary-text-color) 10%);
- }
- 
- .${CARD.documentation.questionMark.class} {
-   color: var(--primary-text-color);
- }
- 
- /* Accordéon */
- .${CARD.editor.fields.accordion.item.class} {
-   display: block;
-   width: 100%;
-   border: 1px solid color-mix(in srgb, var(--card-background-color) 80%, var(--secondary-text-color) 20%);
-   border-radius: var(--border-radius);
-   overflow: visible;
- }
- 
- .${CARD.editor.fields.accordion.title.class} {
-   display: flex;
-   align-items: center;
-   gap: var(--accordion-gap);
-   position: relative;
-   background-color: transparent;
-   color: var(--primary-text-color);
-   cursor: pointer;
-   padding: var(--accordion-padding);
-   width: 100%;
-   height: var(--button-size);
-   border: none;
-   text-align: left;
-   font-size: 15px;
-   transition: background-color 0.4s ease;
- }
- 
- .${CARD.editor.fields.accordion.title.class}:focus {
-   background-color: var(--secondary-background-color);
- }
- 
- .${CARD.editor.fields.accordion.arrow.class} {
-   display: inline-block;
-   width: var(--small-icon-size);
-   height: var(--small-icon-size);
-   margin-left: auto;
-   color: var(--primary-text-color);
-   transition: transform var(--transition-duration) ease-out;
- }
- 
- .accordion.expanded .${CARD.editor.fields.accordion.arrow.class} {
-   transform: rotate(180deg);
- }
- 
- .${CARD.editor.fields.accordion.content.class} {
-   display: flex;
-   flex-direction: row;
-   flex-wrap: wrap;
-   align-content: flex-start;
-   column-gap: var(--accordion-gap);
-   row-gap: 20px;
-   padding: 0 var(--accordion-padding);
-   background-color: transparent;
-   max-height: 0;
-   opacity: 0;
-   overflow: hidden;
-   transition: 
-     max-height var(--transition-duration) var(--transition-easing),
-     padding var(--transition-duration) var(--transition-easing),
-     opacity var(--transition-duration) ease;
- }
- 
- .accordion.expanded .${CARD.editor.fields.accordion.content.class} {
-   /* max-height: défini par script JS */
-   padding-top: 30px;
-   padding-bottom: 30px;
-   opacity: 1;
-   overflow: visible;
- }
- 
- /* Animation des éléments enfants de l'accordéon */
- .${CARD.editor.fields.accordion.content.class} > * {
-   opacity: 0;
-   transition: opacity var(--transition-duration) ease 0.15s;
- }
- 
- .accordion.expanded .${CARD.editor.fields.accordion.content.class} > * {
-   opacity: 1;
- }
- 
- .accordion.collapsing .${CARD.editor.fields.accordion.content.class} > * {
-   opacity: 0 !important;
-   transition: opacity 0.1s ease; /* Transition rapide pendant le repli */
- }
- 
- /* Sélecteur ha-select */
- ha-select {
-   --mdc-menu-max-height: 250px;
- }
- 
- /* Classes show/hide optimisées */
- .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.attribute} .${CARD.editor.keyMappings.attribute},
- .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.max_value_attribute} .${CARD.editor.keyMappings.max_value_attribute},
- .${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.theme} .${CARD.editor.keyMappings.theme} {
-   display: none;
- }
- 
- /* Toggle corrigé */
- .${CARD.editor.fields.toggle.class} {
-   display: flex;
-   align-items: center; /* Correction du typo */
-   gap: 8px;
- }
- `;
+:host {
+  --accordion-padding: 18px;
+  --accordion-gap: 10px;
+  --border-radius: 6px;
+  --transition-duration: 0.2s;
+  --transition-easing: cubic-bezier(0.33, 0, 0.2, 1);
+  --icon-size: 20px;
+  --button-size: 48px;
+  --small-icon-size: 24px;
+}
+
+/* Container principal */
+.${CARD.editor.fields.container.class} {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  padding-bottom: 70px;
+}
+
+/* Icônes communes */
+.${CARD.editor.fields.iconItem.class},
+.${CARD.editor.fields.accordion.icon.class} {
+  margin-right: 8px;
+  color: var(--secondary-text-color);
+}
+
+.${CARD.editor.fields.iconItem.class} {
+  width: var(--icon-size);
+  height: var(--icon-size);
+}
+
+/* Documentation */
+.${CARD.documentation.link.class} {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 600;
+  text-decoration: none;
+  display: flex;
+}
+
+.${CARD.documentation.shape.class} {
+  width: var(--button-size);
+  height: var(--button-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color var(--transition-duration) ease;
+}
+
+.${CARD.documentation.shape.class}:hover {
+  background-color: color-mix(in srgb, var(--card-background-color) 90%, var(--secondary-text-color) 10%);
+}
+
+.${CARD.documentation.questionMark.class} {
+  color: var(--primary-text-color);
+}
+
+/* Accordéon */
+.${CARD.editor.fields.accordion.item.class} {
+  display: block;
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--card-background-color) 80%, var(--secondary-text-color) 20%);
+  border-radius: var(--border-radius);
+  overflow: visible;
+}
+
+.${CARD.editor.fields.accordion.title.class} {
+  display: flex;
+  align-items: center;
+  gap: var(--accordion-gap);
+  position: relative;
+  background-color: transparent;
+  color: var(--primary-text-color);
+  cursor: pointer;
+  padding: var(--accordion-padding);
+  width: 100%;
+  height: var(--button-size);
+  border: none;
+  text-align: left;
+  font-size: 15px;
+  transition: background-color 0.4s ease;
+}
+
+.${CARD.editor.fields.accordion.title.class}:focus {
+  background-color: var(--secondary-background-color);
+}
+
+.${CARD.editor.fields.accordion.arrow.class} {
+  display: inline-block;
+  width: var(--small-icon-size);
+  height: var(--small-icon-size);
+  margin-left: auto;
+  color: var(--primary-text-color);
+  transition: transform var(--transition-duration) ease-out;
+}
+
+.accordion.expanded .${CARD.editor.fields.accordion.arrow.class} {
+  transform: rotate(180deg);
+}
+
+.${CARD.editor.fields.accordion.content.class} {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  column-gap: var(--accordion-gap);
+  row-gap: 20px;
+  padding: 0 var(--accordion-padding);
+  background-color: transparent;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: 
+    max-height var(--transition-duration) var(--transition-easing),
+    padding var(--transition-duration) var(--transition-easing),
+    opacity var(--transition-duration) ease;
+}
+
+.accordion.expanded .${CARD.editor.fields.accordion.content.class} {
+  /* max-height: défini par script JS */
+  padding-top: 30px;
+  padding-bottom: 30px;
+  opacity: 1;
+  overflow: visible;
+}
+
+/* Animation des éléments enfants de l'accordéon */
+.${CARD.editor.fields.accordion.content.class} > * {
+  opacity: 0;
+  transition: opacity var(--transition-duration) ease 0.15s;
+}
+
+.accordion.expanded .${CARD.editor.fields.accordion.content.class} > * {
+  opacity: 1;
+}
+
+.accordion.collapsing .${CARD.editor.fields.accordion.content.class} > * {
+  opacity: 0 !important;
+  transition: opacity 0.1s ease; /* Transition rapide pendant le repli */
+}
+
+/* Sélecteur ha-select */
+ha-select {
+  --mdc-menu-max-height: 250px;
+}
+
+/* Classes show/hide optimisées */
+.${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.attribute} .${CARD.editor.keyMappings.attribute},
+.${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.max_value_attribute} .${CARD.editor.keyMappings.max_value_attribute},
+.${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.theme} .${CARD.editor.keyMappings.theme} {
+  display: none;
+}
+
+/* Toggle corrigé */
+.${CARD.editor.fields.toggle.class} {
+  display: flex;
+  align-items: center; /* Correction du typo */
+  gap: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .${CARD.editor.fields.accordion.title.class},
+  .${CARD.editor.fields.accordion.arrow.class},
+  .${CARD.editor.fields.accordion.content.class},
+  .${CARD.documentation.shape.class} {
+    transition: none !important;
+  }
+
+  .${CARD.editor.fields.accordion.content.class} > * {
+    opacity: 1 !important;
+    transition: none !important;
+  }
+}
+`;
 
 /******************************************************************************************
  * 🛠️ Dev mode
@@ -4580,6 +4630,7 @@ class RegistrationHelper {
       name: component.name,
       preview: true,
       description: component.description,
+      documentationURL: CARD.documentation.link.documentationUrl,
     });
   }
 
@@ -4606,17 +4657,13 @@ const Element = (obj, extraClass = '') => {
 };
 
 const StructureElements = {
-  container: () => Element(CARD.htmlStructure.sections.container).html('{{content}}'),
+  container: (options) => Element(CARD.htmlStructure.sections.container, options.layout).html('{{content}}'),
   belowContainer: () => Element(CARD.htmlStructure.sections.belowContainer).html('{{content}}'),
   topContainer: () => Element(CARD.htmlStructure.sections.topContainer).html('{{content}}'),
   bottomContainer: () => Element(CARD.htmlStructure.sections.bottomContainer).html('{{content}}'),
-  left: () => Element(CARD.htmlStructure.sections.left).html('{{content}}'),
 
   iconAndShape: () => Element(CARD.htmlStructure.elements.shape).html(Element(CARD.htmlStructure.elements.icon).html()),
   badge: () => Element(CARD.htmlStructure.elements.badge.container).html(Element(CARD.htmlStructure.elements.badge.icon).html()),
-
-  right: () => Element(CARD.htmlStructure.sections.right).html('{{content}}'),
-
   nameGroup: () =>
     Element(CARD.htmlStructure.elements.nameGroup).html(
       Element(CARD.htmlStructure.elements.nameCombined).html(
@@ -4672,64 +4719,53 @@ const StructureElements = {
     }
   },
 
-  secondaryInfo: (options) => {
+  createSecondaryInfo: (options, detailGroupFn) => {
     const { layout, barPosition } = options;
     const isTopOrBottom = ['top', 'bottom'].includes(barPosition);
     const isBelowHorizontal = layout === 'horizontal' && barPosition === 'below';
     const isOverlay = barPosition === 'overlay';
+    const isVertical = layout === 'vertical';
 
-    let content = StructureElements.detailGroup();
+    let content = detailGroupFn();
 
-    if (!isTopOrBottom && !isBelowHorizontal && !isOverlay) {
+    if (!isTopOrBottom && !isBelowHorizontal && !isOverlay && !isVertical) {
       content += StructureElements.progressBar(options);
     }
 
     return Element(CARD.htmlStructure.elements.secondaryInfo).html(content);
   },
 
-  secondaryInfoMinimal: (options) => {
-    const { layout, barPosition } = options;
-    const isTopOrBottom = ['top', 'bottom'].includes(barPosition);
-    const isBelowHorizontal = layout === 'horizontal' && barPosition === 'below';
-    const isOverlay = barPosition === 'overlay';
+  secondaryInfo: (options) =>
+    StructureElements.createSecondaryInfo(options, StructureElements.detailGroup),
 
-    let content = StructureElements.detailGroupMinimal();
+  secondaryInfoMinimal: (options) =>
+    StructureElements.createSecondaryInfo(options, StructureElements.detailGroupMinimal),
 
-    if (!isTopOrBottom && !isBelowHorizontal && !isOverlay) {
-      content += StructureElements.progressBar(options);
-    }
-
-    return Element(CARD.htmlStructure.elements.secondaryInfo).html(content);
-  },
-
-  rightFull: (options) => {
-    const rightContent = StructureElements.nameGroup() + StructureElements.secondaryInfo(options);
+  createContent: (options, rightContent) => {
     const isOverlay = options.barPosition === 'overlay';
     const isSingleLine = options.barSingleLine;
-    let extraClass = '';
-    if (isOverlay) extraClass += ' overlay';
-    if (isSingleLine) extraClass += ' single-line';
+    const isVertical = options.layout === 'vertical';
+    const isTopOrBottom = ['top', 'bottom'].includes(options.barPosition);
 
+    const extraClass = (isOverlay ? ' overlay' : '') + (isSingleLine ? ' single-line' : '');
     const before = isOverlay ? StructureElements.progressBar(options) : '';
-    return Element(CARD.htmlStructure.sections.right, extraClass).html(before + rightContent);
+    const after = !isOverlay && !isTopOrBottom && isVertical ? StructureElements.progressBar(options) : '';
+    const content = before + rightContent + after;
+
+    return Element(CARD.htmlStructure.sections.content, extraClass).html(content);
   },
 
-  rightMinimal: (options) => {
-    const rightContent = StructureElements.nameGroupMinimal() + StructureElements.secondaryInfoMinimal(options);
-    const isOverlay = options.barPosition === 'overlay';
-    const isSingleLine = options.barSingleLine;
-    let extraClass = '';
-    if (isOverlay) extraClass += ' overlay';
-    if (isSingleLine) extraClass += ' single-line';
+  contentFull: (options) => StructureElements.createContent(options, StructureElements.nameGroup() + StructureElements.secondaryInfo(options)),
+  contentMini: (options) =>
+    StructureElements.createContent(options, StructureElements.nameGroupMinimal() + StructureElements.secondaryInfoMinimal(options)),
 
-    const before = isOverlay ? StructureElements.progressBar(options) : '';
-    return Element(CARD.htmlStructure.sections.right, extraClass).html(before + rightContent);
-  },
+  iconSection: () => Element(CARD.htmlStructure.sections.icon).html(StructureElements.iconAndShape() + StructureElements.badge()),
+  iconSectionWoBadge: () => Element(CARD.htmlStructure.sections.icon).html(StructureElements.iconAndShape()),
 
-  leftFull: () => Element(CARD.htmlStructure.sections.left).html(StructureElements.iconAndShape() + StructureElements.badge()),
-  leftNoBadge: () => Element(CARD.htmlStructure.sections.left).html(StructureElements.iconAndShape()),
-
-  trendIndicator: (options) => options.trendIndicator ? Element(CARD.htmlStructure.elements.trendIndicator.container).html(Element(CARD.htmlStructure.elements.trendIndicator.icon).html()) : '',
+  trendIndicator: (options) =>
+    options.trendIndicator
+      ? Element(CARD.htmlStructure.elements.trendIndicator.container).html(Element(CARD.htmlStructure.elements.trendIndicator.icon).html())
+      : '',
 
   wrapWithBarPosition: (content, options) => {
     const { barPosition } = options;
@@ -4752,42 +4788,43 @@ const StructureElements = {
 const StructureTemplates = {
   card: (options = {}) => {
     if (options.barPosition === 'below')
-      return StructureElements.container().replace(
+      return StructureElements.container(options).replace(
         '{{content}}',
         StructureElements.trendIndicator(options) +
-          StructureElements.leftFull() +
-          StructureElements.rightFull(options) +
+          StructureElements.iconSection() +
+          StructureElements.contentFull(options) +
           StructureElements.belowContainer().replace('{{content}}', StructureElements.progressBar(options))
       );
     return StructureElements.wrapWithBarPosition(
-      StructureElements.container().replace(
+      StructureElements.container(options).replace(
         '{{content}}',
-        StructureElements.trendIndicator(options) + StructureElements.leftFull() + StructureElements.rightFull(options)
+        StructureElements.trendIndicator(options) + StructureElements.iconSection() + StructureElements.contentFull(options)
       ),
       options
     );
   },
 
   badge: (options = {}) => {
-    return StructureElements.container().replace('{{content}}', StructureElements.leftNoBadge() + StructureElements.rightFull(options));
+    return StructureElements.container(options).replace(
+      '{{content}}',
+      StructureElements.iconSectionWoBadge() + StructureElements.contentFull(options)
+    );
   },
 
   template: (options = {}) => {
     if (options.barPosition === 'below')
-      return StructureElements.container().replace(
+      return StructureElements.container(options).replace(
         '{{content}}',
         StructureElements.trendIndicator(options) +
-          StructureElements.leftFull() +
-          StructureElements.rightMinimal(options) +
+          StructureElements.iconSection() +
+          StructureElements.contentMini(options) +
           StructureElements.belowContainer().replace('{{content}}', StructureElements.progressBar(options))
       );
 
     return StructureElements.wrapWithBarPosition(
-      StructureElements.container().replace(
+      StructureElements.container(options).replace(
         '{{content}}',
-        StructureElements.trendIndicator(options) +
-          StructureElements.leftFull() +
-          StructureElements.rightMinimal(options)
+        StructureElements.trendIndicator(options) + StructureElements.iconSection() + StructureElements.contentMini(options)
       ),
       options
     );
@@ -6385,6 +6422,8 @@ function struct(validator) {
       if (shouldPatch) result.icon_tap_action = { action: 'toggle' };
     }
 
+    if (['top', 'bottom', 'overlay'].includes(result.bar_position)) delete result.bar_size; // avoid conflict
+
     return result;
   };
   const postProcess = (data) => {
@@ -7565,6 +7604,7 @@ class ActionHelper {
   }
 
   #attachListener(elem) {
+    if (!this.#resourceManager) return;
     this.#resourceManager.addEventListener(elem, 'mousedown', this.#boundHandlers.mousedown, { passive: true });
     this.#resourceManager.addEventListener(elem, 'mouseup', this.#boundHandlers.mouseup, { passive: true });
     this.#resourceManager.addEventListener(elem, 'mousemove', this.#boundHandlers.mousemove, { passive: true });
@@ -8731,7 +8771,7 @@ class EntityProgressBadge extends EntityProgressCardBase {
       min-width: unset !important;
       max-width: unset !important;
     }
-    .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.left.class}:hover .${CARD.htmlStructure.elements.shape.class} {
+    .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.icon.class}:hover .${CARD.htmlStructure.elements.shape.class} {
       background-color: unset !important;
     }
     `;
@@ -9139,7 +9179,7 @@ class EntityProgressBadgeTemplate extends EntityProgressTemplate {
       min-width: unset !important;
       max-width: unset !important;
     }
-    .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.left.class}:hover .${CARD.htmlStructure.elements.shape.class} {
+    .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.icon.class}:hover .${CARD.htmlStructure.elements.shape.class} {
       background-color: unset !important;
     }
     `;
@@ -10026,7 +10066,32 @@ class EntityProgressCardEditor extends HTMLElement {
     const panel = accordion.querySelector('.accordion-content');
     if (!panel) return;
 
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const isExpanding = !accordion.classList.contains('expanded');
+
+    // --- reduce mode
+    if (prefersReducedMotion) {
+      if (isExpanding) {
+        accordion.classList.add('expanded');
+        Object.assign(panel.style, {
+          display: 'flex',
+          maxHeight: 'none',
+          paddingTop: '30px',
+          paddingBottom: '30px',
+          opacity: '1',
+        });
+      } else {
+        accordion.classList.remove('expanded');
+        Object.assign(panel.style, {
+          display: '',
+          maxHeight: '',
+          paddingTop: '',
+          paddingBottom: '',
+          opacity: '',
+        });
+      }
+      return; // stop
+    }
 
     // Clean up existing animation
     this.#resourceManager.remove(`accordionTransition-${index}`);
