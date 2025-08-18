@@ -1414,7 +1414,7 @@ Check out the [Contributing Guide] to get started.
 
 ## 📄 License
 
-This project is licensed under the GPL-3.0 license.  
+This project is licensed under the [GPL-3.0 license].  
 
 [🔼 Back to top]
 
@@ -1424,6 +1424,7 @@ This project is licensed under the GPL-3.0 license.
 [js-badge]: https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=Javascript&logoColor=black&color=%23F7DF1E
 [discord-badge]: https://img.shields.io/badge/Discord-%235865F2?style=for-the-badge&logo=Discord&logoColor=white&color=%235865F2
 [repo-link]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card
+[GPL-3.0 license]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/LICENSE
 [discord-link]: https://discord.gg/tyMQ2SfyNG
 [Discord]: https://discord.gg/tyMQ2SfyNG
 [GitHub Issues]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues

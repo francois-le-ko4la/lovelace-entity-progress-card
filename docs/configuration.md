@@ -1014,6 +1014,10 @@ bar_effect: |-
   {% endif %}
 ```
 
+> [!NOTE]
+> The shimmer effect is disabled when center_zero is enabled (center_zero = true).
+
+
 [🔼 Back to top]
 
 #### `bar_orientation`

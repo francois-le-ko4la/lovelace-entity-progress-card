@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.5.0-RC4
+ * @version 1.5.0-RC3
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.5.0-RC4';
+const VERSION = '1.5.0-RC3';
 const CARD = {
   meta: {
     card: {
@@ -3231,6 +3231,7 @@ const EDITOR_INPUT_FIELDS = {
         width: 'calc((100% - 20px) * 0.2)',
         isInGroup: null,
       },
+
       decimal: {
         name: 'decimal',
         type: CARD.editor.fields.number.type,
@@ -3470,10 +3471,6 @@ const ATTRIBUTE_MAPPING = {
 };
 
 const CARD_CSS = `
-/* =============================================================================
-   PARAMS
-   ============================================================================= */
-
 :host {
   /* === SPACING VARIABLES === */
   --epb-gap-default: 10px;
@@ -3537,131 +3534,89 @@ const CARD_CSS = `
 
 .${CARD.style.bar.sizeOptions.xlarge.label} {
   --epb-progress-size: var(--epb-progress-size-xl);
-  --epb-progress-container-height: var(--epb-progress-size-xl);
 }
 
-/* =============================================================================
-   BASE CARD
-   ============================================================================= */
+/* === /PARAM === */
 
+/* === BASE CARD STYLES === */
 ${CARD.htmlStructure.card.element} {
-  --epb-current-card-min-width: var(${CARD.style.dynamic.card.minWidth.var}, 100%);
-  --epb-current-card-padding: 0 var(--epb-padding-default);
-  --epb-current-card-margin: 0 auto;
-  --epb-current-card-box-shadow: var(--ha-card-box-shadow,none);
-  --epb-current-card-border-width: var(--ha-card-border-width,1px);
-
+  height: var(${CARD.style.dynamic.card.height.var}, 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative; /* permet top/bottom */
-  margin: var(--epb-current-card-margin);
-  padding: var(--epb-current-card-padding);
-  width: auto; /* explicite */
-  min-width: var(--epb-current-card-min-width);
-  height: var(${CARD.style.dynamic.card.height.var}, 100%);
-  box-sizing: border-box;
+  padding: 0 var(--epb-padding-default);
+  margin: 0 auto;
   overflow: hidden;
-  box-shadow: var(--epb-current-card-box-shadow);
-  border-width: var(--epb-current-card-border-width);
-
+  box-sizing: border-box;
   font-family: var(--ha-font-family-body);
   -moz-osx-font-smoothing: var(--ha-font-smoothing);
   -webkit-font-smoothing: antialiased;
+  min-width: var(${CARD.style.dynamic.card.minWidth.var}, 100%);
+  position: relative; /* top/bottom*/
 }
 
-/* === TYPE: PICTURE-ELEMENTS === */
+/* type-picture-elements integration */
+
 .type-picture-elements {
-  --epb-current-card-min-width: var(${CARD.style.dynamic.card.minWidth.var}, 200px);
+  min-width: var(${CARD.style.dynamic.card.minWidth.var}, 200px);
 }
 
 /* === FRAMELESS & ENTITIES STYLES === */
 .type-entities,
 .type-custom-vertical-stack-in-card,
 .${CARD.style.dynamic.frameless.class} {
-  --epb-current-card-border-width: 0;
-  --epb-current-card-box-shadow: none;
+  background: transparent;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .type-entities {
   background: transparent !important;
-}
-
-/* === ENTITIES SPECIFICS === */
-.type-entities {
-  --epb-current-card-padding: 0 !important;
-  --epb-current-card-margin: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
   transition: none !important;
 }
 
-/* =============================================================================
-   MAIN CONTAINER
-   ============================================================================= */
-
+/* === MAIN CONTAINER === */
 .${CARD.htmlStructure.sections.container.class} {
   display: flex;
-  flex-direction: var(--epb-current-container-flex-direction, row);
   align-items: center;
   justify-content: center;
-  gap: var(--epb-current-container-gap, var(--epb-gap-default));
+  gap: var(--epb-gap-default);
   width: 100%;
   height: var(${CARD.style.dynamic.card.height.var}, unset);
-  min-height: var(--epb-current-container-min-height, auto);
-  overflow: var(--epb-current-container-overflow, visible);
-  padding-top: var(--epb-current-container-padding-top, 0);
-  box-sizing: var(--epb-current-container-box-sizing, content-box);
-  flex-wrap: var(--epb-current-container-flex-wrap, nowrap);
 }
 
-.horizontal {
-  --epb-current-container-flex-direction: row;
-  --epb-current-container-padding-top: 0px;
-  --epb-current-container-min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.horizontal.minHeight});
-  --epb-current-container-overflow: visible;
-  --epb-current-container-gap: var(--epb-gap-default);
-  --epb-current-container-box-sizing: content-box;
-  --epb-current-container-flex-wrap: wrap;
+.${CARD.htmlStructure.sections.container.class}.${CARD.layout.orientations.vertical.label} {
+  flex-direction: column;
+  min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.vertical.minHeight});
+  overflow: hidden;
+  padding-top: calc(var(--epb-progress-size) + 2px); /* center the content */
+  box-sizing: border-box;
+  gap: 11px;
 }
 
-.vertical {
-  --epb-current-container-flex-direction: column;
-  --epb-current-container-padding-top: calc(var(--epb-progress-size) + 2px);
-  --epb-current-container-min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.vertical.minHeight});
-  --epb-current-container-overflow: hidden;
-  --epb-current-container-gap: 11px;
-  --epb-current-container-box-sizing: border-box;
-  --epb-current-container-flex-wrap: nowrap;
-}
-
-ha-card:has(> .bottom-container) > .${CARD.htmlStructure.sections.container.class},
+ha-card:has(> .bottom-container) > .${CARD.htmlStructure.sections.container.class} ,
 ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} {
-  --epb-current-container-padding-top: 0px;
+  padding-top: 0px;
 }
 
 .${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.sections.container.class},
 .${CARD.htmlStructure.sections.container.class}.vertical:has(.content-section.overlay) {
-  --epb-current-container-padding-top: 3px;
+  padding-top: 3px;
 }
 
 .${CARD.htmlStructure.sections.container.class}.vertical:has(.content-section.overlay) {
-  --epb-current-container-gap: 9.5px;
+  gap: 9.5px;
 }
 
-.type-entities .${CARD.htmlStructure.sections.container.class} {
-  --epb-current-container-gap: var(--epb-gap-entities);
-  --epb-current-container-min-height: var(--epb-entities-card-min-height) !important;
+.${CARD.layout.orientations.horizontal.label} .${CARD.htmlStructure.sections.container.class} {
+  flex-direction: row;
+  flex-wrap: wrap;
+  min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.horizontal.minHeight});
+  overflow: visible;
+  row-gap: 7px;
 }
-
-.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class},
-.${CARD.layout.orientations.vertical.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class},
-.${CARD.layout.orientations.horizontal.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class} {
-  --epb-current-container-min-height: unset;
-  --epb-current-container-padding-top: unset;
-}
-
-/* =============================================================================
-   TOP, BELOW & BOTTOM
-   ============================================================================= */
 
 .below-container {
   flex-basis: 100%;
@@ -3671,19 +3626,24 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
   height: var(--epb-progress-size-xl);
 }
 
+.xlarge .progress-bar-container {
+  height: var(--epb-progress-size-xl);
+}
+
 .bottom-container, .top-container {
   position: absolute;
   width: 100%;
   height: 8px;
-  left: 0;
 }
 
 .top-container {
   top: 0;
+  left: 0;
 }
 
 .bottom-container {
   bottom: 0;
+  left: 0;
 }
 
 .bottom-container .progress-bar-container,
@@ -3691,52 +3651,46 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
   height: var(--epb-progress-size-s);
 }
 
-/* =============================================================================
-   TREND
-   ============================================================================= */
-
-.trend-indicator,
-.trend-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--epb-badge-size);
-  height: var(--epb-badge-size);
-}
-
 .trend-indicator {
+  display: flex;
   position: absolute;
   top: 2px;
   right: 2px;
+  width: var(--epb-badge-size);
+  height: var(--epb-badge-size);  
+  align-items: center;
+  justify-content: center;
 }
 
 .trend-icon {
+  display: flex;
+  width: var(--epb-badge-size);
+  height: var(--epb-badge-size);  
+  align-items: center;
+  justify-content: center;
   color: var(--state-icon-color);
 }
 
-/* =============================================================================
-   ICON SECTION (ICON, SHAPE, BADGE)
-   ============================================================================= */
+.type-entities .${CARD.htmlStructure.sections.container.class} {
+  gap: var(--epb-gap-entities);
+  min-height: var(--epb-entities-card-min-height) !important;
+}
 
+/* === ICON SECTION (ICON, SHAPE, BADGE) === */
 .${CARD.htmlStructure.sections.icon.class} {
-  --epb-current-shape-size: var(--epb-shape-size, var(--epb-shape-default-size));
-
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: relative;
-  width: var(--epb-current-shape-size);
-  height: var(--epb-current-shape-size);
+  width: var(--epb-shape-size, var(--epb-shape-default-size));
+  height: var(--epb-shape-size, var(--epb-shape-default-size));
   flex-shrink: 0;
 }
 
 .type-entities .${CARD.htmlStructure.sections.icon.class} {
-  --epb-current-shape-size: var(--epb-shape-size, var(--epb-entities-shape-size)) !important;
-}
-
-.${CARD.layout.orientations.vertical.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.icon.class} {
-  margin-top: unset;
+  width: var(--epb-shape-size, var(--epb-entities-shape-size)) !important;
+  height: var(--epb-shape-size, var(--epb-entities-shape-size)) !important;
 }
 
 /* === SHAPE & ICON === */
@@ -3744,50 +3698,42 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--epb-current-shape-size);
-  height: var(--epb-current-shape-size);
+  width: var(--epb-shape-size, var(--epb-shape-default-size));
+  height: var(--epb-shape-size, var(--epb-shape-default-size));
   border-radius: 50%;
   background-color: color-mix(in srgb, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) var(--epb-shape-opacity), transparent);
 }
 
-.${CARD.htmlStructure.elements.icon.class},
-.custom-icon-img {
-  --epb-current-icon-size: var(--epb-icon-size, var(--epb-icon-default-size));
-  width: var(--epb-current-icon-size);
-  height: var(--epb-current-icon-size);
-}
-
 .${CARD.htmlStructure.elements.icon.class} {
+  width: var(--epb-icon-size, var(--epb-icon-default-size));
+  height: var(--epb-icon-size, var(--epb-icon-default-size));
   color: var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default});
 }
 
 .custom-icon-img {
+  width: var(--epb-icon-size, var(--epb-icon-default-size));
+  height: var(--epb-icon-size, var(--epb-icon-default-size));
   border-radius: 50%;
   object-fit: cover;
 }
 
-/* =============================================================================
-   CONTENT SECTION (TEXT CONTENT)
-   ============================================================================= */
-
+/* === CONTENT SECTION (TEXT CONTENT) === */
 .${CARD.htmlStructure.sections.content.class} {
   display: flex;
   flex-direction: column;
   justify-content: center;
   flex-grow: 1;
   flex-shrink: 1;
-  width: var(--epb-current-content-width);
   min-width: 0;
   overflow: hidden;
   position: relative; /* overlay */
 }
 
-.horizontal {
-  --epb-current-content-width: calc(100% - 56px);
+.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.content.class} {
+  width: 100%;
 }
-
-.vertical {
-  --epb-current-content-width: 100%;
+.${CARD.layout.orientations.horizontal.label} .${CARD.htmlStructure.sections.content.class} {
+  width: calc(100% - 56px);
 }
 
 /* === TEXT ELEMENTS === */
@@ -3915,82 +3861,13 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
   height: 16px;
 }
 
-
-.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.content.class} {
-  flex-grow: 0;
-}
-
-.${CARD.layout.orientations.vertical.label} :is(
-  .${CARD.htmlStructure.elements.nameGroup.class},
-  .${CARD.htmlStructure.elements.detailGroup.class}
-) {
-  flex-grow: 0;
-  width: 100%;
-  max-width: none;
-  text-align: center;
-  align-items: center;
-  justify-content: center;
-  min-width: 0;
-  box-sizing: border-box;
-}
-
-.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
-  max-width: 100%;
-  overflow: hidden;
-}
-  
-.${CARD.layout.orientations.vertical.label} .${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.nameGroup.class} {
-  height: var(--epb-vertical-name-large-height);
-}
-
-:is(.${CARD.layout.orientations.horizontal.label}, .${CARD.layout.orientations.vertical.label}) 
-  :is(.${CARD.htmlStructure.elements.nameGroup.class} > span, .${CARD.htmlStructure.elements.detailGroup.class} > span) {
-  flex-shrink: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.${CARD.layout.orientations.vertical.label} :is(
-  .${CARD.htmlStructure.elements.nameCombined.class},
-  .${CARD.htmlStructure.elements.detailCombined.class}
-) {
-  text-align: center;
-  width: 100%;
-  display: block; /* Simplifie le layout vertical */
-}
-
-/* =============================================================================
-   PROGRESS BAR
-   ============================================================================= */
-
+/* === PROGRESS BAR === */
 .${CARD.htmlStructure.elements.progressBar.container.class} {
   flex-grow: 1;
-  height: var(--epb-current-progress-container-height);
+  height: var(--epb-progress-container-height);
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.horizontal {
-  --epb-current-progress-container-height: var(--epb-progress-container-height);
-}
-.vertical {
-  --epb-current-progress-container-height: var(--epb-progress-size);
-}
-
-.vertical.xlarge .progress-bar-container {
-  margin-top: 23px;
-}
-
-/* ==== SIZE === */
-.${CARD.htmlStructure.elements.progressBar.inner.class},
-.${CARD.htmlStructure.elements.progressBar.positiveInner.class},
-.${CARD.htmlStructure.elements.progressBar.negativeInner.class},
-.${CARD.htmlStructure.elements.progressBar.bar.class} {
-  height: var(--epb-progress-size);
-  max-height: var(--epb-progress-size);
 }
 
 .${CARD.htmlStructure.elements.progressBar.bar.class} {
@@ -4005,6 +3882,26 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
 }
 
 /* Progress bar size variants */
+
+.${CARD.htmlStructure.elements.progressBar.inner.class},
+.${CARD.htmlStructure.elements.progressBar.positiveInner.class},
+.${CARD.htmlStructure.elements.progressBar.negativeInner.class},
+.${CARD.htmlStructure.elements.progressBar.bar.class} {
+  height: var(--epb-progress-size);
+  max-height: var(--epb-progress-size);
+}
+
+.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.progressBar.container.class} {
+  height: var(--epb-progress-size); /* 8px */
+}
+
+.${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.elements.progressBar.container.class} {
+  margin-top: 23px;
+}
+
+.${CARD.style.dynamic.progressBar.orientation.rtl} .${CARD.htmlStructure.elements.progressBar.bar.class} {
+  transform: scaleX(-1);
+}
 
 .${CARD.htmlStructure.elements.progressBar.inner.class},
 .${CARD.htmlStructure.elements.progressBar.positiveInner.class},
@@ -4032,88 +3929,30 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
   transform-origin: right;
 }
 
-/* === ORIENTATION === */
-.${CARD.style.dynamic.progressBar.orientation.rtl} .${CARD.htmlStructure.elements.progressBar.bar.class} {
-  transform: scaleX(-1);
-}
-
-/* === RADIUS EFFECT === */
-
-.${CARD.htmlStructure.elements.progressBar.bar.class} {
-  --epb-current-progress-bar-radius: calc(var(--epb-progress-size) / 2);
-  border-radius: var(--epb-current-progress-bar-radius);
-}
-
-.${CARD.htmlStructure.elements.progressBar.inner.class} {
-  --epb-current-progress-inner-radius: 0;
-  border-radius: var(--epb-current-progress-inner-radius);
-}
-
-.${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
-  border-radius: var(--epb-current-progress-inner-radius) 0 0 var(--epb-current-progress-inner-radius);
-}
-
-.${CARD.htmlStructure.elements.progressBar.positiveInner.class} {
-  border-radius: 0 var(--epb-current-progress-inner-radius) var(--epb-current-progress-inner-radius) 0;
-}
-
 :is(.top-container, .bottom-container) 
-  :is(.${CARD.htmlStructure.elements.progressBar.bar.class},
-      .${CARD.htmlStructure.elements.progressBar.inner.class},
-      .${CARD.htmlStructure.elements.progressBar.negativeInner.class},
-      .${CARD.htmlStructure.elements.progressBar.positiveInner.class}) {
-  --epb-current-progress-bar-radius: 0;
-  --epb-current-progress-inner-radius: 0;
+.${CARD.htmlStructure.elements.progressBar.bar.class},
+:is(.top-container, .bottom-container) 
+.${CARD.style.dynamic.progressBar.effect.radius.class} .${CARD.htmlStructure.elements.progressBar.inner.class} {
+  border-radius: 0;
 }
 
-.${CARD.style.dynamic.progressBar.effect.radius.class}
-  :is(.${CARD.htmlStructure.elements.progressBar.inner.class},
-      .${CARD.htmlStructure.elements.progressBar.negativeInner.class},
-      .${CARD.htmlStructure.elements.progressBar.positiveInner.class}) {
-  --epb-current-progress-inner-radius: calc(var(--epb-progress-size) / 2);
+.${CARD.htmlStructure.elements.progressBar.bar.class},
+.${CARD.style.dynamic.progressBar.effect.radius.class} .${CARD.htmlStructure.elements.progressBar.inner.class} {
+  border-radius: calc(var(--epb-progress-size) / 2);
 }
 
-/* === VARIANTS === */
-/* ----- glass ----- */
-.${CARD.style.dynamic.progressBar.effect.glass.class} {
-  --epb-current-progress-effect-glass: linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
-  --epb-current-progress-effect-glass-rev: linear-gradient(270deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+.${CARD.style.dynamic.progressBar.effect.glass.class} .${CARD.htmlStructure.elements.progressBar.inner.class} {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
 }
 
-.${CARD.style.dynamic.progressBar.effect.glass.class}
-  :is(.${CARD.htmlStructure.elements.progressBar.inner.class},
-      .${CARD.htmlStructure.elements.progressBar.positiveInner.class}) {
-  background: var(--epb-current-progress-effect-glass);
-}
-.${CARD.style.dynamic.progressBar.effect.glass.class} .${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
-  background: var(--epb-current-progress-effect-glass-rev);
-}
-
-/* ----- gradient ----- */
-.${CARD.style.dynamic.progressBar.effect.gradient.class} {
-  --epb-current-progress-effect-gradient: linear-gradient(
+.${CARD.style.dynamic.progressBar.effect.gradient.class} .${CARD.htmlStructure.elements.progressBar.inner.class} {
+  background: linear-gradient(
     90deg,
     color-mix(in srgb, white 40%, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})),
     var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})
   );
-  --epb-current-progress-effect-gradient-rev: linear-gradient(
-    270deg,
-    color-mix(in srgb, white 40%, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})),
-    var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})
-  );
-}
-
-.${CARD.style.dynamic.progressBar.effect.gradient.class}
-  :is(.${CARD.htmlStructure.elements.progressBar.inner.class},
-      .${CARD.htmlStructure.elements.progressBar.positiveInner.class}) {
-  background: var(--epb-current-progress-effect-gradient);
-}
-
-.${CARD.style.dynamic.progressBar.effect.gradient.class} .${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
-  background: var(--epb-current-progress-effect-gradient-rev);
 } 
 
-/* ----- shimmer ----- */
 .${CARD.style.dynamic.progressBar.effect.shimmer.class} .${CARD.htmlStructure.elements.progressBar.inner.class} {
   overflow: hidden;
   position: relative;
@@ -4135,9 +3974,7 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
     100% { transform: translateX(100%); }
 }
 
-/* =============================================================================
-   WATERMARKS
-   ============================================================================= */
+/* === WATERMARKS === */
 
 /* Base watermark styles */
 :is(.${CARD.htmlStructure.elements.progressBar.zeroMark.class},
@@ -4190,7 +4027,7 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
   width: calc(100% - var(--epb-high-watermark-value, 80%));
 }
 
-/* ---------- Blended ---------- */
+/* Blended effect */
 :is(.${CARD.style.dynamic.show}-lwm-blended-${CARD.htmlStructure.elements.progressBar.watermark.class},
     .${CARD.style.dynamic.show}-hwm-blended-${CARD.htmlStructure.elements.progressBar.watermark.class})
 :is(.${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
@@ -4198,7 +4035,7 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
   mix-blend-mode: hard-light;
 }
 
-/* ---------- Striped ---------- */
+/* Striped effect */
 .${CARD.style.dynamic.show}-lwm-striped-${CARD.htmlStructure.elements.progressBar.watermark.class}
 .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
   background: repeating-linear-gradient(-45deg,
@@ -4276,14 +4113,54 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
   border-top: var(--epb-watermark-triangle-size, 8px) solid var(--epb-high-watermark-color, var(--red-color));
 }
 
-/* =============================================================================
-   BADGE
-   ============================================================================= */
+/* === VERTICAL LAYOUT ADJUSTMENTS === */
+.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.content.class} {
+  flex-grow: 0;
+}
 
-.${CARD.htmlStructure.elements.badge.container.class} {
-  display: none;
+.${CARD.layout.orientations.vertical.label} :is(
+  .${CARD.htmlStructure.elements.nameGroup.class},
+  .${CARD.htmlStructure.elements.detailGroup.class}
+) {
+  flex-grow: 0;
+  width: 100%;
+  max-width: none;
+  text-align: center;
   align-items: center;
   justify-content: center;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
+  max-width: 100%;
+  overflow: hidden;
+}
+  
+.${CARD.layout.orientations.vertical.label} .${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.nameGroup.class} {
+  height: var(--epb-vertical-name-large-height);
+}
+
+:is(.${CARD.layout.orientations.horizontal.label}, .${CARD.layout.orientations.vertical.label}) 
+  :is(.${CARD.htmlStructure.elements.nameGroup.class} > span, .${CARD.htmlStructure.elements.detailGroup.class} > span) {
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.${CARD.layout.orientations.vertical.label} :is(
+  .${CARD.htmlStructure.elements.nameCombined.class},
+  .${CARD.htmlStructure.elements.detailCombined.class}
+) {
+  text-align: center;
+  width: 100%;
+  display: block; /* Simplifie le layout vertical */
+}
+
+/* === BADGE === */
+.${CARD.htmlStructure.elements.badge.container.class} {
   position: absolute;
   z-index: 2;
   top: var(--epb-badge-offset);
@@ -4294,21 +4171,34 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
   height: var(--epb-badge-size);
   border-radius: 50%;
   background-color: var(${CARD.style.dynamic.badge.backgroundColor.var}, ${CARD.style.dynamic.badge.backgroundColor.default});
+  display: none;
+  align-items: center;
+  justify-content: center;
 }
 
 .${CARD.htmlStructure.elements.badge.container.class} .${CARD.htmlStructure.elements.badge.icon.class} {
+  width: var(--epb-badge-icon-size);
+  height: var(--epb-badge-icon-size);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--epb-badge-icon-size);
-  height: var(--epb-badge-icon-size);
   color: var(${CARD.style.dynamic.badge.color.var}, ${CARD.style.dynamic.badge.color.default});
 }
 
-/* =============================================================================
-   VISIBILITY CONTROLS
-   ============================================================================= */
+/* === MARGINLESS === */
 
+.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class},
+.${CARD.layout.orientations.vertical.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class},
+.${CARD.layout.orientations.horizontal.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class} {
+  min-height: unset;
+  padding-top: unset;
+}
+
+.${CARD.layout.orientations.vertical.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.icon.class} {
+  margin-top: unset;
+}
+
+/* === VISIBILITY CONTROLS === */
 .${CARD.style.dynamic.hiddenComponent.icon.class} :is(.${CARD.htmlStructure.sections.icon.class}, .${CARD.htmlStructure.elements.shape.class}),
 .${CARD.style.dynamic.hiddenComponent.name.class} .${CARD.htmlStructure.elements.nameGroup.class},
 .${CARD.style.dynamic.hiddenComponent.secondary_info.class} .${CARD.htmlStructure.elements.detailGroup.class},
@@ -4328,10 +4218,7 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
   display: flex;
 }
 
-/* =============================================================================
-   INTERACTIVE STATES
-   ============================================================================= */
-
+/* === INTERACTIVE STATES === */
 .${CARD.style.dynamic.clickable.card}:hover,
 .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.icon.class}:hover {
   cursor: pointer;
@@ -4347,9 +4234,7 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
   background-color: color-mix(in srgb, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) var(--epb-icon-hover-opacity), transparent);
 }
 
-/* =============================================================================
-   OVERLAY
-   ============================================================================= */
+/* overlay */
 
 .progress-bar-container.overlay {
   position: absolute;
@@ -4739,8 +4624,6 @@ class RegistrationHelper {
   };
 
   static #registerComponent(component, targetKey) {
-    if (customElements.get(component.typeName)) return;
-
     window[targetKey] = window[targetKey] || [];
     window[targetKey].push({
       type: component.typeName,
@@ -6685,6 +6568,7 @@ const watermarkSchema = {
   disable_high: types.optionalBooleanWithDefault(CARD.config.defaults.watermark.disable_high),
 };
 
+
 class yamlSchemaFactory {
   static get card() {
     return struct(
@@ -6931,7 +6815,6 @@ class BaseConfigHelper {
       if (this.#lastMsgConsole !== msgConsole) {
         this.#lastMsgConsole = msgConsole;
         this.#log[curError.severity]?.(msgConsole);
-        this.#log[curError.severity]?.('Effective and validated configuration: ', this.config);
       }
     }
   }
@@ -7213,32 +7096,32 @@ class BaseCardView extends MinimalCardView {
       this._configHelper.config.additions.forEach(({ entity, attribute }) => {
         this.#entityCollection.addEntity(entity, attribute);
       });
-      this.#entityCollection.addEntity(this._configHelper.config.entity, this._configHelper.config.attribute);
+      this.#entityCollection.addEntity(config.entity, config.attribute);
     }
     
     Object.assign(this.#percentHelper, {
       unitSpacing: this._configHelper.config.unit_spacing,
       hasDisabledUnit: this._configHelper.hasDisabledUnit,
-      isCenterZero: this._configHelper.config.center_zero,
+      isCenterZero: this._configHelper.config.center_zero, //  === true
     });
 
     Object.assign(this.#theme, {
-      theme: this._configHelper.config.theme,
-      customTheme: this._configHelper.config.custom_theme,
+      theme: config.theme,
+      customTheme: config.custom_theme,
     });
 
     Object.assign(this._currentValue, {
-      value: this._configHelper.config.entity,
+      value: config.entity,
       stateContent: this._configHelper.stateContent,
     });
 
     if (this._currentValue.isTimer) {
       this.#maxValue.value = CARD.config.value.max;
     } else {
-      this._currentValue.attribute = this._configHelper.config.attribute;
+      this._currentValue.attribute = config.attribute;
       Object.assign(this.#maxValue, {
-        value: this._configHelper.config.max_value ?? CARD.config.value.max,
-        attribute: this._configHelper.config.max_value_attribute,
+        value: config.max_value ?? CARD.config.value.max,
+        attribute: config.max_value_attribute,
       });
     }
   }
@@ -7374,8 +7257,8 @@ class BaseCardView extends MinimalCardView {
       opacity: watermark.opacity,
       type: watermark.type,
       line_size: watermark.line_size,
-      disable_low: watermark.disable_low,
-      disable_high: watermark.disable_high,
+      disable_low: watermark.disable_low, // === true,
+      disable_high: watermark.disable_high, // === true,
     };
   }
   get hasEntityCollection() {
@@ -7457,7 +7340,7 @@ class BaseCardView extends MinimalCardView {
     return unit === null ? CARD.config.unit.default : unit;
   }
   #getCurrentDecimal(currentUnit) {
-    if (is.integer(this._configHelper.config.decimal)) return this._configHelper.config.decimal; // !== null
+    if (this._configHelper.config.decimal) return this._configHelper.config.decimal; // !== null
     if (this._currentValue.precision) return this._currentValue.precision;
     if (this._currentValue.isTimer) return CARD.config.decimal.timer;
     if (this._currentValue.isCounter) return CARD.config.decimal.counter;
@@ -8188,8 +8071,8 @@ class EntityProgressCardBase extends HTMLElement {
       [CARD.style.dynamic.clickable.card, this._cardView.hasClickableCard],
       [CARD.style.dynamic.clickable.icon, this._cardView.hasClickableIcon],
       [CARD.style.dynamic.secondaryInfoError.class, this._cardView.hasStandardEntityError],
-      [CARD.style.dynamic.frameless.class, this._cardView.config.frameless],
-      [CARD.style.dynamic.marginless.class, this._cardView.config.marginless],
+      [CARD.style.dynamic.frameless.class, this._cardView.config.frameless], // === true,
+      [CARD.style.dynamic.marginless.class, this._cardView.config.marginless], // === true,
     ]);
   }
   _applyConditionalClasses(card) {
@@ -8362,7 +8245,7 @@ class EntityProgressCardBase extends HTMLElement {
     this._updateElement(CARD.htmlStructure.card.element, (el) => {
       const style = el.style;
       const bar = this._cardView;
-      const isCenterZero = bar.config.center_zero;
+      const isCenterZero = bar.config.center_zero; // === true,
       const isNegative = bar.percent < 0;
 
       const properties = [
@@ -8936,8 +8819,8 @@ class EntityProgressBadge extends EntityProgressCardBase {
 EntityProgressCardBase.version = VERSION;
 EntityProgressCardBase._moduleLoaded = false;
 customElements.define(CARD.meta.card.typeName, EntityProgressCard);
-RegistrationHelper.registerCard(CARD.meta.card);
 customElements.define(CARD.meta.badge.typeName, EntityProgressBadge);
+RegistrationHelper.registerCard(CARD.meta.card);
 RegistrationHelper.registerBadge(CARD.meta.badge);
 
 /******************************************************************************************
@@ -9060,8 +8943,8 @@ class EntityProgressTemplate extends EntityProgressCardBase {
     return new Map([
       [CARD.style.dynamic.clickable.card, this._cardView.hasClickableCard],
       [CARD.style.dynamic.clickable.icon, this._cardView.hasClickableIcon],
-      [CARD.style.dynamic.frameless.class, this._cardView.config.frameless],
-      [CARD.style.dynamic.marginless.class, this._cardView.config.marginless],
+      [CARD.style.dynamic.frameless.class, this._cardView.config.frameless], // === true,
+      [CARD.style.dynamic.marginless.class, this._cardView.config.marginless], // === true,
     ]);
   }
 
@@ -9138,7 +9021,7 @@ class EntityProgressTemplate extends EntityProgressCardBase {
   }
 
   _renderPercentCSS(percent) {
-    const isCenterZero = this._cardView.config.center_zero;
+    const isCenterZero = this._cardView.config.center_zero; // === true,
     const absPercent = Math.abs(percent);
     const half = `${absPercent / 2}%`;
 
@@ -9337,14 +9220,16 @@ class EntityProgressBadgeTemplate extends EntityProgressTemplate {
   }
 }
 
+
+
 /******************************************************************************************
  * 🔧 Register card & badge
  */
-
 EntityProgressTemplate.version = VERSION;
 EntityProgressTemplate._moduleLoaded = false;
 customElements.define(CARD.meta.template.typeName, EntityProgressTemplate);
 RegistrationHelper.registerCard(CARD.meta.template);
+
 /* NEW */
 customElements.define(CARD.meta.badgeTemplate.typeName, EntityProgressBadgeTemplate);
 RegistrationHelper.registerBadge(CARD.meta.badgeTemplate);
@@ -10155,7 +10040,7 @@ class EntityProgressCardEditor extends HTMLElement {
   #updateToggleFields() {
     const hide = this.#config.hide || [];
     const toggleMappings = {
-      toggle_force_circular_background: this.#config.force_circular_background,
+      toggle_force_circular_background: this.#config.force_circular_background, // === true,
       toggle_unit: !this.#config.disable_unit, // !== true
       toggle_icon: !hide.includes('icon'),
       toggle_name: !hide.includes('name'),

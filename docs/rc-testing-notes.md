@@ -17,7 +17,7 @@
   ➡️ [Feature]: Add option to show progress bar along bottom (or top) border of card #73 (@Valdorama)  
   ➡️ [Enhancement]: Style for XL bar #76 (@yduke)  
   ➡️ [Feature]: bar position #80 (@NfxGT) (soon!)  
-
+- `bar_effect`: added support for `center_zero` (effect: 'radius', 'glass', 'gradient')
 - Single-Line Mode for Overlay Bars  
   New parameter: `bar_single_line` (for overlay mode bars only)
 
@@ -59,30 +59,53 @@
 - Editor: Added new `xlarge` size option for the bar.
 - Accessibility: respects the “Reduce Motion” setting (iOS/macOS, Android, Windows) to limit animations and prevent dizziness, migraines, or distractions.
 
+### 🎨 Style Improvements
+
+#### Major CSS Refactoring
+
+- **Complete CSS reorganization**: Restructured the entire stylesheet with clear section headers and improved organization
+- **CSS Custom Properties migration**: Converted hardcoded values to CSS custom properties for better maintainability and theming
+- **Modular approach**: Split CSS into logical sections (Base Card, Main Container, Progress Bar, etc.)
+
+#### Enhanced Layout System
+
+- **Flexible container system**: Introduced variables for dynamic layout control
+- **Improved vertical/horizontal layouts**: Better separation of concerns between orientation-specific styles
+- **Responsive design improvements**: Enhanced responsiveness across different card types and sizes
+- **Enhanced center_zero support**: Improved bar effects (radius, glass, gradient) compatibility with center_zero mode
+- **Effect rendering**: Better handling of gradient and glass effects for both positive and negative progress values
+
+### Performance
+
+- **Optimized CSS**: More efficient CSS structure with reduced redundancy
+- **Better rendering**: Improved layout calculations and rendering performance
+
 ### 🐞 Bug Fixes
 
-- fixed [Bug]: icons not loading in the application #86 (@jarzebski)
-- fixed [Bug]: Card shows “Configuration error” when conditionally re-displayed via visibility and input_text helper #87
-- fixed [Bug]: Icon container not found for _showIcon #88 (@golles)
+- **Fixed** [Bug]: icons not loading in the application #86 (@jarzebski)
+- **Fixed** [Bug]: Card shows “Configuration error” when conditionally re-displayed via visibility and input_text helper #87
+- **Fixed** [Bug]: Icon container not found for _showIcon #88 (@golles)
+- **Fixed** duplicate registration error during upgrade: Resolved "Failed to execute 'define' on 'CustomElementRegistry': the name has already been used" by adding existence check before registration
+- **Improved** error handling: Added null safety check to prevent "Cannot read properties of null (reading 'addEventListener')" errors
 
 ### 📚 Documentation
 
-- migrate `doc/` to `docs/`
-- Navigation improvements:
+- **migrate** `doc/` to `docs/`
+- **Improved** Navigation:
   - New simplified table of contents
   - Clearer titles and structure throughout
     - Description + Features → Description & features
     - All card types (Standard, Template, Badge) now live under one section
   - YAML options now shown in smart tables
   - Collapsible sections to keep things clean
-- Added: 🙏 Credits
-- Added: Theme documentation - `docs/theme.md`
-- Added: Full Configuration Reference - `docs/configuration.md`
+- **Added**: 🙏 Credits
+- **Added**: Theme documentation - `docs/theme.md`
+- **Added**: Full Configuration Reference - `docs/configuration.md`
   - full update with conventions, matrix, description to use it efficiently
-- Added: Troubleshooting Guide - `docs/troubleshooting.md`
-- Added: Code of Conduct - `docs/code_of_conduct.md`
-- Added: Code of Conduct - `docs/code_of_conduct.md`
-- Added: Release Candidate Guide - `docs/rc-testing.md`
+- **Added**: Troubleshooting Guide - `docs/troubleshooting.md`
+- **Added**: Code of Conduct - `docs/code_of_conduct.md`
+- **Added**: Code of Conduct - `docs/code_of_conduct.md`
+- **Added**: Release Candidate Guide - `docs/rc-testing.md`
 
 This docs update dramatically improves usability:
 
