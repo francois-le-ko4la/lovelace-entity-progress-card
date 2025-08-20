@@ -1749,11 +1749,21 @@ Calculates the progress percentage using templates. Enables complex calculations
 
 _Example_:
 
+A simple example:
 ```yaml
 percent: >-
   {% set used = states('sensor.disk_used') | int %}
   {% set total = states('sensor.disk_total') | int %}
   {{ (used / total * 100) | round(1) }}
+```
+
+Another example, to manage sensor availability and min/max:
+```yaml
+percent: >-
+  {% set temp_state = states('sensor.lounge_temp_temperature') %}
+  {% set max = 22 %}
+  {% set min = -10 %}
+  {{ ((temp_state | float - min) / (max - min) * 100) | round(1) if temp_state not in ['unknown', 'unavailable', 'none'] else 0 }}
 ```
 
 [🔼 Back to top]

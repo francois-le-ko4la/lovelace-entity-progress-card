@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.5.0-RC4
+ * @version 1.5.0
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.5.0-RC4';
+const VERSION = '1.5.0';
 const CARD = {
   meta: {
     card: {
@@ -50,7 +50,7 @@ const CARD = {
     },
   },
   config: {
-    dev: true,
+    dev: false,
     debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false, hass: false },
     language: 'en',
     value: { min: 0, max: 100 },
@@ -261,7 +261,7 @@ const CARD = {
         pSize: { var: '--epb-progress-bar-psize', default: '0%' },
         nSize: { var: '--epb-progress-bar-nsize', default: '0%' },
         background: { var: '--epb-progress-bar-background-color' },
-        orientation: { rtl: 'rtl-orientation', ltr: 'ltr-orientation' },
+        orientation: { rtl: 'rtl-orientation', ltr: 'ltr-orientation', up: 'up-orientation' },
         effect: {
           radius: { label: 'radius', class: 'progress-bar-effect-radius' },
           glass: { label: 'glass', class: 'progress-bar-effect-glass' },
@@ -3589,9 +3589,9 @@ ${CARD.htmlStructure.card.element} {
 
 /* === ENTITIES SPECIFICS === */
 .type-entities {
-  --epb-current-card-padding: 0 !important;
-  --epb-current-card-margin: 0 !important;
-  transition: none !important;
+  --epb-current-card-padding: 0;
+  --epb-current-card-margin: 0;
+  transition: none;
 }
 
 /* =============================================================================
@@ -3649,7 +3649,7 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
 
 .type-entities .${CARD.htmlStructure.sections.container.class} {
   --epb-current-container-gap: var(--epb-gap-entities);
-  --epb-current-container-min-height: var(--epb-entities-card-min-height) !important;
+  --epb-current-container-min-height: var(--epb-entities-card-min-height);
 }
 
 .${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class},
@@ -3732,7 +3732,7 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
 }
 
 .type-entities .${CARD.htmlStructure.sections.icon.class} {
-  --epb-current-shape-size: var(--epb-shape-size, var(--epb-entities-shape-size)) !important;
+  --epb-current-shape-size: var(--epb-shape-size, var(--epb-entities-shape-size));
 }
 
 .${CARD.layout.orientations.vertical.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.icon.class} {
@@ -3774,7 +3774,7 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
   display: flex;
   flex-direction: column;
   justify-content: center;
-  flex-grow: 1;
+  flex-grow: var(--epb-current-content-flex-grow);
   flex-shrink: 1;
   width: var(--epb-current-content-width);
   min-width: 0;
@@ -3782,12 +3782,18 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
   position: relative; /* overlay */
 }
 
+.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.content.class} {
+  gap: var(--epb-vertical-gap);
+}
+
 .horizontal {
   --epb-current-content-width: calc(100% - 56px);
+  --epb-current-content-flex-grow: 1;
 }
 
 .vertical {
   --epb-current-content-width: 100%;
+  --epb-current-content-flex-grow: 0;
 }
 
 /* === TEXT ELEMENTS === */
@@ -3795,97 +3801,140 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
 .${CARD.htmlStructure.elements.nameGroup.class},
 .${CARD.htmlStructure.elements.detailGroup.class} {
   display: flex;
-  align-items: center;
-  min-width: 0;
-  overflow: hidden;
+  align-items: var(--epb-current-group-align-items, center);
+  justify-content: var(--epb-current-group-justify-content, flex-start);
+  min-width: var(--epb-current-group-min-width, 0);
+  max-width: var(--epb-current-group-max-width, none);
+  width: var(--epb-current-group-width, auto);
+  flex-grow: var(--epb-current-group-flex-grow, initial);
+  overflow: var(--epb-current-group-overflow, hidden);
+  text-align: var(--epb-current-group-text-align, left);
+  box-sizing: var(--epb-current-group-box-sizing, content-box);
   z-index: 1;
 }
 
 .${CARD.htmlStructure.elements.nameGroup.class} {
-  width: 100%;
-  height: var(--epb-name-height);
-  justify-content: flex-start;
+  height: var(--type-entities-combined-height, var(--epb-name-height));
 }
 
 .${CARD.htmlStructure.elements.detailGroup.class} {
-  height: var(--epb-detail-height);
+  height: var(--type-entities-combined-height, var(--epb-detail-height));
   line-height: var(--epb-detail-height);
   min-width: var(--epb-detail-min-width);
   max-width: var(--epb-detail-max-width);
-  justify-content: flex-start;
+}
+
+.${CARD.layout.orientations.horizontal.label} {
+  --epb-current-group-justify-content: flex-start;
+  --epb-current-group-width: auto;
+  --epb-current-group-flex-grow: initial;
+  --epb-current-group-text-align: left;
+  --epb-current-group-box-sizing: content-box;
+}
+
+.${CARD.layout.orientations.vertical.label} {
+  --epb-current-group-justify-content: center;
+  --epb-current-group-max-width: 100%;
+  --epb-current-group-width: 100%;
+  --epb-current-group-flex-grow: 0;
+  --epb-current-group-text-align: center;
+  --epb-current-group-box-sizing: border-box;
+}
+
+.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
+  --epb-current-group-overflow: hidden;
+}
+
+:is(.${CARD.layout.orientations.horizontal.label}, .${CARD.layout.orientations.vertical.label})
+  :is(.${CARD.htmlStructure.elements.nameGroup.class} > span, .${CARD.htmlStructure.elements.detailGroup.class} > span) {
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.${CARD.layout.orientations.vertical.label} .${CARD.style.bar.sizeOptions.large.label} {
+  --epb-name-height: var(--epb-vertical-name-large-height);
 }
 
 /* === UNIFIED ELLIPSIS === */
 .${CARD.htmlStructure.elements.nameCombined.class},
 .${CARD.htmlStructure.elements.detailCombined.class} {
   flex: 1;
+  display: var(--epb-current-combined-display);
   min-width: 0;
+  width: var(--epb-current-combined-width);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-align: left;
+  text-align: var(--epb-current-combined-text-align);
+}
+
+.horizontal {
+  --epb-current-combined-text-align: left;
+  --epb-current-combined-width: auto;
+  --epb-current-combined-display: flex;
+}
+
+.vertical {
+  --epb-current-combined-text-align: center;
+  --epb-current-combined-width: 100%;
+  --epb-current-combined-display: block;
 }
 
 .${CARD.htmlStructure.elements.nameCombined.class} {
   color: var(--primary-text-color);
   font-size: var(--ha-font-size-m);
-  font-weight: var(--ha-font-weight-medium);
-  height: var(--epb-name-height);
-  line-height: var(--epb-name-height);
+  font-weight: var(--type-entities-combined-font-weight, var(--ha-font-weight-medium));
+  height: var(--type-entities-combined-height, var(--epb-name-height));
+  line-height: var(--type-entities-combined-line-height, var(--epb-name-height));
   letter-spacing: var(--epb-letter-spacing-name);
 }
 
 .${CARD.htmlStructure.elements.detailCombined.class} {
-  color: var(--primary-text-color);
-  font-size: var(--ha-font-size-s);
-  font-weight: var(--ha-font-weight-body);
-  height: var(--epb-detail-height);
-  line-height: var(--epb-detail-height);
+  color: var(--type-entities-detail-combined-color, var(--primary-text-color));
+  font-size: var(--type-entities-detail-combined-font-size, var(--ha-font-size-s));
+  font-weight: var(--type-entities-combined-font-weight, var(--ha-font-weight-body));
+  height: var(--type-entities-combined-height, var(--epb-detail-height));
+  line-height: var(--type-entities-combined-line-height, var(--epb-detail-height));
   vertical-align: middle;
   letter-spacing: var(--epb-letter-spacing-detail);
 }
 
 /* === ENTITIES TYPE SPECIFIC === */
-.type-entities  :is(
-  .${CARD.htmlStructure.elements.nameGroup.class},
-  .${CARD.htmlStructure.elements.nameGroup.class} > span,
-  .${CARD.htmlStructure.elements.detailGroup.class},
-  .${CARD.htmlStructure.elements.detailGroup.class} > span
-) {
-  height: var(--epb-entities-height) !important;
-}
-
-.type-entities :is(
-  .${CARD.htmlStructure.elements.nameCombined.class},
-  .${CARD.htmlStructure.elements.detailCombined.class}
-) {
-  font-weight: var(--ha-font-weight-normal) !important;
-  line-height: var(--ha-line-height-normal) !important;
-}
-
-.type-entities .${CARD.htmlStructure.elements.detailCombined.class} {
-  color: var(--secondary-text-color) !important;
-  font-size: var(--ha-font-size-m) !important;
+.type-entities {
+  --type-entities-combined-height: var(--epb-entities-height);
+  --type-entities-combined-font-weight: var(--ha-font-weight-normal);
+  --type-entities-combined-line-height: var(--ha-line-height-normal);
+  --type-entities-detail-combined-color: var(--secondary-text-color);
+  --type-entities-detail-combined-font-size: var(--ha-font-size-m);
 }
 
 /* === SECONDARY INFO === */
 .${CARD.htmlStructure.elements.secondaryInfo.class} {
   display: flex;
-  flex-direction: var(--epb-secondary-info-row-reverse, row);
-  align-items: center;
-  gap: var(--epb-gap-default);
+  flex-direction: var(--epb-current-secondary-info-flex-direction);
+  align-items: var(--epb-current-secondary-info-align-items);
+  gap: var(--epb-current-secondary-info-gap, var(--epb-gap-default));
+  width: var(--epb-current-secondary-info-width, auto);
+  min-width: var(--epb-current-secondary-info-min-width, auto);
 }
 
-.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.secondaryInfo.class} {
-  flex-direction: column;
-  align-items: stretch;
-  width: 100%;
-  min-width: 0;
-  gap: unset;
+.${CARD.layout.orientations.horizontal.label} {
+  --epb-current-secondary-info-flex-direction: var(--epb-secondary-info-row-reverse, row);
+  --epb-current-secondary-info-align-items: stretch;
+  --epb-current-secondary-info-gap: var(--epb-gap-default);
+  --epb-current-secondary-info-width: auto;
+  --epb-current-secondary-info-min-width: auto;
 }
 
-.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.content.class} {
-  gap: var(--epb-vertical-gap);
+.${CARD.layout.orientations.vertical.label} {
+  --epb-current-secondary-info-flex-direction: column;
+  --epb-current-secondary-info-align-items: center;
+  --epb-current-secondary-info-gap: unset;
+  --epb-current-secondary-info-width: 100%;
+  --epb-current-secondary-info-min-width: 0;
 }
 
 .multiline {
@@ -3915,62 +3964,16 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
   height: 16px;
 }
 
-
-.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.sections.content.class} {
-  flex-grow: 0;
-}
-
-.${CARD.layout.orientations.vertical.label} :is(
-  .${CARD.htmlStructure.elements.nameGroup.class},
-  .${CARD.htmlStructure.elements.detailGroup.class}
-) {
-  flex-grow: 0;
-  width: 100%;
-  max-width: none;
-  text-align: center;
-  align-items: center;
-  justify-content: center;
-  min-width: 0;
-  box-sizing: border-box;
-}
-
-.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
-  max-width: 100%;
-  overflow: hidden;
-}
-  
-.${CARD.layout.orientations.vertical.label} .${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.nameGroup.class} {
-  height: var(--epb-vertical-name-large-height);
-}
-
-:is(.${CARD.layout.orientations.horizontal.label}, .${CARD.layout.orientations.vertical.label}) 
-  :is(.${CARD.htmlStructure.elements.nameGroup.class} > span, .${CARD.htmlStructure.elements.detailGroup.class} > span) {
-  flex-shrink: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.${CARD.layout.orientations.vertical.label} :is(
-  .${CARD.htmlStructure.elements.nameCombined.class},
-  .${CARD.htmlStructure.elements.detailCombined.class}
-) {
-  text-align: center;
-  width: 100%;
-  display: block; /* Simplifie le layout vertical */
-}
-
 /* =============================================================================
    PROGRESS BAR
    ============================================================================= */
 
 .${CARD.htmlStructure.elements.progressBar.container.class} {
-  flex-grow: 1;
-  height: var(--epb-current-progress-container-height);
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-grow: 1;
+  height: var(--type-entities-combined-line-height, var(--epb-current-progress-container-height));
 }
 
 .horizontal {
@@ -4387,11 +4390,285 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
   margin-left: 7px;
 }
 
-.${CARD.htmlStructure.sections.content.class}.overlay.single-line  {
+/*--- NEW ---*/
+.vertical.up-orientation .${CARD.htmlStructure.sections.content.class}.overlay {
+  flex-grow: 1;
+  width: 50%;
+  height: 100%;
+}
+
+.vertical.up-orientation .container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+  
+.${CARD.htmlStructure.sections.content.class}.overlay.single-line {
   justify-content: space-between;
   flex-direction: row;
   align-items: center;
 }
+
+/* ============================================================================= 
+   TRANSFORMATION VERTICALE - ORIENTATION DU BAS VERS LE HAUT (CORRIGÉE)
+   ============================================================================= */
+
+.vertical.up-orientation .progress-bar-container.overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+/* === BARRE DE PROGRESSION PRINCIPALE - VERTICALE === */
+.vertical.up-orientation .overlay .progress-bar {
+    width: var(--epb-progress-size, 12px); /* largeur de la barre verticale */
+    height: 100%;
+    background-color: var(--epb-progress-bar-background-color, var(--divider-color));
+    border-radius: calc(var(--epb-progress-size, 12px) / 2);
+    position: relative;
+    overflow: hidden;
+    /* Pas de rotation - vraie barre verticale */
+}
+
+/* === INNER PROGRESS BAR - PROGRESSION DU BAS VERS LE HAUT === */
+.vertical.up-orientation .overlay .progress-bar-inner {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: var(--epb-progress-bar-size, 0%);
+    background: var(--epb-progress-bar-color, var(--state-icon-color));
+    transition: height var(--epb-progress-transition-width);
+    will-change: height;
+    border-radius: 0 0 calc(var(--epb-progress-size, 12px) / 2) calc(var(--epb-progress-size, 12px) / 2);
+}
+
+/* === INNER PROGRESS BAR - POSITIF ET NÉGATIF === */
+.vertical.up-orientation .overlay .progress-bar-positive-inner {
+    position: absolute;
+    bottom: 50%;
+    left: 0;
+    width: 100%;
+    height: var(--epb-progress-bar-psize, 0%);
+    background: var(--epb-progress-bar-color, var(--state-icon-color));
+    transition: height var(--epb-progress-transition-width);
+    will-change: height;
+    border-radius: 0;
+}
+
+.vertical.up-orientation .overlay .progress-bar-negative-inner {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: var(--epb-progress-bar-nsize, 0%);
+    background: var(--epb-progress-bar-color, var(--state-icon-color));
+    transition: height var(--epb-progress-transition-width);
+    will-change: height;
+    border-radius: 0;
+}
+
+/* === WATERMARKS - TRANSFORMATION VERTICALE === */
+
+/* Base watermark styles pour vertical */
+.vertical.up-orientation .overlay :is(.progress-bar-low-wm, .progress-bar-high-wm) {
+    position: absolute;
+    width: 100%;
+    opacity: var(--epb-watermark-opacity-value, 0.8);
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Watermark bas (low) - du bas vers le pourcentage */
+.vertical.up-orientation .overlay .progress-bar-low-wm {
+    bottom: 0;
+    height: var(--epb-low-watermark-value, 20%);
+    background-color: var(--epb-low-watermark-color, var(--red-color));
+}
+
+/* Watermark haut (high) - positionné depuis le bas selon la valeur high */
+.vertical.up-orientation .overlay .progress-bar-high-wm {
+    bottom: var(--epb-high-watermark-value, 80%);
+    height: calc(100% - var(--epb-high-watermark-value, 80%));
+    background-color: var(--epb-high-watermark-color, var(--red-color));
+}
+
+/* === VARIANTES D'EFFETS POUR VERTICAL === */
+
+/* ----- Glass Effect Vertical ----- */
+.vertical.up-orientation .overlay.progress-bar-effect-glass {
+    --epb-current-progress-effect-glass-vertical: linear-gradient(0deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+    --epb-current-progress-effect-glass-vertical-rev: linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+}
+
+.vertical.up-orientation .overlay.progress-bar-effect-glass .progress-bar-inner,
+.vertical.up-orientation .overlay.progress-bar-effect-glass .progress-bar-positive-inner {
+    background: var(--epb-current-progress-effect-glass-vertical);
+}
+
+.vertical.up-orientation .overlay.progress-bar-effect-glass .progress-bar-negative-inner {
+    background: var(--epb-current-progress-effect-glass-vertical-rev);
+}
+
+/* ----- Gradient Effect Vertical ----- */
+.vertical.up-orientation .overlay.progress-bar-effect-gradient {
+    --epb-current-progress-effect-gradient-vertical: linear-gradient(
+        0deg,
+        color-mix(in srgb, white 40%, var(--epb-progress-bar-color, var(--state-icon-color))),
+        var(--epb-progress-bar-color, var(--state-icon-color))
+    );
+    --epb-current-progress-effect-gradient-vertical-rev: linear-gradient(
+        180deg,
+        color-mix(in srgb, white 40%, var(--epb-progress-bar-color, var(--state-icon-color))),
+        var(--epb-progress-bar-color, var(--state-icon-color))
+    );
+}
+
+.vertical.up-orientation .overlay.progress-bar-effect-gradient .progress-bar-inner,
+.vertical.up-orientation .overlay.progress-bar-effect-gradient .progress-bar-positive-inner {
+    background: var(--epb-current-progress-effect-gradient-vertical);
+}
+
+.vertical.up-orientation .overlay.progress-bar-effect-gradient .progress-bar-negative-inner {
+    background: var(--epb-current-progress-effect-gradient-vertical-rev);
+}
+
+/* ----- Shimmer Effect Vertical ----- */
+.vertical.up-orientation .overlay.progress-bar-effect-shimmer .progress-bar-inner::after {
+    background: linear-gradient(0deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: shimmer-vertical 2s infinite;
+}
+
+@keyframes shimmer-vertical {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+}
+
+/* === WATERMARKS SPÉCIFIQUES - STYLES VERTICAUX === */
+
+/* Area, Blended, Striped - Vertical */
+.vertical.up-orientation .overlay.show-lwm-area-progress-bar-wm .progress-bar-low-wm,
+.vertical.up-orientation .overlay.show-lwm-blended-progress-bar-wm .progress-bar-low-wm,
+.vertical.up-orientation .overlay.show-lwm-striped-progress-bar-wm .progress-bar-low-wm {
+    bottom: 0;
+    height: var(--epb-low-watermark-value, 20%);
+}
+
+.vertical.up-orientation .overlay.show-hwm-area-progress-bar-wm .progress-bar-high-wm,
+.vertical.up-orientation .overlay.show-hwm-blended-progress-bar-wm .progress-bar-high-wm,
+.vertical.up-orientation .overlay.show-hwm-striped-progress-bar-wm .progress-bar-high-wm {
+    bottom: var(--epb-high-watermark-value, 80%);
+    height: calc(100% - var(--epb-high-watermark-value, 80%));
+}
+
+/* Striped - Vertical Pattern */
+.vertical.up-orientation .overlay.show-lwm-striped-progress-bar-wm .progress-bar-low-wm {
+    background: repeating-linear-gradient(
+        0deg,
+        var(--epb-low-watermark-color, var(--red-color)) 0px,
+        var(--epb-low-watermark-color, var(--red-color)) 3px,
+        transparent 3px,
+        transparent 6px
+    );
+}
+
+.vertical.up-orientation .overlay.show-hwm-striped-progress-bar-wm .progress-bar-high-wm {
+    background: repeating-linear-gradient(
+        0deg,
+        var(--epb-high-watermark-color, var(--red-color)) 0px,
+        var(--epb-high-watermark-color, var(--red-color)) 3px,
+        transparent 3px,
+        transparent 6px
+    );
+}
+
+/* Line - Horizontal pour barre verticale */
+.vertical.up-orientation .overlay.show-lwm-line-progress-bar-wm .progress-bar-low-wm {
+    width: 100%;
+    height: var(--epb-watermark-line-size, 1px);
+    bottom: var(--epb-low-watermark-value, 20%);
+    left: 0;
+}
+
+.vertical.up-orientation .overlay.show-hwm-line-progress-bar-wm .progress-bar-high-wm {
+    width: 100%;
+    height: var(--epb-watermark-line-size, 1px);
+    bottom: var(--epb-high-watermark-value, 80%);
+    left: 0;
+}
+
+/* Round - Centré horizontalement */
+.vertical.up-orientation .overlay.show-lwm-round-progress-bar-wm .progress-bar-low-wm {
+    width: var(--epb-watermark-circle-size, 5px);
+    height: var(--epb-watermark-circle-size, 5px);
+    bottom: calc(var(--epb-low-watermark-value, 20%) - var(--epb-watermark-circle-size, 5px) / 2);
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 50%;
+}
+
+.vertical.up-orientation .overlay.show-hwm-round-progress-bar-wm .progress-bar-high-wm {
+    width: var(--epb-watermark-circle-size, 5px);
+    height: var(--epb-watermark-circle-size, 5px);
+    bottom: calc(var(--epb-high-watermark-value, 80%) - var(--epb-watermark-circle-size, 5px) / 2);
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 50%;
+}
+
+/* Triangle - Orienté pour vertical */
+.vertical.up-orientation .overlay.show-lwm-triangle-progress-bar-wm .progress-bar-low-wm {
+    width: 0;
+    height: 0;
+    background-color: transparent;
+    bottom: calc(var(--epb-low-watermark-value, 20%) - var(--epb-watermark-triangle-size, 8px) / 2);
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: calc(var(--epb-watermark-triangle-size, 8px) / 2) solid transparent;
+    border-right: calc(var(--epb-watermark-triangle-size, 8px) / 2) solid transparent;
+    border-top: var(--epb-watermark-triangle-size, 8px) solid var(--epb-low-watermark-color, var(--red-color));
+}
+
+.vertical.up-orientation .overlay.show-hwm-triangle-progress-bar-wm .progress-bar-high-wm {
+    width: 0;
+    height: 0;
+    background-color: transparent;
+    bottom: calc(var(--epb-high-watermark-value, 80%) - var(--epb-watermark-triangle-size, 8px) / 2);
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: calc(var(--epb-watermark-triangle-size, 8px) / 2) solid transparent;
+    border-right: calc(var(--epb-watermark-triangle-size, 8px) / 2) solid transparent;
+    border-bottom: var(--epb-watermark-triangle-size, 8px) solid var(--epb-high-watermark-color, var(--red-color));
+}
+
+/* === ZERO LINE VERTICAL === */
+.vertical.up-orientation .overlay .progress-bar-low-zero {
+    position: absolute;
+    bottom: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: white;
+    opacity: var(--epb-watermark-opacity-value, 0.8);
+}
+
+/* === AJUSTEMENTS POUR DIFFÉRENTES TAILLES === */
+.vertical.up-orientation.small .overlay .progress-bar,
+.vertical.up-orientation.medium .overlay .progress-bar,
+.vertical.up-orientation.large .overlay .progress-bar,
+.vertical.up-orientation.xlarge .overlay .progress-bar {
+    width: 100%;
+}
+
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -4738,8 +5015,14 @@ class RegistrationHelper {
     customBadges: 'customBadges',
   };
 
-  static #registerComponent(component, targetKey) {
-    if (customElements.get(component.typeName)) return;
+  static #registerComponent(component, targetKey, elementClass) {
+    if (!customElements.get(component.typeName)) {
+      customElements.define(component.typeName, elementClass);
+    }
+
+    if (window[targetKey] && window[targetKey].some(item => item.type === component.typeName)) {
+      return;
+    }
 
     window[targetKey] = window[targetKey] || [];
     window[targetKey].push({
@@ -4748,15 +5031,16 @@ class RegistrationHelper {
       preview: true,
       description: component.description,
       documentationURL: CARD.documentation.link.documentationUrl,
+      version: VERSION,
     });
   }
 
-  static registerCard(card) {
-    RegistrationHelper.#registerComponent(card, RegistrationHelper.#targetKey.customCards);
+  static registerCard(card, elementClass) {
+    RegistrationHelper.#registerComponent(card, RegistrationHelper.#targetKey.customCards, elementClass);
   }
 
-  static registerBadge(badge) {
-    RegistrationHelper.#registerComponent(badge, RegistrationHelper.#targetKey.customBadges);
+  static registerBadge(badge, elementClass) {
+    RegistrationHelper.#registerComponent(badge, RegistrationHelper.#targetKey.customBadges, elementClass);
   }
 }
 
@@ -6577,7 +6861,7 @@ function struct(validator) {
         };
       } catch (error) {
         // ✅ Fonction pour extraire les erreurs en évitant les doublons
-        const extractAllErrors = (error) => {
+        const extractAllErrors = (errRoot) => {
           const allErrors = [];
           const seen = new Set(); // Pour éviter les doublons
 
@@ -6594,8 +6878,8 @@ function struct(validator) {
           };
 
           // ✅ Si l'erreur a des sous-erreurs (errors), prendre seulement celles-ci
-          if (error.errors && Array.isArray(error.errors) && error.errors.length > 0) {
-            error.errors.forEach((subError) => {
+          if (errRoot.errors && Array.isArray(errRoot.errors) && errRoot.errors.length > 0) {
+            errRoot.errors.forEach((subError) => {
               if (subError instanceof ValidationError) {
                 // Récursion pour les erreurs complexes
                 extractAllErrors(subError).forEach(addError);
@@ -6604,9 +6888,9 @@ function struct(validator) {
                 addError(subError);
               }
             });
-          } else if (error.errorCode) {
+          } else if (errRoot.errorCode) {
             // ✅ Sinon, prendre l'erreur principale
-            addError(error);
+            addError(errRoot);
           }
 
           return allErrors;
@@ -6859,7 +7143,7 @@ class BaseConfigHelper {
     this._configParsed = this._yamlSchema.parse(config);
 
     // console.log(this.config);
-    console.log(this._configParsed);
+    // console.log(this._configParsed);
     // console.log(this._hassProvider.language);
     this.#lastMsgConsole = null;
   }
@@ -6931,7 +7215,7 @@ class BaseConfigHelper {
       if (this.#lastMsgConsole !== msgConsole) {
         this.#lastMsgConsole = msgConsole;
         this.#log[curError.severity]?.(msgConsole);
-        this.#log[curError.severity]?.('Effective and validated configuration: ', this.config);
+        this.#log[curError.severity]?.('config: ', this.config);
       }
     }
   }
@@ -7047,7 +7331,7 @@ class MinimalCardView {
     return this.config.layout;
   }
   get barOrientation() {
-    return this._currentValue.isTimer && this.config.bar_orientation === null ? 'rtl' : this.config.bar_orientation === 'rtl' ? 'rtl' : null;
+    return this._currentValue.isTimer && this.config.bar_orientation === null ? 'rtl' : this.config.bar_orientation;
   }
   get barSize() {
     return this.config.bar_size;
@@ -8935,10 +9219,10 @@ class EntityProgressBadge extends EntityProgressCardBase {
 
 EntityProgressCardBase.version = VERSION;
 EntityProgressCardBase._moduleLoaded = false;
-customElements.define(CARD.meta.card.typeName, EntityProgressCard);
-RegistrationHelper.registerCard(CARD.meta.card);
-customElements.define(CARD.meta.badge.typeName, EntityProgressBadge);
-RegistrationHelper.registerBadge(CARD.meta.badge);
+// customElements.define(CARD.meta.card.typeName, EntityProgressCard);
+RegistrationHelper.registerCard(CARD.meta.card, EntityProgressCard);
+// customElements.define(CARD.meta.badge.typeName, EntityProgressBadge);
+RegistrationHelper.registerBadge(CARD.meta.badge, EntityProgressBadge);
 
 /******************************************************************************************
  * 📦 Template Card
@@ -9343,11 +9627,11 @@ class EntityProgressBadgeTemplate extends EntityProgressTemplate {
 
 EntityProgressTemplate.version = VERSION;
 EntityProgressTemplate._moduleLoaded = false;
-customElements.define(CARD.meta.template.typeName, EntityProgressTemplate);
-RegistrationHelper.registerCard(CARD.meta.template);
+//customElements.define(CARD.meta.template.typeName, EntityProgressTemplate);
+RegistrationHelper.registerCard(CARD.meta.template, EntityProgressTemplate);
 /* NEW */
-customElements.define(CARD.meta.badgeTemplate.typeName, EntityProgressBadgeTemplate);
-RegistrationHelper.registerBadge(CARD.meta.badgeTemplate);
+//customElements.define(CARD.meta.badgeTemplate.typeName, EntityProgressBadgeTemplate);
+RegistrationHelper.registerBadge(CARD.meta.badgeTemplate, EntityProgressBadgeTemplate);
 
 
 /******************************************************************************************
@@ -10335,5 +10619,6 @@ class EntityProgressBadgeEditor extends EntityProgressCardEditor {
 /******************************************************************************************
  * 🔧 Register card & badge editors
  */
-customElements.define(CARD.meta.card.editor, EntityProgressCardEditor);
-customElements.define(CARD.meta.badge.editor, EntityProgressBadgeEditor);
+
+if (!customElements.get(CARD.meta.card.editor)) customElements.define(CARD.meta.card.editor, EntityProgressCardEditor);
+if (!customElements.get(CARD.meta.badge.editor)) customElements.define(CARD.meta.badge.editor, EntityProgressBadgeEditor);
