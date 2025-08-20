@@ -1,15 +1,5 @@
 <a id="top"></a>
 
-> [!WARNING]
-> **This documentation is for an upcoming version (v1.5)**
->
-> This README reflects features currently under development.
-> While the documentation is mostly usable, **some parameters and options will only be available starting from version 1.5**.
->
-> 🚧 This version is **not yet released on HACS**.
->
-> 👉 To view the documentation corresponding to the version currently available on HACS, please refer to the [stable README here](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/1.4.12/README.md).
-
 # Lovelace Entity Progress Card [![ReadMe](https://img.shields.io/badge/ReadMe-018EF5?logo=readme&logoColor=fff)](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/1.4.12/README.md)
 
 [![Home Assistant][ha-badge]][repo-link]
