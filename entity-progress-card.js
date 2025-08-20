@@ -50,7 +50,7 @@ const CARD = {
     },
   },
   config: {
-    dev: true,
+    dev: false,
     debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false, hass: false },
     language: 'en',
     value: { min: 0, max: 100 },
