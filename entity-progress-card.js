@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.5.0';
+const VERSION = '1.5.0-1';
 const CARD = {
   meta: {
     card: {
@@ -50,7 +50,7 @@ const CARD = {
     },
   },
   config: {
-    dev: false,
+    dev: true,
     debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false, hass: false },
     language: 'en',
     value: { min: 0, max: 100 },
@@ -5020,7 +5020,7 @@ class RegistrationHelper {
       customElements.define(component.typeName, elementClass);
     }
 
-    if (window[targetKey] && window[targetKey].some(item => item.type === component.typeName)) {
+    if (window[targetKey]?.some((item) => item.type === component.typeName)) {
       return;
     }
 
