@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.5.0
+ * @version 1.5.1
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.5.0-1';
+const VERSION = '1.5.1';
 const CARD = {
   meta: {
     card: {
@@ -3548,8 +3548,6 @@ ${CARD.htmlStructure.card.element} {
   --epb-current-card-min-width: var(${CARD.style.dynamic.card.minWidth.var}, 100%);
   --epb-current-card-padding: 0 var(--epb-padding-default);
   --epb-current-card-margin: 0 auto;
-  --epb-current-card-box-shadow: var(--ha-card-box-shadow,none);
-  --epb-current-card-border-width: var(--ha-card-border-width,1px);
 
   display: flex;
   align-items: center;
@@ -3562,8 +3560,8 @@ ${CARD.htmlStructure.card.element} {
   height: var(${CARD.style.dynamic.card.height.var}, 100%);
   box-sizing: border-box;
   overflow: hidden;
-  box-shadow: var(--epb-current-card-box-shadow);
-  border-width: var(--epb-current-card-border-width);
+  box-shadow: var(--ha-card-box-shadow,none);
+  border-width: var(--ha-card-border-width,1px);
 
   font-family: var(--ha-font-family-body);
   -moz-osx-font-smoothing: var(--ha-font-smoothing);
@@ -3579,19 +3577,15 @@ ${CARD.htmlStructure.card.element} {
 .type-entities,
 .type-custom-vertical-stack-in-card,
 .${CARD.style.dynamic.frameless.class} {
-  --epb-current-card-border-width: 0;
-  --epb-current-card-box-shadow: none;
-}
-
-.type-entities {
+  border: none !important;
+  box-shadow: none !important;
   background: transparent !important;
 }
 
-/* === ENTITIES SPECIFICS === */
 .type-entities {
-  --epb-current-card-padding: 0;
-  --epb-current-card-margin: 0;
-  transition: none;
+  padding: 0 !important;
+  margin: 0 !important;
+  transition: none !important;
 }
 
 /* =============================================================================
@@ -3655,13 +3649,30 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
 .${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class},
 .${CARD.layout.orientations.vertical.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class},
 .${CARD.layout.orientations.horizontal.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class} {
-  --epb-current-container-min-height: unset;
-  --epb-current-container-padding-top: unset;
+  min-height: unset !important;
+  padding-top: unset !important;
 }
 
 /* =============================================================================
    TOP, BELOW & BOTTOM
    ============================================================================= */
+
+ha-card:has(.bottom-container),
+ha-card:has(.top-container),
+ha-card:has(.below-container) {
+  --epb-current-group-max-width: 100%;
+  --epb-current-group-width: 100%;
+  --epb-detail-max-width: 100%;
+  --epb-detail-min-width: 100%;
+}
+
+ha-card:has(:is(.bottom-container, .top-container, .below-container)) :is(.name, .state-and-progress-info) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block; /* ou inline-block si nécessaire */
+}
 
 .below-container {
   flex-basis: 100%;
@@ -3736,7 +3747,7 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
 }
 
 .${CARD.layout.orientations.vertical.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.icon.class} {
-  margin-top: unset;
+  margin-top: unset !important;
 }
 
 /* === SHAPE & ICON === */
@@ -4407,9 +4418,16 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
 }
   
 .${CARD.htmlStructure.sections.content.class}.overlay.single-line {
+  --epb-current-group-max-width: 100%;
+  --epb-current-group-width: 100%;
   justify-content: space-between;
   flex-direction: row;
   align-items: center;
+}
+
+.${CARD.htmlStructure.sections.content.class}.overlay.single-line .secondary-info {
+  --epb-detail-max-width: none;
+  margin-right: 7px;
 }
 
 /* ============================================================================= 
