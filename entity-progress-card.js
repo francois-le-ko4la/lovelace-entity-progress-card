@@ -15,7 +15,7 @@
  * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.5.1
+ * @version 1.5.2-beta1
  *
  */
 
@@ -23,7 +23,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.5.1';
+const VERSION = '1.5.2-beta1';
 const CARD = {
   meta: {
     card: {
@@ -39,7 +39,7 @@ const CARD = {
     },
     badge: {
       typeName: 'entity-progress-badge',
-      name: 'Entity Progress Badge (Template)',
+      name: 'Entity Progress Badge',
       description: 'A cool custom badge to show current entity status with a progress bar.',
       editor: 'entity-progress-badge-editor',
     },
@@ -50,7 +50,7 @@ const CARD = {
     },
   },
   config: {
-    dev: false,
+    dev: true,
     debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false, hass: false },
     language: 'en',
     value: { min: 0, max: 100 },
@@ -525,12 +525,12 @@ const THEME = {
     percent: false,
     style: [
       { min: -50, max: -30, icon: 'mdi:thermometer', color: 'var(--deep-purple-color)' },
-      { min: -30, max: -15, icon: 'mdi:thermometer', color: 'var(--dark-blue-color)' },
+      { min: -30, max: -15, icon: 'mdi:thermometer', color: 'var(--indigo-color)' },
       { min: -15, max: -2, icon: 'mdi:thermometer', color: 'var(--blue-color)' },
       { min: -2, max: 2, icon: 'mdi:thermometer', color: 'var(--light-blue-color)' },
       { min: 2, max: 8, icon: 'mdi:thermometer', color: 'var(--cyan-color)' },
       { min: 8, max: 16, icon: 'mdi:thermometer', color: 'var(--teal-color)' },
-      { min: 16, max: 18, icon: 'mdi:thermometer', color: 'var(--green-teal-color)' },
+      { min: 16, max: 18, icon: 'mdi:thermometer', color: 'var(--green-color)' },
       { min: 18, max: 20, icon: 'mdi:thermometer', color: 'var(--light-green-color)' },
       { min: 20, max: 25, icon: 'mdi:thermometer', color: 'var(--success-color)' },
       { min: 25, max: 27, icon: 'mdi:thermometer', color: 'var(--yellow-color)' },
@@ -581,7 +581,7 @@ const SEV = {
   info: 'info',
   warning: 'warning',
   error: 'error',
-  debug: 'debug'
+  debug: 'debug',
 };
 
 const LANGUAGES = {
@@ -5034,23 +5034,36 @@ class RegistrationHelper {
   };
 
   static #registerComponent(component, targetKey, elementClass) {
-    if (!customElements.get(component.typeName)) {
-      customElements.define(component.typeName, elementClass);
+    try {
+      // On tente l'enregistrement technique
+      if (!customElements.get(component.typeName)) {
+        customElements.define(component.typeName, elementClass);
+      }
+    } catch (error) {
+      // Si ça échoue (déjà défini), on log mais on ne bloque pas la suite
+      console.warn(`[Entity Progress Card] Registration alert: ${error.message}`);
     }
 
-    if (window[targetKey]?.some((item) => item.type === component.typeName)) {
-      return;
-    }
+    // Le reste du code est protégé
+    const registerUI = () => {
+      try {
+        if (window[targetKey]?.some((item) => item.type === component.typeName)) return;
 
-    window[targetKey] = window[targetKey] || [];
-    window[targetKey].push({
-      type: component.typeName,
-      name: component.name,
-      preview: true,
-      description: component.description,
-      documentationURL: CARD.documentation.link.documentationUrl,
-      version: VERSION,
-    });
+        window[targetKey] = window[targetKey] || [];
+        window[targetKey].push({
+          type: component.typeName,
+          name: component.name,
+          preview: true,
+          description: component.description,
+          documentationURL: CARD.documentation.link.documentationUrl,
+          version: VERSION,
+        });
+      } catch (uiError) {
+        console.error('[Entity Progress Card] UI Registration failed', uiError);
+      }
+    };
+
+    setTimeout(registerUI, 500);
   }
 
   static registerCard(card, elementClass) {
@@ -5086,24 +5099,24 @@ const StructureElements = {
   nameGroup: () =>
     Element(CARD.htmlStructure.elements.nameGroup).html(
       Element(CARD.htmlStructure.elements.nameCombined).html(
-        Element(CARD.htmlStructure.elements.name).html() + Element(CARD.htmlStructure.elements.nameCustomInfo).html()
-      )
+        Element(CARD.htmlStructure.elements.name).html() + Element(CARD.htmlStructure.elements.nameCustomInfo).html(),
+      ),
     ),
   nameGroupMinimal: () =>
     Element(CARD.htmlStructure.elements.nameGroup).html(
-      Element(CARD.htmlStructure.elements.nameCombined).html(Element(CARD.htmlStructure.elements.name).html())
+      Element(CARD.htmlStructure.elements.nameCombined).html(Element(CARD.htmlStructure.elements.name).html()),
     ),
 
   detailGroup: () =>
     Element(CARD.htmlStructure.elements.detailGroup).html(
       Element(CARD.htmlStructure.elements.detailCombined).html(
-        Element(CARD.htmlStructure.elements.customInfo).html() + Element(CARD.htmlStructure.elements.stateAndProgressInfo).html()
-      )
+        Element(CARD.htmlStructure.elements.customInfo).html() + Element(CARD.htmlStructure.elements.stateAndProgressInfo).html(),
+      ),
     ),
 
   detailGroupMinimal: () =>
     Element(CARD.htmlStructure.elements.detailGroup).html(
-      Element(CARD.htmlStructure.elements.detailCombined).html(Element(CARD.htmlStructure.elements.customInfo).html())
+      Element(CARD.htmlStructure.elements.detailCombined).html(Element(CARD.htmlStructure.elements.customInfo).html()),
     ),
 
   standardProgressBar: (extraClass = '') =>
@@ -5111,8 +5124,8 @@ const StructureElements = {
       Element(CARD.htmlStructure.elements.progressBar.bar, 'default').html(
         Element(CARD.htmlStructure.elements.progressBar.inner).html() +
           Element(CARD.htmlStructure.elements.progressBar.lowWatermark).html() +
-          Element(CARD.htmlStructure.elements.progressBar.highWatermark).html()
-      )
+          Element(CARD.htmlStructure.elements.progressBar.highWatermark).html(),
+      ),
     ),
 
   centerZeroProgressBar: (extraClass = '') =>
@@ -5122,8 +5135,8 @@ const StructureElements = {
           Element(CARD.htmlStructure.elements.progressBar.positiveInner).html() +
           Element(CARD.htmlStructure.elements.progressBar.lowWatermark).html() +
           Element(CARD.htmlStructure.elements.progressBar.highWatermark).html() +
-          Element(CARD.htmlStructure.elements.progressBar.zeroMark).html()
-      )
+          Element(CARD.htmlStructure.elements.progressBar.zeroMark).html(),
+      ),
     ),
 
   progressBar: (options) => {
@@ -5154,11 +5167,9 @@ const StructureElements = {
     return Element(CARD.htmlStructure.elements.secondaryInfo).html(content);
   },
 
-  secondaryInfo: (options) =>
-    StructureElements.createSecondaryInfo(options, StructureElements.detailGroup),
+  secondaryInfo: (options) => StructureElements.createSecondaryInfo(options, StructureElements.detailGroup),
 
-  secondaryInfoMinimal: (options) =>
-    StructureElements.createSecondaryInfo(options, StructureElements.detailGroupMinimal),
+  secondaryInfoMinimal: (options) => StructureElements.createSecondaryInfo(options, StructureElements.detailGroupMinimal),
 
   createContent: (options, rightContent) => {
     const isOverlay = options.barPosition === 'overlay';
@@ -5212,21 +5223,21 @@ const StructureTemplates = {
         StructureElements.trendIndicator(options) +
           StructureElements.iconSection() +
           StructureElements.contentFull(options) +
-          StructureElements.belowContainer().replace('{{content}}', StructureElements.progressBar(options))
+          StructureElements.belowContainer().replace('{{content}}', StructureElements.progressBar(options)),
       );
     return StructureElements.wrapWithBarPosition(
       StructureElements.container(options).replace(
         '{{content}}',
-        StructureElements.trendIndicator(options) + StructureElements.iconSection() + StructureElements.contentFull(options)
+        StructureElements.trendIndicator(options) + StructureElements.iconSection() + StructureElements.contentFull(options),
       ),
-      options
+      options,
     );
   },
 
   badge: (options = {}) => {
     return StructureElements.container(options).replace(
       '{{content}}',
-      StructureElements.iconSectionWoBadge() + StructureElements.contentFull(options)
+      StructureElements.iconSectionWoBadge() + StructureElements.contentFull(options),
     );
   },
 
@@ -5237,15 +5248,15 @@ const StructureTemplates = {
         StructureElements.trendIndicator(options) +
           StructureElements.iconSection() +
           StructureElements.contentMini(options) +
-          StructureElements.belowContainer().replace('{{content}}', StructureElements.progressBar(options))
+          StructureElements.belowContainer().replace('{{content}}', StructureElements.progressBar(options)),
       );
 
     return StructureElements.wrapWithBarPosition(
       StructureElements.container(options).replace(
         '{{content}}',
-        StructureElements.trendIndicator(options) + StructureElements.iconSection() + StructureElements.contentMini(options)
+        StructureElements.trendIndicator(options) + StructureElements.iconSection() + StructureElements.contentMini(options),
       ),
-      options
+      options,
     );
   },
   feature: (options = {}) => {
@@ -5283,7 +5294,6 @@ class TemplateStructure extends ObjStructure {
 class FeatureStructure extends ObjStructure {
   _cardType = 'feature';
 }
-
 
 /******************************************************************************************
  * 🛠️ NumberFormatter
@@ -5934,7 +5944,7 @@ class HassProviderSingleton {
         .map(([key, val]) => {
           const num = is.number(val) ? val : parseFloat(val);
           return [key, num];
-        })
+        }),
     );
   }
 }
@@ -6093,11 +6103,10 @@ class EntityHelper {
 
     this.#state = this.#hassProvider.getEntityStateValue(this.#entityId);
     if (!this.isValid || !this.isAvailable) return;
-    
+
     const type = this.getEntityType();
     const handler = EntityHelper.#handleRefreshType.get(type) ?? EntityHelper.#handleRefreshType.get('default');
     handler(this);
-
   }
 
   _manageStdEntity() {
@@ -6202,7 +6211,7 @@ class EntityHelper {
     return this.#hassProvider.getUnit(this.#entityId);
   }
   get precision() {
-    return this.#isValid ? this.#hassProvider.getPrecision(this.#entityId) ?? null : null;
+    return this.#isValid ? (this.#hassProvider.getPrecision(this.#entityId) ?? null) : null;
   }
   get isTimer() {
     return this.getEntityType() === 'timer';
@@ -6295,7 +6304,7 @@ class EntityCollectionHelper {
       .filter((helper) => helper.isValid && helper.isAvailable)
       .reduce((sum, helper) => {
         const value = helper.value;
-        return sum + (is.number(value) ? value : value?.current ?? 0);
+        return sum + (is.number(value) ? value : (value?.current ?? 0));
       }, 0);
   }
   getAvailableEntities() {
@@ -6308,7 +6317,7 @@ class EntityCollectionHelper {
 
     return this.getAvailableEntities().map((helper) => {
       const rawValue = helper.value;
-      const value = is.number(rawValue) ? rawValue : rawValue?.current ?? 0;
+      const value = is.number(rawValue) ? rawValue : (rawValue?.current ?? 0);
       const percent = (value / total) * 100;
 
       return {
@@ -6537,30 +6546,33 @@ const ERROR_CODES = {
   appliedDefaultValue: { code: 'appliedDefaultValue', severity: SEV.info },
 };
 
-
-const validateType = (typeCheck, errorCode) => (value, path = []) => {
-  if (is.nullish(value)) throw new ValidationError(path, ERROR_CODES.missingRequiredProperty.code, ERROR_CODES.missingRequiredProperty.severity);
-  if (!typeCheck(value)) throw new ValidationError(path, errorCode.code, errorCode.severity);
-  return value;
-};
+const validateType =
+  (typeCheck, errorCode) =>
+    (value, path = []) => {
+      if (is.nullish(value)) throw new ValidationError(path, ERROR_CODES.missingRequiredProperty.code, ERROR_CODES.missingRequiredProperty.severity);
+      if (!typeCheck(value)) throw new ValidationError(path, errorCode.code, errorCode.severity);
+      return value;
+    };
 
 const types = {
   string: validateType(is.string, ERROR_CODES.invalidTypeString),
   number: validateType(is.number, ERROR_CODES.invalidTypeNumber),
   boolean: validateType(is.boolean, ERROR_CODES.invalidTypeBoolean),
 
-  array: (itemValidator) => (value, path = []) => {
-    if (!is.array(value)) throw new ValidationError(path, ERROR_CODES.invalidTypeArray.code, ERROR_CODES.invalidTypeArray.severity);
+  array:
+    (itemValidator) =>
+      (value, path = []) => {
+        if (!is.array(value)) throw new ValidationError(path, ERROR_CODES.invalidTypeArray.code, ERROR_CODES.invalidTypeArray.severity);
 
-    const validItems = [];
-    value.forEach((item, index) => {
-      const validatedItem = itemValidator(item, [...path, index]);
-      if (validatedItem !== SKIP_PROPERTY) {
-        validItems.push(validatedItem);
-      }
-    });
-    return validItems;
-  },
+        const validItems = [];
+        value.forEach((item, index) => {
+          const validatedItem = itemValidator(item, [...path, index]);
+          if (validatedItem !== SKIP_PROPERTY) {
+            validItems.push(validatedItem);
+          }
+        });
+        return validItems;
+      },
 
   object: (schema) => {
     const validator = (value, path = []) => {
@@ -6600,36 +6612,40 @@ const types = {
     return validator;
   },
 
-  optional: (validator) => (value, path = []) => {
-    if (is.nullish(value)) return SKIP_PROPERTY;
-    try {
-      return validator(value, path);
-    } catch (error) {
-      if (error instanceof ValidationError) {
-        // Si c'est optional, on change la sévérité en INFO
-        error.severity = SEV.info;
-      }
-      throw error;
-    }
-  },
-
-  fallbackTo:  (validator, defaultVal) => (value, path = []) => {
-    if (value === undefined) return defaultVal;
-    try {
-      return validator(value, path);
-    } catch (error) {
-      if (error instanceof ValidationError) {
-        if (is.nullish(value)) {
-          error.severity = SEV.info;
-          error.errorCode = ERROR_CODES.appliedDefaultValue.code;
-        } else {
-          error.severity = SEV.warning;
+  optional:
+    (validator) =>
+      (value, path = []) => {
+        if (is.nullish(value)) return SKIP_PROPERTY;
+        try {
+          return validator(value, path);
+        } catch (error) {
+          if (error instanceof ValidationError) {
+            // Si c'est optional, on change la sévérité en INFO
+            error.severity = SEV.info;
+          }
+          throw error;
         }
-        error.fallback = defaultVal;
-      }
-      throw error;
-    }
-  },
+      },
+
+  fallbackTo:
+    (validator, defaultVal) =>
+      (value, path = []) => {
+        if (value === undefined) return defaultVal;
+        try {
+          return validator(value, path);
+        } catch (error) {
+          if (error instanceof ValidationError) {
+            if (is.nullish(value)) {
+              error.severity = SEV.info;
+              error.errorCode = ERROR_CODES.appliedDefaultValue.code;
+            } else {
+              error.severity = SEV.warning;
+            }
+            error.fallback = defaultVal;
+          }
+          throw error;
+        }
+      },
 
   optionalString: () => types.optional(types.string),
   optionalNumber: () => types.optional(types.number),
@@ -6640,108 +6656,120 @@ const types = {
   optionalNumberWithDefault: (defaultVal) => types.optionalWithDefault(types.number, defaultVal),
   optionalBooleanWithDefault: (defaultVal) => types.optionalWithDefault(types.boolean, defaultVal),
 
-  enums: (allowedValues) => (value, path = []) => {
-    if (is.nullish(value)) {
-      throw new ValidationError(path, ERROR_CODES.missingRequiredProperty.code, ERROR_CODES.missingRequiredProperty.severity);
-    }
-    if (!allowedValues.includes(value)) {
-      throw new ValidationError(path, ERROR_CODES.invalidEnumValue.code, ERROR_CODES.invalidEnumValue.severity);
-    }
-    return value;
-  },
+  enums:
+    (allowedValues) =>
+      (value, path = []) => {
+        if (is.nullish(value)) {
+          throw new ValidationError(path, ERROR_CODES.missingRequiredProperty.code, ERROR_CODES.missingRequiredProperty.severity);
+        }
+        if (!allowedValues.includes(value)) {
+          throw new ValidationError(path, ERROR_CODES.invalidEnumValue.code, ERROR_CODES.invalidEnumValue.severity);
+        }
+        return value;
+      },
 
   enumsWithDefault: (allowedValues, defaultVal) => types.fallbackTo(types.enums(allowedValues), defaultVal),
 
-  theme: (allowedValues) => (value, path = []) => {
-    if (is.nullish(value) || is.emptyString(value)) return SKIP_PROPERTY;
-    const themeMap = {
-      battery: 'optimal_when_high',
-      memory: 'optimal_when_low',
-      cpu: 'optimal_when_low',
-    };
-    value = themeMap[value] || value;
-    if (!allowedValues.includes(value)) throw new ValidationError(path, ERROR_CODES.invalidTheme.code, ERROR_CODES.invalidTheme.severity);
-    return value;
-  },
+  theme:
+    (allowedValues) =>
+      (value, path = []) => {
+        if (is.nullish(value) || is.emptyString(value)) return SKIP_PROPERTY;
+        const themeMap = {
+          battery: 'optimal_when_high',
+          memory: 'optimal_when_low',
+          cpu: 'optimal_when_low',
+        };
+        value = themeMap[value] || value;
+        if (!allowedValues.includes(value)) throw new ValidationError(path, ERROR_CODES.invalidTheme.code, ERROR_CODES.invalidTheme.severity);
+        return value;
+      },
 
-  union: (...validators) => (value, path = []) => {
-    const errors = [];
+  union:
+    (...validators) =>
+      (value, path = []) => {
+        const errors = [];
 
-    for (const validator of validators) {
-      try {
-        return validator(value, path);
-      } catch (error) {
-        errors.push(error.message || error.errorCode);
-      }
-    }
-
-    throw new ValidationError(path, ERROR_CODES.invalidUnionType.code, ERROR_CODES.invalidUnionType.severity);
-  },
-
-  // eslint-disable-next-line no-unused-vars
-  arrayWithValidatedElem: (allowedValues) => (value, _path = []) => {
-    if (is.nullish(value)) return SKIP_PROPERTY;
-
-    const valueArray = is.array(value) ? value : [value];
-    const validItems = valueArray.filter((item) => allowedValues.includes(item));
-
-    if (validItems.length === 0) return SKIP_PROPERTY;
-
-    return validItems;
-  },
-
-  // eslint-disable-next-line no-unused-vars
-  effectArray: (allowedValues) => (value, path = []) => {
-    if (is.nullish(value)) return SKIP_PROPERTY;
-    if (is.jinja(value)) return value;
-
-    const valueArray = is.array(value) ? value : [value];
-    const validItems = valueArray.filter((item) => allowedValues.includes(item));
-
-    if (validItems.length === 0) return SKIP_PROPERTY;
-
-    return validItems;
-  },
-
-  watermarkObject: (schema) => (value, path = []) => {
-    if (is.nullish(value) || !is.plainObject(value)) return SKIP_PROPERTY;
-
-    const result = {};
-    const errors = [];
-
-    for (const [key, validator] of Object.entries(schema)) {
-      try {
-        const validatedValue = validator(value[key], [...path, key]);
-        if (validatedValue !== SKIP_PROPERTY) {
-          result[key] = validatedValue;
-        }
-      } catch (error) {
-        if (error instanceof ValidationError) {
-          // ✅ Appliquer fallback s'il existe
-          if (error.fallback !== null && error.fallback !== undefined) {
-            result[key] = error.fallback;
+        for (const validator of validators) {
+          try {
+            return validator(value, path);
+          } catch (error) {
+            errors.push(error.message || error.errorCode);
           }
-          errors.push(error);
-        } else {
-          throw error;
         }
-      }
-    }
 
-    // ✅ Si il y a des erreurs, lever une erreur avec le résultat complet comme fallback
-    if (errors.length > 0) {
-      throw new ValidationError(
-        path, // chemin vers watermark
-        'watermarkValidation', // code d'erreur
-        SEV.warning, // sévérité
-        result, // ✅ failback
-        null, // pas de partialConfig ici
-        errors // toutes les erreurs individuelles
-      );
-    }
+        throw new ValidationError(path, ERROR_CODES.invalidUnionType.code, ERROR_CODES.invalidUnionType.severity);
+      },
 
-    return result;
-  },
+  arrayWithValidatedElem:
+    (allowedValues) =>
+      // eslint-disable-next-line no-unused-vars
+      (value, _path = []) => {
+        if (is.nullish(value)) return SKIP_PROPERTY;
+
+        const valueArray = is.array(value) ? value : [value];
+        const validItems = valueArray.filter((item) => allowedValues.includes(item));
+
+        if (validItems.length === 0) return SKIP_PROPERTY;
+
+        return validItems;
+      },
+
+  effectArray:
+    (allowedValues) =>
+      // eslint-disable-next-line no-unused-vars
+      (value, path = []) => {
+        if (is.nullish(value)) return SKIP_PROPERTY;
+        if (is.jinja(value)) return value;
+
+        const valueArray = is.array(value) ? value : [value];
+        const validItems = valueArray.filter((item) => allowedValues.includes(item));
+
+        if (validItems.length === 0) return SKIP_PROPERTY;
+
+        return validItems;
+      },
+
+  watermarkObject:
+    (schema) =>
+      (value, path = []) => {
+        if (is.nullish(value) || !is.plainObject(value)) return SKIP_PROPERTY;
+
+        const result = {};
+        const errors = [];
+
+        for (const [key, validator] of Object.entries(schema)) {
+          try {
+            const validatedValue = validator(value[key], [...path, key]);
+            if (validatedValue !== SKIP_PROPERTY) {
+              result[key] = validatedValue;
+            }
+          } catch (error) {
+            if (error instanceof ValidationError) {
+              // ✅ Appliquer fallback s'il existe
+              if (error.fallback !== null && error.fallback !== undefined) {
+                result[key] = error.fallback;
+              }
+              errors.push(error);
+            } else {
+              throw error;
+            }
+          }
+        }
+
+        // ✅ Si il y a des erreurs, lever une erreur avec le résultat complet comme fallback
+        if (errors.length > 0) {
+          throw new ValidationError(
+            path, // chemin vers watermark
+            'watermarkValidation', // code d'erreur
+            SEV.warning, // sévérité
+            result, // ✅ failback
+            null, // pas de partialConfig ici
+            errors, // toutes les erreurs individuelles
+          );
+        }
+
+        return result;
+      },
 
   entityId: (value, path = []) => {
     if (is.nullish(value)) throw new ValidationError(path, ERROR_CODES.missingRequiredProperty.code, ERROR_CODES.missingRequiredProperty.severity);
@@ -6848,6 +6876,8 @@ function struct(validator) {
   const postProcess = (data) => {
     const result = { ...data };
 
+    if (!result.layout) result.layout = CARD.layout.orientations.horizontal.label;
+
     if (result.layout === CARD.layout.orientations.horizontal.label && result.bar_size === CARD.style.bar.sizeOptions.xlarge.label)
       result.bar_position = 'below';
 
@@ -6915,8 +6945,7 @@ function struct(validator) {
         };
 
         const allErrors = extractAllErrors(error);
-        const mainError =
-          allErrors.find((e) => e.severity === 'error') || allErrors[0] || null;
+        const mainError = allErrors.find((e) => e.severity === 'error') || allErrors[0] || null;
 
         const partialConfig = error.partialResult ?? error.partialConfig ?? null;
         const postProcessedPartialConfig = partialConfig !== null ? postProcess(partialConfig) : null;
@@ -6970,10 +6999,13 @@ function struct(validator) {
   return structInstance;
 }
 
-const additionItem = types.fallbackTo(types.object({
-  entity: types.entityId,
-  attribute: types.optional(types.string)
-}), SKIP_PROPERTY);
+const additionItem = types.fallbackTo(
+  types.object({
+    entity: types.entityId,
+    attribute: types.optional(types.string),
+  }),
+  SKIP_PROPERTY,
+);
 
 const watermarkSchema = {
   low: types.optionalNumberWithDefault(CARD.config.defaults.watermark.low),
@@ -7009,7 +7041,7 @@ class yamlSchemaFactory {
         bar_color: types.optionalString(),
         bar_size: types.enumsWithDefault(
           Object.values(CARD.style.bar.sizeOptions).map((e) => e.label),
-          'small'
+          'small',
         ), //[('small', 'medium', 'large', 'xlarge')]
         bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
         bar_effect: types.effectArray(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
@@ -7017,7 +7049,7 @@ class yamlSchemaFactory {
         bar_single_line: types.optionalBooleanWithDefault(false),
         layout: types.enumsWithDefault(
           Object.values(CARD.layout.orientations).map((e) => e.label),
-          'horizontal'
+          'horizontal',
         ), // [('horizontal', 'vertical')]
         min_width: types.optionalString(),
         height: types.optionalString(),
@@ -7055,7 +7087,7 @@ class yamlSchemaFactory {
         icon_tap_action: types.tapActionWithDefault({ action: 'none' }),
         icon_hold_action: types.tapActionWithDefault({ action: 'none' }),
         icon_double_tap_action: types.tapActionWithDefault({ action: 'none' }),
-      })
+      }),
     );
   }
 
@@ -7088,7 +7120,7 @@ class yamlSchemaFactory {
         bar_color: types.optionalString(),
         bar_size: types.enumsWithDefault(
           Object.values(CARD.style.bar.sizeOptions).map((e) => e.label),
-          'small'
+          'small',
         ), //[('small', 'medium', 'large', 'xlarge')]
         bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
         bar_effect: types.effectArray(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
@@ -7096,7 +7128,7 @@ class yamlSchemaFactory {
         bar_single_line: types.optionalBooleanWithDefault(false),
         layout: types.enumsWithDefault(
           Object.values(CARD.layout.orientations).map((e) => e.label),
-          'horizontal'
+          'horizontal',
         ), // [('horizontal', 'vertical')]
         min_width: types.optionalString(),
         height: types.optionalString(),
@@ -7118,13 +7150,23 @@ class yamlSchemaFactory {
         icon_tap_action: types.tapActionWithDefault({ action: 'none' }),
         icon_hold_action: types.tapActionWithDefault({ action: 'none' }),
         icon_double_tap_action: types.tapActionWithDefault({ action: 'none' }),
-      })
+      }),
     );
   }
 
   // new !
   static get badgeTemplate() {
-    return yamlSchemaFactory.template.delete(['bar_position', 'badge_icon', 'badge_color', 'force_circular_background', 'layout', 'height', 'icon_tap_action', 'icon_hold_action', 'icon_double_tap_action']);
+    return yamlSchemaFactory.template.delete([
+      'bar_position',
+      'badge_icon',
+      'badge_color',
+      'force_circular_background',
+      'layout',
+      'height',
+      'icon_tap_action',
+      'icon_hold_action',
+      'icon_double_tap_action',
+    ]);
   }
 }
 
@@ -7175,7 +7217,7 @@ class BaseConfigHelper {
       console.warn(
         `${CARD.meta.card.typeName.toUpperCase()} - theme: ${
           config.theme
-        } is deprecated and will be removed in a future release. Please migrate to the recommended alternative...`
+        } is deprecated and will be removed in a future release. Please migrate to the recommended alternative...`,
       );
   }
 
@@ -7256,7 +7298,6 @@ class BaseConfigHelper {
   }
 }
 
-
 /******************************************************************************************
  * 🛠️ CardConfigHelper
  * ========================================================================================
@@ -7296,7 +7337,6 @@ class CardConfigHelper extends BaseConfigHelper {
 class BadgeConfigHelper extends CardConfigHelper {
   _yamlSchema = yamlSchemaFactory.badge;
 }
-
 
 /******************************************************************************************
  * 🛠️ MinimalCardView
@@ -7517,7 +7557,7 @@ class BaseCardView extends MinimalCardView {
       });
       this.#entityCollection.addEntity(this._configHelper.config.entity, this._configHelper.config.attribute);
     }
-    
+
     Object.assign(this.#percentHelper, {
       unitSpacing: this._configHelper.config.unit_spacing,
       hasDisabledUnit: this._configHelper.hasDisabledUnit,
@@ -7589,9 +7629,10 @@ class BaseCardView extends MinimalCardView {
   }
   get barColor() {
     if (!this.isAvailable) return this.isUnknown ? CARD.style.color.default : CARD.style.color.disabled;
-    const curColor = ThemeManager.adaptColor(this.#theme.barColor || this._configHelper.config.bar_color) ||
+    const curColor =
+      ThemeManager.adaptColor(this.#theme.barColor || this._configHelper.config.bar_color) ||
       this._currentValue.defaultColor ||
-      CARD.style.color.default;    
+      CARD.style.color.default;
     return this.hasEntityCollection ? this.#entityCollection.getEntitiesColor(curColor) : curColor;
   }
   get percent() {
@@ -7699,7 +7740,7 @@ class BaseCardView extends MinimalCardView {
     // console.log(this.#entityCollection.count);
     this.#entityCollection.refreshAll();
     //console.log(this.#entityCollection.getTotalValue());
-    //console.log(this.#entityCollection.getPercentages());    
+    //console.log(this.#entityCollection.getPercentages());
 
     if (!this.isAvailable) return;
 
@@ -7738,7 +7779,7 @@ class BaseCardView extends MinimalCardView {
     Object.assign(this.#percentHelper, {
       current: this._currentValue.value.current,
       min: this._currentValue.value.min,
-      max: this.#maxValue.isEntity ? this.#maxValue.value?.current ?? this.#maxValue.value : this._currentValue.value.max,
+      max: this.#maxValue.isEntity ? (this.#maxValue.value?.current ?? this.#maxValue.value) : this._currentValue.value.max,
     });
   }
 
@@ -8052,7 +8093,7 @@ class ActionHelper {
         this.#isHolding = true;
       },
       500,
-      'holdTimeout'
+      'holdTimeout',
     );
   }
 
@@ -8091,7 +8132,7 @@ class ActionHelper {
           this.#clickCount = 0;
         },
         300,
-        'tapTimeout'
+        'tapTimeout',
       );
     } else if (this.#clickCount === 2) {
       this.#resourceManager.remove('tapTimeout');
@@ -8131,7 +8172,7 @@ class ActionHelper {
           action: 'tap',
           originalEvent,
         },
-      })
+      }),
     );
   }
 }
@@ -8278,7 +8319,7 @@ class EntityProgressCardBase extends HTMLElement {
         this._doHandleHassUpdate();
       },
       100,
-      timeoutId
+      timeoutId,
     );
   }
 
@@ -8378,7 +8419,7 @@ class EntityProgressCardBase extends HTMLElement {
         }
       },
       this._cardView.refreshSpeed,
-      'autoRefresh'
+      'autoRefresh',
     );
   }
 
@@ -8478,7 +8519,8 @@ class EntityProgressCardBase extends HTMLElement {
   }
 
   _addBaseParameter(card) {
-    if (this._cardView.hasReversedSecondaryInfoRow) EntityProgressCardBase._setStylePropertyIfChanged(card.style, '--epb-secondary-info-row-reverse', 'row-reverse');
+    if (this._cardView.hasReversedSecondaryInfoRow)
+      EntityProgressCardBase._setStylePropertyIfChanged(card.style, '--epb-secondary-info-row-reverse', 'row-reverse');
     if (this._cardView.config.min_width)
       EntityProgressCardBase._setStylePropertyIfChanged(card.style, CARD.style.dynamic.card.minWidth.var, this._cardView.config.min_width);
     if (this._cardView.config.height)
@@ -8675,7 +8717,7 @@ class EntityProgressCardBase extends HTMLElement {
       if (isCenterZero) {
         properties.push(
           [isNegative ? CARD.style.dynamic.progressBar.nSize.var : CARD.style.dynamic.progressBar.pSize.var, `${Math.abs(bar.percent / 2)}%`],
-          [isNegative ? CARD.style.dynamic.progressBar.pSize.var : CARD.style.dynamic.progressBar.nSize.var, '0%']
+          [isNegative ? CARD.style.dynamic.progressBar.pSize.var : CARD.style.dynamic.progressBar.nSize.var, '0%'],
         );
       } else {
         properties.push([CARD.style.dynamic.progressBar.size.var, `${bar.percent}%`]);
@@ -8938,7 +8980,7 @@ class EntityProgressCardBase extends HTMLElement {
 
   _refreshBarEffect(content) {
     const card = this._domElements.get(CARD.htmlStructure.card.element);
-    const jinjaEffect = content.split(',').map(s => s.trim());
+    const jinjaEffect = content.split(',').map((s) => s.trim());
     this._handleBarEffect(card, jinjaEffect);
   }
 
@@ -8968,7 +9010,7 @@ class EntityProgressCardBase extends HTMLElement {
         }
       },
       { passive: true },
-      'ws-disconnected'
+      'ws-disconnected',
     );
 
     this._resourceManager.addEventListener(
@@ -8980,7 +9022,7 @@ class EntityProgressCardBase extends HTMLElement {
         this._processJinjaFields();
       },
       { passive: true },
-      'ws-ready'
+      'ws-ready',
     );
   }
 
@@ -9197,7 +9239,7 @@ class EntityProgressBadge extends EntityProgressCardBase {
 
   setConfig(config) {
     super.setConfig(config);
-    
+
     // Force un refresh pour les badges dans l'éditeur
     if (this._hass) {
       setTimeout(() => this.refresh(), 0);
@@ -9339,7 +9381,7 @@ class EntityProgressTemplate extends EntityProgressCardBase {
         this._processJinjaFields();
       },
       50,
-      throttleId
+      throttleId,
     );
   }
 
@@ -9514,7 +9556,7 @@ class EntityProgressTemplate extends EntityProgressCardBase {
 class BadgeTemplateConfigHelper extends BaseConfigHelper {
   _yamlSchema = yamlSchemaFactory.badgeTemplate;
 }
-  
+
 /******************************************************************************************
  * 🛠️ BadgeTemplateCardView
  * ========================================================================================
@@ -9605,7 +9647,7 @@ class EntityProgressBadgeTemplate extends EntityProgressTemplate {
 
   setConfig(config) {
     super.setConfig(config);
-    
+
     // Force un refresh pour les badges dans l'éditeur
     if (this._hass) {
       setTimeout(() => this.refresh(), 0);
@@ -9650,7 +9692,6 @@ RegistrationHelper.registerCard(CARD.meta.template, EntityProgressTemplate);
 /* NEW */
 //customElements.define(CARD.meta.badgeTemplate.typeName, EntityProgressBadgeTemplate);
 RegistrationHelper.registerBadge(CARD.meta.badgeTemplate, EntityProgressBadgeTemplate);
-
 
 /******************************************************************************************
  * 📦 CARD/BADGE EDITOR
@@ -10058,7 +10099,7 @@ class EntityProgressCardEditor extends HTMLElement {
           isInGroup: field.isInGroup,
           width: field.width,
           schema: field.schema !== undefined ? field.schema : null,
-        })
+        }),
       );
     });
   }
@@ -10241,7 +10282,7 @@ class EntityProgressCardEditor extends HTMLElement {
           this.toggleAccordion(index);
         },
         { passive: true }, // options
-        `accordionTitle-${index}`
+        `accordionTitle-${index}`,
       );
     });
   }
@@ -10266,7 +10307,7 @@ class EntityProgressCardEditor extends HTMLElement {
           event.stopPropagation();
         },
         { passive: true }, // options
-        `close-StopPropa-${name}`
+        `close-StopPropa-${name}`,
       );
     }
     events.forEach((eventType) => {
@@ -10275,7 +10316,7 @@ class EntityProgressCardEditor extends HTMLElement {
         eventType,
         this.#onChanged.bind(this),
         { passive: true },
-        `${eventType}-${name}`
+        `${eventType}-${name}`,
       );
     });
   }
@@ -10590,7 +10631,7 @@ class EntityProgressCardEditor extends HTMLElement {
         this.#resourceManager.remove(`accordionTransition-${index}`);
       },
       { passive: true },
-      `accordionTransition-${index}`
+      `accordionTransition-${index}`,
     );
   }
 }
