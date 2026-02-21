@@ -51,7 +51,7 @@ const CARD = {
   },
   config: {
     dev: true,
-    debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false, hass: false },
+    debug: { card: false, editor: true, interactionHandler: false, ressourceManager: true, hass: false },
     language: 'en',
     value: { min: 0, max: 100 },
     unit: {
@@ -341,25 +341,23 @@ const CARD = {
     fields: {
       container: { element: 'div', class: 'editor' },
       entity: { type: 'entity', element: 'ha-form' },
-      attribute: { type: 'attribute', element: 'ha-select' },
-      max_value_attribute: { type: 'max_value_attribute', element: 'ha-select' },
+      attribute: { type: 'attribute', element: 'ha-selector' }, // 2026.2 : ha-select -> ha-selector
+      max_value_attribute: { type: 'max_value_attribute', element: 'ha-selector' }, // 2026.2 : ha-select -> ha-selector
       icon: { type: 'icon', element: 'ha-form' },
-      layout: { type: 'layout', element: 'ha-select' },
-      bar_size: { type: 'bar_size', element: 'ha-select' },
+      layout: { type: 'layout', element: 'ha-selector' }, // 2026.2 : ha-select -> ha-selector
+      bar_size: { type: 'bar_size', element: 'ha-selector' }, // 2026.2 : ha-select -> ha-selector
       tap_action: { type: 'tap_action', element: 'ha-form' },
       double_tap_action: { type: 'double_tap_action', element: 'ha-form' },
       hold_action: { type: 'hold_action', element: 'ha-form' },
       icon_tap_action: { type: 'icon_tap_action', element: 'ha-form' },
       icon_double_tap_action: { type: 'icon_double_tap_action', element: 'ha-form' },
       icon_hold_action: { type: 'icon_hold_action', element: 'ha-form' },
-      theme: { type: 'theme', element: 'ha-select' },
+      theme: { type: 'theme', element: 'ha-selector' }, // 2026.2 : ha-select -> ha-selector
       color: { type: 'color', element: 'ha-form' },
-      number: { type: 'number', element: 'ha-textfield' },
-      default: { type: 'text', element: 'ha-textfield' },
-      listItem: { type: 'list item', element: 'mwc-list-item' },
-      iconItem: { element: 'ha-icon', attribute: 'icon', class: 'editor-icon-list' },
-      select: { element: 'ha-select' },
-      toggle: { type: 'toggle', element: 'ha-switch', class: 'editor-toggle' },
+      number: { type: 'number', element: 'ha-selector' }, // 2026.2 : ha-textfield -> ha-selector
+      decimal: { type: 'decimal', element: 'ha-selector' },
+      default: { type: 'text', element: 'ha-selector' }, // 2026.2 : ha-textfield -> ha-selector
+      toggle: { type: 'toggle', element: 'ha-selector', class: 'editor-toggle' }, // 2026.2 : ha-switch -> ha-selector
       text: { element: 'span' },
       accordion: {
         item: { element: 'div', class: 'accordion' },
@@ -653,7 +651,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'Optimal when Low (CPU, RAM,...)',
           optimal_when_high: 'Optimal when High (Battery...)',
           light: 'Light',
@@ -743,7 +740,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: "Optimal quand c'est bas (CPU, RAM,...)",
           optimal_when_high: "Optimal quand c'est élevé (Batterie...)",
           light: 'Lumière',
@@ -833,7 +829,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'Óptimo cuando es bajo (CPU, RAM,...)',
           optimal_when_high: 'Óptimo cuando es alto (Batería...)',
           light: 'Luz',
@@ -923,7 +918,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'Ottimale quando è basso (CPU, RAM,...)',
           optimal_when_high: 'Ottimale quando è alto (Batteria...)',
           light: 'Luce',
@@ -1013,7 +1007,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'Optimal bei niedrig (CPU, RAM,...)',
           optimal_when_high: 'Optimal bei hoch (Batterie...)',
           light: 'Licht',
@@ -1103,7 +1096,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'Optimaal wanneer laag (CPU, RAM,...)',
           optimal_when_high: 'Optimaal wanneer hoog (Batterij...)',
           light: 'Licht',
@@ -1193,7 +1185,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'Optimalno kada je nisko (CPU, RAM,...)',
           optimal_when_high: 'Optimalno kada je visoko (Baterija...)',
           light: 'Svjetlo',
@@ -1283,7 +1274,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'Optymalny, gdy niskie (CPU, RAM,...)',
           optimal_when_high: 'Optymalny, gdy wysokie (Bateria...)',
           light: 'Światło',
@@ -1373,7 +1363,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'Оптимално кога е ниско(CPU, RAM,...)',
           optimal_when_high: 'Оптимално кога е високо (Батерија...)',
           light: 'Светлина',
@@ -1463,7 +1452,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'Ótimo quando é baixo (CPU, RAM,...)',
           optimal_when_high: 'Ótimo quando é alto (Bateria...)',
           light: 'Luz',
@@ -1553,7 +1541,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'Optimal når lavt (CPU, RAM,...)',
           optimal_when_high: 'Optimal når højt (Batteri...)',
           light: 'Lys',
@@ -1643,7 +1630,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'Optimal når lavt (CPU, RAM,...)',
           optimal_when_high: 'Optimal når høyt (Batteri...)',
           light: 'Lys',
@@ -1733,7 +1719,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'Optimal när det är lågt (CPU, RAM,...)',
           optimal_when_high: 'Optimal när det är högt (Batteri...)',
           light: 'Ljus',
@@ -1823,7 +1808,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'Βέλτιστο όταν είναι χαμηλό (CPU, RAM...)',
           optimal_when_high: 'Βέλτιστο όταν είναι υψηλό (Μπαταρία...)',
           light: 'Φωτεινότητα',
@@ -1913,7 +1897,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'Optimaalinen alhaisena (CPU, RAM...)',
           optimal_when_high: 'Optimaalinen korkeana (Akku...)',
           light: 'Valoisuus',
@@ -2003,7 +1986,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'Optim când este scăzut (CPU, RAM...)',
           optimal_when_high: 'Optim când este ridicat (Baterie...)',
           light: 'Luminozitate',
@@ -2093,7 +2075,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: '低值最佳（CPU、内存等）',
           optimal_when_high: '高值最佳（电池等）',
           light: '亮度',
@@ -2183,7 +2164,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: '低い時が最適（CPU、RAMなど）',
           optimal_when_high: '高い時が最適（バッテリーなど）',
           light: '明るさ',
@@ -2273,7 +2253,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: '낮을 때 최적 (CPU, RAM 등)',
           optimal_when_high: '높을 때 최적 (배터리 등)',
           light: '조도',
@@ -2363,7 +2342,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'Düşükken en iyi (CPU, RAM...)',
           optimal_when_high: 'Yüksekken en iyi (Pil...)',
           light: 'Işık',
@@ -2453,7 +2431,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'مثالي عند الانخفاض (CPU، RAM...)',
           optimal_when_high: 'مثالي عند الارتفاع (البطارية...)',
           light: 'الضوء',
@@ -2543,7 +2520,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'Tối ưu khi thấp (CPU, RAM,...)',
           optimal_when_high: 'Tối ưu khi cao (Pin...)',
           light: 'Ánh sáng',
@@ -2633,7 +2609,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'เหมาะสมเมื่อต่ำ (CPU, RAM,...)',
           optimal_when_high: 'เหมาะสมเมื่อสูง (แบตเตอรี่...)',
           light: 'แสง',
@@ -2723,7 +2698,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'Optimal saat Rendah (CPU, RAM,...)',
           optimal_when_high: 'Optimal saat Tinggi (Baterai...)',
           light: 'Cahaya',
@@ -2813,7 +2787,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'Оптимально при низьких значеннях (CPU, RAM,...)',
           optimal_when_high: 'Оптимально при високих значеннях (Батарея...)',
           light: 'Світло',
@@ -2903,7 +2876,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'कम होने पर इष्टतम (CPU, RAM,...)',
           optimal_when_high: 'उच्च होने पर इष्टतम (बैटरी...)',
           light: 'प्रकाश',
@@ -2993,7 +2965,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'Optimální při nízkých hodnotách (CPU, RAM,...)',
           optimal_when_high: 'Optimální při vysokých hodnotách (Baterie...)',
           light: 'Světlo',
@@ -3083,7 +3054,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'কম হলে সর্বোত্তম (CPU, RAM,...)',
           optimal_when_high: 'বেশি হলে সর্বোত্তম (ব্যাটারি...)',
           light: 'আলো',
@@ -3173,7 +3143,6 @@ const LANGUAGES = {
       },
       option: {
         theme: {
-          '': '',
           optimal_when_low: 'Оптимально при низких значениях (ЦП, ОЗУ,...)',
           optimal_when_high: 'Оптимально при высоких значениях (Батарея...)',
           light: 'Освещение',
@@ -3233,7 +3202,7 @@ const EDITOR_INPUT_FIELDS = {
       },
       decimal: {
         name: 'decimal',
-        type: CARD.editor.fields.number.type,
+        type: CARD.editor.fields.decimal.type,
         width: 'calc((100% - 20px) * 0.2)',
         isInGroup: null,
       },
@@ -3316,43 +3285,36 @@ const EDITOR_INPUT_FIELDS = {
       toggleIcon: {
         name: 'toggle_icon',
         type: CARD.editor.fields.toggle.type,
-        width: '100%',
         isInGroup: null,
       },
       toggleName: {
         name: 'toggle_name',
         type: CARD.editor.fields.toggle.type,
-        width: '100%',
         isInGroup: null,
       },
       toggleValue: {
         name: 'toggle_value',
         type: CARD.editor.fields.toggle.type,
-        width: '100%',
         isInGroup: null,
       },
       toggleUnit: {
         name: 'toggle_unit',
         type: CARD.editor.fields.toggle.type,
-        width: '100%',
         isInGroup: null,
       },
       toggleSecondaryInfo: {
         name: 'toggle_secondary_info',
         type: CARD.editor.fields.toggle.type,
-        width: '100%',
         isInGroup: null,
       },
       toggleBar: {
         name: 'toggle_progress_bar',
         type: CARD.editor.fields.toggle.type,
-        width: '100%',
         isInGroup: null,
       },
       toggleCircular: {
         name: 'toggle_force_circular_background',
         type: CARD.editor.fields.toggle.type,
-        width: '100%',
         isInGroup: null,
       },
       theme: {
@@ -3396,71 +3358,6 @@ const EDITOR_INPUT_FIELDS = {
       },
     },
   },
-};
-
-const FIELD_OPTIONS = {
-  theme: [
-    {
-      value: '',
-      icon: 'mdi:cancel',
-    },
-    {
-      value: 'optimal_when_low',
-      icon: 'mdi:arrow-collapse-down',
-    },
-    {
-      value: 'optimal_when_high',
-      icon: 'mdi:arrow-collapse-up',
-    },
-    {
-      value: 'light',
-      icon: 'mdi:lightbulb',
-    },
-    {
-      value: 'temperature',
-      icon: 'mdi:thermometer',
-    },
-    {
-      value: 'humidity',
-      icon: 'mdi:water-percent',
-    },
-    {
-      value: 'pm25',
-      icon: 'mdi:air-filter',
-    },
-    {
-      value: 'voc',
-      icon: 'mdi:air-filter',
-    },
-  ],
-  bar_size: [
-    {
-      value: CARD.style.bar.sizeOptions.small.label,
-      icon: CARD.style.bar.sizeOptions.small.mdi,
-    },
-    {
-      value: CARD.style.bar.sizeOptions.medium.label,
-      icon: CARD.style.bar.sizeOptions.medium.mdi,
-    },
-    {
-      value: CARD.style.bar.sizeOptions.large.label,
-      icon: CARD.style.bar.sizeOptions.large.mdi,
-    },
-    {
-      value: CARD.style.bar.sizeOptions.xlarge.label,
-      icon: CARD.style.bar.sizeOptions.xlarge.mdi,
-    },
-  ],
-  layout: [
-    {
-      value: CARD.layout.orientations.horizontal.label,
-      icon: CARD.layout.orientations.horizontal.mdi,
-    },
-    {
-      value: CARD.layout.orientations.vertical.label,
-      icon: CARD.layout.orientations.vertical.mdi,
-    },
-  ],
 };
 
 const ATTRIBUTE_MAPPING = {
@@ -4723,15 +4620,9 @@ const CARD_EDITOR_CSS = `
 }
 
 /* Icônes communes */
-.${CARD.editor.fields.iconItem.class},
 .${CARD.editor.fields.accordion.icon.class} {
   margin-right: 8px;
   color: var(--secondary-text-color);
-}
-
-.${CARD.editor.fields.iconItem.class} {
-  width: var(--icon-size);
-  height: var(--icon-size);
 }
 
 /* Documentation */
@@ -4845,11 +4736,6 @@ const CARD_EDITOR_CSS = `
 .accordion.collapsing .${CARD.editor.fields.accordion.content.class} > * {
   opacity: 0 !important;
   transition: opacity 0.1s ease; /* Transition rapide pendant le repli */
-}
-
-/* Sélecteur ha-select */
-ha-select {
-  --mdc-menu-max-height: 250px;
 }
 
 /* Classes show/hide optimisées */
@@ -5063,7 +4949,7 @@ class RegistrationHelper {
       }
     };
 
-    setTimeout(registerUI, 500);
+    setTimeout(registerUI, 1000);
   }
 
   static registerCard(card, elementClass) {
@@ -6548,11 +6434,11 @@ const ERROR_CODES = {
 
 const validateType =
   (typeCheck, errorCode) =>
-    (value, path = []) => {
-      if (is.nullish(value)) throw new ValidationError(path, ERROR_CODES.missingRequiredProperty.code, ERROR_CODES.missingRequiredProperty.severity);
-      if (!typeCheck(value)) throw new ValidationError(path, errorCode.code, errorCode.severity);
-      return value;
-    };
+  (value, path = []) => {
+    if (is.nullish(value)) throw new ValidationError(path, ERROR_CODES.missingRequiredProperty.code, ERROR_CODES.missingRequiredProperty.severity);
+    if (!typeCheck(value)) throw new ValidationError(path, errorCode.code, errorCode.severity);
+    return value;
+  };
 
 const types = {
   string: validateType(is.string, ERROR_CODES.invalidTypeString),
@@ -6561,18 +6447,18 @@ const types = {
 
   array:
     (itemValidator) =>
-      (value, path = []) => {
-        if (!is.array(value)) throw new ValidationError(path, ERROR_CODES.invalidTypeArray.code, ERROR_CODES.invalidTypeArray.severity);
+    (value, path = []) => {
+      if (!is.array(value)) throw new ValidationError(path, ERROR_CODES.invalidTypeArray.code, ERROR_CODES.invalidTypeArray.severity);
 
-        const validItems = [];
-        value.forEach((item, index) => {
-          const validatedItem = itemValidator(item, [...path, index]);
-          if (validatedItem !== SKIP_PROPERTY) {
-            validItems.push(validatedItem);
-          }
-        });
-        return validItems;
-      },
+      const validItems = [];
+      value.forEach((item, index) => {
+        const validatedItem = itemValidator(item, [...path, index]);
+        if (validatedItem !== SKIP_PROPERTY) {
+          validItems.push(validatedItem);
+        }
+      });
+      return validItems;
+    },
 
   object: (schema) => {
     const validator = (value, path = []) => {
@@ -6614,38 +6500,38 @@ const types = {
 
   optional:
     (validator) =>
-      (value, path = []) => {
-        if (is.nullish(value)) return SKIP_PROPERTY;
-        try {
-          return validator(value, path);
-        } catch (error) {
-          if (error instanceof ValidationError) {
-            // Si c'est optional, on change la sévérité en INFO
-            error.severity = SEV.info;
-          }
-          throw error;
+    (value, path = []) => {
+      if (is.nullish(value)) return SKIP_PROPERTY;
+      try {
+        return validator(value, path);
+      } catch (error) {
+        if (error instanceof ValidationError) {
+          // Si c'est optional, on change la sévérité en INFO
+          error.severity = SEV.info;
         }
-      },
+        throw error;
+      }
+    },
 
   fallbackTo:
     (validator, defaultVal) =>
-      (value, path = []) => {
-        if (value === undefined) return defaultVal;
-        try {
-          return validator(value, path);
-        } catch (error) {
-          if (error instanceof ValidationError) {
-            if (is.nullish(value)) {
-              error.severity = SEV.info;
-              error.errorCode = ERROR_CODES.appliedDefaultValue.code;
-            } else {
-              error.severity = SEV.warning;
-            }
-            error.fallback = defaultVal;
+    (value, path = []) => {
+      if (value === undefined) return defaultVal;
+      try {
+        return validator(value, path);
+      } catch (error) {
+        if (error instanceof ValidationError) {
+          if (is.nullish(value)) {
+            error.severity = SEV.info;
+            error.errorCode = ERROR_CODES.appliedDefaultValue.code;
+          } else {
+            error.severity = SEV.warning;
           }
-          throw error;
+          error.fallback = defaultVal;
         }
-      },
+        throw error;
+      }
+    },
 
   optionalString: () => types.optional(types.string),
   optionalNumber: () => types.optional(types.number),
@@ -6658,118 +6544,118 @@ const types = {
 
   enums:
     (allowedValues) =>
-      (value, path = []) => {
-        if (is.nullish(value)) {
-          throw new ValidationError(path, ERROR_CODES.missingRequiredProperty.code, ERROR_CODES.missingRequiredProperty.severity);
-        }
-        if (!allowedValues.includes(value)) {
-          throw new ValidationError(path, ERROR_CODES.invalidEnumValue.code, ERROR_CODES.invalidEnumValue.severity);
-        }
-        return value;
-      },
+    (value, path = []) => {
+      if (is.nullish(value)) {
+        throw new ValidationError(path, ERROR_CODES.missingRequiredProperty.code, ERROR_CODES.missingRequiredProperty.severity);
+      }
+      if (!allowedValues.includes(value)) {
+        throw new ValidationError(path, ERROR_CODES.invalidEnumValue.code, ERROR_CODES.invalidEnumValue.severity);
+      }
+      return value;
+    },
 
   enumsWithDefault: (allowedValues, defaultVal) => types.fallbackTo(types.enums(allowedValues), defaultVal),
 
   theme:
     (allowedValues) =>
-      (value, path = []) => {
-        if (is.nullish(value) || is.emptyString(value)) return SKIP_PROPERTY;
-        const themeMap = {
-          battery: 'optimal_when_high',
-          memory: 'optimal_when_low',
-          cpu: 'optimal_when_low',
-        };
-        value = themeMap[value] || value;
-        if (!allowedValues.includes(value)) throw new ValidationError(path, ERROR_CODES.invalidTheme.code, ERROR_CODES.invalidTheme.severity);
-        return value;
-      },
+    (value, path = []) => {
+      if (is.nullish(value) || is.emptyString(value)) return SKIP_PROPERTY;
+      const themeMap = {
+        battery: 'optimal_when_high',
+        memory: 'optimal_when_low',
+        cpu: 'optimal_when_low',
+      };
+      value = themeMap[value] || value;
+      if (!allowedValues.includes(value)) throw new ValidationError(path, ERROR_CODES.invalidTheme.code, ERROR_CODES.invalidTheme.severity);
+      return value;
+    },
 
   union:
     (...validators) =>
-      (value, path = []) => {
-        const errors = [];
+    (value, path = []) => {
+      const errors = [];
 
-        for (const validator of validators) {
-          try {
-            return validator(value, path);
-          } catch (error) {
-            errors.push(error.message || error.errorCode);
-          }
+      for (const validator of validators) {
+        try {
+          return validator(value, path);
+        } catch (error) {
+          errors.push(error.message || error.errorCode);
         }
+      }
 
-        throw new ValidationError(path, ERROR_CODES.invalidUnionType.code, ERROR_CODES.invalidUnionType.severity);
-      },
+      throw new ValidationError(path, ERROR_CODES.invalidUnionType.code, ERROR_CODES.invalidUnionType.severity);
+    },
 
   arrayWithValidatedElem:
     (allowedValues) =>
-      // eslint-disable-next-line no-unused-vars
-      (value, _path = []) => {
-        if (is.nullish(value)) return SKIP_PROPERTY;
+    // eslint-disable-next-line no-unused-vars
+    (value, _path = []) => {
+      if (is.nullish(value)) return SKIP_PROPERTY;
 
-        const valueArray = is.array(value) ? value : [value];
-        const validItems = valueArray.filter((item) => allowedValues.includes(item));
+      const valueArray = is.array(value) ? value : [value];
+      const validItems = valueArray.filter((item) => allowedValues.includes(item));
 
-        if (validItems.length === 0) return SKIP_PROPERTY;
+      if (validItems.length === 0) return SKIP_PROPERTY;
 
-        return validItems;
-      },
+      return validItems;
+    },
 
   effectArray:
     (allowedValues) =>
-      // eslint-disable-next-line no-unused-vars
-      (value, path = []) => {
-        if (is.nullish(value)) return SKIP_PROPERTY;
-        if (is.jinja(value)) return value;
+    // eslint-disable-next-line no-unused-vars
+    (value, path = []) => {
+      if (is.nullish(value)) return SKIP_PROPERTY;
+      if (is.jinja(value)) return value;
 
-        const valueArray = is.array(value) ? value : [value];
-        const validItems = valueArray.filter((item) => allowedValues.includes(item));
+      const valueArray = is.array(value) ? value : [value];
+      const validItems = valueArray.filter((item) => allowedValues.includes(item));
 
-        if (validItems.length === 0) return SKIP_PROPERTY;
+      if (validItems.length === 0) return SKIP_PROPERTY;
 
-        return validItems;
-      },
+      return validItems;
+    },
 
   watermarkObject:
     (schema) =>
-      (value, path = []) => {
-        if (is.nullish(value) || !is.plainObject(value)) return SKIP_PROPERTY;
+    (value, path = []) => {
+      if (is.nullish(value) || !is.plainObject(value)) return SKIP_PROPERTY;
 
-        const result = {};
-        const errors = [];
+      const result = {};
+      const errors = [];
 
-        for (const [key, validator] of Object.entries(schema)) {
-          try {
-            const validatedValue = validator(value[key], [...path, key]);
-            if (validatedValue !== SKIP_PROPERTY) {
-              result[key] = validatedValue;
+      for (const [key, validator] of Object.entries(schema)) {
+        try {
+          const validatedValue = validator(value[key], [...path, key]);
+          if (validatedValue !== SKIP_PROPERTY) {
+            result[key] = validatedValue;
+          }
+        } catch (error) {
+          if (error instanceof ValidationError) {
+            // ✅ Appliquer fallback s'il existe
+            if (error.fallback !== null && error.fallback !== undefined) {
+              result[key] = error.fallback;
             }
-          } catch (error) {
-            if (error instanceof ValidationError) {
-              // ✅ Appliquer fallback s'il existe
-              if (error.fallback !== null && error.fallback !== undefined) {
-                result[key] = error.fallback;
-              }
-              errors.push(error);
-            } else {
-              throw error;
-            }
+            errors.push(error);
+          } else {
+            throw error;
           }
         }
+      }
 
-        // ✅ Si il y a des erreurs, lever une erreur avec le résultat complet comme fallback
-        if (errors.length > 0) {
-          throw new ValidationError(
-            path, // chemin vers watermark
-            'watermarkValidation', // code d'erreur
-            SEV.warning, // sévérité
-            result, // ✅ failback
-            null, // pas de partialConfig ici
-            errors, // toutes les erreurs individuelles
-          );
-        }
+      // ✅ Si il y a des erreurs, lever une erreur avec le résultat complet comme fallback
+      if (errors.length > 0) {
+        throw new ValidationError(
+          path, // chemin vers watermark
+          'watermarkValidation', // code d'erreur
+          SEV.warning, // sévérité
+          result, // ✅ failback
+          null, // pas de partialConfig ici
+          errors, // toutes les erreurs individuelles
+        );
+      }
 
-        return result;
-      },
+      return result;
+    },
 
   entityId: (value, path = []) => {
     if (is.nullish(value)) throw new ValidationError(path, ERROR_CODES.missingRequiredProperty.code, ERROR_CODES.missingRequiredProperty.severity);
@@ -7202,9 +7088,6 @@ class BaseConfigHelper {
     BaseConfigHelper.#logDeprecatedOption(config);
     this._configParsed = this._yamlSchema.parse(config);
 
-    // console.log(this.config);
-    // console.log(this._configParsed);
-    // console.log(this._hassProvider.language);
     this.#lastMsgConsole = null;
   }
 
@@ -8779,13 +8662,13 @@ class EntityProgressCardBase extends HTMLElement {
     if (!stateObj) {
       return this.isConnected
         ? {
-          entity_id: 'sensor.dummy',
-          state: 'unknown',
-          attributes: {
-            icon: curIcon || 'mdi:help-circle-outline',
-            friendly_name: 'Unknown Entity',
-          },
-        }
+            entity_id: 'sensor.dummy',
+            state: 'unknown',
+            attributes: {
+              icon: curIcon || 'mdi:help-circle-outline',
+              friendly_name: 'Unknown Entity',
+            },
+          }
         : null;
     }
 
@@ -9814,27 +9697,35 @@ class ConfigUpdateEventHandler {
   }
 
   updateField(targetId, changedEvent) {
-    if (is.nullishOrEmptyString(changedEvent.target.value)) {
+    // FIX 2026.2: ha-selector -> detail.value,
+    const newValue = changedEvent.detail?.value;
+
+    if (is.nullishOrEmptyString(newValue)) {
       delete this.config[targetId];
     } else {
-      this.config[targetId] = changedEvent.target.value;
+      this.config[targetId] = newValue;
     }
   }
 
   updateNumericField(targetId, changedEvent) {
-    const curValue = parseFloat(changedEvent.target.value);
-    if (isNaN(curValue)) {
+    // FIX 2026.2: ha-selector -> detail.value,
+    const newValue = changedEvent.detail?.value;
+
+    if (isNaN(newValue)) {
       delete this.config[targetId];
     } else {
-      this.config[targetId] = curValue;
+      this.config[targetId] = newValue;
     }
   }
 
   updateMaxValueField(targetId, changedEvent) {
-    if (is.numericString(changedEvent.target.value)) {
-      this.config[targetId] = parseFloat(changedEvent.target.value);
-    } else if (is.nonEmptyString(changedEvent.target.value)) {
-      this.config[targetId] = changedEvent.target.value;
+    // FIX 2026.2: ha-selector -> detail.value,
+    const newValue = changedEvent.detail?.value;
+
+    if (is.numericString(newValue)) {
+      this.config[targetId] = parseFloat(newValue);
+    } else if (is.nonEmptyString(newValue)) {
+      this.config[targetId] = newValue;
     } else {
       delete this.config[targetId];
     }
@@ -9862,7 +9753,7 @@ class ConfigUpdateEventHandler {
 
     this.#log.debug(' 📌 *** NEWCONFIG (Hide Management) ***:', JSON.stringify(newConfig, null, 2));
 
-    const isChecked = changedEvent.target.checked;
+    const isChecked = changedEvent.detail?.value ?? false;
     this.#log.debug(' 📌 *** key ***:', key);
     this.#log.debug(' 📌 *** is checked ***:', isChecked);
 
@@ -9884,7 +9775,9 @@ class ConfigUpdateEventHandler {
   }
 
   updateCircularField(targetId, changedEvent) {
-    if (changedEvent.target.checked) {
+    const isChecked = changedEvent.detail?.value ?? false;
+
+    if (isChecked) {
       this.config.force_circular_background = true;
     } else {
       delete this.config.force_circular_background;
@@ -9892,7 +9785,9 @@ class ConfigUpdateEventHandler {
   }
 
   updateUnitField(targetId, changedEvent) {
-    if (!changedEvent.srcElement.checked) {
+    const isChecked = changedEvent.detail?.value ?? false;
+
+    if (!isChecked) {
       this.config.disable_unit = true;
     } else {
       delete this.config.disable_unit;
@@ -10052,7 +9947,6 @@ class EntityProgressCardEditor extends HTMLElement {
       this.#renderAccordion(this.#container, this.editorFields[section]);
     }
 
-    this.#container.appendChild(EntityProgressCardEditor.#makeHelpIcon());
     fragment.appendChild(this.#container);
     this.shadowRoot.appendChild(fragment);
   }
@@ -10104,175 +9998,65 @@ class EntityProgressCardEditor extends HTMLElement {
     });
   }
 
+  #getSelectorForType(type) {
+    const buildSelect = (opts) => ({
+      select: { options: Object.entries(opts).map(([value, label]) => ({ value, label })), mode: 'dropdown' },
+    });
+
+    const options = LANGUAGES[this.#currentLanguage].editor.option;
+    const selectors = {
+      [CARD.editor.fields.default.type]: () => ({ text: { mode: 'box' } }),
+      [CARD.editor.fields.number.type]: () => ({ number: {} }),
+      [CARD.editor.fields.toggle.type]: () => ({ boolean: {} }),
+      [CARD.editor.fields.decimal.type]: () => ({ number: { min: 0, max: 10, mode: 'box' } }),
+      [CARD.editor.fields.attribute.type]: () => ({ attribute: { entity_id: this.#config.entity ?? '' } }),
+      [CARD.editor.fields.max_value_attribute.type]: () => ({ attribute: { entity_id: this.#config.max_value ?? '' } }),
+      [CARD.editor.fields.layout.type]: () => buildSelect(options.layout),
+      [CARD.editor.fields.theme.type]: () => buildSelect(options.theme),
+      [CARD.editor.fields.bar_size.type]: () => buildSelect(options.bar_size),
+    };
+
+    return (selectors[type] ?? (() => ({ text: {} })))();
+  }
+
   #createField({ name, label, type, required, isInGroup, width, schema = null }) {
     this.#log.debug('#createField()');
-    let inputElement = null;
-    const value = this.#config[name] ?? '';
 
-    switch (type) {
-      case CARD.editor.fields.entity.type:
-      case CARD.editor.fields.color.type:
-      case CARD.editor.fields.icon.type:
-      case CARD.editor.fields.tap_action.type:
-      case CARD.editor.fields.double_tap_action.type:
-      case CARD.editor.fields.hold_action.type:
-      case CARD.editor.fields.icon_tap_action.type:
-      case CARD.editor.fields.icon_double_tap_action.type:
-      case CARD.editor.fields.icon_hold_action.type: {
-        inputElement = document.createElement(CARD.editor.fields.tap_action.element);
-        if (isInGroup) {
-          inputElement.classList.add(isInGroup);
-        }
-        inputElement.style.width = width;
-        Object.assign(inputElement, {
-          id: name,
-          hass: this.#hassProvider.hass,
-          schema,
-          computeLabel: (s) => EntityProgressCardEditor.#computeCustomLabel(s, label),
-          data: {},
-        });
-        this.#domElements.set(name, inputElement);
-        return inputElement; //break;
-      }
-      case CARD.editor.fields.layout.type:
-      case CARD.editor.fields.bar_size.type:
-      case CARD.editor.fields.theme.type:
-      case CARD.editor.fields.attribute.type:
-      case CARD.editor.fields.max_value_attribute.type:
-        inputElement = document.createElement(CARD.editor.fields[type].element);
-        inputElement.popperOptions = '';
-        this.#updateChoices(inputElement, type);
-        break;
-      case CARD.editor.fields.number.type:
-        inputElement = document.createElement(CARD.editor.fields.number.element);
-        inputElement.type = CARD.editor.fields.number.type;
-        break;
-      case CARD.editor.fields.toggle.type: {
-        inputElement = document.createElement(CARD.editor.fields.container.element);
-        inputElement.classList.add(CARD.editor.fields.toggle.class);
+    const isSelector = schema === null;
+    const inputElement = document.createElement(isSelector ? 'ha-selector' : CARD.editor.fields.tap_action.element);
 
-        if (isInGroup) {
-          inputElement.classList.add(isInGroup);
-        } else {
-          Object.assign(inputElement.style, {
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-          });
-        }
+    if (width !== undefined) inputElement.style.width = width;
+    if (isInGroup) inputElement.classList.add(isInGroup);
 
-        const toggleLabel = document.createElement(CARD.editor.fields.text.element);
-        toggleLabel.textContent = label;
-
-        const toggle = document.createElement(CARD.editor.fields.toggle.element);
-
-        toggle.setAttribute('checked', true);
-        toggle.id = name;
-
-        inputElement.appendChild(toggleLabel);
-        inputElement.appendChild(toggle);
-
-        this.#domElements.set(name, toggle);
-        return inputElement; //break;
-      }
-      default:
-        inputElement = document.createElement(CARD.editor.fields.default.element);
-        inputElement.type = CARD.editor.fields.default.type;
-        break;
-    }
+    Object.assign(inputElement, {
+      id: name,
+      hass: this.#hassProvider.hass,
+      ...(isSelector
+        ? {
+            label: label,
+            value: this.#config[name] ?? '',
+            selector: this.#getSelectorForType(type),
+            required: required,
+          }
+        : {
+            schema: schema,
+            computeLabel: () => label,
+            data: {},
+          }),
+    });
 
     this.#domElements.set(name, inputElement);
-    inputElement.style.width = width;
-    Object.assign(inputElement, {
-      required,
-      label,
-      value,
-      id: name,
-    });
-
-    if (isInGroup) {
-      inputElement.classList.add(isInGroup);
-    }
-
     return inputElement;
-  }
-
-  static #computeCustomLabel(s, label) {
-    return label;
-  }
-
-  #updateChoices(select, type, choices = null) {
-    this.#log.debug('#updateChoices() ', { select, type, choices });
-    const fragment = document.createDocumentFragment();
-
-    const list = [CARD.editor.fields.attribute.type, CARD.editor.fields.max_value_attribute.type].includes(type) ? choices : FIELD_OPTIONS[type];
-    if (!list) {
-      return;
-    }
-    this.#log.debug('  📌 list: ', list);
-
-    list.forEach((optionData) => {
-      const option = document.createElement(CARD.editor.fields.listItem.element);
-      const value = optionData.value !== undefined ? optionData.value : optionData;
-      option.setAttribute('value', String(value));
-
-      switch (type) {
-        case CARD.editor.fields.layout.type:
-        case CARD.editor.fields.theme.type:
-        case CARD.editor.fields.bar_size.type: {
-          const label = LANGUAGES[this.#currentLanguage].editor.option[type][optionData.value];
-          const haIcon = document.createElement(CARD.editor.fields.iconItem.element);
-          haIcon.setAttribute(CARD.editor.fields.iconItem.attribute, optionData.icon);
-          haIcon.classList.add(CARD.editor.fields.iconItem.class);
-          option.appendChild(haIcon);
-          option.append(label);
-          break;
-        }
-        case CARD.editor.fields.attribute.type:
-        case CARD.editor.fields.max_value_attribute.type:
-          option.innerHTML = `${optionData.label}`;
-          break;
-        default:
-          throw new Error('Choices: Unknown case');
-      }
-      // select.appendChild(option);
-      fragment.appendChild(option);
-    });
-    select.replaceChildren(fragment);
-  }
-
-  static #makeHelpIcon() {
-    const link = document.createElement(CARD.documentation.link.element);
-    link.href = CARD.documentation.link.documentationUrl;
-    link.target = CARD.documentation.link.linkTarget;
-    link.classList.add(CARD.documentation.link.class);
-    const shape = document.createElement(CARD.documentation.shape.element);
-    shape.classList.add(CARD.documentation.shape.class);
-
-    const questionMark = document.createElement(CARD.documentation.questionMark.element);
-    questionMark.classList.add(CARD.documentation.questionMark.class);
-    questionMark.setAttribute('icon', CARD.documentation.questionMark.icon);
-    Object.assign(questionMark.style, CARD.documentation.questionMark.style);
-
-    shape.appendChild(questionMark);
-    link.appendChild(shape);
-    return link;
   }
 
   // === EDITOR EVENT ===
 
   #addEventListener() {
-    this.#log.debug('#addEventListener');
-    const allFields = [
-      ...Object.values(this.editorFields.basicConfiguration),
-      ...Object.values(this.editorFields.content.field),
-      ...Object.values(this.editorFields.interaction.field),
-      ...Object.values(this.editorFields.theme.field),
-    ];
-
-    allFields.forEach((field) => {
-      this.#addEventListenerFor(field.name, field.type);
-    });
+    for (const [name, element] of this.#domElements) {
+      if (element.localName === 'ha-selector' || element.localName === 'ha-form') {
+        this.#resourceManager.addEventListener(element, 'value-changed', this.#onChanged.bind(this), { passive: true }, `value-changed-${name}`);
+      }
+    }
 
     this.#accordionTitleList.forEach((title, index) => {
       this.#resourceManager.addEventListener(
@@ -10281,46 +10065,11 @@ class EntityProgressCardEditor extends HTMLElement {
         () => {
           this.toggleAccordion(index);
         },
-        { passive: true }, // options
+        { passive: true },
         `accordionTitle-${index}`,
       );
     });
   }
-
-  #addEventListenerFor(name, type) {
-    this.#log.debug(`#addEventListenerFor(${name}, ${type})`);
-    if (!this.#domElements.get(name)) {
-      console.error(`Element ${name} not found!`);
-      return;
-    }
-    const isHASelect = CARD.editor.fields[type]?.element === CARD.editor.fields.select.element;
-    const isToggle = CARD.editor.fields[type]?.element === CARD.editor.fields.toggle.element;
-    const events = isHASelect ? CARD.interactions.event.HASelect : isToggle ? CARD.interactions.event.toggle : CARD.interactions.event.other;
-
-    this.#log.debug('Event:', events);
-
-    if (isHASelect) {
-      this.#resourceManager.addEventListener(
-        this.#domElements.get(name),
-        CARD.interactions.event.closed,
-        (event) => {
-          event.stopPropagation();
-        },
-        { passive: true }, // options
-        `close-StopPropa-${name}`,
-      );
-    }
-    events.forEach((eventType) => {
-      this.#resourceManager.addEventListener(
-        this.#domElements.get(name),
-        eventType,
-        this.#onChanged.bind(this),
-        { passive: true },
-        `${eventType}-${name}`,
-      );
-    });
-  }
-
   #onChanged(changedEvent) {
     this.#log.debug('#onChanged()');
     this.#log.debug('  📎 ', changedEvent);
@@ -10354,13 +10103,13 @@ class EntityProgressCardEditor extends HTMLElement {
   #updateFields() {
     this.#log.debug('#updateFields()');
 
-    const standardFieldType = new Set(['ha-select', 'ha-textfield']);
-    const excludeStandardType = new Set([CARD.editor.keyMappings.attribute, CARD.editor.keyMappings.max_value_attribute]);
-
+    const excludeKeys = new Set([CARD.editor.keyMappings.attribute, CARD.editor.keyMappings.max_value_attribute]);
     const updates = [];
 
     for (const [key, element] of this.#domElements) {
-      if (standardFieldType.has(element.localName) && !excludeStandardType.has(key)) {
+      if (excludeKeys.has(key) || key.startsWith('toggle_')) continue;
+
+      if (element.localName === 'ha-selector') {
         const update = this.#prepareStandardFieldUpdate(key, element);
         if (update) updates.push(update);
       } else if (element.localName === 'ha-form') {
@@ -10438,68 +10187,30 @@ class EntityProgressCardEditor extends HTMLElement {
    */
   #updateAttributeFromEntity(entity, attribute) {
     this.#log.debug('#updateAttributeFromEntity()');
-    this.#log.debug(`  📎 entity: ${entity}`);
-    this.#log.debug(`  📎 attribute: ${attribute}`);
 
-    // Create an EntityOrValue instance for the current entity
     const curEntity = new EntityOrValue();
     curEntity.value = this.#config[entity];
-    const attributeList = curEntity.attributesListForEditor;
-    this.#log.debug('  📎 attribute liste:', attributeList);
 
-    // If the entity has changed and the current entity has attributes, regenerate the list.
-    if (this.#previous[entity] !== this.#config[entity] && curEntity.hasAttribute) {
+    const targetElement = this.#domElements.get(attribute);
+    if (!targetElement) return curEntity.hasAttribute;
+
+    // Mettre à jour entity_id si l'entité a changé
+    if (this.#previous[entity] !== this.#config[entity]) {
       this.#previous[entity] = this.#config[entity];
-      const targetElement = this.#domElements.get(attribute);
-      if (targetElement) {
-        this.#updateChoices(targetElement, attribute, attributeList);
-      }
-      this.#log.debug(`  ✅ updateFields - ${entity} attributes list: `, attributeList);
+      targetElement.selector = { attribute: { entity_id: this.#config[entity] ?? '' } };
     }
-    // If the attribute is not defined in the config AND
-    // the entity has attributes AND
-    // the selected value does not yet match the defaultAttribute:
-    if (this.#config[attribute] === undefined && curEntity.hasAttribute) {
-      this.#log.debug(`  ✅ updateFields - Attribute ${attribute} (default): in progress...`);
-      this.#applySelectValueOnUpdate(this.#domElements.get(attribute), curEntity.defaultAttribute);
-    }
-
-    if (
-      curEntity.hasAttribute &&
-      has.validKey(curEntity.attributes, this.#config[attribute]) &&
-      this.#domElements.get(attribute).value !== this.#config[attribute]
-    ) {
-      this.#domElements.get(attribute).value = this.#config[attribute];
-      this.#log.debug(`  ✅ updateFields - Attribute ${attribute}: `, curEntity.attributes);
-    }
+    // Sync la valeur courante
+    const defaultValue = this.#config[attribute] ?? curEntity.defaultAttribute ?? '';
+    targetElement.value = defaultValue;
 
     return curEntity.hasAttribute;
-  }
-
-  /**
-   * Applies a default value to a select element once it has finished updating.
-   * Checks if the value exists among the options before setting it.
-   *
-   * @param {HTMLElement} select - The select element to update.
-   * @param {string} value - The value to apply.
-   */
-  async #applySelectValueOnUpdate(select, value) {
-    await select.updateComplete;
-
-    const values = Array.from(select.children).map((el) => el.getAttribute('value'));
-    if (values.includes(value)) {
-      select.value = value;
-      this.#log.debug('  ✅ applySelectValueOnUpdate - Entity attribute (default): ', value);
-    } else {
-      this.#log.debug('  ❌ applySelectValueOnUpdate - Default attribute not found in select options', values);
-    }
   }
 
   #updateToggleFields() {
     const hide = this.#config.hide || [];
     const toggleMappings = {
-      toggle_force_circular_background: this.#config.force_circular_background,
-      toggle_unit: !this.#config.disable_unit, // !== true
+      toggle_force_circular_background: this.#config.force_circular_background ?? false,
+      toggle_unit: !this.#config.disable_unit,
       toggle_icon: !hide.includes('icon'),
       toggle_name: !hide.includes('name'),
       toggle_value: !hide.includes('value'),
@@ -10510,8 +10221,8 @@ class EntityProgressCardEditor extends HTMLElement {
     const toggleUpdates = [];
     for (const [toggleKey, shouldBeChecked] of Object.entries(toggleMappings)) {
       const toggle = this.#domElements.get(toggleKey);
-      if (toggle && toggle.checked !== shouldBeChecked) {
-        toggleUpdates.push(() => (toggle.checked = shouldBeChecked));
+      if (toggle && toggle.value !== shouldBeChecked) {
+        toggleUpdates.push(() => (toggle.value = shouldBeChecked));
       }
     }
 
