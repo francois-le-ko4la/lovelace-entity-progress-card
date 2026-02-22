@@ -5800,7 +5800,43 @@ class HassProviderSingleton {
     const stateObj = this.getEntityStateObj(entityId);
     return this.#hass?.formatEntityAttributeName?.(stateObj, attribute) ?? '';
   }
+  getEntityLastChanged(entityId) {
+    return this.getEntityStateObj(entityId)?.last_changed ?? null;
+  }
+  getEntityLastUpdated(entityId) {
+    return this.getEntityStateObj(entityId)?.last_updated ?? null;
+  }
+  getRelativeTime(curTime) {
+    if (!curTime) return '';
+
+    const startTime = new Date(curTime).getTime();
+    const now = Date.now();
+    const diffInSeconds = Math.floor((startTime - now) / 1000);
+
+    // Unités de temps pour le formatage relatif
+    const units = [
+      { unit: 'year', seconds: 31536000 },
+      { unit: 'month', seconds: 2592000 },
+      { unit: 'day', seconds: 86400 },
+      { unit: 'hour', seconds: 3600 },
+      { unit: 'minute', seconds: 60 },
+      { unit: 'second', seconds: 1 },
+    ];
+
+    // Trouver l'unité appropriée
+    for (const { unit, seconds } of units) {
+      if (Math.abs(diffInSeconds) >= seconds || unit === 'second') {
+        const value = Math.round(diffInSeconds / seconds);
+        // Utilise la langue détectée par ton Singleton
+        const rtf = new Intl.RelativeTimeFormat(this.language, { numeric: 'auto' });
+        return rtf.format(value, unit);
+      }
+    }
+    return '';
+  }
   getFormatedAttributeValue(entityId, attribute) {
+    if (attribute === 'last_changed') return this.getRelativeTime(this.getEntityLastChanged(entityId));
+    if (attribute === 'last_updated') return this.getRelativeTime(this.getEntityLastUpdated(entityId));
     const stateObj = this.getEntityStateObj(entityId);
     return this.#hass?.formatEntityAttributeValue?.(stateObj, attribute) ?? '';
   }
@@ -8125,7 +8161,6 @@ class EntityProgressCardBase extends HTMLElement {
 
     this.attachShadow({ mode: CARD.config.shadowMode });
     this._actionHelper = new ActionHelper(this);
-    EntityProgressCardBase._initializeModule();
   }
 
   connectedCallback() {
@@ -8279,14 +8314,6 @@ class EntityProgressCardBase extends HTMLElement {
 
   // === INITIALIZATION ===
 
-  static _initializeModule() {
-    if (!EntityProgressCardBase._moduleLoaded) {
-      console.groupCollapsed(CARD.console.message, CARD.console.css);
-      console.log(CARD.console.link);
-      console.groupEnd();
-      EntityProgressCardBase._moduleLoaded = true;
-    }
-  }
   _setupClickableTarget() {
     this._clickableTarget = this;
   }
@@ -8763,18 +8790,17 @@ class EntityProgressCardBase extends HTMLElement {
   _showBadge() {
     if (this.constructor._hasDisabledBadge) return;
     const { badgeInfo, isBadgeEnable } = this._cardView;
+    const showIt = isBadgeEnable && badgeInfo !== null;
 
-    if (isBadgeEnable && badgeInfo === null) return; // custom
+    console.log("showBadge", badgeInfo, isBadgeEnable);
 
     this._domElements
       .get(CARD.htmlStructure.card.element)
-      ?.classList.toggle(`${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class}`, isBadgeEnable);
-    if (isBadgeEnable) {
-      if (!badgeInfo) {
-        return;
-      }
-      this._setBadge(badgeInfo.icon, badgeInfo.color, badgeInfo.backgroundColor);
-    }
+      ?.classList.toggle(`${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class}`, showIt);
+
+    if (!showIt) return; // custom
+
+    this._setBadge(badgeInfo.icon, badgeInfo.color, badgeInfo.backgroundColor);
   }
 
   _setBadge(icon, color, backgroundColor) {
@@ -9160,11 +9186,9 @@ class EntityProgressBadge extends EntityProgressCardBase {
  * 🔧 Register card & badge
  */
 
-EntityProgressCardBase.version = VERSION;
-EntityProgressCardBase._moduleLoaded = false;
-// customElements.define(CARD.meta.card.typeName, EntityProgressCard);
+EntityProgressCard.version = VERSION;
+EntityProgressBadge.version = VERSION;
 RegistrationHelper.registerCard(CARD.meta.card, EntityProgressCard);
-// customElements.define(CARD.meta.badge.typeName, EntityProgressBadge);
 RegistrationHelper.registerBadge(CARD.meta.badge, EntityProgressBadge);
 
 /******************************************************************************************
@@ -9569,11 +9593,8 @@ class EntityProgressBadgeTemplate extends EntityProgressTemplate {
  */
 
 EntityProgressTemplate.version = VERSION;
-EntityProgressTemplate._moduleLoaded = false;
-//customElements.define(CARD.meta.template.typeName, EntityProgressTemplate);
+EntityProgressBadgeTemplate.version = VERSION;
 RegistrationHelper.registerCard(CARD.meta.template, EntityProgressTemplate);
-/* NEW */
-//customElements.define(CARD.meta.badgeTemplate.typeName, EntityProgressBadgeTemplate);
 RegistrationHelper.registerBadge(CARD.meta.badgeTemplate, EntityProgressBadgeTemplate);
 
 /******************************************************************************************
@@ -10392,3 +10413,13 @@ class EntityProgressBadgeEditor extends EntityProgressCardEditor {
 
 if (!customElements.get(CARD.meta.card.editor)) customElements.define(CARD.meta.card.editor, EntityProgressCardEditor);
 if (!customElements.get(CARD.meta.badge.editor)) customElements.define(CARD.meta.badge.editor, EntityProgressBadgeEditor);
+
+
+/******************************************************************************************
+ * 🔧 Show module info
+ */
+
+console.groupCollapsed(CARD.console.message, CARD.console.css);
+console.log(CARD.console.link);
+console.groupEnd();
+
