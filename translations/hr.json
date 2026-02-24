@@ -1,0 +1,89 @@
+{
+  "card": {
+    "msg": {
+      "entityNotFound": "Entitet nije pronađen u Home Assistantu.",
+      "attributeNotFound": "Atribut nije pronađen u Home Assistantu.",
+      "missingRequiredProperty": "Nedostaje obavezno svojstvo.",
+      "invalidTypeString": "Očekivana je vrijednost tipa string.",
+      "invalidTypeNumber": "Očekivana je vrijednost tipa broj.",
+      "invalidTypeBoolean": "Očekivana je vrijednost tipa boolean.",
+      "invalidTypeArray": "Očekivana je vrijednost tipa polje.",
+      "invalidTypeObject": "Očekivana je vrijednost tipa objekt.",
+      "invalidEnumValue": "Navedena vrijednost nije među dopuštenim opcijama.",
+      "invalidUnionType": "Vrijednost ne odgovara nijednom dopuštenom tipu.",
+      "invalidEntityId": "ID entiteta je nevažeći ili pogrešno formatiran.",
+      "invalidDecimal": "Vrijednost mora biti valjani decimalni broj.",
+      "invalidActionObject": "Objekt radnje je nevažeći ili loše strukturiran.",
+      "missingActionKey": "Nedostaje obavezni ključ u objektu radnje.",
+      "invalidCustomThemeArray": "Prilagođena tema mora biti polje.",
+      "invalidCustomThemeEntry": "Jedan ili više unosa u temi su nevažeći.",
+      "invalidMinValue": "Minimalna vrijednost je nevažeća ili preniska.",
+      "invalidMaxValue": "Maksimalna vrijednost je nevažeća ili previsoka.",
+      "minGreaterThanMax": "Minimalna vrijednost ne može biti veća od maksimalne.",
+      "discontinuousRange": "Definirani raspon nije kontinuiran.",
+      "missingColorProperty": "Nedostaje obavezno svojstvo boje.",
+      "invalidIconType": "Naveden tip ikone je nevažeći ili neprepoznatljiv.",
+      "invalidStateContent": "Sadržaj stanja je nevažeći ili pogrešno formatiran.",
+      "invalidStateContentEntry": "Jedan ili više unosa stanja su nevažeći.",
+      "invalidTheme": "Navedena tema je nepoznata. Koristi se zadana tema.",
+      "appliedDefaultValue": "Zadana vrijednost automatski je primijenjena."
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "Sadržaj",
+      "interaction": "Interakcije",
+      "theme": "Izgled i funkcionalnost"
+    },
+    "field": {
+      "entity": "Entitet",
+      "attribute": "Atribut",
+      "name": "Ime",
+      "unit": "Jedinica",
+      "decimal": "decimalni",
+      "min_value": "Minimalna vrijednost",
+      "max_value": "Maksimalna vrijednost",
+      "max_value_attribute": "Atribut (max_value)",
+      "tap_action": "Radnja na kratki dodir",
+      "double_tap_action": "Radnja na dupli dodir",
+      "hold_action": "Radnja na dugi dodir",
+      "icon_tap_action": "Radnja na dodir ikone",
+      "icon_double_tap_action": "Radnja na dupli dodir ikone",
+      "icon_hold_action": "Radnja na dugi dodir ikone",
+      "toggle_icon": "Ikona",
+      "toggle_name": "Ime",
+      "toggle_value": "Vrijednost",
+      "toggle_unit": "Jedinica",
+      "toggle_secondary_info": "Info",
+      "toggle_progress_bar": "Traka",
+      "toggle_force_circular_background": "Prisili kružnu pozadinu",
+      "theme": "Tema",
+      "bar_size": "Veličina trake",
+      "bar_color": "Boja za traku",
+      "icon": "Ikona",
+      "color": "Primarna boja",
+      "layout": "Izgled kartice"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "Optimalno kada je nisko (CPU, RAM,...)",
+        "optimal_when_high": "Optimalno kada je visoko (Baterija...)",
+        "light": "Svjetlo",
+        "temperature": "Temperatura",
+        "humidity": "Vlažnost",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "Mala",
+        "medium": "Srednja",
+        "large": "Velika",
+        "xlarge": "Vrlo velika"
+      },
+      "layout": {
+        "horizontal": "Horizontalno (zadano)",
+        "vertical": "Vertikalno"
+      }
+    }
+  }
+}

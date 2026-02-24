@@ -1,0 +1,89 @@
+{
+  "card": {
+    "msg": {
+      "entityNotFound": "Entität in Home Assistant nicht gefunden.",
+      "attributeNotFound": "Attribut in Home Assistant nicht gefunden.",
+      "missingRequiredProperty": "Eine erforderliche Eigenschaft fehlt.",
+      "invalidTypeString": "Ein Wert vom Typ Zeichenkette wurde erwartet.",
+      "invalidTypeNumber": "Ein Wert vom Typ Zahl wurde erwartet.",
+      "invalidTypeBoolean": "Ein Wert vom Typ Boolesch wurde erwartet.",
+      "invalidTypeArray": "Ein Wert vom Typ Array wurde erwartet.",
+      "invalidTypeObject": "Ein Wert vom Typ Objekt wurde erwartet.",
+      "invalidEnumValue": "Der angegebene Wert gehört nicht zu den erlaubten Optionen.",
+      "invalidUnionType": "Der Wert entspricht keinem der erlaubten Typen.",
+      "invalidEntityId": "Die Entity-ID ist ungültig oder fehlerhaft.",
+      "invalidDecimal": "Der Wert muss eine gültige Dezimalzahl sein.",
+      "invalidActionObject": "Das Aktionsobjekt ist ungültig oder falsch strukturiert.",
+      "missingActionKey": "Ein erforderlicher Schlüssel fehlt im Aktionsobjekt.",
+      "invalidCustomThemeArray": "Das benutzerdefinierte Theme muss ein Array sein.",
+      "invalidCustomThemeEntry": "Eine oder mehrere Einträge im benutzerdefinierten Theme sind ungültig.",
+      "invalidMinValue": "Der Minimalwert ist ungültig oder liegt unterhalb des erlaubten Bereichs.",
+      "invalidMaxValue": "Der Maximalwert ist ungültig oder überschreitet den erlaubten Bereich.",
+      "minGreaterThanMax": "Der Minimalwert darf nicht größer als der Maximalwert sein.",
+      "discontinuousRange": "Der definierte Bereich ist nicht kontinuierlich.",
+      "missingColorProperty": "Eine erforderliche Farbeigenschaft fehlt.",
+      "invalidIconType": "Der angegebene Symboltyp ist ungültig oder nicht erkannt.",
+      "invalidStateContent": "Der Statusinhalt ist ungültig oder fehlerhaft.",
+      "invalidStateContentEntry": "Ein oder mehrere Einträge im Statusinhalt sind ungültig.",
+      "invalidTheme": "Das angegebene Theme ist unbekannt. Das Standard-Theme wird verwendet.",
+      "appliedDefaultValue": "Ein Standardwert wurde automatisch angewendet."
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "Inhalt",
+      "interaction": "Interaktionen",
+      "theme": "Aussehen und Bedienung"
+    },
+    "field": {
+      "entity": "Entität",
+      "attribute": "Attribut",
+      "name": "Name",
+      "unit": "Einheit",
+      "decimal": "dezimal",
+      "min_value": "Mindestwert",
+      "max_value": "Höchstwert",
+      "max_value_attribute": "Attribut (max_value)",
+      "tap_action": "Aktion bei kurzem Tippen",
+      "double_tap_action": "Aktion bei doppelt Tippen",
+      "hold_action": "Aktion bei langem Tippen",
+      "icon_tap_action": "Aktion beim Tippen auf das Symbol",
+      "icon_double_tap_action": "Aktion bei doppelt Tippen auf das Symbol",
+      "icon_hold_action": "Aktion bei langem Tippen auf das Symbol",
+      "toggle_icon": "Icon",
+      "toggle_name": "Name",
+      "toggle_value": "Wert",
+      "toggle_unit": "Einheit",
+      "toggle_secondary_info": "Info",
+      "toggle_progress_bar": "Balken",
+      "toggle_force_circular_background": "Kreisförmigen Hintergrund erzwingen",
+      "theme": "Thema",
+      "bar_size": "Größe der Bar",
+      "bar_color": "Farbe für die Leiste",
+      "icon": "Symbol",
+      "color": "Primärfarbe",
+      "layout": "Kartenlayout"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "Optimal bei niedrig (CPU, RAM,...)",
+        "optimal_when_high": "Optimal bei hoch (Batterie...)",
+        "light": "Licht",
+        "temperature": "Temperatur",
+        "humidity": "Feuchtigkeit",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "Klein",
+        "medium": "Mittel",
+        "large": "Groß",
+        "xlarge": "Extra groß"
+      },
+      "layout": {
+        "horizontal": "Horizontal (Standard)",
+        "vertical": "Vertikal"
+      }
+    }
+  }
+}

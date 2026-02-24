@@ -1,0 +1,89 @@
+{
+  "card": {
+    "msg": {
+      "entityNotFound": "Enheden blev ikke fundet i Home Assistant.",
+      "attributeNotFound": "Egenskab blev ikke fundet i Home Assistant.",
+      "missingRequiredProperty": "En påkrævet egenskab mangler.",
+      "invalidTypeString": "Forventede en strengværdi.",
+      "invalidTypeNumber": "Forventede en numerisk værdi.",
+      "invalidTypeBoolean": "Forventede en boolesk værdi.",
+      "invalidTypeArray": "Forventede en array-værdi.",
+      "invalidTypeObject": "Forventede en objektværdi.",
+      "invalidEnumValue": "Den angivne værdi er ikke en tilladt mulighed.",
+      "invalidUnionType": "Værdien matcher ingen af de tilladte typer.",
+      "invalidEntityId": "Enheds-ID er ugyldigt eller forkert formateret.",
+      "invalidDecimal": "Værdien skal være et gyldigt decimaltal.",
+      "invalidActionObject": "Handlingsobjektet er ugyldigt eller forkert struktureret.",
+      "missingActionKey": "En påkrævet nøgle mangler i handlingsobjektet.",
+      "invalidCustomThemeArray": "Det brugerdefinerede tema skal være en array.",
+      "invalidCustomThemeEntry": "En eller flere indgange i det brugerdefinerede tema er ugyldige.",
+      "invalidMinValue": "Mindsteværdi er ugyldig eller under den tilladte grænse.",
+      "invalidMaxValue": "Maksimumværdi er ugyldig eller overstiger den tilladte grænse.",
+      "minGreaterThanMax": "Mindsteværdi kan ikke være større end maksimumværdi.",
+      "discontinuousRange": "Det definerede interval er usammenhængende.",
+      "missingColorProperty": "En påkrævet farveegenskab mangler.",
+      "invalidIconType": "Den angivne ikontype er ugyldig eller ukendt.",
+      "invalidStateContent": "Tilstandsindholdet er ugyldigt eller fejlbehæftet.",
+      "invalidStateContentEntry": "En eller flere poster i tilstandsindholdet er ugyldige.",
+      "invalidTheme": "Det angivne tema er ukendt. Standardtema anvendes.",
+      "appliedDefaultValue": "Standardværdi er blevet anvendt automatisk."
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "Indhold",
+      "interaction": "Interaktioner",
+      "theme": "Udseende og funktionalitet"
+    },
+    "field": {
+      "entity": "Enhed",
+      "attribute": "Attribut",
+      "name": "Navn",
+      "unit": "Enhed",
+      "decimal": "decimal",
+      "min_value": "Minimumsværdi",
+      "max_value": "Maksimal værdi",
+      "max_value_attribute": "Attribut (max_value)",
+      "tap_action": "Handling ved kort tryk",
+      "double_tap_action": "Handling ved dobbelt tryk",
+      "hold_action": "Handling ved langt tryk",
+      "icon_tap_action": "Handling ved tryk på ikonet",
+      "icon_double_tap_action": "Handling ved dobbelt tryk på ikonet",
+      "icon_hold_action": "Handling ved langt tryk på ikonet",
+      "toggle_icon": "Ikon",
+      "toggle_name": "Navn",
+      "toggle_value": "Værdi",
+      "toggle_unit": "Enhed",
+      "toggle_secondary_info": "Info",
+      "toggle_progress_bar": "Bar",
+      "toggle_force_circular_background": "Tving cirkulær baggrund",
+      "theme": "Tema",
+      "bar_size": "Bar størrelse",
+      "bar_color": "Farve til bar",
+      "icon": "Ikon",
+      "color": "Primær farve",
+      "layout": "Kort layout"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "Optimal når lavt (CPU, RAM,...)",
+        "optimal_when_high": "Optimal når højt (Batteri...)",
+        "light": "Lys",
+        "temperature": "Temperatur",
+        "humidity": "Fugtighed",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "Lille",
+        "medium": "Medium",
+        "large": "Stor",
+        "xlarge": "Ekstra stor"
+      },
+      "layout": {
+        "horizontal": "Horisontal (standard)",
+        "vertical": "Vertikal"
+      }
+    }
+  }
+}

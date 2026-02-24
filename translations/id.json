@@ -1,0 +1,89 @@
+{
+  "card": {
+    "msg": {
+      "entityNotFound": "Entitas tidak ditemukan di HA.",
+      "attributeNotFound": "Atribut tidak ditemukan di HA.",
+      "missingRequiredProperty": "Properti yang diperlukan hilang.",
+      "invalidTypeString": "Mengharapkan nilai bertipe string.",
+      "invalidTypeNumber": "Mengharapkan nilai bertipe angka.",
+      "invalidTypeBoolean": "Mengharapkan nilai bertipe boolean.",
+      "invalidTypeArray": "Mengharapkan nilai bertipe array.",
+      "invalidTypeObject": "Mengharapkan nilai bertipe object.",
+      "invalidEnumValue": "Nilai yang diberikan bukan salah satu dari opsi yang diizinkan.",
+      "invalidUnionType": "Nilai tidak cocok dengan tipe yang diizinkan.",
+      "invalidEntityId": "ID entitas tidak valid atau salah format.",
+      "invalidDecimal": "Nilai harus berupa angka desimal yang valid.",
+      "invalidActionObject": "Objek aksi tidak valid atau struktur salah.",
+      "missingActionKey": "Kunci yang diperlukan hilang dalam objek aksi.",
+      "invalidCustomThemeArray": "Tema kustom harus berupa array.",
+      "invalidCustomThemeEntry": "Satu atau lebih entri dalam tema kustom tidak valid.",
+      "invalidMinValue": "Nilai minimum tidak valid atau di bawah batas yang diizinkan.",
+      "invalidMaxValue": "Nilai maksimum tidak valid atau di atas batas yang diizinkan.",
+      "minGreaterThanMax": "Nilai minimum tidak boleh lebih besar dari nilai maksimum.",
+      "discontinuousRange": "Range yang didefinisikan tidak kontinu.",
+      "missingColorProperty": "Properti warna yang diperlukan hilang.",
+      "invalidIconType": "Tipe ikon yang ditentukan tidak valid atau tidak dikenali.",
+      "invalidStateContent": "Konten state tidak valid atau salah format.",
+      "invalidStateContentEntry": "Satu atau lebih entri dalam konten state tidak valid.",
+      "invalidTheme": "Tema yang ditentukan tidak dikenal. Tema default akan digunakan.",
+      "appliedDefaultValue": "Nilai default telah diterapkan secara otomatis."
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "Konten",
+      "interaction": "Interaksi",
+      "theme": "Tampilan & Nuansa"
+    },
+    "field": {
+      "entity": "Entitas",
+      "attribute": "Atribut",
+      "name": "Nama",
+      "unit": "Unit",
+      "decimal": "desimal",
+      "min_value": "Nilai minimum",
+      "max_value": "Nilai maksimum",
+      "max_value_attribute": "Atribut (max_value)",
+      "tap_action": "Perilaku ketuk",
+      "double_tap_action": "Perilaku ketuk ganda",
+      "hold_action": "Perilaku tahan",
+      "icon_tap_action": "Perilaku ketuk ikon",
+      "icon_double_tap_action": "Perilaku ketuk ganda ikon",
+      "icon_hold_action": "Perilaku tahan ikon",
+      "toggle_icon": "Ikon",
+      "toggle_name": "Nama",
+      "toggle_value": "Nilai",
+      "toggle_unit": "Unit",
+      "toggle_secondary_info": "Info",
+      "toggle_progress_bar": "Bar",
+      "toggle_force_circular_background": "Paksa latar belakang melingkar",
+      "theme": "Tema",
+      "bar_size": "Ukuran bar",
+      "bar_color": "Warna bar",
+      "icon": "Ikon",
+      "color": "Warna utama",
+      "layout": "Tata letak kartu"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "Optimal saat Rendah (CPU, RAM,...)",
+        "optimal_when_high": "Optimal saat Tinggi (Baterai...)",
+        "light": "Cahaya",
+        "temperature": "Suhu",
+        "humidity": "Kelembaban",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "Kecil",
+        "medium": "Sedang",
+        "large": "Besar",
+        "xlarge": "Sangat besar"
+      },
+      "layout": {
+        "horizontal": "Horizontal (default)",
+        "vertical": "Vertikal"
+      }
+    }
+  }
+}

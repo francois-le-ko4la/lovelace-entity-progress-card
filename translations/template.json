@@ -1,0 +1,89 @@
+{
+  "card": {
+    "msg": {
+      "entityNotFound": "",
+      "attributeNotFound": "",
+      "missingRequiredProperty": "",
+      "invalidTypeString": "",
+      "invalidTypeNumber": "",
+      "invalidTypeBoolean": "",
+      "invalidTypeArray": "",
+      "invalidTypeObject": "",
+      "invalidEnumValue": "",
+      "invalidUnionType": "",
+      "invalidEntityId": "",
+      "invalidDecimal": "",
+      "invalidActionObject": "",
+      "missingActionKey": "",
+      "invalidCustomThemeArray": "",
+      "invalidCustomThemeEntry": "",
+      "invalidMinValue": "",
+      "invalidMaxValue": "",
+      "minGreaterThanMax": "",
+      "discontinuousRange": "",
+      "missingColorProperty": "",
+      "invalidIconType": "",
+      "invalidStateContent": "",
+      "invalidStateContentEntry": "",
+      "invalidTheme": "",
+      "appliedDefaultValue": ""
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "",
+      "interaction": "",
+      "theme": ""
+    },
+    "field": {
+      "entity": "",
+      "attribute": "",
+      "name": "",
+      "unit": "",
+      "decimal": "",
+      "min_value": "",
+      "max_value": "",
+      "max_value_attribute": "",
+      "tap_action": "",
+      "double_tap_action": "",
+      "hold_action": "",
+      "icon_tap_action": "",
+      "icon_double_tap_action": "",
+      "icon_hold_action": "",
+      "toggle_icon": "",
+      "toggle_name": "",
+      "toggle_value": "",
+      "toggle_unit": "",
+      "toggle_secondary_info": "",
+      "toggle_progress_bar": "",
+      "toggle_force_circular_background": "",
+      "theme": "",
+      "bar_size": "",
+      "bar_color": "",
+      "icon": "",
+      "color": "",
+      "layout": ""
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "",
+        "optimal_when_high": "",
+        "light": "",
+        "temperature": "",
+        "humidity": "",
+        "pm25": "",
+        "voc": ""
+      },
+      "bar_size": {
+        "small": "",
+        "medium": "",
+        "large": "",
+        "xlarge": ""
+      },
+      "layout": {
+        "horizontal": "",
+        "vertical": ""
+      }
+    }
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "card": {
+    "msg": {
+      "entityNotFound": "HA তে সত্তা পাওয়া যায়নি।",
+      "attributeNotFound": "HA তে বৈশিষ্ট্য পাওয়া যায়নি।",
+      "missingRequiredProperty": "প্রয়োজনীয় বৈশিষ্ট্য অনুপস্থিত।",
+      "invalidTypeString": "স্ট্রিং ধরনের একটি মান প্রত্যাশিত।",
+      "invalidTypeNumber": "সংখ্যা ধরনের একটি মান প্রত্যাশিত।",
+      "invalidTypeBoolean": "বুলিয়ান ধরনের একটি মান প্রত্যাশিত।",
+      "invalidTypeArray": "অ্যারে ধরনের একটি মান প্রত্যাশিত।",
+      "invalidTypeObject": "অবজেক্ট ধরনের একটি মান প্রত্যাশিত।",
+      "invalidEnumValue": "প্রদত্ত মানটি অনুমোদিত বিকল্পগুলির মধ্যে একটি নয়।",
+      "invalidUnionType": "মানটি অনুমোদিত ধরনগুলির কোনোটির সাথে মেলে না।",
+      "invalidEntityId": "সত্তার আইডি অবৈধ বা ভুলভাবে গঠিত।",
+      "invalidDecimal": "মানটি একটি বৈধ দশমিক সংখ্যা হতে হবে।",
+      "invalidActionObject": "অ্যাকশন অবজেক্ট অবৈধ বা ভুলভাবে গঠিত।",
+      "missingActionKey": "অ্যাকশন অবজেক্টে একটি প্রয়োজনীয় কী অনুপস্থিত।",
+      "invalidCustomThemeArray": "কাস্টম থিম একটি অ্যারে হতে হবে।",
+      "invalidCustomThemeEntry": "কাস্টম থিমে একটি বা একাধিক এন্ট্রি অবৈধ।",
+      "invalidMinValue": "ন্যূনতম মান অবৈধ বা অনুমোদিত সীমার নিচে।",
+      "invalidMaxValue": "সর্বোচ্চ মান অবৈধ বা অনুমোদিত সীমার উপরে।",
+      "minGreaterThanMax": "ন্যূনতম মান সর্বোচ্চ মানের চেয়ে বড় হতে পারে না।",
+      "discontinuousRange": "নির্ধারিত পরিসর অবিচ্ছিন্ন নয়।",
+      "missingColorProperty": "একটি প্রয়োজনীয় রঙের বৈশিষ্ট্য অনুপস্থিত।",
+      "invalidIconType": "নির্দিষ্ট আইকন প্রকার অবৈধ বা অচেনা।",
+      "invalidStateContent": "অবস্থার বিষয়বস্তু অবৈধ বা ভুলভাবে গঠিত।",
+      "invalidStateContentEntry": "অবস্থার বিষয়বস্তুতে একটি বা একাধিক এন্ট্রি অবৈধ।",
+      "invalidTheme": "নির্দিষ্ট থিম অজানা। ডিফল্ট থিম ব্যবহার করা হবে।",
+      "appliedDefaultValue": "একটি ডিফল্ট মান স্বয়ংক্রিয়ভাবে প্রয়োগ করা হয়েছে।"
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "বিষয়বস্তু",
+      "interaction": "মিথস্ক্রিয়া",
+      "theme": "চেহারা এবং অনুভূতি"
+    },
+    "field": {
+      "entity": "সত্তা",
+      "attribute": "বৈশিষ্ট্য",
+      "name": "নাম",
+      "unit": "একক",
+      "decimal": "দশমিক",
+      "min_value": "ন্যূনতম মান",
+      "max_value": "সর্বোচ্চ মান",
+      "max_value_attribute": "বৈশিষ্ট্য (max_value)",
+      "tap_action": "ট্যাপ আচরণ",
+      "double_tap_action": "ডাবল ট্যাপ আচরণ",
+      "hold_action": "হোল্ড আচরণ",
+      "icon_tap_action": "আইকন ট্যাপ আচরণ",
+      "icon_double_tap_action": "আইকন ডাবল ট্যাপ আচরণ",
+      "icon_hold_action": "আইকন হোল্ড আচরণ",
+      "toggle_icon": "আইকন",
+      "toggle_name": "নাম",
+      "toggle_value": "মান",
+      "toggle_unit": "একক",
+      "toggle_secondary_info": "তথ্য",
+      "toggle_progress_bar": "বার",
+      "toggle_force_circular_background": "বৃত্তাকার পটভূমি জোর করুন",
+      "theme": "থিম",
+      "bar_size": "বারের আকার",
+      "bar_color": "বারের রঙ",
+      "icon": "আইকন",
+      "color": "প্রাথমিক রঙ",
+      "layout": "কার্ড লেআউট"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "কম হলে সর্বোত্তম (CPU, RAM,...)",
+        "optimal_when_high": "বেশি হলে সর্বোত্তম (ব্যাটারি...)",
+        "light": "আলো",
+        "temperature": "তাপমাত্রা",
+        "humidity": "আর্দ্রতা",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "ছোট",
+        "medium": "মাঝারি",
+        "large": "বড়",
+        "xlarge": "অতিরিক্ত বড়"
+      },
+      "layout": {
+        "horizontal": "অনুভূমিক (ডিফল্ট)",
+        "vertical": "উল্লম্ব"
+      }
+    }
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "card": {
+    "msg": {
+      "entityNotFound": "Entiteettiä ei löytynyt Home Assistantista.",
+      "attributeNotFound": "Attribuuttia ei löytynyt Home Assistantista.",
+      "missingRequiredProperty": "Pakollinen ominaisuus puuttuu.",
+      "invalidTypeString": "Odotettiin merkkijonotyyppistä arvoa.",
+      "invalidTypeNumber": "Odotettiin numeerista arvoa.",
+      "invalidTypeBoolean": "Odotettiin totuusarvoa (boolean).",
+      "invalidTypeArray": "Odotettiin taulukkoarvoa.",
+      "invalidTypeObject": "Odotettiin objektityyppistä arvoa.",
+      "invalidEnumValue": "Annettu arvo ei ole sallituista vaihtoehdoista.",
+      "invalidUnionType": "Arvo ei vastaa mitään sallituista tyypeistä.",
+      "invalidEntityId": "Entiteetin tunniste on virheellinen tai väärin muotoiltu.",
+      "invalidDecimal": "Arvon on oltava kelvollinen desimaaliluku.",
+      "invalidActionObject": "Toiminto-objekti on virheellinen tai huonosti rakennettu.",
+      "missingActionKey": "Toiminto-objektista puuttuu vaadittu avain.",
+      "invalidCustomThemeArray": "Mukautetun teeman on oltava taulukko.",
+      "invalidCustomThemeEntry": "Yksi tai useampi mukautetun teeman merkintä on virheellinen.",
+      "invalidMinValue": "Vähimmäisarvo on virheellinen tai liian pieni.",
+      "invalidMaxValue": "Enimmäisarvo on virheellinen tai liian suuri.",
+      "minGreaterThanMax": "Vähimmäisarvo ei voi olla suurempi kuin enimmäisarvo.",
+      "discontinuousRange": "Määritetty alue on katkonainen.",
+      "missingColorProperty": "Pakollinen väriominaisuus puuttuu.",
+      "invalidIconType": "Annettu kuvaketyyppi on virheellinen tai tuntematon.",
+      "invalidStateContent": "Tilasisältö on virheellinen tai väärässä muodossa.",
+      "invalidStateContentEntry": "Yksi tai useampi tilasisällön merkintä on virheellinen.",
+      "invalidTheme": "Määritetty teema on tuntematon. Käytetään oletusteemaa.",
+      "appliedDefaultValue": "Oletusarvo on asetettu automaattisesti."
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "Sisältö",
+      "interaction": "Vuorovaikutukset",
+      "theme": "Ulkoasu"
+    },
+    "field": {
+      "entity": "Entiteetti",
+      "attribute": "Attribuutti",
+      "name": "Nimi",
+      "unit": "Yksikkö",
+      "decimal": "desimaali",
+      "min_value": "Minimiarvo",
+      "max_value": "Maksimiarvo",
+      "max_value_attribute": "Attribuutti (max_value)",
+      "tap_action": "Toiminto lyhyellä napautuksella",
+      "double_tap_action": "Toiminto kahdella napautuksella",
+      "hold_action": "Toiminto pitkällä painalluksella",
+      "icon_tap_action": "Toiminto kuvaketta napautettaessa",
+      "icon_double_tap_action": "Toiminto kahdella napautuksella kuvaketta",
+      "icon_hold_action": "Toiminto pitkällä painalluksella kuvaketta",
+      "toggle_icon": "Ikoni",
+      "toggle_name": "Nimi",
+      "toggle_value": "Arvo",
+      "toggle_unit": "Yksikkö",
+      "toggle_secondary_info": "Tiedot",
+      "toggle_progress_bar": "Palkki",
+      "toggle_force_circular_background": "Pakota pyöreä tausta",
+      "theme": "Teema",
+      "bar_size": "Palkin koko",
+      "bar_color": "Palkin väri",
+      "icon": "Ikoni",
+      "color": "Pääväri",
+      "layout": "Kortin asettelu"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "Optimaalinen alhaisena (CPU, RAM...)",
+        "optimal_when_high": "Optimaalinen korkeana (Akku...)",
+        "light": "Valoisuus",
+        "temperature": "Lämpötila",
+        "humidity": "Kosteus",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "Pieni",
+        "medium": "Keski",
+        "large": "Suuri",
+        "xlarge": "Erittäin suuri"
+      },
+      "layout": {
+        "horizontal": "Vaakasuora (oletus)",
+        "vertical": "Pystysuora"
+      }
+    }
+  }
+}

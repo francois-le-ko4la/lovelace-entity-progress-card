@@ -1,0 +1,89 @@
+{
+  "card": {
+    "msg": {
+      "entityNotFound": "Entidad no encontrada en Home Assistant.",
+      "attributeNotFound": "Atributo no encontrado en Home Assistant.",
+      "missingRequiredProperty": "Falta una propiedad obligatoria.",
+      "invalidTypeString": "Se esperaba un valor de tipo cadena.",
+      "invalidTypeNumber": "Se esperaba un valor de tipo número.",
+      "invalidTypeBoolean": "Se esperaba un valor de tipo booleano.",
+      "invalidTypeArray": "Se esperaba un valor de tipo arreglo.",
+      "invalidTypeObject": "Se esperaba un valor de tipo objeto.",
+      "invalidEnumValue": "El valor proporcionado no es una opción válida.",
+      "invalidUnionType": "El valor no coincide con ninguno de los tipos permitidos.",
+      "invalidEntityId": "El ID de la entidad no es válido o está mal formado.",
+      "invalidDecimal": "El valor debe ser un número decimal válido.",
+      "invalidActionObject": "El objeto de acción es inválido o está mal estructurado.",
+      "missingActionKey": "Falta una clave obligatoria en el objeto de acción.",
+      "invalidCustomThemeArray": "El tema personalizado debe ser un arreglo.",
+      "invalidCustomThemeEntry": "Una o más entradas en el tema personalizado son inválidas.",
+      "invalidMinValue": "El valor mínimo es inválido o está por debajo del límite permitido.",
+      "invalidMaxValue": "El valor máximo es inválido o excede el límite permitido.",
+      "minGreaterThanMax": "El valor mínimo no puede ser mayor que el valor máximo.",
+      "discontinuousRange": "El rango definido es discontinuo.",
+      "missingColorProperty": "Falta una propiedad de color obligatoria.",
+      "invalidIconType": "El tipo de icono especificado es inválido o no reconocido.",
+      "invalidStateContent": "El contenido del estado es inválido o está mal formado.",
+      "invalidStateContentEntry": "Una o más entradas en el contenido del estado son inválidas.",
+      "invalidTheme": "El tema especificado es desconocido. Se usará el tema por defecto.",
+      "appliedDefaultValue": "Se ha aplicado un valor predeterminado automáticamente."
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "Contenido",
+      "interaction": "Interacciones",
+      "theme": "Apariencia y funcionamiento"
+    },
+    "field": {
+      "entity": "Entidad",
+      "attribute": "Atributo",
+      "name": "Nombre",
+      "unit": "Unidad",
+      "decimal": "decimal",
+      "min_value": "Valor mínimo",
+      "max_value": "Valor máximo",
+      "max_value_attribute": "Atributo (max_value)",
+      "tap_action": "Acción al pulsar brevemente",
+      "double_tap_action": "Acción al pulsar dos veces",
+      "hold_action": "Acción al mantener pulsado",
+      "icon_tap_action": "Acción al pulsar el icono",
+      "icon_double_tap_action": "Acción al pulsar dos veces el icono",
+      "icon_hold_action": "Acción al mantener pulsado el icono",
+      "toggle_icon": "Icono",
+      "toggle_name": "Nombre",
+      "toggle_value": "Valor",
+      "toggle_unit": "Unidad",
+      "toggle_secondary_info": "Info",
+      "toggle_progress_bar": "Barra",
+      "toggle_force_circular_background": "Forzar fondo circular",
+      "theme": "Tema",
+      "bar_size": "Tamaño de la barra",
+      "bar_color": "Color de la barra",
+      "icon": "Icono",
+      "color": "Color del icono",
+      "layout": "Disposición de la tarjeta"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "Óptimo cuando es bajo (CPU, RAM,...)",
+        "optimal_when_high": "Óptimo cuando es alto (Batería...)",
+        "light": "Luz",
+        "temperature": "Temperatura",
+        "humidity": "Humedad",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "Pequeña",
+        "medium": "Mediana",
+        "large": "Grande",
+        "xlarge": "Extra grande"
+      },
+      "layout": {
+        "horizontal": "Horizontal (predeterminado)",
+        "vertical": "Vertical"
+      }
+    }
+  }
+}

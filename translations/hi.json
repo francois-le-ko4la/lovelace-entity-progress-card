@@ -1,0 +1,89 @@
+{
+  "card": {
+    "msg": {
+      "entityNotFound": "HA में एंटिटी नहीं मिली।",
+      "attributeNotFound": "HA में एट्रिब्यूट नहीं मिला।",
+      "missingRequiredProperty": "आवश्यक गुण गायब है।",
+      "invalidTypeString": "स्ट्रिंग प्रकार का मान अपेक्षित है।",
+      "invalidTypeNumber": "संख्या प्रकार का मान अपेक्षित है।",
+      "invalidTypeBoolean": "बूलियन प्रकार का मान अपेक्षित है।",
+      "invalidTypeArray": "एरे प्रकार का मान अपेक्षित है।",
+      "invalidTypeObject": "ऑब्जेक्ट प्रकार का मान अपेक्षित है।",
+      "invalidEnumValue": "प्रदान किया गया मान अनुमतित विकल्पों में से एक नहीं है।",
+      "invalidUnionType": "मान अनुमतित प्रकारों में से किसी से मेल नहीं खाता।",
+      "invalidEntityId": "एंटिटी आईडी अमान्य या गलत तरीके से बनाई गई है।",
+      "invalidDecimal": "मान एक वैध दशमलव संख्या होना चाहिए।",
+      "invalidActionObject": "एक्शन ऑब्जेक्ट अमान्य या गलत तरीके से संरचित है।",
+      "missingActionKey": "एक्शन ऑब्जेक्ट में एक आवश्यक कुंजी गायब है।",
+      "invalidCustomThemeArray": "कस्टम थीम एक एरे होना चाहिए।",
+      "invalidCustomThemeEntry": "कस्टम थीम में एक या अधिक प्रविष्टियां अमान्य हैं।",
+      "invalidMinValue": "न्यूनतम मान अमान्य है या अनुमतित सीमा से नीचे है।",
+      "invalidMaxValue": "अधिकतम मान अमान्य है या अनुमतित सीमा से ऊपर है।",
+      "minGreaterThanMax": "न्यूनतम मान अधिकतम मान से अधिक नहीं हो सकता।",
+      "discontinuousRange": "परिभाषित रेंज असतत है।",
+      "missingColorProperty": "एक आवश्यक रंग गुण गायब है।",
+      "invalidIconType": "निर्दिष्ट आइकन प्रकार अमान्य या अपरिचित है।",
+      "invalidStateContent": "स्थिति सामग्री अमान्य या गलत तरीके से बनाई गई है।",
+      "invalidStateContentEntry": "स्थिति सामग्री में एक या अधिक प्रविष्टियां अमान्य हैं।",
+      "invalidTheme": "निर्दिष्ट थीम अज्ञात है। डिफ़ॉल्ट थीम का उपयोग किया जाएगा।",
+      "appliedDefaultValue": "एक डिफ़ॉल्ट मान स्वचालित रूप से लागू किया गया है।"
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "सामग्री",
+      "interaction": "बातचीत",
+      "theme": "रूप और अनुभव"
+    },
+    "field": {
+      "entity": "एंटिटी",
+      "attribute": "एट्रिब्यूट",
+      "name": "नाम",
+      "unit": "इकाई",
+      "decimal": "दशमलव",
+      "min_value": "न्यूनतम मान",
+      "max_value": "अधिकतम मान",
+      "max_value_attribute": "एट्रिब्यूट (max_value)",
+      "tap_action": "टैप व्यवहार",
+      "double_tap_action": "डबल टैप व्यवहार",
+      "hold_action": "होल्ड व्यवहार",
+      "icon_tap_action": "आइकन टैप व्यवहार",
+      "icon_double_tap_action": "आइकन डबल टैप व्यवहार",
+      "icon_hold_action": "आइकन होल्ड व्यवहार",
+      "toggle_icon": "आइकन",
+      "toggle_name": "नाम",
+      "toggle_value": "मान",
+      "toggle_unit": "इकाई",
+      "toggle_secondary_info": "जानकारी",
+      "toggle_progress_bar": "बार",
+      "toggle_force_circular_background": "गोलाकार पृष्ठभूमि को बाध्य करें",
+      "theme": "थीम",
+      "bar_size": "बार का आकार",
+      "bar_color": "बार का रंग",
+      "icon": "आइकन",
+      "color": "मुख्य रंग",
+      "layout": "कार्ड लेआउट"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "कम होने पर इष्टतम (CPU, RAM,...)",
+        "optimal_when_high": "उच्च होने पर इष्टतम (बैटरी...)",
+        "light": "प्रकाश",
+        "temperature": "तापमान",
+        "humidity": "आर्द्रता",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "छोटी",
+        "medium": "मध्यम",
+        "large": "बड़ी",
+        "xlarge": "अतिरिक्त बड़ी"
+      },
+      "layout": {
+        "horizontal": "क्षैतिज (डिफ़ॉल्ट)",
+        "vertical": "लंबवत"
+      }
+    }
+  }
+}

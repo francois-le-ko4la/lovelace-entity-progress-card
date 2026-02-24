@@ -1,0 +1,89 @@
+{
+  "card": {
+    "msg": {
+      "entityNotFound": "Entidade não encontrada no Home Assistant.",
+      "attributeNotFound": "Atributo não encontrado no Home Assistant.",
+      "missingRequiredProperty": "Propriedade obrigatória ausente.",
+      "invalidTypeString": "Esperava-se um valor do tipo string.",
+      "invalidTypeNumber": "Esperava-se um valor do tipo número.",
+      "invalidTypeBoolean": "Esperava-se um valor do tipo booleano.",
+      "invalidTypeArray": "Esperava-se um valor do tipo array.",
+      "invalidTypeObject": "Esperava-se um valor do tipo objeto.",
+      "invalidEnumValue": "O valor fornecido não é uma opção válida.",
+      "invalidUnionType": "O valor não corresponde a nenhum dos tipos permitidos.",
+      "invalidEntityId": "O ID da entidade é inválido ou mal formatado.",
+      "invalidDecimal": "O valor deve ser um número decimal válido.",
+      "invalidActionObject": "O objeto de ação é inválido ou mal estruturado.",
+      "missingActionKey": "Uma chave obrigatória está faltando no objeto de ação.",
+      "invalidCustomThemeArray": "O tema personalizado deve ser um array.",
+      "invalidCustomThemeEntry": "Uma ou mais entradas no tema personalizado são inválidas.",
+      "invalidMinValue": "O valor mínimo é inválido ou abaixo do permitido.",
+      "invalidMaxValue": "O valor máximo é inválido ou acima do permitido.",
+      "minGreaterThanMax": "O valor mínimo não pode ser maior que o valor máximo.",
+      "discontinuousRange": "O intervalo definido é descontínuo.",
+      "missingColorProperty": "Uma propriedade de cor obrigatória está faltando.",
+      "invalidIconType": "O tipo de ícone especificado é inválido ou desconhecido.",
+      "invalidStateContent": "O conteúdo do estado é inválido ou mal formatado.",
+      "invalidStateContentEntry": "Uma ou mais entradas do conteúdo do estado são inválidas.",
+      "invalidTheme": "O tema especificado é desconhecido. Tema padrão será usado.",
+      "appliedDefaultValue": "Um valor padrão foi aplicado automaticamente."
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "Conteúdo",
+      "interaction": "Interações",
+      "theme": "Aparência e usabilidade"
+    },
+    "field": {
+      "entity": "Entidade",
+      "attribute": "Atributo",
+      "name": "Nome",
+      "unit": "Unidade",
+      "decimal": "decimal",
+      "min_value": "Valor mínimo",
+      "max_value": "Valor máximo",
+      "max_value_attribute": "Atributo (max_value)",
+      "tap_action": "Ação ao toque curto",
+      "double_tap_action": "Ação ao toque duplo",
+      "hold_action": "Ação ao toque longo",
+      "icon_tap_action": "Ação ao tocar no ícone",
+      "icon_double_tap_action": "Ação ao tocar duplamente no ícone",
+      "icon_hold_action": "Ação ao manter o toque no ícone",
+      "toggle_icon": "Ícone",
+      "toggle_name": "Nome",
+      "toggle_value": "Valor",
+      "toggle_unit": "Unidade",
+      "toggle_secondary_info": "Info",
+      "toggle_progress_bar": "Barra",
+      "toggle_force_circular_background": "Forçar fundo circular",
+      "theme": "Tema",
+      "bar_size": "Tamanho da barra",
+      "bar_color": "Cor para a barra",
+      "icon": "Ícone",
+      "color": "Cor primária",
+      "layout": "Layout do cartão"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "Ótimo quando é baixo (CPU, RAM,...)",
+        "optimal_when_high": "Ótimo quando é alto (Bateria...)",
+        "light": "Luz",
+        "temperature": "Temperatura",
+        "humidity": "Humidade",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "Pequena",
+        "medium": "Média",
+        "large": "Grande",
+        "xlarge": "Extra grande"
+      },
+      "layout": {
+        "horizontal": "Horizontal (padrão)",
+        "vertical": "Vertical"
+      }
+    }
+  }
+}

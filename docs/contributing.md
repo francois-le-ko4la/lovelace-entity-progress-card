@@ -90,8 +90,6 @@ We welcome translations for new languages! Currently supported languages:
 - 🇻🇳 vi - Tiếng Việt (Vietnamese)
 - 🇨🇳 zh - 中文 (Chinese)
 
-Join [Discord] server to discuss about it.
-
 ## 🛠️ Getting Started
 
 ### Fork & Clone
@@ -104,8 +102,6 @@ Join [Discord] server to discuss about it.
    cd lovelace-entity-progress-card
    ```
 
-## 💻 Development Setup
-
 ## 📝 Contribution Guidelines
 
 ### Code Style
@@ -116,6 +112,12 @@ Join [Discord] server to discuss about it.
 - **Comment complex logic** thoroughly
 - **Follow existing code patterns**
 - **No dependencies**
+
+### New translation
+
+- Copy the template `./translations/translation.template.json` and name it with the language ([code](https://developers.home-assistant.io/docs/voice/intent-recognition/supported-languages/))
+- Fill in all the empty values in `xx.json` with your translations.
+- Submit a pull request with your `xx.json`
 
 ### Commit Messages
 

@@ -1,0 +1,89 @@
+{
+  "card": {
+    "msg": {
+      "entityNotFound": "在 Home Assistant 中找不到实体。",
+      "attributeNotFound": "在 Home Assistant 中找不到属性。",
+      "missingRequiredProperty": "缺少必需的属性。",
+      "invalidTypeString": "应为字符串类型的值。",
+      "invalidTypeNumber": "应为数字类型的值。",
+      "invalidTypeBoolean": "应为布尔类型的值。",
+      "invalidTypeArray": "应为数组类型的值。",
+      "invalidTypeObject": "应为对象类型的值。",
+      "invalidEnumValue": "提供的值不是允许的选项之一。",
+      "invalidUnionType": "该值不符合任何允许的类型。",
+      "invalidEntityId": "实体 ID 无效或格式错误。",
+      "invalidDecimal": "该值必须是有效的小数。",
+      "invalidActionObject": "操作对象无效或结构不正确。",
+      "missingActionKey": "操作对象中缺少必需的键。",
+      "invalidCustomThemeArray": "自定义主题必须是数组。",
+      "invalidCustomThemeEntry": "自定义主题中有一个或多个无效条目。",
+      "invalidMinValue": "最小值无效或低于允许的限制。",
+      "invalidMaxValue": "最大值无效或超过允许的限制。",
+      "minGreaterThanMax": "最小值不能大于最大值。",
+      "discontinuousRange": "定义的范围不连续。",
+      "missingColorProperty": "缺少必需的颜色属性。",
+      "invalidIconType": "指定的图标类型无效或无法识别。",
+      "invalidStateContent": "状态内容无效或格式错误。",
+      "invalidStateContentEntry": "状态内容中有一个或多个无效条目。",
+      "invalidTheme": "指定的主题未知，将使用默认主题。",
+      "appliedDefaultValue": "已自动应用默认值。"
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "内容",
+      "interaction": "交互",
+      "theme": "外观"
+    },
+    "field": {
+      "entity": "实体",
+      "attribute": "属性",
+      "name": "名称",
+      "unit": "单位",
+      "decimal": "小数",
+      "min_value": "最小值",
+      "max_value": "最大值",
+      "max_value_attribute": "属性（最大值）",
+      "tap_action": "短按时的操作",
+      "double_tap_action": "双击时的操作",
+      "hold_action": "长按时的操作",
+      "icon_tap_action": "点击图标时的操作",
+      "icon_double_tap_action": "双击图标时的操作",
+      "icon_hold_action": "长按图标时的操作",
+      "toggle_icon": "图标",
+      "toggle_name": "名称",
+      "toggle_value": "数值",
+      "toggle_unit": "单位",
+      "toggle_secondary_info": "信息",
+      "toggle_progress_bar": "进度条",
+      "toggle_force_circular_background": "强制圆形背景",
+      "theme": "主题",
+      "bar_size": "条形大小",
+      "bar_color": "条形颜色",
+      "icon": "图标",
+      "color": "主色",
+      "layout": "卡片布局"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "低值最佳（CPU、内存等）",
+        "optimal_when_high": "高值最佳（电池等）",
+        "light": "亮度",
+        "temperature": "温度",
+        "humidity": "湿度",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "小",
+        "medium": "中",
+        "large": "大",
+        "xlarge": "超大"
+      },
+      "layout": {
+        "horizontal": "水平（默认）",
+        "vertical": "垂直"
+      }
+    }
+  }
+}

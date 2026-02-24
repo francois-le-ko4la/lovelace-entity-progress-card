@@ -1,0 +1,89 @@
+{
+  "card": {
+    "msg": {
+      "entityNotFound": "ไม่พบเอนทิตีใน HA",
+      "attributeNotFound": "ไม่พบแอตทริบิวต์ใน HA",
+      "missingRequiredProperty": "ขาดคุณสมบัติที่จำเป็น",
+      "invalidTypeString": "คาดหวังค่าประเภทสตริง",
+      "invalidTypeNumber": "คาดหวังค่าประเภทตัวเลข",
+      "invalidTypeBoolean": "คาดหวังค่าประเภทบูลีน",
+      "invalidTypeArray": "คาดหวังค่าประเภทอาร์เรย์",
+      "invalidTypeObject": "คาดหวังค่าประเภทออบเจ็กต์",
+      "invalidEnumValue": "ค่าที่ให้มาไม่ใช่หนึ่งในตัวเลือกที่อนุญาต",
+      "invalidUnionType": "ค่าไม่ตรงกับประเภทที่อนุญาตใด ๆ",
+      "invalidEntityId": "ID เอนทิตีไม่ถูกต้องหรือรูปแบบผิด",
+      "invalidDecimal": "ค่าต้องเป็นตัวเลขทศนิยมที่ถูกต้อง",
+      "invalidActionObject": "ออบเจ็กต์แอ็กชันไม่ถูกต้องหรือโครงสร้างผิด",
+      "missingActionKey": "ขาดคีย์ที่จำเป็นในออบเจ็กต์แอ็กชัน",
+      "invalidCustomThemeArray": "ธีมกำหนดเองต้องเป็นอาร์เรย์",
+      "invalidCustomThemeEntry": "หนึ่งหรือหลายรายการในธีมกำหนดเองไม่ถูกต้อง",
+      "invalidMinValue": "ค่าต่ำสุดไม่ถูกต้องหรือต่ำกว่าขีดจำกัดที่อนุญาต",
+      "invalidMaxValue": "ค่าสูงสุดไม่ถูกต้องหรือสูงกว่าขีดจำกัดที่อนุญาต",
+      "minGreaterThanMax": "ค่าต่ำสุดไม่สามารถมากกว่าค่าสูงสุด",
+      "discontinuousRange": "ช่วงที่กำหนดไม่ต่อเนื่อง",
+      "missingColorProperty": "ขาดคุณสมบัติสีที่จำเป็น",
+      "invalidIconType": "ประเภทไอคอนที่ระบุไม่ถูกต้องหรือไม่รู้จัก",
+      "invalidStateContent": "เนื้อหาสถานะไม่ถูกต้องหรือรูปแบบผิด",
+      "invalidStateContentEntry": "หนึ่งหรือหลายรายการในเนื้อหาสถานะไม่ถูกต้อง",
+      "invalidTheme": "ธีมที่ระบุไม่รู้จัก จะใช้ธีมเริ่มต้น",
+      "appliedDefaultValue": "ค่าเริ่มต้นถูกนำไปใช้โดยอัตโนมัติ"
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "เนื้อหา",
+      "interaction": "การโต้ตอบ",
+      "theme": "รูปลักษณ์และความรู้สึก"
+    },
+    "field": {
+      "entity": "เอนทิตี",
+      "attribute": "แอตทริบิวต์",
+      "name": "ชื่อ",
+      "unit": "หน่วย",
+      "decimal": "ทศนิยม",
+      "min_value": "ค่าต่ำสุด",
+      "max_value": "ค่าสูงสุด",
+      "max_value_attribute": "แอตทริบิวต์ (max_value)",
+      "tap_action": "พฤติกรรมการแตะ",
+      "double_tap_action": "พฤติกรรมการแตะสองครั้ง",
+      "hold_action": "พฤติกรรมการกด",
+      "icon_tap_action": "พฤติกรรมการแตะไอคอน",
+      "icon_double_tap_action": "พฤติกรรมการแตะไอคอนสองครั้ง",
+      "icon_hold_action": "พฤติกรรมการกดไอคอน",
+      "toggle_icon": "ไอคอน",
+      "toggle_name": "ชื่อ",
+      "toggle_value": "ค่า",
+      "toggle_unit": "หน่วย",
+      "toggle_secondary_info": "ข้อมูล",
+      "toggle_progress_bar": "แถบ",
+      "toggle_force_circular_background": "บังคับพื้นหลังวงกลม",
+      "theme": "ธีม",
+      "bar_size": "ขนาดแถบ",
+      "bar_color": "สีแถบ",
+      "icon": "ไอคอน",
+      "color": "สีหลัก",
+      "layout": "เลย์เอาต์การ์ด"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "เหมาะสมเมื่อต่ำ (CPU, RAM,...)",
+        "optimal_when_high": "เหมาะสมเมื่อสูง (แบตเตอรี่...)",
+        "light": "แสง",
+        "temperature": "อุณหภูมิ",
+        "humidity": "ความชื้น",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "เล็ก",
+        "medium": "กลาง",
+        "large": "ใหญ่",
+        "xlarge": "ใหญ่พิเศษ"
+      },
+      "layout": {
+        "horizontal": "แนวนอน (เริ่มต้น)",
+        "vertical": "แนวตั้ง"
+      }
+    }
+  }
+}

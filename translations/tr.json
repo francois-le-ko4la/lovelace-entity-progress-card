@@ -1,0 +1,89 @@
+{
+  "card": {
+    "msg": {
+      "entityNotFound": "Varlık Home Assistant'ta bulunamadı.",
+      "attributeNotFound": "Öznitelik Home Assistant'ta bulunamadı.",
+      "missingRequiredProperty": "Gerekli bir özellik eksik.",
+      "invalidTypeString": "Dize (string) türünde bir değer bekleniyordu.",
+      "invalidTypeNumber": "Sayı türünde bir değer bekleniyordu.",
+      "invalidTypeBoolean": "Boolean türünde bir değer bekleniyordu.",
+      "invalidTypeArray": "Dizi türünde bir değer bekleniyordu.",
+      "invalidTypeObject": "Nesne türünde bir değer bekleniyordu.",
+      "invalidEnumValue": "Sağlanan değer izin verilen seçeneklerden biri değil.",
+      "invalidUnionType": "Değer izin verilen türlerden hiçbirine uymuyor.",
+      "invalidEntityId": "Varlık kimliği geçersiz veya hatalı biçimlendirilmiş.",
+      "invalidDecimal": "Değer geçerli bir ondalık sayı olmalıdır.",
+      "invalidActionObject": "Eylem nesnesi geçersiz veya hatalı yapılandırılmış.",
+      "missingActionKey": "Eylem nesnesinde gerekli bir anahtar eksik.",
+      "invalidCustomThemeArray": "Özel tema bir dizi olmalıdır.",
+      "invalidCustomThemeEntry": "Özel temadaki bir veya daha fazla giriş geçersiz.",
+      "invalidMinValue": "Minimum değer geçersiz veya sınırların altında.",
+      "invalidMaxValue": "Maksimum değer geçersiz veya sınırların üzerinde.",
+      "minGreaterThanMax": "Minimum değer maksimum değerden büyük olamaz.",
+      "discontinuousRange": "Tanımlanan aralık süreksizdir.",
+      "missingColorProperty": "Gerekli bir renk özelliği eksik.",
+      "invalidIconType": "Belirtilen simge türü geçersiz veya tanınmıyor.",
+      "invalidStateContent": "Durum içeriği geçersiz veya hatalı biçimlendirilmiş.",
+      "invalidStateContentEntry": "Durum içeriğindeki bir veya daha fazla giriş geçersiz.",
+      "invalidTheme": "Belirtilen tema bilinmiyor. Varsayılan tema kullanılacak.",
+      "appliedDefaultValue": "Varsayılan değer otomatik olarak uygulandı."
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "İçerik",
+      "interaction": "Etkileşimler",
+      "theme": "Görünüm"
+    },
+    "field": {
+      "entity": "Varlık",
+      "attribute": "Öznitelik",
+      "name": "Ad",
+      "unit": "Birim",
+      "decimal": "ondalık",
+      "min_value": "Minimum değer",
+      "max_value": "Maksimum değer",
+      "max_value_attribute": "Öznitelik (max_value)",
+      "tap_action": "Kısa dokunma davranışı",
+      "double_tap_action": "Çift dokunma davranışı",
+      "hold_action": "Uzun basma davranışı",
+      "icon_tap_action": "Simgeye dokunma davranışı",
+      "icon_double_tap_action": "Simgeye çift dokunma davranışı",
+      "icon_hold_action": "Simgeye uzun basma davranışı",
+      "toggle_icon": "Simge",
+      "toggle_name": "Ad",
+      "toggle_value": "Değer",
+      "toggle_unit": "Birim",
+      "toggle_secondary_info": "Bilgi",
+      "toggle_progress_bar": "Çubuk",
+      "toggle_force_circular_background": "Dairesel arka planı zorla",
+      "theme": "Tema",
+      "bar_size": "Çubuk boyutu",
+      "bar_color": "Çubuk rengi",
+      "icon": "Simge",
+      "color": "Birincil renk",
+      "layout": "Kart düzeni"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "Düşükken en iyi (CPU, RAM...)",
+        "optimal_when_high": "Yüksekken en iyi (Pil...)",
+        "light": "Işık",
+        "temperature": "Sıcaklık",
+        "humidity": "Nem",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "Küçük",
+        "medium": "Orta",
+        "large": "Büyük",
+        "xlarge": "Çok büyük"
+      },
+      "layout": {
+        "horizontal": "Yatay (varsayılan)",
+        "vertical": "Dikey"
+      }
+    }
+  }
+}

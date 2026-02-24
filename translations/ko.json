@@ -1,0 +1,89 @@
+{
+  "card": {
+    "msg": {
+      "entityNotFound": "Home Assistant에서 엔티티를 찾을 수 없습니다.",
+      "attributeNotFound": "Home Assistant에서 속성을 찾을 수 없습니다.",
+      "missingRequiredProperty": "필수 속성이 누락되었습니다.",
+      "invalidTypeString": "문자열 유형의 값이 필요합니다.",
+      "invalidTypeNumber": "숫자 유형의 값이 필요합니다.",
+      "invalidTypeBoolean": "불리언 유형의 값이 필요합니다.",
+      "invalidTypeArray": "배열 유형의 값이 필요합니다.",
+      "invalidTypeObject": "객체 유형의 값이 필요합니다.",
+      "invalidEnumValue": "제공된 값이 허용된 옵션 중 하나가 아닙니다.",
+      "invalidUnionType": "값이 허용된 유형 중 어떤 것과도 일치하지 않습니다.",
+      "invalidEntityId": "엔티티 ID가 잘못되었거나 형식이 잘못되었습니다.",
+      "invalidDecimal": "값은 유효한 소수여야 합니다.",
+      "invalidActionObject": "액션 객체가 잘못되었거나 구조가 올바르지 않습니다.",
+      "missingActionKey": "액션 객체에 필수 키가 없습니다.",
+      "invalidCustomThemeArray": "사용자 정의 테마는 배열이어야 합니다.",
+      "invalidCustomThemeEntry": "사용자 정의 테마에 하나 이상의 잘못된 항목이 있습니다.",
+      "invalidMinValue": "최소값이 유효하지 않거나 허용된 범위보다 작습니다.",
+      "invalidMaxValue": "최대값이 유효하지 않거나 허용된 범위를 초과합니다.",
+      "minGreaterThanMax": "최소값은 최대값보다 클 수 없습니다.",
+      "discontinuousRange": "정의된 범위가 연속적이지 않습니다.",
+      "missingColorProperty": "필수 색상 속성이 누락되었습니다.",
+      "invalidIconType": "지정된 아이콘 유형이 잘못되었거나 인식되지 않습니다.",
+      "invalidStateContent": "상태 콘텐츠가 잘못되었거나 형식이 잘못되었습니다.",
+      "invalidStateContentEntry": "상태 콘텐츠에 하나 이상의 잘못된 항목이 있습니다.",
+      "invalidTheme": "지정된 테마를 알 수 없습니다. 기본 테마가 사용됩니다.",
+      "appliedDefaultValue": "기본값이 자동으로 적용되었습니다."
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "콘텐츠",
+      "interaction": "상호작용",
+      "theme": "테마 및 스타일"
+    },
+    "field": {
+      "entity": "엔티티",
+      "attribute": "속성",
+      "name": "이름",
+      "unit": "단위",
+      "decimal": "소수점",
+      "min_value": "최소값",
+      "max_value": "최대값",
+      "max_value_attribute": "속성 (최대값)",
+      "tap_action": "짧게 탭 시 동작",
+      "double_tap_action": "더블 탭 시 동작",
+      "hold_action": "길게 누를 시 동작",
+      "icon_tap_action": "아이콘 탭 시 동작",
+      "icon_double_tap_action": "아이콘 더블 탭 시 동작",
+      "icon_hold_action": "아이콘 길게 누를 시 동작",
+      "toggle_icon": "아이콘",
+      "toggle_name": "이름",
+      "toggle_value": "값",
+      "toggle_unit": "단위",
+      "toggle_secondary_info": "정보",
+      "toggle_progress_bar": "진행 바",
+      "toggle_force_circular_background": "원형 배경 강제 적용",
+      "theme": "테마",
+      "bar_size": "바 크기",
+      "bar_color": "바 색상",
+      "icon": "아이콘",
+      "color": "기본 색상",
+      "layout": "카드 레이아웃"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "낮을 때 최적 (CPU, RAM 등)",
+        "optimal_when_high": "높을 때 최적 (배터리 등)",
+        "light": "조도",
+        "temperature": "온도",
+        "humidity": "습도",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "작은",
+        "medium": "중간",
+        "large": "큰",
+        "xlarge": "매우 큰"
+      },
+      "layout": {
+        "horizontal": "수평 (기본)",
+        "vertical": "수직"
+      }
+    }
+  }
+}

@@ -269,6 +269,7 @@ This is the primary card for displaying entity progress.
 | `center_zero`                      | boolean (optional)       | `false`                     | Center the bar on 0                     | [Config Ref.][config-center_zero]                |
 | `theme`                            | string (optional)        | —                           | Applies a preset theme                  | [Config Ref.][config-theme]                      |
 | `custom_theme`                     | list (optional)          | —                           | Define color thresholds                 | [Config Ref.][config-custom_theme]               |
+| `interpolate`                      | boolean (optional)       | —                           | Enables smooth color transition         | [Config Ref.][config-custom_theme]               |
 | `hide`                             | list (optional)          | —                           | Hide parts of the card                  | [Config Ref.][config-hide]                       |
 | `disable_unit`                     | boolean (optional)       | `false`                     | Hide the unit text                      | [Config Ref.][config-disable_unit]               |
 | `watermark`                        | map (optional)           | —                           | Adds min/max overlays                   | [Config Ref.][config-watermark]                  |
@@ -1152,6 +1153,7 @@ customizable badge format with a dynamic progress bar.
 | `center_zero`                | boolean (optional)      | `false`                   | Center the bar on 0                   | [Config Ref.][config-center_zero]                |
 | `theme`                      | string (optional)       | —                         | Applies a preset theme                | [Config Ref.][config-theme]                      |
 | `custom_theme`               | list (optional)         | —                         | Define color thresholds               | [Config Ref.][config-custom_theme]               |
+| `interpolate`                | boolean (optional)      | —                         | Enables smooth color transition       | [Config Ref.][config-interpolate]                |
 | `hide`                       | list (optional)         | —                         | Hide parts of the card                | [Config Ref.][config-hide]                       |
 | `disable_unit`               | boolean (optional)      | `false`                   | Hide the unit text                    | [Config Ref.][config-disable_unit]               |
 | `watermark`                  | map (optional)          | —                         | Adds min/max overlays                 | [Config Ref.][config-watermark]                  |
@@ -1463,6 +1465,7 @@ This project is licensed under the [GPL-3.0 license].
 [config-center_zero]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#center_zero>
 [config-theme]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#theme>
 [config-custom_theme]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#custom_theme>
+[config-interpolate]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#interpolate>
 [config-hide]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#hide>
 [config-disable_unit]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#disable_unit>
 [config-watermark]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#watermark>

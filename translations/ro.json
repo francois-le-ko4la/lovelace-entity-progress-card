@@ -1,0 +1,89 @@
+{
+  "card": {
+    "msg": {
+      "entityNotFound": "Entitatea nu a fost găsită în Home Assistant.",
+      "attributeNotFound": "Atributul nu a fost găsit în Home Assistant.",
+      "missingRequiredProperty": "Lipsește o proprietate necesară.",
+      "invalidTypeString": "Se aștepta o valoare de tip șir.",
+      "invalidTypeNumber": "Se aștepta o valoare de tip număr.",
+      "invalidTypeBoolean": "Se aștepta o valoare de tip boolean.",
+      "invalidTypeArray": "Se aștepta o valoare de tip array.",
+      "invalidTypeObject": "Se aștepta o valoare de tip obiect.",
+      "invalidEnumValue": "Valoarea furnizată nu este una dintre opțiunile permise.",
+      "invalidUnionType": "Valoarea nu se potrivește niciunui tip permis.",
+      "invalidEntityId": "ID-ul entității este invalid sau formatat greșit.",
+      "invalidDecimal": "Valoarea trebuie să fie un număr zecimal valid.",
+      "invalidActionObject": "Obiectul acțiune este invalid sau structurat incorect.",
+      "missingActionKey": "Lipsește o cheie necesară în obiectul acțiune.",
+      "invalidCustomThemeArray": "Tema personalizată trebuie să fie un array.",
+      "invalidCustomThemeEntry": "Una sau mai multe intrări din temă sunt invalide.",
+      "invalidMinValue": "Valoarea minimă este invalidă sau prea mică.",
+      "invalidMaxValue": "Valoarea maximă este invalidă sau prea mare.",
+      "minGreaterThanMax": "Valoarea minimă nu poate fi mai mare decât valoarea maximă.",
+      "discontinuousRange": "Intervalul definit este discontinuu.",
+      "missingColorProperty": "Lipsește o proprietate de culoare necesară.",
+      "invalidIconType": "Tipul de pictogramă specificat este invalid sau necunoscut.",
+      "invalidStateContent": "Conținutul stării este invalid sau formatat greșit.",
+      "invalidStateContentEntry": "Una sau mai multe intrări în conținutul stării sunt invalide.",
+      "invalidTheme": "Tema specificată este necunoscută. Va fi utilizată tema implicită.",
+      "appliedDefaultValue": "A fost aplicată automat o valoare implicită."
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "Conținut",
+      "interaction": "Interacțiuni",
+      "theme": "Aspect & Stil"
+    },
+    "field": {
+      "entity": "Entitate",
+      "attribute": "Atribut",
+      "name": "Nume",
+      "unit": "Unitate",
+      "decimal": "zecimal",
+      "min_value": "Valoare minimă",
+      "max_value": "Valoare maximă",
+      "max_value_attribute": "Atribut (max_value)",
+      "tap_action": "Acțiune la apăsare scurtă",
+      "double_tap_action": "Acțiune la apăsare dublă",
+      "hold_action": "Acțiune la apăsare lungă",
+      "icon_tap_action": "Acțiune la apăsarea pictogramei",
+      "icon_double_tap_action": "Acțiune la apăsare dublă a pictogramei",
+      "icon_hold_action": "Acțiune la apăsare lungă a pictogramei",
+      "toggle_icon": "Pictogramă",
+      "toggle_name": "Nume",
+      "toggle_value": "Valoare",
+      "toggle_unit": "Unitate",
+      "toggle_secondary_info": "Info",
+      "toggle_progress_bar": "Bară",
+      "toggle_force_circular_background": "Forțează fundal circular",
+      "theme": "Temă",
+      "bar_size": "Dimensiunea barei",
+      "bar_color": "Culoare bară",
+      "icon": "Pictogramă",
+      "color": "Culoare principală",
+      "layout": "Aspectul cardului"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "Optim când este scăzut (CPU, RAM...)",
+        "optimal_when_high": "Optim când este ridicat (Baterie...)",
+        "light": "Luminozitate",
+        "temperature": "Temperatură",
+        "humidity": "Umiditate",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "Mică",
+        "medium": "Medie",
+        "large": "Mare",
+        "xlarge": "Foarte mare"
+      },
+      "layout": {
+        "horizontal": "Orizontal (implicit)",
+        "vertical": "Vertical"
+      }
+    }
+  }
+}

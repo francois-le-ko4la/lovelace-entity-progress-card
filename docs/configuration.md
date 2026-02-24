@@ -60,6 +60,7 @@
       - [`center_zero`](#center_zero)
       - [`theme`](#theme)
       - [`custom_theme`](#custom_theme)
+      - [`interpolate`](#interpolate)
       - [`hide`](#hide)
       - [`disable_unit`](#disable_unit)
       - [`watermark`](#watermark)
@@ -1418,6 +1419,36 @@ custom_theme:
     max: 70
     color: var(--state-icon-color)
     icon: mdi:abacus
+```
+
+[🔼 Back to top]
+
+#### `interpolate`
+
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
+
+> **`interpolate`** [Boolean] _(optional, default: `false`)_
+
+Enables smooth color transition between consecutive steps of a custom theme. When set
+to true, the icon and bar colors are interpolated between the current step and the next
+one based on the current value's position within the step range.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+····
+custom_theme:
+  - min: 0
+    max: 20
+    color: "#4caf50"
+  - min: 20
+    max: 70
+    color: "#ffeb3b"
+  - min: 70
+    max: 100
+    color: "#f44336"
+interpolate: true
 ```
 
 [🔼 Back to top]

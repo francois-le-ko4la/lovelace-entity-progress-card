@@ -1,0 +1,89 @@
+{
+  "card": {
+    "msg": {
+      "entityNotFound": "Không tìm thấy thực thể trong HA.",
+      "attributeNotFound": "Không tìm thấy thuộc tính trong HA.",
+      "missingRequiredProperty": "Thuộc tính bắt buộc bị thiếu.",
+      "invalidTypeString": "Mong đợi một giá trị kiểu chuỗi.",
+      "invalidTypeNumber": "Mong đợi một giá trị kiểu số.",
+      "invalidTypeBoolean": "Mong đợi một giá trị kiểu boolean.",
+      "invalidTypeArray": "Mong đợi một giá trị kiểu mảng.",
+      "invalidTypeObject": "Mong đợi một giá trị kiểu đối tượng.",
+      "invalidEnumValue": "Giá trị được cung cấp không nằm trong các tùy chọn được phép.",
+      "invalidUnionType": "Giá trị không khớp với bất kỳ loại nào được phép.",
+      "invalidEntityId": "ID thực thể không hợp lệ hoặc không đúng định dạng.",
+      "invalidDecimal": "Giá trị phải là một số thập phân hợp lệ.",
+      "invalidActionObject": "Đối tượng hành động không hợp lệ hoặc cấu trúc không đúng.",
+      "missingActionKey": "Một khóa bắt buộc bị thiếu trong đối tượng hành động.",
+      "invalidCustomThemeArray": "Chủ đề tùy chỉnh phải là một mảng.",
+      "invalidCustomThemeEntry": "Một hoặc nhiều mục trong chủ đề tùy chỉnh không hợp lệ.",
+      "invalidMinValue": "Giá trị tối thiểu không hợp lệ hoặc dưới giới hạn cho phép.",
+      "invalidMaxValue": "Giá trị tối đa không hợp lệ hoặc trên giới hạn cho phép.",
+      "minGreaterThanMax": "Giá trị tối thiểu không thể lớn hơn giá trị tối đa.",
+      "discontinuousRange": "Phạm vi được xác định không liên tục.",
+      "missingColorProperty": "Một thuộc tính màu bắt buộc bị thiếu.",
+      "invalidIconType": "Loại biểu tượng được chỉ định không hợp lệ hoặc không được nhận dạng.",
+      "invalidStateContent": "Nội dung trạng thái không hợp lệ hoặc không đúng định dạng.",
+      "invalidStateContentEntry": "Một hoặc nhiều mục trong nội dung trạng thái không hợp lệ.",
+      "invalidTheme": "Chủ đề được chỉ định không xác định. Chủ đề mặc định sẽ được sử dụng.",
+      "appliedDefaultValue": "Một giá trị mặc định đã được áp dụng tự động."
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "Nội dung",
+      "interaction": "Tương tác",
+      "theme": "Giao diện & Trải nghiệm"
+    },
+    "field": {
+      "entity": "Thực thể",
+      "attribute": "Thuộc tính",
+      "name": "Tên",
+      "unit": "Đơn vị",
+      "decimal": "thập phân",
+      "min_value": "Giá trị tối thiểu",
+      "max_value": "Giá trị tối đa",
+      "max_value_attribute": "Thuộc tính (max_value)",
+      "tap_action": "Hành vi chạm",
+      "double_tap_action": "Hành vi chạm đôi",
+      "hold_action": "Hành vi giữ",
+      "icon_tap_action": "Hành vi chạm biểu tượng",
+      "icon_double_tap_action": "Hành vi chạm đôi biểu tượng",
+      "icon_hold_action": "Hành vi giữ biểu tượng",
+      "toggle_icon": "Biểu tượng",
+      "toggle_name": "Tên",
+      "toggle_value": "Giá trị",
+      "toggle_unit": "Đơn vị",
+      "toggle_secondary_info": "Thông tin",
+      "toggle_progress_bar": "Thanh tiến trình",
+      "toggle_force_circular_background": "Buộc nền hình tròn",
+      "theme": "Chủ đề",
+      "bar_size": "Kích thước thanh",
+      "bar_color": "Màu thanh",
+      "icon": "Biểu tượng",
+      "color": "Màu chính",
+      "layout": "Bố cục thẻ"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "Tối ưu khi thấp (CPU, RAM,...)",
+        "optimal_when_high": "Tối ưu khi cao (Pin...)",
+        "light": "Ánh sáng",
+        "temperature": "Nhiệt độ",
+        "humidity": "Độ ẩm",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "Nhỏ",
+        "medium": "Trung bình",
+        "large": "Lớn",
+        "xlarge": "Rất lớn"
+      },
+      "layout": {
+        "horizontal": "Ngang (mặc định)",
+        "vertical": "Dọc"
+      }
+    }
+  }
+}

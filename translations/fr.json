@@ -1,0 +1,89 @@
+{
+  "card": {
+    "msg": {
+      "entityNotFound": "Entité introuvable dans Home Assistant.",
+      "attributeNotFound": "Attribut introuvable dans Home Assistant.",
+      "missingRequiredProperty": "Une propriété requise est manquante.",
+      "invalidTypeString": "Une valeur de type chaîne de caractères était attendue.",
+      "invalidTypeNumber": "Une valeur de type nombre était attendue.",
+      "invalidTypeBoolean": "Une valeur de type booléen était attendue.",
+      "invalidTypeArray": "Une valeur de type tableau était attendue.",
+      "invalidTypeObject": "Une valeur de type objet était attendue.",
+      "invalidEnumValue": "La valeur fournie ne fait pas partie des options autorisées.",
+      "invalidUnionType": "La valeur ne correspond à aucun des types autorisés.",
+      "invalidEntityId": "L’identifiant de l’entité est invalide ou mal formé.",
+      "invalidDecimal": "La valeur doit être un nombre entier positif.",
+      "invalidActionObject": "L’objet action est invalide ou mal structuré.",
+      "missingActionKey": "Une clé requise est manquante dans l’objet action.",
+      "invalidCustomThemeArray": "Le thème personnalisé doit être un tableau.",
+      "invalidCustomThemeEntry": "Une ou plusieurs entrées du thème personnalisé sont invalides.",
+      "invalidMinValue": "La valeur minimale est invalide ou en dessous des limites autorisées.",
+      "invalidMaxValue": "La valeur maximale est invalide ou au-dessus des limites autorisées.",
+      "minGreaterThanMax": "La valeur minimale ne peut pas être supérieure à la valeur maximale.",
+      "discontinuousRange": "L’intervalle défini est discontinu.",
+      "missingColorProperty": "Une propriété de couleur requise est manquante.",
+      "invalidIconType": "Le type d’icône spécifié est invalide ou non reconnu.",
+      "invalidStateContent": "Le contenu d’état est invalide ou mal formé.",
+      "invalidStateContentEntry": "Une ou plusieurs entrées du contenu d’état sont invalides.",
+      "invalidTheme": "Le thème spécifié est inconnu. Le thème par défaut sera utilisé.",
+      "appliedDefaultValue": "Une valeur par défaut a été appliquée automatiquement."
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "Contenu",
+      "interaction": "Interactions",
+      "theme": "Aspect visuel et convivialité"
+    },
+    "field": {
+      "entity": "Entité",
+      "attribute": "Attribut",
+      "name": "Nom",
+      "unit": "Unité",
+      "decimal": "décimal",
+      "min_value": "Valeur minimum",
+      "max_value": "Valeur maximum",
+      "max_value_attribute": "Attribut (max_value)",
+      "tap_action": "Comportement lors d'un appui court",
+      "double_tap_action": "Comportement lors d'un double appui",
+      "hold_action": "Comportement lors d'un appui long",
+      "icon_tap_action": "Comportement lors de l'appui sur l'icône",
+      "icon_double_tap_action": "Comportement lors d'un double appui sur l'icône",
+      "icon_hold_action": "Comportement lors d'un appui long sur l'icône",
+      "toggle_icon": "Icône",
+      "toggle_name": "Nom",
+      "toggle_value": "Valeur",
+      "toggle_unit": "Unité",
+      "toggle_secondary_info": "Info",
+      "toggle_progress_bar": "Barre",
+      "toggle_force_circular_background": "Forcer le fond circulaire",
+      "theme": "Thème",
+      "bar_size": "Taille de la barre",
+      "bar_color": "Couleur de la barre",
+      "icon": "Icône",
+      "color": "Couleur de l'icône",
+      "layout": "Disposition de la carte"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "Optimal quand c'est bas (CPU, RAM,...)",
+        "optimal_when_high": "Optimal quand c'est élevé (Batterie...)",
+        "light": "Lumière",
+        "temperature": "Température",
+        "humidity": "Humidité",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "Petite",
+        "medium": "Moyenne",
+        "large": "Grande",
+        "xlarge": "Très grande"
+      },
+      "layout": {
+        "horizontal": "Horizontal (par défaut)",
+        "vertical": "Vertical"
+      }
+    }
+  }
+}

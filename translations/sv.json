@@ -1,0 +1,89 @@
+{
+  "card": {
+    "msg": {
+      "entityNotFound": "Enheten kunde inte hittas i Home Assistant.",
+      "attributeNotFound": "Attributet kunde inte hittas i Home Assistant.",
+      "missingRequiredProperty": "En obligatorisk egenskap saknas.",
+      "invalidTypeString": "Förväntade ett värde av typen sträng.",
+      "invalidTypeNumber": "Förväntade ett värde av typen nummer.",
+      "invalidTypeBoolean": "Förväntade ett värde av typen boolean.",
+      "invalidTypeArray": "Förväntade ett värde av typen array.",
+      "invalidTypeObject": "Förväntade ett värde av typen objekt.",
+      "invalidEnumValue": "Det angivna värdet är inte ett giltigt alternativ.",
+      "invalidUnionType": "Värdet matchar inte något av de tillåtna typerna.",
+      "invalidEntityId": "Enhets-ID är ogiltigt eller felaktigt formaterat.",
+      "invalidDecimal": "Värdet måste vara ett giltigt decimaltal.",
+      "invalidActionObject": "Åtgärdsobjektet är ogiltigt eller felstrukturerat.",
+      "missingActionKey": "En obligatorisk nyckel saknas i åtgärdsobjektet.",
+      "invalidCustomThemeArray": "Det anpassade temat måste vara en array.",
+      "invalidCustomThemeEntry": "En eller flera poster i det anpassade temat är ogiltiga.",
+      "invalidMinValue": "Minimivärdet är ogiltigt eller för lågt.",
+      "invalidMaxValue": "Maximivärdet är ogiltigt eller för högt.",
+      "minGreaterThanMax": "Minimivärdet kan inte vara större än maximivärdet.",
+      "discontinuousRange": "Det angivna intervallet är inte sammanhängande.",
+      "missingColorProperty": "En obligatorisk färgegenskap saknas.",
+      "invalidIconType": "Den angivna ikontypen är ogiltig eller okänd.",
+      "invalidStateContent": "Tillståndsinnehållet är ogiltigt eller felaktigt.",
+      "invalidStateContentEntry": "En eller flera poster i tillståndsinnehållet är ogiltiga.",
+      "invalidTheme": "Det angivna temat är okänt. Standardtema används.",
+      "appliedDefaultValue": "Ett standardvärde har tillämpats automatiskt."
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "Innehåll",
+      "interaction": "Interaktioner",
+      "theme": "Utseende och funktionalitet"
+    },
+    "field": {
+      "entity": "Enhet",
+      "attribute": "Attribut",
+      "name": "Namn",
+      "unit": "Enhet",
+      "decimal": "decimal",
+      "min_value": "Minsta värde",
+      "max_value": "Maximalt värde",
+      "max_value_attribute": "Attribut (max_value)",
+      "tap_action": "Åtgärd vid kort tryck",
+      "double_tap_action": "Åtgärd vid dubbeltryck",
+      "hold_action": "Åtgärd vid långt tryck",
+      "icon_tap_action": "Åtgärd vid tryck på ikonen",
+      "icon_double_tap_action": "Åtgärd vid dubbeltryck på ikonen",
+      "icon_hold_action": "Åtgärd vid långt tryck på ikonen",
+      "toggle_icon": "Ikon",
+      "toggle_name": "Namn",
+      "toggle_value": "Värde",
+      "toggle_unit": "Enhet",
+      "toggle_secondary_info": "Info",
+      "toggle_progress_bar": "Bar",
+      "toggle_force_circular_background": "Tvinga cirkulär bakgrund",
+      "theme": "Tema",
+      "bar_size": "Barstorlek",
+      "bar_color": "Färg för baren",
+      "icon": "Ikon",
+      "color": "Primärfärg",
+      "layout": "Kortlayout"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "Optimal när det är lågt (CPU, RAM,...)",
+        "optimal_when_high": "Optimal när det är högt (Batteri...)",
+        "light": "Ljus",
+        "temperature": "Temperatur",
+        "humidity": "Luftfuktighet",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "Liten",
+        "medium": "Medium",
+        "large": "Stor",
+        "xlarge": "Extra stor"
+      },
+      "layout": {
+        "horizontal": "Horisontell (standard)",
+        "vertical": "Vertikal"
+      }
+    }
+  }
+}

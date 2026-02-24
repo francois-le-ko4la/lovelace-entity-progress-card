@@ -1,0 +1,89 @@
+{
+  "card": {
+    "msg": {
+      "entityNotFound": "Entity not found in HA.",
+      "attributeNotFound": "Attribute not found in HA.",
+      "missingRequiredProperty": "Required property is missing.",
+      "invalidTypeString": "Expected a value of type string.",
+      "invalidTypeNumber": "Expected a value of type number.",
+      "invalidTypeBoolean": "Expected a value of type boolean.",
+      "invalidTypeArray": "Expected a value of type array.",
+      "invalidTypeObject": "Expected a value of type object.",
+      "invalidEnumValue": "The provided value is not one of the allowed options.",
+      "invalidUnionType": "The value does not match any of the allowed types.",
+      "invalidEntityId": "The entity ID is invalid or malformed.",
+      "invalidDecimal": "The value must be a valid decimal number.",
+      "invalidActionObject": "The action object is invalid or improperly structured.",
+      "missingActionKey": "A required key is missing in the action object.",
+      "invalidCustomThemeArray": "The custom theme must be an array.",
+      "invalidCustomThemeEntry": "One or more entries in the custom theme are invalid.",
+      "invalidMinValue": "The minimum value is invalid or below allowed limits.",
+      "invalidMaxValue": "The maximum value is invalid or above allowed limits.",
+      "minGreaterThanMax": "Minimum value cannot be greater than maximum value.",
+      "discontinuousRange": "The defined range is discontinuous.",
+      "missingColorProperty": "A required color property is missing.",
+      "invalidIconType": "The specified icon type is invalid or unrecognized.",
+      "invalidStateContent": "The state content is invalid or malformed.",
+      "invalidStateContentEntry": "One or more entries in the state content are invalid.",
+      "invalidTheme": "The specified theme is unknown. Default theme will be used.",
+      "appliedDefaultValue": "A default value has been applied automatically."
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "Content",
+      "interaction": "Interactions",
+      "theme": "Look & Feel"
+    },
+    "field": {
+      "entity": "Entity",
+      "attribute": "Attribute",
+      "name": "Name",
+      "unit": "Unit",
+      "decimal": "decimal",
+      "min_value": "Minimum value",
+      "max_value": "Maximum value",
+      "max_value_attribute": "Attribute (max_value)",
+      "tap_action": "Tap behavior",
+      "double_tap_action": "Double tap behavior",
+      "hold_action": "Hold behavior",
+      "icon_tap_action": "Icon tap behavior",
+      "icon_double_tap_action": "Icon double tap behavior",
+      "icon_hold_action": "Icon hold behavior",
+      "toggle_icon": "Icon",
+      "toggle_name": "Name",
+      "toggle_value": "Value",
+      "toggle_unit": "Unit",
+      "toggle_secondary_info": "Info",
+      "toggle_progress_bar": "Bar",
+      "toggle_force_circular_background": "Force circular background",
+      "theme": "Theme",
+      "bar_size": "Bar size",
+      "bar_color": "Color for the bar",
+      "icon": "Icon",
+      "color": "Primary color",
+      "layout": "Card layout"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "Optimal when Low (CPU, RAM,...)",
+        "optimal_when_high": "Optimal when High (Battery...)",
+        "light": "Light",
+        "temperature": "Temperature",
+        "humidity": "Humidity",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "Small",
+        "medium": "Medium",
+        "large": "Large",
+        "xlarge": "Extra Large"
+      },
+      "layout": {
+        "horizontal": "Horizontal (default)",
+        "vertical": "Vertical"
+      }
+    }
+  }
+}

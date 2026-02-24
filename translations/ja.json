@@ -1,0 +1,89 @@
+{
+  "card": {
+    "msg": {
+      "entityNotFound": "Home Assistant にエンティティが見つかりません。",
+      "attributeNotFound": "Home Assistant に属性が見つかりません。",
+      "missingRequiredProperty": "必要なプロパティが欠落しています。",
+      "invalidTypeString": "文字列型の値が必要です。",
+      "invalidTypeNumber": "数値型の値が必要です。",
+      "invalidTypeBoolean": "ブール型の値が必要です。",
+      "invalidTypeArray": "配列型の値が必要です。",
+      "invalidTypeObject": "オブジェクト型の値が必要です。",
+      "invalidEnumValue": "指定された値は許可されたオプションのいずれでもありません。",
+      "invalidUnionType": "値が許可された型のいずれにも一致しません。",
+      "invalidEntityId": "エンティティ ID が無効か、形式が正しくありません。",
+      "invalidDecimal": "値は有効な小数である必要があります。",
+      "invalidActionObject": "アクションオブジェクトが無効または構造が不正です。",
+      "missingActionKey": "アクションオブジェクトに必要なキーが欠落しています。",
+      "invalidCustomThemeArray": "カスタムテーマは配列である必要があります。",
+      "invalidCustomThemeEntry": "カスタムテーマの1つ以上のエントリが無効です。",
+      "invalidMinValue": "最小値が無効か、許容範囲を下回っています。",
+      "invalidMaxValue": "最大値が無効か、許容範囲を超えています。",
+      "minGreaterThanMax": "最小値は最大値より大きくできません。",
+      "discontinuousRange": "定義された範囲が連続していません。",
+      "missingColorProperty": "必要な色のプロパティが欠落しています。",
+      "invalidIconType": "指定されたアイコンタイプが無効または認識されません。",
+      "invalidStateContent": "状態の内容が無効または形式が不正です。",
+      "invalidStateContentEntry": "状態の内容の1つ以上のエントリが無効です。",
+      "invalidTheme": "指定されたテーマは不明です。デフォルトのテーマが使用されます。",
+      "appliedDefaultValue": "デフォルト値が自動的に適用されました。"
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "コンテンツ",
+      "interaction": "インタラクション",
+      "theme": "外観"
+    },
+    "field": {
+      "entity": "エンティティ",
+      "attribute": "属性",
+      "name": "名前",
+      "unit": "単位",
+      "decimal": "小数点",
+      "min_value": "最小値",
+      "max_value": "最大値",
+      "max_value_attribute": "属性（最大値）",
+      "tap_action": "短くタップしたときの動作",
+      "double_tap_action": "ダブルタップしたときの動作",
+      "hold_action": "長押ししたときの動作",
+      "icon_tap_action": "アイコンをタップしたときの動作",
+      "icon_double_tap_action": "アイコンをダブルタップしたときの動作",
+      "icon_hold_action": "アイコンを長押ししたときの動作",
+      "toggle_icon": "アイコン",
+      "toggle_name": "名前",
+      "toggle_value": "値",
+      "toggle_unit": "単位",
+      "toggle_secondary_info": "情報",
+      "toggle_progress_bar": "バー",
+      "toggle_force_circular_background": "円形の背景を強制する",
+      "theme": "テーマ",
+      "bar_size": "バーサイズ",
+      "bar_color": "バーの色",
+      "icon": "アイコン",
+      "color": "メインカラー",
+      "layout": "カードレイアウト"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "低い時が最適（CPU、RAMなど）",
+        "optimal_when_high": "高い時が最適（バッテリーなど）",
+        "light": "明るさ",
+        "temperature": "温度",
+        "humidity": "湿度",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "小",
+        "medium": "中",
+        "large": "大",
+        "xlarge": "特大"
+      },
+      "layout": {
+        "horizontal": "水平（デフォルト）",
+        "vertical": "垂直"
+      }
+    }
+  }
+}
