@@ -78,13 +78,15 @@
 
 ## Introduction
 
-This document provides an in-depth overview of all available options, accompanied by detailed examples to
-help you configure the system precisely to your needs. Whether you’re optimizing for customizing features,
-or ensuring compatibility, this guide will serve as your comprehensive reference.
+This document provides an in-depth overview of all available options,
+accompanied by detailed examples to help you configure the system precisely to
+your needs. Whether you’re optimizing for customizing features, or ensuring
+compatibility, this guide will serve as your comprehensive reference.
 
 ## Conventions
 
-In this documentation, the following types are used to describe configuration parameters. Here is what they mean:
+In this documentation, the following types are used to describe configuration
+parameters. Here is what they mean:
 
 ### Input types
 
@@ -95,14 +97,15 @@ A sequence of characters, including letters, numbers, or symbols.
 Example:
 
 ```yaml
-option: "xyz"
+option: 'xyz'
 ```
 
 [🔼 Back to top]
 
 #### Float
 
-A number that may include a decimal point (e.g., 3.14). Can also represent negative values.
+A number that may include a decimal point (e.g., 3.14). Can also represent
+negative values.
 
 _Example_:
 
@@ -114,7 +117,8 @@ option: -1.3
 
 #### Integer
 
-A whole number. In this context, only positive integers are allowed (i.e., no decimals, no negatives).
+A whole number. In this context, only positive integers are allowed (i.e., no
+decimals, no negatives).
 
 _Example_:
 
@@ -126,7 +130,8 @@ option: 1
 
 #### Boolean
 
-A value that can be either `true` or `false`. It is typically used for toggling features on or off.
+A value that can be either `true` or `false`. It is typically used for toggling
+features on or off.
 
 _Example_:
 
@@ -138,9 +143,9 @@ option: true
 
 #### List (Array)
 
-An ordered collection of elements, which can contain multiple values.
-Each element can be of any type. In YAML, this corresponds to a list
-indicated with dashes (`-`).  
+An ordered collection of elements, which can contain multiple values. Each
+element can be of any type. In YAML, this corresponds to a list indicated with
+dashes (`-`).
 
 _Example_:
 
@@ -155,8 +160,8 @@ option:
 
 #### Map (Object)
 
-A set of key-value pairs, also called a dictionary or map.
-Each key is associated with a value that can be of any type.
+A set of key-value pairs, also called a dictionary or map. Each key is
+associated with a value that can be of any type.
 
 _Example_:
 
@@ -172,11 +177,15 @@ object:
 
 A static string or a Jinja template.
 
-This field supports templating using [Home Assistant Jinja2 templates][ha-jinja],
-allowing the option to be conditionally rendered.
+This field supports templating using [Home Assistant Jinja2
+templates][ha-jinja], allowing the option to be conditionally rendered.
 
 The expression is evaluated in the context of the entity's state and attributes.
-The keyword `entity` can be used to represent the entity defined at the card level.
+The keyword `entity` can be used to represent the entity defined at the card
+level.
+
+This is a very long line that definitely exceeds eighty characters and should be
+wrapped by prettier automatically.
 
 _Example_:
 
@@ -190,7 +199,8 @@ option: "{{ state_attr('sensor.temperature', 'unit_of_measurement') }}"
 
 #### Structure
 
-Each configuration option in this documentation follows a consistent structure to ensure clarity and ease of use:
+Each configuration option in this documentation follows a consistent structure
+to ensure clarity and ease of use:
 
 - **Title**  
   The name of the option, as used in the configuration file.
@@ -199,16 +209,22 @@ Each configuration option in this documentation follows a consistent structure t
   Badge to identify the compatibility
 
 - **Parameter specification**  
-  This format provides a quick reference for parameter types, valid values, and default settings without reading full descriptions.
+  This format provides a quick reference for parameter types, valid values, and
+  default settings without reading full descriptions.
 
 - **Description**  
-  A detailed explanation of what the option does, how it behaves, and any specific behavior or rules. If the option supports special values (e.g., `auto`, `null`, etc.), they should be mentioned here.
+  A detailed explanation of what the option does, how it behaves, and any
+  specific behavior or rules. If the option supports special values (e.g.,
+  `auto`, `null`, etc.), they should be mentioned here.
 
 - **Example**  
-  A concrete configuration snippet in YAML showing how the option is typically used. When possible, the example should reflect a realistic or common use case.
+  A concrete configuration snippet in YAML showing how the option is typically
+  used. When possible, the example should reflect a realistic or common use
+  case.
 
 - **Notes** _(optional)_  
-  Any additional details, edge cases, limitations, or version compatibility notes that may help advanced users or clarify uncommon behavior.
+  Any additional details, edge cases, limitations, or version compatibility
+  notes that may help advanced users or clarify uncommon behavior.
 
 [🔼 Back to top]
 
@@ -216,13 +232,14 @@ Each configuration option in this documentation follows a consistent structure t
 
 ##### Compatibility
 
-Throughout this documentation, compatibility badges indicate which components work with specific configuration options:
+Throughout this documentation, compatibility badges indicate which components
+work with specific configuration options:
 
-| Badge | Component | Description |
-|:------|-----------|-------------|
-| [![Card OK][Card-OK]](#compatibility) | **Card Compatible** | This option works with the main card display |
-| [![Badge OK][Badge-OK]](#compatibility) | **Badge Compatible** | This option works with the card badge feature |
-| [![Template OK][Template-OK]](#compatibility) | **Template Compatible** | This option supports Jinja2 templating |
+| Badge                                                    | Component                     | Description                                          |
+| :------------------------------------------------------- | ----------------------------- | ---------------------------------------------------- |
+| [![Card OK][Card-OK]](#compatibility)                    | **Card Compatible**           | This option works with the main card display         |
+| [![Badge OK][Badge-OK]](#compatibility)                  | **Badge Compatible**          | This option works with the card badge feature        |
+| [![Template OK][Template-OK]](#compatibility)            | **Template Compatible**       | This option supports Jinja2 templating               |
 | [![Badge Template OK][BadgeTemplate-OK]](#compatibility) | **Badge Template Compatible** | This option supports Jinja2 templating within badges |
 
 ##### YAML Only
@@ -231,25 +248,31 @@ The following badges is used throughout this documentation:
 
 [![YAML Only][yaml-only]](#yaml-only)
 
-These options are not available in the visual card editor and must be configured manually in YAML mode.
+These options are not available in the visual card editor and must be configured
+manually in YAML mode.
 
 [🔼 Back to top]
 
 #### Parameter specification
 
-This syntax provides an instant overview of configuration options, making it easier to set up parameters correctly.
+This syntax provides an instant overview of configuration options, making it
+easier to set up parameters correctly.
 
 ##### Supported values
 
-When an option only accepts a predefined set of values, we indicate it using the ➡️ symbol, followed by the list of allowed choices.
+When an option only accepts a predefined set of values, we indicate it using the
+➡️ symbol, followed by the list of allowed choices.
 
 _Example_:
 
-> **`layout`** [String] ➡️ {`horizontal`| `vertical`} _(optional, default: `horizontal`)_:
+> **`layout`** [String] ➡️ {`horizontal`| `vertical`} _(optional, default:
+> `horizontal`)_:
 
 ##### Jinja
 
-When an option supports a Jinja template, we use the ➡️ symbol to indicate the type of value that the Jinja expression must return. This helps ensure the template produces the correct data type expected by the configuration.
+When an option supports a Jinja template, we use the ➡️ symbol to indicate the
+type of value that the Jinja expression must return. This helps ensure the
+template produces the correct data type expected by the configuration.
 
 _Example_:
 
@@ -289,7 +312,9 @@ Options related to entity data, attributes, value display logic, and metadata.
 
 #### `entity`
 
-[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
 > **`entity`** [String] _(required)_
 
@@ -304,7 +329,8 @@ entity: sensor.hp_envy_6400_series_tri_color_cartridge
 
 > [!NOTE]
 >
-> This parameter is optional with `entity-progress-card-template` and `entity-progress-badge-template`
+> This parameter is optional with `entity-progress-card-template` and
+> `entity-progress-badge-template`
 
 > [!NOTE]
 >
@@ -336,8 +362,8 @@ attribute: brightness
 
 _Supported entities:_
 
-All entities that have an attribute containing a numeric value are supported. This
-allows the card to work with a wide range of sensors, statistics, or other
+All entities that have an attribute containing a numeric value are supported.
+This allows the card to work with a wide range of sensors, statistics, or other
 entities exposing numeric data through their attributes.
 
 Defining the attribute with the following is not supported:
@@ -394,16 +420,15 @@ _Unit selection_:
 - Otherwise, if `max_value` is an entity, the default unit (%) will be used.
 - Otherwise, the `unit` is automatically determined based on the current value:
   - If the entity is a `timer` the unit will be 's' (seconds).
-  - If the entity is a `duration`:
-    By default, the internal value in the card is expressed in seconds. If
-    you do not specify a unit, we will display the duration based on what
-    is defined in the Home Assistant entity, using a natural format (e.g.,
-    2h 32min). If you want to display the value in seconds, set the unit
-    to 's'. If you prefer a HH:MM:SS format, you can use either timer or
-    flextimer.
+  - If the entity is a `duration`: By default, the internal value in the card is
+    expressed in seconds. If you do not specify a unit, we will display the
+    duration based on what is defined in the Home Assistant entity, using a
+    natural format (e.g., 2h 32min). If you want to display the value in
+    seconds, set the unit to 's'. If you prefer a HH:MM:SS format, you can use
+    either timer or flextimer.
   - If the entity is a `counter`, no unit ('') will be displayed.
-  - Otherwise, the `unit` defined in Home Assistant for the entity will be
-    used (e.g., °C, kWh, etc.).
+  - Otherwise, the `unit` defined in Home Assistant for the entity will be used
+    (e.g., °C, kWh, etc.).
 
 > [!NOTE]
 >
@@ -411,12 +436,11 @@ _Unit selection_:
 > `max_value`. Even if the displayed value uses an automatically detected unit,
 > the progress bar still relies on max_value to calculate the percentage.
 
-> [!WARNING]
-> Setting the unit to % will display the percentage value, while using a
-> different unit will show the value of the primary entity. Switching between
-> non-percentage units does not affect the displayed numeric value. For example,
-> by default, a timer is shown in seconds. If the unit is changed from s
-> (seconds) to min (minutes), no conversion is performed (for now), and the
+> [!WARNING] Setting the unit to % will display the percentage value, while
+> using a different unit will show the value of the primary entity. Switching
+> between non-percentage units does not affect the displayed numeric value. For
+> example, by default, a timer is shown in seconds. If the unit is changed from
+> s (seconds) to min (minutes), no conversion is performed (for now), and the
 > value remains unchanged.
 
 _Example_:
@@ -455,14 +479,13 @@ The `decimal` value will be determined based on the following priority:
 - Otherwise, if the entity has a custom `Display Precision` set in Home
   Assistant (i.e., a value manually configured by the user and different from
   the default), it is used.
-- Otherwise, the `default` number of decimals is selected based on the type
-  of value:
+- Otherwise, the `default` number of decimals is selected based on the type of
+  value:
   - If the value represents a `timer`, the timer default is used.
   - If the value represents a `counter`, the counter default is used.
-  - If the value represents a `duration`, or if the unit is one of j, d, h,
-    min, s, or ms, the duration default is used.
-  - If the unit is `%` (the default unit), the `percentage` default is
-    used.
+  - If the value represents a `duration`, or if the unit is one of j, d, h, min,
+    s, or ms, the duration default is used.
+  - If the unit is `%` (the default unit), the `percentage` default is used.
   - Otherwise, the other default is applied (for units like °C, kWh, etc.).
 
 _Default values:_
@@ -504,7 +527,8 @@ Defines the minimum value to be used when calculating the percentage.
 This allows the percentage to be relative to both a minimum (`min_value`, which
 represents 0%) and a maximum (`max_value`, which represents 100%).
 
-When `center_zero` is enabled, the default `min_value` is -100, offering a clearer and more intuitive display.
+When `center_zero` is enabled, the default `min_value` is -100, offering a
+clearer and more intuitive display.
 
 This value must be numeric (either a float or an integer).
 
@@ -565,7 +589,8 @@ entity. See `attribute`.
 
 #### `reverse`
 
-[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`reverse`** [Boolean] _(optional, default: `false`)_
 
@@ -592,7 +617,8 @@ reverse: true
 
 #### `state_content`
 
-[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`state_content`** [String]|[List] _(optional)_:
 
@@ -610,8 +636,8 @@ _Behavior_:
 _Accepted values_:
 
 - state — Displays the entity's main state.
-- current_position — Displays the current position attribute (commonly used
-  for covers, blinds, etc.).
+- current_position — Displays the current position attribute (commonly used for
+  covers, blinds, etc.).
 - Other custom attributes from the entity can also be listed.
 
 > [!TIP]
@@ -638,8 +664,7 @@ state_content:
 > - The selected attribute is shown before the main numerical display on the
 >   card.
 
-- If an attribute listed does not exist, the card immediately displays
-  unknown.
+- If an attribute listed does not exist, the card immediately displays unknown.
 - This feature is useful for adding additional context (e.g., position,
   status...) to the main progress value.
 
@@ -647,13 +672,15 @@ state_content:
 
 #### `custom_info`
 
-[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`custom_info`** [JINJA] _(optional)_:
 
 The `custom_info` option allows you to display additional, customizable text or
-HTML next to the entity’s value. It supports full [JINJA] and inline HTML, enabling
-you to style or conditionally format the information based on sensor states or logic.
+HTML next to the entity’s value. It supports full [JINJA] and inline HTML,
+enabling you to style or conditionally format the information based on sensor
+states or logic.
 
 See [JINJA].
 
@@ -694,13 +721,15 @@ custom_info: >-
 
 #### `name_info`
 
-[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`name_info`** [JINJA] _(optional)_:
 
 The `name_info` option allows you to display additional, customizable text or
 HTML next to the entity’s name. It supports full [JINJA] and inline HTML,
-enabling you to style or conditionally format the information based on sensor states or logic.
+enabling you to style or conditionally format the information based on sensor
+states or logic.
 
 See [JINJA].
 
@@ -732,7 +761,8 @@ name_info: >-
 
 #### `additions`
 
-[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`additions`** [List] _(optional)_
 
@@ -788,11 +818,13 @@ _Order of Priority for the Icon:_
 
 > **`color`** [String] _(optional)_
 
-The color of the icon. Accepts [Token color][token-color], color names, RGB values,
-or HEX codes. By default, the color is based on state, domain, and device_class of
-your entity for `timer`, `cover`, `light`, `fan`, `climate` and `battery`.
+The color of the icon. Accepts [Token color][token-color], color names, RGB
+values, or HEX codes. By default, the color is based on state, domain, and
+device_class of your entity for `timer`, `cover`, `light`, `fan`, `climate` and
+`battery`.
 
-_Examples:_ `"green"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`...
+_Examples:_ `"green"`, `"rgb(68, 115, 158)"`, `"#FF5733"`,
+`var(--state-icon-color)`...
 
 ```yaml
 type: custom:entity-progress-card
@@ -804,7 +836,9 @@ color: rgb(110, 65, 171)
 
 #### `badge_icon`
 
-[![Card OK][Card-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`badge_icon`** [JINJA] _(optional)_:
 
@@ -828,20 +862,22 @@ badge_icon: >-
 
 > [!NOTE]
 >
-> If the returns nothing (i.e., empty string or None), the badge will
-> not be displayed.
+> If the returns nothing (i.e., empty string or None), the badge will not be
+> displayed.
 
 [🔼 Back to top]
 
 #### `badge_color`
 
-[![Card OK][Card-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`badge_color`** [JINJA] _(optional)_:
 
 The `badge_color` option lets you setup a dynamic badge's background color,
-offering a quick status hint or symbolic representation based on logic or
-sensor values.
+offering a quick status hint or symbolic representation based on logic or sensor
+values.
 
 See [JINJA].
 
@@ -869,7 +905,8 @@ badge_color: >-
 The color of the progress bar. Accepts [Token color][token-color], color names,
 RGB values, or HEX codes.
 
-_Examples:_ `"blue"`, `"rgb(68, 115, 158)"`, `"#FF5733"`, `var(--state-icon-color)`
+_Examples:_ `"blue"`, `"rgb(68, 115, 158)"`, `"#FF5733"`,
+`var(--state-icon-color)`
 
 ```yaml
 type: custom:entity-progress-card
@@ -881,9 +918,12 @@ bar_color: rgb(110, 65, 171)
 
 #### `bar_size`
 
-[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
-> **`bar_size`** [String] ➡️ {`small`|`medium`|`large`|`xlarge`} _(optional, default: `small`)_
+> **`bar_size`** [String] ➡️ {`small`|`medium`|`large`|`xlarge`} _(optional,
+> default: `small`)_
 
 Customizes the appearance of the progress bar by selecting a predefined size.
 Choose from small, medium, or large to adjust the visual scale of the bar.
@@ -896,20 +936,22 @@ type: custom:entity-progress-card
 bar_size: medium
 ```
 
-`xlarge` can only be configured via YAML, and the interface automatically adjusts to accommodate the size of the progress bar.
+`xlarge` can only be configured via YAML, and the interface automatically
+adjusts to accommodate the size of the progress bar.
 
 [🔼 Back to top]
 
 #### `bar_position`
 
-[![Card OK][Card-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility)
+[![Card OK][Card-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
 
 > **`bar_position`** [String] _(optional, default: "default")_
 
 Defines the position of the progress bar within the card.
 
-> [!WARNING]
-> If bar_position is set (to any value other than "default"), the bar_size option will be ignored.
+> [!WARNING] If bar_position is set (to any value other than "default"), the
+> bar_size option will be ignored.
 
 _Example_:
 
@@ -936,11 +978,13 @@ _Default value_:
 
 #### `bar_single_line`
 
-[![Card OK][Card-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility)
+[![Card OK][Card-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
 
 > **`bar_single_line`** [Boolean] _(optional, default: false)_
 
-Enables single-line mode for overlay bars, showing the progress bar in a more compact layout.
+Enables single-line mode for overlay bars, showing the progress bar in a more
+compact layout.
 
 _Example_:
 
@@ -966,7 +1010,9 @@ _Default value_:
 
 #### `bar_effect`
 
-[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
 > **`bar_effect`** [String] or [List] or [JINJA] _(optional)_
 
@@ -976,10 +1022,11 @@ or combine multiple in a list.
 Defines visual effects applied to the progress bar.
 
 - If a **[String]** is provided (e.g. `"gradient"`), only one effect is applied.
-- If a **[List]** is provided (e.g. `["radius", "shimmer"]`), effects are combined.
+- If a **[List]** is provided (e.g. `["radius", "shimmer"]`), effects are
+  combined.
 - If using a **[JINJA] template**, it should return either:
   - a single effect string (`shimmer`)
-  - or a comma-separated string (`"gradient, shimmer"`) which will be parsed as a list.
+  - or a comma-separated string (`"gradient, shimmer"`)
 
 _Available options_:
 
@@ -1015,15 +1062,17 @@ bar_effect: |-
   {% endif %}
 ```
 
-> [!NOTE]
-> The shimmer effect is disabled when center_zero is enabled (center_zero = true).
-
+> [!NOTE] The shimmer effect is disabled when center_zero is enabled
+> (center_zero = true).
 
 [🔼 Back to top]
 
 #### `bar_orientation`
 
-[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`bar_orientation`** [String] {`rtl`|`ltr`} _(optional, default: `ltr`)_
 
@@ -1057,12 +1106,13 @@ reverse: true
 
 #### `force_circular_background`
 
-[![Card OK][Card-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility)
+[![Card OK][Card-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
 
 > **`force_circular_background`** [String] _(optional: false)_
 
-This option forces a **circular background** to be displayed behind the icon shown
-on the card.
+This option forces a **circular background** to be displayed behind the icon
+shown on the card.
 
 HA 2025.3 bring a lot of improvement and change the circular background
 strategy: <https://www.home-assistant.io/blog/2025/03/05/release-20253/>
@@ -1087,11 +1137,13 @@ force_circular_background: true
 
 #### `trend_indicator`
 
-[![Card OK][Card-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility)
+[![Card OK][Card-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
 
 > **`trend_indicator`** [Boolean] _(optional, default: false)_
 
-Displays trend icons indicating the direction of the entity's value. Icons are automatically positioned at the top right of the card.
+Displays trend icons indicating the direction of the entity's value. Icons are
+automatically positioned at the top right of the card.
 
 _Example_:
 
@@ -1117,9 +1169,11 @@ _Default value_:
 
 #### `layout`
 
-[![Card OK][Card-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility)
+[![Card OK][Card-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
 
-> **`layout`** [String] ➡️ {`horizontal`| `vertical`} _(optional, default: `horizontal`)_:
+> **`layout`** [String] ➡️ {`horizontal`| `vertical`} _(optional, default:
+> `horizontal`)_:
 
 Determines the layout of the elements inside the card. You can choose between
 different layouts based on your visual preferences:
@@ -1139,13 +1193,16 @@ layout: vertical
 
 #### `frameless`
 
-[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`frameless`** [Boolean] _(optional, default: false)_
 
-Allows you to remove the default Lovelace card styling: the border and background
-color. When set to `true`, the card blends seamlessly into the interface or can
-be embedded in other designs without visual interference.
+Allows you to remove the default Lovelace card styling: the border and
+background color. When set to `true`, the card blends seamlessly into the
+interface or can be embedded in other designs without visual interference.
 
 _Compatibility_:
 
@@ -1168,7 +1225,10 @@ frameless: true
 
 #### `marginless`
 
-[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`marginless`** [Boolean] _(optional, default: false)_
 
@@ -1186,16 +1246,19 @@ marginless: true
 
 #### `height`
 
-[![Card OK][Card-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`height`** [String] (optional)
 
-Sets the height (e.g., 120px, 10em, 30%) for the card.
-Useful for ensuring consistent layout in horizontal stacks or grids.
+Sets the height (e.g., 120px, 10em, 30%) for the card. Useful for ensuring
+consistent layout in horizontal stacks or grids.
 
 > [!NOTE]
 >
-> If the main objective is to reduce the size, test the `marginless` parameter before adjusting the `height`.
+> If the main objective is to reduce the size, test the `marginless` parameter
+> before adjusting the `height`.
 
 _Example_:
 
@@ -1209,7 +1272,10 @@ height: 140px
 
 #### `min_width`
 
-[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`min_width`** [String] (optional)
 
@@ -1228,7 +1294,10 @@ min_width: 140px
 
 #### `reverse_secondary_info_row`
 
-[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`reverse_secondary_info_row`** [Boolean] _(optional, default: false)_
 
@@ -1236,8 +1305,8 @@ Reverses the order of the progress bar and the secondary info when using a
 horizontal layout.
 
 When set to `true`, the secondary info appears to the right of the progress bar
-instead of the left. Useful for emphasizing the progress visually by aligning
-it first, or for adapting to specific design preferences.
+instead of the left. Useful for emphasizing the progress visually by aligning it
+first, or for adapting to specific design preferences.
 
 ```yaml
 type: custom:entity-progress-card
@@ -1249,9 +1318,11 @@ reverse_secondary_info_row: true
 
 #### `unit_spacing`
 
-[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![YAML Only][yaml-only]](#yaml-only)
 
-> **`unit_spacing`** [String] ➡️ {`auto`|`space`|`no-space`} _(optional, default: `auto`)_
+> **`unit_spacing`** [String] ➡️ {`auto`|`space`|`no-space`} _(optional,
+> default: `auto`)_
 
 Defines whether a space should appear between numeric values and units, either
 following locale rules or overriding them explicitly.
@@ -1260,19 +1331,22 @@ following locale rules or overriding them explicitly.
   space)
 - `space`: Forces a space between number and unit (e.g., 80 %), regardless of
   locale
-- `no-space`: Forces no space between number and unit (e.g., 80%), regardless
-  of locale
+- `no-space`: Forces no space between number and unit (e.g., 80%), regardless of
+  locale
 
 [🔼 Back to top]
 
 #### `center_zero`
 
-[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`center_zero`** [Boolean] _(optional, default: `false`)_
 
-Centers the progress bar at zero, allowing for better visualization of values that
-fluctuate around zero (e.g., positive/negative changes).
+Centers the progress bar at zero, allowing for better visualization of values
+that fluctuate around zero (e.g., positive/negative changes).
 
 _Example_:
 
@@ -1288,7 +1362,8 @@ center_zero: true
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 
-> **`theme`** [String] ➡️ {`optimal_when_low`|`optimal_when_high`|`light`|`temperature`|`humidity`|`pm25`|`voc`} _(optional)_
+> **`theme`** [String] ➡️ {`optimal_when_low`|`optimal_when_high`|`light`|
+> `temperature`|`humidity`|`pm25`|`voc`} _(optional)_
 
 Allows customization of the progress bar's appearance using a predefined theme.
 This theme dynamically adjusts the `icon`, `color` and `bar-color` parameters
@@ -1303,24 +1378,23 @@ type: custom:entity-progress-card
 theme: light
 ```
 
-> [!WARNING]
-> The `battery`, `cpu`, and `memory` parameters are deprecated and SHOULD no
-> longer be used. Although these parameters are still valid, they MUST be
-> replaced by `optimal_when_low` or `optimal_when_high`. These new parameters,
-> introduced in version `1.1.7`, eliminate the need for multiple theme
-> definitions and are sufficient to replace the deprecated themes.
+> [!WARNING] The `battery`, `cpu`, and `memory` parameters are deprecated and
+> SHOULD no longer be used. Although these parameters are still valid, they MUST
+> be replaced by `optimal_when_low` or `optimal_when_high`. These new
+> parameters, introduced in version `1.1.7`, eliminate the need for multiple
+> theme definitions and are sufficient to replace the deprecated themes.
 
 [🔼 Back to top]
 
 #### `custom_theme`
 
-[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`custom_theme`** [List] of [Map] _(optional)_
 
 Defines a list of custom theme rules based on value ranges. Setting this
-variable disables the theme variable. This variable can only be defined in
-YAML.
+variable disables the theme variable. This variable can only be defined in YAML.
 
 _Map definition:_
 
@@ -1425,13 +1499,15 @@ custom_theme:
 
 #### `interpolate`
 
-[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![YAML Only][yaml-only]](#yaml-only)
 
 > **`interpolate`** [Boolean] _(optional, default: `false`)_
 
-Enables smooth color transition between consecutive steps of a custom theme. When set
-to true, the icon and bar colors are interpolated between the current step and the next
-one based on the current value's position within the step range.
+Enables smooth color transition between consecutive steps of a custom theme.
+When set to true, the icon and bar colors are interpolated between the current
+step and the next one based on the current value's position within the step
+range.
 
 _Example_:
 
@@ -1455,9 +1531,11 @@ interpolate: true
 
 #### `hide`
 
-[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
-> **`hide`** [List] (optional)_:
+> **`hide`** [List] (optional)\_:
 
 Defines which elements should be hidden in the card.
 
@@ -1503,9 +1581,12 @@ disable_unit: true
 
 #### `watermark`
 
-[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility) [![YAML Only][yaml-only]](#yaml-only)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+[![YAML Only][yaml-only]](#yaml-only)
 
-> **`watermark`** [Map] (optional)_:
+> **`watermark`** [Map] (optional)\_:
 
 The `watermark` option allows you to visually highlight specific value
 thresholds (low and high) within the progress bar, helping you better interpret
@@ -1513,29 +1594,30 @@ the current state at a glance.
 
 _Map definition_:
 
-- `high` (number): The upper value where the bar will start indicating a high
-  zone (0–100).
-- `high_color` (string): The CSS color used for the high watermark zone (can
-  be a name or hex).
-- `low` (number): The lower value where the bar starts highlighting a low zone
+- `high` (number/entity): The upper value where the bar will start indicating a
+  high zone (0–100).
+- `high_attribute`: Entity's attribute to define a high zone.
+- `high_color` (string): The CSS color used for the high watermark zone (can be
+  a name or hex).
+- `low` (number/entity): The lower value where the bar starts highlighting a low zone
   (0–100).
+- `low_attribute`: Entity's attribute to define a low zone.
 - `low_color` (string): The CSS color used for the low watermark zone.
 - `type` (string): Defines the style of the watermark overlay.
-  - `blended` (default): A subtle colored overlay that merges with the
-    bar’s colors for a more integrated look.
-  - `area`: A soft transparent shape placed over the bar, without blending
-    into the bar's colors.
+  - `blended` (default): A subtle colored overlay that merges with the bar’s
+    colors for a more integrated look.
+  - `area`: A soft transparent shape placed over the bar, without blending into
+    the bar's colors.
   - `striped`: Diagonal stripes for a patterned effect.
   - `triangle`: Triangle shapes as a watermark.
   - `round`: Rounded shapes applied as a watermark.
   - `line`: Vertical lines pattern (like a hatch effect).
 - `line_size` (string): Defines the thickness of the lines when the watermark
   type is 'line' (e.g., "3px").
-- `opacity` (number): Adjusts the transparency of the watermark overlay (from
-  0 = fully transparent to 1 = fully opaque).
+- `opacity` (number): Adjusts the transparency of the watermark overlay (from 0
+  = fully transparent to 1 = fully opaque).
 - `disable_low` (boolean): If set to true, disables the low watermark display.
-- `disable_high` (boolean): If set to true, disables the high watermark
-  display.
+- `disable_high` (boolean): If set to true, disables the high watermark display.
 
 _Example_:
 
@@ -1561,27 +1643,30 @@ Define interactions on tap, double tap, or hold gestures.
 
 #### `xyz_action`
 
-[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
-> **`xyz_action`** [map] ➡️ {action: {`more-info` | `toggle` | `perform-action` | `navigate` | `url` | `assist` | `none`}...} _(optional)_
+> **`xyz_action`** [map] ➡️ {action: {`more-info` | `toggle` | `perform-action`
+> | `navigate` | `url` | `assist` | `none`}...} _(optional)_
 
 _`xyz_action`_:
 
 - `tap_action`: Defines the behavior when a user taps on the card. The action
   could be a navigation, toggle, or any other pre-defined action.
-- `double_tap_action`: Defines the behavior when a user double-taps on the
-  card. This can be used to trigger a different action from the regular tap.
+- `double_tap_action`: Defines the behavior when a user double-taps on the card.
+  This can be used to trigger a different action from the regular tap.
 - `hold_action`: Defines the behavior when the user holds down (long press) on
   the card. This is often used for actions that should only be triggered with a
   longer press.
 - `icon_tap_action`: Defines the behavior when the user taps on the icon
-  (typically an icon on a card). This action can be different from the
-  general tap_action of the card.
+  (typically an icon on a card). This action can be different from the general
+  tap_action of the card.
 - `icon_double_tap_action`: Defines the behavior when the user double-taps on
   the icon. This can be used to trigger an alternative action from the regular
   icon_tap_action.
-- `icon_hold_action`: Defines the behavior when the user holds down (long
-  press) on the icon. This action might be used for a different, more powerful
+- `icon_hold_action`: Defines the behavior when the user holds down (long press)
+  on the icon. This action might be used for a different, more powerful
   interaction compared to the regular tap or double tap.
 
 > [!NOTE]
@@ -1615,8 +1700,7 @@ _Options:_
 - `navigation_path` _path_: Lovelace path to navigate to (e.g.,
   /lovelace/lights).
 - `url_path` _url_: URL to open when action is 'url' (e.g.,
-  <https://example.com>).
-  ...
+  <https://example.com>). ...
 
 _Default:_
 
@@ -1624,8 +1708,8 @@ _Default:_
 - hold_action: `none`
 - double_tap_action: `none`
 - icon_tap_action:
-  - `toggle` if the entity is a `light`, `switch`, `fan`, `input_boolean`,
-    or `media_player`
+  - `toggle` if the entity is a `light`, `switch`, `fan`, `input_boolean`, or
+    `media_player`
   - `none` otherwise
 - icon_hold_action: `none`
 - icon_double_tap_action: `none`
@@ -1647,10 +1731,11 @@ tap_action:
   navigation_path: /lovelace/lights
 ```
 
-> [!NOTE]
-> It's possible to specify a different entity for an action. For example, this can be useful if you want the `more-info`
-> popup to display information for a different entity to the one used in the progress card. As shown below, the progress
-> card shows a stacked bar chart with `pv1_power` and `pv2_power`, but displays `pv_total_power` when tapped.
+> [!NOTE] It's possible to specify a different entity for an action. For
+> example, this can be useful if you want the `more-info` popup to display
+> information for a different entity to the one used in the progress card. As
+> shown below, the progress card shows a stacked bar chart with `pv1_power` and
+> `pv2_power`, but displays `pv_total_power` when tapped.
 
 _Example_:
 
@@ -1671,33 +1756,34 @@ tap_action:
 
 ### Common options
 
-These options are the same as those of the `entity-progress-card` and are available for Templates as well:
+These options are the same as those of the `entity-progress-card` and are
+available for Templates as well:
 
-| **Option**                         | **Type**                 | **Default**                 | **Description**                         | **Link**                            |
-| :--------------------------------- |:------------------------ | :-------------------------- | :-------------------------------------- | :---------------------------------- |
-| **Data Options**                   |                          |                             |                                         |                                     |
-| `entity`                           | string (optional)        | —                           | Main entity ID                          | [Link](#entity)                     |
-| **Styling Options**                |                          |                             |                                         |                                     |
-| `badge_icon`                       | Jinja (optional)         | —                           | Dynamic badge icon                      | [Link](#badge_icon)                 |
-| `badge_color`                      | Jinja (optional)         | —                           | Dynamic badge color                     | [Link](#badge_color)                |
-| `bar_size`                         | string (optional)        | `small`                     | Size of the progress bar                | [Link](#bar_size)                   |
-| `bar_position`                     | string (optional)        | `default`                   | Position of the progress bar            | [Link](#bar_position)               |
-| `bar_single_line`                  | boolean (optional)       | `false`                     | single-line mode for overlay bars       | [Link](#bar_single_line)            |
-| `bar_effect`                       | string/list/jinja        | —                           | Visual effects for the bar              | [Link](#bar_effect)                 |
-| `bar_orientation`                  | string (optional)        | `ltr`                       | Bar direction                           | [Link](#bar_orientation)            |
-| `force_circular_background`        | boolean (optional)       | `false`                     | Force icon circle background            | [Link](#force_circular_background)  |
-| `trend_indicator`                  | string (optional)        | `false`                     | Displays trend icons.                   | [Link](#trend_indicator)            |
-| `layout`                           | string (optional)        | `horizontal`                | Layout direction                        | [Link](#layout)                     |
-| `frameless`                        | boolean (optional)       | `false`                     | Remove card frame                       | [Link](#frameless)                  |
-| `marginless`                       | boolean (optional)       | `false`                     | Remove top/bottom margin                | [Link](#marginless)                 |
-| `height`                           | string (optional)        | —                           | Card height                             | [Link](#height)                     |
-| `min_width`                        | string (optional)        | —                           | Minimum width                           | [Link](#min_width)                  |
-| `reverse_secondary_info_row`       | boolean (optional)       | `false`                     | Flip info bar layout                    | [Link](#reverse_secondary_info_row) |
-| `center_zero`                      | boolean (optional)       | `false`                     | Center the bar on 0                     | [Link](#center_zero)                |
-| `hide`                             | list (optional)          | —                           | Hide parts of the card                  | [Link](#hide)                       |
-| `watermark`                        | map (optional)           | —                           | Adds min/max overlays                   | [Link](#watermark)                  |
-| **Behavior And Actions**           |                          |                             |                                         |                                     |
-| `xyz_action`                       | map (optional)           | see defaults                | Tap/double/hold actions                 | [Link](#xyz_action)                 |
+| **Option**                   | **Type**           | **Default**  | **Description**                   | **Link**                                   |
+| :--------------------------- | :----------------- | :----------- | :-------------------------------- | :----------------------------------------- |
+| **Data Options**             |                    |              |                                   |                                            |
+| `entity`                     | string (optional)  | —            | Main entity ID                    | [Config Ref.](#entity)                     |
+| **Styling Options**          |                    |              |                                   |                                            |
+| `badge_icon`                 | Jinja (optional)   | —            | Dynamic badge icon                | [Config Ref.](#badge_icon)                 |
+| `badge_color`                | Jinja (optional)   | —            | Dynamic badge color               | [Config Ref.](#badge_color)                |
+| `bar_size`                   | string (optional)  | `small`      | Size of the progress bar          | [Config Ref.](#bar_size)                   |
+| `bar_position`               | string (optional)  | `default`    | Position of the progress bar      | [Config Ref.](#bar_position)               |
+| `bar_single_line`            | boolean (optional) | `false`      | single-line mode for overlay bars | [Config Ref.](#bar_single_line)            |
+| `bar_effect`                 | string/list/jinja  | —            | Visual effects for the bar        | [Config Ref.](#bar_effect)                 |
+| `bar_orientation`            | string (optional)  | `ltr`        | Bar direction                     | [Config Ref.](#bar_orientation)            |
+| `force_circular_background`  | boolean (optional) | `false`      | Force icon circle background      | [Config Ref.](#force_circular_background)  |
+| `trend_indicator`            | string (optional)  | `false`      | Displays trend icons.             | [Config Ref.](#trend_indicator)            |
+| `layout`                     | string (optional)  | `horizontal` | Layout direction                  | [Config Ref.](#layout)                     |
+| `frameless`                  | boolean (optional) | `false`      | Remove card frame                 | [Config Ref.](#frameless)                  |
+| `marginless`                 | boolean (optional) | `false`      | Remove top/bottom margin          | [Config Ref.](#marginless)                 |
+| `height`                     | string (optional)  | —            | Card height                       | [Config Ref.](#height)                     |
+| `min_width`                  | string (optional)  | —            | Minimum width                     | [Config Ref.](#min_width)                  |
+| `reverse_secondary_info_row` | boolean (optional) | `false`      | Flip info bar layout              | [Config Ref.](#reverse_secondary_info_row) |
+| `center_zero`                | boolean (optional) | `false`      | Center the bar on 0               | [Config Ref.](#center_zero)                |
+| `hide`                       | list (optional)    | —            | Hide parts of the card            | [Config Ref.](#hide)                       |
+| `watermark`                  | map (optional)     | —            | Adds min/max overlays             | [Config Ref.](#watermark)                  |
+| **Behavior And Actions**     |                    |              |                                   |                                            |
+| `xyz_action`                 | map (optional)     | see defaults | Tap/double/hold actions           | [Config Ref.](#xyz_action)                 |
 
 [🔼 Back to top]
 
@@ -1705,39 +1791,42 @@ These options are the same as those of the `entity-progress-card` and are availa
 
 #### `name` (Jinja)
 
-[![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
 > **`name`** [JINJA] ➡️ [String]
 
-Dynamically generates the name using [JINJA] templates.
-We can access entity states and attributes to create context-aware names.
+Dynamically generates the name using [JINJA] templates. We can access entity
+states and attributes to create context-aware names.
 
-See [`name`](#name).
-See [JINJA].
+See [`name`](#name). See [JINJA].
 
 _Example_:
 
 ```yaml
-name: "{{ state_attr('sensor.battery_level', 'friendly_name') }} ({{ states('sensor.battery_level') }}%)"
+name:
+  "{{ state_attr('sensor.battery_level', 'friendly_name') }} ({{
+  states('sensor.battery_level') }}%)"
 ```
 
 [🔼 Back to top]
 
 #### `icon` (Jinja)
 
-[![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
-> **`icon`** [JINJA] ➡️ [String]  
+> **`icon`** [JINJA] ➡️ [String]
 
-Conditionally sets the card icon based on entity state or attributes. Useful for dynamic icon changes.
+Conditionally sets the card icon based on entity state or attributes. Useful for
+dynamic icon changes.
 
 _Order of Priority for the Icon:_
 
-- Icon ([JINJA]): A custom icon specifically defined for the item through a [JINJA] expression.
+- Icon ([JINJA]): A custom icon defined with a [JINJA] expression.
 - Entity icon.
 
-See [`icon`](#icon).
-See [JINJA].
+See [`icon`](#icon). See [JINJA].
 
 _Example_:
 
@@ -1754,11 +1843,13 @@ icon: >-
 
 #### `secondary` (Jinja)
 
-[![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
 > **`secondary`** [JINJA] ➡️ [String]
 
-Renders the secondary content (e.g., unit, status, additional info) using templates for dynamic secondary text display.
+Renders the secondary content (e.g., unit, status, additional info) using
+templates for dynamic secondary text display.
 
 _Example_:
 
@@ -1772,40 +1863,44 @@ secondary: >-
 
 #### `percent` (Jinja)
 
-[![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
 > **`percent`** [JINJA] ➡️ [Float]
 
-Calculates the progress percentage using templates. Enables complex calculations from multiple entities or custom formulas.
+Calculates the progress percentage using templates. Enables complex calculations
+from multiple entities or custom formulas.
 
 _Example_:
 
 A simple example:
+
 ```yaml
 percent: >-
-  {% set used = states('sensor.disk_used') | int %}
-  {% set total = states('sensor.disk_total') | int %}
-  {{ (used / total * 100) | round(1) }}
+  {% set used = states('sensor.disk_used') | int %} {% set total =
+  states('sensor.disk_total') | int %} {{ (used / total * 100) | round(1) }}
 ```
 
 Another example, to manage sensor availability and min/max:
+
 ```yaml
 percent: >-
-  {% set temp_state = states('sensor.lounge_temp_temperature') %}
-  {% set max = 22 %}
-  {% set min = -10 %}
-  {{ ((temp_state | float - min) / (max - min) * 100) | round(1) if temp_state not in ['unknown', 'unavailable', 'none'] else 0 }}
+  {% set temp_state = states('sensor.lounge_temp_temperature') %} {% set max =
+  22 %} {% set min = -10 %} {{ ((temp_state | float - min) / (max - min) * 100)
+  | round(1) if temp_state not in ['unknown', 'unavailable', 'none'] else 0 }}
 ```
 
 [🔼 Back to top]
 
 #### `color` (Jinja)
 
-[![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
 > **`color`** [JINJA] ➡️ [String]
 
-Dynamically sets the icon color based on conditions. Useful for visual feedback based on entity states.
+Dynamically sets the icon color based on conditions. Useful for visual feedback
+based on entity states.
 
 See [`color`](#color).
 
@@ -1826,11 +1921,13 @@ color: >-
 
 #### `bar_color` (Jinja)
 
-[![Template OK][Template-OK]](#compatibility) [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
 > **`bar_color`** [JINJA] ➡️ [String]
 
-Conditionally sets the progress bar color using templates. Supports gradients and complex color logic.
+Conditionally sets the progress bar color using templates. Supports gradients
+and complex color logic.
 
 See [`bar_color`](#bar_color).
 
@@ -1838,8 +1935,7 @@ _Example_:
 
 ```yaml
 bar_color: >-
-  {% set level = states('sensor.battery_level') | int %}
-  {% if level > 80 %}
+  {% set level = states('sensor.battery_level') | int %} {% if level > 80 %}
     linear-gradient(90deg, lightgreen, green)
   {% elif level > 20 %}
     linear-gradient(90deg, yellow, orange)
@@ -1859,7 +1955,8 @@ _This reference guide is adapted for entity-progress-card._
 [Card-OK]: https://img.shields.io/badge/Card-OK-green.svg?style=flat
 [Badge-OK]: https://img.shields.io/badge/Badge-OK-green.svg?style=flat
 [Template-OK]: https://img.shields.io/badge/Template-OK-green.svg?style=flat
-[BadgeTemplate-OK]: https://img.shields.io/badge/Badge%20Template-OK-green.svg?style=flat
+[BadgeTemplate-OK]:
+  https://img.shields.io/badge/Badge%20Template-OK-green.svg?style=flat
 [String]: #string
 [Float]: #float
 [Integer]: #integer
@@ -1868,4 +1965,5 @@ _This reference guide is adapted for entity-progress-card._
 [Map]: #map-object
 [JINJA]: #jinja
 [ha-jinja]: https://www.home-assistant.io/docs/configuration/templating/
-[token-color]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/theme.md#token-color
+[token-color]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/theme.md#token-color

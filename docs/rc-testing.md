@@ -1,11 +1,12 @@
 # 🧪 Testing a Release Candidate (RC) – Safely
 
-We provide a process designed to be as safe as possible, but please always verify your backups before proceeding.
+We provide a process designed to be as safe as possible, but please always
+verify your backups before proceeding.
 
 > [!WARNING]
 > **Development Status**
 >
-> - Release candidate version - not intended for production use / Avoid use on critical production machines
+> - Release candidate version - not intended for production use
 > - Potential bugs and instabilities may occur
 > - Features subject to change before final release
 > - Thorough testing required before wider deployment
@@ -18,12 +19,14 @@ We provide a process designed to be as safe as possible, but please always verif
 > - Check for known issues or required changes
 
 > [!WARNING]
-> To avoid interfering with your HA environment or HACS-installed versions,
-> **do not** overwrite the HACS installation. Instead, follow this isolated setup process.
+> To avoid interfering with your HA environment or HACS-installed
+> versions, **do not** overwrite the HACS installation. Instead, follow this
+> isolated setup process.
 
 ## ⬇️ Install the RC version
 
-We recommend separating the RC version from your main setup by creating a dedicated test folder.
+We recommend separating the RC version from your main setup by creating a
+dedicated test folder.
 
 ### 📁 Create a Test Directory
 
@@ -33,15 +36,16 @@ In your Home Assistant config folder, create a `test` folder.
 mkdir -p config/www/test/
 ```
 
-> [!NOTE]
-> This allows for clean separation between official HACS components and manually tested files.
+> [!NOTE] This allows for clean separation between official HACS components and
+> manually tested files.
 
 ### ⬇️ Download and Add the RC version
 
 - Download the file `entity-progress-card.js` (RC version) to the
-    `/config/www/test/` directory in your Home Assistant setup.
+  `/config/www/test/` directory in your Home Assistant setup.
 - Add `/local/test/entity-progress-card.js` to your Lovelace resources:
-  - Go to **Settings** ➡️ **Dashboards** ➡️ **Resources** ➡️ **`⋮`** ➡️ **Add Resource**
+  - Go to **Settings** ➡️ **Dashboards** ➡️ **Resources** ➡️ **`⋮`** ➡️ **Add
+    Resource**
   - Set :
     - URL: `/local/test/entity-progress-card.js`
     - Type: `JavaScript Module`
@@ -52,7 +56,7 @@ mkdir -p config/www/test/
 
 ### How to use the RC version
 
-We strongly recommend duplicating an existing card and modifying only the type.  
+We strongly recommend duplicating an existing card and modifying only the type.
 
 Your original card use:
 

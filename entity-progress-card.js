@@ -5708,47 +5708,47 @@ class ThemeManager {
     const lastStep = this.#currentStyle.length - 1;
     const thresholdSize = CARD.config.value.max / lastStep;
     const percentage = Math.max(0, Math.min(this.#value, CARD.config.value.max));
-    const themeData = this.#currentStyle[Math.floor(percentage / thresholdSize)];
-    this.#icon = themeData.icon;
-    this.#iconColor = themeData.color;
-    this.#barColor = themeData.color;
+    const index = Math.min(Math.floor(percentage / thresholdSize), lastStep);
+    const ratio = (percentage - index * thresholdSize) / thresholdSize;
+    this.#applyColors(this.#currentStyle[index], this.#currentStyle[index + 1] ?? null, ratio);
   }
 
   #setStyle() {
-    let themeData = null;
-    let nextThemeData = null;
-    let ratio = 0;
+    let [themeData, nextThemeData, ratio] = [null, null, 0];
 
     if (this.#value >= this.#currentStyle[this.#currentStyle.length - 1].max) {
       themeData = this.#currentStyle[this.#currentStyle.length - 1];
     } else if (this.#value < this.#currentStyle[0].min) {
       themeData = this.#currentStyle[0];
     } else {
-      //themeData = this.#currentStyle.find((level) => this.#value >= level.min && this.#value < level.max);
       const index = this.#currentStyle.findIndex((level) => this.#value >= level.min && this.#value < level.max);
       themeData = this.#currentStyle[index];
       nextThemeData = this.#currentStyle[index + 1] ?? null;
-      // ratio de progression dans ce step (0 → 1)
       ratio = (this.#value - themeData.min) / (themeData.max - themeData.min);
     }
-    if (themeData) {
-      this.#icon = themeData.icon || null;
-      const shouldInterpolate = this.#interpolate && nextThemeData;
-      if (shouldInterpolate) {
-        this.#iconColor = ThemeManager.#interpolateColor(
-          ThemeManager.adaptColor(themeData.icon_color || themeData.color || null),
-          ThemeManager.adaptColor(nextThemeData.icon_color || nextThemeData.color || null),
-          ratio,
-        );
-        this.#barColor = ThemeManager.#interpolateColor(
-          ThemeManager.adaptColor(themeData.bar_color || themeData.color || null),
-          ThemeManager.adaptColor(nextThemeData.bar_color || nextThemeData.color || null),
-          ratio,
-        );
-      } else {
-        this.#iconColor = ThemeManager.adaptColor(themeData.icon_color || themeData.color || null);
-        this.#barColor = ThemeManager.adaptColor(themeData.bar_color || themeData.color || null);
-      }
+
+    this.#applyColors(themeData, nextThemeData, ratio);
+  }
+  
+  #applyColors(themeData, nextThemeData, ratio) {
+    this.#icon = themeData.icon || null;
+
+    if (this.#interpolate && nextThemeData) {
+      const color = ThemeManager.#interpolateColor(
+        ThemeManager.adaptColor(themeData.icon_color || themeData.color || null),
+        ThemeManager.adaptColor(nextThemeData.icon_color || nextThemeData.color || null),
+        ratio,
+      );
+      const barColor = ThemeManager.#interpolateColor(
+        ThemeManager.adaptColor(themeData.bar_color || themeData.color || null),
+        ThemeManager.adaptColor(nextThemeData.bar_color || nextThemeData.color || null),
+        ratio,
+      );
+      this.#iconColor = color;
+      this.#barColor = barColor;
+    } else {
+      this.#iconColor = ThemeManager.adaptColor(themeData.icon_color || themeData.color || null);
+      this.#barColor = ThemeManager.adaptColor(themeData.bar_color || themeData.color || null);
     }
   }
   static #interpolateColor(from, to, ratio) {
@@ -7048,9 +7048,13 @@ const additionItem = types.fallbackTo(
 );
 
 const watermarkSchema = {
-  low: types.optionalNumberWithDefault(CARD.config.defaults.watermark.low),
+  // low: types.optionalNumberWithDefault(CARD.config.defaults.watermark.low),
+  low: types.fallbackTo(types.union(types.number, types.string), CARD.config.defaults.watermark.low),
+  low_attribute: types.optionalString(),
   low_color: types.optionalStringWithDefault(CARD.config.defaults.watermark.low_color),
-  high: types.optionalNumberWithDefault(CARD.config.defaults.watermark.high),
+  // high: types.optionalNumberWithDefault(CARD.config.defaults.watermark.high),
+  high: types.fallbackTo(types.union(types.number, types.string), CARD.config.defaults.watermark.high),
+  high_attribute: types.optionalString(),
   high_color: types.optionalStringWithDefault(CARD.config.defaults.watermark.high_color),
   opacity: types.optionalNumberWithDefault(CARD.config.defaults.watermark.opacity),
   type: types.enumsWithDefault(['blended', 'area', 'striped', 'triangle', 'round', 'line'], CARD.config.defaults.watermark.type),
@@ -7318,16 +7322,25 @@ class BaseConfigHelper {
   }
 
   _checkHAEnvironment() {
-    const entityState = this._hassProvider.getEntityStateObj(this.config.entity);
-    const maxValueState = is.nonEmptyString(this.config.max_value) ? this._hassProvider.getEntityStateObj(this.config.max_value) : null;
+    const resolve = (key) => is.nonEmptyString(key) ? this._hassProvider.getEntityStateObj(key) : null;
 
-    if (is.string(this.config.attribute) && entityState && !has.own(entityState.attributes, this.config.attribute))
-      this.#HAError = { path: 'attribute', errorCode: 'attributeNotFound', severity: SEV.error };
-    else if (is.string(this.config.max_value) && !maxValueState)
-      this.#HAError = { path: 'max_value', errorCode: 'entityNotFound', severity: SEV.error };
-    else if (is.string(this.config.max_value_attribute) && maxValueState && !has.own(maxValueState.attributes, this.config.max_value_attribute))
-      this.#HAError = { path: 'max_value_attribute', errorCode: 'attributeNotFound', severity: SEV.error };
-    else this.#HAError = null;
+    const entityState = resolve(this.config.entity);
+    const maxValueState = resolve(this.config.max_value);
+    const lowWMState = resolve(this.config?.watermark?.low);
+    const highWMState = resolve(this.config?.watermark?.high);
+
+    const checks = [
+      { condition: is.string(this.config.attribute) && entityState && !has.own(entityState.attributes, this.config.attribute), path: 'attribute', errorCode: 'attributeNotFound' },
+      { condition: is.nonEmptyString(this.config.max_value) && !maxValueState, path: 'max_value', errorCode: 'entityNotFound' },
+      { condition: is.nonEmptyString(this.config.max_value_attribute) && maxValueState && !has.own(maxValueState.attributes, this.config.max_value_attribute), path: 'max_value_attribute', errorCode: 'attributeNotFound' },
+      { condition: is.nonEmptyString(this.config.watermark?.low) && !lowWMState, path: 'watermark.low', errorCode: 'entityNotFound' },
+      { condition: is.nonEmptyString(this.config.watermark?.low_attribute) && lowWMState && !has.own(lowWMState.attributes, this.config.watermark.low_attribute), path: 'watermark.low_attribute', errorCode: 'attributeNotFound' },
+      { condition: is.nonEmptyString(this.config.watermark?.high) && !highWMState, path: 'watermark.high', errorCode: 'entityNotFound' },
+      { condition: is.nonEmptyString(this.config.watermark?.high_attribute) && highWMState && !has.own(highWMState.attributes, this.config.watermark.high_attribute), path: 'watermark.high_attribute', errorCode: 'attributeNotFound' },
+    ];
+
+    const failed = checks.find(c => c.condition);
+    this.#HAError = failed ? { path: failed.path, errorCode: failed.errorCode, severity: SEV.error } : null;
   }
 
   get _hassProvider() {
@@ -7411,15 +7424,30 @@ class MinimalCardView {
   _lastPercent = null;
   _configHelper = null;
   _currentValue = new EntityOrValue();
+  #lowValue = new EntityOrValue();
+  #highValue = new EntityOrValue();
 
   // === GETTERS / SETTERS ===
 
   set config(config) {
     this._configHelper.config = config;
+    Object.assign(this.#lowValue, {
+      value: this._configHelper.config?.watermark?.low,
+      attribute: this._configHelper.config?.watermark?.low_attribute,
+    });
+    Object.assign(this.#highValue, {
+      value: this._configHelper.config?.watermark?.high,
+      attribute: this._configHelper.config?.watermark?.high_attribute,
+    });
   }
 
   get config() {
     return this._configHelper.config;
+  }
+
+  refresh() {
+    this.#lowValue.refresh();
+    this.#highValue.refresh();
   }
 
   get layout() {
@@ -7469,20 +7497,16 @@ class MinimalCardView {
     return this.config.bar_effect !== undefined;
   }
   get watermark() {
-    if (!this.config.watermark) return null;
-
     const { watermark } = this.config;
-    return {
-      low: this.config.center_zero ? 50 + watermark.low / 2 : watermark.low, // === true
-      low_color: ThemeManager.adaptColor(watermark.low_color),
-      high: this.config.center_zero ? 50 + watermark.high / 2 : watermark.high, // === true
-      high_color: ThemeManager.adaptColor(watermark.high_color),
-      opacity: watermark.opacity,
-      type: watermark.type,
-      line_size: watermark.line_size,
-      disable_low: watermark.disable_low,
-      disable_high: watermark.disable_high,
-    };
+    return watermark
+      ? {
+          ...watermark,
+          low: this.#lowValue.value,
+          low_color: ThemeManager.adaptColor(watermark.low_color),
+          high: this.#highValue.value,
+          high_color: ThemeManager.adaptColor(watermark.high_color),
+        }
+      : null;
   }
 
   // === PUBLIC API METHODS ===
@@ -7575,6 +7599,8 @@ class BaseCardView extends MinimalCardView {
   #maxValue = new EntityOrValue();
   #entityCollection = new EntityCollectionHelper();
   #currentLanguage = CARD.config.language;
+  #lowValue = new EntityOrValue();
+  #highValue = new EntityOrValue();
 
   // === PUBLIC GETTERS / SETTERS ===
 
@@ -7620,22 +7646,39 @@ class BaseCardView extends MinimalCardView {
         value: this._configHelper.config.max_value ?? CARD.config.value.max,
         attribute: this._configHelper.config.max_value_attribute,
       });
+      Object.assign(this.#lowValue, {
+        value: this._configHelper.config?.watermark?.low,
+        attribute: this._configHelper.config?.watermark?.low_attribute,
+      });
+      Object.assign(this.#highValue, {
+        value: this._configHelper.config?.watermark?.high,
+        attribute: this._configHelper.config?.watermark?.high_attribute,
+      });
     }
   }
   get config() {
     return this._configHelper.config;
   }
+  #hasState(state) {
+    const toEVal = this.hasWatermark ? [this._currentValue, this.#maxValue, this.#lowValue, this.#highValue] : [this._currentValue, this.#maxValue];
+    return toEVal.some((v) => v.state === state);
+  }
   get isUnknown() {
-    return this._currentValue.state === CARD.config.entity.state.unknown || this.#maxValue.state === CARD.config.entity.state.unknown;
+    return this.#hasState(CARD.config.entity.state.unknown);
   }
   get isUnavailable() {
-    return this._currentValue.state === CARD.config.entity.state.unavailable || this.#maxValue.state === CARD.config.entity.state.unavailable;
+    return this.#hasState(CARD.config.entity.state.unavailable);
   }
   get isNotFound() {
-    return this._currentValue.state === CARD.config.entity.state.notFound || this.#maxValue.state === CARD.config.entity.state.notFound;
+    return this.#hasState(CARD.config.entity.state.notFound);
   }
   get isAvailable() {
-    return !(!this._currentValue.isAvailable || (!this.#maxValue.isAvailable && this._configHelper.maxValue));
+    return !(
+      !this._currentValue.isAvailable ||
+      (!this.#maxValue.isAvailable && this._configHelper.maxValue) ||
+      (!this.#lowValue.isAvailable && this._configHelper.config?.watermark?.low) ||
+      (!this.#highValue.isAvailable && this._configHelper.config?.watermark?.high)
+    );
   }
   get hasStandardEntityError() {
     return this.isUnavailable || this.isNotFound || this.isUnknown;
@@ -7744,20 +7787,16 @@ class BaseCardView extends MinimalCardView {
     return this._configHelper.config.watermark !== undefined;
   }
   get watermark() {
-    if (!this._configHelper.config.watermark) return null;
-
-    const { watermark } = this._configHelper.config;
-    return {
-      low: this.#percentHelper.calcWatermark(watermark.low),
-      low_color: ThemeManager.adaptColor(watermark.low_color),
-      high: this.#percentHelper.calcWatermark(watermark.high),
-      high_color: ThemeManager.adaptColor(watermark.high_color),
-      opacity: watermark.opacity,
-      type: watermark.type,
-      line_size: watermark.line_size,
-      disable_low: watermark.disable_low,
-      disable_high: watermark.disable_high,
-    };
+    const { watermark } = this.config;
+    return watermark
+      ? {
+          ...watermark,
+          low: this.#percentHelper.calcWatermark(this.#lowValue.value),
+          low_color: ThemeManager.adaptColor(watermark.low_color),
+          high: this.#percentHelper.calcWatermark(this.#highValue.value),
+          high_color: ThemeManager.adaptColor(watermark.high_color),
+        }
+      : null;
   }
   get hasEntityCollection() {
     return this.#entityCollection.count >= 2;
@@ -7774,11 +7813,10 @@ class BaseCardView extends MinimalCardView {
     this.currentLanguage = this.#hassProvider.language;
     this._currentValue.refresh();
     this.#maxValue.refresh();
+    this.#lowValue.refresh();
+    this.#highValue.refresh();
     this._configHelper.checkConfig();
-    // console.log(this.#entityCollection.count);
     this.#entityCollection.refreshAll();
-    //console.log(this.#entityCollection.getTotalValue());
-    //console.log(this.#entityCollection.getPercentages());
 
     if (!this.isAvailable) return;
 
@@ -8319,6 +8357,8 @@ class EntityProgressCardBase extends HTMLElement {
     this._cardView.config = { ...config };
     if (is.string(config.entity)) this._changeTracker.watchEntity(config.entity);
     if (is.string(config.max_value)) this._changeTracker.watchEntity(config.max_value);
+    if (is.string(config?.watermark?.low)) this._changeTracker.watchEntity(config.watermark.low);
+    if (is.string(config?.watermark?.high)) this._changeTracker.watchEntity(config.watermark.high);
     this.render();
   }
 
@@ -9441,9 +9481,10 @@ class EntityProgressTemplate extends EntityProgressCardBase {
 
   _updateWatermark() {
     if (!this._cardView.hasWatermark) return;
-
+    this._cardView.refresh();
     const wm = this._cardView.watermark;
-    const properties = EntityProgressCardBase._getWatermarkProperties(wm);
+    const isCenterZero = this._cardView.config.center_zero;
+    const properties = EntityProgressCardBase._getWatermarkProperties(wm, isCenterZero);
 
     properties.forEach(([key, value]) => {
       this._updateCSSValue(key, value);

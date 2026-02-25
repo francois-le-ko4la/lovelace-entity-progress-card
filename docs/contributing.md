@@ -2,29 +2,36 @@
 
 First off, thank you for considering contributing to Entity Progress Card! 🎉
 
-It's people like you that make Entity Progress Card such a great tool for the community.
+It's people like you that make Entity Progress Card such a great tool for the
+community.
 
 ## 📋 Table of Contents
 
 - [Code of Conduct](#code-of-conduct)
 - [How Can I Contribute?](#how-can-i-contribute)
 - [Getting Started](#getting-started)
-- [Development Setup](#development-setup)
 - [Contribution Guidelines](#contribution-guidelines)
-- [Submitting Changes](#submitting-changes)
 - [Community](#community)
+- [Questions](#questions)
+
+<a id="code-of-conduct"></a>
 
 ## 🤝 Code of Conduct
 
-This project and everyone participating in it is governed by our [Code of Conduct].
-By participating, you are expected to uphold this code.  
-**In short: Be respectful, be inclusive, and help create a positive environment for everyone.**
+This project and everyone participating in it is governed by our [Code of
+Conduct]. By participating, you are expected to uphold this code.  
+**In short: Be respectful, be inclusive, and help create a positive environment
+for everyone.**
+
+<a id="how-can-i-contribute"></a>
 
 ## 🚀 How Can I Contribute?
 
 ### Reporting Bugs 🐛
 
-Before creating bug reports, please check the [Errors, Deprecations & Troubleshooting Guide] and the existing [GitHub Issues] to avoid duplicates. When you create a bug report, please include as many details as possible:
+Before creating bug reports, please check the [Errors, Deprecations &
+Troubleshooting Guide] and the existing [GitHub Issues] to avoid duplicates.
+When you create a bug report, please include as many details as possible:
 
 - **Use a clear and descriptive title**
 - **Describe the exact steps to reproduce the problem**
@@ -34,7 +41,8 @@ Before creating bug reports, please check the [Errors, Deprecations & Troublesho
 
 ### Suggesting Enhancements 💡
 
-Enhancement suggestions are tracked as [GitHub Issues]. When creating an enhancement suggestion:
+Enhancement suggestions are tracked as [GitHub Issues]. When creating an
+enhancement suggestion:
 
 - **Use a clear and descriptive title**
 - **Provide a step-by-step description of the suggested enhancement**
@@ -90,6 +98,8 @@ We welcome translations for new languages! Currently supported languages:
 - 🇻🇳 vi - Tiếng Việt (Vietnamese)
 - 🇨🇳 zh - 中文 (Chinese)
 
+<a id="getting-started"></a>
+
 ## 🛠️ Getting Started
 
 ### Fork & Clone
@@ -101,6 +111,8 @@ We welcome translations for new languages! Currently supported languages:
    git clone https://github.com/YOUR-USERNAME/lovelace-entity-progress-card.git
    cd lovelace-entity-progress-card
    ```
+
+<a id="contribution-guidelines"></a>
 
 ## 📝 Contribution Guidelines
 
@@ -115,7 +127,8 @@ We welcome translations for new languages! Currently supported languages:
 
 ### New translation
 
-- Copy the template `./translations/translation.template.json` and name it with the language ([code](https://developers.home-assistant.io/docs/voice/intent-recognition/supported-languages/))
+- Copy the file `./translations/template.json` and name it with the language
+  ([code](https://developers.home-assistant.io/docs/voice/intent-recognition/supported-languages/))
 - Fill in all the empty values in `xx.json` with your translations.
 - Submit a pull request with your `xx.json`
 
@@ -148,6 +161,8 @@ Before submitting a PR, please ensure:
 - ✅ **Various entity types** are supported
 - ✅ **Documentation** is updated
 
+<a id="community"></a>
+
 ## 💬 Community
 
 ### Discord Server
@@ -162,9 +177,11 @@ Join our [Discord] community for:
 ### Getting Help
 
 - **General questions**: [Discord] #general channel
-- **Development help**: [Discord] #dev channel  
+- **Development help**: [Discord] #dev channel
 - **Feature requests**: [Discord] / [GitHub Issues]
 - **Bug reports**: [GitHub Issues]
+
+<a id="questions"></a>
 
 ## ❓ Questions?
 
@@ -175,15 +192,20 @@ Don't hesitate to ask! We're here to help:
 
 ## 🙏 Thank You
 
-Every contribution, no matter how small, is valuable and appreciated. Whether you're fixing a typo, adding a feature, or helping other users, you're making Entity Progress Card better for everyone.
+Every contribution, no matter how small, is valuable and appreciated. Whether
+you're fixing a typo, adding a feature, or helping other users, you're making
+Entity Progress Card better for everyone.
 
 **Happy Contributing!** 🚀
 
 ---
 
-_This contribution guide is inspired by open source best practices and adapted for entity-progress-card._
+_This contribution guide is inspired by open source best practices._
 
 [Discord]: https://discord.gg/tyMQ2SfyNG
-[GitHub Issues]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues
-[Code of Conduct]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/code_of_conduct.md
-[Errors, Deprecations & Troubleshooting Guide]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/troubleshooting.md
+[GitHub Issues]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues
+[Code of Conduct]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/code_of_conduct.md
+[Errors, Deprecations & Troubleshooting Guide]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/troubleshooting.md

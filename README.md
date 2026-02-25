@@ -2,8 +2,7 @@
 
 # Lovelace Entity Progress Card [![ReadMe](https://img.shields.io/badge/ReadMe-018EF5?logo=readme&logoColor=fff)](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/1.4.12/README.md)
 
-[![Home Assistant][ha-badge]][repo-link]
-[![JavaScript][js-badge]][repo-link]
+[![Home Assistant][ha-badge]][repo-link] [![JavaScript][js-badge]][repo-link]
 [![Discord][discord-badge]][discord-link]
 
 A modern Entity progress card for Home Assistant's Lovelace UI.
@@ -45,31 +44,35 @@ Jump to the specific section:
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/example.png" alt="example" width="400"/>
 
-This custom version of the **Bar Card** for Home Assistant allows you to display a simple
-percentage bar that is quick and easy to integrate into your Lovelace cards. It blends
-seamlessly with the `Tile`/`Mushroom` look & feel of the latest Home Assistant versions.
-This card is based on custom CSS and leverages existing code to fine-tune the appearance.
+This custom version of the **Bar Card** for Home Assistant allows you to display
+a simple percentage bar that is quick and easy to integrate into your Lovelace
+cards. It blends seamlessly with the `Tile`/`Mushroom` look & feel of the latest
+Home Assistant versions. This card is based on custom CSS and leverages existing
+code to fine-tune the appearance.
 
 ### 🚀 Features
 
-- **Percentage Progress Bar**: Displays the progress of a specified entity in percentage.
-- **Seamless Integration with Home Assistant's Modern UI**: Fully aligns with the "Tile"
-  look & feel of recent Home Assistant versions.
-- **Dynamic Theme**: Automatically adjusts icons and colors based on the context (e.g.,
-  Battery Theme), reflecting the entity's state.
-- **Enhanced Customization**: Offers a balanced default setup while allowing users to
-  further tailor the card's behavior and appearance through YAML or the card editor
-  (full details below).
+- **Percentage Progress Bar**: Displays the progress of a specified entity in
+  percentage.
+- **Seamless Integration with Home Assistant's Modern UI**: Fully aligns with
+  the "Tile" look & feel of recent Home Assistant versions.
+- **Dynamic Theme**: Automatically adjusts icons and colors based on the context
+  (e.g., Battery Theme), reflecting the entity's state.
+- **Enhanced Customization**: Offers a balanced default setup while allowing
+  users to further tailor the card's behavior and appearance through YAML or the
+  card editor (full details below).
 - **Smooth Animations**: Provides HTML elements that facilitate smooth, visually
-  appealing animations, leveraging well-known mechanisms for easy implementation.
-- **Interactive Features**: Includes all "xyz_action" option, enabling users to view
-  additional entity details or navigate to another dashboard with a simple click,
-  improving accessibility and usability.
+  appealing animations, leveraging well-known mechanisms for easy
+  implementation.
+- **Interactive Features**: Includes all "xyz_action" option, enabling users to
+  view additional entity details or navigate to another dashboard with a simple
+  click, improving accessibility and usability.
 - **Performance Optimized**: Code enhancements ensure better performance and
   maintainability, offering a more stable and responsive experience.
-- **Multi-Language Support**: Provides localized error messages and descriptions,
-  supporting multiple languages 🇸🇦 🇧🇩 🇨🇿 🇩🇰 🇩🇪 🇬🇷 🇬🇧 🇪🇸 🇫🇮 🇫🇷 🇮🇳 🇭🇷 🇮🇩 🇮🇹 🇯🇵
-  🇰🇷 🇲🇰 🇳🇴 (bokmål) 🇳🇱 🇵🇱 🇵🇹 🇷🇴 🇸🇪 🇹🇭 🇹🇷 🇺🇦 🇻🇳 🇨🇳.
+- **Multi-Language Support**: Provides localized error messages and
+  descriptions, supporting multiple languages 🇸🇦 🇧🇩 🇨🇿 🇩🇰 🇩🇪 🇬🇷 🇬🇧
+  🇪🇸 🇫🇮 🇫🇷 🇮🇳🇭🇷 🇮🇩 🇮🇹 🇯🇵 🇰🇷 🇲🇰 🇳🇴 (bokmål) 🇳🇱 🇵🇱 🇵🇹
+  🇷🇴 🇸🇪 🇹🇭 🇹🇷 🇺🇦 🇻🇳 🇨🇳.
 
 [🔼 Back to top]
 
@@ -79,11 +82,11 @@ This card is based on custom CSS and leverages existing code to fine-tune the ap
 
 ### ⚙️ Prerequisites
 
-| Platform           | Browsers               |                    |                          |                        |                      |
-|:------------------:|:----------------------:|:------------------:|:------------------------:|:----------------------:|:--------------------:|
-| ![HA][ha-logo]     | ![Chrome][chrome-logo] | ![Edge][edge-logo] | ![Firefox][firefox-logo] | ![Safari][safari-logo] | ![Opera][opera-logo] |
-| **Home Assistant** | **Chrome**             | **Edge**           | **Firefox**              | **Safari**             | **Opera**            |
-| `2024.0+`          | `98+`                  | `98+`              | `94+`                    | `15.4+`                | `84+`                |
+|      Platform      |        Browsers        |                    |                          |                        |                      |
+| :----------------: | :--------------------: | :----------------: | :----------------------: | :--------------------: | :------------------: |
+|   ![HA][ha-logo]   | ![Chrome][chrome-logo] | ![Edge][edge-logo] | ![Firefox][firefox-logo] | ![Safari][safari-logo] | ![Opera][opera-logo] |
+| **Home Assistant** |       **Chrome**       |      **Edge**      |       **Firefox**        |       **Safari**       |      **Opera**       |
+|     `2024.0+`      |         `98+`          |       `98+`        |          `94+`           |        `15.4+`         |        `84+`         |
 
 > [!IMPORTANT]
 >
@@ -91,7 +94,8 @@ This card is based on custom CSS and leverages existing code to fine-tune the ap
 
 ### 📦 Installation Steps
 
-`entity-progress-card` is available in [HACS](https://hacs.xyz) (Home Assistant Community Store).
+`entity-progress-card` is available in [HACS](https://hacs.xyz) (Home Assistant
+Community Store).
 
 Use this link to directly go to the repository in HACS
 
@@ -101,7 +105,8 @@ Use this link to directly go to the repository in HACS
 >
 > If you are unable to use the button above, follow the steps below:
 >
-> - Add this repository to HACS: Go to **HACS** ➡️ **Integrations** ➡️ **`⋮`** ➡️ **Custom repositories**.
+> - Add this repository to HACS: Go to **HACS** ➡️ **Integrations** ➡️ **`⋮`**
+>   ➡️ **Custom repositories**.
 > - Paste the URL of this repository and select **Dashboard** as the category.
 > - Install the Entity Progress Card from HACS.
 
@@ -109,9 +114,10 @@ Use this link to directly go to the repository in HACS
 <summary><strong>Manual Installation (click to expand)</strong></summary>
 
 - Download the file `entity-progress-card.js` (from the last version) to the
-    `/config/www/` directory in your Home Assistant setup.
+  `/config/www/` directory in your Home Assistant setup.
 - Add `/local/entity-progress-card.js` to your Lovelace resources:
-  - Go to **Settings** ➡️ **Dashboards** ➡️ **Resources** ➡️ **`⋮`** ➡️ **Add Resource**
+  - Go to **Settings** ➡️ **Dashboards** ➡️ **Resources** ➡️ **`⋮`** ➡️
+    **Add Resource**
   - Set :
     - URL: `/local/www/entity-progress-card.js`
     - Type: `JavaScript Module`
@@ -126,9 +132,9 @@ Use this link to directly go to the repository in HACS
 
 ## 🧱 Entity Progress Components
 
-This documentation is meant to help you understand and use the different
-Entity Progress components in Home Assistant (cards and badges, both
-standard and template versions), providing clear guidance.
+This documentation is meant to help you understand and use the different Entity
+Progress components in Home Assistant (cards and badges, both standard and
+template versions), providing clear guidance.
 
 <a id="components-overview"></a>
 
@@ -141,7 +147,8 @@ standard and template versions), providing clear guidance.
 | **Entity Progress Badge**          | A compact badge with a mini progress bar.                    |
 | **Entity Progress Badge Template** | A templatable badge version for advanced use cases.          |
 
-Each component is suited for different use cases, depending on display needs, complexity, and UI layout.
+Each component is suited for different use cases, depending on display needs,
+complexity, and UI layout.
 
 <a id="purpose"></a>
 
@@ -153,9 +160,11 @@ Each component is suited for different use cases, depending on display needs, co
 
 This card is ideal when:
 
-- You want to display the progress of a single entity (e.g., battery level, completion percentage, charging status).
+- You want to display the progress of a single entity (e.g., battery level,
+  completion percentage, charging status).
 - You want easy visual representation with minimal configuration.
-- You want to enable quick interactions via tap_action, hold_action, or double_tap_action.
+- You want to enable quick interactions via tap_action, hold_action, or
+  double_tap_action.
 
 _Examples_:
 
@@ -164,7 +173,8 @@ _Examples_:
 - Monitor the progress of a running script or automation.
 
 Essentially, if you need a clear, visually appealing progress bar that's easy to
-configure and fits well into the Home Assistant ecosystem, this is your go-to card.
+configure and fits well into the Home Assistant ecosystem, this is your go-to
+card.
 
 <a id="purpose-template"></a>
 
@@ -172,9 +182,11 @@ configure and fits well into the Home Assistant ecosystem, this is your go-to ca
 
 Use the Template version (card or badge) when:
 
-- You need to calculate the percentage manually from multiple sensor values (e.g., water tank level from height readings).
+- You need to calculate the percentage manually from multiple sensor values
+  (e.g., water tank level from height readings).
 - Your use case involves conditional logic, math, or non-linear scales.
-- You want to use Jinja2 templates directly in the YAML, without creating extra helpers or sensors.
+- You want to use Jinja2 templates directly in the YAML, without creating extra
+  helpers or sensors.
 - You need maximum flexibility without being restricted by the standard options.
 
 _Examples_:
@@ -206,6 +218,7 @@ _Examples_:
 ### 🪄 Card and badge Editor
 
 The card editor allows you to quickly set up and customize the card.
+
 <details>
 <summary><strong>Show the screenshot (click to expand)</strong></summary>
 
@@ -230,51 +243,51 @@ This is the primary card for displaying entity progress.
 <details>
 <summary><strong>Options and Configuration (click to expand)</strong></summary>
 
-| **Option**                         | **Type**                 | **Default**                 | **Description**                         | **Link**                                         |
-| :--------------------------------- |:------------------------ | :-------------------------- | :-------------------------------------- | :----------------------------------------------- |
-| **Data Options**                   |                          |                             |                                         |                                                  |
-| `entity`                           | string (required)        | —                           | Main entity ID                          | [Config Ref.][config-entity]                     |
-| `attribute`                        | string (optional)        | depends on entity           | Attribute to use as value               | [Config Ref.][config-attribute]                  |
-| `name`                             | string (optional)        | entity name                 | Custom name to show                     | [Config Ref.][config-name]                       |
-| `unit`                             | string (optional)        | `auto`                      | Unit displayed                          | [Config Ref.][config-unit]                       |
-| `decimal`                          | integer (optional)       | context-based               | Number of decimal places                | [Config Ref.][config-decimal]                    |
-| `min_value`                        | float (optional)         | `0` or `-100`               | Min for progress calculation            | [Config Ref.][config-min_value]                  |
-| `max_value`                        | float/string (optional)  | `100`                       | Max for progress calculation            | [Config Ref.][config-max_value]                  |
-| `max_value_attribute`              | string (optional)        | —                           | Attribute from `max_value` entity       | [Config Ref.][config-max_value_attribute]        |
-| `reverse`                          | boolean (optional)       | depends on entity           | Countdown-style behavior                | [Config Ref.][config-reverse]                    |
-| `state_content`                    | string/list (optional)   | depends on domain           | Attribute to show near value            | [Config Ref.][config-state_content]              |
-| `custom_info`                      | Jinja (optional)         | —                           | Extra info near value                   | [Config Ref.][config-custom_info]                |
-| `name_info`                        | Jinja (optional)         | —                           | Extra info near name                    | [Config Ref.][config-name_info]                  |
-| `additions`                        | list (optional)          | —                           | Additional entities to display          | [Config Ref.][config-additions]                  |
-| **Styling Options**                |                          |                             |                                         |                                                  |
-| `icon`                             | string (optional)        | —                           | Icon override                           | [Config Ref.][config-icon]                       |
-| `color`                            | string (optional)        | based on entity             | Icon color                              | [Config Ref.][config-color]                      |
-| `badge_icon`                       | Jinja (optional)         | —                           | Dynamic badge icon                      | [Config Ref.][config-badge_icon]                 |
-| `badge_color`                      | Jinja (optional)         | —                           | Dynamic badge color                     | [Config Ref.][config-badge_color]                |
-| `bar_color`                        | string (optional)        | `var(--state-icon-color)`   | Color of progress bar                   | [Config Ref.][config-bar_color]                  |
-| `bar_size`                         | string (optional)        | `small`                     | Size of the progress bar                | [Config Ref.][config-bar_size]                   |
-| `bar_position`                     | string (optional)        | `default`                   | Position of the progress bar            | [Config Ref.][config-bar_position]               |
-| `bar_single_line`                  | boolean (optional)       | `false`                     | single-line mode for overlay bars       | [Config Ref.][config-bar_single_line]            |
-| `bar_effect`                       | string/list/jinja        | —                           | Visual effects for the bar              | [Config Ref.][config-bar_effect]                 |
-| `bar_orientation`                  | string (optional)        | `ltr`                       | Bar direction                           | [Config Ref.][config-bar_orientation]            |
-| `force_circular_background`        | boolean (optional)       | `false`                     | Force icon circle background            | [Config Ref.][config-force_circular_background]  |
-| `trend_indicator`                  | string (optional)        | `false`                     | Displays trend icons.                   | [Config Ref.][config-trend_indicator]            |
-| `layout`                           | string (optional)        | `horizontal`                | Layout direction                        | [Config Ref.][config-layout]                     |
-| `frameless`                        | boolean (optional)       | `false`                     | Remove card frame                       | [Config Ref.][config-frameless]                  |
-| `marginless`                       | boolean (optional)       | `false`                     | Remove top/bottom margin                | [Config Ref.][config-marginless]                 |
-| `height`                           | string (optional)        | —                           | Card height                             | [Config Ref.][config-height]                     |
-| `min_width`                        | string (optional)        | —                           | Minimum width                           | [Config Ref.][config-min_width]                  |
-| `reverse_secondary_info_row`       | boolean (optional)       | `false`                     | Flip info bar layout                    | [Config Ref.][config-reverse_secondary_info_row] |
-| `unit_spacing`                     | string (optional)        | `auto`                      | Controls space between value and unit   | [Config Ref.][config-unit_spacing]               |
-| `center_zero`                      | boolean (optional)       | `false`                     | Center the bar on 0                     | [Config Ref.][config-center_zero]                |
-| `theme`                            | string (optional)        | —                           | Applies a preset theme                  | [Config Ref.][config-theme]                      |
-| `custom_theme`                     | list (optional)          | —                           | Define color thresholds                 | [Config Ref.][config-custom_theme]               |
-| `interpolate`                      | boolean (optional)       | —                           | Enables smooth color transition         | [Config Ref.][config-custom_theme]               |
-| `hide`                             | list (optional)          | —                           | Hide parts of the card                  | [Config Ref.][config-hide]                       |
-| `disable_unit`                     | boolean (optional)       | `false`                     | Hide the unit text                      | [Config Ref.][config-disable_unit]               |
-| `watermark`                        | map (optional)           | —                           | Adds min/max overlays                   | [Config Ref.][config-watermark]                  |
-| **Behavior And Actions**           |                          |                             |                                         |                                                  |
-| `xyz_action`                       | map (optional)           | see defaults                | Tap/double/hold actions                 | [Config Ref.][config-xyz_action]                 |
+| **Option**                   | **Type**                | **Default**               | **Description**                       | **Link**                                         |
+| :--------------------------- | :---------------------- | :------------------------ | :------------------------------------ | :----------------------------------------------- |
+| **Data Options**             |                         |                           |                                       |                                                  |
+| `entity`                     | string (required)       | —                         | Main entity ID                        | [Config Ref.][config-entity]                     |
+| `attribute`                  | string (optional)       | depends on entity         | Attribute to use as value             | [Config Ref.][config-attribute]                  |
+| `name`                       | string (optional)       | entity name               | Custom name to show                   | [Config Ref.][config-name]                       |
+| `unit`                       | string (optional)       | `auto`                    | Unit displayed                        | [Config Ref.][config-unit]                       |
+| `decimal`                    | integer (optional)      | context-based             | Number of decimal places              | [Config Ref.][config-decimal]                    |
+| `min_value`                  | float (optional)        | `0` or `-100`             | Min for progress calculation          | [Config Ref.][config-min_value]                  |
+| `max_value`                  | float/string (optional) | `100`                     | Max for progress calculation          | [Config Ref.][config-max_value]                  |
+| `max_value_attribute`        | string (optional)       | —                         | Attribute from `max_value` entity     | [Config Ref.][config-max_value_attribute]        |
+| `reverse`                    | boolean (optional)      | depends on entity         | Countdown-style behavior              | [Config Ref.][config-reverse]                    |
+| `state_content`              | string/list (optional)  | depends on domain         | Attribute to show near value          | [Config Ref.][config-state_content]              |
+| `custom_info`                | Jinja (optional)        | —                         | Extra info near value                 | [Config Ref.][config-custom_info]                |
+| `name_info`                  | Jinja (optional)        | —                         | Extra info near name                  | [Config Ref.][config-name_info]                  |
+| `additions`                  | list (optional)         | —                         | Additional entities to display        | [Config Ref.][config-additions]                  |
+| **Styling Options**          |                         |                           |                                       |                                                  |
+| `icon`                       | string (optional)       | —                         | Icon override                         | [Config Ref.][config-icon]                       |
+| `color`                      | string (optional)       | based on entity           | Icon color                            | [Config Ref.][config-color]                      |
+| `badge_icon`                 | Jinja (optional)        | —                         | Dynamic badge icon                    | [Config Ref.][config-badge_icon]                 |
+| `badge_color`                | Jinja (optional)        | —                         | Dynamic badge color                   | [Config Ref.][config-badge_color]                |
+| `bar_color`                  | string (optional)       | `var(--state-icon-color)` | Color of progress bar                 | [Config Ref.][config-bar_color]                  |
+| `bar_size`                   | string (optional)       | `small`                   | Size of the progress bar              | [Config Ref.][config-bar_size]                   |
+| `bar_position`               | string (optional)       | `default`                 | Position of the progress bar          | [Config Ref.][config-bar_position]               |
+| `bar_single_line`            | boolean (optional)      | `false`                   | single-line mode for overlay bars     | [Config Ref.][config-bar_single_line]            |
+| `bar_effect`                 | string/list/jinja       | —                         | Visual effects for the bar            | [Config Ref.][config-bar_effect]                 |
+| `bar_orientation`            | string (optional)       | `ltr`                     | Bar direction                         | [Config Ref.][config-bar_orientation]            |
+| `force_circular_background`  | boolean (optional)      | `false`                   | Force icon circle background          | [Config Ref.][config-force_circular_background]  |
+| `trend_indicator`            | string (optional)       | `false`                   | Displays trend icons.                 | [Config Ref.][config-trend_indicator]            |
+| `layout`                     | string (optional)       | `horizontal`              | Layout direction                      | [Config Ref.][config-layout]                     |
+| `frameless`                  | boolean (optional)      | `false`                   | Remove card frame                     | [Config Ref.][config-frameless]                  |
+| `marginless`                 | boolean (optional)      | `false`                   | Remove top/bottom margin              | [Config Ref.][config-marginless]                 |
+| `height`                     | string (optional)       | —                         | Card height                           | [Config Ref.][config-height]                     |
+| `min_width`                  | string (optional)       | —                         | Minimum width                         | [Config Ref.][config-min_width]                  |
+| `reverse_secondary_info_row` | boolean (optional)      | `false`                   | Flip info bar layout                  | [Config Ref.][config-reverse_secondary_info_row] |
+| `unit_spacing`               | string (optional)       | `auto`                    | Controls space between value and unit | [Config Ref.][config-unit_spacing]               |
+| `center_zero`                | boolean (optional)      | `false`                   | Center the bar on 0                   | [Config Ref.][config-center_zero]                |
+| `theme`                      | string (optional)       | —                         | Applies a preset theme                | [Config Ref.][config-theme]                      |
+| `custom_theme`               | list (optional)         | —                         | Define color thresholds               | [Config Ref.][config-custom_theme]               |
+| `interpolate`                | boolean (optional)      | —                         | Enables smooth color transition       | [Config Ref.][config-custom_theme]               |
+| `hide`                       | list (optional)         | —                         | Hide parts of the card                | [Config Ref.][config-hide]                       |
+| `disable_unit`               | boolean (optional)      | `false`                   | Hide the unit text                    | [Config Ref.][config-disable_unit]               |
+| `watermark`                  | map (optional)          | —                         | Adds min/max overlays                 | [Config Ref.][config-watermark]                  |
+| **Behavior And Actions**     |                         |                           |                                       |                                                  |
+| `xyz_action`                 | map (optional)          | see defaults              | Tap/double/hold actions               | [Config Ref.][config-xyz_action]                 |
 
 See [Full Configuration Reference][FCR].
 
@@ -288,16 +301,14 @@ entity, depending on the type of input it receives:
   If the value represents a timer, the range (min, max) and the current value
   are taken directly from the timer entity. Attribute will not be used.
 
-- Counter or Number value:
-  If the value is a counter or a Number ({ value, min, max }), it uses the
-  provided value directly from the entity. The max value can also come from
-  another entity by using max_value. Attribute will not be used.
+- Counter or Number value: If the value is a counter or a Number ({ value, min,
+  max }), it uses the provided value directly from the entity. The max value can
+  also come from another entity by using max_value. Attribute will not be used.
 
-- Other entity:
-  If the entity value is a number, it’s treated as the current value. The min
-  and max boundaries are taken from default value (0/100) or configuration or
-  external entities depending on the setup. If max_value is an entity, its
-  current value is used.
+- Other entity: If the entity value is a number, it’s treated as the current
+  value. The min and max boundaries are taken from default value (0/100) or
+  configuration or external entities depending on the setup. If max_value is an
+  entity, its current value is used.
 
 </details>
 
@@ -308,12 +319,13 @@ entity, depending on the type of input it receives:
 Here are some examples of how to use the Standard Lovelace Entity Progress Card.
 
 > [!TIP]
-> Use Material Design Icons (MDI) for a consistent look. Browse available icons at
-> Material Design Icons. Experiment with color codes like HEX or RGB for precise
-> customization. Combine with other Lovelace cards to create a visually
-> cohesive dashboard.
+> Use Material Design Icons (MDI) for a consistent look. Browse available
+> icons at Material Design Icons. Experiment with color codes like HEX or RGB
+> for precise customization. Combine with other Lovelace cards to create a
+> visually cohesive dashboard.
 
-In addition to styling tips, it’s important to understand how this card interacts with other powerful Lovelace tools.
+In addition to styling tips, it’s important to understand how this card
+interacts with other powerful Lovelace tools.
 
 > [!IMPORTANT]
 >
@@ -321,9 +333,11 @@ In addition to styling tips, it’s important to understand how this card intera
 > with other popular Home Assistant projects. To replicate these samples, ensure
 > the following are set up:
 >
-> 📌 vertical-stack-in-card ([GitHub link](https://github.com/ofekashery/vertical-stack-in-card))
-> 📌 auto-entities ([GitHub link](https://github.com/thomasloven/lovelace-auto-entities))
-> 📌 card_mod ([GitHub link](https://github.com/thomasloven/lovelace-card-mod))
+> 📌 vertical-stack-in-card
+> ([GitHub link](https://github.com/ofekashery/vertical-stack-in-card)) 📌
+> auto-entities
+> ([GitHub link](https://github.com/thomasloven/lovelace-auto-entities)) 📌
+> card_mod ([GitHub link](https://github.com/thomasloven/lovelace-card-mod))
 
 <details>
 <summary><strong>Basic Usage (YAML Example)</strong></summary>
@@ -403,8 +417,8 @@ sort:
 <details>
 <summary><strong>Litter box Example (click to expand)</strong></summary>
 
-Do you want a percentage based on a minimum and maximum quantity? Here’s an example
-with a litter box:
+Do you want a percentage based on a minimum and maximum quantity? Here’s an
+example with a litter box:
 
 ```yaml
 type: custom:entity-progress-card
@@ -423,8 +437,8 @@ grid_options:
 <details>
 <summary><strong>card_mod / animation Example (click to expand)</strong></summary>
 
-We can use `card_mod` to add dynamic animations to the icon, enhancing the visual
-experience and providing a more engaging user interface.
+We can use `card_mod` to add dynamic animations to the icon, enhancing the
+visual experience and providing a more engaging user interface.
 
 _Example_:
 
@@ -548,17 +562,17 @@ flexibility to adapt to entity variations based on the integration used.
 **Searching for Entities**
 
 Before configuring your card, it's essential to research the specific entities
-for your washing machine integration. To do this, you will need to explore
-Home Assistant's developer tools to pinpoint the necessary information.
-Let’s take this personal integration as an example:
+for your washing machine integration. To do this, you will need to explore Home
+Assistant's developer tools to pinpoint the necessary information. Let’s take
+this personal integration as an example:
 
-- **`sensor.washing_machine_operation_state`**: This entity is very specific
-  to my washing machine brand and the **Home Connect** integration that comes
-  with it. It tracks the machine's operation state (running, paused, etc.).
+- **`sensor.washing_machine_operation_state`**: This entity is very specific to
+  my washing machine brand and the **Home Connect** integration that comes with
+  it. It tracks the machine's operation state (running, paused, etc.).
 - **`sensor.washing_machine_progress_current_percentage`**: This is a custom
   sensor defined in `configuration.yaml`. The integration only reports a
-  percentage when the machine is running. The template sets it to 0% when
-  the integration reports 'unavailable'.
+  percentage when the machine is running. The template sets it to 0% when the
+  integration reports 'unavailable'.
 - **`sensor.washing_machine_remaining_program_time`**: This entity shows the
   estimated time left until the program finishes. However, the entity's name
   doesn't exactly match what the integration provides.
@@ -569,8 +583,8 @@ integration.
 
 **Setting Up the Card**
 
-Once the entities are identified, you can configure your card in YAML to
-display the necessary information.
+Once the entities are identified, you can configure your card in YAML to display
+the necessary information.
 
 Below an example that is currently used:
 
@@ -606,8 +620,8 @@ In this example, the card displays:
 **Conclusion**
 
 Using Jinja and custom entity configurations in Home Assistant provides advanced
-flexibility for adapting the card to the specifics of each washing machine.
-With this approach, you can create a single card that works with different
+flexibility for adapting the card to the specifics of each washing machine. With
+this approach, you can create a single card that works with different
 integrations while displaying relevant information in a clear and consistent
 manner.
 
@@ -624,9 +638,9 @@ We want to monitor a process and we have entities for:
 - finish time: states.sensor.print_puppy_end_time (time)
 - and remaining time: sensor.print_puppy_remaining_time (min)
 
-Our goal is to display the percentage of remaining time and show the remaining time
-in minutes. Unfortunately, the standard usage of this card cannot achieve what we
-need. We read the README it seems to be impossible but...
+Our goal is to display the percentage of remaining time and show the remaining
+time in minutes. Unfortunately, the standard usage of this card cannot achieve
+what we need. We read the README it seems to be impossible but...
 
 **Mathematical Model**
 
@@ -640,18 +654,18 @@ Where:
 - $t_{\text{remain}}$: Remaining time (in minutes).
 - $\Delta T$: Total duration of the task (in minutes).
 
-The good news is that we can use an entity to define the `max_value` and dynamically
-calculate the percentage. Therefore, we need to find a way to determine $\Delta T$.
+The good news is that we can use an entity to define the `max_value` and
+dynamically calculate the percentage. Therefore, we need to find a way to
+determine $\Delta T$.
 
 **How ?**
 
-We'll use a Helper (Number) to handle this calculation. It’s simple to define and can
-be set up according to various needs.
+We'll use a Helper (Number) to handle this calculation. It’s simple to define
+and can be set up according to various needs.
 
 - Go to `settings` > `Devices and services` > `Helpers` > `Create Helper` >
   `Template` > `Template a number`
 - Define the template to do the delta automatically
-
   - Choose a name and define your state template:
 
     ```yaml
@@ -664,9 +678,8 @@ be set up according to various needs.
     {% endif %}
     ```
 
-    > Check your syntax. Here, we are using entity values; therefore, we
-    > access the value through xyz.state. Sometimes, the value will be an
-    > attribute.
+    > Check your syntax. Here, we are using entity values; therefore, we access
+    > the value through xyz.state. Sometimes, the value will be an attribute.
 
   - Set the minimum, maximum, step value, and unit accordingly.
   - Check the current value to ensure it’s working properly.
@@ -696,30 +709,30 @@ the user experience.
 <details>
 <summary><strong>Don't Let It Expire ! (click to expand)</strong></summary>
 
-This example is similar to the previous one that used a Home Assistant helper but
-relying more on system-level tools—offering potentially greater efficiency at the
-cost of increased system dependency. We provide this example for illustration
-purposes only. Make sure to verify that no integration already exists before
-attempting this type of deployment. In the epilogue, I’ll suggest a more
-universal way to achieve the same result.
+This example is similar to the previous one that used a Home Assistant helper
+but relying more on system-level tools—offering potentially greater efficiency
+at the cost of increased system dependency. We provide this example for
+illustration purposes only. Make sure to verify that no integration already
+exists before attempting this type of deployment. In the epilogue, I’ll suggest
+a more universal way to achieve the same result.
 
 **Why?**
 
 SSL certificates are critical for securing HTTPS connections. If one expires, it
-can make your services inaccessible — including your Home Assistant interface when
-accessed remotely.
+can make your services inaccessible — including your Home Assistant interface
+when accessed remotely.
 
-The challenge? Certificates (especially Let's Encrypt) usually last only 90 days,
-and it's easy to forget when they expire.
+The challenge? Certificates (especially Let's Encrypt) usually last only 90
+days, and it's easy to forget when they expire.
 
-👉 The goal here is to automatically track how many days are left (countdown) before
-your SSL certificate expires and visually display this countdown as a color-coded
-progress bar in the Lovelace dashboard.
+👉 The goal here is to automatically track how many days are left (countdown)
+before your SSL certificate expires and visually display this countdown as a
+color-coded progress bar in the Lovelace dashboard.
 
 **How?**
 
-Here, we're using a Home Assistant instance running in Docker with access to Linux
-commands.
+Here, we're using a Home Assistant instance running in Docker with access to
+Linux commands.
 
 We will:
 
@@ -739,7 +752,11 @@ We will:
     - platform: command_line
       name: 'SSL Certificate Expiry'
       command: >
-        echo $(( ($(date -u -d "$(curl -vI --insecure https://<hostname>:<port> 2>&1 | grep -i 'expire date' | awk -F': ' '{print $2}' | sed -E 's/Jan/01/; s/Feb/02/; s/Mar/03/; s/Apr/04/; s/May/05/; s/Jun/06/; s/Jul/07/; s/Aug/08/; s/Sep/09/; s/Oct/10/; s/Nov/11/; s/Dec/12/' | awk '{print $4"-"$1"-"$2" "$3}')" +%s) - $(date +%s) ) / 86400 ))
+        echo $(( ($(date -u -d "$(curl -vI --insecure https://<hostname>:<port>
+        2>&1 | grep -i 'expire date' | awk -F': ' '{print $2}' | sed -E
+        's/Jan/01/; s/Feb/02/; s/Mar/03/; s/Apr/04/; s/May/05/; s/Jun/06/;
+        s/Jul/07/; s/Aug/08/; s/Sep/09/; s/Oct/10/; s/Nov/11/; s/Dec/12/' | awk
+        '{print $4"-"$1"-"$2" "$3}')" +%s) - $(date +%s) ) / 86400 ))
       unit_of_measurement: 'days'
       scan_interval: 3600
   ```
@@ -774,16 +791,18 @@ We will:
 
 **Conclusion**
 
-With this setup, Home Assistant becomes a proactive security monitor for your SSL
-certificates. You get a clear visual on how much time is left — and can renew in
-time to avoid downtime.
+With this setup, Home Assistant becomes a proactive security monitor for your
+SSL certificates. You get a clear visual on how much time is left — and can
+renew in time to avoid downtime.
 
-This method is reusable for any use case that can be monitored at the system level.
+This method is reusable for any use case that can be monitored at the system
+level.
 
 **Epilogue**
 
-It was fun to develop and can certainly be used as-is, but in practice, it relies
-on Linux system commands, which makes it less portable than the previous examples.
+It was fun to develop and can certainly be used as-is, but in practice, it
+relies on Linux system commands, which makes it less portable than the previous
+examples.
 
 Ultimately, to meet the original goal, we can simply enable the `cert_expiry`
 integration, which provides the certificate's expiration timestamp in a more
@@ -842,7 +861,7 @@ grid_options:
 
 Now you have a working solution that avoids operating system dependencies and is
 more efficient within Home Assistant's ecosystem. Obviously, in the case of a
-Let's Encrypt certificate, it's recommended to :
+Let's Encrypt certificate, it's recommended to:
 
 - have a renewal process in place
 - add a trigger to generate an alert before the certificate expires
@@ -867,14 +886,14 @@ you to implement your desired mathematical modeling directly through templating.
 <details>
 <summary><strong>Available Jinja Options (click to expand)</strong></summary>
 
-| **Options**   | **Type** | **Description**                                                            | **Doc**                          |
-| :------------ | :------- | :------------------------------------------------------------------------- | :------------------------------- |
-| `name`        | JINJA    | Renders the customized entity name                                         | [Config Ref.][name-jinja]        |
-| `icon`        | JINJA    | Main icon shown on the card                                                | [Config Ref.][icon-jinja]        |
-| `secondary`   | JINJA    | Renders the secondary content (e.g., unit, status, additional info)        | [Config Ref.][secondary-jinja]   |
-| `percent`     | JINJA    | Numerical value representing progress (0–100%), affects progress bar width | [Config Ref.][percent-jinja]     |
-| `color`       | JINJA    | Dynamic color for the icon and shape, adapted using `ThemeManager`         | [Config Ref.][color-jinja]       |
-| `bar_color`   | JINJA    | Dynamic progress bar color, also handled through `ThemeManager`            | [Config Ref.][bar_color-jinja]   |
+| **Options** | **Type** | **Description**                                                            | **Doc**                        |
+| :---------- | :------- | :------------------------------------------------------------------------- | :----------------------------- |
+| `name`      | JINJA    | Renders the customized entity name                                         | [Config Ref.][name-jinja]      |
+| `icon`      | JINJA    | Main icon shown on the card                                                | [Config Ref.][icon-jinja]      |
+| `secondary` | JINJA    | Renders the secondary content (e.g., unit, status, additional info)        | [Config Ref.][secondary-jinja] |
+| `percent`   | JINJA    | Numerical value representing progress (0–100%), affects progress bar width | [Config Ref.][percent-jinja]   |
+| `color`     | JINJA    | Dynamic color for the icon and shape, adapted using `ThemeManager`         | [Config Ref.][color-jinja]     |
+| `bar_color` | JINJA    | Dynamic progress bar color, also handled through `ThemeManager`            | [Config Ref.][bar_color-jinja] |
 
 See [Full Configuration Reference][FCR].
 
@@ -882,8 +901,8 @@ See [Full Configuration Reference][FCR].
 
 > [!NOTE]
 >
-> The keyword `entity` can be used in Jinja to represent the entity defined at the card level.
->
+> The keyword `entity` can be used in Jinja to represent the entity defined at
+> the card level.
 
 <details>
 <summary><strong>Supported Options (click to expand)</strong></summary>
@@ -985,34 +1004,31 @@ tap_action:
 **🧐 Why?**
 
 You want a visual representation of the sun's next event (sunrise or sunset) and
-the progress until it happens, directly in your Home Assistant dashboard. Instead
-of showing static time values, you aim to give users contextual, visual feedback
-on when the next sun transition will occur, and how far along we are toward it.
+the progress until it happens, directly in your Home Assistant dashboard.
+Instead of showing static time values, you aim to give users contextual, visual
+feedback on when the next sun transition will occur, and how far along we are
+toward it.
 
 **⚙️ How?**
 
 This card uses custom:entity-progress-card-template and dynamic Jinja2 templates
 to show:
 
-- 📛 name
-  Dynamically shows:
+- 📛 name Dynamically shows:
   - Next Rise: HH:MM if sunrise is next,
   - Next Setting: HH:MM if sunset is next,
   - or a fallback if sun data isn't available.
 - 🎨 bar_color & color
   - Bar turns orange when the sun is above the horizon.
   - Turns light gray / invisible when it's below the horizon.
-- 📄 secondary
-  Displays a live countdown (e.g., in 02:34:12) until the next sun event,
-  accounting for whether sunrise or sunset is next.
-- 📊 percent
-  Calculates progress between the last and the next sun event.
-  - For example, at 50%: you're halfway between yesterday's and today's
-    sunrise.
+- 📄 secondary Displays a live countdown (e.g., in 02:34:12) until the next sun
+  event, accounting for whether sunrise or sunset is next.
+- 📊 percent Calculates progress between the last and the next sun event.
+  - For example, at 50%: you're halfway between yesterday's and today's sunrise.
   - Or halfway between yesterday's and today's sunset, depending on current
     time.
-- 🖱️ tap_action
-  Opens the standard more-info view for the sun.sun entity when tapped.
+- 🖱️ tap_action Opens the standard more-info view for the sun.sun entity when
+  tapped.
 
 ```yaml
 type: custom:entity-progress-card-template
@@ -1158,7 +1174,7 @@ customizable badge format with a dynamic progress bar.
 | `disable_unit`               | boolean (optional)      | `false`                   | Hide the unit text                    | [Config Ref.][config-disable_unit]               |
 | `watermark`                  | map (optional)          | —                         | Adds min/max overlays                 | [Config Ref.][config-watermark]                  |
 | **Behavior And Actions**     |                         |                           |                                       |                                                  |
-| `xyz_action`                | map (optional)           | see defaults              | Tap/double/hold actions               | [Config Ref.][config-xyz_action]                 |
+| `xyz_action`                 | map (optional)          | see defaults              | Tap/double/hold actions               | [Config Ref.][config-xyz_action]                 |
 
 See [Full Configuration Reference][FCR].  
 We use the same syntax as the card.
@@ -1188,9 +1204,9 @@ icon: mdi:air-conditioner
 
 ### 🧩 Entity Progress Badge Template
 
-This badge is designed to display the progress of an entity in a compact, customizable format with
-a dynamic progress bar. The entire template is now written in Jinja, offering significantly more
-flexibility and dynamic behavior.
+This badge is designed to display the progress of an entity in a compact,
+customizable format with a dynamic progress bar. The entire template is now
+written in Jinja, offering significantly more flexibility and dynamic behavior.
 
 #### 🛠️ Available Jinja Options and Supported Options
 
@@ -1212,8 +1228,8 @@ See [Full Configuration Reference][FCR].
 
 > [!NOTE]
 >
-> The keyword `entity` can be used in Jinja to represent the entity defined at the card level.
->
+> The keyword `entity` can be used in Jinja to represent the entity defined at
+> the card level.
 
 <details>
 <summary><strong>Supported Options (click to expand)</strong></summary>
@@ -1276,8 +1292,8 @@ percent: |-
 
 ## 🎨 Theme
 
-Explore all the customization options and learn how to style your setup by reading the [Theme Guide].
-
+Explore all the customization options and learn how to style your setup by
+reading the [Theme Guide].
 
 [🔼 Back to top]
 
@@ -1332,9 +1348,11 @@ We strive to make this card as inclusive as possible, with support for:
 - 🇨🇳 zh - 中文 (Chinese)
 
 > [!IMPORTANT]
-> I use translation tools to help bridge language gaps, as I'm not fluent in every language.
+> I use translation tools to help bridge language gaps, as I'm not fluent in
+> every language.
 >
-> If you notice any mistakes, please understand they are **purely unintentional** — feel free to reach out on GitHub or Discord to fix it.
+> If you notice any mistakes, please understand they are **purely
+> unintentional** — feel free to reach out on GitHub or Discord to fix it.
 
 More languages may be added in the future to enhance accessibility!
 
@@ -1347,7 +1365,7 @@ Numbers are displayed based on your regional preferences, using:
 - Or the system-defined format from your Home Assistant user profile
 
 By default, the card uses standard Arabic numerals (0-9) for maximum
-compatibility.  
+compatibility.
 
 [🔼 Back to top]
 
@@ -1355,7 +1373,8 @@ compatibility.
 
 ## 🚨 Errors, Deprecations & Troubleshooting
 
-Need help? Find solutions and important updates in the [Errors, Deprecations & Troubleshooting Guide].
+Need help? Find solutions and important updates in the [Errors, Deprecations &
+Troubleshooting Guide].
 
 [🔼 Back to top]
 
@@ -1375,104 +1394,174 @@ Check out the [Contributing Guide] to get started.
 - **Resources from Home Assistant**  
   ➡️ [Custom Card Documentation](https://developers.home-assistant.io/docs/frontend/custom-ui/custom-card/)
 
-- **Resources from [@thomasloven](https://github.com/thomasloven)** – _thank you!_  
+- **Resources from [@thomasloven](https://github.com/thomasloven)** – _thank
+  you!_  
   ➡️ [PreLoading Lovelace Elements](https://github.com/thomasloven/hass-config/wiki/PreLoading-Lovelace-Elements)  
-  ➡️ [Custom Element Loader Gist](https://gist.github.com/thomasloven/5f965bd26e5f69876890886c09dd9ba8)
+  ➡️
+  [Custom Element Loader Gist](https://gist.github.com/thomasloven/5f965bd26e5f69876890886c09dd9ba8)
 
-- **Inspired by [Mushroom](https://github.com/piitaya/lovelace-mushroom)** by [@piitaya](https://github.com/piitaya)  
+- **Inspired by [Mushroom](https://github.com/piitaya/lovelace-mushroom)** by
+  [@piitaya](https://github.com/piitaya)  
   ➡️ For the look & feel
 
-- **Inspired by [bar-card](https://github.com/custom-cards/bar-card)** by [@Gluwc](https://github.com/Gluwc)  
+- **Inspired by [bar-card](https://github.com/custom-cards/bar-card)** by
+  [@Gluwc](https://github.com/Gluwc)  
   ➡️ No code was copied; this project is an original implementation.
 
-- **Inspired by [superstruct](https://github.com/ianstormtaylor/superstruct)** by [@ianstormtaylor](https://github.com/ianstormtaylor)  
-  ➡️ Structural validation ideas to manage inputs (v1.5+). This implementation is original and does not reuse code from the library.
+- **Inspired by [superstruct](https://github.com/ianstormtaylor/superstruct)**
+  by [@ianstormtaylor](https://github.com/ianstormtaylor)  
+  ➡️ Structural validation ideas to manage inputs (v1.5+). This implementation
+  is original and does not reuse code from the library.
 
-- **Special thanks to [@harmonie-durrant](https://github.com/harmonie-durrant)**  
-  ➡️ PRs, HACS testing, debugging, `Light` theme and illustrations:  
-  - `docs/images/example.png`  
+- **Special thanks to
+  [@harmonie-durrant](https://github.com/harmonie-durrant)**  
+  ➡️ PRs, HACS testing, debugging, `Light` theme and illustrations:
+  - `docs/images/example.png`
   - `docs/images/thumbnail.png`
 
-- **Special thanks to [@jam3sward](https://github.com/jam3sward) & [@Duncan1106](https://github.com/Duncan1106)**  
+- **Special thanks to [@jam3sward](https://github.com/jam3sward) &
+  [@Duncan1106](https://github.com/Duncan1106)**  
   ➡️ README proofreading and improvements
 
 - **Special thanks to [@mooseBringer](https://github.com/mooseBringer)**  
   ➡️ Discord activity  
   ➡️ Regular tests & feedbacks
 
-- **Special thanks to all contributors** – including those who submitted pull requests, opened issues, and shared feedback ([GitHub Issues] / [Discord])!
+- **Special thanks to all contributors** – including those who submitted pull
+  requests, opened issues, and shared feedback ([GitHub Issues] / [Discord])!
 
 <a id="license"></a>
 
 ## 📄 License
 
-This project is licensed under the [GPL-3.0 license].  
+This project is licensed under the [GPL-3.0 license].
 
 [🔼 Back to top]
 
 <!-- Links -->
+
 [🔼 Back to top]: #top
-[ha-badge]: https://img.shields.io/badge/Home%20Assistant-blue?style=for-the-badge&logo=homeassistant&logoColor=white&color=blue
-[js-badge]: https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=Javascript&logoColor=black&color=%23F7DF1E
-[discord-badge]: https://img.shields.io/badge/Discord-%235865F2?style=for-the-badge&logo=Discord&logoColor=white&color=%235865F2
+[ha-badge]:
+  https://img.shields.io/badge/Home%20Assistant-blue?style=for-the-badge&logo=homeassistant&logoColor=white&color=blue
+[js-badge]:
+  https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=Javascript&logoColor=black&color=%23F7DF1E
+[discord-badge]:
+  https://img.shields.io/badge/Discord-%235865F2?style=for-the-badge&logo=Discord&logoColor=white&color=%235865F2
 [repo-link]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card
-[GPL-3.0 license]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/LICENSE
+[GPL-3.0 license]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/LICENSE
 [discord-link]: https://discord.gg/tyMQ2SfyNG
 [Discord]: https://discord.gg/tyMQ2SfyNG
-[GitHub Issues]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues
-[Errors, Deprecations & Troubleshooting Guide]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/troubleshooting.md
-[Contributing Guide]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/contributing.md
-[Theme Guide]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/theme.md 
+[GitHub Issues]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues
+[Errors, Deprecations & Troubleshooting Guide]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/troubleshooting.md
+[Contributing Guide]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/contributing.md
+[Theme Guide]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/theme.md
 [ha-logo]: https://avatars.githubusercontent.com/u/13844975?s=64&v=4
-[chrome-logo]: https://raw.githubusercontent.com/alrra/browser-logos/main/src/chrome/chrome_64x64.png
-[edge-logo]: https://raw.githubusercontent.com/alrra/browser-logos/main/src/edge/edge_64x64.png
-[firefox-logo]: https://raw.githubusercontent.com/alrra/browser-logos/main/src/firefox/firefox_64x64.png
-[safari-logo]: https://raw.githubusercontent.com/alrra/browser-logos/main/src/safari/safari_64x64.png
-[opera-logo]: https://raw.githubusercontent.com/alrra/browser-logos/main/src/opera/opera_64x64.png
-[FCR]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md>
-[config-entity]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#entity>
-[config-attribute]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#attribute>
-[config-name]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#name>
-[config-unit]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#unit>
-[config-decimal]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#decimal>
-[config-min_value]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#min_value>
-[config-max_value]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#max_value>
-[config-max_value_attribute]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#max_value_attribute>
-[config-reverse]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#reverse>
-[config-state_content]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#state_content>
-[config-custom_info]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#custom_info>
-[config-name_info]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#name_info>
-[config-additions]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#additions>
-[config-icon]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#icon>
-[config-color]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#color>
-[config-badge_icon]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#badge_icon>
-[config-badge_color]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#badge_color>
-[config-bar_color]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_color>
-[config-bar_size]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_size>
-[config-bar_position]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_position>
-[config-bar_single_line]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_single_line>
-[config-bar_effect]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_effect>
-[config-bar_orientation]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_orientation>
-[config-force_circular_background]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#force_circular_background>
-[config-trend_indicator]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#trend_indicator>
-[config-layout]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#layout>
-[config-frameless]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#frameless>
-[config-marginless]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#marginless>
-[config-height]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#height>
-[config-min_width]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#min_width>
-[config-reverse_secondary_info_row]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#reverse_secondary_info_row>
-[config-unit_spacing]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#unit_spacing>
-[config-center_zero]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#center_zero>
-[config-theme]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#theme>
-[config-custom_theme]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#custom_theme>
-[config-interpolate]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#interpolate>
-[config-hide]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#hide>
-[config-disable_unit]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#disable_unit>
-[config-watermark]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#watermark>
-[config-xyz_action]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#xyz_action>
-[name-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#name-jinja>
-[icon-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#icon-jinja>
-[secondary-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#secondary-jinja>
-[percent-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#percent-jinja>
-[color-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#color-jinja>
-[bar_color-jinja]: <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_color-jinja>
+[chrome-logo]:
+  https://raw.githubusercontent.com/alrra/browser-logos/main/src/chrome/chrome_64x64.png
+[edge-logo]:
+  https://raw.githubusercontent.com/alrra/browser-logos/main/src/edge/edge_64x64.png
+[firefox-logo]:
+  https://raw.githubusercontent.com/alrra/browser-logos/main/src/firefox/firefox_64x64.png
+[safari-logo]:
+  https://raw.githubusercontent.com/alrra/browser-logos/main/src/safari/safari_64x64.png
+[opera-logo]:
+  https://raw.githubusercontent.com/alrra/browser-logos/main/src/opera/opera_64x64.png
+[FCR]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md
+[config-entity]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#entity
+[config-attribute]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#attribute
+[config-name]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#name
+[config-unit]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#unit
+[config-decimal]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#decimal
+[config-min_value]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#min_value
+[config-max_value]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#max_value
+[config-max_value_attribute]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#max_value_attribute
+[config-reverse]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#reverse
+[config-state_content]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#state_content
+[config-custom_info]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#custom_info
+[config-name_info]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#name_info
+[config-additions]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#additions
+[config-icon]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#icon
+[config-color]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#color
+[config-badge_icon]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#badge_icon
+[config-badge_color]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#badge_color
+[config-bar_color]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_color
+[config-bar_size]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_size
+[config-bar_position]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_position
+[config-bar_single_line]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_single_line
+[config-bar_effect]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_effect
+[config-bar_orientation]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_orientation
+[config-force_circular_background]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#force_circular_background
+[config-trend_indicator]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#trend_indicator
+[config-layout]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#layout
+[config-frameless]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#frameless
+[config-marginless]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#marginless
+[config-height]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#height
+[config-min_width]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#min_width
+[config-reverse_secondary_info_row]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#reverse_secondary_info_row
+[config-unit_spacing]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#unit_spacing
+[config-center_zero]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#center_zero
+[config-theme]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#theme
+[config-custom_theme]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#custom_theme
+[config-interpolate]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#interpolate
+[config-hide]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#hide
+[config-disable_unit]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#disable_unit
+[config-watermark]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#watermark
+[config-xyz_action]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#xyz_action
+[name-jinja]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#name-jinja
+[icon-jinja]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#icon-jinja
+[secondary-jinja]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#secondary-jinja
+[percent-jinja]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#percent-jinja
+[color-jinja]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#color-jinja
+[bar_color-jinja]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_color-jinja

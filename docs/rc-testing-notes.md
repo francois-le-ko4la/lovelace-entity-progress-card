@@ -1,7 +1,7 @@
-
 ## What's new
 
-**Better, faster, clearer**: new features, enhanced usability, and a full docs overhaul to make setup and customization effortless.
+**Better, faster, clearer**: new features, enhanced usability, and a full docs
+overhaul to make setup and customization effortless.
 
 ### 🆕 New Feature
 
@@ -14,7 +14,8 @@
   - `bottom`: at the bottom of the card
   - `overlay`: overlaid on top of the content
 
-  ➡️ [Feature]: Add option to show progress bar along bottom (or top) border of card #73 (@Valdorama)  
+  ➡️ [Feature]: Add option to show progress bar along bottom (or top) border of
+  card #73 (@Valdorama)  
   ➡️ [Enhancement]: Style for XL bar #76 (@yduke)  
   ➡️ [Feature]: bar position #80 (@NfxGT) (soon!)  
 - `bar_effect`: added support for `center_zero` (effect: 'radius', 'glass', 'gradient')

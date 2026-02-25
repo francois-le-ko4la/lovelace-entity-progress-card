@@ -13,7 +13,7 @@ Jump to the specific section:
   - 💧 [Humidity](#humidity)
   - 🦠 [VOC](#voc)
   - 🦠 [PM 2.5](#pm25)
-- [Adapt to HA custom theme](#adapt-to-ha-custom-theme)  
+- [Adapt to HA custom theme](#adapt-to-ha-custom-theme)
 
 ## Token color
 
@@ -63,20 +63,22 @@ as defined by the CSS standard.
 
 ## Predefined theme
 
-Predefined themes (Card and Badge) are built-in Lovelace themes provided by default. They allow you to quickly apply a consistent and
-visually appealing style to your dashboard or badge without any manual configuration. These themes are ideal for getting
-an immediate result and improving the look and feel of your interface with minimal effort.
+Predefined themes (Card and Badge) are built-in Lovelace themes provided by
+default. They allow you to quickly apply a consistent and visually appealing
+style to your dashboard or badge without any manual configuration. These themes
+are ideal for getting an immediate result and improving the look and feel of
+your interface with minimal effort.
 
 <a id="optimal-high"></a>
 
 ### 🔋 Optimal when high (Battery...)
 
-The "Optimal when High" parameter is particularly useful in cases where the system
-or component in question performs best at higher values. For instance, in the case
-of battery charge, the device functions more efficiently and with better
-performance when the battery level is high. By using "Optimal when High," you can
-set a theme that visually emphasizes and prioritizes states where the value is at
-its peak.
+The "Optimal when High" parameter is particularly useful in cases where the
+system or component in question performs best at higher values. For instance, in
+the case of battery charge, the device functions more efficiently and with
+better performance when the battery level is high. By using "Optimal when High,"
+you can set a theme that visually emphasizes and prioritizes states where the
+value is at its peak.
 
 ```yaml
 type: custom:entity-progress-card
@@ -140,10 +142,11 @@ icon_tap_action:
   action: more-info
 ```
 
-The `light` configuration, designed by [@harmonie-durrant](https://github.com/harmonie-durrant),
-defines how different brightness levels are visually represented using colors and
-icons. This system uses a **linear gradient**, meaning the color transitions
-smoothly across the brightness percentage range.
+The `light` configuration, designed by
+[@harmonie-durrant](https://github.com/harmonie-durrant), defines how different
+brightness levels are visually represented using colors and icons. This system
+uses a **linear gradient**, meaning the color transitions smoothly across the
+brightness percentage range.
 
 The brightness levels and their corresponding colors are as follows:
 
@@ -179,9 +182,9 @@ icon_tap_action:
   action: more-info
 ```
 
-We can use `min_value` and `max_value` to define the range of values we want
-to represent with our color gradient. We use predefined intervals, each
-associated with a specific color:
+We can use `min_value` and `max_value` to define the range of values we want to
+represent with our color gradient. We use predefined intervals, each associated
+with a specific color:
 
 | **Temperature Range (°C / °F)** | **Color Variable**         | **Description** |
 | :------------------------------ | :------------------------- | :-------------- |
@@ -202,8 +205,7 @@ associated with a specific color:
 > [!IMPORTANT]
 >
 > Fahrenheit values are converted to apply the correct color. Make sure to set
-> your unit to `°F` correctly in order to see the accurate color
-> representation.
+> your unit to `°F` correctly in order to see the accurate color representation.
 
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/temperature.png" alt="Image title" width="500"/>
 
@@ -279,7 +281,8 @@ The ranges and their corresponding colors are as follows:
 > [!IMPORTANT]
 >
 > The information provided in this HA card is based on thresholds from the
-> following [source](https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element).
+> following
+> [source](https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element).
 > This color code is for informational purposes only and should not be taken as
 > professional advice or a standard to follow. It is crucial to consult the
 > device's official documentation or current standards for the most accurate and
@@ -311,8 +314,8 @@ icon_tap_action:
 ```
 
 The `pm25` configuration defines how different concentrations of fine
-particulate matter (PM2.5) are represented using colors and icons. Rather than
-a linear gradient, this system categorizes PM2.5 levels into predefined ranges,
+particulate matter (PM2.5) are represented using colors and icons. Rather than a
+linear gradient, this system categorizes PM2.5 levels into predefined ranges,
 each mapped to a specific color for easy interpretation.
 
 The ranges and their corresponding colors are as follows:
@@ -328,7 +331,8 @@ The ranges and their corresponding colors are as follows:
 > [!IMPORTANT]
 >
 > The information provided in this HA card is based on thresholds from the
-> following [source](https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element).
+> following
+> [source](https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element).
 > This color code is for informational purposes only and should not be taken as
 > professional advice or a standard to follow. It is crucial to consult the
 > device's official documentation or current standards for the most accurate and
