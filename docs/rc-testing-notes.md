@@ -17,6 +17,15 @@ What this means for you:
 - Fields respond correctly to your HA theme (light/dark mode, accent colors)
 - Full compatibility with both the old and new HA frontend architecture
 
+### ⚡ Faster Tap Response
+
+Immediate action on single tap ! Previously, every tap was delayed by 300ms to
+wait for a potential double tap — even when no double_tap_action was configured.
+This caused a noticeable lag when opening more-info or triggering any tap
+action. The card now detects at startup whether a double tap action is
+configured. If not, tap actions fire immediately with no delay, matching the
+responsiveness of native HA cards.
+
 ### ✨ Smoother Interactions
 
 Better click & tap feedback: The card now uses Home Assistant's native ripple
@@ -37,13 +46,26 @@ card_mod:
 
 ### 🎨 Smooth Color Transitions
 
-New `interpolate` option for custom themes: When using a custom_theme, you can now
-enable smooth color transitions between steps. Instead of jumping abruptly from
-one color to the next, the icon and progress bar will gradually blend from one
-color to the other as the value changes.
+New `interpolate` option for custom themes: When using a custom_theme, you can
+now enable smooth color transitions between steps. Instead of jumping abruptly
+from one color to the next, the icon and progress bar will gradually blend from
+one color to the other as the value changes.
 
 ➡️ [Enhancement]: Smooth color interpolation between custom_theme ranges #96
 (@diegocjorge)
+
+### ✨ New Bar Effects: shimmer_reverse and gradient_reverse
+
+Two new visual effects are now available as companions to the existing `shimmer`
+and `gradient` effects.
+
+- `shimmer_reverse` — same shimmering animation as shimmer, but running in the
+  opposite direction.
+- `gradient_reverse` — same color gradient as gradient, but fading in the
+  opposite direction.
+
+These new effects are independent from `bar_orientation` — you can combine them
+freely to achieve the exact visual result you want.
 
 ### 💧 Dynamic Watermarks: Compare your entity against another sensor
 
@@ -108,10 +130,10 @@ watermark:
 
 ### 🌍 Multilingual support: Easier to contribute
 
-All translations have been moved to dedicated JSON files under `./translations/`.
-If you'd like to add a new language or fix an existing translation, you no
-longer need to touch any code — just edit or create a simple JSON file and
-submit a pull request.
+All translations have been moved to dedicated JSON files under
+`./translations/`. If you'd like to add a new language or fix an existing
+translation, you no longer need to touch any code — just edit or create a simple
+JSON file and submit a pull request.
 
 ➡️ Want to help translate the card into your language? Check out the
 `contributing.md` guide for instructions.

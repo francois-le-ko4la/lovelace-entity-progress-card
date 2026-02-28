@@ -271,7 +271,9 @@ const CARD = {
           radius: { label: 'radius', class: 'progress-bar-effect-radius' },
           glass: { label: 'glass', class: 'progress-bar-effect-glass' },
           gradient: { label: 'gradient', class: 'progress-bar-effect-gradient' },
+          gradientReverse: { label: 'gradient_reverse', class: 'progress-bar-effect-gradient-reverse' },
           shimmer: { label: 'shimmer', class: 'progress-bar-effect-shimmer' },
+          shimmerReverse: { label: 'shimmer_reverse', class: 'progress-bar-effect-shimmer-reverse' },
         },
       },
       watermark: {
@@ -4087,8 +4089,9 @@ ha-card:has(.top-container) {
   background: var(--epb-current-progress-effect-glass-rev);
 }
 
-/* ----- gradient ----- */
-.${CARD.style.dynamic.progressBar.effect.gradient.class} {
+/* ----- gradient / gradient-reverse ----- */
+.${CARD.style.dynamic.progressBar.effect.gradient.class},
+.${CARD.style.dynamic.progressBar.effect.gradientReverse.class} {
   --epb-current-progress-effect-gradient: linear-gradient(
     90deg,
     color-mix(in srgb, white 40%, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})),
@@ -4109,15 +4112,27 @@ ha-card:has(.top-container) {
 
 .${CARD.style.dynamic.progressBar.effect.gradient.class} .${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
   background: var(--epb-current-progress-effect-gradient-rev);
-} 
+}
 
-/* ----- shimmer ----- */
-.${CARD.style.dynamic.progressBar.effect.shimmer.class} .${CARD.htmlStructure.elements.progressBar.inner.class} {
+.${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
+  :is(.${CARD.htmlStructure.elements.progressBar.inner.class},
+      .${CARD.htmlStructure.elements.progressBar.positiveInner.class}) {
+  background: var(--epb-current-progress-effect-gradient-rev);
+}
+
+.${CARD.style.dynamic.progressBar.effect.gradientReverse.class} .${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
+  background: var(--epb-current-progress-effect-gradient);
+}
+
+/* ----- shimmer / shimmer-reverse ----- */
+.${CARD.style.dynamic.progressBar.effect.shimmer.class} .${CARD.htmlStructure.elements.progressBar.inner.class},
+.${CARD.style.dynamic.progressBar.effect.shimmerReverse.class} .${CARD.htmlStructure.elements.progressBar.inner.class} {
   overflow: hidden;
   position: relative;
 }
 
-.${CARD.style.dynamic.progressBar.effect.shimmer.class} .${CARD.htmlStructure.elements.progressBar.inner.class}::after {
+.${CARD.style.dynamic.progressBar.effect.shimmer.class} .${CARD.htmlStructure.elements.progressBar.inner.class}::after,
+.${CARD.style.dynamic.progressBar.effect.shimmerReverse.class} .${CARD.htmlStructure.elements.progressBar.inner.class}::after {
   content: '';
   position: absolute;
   top: 0;
@@ -4125,12 +4140,24 @@ ha-card:has(.top-container) {
   width: 100%;
   height: 100%;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-  animation: shimmer 2s infinite;
 }
 
-@keyframes shimmer {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
+.${CARD.style.dynamic.progressBar.effect.shimmer.class} .${CARD.htmlStructure.elements.progressBar.inner.class}::after {
+  animation: shimmer-ltr 2s infinite;
+}
+
+.${CARD.style.dynamic.progressBar.effect.shimmerReverse.class} .${CARD.htmlStructure.elements.progressBar.inner.class}::after {
+  animation: shimmer-rtl 2s infinite;
+}
+
+@keyframes shimmer-ltr {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes shimmer-rtl {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
 }
 
 /* =============================================================================
@@ -8080,6 +8107,7 @@ class ActionHelper {
   #startY = 0;
   #iconClickSources = new Set(['shape', 'ha-svg-icon', 'img']);
   #disableIconTap = false;
+  #hasDoubleTap = false;
 
   #boundHandlers = {
     pointerdown: (e) => this.#handleMouseDown(e),
@@ -8098,6 +8126,9 @@ class ActionHelper {
     this.#resourceManager = resourceManager;
     this.#config = config;
     this.#disableIconTap = disableIconTap;
+    this.#hasDoubleTap =
+      this.#config?.[`${CARD.interactions.event.tap.doubleTapAction}_action`]?.action !== 'none' ||
+      this.#config?.[`icon_${CARD.interactions.event.tap.doubleTapAction}_action`]?.action !== 'none';
     this.#attachToTargets(clickableTarget);
   }
 
@@ -8183,14 +8214,19 @@ class ActionHelper {
     this.#clickCount++;
 
     if (this.#clickCount === 1) {
-      this.#resourceManager.setTimeout(
-        () => {
-          this.#fireAction(ev, CARD.interactions.event.tap.tapAction);
-          this.#clickCount = 0;
-        },
-        300,
-        'tapTimeout',
-      );
+      if (this.#hasDoubleTap)  {
+        this.#resourceManager.setTimeout(
+          () => {
+            this.#fireAction(ev, CARD.interactions.event.tap.tapAction);
+            this.#clickCount = 0;
+          },
+          300,
+          'tapTimeout',
+        );
+      } else {
+        this.#fireAction(ev, CARD.interactions.event.tap.tapAction);
+        this.#clickCount = 0;
+      }
     } else if (this.#clickCount === 2) {
       this.#resourceManager.remove('tapTimeout');
       this.#fireAction(ev, CARD.interactions.event.tap.doubleTapAction);

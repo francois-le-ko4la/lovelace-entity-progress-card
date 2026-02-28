@@ -1036,7 +1036,11 @@ _Available options_:
 - radius: rounds the corners of the progress bar
 - glass: adds a frosted glass effect to the progress bar
 - gradient: applies a color gradient to the progress bar
+- gradient_reverse: applies a color gradient to the progress bar (fading in the
+  opposite direction)
 - shimmer: adds a shimmering light animation across the bar
+- shimmer_reverse: adds a shimmering light animation across the bar (running in
+  the opposite direction)
 
 _Examples_:
 
@@ -1632,8 +1636,8 @@ _Map definition_:
 - `high_attribute`: Entity's attribute to define a high zone.
 - `high_color` (string): The CSS color used for the high watermark zone (can be
   a name or hex).
-- `low` (number/entity): The lower value where the bar starts highlighting a low zone
-  (0–100).
+- `low` (number/entity): The lower value where the bar starts highlighting a low
+  zone (0–100).
 - `low_attribute`: Entity's attribute to define a low zone.
 - `low_color` (string): The CSS color used for the low watermark zone.
 - `type` (string): Defines the style of the watermark overlay.
