@@ -436,11 +436,13 @@ _Unit selection_:
 > `max_value`. Even if the displayed value uses an automatically detected unit,
 > the progress bar still relies on max_value to calculate the percentage.
 
-> [!WARNING] Setting the unit to % will display the percentage value, while
-> using a different unit will show the value of the primary entity. Switching
-> between non-percentage units does not affect the displayed numeric value. For
-> example, by default, a timer is shown in seconds. If the unit is changed from
-> s (seconds) to min (minutes), no conversion is performed (for now), and the
+> [!WARNING]
+>
+> Setting the unit to % will display the percentage value, while using a
+> different unit will show the value of the primary entity. Switching between
+> non-percentage units does not affect the displayed numeric value. For example,
+> by default, a timer is shown in seconds. If the unit is changed from s
+> (seconds) to min (minutes), no conversion is performed (for now), and the
 > value remains unchanged.
 
 _Example_:
@@ -663,10 +665,9 @@ state_content:
 >
 > - The selected attribute is shown before the main numerical display on the
 >   card.
-
-- If an attribute listed does not exist, the card immediately displays unknown.
-- This feature is useful for adding additional context (e.g., position,
-  status...) to the main progress value.
+> - If an attribute listed does not exist, the card immediately displays unknown.
+> - This feature is useful for adding additional context (e.g., position,
+>   status...) to the main progress value.
 
 [🔼 Back to top]
 
@@ -950,8 +951,10 @@ adjusts to accommodate the size of the progress bar.
 
 Defines the position of the progress bar within the card.
 
-> [!WARNING] If bar_position is set (to any value other than "default"), the
-> bar_size option will be ignored.
+> [!WARNING]
+>
+> If bar_position is set (to any value other than "default"), the bar_size
+> option will be ignored.
 
 _Example_:
 
@@ -1062,7 +1065,9 @@ bar_effect: |-
   {% endif %}
 ```
 
-> [!NOTE] The shimmer effect is disabled when center_zero is enabled
+> [!NOTE]
+>
+> The shimmer effect is disabled when center_zero is enabled
 > (center_zero = true).
 
 [🔼 Back to top]
@@ -1160,6 +1165,32 @@ _Icons_:
 | `mdi:chevron-up-box`   | Upward trend   |
 | `mdi:chevron-down-box` | Downward trend |
 | `mdi:equal-box`        | Stable trend   |
+
+_Default value_:
+
+- `false`
+
+[🔼 Back to top]
+
+#### `text_shadow`
+
+[![Card OK][Card-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+
+> **`text_shadow`** [Boolean] _(optional, default: false)_
+
+Displays a shadow behind the text when `bar_position` is set to `overlay`,
+improving readability over colored or gradient backgrounds.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.temperature
+····
+bar_position: overlay
+text_shadow: true
+```
 
 _Default value_:
 
@@ -1378,7 +1409,9 @@ type: custom:entity-progress-card
 theme: light
 ```
 
-> [!WARNING] The `battery`, `cpu`, and `memory` parameters are deprecated and
+> [!WARNING]
+>
+> The `battery`, `cpu`, and `memory` parameters are deprecated and
 > SHOULD no longer be used. Although these parameters are still valid, they MUST
 > be replaced by `optimal_when_low` or `optimal_when_high`. These new
 > parameters, introduced in version `1.1.7`, eliminate the need for multiple
@@ -1731,11 +1764,13 @@ tap_action:
   navigation_path: /lovelace/lights
 ```
 
-> [!NOTE] It's possible to specify a different entity for an action. For
-> example, this can be useful if you want the `more-info` popup to display
-> information for a different entity to the one used in the progress card. As
-> shown below, the progress card shows a stacked bar chart with `pv1_power` and
-> `pv2_power`, but displays `pv_total_power` when tapped.
+> [!NOTE]
+>
+> It's possible to specify a different entity for an action. For example, this
+> can be useful if you want the `more-info` popup to display information for a
+> different entity to the one used in the progress card. As shown below, the
+> progress card shows a stacked bar chart with `pv1_power` and `pv2_power`, but
+> displays `pv_total_power` when tapped.
 
 _Example_:
 

@@ -272,6 +272,7 @@ This is the primary card for displaying entity progress.
 | `bar_orientation`            | string (optional)       | `ltr`                     | Bar direction                         | [Config Ref.][config-bar_orientation]            |
 | `force_circular_background`  | boolean (optional)      | `false`                   | Force icon circle background          | [Config Ref.][config-force_circular_background]  |
 | `trend_indicator`            | string (optional)       | `false`                   | Displays trend icons.                 | [Config Ref.][config-trend_indicator]            |
+| `text_shadow`                | boolean (optional)      | `false`                   | Display a text shadow (overlay)       | [Config Ref.][config-text_shadow]                |
 | `layout`                     | string (optional)       | `horizontal`              | Layout direction                      | [Config Ref.][config-layout]                     |
 | `frameless`                  | boolean (optional)      | `false`                   | Remove card frame                     | [Config Ref.][config-frameless]                  |
 | `marginless`                 | boolean (optional)      | `false`                   | Remove top/bottom margin              | [Config Ref.][config-marginless]                 |
@@ -923,6 +924,7 @@ The following options remain fully compatible with this new card:
 | `bar_orientation`            | string (optional)  | Define the direction of the progress bar (e.g., `ltr`, `rtl`).                 | [Config Ref.][config-bar_orientation]            |
 | `force_circular_background`  | boolean (optional) | Force icon circle background.                                                  | [Config Ref.][config-force_circular_background]  |
 | `trend_indicator`            | string (optional)  | Displays trend icons.                                                          | [Config Ref.][config-trend_indicator]            |
+| `text_shadow`                | boolean (optional) | Display a text shadow (overlay)                                                | [Config Ref.][config-text_shadow]                |
 | `layout`                     | string (optional)  | Adjust the overall layout (e.g., `horizontal`, `vertical`).                    | [Config Ref.][config-layout]                     |
 | `frameless`                  | boolean (optional) | Remove the default card border and background for a seamless, flat appearance. | [Config Ref.][config-frameless]                  |
 | `marginless`                 | boolean (optional) | Remove vertical margin for a more compact template display.                    | [Config Ref.][config-marginless]                 |
@@ -1523,6 +1525,8 @@ This project is licensed under the [GPL-3.0 license].
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#force_circular_background
 [config-trend_indicator]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#trend_indicator
+[config-text_shadow]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#text_shadow
 [config-layout]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#layout
 [config-frameless]:
