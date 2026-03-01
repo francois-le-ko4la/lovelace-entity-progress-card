@@ -3857,6 +3857,7 @@ ha-card:has(.top-container) {
 
 .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
   --epb-current-group-overflow: hidden;
+  min-width: 0;
 }
 
 .${CARD.layout.orientations.vertical.label} .${CARD.style.bar.sizeOptions.large.label} {
@@ -3869,6 +3870,7 @@ ha-card:has(.top-container) {
   text-overflow: ellipsis;
   white-space: nowrap;
   min-width: 0;
+  height: 100%;
   width: 100%;
 }
 
@@ -4385,8 +4387,11 @@ ha-card:has(.top-container) {
     .${CARD.style.dynamic.show}-hwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class})
 :is(.${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
     .${CARD.htmlStructure.elements.progressBar.highWatermark.class}) {
+  --epb-wm-triangle-top: 0px;
+
   width: 0;
   height: 0;
+  top: var(--epb-wm-triangle-top);
   background-color: transparent;
   border-left: calc(var(--epb-watermark-triangle-size, 8px) / 2) solid transparent;
   border-right: calc(var(--epb-watermark-triangle-size, 8px) / 2) solid transparent;
@@ -4402,7 +4407,7 @@ ha-card:has(.top-container) {
 }
 .${CARD.style.dynamic.show}-hwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class}
 .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  --epb-hwm-triangle-left: calc(var(--epb-high-watermark-value, 80%) + var(--epb-watermark-triangle-size, 8px) / 2);
+  --epb-hwm-triangle-left: calc(var(--epb-high-watermark-value, 80%) - var(--epb-watermark-triangle-size, 8px) / 2);
   --epb-hwm-triangle-bottom: unset;
 
   left: var(--epb-hwm-triangle-left);
@@ -4413,6 +4418,7 @@ ha-card:has(.top-container) {
 ha-card.vertical.up-orientation.${CARD.style.dynamic.show}-lwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class} .overlay .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
   --epb-lwm-triangle-left: 0%;
   --epb-lwm-triangle-bottom: calc(var(--epb-low-watermark-value, 20%) - var(--epb-watermark-triangle-size, 8px) / 2);
+  --epb-wm-triangle-top: unset;
 
   border-left: var(--epb-watermark-triangle-size, 8px) solid var(--epb-low-watermark-color, var(--red-color));
   border-right: none;
@@ -4423,6 +4429,7 @@ ha-card.vertical.up-orientation.${CARD.style.dynamic.show}-lwm-triangle-${CARD.h
 ha-card.vertical.up-orientation.${CARD.style.dynamic.show}-hwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class} .overlay .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   --epb-hwm-triangle-left: 0%;
   --epb-hwm-triangle-bottom: calc(var(--epb-high-watermark-value, 80%) - var(--epb-watermark-triangle-size, 8px) / 2);
+  --epb-wm-triangle-top: unset;
 
   border-left: var(--epb-watermark-triangle-size, 8px) solid var(--epb-high-watermark-color, var(--red-color));
   border-right: none;
@@ -9304,7 +9311,7 @@ class EntityProgressBadge extends EntityProgressCardBase {
     }
 
     .${CARD.htmlStructure.elements.nameGroup.class},
-    .${CARD.htmlStructure.elements.nameGroup.class} > span {
+    .${CARD.htmlStructure.elements.nameGroup.class} .ellipsis-wrapper > span {
       height: 10px !important;
       font-size: 10px !important;
       font-style: normal !important;
@@ -9315,7 +9322,7 @@ class EntityProgressBadge extends EntityProgressCardBase {
     }
 
     .${CARD.htmlStructure.elements.detailGroup.class},
-    .${CARD.htmlStructure.elements.detailGroup.class} > span {
+    .${CARD.htmlStructure.elements.detailGroup.class} .ellipsis-wrapper > span {
       font-size: var(--ha-badge-font-size, var(--ha-font-size-s)) !important;
       font-style: normal !important;
       font-weight: 500 !important;
@@ -9710,7 +9717,7 @@ class EntityProgressBadgeTemplate extends EntityProgressTemplate {
     }
 
     .${CARD.htmlStructure.elements.nameGroup.class},
-    .${CARD.htmlStructure.elements.nameGroup.class} > span {
+    .${CARD.htmlStructure.elements.nameGroup.class} .ellipsis-wrapper > span {
       height: 10px !important;
       font-size: 10px !important;
       font-style: normal !important;
@@ -9721,7 +9728,7 @@ class EntityProgressBadgeTemplate extends EntityProgressTemplate {
     }
 
     .${CARD.htmlStructure.elements.detailGroup.class},
-    .${CARD.htmlStructure.elements.detailGroup.class} > span {
+    .${CARD.htmlStructure.elements.detailGroup.class} .ellipsis-wrapper > span {
       font-size: var(--ha-badge-font-size, var(--ha-font-size-s)) !important;
       font-style: normal !important;
       font-weight: 500 !important;
