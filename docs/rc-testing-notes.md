@@ -91,6 +91,18 @@ watermark:
 ➡️ [Enhancement]: Make watermark accept a dynamically updating value. #62
 (@YamanKoudmani)
 
+### 📏 Progress Bar Max Width (bar_max_width)
+
+Control the width of your horizontal progress bars !
+You can now cap that width to keep bars more compact or visually balanced.
+
+```yaml
+type: custom:entity-progress-card
+bar_max_width: 120px
+```
+
+➡️ Discord @RKT62
+
 ### 🛠️ Other improvements
 
 - Add Watermark on vertical layout and style improvements

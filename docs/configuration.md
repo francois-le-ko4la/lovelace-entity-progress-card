@@ -47,6 +47,7 @@
       - [`bar_position`](#bar_position)
       - [`bar_single_line`](#bar_single_line)
       - [`bar_effect`](#bar_effect)
+      - [`bar_max_width`](#bar_max_width)
       - [`bar_orientation`](#bar_orientation)
       - [`force_circular_background`](#force_circular_background)
       - [`trend_indicator`](#trend_indicator)
@@ -1076,6 +1077,29 @@ bar_effect: |-
 
 [🔼 Back to top]
 
+#### `bar_max_width`
+
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+[![YAML Only][yaml-only]](#yaml-only)
+
+> **`bar_max_width`** [String] _(optional)_
+
+Limits the maximum width of the progress bar in vertical layout.
+Only applies to vertical layout (`small`, `medium`, `large` sizes). Has no
+effect on `xlarge`.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+entity: timer.testtimer
+bar_max_width: 100px
+```
+
+[🔼 Back to top]
+
 #### `bar_orientation`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
@@ -1809,6 +1833,7 @@ available for Templates as well:
 | `bar_position`               | string (optional)  | `default`    | Position of the progress bar      | [Config Ref.](#bar_position)               |
 | `bar_single_line`            | boolean (optional) | `false`      | single-line mode for overlay bars | [Config Ref.](#bar_single_line)            |
 | `bar_effect`                 | string/list/jinja  | —            | Visual effects for the bar        | [Config Ref.](#bar_effect)                 |
+| `bar_max_width`.             | string (optional)  | -            | Limits the max width of the bar   | [Config Ref.](#bar_max_width)              |
 | `bar_orientation`            | string (optional)  | `ltr`        | Bar direction                     | [Config Ref.](#bar_orientation)            |
 | `force_circular_background`  | boolean (optional) | `false`      | Force icon circle background      | [Config Ref.](#force_circular_background)  |
 | `trend_indicator`            | string (optional)  | `false`      | Displays trend icons.             | [Config Ref.](#trend_indicator)            |

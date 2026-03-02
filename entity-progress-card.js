@@ -265,6 +265,7 @@ const CARD = {
         size: { var: '--epb-progress-bar-size', default: '0%' },
         pSize: { var: '--epb-progress-bar-psize', default: '0%' },
         nSize: { var: '--epb-progress-bar-nsize', default: '0%' },
+        maxWidth: { var: '--epb-progress-bar-max-width', default: null },
         background: { var: '--epb-progress-bar-background-color' },
         orientation: { rtl: 'rtl-orientation', ltr: 'ltr-orientation', up: 'up-orientation' },
         effect: {
@@ -3871,6 +3872,7 @@ ha-card:has(.top-container) {
   white-space: nowrap;
   min-width: 0;
   height: 100%;
+  line-height: 100%;
   width: 100%;
 }
 
@@ -3893,7 +3895,6 @@ ha-card:has(.top-container) {
   font-weight: var(--type-entities-combined-font-weight, var(--ha-font-weight-body));
   height: var(--type-entities-combined-height, var(--epb-detail-height));
   line-height: var(--type-entities-combined-line-height, var(--epb-detail-height));
-  vertical-align: middle;
   letter-spacing: var(--epb-letter-spacing-detail);
 }
 
@@ -3914,6 +3915,7 @@ ha-card:has(.top-container) {
   gap: var(--epb-current-secondary-info-gap, var(--epb-gap-default));
   width: var(--epb-current-secondary-info-width, auto);
   min-width: var(--epb-current-secondary-info-min-width, auto);
+  justify-content: space-between;
 }
 
 .secondary-info-detail-group:has(.secondary-info-custom-info:empty):has(.state-and-progress-info:empty) {
@@ -3973,6 +3975,12 @@ ha-card:has(.top-container) {
   align-items: center;
   flex-grow: 1;
   height: var(--type-entities-combined-line-height, var(--epb-current-progress-container-height));
+}
+
+.${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.elements.progressBar.container.class},
+.${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.container.class},
+.${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.container.class} {
+  max-width: var(--epb-progress-bar-max-width, unset);
 }
 
 .horizontal {
@@ -7105,6 +7113,7 @@ class yamlSchemaFactory {
         bar_effect: types.effectArray(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
         bar_position: types.enumsWithDefault(['default', 'below', 'top', 'bottom', 'overlay'], 'default'),
         bar_single_line: types.optionalBooleanWithDefault(false),
+        bar_max_width: types.optionalString(),
         layout: types.enumsWithDefault(
           Object.values(CARD.layout.orientations).map((e) => e.label),
           'horizontal',
@@ -7186,6 +7195,7 @@ class yamlSchemaFactory {
         bar_effect: types.effectArray(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
         bar_position: types.enumsWithDefault(['default', 'below', 'top', 'bottom', 'overlay'], 'default'),
         bar_single_line: types.optionalBooleanWithDefault(false),
+        bar_max_width: types.optionalString(),
         layout: types.enumsWithDefault(
           Object.values(CARD.layout.orientations).map((e) => e.label),
           'horizontal',
@@ -8629,6 +8639,8 @@ class EntityProgressCardBase extends HTMLElement {
       EntityProgressCardBase._setStylePropertyIfChanged(card.style, CARD.style.dynamic.card.minWidth.var, this._cardView.config.min_width);
     if (this._cardView.config.height)
       EntityProgressCardBase._setStylePropertyIfChanged(card.style, CARD.style.dynamic.card.height.var, this._cardView.config.height);
+    if (this._cardView.config.bar_max_width)
+      EntityProgressCardBase._setStylePropertyIfChanged(card.style, CARD.style.dynamic.progressBar.maxWidth.var, this._cardView.config.bar_max_width);
   }
 
   get conditionalStyle() {
