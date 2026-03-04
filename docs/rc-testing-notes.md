@@ -105,7 +105,11 @@ bar_max_width: 120px
 
 ### 🛠️ Other improvements
 
-- Add Watermark on vertical layout and style improvements
+- Fix text ellipsis overflow
+
+- Refactor bar effect
+
+- Add Watermark and bar effect on vertical layout and style improvements
 
   ➡️ [Feature]: bar position #80 (@NfxGT)
 
@@ -135,7 +139,7 @@ bar_max_width: 120px
 
   ➡️ [Bug]: Temperature theme not always applied #105 (@sgofferj)
 
-- Fix last_updated/state_content informations
+- Fix `last_updated`/`state_content` informations
 
   ➡️ [Bug]: last_updated/last_changed is declared unknown in state_content #106
   (MatzeKitt)

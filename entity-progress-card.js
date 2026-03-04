@@ -3,8 +3,8 @@
  *
  * This file defines a custom element `EntityProgressCard` for displaying
  * progress or status information about an entity in Home Assistant.
- * The card displays visual elements like icons, progress bars, and other dynamic content
- * based on the state of the entity and user configurations.
+ * The card displays visual elements like icons, progress bars, and other
+ * dynamic content based on the state of the entity and user configurations.
  *
  * Key Features:
  * - Dynamic content update (e.g., progress bar, icons) based on entity state.
@@ -12,10 +12,11 @@
  * - Error handling for missing or invalid entities.
  * - Configuration options for various card elements.
  *
- * More informations here: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
+ * More informations here:
+ *   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.5.2-rc1
+ * @version 1.5.2-rc2
  *
  */
 
@@ -23,7 +24,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.5.2-beta1';
+const VERSION = '1.5.2-rc2';
 const CARD = {
   meta: {
     card: {
@@ -3556,8 +3557,6 @@ ${CARD.htmlStructure.card.element} {
   height: var(${CARD.style.dynamic.card.height.var}, 100%);
   box-sizing: border-box;
   overflow: hidden;
-  box-shadow: var(--ha-card-box-shadow,none);
-  border-width: var(--ha-card-border-width,1px);
 
   font-family: var(--ha-font-family-body);
   -moz-osx-font-smoothing: var(--ha-font-smoothing);
@@ -3573,14 +3572,17 @@ ${CARD.htmlStructure.card.element} {
 .type-entities,
 .type-custom-vertical-stack-in-card,
 .${CARD.style.dynamic.frameless.class} {
-  border: none !important;
-  box-shadow: none !important;
-  background: transparent !important;
+  --ha-card-background: transparent;
+  --ha-card-border-width: 0px;
+  --ha-card-box-shadow: none;
 }
 
 .type-entities {
-  padding: 0 !important;
-  margin: 0 !important;
+  --epb-current-card-padding: 0px;
+  --epb-current-card-margin: 0px;
+  --ha-ripple-hover-opacity: 0;
+  --ha-ripple-pressed-opacity: 0;
+
   transition: none !important;
 }
 
@@ -3642,11 +3644,9 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
   --epb-current-container-min-height: var(--epb-entities-card-min-height);
 }
 
-.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class},
-.${CARD.layout.orientations.vertical.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class},
-.${CARD.layout.orientations.horizontal.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class} {
-  min-height: unset !important;
-  padding-top: unset !important;
+.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class} {
+  --epb-current-container-min-height: 0px;
+  --epb-current-container-padding-top: 0px;
 }
 
 /* =============================================================================
@@ -3747,6 +3747,11 @@ ha-card:has(.below-container) {
   height: var(--epb-current-shape-size);
   border-radius: 50%;
   background-color: color-mix(in srgb, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) var(--epb-shape-opacity), transparent);
+}
+
+.type-entities .${CARD.htmlStructure.elements.shape.class} {
+  --ha-ripple-hover-opacity: 0;
+  --ha-ripple-pressed-opacity: 0;
 }
 
 .${CARD.htmlStructure.elements.icon.class},
@@ -3856,6 +3861,7 @@ ha-card:has(.top-container) {
   --epb-current-group-box-sizing: border-box;
 }
 
+.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.nameGroup.class},
 .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
   --epb-current-group-overflow: hidden;
   min-width: 0;
@@ -4019,9 +4025,17 @@ ha-card:has(.top-container) {
 .${CARD.htmlStructure.elements.progressBar.inner.class},
 .${CARD.htmlStructure.elements.progressBar.positiveInner.class},
 .${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
-  background: var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default});
   transition: width var(--epb-progress-transition-width);
   will-change: width;
+}
+
+.${CARD.htmlStructure.elements.progressBar.inner.class},
+.${CARD.htmlStructure.elements.progressBar.positiveInner.class} {
+  background: var(--epb-current-progress-effect, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default}));
+}
+
+.${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
+  background: var(--epb-current-progress-effect-neg, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default}));
 }
 
 .${CARD.htmlStructure.elements.progressBar.inner.class} {
@@ -4086,17 +4100,13 @@ ha-card:has(.top-container) {
 /* === VARIANTS === */
 /* ----- glass ----- */
 .${CARD.style.dynamic.progressBar.effect.glass.class} {
-  --epb-current-progress-effect-glass: linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
-  --epb-current-progress-effect-glass-rev: linear-gradient(270deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+  --epb-current-progress-effect: linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+  --epb-current-progress-effect-neg: linear-gradient(270deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
 }
 
-.${CARD.style.dynamic.progressBar.effect.glass.class}
-  :is(.${CARD.htmlStructure.elements.progressBar.inner.class},
-      .${CARD.htmlStructure.elements.progressBar.positiveInner.class}) {
-  background: var(--epb-current-progress-effect-glass);
-}
-.${CARD.style.dynamic.progressBar.effect.glass.class} .${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
-  background: var(--epb-current-progress-effect-glass-rev);
+.vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.glass.class} {
+  --epb-current-progress-effect: linear-gradient(0deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+  --epb-current-progress-effect-neg: linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
 }
 
 /* ----- gradient / gradient-reverse ----- */
@@ -4114,24 +4124,28 @@ ha-card:has(.top-container) {
   );
 }
 
-.${CARD.style.dynamic.progressBar.effect.gradient.class}
-  :is(.${CARD.htmlStructure.elements.progressBar.inner.class},
-      .${CARD.htmlStructure.elements.progressBar.positiveInner.class}) {
-  background: var(--epb-current-progress-effect-gradient);
+.vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.gradient.class},
+.vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.gradientReverse.class} {
+  --epb-current-progress-effect-gradient: linear-gradient(
+    0deg,
+    color-mix(in srgb, white 40%, var(--epb-progress-bar-color, var(--state-icon-color))),
+    var(--epb-progress-bar-color, var(--state-icon-color))
+  );
+  --epb-current-progress-effect-gradient-rev: linear-gradient(
+    180deg,
+    color-mix(in srgb, white 40%, var(--epb-progress-bar-color, var(--state-icon-color))),
+    var(--epb-progress-bar-color, var(--state-icon-color))
+  );
 }
 
-.${CARD.style.dynamic.progressBar.effect.gradient.class} .${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
-  background: var(--epb-current-progress-effect-gradient-rev);
+.${CARD.style.dynamic.progressBar.effect.gradient.class} {
+  --epb-current-progress-effect: var(--epb-current-progress-effect-gradient);
+  --epb-current-progress-effect-neg: var(--epb-current-progress-effect-gradient-rev);
 }
 
-.${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
-  :is(.${CARD.htmlStructure.elements.progressBar.inner.class},
-      .${CARD.htmlStructure.elements.progressBar.positiveInner.class}) {
-  background: var(--epb-current-progress-effect-gradient-rev);
-}
-
-.${CARD.style.dynamic.progressBar.effect.gradientReverse.class} .${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
-  background: var(--epb-current-progress-effect-gradient);
+.${CARD.style.dynamic.progressBar.effect.gradientReverse.class} {
+  --epb-current-progress-effect: var(--epb-current-progress-effect-gradient-rev);
+  --epb-current-progress-effect-neg: var(--epb-current-progress-effect-gradient);
 }
 
 /* ----- shimmer / shimmer-reverse ----- */
@@ -4149,15 +4163,30 @@ ha-card:has(.top-container) {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  background: linear-gradient(var(--epb-shimmer-direction, 90deg), transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: var(--epb-shimmer-animation) 2s infinite;
 }
 
-.${CARD.style.dynamic.progressBar.effect.shimmer.class} .${CARD.htmlStructure.elements.progressBar.inner.class}::after {
-  animation: shimmer-ltr 2s infinite;
+/* horizontales */
+.${CARD.style.dynamic.progressBar.effect.shimmer.class} {
+  --epb-shimmer-direction: 90deg;
+  --epb-shimmer-animation: shimmer-ltr;
 }
 
-.${CARD.style.dynamic.progressBar.effect.shimmerReverse.class} .${CARD.htmlStructure.elements.progressBar.inner.class}::after {
-  animation: shimmer-rtl 2s infinite;
+.${CARD.style.dynamic.progressBar.effect.shimmerReverse.class} {
+  --epb-shimmer-direction: 90deg;
+  --epb-shimmer-animation: shimmer-rtl;
+}
+
+/* verticales */
+.vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.shimmer.class} {
+  --epb-shimmer-direction: 0deg;
+  --epb-shimmer-animation: shimmer-btt;
+}
+
+.vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.shimmerReverse.class} {
+  --epb-shimmer-direction: 0deg;
+  --epb-shimmer-animation: shimmer-ttb;
 }
 
 @keyframes shimmer-ltr {
@@ -4168,6 +4197,16 @@ ha-card:has(.top-container) {
 @keyframes shimmer-rtl {
   0% { transform: translateX(100%); }
   100% { transform: translateX(-100%); }
+}
+
+@keyframes shimmer-btt {
+  0% { transform: translateY(100%); }
+  100% { transform: translateY(-100%); }
+}
+
+@keyframes shimmer-ttb {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
 }
 
 /* =============================================================================
@@ -4202,11 +4241,8 @@ ha-card:has(.top-container) {
 :is(.${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
     .${CARD.htmlStructure.elements.progressBar.highWatermark.class}) {
   position: absolute;
-  /* height: 100%; */
-  /* top: 0; */
   opacity: var(--epb-watermark-opacity-value, 0.8);
   display: none;
-  /* max-width: 100%; */
   box-sizing: border-box;
   clip-path: inset(0);
 }
@@ -4509,11 +4545,6 @@ ha-card.vertical.up-orientation.${CARD.style.dynamic.show}-hwm-triangle-${CARD.h
   cursor: pointer;
 }
 
-/*
-.${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.icon.class}:hover .${CARD.htmlStructure.elements.shape.class} {
-  background-color: color-mix(in srgb, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) var(--epb-icon-hover-opacity), transparent);
-} */
-
 /* =============================================================================
    OVERLAY
    ============================================================================= */
@@ -4602,7 +4633,6 @@ ha-card.text-shadow .${CARD.htmlStructure.sections.content.class}.overlay .secon
 .vertical.up-orientation .overlay .progress-bar {
     width: 100%;
     height: 100%;
-    background-color: var(--epb-progress-bar-background-color, var(--divider-color));
     border-radius: 10px;
     position: relative;
     overflow: hidden;
@@ -4615,7 +4645,6 @@ ha-card.text-shadow .${CARD.htmlStructure.sections.content.class}.overlay .secon
     left: 0;
     width: 100%;
     height: var(--epb-progress-bar-size, 0%);
-    background: var(--epb-progress-bar-color, var(--state-icon-color));
     transition: height var(--epb-progress-transition-width);
     will-change: height;
     border-radius: 0 0 calc(var(--epb-progress-size, 12px) / 2) calc(var(--epb-progress-size, 12px) / 2);
@@ -4628,7 +4657,6 @@ ha-card.text-shadow .${CARD.htmlStructure.sections.content.class}.overlay .secon
     left: 0;
     width: 100%;
     height: var(--epb-progress-bar-psize, 0%);
-    background: var(--epb-progress-bar-color, var(--state-icon-color));
     transition: height var(--epb-progress-transition-width);
     will-change: height;
     border-radius: 0;
@@ -4640,62 +4668,9 @@ ha-card.text-shadow .${CARD.htmlStructure.sections.content.class}.overlay .secon
     left: 0;
     width: 100%;
     height: var(--epb-progress-bar-nsize, 0%);
-    background: var(--epb-progress-bar-color, var(--state-icon-color));
     transition: height var(--epb-progress-transition-width);
     will-change: height;
     border-radius: 0;
-}
-
-
-/* === VARIANTES D'EFFETS POUR VERTICAL === */
-
-/* ----- Glass Effect Vertical ----- */
-.vertical.up-orientation .overlay.progress-bar-effect-glass {
-    --epb-current-progress-effect-glass-vertical: linear-gradient(0deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
-    --epb-current-progress-effect-glass-vertical-rev: linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
-}
-
-.vertical.up-orientation .overlay.progress-bar-effect-glass .progress-bar-inner,
-.vertical.up-orientation .overlay.progress-bar-effect-glass .progress-bar-positive-inner {
-    background: var(--epb-current-progress-effect-glass-vertical);
-}
-
-.vertical.up-orientation .overlay.progress-bar-effect-glass .progress-bar-negative-inner {
-    background: var(--epb-current-progress-effect-glass-vertical-rev);
-}
-
-/* ----- Gradient Effect Vertical ----- */
-.vertical.up-orientation .overlay.progress-bar-effect-gradient {
-    --epb-current-progress-effect-gradient-vertical: linear-gradient(
-        0deg,
-        color-mix(in srgb, white 40%, var(--epb-progress-bar-color, var(--state-icon-color))),
-        var(--epb-progress-bar-color, var(--state-icon-color))
-    );
-    --epb-current-progress-effect-gradient-vertical-rev: linear-gradient(
-        180deg,
-        color-mix(in srgb, white 40%, var(--epb-progress-bar-color, var(--state-icon-color))),
-        var(--epb-progress-bar-color, var(--state-icon-color))
-    );
-}
-
-.vertical.up-orientation .overlay.progress-bar-effect-gradient .progress-bar-inner,
-.vertical.up-orientation .overlay.progress-bar-effect-gradient .progress-bar-positive-inner {
-    background: var(--epb-current-progress-effect-gradient-vertical);
-}
-
-.vertical.up-orientation .overlay.progress-bar-effect-gradient .progress-bar-negative-inner {
-    background: var(--epb-current-progress-effect-gradient-vertical-rev);
-}
-
-/* ----- Shimmer Effect Vertical ----- */
-.vertical.up-orientation .overlay.progress-bar-effect-shimmer .progress-bar-inner::after {
-    background: linear-gradient(0deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-    animation: shimmer-vertical 2s infinite;
-}
-
-@keyframes shimmer-vertical {
-    0% { transform: translateY(-100%); }
-    100% { transform: translateY(100%); }
 }
 
 /* === prefers-reduced-motion === */
