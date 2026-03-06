@@ -16,7 +16,7 @@
  *   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.5.2-rc2
+ * @version 1.5.2
  *
  */
 
@@ -24,7 +24,7 @@
  * PARAMETERS
  */
 
-const VERSION = '1.5.2-rc2';
+const VERSION = '1.5.2';
 const CARD = {
   meta: {
     card: {
@@ -51,8 +51,8 @@ const CARD = {
     },
   },
   config: {
-    dev: true,
-    debug: { card: false, editor: true, interactionHandler: false, ressourceManager: true, hass: false },
+    dev: false,
+    debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false, hass: false },
     language: 'en',
     value: { min: 0, max: 100 },
     unit: {
@@ -3543,8 +3543,11 @@ const CARD_CSS = `
 
 ${CARD.htmlStructure.card.element} {
   --epb-current-card-min-width: var(${CARD.style.dynamic.card.minWidth.var}, 100%);
+  --epb-current-card-min-height: 0px;
+  --epb-current-card-height: var(${CARD.style.dynamic.card.height.var}, 100%);
   --epb-current-card-padding: 0 var(--epb-padding-default);
   --epb-current-card-margin: 0 auto;
+  --epb-current-card-border-radius: var(--ha-card-border-radius, var(--ha-border-radius-lg));
 
   display: flex;
   align-items: center;
@@ -3554,13 +3557,34 @@ ${CARD.htmlStructure.card.element} {
   padding: var(--epb-current-card-padding);
   width: auto; /* explicite */
   min-width: var(--epb-current-card-min-width);
-  height: var(${CARD.style.dynamic.card.height.var}, 100%);
+  min-height: var(--epb-current-card-min-height);
+  height: var(--epb-current-card-height);
   box-sizing: border-box;
+  border-radius: var(--epb-current-card-border-radius);
   overflow: hidden;
-
   font-family: var(--ha-font-family-body);
   -moz-osx-font-smoothing: var(--ha-font-smoothing);
   -webkit-font-smoothing: antialiased;
+}
+
+.horizontal {
+  --epb-current-card-min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.horizontal.minHeight});
+}
+
+.vertical {
+  --epb-current-card-min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.vertical.minHeight});
+}
+
+.marginless {
+  --epb-current-card-min-height: unset;
+}
+
+/* === BADGE === */
+[class^="entity-progress-badge"] {
+  --epb-current-card-height: var(--ha-badge-size, 36px);
+  --epb-current-card-min-height: var(--ha-badge-size, 36px);
+  --epb-current-card-min-width: var(--epb-card-min-width, var(--ha-badge-size, 130px));
+  --epb-current-card-border-radius: var(--ha-badge-border-radius,calc(var(--ha-badge-size,36px)/ 2));
 }
 
 /* === TYPE: PICTURE-ELEMENTS === */
@@ -3597,8 +3621,7 @@ ${CARD.htmlStructure.card.element} {
   justify-content: center;
   gap: var(--epb-current-container-gap, var(--epb-gap-default));
   width: 100%;
-  height: var(${CARD.style.dynamic.card.height.var}, unset);
-  min-height: var(--epb-current-container-min-height, auto);
+  height: 100%;
   overflow: var(--epb-current-container-overflow, visible);
   padding-top: var(--epb-current-container-padding-top, 0);
   box-sizing: var(--epb-current-container-box-sizing, content-box);
@@ -3716,7 +3739,7 @@ ha-card:has(.below-container) {
    ============================================================================= */
 
 .${CARD.htmlStructure.sections.icon.class} {
-  --epb-current-shape-size: var(--epb-shape-size, var(--epb-shape-default-size));
+  --epb-current-shape-size: var(--epb-shape-default-size);
 
   display: flex;
   flex-direction: column;
@@ -3729,7 +3752,7 @@ ha-card:has(.below-container) {
 }
 
 .type-entities .${CARD.htmlStructure.sections.icon.class} {
-  --epb-current-shape-size: var(--epb-shape-size, var(--epb-entities-shape-size));
+  --epb-current-shape-size: var(--epb-entities-shape-size);
 }
 
 .${CARD.layout.orientations.vertical.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.icon.class} {
@@ -3738,7 +3761,9 @@ ha-card:has(.below-container) {
 
 /* === SHAPE & ICON === */
 .${CARD.htmlStructure.elements.shape.class} {
+  --epb-current-shape-background-color: color-mix(in srgb, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) var(--epb-shape-opacity), transparent);
   --ha-ripple-hover-opacity: 0.15;
+
   position: relative;
   display: flex;
   align-items: center;
@@ -3746,20 +3771,42 @@ ha-card:has(.below-container) {
   width: var(--epb-current-shape-size);
   height: var(--epb-current-shape-size);
   border-radius: 50%;
-  background-color: color-mix(in srgb, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) var(--epb-shape-opacity), transparent);
+  background-color: var(--epb-current-shape-background-color);
 }
 
 .type-entities .${CARD.htmlStructure.elements.shape.class} {
   --ha-ripple-hover-opacity: 0;
   --ha-ripple-pressed-opacity: 0;
+  --epb-current-shape-background-color: transparent;
 }
 
 .${CARD.htmlStructure.elements.icon.class},
 .custom-icon-img {
-  --epb-current-icon-size: var(--epb-icon-size, var(--epb-icon-default-size));
+  --epb-current-icon-size: var(--epb-icon-default-size);
+
   width: var(--epb-current-icon-size);
   height: var(--epb-current-icon-size);
 }
+
+[class^="entity-progress-badge"] .${CARD.htmlStructure.sections.icon.class},
+[class^="entity-progress-badge"] .${CARD.htmlStructure.elements.icon.class},
+[class^="entity-progress-badge"] .${CARD.htmlStructure.elements.shape.class},
+[class^="entity-progress-badge"] .custom-icon-img {
+  --epb-current-icon-size: 18px;
+  --epb-current-shape-size: 18px;
+}
+
+[class^="entity-progress-badge"] .icon ha-state-icon {
+  --epb-current-icon-size: 18px;
+  --mdc-icon-size: var(--epb-current-icon-size);
+  --ha-icon-display: flex;
+  height: var(--epb-current-icon-size);
+  width: var(--epb-current-icon-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 
 .${CARD.htmlStructure.elements.icon.class} {
   color: var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default});
@@ -3817,15 +3864,31 @@ ha-card:has(.below-container) {
 }
 
 .${CARD.htmlStructure.elements.nameGroup.class} {
-  height: var(--type-entities-combined-height, var(--epb-name-height));
+  --epb-current-name-groupe-height: var(--type-entities-combined-height, var(--epb-name-height));
+  height: var(--epb-current-name-groupe-height);
+}
+
+[class^="entity-progress-badge"] .${CARD.htmlStructure.elements.nameGroup.class} {
+  --epb-current-name-groupe-height: 10px;
+  font-size: var(--epb-current-name-groupe-height);
 }
 
 .${CARD.htmlStructure.elements.detailGroup.class} {
-  height: var(--type-entities-combined-height, var(--epb-detail-height));
+  --epb-current-detail-groupe-height: var(--type-entities-combined-height, var(--epb-detail-height));
+  --epb-current-detail-groupe-min-width: var(--epb-detail-min-width);
+  --epb-current-detail-groupe-max-width: var(--epb-detail-max-width);
+
+  height: var(--epb-current-detail-groupe-height);
   line-height: var(--epb-detail-height);
-  min-width: var(--epb-detail-min-width);
-  max-width: var(--epb-detail-max-width);
+  min-width: var(--epb-current-detail-groupe-min-width);
+  max-width: var(--epb-current-detail-groupe-max-width);
 }
+
+[class^="entity-progress-badge"] .${CARD.htmlStructure.elements.detailGroup.class} {
+  --epb-current-detail-groupe-min-width: unset;
+  --epb-current-detail-groupe-max-width: unset;
+}
+
 
 ha-card.horizontal:not(.xlarge):not(:has(.bottom-container)):not(:has(.top-container)) {
   --epb-detail-min-width: 45px;
@@ -3887,22 +3950,54 @@ ha-card:has(.top-container) {
 }
 
 .${CARD.htmlStructure.elements.nameCombined.class} {
-  color: var(--primary-text-color);
-  font-size: var(--ha-font-size-m);
-  font-weight: var(--type-entities-combined-font-weight, var(--ha-font-weight-medium));
-  height: var(--type-entities-combined-height, var(--epb-name-height));
-  line-height: var(--type-entities-combined-line-height, var(--epb-name-height));
+  --epb-current-name-combined-height: var(--type-entities-combined-height, var(--epb-name-height));
+  --epb-current-name-combined-font-size: var(--ha-font-size-m);
+  --epb-current-name-combined-font-weight: var(--type-entities-combined-font-weight, var(--ha-font-weight-medium));
+  --epb-current-name-combined-line-height: var(--type-entities-combined-line-height, var(--epb-name-height));
+  --epb-current-name-combined-color: var(--primary-text-color);
+  --epb-current-name-combined-margin-right: 0px;
+
+  color: var(--epb-current-name-combined-color);
+  font-size: var(--epb-current-name-combined-font-size);
+  font-weight: var(--epb-current-name-combined-font-weight);
+  height: var(--epb-current-name-combined-height);
+  line-height: var(--epb-current-name-combined-line-height);
   letter-spacing: var(--epb-letter-spacing-name);
+  margin-right: var(--epb-current-name-combined-margin-right);
 }
 
+
+[class^="entity-progress-badge"] .${CARD.htmlStructure.elements.nameCombined.class} {
+  --epb-current-name-combined-height: 10px;
+  --epb-current-name-combined-font-size: 10px;
+  --epb-current-name-combined-font-weight: 500;
+  --epb-current-name-combined-line-height: 10px;
+  --epb-current-name-combined-color: var(--secondary-text-color);
+  --epb-current-name-combined-margin-right: 5px;
+}
+
+
 .${CARD.htmlStructure.elements.detailCombined.class} {
-  color: var(--type-entities-detail-combined-color, var(--primary-text-color));
-  font-size: var(--type-entities-detail-combined-font-size, var(--ha-font-size-s));
-  font-weight: var(--type-entities-combined-font-weight, var(--ha-font-weight-body));
+  --epb-current-detail-font-size: var(--type-entities-detail-combined-font-size, var(--ha-font-size-s));
+  --epb-current-detail-font-weight: var(--type-entities-combined-font-weight, var(--ha-font-weight-body));;
+  --epb-current-detail-letter-spacing: var(--epb-letter-spacing-detail);
+  --epb-current-detail-color: var(--type-entities-detail-combined-color, var(--primary-text-color));
+
+  color: var(--epb-current-detail-color);
+  font-size: var(--epb-current-detail-font-size);
+  font-weight: var(--epb-current-detail-font-weight);
   height: var(--type-entities-combined-height, var(--epb-detail-height));
   line-height: var(--type-entities-combined-line-height, var(--epb-detail-height));
-  letter-spacing: var(--epb-letter-spacing-detail);
+  letter-spacing: var(--epb-current-detail-letter-spacing);
 }
+
+[class^="entity-progress-badge"] .${CARD.htmlStructure.elements.detailCombined.class} {
+  --epb-current-detail-font-size: var(--ha-badge-font-size, var(--ha-font-size-s));
+  --epb-current-detail-font-weight: 500;
+  --epb-current-detail-letter-spacing: 0.1px;
+  --epb-current-detail-color: var(--primary-text-color);
+}
+
 
 /* === ENTITIES TYPE SPECIFIC === */
 .type-entities {
@@ -3942,6 +4037,10 @@ ha-card:has(.top-container) {
   --epb-current-secondary-info-gap: unset;
   --epb-current-secondary-info-width: 100%;
   --epb-current-secondary-info-min-width: 0;
+}
+
+[class^="entity-progress-badge"] {
+  --epb-current-secondary-info-gap: 5px;
 }
 
 .multiline {
@@ -8920,7 +9019,7 @@ class EntityProgressCardBase extends HTMLElement {
       iconContainer.replaceChildren(this._icon);
     }
 
-    this._icon.hass = this._hass;
+    this._icon.hass = this.hass;
     this._icon.stateObj = stateObjIcon;
   }
 
@@ -9269,70 +9368,13 @@ class EntityProgressBadge extends EntityProgressCardBase {
   static _hasDisabledBadge = true;
   static _cardLayout = CARD.layout.orientations.horizontal.grid;
   static _cardStructure = new BadgeStructure();
-  static _cardStyle = `
-    :host {
-      --epb-icon-size: 18px;
-      --epb-shape-size: 18px;
-    }
-
-    ${CARD_CSS}
-
-    ${CARD.htmlStructure.card.element},
-    .${CARD.htmlStructure.sections.container.class} {
-      min-height: 36px !important;
-      max-height: 36px !important;
-      height: var(--ha-badge-size, 36px);
-      min-width: var(--epb-card-min-width, var(--ha-badge-size, 110px));
-      width: 100%;
-      border-radius: var(--ha-badge-border-radius,calc(var(--ha-badge-size,36px)/ 2));
-    }
-
-    .icon ha-state-icon {
-      --mdc-icon-size: var(--epb-icon-size);
-      --ha-icon-display: flex;
-      height: var(--epb-icon-size);
-      width: var(--epb-icon-size);
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-    }
-
-    .${CARD.htmlStructure.elements.nameGroup.class},
-    .${CARD.htmlStructure.elements.nameGroup.class} .ellipsis-wrapper > span {
-      height: 10px !important;
-      font-size: 10px !important;
-      font-style: normal !important;
-      font-weight: 500 !important;
-      line-height: 10px !important;
-      color: var(--secondary-text-color) !important;
-      margin-right: 5px !important;
-    }
-
-    .${CARD.htmlStructure.elements.detailGroup.class},
-    .${CARD.htmlStructure.elements.detailGroup.class} .ellipsis-wrapper > span {
-      font-size: var(--ha-badge-font-size, var(--ha-font-size-s)) !important;
-      font-style: normal !important;
-      font-weight: 500 !important;
-      letter-spacing: 0.1px !important;
-      color: var(--primary-text-color)
-    }
-    .${CARD.htmlStructure.elements.secondaryInfo.class} {
-    gap: 5px !important;
-    }
-    .${CARD.htmlStructure.elements.detailGroup.class} {
-      min-width: unset !important;
-      max-width: unset !important;
-    }
-    .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.icon.class}:hover .${CARD.htmlStructure.elements.shape.class} {
-      background-color: unset !important;
-    }
-    `;
+  static _cardStyle = CARD_CSS;
 
   setConfig(config) {
     super.setConfig(config);
 
     // Force un refresh pour les badges dans l'éditeur
-    if (this._hass) {
+    if (this.hass) {
       setTimeout(() => this.refresh(), 0);
     }
   }
@@ -9675,64 +9717,7 @@ class EntityProgressBadgeTemplate extends EntityProgressTemplate {
   static _hasDisabledBadge = true;
   static _cardLayout = CARD.layout.orientations.horizontal.grid;
   static _cardStructure = new BadgeStructure();
-  static _cardStyle = `
-    :host {
-      --epb-icon-size: 18px;
-      --epb-shape-size: 18px;
-    }
-
-    ${CARD_CSS}
-
-    ${CARD.htmlStructure.card.element},
-    .${CARD.htmlStructure.sections.container.class} {
-      min-height: 36px !important;
-      max-height: 36px !important;
-      height: var(--ha-badge-size, 36px);
-      min-width: var(--epb-card-min-width, var(--ha-badge-size, 110px));
-      width: 100%;
-      border-radius: var(--ha-badge-border-radius,calc(var(--ha-badge-size,36px)/ 2));
-    }
-
-    .icon ha-state-icon {
-      --mdc-icon-size: var(--epb-icon-size);
-      --ha-icon-display: flex;
-      height: var(--epb-icon-size);
-      width: var(--epb-icon-size);
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-    }
-
-    .${CARD.htmlStructure.elements.nameGroup.class},
-    .${CARD.htmlStructure.elements.nameGroup.class} .ellipsis-wrapper > span {
-      height: 10px !important;
-      font-size: 10px !important;
-      font-style: normal !important;
-      font-weight: 500 !important;
-      line-height: 10px !important;
-      color: var(--secondary-text-color) !important;
-      margin-right: 5px !important;
-    }
-
-    .${CARD.htmlStructure.elements.detailGroup.class},
-    .${CARD.htmlStructure.elements.detailGroup.class} .ellipsis-wrapper > span {
-      font-size: var(--ha-badge-font-size, var(--ha-font-size-s)) !important;
-      font-style: normal !important;
-      font-weight: 500 !important;
-      letter-spacing: 0.1px !important;
-      color: var(--primary-text-color)
-    }
-    .${CARD.htmlStructure.elements.secondaryInfo.class} {
-    gap: 5px !important;
-    }
-    .${CARD.htmlStructure.elements.detailGroup.class} {
-      min-width: unset !important;
-      max-width: unset !important;
-    }
-    .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.sections.icon.class}:hover .${CARD.htmlStructure.elements.shape.class} {
-      background-color: unset !important;
-    }
-    `;
+  static _cardStyle = CARD_CSS;
 
   setConfig(config) {
     super.setConfig(config);

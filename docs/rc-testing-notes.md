@@ -5,8 +5,16 @@ WebAwesome-compatible editor to live watermarks, smoother animations, and
 cleaner docs, this release makes the card feel right at home in any Home
 Assistant setup.
 
+I would have loved to include more features in this release, but the
+WebAwesome migration forced me to prioritize and ship this update sooner
+than originally planned.
+
 ### 🧩 WebAwesome Compatibility
 
+Starting with HA 2026.2.x, Home Assistant introduced significant changes as
+part of the migration to Webawesome. With 2026.3.x, the select component in the
+visual editor is broken — options can no longer be selected.
+**Cards/badges are not affected by this Home Assistant update.**
 The visual editor has been updated to use the latest Home Assistant UI
 components, fully compatible with the new WebAwesome framework introduced in
 recent HA versions.
@@ -143,6 +151,8 @@ bar_max_width: 120px
 
   ➡️ [Bug]: last_updated/last_changed is declared unknown in state_content #106
   (MatzeKitt)
+
+- refactor badge styles
 
 ### 🌍 Multilingual support: Easier to contribute
 
