@@ -3784,6 +3784,9 @@ ha-card:has(.below-container) {
 .custom-icon-img {
   --epb-current-icon-size: var(--epb-shape-default-size);
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: var(--epb-current-icon-size);
   height: var(--epb-current-icon-size);
 }
