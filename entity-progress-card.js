@@ -9073,7 +9073,7 @@ class EntityProgressCardBase extends HTMLElement {
     const { badgeInfo, isBadgeEnable } = this._cardView;
     const showIt = isBadgeEnable && badgeInfo !== null;
 
-    console.log('showBadge', badgeInfo, isBadgeEnable);
+    //console.log('showBadge', badgeInfo, isBadgeEnable);
 
     this._domElements
       .get(CARD.htmlStructure.card.element)
