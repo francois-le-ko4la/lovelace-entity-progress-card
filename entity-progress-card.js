@@ -3782,7 +3782,7 @@ ha-card:has(.below-container) {
 
 .${CARD.htmlStructure.elements.icon.class},
 .custom-icon-img {
-  --epb-current-icon-size: var(--epb-icon-default-size);
+  --epb-current-icon-size: var(--epb-shape-default-size);
 
   width: var(--epb-current-icon-size);
   height: var(--epb-current-icon-size);
