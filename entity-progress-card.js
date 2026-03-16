@@ -57,7 +57,7 @@ const CARD = {
   },
   config: {
     dev: true,
-    debug: { card: true, editor: true, interactionHandler: false, ressourceManager: true, hass: false },
+    debug: { card: true, editor: false, interactionHandler: false, ressourceManager: false, hass: false },
     language: 'en',
     value: { min: 0, max: 100 },
     unit: {
@@ -7173,7 +7173,7 @@ const watermarkSchema = {
   disable_high: types.optionalBooleanWithDefault(CARD.config.defaults.watermark.disable_high),
 };
 
-class yamlSchemaFactory {
+class YamlSchemaFactory {
   static get feature() {
     return struct(
       types.object({
@@ -7282,7 +7282,7 @@ class yamlSchemaFactory {
   }
 
   static get badge() {
-    return yamlSchemaFactory.card.delete([
+    return YamlSchemaFactory.card.delete([
       'bar_position',
       'badge_icon',
       'badge_color',
@@ -7348,7 +7348,7 @@ class yamlSchemaFactory {
   }
 
   static get badgeTemplate() {
-    return yamlSchemaFactory.template.delete([
+    return YamlSchemaFactory.template.delete([
       'bar_position',
       'badge_icon',
       'badge_color',
@@ -7524,17 +7524,8 @@ class BaseConfigHelper {
   }
 }
 
-/******************************************************************************************
- * 🛠️ CardConfigHelper
- * ========================================================================================
- *
- * ✅ class for managing and validating card configuration.
- *
- * @class
- */
-
 class CardConfigHelper extends BaseConfigHelper {
-  _yamlSchema = yamlSchemaFactory.card;
+  _yamlSchema = YamlSchemaFactory.card;
 
   get max_value() {
     if (!this.config.max_value) return CARD.config.value.max;
@@ -7551,47 +7542,45 @@ class CardConfigHelper extends BaseConfigHelper {
   }
 }
 
-/******************************************************************************************
- * 🛠️ BadgeConfigHelper
- * ========================================================================================
- *
- * ✅ class for managing and validating badge configuration.
- *
- * @class
- */
-
 class BadgeConfigHelper extends CardConfigHelper {
-  _yamlSchema = yamlSchemaFactory.badge;
+  _yamlSchema = YamlSchemaFactory.badge;
 }
-
-/******************************************************************************************
- * 🛠️ FeatureConfigHelper
- * ========================================================================================
- *
- * ✅ class for managing and validating feature configuration.
- *
- * @class
- */
 
 class FeatureConfigHelper extends CardConfigHelper {
-  _yamlSchema = yamlSchemaFactory.feature;
+  _yamlSchema = YamlSchemaFactory.feature;
+}
+
+class TemplateConfigHelper extends BaseConfigHelper {
+  _yamlSchema = YamlSchemaFactory.template;
+}
+
+class BadgeTemplateConfigHelper extends BaseConfigHelper {
+  _yamlSchema = YamlSchemaFactory.badgeTemplate;
 }
 
 /******************************************************************************************
- * 🛠️ MinimalCardView
+ * 🛠️ ViewCore
  * ========================================================================================
  *
  * ✅ A view class for rendering minimal cards in a user interface.
  * This class manages configuration, entity states, user interactions, and visual
  * appearance of cards including layouts, orientations, watermarks, and interactive elements.
  *
- * @class MinimalCardView
+ * ViewCore
+ * ├── ViewBase
+ * │   ├── CardView
+ * │   ├── BadgeView
+ * │   └── FeatureView
+ * ├── CardTemplateView
+ * └── BadgeTemplateView
+ * 
+ * @class
  * @description Handles the display and behavior of minimal cards with support for
  *              Home Assistant entities, user actions, and visual customization
  *              (watermarks, shapes, orientations, clickable elements).
  *
  * @example
- * const cardView = new MinimalCardView();
+ * const cardView = new ViewCore();
  * cardView.config = {
  *   entity: 'sensor.temperature',
  *   layout: 'vertical',
@@ -7609,7 +7598,7 @@ class FeatureConfigHelper extends CardConfigHelper {
  * const hasShape = cardView.hasVisibleShape;
  * const isClickable = cardView.hasClickableCard;
  */
-class MinimalCardView {
+class ViewCore {
   _hassProvider = HassProviderSingleton.getInstance();
   _lastPercent = null;
   _configHelper = new BaseConfigHelper(); // Base config
@@ -7654,7 +7643,19 @@ class MinimalCardView {
   get layout() {
     return this.config ? this.config.layout : undefined;
   }
-
+  get cardSize() {
+    return this.config 
+      ? CARD.layout.orientations[this.layout]?.grid?.grid_rows ?? 1 
+      : CARD.layout.orientations.horizontal.grid.grid_rows;
+  }
+  get cardLayoutOptions() {
+    if (!this.config) return CARD.layout.orientations.horizontal.grid;
+    const layout = structuredClone(CARD.layout.orientations[this.layout]);
+    layout.grid.grid_min_rows = this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.icon.label)
+      ? 1
+      : layout.grid.grid_min_rows + (this.config.bar_size === CARD.style.bar.sizeOptions.xlarge.label ? 1 : 0);
+    return layout.grid;
+  }
   _getEntityColor() {
     if (this._currentValue.state === CARD.config.entity.state.unavailable) return CARD.style.color.unavailable;
     if (this._currentValue.state === CARD.config.entity.state.notFound) return CARD.style.color.notFound;
@@ -7753,15 +7754,15 @@ class MinimalCardView {
   }
 }
 /******************************************************************************************
- * 🛠️ BaseCardView
+ * 🛠️ ViewBase
  * ========================================================================================
  *
- * ✅ A comprehensive base card view that extends MinimalCardView to manage all information
+ * ✅ A comprehensive base card view that extends ViewCore to manage all information
  * required for creating cards and badges. This class handles entity states, theme management,
  * percentage calculations, timers, and provides a complete API for card rendering.
  *
- * @class BaseCardView
- * @extends MinimalCardView
+ * @class
+ * @extends ViewCore
  * @description Manages the complete lifecycle of card display including:
  *              - Entity state management and validation
  *              - Theme and color management
@@ -7772,7 +7773,7 @@ class MinimalCardView {
  *              - Error state handling (unavailable, not found, unknown)
  *
  * @example
- * const cardView = new BaseCardView();
+ * const cardView = new ViewBase();
  * cardView.config = {
  *   entity: 'sensor.cpu_percent',
  *   name: 'CPU Usage',
@@ -7802,7 +7803,7 @@ class MinimalCardView {
  *   // Update UI at calculated refresh rate
  * }
  */
-class BaseCardView extends MinimalCardView {
+class ViewBase extends ViewCore {
   #percentHelper = new PercentHelper();
   #theme = new ThemeManager();
   #maxValue = new EntityOrValue();
@@ -8084,50 +8085,41 @@ class BaseCardView extends MinimalCardView {
  * 🛠️ CardView
  * ========================================================================================
  *
- * A specialized card view implementation that extends BaseCardView specifically for
+ * A specialized card view implementation that extends ViewBase specifically for
  * rendering full card components. This class provides the complete card functionality
  * with proper configuration management through CardConfigHelper.
  *
  * @class CardView
- * @extends BaseCardView
- * @description A concrete implementation of BaseCardView designed for full card rendering.
+ * @extends ViewBase
+ * @description A concrete implementation of ViewBase designed for full card rendering.
  *              This class uses CardConfigHelper to handle card-specific configuration
  *              validation, processing, and management. It inherits all entity management,
- *              theme handling, and state processing capabilities from BaseCardView while
+ *              theme handling, and state processing capabilities from ViewBase while
  *              providing card-specific configuration logic.
  *
- * @see BaseCardView For inherited functionality
+ * @see ViewBase For inherited functionality
  * @see CardConfigHelper For configuration management details
  */
-class CardView extends BaseCardView {
+class CardView extends ViewBase {
   _configHelper = new CardConfigHelper();
 }
 
-class FeatureView extends BaseCardView {
+class BadgeView extends ViewBase {
+  _configHelper = new BadgeConfigHelper();
+}
+
+class FeatureView extends ViewBase {
   _configHelper = new FeatureConfigHelper();
 }
 
-/******************************************************************************************
- * 🛠️ BadgeView
- * ========================================================================================
- *
- * A specialized badge view implementation that extends BaseCardView specifically for
- * rendering compact badge components. This class provides complete badge functionality
- * with proper configuration management through BadgeConfigHelper.
- *
- * @class BadgeView
- * @extends BaseCardView
- * @description A concrete implementation of BaseCardView designed for compact badge rendering.
- *              Badges are smaller, more focused UI elements that display key information
- *              in a condensed format. This class uses BadgeConfigHelper to handle badge-specific
- *              configuration validation and processing while inheriting all entity management,
- *              theme handling, and state processing capabilities from BaseCardView.
- *
- * @see BaseCardView For inherited functionality
- * @see BadgeConfigHelper For badge configuration management details
- */
-class BadgeView extends BaseCardView {
-  _configHelper = new BadgeConfigHelper();
+class CardTemplateView extends ViewCore {
+  _configHelper = new TemplateConfigHelper();
+  icon = null;
+}
+
+class BadgeTemplateView extends ViewCore {
+  _configHelper = new BadgeTemplateConfigHelper();
+  icon = null;
 }
 
 /******************************************************************************************
@@ -8664,20 +8656,21 @@ class ActionHelper {
 }
 
 /******************************************************************************************
- * 🛠️ HABase
+ * 🛠️ HACore
  * ========================================================================================
  *
  * Base class for Home Assistant custom elements (cards, badges, features).
  *
- *       HTMLElement
+*       HTMLElement
  *       │
- *       ├── HABase
- *       │   ├── HACardBase
- *       │   │   ├── EntityProgressStandardCard
+ *       ├── HACore
+ *       │   ├── HABase
+ *       │   │   ├── EntityProgressCardBase
  *       │   │   │   ├── EntityProgressCard
  *       │   │   │   └── EntityProgressBadge
- *       │   │   └── EntityProgressTemplate
- *       │   │       └── EntityProgressBadgeTemplate
+ *       │   │   └── EntityProgressTemplateBase
+ *       │   │       ├── EntityProgressTemplateCard
+ *       │   │       └── EntityProgressTemplateBadge
  *       │   │
  *       │   └── EntityProgressFeatures
  *
@@ -8699,10 +8692,10 @@ class ActionHelper {
  * @abstract
  * @extends HTMLElement
  */
-class HABase extends HTMLElement {
+class HACore extends HTMLElement {
+  static _baseClass = CARD.meta.feature.typeName;
   static _cardStructure = new FeatureStructure();
   static _cardStyle = CARD_CSS;
-  static _baseClass = CARD.meta.feature.typeName;
   _debug = CARD.config.debug.card;
   _log = null;
   _resourceManager = null;
@@ -8748,6 +8741,13 @@ class HABase extends HTMLElement {
     this.attachShadow({ mode: CARD.config.shadowMode });
   }
 
+  static getConfigElement() {
+    //
+    // customize it
+    //
+    return null;
+  }
+
   connectedCallback() {
     if (!this._resourceManager) this._resourceManager = new ResourceManager();
     this.render();
@@ -8769,7 +8769,7 @@ class HABase extends HTMLElement {
    * Updates the component's configuration and triggers static changes.
    */
   setConfig(config) {
-    this._log.debug('📎 HABase.setConfig()', config);
+    this._log.debug('📎 HACore.setConfig()', config);
 
     if (!config) throw new Error('setConfig: invalid config');
     if (this.isRendered) this.reset(); // Card/Badge editor
@@ -8791,7 +8791,7 @@ class HABase extends HTMLElement {
    *                        state and services.
    */
   set hass(hass) {
-    this._log.debug('👉 HABase.set hass()');
+    this._log.debug('👉 HACore.set hass()');
     if (!hass) return;
 
     const isFirstHass = !this.hass;
@@ -8906,7 +8906,7 @@ class HABase extends HTMLElement {
   }
 
   _handleBarEffect(jinjaEffect = null) {
-    this._log.debug('📎 HABase _handleBarEffect(jinjaEffect)', jinjaEffect);
+    this._log.debug('📎 HACore _handleBarEffect(jinjaEffect)', jinjaEffect);
 
     if (!this._cardView.barEffectsEnabled) return;
     const isJinja = is.jinja(this._cardView.config.bar_effect);
@@ -8966,9 +8966,9 @@ class HABase extends HTMLElement {
     const config = this._cardView.config;
 
     return {
-      badge_icon: config.badge_icon || '', // HACardBase
-      badge_color: config.badge_color || '', // HACardBase
-      bar_effect: config.bar_effect || '', // HABase
+      badge_icon: config.badge_icon || '', // HABase
+      badge_color: config.badge_color || '', // HABase
+      bar_effect: config.bar_effect || '', // HACore
     // ...
     };
     */
@@ -8981,16 +8981,16 @@ class HABase extends HTMLElement {
     throw new Error(`${this.constructor.name} must implement _getRenderHandlers(${content})`);
     /*
     return {
-      badge_icon: () => this._renderBadgeIcon(content), // HACardBase
-      badge_color: () => this._renderBadgeColor(content), // HACardBase
-      bar_effect: () => this._refreshBarEffect(content), // HABase
+      badge_icon: () => this._renderBadgeIcon(content), // HABase
+      badge_color: () => this._renderBadgeColor(content), // HABase
+      bar_effect: () => this._refreshBarEffect(content), // HACore
     // ...
     };
     */
   }
 
   _renderJinja(key, content) {
-    this._log.debug('📎 HABase._renderJinja():', { key, content });
+    this._log.debug('📎 HACore._renderJinja():', { key, content });
 
     const renderHandlers = this._getRenderHandlers(content);
     const handler = renderHandlers[key];
@@ -9003,7 +9003,7 @@ class HABase extends HTMLElement {
   }
 
   _refreshBarEffect(content) {
-    this._log.debug('📎 HABase._refreshBarEffect():', { content });
+    this._log.debug('📎 HACore._refreshBarEffect():', { content });
     const jinjaEffect = content.split(',').map((s) => s.trim());
     this._handleBarEffect(jinjaEffect);
   }
@@ -9075,7 +9075,7 @@ class HABase extends HTMLElement {
   }
 
   async _subscribeToTemplate(key, template) {
-    this._log.debug('📎 HABase._subscribeToTemplate:', { key, template });
+    this._log.debug('📎 HACore._subscribeToTemplate:', { key, template });
     const subscriptionKey = `template-${key}`;
 
     if (!this.hass?.connection?.connected) {
@@ -9122,7 +9122,7 @@ class HABase extends HTMLElement {
 
 
 /******************************************************************************************
- * 🛠️ HACardBase
+ * 🛠️ HABase
  * ========================================================================================
  *
  * ✅ Represents the base class for all custom "entity-progress" cards:
@@ -9132,7 +9132,7 @@ class HABase extends HTMLElement {
  *   - Serves as the foundation for building consistent and reusable UI components.
  *
  * 🛠️ Example:
- *   class MyCustomCard extends HACardBase { ... }
+ *   class MyCustomCard extends HABase { ... }
  *
  * 📚 Context:
  *   - Designed for use in Home Assistant dashboards.
@@ -9142,13 +9142,12 @@ class HABase extends HTMLElement {
  * @extends HTMLElement
  */
 
-class HACardBase extends HABase {
+class HABase extends HACore {
+  static _baseClass = CARD.meta.card.typeName;
   static _cardStructure = new CardStructure();
   static _cardStyle = CARD_CSS;
   static _hasDisabledIconTap = false;
   static _hasDisabledBadge = false;
-  static _baseClass = CARD.meta.card.typeName;
-  static _cardLayout = CARD.layout.orientations;
   _trendIcons = {
     up: 'mdi:chevron-up-box',
     down: 'mdi:chevron-down-box',
@@ -9165,8 +9164,6 @@ class HACardBase extends HABase {
   static get _loggedMethods() {
     return [
       ...super._loggedMethods,
-      'getCardSize',
-      'getLayoutOptions',
       '_storeDOM',
       '_setupClickableTarget',
       '_showIcon',
@@ -9214,34 +9211,6 @@ class HACardBase extends HABase {
     this._cardView.refresh(this.hass);
     if (this._manageErrorMessage()) return;
     this._updateDynamicElements();
-  }
-
-  /**
-   * Returns the number of grid rows for the card size based on the current layout.
-   *
-   * @returns {number} - The number of grid rows for the current card layout.
-   */
-  getCardSize() {
-    if (!this._cardView?.config) return undefined;
-    const layout = this.constructor._cardLayout[this._cardView.layout];
-    this._log.debug('getCardSize -> ', layout.grid.grid_rows);
-
-    return layout.grid.grid_rows;
-  }
-
-  /**
-   * Returns the layout options based on the current layout configuration.
-   *
-   * @returns {object} - The layout options for the current layout configuration.
-   */
-  getLayoutOptions() {
-    if (!this._cardView?.config) return undefined;
-    const layout = structuredClone(this.constructor._cardLayout[this._cardView.layout]);
-    if (this._cardView.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.icon.label)) layout.grid.grid_min_rows = 1;
-    if (this._cardView.config.bar_size === CARD.style.bar.sizeOptions.xlarge.label) layout.grid.grid_min_rows = layout.grid.grid_min_rows + 1;
-    this._log.debug('getLayoutOptions -> ', layout.grid);
-
-    return layout.grid;
   }
 
   reset() {
@@ -9469,7 +9438,7 @@ class HACardBase extends HABase {
   // === ICON MANAGEMENT ===
 
   _createImgIcon(altText, className = 'custom-icon-img') {
-    this._log.debug('📎 HACardBase._createImgIcon():', { altText, className });
+    this._log.debug('📎 HABase._createImgIcon():', { altText, className });
 
     const img = document.createElement('img');
     img.className = className;
@@ -9479,7 +9448,7 @@ class HACardBase extends HABase {
   }
 
   _handleImgIcon(stateObj, srcPicture) {
-    this._log.debug('📎 HACardBase._handleImgIcon():', { stateObj, srcPicture });
+    this._log.debug('📎 HABase._handleImgIcon():', { stateObj, srcPicture });
 
     const pictureAlt = stateObj?.attributes?.friendly_name || 'Entity picture';
     const iconContainer = this._dom.get(CARD.htmlStructure.elements.icon.class);
@@ -9497,7 +9466,7 @@ class HACardBase extends HABase {
   }
 
   _createStateObjIcon(stateObj, curIcon, hasIconOverride, hasPicture) {
-    this._log.debug('📎 HACardBase._createStateObjIcon():', { stateObj, curIcon, hasIconOverride, hasPicture });
+    this._log.debug('📎 HABase._createStateObjIcon():', { stateObj, curIcon, hasIconOverride, hasPicture });
 
     if (!stateObj) {
       return this.isConnected
@@ -9544,7 +9513,7 @@ class HACardBase extends HABase {
   }
 
   _handleStateIcon(iconContainer, stateObjIcon) {
-    this._log.debug('📎 HACardBase._handleStateIcon():', { iconContainer, stateObjIcon });
+    this._log.debug('📎 HABase._handleStateIcon():', { iconContainer, stateObjIcon });
 
     this._cleanupImgIcon();
 
@@ -9618,7 +9587,7 @@ class HACardBase extends HABase {
   }
 
   _enableBadge(isBadgeEnable) {
-    this._log.debug('📎 HACardBase._enableBadge():', { isBadgeEnable });
+    this._log.debug('📎 HABase._enableBadge():', { isBadgeEnable });
 
     this._dom.toggleClass(
       CARD.htmlStructure.card.element,
@@ -9628,7 +9597,7 @@ class HACardBase extends HABase {
   }
 
   _setBadgeIconColor(icon, color, backgroundColor) {
-    this._log.debug('📎 HACardBase._setBadgeIconColor():', { icon, color, backgroundColor });
+    this._log.debug('📎 HABase._setBadgeIconColor():', { icon, color, backgroundColor });
 
     this._setBadgeIcon(icon);
     this._setBadgeColor(color, backgroundColor);
@@ -9674,7 +9643,7 @@ class HACardBase extends HABase {
   */
 
   _renderBadgeIcon(content) {
-    this._log.debug('📎 HACardBase._renderBadgeIcon():', { content });
+    this._log.debug('📎 HABase._renderBadgeIcon():', { content });
 
     const badgeInfo = this._cardView.badgeInfo;
     const isBadgeEnable = this._cardView.isBadgeEnable;
@@ -9688,7 +9657,7 @@ class HACardBase extends HABase {
     }
   }
   _renderBadgeColor(content) {
-    this._log.debug('📎 HACardBase._renderBadgeColor():', { content });
+    this._log.debug('📎 HABase._renderBadgeColor():', { content });
 
     const backgroundColor = ThemeManager.adaptColor(content);
     const color = 'var(--white-color)';
@@ -9708,19 +9677,19 @@ class HACardBase extends HABase {
 }
 
 /******************************************************************************************
- * 🛠️ EntityProgressStandardCard
+ * 🛠️ EntityProgressCardBase
  * ========================================================================================
  *
  * ✅ Represents the base class for all standard cards:
- *  - EntityProgressStandardCard / "entity-progress-card"
+ *  - EntityProgressCardBase / "entity-progress-card"
  *  - EntityProgressBadge / "entity-progress-badge"
  *
  *
  * @class
- * @extends HACardBase
+ * @extends HABase
  */
 
-class EntityProgressStandardCard extends HACardBase {
+class EntityProgressCardBase extends HABase {
   static get _loggedMethods() {
     return [
       ...super._loggedMethods,
@@ -9765,7 +9734,7 @@ class EntityProgressStandardCard extends HACardBase {
     }
 
     if (bar.hasWatermark) {
-      HABase._getWatermarkProperties(bar.watermark, isCenterZero).forEach(([variable, value]) => {
+      HACore._getWatermarkProperties(bar.watermark, isCenterZero).forEach(([variable, value]) => {
         if (value != null) this._dom.setStyle(cardKey, variable, value);
       });
     }
@@ -9816,25 +9785,24 @@ class EntityProgressStandardCard extends HACardBase {
   }
 }
 
-
 /******************************************************************************************
- * 📦 CARDS
- ******************************************************************************************/
-
-/******************************************************************************************
- * 🛠️ EntityProgressCard
+ * 📦 EntityProgressCard
  * ========================================================================================
  *
  * ✅ HA CARD "entity-progress-card"
  *
  * @class
- * @extends EntityProgressStandardCard
+ * @extends EntityProgressCardBase
  */
-class EntityProgressCard extends EntityProgressStandardCard {
+class EntityProgressCard extends EntityProgressCardBase {
   _cardView = new CardView();
   static _baseClass = CARD.meta.card.typeName;
 
   // === STATIC METHODS ===
+
+  static get _loggedMethods() {
+    return [...super._loggedMethods, 'getCardSize', 'getLayoutOptions'];
+  }
 
   static getConfigElement() {
     return document.createElement(CARD.meta.card.editor);
@@ -9850,113 +9818,41 @@ class EntityProgressCard extends EntityProgressStandardCard {
       entity: EntityProgressCard.getStubEntity(hass),
     };
   }
-}
 
-/******************************************************************************************
- * 🛠️ EntityProgressFeatures
- * ========================================================================================
- *
- * ✅ HA CARD "entity-progress-feature"
- *
- * @class
- * @extends HABase
- */
+  // === LAYOUT ===
 
-class EntityProgressFeatures extends HABase {
-  // === STATIC ===
-
-  static getConfigElement() {
-    return null; //document.createElement(CARD.meta.feature.editor);
+  getCardSize() {
+    const cardSize = this._cardView.cardSize;
+    this._log.debug('getCardSize: ', cardSize);
+    return cardSize;
   }
 
-  static getStubConfig() {
-    return {
-      type: `custom:${CARD.meta.feature.typeName}`,
-    };
-  }
-  // === HANDLE UPDATE ===
-
-  _handleHassUpdate() {
-    this.refresh();
-  }
-
-  _updateCSS() {
-    const bar = this._cardView;
-    const isCenterZero = bar.config.center_zero;
-    const isNegative = bar.percent < 0;
-    const cardKey = CARD.htmlStructure.card.element;
-
-    this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.color.var, bar.barColor);
-
-    if (isCenterZero) {
-      this._dom.setStyle(cardKey, isNegative ? CARD.style.dynamic.progressBar.nSize.var : CARD.style.dynamic.progressBar.pSize.var, `${Math.abs(bar.percent / 2)}%`);
-      this._dom.setStyle(cardKey, isNegative ? CARD.style.dynamic.progressBar.pSize.var : CARD.style.dynamic.progressBar.nSize.var, '0%');
-    } else {
-      this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.size.var, `${bar.percent}%`);
-    }
-
-    if (bar.hasWatermark) {
-      HABase._getWatermarkProperties(bar.watermark, isCenterZero).forEach(([variable, value]) => {
-        if (value != null) this._dom.setStyle(cardKey, variable, value);
-      });
-    }
-  }
-
-  // === JINJA TEMPLATE RENDERING - CUSTOMIZATION ===
-  _getTemplateFields() {
-    const config = this._cardView.config;
-
-    return {
-      bar_effect: config.bar_effect || '', // base
-    };
-  }
-
-  _getRenderHandlers(content) {
-    return {
-      bar_effect: () => this._refreshBarEffect(content), // base
-    };
+  getLayoutOptions() {
+    const cardLayoutOptions = this._cardView.cardLayoutOptions;
+    this._log.debug('getLayoutOptions: ', cardLayoutOptions);
+    return cardLayoutOptions;
   }
 }
 
-
-customElements.define(CARD.meta.feature.typeName, EntityProgressFeatures);
-
-// register feature
-window.customCardFeatures = window.customCardFeatures || [];
-window.customCardFeatures.push({
-  type: CARD.meta.feature.typeName,
-  name: 'Entity Progress Bar',
-  supported: () => true,
-});
-
 /******************************************************************************************
- * 🛠️ EntityProgressBadge
+ * 📦 EntityProgressBadge
  * ========================================================================================
  *
  * ✅ HA CARD "entity-progress-badge"
  *
  * @class
- * @extends EntityProgressStandardCard
+ * @extends EntityProgressCardBase
  */
-class EntityProgressBadge extends EntityProgressStandardCard {
+class EntityProgressBadge extends EntityProgressCardBase {
   _cardView = new BadgeView();
   static _baseClass = CARD.meta.badge.typeName;
   static _hasDisabledIconTap = true;
   static _hasDisabledBadge = true;
-  static _cardLayout = CARD.layout.orientations.horizontal.grid;
   static _cardStructure = new BadgeStructure();
   static _cardStyle = CARD_CSS;
 
   static getConfigElement() {
     return document.createElement(CARD.meta.badge.editor);
-  }
-
-  getCardSize() {
-    return this._cardLayout.grid_rows;
-  }
-
-  getLayoutOptions() {
-    return this._cardLayout;
   }
 
   static getStubConfig(hass) {
@@ -9987,62 +9883,81 @@ class EntityProgressBadge extends EntityProgressStandardCard {
 }
 
 /******************************************************************************************
- * 🔧 Register card & badge
- */
-
-EntityProgressCard.version = VERSION;
-EntityProgressBadge.version = VERSION;
-RegistrationHelper.registerCard(CARD.meta.card, EntityProgressCard);
-RegistrationHelper.registerBadge(CARD.meta.badge, EntityProgressBadge);
-
-/******************************************************************************************
- * 📦 Template Card
- ******************************************************************************************/
-
-/******************************************************************************************
- * 🛠️ TemplateConfigHelper
+ * 📦 EntityProgressFeatures
  * ========================================================================================
  *
- * ✅ Config Helper
- *
- * 📌 Purpose:
- *   - Manage card configuration.
+ * ✅ HA CARD "entity-progress-feature"
  *
  * @class
- * @extends BaseConfigHelper
+ * @extends HACore
  */
 
-class TemplateConfigHelper extends BaseConfigHelper {
-  _yamlSchema = yamlSchemaFactory.template;
+class EntityProgressFeatures extends HACore {
+  static _baseClass = CARD.meta.feature.typeName;
+
+  // === STATIC ===
+
+  static getStubConfig() {
+    return {
+      type: `custom:${CARD.meta.feature.typeName}`,
+    };
+  }
+  // === HANDLE UPDATE ===
+
+  _handleHassUpdate() {
+    this.refresh();
+  }
+
+  _updateCSS() {
+    const bar = this._cardView;
+    const isCenterZero = bar.config.center_zero;
+    const isNegative = bar.percent < 0;
+    const cardKey = CARD.htmlStructure.card.element;
+
+    this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.color.var, bar.barColor);
+
+    if (isCenterZero) {
+      this._dom.setStyle(cardKey, isNegative ? CARD.style.dynamic.progressBar.nSize.var : CARD.style.dynamic.progressBar.pSize.var, `${Math.abs(bar.percent / 2)}%`);
+      this._dom.setStyle(cardKey, isNegative ? CARD.style.dynamic.progressBar.pSize.var : CARD.style.dynamic.progressBar.nSize.var, '0%');
+    } else {
+      this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.size.var, `${bar.percent}%`);
+    }
+
+    if (bar.hasWatermark) {
+      HACore._getWatermarkProperties(bar.watermark, isCenterZero).forEach(([variable, value]) => {
+        if (value != null) this._dom.setStyle(cardKey, variable, value);
+      });
+    }
+  }
+
+  // === JINJA TEMPLATE RENDERING - CUSTOMIZATION ===
+  _getTemplateFields() {
+    const config = this._cardView.config;
+
+    return {
+      bar_effect: config.bar_effect || '', // base
+    };
+  }
+
+  _getRenderHandlers(content) {
+    return {
+      bar_effect: () => this._refreshBarEffect(content), // base
+    };
+  }
 }
 
 /******************************************************************************************
- * 🛠️ TemplateCardView
- * ========================================================================================
- *
- * ✅ A view that manage all informations to create the card.
- *
- * @class
- */
-class TemplateCardView extends MinimalCardView {
-  _configHelper = new TemplateConfigHelper();
-  icon = null;
-}
-
-/******************************************************************************************
- * 🛠️ EntityProgressTemplate
+ * 🛠️ EntityProgressTemplateBase
  * ========================================================================================
  *
  * ✅ HA CARD "entity-progress-card-template"
  *
  * @class
- * @extends EntityProgressCardBase
+ * @extends HABase
  */
-class EntityProgressTemplate extends HACardBase {
-  static _cardStructure = new TemplateStructure();
-  _firstIconRefresh = true;
-  _debug = CARD.config.debug.card;
-  _cardView = new TemplateCardView();
+class EntityProgressTemplateBase extends HABase {
+  static _cardStructure = new TemplateStructure(); // customize it
+  _cardView = new CardTemplateView(); // customize it
 
   static get _loggedMethods() {
     return [
@@ -10058,7 +9973,7 @@ class EntityProgressTemplate extends HACardBase {
       '_validateProcessJinjaFields',
     ];
   }
-  
+
   connectedCallback() {
     super.connectedCallback(); // render, _updateDynamicElements, hass, watchWebSocket
     this._updateWatermark();
@@ -10095,7 +10010,7 @@ class EntityProgressTemplate extends HACardBase {
     this._dom.setStyle(cardKey, CARD.style.dynamic.iconAndShape.color.var, bar.iconColor);
 
     if (bar.hasWatermark) {
-      HABase._getWatermarkProperties(bar.watermark, isCenterZero).forEach(([variable, value]) => {
+      HACore._getWatermarkProperties(bar.watermark, isCenterZero).forEach(([variable, value]) => {
         if (value != null) this._dom.setStyle(cardKey, variable, value);
       });
     }
@@ -10106,7 +10021,7 @@ class EntityProgressTemplate extends HACardBase {
     if (!this._cardView.hasWatermark) return;
     this._cardView.refresh();
 
-    HABase._getWatermarkProperties(this._cardView.watermark, this._cardView.config.center_zero).forEach(([variable, value]) => {
+    HACore._getWatermarkProperties(this._cardView.watermark, this._cardView.config.center_zero).forEach(([variable, value]) => {
       if (value != null) this._dom.setStyle(CARD.htmlStructure.card.element, variable, value);
     });
   }
@@ -10156,18 +10071,6 @@ class EntityProgressTemplate extends HACardBase {
     };
   }
   // === BADGE MANAGEMENT ===
-  /*
-  _renderBadgeIcon(content) {
-    const isMdiIcon = content.includes('mdi:');
-    const containerClass = `${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class}`;
-
-    this._domElements.get(CARD.htmlStructure.card.element)?.classList.toggle(containerClass, isMdiIcon);
-
-    if (isMdiIcon) {
-      this._setBadgeIcon(content);
-    }
-  }
-  */
 
   _renderName(content) {
     this._dom.setHTML(CARD.htmlStructure.elements.name.class, `${content}`.trim());
@@ -10214,72 +10117,58 @@ class EntityProgressTemplate extends HACardBase {
 }
 
 /******************************************************************************************
- * 📦 Badge Template card
- ******************************************************************************************/
-
-/******************************************************************************************
- * 🛠️ BadgeTemplateConfigHelper
+ * 📦 EntityProgressTemplateCard
  * ========================================================================================
  *
- * ✅ Config Helper
- *
- * 📌 Purpose:
- *   - Manage card configuration.
+ * ✅ HA CARD "entity-progress-card-template"
  *
  * @class
- * @extends BaseConfigHelper
+ * @extends EntityProgressTemplateBase
  */
+class EntityProgressTemplateCard extends EntityProgressTemplateBase {
+  static _cardStructure = new TemplateStructure();
+  static _baseClass = CARD.meta.template.typeName;
+  _cardView = new CardTemplateView();
 
-class BadgeTemplateConfigHelper extends BaseConfigHelper {
-  _yamlSchema = yamlSchemaFactory.badgeTemplate;
+  static get _loggedMethods() {
+    return [...super._loggedMethods, 'getCardSize', 'getLayoutOptions'];
+  }
+
+  // === LAYOUT ===
+
+  getCardSize() {
+    const cardSize = this._cardView.cardSize;
+    this._log.debug('getCardSize: ', cardSize);
+    return cardSize;
+  }
+
+  getLayoutOptions() {
+    const cardLayoutOptions = this._cardView.cardLayoutOptions;
+    this._log.debug('getLayoutOptions: ', cardLayoutOptions);
+    return cardLayoutOptions;
+  }
 }
 
 /******************************************************************************************
- * 🛠️ BadgeTemplateCardView
+ * 📦 EntityProgressTemplateBadge
  * ========================================================================================
  *
- * ✅ A view that manage all informations to create the card.
+ * ✅ HA CARD "entity-progress-badge-template"
  *
  * @class
+ * @extends EntityProgressTemplateBase
  */
-class BadgeTemplateCardView extends MinimalCardView {
-  _configHelper = new BadgeTemplateConfigHelper();
-  icon = null;
-}
-
-/******************************************************************************************
- * 🛠️ EntityProgressBadge
- * ========================================================================================
- *
- * ✅ HA CARD "entity-progress-badge"
- *
- * @class
- * @extends EntityProgressTemplate
- */
-class EntityProgressBadgeTemplate extends EntityProgressTemplate {
-  _cardView = new BadgeTemplateCardView();
+class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
   static _baseClass = CARD.meta.badgeTemplate.typeName;
   static _hasDisabledIconTap = true;
   static _hasDisabledBadge = true;
-  static _cardLayout = CARD.layout.orientations.horizontal.grid;
   static _cardStructure = new BadgeStructure();
   static _cardStyle = CARD_CSS;
+  _cardView = new BadgeTemplateView();
 
   setConfig(config) {
     super.setConfig(config);
     if (this.hass) setTimeout(() => this.refresh(), 0);
-  }
-
-  static getConfigElement() {
-    return null; //document.createElement(CARD.meta.badge.editor);
-  }
-
-  getCardSize() {
-    return this._cardLayout.grid_rows;
-  }
-
-  getLayoutOptions() {
-    return this._cardLayout;
   }
 
   static getStubConfig(hass) {
@@ -10294,10 +10183,24 @@ class EntityProgressBadgeTemplate extends EntityProgressTemplate {
  * 🔧 Register card & badge
  */
 
-EntityProgressTemplate.version = VERSION;
-EntityProgressBadgeTemplate.version = VERSION;
-RegistrationHelper.registerCard(CARD.meta.template, EntityProgressTemplate);
-RegistrationHelper.registerBadge(CARD.meta.badgeTemplate, EntityProgressBadgeTemplate);
+EntityProgressCard.version = VERSION;
+EntityProgressBadge.version = VERSION;
+RegistrationHelper.registerCard(CARD.meta.card, EntityProgressCard);
+RegistrationHelper.registerBadge(CARD.meta.badge, EntityProgressBadge);
+
+customElements.define(CARD.meta.feature.typeName, EntityProgressFeatures);
+// register feature
+window.customCardFeatures = window.customCardFeatures || [];
+window.customCardFeatures.push({
+  type: CARD.meta.feature.typeName,
+  name: 'Entity Progress Bar',
+  supported: () => true,
+});
+
+EntityProgressTemplateCard.version = VERSION;
+EntityProgressTemplateBadge.version = VERSION;
+RegistrationHelper.registerCard(CARD.meta.template, EntityProgressTemplateCard);
+RegistrationHelper.registerBadge(CARD.meta.badgeTemplate, EntityProgressTemplateBadge);
 
 /******************************************************************************************
  * 📦 CARD/BADGE EDITOR
@@ -10326,7 +10229,6 @@ RegistrationHelper.registerBadge(CARD.meta.badgeTemplate, EntityProgressBadgeTem
  *
  * @class
  */
-
 class ConfigUpdateEventHandler {
   #debug = CARD.config.debug.editor;
   #log = null;
