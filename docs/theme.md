@@ -14,6 +14,8 @@ Jump to the specific section:
   - 🦠 [VOC](#voc)
   - 🦠 [PM 2.5](#pm25)
 - [Adapt to HA custom theme](#adapt-to-ha-custom-theme)
+  - [CSS variables](#css)
+  - [Usage](#usage)
 
 ## Token color
 
@@ -351,35 +353,110 @@ clear and intuitive display of PM2.5 pollution levels.
 
 ## Adapt to HA custom theme
 
-By default, the progress bar uses a neutral/semi-transparent background color.
-However, depending on the theme in use, the color `var(--divider-color)` might
-not provide enough contrast or might clash with your design (e.g., if your theme
-heavily uses greens or dark shades).
+<a id="css"></a>
 
-We can define the `--epb-progress-bar-background-color` CSS variable. It allows
-you to customize the background color of the progress bar, making it easier to
-visually integrate the card with your Home Assistant theme.
+### CSS variables
 
-You can define this variable globally in your Home Assistant theme file, so it
-automatically applies to all instances of the card without needing to configure
-each one manually.
+| Variable                              | Target       | Category   | Description                                         | Example     |
+| ------------------------------------- | ------------ | ---------- | --------------------------------------------------- | ----------- |
+| `--epb-card-height`                   | Card         | Dimension  | Card height                                         | `80px`      |
+| `--epb-card-width`                    | Card         | Dimension  | Card width                                          | `300px`     |
+| `--epb-card-border-width`             | Card         | Border     | Border thickness                                    | `2px`       |
+| `--epb-card-border-color`             | Card         | Border     | Border color                                        | `#ff6600`   |
+| `--epb-card-border-radius`            | Card         | Border     | Card corner radius                                  | `20px`      |
+| `--epb-card-border-style`             | Card         | Border     | Border style                                        | `dashed`    |
+| `--epb-card-font-family`              | Card         | Typography | Card font family                                    | `monospace` |
+| `--epb-progress-bar-color`            | Progress Bar | Color      | Progress bar fill color                             | `#ff6600`   |
+| `--epb-progress-bar-background-color` | Progress Bar | Color      | Progress bar background color                       | `#333333`   |
+| `--epb-progress-bar-size`             | Progress Bar | Dimension  | Forces the bar fill size (overrides computed value) | `60%`       |
+| `--epb-progress-bar-radius`           | Progress Bar | Border     | Progress bar container border radius                | `4px`       |
+| `--epb-progress-inner-radius`         | Progress Bar | Border     | Progress bar inner fill border radius               | `4px`       |
+| `--epb-icon-and-shape-color`          | Icon         | Color      | Icon and shape background color                     | `#ff6600`   |
+| `--epb-name-color`                    | Name         | Color      | Name color                                          | `#ffffff`   |
+| `--epb-name-font-size`                | Name         | Typography | Name font size                                      | `16px`      |
+| `--epb-name-font-weight`              | Name         | Typography | Name font weight                                    | `700`       |
+| `--epb-name-letter-spacing`           | Name         | Typography | Name letter spacing                                 | `2px`       |
+| `--epb-detail-color`                  | Detail       | Color      | Detail color                                        | `#aaaaaa`   |
+| `--epb-detail-font-size`              | Detail       | Typography | Detail font size                                    | `12px`      |
+| `--epb-detail-font-weight`            | Detail       | Typography | Detail font weight                                  | `300`       |
+| `--epb-detail-letter-spacing`         | Detail       | Typography | Detail letter spacing                               | `1px`       |
+| `--epb-watermark-line-size`           | Watermark    | Dimension  | Line watermark thickness                            | `3px`       |
+| `--epb-watermark-opacity`             | Watermark    | Opacity    | Watermark opacity                                   | `0.5`       |
+| `--epb-low-watermark-color`           | Watermark    | Color      | Low watermark color                                 | `#ff0000`   |
+| `--epb-high-watermark-color`          | Watermark    | Color      | High watermark color                                | `#00ff00`   |
+| `--epb-zero-mark-width`               | Marker       | Dimension  | Zero marker thickness                               | `2px`       |
+| `--epb-zero-mark-color`               | Marker       | Color      | Zero marker color                                   | `#ff0000`   |
 
-In your theme YAML:
+
+<a id="usage"></a>
+
+### Usage
+
+#### Theme
+
+The progress bar background defaults to `var(--divider-color)`, a neutral
+semi-transparent color. Depending on your Home Assistant theme, this may lack
+contrast or clash with your design.
+
+You can override it globally by defining `--epb-progress-bar-background-color`
+directly in your theme YAML — no need to configure each card individually:
 
 ```yaml
 my_custom_theme:
-  ····
-  # Define a custom background color for the progress bar
-  epb-progress-bar-background-color: "rgba(255, 255, 255, 0.12)"
+  # ...
+  epb-progress-bar-background-color: 'rgba(255, 255, 255, 0.12)'
 ```
 
 > [!NOTE]
->
-> When declaring it in your YAML theme file, do not prefix the variable name
-> with `--`. Home Assistant handles this automatically.
+> When declaring CSS variables in a theme YAML file, omit the `--`
+> prefix — Home Assistant adds it automatically.
 
-Once set, the progress bar background will reflect the new color consistently
-across all cards using this variable.
+This applies to all cards using that theme.
+
+#### card_mod
+
+All public CSS variables can also be scoped to a single card using
+[card_mod](https://github.com/thomasloven/lovelace-card-mod):
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.battery
+card_mod:
+  style: |
+    ha-card {
+      --epb-card-height: 80px;
+      --epb-card-width: 300px;
+
+      --epb-card-border-width: 2px;
+      --epb-card-border-color: #ff6600;
+      --epb-card-border-radius: 20px;
+      --epb-card-border-style: dashed;
+
+      --epb-progress-bar-color: #ff6600;
+      --epb-progress-bar-background-color: #333333;
+      --epb-icon-and-shape-color: #ff6600;
+      --epb-low-watermark-color: #ff0000;
+      --epb-high-watermark-color: #00ff00;
+      --epb-watermark-opacity: 0.5;
+      --epb-watermark-line-size: 3px;
+      --epb-zero-mark-width: 2px;
+
+      --epb-progress-bar-size: 60%;
+      --epb-progress-bar-radius: 4px;
+      --epb-progress-inner-radius: 4px;
+
+      --epb-card-font-family: monospace;
+      --epb-name-color: #ffffff;
+      --epb-name-font-size: 16px;
+      --epb-name-font-weight: 700;
+      --epb-name-letter-spacing: 2px;
+
+      --epb-detail-color: #aaaaaa;
+      --epb-detail-font-size: 12px;
+      --epb-detail-font-weight: 300;
+      --epb-detail-letter-spacing: 1px;
+    }
+```
 
 [🔼 Back to top]
 

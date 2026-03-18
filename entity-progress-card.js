@@ -251,27 +251,27 @@ const CARD = {
     },
     dynamic: {
       card: {
-        minWidth: { var: '--epb-card-min-width' },
-        height: { var: '--epb-card-height' },
+        minWidth: { var: '--card-min-width' },
+        height: { var: '--card-height' },
       },
       badge: {
-        color: { var: '--epb-badge-color', default: 'var(--orange-color)' },
-        backgroundColor: { var: '--epb-badge-bgcolor', default: 'white' },
+        color: { var: '--badge-color', default: 'var(--orange-color)' },
+        backgroundColor: { var: '--badge-bgcolor', default: 'white' },
       },
       iconAndShape: {
-        color: { var: '--epb-icon-and-shape-color', default: 'var(--state-icon-color)' },
-        icon: { size: { var: '--epb-icon-size' } },
-        shape: { size: { var: '--epb-shape-size' } },
+        color: { var: '--icon-and-shape-color', default: 'var(--state-icon-color)' },
+        icon: { size: { var: '--icon-size' } },
+        shape: { size: { var: '--shape-size' } },
       },
       haRipple: {
         color: { var: '--ha-ripple-color' },
       },
       progressBar: {
-        color: { var: '--epb-progress-bar-color', default: 'var(--state-icon-color)' },
-        size: { var: '--epb-progress-bar-size', default: '0%' },
-        pSize: { var: '--epb-progress-bar-psize', default: '0%' },
-        nSize: { var: '--epb-progress-bar-nsize', default: '0%' },
-        maxWidth: { var: '--epb-progress-bar-max-width', default: null },
+        color: { var: '--progress-bar-color', default: 'var(--state-icon-color)' },
+        size: { var: '--progress-bar-size', default: '0%' },
+        pSize: { var: '--progress-bar-psize', default: '0%' },
+        nSize: { var: '--progress-bar-nsize', default: '0%' },
+        maxWidth: { var: '--progress-bar-max-width', default: null },
         background: { var: '--epb-progress-bar-background-color' },
         orientation: { rtl: 'rtl-orientation', ltr: 'ltr-orientation', up: 'up-orientation' },
         effect: {
@@ -284,10 +284,10 @@ const CARD = {
         },
       },
       watermark: {
-        low: { value: { var: '--epb-low-watermark-value', default: 20 }, color: { var: '--epb-low-watermark-color', default: 'red' } },
-        high: { value: { var: '--epb-high-watermark-value', default: 80 }, color: { var: '--epb-high-watermark-color', default: 'red' } },
-        lineSize: { var: '--epb-watermark-line-size' },
-        opacity: { var: '--epb-watermark-opacity-value' },
+        low: { value: { var: '--low-watermark-value', default: 20 }, color: { var: '--low-watermark-color', default: 'red' } },
+        high: { value: { var: '--high-watermark-value', default: 80 }, color: { var: '--high-watermark-color', default: 'red' } },
+        lineSize: { var: '--watermark-line-size' },
+        opacity: { var: '--watermark-opacity-value' },
       },
       secondaryInfoError: { class: 'secondary-info-error' },
       show: 'show',
@@ -3477,48 +3477,48 @@ const CARD_CSS = `
 
 :host {
   /* === SPACING VARIABLES === */
-  --epb-gap-default: 10px;
-  --epb-gap-entities: 16px;
-  --epb-padding-default: 10px;
+  --gap-default: 10px;
+  --gap-entities: 16px;
+  --padding-default: 10px;
 
   /* === SIZE VARIABLES === */
-  --epb-shape-default-size: 36px;
-  --epb-icon-default-size: 24px;
-  --epb-entities-shape-size: 40px;
-  --epb-badge-size: 16px;
-  --epb-badge-icon-size: 12px;
-  --epb-badge-offset: -3px;
-  --epb-progress-size-s: 8px;
-  --epb-progress-size-m: 12px;
-  --epb-progress-size-l: 16px;
-  --epb-progress-size-xl: 42px;
+  --shape-default-size: 36px;
+  --icon-default-size: 24px;
+  --entities-shape-size: 40px;
+  --badge-size: 16px;
+  --badge-icon-size: 12px;
+  --badge-offset: -3px;
+  --progress-size-s: 8px;
+  --progress-size-m: 12px;
+  --progress-size-l: 16px;
+  --progress-size-xl: 42px;
 
   /* === HEIGHT VARIABLES === */
-  --epb-name-height: 20px;
-  --epb-detail-height: 16px;
-  --epb-entities-height: 22.4px;
-  --epb-entities-card-min-height: 44.8px;
-  --epb-vertical-name-large-height: 18px;
-  --epb-progress-container-height: 16px;
+  --name-height: 20px;
+  --detail-height: 16px;
+  --entities-height: 22.4px;
+  --entities-card-min-height: 44.8px;
+  --vertical-name-large-height: 18px;
+  --progress-container-height: 16px;
 
   /* === COLOR OPACITY VARIABLES === */
-  --epb-shape-opacity: 20%;
-  --epb-hover-opacity: 4%;
-  --epb-active-opacity: 15%;
-  --epb-icon-hover-opacity: 40%;
-  --epb-card-hover-mix: 96%;
-  --epb-card-active-mix: 85%;
+  --shape-opacity: 20%;
+  --hover-opacity: 4%;
+  --active-opacity: 15%;
+  --icon-hover-opacity: 40%;
+  --card-hover-mix: 96%;
+  --card-active-mix: 85%;
 
   /* === TRANSITION VARIABLES === */
-  --epb-progress-transition-width: 0.3s ease;
-  --epb-click-transition-background: 0.5s ease;
+  --progress-transition-width: 0.3s ease;
+  --click-transition-background: 0.5s ease;
 
   /* === TYPOGRAPHY VARIABLES === */
-  --epb-letter-spacing-name: 0.1px;
-  --epb-letter-spacing-detail: 0.4px;
+  --name-letter-spacing: 0.1px;
+  --letter-spacing-detail: 0.4px;
 
   /* === LAYOUT VARIABLES === */
-  --epb-vertical-gap: 1px;
+  --vertical-gap: 1px;
 
   /* === HA RIPPLE === */
   --ha-ripple-hover-opacity: 0.04;
@@ -3526,20 +3526,20 @@ const CARD_CSS = `
 }
 
 .${CARD.style.bar.sizeOptions.small.label} {
-  --epb-progress-size: var(--epb-progress-size-s);
+  --progress-size: var(--epb-progress-bar-size, var(--progress-size-s));
 }
 
 .${CARD.style.bar.sizeOptions.medium.label} {
-  --epb-progress-size: var(--epb-progress-size-m);
+  --progress-size: var(--epb-progress-bar-size, var(--progress-size-m));
 }
 
 .${CARD.style.bar.sizeOptions.large.label} {
-  --epb-progress-size: var(--epb-progress-size-l);
+  --progress-size: var(--epb-progress-bar-size, var(--progress-size-l));
 }
 
 .${CARD.style.bar.sizeOptions.xlarge.label} {
-  --epb-progress-size: var(--epb-progress-size-xl);
-  --epb-progress-container-height: var(--epb-progress-size-xl);
+  --progress-size: var(--epb-progress-bar-size, var(--progress-size-xl));
+  --progress-container-height: var(--progress-size-xl);
 }
 
 /* =============================================================================
@@ -3547,55 +3547,58 @@ const CARD_CSS = `
    ============================================================================= */
 
 ${CARD.htmlStructure.card.element} {
-  --ha-ripple-color: var(--epb-icon-and-shape-color, var(--state-icon-color));
-  --epb-current-card-min-width: var(${CARD.style.dynamic.card.minWidth.var}, 100%);
-  --epb-current-card-min-height: 0px;
-  --epb-current-card-height: var(${CARD.style.dynamic.card.height.var}, 100%);
-  --epb-current-card-padding: 0 var(--epb-padding-default);
-  --epb-current-card-margin: 0 auto;
-  --epb-current-card-border-radius: var(--ha-card-border-radius, var(--ha-border-radius-lg));
+  --ha-ripple-color: var(--epb-icon-and-shape-color, var(--icon-and-shape-color, var(--state-icon-color)));
+  --current-card-min-width: var(${CARD.style.dynamic.card.minWidth.var}, 100%);
+  --current-card-min-height: 0px;
+  --current-card-height: var(${CARD.style.dynamic.card.height.var}, 100%);
+  --current-card-padding: 0 var(--padding-default);
+  --current-card-margin: 0 auto;
+  --current-card-border-radius: var(--ha-card-border-radius, var(--ha-border-radius-lg));
 
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative; /* permet top/bottom */
-  margin: var(--epb-current-card-margin);
-  padding: var(--epb-current-card-padding);
-  width: auto; /* explicite */
-  min-width: var(--epb-current-card-min-width);
-  min-height: var(--epb-current-card-min-height);
-  height: var(--epb-current-card-height);
+  margin: var(--current-card-margin);
+  padding: var(--current-card-padding);
+  min-width: var(--epb-card-width, var(--current-card-min-width));
+  width: var(--epb-card-width, auto);
+  min-height: var(--current-card-min-height);
+  height: var(--epb-card-height, var(--current-card-height));
   box-sizing: border-box;
-  border-radius: var(--epb-current-card-border-radius);
+  border-radius: var(--epb-card-border-radius, var(--current-card-border-radius));
+  border-width: var(--epb-card-border-width, var(--ha-card-border-width, 1px));
+  border-color: var(--epb-card-border-color, var(--ha-card-border-color, var(--divider-color, #e0e0e0)));
+  border-style: var(--epb-card-border-style, solid);
   overflow: hidden;
-  font-family: var(--ha-font-family-body);
+  font-family: var(--epb-card-font-family, var(--ha-font-family-body));
   -moz-osx-font-smoothing: var(--ha-font-smoothing);
   -webkit-font-smoothing: antialiased;
 }
 
 .horizontal {
-  --epb-current-card-min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.horizontal.minHeight});
+  --current-card-min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.horizontal.minHeight});
 }
 
 .vertical {
-  --epb-current-card-min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.vertical.minHeight});
+  --current-card-min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.vertical.minHeight});
 }
 
 .marginless {
-  --epb-current-card-min-height: unset;
+  --current-card-min-height: unset;
 }
 
 /* === BADGE === */
-[class^="type-custom-entity-progress-badge"] {
-  --epb-current-card-height: var(--ha-badge-size, 36px);
-  --epb-current-card-min-height: var(--ha-badge-size, 36px);
-  --epb-current-card-min-width: var(--epb-card-min-width, var(--ha-badge-size, 130px));
-  --epb-current-card-border-radius: var(--ha-badge-border-radius,calc(var(--ha-badge-size,36px)/ 2));
+.progress-badge {
+  --current-card-height: var(--ha-badge-size, 36px);
+  --current-card-min-height: var(--ha-badge-size, 36px);
+  --current-card-min-width: var(--card-min-width, var(--ha-badge-size, 130px));
+  --current-card-border-radius: var(--ha-badge-border-radius,calc(var(--ha-badge-size,36px)/ 2));
 }
 
 /* === TYPE: PICTURE-ELEMENTS === */
 .type-picture-elements {
-  --epb-current-card-min-width: var(${CARD.style.dynamic.card.minWidth.var}, 200px);
+  --current-card-min-width: var(${CARD.style.dynamic.card.minWidth.var}, 200px);
 }
 
 /* === FRAMELESS & ENTITIES STYLES === */
@@ -3608,8 +3611,8 @@ ${CARD.htmlStructure.card.element} {
 }
 
 .type-entities {
-  --epb-current-card-padding: 0px;
-  --epb-current-card-margin: 0px;
+  --current-card-padding: 0px;
+  --current-card-margin: 0px;
   --ha-ripple-hover-opacity: 0;
   --ha-ripple-pressed-opacity: 0;
 
@@ -3622,60 +3625,67 @@ ${CARD.htmlStructure.card.element} {
 
 .${CARD.htmlStructure.sections.container.class} {
   display: flex;
-  flex-direction: var(--epb-current-container-flex-direction, row);
+  flex-direction: var(--current-container-flex-direction, row);
   align-items: center;
   justify-content: center;
-  gap: var(--epb-current-container-gap, var(--epb-gap-default));
+  gap: var(--current-container-gap, var(--gap-default));
   width: 100%;
   height: 100%;
-  overflow: var(--epb-current-container-overflow, visible);
-  padding-top: var(--epb-current-container-padding-top, 0);
-  box-sizing: var(--epb-current-container-box-sizing, content-box);
-  flex-wrap: var(--epb-current-container-flex-wrap, nowrap);
+  overflow: var(--current-container-overflow, visible);
+  padding-top: var(--current-container-padding-top, 0);
+  box-sizing: var(--current-container-box-sizing, content-box);
+  flex-wrap: var(--current-container-flex-wrap, nowrap);
 }
 
 .horizontal {
-  --epb-current-container-flex-direction: row;
-  --epb-current-container-padding-top: 0px;
-  --epb-current-container-min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.horizontal.minHeight});
-  --epb-current-container-overflow: visible;
-  --epb-current-container-gap: var(--epb-gap-default);
-  --epb-current-container-box-sizing: content-box;
-  --epb-current-container-flex-wrap: wrap;
+  --current-container-flex-direction: row;
+  --current-container-padding-top: 0px;
+  --current-container-min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.horizontal.minHeight});
+  --current-container-overflow: visible;
+  --current-container-gap: var(--gap-default);
+  --current-container-box-sizing: content-box;
+  --current-container-flex-wrap: wrap;
 }
 
 .vertical {
-  --epb-current-container-flex-direction: column;
-  --epb-current-container-padding-top: calc(var(--epb-progress-size) + 2px);
-  --epb-current-container-min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.vertical.minHeight});
-  --epb-current-container-overflow: hidden;
-  --epb-current-container-gap: 11px;
-  --epb-current-container-box-sizing: border-box;
-  --epb-current-container-flex-wrap: nowrap;
+  --current-container-flex-direction: column;
+  --current-container-padding-top: calc(var(--progress-size) + 2px);
+  --current-container-min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.vertical.minHeight});
+  --current-container-overflow: hidden;
+  --current-container-gap: 11px;
+  --current-container-box-sizing: border-box;
+  --current-container-flex-wrap: nowrap;
 }
 
 ha-card:has(> .bottom-container) > .${CARD.htmlStructure.sections.container.class},
 ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} {
-  --epb-current-container-padding-top: 0px;
+  --current-container-padding-top: 0px;
 }
 
 .${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.sections.container.class},
 .${CARD.htmlStructure.sections.container.class}.vertical:has(.content-section.overlay) {
-  --epb-current-container-padding-top: 3px;
+  --current-container-padding-top: 3px;
 }
 
+.${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.sections.icon.class},
+.${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.sections.content.class} {
+  height: 54px;
+  align-self: flex-start;
+}
+
+
 .${CARD.htmlStructure.sections.container.class}.vertical:has(.content-section.overlay) {
-  --epb-current-container-gap: 9.5px;
+  --current-container-gap: 9.5px;
 }
 
 .type-entities .${CARD.htmlStructure.sections.container.class} {
-  --epb-current-container-gap: var(--epb-gap-entities);
-  --epb-current-container-min-height: var(--epb-entities-card-min-height);
+  --current-container-gap: var(--gap-entities);
+  --current-container-min-height: var(--entities-card-min-height);
 }
 
 .${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class} {
-  --epb-current-container-min-height: 0px;
-  --epb-current-container-padding-top: 0px;
+  --current-container-min-height: 0px;
+  --current-container-padding-top: 0px;
 }
 
 /* =============================================================================
@@ -3685,8 +3695,8 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
 ha-card:has(.bottom-container),
 ha-card:has(.top-container),
 ha-card:has(.below-container) {
-  --epb-current-group-max-width: 100%;
-  --epb-current-group-width: 100%;
+  --current-group-max-width: 100%;
+  --current-group-width: 100%;
 }
 
 .below-container {
@@ -3694,7 +3704,11 @@ ha-card:has(.below-container) {
   width: 100%;
   display: flex;
   overflow: hidden;
-  height: var(--epb-progress-size-xl);
+  height: 54px;
+}
+
+.horizontal.xlarge .container {
+  align-content: center;
 }
 
 .bottom-container, .top-container {
@@ -3714,7 +3728,7 @@ ha-card:has(.below-container) {
 
 .bottom-container .progress-bar-container,
 .top-container .progress-bar-container {
-  height: var(--epb-progress-size-s);
+  height: var(--progress-size-s);
 }
 
 /* =============================================================================
@@ -3726,8 +3740,8 @@ ha-card:has(.below-container) {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--epb-badge-size);
-  height: var(--epb-badge-size);
+  width: var(--badge-size);
+  height: var(--badge-size);
 }
 
 .trend-indicator {
@@ -3745,20 +3759,20 @@ ha-card:has(.below-container) {
    ============================================================================= */
 
 .${CARD.htmlStructure.sections.icon.class} {
-  --epb-current-shape-size: var(--epb-shape-default-size);
+  --current-shape-size: var(--shape-default-size);
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: relative;
-  width: var(--epb-current-shape-size);
-  height: var(--epb-current-shape-size);
+  width: var(--current-shape-size);
+  height: var(--current-shape-size);
   flex-shrink: 0;
 }
 
 .type-entities .${CARD.htmlStructure.sections.icon.class} {
-  --epb-current-shape-size: var(--epb-entities-shape-size);
+  --current-shape-size: var(--entities-shape-size);
 }
 
 .${CARD.layout.orientations.vertical.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.icon.class} {
@@ -3767,50 +3781,50 @@ ha-card:has(.below-container) {
 
 /* === SHAPE & ICON === */
 .${CARD.htmlStructure.elements.shape.class} {
-  --epb-current-shape-background-color: color-mix(in srgb, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}) var(--epb-shape-opacity), transparent);
+  --current-shape-background-color: color-mix(in srgb, var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default})) var(--shape-opacity), transparent);
   --ha-ripple-hover-opacity: 0.15;
 
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--epb-current-shape-size);
-  height: var(--epb-current-shape-size);
+  width: var(--current-shape-size);
+  height: var(--current-shape-size);
   border-radius: 50%;
-  background-color: var(--epb-current-shape-background-color);
+  background-color: var(--current-shape-background-color);
 }
 
 .type-entities .${CARD.htmlStructure.elements.shape.class} {
   --ha-ripple-hover-opacity: 0;
   --ha-ripple-pressed-opacity: 0;
-  --epb-current-shape-background-color: transparent;
+  --current-shape-background-color: transparent;
 }
 
 .${CARD.htmlStructure.elements.icon.class},
 .custom-icon-img {
-  --epb-current-icon-size: var(--epb-shape-default-size);
+  --current-icon-size: var(--shape-default-size);
 
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--epb-current-icon-size);
-  height: var(--epb-current-icon-size);
+  width: var(--current-icon-size);
+  height: var(--current-icon-size);
 }
 
-[class^="type-custom-entity-progress-badge"] .${CARD.htmlStructure.sections.icon.class},
-[class^="type-custom-entity-progress-badge"] .${CARD.htmlStructure.elements.icon.class},
-[class^="type-custom-entity-progress-badge"] .${CARD.htmlStructure.elements.shape.class},
-[class^="type-custom-entity-progress-badge"] .custom-icon-img {
-  --epb-current-icon-size: 18px;
-  --epb-current-shape-size: 18px;
+.progress-badge .${CARD.htmlStructure.sections.icon.class},
+.progress-badge .${CARD.htmlStructure.elements.icon.class},
+.progress-badge .${CARD.htmlStructure.elements.shape.class},
+.progress-badge .custom-icon-img {
+  --current-icon-size: 18px;
+  --current-shape-size: 18px;
 }
 
-[class^="type-custom-entity-progress-badge"] .icon ha-state-icon {
-  --epb-current-icon-size: 18px;
-  --mdc-icon-size: var(--epb-current-icon-size);
+.progress-badge .icon ha-state-icon {
+  --current-icon-size: 18px;
+  --mdc-icon-size: var(--current-icon-size);
   --ha-icon-display: flex;
-  height: var(--epb-current-icon-size);
-  width: var(--epb-current-icon-size);
+  height: var(--current-icon-size);
+  width: var(--current-icon-size);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3818,7 +3832,7 @@ ha-card:has(.below-container) {
 
 
 .${CARD.htmlStructure.elements.icon.class} {
-  color: var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default});
+  color: var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}));
 }
 
 .custom-icon-img {
@@ -3834,25 +3848,25 @@ ha-card:has(.below-container) {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  flex-grow: var(--epb-current-content-flex-grow);
+  flex-grow: var(--current-content-flex-grow);
   flex-shrink: 1;
-  width: var(--epb-current-content-width);
-  gap: var(--epb-current-content-gap, 0);
+  width: var(--current-content-width);
+  gap: var(--current-content-gap, 0);
   min-width: 0;
   overflow: hidden;
   position: relative; /* overlay */
 }
 
 .horizontal {
-  --epb-current-content-width: calc(100% - 56px);
-  --epb-current-content-flex-grow: 1;
-  --epb-current-content-gap: 0;
+  --current-content-width: calc(100% - 56px);
+  --current-content-flex-grow: 1;
+  --current-content-gap: 0;
 }
 
 .vertical {
-  --epb-current-content-width: 100%;
-  --epb-current-content-flex-grow: 0;
-  --epb-current-content-gap: var(--epb-vertical-gap);
+  --current-content-width: 100%;
+  --current-content-flex-grow: 0;
+  --current-content-gap: var(--vertical-gap);
 }
 
 /* === TEXT ELEMENTS === */
@@ -3860,56 +3874,56 @@ ha-card:has(.below-container) {
 .${CARD.htmlStructure.elements.nameGroup.class},
 .${CARD.htmlStructure.elements.detailGroup.class} {
   display: flex;
-  align-items: var(--epb-current-group-align-items, center);
-  justify-content: var(--epb-current-group-justify-content, flex-start);
-  min-width: var(--epb-current-group-min-width, 0);
-  max-width: var(--epb-current-group-max-width, none);
-  width: var(--epb-current-group-width, auto);
-  flex-grow: var(--epb-current-group-flex-grow, initial);
-  overflow: var(--epb-current-group-overflow, hidden);
-  text-align: var(--epb-current-group-text-align, left);
-  box-sizing: var(--epb-current-group-box-sizing, content-box);
+  align-items: var(--current-group-align-items, center);
+  justify-content: var(--current-group-justify-content, flex-start);
+  min-width: var(--current-group-min-width, 0);
+  max-width: var(--current-group-max-width, none);
+  width: var(--current-group-width, auto);
+  flex-grow: var(--current-group-flex-grow, initial);
+  overflow: var(--current-group-overflow, hidden);
+  text-align: var(--current-group-text-align, left);
+  box-sizing: var(--current-group-box-sizing, content-box);
   z-index: 1;
 }
 
 .${CARD.htmlStructure.elements.nameGroup.class} {
-  --epb-current-name-groupe-height: var(--type-entities-combined-height, var(--epb-name-height));
-  height: var(--epb-current-name-groupe-height);
+  --current-name-groupe-height: var(--type-entities-combined-height, var(--name-height));
+  height: var(--current-name-groupe-height);
 }
 
-[class^="type-custom-entity-progress-badge"] .${CARD.htmlStructure.elements.nameGroup.class} {
-  --epb-current-name-groupe-height: 10px;
-  font-size: var(--epb-current-name-groupe-height);
+.progress-badge .${CARD.htmlStructure.elements.nameGroup.class} {
+  --current-name-groupe-height: 10px;
+  font-size: var(--current-name-groupe-height);
 }
 
 .${CARD.htmlStructure.elements.detailGroup.class} {
-  --epb-current-detail-groupe-height: var(--type-entities-combined-height, var(--epb-detail-height));
-  --epb-current-detail-groupe-min-width: var(--epb-detail-min-width);
-  --epb-current-detail-groupe-max-width: var(--epb-detail-max-width);
+  --current-detail-groupe-height: var(--type-entities-combined-height, var(--detail-height));
+  --current-detail-groupe-min-width: var(--detail-min-width);
+  --current-detail-groupe-max-width: var(--detail-max-width);
 
-  height: var(--epb-current-detail-groupe-height);
-  line-height: var(--epb-detail-height);
-  min-width: var(--epb-current-detail-groupe-min-width);
-  max-width: var(--epb-current-detail-groupe-max-width);
+  height: var(--current-detail-groupe-height);
+  line-height: var(--detail-height);
+  min-width: var(--current-detail-groupe-min-width);
+  max-width: var(--current-detail-groupe-max-width);
 }
 
-[class^="type-custom-entity-progress-badge"] .${CARD.htmlStructure.elements.detailGroup.class} {
-  --epb-current-detail-groupe-min-width: unset;
-  --epb-current-detail-groupe-max-width: unset;
+.progress-badge .${CARD.htmlStructure.elements.detailGroup.class} {
+  --current-detail-groupe-min-width: unset;
+  --current-detail-groupe-max-width: unset;
 }
 
 
 ha-card.horizontal:not(.xlarge):not(:has(.bottom-container)):not(:has(.top-container)) {
-  --epb-detail-min-width: 45px;
-  --epb-detail-max-width: 60%;
+  --detail-min-width: 45px;
+  --detail-max-width: 60%;
 }
 
 ha-card.vertical,
 ha-card.xlarge,
 ha-card:has(.bottom-container),
 ha-card:has(.top-container) {
-  --epb-detail-min-width: 100%;
-  --epb-detail-max-width: 100%;
+  --detail-min-width: 100%;
+  --detail-max-width: 100%;
 }
 
 .row-reverse .${CARD.htmlStructure.elements.detailGroup.class} {
@@ -3917,30 +3931,30 @@ ha-card:has(.top-container) {
 }
 
 .${CARD.layout.orientations.horizontal.label} {
-  --epb-current-group-justify-content: flex-start;
-  --epb-current-group-width: auto;
-  --epb-current-group-flex-grow: initial;
-  --epb-current-group-text-align: left;
-  --epb-current-group-box-sizing: content-box;
+  --current-group-justify-content: flex-start;
+  --current-group-width: auto;
+  --current-group-flex-grow: initial;
+  --current-group-text-align: left;
+  --current-group-box-sizing: content-box;
 }
 
 .${CARD.layout.orientations.vertical.label} {
-  --epb-current-group-justify-content: center;
-  --epb-current-group-max-width: 100%;
-  --epb-current-group-width: 100%;
-  --epb-current-group-flex-grow: 0;
-  --epb-current-group-text-align: center;
-  --epb-current-group-box-sizing: border-box;
+  --current-group-justify-content: center;
+  --current-group-max-width: 100%;
+  --current-group-width: 100%;
+  --current-group-flex-grow: 0;
+  --current-group-text-align: center;
+  --current-group-box-sizing: border-box;
 }
 
 .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.nameGroup.class},
 .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
-  --epb-current-group-overflow: hidden;
+  --current-group-overflow: hidden;
   min-width: 0;
 }
 
 .${CARD.layout.orientations.vertical.label} .${CARD.style.bar.sizeOptions.large.label} {
-  --epb-name-height: var(--epb-vertical-name-large-height);
+  --name-height: var(--vertical-name-large-height);
 }
 
 .ellipsis-wrapper {
@@ -3959,58 +3973,58 @@ ha-card:has(.top-container) {
 }
 
 .${CARD.htmlStructure.elements.nameCombined.class} {
-  --epb-current-name-combined-height: var(--type-entities-combined-height, var(--epb-name-height));
-  --epb-current-name-combined-font-size: var(--ha-font-size-m);
-  --epb-current-name-combined-font-weight: var(--type-entities-combined-font-weight, var(--ha-font-weight-medium));
-  --epb-current-name-combined-line-height: var(--type-entities-combined-line-height, var(--epb-name-height));
-  --epb-current-name-combined-color: var(--primary-text-color);
-  --epb-current-name-combined-margin-right: 0px;
+  --current-name-combined-height: var(--type-entities-combined-height, var(--name-height));
+  --current-name-combined-font-size: var(--ha-font-size-m);
+  --current-name-combined-font-weight: var(--type-entities-combined-font-weight, var(--ha-font-weight-medium));
+  --current-name-combined-line-height: var(--type-entities-combined-line-height, var(--name-height));
+  --current-name-combined-color: var(--primary-text-color);
+  --current-name-combined-margin-right: 0px;
 
-  color: var(--epb-current-name-combined-color);
-  font-size: var(--epb-current-name-combined-font-size);
-  font-weight: var(--epb-current-name-combined-font-weight);
-  height: var(--epb-current-name-combined-height);
-  line-height: var(--epb-current-name-combined-line-height);
-  letter-spacing: var(--epb-letter-spacing-name);
-  margin-right: var(--epb-current-name-combined-margin-right);
+  color: var(--epb-name-color, var(--current-name-combined-color));
+  font-size: var(--epb-name-font-size, var(--current-name-combined-font-size));
+  font-weight: var(--epb-name-font-weight, var(--current-name-combined-font-weight));
+  height: var(--current-name-combined-height);
+  line-height: var(--current-name-combined-line-height);
+  letter-spacing: var(--epb-name-letter-spacing, var(--name-letter-spacing));
+  margin-right: var(--current-name-combined-margin-right);
 }
 
 
-[class^="type-custom-entity-progress-badge"] .${CARD.htmlStructure.elements.nameCombined.class} {
-  --epb-current-name-combined-height: 10px;
-  --epb-current-name-combined-font-size: 10px;
-  --epb-current-name-combined-font-weight: 500;
-  --epb-current-name-combined-line-height: 10px;
-  --epb-current-name-combined-color: var(--secondary-text-color);
-  --epb-current-name-combined-margin-right: 5px;
+.progress-badge .${CARD.htmlStructure.elements.nameCombined.class} {
+  --current-name-combined-height: 10px;
+  --current-name-combined-font-size: 10px;
+  --current-name-combined-font-weight: 500;
+  --current-name-combined-line-height: 10px;
+  --current-name-combined-color: var(--secondary-text-color);
+  --current-name-combined-margin-right: 5px;
 }
 
 
 .${CARD.htmlStructure.elements.detailCombined.class} {
-  --epb-current-detail-font-size: var(--type-entities-detail-combined-font-size, var(--ha-font-size-s));
-  --epb-current-detail-font-weight: var(--type-entities-combined-font-weight, var(--ha-font-weight-body));;
-  --epb-current-detail-letter-spacing: var(--epb-letter-spacing-detail);
-  --epb-current-detail-color: var(--type-entities-detail-combined-color, var(--primary-text-color));
+  --current-detail-font-size: var(--type-entities-detail-combined-font-size, var(--ha-font-size-s));
+  --current-detail-font-weight: var(--type-entities-combined-font-weight, var(--ha-font-weight-body));;
+  --current-detail-letter-spacing: var(--letter-spacing-detail);
+  --current-detail-color: var(--type-entities-detail-combined-color, var(--primary-text-color));
 
-  color: var(--epb-current-detail-color);
-  font-size: var(--epb-current-detail-font-size);
-  font-weight: var(--epb-current-detail-font-weight);
-  height: var(--type-entities-combined-height, var(--epb-detail-height));
-  line-height: var(--type-entities-combined-line-height, var(--epb-detail-height));
-  letter-spacing: var(--epb-current-detail-letter-spacing);
+  color: var(--epb-detail-color, var(--current-detail-color));
+  font-size: var(--epb-detail-font-size, var(--current-detail-font-size));
+  font-weight: var(--epb-detail-font-weight, var(--current-detail-font-weight));
+  height: var(--type-entities-combined-height, var(--detail-height));
+  line-height: var(--type-entities-combined-line-height, var(--detail-height));
+  letter-spacing: var(--epb-detail-letter-spacing, var(--current-detail-letter-spacing));
 }
 
-[class^="type-custom-entity-progress-badge"] .${CARD.htmlStructure.elements.detailCombined.class} {
-  --epb-current-detail-font-size: var(--ha-badge-font-size, var(--ha-font-size-s));
-  --epb-current-detail-font-weight: 500;
-  --epb-current-detail-letter-spacing: 0.1px;
-  --epb-current-detail-color: var(--primary-text-color);
+.progress-badge .${CARD.htmlStructure.elements.detailCombined.class} {
+  --current-detail-font-size: var(--ha-badge-font-size, var(--ha-font-size-s));
+  --current-detail-font-weight: 500;
+  --current-detail-letter-spacing: 0.1px;
+  --current-detail-color: var(--primary-text-color);
 }
 
 
 /* === ENTITIES TYPE SPECIFIC === */
 .type-entities {
-  --type-entities-combined-height: var(--epb-entities-height);
+  --type-entities-combined-height: var(--entities-height);
   --type-entities-combined-font-weight: var(--ha-font-weight-normal);
   --type-entities-combined-line-height: var(--ha-line-height-normal);
   --type-entities-detail-combined-color: var(--secondary-text-color);
@@ -4020,11 +4034,11 @@ ha-card:has(.top-container) {
 /* === SECONDARY INFO === */
 .${CARD.htmlStructure.elements.secondaryInfo.class} {
   display: flex;
-  flex-direction: var(--epb-current-secondary-info-flex-direction);
-  align-items: var(--epb-current-secondary-info-align-items);
-  gap: var(--epb-current-secondary-info-gap, var(--epb-gap-default));
-  width: var(--epb-current-secondary-info-width, auto);
-  min-width: var(--epb-current-secondary-info-min-width, auto);
+  flex-direction: var(--current-secondary-info-flex-direction);
+  align-items: var(--current-secondary-info-align-items);
+  gap: var(--current-secondary-info-gap, var(--gap-default));
+  width: var(--current-secondary-info-width, auto);
+  min-width: var(--current-secondary-info-min-width, auto);
   justify-content: space-between;
 }
 
@@ -4033,23 +4047,23 @@ ha-card:has(.top-container) {
 }
 
 .${CARD.layout.orientations.horizontal.label} {
-  --epb-current-secondary-info-flex-direction: var(--epb-secondary-info-row-reverse, row);
-  --epb-current-secondary-info-align-items: stretch;
-  --epb-current-secondary-info-gap: var(--epb-gap-default);
-  --epb-current-secondary-info-width: auto;
-  --epb-current-secondary-info-min-width: auto;
+  --current-secondary-info-flex-direction: var(--secondary-info-row-reverse, row);
+  --current-secondary-info-align-items: stretch;
+  --current-secondary-info-gap: var(--gap-default);
+  --current-secondary-info-width: auto;
+  --current-secondary-info-min-width: auto;
 }
 
 .${CARD.layout.orientations.vertical.label} {
-  --epb-current-secondary-info-flex-direction: column;
-  --epb-current-secondary-info-align-items: center;
-  --epb-current-secondary-info-gap: unset;
-  --epb-current-secondary-info-width: 100%;
-  --epb-current-secondary-info-min-width: 0;
+  --current-secondary-info-flex-direction: column;
+  --current-secondary-info-align-items: center;
+  --current-secondary-info-gap: unset;
+  --current-secondary-info-width: 100%;
+  --current-secondary-info-min-width: 0;
 }
 
-[class^="type-custom-entity-progress-badge"] {
-  --epb-current-secondary-info-gap: 5px;
+.progress-badge {
+  --current-secondary-info-gap: 5px;
 }
 
 .multiline {
@@ -4088,20 +4102,20 @@ ha-card:has(.top-container) {
   justify-content: center;
   align-items: center;
   flex-grow: 1;
-  height: var(--type-entities-combined-line-height, var(--epb-current-progress-container-height));
+  height: var(--type-entities-combined-line-height, var(--current-progress-container-height));
 }
 
 .${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.elements.progressBar.container.class},
 .${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.container.class},
 .${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.container.class} {
-  max-width: var(--epb-progress-bar-max-width, unset);
+  max-width: var(--progress-bar-max-width, unset);
 }
 
 .horizontal {
-  --epb-current-progress-container-height: var(--epb-progress-container-height);
+  --current-progress-container-height: var(--progress-container-height);
 }
 .vertical {
-  --epb-current-progress-container-height: var(--epb-progress-size);
+  --current-progress-container-height: var(--progress-size);
 }
 
 .vertical.xlarge .progress-bar-container {
@@ -4113,8 +4127,8 @@ ha-card:has(.top-container) {
 .${CARD.htmlStructure.elements.progressBar.positiveInner.class},
 .${CARD.htmlStructure.elements.progressBar.negativeInner.class},
 .${CARD.htmlStructure.elements.progressBar.bar.class} {
-  height: var(--epb-progress-size);
-  max-height: var(--epb-progress-size);
+  height: var(--progress-size);
+  max-height: var(--progress-size);
 }
 
 .${CARD.htmlStructure.elements.progressBar.bar.class} {
@@ -4133,17 +4147,17 @@ ha-card:has(.top-container) {
 .${CARD.htmlStructure.elements.progressBar.inner.class},
 .${CARD.htmlStructure.elements.progressBar.positiveInner.class},
 .${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
-  transition: width var(--epb-progress-transition-width);
+  transition: width var(--progress-transition-width);
   will-change: width;
 }
 
 .${CARD.htmlStructure.elements.progressBar.inner.class},
 .${CARD.htmlStructure.elements.progressBar.positiveInner.class} {
-  background: var(--epb-current-progress-effect, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default}));
+  background: var(--current-progress-effect, var(--epb-progress-bar-color, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})));
 }
 
 .${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
-  background: var(--epb-current-progress-effect-neg, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default}));
+  background: var(--current-progress-effect-neg, var(--epb-progress-bar-color, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})));
 }
 
 .${CARD.htmlStructure.elements.progressBar.inner.class} {
@@ -4172,21 +4186,21 @@ ha-card:has(.top-container) {
 /* === RADIUS EFFECT === */
 
 .${CARD.htmlStructure.elements.progressBar.bar.class} {
-  --epb-current-progress-bar-radius: calc(var(--epb-progress-size) / 2);
-  border-radius: var(--epb-current-progress-bar-radius);
+  --current-progress-bar-radius: calc(var(--progress-size) / 2);
+  border-radius: var(--epb-progress-bar-radius, var(--current-progress-bar-radius));
 }
 
 .${CARD.htmlStructure.elements.progressBar.inner.class} {
-  --epb-current-progress-inner-radius: 0;
-  border-radius: var(--epb-current-progress-inner-radius);
+  --current-progress-inner-radius: 0;
+  border-radius: var(--epb-progress-inner-radius, var(--current-progress-inner-radius));
 }
 
 .${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
-  border-radius: var(--epb-current-progress-inner-radius) 0 0 var(--epb-current-progress-inner-radius);
+  border-radius: var(--epb-progress-inner-radius, var(--current-progress-inner-radius)) 0 0 var(--epb-progress-inner-radius, var(--current-progress-inner-radius));
 }
 
 .${CARD.htmlStructure.elements.progressBar.positiveInner.class} {
-  border-radius: 0 var(--epb-current-progress-inner-radius) var(--epb-current-progress-inner-radius) 0;
+  border-radius: 0 var(--epb-progress-inner-radius, var(--current-progress-inner-radius)) var(--epb-progress-inner-radius, var(--current-progress-inner-radius)) 0;
 }
 
 :is(.top-container, .bottom-container)
@@ -4194,38 +4208,38 @@ ha-card:has(.top-container) {
       .${CARD.htmlStructure.elements.progressBar.inner.class},
       .${CARD.htmlStructure.elements.progressBar.negativeInner.class},
       .${CARD.htmlStructure.elements.progressBar.positiveInner.class}) {
-  --epb-current-progress-bar-radius: 0;
-  --epb-current-progress-inner-radius: 0;
+  --current-progress-bar-radius: 0;
+  --current-progress-inner-radius: 0;
 }
 
 .${CARD.style.dynamic.progressBar.effect.radius.class}
   :is(.${CARD.htmlStructure.elements.progressBar.inner.class},
       .${CARD.htmlStructure.elements.progressBar.negativeInner.class},
       .${CARD.htmlStructure.elements.progressBar.positiveInner.class}) {
-  --epb-current-progress-inner-radius: calc(var(--epb-progress-size) / 2);
+  --current-progress-inner-radius: calc(var(--progress-size) / 2);
 }
 
 /* === VARIANTS === */
 /* ----- glass ----- */
 .${CARD.style.dynamic.progressBar.effect.glass.class} {
-  --epb-current-progress-effect: linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
-  --epb-current-progress-effect-neg: linear-gradient(270deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+  --current-progress-effect: linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+  --current-progress-effect-neg: linear-gradient(270deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
 }
 
 .vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.glass.class} {
-  --epb-current-progress-effect: linear-gradient(0deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
-  --epb-current-progress-effect-neg: linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+  --current-progress-effect: linear-gradient(0deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+  --current-progress-effect-neg: linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
 }
 
 /* ----- gradient / gradient-reverse ----- */
 .${CARD.style.dynamic.progressBar.effect.gradient.class},
 .${CARD.style.dynamic.progressBar.effect.gradientReverse.class} {
-  --epb-current-progress-effect-gradient: linear-gradient(
+  --current-progress-effect-gradient: linear-gradient(
     90deg,
     color-mix(in srgb, white 40%, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})),
     var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})
   );
-  --epb-current-progress-effect-gradient-rev: linear-gradient(
+  --current-progress-effect-gradient-rev: linear-gradient(
     270deg,
     color-mix(in srgb, white 40%, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})),
     var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})
@@ -4234,26 +4248,26 @@ ha-card:has(.top-container) {
 
 .vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.gradient.class},
 .vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.gradientReverse.class} {
-  --epb-current-progress-effect-gradient: linear-gradient(
+  --current-progress-effect-gradient: linear-gradient(
     0deg,
-    color-mix(in srgb, white 40%, var(--epb-progress-bar-color, var(--state-icon-color))),
-    var(--epb-progress-bar-color, var(--state-icon-color))
+    color-mix(in srgb, white 40%, var(--progress-bar-color, var(--state-icon-color))),
+    var(--progress-bar-color, var(--state-icon-color))
   );
-  --epb-current-progress-effect-gradient-rev: linear-gradient(
+  --current-progress-effect-gradient-rev: linear-gradient(
     180deg,
-    color-mix(in srgb, white 40%, var(--epb-progress-bar-color, var(--state-icon-color))),
-    var(--epb-progress-bar-color, var(--state-icon-color))
+    color-mix(in srgb, white 40%, var(--progress-bar-color, var(--state-icon-color))),
+    var(--progress-bar-color, var(--state-icon-color))
   );
 }
 
 .${CARD.style.dynamic.progressBar.effect.gradient.class} {
-  --epb-current-progress-effect: var(--epb-current-progress-effect-gradient);
-  --epb-current-progress-effect-neg: var(--epb-current-progress-effect-gradient-rev);
+  --current-progress-effect: var(--current-progress-effect-gradient);
+  --current-progress-effect-neg: var(--current-progress-effect-gradient-rev);
 }
 
 .${CARD.style.dynamic.progressBar.effect.gradientReverse.class} {
-  --epb-current-progress-effect: var(--epb-current-progress-effect-gradient-rev);
-  --epb-current-progress-effect-neg: var(--epb-current-progress-effect-gradient);
+  --current-progress-effect: var(--current-progress-effect-gradient-rev);
+  --current-progress-effect-neg: var(--current-progress-effect-gradient);
 }
 
 /* ----- shimmer / shimmer-reverse ----- */
@@ -4271,30 +4285,30 @@ ha-card:has(.top-container) {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(var(--epb-shimmer-direction, 90deg), transparent, rgba(255, 255, 255, 0.4), transparent);
-  animation: var(--epb-shimmer-animation) 2s infinite;
+  background: linear-gradient(var(--shimmer-direction, 90deg), transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: var(--shimmer-animation) 2s infinite;
 }
 
 /* horizontales */
 .${CARD.style.dynamic.progressBar.effect.shimmer.class} {
-  --epb-shimmer-direction: 90deg;
-  --epb-shimmer-animation: shimmer-ltr;
+  --shimmer-direction: 90deg;
+  --shimmer-animation: shimmer-ltr;
 }
 
 .${CARD.style.dynamic.progressBar.effect.shimmerReverse.class} {
-  --epb-shimmer-direction: 90deg;
-  --epb-shimmer-animation: shimmer-rtl;
+  --shimmer-direction: 90deg;
+  --shimmer-animation: shimmer-rtl;
 }
 
 /* verticales */
 .vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.shimmer.class} {
-  --epb-shimmer-direction: 0deg;
-  --epb-shimmer-animation: shimmer-btt;
+  --shimmer-direction: 0deg;
+  --shimmer-animation: shimmer-btt;
 }
 
 .vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.shimmerReverse.class} {
-  --epb-shimmer-direction: 0deg;
-  --epb-shimmer-animation: shimmer-ttb;
+  --shimmer-direction: 0deg;
+  --shimmer-animation: shimmer-ttb;
 }
 
 @keyframes shimmer-ltr {
@@ -4323,33 +4337,33 @@ ha-card:has(.top-container) {
 
 /* --- ZERO MARK -- */
 .${CARD.htmlStructure.elements.progressBar.zeroMark.class} {
-  --epb-zero-mark-height: 100%;
-  --epb-zero-mark-width: 1px;
-  --epb-zero-mark-top: 0;
-  --epb-zero-mark-left: 50%;
+  --zero-mark-height: 100%;
+  --zero-mark-width: var(--epb-zero-mark-width, 1px);
+  --zero-mark-top: 0;
+  --zero-mark-left: 50%;
 
   display: flex;
   position: absolute;
-  height: var(--epb-zero-mark-height);
-  width: var(--epb-zero-mark-width);
-  top: var(--epb-zero-mark-top);
-  left: var(--epb-zero-mark-left);
-  background-color: white;
-  opacity: var(--epb-watermark-opacity-value, 0.8);
+  height: var(--zero-mark-height);
+  width: var(--zero-mark-width);
+  top: var(--zero-mark-top);
+  left: var(--zero-mark-left);
+  background-color: var(--epb-zero-mark-color, white);
+  opacity: var(--epb-watermark-opacity, var(--watermark-opacity-value, 0.8));
 }
 
 .vertical.up-orientation .overlay .${CARD.htmlStructure.elements.progressBar.zeroMark.class} {
-  --epb-zero-mark-height: 1px;
-  --epb-zero-mark-width: 100%;
-  --epb-zero-mark-top: 50%;
-  --epb-zero-mark-left: 0;
+  --zero-mark-height: var(--epb-zero-mark-width, 1px);
+  --zero-mark-width: 100%;
+  --zero-mark-top: 50%;
+  --zero-mark-left: 0;
 }
 
 /* --- Base watermark styles ---*/
 :is(.${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
     .${CARD.htmlStructure.elements.progressBar.highWatermark.class}) {
   position: absolute;
-  opacity: var(--epb-watermark-opacity-value, 0.8);
+  opacity: var(--epb-watermark-opacity, var(--watermark-opacity-value, 0.8));
   display: none;
   box-sizing: border-box;
   clip-path: inset(0);
@@ -4357,10 +4371,10 @@ ha-card:has(.top-container) {
 
 /* Colors */
 .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-  background-color: var(--epb-low-watermark-color, var(--red-color));
+  background-color: var(--epb-low-watermark-color, var(--low-watermark-color, var(--red-color)));
 }
 .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  background-color: var(--epb-high-watermark-color, var(--red-color));
+  background-color: var(--epb-high-watermark-color, var(--high-watermark-color, var(--red-color)));
 }
 
 /* ---------- Area, Blended, Striped positioning ---------- */
@@ -4368,50 +4382,50 @@ ha-card:has(.top-container) {
     .${CARD.style.dynamic.show}-lwm-blended-${CARD.htmlStructure.elements.progressBar.watermark.class},
     .${CARD.style.dynamic.show}-lwm-striped-${CARD.htmlStructure.elements.progressBar.watermark.class})
 .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-  --epb-lwm-all-area-left: 0px;
-  --epb-lwm-all-area-top: 0px;
-  --epb-lwm-all-area-bottom: unset;
-  --epb-lwm-all-area-height: 100%;
-  --epb-lwm-all-area-width: var(--epb-low-watermark-value, 20%);
+  --lwm-all-area-left: 0px;
+  --lwm-all-area-top: 0px;
+  --lwm-all-area-bottom: unset;
+  --lwm-all-area-height: 100%;
+  --lwm-all-area-width: var(--low-watermark-value, 20%);
 
-  left: var(--epb-lwm-all-area-left);
-  top: var(--epb-lwm-all-area-top);
-  bottom: var(--epb-lwm-all-area-bottom);
-  height: var(--epb-lwm-all-area-height);
-  width: var(--epb-lwm-all-area-width);
+  left: var(--lwm-all-area-left);
+  top: var(--lwm-all-area-top);
+  bottom: var(--lwm-all-area-bottom);
+  height: var(--lwm-all-area-height);
+  width: var(--lwm-all-area-width);
 }
 
 :is(.${CARD.style.dynamic.show}-hwm-area-${CARD.htmlStructure.elements.progressBar.watermark.class},
     .${CARD.style.dynamic.show}-hwm-blended-${CARD.htmlStructure.elements.progressBar.watermark.class},
     .${CARD.style.dynamic.show}-hwm-striped-${CARD.htmlStructure.elements.progressBar.watermark.class})
 .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  --epb-hwm-all-area-right: 0px;
-  --epb-hwm-all-area-top: 0px;
-  --epb-hwm-all-area-bottom: unset;
-  --epb-hwm-all-area-height: 100%;
-  --epb-hwm-all-area-width: calc(100% - var(--epb-high-watermark-value, 80%));
+  --hwm-all-area-right: 0px;
+  --hwm-all-area-top: 0px;
+  --hwm-all-area-bottom: unset;
+  --hwm-all-area-height: 100%;
+  --hwm-all-area-width: calc(100% - var(--high-watermark-value, 80%));
 
-  right: var(--epb-hwm-all-area-right);
-  top: var(--epb-hwm-all-area-top);
-  bottom: var(--epb-hwm-all-area-bottom);
-  height: var(--epb-hwm-all-area-height);
-  width: var(--epb-hwm-all-area-width);
+  right: var(--hwm-all-area-right);
+  top: var(--hwm-all-area-top);
+  bottom: var(--hwm-all-area-bottom);
+  height: var(--hwm-all-area-height);
+  width: var(--hwm-all-area-width);
 }
 
 .vertical.up-orientation .overlay .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-  --epb-lwm-all-area-left: unset;
-  --epb-lwm-all-area-top: unset;
-  --epb-lwm-all-area-bottom: 0px;
-  --epb-lwm-all-area-height: var(--epb-low-watermark-value, 20%);
-  --epb-lwm-all-area-width: 100%;
+  --lwm-all-area-left: unset;
+  --lwm-all-area-top: unset;
+  --lwm-all-area-bottom: 0px;
+  --lwm-all-area-height: var(--low-watermark-value, 20%);
+  --lwm-all-area-width: 100%;
 }
 
 .vertical.up-orientation .overlay .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  --epb-hwm-all-area-right: unset;
-  --epb-hwm-all-area-top: unset;
-  --epb-hwm-all-area-bottom: var(--epb-high-watermark-value, 80%);
-  --epb-hwm-all-area-height: calc(100% - var(--epb-high-watermark-value, 80%));
-  --epb-hwm-all-area-width: 100%;
+  --hwm-all-area-right: unset;
+  --hwm-all-area-top: unset;
+  --hwm-all-area-bottom: var(--high-watermark-value, 80%);
+  --hwm-all-area-height: calc(100% - var(--high-watermark-value, 80%));
+  --hwm-all-area-width: 100%;
 
 }
 
@@ -4427,15 +4441,15 @@ ha-card:has(.top-container) {
 .${CARD.style.dynamic.show}-lwm-striped-${CARD.htmlStructure.elements.progressBar.watermark.class}
 .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
   background: repeating-linear-gradient(-45deg,
-    var(--epb-low-watermark-color, var(--red-color)) 0px,
-    var(--epb-low-watermark-color, var(--red-color)) 3px,
+    var(--low-watermark-color, var(--red-color)) 0px,
+    var(--low-watermark-color, var(--red-color)) 3px,
     transparent 3px, transparent 6px);
 }
 .${CARD.style.dynamic.show}-hwm-striped-${CARD.htmlStructure.elements.progressBar.watermark.class}
 .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   background: repeating-linear-gradient(-45deg,
-    var(--epb-high-watermark-color, var(--red-color)) 0px,
-    var(--epb-high-watermark-color, var(--red-color)) 3px,
+    var(--high-watermark-color, var(--red-color)) 0px,
+    var(--high-watermark-color, var(--red-color)) 3px,
     transparent 3px, transparent 6px);
 }
 
@@ -4444,47 +4458,47 @@ ha-card:has(.top-container) {
     .${CARD.style.dynamic.show}-hwm-line-${CARD.htmlStructure.elements.progressBar.watermark.class})
 :is(.${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
     .${CARD.htmlStructure.elements.progressBar.highWatermark.class}) {
-  --epb-wm-line-top: 0px;
-  --epb-wm-line-width: var(--epb-watermark-line-size, 1px);
-  --epb-wm-line-height: 100%;
+  --wm-line-top: 0px;
+  --wm-line-width: var(--epb-watermark-line-size, var(--watermark-line-size, 1px));
+  --wm-line-height: 100%;
 
-  top: var(--epb-wm-line-top);
-  width: var(--epb-wm-line-width);
-  height: var(--epb-wm-line-height);
+  top: var(--wm-line-top);
+  width: var(--wm-line-width);
+  height: var(--wm-line-height);
   border: none;
   transform: none;
 }
 .${CARD.style.dynamic.show}-lwm-line-${CARD.htmlStructure.elements.progressBar.watermark.class}
 .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-  --epb-lwm-line-left: calc(var(--epb-low-watermark-value, 20%) - var(--epb-watermark-line-size, 1px) / 2);
-  --epb-lwm-line-bottom: unset;
+  --lwm-line-left: calc(var(--low-watermark-value, 20%) - var(--watermark-line-size, 1px) / 2);
+  --lwm-line-bottom: unset;
 
-  left: var(--epb-lwm-line-left);
-  bottom: var(--epb-lwm-line-bottom);
+  left: var(--lwm-line-left);
+  bottom: var(--lwm-line-bottom);
 }
 .${CARD.style.dynamic.show}-hwm-line-${CARD.htmlStructure.elements.progressBar.watermark.class}
 .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  --epb-hwm-line-left: calc(var(--epb-high-watermark-value, 80%) - var(--epb-watermark-line-size, 1px) / 2);
-  --epb-hwm-line-bottom: unset;
+  --hwm-line-left: calc(var(--high-watermark-value, 80%) - var(--watermark-line-size, 1px) / 2);
+  --hwm-line-bottom: unset;
 
-  left: var(--epb-hwm-line-left);
-  bottom: var(--epb-hwm-line-bottom);
+  left: var(--hwm-line-left);
+  bottom: var(--hwm-line-bottom);
 }
 
 .vertical.up-orientation .overlay .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-  --epb-wm-line-width: 100%;
-  --epb-wm-line-height: var(--epb-watermark-line-size, 1px);
-  --epb-wm-line-top: unset;
-  --epb-lwm-line-left: unset;
-  --epb-lwm-line-bottom: calc(var(--epb-low-watermark-value, 20%) - var(--epb-watermark-line-size, 1px) / 2);
+  --wm-line-width: 100%;
+  --wm-line-height: var(--watermark-line-size, 1px);
+  --wm-line-top: unset;
+  --lwm-line-left: unset;
+  --lwm-line-bottom: calc(var(--low-watermark-value, 20%) - var(--watermark-line-size, 1px) / 2);
 }
 
 .vertical.up-orientation .overlay .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  --epb-wm-line-width: 100%;
-  --epb-wm-line-height: var(--epb-watermark-line-size, 1px);
-  --epb-wm-line-top: unset;
-  --epb-hwm-line-left: unset;
-  --epb-hwm-line-bottom: calc(var(--epb-high-watermark-value, 80%) - var(--epb-watermark-line-size, 1px) / 2);
+  --wm-line-width: 100%;
+  --wm-line-height: var(--watermark-line-size, 1px);
+  --wm-line-top: unset;
+  --hwm-line-left: unset;
+  --hwm-line-bottom: calc(var(--high-watermark-value, 80%) - var(--watermark-line-size, 1px) / 2);
 }
 
 /* ---------- Round ---------- */
@@ -4492,46 +4506,46 @@ ha-card:has(.top-container) {
     .${CARD.style.dynamic.show}-hwm-round-${CARD.htmlStructure.elements.progressBar.watermark.class})
 :is(.${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
     .${CARD.htmlStructure.elements.progressBar.highWatermark.class}) {
-  --epb-wm-round-top: 50%;
-  --epb-wm-round-bottom: unset;
-  --epb-wm-round-transform: translateY(-50%);
+  --wm-round-top: 50%;
+  --wm-round-bottom: unset;
+  --wm-round-transform: translateY(-50%);
 
-  width: var(--epb-watermark-circle-size, 5px);
-  height: var(--epb-watermark-circle-size, 5px);
+  width: var(--watermark-circle-size, 5px);
+  height: var(--watermark-circle-size, 5px);
   border-radius: 50%;
-  top: var(--epb-wm-round-top);
-  transform: var(--epb-wm-round-transform);
+  top: var(--wm-round-top);
+  transform: var(--wm-round-transform);
   border: none;
 }
 .${CARD.style.dynamic.show}-lwm-round-${CARD.htmlStructure.elements.progressBar.watermark.class}
 .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-  --epb-lwm-round-left: calc(var(--epb-low-watermark-value, 20%) - var(--epb-watermark-circle-size, 5px) / 2);
-  --epb-lwm-round-bottom: unset;
+  --lwm-round-left: calc(var(--low-watermark-value, 20%) - var(--watermark-circle-size, 5px) / 2);
+  --lwm-round-bottom: unset;
 
-  left: var(--epb-lwm-round-left);
-  bottom: var(--epb-lwm-round-bottom);
+  left: var(--lwm-round-left);
+  bottom: var(--lwm-round-bottom);
 }
 .${CARD.style.dynamic.show}-hwm-round-${CARD.htmlStructure.elements.progressBar.watermark.class}
 .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  --epb-hwm-round-left: calc(var(--epb-high-watermark-value, 80%) + var(--epb-watermark-circle-size, 5px) / 2);
-  --epb-hwm-round-bottom: unset;
+  --hwm-round-left: calc(var(--high-watermark-value, 80%) + var(--watermark-circle-size, 5px) / 2);
+  --hwm-round-bottom: unset;
 
-  left: var(--epb-hwm-round-left);
-  bottom: var(--epb-hwm-round-bottom);
+  left: var(--hwm-round-left);
+  bottom: var(--hwm-round-bottom);
 }
 
 .vertical.up-orientation .overlay .${CARD.htmlStructure.elements.progressBar.lowWatermark.class}{
-  --epb-wm-round-top: unset;
-  --epb-wm-round-transform: translateX(-50%);
-  --epb-lwm-round-left: 50%;
-  --epb-lwm-round-bottom: calc(var(--epb-low-watermark-value, 20%) - var(--epb-watermark-circle-size, 5px) / 2);
+  --wm-round-top: unset;
+  --wm-round-transform: translateX(-50%);
+  --lwm-round-left: 50%;
+  --lwm-round-bottom: calc(var(--low-watermark-value, 20%) - var(--watermark-circle-size, 5px) / 2);
 }
 
 .vertical.up-orientation .overlay .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  --epb-wm-round-top: unset;
-  --epb-wm-round-transform: translateX(-50%);
-  --epb-hwm-round-left: 50%;
-  --epb-hwm-round-bottom: calc(var(--epb-high-watermark-value, 80%) - var(--epb-watermark-circle-size, 5px) / 2);
+  --wm-round-top: unset;
+  --wm-round-transform: translateX(-50%);
+  --hwm-round-left: 50%;
+  --hwm-round-bottom: calc(var(--high-watermark-value, 80%) - var(--watermark-circle-size, 5px) / 2);
 }
 
 /* ---------- Triangle ---------- */
@@ -4539,54 +4553,54 @@ ha-card:has(.top-container) {
     .${CARD.style.dynamic.show}-hwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class})
 :is(.${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
     .${CARD.htmlStructure.elements.progressBar.highWatermark.class}) {
-  --epb-wm-triangle-top: 0px;
+  --wm-triangle-top: 0px;
 
   width: 0;
   height: 0;
-  top: var(--epb-wm-triangle-top);
+  top: var(--wm-triangle-top);
   background-color: transparent;
-  border-left: calc(var(--epb-watermark-triangle-size, 8px) / 2) solid transparent;
-  border-right: calc(var(--epb-watermark-triangle-size, 8px) / 2) solid transparent;
+  border-left: calc(var(--watermark-triangle-size, 8px) / 2) solid transparent;
+  border-right: calc(var(--watermark-triangle-size, 8px) / 2) solid transparent;
 }
 .${CARD.style.dynamic.show}-lwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class}
 .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-  --epb-lwm-triangle-left: calc(var(--epb-low-watermark-value, 20%) - var(--epb-watermark-triangle-size, 8px) / 2);
-  --epb-lwm-triangle-bottom: unset;
+  --lwm-triangle-left: calc(var(--low-watermark-value, 20%) - var(--watermark-triangle-size, 8px) / 2);
+  --lwm-triangle-bottom: unset;
 
-  left: var(--epb-lwm-triangle-left);
-  bottom: var(--epb-lwm-triangle-bottom);
-  border-top: var(--epb-watermark-triangle-size, 8px) solid var(--epb-low-watermark-color, var(--red-color));
+  left: var(--lwm-triangle-left);
+  bottom: var(--lwm-triangle-bottom);
+  border-top: var(--watermark-triangle-size, 8px) solid var(--low-watermark-color, var(--red-color));
 }
 .${CARD.style.dynamic.show}-hwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class}
 .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  --epb-hwm-triangle-left: calc(var(--epb-high-watermark-value, 80%) - var(--epb-watermark-triangle-size, 8px) / 2);
-  --epb-hwm-triangle-bottom: unset;
+  --hwm-triangle-left: calc(var(--high-watermark-value, 80%) - var(--watermark-triangle-size, 8px) / 2);
+  --hwm-triangle-bottom: unset;
 
-  left: var(--epb-hwm-triangle-left);
-  bottom: var(--epb-hwm-triangle-bottom);
-  border-top: var(--epb-watermark-triangle-size, 8px) solid var(--epb-high-watermark-color, var(--red-color));
+  left: var(--hwm-triangle-left);
+  bottom: var(--hwm-triangle-bottom);
+  border-top: var(--watermark-triangle-size, 8px) solid var(--high-watermark-color, var(--red-color));
 }
 
 ha-card.vertical.up-orientation.${CARD.style.dynamic.show}-lwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class} .overlay .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-  --epb-lwm-triangle-left: 0%;
-  --epb-lwm-triangle-bottom: calc(var(--epb-low-watermark-value, 20%) - var(--epb-watermark-triangle-size, 8px) / 2);
-  --epb-wm-triangle-top: unset;
+  --lwm-triangle-left: 0%;
+  --lwm-triangle-bottom: calc(var(--low-watermark-value, 20%) - var(--watermark-triangle-size, 8px) / 2);
+  --wm-triangle-top: unset;
 
-  border-left: var(--epb-watermark-triangle-size, 8px) solid var(--epb-low-watermark-color, var(--red-color));
+  border-left: var(--watermark-triangle-size, 8px) solid var(--low-watermark-color, var(--red-color));
   border-right: none;
-  border-top: calc(var(--epb-watermark-triangle-size, 8px) / 2) solid transparent;
-  border-bottom: calc(var(--epb-watermark-triangle-size, 8px) / 2) solid transparent;
+  border-top: calc(var(--watermark-triangle-size, 8px) / 2) solid transparent;
+  border-bottom: calc(var(--watermark-triangle-size, 8px) / 2) solid transparent;
 }
 
 ha-card.vertical.up-orientation.${CARD.style.dynamic.show}-hwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class} .overlay .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  --epb-hwm-triangle-left: 0%;
-  --epb-hwm-triangle-bottom: calc(var(--epb-high-watermark-value, 80%) - var(--epb-watermark-triangle-size, 8px) / 2);
-  --epb-wm-triangle-top: unset;
+  --hwm-triangle-left: 0%;
+  --hwm-triangle-bottom: calc(var(--high-watermark-value, 80%) - var(--watermark-triangle-size, 8px) / 2);
+  --wm-triangle-top: unset;
 
-  border-left: var(--epb-watermark-triangle-size, 8px) solid var(--epb-high-watermark-color, var(--red-color));
+  border-left: var(--watermark-triangle-size, 8px) solid var(--high-watermark-color, var(--red-color));
   border-right: none;
-  border-top: calc(var(--epb-watermark-triangle-size, 8px) / 2) solid transparent;
-  border-bottom: calc(var(--epb-watermark-triangle-size, 8px) / 2) solid transparent;
+  border-top: calc(var(--watermark-triangle-size, 8px) / 2) solid transparent;
+  border-bottom: calc(var(--watermark-triangle-size, 8px) / 2) solid transparent;
 }
 
 /* =============================================================================
@@ -4599,12 +4613,12 @@ ha-card.vertical.up-orientation.${CARD.style.dynamic.show}-hwm-triangle-${CARD.h
   justify-content: center;
   position: absolute;
   z-index: 2;
-  top: var(--epb-badge-offset);
-  right: var(--epb-badge-offset);
-  inset-inline-end: var(--epb-badge-offset);
+  top: var(--badge-offset);
+  right: var(--badge-offset);
+  inset-inline-end: var(--badge-offset);
   inset-inline-start: initial;
-  width: var(--epb-badge-size);
-  height: var(--epb-badge-size);
+  width: var(--badge-size);
+  height: var(--badge-size);
   border-radius: 50%;
   background-color: var(${CARD.style.dynamic.badge.backgroundColor.var}, ${CARD.style.dynamic.badge.backgroundColor.default});
 }
@@ -4613,8 +4627,8 @@ ha-card.vertical.up-orientation.${CARD.style.dynamic.show}-hwm-triangle-${CARD.h
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--epb-badge-icon-size);
-  height: var(--epb-badge-icon-size);
+  width: var(--badge-icon-size);
+  height: var(--badge-icon-size);
   color: var(${CARD.style.dynamic.badge.color.var}, ${CARD.style.dynamic.badge.color.default});
 }
 
@@ -4710,15 +4724,15 @@ ha-card.text-shadow .${CARD.htmlStructure.sections.content.class}.overlay .secon
 }
 
 .${CARD.htmlStructure.sections.content.class}.overlay.single-line {
-  --epb-current-group-max-width: 100%;
-  --epb-current-group-width: 100%;
+  --current-group-max-width: 100%;
+  --current-group-width: 100%;
   justify-content: space-between;
   flex-direction: row;
   align-items: center;
 }
 
 .${CARD.htmlStructure.sections.content.class}.overlay.single-line .secondary-info {
-  --epb-detail-max-width: none;
+  --detail-max-width: none;
   margin-right: 7px;
 }
 
@@ -4753,10 +4767,10 @@ ha-card.text-shadow .${CARD.htmlStructure.sections.content.class}.overlay .secon
     bottom: 0;
     left: 0;
     width: 100%;
-    height: var(--epb-progress-bar-size, 0%);
-    transition: height var(--epb-progress-transition-width);
+    height: var(--progress-bar-size, 0%);
+    transition: height var(--progress-transition-width);
     will-change: height;
-    border-radius: 0 0 calc(var(--epb-progress-size, 12px) / 2) calc(var(--epb-progress-size, 12px) / 2);
+    border-radius: 0 0 calc(var(--progress-size, 12px) / 2) calc(var(--progress-size, 12px) / 2);
 }
 
 /* === INNER PROGRESS BAR - POSITIF ET NÉGATIF === */
@@ -4765,8 +4779,8 @@ ha-card.text-shadow .${CARD.htmlStructure.sections.content.class}.overlay .secon
     bottom: 50%;
     left: 0;
     width: 100%;
-    height: var(--epb-progress-bar-psize, 0%);
-    transition: height var(--epb-progress-transition-width);
+    height: var(--progress-bar-psize, 0%);
+    transition: height var(--progress-transition-width);
     will-change: height;
     border-radius: 0;
 }
@@ -4776,8 +4790,8 @@ ha-card.text-shadow .${CARD.htmlStructure.sections.content.class}.overlay .secon
     top: 50%;
     left: 0;
     width: 100%;
-    height: var(--epb-progress-bar-nsize, 0%);
-    transition: height var(--epb-progress-transition-width);
+    height: var(--progress-bar-nsize, 0%);
+    transition: height var(--progress-transition-width);
     will-change: height;
     border-radius: 0;
 }
@@ -4948,21 +4962,6 @@ const CARD_EDITOR_CSS = `
 `;
 
 /******************************************************************************************
- * 🛠️ Dev mode
- */
-
-if (CARD.config.dev) {
-  CARD.meta.card.typeName = `${CARD.meta.card.typeName}-dev`;
-  CARD.meta.card.name = `${CARD.meta.card.typeName} (dev)`;
-  CARD.meta.card.editor = `${CARD.meta.card.editor}-dev`;
-  CARD.meta.template.typeName = `${CARD.meta.template.typeName}-dev`;
-  CARD.meta.template.name = `${CARD.meta.template.typeName} (dev)`;
-  CARD.meta.badge.typeName = `${CARD.meta.badge.typeName}-dev`;
-  CARD.meta.badge.editor = `${CARD.meta.badge.editor}-dev`;
-  CARD.meta.badgeTemplate.typeName = `${CARD.meta.badgeTemplate.typeName}-dev`;
-}
-
-/******************************************************************************************
  * 📦 Test utils
  ******************************************************************************************/
 
@@ -5103,17 +5102,39 @@ function initLogger(ctx, debugFlag, methodNames = []) {
  * @class
  */
 class RegistrationHelper {
+  static _devMode = CARD.config.dev;
   static #targetKey = {
     customCards: 'customCards',
     customBadges: 'customBadges',
+    customCardFeatures: 'customCardFeatures',
   };
 
-  static #registerComponent(component, targetKey, elementClass) {
+  static #resolveComponent(component) {
+    if (!RegistrationHelper._devMode) return component;
+    return {
+      ...component,
+      typeName: `${component.typeName}-dev`,
+      name: `${component.name} (dev)`,
+      editor: component.editor ? `${component.editor}-dev` : undefined,
+    };
+  }
+  static #resolveEntry(component, targetKey) {
+    return targetKey === RegistrationHelper.#targetKey.customCardFeatures
+      ? { type: component.typeName, name: component.name, supported: () => true }
+      : {
+          type: component.typeName,
+          name: component.name,
+          preview: true,
+          description: component.description,
+          documentationURL: CARD.documentation.link.documentationUrl,
+          version: VERSION,
+        };
+  }
+  static #registerComponent(component, targetKey, elementClass, editorClass) {
     try {
       // On tente l'enregistrement technique
-      if (!customElements.get(component.typeName)) {
-        customElements.define(component.typeName, elementClass);
-      }
+      if (!customElements.get(component.typeName)) customElements.define(component.typeName, elementClass);
+      if (editorClass && component.editor && !customElements.get(component.editor)) customElements.define(component.editor, editorClass);
     } catch (error) {
       // Si ça échoue (déjà défini), on log mais on ne bloque pas la suite
       console.warn(`[Entity Progress Card] Registration alert: ${error.message}`);
@@ -5122,17 +5143,9 @@ class RegistrationHelper {
     // Le reste du code est protégé
     const registerUI = () => {
       try {
-        if (window[targetKey]?.some((item) => item.type === component.typeName)) return;
-
         window[targetKey] = window[targetKey] || [];
-        window[targetKey].push({
-          type: component.typeName,
-          name: component.name,
-          preview: true,
-          description: component.description,
-          documentationURL: CARD.documentation.link.documentationUrl,
-          version: VERSION,
-        });
+        if (window[targetKey].some((item) => item.type === component.typeName)) return;
+        window[targetKey].push(RegistrationHelper.#resolveEntry(component, targetKey));
       } catch (uiError) {
         console.error('[Entity Progress Card] UI Registration failed', uiError);
       }
@@ -5141,12 +5154,30 @@ class RegistrationHelper {
     setTimeout(registerUI, 1000);
   }
 
-  static registerCard(card, elementClass) {
-    RegistrationHelper.#registerComponent(card, RegistrationHelper.#targetKey.customCards, elementClass);
+  static registerCard(card, elementClass, editorClass) {
+    RegistrationHelper.#registerComponent(
+      RegistrationHelper.#resolveComponent(card),
+      RegistrationHelper.#targetKey.customCards,
+      elementClass,
+      editorClass,
+    );
   }
 
-  static registerBadge(badge, elementClass) {
-    RegistrationHelper.#registerComponent(badge, RegistrationHelper.#targetKey.customBadges, elementClass);
+  static registerBadge(badge, elementClass, editorClass) {
+    RegistrationHelper.#registerComponent(
+      RegistrationHelper.#resolveComponent(badge),
+      RegistrationHelper.#targetKey.customBadges,
+      elementClass,
+      editorClass,
+    );
+  }
+
+  static registerCardFeature(cardFeature, elementClass) {
+    RegistrationHelper.#registerComponent(
+      RegistrationHelper.#resolveComponent(cardFeature),
+      RegistrationHelper.#targetKey.customCardFeatures,
+      elementClass,
+    );
   }
 }
 
@@ -8356,6 +8387,7 @@ class DOMHelper {
    * Skipped if the value matches the cache — no DOM read required.
    */
   setStyle(key, prop, value) {
+    if (value == null) return;
     const cacheKey = `${key}:style:${prop}`;
     if (this._appliedValues.get(cacheKey) === value) return;
 
@@ -8373,6 +8405,7 @@ class DOMHelper {
    * Skipped if the value matches the cache.
    */
   setText(key, value) {
+    if (value == null) return;
     const cacheKey = `${key}:text`;
     if (this._appliedValues.get(cacheKey) === value) return;
 
@@ -8390,6 +8423,7 @@ class DOMHelper {
    * Skipped if the value matches the cache.
    */
   setHTML(key, value) {
+    if (value == null) return;
     const cacheKey = `${key}:html`;
     if (this._appliedValues.get(cacheKey) === value) return;
 
@@ -8407,6 +8441,7 @@ class DOMHelper {
    * Skipped if the state matches the cache.
    */
   toggleClass(key, className, force) {
+    if (!className) return;
     const cacheKey = `${key}:class:${className}`;
     if (this._appliedValues.get(cacheKey) === force) return;
 
@@ -8440,6 +8475,7 @@ class DOMHelper {
    * Skipped if the value matches the cache.
    */
   setAttribute(key, attr, value) {
+    if (value == null) return;
     const cacheKey = `${key}:attr:${attr}`;
     if (this._appliedValues.get(cacheKey) === value) return;
 
@@ -8693,6 +8729,7 @@ class ActionHelper {
  * @extends HTMLElement
  */
 class HACore extends HTMLElement {
+  static version = VERSION;
   static _baseClass = CARD.meta.feature.typeName;
   static _cardStructure = new FeatureStructure();
   static _cardStyle = CARD_CSS;
@@ -9139,7 +9176,7 @@ class HACore extends HTMLElement {
  *   - Enables unified behavior across multiple card implementations.
  *
  * @class
- * @extends HTMLElement
+ * @extends HACore
  */
 
 class HABase extends HACore {
@@ -9316,6 +9353,7 @@ class HABase extends HACore {
     this._dom.addClass(
       CARD.htmlStructure.card.element,
       this.baseClass,
+      this.baseClass.includes('badge') ? 'progress-badge' : null,
       this._cardView.layout,
       this._cardView.barSize,
       this._cardView.barOrientation ? CARD.style.dynamic.progressBar.orientation[this._cardView.barOrientation] : null,
@@ -9329,7 +9367,7 @@ class HABase extends HACore {
     const config = this._cardView.config;
 
     [
-      [this._cardView.hasReversedSecondaryInfoRow, '--epb-secondary-info-row-reverse', 'row-reverse'],
+      [this._cardView.hasReversedSecondaryInfoRow, '--secondary-info-row-reverse', 'row-reverse'],
       [config.min_width, CARD.style.dynamic.card.minWidth.var, config.min_width],
       [config.height, CARD.style.dynamic.card.height.var, config.height],
       [config.bar_max_width, CARD.style.dynamic.progressBar.maxWidth.var, config.bar_max_width],
@@ -9805,7 +9843,7 @@ class EntityProgressCard extends EntityProgressCardBase {
   }
 
   static getConfigElement() {
-    return document.createElement(CARD.meta.card.editor);
+    return document.createElement(CARD.config.dev ? `${CARD.meta.card.editor}-dev` : CARD.meta.card.editor);
   }
 
   static getStubEntity(hass) {
@@ -9814,7 +9852,7 @@ class EntityProgressCard extends EntityProgressCardBase {
 
   static getStubConfig(hass) {
     return {
-      type: `custom:${CARD.meta.card.typeName}`,
+      type: `custom:${CARD.meta.card.typeName}${CARD.config.dev ? '-dev' : ''}`,
       entity: EntityProgressCard.getStubEntity(hass),
     };
   }
@@ -9852,12 +9890,12 @@ class EntityProgressBadge extends EntityProgressCardBase {
   static _cardStyle = CARD_CSS;
 
   static getConfigElement() {
-    return document.createElement(CARD.meta.badge.editor);
+    return document.createElement(CARD.config.dev ? `${CARD.meta.badge.editor}-dev` : CARD.meta.badge.editor);
   }
 
   static getStubConfig(hass) {
     return {
-      type: `custom:${CARD.meta.badge.typeName}`,
+      type: `custom:${CARD.meta.badge.typeName}${CARD.config.dev ? '-dev' : ''}`,
       entity: EntityProgressCard.getStubEntity(hass),
     };
   }
@@ -9899,7 +9937,7 @@ class EntityProgressFeatures extends HACore {
 
   static getStubConfig() {
     return {
-      type: `custom:${CARD.meta.feature.typeName}`,
+      type: `custom:${CARD.meta.feature.typeName}${CARD.config.dev ? '-dev' : ''}`,
     };
   }
   // === HANDLE UPDATE ===
@@ -10178,29 +10216,6 @@ class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
     };
   }
 }
-
-/******************************************************************************************
- * 🔧 Register card & badge
- */
-
-EntityProgressCard.version = VERSION;
-EntityProgressBadge.version = VERSION;
-RegistrationHelper.registerCard(CARD.meta.card, EntityProgressCard);
-RegistrationHelper.registerBadge(CARD.meta.badge, EntityProgressBadge);
-
-customElements.define(CARD.meta.feature.typeName, EntityProgressFeatures);
-// register feature
-window.customCardFeatures = window.customCardFeatures || [];
-window.customCardFeatures.push({
-  type: CARD.meta.feature.typeName,
-  name: 'Entity Progress Bar',
-  supported: () => true,
-});
-
-EntityProgressTemplateCard.version = VERSION;
-EntityProgressTemplateBadge.version = VERSION;
-RegistrationHelper.registerCard(CARD.meta.template, EntityProgressTemplateCard);
-RegistrationHelper.registerBadge(CARD.meta.badgeTemplate, EntityProgressTemplateBadge);
 
 /******************************************************************************************
  * 📦 CARD/BADGE EDITOR
@@ -11009,11 +11024,14 @@ class EntityProgressBadgeEditor extends EntityProgressCardEditor {
 }
 
 /******************************************************************************************
- * 🔧 Register card & badge editors
+ * 🔧 Register components
  */
 
-if (!customElements.get(CARD.meta.card.editor)) customElements.define(CARD.meta.card.editor, EntityProgressCardEditor);
-if (!customElements.get(CARD.meta.badge.editor)) customElements.define(CARD.meta.badge.editor, EntityProgressBadgeEditor);
+RegistrationHelper.registerCard(CARD.meta.card, EntityProgressCard, EntityProgressCardEditor);
+RegistrationHelper.registerBadge(CARD.meta.badge, EntityProgressBadge, EntityProgressBadgeEditor);
+RegistrationHelper.registerCard(CARD.meta.template, EntityProgressTemplateCard);
+RegistrationHelper.registerBadge(CARD.meta.badgeTemplate, EntityProgressTemplateBadge);
+RegistrationHelper.registerCardFeature(CARD.meta.feature, EntityProgressFeatures);
 
 /******************************************************************************************
  * 🔧 Show module info
