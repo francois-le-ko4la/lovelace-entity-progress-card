@@ -1406,18 +1406,28 @@ Check out the [Contributing Guide] to get started.
   ➡️
   [Custom Element Loader Gist](https://gist.github.com/thomasloven/5f965bd26e5f69876890886c09dd9ba8)
 
-- **Inspired by [Mushroom](https://github.com/piitaya/lovelace-mushroom)** by
-  [@piitaya](https://github.com/piitaya)  
+- **Inspired by [Mushroom](https://github.com/piitaya/lovelace-mushroom)**
+  **(Apache-2.0 license) —**
+  **Copyright © Paul Bottein ([@piitaya](https://github.com/piitaya))**  
   ➡️ For the look & feel
 
-- **Inspired by [bar-card](https://github.com/custom-cards/bar-card)** by
-  [@Gluwc](https://github.com/Gluwc)  
+- **Inspired by [bar-card](https://github.com/custom-cards/bar-card)**
+  **(MIT License) —**
+  **Copyright © Lucas Bramlage ([@Gluwc](https://github.com/Gluwc))**  
   ➡️ No code was copied; this project is an original implementation.
 
 - **Inspired by [superstruct](https://github.com/ianstormtaylor/superstruct)**
-  by [@ianstormtaylor](https://github.com/ianstormtaylor)  
+  **(MIT License) —**
+  **Copyright © Ian Storm Taylor ([@ianstormtaylor](https://github.com/ianstormtaylor))**  
   ➡️ Structural validation ideas to manage inputs (v1.5+). This implementation
   is original and does not reuse code from the library.
+
+- **Inspired by**
+  **[hass-progress-bar-feature](https://github.com/ytilis/hass-progress-bar-feature)**
+  **(MIT License) —**
+  **Copyright © Yury Tilis ([@ytilis](https://github.com/ytilis))**  
+  ➡️ override HA's default feature row sizing behavior, preventing card height
+     increase when using overlay features.
 
 - **Special thanks to
   [@harmonie-durrant](https://github.com/harmonie-durrant)**  

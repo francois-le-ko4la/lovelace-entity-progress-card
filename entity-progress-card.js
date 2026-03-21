@@ -57,7 +57,7 @@ const CARD = {
   },
   config: {
     dev: true,
-    debug: { card: true, editor: false, interactionHandler: false, ressourceManager: false, hass: false },
+    debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false, hass: false },
     language: 'en',
     value: { min: 0, max: 100 },
     unit: {
@@ -3488,6 +3488,7 @@ const CARD_CSS = `
   --badge-size: 16px;
   --badge-icon-size: 12px;
   --badge-offset: -3px;
+  --progress-size-xs: 6px;
   --progress-size-s: 8px;
   --progress-size-m: 12px;
   --progress-size-l: 16px;
@@ -3540,6 +3541,11 @@ const CARD_CSS = `
 .${CARD.style.bar.sizeOptions.xlarge.label} {
   --progress-size: var(--epb-progress-bar-size, var(--progress-size-xl));
   --progress-container-height: var(--progress-size-xl);
+}
+
+.bottom-container, .top-container {
+  --progress-size: var(--epb-progress-bar-size, var(--progress-size-xs));
+  --progress-container-height: var(--progress-size-xs);
 }
 
 /* =============================================================================
@@ -3714,7 +3720,6 @@ ha-card:has(.below-container) {
 .bottom-container, .top-container {
   position: absolute;
   width: 100%;
-  height: 8px;
   left: 0;
 }
 
@@ -3728,7 +3733,7 @@ ha-card:has(.below-container) {
 
 .bottom-container .progress-bar-container,
 .top-container .progress-bar-container {
-  height: var(--progress-size-s);
+  height: var(--progress-size);
 }
 
 /* =============================================================================
@@ -4127,8 +4132,8 @@ ha-card:has(.top-container) {
 .${CARD.htmlStructure.elements.progressBar.positiveInner.class},
 .${CARD.htmlStructure.elements.progressBar.negativeInner.class},
 .${CARD.htmlStructure.elements.progressBar.bar.class} {
-  height: var(--progress-size);
-  max-height: var(--progress-size);
+  height: var(--progress-size, 100%);
+  max-height: var(--progress-size, 100%);
 }
 
 .${CARD.htmlStructure.elements.progressBar.bar.class} {
@@ -4203,11 +4208,20 @@ ha-card:has(.top-container) {
   border-radius: 0 var(--epb-progress-inner-radius, var(--current-progress-inner-radius)) var(--epb-progress-inner-radius, var(--current-progress-inner-radius)) 0;
 }
 
+.entity-progress-feature
+  :is(.${CARD.htmlStructure.elements.progressBar.bar.class},
+    .${CARD.htmlStructure.elements.progressBar.inner.class},
+    .${CARD.htmlStructure.elements.progressBar.negativeInner.class},
+    .${CARD.htmlStructure.elements.progressBar.positiveInner.class}) {
+  --current-progress-bar-radius: var(--feature-border-radius);
+  --current-progress-inner-radius: var(--feature-border-radius);
+}
+
 :is(.top-container, .bottom-container)
   :is(.${CARD.htmlStructure.elements.progressBar.bar.class},
-      .${CARD.htmlStructure.elements.progressBar.inner.class},
-      .${CARD.htmlStructure.elements.progressBar.negativeInner.class},
-      .${CARD.htmlStructure.elements.progressBar.positiveInner.class}) {
+    .${CARD.htmlStructure.elements.progressBar.inner.class},
+    .${CARD.htmlStructure.elements.progressBar.negativeInner.class},
+    .${CARD.htmlStructure.elements.progressBar.positiveInner.class}) {
   --current-progress-bar-radius: 0;
   --current-progress-inner-radius: 0;
 }
@@ -5375,6 +5389,13 @@ const StructureTemplates = {
     );
   },
   feature: (options = {}) => {
+    const { barPosition } = options;
+    if (barPosition === 'top') {
+      return StructureElements.topContainer().replace('{{content}}', StructureElements.progressBar(options));
+    }
+    if (barPosition === 'bottom') {
+      return StructureElements.bottomContainer().replace('{{content}}', StructureElements.progressBar(options));
+    }
     return StructureElements.progressBar(options);
   },
 };
@@ -6681,8 +6702,12 @@ class EntityOrValue {
 /******************************************************************************************
  * 🛠️ Manage YAML options
  * ========================================================================================
- * Inspired by superstruct (https://github.com/ianstormtaylor/superstruct) by @ianstormtaylor
- * structural validation ideas to manage inputs (1.5+)
+ * structural validation ideas to manage inputs (1.5+).
+ * deliberately verbose by design: no external dependencies, fully typed errors,
+ * and scales cleanly across multiple card types.
+ * 
+ * @inspired by superstruct (MIT License) - Copyright (c) @ianstormtaylor
+ * @see https://github.com/ianstormtaylor/superstruct
  */
 
 class ValidationError extends Error {
@@ -6895,19 +6920,11 @@ const types = {
       return validItems;
     },
 
-  effectArray:
+  jinjaOrArrayWithValidatedElem:
     (allowedValues) =>
-    // eslint-disable-next-line no-unused-vars
     (value, path = []) => {
-      if (is.nullish(value)) return SKIP_PROPERTY;
       if (is.jinja(value)) return value;
-
-      const valueArray = is.array(value) ? value : [value];
-      const validItems = valueArray.filter((item) => allowedValues.includes(item));
-
-      if (validItems.length === 0) return SKIP_PROPERTY;
-
-      return validItems;
+      return types.arrayWithValidatedElem(allowedValues)(value, path);
     },
 
   watermarkObject:
@@ -7089,10 +7106,10 @@ function struct(validator) {
           errors: [],
         };
       } catch (error) {
-        // ✅ Fonction pour extraire les erreurs en évitant les doublons
+        // extract error wo duplicates
         const extractAllErrors = (errRoot) => {
           const allErrors = [];
-          const seen = new Set(); // Pour éviter les doublons
+          const seen = new Set();
 
           const addError = (err) => {
             const key = `${JSON.stringify(err.path)}-${err.errorCode}`;
@@ -7106,19 +7123,15 @@ function struct(validator) {
             }
           };
 
-          // ✅ Si l'erreur a des sous-erreurs (errors), prendre seulement celles-ci
           if (errRoot.errors && Array.isArray(errRoot.errors) && errRoot.errors.length > 0) {
             errRoot.errors.forEach((subError) => {
               if (subError instanceof ValidationError) {
-                // Récursion pour les erreurs complexes
                 extractAllErrors(subError).forEach(addError);
               } else if (subError.errorCode) {
-                // Erreur simple
                 addError(subError);
               }
             });
           } else if (errRoot.errorCode) {
-            // ✅ Sinon, prendre l'erreur principale
             addError(errRoot);
           }
 
@@ -7189,11 +7202,9 @@ const additionItem = types.fallbackTo(
 );
 
 const watermarkSchema = {
-  // low: types.optionalNumberWithDefault(CARD.config.defaults.watermark.low),
   low: types.fallbackTo(types.union(types.number, types.string), CARD.config.defaults.watermark.low),
   low_attribute: types.optionalString(),
   low_color: types.optionalStringWithDefault(CARD.config.defaults.watermark.low_color),
-  // high: types.optionalNumberWithDefault(CARD.config.defaults.watermark.high),
   high: types.fallbackTo(types.union(types.number, types.string), CARD.config.defaults.watermark.high),
   high_attribute: types.optionalString(),
   high_color: types.optionalStringWithDefault(CARD.config.defaults.watermark.high_color),
@@ -7222,12 +7233,11 @@ class YamlSchemaFactory {
           'small',
         ), //[('small', 'medium', 'large', 'xlarge')]
         bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
-        bar_effect: types.effectArray(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
-        bar_position: types.enumsWithDefault([ 'top', 'bottom' ], 'bottom'),
+        bar_effect: types.jinjaOrArrayWithValidatedElem(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
+        bar_position: types.enumsWithDefault(['default', 'top', 'bottom'], 'default'),
         center_zero: types.optionalBooleanWithDefault(false),
 
         // === Theme & Watermark ===
-        // theme: types.theme(['optimal_when_low', 'optimal_when_high', 'light', 'temperature', 'humidity', 'pm25', 'voc']),
         theme: types.theme(Object.keys(THEME)),
         custom_theme: types.fallbackTo(types.customTheme, SKIP_PROPERTY),
         interpolate: types.optionalBooleanWithDefault(false),
@@ -7262,7 +7272,7 @@ class YamlSchemaFactory {
           'small',
         ), //[('small', 'medium', 'large', 'xlarge')]
         bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
-        bar_effect: types.effectArray(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
+        bar_effect: types.jinjaOrArrayWithValidatedElem(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
         bar_position: types.enumsWithDefault(['default', 'below', 'top', 'bottom', 'overlay'], 'default'),
         bar_single_line: types.optionalBooleanWithDefault(false),
         bar_max_width: types.optionalString(),
@@ -7282,7 +7292,7 @@ class YamlSchemaFactory {
         text_shadow: types.optionalBooleanWithDefault(false),
 
         // === Visibility & Content ===
-        hide: types.arrayWithValidatedElem(['icon', 'name', 'value', 'secondary_info', 'progress_bar']),
+        hide: types.jinjaOrArrayWithValidatedElem(['icon', 'name', 'value', 'secondary_info', 'progress_bar']),
         name_info: types.optionalString(),
         custom_info: types.optionalString(),
         state_content: types.optional(types.fallbackTo(types.stateContent, SKIP_PROPERTY)),
@@ -7344,7 +7354,7 @@ class YamlSchemaFactory {
           'small',
         ), //[('small', 'medium', 'large', 'xlarge')]
         bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
-        bar_effect: types.effectArray(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
+        bar_effect: types.jinjaOrArrayWithValidatedElem(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
         bar_position: types.enumsWithDefault(['default', 'below', 'top', 'bottom', 'overlay'], 'default'),
         bar_single_line: types.optionalBooleanWithDefault(false),
         bar_max_width: types.optionalString(),
@@ -7362,7 +7372,7 @@ class YamlSchemaFactory {
         trend_indicator: types.optionalBooleanWithDefault(false),
         text_shadow: types.optionalBooleanWithDefault(false),
 
-        hide: types.arrayWithValidatedElem(['icon', 'name', 'value', 'secondary_info', 'progress_bar']),
+        hide: types.jinjaOrArrayWithValidatedElem(['icon', 'name', 'value', 'secondary_info', 'progress_bar']),
         badge_icon: types.optionalString(),
         badge_color: types.optionalString(),
         watermark: types.watermarkObject(watermarkSchema, CARD.config.defaults.watermark),
@@ -8401,6 +8411,20 @@ class DOMHelper {
   }
 
   /**
+   * Sets a CSS custom property synchronously — no RAF, no cache check, no queue.
+   * Use when immediate DOM update is required.
+   */
+  setStyleNow(key, prop, value) {
+    if (value == null) return;
+
+    const el = this._domElements.get(key);
+    if (!el) return;
+
+    el.style.setProperty(prop, value);
+    this._appliedValues.set(`${key}:style:${prop}`, value); // ← met à jour le cache après
+  }
+
+  /**
    * Sets the text content of the element registered under the given key.
    * Skipped if the value matches the cache.
    */
@@ -8487,6 +8511,15 @@ class DOMHelper {
       this._appliedValues.set(cacheKey, value);
     });
   }
+  // ─── Walkthrough ──────────────────────────────────────────────────────────
+
+  static walkUpThroughShadow(node, selector) {
+    if (!node) return null;
+    if (node instanceof ShadowRoot) return DOMHelper.walkUpThroughShadow(node.host, selector);
+    if (node instanceof HTMLElement && node.matches(selector)) return node;
+    return DOMHelper.walkUpThroughShadow(node.parentNode, selector);
+  }
+
   // ─── Cleanup ──────────────────────────────────────────────────────────────
 
   /**
@@ -8506,185 +8539,61 @@ class DOMHelper {
  * ========================================================================================
  *
  * ✅ Centralized handler for `xyz_action` logic.
+ * Deprecated for HA 2026.3+
  *
  * 📌 Purpose:
  *   - Encapsulates and manages the execution, validation, and dispatch of `xyz_action`.
  *   - Promotes reusable, maintainable logic for action-related features.
  */
+
 class ActionHelper {
-  #debug = CARD.config.debug.interactionHandler;
-  #log = null;
-  #resourceManager = null;
+  #target = null;
   #config = null;
-  #element = null;
-  #clickCount = 0;
-  #downTime = null;
-  #isHolding = null;
-  #clickSource = null;
-  #startX = 0;
-  #startY = 0;
+  #fromIcon = false;
   #iconClickSources = new Set(['shape', 'ha-svg-icon', 'img']);
-  #disableIconTap = false;
-  #hasDoubleTap = false;
 
-  #boundHandlers = {
-    pointerdown: (e) => this.#handleMouseDown(e),
-    pointerup: (e) => this.#handleMouseUp(e),
-    pointermove: (e) => this.#handleMouseMove(e),
-  };
-
-  constructor(element) {
-    this.#element = element;
-    this.#log = initLogger(this, this.#debug, ['init', 'cleanup']);
+  constructor(target) {
+    this.#target = target;
   }
 
-  // === PUBLIC API METHODS ===
-
-  init(resourceManager, config, clickableTarget, disableIconTap) {
-    this.#resourceManager = resourceManager;
+  init(config, disableIconTap) {
     this.#config = config;
-    this.#disableIconTap = disableIconTap;
-    this.#hasDoubleTap =
-      this.#config?.[`${CARD.interactions.event.tap.doubleTapAction}_action`]?.action !== 'none' ||
-      this.#config?.[`icon_${CARD.interactions.event.tap.doubleTapAction}_action`]?.action !== 'none';
-    this.#attachToTargets(clickableTarget);
+
+    if (!this.#target) return;
+
+    document.querySelector('action-handler').bind(this.#target, {
+      hasHold: true,
+      hasDoubleClick: true,
+    });
+
+    this.#target.addEventListener('pointerdown', (ev) => {
+      const localName = ev.composedPath()[0].localName;
+      this.#fromIcon = !disableIconTap && this.#iconClickSources.has(localName);
+    }, { passive: true });
+
+    this.#target.addEventListener('action', (ev) => {
+      this.#handleAction(ev, this.#fromIcon);
+    });
   }
 
-  cleanup() {
-    this.#resourceManager?.cleanup();
-  }
+  #handleAction(ev, fromIcon) {
+    const action = ev.detail.action;
+    const iconActionKey = `icon_${action}_action`;
 
-  // === PRIVATE METHODS ===
-
-  #attachToTargets(clickableTarget) {
-    if (!clickableTarget) return;
-
-    if (is.array(clickableTarget)) {
-      for (const target of clickableTarget) {
-        if (target) this.#attachListener(target);
-      }
-    } else {
-      this.#attachListener(clickableTarget);
-    }
-  }
-
-  #attachListener(elem) {
-    if (!this.#resourceManager) return;
-    this.#resourceManager.addEventListener(elem, 'pointerdown', this.#boundHandlers.pointerdown, { passive: true });
-    this.#resourceManager.addEventListener(elem, 'pointerup', this.#boundHandlers.pointerup, { passive: true });
-    this.#resourceManager.addEventListener(elem, 'pointermove', this.#boundHandlers.pointermove, { passive: true });
-  }
-
-  #handleMouseDown(ev) {
-    ev.stopPropagation();
-    ev.stopImmediatePropagation();
-    const localName = ev.composedPath()[0].localName;
-    this.#log.debug('localName', localName);
-    this.#clickSource = !this.#disableIconTap
-      ? this.#iconClickSources.has(localName)
-        ? CARD.interactions.event.from.icon
-        : CARD.interactions.event.from.card
-      : CARD.interactions.event.from.card;
-    this.#log.debug('clickSource: ', this.#clickSource);
-
-    this.#downTime = Date.now();
-    this.#startX = ev.clientX;
-    this.#startY = ev.clientY;
-    this.#isHolding = false;
-
-    this.#resourceManager.setTimeout(
-      () => {
-        this.#isHolding = true;
-      },
-      500,
-      'holdTimeout',
-    );
-  }
-
-  #resetClickState() {
-    this.#downTime = null;
-    this.#isHolding = false;
-  }
-
-  #handleMouseUp(ev) {
-    ev.stopPropagation();
-    ev.stopImmediatePropagation();
-    this.#resourceManager.remove('holdTimeout');
-
-    const upTime = Date.now();
-    const deltaTime = upTime - this.#downTime;
-    const moveThreshold = 5;
-
-    const isClick = deltaTime < 500 && Math.abs(ev.clientX - this.#startX) < moveThreshold && Math.abs(ev.clientY - this.#startY) < moveThreshold;
-
-    if (this.#isHolding) {
-      this.#fireAction(ev, CARD.interactions.event.tap.holdAction);
-      this.#resetClickState();
-      this.#clickCount = 0;
-      return;
-    }
-
-    if (!isClick) {
-      this.#resetClickState();
-      return;
-    }
-
-    this.#clickCount++;
-
-    if (this.#clickCount === 1) {
-      if (this.#hasDoubleTap)  {
-        this.#resourceManager.setTimeout(
-          () => {
-            this.#fireAction(ev, CARD.interactions.event.tap.tapAction);
-            this.#clickCount = 0;
-          },
-          300,
-          'tapTimeout',
-        );
-      } else {
-        this.#fireAction(ev, CARD.interactions.event.tap.tapAction);
-        this.#clickCount = 0;
-      }
-    } else if (this.#clickCount === 2) {
-      this.#resourceManager.remove('tapTimeout');
-      this.#fireAction(ev, CARD.interactions.event.tap.doubleTapAction);
-      this.#clickCount = 0;
-    }
-
-    this.#resetClickState();
-  }
-
-  #handleMouseMove(ev) {
-    ev.stopPropagation();
-    ev.stopImmediatePropagation();
-
-    if (this.#downTime && (Math.abs(ev.clientX - this.#startX) > 5 || Math.abs(ev.clientY - this.#startY) > 5)) {
-      this.#resourceManager.remove('holdTimeout');
-      this.#isHolding = false;
-      this.#downTime = null;
-    }
-  }
-
-  #fireAction(originalEvent, currentAction) {
-    const eventFromIcon = this.#clickSource === CARD.interactions.event.from.icon;
-    const fullAction = eventFromIcon ? `${this.#clickSource}_${currentAction}` : currentAction;
-
-    const actionConfig =
-      eventFromIcon && (!this.#config?.[`${fullAction}_action`] || this.#config[`${fullAction}_action`].action === 'none')
-        ? this.#config?.[`${currentAction}_action`]
-        : this.#config?.[`${fullAction}_action`];
+    const actionConfig = fromIcon && this.#config[iconActionKey]?.action !== 'none' ? this.#config[iconActionKey] : this.#config[`${action}_action`];
 
     if (!actionConfig) return;
-    const config = { entity: this.#config.entity, tap_action: actionConfig };
 
-    this.#element.dispatchEvent(
+    this.#target.dispatchEvent(
       new CustomEvent('hass-action', {
         bubbles: true,
         composed: true,
         detail: {
-          config,
+          config: {
+            entity: this.#config.entity,
+            tap_action: actionConfig,
+          },
           action: 'tap',
-          originalEvent,
         },
       }),
     );
@@ -8733,6 +8642,7 @@ class HACore extends HTMLElement {
   static _baseClass = CARD.meta.feature.typeName;
   static _cardStructure = new FeatureStructure();
   static _cardStyle = CARD_CSS;
+  static _cardElement = CARD.htmlStructure.card.element;
   _debug = CARD.config.debug.card;
   _log = null;
   _resourceManager = null;
@@ -8882,6 +8792,10 @@ class HACore extends HTMLElement {
     return this.constructor._baseClass;
   }
 
+  get cardElement() {
+    return this.constructor._cardElement;
+  }
+
   // === CARD BUILDING ===
 
   /**
@@ -8912,7 +8826,7 @@ class HACore extends HTMLElement {
     const style = document.createElement(CARD.style.element);
     style.textContent = this.cardStyle;
 
-    const card = document.createElement(CARD.htmlStructure.card.element);
+    const card = document.createElement(this.cardElement);
     this._dom.destroy();
     this._dom.register(CARD.htmlStructure.card.element, card);
     this._buildStyle();
@@ -8925,8 +8839,19 @@ class HACore extends HTMLElement {
     //
     // customize it
     //
+    this._addBaseClasses();
     this._handleWatermarkClasses();
     this._handleBarEffect();
+  }
+
+  _addBaseClasses() {
+    this._dom.addClass(
+      CARD.htmlStructure.card.element,
+      this.baseClass,
+      this._cardView.layout,
+      this._cardView.barSize,
+      this._cardView.barOrientation ? CARD.style.dynamic.progressBar.orientation[this._cardView.barOrientation] : null,
+    );
   }
 
   _handleWatermarkClasses() {
@@ -9156,8 +9081,6 @@ class HACore extends HTMLElement {
   }
 }
 
-
-
 /******************************************************************************************
  * 🛠️ HABase
  * ========================================================================================
@@ -9192,7 +9115,6 @@ class HABase extends HACore {
   };
   _icon = null;
   _cardView = new CardView();
-  _clickableTarget = null;
   _actionHelper = null;
   #lastMessage = null;
 
@@ -9202,7 +9124,6 @@ class HABase extends HACore {
     return [
       ...super._loggedMethods,
       '_storeDOM',
-      '_setupClickableTarget',
       '_showIcon',
       '_handleImgIcon',
       '_handleStateIcon',
@@ -9236,8 +9157,7 @@ class HABase extends HACore {
 
   connectedCallback() {
     super.connectedCallback(); // render, _updateDynamicElements, watchWebSocket
-    this._setupClickableTarget();
-    this._actionHelper.init(this._resourceManager, this._cardView.config, this._clickableTarget, this.hasDisabledIconTap);
+    this._actionHelper.init(this._cardView.config, this.hasDisabledIconTap);
   }
 
   // disconnectedCallback() {}
@@ -9258,12 +9178,6 @@ class HABase extends HACore {
   get hasDisabledIconTap() {
     // check it soon
     return this.constructor._hasDisabledIconTap;
-  }
-
-  // === INITIALIZATION ===
-
-  _setupClickableTarget() {
-    this._clickableTarget = this;
   }
 
   // === AUTO-REFRESH MANAGEMENT ===
@@ -9403,12 +9317,19 @@ class HABase extends HACore {
     ];
   }
 
-  _handleHiddenComponents() {
+  _handleHiddenComponents(jinjaContent = null) {
+    if (jinjaContent === null && is.jinja(this._cardView.config.hide)) return;
+    
+    const items = jinjaContent?.split(',').map(s => s.trim()).filter(Boolean) ?? null;
+    
     this._hiddenComponents.forEach((component) => {
-      this._dom.toggleClass(CARD.htmlStructure.card.element, component.class, this._cardView.hasComponentHiddenFlag(component.label));
+      this._dom.toggleClass(
+        CARD.htmlStructure.card.element,
+        component.class,
+        items ? items.includes(component.label) : this._cardView.hasComponentHiddenFlag(component.label)
+      );
     });
   }
-
   // === DOM MANAGEMENT ===
 
   get _domSelectors() {
@@ -9800,6 +9721,7 @@ class EntityProgressCardBase extends HABase {
       badge_icon: config.badge_icon || '', // base
       badge_color: config.badge_color || '', // base
       bar_effect: config.bar_effect || '', // base
+      hide: config.hide || '', // base
       custom_info: config.custom_info || '',
       name_info: config.name_info || '',
     };
@@ -9810,6 +9732,7 @@ class EntityProgressCardBase extends HABase {
       badge_icon: () => this._renderBadgeIcon(content), // base
       badge_color: () => this._renderBadgeColor(content), // base
       bar_effect: () => this._refreshBarEffect(content), // base
+      hide: () => this._handleHiddenComponents(content), // base
       custom_info: () => this._renderCustomInfo(content),
       name_info: () => this._renderNameInfo(content),
     };
@@ -9906,6 +9829,7 @@ class EntityProgressBadge extends EntityProgressCardBase {
 
     return {
       bar_effect: config.bar_effect || '', // base
+      hide: config.hide || '', // base
       custom_info: config.custom_info || '',
       name_info: config.name_info || '',
     };
@@ -9914,6 +9838,7 @@ class EntityProgressBadge extends EntityProgressCardBase {
   _getRenderHandlers(content) {
     return {
       bar_effect: () => this._refreshBarEffect(content), // base
+      hide: () => this._handleHiddenComponents(content), // base
       custom_info: () => this._renderCustomInfo(content),
       name_info: () => this._renderNameInfo(content),
     };
@@ -9932,6 +9857,8 @@ class EntityProgressBadge extends EntityProgressCardBase {
 
 class EntityProgressFeatures extends HACore {
   static _baseClass = CARD.meta.feature.typeName;
+  static _cardElement = 'div';
+  #firstHack = true;
 
   // === STATIC ===
 
@@ -9940,9 +9867,67 @@ class EntityProgressFeatures extends HACore {
       type: `custom:${CARD.meta.feature.typeName}${CARD.config.dev ? '-dev' : ''}`,
     };
   }
+
+  /**
+   * Fixes the parent card layout when the feature is used as an overlay.
+   *
+   * By default, HA increases the card's --row-size by 1 for each feature added,
+   * which would make the card taller. This method counteracts that behavior by
+   * piercing through multiple Shadow DOM boundaries to directly manipulate the
+   * parent card's layout properties.
+   *
+   * The following adjustments are made:
+   * - `.container` and `hui-card-features` are set to `position: static` so the
+   *   feature can be positioned absolutely relative to `ha-card`
+   * - `ha-card` gets `overflow: hidden` to clip the feature to the card's border radius
+   * - `--row-size` is decremented by 1 to cancel the extra row reserved by HA
+   *
+   * A MutationObserver watches for HA re-applying `--row-size` and immediately
+   * corrects it. A `fixing` flag prevents infinite loops between our correction
+   * and the observer callback.
+   *
+   * Only executed once per instance via the `#firstHack` guard.
+   *
+   * @inspired by hass-progress-bar-feature (MIT License) — Copyright (c) ytilis
+   * @see https://github.com/ytilis/hass-progress-bar-feature
+   */
+  #fixCardStyles() {
+    if (!['top', 'bottom'].includes(this._cardView.config.bar_position) || !this.#firstHack) return;
+    const cardContainer = DOMHelper.walkUpThroughShadow(this, '.card');
+    if (!cardContainer) return;
+    this.#firstHack = false;
+
+    this._dom.register('ext:card', DOMHelper.walkUpThroughShadow(this, 'ha-card'));
+    this._dom.register('ext:container', DOMHelper.walkUpThroughShadow(this, '.container'));
+    this._dom.register('ext:features', DOMHelper.walkUpThroughShadow(this, 'hui-card-features'));
+    this._dom.register('ext:card-container', cardContainer);
+    const targetRowSize = parseInt(getComputedStyle(cardContainer)?.getPropertyValue('--row-size')) - 1;
+
+    let fixing = false;
+    const fix = () => {
+      if (fixing) return;
+      const rowSize = getComputedStyle(cardContainer)?.getPropertyValue('--row-size');
+      if (rowSize && parseInt(rowSize) > targetRowSize) {
+        fixing = true;
+        this._dom.setStyleNow('ext:card', 'overflow', 'hidden');
+        this._dom.setStyleNow('ext:container', 'position', 'static');
+        this._dom.setStyleNow('ext:features', 'position', 'static');
+        this._dom.setStyleNow('ext:card-container', '--row-size', targetRowSize);
+        fixing = false;
+      }
+    };
+
+    fix();
+    new MutationObserver(fix).observe(cardContainer, {
+      attributes: true,
+      attributeFilter: ['style'],
+    });
+  }
+
   // === HANDLE UPDATE ===
 
   _handleHassUpdate() {
+    this.#fixCardStyles();
     this.refresh();
   }
 
@@ -9955,7 +9940,11 @@ class EntityProgressFeatures extends HACore {
     this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.color.var, bar.barColor);
 
     if (isCenterZero) {
-      this._dom.setStyle(cardKey, isNegative ? CARD.style.dynamic.progressBar.nSize.var : CARD.style.dynamic.progressBar.pSize.var, `${Math.abs(bar.percent / 2)}%`);
+      this._dom.setStyle(
+        cardKey,
+        isNegative ? CARD.style.dynamic.progressBar.nSize.var : CARD.style.dynamic.progressBar.pSize.var,
+        `${Math.abs(bar.percent / 2)}%`,
+      );
       this._dom.setStyle(cardKey, isNegative ? CARD.style.dynamic.progressBar.pSize.var : CARD.style.dynamic.progressBar.nSize.var, '0%');
     } else {
       this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.size.var, `${bar.percent}%`);
@@ -10086,6 +10075,7 @@ class EntityProgressTemplateBase extends HABase {
       badge_icon: config.badge_icon || '', // base
       badge_color: config.badge_color || '', // base
       bar_effect: config.bar_effect || '', // base
+      hide: config.hide || '', // base
       name: config.name || '',
       secondary: config.secondary || '',
       icon: config.icon || '',
@@ -10099,6 +10089,7 @@ class EntityProgressTemplateBase extends HABase {
       badge_icon: () => this._renderBadgeIcon(content), // base
       badge_color: () => this._renderBadgeColor(content), // base
       bar_effect: () => this._refreshBarEffect(content), // base
+      hide: () => this._handleHiddenComponents(content), // base
       name: () => this._renderName(content),
       secondary: () => this._renderSecondary(content),
       icon: () => this._showIcon(content),
@@ -10384,6 +10375,7 @@ class ConfigUpdateEventHandler {
   }
 
   updateToggleField(targetId, changedEvent) {
+    if (is.jinja(this.config.hide)) return;
     const key = targetId.replace('toggle_', '');
     const newConfig = structuredClone(this.config);
 
@@ -10447,7 +10439,7 @@ class ConfigUpdateEventHandler {
  * users to interactively configure the card's settings and manage
  * internal state and synchronization with Home Assistant entities.
  *
- * Inspired by Home Assistant component structure:
+ * @inspired by Home Assistant component structure
  * @see https://github.com/home-assistant/frontend/blob/dev/src/data/selector.ts
  *
  * 🧠 Responsibilities:
@@ -10518,7 +10510,7 @@ class EntityProgressCardEditor extends HTMLElement {
 
   set hass(hass) {
     if (!hass) return;
-    
+
     if (!this.#hassProvider.hass || this.#hassProvider.hass.entities !== hass.entities) {
       this.#hassProvider.hass = hass;
     }
@@ -10845,22 +10837,24 @@ class EntityProgressCardEditor extends HTMLElement {
 
   #updateToggleFields() {
     const hide = this.#config.hide || [];
+    const isJinjaHide = is.jinja(this.#config.hide);
+
     const toggleMappings = {
-      toggle_force_circular_background: this.#config.force_circular_background ?? false,
-      toggle_unit: !this.#config.disable_unit,
-      toggle_icon: !hide.includes('icon'),
-      toggle_name: !hide.includes('name'),
-      toggle_value: !hide.includes('value'),
-      toggle_secondary_info: !hide.includes('secondary_info'),
-      toggle_progress_bar: !hide.includes('progress_bar'),
+      toggle_force_circular_background: { value: this.#config.force_circular_background ?? false },
+      toggle_unit: { value: !this.#config.disable_unit },
+      toggle_icon: { value: !hide.includes('icon'), disabled: isJinjaHide },
+      toggle_name: { value: !hide.includes('name'), disabled: isJinjaHide },
+      toggle_value: { value: !hide.includes('value'), disabled: isJinjaHide },
+      toggle_secondary_info: { value: !hide.includes('secondary_info'), disabled: isJinjaHide },
+      toggle_progress_bar: { value: !hide.includes('progress_bar'), disabled: isJinjaHide },
     };
 
     const toggleUpdates = [];
-    for (const [toggleKey, shouldBeChecked] of Object.entries(toggleMappings)) {
+    for (const [toggleKey, { value, disabled = false }] of Object.entries(toggleMappings)) {
       const toggle = this.#domElements.get(toggleKey);
-      if (toggle && toggle.value !== shouldBeChecked) {
-        toggleUpdates.push(() => (toggle.value = shouldBeChecked));
-      }
+      if (!toggle) continue;
+      if (toggle.value !== value) toggleUpdates.push(() => (toggle.value = value));
+      if (toggle.disabled !== disabled) toggleUpdates.push(() => (toggle.disabled = disabled));
     }
 
     toggleUpdates.forEach((update) => update());
@@ -11021,6 +11015,195 @@ class EntityProgressBadgeEditor extends EntityProgressCardEditor {
 
     return baseFields;
   })();
+}
+
+
+const TEMPLATE_EDITOR_FIELDS = {
+  // === Entity & Data ===
+  entity: { name: 'entity', type: 'entity' },
+  name: { name: 'name', type: 'template' },
+  secondary: { name: 'secondary', type: 'template' },
+  percent: { name: 'percent', type: 'template' },
+
+  // === Appearance ===
+  icon: { name: 'icon', type: 'template' },
+  color: { name: 'color', type: 'template' },
+  bar_color: { name: 'bar_color', type: 'template' },
+  bar_size: { name: 'bar_size', type: 'bar_size' },
+  bar_orientation: { name: 'bar_orientation', type: 'bar_orientation' },
+  bar_effect: { name: 'bar_effect', type: 'template' },
+  bar_position: { name: 'bar_position', type: 'bar_position' },
+  bar_single_line: { name: 'bar_single_line', type: 'toggle' },
+  bar_max_width: { name: 'bar_max_width', type: 'default' },
+  layout: { name: 'layout', type: 'layout' },
+  min_width: { name: 'min_width', type: 'default' },
+  height: { name: 'height', type: 'default' },
+  frameless: { name: 'frameless', type: 'toggle' },
+  marginless: { name: 'marginless', type: 'toggle' },
+  reverse_secondary_info_row: { name: 'reverse_secondary_info_row', type: 'toggle' },
+  force_circular_background: { name: 'force_circular_background', type: 'toggle' },
+  center_zero: { name: 'center_zero', type: 'toggle' },
+  trend_indicator: { name: 'trend_indicator', type: 'toggle' },
+  text_shadow: { name: 'text_shadow', type: 'toggle' },
+  hide: { name: 'hide', type: 'template' },
+
+  // === Badge ===
+  badge_icon: { name: 'badge_icon', type: 'template' },
+  badge_color: { name: 'badge_color', type: 'template' },
+
+};
+
+class EntityProgressTemplateEditor extends HTMLElement {
+  static _editorStyle = CARD_EDITOR_CSS;
+  static _editorFields = TEMPLATE_EDITOR_FIELDS;
+
+  #hassProvider = null;
+  #resourceManager = null;
+  #config = {};
+  #domElements = new Map();
+  #isRendered = false;
+  #isYAML = false;
+  #isListenersAttached = false;
+
+  constructor() {
+    super();
+    this.attachShadow({ mode: CARD.config.shadowMode });
+    this.#hassProvider = HassProviderSingleton.getInstance();
+  }
+
+  connectedCallback() {
+    if (!this.#resourceManager) this.#resourceManager = new ResourceManager();
+    if (this.#isRendered && !this.#isListenersAttached && this.#isYAML) {
+      this.#addEventListener();
+      this.#isListenersAttached = true;
+      this.#isYAML = false;
+    }
+  }
+
+  disconnectedCallback() {
+    this.#resourceManager?.cleanup();
+    this.#resourceManager = null;
+    this.#isListenersAttached = false;
+    this.#isYAML = true;
+  }
+
+  set hass(hass) {
+    if (!hass) return;
+    if (!this.#hassProvider.hass || this.#hassProvider.hass.entities !== hass.entities) {
+      this.#hassProvider.hass = hass;
+    }
+  }
+
+  get hass() {
+    return this.#hassProvider.hass;
+  }
+
+  setConfig(config) {
+    if (!config) throw new Error('setConfig: invalid config');
+    this.#config = { ...config };
+    if (!this.#hassProvider.isValid) return;
+
+    if (!this.#isRendered) {
+      this.#domElements = new Map();
+      this.render();
+      this.#isRendered = true;
+      this.#isListenersAttached = false;
+    }
+
+    if (!this.isConnected) this.#isYAML = true;
+    if (!this.#isListenersAttached && this.isConnected) {
+      this.#addEventListener();
+      this.#isListenersAttached = true;
+    }
+    this.#updateFields();
+  }
+
+  render() {
+    const style = document.createElement(CARD.style.element);
+    style.textContent = this.constructor._editorStyle;
+
+    const container = document.createElement('div');
+    container.classList.add('editor-container');
+
+    Object.values(this.constructor._editorFields).forEach((field) => {
+      container.appendChild(this.#createField(field));
+    });
+
+    const fragment = document.createDocumentFragment();
+    fragment.appendChild(style);
+    fragment.appendChild(container);
+    this.shadowRoot.appendChild(fragment);
+  }
+
+  #getSelectorForType(type) {
+    const selectors = {
+      entity: () => ({ entity: {} }),
+      template: () => ({ template: {} }),
+      toggle: () => ({ boolean: {} }),
+      default: () => ({ text: { mode: 'box' } }),
+      bar_size: () => ({ select: { options: Object.values(CARD.style.bar.sizeOptions).map((e) => ({ value: e.label, label: e.label })) } }),
+      bar_orientation: () => ({ select: { options: Object.keys(CARD.style.dynamic.progressBar.orientation).map((v) => ({ value: v, label: v })) } }),
+      bar_position: () => ({ select: { options: ['default', 'below', 'top', 'bottom', 'overlay'].map((v) => ({ value: v, label: v })) } }),
+      layout: () => ({ select: { options: Object.values(CARD.layout.orientations).map((e) => ({ value: e.label, label: e.label })) } }),
+    };
+
+    return (selectors[type] ?? (() => ({ text: {} })))();
+  }
+
+  #createField(field) {
+    const isAction = field.schema !== undefined;
+    const el = document.createElement(isAction ? 'ha-form' : 'ha-selector');
+
+    Object.assign(el, {
+      id: field.name,
+      hass: this.#hassProvider.hass,
+      ...(isAction
+        ? { schema: field.schema, computeLabel: () => this.#hassProvider.localize('editor.field')[field.name], data: {} }
+        : {
+            label: this.#hassProvider.localize('editor.field')[field.name],
+            value: this.#config[field.name] ?? '',
+            selector: this.#getSelectorForType(field.type, field.name),
+          }),
+    });
+
+    this.#domElements.set(field.name, el);
+    return el;
+  }
+
+  #addEventListener() {
+    for (const [name, element] of this.#domElements) {
+      this.#resourceManager.addEventListener(element, 'value-changed', this.#onChanged.bind(this), { passive: true }, `value-changed-${name}`);
+    }
+  }
+
+  #onChanged(event) {
+    const { value } = event.detail;
+    const key = event.target.id;
+    
+    this.#sendNewConfig({ ...this.#config, [key]: value });
+  }
+
+  #sendNewConfig(newConfig) {
+    this.dispatchEvent(new CustomEvent(CARD.interactions.event.configChanged, {
+      detail: { config: newConfig },
+      bubbles: true,
+      composed: true,
+    }));
+  }
+  
+  #updateFields() {
+    for (const [key, element] of this.#domElements) {
+      if (element.localName === 'ha-selector') {
+        const newValue = key in this.#config ? this.#config[key] : '';
+        if (element.value !== newValue) element.value = newValue;
+      } else if (element.localName === 'ha-form') {
+        const newValue = this.#config[key];
+        if (element.data?.[key] !== newValue) {
+          element.data = { ...element.data, [key]: newValue };
+        }
+      }
+    }
+  }
 }
 
 /******************************************************************************************
