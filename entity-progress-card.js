@@ -3477,9 +3477,8 @@ const CARD_CSS = `
 
 :host {
   /* === SPACING VARIABLES === */
-  --gap-default: 10px;
+  --spacing: 10px;
   --gap-entities: 16px;
-  --padding-default: 10px;
 
   /* === SIZE VARIABLES === */
   --shape-default-size: 36px;
@@ -3557,7 +3556,7 @@ ${CARD.htmlStructure.card.element} {
   --current-card-min-width: var(${CARD.style.dynamic.card.minWidth.var}, 100%);
   --current-card-min-height: 0px;
   --current-card-height: var(${CARD.style.dynamic.card.height.var}, 100%);
-  --current-card-padding: 0 var(--padding-default);
+  --current-card-padding: 0 var(--spacing);
   --current-card-margin: 0 auto;
   --current-card-border-radius: var(--ha-card-border-radius, var(--ha-border-radius-lg));
 
@@ -3571,7 +3570,6 @@ ${CARD.htmlStructure.card.element} {
   width: var(--epb-card-width, auto);
   min-height: var(--current-card-min-height);
   height: var(--epb-card-height, var(--current-card-height));
-  box-sizing: border-box;
   border-radius: var(--epb-card-border-radius, var(--current-card-border-radius));
   border-width: var(--epb-card-border-width, var(--ha-card-border-width, 1px));
   border-color: var(--epb-card-border-color, var(--ha-card-border-color, var(--divider-color, #e0e0e0)));
@@ -3621,7 +3619,9 @@ ${CARD.htmlStructure.card.element} {
   --current-card-margin: 0px;
   --ha-ripple-hover-opacity: 0;
   --ha-ripple-pressed-opacity: 0;
-
+  --current-card-height: var(--entities-card-min-height); /* 44.8 px*/
+  --current-card-min-height: var(--entities-card-min-height);
+  
   transition: none !important;
 }
 
@@ -3634,7 +3634,7 @@ ${CARD.htmlStructure.card.element} {
   flex-direction: var(--current-container-flex-direction, row);
   align-items: center;
   justify-content: center;
-  gap: var(--current-container-gap, var(--gap-default));
+  gap: var(--current-container-gap, var(--spacing));
   width: 100%;
   height: 100%;
   overflow: var(--current-container-overflow, visible);
@@ -3648,7 +3648,7 @@ ${CARD.htmlStructure.card.element} {
   --current-container-padding-top: 0px;
   --current-container-min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.horizontal.minHeight});
   --current-container-overflow: visible;
-  --current-container-gap: var(--gap-default);
+  --current-container-gap: var(--spacing);
   --current-container-box-sizing: content-box;
   --current-container-flex-wrap: wrap;
 }
@@ -3672,13 +3672,6 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
 .${CARD.htmlStructure.sections.container.class}.vertical:has(.content-section.overlay) {
   --current-container-padding-top: 3px;
 }
-
-.${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.sections.icon.class},
-.${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.sections.content.class} {
-  height: 54px;
-  align-self: flex-start;
-}
-
 
 .${CARD.htmlStructure.sections.container.class}.vertical:has(.content-section.overlay) {
   --current-container-gap: 9.5px;
@@ -3705,12 +3698,39 @@ ha-card:has(.below-container) {
   --current-group-width: 100%;
 }
 
+ha-card:has(.below-container) {
+  --current-card-padding: var(--spacing);
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: var(--spacing);
+}
+
+ha-card:has(.below-container) > .container {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+ha-card.vertical.xlarge:has(.below-container) .container {
+  --current-container-padding-top: 0px;
+}
+
+ha-card:has(.below-container) .${CARD.htmlStructure.elements.progressBar.container.class} {
+  --current-progress-container-height: var(--progress-size);
+}
+
+ha-card.vertical.xlarge:has(.below-container) .${CARD.htmlStructure.elements.progressBar.container.class} {
+  margin: 0px;
+}
+
+
 .below-container {
-  flex-basis: 100%;
   width: 100%;
   display: flex;
   overflow: hidden;
-  height: 54px;
+  height: var(--progress-size);
+  flex-shrink: 0;
 }
 
 .horizontal.xlarge .container {
@@ -4041,7 +4061,7 @@ ha-card:has(.top-container) {
   display: flex;
   flex-direction: var(--current-secondary-info-flex-direction);
   align-items: var(--current-secondary-info-align-items);
-  gap: var(--current-secondary-info-gap, var(--gap-default));
+  gap: var(--current-secondary-info-gap, var(--spacing));
   width: var(--current-secondary-info-width, auto);
   min-width: var(--current-secondary-info-min-width, auto);
   justify-content: space-between;
@@ -4054,7 +4074,7 @@ ha-card:has(.top-container) {
 .${CARD.layout.orientations.horizontal.label} {
   --current-secondary-info-flex-direction: var(--secondary-info-row-reverse, row);
   --current-secondary-info-align-items: stretch;
-  --current-secondary-info-gap: var(--gap-default);
+  --current-secondary-info-gap: var(--spacing);
   --current-secondary-info-width: auto;
   --current-secondary-info-min-width: auto;
 }
@@ -4191,7 +4211,7 @@ ha-card:has(.top-container) {
 /* === RADIUS EFFECT === */
 
 .${CARD.htmlStructure.elements.progressBar.bar.class} {
-  --current-progress-bar-radius: calc(var(--progress-size) / 2);
+  --current-progress-bar-radius: var(--ha-card-border-radius, var(--ha-border-radius-lg));
   border-radius: var(--epb-progress-bar-radius, var(--current-progress-bar-radius));
 }
 
@@ -4230,7 +4250,7 @@ ha-card:has(.top-container) {
   :is(.${CARD.htmlStructure.elements.progressBar.inner.class},
       .${CARD.htmlStructure.elements.progressBar.negativeInner.class},
       .${CARD.htmlStructure.elements.progressBar.positiveInner.class}) {
-  --current-progress-inner-radius: calc(var(--progress-size) / 2);
+  --current-progress-inner-radius: var(--ha-card-border-radius, var(--ha-border-radius-lg));
 }
 
 /* === VARIANTS === */
@@ -5283,13 +5303,13 @@ const StructureElements = {
   createSecondaryInfo: (options, detailGroupFn) => {
     const { layout, barPosition } = options;
     const isTopOrBottom = ['top', 'bottom'].includes(barPosition);
-    const isBelowHorizontal = layout === 'horizontal' && barPosition === 'below';
+    const isBelow = barPosition === 'below';
     const isOverlay = barPosition === 'overlay';
     const isVertical = layout === 'vertical';
 
     let content = detailGroupFn();
 
-    if (!isTopOrBottom && !isBelowHorizontal && !isOverlay && !isVertical) {
+    if (!isTopOrBottom && !isBelow && !isOverlay && !isVertical) {
       content += StructureElements.progressBar(options);
     }
 
@@ -5304,11 +5324,11 @@ const StructureElements = {
     const isOverlay = options.barPosition === 'overlay';
     const isSingleLine = options.barSingleLine;
     const isVertical = options.layout === 'vertical';
-    const isTopOrBottom = ['top', 'bottom'].includes(options.barPosition);
+    const isBelowTopOrBottom = ['below', 'top', 'bottom'].includes(options.barPosition);
 
     const extraClass = (isOverlay ? ' overlay' : '') + (isSingleLine ? ' single-line' : '');
     const before = isOverlay ? StructureElements.progressBar(options) : '';
-    const after = !isOverlay && !isTopOrBottom && isVertical ? StructureElements.progressBar(options) : '';
+    const after = !isOverlay && !isBelowTopOrBottom && isVertical ? StructureElements.progressBar(options) : '';
     const content = before + rightContent + after;
 
     return Element(CARD.htmlStructure.sections.content, extraClass).html(content);
@@ -5338,6 +5358,9 @@ const StructureElements = {
       case 'bottom':
         after = StructureElements.bottomContainer().replace('{{content}}', StructureElements.progressBar(options));
         break;
+      case 'below':
+        after = StructureElements.belowContainer().replace('{{content}}', StructureElements.progressBar(options));
+        break;
     }
 
     return before + content + after;
@@ -5346,14 +5369,6 @@ const StructureElements = {
 
 const StructureTemplates = {
   card: (options = {}) => {
-    if (options.barPosition === 'below')
-      return StructureElements.container(options).replace(
-        '{{content}}',
-        StructureElements.trendIndicator(options) +
-          StructureElements.iconSection() +
-          StructureElements.contentFull(options) +
-          StructureElements.belowContainer().replace('{{content}}', StructureElements.progressBar(options)),
-      );
     return StructureElements.wrapWithBarPosition(
       StructureElements.container(options).replace(
         '{{content}}',
@@ -5371,15 +5386,6 @@ const StructureTemplates = {
   },
 
   template: (options = {}) => {
-    if (options.barPosition === 'below')
-      return StructureElements.container(options).replace(
-        '{{content}}',
-        StructureElements.trendIndicator(options) +
-          StructureElements.iconSection() +
-          StructureElements.contentMini(options) +
-          StructureElements.belowContainer().replace('{{content}}', StructureElements.progressBar(options)),
-      );
-
     return StructureElements.wrapWithBarPosition(
       StructureElements.container(options).replace(
         '{{content}}',
@@ -7076,8 +7082,7 @@ function struct(validator) {
 
     if (!result.layout) result.layout = CARD.layout.orientations.horizontal.label;
 
-    if (result.layout === CARD.layout.orientations.horizontal.label && result.bar_size === CARD.style.bar.sizeOptions.xlarge.label)
-      result.bar_position = 'below';
+    if (result.bar_size === CARD.style.bar.sizeOptions.xlarge.label) result.bar_position = 'below';
 
     if (result.bar_position !== 'overlay' && result.bar_single_line) result.bar_single_line = false;
 
@@ -8258,6 +8263,31 @@ class ResourceManager {
       this.#log.debug('Throttle function - ', id);
     }
   }
+  throttleDebounce(fn, delay, id) {
+    const now = Date.now();
+    
+    // Throttle — exec if time is over
+    if (!this.#throttles.has(id)) {
+      this.#throttles.set(id, { lastCall: 0 });
+      this.add(() => this.resetThrottle(id), id + '-throttle');
+    }
+    
+    const context = this.#throttles.get(id);
+    if (now - context.lastCall >= delay) {
+      context.lastCall = now;
+      fn();
+      this.#log.debug('ThrottleDebounce immediate - ', id);
+    }
+    
+    // Debounce — exec after a RAF
+    if (this.#resources.has(id + '-debounce')) {
+      this.remove(id + '-debounce');
+    }
+    this.setTimeout(() => {
+      fn();
+      this.#log.debug('ThrottleDebounce trailing - ', id);
+    }, delay, id + '-debounce');
+  }
 
   resetThrottle(id) {
     this.#throttles.delete(id);
@@ -9024,11 +9054,12 @@ class HACore extends HTMLElement {
 
     this._log.debug('✅ Processing Jinja fields');
 
-    const templates = this._getTemplateFields();
-
-    for (const [key, template] of Object.entries(templates)) {
-      if (is.nonEmptyString(template)) await this._subscribeToTemplate(key, template);
-    }
+    this._resourceManager?.throttleDebounce(async () => {
+      const templates = this._getTemplateFields();
+      for (const [key, template] of Object.entries(templates)) {
+        if (is.nonEmptyString(template)) await this._subscribeToTemplate(key, template);
+      }
+    }, 300, 'jinjaProcess');
   }
 
   _getTemplateContext() {

@@ -1,5 +1,30 @@
 ## What's new
 
+### 🧩 Tile Feature Support
+
+Entity Progress Card can now be used as a native **tile feature**, displayed
+as a progress bar directly embedded inside a Home Assistant tile card.
+```yaml
+type: tile
+entity: sensor.cpu_percent
+features:
+  - type: custom:entity-progress-feature
+    entity: sensor.cpu_percent
+```
+
+The feature supports all standard progress bar options including watermarks,
+bar effects, center-zero mode, and Jinja2 templates.
+
+A dedicated overlay mode is also available, allowing the progress bar to be
+anchored to the top or bottom edge of the tile card without increasing its
+height:
+```yaml
+features:
+  - type: custom:entity-progress-feature
+    entity: sensor.cpu_percent
+    bar_position: bottom
+```
+
 ### ⚡ Action Handler Refactoring
 
 Replaced the custom gesture detection system (pointer events, timers, click
@@ -20,6 +45,28 @@ Available categories:
 - **Colors** — background, icon, text
 - **Progress bar** — fill color, background, height
 - **Typography** — font size, weight, color
+
+```yaml
+type: custom:entity-progress-card
+...
+card_mod:
+  style: |
+    ha-card {
+      --epb-progress-bar-size: 42px;
+      --epb-progress-bar-radius: 12px;
+      ...
+    }
+```
+
+### 📐 `below` Bar Position — Now a First-Class Layout
+
+The `below` position is no longer just a hidden workaround for `xlarge` bar size.
+It is now a fully supported layout option for both horizontal and vertical cards,
+placing the progress bar below the card content as a dedicated row.
+
+- `bar_position: below` is now available in both `horizontal` and `vertical` layouts
+- `bar_size: xlarge` automatically sets `bar_position: below` regardless of layout,
+  ensuring the oversized bar always renders correctly without manual configuration
 
 ### 🧩 Improvements and Bug Fixes
 

@@ -967,12 +967,13 @@ bar_position: overlay
 
 _Options:_
 
-| option    | description                    |
-| :-------- | :----------------------------- |
-| `default` | Standard position              |
-| `top`     | At the top of the card         |
-| `bottom`  | At the bottom of the card      |
-| `overlay` | Overlaid on top of the content |
+| option    | description                                          |
+| :-------- | :--------------------------------------------------- |
+| `default` | Standard position (inline with content)              |
+| `below`   | Below the content as a dedicated row                 |
+| `top`     | At the top of the card edge                          |
+| `bottom`  | At the bottom of the card edge                       |
+| `overlay` | Overlaid on top of the content                       |
 
 _Default value_:
 
