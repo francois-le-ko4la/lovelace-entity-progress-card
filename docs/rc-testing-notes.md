@@ -1,9 +1,17 @@
 ## What's new
 
+This update is a major evolution for the Entity Progress Card. We’ve focused on
+deeper Home Assistant integration, a high-performance rendering engine, and a
+brand-new CSS API for effortless styling.
+
 ### 🧩 Tile Feature Support
 
-Entity Progress Card can now be used as a native **tile feature**, displayed
-as a progress bar directly embedded inside a Home Assistant tile card.
+New: Tile Feature Support
+
+The Entity Progress Card can now be used as a native **Tile Feature**. This
+allows you to embed a progress bar directly inside a standard Home Assistant
+Tile card.
+
 ```yaml
 type: tile
 entity: sensor.cpu_percent
@@ -12,12 +20,11 @@ features:
     entity: sensor.cpu_percent
 ```
 
-The feature supports all standard progress bar options including watermarks,
-bar effects, center-zero mode, and Jinja2 templates.
+- Overlay Mode: Anchor the bar to the top or bottom edge of a tile without
+  increasing its height.
+- Full Power: Supports all standard options, including watermarks, bar effects,
+  and Jinja2 templates.
 
-A dedicated overlay mode is also available, allowing the progress bar to be
-anchored to the top or bottom edge of the tile card without increasing its
-height:
 ```yaml
 features:
   - type: custom:entity-progress-feature
@@ -25,12 +32,18 @@ features:
     bar_position: bottom
 ```
 
-### ⚡ Action Handler Refactoring
+⚡ Performance & Interaction Refactor
 
-Replaced the custom gesture detection system (pointer events, timers, click
-counting) with Home Assistant's native `action-handler`. Tap, hold and
-double tap are now fully delegated to HA's internal system, ensuring
-consistent behavior across all platforms (browser, mobile app, tablet).
+We’ve re-engineered the "brain" of the card to be faster and more reliable:
+
+- Native Action Handler: We’ve replaced custom gesture logic with Home
+  Assistant’s native system. Tap, hold, and double-tap now behave exactly like
+  official cards across all devices.
+- GPU-Accelerated Animations: Instead of just changing the width, the bar now
+  uses a technical trick (CSS Transforms) that makes the animation much smoother
+  and uses less "brainpower" from your phone or computer.
+- Optimized Jinja2: Template processing is now smarter, using high-performance
+  "resolvers" to prevent UI stutter when updating multiple cards at once.
 
 ### 🎨 Public CSS Variable API
 
@@ -60,17 +73,34 @@ card_mod:
 
 ### 📐 `below` Bar Position — Now a First-Class Layout
 
-The `below` position is no longer just a hidden workaround for `xlarge` bar size.
-It is now a fully supported layout option for both horizontal and vertical cards,
-placing the progress bar below the card content as a dedicated row.
+The `below` position is no longer just a hidden workaround for `xlarge` bar
+size. It is now a fully supported layout option for both horizontal and vertical
+cards, placing the progress bar below the card content as a dedicated row.
 
-- `bar_position: below` is now available in both `horizontal` and `vertical` layouts
-- `bar_size: xlarge` automatically sets `bar_position: below` regardless of layout,
-  ensuring the oversized bar always renders correctly without manual configuration
+- `bar_position: below` is now available in both `horizontal` and `vertical`
+  layouts
+- `bar_size: xlarge` automatically sets `bar_position: below` regardless of
+  layout, ensuring the oversized bar always renders correctly without manual
+  configuration
+
+### ✨ Visual Polish & Better "Overlays"
+
+If you like putting your text directly on top of the progress bar (Overlay
+mode), this update is for you.
+
+- Major improvements to the progress bar overlay layout, especially for vertical
+  cards.
+- Progress bar sizing and spacing are now more consistent across layouts.
+- Improved support for overlay mode with better alignment and transitions.
+- Text over the Bar: Improved "Text Shadow" support.
+- Smart Cornering: The card now automatically matches the "Border Radius" (the
+  roundness of the corners) of your specific Home Assistant theme. It will look
+  like it truly belongs in your dashboard.
 
 ### 🧩 Improvements and Bug Fixes
 
-- General refactoring and stability improvements on logs, Jinja & config management.
+- General refactoring and stability improvements on logs, Jinja & config
+  management.
 - Added: Card/Badge template now correctly displays colors based on priority —
   entity state color by default, overridden by Jinja `color` / `bar_color`
   parameters when defined.
@@ -80,4 +110,12 @@ placing the progress bar below the card content as a dedicated row.
   editing a badge template configuration and would not come back until a full
   page reload.
 - Fixed: guard against null/undefined config and prevent cascading errors
-- fixed(layout): center content vertically in horizontal xlarge card
+- fixed(layout): center content vertically in horizontal xlarge card 🎨
+  Improvements
+- Reduced CSS complexity which improves browser rendering performance.
+- Watermark and zero mark rendering has been redesigned to be more flexible.
+- Improved support for low/high watermark visual styles (area, line, round,
+  striped, triangle, etc.).
+- Simplified internal styling which improves compatibility with custom themes.
+- Card spacing and padding are now more consistent in all layouts.
+- Improved grid layout behavior for vertical cards.

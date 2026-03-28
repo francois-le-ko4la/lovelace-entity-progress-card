@@ -37,6 +37,7 @@ const CARD = {
       typeName: 'entity-progress-card-template',
       name: 'Entity Progress Card (Template)',
       description: 'A cool custom card to show current entity status with a progress bar.',
+      editor: 'entity-progress-card-template-editor',
     },
     badge: {
       typeName: 'entity-progress-badge',
@@ -57,7 +58,7 @@ const CARD = {
   },
   config: {
     dev: true,
-    debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false, hass: false },
+    debug: { card: true, editor: true, interactionHandler: true, ressourceManager: true, hass: false },
     language: 'en',
     value: { min: 0, max: 100 },
     unit: {
@@ -268,9 +269,9 @@ const CARD = {
       },
       progressBar: {
         color: { var: '--progress-bar-color', default: 'var(--state-icon-color)' },
-        size: { var: '--progress-bar-size', default: '0%' },
-        pSize: { var: '--progress-bar-psize', default: '0%' },
-        nSize: { var: '--progress-bar-nsize', default: '0%' },
+        size: { var: '--progress-bar-size', default: '0' },
+        pSize: { var: '--progress-bar-psize', default: '0' },
+        nSize: { var: '--progress-bar-nsize', default: '0' },
         maxWidth: { var: '--progress-bar-max-width', default: null },
         background: { var: '--epb-progress-bar-background-color' },
         orientation: { rtl: 'rtl-orientation', ltr: 'ltr-orientation', up: 'up-orientation' },
@@ -626,14 +627,14 @@ const LANGUAGES = {
         invalidStateContent: 'محتوى الحالة غير صالح أو معيب.',
         invalidStateContentEntry: 'إدخال أو أكثر في محتوى الحالة غير صالحة.',
         invalidTheme: 'السمة المحددة غير معروفة. سيتم استخدام السمة الافتراضية.',
-        appliedDefaultValue: 'تم تطبيق قيمة افتراضية تلقائيًا.'
-      }
+        appliedDefaultValue: 'تم تطبيق قيمة افتراضية تلقائيًا.',
+      },
     },
     editor: {
       title: {
         content: 'المحتوى',
         interaction: 'التفاعلات',
-        theme: 'المظهر'
+        theme: 'المظهر',
       },
       field: {
         entity: 'الكيان',
@@ -662,7 +663,7 @@ const LANGUAGES = {
         bar_color: 'لون الشريط',
         icon: 'أيقونة',
         color: 'اللون الأساسي',
-        layout: 'تخطيط البطاقة'
+        layout: 'تخطيط البطاقة',
       },
       option: {
         theme: {
@@ -672,20 +673,20 @@ const LANGUAGES = {
           temperature: 'درجة الحرارة',
           humidity: 'الرطوبة',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'صغيرة',
           medium: 'متوسطة',
           large: 'كبيرة',
-          xlarge: 'كبيرة جداً'
+          xlarge: 'كبيرة جداً',
         },
         layout: {
           horizontal: 'أفقي (افتراضي)',
-          vertical: 'رأسي'
-        }
-      }
-    }
+          vertical: 'رأسي',
+        },
+      },
+    },
   },
   bn: {
     card: {
@@ -715,14 +716,14 @@ const LANGUAGES = {
         invalidStateContent: 'অবস্থার বিষয়বস্তু অবৈধ বা ভুলভাবে গঠিত।',
         invalidStateContentEntry: 'অবস্থার বিষয়বস্তুতে একটি বা একাধিক এন্ট্রি অবৈধ।',
         invalidTheme: 'নির্দিষ্ট থিম অজানা। ডিফল্ট থিম ব্যবহার করা হবে।',
-        appliedDefaultValue: 'একটি ডিফল্ট মান স্বয়ংক্রিয়ভাবে প্রয়োগ করা হয়েছে।'
-      }
+        appliedDefaultValue: 'একটি ডিফল্ট মান স্বয়ংক্রিয়ভাবে প্রয়োগ করা হয়েছে।',
+      },
     },
     editor: {
       title: {
         content: 'বিষয়বস্তু',
         interaction: 'মিথস্ক্রিয়া',
-        theme: 'চেহারা এবং অনুভূতি'
+        theme: 'চেহারা এবং অনুভূতি',
       },
       field: {
         entity: 'সত্তা',
@@ -751,7 +752,7 @@ const LANGUAGES = {
         bar_color: 'বারের রঙ',
         icon: 'আইকন',
         color: 'প্রাথমিক রঙ',
-        layout: 'কার্ড লেআউট'
+        layout: 'কার্ড লেআউট',
       },
       option: {
         theme: {
@@ -761,20 +762,20 @@ const LANGUAGES = {
           temperature: 'তাপমাত্রা',
           humidity: 'আর্দ্রতা',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'ছোট',
           medium: 'মাঝারি',
           large: 'বড়',
-          xlarge: 'অতিরিক্ত বড়'
+          xlarge: 'অতিরিক্ত বড়',
         },
         layout: {
           horizontal: 'অনুভূমিক (ডিফল্ট)',
-          vertical: 'উল্লম্ব'
-        }
-      }
-    }
+          vertical: 'উল্লম্ব',
+        },
+      },
+    },
   },
   cs: {
     card: {
@@ -804,14 +805,14 @@ const LANGUAGES = {
         invalidStateContent: 'Obsah stavu je neplatný nebo špatně formátovaný.',
         invalidStateContentEntry: 'Jedna nebo více položek v obsahu stavu je neplatných.',
         invalidTheme: 'Zadaný motiv je neznámý. Bude použit výchozí motiv.',
-        appliedDefaultValue: 'Výchozí hodnota byla automaticky aplikována.'
-      }
+        appliedDefaultValue: 'Výchozí hodnota byla automaticky aplikována.',
+      },
     },
     editor: {
       title: {
         content: 'Obsah',
         interaction: 'Interakce',
-        theme: 'Vzhled a pocit'
+        theme: 'Vzhled a pocit',
       },
       field: {
         entity: 'Entita',
@@ -840,7 +841,7 @@ const LANGUAGES = {
         bar_color: 'Barva lišty',
         icon: 'Ikona',
         color: 'Hlavní barva',
-        layout: 'Rozložení karty'
+        layout: 'Rozložení karty',
       },
       option: {
         theme: {
@@ -850,20 +851,20 @@ const LANGUAGES = {
           temperature: 'Teplota',
           humidity: 'Vlhkost',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'Malá',
           medium: 'Střední',
           large: 'Velká',
-          xlarge: 'Extra velká'
+          xlarge: 'Extra velká',
         },
         layout: {
           horizontal: 'Horizontální (výchozí)',
-          vertical: 'Vertikální'
-        }
-      }
-    }
+          vertical: 'Vertikální',
+        },
+      },
+    },
   },
   da: {
     card: {
@@ -893,14 +894,14 @@ const LANGUAGES = {
         invalidStateContent: 'Tilstandsindholdet er ugyldigt eller fejlbehæftet.',
         invalidStateContentEntry: 'En eller flere poster i tilstandsindholdet er ugyldige.',
         invalidTheme: 'Det angivne tema er ukendt. Standardtema anvendes.',
-        appliedDefaultValue: 'Standardværdi er blevet anvendt automatisk.'
-      }
+        appliedDefaultValue: 'Standardværdi er blevet anvendt automatisk.',
+      },
     },
     editor: {
       title: {
         content: 'Indhold',
         interaction: 'Interaktioner',
-        theme: 'Udseende og funktionalitet'
+        theme: 'Udseende og funktionalitet',
       },
       field: {
         entity: 'Enhed',
@@ -929,7 +930,7 @@ const LANGUAGES = {
         bar_color: 'Farve til bar',
         icon: 'Ikon',
         color: 'Primær farve',
-        layout: 'Kort layout'
+        layout: 'Kort layout',
       },
       option: {
         theme: {
@@ -939,20 +940,20 @@ const LANGUAGES = {
           temperature: 'Temperatur',
           humidity: 'Fugtighed',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'Lille',
           medium: 'Medium',
           large: 'Stor',
-          xlarge: 'Ekstra stor'
+          xlarge: 'Ekstra stor',
         },
         layout: {
           horizontal: 'Horisontal (standard)',
-          vertical: 'Vertikal'
-        }
-      }
-    }
+          vertical: 'Vertikal',
+        },
+      },
+    },
   },
   de: {
     card: {
@@ -982,14 +983,14 @@ const LANGUAGES = {
         invalidStateContent: 'Der Statusinhalt ist ungültig oder fehlerhaft.',
         invalidStateContentEntry: 'Ein oder mehrere Einträge im Statusinhalt sind ungültig.',
         invalidTheme: 'Das angegebene Theme ist unbekannt. Das Standard-Theme wird verwendet.',
-        appliedDefaultValue: 'Ein Standardwert wurde automatisch angewendet.'
-      }
+        appliedDefaultValue: 'Ein Standardwert wurde automatisch angewendet.',
+      },
     },
     editor: {
       title: {
         content: 'Inhalt',
         interaction: 'Interaktionen',
-        theme: 'Aussehen und Bedienung'
+        theme: 'Aussehen und Bedienung',
       },
       field: {
         entity: 'Entität',
@@ -1018,7 +1019,7 @@ const LANGUAGES = {
         bar_color: 'Farbe für die Leiste',
         icon: 'Symbol',
         color: 'Primärfarbe',
-        layout: 'Kartenlayout'
+        layout: 'Kartenlayout',
       },
       option: {
         theme: {
@@ -1028,20 +1029,20 @@ const LANGUAGES = {
           temperature: 'Temperatur',
           humidity: 'Feuchtigkeit',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'Klein',
           medium: 'Mittel',
           large: 'Groß',
-          xlarge: 'Extra groß'
+          xlarge: 'Extra groß',
         },
         layout: {
           horizontal: 'Horizontal (Standard)',
-          vertical: 'Vertikal'
-        }
-      }
-    }
+          vertical: 'Vertikal',
+        },
+      },
+    },
   },
   el: {
     card: {
@@ -1071,14 +1072,14 @@ const LANGUAGES = {
         invalidStateContent: 'Το περιεχόμενο κατάστασης δεν είναι έγκυρο ή είναι κακώς διαμορφωμένο.',
         invalidStateContentEntry: 'Μία ή περισσότερες καταχωρήσεις στο περιεχόμενο κατάστασης είναι άκυρες.',
         invalidTheme: 'Το καθορισμένο θέμα είναι άγνωστο. Θα χρησιμοποιηθεί το προεπιλεγμένο θέμα.',
-        appliedDefaultValue: 'Εφαρμόστηκε αυτόματα προεπιλεγμένη τιμή.'
-      }
+        appliedDefaultValue: 'Εφαρμόστηκε αυτόματα προεπιλεγμένη τιμή.',
+      },
     },
     editor: {
       title: {
         content: 'Περιεχόμενο',
         interaction: 'Αλληλεπιδράσεις',
-        theme: 'Εμφάνιση'
+        theme: 'Εμφάνιση',
       },
       field: {
         entity: 'Οντότητα',
@@ -1107,7 +1108,7 @@ const LANGUAGES = {
         bar_color: 'Χρώμα γραμμής',
         icon: 'Εικονίδιο',
         color: 'Κύριο χρώμα',
-        layout: 'Διάταξη κάρτας'
+        layout: 'Διάταξη κάρτας',
       },
       option: {
         theme: {
@@ -1117,20 +1118,20 @@ const LANGUAGES = {
           temperature: 'Θερμοκρασία',
           humidity: 'Υγρασία',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'Μικρή',
           medium: 'Μεσαία',
           large: 'Μεγάλη',
-          xlarge: 'Πολύ μεγάλη'
+          xlarge: 'Πολύ μεγάλη',
         },
         layout: {
           horizontal: 'Οριζόντια (προεπιλογή)',
-          vertical: 'Κατακόρυφη'
-        }
-      }
-    }
+          vertical: 'Κατακόρυφη',
+        },
+      },
+    },
   },
   en: {
     card: {
@@ -1160,14 +1161,14 @@ const LANGUAGES = {
         invalidStateContent: 'The state content is invalid or malformed.',
         invalidStateContentEntry: 'One or more entries in the state content are invalid.',
         invalidTheme: 'The specified theme is unknown. Default theme will be used.',
-        appliedDefaultValue: 'A default value has been applied automatically.'
-      }
+        appliedDefaultValue: 'A default value has been applied automatically.',
+      },
     },
     editor: {
       title: {
         content: 'Content',
         interaction: 'Interactions',
-        theme: 'Look & Feel'
+        theme: 'Look & Feel',
       },
       field: {
         entity: 'Entity',
@@ -1196,7 +1197,7 @@ const LANGUAGES = {
         bar_color: 'Color for the bar',
         icon: 'Icon',
         color: 'Primary color',
-        layout: 'Card layout'
+        layout: 'Card layout',
       },
       option: {
         theme: {
@@ -1206,20 +1207,20 @@ const LANGUAGES = {
           temperature: 'Temperature',
           humidity: 'Humidity',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'Small',
           medium: 'Medium',
           large: 'Large',
-          xlarge: 'Extra Large'
+          xlarge: 'Extra Large',
         },
         layout: {
           horizontal: 'Horizontal (default)',
-          vertical: 'Vertical'
-        }
-      }
-    }
+          vertical: 'Vertical',
+        },
+      },
+    },
   },
   es: {
     card: {
@@ -1249,14 +1250,14 @@ const LANGUAGES = {
         invalidStateContent: 'El contenido del estado es inválido o está mal formado.',
         invalidStateContentEntry: 'Una o más entradas en el contenido del estado son inválidas.',
         invalidTheme: 'El tema especificado es desconocido. Se usará el tema por defecto.',
-        appliedDefaultValue: 'Se ha aplicado un valor predeterminado automáticamente.'
-      }
+        appliedDefaultValue: 'Se ha aplicado un valor predeterminado automáticamente.',
+      },
     },
     editor: {
       title: {
         content: 'Contenido',
         interaction: 'Interacciones',
-        theme: 'Apariencia y funcionamiento'
+        theme: 'Apariencia y funcionamiento',
       },
       field: {
         entity: 'Entidad',
@@ -1285,7 +1286,7 @@ const LANGUAGES = {
         bar_color: 'Color de la barra',
         icon: 'Icono',
         color: 'Color del icono',
-        layout: 'Disposición de la tarjeta'
+        layout: 'Disposición de la tarjeta',
       },
       option: {
         theme: {
@@ -1295,20 +1296,20 @@ const LANGUAGES = {
           temperature: 'Temperatura',
           humidity: 'Humedad',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'Pequeña',
           medium: 'Mediana',
           large: 'Grande',
-          xlarge: 'Extra grande'
+          xlarge: 'Extra grande',
         },
         layout: {
           horizontal: 'Horizontal (predeterminado)',
-          vertical: 'Vertical'
-        }
-      }
-    }
+          vertical: 'Vertical',
+        },
+      },
+    },
   },
   fi: {
     card: {
@@ -1338,14 +1339,14 @@ const LANGUAGES = {
         invalidStateContent: 'Tilasisältö on virheellinen tai väärässä muodossa.',
         invalidStateContentEntry: 'Yksi tai useampi tilasisällön merkintä on virheellinen.',
         invalidTheme: 'Määritetty teema on tuntematon. Käytetään oletusteemaa.',
-        appliedDefaultValue: 'Oletusarvo on asetettu automaattisesti.'
-      }
+        appliedDefaultValue: 'Oletusarvo on asetettu automaattisesti.',
+      },
     },
     editor: {
       title: {
         content: 'Sisältö',
         interaction: 'Vuorovaikutukset',
-        theme: 'Ulkoasu'
+        theme: 'Ulkoasu',
       },
       field: {
         entity: 'Entiteetti',
@@ -1374,7 +1375,7 @@ const LANGUAGES = {
         bar_color: 'Palkin väri',
         icon: 'Ikoni',
         color: 'Pääväri',
-        layout: 'Kortin asettelu'
+        layout: 'Kortin asettelu',
       },
       option: {
         theme: {
@@ -1384,20 +1385,20 @@ const LANGUAGES = {
           temperature: 'Lämpötila',
           humidity: 'Kosteus',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'Pieni',
           medium: 'Keski',
           large: 'Suuri',
-          xlarge: 'Erittäin suuri'
+          xlarge: 'Erittäin suuri',
         },
         layout: {
           horizontal: 'Vaakasuora (oletus)',
-          vertical: 'Pystysuora'
-        }
-      }
-    }
+          vertical: 'Pystysuora',
+        },
+      },
+    },
   },
   fr: {
     card: {
@@ -1427,14 +1428,14 @@ const LANGUAGES = {
         invalidStateContent: 'Le contenu d’état est invalide ou mal formé.',
         invalidStateContentEntry: 'Une ou plusieurs entrées du contenu d’état sont invalides.',
         invalidTheme: 'Le thème spécifié est inconnu. Le thème par défaut sera utilisé.',
-        appliedDefaultValue: 'Une valeur par défaut a été appliquée automatiquement.'
-      }
+        appliedDefaultValue: 'Une valeur par défaut a été appliquée automatiquement.',
+      },
     },
     editor: {
       title: {
         content: 'Contenu',
         interaction: 'Interactions',
-        theme: 'Aspect visuel et convivialité'
+        theme: 'Aspect visuel et convivialité',
       },
       field: {
         entity: 'Entité',
@@ -1445,12 +1446,12 @@ const LANGUAGES = {
         min_value: 'Valeur minimum',
         max_value: 'Valeur maximum',
         max_value_attribute: 'Attribut (max_value)',
-        tap_action: 'Comportement lors d\'un appui court',
-        double_tap_action: 'Comportement lors d\'un double appui',
-        hold_action: 'Comportement lors d\'un appui long',
-        icon_tap_action: 'Comportement lors de l\'appui sur l\'icône',
-        icon_double_tap_action: 'Comportement lors d\'un double appui sur l\'icône',
-        icon_hold_action: 'Comportement lors d\'un appui long sur l\'icône',
+        tap_action: "Comportement lors d'un appui court",
+        double_tap_action: "Comportement lors d'un double appui",
+        hold_action: "Comportement lors d'un appui long",
+        icon_tap_action: "Comportement lors de l'appui sur l'icône",
+        icon_double_tap_action: "Comportement lors d'un double appui sur l'icône",
+        icon_hold_action: "Comportement lors d'un appui long sur l'icône",
         toggle_icon: 'Icône',
         toggle_name: 'Nom',
         toggle_value: 'Valeur',
@@ -1462,31 +1463,31 @@ const LANGUAGES = {
         bar_size: 'Taille de la barre',
         bar_color: 'Couleur de la barre',
         icon: 'Icône',
-        color: 'Couleur de l\'icône',
-        layout: 'Disposition de la carte'
+        color: "Couleur de l'icône",
+        layout: 'Disposition de la carte',
       },
       option: {
         theme: {
-          optimal_when_low: 'Optimal quand c\'est bas (CPU, RAM,...)',
-          optimal_when_high: 'Optimal quand c\'est élevé (Batterie...)',
+          optimal_when_low: "Optimal quand c'est bas (CPU, RAM,...)",
+          optimal_when_high: "Optimal quand c'est élevé (Batterie...)",
           light: 'Lumière',
           temperature: 'Température',
           humidity: 'Humidité',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'Petite',
           medium: 'Moyenne',
           large: 'Grande',
-          xlarge: 'Très grande'
+          xlarge: 'Très grande',
         },
         layout: {
           horizontal: 'Horizontal (par défaut)',
-          vertical: 'Vertical'
-        }
-      }
-    }
+          vertical: 'Vertical',
+        },
+      },
+    },
   },
   hi: {
     card: {
@@ -1516,14 +1517,14 @@ const LANGUAGES = {
         invalidStateContent: 'स्थिति सामग्री अमान्य या गलत तरीके से बनाई गई है।',
         invalidStateContentEntry: 'स्थिति सामग्री में एक या अधिक प्रविष्टियां अमान्य हैं।',
         invalidTheme: 'निर्दिष्ट थीम अज्ञात है। डिफ़ॉल्ट थीम का उपयोग किया जाएगा।',
-        appliedDefaultValue: 'एक डिफ़ॉल्ट मान स्वचालित रूप से लागू किया गया है।'
-      }
+        appliedDefaultValue: 'एक डिफ़ॉल्ट मान स्वचालित रूप से लागू किया गया है।',
+      },
     },
     editor: {
       title: {
         content: 'सामग्री',
         interaction: 'बातचीत',
-        theme: 'रूप और अनुभव'
+        theme: 'रूप और अनुभव',
       },
       field: {
         entity: 'एंटिटी',
@@ -1552,7 +1553,7 @@ const LANGUAGES = {
         bar_color: 'बार का रंग',
         icon: 'आइकन',
         color: 'मुख्य रंग',
-        layout: 'कार्ड लेआउट'
+        layout: 'कार्ड लेआउट',
       },
       option: {
         theme: {
@@ -1562,20 +1563,20 @@ const LANGUAGES = {
           temperature: 'तापमान',
           humidity: 'आर्द्रता',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'छोटी',
           medium: 'मध्यम',
           large: 'बड़ी',
-          xlarge: 'अतिरिक्त बड़ी'
+          xlarge: 'अतिरिक्त बड़ी',
         },
         layout: {
           horizontal: 'क्षैतिज (डिफ़ॉल्ट)',
-          vertical: 'लंबवत'
-        }
-      }
-    }
+          vertical: 'लंबवत',
+        },
+      },
+    },
   },
   hr: {
     card: {
@@ -1605,14 +1606,14 @@ const LANGUAGES = {
         invalidStateContent: 'Sadržaj stanja je nevažeći ili pogrešno formatiran.',
         invalidStateContentEntry: 'Jedan ili više unosa stanja su nevažeći.',
         invalidTheme: 'Navedena tema je nepoznata. Koristi se zadana tema.',
-        appliedDefaultValue: 'Zadana vrijednost automatski je primijenjena.'
-      }
+        appliedDefaultValue: 'Zadana vrijednost automatski je primijenjena.',
+      },
     },
     editor: {
       title: {
         content: 'Sadržaj',
         interaction: 'Interakcije',
-        theme: 'Izgled i funkcionalnost'
+        theme: 'Izgled i funkcionalnost',
       },
       field: {
         entity: 'Entitet',
@@ -1641,7 +1642,7 @@ const LANGUAGES = {
         bar_color: 'Boja za traku',
         icon: 'Ikona',
         color: 'Primarna boja',
-        layout: 'Izgled kartice'
+        layout: 'Izgled kartice',
       },
       option: {
         theme: {
@@ -1651,20 +1652,20 @@ const LANGUAGES = {
           temperature: 'Temperatura',
           humidity: 'Vlažnost',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'Mala',
           medium: 'Srednja',
           large: 'Velika',
-          xlarge: 'Vrlo velika'
+          xlarge: 'Vrlo velika',
         },
         layout: {
           horizontal: 'Horizontalno (zadano)',
-          vertical: 'Vertikalno'
-        }
-      }
-    }
+          vertical: 'Vertikalno',
+        },
+      },
+    },
   },
   id: {
     card: {
@@ -1694,14 +1695,14 @@ const LANGUAGES = {
         invalidStateContent: 'Konten state tidak valid atau salah format.',
         invalidStateContentEntry: 'Satu atau lebih entri dalam konten state tidak valid.',
         invalidTheme: 'Tema yang ditentukan tidak dikenal. Tema default akan digunakan.',
-        appliedDefaultValue: 'Nilai default telah diterapkan secara otomatis.'
-      }
+        appliedDefaultValue: 'Nilai default telah diterapkan secara otomatis.',
+      },
     },
     editor: {
       title: {
         content: 'Konten',
         interaction: 'Interaksi',
-        theme: 'Tampilan & Nuansa'
+        theme: 'Tampilan & Nuansa',
       },
       field: {
         entity: 'Entitas',
@@ -1730,7 +1731,7 @@ const LANGUAGES = {
         bar_color: 'Warna bar',
         icon: 'Ikon',
         color: 'Warna utama',
-        layout: 'Tata letak kartu'
+        layout: 'Tata letak kartu',
       },
       option: {
         theme: {
@@ -1740,20 +1741,20 @@ const LANGUAGES = {
           temperature: 'Suhu',
           humidity: 'Kelembaban',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'Kecil',
           medium: 'Sedang',
           large: 'Besar',
-          xlarge: 'Sangat besar'
+          xlarge: 'Sangat besar',
         },
         layout: {
           horizontal: 'Horizontal (default)',
-          vertical: 'Vertikal'
-        }
-      }
-    }
+          vertical: 'Vertikal',
+        },
+      },
+    },
   },
   it: {
     card: {
@@ -1768,29 +1769,29 @@ const LANGUAGES = {
         invalidTypeObject: 'Atteso un valore di tipo oggetto.',
         invalidEnumValue: 'Il valore fornito non è tra quelli consentiti.',
         invalidUnionType: 'Il valore non corrisponde a nessuno dei tipi consentiti.',
-        invalidEntityId: 'L\'ID dell\'entità non è valido o è mal formattato.',
+        invalidEntityId: "L'ID dell'entità non è valido o è mal formattato.",
         invalidDecimal: 'Il valore deve essere un numero decimale valido.',
-        invalidActionObject: 'L\'oggetto azione non è valido o è strutturato in modo errato.',
-        missingActionKey: 'Manca una chiave obbligatoria nell\'oggetto azione.',
+        invalidActionObject: "L'oggetto azione non è valido o è strutturato in modo errato.",
+        missingActionKey: "Manca una chiave obbligatoria nell'oggetto azione.",
         invalidCustomThemeArray: 'Il tema personalizzato deve essere un array.',
         invalidCustomThemeEntry: 'Una o più voci del tema personalizzato non sono valide.',
         invalidMinValue: 'Il valore minimo non è valido o è al di sotto del limite consentito.',
         invalidMaxValue: 'Il valore massimo non è valido o supera il limite consentito.',
         minGreaterThanMax: 'Il valore minimo non può essere superiore al valore massimo.',
-        discontinuousRange: 'L\'intervallo definito è discontinuo.',
+        discontinuousRange: "L'intervallo definito è discontinuo.",
         missingColorProperty: 'Manca una proprietà colore obbligatoria.',
         invalidIconType: 'Il tipo di icona specificato non è valido o non è riconosciuto.',
         invalidStateContent: 'Il contenuto dello stato non è valido o è mal formattato.',
         invalidStateContentEntry: 'Una o più voci nel contenuto dello stato non sono valide.',
         invalidTheme: 'Il tema specificato è sconosciuto. Verrà utilizzato il tema predefinito.',
-        appliedDefaultValue: 'È stato applicato automaticamente un valore predefinito.'
-      }
+        appliedDefaultValue: 'È stato applicato automaticamente un valore predefinito.',
+      },
     },
     editor: {
       title: {
         content: 'Contenuto',
         interaction: 'Interazioni',
-        theme: 'Aspetto e funzionalità'
+        theme: 'Aspetto e funzionalità',
       },
       field: {
         entity: 'Entità',
@@ -1804,9 +1805,9 @@ const LANGUAGES = {
         tap_action: 'Azione al tocco breve',
         double_tap_action: 'Azione al doppio tocco',
         hold_action: 'Azione al tocco prolungato',
-        icon_tap_action: 'Azione al tocco dell\'icona',
-        icon_double_tap_action: 'Azione al doppio tocco dell\'icona',
-        icon_hold_action: 'Azione al tocco prolungato dell\'icona',
+        icon_tap_action: "Azione al tocco dell'icona",
+        icon_double_tap_action: "Azione al doppio tocco dell'icona",
+        icon_hold_action: "Azione al tocco prolungato dell'icona",
         toggle_icon: 'Icona',
         toggle_name: 'Nome',
         toggle_value: 'Valore',
@@ -1818,8 +1819,8 @@ const LANGUAGES = {
         bar_size: 'Dimensione della barra',
         bar_color: 'Colore per la barra',
         icon: 'Icona',
-        color: 'Colore dell\'icona',
-        layout: 'Layout della carta'
+        color: "Colore dell'icona",
+        layout: 'Layout della carta',
       },
       option: {
         theme: {
@@ -1829,20 +1830,20 @@ const LANGUAGES = {
           temperature: 'Temperatura',
           humidity: 'Umidità',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'Piccola',
           medium: 'Media',
           large: 'Grande',
-          xlarge: 'Extra grande'
+          xlarge: 'Extra grande',
         },
         layout: {
           horizontal: 'Orizzontale (predefinito)',
-          vertical: 'Verticale'
-        }
-      }
-    }
+          vertical: 'Verticale',
+        },
+      },
+    },
   },
   ja: {
     card: {
@@ -1872,14 +1873,14 @@ const LANGUAGES = {
         invalidStateContent: '状態の内容が無効または形式が不正です。',
         invalidStateContentEntry: '状態の内容の1つ以上のエントリが無効です。',
         invalidTheme: '指定されたテーマは不明です。デフォルトのテーマが使用されます。',
-        appliedDefaultValue: 'デフォルト値が自動的に適用されました。'
-      }
+        appliedDefaultValue: 'デフォルト値が自動的に適用されました。',
+      },
     },
     editor: {
       title: {
         content: 'コンテンツ',
         interaction: 'インタラクション',
-        theme: '外観'
+        theme: '外観',
       },
       field: {
         entity: 'エンティティ',
@@ -1908,7 +1909,7 @@ const LANGUAGES = {
         bar_color: 'バーの色',
         icon: 'アイコン',
         color: 'メインカラー',
-        layout: 'カードレイアウト'
+        layout: 'カードレイアウト',
       },
       option: {
         theme: {
@@ -1918,20 +1919,20 @@ const LANGUAGES = {
           temperature: '温度',
           humidity: '湿度',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: '小',
           medium: '中',
           large: '大',
-          xlarge: '特大'
+          xlarge: '特大',
         },
         layout: {
           horizontal: '水平（デフォルト）',
-          vertical: '垂直'
-        }
-      }
-    }
+          vertical: '垂直',
+        },
+      },
+    },
   },
   ko: {
     card: {
@@ -1961,14 +1962,14 @@ const LANGUAGES = {
         invalidStateContent: '상태 콘텐츠가 잘못되었거나 형식이 잘못되었습니다.',
         invalidStateContentEntry: '상태 콘텐츠에 하나 이상의 잘못된 항목이 있습니다.',
         invalidTheme: '지정된 테마를 알 수 없습니다. 기본 테마가 사용됩니다.',
-        appliedDefaultValue: '기본값이 자동으로 적용되었습니다.'
-      }
+        appliedDefaultValue: '기본값이 자동으로 적용되었습니다.',
+      },
     },
     editor: {
       title: {
         content: '콘텐츠',
         interaction: '상호작용',
-        theme: '테마 및 스타일'
+        theme: '테마 및 스타일',
       },
       field: {
         entity: '엔티티',
@@ -1997,7 +1998,7 @@ const LANGUAGES = {
         bar_color: '바 색상',
         icon: '아이콘',
         color: '기본 색상',
-        layout: '카드 레이아웃'
+        layout: '카드 레이아웃',
       },
       option: {
         theme: {
@@ -2007,20 +2008,20 @@ const LANGUAGES = {
           temperature: '온도',
           humidity: '습도',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: '작은',
           medium: '중간',
           large: '큰',
-          xlarge: '매우 큰'
+          xlarge: '매우 큰',
         },
         layout: {
           horizontal: '수평 (기본)',
-          vertical: '수직'
-        }
-      }
-    }
+          vertical: '수직',
+        },
+      },
+    },
   },
   mk: {
     card: {
@@ -2050,14 +2051,14 @@ const LANGUAGES = {
         invalidStateContent: 'Состојбата е невалидна или лошо форматирана.',
         invalidStateContentEntry: 'Еден или повеќе елементи во состојбата се невалидни.',
         invalidTheme: 'Темата е непозната. Ќе се користи стандардна тема.',
-        appliedDefaultValue: 'Автоматски е применета стандардна вредност.'
-      }
+        appliedDefaultValue: 'Автоматски е применета стандардна вредност.',
+      },
     },
     editor: {
       title: {
         content: 'Содржина',
         interaction: 'Интеракции',
-        theme: 'Изглед и функционалност'
+        theme: 'Изглед и функционалност',
       },
       field: {
         entity: 'Ентитет',
@@ -2086,7 +2087,7 @@ const LANGUAGES = {
         bar_color: 'Боја за лентата',
         icon: 'Икона',
         color: 'Примарна боја',
-        layout: 'Распоред на карта'
+        layout: 'Распоред на карта',
       },
       option: {
         theme: {
@@ -2096,20 +2097,20 @@ const LANGUAGES = {
           temperature: 'Температура',
           humidity: 'Влажност',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'Мала',
           medium: 'Средна',
           large: 'Голема',
-          xlarge: 'Многу голема'
+          xlarge: 'Многу голема',
         },
         layout: {
           horizontal: 'Хоризонтално (стандардно)',
-          vertical: 'Вертикално'
-        }
-      }
-    }
+          vertical: 'Вертикално',
+        },
+      },
+    },
   },
   nb: {
     card: {
@@ -2139,14 +2140,14 @@ const LANGUAGES = {
         invalidStateContent: 'Tilstandsinnholdet er ugyldig eller feil formatert.',
         invalidStateContentEntry: 'En eller flere oppføringer i tilstandsinnholdet er ugyldige.',
         invalidTheme: 'Angitt tema er ukjent. Standardtema vil bli brukt.',
-        appliedDefaultValue: 'En standardverdi har blitt brukt automatisk.'
-      }
+        appliedDefaultValue: 'En standardverdi har blitt brukt automatisk.',
+      },
     },
     editor: {
       title: {
         content: 'Innhold',
         interaction: 'Interaksjoner',
-        theme: 'Utseende og funksjonalitet'
+        theme: 'Utseende og funksjonalitet',
       },
       field: {
         entity: 'Enhet',
@@ -2175,7 +2176,7 @@ const LANGUAGES = {
         bar_color: 'Farge for baren',
         icon: 'Ikon',
         color: 'Primærfarge',
-        layout: 'Kortlayout'
+        layout: 'Kortlayout',
       },
       option: {
         theme: {
@@ -2185,20 +2186,20 @@ const LANGUAGES = {
           temperature: 'Temperatur',
           humidity: 'Fuktighet',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'Liten',
           medium: 'Medium',
           large: 'Stor',
-          xlarge: 'Ekstra stor'
+          xlarge: 'Ekstra stor',
         },
         layout: {
           horizontal: 'Horisontal (standard)',
-          vertical: 'Vertikal'
-        }
-      }
-    }
+          vertical: 'Vertikal',
+        },
+      },
+    },
   },
   nl: {
     card: {
@@ -2228,14 +2229,14 @@ const LANGUAGES = {
         invalidStateContent: 'De statusinhoud is ongeldig of foutief.',
         invalidStateContentEntry: 'Een of meer onderdelen van de statusinhoud zijn ongeldig.',
         invalidTheme: 'Het opgegeven thema is onbekend. Het standaardthema wordt gebruikt.',
-        appliedDefaultValue: 'Een standaardwaarde is automatisch toegepast.'
-      }
+        appliedDefaultValue: 'Een standaardwaarde is automatisch toegepast.',
+      },
     },
     editor: {
       title: {
         content: 'Inhoud',
         interaction: 'Interactie',
-        theme: 'Uiterlijk en gebruiksgemak'
+        theme: 'Uiterlijk en gebruiksgemak',
       },
       field: {
         entity: 'Entiteit',
@@ -2264,7 +2265,7 @@ const LANGUAGES = {
         bar_color: 'Kleur voor de balk',
         icon: 'Pictogram',
         color: 'Primaire kleur',
-        layout: 'Kaartindeling'
+        layout: 'Kaartindeling',
       },
       option: {
         theme: {
@@ -2274,20 +2275,20 @@ const LANGUAGES = {
           temperature: 'Temperatuur',
           humidity: 'Vochtigheid',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'Klein',
           medium: 'Middel',
           large: 'Groot',
-          xlarge: 'Extra groot'
+          xlarge: 'Extra groot',
         },
         layout: {
           horizontal: 'Horizontaal (standaard)',
-          vertical: 'Verticaal'
-        }
-      }
-    }
+          vertical: 'Verticaal',
+        },
+      },
+    },
   },
   pl: {
     card: {
@@ -2317,14 +2318,14 @@ const LANGUAGES = {
         invalidStateContent: 'Zawartość stanu jest nieprawidłowa lub uszkodzona.',
         invalidStateContentEntry: 'Jedna lub więcej pozycji zawartości stanu jest nieprawidłowa.',
         invalidTheme: 'Podany motyw jest nieznany. Zostanie użyty domyślny motyw.',
-        appliedDefaultValue: 'Zastosowano domyślną wartość automatycznie.'
-      }
+        appliedDefaultValue: 'Zastosowano domyślną wartość automatycznie.',
+      },
     },
     editor: {
       title: {
         content: 'Zawartość',
         interaction: 'Interakcje',
-        theme: 'Wygląd i funkcjonalność'
+        theme: 'Wygląd i funkcjonalność',
       },
       field: {
         entity: 'Encja',
@@ -2353,7 +2354,7 @@ const LANGUAGES = {
         bar_color: 'Kolor paska',
         icon: 'Ikona',
         color: 'Kolor podstawowy',
-        layout: 'Układ karty'
+        layout: 'Układ karty',
       },
       option: {
         theme: {
@@ -2363,20 +2364,20 @@ const LANGUAGES = {
           temperature: 'Temperatura',
           humidity: 'Wilgotność',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'Mała',
           medium: 'Średnia',
           large: 'Duża',
-          xlarge: 'Bardzo duża'
+          xlarge: 'Bardzo duża',
         },
         layout: {
           horizontal: 'Poziomo (domyślnie)',
-          vertical: 'Pionowy'
-        }
-      }
-    }
+          vertical: 'Pionowy',
+        },
+      },
+    },
   },
   pt: {
     card: {
@@ -2406,14 +2407,14 @@ const LANGUAGES = {
         invalidStateContent: 'O conteúdo do estado é inválido ou mal formatado.',
         invalidStateContentEntry: 'Uma ou mais entradas do conteúdo do estado são inválidas.',
         invalidTheme: 'O tema especificado é desconhecido. Tema padrão será usado.',
-        appliedDefaultValue: 'Um valor padrão foi aplicado automaticamente.'
-      }
+        appliedDefaultValue: 'Um valor padrão foi aplicado automaticamente.',
+      },
     },
     editor: {
       title: {
         content: 'Conteúdo',
         interaction: 'Interações',
-        theme: 'Aparência e usabilidade'
+        theme: 'Aparência e usabilidade',
       },
       field: {
         entity: 'Entidade',
@@ -2442,7 +2443,7 @@ const LANGUAGES = {
         bar_color: 'Cor para a barra',
         icon: 'Ícone',
         color: 'Cor primária',
-        layout: 'Layout do cartão'
+        layout: 'Layout do cartão',
       },
       option: {
         theme: {
@@ -2452,20 +2453,20 @@ const LANGUAGES = {
           temperature: 'Temperatura',
           humidity: 'Humidade',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'Pequena',
           medium: 'Média',
           large: 'Grande',
-          xlarge: 'Extra grande'
+          xlarge: 'Extra grande',
         },
         layout: {
           horizontal: 'Horizontal (padrão)',
-          vertical: 'Vertical'
-        }
-      }
-    }
+          vertical: 'Vertical',
+        },
+      },
+    },
   },
   ro: {
     card: {
@@ -2495,14 +2496,14 @@ const LANGUAGES = {
         invalidStateContent: 'Conținutul stării este invalid sau formatat greșit.',
         invalidStateContentEntry: 'Una sau mai multe intrări în conținutul stării sunt invalide.',
         invalidTheme: 'Tema specificată este necunoscută. Va fi utilizată tema implicită.',
-        appliedDefaultValue: 'A fost aplicată automat o valoare implicită.'
-      }
+        appliedDefaultValue: 'A fost aplicată automat o valoare implicită.',
+      },
     },
     editor: {
       title: {
         content: 'Conținut',
         interaction: 'Interacțiuni',
-        theme: 'Aspect & Stil'
+        theme: 'Aspect & Stil',
       },
       field: {
         entity: 'Entitate',
@@ -2531,7 +2532,7 @@ const LANGUAGES = {
         bar_color: 'Culoare bară',
         icon: 'Pictogramă',
         color: 'Culoare principală',
-        layout: 'Aspectul cardului'
+        layout: 'Aspectul cardului',
       },
       option: {
         theme: {
@@ -2541,20 +2542,20 @@ const LANGUAGES = {
           temperature: 'Temperatură',
           humidity: 'Umiditate',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'Mică',
           medium: 'Medie',
           large: 'Mare',
-          xlarge: 'Foarte mare'
+          xlarge: 'Foarte mare',
         },
         layout: {
           horizontal: 'Orizontal (implicit)',
-          vertical: 'Vertical'
-        }
-      }
-    }
+          vertical: 'Vertical',
+        },
+      },
+    },
   },
   ru: {
     card: {
@@ -2584,14 +2585,14 @@ const LANGUAGES = {
         invalidStateContent: 'Содержимое состояния недействительно или неправильно сформировано.',
         invalidStateContentEntry: 'Одна или несколько записей в содержимом состояния недействительны.',
         invalidTheme: 'Указанная тема неизвестна. Будет использована тема по умолчанию.',
-        appliedDefaultValue: 'Значение по умолчанию было применено автоматически.'
-      }
+        appliedDefaultValue: 'Значение по умолчанию было применено автоматически.',
+      },
     },
     editor: {
       title: {
         content: 'Содержимое',
         interaction: 'Взаимодействия',
-        theme: 'Внешний вид'
+        theme: 'Внешний вид',
       },
       field: {
         entity: 'Сущность',
@@ -2620,7 +2621,7 @@ const LANGUAGES = {
         bar_color: 'Цвет полосы',
         icon: 'Иконка',
         color: 'Основной цвет',
-        layout: 'Макет карточки'
+        layout: 'Макет карточки',
       },
       option: {
         theme: {
@@ -2630,20 +2631,20 @@ const LANGUAGES = {
           temperature: 'Температура',
           humidity: 'Влажность',
           pm25: 'PM2.5',
-          voc: 'ЛОС'
+          voc: 'ЛОС',
         },
         bar_size: {
           small: 'Маленькая',
           medium: 'Средняя',
           large: 'Большая',
-          xlarge: 'Очень большая'
+          xlarge: 'Очень большая',
         },
         layout: {
           horizontal: 'Горизонтальный (по умолчанию)',
-          vertical: 'Вертикальный'
-        }
-      }
-    }
+          vertical: 'Вертикальный',
+        },
+      },
+    },
   },
   sv: {
     card: {
@@ -2673,14 +2674,14 @@ const LANGUAGES = {
         invalidStateContent: 'Tillståndsinnehållet är ogiltigt eller felaktigt.',
         invalidStateContentEntry: 'En eller flera poster i tillståndsinnehållet är ogiltiga.',
         invalidTheme: 'Det angivna temat är okänt. Standardtema används.',
-        appliedDefaultValue: 'Ett standardvärde har tillämpats automatiskt.'
-      }
+        appliedDefaultValue: 'Ett standardvärde har tillämpats automatiskt.',
+      },
     },
     editor: {
       title: {
         content: 'Innehåll',
         interaction: 'Interaktioner',
-        theme: 'Utseende och funktionalitet'
+        theme: 'Utseende och funktionalitet',
       },
       field: {
         entity: 'Enhet',
@@ -2709,7 +2710,7 @@ const LANGUAGES = {
         bar_color: 'Färg för baren',
         icon: 'Ikon',
         color: 'Primärfärg',
-        layout: 'Kortlayout'
+        layout: 'Kortlayout',
       },
       option: {
         theme: {
@@ -2719,20 +2720,20 @@ const LANGUAGES = {
           temperature: 'Temperatur',
           humidity: 'Luftfuktighet',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'Liten',
           medium: 'Medium',
           large: 'Stor',
-          xlarge: 'Extra stor'
+          xlarge: 'Extra stor',
         },
         layout: {
           horizontal: 'Horisontell (standard)',
-          vertical: 'Vertikal'
-        }
-      }
-    }
+          vertical: 'Vertikal',
+        },
+      },
+    },
   },
   template: {
     card: {
@@ -2762,14 +2763,14 @@ const LANGUAGES = {
         invalidStateContent: '',
         invalidStateContentEntry: '',
         invalidTheme: '',
-        appliedDefaultValue: ''
-      }
+        appliedDefaultValue: '',
+      },
     },
     editor: {
       title: {
         content: '',
         interaction: '',
-        theme: ''
+        theme: '',
       },
       field: {
         entity: '',
@@ -2798,7 +2799,7 @@ const LANGUAGES = {
         bar_color: '',
         icon: '',
         color: '',
-        layout: ''
+        layout: '',
       },
       option: {
         theme: {
@@ -2808,20 +2809,20 @@ const LANGUAGES = {
           temperature: '',
           humidity: '',
           pm25: '',
-          voc: ''
+          voc: '',
         },
         bar_size: {
           small: '',
           medium: '',
           large: '',
-          xlarge: ''
+          xlarge: '',
         },
         layout: {
           horizontal: '',
-          vertical: ''
-        }
-      }
-    }
+          vertical: '',
+        },
+      },
+    },
   },
   th: {
     card: {
@@ -2851,14 +2852,14 @@ const LANGUAGES = {
         invalidStateContent: 'เนื้อหาสถานะไม่ถูกต้องหรือรูปแบบผิด',
         invalidStateContentEntry: 'หนึ่งหรือหลายรายการในเนื้อหาสถานะไม่ถูกต้อง',
         invalidTheme: 'ธีมที่ระบุไม่รู้จัก จะใช้ธีมเริ่มต้น',
-        appliedDefaultValue: 'ค่าเริ่มต้นถูกนำไปใช้โดยอัตโนมัติ'
-      }
+        appliedDefaultValue: 'ค่าเริ่มต้นถูกนำไปใช้โดยอัตโนมัติ',
+      },
     },
     editor: {
       title: {
         content: 'เนื้อหา',
         interaction: 'การโต้ตอบ',
-        theme: 'รูปลักษณ์และความรู้สึก'
+        theme: 'รูปลักษณ์และความรู้สึก',
       },
       field: {
         entity: 'เอนทิตี',
@@ -2887,7 +2888,7 @@ const LANGUAGES = {
         bar_color: 'สีแถบ',
         icon: 'ไอคอน',
         color: 'สีหลัก',
-        layout: 'เลย์เอาต์การ์ด'
+        layout: 'เลย์เอาต์การ์ด',
       },
       option: {
         theme: {
@@ -2897,26 +2898,26 @@ const LANGUAGES = {
           temperature: 'อุณหภูมิ',
           humidity: 'ความชื้น',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'เล็ก',
           medium: 'กลาง',
           large: 'ใหญ่',
-          xlarge: 'ใหญ่พิเศษ'
+          xlarge: 'ใหญ่พิเศษ',
         },
         layout: {
           horizontal: 'แนวนอน (เริ่มต้น)',
-          vertical: 'แนวตั้ง'
-        }
-      }
-    }
+          vertical: 'แนวตั้ง',
+        },
+      },
+    },
   },
   tr: {
     card: {
       msg: {
-        entityNotFound: 'Varlık Home Assistant\'ta bulunamadı.',
-        attributeNotFound: 'Öznitelik Home Assistant\'ta bulunamadı.',
+        entityNotFound: "Varlık Home Assistant'ta bulunamadı.",
+        attributeNotFound: "Öznitelik Home Assistant'ta bulunamadı.",
         missingRequiredProperty: 'Gerekli bir özellik eksik.',
         invalidTypeString: 'Dize (string) türünde bir değer bekleniyordu.',
         invalidTypeNumber: 'Sayı türünde bir değer bekleniyordu.',
@@ -2940,14 +2941,14 @@ const LANGUAGES = {
         invalidStateContent: 'Durum içeriği geçersiz veya hatalı biçimlendirilmiş.',
         invalidStateContentEntry: 'Durum içeriğindeki bir veya daha fazla giriş geçersiz.',
         invalidTheme: 'Belirtilen tema bilinmiyor. Varsayılan tema kullanılacak.',
-        appliedDefaultValue: 'Varsayılan değer otomatik olarak uygulandı.'
-      }
+        appliedDefaultValue: 'Varsayılan değer otomatik olarak uygulandı.',
+      },
     },
     editor: {
       title: {
         content: 'İçerik',
         interaction: 'Etkileşimler',
-        theme: 'Görünüm'
+        theme: 'Görünüm',
       },
       field: {
         entity: 'Varlık',
@@ -2976,7 +2977,7 @@ const LANGUAGES = {
         bar_color: 'Çubuk rengi',
         icon: 'Simge',
         color: 'Birincil renk',
-        layout: 'Kart düzeni'
+        layout: 'Kart düzeni',
       },
       option: {
         theme: {
@@ -2986,57 +2987,57 @@ const LANGUAGES = {
           temperature: 'Sıcaklık',
           humidity: 'Nem',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'Küçük',
           medium: 'Orta',
           large: 'Büyük',
-          xlarge: 'Çok büyük'
+          xlarge: 'Çok büyük',
         },
         layout: {
           horizontal: 'Yatay (varsayılan)',
-          vertical: 'Dikey'
-        }
-      }
-    }
+          vertical: 'Dikey',
+        },
+      },
+    },
   },
   uk: {
     card: {
       msg: {
         entityNotFound: 'Сутність не знайдена в HA.',
         attributeNotFound: 'Атрибут не знайдено в HA.',
-        missingRequiredProperty: 'Відсутня обов\'язкова властивість.',
+        missingRequiredProperty: "Відсутня обов'язкова властивість.",
         invalidTypeString: 'Очікується значення типу рядок.',
         invalidTypeNumber: 'Очікується значення типу число.',
         invalidTypeBoolean: 'Очікується значення типу булевий.',
         invalidTypeArray: 'Очікується значення típу масив.',
-        invalidTypeObject: 'Очікується значення типу об\'єкт.',
+        invalidTypeObject: "Очікується значення типу об'єкт.",
         invalidEnumValue: 'Надане значення не є одним з дозволених варіантів.',
         invalidUnionType: 'Значення не відповідає жодному з дозволених типів.',
         invalidEntityId: 'ID сутності недійсний або неправильно сформований.',
         invalidDecimal: 'Значення повинно бути дійсним десятковим числом.',
-        invalidActionObject: 'Об\'єкт дії недійсний або неправильно структурований.',
-        missingActionKey: 'Відсутній обов\'язковий ключ в об\'єкті дії.',
+        invalidActionObject: "Об'єкт дії недійсний або неправильно структурований.",
+        missingActionKey: "Відсутній обов'язковий ключ в об'єкті дії.",
         invalidCustomThemeArray: 'Користувацька тема повинна бути масивом.',
         invalidCustomThemeEntry: 'Один або кілька записів у користувацькій темі недійсні.',
         invalidMinValue: 'Мінімальне значення недійсне або нижче дозволених меж.',
         invalidMaxValue: 'Максимальне значення недійсне або вище дозволених меж.',
         minGreaterThanMax: 'Мінімальне значення не може бути більшим за максимальне.',
         discontinuousRange: 'Визначений діапазон є розривним.',
-        missingColorProperty: 'Відсутня обов\'язкова властивість кольору.',
+        missingColorProperty: "Відсутня обов'язкова властивість кольору.",
         invalidIconType: 'Зазначений тип іконки недійсний або нерозпізнаний.',
         invalidStateContent: 'Вміст стану недійсний або неправильно сформований.',
         invalidStateContentEntry: 'Один або кілька записів у вмісті стану недійсні.',
         invalidTheme: 'Зазначена тема невідома. Буде використана тема за замовчуванням.',
-        appliedDefaultValue: 'Значення за замовчуванням було застосовано автоматично.'
-      }
+        appliedDefaultValue: 'Значення за замовчуванням було застосовано автоматично.',
+      },
     },
     editor: {
       title: {
         content: 'Вміст',
         interaction: 'Взаємодії',
-        theme: 'Вигляд та відчуття'
+        theme: 'Вигляд та відчуття',
       },
       field: {
         entity: 'Сутність',
@@ -3065,7 +3066,7 @@ const LANGUAGES = {
         bar_color: 'Колір панелі',
         icon: 'Іконка',
         color: 'Основний колір',
-        layout: 'Розташування картки'
+        layout: 'Розташування картки',
       },
       option: {
         theme: {
@@ -3075,20 +3076,20 @@ const LANGUAGES = {
           temperature: 'Температура',
           humidity: 'Вологість',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'Мала',
           medium: 'Середня',
           large: 'Велика',
-          xlarge: 'Дуже велика'
+          xlarge: 'Дуже велика',
         },
         layout: {
           horizontal: 'Горизонтальний (за замовчуванням)',
-          vertical: 'Вертикальний'
-        }
-      }
-    }
+          vertical: 'Вертикальний',
+        },
+      },
+    },
   },
   vi: {
     card: {
@@ -3118,14 +3119,14 @@ const LANGUAGES = {
         invalidStateContent: 'Nội dung trạng thái không hợp lệ hoặc không đúng định dạng.',
         invalidStateContentEntry: 'Một hoặc nhiều mục trong nội dung trạng thái không hợp lệ.',
         invalidTheme: 'Chủ đề được chỉ định không xác định. Chủ đề mặc định sẽ được sử dụng.',
-        appliedDefaultValue: 'Một giá trị mặc định đã được áp dụng tự động.'
-      }
+        appliedDefaultValue: 'Một giá trị mặc định đã được áp dụng tự động.',
+      },
     },
     editor: {
       title: {
         content: 'Nội dung',
         interaction: 'Tương tác',
-        theme: 'Giao diện & Trải nghiệm'
+        theme: 'Giao diện & Trải nghiệm',
       },
       field: {
         entity: 'Thực thể',
@@ -3154,7 +3155,7 @@ const LANGUAGES = {
         bar_color: 'Màu thanh',
         icon: 'Biểu tượng',
         color: 'Màu chính',
-        layout: 'Bố cục thẻ'
+        layout: 'Bố cục thẻ',
       },
       option: {
         theme: {
@@ -3164,20 +3165,20 @@ const LANGUAGES = {
           temperature: 'Nhiệt độ',
           humidity: 'Độ ẩm',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: 'Nhỏ',
           medium: 'Trung bình',
           large: 'Lớn',
-          xlarge: 'Rất lớn'
+          xlarge: 'Rất lớn',
         },
         layout: {
           horizontal: 'Ngang (mặc định)',
-          vertical: 'Dọc'
-        }
-      }
-    }
+          vertical: 'Dọc',
+        },
+      },
+    },
   },
   zh: {
     card: {
@@ -3207,14 +3208,14 @@ const LANGUAGES = {
         invalidStateContent: '状态内容无效或格式错误。',
         invalidStateContentEntry: '状态内容中有一个或多个无效条目。',
         invalidTheme: '指定的主题未知，将使用默认主题。',
-        appliedDefaultValue: '已自动应用默认值。'
-      }
+        appliedDefaultValue: '已自动应用默认值。',
+      },
     },
     editor: {
       title: {
         content: '内容',
         interaction: '交互',
-        theme: '外观'
+        theme: '外观',
       },
       field: {
         entity: '实体',
@@ -3243,7 +3244,7 @@ const LANGUAGES = {
         bar_color: '条形颜色',
         icon: '图标',
         color: '主色',
-        layout: '卡片布局'
+        layout: '卡片布局',
       },
       option: {
         theme: {
@@ -3253,21 +3254,21 @@ const LANGUAGES = {
           temperature: '温度',
           humidity: '湿度',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
         },
         bar_size: {
           small: '小',
           medium: '中',
           large: '大',
-          xlarge: '超大'
+          xlarge: '超大',
         },
         layout: {
           horizontal: '水平（默认）',
-          vertical: '垂直'
-        }
-      }
-    }
-  }
+          vertical: '垂直',
+        },
+      },
+    },
+  },
 };
 
 const EDITOR_INPUT_FIELDS = {
@@ -3492,6 +3493,7 @@ const CARD_CSS = `
   --progress-size-m: 12px;
   --progress-size-l: 16px;
   --progress-size-xl: 42px;
+  --progress-size-overlay: 36px;
 
   /* === HEIGHT VARIABLES === */
   --name-height: 20px;
@@ -3510,8 +3512,7 @@ const CARD_CSS = `
   --card-active-mix: 85%;
 
   /* === TRANSITION VARIABLES === */
-  --progress-transition-width: 0.3s ease;
-  --click-transition-background: 0.5s ease;
+  --progress-transition: 0.3s ease;
 
   /* === TYPOGRAPHY VARIABLES === */
   --name-letter-spacing: 0.1px;
@@ -3523,6 +3524,9 @@ const CARD_CSS = `
   /* === HA RIPPLE === */
   --ha-ripple-hover-opacity: 0.04;
   --ha-ripple-pressed-opacity: 0.12;
+
+  /* === BORDER RADIUS === */
+  --ha-standard-border-radius: var(--ha-card-border-radius, var(--ha-border-radius-lg));
 }
 
 .${CARD.style.bar.sizeOptions.small.label} {
@@ -3542,6 +3546,11 @@ const CARD_CSS = `
   --progress-container-height: var(--progress-size-xl);
 }
 
+ha-card.overlay {
+  --progress-size: var(--epb-progress-bar-size, var(--progress-size-overlay));
+  --progress-container-height: var(--epb-progress-bar-size, var(--progress-size-overlay));
+}
+
 .bottom-container, .top-container {
   --progress-size: var(--epb-progress-bar-size, var(--progress-size-xs));
   --progress-container-height: var(--progress-size-xs);
@@ -3554,11 +3563,11 @@ const CARD_CSS = `
 ${CARD.htmlStructure.card.element} {
   --ha-ripple-color: var(--epb-icon-and-shape-color, var(--icon-and-shape-color, var(--state-icon-color)));
   --current-card-min-width: var(${CARD.style.dynamic.card.minWidth.var}, 100%);
-  --current-card-min-height: 0px;
+  --current-card-min-height: 0;
   --current-card-height: var(${CARD.style.dynamic.card.height.var}, 100%);
   --current-card-padding: 0 var(--spacing);
   --current-card-margin: 0 auto;
-  --current-card-border-radius: var(--ha-card-border-radius, var(--ha-border-radius-lg));
+  --current-card-border-radius: var(--ha-standard-border-radius);
 
   display: flex;
   align-items: center;
@@ -3578,18 +3587,23 @@ ${CARD.htmlStructure.card.element} {
   font-family: var(--epb-card-font-family, var(--ha-font-family-body));
   -moz-osx-font-smoothing: var(--ha-font-smoothing);
   -webkit-font-smoothing: antialiased;
+  transition-property: background-color, box-shadow, border-color;
 }
 
 .horizontal {
   --current-card-min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.horizontal.minHeight});
+  --current-card-padding: 0 var(--spacing);
 }
 
 .vertical {
   --current-card-min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.vertical.minHeight});
+  --current-card-padding: var(--spacing);
 }
 
 .marginless {
   --current-card-min-height: unset;
+  --current-card-padding: 0;
+  --current-card-margin: 0;
 }
 
 /* === BADGE === */
@@ -3610,13 +3624,13 @@ ${CARD.htmlStructure.card.element} {
 .type-custom-vertical-stack-in-card,
 .${CARD.style.dynamic.frameless.class} {
   --ha-card-background: transparent;
-  --ha-card-border-width: 0px;
+  --ha-card-border-width: 0;
   --ha-card-box-shadow: none;
 }
 
 .type-entities {
-  --current-card-padding: 0px;
-  --current-card-margin: 0px;
+  --current-card-padding: 0;
+  --current-card-margin: 0;
   --ha-ripple-hover-opacity: 0;
   --ha-ripple-pressed-opacity: 0;
   --current-card-height: var(--entities-card-min-height); /* 44.8 px*/
@@ -3645,7 +3659,7 @@ ${CARD.htmlStructure.card.element} {
 
 .horizontal {
   --current-container-flex-direction: row;
-  --current-container-padding-top: 0px;
+  --current-container-padding-top: 0;
   --current-container-min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.horizontal.minHeight});
   --current-container-overflow: visible;
   --current-container-gap: var(--spacing);
@@ -3655,25 +3669,18 @@ ${CARD.htmlStructure.card.element} {
 
 .vertical {
   --current-container-flex-direction: column;
-  --current-container-padding-top: calc(var(--progress-size) + 2px);
   --current-container-min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.vertical.minHeight});
   --current-container-overflow: hidden;
-  --current-container-gap: 11px;
+  --current-container-gap: var(--spacing);
   --current-container-box-sizing: border-box;
   --current-container-flex-wrap: nowrap;
 }
 
-ha-card:has(> .bottom-container) > .${CARD.htmlStructure.sections.container.class},
-ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} {
-  --current-container-padding-top: 0px;
+.vertical.default {
+  --current-container-padding-top: var(--progress-size);
 }
 
-.${CARD.layout.orientations.vertical.label}.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.sections.container.class},
-.${CARD.htmlStructure.sections.container.class}.vertical:has(.content-section.overlay) {
-  --current-container-padding-top: 3px;
-}
-
-.${CARD.htmlStructure.sections.container.class}.vertical:has(.content-section.overlay) {
+.${CARD.htmlStructure.sections.container.class}.vertical.up-orientation.overlay {
   --current-container-gap: 9.5px;
 }
 
@@ -3683,22 +3690,20 @@ ha-card:has(> .top-container) > .${CARD.htmlStructure.sections.container.class} 
 }
 
 .${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class} {
-  --current-container-min-height: 0px;
-  --current-container-padding-top: 0px;
+  --current-container-min-height: 0;
+  --current-container-padding-top: 0;
 }
 
 /* =============================================================================
    TOP, BELOW & BOTTOM
    ============================================================================= */
 
-ha-card:has(.bottom-container),
-ha-card:has(.top-container),
-ha-card:has(.below-container) {
-  --current-group-max-width: 100%;
-  --current-group-width: 100%;
+ha-card:is(.bottom, .top, .below) {
+  --group-max-width: 100%;
+  --group-width: 100%;
 }
 
-ha-card:has(.below-container) {
+ha-card.below {
   --current-card-padding: var(--spacing);
   flex-direction: column;
   flex-wrap: nowrap;
@@ -3707,23 +3712,22 @@ ha-card:has(.below-container) {
   gap: var(--spacing);
 }
 
-ha-card:has(.below-container) > .container {
+ha-card.below > .container {
   flex: 1 1 auto;
   min-height: 0;
 }
 
-ha-card.vertical.xlarge:has(.below-container) .container {
-  --current-container-padding-top: 0px;
+ha-card.vertical.xlarge.below .container {
+  --current-container-padding-top: 0;
 }
 
-ha-card:has(.below-container) .${CARD.htmlStructure.elements.progressBar.container.class} {
+ha-card.below .${CARD.htmlStructure.elements.progressBar.container.class} {
   --current-progress-container-height: var(--progress-size);
 }
 
-ha-card.vertical.xlarge:has(.below-container) .${CARD.htmlStructure.elements.progressBar.container.class} {
-  margin: 0px;
+ha-card.vertical.xlarge.below .${CARD.htmlStructure.elements.progressBar.container.class} {
+  margin: 0;
 }
-
 
 .below-container {
   width: 100%;
@@ -3870,116 +3874,122 @@ ha-card.vertical.xlarge:has(.below-container) .${CARD.htmlStructure.elements.pro
    ============================================================================= */
 
 .${CARD.htmlStructure.sections.content.class} {
+  --current-content-height: calc(var(--name-height) + var(--detail-height));
+
   display: flex;
   flex-direction: column;
   justify-content: center;
   flex-grow: var(--current-content-flex-grow);
   flex-shrink: 1;
   width: var(--current-content-width);
+  height: var(--current-content-height);
   gap: var(--current-content-gap, 0);
   min-width: 0;
   overflow: hidden;
   position: relative; /* overlay */
 }
 
-.horizontal {
+ha-card.horizontal .${CARD.htmlStructure.sections.content.class} {
   --current-content-width: calc(100% - 56px);
   --current-content-flex-grow: 1;
   --current-content-gap: 0;
 }
 
-.vertical {
+ha-card.vertical .${CARD.htmlStructure.sections.content.class} {
   --current-content-width: 100%;
   --current-content-flex-grow: 0;
   --current-content-gap: var(--vertical-gap);
+}
+
+ha-card.vertical.default .${CARD.htmlStructure.sections.content.class} {
+  --current-content-height: calc(var(--name-height) + var(--detail-height) + var(--progress-size));
+}
+
+ha-card.type-entities .${CARD.htmlStructure.sections.content.class} {
+  --current-content-height: unset;
+}
+
+.progress-badge .${CARD.htmlStructure.sections.content.class} {
+  --current-content-height: unset;
+}
+
+.overlay .${CARD.htmlStructure.sections.content.class} {
+  --current-content-height: var(--progress-size);
+}
+
+.vertical.up-orientation.overlay .${CARD.htmlStructure.sections.content.class} {
+  --current-content-flex-grow: 1;
+  --current-content-width: var(--epb-progress-bar-size, 50%);
+  --current-content-height: 100%;
 }
 
 /* === TEXT ELEMENTS === */
 
 .${CARD.htmlStructure.elements.nameGroup.class},
 .${CARD.htmlStructure.elements.detailGroup.class} {
+  /* flex layout, dimensions, overflow, alignement*/
   display: flex;
-  align-items: var(--current-group-align-items, center);
-  justify-content: var(--current-group-justify-content, flex-start);
-  min-width: var(--current-group-min-width, 0);
-  max-width: var(--current-group-max-width, none);
-  width: var(--current-group-width, auto);
-  flex-grow: var(--current-group-flex-grow, initial);
-  overflow: var(--current-group-overflow, hidden);
-  text-align: var(--current-group-text-align, left);
-  box-sizing: var(--current-group-box-sizing, content-box);
   z-index: 1;
+  align-items: var(--group-align-items, center);
+  justify-content: var(--group-justify-content, flex-start);
+  flex-grow: var(--group-flex-grow, initial);
+  width: var(--group-width, auto);
+  min-width: var(--group-min-width, 0);
+  max-width: var(--group-max-width, none);
+  height: var(--group-height);
+  line-height: var(--group-height); /*fix size*/
+  overflow: var(--group-overflow, hidden);
+  text-align: var(--group-text-align, left);
+  box-sizing: var(--group-box-sizing, content-box);
+  margin-left: var(--group-margin-left);
 }
 
 .${CARD.htmlStructure.elements.nameGroup.class} {
-  --current-name-groupe-height: var(--type-entities-combined-height, var(--name-height));
-  height: var(--current-name-groupe-height);
-}
-
-.progress-badge .${CARD.htmlStructure.elements.nameGroup.class} {
-  --current-name-groupe-height: 10px;
-  font-size: var(--current-name-groupe-height);
+  --group-height: var(--name-height);
 }
 
 .${CARD.htmlStructure.elements.detailGroup.class} {
-  --current-detail-groupe-height: var(--type-entities-combined-height, var(--detail-height));
-  --current-detail-groupe-min-width: var(--detail-min-width);
-  --current-detail-groupe-max-width: var(--detail-max-width);
+  --group-height: var(--detail-height);
+  --group-min-width: 45px;
+  --group-max-width: 60%;
+}
 
-  height: var(--current-detail-groupe-height);
-  line-height: var(--detail-height);
-  min-width: var(--current-detail-groupe-min-width);
-  max-width: var(--current-detail-groupe-max-width);
+.progress-badge .${CARD.htmlStructure.elements.nameGroup.class} {
+  --group-height: var(--ha-font-size-xs);
 }
 
 .progress-badge .${CARD.htmlStructure.elements.detailGroup.class} {
-  --current-detail-groupe-min-width: unset;
-  --current-detail-groupe-max-width: unset;
+  --group-min-width: unset;
+  --group-max-width: unset;
 }
 
-
-ha-card.horizontal:not(.xlarge):not(:has(.bottom-container)):not(:has(.top-container)) {
-  --detail-min-width: 45px;
-  --detail-max-width: 60%;
-}
-
-ha-card.vertical,
-ha-card.xlarge,
-ha-card:has(.bottom-container),
-ha-card:has(.top-container) {
-  --detail-min-width: 100%;
-  --detail-max-width: 100%;
+ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.detailGroup.class} {
+  --group-min-width: 100%;
+  --group-max-width: 100%;
 }
 
 .row-reverse .${CARD.htmlStructure.elements.detailGroup.class} {
-  min-width: unset;
-}
-
-.${CARD.layout.orientations.horizontal.label} {
-  --current-group-justify-content: flex-start;
-  --current-group-width: auto;
-  --current-group-flex-grow: initial;
-  --current-group-text-align: left;
-  --current-group-box-sizing: content-box;
+  --group-min-width: unset;
 }
 
 .${CARD.layout.orientations.vertical.label} {
-  --current-group-justify-content: center;
-  --current-group-max-width: 100%;
-  --current-group-width: 100%;
-  --current-group-flex-grow: 0;
-  --current-group-text-align: center;
-  --current-group-box-sizing: border-box;
-}
-
-.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.nameGroup.class},
-.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.detailGroup.class} {
-  --current-group-overflow: hidden;
-  min-width: 0;
+  --group-justify-content: center;
+  --group-width: 100%;
+  --group-max-width: 100%;
+  --group-flex-grow: 0;
+  --group-text-align: center;
+  --group-box-sizing: border-box;
 }
 
 .${CARD.layout.orientations.vertical.label} .${CARD.style.bar.sizeOptions.large.label} {
   --name-height: var(--vertical-name-large-height);
+}
+
+.overlay :is(.${CARD.htmlStructure.elements.nameGroup.class}, .${CARD.htmlStructure.elements.detailGroup.class}) {
+  --group-margin-left: 7px;
+}
+.vertical.up-orientation.overlay :is(.${CARD.htmlStructure.elements.nameGroup.class}, .${CARD.htmlStructure.elements.detailGroup.class}) {
+  --group-margin-left: 0;
 }
 
 .ellipsis-wrapper {
@@ -3988,7 +3998,6 @@ ha-card:has(.top-container) {
   text-overflow: ellipsis;
   white-space: nowrap;
   min-width: 0;
-  height: 100%;
   line-height: 100%;
   width: 100%;
 }
@@ -3997,63 +4006,72 @@ ha-card:has(.top-container) {
   display: inline;
 }
 
+.${CARD.htmlStructure.elements.nameCombined.class},
+.${CARD.htmlStructure.elements.detailCombined.class} {
+  color: var(--text-color);
+  font-size: var(--text-font-size);
+  font-weight: var(--text-font-weight);
+  height: var(--text-height);
+  line-height: var(--text-line-height);
+  letter-spacing: var(--text-letter-spacing);
+  margin-right: var(--text-margin-right);
+  text-shadow: var(--text-shadow);
+}
+
 .${CARD.htmlStructure.elements.nameCombined.class} {
-  --current-name-combined-height: var(--type-entities-combined-height, var(--name-height));
-  --current-name-combined-font-size: var(--ha-font-size-m);
-  --current-name-combined-font-weight: var(--type-entities-combined-font-weight, var(--ha-font-weight-medium));
-  --current-name-combined-line-height: var(--type-entities-combined-line-height, var(--name-height));
-  --current-name-combined-color: var(--primary-text-color);
-  --current-name-combined-margin-right: 0px;
-
-  color: var(--epb-name-color, var(--current-name-combined-color));
-  font-size: var(--epb-name-font-size, var(--current-name-combined-font-size));
-  font-weight: var(--epb-name-font-weight, var(--current-name-combined-font-weight));
-  height: var(--current-name-combined-height);
-  line-height: var(--current-name-combined-line-height);
-  letter-spacing: var(--epb-name-letter-spacing, var(--name-letter-spacing));
-  margin-right: var(--current-name-combined-margin-right);
+  --text-color: var(--epb-name-color, var(--primary-text-color));
+  --text-font-size: var(--epb-name-font-size, var(--ha-font-size-m));
+  --text-font-weight: var(--epb-name-font-weight, var(--ha-font-weight-medium));
+  --text-height: var(--name-height);
+  --text-line-height: var(--name-height);
+  --text-letter-spacing: var(--epb-name-letter-spacing, var(--name-letter-spacing));
+  --text-margin-right: 0;
 }
-
-
-.progress-badge .${CARD.htmlStructure.elements.nameCombined.class} {
-  --current-name-combined-height: 10px;
-  --current-name-combined-font-size: 10px;
-  --current-name-combined-font-weight: 500;
-  --current-name-combined-line-height: 10px;
-  --current-name-combined-color: var(--secondary-text-color);
-  --current-name-combined-margin-right: 5px;
-}
-
 
 .${CARD.htmlStructure.elements.detailCombined.class} {
-  --current-detail-font-size: var(--type-entities-detail-combined-font-size, var(--ha-font-size-s));
-  --current-detail-font-weight: var(--type-entities-combined-font-weight, var(--ha-font-weight-body));;
-  --current-detail-letter-spacing: var(--letter-spacing-detail);
-  --current-detail-color: var(--type-entities-detail-combined-color, var(--primary-text-color));
+  --text-color: var(--epb-name-color, var(--primary-text-color));
+  --text-font-size: var(--ha-font-size-s);
+  --text-font-weight: var(--ha-font-weight-body);
+  --text-height: var(--detail-height);
+  --text-line-height: var(--detail-height);
+  --text-letter-spacing: var(--letter-spacing-detail);
+  --text-margin-right: 0;
+}
 
-  color: var(--epb-detail-color, var(--current-detail-color));
-  font-size: var(--epb-detail-font-size, var(--current-detail-font-size));
-  font-weight: var(--epb-detail-font-weight, var(--current-detail-font-weight));
-  height: var(--type-entities-combined-height, var(--detail-height));
-  line-height: var(--type-entities-combined-line-height, var(--detail-height));
-  letter-spacing: var(--epb-detail-letter-spacing, var(--current-detail-letter-spacing));
+.progress-badge .${CARD.htmlStructure.elements.nameCombined.class} {
+  --text-color: var(--epb-name-color, var(--secondary-text-color));
+  --text-font-size: var(--ha-font-size-xs);
+  --text-font-weight: var(--ha-font-weight-medium);
+  --text-height: 10px;
+  --text-line-height: 10px;
+  --text-margin-right: 5px;
+  --text-letter-spacing: var(--name-letter-spacing);
 }
 
 .progress-badge .${CARD.htmlStructure.elements.detailCombined.class} {
-  --current-detail-font-size: var(--ha-badge-font-size, var(--ha-font-size-s));
-  --current-detail-font-weight: 500;
-  --current-detail-letter-spacing: 0.1px;
-  --current-detail-color: var(--primary-text-color);
+  --text-color: var(--primary-text-color);
+  --text-font-size: var(--ha-badge-font-size, var(--ha-font-size-s));
+  --text-font-weight: var(--ha-font-weight-medium);
+  --text-height: var(--text-font-size);
+  --text-line-height: var(--ha-line-height-condensed);
+  --text-letter-spacing: var(--name-letter-spacing);
 }
 
+.type-entities :is(.${CARD.htmlStructure.elements.nameCombined.class}, 
+                    .${CARD.htmlStructure.elements.detailCombined.class}) {
+  --text-height: var(--entities-height);
+  --text-font-weight: var(--ha-font-weight-normal);
+  --text-line-height: var(--ha-line-height-normal);
+}
 
-/* === ENTITIES TYPE SPECIFIC === */
-.type-entities {
-  --type-entities-combined-height: var(--entities-height);
-  --type-entities-combined-font-weight: var(--ha-font-weight-normal);
-  --type-entities-combined-line-height: var(--ha-line-height-normal);
-  --type-entities-detail-combined-color: var(--secondary-text-color);
-  --type-entities-detail-combined-font-size: var(--ha-font-size-m);
+.type-entities .${CARD.htmlStructure.elements.detailCombined.class} {
+  --text-color: var(--secondary-text-color);
+  --text-font-size: var(--ha-font-size-m);
+}
+
+.overlay.text-shadow :is(.${CARD.htmlStructure.elements.nameCombined.class}, 
+                    .${CARD.htmlStructure.elements.detailCombined.class}) {
+  --text-shadow: 1px 1px 2px var(--card-background-color);
 }
 
 /* === SECONDARY INFO === */
@@ -4100,21 +4118,21 @@ ha-card:has(.top-container) {
   padding: 0;
 }
 
-.secondary-info:has(.multiline),
-.secondary-info:has(.multiline) * {
+.info-multiline .secondary-info,
+.info-multiline .secondary-info * {
   height: 18px;
   font-size: 9px;
 }
 
-.vertical :is(
-  .secondary-info:has(.multiline),
-  .secondary-info:has(.multiline) .secondary-info-detail-group,
-  .secondary-info:has(.multiline) .secondary-info-custom-info
+.vertical.info-multiline :is(
+  .secondary-info,
+  .secondary-info .secondary-info-detail-group,
+  .secondary-info .secondary-info-custom-info
 ) {
   height: unset !important;
 }
 
-.vertical .secondary-info:has(.multiline) .progress-bar-container {
+.vertical.info-multiline .secondary-info .progress-bar-container {
   height: 16px;
 }
 
@@ -4122,12 +4140,20 @@ ha-card:has(.top-container) {
    PROGRESS BAR
    ============================================================================= */
 
+/* ==== CONTAINER === */
+
 .${CARD.htmlStructure.elements.progressBar.container.class} {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-grow: 1;
   height: var(--type-entities-combined-line-height, var(--current-progress-container-height));
+}
+
+.overlay .${CARD.htmlStructure.elements.progressBar.container.class} {
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }
 
 .${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.elements.progressBar.container.class},
@@ -4147,7 +4173,22 @@ ha-card:has(.top-container) {
   margin-top: 23px;
 }
 
-/* ==== SIZE === */
+/* ==== INNER === */
+.${CARD.htmlStructure.elements.progressBar.bar.class} {
+  --bar-radius: var(--ha-standard-border-radius);
+
+  position: relative;
+  width: 100%;
+  flex-grow: var(--bar-flex-grow);
+  overflow: hidden;
+  background-color: var(${CARD.style.dynamic.progressBar.background.var}, var(--divider-color));
+  border-radius: var(--epb-progress-bar-radius, var(--bar-radius));
+}
+
+.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.progressBar.bar.class}  {
+  --bar-flex-grow: 0;
+}
+
 .${CARD.htmlStructure.elements.progressBar.inner.class},
 .${CARD.htmlStructure.elements.progressBar.positiveInner.class},
 .${CARD.htmlStructure.elements.progressBar.negativeInner.class},
@@ -4156,51 +4197,97 @@ ha-card:has(.top-container) {
   max-height: var(--progress-size, 100%);
 }
 
-.${CARD.htmlStructure.elements.progressBar.bar.class} {
-  width: 100%;
-  background-color: var(${CARD.style.dynamic.progressBar.background.var}, var(--divider-color));
-  overflow: hidden;
-  position: relative;
+.overlay .progress-bar {
+  height: 100%;
+  max-height: 100%;
 }
 
-.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.progressBar.bar.class}  {
-  flex-grow: 0;
+.overlay :is(.${CARD.htmlStructure.elements.progressBar.inner.class},
+            .${CARD.htmlStructure.elements.progressBar.positiveInner.class},
+            .${CARD.htmlStructure.elements.progressBar.negativeInner.class}) {
+  height: var(--inner-height, 100%); 
+  max-height: 100%;
 }
-
-/* Progress bar size variants */
 
 .${CARD.htmlStructure.elements.progressBar.inner.class},
 .${CARD.htmlStructure.elements.progressBar.positiveInner.class},
 .${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
-  transition: width var(--progress-transition-width);
-  will-change: width;
+  --inner-radius: 0;
+  --_r: var(--epb-progress-inner-radius, var(--inner-radius));
+  
+  position: absolute;
+  height: var(--inner-height, 100%);
+  width: var(--inner-width, 100%);
+  right: var(--inner-right, auto);
+  left: var(--inner-left, 0);
+  top: var(--inner-top, 0);
+  bottom: var(--inner-bottom, auto);
+  background: var(--inner-background);
+  border-radius: var(--inner-border-radius);
+}
+:not(.vertical.up-orientation.overlay) .${CARD.htmlStructure.elements.progressBar.inner.class},
+:not(.vertical.up-orientation.overlay) .${CARD.htmlStructure.elements.progressBar.positiveInner.class},
+:not(.vertical.up-orientation.overlay) .${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
+  transform-origin: var(--inner-transform-origin, left);
+  transform: scaleX(var(--inner-size, 0));
+  transition: transform var(--progress-transition);
+  will-change: transform;
 }
 
 .${CARD.htmlStructure.elements.progressBar.inner.class},
 .${CARD.htmlStructure.elements.progressBar.positiveInner.class} {
-  background: var(--current-progress-effect, var(--epb-progress-bar-color, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})));
+  --inner-background: var(--epb-progress-bar-color, var(--progress-effect, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})));
 }
 
 .${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
-  background: var(--current-progress-effect-neg, var(--epb-progress-bar-color, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})));
+  --inner-transform-origin: right;
+  --inner-background: var(--epb-progress-bar-color, var(--progress-effect-neg, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})));
 }
 
 .${CARD.htmlStructure.elements.progressBar.inner.class} {
-  width: var(${CARD.style.dynamic.progressBar.size.var}, ${CARD.style.dynamic.progressBar.size.default});
+  --inner-size: var(${CARD.style.dynamic.progressBar.size.var}, 0);
+  --inner-border-radius: var(--_r);
 }
 
 .${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
-  position: absolute;
-  right: 50%;
-  width: var(${CARD.style.dynamic.progressBar.nSize.var}, ${CARD.style.dynamic.progressBar.pSize.default});
-  transform-origin: left;
+  --inner-right: 50%;
+  --inner-width: 50%;
+  --inner-size: var(${CARD.style.dynamic.progressBar.nSize.var}, 0);
+  --inner-border-radius: var(--_r) 0 0 var(--_r);
+}
+.${CARD.htmlStructure.elements.progressBar.positiveInner.class} {
+  --inner-left: 50%;
+  --inner-width: 50%;
+  --inner-size: var(${CARD.style.dynamic.progressBar.pSize.var}, 0);
+  --inner-border-radius: 0 var(--_r) var(--_r) 0;
 }
 
-.${CARD.htmlStructure.elements.progressBar.positiveInner.class} {
-  position: absolute;
-  left: 50%;
-  width: var(${CARD.style.dynamic.progressBar.pSize.var}, ${CARD.style.dynamic.progressBar.nSize.default});
-  transform-origin: right;
+.vertical.up-orientation.overlay .${CARD.htmlStructure.elements.progressBar.inner.class},
+.vertical.up-orientation.overlay .${CARD.htmlStructure.elements.progressBar.positiveInner.class},
+.vertical.up-orientation.overlay .${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
+  --inner-width: 100%;
+  --inner-left: 0;
+  --inner-right: auto;
+  --inner-bottom: 0;
+  --inner-top: auto;
+  transform-origin: var(--inner-transform-origin, bottom);
+  transform: scaleY(var(--inner-size, 0));
+  transition: transform var(--progress-transition);
+  will-change: transform;
+}
+
+.vertical.up-orientation.overlay .progress-bar-positive-inner {
+  --inner-height: 50%;
+  --inner-bottom: 50%;
+  --inner-top: 0;
+  --inner-transform-origin: bottom;
+}
+
+.vertical.up-orientation.overlay .progress-bar-negative-inner {
+  --inner-height: 50%;
+  --inner-top: 50%;
+  --inner-bottom: 0;
+  --inner-transform-origin: top;
 }
 
 /* === ORIENTATION === */
@@ -4209,32 +4296,13 @@ ha-card:has(.top-container) {
 }
 
 /* === RADIUS EFFECT === */
-
-.${CARD.htmlStructure.elements.progressBar.bar.class} {
-  --current-progress-bar-radius: var(--ha-card-border-radius, var(--ha-border-radius-lg));
-  border-radius: var(--epb-progress-bar-radius, var(--current-progress-bar-radius));
-}
-
-.${CARD.htmlStructure.elements.progressBar.inner.class} {
-  --current-progress-inner-radius: 0;
-  border-radius: var(--epb-progress-inner-radius, var(--current-progress-inner-radius));
-}
-
-.${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
-  border-radius: var(--epb-progress-inner-radius, var(--current-progress-inner-radius)) 0 0 var(--epb-progress-inner-radius, var(--current-progress-inner-radius));
-}
-
-.${CARD.htmlStructure.elements.progressBar.positiveInner.class} {
-  border-radius: 0 var(--epb-progress-inner-radius, var(--current-progress-inner-radius)) var(--epb-progress-inner-radius, var(--current-progress-inner-radius)) 0;
-}
-
 .entity-progress-feature
   :is(.${CARD.htmlStructure.elements.progressBar.bar.class},
     .${CARD.htmlStructure.elements.progressBar.inner.class},
     .${CARD.htmlStructure.elements.progressBar.negativeInner.class},
     .${CARD.htmlStructure.elements.progressBar.positiveInner.class}) {
-  --current-progress-bar-radius: var(--feature-border-radius);
-  --current-progress-inner-radius: var(--feature-border-radius);
+  --bar-radius: var(--feature-border-radius);
+  --inner-radius: var(--feature-border-radius);
 }
 
 :is(.top-container, .bottom-container)
@@ -4242,38 +4310,38 @@ ha-card:has(.top-container) {
     .${CARD.htmlStructure.elements.progressBar.inner.class},
     .${CARD.htmlStructure.elements.progressBar.negativeInner.class},
     .${CARD.htmlStructure.elements.progressBar.positiveInner.class}) {
-  --current-progress-bar-radius: 0;
-  --current-progress-inner-radius: 0;
+  --bar-radius: 0;
+  --inner-radius: 0;
 }
 
 .${CARD.style.dynamic.progressBar.effect.radius.class}
   :is(.${CARD.htmlStructure.elements.progressBar.inner.class},
       .${CARD.htmlStructure.elements.progressBar.negativeInner.class},
       .${CARD.htmlStructure.elements.progressBar.positiveInner.class}) {
-  --current-progress-inner-radius: var(--ha-card-border-radius, var(--ha-border-radius-lg));
+  --inner-radius: var(--ha-standard-border-radius);
 }
 
 /* === VARIANTS === */
 /* ----- glass ----- */
 .${CARD.style.dynamic.progressBar.effect.glass.class} {
-  --current-progress-effect: linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
-  --current-progress-effect-neg: linear-gradient(270deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+  --progress-effect: linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+  --progress-effect-neg: linear-gradient(270deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
 }
 
 .vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.glass.class} {
-  --current-progress-effect: linear-gradient(0deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
-  --current-progress-effect-neg: linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+  --progress-effect: linear-gradient(0deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+  --progress-effect-neg: linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
 }
 
 /* ----- gradient / gradient-reverse ----- */
 .${CARD.style.dynamic.progressBar.effect.gradient.class},
 .${CARD.style.dynamic.progressBar.effect.gradientReverse.class} {
-  --current-progress-effect-gradient: linear-gradient(
+  --progress-effect-gradient: linear-gradient(
     90deg,
     color-mix(in srgb, white 40%, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})),
     var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})
   );
-  --current-progress-effect-gradient-rev: linear-gradient(
+  --progress-effect-gradient-rev: linear-gradient(
     270deg,
     color-mix(in srgb, white 40%, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})),
     var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})
@@ -4282,12 +4350,12 @@ ha-card:has(.top-container) {
 
 .vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.gradient.class},
 .vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.gradientReverse.class} {
-  --current-progress-effect-gradient: linear-gradient(
+  --progress-effect-gradient: linear-gradient(
     0deg,
     color-mix(in srgb, white 40%, var(--progress-bar-color, var(--state-icon-color))),
     var(--progress-bar-color, var(--state-icon-color))
   );
-  --current-progress-effect-gradient-rev: linear-gradient(
+  --progress-effect-gradient-rev: linear-gradient(
     180deg,
     color-mix(in srgb, white 40%, var(--progress-bar-color, var(--state-icon-color))),
     var(--progress-bar-color, var(--state-icon-color))
@@ -4295,13 +4363,13 @@ ha-card:has(.top-container) {
 }
 
 .${CARD.style.dynamic.progressBar.effect.gradient.class} {
-  --current-progress-effect: var(--current-progress-effect-gradient);
-  --current-progress-effect-neg: var(--current-progress-effect-gradient-rev);
+  --progress-effect: var(--progress-effect-gradient);
+  --progress-effect-neg: var(--progress-effect-gradient-rev);
 }
 
 .${CARD.style.dynamic.progressBar.effect.gradientReverse.class} {
-  --current-progress-effect: var(--current-progress-effect-gradient-rev);
-  --current-progress-effect-neg: var(--current-progress-effect-gradient);
+  --progress-effect: var(--progress-effect-gradient-rev);
+  --progress-effect-neg: var(--progress-effect-gradient);
 }
 
 /* ----- shimmer / shimmer-reverse ----- */
@@ -4369,272 +4437,164 @@ ha-card:has(.top-container) {
    WATERMARKS
    ============================================================================= */
 
-/* --- ZERO MARK -- */
-.${CARD.htmlStructure.elements.progressBar.zeroMark.class} {
-  --zero-mark-height: 100%;
-  --zero-mark-width: var(--epb-zero-mark-width, 1px);
-  --zero-mark-top: 0;
-  --zero-mark-left: 50%;
-
-  display: flex;
+:is(.${CARD.htmlStructure.elements.progressBar.lowWatermark.class}, .${CARD.htmlStructure.elements.progressBar.highWatermark.class}, .${CARD.htmlStructure.elements.progressBar.zeroMark.class}) {
+  display: var(--mark-display, none);
   position: absolute;
-  height: var(--zero-mark-height);
-  width: var(--zero-mark-width);
-  top: var(--zero-mark-top);
-  left: var(--zero-mark-left);
-  background-color: var(--epb-zero-mark-color, white);
+  box-sizing: border-box;
   opacity: var(--epb-watermark-opacity, var(--watermark-opacity-value, 0.8));
+
+  top: var(--mark-top, 0); /* Horizontal */
+  bottom: var(--mark-bottom, auto);
+  left: var(--mark-left, auto);
+  right: var(--mark-right, auto);
+  width: var(--mark-width, 100%);
+  height: var(--mark-height, 100%);
+
+  background: var(--mark-background);
 }
 
-.vertical.up-orientation .overlay .${CARD.htmlStructure.elements.progressBar.zeroMark.class} {
-  --zero-mark-height: var(--epb-zero-mark-width, 1px);
-  --zero-mark-width: 100%;
-  --zero-mark-top: 50%;
-  --zero-mark-left: 0;
+.vertical.up-orientation.overlay :is(.${CARD.htmlStructure.elements.progressBar.lowWatermark.class}, .${CARD.htmlStructure.elements.progressBar.highWatermark.class}, .${CARD.htmlStructure.elements.progressBar.zeroMark.class}) {
+  --mark-top: auto;
+  --mark-bottom: 0;
+  --mark-left: 0;
+  --mark-width: 100%;
+}
+
+/* --- ZERO MARK -- */
+.${CARD.htmlStructure.elements.progressBar.zeroMark.class} {
+  --mark-display: flex;
+  --mark-width: var(--epb-zero-mark-width, 1px);
+  --mark-left: 50%;
+  --mark-background: var(--epb-zero-mark-color, white);
+}
+
+.vertical.up-orientation.overlay .${CARD.htmlStructure.elements.progressBar.zeroMark.class} {
+  --mark-height: var(--epb-zero-mark-width, 1px);
+  --mark-top: 50%;
 }
 
 /* --- Base watermark styles ---*/
-:is(.${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-    .${CARD.htmlStructure.elements.progressBar.highWatermark.class}) {
-  position: absolute;
-  opacity: var(--epb-watermark-opacity, var(--watermark-opacity-value, 0.8));
-  display: none;
-  box-sizing: border-box;
-  clip-path: inset(0);
+.${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+.${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+  --wm-line-size: var(--epb-watermark-line-size, var(--watermark-line-size, 1px));
+  --wm-circle-size: var(--watermark-circle-size, 5px);
+  --wm-tri-size: var(--watermark-triangle-size, 8px);
+  --wm-half-line: calc(var(--wm-line-size) /2);
+  --wm-half-circle: calc(var(--wm-circle-size) / 2);
+  --wm-half-tri: calc(var(--wm-tri-size) / 2);
 }
-
-/* Colors */
 .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-  background-color: var(--epb-low-watermark-color, var(--low-watermark-color, var(--red-color)));
+  --wm-value: var(--low-watermark-value, 20%);
+  --wm-color: var(--epb-low-watermark-color, var(--low-watermark-color, var(--red-color)));
 }
 .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  background-color: var(--epb-high-watermark-color, var(--high-watermark-color, var(--red-color)));
+  --wm-value: var(--high-watermark-value, 80%);
+  --wm-color: var(--epb-high-watermark-color, var(--high-watermark-color, var(--red-color)));
+}
+:is(.show-lwm-area, .show-lwm-blended, .show-lwm-line, .show-lwm-round) .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+:is(.show-hwm-area, .show-hwm-blended, .show-hwm-line, .show-hwm-round) .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+  --mark-background: var(--wm-color);
+}
+
+/* ---------- show ---------- */
+:is(.show-lwm-area, .show-lwm-blended, .show-lwm-striped, .show-lwm-line, .show-lwm-round, .show-lwm-triangle) .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+:is(.show-hwm-area, .show-hwm-blended, .show-hwm-striped, .show-hwm-line, .show-hwm-round, .show-hwm-triangle) .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+  --mark-display: flex;
 }
 
 /* ---------- Area, Blended, Striped positioning ---------- */
-:is(.${CARD.style.dynamic.show}-lwm-area-${CARD.htmlStructure.elements.progressBar.watermark.class},
-    .${CARD.style.dynamic.show}-lwm-blended-${CARD.htmlStructure.elements.progressBar.watermark.class},
-    .${CARD.style.dynamic.show}-lwm-striped-${CARD.htmlStructure.elements.progressBar.watermark.class})
-.${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-  --lwm-all-area-left: 0px;
-  --lwm-all-area-top: 0px;
-  --lwm-all-area-bottom: unset;
-  --lwm-all-area-height: 100%;
-  --lwm-all-area-width: var(--low-watermark-value, 20%);
-
-  left: var(--lwm-all-area-left);
-  top: var(--lwm-all-area-top);
-  bottom: var(--lwm-all-area-bottom);
-  height: var(--lwm-all-area-height);
-  width: var(--lwm-all-area-width);
+:is(.show-lwm-area, .show-lwm-blended, .show-lwm-striped) .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+  --mark-left: 0;
+  --mark-width: var(--wm-value);
+}
+:is(.show-hwm-area, .show-hwm-blended, .show-hwm-striped) .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+  --mark-right: 0;
+  --mark-width: calc(100% - var(--wm-value));
 }
 
-:is(.${CARD.style.dynamic.show}-hwm-area-${CARD.htmlStructure.elements.progressBar.watermark.class},
-    .${CARD.style.dynamic.show}-hwm-blended-${CARD.htmlStructure.elements.progressBar.watermark.class},
-    .${CARD.style.dynamic.show}-hwm-striped-${CARD.htmlStructure.elements.progressBar.watermark.class})
-.${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  --hwm-all-area-right: 0px;
-  --hwm-all-area-top: 0px;
-  --hwm-all-area-bottom: unset;
-  --hwm-all-area-height: 100%;
-  --hwm-all-area-width: calc(100% - var(--high-watermark-value, 80%));
-
-  right: var(--hwm-all-area-right);
-  top: var(--hwm-all-area-top);
-  bottom: var(--hwm-all-area-bottom);
-  height: var(--hwm-all-area-height);
-  width: var(--hwm-all-area-width);
+.vertical.up-orientation.overlay:is(.show-lwm-area, .show-lwm-blended, .show-lwm-striped) .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+  --mark-height: var(--wm-value);
 }
-
-.vertical.up-orientation .overlay .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-  --lwm-all-area-left: unset;
-  --lwm-all-area-top: unset;
-  --lwm-all-area-bottom: 0px;
-  --lwm-all-area-height: var(--low-watermark-value, 20%);
-  --lwm-all-area-width: 100%;
-}
-
-.vertical.up-orientation .overlay .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  --hwm-all-area-right: unset;
-  --hwm-all-area-top: unset;
-  --hwm-all-area-bottom: var(--high-watermark-value, 80%);
-  --hwm-all-area-height: calc(100% - var(--high-watermark-value, 80%));
-  --hwm-all-area-width: 100%;
-
+.vertical.up-orientation.overlay:is(.show-hwm-area, .show-hwm-blended, .show-hwm-striped) .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+  --mark-bottom: var(--wm-value);
+  --mark-height: calc(100% - var(--wm-value));
 }
 
 /* ---------- Blended ---------- */
-:is(.${CARD.style.dynamic.show}-lwm-blended-${CARD.htmlStructure.elements.progressBar.watermark.class},
-    .${CARD.style.dynamic.show}-hwm-blended-${CARD.htmlStructure.elements.progressBar.watermark.class})
-:is(.${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-    .${CARD.htmlStructure.elements.progressBar.highWatermark.class}) {
+.show-lwm-blended .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+.show-hwm-blended .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   mix-blend-mode: hard-light;
 }
 
 /* ---------- Striped ---------- */
-.${CARD.style.dynamic.show}-lwm-striped-${CARD.htmlStructure.elements.progressBar.watermark.class}
-.${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-  background: repeating-linear-gradient(-45deg,
-    var(--low-watermark-color, var(--red-color)) 0px,
-    var(--low-watermark-color, var(--red-color)) 3px,
-    transparent 3px, transparent 6px);
-}
-.${CARD.style.dynamic.show}-hwm-striped-${CARD.htmlStructure.elements.progressBar.watermark.class}
-.${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  background: repeating-linear-gradient(-45deg,
-    var(--high-watermark-color, var(--red-color)) 0px,
-    var(--high-watermark-color, var(--red-color)) 3px,
+.show-lwm-striped .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+.show-hwm-striped .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+  --mark-background: repeating-linear-gradient(-45deg,
+    var(--wm-color) 0,
+    var(--wm-color) 3px,
     transparent 3px, transparent 6px);
 }
 
 /* ---------- Line ---------- */
-:is(.${CARD.style.dynamic.show}-lwm-line-${CARD.htmlStructure.elements.progressBar.watermark.class},
-    .${CARD.style.dynamic.show}-hwm-line-${CARD.htmlStructure.elements.progressBar.watermark.class})
-:is(.${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-    .${CARD.htmlStructure.elements.progressBar.highWatermark.class}) {
-  --wm-line-top: 0px;
-  --wm-line-width: var(--epb-watermark-line-size, var(--watermark-line-size, 1px));
-  --wm-line-height: 100%;
-
-  top: var(--wm-line-top);
-  width: var(--wm-line-width);
-  height: var(--wm-line-height);
+.show-lwm-line .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+.show-hwm-line .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+  --wm-position: calc(var(--wm-value) - var(--wm-half-line));
+  --mark-width: var(--wm-line-size);
+  --mark-left: var(--wm-position);
   border: none;
   transform: none;
 }
-.${CARD.style.dynamic.show}-lwm-line-${CARD.htmlStructure.elements.progressBar.watermark.class}
-.${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-  --lwm-line-left: calc(var(--low-watermark-value, 20%) - var(--watermark-line-size, 1px) / 2);
-  --lwm-line-bottom: unset;
-
-  left: var(--lwm-line-left);
-  bottom: var(--lwm-line-bottom);
-}
-.${CARD.style.dynamic.show}-hwm-line-${CARD.htmlStructure.elements.progressBar.watermark.class}
-.${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  --hwm-line-left: calc(var(--high-watermark-value, 80%) - var(--watermark-line-size, 1px) / 2);
-  --hwm-line-bottom: unset;
-
-  left: var(--hwm-line-left);
-  bottom: var(--hwm-line-bottom);
-}
-
-.vertical.up-orientation .overlay .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-  --wm-line-width: 100%;
-  --wm-line-height: var(--watermark-line-size, 1px);
-  --wm-line-top: unset;
-  --lwm-line-left: unset;
-  --lwm-line-bottom: calc(var(--low-watermark-value, 20%) - var(--watermark-line-size, 1px) / 2);
-}
-
-.vertical.up-orientation .overlay .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  --wm-line-width: 100%;
-  --wm-line-height: var(--watermark-line-size, 1px);
-  --wm-line-top: unset;
-  --hwm-line-left: unset;
-  --hwm-line-bottom: calc(var(--high-watermark-value, 80%) - var(--watermark-line-size, 1px) / 2);
+.vertical.up-orientation.overlay.show-lwm-line .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+.vertical.up-orientation.overlay.show-hwm-line .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+  --mark-height: var(--wm-line-size);
+  --mark-bottom: var(--wm-position);
 }
 
 /* ---------- Round ---------- */
-:is(.${CARD.style.dynamic.show}-lwm-round-${CARD.htmlStructure.elements.progressBar.watermark.class},
-    .${CARD.style.dynamic.show}-hwm-round-${CARD.htmlStructure.elements.progressBar.watermark.class})
-:is(.${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-    .${CARD.htmlStructure.elements.progressBar.highWatermark.class}) {
-  --wm-round-top: 50%;
-  --wm-round-bottom: unset;
-  --wm-round-transform: translateY(-50%);
-
-  width: var(--watermark-circle-size, 5px);
-  height: var(--watermark-circle-size, 5px);
+.show-lwm-round .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+.show-hwm-round .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+  --mark-top: 50%;
+  --mark-width: var(--wm-circle-size);
+  --mark-height: var(--wm-circle-size);
+  transform: translateY(-50%);
   border-radius: 50%;
-  top: var(--wm-round-top);
-  transform: var(--wm-round-transform);
   border: none;
 }
-.${CARD.style.dynamic.show}-lwm-round-${CARD.htmlStructure.elements.progressBar.watermark.class}
-.${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-  --lwm-round-left: calc(var(--low-watermark-value, 20%) - var(--watermark-circle-size, 5px) / 2);
-  --lwm-round-bottom: unset;
-
-  left: var(--lwm-round-left);
-  bottom: var(--lwm-round-bottom);
+.show-lwm-round .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+  --mark-left: calc(var(--wm-value) - var(--wm-half-circle));
 }
-.${CARD.style.dynamic.show}-hwm-round-${CARD.htmlStructure.elements.progressBar.watermark.class}
-.${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  --hwm-round-left: calc(var(--high-watermark-value, 80%) + var(--watermark-circle-size, 5px) / 2);
-  --hwm-round-bottom: unset;
-
-  left: var(--hwm-round-left);
-  bottom: var(--hwm-round-bottom);
+.show-hwm-round .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+  --mark-left: calc(var(--wm-value) - var(--wm-half-circle));
 }
-
-.vertical.up-orientation .overlay .${CARD.htmlStructure.elements.progressBar.lowWatermark.class}{
-  --wm-round-top: unset;
-  --wm-round-transform: translateX(-50%);
-  --lwm-round-left: 50%;
-  --lwm-round-bottom: calc(var(--low-watermark-value, 20%) - var(--watermark-circle-size, 5px) / 2);
-}
-
-.vertical.up-orientation .overlay .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  --wm-round-top: unset;
-  --wm-round-transform: translateX(-50%);
-  --hwm-round-left: 50%;
-  --hwm-round-bottom: calc(var(--high-watermark-value, 80%) - var(--watermark-circle-size, 5px) / 2);
+.vertical.up-orientation.overlay.show-lwm-round .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+.vertical.up-orientation.overlay.show-hwm-round .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+  --mark-left: 50%;
+  --mark-right: auto;
+  --mark-top: auto;
+  --mark-bottom: calc(var(--wm-value) - var(--wm-half-circle));
+  --mark-width: var(--wm-circle-size);
+  transform: translateX(-50%);
 }
 
 /* ---------- Triangle ---------- */
-:is(.${CARD.style.dynamic.show}-lwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class},
-    .${CARD.style.dynamic.show}-hwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class})
-:is(.${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-    .${CARD.htmlStructure.elements.progressBar.highWatermark.class}) {
-  --wm-triangle-top: 0px;
-
-  width: 0;
-  height: 0;
-  top: var(--wm-triangle-top);
-  background-color: transparent;
-  border-left: calc(var(--watermark-triangle-size, 8px) / 2) solid transparent;
-  border-right: calc(var(--watermark-triangle-size, 8px) / 2) solid transparent;
+.show-lwm-triangle .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+.show-hwm-triangle .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+  --mark-left: calc(var(--wm-value) - var(--wm-half-tri));
+  --mark-width: 0;
+  --mark-height: 0;
+  --mark-background: transparent;
+  border-top: var(--wm-tri-size) solid var(--wm-color);
+  border-left: var(--wm-half-tri) solid transparent;
+  border-right: var(--wm-half-tri) solid transparent;
 }
-.${CARD.style.dynamic.show}-lwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class}
-.${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-  --lwm-triangle-left: calc(var(--low-watermark-value, 20%) - var(--watermark-triangle-size, 8px) / 2);
-  --lwm-triangle-bottom: unset;
-
-  left: var(--lwm-triangle-left);
-  bottom: var(--lwm-triangle-bottom);
-  border-top: var(--watermark-triangle-size, 8px) solid var(--low-watermark-color, var(--red-color));
-}
-.${CARD.style.dynamic.show}-hwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class}
-.${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  --hwm-triangle-left: calc(var(--high-watermark-value, 80%) - var(--watermark-triangle-size, 8px) / 2);
-  --hwm-triangle-bottom: unset;
-
-  left: var(--hwm-triangle-left);
-  bottom: var(--hwm-triangle-bottom);
-  border-top: var(--watermark-triangle-size, 8px) solid var(--high-watermark-color, var(--red-color));
-}
-
-ha-card.vertical.up-orientation.${CARD.style.dynamic.show}-lwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class} .overlay .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-  --lwm-triangle-left: 0%;
-  --lwm-triangle-bottom: calc(var(--low-watermark-value, 20%) - var(--watermark-triangle-size, 8px) / 2);
-  --wm-triangle-top: unset;
-
-  border-left: var(--watermark-triangle-size, 8px) solid var(--low-watermark-color, var(--red-color));
+.vertical.up-orientation.overlay.show-lwm-triangle .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+.vertical.up-orientation.overlay.show-hwm-triangle .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+  --mark-left: 0;
+  --mark-bottom: calc(var(--wm-value) - var(--wm-half-tri));
   border-right: none;
-  border-top: calc(var(--watermark-triangle-size, 8px) / 2) solid transparent;
-  border-bottom: calc(var(--watermark-triangle-size, 8px) / 2) solid transparent;
-}
-
-ha-card.vertical.up-orientation.${CARD.style.dynamic.show}-hwm-triangle-${CARD.htmlStructure.elements.progressBar.watermark.class} .overlay .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  --hwm-triangle-left: 0%;
-  --hwm-triangle-bottom: calc(var(--high-watermark-value, 80%) - var(--watermark-triangle-size, 8px) / 2);
-  --wm-triangle-top: unset;
-
-  border-left: var(--watermark-triangle-size, 8px) solid var(--high-watermark-color, var(--red-color));
-  border-right: none;
-  border-top: calc(var(--watermark-triangle-size, 8px) / 2) solid transparent;
-  border-bottom: calc(var(--watermark-triangle-size, 8px) / 2) solid transparent;
+  border-top: var(--wm-half-tri) solid transparent;
+  border-left: var(--wm-tri-size) solid var(--wm-color);
+  border-bottom: var(--wm-half-tri) solid transparent;
 }
 
 /* =============================================================================
@@ -4673,7 +4633,8 @@ ha-card.vertical.up-orientation.${CARD.style.dynamic.show}-hwm-triangle-${CARD.h
 .${CARD.style.dynamic.hiddenComponent.icon.class} :is(.${CARD.htmlStructure.sections.icon.class}, .${CARD.htmlStructure.elements.shape.class}),
 .${CARD.style.dynamic.hiddenComponent.name.class} .${CARD.htmlStructure.elements.nameGroup.class},
 .${CARD.style.dynamic.hiddenComponent.secondary_info.class} .${CARD.htmlStructure.elements.detailGroup.class},
-.${CARD.style.dynamic.hiddenComponent.progress_bar.class} .${CARD.htmlStructure.elements.progressBar.bar.class} {
+.${CARD.style.dynamic.hiddenComponent.progress_bar.class} .${CARD.htmlStructure.elements.progressBar.bar.class},
+.${CARD.style.dynamic.hiddenComponent.shape.class} .${CARD.htmlStructure.elements.shape.class} ha-ripple {
   display: none;
 }
 
@@ -4682,15 +4643,8 @@ ha-card.vertical.up-orientation.${CARD.style.dynamic.show}-hwm-triangle-${CARD.h
   background-color: transparent;
 }
 
-.${CARD.style.dynamic.hiddenComponent.shape.class} .${CARD.htmlStructure.elements.shape.class} ha-ripple {
-  display: none;
-}
-
-
 /* Show elements when needed */
-.${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class} .${CARD.htmlStructure.elements.badge.container.class},
-[class*="${CARD.style.dynamic.show}-hwm-"] .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
-[class*="${CARD.style.dynamic.show}-lwm-"] .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+.${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class} .${CARD.htmlStructure.elements.badge.container.class} {
   display: flex;
 }
 
@@ -4703,131 +4657,27 @@ ha-card.vertical.up-orientation.${CARD.style.dynamic.show}-hwm-triangle-${CARD.h
 }
 
 /* =============================================================================
-   OVERLAY
+   single line
    ============================================================================= */
-
-.progress-bar-container.overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-}
-
-.progress-bar-container.overlay .progress-bar,
-.progress-bar-container.overlay .progress-bar-effect-radius
-.progress-bar-container.overlay .progress-bar-inner {
-  border-radius: 10px;
-  height: 100%;
-}
-.progress-bar-container.overlay .progress-bar-inner,
-.progress-bar-container.overlay .progress-bar-positive-inner,
-.progress-bar-container.overlay .progress-bar-negative-inner,
-.progress-bar-container.overlay .progress-bar {
-  height: 100%;
-  max-height: 100%;
-}
-
-.${CARD.htmlStructure.sections.content.class}.overlay {
-  height: 40px;
-}
-
-ha-card.text-shadow .${CARD.htmlStructure.sections.content.class}.overlay .name-group,
-ha-card.text-shadow .${CARD.htmlStructure.sections.content.class}.overlay .secondary-info {
-  text-shadow: 1px 1px 2px var(--card-background-color);
-}
-
-.horizontal .${CARD.htmlStructure.sections.content.class}.overlay .name-group,
-.horizontal .${CARD.htmlStructure.sections.content.class}.overlay .secondary-info {
-  margin-left: 7px;
-}
-
-.vertical.up-orientation .${CARD.htmlStructure.sections.content.class}.overlay {
-  flex-grow: 1;
-  width: 50%;
-  height: 100%;
-}
-
-.vertical.up-orientation .container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  height: 100%;
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-
-.${CARD.htmlStructure.sections.content.class}.overlay.single-line {
-  --current-group-max-width: 100%;
-  --current-group-width: 100%;
+.overlay.single-line {
+  --group-max-width: 100%;
+  --group-width: 100%;
   justify-content: space-between;
   flex-direction: row;
   align-items: center;
 }
 
-.${CARD.htmlStructure.sections.content.class}.overlay.single-line .secondary-info {
-  --detail-max-width: none;
+.overlay.single-line .${CARD.htmlStructure.elements.detailGroup.class} {
+  --group-max-width: none;
   margin-right: 7px;
 }
 
 /* =============================================================================
-   TRANSFORMATION VERTICALE - ORIENTATION DU BAS VERS LE HAUT (CORRIGÉE)
+   TRANSFORMATION VERTICALE - ORIENTATION DU BAS VERS LE HAUT
    ============================================================================= */
 
-.vertical.up-orientation .progress-bar-container.overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: center;
-}
-
-/* === BARRE DE PROGRESSION PRINCIPALE - VERTICALE === */
-.vertical.up-orientation .overlay .progress-bar {
-    width: 100%;
-    height: 100%;
-    border-radius: 10px;
-    position: relative;
-    overflow: hidden;
-}
-
-/* === INNER PROGRESS BAR - PROGRESSION DU BAS VERS LE HAUT === */
-.vertical.up-orientation .overlay .progress-bar-inner {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: var(--progress-bar-size, 0%);
-    transition: height var(--progress-transition-width);
-    will-change: height;
-    border-radius: 0 0 calc(var(--progress-size, 12px) / 2) calc(var(--progress-size, 12px) / 2);
-}
-
-/* === INNER PROGRESS BAR - POSITIF ET NÉGATIF === */
-.vertical.up-orientation .overlay .progress-bar-positive-inner {
-    position: absolute;
-    bottom: 50%;
-    left: 0;
-    width: 100%;
-    height: var(--progress-bar-psize, 0%);
-    transition: height var(--progress-transition-width);
-    will-change: height;
-    border-radius: 0;
-}
-
-.vertical.up-orientation .overlay .progress-bar-negative-inner {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    width: 100%;
-    height: var(--progress-bar-nsize, 0%);
-    transition: height var(--progress-transition-width);
-    will-change: height;
-    border-radius: 0;
+.vertical.up-orientation .container {
+  height: 100%;
 }
 
 /* === prefers-reduced-motion === */
@@ -4907,7 +4757,7 @@ const CARD_EDITOR_CSS = `
 }
 
 .accordion.expanded .${CARD.editor.fields.accordion.title.class}:focus {
-  border-radius: var(--ha-border-radius-md) var(--ha-border-radius-md) 0px 0px;
+  border-radius: var(--ha-border-radius-md) var(--ha-border-radius-md) 0 0;
 }
 
 .${CARD.editor.fields.accordion.arrow.class} {
@@ -5057,7 +4907,8 @@ const Logger = {
 
         const logStart = () => shouldLog(SEV.debug) && console.debug(`[${name}] 👉 ${fnName}`);
         const logSuccess = (start) => shouldLog(SEV.debug) && console.debug(`[${name}] ✅ ${fnName} (${(performance.now() - start).toFixed(2)}ms)`);
-        const logError = (start, error) => shouldLog(SEV.error) && console.error(`[${name}] ❌ ${fnName} failed (${(performance.now() - start).toFixed(2)}ms)`, error);
+        const logError = (start, error) =>
+          shouldLog(SEV.error) && console.error(`[${name}] ❌ ${fnName} failed (${(performance.now() - start).toFixed(2)}ms)`, error);
 
         if (isAsync) {
           return async (...args) => {
@@ -5348,20 +5199,15 @@ const StructureElements = {
 
   wrapWithBarPosition: (content, options) => {
     const { barPosition } = options;
-    let before = '';
-    let after = '';
+    const bar = () => StructureElements.progressBar(options);
 
-    switch (barPosition) {
-      case 'top':
-        before = StructureElements.topContainer().replace('{{content}}', StructureElements.progressBar(options));
-        break;
-      case 'bottom':
-        after = StructureElements.bottomContainer().replace('{{content}}', StructureElements.progressBar(options));
-        break;
-      case 'below':
-        after = StructureElements.belowContainer().replace('{{content}}', StructureElements.progressBar(options));
-        break;
-    }
+    const wrap = {
+      top: () => ({ before: StructureElements.topContainer().replace('{{content}}', bar()), after: '' }),
+      bottom: () => ({ before: '', after: StructureElements.bottomContainer().replace('{{content}}', bar()) }),
+      below: () => ({ before: '', after: StructureElements.belowContainer().replace('{{content}}', bar()) }),
+    };
+
+    const { before = '', after = '' } = wrap[barPosition]?.() ?? {};
 
     return before + content + after;
   },
@@ -5396,13 +5242,14 @@ const StructureTemplates = {
   },
   feature: (options = {}) => {
     const { barPosition } = options;
-    if (barPosition === 'top') {
-      return StructureElements.topContainer().replace('{{content}}', StructureElements.progressBar(options));
-    }
-    if (barPosition === 'bottom') {
-      return StructureElements.bottomContainer().replace('{{content}}', StructureElements.progressBar(options));
-    }
-    return StructureElements.progressBar(options);
+    const bar = () => StructureElements.progressBar(options);
+
+    const containers = {
+      top: () => StructureElements.topContainer().replace('{{content}}', bar()),
+      bottom: () => StructureElements.bottomContainer().replace('{{content}}', bar()),
+    };
+
+    return containers[barPosition]?.() ?? bar();
   },
 };
 
@@ -5436,7 +5283,6 @@ class TemplateStructure extends ObjStructure {
 class FeatureStructure extends ObjStructure {
   _cardType = 'feature';
 }
-
 
 /******************************************************************************************
  * 🛠️ NumberFormatter
@@ -6082,15 +5928,13 @@ class HassProviderSingleton {
     const mapping = HassProviderSingleton.#entityMap[prop];
     if (!mapping) return null;
 
-    switch (mapping.source) {
-      case 'attribute':
-        return this.getEntityAttribute(entityId, prop);
-      case 'state':
-        return this.getEntityStateObj(entityId)?.[prop] ?? null;
-      case 'entity':
-        return this.#hass?.entities?.[entityId]?.[prop] ?? null;
-    }
-    return null;
+    const resolvers = {
+      attribute: () => this.getEntityAttribute(entityId, prop),
+      state: () => this.getEntityStateObj(entityId)?.[prop] ?? null,
+      entity: () => this.#hass?.entities?.[entityId]?.[prop] ?? null,
+    };
+
+    return resolvers[mapping.source]?.() ?? null;
   }
   #formatEntityProp(entityId, prop) {
     if (prop === 'last_changed' || prop === 'last_updated') return this.getRelativeTime(this.#resolveEntityProp(entityId, prop));
@@ -6711,7 +6555,7 @@ class EntityOrValue {
  * structural validation ideas to manage inputs (1.5+).
  * deliberately verbose by design: no external dependencies, fully typed errors,
  * and scales cleanly across multiple card types.
- * 
+ *
  * @inspired by superstruct (MIT License) - Copyright (c) @ianstormtaylor
  * @see https://github.com/ianstormtaylor/superstruct
  */
@@ -7619,7 +7463,7 @@ class BadgeTemplateConfigHelper extends BaseConfigHelper {
  * │   └── FeatureView
  * ├── CardTemplateView
  * └── BadgeTemplateView
- * 
+ *
  * @class
  * @description Handles the display and behavior of minimal cards with support for
  *              Home Assistant entities, user actions, and visual customization
@@ -7690,16 +7534,18 @@ class ViewCore {
     return this.config ? this.config.layout : undefined;
   }
   get cardSize() {
-    return this.config 
-      ? CARD.layout.orientations[this.layout]?.grid?.grid_rows ?? 1 
-      : CARD.layout.orientations.horizontal.grid.grid_rows;
+    return this.config ? (CARD.layout.orientations[this.layout]?.grid?.grid_rows ?? 1) : CARD.layout.orientations.horizontal.grid.grid_rows;
   }
   get cardLayoutOptions() {
     if (!this.config) return CARD.layout.orientations.horizontal.grid;
     const layout = structuredClone(CARD.layout.orientations[this.layout]);
     layout.grid.grid_min_rows = this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.icon.label)
       ? 1
-      : layout.grid.grid_min_rows + (this.config.bar_size === CARD.style.bar.sizeOptions.xlarge.label ? 1 : 0);
+      : layout.grid.grid_min_rows +
+        (this.config.bar_size === CARD.style.bar.sizeOptions.xlarge.label ||
+        (this.layout === 'vertical' && ['default', 'below'].includes(this.config.bar_position) && this.config.bar_size !== 'small')
+          ? 1
+          : 0);
     return layout.grid;
   }
   _getEntityColor() {
@@ -7712,7 +7558,7 @@ class ViewCore {
     return this.entity && !this._configHelper.config.bar_color ? this._getEntityColor() : null;
   }
   get iconColor() {
-    return (this.entity && !this._configHelper.config.color) ? this._getEntityColor() : null;
+    return this.entity && !this._configHelper.config.color ? this._getEntityColor() : null;
   }
   get barOrientation() {
     return this._currentValue.isTimer && this.config.bar_orientation === null ? 'rtl' : this.config.bar_orientation;
@@ -8263,30 +8109,39 @@ class ResourceManager {
       this.#log.debug('Throttle function - ', id);
     }
   }
+
   throttleDebounce(fn, delay, id) {
     const now = Date.now();
-    
+    const keys = {
+      throttle: `${id}-throttle`,
+      debounce: `${id}-debounce`,
+    };
+
     // Throttle — exec if time is over
-    if (!this.#throttles.has(id)) {
-      this.#throttles.set(id, { lastCall: 0 });
-      this.add(() => this.resetThrottle(id), id + '-throttle');
+    if (!this.#throttles.has(keys.throttle)) {
+      this.#throttles.set(keys.throttle, { lastCall: 0 });
+      this.add(() => this.resetThrottle(keys.throttle), keys.throttle);
     }
-    
-    const context = this.#throttles.get(id);
+
+    const context = this.#throttles.get(keys.throttle);
     if (now - context.lastCall >= delay) {
       context.lastCall = now;
       fn();
       this.#log.debug('ThrottleDebounce immediate - ', id);
     }
-    
-    // Debounce — exec after a RAF
-    if (this.#resources.has(id + '-debounce')) {
-      this.remove(id + '-debounce');
+
+    // Debounce — exec after delay
+    if (this.#resources.has(keys.debounce)) {
+      this.remove(keys.debounce);
     }
-    this.setTimeout(() => {
-      fn();
-      this.#log.debug('ThrottleDebounce trailing - ', id);
-    }, delay, id + '-debounce');
+    this.setTimeout(
+      () => {
+        fn();
+        this.#log.debug('ThrottleDebounce trailing - ', id);
+      },
+      delay,
+      keys.debounce,
+    );
   }
 
   resetThrottle(id) {
@@ -8336,7 +8191,7 @@ class ResourceManager {
  * ========================================================================================
  *
  * ✅ Manages DOM elements, RAF queue, and applied values cache.
- * 
+ *
  * // Init
  * this._dom = new DOMHelper();
  * this._dom.register("card",  this.shadowRoot.querySelector(".card"));
@@ -8466,7 +8321,7 @@ class DOMHelper {
     const el = this._domElements.get(key);
     if (!el) return;
 
-    this.enqueue(key, `text`, () => {
+    this.enqueue(key, 'text', () => {
       el.textContent = value;
       this._appliedValues.set(cacheKey, value);
     });
@@ -8484,7 +8339,7 @@ class DOMHelper {
     const el = this._domElements.get(key);
     if (!el) return;
 
-    this.enqueue(key, `html`, () => {
+    this.enqueue(key, 'html', () => {
       el.innerHTML = value;
       this._appliedValues.set(cacheKey, value);
     });
@@ -8596,10 +8451,14 @@ class ActionHelper {
       hasDoubleClick: true,
     });
 
-    this.#target.addEventListener('pointerdown', (ev) => {
-      const localName = ev.composedPath()[0].localName;
-      this.#fromIcon = !disableIconTap && this.#iconClickSources.has(localName);
-    }, { passive: true });
+    this.#target.addEventListener(
+      'pointerdown',
+      (ev) => {
+        const localName = ev.composedPath()[0].localName;
+        this.#fromIcon = !disableIconTap && this.#iconClickSources.has(localName);
+      },
+      { passive: true },
+    );
 
     this.#target.addEventListener('action', (ev) => {
       this.#handleAction(ev, this.#fromIcon);
@@ -8636,7 +8495,7 @@ class ActionHelper {
  *
  * Base class for Home Assistant custom elements (cards, badges, features).
  *
-*       HTMLElement
+ *       HTMLElement
  *       │
  *       ├── HACore
  *       │   ├── HABase
@@ -8661,8 +8520,9 @@ class ActionHelper {
  * Subclasses MUST implement:
  * - _handleHassUpdate()  → react to hass state changes
  * - _updateCSS()         → apply dynamic CSS custom properties
- * - _getTemplateFields() → declare Jinja2 template bindings
- * - _getRenderHandlers() → handle Jinja2 template results
+ * - _jinjaFields.        → declare Jinja2 template
+ * - validJinjaFields     → current valid jinja available / config
+ * - _getJinjaHandlers() → handle Jinja2 template results
  *
  * @abstract
  * @extends HTMLElement
@@ -8707,8 +8567,7 @@ class HACore extends HTMLElement {
       // abstract
       '_handleHassUpdate',
       '_updateCSS',
-      '_getTemplateFields',
-      '_getRenderHandlers',
+      '_getJinjaHandlers',
     ];
   }
 
@@ -8890,11 +8749,10 @@ class HACore extends HTMLElement {
     const type = ['area', 'blended', 'striped', 'line', 'triangle', 'round'].includes(this._cardView.watermark.type)
       ? `${this._cardView.watermark.type}`
       : 'blended';
-    const baseWMClass = CARD.htmlStructure.elements.progressBar.watermark.class;
     const showClass = CARD.style.dynamic.show;
 
-    this._dom.toggleClass(CARD.htmlStructure.card.element, `${showClass}-hwm-${type}-${baseWMClass}`, !this._cardView.watermark.disable_high);
-    this._dom.toggleClass(CARD.htmlStructure.card.element, `${showClass}-lwm-${type}-${baseWMClass}`, !this._cardView.watermark.disable_low);
+    this._dom.toggleClass(CARD.htmlStructure.card.element, `${showClass}-hwm-${type}`, !this._cardView.watermark.disable_high);
+    this._dom.toggleClass(CARD.htmlStructure.card.element, `${showClass}-lwm-${type}`, !this._cardView.watermark.disable_low);
   }
 
   _handleBarEffect(jinjaEffect = null) {
@@ -8949,28 +8807,21 @@ class HACore extends HTMLElement {
 
   // === JINJA TEMPLATE RENDERING ===
 
-  _getTemplateFields() {
-    //
-    // cutomize it - list the fields/config
-    //
-    throw new Error(`${this.constructor.name} must implement _getTemplateFields()`);
-    /*
-    const config = this._cardView.config;
-
-    return {
-      badge_icon: config.badge_icon || '', // HABase
-      badge_color: config.badge_color || '', // HABase
-      bar_effect: config.bar_effect || '', // HACore
-    // ...
-    };
-    */
+  get validJinjaFields() {
+    const result = Object.fromEntries(
+      Object.keys(this._getJinjaHandlers())
+        .map((key) => [key, this._cardView.config[key] || ''])
+        .filter(([, value]) => is.nonEmptyString(value)),
+    );
+    this._log.debug('validJinjaFields: ', { result });
+    return result;
   }
 
-  _getRenderHandlers(content) {
+  _getJinjaHandlers(content) {
     //
     // cutomize it - list the fields/render func
     //
-    throw new Error(`${this.constructor.name} must implement _getRenderHandlers(${content})`);
+    throw new Error(`${this.constructor.name} must implement _getJinjaHandlers(${content})`);
     /*
     return {
       badge_icon: () => this._renderBadgeIcon(content), // HABase
@@ -8984,7 +8835,7 @@ class HACore extends HTMLElement {
   _renderJinja(key, content) {
     this._log.debug('📎 HACore._renderJinja():', { key, content });
 
-    const renderHandlers = this._getRenderHandlers(content);
+    const renderHandlers = this._getJinjaHandlers(content);
     const handler = renderHandlers[key];
 
     if (handler) {
@@ -9020,7 +8871,7 @@ class HACore extends HTMLElement {
       'disconnected',
       () => {
         this._log.debug('🔌 WebSocket disconnected');
-        const templates = this._getTemplateFields();
+        const templates = this.validJinjaFields;
         for (const key of Object.keys(templates)) {
           this._resourceManager.remove(`template-${key}`);
         }
@@ -9043,10 +8894,10 @@ class HACore extends HTMLElement {
   }
 
   _validateProcessJinjaFields() {
-    return this._cardView.hasStandardEntityError || !this._resourceManager ? false : true;
+    return (this._cardView.config?.entity && this._cardView.hasStandardEntityError) || !this._resourceManager ? false : true;
   }
 
-  async _processJinjaFields() {
+  _processJinjaFields() {
     if (!this._validateProcessJinjaFields()) {
       this._log.debug('❌ Jinja processing skipped - validation failed');
       return;
@@ -9054,12 +8905,16 @@ class HACore extends HTMLElement {
 
     this._log.debug('✅ Processing Jinja fields');
 
-    this._resourceManager?.throttleDebounce(async () => {
-      const templates = this._getTemplateFields();
-      for (const [key, template] of Object.entries(templates)) {
-        if (is.nonEmptyString(template)) await this._subscribeToTemplate(key, template);
-      }
-    }, 300, 'jinjaProcess');
+    this._resourceManager?.throttleDebounce(
+      async () => {
+        const templates = this.validJinjaFields;
+        for (const [key, template] of Object.entries(templates)) {
+          if (is.nonEmptyString(template)) this._subscribeToTemplate(key, template);
+        }
+      },
+      300,
+      'jinjaProcess',
+    );
   }
 
   _getTemplateContext() {
@@ -9117,7 +8972,7 @@ class HACore extends HTMLElement {
  * ========================================================================================
  *
  * ✅ Represents the base class for all custom "entity-progress" cards:
- * 
+ *
  * 📌 Purpose:
  *   - Provides shared structure, lifecycle hooks, and utility logic for custom Lovelace cards.
  *   - Serves as the foundation for building consistent and reusable UI components.
@@ -9233,7 +9088,7 @@ class HABase extends HACore {
   // === ERROR MESSAGE MANAGEMENT ===
 
   _manageErrorMessage() {
-    if (is.nullish(this._cardView.entity) || (this._cardView.isAvailable && !this._cardView.hasValidatedConfig)) {
+    if (this._cardView.msg && (is.nullish(this._cardView.entity) || (this._cardView.isAvailable && !this._cardView.hasValidatedConfig))) {
       this._renderMessage(this._cardView.msg);
       return true;
     }
@@ -9301,6 +9156,7 @@ class HABase extends HACore {
       this.baseClass.includes('badge') ? 'progress-badge' : null,
       this._cardView.layout,
       this._cardView.barSize,
+      this._cardView.config.bar_position,
       this._cardView.barOrientation ? CARD.style.dynamic.progressBar.orientation[this._cardView.barOrientation] : null,
       this._cardView.hasReversedSecondaryInfoRow ? 'row-reverse' : null,
       this._cardView.config.text_shadow ? 'text-shadow' : null,
@@ -9350,14 +9206,18 @@ class HABase extends HACore {
 
   _handleHiddenComponents(jinjaContent = null) {
     if (jinjaContent === null && is.jinja(this._cardView.config.hide)) return;
-    
-    const items = jinjaContent?.split(',').map(s => s.trim()).filter(Boolean) ?? null;
-    
+
+    const items =
+      jinjaContent
+        ?.split(',')
+        .map((s) => s.trim())
+        .filter(Boolean) ?? null;
+
     this._hiddenComponents.forEach((component) => {
       this._dom.toggleClass(
         CARD.htmlStructure.card.element,
         component.class,
-        items ? items.includes(component.label) : this._cardView.hasComponentHiddenFlag(component.label)
+        items ? items.includes(component.label) : this._cardView.hasComponentHiddenFlag(component.label),
       );
     });
   }
@@ -9603,25 +9463,10 @@ class HABase extends HACore {
   }
 
   // === JINJA TEMPLATE RENDERING ===
-  /*
-  _getTemplateFields() {
-    //
-    // cutomize it - list the fields/config
-    //
-    const config = this._cardView.config;
-
-    return {
-      badge_icon: config.badge_icon || '',
-      badge_color: config.badge_color || '',
-      bar_effect: config.bar_effect || '',
-    // ...
-    };
-  }
-
-  _getRenderHandlers(content) {
+  /* _getJinjaHandlers(content) {
     //
     // cutomize it - list the fields/render func
-    //
+    // + static _jinjaFields
 
     return {
       badge_icon: () => this._renderBadgeIcon(content), // base
@@ -9629,20 +9474,17 @@ class HABase extends HACore {
       bar_effect: () => this._refreshBarEffect(content), // base
     // ...
     };
-  }
-  */
+  }*/
 
   _renderBadgeIcon(content) {
     this._log.debug('📎 HABase._renderBadgeIcon():', { content });
-
     const badgeInfo = this._cardView.badgeInfo;
-    const isBadgeEnable = this._cardView.isBadgeEnable;
+    const isBadgeEnable = this._cardView.isBadgeEnable || is.nonEmptyString(content);
     const isMdiIcon = content.includes('mdi:');
 
-    if (badgeInfo !== null) return; // alert -> cancel custom badge
-
+    if (!is.nullish(badgeInfo)) return; // alert -> cancel custom badge
+    this._enableBadge(isBadgeEnable);
     if (isMdiIcon) {
-      this._enableBadge(isBadgeEnable);
       this._setBadgeIcon(content);
     }
   }
@@ -9681,12 +9523,7 @@ class HABase extends HACore {
 
 class EntityProgressCardBase extends HABase {
   static get _loggedMethods() {
-    return [
-      ...super._loggedMethods,
-      '_getStandardFields',
-      '_renderCustomInfo',
-      '_renderNameInfo',
-    ];
+    return [...super._loggedMethods, '_getStandardFields', '_renderCustomInfo', '_renderNameInfo'];
   }
   _handleHassUpdate() {
     this.refresh();
@@ -9708,19 +9545,16 @@ class EntityProgressCardBase extends HABase {
     const isCenterZero = bar.config.center_zero;
     const isNegative = bar.percent < 0;
     const cardKey = CARD.htmlStructure.card.element;
+    const progressSize = `${Math.abs(bar.percent) / 100}`;
 
     this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.color.var, bar.barColor);
     this._dom.setStyle(cardKey, CARD.style.dynamic.iconAndShape.color.var, bar.iconColor);
 
     if (isCenterZero) {
-      this._dom.setStyle(
-        cardKey,
-        isNegative ? CARD.style.dynamic.progressBar.nSize.var : CARD.style.dynamic.progressBar.pSize.var,
-        `${Math.abs(bar.percent / 2)}%`,
-      );
-      this._dom.setStyle(cardKey, isNegative ? CARD.style.dynamic.progressBar.pSize.var : CARD.style.dynamic.progressBar.nSize.var, '0%');
+      this._dom.setStyle(cardKey, isNegative ? CARD.style.dynamic.progressBar.nSize.var : CARD.style.dynamic.progressBar.pSize.var, progressSize);
+      this._dom.setStyle(cardKey, isNegative ? CARD.style.dynamic.progressBar.pSize.var : CARD.style.dynamic.progressBar.nSize.var, '0');
     } else {
-      this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.size.var, `${bar.percent}%`);
+      this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.size.var, progressSize);
     }
 
     if (bar.hasWatermark) {
@@ -9745,20 +9579,7 @@ class EntityProgressCardBase extends HABase {
   }
 
   // === JINJA TEMPLATE RENDERING - CUSTOMIZATION ===
-  _getTemplateFields() {
-    const config = this._cardView.config;
-
-    return {
-      badge_icon: config.badge_icon || '', // base
-      badge_color: config.badge_color || '', // base
-      bar_effect: config.bar_effect || '', // base
-      hide: config.hide || '', // base
-      custom_info: config.custom_info || '',
-      name_info: config.name_info || '',
-    };
-  }
-
-  _getRenderHandlers(content) {
+  _getJinjaHandlers(content) {
     return {
       badge_icon: () => this._renderBadgeIcon(content), // base
       badge_color: () => this._renderBadgeColor(content), // base
@@ -9855,18 +9676,7 @@ class EntityProgressBadge extends EntityProgressCardBase {
   }
 
   // === JINJA TEMPLATE RENDERING - CUSTOMIZATION ===
-  _getTemplateFields() {
-    const config = this._cardView.config;
-
-    return {
-      bar_effect: config.bar_effect || '', // base
-      hide: config.hide || '', // base
-      custom_info: config.custom_info || '',
-      name_info: config.name_info || '',
-    };
-  }
-
-  _getRenderHandlers(content) {
+  _getJinjaHandlers(content) {
     return {
       bar_effect: () => this._refreshBarEffect(content), // base
       hide: () => this._handleHiddenComponents(content), // base
@@ -9967,18 +9777,15 @@ class EntityProgressFeatures extends HACore {
     const isCenterZero = bar.config.center_zero;
     const isNegative = bar.percent < 0;
     const cardKey = CARD.htmlStructure.card.element;
+    const progressSize = `${Math.abs(bar.percent) / 100}`;
 
     this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.color.var, bar.barColor);
 
     if (isCenterZero) {
-      this._dom.setStyle(
-        cardKey,
-        isNegative ? CARD.style.dynamic.progressBar.nSize.var : CARD.style.dynamic.progressBar.pSize.var,
-        `${Math.abs(bar.percent / 2)}%`,
-      );
-      this._dom.setStyle(cardKey, isNegative ? CARD.style.dynamic.progressBar.pSize.var : CARD.style.dynamic.progressBar.nSize.var, '0%');
+      this._dom.setStyle(cardKey, isNegative ? CARD.style.dynamic.progressBar.nSize.var : CARD.style.dynamic.progressBar.pSize.var, progressSize);
+      this._dom.setStyle(cardKey, isNegative ? CARD.style.dynamic.progressBar.pSize.var : CARD.style.dynamic.progressBar.nSize.var, '0');
     } else {
-      this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.size.var, `${bar.percent}%`);
+      this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.size.var, progressSize);
     }
 
     if (bar.hasWatermark) {
@@ -9989,15 +9796,8 @@ class EntityProgressFeatures extends HACore {
   }
 
   // === JINJA TEMPLATE RENDERING - CUSTOMIZATION ===
-  _getTemplateFields() {
-    const config = this._cardView.config;
 
-    return {
-      bar_effect: config.bar_effect || '', // base
-    };
-  }
-
-  _getRenderHandlers(content) {
+  _getJinjaHandlers(content) {
     return {
       bar_effect: () => this._refreshBarEffect(content), // base
     };
@@ -10099,23 +9899,7 @@ class EntityProgressTemplateBase extends HABase {
     this._processJinjaFields();
   }
 
-  _getTemplateFields() {
-    const config = this._cardView.config;
-
-    return {
-      badge_icon: config.badge_icon || '', // base
-      badge_color: config.badge_color || '', // base
-      bar_effect: config.bar_effect || '', // base
-      hide: config.hide || '', // base
-      name: config.name || '',
-      secondary: config.secondary || '',
-      icon: config.icon || '',
-      percent: config.percent || '',
-      color: config.color || '',
-      bar_color: config.bar_color || '',
-    };
-  }
-  _getRenderHandlers(content) {
+  _getJinjaHandlers(content) {
     return {
       badge_icon: () => this._renderBadgeIcon(content), // base
       badge_color: () => this._renderBadgeColor(content), // base
@@ -10139,6 +9923,7 @@ class EntityProgressTemplateBase extends HABase {
   _renderSecondary(content) {
     const hasLineBreak = /<br\s*\/?>/i.test(content);
     const wrappedContent = hasLineBreak ? `<span class="multiline">${content}</span>` : `${content}`;
+    this._dom.toggleClass(CARD.htmlStructure.card.element, 'info-multiline', hasLineBreak);
     this._dom.setHTML(CARD.htmlStructure.elements.customInfo.class, wrappedContent.trim());
   }
 
@@ -10159,20 +9944,20 @@ class EntityProgressTemplateBase extends HABase {
   _renderPercentCSS(percent) {
     const isCenterZero = this._cardView.config.center_zero;
     const cardKey = CARD.htmlStructure.card.element;
-    const half = `${Math.abs(percent) / 2}%`;
+    const progressSize = `${Math.abs(percent) / 100}`;
 
     if (isCenterZero) {
-      this._dom.setStyle(cardKey, percent >= 0 ? CARD.style.dynamic.progressBar.pSize.var : CARD.style.dynamic.progressBar.nSize.var, half);
-      this._dom.setStyle(cardKey, percent >= 0 ? CARD.style.dynamic.progressBar.nSize.var : CARD.style.dynamic.progressBar.pSize.var, '0%');
+      this._dom.setStyle(cardKey, percent >= 0 ? CARD.style.dynamic.progressBar.pSize.var : CARD.style.dynamic.progressBar.nSize.var, progressSize);
+      this._dom.setStyle(cardKey, percent >= 0 ? CARD.style.dynamic.progressBar.nSize.var : CARD.style.dynamic.progressBar.pSize.var, '0');
     } else {
-      this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.size.var, `${Math.abs(percent)}%`);
+      this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.size.var, progressSize);
     }
   }
 
   // === TEMPLATE PROCESSING ===
 
   _validateProcessJinjaFields() {
-    return Boolean(this.hass);
+    return Boolean(this.hass) && Boolean(this._resourceManager);
   }
 }
 
@@ -10192,6 +9977,10 @@ class EntityProgressTemplateCard extends EntityProgressTemplateBase {
 
   static get _loggedMethods() {
     return [...super._loggedMethods, 'getCardSize', 'getLayoutOptions'];
+  }
+
+  static getConfigElement() {
+    return document.createElement(`${CARD.meta.template.editor}${CARD.config.dev ? '-dev' : ''}`);
   }
 
   // === LAYOUT ===
@@ -10693,13 +10482,13 @@ class EntityProgressCardEditor extends HTMLElement {
       hass: this.#hassProvider.hass,
       ...(isSelector
         ? {
-            label: label,
+            label, //label: label,
             value: this.#config[name] ?? '',
             selector: this.#getSelectorForType(type),
-            required: required,
+            required, //required: required,
           }
         : {
-            schema: schema,
+            schema, //schema: schema,
             computeLabel: () => label,
             data: {},
           }),
@@ -11048,7 +10837,6 @@ class EntityProgressBadgeEditor extends EntityProgressCardEditor {
   })();
 }
 
-
 const TEMPLATE_EDITOR_FIELDS = {
   // === Entity & Data ===
   entity: { name: 'entity', type: 'entity' },
@@ -11081,7 +10869,6 @@ const TEMPLATE_EDITOR_FIELDS = {
   // === Badge ===
   badge_icon: { name: 'badge_icon', type: 'template' },
   badge_color: { name: 'badge_color', type: 'template' },
-
 };
 
 class EntityProgressTemplateEditor extends HTMLElement {
@@ -11210,18 +10997,20 @@ class EntityProgressTemplateEditor extends HTMLElement {
   #onChanged(event) {
     const { value } = event.detail;
     const key = event.target.id;
-    
+
     this.#sendNewConfig({ ...this.#config, [key]: value });
   }
 
   #sendNewConfig(newConfig) {
-    this.dispatchEvent(new CustomEvent(CARD.interactions.event.configChanged, {
-      detail: { config: newConfig },
-      bubbles: true,
-      composed: true,
-    }));
+    this.dispatchEvent(
+      new CustomEvent(CARD.interactions.event.configChanged, {
+        detail: { config: newConfig },
+        bubbles: true,
+        composed: true,
+      }),
+    );
   }
-  
+
   #updateFields() {
     for (const [key, element] of this.#domElements) {
       if (element.localName === 'ha-selector') {
@@ -11243,7 +11032,7 @@ class EntityProgressTemplateEditor extends HTMLElement {
 
 RegistrationHelper.registerCard(CARD.meta.card, EntityProgressCard, EntityProgressCardEditor);
 RegistrationHelper.registerBadge(CARD.meta.badge, EntityProgressBadge, EntityProgressBadgeEditor);
-RegistrationHelper.registerCard(CARD.meta.template, EntityProgressTemplateCard);
+RegistrationHelper.registerCard(CARD.meta.template, EntityProgressTemplateCard, EntityProgressTemplateEditor);
 RegistrationHelper.registerBadge(CARD.meta.badgeTemplate, EntityProgressTemplateBadge);
 RegistrationHelper.registerCardFeature(CARD.meta.feature, EntityProgressFeatures);
 
