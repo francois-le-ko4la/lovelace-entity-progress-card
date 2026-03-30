@@ -174,28 +174,26 @@ const CARD = {
       icon: { element: 'div', class: 'icon' },
       shape: { element: 'shape', class: 'shape' },
       ellipsisWrapper: { element: 'div', class: 'ellipsis-wrapper' },
-      nameGroup: { element: 'div', class: 'name-group' },
-      nameCombined: { element: 'span', class: 'name-combined' },
-      name: { element: 'span', class: 'name' },
-      nameCustomInfo: { element: 'span', class: 'name-custom-info' },
+      nameContent: { element: 'div', class: 'name' },
+      nameValue: { element: 'span', class: 'name-value' },
+      nameMain: { element: 'span', class: 'name-main' },
+      nameExtra: { element: 'span', class: 'name-extra' },
       trendIndicator: {
         container: { element: 'div', class: 'trend-indicator' },
         icon: { element: 'ha-icon', class: 'trend-icon' },
       },
       secondaryInfo: { element: 'div', class: 'secondary-info' },
-      detailGroup: { element: 'div', class: 'secondary-info-detail-group' },
-      detailCombined: { element: 'span', class: 'secondary-info-detail-combined' },
-      stateAndProgressInfo: { element: 'span', class: 'state-and-progress-info' },
-      customInfo: { element: 'span', class: 'secondary-info-custom-info' },
+      secondaryInfoWrapper: { element: 'div', class: 'secondary-info-wrapper' },
+      secondaryInfoValue: { element: 'span', class: 'secondary-info-value' },
+      secondaryInfoMain: { element: 'span', class: 'secondary-info-main' },
+      secondaryInfoExtra: { element: 'span', class: 'secondary-info-extra' },
       progressBar: {
-        container: { element: 'div', class: 'progress-bar-container' },
+        container: { element: 'div', class: 'bar-container' },
         bar: { element: 'div', class: 'progress-bar' },
-        inner: { element: 'div', class: 'progress-bar-inner' },
-        positiveInner: { element: 'div', class: 'progress-bar-positive-inner' },
-        negativeInner: { element: 'div', class: 'progress-bar-negative-inner' },
-        zeroMark: { element: 'div', class: 'progress-bar-low-zero' },
-        lowWatermark: { element: 'div', class: 'progress-bar-low-wm' },
-        highWatermark: { element: 'div', class: 'progress-bar-high-wm' },
+        inner: { element: 'div', class: 'inner' },
+        zeroMark: { element: 'div', class: 'zero' },
+        lowWatermark: { element: 'div', class: 'low' },
+        highWatermark: { element: 'div', class: 'high' },
         watermark: { class: 'progress-bar-wm' },
       },
       badge: {
@@ -269,9 +267,7 @@ const CARD = {
       },
       progressBar: {
         color: { var: '--progress-bar-color', default: 'var(--state-icon-color)' },
-        size: { var: '--progress-bar-size', default: '0' },
-        pSize: { var: '--progress-bar-psize', default: '0' },
-        nSize: { var: '--progress-bar-nsize', default: '0' },
+        value: { var: '--progress-bar-value', default: '0' },
         maxWidth: { var: '--progress-bar-max-width', default: null },
         background: { var: '--epb-progress-bar-background-color' },
         orientation: { rtl: 'rtl-orientation', ltr: 'ltr-orientation', up: 'up-orientation' },
@@ -3516,7 +3512,7 @@ const CARD_CSS = `
 
   /* === TYPOGRAPHY VARIABLES === */
   --name-letter-spacing: 0.1px;
-  --letter-spacing-detail: 0.4px;
+  --detail-letter-spacing: 0.4px;
 
   /* === LAYOUT VARIABLES === */
   --vertical-gap: 1px;
@@ -3755,8 +3751,8 @@ ha-card.vertical.xlarge.below .${CARD.htmlStructure.elements.progressBar.contain
   bottom: 0;
 }
 
-.bottom-container .progress-bar-container,
-.top-container .progress-bar-container {
+.bottom-container .bar-container,
+.top-container .bar-container {
   height: var(--progress-size);
 }
 
@@ -3925,8 +3921,8 @@ ha-card.type-entities .${CARD.htmlStructure.sections.content.class} {
 
 /* === TEXT ELEMENTS === */
 
-.${CARD.htmlStructure.elements.nameGroup.class},
-.${CARD.htmlStructure.elements.detailGroup.class} {
+.${CARD.htmlStructure.elements.nameContent.class},
+.${CARD.htmlStructure.elements.secondaryInfoWrapper.class} {
   /* flex layout, dimensions, overflow, alignement*/
   display: flex;
   z-index: 1;
@@ -3944,31 +3940,31 @@ ha-card.type-entities .${CARD.htmlStructure.sections.content.class} {
   margin-left: var(--group-margin-left);
 }
 
-.${CARD.htmlStructure.elements.nameGroup.class} {
+.${CARD.htmlStructure.elements.nameContent.class} {
   --group-height: var(--name-height);
 }
 
-.${CARD.htmlStructure.elements.detailGroup.class} {
+.${CARD.htmlStructure.elements.secondaryInfoWrapper.class} {
   --group-height: var(--detail-height);
   --group-min-width: 45px;
   --group-max-width: 60%;
 }
 
-.progress-badge .${CARD.htmlStructure.elements.nameGroup.class} {
+.progress-badge .${CARD.htmlStructure.elements.nameContent.class} {
   --group-height: var(--ha-font-size-xs);
 }
 
-.progress-badge .${CARD.htmlStructure.elements.detailGroup.class} {
+.progress-badge .${CARD.htmlStructure.elements.secondaryInfoWrapper.class} {
   --group-min-width: unset;
   --group-max-width: unset;
 }
 
-ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.detailGroup.class} {
+ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.secondaryInfoWrapper.class} {
   --group-min-width: 100%;
   --group-max-width: 100%;
 }
 
-.row-reverse .${CARD.htmlStructure.elements.detailGroup.class} {
+.row-reverse .${CARD.htmlStructure.elements.secondaryInfoWrapper.class} {
   --group-min-width: unset;
 }
 
@@ -3985,10 +3981,10 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.det
   --name-height: var(--vertical-name-large-height);
 }
 
-.overlay :is(.${CARD.htmlStructure.elements.nameGroup.class}, .${CARD.htmlStructure.elements.detailGroup.class}) {
+.overlay :is(.${CARD.htmlStructure.elements.nameContent.class}, .${CARD.htmlStructure.elements.secondaryInfoWrapper.class}) {
   --group-margin-left: 7px;
 }
-.vertical.up-orientation.overlay :is(.${CARD.htmlStructure.elements.nameGroup.class}, .${CARD.htmlStructure.elements.detailGroup.class}) {
+.vertical.up-orientation.overlay :is(.${CARD.htmlStructure.elements.nameContent.class}, .${CARD.htmlStructure.elements.secondaryInfoWrapper.class}) {
   --group-margin-left: 0;
 }
 
@@ -4006,8 +4002,8 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.det
   display: inline;
 }
 
-.${CARD.htmlStructure.elements.nameCombined.class},
-.${CARD.htmlStructure.elements.detailCombined.class} {
+.${CARD.htmlStructure.elements.nameValue.class},
+.${CARD.htmlStructure.elements.secondaryInfoValue.class} {
   color: var(--text-color);
   font-size: var(--text-font-size);
   font-weight: var(--text-font-weight);
@@ -4018,7 +4014,7 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.det
   text-shadow: var(--text-shadow);
 }
 
-.${CARD.htmlStructure.elements.nameCombined.class} {
+.${CARD.htmlStructure.elements.nameValue.class} {
   --text-color: var(--epb-name-color, var(--primary-text-color));
   --text-font-size: var(--epb-name-font-size, var(--ha-font-size-m));
   --text-font-weight: var(--epb-name-font-weight, var(--ha-font-weight-medium));
@@ -4028,17 +4024,17 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.det
   --text-margin-right: 0;
 }
 
-.${CARD.htmlStructure.elements.detailCombined.class} {
+.${CARD.htmlStructure.elements.secondaryInfoValue.class} {
   --text-color: var(--epb-name-color, var(--primary-text-color));
   --text-font-size: var(--ha-font-size-s);
   --text-font-weight: var(--ha-font-weight-body);
   --text-height: var(--detail-height);
   --text-line-height: var(--detail-height);
-  --text-letter-spacing: var(--letter-spacing-detail);
+  --text-letter-spacing: var(--epb-detail-letter-spacing, var(--detail-letter-spacing));
   --text-margin-right: 0;
 }
 
-.progress-badge .${CARD.htmlStructure.elements.nameCombined.class} {
+.progress-badge .${CARD.htmlStructure.elements.nameValue.class} {
   --text-color: var(--epb-name-color, var(--secondary-text-color));
   --text-font-size: var(--ha-font-size-xs);
   --text-font-weight: var(--ha-font-weight-medium);
@@ -4048,7 +4044,7 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.det
   --text-letter-spacing: var(--name-letter-spacing);
 }
 
-.progress-badge .${CARD.htmlStructure.elements.detailCombined.class} {
+.progress-badge .${CARD.htmlStructure.elements.secondaryInfoValue.class} {
   --text-color: var(--primary-text-color);
   --text-font-size: var(--ha-badge-font-size, var(--ha-font-size-s));
   --text-font-weight: var(--ha-font-weight-medium);
@@ -4057,20 +4053,20 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.det
   --text-letter-spacing: var(--name-letter-spacing);
 }
 
-.type-entities :is(.${CARD.htmlStructure.elements.nameCombined.class}, 
-                    .${CARD.htmlStructure.elements.detailCombined.class}) {
+.type-entities :is(.${CARD.htmlStructure.elements.nameValue.class}, 
+                    .${CARD.htmlStructure.elements.secondaryInfoValue.class}) {
   --text-height: var(--entities-height);
   --text-font-weight: var(--ha-font-weight-normal);
   --text-line-height: var(--ha-line-height-normal);
 }
 
-.type-entities .${CARD.htmlStructure.elements.detailCombined.class} {
+.type-entities .${CARD.htmlStructure.elements.secondaryInfoValue.class} {
   --text-color: var(--secondary-text-color);
   --text-font-size: var(--ha-font-size-m);
 }
 
-.overlay.text-shadow :is(.${CARD.htmlStructure.elements.nameCombined.class}, 
-                    .${CARD.htmlStructure.elements.detailCombined.class}) {
+.overlay.text-shadow :is(.${CARD.htmlStructure.elements.nameValue.class}, 
+                    .${CARD.htmlStructure.elements.secondaryInfoValue.class}) {
   --text-shadow: 1px 1px 2px var(--card-background-color);
 }
 
@@ -4085,7 +4081,7 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.det
   justify-content: space-between;
 }
 
-.secondary-info-detail-group:has(.secondary-info-custom-info:empty):has(.state-and-progress-info:empty) {
+.secondary-info-wrapper:has(.secondary-info-extra:empty):has(.secondary-info-main:empty) {
   display: none;
 }
 
@@ -4126,13 +4122,13 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.det
 
 .vertical.info-multiline :is(
   .secondary-info,
-  .secondary-info .secondary-info-detail-group,
-  .secondary-info .secondary-info-custom-info
+  .secondary-info .secondary-info-wrapper,
+  .secondary-info .secondary-info-extra
 ) {
   height: unset !important;
 }
 
-.vertical.info-multiline .secondary-info .progress-bar-container {
+.vertical.info-multiline .secondary-info .bar-container {
   height: 16px;
 }
 
@@ -4169,15 +4165,17 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.det
   --current-progress-container-height: var(--progress-size);
 }
 
-.vertical.xlarge .progress-bar-container {
+.vertical.xlarge .bar-container {
   margin-top: 23px;
 }
 
-/* ==== INNER === */
+/* ==== BAR === */
 .${CARD.htmlStructure.elements.progressBar.bar.class} {
   --bar-radius: var(--ha-standard-border-radius);
 
   position: relative;
+  height: var(--bar-height, var(--progress-size, 100%));
+  max-height: var(--bar-max-height, var(--progress-size, 100%));
   width: 100%;
   flex-grow: var(--bar-flex-grow);
   overflow: hidden;
@@ -4185,109 +4183,95 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.det
   border-radius: var(--epb-progress-bar-radius, var(--bar-radius));
 }
 
-.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.progressBar.bar.class}  {
+.${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
   --bar-flex-grow: 0;
 }
 
-.${CARD.htmlStructure.elements.progressBar.inner.class},
-.${CARD.htmlStructure.elements.progressBar.positiveInner.class},
-.${CARD.htmlStructure.elements.progressBar.negativeInner.class},
-.${CARD.htmlStructure.elements.progressBar.bar.class} {
-  height: var(--progress-size, 100%);
-  max-height: var(--progress-size, 100%);
+.overlay .${CARD.layout.orientations.vertical.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
+  --bar-height: 100%;
+  --bar-max-height: 100%;
 }
 
-.overlay .progress-bar {
-  height: 100%;
-  max-height: 100%;
-}
+/* ==== INNER === */
 
-.overlay :is(.${CARD.htmlStructure.elements.progressBar.inner.class},
-            .${CARD.htmlStructure.elements.progressBar.positiveInner.class},
-            .${CARD.htmlStructure.elements.progressBar.negativeInner.class}) {
-  height: var(--inner-height, 100%); 
-  max-height: 100%;
-}
+/* --- Base ---*/
 
-.${CARD.htmlStructure.elements.progressBar.inner.class},
-.${CARD.htmlStructure.elements.progressBar.positiveInner.class},
-.${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
+.${CARD.htmlStructure.elements.progressBar.inner.class} {
   --inner-radius: 0;
   --_r: var(--epb-progress-inner-radius, var(--inner-radius));
   
   position: absolute;
-  height: var(--inner-height, 100%);
-  width: var(--inner-width, 100%);
-  right: var(--inner-right, auto);
-  left: var(--inner-left, 0);
-  top: var(--inner-top, 0);
-  bottom: var(--inner-bottom, auto);
+  inset: var(--inner-inset, 0 0 0 0);
+
   background: var(--inner-background);
   border-radius: var(--inner-border-radius);
-}
-:not(.vertical.up-orientation.overlay) .${CARD.htmlStructure.elements.progressBar.inner.class},
-:not(.vertical.up-orientation.overlay) .${CARD.htmlStructure.elements.progressBar.positiveInner.class},
-:not(.vertical.up-orientation.overlay) .${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
+
   transform-origin: var(--inner-transform-origin, left);
-  transform: scaleX(var(--inner-size, 0));
-  transition: transform var(--progress-transition);
+  transform: scaleX(var(--scale-x,0)) scaleY(var(--scale-y,0));
   will-change: transform;
+  backface-visibility: hidden;
+  contain: layout paint;  
 }
 
-.${CARD.htmlStructure.elements.progressBar.inner.class},
-.${CARD.htmlStructure.elements.progressBar.positiveInner.class} {
-  --inner-background: var(--epb-progress-bar-color, var(--progress-effect, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})));
+/* --- Animation ---*/
+.horizontal-bar .${CARD.htmlStructure.elements.progressBar.inner.class} {
+  --scale-x: 0;
+  --scale-y: 1;
+}
+.horizontal-bar.transition-ready .${CARD.htmlStructure.elements.progressBar.inner.class} {
+  --scale-x: var(--inner-size);
+  transition: transform var(--progress-transition);
+}
+.vertical-bar .${CARD.htmlStructure.elements.progressBar.inner.class} {
+  --scale-x: 1;
+  --scale-y: 0;
+}
+.vertical-bar.transition-ready .${CARD.htmlStructure.elements.progressBar.inner.class} {
+  --scale-y: var(--inner-size);
+  transition: transform var(--progress-transition);
 }
 
-.${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
-  --inner-transform-origin: right;
-  --inner-background: var(--epb-progress-bar-color, var(--progress-effect-neg, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})));
-}
-
-.${CARD.htmlStructure.elements.progressBar.inner.class} {
-  --inner-size: var(${CARD.style.dynamic.progressBar.size.var}, 0);
+/* --- STD Horizontal ---*/
+.horizontal-bar .${CARD.htmlStructure.elements.progressBar.inner.class}.positive {
   --inner-border-radius: var(--_r);
 }
 
-.${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
-  --inner-right: 50%;
-  --inner-width: 50%;
-  --inner-size: var(${CARD.style.dynamic.progressBar.nSize.var}, 0);
-  --inner-border-radius: var(--_r) 0 0 var(--_r);
-}
-.${CARD.htmlStructure.elements.progressBar.positiveInner.class} {
-  --inner-left: 50%;
-  --inner-width: 50%;
-  --inner-size: var(${CARD.style.dynamic.progressBar.pSize.var}, 0);
+/*  center zero - positiveInner */
+.center-zero.horizontal-bar .${CARD.htmlStructure.elements.progressBar.inner.class}.positive {
+  --inner-inset: 0 0 0 50%;
   --inner-border-radius: 0 var(--_r) var(--_r) 0;
 }
 
-.vertical.up-orientation.overlay .${CARD.htmlStructure.elements.progressBar.inner.class},
-.vertical.up-orientation.overlay .${CARD.htmlStructure.elements.progressBar.positiveInner.class},
-.vertical.up-orientation.overlay .${CARD.htmlStructure.elements.progressBar.negativeInner.class} {
-  --inner-width: 100%;
-  --inner-left: 0;
-  --inner-right: auto;
-  --inner-bottom: 0;
-  --inner-top: auto;
-  transform-origin: var(--inner-transform-origin, bottom);
-  transform: scaleY(var(--inner-size, 0));
-  transition: transform var(--progress-transition);
-  will-change: transform;
+/* center zero - negativeInner */
+.center-zero.horizontal-bar .${CARD.htmlStructure.elements.progressBar.inner.class}.negative {
+  --inner-inset: 0 50% 0 0;
+  --inner-border-radius: var(--_r) 0 0 var(--_r);
+  --inner-transform-origin: right; 
 }
 
-.vertical.up-orientation.overlay .progress-bar-positive-inner {
-  --inner-height: 50%;
-  --inner-bottom: 50%;
-  --inner-top: 0;
+/* --- Vertical --- */
+.vertical-bar .${CARD.htmlStructure.elements.progressBar.inner.class}.positive {
+  --inner-border-radius: var(--_r) var(--_r) 0 0;
   --inner-transform-origin: bottom;
 }
-
-.vertical.up-orientation.overlay .progress-bar-negative-inner {
-  --inner-height: 50%;
-  --inner-top: 50%;
-  --inner-bottom: 0;
+.vertical-bar.center-zero .${CARD.htmlStructure.elements.progressBar.inner.class}.positive {
+  --inner-inset: 0 0 50% 0;
+  --inner-transform-origin: bottom;
+}
+.vertical-bar.center-zero .${CARD.htmlStructure.elements.progressBar.inner.class}.negative {
+  --inner-inset: 50% 0 0 0;
   --inner-transform-origin: top;
+  --inner-border-radius: 0 0 var(--_r) var(--_r);
+}
+
+/* --- inner size/background --- */
+.${CARD.htmlStructure.elements.progressBar.inner.class}.positive {
+  --inner-size: var(${CARD.style.dynamic.progressBar.value.var}, 0);
+  --inner-background: var(--epb-progress-bar-color, var(--progress-effect, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})));
+}
+.center-zero .${CARD.htmlStructure.elements.progressBar.inner.class}.negative {
+  --inner-size: calc(var(${CARD.style.dynamic.progressBar.value.var}, 0) * -1);
+  --inner-background: var(--epb-progress-bar-color, var(--progress-effect-neg, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})));
 }
 
 /* === ORIENTATION === */
@@ -4296,28 +4280,25 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.det
 }
 
 /* === RADIUS EFFECT === */
+/* positiveInner / negativeInner */
 .entity-progress-feature
   :is(.${CARD.htmlStructure.elements.progressBar.bar.class},
-    .${CARD.htmlStructure.elements.progressBar.inner.class},
-    .${CARD.htmlStructure.elements.progressBar.negativeInner.class},
-    .${CARD.htmlStructure.elements.progressBar.positiveInner.class}) {
+    .${CARD.htmlStructure.elements.progressBar.inner.class}) {
   --bar-radius: var(--feature-border-radius);
   --inner-radius: var(--feature-border-radius);
 }
 
+/* positiveInner / negativeInner */
 :is(.top-container, .bottom-container)
   :is(.${CARD.htmlStructure.elements.progressBar.bar.class},
-    .${CARD.htmlStructure.elements.progressBar.inner.class},
-    .${CARD.htmlStructure.elements.progressBar.negativeInner.class},
-    .${CARD.htmlStructure.elements.progressBar.positiveInner.class}) {
+    .${CARD.htmlStructure.elements.progressBar.inner.class}) {
   --bar-radius: 0;
   --inner-radius: 0;
 }
 
+/* positiveInner / negativeInner */
 .${CARD.style.dynamic.progressBar.effect.radius.class}
-  :is(.${CARD.htmlStructure.elements.progressBar.inner.class},
-      .${CARD.htmlStructure.elements.progressBar.negativeInner.class},
-      .${CARD.htmlStructure.elements.progressBar.positiveInner.class}) {
+  :is(.${CARD.htmlStructure.elements.progressBar.inner.class}) {
   --inner-radius: var(--ha-standard-border-radius);
 }
 
@@ -4376,7 +4357,7 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.det
 .${CARD.style.dynamic.progressBar.effect.shimmer.class} .${CARD.htmlStructure.elements.progressBar.inner.class},
 .${CARD.style.dynamic.progressBar.effect.shimmerReverse.class} .${CARD.htmlStructure.elements.progressBar.inner.class} {
   overflow: hidden;
-  position: relative;
+  position: absolute;
 }
 
 .${CARD.style.dynamic.progressBar.effect.shimmer.class} .${CARD.htmlStructure.elements.progressBar.inner.class}::after,
@@ -4437,7 +4418,8 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.det
    WATERMARKS
    ============================================================================= */
 
-:is(.${CARD.htmlStructure.elements.progressBar.lowWatermark.class}, .${CARD.htmlStructure.elements.progressBar.highWatermark.class}, .${CARD.htmlStructure.elements.progressBar.zeroMark.class}) {
+/* low, high, center */
+.mark {
   display: var(--mark-display, none);
   position: absolute;
   box-sizing: border-box;
@@ -4453,7 +4435,7 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.det
   background: var(--mark-background);
 }
 
-.vertical.up-orientation.overlay :is(.${CARD.htmlStructure.elements.progressBar.lowWatermark.class}, .${CARD.htmlStructure.elements.progressBar.highWatermark.class}, .${CARD.htmlStructure.elements.progressBar.zeroMark.class}) {
+.vertical.up-orientation.overlay .mark {
   --mark-top: auto;
   --mark-bottom: 0;
   --mark-left: 0;
@@ -4474,8 +4456,7 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.det
 }
 
 /* --- Base watermark styles ---*/
-.${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-.${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+.watermark {
   --wm-line-size: var(--epb-watermark-line-size, var(--watermark-line-size, 1px));
   --wm-circle-size: var(--watermark-circle-size, 5px);
   --wm-tri-size: var(--watermark-triangle-size, 8px);
@@ -4491,44 +4472,44 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.det
   --wm-value: var(--high-watermark-value, 80%);
   --wm-color: var(--epb-high-watermark-color, var(--high-watermark-color, var(--red-color)));
 }
-:is(.show-lwm-area, .show-lwm-blended, .show-lwm-line, .show-lwm-round) .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-:is(.show-hwm-area, .show-hwm-blended, .show-hwm-line, .show-hwm-round) .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+:is(.lwm-area, .lwm-blended, .lwm-line, .lwm-round) .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+:is(.hwm-area, .hwm-blended, .hwm-line, .hwm-round) .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   --mark-background: var(--wm-color);
 }
 
 /* ---------- show ---------- */
-:is(.show-lwm-area, .show-lwm-blended, .show-lwm-striped, .show-lwm-line, .show-lwm-round, .show-lwm-triangle) .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-:is(.show-hwm-area, .show-hwm-blended, .show-hwm-striped, .show-hwm-line, .show-hwm-round, .show-hwm-triangle) .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+.show-lwm .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+.show-hwm .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   --mark-display: flex;
 }
 
 /* ---------- Area, Blended, Striped positioning ---------- */
-:is(.show-lwm-area, .show-lwm-blended, .show-lwm-striped) .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+:is(.lwm-area, .lwm-blended, .lwm-striped) .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
   --mark-left: 0;
   --mark-width: var(--wm-value);
 }
-:is(.show-hwm-area, .show-hwm-blended, .show-hwm-striped) .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+:is(.hwm-area, .hwm-blended, .hwm-striped) .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   --mark-right: 0;
   --mark-width: calc(100% - var(--wm-value));
 }
 
-.vertical.up-orientation.overlay:is(.show-lwm-area, .show-lwm-blended, .show-lwm-striped) .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+.vertical.up-orientation.overlay:is(.lwm-area, .lwm-blended, .lwm-striped) .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
   --mark-height: var(--wm-value);
 }
-.vertical.up-orientation.overlay:is(.show-hwm-area, .show-hwm-blended, .show-hwm-striped) .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+.vertical.up-orientation.overlay:is(.hwm-area, .hwm-blended, .hwm-striped) .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   --mark-bottom: var(--wm-value);
   --mark-height: calc(100% - var(--wm-value));
 }
 
 /* ---------- Blended ---------- */
-.show-lwm-blended .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-.show-hwm-blended .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+.lwm-blended .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+.hwm-blended .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   mix-blend-mode: hard-light;
 }
 
 /* ---------- Striped ---------- */
-.show-lwm-striped .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-.show-hwm-striped .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+.lwm-striped .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+.hwm-striped .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   --mark-background: repeating-linear-gradient(-45deg,
     var(--wm-color) 0,
     var(--wm-color) 3px,
@@ -4536,23 +4517,23 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.det
 }
 
 /* ---------- Line ---------- */
-.show-lwm-line .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-.show-hwm-line .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+.lwm-line .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+.hwm-line .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   --wm-position: calc(var(--wm-value) - var(--wm-half-line));
   --mark-width: var(--wm-line-size);
   --mark-left: var(--wm-position);
   border: none;
   transform: none;
 }
-.vertical.up-orientation.overlay.show-lwm-line .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-.vertical.up-orientation.overlay.show-hwm-line .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+.vertical.up-orientation.overlay.lwm-line .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+.vertical.up-orientation.overlay.hwm-line .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   --mark-height: var(--wm-line-size);
   --mark-bottom: var(--wm-position);
 }
 
 /* ---------- Round ---------- */
-.show-lwm-round .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-.show-hwm-round .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+.lwm-round .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+.hwm-round .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   --mark-top: 50%;
   --mark-width: var(--wm-circle-size);
   --mark-height: var(--wm-circle-size);
@@ -4560,14 +4541,14 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.det
   border-radius: 50%;
   border: none;
 }
-.show-lwm-round .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+.lwm-round .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
   --mark-left: calc(var(--wm-value) - var(--wm-half-circle));
 }
-.show-hwm-round .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+.hwm-round .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   --mark-left: calc(var(--wm-value) - var(--wm-half-circle));
 }
-.vertical.up-orientation.overlay.show-lwm-round .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-.vertical.up-orientation.overlay.show-hwm-round .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+.vertical.up-orientation.overlay.lwm-round .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+.vertical.up-orientation.overlay.hwm-round .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   --mark-left: 50%;
   --mark-right: auto;
   --mark-top: auto;
@@ -4577,8 +4558,8 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.det
 }
 
 /* ---------- Triangle ---------- */
-.show-lwm-triangle .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-.show-hwm-triangle .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+.lwm-triangle .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+.hwm-triangle .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   --mark-left: calc(var(--wm-value) - var(--wm-half-tri));
   --mark-width: 0;
   --mark-height: 0;
@@ -4587,8 +4568,8 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.det
   border-left: var(--wm-half-tri) solid transparent;
   border-right: var(--wm-half-tri) solid transparent;
 }
-.vertical.up-orientation.overlay.show-lwm-triangle .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-.vertical.up-orientation.overlay.show-hwm-triangle .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+.vertical.up-orientation.overlay.lwm-triangle .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+.vertical.up-orientation.overlay.hwm-triangle .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   --mark-left: 0;
   --mark-bottom: calc(var(--wm-value) - var(--wm-half-tri));
   border-right: none;
@@ -4631,8 +4612,8 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.det
    ============================================================================= */
 
 .${CARD.style.dynamic.hiddenComponent.icon.class} :is(.${CARD.htmlStructure.sections.icon.class}, .${CARD.htmlStructure.elements.shape.class}),
-.${CARD.style.dynamic.hiddenComponent.name.class} .${CARD.htmlStructure.elements.nameGroup.class},
-.${CARD.style.dynamic.hiddenComponent.secondary_info.class} .${CARD.htmlStructure.elements.detailGroup.class},
+.${CARD.style.dynamic.hiddenComponent.name.class} .${CARD.htmlStructure.elements.nameContent.class},
+.${CARD.style.dynamic.hiddenComponent.secondary_info.class} .${CARD.htmlStructure.elements.secondaryInfoWrapper.class},
 .${CARD.style.dynamic.hiddenComponent.progress_bar.class} .${CARD.htmlStructure.elements.progressBar.bar.class},
 .${CARD.style.dynamic.hiddenComponent.shape.class} .${CARD.htmlStructure.elements.shape.class} ha-ripple {
   display: none;
@@ -4667,7 +4648,7 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.det
   align-items: center;
 }
 
-.overlay.single-line .${CARD.htmlStructure.elements.detailGroup.class} {
+.overlay.single-line .${CARD.htmlStructure.elements.secondaryInfoWrapper.class} {
   --group-max-width: none;
   margin-right: 7px;
 }
@@ -5088,77 +5069,60 @@ const StructureElements = {
 
   iconAndShape: () => Element(CARD.htmlStructure.elements.shape).html(StructureElements.ripple() + Element(CARD.htmlStructure.elements.icon).html()),
   badge: () => Element(CARD.htmlStructure.elements.badge.container).html(Element(CARD.htmlStructure.elements.badge.icon).html()),
-  nameGroup: () =>
-    Element(CARD.htmlStructure.elements.nameGroup).html(
+  nameContent: (minimal = false) =>
+    Element(CARD.htmlStructure.elements.nameContent).html(
       Element(CARD.htmlStructure.elements.ellipsisWrapper).html(
-        Element(CARD.htmlStructure.elements.nameCombined).html(
-          Element(CARD.htmlStructure.elements.name).html() + Element(CARD.htmlStructure.elements.nameCustomInfo).html(),
+        Element(CARD.htmlStructure.elements.nameValue).html(
+          Element(CARD.htmlStructure.elements.nameMain).html() + (minimal ? '' : Element(CARD.htmlStructure.elements.nameExtra).html()),
         ),
       ),
     ),
-  nameGroupMinimal: () =>
-    Element(CARD.htmlStructure.elements.nameGroup).html(
+  secondaryInfoWrapper: () =>
+    Element(CARD.htmlStructure.elements.secondaryInfoWrapper).html(
       Element(CARD.htmlStructure.elements.ellipsisWrapper).html(
-        Element(CARD.htmlStructure.elements.nameCombined).html(Element(CARD.htmlStructure.elements.name).html()),
-      ),
-    ),
-
-  detailGroup: () =>
-    Element(CARD.htmlStructure.elements.detailGroup).html(
-      Element(CARD.htmlStructure.elements.ellipsisWrapper).html(
-        Element(CARD.htmlStructure.elements.detailCombined).html(
-          Element(CARD.htmlStructure.elements.customInfo).html() + Element(CARD.htmlStructure.elements.stateAndProgressInfo).html(),
+        Element(CARD.htmlStructure.elements.secondaryInfoValue).html(
+          Element(CARD.htmlStructure.elements.secondaryInfoExtra).html() + Element(CARD.htmlStructure.elements.secondaryInfoMain).html(),
         ),
       ),
     ),
 
-  detailGroupMinimal: () =>
-    Element(CARD.htmlStructure.elements.detailGroup).html(
+  secondaryInfoWrapperMinimal: () =>
+    Element(CARD.htmlStructure.elements.secondaryInfoWrapper).html(
       Element(CARD.htmlStructure.elements.ellipsisWrapper).html(
-        Element(CARD.htmlStructure.elements.detailCombined).html(Element(CARD.htmlStructure.elements.customInfo).html()),
-      ),
-    ),
-
-  standardProgressBar: (extraClass = '') =>
-    Element(CARD.htmlStructure.elements.progressBar.container, extraClass).html(
-      Element(CARD.htmlStructure.elements.progressBar.bar, 'default').html(
-        Element(CARD.htmlStructure.elements.progressBar.inner).html() +
-          Element(CARD.htmlStructure.elements.progressBar.lowWatermark).html() +
-          Element(CARD.htmlStructure.elements.progressBar.highWatermark).html(),
-      ),
-    ),
-
-  centerZeroProgressBar: (extraClass = '') =>
-    Element(CARD.htmlStructure.elements.progressBar.container, extraClass).html(
-      Element(CARD.htmlStructure.elements.progressBar.bar, 'center-zero').html(
-        Element(CARD.htmlStructure.elements.progressBar.negativeInner).html() +
-          Element(CARD.htmlStructure.elements.progressBar.positiveInner).html() +
-          Element(CARD.htmlStructure.elements.progressBar.lowWatermark).html() +
-          Element(CARD.htmlStructure.elements.progressBar.highWatermark).html() +
-          Element(CARD.htmlStructure.elements.progressBar.zeroMark).html(),
+        Element(CARD.htmlStructure.elements.secondaryInfoValue).html(Element(CARD.htmlStructure.elements.secondaryInfoExtra).html()),
       ),
     ),
 
   progressBar: (options) => {
     const extraClass = options.barPosition === 'overlay' ? 'overlay' : '';
+    const isCenterZero = options.barType === 'centerZero';
 
-    switch (options.barType) {
-      case 'centerZero':
-        return StructureElements.centerZeroProgressBar(extraClass);
-      case 'default':
-      default:
-        return StructureElements.standardProgressBar(extraClass);
-    }
+    const marks =
+      Element(CARD.htmlStructure.elements.progressBar.lowWatermark, 'watermark mark').html() +
+      Element(CARD.htmlStructure.elements.progressBar.highWatermark, 'watermark mark').html() +
+      (isCenterZero ? Element(CARD.htmlStructure.elements.progressBar.zeroMark, 'mark').html() : '');
+
+    const innerHtml = Element(CARD.htmlStructure.elements.progressBar.inner).html() + marks;
+
+    return Element(
+      CARD.htmlStructure.elements.progressBar.container,
+      extraClass
+    ).html(
+      Element(
+        CARD.htmlStructure.elements.progressBar.bar,
+        isCenterZero ? 'center-zero' : 'default'
+      ).html(innerHtml)
+    );
   },
 
-  createSecondaryInfo: (options, detailGroupFn) => {
+  createSecondaryInfo: (options, secondaryInfoWrapperFn) => {
     const { layout, barPosition } = options;
     const isTopOrBottom = ['top', 'bottom'].includes(barPosition);
     const isBelow = barPosition === 'below';
     const isOverlay = barPosition === 'overlay';
     const isVertical = layout === 'vertical';
 
-    let content = detailGroupFn();
+    let content = secondaryInfoWrapperFn();
 
     if (!isTopOrBottom && !isBelow && !isOverlay && !isVertical) {
       content += StructureElements.progressBar(options);
@@ -5167,9 +5131,9 @@ const StructureElements = {
     return Element(CARD.htmlStructure.elements.secondaryInfo).html(content);
   },
 
-  secondaryInfo: (options) => StructureElements.createSecondaryInfo(options, StructureElements.detailGroup),
+  secondaryInfo: (options) => StructureElements.createSecondaryInfo(options, StructureElements.secondaryInfoWrapper),
 
-  secondaryInfoMinimal: (options) => StructureElements.createSecondaryInfo(options, StructureElements.detailGroupMinimal),
+  secondaryInfoMinimal: (options) => StructureElements.createSecondaryInfo(options, StructureElements.secondaryInfoWrapperMinimal),
 
   createContent: (options, rightContent) => {
     const isOverlay = options.barPosition === 'overlay';
@@ -5185,9 +5149,9 @@ const StructureElements = {
     return Element(CARD.htmlStructure.sections.content, extraClass).html(content);
   },
 
-  contentFull: (options) => StructureElements.createContent(options, StructureElements.nameGroup() + StructureElements.secondaryInfo(options)),
+  contentFull: (options) => StructureElements.createContent(options, StructureElements.nameContent() + StructureElements.secondaryInfo(options)),
   contentMini: (options) =>
-    StructureElements.createContent(options, StructureElements.nameGroupMinimal() + StructureElements.secondaryInfoMinimal(options)),
+    StructureElements.createContent(options, StructureElements.nameContent(true) + StructureElements.secondaryInfoMinimal(options)),
 
   iconSection: () => Element(CARD.htmlStructure.sections.icon).html(StructureElements.iconAndShape() + StructureElements.badge()),
   iconSectionWoBadge: () => Element(CARD.htmlStructure.sections.icon).html(StructureElements.iconAndShape()),
@@ -7681,7 +7645,7 @@ class ViewCore {
  * // Access computed properties
  * const isReady = cardView.isAvailable;
  * const progress = cardView.percent;
- * const displayText = cardView.stateAndProgressInfo;
+ * const displayText = cardView.secondaryInfoMain;
  * const cardColor = cardView.iconColor;
  *
  * // Handle error states
@@ -7818,7 +7782,7 @@ class ViewBase extends ViewCore {
     return super.getTrend(this.#percentHelper.percent);
   }
 
-  get stateAndProgressInfo() {
+  get secondaryInfoMain() {
     if (this.hasStandardEntityError || (this._currentValue.isTimer && this._currentValue.value.state === CARD.config.entity.state.idle))
       return this._currentValue.formatedEntityState;
 
@@ -7831,14 +7795,6 @@ class ViewBase extends ViewCore {
   }
   get name() {
     return this._configHelper.config.name || this._currentValue.name || this._configHelper.config.entity;
-  }
-  get isBadgeEnable() {
-    return (
-      this.isUnavailable ||
-      this.isNotFound ||
-      this._configHelper.config.badge_icon !== null ||
-      (this._currentValue.isTimer && [CARD.config.entity.state.paused, CARD.config.entity.state.active].includes(this._currentValue.value.state))
-    );
   }
   get badgeInfo() {
     if (this.isNotFound) return CARD.style.icon.badge.notFound;
@@ -8551,6 +8507,7 @@ class HACore extends HTMLElement {
       'refresh',
       'reset',
       'render',
+      '_storeDOM',
       '_manageStructureOptions',
       '_handleWatermarkClasses',
       '_handleBarEffect',
@@ -8699,6 +8656,10 @@ class HACore extends HTMLElement {
     this._manageStructureOptions();
     const element = this._createCardElements();
     this.shadowRoot.replaceChildren(element.style, element.card);
+    this._storeDOM();
+    requestAnimationFrame(() => {
+      this._dom.addClass(CARD.htmlStructure.card.element, 'transition-ready');
+    });
   }
 
   _manageStructureOptions() {
@@ -8718,10 +8679,22 @@ class HACore extends HTMLElement {
     const card = document.createElement(this.cardElement);
     this._dom.destroy();
     this._dom.register(CARD.htmlStructure.card.element, card);
+    this._dom.setStyle(CARD.htmlStructure.card.element, CARD.style.dynamic.progressBar.value.var, 0);
     this._buildStyle();
     card.innerHTML = this.innerHTML;
+    console.log('innerHTML: ', this.innerHTML);
 
     return { style, card };
+  }
+
+  _storeDOM() {
+    const allElements = this.shadowRoot.querySelectorAll('*');
+    allElements.forEach((el) => {
+      if (el.classList.length > 0) {
+        const key = el.classList[0]; // première classe uniquement
+        this._dom.register(key, el);
+      }
+    });
   }
 
   _buildStyle() {
@@ -8740,6 +8713,10 @@ class HACore extends HTMLElement {
       this._cardView.layout,
       this._cardView.barSize,
       this._cardView.barOrientation ? CARD.style.dynamic.progressBar.orientation[this._cardView.barOrientation] : null,
+      this._cardView.config.center_zero ? 'center-zero' : null,
+      this._cardView.layout === 'vertical' && this._cardView.barOrientation === 'up' && this._cardView.config.bar_position === 'overlay'
+        ? 'vertical-bar'
+        : 'horizontal-bar',
     );
   }
 
@@ -8751,8 +8728,10 @@ class HACore extends HTMLElement {
       : 'blended';
     const showClass = CARD.style.dynamic.show;
 
-    this._dom.toggleClass(CARD.htmlStructure.card.element, `${showClass}-hwm-${type}`, !this._cardView.watermark.disable_high);
-    this._dom.toggleClass(CARD.htmlStructure.card.element, `${showClass}-lwm-${type}`, !this._cardView.watermark.disable_low);
+    this._dom.toggleClass(CARD.htmlStructure.card.element, `${showClass}-hwm`, !this._cardView.watermark.disable_high);
+    this._dom.toggleClass(CARD.htmlStructure.card.element, `hwm-${type}`, !this._cardView.watermark.disable_high);
+    this._dom.toggleClass(CARD.htmlStructure.card.element, `${showClass}-lwm`, !this._cardView.watermark.disable_low);
+    this._dom.toggleClass(CARD.htmlStructure.card.element, `lwm-${type}`, !this._cardView.watermark.disable_low);
   }
 
   _handleBarEffect(jinjaEffect = null) {
@@ -8944,7 +8923,7 @@ class HACore extends HTMLElement {
 
       const unsub = await this.hass.connection.subscribeMessage((msg) => this._renderJinja(key, msg.result), {
         type: 'render_template',
-        template: template,
+        template, //template: template,
         variables: this._getTemplateContext(),
       });
 
@@ -9009,7 +8988,6 @@ class HABase extends HACore {
   static get _loggedMethods() {
     return [
       ...super._loggedMethods,
-      '_storeDOM',
       '_showIcon',
       '_handleImgIcon',
       '_handleStateIcon',
@@ -9119,12 +9097,6 @@ class HABase extends HACore {
 
   // === CARD BUILDING ===
 
-  render() {
-    if (this.isRendered) return; // _storeDOM protection
-    super.render(); // ← isRendered, _manageStructureOptions, _createCardElements, replaceChildren
-    this._storeDOM();
-  }
-
   _manageStructureOptions() {
     //
     // customize it
@@ -9158,6 +9130,10 @@ class HABase extends HACore {
       this._cardView.barSize,
       this._cardView.config.bar_position,
       this._cardView.barOrientation ? CARD.style.dynamic.progressBar.orientation[this._cardView.barOrientation] : null,
+      this._cardView.config.center_zero ? 'center-zero' : null,
+      this._cardView.layout === 'vertical' && this._cardView.barOrientation === 'up' && this._cardView.config.bar_position === 'overlay'
+        ? 'vertical-bar'
+        : 'horizontal-bar',
       this._cardView.hasReversedSecondaryInfoRow ? 'row-reverse' : null,
       this._cardView.config.text_shadow ? 'text-shadow' : null,
     );
@@ -9220,34 +9196,6 @@ class HABase extends HACore {
         items ? items.includes(component.label) : this._cardView.hasComponentHiddenFlag(component.label),
       );
     });
-  }
-  // === DOM MANAGEMENT ===
-
-  get _domSelectors() {
-    //
-    // cutomize it
-    //
-    const elements = CARD.htmlStructure.elements;
-    return [
-      elements.icon,
-      elements.shape,
-      elements.badge.icon,
-      elements.trendIndicator.icon,
-      elements.name,
-      elements.nameCustomInfo,
-      elements.customInfo,
-      elements.stateAndProgressInfo,
-    ];
-  }
-
-  _storeDOM() {
-    // get all children define in the card structure
-    const lookup = Array.from(this.shadowRoot.querySelectorAll('*'));
-
-    for (const { class: className } of this._domSelectors) {
-      const element = lookup.find((el) => el.classList.contains(className));
-      if (element) this._dom.register(className, element);
-    }
   }
 
   // === DYNAMIC ELEMENTS UPDATE ===
@@ -9422,18 +9370,15 @@ class HABase extends HACore {
   // === BADGE MANAGEMENT ===
 
   /**
-   * Displays a badge
+   * Displays a badge (default info)
    */
   _showBadge() {
     if (this.constructor._hasDisabledBadge) return;
-    const { badgeInfo, isBadgeEnable } = this._cardView;
-    const showIt = isBadgeEnable && badgeInfo !== null;
+    const badgeInfo = this._cardView.badgeInfo;
+    const isBadgeEnable = badgeInfo || this._cardView.config.badge_icon || this._cardView.config.badge_color;
 
-    this._dom.toggleClass(CARD.htmlStructure.card.element, `${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class}`, showIt);
-
-    if (!showIt) return; // custom
-
-    this._setBadgeIconColor(badgeInfo.icon, badgeInfo.color, badgeInfo.backgroundColor);
+    this._enableBadge(isBadgeEnable);
+    if (badgeInfo) this._setBadgeIconColor(badgeInfo.icon, badgeInfo.color, badgeInfo.backgroundColor);
   }
 
   _enableBadge(isBadgeEnable) {
@@ -9479,7 +9424,7 @@ class HABase extends HACore {
   _renderBadgeIcon(content) {
     this._log.debug('📎 HABase._renderBadgeIcon():', { content });
     const badgeInfo = this._cardView.badgeInfo;
-    const isBadgeEnable = this._cardView.isBadgeEnable || is.nonEmptyString(content);
+    const isBadgeEnable = is.nonEmptyString(content);
     const isMdiIcon = content.includes('mdi:');
 
     if (!is.nullish(badgeInfo)) return; // alert -> cancel custom badge
@@ -9497,7 +9442,7 @@ class HABase extends HACore {
   }
 
   // === STD FIELDS PROCESSING ===
-  _getStandardFields() {
+  _getStandardFields() { // deepsource: ignore=JS-0105
     return [];
   }
 
@@ -9543,19 +9488,19 @@ class EntityProgressCardBase extends HABase {
   _updateCSS() {
     const bar = this._cardView;
     const isCenterZero = bar.config.center_zero;
-    const isNegative = bar.percent < 0;
     const cardKey = CARD.htmlStructure.card.element;
-    const progressSize = `${Math.abs(bar.percent) / 100}`;
+    const progressValue = `${bar.percent / 100}`;
 
     this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.color.var, bar.barColor);
     this._dom.setStyle(cardKey, CARD.style.dynamic.iconAndShape.color.var, bar.iconColor);
-
-    if (isCenterZero) {
-      this._dom.setStyle(cardKey, isNegative ? CARD.style.dynamic.progressBar.nSize.var : CARD.style.dynamic.progressBar.pSize.var, progressSize);
-      this._dom.setStyle(cardKey, isNegative ? CARD.style.dynamic.progressBar.pSize.var : CARD.style.dynamic.progressBar.nSize.var, '0');
-    } else {
-      this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.size.var, progressSize);
+    if(isCenterZero) {
+      this._dom.toggleClass('inner', 'negative', isCenterZero && progressValue < 0);
+      this._dom.toggleClass('inner', 'positive', isCenterZero && progressValue >= 0);
     }
+    else {
+      this._dom.addClass('inner', 'positive');
+    }
+    this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.value.var, progressValue);
 
     if (bar.hasWatermark) {
       HACore._getWatermarkProperties(bar.watermark, isCenterZero).forEach(([variable, value]) => {
@@ -9568,12 +9513,12 @@ class EntityProgressCardBase extends HABase {
   _getStandardFields() {
     return [
       {
-        className: CARD.htmlStructure.elements.name.class,
+        className: CARD.htmlStructure.elements.nameMain.class,
         value: this._cardView.name,
       },
       {
-        className: CARD.htmlStructure.elements.stateAndProgressInfo.class,
-        value: this._cardView.stateAndProgressInfo,
+        className: CARD.htmlStructure.elements.secondaryInfoMain.class,
+        value: this._cardView.secondaryInfoMain,
       },
     ];
   }
@@ -9590,11 +9535,11 @@ class EntityProgressCardBase extends HABase {
     };
   }
   _renderCustomInfo(content) {
-    this._dom.setHTML(CARD.htmlStructure.elements.customInfo.class, `${content}&nbsp;`);
+    this._dom.setHTML(CARD.htmlStructure.elements.secondaryInfoExtra.class, `${content}&nbsp;`);
   }
 
   _renderNameInfo(content) {
-    this._dom.setHTML(CARD.htmlStructure.elements.nameCustomInfo.class, `&nbsp;${content}`);
+    this._dom.setHTML(CARD.htmlStructure.elements.nameExtra.class, `&nbsp;${content}`);
   }
 }
 
@@ -9775,18 +9720,17 @@ class EntityProgressFeatures extends HACore {
   _updateCSS() {
     const bar = this._cardView;
     const isCenterZero = bar.config.center_zero;
-    const isNegative = bar.percent < 0;
     const cardKey = CARD.htmlStructure.card.element;
-    const progressSize = `${Math.abs(bar.percent) / 100}`;
+    const progressValue = `${bar.percent / 100}`;
 
     this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.color.var, bar.barColor);
-
     if (isCenterZero) {
-      this._dom.setStyle(cardKey, isNegative ? CARD.style.dynamic.progressBar.nSize.var : CARD.style.dynamic.progressBar.pSize.var, progressSize);
-      this._dom.setStyle(cardKey, isNegative ? CARD.style.dynamic.progressBar.pSize.var : CARD.style.dynamic.progressBar.nSize.var, '0');
+      this._dom.toggleClass('inner', 'negative', isCenterZero && progressValue < 0);
+      this._dom.toggleClass('inner', 'positive', isCenterZero && progressValue >= 0);
     } else {
-      this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.size.var, progressSize);
+      this._dom.addClass('inner', 'positive');
     }
+    this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.value.var, progressValue);
 
     if (bar.hasWatermark) {
       HACore._getWatermarkProperties(bar.watermark, isCenterZero).forEach(([variable, value]) => {
@@ -9917,14 +9861,14 @@ class EntityProgressTemplateBase extends HABase {
   // === BADGE MANAGEMENT ===
 
   _renderName(content) {
-    this._dom.setHTML(CARD.htmlStructure.elements.name.class, `${content}`.trim());
+    this._dom.setHTML(CARD.htmlStructure.elements.nameMain.class, `${content}`.trim());
   }
 
   _renderSecondary(content) {
     const hasLineBreak = /<br\s*\/?>/i.test(content);
     const wrappedContent = hasLineBreak ? `<span class="multiline">${content}</span>` : `${content}`;
     this._dom.toggleClass(CARD.htmlStructure.card.element, 'info-multiline', hasLineBreak);
-    this._dom.setHTML(CARD.htmlStructure.elements.customInfo.class, wrappedContent.trim());
+    this._dom.setHTML(CARD.htmlStructure.elements.secondaryInfoExtra.class, wrappedContent.trim());
   }
 
   _managePercent(percent) {
@@ -9942,16 +9886,17 @@ class EntityProgressTemplateBase extends HABase {
   }
 
   _renderPercentCSS(percent) {
-    const isCenterZero = this._cardView.config.center_zero;
     const cardKey = CARD.htmlStructure.card.element;
-    const progressSize = `${Math.abs(percent) / 100}`;
+    const isCenterZero = this._cardView.config.center_zero;
+    const progressValue = `${percent / 100}`;
 
     if (isCenterZero) {
-      this._dom.setStyle(cardKey, percent >= 0 ? CARD.style.dynamic.progressBar.pSize.var : CARD.style.dynamic.progressBar.nSize.var, progressSize);
-      this._dom.setStyle(cardKey, percent >= 0 ? CARD.style.dynamic.progressBar.nSize.var : CARD.style.dynamic.progressBar.pSize.var, '0');
+      this._dom.toggleClass('inner', 'negative', isCenterZero && progressValue < 0);
+      this._dom.toggleClass('inner', 'positive', isCenterZero && progressValue >= 0);
     } else {
-      this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.size.var, progressSize);
+      this._dom.addClass('inner', 'positive');
     }
+    this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.value.var, progressValue);
   }
 
   // === TEMPLATE PROCESSING ===

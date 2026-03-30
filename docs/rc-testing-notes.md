@@ -99,6 +99,17 @@ mode), this update is for you.
 
 ### 🧩 Improvements and Bug Fixes
 
+- Card structure refactor
+  - The way names, secondary info, and progress bars are organized has been
+    simplified and renamed for clarity.
+  - Card spacing and padding are now more consistent in all layouts.
+  - Improved grid layout behavior for vertical cards.
+- Reduced CSS complexity which improves browser rendering performance.
+  - Progress bars: Now use a unified "inner" element instead of separate
+    positive/negative bars. Zero, low, and high markers have simpler classes.
+  - Watermark and zero mark rendering has been redesigned to be more flexible.
+  - Improved support for low/high watermark visual styles (area, line, round,
+    striped, triangle, etc.).
 - General refactoring and stability improvements on logs, Jinja & config
   management.
 - Added: Card/Badge template now correctly displays colors based on priority —
@@ -112,10 +123,3 @@ mode), this update is for you.
 - Fixed: guard against null/undefined config and prevent cascading errors
 - fixed(layout): center content vertically in horizontal xlarge card 🎨
   Improvements
-- Reduced CSS complexity which improves browser rendering performance.
-- Watermark and zero mark rendering has been redesigned to be more flexible.
-- Improved support for low/high watermark visual styles (area, line, round,
-  striped, triangle, etc.).
-- Simplified internal styling which improves compatibility with custom themes.
-- Card spacing and padding are now more consistent in all layouts.
-- Improved grid layout behavior for vertical cards.

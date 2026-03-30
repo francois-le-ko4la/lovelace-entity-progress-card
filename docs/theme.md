@@ -387,7 +387,6 @@ clear and intuitive display of PM2.5 pollution levels.
 | `--epb-zero-mark-width`               | Marker       | Dimension  | Zero marker thickness                               | `2px`       |
 | `--epb-zero-mark-color`               | Marker       | Color      | Zero marker color                                   | `#ff0000`   |
 
-
 <a id="usage"></a>
 
 ### Usage
@@ -407,8 +406,7 @@ my_custom_theme:
   epb-progress-bar-background-color: 'rgba(255, 255, 255, 0.12)'
 ```
 
-> [!NOTE]
-> When declaring CSS variables in a theme YAML file, omit the `--`
+> [!NOTE] When declaring CSS variables in a theme YAML file, omit the `--`
 > prefix — Home Assistant adds it automatically.
 
 This applies to all cards using that theme.
@@ -457,6 +455,161 @@ card_mod:
       --epb-detail-letter-spacing: 1px;
     }
 ```
+
+[🔼 Back to top]
+
+## card_mod and card structure
+
+### Class Name Updates & Migration Guide (v1.5.3+)
+
+This project has evolved with new use cases, which means that the original class
+names needed to be revisited. The goal of this update is to simplify the
+identification of elements within the cards, making it easier to understand and
+maintain.
+
+These changes also prepare the codebase for future releases, ensuring
+consistency and flexibility for upcoming features.
+
+To help you transition to this new class naming scheme, you will find the table
+below, which shows the mapping between the old and new class names. This should
+guide you in updating your custom card modifications.
+
+| **Old Class**                    | **New Class**            | **Notes / Usage**                                    |
+| -------------------------------- | ------------------------ | ---------------------------------------------------- |
+| `name-group`                     | `name`                   | Main container for the name block                    |
+| `name-combined`                  | `name-value`             | Displays the combined main and extra name            |
+| `name`                           | `name-main`              | Main name text                                       |
+| `name-custom-info`               | `name-extra`             | Extra name info, appended after main name            |
+| `secondary-info-detail-group`    | `secondary-info-wrapper` | Container for secondary info (state/progress/custom) |
+| `secondary-info-detail-combined` | `secondary-info-value`   | Displays main + extra secondary info                 |
+| `state-and-progress-info`        | `secondary-info-main`    | Main secondary info (was progress/state)             |
+| `secondary-info-custom-info`     | `secondary-info-extra`   | Extra secondary info (was custom info)               |
+| `progress-bar-container`         | `bar-container`          | Progress bar wrapper                                 |
+| `progress-bar-inner`             | `inner`                  | Single inner bar element (positive/negative unified) |
+| `progress-bar-low-zero`          | `zero`                   | Zero mark for center-zero bars                       |
+| `progress-bar-low-wm`            | `low`                    | Low watermark marker                                 |
+| `progress-bar-high-wm`           | `high`                   | High watermark marker                                |
+
+[🔼 Back to top]
+
+### DOM
+
+#### entity-progress-card
+
+```text
+ha-card.entity-progress-card...
+ ├─ ha-ripple
+ ├─ div.container
+ │   ├─ div.trend-indicator (optional)
+ │   │   └─ ha-icon.trend-icon
+ │   ├─ div.icon-section
+ │   │   ├─ shape.shape
+ │   │   │   ├─ ha-ripple
+ │   │   │   └─ div.icon
+ │   │   │       └─ ha-state-icon
+ │   │   └─ div.badge (optional)
+ │   │       └─ ha-icon.badge-icon
+ │   └─ div.content-section
+ │       ├─ div.name
+ │       │   └─ div.ellipsis-wrapper
+ │       │       └─ span.name-value
+ │       │           ├─ span.name-main
+ │       │           └─ span.name-extra (optional)
+ │       └─ div.secondary-info
+ │           └─ div.secondary-info-group
+ │               └─ div.ellipsis-wrapper
+ │                   └─ span.secondary-info-value
+ │                       ├─ span.secondary-info-main
+ │                       └─ span.secondary-info-extra (optional)
+ └─ div.top-container / div.bottom-container / div.below-container (depends on barPosition)
+     └─ div.bar-container
+         └─ div.progress-bar.default / center-zero (depends on bar type)
+             ├─ div.inner
+             ├─ div.low.watermark.mark
+             ├─ div.high.watermark.mark
+             └─ div.zero.mark (if center-zero)
+```
+
+#### Template
+
+```text
+ha-card...
+ ├─ ha-ripple
+ ├─ div.container
+ │   ├─ div.trend-indicator (optional)
+ │   │   └─ ha-icon.trend-icon
+ │   ├─ div.icon-section
+ │   │   ├─ shape.shape
+ │   │   │   ├─ ha-ripple
+ │   │   │   └─ div.icon
+ │   │   │       └─ ha-state-icon
+ │   │   └─ div.badge (optional)
+ │   │       └─ ha-icon.badge-icon
+ │   └─ div.content-section
+ │       ├─ div.name
+ │       │   └─ div.ellipsis-wrapper
+ │       │       └─ span.name-value
+ │       │           ├─ span.name-main
+ │       │           └─ span.name-extra (optional)
+ │       └─ div.secondary-info
+ │           └─ div.secondary-info-group
+ │               └─ div.ellipsis-wrapper
+ │                   └─ span.secondary-info-value
+ │                       ├─ span.secondary-info-main
+ │                       └─ span.secondary-info-extra (optional)
+ └─ div.top-container / div.bottom-container / div.below-container (if barPosition)
+     └─ div.bar-container
+         └─ div.progress-bar.default / center-zero
+             ├─ div.inner
+             ├─ div.low.watermark.mark
+             ├─ div.high.watermark.mark
+             └─ div.zero.mark (if center-zero)
+```
+
+#### Badge
+
+```text
+ha-card...
+ ├─ div.container
+ │   ├─ div.icon-section
+ │   │   └─ shape.shape
+ │   │       ├─ ha-ripple
+ │   │       └─ div.icon
+ │   │           └─ ha-state-icon
+ │   └─ div.content-section
+ │       ├─ div.name
+ │       │   └─ div.ellipsis-wrapper
+ │       │       └─ span.name-value
+ │       │           ├─ span.name-main
+ │       │           └─ span.name-extra (optional)
+ │       └─ div.secondary-info
+ │           └─ div.secondary-info-group
+ │               └─ div.ellipsis-wrapper
+ │                   └─ span.secondary-info-value
+ │                       ├─ span.secondary-info-main
+ │                       └─ span.secondary-info-extra (optional)
+
+```
+
+#### Center-Zero / Vertical Bars (Additional Variants)
+
+```text
+ha-card...
+ ├─ div.container
+ │   ├─ div.icon-section (optional)
+ │   └─ div.content-section
+ │       ├─ div.name
+ │       │   └─ span.name-value
+ │       └─ div.secondary-info
+ │           └─ span.secondary-info-value
+ └─ div.bar-container.vertical / top / bottom / below
+     └─ div.progress-bar.center-zero
+         ├─ div.inner
+         ├─ div.low.watermark.mark
+         ├─ div.high.watermark.mark
+         └─ div.zero.mark
+```
+
 
 [🔼 Back to top]
 
