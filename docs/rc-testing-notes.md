@@ -96,9 +96,27 @@ mode), this update is for you.
 - Smart Cornering: The card now automatically matches the "Border Radius" (the
   roundness of the corners) of your specific Home Assistant theme. It will look
   like it truly belongs in your dashboard.
+- Extended HA color usable in the YAML editor: see theme guide.
 
-### 🧩 Improvements and Bug Fixes
+🎨 Improved Editor Experience
 
+The visual editor (GUI) has been redesigned to be more intuitive:
+
+- Dynamic Fields: The editor now intelligently shows or hides fields based on
+  your current configuration (e.g., attribute selectors only appear once an
+  entity is selected).
+- Toggle Logic: Simplified the way elements are hidden or shown, moving away
+  from complex lists to straightforward "Show/Hide" switches.
+- Max Value Entity: Added better support for using a second entity or a specific
+  attribute as the maximum value for the progress bar.
+
+### 🛡️ Stability & Fixes
+
+- 2026.2 Compatibility: Updated selectors and form elements to ensure full
+  compatibility with the latest Home Assistant frontend changes.
+- Bug Fixes: Resolved issues related to accordion animations in the editor and
+  CSS variable propagation removing home-made accordion and using native HA
+  component.
 - Card structure refactor
   - The way names, secondary info, and progress bars are organized has been
     simplified and renamed for clarity.

@@ -17,7 +17,7 @@ export default [
     },
     plugins: {
       compat,
-      'sonarjs': sonarjs,
+      sonarjs,
     },
     settings: {
       browsers: ['Chrome >= 98', 'Edge >= 98', 'Firefox >= 94', 'Safari >= 15.4', 'Opera >= 84'],

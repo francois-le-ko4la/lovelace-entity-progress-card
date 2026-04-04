@@ -32,6 +32,8 @@ color is missing, please do not hesitate to let us know. If you choose a
 CSS-compatible color name that is not part of this list, the rendering will be
 as defined by the CSS standard.
 
+### Standard color
+
 | **Color Name** | **Mapped CSS Variable**    |
 | :------------- | :------------------------- |
 | `primary`      | `var(--primary-color)`     |
@@ -60,6 +62,121 @@ as defined by the CSS standard.
 | `black`        | `var(--black-color)`       |
 | `white`        | `var(--white-color)`       |
 | `disabled`     | `var(--disabled-color)`    |
+
+### Text
+
+| **Color Name**     | **CSS Variable**                  |
+| ------------------ | --------------------------------- |
+| primary-text       | `var(--primary-text-color)`       |
+| secondary-text     | `var(--secondary-text-color)`     |
+| text-primary       | `var(--text-primary-color)`       |
+| text-light-primary | `var(--text-light-primary-color)` |
+| disabled-text      | `var(--disabled-text-color)`      |
+
+### Status
+
+| Color Name | CSS Variable           |
+| ---------- | ---------------------- |
+| success    | `var(--success-color)` |
+| warning    | `var(--warning-color)` |
+| error      | `var(--error-color)`   |
+| info       | `var(--info-color)`    |
+
+### Interface/UI
+
+| Color Name     | CSS Variable                  |
+| -------------- | ----------------------------- |
+| dark-primary   | `var(--dark-primary-color)`   |
+| darker-primary | `var(--darker-primary-color)` |
+| light-primary  | `var(--light-primary-color)`  |
+| divider        | `var(--divider-color)`        |
+| outline        | `var(--outline-color)`        |
+| outline-hover  | `var(--outline-hover-color)`  |
+| shadow         | `var(--shadow-color)`         |
+
+### HA State
+
+| **Color Name**                                | **CSS Variable**                                             |
+| --------------------------------------------- | ------------------------------------------------------------ |
+| state-alarm_control_panel-armed_away          | `var(--state-alarm_control_panel-armed_away-color)`          |
+| state-alarm_control_panel-armed_custom_bypass | `var(--state-alarm_control_panel-armed_custom_bypass-color)` |
+| state-alarm_control_panel-armed_home          | `var(--state-alarm_control_panel-armed_home-color)`          |
+| state-alarm_control_panel-armed_night         | `var(--state-alarm_control_panel-armed_night-color)`         |
+| state-alarm_control_panel-armed_vacation      | `var(--state-alarm_control_panel-armed_vacation-color)`      |
+| state-alarm_control_panel-arming              | `var(--state-alarm_control_panel-arming-color)`              |
+| state-alarm_control_panel-disarming           | `var(--state-alarm_control_panel-disarming-color)`           |
+| state-alarm_control_panel-pending             | `var(--state-alarm_control_panel-pending-color)`             |
+| state-alarm_control_panel-triggered           | `var(--state-alarm_control_panel-triggered-color)`           |
+| state-alert-off                               | `var(--state-alert-off-color)`                               |
+| state-alert-on                                | `var(--state-alert-on-color)`                                |
+| state-binary_sensor-active                    | `var(--state-binary_sensor-active-color)`                    |
+| state-binary_sensor-battery-on                | `var(--state-binary_sensor-battery-on-color)`                |
+| state-binary_sensor-carbon_monoxide-on        | `var(--state-binary_sensor-carbon_monoxide-on-color)`        |
+| state-binary_sensor-gas-on                    | `var(--state-binary_sensor-gas-on-color)`                    |
+| state-binary_sensor-heat-on                   | `var(--state-binary_sensor-heat-on-color)`                   |
+| state-binary_sensor-lock-on                   | `var(--state-binary_sensor-lock-on-color)`                   |
+| state-binary_sensor-moisture-on               | `var(--state-binary_sensor-moisture-on-color)`               |
+| state-binary_sensor-problem-on                | `var(--state-binary_sensor-problem-on-color)`                |
+| state-binary_sensor-safety-on                 | `var(--state-binary_sensor-safety-on-color)`                 |
+| state-binary_sensor-smoke-on                  | `var(--state-binary_sensor-smoke-on-color)`                  |
+| state-binary_sensor-sound-on                  | `var(--state-binary_sensor-sound-on-color)`                  |
+| state-binary_sensor-tamper-on                 | `var(--state-binary_sensor-tamper-on-color)`                 |
+| state-climate-auto                            | `var(--state-climate-auto-color)`                            |
+| state-climate-cool                            | `var(--state-climate-cool-color)`                            |
+| state-climate-dry                             | `var(--state-climate-dry-color)`                             |
+| state-climate-fan_only                        | `var(--state-climate-fan_only-color)`                        |
+| state-climate-heat                            | `var(--state-climate-heat-color)`                            |
+| state-climate-heat-cool                       | `var(--state-climate-heat-cool-color)`                       |
+| state-cover-active                            | `var(--state-cover-active-color)`                            |
+| state-device_tracker-active                   | `var(--state-device_tracker-active-color)`                   |
+| state-device_tracker-home                     | `var(--state-device_tracker-home-color)`                     |
+| state-fan-active                              | `var(--state-fan-active-color)`                              |
+| state-humidifier-on                           | `var(--state-humidifier-on-color)`                           |
+| state-lawn_mower-error                        | `var(--state-lawn_mower-error-color)`                        |
+| state-lawn_mower-mowing                       | `var(--state-lawn_mower-mowing-color)`                       |
+| state-light-active                            | `var(--state-light-active-color)`                            |
+| state-lock-jammed                             | `var(--state-lock-jammed-color)`                             |
+| state-lock-locked                             | `var(--state-lock-locked-color)`                             |
+| state-lock-locking                            | `var(--state-lock-locking-color)`                            |
+| state-lock-unlocked                           | `var(--state-lock-unlocked-color)`                           |
+| state-lock-unlocking                          | `var(--state-lock-unlocking-color)`                          |
+| state-lock-open                               | `var(--state-lock-open-color)`                               |
+| state-lock-opening                            | `var(--state-lock-opening-color)`                            |
+| state-media_player-active                     | `var(--state-media_player-active-color)`                     |
+| state-person-active                           | `var(--state-person-active-color)`                           |
+| state-person-home                             | `var(--state-person-home-color)`                             |
+| state-plant-active                            | `var(--state-plant-active-color)`                            |
+| state-siren-active                            | `var(--state-siren-active-color)`                            |
+| state-sun-above_horizon                       | `var(--state-sun-above_horizon-color)`                       |
+| state-sun-below_horizon                       | `var(--state-sun-below_horizon-color)`                       |
+| state-switch-active                           | `var(--state-switch-active-color)`                           |
+| state-update-active                           | `var(--state-update-active-color)`                           |
+| state-vacuum-active                           | `var(--state-vacuum-active-color)`                           |
+| state-valve-active                            | `var(--state-valve-active-color)`                            |
+| state-sensor-battery-high                     | `var(--state-sensor-battery-high-color)`                     |
+| state-sensor-battery-low                      | `var(--state-sensor-battery-low-color)`                      |
+| state-sensor-battery-medium                   | `var(--state-sensor-battery-medium-color)`                   |
+| state-water_heater-eco                        | `var(--state-water_heater-eco-color)`                        |
+| state-water_heater-electric                   | `var(--state-water_heater-electric-color)`                   |
+| state-water_heater-gas                        | `var(--state-water_heater-gas-color)`                        |
+| state-water_heater-heat_pump                  | `var(--state-water_heater-heat_pump-color)`                  |
+| state-water_heater-high_demand                | `var(--state-water_heater-high_demand-color)`                |
+| state-water_heater-performance                | `var(--state-water_heater-performance-color)`                |
+| state-weather-clear_night                     | `var(--state-weather-clear_night-color)`                     |
+| state-weather-cloudy                          | `var(--state-weather-cloudy-color)`                          |
+| state-weather-exceptional                     | `var(--state-weather-exceptional-color)`                     |
+| state-weather-fog                             | `var(--state-weather-fog-color)`                             |
+| state-weather-hail                            | `var(--state-weather-hail-color)`                            |
+| state-weather-lightning_rainy                 | `var(--state-weather-lightning_rainy-color)`                 |
+| state-weather-lightning                       | `var(--state-weather-lightning-color)`                       |
+| state-weather-partlycloudy                    | `var(--state-weather-partlycloudy-color)`                    |
+| state-weather-pouring                         | `var(--state-weather-pouring-color)`                         |
+| state-weather-rainy                           | `var(--state-weather-rainy-color)`                           |
+| state-weather-snowy_rainy                     | `var(--state-weather-snowy_rainy-color)`                     |
+| state-weather-snowy                           | `var(--state-weather-snowy-color)`                           |
+| state-weather-sunny                           | `var(--state-weather-sunny-color)`                           |
+| state-weather-windy_variant                   | `var(--state-weather-windy_variant-color)`                   |
+| state-weather-windy                           | `var(--state-weather-windy-color)`                           |
 
 [🔼 Back to top]
 
