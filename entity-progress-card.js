@@ -24,9 +24,12 @@
  * PARAMETERS
  */
 
+// prettier-ignore-start
 const VERSION = '1.5.3-dev';
-const CARD = {
-  meta: {
+
+const META = {
+  documentation: 'https://github.com/francois-le-ko4la/lovelace-entity-progress-card/',
+  cards: {
     card: {
       typeName: 'entity-progress-card',
       name: 'Entity Progress Card',
@@ -49,16 +52,170 @@ const CARD = {
       typeName: 'entity-progress-badge-template',
       name: 'Entity Progress Badge (Template)',
       description: 'A cool custom badge to show current entity status with a progress bar.',
+      editor: 'entity-progress-badge-template-editor',
     },
     feature: {
       typeName: 'entity-progress-feature',
       name: 'Entity Progress Feature',
       description: 'A cool custom feature in tile to show current entity status with a progress bar.',
     },
+  }
+};
+
+const CARD_CONTEXT = {
+  dev: true,
+  // editor: true, interactionHandler: true
+  debug: { card: true, editor: true, interactionHandler: true, ressourceManager: true, hass: false },
+};
+
+// from: https://github.com/home-assistant/frontend/blob/master/src/resources/theme/color/color.globals.ts
+const HA_CONTEXT = {
+  icons: {
+    prefix: 'mdi:',
+    help: 'mdi:help',
+    helpCircle: 'mdi:help-circle',
+    helpCircleOutline: 'mdi:help-circle-outline',
+    chevronUpBox: 'mdi:chevron-up-box',
+    chevronDownBox: 'mdi:chevron-down-box',
+    equalBox: 'mdi:equal-box',
+    focusHorizontal: 'mdi:focus-field-horizontal',
+    focusVertical: 'mdi:focus-field-vertical',
+    alert: 'mdi:alert',
+    alertCircleOutline: 'mdi:alert-circle-outline',
+    exclamationThick: 'mdi:exclamation-thick',
+    play: 'mdi:play',
+    pause: 'mdi:pause',
+    gestureTapHold: 'mdi:gesture-tap-hold',
+    washingMachine: 'mdi:washing-machine',
+    update: 'mdi:update',
+    lightbulb: 'mdi:lightbulb',
+    lightbulbOutline: 'mdi:lightbulb-outline',
+    thermometer: 'mdi:thermometer',
+    waterPercent: 'mdi:water-percent',
+    airFilter: 'mdi:air-filter',
+    listBox: 'mdi:list-box',
+    textShort: 'mdi:text-short',
+    sizeSmall: 'mdi:size-s',
+    sizeMedium: 'mdi:size-m',
+    sizeLarge: 'mdi:size-l',
+    sizeXLarge: 'mdi:size-xl',
   },
+  colors: {
+    success: 'var(--success-color)',
+    stateIcon: 'var(--state-icon-color)',
+    red: 'var(--red-color)',
+    orange: 'var(--orange-color)',
+    deepOrange: 'var(--deep-orange-color)',
+    yellow: 'var(--yellow-color)',
+    amber: 'var(--amber-color)',
+    accent: 'var(--accent-color)',
+    deepPurple: 'var(--deep-purple-color)',
+    indigo: 'var(--indigo-color)',
+    blue: 'var(--blue-color)',
+    lightBlue: 'var(--light-blue-color)',
+    cyan: 'var(--cyan-color)',
+    teal: 'var(--teal-color)',
+    green: 'var(--green-color)',
+    lightGreen: 'var(--light-green-color)',
+    darkGrey: 'var(--dark-grey-color)',
+    unavailable: 'var(--state-unavailable-color)',
+    inactive: 'var(--state-inactive-color)',
+    active: 'var(--state-active-color)',
+    coverActive: 'var(--state-cover-active-color)',
+    fanActive: 'var(--state-fan-active-color)',
+    batteryLow: 'var(--state-sensor-battery-low-color)',
+    batteryMedium: 'var(--state-sensor-battery-medium-color)',
+    batteryHigh: 'var(--state-sensor-battery-high-color)',
+    climateDry: 'var(--state-climate-dry-color)',
+    climateCool: 'var(--state-climate-cool-color)',
+    climateHeat: 'var(--state-climate-heat-color)',
+    climateFanOnly: 'var(--state-climate-fan_only-color)',
+  },
+  haColors: new Map(
+    [
+      // texte
+      'primary-text', 'secondary-text', 'text-primary', 'text-light-primary', 'disabled-text',
+      // interface
+      'primary', 'dark-primary', 'darker-primary', 'light-primary', 'accent', 'divider',
+      'outline', 'outline-hover', 'shadow',    
+      // material color
+      'primary', 'accent', 'red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue',
+      'light-blue', 'cyan', 'teal', 'green', 'light-green', 'lime', 'yellow', 'amber',
+      'orange', 'deep-orange', 'brown', 'light-grey', 'grey', 'dark-grey', 'blue-grey',
+      'black', 'white', 'disabled',
+      // HA
+      'success', 'warning', 'error', 'info', 'disabled',
+      // State
+      'state-icon', 'state-active', 'state-inactive', 'state-unavailable',
+      'state-alarm_control_panel-armed_away', 'state-alarm_control_panel-armed_custom_bypass',
+      'state-alarm_control_panel-armed_home', 'state-alarm_control_panel-armed_night',
+      'state-alarm_control_panel-armed_vacation', 'state-alarm_control_panel-arming',
+      'state-alarm_control_panel-disarming', 'state-alarm_control_panel-pending',
+      'state-alarm_control_panel-triggered', 'state-alert-off', 'state-alert-on',
+      'state-binary_sensor-active', 'state-binary_sensor-battery-on',
+      'state-binary_sensor-carbon_monoxide-on', 'state-binary_sensor-gas-on',
+      'state-binary_sensor-heat-on', 'state-binary_sensor-lock-on', 'state-binary_sensor-moisture-on',
+      'state-binary_sensor-problem-on', 'state-binary_sensor-safety-on', 'state-binary_sensor-smoke-on',
+      'state-binary_sensor-sound-on', 'state-binary_sensor-tamper-on',
+      'state-climate-auto', 'state-climate-cool', 'state-climate-dry', 'state-climate-fan_only',
+      'state-climate-heat', 'state-climate-heat-cool', 'state-cover-active',
+      'state-device_tracker-active', 'state-device_tracker-home', 'state-fan-active',
+      'state-humidifier-on', 'state-lawn_mower-error', 'state-lawn_mower-mowing',
+      'state-light-active', 'state-lock-jammed', 'state-lock-locked', 'state-lock-locking',
+      'state-lock-unlocked', 'state-lock-unlocking', 'state-lock-open', 'state-lock-opening',
+      'state-media_player-active', 'state-person-active', 'state-person-home', 'state-plant-active',
+      'state-siren-active', 'state-sun-above_horizon', 'state-sun-below_horizon', 'state-switch-active',
+      'state-update-active', 'state-vacuum-active', 'state-valve-active', 'state-sensor-battery-high',
+      'state-sensor-battery-low', 'state-sensor-battery-medium', 'state-water_heater-eco',
+      'state-water_heater-electric', 'state-water_heater-gas', 'state-water_heater-heat_pump',
+      'state-water_heater-high_demand', 'state-water_heater-performance',
+      'state-weather-clear_night', 'state-weather-cloudy', 'state-weather-exceptional', 'state-weather-fog',
+      'state-weather-hail', 'state-weather-lightning_rainy', 'state-weather-lightning',
+      'state-weather-partlycloudy', 'state-weather-pouring', 'state-weather-rainy',
+      'state-weather-snowy_rainy', 'state-weather-snowy', 'state-weather-sunny',
+      'state-weather-windy_variant', 'state-weather-windy'
+    ].map((c) => [c, `var(--${c}-color)`]),
+  ),
+  languages: new Map([
+    ['af', 'af-ZA'], ['ar', 'ar'], ['bg', 'bg-BG'], ['bn', 'bn'], ['ca', 'ca-ES'], ['cs', 'cs-CZ'],
+    ['da', 'da-DK'], ['de', 'de-DE'], ['de-CH', 'de-CH'], ['el', 'el-GR'], ['en', 'en-US'], ['es', 'es-ES'],
+    ['et', 'et-EE'], ['eu', 'eu-ES'], ['fa', 'fa-IR'], ['fi', 'fi-FI'], ['fr', 'fr-FR'], ['gl', 'gl-ES'],
+    ['gu', 'gu-IN'], ['he', 'he-IL'], ['hi', 'hi-IN'], ['hr', 'hr-HR'], ['hu', 'hu-HU'], ['id', 'id-ID'],
+    ['is', 'is-IS'], ['it', 'it-IT'], ['ja', 'ja-JP'], ['ka', 'ka-GE'], ['kn', 'kn-IN'], ['ko', 'ko-KR'],
+    ['kw', 'kw-GB'], ['lb', 'lb-LU'], ['lt', 'lt-LT'], ['lv', 'lv-LV'], ['ml', 'ml-IN'], ['mn', 'mn-MN'],
+    ['mr', 'mr-IN'], ['ms', 'ms-MY'], ['nb', 'nb-NO'], ['ne', 'ne-NP'], ['nl', 'nl-NL'], ['pl', 'pl-PL'],
+    ['pt', 'pt-PT'], ['pt-br', 'pt-BR'], ['ro', 'ro-RO'], ['ru', 'ru-RU'], ['sk', 'sk-SK'], ['sl', 'sl-SI'],
+    ['sr', 'sr-RS'], ['sr-Latn', 'sr-Latn-RS'], ['sv', 'sv-SE'], ['sw', 'sw-KE'], ['te', 'te-IN'], ['th', 'th-TH'],
+    ['tr', 'tr-TR'], ['uk', 'uk-UA'], ['ur', 'ur-PK'], ['vi', 'vi-VN'], ['zh-cn', 'zh-CN'], ['zh-hk', 'zh-HK'],
+    ['zh-tw', 'zh-TW'], ['zh-Hant', 'zh-TW'],
+  ]),
+  attributeMapping: {
+    cover: { label: 'cover', attribute: 'current_position' },
+    light: { label: 'light', attribute: 'brightness' },
+    fan: { label: 'fan', attribute: 'percentage' },
+  },
+  entity: {
+    state: { unavailable: 'unavailable', unknown: 'unknown', notFound: 'notFound', idle: 'idle', active: 'active', paused: 'paused' },
+    type: { timer: 'timer', light: 'light', cover: 'cover', fan: 'fan', climate: 'climate', counter: 'counter', number: 'number' },
+    class: { shutter: 'shutter', battery: 'battery' },
+  },
+  actions: {
+    default: 'default',
+    navigate: { action: 'navigate' },
+    moreInfo: { action: 'more-info' },
+    url: { action: 'url' },
+    assist: { action: 'assist' },
+    toggle: { action: 'toggle' },
+    performAction: { action: 'perform-action' },
+    none: { action: 'none' },
+  },
+  styles: {
+    rowSize: '--row-size',
+  },
+}
+
+const CARD = {
   config: {
-    dev: true,
-    debug: { card: true, editor: true, interactionHandler: true, ressourceManager: true, hass: false },
     language: 'en',
     value: { min: 0, max: 100 },
     unit: {
@@ -74,90 +231,22 @@ const CARD = {
     showMoreInfo: true,
     reverse: false,
     decimal: { percentage: 0, timer: 0, counter: 0, duration: 0, other: 2 },
-    entity: {
-      state: { unavailable: 'unavailable', unknown: 'unknown', notFound: 'notFound', idle: 'idle', active: 'active', paused: 'paused' },
-      type: { timer: 'timer', light: 'light', cover: 'cover', fan: 'fan', climate: 'climate', counter: 'counter', number: 'number' },
-      class: { shutter: 'shutter', battery: 'battery' },
-    },
     msFactor: 1000,
     shadowMode: 'open',
     refresh: { ratio: 500, min: 250, max: 1000 },
     stub: {
       template: {
-        icon: 'mdi:washing-machine',
+        icon: HA_CONTEXT.icons.washingMachine,
         name: 'Entity Progress Card',
         secondary: 'Template',
-        badge_icon: 'mdi:update',
+        badge_icon: HA_CONTEXT.icons.update,
         badge_color: 'green',
         percent: '{{ 50 }}',
         force_circular_background: true,
       },
     },
-    languageMap: {
-      af: 'af-ZA',
-      ar: 'ar',
-      bg: 'bg-BG',
-      bn: 'bn',
-      ca: 'ca-ES',
-      cs: 'cs-CZ',
-      da: 'da-DK',
-      de: 'de-DE',
-      'de-CH': 'de-CH',
-      el: 'el-GR',
-      en: 'en-US',
-      es: 'es-ES',
-      et: 'et-EE',
-      eu: 'eu-ES',
-      fa: 'fa-IR',
-      fi: 'fi-FI',
-      fr: 'fr-FR',
-      gl: 'gl-ES',
-      gu: 'gu-IN',
-      he: 'he-IL',
-      hi: 'hi-IN',
-      hr: 'hr-HR',
-      hu: 'hu-HU',
-      id: 'id-ID',
-      is: 'is-IS',
-      it: 'it-IT',
-      ja: 'ja-JP',
-      ka: 'ka-GE',
-      kn: 'kn-IN',
-      ko: 'ko-KR',
-      kw: 'kw-GB',
-      lb: 'lb-LU',
-      lt: 'lt-LT',
-      lv: 'lv-LV',
-      ml: 'ml-IN',
-      mn: 'mn-MN',
-      mr: 'mr-IN',
-      ms: 'ms-MY',
-      nb: 'nb-NO',
-      ne: 'ne-NP',
-      nl: 'nl-NL',
-      pl: 'pl-PL',
-      pt: 'pt-PT',
-      'pt-br': 'pt-BR',
-      ro: 'ro-RO',
-      ru: 'ru-RU',
-      sk: 'sk-SK',
-      sl: 'sl-SI',
-      sr: 'sr-RS',
-      'sr-Latn': 'sr-Latn-RS',
-      sv: 'sv-SE',
-      sw: 'sw-KE',
-      te: 'te-IN',
-      th: 'th-TH',
-      tr: 'tr-TR',
-      uk: 'uk-UA',
-      ur: 'ur-PK',
-      vi: 'vi-VN',
-      'zh-cn': 'zh-CN',
-      'zh-hk': 'zh-HK',
-      'zh-tw': 'zh-TW',
-      'zh-Hant': 'zh-TW',
-    },
     separator: ' · ',
+    configError: 'Invalid config',
   },
   htmlStructure: {
     card: { element: 'ha-card' },
@@ -205,47 +294,47 @@ const CARD = {
   style: {
     element: 'style',
     color: {
-      default: 'var(--state-icon-color)',
-      disabled: 'var(--dark-grey-color)',
-      unavailable: 'var(--state-unavailable-color)',
-      notFound: 'var(--state-inactive-color)',
-      active: 'var(--state-active-color)',
-      coverActive: 'var(--state-cover-active-color)',
+      default: HA_CONTEXT.colors.stateIcon,
+      disabled: HA_CONTEXT.colors.darkGrey,
+      unavailable: HA_CONTEXT.colors.unavailable,
+      notFound: HA_CONTEXT.colors.inactive,
+      active: HA_CONTEXT.colors.active,
+      coverActive: HA_CONTEXT.colors.coverActive,
       lightActive: '#FF890E',
-      fanActive: 'var(--state-fan-active-color)',
+      fanActive: HA_CONTEXT.colors.fanActive,
       battery: {
-        low: 'var(--state-sensor-battery-low-color)',
-        medium: 'var(--state-sensor-battery-medium-color)',
-        high: 'var(--state-sensor-battery-high-color)',
+        low: HA_CONTEXT.colors.batteryLow,
+        medium: HA_CONTEXT.colors.batteryMedium,
+        high: HA_CONTEXT.colors.batteryHigh,
       },
       climate: {
-        dry: 'var(--state-climate-dry-color)',
-        cool: 'var(--state-climate-cool-color)',
-        heat: 'var(--state-climate-heat-color)',
-        fanOnly: 'var(--state-climate-fan_only-color)',
+        dry: HA_CONTEXT.colors.climateDry,
+        cool: HA_CONTEXT.colors.climateCool,
+        heat: HA_CONTEXT.colors.climateHeat,
+        fanOnly: HA_CONTEXT.colors.climateFanOnly,
       },
-      inactive: 'var(--state-inactive-color)',
+      inactive: HA_CONTEXT.colors.inactive,
     },
     icon: {
-      default: { icon: 'mdi:alert' },
-      alert: { icon: 'mdi:alert-circle-outline', color: '#0080ff', attribute: 'icon' },
-      notFound: { icon: 'mdi:help' },
+      default: { icon: HA_CONTEXT.icons.alert },
+      alert: { icon: HA_CONTEXT.icons.alertCircleOutline, color: '#0080ff', attribute: 'icon' },
+      notFound: { icon: HA_CONTEXT.icons.help },
       badge: {
         default: { attribute: 'icon' },
-        unavailable: { icon: 'mdi:exclamation-thick', color: 'white', backgroundColor: 'var(--orange-color)', attribute: 'icon' },
-        notFound: { icon: 'mdi:exclamation-thick', color: 'white', backgroundColor: 'var(--red-color)', attribute: 'icon' },
+        unavailable: { icon: HA_CONTEXT.icons.exclamationThick, color: 'white', backgroundColor: HA_CONTEXT.colors.orange, attribute: 'icon' },
+        notFound: { icon: HA_CONTEXT.icons.exclamationThick, color: 'white', backgroundColor: HA_CONTEXT.colors.red, attribute: 'icon' },
         timer: {
-          active: { icon: 'mdi:play', color: 'white', backgroundColor: 'var(--success-color)', attribute: 'icon' },
-          paused: { icon: 'mdi:pause', color: 'white', backgroundColor: 'var(--state-icon-color)', attribute: 'icon' },
+          active: { icon: HA_CONTEXT.icons.play, color: 'white', backgroundColor: HA_CONTEXT.colors.success, attribute: 'icon' },
+          paused: { icon: HA_CONTEXT.icons.pause, color: 'white', backgroundColor: HA_CONTEXT.colors.stateIcon, attribute: 'icon' },
         },
       },
     },
     bar: {
       sizeOptions: {
-        small: { label: 'small', mdi: 'mdi:size-s' },
-        medium: { label: 'medium', mdi: 'mdi:size-m' },
-        large: { label: 'large', mdi: 'mdi:size-l' },
-        xlarge: { label: 'xlarge', mdi: 'mdi:size-xl' },
+        small: { label: 'small', mdi: HA_CONTEXT.icons.sizeSmall },
+        medium: { label: 'medium', mdi: HA_CONTEXT.icons.sizeMedium },
+        large: { label: 'large', mdi: HA_CONTEXT.icons.sizeLarge },
+        xlarge: { label: 'xlarge', mdi: HA_CONTEXT.icons.sizeXLarge },
       },
     },
     dynamic: {
@@ -254,11 +343,11 @@ const CARD = {
         height: { var: '--card-height' },
       },
       badge: {
-        color: { var: '--badge-color', default: 'var(--orange-color)' },
+        color: { var: '--badge-color', default: HA_CONTEXT.colors.orange },
         backgroundColor: { var: '--badge-bgcolor', default: 'white' },
       },
       iconAndShape: {
-        color: { var: '--icon-and-shape-color', default: 'var(--state-icon-color)' },
+        color: { var: '--icon-and-shape-color', default: HA_CONTEXT.colors.stateIcon },
         icon: { size: { var: '--icon-size' } },
         shape: { size: { var: '--shape-size' } },
       },
@@ -266,7 +355,7 @@ const CARD = {
         color: { var: '--ha-ripple-color' },
       },
       progressBar: {
-        color: { var: '--progress-bar-color', default: 'var(--state-icon-color)' },
+        color: { var: '--progress-bar-color', default: HA_CONTEXT.colors.stateIcon },
         value: { var: '--progress-bar-value', default: '0' },
         maxWidth: { var: '--progress-bar-max-width', default: null },
         background: { var: '--epb-progress-bar-background-color' },
@@ -307,84 +396,15 @@ const CARD = {
       horizontal: {
         label: 'horizontal',
         grid: { grid_rows: 1, grid_min_rows: 1, grid_columns: 2, grid_min_columns: 2 },
-        mdi: 'mdi:focus-field-horizontal',
+        mdi: HA_CONTEXT.icons.focusHorizontal,
         minHeight: '56px',
       },
       vertical: {
         label: 'vertical',
         grid: { grid_rows: 2, grid_min_rows: 2, grid_columns: 1, grid_min_columns: 1 },
-        mdi: 'mdi:focus-field-vertical',
+        mdi: HA_CONTEXT.icons.focusVertical,
         minHeight: '120px',
       },
-    },
-  },
-  interactions: {
-    event: {
-      HASelect: ['selected'],
-      toggle: ['change'],
-      other: ['value-changed', 'input'],
-      closed: 'closed',
-      click: 'click',
-      configChanged: 'config-changed',
-      originalTarget: { icon: ['ha-shape', 'ha-svg-icon'] },
-      from: { icon: 'icon', card: 'card' },
-      tap: {
-        tapAction: 'tap',
-        holdAction: 'hold',
-        doubleTapAction: 'double_tap',
-        iconTapAction: 'icon_tap',
-        iconHoldAction: 'icon_hold',
-        iconDoubleTapAction: 'icon_double_tap',
-      },
-    },
-    action: {
-      default: 'default',
-      navigate: { action: 'navigate' },
-      moreInfo: { action: 'more-info' },
-      url: { action: 'url' },
-      assist: { action: 'assist' },
-      toggle: { action: 'toggle' },
-      performAction: { action: 'perform-action' },
-      none: { action: 'none' },
-    },
-  },
-  editor: {
-    fields: {
-      container: { element: 'div', class: 'editor' },
-      entity: { type: 'entity', element: 'ha-form' },
-      attribute: { type: 'attribute', element: 'ha-selector' }, // 2026.2 : ha-select -> ha-selector
-      max_value_attribute: { type: 'max_value_attribute', element: 'ha-selector' }, // 2026.2 : ha-select -> ha-selector
-      icon: { type: 'icon', element: 'ha-form' },
-      layout: { type: 'layout', element: 'ha-selector' }, // 2026.2 : ha-select -> ha-selector
-      bar_size: { type: 'bar_size', element: 'ha-selector' }, // 2026.2 : ha-select -> ha-selector
-      tap_action: { type: 'tap_action', element: 'ha-form' },
-      double_tap_action: { type: 'double_tap_action', element: 'ha-form' },
-      hold_action: { type: 'hold_action', element: 'ha-form' },
-      icon_tap_action: { type: 'icon_tap_action', element: 'ha-form' },
-      icon_double_tap_action: { type: 'icon_double_tap_action', element: 'ha-form' },
-      icon_hold_action: { type: 'icon_hold_action', element: 'ha-form' },
-      theme: { type: 'theme', element: 'ha-selector' }, // 2026.2 : ha-select -> ha-selector
-      color: { type: 'color', element: 'ha-form' },
-      number: { type: 'number', element: 'ha-selector' }, // 2026.2 : ha-textfield -> ha-selector
-      decimal: { type: 'decimal', element: 'ha-selector' },
-      default: { type: 'text', element: 'ha-selector' }, // 2026.2 : ha-textfield -> ha-selector
-      toggle: { type: 'toggle', element: 'ha-selector', class: 'editor-toggle' }, // 2026.2 : ha-switch -> ha-selector
-      text: { element: 'span' },
-      accordion: {
-        item: { element: 'div', class: 'accordion' },
-        icon: { element: 'ha-icon', class: 'accordion-icon' },
-        title: { element: 'button', class: 'accordion-title' },
-        arrow: { element: 'ha-icon', class: 'accordion-arrow', icon: 'mdi:chevron-down' },
-        content: { element: 'div', class: 'accordion-content' },
-      },
-    },
-    keyMappings: {
-      attribute: 'attribute',
-      max_value_attribute: 'max_value_attribute',
-      url_path: 'url_path',
-      navigation_path: 'navigation_path',
-      theme: 'theme',
-      tapAction: 'tap_action',
     },
   },
   theme: {
@@ -395,30 +415,20 @@ const CARD = {
       colorKeys: ['color', 'icon_color', 'bar_color'],
     },
   },
-  documentation: {
-    link: {
-      element: 'a',
-      class: 'documentation-link',
-      linkTarget: '_blank',
-      documentationUrl: 'https://github.com/francois-le-ko4la/lovelace-entity-progress-card/',
-    },
-    shape: { element: 'div', class: 'documentation-link-shape' },
-    questionMark: {
-      element: 'ha-icon',
-      class: 'documentation-icon',
-      icon: 'mdi:help-circle',
-      style: { width: '24px', class: '24px' },
-    },
+  network: {
+    ready: 'ws-ready',
+    disconnected: 'ws-disconnected',
   },
 };
+CARD.network.ready
 
 CARD.config.defaults = {
-  tap_action: { action: 'more-info' },
-  hold_action: { action: 'none' },
-  double_tap_action: { action: 'none' },
-  icon_tap_action: { action: 'none' },
-  icon_hold_action: { action: 'none' },
-  icon_double_tap_action: { action: 'none' },
+  tap_action: HA_CONTEXT.actions.moreInfo,
+  hold_action: HA_CONTEXT.actions.none,
+  double_tap_action: HA_CONTEXT.actions.none,
+  icon_tap_action: HA_CONTEXT.actions.none,
+  icon_hold_action: HA_CONTEXT.actions.none,
+  icon_double_tap_action: HA_CONTEXT.actions.none,
   unit: null,
   layout: CARD.layout.orientations.horizontal.label,
   decimal: null,
@@ -464,125 +474,96 @@ CARD.config.defaults = {
 };
 
 CARD.console = {
-  message: `%c✨${CARD.meta.card.typeName.toUpperCase()} ${VERSION} IS INSTALLED.`,
+  message: `%c✨${META.cards.card.typeName.toUpperCase()} ${VERSION} IS INSTALLED.`,
   css: 'color:orange; background-color:black; font-weight: bold;',
   link: '      For more details, check the README: https://github.com/francois-le-ko4la/lovelace-entity-progress-card',
 };
-
-const DEF_COLORS = new Set([
-  'primary',
-  'accent',
-  'red',
-  'pink',
-  'purple',
-  'deep-purple',
-  'indigo',
-  'blue',
-  'light-blue',
-  'cyan',
-  'teal',
-  'green',
-  'light-green',
-  'lime',
-  'yellow',
-  'amber',
-  'orange',
-  'deep-orange',
-  'brown',
-  'light-grey',
-  'grey',
-  'dark-grey',
-  'blue-grey',
-  'black',
-  'white',
-  'disabled',
-]);
 
 const THEME = {
   optimal_when_low: {
     linear: false,
     percent: true,
     style: [
-      { min: 0, max: 20, icon: null, color: 'var(--success-color)' },
-      { min: 20, max: 50, icon: null, color: 'var(--yellow-color)' },
-      { min: 50, max: 80, icon: null, color: 'var(--accent-color)' },
-      { min: 80, max: 100, icon: null, color: 'var(--red-color)' },
+      { min: 0, max: 20, icon: null, color: HA_CONTEXT.colors.success },
+      { min: 20, max: 50, icon: null, color: HA_CONTEXT.colors.yellow },
+      { min: 50, max: 80, icon: null, color: HA_CONTEXT.colors.accent },
+      { min: 80, max: 100, icon: null, color: HA_CONTEXT.colors.red },
     ],
   },
   optimal_when_high: {
     linear: false,
     percent: true,
     style: [
-      { min: 0, max: 20, icon: null, color: 'var(--red-color)' },
-      { min: 20, max: 50, icon: null, color: 'var(--accent-color)' },
-      { min: 50, max: 80, icon: null, color: 'var(--yellow-color)' },
-      { min: 80, max: 100, icon: null, color: 'var(--success-color)' },
+      { min: 0, max: 20, icon: null, color: HA_CONTEXT.colors.red },
+      { min: 20, max: 50, icon: null, color: HA_CONTEXT.colors.accent },
+      { min: 50, max: 80, icon: null, color: HA_CONTEXT.colors.yellow },
+      { min: 80, max: 100, icon: null, color: HA_CONTEXT.colors.success },
     ],
   },
   light: {
     linear: true,
     percent: true,
     style: [
-      { icon: 'mdi:lightbulb-outline', color: '#4B4B4B' },
-      { icon: 'mdi:lightbulb-outline', color: '#877F67' },
-      { icon: 'mdi:lightbulb', color: '#C3B382' },
-      { icon: 'mdi:lightbulb', color: '#FFE79E' },
-      { icon: 'mdi:lightbulb', color: '#FFE79E' },
+      { icon: HA_CONTEXT.icons.lightbulbOutline, color: '#4B4B4B' },
+      { icon: HA_CONTEXT.icons.lightbulbOutline, color: '#877F67' },
+      { icon: HA_CONTEXT.icons.lightbulb, color: '#C3B382' },
+      { icon: HA_CONTEXT.icons.lightbulb, color: '#FFE79E' },
+      { icon: HA_CONTEXT.icons.lightbulb, color: '#FFE79E' },
     ],
   },
   temperature: {
     linear: false,
     percent: false,
     style: [
-      { min: -50, max: -30, icon: 'mdi:thermometer', color: 'var(--deep-purple-color)' },
-      { min: -30, max: -15, icon: 'mdi:thermometer', color: 'var(--indigo-color)' },
-      { min: -15, max: -2, icon: 'mdi:thermometer', color: 'var(--blue-color)' },
-      { min: -2, max: 2, icon: 'mdi:thermometer', color: 'var(--light-blue-color)' },
-      { min: 2, max: 8, icon: 'mdi:thermometer', color: 'var(--cyan-color)' },
-      { min: 8, max: 16, icon: 'mdi:thermometer', color: 'var(--teal-color)' },
-      { min: 16, max: 18, icon: 'mdi:thermometer', color: 'var(--green-color)' },
-      { min: 18, max: 20, icon: 'mdi:thermometer', color: 'var(--light-green-color)' },
-      { min: 20, max: 25, icon: 'mdi:thermometer', color: 'var(--success-color)' },
-      { min: 25, max: 27, icon: 'mdi:thermometer', color: 'var(--yellow-color)' },
-      { min: 27, max: 29, icon: 'mdi:thermometer', color: 'var(--amber-color)' },
-      { min: 29, max: 34, icon: 'mdi:thermometer', color: 'var(--deep-orange-color)' },
-      { min: 34, max: 100, icon: 'mdi:thermometer', color: 'var(--red-color)' },
+      { min: -50, max: -30, icon: HA_CONTEXT.icons.thermometer, color: HA_CONTEXT.colors.deepPurple },
+      { min: -30, max: -15, icon: HA_CONTEXT.icons.thermometer, color: HA_CONTEXT.colors.indigo },
+      { min: -15, max: -2, icon: HA_CONTEXT.icons.thermometer, color: HA_CONTEXT.colors.blue },
+      { min: -2, max: 2, icon: HA_CONTEXT.icons.thermometer, color: HA_CONTEXT.colors.lightBlue },
+      { min: 2, max: 8, icon: HA_CONTEXT.icons.thermometer, color: HA_CONTEXT.colors.cyan },
+      { min: 8, max: 16, icon: HA_CONTEXT.icons.thermometer, color: HA_CONTEXT.colors.teal },
+      { min: 16, max: 18, icon: HA_CONTEXT.icons.thermometer, color: HA_CONTEXT.colors.green },
+      { min: 18, max: 20, icon: HA_CONTEXT.icons.thermometer, color: HA_CONTEXT.colors.lightGreen },
+      { min: 20, max: 25, icon: HA_CONTEXT.icons.thermometer, color: HA_CONTEXT.colors.success },
+      { min: 25, max: 27, icon: HA_CONTEXT.icons.thermometer, color: HA_CONTEXT.colors.yellow },
+      { min: 27, max: 29, icon: HA_CONTEXT.icons.thermometer, color: HA_CONTEXT.colors.amber },
+      { min: 29, max: 34, icon: HA_CONTEXT.icons.thermometer, color: HA_CONTEXT.colors.deepOrange },
+      { min: 34, max: 100, icon: HA_CONTEXT.icons.thermometer, color: HA_CONTEXT.colors.red },
     ],
   },
   humidity: {
     linear: false,
     percent: true,
     style: [
-      { min: 0, max: 23, icon: 'mdi:water-percent', color: 'var(--red-color)' },
-      { min: 23, max: 30, icon: 'mdi:water-percent', color: 'var(--accent-color)' },
-      { min: 30, max: 40, icon: 'mdi:water-percent', color: 'var(--yellow-color)' },
-      { min: 40, max: 50, icon: 'mdi:water-percent', color: 'var(--success-color)' },
-      { min: 50, max: 60, icon: 'mdi:water-percent', color: 'var(--teal-color)' },
-      { min: 60, max: 65, icon: 'mdi:water-percent', color: 'var(--light-blue-color)' },
-      { min: 65, max: 80, icon: 'mdi:water-percent', color: 'var(--indigo-color)' },
-      { min: 80, max: 100, icon: 'mdi:water-percent', color: 'var(--deep-purple-color)' },
+      { min: 0, max: 23, icon: HA_CONTEXT.icons.waterPercent, color: HA_CONTEXT.colors.red },
+      { min: 23, max: 30, icon: HA_CONTEXT.icons.waterPercent, color: HA_CONTEXT.colors.accent },
+      { min: 30, max: 40, icon: HA_CONTEXT.icons.waterPercent, color: HA_CONTEXT.colors.yellow },
+      { min: 40, max: 50, icon: HA_CONTEXT.icons.waterPercent, color: HA_CONTEXT.colors.success },
+      { min: 50, max: 60, icon: HA_CONTEXT.icons.waterPercent, color: HA_CONTEXT.colors.teal },
+      { min: 60, max: 65, icon: HA_CONTEXT.icons.waterPercent, color: 'var(--light-blue-color)' },
+      { min: 65, max: 80, icon: HA_CONTEXT.icons.waterPercent, color: HA_CONTEXT.colors.indigo },
+      { min: 80, max: 100, icon: HA_CONTEXT.icons.waterPercent, color: HA_CONTEXT.colors.deepPurple },
     ],
   },
   voc: {
     linear: false,
     percent: false,
     style: [
-      { min: 0, max: 300, icon: 'mdi:air-filter', color: 'var(--success-color)' },
-      { min: 300, max: 500, icon: 'mdi:air-filter', color: 'var(--yellow-color)' },
-      { min: 500, max: 3000, icon: 'mdi:air-filter', color: 'var(--accent-color)' },
-      { min: 3000, max: 25000, icon: 'mdi:air-filter', color: 'var(--red-color)' },
-      { min: 25000, max: 50000, icon: 'mdi:air-filter', color: 'var(--deep-purple-color)' },
+      { min: 0, max: 300, icon: HA_CONTEXT.icons.airFilter, color: HA_CONTEXT.colors.success },
+      { min: 300, max: 500, icon: HA_CONTEXT.icons.airFilter, color: HA_CONTEXT.colors.yellow },
+      { min: 500, max: 3000, icon: HA_CONTEXT.icons.airFilter, color: HA_CONTEXT.colors.accent },
+      { min: 3000, max: 25000, icon: HA_CONTEXT.icons.airFilter, color: HA_CONTEXT.colors.red },
+      { min: 25000, max: 50000, icon: HA_CONTEXT.icons.airFilter, color: HA_CONTEXT.colors.deepPurple },
     ],
   },
   pm25: {
     linear: false,
     percent: false,
     style: [
-      { min: 0, max: 12, icon: 'mdi:air-filter', color: 'var(--success-color)' },
-      { min: 12, max: 35, icon: 'mdi:air-filter', color: 'var(--yellow-color)' },
-      { min: 35, max: 55, icon: 'mdi:air-filter', color: 'var(--accent-color)' },
-      { min: 55, max: 150, icon: 'mdi:air-filter', color: 'var(--red-color)' },
-      { min: 150, max: 200, icon: 'mdi:air-filter', color: 'var(--deep-purple-color)' },
+      { min: 0, max: 12, icon: HA_CONTEXT.icons.airFilter, color: HA_CONTEXT.colors.success },
+      { min: 12, max: 35, icon: HA_CONTEXT.icons.airFilter, color: HA_CONTEXT.colors.yellow },
+      { min: 35, max: 55, icon: HA_CONTEXT.icons.airFilter, color: HA_CONTEXT.colors.accent },
+      { min: 55, max: 150, icon: HA_CONTEXT.icons.airFilter, color: HA_CONTEXT.colors.red },
+      { min: 150, max: 200, icon: HA_CONTEXT.icons.airFilter, color: HA_CONTEXT.colors.deepPurple },
     ],
   },
 };
@@ -594,7 +575,10 @@ const SEV = {
   debug: 'debug',
 };
 
-const LANGUAGES = {
+// prettier-ignore-end
+
+/* eslint-disable sonarjs/no-duplicate-string */
+const TRANSLATIONS = {
   ar: {
     card: {
       msg: {
@@ -1441,6 +1425,7 @@ const LANGUAGES = {
         decimal: 'décimal',
         min_value: 'Valeur minimum',
         max_value: 'Valeur maximum',
+        max_value_entity: 'Valeur maximum',
         max_value_attribute: 'Attribut (max_value)',
         tap_action: "Comportement lors d'un appui court",
         double_tap_action: "Comportement lors d'un double appui",
@@ -1448,19 +1433,30 @@ const LANGUAGES = {
         icon_tap_action: "Comportement lors de l'appui sur l'icône",
         icon_double_tap_action: "Comportement lors d'un double appui sur l'icône",
         icon_hold_action: "Comportement lors d'un appui long sur l'icône",
-        toggle_icon: 'Icône',
-        toggle_name: 'Nom',
-        toggle_value: 'Valeur',
-        toggle_unit: 'Unité',
-        toggle_secondary_info: 'Info',
-        toggle_progress_bar: 'Barre',
+        toggle_icon: "Afficher l'icône",
+        toggle_name: 'Afficher le nom',
+        toggle_value: 'Afficher la valeur',
+        disable_unit: "Afficher l'unité",
+        toggle_secondary_info: 'Afficher les informations secondaires',
+        toggle_progress_bar: 'Afficher la barre de progression',
         toggle_force_circular_background: 'Forcer le fond circulaire',
         theme: 'Thème',
         bar_size: 'Taille de la barre',
         bar_color: 'Couleur de la barre',
+        bar_orientation: 'Orientation de la barre',
+        bar_position: 'Position de la barre',
+        bar_effect: 'Effet sur la barre',
+        bar_single_line: 'Infos sur une ligne (overlay)',
+        center_zero: 'Zéro au centre',
+        force_circular_background: 'Fond de l’icône',
+        use_max_entity: 'Utiliser une entité pour la valeur max',
         icon: 'Icône',
         color: "Couleur de l'icône",
         layout: 'Disposition de la carte',
+        secondary: 'Information secondaire',
+        percent: 'Pourcentage',
+        badge_icon: 'Icône du badge',
+        badge_color: 'Couleur du badge',
       },
       option: {
         theme: {
@@ -1477,6 +1473,18 @@ const LANGUAGES = {
           medium: 'Moyenne',
           large: 'Grande',
           xlarge: 'Très grande',
+        },
+        bar_orientation: {
+          ltr: 'Gauche à droite',
+          rtl: 'Droite à gauche',
+          up: 'Vers le haut (overlay)',
+        },
+        bar_position: {
+          default: 'Défaut',
+          below: 'Barre en dessous du contenu',
+          top: 'Barre en haut (superposée)',
+          bottom: 'Barre en bas (superposée)',
+          overlay: 'Barre superposée au contenu (overlay)',
         },
         layout: {
           horizontal: 'Horizontal (par défaut)',
@@ -3266,206 +3274,7 @@ const LANGUAGES = {
     },
   },
 };
-
-const EDITOR_INPUT_FIELDS = {
-  basicConfiguration: {
-    entity: {
-      name: 'entity',
-      type: CARD.editor.fields.entity.type,
-      width: '100%',
-      isInGroup: null,
-      schema: [{ name: 'entity', required: true, selector: { entity: {} } }],
-    },
-    attribute: {
-      name: 'attribute',
-      type: CARD.editor.fields.attribute.type,
-      width: '100%',
-      isInGroup: CARD.editor.keyMappings.attribute,
-    },
-  },
-  content: {
-    title: {
-      name: 'content',
-      icon: 'mdi:text-short',
-    },
-    field: {
-      name: {
-        name: 'name',
-        type: CARD.editor.fields.default.type,
-        width: '100%',
-        isInGroup: null,
-      },
-      unit: {
-        name: 'unit',
-        type: CARD.editor.fields.default.type,
-        width: 'calc((100% - 20px) * 0.2)',
-        isInGroup: null,
-      },
-      decimal: {
-        name: 'decimal',
-        type: CARD.editor.fields.decimal.type,
-        width: 'calc((100% - 20px) * 0.2)',
-        isInGroup: null,
-      },
-      min_value: {
-        name: 'min_value',
-        type: CARD.editor.fields.number.type,
-        width: 'calc((100% - 20px) * 0.6)',
-        isInGroup: null,
-      },
-      max_value: {
-        name: 'max_value',
-        type: CARD.editor.fields.default.type,
-        width: '100%',
-        isInGroup: null,
-      },
-      max_value_attribute: {
-        name: 'max_value_attribute',
-        type: CARD.editor.fields.max_value_attribute.type,
-        width: '100%',
-        isInGroup: CARD.editor.keyMappings.max_value_attribute,
-      },
-    },
-  },
-  interaction: {
-    title: {
-      name: 'interaction',
-      icon: 'mdi:gesture-tap-hold',
-    },
-    field: {
-      tap_action: {
-        name: 'tap_action',
-        type: CARD.editor.fields.tap_action.type,
-        isInGroup: null,
-        width: '100%',
-        schema: [{ name: 'tap_action', selector: { 'ui-action': {} } }],
-      },
-      hold_action: {
-        name: 'hold_action',
-        type: CARD.editor.fields.tap_action.type,
-        isInGroup: null,
-        width: '100%',
-        schema: [{ name: 'hold_action', selector: { 'ui-action': {} } }],
-      },
-      double_tap_action: {
-        name: 'double_tap_action',
-        type: CARD.editor.fields.double_tap_action.type,
-        isInGroup: null,
-        width: '100%',
-        schema: [{ name: 'double_tap_action', selector: { 'ui-action': {} } }],
-      },
-      icon_tap_action: {
-        name: 'icon_tap_action',
-        type: CARD.editor.fields.icon_tap_action.type,
-        isInGroup: null,
-        width: '100%',
-        schema: [{ name: 'icon_tap_action', selector: { 'ui-action': {} } }],
-      },
-      icon_hold_action: {
-        name: 'icon_hold_action',
-        type: CARD.editor.fields.icon_hold_action.type,
-        isInGroup: null,
-        width: '100%',
-        schema: [{ name: 'icon_hold_action', selector: { 'ui-action': {} } }],
-      },
-      icon_double_tap_action: {
-        name: 'icon_double_tap_action',
-        type: CARD.editor.fields.icon_double_tap_action.type,
-        isInGroup: null,
-        width: '100%',
-        schema: [{ name: 'icon_double_tap_action', selector: { 'ui-action': {} } }],
-      },
-    },
-  },
-  theme: {
-    title: {
-      name: 'theme',
-      icon: 'mdi:list-box',
-    },
-    field: {
-      toggleIcon: {
-        name: 'toggle_icon',
-        type: CARD.editor.fields.toggle.type,
-        isInGroup: null,
-      },
-      toggleName: {
-        name: 'toggle_name',
-        type: CARD.editor.fields.toggle.type,
-        isInGroup: null,
-      },
-      toggleValue: {
-        name: 'toggle_value',
-        type: CARD.editor.fields.toggle.type,
-        isInGroup: null,
-      },
-      toggleUnit: {
-        name: 'toggle_unit',
-        type: CARD.editor.fields.toggle.type,
-        isInGroup: null,
-      },
-      toggleSecondaryInfo: {
-        name: 'toggle_secondary_info',
-        type: CARD.editor.fields.toggle.type,
-        isInGroup: null,
-      },
-      toggleBar: {
-        name: 'toggle_progress_bar',
-        type: CARD.editor.fields.toggle.type,
-        isInGroup: null,
-      },
-      toggleCircular: {
-        name: 'toggle_force_circular_background',
-        type: CARD.editor.fields.toggle.type,
-        isInGroup: null,
-      },
-      theme: {
-        name: 'theme',
-        type: CARD.editor.fields.theme.type,
-        width: '100%',
-        isInGroup: null,
-      },
-      bar_size: {
-        name: 'bar_size',
-        type: CARD.editor.fields.bar_size.type,
-        width: 'calc((100% - 10px) * 0.5)',
-        isInGroup: null,
-      },
-      bar_color: {
-        name: 'bar_color',
-        type: CARD.editor.fields.color.type,
-        width: 'calc((100% - 10px) * 0.5)',
-        isInGroup: CARD.editor.keyMappings.theme,
-        schema: [{ name: 'bar_color', selector: { 'ui-color': {} } }],
-      },
-      icon: {
-        name: 'icon',
-        type: CARD.editor.fields.icon.type,
-        width: 'calc((100% - 10px) * 0.5)',
-        isInGroup: null,
-        schema: [{ name: 'icon', selector: { icon: { icon_set: ['mdi'] } } }],
-      },
-      color: {
-        name: 'color',
-        type: CARD.editor.fields.color.type,
-        width: 'calc((100% - 10px) * 0.5)',
-        isInGroup: CARD.editor.keyMappings.theme,
-        schema: [{ name: 'color', selector: { 'ui-color': {} } }],
-      },
-      layout: {
-        name: 'layout',
-        type: CARD.editor.fields.layout.type,
-        width: '100%',
-        isInGroup: null,
-      },
-    },
-  },
-};
-
-const ATTRIBUTE_MAPPING = {
-  cover: { label: 'cover', attribute: 'current_position' },
-  light: { label: 'light', attribute: 'brightness' },
-  fan: { label: 'fan', attribute: 'percentage' },
-};
+/* eslint-enable sonarjs/no-duplicate-string */
 
 const CARD_CSS = `
 /* =============================================================================
@@ -4675,157 +4484,6 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
 }
 `;
 
-/* ======= END CSS */
-
-const CARD_EDITOR_CSS = `
-:host {
-  --accordion-padding: 18px;
-  --accordion-gap: 10px;
-  --border-radius: 6px;
-  --transition-duration: 0.2s;
-  --transition-easing: cubic-bezier(0.33, 0, 0.2, 1);
-  --icon-size: 20px;
-  --button-size: 48px;
-  --small-icon-size: 24px;
-}
-
-/* Container principal */
-.${CARD.editor.fields.container.class} {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  padding-bottom: 70px;
-}
-
-/* Icônes communes */
-.${CARD.editor.fields.accordion.icon.class} {
-  margin-right: 8px;
-  color: var(--secondary-text-color);
-}
-
-/* Accordéon */
-.${CARD.editor.fields.accordion.item.class} {
-  display: block;
-  width: 100%;
-  box-shadow: none;
-  border-width: 1px;
-  border-style: solid;
-  border-color: var(--outline-color);
-  border-radius: var(--ha-border-radius-md);
-  overflow: visible;
-}
-
-.${CARD.editor.fields.accordion.title.class} {
-  display: flex;
-  align-items: center;
-  gap: var(--accordion-gap);
-  position: relative;
-  background-color: transparent;
-  color: var(--primary-text-color);
-  cursor: pointer;
-  padding: var(--accordion-padding);
-  width: 100%;
-  height: var(--button-size);
-  border: none;
-  text-align: left;
-  font-size: 15px;
-  transition: background-color 0.4s ease;
-  border-radius: var(--ha-border-radius-md);
-}
-
-.${CARD.editor.fields.accordion.title.class}:focus {
-  background-color: var(--input-fill-color);
-}
-
-.accordion.expanded .${CARD.editor.fields.accordion.title.class}:focus {
-  border-radius: var(--ha-border-radius-md) var(--ha-border-radius-md) 0 0;
-}
-
-.${CARD.editor.fields.accordion.arrow.class} {
-  display: inline-block;
-  width: var(--small-icon-size);
-  height: var(--small-icon-size);
-  margin-left: auto;
-  color: var(--primary-text-color);
-  transition: transform var(--transition-duration) ease-out;
-}
-
-.accordion.expanded .${CARD.editor.fields.accordion.arrow.class} {
-  transform: rotate(180deg);
-}
-
-.${CARD.editor.fields.accordion.content.class} {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-content: flex-start;
-  column-gap: var(--accordion-gap);
-  row-gap: 20px;
-  padding: 0 var(--accordion-padding);
-  background-color: transparent;
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  transition:
-    max-height var(--transition-duration) var(--transition-easing),
-    padding var(--transition-duration) var(--transition-easing),
-    opacity var(--transition-duration) ease;
-}
-
-.accordion.expanded .${CARD.editor.fields.accordion.content.class} {
-  /* max-height: défini par script JS */
-  padding-top: 30px;
-  padding-bottom: 30px;
-  opacity: 1;
-  overflow: visible;
-}
-
-/* Animation des éléments enfants de l'accordéon */
-.${CARD.editor.fields.accordion.content.class} > * {
-  opacity: 0;
-  transition: opacity var(--transition-duration) ease 0.15s;
-}
-
-.accordion.expanded .${CARD.editor.fields.accordion.content.class} > * {
-  opacity: 1;
-}
-
-.accordion.collapsing .${CARD.editor.fields.accordion.content.class} > * {
-  opacity: 0 !important;
-  transition: opacity 0.1s ease; /* Transition rapide pendant le repli */
-}
-
-/* Classes show/hide optimisées */
-.${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.attribute} .${CARD.editor.keyMappings.attribute},
-.${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.max_value_attribute} .${CARD.editor.keyMappings.max_value_attribute},
-.${CARD.style.dynamic.hide}-${CARD.editor.keyMappings.theme} .${CARD.editor.keyMappings.theme} {
-  display: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-
-  .${CARD.editor.fields.accordion.title.class},
-  .${CARD.editor.fields.accordion.arrow.class},
-  .${CARD.editor.fields.accordion.content.class},
-  .${CARD.documentation.shape.class} {
-    transition: none !important;
-  }
-
-  .${CARD.editor.fields.accordion.content.class} > * {
-    opacity: 1 !important;
-    transition: none !important;
-  }
-}
-`;
-
 /******************************************************************************************
  * 📦 Test utils
  ******************************************************************************************/
@@ -4968,7 +4626,7 @@ function initLogger(ctx, debugFlag, methodNames = []) {
  * @class
  */
 class RegistrationHelper {
-  static _devMode = CARD.config.dev;
+  static _devMode = CARD_CONTEXT.dev;
   static #targetKey = {
     customCards: 'customCards',
     customBadges: 'customBadges',
@@ -4992,7 +4650,7 @@ class RegistrationHelper {
           name: component.name,
           preview: true,
           description: component.description,
-          documentationURL: CARD.documentation.link.documentationUrl,
+          documentationURL: META.documentation,
           version: VERSION,
         };
   }
@@ -5051,6 +4709,8 @@ class RegistrationHelper {
  * 📦 CARD LIB
  ******************************************************************************************/
 
+const CONTENT_SLOT = '{{content}}';
+
 const Element = (obj, extraClass = '') => {
   const className = `${obj.class} ${extraClass}`.trim();
   return {
@@ -5062,10 +4722,10 @@ const Element = (obj, extraClass = '') => {
 
 const StructureElements = {
   ripple: () => '<ha-ripple></ha-ripple>',
-  container: (options) => StructureElements.ripple() + Element(CARD.htmlStructure.sections.container, options.layout).html('{{content}}'),
-  belowContainer: () => Element(CARD.htmlStructure.sections.belowContainer).html('{{content}}'),
-  topContainer: () => Element(CARD.htmlStructure.sections.topContainer).html('{{content}}'),
-  bottomContainer: () => Element(CARD.htmlStructure.sections.bottomContainer).html('{{content}}'),
+  container: (options) => StructureElements.ripple() + Element(CARD.htmlStructure.sections.container, options.layout).html(CONTENT_SLOT),
+  belowContainer: () => Element(CARD.htmlStructure.sections.belowContainer).html(CONTENT_SLOT),
+  topContainer: () => Element(CARD.htmlStructure.sections.topContainer).html(CONTENT_SLOT),
+  bottomContainer: () => Element(CARD.htmlStructure.sections.bottomContainer).html(CONTENT_SLOT),
 
   iconAndShape: () => Element(CARD.htmlStructure.elements.shape).html(StructureElements.ripple() + Element(CARD.htmlStructure.elements.icon).html()),
   badge: () => Element(CARD.htmlStructure.elements.badge.container).html(Element(CARD.htmlStructure.elements.badge.icon).html()),
@@ -5104,14 +4764,8 @@ const StructureElements = {
 
     const innerHtml = Element(CARD.htmlStructure.elements.progressBar.inner).html() + marks;
 
-    return Element(
-      CARD.htmlStructure.elements.progressBar.container,
-      extraClass
-    ).html(
-      Element(
-        CARD.htmlStructure.elements.progressBar.bar,
-        isCenterZero ? 'center-zero' : 'default'
-      ).html(innerHtml)
+    return Element(CARD.htmlStructure.elements.progressBar.container, extraClass).html(
+      Element(CARD.htmlStructure.elements.progressBar.bar, isCenterZero ? 'center-zero' : 'default').html(innerHtml),
     );
   },
 
@@ -5166,9 +4820,9 @@ const StructureElements = {
     const bar = () => StructureElements.progressBar(options);
 
     const wrap = {
-      top: () => ({ before: StructureElements.topContainer().replace('{{content}}', bar()), after: '' }),
-      bottom: () => ({ before: '', after: StructureElements.bottomContainer().replace('{{content}}', bar()) }),
-      below: () => ({ before: '', after: StructureElements.belowContainer().replace('{{content}}', bar()) }),
+      top: () => ({ before: StructureElements.topContainer().replace(CONTENT_SLOT, bar()), after: '' }),
+      bottom: () => ({ before: '', after: StructureElements.bottomContainer().replace(CONTENT_SLOT, bar()) }),
+      below: () => ({ before: '', after: StructureElements.belowContainer().replace(CONTENT_SLOT, bar()) }),
     };
 
     const { before = '', after = '' } = wrap[barPosition]?.() ?? {};
@@ -5181,7 +4835,7 @@ const StructureTemplates = {
   card: (options = {}) => {
     return StructureElements.wrapWithBarPosition(
       StructureElements.container(options).replace(
-        '{{content}}',
+        CONTENT_SLOT,
         StructureElements.trendIndicator(options) + StructureElements.iconSection() + StructureElements.contentFull(options),
       ),
       options,
@@ -5190,7 +4844,7 @@ const StructureTemplates = {
 
   badge: (options = {}) => {
     return StructureElements.container(options).replace(
-      '{{content}}',
+      CONTENT_SLOT,
       StructureElements.iconSectionWoBadge() + StructureElements.contentFull(options),
     );
   },
@@ -5198,7 +4852,7 @@ const StructureTemplates = {
   template: (options = {}) => {
     return StructureElements.wrapWithBarPosition(
       StructureElements.container(options).replace(
-        '{{content}}',
+        CONTENT_SLOT,
         StructureElements.trendIndicator(options) + StructureElements.iconSection() + StructureElements.contentMini(options),
       ),
       options,
@@ -5209,8 +4863,8 @@ const StructureTemplates = {
     const bar = () => StructureElements.progressBar(options);
 
     const containers = {
-      top: () => StructureElements.topContainer().replace('{{content}}', bar()),
-      bottom: () => StructureElements.bottomContainer().replace('{{content}}', bar()),
+      top: () => StructureElements.topContainer().replace(CONTENT_SLOT, bar()),
+      bottom: () => StructureElements.bottomContainer().replace(CONTENT_SLOT, bar()),
     };
 
     return containers[barPosition]?.() ?? bar();
@@ -5711,6 +5365,7 @@ class ThemeManager {
   }
 
   #setStyle() {
+    // eslint-disable-next-line no-useless-assignment
     let [themeData, nextThemeData, ratio] = [null, null, 0];
 
     if (this.#value >= this.#currentStyle[this.#currentStyle.length - 1].max) {
@@ -5776,8 +5431,7 @@ class ThemeManager {
   // === PUBLIC API METHODS ===
 
   static adaptColor(curColor) {
-    if (!curColor) return null;
-    return DEF_COLORS.has(curColor) ? `var(--${curColor}-color)` : curColor;
+    return HA_CONTEXT.haColors.get(curColor) ?? curColor;
   }
 }
 
@@ -5807,7 +5461,7 @@ class HassProviderSingleton {
     last_updated: { source: 'state' },
     display_precision: { source: 'entity' },
   };
-  #debug = CARD.config.debug.hass;
+  #debug = CARD_CONTEXT.debug.hass;
   #log = null;
   #hass = null;
   #isValid = false;
@@ -5842,25 +5496,25 @@ class HassProviderSingleton {
     return this.#isValid;
   }
   get language() {
-    return this.#hass?.language in LANGUAGES ? this.#hass.language : CARD.config.language;
+    return this.#hass?.language in TRANSLATIONS ? this.#hass.language : CARD.config.language;
   }
   getMessage(code) {
     return this.localize('card.msg')[code] || `Unknown message code: ${code}`;
   }
   get numberFormat() {
     const format = this.#hass?.locale?.number_format;
-    if (!format) return CARD.config.languageMap[CARD.config.language];
+    if (!format) return HA_CONTEXT.languages.get(CARD.config.language);
 
     const formatMap = {
       decimal_comma: 'de-DE', // 1.234,56 (Allemagne, France, etc.)
       comma_decimal: 'en-US', // 1,234.56 (USA, UK, etc.)
       space_comma: 'fr-FR', // 1 234,56 (France, Norvège, etc.)
-      language: CARD.config.languageMap[this.language],
+      language: HA_CONTEXT.languages.get(this.language),
       system: Intl.NumberFormat().resolvedOptions().locale,
       none: 'en',
     };
 
-    return formatMap[format] || CARD.config.languageMap[CARD.config.language];
+    return formatMap[format] || HA_CONTEXT.languages.get(CARD.config.language);
   }
   get version() {
     return this.#hass?.config?.version ?? null;
@@ -5967,8 +5621,8 @@ class HassProviderSingleton {
     );
   }
   #loadTranslations(lang) {
-    const curLanguage = lang in CARD.config.languageMap ? lang : CARD.config.language;
-    this.#translations = LANGUAGES[curLanguage];
+    const curLanguage = HA_CONTEXT.languages.has(lang) ? lang : CARD.config.language;
+    this.#translations = TRANSLATIONS[curLanguage];
   }
   #getRelativeTimeFormat() {
     if (!this.#rtf || this.#rtfLanguage !== this.language) {
@@ -5980,7 +5634,7 @@ class HassProviderSingleton {
 }
 
 class ChangeTracker {
-  #debug = CARD.config.debug.hass;
+  #debug = CARD_CONTEXT.debug.hass;
   #log = null;
   #firstTime = true;
   #watchedEntities = new Set();
@@ -6123,7 +5777,7 @@ class EntityHelper {
     this.#isValid = this.#hassProvider.hasEntity(this.#entityId);
 
     if (!this.#isValid) {
-      this.#state = CARD.config.entity.state.notFound;
+      this.#state = HA_CONTEXT.entity.state.notFound;
       return;
     }
 
@@ -6140,7 +5794,7 @@ class EntityHelper {
   }
 
   _manageStdEntity() {
-    this.#attribute = this.#attribute || ATTRIBUTE_MAPPING[this.#domain]?.attribute;
+    this.#attribute = this.#attribute || HA_CONTEXT.attributeMapping[this.#domain]?.attribute;
     if (!this.#attribute) {
       this.#value = parseFloat(this.#state) || 0;
       return;
@@ -6150,7 +5804,7 @@ class EntityHelper {
 
     if (is.numericString(attrValue) || is.number(attrValue)) {
       this.#value = parseFloat(attrValue);
-      if (this.#domain === ATTRIBUTE_MAPPING.light.label && this.#attribute === ATTRIBUTE_MAPPING.light.attribute) {
+      if (this.#domain === HA_CONTEXT.attributeMapping.light.label && this.#attribute === HA_CONTEXT.attributeMapping.light.attribute) {
         this.#value = (100 * this.#value) / 255;
       }
     } else {
@@ -6160,15 +5814,15 @@ class EntityHelper {
     }
   }
   _manageTimerEntity() {
-    let duration = null;
-    let elapsed = null;
+    // eslint-disable-next-line no-useless-assignment
+    let [duration, elapsed] = [null, null];
     switch (this.#state) {
-      case CARD.config.entity.state.idle: {
+      case HA_CONTEXT.entity.state.idle: {
         elapsed = CARD.config.value.min;
         duration = CARD.config.value.max;
         break;
       }
-      case CARD.config.entity.state.active: {
+      case HA_CONTEXT.entity.state.active: {
         const finished_at = new Date(this.#hassProvider.getEntityProp(this.#entityId, 'finishes_at')).getTime();
         duration = NumberFormatter.convertDuration(this.#hassProvider.getEntityProp(this.#entityId, 'duration'));
         const started_at = finished_at - duration;
@@ -6176,7 +5830,7 @@ class EntityHelper {
         elapsed = now - started_at;
         break;
       }
-      case CARD.config.entity.state.paused: {
+      case HA_CONTEXT.entity.state.paused: {
         const remaining = NumberFormatter.convertDuration(this.#hassProvider.getEntityProp(this.#entityId, 'remaining'));
         duration = NumberFormatter.convertDuration(this.#hassProvider.getEntityProp(this.#entityId, 'duration'));
         elapsed = duration - remaining;
@@ -6210,7 +5864,7 @@ class EntityHelper {
     return this.#isValid && Object.keys(this.attributes ?? {}).length > 0;
   }
   get defaultAttribute() {
-    return ATTRIBUTE_MAPPING[this.#domain]?.attribute ?? null;
+    return HA_CONTEXT.attributeMapping[this.#domain]?.attribute ?? null;
   }
   get name() {
     return this.#hassProvider.getEntityProp(this.#entityId, 'friendly_name');
@@ -6245,7 +5899,7 @@ class EntityHelper {
     return this.getEntityType() === 'counter';
   }
   get hasShapeByDefault() {
-    return [CARD.config.entity.type.light, CARD.config.entity.type.fan].includes(this.#domain);
+    return [HA_CONTEXT.entity.type.light, HA_CONTEXT.entity.type.fan].includes(this.#domain);
   }
 
   #getClimateColor() {
@@ -6267,12 +5921,12 @@ class EntityHelper {
 
   get defaultColor() {
     const colorMap = {
-      [CARD.config.entity.type.timer]: this.value?.state === CARD.config.entity.state.active ? CARD.style.color.active : CARD.style.color.inactive,
-      [CARD.config.entity.type.cover]: this.value > 0 ? CARD.style.color.coverActive : CARD.style.color.inactive,
-      [CARD.config.entity.type.light]: this.value > 0 ? CARD.style.color.lightActive : CARD.style.color.inactive,
-      [CARD.config.entity.type.fan]: this.value > 0 ? CARD.style.color.fanActive : CARD.style.color.inactive,
-      [CARD.config.entity.type.climate]: this.#getClimateColor(),
-      [CARD.config.entity.class.battery]: this.#getBatteryColor(),
+      [HA_CONTEXT.entity.type.timer]: this.value?.state === HA_CONTEXT.entity.state.active ? CARD.style.color.active : CARD.style.color.inactive,
+      [HA_CONTEXT.entity.type.cover]: this.value > 0 ? CARD.style.color.coverActive : CARD.style.color.inactive,
+      [HA_CONTEXT.entity.type.light]: this.value > 0 ? CARD.style.color.lightActive : CARD.style.color.inactive,
+      [HA_CONTEXT.entity.type.fan]: this.value > 0 ? CARD.style.color.fanActive : CARD.style.color.inactive,
+      [HA_CONTEXT.entity.type.climate]: this.#getClimateColor(),
+      [HA_CONTEXT.entity.class.battery]: this.#getBatteryColor(),
     };
 
     return colorMap[this.#domain] ?? colorMap[this.#hassProvider.getEntityProp(this.#entityId, 'device_class')] ?? null;
@@ -6878,7 +6532,7 @@ function struct(validator) {
     if (is.nullish(result.icon_tap_action) && is.string(result.entity)) {
       const domain = HassProviderSingleton.getEntityDomain(result.entity);
       const shouldPatch = ['light', 'switch', 'fan', 'input_boolean', 'media_player'].includes(domain);
-      if (shouldPatch) result.icon_tap_action = { action: 'toggle' };
+      if (shouldPatch) result.icon_tap_action = HA_CONTEXT.actions.toggle;
     }
 
     if (['top', 'bottom', 'overlay'].includes(result.bar_position)) delete result.bar_size; // avoid conflict
@@ -6896,7 +6550,7 @@ function struct(validator) {
 
     return result;
   };
-  const structInstance = {
+  return {
     validate: (data) => {
       try {
         const preProcessed = preProcess(data);
@@ -7002,8 +6656,6 @@ function struct(validator) {
       return Object.keys(validator._schema);
     },
   };
-
-  return structInstance;
 }
 
 const additionItem = types.fallbackTo(
@@ -7125,12 +6777,12 @@ class YamlSchemaFactory {
         additions: types.optional(types.array(additionItem)),
 
         // === Actions ===
-        tap_action: types.tapActionWithDefault({ action: 'more-info' }),
-        hold_action: types.tapActionWithDefault({ action: 'none' }),
-        double_tap_action: types.tapActionWithDefault({ action: 'none' }),
-        icon_tap_action: types.tapActionWithDefault({ action: 'none' }),
-        icon_hold_action: types.tapActionWithDefault({ action: 'none' }),
-        icon_double_tap_action: types.tapActionWithDefault({ action: 'none' }),
+        tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.moreInfo),
+        hold_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),
+        double_tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),
+        icon_tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),
+        icon_hold_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),
+        icon_double_tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),
       }),
     );
   }
@@ -7191,12 +6843,12 @@ class YamlSchemaFactory {
         watermark: types.watermarkObject(watermarkSchema, CARD.config.defaults.watermark),
 
         // === Actions ===
-        tap_action: types.tapActionWithDefault({ action: 'more-info' }),
-        hold_action: types.tapActionWithDefault({ action: 'none' }),
-        double_tap_action: types.tapActionWithDefault({ action: 'none' }),
-        icon_tap_action: types.tapActionWithDefault({ action: 'none' }),
-        icon_hold_action: types.tapActionWithDefault({ action: 'none' }),
-        icon_double_tap_action: types.tapActionWithDefault({ action: 'none' }),
+        tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.moreInfo),
+        hold_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),
+        double_tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),
+        icon_tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),
+        icon_hold_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),
+        icon_double_tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),
       }),
     );
   }
@@ -7252,19 +6904,23 @@ class BaseConfigHelper {
     this.#actionsReady = false;
     this._isDefined = true;
     BaseConfigHelper.#logDeprecatedOption(config);
-    this._configParsed = this._yamlSchema.parse(config);
+    this._configParsed = this._yamlSchema.parse(this._customizeConfig(config));
 
     this.#lastMsgConsole = null;
   }
 
+  _customizeConfig(config) {
+    return config;
+  }
+
   static #logDeprecatedOption(config) {
     if (config.navigate_to !== undefined)
-      console.warn(`${CARD.meta.card.typeName.toUpperCase()} - navigate_to option is deprecated and has been removed.`);
+      console.warn(`${META.cards.card.typeName.toUpperCase()} - navigate_to option is deprecated and has been removed.`);
     if (config.show_more_info !== undefined)
-      console.warn(`${CARD.meta.card.typeName.toUpperCase()} - show_more_info option is deprecated and has been removed.`);
+      console.warn(`${META.cards.card.typeName.toUpperCase()} - show_more_info option is deprecated and has been removed.`);
     if (['battery', 'cpu', 'memory'].includes(config.theme))
       console.warn(
-        `${CARD.meta.card.typeName.toUpperCase()} - theme: ${
+        `${META.cards.card.typeName.toUpperCase()} - theme: ${
           config.theme
         } is deprecated and will be removed in a future release. Please migrate to the recommended alternative...`,
       );
@@ -7288,7 +6944,6 @@ class BaseConfigHelper {
     return this.config?.disable_unit;
   }
 
-  // === PUBLIC API METHODS ===
   get action() {
     if (!this.#actionsReady) {
       this.#actions = {
@@ -7381,6 +7036,18 @@ class BaseConfigHelper {
 class CardConfigHelper extends BaseConfigHelper {
   _yamlSchema = YamlSchemaFactory.card;
 
+  _customizeConfig(config) {
+    return {
+      ...config,
+      ...(is.nonEmptyString(config?.entity) && is.nullish(config?.attribute)
+        ? { attribute: HA_CONTEXT.attributeMapping[HassProviderSingleton.getEntityDomain(config?.entity)]?.attribute }
+        : {}),
+      ...(is.nonEmptyString(config?.max_value) && is.nullish(config?.max_value_attribute)
+        ? { max_value_attribute: HA_CONTEXT.attributeMapping[HassProviderSingleton.getEntityDomain(config?.max_value)]?.attribute }
+        : {}),
+    };
+  }
+
   get max_value() {
     if (!this.config.max_value) return CARD.config.value.max;
     if (Number.isFinite(this.config.max_value)) return this.config.max_value;
@@ -7464,7 +7131,7 @@ class ViewCore {
 
   set config(config) {
     if (!config) {
-      throw new Error('Invalid config');
+      throw new Error(CARD.config.configError);
     }
 
     this._configHelper.config = config;
@@ -7513,8 +7180,8 @@ class ViewCore {
     return layout.grid;
   }
   _getEntityColor() {
-    if (this._currentValue.state === CARD.config.entity.state.unavailable) return CARD.style.color.unavailable;
-    if (this._currentValue.state === CARD.config.entity.state.notFound) return CARD.style.color.notFound;
+    if (this._currentValue.state === HA_CONTEXT.entity.state.unavailable) return CARD.style.color.unavailable;
+    if (this._currentValue.state === HA_CONTEXT.entity.state.notFound) return CARD.style.color.notFound;
     return ThemeManager.adaptColor(this._currentValue.defaultColor || CARD.style.color.default);
   }
 
@@ -7549,12 +7216,12 @@ class ViewCore {
 
   get _hasInteractiveShape() {
     return [
-      CARD.interactions.action.navigate.action,
-      CARD.interactions.action.url.action,
-      CARD.interactions.action.moreInfo.action,
-      CARD.interactions.action.assist.action,
-      CARD.interactions.action.toggle.action,
-      CARD.interactions.action.performAction.action,
+      HA_CONTEXT.actions.navigate.action,
+      HA_CONTEXT.actions.url.action,
+      HA_CONTEXT.actions.moreInfo.action,
+      HA_CONTEXT.actions.assist.action,
+      HA_CONTEXT.actions.toggle.action,
+      HA_CONTEXT.actions.performAction.action,
     ].includes(this._configHelper.action.icon.tap);
   }
   get hasWatermark() {
@@ -7602,7 +7269,7 @@ class ViewCore {
 
   // skipcq: JS-0105
   _hasAction(action) {
-    return action !== CARD.interactions.action.none.action;
+    return action !== HA_CONTEXT.actions.none.action;
   }
 
   _hasAnyAction(actions) {
@@ -7675,7 +7342,7 @@ class ViewBase extends ViewCore {
   }
   set config(config) {
     if (!config) {
-      throw new Error('Invalid config');
+      throw new Error(CARD.config.configError);
     }
 
     this._configHelper.config = config;
@@ -7730,13 +7397,13 @@ class ViewBase extends ViewCore {
     return toEVal.some((v) => v.state === state);
   }
   get isUnknown() {
-    return this.#hasState(CARD.config.entity.state.unknown);
+    return this.#hasState(HA_CONTEXT.entity.state.unknown);
   }
   get isUnavailable() {
-    return this.#hasState(CARD.config.entity.state.unavailable);
+    return this.#hasState(HA_CONTEXT.entity.state.unavailable);
   }
   get isNotFound() {
-    return this.#hasState(CARD.config.entity.state.notFound);
+    return this.#hasState(HA_CONTEXT.entity.state.notFound);
   }
   get isAvailable() {
     return !(
@@ -7783,7 +7450,7 @@ class ViewBase extends ViewCore {
   }
 
   get secondaryInfoMain() {
-    if (this.hasStandardEntityError || (this._currentValue.isTimer && this._currentValue.value.state === CARD.config.entity.state.idle))
+    if (this.hasStandardEntityError || (this._currentValue.isTimer && this._currentValue.value.state === HA_CONTEXT.entity.state.idle))
       return this._currentValue.formatedEntityState;
 
     const additionalInfo = this._currentValue.stateContentToString;
@@ -7802,30 +7469,28 @@ class ViewBase extends ViewCore {
 
     if (this._currentValue.isTimer) {
       const { state } = this._currentValue.value;
-      const { paused, active } = CARD.config.entity.state;
+      const { paused, active } = HA_CONTEXT.entity.state;
       if (state === paused) return CARD.style.icon.badge.timer.paused;
       if (state === active) return CARD.style.icon.badge.timer.active;
     }
     return null;
   }
   get isActiveTimer() {
-    return this._currentValue.isTimer && this._currentValue.state === CARD.config.entity.state.active;
+    return this._currentValue.isTimer && this._currentValue.state === HA_CONTEXT.entity.state.active;
   }
   get refreshSpeed() {
     const rawSpeed = this._currentValue.value.duration / CARD.config.refresh.ratio;
     const clampedSpeed = Math.min(CARD.config.refresh.max, Math.max(CARD.config.refresh.min, rawSpeed));
-    const roundedSpeed = Math.max(100, Math.round(clampedSpeed / 100) * 100);
-
-    return roundedSpeed;
+    return Math.max(100, Math.round(clampedSpeed / 100) * 100);
   }
   get show_more_info() {
-    return [CARD.interactions.action.default, CARD.interactions.action.moreInfo.action].includes(this._configHelper.action.card.tap);
+    return [HA_CONTEXT.actions.default, HA_CONTEXT.actions.moreInfo.action].includes(this._configHelper.action.card.tap);
   }
   get hasVisibleShape() {
     return this._hassProvider.hasNewShapeStrategy ? super.hasVisibleShape : true;
   }
   get timerIsReversed() {
-    return this._configHelper.config.reverse !== false && this._currentValue.value.state !== CARD.config.entity.state.idle;
+    return this._configHelper.config.reverse !== false && this._currentValue.value.state !== HA_CONTEXT.entity.state.idle;
   }
   get hasWatermark() {
     return this._configHelper.config.watermark !== undefined;
@@ -7979,7 +7644,7 @@ class BadgeTemplateView extends ViewCore {
  * @class
  */
 class ResourceManager {
-  #debug = CARD.config.debug.ressourceManager;
+  #debug = CARD_CONTEXT.debug.ressourceManager;
   #log = null;
   #resources = new Map();
   #throttles = new Map();
@@ -8134,7 +7799,7 @@ class ResourceManager {
   // === PRIVATE METHODS ===
 
   #generateUniqueId() {
-    let id = null;
+    let id;
     do {
       id = Math.random().toString(36).slice(2, 8);
     } while (this.#resources.has(id));
@@ -8164,7 +7829,7 @@ class ResourceManager {
  * @class
  */
 class DOMHelper {
-  #debug = CARD.config.debug.ressourceManager;
+  #debug = CARD_CONTEXT.debug.ressourceManager;
   #log = null;
 
   constructor() {
@@ -8485,11 +8150,11 @@ class ActionHelper {
  */
 class HACore extends HTMLElement {
   static version = VERSION;
-  static _baseClass = CARD.meta.feature.typeName;
+  static _baseClass = META.cards.feature.typeName;
   static _cardStructure = new FeatureStructure();
   static _cardStyle = CARD_CSS;
   static _cardElement = CARD.htmlStructure.card.element;
-  _debug = CARD.config.debug.card;
+  _debug = CARD_CONTEXT.debug.card;
   _log = null;
   _resourceManager = null;
   _cardView = new FeatureView();
@@ -8682,7 +8347,6 @@ class HACore extends HTMLElement {
     this._dom.setStyle(CARD.htmlStructure.card.element, CARD.style.dynamic.progressBar.value.var, 0);
     this._buildStyle();
     card.innerHTML = this.innerHTML;
-    console.log('innerHTML: ', this.innerHTML);
 
     return { style, card };
   }
@@ -8833,13 +8497,13 @@ class HACore extends HTMLElement {
   // === TEMPLATE PROCESSING ===
 
   get _wsInitialized() {
-    return this._resourceManager?.has('ws-disconnected') && this._resourceManager?.has('ws-ready');
+    return this._resourceManager?.has(CARD.network.disconnected) && this._resourceManager?.has(CARD.network.ready);
   }
 
   _unwatchWebSocket() {
     if (!this._resourceManager) return;
-    this._resourceManager.remove('ws-disconnected');
-    this._resourceManager.remove('ws-ready');
+    this._resourceManager.remove(CARD.network.disconnected);
+    this._resourceManager.remove(CARD.network.ready);
   }
 
   _watchWebSocket() {
@@ -8856,7 +8520,7 @@ class HACore extends HTMLElement {
         }
       },
       { passive: true },
-      'ws-disconnected',
+      CARD.network.disconnected,
     );
 
     this._resourceManager.addEventListener(
@@ -8868,7 +8532,7 @@ class HACore extends HTMLElement {
         this._processJinjaFields();
       },
       { passive: true },
-      'ws-ready',
+      CARD.network.ready,
     );
   }
 
@@ -8968,15 +8632,15 @@ class HACore extends HTMLElement {
  */
 
 class HABase extends HACore {
-  static _baseClass = CARD.meta.card.typeName;
+  static _baseClass = META.cards.card.typeName;
   static _cardStructure = new CardStructure();
   static _cardStyle = CARD_CSS;
   static _hasDisabledIconTap = false;
   static _hasDisabledBadge = false;
   _trendIcons = {
-    up: 'mdi:chevron-up-box',
-    down: 'mdi:chevron-down-box',
-    flat: 'mdi:equal-box',
+    up: HA_CONTEXT.icons.chevronUpBox,
+    down: HA_CONTEXT.icons.chevronDownBox,
+    flat: HA_CONTEXT.equalBox,
   };
   _icon = null;
   _cardView = new CardView();
@@ -9025,6 +8689,20 @@ class HABase extends HACore {
   }
 
   // disconnectedCallback() {}
+
+  getCardSize() {
+    if (![META.cards.card.typeName, META.cards.template.typeName].includes(this.baseClass)) return undefined;
+    const cardSize = this._cardView.cardSize;
+    this._log.debug('getCardSize: ', cardSize);
+    return cardSize;
+  }
+
+  getLayoutOptions() {
+    if (![META.cards.card.typeName, META.cards.template.typeName].includes(this.baseClass)) return undefined;
+    const cardLayoutOptions = this._cardView.cardLayoutOptions;
+    this._log.debug('getLayoutOptions: ', cardLayoutOptions);
+    return cardLayoutOptions;
+  }
 
   // === PUBLIC API METHODS ===
 
@@ -9272,7 +8950,7 @@ class HABase extends HACore {
             entity_id: 'sensor.dummy',
             state: 'unknown',
             attributes: {
-              icon: curIcon || 'mdi:help-circle-outline',
+              icon: curIcon || HA_CONTEXT.helpCircleOutline,
               friendly_name: 'Unknown Entity',
             },
           }
@@ -9425,7 +9103,7 @@ class HABase extends HACore {
     this._log.debug('📎 HABase._renderBadgeIcon():', { content });
     const badgeInfo = this._cardView.badgeInfo;
     const isBadgeEnable = is.nonEmptyString(content);
-    const isMdiIcon = content.includes('mdi:');
+    const isMdiIcon = content.includes(HA_CONTEXT.icons.prefix);
 
     if (!is.nullish(badgeInfo)) return; // alert -> cancel custom badge
     this._enableBadge(isBadgeEnable);
@@ -9442,7 +9120,8 @@ class HABase extends HACore {
   }
 
   // === STD FIELDS PROCESSING ===
-  _getStandardFields() { // deepsource: ignore=JS-0105
+  _getStandardFields() {
+    // deepsource: ignore=JS-0105
     return [];
   }
 
@@ -9480,6 +9159,19 @@ class EntityProgressCardBase extends HABase {
     }
   }
 
+  get _hiddenComponents() {
+    //
+    // customize it
+    //
+    return [
+      CARD.style.dynamic.hiddenComponent.icon,
+      CARD.style.dynamic.hiddenComponent.name,
+      CARD.style.dynamic.hiddenComponent.value,
+      CARD.style.dynamic.hiddenComponent.secondary_info,
+      CARD.style.dynamic.hiddenComponent.progress_bar,
+    ];
+  }
+
   // === CSS - CUSTOMIZATION ===
   get conditionalStyle() {
     return new Map([...super.conditionalStyle, [CARD.style.dynamic.secondaryInfoError.class, this._cardView.hasStandardEntityError]]);
@@ -9493,11 +9185,10 @@ class EntityProgressCardBase extends HABase {
 
     this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.color.var, bar.barColor);
     this._dom.setStyle(cardKey, CARD.style.dynamic.iconAndShape.color.var, bar.iconColor);
-    if(isCenterZero) {
+    if (isCenterZero) {
       this._dom.toggleClass('inner', 'negative', isCenterZero && progressValue < 0);
       this._dom.toggleClass('inner', 'positive', isCenterZero && progressValue >= 0);
-    }
-    else {
+    } else {
       this._dom.addClass('inner', 'positive');
     }
     this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.value.var, progressValue);
@@ -9554,7 +9245,7 @@ class EntityProgressCardBase extends HABase {
  */
 class EntityProgressCard extends EntityProgressCardBase {
   _cardView = new CardView();
-  static _baseClass = CARD.meta.card.typeName;
+  static _baseClass = META.cards.card.typeName;
 
   // === STATIC METHODS ===
 
@@ -9563,7 +9254,7 @@ class EntityProgressCard extends EntityProgressCardBase {
   }
 
   static getConfigElement() {
-    return document.createElement(CARD.config.dev ? `${CARD.meta.card.editor}-dev` : CARD.meta.card.editor);
+    return document.createElement(CARD_CONTEXT.dev ? `${META.cards.card.editor}-dev` : META.cards.card.editor);
   }
 
   static getStubEntity(hass) {
@@ -9572,23 +9263,9 @@ class EntityProgressCard extends EntityProgressCardBase {
 
   static getStubConfig(hass) {
     return {
-      type: `custom:${CARD.meta.card.typeName}${CARD.config.dev ? '-dev' : ''}`,
+      type: `custom:${META.cards.card.typeName}${CARD_CONTEXT.dev ? '-dev' : ''}`,
       entity: EntityProgressCard.getStubEntity(hass),
     };
-  }
-
-  // === LAYOUT ===
-
-  getCardSize() {
-    const cardSize = this._cardView.cardSize;
-    this._log.debug('getCardSize: ', cardSize);
-    return cardSize;
-  }
-
-  getLayoutOptions() {
-    const cardLayoutOptions = this._cardView.cardLayoutOptions;
-    this._log.debug('getLayoutOptions: ', cardLayoutOptions);
-    return cardLayoutOptions;
   }
 }
 
@@ -9603,19 +9280,19 @@ class EntityProgressCard extends EntityProgressCardBase {
  */
 class EntityProgressBadge extends EntityProgressCardBase {
   _cardView = new BadgeView();
-  static _baseClass = CARD.meta.badge.typeName;
+  static _baseClass = META.cards.badge.typeName;
   static _hasDisabledIconTap = true;
   static _hasDisabledBadge = true;
   static _cardStructure = new BadgeStructure();
   static _cardStyle = CARD_CSS;
 
   static getConfigElement() {
-    return document.createElement(CARD.config.dev ? `${CARD.meta.badge.editor}-dev` : CARD.meta.badge.editor);
+    return document.createElement(CARD_CONTEXT.dev ? `${META.cards.badge.editor}-dev` : META.cards.badge.editor);
   }
 
   static getStubConfig(hass) {
     return {
-      type: `custom:${CARD.meta.badge.typeName}${CARD.config.dev ? '-dev' : ''}`,
+      type: `custom:${META.cards.badge.typeName}${CARD_CONTEXT.dev ? '-dev' : ''}`,
       entity: EntityProgressCard.getStubEntity(hass),
     };
   }
@@ -9642,7 +9319,7 @@ class EntityProgressBadge extends EntityProgressCardBase {
  */
 
 class EntityProgressFeatures extends HACore {
-  static _baseClass = CARD.meta.feature.typeName;
+  static _baseClass = META.cards.feature.typeName;
   static _cardElement = 'div';
   #firstHack = true;
 
@@ -9650,7 +9327,7 @@ class EntityProgressFeatures extends HACore {
 
   static getStubConfig() {
     return {
-      type: `custom:${CARD.meta.feature.typeName}${CARD.config.dev ? '-dev' : ''}`,
+      type: `custom:${META.cards.feature.typeName}${CARD_CONTEXT.dev ? '-dev' : ''}`,
     };
   }
 
@@ -9687,18 +9364,18 @@ class EntityProgressFeatures extends HACore {
     this._dom.register('ext:container', DOMHelper.walkUpThroughShadow(this, '.container'));
     this._dom.register('ext:features', DOMHelper.walkUpThroughShadow(this, 'hui-card-features'));
     this._dom.register('ext:card-container', cardContainer);
-    const targetRowSize = parseInt(getComputedStyle(cardContainer)?.getPropertyValue('--row-size')) - 1;
+    const targetRowSize = parseInt(getComputedStyle(cardContainer)?.getPropertyValue(HA_CONTEXT.styles.rowSize)) - 1;
 
     let fixing = false;
     const fix = () => {
       if (fixing) return;
-      const rowSize = getComputedStyle(cardContainer)?.getPropertyValue('--row-size');
+      const rowSize = getComputedStyle(cardContainer)?.getPropertyValue(HA_CONTEXT.styles.rowSize);
       if (rowSize && parseInt(rowSize) > targetRowSize) {
         fixing = true;
         this._dom.setStyleNow('ext:card', 'overflow', 'hidden');
         this._dom.setStyleNow('ext:container', 'position', 'static');
         this._dom.setStyleNow('ext:features', 'position', 'static');
-        this._dom.setStyleNow('ext:card-container', '--row-size', targetRowSize);
+        this._dom.setStyleNow('ext:card-container', HA_CONTEXT.styles.rowSize, targetRowSize);
         fixing = false;
       }
     };
@@ -9788,7 +9465,7 @@ class EntityProgressTemplateBase extends HABase {
 
   static getStubConfig(hass) {
     return {
-      type: `custom:${CARD.meta.template.typeName}`,
+      type: `custom:${META.cards.template.typeName}`,
       entity: EntityProgressCard.getStubEntity(hass),
       ...CARD.config.stub.template,
     };
@@ -9917,7 +9594,7 @@ class EntityProgressTemplateBase extends HABase {
  */
 class EntityProgressTemplateCard extends EntityProgressTemplateBase {
   static _cardStructure = new TemplateStructure();
-  static _baseClass = CARD.meta.template.typeName;
+  static _baseClass = META.cards.template.typeName;
   _cardView = new CardTemplateView();
 
   static get _loggedMethods() {
@@ -9925,21 +9602,7 @@ class EntityProgressTemplateCard extends EntityProgressTemplateBase {
   }
 
   static getConfigElement() {
-    return document.createElement(`${CARD.meta.template.editor}${CARD.config.dev ? '-dev' : ''}`);
-  }
-
-  // === LAYOUT ===
-
-  getCardSize() {
-    const cardSize = this._cardView.cardSize;
-    this._log.debug('getCardSize: ', cardSize);
-    return cardSize;
-  }
-
-  getLayoutOptions() {
-    const cardLayoutOptions = this._cardView.cardLayoutOptions;
-    this._log.debug('getLayoutOptions: ', cardLayoutOptions);
-    return cardLayoutOptions;
+    return document.createElement(`${META.cards.template.editor}${CARD_CONTEXT.dev ? '-dev' : ''}`);
   }
 }
 
@@ -9953,12 +9616,16 @@ class EntityProgressTemplateCard extends EntityProgressTemplateBase {
  * @extends EntityProgressTemplateBase
  */
 class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
-  static _baseClass = CARD.meta.badgeTemplate.typeName;
+  static _baseClass = META.cards.badgeTemplate.typeName;
   static _hasDisabledIconTap = true;
   static _hasDisabledBadge = true;
   static _cardStructure = new BadgeStructure();
   static _cardStyle = CARD_CSS;
   _cardView = new BadgeTemplateView();
+
+  static getConfigElement() {
+    return document.createElement(`${META.cards.badgeTemplate.editor}${CARD_CONTEXT.dev ? '-dev' : ''}`);
+  }
 
   setConfig(config) {
     super.setConfig(config);
@@ -9967,7 +9634,7 @@ class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
 
   static getStubConfig(hass) {
     return {
-      type: `custom:${CARD.meta.badgeTemplate.typeName}`,
+      type: `custom:${META.cards.badgeTemplate.typeName}${CARD_CONTEXT.dev ? '-dev' : ''}`,
       entity: EntityProgressCard.getStubEntity(hass),
     };
   }
@@ -9978,418 +9645,281 @@ class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
  ******************************************************************************************/
 
 /******************************************************************************************
- * 🛠️ ConfigUpdateEventHandler: Configuration Update Manager
+ * 🛠️ EditorDOMHelper
  * ========================================================================================
  *
- * ✅ Handles dynamic updates to the configuration object of a custom card via UI events.
- *
- * 📌 Purpose:
- *   - Listens to input field changes from the editor UI.
- *   - Dispatches the appropriate update logic based on field type.
- *   - Ensures proper formatting, cleanup, and validation of config values.
- *
- * 🧠 Features:
- *   - Centralized mapping between input field IDs and handler functions.
- *   - Safely mutates or deletes config keys based on user input.
- *   - Supports multiple types of updates:
- *     - Text & basic fields
- *     - Numeric fields
- *     - Entity/value selectors
- *     - Toggle states
- *     - Complex interaction objects
- *
  * @class
+ * @extends DOMHelper
  */
-class ConfigUpdateEventHandler {
-  #debug = CARD.config.debug.editor;
-  #log = null;
 
-  constructor(newConfig) {
-    this.#log = initLogger(this, this.#debug, [
-      'updateField',
-      'updateNumericField',
-      'updateMaxValueField',
-      'updateInteractionField',
-      'updateEntityOrValueField',
-      'updateToggleField',
-      'updateCircularField',
-      'updateUnitField',
-    ]);
+class EditorDOMHelper extends DOMHelper {
+  // ─── Field registration ───────────────────────────────────────────────────
 
-    this.config = structuredClone(newConfig);
-
-    // Lier les méthodes au contexte 'this' pour éviter les erreurs de binding
-    this.updateFunctions = new Map([
-      [EDITOR_INPUT_FIELDS.basicConfiguration.attribute.name, this.updateField.bind(this)],
-      [EDITOR_INPUT_FIELDS.content.field.max_value_attribute.name, this.updateField.bind(this)],
-      [EDITOR_INPUT_FIELDS.content.field.name.name, this.updateField.bind(this)],
-      [EDITOR_INPUT_FIELDS.content.field.unit.name, this.updateField.bind(this)],
-      [EDITOR_INPUT_FIELDS.theme.field.bar_size.name, this.updateField.bind(this)],
-      [EDITOR_INPUT_FIELDS.theme.field.layout.name, this.updateField.bind(this)],
-      [EDITOR_INPUT_FIELDS.theme.field.theme.name, this.updateField.bind(this)],
-
-      [EDITOR_INPUT_FIELDS.content.field.decimal.name, this.updateNumericField.bind(this)],
-      [EDITOR_INPUT_FIELDS.content.field.min_value.name, this.updateNumericField.bind(this)],
-
-      [EDITOR_INPUT_FIELDS.content.field.max_value.name, this.updateMaxValueField.bind(this)],
-
-      [EDITOR_INPUT_FIELDS.interaction.field.icon_tap_action.name, this.updateInteractionField.bind(this)],
-      [EDITOR_INPUT_FIELDS.interaction.field.icon_double_tap_action.name, this.updateInteractionField.bind(this)],
-      [EDITOR_INPUT_FIELDS.interaction.field.icon_hold_action.name, this.updateInteractionField.bind(this)],
-      [EDITOR_INPUT_FIELDS.interaction.field.tap_action.name, this.updateInteractionField.bind(this)],
-      [EDITOR_INPUT_FIELDS.interaction.field.double_tap_action.name, this.updateInteractionField.bind(this)],
-      [EDITOR_INPUT_FIELDS.interaction.field.hold_action.name, this.updateInteractionField.bind(this)],
-
-      [EDITOR_INPUT_FIELDS.basicConfiguration.entity.name, this.updateEntityOrValueField.bind(this)],
-      [EDITOR_INPUT_FIELDS.theme.field.icon.name, this.updateEntityOrValueField.bind(this)],
-      [EDITOR_INPUT_FIELDS.theme.field.bar_color.name, this.updateEntityOrValueField.bind(this)],
-      [EDITOR_INPUT_FIELDS.theme.field.color.name, this.updateEntityOrValueField.bind(this)],
-
-      [EDITOR_INPUT_FIELDS.theme.field.toggleBar.name, this.updateToggleField.bind(this)],
-      [EDITOR_INPUT_FIELDS.theme.field.toggleIcon.name, this.updateToggleField.bind(this)],
-      [EDITOR_INPUT_FIELDS.theme.field.toggleName.name, this.updateToggleField.bind(this)],
-      [EDITOR_INPUT_FIELDS.theme.field.toggleValue.name, this.updateToggleField.bind(this)],
-      [EDITOR_INPUT_FIELDS.theme.field.toggleSecondaryInfo.name, this.updateToggleField.bind(this)],
-
-      [EDITOR_INPUT_FIELDS.theme.field.toggleCircular.name, this.updateCircularField.bind(this)],
-      [EDITOR_INPUT_FIELDS.theme.field.toggleUnit.name, this.updateUnitField.bind(this)],
-    ]);
-
-    this.#log.debug('Loaded');
+  /**
+   * Registers a field element and its definition.
+   * Wraps DOMHelper.register() — the def is stored on the element directly
+   * so it travels with it without needing a separate Map.
+   *
+   * @param {string}      name — field id
+   * @param {HTMLElement} el   — ha-selector or ha-form element
+   * @param {object}      def  — field definition from _fields
+   */
+  registerField(name, el, def) {
+    el._fieldDef = def;
+    this.register(name, el);
   }
 
-  // === PUBLIC API METHODS ===
+  // ─── Hass propagation ─────────────────────────────────────────────────────
 
-  updateConfig(changedEvent) {
-    this.#log.debug('  📎 ', changedEvent);
-
-    const targetId = changedEvent.target.id;
-
-    if (this.updateFunctions.has(targetId)) {
-      const updateFunction = this.updateFunctions.get(targetId);
-      updateFunction.call(this, targetId, changedEvent);
-    } else {
-      throw new Error('Unknown case in message update');
-    }
-    if (
-      changedEvent.target.id === EDITOR_INPUT_FIELDS.basicConfiguration.entity.name ||
-      changedEvent.target.id === EDITOR_INPUT_FIELDS.content.field.max_value.name
-    ) {
-      const curAttribute =
-        changedEvent.target.id === EDITOR_INPUT_FIELDS.basicConfiguration.entity.name
-          ? EDITOR_INPUT_FIELDS.basicConfiguration.attribute.name
-          : EDITOR_INPUT_FIELDS.content.field.max_value_attribute.name;
-      const curEntity = new EntityOrValue();
-      curEntity.value = changedEvent.target.value;
-      if (!curEntity.hasAttribute) {
-        delete this.config[curAttribute];
+  /**
+   * Propagates hass to all registered field elements.
+   * Batched in a single RAF call.
+   *
+   * @param {object} hass
+   */
+  updateHass(hass) {
+    this.enqueue('__hass__', 'hass', () => {
+      for (const el of this._domElements.values()) {
+        if (el.hass !== hass) el.hass = hass;
       }
-      if (changedEvent.target.id === EDITOR_INPUT_FIELDS.basicConfiguration.entity.name && curEntity.unit && this.config.unit === null) {
-        this.config.unit = curEntity.unit;
+    });
+  }
+
+  // ─── Field value ──────────────────────────────────────────────────────────
+
+  /**
+   * Updates the value of a ha-selector field.
+   * Skipped if value hasn't changed.
+   *
+   * @param {string} name
+   * @param {*}      newVal
+   */
+  updateValue(name, newVal) {
+    this.enqueue(name, 'value', () => {
+      const el = this._domElements.get(name);
+      if (!el) return;
+      if (el.value !== newVal) el.value = newVal;
+    });
+  }
+
+  // ─── Visibility ───────────────────────────────────────────────────────────
+
+  /**
+   * Shows or hides a field.
+   * Batched via RAF.
+   *
+   * @param {string}  name
+   * @param {boolean} visible
+   */
+  updateVisibility(name, visible) {
+    this.enqueue(name, 'display', () => {
+      const el = this._domElements.get(name);
+      if (!el) return;
+      el.style.display = visible ? '' : 'none';
+    });
+  }
+
+  // ─── Dynamic selector ─────────────────────────────────────────────────────
+
+  /**
+   * Updates the selector of a ha-selector field.
+   * Used for fields whose options depend on another field (e.g. attribute → entity).
+   *
+   * @param {string} name
+   * @param {object} selector
+   */
+  updateSelector(name, selector) {
+    this.enqueue(name, 'selector', () => {
+      const el = this._domElements.get(name);
+      if (!el) return;
+      el.selector = selector;
+    });
+  }
+
+  // ─── Bulk update ──────────────────────────────────────────────────────────
+
+  /**
+   * Iterates all registered fields and applies value, visibility,
+   * and dynamic selector updates based on the current config.
+   *
+   * @param {object}   config       — current card config
+   * @param {function} resolveValue — (def, config) => raw value
+   */
+  updateAll(config, resolveValue) {
+    for (const [name, el] of this._domElements) {
+      const def = el._fieldDef;
+      if (!def) continue;
+
+      // Visibility
+      if (def.showIf) {
+        this.updateVisibility(name, def.showIf(config));
       }
-    }
 
-    return this.config;
-  }
-
-  updateField(targetId, changedEvent) {
-    // FIX 2026.2: ha-selector -> detail.value,
-    const newValue = changedEvent.detail?.value;
-
-    if (is.nullishOrEmptyString(newValue)) {
-      delete this.config[targetId];
-    } else {
-      this.config[targetId] = newValue;
-    }
-  }
-
-  updateNumericField(targetId, changedEvent) {
-    // FIX 2026.2: ha-selector -> detail.value,
-    const newValue = changedEvent.detail?.value;
-
-    if (isNaN(newValue)) {
-      delete this.config[targetId];
-    } else {
-      this.config[targetId] = newValue;
-    }
-  }
-
-  updateMaxValueField(targetId, changedEvent) {
-    // FIX 2026.2: ha-selector -> detail.value,
-    const newValue = changedEvent.detail?.value;
-
-    if (is.numericString(newValue)) {
-      this.config[targetId] = parseFloat(newValue);
-    } else if (is.nonEmptyString(newValue)) {
-      this.config[targetId] = newValue;
-    } else {
-      delete this.config[targetId];
-    }
-  }
-
-  updateInteractionField(targetId, changedEvent) {
-    this.config[targetId] = changedEvent.detail.value[targetId];
-  }
-
-  updateEntityOrValueField(targetId, changedEvent) {
-    if (changedEvent?.detail?.value && is.nonEmptyString(changedEvent.detail.value[targetId])) {
-      this.config[targetId] = changedEvent.detail.value[targetId];
-    } else {
-      delete this.config[targetId];
-    }
-  }
-
-  updateToggleField(targetId, changedEvent) {
-    if (is.jinja(this.config.hide)) return;
-    const key = targetId.replace('toggle_', '');
-    const newConfig = structuredClone(this.config);
-
-    this.#log.debug(' 📌 *** CONFIG before ***:', JSON.stringify(this.config, null, 2));
-    this.#log.debug(' 📌 *** NEWCONFIG before ***:', JSON.stringify(newConfig, null, 2));
-    newConfig.hide = is.nonEmptyArray(newConfig.hide) ? [...newConfig.hide] : [];
-
-    this.#log.debug(' 📌 *** NEWCONFIG (Hide Management) ***:', JSON.stringify(newConfig, null, 2));
-
-    const isChecked = changedEvent.detail?.value ?? false;
-    this.#log.debug(' 📌 *** key ***:', key);
-    this.#log.debug(' 📌 *** is checked ***:', isChecked);
-
-    if (isChecked) {
-      newConfig.hide = newConfig.hide.filter((item) => item !== key);
-    } else {
-      if (!newConfig.hide.includes(key)) {
-        newConfig.hide.push(key);
+      // Dynamic selector
+      if (def.selectorOf) {
+        this.updateSelector(name, { attribute: { entity_id: config[def.selectorOf] ?? '' } });
       }
-    }
 
-    if (newConfig.hide.length === 0) {
-      delete newConfig.hide;
-    }
+      // Champs virtuels — pas de valeur dans le config, géré par showIf uniquement
+      if (def.virtual) {
+        if (def.resolveVirtual) {
+          const val = def.resolveVirtual(config);
+          this.updateValue(name, val);
+        }
+        continue;
+      }
 
-    this.config = newConfig;
-    this.#log.debug(' 📌 *** CONFIG after ***:', JSON.stringify(this.config, null, 2));
-    this.#log.debug(' 📌 *** NEWCONFIG after ***:', JSON.stringify(newConfig, null, 2));
-  }
-
-  updateCircularField(targetId, changedEvent) {
-    const isChecked = changedEvent.detail?.value ?? false;
-
-    if (isChecked) {
-      this.config.force_circular_background = true;
-    } else {
-      delete this.config.force_circular_background;
-    }
-  }
-
-  updateUnitField(targetId, changedEvent) {
-    const isChecked = changedEvent.detail?.value ?? false;
-
-    if (!isChecked) {
-      this.config.disable_unit = true;
-    } else {
-      delete this.config.disable_unit;
+      // Value
+      const raw = resolveValue(def, config);
+      const val = def.invert ? !raw : raw;
+      this.updateValue(name, val);
     }
   }
 }
 
 /******************************************************************************************
- * 🛠️ EntityProgressCardEditor
+ * 🛠️ EditorBase
  * ========================================================================================
- * ✅ Custom Editor for configuring the `EntityProgressCard`.
- *
- * 📌 Purpose:
- *
- * This class defines a custom web component responsible for rendering
- * a user interface in the Home Assistant Lovelace GUI editor. It allows
- * users to interactively configure the card's settings and manage
- * internal state and synchronization with Home Assistant entities.
- *
- * @inspired by Home Assistant component structure
- * @see https://github.com/home-assistant/frontend/blob/dev/src/data/selector.ts
- *
- * 🧠 Responsibilities:
- * - Dynamically build form elements based on a predefined schema.
- * - Sync form inputs with the YAML configuration.
- * - Listen to and handle UI changes and emit valid config objects.
- * - Manage DOM and event listener lifecycle.
- *
- * Core Concepts:
- * - Shadow DOM is used for encapsulation.
- * - Internal state is managed with private class fields (#).
- * - Entity attributes are automatically extracted to populate select fields.
- * - Supports both YAML and GUI editing modes.
  *
  * @class
  * @extends HTMLElement
  */
-class EntityProgressCardEditor extends HTMLElement {
-  static #debug = CARD.config.debug.editor;
-  static _editorStyle = CARD_EDITOR_CSS;
-  static _editorFields = EDITOR_INPUT_FIELDS;
-  #log = null;
-  #hassProvider = null;
-  #resourceManager = null;
-  #container = null;
-  #config = {};
-  #previous = { entity: null, max_value: null };
-  #isRendered = false;
-  #isYAML = false;
-  #domElements = new Map();
-  #accordionList = [];
-  #accordionTitleList = [];
-  #isListenersAttached = false;
 
-  // === LIFECYCLE METHODS ===
+class EditorBase extends HTMLElement {
+  static _fields = {
+    /* --- cutomizee it
+    general: {
+      flat: true,
+      fields: {
+        entity: { name: 'entity', type: 'entity' },
+      },
+    },
+    content: {
+      title: 'editor.title.content',
+      icon: 'mdi:text-short',
+      fields: {
+        name: { name: 'name', type: 'template' },
+        secondary: { name: 'secondary', type: 'template' },
+        percent: { name: 'percent', type: 'template' },
+      },
+    }, */
+  };
+
+  // --- private state ---
+  #config = {};
+  #hassProvider = null;
+  #dom = null;
+  #boundOnChanged = null;
+  _configHelper = new BaseConfigHelper();
+  static _sections = {
+    content: {
+      title: 'editor.title.content',
+      icon: HA_CONTEXT.icons.textShort,      
+    },
+    theme: {
+      title: 'editor.title.theme',
+      icon: HA_CONTEXT.icons.listBox,
+    },
+    interactions: {
+      title: 'editor.title.interaction',
+      icon: HA_CONTEXT.icons.gestureTapHold,
+    }
+  }
+
+  // === LIFECYCLE ===
 
   constructor() {
     super();
-    this.#log = initLogger(this, EntityProgressCardEditor.#debug, [
-      'connectedCallback',
-      'disconnectedCallback',
-      'setConfig',
-      'render',
-      'toggleAccordion',
-    ]);
-    this.attachShadow({ mode: CARD.config.shadowMode });
+    this.attachShadow({ mode: 'open' });
     this.#hassProvider = HassProviderSingleton.getInstance();
-    this.#log.debug('Loaded');
+    this.#dom = new EditorDOMHelper();
   }
 
   connectedCallback() {
-    if (!this.#resourceManager) this.#resourceManager = new ResourceManager();
-    if (this.#isRendered && !this.#isListenersAttached && this.#isYAML) {
-      this.#addEventListener();
-      this.#isListenersAttached = true;
-      this.#isYAML = false;
-    }
+    this.#boundOnChanged = this.#onChanged.bind(this);
+    this.#render();
+    this.shadowRoot.addEventListener('value-changed', this.#boundOnChanged);
   }
 
   disconnectedCallback() {
-    this.#resourceManager?.cleanup();
-    this.#resourceManager = null;
-    this.#isListenersAttached = false;
-    this.#isYAML = true;
+    this.shadowRoot.removeEventListener('value-changed', this.#boundOnChanged);
+    this.#boundOnChanged = null;
+    // this.#dom.destroy();
   }
 
-  // === PUBLIC API METHODS ===
+  // === PUBLIC API ===
 
   set hass(hass) {
     if (!hass) return;
-
-    if (!this.#hassProvider.hass || this.#hassProvider.hass.entities !== hass.entities) {
-      this.#hassProvider.hass = hass;
-    }
+    this.#hassProvider.hass = hass;
+    this.#dom.updateHass(hass);
   }
-
   get hass() {
     return this.#hassProvider.hass;
   }
 
   setConfig(config) {
-    this.#log.debug('  📎 config: ', config);
-    if (!config) throw new Error('setConfig: invalid config');
-    this.#config = { ...config };
-    if (!this.#hassProvider.isValid) return;
-
-    if (!this.#isRendered) {
-      this.#domElements = new Map();
-      this.#accordionList = [];
-      this.#accordionTitleList = [];
-      this.render();
-      this.#isRendered = true;
-      this.#isListenersAttached = false;
-    }
-
-    this.#log.debug('  📎 container GUI: ', this.#container);
-    this.#log.debug('  📎 connected ?: ', this.isConnected);
-
-    if (!this.isConnected) this.#isYAML = true; // YAML editor
-    if (!this.#isListenersAttached && this.isConnected) {
-      // GUI editor
-      this.#addEventListener();
-      this.#isListenersAttached = true;
-    }
+    if (!config) throw new Error(CARD.config.configError);
+    // config with default value
+    this._configHelper.config = config;
+    // current config
+    this.#config = config;
+    console.log('config: ', config);
+    console.log('config: ', this._configHelper.config);
     this.#updateFields();
   }
 
-  get editorStyle() {
-    return this.constructor._editorStyle;
-  }
+  // === RENDER (once) ===
 
-  get editorFields() {
-    return this.constructor._editorFields;
-  }
+  #render() {
+    if (this.shadowRoot.querySelector('.editor')) return;
 
-  // === EDITOR BUILDING ===
+    const style = document.createElement('style');
+    style.textContent = `
+      .editor { display: flex; flex-direction: column; gap: 16px; }
+      .panel-body { display: flex; flex-direction: row; gap: 16px; flex-wrap: wrap; align-content: flex-start; padding: 8px 0; }
+    `;
 
-  /**
-   * Renders the editor interface for configuring the card's settings.
-   *
-   * @returns {void}
-   */
-  render() {
-    const style = document.createElement(CARD.style.element);
-    style.textContent = this.editorStyle;
-    const fragment = document.createDocumentFragment();
-    fragment.appendChild(style);
-    this.#container = document.createElement(CARD.editor.fields.container.element);
-    this.#container.classList.add(CARD.editor.fields.container.class);
+    const container = document.createElement('div');
+    container.className = 'editor';
 
-    this.#renderFields(this.#container, this.editorFields.basicConfiguration);
-    for (const section of Object.keys(this.editorFields)) {
-      if (section === 'basicConfiguration') continue;
-      this.#renderAccordion(this.#container, this.editorFields[section]);
+    for (const [section, def] of Object.entries(this.constructor._fields)) {
+      container.appendChild(this.#buildExpansionPanel(section, def));
     }
 
-    fragment.appendChild(this.#container);
-    this.shadowRoot.appendChild(fragment);
+    this.shadowRoot.append(style, container);
   }
 
-  #renderAccordion(parent, inputFields) {
-    const accordionItem = document.createElement(CARD.editor.fields.accordion.item.element);
-    accordionItem.classList.add(CARD.editor.fields.accordion.item.class);
-    this.#accordionList.push(accordionItem);
+  #buildExpansionPanel(section, def) {
+    if (def.flat) {
+      const frag = document.createDocumentFragment();
+      for (const field of Object.values(def.fields)) {
+        frag.appendChild(this.#buildField(field));
+      }
+      return frag;
+    }
 
-    const accordionTitle = document.createElement(CARD.editor.fields.accordion.title.element);
-    this.#accordionTitleList.push(accordionTitle);
-    accordionTitle.classList.add(CARD.editor.fields.accordion.title.class);
-    const icon = document.createElement(CARD.editor.fields.accordion.icon.element);
-    icon.setAttribute('icon', inputFields.title.icon);
-    icon.classList.add(CARD.editor.fields.accordion.icon.class);
-    accordionTitle.appendChild(icon);
+    const panel = document.createElement('ha-expansion-panel');
+    panel.header = this.#hassProvider.localize(def.title);
+    panel.outlined = true;
 
-    const title = document.createTextNode(this.#hassProvider.localize('editor.title')[inputFields.title.name]);
-    accordionTitle.appendChild(title);
+    if (def.icon) {
+      const icon = document.createElement('ha-icon');
+      icon.setAttribute('icon', def.icon);
+      icon.slot = 'leading-icon';
+      panel.appendChild(icon);
+    }
 
-    const accordionArrow = document.createElement(CARD.editor.fields.accordion.arrow.element);
-    accordionArrow.classList.add(CARD.editor.fields.accordion.arrow.class);
-    accordionArrow.setAttribute('icon', CARD.editor.fields.accordion.arrow.icon);
-    accordionTitle.appendChild(accordionArrow);
-    accordionItem.appendChild(accordionTitle);
+    const body = document.createElement('div');
+    body.className = 'panel-body';
 
-    const accordionContent = document.createElement(CARD.editor.fields.accordion.content.element);
-    accordionContent.classList.add(CARD.editor.fields.accordion.content.class);
+    for (const field of Object.values(def.fields)) {
+      body.appendChild(this.#buildField(field));
+    }
 
-    this.#renderFields(accordionContent, inputFields.field);
+    panel.appendChild(body);
 
-    accordionItem.appendChild(accordionContent);
-    parent.appendChild(accordionItem);
-  }
-
-  #renderFields(parent, inputFields) {
-    Object.values(inputFields).forEach((field) => {
-      this.#log.debug('#renderFields - field: ', field);
-      parent.appendChild(
-        this.#createField({
-          name: field.name,
-          label: this.#hassProvider.localize('editor.field')[field.name],
-          type: field.type,
-          isInGroup: field.isInGroup,
-          width: field.width,
-          schema: field.schema !== undefined ? field.schema : null,
-        }),
-      );
-    });
+    return panel;
   }
 
   #getSelectorForType(type) {
@@ -10399,348 +9929,227 @@ class EntityProgressCardEditor extends HTMLElement {
 
     const options = this.#hassProvider.localize('editor.option');
     const selectors = {
-      [CARD.editor.fields.default.type]: () => ({ text: { mode: 'box' } }),
-      [CARD.editor.fields.number.type]: () => ({ number: {} }),
-      [CARD.editor.fields.toggle.type]: () => ({ boolean: {} }),
-      [CARD.editor.fields.decimal.type]: () => ({ number: { min: 0, max: 10, mode: 'box' } }),
-      [CARD.editor.fields.attribute.type]: () => ({ attribute: { entity_id: this.#config.entity ?? '' } }),
-      [CARD.editor.fields.max_value_attribute.type]: () => ({ attribute: { entity_id: this.#config.max_value ?? '' } }),
-      [CARD.editor.fields.layout.type]: () => buildSelect(options.layout),
-      [CARD.editor.fields.theme.type]: () => buildSelect(options.theme),
-      [CARD.editor.fields.bar_size.type]: () => buildSelect(options.bar_size),
+      text: () => ({ text: { mode: 'box' } }),
+      entity: () => ({ entity: {} }),
+      attribute: () => ({ attribute: { entity_id: this.#config.entity ?? '' } }),
+      maxValueAttribute: () => ({ attribute: { entity_id: this.#config.max_value ?? '' } }),
+      number: () => ({ number: {} }),
+      decimal: () => ({ number: { min: 0, max: 10, mode: 'box' } }),
+      template: () => ({ template: {} }),
+      toggle: () => ({ boolean: {} }),
+      action: () => ({ 'ui-action': {} }),
+      icon: () => ({ icon: { icon_set: ['mdi'] } }),
+      color: () => ({ 'ui-color': {} }),
+      default: () => ({ text: { mode: 'box' } }),
+      bar_size: () => buildSelect(options.bar_size),
+      bar_orientation: () => buildSelect(options.bar_orientation),
+      bar_position: () => buildSelect(options.bar_position),
+      layout: () => buildSelect(options.layout),
+      theme: () => buildSelect(options.theme),
     };
 
     return (selectors[type] ?? (() => ({ text: {} })))();
   }
+  #buildField(field) {
+    const el = document.createElement('ha-selector');
+    if (field.isInGroup) el.classList.add(field.isInGroup);
 
-  #createField({ name, label, type, required, isInGroup, width, schema = null }) {
-    this.#log.debug('#createField()');
+    el.id = field.name;
+    el.hass = this.hass;
+    el.required = field.required ?? false;
 
-    const isSelector = schema === null;
-    const inputElement = document.createElement(isSelector ? 'ha-selector' : CARD.editor.fields.tap_action.element);
+    el.style.width = field.width ? field.width : '100%';
 
-    if (width !== undefined) inputElement.style.width = width;
-    if (isInGroup) inputElement.classList.add(isInGroup);
+    const isNested = field.name.includes('.');
+    const [, childKey] = isNested ? field.name.split('.') : [field.name, null];
+    const raw = this.#resolveValue(field, this._configHelper.config);
+    const isInverted = field.invert ?? false;
 
-    Object.assign(inputElement, {
-      id: name,
-      hass: this.#hassProvider.hass,
-      ...(isSelector
-        ? {
-            label, //label: label,
-            value: this.#config[name] ?? '',
-            selector: this.#getSelectorForType(type),
-            required, //required: required,
-          }
-        : {
-            schema, //schema: schema,
-            computeLabel: () => label,
-            data: {},
-          }),
-    });
+    el.label = this.#hassProvider.localize('editor.field')[isNested ? `toggle_${childKey}` : field.name];
+    el.value = isInverted ? !raw : raw;
+    el.isInverted = isInverted;
+    el.isArray = field.array ?? false;
+    el.selector = this.#getSelectorForType(field.type);
 
-    this.#domElements.set(name, inputElement);
-    return inputElement;
+    this.#dom.registerField(field.name, el, field);
+
+    return el;
   }
 
-  // === EDITOR EVENT ===
+  #resolveValue(def, config) {
+    const empty = ['toggle', 'number', 'decimal'].includes(def.type) ? undefined : '';
+    if (!config) return empty;
 
-  #addEventListener() {
-    for (const [name, element] of this.#domElements) {
-      if (element.localName === 'ha-selector' || element.localName === 'ha-form') {
-        this.#resourceManager.addEventListener(element, 'value-changed', this.#onChanged.bind(this), { passive: true }, `value-changed-${name}`);
-      }
-    }
+    if (def.virtual && def.resolveVirtual) return def.resolveVirtual(config);
 
-    this.#accordionTitleList.forEach((title, index) => {
-      this.#resourceManager.addEventListener(
-        title,
-        CARD.interactions.event.click,
-        () => {
-          this.toggleAccordion(index);
-        },
-        { passive: true },
-        `accordionTitle-${index}`,
-      );
-    });
-  }
-  #onChanged(changedEvent) {
-    this.#log.debug('#onChanged()');
-    this.#log.debug('  📎 ', changedEvent);
+    const isNested = def.name.includes('.');
+    const [parentKey, childKey] = isNested ? def.name.split('.') : [def.name, null];
+    const key = def.target ?? def.name;
 
-    const configUpdateEventHandler = new ConfigUpdateEventHandler(Object.assign({}, this.#config));
-    const newConfig = configUpdateEventHandler.updateConfig(changedEvent);
-
-    this.#sendNewConfig(newConfig);
+    if (isNested && def.array) return config[parentKey]?.includes(childKey) ?? false;
+    if (isNested) return config[parentKey]?.[childKey] ?? empty;
+    return config[key] ?? empty;
   }
 
-  #sendNewConfig(newConfig) {
-    this.#log.debug('#sendNewConfig()');
-    let finalConfig = newConfig;
-    if (newConfig.grid_options) {
-      const { grid_options, ...rest } = newConfig;
-      finalConfig = { ...rest, grid_options };
-    }
-
-    this.#log.debug('📎 Config: ', finalConfig);
-
-    const messageEvent = new CustomEvent(CARD.interactions.event.configChanged, {
-      detail: { config: finalConfig },
-      bubbles: true,
-      composed: true,
-    });
-    this.dispatchEvent(messageEvent);
-  }
-
-  // === EDITOR REFRESH ===
+  // === UPDATE (every setConfig) ===
 
   #updateFields() {
-    this.#log.debug('#updateFields()');
+    this.#dom.updateAll(this._configHelper.config, this.#resolveValue.bind(this));
+  }
 
-    const excludeKeys = new Set([CARD.editor.keyMappings.attribute, CARD.editor.keyMappings.max_value_attribute]);
-    const updates = [];
+  // === EVENTS ===
 
-    for (const [key, element] of this.#domElements) {
-      if (excludeKeys.has(key) || key.startsWith('toggle_')) continue;
+  #onChanged(e) {
+    const key = e.target.id;
+    if (!key || !e.detail || !('value' in e.detail)) return;
+    let value = e.detail.value;
 
-      if (element.localName === 'ha-selector') {
-        const update = this.#prepareStandardFieldUpdate(key, element);
-        if (update) updates.push(update);
-      } else if (element.localName === 'ha-form') {
-        const update = this.#prepareHAFormUpdate(element, key, this.#config[key]);
-        if (update) updates.push(update);
+    // Champ virtuel — délègue au handler custom de la def
+    const def = this.#dom.get(key)?._fieldDef;
+    if (def?.virtual) {
+      if (def.onVirtualChange) {
+        const newConfig = def.onVirtualChange(value, { ...this.#config });
+        if (newConfig) this.#sendConfig(newConfig);
       }
+      return;
     }
 
-    // Apply all updates in batch
-    updates.forEach((update) => update());
+    const isInverted = e.target?.isInverted ?? false;
+    const isArray = e.target.isArray ?? false;
+    const isNested = key.includes('.');
+    const [parentKey, childKey] = isNested ? key.split('.') : [];
 
-    // Handle special fields
-    this.#updateSpecialFields();
-  }
+    if (isInverted) value = !value;
 
-  #prepareStandardFieldUpdate(key, element) {
-    const newValue = has.own(this.#config, key) ? this.#config[key] : '';
-    const currentValue = element.value;
-    const shouldUpdate = is.string(currentValue) ? currentValue !== String(newValue) : currentValue !== newValue;
-
-    if (shouldUpdate) {
-      this.#log.debug('🆕 updateFields - update: ', [key, newValue]);
-      return () => {
-        element.value = newValue;
-      };
-    }
-    return null;
-  }
-
-  #prepareHAFormUpdate(form, key, newValue) {
-    const currentData = form.data;
-    const needsUpdate =
-      currentData === undefined ||
-      (newValue !== undefined && currentData[key] !== newValue) ||
-      (newValue === undefined && currentData[key] !== undefined);
-
-    if (needsUpdate) {
-      this.#log.debug('🆕 updateFields - update: ', [key, newValue]);
-      return () => {
-        form.data = {
-          ...currentData,
-          [key]: newValue,
-        };
-      };
-    }
-    return null;
-  }
-
-  #updateSpecialFields() {
-    // Theme toggle
-    this.#toggleFieldDisable(CARD.editor.keyMappings.theme, this.#config.theme !== undefined);
-
-    // Attribute updates
-    const entityHasAttribute = this.#updateAttributeFromEntity('entity', 'attribute');
-    this.#toggleFieldDisable(this.editorFields.basicConfiguration.attribute.isInGroup, !entityHasAttribute);
-
-    const maxValueHasAttribute = this.#updateAttributeFromEntity('max_value', 'max_value_attribute');
-    this.#toggleFieldDisable(this.editorFields.content.field.max_value_attribute.isInGroup, !maxValueHasAttribute);
-
-    // Toggle fields
-    this.#updateToggleFields();
-  }
-
-  #toggleFieldDisable(key, disable) {
-    this.#container.classList.toggle(`${CARD.style.dynamic.hide}-${key}`, disable);
-  }
-
-  /**
-   * Updates the list of available attributes for a given entity in the corresponding selector.
-   * When the entity changes, updates the options and selects a default attribute if necessary.
-   *
-   * @param {string} entity - The key name of the entity in the config (e.g., 'entity' or 'max_value').
-   * @param {string} attribute - The key name of the attribute to update.
-   * @returns {boolean} - Returns true if the entity has attributes.
-   */
-  #updateAttributeFromEntity(entity, attribute) {
-    this.#log.debug('#updateAttributeFromEntity()');
-
-    const curEntity = new EntityOrValue();
-    curEntity.value = this.#config[entity];
-
-    const targetElement = this.#domElements.get(attribute);
-    if (!targetElement) return curEntity.hasAttribute;
-
-    // Mettre à jour entity_id si l'entité a changé
-    if (this.#previous[entity] !== this.#config[entity]) {
-      this.#previous[entity] = this.#config[entity];
-      targetElement.selector = { attribute: { entity_id: this.#config[entity] ?? '' } };
-    }
-    // Sync la valeur courante
-    const defaultValue = this.#config[attribute] ?? curEntity.defaultAttribute ?? '';
-    targetElement.value = defaultValue;
-
-    return curEntity.hasAttribute;
-  }
-
-  #updateToggleFields() {
-    const hide = this.#config.hide || [];
-    const isJinjaHide = is.jinja(this.#config.hide);
-
-    const toggleMappings = {
-      toggle_force_circular_background: { value: this.#config.force_circular_background ?? false },
-      toggle_unit: { value: !this.#config.disable_unit },
-      toggle_icon: { value: !hide.includes('icon'), disabled: isJinjaHide },
-      toggle_name: { value: !hide.includes('name'), disabled: isJinjaHide },
-      toggle_value: { value: !hide.includes('value'), disabled: isJinjaHide },
-      toggle_secondary_info: { value: !hide.includes('secondary_info'), disabled: isJinjaHide },
-      toggle_progress_bar: { value: !hide.includes('progress_bar'), disabled: isJinjaHide },
-    };
-
-    const toggleUpdates = [];
-    for (const [toggleKey, { value, disabled = false }] of Object.entries(toggleMappings)) {
-      const toggle = this.#domElements.get(toggleKey);
-      if (!toggle) continue;
-      if (toggle.value !== value) toggleUpdates.push(() => (toggle.value = value));
-      if (toggle.disabled !== disabled) toggleUpdates.push(() => (toggle.disabled = disabled));
+    if (isNested && isArray) {
+      const current = [...(this.#config[parentKey] ?? [])];
+      const updated = value ? [...current, childKey] : current.filter((v) => v !== childKey);
+      this.#sendConfig({ ...this.#config, [parentKey]: updated });
+      return;
     }
 
-    toggleUpdates.forEach((update) => update());
-  }
-  // === ACCORDION ANIMATION ===
-
-  toggleAccordion(index) {
-    const accordion = this.#accordionList[index];
-    const panel = accordion.querySelector('.accordion-content');
-    if (!panel) return;
-
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const isExpanding = !accordion.classList.contains('expanded');
-
-    // --- reduce mode
-    if (prefersReducedMotion) {
-      if (isExpanding) {
-        accordion.classList.add('expanded');
-        Object.assign(panel.style, {
-          display: 'flex',
-          maxHeight: 'none',
-          paddingTop: '30px',
-          paddingBottom: '30px',
-          opacity: '1',
-        });
-      } else {
-        accordion.classList.remove('expanded');
-        Object.assign(panel.style, {
-          display: '',
-          maxHeight: '',
-          paddingTop: '',
-          paddingBottom: '',
-          opacity: '',
-        });
-      }
-      return; // stop
-    }
-
-    // Clean up existing animation
-    this.#resourceManager.remove(`accordionTransition-${index}`);
-
-    if (isExpanding) {
-      this.#expandAccordion(accordion, panel, index);
-    } else {
-      this.#collapseAccordion(accordion, panel, index);
-    }
-  }
-
-  #expandAccordion(accordion, panel, index) {
-    // Set initial state
-    Object.assign(panel.style, {
-      display: 'flex',
-      maxHeight: '0',
-      paddingTop: '0',
-      paddingBottom: '0',
-      opacity: '0',
-    });
-
-    // Force reflow
-    const _ = panel.offsetHeight; // eslint-disable-line no-unused-vars
-
-    accordion.classList.add('expanded');
-
-    // Animate to final state
-    requestAnimationFrame(() => {
-      Object.assign(panel.style, {
-        maxHeight: `${panel.scrollHeight}px`,
-        paddingTop: '30px',
-        paddingBottom: '30px',
-        opacity: '1',
+    if (isNested) {
+      this.#sendConfig({
+        ...this.#config,
+        [parentKey]: { ...this.#config[parentKey], [childKey]: value },
       });
-    });
+      return;
+    }
 
-    this.#addAccordionTransitionListener(panel, index, () => {
-      panel.style.maxHeight = 'none';
-    });
+    const targetKey = def?.target ?? key;
+    if (!value && def?.onClear) {
+      this.#sendConfig(def.onClear({ ...this.#config }));
+      return;
+    }
+
+    this.#sendConfig({ ...this.#config, [targetKey]: value });
   }
 
-  #collapseAccordion(accordion, panel, index) {
-    accordion.classList.add('collapsing');
-
-    // Set current height
-    panel.style.maxHeight = `${panel.scrollHeight}px`;
-    const _ = panel.offsetHeight; // eslint-disable-line no-unused-vars
-
-    requestAnimationFrame(() => {
-      Object.assign(panel.style, {
-        maxHeight: '0',
-        paddingTop: '0',
-        paddingBottom: '0',
-        opacity: '0',
-      });
-    });
-
-    this.#addAccordionTransitionListener(panel, index, () => {
-      accordion.classList.remove('expanded', 'collapsing');
-
-      // Reset styles
-      Object.assign(panel.style, {
-        display: '',
-        maxHeight: '',
-        paddingTop: '',
-        paddingBottom: '',
-        opacity: '',
-      });
-    });
-  }
-
-  #addAccordionTransitionListener(panel, index, callback) {
-    this.#resourceManager.addEventListener(
-      panel,
-      'transitionend',
-      (e) => {
-        if (e.target !== panel) return;
-        callback();
-        this.#resourceManager.remove(`accordionTransition-${index}`);
-      },
-      { passive: true },
-      `accordionTransition-${index}`,
+  #sendConfig(config) {
+    this.dispatchEvent(
+      new CustomEvent('config-changed', {
+        detail: { config },
+        bubbles: true,
+        composed: true,
+      }),
     );
   }
+}
+
+/******************************************************************************************
+ * PARAMS
+ */
+
+const availableSpace = (gap = 16, factor = 0.5) => `calc((100% - ${gap}px) * ${factor})`;
+
+/******************************************************************************************
+ * 🛠️ EntityProgressCardEditor
+ * ========================================================================================
+ *
+ * @class
+ * @extends EditorBase
+ */
+class EntityProgressCardEditor extends EditorBase {
+  _configHelper = new CardConfigHelper();
+  static _fields = {
+    general: {
+      flat: true,
+      fields: {
+        entity: { name: 'entity', type: 'entity', required: true },
+        attribute: { name: 'attribute', type: 'attribute', selectorOf: 'entity', showIf: (c) => !!c.entity },
+      },
+    },
+    content: {
+      ...EditorBase._sections.content,
+      fields: {
+        name: { name: 'name', type: 'text' },
+        toggleName: { name: 'hide.name', type: 'toggle', invert: true, array: true },
+        unit: { name: 'unit', type: 'text', width: availableSpace(32, 0.2) },
+        decimal: { name: 'decimal', type: 'decimal', width: availableSpace(32, 0.2) },
+        min_value: { name: 'min_value', type: 'number', width: availableSpace(32, 0.6) },
+        toggleUnit: { name: 'disable_unit', type: 'toggle', invert: true },
+        max_value: { name: 'max_value', type: 'number', showIf: (c) => typeof c.max_value !== 'string' },
+        use_max_entity: {
+          name: 'use_max_entity',
+          type: 'toggle',
+          virtual: true,
+          resolveVirtual: (c) => typeof c.max_value === 'string',
+          onVirtualChange: (value, config) => ({
+            ...config,
+            max_value: value ? '' : 100,
+            max_value_attribute: value ? config.max_value_attribute : undefined,
+          }),
+        },
+        max_value_entity: {
+          name: 'max_value_entity',
+          type: 'entity',
+          target: 'max_value',
+          showIf: (c) => typeof c.max_value === 'string',
+          onClear: (config) => ({ ...config, max_value: 100, max_value_attribute: undefined }),
+        },
+        max_value_attribute: {
+          name: 'max_value_attribute',
+          type: 'maxValueAttribute',
+          selectorOf: 'max_value',
+          showIf: (c) => typeof c.max_value === 'string' && c.max_value !== '',
+        },
+        toggleValue: { name: 'hide.value', type: 'toggle', invert: true, array: true },
+        toggleSecondaryInfo: { name: 'hide.secondary_info', type: 'toggle', invert: true, array: true },
+      },
+    },
+    theme: {
+      ...EditorBase._sections.theme,
+      fields: {
+        theme: { name: 'theme', type: 'theme' },
+        icon: { name: 'icon', type: 'icon', width: availableSpace() },
+        color: { name: 'color', type: 'color', width: availableSpace(), showIf: (c) => is.nullish(c.theme) },
+        toggleIcon: { name: 'hide.icon', type: 'toggle', invert: true, array: true },
+        force_circular_background: { name: 'force_circular_background', type: 'toggle' },
+        bar_size: { name: 'bar_size', type: 'bar_size', width: availableSpace() },
+        bar_position: { name: 'bar_position', type: 'bar_position', width: availableSpace() },
+        bar_single_line: { name: 'bar_single_line', type: 'toggle' },
+        bar_color: { name: 'bar_color', type: 'color', width: availableSpace(), showIf: (c) => is.nullish(c.theme) },
+        bar_orientation: { name: 'bar_orientation', type: 'bar_orientation', width: availableSpace() },
+        center_zero: { name: 'center_zero', type: 'toggle' },
+        bar_effect: { name: 'bar_effect', type: 'template' },
+        toggleBar: { name: 'hide.progress_bar', type: 'toggle', invert: true, array: true },
+        badge_icon: { name: 'badge_icon', type: 'template' },
+        badge_color: { name: 'badge_color', type: 'template' },
+        layout: { name: 'layout', type: 'layout' },
+      },
+    },
+    interactions: {
+      ...EditorBase._sections.interactions,
+      fields: {
+        tap_action: { name: 'tap_action', type: 'action' },
+        hold_action: { name: 'hold_action', type: 'action' },
+        double_tap_action: { name: 'double_tap_action', type: 'action' },
+        icon_tap_action: { name: 'icon_tap_action', type: 'action' },
+        icon_hold_action: { name: 'icon_hold_action', type: 'action' },
+        icon_double_tap_action: { name: 'icon_double_tap_action', type: 'action' },
+      },
+    },
+  };
 }
 
 /******************************************************************************************
@@ -10758,228 +10167,157 @@ class EntityProgressCardEditor extends HTMLElement {
  * @extends EntityProgressCardEditor
  */
 class EntityProgressBadgeEditor extends EntityProgressCardEditor {
-  static _editorStyle = `
-   ${CARD_EDITOR_CSS}
+  _configHelper = new BadgeConfigHelper();
+  static _fields = {
+    ...EntityProgressCardEditor._fields,
 
-   .hide {
-     display: none;
-   }`;
-  static _editorFields = (() => {
-    const baseFields = structuredClone(EntityProgressCardEditor._editorFields);
-    const hide = 'hide';
-    const fieldsToHide = ['icon_tap_action', 'icon_hold_action', 'icon_double_tap_action', 'toggleCircular', 'bar_size', 'layout'];
+    theme: {
+      ...EditorBase._sections.theme,
+      fields: {
+        theme: EntityProgressCardEditor._fields.theme.fields.theme,
+        icon: EntityProgressCardEditor._fields.theme.fields.icon,
+        color: EntityProgressCardEditor._fields.theme.fields.color,
+        toggleIcon: EntityProgressCardEditor._fields.theme.fields.toggleIcon,
+        bar_color: EntityProgressCardEditor._fields.theme.fields.bar_color,
+        bar_orientation: EntityProgressCardEditor._fields.theme.fields.bar_orientation,
+        center_zero: EntityProgressCardEditor._fields.theme.fields.center_zero,
+        bar_effect: EntityProgressCardEditor._fields.theme.fields.bar_effect,
+        toggleBar: EntityProgressCardEditor._fields.theme.fields.toggleBar,
+      },
+    },
 
-    fieldsToHide.forEach((curField) => {
-      if (baseFields.interaction?.field?.[curField]) {
-        baseFields.interaction.field[curField].isInGroup = hide;
-      }
-      if (baseFields.theme?.field?.[curField]) {
-        baseFields.theme.field[curField].isInGroup = hide;
-      }
-    });
-
-    return baseFields;
-  })();
+    interactions: {
+      ...EditorBase._sections.interactions,
+      fields: {
+        tap_action: EntityProgressCardEditor._fields.interactions.fields.tap_action,
+        double_tap_action: EntityProgressCardEditor._fields.interactions.fields.double_tap_action,
+        hold_action: EntityProgressCardEditor._fields.interactions.fields.hold_action,
+      },
+    },
+  };
 }
 
-const TEMPLATE_EDITOR_FIELDS = {
-  // === Entity & Data ===
-  entity: { name: 'entity', type: 'entity' },
-  name: { name: 'name', type: 'template' },
-  secondary: { name: 'secondary', type: 'template' },
-  percent: { name: 'percent', type: 'template' },
+/******************************************************************************************
+ * 🛠️ EntityProgressTemplateEditor
+ * ========================================================================================
+ *
+ * @class
+ * @extends EditorBase
+ */
 
-  // === Appearance ===
-  icon: { name: 'icon', type: 'template' },
-  color: { name: 'color', type: 'template' },
-  bar_color: { name: 'bar_color', type: 'template' },
-  bar_size: { name: 'bar_size', type: 'bar_size' },
-  bar_orientation: { name: 'bar_orientation', type: 'bar_orientation' },
-  bar_effect: { name: 'bar_effect', type: 'template' },
-  bar_position: { name: 'bar_position', type: 'bar_position' },
-  bar_single_line: { name: 'bar_single_line', type: 'toggle' },
-  bar_max_width: { name: 'bar_max_width', type: 'default' },
-  layout: { name: 'layout', type: 'layout' },
-  min_width: { name: 'min_width', type: 'default' },
-  height: { name: 'height', type: 'default' },
-  frameless: { name: 'frameless', type: 'toggle' },
-  marginless: { name: 'marginless', type: 'toggle' },
-  reverse_secondary_info_row: { name: 'reverse_secondary_info_row', type: 'toggle' },
-  force_circular_background: { name: 'force_circular_background', type: 'toggle' },
-  center_zero: { name: 'center_zero', type: 'toggle' },
-  trend_indicator: { name: 'trend_indicator', type: 'toggle' },
-  text_shadow: { name: 'text_shadow', type: 'toggle' },
-  hide: { name: 'hide', type: 'template' },
+class EntityProgressTemplateEditor extends EditorBase {
+  _configHelper = new TemplateConfigHelper();
+  static _fields = {
+    general: {
+      flat: true,
+      fields: {
+        entity: { name: 'entity', type: 'entity' },
+      },
+    },
+    content: {
+      ...EditorBase._sections.content,
+      fields: {
+        name: { name: 'name', type: 'template' },
+        toggleName: { name: 'hide.name', type: 'toggle', invert: true, array: true },
+        secondary: { name: 'secondary', type: 'template' },
+        toggleSecondaryInfo: { name: 'hide.secondary_info', type: 'toggle', invert: true, array: true },
+        percent: { name: 'percent', type: 'template' },
+      },
+    },
+    theme: {
+      ...EditorBase._sections.theme,
+      fields: {
+        icon: { name: 'icon', type: 'template' },
+        color: { name: 'color', type: 'template' },
+        toggleIcon: { name: 'hide.icon', type: 'toggle', invert: true, array: true },
+        force_circular_background: { name: 'force_circular_background', type: 'toggle' },
+        bar_size: { name: 'bar_size', type: 'bar_size', width: availableSpace() },
+        bar_position: { name: 'bar_position', type: 'bar_position', width: availableSpace() },
+        bar_single_line: { name: 'bar_single_line', type: 'toggle' },
+        bar_color: { name: 'bar_color', type: 'template' },
+        bar_orientation: { name: 'bar_orientation', type: 'bar_orientation' },
+        center_zero: { name: 'center_zero', type: 'toggle' },
+        bar_effect: { name: 'bar_effect', type: 'template' },
+        toggleBar: { name: 'hide.progress_bar', type: 'toggle', invert: true, array: true },
+        badge_icon: { name: 'badge_icon', type: 'template' },
+        badge_color: { name: 'badge_color', type: 'template' },
+        layout: { name: 'layout', type: 'layout' },
+      },
+    },
+    interactions: {
+      ...EditorBase._sections.interactions,
+      fields: {
+        tap_action: { name: 'tap_action', type: 'action' },
+        hold_action: { name: 'hold_action', type: 'action' },
+        double_tap_action: { name: 'double_tap_action', type: 'action' },
+        icon_tap_action: { name: 'icon_tap_action', type: 'action' },
+        icon_hold_action: { name: 'icon_hold_action', type: 'action' },
+        icon_double_tap_action: { name: 'icon_double_tap_action', type: 'action' },
+      },
+    },
+  };
+}
 
-  // === Badge ===
-  badge_icon: { name: 'badge_icon', type: 'template' },
-  badge_color: { name: 'badge_color', type: 'template' },
-};
+/******************************************************************************************
+ * 🛠️ EntityProgressBadgeTemplateEditor
+ * ========================================================================================
+ *
+ * @class
+ * @extends EditorBase
+ */
 
-class EntityProgressTemplateEditor extends HTMLElement {
-  static _editorStyle = CARD_EDITOR_CSS;
-  static _editorFields = TEMPLATE_EDITOR_FIELDS;
-
-  #hassProvider = null;
-  #resourceManager = null;
-  #config = {};
-  #domElements = new Map();
-  #isRendered = false;
-  #isYAML = false;
-  #isListenersAttached = false;
-
-  constructor() {
-    super();
-    this.attachShadow({ mode: CARD.config.shadowMode });
-    this.#hassProvider = HassProviderSingleton.getInstance();
-  }
-
-  connectedCallback() {
-    if (!this.#resourceManager) this.#resourceManager = new ResourceManager();
-    if (this.#isRendered && !this.#isListenersAttached && this.#isYAML) {
-      this.#addEventListener();
-      this.#isListenersAttached = true;
-      this.#isYAML = false;
-    }
-  }
-
-  disconnectedCallback() {
-    this.#resourceManager?.cleanup();
-    this.#resourceManager = null;
-    this.#isListenersAttached = false;
-    this.#isYAML = true;
-  }
-
-  set hass(hass) {
-    if (!hass) return;
-    if (!this.#hassProvider.hass || this.#hassProvider.hass.entities !== hass.entities) {
-      this.#hassProvider.hass = hass;
-    }
-  }
-
-  get hass() {
-    return this.#hassProvider.hass;
-  }
-
-  setConfig(config) {
-    if (!config) throw new Error('setConfig: invalid config');
-    this.#config = { ...config };
-    if (!this.#hassProvider.isValid) return;
-
-    if (!this.#isRendered) {
-      this.#domElements = new Map();
-      this.render();
-      this.#isRendered = true;
-      this.#isListenersAttached = false;
-    }
-
-    if (!this.isConnected) this.#isYAML = true;
-    if (!this.#isListenersAttached && this.isConnected) {
-      this.#addEventListener();
-      this.#isListenersAttached = true;
-    }
-    this.#updateFields();
-  }
-
-  render() {
-    const style = document.createElement(CARD.style.element);
-    style.textContent = this.constructor._editorStyle;
-
-    const container = document.createElement('div');
-    container.classList.add('editor-container');
-
-    Object.values(this.constructor._editorFields).forEach((field) => {
-      container.appendChild(this.#createField(field));
-    });
-
-    const fragment = document.createDocumentFragment();
-    fragment.appendChild(style);
-    fragment.appendChild(container);
-    this.shadowRoot.appendChild(fragment);
-  }
-
-  #getSelectorForType(type) {
-    const selectors = {
-      entity: () => ({ entity: {} }),
-      template: () => ({ template: {} }),
-      toggle: () => ({ boolean: {} }),
-      default: () => ({ text: { mode: 'box' } }),
-      bar_size: () => ({ select: { options: Object.values(CARD.style.bar.sizeOptions).map((e) => ({ value: e.label, label: e.label })) } }),
-      bar_orientation: () => ({ select: { options: Object.keys(CARD.style.dynamic.progressBar.orientation).map((v) => ({ value: v, label: v })) } }),
-      bar_position: () => ({ select: { options: ['default', 'below', 'top', 'bottom', 'overlay'].map((v) => ({ value: v, label: v })) } }),
-      layout: () => ({ select: { options: Object.values(CARD.layout.orientations).map((e) => ({ value: e.label, label: e.label })) } }),
-    };
-
-    return (selectors[type] ?? (() => ({ text: {} })))();
-  }
-
-  #createField(field) {
-    const isAction = field.schema !== undefined;
-    const el = document.createElement(isAction ? 'ha-form' : 'ha-selector');
-
-    Object.assign(el, {
-      id: field.name,
-      hass: this.#hassProvider.hass,
-      ...(isAction
-        ? { schema: field.schema, computeLabel: () => this.#hassProvider.localize('editor.field')[field.name], data: {} }
-        : {
-            label: this.#hassProvider.localize('editor.field')[field.name],
-            value: this.#config[field.name] ?? '',
-            selector: this.#getSelectorForType(field.type, field.name),
-          }),
-    });
-
-    this.#domElements.set(field.name, el);
-    return el;
-  }
-
-  #addEventListener() {
-    for (const [name, element] of this.#domElements) {
-      this.#resourceManager.addEventListener(element, 'value-changed', this.#onChanged.bind(this), { passive: true }, `value-changed-${name}`);
-    }
-  }
-
-  #onChanged(event) {
-    const { value } = event.detail;
-    const key = event.target.id;
-
-    this.#sendNewConfig({ ...this.#config, [key]: value });
-  }
-
-  #sendNewConfig(newConfig) {
-    this.dispatchEvent(
-      new CustomEvent(CARD.interactions.event.configChanged, {
-        detail: { config: newConfig },
-        bubbles: true,
-        composed: true,
-      }),
-    );
-  }
-
-  #updateFields() {
-    for (const [key, element] of this.#domElements) {
-      if (element.localName === 'ha-selector') {
-        const newValue = key in this.#config ? this.#config[key] : '';
-        if (element.value !== newValue) element.value = newValue;
-      } else if (element.localName === 'ha-form') {
-        const newValue = this.#config[key];
-        if (element.data?.[key] !== newValue) {
-          element.data = { ...element.data, [key]: newValue };
-        }
-      }
-    }
-  }
+class EntityProgressBadgeTemplateEditor extends EditorBase {
+  _configHelper = new BadgeTemplateConfigHelper();
+  static _fields = {
+    general: {
+      flat: true,
+      fields: {
+        entity: { name: 'entity', type: 'entity' },
+      },
+    },
+    content: {
+      ...EditorBase._sections.content,
+      fields: {
+        name: { name: 'name', type: 'template' },
+        toggleName: { name: 'hide.name', type: 'toggle', invert: true, array: true },
+        secondary: { name: 'secondary', type: 'template' },
+        toggleSecondaryInfo: { name: 'hide.secondary_info', type: 'toggle', invert: true, array: true },
+        percent: { name: 'percent', type: 'template' },
+      },
+    },
+    theme: {
+      ...EditorBase._sections.theme,
+      fields: {
+        icon: { name: 'icon', type: 'template' },
+        color: { name: 'color', type: 'template' },
+        toggleIcon: { name: 'hide.icon', type: 'toggle', invert: true, array: true },
+        bar_color: { name: 'bar_color', type: 'template' },
+        bar_orientation: { name: 'bar_orientation', type: 'bar_orientation' },
+        center_zero: { name: 'center_zero', type: 'toggle' },
+        bar_effect: { name: 'bar_effect', type: 'template' },
+        toggleBar: { name: 'hide.progress_bar', type: 'toggle', invert: true, array: true },
+      },
+    },
+    interactions: {
+      ...EditorBase._sections.interactions,
+      fields: {
+        tap_action: { name: 'tap_action', type: 'action' },
+        hold_action: { name: 'hold_action', type: 'action' },
+        double_tap_action: { name: 'double_tap_action', type: 'action' },
+      },
+    },
+  };
 }
 
 /******************************************************************************************
  * 🔧 Register components
  */
 
-RegistrationHelper.registerCard(CARD.meta.card, EntityProgressCard, EntityProgressCardEditor);
-RegistrationHelper.registerBadge(CARD.meta.badge, EntityProgressBadge, EntityProgressBadgeEditor);
-RegistrationHelper.registerCard(CARD.meta.template, EntityProgressTemplateCard, EntityProgressTemplateEditor);
-RegistrationHelper.registerBadge(CARD.meta.badgeTemplate, EntityProgressTemplateBadge);
-RegistrationHelper.registerCardFeature(CARD.meta.feature, EntityProgressFeatures);
+RegistrationHelper.registerCard(META.cards.card, EntityProgressCard, EntityProgressCardEditor);
+RegistrationHelper.registerBadge(META.cards.badge, EntityProgressBadge, EntityProgressBadgeEditor);
+RegistrationHelper.registerCard(META.cards.template, EntityProgressTemplateCard, EntityProgressTemplateEditor);
+RegistrationHelper.registerBadge(META.cards.badgeTemplate, EntityProgressTemplateBadge, EntityProgressBadgeTemplateEditor);
+RegistrationHelper.registerCardFeature(META.cards.feature, EntityProgressFeatures);
 
 /******************************************************************************************
  * 🔧 Show module info

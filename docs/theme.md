@@ -96,7 +96,6 @@ theme: optimal_when_high
 | 80% – 100%           | `green`   | Optimal / High               |
 
 > [!NOTE]
->
 > The icon is automatically retrieved from the entity but can be overridden
 > using the `icon` parameter.
 
@@ -125,7 +124,6 @@ theme: optimal_when_low
 | 80% – 100%           | `red`     | High / Critical              |
 
 > [!NOTE]
->
 > The icon is automatically retrieved from the entity but can be overridden
 > using the `icon` parameter.
 
@@ -164,7 +162,10 @@ The `mdi:lightbulb-outline` icon is used for lower brightness levels, while
 `mdi:lightbulb` is displayed when the light intensity increases. Thanks to the
 **linear** approach, the brightness smoothly transitions between these levels.
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/light.png" alt="Image title" width="500"/>
+<img
+  src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/light.png"
+  alt="Image title" width="500"
+/>
 
 [🔼 Back to top]
 
@@ -205,11 +206,13 @@ with a specific color:
 | 34°C – 50°C / 93.2°F – 122°F    | `var(--red-color)`         | Extremely hot   |
 
 > [!IMPORTANT]
->
 > Fahrenheit values are converted to apply the correct color. Make sure to set
 > your unit to `°F` correctly in order to see the accurate color representation.
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/temperature.png" alt="Image title" width="500"/>
+<img
+  src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/temperature.png"
+  alt="Image title" width="500"
+/>
 
 [🔼 Back to top]
 
@@ -246,7 +249,10 @@ The ranges and their corresponding colors are as follows:
 Each range is visually represented using the `mdi:water-percent` icon, ensuring
 a clear and intuitive display of humidity levels.
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/humidity.png" alt="Image title" width="500"/>
+<img
+  src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/humidity.png"
+  alt="Image title" width="500"
+/>
 
 [🔼 Back to top]
 
@@ -281,7 +287,6 @@ The ranges and their corresponding colors are as follows:
 | 25,000 – 50,000      | `var(--deep-purple-color)` | Hazardous              |
 
 > [!IMPORTANT]
->
 > The information provided in this HA card is based on thresholds from the
 > following
 > [source](https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element).
@@ -296,7 +301,10 @@ The ranges and their corresponding colors are as follows:
 Each range is visually represented using the `mdi:air-filter` icon, ensuring a
 clear and intuitive display of VOC levels.
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/voc.png" alt="Image title" width="250"/>
+<img
+  src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/voc.png"
+  alt="Image title" width="250"
+/>
 
 [🔼 Back to top]
 
@@ -331,7 +339,6 @@ The ranges and their corresponding colors are as follows:
 | 150 – 200               | `var(--deep-purple-color)` | Very unhealthy air quality     |
 
 > [!IMPORTANT]
->
 > The information provided in this HA card is based on thresholds from the
 > following
 > [source](https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element).
@@ -346,7 +353,10 @@ The ranges and their corresponding colors are as follows:
 Each range is visually represented using the `mdi:air-filter` icon, ensuring a
 clear and intuitive display of PM2.5 pollution levels.
 
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/pm.png" alt="Image title" width="250"/>
+<img
+  src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/pm.png"
+  alt="Image title" width="250"
+/>
 </details>
 
 [🔼 Back to top]
@@ -406,7 +416,8 @@ my_custom_theme:
   epb-progress-bar-background-color: 'rgba(255, 255, 255, 0.12)'
 ```
 
-> [!NOTE] When declaring CSS variables in a theme YAML file, omit the `--`
+> [!NOTE]
+> When declaring CSS variables in a theme YAML file, omit the `--`
 > prefix — Home Assistant adds it automatically.
 
 This applies to all cards using that theme.
@@ -494,7 +505,7 @@ guide you in updating your custom card modifications.
 
 ### DOM
 
-#### entity-progress-card
+#### Card
 
 ```text
 ha-card.entity-progress-card...
@@ -596,7 +607,7 @@ ha-card...
 ```text
 ha-card...
  ├─ div.container
- │   ├─ div.icon-section (optional)
+ │   ├─ div.icon-section
  │   └─ div.content-section
  │       ├─ div.name
  │       │   └─ span.name-value
@@ -609,7 +620,6 @@ ha-card...
          ├─ div.high.watermark.mark
          └─ div.zero.mark
 ```
-
 
 [🔼 Back to top]
 

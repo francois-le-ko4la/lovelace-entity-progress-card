@@ -1,6 +1,7 @@
 import globals from 'globals';
 import js from '@eslint/js';
 import compat from 'eslint-plugin-compat';
+import sonarjs from 'eslint-plugin-sonarjs';
 
 export default [
   // Configuration de base recommandée
@@ -16,12 +17,21 @@ export default [
     },
     plugins: {
       compat,
+      'sonarjs': sonarjs,
     },
     settings: {
       browsers: ['Chrome >= 98', 'Edge >= 98', 'Firefox >= 94', 'Safari >= 15.4', 'Opera >= 84'],
     },
     rules: {
       'compat/compat': 'warn',
+      'sonarjs/no-duplicate-string': 'warn',
+      'sonarjs/cognitive-complexity': ['warn', 15],
+      'sonarjs/no-identical-functions': 'error',
+      'sonarjs/no-collapsible-if': 'warn',
+      'sonarjs/no-redundant-boolean': 'warn',
+      'sonarjs/no-useless-catch': 'warn',
+      'sonarjs/prefer-immediate-return': 'warn',
+      'sonarjs/prefer-single-boolean-return': 'warn',
       // quotes: ['error', 'single', { avoidEscape: true }],
       'no-var': 'error',
       'prefer-const': 'error',

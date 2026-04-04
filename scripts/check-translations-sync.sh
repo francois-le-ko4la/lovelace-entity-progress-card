@@ -8,13 +8,13 @@ ERRORS=0
 
 echo "🔍 Checking translations sync..."
 
-# Extraire LANGUAGES du JS une seule fois
-JS_LANGUAGES=$(node -e "
+# Extraire TRANSLATIONS du JS une seule fois
+JS_TRANSLATIONS=$(node -e "
 const src = require('fs').readFileSync('$JS_FILE', 'utf8');
-const match = src.match(/const LANGUAGES = (\{[\s\S]*?\n\};)/);
-if (!match) { console.error('LANGUAGES not found'); process.exit(1); }
-const LANGUAGES = eval('(' + match[1].replace(/};$/, '}') + ')');
-console.log(JSON.stringify(LANGUAGES));
+const match = src.match(/const TRANSLATIONS = (\{[\s\S]*?\n\};)/);
+if (!match) { console.error('TRANSLATIONS not found'); process.exit(1); }
+const TRANSLATIONS = eval('(' + match[1].replace(/};$/, '}') + ')');
+console.log(JSON.stringify(TRANSLATIONS));
 ")
 
 for file in "$TRANSLATIONS_DIR"/*.json; do
@@ -25,11 +25,11 @@ for file in "$TRANSLATIONS_DIR"/*.json; do
 const fs = require('fs');
 const lang = '$lang';
 const json = JSON.parse(fs.readFileSync('$file', 'utf8'));
-const LANGUAGES = $JS_LANGUAGES;
-const jsLang = LANGUAGES[lang];
+const TRANSLATIONS = $JS_TRANSLATIONS;
+const jsLang = TRANSLATIONS[lang];
 
 if (!jsLang) {
-  console.log('⚠️  ' + lang + ': not found in LANGUAGES');
+  console.log('⚠️  ' + lang + ': not found in TRANSLATIONS');
   process.exit(1);
 }
 
