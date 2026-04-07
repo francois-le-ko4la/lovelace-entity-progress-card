@@ -7,6 +7,7 @@
         "typescriptreact",
         "markdown"
     ],
+    "eslint.run": "onSave",
     "eslint.workingDirectories": [
         { "directory": ".", "changeProcessCWD": true }
     ]

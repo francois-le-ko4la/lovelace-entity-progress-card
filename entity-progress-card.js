@@ -7432,9 +7432,8 @@ class HassProviderSingleton {
         const rtf = this.#getRelativeTimeFormat();
         return rtf.format(value, unit);
       }
-
-      return null;
     }
+    return null;
   }
   getNumericAttributes(entityId) {
     return Object.fromEntries(
@@ -8007,7 +8006,7 @@ class EntityOrValue {
  */
 
 class ValidationError extends Error {
-  constructor(path = [], errorCode, severity = SEV.error, fallback = null, partialConfig = null, allErrors = []) {
+  constructor(path = [], errorCode = null, severity = SEV.error, fallback = null, partialConfig = null, allErrors = []) {
     super();
     this.name = 'ValidationError';
     this.path = path;
@@ -11832,10 +11831,9 @@ class EditorBase extends HTMLElement {
 
     if (isInverted) value = !value;
 
-    if (isNested && isArray) return this.#handleNestedArrayField(parentKey, childKey, value);
-    if (isNested) return this.#handleNestedField(parentKey, childKey, value);
-
-    this.#handleStdField(def, key, value);
+    if (isNested && isArray) this.#handleNestedArrayField(parentKey, childKey, value);
+    else if (isNested) this.#handleNestedField(parentKey, childKey, value);
+    else this.#handleStdField(def, key, value);
   }
 
   #sendConfig(config) {
