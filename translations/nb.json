@@ -66,6 +66,7 @@
       "percent": "Prosent",
       "secondary": "Sekundær informasjon",
       "tap_action": "Handling ved kort trykk",
+      "text_shadow": "Legg til tekstskygge (overlay)",
       "theme": "Tema",
       "toggle_icon": "Vis ikon",
       "toggle_name": "Vis navn",

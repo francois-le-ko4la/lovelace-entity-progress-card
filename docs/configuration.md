@@ -840,7 +840,6 @@ color: rgb(110, 65, 171)
 
 [![Card OK][Card-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
-[![YAML Only][yaml-only]](#yaml-only)
 
 > **`badge_icon`** [JINJA] _(optional)_:
 
@@ -873,7 +872,6 @@ badge_icon: >-
 
 [![Card OK][Card-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
-[![YAML Only][yaml-only]](#yaml-only)
 
 > **`badge_color`** [JINJA] _(optional)_:
 
@@ -1106,9 +1104,8 @@ bar_max_width: 100px
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
 [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
-[![YAML Only][yaml-only]](#yaml-only)
 
-> **`bar_orientation`** [String] {`rtl`|`ltr`} _(optional, default: `ltr`)_
+> **`bar_orientation`** [String] {`rtl`|`ltr`|`up`} _(optional, default: `ltr`)_
 
 Adjusts the progress bar direction to display from right to left.
 
@@ -1135,6 +1132,10 @@ reverse: true
 >
 > While this parameter was originally designed for timers, it can be applied to
 > any entity where a reversed progress bar is needed.
+
+> [!IMPORTANT]
+> 'up' can only be used with the vertical card layout and when the bar position
+> is set to overlay.
 
 [🔼 Back to top]
 
@@ -1401,7 +1402,6 @@ following locale rules or overriding them explicitly.
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
 [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
-[![YAML Only][yaml-only]](#yaml-only)
 
 > **`center_zero`** [Boolean] _(optional, default: `false`)_
 

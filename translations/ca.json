@@ -1,0 +1,113 @@
+{
+  "card": {
+    "msg": {
+      "appliedDefaultValue": "S'ha aplicat automàticament un valor per defecte.",
+      "attributeNotFound": "No s'ha trobat l'atribut a Home Assistant.",
+      "discontinuousRange": "El rang definit és discontinu.",
+      "entityNotFound": "No s'ha trobat l'entitat a Home Assistant.",
+      "invalidActionObject": "L'objecte d'acció és invàlid o té una estructura incorrecta.",
+      "invalidCustomThemeArray": "El tema personalitzat ha de ser un array.",
+      "invalidCustomThemeEntry": "Una o més entrades del tema personalitzat són invàlides.",
+      "invalidDecimal": "El valor ha de ser un decimal vàlid.",
+      "invalidEntityId": "L'ID de l'entitat no és vàlid o té un format incorrecte.",
+      "invalidEnumValue": "El valor proporcionat no és una opció vàlida.",
+      "invalidIconType": "El tipus d'icona especificat és invàlid o desconegut.",
+      "invalidMaxValue": "El valor màxim és invàlid o supera el límit permès.",
+      "invalidMinValue": "El valor mínim és invàlid o està per sota del límit permès.",
+      "invalidStateContent": "El contingut de l'estat és invàlid o té un format incorrecte.",
+      "invalidStateContentEntry": "Una o més entrades del contingut de l'estat són invàlides.",
+      "invalidTheme": "El tema especificat és desconegut. S'utilitzarà el tema per defecte.",
+      "invalidTypeArray": "S'esperava un valor de tipus array.",
+      "invalidTypeBoolean": "S'esperava un valor de tipus boolean.",
+      "invalidTypeNumber": "S'esperava un valor de tipus número.",
+      "invalidTypeObject": "S'esperava un valor de tipus objecte.",
+      "invalidTypeString": "S'esperava un valor de tipus cadena.",
+      "invalidUnionType": "El valor no coincideix amb cap dels tipus permesos.",
+      "minGreaterThanMax": "El valor mínim no pot ser més gran que el valor màxim.",
+      "missingActionKey": "Falta una clau obligatòria a l'objecte d'acció.",
+      "missingColorProperty": "Falta una propietat de color obligatòria.",
+      "missingRequiredProperty": "Falta una propietat obligatòria."
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "Contingut",
+      "interaction": "Interacció",
+      "theme": "Aparença i tema"
+    },
+    "field": {
+      "attribute": "Atribut",
+      "badge_color": "Color de la insígnia",
+      "badge_icon": "Icona de la insígnia",
+      "bar_color": "Color principal",
+      "bar_effect": "Efecte de la barra",
+      "bar_orientation": "Orientació de la barra",
+      "bar_position": "Posició de la barra",
+      "bar_single_line": "Informació en una sola línia (overlay)",
+      "bar_size": "Mida de la barra",
+      "center_zero": "Zero al centre",
+      "color": "Color principal",
+      "decimal": "Decimal",
+      "disable_unit": "Mostra la unitat",
+      "double_tap_action": "Acció al doble tocar",
+      "entity": "Entitat",
+      "force_circular_background": "Forçar fons circular",
+      "hold_action": "Acció en mantenir premut",
+      "icon": "Icona",
+      "icon_double_tap_action": "Acció al doble tocar la icona",
+      "icon_hold_action": "Acció en mantenir premuda la icona",
+      "icon_tap_action": "Acció al tocar la icona",
+      "layout": "Disposició de la targeta",
+      "max_value": "Valor màxim",
+      "max_value_attribute": "Atribut (valor màxim)",
+      "max_value_entity": "Usar entitat com a valor màxim",
+      "min_value": "Valor mínim",
+      "name": "Nom",
+      "percent": "Percentatge",
+      "secondary": "Informació secundària",
+      "tap_action": "Acció al tocar breument",
+      "text_shadow": "Afegir ombra al text (overlay)",
+      "theme": "Tema",
+      "toggle_icon": "Mostra icona",
+      "toggle_name": "Mostra nom",
+      "toggle_progress_bar": "Mostra barra de progrés",
+      "toggle_secondary_info": "Mostra informació secundària",
+      "toggle_value": "Mostra valor",
+      "unit": "Unitat",
+      "use_max_entity": "Usar una entitat com a valor màxim"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "Òptim quan és baix (CPU, RAM…)",
+        "optimal_when_high": "Òptim quan és alt (Bateria…)",
+        "light": "Llum",
+        "temperature": "Temperatura",
+        "humidity": "Humitat",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "Petita",
+        "medium": "Mitjana",
+        "large": "Gran",
+        "xlarge": "Extra gran"
+      },
+      "bar_orientation": {
+        "ltr": "D'esquerra a dreta",
+        "rtl": "De dreta a esquerra",
+        "up": "Cap amunt (overlay)"
+      },
+      "bar_position": {
+        "default": "Predeterminada",
+        "below": "Barra sota el contingut",
+        "top": "Barra a sobre (superposada)",
+        "bottom": "Barra a sota (superposada)",
+        "overlay": "Barra superposada al contingut (overlay)"
+      },
+      "layout": {
+        "horizontal": "Horitzontal (predeterminada)",
+        "vertical": "Vertical"
+      }
+    }
+  }
+}

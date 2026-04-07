@@ -1,0 +1,113 @@
+{
+  "card": {
+    "msg": {
+      "appliedDefaultValue": "Vaikimisi väärtus rakendati automaatselt.",
+      "attributeNotFound": "Atribuut ei leitud Home Assistantis.",
+      "discontinuousRange": "Määratud vahemik ei ole katkematu.",
+      "entityNotFound": "Objekti ei leitud Home Assistantis.",
+      "invalidActionObject": "Tegevuse objekt on vigane või valesti struktureeritud.",
+      "invalidCustomThemeArray": "Kohandatud teema peab olema massiiv.",
+      "invalidCustomThemeEntry": "Üks või mitu kohandatud teema kirjet on vigased.",
+      "invalidDecimal": "Väärtus peab olema positiivne täisarv.",
+      "invalidEntityId": "Objekti ID on vigane või valesti vormistatud.",
+      "invalidEnumValue": "Antud väärtus ei kuulu lubatud valikute hulka.",
+      "invalidIconType": "Määratud ikooni tüüp on vigane või tundmatu.",
+      "invalidMaxValue": "Maksimaalne väärtus on vigane või ületab lubatud piiri.",
+      "invalidMinValue": "Minimaalne väärtus on vigane või alla lubatud piiri.",
+      "invalidStateContent": "Seisundi sisu on vigane või valesti vormistatud.",
+      "invalidStateContentEntry": "Üks või mitu seisundi sisu kirjet on vigased.",
+      "invalidTheme": "Määratud teema on tundmatu. Kasutatakse vaikimisi teemat.",
+      "invalidTypeArray": "Oodati massiivi tüüpi väärtust.",
+      "invalidTypeBoolean": "Oodati loogilist (boolean) tüüpi väärtust.",
+      "invalidTypeNumber": "Oodati numbri tüüpi väärtust.",
+      "invalidTypeObject": "Oodati objekti tüüpi väärtust.",
+      "invalidTypeString": "Oodati stringi tüüpi väärtust.",
+      "invalidUnionType": "Väärtus ei vasta ühelegi lubatud tüübile.",
+      "minGreaterThanMax": "Minimaalne väärtus ei saa olla suurem kui maksimaalne.",
+      "missingActionKey": "Tegevuse objektist puudub kohustuslik võti.",
+      "missingColorProperty": "Puudub kohustuslik värvi atribuut.",
+      "missingRequiredProperty": "Puudub kohustuslik atribuut."
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "Sisu",
+      "interaction": "Interaktsioonid",
+      "theme": "Välimus ja kasutatavus"
+    },
+    "field": {
+      "attribute": "Atribuut",
+      "badge_color": "Märgi värv",
+      "badge_icon": "Märgi ikoon",
+      "bar_color": "Riba värv",
+      "bar_effect": "Riba efekt",
+      "bar_orientation": "Riba orientatsioon",
+      "bar_position": "Riba positsioon",
+      "bar_single_line": "Info ühel real (overlay)",
+      "bar_size": "Riba suurus",
+      "center_zero": "Null keskel",
+      "color": "Ikooni värv",
+      "decimal": "Kümnendkoht",
+      "disable_unit": "Näita ühikut",
+      "double_tap_action": "Topeltpuudutuse tegevus",
+      "entity": "Objekt",
+      "force_circular_background": "Sunnitud ümmargune taust",
+      "hold_action": "Pikema vajutuse tegevus",
+      "icon": "Ikoon",
+      "icon_double_tap_action": "Ikooni topeltpuudutuse tegevus",
+      "icon_hold_action": "Ikooni pika vajutuse tegevus",
+      "icon_tap_action": "Ikooni puudutuse tegevus",
+      "layout": "Kaardi paigutus",
+      "max_value": "Maksimaalne väärtus",
+      "max_value_attribute": "Atribuut (max_value)",
+      "max_value_entity": "Maksimaalne väärtus",
+      "min_value": "Minimaalne väärtus",
+      "name": "Nimi",
+      "percent": "Protsent",
+      "secondary": "Täiendav info",
+      "tap_action": "Puudutuse tegevus",
+      "text_shadow": "Lisa teksti vari (overlay)",
+      "theme": "Teema",
+      "toggle_icon": "Näita ikooni",
+      "toggle_name": "Näita nime",
+      "toggle_progress_bar": "Näita edenemisriba",
+      "toggle_secondary_info": "Näita täiendavat infot",
+      "toggle_value": "Näita väärtust",
+      "unit": "Ühik",
+      "use_max_entity": "Kasuta objekti maksimaalse väärtuse jaoks"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "Optimaalne madalatel väärtustel (CPU, RAM...)",
+        "optimal_when_high": "Optimaalne kõrgetel väärtustel (Aku...)",
+        "light": "Hele",
+        "temperature": "Temperatuur",
+        "humidity": "Niiskus",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "Väike",
+        "medium": "Keskmine",
+        "large": "Suur",
+        "xlarge": "Väga suur"
+      },
+      "bar_orientation": {
+        "ltr": "Vasakult paremale",
+        "rtl": "Paremalt vasakule",
+        "up": "Üles (overlay)"
+      },
+      "bar_position": {
+        "default": "Vaikimisi",
+        "below": "Riba sisu all",
+        "top": "Riba üleval (overlay)",
+        "bottom": "Riba all (overlay)",
+        "overlay": "Riba sisu kohal (overlay)"
+      },
+      "layout": {
+        "horizontal": "Horisontaalne (vaikimisi)",
+        "vertical": "Vertikaalne"
+      }
+    }
+  }
+}

@@ -176,23 +176,16 @@ const HA_CONTEXT = {
       'state-weather-windy_variant', 'state-weather-windy'
     ].map((c) => [c, `var(--${c}-color)`]),
   ),
-  languages: new Map([
-    ['af', 'af-ZA'], ['ar', 'ar'], ['bg', 'bg-BG'], ['bn', 'bn'], ['ca', 'ca-ES'], ['cs', 'cs-CZ'],
-    ['da', 'da-DK'], ['de', 'de-DE'], ['de-CH', 'de-CH'], ['el', 'el-GR'], ['en', 'en-US'], ['es', 'es-ES'],
-    ['et', 'et-EE'], ['eu', 'eu-ES'], ['fa', 'fa-IR'], ['fi', 'fi-FI'], ['fr', 'fr-FR'], ['gl', 'gl-ES'],
-    ['gu', 'gu-IN'], ['he', 'he-IL'], ['hi', 'hi-IN'], ['hr', 'hr-HR'], ['hu', 'hu-HU'], ['id', 'id-ID'],
-    ['is', 'is-IS'], ['it', 'it-IT'], ['ja', 'ja-JP'], ['ka', 'ka-GE'], ['kn', 'kn-IN'], ['ko', 'ko-KR'],
-    ['kw', 'kw-GB'], ['lb', 'lb-LU'], ['lt', 'lt-LT'], ['lv', 'lv-LV'], ['ml', 'ml-IN'], ['mn', 'mn-MN'],
-    ['mr', 'mr-IN'], ['ms', 'ms-MY'], ['nb', 'nb-NO'], ['ne', 'ne-NP'], ['nl', 'nl-NL'], ['pl', 'pl-PL'],
-    ['pt', 'pt-PT'], ['pt-br', 'pt-BR'], ['ro', 'ro-RO'], ['ru', 'ru-RU'], ['sk', 'sk-SK'], ['sl', 'sl-SI'],
-    ['sr', 'sr-RS'], ['sr-Latn', 'sr-Latn-RS'], ['sv', 'sv-SE'], ['sw', 'sw-KE'], ['te', 'te-IN'], ['th', 'th-TH'],
-    ['tr', 'tr-TR'], ['uk', 'uk-UA'], ['ur', 'ur-PK'], ['vi', 'vi-VN'], ['zh-cn', 'zh-CN'], ['zh-hk', 'zh-HK'],
-    ['zh-tw', 'zh-TW'], ['zh-Hant', 'zh-TW'],
-  ]),
   attributeMapping: {
     cover: { label: 'cover', attribute: 'current_position' },
     light: { label: 'light', attribute: 'brightness' },
     fan: { label: 'fan', attribute: 'percentage' },
+  },
+  numberFormat: {
+    decimal_comma: 'de-DE', // 1.234,56 (Allemagne, France, etc.)
+    comma_decimal: 'en-US', // 1,234.56 (USA, UK, etc.)
+    space_comma: 'fr-FR', // 1 234,56 (France, Norvège, etc.)
+    quote_decimal: 'de-CH', // 12'345.60 (Switzerland)
   },
   entity: {
     state: { unavailable: 'unavailable', unknown: 'unknown', notFound: 'notFound', idle: 'idle', active: 'active', paused: 'paused' },
@@ -368,6 +361,7 @@ const CARD = {
           shimmer: { label: 'shimmer', class: 'progress-bar-effect-shimmer' },
           shimmerReverse: { label: 'shimmer_reverse', class: 'progress-bar-effect-shimmer-reverse' },
         },
+        centerZero: { class: 'center-zero' },
       },
       watermark: {
         low: { value: { var: '--low-watermark-value', default: 20 }, color: { var: '--low-watermark-color', default: 'red' } },
@@ -646,6 +640,7 @@ const TRANSLATIONS = {
         percent: 'النسبة المئوية',
         secondary: 'معلومات ثانوية',
         tap_action: 'الإجراء عند النقر القصير',
+        text_shadow: 'إضافة ظل للنص (overlay)',
         theme: 'السمة',
         toggle_icon: 'عرض الأيقونة',
         toggle_name: 'عرض الاسم',
@@ -758,6 +753,7 @@ const TRANSLATIONS = {
         percent: 'শতাংশ',
         secondary: 'দ্বিতীয় তথ্য',
         tap_action: 'ট্যাপ আচরণ',
+        text_shadow: 'টেক্সটে ছায়া যোগ করুন (overlay)',
         theme: 'থিম',
         toggle_icon: 'আইকন',
         toggle_name: 'নাম',
@@ -798,6 +794,119 @@ const TRANSLATIONS = {
         layout: {
           horizontal: 'অনুভূমিক (ডিফল্ট)',
           vertical: 'উল্লম্ব'
+        }
+      }
+    }
+  },
+  ca: {
+    card: {
+      msg: {
+        appliedDefaultValue: 'S\'ha aplicat automàticament un valor per defecte.',
+        attributeNotFound: 'No s\'ha trobat l\'atribut a Home Assistant.',
+        discontinuousRange: 'El rang definit és discontinu.',
+        entityNotFound: 'No s\'ha trobat l\'entitat a Home Assistant.',
+        invalidActionObject: 'L\'objecte d\'acció és invàlid o té una estructura incorrecta.',
+        invalidCustomThemeArray: 'El tema personalitzat ha de ser un array.',
+        invalidCustomThemeEntry: 'Una o més entrades del tema personalitzat són invàlides.',
+        invalidDecimal: 'El valor ha de ser un decimal vàlid.',
+        invalidEntityId: 'L\'ID de l\'entitat no és vàlid o té un format incorrecte.',
+        invalidEnumValue: 'El valor proporcionat no és una opció vàlida.',
+        invalidIconType: 'El tipus d\'icona especificat és invàlid o desconegut.',
+        invalidMaxValue: 'El valor màxim és invàlid o supera el límit permès.',
+        invalidMinValue: 'El valor mínim és invàlid o està per sota del límit permès.',
+        invalidStateContent: 'El contingut de l\'estat és invàlid o té un format incorrecte.',
+        invalidStateContentEntry: 'Una o més entrades del contingut de l\'estat són invàlides.',
+        invalidTheme: 'El tema especificat és desconegut. S\'utilitzarà el tema per defecte.',
+        invalidTypeArray: 'S\'esperava un valor de tipus array.',
+        invalidTypeBoolean: 'S\'esperava un valor de tipus boolean.',
+        invalidTypeNumber: 'S\'esperava un valor de tipus número.',
+        invalidTypeObject: 'S\'esperava un valor de tipus objecte.',
+        invalidTypeString: 'S\'esperava un valor de tipus cadena.',
+        invalidUnionType: 'El valor no coincideix amb cap dels tipus permesos.',
+        minGreaterThanMax: 'El valor mínim no pot ser més gran que el valor màxim.',
+        missingActionKey: 'Falta una clau obligatòria a l\'objecte d\'acció.',
+        missingColorProperty: 'Falta una propietat de color obligatòria.',
+        missingRequiredProperty: 'Falta una propietat obligatòria.'
+      }
+    },
+    editor: {
+      title: {
+        content: 'Contingut',
+        interaction: 'Interacció',
+        theme: 'Aparença i tema'
+      },
+      field: {
+        attribute: 'Atribut',
+        badge_color: 'Color de la insígnia',
+        badge_icon: 'Icona de la insígnia',
+        bar_color: 'Color principal',
+        bar_effect: 'Efecte de la barra',
+        bar_orientation: 'Orientació de la barra',
+        bar_position: 'Posició de la barra',
+        bar_single_line: 'Informació en una sola línia (overlay)',
+        bar_size: 'Mida de la barra',
+        center_zero: 'Zero al centre',
+        color: 'Color principal',
+        decimal: 'Decimal',
+        disable_unit: 'Mostra la unitat',
+        double_tap_action: 'Acció al doble tocar',
+        entity: 'Entitat',
+        force_circular_background: 'Forçar fons circular',
+        hold_action: 'Acció en mantenir premut',
+        icon: 'Icona',
+        icon_double_tap_action: 'Acció al doble tocar la icona',
+        icon_hold_action: 'Acció en mantenir premuda la icona',
+        icon_tap_action: 'Acció al tocar la icona',
+        layout: 'Disposició de la targeta',
+        max_value: 'Valor màxim',
+        max_value_attribute: 'Atribut (valor màxim)',
+        max_value_entity: 'Usar entitat com a valor màxim',
+        min_value: 'Valor mínim',
+        name: 'Nom',
+        percent: 'Percentatge',
+        secondary: 'Informació secundària',
+        tap_action: 'Acció al tocar breument',
+        text_shadow: 'Afegir ombra al text (overlay)',
+        theme: 'Tema',
+        toggle_icon: 'Mostra icona',
+        toggle_name: 'Mostra nom',
+        toggle_progress_bar: 'Mostra barra de progrés',
+        toggle_secondary_info: 'Mostra informació secundària',
+        toggle_value: 'Mostra valor',
+        unit: 'Unitat',
+        use_max_entity: 'Usar una entitat com a valor màxim'
+      },
+      option: {
+        theme: {
+          optimal_when_low: 'Òptim quan és baix (CPU, RAM…)',
+          optimal_when_high: 'Òptim quan és alt (Bateria…)',
+          light: 'Llum',
+          temperature: 'Temperatura',
+          humidity: 'Humitat',
+          pm25: 'PM2.5',
+          voc: 'VOC'
+        },
+        bar_size: {
+          small: 'Petita',
+          medium: 'Mitjana',
+          large: 'Gran',
+          xlarge: 'Extra gran'
+        },
+        bar_orientation: {
+          ltr: 'D\'esquerra a dreta',
+          rtl: 'De dreta a esquerra',
+          up: 'Cap amunt (overlay)'
+        },
+        bar_position: {
+          default: 'Predeterminada',
+          below: 'Barra sota el contingut',
+          top: 'Barra a sobre (superposada)',
+          bottom: 'Barra a sota (superposada)',
+          overlay: 'Barra superposada al contingut (overlay)'
+        },
+        layout: {
+          horizontal: 'Horitzontal (predeterminada)',
+          vertical: 'Vertical'
         }
       }
     }
@@ -870,6 +979,7 @@ const TRANSLATIONS = {
         percent: 'Procento',
         secondary: 'Sekundární informace',
         tap_action: 'Chování při klepnutí',
+        text_shadow: 'Přidat stín textu (overlay)',
         theme: 'Motiv',
         toggle_icon: 'Zobrazit ikonu',
         toggle_name: 'Zobrazit název',
@@ -982,6 +1092,7 @@ const TRANSLATIONS = {
         percent: 'Procent',
         secondary: 'Sekundær info',
         tap_action: 'Handling ved kort tryk',
+        text_shadow: 'Tilføj tekstskygge (overlay)',
         theme: 'Tema',
         toggle_icon: 'Vis ikon',
         toggle_name: 'Vis navn',
@@ -1094,6 +1205,7 @@ const TRANSLATIONS = {
         percent: 'Prozent',
         secondary: 'Sekundäre Informationen',
         tap_action: 'Aktion bei kurzem Tippen',
+        text_shadow: 'Textschatten hinzufügen (Overlay)',
         theme: 'Thema',
         toggle_icon: 'Icon anzeigen',
         toggle_name: 'Name anzeigen',
@@ -1206,6 +1318,7 @@ const TRANSLATIONS = {
         percent: 'Ποσοστό',
         secondary: 'Πρόσθετες πληροφορίες',
         tap_action: 'Ενέργεια κατά το σύντομο πάτημα',
+        text_shadow: 'Προσθήκη σκιάς στο κείμενο (overlay)',
         theme: 'Θέμα',
         toggle_icon: 'Εμφάνιση εικονιδίου',
         toggle_name: 'Εμφάνιση ονόματος',
@@ -1318,6 +1431,7 @@ const TRANSLATIONS = {
         percent: 'Percentage',
         secondary: 'Secondary info',
         tap_action: 'Tap behavior',
+        text_shadow: 'Add text shadow (overlay)',
         theme: 'Theme',
         toggle_icon: 'Show icon',
         toggle_name: 'Show name',
@@ -1357,6 +1471,119 @@ const TRANSLATIONS = {
         },
         layout: {
           horizontal: 'Horizontal (default)',
+          vertical: 'Vertical'
+        }
+      }
+    }
+  },
+  'es-419': {
+    card: {
+      msg: {
+        appliedDefaultValue: 'Se aplicó automáticamente el valor predeterminado.',
+        attributeNotFound: 'No se encontró el atributo en Home Assistant.',
+        discontinuousRange: 'El rango definido no es continuo.',
+        entityNotFound: 'No se encontró la entidad en Home Assistant.',
+        invalidActionObject: 'Objeto de acción inválido o mal estructurado.',
+        invalidCustomThemeArray: 'El tema personalizado debe ser un arreglo.',
+        invalidCustomThemeEntry: 'Uno o más elementos del tema personalizado son inválidos.',
+        invalidDecimal: 'El valor debe ser un decimal válido.',
+        invalidEntityId: 'ID de entidad inválido o mal formado.',
+        invalidEnumValue: 'El valor proporcionado no está dentro de las opciones permitidas.',
+        invalidIconType: 'El tipo de ícono especificado es inválido o desconocido.',
+        invalidMaxValue: 'El valor máximo es inválido o excede el límite permitido.',
+        invalidMinValue: 'El valor mínimo es inválido o está por debajo del límite permitido.',
+        invalidStateContent: 'Contenido del estado inválido o mal formado.',
+        invalidStateContentEntry: 'Uno o más elementos del contenido del estado son inválidos.',
+        invalidTheme: 'El tema especificado es desconocido; se usará el tema predeterminado.',
+        invalidTypeArray: 'Se esperaba un valor de tipo arreglo.',
+        invalidTypeBoolean: 'Se esperaba un valor de tipo booleano.',
+        invalidTypeNumber: 'Se esperaba un valor de tipo numérico.',
+        invalidTypeObject: 'Se esperaba un valor de tipo objeto.',
+        invalidTypeString: 'Se esperaba un valor de tipo cadena.',
+        invalidUnionType: 'El valor no coincide con ningún tipo permitido.',
+        minGreaterThanMax: 'El valor mínimo no puede ser mayor que el máximo.',
+        missingActionKey: 'Falta una clave obligatoria en el objeto de acción.',
+        missingColorProperty: 'Falta una propiedad de color obligatoria.',
+        missingRequiredProperty: 'Falta una propiedad obligatoria.'
+      }
+    },
+    editor: {
+      title: {
+        content: 'Contenido',
+        interaction: 'Interacción',
+        theme: 'Apariencia y tema'
+      },
+      field: {
+        attribute: 'Atributo',
+        badge_color: 'Color del distintivo',
+        badge_icon: 'Ícono del distintivo',
+        bar_color: 'Color de la barra de progreso',
+        bar_effect: 'Efecto de la barra de progreso',
+        bar_orientation: 'Orientación de la barra',
+        bar_position: 'Posición de la barra',
+        bar_single_line: 'Información en línea (superpuesta)',
+        bar_size: 'Tamaño de la barra',
+        center_zero: 'Cero centrado',
+        color: 'Color principal',
+        decimal: 'Decimal',
+        disable_unit: 'Mostrar unidad',
+        double_tap_action: 'Acción al doble toque',
+        entity: 'Entidad',
+        force_circular_background: 'Forzar fondo circular',
+        hold_action: 'Acción al mantener presionado',
+        icon: 'Ícono',
+        icon_double_tap_action: 'Acción de doble toque en ícono',
+        icon_hold_action: 'Acción al mantener presionado ícono',
+        icon_tap_action: 'Acción al tocar ícono',
+        layout: 'Diseño de tarjeta',
+        max_value: 'Valor máximo',
+        max_value_attribute: 'Atributo (valor máximo)',
+        max_value_entity: 'Usar valor máximo de la entidad',
+        min_value: 'Valor mínimo',
+        name: 'Nombre',
+        percent: 'Porcentaje',
+        secondary: 'Información secundaria',
+        tap_action: 'Acción al tocar',
+        text_shadow: 'Agregar sombra al texto (overlay)',
+        theme: 'Tema',
+        toggle_icon: 'Mostrar ícono',
+        toggle_name: 'Mostrar nombre',
+        toggle_progress_bar: 'Mostrar barra de progreso',
+        toggle_secondary_info: 'Mostrar información secundaria',
+        toggle_value: 'Mostrar valor',
+        unit: 'Unidad',
+        use_max_entity: 'Usar entidad como valor máximo'
+      },
+      option: {
+        theme: {
+          optimal_when_low: 'Óptimo cuando es bajo (CPU, RAM…)',
+          optimal_when_high: 'Óptimo cuando es alto (batería…)',
+          light: 'Brillo',
+          temperature: 'Temperatura',
+          humidity: 'Humedad',
+          pm25: 'PM2.5',
+          voc: 'VOC'
+        },
+        bar_size: {
+          small: 'Pequeña',
+          medium: 'Mediana',
+          large: 'Grande',
+          xlarge: 'Extra grande'
+        },
+        bar_orientation: {
+          ltr: 'De izquierda a derecha',
+          rtl: 'De derecha a izquierda',
+          up: 'Hacia arriba (superpuesta)'
+        },
+        bar_position: {
+          default: 'Predeterminado',
+          below: 'Barra debajo del contenido',
+          top: 'Barra arriba (superpuesta)',
+          bottom: 'Barra abajo (superpuesta)',
+          overlay: 'Superpuesta sobre el contenido'
+        },
+        layout: {
+          horizontal: 'Horizontal (predeterminado)',
           vertical: 'Vertical'
         }
       }
@@ -1430,6 +1657,7 @@ const TRANSLATIONS = {
         percent: 'Porcentaje',
         secondary: 'Información secundaria',
         tap_action: 'Acción al pulsar brevemente',
+        text_shadow: 'Añadir sombra al texto (overlay)',
         theme: 'Tema',
         toggle_icon: 'Mostrar icono',
         toggle_name: 'Mostrar nombre',
@@ -1470,6 +1698,119 @@ const TRANSLATIONS = {
         layout: {
           horizontal: 'Horizontal (predeterminado)',
           vertical: 'Vertical'
+        }
+      }
+    }
+  },
+  et: {
+    card: {
+      msg: {
+        appliedDefaultValue: 'Vaikimisi väärtus rakendati automaatselt.',
+        attributeNotFound: 'Atribuut ei leitud Home Assistantis.',
+        discontinuousRange: 'Määratud vahemik ei ole katkematu.',
+        entityNotFound: 'Objekti ei leitud Home Assistantis.',
+        invalidActionObject: 'Tegevuse objekt on vigane või valesti struktureeritud.',
+        invalidCustomThemeArray: 'Kohandatud teema peab olema massiiv.',
+        invalidCustomThemeEntry: 'Üks või mitu kohandatud teema kirjet on vigased.',
+        invalidDecimal: 'Väärtus peab olema positiivne täisarv.',
+        invalidEntityId: 'Objekti ID on vigane või valesti vormistatud.',
+        invalidEnumValue: 'Antud väärtus ei kuulu lubatud valikute hulka.',
+        invalidIconType: 'Määratud ikooni tüüp on vigane või tundmatu.',
+        invalidMaxValue: 'Maksimaalne väärtus on vigane või ületab lubatud piiri.',
+        invalidMinValue: 'Minimaalne väärtus on vigane või alla lubatud piiri.',
+        invalidStateContent: 'Seisundi sisu on vigane või valesti vormistatud.',
+        invalidStateContentEntry: 'Üks või mitu seisundi sisu kirjet on vigased.',
+        invalidTheme: 'Määratud teema on tundmatu. Kasutatakse vaikimisi teemat.',
+        invalidTypeArray: 'Oodati massiivi tüüpi väärtust.',
+        invalidTypeBoolean: 'Oodati loogilist (boolean) tüüpi väärtust.',
+        invalidTypeNumber: 'Oodati numbri tüüpi väärtust.',
+        invalidTypeObject: 'Oodati objekti tüüpi väärtust.',
+        invalidTypeString: 'Oodati stringi tüüpi väärtust.',
+        invalidUnionType: 'Väärtus ei vasta ühelegi lubatud tüübile.',
+        minGreaterThanMax: 'Minimaalne väärtus ei saa olla suurem kui maksimaalne.',
+        missingActionKey: 'Tegevuse objektist puudub kohustuslik võti.',
+        missingColorProperty: 'Puudub kohustuslik värvi atribuut.',
+        missingRequiredProperty: 'Puudub kohustuslik atribuut.'
+      }
+    },
+    editor: {
+      title: {
+        content: 'Sisu',
+        interaction: 'Interaktsioonid',
+        theme: 'Välimus ja kasutatavus'
+      },
+      field: {
+        attribute: 'Atribuut',
+        badge_color: 'Märgi värv',
+        badge_icon: 'Märgi ikoon',
+        bar_color: 'Riba värv',
+        bar_effect: 'Riba efekt',
+        bar_orientation: 'Riba orientatsioon',
+        bar_position: 'Riba positsioon',
+        bar_single_line: 'Info ühel real (overlay)',
+        bar_size: 'Riba suurus',
+        center_zero: 'Null keskel',
+        color: 'Ikooni värv',
+        decimal: 'Kümnendkoht',
+        disable_unit: 'Näita ühikut',
+        double_tap_action: 'Topeltpuudutuse tegevus',
+        entity: 'Objekt',
+        force_circular_background: 'Sunnitud ümmargune taust',
+        hold_action: 'Pikema vajutuse tegevus',
+        icon: 'Ikoon',
+        icon_double_tap_action: 'Ikooni topeltpuudutuse tegevus',
+        icon_hold_action: 'Ikooni pika vajutuse tegevus',
+        icon_tap_action: 'Ikooni puudutuse tegevus',
+        layout: 'Kaardi paigutus',
+        max_value: 'Maksimaalne väärtus',
+        max_value_attribute: 'Atribuut (max_value)',
+        max_value_entity: 'Maksimaalne väärtus',
+        min_value: 'Minimaalne väärtus',
+        name: 'Nimi',
+        percent: 'Protsent',
+        secondary: 'Täiendav info',
+        tap_action: 'Puudutuse tegevus',
+        text_shadow: 'Lisa teksti vari (overlay)',
+        theme: 'Teema',
+        toggle_icon: 'Näita ikooni',
+        toggle_name: 'Näita nime',
+        toggle_progress_bar: 'Näita edenemisriba',
+        toggle_secondary_info: 'Näita täiendavat infot',
+        toggle_value: 'Näita väärtust',
+        unit: 'Ühik',
+        use_max_entity: 'Kasuta objekti maksimaalse väärtuse jaoks'
+      },
+      option: {
+        theme: {
+          optimal_when_low: 'Optimaalne madalatel väärtustel (CPU, RAM...)',
+          optimal_when_high: 'Optimaalne kõrgetel väärtustel (Aku...)',
+          light: 'Hele',
+          temperature: 'Temperatuur',
+          humidity: 'Niiskus',
+          pm25: 'PM2.5',
+          voc: 'VOC'
+        },
+        bar_size: {
+          small: 'Väike',
+          medium: 'Keskmine',
+          large: 'Suur',
+          xlarge: 'Väga suur'
+        },
+        bar_orientation: {
+          ltr: 'Vasakult paremale',
+          rtl: 'Paremalt vasakule',
+          up: 'Üles (overlay)'
+        },
+        bar_position: {
+          default: 'Vaikimisi',
+          below: 'Riba sisu all',
+          top: 'Riba üleval (overlay)',
+          bottom: 'Riba all (overlay)',
+          overlay: 'Riba sisu kohal (overlay)'
+        },
+        layout: {
+          horizontal: 'Horisontaalne (vaikimisi)',
+          vertical: 'Vertikaalne'
         }
       }
     }
@@ -1542,6 +1883,7 @@ const TRANSLATIONS = {
         percent: 'Prosentti',
         secondary: 'Lisätiedot',
         tap_action: 'Toiminto lyhyellä napautuksella',
+        text_shadow: 'Lisää tekstivarjo (overlay)',
         theme: 'Teema',
         toggle_icon: 'Näytä ikoni',
         toggle_name: 'Näytä nimi',
@@ -1654,6 +1996,7 @@ const TRANSLATIONS = {
         percent: 'Pourcentage',
         secondary: 'Information secondaire',
         tap_action: 'Comportement lors d\'un appui court',
+        text_shadow: 'Ajouter une ombre au texte (overlay)',
         theme: 'Thème',
         toggle_icon: 'Afficher l\'icône',
         toggle_name: 'Afficher le nom',
@@ -1766,6 +2109,7 @@ const TRANSLATIONS = {
         percent: 'प्रतिशत',
         secondary: 'सहायक जानकारी',
         tap_action: 'टैप व्यवहार',
+        text_shadow: 'टेक्स्ट में छाया जोड़ें (overlay)',
         theme: 'थीम',
         toggle_icon: 'आइकन दिखाएँ',
         toggle_name: 'नाम दिखाएँ',
@@ -1878,6 +2222,7 @@ const TRANSLATIONS = {
         percent: 'Postotak',
         secondary: 'Sekundarne informacije',
         tap_action: 'Radnja na kratki dodir',
+        text_shadow: 'Dodaj sjenu tekstu (overlay)',
         theme: 'Tema',
         toggle_icon: 'Prikaži ikonu',
         toggle_name: 'Prikaži ime',
@@ -1918,6 +2263,119 @@ const TRANSLATIONS = {
           pm25: 'PM2.5',
           temperature: 'Temperatura',
           voc: 'VOC'
+        }
+      }
+    }
+  },
+  hu: {
+    card: {
+      msg: {
+        appliedDefaultValue: 'Alapértelmezett érték automatikusan alkalmazva.',
+        attributeNotFound: 'Az attribútum nem található a Home Assistantban.',
+        discontinuousRange: 'A megadott tartomány nem folytonos.',
+        entityNotFound: 'Az entitás nem található a Home Assistantban.',
+        invalidActionObject: 'Az action objektum érvénytelen vagy hibás felépítésű.',
+        invalidCustomThemeArray: 'Az egyéni témának tömbnek kell lennie.',
+        invalidCustomThemeEntry: 'Az egyéni téma egy vagy több bejegyzése érvénytelen.',
+        invalidDecimal: 'Az értéknek pozitív egész számnak kell lennie.',
+        invalidEntityId: 'Az entitás azonosító érvénytelen vagy hibás.',
+        invalidEnumValue: 'A megadott érték nem része az engedélyezett opcióknak.',
+        invalidIconType: 'A megadott ikon típus érvénytelen vagy nem ismert.',
+        invalidMaxValue: 'A maximális érték érvénytelen vagy túl magas.',
+        invalidMinValue: 'A minimális érték érvénytelen vagy túl alacsony.',
+        invalidStateContent: 'Az állapot tartalma érvénytelen vagy hibás.',
+        invalidStateContentEntry: 'Az állapot tartalmának egy vagy több eleme érvénytelen.',
+        invalidTheme: 'Az adott téma ismeretlen. Az alapértelmezett téma lesz használva.',
+        invalidTypeArray: 'Tömb típusú érték volt elvárva.',
+        invalidTypeBoolean: 'Logikai (boolean) érték volt elvárva.',
+        invalidTypeNumber: 'Szám típusú érték volt elvárva.',
+        invalidTypeObject: 'Objektum típusú érték volt elvárva.',
+        invalidTypeString: 'Szöveg típusú érték volt elvárva.',
+        invalidUnionType: 'Az érték nem felel meg egyik engedélyezett típusnak sem.',
+        minGreaterThanMax: 'A minimális érték nem lehet nagyobb a maximálisnál.',
+        missingActionKey: 'Egy kötelező kulcs hiányzik az action objektumból.',
+        missingColorProperty: 'Egy kötelező szín tulajdonság hiányzik.',
+        missingRequiredProperty: 'Egy kötelező tulajdonság hiányzik.'
+      }
+    },
+    editor: {
+      title: {
+        content: 'Tartalom',
+        interaction: 'Interakciók',
+        theme: 'Megjelenés és használhatóság'
+      },
+      field: {
+        attribute: 'Attribútum',
+        badge_color: 'Jelvény színe',
+        badge_icon: 'Jelvény ikon',
+        bar_color: 'Sáv színe',
+        bar_effect: 'Sáv effektus',
+        bar_orientation: 'Sáv iránya',
+        bar_position: 'Sáv pozíciója',
+        bar_single_line: 'Egy soros információ (overlay)',
+        bar_size: 'Sáv mérete',
+        center_zero: 'Nulla középen',
+        color: 'Ikon színe',
+        decimal: 'Tizedes',
+        disable_unit: 'Egység megjelenítése',
+        double_tap_action: 'Kettős koppintás művelet',
+        entity: 'Entitás',
+        force_circular_background: 'Kör alakú háttér erőltetése',
+        hold_action: 'Hosszan tartó nyomás művelet',
+        icon: 'Ikon',
+        icon_double_tap_action: 'Ikon dupla koppintás művelet',
+        icon_hold_action: 'Ikon hosszan nyomás művelet',
+        icon_tap_action: 'Ikon koppintás művelet',
+        layout: 'Kártya elrendezése',
+        max_value: 'Maximális érték',
+        max_value_attribute: 'Attribútum (max_value)',
+        max_value_entity: 'Maximális érték',
+        min_value: 'Minimális érték',
+        name: 'Név',
+        percent: 'Százalék',
+        secondary: 'Másodlagos információ',
+        tap_action: 'Koppintás művelet',
+        text_shadow: 'Szöveg árnyék hozzáadása (overlay)',
+        theme: 'Téma',
+        toggle_icon: 'Ikon megjelenítése',
+        toggle_name: 'Név megjelenítése',
+        toggle_progress_bar: 'Sáv megjelenítése',
+        toggle_secondary_info: 'Másodlagos info megjelenítése',
+        toggle_value: 'Érték megjelenítése',
+        unit: 'Mértékegység',
+        use_max_entity: 'Entitás használata max értékhez'
+      },
+      option: {
+        theme: {
+          optimal_when_low: 'Optimális alacsony értéknél (CPU, RAM...)',
+          optimal_when_high: 'Optimális magas értéknél (Akkumulátor...)',
+          light: 'Világos',
+          temperature: 'Hőmérséklet',
+          humidity: 'Páratartalom',
+          pm25: 'PM2.5',
+          voc: 'VOC'
+        },
+        bar_size: {
+          small: 'Kicsi',
+          medium: 'Közepes',
+          large: 'Nagy',
+          xlarge: 'Nagyon nagy'
+        },
+        bar_orientation: {
+          ltr: 'Balról jobbra',
+          rtl: 'Jobbról balra',
+          up: 'Felfelé (overlay)'
+        },
+        bar_position: {
+          default: 'Alapértelmezett',
+          below: 'Sáv a tartalom alatt',
+          top: 'Sáv fent (overlay)',
+          bottom: 'Sáv lent (overlay)',
+          overlay: 'Sáv a tartalmon (overlay)'
+        },
+        layout: {
+          horizontal: 'Vízszintes (alapértelmezett)',
+          vertical: 'Függőleges'
         }
       }
     }
@@ -1990,6 +2448,7 @@ const TRANSLATIONS = {
         percent: 'Persentase',
         secondary: 'Informasi sekunder',
         tap_action: 'Perilaku ketuk',
+        text_shadow: 'Tambahkan bayangan teks (overlay)',
         theme: 'Tema',
         toggle_icon: 'Tampilkan ikon',
         toggle_name: 'Tampilkan nama',
@@ -2102,6 +2561,7 @@ const TRANSLATIONS = {
         percent: 'Percentuale',
         secondary: 'Informazione secondaria',
         tap_action: 'Azione al tocco breve',
+        text_shadow: 'Aggiungi ombra al testo (overlay)',
         theme: 'Tema',
         toggle_icon: 'Mostra icona',
         toggle_name: 'Mostra nome',
@@ -2214,6 +2674,7 @@ const TRANSLATIONS = {
         percent: 'パーセント',
         secondary: '補足情報',
         tap_action: '短くタップしたときの動作',
+        text_shadow: 'テキストに影を追加 (オーバーレイ)',
         theme: 'テーマ',
         toggle_icon: 'アイコンを表示',
         toggle_name: '名前を表示',
@@ -2326,6 +2787,7 @@ const TRANSLATIONS = {
         percent: '퍼센트',
         secondary: '보조 정보',
         tap_action: '짧게 탭 시 동작',
+        text_shadow: '텍스트 그림자 추가 (오버레이)',
         theme: '테마',
         toggle_icon: '아이콘 표시',
         toggle_name: '이름 표시',
@@ -2366,6 +2828,232 @@ const TRANSLATIONS = {
           pm25: 'PM2.5',
           temperature: '온도',
           voc: 'VOC'
+        }
+      }
+    }
+  },
+  lt: {
+    card: {
+      msg: {
+        appliedDefaultValue: 'Numatytoji reikšmė buvo automatiškai pritaikyta.',
+        attributeNotFound: 'Atributas nerastas Home Assistant.',
+        discontinuousRange: 'Nustatytas intervalas nėra tęstinis.',
+        entityNotFound: 'Entity nerasta Home Assistant.',
+        invalidActionObject: 'Veiksmo objektas negalioja arba neteisingai suformuotas.',
+        invalidCustomThemeArray: 'Individuali tema turi būti masyvas.',
+        invalidCustomThemeEntry: 'Viena ar daugiau individualios temos įrašų negalioja.',
+        invalidDecimal: 'Reikšmė turi būti teigiamas sveikasis skaičius.',
+        invalidEntityId: 'Entity ID negalioja arba neteisingas.',
+        invalidEnumValue: 'Pateikta reikšmė nėra tarp leidžiamų parinkčių.',
+        invalidIconType: 'Nurodytas piktogramos tipas negalioja arba nežinomas.',
+        invalidMaxValue: 'Maksimali reikšmė negalioja arba viršija leistiną ribą.',
+        invalidMinValue: 'Minimali reikšmė negalioja arba žemesnė už leistiną ribą.',
+        invalidStateContent: 'Būsenos turinys negalioja arba neteisingai suformuotas.',
+        invalidStateContentEntry: 'Viena ar daugiau būsenos turinio įrašų negalioja.',
+        invalidTheme: 'Nurodyta tema nežinoma. Bus naudojama numatytoji tema.',
+        invalidTypeArray: 'Tikėtasi masyvo tipo reikšmės.',
+        invalidTypeBoolean: 'Tikėtasi loginės reikšmės (boolean).',
+        invalidTypeNumber: 'Tikėtasi skaičiaus tipo reikšmės.',
+        invalidTypeObject: 'Tikėtasi objekto tipo reikšmės.',
+        invalidTypeString: 'Tikėtasi eilutės tipo reikšmės.',
+        invalidUnionType: 'Reikšmė neatitinka nė vieno leidžiamo tipo.',
+        minGreaterThanMax: 'Minimali reikšmė negali būti didesnė už maksimalų.',
+        missingActionKey: 'Trūksta privalomo rakto veiksmo objekte.',
+        missingColorProperty: 'Trūksta privalomos spalvos savybės.',
+        missingRequiredProperty: 'Trūksta privalomos savybės.'
+      }
+    },
+    editor: {
+      title: {
+        content: 'Turinys',
+        interaction: 'Sąveikos',
+        theme: 'Išvaizda ir naudojamumas'
+      },
+      field: {
+        attribute: 'Atributas',
+        badge_color: 'Ženklelio spalva',
+        badge_icon: 'Ženklelio ikona',
+        bar_color: 'Juostos spalva',
+        bar_effect: 'Juostos efektas',
+        bar_orientation: 'Juostos orientacija',
+        bar_position: 'Juostos pozicija',
+        bar_single_line: 'Informacija vienoje eilutėje (overlay)',
+        bar_size: 'Juostos dydis',
+        center_zero: 'Nulis centre',
+        color: 'Ikonos spalva',
+        decimal: 'Dešimtainė',
+        disable_unit: 'Rodyti vienetą',
+        double_tap_action: 'Dviejų bakstelėjimų veiksmas',
+        entity: 'Entity',
+        force_circular_background: 'Priversti apvalų foną',
+        hold_action: 'Ilgo paspaudimo veiksmas',
+        icon: 'Ikona',
+        icon_double_tap_action: 'Ikonos dviejų bakstelėjimų veiksmas',
+        icon_hold_action: 'Ikonos ilgo paspaudimo veiksmas',
+        icon_tap_action: 'Ikonos bakstelėjimo veiksmas',
+        layout: 'Kortelės išdėstymas',
+        max_value: 'Maksimali reikšmė',
+        max_value_attribute: 'Atributas (max_value)',
+        max_value_entity: 'Maksimali reikšmė',
+        min_value: 'Minimali reikšmė',
+        name: 'Pavadinimas',
+        percent: 'Procentai',
+        secondary: 'Papildoma informacija',
+        tap_action: 'Bakstelėjimo veiksmas',
+        text_shadow: 'Pridėti teksto šešėlį (overlay)',
+        theme: 'Tema',
+        toggle_icon: 'Rodyti ikoną',
+        toggle_name: 'Rodyti pavadinimą',
+        toggle_progress_bar: 'Rodyti progreso juostą',
+        toggle_secondary_info: 'Rodyti papildomą info',
+        toggle_value: 'Rodyti reikšmę',
+        unit: 'Vienetas',
+        use_max_entity: 'Naudoti entity max reikšmei'
+      },
+      option: {
+        theme: {
+          optimal_when_low: 'Optimalu esant žemoms reikšmėms (CPU, RAM...)',
+          optimal_when_high: 'Optimalu esant aukštoms reikšmėms (Baterija...)',
+          light: 'Šviesi',
+          temperature: 'Temperatūra',
+          humidity: 'Drėgmė',
+          pm25: 'PM2.5',
+          voc: 'VOC'
+        },
+        bar_size: {
+          small: 'Maža',
+          medium: 'Vidutinė',
+          large: 'Didelė',
+          xlarge: 'Labai didelė'
+        },
+        bar_orientation: {
+          ltr: 'Iš kairės į dešinę',
+          rtl: 'Iš dešinės į kairę',
+          up: 'Į viršų (overlay)'
+        },
+        bar_position: {
+          default: 'Numatyta',
+          below: 'Juosta po turiniu',
+          top: 'Juosta viršuje (overlay)',
+          bottom: 'Juosta apačioje (overlay)',
+          overlay: 'Juosta ant turinio (overlay)'
+        },
+        layout: {
+          horizontal: 'Horizontalus (numatyta)',
+          vertical: 'Vertikalus'
+        }
+      }
+    }
+  },
+  lv: {
+    card: {
+      msg: {
+        appliedDefaultValue: 'Noklusējuma vērtība tika automātiski piemērota.',
+        attributeNotFound: 'Atribūts nav atrasts Home Assistant.',
+        discontinuousRange: 'Norādītais diapazons nav nepārtraukts.',
+        entityNotFound: 'Vienība nav atrasta Home Assistant.',
+        invalidActionObject: 'Darbības objekts nav derīgs vai ir nepareizi strukturēts.',
+        invalidCustomThemeArray: 'Pielāgotajai tēmai jābūt masīvam.',
+        invalidCustomThemeEntry: 'Viena vai vairākas pielāgotās tēmas ievades nav derīgas.',
+        invalidDecimal: 'Vērtībai jābūt pozitīvam veselajam skaitlim.',
+        invalidEntityId: 'Vienības ID nav derīgs vai ir nepareizs.',
+        invalidEnumValue: 'Ievadītā vērtība nav atļauto opciju sarakstā.',
+        invalidIconType: 'Norādītais ikonas tips nav derīgs vai nav zināms.',
+        invalidMaxValue: 'Maksimālā vērtība nav derīga vai pārsniedz atļauto robežu.',
+        invalidMinValue: 'Minimālā vērtība nav derīga vai zem atļautās robežas.',
+        invalidStateContent: 'Stāvokļa saturs nav derīgs vai ir nepareizi strukturēts.',
+        invalidStateContentEntry: 'Viena vai vairākas stāvokļa satura ievades nav derīgas.',
+        invalidTheme: 'Norādītā tēma nav zināma. Tiks izmantota noklusējuma tēma.',
+        invalidTypeArray: 'Tika gaidīta masīva tipa vērtība.',
+        invalidTypeBoolean: 'Tika gaidīta loģiska (boolean) vērtība.',
+        invalidTypeNumber: 'Tika gaidīta skaitļa tipa vērtība.',
+        invalidTypeObject: 'Tika gaidīta objekta tipa vērtība.',
+        invalidTypeString: 'Tika gaidīta virknes tipa vērtība.',
+        invalidUnionType: 'Vērtība neatbilst nevienam atļautajam tipam.',
+        minGreaterThanMax: 'Minimālā vērtība nevar būt lielāka par maksimālo.',
+        missingActionKey: 'Trūkst obligātā atslēga darbības objektā.',
+        missingColorProperty: 'Trūkst obligātā krāsas īpašība.',
+        missingRequiredProperty: 'Trūkst obligātā īpašība.'
+      }
+    },
+    editor: {
+      title: {
+        content: 'Saturs',
+        interaction: 'Saskarsme',
+        theme: 'Izskats un lietojamība'
+      },
+      field: {
+        attribute: 'Atribūts',
+        badge_color: 'Žetona krāsa',
+        badge_icon: 'Žetona ikona',
+        bar_color: 'Joslas krāsa',
+        bar_effect: 'Joslas efekts',
+        bar_orientation: 'Joslas orientācija',
+        bar_position: 'Joslas pozīcija',
+        bar_single_line: 'Informācija vienā rindā (overlay)',
+        bar_size: 'Joslas izmērs',
+        center_zero: 'Nulles centrā',
+        color: 'Ikonas krāsa',
+        decimal: 'Decimāldaļa',
+        disable_unit: 'Rādīt vienību',
+        double_tap_action: 'Divreiz pieskaroties',
+        entity: 'Vienība',
+        force_circular_background: 'Piespiest apļu fonu',
+        hold_action: 'Ilgs pieskāriens',
+        icon: 'Ikona',
+        icon_double_tap_action: 'Ikonas dubults pieskāriens',
+        icon_hold_action: 'Ikonas ilgs pieskāriens',
+        icon_tap_action: 'Ikonas pieskāriens',
+        layout: 'Kartes izkārtojums',
+        max_value: 'Maksimālā vērtība',
+        max_value_attribute: 'Atribūts (max_value)',
+        max_value_entity: 'Maksimālā vērtība',
+        min_value: 'Minimālā vērtība',
+        name: 'Nosaukums',
+        percent: 'Procenti',
+        secondary: 'Papildu informācija',
+        tap_action: 'Pieskāriens',
+        text_shadow: 'Pievienot teksta ēnu (overlay)',
+        theme: 'Tēma',
+        toggle_icon: 'Rādīt ikonu',
+        toggle_name: 'Rādīt nosaukumu',
+        toggle_progress_bar: 'Rādīt progresa joslu',
+        toggle_secondary_info: 'Rādīt papildu info',
+        toggle_value: 'Rādīt vērtību',
+        unit: 'Vienība',
+        use_max_entity: 'Izmantot vienību max vērtībai'
+      },
+      option: {
+        theme: {
+          optimal_when_low: 'Optimāli pie zemām vērtībām (CPU, RAM...)',
+          optimal_when_high: 'Optimāli pie augstām vērtībām (Akumulators...)',
+          light: 'Gaiša',
+          temperature: 'Temperatūra',
+          humidity: 'Mitrums',
+          pm25: 'PM2.5',
+          voc: 'VOC'
+        },
+        bar_size: {
+          small: 'Mazs',
+          medium: 'Vidējs',
+          large: 'Liels',
+          xlarge: 'Ļoti liels'
+        },
+        bar_orientation: {
+          ltr: 'No kreisās uz labo',
+          rtl: 'No labās uz kreiso',
+          up: 'Uz augšu (overlay)'
+        },
+        bar_position: {
+          default: 'Noklusētais',
+          below: 'Josla zem satura',
+          top: 'Josla augšā (overlay)',
+          bottom: 'Josla apakšā (overlay)',
+          overlay: 'Josla virs satura (overlay)'
+        },
+        layout: {
+          horizontal: 'Horizontāls (noklusēts)',
+          vertical: 'Vertikāls'
         }
       }
     }
@@ -2438,6 +3126,7 @@ const TRANSLATIONS = {
         percent: 'Процент',
         secondary: 'Секундарни информации',
         tap_action: 'Дејство при краток допир',
+        text_shadow: 'Додај сенка на текст (overlay)',
         theme: 'Тема',
         toggle_icon: 'Прикажи икона',
         toggle_name: 'Прикажи име',
@@ -2550,6 +3239,7 @@ const TRANSLATIONS = {
         percent: 'Prosent',
         secondary: 'Sekundær informasjon',
         tap_action: 'Handling ved kort trykk',
+        text_shadow: 'Legg til tekstskygge (overlay)',
         theme: 'Tema',
         toggle_icon: 'Vis ikon',
         toggle_name: 'Vis navn',
@@ -2662,6 +3352,7 @@ const TRANSLATIONS = {
         percent: 'Percentage',
         secondary: 'Secundaire informatie',
         tap_action: 'Actie bij korte tik',
+        text_shadow: 'Tekstschaduw toevoegen (overlay)',
         theme: 'Thema',
         toggle_icon: 'Pictogram weergeven',
         toggle_name: 'Naam weergeven',
@@ -2774,6 +3465,7 @@ const TRANSLATIONS = {
         percent: 'Procent',
         secondary: 'Informacja dodatkowa',
         tap_action: 'Akcja przy krótkim naciśnięciu',
+        text_shadow: 'Dodaj cień tekstu (overlay)',
         theme: 'Motyw',
         toggle_icon: 'Pokaż ikonę',
         toggle_name: 'Pokaż nazwę',
@@ -2814,6 +3506,119 @@ const TRANSLATIONS = {
           pm25: 'PM2.5',
           temperature: 'Temperatura',
           voc: 'VOC'
+        }
+      }
+    }
+  },
+  'pt-BR': {
+    card: {
+      msg: {
+        appliedDefaultValue: 'Um valor padrão foi aplicado automaticamente.',
+        attributeNotFound: 'Atributo não encontrado no Home Assistant.',
+        discontinuousRange: 'O intervalo definido é descontínuo.',
+        entityNotFound: 'Entidade não encontrada no Home Assistant.',
+        invalidActionObject: 'O objeto de ação é inválido ou mal estruturado.',
+        invalidCustomThemeArray: 'O tema personalizado deve ser um array.',
+        invalidCustomThemeEntry: 'Uma ou mais entradas do tema personalizado são inválidas.',
+        invalidDecimal: 'O valor deve ser um número inteiro positivo.',
+        invalidEntityId: 'O ID da entidade é inválido ou mal formado.',
+        invalidEnumValue: 'O valor fornecido não faz parte das opções permitidas.',
+        invalidIconType: 'O tipo de ícone especificado é inválido ou desconhecido.',
+        invalidMaxValue: 'O valor máximo é inválido ou excede os limites permitidos.',
+        invalidMinValue: 'O valor mínimo é inválido ou abaixo dos limites permitidos.',
+        invalidStateContent: 'O conteúdo do estado é inválido ou mal formado.',
+        invalidStateContentEntry: 'Uma ou mais entradas do conteúdo do estado são inválidas.',
+        invalidTheme: 'O tema especificado é desconhecido. O tema padrão será usado.',
+        invalidTypeArray: 'Um valor do tipo array era esperado.',
+        invalidTypeBoolean: 'Um valor do tipo booleano era esperado.',
+        invalidTypeNumber: 'Um valor do tipo número era esperado.',
+        invalidTypeObject: 'Um valor do tipo objeto era esperado.',
+        invalidTypeString: 'Um valor do tipo string era esperado.',
+        invalidUnionType: 'O valor não corresponde a nenhum dos tipos permitidos.',
+        minGreaterThanMax: 'O valor mínimo não pode ser maior que o valor máximo.',
+        missingActionKey: 'Uma chave obrigatória está ausente no objeto de ação.',
+        missingColorProperty: 'Uma propriedade de cor obrigatória está ausente.',
+        missingRequiredProperty: 'Uma propriedade obrigatória está ausente.'
+      }
+    },
+    editor: {
+      title: {
+        content: 'Conteúdo',
+        interaction: 'Interações',
+        theme: 'Aparência e usabilidade'
+      },
+      field: {
+        attribute: 'Atributo',
+        badge_color: 'Cor do badge',
+        badge_icon: 'Ícone do badge',
+        bar_color: 'Cor da barra',
+        bar_effect: 'Efeito na barra',
+        bar_orientation: 'Orientação da barra',
+        bar_position: 'Posição da barra',
+        bar_single_line: 'Informações em uma linha (overlay)',
+        bar_size: 'Tamanho da barra',
+        center_zero: 'Zero no centro',
+        color: 'Cor do ícone',
+        decimal: 'Decimal',
+        disable_unit: 'Mostrar unidade',
+        double_tap_action: 'Ação ao tocar duas vezes',
+        entity: 'Entidade',
+        force_circular_background: 'Forçar fundo circular',
+        hold_action: 'Ação ao manter pressionado',
+        icon: 'Ícone',
+        icon_double_tap_action: 'Ação ao tocar duas vezes no ícone',
+        icon_hold_action: 'Ação ao manter pressionado o ícone',
+        icon_tap_action: 'Ação ao tocar no ícone',
+        layout: 'Layout do cartão',
+        max_value: 'Valor máximo',
+        max_value_attribute: 'Atributo (max_value)',
+        max_value_entity: 'Valor máximo',
+        min_value: 'Valor mínimo',
+        name: 'Nome',
+        percent: 'Porcentagem',
+        secondary: 'Informação secundária',
+        tap_action: 'Ação ao tocar',
+        text_shadow: 'Adicionar sombra ao texto (overlay)',
+        theme: 'Tema',
+        toggle_icon: 'Mostrar ícone',
+        toggle_name: 'Mostrar nome',
+        toggle_progress_bar: 'Mostrar barra de progresso',
+        toggle_secondary_info: 'Mostrar informações secundárias',
+        toggle_value: 'Mostrar valor',
+        unit: 'Unidade',
+        use_max_entity: 'Usar entidade para valor máximo'
+      },
+      option: {
+        theme: {
+          optimal_when_low: 'Ideal quando baixo (CPU, RAM...)',
+          optimal_when_high: 'Ideal quando alto (Bateria...)',
+          light: 'Claro',
+          temperature: 'Temperatura',
+          humidity: 'Umidade',
+          pm25: 'PM2.5',
+          voc: 'VOC'
+        },
+        bar_size: {
+          small: 'Pequena',
+          medium: 'Média',
+          large: 'Grande',
+          xlarge: 'Muito grande'
+        },
+        bar_orientation: {
+          ltr: 'Esquerda para direita',
+          rtl: 'Direita para esquerda',
+          up: 'Para cima (overlay)'
+        },
+        bar_position: {
+          default: 'Padrão',
+          below: 'Barra abaixo do conteúdo',
+          top: 'Barra acima (overlay)',
+          bottom: 'Barra abaixo (overlay)',
+          overlay: 'Barra sobre o conteúdo (overlay)'
+        },
+        layout: {
+          horizontal: 'Horizontal (padrão)',
+          vertical: 'Vertical'
         }
       }
     }
@@ -2886,6 +3691,7 @@ const TRANSLATIONS = {
         percent: 'Percentagem',
         secondary: 'Informação secundária',
         tap_action: 'Ação ao toque curto',
+        text_shadow: 'Adicionar sombra ao texto (overlay)',
         theme: 'Tema',
         toggle_icon: 'Mostrar ícone',
         toggle_name: 'Mostrar nome',
@@ -2998,6 +3804,7 @@ const TRANSLATIONS = {
         percent: 'Procent',
         secondary: 'Informație secundară',
         tap_action: 'Acțiune la apăsare scurtă',
+        text_shadow: 'Adaugă umbră textului (overlay)',
         theme: 'Temă',
         toggle_icon: 'Afișează pictograma',
         toggle_name: 'Afișează numele',
@@ -3110,6 +3917,7 @@ const TRANSLATIONS = {
         percent: 'Процент',
         secondary: 'Дополнительная информация',
         tap_action: 'Поведение при нажатии',
+        text_shadow: 'Добавить тень к тексту (overlay)',
         theme: 'Тема',
         toggle_icon: 'Показать иконку',
         toggle_name: 'Показать название',
@@ -3150,6 +3958,232 @@ const TRANSLATIONS = {
           pm25: 'PM2.5',
           temperature: 'Температура',
           voc: 'ЛОС'
+        }
+      }
+    }
+  },
+  sk: {
+    card: {
+      msg: {
+        appliedDefaultValue: 'Predvolená hodnota bola automaticky použitá.',
+        attributeNotFound: 'Atribút sa nenašiel v Home Assistant.',
+        discontinuousRange: 'Zadaný rozsah nie je spojitý.',
+        entityNotFound: 'Entita sa nenašla v Home Assistant.',
+        invalidActionObject: 'Objekt akcie je neplatný alebo nesprávne štruktúrovaný.',
+        invalidCustomThemeArray: 'Vlastná téma musí byť pole.',
+        invalidCustomThemeEntry: 'Jedna alebo viac položiek vlastnej témy je neplatných.',
+        invalidDecimal: 'Hodnota musí byť kladné celé číslo.',
+        invalidEntityId: 'ID entity je neplatné alebo nesprávne.',
+        invalidEnumValue: 'Zadaná hodnota nie je súčasťou povolených možností.',
+        invalidIconType: 'Zadaný typ ikony je neplatný alebo neznámy.',
+        invalidMaxValue: 'Maximálna hodnota je neplatná alebo nad limitom.',
+        invalidMinValue: 'Minimálna hodnota je neplatná alebo pod limitom.',
+        invalidStateContent: 'Obsah stavu je neplatný alebo nesprávny.',
+        invalidStateContentEntry: 'Jedna alebo viac položiek obsahu stavu je neplatných.',
+        invalidTheme: 'Zadaná téma je neznáma. Použije sa predvolená téma.',
+        invalidTypeArray: 'Očakávala sa hodnota typu pole.',
+        invalidTypeBoolean: 'Očakávala sa hodnota typu boolean.',
+        invalidTypeNumber: 'Očakávala sa hodnota typu číslo.',
+        invalidTypeObject: 'Očakávala sa hodnota typu objekt.',
+        invalidTypeString: 'Očakávala sa hodnota typu reťazec.',
+        invalidUnionType: 'Hodnota nezodpovedá žiadnemu povolenému typu.',
+        minGreaterThanMax: 'Minimálna hodnota nemôže byť väčšia ako maximálna.',
+        missingActionKey: 'Chýba povinný kľúč v objekte akcie.',
+        missingColorProperty: 'Chýba povinná vlastnosť farby.',
+        missingRequiredProperty: 'Chýba povinná vlastnosť.'
+      }
+    },
+    editor: {
+      title: {
+        content: 'Obsah',
+        interaction: 'Interakcie',
+        theme: 'Vzhľad a použiteľnosť'
+      },
+      field: {
+        attribute: 'Atribút',
+        badge_color: 'Farba odznaku',
+        badge_icon: 'Ikona odznaku',
+        bar_color: 'Farba lišty',
+        bar_effect: 'Efekt lišty',
+        bar_orientation: 'Orientácia lišty',
+        bar_position: 'Pozícia lišty',
+        bar_single_line: 'Informácie na jednej línii (overlay)',
+        bar_size: 'Veľkosť lišty',
+        center_zero: 'Nula v strede',
+        color: 'Farba ikony',
+        decimal: 'Desatinné',
+        disable_unit: 'Zobraziť jednotku',
+        double_tap_action: 'Akcia pri dvojitom ťuknutí',
+        entity: 'Entita',
+        force_circular_background: 'Vynútiť kruhové pozadie',
+        hold_action: 'Akcia pri dlhom podržaní',
+        icon: 'Ikona',
+        icon_double_tap_action: 'Akcia pri dvojitom ťuknutí ikony',
+        icon_hold_action: 'Akcia pri dlhom podržaní ikony',
+        icon_tap_action: 'Akcia pri ťuknutí ikony',
+        layout: 'Rozloženie karty',
+        max_value: 'Maximálna hodnota',
+        max_value_attribute: 'Atribút (max_value)',
+        max_value_entity: 'Maximálna hodnota',
+        min_value: 'Minimálna hodnota',
+        name: 'Názov',
+        percent: 'Percento',
+        secondary: 'Sekundárna informácia',
+        tap_action: 'Akcia pri ťuknutí',
+        text_shadow: 'Pridať tieň textu (overlay)',
+        theme: 'Téma',
+        toggle_icon: 'Zobraziť ikonu',
+        toggle_name: 'Zobraziť názov',
+        toggle_progress_bar: 'Zobraziť pruh postupu',
+        toggle_secondary_info: 'Zobraziť sekundárne info',
+        toggle_value: 'Zobraziť hodnotu',
+        unit: 'Jednotka',
+        use_max_entity: 'Použiť entitu pre max hodnotu'
+      },
+      option: {
+        theme: {
+          optimal_when_low: 'Optimálne pri nízkej hodnote (CPU, RAM...)',
+          optimal_when_high: 'Optimálne pri vysokej hodnote (Batéria...)',
+          light: 'Svetlá',
+          temperature: 'Teplota',
+          humidity: 'Vlhkosť',
+          pm25: 'PM2.5',
+          voc: 'VOC'
+        },
+        bar_size: {
+          small: 'Malá',
+          medium: 'Stredná',
+          large: 'Veľká',
+          xlarge: 'Veľmi veľká'
+        },
+        bar_orientation: {
+          ltr: 'Zľava doprava',
+          rtl: 'Sprava doľava',
+          up: 'Nahor (overlay)'
+        },
+        bar_position: {
+          default: 'Predvolené',
+          below: 'Pruh pod obsahom',
+          top: 'Pruh hore (overlay)',
+          bottom: 'Pruh dole (overlay)',
+          overlay: 'Pruh cez obsah (overlay)'
+        },
+        layout: {
+          horizontal: 'Horizontálne (predvolené)',
+          vertical: 'Vertikálne'
+        }
+      }
+    }
+  },
+  sl: {
+    card: {
+      msg: {
+        appliedDefaultValue: 'Privzeta vrednost je bila samodejno uporabljena.',
+        attributeNotFound: 'Atribut ni bil najden v Home Assistant.',
+        discontinuousRange: 'Določeno območje ni neprekinjeno.',
+        entityNotFound: 'Entiteta ni bila najdena v Home Assistant.',
+        invalidActionObject: 'Objekt akcije je neveljaven ali napačno strukturiran.',
+        invalidCustomThemeArray: 'Prilagojena tema mora biti polje.',
+        invalidCustomThemeEntry: 'Ena ali več vnosov prilagojene teme je neveljavnih.',
+        invalidDecimal: 'Vrednost mora biti pozitivno celo število.',
+        invalidEntityId: 'ID entitete je neveljaven ali napačen.',
+        invalidEnumValue: 'Podana vrednost ni med dovoljenimi možnostmi.',
+        invalidIconType: 'Podana vrsta ikone je neveljavna ali neznana.',
+        invalidMaxValue: 'Največja vrednost je neveljavna ali presega omejitve.',
+        invalidMinValue: 'Najmanjša vrednost je neveljavna ali pod dovoljenimi mejami.',
+        invalidStateContent: 'Vsebina stanja je neveljavna ali napačno oblikovana.',
+        invalidStateContentEntry: 'Eden ali več vnosov vsebine stanja je neveljavno.',
+        invalidTheme: 'Določena tema je neznana. Uporabila se bo privzeta tema.',
+        invalidTypeArray: 'Pričakovana je bila vrednost tipa polje.',
+        invalidTypeBoolean: 'Pričakovana je bila vrednost tipa boolean.',
+        invalidTypeNumber: 'Pričakovana je bila vrednost tipa število.',
+        invalidTypeObject: 'Pričakovana je bila vrednost tipa objekt.',
+        invalidTypeString: 'Pričakovana je bila vrednost tipa niz.',
+        invalidUnionType: 'Vrednost ne ustreza nobeni dovoljeni vrsti.',
+        minGreaterThanMax: 'Najmanjša vrednost ne sme biti večja od največje.',
+        missingActionKey: 'Manjka obvezni ključ v objektu akcije.',
+        missingColorProperty: 'Manjka obvezna lastnost barve.',
+        missingRequiredProperty: 'Manjka obvezna lastnost.'
+      }
+    },
+    editor: {
+      title: {
+        content: 'Vsebina',
+        interaction: 'Interakcije',
+        theme: 'Videz in uporabnost'
+      },
+      field: {
+        attribute: 'Atribut',
+        badge_color: 'Barva značke',
+        badge_icon: 'Ikona značke',
+        bar_color: 'Barva vrstice',
+        bar_effect: 'Učinek vrstice',
+        bar_orientation: 'Usmeritev vrstice',
+        bar_position: 'Pozicija vrstice',
+        bar_single_line: 'Informacije v eni vrstici (overlay)',
+        bar_size: 'Velikost vrstice',
+        center_zero: 'Ni ničle na sredini',
+        color: 'Barva ikone',
+        decimal: 'Decimalno',
+        disable_unit: 'Prikaži enoto',
+        double_tap_action: 'Akcija ob dvojni tap',
+        entity: 'Entiteta',
+        force_circular_background: 'Prisili krožno ozadje',
+        hold_action: 'Akcija ob dolgem pritisku',
+        icon: 'Ikona',
+        icon_double_tap_action: 'Akcija ob dvojni tap ikone',
+        icon_hold_action: 'Akcija ob dolgem pritisku ikone',
+        icon_tap_action: 'Akcija ob tap ikone',
+        layout: 'Postavitev kartice',
+        max_value: 'Največja vrednost',
+        max_value_attribute: 'Atribut (max_value)',
+        max_value_entity: 'Največja vrednost',
+        min_value: 'Najmanjša vrednost',
+        name: 'Ime',
+        percent: 'Odstotek',
+        secondary: 'Sekundarne informacije',
+        tap_action: 'Akcija ob tap',
+        text_shadow: 'Dodaj senco besedila (overlay)',
+        theme: 'Tema',
+        toggle_icon: 'Prikaži ikono',
+        toggle_name: 'Prikaži ime',
+        toggle_progress_bar: 'Prikaži vrstico napredka',
+        toggle_secondary_info: 'Prikaži sekundarne informacije',
+        toggle_value: 'Prikaži vrednost',
+        unit: 'Enota',
+        use_max_entity: 'Uporabi entiteto za max vrednost'
+      },
+      option: {
+        theme: {
+          optimal_when_low: 'Optimalno pri nizkih vrednostih (CPU, RAM...)',
+          optimal_when_high: 'Optimalno pri visokih vrednostih (Baterija...)',
+          light: 'Svetla',
+          temperature: 'Temperatura',
+          humidity: 'Vlažnost',
+          pm25: 'PM2.5',
+          voc: 'VOC'
+        },
+        bar_size: {
+          small: 'Majhna',
+          medium: 'Srednja',
+          large: 'Velika',
+          xlarge: 'Zelo velika'
+        },
+        bar_orientation: {
+          ltr: 'Levo proti desni',
+          rtl: 'Desno proti levi',
+          up: 'Navzgor (overlay)'
+        },
+        bar_position: {
+          default: 'Privzeto',
+          below: 'Vrstica pod vsebino',
+          top: 'Vrstica zgoraj (overlay)',
+          bottom: 'Vrstica spodaj (overlay)',
+          overlay: 'Vrstica čez vsebino (overlay)'
+        },
+        layout: {
+          horizontal: 'Horizontalno (privzeto)',
+          vertical: 'Vertikalno'
         }
       }
     }
@@ -3222,6 +4256,7 @@ const TRANSLATIONS = {
         percent: 'Procent',
         secondary: 'Sekundär information',
         tap_action: 'Åtgärd vid kort tryck',
+        text_shadow: 'Lägg till textskugga (overlay)',
         theme: 'Tema',
         toggle_icon: 'Visa ikon',
         toggle_name: 'Visa namn',
@@ -3334,6 +4369,7 @@ const TRANSLATIONS = {
         percent: '',
         secondary: '',
         tap_action: '',
+        text_shadow: '',
         theme: '',
         toggle_icon: '',
         toggle_name: '',
@@ -3446,6 +4482,7 @@ const TRANSLATIONS = {
         percent: 'เปอร์เซ็นต์',
         secondary: 'ข้อมูลรอง',
         tap_action: 'พฤติกรรมการแตะ',
+        text_shadow: 'เพิ่มเงาให้ข้อความ (overlay)',
         theme: 'ธีม',
         toggle_icon: 'แสดงไอคอน',
         toggle_name: 'แสดงชื่อ',
@@ -3558,6 +4595,7 @@ const TRANSLATIONS = {
         percent: 'Yüzde',
         secondary: 'İkincil bilgi',
         tap_action: 'Kısa dokunma davranışı',
+        text_shadow: 'Metne gölge ekle (overlay)',
         theme: 'Tema',
         toggle_icon: 'Simgeyi göster',
         toggle_name: 'Adı göster',
@@ -3670,6 +4708,7 @@ const TRANSLATIONS = {
         percent: 'Відсоток',
         secondary: 'Додаткова інформація',
         tap_action: 'Поведінка при дотику',
+        text_shadow: 'Додати тінь до тексту (overlay)',
         theme: 'Тема',
         toggle_icon: 'Показати іконку',
         toggle_name: 'Показати назву',
@@ -3782,6 +4821,7 @@ const TRANSLATIONS = {
         percent: 'Phần trăm',
         secondary: 'Thông tin phụ',
         tap_action: 'Hành vi chạm',
+        text_shadow: 'Thêm bóng cho văn bản (overlay)',
         theme: 'Chủ đề',
         toggle_icon: 'Hiển thị biểu tượng',
         toggle_name: 'Hiển thị tên',
@@ -3826,7 +4866,7 @@ const TRANSLATIONS = {
       }
     }
   },
-  zh: {
+  'zh-Hans': {
     card: {
       msg: {
         appliedDefaultValue: '默认值已自动应用。',
@@ -3894,6 +4934,7 @@ const TRANSLATIONS = {
         percent: '百分比',
         secondary: '次要信息',
         tap_action: '点击动作',
+        text_shadow: '添加文本阴影（overlay）',
         theme: '主题',
         toggle_icon: '显示图标',
         toggle_name: '显示名称',
@@ -3933,6 +4974,119 @@ const TRANSLATIONS = {
         },
         layout: {
           horizontal: '水平（默认）',
+          vertical: '垂直'
+        }
+      }
+    }
+  },
+  'zh-Hant': {
+    card: {
+      msg: {
+        appliedDefaultValue: '已自動套用預設值。',
+        attributeNotFound: '在 Home Assistant 中找不到此屬性。',
+        discontinuousRange: '定義的範圍不連續。',
+        entityNotFound: '在 Home Assistant 中找不到此實體。',
+        invalidActionObject: '動作物件無效或結構不正確。',
+        invalidCustomThemeArray: '自訂主題必須是陣列。',
+        invalidCustomThemeEntry: '一個或多個自訂主題項目無效。',
+        invalidDecimal: '數值必須是正整數。',
+        invalidEntityId: '實體 ID 無效或格式不正確。',
+        invalidEnumValue: '提供的值不在允許的選項中。',
+        invalidIconType: '指定的圖示類型無效或未知。',
+        invalidMaxValue: '最大值無效或超出允許範圍。',
+        invalidMinValue: '最小值無效或低於允許範圍。',
+        invalidStateContent: '狀態內容無效或格式不正確。',
+        invalidStateContentEntry: '一個或多個狀態內容項目無效。',
+        invalidTheme: '指定的主題未知，將使用預設主題。',
+        invalidTypeArray: '預期為陣列類型的值。',
+        invalidTypeBoolean: '預期為布林值類型的值。',
+        invalidTypeNumber: '預期為數字類型的值。',
+        invalidTypeObject: '預期為物件類型的值。',
+        invalidTypeString: '預期為字串類型的值。',
+        invalidUnionType: '值不符合任何允許的類型。',
+        minGreaterThanMax: '最小值不能大於最大值。',
+        missingActionKey: '動作物件中缺少必要鍵。',
+        missingColorProperty: '缺少必要的顏色屬性。',
+        missingRequiredProperty: '缺少必要屬性。'
+      }
+    },
+    editor: {
+      title: {
+        content: '內容',
+        interaction: '互動',
+        theme: '外觀與主題'
+      },
+      field: {
+        attribute: '屬性',
+        badge_color: '徽章顏色',
+        badge_icon: '徽章圖示',
+        bar_color: '進度條顏色',
+        bar_effect: '進度條效果',
+        bar_orientation: '進度條方向',
+        bar_position: '進度條位置',
+        bar_single_line: '單行資訊（疊加）',
+        bar_size: '進度條大小',
+        center_zero: '中心為零',
+        color: '圖示顏色',
+        decimal: '小數',
+        disable_unit: '顯示單位',
+        double_tap_action: '雙擊操作',
+        entity: '實體',
+        force_circular_background: '強制圓形背景',
+        hold_action: '長按操作',
+        icon: '圖示',
+        icon_double_tap_action: '圖示雙擊操作',
+        icon_hold_action: '圖示長按操作',
+        icon_tap_action: '圖示點擊操作',
+        layout: '卡片佈局',
+        max_value: '最大值',
+        max_value_attribute: '屬性（max_value）',
+        max_value_entity: '最大值',
+        min_value: '最小值',
+        name: '名稱',
+        percent: '百分比',
+        secondary: '次要資訊',
+        tap_action: '點擊操作',
+        text_shadow: '文字陰影（疊加）',
+        theme: '主題',
+        toggle_icon: '顯示圖示',
+        toggle_name: '顯示名稱',
+        toggle_progress_bar: '顯示進度條',
+        toggle_secondary_info: '顯示次要資訊',
+        toggle_value: '顯示數值',
+        unit: '單位',
+        use_max_entity: '使用實體作為最大值'
+      },
+      option: {
+        theme: {
+          optimal_when_low: '數值低時最佳（CPU, RAM…）',
+          optimal_when_high: '數值高時最佳（電池…）',
+          light: '明亮',
+          temperature: '溫度',
+          humidity: '濕度',
+          pm25: 'PM2.5',
+          voc: 'VOC'
+        },
+        bar_size: {
+          small: '小',
+          medium: '中',
+          large: '大',
+          xlarge: '特大'
+        },
+        bar_orientation: {
+          ltr: '由左到右',
+          rtl: '由右到左',
+          up: '向上（疊加）'
+        },
+        bar_position: {
+          default: '預設',
+          below: '內容下方',
+          top: '上方（疊加）',
+          bottom: '下方（疊加）',
+          overlay: '疊加在內容上'
+        },
+        layout: {
+          horizontal: '水平（預設）',
           vertical: '垂直'
         }
       }
@@ -5430,7 +6584,7 @@ const StructureElements = {
     const innerHtml = Element(CARD.htmlStructure.elements.progressBar.inner).html() + marks;
 
     return Element(CARD.htmlStructure.elements.progressBar.container, extraClass).html(
-      Element(CARD.htmlStructure.elements.progressBar.bar, isCenterZero ? 'center-zero' : 'default').html(innerHtml),
+      Element(CARD.htmlStructure.elements.progressBar.bar, isCenterZero ? CARD.style.dynamic.progressBar.centerZero.class : 'default').html(innerHtml),
     );
   },
 
@@ -6167,19 +7321,21 @@ class HassProviderSingleton {
     return this.localize('card.msg')[code] || `Unknown message code: ${code}`;
   }
   get numberFormat() {
-    const format = this.#hass?.locale?.number_format;
-    if (!format) return HA_CONTEXT.languages.get(CARD.config.language);
-
-    const formatMap = {
-      decimal_comma: 'de-DE', // 1.234,56 (Allemagne, France, etc.)
-      comma_decimal: 'en-US', // 1,234.56 (USA, UK, etc.)
-      space_comma: 'fr-FR', // 1 234,56 (France, Norvège, etc.)
-      language: HA_CONTEXT.languages.get(this.language),
+    const localeFromLang = (lang) => {
+      try {
+        return new Intl.NumberFormat(lang).resolvedOptions().locale;
+      } catch {
+        return 'en-US';
+      }
+    };
+    const userDef = this.#hass?.locale?.number_format;
+    const numberFormatMap = {
+      ...HA_CONTEXT.numberFormat,
+      language: localeFromLang(this.language),
       system: Intl.NumberFormat().resolvedOptions().locale,
       none: 'en',
     };
-
-    return formatMap[format] || HA_CONTEXT.languages.get(CARD.config.language);
+    return numberFormatMap[userDef] || localeFromLang(this.language);
   }
   get version() {
     return this.#hass?.config?.version ?? null;
@@ -6288,7 +7444,7 @@ class HassProviderSingleton {
     );
   }
   #loadTranslations(lang) {
-    const curLanguage = HA_CONTEXT.languages.has(lang) ? lang : CARD.config.language;
+    const curLanguage = has.own(TRANSLATIONS, lang) ? lang : CARD.config.language;
     this.#translations = TRANSLATIONS[curLanguage];
   }
   #getRelativeTimeFormat() {
@@ -6389,6 +7545,7 @@ class EntityHelper {
   #attribute = null;
   #state = null;
   #domain = null;
+  #entityType = null;
   stateContent = [];
 
   constructor() {
@@ -6397,6 +7554,7 @@ class EntityHelper {
 
   set entityId(newValue) {
     this.#entityId = newValue;
+    this.#entityType = null;
     this.#value = 0;
     this.#domain = HassProviderSingleton.getEntityDomain(newValue);
     this.#isValid = this.#hassProvider.hasEntity(this.#entityId);
@@ -6434,10 +7592,13 @@ class EntityHelper {
   ]);
 
   getEntityType() {
-    if (EntityHelper.#handleRefreshType.has(this.#domain)) return this.#domain;
-    if (this.#hassProvider.getEntityProp(this.#entityId, 'device_class') === 'duration' && !this.#attribute) return 'duration';
+    this.#entityType ??= EntityHelper.#handleRefreshType.has(this.#domain)
+      ? this.#domain
+      : this.#hassProvider.getEntityProp(this.#entityId, 'device_class') === 'duration' && !this.#attribute
+        ? 'duration'
+        : 'default';
 
-    return 'default';
+    return this.#entityType;
   }
 
   refresh() {
@@ -7067,38 +8228,25 @@ const types = {
     (value, path = []) => {
       if (is.nullish(value) || !is.plainObject(value)) return SKIP_PROPERTY;
 
-      const result = {};
-      const errors = [];
-
-      for (const [key, validator] of Object.entries(schema)) {
+      const validateEntry = (key, validator) => {
         try {
-          const validatedValue = validator(value[key], [...path, key]);
-          if (validatedValue !== SKIP_PROPERTY) {
-            result[key] = validatedValue;
-          }
+          return { key, value: validator(value[key], [...path, key]), error: null };
         } catch (error) {
-          if (error instanceof ValidationError) {
-            // ✅ Appliquer fallback s'il existe
-            if (error.fallback !== null && error.fallback !== undefined) {
-              result[key] = error.fallback;
-            }
-            errors.push(error);
-          } else {
-            throw error;
-          }
+          if (!(error instanceof ValidationError)) throw error;
+          return { key, value: error.fallback ?? undefined, error };
         }
-      }
+      };
 
-      // ✅ Si il y a des erreurs, lever une erreur avec le résultat complet comme fallback
+      const results = Object.entries(schema).map(([key, validator]) => validateEntry(key, validator));
+      const errors = results.filter((r) => r.error).map((r) => r.error);
+      const result = Object.fromEntries(
+        results
+          .filter((r) => r.value !== SKIP_PROPERTY && r.value !== undefined)
+          .map((r) => [r.key, r.value])
+      );
+
       if (errors.length > 0) {
-        throw new ValidationError(
-          path, // chemin vers watermark
-          'watermarkValidation', // code d'erreur
-          SEV.warning, // sévérité
-          result, // ✅ failback
-          null, // pas de partialConfig ici
-          errors, // toutes les erreurs individuelles
-        );
+        throw new ValidationError(path, 'watermarkValidation', SEV.warning, result, null, errors);
       }
 
       return result;
@@ -7571,12 +8719,12 @@ class BaseConfigHelper {
     this.#actionsReady = false;
     this._isDefined = true;
     BaseConfigHelper.#logDeprecatedOption(config);
-    this._configParsed = this._yamlSchema.parse(this._customizeConfig(config));
+    this._configParsed = this._yamlSchema.parse(this.constructor._customizeConfig(config));
 
     this.#lastMsgConsole = null;
   }
 
-  _customizeConfig(config) {
+  static _customizeConfig(config) {
     return config;
   }
 
@@ -7703,7 +8851,7 @@ class BaseConfigHelper {
 class CardConfigHelper extends BaseConfigHelper {
   _yamlSchema = YamlSchemaFactory.card;
 
-  _customizeConfig(config) {
+  static _customizeConfig(config) {
     return {
       ...config,
       ...(is.nonEmptyString(config?.entity) && is.nullish(config?.attribute)
@@ -7865,10 +9013,10 @@ class ViewCore {
     return this.config.bar_size;
   }
   get hasClickableIcon() {
-    return this._hasAnyAction([this._configHelper.action.icon.tap, this._configHelper.action.icon.hold, this._configHelper.action.icon.doubleTap]);
+    return ViewCore.#hasAction([this._configHelper.action.icon.tap, this._configHelper.action.icon.hold, this._configHelper.action.icon.doubleTap]);
   }
   get hasClickableCard() {
-    return this._hasAnyAction([this._configHelper.action.card.tap, this._configHelper.action.card.hold, this._configHelper.action.card.doubleTap]);
+    return ViewCore.#hasAction([this._configHelper.action.card.tap, this._configHelper.action.card.hold, this._configHelper.action.card.doubleTap]);
   }
   get hasReversedSecondaryInfoRow() {
     return this.config.reverse_secondary_info_row; // === true
@@ -7878,18 +9026,10 @@ class ViewCore {
   }
 
   get _hasDefaultShape() {
-    return this._currentValue.hasShapeByDefault && this._hasAction(this._configHelper.action.icon.tap);
+    return this._currentValue.hasShapeByDefault && ViewCore.#hasAction([this._configHelper.action.icon.tap]);
   }
-
   get _hasInteractiveShape() {
-    return [
-      HA_CONTEXT.actions.navigate.action,
-      HA_CONTEXT.actions.url.action,
-      HA_CONTEXT.actions.moreInfo.action,
-      HA_CONTEXT.actions.assist.action,
-      HA_CONTEXT.actions.toggle.action,
-      HA_CONTEXT.actions.performAction.action,
-    ].includes(this._configHelper.action.icon.tap);
+    return this._configHelper.action.icon.tap !== HA_CONTEXT.actions.none.action;
   }
   get hasWatermark() {
     return this.config.watermark !== undefined;
@@ -7934,13 +9074,8 @@ class ViewCore {
     return is.array(this.config?.[key]) && this.config[key].includes(value);
   }
 
-  // skipcq: JS-0105
-  _hasAction(action) {
-    return action !== HA_CONTEXT.actions.none.action;
-  }
-
-  _hasAnyAction(actions) {
-    return actions.some((action) => this._hasAction(action));
+  static #hasAction(actions) {
+    return actions.some((action) => action !== HA_CONTEXT.actions.none.action);
   }
 }
 /******************************************************************************************
@@ -8809,7 +9944,6 @@ class ActionHelper {
  * Subclasses MUST implement:
  * - _handleHassUpdate()  → react to hass state changes
  * - _updateCSS()         → apply dynamic CSS custom properties
- * - _jinjaFields.        → declare Jinja2 template
  * - validJinjaFields     → current valid jinja available / config
  * - _getJinjaHandlers() → handle Jinja2 template results
  *
@@ -9045,7 +10179,7 @@ class HACore extends HTMLElement {
       this._cardView.layout,
       this._cardView.barSize,
       this._cardView.barOrientation ? CARD.style.dynamic.progressBar.orientation[this._cardView.barOrientation] : null,
-      this._cardView.config.center_zero ? 'center-zero' : null,
+      this._cardView.config.center_zero ? CARD.style.dynamic.progressBar.centerZero.class : null,
       this._cardView.layout === 'vertical' && this._cardView.barOrientation === 'up' && this._cardView.config.bar_position === 'overlay'
         ? 'vertical-bar'
         : 'horizontal-bar',
@@ -9305,6 +10439,13 @@ class HABase extends HACore {
   static _cardStyle = CARD_CSS;
   static _hasDisabledIconTap = false;
   static _hasDisabledBadge = false;
+  static _hiddenComponents = [
+    // customize it
+    CARD.style.dynamic.hiddenComponent.icon,
+    CARD.style.dynamic.hiddenComponent.name,
+    CARD.style.dynamic.hiddenComponent.secondary_info,
+    CARD.style.dynamic.hiddenComponent.progress_bar,
+  ];  
   _trendIcons = {
     up: HA_CONTEXT.icons.chevronUpBox,
     down: HA_CONTEXT.icons.chevronDownBox,
@@ -9476,7 +10617,7 @@ class HABase extends HACore {
       this._cardView.barSize,
       this._cardView.config.bar_position,
       this._cardView.barOrientation ? CARD.style.dynamic.progressBar.orientation[this._cardView.barOrientation] : null,
-      this._cardView.config.center_zero ? 'center-zero' : null,
+      this._cardView.config.center_zero ? CARD.style.dynamic.progressBar.centerZero.class : null,
       this._cardView.layout === 'vertical' && this._cardView.barOrientation === 'up' && this._cardView.config.bar_position === 'overlay'
         ? 'vertical-bar'
         : 'horizontal-bar',
@@ -9514,18 +10655,6 @@ class HABase extends HACore {
     });
   }
 
-  get _hiddenComponents() {
-    //
-    // customize it
-    //
-    return [
-      CARD.style.dynamic.hiddenComponent.icon,
-      CARD.style.dynamic.hiddenComponent.name,
-      CARD.style.dynamic.hiddenComponent.secondary_info,
-      CARD.style.dynamic.hiddenComponent.progress_bar,
-    ];
-  }
-
   _handleHiddenComponents(jinjaContent = null) {
     if (jinjaContent === null && is.jinja(this._cardView.config.hide)) return;
 
@@ -9535,7 +10664,7 @@ class HABase extends HACore {
         .map((s) => s.trim())
         .filter(Boolean) ?? null;
 
-    this._hiddenComponents.forEach((component) => {
+    this.constructor._hiddenComponents.forEach((component) => {
       this._dom.toggleClass(
         CARD.htmlStructure.card.element,
         component.class,
@@ -9757,7 +10886,7 @@ class HABase extends HACore {
   /* _getJinjaHandlers(content) {
     //
     // cutomize it - list the fields/render func
-    // + static _jinjaFields
+    //
 
     return {
       badge_icon: () => this._renderBadgeIcon(content), // base
@@ -9788,13 +10917,15 @@ class HABase extends HACore {
   }
 
   // === STD FIELDS PROCESSING ===
-  _getStandardFields() {
-    // deepsource: ignore=JS-0105
+  static _getStandardFields(/*cardView*/) {
+    //
+    // customize it !!!
+    //
     return [];
   }
 
   _processStandardFields() {
-    this._getStandardFields().forEach(({ className, value }) => {
+    this.constructor._getStandardFields(this._cardView).forEach(({ className, value }) => {
       this._dom.setText(className, value);
     });
   }
@@ -9814,6 +10945,10 @@ class HABase extends HACore {
  */
 
 class EntityProgressCardBase extends HABase {
+  static _hiddenComponents = [
+    ...super._hiddenComponents,
+    CARD.style.dynamic.hiddenComponent.value,
+  ]; 
   static get _loggedMethods() {
     return [...super._loggedMethods, '_getStandardFields', '_renderCustomInfo', '_renderNameInfo'];
   }
@@ -9825,19 +10960,6 @@ class EntityProgressCardBase extends HABase {
     } else if (!this._resourceManager.has('autoRefresh')) {
       this._startAutoRefresh();
     }
-  }
-
-  get _hiddenComponents() {
-    //
-    // customize it
-    //
-    return [
-      CARD.style.dynamic.hiddenComponent.icon,
-      CARD.style.dynamic.hiddenComponent.name,
-      CARD.style.dynamic.hiddenComponent.value,
-      CARD.style.dynamic.hiddenComponent.secondary_info,
-      CARD.style.dynamic.hiddenComponent.progress_bar,
-    ];
   }
 
   // === CSS - CUSTOMIZATION ===
@@ -9869,15 +10991,15 @@ class EntityProgressCardBase extends HABase {
   }
 
   // === STD FIELDS PROCESSING - CUSTOMIZATION ===
-  _getStandardFields() {
+  static _getStandardFields(cardView) {
     return [
       {
         className: CARD.htmlStructure.elements.nameMain.class,
-        value: this._cardView.name,
+        value: cardView.name,
       },
       {
         className: CARD.htmlStructure.elements.secondaryInfoMain.class,
-        value: this._cardView.secondaryInfoMain,
+        value: cardView.secondaryInfoMain,
       },
     ];
   }
@@ -10312,6 +11434,8 @@ class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
  * 📦 CARD/BADGE EDITOR
  ******************************************************************************************/
 
+const availableSpace = (gap = 16, factor = 0.5) => `calc((100% - ${gap}px) * ${factor})`;
+
 /******************************************************************************************
  * 🛠️ EditorDOMHelper
  * ========================================================================================
@@ -10479,20 +11603,6 @@ class EditorBase extends HTMLElement {
   #dom = null;
   #boundOnChanged = null;
   _configHelper = new BaseConfigHelper();
-  static _sections = {
-    content: {
-      title: 'editor.title.content',
-      icon: HA_CONTEXT.icons.textShort,      
-    },
-    theme: {
-      title: 'editor.title.theme',
-      icon: HA_CONTEXT.icons.listBox,
-    },
-    interactions: {
-      title: 'editor.title.interaction',
-      icon: HA_CONTEXT.icons.gestureTapHold,
-    }
-  }
 
   // === LIFECYCLE ===
 
@@ -10532,8 +11642,6 @@ class EditorBase extends HTMLElement {
     this._configHelper.config = config;
     // current config
     this.#config = config;
-    console.log('config: ', config);
-    console.log('config: ', this._configHelper.config);
     this.#updateFields();
   }
 
@@ -10618,33 +11726,43 @@ class EditorBase extends HTMLElement {
 
     return (selectors[type] ?? (() => ({ text: {} })))();
   }
+
+  #resolveFieldMeta(field) {
+    const isNested = field.name.includes('.');
+    const [, childKey] = isNested ? field.name.split('.') : [null, null];
+    const raw = EditorBase.#resolveValue(field, this._configHelper.config);
+    const isInverted = field.invert ?? false;
+
+    return {
+      label: this.#hassProvider.localize('editor.field')[isNested ? `toggle_${childKey}` : field.name],
+      value: isInverted ? !raw : raw,
+      isInverted,
+    };
+  }
+
   #buildField(field) {
     const el = document.createElement('ha-selector');
-    if (field.isInGroup) el.classList.add(field.isInGroup);
 
     el.id = field.name;
     el.hass = this.hass;
     el.required = field.required ?? false;
-
-    el.style.width = field.width ? field.width : '100%';
-
-    const isNested = field.name.includes('.');
-    const [, childKey] = isNested ? field.name.split('.') : [field.name, null];
-    const raw = this.#resolveValue(field, this._configHelper.config);
-    const isInverted = field.invert ?? false;
-
-    el.label = this.#hassProvider.localize('editor.field')[isNested ? `toggle_${childKey}` : field.name];
-    el.value = isInverted ? !raw : raw;
-    el.isInverted = isInverted;
+    el.style.width = field.width ?? '100%';
     el.isArray = field.array ?? false;
     el.selector = this.#getSelectorForType(field.type);
+
+    if (field.isInGroup) el.classList.add(field.isInGroup);
+
+    const { label, value, isInverted } = this.#resolveFieldMeta(field);
+    el.label = label;
+    el.value = value;
+    el.isInverted = isInverted;
 
     this.#dom.registerField(field.name, el, field);
 
     return el;
   }
 
-  #resolveValue(def, config) {
+  static #resolveValue(def, config) {
     const empty = ['toggle', 'number', 'decimal'].includes(def.type) ? undefined : '';
     if (!config) return empty;
 
@@ -10662,23 +11780,48 @@ class EditorBase extends HTMLElement {
   // === UPDATE (every setConfig) ===
 
   #updateFields() {
-    this.#dom.updateAll(this._configHelper.config, this.#resolveValue.bind(this));
+    this.#dom.updateAll(this._configHelper.config, EditorBase.#resolveValue);
   }
 
   // === EVENTS ===
 
+  #handleVirtualField(def, value) {
+    if (!def.onVirtualChange) return;
+    const newConfig = def.onVirtualChange(value, { ...this.#config });
+    if (newConfig) this.#sendConfig(newConfig);
+  }
+
+  #handleNestedArrayField(parentKey, childKey, value) {
+    const current = [...(this.#config[parentKey] ?? [])];
+    const updated = value ? [...current, childKey] : current.filter((v) => v !== childKey);
+    this.#sendConfig({ ...this.#config, [parentKey]: updated });
+  }
+
+  #handleNestedField(parentKey, childKey, value) {
+    this.#sendConfig({
+      ...this.#config,
+      [parentKey]: { ...this.#config[parentKey], [childKey]: value },
+    });
+  }
+
+  #handleStdField(def, key, value) {
+    const targetKey = def?.target ?? key;
+    if (!value && def?.onClear) {
+      this.#sendConfig(def.onClear({ ...this.#config }));
+      return;
+    }
+    this.#sendConfig({ ...this.#config, [targetKey]: value });
+  }
+
   #onChanged(e) {
     const key = e.target.id;
     if (!key || !e.detail || !('value' in e.detail)) return;
+
+    const def = this.#dom.get(key)?._fieldDef;
     let value = e.detail.value;
 
-    // Champ virtuel — délègue au handler custom de la def
-    const def = this.#dom.get(key)?._fieldDef;
     if (def?.virtual) {
-      if (def.onVirtualChange) {
-        const newConfig = def.onVirtualChange(value, { ...this.#config });
-        if (newConfig) this.#sendConfig(newConfig);
-      }
+      this.#handleVirtualField(def, value);
       return;
     }
 
@@ -10689,28 +11832,10 @@ class EditorBase extends HTMLElement {
 
     if (isInverted) value = !value;
 
-    if (isNested && isArray) {
-      const current = [...(this.#config[parentKey] ?? [])];
-      const updated = value ? [...current, childKey] : current.filter((v) => v !== childKey);
-      this.#sendConfig({ ...this.#config, [parentKey]: updated });
-      return;
-    }
+    if (isNested && isArray) return this.#handleNestedArrayField(parentKey, childKey, value);
+    if (isNested) return this.#handleNestedField(parentKey, childKey, value);
 
-    if (isNested) {
-      this.#sendConfig({
-        ...this.#config,
-        [parentKey]: { ...this.#config[parentKey], [childKey]: value },
-      });
-      return;
-    }
-
-    const targetKey = def?.target ?? key;
-    if (!value && def?.onClear) {
-      this.#sendConfig(def.onClear({ ...this.#config }));
-      return;
-    }
-
-    this.#sendConfig({ ...this.#config, [targetKey]: value });
+    this.#handleStdField(def, key, value);
   }
 
   #sendConfig(config) {
@@ -10725,256 +11850,178 @@ class EditorBase extends HTMLElement {
 }
 
 /******************************************************************************************
- * PARAMS
+ * 🛠️ EditorFieldsType/EditorFactory
+ * ========================================================================================
  */
 
-const availableSpace = (gap = 16, factor = 0.5) => `calc((100% - ${gap}px) * ${factor})`;
+const field = (type) => (name, o = {}) => ({ name, type, ...o });
+
+const EditorFieldsType = {
+  entity:  field('entity'),
+  text:    field('text'),
+  number:  field('number'),
+  decimal: field('decimal'),
+  toggle:  field('toggle'),
+  tpl:     field('template'),
+  action:  field('action'),
+  select:  (name, o = {}) => ({ name, type: name, ...o }),
+  templateOrType: (name, template, type, o = {}) => field(template ? 'template' : type)(name, o),
+};
+
+const EditorFactory = {
+  general: (template) => ({
+    flat: true,
+    fields: {
+      entity: EditorFieldsType.entity('entity', { required: !template }),
+      ...(!template && {
+        attribute: EditorFieldsType.select('attribute', {
+          type: 'attribute',
+          selectorOf: 'entity',
+          showIf: (c) => Boolean(c.entity),
+        }),
+      }),
+    },
+  }),
+
+  content: (template) => ({
+    title: 'editor.title.content',
+    icon: HA_CONTEXT.icons.textShort,
+    fields: {
+      name: EditorFieldsType.templateOrType('name', template, 'text'),
+      toggleName: EditorFieldsType.toggle('hide.name', { invert: true, array: true }),
+      ...(template
+        ? {
+            secondary: EditorFieldsType.tpl('secondary'),
+            toggleSecondaryInfo: EditorFieldsType.toggle('hide.secondary_info', { invert: true, array: true }),
+            percent: EditorFieldsType.tpl('percent'),
+          }
+        : {
+            unit: EditorFieldsType.text('unit', { width: availableSpace(32, 0.2) }),
+            decimal: EditorFieldsType.decimal('decimal', { width: availableSpace(32, 0.2) }),
+            min_value: EditorFieldsType.number('min_value', { width: availableSpace(32, 0.6) }),
+            toggleUnit: EditorFieldsType.toggle('disable_unit', { invert: true }),
+            max_value: EditorFieldsType.number('max_value', { showIf: (c) => typeof c.max_value !== 'string' }),
+            use_max_entity: EditorFieldsType.toggle('use_max_entity', {
+              virtual: true,
+              resolveVirtual: (c) => typeof c.max_value === 'string',
+              onVirtualChange: (value, config) => ({
+                ...config,
+                max_value: value ? '' : 100,
+                max_value_attribute: value ? config.max_value_attribute : undefined,
+              }),
+            }),
+            max_value_entity: EditorFieldsType.entity('max_value_entity', {
+              target: 'max_value',
+              showIf: (c) => typeof c.max_value === 'string',
+              onClear: (config) => ({ ...config, max_value: 100, max_value_attribute: undefined }),
+            }),
+            max_value_attribute: EditorFieldsType.select('max_value_attribute', {
+              type: 'maxValueAttribute',
+              selectorOf: 'max_value',
+              showIf: (c) => typeof c.max_value === 'string' && c.max_value !== '',
+            }),
+            toggleValue: EditorFieldsType.toggle('hide.value', { invert: true, array: true }),
+            toggleSecondaryInfo: EditorFieldsType.toggle('hide.secondary_info', { invert: true, array: true }),
+          }),
+    },
+  }),
+
+  theme: (template, badge) => ({
+    title: 'editor.title.theme',
+    icon: HA_CONTEXT.icons.listBox,
+    fields: {
+      ...(template ? {} : { theme: EditorFieldsType.select('theme') }),
+      icon: EditorFieldsType.templateOrType('icon', template, 'icon', template ? {} : { width: availableSpace() }),
+      color: EditorFieldsType.templateOrType('color', template, 'color', {
+        showIf: (c) => is.nullish(c.theme),
+        ...(template ? {} : { width: availableSpace() }),
+      }),
+      toggleIcon: EditorFieldsType.toggle('hide.icon', { invert: true, array: true }),
+      ...(badge
+        ? {}
+        : {
+            force_circular_background: EditorFieldsType.toggle('force_circular_background'),
+            bar_size: EditorFieldsType.select('bar_size', { width: availableSpace() }),
+            bar_position: EditorFieldsType.select('bar_position', { width: availableSpace() }),
+            bar_single_line: EditorFieldsType.toggle('bar_single_line', { showIf: (c) => c.bar_position === 'overlay' }),
+            text_shadow: EditorFieldsType.toggle('text_shadow', { showIf: (c) => c.bar_position === 'overlay' }),
+          }),
+      bar_color: EditorFieldsType.templateOrType('bar_color', template, 'color', {
+        showIf: (c) => is.nullish(c.theme),
+        ...(template ? {} : { width: availableSpace() }),
+      }),
+      bar_orientation: EditorFieldsType.select('bar_orientation', template ? {} : { width: availableSpace() }),
+      center_zero: EditorFieldsType.toggle('center_zero'),
+      bar_effect: EditorFieldsType.tpl('bar_effect'),
+      toggleBar: EditorFieldsType.toggle('hide.progress_bar', { invert: true, array: true }),
+      ...(badge
+        ? {}
+        : {
+            badge_icon: EditorFieldsType.tpl('badge_icon'),
+            badge_color: EditorFieldsType.tpl('badge_color'),
+            layout: EditorFieldsType.select('layout'),
+          }),
+    },
+  }),
+
+  interactions: (badge) => {
+    const fields = [
+      'tap_action',
+      'hold_action',
+      'double_tap_action',
+      ...(badge ? [] : ['icon_tap_action', 'icon_hold_action', 'icon_double_tap_action']),
+    ];
+    return {
+      title: 'editor.title.interaction',
+      icon: HA_CONTEXT.icons.gestureTapHold,
+      fields: Object.fromEntries(fields.map((n) => [n, EditorFieldsType.action(n)])),
+    };
+  },
+
+  build: (template, badge) => ({
+    general: EditorFactory.general(template),
+    content: EditorFactory.content(template),
+    theme: EditorFactory.theme(template, badge),
+    interactions: EditorFactory.interactions(badge),
+  }),
+};
 
 /******************************************************************************************
  * 🛠️ EntityProgressCardEditor
  * ========================================================================================
- *
- * @class
- * @extends EditorBase
  */
 class EntityProgressCardEditor extends EditorBase {
   _configHelper = new CardConfigHelper();
-  static _fields = {
-    general: {
-      flat: true,
-      fields: {
-        entity: { name: 'entity', type: 'entity', required: true },
-        attribute: { name: 'attribute', type: 'attribute', selectorOf: 'entity', showIf: (c) => Boolean(c.entity) },
-      },
-    },
-    content: {
-      ...EditorBase._sections.content,
-      fields: {
-        name: { name: 'name', type: 'text' },
-        toggleName: { name: 'hide.name', type: 'toggle', invert: true, array: true },
-        unit: { name: 'unit', type: 'text', width: availableSpace(32, 0.2) },
-        decimal: { name: 'decimal', type: 'decimal', width: availableSpace(32, 0.2) },
-        min_value: { name: 'min_value', type: 'number', width: availableSpace(32, 0.6) },
-        toggleUnit: { name: 'disable_unit', type: 'toggle', invert: true },
-        max_value: { name: 'max_value', type: 'number', showIf: (c) => typeof c.max_value !== 'string' },
-        use_max_entity: {
-          name: 'use_max_entity',
-          type: 'toggle',
-          virtual: true,
-          resolveVirtual: (c) => typeof c.max_value === 'string',
-          onVirtualChange: (value, config) => ({
-            ...config,
-            max_value: value ? '' : 100,
-            max_value_attribute: value ? config.max_value_attribute : undefined,
-          }),
-        },
-        max_value_entity: {
-          name: 'max_value_entity',
-          type: 'entity',
-          target: 'max_value',
-          showIf: (c) => typeof c.max_value === 'string',
-          onClear: (config) => ({ ...config, max_value: 100, max_value_attribute: undefined }),
-        },
-        max_value_attribute: {
-          name: 'max_value_attribute',
-          type: 'maxValueAttribute',
-          selectorOf: 'max_value',
-          showIf: (c) => typeof c.max_value === 'string' && c.max_value !== '',
-        },
-        toggleValue: { name: 'hide.value', type: 'toggle', invert: true, array: true },
-        toggleSecondaryInfo: { name: 'hide.secondary_info', type: 'toggle', invert: true, array: true },
-      },
-    },
-    theme: {
-      ...EditorBase._sections.theme,
-      fields: {
-        theme: { name: 'theme', type: 'theme' },
-        icon: { name: 'icon', type: 'icon', width: availableSpace() },
-        color: { name: 'color', type: 'color', width: availableSpace(), showIf: (c) => is.nullish(c.theme) },
-        toggleIcon: { name: 'hide.icon', type: 'toggle', invert: true, array: true },
-        force_circular_background: { name: 'force_circular_background', type: 'toggle' },
-        bar_size: { name: 'bar_size', type: 'bar_size', width: availableSpace() },
-        bar_position: { name: 'bar_position', type: 'bar_position', width: availableSpace() },
-        bar_single_line: { name: 'bar_single_line', type: 'toggle' },
-        bar_color: { name: 'bar_color', type: 'color', width: availableSpace(), showIf: (c) => is.nullish(c.theme) },
-        bar_orientation: { name: 'bar_orientation', type: 'bar_orientation', width: availableSpace() },
-        center_zero: { name: 'center_zero', type: 'toggle' },
-        bar_effect: { name: 'bar_effect', type: 'template' },
-        toggleBar: { name: 'hide.progress_bar', type: 'toggle', invert: true, array: true },
-        badge_icon: { name: 'badge_icon', type: 'template' },
-        badge_color: { name: 'badge_color', type: 'template' },
-        layout: { name: 'layout', type: 'layout' },
-      },
-    },
-    interactions: {
-      ...EditorBase._sections.interactions,
-      fields: {
-        tap_action: { name: 'tap_action', type: 'action' },
-        hold_action: { name: 'hold_action', type: 'action' },
-        double_tap_action: { name: 'double_tap_action', type: 'action' },
-        icon_tap_action: { name: 'icon_tap_action', type: 'action' },
-        icon_hold_action: { name: 'icon_hold_action', type: 'action' },
-        icon_double_tap_action: { name: 'icon_double_tap_action', type: 'action' },
-      },
-    },
-  };
+  static _fields = EditorFactory.build(false, false);
 }
 
 /******************************************************************************************
  * 🛠️ EntityProgressBadgeEditor
  * ========================================================================================
- * ✅ Manage the badge editor.
- *
- * This class extends `EntityProgressCardEditor` and provides a specialized version of the editor
- * for a progress badge (circular badge), with a reduced set of configurable fields.
- *
- * It is used in card editor interfaces, where the user can configure the display and behavior
- * options of a badge that represents the state of an entity.
- *
- * @class
- * @extends EntityProgressCardEditor
  */
-class EntityProgressBadgeEditor extends EntityProgressCardEditor {
+class EntityProgressBadgeEditor extends EditorBase {
   _configHelper = new BadgeConfigHelper();
-  static _fields = {
-    ...EntityProgressCardEditor._fields,
-
-    theme: {
-      ...EditorBase._sections.theme,
-      fields: {
-        theme: EntityProgressCardEditor._fields.theme.fields.theme,
-        icon: EntityProgressCardEditor._fields.theme.fields.icon,
-        color: EntityProgressCardEditor._fields.theme.fields.color,
-        toggleIcon: EntityProgressCardEditor._fields.theme.fields.toggleIcon,
-        bar_color: EntityProgressCardEditor._fields.theme.fields.bar_color,
-        bar_orientation: EntityProgressCardEditor._fields.theme.fields.bar_orientation,
-        center_zero: EntityProgressCardEditor._fields.theme.fields.center_zero,
-        bar_effect: EntityProgressCardEditor._fields.theme.fields.bar_effect,
-        toggleBar: EntityProgressCardEditor._fields.theme.fields.toggleBar,
-      },
-    },
-
-    interactions: {
-      ...EditorBase._sections.interactions,
-      fields: {
-        tap_action: EntityProgressCardEditor._fields.interactions.fields.tap_action,
-        double_tap_action: EntityProgressCardEditor._fields.interactions.fields.double_tap_action,
-        hold_action: EntityProgressCardEditor._fields.interactions.fields.hold_action,
-      },
-    },
-  };
+  static _fields = EditorFactory.build(false, true);
 }
 
 /******************************************************************************************
  * 🛠️ EntityProgressTemplateEditor
  * ========================================================================================
- *
- * @class
- * @extends EditorBase
  */
 
 class EntityProgressTemplateEditor extends EditorBase {
   _configHelper = new TemplateConfigHelper();
-  static _fields = {
-    general: {
-      flat: true,
-      fields: {
-        entity: { name: 'entity', type: 'entity' },
-      },
-    },
-    content: {
-      ...EditorBase._sections.content,
-      fields: {
-        name: { name: 'name', type: 'template' },
-        toggleName: { name: 'hide.name', type: 'toggle', invert: true, array: true },
-        secondary: { name: 'secondary', type: 'template' },
-        toggleSecondaryInfo: { name: 'hide.secondary_info', type: 'toggle', invert: true, array: true },
-        percent: { name: 'percent', type: 'template' },
-      },
-    },
-    theme: {
-      ...EditorBase._sections.theme,
-      fields: {
-        icon: { name: 'icon', type: 'template' },
-        color: { name: 'color', type: 'template' },
-        toggleIcon: { name: 'hide.icon', type: 'toggle', invert: true, array: true },
-        force_circular_background: { name: 'force_circular_background', type: 'toggle' },
-        bar_size: { name: 'bar_size', type: 'bar_size', width: availableSpace() },
-        bar_position: { name: 'bar_position', type: 'bar_position', width: availableSpace() },
-        bar_single_line: { name: 'bar_single_line', type: 'toggle' },
-        bar_color: { name: 'bar_color', type: 'template' },
-        bar_orientation: { name: 'bar_orientation', type: 'bar_orientation' },
-        center_zero: { name: 'center_zero', type: 'toggle' },
-        bar_effect: { name: 'bar_effect', type: 'template' },
-        toggleBar: { name: 'hide.progress_bar', type: 'toggle', invert: true, array: true },
-        badge_icon: { name: 'badge_icon', type: 'template' },
-        badge_color: { name: 'badge_color', type: 'template' },
-        layout: { name: 'layout', type: 'layout' },
-      },
-    },
-    interactions: {
-      ...EditorBase._sections.interactions,
-      fields: {
-        tap_action: { name: 'tap_action', type: 'action' },
-        hold_action: { name: 'hold_action', type: 'action' },
-        double_tap_action: { name: 'double_tap_action', type: 'action' },
-        icon_tap_action: { name: 'icon_tap_action', type: 'action' },
-        icon_hold_action: { name: 'icon_hold_action', type: 'action' },
-        icon_double_tap_action: { name: 'icon_double_tap_action', type: 'action' },
-      },
-    },
-  };
+  static _fields = EditorFactory.build(true, false);
 }
 
 /******************************************************************************************
  * 🛠️ EntityProgressBadgeTemplateEditor
  * ========================================================================================
- *
- * @class
- * @extends EditorBase
  */
 
 class EntityProgressBadgeTemplateEditor extends EditorBase {
   _configHelper = new BadgeTemplateConfigHelper();
-  static _fields = {
-    general: {
-      flat: true,
-      fields: {
-        entity: { name: 'entity', type: 'entity' },
-      },
-    },
-    content: {
-      ...EditorBase._sections.content,
-      fields: {
-        name: { name: 'name', type: 'template' },
-        toggleName: { name: 'hide.name', type: 'toggle', invert: true, array: true },
-        secondary: { name: 'secondary', type: 'template' },
-        toggleSecondaryInfo: { name: 'hide.secondary_info', type: 'toggle', invert: true, array: true },
-        percent: { name: 'percent', type: 'template' },
-      },
-    },
-    theme: {
-      ...EditorBase._sections.theme,
-      fields: {
-        icon: { name: 'icon', type: 'template' },
-        color: { name: 'color', type: 'template' },
-        toggleIcon: { name: 'hide.icon', type: 'toggle', invert: true, array: true },
-        bar_color: { name: 'bar_color', type: 'template' },
-        bar_orientation: { name: 'bar_orientation', type: 'bar_orientation' },
-        center_zero: { name: 'center_zero', type: 'toggle' },
-        bar_effect: { name: 'bar_effect', type: 'template' },
-        toggleBar: { name: 'hide.progress_bar', type: 'toggle', invert: true, array: true },
-      },
-    },
-    interactions: {
-      ...EditorBase._sections.interactions,
-      fields: {
-        tap_action: { name: 'tap_action', type: 'action' },
-        hold_action: { name: 'hold_action', type: 'action' },
-        double_tap_action: { name: 'double_tap_action', type: 'action' },
-      },
-    },
-  };
+  static _fields = EditorFactory.build(true, true);
 }
 
 /******************************************************************************************

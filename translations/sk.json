@@ -1,0 +1,113 @@
+{
+  "card": {
+    "msg": {
+      "appliedDefaultValue": "Predvolená hodnota bola automaticky použitá.",
+      "attributeNotFound": "Atribút sa nenašiel v Home Assistant.",
+      "discontinuousRange": "Zadaný rozsah nie je spojitý.",
+      "entityNotFound": "Entita sa nenašla v Home Assistant.",
+      "invalidActionObject": "Objekt akcie je neplatný alebo nesprávne štruktúrovaný.",
+      "invalidCustomThemeArray": "Vlastná téma musí byť pole.",
+      "invalidCustomThemeEntry": "Jedna alebo viac položiek vlastnej témy je neplatných.",
+      "invalidDecimal": "Hodnota musí byť kladné celé číslo.",
+      "invalidEntityId": "ID entity je neplatné alebo nesprávne.",
+      "invalidEnumValue": "Zadaná hodnota nie je súčasťou povolených možností.",
+      "invalidIconType": "Zadaný typ ikony je neplatný alebo neznámy.",
+      "invalidMaxValue": "Maximálna hodnota je neplatná alebo nad limitom.",
+      "invalidMinValue": "Minimálna hodnota je neplatná alebo pod limitom.",
+      "invalidStateContent": "Obsah stavu je neplatný alebo nesprávny.",
+      "invalidStateContentEntry": "Jedna alebo viac položiek obsahu stavu je neplatných.",
+      "invalidTheme": "Zadaná téma je neznáma. Použije sa predvolená téma.",
+      "invalidTypeArray": "Očakávala sa hodnota typu pole.",
+      "invalidTypeBoolean": "Očakávala sa hodnota typu boolean.",
+      "invalidTypeNumber": "Očakávala sa hodnota typu číslo.",
+      "invalidTypeObject": "Očakávala sa hodnota typu objekt.",
+      "invalidTypeString": "Očakávala sa hodnota typu reťazec.",
+      "invalidUnionType": "Hodnota nezodpovedá žiadnemu povolenému typu.",
+      "minGreaterThanMax": "Minimálna hodnota nemôže byť väčšia ako maximálna.",
+      "missingActionKey": "Chýba povinný kľúč v objekte akcie.",
+      "missingColorProperty": "Chýba povinná vlastnosť farby.",
+      "missingRequiredProperty": "Chýba povinná vlastnosť."
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "Obsah",
+      "interaction": "Interakcie",
+      "theme": "Vzhľad a použiteľnosť"
+    },
+    "field": {
+      "attribute": "Atribút",
+      "badge_color": "Farba odznaku",
+      "badge_icon": "Ikona odznaku",
+      "bar_color": "Farba lišty",
+      "bar_effect": "Efekt lišty",
+      "bar_orientation": "Orientácia lišty",
+      "bar_position": "Pozícia lišty",
+      "bar_single_line": "Informácie na jednej línii (overlay)",
+      "bar_size": "Veľkosť lišty",
+      "center_zero": "Nula v strede",
+      "color": "Farba ikony",
+      "decimal": "Desatinné",
+      "disable_unit": "Zobraziť jednotku",
+      "double_tap_action": "Akcia pri dvojitom ťuknutí",
+      "entity": "Entita",
+      "force_circular_background": "Vynútiť kruhové pozadie",
+      "hold_action": "Akcia pri dlhom podržaní",
+      "icon": "Ikona",
+      "icon_double_tap_action": "Akcia pri dvojitom ťuknutí ikony",
+      "icon_hold_action": "Akcia pri dlhom podržaní ikony",
+      "icon_tap_action": "Akcia pri ťuknutí ikony",
+      "layout": "Rozloženie karty",
+      "max_value": "Maximálna hodnota",
+      "max_value_attribute": "Atribút (max_value)",
+      "max_value_entity": "Maximálna hodnota",
+      "min_value": "Minimálna hodnota",
+      "name": "Názov",
+      "percent": "Percento",
+      "secondary": "Sekundárna informácia",
+      "tap_action": "Akcia pri ťuknutí",
+      "text_shadow": "Pridať tieň textu (overlay)",
+      "theme": "Téma",
+      "toggle_icon": "Zobraziť ikonu",
+      "toggle_name": "Zobraziť názov",
+      "toggle_progress_bar": "Zobraziť pruh postupu",
+      "toggle_secondary_info": "Zobraziť sekundárne info",
+      "toggle_value": "Zobraziť hodnotu",
+      "unit": "Jednotka",
+      "use_max_entity": "Použiť entitu pre max hodnotu"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "Optimálne pri nízkej hodnote (CPU, RAM...)",
+        "optimal_when_high": "Optimálne pri vysokej hodnote (Batéria...)",
+        "light": "Svetlá",
+        "temperature": "Teplota",
+        "humidity": "Vlhkosť",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "Malá",
+        "medium": "Stredná",
+        "large": "Veľká",
+        "xlarge": "Veľmi veľká"
+      },
+      "bar_orientation": {
+        "ltr": "Zľava doprava",
+        "rtl": "Sprava doľava",
+        "up": "Nahor (overlay)"
+      },
+      "bar_position": {
+        "default": "Predvolené",
+        "below": "Pruh pod obsahom",
+        "top": "Pruh hore (overlay)",
+        "bottom": "Pruh dole (overlay)",
+        "overlay": "Pruh cez obsah (overlay)"
+      },
+      "layout": {
+        "horizontal": "Horizontálne (predvolené)",
+        "vertical": "Vertikálne"
+      }
+    }
+  }
+}

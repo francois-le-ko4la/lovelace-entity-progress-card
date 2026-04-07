@@ -1,0 +1,113 @@
+{
+  "card": {
+    "msg": {
+      "appliedDefaultValue": "Numatytoji reikšmė buvo automatiškai pritaikyta.",
+      "attributeNotFound": "Atributas nerastas Home Assistant.",
+      "discontinuousRange": "Nustatytas intervalas nėra tęstinis.",
+      "entityNotFound": "Entity nerasta Home Assistant.",
+      "invalidActionObject": "Veiksmo objektas negalioja arba neteisingai suformuotas.",
+      "invalidCustomThemeArray": "Individuali tema turi būti masyvas.",
+      "invalidCustomThemeEntry": "Viena ar daugiau individualios temos įrašų negalioja.",
+      "invalidDecimal": "Reikšmė turi būti teigiamas sveikasis skaičius.",
+      "invalidEntityId": "Entity ID negalioja arba neteisingas.",
+      "invalidEnumValue": "Pateikta reikšmė nėra tarp leidžiamų parinkčių.",
+      "invalidIconType": "Nurodytas piktogramos tipas negalioja arba nežinomas.",
+      "invalidMaxValue": "Maksimali reikšmė negalioja arba viršija leistiną ribą.",
+      "invalidMinValue": "Minimali reikšmė negalioja arba žemesnė už leistiną ribą.",
+      "invalidStateContent": "Būsenos turinys negalioja arba neteisingai suformuotas.",
+      "invalidStateContentEntry": "Viena ar daugiau būsenos turinio įrašų negalioja.",
+      "invalidTheme": "Nurodyta tema nežinoma. Bus naudojama numatytoji tema.",
+      "invalidTypeArray": "Tikėtasi masyvo tipo reikšmės.",
+      "invalidTypeBoolean": "Tikėtasi loginės reikšmės (boolean).",
+      "invalidTypeNumber": "Tikėtasi skaičiaus tipo reikšmės.",
+      "invalidTypeObject": "Tikėtasi objekto tipo reikšmės.",
+      "invalidTypeString": "Tikėtasi eilutės tipo reikšmės.",
+      "invalidUnionType": "Reikšmė neatitinka nė vieno leidžiamo tipo.",
+      "minGreaterThanMax": "Minimali reikšmė negali būti didesnė už maksimalų.",
+      "missingActionKey": "Trūksta privalomo rakto veiksmo objekte.",
+      "missingColorProperty": "Trūksta privalomos spalvos savybės.",
+      "missingRequiredProperty": "Trūksta privalomos savybės."
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "Turinys",
+      "interaction": "Sąveikos",
+      "theme": "Išvaizda ir naudojamumas"
+    },
+    "field": {
+      "attribute": "Atributas",
+      "badge_color": "Ženklelio spalva",
+      "badge_icon": "Ženklelio ikona",
+      "bar_color": "Juostos spalva",
+      "bar_effect": "Juostos efektas",
+      "bar_orientation": "Juostos orientacija",
+      "bar_position": "Juostos pozicija",
+      "bar_single_line": "Informacija vienoje eilutėje (overlay)",
+      "bar_size": "Juostos dydis",
+      "center_zero": "Nulis centre",
+      "color": "Ikonos spalva",
+      "decimal": "Dešimtainė",
+      "disable_unit": "Rodyti vienetą",
+      "double_tap_action": "Dviejų bakstelėjimų veiksmas",
+      "entity": "Entity",
+      "force_circular_background": "Priversti apvalų foną",
+      "hold_action": "Ilgo paspaudimo veiksmas",
+      "icon": "Ikona",
+      "icon_double_tap_action": "Ikonos dviejų bakstelėjimų veiksmas",
+      "icon_hold_action": "Ikonos ilgo paspaudimo veiksmas",
+      "icon_tap_action": "Ikonos bakstelėjimo veiksmas",
+      "layout": "Kortelės išdėstymas",
+      "max_value": "Maksimali reikšmė",
+      "max_value_attribute": "Atributas (max_value)",
+      "max_value_entity": "Maksimali reikšmė",
+      "min_value": "Minimali reikšmė",
+      "name": "Pavadinimas",
+      "percent": "Procentai",
+      "secondary": "Papildoma informacija",
+      "tap_action": "Bakstelėjimo veiksmas",
+      "text_shadow": "Pridėti teksto šešėlį (overlay)",
+      "theme": "Tema",
+      "toggle_icon": "Rodyti ikoną",
+      "toggle_name": "Rodyti pavadinimą",
+      "toggle_progress_bar": "Rodyti progreso juostą",
+      "toggle_secondary_info": "Rodyti papildomą info",
+      "toggle_value": "Rodyti reikšmę",
+      "unit": "Vienetas",
+      "use_max_entity": "Naudoti entity max reikšmei"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "Optimalu esant žemoms reikšmėms (CPU, RAM...)",
+        "optimal_when_high": "Optimalu esant aukštoms reikšmėms (Baterija...)",
+        "light": "Šviesi",
+        "temperature": "Temperatūra",
+        "humidity": "Drėgmė",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "Maža",
+        "medium": "Vidutinė",
+        "large": "Didelė",
+        "xlarge": "Labai didelė"
+      },
+      "bar_orientation": {
+        "ltr": "Iš kairės į dešinę",
+        "rtl": "Iš dešinės į kairę",
+        "up": "Į viršų (overlay)"
+      },
+      "bar_position": {
+        "default": "Numatyta",
+        "below": "Juosta po turiniu",
+        "top": "Juosta viršuje (overlay)",
+        "bottom": "Juosta apačioje (overlay)",
+        "overlay": "Juosta ant turinio (overlay)"
+      },
+      "layout": {
+        "horizontal": "Horizontalus (numatyta)",
+        "vertical": "Vertikalus"
+      }
+    }
+  }
+}

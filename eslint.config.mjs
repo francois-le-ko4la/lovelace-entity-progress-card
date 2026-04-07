@@ -32,23 +32,15 @@ export default [
       'sonarjs/no-useless-catch': 'warn',
       'sonarjs/prefer-immediate-return': 'warn',
       'sonarjs/prefer-single-boolean-return': 'warn',
-      // quotes: ['error', 'single', { avoidEscape: true }],
       'no-var': 'error',
       'prefer-const': 'error',
       'no-unused-vars': 'warn',
       'eol-last': ['error', 'always'],
-      // semi: ['error', 'always'],
       'space-infix-ops': 'error',
-      // indent: ['error', 2, { SwitchCase: 1 }],
-      // 'max-len': [
-      //  'error',
-      //  {
-      //    code: 150,
-      //    ignoreStrings: true,
-      //    ignoreTemplateLiterals: true,
-      //    ignoreComments: true,
-      //  },
-      //],
+      'class-methods-use-this': ['error', {
+        exceptMethods: ['connectedCallback', 'disconnectedCallback', 'setConfig'],
+        enforceForClassFields: true,
+      }],
     },
   },
 

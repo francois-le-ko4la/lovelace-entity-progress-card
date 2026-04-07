@@ -1,0 +1,113 @@
+{
+  "card": {
+    "msg": {
+      "appliedDefaultValue": "Privzeta vrednost je bila samodejno uporabljena.",
+      "attributeNotFound": "Atribut ni bil najden v Home Assistant.",
+      "discontinuousRange": "Določeno območje ni neprekinjeno.",
+      "entityNotFound": "Entiteta ni bila najdena v Home Assistant.",
+      "invalidActionObject": "Objekt akcije je neveljaven ali napačno strukturiran.",
+      "invalidCustomThemeArray": "Prilagojena tema mora biti polje.",
+      "invalidCustomThemeEntry": "Ena ali več vnosov prilagojene teme je neveljavnih.",
+      "invalidDecimal": "Vrednost mora biti pozitivno celo število.",
+      "invalidEntityId": "ID entitete je neveljaven ali napačen.",
+      "invalidEnumValue": "Podana vrednost ni med dovoljenimi možnostmi.",
+      "invalidIconType": "Podana vrsta ikone je neveljavna ali neznana.",
+      "invalidMaxValue": "Največja vrednost je neveljavna ali presega omejitve.",
+      "invalidMinValue": "Najmanjša vrednost je neveljavna ali pod dovoljenimi mejami.",
+      "invalidStateContent": "Vsebina stanja je neveljavna ali napačno oblikovana.",
+      "invalidStateContentEntry": "Eden ali več vnosov vsebine stanja je neveljavno.",
+      "invalidTheme": "Določena tema je neznana. Uporabila se bo privzeta tema.",
+      "invalidTypeArray": "Pričakovana je bila vrednost tipa polje.",
+      "invalidTypeBoolean": "Pričakovana je bila vrednost tipa boolean.",
+      "invalidTypeNumber": "Pričakovana je bila vrednost tipa število.",
+      "invalidTypeObject": "Pričakovana je bila vrednost tipa objekt.",
+      "invalidTypeString": "Pričakovana je bila vrednost tipa niz.",
+      "invalidUnionType": "Vrednost ne ustreza nobeni dovoljeni vrsti.",
+      "minGreaterThanMax": "Najmanjša vrednost ne sme biti večja od največje.",
+      "missingActionKey": "Manjka obvezni ključ v objektu akcije.",
+      "missingColorProperty": "Manjka obvezna lastnost barve.",
+      "missingRequiredProperty": "Manjka obvezna lastnost."
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "Vsebina",
+      "interaction": "Interakcije",
+      "theme": "Videz in uporabnost"
+    },
+    "field": {
+      "attribute": "Atribut",
+      "badge_color": "Barva značke",
+      "badge_icon": "Ikona značke",
+      "bar_color": "Barva vrstice",
+      "bar_effect": "Učinek vrstice",
+      "bar_orientation": "Usmeritev vrstice",
+      "bar_position": "Pozicija vrstice",
+      "bar_single_line": "Informacije v eni vrstici (overlay)",
+      "bar_size": "Velikost vrstice",
+      "center_zero": "Ni ničle na sredini",
+      "color": "Barva ikone",
+      "decimal": "Decimalno",
+      "disable_unit": "Prikaži enoto",
+      "double_tap_action": "Akcija ob dvojni tap",
+      "entity": "Entiteta",
+      "force_circular_background": "Prisili krožno ozadje",
+      "hold_action": "Akcija ob dolgem pritisku",
+      "icon": "Ikona",
+      "icon_double_tap_action": "Akcija ob dvojni tap ikone",
+      "icon_hold_action": "Akcija ob dolgem pritisku ikone",
+      "icon_tap_action": "Akcija ob tap ikone",
+      "layout": "Postavitev kartice",
+      "max_value": "Največja vrednost",
+      "max_value_attribute": "Atribut (max_value)",
+      "max_value_entity": "Največja vrednost",
+      "min_value": "Najmanjša vrednost",
+      "name": "Ime",
+      "percent": "Odstotek",
+      "secondary": "Sekundarne informacije",
+      "tap_action": "Akcija ob tap",
+      "text_shadow": "Dodaj senco besedila (overlay)",
+      "theme": "Tema",
+      "toggle_icon": "Prikaži ikono",
+      "toggle_name": "Prikaži ime",
+      "toggle_progress_bar": "Prikaži vrstico napredka",
+      "toggle_secondary_info": "Prikaži sekundarne informacije",
+      "toggle_value": "Prikaži vrednost",
+      "unit": "Enota",
+      "use_max_entity": "Uporabi entiteto za max vrednost"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "Optimalno pri nizkih vrednostih (CPU, RAM...)",
+        "optimal_when_high": "Optimalno pri visokih vrednostih (Baterija...)",
+        "light": "Svetla",
+        "temperature": "Temperatura",
+        "humidity": "Vlažnost",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "Majhna",
+        "medium": "Srednja",
+        "large": "Velika",
+        "xlarge": "Zelo velika"
+      },
+      "bar_orientation": {
+        "ltr": "Levo proti desni",
+        "rtl": "Desno proti levi",
+        "up": "Navzgor (overlay)"
+      },
+      "bar_position": {
+        "default": "Privzeto",
+        "below": "Vrstica pod vsebino",
+        "top": "Vrstica zgoraj (overlay)",
+        "bottom": "Vrstica spodaj (overlay)",
+        "overlay": "Vrstica čez vsebino (overlay)"
+      },
+      "layout": {
+        "horizontal": "Horizontalno (privzeto)",
+        "vertical": "Vertikalno"
+      }
+    }
+  }
+}

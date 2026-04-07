@@ -1,0 +1,113 @@
+{
+  "card": {
+    "msg": {
+      "appliedDefaultValue": "Um valor padrão foi aplicado automaticamente.",
+      "attributeNotFound": "Atributo não encontrado no Home Assistant.",
+      "discontinuousRange": "O intervalo definido é descontínuo.",
+      "entityNotFound": "Entidade não encontrada no Home Assistant.",
+      "invalidActionObject": "O objeto de ação é inválido ou mal estruturado.",
+      "invalidCustomThemeArray": "O tema personalizado deve ser um array.",
+      "invalidCustomThemeEntry": "Uma ou mais entradas do tema personalizado são inválidas.",
+      "invalidDecimal": "O valor deve ser um número inteiro positivo.",
+      "invalidEntityId": "O ID da entidade é inválido ou mal formado.",
+      "invalidEnumValue": "O valor fornecido não faz parte das opções permitidas.",
+      "invalidIconType": "O tipo de ícone especificado é inválido ou desconhecido.",
+      "invalidMaxValue": "O valor máximo é inválido ou excede os limites permitidos.",
+      "invalidMinValue": "O valor mínimo é inválido ou abaixo dos limites permitidos.",
+      "invalidStateContent": "O conteúdo do estado é inválido ou mal formado.",
+      "invalidStateContentEntry": "Uma ou mais entradas do conteúdo do estado são inválidas.",
+      "invalidTheme": "O tema especificado é desconhecido. O tema padrão será usado.",
+      "invalidTypeArray": "Um valor do tipo array era esperado.",
+      "invalidTypeBoolean": "Um valor do tipo booleano era esperado.",
+      "invalidTypeNumber": "Um valor do tipo número era esperado.",
+      "invalidTypeObject": "Um valor do tipo objeto era esperado.",
+      "invalidTypeString": "Um valor do tipo string era esperado.",
+      "invalidUnionType": "O valor não corresponde a nenhum dos tipos permitidos.",
+      "minGreaterThanMax": "O valor mínimo não pode ser maior que o valor máximo.",
+      "missingActionKey": "Uma chave obrigatória está ausente no objeto de ação.",
+      "missingColorProperty": "Uma propriedade de cor obrigatória está ausente.",
+      "missingRequiredProperty": "Uma propriedade obrigatória está ausente."
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "Conteúdo",
+      "interaction": "Interações",
+      "theme": "Aparência e usabilidade"
+    },
+    "field": {
+      "attribute": "Atributo",
+      "badge_color": "Cor do badge",
+      "badge_icon": "Ícone do badge",
+      "bar_color": "Cor da barra",
+      "bar_effect": "Efeito na barra",
+      "bar_orientation": "Orientação da barra",
+      "bar_position": "Posição da barra",
+      "bar_single_line": "Informações em uma linha (overlay)",
+      "bar_size": "Tamanho da barra",
+      "center_zero": "Zero no centro",
+      "color": "Cor do ícone",
+      "decimal": "Decimal",
+      "disable_unit": "Mostrar unidade",
+      "double_tap_action": "Ação ao tocar duas vezes",
+      "entity": "Entidade",
+      "force_circular_background": "Forçar fundo circular",
+      "hold_action": "Ação ao manter pressionado",
+      "icon": "Ícone",
+      "icon_double_tap_action": "Ação ao tocar duas vezes no ícone",
+      "icon_hold_action": "Ação ao manter pressionado o ícone",
+      "icon_tap_action": "Ação ao tocar no ícone",
+      "layout": "Layout do cartão",
+      "max_value": "Valor máximo",
+      "max_value_attribute": "Atributo (max_value)",
+      "max_value_entity": "Valor máximo",
+      "min_value": "Valor mínimo",
+      "name": "Nome",
+      "percent": "Porcentagem",
+      "secondary": "Informação secundária",
+      "tap_action": "Ação ao tocar",
+      "text_shadow": "Adicionar sombra ao texto (overlay)",
+      "theme": "Tema",
+      "toggle_icon": "Mostrar ícone",
+      "toggle_name": "Mostrar nome",
+      "toggle_progress_bar": "Mostrar barra de progresso",
+      "toggle_secondary_info": "Mostrar informações secundárias",
+      "toggle_value": "Mostrar valor",
+      "unit": "Unidade",
+      "use_max_entity": "Usar entidade para valor máximo"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "Ideal quando baixo (CPU, RAM...)",
+        "optimal_when_high": "Ideal quando alto (Bateria...)",
+        "light": "Claro",
+        "temperature": "Temperatura",
+        "humidity": "Umidade",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "Pequena",
+        "medium": "Média",
+        "large": "Grande",
+        "xlarge": "Muito grande"
+      },
+      "bar_orientation": {
+        "ltr": "Esquerda para direita",
+        "rtl": "Direita para esquerda",
+        "up": "Para cima (overlay)"
+      },
+      "bar_position": {
+        "default": "Padrão",
+        "below": "Barra abaixo do conteúdo",
+        "top": "Barra acima (overlay)",
+        "bottom": "Barra abaixo (overlay)",
+        "overlay": "Barra sobre o conteúdo (overlay)"
+      },
+      "layout": {
+        "horizontal": "Horizontal (padrão)",
+        "vertical": "Vertical"
+      }
+    }
+  }
+}

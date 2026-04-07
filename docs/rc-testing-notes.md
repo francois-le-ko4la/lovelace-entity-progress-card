@@ -98,17 +98,37 @@ mode), this update is for you.
   like it truly belongs in your dashboard.
 - Extended HA color usable in the YAML editor: see theme guide.
 
-🎨 Improved Editor Experience
+### 🎨 Improved Editor Experience
 
 The visual editor (GUI) has been redesigned to be more intuitive:
 
-- Dynamic Fields: The editor now intelligently shows or hides fields based on
-  your current configuration (e.g., attribute selectors only appear once an
+- Dynamic Fields: Improved the logic that shows or hides fields based on the
+  current configuration (e.g., attribute selectors now appear only after an
   entity is selected).
-- Toggle Logic: Simplified the way elements are hidden or shown, moving away
-  from complex lists to straightforward "Show/Hide" switches.
+- Toggles: Relocated toggle switches to improve readability, replacing complex
+  option lists with simple Show/Hide switches.
 - Max Value Entity: Added better support for using a second entity or a specific
   attribute as the maximum value for the progress bar.
+- added: `badge_color`, `badge_icon`, `bar_effect`, `bar_orientation`,
+  `bar_position`, `bar_single_line`, `center_zero`, `text_shadow`,
+
+### 🌐 Expanded Language Support
+
+This release adds six new languages, making the interface more accessible worldwide:
+
+- 🇦🇩 ca – Catalan / Català
+- 🌎 es-419 – Spanish (Latin America) / Español (Latinoamérica)
+- 🇭🇺 hu – Hungarian / Magyar
+- 🇸🇰 sk – Slovak / Slovenčina
+- 🇸🇮 sl – Slovene / Slovenščina
+- 🇱🇹 lt – Lithuanian / Lietuvių
+- 🇱🇻 lv – Latvian / Latviešu
+- 🇪🇪 et – Estonian / Eesti
+- 🇧🇷 pt-BR – Brazilian Portuguese / Português (Brasil)
+- 🇨🇳 zh-Hans – Simplified Chinese / 简体中文
+- 🇹🇼 zh-Hant – Traditional Chinese / 繁體中文
+
+✅ You can contribute by adding more languages or fixing any mistakes.
 
 ### 🛡️ Stability & Fixes
 
@@ -117,6 +137,8 @@ The visual editor (GUI) has been redesigned to be more intuitive:
 - Bug Fixes: Resolved issues related to accordion animations in the editor and
   CSS variable propagation removing home-made accordion and using native HA
   component.
+- Performance Optimization: Improved DOM management and rendering logic to
+  ensure smoother updates.
 - Card structure refactor
   - The way names, secondary info, and progress bars are organized has been
     simplified and renamed for clarity.
@@ -133,6 +155,7 @@ The visual editor (GUI) has been redesigned to be more intuitive:
 - Added: Card/Badge template now correctly displays colors based on priority —
   entity state color by default, overridden by Jinja `color` / `bar_color`
   parameters when defined.
+- Added: The card now respects the user `quote_decimal` / Swiss format setting.
 - Fixed [Bug]: Ripple effect for hover and tap animations doesn't work on the
   template card. #110 (@WarC0zes)
 - Fixed an issue where the icon would disappear in the editor preview when

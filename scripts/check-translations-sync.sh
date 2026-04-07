@@ -8,14 +8,16 @@ ERRORS=0
 
 echo "🔍 Checking translations sync..."
 
-# Extraire TRANSLATIONS du JS une seule fois
-JS_TRANSLATIONS=$(node -e "
+TEMP_FILE=$(mktemp /tmp/translations_XXXXXX.json)
+trap 'rm -f "$TEMP_FILE"' EXIT
+
+node -e "
 const src = require('fs').readFileSync('$JS_FILE', 'utf8');
 const match = src.match(/const TRANSLATIONS = (\{[\s\S]*?\n\};)/);
 if (!match) { console.error('TRANSLATIONS not found'); process.exit(1); }
 const TRANSLATIONS = eval('(' + match[1].replace(/};$/, '}') + ')');
-console.log(JSON.stringify(TRANSLATIONS));
-")
+require('fs').writeFileSync('$TEMP_FILE', JSON.stringify(TRANSLATIONS));
+"
 
 for file in "$TRANSLATIONS_DIR"/*.json; do
   lang=$(basename "$file" .json)
@@ -25,7 +27,7 @@ for file in "$TRANSLATIONS_DIR"/*.json; do
 const fs = require('fs');
 const lang = '$lang';
 const json = JSON.parse(fs.readFileSync('$file', 'utf8'));
-const TRANSLATIONS = $JS_TRANSLATIONS;
+const TRANSLATIONS = JSON.parse(fs.readFileSync('$TEMP_FILE', 'utf8'));
 const jsLang = TRANSLATIONS[lang];
 
 if (!jsLang) {
@@ -54,6 +56,7 @@ const walk = (jsonObj, jsObj, prefix) => {
     }
   }
 };
+
 walk(json, jsLang, '');
 
 if (diffs.length === 0) {
@@ -73,5 +76,4 @@ process.exit(1);
 done
 
 echo ""
-[ $ERRORS -eq 0 ] && echo "All translations are in sync!" || echo "$ERRORS language(s) out of sync."
-exit $ERRORS
+[ $ERRORS -eq 0 ] && echo "✅ All translations are in sync!" || echo "❌ $ERRORS language(s) out of sync."

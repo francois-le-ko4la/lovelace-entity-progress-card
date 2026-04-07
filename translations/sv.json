@@ -66,6 +66,7 @@
       "percent": "Procent",
       "secondary": "Sekundär information",
       "tap_action": "Åtgärd vid kort tryck",
+      "text_shadow": "Lägg till textskugga (overlay)",
       "theme": "Tema",
       "toggle_icon": "Visa ikon",
       "toggle_name": "Visa namn",

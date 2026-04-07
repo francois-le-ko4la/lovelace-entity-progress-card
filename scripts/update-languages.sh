@@ -22,11 +22,22 @@ for (const file of fs.readdirSync(dir).filter(f => f.endsWith('.json') && f !== 
 const formatJS = (obj, indent = 0) => {
   const pad = '  '.repeat(indent);
   const pad1 = '  '.repeat(indent + 1);
+
   const entries = Object.entries(obj).map(([k, v]) => {
-    const key = /^[a-zA-Z_$][a-zA-Z0-9_$-]*$/.test(k) ? k : `'${k}'`;
-    const val = typeof v === 'object' ? formatJS(v, indent + 1) : `'${v.replace(/'/g, "\\'")}'`;
+    // Si la clé contient autre chose que [a-zA-Z0-9_$], ou commence par un chiffre, on met des guillemets
+    const needsQuotes = !/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(k);
+    const key = needsQuotes ? `'${k.replace(/'/g, "\\'")}'` : k;
+
+    let val;
+    if (typeof v === 'object' && v !== null) {
+      val = formatJS(v, indent + 1);
+    } else {
+      val = `'${String(v).replace(/'/g, "\\'")}'`;
+    }
+
     return `${pad1}${key}: ${val}`;
   });
+
   return `{\n${entries.join(',\n')}\n${pad}}`;
 };
 

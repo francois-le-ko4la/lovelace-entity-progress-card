@@ -66,6 +66,7 @@
       "percent": "パーセント",
       "secondary": "補足情報",
       "tap_action": "短くタップしたときの動作",
+      "text_shadow": "テキストに影を追加 (オーバーレイ)",
       "theme": "テーマ",
       "toggle_icon": "アイコンを表示",
       "toggle_name": "名前を表示",

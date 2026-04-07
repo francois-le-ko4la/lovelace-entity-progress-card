@@ -70,9 +70,8 @@ code to fine-tune the appearance.
 - **Performance Optimized**: Code enhancements ensure better performance and
   maintainability, offering a more stable and responsive experience.
 - **Multi-Language Support**: Provides localized error messages and
-  descriptions, supporting multiple languages 🇸🇦 🇧🇩 🇨🇿 🇩🇰 🇩🇪 🇬🇷 🇬🇧
-  🇪🇸 🇫🇮 🇫🇷 🇮🇳🇭🇷 🇮🇩 🇮🇹 🇯🇵 🇰🇷 🇲🇰 🇳🇴 (bokmål) 🇳🇱 🇵🇱 🇵🇹
-  🇷🇴 🇸🇪 🇹🇭 🇹🇷 🇺🇦 🇻🇳 🇨🇳.
+  descriptions, supporting multiple languages 🇸🇦 🇧🇩 🇨🇿 🇩🇰 🇩🇪 🇬🇷 🇬🇧 🇪🇸 🇫🇮 🇫🇷 🇮🇳🇭🇷
+  🇮🇩 🇮🇹 🇯🇵 🇰🇷 🇲🇰 🇳🇴 (bokmål) 🇳🇱 🇵🇱 🇵🇹 🇷🇴 🇸🇪 🇹🇭 🇹🇷 🇺🇦 🇻🇳 🇨🇳.
 
 [🔼 Back to top]
 
@@ -116,8 +115,8 @@ Use this link to directly go to the repository in HACS
 - Download the file `entity-progress-card.js` (from the last version) to the
   `/config/www/` directory in your Home Assistant setup.
 - Add `/local/entity-progress-card.js` to your Lovelace resources:
-  - Go to **Settings** ➡️ **Dashboards** ➡️ **Resources** ➡️ **`⋮`** ➡️
-    **Add Resource**
+  - Go to **Settings** ➡️ **Dashboards** ➡️ **Resources** ➡️ **`⋮`** ➡️ **Add
+    Resource**
   - Set :
     - URL: `/local/www/entity-progress-card.js`
     - Type: `JavaScript Module`
@@ -320,8 +319,7 @@ entity, depending on the type of input it receives:
 
 Here are some examples of how to use the Standard Lovelace Entity Progress Card.
 
-> [!TIP]
-> Use Material Design Icons (MDI) for a consistent look. Browse available
+> [!TIP] Use Material Design Icons (MDI) for a consistent look. Browse available
 > icons at Material Design Icons. Experiment with color codes like HEX or RGB
 > for precise customization. Combine with other Lovelace cards to create a
 > visually cohesive dashboard.
@@ -470,8 +468,7 @@ card_mod:
 
 </details>
 
-> [!TIP]
-> We expose the `.icon` and `.shape` to properly animate the card.
+> [!TIP] We expose the `.icon` and `.shape` to properly animate the card.
 
 <details>
 <summary><strong>vertical-stack-in-card Example (click to expand)</strong></summary>
@@ -1323,39 +1320,50 @@ This card supports multiple languages to provide:
 
 We strive to make this card as inclusive as possible, with support for:
 
-- 🇸🇦 ar - العربية (Arabic)
-- 🇧🇩 bn - বাংলা (Bengali)
-- 🇨🇿 cs - Čeština (Czech)
-- 🇩🇰 da - Dansk (Danish)
-- 🇩🇪 de - Deutsch (German)
-- 🇬🇷 el - Ελληνικά (Greek)
-- 🇬🇧 en - English
-- 🇪🇸 es - Español (Spanish)
-- 🇫🇮 fi - Suomi (Finnish)
-- 🇫🇷 fr - Français (French)
-- 🇮🇳 hi - हिन्दी (Hindi)
-- 🇭🇷 hr - Hrvatski (Croatian)
-- 🇮🇩 id - Bahasa Indonesia (Indonesian)
-- 🇮🇹 it - Italiano (Italian)
-- 🇯🇵 ja - 日本語 (Japanese)
-- 🇰🇷 ko - 한국어 (Korean)
-- 🇲🇰 mk - Македонски (Macedonian)
-- 🇳🇴 nb - Norsk Bokmål (Norwegian Bokmål)
-- 🇳🇱 nl - Nederlands (Dutch)
-- 🇵🇱 pl - Polski (Polish)
-- 🇵🇹 pt - Português (Portuguese)
-- 🇷🇴 ro - Română (Romanian)
-- 🇷🇺 ru - Русский (Russian)
-- 🇸🇪 sv - Svenska (Swedish)
-- 🇹🇭 th - ไทย (Thai)
-- 🇹🇷 tr - Türkçe (Turkish)
-- 🇺🇦 uk - Українська (Ukrainian)
-- 🇻🇳 vi - Tiếng Việt (Vietnamese)
-- 🇨🇳 zh - 中文 (Chinese)
+| Flag | Code    | Language (English / Native)                       |
+| ---- | ------- | ------------------------------------------------- |
+| 🇸🇦   | ar      | Arabic / العربية                                  |
+| 🇧🇩   | bn      | Bengali / বাংলা                                      |
+| 🇦🇩   | ca      | Catalan / Català                                  |
+| 🇨🇿   | cs      | Czech / Čeština                                   |
+| 🇩🇰   | da      | Danish / Dansk                                    |
+| 🇩🇪   | de      | German / Deutsch                                  |
+| 🇬🇷   | el      | Greek / Ελληνικά                                  |
+| 🇬🇧   | en      | English / English                                 |
+| 🇪🇸   | es      | Spanish / Español                                 |
+| 🌎   | es-419  | Spanish (Latin America) / Español (Latinoamérica) |
+| 🇫🇮   | fi      | Finnish / Suomi                                   |
+| 🇫🇷   | fr      | French / Français                                 |
+| 🇮🇳   | hi      | Hindi / हिन्दी                                        |
+| 🇭🇷   | hr      | Croatian / Hrvatski                               |
+| 🇮🇩   | id      | Indonesian / Bahasa Indonesia                     |
+| 🇮🇹   | it      | Italian / Italiano                                |
+| 🇯🇵   | ja      | Japanese / 日本語                                 |
+| 🇰🇷   | ko      | Korean / 한국어                                   |
+| 🇲🇰   | mk      | Macedonian / Македонски                           |
+| 🇱🇹   | lt      | Lithuanian / Lietuvių                             |
+| 🇱🇻   | lv      | Latvian / Latviešu                                |
+| 🇪🇪   | et      | Estonian / Eesti                                  |
+| 🇳🇴   | nb      | Norwegian Bokmål / Norsk Bokmål                   |
+| 🇳🇱   | nl      | Dutch / Nederlands                                |
+| 🇵🇱   | pl      | Polish / Polski                                   |
+| 🇵🇹   | pt      | Portuguese / Português (Portugal)                 |
+| 🇧🇷   | pt-BR   | Portuguese / Português (Brazil)                   |
+| 🇷🇴   | ro      | Romanian / Română                                 |
+| 🇷🇺   | ru      | Russian / Русский                                 |
+| 🇸🇰   | sk      | Slovak / Slovenský                                |
+| 🇸🇮   | sl      | Slovene / Slovenščina                             |
+| 🇭🇺   | hu      | Hungarian / Magyar                                |
+| 🇸🇪   | sv      | Swedish / Svenska                                 |
+| 🇹🇭   | th      | Thai / ไทย                                        |
+| 🇹🇷   | tr      | Turkish / Türkçe                                  |
+| 🇺🇦   | uk      | Ukrainian / Українська                            |
+| 🇻🇳   | vi      | Vietnamese / Tiếng Việt                           |
+| 🇨🇳   | zh-Hans | Chinese (Simplified) / 中文（简体）               |
+| 🇹🇼   | zh-Hant | Chinese (Traditional) / 中文（繁體）              |
 
-> [!IMPORTANT]
-> I use translation tools to help bridge language gaps, as I'm not fluent in
-> every language.
+> [!IMPORTANT] I use translation tools to help bridge language gaps, as I'm not
+> fluent in every language.
 >
 > If you notice any mistakes, please understand they are **purely
 > unintentional** — feel free to reach out on GitHub or Discord to fix it.
@@ -1407,27 +1415,27 @@ Check out the [Contributing Guide] to get started.
   [Custom Element Loader Gist](https://gist.github.com/thomasloven/5f965bd26e5f69876890886c09dd9ba8)
 
 - **Inspired by [Mushroom](https://github.com/piitaya/lovelace-mushroom)**
-  **(Apache-2.0 license) —**
-  **Copyright © Paul Bottein ([@piitaya](https://github.com/piitaya))**  
+  **(Apache-2.0 license) —** **Copyright © Paul Bottein
+  ([@piitaya](https://github.com/piitaya))**  
   ➡️ For the look & feel
 
-- **Inspired by [bar-card](https://github.com/custom-cards/bar-card)**
-  **(MIT License) —**
-  **Copyright © Lucas Bramlage ([@Gluwc](https://github.com/Gluwc))**  
+- **Inspired by [bar-card](https://github.com/custom-cards/bar-card)** **(MIT
+  License) —** **Copyright © Lucas Bramlage
+  ([@Gluwc](https://github.com/Gluwc))**  
   ➡️ No code was copied; this project is an original implementation.
 
 - **Inspired by [superstruct](https://github.com/ianstormtaylor/superstruct)**
-  **(MIT License) —**
-  **Copyright © Ian Storm Taylor ([@ianstormtaylor](https://github.com/ianstormtaylor))**  
+  **(MIT License) —** **Copyright © Ian Storm Taylor
+  ([@ianstormtaylor](https://github.com/ianstormtaylor))**  
   ➡️ Structural validation ideas to manage inputs (v1.5+). This implementation
   is original and does not reuse code from the library.
 
 - **Inspired by**
   **[hass-progress-bar-feature](https://github.com/ytilis/hass-progress-bar-feature)**
-  **(MIT License) —**
-  **Copyright © Yury Tilis ([@ytilis](https://github.com/ytilis))**  
+  **(MIT License) —** **Copyright © Yury Tilis
+  ([@ytilis](https://github.com/ytilis))**  
   ➡️ override HA's default feature row sizing behavior, preventing card height
-     increase when using overlay features.
+  increase when using overlay features.
 
 - **Special thanks to
   [@harmonie-durrant](https://github.com/harmonie-durrant)**  

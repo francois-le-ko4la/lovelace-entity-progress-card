@@ -66,6 +66,7 @@
       "percent": "Pourcentage",
       "secondary": "Information secondaire",
       "tap_action": "Comportement lors d'un appui court",
+      "text_shadow": "Ajouter une ombre au texte (overlay)",
       "theme": "Thème",
       "toggle_icon": "Afficher l'icône",
       "toggle_name": "Afficher le nom",

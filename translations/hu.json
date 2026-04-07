@@ -1,0 +1,113 @@
+{
+  "card": {
+    "msg": {
+      "appliedDefaultValue": "Alapértelmezett érték automatikusan alkalmazva.",
+      "attributeNotFound": "Az attribútum nem található a Home Assistantban.",
+      "discontinuousRange": "A megadott tartomány nem folytonos.",
+      "entityNotFound": "Az entitás nem található a Home Assistantban.",
+      "invalidActionObject": "Az action objektum érvénytelen vagy hibás felépítésű.",
+      "invalidCustomThemeArray": "Az egyéni témának tömbnek kell lennie.",
+      "invalidCustomThemeEntry": "Az egyéni téma egy vagy több bejegyzése érvénytelen.",
+      "invalidDecimal": "Az értéknek pozitív egész számnak kell lennie.",
+      "invalidEntityId": "Az entitás azonosító érvénytelen vagy hibás.",
+      "invalidEnumValue": "A megadott érték nem része az engedélyezett opcióknak.",
+      "invalidIconType": "A megadott ikon típus érvénytelen vagy nem ismert.",
+      "invalidMaxValue": "A maximális érték érvénytelen vagy túl magas.",
+      "invalidMinValue": "A minimális érték érvénytelen vagy túl alacsony.",
+      "invalidStateContent": "Az állapot tartalma érvénytelen vagy hibás.",
+      "invalidStateContentEntry": "Az állapot tartalmának egy vagy több eleme érvénytelen.",
+      "invalidTheme": "Az adott téma ismeretlen. Az alapértelmezett téma lesz használva.",
+      "invalidTypeArray": "Tömb típusú érték volt elvárva.",
+      "invalidTypeBoolean": "Logikai (boolean) érték volt elvárva.",
+      "invalidTypeNumber": "Szám típusú érték volt elvárva.",
+      "invalidTypeObject": "Objektum típusú érték volt elvárva.",
+      "invalidTypeString": "Szöveg típusú érték volt elvárva.",
+      "invalidUnionType": "Az érték nem felel meg egyik engedélyezett típusnak sem.",
+      "minGreaterThanMax": "A minimális érték nem lehet nagyobb a maximálisnál.",
+      "missingActionKey": "Egy kötelező kulcs hiányzik az action objektumból.",
+      "missingColorProperty": "Egy kötelező szín tulajdonság hiányzik.",
+      "missingRequiredProperty": "Egy kötelező tulajdonság hiányzik."
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "Tartalom",
+      "interaction": "Interakciók",
+      "theme": "Megjelenés és használhatóság"
+    },
+    "field": {
+      "attribute": "Attribútum",
+      "badge_color": "Jelvény színe",
+      "badge_icon": "Jelvény ikon",
+      "bar_color": "Sáv színe",
+      "bar_effect": "Sáv effektus",
+      "bar_orientation": "Sáv iránya",
+      "bar_position": "Sáv pozíciója",
+      "bar_single_line": "Egy soros információ (overlay)",
+      "bar_size": "Sáv mérete",
+      "center_zero": "Nulla középen",
+      "color": "Ikon színe",
+      "decimal": "Tizedes",
+      "disable_unit": "Egység megjelenítése",
+      "double_tap_action": "Kettős koppintás művelet",
+      "entity": "Entitás",
+      "force_circular_background": "Kör alakú háttér erőltetése",
+      "hold_action": "Hosszan tartó nyomás művelet",
+      "icon": "Ikon",
+      "icon_double_tap_action": "Ikon dupla koppintás művelet",
+      "icon_hold_action": "Ikon hosszan nyomás művelet",
+      "icon_tap_action": "Ikon koppintás művelet",
+      "layout": "Kártya elrendezése",
+      "max_value": "Maximális érték",
+      "max_value_attribute": "Attribútum (max_value)",
+      "max_value_entity": "Maximális érték",
+      "min_value": "Minimális érték",
+      "name": "Név",
+      "percent": "Százalék",
+      "secondary": "Másodlagos információ",
+      "tap_action": "Koppintás művelet",
+      "text_shadow": "Szöveg árnyék hozzáadása (overlay)",
+      "theme": "Téma",
+      "toggle_icon": "Ikon megjelenítése",
+      "toggle_name": "Név megjelenítése",
+      "toggle_progress_bar": "Sáv megjelenítése",
+      "toggle_secondary_info": "Másodlagos info megjelenítése",
+      "toggle_value": "Érték megjelenítése",
+      "unit": "Mértékegység",
+      "use_max_entity": "Entitás használata max értékhez"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "Optimális alacsony értéknél (CPU, RAM...)",
+        "optimal_when_high": "Optimális magas értéknél (Akkumulátor...)",
+        "light": "Világos",
+        "temperature": "Hőmérséklet",
+        "humidity": "Páratartalom",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "Kicsi",
+        "medium": "Közepes",
+        "large": "Nagy",
+        "xlarge": "Nagyon nagy"
+      },
+      "bar_orientation": {
+        "ltr": "Balról jobbra",
+        "rtl": "Jobbról balra",
+        "up": "Felfelé (overlay)"
+      },
+      "bar_position": {
+        "default": "Alapértelmezett",
+        "below": "Sáv a tartalom alatt",
+        "top": "Sáv fent (overlay)",
+        "bottom": "Sáv lent (overlay)",
+        "overlay": "Sáv a tartalmon (overlay)"
+      },
+      "layout": {
+        "horizontal": "Vízszintes (alapértelmezett)",
+        "vertical": "Függőleges"
+      }
+    }
+  }
+}

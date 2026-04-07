@@ -66,6 +66,7 @@
       "percent": "퍼센트",
       "secondary": "보조 정보",
       "tap_action": "짧게 탭 시 동작",
+      "text_shadow": "텍스트 그림자 추가 (오버레이)",
       "theme": "테마",
       "toggle_icon": "아이콘 표시",
       "toggle_name": "이름 표시",

@@ -1,0 +1,113 @@
+{
+  "card": {
+    "msg": {
+      "appliedDefaultValue": "Noklusējuma vērtība tika automātiski piemērota.",
+      "attributeNotFound": "Atribūts nav atrasts Home Assistant.",
+      "discontinuousRange": "Norādītais diapazons nav nepārtraukts.",
+      "entityNotFound": "Vienība nav atrasta Home Assistant.",
+      "invalidActionObject": "Darbības objekts nav derīgs vai ir nepareizi strukturēts.",
+      "invalidCustomThemeArray": "Pielāgotajai tēmai jābūt masīvam.",
+      "invalidCustomThemeEntry": "Viena vai vairākas pielāgotās tēmas ievades nav derīgas.",
+      "invalidDecimal": "Vērtībai jābūt pozitīvam veselajam skaitlim.",
+      "invalidEntityId": "Vienības ID nav derīgs vai ir nepareizs.",
+      "invalidEnumValue": "Ievadītā vērtība nav atļauto opciju sarakstā.",
+      "invalidIconType": "Norādītais ikonas tips nav derīgs vai nav zināms.",
+      "invalidMaxValue": "Maksimālā vērtība nav derīga vai pārsniedz atļauto robežu.",
+      "invalidMinValue": "Minimālā vērtība nav derīga vai zem atļautās robežas.",
+      "invalidStateContent": "Stāvokļa saturs nav derīgs vai ir nepareizi strukturēts.",
+      "invalidStateContentEntry": "Viena vai vairākas stāvokļa satura ievades nav derīgas.",
+      "invalidTheme": "Norādītā tēma nav zināma. Tiks izmantota noklusējuma tēma.",
+      "invalidTypeArray": "Tika gaidīta masīva tipa vērtība.",
+      "invalidTypeBoolean": "Tika gaidīta loģiska (boolean) vērtība.",
+      "invalidTypeNumber": "Tika gaidīta skaitļa tipa vērtība.",
+      "invalidTypeObject": "Tika gaidīta objekta tipa vērtība.",
+      "invalidTypeString": "Tika gaidīta virknes tipa vērtība.",
+      "invalidUnionType": "Vērtība neatbilst nevienam atļautajam tipam.",
+      "minGreaterThanMax": "Minimālā vērtība nevar būt lielāka par maksimālo.",
+      "missingActionKey": "Trūkst obligātā atslēga darbības objektā.",
+      "missingColorProperty": "Trūkst obligātā krāsas īpašība.",
+      "missingRequiredProperty": "Trūkst obligātā īpašība."
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "Saturs",
+      "interaction": "Saskarsme",
+      "theme": "Izskats un lietojamība"
+    },
+    "field": {
+      "attribute": "Atribūts",
+      "badge_color": "Žetona krāsa",
+      "badge_icon": "Žetona ikona",
+      "bar_color": "Joslas krāsa",
+      "bar_effect": "Joslas efekts",
+      "bar_orientation": "Joslas orientācija",
+      "bar_position": "Joslas pozīcija",
+      "bar_single_line": "Informācija vienā rindā (overlay)",
+      "bar_size": "Joslas izmērs",
+      "center_zero": "Nulles centrā",
+      "color": "Ikonas krāsa",
+      "decimal": "Decimāldaļa",
+      "disable_unit": "Rādīt vienību",
+      "double_tap_action": "Divreiz pieskaroties",
+      "entity": "Vienība",
+      "force_circular_background": "Piespiest apļu fonu",
+      "hold_action": "Ilgs pieskāriens",
+      "icon": "Ikona",
+      "icon_double_tap_action": "Ikonas dubults pieskāriens",
+      "icon_hold_action": "Ikonas ilgs pieskāriens",
+      "icon_tap_action": "Ikonas pieskāriens",
+      "layout": "Kartes izkārtojums",
+      "max_value": "Maksimālā vērtība",
+      "max_value_attribute": "Atribūts (max_value)",
+      "max_value_entity": "Maksimālā vērtība",
+      "min_value": "Minimālā vērtība",
+      "name": "Nosaukums",
+      "percent": "Procenti",
+      "secondary": "Papildu informācija",
+      "tap_action": "Pieskāriens",
+      "text_shadow": "Pievienot teksta ēnu (overlay)",
+      "theme": "Tēma",
+      "toggle_icon": "Rādīt ikonu",
+      "toggle_name": "Rādīt nosaukumu",
+      "toggle_progress_bar": "Rādīt progresa joslu",
+      "toggle_secondary_info": "Rādīt papildu info",
+      "toggle_value": "Rādīt vērtību",
+      "unit": "Vienība",
+      "use_max_entity": "Izmantot vienību max vērtībai"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "Optimāli pie zemām vērtībām (CPU, RAM...)",
+        "optimal_when_high": "Optimāli pie augstām vērtībām (Akumulators...)",
+        "light": "Gaiša",
+        "temperature": "Temperatūra",
+        "humidity": "Mitrums",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "Mazs",
+        "medium": "Vidējs",
+        "large": "Liels",
+        "xlarge": "Ļoti liels"
+      },
+      "bar_orientation": {
+        "ltr": "No kreisās uz labo",
+        "rtl": "No labās uz kreiso",
+        "up": "Uz augšu (overlay)"
+      },
+      "bar_position": {
+        "default": "Noklusētais",
+        "below": "Josla zem satura",
+        "top": "Josla augšā (overlay)",
+        "bottom": "Josla apakšā (overlay)",
+        "overlay": "Josla virs satura (overlay)"
+      },
+      "layout": {
+        "horizontal": "Horizontāls (noklusēts)",
+        "vertical": "Vertikāls"
+      }
+    }
+  }
+}

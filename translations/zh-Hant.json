@@ -1,0 +1,113 @@
+{
+  "card": {
+    "msg": {
+      "appliedDefaultValue": "已自動套用預設值。",
+      "attributeNotFound": "在 Home Assistant 中找不到此屬性。",
+      "discontinuousRange": "定義的範圍不連續。",
+      "entityNotFound": "在 Home Assistant 中找不到此實體。",
+      "invalidActionObject": "動作物件無效或結構不正確。",
+      "invalidCustomThemeArray": "自訂主題必須是陣列。",
+      "invalidCustomThemeEntry": "一個或多個自訂主題項目無效。",
+      "invalidDecimal": "數值必須是正整數。",
+      "invalidEntityId": "實體 ID 無效或格式不正確。",
+      "invalidEnumValue": "提供的值不在允許的選項中。",
+      "invalidIconType": "指定的圖示類型無效或未知。",
+      "invalidMaxValue": "最大值無效或超出允許範圍。",
+      "invalidMinValue": "最小值無效或低於允許範圍。",
+      "invalidStateContent": "狀態內容無效或格式不正確。",
+      "invalidStateContentEntry": "一個或多個狀態內容項目無效。",
+      "invalidTheme": "指定的主題未知，將使用預設主題。",
+      "invalidTypeArray": "預期為陣列類型的值。",
+      "invalidTypeBoolean": "預期為布林值類型的值。",
+      "invalidTypeNumber": "預期為數字類型的值。",
+      "invalidTypeObject": "預期為物件類型的值。",
+      "invalidTypeString": "預期為字串類型的值。",
+      "invalidUnionType": "值不符合任何允許的類型。",
+      "minGreaterThanMax": "最小值不能大於最大值。",
+      "missingActionKey": "動作物件中缺少必要鍵。",
+      "missingColorProperty": "缺少必要的顏色屬性。",
+      "missingRequiredProperty": "缺少必要屬性。"
+    }
+  },
+  "editor": {
+    "title": {
+      "content": "內容",
+      "interaction": "互動",
+      "theme": "外觀與主題"
+    },
+    "field": {
+      "attribute": "屬性",
+      "badge_color": "徽章顏色",
+      "badge_icon": "徽章圖示",
+      "bar_color": "進度條顏色",
+      "bar_effect": "進度條效果",
+      "bar_orientation": "進度條方向",
+      "bar_position": "進度條位置",
+      "bar_single_line": "單行資訊（疊加）",
+      "bar_size": "進度條大小",
+      "center_zero": "中心為零",
+      "color": "圖示顏色",
+      "decimal": "小數",
+      "disable_unit": "顯示單位",
+      "double_tap_action": "雙擊操作",
+      "entity": "實體",
+      "force_circular_background": "強制圓形背景",
+      "hold_action": "長按操作",
+      "icon": "圖示",
+      "icon_double_tap_action": "圖示雙擊操作",
+      "icon_hold_action": "圖示長按操作",
+      "icon_tap_action": "圖示點擊操作",
+      "layout": "卡片佈局",
+      "max_value": "最大值",
+      "max_value_attribute": "屬性（max_value）",
+      "max_value_entity": "最大值",
+      "min_value": "最小值",
+      "name": "名稱",
+      "percent": "百分比",
+      "secondary": "次要資訊",
+      "tap_action": "點擊操作",
+      "text_shadow": "文字陰影（疊加）",
+      "theme": "主題",
+      "toggle_icon": "顯示圖示",
+      "toggle_name": "顯示名稱",
+      "toggle_progress_bar": "顯示進度條",
+      "toggle_secondary_info": "顯示次要資訊",
+      "toggle_value": "顯示數值",
+      "unit": "單位",
+      "use_max_entity": "使用實體作為最大值"
+    },
+    "option": {
+      "theme": {
+        "optimal_when_low": "數值低時最佳（CPU, RAM…）",
+        "optimal_when_high": "數值高時最佳（電池…）",
+        "light": "明亮",
+        "temperature": "溫度",
+        "humidity": "濕度",
+        "pm25": "PM2.5",
+        "voc": "VOC"
+      },
+      "bar_size": {
+        "small": "小",
+        "medium": "中",
+        "large": "大",
+        "xlarge": "特大"
+      },
+      "bar_orientation": {
+        "ltr": "由左到右",
+        "rtl": "由右到左",
+        "up": "向上（疊加）"
+      },
+      "bar_position": {
+        "default": "預設",
+        "below": "內容下方",
+        "top": "上方（疊加）",
+        "bottom": "下方（疊加）",
+        "overlay": "疊加在內容上"
+      },
+      "layout": {
+        "horizontal": "水平（預設）",
+        "vertical": "垂直"
+      }
+    }
+  }
+}
