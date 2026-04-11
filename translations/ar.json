@@ -64,6 +64,7 @@
       "min_value": "القيمة الدنيا",
       "name": "الاسم",
       "percent": "النسبة المئوية",
+      "reverse_secondary_info_row": "تبديل الشريط والنص",
       "secondary": "معلومات ثانوية",
       "tap_action": "الإجراء عند النقر القصير",
       "text_shadow": "إضافة ظل للنص (overlay)",

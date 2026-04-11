@@ -64,6 +64,7 @@
       "min_value": "Мінімальне значення",
       "name": "Назва",
       "percent": "Відсоток",
+      "reverse_secondary_info_row": "Поміняти місцями панель і текст",
       "secondary": "Додаткова інформація",
       "tap_action": "Поведінка при дотику",
       "text_shadow": "Додати тінь до тексту (overlay)",

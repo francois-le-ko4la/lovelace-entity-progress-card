@@ -64,6 +64,7 @@
       "min_value": "Минимална вредност",
       "name": "Име",
       "percent": "Процент",
+      "reverse_secondary_info_row": "Сменете ги лентата и текстот",
       "secondary": "Секундарни информации",
       "tap_action": "Дејство при краток допир",
       "text_shadow": "Додај сенка на текст (overlay)",

@@ -64,6 +64,7 @@
       "min_value": "Minimale waarde",
       "name": "Naam",
       "percent": "Percentage",
+      "reverse_secondary_info_row": "Balk en tekst omwisselen",
       "secondary": "Secundaire informatie",
       "tap_action": "Actie bij korte tik",
       "text_shadow": "Tekstschaduw toevoegen (overlay)",

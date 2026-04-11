@@ -64,6 +64,7 @@
       "min_value": "Minimálna hodnota",
       "name": "Názov",
       "percent": "Percento",
+      "reverse_secondary_info_row": "Vymeňte lištu a text",
       "secondary": "Sekundárna informácia",
       "tap_action": "Akcia pri ťuknutí",
       "text_shadow": "Pridať tieň textu (overlay)",

@@ -64,6 +64,7 @@
       "min_value": "Minsta värde",
       "name": "Namn",
       "percent": "Procent",
+      "reverse_secondary_info_row": "Byt ut stapel och text",
       "secondary": "Sekundär information",
       "tap_action": "Åtgärd vid kort tryck",
       "text_shadow": "Lägg till textskugga (overlay)",

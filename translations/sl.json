@@ -64,6 +64,7 @@
       "min_value": "Najmanjša vrednost",
       "name": "Ime",
       "percent": "Odstotek",
+      "reverse_secondary_info_row": "Zamenjaj vrstico in besedilo",
       "secondary": "Sekundarne informacije",
       "tap_action": "Akcija ob tap",
       "text_shadow": "Dodaj senco besedila (overlay)",

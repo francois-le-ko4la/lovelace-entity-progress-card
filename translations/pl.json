@@ -64,6 +64,7 @@
       "min_value": "Wartość minimalna",
       "name": "Nazwa",
       "percent": "Procent",
+      "reverse_secondary_info_row": "Zamień pasek i tekst",
       "secondary": "Informacja dodatkowa",
       "tap_action": "Akcja przy krótkim naciśnięciu",
       "text_shadow": "Dodaj cień tekstu (overlay)",

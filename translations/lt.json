@@ -64,6 +64,7 @@
       "min_value": "Minimali reikšmė",
       "name": "Pavadinimas",
       "percent": "Procentai",
+      "reverse_secondary_info_row": "Sukeisti juostą ir tekstą",
       "secondary": "Papildoma informacija",
       "tap_action": "Bakstelėjimo veiksmas",
       "text_shadow": "Pridėti teksto šešėlį (overlay)",

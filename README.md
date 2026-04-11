@@ -1324,7 +1324,7 @@ We strive to make this card as inclusive as possible, with support for:
 | ---- | ------- | ------------------------------------------------- |
 | 🇸🇦   | ar      | Arabic / العربية                                  |
 | 🇧🇩   | bn      | Bengali / বাংলা                                      |
-| 🇦🇩   | ca      | Catalan / Català                                  |
+| <img src="./docs/images/ca.svg" alt="" width="14px" />   | ca      | Catalan / Català                                  |
 | 🇨🇿   | cs      | Czech / Čeština                                   |
 | 🇩🇰   | da      | Danish / Dansk                                    |
 | 🇩🇪   | de      | German / Deutsch                                  |
@@ -1361,6 +1361,9 @@ We strive to make this card as inclusive as possible, with support for:
 | 🇻🇳   | vi      | Vietnamese / Tiếng Việt                           |
 | 🇨🇳   | zh-Hans | Chinese (Simplified) / 中文（简体）               |
 | 🇹🇼   | zh-Hant | Chinese (Traditional) / 中文（繁體）              |
+
+
+
 
 > [!IMPORTANT] I use translation tools to help bridge language gaps, as I'm not
 > fluent in every language.

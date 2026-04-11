@@ -64,6 +64,7 @@
       "min_value": "Valoare minimă",
       "name": "Nume",
       "percent": "Procent",
+      "reverse_secondary_info_row": "Schimbați bara și textul",
       "secondary": "Informație secundară",
       "tap_action": "Acțiune la apăsare scurtă",
       "text_shadow": "Adaugă umbră textului (overlay)",

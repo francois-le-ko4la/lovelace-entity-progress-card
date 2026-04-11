@@ -64,6 +64,7 @@
       "min_value": "最小值",
       "name": "名稱",
       "percent": "百分比",
+      "reverse_secondary_info_row": "交換進度條和文字",
       "secondary": "次要資訊",
       "tap_action": "點擊操作",
       "text_shadow": "文字陰影（疊加）",

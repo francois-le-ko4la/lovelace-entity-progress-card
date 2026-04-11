@@ -64,6 +64,7 @@
       "min_value": "Valore minimo",
       "name": "Nome",
       "percent": "Percentuale",
+      "reverse_secondary_info_row": "Scambia barra e testo",
       "secondary": "Informazione secondaria",
       "tap_action": "Azione al tocco breve",
       "text_shadow": "Aggiungi ombra al testo (overlay)",

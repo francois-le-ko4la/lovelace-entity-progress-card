@@ -64,6 +64,7 @@
       "min_value": "最小値",
       "name": "名前",
       "percent": "パーセント",
+      "reverse_secondary_info_row": "バーとテキストを入れ替える",
       "secondary": "補足情報",
       "tap_action": "短くタップしたときの動作",
       "text_shadow": "テキストに影を追加 (オーバーレイ)",

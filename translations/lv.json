@@ -64,6 +64,7 @@
       "min_value": "Minimālā vērtība",
       "name": "Nosaukums",
       "percent": "Procenti",
+      "reverse_secondary_info_row": "Mainīt joslu un tekstu",
       "secondary": "Papildu informācija",
       "tap_action": "Pieskāriens",
       "text_shadow": "Pievienot teksta ēnu (overlay)",

@@ -64,6 +64,7 @@
       "min_value": "Nilai minimum",
       "name": "Nama",
       "percent": "Persentase",
+      "reverse_secondary_info_row": "Tukar bilah dan teks",
       "secondary": "Informasi sekunder",
       "tap_action": "Perilaku ketuk",
       "text_shadow": "Tambahkan bayangan teks (overlay)",

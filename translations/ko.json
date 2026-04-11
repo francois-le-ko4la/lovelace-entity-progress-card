@@ -64,6 +64,7 @@
       "min_value": "최소값",
       "name": "이름",
       "percent": "퍼센트",
+      "reverse_secondary_info_row": "막대와 텍스트 교체",
       "secondary": "보조 정보",
       "tap_action": "짧게 탭 시 동작",
       "text_shadow": "텍스트 그림자 추가 (오버레이)",

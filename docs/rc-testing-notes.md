@@ -111,10 +111,21 @@ The visual editor (GUI) has been redesigned to be more intuitive:
   attribute as the maximum value for the progress bar.
 - added: `badge_color`, `badge_icon`, `bar_effect`, `bar_orientation`,
   `bar_position`, `bar_single_line`, `center_zero`, `text_shadow`,
+  `reverse_secondary_info_row`.
+
+### 🗣️ Accessibility improvements
+
+The card now properly exposes its progress bar to screen readers via ARIA
+attributes (role="progressbar", aria-valuemin, aria-valuemax, aria-valuenow).
+The icon section and decorative elements are marked as aria-hidden to avoid
+noise for assistive technologies. The card is exposed as a named region,
+allowing screen readers to navigate into its content and read the progress
+value directly.
 
 ### 🌐 Expanded Language Support
 
-This release adds six new languages, making the interface more accessible worldwide:
+This release adds six new languages, making the interface more accessible
+worldwide:
 
 - 🇦🇩 ca – Catalan / Català
 - 🌎 es-419 – Spanish (Latin America) / Español (Latinoamérica)
@@ -150,6 +161,7 @@ This release adds six new languages, making the interface more accessible worldw
   - Watermark and zero mark rendering has been redesigned to be more flexible.
   - Improved support for low/high watermark visual styles (area, line, round,
     striped, triangle, etc.).
+  - Removed duplication and cleanup
 - General refactoring and stability improvements on logs, Jinja & config
   management.
 - Added: Card/Badge template now correctly displays colors based on priority —

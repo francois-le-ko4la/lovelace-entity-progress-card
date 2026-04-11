@@ -64,6 +64,7 @@
       "min_value": "न्यूनतम मान",
       "name": "नाम",
       "percent": "प्रतिशत",
+      "reverse_secondary_info_row": "बार और टेक्स्ट बदलें",
       "secondary": "सहायक जानकारी",
       "tap_action": "टैप व्यवहार",
       "text_shadow": "टेक्स्ट में छाया जोड़ें (overlay)",

@@ -29,7 +29,7 @@ const VERSION = '1.5.3-dev';
 
 const META = {
   documentation: 'https://github.com/francois-le-ko4la/lovelace-entity-progress-card/',
-  cards: {
+  types: {
     card: {
       typeName: 'entity-progress-card',
       name: 'Entity Progress Card',
@@ -189,7 +189,7 @@ const HA_CONTEXT = {
   },
   entity: {
     state: { unavailable: 'unavailable', unknown: 'unknown', notFound: 'notFound', idle: 'idle', active: 'active', paused: 'paused' },
-    type: { timer: 'timer', light: 'light', cover: 'cover', fan: 'fan', climate: 'climate', counter: 'counter', number: 'number' },
+    type: { timer: 'timer', light: 'light', cover: 'cover', fan: 'fan', climate: 'climate', counter: 'counter', number: 'number', duration: 'duration', default: 'default'},
     class: { shutter: 'shutter', battery: 'battery' },
   },
   actions: {
@@ -230,7 +230,7 @@ const CARD = {
     stub: {
       template: {
         icon: HA_CONTEXT.icons.washingMachine,
-        name: 'Entity Progress Card',
+        name: META.types.card.name,
         secondary: 'Template',
         badge_icon: HA_CONTEXT.icons.update,
         badge_color: 'green',
@@ -242,14 +242,21 @@ const CARD = {
     configError: 'Invalid config',
   },
   htmlStructure: {
-    card: { element: 'ha-card' },
+    card: {
+      element: 'ha-card',
+      extraAttr: {
+        role: 'region',
+        tabindex: '0',
+        'aria-label': META.types.card.name,
+      },
+    },
     sections: {
       container: { element: 'div', class: 'container' },
       ripple: { element: 'ha-ripple' },
       belowContainer: { element: 'div', class: 'below-container' },
       topContainer: { element: 'div', class: 'top-container' },
       bottomContainer: { element: 'div', class: 'bottom-container' },
-      icon: { element: 'div', class: 'icon-section' },
+      icon: { element: 'div', class: 'icon-section', extraAttr: {'aria-hidden': 'true'} },
       content: { element: 'div', class: 'content-section' },
     },
     elements: {
@@ -258,7 +265,7 @@ const CARD = {
       ellipsisWrapper: { element: 'div', class: 'ellipsis-wrapper' },
       nameContent: { element: 'div', class: 'name' },
       nameValue: { element: 'span', class: 'name-value' },
-      nameMain: { element: 'span', class: 'name-main' },
+      nameMain: { element: 'span', class: 'name-main', id: 'entity-name' },
       nameExtra: { element: 'span', class: 'name-extra' },
       trendIndicator: {
         container: { element: 'div', class: 'trend-indicator' },
@@ -267,19 +274,30 @@ const CARD = {
       secondaryInfo: { element: 'div', class: 'secondary-info' },
       secondaryInfoWrapper: { element: 'div', class: 'secondary-info-wrapper' },
       secondaryInfoValue: { element: 'span', class: 'secondary-info-value' },
-      secondaryInfoMain: { element: 'span', class: 'secondary-info-main' },
+      secondaryInfoMain: { element: 'span', class: 'secondary-info-main', id: 'entity-value' },
       secondaryInfoExtra: { element: 'span', class: 'secondary-info-extra' },
       progressBar: {
-        container: { element: 'div', class: 'bar-container' },
-        bar: { element: 'div', class: 'progress-bar' },
-        inner: { element: 'div', class: 'inner' },
-        zeroMark: { element: 'div', class: 'zero' },
-        lowWatermark: { element: 'div', class: 'low' },
-        highWatermark: { element: 'div', class: 'high' },
+        container: {
+          element: 'div',
+          class: 'bar-container',
+          extraAttr: {
+            role: 'progressbar',
+            'aria-valuemin': 0,
+            'aria-valuemax': 100,
+            'aria-valuenow': 0,
+            'aria-labelledby': 'entity-name',
+            'aria-describedby': 'entity-value',
+          },
+        },
+        bar: { element: 'div', class: 'progress-bar', extraAttr: {'aria-hidden': 'true'} },
+        inner: { element: 'div', class: 'inner', extraAttr: {'aria-hidden': 'true'}  },
+        zeroMark: { element: 'div', class: 'zero', extraAttr: {'aria-hidden': 'true'} },
+        lowWatermark: { element: 'div', class: 'low', extraAttr: {'aria-hidden': 'true'} },
+        highWatermark: { element: 'div', class: 'high', extraAttr: {'aria-hidden': 'true'} },
         watermark: { class: 'progress-bar-wm' },
       },
       badge: {
-        container: { element: 'div', class: 'badge' },
+        container: { element: 'div', class: 'badge', extraAttr: {'aria-hidden': 'true'} },
         icon: { element: 'ha-icon', class: 'badge-icon' },
       },
     },
@@ -467,7 +485,7 @@ CARD.config.defaults = {
 };
 
 CARD.console = {
-  message: `%c✨${META.cards.card.typeName.toUpperCase()} ${VERSION} IS INSTALLED.`,
+  message: `%c✨${META.types.card.typeName.toUpperCase()} ${VERSION} IS INSTALLED.`,
   css: 'color:orange; background-color:black; font-weight: bold;',
   link: '      For more details, check the README: https://github.com/francois-le-ko4la/lovelace-entity-progress-card',
 };
@@ -638,6 +656,7 @@ const TRANSLATIONS = {
         min_value: 'القيمة الدنيا',
         name: 'الاسم',
         percent: 'النسبة المئوية',
+        reverse_secondary_info_row: 'تبديل الشريط والنص',
         secondary: 'معلومات ثانوية',
         tap_action: 'الإجراء عند النقر القصير',
         text_shadow: 'إضافة ظل للنص (overlay)',
@@ -751,6 +770,7 @@ const TRANSLATIONS = {
         min_value: 'ন্যূনতম মান',
         name: 'নাম',
         percent: 'শতাংশ',
+        reverse_secondary_info_row: 'বার এবং টেক্সট অদলবদল করুন',
         secondary: 'দ্বিতীয় তথ্য',
         tap_action: 'ট্যাপ আচরণ',
         text_shadow: 'টেক্সটে ছায়া যোগ করুন (overlay)',
@@ -864,6 +884,7 @@ const TRANSLATIONS = {
         min_value: 'Valor mínim',
         name: 'Nom',
         percent: 'Percentatge',
+        reverse_secondary_info_row: 'Intercanvia barra i text',
         secondary: 'Informació secundària',
         tap_action: 'Acció al tocar breument',
         text_shadow: 'Afegir ombra al text (overlay)',
@@ -977,6 +998,7 @@ const TRANSLATIONS = {
         min_value: 'Minimální hodnota',
         name: 'Název',
         percent: 'Procento',
+        reverse_secondary_info_row: 'Zaměnit lištu a text',
         secondary: 'Sekundární informace',
         tap_action: 'Chování při klepnutí',
         text_shadow: 'Přidat stín textu (overlay)',
@@ -1090,6 +1112,7 @@ const TRANSLATIONS = {
         min_value: 'Minimumsværdi',
         name: 'Navn',
         percent: 'Procent',
+        reverse_secondary_info_row: 'Skift bjælke og tekst',
         secondary: 'Sekundær info',
         tap_action: 'Handling ved kort tryk',
         text_shadow: 'Tilføj tekstskygge (overlay)',
@@ -1203,6 +1226,7 @@ const TRANSLATIONS = {
         min_value: 'Mindestwert',
         name: 'Name',
         percent: 'Prozent',
+        reverse_secondary_info_row: 'Barra und Text tauschen',
         secondary: 'Sekundäre Informationen',
         tap_action: 'Aktion bei kurzem Tippen',
         text_shadow: 'Textschatten hinzufügen (Overlay)',
@@ -1316,6 +1340,7 @@ const TRANSLATIONS = {
         min_value: 'Ελάχιστη τιμή',
         name: 'Όνομα',
         percent: 'Ποσοστό',
+        reverse_secondary_info_row: 'Εναλλαγή γραμμής και κειμένου',
         secondary: 'Πρόσθετες πληροφορίες',
         tap_action: 'Ενέργεια κατά το σύντομο πάτημα',
         text_shadow: 'Προσθήκη σκιάς στο κείμενο (overlay)',
@@ -1429,6 +1454,7 @@ const TRANSLATIONS = {
         min_value: 'Minimum value',
         name: 'Name',
         percent: 'Percentage',
+        reverse_secondary_info_row: 'Swap bar and text',
         secondary: 'Secondary info',
         tap_action: 'Tap behavior',
         text_shadow: 'Add text shadow (overlay)',
@@ -1542,6 +1568,7 @@ const TRANSLATIONS = {
         min_value: 'Valor mínimo',
         name: 'Nombre',
         percent: 'Porcentaje',
+        reverse_secondary_info_row: 'Intercambiar barra y texto',
         secondary: 'Información secundaria',
         tap_action: 'Acción al tocar',
         text_shadow: 'Agregar sombra al texto (overlay)',
@@ -1655,6 +1682,7 @@ const TRANSLATIONS = {
         min_value: 'Valor mínimo',
         name: 'Nombre',
         percent: 'Porcentaje',
+        reverse_secondary_info_row: 'Intercambiar barra y texto',
         secondary: 'Información secundaria',
         tap_action: 'Acción al pulsar brevemente',
         text_shadow: 'Añadir sombra al texto (overlay)',
@@ -1768,6 +1796,7 @@ const TRANSLATIONS = {
         min_value: 'Minimaalne väärtus',
         name: 'Nimi',
         percent: 'Protsent',
+        reverse_secondary_info_row: 'Vaheta riba ja tekst',
         secondary: 'Täiendav info',
         tap_action: 'Puudutuse tegevus',
         text_shadow: 'Lisa teksti vari (overlay)',
@@ -1881,6 +1910,7 @@ const TRANSLATIONS = {
         min_value: 'Minimiarvo',
         name: 'Nimi',
         percent: 'Prosentti',
+        reverse_secondary_info_row: 'Vaihda palkki ja teksti',
         secondary: 'Lisätiedot',
         tap_action: 'Toiminto lyhyellä napautuksella',
         text_shadow: 'Lisää tekstivarjo (overlay)',
@@ -1994,6 +2024,7 @@ const TRANSLATIONS = {
         min_value: 'Valeur minimum',
         name: 'Nom',
         percent: 'Pourcentage',
+        reverse_secondary_info_row: 'Intervertir barre et texte',
         secondary: 'Information secondaire',
         tap_action: 'Comportement lors d\'un appui court',
         text_shadow: 'Ajouter une ombre au texte (overlay)',
@@ -2107,6 +2138,7 @@ const TRANSLATIONS = {
         min_value: 'न्यूनतम मान',
         name: 'नाम',
         percent: 'प्रतिशत',
+        reverse_secondary_info_row: 'बार और टेक्स्ट बदलें',
         secondary: 'सहायक जानकारी',
         tap_action: 'टैप व्यवहार',
         text_shadow: 'टेक्स्ट में छाया जोड़ें (overlay)',
@@ -2220,6 +2252,7 @@ const TRANSLATIONS = {
         min_value: 'Minimalna vrijednost',
         name: 'Ime',
         percent: 'Postotak',
+        reverse_secondary_info_row: 'Zamijeni traku i tekst',
         secondary: 'Sekundarne informacije',
         tap_action: 'Radnja na kratki dodir',
         text_shadow: 'Dodaj sjenu tekstu (overlay)',
@@ -2333,6 +2366,7 @@ const TRANSLATIONS = {
         min_value: 'Minimális érték',
         name: 'Név',
         percent: 'Százalék',
+        reverse_secondary_info_row: 'Cserélje fel a sávot és a szöveget',
         secondary: 'Másodlagos információ',
         tap_action: 'Koppintás művelet',
         text_shadow: 'Szöveg árnyék hozzáadása (overlay)',
@@ -2446,6 +2480,7 @@ const TRANSLATIONS = {
         min_value: 'Nilai minimum',
         name: 'Nama',
         percent: 'Persentase',
+        reverse_secondary_info_row: 'Tukar bilah dan teks',
         secondary: 'Informasi sekunder',
         tap_action: 'Perilaku ketuk',
         text_shadow: 'Tambahkan bayangan teks (overlay)',
@@ -2559,6 +2594,7 @@ const TRANSLATIONS = {
         min_value: 'Valore minimo',
         name: 'Nome',
         percent: 'Percentuale',
+        reverse_secondary_info_row: 'Scambia barra e testo',
         secondary: 'Informazione secondaria',
         tap_action: 'Azione al tocco breve',
         text_shadow: 'Aggiungi ombra al testo (overlay)',
@@ -2672,6 +2708,7 @@ const TRANSLATIONS = {
         min_value: '最小値',
         name: '名前',
         percent: 'パーセント',
+        reverse_secondary_info_row: 'バーとテキストを入れ替える',
         secondary: '補足情報',
         tap_action: '短くタップしたときの動作',
         text_shadow: 'テキストに影を追加 (オーバーレイ)',
@@ -2785,6 +2822,7 @@ const TRANSLATIONS = {
         min_value: '최소값',
         name: '이름',
         percent: '퍼센트',
+        reverse_secondary_info_row: '막대와 텍스트 교체',
         secondary: '보조 정보',
         tap_action: '짧게 탭 시 동작',
         text_shadow: '텍스트 그림자 추가 (오버레이)',
@@ -2898,6 +2936,7 @@ const TRANSLATIONS = {
         min_value: 'Minimali reikšmė',
         name: 'Pavadinimas',
         percent: 'Procentai',
+        reverse_secondary_info_row: 'Sukeisti juostą ir tekstą',
         secondary: 'Papildoma informacija',
         tap_action: 'Bakstelėjimo veiksmas',
         text_shadow: 'Pridėti teksto šešėlį (overlay)',
@@ -3011,6 +3050,7 @@ const TRANSLATIONS = {
         min_value: 'Minimālā vērtība',
         name: 'Nosaukums',
         percent: 'Procenti',
+        reverse_secondary_info_row: 'Mainīt joslu un tekstu',
         secondary: 'Papildu informācija',
         tap_action: 'Pieskāriens',
         text_shadow: 'Pievienot teksta ēnu (overlay)',
@@ -3124,6 +3164,7 @@ const TRANSLATIONS = {
         min_value: 'Минимална вредност',
         name: 'Име',
         percent: 'Процент',
+        reverse_secondary_info_row: 'Сменете ги лентата и текстот',
         secondary: 'Секундарни информации',
         tap_action: 'Дејство при краток допир',
         text_shadow: 'Додај сенка на текст (overlay)',
@@ -3237,6 +3278,7 @@ const TRANSLATIONS = {
         min_value: 'Minste verdi',
         name: 'Navn',
         percent: 'Prosent',
+        reverse_secondary_info_row: 'Bytt linje og tekst',
         secondary: 'Sekundær informasjon',
         tap_action: 'Handling ved kort trykk',
         text_shadow: 'Legg til tekstskygge (overlay)',
@@ -3350,6 +3392,7 @@ const TRANSLATIONS = {
         min_value: 'Minimale waarde',
         name: 'Naam',
         percent: 'Percentage',
+        reverse_secondary_info_row: 'Balk en tekst omwisselen',
         secondary: 'Secundaire informatie',
         tap_action: 'Actie bij korte tik',
         text_shadow: 'Tekstschaduw toevoegen (overlay)',
@@ -3463,6 +3506,7 @@ const TRANSLATIONS = {
         min_value: 'Wartość minimalna',
         name: 'Nazwa',
         percent: 'Procent',
+        reverse_secondary_info_row: 'Zamień pasek i tekst',
         secondary: 'Informacja dodatkowa',
         tap_action: 'Akcja przy krótkim naciśnięciu',
         text_shadow: 'Dodaj cień tekstu (overlay)',
@@ -3576,6 +3620,7 @@ const TRANSLATIONS = {
         min_value: 'Valor mínimo',
         name: 'Nome',
         percent: 'Porcentagem',
+        reverse_secondary_info_row: 'Trocar barra e texto',
         secondary: 'Informação secundária',
         tap_action: 'Ação ao tocar',
         text_shadow: 'Adicionar sombra ao texto (overlay)',
@@ -3689,6 +3734,7 @@ const TRANSLATIONS = {
         min_value: 'Valor mínimo',
         name: 'Nome',
         percent: 'Percentagem',
+        reverse_secondary_info_row: 'Trocar barra e texto',
         secondary: 'Informação secundária',
         tap_action: 'Ação ao toque curto',
         text_shadow: 'Adicionar sombra ao texto (overlay)',
@@ -3802,6 +3848,7 @@ const TRANSLATIONS = {
         min_value: 'Valoare minimă',
         name: 'Nume',
         percent: 'Procent',
+        reverse_secondary_info_row: 'Schimbați bara și textul',
         secondary: 'Informație secundară',
         tap_action: 'Acțiune la apăsare scurtă',
         text_shadow: 'Adaugă umbră textului (overlay)',
@@ -3915,6 +3962,7 @@ const TRANSLATIONS = {
         min_value: 'Минимальное значение',
         name: 'Название',
         percent: 'Процент',
+        reverse_secondary_info_row: 'Поменять местами панель и текст',
         secondary: 'Дополнительная информация',
         tap_action: 'Поведение при нажатии',
         text_shadow: 'Добавить тень к тексту (overlay)',
@@ -4028,6 +4076,7 @@ const TRANSLATIONS = {
         min_value: 'Minimálna hodnota',
         name: 'Názov',
         percent: 'Percento',
+        reverse_secondary_info_row: 'Vymeňte lištu a text',
         secondary: 'Sekundárna informácia',
         tap_action: 'Akcia pri ťuknutí',
         text_shadow: 'Pridať tieň textu (overlay)',
@@ -4141,6 +4190,7 @@ const TRANSLATIONS = {
         min_value: 'Najmanjša vrednost',
         name: 'Ime',
         percent: 'Odstotek',
+        reverse_secondary_info_row: 'Zamenjaj vrstico in besedilo',
         secondary: 'Sekundarne informacije',
         tap_action: 'Akcija ob tap',
         text_shadow: 'Dodaj senco besedila (overlay)',
@@ -4254,6 +4304,7 @@ const TRANSLATIONS = {
         min_value: 'Minsta värde',
         name: 'Namn',
         percent: 'Procent',
+        reverse_secondary_info_row: 'Byt ut stapel och text',
         secondary: 'Sekundär information',
         tap_action: 'Åtgärd vid kort tryck',
         text_shadow: 'Lägg till textskugga (overlay)',
@@ -4367,6 +4418,7 @@ const TRANSLATIONS = {
         min_value: '',
         name: '',
         percent: '',
+        reverse_secondary_info_row: '',
         secondary: '',
         tap_action: '',
         text_shadow: '',
@@ -4480,6 +4532,7 @@ const TRANSLATIONS = {
         min_value: 'ค่าต่ำสุด',
         name: 'ชื่อ',
         percent: 'เปอร์เซ็นต์',
+        reverse_secondary_info_row: 'แถบและข้อความสลับกัน',
         secondary: 'ข้อมูลรอง',
         tap_action: 'พฤติกรรมการแตะ',
         text_shadow: 'เพิ่มเงาให้ข้อความ (overlay)',
@@ -4593,6 +4646,7 @@ const TRANSLATIONS = {
         min_value: 'Minimum değer',
         name: 'Ad',
         percent: 'Yüzde',
+        reverse_secondary_info_row: 'Çubuğu ve metni değiştir',
         secondary: 'İkincil bilgi',
         tap_action: 'Kısa dokunma davranışı',
         text_shadow: 'Metne gölge ekle (overlay)',
@@ -4706,6 +4760,7 @@ const TRANSLATIONS = {
         min_value: 'Мінімальне значення',
         name: 'Назва',
         percent: 'Відсоток',
+        reverse_secondary_info_row: 'Поміняти місцями панель і текст',
         secondary: 'Додаткова інформація',
         tap_action: 'Поведінка при дотику',
         text_shadow: 'Додати тінь до тексту (overlay)',
@@ -4819,6 +4874,7 @@ const TRANSLATIONS = {
         min_value: 'Giá trị tối thiểu',
         name: 'Tên',
         percent: 'Phần trăm',
+        reverse_secondary_info_row: 'Hoán đổi thanh và văn bản',
         secondary: 'Thông tin phụ',
         tap_action: 'Hành vi chạm',
         text_shadow: 'Thêm bóng cho văn bản (overlay)',
@@ -4932,6 +4988,7 @@ const TRANSLATIONS = {
         min_value: '最小值',
         name: '名称',
         percent: '百分比',
+        reverse_secondary_info_row: '交换进度条和文本',
         secondary: '次要信息',
         tap_action: '点击动作',
         text_shadow: '添加文本阴影（overlay）',
@@ -5045,6 +5102,7 @@ const TRANSLATIONS = {
         min_value: '最小值',
         name: '名稱',
         percent: '百分比',
+        reverse_secondary_info_row: '交換進度條和文字',
         secondary: '次要資訊',
         tap_action: '點擊操作',
         text_shadow: '文字陰影（疊加）',
@@ -5825,8 +5883,9 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
 /* --- Base ---*/
 
 .${CARD.htmlStructure.elements.progressBar.inner.class} {
-  --inner-radius: 0;
-  --_r: var(--epb-progress-inner-radius, var(--inner-radius));
+  --inner-radius: 0; /* radius value */
+  --_r: var(--epb-progress-inner-radius, var(--inner-radius)); /* user choice Vs system value */
+  --inner-border-radius: var(--_r); /* schema */
   
   position: absolute;
   inset: var(--inner-inset, 0 0 0 0);
@@ -5859,11 +5918,6 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
   transition: transform var(--progress-transition);
 }
 
-/* --- STD Horizontal ---*/
-.horizontal-bar .${CARD.htmlStructure.elements.progressBar.inner.class}.positive {
-  --inner-border-radius: var(--_r);
-}
-
 /*  center zero - positiveInner */
 .center-zero.horizontal-bar .${CARD.htmlStructure.elements.progressBar.inner.class}.positive {
   --inner-inset: 0 0 0 50%;
@@ -5879,12 +5933,11 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
 
 /* --- Vertical --- */
 .vertical-bar .${CARD.htmlStructure.elements.progressBar.inner.class}.positive {
-  --inner-border-radius: var(--_r) var(--_r) 0 0;
   --inner-transform-origin: bottom;
+  --inner-border-radius: var(--_r) var(--_r) 0 0;
 }
 .vertical-bar.center-zero .${CARD.htmlStructure.elements.progressBar.inner.class}.positive {
   --inner-inset: 0 0 50% 0;
-  --inner-transform-origin: bottom;
 }
 .vertical-bar.center-zero .${CARD.htmlStructure.elements.progressBar.inner.class}.negative {
   --inner-inset: 50% 0 0 0;
@@ -6532,10 +6585,18 @@ const CONTENT_SLOT = '{{content}}';
 
 const Element = (obj, extraClass = '') => {
   const className = `${obj.class} ${extraClass}`.trim();
+  const renderAttrs = (attrsObj = {}) =>
+    Object.entries(attrsObj)
+      .map(([key, value]) => `${key}="${value}"`)
+      .join(' ');
+
   return {
     tag: obj.element,
     class: className,
-    html: (content = '', attrs = '') => `<${obj.element} class="${className}" ${attrs}>${content}</${obj.element}>`,
+    html: (content = '', attrs = {}) => {
+      const allAttrs = { ...(obj.id ? { id: obj.id } : {}), ...(obj.extraAttr || {}), ...attrs };
+      return `<${obj.element} class="${className}" ${renderAttrs(allAttrs)}>${content}</${obj.element}>`;
+    },
   };
 };
 
@@ -6575,7 +6636,6 @@ const StructureElements = {
   progressBar: (options) => {
     const extraClass = options.barPosition === 'overlay' ? 'overlay' : '';
     const isCenterZero = options.barType === 'centerZero';
-
     const marks =
       Element(CARD.htmlStructure.elements.progressBar.lowWatermark, 'watermark mark').html() +
       Element(CARD.htmlStructure.elements.progressBar.highWatermark, 'watermark mark').html() +
@@ -6585,6 +6645,7 @@ const StructureElements = {
 
     return Element(CARD.htmlStructure.elements.progressBar.container, extraClass).html(
       Element(CARD.htmlStructure.elements.progressBar.bar, isCenterZero ? CARD.style.dynamic.progressBar.centerZero.class : 'default').html(innerHtml),
+      isCenterZero ? { 'aria-valuemin': '-100' } : {}
     );
   },
 
@@ -6822,11 +6883,13 @@ class ValueHelper {
   #isValid = false;
   #defaultValue = null;
 
+  // ─── LIFECYCLE ────────────────────────────────────────────────────────────
+
   constructor(newValue = null) {
     if (ValueHelper.#validate(newValue)) this.#defaultValue = newValue;
   }
 
-  // === PUBLIC GETTERS / SETTERS ===
+  // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
   set value(newValue) {
     this.#isValid = ValueHelper.#validate(newValue); // Appel à la méthode statique
@@ -6839,7 +6902,7 @@ class ValueHelper {
     return this.#isValid;
   }
 
-  // === VALIDATION ===
+  // ─── VALIDATION ───────────────────────────────────────────────────────────
 
   static #validate(value) {
     return Number.isFinite(value);
@@ -6863,7 +6926,7 @@ class DecimalHelper {
     if (DecimalHelper.#validate(newValue)) this.#defaultValue = newValue;
   }
 
-  // === PUBLIC GETTERS / SETTERS ===
+  // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
   set value(newValue) {
     this.#isValid = DecimalHelper.#validate(newValue);
@@ -6876,7 +6939,7 @@ class DecimalHelper {
     return this.#isValid;
   }
 
-  // === VALIDATION ===
+  // ─── VALIDATION ───────────────────────────────────────────────────────────
 
   static #validate(value) {
     return Number.isInteger(value) && value >= 0;
@@ -6895,7 +6958,7 @@ class UnitHelper {
   #value = CARD.config.unit.default;
   #isDisabled = false;
 
-  // === PUBLIC GETTERS / SETTERS ===
+  // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
   set value(newValue) {
     this.#value = newValue.trim() ?? CARD.config.unit.default;
@@ -6916,7 +6979,7 @@ class UnitHelper {
     return this.#value.toLowerCase() === CARD.config.unit.flexTimer;
   }
 
-  // === PUBLIC API METHODS ===
+  // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
   toString() {
     return this.#isDisabled ? '' : this.#value;
@@ -6948,7 +7011,7 @@ class PercentHelper {
     this.#hassProvider = HassProviderSingleton.getInstance();
   }
 
-  // === PUBLIC GETTERS / SETTERS ===
+  // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
   set isTimer(newValue) {
     this.#isTimer = is.boolean(newValue) ? newValue : false;
@@ -7033,10 +7096,10 @@ class PercentHelper {
     return this.#isCenterZero;
   }
 
-  // === PUBLIC API METHODS ===
+  // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
   valueForThemes(isCustomTheme, valueBasedOnPercentage) {
-    /****************************************************************************************
+    /*
      * Calculates the value to display based on the selected theme and unit system.
      *
      * - If the unit is Fahrenheit, the temperature is converted to Celsius before returning.
@@ -7087,7 +7150,7 @@ class ThemeManager {
   #currentStyle = null;
   #interpolate = false;
 
-  // === PUBLIC GETTERS / SETTERS ===
+  // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
   set theme(newTheme) {
     if (is.nullish(newTheme) || !has.validKey(THEME, newTheme)) {
@@ -7151,7 +7214,7 @@ class ThemeManager {
     return this.#barColor;
   }
 
-  // === PRIVATE METHODS ===
+  // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
 
   #reset() {
     [
@@ -7247,7 +7310,7 @@ class ThemeManager {
     });
   }
 
-  // === PUBLIC API METHODS ===
+  // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
   static adaptColor(curColor) {
     return HA_CONTEXT.haColors.get(curColor) ?? curColor;
@@ -7296,7 +7359,7 @@ class HassProviderSingleton {
     HassProviderSingleton.#allowInit = false;
   }
 
-  // === PUBLIC GETTERS / SETTERS ===
+  // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
   set hass(hass) {
     if (!hass) return;
@@ -7345,7 +7408,7 @@ class HassProviderSingleton {
     return year > 2025 || (year === 2025 && month >= 3);
   }
 
-  // === PUBLIC API METHODS ===
+  // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
   localize(key) {
     const result = key.split('.').reduce((obj, k) => obj?.[k], this.#translations);
@@ -7405,11 +7468,6 @@ class HassProviderSingleton {
     const state = this.getEntityStateObj(entityId)?.state;
     return state !== 'unavailable' && state !== 'unknown';
   }
-  getFormatedEntityAttributeName(entityId, attribute) {
-    /* OLD ? */
-    const stateObj = this.getEntityStateObj(entityId);
-    return this.#hass?.formatEntityAttributeName?.(stateObj, attribute) ?? '';
-  }
   getRelativeTime(curTime) {
     if (!curTime) return '';
 
@@ -7467,7 +7525,8 @@ class ChangeTracker {
   constructor() {
     this.#log = Logger.create('ChangeTracker', this.#debug ? SEV.debug : SEV.info);
   }
-  // === PUBLIC GETTERS / SETTERS ===
+
+  // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
   set hassState(hass) {
     this.#updated = false;
@@ -7489,7 +7548,7 @@ class ChangeTracker {
     return this.#updated;
   }
 
-  // === PRIVATE METHODS ===
+  // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
 
   _hasChanged(newHass) {
     if (this.#firstTime) {
@@ -7518,7 +7577,7 @@ class ChangeTracker {
     }
   }
 
-  // === PUBLIC API METHODS ===
+  // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
   watchEntity(entityId) {
     if (entityId) {
@@ -7545,15 +7604,26 @@ class EntityHelper {
   #state = null;
   #domain = null;
   #entityType = null;
+  #entityTypeFlags = { isTimer: false, isDuration: false, isNumber: false, isCounter: false, isSynced: false };
   stateContent = [];
+  static #handleRefreshType = new Map([
+    [HA_CONTEXT.entity.type.timer, (self) => self._manageTimerEntity()],
+    [HA_CONTEXT.entity.type.duration, (self) => self._manageDurationEntity()],
+    [HA_CONTEXT.entity.type.counter, (self) => self._manageCounterAndNumberEntity('minimum', 'maximum')],
+    [HA_CONTEXT.entity.type.number, (self) => self._manageCounterAndNumberEntity('min', 'max')],
+    [HA_CONTEXT.entity.type.default, (self) => self._manageStdEntity()],
+  ]);
 
   constructor() {
     this.#hassProvider = HassProviderSingleton.getInstance();
   }
 
+  // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
+
   set entityId(newValue) {
     this.#entityId = newValue;
     this.#entityType = null;
+    this.#entityTypeFlags.isSynced = false;
     this.#value = 0;
     this.#domain = HassProviderSingleton.getEntityDomain(newValue);
     this.#isValid = this.#hassProvider.hasEntity(this.#entityId);
@@ -7562,7 +7632,6 @@ class EntityHelper {
   get entityId() {
     return this.#entityId;
   }
-
   set attribute(newValue) {
     this.#attribute = newValue;
   }
@@ -7581,21 +7650,86 @@ class EntityHelper {
   get isAvailable() {
     return this.#hassProvider.isEntityAvailable(this.#entityId);
   }
+  get attributes() {
+    return this.#isValid && !this.entityType.isCounter && !this.entityType.isNumber && !this.entityType.isDuration && !this.entityType.isTimer
+      ? this.#hassProvider.getNumericAttributes(this.#entityId)
+      : {};
+  }
+  get hasAttribute() {
+    return this.#isValid && Object.keys(this.attributes ?? {}).length > 0;
+  }
+  get defaultAttribute() {
+    return HA_CONTEXT.attributeMapping[this.#domain]?.attribute ?? null;
+  }
+  get name() {
+    return this.#hassProvider.getEntityProp(this.#entityId, 'friendly_name');
+  }
+  get stateObj() {
+    return this.#hassProvider.getEntityStateObj(this.#entityId);
+  }
+  get formatedEntityState() {
+    return this.#hassProvider.getEntityProp(this.#entityId, 'state', true);
+  }
+  get unit() {
+    if (!this.#isValid) return null;
+    if (this.entityType.isTimer) return CARD.config.unit.flexTimer;
+    if (this.entityType.isDuration) return CARD.config.unit.second;
+    if (this.entityType.isCounter) return CARD.config.unit.disable;
 
-  static #handleRefreshType = new Map([
-    ['timer', (self) => self._manageTimerEntity()],
-    ['duration', (self) => self._manageDurationEntity()],
-    ['counter', (self) => self._manageCounterAndNumberEntity('minimum', 'maximum')],
-    ['number', (self) => self._manageCounterAndNumberEntity('min', 'max')],
-    ['default', (self) => self._manageStdEntity()],
-  ]);
+    return this.#hassProvider.getEntityProp(this.#entityId, 'unit_of_measurement');
+  }
+  get precision() {
+    return this.#isValid ? (this.#hassProvider.getEntityProp(this.#entityId, 'display_precision') ?? null) : null;
+  }
+  get entityType() {
+    if (!this.#entityTypeFlags.isSynced) {
+      const type = this.getEntityType();
+      const key = `is${type.charAt(0).toUpperCase() + type.slice(1)}`;
+      this.#entityTypeFlags = { isTimer: false, isDuration: false, isNumber: false, isCounter: false, isSynced: true };
+      this.#entityTypeFlags[key] = true;
+    }
+    return this.#entityTypeFlags;
+  }
+  get hasShapeByDefault() {
+    return [HA_CONTEXT.entity.type.light, HA_CONTEXT.entity.type.fan].includes(this.#domain);
+  }
+  get defaultColor() {
+    const colorMap = {
+      [HA_CONTEXT.entity.type.timer]: this.value?.state === HA_CONTEXT.entity.state.active ? CARD.style.color.active : CARD.style.color.inactive,
+      [HA_CONTEXT.entity.type.cover]: this.value > 0 ? CARD.style.color.coverActive : CARD.style.color.inactive,
+      [HA_CONTEXT.entity.type.light]: this.value > 0 ? CARD.style.color.lightActive : CARD.style.color.inactive,
+      [HA_CONTEXT.entity.type.fan]: this.value > 0 ? CARD.style.color.fanActive : CARD.style.color.inactive,
+      [HA_CONTEXT.entity.type.climate]: this.#getClimateColor(),
+      [HA_CONTEXT.entity.class.battery]: this.#getBatteryColor(),
+    };
+
+    return colorMap[this.#domain] ?? colorMap[this.#hassProvider.getEntityProp(this.#entityId, 'device_class')] ?? null;
+  }
+  get stateContentToString() {
+    const results = [];
+
+    for (const attr of this.stateContent) {
+      switch (attr) {
+        case 'state':
+          results.push(this.#hassProvider.getEntityProp(this.#entityId, 'state', true));
+          break;
+        default:
+          results.push(this.#hassProvider.getEntityProp(this.#entityId, attr, true));
+          break;
+      }
+    }
+
+    return results.length !== 0 ? results.join(CARD.config.separator) : '';
+  }
+
+  // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
   getEntityType() {
     this.#entityType ??= EntityHelper.#handleRefreshType.has(this.#domain)
       ? this.#domain
-      : this.#hassProvider.getEntityProp(this.#entityId, 'device_class') === 'duration' && !this.#attribute
-        ? 'duration'
-        : 'default';
+      : this.#hassProvider.getEntityProp(this.#entityId, 'device_class') === HA_CONTEXT.entity.type.duration && !this.#attribute
+        ? HA_CONTEXT.entity.type.duration
+        : HA_CONTEXT.entity.type.default;
 
     return this.#entityType;
   }
@@ -7616,9 +7750,11 @@ class EntityHelper {
     if (!this.isValid || !this.isAvailable) return;
 
     const type = this.getEntityType();
-    const handler = EntityHelper.#handleRefreshType.get(type) ?? EntityHelper.#handleRefreshType.get('default');
+    const handler = EntityHelper.#handleRefreshType.get(type) ?? EntityHelper.#handleRefreshType.get(HA_CONTEXT.entity.type.default);
     handler(this);
   }
+
+  // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
 
   _manageStdEntity() {
     this.#attribute = this.#attribute || HA_CONTEXT.attributeMapping[this.#domain]?.attribute;
@@ -7682,53 +7818,6 @@ class EntityHelper {
     this.#isValid = unit !== undefined;
   }
 
-  get attributes() {
-    return this.#isValid && !this.isCounter && !this.isNumber && !this.isDuration && !this.isTimer
-      ? this.#hassProvider.getNumericAttributes(this.#entityId)
-      : {};
-  }
-  get hasAttribute() {
-    return this.#isValid && Object.keys(this.attributes ?? {}).length > 0;
-  }
-  get defaultAttribute() {
-    return HA_CONTEXT.attributeMapping[this.#domain]?.attribute ?? null;
-  }
-  get name() {
-    return this.#hassProvider.getEntityProp(this.#entityId, 'friendly_name');
-  }
-  get stateObj() {
-    return this.#hassProvider.getEntityStateObj(this.#entityId);
-  }
-  get formatedEntityState() {
-    return this.#hassProvider.getEntityProp(this.#entityId, 'state', true);
-  }
-  get unit() {
-    if (!this.#isValid) return null;
-    if (this.isTimer) return CARD.config.unit.flexTimer;
-    if (this.isDuration) return CARD.config.unit.second;
-    if (this.isCounter) return CARD.config.unit.disable;
-
-    return this.#hassProvider.getEntityProp(this.#entityId, 'unit_of_measurement');
-  }
-  get precision() {
-    return this.#isValid ? (this.#hassProvider.getEntityProp(this.#entityId, 'display_precision') ?? null) : null;
-  }
-  get isTimer() {
-    return this.getEntityType() === 'timer';
-  }
-  get isDuration() {
-    return this.getEntityType() === 'duration';
-  }
-  get isNumber() {
-    return this.getEntityType() === 'number';
-  }
-  get isCounter() {
-    return this.getEntityType() === 'counter';
-  }
-  get hasShapeByDefault() {
-    return [HA_CONTEXT.entity.type.light, HA_CONTEXT.entity.type.fan].includes(this.#domain);
-  }
-
   #getClimateColor() {
     const climateColorMap = {
       heat_cool: CARD.style.color.active,
@@ -7744,35 +7833,6 @@ class EntityHelper {
     if (!this.#value || this.#value <= 30) return CARD.style.color.battery.low;
     if (this.#value <= 70) return CARD.style.color.battery.medium;
     return CARD.style.color.battery.high;
-  }
-
-  get defaultColor() {
-    const colorMap = {
-      [HA_CONTEXT.entity.type.timer]: this.value?.state === HA_CONTEXT.entity.state.active ? CARD.style.color.active : CARD.style.color.inactive,
-      [HA_CONTEXT.entity.type.cover]: this.value > 0 ? CARD.style.color.coverActive : CARD.style.color.inactive,
-      [HA_CONTEXT.entity.type.light]: this.value > 0 ? CARD.style.color.lightActive : CARD.style.color.inactive,
-      [HA_CONTEXT.entity.type.fan]: this.value > 0 ? CARD.style.color.fanActive : CARD.style.color.inactive,
-      [HA_CONTEXT.entity.type.climate]: this.#getClimateColor(),
-      [HA_CONTEXT.entity.class.battery]: this.#getBatteryColor(),
-    };
-
-    return colorMap[this.#domain] ?? colorMap[this.#hassProvider.getEntityProp(this.#entityId, 'device_class')] ?? null;
-  }
-  get stateContentToString() {
-    const results = [];
-
-    for (const attr of this.stateContent) {
-      switch (attr) {
-        case 'state':
-          results.push(this.#hassProvider.getEntityProp(this.#entityId, 'state', true));
-          break;
-        default:
-          results.push(this.#hassProvider.getEntityProp(this.#entityId, attr, true));
-          break;
-      }
-    }
-
-    return results.length !== 0 ? results.join(CARD.config.separator) : '';
   }
 }
 
@@ -7889,8 +7949,9 @@ class EntityOrValue {
   #activeHelper = null; // Dynamically set to EntityHelper or ValueHelper
   #helperType = { entity: 'entity', value: 'value' };
   #isEntity = null;
+  #entityTypeFlags = { isTimer: false, isDuration: false, isNumber: false, isCounter: false, isSynced: false };
 
-  // === PRIVATE METHODS (CREATION) ===
+  // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
 
   #createHelper(helperType) {
     const HelperClass = helperType === this.#helperType.entity ? EntityHelper : ValueHelper;
@@ -7900,7 +7961,7 @@ class EntityOrValue {
     }
   }
 
-  // === PUBLIC GETTERS / SETTERS ===
+  // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
   set value(newValue) {
     if (is.string(newValue)) {
@@ -7912,6 +7973,7 @@ class EntityOrValue {
     } else {
       this.#activeHelper = null;
     }
+    this.#entityTypeFlags.isSynced = false;
   }
 
   get value() {
@@ -7953,17 +8015,9 @@ class EntityOrValue {
   get stateContentToString() {
     return this.#activeHelper && this.#isEntity ? this.#activeHelper.stateContentToString : null;
   }
-  get isTimer() {
-    return this.#activeHelper && this.#isEntity ? this.#activeHelper.isTimer : false;
-  }
-  get isDuration() {
-    return this.#activeHelper && this.#isEntity ? this.#activeHelper.isDuration : false;
-  }
-  get isCounter() {
-    return this.#activeHelper && this.#isEntity ? this.#activeHelper.isCounter : false;
-  }
-  get isNumber() {
-    return this.#activeHelper && this.#isEntity ? this.#activeHelper.isNumber : false;
+  get entityType() {
+    if (this.#activeHelper && this.#isEntity && !this.#entityTypeFlags.isSynced) this.#entityTypeFlags = this.#activeHelper.entityType;
+    return this.#entityTypeFlags;
   }
   get hasShapeByDefault() {
     return this.#activeHelper && this.#isEntity ? this.#activeHelper.hasShapeByDefault : false;
@@ -7987,7 +8041,7 @@ class EntityOrValue {
     return this.#activeHelper && this.#isEntity ? this.#activeHelper.stateObj : null;
   }
 
-  // === PUBLIC API METHODS ===
+  // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
   refresh() {
     if (this.#activeHelper && this.#isEntity) this.#activeHelper.refresh();
@@ -8498,14 +8552,14 @@ class YamlSchemaFactory {
   static get feature() {
     return struct(
       types.object({
-        // === Entity & Data ===
+        // ─── Entity & Data ===
         entity: types.entityId,
         attribute: types.optionalString(),
         min_value: types.optionalNumber(0),
         max_value: types.fallbackTo(types.union(types.number, types.string), 100),
         max_value_attribute: types.optionalString(),
 
-        // === Appearance ===
+        // ─── Appearance ===
         bar_color: types.optionalString(),
         bar_size: types.enumsWithDefault(
           Object.values(CARD.style.bar.sizeOptions).map((e) => e.label),
@@ -8516,13 +8570,13 @@ class YamlSchemaFactory {
         bar_position: types.enumsWithDefault(['default', 'top', 'bottom'], 'default'),
         center_zero: types.optionalBooleanWithDefault(false),
 
-        // === Theme & Watermark ===
+        // ─── Theme & Watermark ===
         theme: types.theme(Object.keys(THEME)),
         custom_theme: types.fallbackTo(types.customTheme, SKIP_PROPERTY),
         interpolate: types.optionalBooleanWithDefault(false),
         watermark: types.watermarkObject(watermarkSchema, CARD.config.defaults.watermark),
 
-        // === Additions ===
+        // ─── Additions ===
         additions: types.optional(types.array(additionItem)),
       }),
     );
@@ -8530,7 +8584,7 @@ class YamlSchemaFactory {
   static get card() {
     return struct(
       types.object({
-        // === Entity & Data ===
+        // ─── Entity & Data ===
         entity: types.entityId,
         attribute: types.optionalString(),
         name: types.optionalString(),
@@ -8542,7 +8596,7 @@ class YamlSchemaFactory {
         max_value: types.fallbackTo(types.union(types.number, types.string), 100),
         max_value_attribute: types.optionalString(),
 
-        // === Appearance ===
+        // ─── Appearance ===
         icon: types.optionalString(),
         color: types.optionalString(),
         bar_color: types.optionalString(),
@@ -8570,27 +8624,27 @@ class YamlSchemaFactory {
         trend_indicator: types.optionalBooleanWithDefault(false),
         text_shadow: types.optionalBooleanWithDefault(false),
 
-        // === Visibility & Content ===
+        // ─── Visibility & Content ===
         hide: types.jinjaOrArrayWithValidatedElem(['icon', 'name', 'value', 'secondary_info', 'progress_bar']),
         name_info: types.optionalString(),
         custom_info: types.optionalString(),
         state_content: types.optional(types.fallbackTo(types.stateContent, SKIP_PROPERTY)),
 
-        // === Badges ===
+        // ─── Badges ===
         badge_icon: types.optionalString(),
         badge_color: types.optionalString(),
 
-        // === Theme & Watermark ===
+        // ─── Theme & Watermark ===
         // theme: types.theme(['optimal_when_low', 'optimal_when_high', 'light', 'temperature', 'humidity', 'pm25', 'voc']),
         theme: types.theme(Object.keys(THEME)),
         custom_theme: types.fallbackTo(types.customTheme, SKIP_PROPERTY),
         interpolate: types.optionalBooleanWithDefault(false),
         watermark: types.watermarkObject(watermarkSchema, CARD.config.defaults.watermark),
 
-        // === Additions ===
+        // ─── Additions ===
         additions: types.optional(types.array(additionItem)),
 
-        // === Actions ===
+        // ─── Actions ===
         tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.moreInfo),
         hold_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),
         double_tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),
@@ -8618,13 +8672,13 @@ class YamlSchemaFactory {
   static get template() {
     return struct(
       types.object({
-        // === Entity & Data ===
+        // ─── Entity & Data ===
         entity: types.optional(types.entityId),
         name: types.optionalString(),
         secondary: types.optionalString(),
         percent: types.optionalString(),
 
-        // === Appearance ===
+        // ─── Appearance ===
         icon: types.optionalString(),
         color: types.optionalString(),
         bar_color: types.optionalString(),
@@ -8656,7 +8710,7 @@ class YamlSchemaFactory {
         badge_color: types.optionalString(),
         watermark: types.watermarkObject(watermarkSchema, CARD.config.defaults.watermark),
 
-        // === Actions ===
+        // ─── Actions ===
         tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.moreInfo),
         hold_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),
         double_tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),
@@ -8709,7 +8763,8 @@ class BaseConfigHelper {
     this.#log = initLogger(this, false);
   }
 
-  // === GETTERS/SETTERS ===
+  // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
+
   get config() {
     return this._configParsed?.config;
   }
@@ -8729,12 +8784,12 @@ class BaseConfigHelper {
 
   static #logDeprecatedOption(config) {
     if (config.navigate_to !== undefined)
-      console.warn(`${META.cards.card.typeName.toUpperCase()} - navigate_to option is deprecated and has been removed.`);
+      console.warn(`${META.types.card.typeName.toUpperCase()} - navigate_to option is deprecated and has been removed.`);
     if (config.show_more_info !== undefined)
-      console.warn(`${META.cards.card.typeName.toUpperCase()} - show_more_info option is deprecated and has been removed.`);
+      console.warn(`${META.types.card.typeName.toUpperCase()} - show_more_info option is deprecated and has been removed.`);
     if (['battery', 'cpu', 'memory'].includes(config.theme))
       console.warn(
-        `${META.cards.card.typeName.toUpperCase()} - theme: ${
+        `${META.types.card.typeName.toUpperCase()} - theme: ${
           config.theme
         } is deprecated and will be removed in a future release. Please migrate to the recommended alternative...`,
       );
@@ -8941,7 +8996,7 @@ class ViewCore {
   _lowValue = new EntityOrValue();
   _highValue = new EntityOrValue();
 
-  // === GETTERS / SETTERS ===
+  // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
   set config(config) {
     if (!config) {
@@ -8975,20 +9030,17 @@ class ViewCore {
   get entity() {
     return this.config ? this.config.entity : undefined;
   }
-  get layout() {
-    return this.config ? this.config.layout : undefined;
-  }
   get cardSize() {
-    return this.config ? (CARD.layout.orientations[this.layout]?.grid?.grid_rows ?? 1) : CARD.layout.orientations.horizontal.grid.grid_rows;
+    return this.config ? (CARD.layout.orientations[this.config.layout]?.grid?.grid_rows ?? 1) : CARD.layout.orientations.horizontal.grid.grid_rows;
   }
   get cardLayoutOptions() {
     if (!this.config) return CARD.layout.orientations.horizontal.grid;
-    const layout = structuredClone(CARD.layout.orientations[this.layout]);
+    const layout = structuredClone(CARD.layout.orientations[this.config.layout]);
     layout.grid.grid_min_rows = this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.icon.label)
       ? 1
       : layout.grid.grid_min_rows +
         (this.config.bar_size === CARD.style.bar.sizeOptions.xlarge.label ||
-        (this.layout === 'vertical' && ['default', 'below'].includes(this.config.bar_position) && this.config.bar_size !== 'small')
+        (this.config.layout === 'vertical' && ['default', 'below'].includes(this.config.bar_position) && this.config.bar_size !== 'small')
           ? 1
           : 0);
     return layout.grid;
@@ -9005,12 +9057,6 @@ class ViewCore {
   get iconColor() {
     return this.entity && !this._configHelper.config.color ? this._getEntityColor() : null;
   }
-  get barOrientation() {
-    return this._currentValue.isTimer && this.config.bar_orientation === null ? 'rtl' : this.config.bar_orientation;
-  }
-  get barSize() {
-    return this.config.bar_size;
-  }
   get hasClickableIcon() {
     return ViewCore.#hasAction([this._configHelper.action.icon.tap, this._configHelper.action.icon.hold, this._configHelper.action.icon.doubleTap]);
   }
@@ -9018,12 +9064,11 @@ class ViewCore {
     return ViewCore.#hasAction([this._configHelper.action.card.tap, this._configHelper.action.card.hold, this._configHelper.action.card.doubleTap]);
   }
   get hasReversedSecondaryInfoRow() {
-    return this.config.reverse_secondary_info_row; // === true
+    return this.config.reverse_secondary_info_row; // ─── true
   }
   get hasVisibleShape() {
     return this.config.force_circular_background || this._hasDefaultShape || this._hasInteractiveShape; // this.config.force_circular_background === true
   }
-
   get _hasDefaultShape() {
     return this._currentValue.hasShapeByDefault && ViewCore.#hasAction([this._configHelper.action.icon.tap]);
   }
@@ -9049,7 +9094,7 @@ class ViewCore {
       : null;
   }
 
-  // === PUBLIC API METHODS ===
+  // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
   getTrend(currentPercent) {
     const result =
@@ -9067,7 +9112,7 @@ class ViewCore {
     return this._hasInConfigArray('bar_effect', component);
   }
 
-  // === PRIVATE METHODS ===
+  // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
 
   _hasInConfigArray(key, value) {
     return is.array(this.config?.[key]) && this.config[key].includes(value);
@@ -9085,6 +9130,17 @@ class ViewCore {
  * required for creating cards and badges. This class handles entity states, theme management,
  * percentage calculations, timers, and provides a complete API for card rendering.
  *
+ *       ViewCore
+ *       │
+ *       ├── ViewBase
+ *       │   ├── CardView                  (CardConfigHelper)
+ *       │   ├── BadgeView                 (BadgeConfigHelper)
+ *       │   └── FeatureView               (FeatureConfigHelper)
+ *       │
+ *       └── (direct)
+ *           ├── CardTemplateView          (TemplateConfigHelper)
+ *           └── BadgeTemplateView         (BadgeTemplateConfigHelper)
+ * 
  * @class
  * @extends ViewCore
  * @description Manages the complete lifecycle of card display including:
@@ -9133,7 +9189,7 @@ class ViewBase extends ViewCore {
   #maxValue = new EntityOrValue();
   #entityCollection = new EntityCollectionHelper();
 
-  // === PUBLIC GETTERS / SETTERS ===
+  // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
   get hasValidatedConfig() {
     return this._configHelper.isValid;
@@ -9172,7 +9228,7 @@ class ViewBase extends ViewCore {
       stateContent: this._configHelper.stateContent,
     });
 
-    if (this._currentValue.isTimer) {
+    if (this._currentValue.entityType.isTimer) {
       this.#maxValue.value = CARD.config.value.max;
     } else {
       this._currentValue.attribute = this._configHelper.config.attribute;
@@ -9251,13 +9307,13 @@ class ViewBase extends ViewCore {
   }
 
   get secondaryInfoMain() {
-    if (this.hasStandardEntityError || (this._currentValue.isTimer && this._currentValue.value.state === HA_CONTEXT.entity.state.idle))
+    if (this.hasStandardEntityError || (this._currentValue.entityType.isTimer && this._currentValue.value.state === HA_CONTEXT.entity.state.idle))
       return this._currentValue.formatedEntityState;
 
     const additionalInfo = this._currentValue.stateContentToString;
     if (this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.value.label)) return additionalInfo;
     const valueInfo =
-      this._currentValue.isDuration && !this._configHelper.config.unit ? this._currentValue.formatedEntityState : this.#percentHelper.toString();
+      this._currentValue.entityType.isDuration && !this._configHelper.config.unit ? this._currentValue.formatedEntityState : this.#percentHelper.toString();
 
     return additionalInfo === '' ? valueInfo : [additionalInfo, valueInfo].join(CARD.config.separator);
   }
@@ -9268,7 +9324,7 @@ class ViewBase extends ViewCore {
     if (this.isNotFound) return CARD.style.icon.badge.notFound;
     if (this.isUnavailable) return CARD.style.icon.badge.unavailable;
 
-    if (this._currentValue.isTimer) {
+    if (this._currentValue.entityType.isTimer) {
       const { state } = this._currentValue.value;
       const { paused, active } = HA_CONTEXT.entity.state;
       if (state === paused) return CARD.style.icon.badge.timer.paused;
@@ -9277,15 +9333,12 @@ class ViewBase extends ViewCore {
     return null;
   }
   get isActiveTimer() {
-    return this._currentValue.isTimer && this._currentValue.state === HA_CONTEXT.entity.state.active;
+    return this._currentValue.entityType.isTimer && this._currentValue.state === HA_CONTEXT.entity.state.active;
   }
   get refreshSpeed() {
     const rawSpeed = this._currentValue.value.duration / CARD.config.refresh.ratio;
     const clampedSpeed = Math.min(CARD.config.refresh.max, Math.max(CARD.config.refresh.min, rawSpeed));
     return Math.max(100, Math.round(clampedSpeed / 100) * 100);
-  }
-  get show_more_info() {
-    return [HA_CONTEXT.actions.default, HA_CONTEXT.actions.moreInfo.action].includes(this._configHelper.action.card.tap);
   }
   get hasVisibleShape() {
     return this._hassProvider.hasNewShapeStrategy ? super.hasVisibleShape : true;
@@ -9316,7 +9369,7 @@ class ViewBase extends ViewCore {
     return this.#entityCollection.getPercentages();
   }
 
-  // === PUBLIC API METHODS ===
+  // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
   refresh(hass) {
     super.refresh(hass); // _hassProvider, _currentValue, _lowValue, _highValue
@@ -9330,18 +9383,18 @@ class ViewBase extends ViewCore {
     this.#theme.value = this.#percentHelper.valueForThemes(this.#theme.isCustomTheme, this.#theme.isBasedOnPercentage);
   }
 
-  // === PRIVATE METHODS ===
+  // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
 
   #updatePercentHelper() {
     // update
-    this.#percentHelper.isTimer = this._currentValue.isTimer || this._currentValue.isDuration;
+    this.#percentHelper.isTimer = this._currentValue.entityType.isTimer || this._currentValue.entityType.isDuration;
     const currentUnit = this.#getCurrentUnit();
     this.#percentHelper.unit = currentUnit;
     this.#percentHelper.decimal = this.#getCurrentDecimal(currentUnit);
 
-    if (this._currentValue.isTimer) {
+    if (this._currentValue.entityType.isTimer) {
       this.#setTimerValues();
-    } else if (this._currentValue.isCounter || this._currentValue.isNumber) {
+    } else if (this._currentValue.entityType.isCounter || this._currentValue.entityType.isNumber) {
       this.#setCounterValues();
     } else {
       this.#setStdValues();
@@ -9384,9 +9437,9 @@ class ViewBase extends ViewCore {
   #getCurrentDecimal(currentUnit) {
     if (is.integer(this._configHelper.config.decimal)) return this._configHelper.config.decimal;
     if (this._currentValue.precision) return this._currentValue.precision;
-    if (this._currentValue.isTimer) return CARD.config.decimal.timer;
-    if (this._currentValue.isCounter) return CARD.config.decimal.counter;
-    if (this._currentValue.isDuration) return CARD.config.decimal.duration;
+    if (this._currentValue.entityType.isTimer) return CARD.config.decimal.timer;
+    if (this._currentValue.entityType.isCounter) return CARD.config.decimal.counter;
+    if (this._currentValue.entityType.isDuration) return CARD.config.decimal.duration;
     if (['j', 'd', 'h', 'min', 's', 'ms', 'μs'].includes(this._currentValue.unit)) return CARD.config.decimal.duration;
 
     if (this._configHelper.config.unit)
@@ -9454,7 +9507,7 @@ class ResourceManager {
     this.#log = initLogger(this, this.#debug, ['add', 'remove', 'cleanup']);
   }
 
-  // === PUBLIC GETTERS / SETTERS ===
+  // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
   get list() {
     return [...this.#resources.keys()];
@@ -9464,7 +9517,7 @@ class ResourceManager {
     return this.#resources.size;
   }
 
-  // === PUBLIC API METHODS ===
+  // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
   add(cleanupFn, id) {
     if (!is.func(cleanupFn)) {
@@ -9597,7 +9650,7 @@ class ResourceManager {
     this.#log.debug('All resources cleared.');
   }
 
-  // === PRIVATE METHODS ===
+  // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
 
   #generateUniqueId() {
     // eslint-disable-next-line no-useless-assignment
@@ -9951,7 +10004,7 @@ class ActionHelper {
  */
 class HACore extends HTMLElement {
   static version = VERSION;
-  static _baseClass = META.cards.feature.typeName;
+  static _baseClass = META.types.feature.typeName;
   static _cardStructure = new FeatureStructure();
   static _cardStyle = CARD_CSS;
   static _cardElement = CARD.htmlStructure.card.element;
@@ -9964,7 +10017,7 @@ class HACore extends HTMLElement {
   _changeTracker = new ChangeTracker();
   #isRendered = false;
 
-  // === LIFECYCLE METHODS ===
+  // ─── LIFECYCLE METHODS ===
   static get _loggedMethods() {
     return [
       'connectedCallback',
@@ -10022,7 +10075,7 @@ class HACore extends HTMLElement {
     this._resourceManager = null;
   }
 
-  // === PUBLIC API METHODS ===
+  // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
   /**
    * Updates the component's configuration and triggers static changes.
@@ -10108,7 +10161,7 @@ class HACore extends HTMLElement {
     return this.constructor._cardElement;
   }
 
-  // === CARD BUILDING ===
+  // ─── CARD BUILDING ===
 
   /**
    * Builds and initializes the structure of the custom card component.
@@ -10133,7 +10186,7 @@ class HACore extends HTMLElement {
     // customize it
     //
     this.constructor._cardStructure.options = {
-      barType: this._cardView.config.center_zero ? 'centerZero' : 'default', // === true
+      barType: this._cardView.config.center_zero ? 'centerZero' : 'default', // ─── true
       barPosition: this._cardView.config.bar_position,
     };
   }
@@ -10146,6 +10199,11 @@ class HACore extends HTMLElement {
     this._dom.destroy();
     this._dom.register(CARD.htmlStructure.card.element, card);
     this._dom.setStyle(CARD.htmlStructure.card.element, CARD.style.dynamic.progressBar.value.var, 0);
+    if (this._cardView.hasClickableCard || this._cardView.hasClickableIcon) {
+      Object.entries(CARD.htmlStructure.card.extraAttr).forEach(([key, value]) => {
+        this._dom.setAttribute(CARD.htmlStructure.card.element, key, value);
+      });
+    }
     this._buildStyle();
     card.innerHTML = this.innerHTML;
 
@@ -10175,11 +10233,11 @@ class HACore extends HTMLElement {
     this._dom.addClass(
       CARD.htmlStructure.card.element,
       this.baseClass,
-      this._cardView.layout,
-      this._cardView.barSize,
-      this._cardView.barOrientation ? CARD.style.dynamic.progressBar.orientation[this._cardView.barOrientation] : null,
+      this._cardView.config.layout,
+      this._cardView.config.bar_size,
+      this._cardView.config.bar_orientation ? CARD.style.dynamic.progressBar.orientation[this._cardView.config.bar_orientation] : null,
       this._cardView.config.center_zero ? CARD.style.dynamic.progressBar.centerZero.class : null,
-      this._cardView.layout === 'vertical' && this._cardView.barOrientation === 'up' && this._cardView.config.bar_position === 'overlay'
+      this._cardView.config.layout === 'vertical' && this._cardView.config.bar_orientation === 'up' && this._cardView.config.bar_position === 'overlay'
         ? 'vertical-bar'
         : 'horizontal-bar',
     );
@@ -10214,7 +10272,7 @@ class HACore extends HTMLElement {
     });
   }
 
-  // === DYNAMIC ELEMENTS UPDATE ===
+  // ─── DYNAMIC ELEMENTS UPDATE ──────────────────────────────────────────────
 
   _updateDynamicElements() {
     //
@@ -10224,7 +10282,7 @@ class HACore extends HTMLElement {
     this._processJinjaFields();
   }
 
-  // --- CSS MANAGEMENT ---
+  // ─── CSS MANAGEMENT ───────────────────────────────────────────────────────
 
   _updateCSS() {
     //
@@ -10233,7 +10291,33 @@ class HACore extends HTMLElement {
     throw new Error(`${this.constructor.name} must implement _updateCSS()`);
   }
 
-  // === WATERMARK MANAGEMENT ===
+  _applyProgressCSS(progressValue, { barColor = null, iconColor = null, isCenterZero = false } = {}) {
+    const cardKey = CARD.htmlStructure.card.element;
+
+    if (barColor !== null)  this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.color.var, barColor);
+    if (iconColor !== null) this._dom.setStyle(cardKey, CARD.style.dynamic.iconAndShape.color.var, iconColor);
+
+    if (progressValue !== null) {
+      if (isCenterZero) {
+        this._dom.toggleClass('inner', 'negative', progressValue < 0);
+        this._dom.toggleClass('inner', 'positive', progressValue >= 0);
+      } else {
+        this._dom.addClass('inner', 'positive');
+      }
+      this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.value.var, progressValue);
+      this._dom.setAttribute(CARD.htmlStructure.elements.progressBar.container.class, 'aria-valuenow', Math.round(progressValue * 100));
+    }
+  }
+
+  _applyWatermarkCSS(watermark, isCenterZero = false) {
+    if (!watermark) return;
+    const cardKey = CARD.htmlStructure.card.element;
+    HACore._getWatermarkProperties(watermark, isCenterZero).forEach(([variable, value]) => {
+      if (value != null) this._dom.setStyle(cardKey, variable, value);
+    });
+  }
+
+  // ─── WATERMARK MANAGEMENT ─────────────────────────────────────────────────
 
   static _getWatermarkProperties(watermark, isCenterZero = false) {
     const highWatermark = isCenterZero ? 50 + watermark.high / 2 : watermark.high;
@@ -10249,7 +10333,7 @@ class HACore extends HTMLElement {
     ];
   }
 
-  // === JINJA TEMPLATE RENDERING ===
+  // ─── JINJA TEMPLATE RENDERING ─────────────────────────────────────────────
 
   get validJinjaFields() {
     const result = Object.fromEntries(
@@ -10295,7 +10379,7 @@ class HACore extends HTMLElement {
     this._handleBarEffect(jinjaEffect);
   }
 
-  // === TEMPLATE PROCESSING ===
+  // ─── TEMPLATE PROCESSING ──────────────────────────────────────────────────
 
   get _wsInitialized() {
     return this._resourceManager?.has(CARD.network.disconnected) && this._resourceManager?.has(CARD.network.ready);
@@ -10433,9 +10517,8 @@ class HACore extends HTMLElement {
  */
 
 class HABase extends HACore {
-  static _baseClass = META.cards.card.typeName;
+  static _baseClass = META.types.card.typeName;
   static _cardStructure = new CardStructure();
-  static _cardStyle = CARD_CSS;
   static _hasDisabledIconTap = false;
   static _hasDisabledBadge = false;
   static _hiddenComponents = [
@@ -10455,7 +10538,7 @@ class HABase extends HACore {
   _actionHelper = null;
   #lastMessage = null;
 
-  // === LIFECYCLE METHODS ===
+  // ─── LIFECYCLE METHODS ===
 
   static get _loggedMethods() {
     return [
@@ -10499,20 +10582,20 @@ class HABase extends HACore {
   // disconnectedCallback() {}
 
   getCardSize() {
-    if (![META.cards.card.typeName, META.cards.template.typeName].includes(this.baseClass)) return undefined;
+    if (![META.types.card.typeName, META.types.template.typeName].includes(this.baseClass)) return undefined;
     const cardSize = this._cardView.cardSize;
     this._log.debug('getCardSize: ', cardSize);
     return cardSize;
   }
 
   getLayoutOptions() {
-    if (![META.cards.card.typeName, META.cards.template.typeName].includes(this.baseClass)) return undefined;
+    if (![META.types.card.typeName, META.types.template.typeName].includes(this.baseClass)) return undefined;
     const cardLayoutOptions = this._cardView.cardLayoutOptions;
     this._log.debug('getLayoutOptions: ', cardLayoutOptions);
     return cardLayoutOptions;
   }
 
-  // === PUBLIC API METHODS ===
+  // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
   refresh() {
     this._cardView.refresh(this.hass);
@@ -10530,7 +10613,7 @@ class HABase extends HACore {
     return this.constructor._hasDisabledIconTap;
   }
 
-  // === AUTO-REFRESH MANAGEMENT ===
+  // ─── AUTO-REFRESH MANAGEMENT ===
 
   _startAutoRefresh() {
     if (!this._resourceManager) return;
@@ -10549,7 +10632,7 @@ class HABase extends HACore {
     if (this._resourceManager) this._resourceManager.remove('autoRefresh');
   }
 
-  // === ERROR MESSAGE MANAGEMENT ===
+  // ─── ERROR MESSAGE MANAGEMENT ===
 
   _manageErrorMessage() {
     if (this._cardView.msg && (is.nullish(this._cardView.entity) || (this._cardView.isAvailable && !this._cardView.hasValidatedConfig))) {
@@ -10581,14 +10664,14 @@ class HABase extends HACore {
     alert.textContent = msg.content;
   }
 
-  // === CARD BUILDING ===
+  // ─── CARD BUILDING ===
 
   _manageStructureOptions() {
     //
     // customize it
     //
     this.constructor._cardStructure.options = {
-      barType: this._cardView.config.center_zero ? 'centerZero' : 'default', // === true
+      barType: this._cardView.config.center_zero ? 'centerZero' : 'default', // ─── true
       layout: this._cardView.config.layout,
       barPosition: this._cardView.config.bar_position,
       barSingleLine: this._cardView.config.bar_single_line,
@@ -10608,18 +10691,11 @@ class HABase extends HACore {
   }
 
   _addBaseClasses() {
+    super._addBaseClasses();
     this._dom.addClass(
       CARD.htmlStructure.card.element,
-      this.baseClass,
       this.baseClass.includes('badge') ? 'progress-badge' : null,
-      this._cardView.layout,
-      this._cardView.barSize,
       this._cardView.config.bar_position,
-      this._cardView.barOrientation ? CARD.style.dynamic.progressBar.orientation[this._cardView.barOrientation] : null,
-      this._cardView.config.center_zero ? CARD.style.dynamic.progressBar.centerZero.class : null,
-      this._cardView.layout === 'vertical' && this._cardView.barOrientation === 'up' && this._cardView.config.bar_position === 'overlay'
-        ? 'vertical-bar'
-        : 'horizontal-bar',
       this._cardView.hasReversedSecondaryInfoRow ? 'row-reverse' : null,
       this._cardView.config.text_shadow ? 'text-shadow' : null,
     );
@@ -10672,7 +10748,7 @@ class HABase extends HACore {
     });
   }
 
-  // === DYNAMIC ELEMENTS UPDATE ===
+  // ─── DYNAMIC ELEMENTS UPDATE ──────────────────────────────────────────────
 
   _updateDynamicElements() {
     //
@@ -10687,7 +10763,7 @@ class HABase extends HACore {
     this._processStandardFields();
   }
 
-  // === Update Trend ===
+  // ─── Update Trend ===
   _updateTrend() {
     if (!this._cardView.config.trend_indicator) return;
 
@@ -10698,7 +10774,7 @@ class HABase extends HACore {
     );
   }
 
-  // === CSS MANAGEMENT ===
+  // ─── CSS MANAGEMENT ───────────────────────────────────────────────────────
 
   _updateCSS() {
     //
@@ -10707,7 +10783,7 @@ class HABase extends HACore {
     throw new Error(`${this.constructor.name} must implement _updateCSS()`);
   }
 
-  // === ICON MANAGEMENT ===
+  // ─── ICON MANAGEMENT ──────────────────────────────────────────────────────
 
   _createImgIcon(altText, className = 'custom-icon-img') {
     this._log.debug('📎 HABase._createImgIcon():', { altText, className });
@@ -10831,7 +10907,7 @@ class HABase extends HACore {
     this._handleStateIcon(iconContainer, stateObjIcon);
   }
 
-  // === SHAPE MANAGEMENT ===
+  // ─── SHAPE MANAGEMENT ─────────────────────────────────────────────────────
 
   _manageShape() {
     this._dom.toggleClass(
@@ -10841,7 +10917,7 @@ class HABase extends HACore {
     );
   }
 
-  // === BADGE MANAGEMENT ===
+  // ─── BADGE MANAGEMENT ─────────────────────────────────────────────────────
 
   /**
    * Displays a badge (default info)
@@ -10881,7 +10957,7 @@ class HABase extends HACore {
     this._dom.setStyle(CARD.htmlStructure.card.element, CARD.style.dynamic.badge.color.var, color);
   }
 
-  // === JINJA TEMPLATE RENDERING ===
+  // ─── JINJA TEMPLATE RENDERING ===
   /* _getJinjaHandlers(content) {
     //
     // cutomize it - list the fields/render func
@@ -10915,7 +10991,7 @@ class HABase extends HACore {
     this._setBadgeColor(color, backgroundColor);
   }
 
-  // === STD FIELDS PROCESSING ===
+  // ─── STD FIELDS PROCESSING ===
   static _getStandardFields(/*cardView*/) {
     //
     // customize it !!!
@@ -10927,6 +11003,11 @@ class HABase extends HACore {
     this.constructor._getStandardFields(this._cardView).forEach(({ className, value }) => {
       this._dom.setText(className, value);
     });
+  }
+
+  // ─── getStubConfig -> select entity ===
+  static getStubEntity(hass) {
+    return Object.keys(hass.states).find((id) => /^(sensor\..*battery|fan\.|cover\.|light\.)/i.test(id)) || 'sensor.temperature';
   }
 }
 
@@ -10961,35 +11042,23 @@ class EntityProgressCardBase extends HABase {
     }
   }
 
-  // === CSS - CUSTOMIZATION ===
+  // ─── CSS - CUSTOMIZATION ===
   get conditionalStyle() {
     return new Map([...super.conditionalStyle, [CARD.style.dynamic.secondaryInfoError.class, this._cardView.hasStandardEntityError]]);
   }
 
   _updateCSS() {
     const bar = this._cardView;
-    const isCenterZero = bar.config.center_zero;
-    const cardKey = CARD.htmlStructure.card.element;
-    const progressValue = `${bar.percent / 100}`;
-
-    this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.color.var, bar.barColor);
-    this._dom.setStyle(cardKey, CARD.style.dynamic.iconAndShape.color.var, bar.iconColor);
-    if (isCenterZero) {
-      this._dom.toggleClass('inner', 'negative', isCenterZero && progressValue < 0);
-      this._dom.toggleClass('inner', 'positive', isCenterZero && progressValue >= 0);
-    } else {
-      this._dom.addClass('inner', 'positive');
-    }
-    this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.value.var, progressValue);
-
-    if (bar.hasWatermark) {
-      HACore._getWatermarkProperties(bar.watermark, isCenterZero).forEach(([variable, value]) => {
-        if (value != null) this._dom.setStyle(cardKey, variable, value);
-      });
-    }
+    const progressValue = bar.percent / 100;
+    this._applyProgressCSS(progressValue, {
+      barColor: bar.barColor,
+      iconColor: bar.iconColor,
+      isCenterZero: bar.config.center_zero,
+    });
+    this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null, bar.config.center_zero);
   }
 
-  // === STD FIELDS PROCESSING - CUSTOMIZATION ===
+  // ─── STD FIELDS PROCESSING - CUSTOMIZATION ===
   static _getStandardFields(cardView) {
     return [
       {
@@ -11003,7 +11072,7 @@ class EntityProgressCardBase extends HABase {
     ];
   }
 
-  // === JINJA TEMPLATE RENDERING - CUSTOMIZATION ===
+  // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ===
   _getJinjaHandlers(content) {
     return {
       badge_icon: () => this._renderBadgeIcon(content), // base
@@ -11034,26 +11103,22 @@ class EntityProgressCardBase extends HABase {
  */
 class EntityProgressCard extends EntityProgressCardBase {
   _cardView = new CardView();
-  static _baseClass = META.cards.card.typeName;
+  static _baseClass = META.types.card.typeName;
 
-  // === STATIC METHODS ===
+  // ─── STATIC METHODS ===
 
   static get _loggedMethods() {
     return [...super._loggedMethods, 'getCardSize', 'getLayoutOptions'];
   }
 
   static getConfigElement() {
-    return document.createElement(CARD_CONTEXT.dev ? `${META.cards.card.editor}-dev` : META.cards.card.editor);
-  }
-
-  static getStubEntity(hass) {
-    return Object.keys(hass.states).find((id) => /^(sensor\..*battery|fan\.|cover\.|light\.)/i.test(id)) || 'sensor.temperature';
+    return document.createElement(CARD_CONTEXT.dev ? `${META.types.card.editor}-dev` : META.types.card.editor);
   }
 
   static getStubConfig(hass) {
     return {
-      type: `custom:${META.cards.card.typeName}${CARD_CONTEXT.dev ? '-dev' : ''}`,
-      entity: EntityProgressCard.getStubEntity(hass),
+      type: `custom:${META.types.card.typeName}${CARD_CONTEXT.dev ? '-dev' : ''}`,
+      entity: HABase.getStubEntity(hass),
     };
   }
 }
@@ -11069,24 +11134,23 @@ class EntityProgressCard extends EntityProgressCardBase {
  */
 class EntityProgressBadge extends EntityProgressCardBase {
   _cardView = new BadgeView();
-  static _baseClass = META.cards.badge.typeName;
+  static _baseClass = META.types.badge.typeName;
   static _hasDisabledIconTap = true;
   static _hasDisabledBadge = true;
   static _cardStructure = new BadgeStructure();
-  static _cardStyle = CARD_CSS;
 
   static getConfigElement() {
-    return document.createElement(CARD_CONTEXT.dev ? `${META.cards.badge.editor}-dev` : META.cards.badge.editor);
+    return document.createElement(CARD_CONTEXT.dev ? `${META.types.badge.editor}-dev` : META.types.badge.editor);
   }
 
   static getStubConfig(hass) {
     return {
-      type: `custom:${META.cards.badge.typeName}${CARD_CONTEXT.dev ? '-dev' : ''}`,
-      entity: EntityProgressCard.getStubEntity(hass),
+      type: `custom:${META.types.badge.typeName}${CARD_CONTEXT.dev ? '-dev' : ''}`,
+      entity: HABase.getStubEntity(hass),
     };
   }
 
-  // === JINJA TEMPLATE RENDERING - CUSTOMIZATION ===
+  // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ===
   _getJinjaHandlers(content) {
     return {
       bar_effect: () => this._refreshBarEffect(content), // base
@@ -11108,15 +11172,15 @@ class EntityProgressBadge extends EntityProgressCardBase {
  */
 
 class EntityProgressFeatures extends HACore {
-  static _baseClass = META.cards.feature.typeName;
+  static _baseClass = META.types.feature.typeName;
   static _cardElement = 'div';
   #firstHack = true;
 
-  // === STATIC ===
+  // ─── STATIC ===
 
   static getStubConfig() {
     return {
-      type: `custom:${META.cards.feature.typeName}${CARD_CONTEXT.dev ? '-dev' : ''}`,
+      type: `custom:${META.types.feature.typeName}${CARD_CONTEXT.dev ? '-dev' : ''}`,
     };
   }
 
@@ -11176,36 +11240,26 @@ class EntityProgressFeatures extends HACore {
     });
   }
 
-  // === HANDLE UPDATE ===
+  // ─── HANDLE UPDATE ===
 
   _handleHassUpdate() {
     this.#fixCardStyles();
     this.refresh();
   }
 
+  // ─── CSS MANAGEMENT ───────────────────────────────────────────────────────
+
   _updateCSS() {
     const bar = this._cardView;
-    const isCenterZero = bar.config.center_zero;
-    const cardKey = CARD.htmlStructure.card.element;
-    const progressValue = `${bar.percent / 100}`;
-
-    this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.color.var, bar.barColor);
-    if (isCenterZero) {
-      this._dom.toggleClass('inner', 'negative', isCenterZero && progressValue < 0);
-      this._dom.toggleClass('inner', 'positive', isCenterZero && progressValue >= 0);
-    } else {
-      this._dom.addClass('inner', 'positive');
-    }
-    this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.value.var, progressValue);
-
-    if (bar.hasWatermark) {
-      HACore._getWatermarkProperties(bar.watermark, isCenterZero).forEach(([variable, value]) => {
-        if (value != null) this._dom.setStyle(cardKey, variable, value);
-      });
-    }
+    const progressValue = bar.percent / 100;
+    this._applyProgressCSS(progressValue, {
+      barColor: bar.barColor,
+      isCenterZero: bar.config.center_zero,
+    });
+    this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null, bar.config.center_zero);
   }
 
-  // === JINJA TEMPLATE RENDERING - CUSTOMIZATION ===
+  // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ===
 
   _getJinjaHandlers(content) {
     return {
@@ -11254,47 +11308,32 @@ class EntityProgressTemplateBase extends HABase {
 
   static getStubConfig(hass) {
     return {
-      type: `custom:${META.cards.template.typeName}`,
-      entity: EntityProgressCard.getStubEntity(hass),
+      type: `custom:${META.types.template.typeName}${CARD_CONTEXT.dev ? '-dev' : ''}`,
+      entity: HABase.getStubEntity(hass),
       ...CARD.config.stub.template,
     };
   }
 
-  /** --------------------------------------------------------------------------
-   * Private methods organized by functionality
-   */
+  // ─── CSS MANAGEMENT ───────────────────────────────────────────────────────
 
-  // === INITIALIZATION ===
-
-  // === CARD BUILDING ===
-
-  // === CSS CUSTOMIZATION ===
   _updateCSS() {
     const bar = this._cardView;
-    const isCenterZero = bar.config.center_zero;
-    const cardKey = CARD.htmlStructure.card.element;
-
-    this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.color.var, bar.barColor);
-    this._dom.setStyle(cardKey, CARD.style.dynamic.iconAndShape.color.var, bar.iconColor);
-
-    if (bar.hasWatermark) {
-      HACore._getWatermarkProperties(bar.watermark, isCenterZero).forEach(([variable, value]) => {
-        if (value != null) this._dom.setStyle(cardKey, variable, value);
-      });
-    }
+    this._applyProgressCSS(null, {
+      barColor: bar.barColor,
+      iconColor: bar.iconColor,
+    });
+    this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null, bar.config.center_zero);
   }
-  // === WATERMARK MANAGEMENT ===
+
+  // ─── WATERMARK MANAGEMENT ─────────────────────────────────────────────────
 
   _updateWatermark() {
     if (!this._cardView.hasWatermark) return;
     this._cardView.refresh();
-
-    HACore._getWatermarkProperties(this._cardView.watermark, this._cardView.config.center_zero).forEach(([variable, value]) => {
-      if (value != null) this._dom.setStyle(CARD.htmlStructure.card.element, variable, value);
-    });
+    this._applyWatermarkCSS(this._cardView.watermark, this._cardView.config.center_zero);
   }
 
-  // === ICON MANAGEMENT ===
+  // ─── ICON MANAGEMENT ──────────────────────────────────────────────────────
 
   _showIcon(iconFromJinja = null) {
     const jinjaIconNotReady = this._cardView.config.icon !== undefined && iconFromJinja === null;
@@ -11303,7 +11342,8 @@ class EntityProgressTemplateBase extends HABase {
     super._showIcon();
   }
 
-  // === JINJA TEMPLATE RENDERING - CUSTOMIZATION ===
+  // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ─────────────────────────────
+
   _forceJinjaProcessing() {
     if (!this._resourceManager) this._resourceManager = new ResourceManager();
     this._processJinjaFields();
@@ -11324,7 +11364,6 @@ class EntityProgressTemplateBase extends HABase {
         this._dom.setStyle(CARD.htmlStructure.card.element, CARD.style.dynamic.progressBar.color.var, ThemeManager.adaptColor(content)),
     };
   }
-  // === BADGE MANAGEMENT ===
 
   _renderName(content) {
     this._dom.setHTML(CARD.htmlStructure.elements.nameMain.class, `${content}`.trim());
@@ -11352,20 +11391,12 @@ class EntityProgressTemplateBase extends HABase {
   }
 
   _renderPercentCSS(percent) {
-    const cardKey = CARD.htmlStructure.card.element;
-    const isCenterZero = this._cardView.config.center_zero;
-    const progressValue = `${percent / 100}`;
-
-    if (isCenterZero) {
-      this._dom.toggleClass('inner', 'negative', isCenterZero && progressValue < 0);
-      this._dom.toggleClass('inner', 'positive', isCenterZero && progressValue >= 0);
-    } else {
-      this._dom.addClass('inner', 'positive');
-    }
-    this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.value.var, progressValue);
+    this._applyProgressCSS(percent / 100, {
+      isCenterZero: this._cardView.config.center_zero,
+    });
   }
 
-  // === TEMPLATE PROCESSING ===
+  // ─── TEMPLATE PROCESSING ===
 
   _validateProcessJinjaFields() {
     return Boolean(this.hass) && Boolean(this._resourceManager);
@@ -11382,16 +11413,14 @@ class EntityProgressTemplateBase extends HABase {
  * @extends EntityProgressTemplateBase
  */
 class EntityProgressTemplateCard extends EntityProgressTemplateBase {
-  static _cardStructure = new TemplateStructure();
-  static _baseClass = META.cards.template.typeName;
-  _cardView = new CardTemplateView();
+  static _baseClass = META.types.template.typeName;
 
   static get _loggedMethods() {
     return [...super._loggedMethods, 'getCardSize', 'getLayoutOptions'];
   }
 
   static getConfigElement() {
-    return document.createElement(`${META.cards.template.editor}${CARD_CONTEXT.dev ? '-dev' : ''}`);
+    return document.createElement(`${META.types.template.editor}${CARD_CONTEXT.dev ? '-dev' : ''}`);
   }
 }
 
@@ -11405,15 +11434,14 @@ class EntityProgressTemplateCard extends EntityProgressTemplateBase {
  * @extends EntityProgressTemplateBase
  */
 class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
-  static _baseClass = META.cards.badgeTemplate.typeName;
+  static _baseClass = META.types.badgeTemplate.typeName;
   static _hasDisabledIconTap = true;
   static _hasDisabledBadge = true;
   static _cardStructure = new BadgeStructure();
-  static _cardStyle = CARD_CSS;
   _cardView = new BadgeTemplateView();
 
   static getConfigElement() {
-    return document.createElement(`${META.cards.badgeTemplate.editor}${CARD_CONTEXT.dev ? '-dev' : ''}`);
+    return document.createElement(`${META.types.badgeTemplate.editor}${CARD_CONTEXT.dev ? '-dev' : ''}`);
   }
 
   setConfig(config) {
@@ -11423,8 +11451,8 @@ class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
 
   static getStubConfig(hass) {
     return {
-      type: `custom:${META.cards.badgeTemplate.typeName}${CARD_CONTEXT.dev ? '-dev' : ''}`,
-      entity: EntityProgressCard.getStubEntity(hass),
+      type: `custom:${META.types.badgeTemplate.typeName}${CARD_CONTEXT.dev ? '-dev' : ''}`,
+      entity: HABase.getStubEntity(hass),
     };
   }
 }
@@ -11596,14 +11624,15 @@ class EditorBase extends HTMLElement {
     }, */
   };
 
-  // --- private state ---
+  // ─── private state ────────────────────────────────────────────────────────
+
   #config = {};
   #hassProvider = null;
   #dom = null;
   #boundOnChanged = null;
   _configHelper = new BaseConfigHelper();
 
-  // === LIFECYCLE ===
+  // ─── LIFECYCLE ────────────────────────────────────────────────────────────
 
   constructor() {
     super();
@@ -11624,7 +11653,7 @@ class EditorBase extends HTMLElement {
     // this.#dom.destroy();
   }
 
-  // === PUBLIC API ===
+  // ─── PUBLIC API ───────────────────────────────────────────────────────────
 
   set hass(hass) {
     if (!hass) return;
@@ -11644,7 +11673,7 @@ class EditorBase extends HTMLElement {
     this.#updateFields();
   }
 
-  // === RENDER (once) ===
+  // ─── RENDER (once) ────────────────────────────────────────────────────────
 
   #render() {
     if (this.shadowRoot.querySelector('.editor')) return;
@@ -11721,6 +11750,13 @@ class EditorBase extends HTMLElement {
       bar_position: () => buildSelect(options.bar_position),
       layout: () => buildSelect(options.layout),
       theme: () => buildSelect(options.theme),
+      test: () => ({
+        options: [
+          { value: 'auto', label: 'Auto' },
+          { value: 'manual', label: 'Manual' },
+        ],
+        mode: 'buttons',
+      }),
     };
 
     return (selectors[type] ?? (() => ({ text: {} })))();
@@ -11776,13 +11812,13 @@ class EditorBase extends HTMLElement {
     return config[key] ?? empty;
   }
 
-  // === UPDATE (every setConfig) ===
+  // ─── UPDATE (every setConfig) ─────────────────────────────────────────────
 
   #updateFields() {
     this.#dom.updateAll(this._configHelper.config, EditorBase.#resolveValue);
   }
 
-  // === EVENTS ===
+  // ─── EVENTS ───────────────────────────────────────────────────────────────
 
   #handleVirtualField(def, value) {
     if (!def.onVirtualChange) return;
@@ -11898,6 +11934,7 @@ const EditorFactory = {
             decimal: EditorFieldsType.decimal('decimal', { width: availableSpace(32, 0.2) }),
             min_value: EditorFieldsType.number('min_value', { width: availableSpace(32, 0.6) }),
             toggleUnit: EditorFieldsType.toggle('disable_unit', { invert: true }),
+            test: EditorFieldsType.select('test'),
             max_value: EditorFieldsType.number('max_value', { showIf: (c) => typeof c.max_value !== 'string' }),
             use_max_entity: EditorFieldsType.toggle('use_max_entity', {
               virtual: true,
@@ -11949,6 +11986,7 @@ const EditorFactory = {
         ...(template ? {} : { width: availableSpace() }),
       }),
       bar_orientation: EditorFieldsType.select('bar_orientation', template ? {} : { width: availableSpace() }),
+      reverse_secondary_info_row: EditorFieldsType.toggle('reverse_secondary_info_row', { showIf: (c) => (!c.bar_position || c.bar_position === 'default') && c.layout === 'horizontal' }),
       center_zero: EditorFieldsType.toggle('center_zero'),
       bar_effect: EditorFieldsType.tpl('bar_effect'),
       toggleBar: EditorFieldsType.toggle('hide.progress_bar', { invert: true, array: true }),
@@ -12026,11 +12064,11 @@ class EntityProgressBadgeTemplateEditor extends EditorBase {
  * 🔧 Register components
  */
 
-RegistrationHelper.registerCard(META.cards.card, EntityProgressCard, EntityProgressCardEditor);
-RegistrationHelper.registerBadge(META.cards.badge, EntityProgressBadge, EntityProgressBadgeEditor);
-RegistrationHelper.registerCard(META.cards.template, EntityProgressTemplateCard, EntityProgressTemplateEditor);
-RegistrationHelper.registerBadge(META.cards.badgeTemplate, EntityProgressTemplateBadge, EntityProgressBadgeTemplateEditor);
-RegistrationHelper.registerCardFeature(META.cards.feature, EntityProgressFeatures);
+RegistrationHelper.registerCard(META.types.card, EntityProgressCard, EntityProgressCardEditor);
+RegistrationHelper.registerBadge(META.types.badge, EntityProgressBadge, EntityProgressBadgeEditor);
+RegistrationHelper.registerCard(META.types.template, EntityProgressTemplateCard, EntityProgressTemplateEditor);
+RegistrationHelper.registerBadge(META.types.badgeTemplate, EntityProgressTemplateBadge, EntityProgressBadgeTemplateEditor);
+RegistrationHelper.registerCardFeature(META.types.feature, EntityProgressFeatures);
 
 /******************************************************************************************
  * 🔧 Show module info

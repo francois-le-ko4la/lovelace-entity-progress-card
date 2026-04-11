@@ -64,6 +64,7 @@
       "min_value": "Minimum değer",
       "name": "Ad",
       "percent": "Yüzde",
+      "reverse_secondary_info_row": "Çubuğu ve metni değiştir",
       "secondary": "İkincil bilgi",
       "tap_action": "Kısa dokunma davranışı",
       "text_shadow": "Metne gölge ekle (overlay)",

@@ -64,6 +64,7 @@
       "min_value": "Minimiarvo",
       "name": "Nimi",
       "percent": "Prosentti",
+      "reverse_secondary_info_row": "Vaihda palkki ja teksti",
       "secondary": "Lisätiedot",
       "tap_action": "Toiminto lyhyellä napautuksella",
       "text_shadow": "Lisää tekstivarjo (overlay)",

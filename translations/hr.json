@@ -64,6 +64,7 @@
       "min_value": "Minimalna vrijednost",
       "name": "Ime",
       "percent": "Postotak",
+      "reverse_secondary_info_row": "Zamijeni traku i tekst",
       "secondary": "Sekundarne informacije",
       "tap_action": "Radnja na kratki dodir",
       "text_shadow": "Dodaj sjenu tekstu (overlay)",

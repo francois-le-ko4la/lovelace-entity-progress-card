@@ -64,6 +64,7 @@
       "min_value": "Minimumsværdi",
       "name": "Navn",
       "percent": "Procent",
+      "reverse_secondary_info_row": "Skift bjælke og tekst",
       "secondary": "Sekundær info",
       "tap_action": "Handling ved kort tryk",
       "text_shadow": "Tilføj tekstskygge (overlay)",

@@ -64,6 +64,7 @@
       "min_value": "Giá trị tối thiểu",
       "name": "Tên",
       "percent": "Phần trăm",
+      "reverse_secondary_info_row": "Hoán đổi thanh và văn bản",
       "secondary": "Thông tin phụ",
       "tap_action": "Hành vi chạm",
       "text_shadow": "Thêm bóng cho văn bản (overlay)",

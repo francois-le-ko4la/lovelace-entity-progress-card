@@ -64,6 +64,7 @@
       "min_value": "ন্যূনতম মান",
       "name": "নাম",
       "percent": "শতাংশ",
+      "reverse_secondary_info_row": "বার এবং টেক্সট অদলবদল করুন",
       "secondary": "দ্বিতীয় তথ্য",
       "tap_action": "ট্যাপ আচরণ",
       "text_shadow": "টেক্সটে ছায়া যোগ করুন (overlay)",

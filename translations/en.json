@@ -64,6 +64,7 @@
       "min_value": "Minimum value",
       "name": "Name",
       "percent": "Percentage",
+      "reverse_secondary_info_row": "Swap bar and text",
       "secondary": "Secondary info",
       "tap_action": "Tap behavior",
       "text_shadow": "Add text shadow (overlay)",

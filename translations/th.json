@@ -64,6 +64,7 @@
       "min_value": "ค่าต่ำสุด",
       "name": "ชื่อ",
       "percent": "เปอร์เซ็นต์",
+      "reverse_secondary_info_row": "แถบและข้อความสลับกัน",
       "secondary": "ข้อมูลรอง",
       "tap_action": "พฤติกรรมการแตะ",
       "text_shadow": "เพิ่มเงาให้ข้อความ (overlay)",

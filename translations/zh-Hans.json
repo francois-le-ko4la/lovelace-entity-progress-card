@@ -64,6 +64,7 @@
       "min_value": "最小值",
       "name": "名称",
       "percent": "百分比",
+      "reverse_secondary_info_row": "交换进度条和文本",
       "secondary": "次要信息",
       "tap_action": "点击动作",
       "text_shadow": "添加文本阴影（overlay）",

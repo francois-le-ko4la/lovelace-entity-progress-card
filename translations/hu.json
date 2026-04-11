@@ -64,6 +64,7 @@
       "min_value": "Minimális érték",
       "name": "Név",
       "percent": "Százalék",
+      "reverse_secondary_info_row": "Cserélje fel a sávot és a szöveget",
       "secondary": "Másodlagos információ",
       "tap_action": "Koppintás művelet",
       "text_shadow": "Szöveg árnyék hozzáadása (overlay)",

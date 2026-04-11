@@ -64,6 +64,7 @@
       "min_value": "Minimaalne väärtus",
       "name": "Nimi",
       "percent": "Protsent",
+      "reverse_secondary_info_row": "Vaheta riba ja tekst",
       "secondary": "Täiendav info",
       "tap_action": "Puudutuse tegevus",
       "text_shadow": "Lisa teksti vari (overlay)",

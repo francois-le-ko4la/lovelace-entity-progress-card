@@ -1358,7 +1358,6 @@ min_width: 140px
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
 [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
-[![YAML Only][yaml-only]](#yaml-only)
 
 > **`reverse_secondary_info_row`** [Boolean] _(optional, default: false)_
 

@@ -64,6 +64,7 @@
       "min_value": "Valor mínim",
       "name": "Nom",
       "percent": "Percentatge",
+      "reverse_secondary_info_row": "Intercanvia barra i text",
       "secondary": "Informació secundària",
       "tap_action": "Acció al tocar breument",
       "text_shadow": "Afegir ombra al text (overlay)",
