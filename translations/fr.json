@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Comportement lors d'un double appui sur l'icône",
       "icon_hold_action": "Comportement lors d'un appui long sur l'icône",
       "icon_tap_action": "Comportement lors de l'appui sur l'icône",
-      "layout": "Disposition de la carte",
+      "layout": "Disposition du contenu",
       "max_value": "Valeur maximum",
       "max_value_attribute": "Attribut (max_value)",
       "max_value_entity": "Valeur maximum",
@@ -66,6 +66,7 @@
       "percent": "Pourcentage",
       "reverse_secondary_info_row": "Intervertir barre et texte",
       "secondary": "Information secondaire",
+      "state_content": "Contenu de l’état",
       "tap_action": "Comportement lors d'un appui court",
       "text_shadow": "Ajouter une ombre au texte (overlay)",
       "theme": "Thème",
@@ -103,7 +104,8 @@
         "below": "Barre en dessous du contenu",
         "top": "Barre en haut (superposée)",
         "bottom": "Barre en bas (superposée)",
-        "overlay": "Barre superposée au contenu (overlay)"
+        "overlay": "Barre superposée au contenu (overlay)",
+        "background": "Arrière-plan de la carte"
       },
       "layout": {
         "horizontal": "Horizontal (par défaut)",

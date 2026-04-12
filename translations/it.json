@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Azione al doppio tocco dell'icona",
       "icon_hold_action": "Azione al tocco prolungato dell'icona",
       "icon_tap_action": "Azione al tocco dell'icona",
-      "layout": "Layout della carta",
+      "layout": "Layout del contenuto",
       "max_value": "Valore massimo",
       "max_value_attribute": "Attributo (max_value)",
       "max_value_entity": "Valore massimo",
@@ -66,6 +66,7 @@
       "percent": "Percentuale",
       "reverse_secondary_info_row": "Scambia barra e testo",
       "secondary": "Informazione secondaria",
+      "state_content": "Contenuto dello stato",
       "tap_action": "Azione al tocco breve",
       "text_shadow": "Aggiungi ombra al testo (overlay)",
       "theme": "Tema",
@@ -88,7 +89,8 @@
         "bottom": "Barra in basso (overlay)",
         "default": "Predefinito",
         "overlay": "Barra sovrapposta al contenuto (overlay)",
-        "top": "Barra in alto (overlay)"
+        "top": "Barra in alto (overlay)",
+        "background": "Sfondo della scheda"
       },
       "bar_size": {
         "large": "Grande",

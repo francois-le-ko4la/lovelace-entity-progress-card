@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Aktion bei doppelt Tippen auf das Symbol",
       "icon_hold_action": "Aktion bei langem Tippen auf das Symbol",
       "icon_tap_action": "Aktion beim Tippen auf das Symbol",
-      "layout": "Kartenlayout",
+      "layout": "Inhaltslayout",
       "max_value": "Höchstwert",
       "max_value_attribute": "Attribut (max_value)",
       "max_value_entity": "Entität für Maximalwert verwenden",
@@ -66,6 +66,7 @@
       "percent": "Prozent",
       "reverse_secondary_info_row": "Barra und Text tauschen",
       "secondary": "Sekundäre Informationen",
+      "state_content": "Statusinhalt",
       "tap_action": "Aktion bei kurzem Tippen",
       "text_shadow": "Textschatten hinzufügen (Overlay)",
       "theme": "Thema",
@@ -103,7 +104,8 @@
         "below": "Leiste unter dem Inhalt",
         "top": "Leiste oben (Overlay)",
         "bottom": "Leiste unten (Overlay)",
-        "overlay": "Leiste über dem Inhalt (Overlay)"
+        "overlay": "Leiste über dem Inhalt (Overlay)",
+        "background": "Kartenhintergrund"
       },
       "layout": {
         "horizontal": "Horizontal (Standard)",

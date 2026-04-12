@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Дејство при двоен допир на иконата",
       "icon_hold_action": "Дејство при долг допир на иконата",
       "icon_tap_action": "Дејство при допир на иконата",
-      "layout": "Распоред на карта",
+      "layout": "Распоред на содржината",
       "max_value": "Максимална вредност",
       "max_value_attribute": "Атрибут (max_value)",
       "max_value_entity": "Максимална вредност",
@@ -66,6 +66,7 @@
       "percent": "Процент",
       "reverse_secondary_info_row": "Сменете ги лентата и текстот",
       "secondary": "Секундарни информации",
+      "state_content": "Содржина на состојба",
       "tap_action": "Дејство при краток допир",
       "text_shadow": "Додај сенка на текст (overlay)",
       "theme": "Тема",
@@ -88,7 +89,8 @@
         "bottom": "Лента на дното (overlay)",
         "default": "Стандардно",
         "overlay": "Лента преку содржината (overlay)",
-        "top": "Лента на врвот (overlay)"
+        "top": "Лента на врвот (overlay)",
+        "background": "Позадина на картичката"
       },
       "bar_size": {
         "large": "Голема",

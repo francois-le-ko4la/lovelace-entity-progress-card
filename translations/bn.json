@@ -57,7 +57,7 @@
       "icon_double_tap_action": "আইকন ডাবল ট্যাপ আচরণ",
       "icon_hold_action": "আইকন হোল্ড আচরণ",
       "icon_tap_action": "আইকন ট্যাপ আচরণ",
-      "layout": "কার্ড লেআউট",
+      "layout": "বিষয়বস্তুর বিন্যাস",
       "max_value": "সর্বোচ্চ মান",
       "max_value_attribute": "বৈশিষ্ট্য (max_value)",
       "max_value_entity": "সত্তার সর্বোচ্চ মান",
@@ -66,6 +66,7 @@
       "percent": "শতাংশ",
       "reverse_secondary_info_row": "বার এবং টেক্সট অদলবদল করুন",
       "secondary": "দ্বিতীয় তথ্য",
+      "state_content": "স্টেটের বিষয়বস্তু",
       "tap_action": "ট্যাপ আচরণ",
       "text_shadow": "টেক্সটে ছায়া যোগ করুন (overlay)",
       "theme": "থিম",
@@ -103,7 +104,8 @@
         "below": "বিষয়বস্তুর নিচে বার",
         "top": "উপরের দিকে বার (ওভারলে)",
         "bottom": "নিচের দিকে বার (ওভারলে)",
-        "overlay": "বিষয়বস্তুর ওপর বার (ওভারলে)"
+        "overlay": "বিষয়বস্তুর ওপর বার (ওভারলে)",
+        "background": "কার্ড পটভূমি"
       },
       "layout": {
         "horizontal": "অনুভূমিক (ডিফল্ট)",

@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Actie bij dubbel tikken op pictogram",
       "icon_hold_action": "Actie bij lang ingedrukt houden op pictogram",
       "icon_tap_action": "Actie bij tikken op pictogram",
-      "layout": "Kaartindeling",
+      "layout": "Inhoudsindeling",
       "max_value": "Maximale waarde",
       "max_value_attribute": "Attribuut (max_value)",
       "max_value_entity": "Maximale waarde",
@@ -66,6 +66,7 @@
       "percent": "Percentage",
       "reverse_secondary_info_row": "Balk en tekst omwisselen",
       "secondary": "Secundaire informatie",
+      "state_content": "Inhoud van de status",
       "tap_action": "Actie bij korte tik",
       "text_shadow": "Tekstschaduw toevoegen (overlay)",
       "theme": "Thema",
@@ -88,7 +89,8 @@
         "bottom": "Balk onderaan (overlay)",
         "default": "Standaard",
         "overlay": "Balk over de inhoud (overlay)",
-        "top": "Balk bovenaan (overlay)"
+        "top": "Balk bovenaan (overlay)",
+        "background": "Kaartachtergrond"
       },
       "bar_size": {
         "large": "Groot",

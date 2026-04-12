@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Åtgärd vid dubbeltryck på ikonen",
       "icon_hold_action": "Åtgärd vid långt tryck på ikonen",
       "icon_tap_action": "Åtgärd vid tryck på ikonen",
-      "layout": "Kortlayout",
+      "layout": "Innehållslayout",
       "max_value": "Maximalt värde",
       "max_value_attribute": "Attribut (max_value)",
       "max_value_entity": "Maximalt värde",
@@ -66,6 +66,7 @@
       "percent": "Procent",
       "reverse_secondary_info_row": "Byt ut stapel och text",
       "secondary": "Sekundär information",
+      "state_content": "Statusinnehåll",
       "tap_action": "Åtgärd vid kort tryck",
       "text_shadow": "Lägg till textskugga (overlay)",
       "theme": "Tema",
@@ -88,7 +89,8 @@
         "bottom": "Bar längst ned (overlay)",
         "default": "Standard",
         "overlay": "Bar överlagrad på innehållet (overlay)",
-        "top": "Bar längst upp (overlay)"
+        "top": "Bar längst upp (overlay)",
+        "background": "Kortbakgrund"
       },
       "bar_size": {
         "large": "Stor",

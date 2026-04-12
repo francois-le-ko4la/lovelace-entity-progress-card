@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Akcija ob dvojni tap ikone",
       "icon_hold_action": "Akcija ob dolgem pritisku ikone",
       "icon_tap_action": "Akcija ob tap ikone",
-      "layout": "Postavitev kartice",
+      "layout": "Postavitev vsebine",
       "max_value": "Največja vrednost",
       "max_value_attribute": "Atribut (max_value)",
       "max_value_entity": "Največja vrednost",
@@ -66,6 +66,7 @@
       "percent": "Odstotek",
       "reverse_secondary_info_row": "Zamenjaj vrstico in besedilo",
       "secondary": "Sekundarne informacije",
+      "state_content": "Vsebina stanja",
       "tap_action": "Akcija ob tap",
       "text_shadow": "Dodaj senco besedila (overlay)",
       "theme": "Tema",
@@ -103,7 +104,8 @@
         "below": "Vrstica pod vsebino",
         "top": "Vrstica zgoraj (overlay)",
         "bottom": "Vrstica spodaj (overlay)",
-        "overlay": "Vrstica čez vsebino (overlay)"
+        "overlay": "Vrstica čez vsebino (overlay)",
+        "background": "Ozadje kartice"
       },
       "layout": {
         "horizontal": "Horizontalno (privzeto)",

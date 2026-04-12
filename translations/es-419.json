@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Acción de doble toque en ícono",
       "icon_hold_action": "Acción al mantener presionado ícono",
       "icon_tap_action": "Acción al tocar ícono",
-      "layout": "Diseño de tarjeta",
+      "layout": "Disposición del contenido",
       "max_value": "Valor máximo",
       "max_value_attribute": "Atributo (valor máximo)",
       "max_value_entity": "Usar valor máximo de la entidad",
@@ -66,6 +66,7 @@
       "percent": "Porcentaje",
       "reverse_secondary_info_row": "Intercambiar barra y texto",
       "secondary": "Información secundaria",
+      "state_content": "Contenido del estado",
       "tap_action": "Acción al tocar",
       "text_shadow": "Agregar sombra al texto (overlay)",
       "theme": "Tema",
@@ -103,7 +104,8 @@
         "below": "Barra debajo del contenido",
         "top": "Barra arriba (superpuesta)",
         "bottom": "Barra abajo (superpuesta)",
-        "overlay": "Superpuesta sobre el contenido"
+        "overlay": "Superpuesta sobre el contenido",
+        "background": "Fondo de la tarjeta"
       },
       "layout": {
         "horizontal": "Horizontal (predeterminado)",

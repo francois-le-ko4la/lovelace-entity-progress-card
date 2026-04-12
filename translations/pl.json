@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Akcja przy podwójnym naciśnięciu ikony",
       "icon_hold_action": "Akcja przy długim naciśnięciu ikony",
       "icon_tap_action": "Akcja przy naciśnięciu ikony",
-      "layout": "Układ karty",
+      "layout": "Układ treści",
       "max_value": "Wartość maksymalna",
       "max_value_attribute": "Atrybut (max_value)",
       "max_value_entity": "Wartość maksymalna",
@@ -66,6 +66,7 @@
       "percent": "Procent",
       "reverse_secondary_info_row": "Zamień pasek i tekst",
       "secondary": "Informacja dodatkowa",
+      "state_content": "Zawartość stanu",
       "tap_action": "Akcja przy krótkim naciśnięciu",
       "text_shadow": "Dodaj cień tekstu (overlay)",
       "theme": "Motyw",
@@ -88,7 +89,8 @@
         "bottom": "Pasek na dole (overlay)",
         "default": "Domyślnie",
         "overlay": "Pasek nałożony na zawartość (overlay)",
-        "top": "Pasek na górze (overlay)"
+        "top": "Pasek na górze (overlay)",
+        "background": "Tło karty"
       },
       "bar_size": {
         "large": "Duża",

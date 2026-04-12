@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Handling ved dobbelt tryk på ikonet",
       "icon_hold_action": "Handling ved langt tryk på ikonet",
       "icon_tap_action": "Handling ved tryk på ikonet",
-      "layout": "Kort layout",
+      "layout": "Indholdslayout",
       "max_value": "Maksimal værdi",
       "max_value_attribute": "Attribut (max_value)",
       "max_value_entity": "Brug enhed for max-værdi",
@@ -66,6 +66,7 @@
       "percent": "Procent",
       "reverse_secondary_info_row": "Skift bjælke og tekst",
       "secondary": "Sekundær info",
+      "state_content": "Indhold af tilstand",
       "tap_action": "Handling ved kort tryk",
       "text_shadow": "Tilføj tekstskygge (overlay)",
       "theme": "Tema",
@@ -103,7 +104,8 @@
         "below": "Bar under indhold",
         "top": "Bar øverst (overlay)",
         "bottom": "Bar nederst (overlay)",
-        "overlay": "Bar over indhold (overlay)"
+        "overlay": "Bar over indhold (overlay)",
+        "background": "Kortbaggrund"
       },
       "layout": {
         "horizontal": "Horisontal (standard)",

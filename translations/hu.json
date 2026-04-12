@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Ikon dupla koppintás művelet",
       "icon_hold_action": "Ikon hosszan nyomás művelet",
       "icon_tap_action": "Ikon koppintás művelet",
-      "layout": "Kártya elrendezése",
+      "layout": "Tartalom elrendezése",
       "max_value": "Maximális érték",
       "max_value_attribute": "Attribútum (max_value)",
       "max_value_entity": "Maximális érték",
@@ -66,6 +66,7 @@
       "percent": "Százalék",
       "reverse_secondary_info_row": "Cserélje fel a sávot és a szöveget",
       "secondary": "Másodlagos információ",
+      "state_content": "Állapot tartalma",
       "tap_action": "Koppintás művelet",
       "text_shadow": "Szöveg árnyék hozzáadása (overlay)",
       "theme": "Téma",
@@ -103,7 +104,8 @@
         "below": "Sáv a tartalom alatt",
         "top": "Sáv fent (overlay)",
         "bottom": "Sáv lent (overlay)",
-        "overlay": "Sáv a tartalmon (overlay)"
+        "overlay": "Sáv a tartalmon (overlay)",
+        "background": "Kártya háttér"
       },
       "layout": {
         "horizontal": "Vízszintes (alapértelmezett)",

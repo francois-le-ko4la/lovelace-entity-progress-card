@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Поведінка подвійного дотику іконки",
       "icon_hold_action": "Поведінка утримання іконки",
       "icon_tap_action": "Поведінка дотику іконки",
-      "layout": "Розташування картки",
+      "layout": "Розташування вмісту",
       "max_value": "Максимальне значення",
       "max_value_attribute": "Атрибут (max_value)",
       "max_value_entity": "Максимальне значення",
@@ -66,6 +66,7 @@
       "percent": "Відсоток",
       "reverse_secondary_info_row": "Поміняти місцями панель і текст",
       "secondary": "Додаткова інформація",
+      "state_content": "Вміст стану",
       "tap_action": "Поведінка при дотику",
       "text_shadow": "Додати тінь до тексту (overlay)",
       "theme": "Тема",
@@ -88,7 +89,8 @@
         "bottom": "Панель знизу (overlay)",
         "default": "За замовчуванням",
         "overlay": "Панель поверх вмісту (overlay)",
-        "top": "Панель зверху (overlay)"
+        "top": "Панель зверху (overlay)",
+        "background": "Фон картки"
       },
       "bar_size": {
         "large": "Велика",

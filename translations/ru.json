@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Поведение при двойном нажатии на иконку",
       "icon_hold_action": "Поведение при длительном нажатии на иконку",
       "icon_tap_action": "Поведение при нажатии на иконку",
-      "layout": "Макет карточки",
+      "layout": "Расположение содержимого",
       "max_value": "Максимальное значение",
       "max_value_attribute": "Атрибут (max_value)",
       "max_value_entity": "Максимальное значение",
@@ -66,6 +66,7 @@
       "percent": "Процент",
       "reverse_secondary_info_row": "Поменять местами панель и текст",
       "secondary": "Дополнительная информация",
+      "state_content": "Содержимое состояния",
       "tap_action": "Поведение при нажатии",
       "text_shadow": "Добавить тень к тексту (overlay)",
       "theme": "Тема",
@@ -88,7 +89,8 @@
         "bottom": "Полоса внизу (overlay)",
         "default": "По умолчанию",
         "overlay": "Полоса поверх содержимого (overlay)",
-        "top": "Полоса вверху (overlay)"
+        "top": "Полоса вверху (overlay)",
+        "background": "Фон карточки"
       },
       "bar_size": {
         "large": "Большая",

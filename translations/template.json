@@ -66,6 +66,7 @@
       "percent": "",
       "reverse_secondary_info_row": "",
       "secondary": "",
+      "state_content": "",
       "tap_action": "",
       "text_shadow": "",
       "theme": "",
@@ -103,7 +104,8 @@
         "below": "",
         "top": "",
         "bottom": "",
-        "overlay": ""
+        "overlay": "",
+        "background": ""
       },
       "layout": {
         "horizontal": "",

@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Acció al doble tocar la icona",
       "icon_hold_action": "Acció en mantenir premuda la icona",
       "icon_tap_action": "Acció al tocar la icona",
-      "layout": "Disposició de la targeta",
+      "layout": "Disposició del contingut",
       "max_value": "Valor màxim",
       "max_value_attribute": "Atribut (valor màxim)",
       "max_value_entity": "Usar entitat com a valor màxim",
@@ -66,6 +66,7 @@
       "percent": "Percentatge",
       "reverse_secondary_info_row": "Intercanvia barra i text",
       "secondary": "Informació secundària",
+      "state_content": "Contingut de l'estat",
       "tap_action": "Acció al tocar breument",
       "text_shadow": "Afegir ombra al text (overlay)",
       "theme": "Tema",
@@ -103,7 +104,8 @@
         "below": "Barra sota el contingut",
         "top": "Barra a sobre (superposada)",
         "bottom": "Barra a sota (superposada)",
-        "overlay": "Barra superposada al contingut (overlay)"
+        "overlay": "Barra superposada al contingut (overlay)",
+        "background": "Fons de la targeta"
       },
       "layout": {
         "horizontal": "Horitzontal (predeterminada)",

@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Ikonos dviejų bakstelėjimų veiksmas",
       "icon_hold_action": "Ikonos ilgo paspaudimo veiksmas",
       "icon_tap_action": "Ikonos bakstelėjimo veiksmas",
-      "layout": "Kortelės išdėstymas",
+      "layout": "Turinio išdėstymas",
       "max_value": "Maksimali reikšmė",
       "max_value_attribute": "Atributas (max_value)",
       "max_value_entity": "Maksimali reikšmė",
@@ -66,6 +66,7 @@
       "percent": "Procentai",
       "reverse_secondary_info_row": "Sukeisti juostą ir tekstą",
       "secondary": "Papildoma informacija",
+      "state_content": "Būsenos turinys",
       "tap_action": "Bakstelėjimo veiksmas",
       "text_shadow": "Pridėti teksto šešėlį (overlay)",
       "theme": "Tema",
@@ -103,7 +104,8 @@
         "below": "Juosta po turiniu",
         "top": "Juosta viršuje (overlay)",
         "bottom": "Juosta apačioje (overlay)",
-        "overlay": "Juosta ant turinio (overlay)"
+        "overlay": "Juosta ant turinio (overlay)",
+        "background": "Kortelės fonas"
       },
       "layout": {
         "horizontal": "Horizontalus (numatyta)",

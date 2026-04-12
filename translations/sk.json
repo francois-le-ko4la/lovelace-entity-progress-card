@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Akcia pri dvojitom ťuknutí ikony",
       "icon_hold_action": "Akcia pri dlhom podržaní ikony",
       "icon_tap_action": "Akcia pri ťuknutí ikony",
-      "layout": "Rozloženie karty",
+      "layout": "Rozloženie obsahu",
       "max_value": "Maximálna hodnota",
       "max_value_attribute": "Atribút (max_value)",
       "max_value_entity": "Maximálna hodnota",
@@ -66,6 +66,7 @@
       "percent": "Percento",
       "reverse_secondary_info_row": "Vymeňte lištu a text",
       "secondary": "Sekundárna informácia",
+      "state_content": "Obsah stavu",
       "tap_action": "Akcia pri ťuknutí",
       "text_shadow": "Pridať tieň textu (overlay)",
       "theme": "Téma",
@@ -103,7 +104,8 @@
         "below": "Pruh pod obsahom",
         "top": "Pruh hore (overlay)",
         "bottom": "Pruh dole (overlay)",
-        "overlay": "Pruh cez obsah (overlay)"
+        "overlay": "Pruh cez obsah (overlay)",
+        "background": "Pozadie karty"
       },
       "layout": {
         "horizontal": "Horizontálne (predvolené)",

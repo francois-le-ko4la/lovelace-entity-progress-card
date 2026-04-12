@@ -390,20 +390,50 @@ _default attribute:_
 
 > **`name`** [String] _(optional)_
 
-The name displayed on the progress bar. If omitted, the entity's friendly name
-will be used.
+The name displayed on the progress bar. If omitted, the entity's
+`friendly name` will be used.
 
 _Default_:
 
 - `<entity_name>`
 
-_Example_:
+_Simple Usage_:
+
+You can provide a simple string for a static label.
 
 ```yaml
 type: custom:entity-progress-card
 ····
 name: ABC
 ```
+
+_Advanced Usage_:
+
+To build a dynamic name, you can provide a list of objects. This allows you to
+combine static text with Home Assistant metadata. Elements are concatenated
+with a space automatically.
+
+```yaml
+type: custom:entity-progress-card
+····
+name:
+  - type: text
+    text: my text
+  - type: area
+  - type: device
+  - type: entity
+  - type: floor
+```
+
+_Accepted types_:
+
+| Type   | Description                                                        |
+| ------ | ------------------------------------------------------------------ |
+| text   | Displays static text. Requires the `text` key.                     |
+| entity | Displays the name of the card's configured entity.                 |
+| area   | Displays the name of the Area associated with the entity.          |
+| device | Displays the name of the Device associated with the entity.        |
+| floor  | Displays the name of the Floor where the entity's area is located. |
 
 [🔼 Back to top]
 
@@ -621,7 +651,6 @@ reverse: true
 #### `state_content`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
-[![YAML Only][yaml-only]](#yaml-only)
 
 > **`state_content`** [String]|[List] _(optional)_:
 

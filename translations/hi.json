@@ -57,7 +57,7 @@
       "icon_double_tap_action": "आइकन डबल टैप व्यवहार",
       "icon_hold_action": "आइकन होल्ड व्यवहार",
       "icon_tap_action": "आइकन टैप व्यवहार",
-      "layout": "कार्ड लेआउट",
+      "layout": "सामग्री लेआउट",
       "max_value": "अधिकतम मान",
       "max_value_attribute": "एट्रिब्यूट (max_value)",
       "max_value_entity": "एंटिटी का अधिकतम मान",
@@ -66,6 +66,7 @@
       "percent": "प्रतिशत",
       "reverse_secondary_info_row": "बार और टेक्स्ट बदलें",
       "secondary": "सहायक जानकारी",
+      "state_content": "स्थिति की सामग्री",
       "tap_action": "टैप व्यवहार",
       "text_shadow": "टेक्स्ट में छाया जोड़ें (overlay)",
       "theme": "थीम",
@@ -88,7 +89,8 @@
         "bottom": "नीचे बार (ओवरले)",
         "default": "डिफ़ॉल्ट",
         "overlay": "सामग्री पर ओवरले बार",
-        "top": "ऊपर बार (ओवरले)"
+        "top": "ऊपर बार (ओवरले)",
+        "background": "कार्ड पृष्ठभूमि"
       },
       "bar_size": {
         "large": "बड़ी",

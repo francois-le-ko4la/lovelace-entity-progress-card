@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Chování při dvojitém klepnutí na ikonu",
       "icon_hold_action": "Chování při podržení ikony",
       "icon_tap_action": "Chování při klepnutí na ikonu",
-      "layout": "Rozložení karty",
+      "layout": "Rozložení obsahu",
       "max_value": "Maximální hodnota",
       "max_value_attribute": "Atribut (max_value)",
       "max_value_entity": "Použít entitu pro maximální hodnotu",
@@ -66,6 +66,7 @@
       "percent": "Procento",
       "reverse_secondary_info_row": "Zaměnit lištu a text",
       "secondary": "Sekundární informace",
+      "state_content": "Obsah stavu",
       "tap_action": "Chování při klepnutí",
       "text_shadow": "Přidat stín textu (overlay)",
       "theme": "Motiv",
@@ -103,7 +104,8 @@
         "below": "Lišta pod obsahem",
         "top": "Lišta nahoře (overlay)",
         "bottom": "Lišta dole (overlay)",
-        "overlay": "Lišta přes obsah (overlay)"
+        "overlay": "Lišta přes obsah (overlay)",
+        "background": "Pozadí karty"
       },
       "layout": {
         "horizontal": "Horizontální (výchozí)",

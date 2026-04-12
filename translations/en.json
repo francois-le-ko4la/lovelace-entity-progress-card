@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Icon double tap behavior",
       "icon_hold_action": "Icon hold behavior",
       "icon_tap_action": "Icon tap behavior",
-      "layout": "Card layout",
+      "layout": "Content layout",
       "max_value": "Maximum value",
       "max_value_attribute": "Attribute (max_value)",
       "max_value_entity": "Use entity as maximum value",
@@ -66,6 +66,7 @@
       "percent": "Percentage",
       "reverse_secondary_info_row": "Swap bar and text",
       "secondary": "Secondary info",
+      "state_content": "State content",
       "tap_action": "Tap behavior",
       "text_shadow": "Add text shadow (overlay)",
       "theme": "Theme",
@@ -103,7 +104,8 @@
         "below": "Bar below content",
         "top": "Bar on top (overlay)",
         "bottom": "Bar on bottom (overlay)",
-        "overlay": "Bar overlay on content"
+        "overlay": "Bar overlay on content",
+        "background": "Full card background"
       },
       "layout": {
         "horizontal": "Horizontal (default)",

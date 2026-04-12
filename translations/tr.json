@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Simgeye çift dokunma davranışı",
       "icon_hold_action": "Simgeye uzun basma davranışı",
       "icon_tap_action": "Simgeye dokunma davranışı",
-      "layout": "Kart düzeni",
+      "layout": "İçerik düzeni",
       "max_value": "Maksimum değer",
       "max_value_attribute": "Öznitelik (max_value)",
       "max_value_entity": "Maksimum değer",
@@ -66,6 +66,7 @@
       "percent": "Yüzde",
       "reverse_secondary_info_row": "Çubuğu ve metni değiştir",
       "secondary": "İkincil bilgi",
+      "state_content": "Durum içeriği",
       "tap_action": "Kısa dokunma davranışı",
       "text_shadow": "Metne gölge ekle (overlay)",
       "theme": "Tema",
@@ -88,7 +89,8 @@
         "bottom": "Altta çubuk (overlay)",
         "default": "Varsayılan",
         "overlay": "İçeriğin üzerine bindirme (overlay)",
-        "top": "Üstte çubuk (overlay)"
+        "top": "Üstte çubuk (overlay)",
+        "background": "Kart arka planı"
       },
       "bar_size": {
         "large": "Büyük",

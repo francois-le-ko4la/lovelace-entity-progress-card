@@ -256,6 +256,7 @@ const CARD = {
       belowContainer: { element: 'div', class: 'below-container' },
       topContainer: { element: 'div', class: 'top-container' },
       bottomContainer: { element: 'div', class: 'bottom-container' },
+      backgroundContainer: { element: 'div', class: 'background-container' },
       icon: { element: 'div', class: 'icon-section', extraAttr: {'aria-hidden': 'true'} },
       content: { element: 'div', class: 'content-section' },
     },
@@ -649,7 +650,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'الإجراء عند النقر المزدوج على الأيقونة',
         icon_hold_action: 'الإجراء عند الضغط المطول على الأيقونة',
         icon_tap_action: 'الإجراء عند النقر على الأيقونة',
-        layout: 'تخطيط البطاقة',
+        layout: 'تخطيط المحتوى',
         max_value: 'القيمة القصوى',
         max_value_attribute: 'السمة (max_value)',
         max_value_entity: 'استخدام الكيان للقيمة القصوى',
@@ -658,6 +659,7 @@ const TRANSLATIONS = {
         percent: 'النسبة المئوية',
         reverse_secondary_info_row: 'تبديل الشريط والنص',
         secondary: 'معلومات ثانوية',
+        state_content: 'محتوى الحالة',
         tap_action: 'الإجراء عند النقر القصير',
         text_shadow: 'إضافة ظل للنص (overlay)',
         theme: 'السمة',
@@ -695,7 +697,8 @@ const TRANSLATIONS = {
           below: 'الشريط تحت المحتوى',
           top: 'الشريط أعلى المحتوى (تراكب)',
           bottom: 'الشريط أسفل المحتوى (تراكب)',
-          overlay: 'الشريط فوق المحتوى (تراكب)'
+          overlay: 'الشريط فوق المحتوى (تراكب)',
+          background: 'خلفية البطاقة'
         },
         layout: {
           horizontal: 'أفقي (افتراضي)',
@@ -763,7 +766,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'আইকন ডাবল ট্যাপ আচরণ',
         icon_hold_action: 'আইকন হোল্ড আচরণ',
         icon_tap_action: 'আইকন ট্যাপ আচরণ',
-        layout: 'কার্ড লেআউট',
+        layout: 'বিষয়বস্তুর বিন্যাস',
         max_value: 'সর্বোচ্চ মান',
         max_value_attribute: 'বৈশিষ্ট্য (max_value)',
         max_value_entity: 'সত্তার সর্বোচ্চ মান',
@@ -772,6 +775,7 @@ const TRANSLATIONS = {
         percent: 'শতাংশ',
         reverse_secondary_info_row: 'বার এবং টেক্সট অদলবদল করুন',
         secondary: 'দ্বিতীয় তথ্য',
+        state_content: 'স্টেটের বিষয়বস্তু',
         tap_action: 'ট্যাপ আচরণ',
         text_shadow: 'টেক্সটে ছায়া যোগ করুন (overlay)',
         theme: 'থিম',
@@ -809,7 +813,8 @@ const TRANSLATIONS = {
           below: 'বিষয়বস্তুর নিচে বার',
           top: 'উপরের দিকে বার (ওভারলে)',
           bottom: 'নিচের দিকে বার (ওভারলে)',
-          overlay: 'বিষয়বস্তুর ওপর বার (ওভারলে)'
+          overlay: 'বিষয়বস্তুর ওপর বার (ওভারলে)',
+          background: 'কার্ড পটভূমি'
         },
         layout: {
           horizontal: 'অনুভূমিক (ডিফল্ট)',
@@ -877,7 +882,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Acció al doble tocar la icona',
         icon_hold_action: 'Acció en mantenir premuda la icona',
         icon_tap_action: 'Acció al tocar la icona',
-        layout: 'Disposició de la targeta',
+        layout: 'Disposició del contingut',
         max_value: 'Valor màxim',
         max_value_attribute: 'Atribut (valor màxim)',
         max_value_entity: 'Usar entitat com a valor màxim',
@@ -886,6 +891,7 @@ const TRANSLATIONS = {
         percent: 'Percentatge',
         reverse_secondary_info_row: 'Intercanvia barra i text',
         secondary: 'Informació secundària',
+        state_content: 'Contingut de l\'estat',
         tap_action: 'Acció al tocar breument',
         text_shadow: 'Afegir ombra al text (overlay)',
         theme: 'Tema',
@@ -923,7 +929,8 @@ const TRANSLATIONS = {
           below: 'Barra sota el contingut',
           top: 'Barra a sobre (superposada)',
           bottom: 'Barra a sota (superposada)',
-          overlay: 'Barra superposada al contingut (overlay)'
+          overlay: 'Barra superposada al contingut (overlay)',
+          background: 'Fons de la targeta'
         },
         layout: {
           horizontal: 'Horitzontal (predeterminada)',
@@ -991,7 +998,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Chování při dvojitém klepnutí na ikonu',
         icon_hold_action: 'Chování při podržení ikony',
         icon_tap_action: 'Chování při klepnutí na ikonu',
-        layout: 'Rozložení karty',
+        layout: 'Rozložení obsahu',
         max_value: 'Maximální hodnota',
         max_value_attribute: 'Atribut (max_value)',
         max_value_entity: 'Použít entitu pro maximální hodnotu',
@@ -1000,6 +1007,7 @@ const TRANSLATIONS = {
         percent: 'Procento',
         reverse_secondary_info_row: 'Zaměnit lištu a text',
         secondary: 'Sekundární informace',
+        state_content: 'Obsah stavu',
         tap_action: 'Chování při klepnutí',
         text_shadow: 'Přidat stín textu (overlay)',
         theme: 'Motiv',
@@ -1037,7 +1045,8 @@ const TRANSLATIONS = {
           below: 'Lišta pod obsahem',
           top: 'Lišta nahoře (overlay)',
           bottom: 'Lišta dole (overlay)',
-          overlay: 'Lišta přes obsah (overlay)'
+          overlay: 'Lišta přes obsah (overlay)',
+          background: 'Pozadí karty'
         },
         layout: {
           horizontal: 'Horizontální (výchozí)',
@@ -1105,7 +1114,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Handling ved dobbelt tryk på ikonet',
         icon_hold_action: 'Handling ved langt tryk på ikonet',
         icon_tap_action: 'Handling ved tryk på ikonet',
-        layout: 'Kort layout',
+        layout: 'Indholdslayout',
         max_value: 'Maksimal værdi',
         max_value_attribute: 'Attribut (max_value)',
         max_value_entity: 'Brug enhed for max-værdi',
@@ -1114,6 +1123,7 @@ const TRANSLATIONS = {
         percent: 'Procent',
         reverse_secondary_info_row: 'Skift bjælke og tekst',
         secondary: 'Sekundær info',
+        state_content: 'Indhold af tilstand',
         tap_action: 'Handling ved kort tryk',
         text_shadow: 'Tilføj tekstskygge (overlay)',
         theme: 'Tema',
@@ -1151,7 +1161,8 @@ const TRANSLATIONS = {
           below: 'Bar under indhold',
           top: 'Bar øverst (overlay)',
           bottom: 'Bar nederst (overlay)',
-          overlay: 'Bar over indhold (overlay)'
+          overlay: 'Bar over indhold (overlay)',
+          background: 'Kortbaggrund'
         },
         layout: {
           horizontal: 'Horisontal (standard)',
@@ -1219,7 +1230,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Aktion bei doppelt Tippen auf das Symbol',
         icon_hold_action: 'Aktion bei langem Tippen auf das Symbol',
         icon_tap_action: 'Aktion beim Tippen auf das Symbol',
-        layout: 'Kartenlayout',
+        layout: 'Inhaltslayout',
         max_value: 'Höchstwert',
         max_value_attribute: 'Attribut (max_value)',
         max_value_entity: 'Entität für Maximalwert verwenden',
@@ -1228,6 +1239,7 @@ const TRANSLATIONS = {
         percent: 'Prozent',
         reverse_secondary_info_row: 'Barra und Text tauschen',
         secondary: 'Sekundäre Informationen',
+        state_content: 'Statusinhalt',
         tap_action: 'Aktion bei kurzem Tippen',
         text_shadow: 'Textschatten hinzufügen (Overlay)',
         theme: 'Thema',
@@ -1265,7 +1277,8 @@ const TRANSLATIONS = {
           below: 'Leiste unter dem Inhalt',
           top: 'Leiste oben (Overlay)',
           bottom: 'Leiste unten (Overlay)',
-          overlay: 'Leiste über dem Inhalt (Overlay)'
+          overlay: 'Leiste über dem Inhalt (Overlay)',
+          background: 'Kartenhintergrund'
         },
         layout: {
           horizontal: 'Horizontal (Standard)',
@@ -1333,7 +1346,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Ενέργεια στο διπλό πάτημα του εικονιδίου',
         icon_hold_action: 'Ενέργεια στο παρατεταμένο πάτημα του εικονιδίου',
         icon_tap_action: 'Ενέργεια στο πάτημα του εικονιδίου',
-        layout: 'Διάταξη κάρτας',
+        layout: 'Διάταξη περιεχομένου',
         max_value: 'Μέγιστη τιμή',
         max_value_attribute: 'Χαρακτηριστικό (max_value)',
         max_value_entity: 'Χρήση οντότητας ως μέγιστης τιμής',
@@ -1342,6 +1355,7 @@ const TRANSLATIONS = {
         percent: 'Ποσοστό',
         reverse_secondary_info_row: 'Εναλλαγή γραμμής και κειμένου',
         secondary: 'Πρόσθετες πληροφορίες',
+        state_content: 'Περιεχόμενο κατάστασης',
         tap_action: 'Ενέργεια κατά το σύντομο πάτημα',
         text_shadow: 'Προσθήκη σκιάς στο κείμενο (overlay)',
         theme: 'Θέμα',
@@ -1379,7 +1393,8 @@ const TRANSLATIONS = {
           below: 'Γραμμή κάτω από το περιεχόμενο',
           top: 'Γραμμή πάνω (επικάλυψη)',
           bottom: 'Γραμμή κάτω (επικάλυψη)',
-          overlay: 'Γραμμή πάνω από περιεχόμενο (overlay)'
+          overlay: 'Γραμμή πάνω από περιεχόμενο (overlay)',
+          background: 'Φόντο κάρτας'
         },
         layout: {
           horizontal: 'Οριζόντια (προεπιλογή)',
@@ -1447,7 +1462,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Icon double tap behavior',
         icon_hold_action: 'Icon hold behavior',
         icon_tap_action: 'Icon tap behavior',
-        layout: 'Card layout',
+        layout: 'Content layout',
         max_value: 'Maximum value',
         max_value_attribute: 'Attribute (max_value)',
         max_value_entity: 'Use entity as maximum value',
@@ -1456,6 +1471,7 @@ const TRANSLATIONS = {
         percent: 'Percentage',
         reverse_secondary_info_row: 'Swap bar and text',
         secondary: 'Secondary info',
+        state_content: 'State content',
         tap_action: 'Tap behavior',
         text_shadow: 'Add text shadow (overlay)',
         theme: 'Theme',
@@ -1493,7 +1509,8 @@ const TRANSLATIONS = {
           below: 'Bar below content',
           top: 'Bar on top (overlay)',
           bottom: 'Bar on bottom (overlay)',
-          overlay: 'Bar overlay on content'
+          overlay: 'Bar overlay on content',
+          background: 'Full card background'
         },
         layout: {
           horizontal: 'Horizontal (default)',
@@ -1561,7 +1578,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Acción de doble toque en ícono',
         icon_hold_action: 'Acción al mantener presionado ícono',
         icon_tap_action: 'Acción al tocar ícono',
-        layout: 'Diseño de tarjeta',
+        layout: 'Disposición del contenido',
         max_value: 'Valor máximo',
         max_value_attribute: 'Atributo (valor máximo)',
         max_value_entity: 'Usar valor máximo de la entidad',
@@ -1570,6 +1587,7 @@ const TRANSLATIONS = {
         percent: 'Porcentaje',
         reverse_secondary_info_row: 'Intercambiar barra y texto',
         secondary: 'Información secundaria',
+        state_content: 'Contenido del estado',
         tap_action: 'Acción al tocar',
         text_shadow: 'Agregar sombra al texto (overlay)',
         theme: 'Tema',
@@ -1607,7 +1625,8 @@ const TRANSLATIONS = {
           below: 'Barra debajo del contenido',
           top: 'Barra arriba (superpuesta)',
           bottom: 'Barra abajo (superpuesta)',
-          overlay: 'Superpuesta sobre el contenido'
+          overlay: 'Superpuesta sobre el contenido',
+          background: 'Fondo de la tarjeta'
         },
         layout: {
           horizontal: 'Horizontal (predeterminado)',
@@ -1675,7 +1694,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Acción al pulsar dos veces el icono',
         icon_hold_action: 'Acción al mantener pulsado el icono',
         icon_tap_action: 'Acción al pulsar el icono',
-        layout: 'Disposición de la tarjeta',
+        layout: 'Disposición del contenido',
         max_value: 'Valor máximo',
         max_value_attribute: 'Atributo (max_value)',
         max_value_entity: 'Usar entidad como valor máximo',
@@ -1684,6 +1703,7 @@ const TRANSLATIONS = {
         percent: 'Porcentaje',
         reverse_secondary_info_row: 'Intercambiar barra y texto',
         secondary: 'Información secundaria',
+        state_content: 'Contenido del estado',
         tap_action: 'Acción al pulsar brevemente',
         text_shadow: 'Añadir sombra al texto (overlay)',
         theme: 'Tema',
@@ -1721,7 +1741,8 @@ const TRANSLATIONS = {
           below: 'Barra debajo del contenido',
           top: 'Barra arriba (superpuesta)',
           bottom: 'Barra abajo (superpuesta)',
-          overlay: 'Barra superpuesta al contenido (overlay)'
+          overlay: 'Barra superpuesta al contenido (overlay)',
+          background: 'Fondo de la tarjeta'
         },
         layout: {
           horizontal: 'Horizontal (predeterminado)',
@@ -1789,7 +1810,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Ikooni topeltpuudutuse tegevus',
         icon_hold_action: 'Ikooni pika vajutuse tegevus',
         icon_tap_action: 'Ikooni puudutuse tegevus',
-        layout: 'Kaardi paigutus',
+        layout: 'Sisu paigutus',
         max_value: 'Maksimaalne väärtus',
         max_value_attribute: 'Atribuut (max_value)',
         max_value_entity: 'Maksimaalne väärtus',
@@ -1798,6 +1819,7 @@ const TRANSLATIONS = {
         percent: 'Protsent',
         reverse_secondary_info_row: 'Vaheta riba ja tekst',
         secondary: 'Täiendav info',
+        state_content: 'Oleku sisu',
         tap_action: 'Puudutuse tegevus',
         text_shadow: 'Lisa teksti vari (overlay)',
         theme: 'Teema',
@@ -1835,7 +1857,8 @@ const TRANSLATIONS = {
           below: 'Riba sisu all',
           top: 'Riba üleval (overlay)',
           bottom: 'Riba all (overlay)',
-          overlay: 'Riba sisu kohal (overlay)'
+          overlay: 'Riba sisu kohal (overlay)',
+          background: 'Kaardi taust'
         },
         layout: {
           horizontal: 'Horisontaalne (vaikimisi)',
@@ -1903,7 +1926,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Toiminto kahdella napautuksella kuvaketta',
         icon_hold_action: 'Toiminto pitkällä painalluksella kuvaketta',
         icon_tap_action: 'Toiminto kuvaketta napautettaessa',
-        layout: 'Kortin asettelu',
+        layout: 'Sisällön asettelu',
         max_value: 'Maksimiarvo',
         max_value_attribute: 'Attribuutti (max_value)',
         max_value_entity: 'Käytä entiteettiä maksimiarvona',
@@ -1912,6 +1935,7 @@ const TRANSLATIONS = {
         percent: 'Prosentti',
         reverse_secondary_info_row: 'Vaihda palkki ja teksti',
         secondary: 'Lisätiedot',
+        state_content: 'Tilan sisältö',
         tap_action: 'Toiminto lyhyellä napautuksella',
         text_shadow: 'Lisää tekstivarjo (overlay)',
         theme: 'Teema',
@@ -1949,7 +1973,8 @@ const TRANSLATIONS = {
           below: 'Palkki sisällön alla',
           top: 'Palkki ylhäällä (päällekkäin)',
           bottom: 'Palkki alhaalla (päällekkäin)',
-          overlay: 'Palkki sisällön päällä (overlay)'
+          overlay: 'Palkki sisällön päällä (overlay)',
+          background: 'Kortin tausta'
         },
         layout: {
           horizontal: 'Vaakasuora (oletus)',
@@ -2017,7 +2042,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Comportement lors d\'un double appui sur l\'icône',
         icon_hold_action: 'Comportement lors d\'un appui long sur l\'icône',
         icon_tap_action: 'Comportement lors de l\'appui sur l\'icône',
-        layout: 'Disposition de la carte',
+        layout: 'Disposition du contenu',
         max_value: 'Valeur maximum',
         max_value_attribute: 'Attribut (max_value)',
         max_value_entity: 'Valeur maximum',
@@ -2026,6 +2051,7 @@ const TRANSLATIONS = {
         percent: 'Pourcentage',
         reverse_secondary_info_row: 'Intervertir barre et texte',
         secondary: 'Information secondaire',
+        state_content: 'Contenu de l’état',
         tap_action: 'Comportement lors d\'un appui court',
         text_shadow: 'Ajouter une ombre au texte (overlay)',
         theme: 'Thème',
@@ -2063,7 +2089,8 @@ const TRANSLATIONS = {
           below: 'Barre en dessous du contenu',
           top: 'Barre en haut (superposée)',
           bottom: 'Barre en bas (superposée)',
-          overlay: 'Barre superposée au contenu (overlay)'
+          overlay: 'Barre superposée au contenu (overlay)',
+          background: 'Arrière-plan de la carte'
         },
         layout: {
           horizontal: 'Horizontal (par défaut)',
@@ -2131,7 +2158,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'आइकन डबल टैप व्यवहार',
         icon_hold_action: 'आइकन होल्ड व्यवहार',
         icon_tap_action: 'आइकन टैप व्यवहार',
-        layout: 'कार्ड लेआउट',
+        layout: 'सामग्री लेआउट',
         max_value: 'अधिकतम मान',
         max_value_attribute: 'एट्रिब्यूट (max_value)',
         max_value_entity: 'एंटिटी का अधिकतम मान',
@@ -2140,6 +2167,7 @@ const TRANSLATIONS = {
         percent: 'प्रतिशत',
         reverse_secondary_info_row: 'बार और टेक्स्ट बदलें',
         secondary: 'सहायक जानकारी',
+        state_content: 'स्थिति की सामग्री',
         tap_action: 'टैप व्यवहार',
         text_shadow: 'टेक्स्ट में छाया जोड़ें (overlay)',
         theme: 'थीम',
@@ -2162,7 +2190,8 @@ const TRANSLATIONS = {
           bottom: 'नीचे बार (ओवरले)',
           default: 'डिफ़ॉल्ट',
           overlay: 'सामग्री पर ओवरले बार',
-          top: 'ऊपर बार (ओवरले)'
+          top: 'ऊपर बार (ओवरले)',
+          background: 'कार्ड पृष्ठभूमि'
         },
         bar_size: {
           large: 'बड़ी',
@@ -2245,7 +2274,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Radnja na dupli dodir ikone',
         icon_hold_action: 'Radnja na dugi dodir ikone',
         icon_tap_action: 'Radnja na dodir ikone',
-        layout: 'Izgled kartice',
+        layout: 'Raspored sadržaja',
         max_value: 'Maksimalna vrijednost',
         max_value_attribute: 'Atribut (max_value)',
         max_value_entity: 'Maksimalna vrijednost entiteta',
@@ -2254,6 +2283,7 @@ const TRANSLATIONS = {
         percent: 'Postotak',
         reverse_secondary_info_row: 'Zamijeni traku i tekst',
         secondary: 'Sekundarne informacije',
+        state_content: 'Sadržaj stanja',
         tap_action: 'Radnja na kratki dodir',
         text_shadow: 'Dodaj sjenu tekstu (overlay)',
         theme: 'Tema',
@@ -2276,7 +2306,8 @@ const TRANSLATIONS = {
           bottom: 'Traka na dnu (overlay)',
           default: 'Zadano',
           overlay: 'Traka preklopljena na sadržaj (overlay)',
-          top: 'Traka na vrhu (overlay)'
+          top: 'Traka na vrhu (overlay)',
+          background: 'Pozadina kartice'
         },
         bar_size: {
           large: 'Velika',
@@ -2359,7 +2390,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Ikon dupla koppintás művelet',
         icon_hold_action: 'Ikon hosszan nyomás művelet',
         icon_tap_action: 'Ikon koppintás művelet',
-        layout: 'Kártya elrendezése',
+        layout: 'Tartalom elrendezése',
         max_value: 'Maximális érték',
         max_value_attribute: 'Attribútum (max_value)',
         max_value_entity: 'Maximális érték',
@@ -2368,6 +2399,7 @@ const TRANSLATIONS = {
         percent: 'Százalék',
         reverse_secondary_info_row: 'Cserélje fel a sávot és a szöveget',
         secondary: 'Másodlagos információ',
+        state_content: 'Állapot tartalma',
         tap_action: 'Koppintás művelet',
         text_shadow: 'Szöveg árnyék hozzáadása (overlay)',
         theme: 'Téma',
@@ -2405,7 +2437,8 @@ const TRANSLATIONS = {
           below: 'Sáv a tartalom alatt',
           top: 'Sáv fent (overlay)',
           bottom: 'Sáv lent (overlay)',
-          overlay: 'Sáv a tartalmon (overlay)'
+          overlay: 'Sáv a tartalmon (overlay)',
+          background: 'Kártya háttér'
         },
         layout: {
           horizontal: 'Vízszintes (alapértelmezett)',
@@ -2473,7 +2506,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Perilaku ketuk ganda ikon',
         icon_hold_action: 'Perilaku tahan ikon',
         icon_tap_action: 'Perilaku ketuk ikon',
-        layout: 'Tata letak kartu',
+        layout: 'Tata letak konten',
         max_value: 'Nilai maksimum',
         max_value_attribute: 'Atribut (max_value)',
         max_value_entity: 'Nilai maksimum',
@@ -2482,6 +2515,7 @@ const TRANSLATIONS = {
         percent: 'Persentase',
         reverse_secondary_info_row: 'Tukar bilah dan teks',
         secondary: 'Informasi sekunder',
+        state_content: 'Konten status',
         tap_action: 'Perilaku ketuk',
         text_shadow: 'Tambahkan bayangan teks (overlay)',
         theme: 'Tema',
@@ -2504,7 +2538,8 @@ const TRANSLATIONS = {
           bottom: 'Bar di bawah (overlay)',
           default: 'Default',
           overlay: 'Bar ditumpangkan pada konten (overlay)',
-          top: 'Bar di atas (overlay)'
+          top: 'Bar di atas (overlay)',
+          background: 'Latar belakang kartu'
         },
         bar_size: {
           large: 'Besar',
@@ -2587,7 +2622,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Azione al doppio tocco dell\'icona',
         icon_hold_action: 'Azione al tocco prolungato dell\'icona',
         icon_tap_action: 'Azione al tocco dell\'icona',
-        layout: 'Layout della carta',
+        layout: 'Layout del contenuto',
         max_value: 'Valore massimo',
         max_value_attribute: 'Attributo (max_value)',
         max_value_entity: 'Valore massimo',
@@ -2596,6 +2631,7 @@ const TRANSLATIONS = {
         percent: 'Percentuale',
         reverse_secondary_info_row: 'Scambia barra e testo',
         secondary: 'Informazione secondaria',
+        state_content: 'Contenuto dello stato',
         tap_action: 'Azione al tocco breve',
         text_shadow: 'Aggiungi ombra al testo (overlay)',
         theme: 'Tema',
@@ -2618,7 +2654,8 @@ const TRANSLATIONS = {
           bottom: 'Barra in basso (overlay)',
           default: 'Predefinito',
           overlay: 'Barra sovrapposta al contenuto (overlay)',
-          top: 'Barra in alto (overlay)'
+          top: 'Barra in alto (overlay)',
+          background: 'Sfondo della scheda'
         },
         bar_size: {
           large: 'Grande',
@@ -2701,7 +2738,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'アイコンをダブルタップしたときの動作',
         icon_hold_action: 'アイコンを長押ししたときの動作',
         icon_tap_action: 'アイコンをタップしたときの動作',
-        layout: 'カードレイアウト',
+        layout: 'コンテンツのレイアウト',
         max_value: '最大値',
         max_value_attribute: '属性（最大値）',
         max_value_entity: '最大値',
@@ -2710,6 +2747,7 @@ const TRANSLATIONS = {
         percent: 'パーセント',
         reverse_secondary_info_row: 'バーとテキストを入れ替える',
         secondary: '補足情報',
+        state_content: '状態の内容',
         tap_action: '短くタップしたときの動作',
         text_shadow: 'テキストに影を追加 (オーバーレイ)',
         theme: 'テーマ',
@@ -2732,7 +2770,8 @@ const TRANSLATIONS = {
           bottom: '下部にバー（オーバーレイ）',
           default: 'デフォルト',
           overlay: 'コンテンツに重ねてバー（オーバーレイ）',
-          top: '上部にバー（オーバーレイ）'
+          top: '上部にバー（オーバーレイ）',
+          background: 'カードの背景'
         },
         bar_size: {
           large: '大',
@@ -2815,7 +2854,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: '아이콘 더블 탭 시 동작',
         icon_hold_action: '아이콘 길게 누를 시 동작',
         icon_tap_action: '아이콘 탭 시 동작',
-        layout: '카드 레이아웃',
+        layout: '콘텐츠 레이아웃',
         max_value: '최대값',
         max_value_attribute: '속성 (최대값)',
         max_value_entity: '최대값',
@@ -2824,6 +2863,7 @@ const TRANSLATIONS = {
         percent: '퍼센트',
         reverse_secondary_info_row: '막대와 텍스트 교체',
         secondary: '보조 정보',
+        state_content: '상태 콘텐츠',
         tap_action: '짧게 탭 시 동작',
         text_shadow: '텍스트 그림자 추가 (오버레이)',
         theme: '테마',
@@ -2846,7 +2886,8 @@ const TRANSLATIONS = {
           bottom: '하단 바 (오버레이)',
           default: '기본',
           overlay: '콘텐츠 위에 바 (오버레이)',
-          top: '상단 바 (오버레이)'
+          top: '상단 바 (오버레이)',
+          background: '카드 배경'
         },
         bar_size: {
           large: '큰',
@@ -2929,7 +2970,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Ikonos dviejų bakstelėjimų veiksmas',
         icon_hold_action: 'Ikonos ilgo paspaudimo veiksmas',
         icon_tap_action: 'Ikonos bakstelėjimo veiksmas',
-        layout: 'Kortelės išdėstymas',
+        layout: 'Turinio išdėstymas',
         max_value: 'Maksimali reikšmė',
         max_value_attribute: 'Atributas (max_value)',
         max_value_entity: 'Maksimali reikšmė',
@@ -2938,6 +2979,7 @@ const TRANSLATIONS = {
         percent: 'Procentai',
         reverse_secondary_info_row: 'Sukeisti juostą ir tekstą',
         secondary: 'Papildoma informacija',
+        state_content: 'Būsenos turinys',
         tap_action: 'Bakstelėjimo veiksmas',
         text_shadow: 'Pridėti teksto šešėlį (overlay)',
         theme: 'Tema',
@@ -2975,7 +3017,8 @@ const TRANSLATIONS = {
           below: 'Juosta po turiniu',
           top: 'Juosta viršuje (overlay)',
           bottom: 'Juosta apačioje (overlay)',
-          overlay: 'Juosta ant turinio (overlay)'
+          overlay: 'Juosta ant turinio (overlay)',
+          background: 'Kortelės fonas'
         },
         layout: {
           horizontal: 'Horizontalus (numatyta)',
@@ -3043,7 +3086,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Ikonas dubults pieskāriens',
         icon_hold_action: 'Ikonas ilgs pieskāriens',
         icon_tap_action: 'Ikonas pieskāriens',
-        layout: 'Kartes izkārtojums',
+        layout: 'Satura izkārtojums',
         max_value: 'Maksimālā vērtība',
         max_value_attribute: 'Atribūts (max_value)',
         max_value_entity: 'Maksimālā vērtība',
@@ -3052,6 +3095,7 @@ const TRANSLATIONS = {
         percent: 'Procenti',
         reverse_secondary_info_row: 'Mainīt joslu un tekstu',
         secondary: 'Papildu informācija',
+        state_content: 'Stāvokļa saturs',
         tap_action: 'Pieskāriens',
         text_shadow: 'Pievienot teksta ēnu (overlay)',
         theme: 'Tēma',
@@ -3089,7 +3133,8 @@ const TRANSLATIONS = {
           below: 'Josla zem satura',
           top: 'Josla augšā (overlay)',
           bottom: 'Josla apakšā (overlay)',
-          overlay: 'Josla virs satura (overlay)'
+          overlay: 'Josla virs satura (overlay)',
+          background: 'Kartes fons'
         },
         layout: {
           horizontal: 'Horizontāls (noklusēts)',
@@ -3157,7 +3202,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Дејство при двоен допир на иконата',
         icon_hold_action: 'Дејство при долг допир на иконата',
         icon_tap_action: 'Дејство при допир на иконата',
-        layout: 'Распоред на карта',
+        layout: 'Распоред на содржината',
         max_value: 'Максимална вредност',
         max_value_attribute: 'Атрибут (max_value)',
         max_value_entity: 'Максимална вредност',
@@ -3166,6 +3211,7 @@ const TRANSLATIONS = {
         percent: 'Процент',
         reverse_secondary_info_row: 'Сменете ги лентата и текстот',
         secondary: 'Секундарни информации',
+        state_content: 'Содржина на состојба',
         tap_action: 'Дејство при краток допир',
         text_shadow: 'Додај сенка на текст (overlay)',
         theme: 'Тема',
@@ -3188,7 +3234,8 @@ const TRANSLATIONS = {
           bottom: 'Лента на дното (overlay)',
           default: 'Стандардно',
           overlay: 'Лента преку содржината (overlay)',
-          top: 'Лента на врвот (overlay)'
+          top: 'Лента на врвот (overlay)',
+          background: 'Позадина на картичката'
         },
         bar_size: {
           large: 'Голема',
@@ -3271,7 +3318,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Handling ved dobbelt trykk på ikonet',
         icon_hold_action: 'Handling ved langt trykk på ikonet',
         icon_tap_action: 'Handling ved trykk på ikonet',
-        layout: 'Kortlayout',
+        layout: 'Innholdslayout',
         max_value: 'Maksimal verdi',
         max_value_attribute: 'Attributt (max_value)',
         max_value_entity: 'Maksimal verdi',
@@ -3280,6 +3327,7 @@ const TRANSLATIONS = {
         percent: 'Prosent',
         reverse_secondary_info_row: 'Bytt linje og tekst',
         secondary: 'Sekundær informasjon',
+        state_content: 'Innhold i tilstand',
         tap_action: 'Handling ved kort trykk',
         text_shadow: 'Legg til tekstskygge (overlay)',
         theme: 'Tema',
@@ -3302,7 +3350,8 @@ const TRANSLATIONS = {
           bottom: 'Bar nederst (overlay)',
           default: 'Standard',
           overlay: 'Bar lagt over innholdet (overlay)',
-          top: 'Bar øverst (overlay)'
+          top: 'Bar øverst (overlay)',
+          background: 'Kortbakgrunn'
         },
         bar_size: {
           large: 'Stor',
@@ -3385,7 +3434,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Actie bij dubbel tikken op pictogram',
         icon_hold_action: 'Actie bij lang ingedrukt houden op pictogram',
         icon_tap_action: 'Actie bij tikken op pictogram',
-        layout: 'Kaartindeling',
+        layout: 'Inhoudsindeling',
         max_value: 'Maximale waarde',
         max_value_attribute: 'Attribuut (max_value)',
         max_value_entity: 'Maximale waarde',
@@ -3394,6 +3443,7 @@ const TRANSLATIONS = {
         percent: 'Percentage',
         reverse_secondary_info_row: 'Balk en tekst omwisselen',
         secondary: 'Secundaire informatie',
+        state_content: 'Inhoud van de status',
         tap_action: 'Actie bij korte tik',
         text_shadow: 'Tekstschaduw toevoegen (overlay)',
         theme: 'Thema',
@@ -3416,7 +3466,8 @@ const TRANSLATIONS = {
           bottom: 'Balk onderaan (overlay)',
           default: 'Standaard',
           overlay: 'Balk over de inhoud (overlay)',
-          top: 'Balk bovenaan (overlay)'
+          top: 'Balk bovenaan (overlay)',
+          background: 'Kaartachtergrond'
         },
         bar_size: {
           large: 'Groot',
@@ -3499,7 +3550,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Akcja przy podwójnym naciśnięciu ikony',
         icon_hold_action: 'Akcja przy długim naciśnięciu ikony',
         icon_tap_action: 'Akcja przy naciśnięciu ikony',
-        layout: 'Układ karty',
+        layout: 'Układ treści',
         max_value: 'Wartość maksymalna',
         max_value_attribute: 'Atrybut (max_value)',
         max_value_entity: 'Wartość maksymalna',
@@ -3508,6 +3559,7 @@ const TRANSLATIONS = {
         percent: 'Procent',
         reverse_secondary_info_row: 'Zamień pasek i tekst',
         secondary: 'Informacja dodatkowa',
+        state_content: 'Zawartość stanu',
         tap_action: 'Akcja przy krótkim naciśnięciu',
         text_shadow: 'Dodaj cień tekstu (overlay)',
         theme: 'Motyw',
@@ -3530,7 +3582,8 @@ const TRANSLATIONS = {
           bottom: 'Pasek na dole (overlay)',
           default: 'Domyślnie',
           overlay: 'Pasek nałożony na zawartość (overlay)',
-          top: 'Pasek na górze (overlay)'
+          top: 'Pasek na górze (overlay)',
+          background: 'Tło karty'
         },
         bar_size: {
           large: 'Duża',
@@ -3613,7 +3666,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Ação ao tocar duas vezes no ícone',
         icon_hold_action: 'Ação ao manter pressionado o ícone',
         icon_tap_action: 'Ação ao tocar no ícone',
-        layout: 'Layout do cartão',
+        layout: 'Layout do conteúdo',
         max_value: 'Valor máximo',
         max_value_attribute: 'Atributo (max_value)',
         max_value_entity: 'Valor máximo',
@@ -3622,6 +3675,7 @@ const TRANSLATIONS = {
         percent: 'Porcentagem',
         reverse_secondary_info_row: 'Trocar barra e texto',
         secondary: 'Informação secundária',
+        state_content: 'Conteúdo do estado',
         tap_action: 'Ação ao tocar',
         text_shadow: 'Adicionar sombra ao texto (overlay)',
         theme: 'Tema',
@@ -3659,7 +3713,8 @@ const TRANSLATIONS = {
           below: 'Barra abaixo do conteúdo',
           top: 'Barra acima (overlay)',
           bottom: 'Barra abaixo (overlay)',
-          overlay: 'Barra sobre o conteúdo (overlay)'
+          overlay: 'Barra sobre o conteúdo (overlay)',
+          background: 'Fundo do cartão'
         },
         layout: {
           horizontal: 'Horizontal (padrão)',
@@ -3727,7 +3782,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Ação ao tocar duplamente no ícone',
         icon_hold_action: 'Ação ao manter o toque no ícone',
         icon_tap_action: 'Ação ao tocar no ícone',
-        layout: 'Layout do cartão',
+        layout: 'Layout do conteúdo',
         max_value: 'Valor máximo',
         max_value_attribute: 'Atributo (max_value)',
         max_value_entity: 'Valor máximo',
@@ -3736,6 +3791,7 @@ const TRANSLATIONS = {
         percent: 'Percentagem',
         reverse_secondary_info_row: 'Trocar barra e texto',
         secondary: 'Informação secundária',
+        state_content: 'Conteúdo do estado',
         tap_action: 'Ação ao toque curto',
         text_shadow: 'Adicionar sombra ao texto (overlay)',
         theme: 'Tema',
@@ -3758,7 +3814,8 @@ const TRANSLATIONS = {
           bottom: 'Barra em baixo (overlay)',
           default: 'Padrão',
           overlay: 'Barra sobreposta ao conteúdo (overlay)',
-          top: 'Barra em cima (overlay)'
+          top: 'Barra em cima (overlay)',
+          background: 'Fundo do cartão'
         },
         bar_size: {
           large: 'Grande',
@@ -3841,7 +3898,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Acțiune la apăsare dublă a pictogramei',
         icon_hold_action: 'Acțiune la apăsare lungă a pictogramei',
         icon_tap_action: 'Acțiune la apăsarea pictogramei',
-        layout: 'Aspectul cardului',
+        layout: 'Aspect conținut',
         max_value: 'Valoare maximă',
         max_value_attribute: 'Atribut (max_value)',
         max_value_entity: 'Valoare maximă',
@@ -3850,6 +3907,7 @@ const TRANSLATIONS = {
         percent: 'Procent',
         reverse_secondary_info_row: 'Schimbați bara și textul',
         secondary: 'Informație secundară',
+        state_content: 'Conținutul stării',
         tap_action: 'Acțiune la apăsare scurtă',
         text_shadow: 'Adaugă umbră textului (overlay)',
         theme: 'Temă',
@@ -3872,7 +3930,8 @@ const TRANSLATIONS = {
           bottom: 'Bară jos (overlay)',
           default: 'Implicit',
           overlay: 'Bară suprapusă peste conținut (overlay)',
-          top: 'Bară sus (overlay)'
+          top: 'Bară sus (overlay)',
+          background: 'Fundal card'
         },
         bar_size: {
           large: 'Mare',
@@ -3955,7 +4014,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Поведение при двойном нажатии на иконку',
         icon_hold_action: 'Поведение при длительном нажатии на иконку',
         icon_tap_action: 'Поведение при нажатии на иконку',
-        layout: 'Макет карточки',
+        layout: 'Расположение содержимого',
         max_value: 'Максимальное значение',
         max_value_attribute: 'Атрибут (max_value)',
         max_value_entity: 'Максимальное значение',
@@ -3964,6 +4023,7 @@ const TRANSLATIONS = {
         percent: 'Процент',
         reverse_secondary_info_row: 'Поменять местами панель и текст',
         secondary: 'Дополнительная информация',
+        state_content: 'Содержимое состояния',
         tap_action: 'Поведение при нажатии',
         text_shadow: 'Добавить тень к тексту (overlay)',
         theme: 'Тема',
@@ -3986,7 +4046,8 @@ const TRANSLATIONS = {
           bottom: 'Полоса внизу (overlay)',
           default: 'По умолчанию',
           overlay: 'Полоса поверх содержимого (overlay)',
-          top: 'Полоса вверху (overlay)'
+          top: 'Полоса вверху (overlay)',
+          background: 'Фон карточки'
         },
         bar_size: {
           large: 'Большая',
@@ -4069,7 +4130,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Akcia pri dvojitom ťuknutí ikony',
         icon_hold_action: 'Akcia pri dlhom podržaní ikony',
         icon_tap_action: 'Akcia pri ťuknutí ikony',
-        layout: 'Rozloženie karty',
+        layout: 'Rozloženie obsahu',
         max_value: 'Maximálna hodnota',
         max_value_attribute: 'Atribút (max_value)',
         max_value_entity: 'Maximálna hodnota',
@@ -4078,6 +4139,7 @@ const TRANSLATIONS = {
         percent: 'Percento',
         reverse_secondary_info_row: 'Vymeňte lištu a text',
         secondary: 'Sekundárna informácia',
+        state_content: 'Obsah stavu',
         tap_action: 'Akcia pri ťuknutí',
         text_shadow: 'Pridať tieň textu (overlay)',
         theme: 'Téma',
@@ -4115,7 +4177,8 @@ const TRANSLATIONS = {
           below: 'Pruh pod obsahom',
           top: 'Pruh hore (overlay)',
           bottom: 'Pruh dole (overlay)',
-          overlay: 'Pruh cez obsah (overlay)'
+          overlay: 'Pruh cez obsah (overlay)',
+          background: 'Pozadie karty'
         },
         layout: {
           horizontal: 'Horizontálne (predvolené)',
@@ -4183,7 +4246,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Akcija ob dvojni tap ikone',
         icon_hold_action: 'Akcija ob dolgem pritisku ikone',
         icon_tap_action: 'Akcija ob tap ikone',
-        layout: 'Postavitev kartice',
+        layout: 'Postavitev vsebine',
         max_value: 'Največja vrednost',
         max_value_attribute: 'Atribut (max_value)',
         max_value_entity: 'Največja vrednost',
@@ -4192,6 +4255,7 @@ const TRANSLATIONS = {
         percent: 'Odstotek',
         reverse_secondary_info_row: 'Zamenjaj vrstico in besedilo',
         secondary: 'Sekundarne informacije',
+        state_content: 'Vsebina stanja',
         tap_action: 'Akcija ob tap',
         text_shadow: 'Dodaj senco besedila (overlay)',
         theme: 'Tema',
@@ -4229,7 +4293,8 @@ const TRANSLATIONS = {
           below: 'Vrstica pod vsebino',
           top: 'Vrstica zgoraj (overlay)',
           bottom: 'Vrstica spodaj (overlay)',
-          overlay: 'Vrstica čez vsebino (overlay)'
+          overlay: 'Vrstica čez vsebino (overlay)',
+          background: 'Ozadje kartice'
         },
         layout: {
           horizontal: 'Horizontalno (privzeto)',
@@ -4297,7 +4362,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Åtgärd vid dubbeltryck på ikonen',
         icon_hold_action: 'Åtgärd vid långt tryck på ikonen',
         icon_tap_action: 'Åtgärd vid tryck på ikonen',
-        layout: 'Kortlayout',
+        layout: 'Innehållslayout',
         max_value: 'Maximalt värde',
         max_value_attribute: 'Attribut (max_value)',
         max_value_entity: 'Maximalt värde',
@@ -4306,6 +4371,7 @@ const TRANSLATIONS = {
         percent: 'Procent',
         reverse_secondary_info_row: 'Byt ut stapel och text',
         secondary: 'Sekundär information',
+        state_content: 'Statusinnehåll',
         tap_action: 'Åtgärd vid kort tryck',
         text_shadow: 'Lägg till textskugga (overlay)',
         theme: 'Tema',
@@ -4328,7 +4394,8 @@ const TRANSLATIONS = {
           bottom: 'Bar längst ned (overlay)',
           default: 'Standard',
           overlay: 'Bar överlagrad på innehållet (overlay)',
-          top: 'Bar längst upp (overlay)'
+          top: 'Bar längst upp (overlay)',
+          background: 'Kortbakgrund'
         },
         bar_size: {
           large: 'Stor',
@@ -4420,6 +4487,7 @@ const TRANSLATIONS = {
         percent: '',
         reverse_secondary_info_row: '',
         secondary: '',
+        state_content: '',
         tap_action: '',
         text_shadow: '',
         theme: '',
@@ -4457,7 +4525,8 @@ const TRANSLATIONS = {
           below: '',
           top: '',
           bottom: '',
-          overlay: ''
+          overlay: '',
+          background: ''
         },
         layout: {
           horizontal: '',
@@ -4525,7 +4594,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'พฤติกรรมการแตะไอคอนสองครั้ง',
         icon_hold_action: 'พฤติกรรมการกดไอคอน',
         icon_tap_action: 'พฤติกรรมการแตะไอคอน',
-        layout: 'เลย์เอาต์การ์ด',
+        layout: 'รูปแบบเนื้อหา',
         max_value: 'ค่าสูงสุด',
         max_value_attribute: 'แอตทริบิวต์ (max_value)',
         max_value_entity: 'ค่าสูงสุด',
@@ -4534,6 +4603,7 @@ const TRANSLATIONS = {
         percent: 'เปอร์เซ็นต์',
         reverse_secondary_info_row: 'แถบและข้อความสลับกัน',
         secondary: 'ข้อมูลรอง',
+        state_content: 'เนื้อหาของสถานะ',
         tap_action: 'พฤติกรรมการแตะ',
         text_shadow: 'เพิ่มเงาให้ข้อความ (overlay)',
         theme: 'ธีม',
@@ -4556,7 +4626,8 @@ const TRANSLATIONS = {
           bottom: 'แถบด้านล่าง (overlay)',
           default: 'ค่าเริ่มต้น',
           overlay: 'แถบซ้อนทับเนื้อหา (overlay)',
-          top: 'แถบด้านบน (overlay)'
+          top: 'แถบด้านบน (overlay)',
+          background: 'พื้นหลังการ์ด'
         },
         bar_size: {
           large: 'ใหญ่',
@@ -4639,7 +4710,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Simgeye çift dokunma davranışı',
         icon_hold_action: 'Simgeye uzun basma davranışı',
         icon_tap_action: 'Simgeye dokunma davranışı',
-        layout: 'Kart düzeni',
+        layout: 'İçerik düzeni',
         max_value: 'Maksimum değer',
         max_value_attribute: 'Öznitelik (max_value)',
         max_value_entity: 'Maksimum değer',
@@ -4648,6 +4719,7 @@ const TRANSLATIONS = {
         percent: 'Yüzde',
         reverse_secondary_info_row: 'Çubuğu ve metni değiştir',
         secondary: 'İkincil bilgi',
+        state_content: 'Durum içeriği',
         tap_action: 'Kısa dokunma davranışı',
         text_shadow: 'Metne gölge ekle (overlay)',
         theme: 'Tema',
@@ -4670,7 +4742,8 @@ const TRANSLATIONS = {
           bottom: 'Altta çubuk (overlay)',
           default: 'Varsayılan',
           overlay: 'İçeriğin üzerine bindirme (overlay)',
-          top: 'Üstte çubuk (overlay)'
+          top: 'Üstte çubuk (overlay)',
+          background: 'Kart arka planı'
         },
         bar_size: {
           large: 'Büyük',
@@ -4753,7 +4826,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Поведінка подвійного дотику іконки',
         icon_hold_action: 'Поведінка утримання іконки',
         icon_tap_action: 'Поведінка дотику іконки',
-        layout: 'Розташування картки',
+        layout: 'Розташування вмісту',
         max_value: 'Максимальне значення',
         max_value_attribute: 'Атрибут (max_value)',
         max_value_entity: 'Максимальне значення',
@@ -4762,6 +4835,7 @@ const TRANSLATIONS = {
         percent: 'Відсоток',
         reverse_secondary_info_row: 'Поміняти місцями панель і текст',
         secondary: 'Додаткова інформація',
+        state_content: 'Вміст стану',
         tap_action: 'Поведінка при дотику',
         text_shadow: 'Додати тінь до тексту (overlay)',
         theme: 'Тема',
@@ -4784,7 +4858,8 @@ const TRANSLATIONS = {
           bottom: 'Панель знизу (overlay)',
           default: 'За замовчуванням',
           overlay: 'Панель поверх вмісту (overlay)',
-          top: 'Панель зверху (overlay)'
+          top: 'Панель зверху (overlay)',
+          background: 'Фон картки'
         },
         bar_size: {
           large: 'Велика',
@@ -4867,7 +4942,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: 'Hành vi chạm đôi biểu tượng',
         icon_hold_action: 'Hành vi giữ biểu tượng',
         icon_tap_action: 'Hành vi chạm biểu tượng',
-        layout: 'Bố cục thẻ',
+        layout: 'Bố cục nội dung',
         max_value: 'Giá trị tối đa',
         max_value_attribute: 'Thuộc tính (max_value)',
         max_value_entity: 'Giá trị tối đa',
@@ -4876,6 +4951,7 @@ const TRANSLATIONS = {
         percent: 'Phần trăm',
         reverse_secondary_info_row: 'Hoán đổi thanh và văn bản',
         secondary: 'Thông tin phụ',
+        state_content: 'Nội dung trạng thái',
         tap_action: 'Hành vi chạm',
         text_shadow: 'Thêm bóng cho văn bản (overlay)',
         theme: 'Chủ đề',
@@ -4898,7 +4974,8 @@ const TRANSLATIONS = {
           bottom: 'Thanh ở dưới cùng (overlay)',
           default: 'Mặc định',
           overlay: 'Thanh phủ lên nội dung (overlay)',
-          top: 'Thanh ở trên cùng (overlay)'
+          top: 'Thanh ở trên cùng (overlay)',
+          background: 'Nền thẻ'
         },
         bar_size: {
           large: 'Lớn',
@@ -4981,7 +5058,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: '图标双击动作',
         icon_hold_action: '图标长按动作',
         icon_tap_action: '图标点击动作',
-        layout: '卡片布局',
+        layout: '内容布局',
         max_value: '最大值',
         max_value_attribute: '属性（最大值）',
         max_value_entity: '使用实体的最大值',
@@ -4990,6 +5067,7 @@ const TRANSLATIONS = {
         percent: '百分比',
         reverse_secondary_info_row: '交换进度条和文本',
         secondary: '次要信息',
+        state_content: '状态内容',
         tap_action: '点击动作',
         text_shadow: '添加文本阴影（overlay）',
         theme: '主题',
@@ -5027,7 +5105,8 @@ const TRANSLATIONS = {
           below: '内容下方的进度条',
           top: '顶部进度条（覆盖显示）',
           bottom: '底部进度条（覆盖显示）',
-          overlay: '覆盖内容的进度条'
+          overlay: '覆盖内容的进度条',
+          background: '卡片背景'
         },
         layout: {
           horizontal: '水平（默认）',
@@ -5095,7 +5174,7 @@ const TRANSLATIONS = {
         icon_double_tap_action: '圖示雙擊操作',
         icon_hold_action: '圖示長按操作',
         icon_tap_action: '圖示點擊操作',
-        layout: '卡片佈局',
+        layout: '內容佈局',
         max_value: '最大值',
         max_value_attribute: '屬性（max_value）',
         max_value_entity: '最大值',
@@ -5104,6 +5183,7 @@ const TRANSLATIONS = {
         percent: '百分比',
         reverse_secondary_info_row: '交換進度條和文字',
         secondary: '次要資訊',
+        state_content: '狀態內容',
         tap_action: '點擊操作',
         text_shadow: '文字陰影（疊加）',
         theme: '主題',
@@ -5141,7 +5221,8 @@ const TRANSLATIONS = {
           below: '內容下方',
           top: '上方（疊加）',
           bottom: '下方（疊加）',
-          overlay: '疊加在內容上'
+          overlay: '疊加在內容上',
+          background: '卡片背景'
         },
         layout: {
           horizontal: '水平（預設）',
@@ -5441,6 +5522,32 @@ ha-card.vertical.xlarge.below .${CARD.htmlStructure.elements.progressBar.contain
 .top-container .bar-container {
   height: var(--progress-size);
 }
+
+ha-card.background {
+  --progress-size: 100%;
+  --progress-container-height: 100%;
+}
+
+.background-container {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.background .${CARD.htmlStructure.sections.container.class} {
+  position: relative;
+  z-index: 1;
+}
+
+:is(.background-container)
+  :is(.${CARD.htmlStructure.elements.progressBar.bar.class},
+    .${CARD.htmlStructure.elements.progressBar.inner.class}) {
+  --bar-radius: 0;
+  --inner-radius: 0;
+}
+
 
 /* =============================================================================
    TREND
@@ -6605,6 +6712,7 @@ const StructureElements = {
   container: (options) => StructureElements.ripple() + Element(CARD.htmlStructure.sections.container, options.layout).html(CONTENT_SLOT),
   belowContainer: () => Element(CARD.htmlStructure.sections.belowContainer).html(CONTENT_SLOT),
   topContainer: () => Element(CARD.htmlStructure.sections.topContainer).html(CONTENT_SLOT),
+  backgroundContainer: () => Element(CARD.htmlStructure.sections.backgroundContainer).html(CONTENT_SLOT),
   bottomContainer: () => Element(CARD.htmlStructure.sections.bottomContainer).html(CONTENT_SLOT),
 
   iconAndShape: () => Element(CARD.htmlStructure.elements.shape).html(StructureElements.ripple() + Element(CARD.htmlStructure.elements.icon).html()),
@@ -6651,14 +6759,12 @@ const StructureElements = {
 
   createSecondaryInfo: (options, secondaryInfoWrapperFn) => {
     const { layout, barPosition } = options;
-    const isTopOrBottom = ['top', 'bottom'].includes(barPosition);
-    const isBelow = barPosition === 'below';
-    const isOverlay = barPosition === 'overlay';
-    const isVertical = layout === 'vertical';
+    const excludedPositions = ['top', 'bottom', 'below', 'overlay', 'background'];
+    const excludedLayouts = ['vertical'];
 
     let content = secondaryInfoWrapperFn();
 
-    if (!isTopOrBottom && !isBelow && !isOverlay && !isVertical) {
+    if (!excludedPositions.includes(barPosition) && !excludedLayouts.includes(layout)) {
       content += StructureElements.progressBar(options);
     }
 
@@ -6673,7 +6779,7 @@ const StructureElements = {
     const isOverlay = options.barPosition === 'overlay';
     const isSingleLine = options.barSingleLine;
     const isVertical = options.layout === 'vertical';
-    const isBelowTopOrBottom = ['below', 'top', 'bottom'].includes(options.barPosition);
+    const isBelowTopOrBottom = ['below', 'top', 'bottom', 'background'].includes(options.barPosition);
 
     const extraClass = (isOverlay ? ' overlay' : '') + (isSingleLine ? ' single-line' : '');
     const before = isOverlay ? StructureElements.progressBar(options) : '';
@@ -6703,6 +6809,7 @@ const StructureElements = {
       top: () => ({ before: StructureElements.topContainer().replace(CONTENT_SLOT, bar()), after: '' }),
       bottom: () => ({ before: '', after: StructureElements.bottomContainer().replace(CONTENT_SLOT, bar()) }),
       below: () => ({ before: '', after: StructureElements.belowContainer().replace(CONTENT_SLOT, bar()) }),
+      background: () => ({ before: '', after: StructureElements.backgroundContainer().replace(CONTENT_SLOT, bar()) }),
     };
 
     const { before = '', after = '' } = wrap[barPosition]?.() ?? {};
@@ -7446,7 +7553,6 @@ class HassProviderSingleton {
 
     return this.#hass?.formatEntityAttributeValue?.(stateObj, prop) ?? '';
   }
-
   hasEntity(entityId) {
     return entityId in (this.#hass?.states || {});
   }
@@ -7460,6 +7566,30 @@ class HassProviderSingleton {
     if (!attribute) return null;
     const attributes = this.#getAttributes(entityId);
     return attribute in attributes ? attributes[attribute] : null;
+  }
+  getEntityName(entityId) {
+    return this.#hass?.entities?.[entityId].name;
+  }
+  getEntityDevice(entityId) {
+    const deviceId = this.#hass?.entities?.[entityId]?.device_id;
+    if (!deviceId) return null;
+    return this.#hass?.devices?.[deviceId]?.name ?? null;
+  }
+  getEntityArea(entityId) {
+    const entityAreaId = this.#hass?.entities?.[entityId]?.area_id;
+    if (entityAreaId) return this.#hass?.areas?.[entityAreaId]?.name ?? null;
+ 
+    const deviceId = this.#hass?.entities?.[entityId]?.device_id;
+    if (!deviceId) return null;
+    const deviceAreaId = this.#hass?.devices?.[deviceId]?.area_id;
+    return this.#hass?.areas?.[deviceAreaId]?.name ?? null;
+  }
+  getEntityFloor(entityId) {
+    const areaId = this.#hass?.entities?.[entityId]?.area_id
+      ?? this.#hass?.devices?.[this.#hass?.entities?.[entityId]?.device_id]?.area_id;
+    if (!areaId) return null;
+    const floorId = this.#hass?.areas?.[areaId]?.floor_id;
+    return this.#hass?.floors?.[floorId]?.name ?? null;
   }
   static getEntityDomain(entityId) {
     return is.string(entityId) && entityId.includes('.') ? entityId.split('.')[0] : null;
@@ -7606,6 +7736,7 @@ class EntityHelper {
   #entityType = null;
   #entityTypeFlags = { isTimer: false, isDuration: false, isNumber: false, isCounter: false, isSynced: false };
   stateContent = [];
+  #nameTokens = null;
   static #handleRefreshType = new Map([
     [HA_CONTEXT.entity.type.timer, (self) => self._manageTimerEntity()],
     [HA_CONTEXT.entity.type.duration, (self) => self._manageDurationEntity()],
@@ -7622,6 +7753,7 @@ class EntityHelper {
 
   set entityId(newValue) {
     this.#entityId = newValue;
+    this.#nameTokens = null;
     this.#entityType = null;
     this.#entityTypeFlags.isSynced = false;
     this.#value = 0;
@@ -7637,6 +7769,12 @@ class EntityHelper {
   }
   get attribute() {
     return this.#attribute;
+  }
+  set nameTokens(tok) {
+    this.#nameTokens = is.nonEmptyArray(tok) ? tok : null;
+  }
+  get nameTokens() {
+    return this.#nameTokens;
   }
   get value() {
     return this.#isValid ? this.#value : 0;
@@ -7663,6 +7801,33 @@ class EntityHelper {
   }
   get name() {
     return this.#hassProvider.getEntityProp(this.#entityId, 'friendly_name');
+  }
+  _nameResolver() {
+    const resolvers = {
+      text: (item) => item.text,
+      entity: () => this.#hassProvider.getEntityName(this.entityId),
+      device: () => this.#hassProvider.getEntityDevice(this.entityId),
+      area: () => this.#hassProvider.getEntityArea(this.entityId),
+      floor: () => this.#hassProvider.getEntityFloor(this.entityId),
+    };
+
+    return this.#nameTokens
+      .map((item) => {
+        const resolver = resolvers[item.type];
+        if (!resolver) return null;
+        try {
+          return resolver(item);
+        } catch {
+          return null;
+        }
+      })
+      .filter((v) => is.nonEmptyString(v))
+      .join(' ');    
+  }
+  get nameComposition() {
+    return this.#nameTokens
+      ? this._nameResolver()
+      : this.name;
   }
   get stateObj() {
     return this.#hassProvider.getEntityStateObj(this.#entityId);
@@ -7712,6 +7877,12 @@ class EntityHelper {
       switch (attr) {
         case 'state':
           results.push(this.#hassProvider.getEntityProp(this.#entityId, 'state', true));
+          break;
+        case 'device_name':
+          results.push(this.#hassProvider.getEntityDevice(this.entityId));
+          break;
+        case 'area_name':
+          results.push(this.#hassProvider.getEntityArea(this.#entityId));
           break;
         default:
           results.push(this.#hassProvider.getEntityProp(this.#entityId, attr, true));
@@ -7988,6 +8159,12 @@ class EntityOrValue {
   get attribute() {
     return this.#isEntity ? this.#activeHelper.attribute : null;
   }
+  set nameTokens(tok) {
+    if (this.#activeHelper && this.#isEntity) this.#activeHelper.nameTokens = tok;
+  }
+  get nameTokens() {
+    return this.#activeHelper && this.#isEntity ? this.#activeHelper.nameTokens : null;
+  }
   get state() {
     return this.#activeHelper && this.#isEntity ? this.#activeHelper.state : null;
   }
@@ -8002,6 +8179,9 @@ class EntityOrValue {
   }
   get name() {
     return this.#activeHelper && this.#isEntity ? this.#activeHelper.name : null;
+  }
+  get nameComposition() {
+    return this.#activeHelper && this.#isEntity ? this.#activeHelper.nameComposition : null;
   }
   get formatedEntityState() {
     return this.#activeHelper && this.#isEntity ? this.#activeHelper.formatedEntityState : null;
@@ -8397,13 +8577,21 @@ function struct(validator) {
   const preProcess = (data) => {
     const result = { ...data };
 
+  if (is.nonEmptyString(result.name)) {
+    result.name = [ { type: 'text', text: result.name } ];
+  } else if (is.plainObject(result.name)) {
+    result.name = [ result.name ];
+  }
+
     if (is.nullish(result.icon_tap_action) && is.string(result.entity)) {
       const domain = HassProviderSingleton.getEntityDomain(result.entity);
       const shouldPatch = ['light', 'switch', 'fan', 'input_boolean', 'media_player'].includes(domain);
       if (shouldPatch) result.icon_tap_action = HA_CONTEXT.actions.toggle;
     }
 
-    if (['top', 'bottom', 'overlay'].includes(result.bar_position)) delete result.bar_size; // avoid conflict
+    if (['top', 'bottom', 'overlay', 'background'].includes(result.bar_position)) delete result.bar_size; // avoid conflict
+
+    console.log('pre process: ', result);
 
     return result;
   };
@@ -8412,7 +8600,7 @@ function struct(validator) {
 
     if (!result.layout) result.layout = CARD.layout.orientations.horizontal.label;
 
-    if (result.bar_size === CARD.style.bar.sizeOptions.xlarge.label) result.bar_position = 'below';
+    if (result.bar_size === CARD.style.bar.sizeOptions.xlarge.label && result.bar_position === 'default') result.bar_position = 'below';
 
     if (result.bar_position !== 'overlay' && result.bar_single_line) result.bar_single_line = false;
 
@@ -8526,6 +8714,59 @@ function struct(validator) {
   };
 }
 
+types.discriminatedUnion = (key, mapping) => (value, path = []) => {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+    throw new ValidationError(path, ERROR_CODES.invalidTypeObject.code, ERROR_CODES.invalidTypeObject.severity);
+  }
+
+  const discriminator = value[key];
+
+  if (typeof discriminator !== 'string') {
+    throw new ValidationError(
+      [...path, key],
+      ERROR_CODES.invalidTypeString.code,
+      ERROR_CODES.invalidTypeString.severity
+    );
+  }
+
+  const validator = mapping[discriminator];
+
+  if (!validator) {
+    throw new ValidationError(
+      [...path, key],
+      ERROR_CODES.invalidEnumValue.code,
+      ERROR_CODES.invalidEnumValue.severity
+    );
+  }
+
+  return validator(value, path);
+};
+
+const nameItem = types.discriminatedUnion('type', {
+  text: types.object({
+    type: types.enums(['text']),
+    text: types.string,
+  }),
+
+  entity: types.object({
+    type: types.enums(['entity']),
+  }),
+
+  device: types.object({
+    type: types.enums(['device']),
+  }),
+
+  area: types.object({
+    type: types.enums(['area']),
+  }),
+
+  floor: types.object({
+    type: types.enums(['floor']),
+  }),
+});
+
+types.name = types.array(nameItem);
+
 const additionItem = types.fallbackTo(
   types.object({
     entity: types.entityId,
@@ -8587,7 +8828,7 @@ class YamlSchemaFactory {
         // ─── Entity & Data ===
         entity: types.entityId,
         attribute: types.optionalString(),
-        name: types.optionalString(),
+        name: types.optional(types.name),
         decimal: types.decimal,
         unit: types.optionalString(),
         disable_unit: types.optionalBooleanWithDefault(false),
@@ -8606,7 +8847,7 @@ class YamlSchemaFactory {
         ), //[('small', 'medium', 'large', 'xlarge')]
         bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
         bar_effect: types.jinjaOrArrayWithValidatedElem(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
-        bar_position: types.enumsWithDefault(['default', 'below', 'top', 'bottom', 'overlay'], 'default'),
+        bar_position: types.enumsWithDefault(['default', 'below', 'top', 'bottom', 'overlay', 'background'], 'default'),
         bar_single_line: types.optionalBooleanWithDefault(false),
         bar_max_width: types.optionalString(),
         layout: types.enumsWithDefault(
@@ -8688,7 +8929,7 @@ class YamlSchemaFactory {
         ), //[('small', 'medium', 'large', 'xlarge')]
         bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
         bar_effect: types.jinjaOrArrayWithValidatedElem(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
-        bar_position: types.enumsWithDefault(['default', 'below', 'top', 'bottom', 'overlay'], 'default'),
+        bar_position: types.enumsWithDefault(['default', 'below', 'top', 'bottom', 'overlay', 'background'], 'default'),
         bar_single_line: types.optionalBooleanWithDefault(false),
         bar_max_width: types.optionalString(),
         layout: types.enumsWithDefault(
@@ -9040,6 +9281,7 @@ class ViewCore {
       ? 1
       : layout.grid.grid_min_rows +
         (this.config.bar_size === CARD.style.bar.sizeOptions.xlarge.label ||
+        this.config.layout === 'horizontal' && this.config.bar_position === 'below' ||
         (this.config.layout === 'vertical' && ['default', 'below'].includes(this.config.bar_position) && this.config.bar_size !== 'small')
           ? 1
           : 0);
@@ -9064,7 +9306,7 @@ class ViewCore {
     return ViewCore.#hasAction([this._configHelper.action.card.tap, this._configHelper.action.card.hold, this._configHelper.action.card.doubleTap]);
   }
   get hasReversedSecondaryInfoRow() {
-    return this.config.reverse_secondary_info_row; // ─── true
+    return this.config.layout === 'horizontal' && this.config.bar_position === 'default' && this.config.reverse_secondary_info_row; // ─── true
   }
   get hasVisibleShape() {
     return this.config.force_circular_background || this._hasDefaultShape || this._hasInteractiveShape; // this.config.force_circular_background === true
@@ -9225,6 +9467,7 @@ class ViewBase extends ViewCore {
 
     Object.assign(this._currentValue, {
       value: this._configHelper.config.entity,
+      nameTokens: this._configHelper.config.name,
       stateContent: this._configHelper.stateContent,
     });
 
@@ -9313,12 +9556,16 @@ class ViewBase extends ViewCore {
     const additionalInfo = this._currentValue.stateContentToString;
     if (this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.value.label)) return additionalInfo;
     const valueInfo =
-      this._currentValue.entityType.isDuration && !this._configHelper.config.unit ? this._currentValue.formatedEntityState : this.#percentHelper.toString();
+      this._currentValue.entityType.isDuration && !this._configHelper.config.unit
+        ? this._currentValue.formatedEntityState
+        : this.#percentHelper.toString();
 
     return additionalInfo === '' ? valueInfo : [additionalInfo, valueInfo].join(CARD.config.separator);
   }
   get name() {
-    return this._configHelper.config.name || this._currentValue.name || this._configHelper.config.entity;
+    return is.nonEmptyArray(this._configHelper.config.name)
+      ? this._currentValue.nameComposition
+      : this._configHelper.config.name || this._currentValue.name || this._configHelper.config.entity;
   }
   get badgeInfo() {
     if (this.isNotFound) return CARD.style.icon.badge.notFound;
@@ -10237,7 +10484,10 @@ class HACore extends HTMLElement {
       this._cardView.config.bar_size,
       this._cardView.config.bar_orientation ? CARD.style.dynamic.progressBar.orientation[this._cardView.config.bar_orientation] : null,
       this._cardView.config.center_zero ? CARD.style.dynamic.progressBar.centerZero.class : null,
-      this._cardView.config.layout === 'vertical' && this._cardView.config.bar_orientation === 'up' && this._cardView.config.bar_position === 'overlay'
+      (this._cardView.config.layout === 'vertical' &&
+        this._cardView.config.bar_orientation === 'up' &&
+        this._cardView.config.bar_position === 'overlay') ||
+        (this._cardView.config.bar_orientation === 'up' && this._cardView.config.bar_position === 'background')
         ? 'vertical-bar'
         : 'horizontal-bar',
     );
@@ -10294,7 +10544,7 @@ class HACore extends HTMLElement {
   _applyProgressCSS(progressValue, { barColor = null, iconColor = null, isCenterZero = false } = {}) {
     const cardKey = CARD.htmlStructure.card.element;
 
-    if (barColor !== null)  this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.color.var, barColor);
+    if (barColor !== null) this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.color.var, barColor);
     if (iconColor !== null) this._dom.setStyle(cardKey, CARD.style.dynamic.iconAndShape.color.var, iconColor);
 
     if (progressValue !== null) {
@@ -11579,6 +11829,17 @@ class EditorDOMHelper extends DOMHelper {
         this.updateSelector(name, { attribute: { entity_id: config[def.selectorOf] ?? '' } });
       }
 
+      // Context
+      if (def.context) {
+        this.enqueue(name, 'context', () => {
+          const el = this._domElements.get(name);
+          if (!el) return;
+          el.context = Object.fromEntries(
+            Object.entries(def.context).map(([k, v]) => [k, config[v] ?? ''])
+          );
+        });
+      }
+
       // Champs virtuels — pas de valeur dans le config, géré par showIf uniquement
       if (def.virtual) {
         if (def.resolveVirtual) {
@@ -11731,10 +11992,30 @@ class EditorBase extends HTMLElement {
       select: { options: Object.entries(opts).map(([value, label]) => ({ value, label })), mode: 'dropdown' },
     });
 
+    const buildBoxSelect = (opts, imageFn = null) => ({
+      // see https://github.com/home-assistant/frontend/blob/dev/src/panels/lovelace/editor/config-elements/hui-tile-card-editor.ts#L158
+      select: {
+        mode: 'box',
+        options: Object.entries(opts).map(([value, label]) => ({
+          value,
+          label,
+          ...(imageFn ? { image: imageFn(value) } : {}),
+        })),
+      },
+    });
     const options = this.#hassProvider.localize('editor.option');
+    const tileImage = (value) => ({
+      // see https://github.com/home-assistant/frontend/blob/dev/src/panels/lovelace/editor/config-elements/hui-tile-card-editor.ts#L158
+      src: `/static/images/form/tile_content_layout_${value}.svg`,
+      src_dark: `/static/images/form/tile_content_layout_${value}_dark.svg`,
+      flip_rtl: true,
+    });
+
     const selectors = {
       text: () => ({ text: { mode: 'box' } }),
       entity: () => ({ entity: {} }),
+      entity_name: () => ({ entity_name: {} }),
+      state_content: () => ({ ui_state_content: { allow_context: true } }),
       attribute: () => ({ attribute: { entity_id: this.#config.entity ?? '' } }),
       maxValueAttribute: () => ({ attribute: { entity_id: this.#config.max_value ?? '' } }),
       number: () => ({ number: {} }),
@@ -11748,15 +12029,8 @@ class EditorBase extends HTMLElement {
       bar_size: () => buildSelect(options.bar_size),
       bar_orientation: () => buildSelect(options.bar_orientation),
       bar_position: () => buildSelect(options.bar_position),
-      layout: () => buildSelect(options.layout),
       theme: () => buildSelect(options.theme),
-      test: () => ({
-        options: [
-          { value: 'auto', label: 'Auto' },
-          { value: 'manual', label: 'Manual' },
-        ],
-        mode: 'buttons',
-      }),
+      layout: () => buildBoxSelect(options.layout, tileImage),
     };
 
     return (selectors[type] ?? (() => ({ text: {} })))();
@@ -11775,7 +12049,24 @@ class EditorBase extends HTMLElement {
     };
   }
 
+  #buildButtonToggle(field) {
+    const el = document.createElement('ha-button-toggle-group');
+    el.id = field.name;
+    el.size = 'small';
+
+    this.#dom.registerField(field.name, el, field);
+
+    // updateComplete n'existe qu'après connexion au DOM
+    requestAnimationFrame(() => {
+      el.buttons = field.options.map(o => ({ label: o.label, value: o.value }));
+      el.value = EditorBase.#resolveValue(field, this._configHelper.config);
+    });
+
+    return el;
+  }
+
   #buildField(field) {
+    if (field.type === 'buttons') return this.#buildButtonToggle(field);
     const el = document.createElement('ha-selector');
 
     el.id = field.name;
@@ -11791,6 +12082,12 @@ class EditorBase extends HTMLElement {
     el.label = label;
     el.value = value;
     el.isInverted = isInverted;
+
+    if (field.context) {
+      el.context = Object.fromEntries(
+        Object.entries(field.context).map(([k, v]) => [k, this.#config[v] ?? ''])
+      );
+    }
 
     this.#dom.registerField(field.name, el, field);
 
@@ -11891,15 +12188,18 @@ class EditorBase extends HTMLElement {
 const field = (type) => (name, o = {}) => ({ name, type, ...o });
 
 const EditorFieldsType = {
-  entity:  field('entity'),
-  text:    field('text'),
-  number:  field('number'),
+  entity: field('entity'),
+  entityName: field('entity_name'),
+  stateContent: field('state_content'),
+  text: field('text'),
+  number: field('number'),
   decimal: field('decimal'),
-  toggle:  field('toggle'),
-  tpl:     field('template'),
-  action:  field('action'),
-  select:  (name, o = {}) => ({ name, type: name, ...o }),
+  toggle: field('toggle'),
+  tpl: field('template'),
+  action: field('action'),
+  select: (name, o = {}) => ({ name, type: name, ...o }),
   templateOrType: (name, template, type, o = {}) => field(template ? 'template' : type)(name, o),
+  buttons: (name, options, o = {}) => ({ name, type: 'buttons', options, ...o }),
 };
 
 const EditorFactory = {
@@ -11921,7 +12221,13 @@ const EditorFactory = {
     title: 'editor.title.content',
     icon: HA_CONTEXT.icons.textShort,
     fields: {
-      name: EditorFieldsType.templateOrType('name', template, 'text'),
+      ...(template
+        ? {
+            name: EditorFieldsType.tpl('name'),
+          }
+        : {
+            name: EditorFieldsType.entityName('name', { context: { entity: 'entity' } }),
+          }),      
       toggleName: EditorFieldsType.toggle('hide.name', { invert: true, array: true }),
       ...(template
         ? {
@@ -11934,7 +12240,6 @@ const EditorFactory = {
             decimal: EditorFieldsType.decimal('decimal', { width: availableSpace(32, 0.2) }),
             min_value: EditorFieldsType.number('min_value', { width: availableSpace(32, 0.6) }),
             toggleUnit: EditorFieldsType.toggle('disable_unit', { invert: true }),
-            test: EditorFieldsType.select('test'),
             max_value: EditorFieldsType.number('max_value', { showIf: (c) => typeof c.max_value !== 'string' }),
             use_max_entity: EditorFieldsType.toggle('use_max_entity', {
               virtual: true,
@@ -11957,6 +12262,7 @@ const EditorFactory = {
             }),
             toggleValue: EditorFieldsType.toggle('hide.value', { invert: true, array: true }),
             toggleSecondaryInfo: EditorFieldsType.toggle('hide.secondary_info', { invert: true, array: true }),
+            state_content: EditorFieldsType.stateContent('state_content', { context: { filter_entity: 'entity' }, }),            
           }),
     },
   }),

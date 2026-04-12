@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Toiminto kahdella napautuksella kuvaketta",
       "icon_hold_action": "Toiminto pitkällä painalluksella kuvaketta",
       "icon_tap_action": "Toiminto kuvaketta napautettaessa",
-      "layout": "Kortin asettelu",
+      "layout": "Sisällön asettelu",
       "max_value": "Maksimiarvo",
       "max_value_attribute": "Attribuutti (max_value)",
       "max_value_entity": "Käytä entiteettiä maksimiarvona",
@@ -66,6 +66,7 @@
       "percent": "Prosentti",
       "reverse_secondary_info_row": "Vaihda palkki ja teksti",
       "secondary": "Lisätiedot",
+      "state_content": "Tilan sisältö",
       "tap_action": "Toiminto lyhyellä napautuksella",
       "text_shadow": "Lisää tekstivarjo (overlay)",
       "theme": "Teema",
@@ -103,7 +104,8 @@
         "below": "Palkki sisällön alla",
         "top": "Palkki ylhäällä (päällekkäin)",
         "bottom": "Palkki alhaalla (päällekkäin)",
-        "overlay": "Palkki sisällön päällä (overlay)"
+        "overlay": "Palkki sisällön päällä (overlay)",
+        "background": "Kortin tausta"
       },
       "layout": {
         "horizontal": "Vaakasuora (oletus)",

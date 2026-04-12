@@ -57,7 +57,7 @@
       "icon_double_tap_action": "アイコンをダブルタップしたときの動作",
       "icon_hold_action": "アイコンを長押ししたときの動作",
       "icon_tap_action": "アイコンをタップしたときの動作",
-      "layout": "カードレイアウト",
+      "layout": "コンテンツのレイアウト",
       "max_value": "最大値",
       "max_value_attribute": "属性（最大値）",
       "max_value_entity": "最大値",
@@ -66,6 +66,7 @@
       "percent": "パーセント",
       "reverse_secondary_info_row": "バーとテキストを入れ替える",
       "secondary": "補足情報",
+      "state_content": "状態の内容",
       "tap_action": "短くタップしたときの動作",
       "text_shadow": "テキストに影を追加 (オーバーレイ)",
       "theme": "テーマ",
@@ -88,7 +89,8 @@
         "bottom": "下部にバー（オーバーレイ）",
         "default": "デフォルト",
         "overlay": "コンテンツに重ねてバー（オーバーレイ）",
-        "top": "上部にバー（オーバーレイ）"
+        "top": "上部にバー（オーバーレイ）",
+        "background": "カードの背景"
       },
       "bar_size": {
         "large": "大",

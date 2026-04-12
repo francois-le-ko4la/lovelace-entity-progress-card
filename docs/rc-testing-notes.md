@@ -83,13 +83,15 @@ cards, placing the progress bar below the card content as a dedicated row.
   layout, ensuring the oversized bar always renders correctly without manual
   configuration
 
-### ✨ Visual Polish & Better "Overlays"
+### ✨ Visual Polish & bar_position
 
 If you like putting your text directly on top of the progress bar (Overlay
 mode), this update is for you.
 
-- Major improvements to the progress bar overlay layout, especially for vertical
+- Major improvements to the progress bar `overlay` layout, especially for vertical
   cards.
+- Added a new `background` position for the progress bar. In this mode, the bar
+  expands to fill the entire card
 - Progress bar sizing and spacing are now more consistent across layouts.
 - Improved support for overlay mode with better alignment and transitions.
 - Text over the Bar: Improved "Text Shadow" support.
@@ -110,8 +112,15 @@ The visual editor (GUI) has been redesigned to be more intuitive:
 - Max Value Entity: Added better support for using a second entity or a specific
   attribute as the maximum value for the progress bar.
 - added: `badge_color`, `badge_icon`, `bar_effect`, `bar_orientation`,
-  `bar_position`, `bar_single_line`, `center_zero`, `text_shadow`,
-  `reverse_secondary_info_row`.
+  `bar_position`, `bar_single_line`, `center_zero`, `state_content`,
+  `text_shadow`, `reverse_secondary_info_row`.
+- Name Composition: Implemented a "Token" system for the name field. It now
+  supports dynamic arrays (tokens) instead of just static strings.
+- Updated the layout selector to use a box mode, utilizing standard Home
+  Assistant tile layout SVGs for a more native look.
+- New Resolvers: Added helper methods to fetch specific Home Assistant metadata
+- Validation: Refined the bar_position and bar_size logic to prevent conflicts
+  when using full-card layouts.
 
 ### 🗣️ Accessibility improvements
 

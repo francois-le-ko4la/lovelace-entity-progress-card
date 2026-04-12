@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Ikooni topeltpuudutuse tegevus",
       "icon_hold_action": "Ikooni pika vajutuse tegevus",
       "icon_tap_action": "Ikooni puudutuse tegevus",
-      "layout": "Kaardi paigutus",
+      "layout": "Sisu paigutus",
       "max_value": "Maksimaalne väärtus",
       "max_value_attribute": "Atribuut (max_value)",
       "max_value_entity": "Maksimaalne väärtus",
@@ -66,6 +66,7 @@
       "percent": "Protsent",
       "reverse_secondary_info_row": "Vaheta riba ja tekst",
       "secondary": "Täiendav info",
+      "state_content": "Oleku sisu",
       "tap_action": "Puudutuse tegevus",
       "text_shadow": "Lisa teksti vari (overlay)",
       "theme": "Teema",
@@ -103,7 +104,8 @@
         "below": "Riba sisu all",
         "top": "Riba üleval (overlay)",
         "bottom": "Riba all (overlay)",
-        "overlay": "Riba sisu kohal (overlay)"
+        "overlay": "Riba sisu kohal (overlay)",
+        "background": "Kaardi taust"
       },
       "layout": {
         "horizontal": "Horisontaalne (vaikimisi)",

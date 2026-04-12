@@ -57,7 +57,7 @@
       "icon_double_tap_action": "圖示雙擊操作",
       "icon_hold_action": "圖示長按操作",
       "icon_tap_action": "圖示點擊操作",
-      "layout": "卡片佈局",
+      "layout": "內容佈局",
       "max_value": "最大值",
       "max_value_attribute": "屬性（max_value）",
       "max_value_entity": "最大值",
@@ -66,6 +66,7 @@
       "percent": "百分比",
       "reverse_secondary_info_row": "交換進度條和文字",
       "secondary": "次要資訊",
+      "state_content": "狀態內容",
       "tap_action": "點擊操作",
       "text_shadow": "文字陰影（疊加）",
       "theme": "主題",
@@ -103,7 +104,8 @@
         "below": "內容下方",
         "top": "上方（疊加）",
         "bottom": "下方（疊加）",
-        "overlay": "疊加在內容上"
+        "overlay": "疊加在內容上",
+        "background": "卡片背景"
       },
       "layout": {
         "horizontal": "水平（預設）",

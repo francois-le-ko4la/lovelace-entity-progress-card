@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Perilaku ketuk ganda ikon",
       "icon_hold_action": "Perilaku tahan ikon",
       "icon_tap_action": "Perilaku ketuk ikon",
-      "layout": "Tata letak kartu",
+      "layout": "Tata letak konten",
       "max_value": "Nilai maksimum",
       "max_value_attribute": "Atribut (max_value)",
       "max_value_entity": "Nilai maksimum",
@@ -66,6 +66,7 @@
       "percent": "Persentase",
       "reverse_secondary_info_row": "Tukar bilah dan teks",
       "secondary": "Informasi sekunder",
+      "state_content": "Konten status",
       "tap_action": "Perilaku ketuk",
       "text_shadow": "Tambahkan bayangan teks (overlay)",
       "theme": "Tema",
@@ -88,7 +89,8 @@
         "bottom": "Bar di bawah (overlay)",
         "default": "Default",
         "overlay": "Bar ditumpangkan pada konten (overlay)",
-        "top": "Bar di atas (overlay)"
+        "top": "Bar di atas (overlay)",
+        "background": "Latar belakang kartu"
       },
       "bar_size": {
         "large": "Besar",

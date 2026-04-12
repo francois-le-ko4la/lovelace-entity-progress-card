@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Hành vi chạm đôi biểu tượng",
       "icon_hold_action": "Hành vi giữ biểu tượng",
       "icon_tap_action": "Hành vi chạm biểu tượng",
-      "layout": "Bố cục thẻ",
+      "layout": "Bố cục nội dung",
       "max_value": "Giá trị tối đa",
       "max_value_attribute": "Thuộc tính (max_value)",
       "max_value_entity": "Giá trị tối đa",
@@ -66,6 +66,7 @@
       "percent": "Phần trăm",
       "reverse_secondary_info_row": "Hoán đổi thanh và văn bản",
       "secondary": "Thông tin phụ",
+      "state_content": "Nội dung trạng thái",
       "tap_action": "Hành vi chạm",
       "text_shadow": "Thêm bóng cho văn bản (overlay)",
       "theme": "Chủ đề",
@@ -88,7 +89,8 @@
         "bottom": "Thanh ở dưới cùng (overlay)",
         "default": "Mặc định",
         "overlay": "Thanh phủ lên nội dung (overlay)",
-        "top": "Thanh ở trên cùng (overlay)"
+        "top": "Thanh ở trên cùng (overlay)",
+        "background": "Nền thẻ"
       },
       "bar_size": {
         "large": "Lớn",

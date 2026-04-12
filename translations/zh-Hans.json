@@ -57,7 +57,7 @@
       "icon_double_tap_action": "图标双击动作",
       "icon_hold_action": "图标长按动作",
       "icon_tap_action": "图标点击动作",
-      "layout": "卡片布局",
+      "layout": "内容布局",
       "max_value": "最大值",
       "max_value_attribute": "属性（最大值）",
       "max_value_entity": "使用实体的最大值",
@@ -66,6 +66,7 @@
       "percent": "百分比",
       "reverse_secondary_info_row": "交换进度条和文本",
       "secondary": "次要信息",
+      "state_content": "状态内容",
       "tap_action": "点击动作",
       "text_shadow": "添加文本阴影（overlay）",
       "theme": "主题",
@@ -103,7 +104,8 @@
         "below": "内容下方的进度条",
         "top": "顶部进度条（覆盖显示）",
         "bottom": "底部进度条（覆盖显示）",
-        "overlay": "覆盖内容的进度条"
+        "overlay": "覆盖内容的进度条",
+        "background": "卡片背景"
       },
       "layout": {
         "horizontal": "水平（默认）",

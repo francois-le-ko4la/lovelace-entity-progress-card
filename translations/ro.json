@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Acțiune la apăsare dublă a pictogramei",
       "icon_hold_action": "Acțiune la apăsare lungă a pictogramei",
       "icon_tap_action": "Acțiune la apăsarea pictogramei",
-      "layout": "Aspectul cardului",
+      "layout": "Aspect conținut",
       "max_value": "Valoare maximă",
       "max_value_attribute": "Atribut (max_value)",
       "max_value_entity": "Valoare maximă",
@@ -66,6 +66,7 @@
       "percent": "Procent",
       "reverse_secondary_info_row": "Schimbați bara și textul",
       "secondary": "Informație secundară",
+      "state_content": "Conținutul stării",
       "tap_action": "Acțiune la apăsare scurtă",
       "text_shadow": "Adaugă umbră textului (overlay)",
       "theme": "Temă",
@@ -88,7 +89,8 @@
         "bottom": "Bară jos (overlay)",
         "default": "Implicit",
         "overlay": "Bară suprapusă peste conținut (overlay)",
-        "top": "Bară sus (overlay)"
+        "top": "Bară sus (overlay)",
+        "background": "Fundal card"
       },
       "bar_size": {
         "large": "Mare",

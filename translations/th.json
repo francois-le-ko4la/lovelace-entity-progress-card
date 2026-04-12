@@ -57,7 +57,7 @@
       "icon_double_tap_action": "พฤติกรรมการแตะไอคอนสองครั้ง",
       "icon_hold_action": "พฤติกรรมการกดไอคอน",
       "icon_tap_action": "พฤติกรรมการแตะไอคอน",
-      "layout": "เลย์เอาต์การ์ด",
+      "layout": "รูปแบบเนื้อหา",
       "max_value": "ค่าสูงสุด",
       "max_value_attribute": "แอตทริบิวต์ (max_value)",
       "max_value_entity": "ค่าสูงสุด",
@@ -66,6 +66,7 @@
       "percent": "เปอร์เซ็นต์",
       "reverse_secondary_info_row": "แถบและข้อความสลับกัน",
       "secondary": "ข้อมูลรอง",
+      "state_content": "เนื้อหาของสถานะ",
       "tap_action": "พฤติกรรมการแตะ",
       "text_shadow": "เพิ่มเงาให้ข้อความ (overlay)",
       "theme": "ธีม",
@@ -88,7 +89,8 @@
         "bottom": "แถบด้านล่าง (overlay)",
         "default": "ค่าเริ่มต้น",
         "overlay": "แถบซ้อนทับเนื้อหา (overlay)",
-        "top": "แถบด้านบน (overlay)"
+        "top": "แถบด้านบน (overlay)",
+        "background": "พื้นหลังการ์ด"
       },
       "bar_size": {
         "large": "ใหญ่",

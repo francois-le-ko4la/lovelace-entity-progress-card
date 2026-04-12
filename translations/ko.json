@@ -57,7 +57,7 @@
       "icon_double_tap_action": "아이콘 더블 탭 시 동작",
       "icon_hold_action": "아이콘 길게 누를 시 동작",
       "icon_tap_action": "아이콘 탭 시 동작",
-      "layout": "카드 레이아웃",
+      "layout": "콘텐츠 레이아웃",
       "max_value": "최대값",
       "max_value_attribute": "속성 (최대값)",
       "max_value_entity": "최대값",
@@ -66,6 +66,7 @@
       "percent": "퍼센트",
       "reverse_secondary_info_row": "막대와 텍스트 교체",
       "secondary": "보조 정보",
+      "state_content": "상태 콘텐츠",
       "tap_action": "짧게 탭 시 동작",
       "text_shadow": "텍스트 그림자 추가 (오버레이)",
       "theme": "테마",
@@ -88,7 +89,8 @@
         "bottom": "하단 바 (오버레이)",
         "default": "기본",
         "overlay": "콘텐츠 위에 바 (오버레이)",
-        "top": "상단 바 (오버레이)"
+        "top": "상단 바 (오버레이)",
+        "background": "카드 배경"
       },
       "bar_size": {
         "large": "큰",

@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Ação ao tocar duplamente no ícone",
       "icon_hold_action": "Ação ao manter o toque no ícone",
       "icon_tap_action": "Ação ao tocar no ícone",
-      "layout": "Layout do cartão",
+      "layout": "Layout do conteúdo",
       "max_value": "Valor máximo",
       "max_value_attribute": "Atributo (max_value)",
       "max_value_entity": "Valor máximo",
@@ -66,6 +66,7 @@
       "percent": "Percentagem",
       "reverse_secondary_info_row": "Trocar barra e texto",
       "secondary": "Informação secundária",
+      "state_content": "Conteúdo do estado",
       "tap_action": "Ação ao toque curto",
       "text_shadow": "Adicionar sombra ao texto (overlay)",
       "theme": "Tema",
@@ -88,7 +89,8 @@
         "bottom": "Barra em baixo (overlay)",
         "default": "Padrão",
         "overlay": "Barra sobreposta ao conteúdo (overlay)",
-        "top": "Barra em cima (overlay)"
+        "top": "Barra em cima (overlay)",
+        "background": "Fundo do cartão"
       },
       "bar_size": {
         "large": "Grande",

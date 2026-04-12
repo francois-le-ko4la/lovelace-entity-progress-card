@@ -57,7 +57,7 @@
       "icon_double_tap_action": "Ikonas dubults pieskāriens",
       "icon_hold_action": "Ikonas ilgs pieskāriens",
       "icon_tap_action": "Ikonas pieskāriens",
-      "layout": "Kartes izkārtojums",
+      "layout": "Satura izkārtojums",
       "max_value": "Maksimālā vērtība",
       "max_value_attribute": "Atribūts (max_value)",
       "max_value_entity": "Maksimālā vērtība",
@@ -66,6 +66,7 @@
       "percent": "Procenti",
       "reverse_secondary_info_row": "Mainīt joslu un tekstu",
       "secondary": "Papildu informācija",
+      "state_content": "Stāvokļa saturs",
       "tap_action": "Pieskāriens",
       "text_shadow": "Pievienot teksta ēnu (overlay)",
       "theme": "Tēma",
@@ -103,7 +104,8 @@
         "below": "Josla zem satura",
         "top": "Josla augšā (overlay)",
         "bottom": "Josla apakšā (overlay)",
-        "overlay": "Josla virs satura (overlay)"
+        "overlay": "Josla virs satura (overlay)",
+        "background": "Kartes fons"
       },
       "layout": {
         "horizontal": "Horizontāls (noklusēts)",
