@@ -71,7 +71,22 @@ card_mod:
     }
 ```
 
-### 📐 `below` Bar Position — Now a First-Class Layout
+### 📐 Visual Polish & bar_position
+
+If you like putting your text directly on top of the progress bar (Overlay
+mode), this update is for you.
+
+- Major improvements to the progress bar `overlay` layout, especially for
+  vertical cards.
+- Added a new `background` position for the progress bar. In this mode, the bar
+  expands to fill the entire card
+- Progress bar sizing and spacing are now more consistent across layouts.
+- Improved support for overlay mode with better alignment and transitions.
+- Text over the Bar: Improved "Text Shadow" support.
+- Smart Cornering: The card now automatically matches the "Border Radius" (the
+  roundness of the corners) of your specific Home Assistant theme. It will look
+  like it truly belongs in your dashboard.
+- Extended HA color usable in the YAML editor: see theme guide.
 
 The `below` position is no longer just a hidden workaround for `xlarge` bar
 size. It is now a fully supported layout option for both horizontal and vertical
@@ -83,22 +98,39 @@ cards, placing the progress bar below the card content as a dedicated row.
   layout, ensuring the oversized bar always renders correctly without manual
   configuration
 
-### ✨ Visual Polish & bar_position
+🛠️ Badge Icon/Color - Visual stability improvements (anti-flicker fixes)
 
-If you like putting your text directly on top of the progress bar (Overlay
-mode), this update is for you.
+This release includes several important improvements aimed at enhancing visual
+stability and eliminating flickering cases during dynamic UI updates,
+particularly around badge rendering and state transitions.
 
-- Major improvements to the progress bar `overlay` layout, especially for vertical
-  cards.
-- Added a new `background` position for the progress bar. In this mode, the bar
-  expands to fill the entire card
-- Progress bar sizing and spacing are now more consistent across layouts.
-- Improved support for overlay mode with better alignment and transitions.
-- Text over the Bar: Improved "Text Shadow" support.
-- Smart Cornering: The card now automatically matches the "Border Radius" (the
-  roundness of the corners) of your specific Home Assistant theme. It will look
-  like it truly belongs in your dashboard.
-- Extended HA color usable in the YAML editor: see theme guide.
+The badge is now displayed even when there is no overlap between the icon and
+color states, as shown in the example below.
+
+```yaml
+badge_icon: |-
+  {% if states('input_boolean.xxx') == 'on' %}
+    mdi:play
+  {% endif %}
+badge_color: |-
+  {% if states('input_boolean.xxx') == 'on' %}
+    orange
+  {% else %}
+    disabled 
+  {% endif %}
+```
+
+the default badge color has been changed to transparent to prevent any unwanted
+visual glitches or “flash” effects during state transitions.
+
+### 🗣️ Accessibility improvements
+
+The card now properly exposes its progress bar to screen readers via ARIA
+attributes (role="progressbar", aria-valuemin, aria-valuemax, aria-valuenow).
+The icon section and decorative elements are marked as aria-hidden to avoid
+noise for assistive technologies. The card is exposed as a named region,
+allowing screen readers to navigate into its content and read the progress value
+directly.
 
 ### 🎨 Improved Editor Experience
 
@@ -122,21 +154,13 @@ The visual editor (GUI) has been redesigned to be more intuitive:
 - Validation: Refined the bar_position and bar_size logic to prevent conflicts
   when using full-card layouts.
 
-### 🗣️ Accessibility improvements
-
-The card now properly exposes its progress bar to screen readers via ARIA
-attributes (role="progressbar", aria-valuemin, aria-valuemax, aria-valuenow).
-The icon section and decorative elements are marked as aria-hidden to avoid
-noise for assistive technologies. The card is exposed as a named region,
-allowing screen readers to navigate into its content and read the progress
-value directly.
-
 ### 🌐 Expanded Language Support
 
 This release adds six new languages, making the interface more accessible
 worldwide:
 
-- 🇦🇩 ca – Catalan / Català
+- <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/refs/heads/main/docs/images/ca.svg" alt="" width="14px" />
+  ca – Catalan / Català
 - 🌎 es-419 – Spanish (Latin America) / Español (Latinoamérica)
 - 🇭🇺 hu – Hungarian / Magyar
 - 🇸🇰 sk – Slovak / Slovenčina

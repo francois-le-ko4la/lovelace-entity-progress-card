@@ -1324,7 +1324,7 @@ We strive to make this card as inclusive as possible, with support for:
 | ---- | ------- | ------------------------------------------------- |
 | 🇸🇦   | ar      | Arabic / العربية                                  |
 | 🇧🇩   | bn      | Bengali / বাংলা                                      |
-| <img src="./docs/images/ca.svg" alt="" width="14px" />   | ca      | Catalan / Català                                  |
+| <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/refs/heads/main/docs/images/ca.svg" alt="" width="14px" />   | ca      | Catalan / Català                                  |
 | 🇨🇿   | cs      | Czech / Čeština                                   |
 | 🇩🇰   | da      | Danish / Dansk                                    |
 | 🇩🇪   | de      | German / Deutsch                                  |

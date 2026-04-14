@@ -356,7 +356,7 @@ const CARD = {
       },
       badge: {
         color: { var: '--badge-color', default: HA_CONTEXT.colors.orange },
-        backgroundColor: { var: '--badge-bgcolor', default: 'white' },
+        backgroundColor: { var: '--badge-bgcolor', default: 'transparent' },
       },
       iconAndShape: {
         color: { var: '--icon-and-shape-color', default: HA_CONTEXT.colors.stateIcon },
@@ -8793,14 +8793,14 @@ class YamlSchemaFactory {
   static get feature() {
     return struct(
       types.object({
-        // ─── Entity & Data ===
+        // ─── Entity & Data ──────────────────────────────────────────────────
         entity: types.entityId,
         attribute: types.optionalString(),
         min_value: types.optionalNumber(0),
         max_value: types.fallbackTo(types.union(types.number, types.string), 100),
         max_value_attribute: types.optionalString(),
 
-        // ─── Appearance ===
+        // ─── Appearance ─────────────────────────────────────────────────────
         bar_color: types.optionalString(),
         bar_size: types.enumsWithDefault(
           Object.values(CARD.style.bar.sizeOptions).map((e) => e.label),
@@ -8811,13 +8811,13 @@ class YamlSchemaFactory {
         bar_position: types.enumsWithDefault(['default', 'top', 'bottom'], 'default'),
         center_zero: types.optionalBooleanWithDefault(false),
 
-        // ─── Theme & Watermark ===
+        // ─── Theme & Watermark ──────────────────────────────────────────────
         theme: types.theme(Object.keys(THEME)),
         custom_theme: types.fallbackTo(types.customTheme, SKIP_PROPERTY),
         interpolate: types.optionalBooleanWithDefault(false),
         watermark: types.watermarkObject(watermarkSchema, CARD.config.defaults.watermark),
 
-        // ─── Additions ===
+        // ─── Additions ──────────────────────────────────────────────────────
         additions: types.optional(types.array(additionItem)),
       }),
     );
@@ -8825,7 +8825,7 @@ class YamlSchemaFactory {
   static get card() {
     return struct(
       types.object({
-        // ─── Entity & Data ===
+        // ─── Entity & Data ──────────────────────────────────────────────────
         entity: types.entityId,
         attribute: types.optionalString(),
         name: types.optional(types.name),
@@ -9517,8 +9517,8 @@ class ViewBase extends ViewCore {
     return this.isUnavailable || this.isNotFound || this.isUnknown;
   }
 
-  /* === Getters for card === */
-
+  // ─── Getters for card ─────────────────────────────────────────────────────
+  
   get icon() {
     const notFound = this.isNotFound ? CARD.style.icon.notFound.icon : null;
     return notFound || this.#theme.icon || this._configHelper.config.icon;
@@ -10408,7 +10408,7 @@ class HACore extends HTMLElement {
     return this.constructor._cardElement;
   }
 
-  // ─── CARD BUILDING ===
+  // ─── CARD BUILDING ────────────────────────────────────────────────────────
 
   /**
    * Builds and initializes the structure of the custom card component.
@@ -10461,7 +10461,7 @@ class HACore extends HTMLElement {
     const allElements = this.shadowRoot.querySelectorAll('*');
     allElements.forEach((el) => {
       if (el.classList.length > 0) {
-        const key = el.classList[0]; // première classe uniquement
+        const key = el.classList[0]; // 1st class only
         this._dom.register(key, el);
       }
     });
@@ -10786,6 +10786,7 @@ class HABase extends HACore {
   _icon = null;
   _cardView = new CardView();
   _actionHelper = null;
+  #jinjaStateBadge = { icon: false, color: false };
   #lastMessage = null;
 
   // ─── LIFECYCLE METHODS ===
@@ -10863,7 +10864,7 @@ class HABase extends HACore {
     return this.constructor._hasDisabledIconTap;
   }
 
-  // ─── AUTO-REFRESH MANAGEMENT ===
+  // ─── AUTO-REFRESH MANAGEMENT ──────────────────────────────────────────────
 
   _startAutoRefresh() {
     if (!this._resourceManager) return;
@@ -10882,7 +10883,7 @@ class HABase extends HACore {
     if (this._resourceManager) this._resourceManager.remove('autoRefresh');
   }
 
-  // ─── ERROR MESSAGE MANAGEMENT ===
+  // ─── ERROR MESSAGE MANAGEMENT ─────────────────────────────────────────────
 
   _manageErrorMessage() {
     if (this._cardView.msg && (is.nullish(this._cardView.entity) || (this._cardView.isAvailable && !this._cardView.hasValidatedConfig))) {
@@ -11207,7 +11208,7 @@ class HABase extends HACore {
     this._dom.setStyle(CARD.htmlStructure.card.element, CARD.style.dynamic.badge.color.var, color);
   }
 
-  // ─── JINJA TEMPLATE RENDERING ===
+  // ─── JINJA TEMPLATE RENDERING ─────────────────────────────────────────────
   /* _getJinjaHandlers(content) {
     //
     // cutomize it - list the fields/render func
@@ -11221,27 +11222,46 @@ class HABase extends HACore {
     };
   }*/
 
+  _getJinjaBadgeState() {
+    const hasIcon = this.#jinjaStateBadge.icon;
+    const hasColor = this.#jinjaStateBadge.color;
+
+    if (hasIcon && hasColor) return 'both';
+    if (hasIcon) return 'icon';
+    if (hasColor) return 'color';
+    return 'off';
+  }
+  _updateBadgeVisibility() {
+    const state = this._getJinjaBadgeState();
+    const shouldShow = state !== 'off';
+    this._enableBadge(shouldShow);
+  }
+
   _renderBadgeIcon(content) {
     this._log.debug('📎 HABase._renderBadgeIcon():', { content });
-    const badgeInfo = this._cardView.badgeInfo;
-    const isBadgeEnable = is.nonEmptyString(content);
-    const isMdiIcon = content.includes(HA_CONTEXT.icons.prefix);
+    this.#jinjaStateBadge.icon = is.nonEmptyString(content) && content.includes(HA_CONTEXT.icons.prefix);
 
-    if (!is.nullish(badgeInfo)) return; // alert -> cancel custom badge
-    this._enableBadge(isBadgeEnable);
-    if (isMdiIcon) {
+    if (!is.nullish(this._cardView.badgeInfo)) return false; // alert -> cancel custom badge
+    if (this.#jinjaStateBadge.icon) {
       this._setBadgeIcon(content);
     }
+    this._updateBadgeVisibility();
   }
   _renderBadgeColor(content) {
     this._log.debug('📎 HABase._renderBadgeColor():', { content });
+    this.#jinjaStateBadge.color = is.nonEmptyString(content);
 
-    const backgroundColor = ThemeManager.adaptColor(content);
-    const color = 'var(--white-color)';
-    this._setBadgeColor(color, backgroundColor);
+    if (!is.nullish(this._cardView.badgeInfo)) return false; // alert -> cancel custom badge
+
+    if (this.#jinjaStateBadge.color) {
+      const backgroundColor = ThemeManager.adaptColor(content);
+      const color = 'var(--white-color)';
+      this._setBadgeColor(color, backgroundColor);
+    }
+    this._updateBadgeVisibility();
   }
 
-  // ─── STD FIELDS PROCESSING ===
+  // ─── STD FIELDS PROCESSING ────────────────────────────────────────────────
   static _getStandardFields(/*cardView*/) {
     //
     // customize it !!!
@@ -11255,7 +11275,7 @@ class HABase extends HACore {
     });
   }
 
-  // ─── getStubConfig -> select entity ===
+  // ─── getStubConfig -> select entity ───────────────────────────────────────
   static getStubEntity(hass) {
     return Object.keys(hass.states).find((id) => /^(sensor\..*battery|fan\.|cover\.|light\.)/i.test(id)) || 'sensor.temperature';
   }
@@ -11292,7 +11312,7 @@ class EntityProgressCardBase extends HABase {
     }
   }
 
-  // ─── CSS - CUSTOMIZATION ===
+  // ─── CSS - CUSTOMIZATION ──────────────────────────────────────────────────
   get conditionalStyle() {
     return new Map([...super.conditionalStyle, [CARD.style.dynamic.secondaryInfoError.class, this._cardView.hasStandardEntityError]]);
   }
@@ -11308,7 +11328,7 @@ class EntityProgressCardBase extends HABase {
     this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null, bar.config.center_zero);
   }
 
-  // ─── STD FIELDS PROCESSING - CUSTOMIZATION ===
+  // ─── STD FIELDS PROCESSING - CUSTOMIZATION ────────────────────────────────
   static _getStandardFields(cardView) {
     return [
       {
@@ -11322,7 +11342,7 @@ class EntityProgressCardBase extends HABase {
     ];
   }
 
-  // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ===
+  // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ─────────────────────────────
   _getJinjaHandlers(content) {
     return {
       badge_icon: () => this._renderBadgeIcon(content), // base
@@ -11490,7 +11510,7 @@ class EntityProgressFeatures extends HACore {
     });
   }
 
-  // ─── HANDLE UPDATE ===
+  // ─── HANDLE UPDATE ────────────────────────────────────────────────────────
 
   _handleHassUpdate() {
     this.#fixCardStyles();
@@ -11509,7 +11529,7 @@ class EntityProgressFeatures extends HACore {
     this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null, bar.config.center_zero);
   }
 
-  // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ===
+  // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ─────────────────────────────
 
   _getJinjaHandlers(content) {
     return {
@@ -12049,24 +12069,7 @@ class EditorBase extends HTMLElement {
     };
   }
 
-  #buildButtonToggle(field) {
-    const el = document.createElement('ha-button-toggle-group');
-    el.id = field.name;
-    el.size = 'small';
-
-    this.#dom.registerField(field.name, el, field);
-
-    // updateComplete n'existe qu'après connexion au DOM
-    requestAnimationFrame(() => {
-      el.buttons = field.options.map(o => ({ label: o.label, value: o.value }));
-      el.value = EditorBase.#resolveValue(field, this._configHelper.config);
-    });
-
-    return el;
-  }
-
   #buildField(field) {
-    if (field.type === 'buttons') return this.#buildButtonToggle(field);
     const el = document.createElement('ha-selector');
 
     el.id = field.name;
@@ -12199,7 +12202,6 @@ const EditorFieldsType = {
   action: field('action'),
   select: (name, o = {}) => ({ name, type: name, ...o }),
   templateOrType: (name, template, type, o = {}) => field(template ? 'template' : type)(name, o),
-  buttons: (name, options, o = {}) => ({ name, type: 'buttons', options, ...o }),
 };
 
 const EditorFactory = {
