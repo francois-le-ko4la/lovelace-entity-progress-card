@@ -201,6 +201,20 @@ const HA_CONTEXT = {
     toggle: { action: 'toggle' },
     performAction: { action: 'perform-action' },
     none: { action: 'none' },
+    toggleDomain: [
+      'light',
+      'switch', 
+      'fan',
+      'input_boolean',
+      'media_player',
+      'automation',
+      'humidifier',
+      'remote',
+      'siren',
+      'water_heater',
+      'vacuum',
+      'group',
+    ],
   },
   styles: {
     rowSize: '--row-size',
@@ -645,6 +659,7 @@ const TRANSLATIONS = {
         double_tap_action: 'الإجراء عند النقر المزدوج',
         entity: 'الكيان',
         force_circular_background: 'فرض خلفية دائرية',
+        hide: 'إخفاء',
         hold_action: 'الإجراء عند الضغط المطول',
         icon: 'أيقونة',
         icon_double_tap_action: 'الإجراء عند النقر المزدوج على الأيقونة',
@@ -761,6 +776,7 @@ const TRANSLATIONS = {
         double_tap_action: 'ডাবল ট্যাপ আচরণ',
         entity: 'সত্তা',
         force_circular_background: 'বৃত্তাকার পটভূমি জোর করুন',
+        hide: 'লুকান',
         hold_action: 'হোল্ড আচরণ',
         icon: 'আইকন',
         icon_double_tap_action: 'আইকন ডাবল ট্যাপ আচরণ',
@@ -877,6 +893,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Acció al doble tocar',
         entity: 'Entitat',
         force_circular_background: 'Forçar fons circular',
+        hide: 'Amaga',
         hold_action: 'Acció en mantenir premut',
         icon: 'Icona',
         icon_double_tap_action: 'Acció al doble tocar la icona',
@@ -993,6 +1010,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Chování při dvojitém klepnutí',
         entity: 'Entita',
         force_circular_background: 'Vynutit kruhové pozadí',
+        hide: 'Skrýt',
         hold_action: 'Chování při podržení',
         icon: 'Ikona',
         icon_double_tap_action: 'Chování při dvojitém klepnutí na ikonu',
@@ -1109,6 +1127,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Handling ved dobbelt tryk',
         entity: 'Enhed',
         force_circular_background: 'Tving cirkulær baggrund',
+        hide: 'Skjul',
         hold_action: 'Handling ved langt tryk',
         icon: 'Ikon',
         icon_double_tap_action: 'Handling ved dobbelt tryk på ikonet',
@@ -1225,6 +1244,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Aktion bei doppelt Tippen',
         entity: 'Entität',
         force_circular_background: 'Kreisförmigen Hintergrund erzwingen',
+        hide: 'Ausblenden',
         hold_action: 'Aktion bei langem Tippen',
         icon: 'Symbol',
         icon_double_tap_action: 'Aktion bei doppelt Tippen auf das Symbol',
@@ -1341,6 +1361,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Ενέργεια κατά το διπλό πάτημα',
         entity: 'Οντότητα',
         force_circular_background: 'Εξαναγκασμός κυκλικού φόντου',
+        hide: 'Απόκρυψη',
         hold_action: 'Ενέργεια κατά το παρατεταμένο πάτημα',
         icon: 'Εικονίδιο',
         icon_double_tap_action: 'Ενέργεια στο διπλό πάτημα του εικονιδίου',
@@ -1457,6 +1478,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Double tap behavior',
         entity: 'Entity',
         force_circular_background: 'Force icon circular background',
+        hide: 'Hide',
         hold_action: 'Hold behavior',
         icon: 'Icon',
         icon_double_tap_action: 'Icon double tap behavior',
@@ -1573,6 +1595,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Acción al doble toque',
         entity: 'Entidad',
         force_circular_background: 'Forzar fondo circular',
+        hide: 'Ocultar',
         hold_action: 'Acción al mantener presionado',
         icon: 'Ícono',
         icon_double_tap_action: 'Acción de doble toque en ícono',
@@ -1689,6 +1712,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Acción al pulsar dos veces',
         entity: 'Entidad',
         force_circular_background: 'Forzar fondo circular',
+        hide: 'Ocultar',
         hold_action: 'Acción al mantener pulsado',
         icon: 'Icono',
         icon_double_tap_action: 'Acción al pulsar dos veces el icono',
@@ -1805,6 +1829,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Topeltpuudutuse tegevus',
         entity: 'Objekt',
         force_circular_background: 'Sunnitud ümmargune taust',
+        hide: 'Peida',
         hold_action: 'Pikema vajutuse tegevus',
         icon: 'Ikoon',
         icon_double_tap_action: 'Ikooni topeltpuudutuse tegevus',
@@ -1921,6 +1946,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Toiminto kahdella napautuksella',
         entity: 'Entiteetti',
         force_circular_background: 'Pakota pyöreä tausta',
+        hide: 'Piilota',
         hold_action: 'Toiminto pitkällä painalluksella',
         icon: 'Ikoni',
         icon_double_tap_action: 'Toiminto kahdella napautuksella kuvaketta',
@@ -2037,6 +2063,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Comportement lors d\'un double appui',
         entity: 'Entité',
         force_circular_background: 'Forcer le fond circulaire',
+        hide: 'Masquer',
         hold_action: 'Comportement lors d\'un appui long',
         icon: 'Icône',
         icon_double_tap_action: 'Comportement lors d\'un double appui sur l\'icône',
@@ -2153,6 +2180,7 @@ const TRANSLATIONS = {
         double_tap_action: 'डबल टैप व्यवहार',
         entity: 'एंटिटी',
         force_circular_background: 'गोलाकार पृष्ठभूमि को बाध्य करें',
+        hide: 'छिपाएँ',
         hold_action: 'होल्ड व्यवहार',
         icon: 'आइकन',
         icon_double_tap_action: 'आइकन डबल टैप व्यवहार',
@@ -2269,6 +2297,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Radnja na dupli dodir',
         entity: 'Entitet',
         force_circular_background: 'Prisili kružnu pozadinu',
+        hide: 'Sakrij',
         hold_action: 'Radnja na dugi dodir',
         icon: 'Ikona',
         icon_double_tap_action: 'Radnja na dupli dodir ikone',
@@ -2385,6 +2414,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Kettős koppintás művelet',
         entity: 'Entitás',
         force_circular_background: 'Kör alakú háttér erőltetése',
+        hide: 'Elrejtés',
         hold_action: 'Hosszan tartó nyomás művelet',
         icon: 'Ikon',
         icon_double_tap_action: 'Ikon dupla koppintás művelet',
@@ -2501,6 +2531,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Perilaku ketuk ganda',
         entity: 'Entitas',
         force_circular_background: 'Paksa latar belakang melingkar',
+        hide: 'Sembunyikan',
         hold_action: 'Perilaku tahan',
         icon: 'Ikon',
         icon_double_tap_action: 'Perilaku ketuk ganda ikon',
@@ -2617,6 +2648,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Azione al doppio tocco',
         entity: 'Entità',
         force_circular_background: 'Forza sfondo circolare',
+        hide: 'Nascondi',
         hold_action: 'Azione al tocco prolungato',
         icon: 'Icona',
         icon_double_tap_action: 'Azione al doppio tocco dell\'icona',
@@ -2733,6 +2765,7 @@ const TRANSLATIONS = {
         double_tap_action: 'ダブルタップしたときの動作',
         entity: 'エンティティ',
         force_circular_background: '円形の背景を強制する',
+        hide: '非表示',
         hold_action: '長押ししたときの動作',
         icon: 'アイコン',
         icon_double_tap_action: 'アイコンをダブルタップしたときの動作',
@@ -2849,6 +2882,7 @@ const TRANSLATIONS = {
         double_tap_action: '더블 탭 시 동작',
         entity: '엔티티',
         force_circular_background: '원형 배경 강제 적용',
+        hide: '숨기기',
         hold_action: '길게 누를 시 동작',
         icon: '아이콘',
         icon_double_tap_action: '아이콘 더블 탭 시 동작',
@@ -2965,6 +2999,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Dviejų bakstelėjimų veiksmas',
         entity: 'Entity',
         force_circular_background: 'Priversti apvalų foną',
+        hide: 'Slėpti',
         hold_action: 'Ilgo paspaudimo veiksmas',
         icon: 'Ikona',
         icon_double_tap_action: 'Ikonos dviejų bakstelėjimų veiksmas',
@@ -3081,6 +3116,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Divreiz pieskaroties',
         entity: 'Vienība',
         force_circular_background: 'Piespiest apļu fonu',
+        hide: 'Slēpt',
         hold_action: 'Ilgs pieskāriens',
         icon: 'Ikona',
         icon_double_tap_action: 'Ikonas dubults pieskāriens',
@@ -3197,6 +3233,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Дејство при двоен допир',
         entity: 'Ентитет',
         force_circular_background: 'Принуди кружна позадина',
+        hide: 'Сокриј',
         hold_action: 'Дејство при долг допир',
         icon: 'Икона',
         icon_double_tap_action: 'Дејство при двоен допир на иконата',
@@ -3313,6 +3350,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Handling ved dobbelt trykk',
         entity: 'Enhet',
         force_circular_background: 'Tving sirkulær bakgrunn',
+        hide: 'Skjul',
         hold_action: 'Handling ved langt trykk',
         icon: 'Ikon',
         icon_double_tap_action: 'Handling ved dobbelt trykk på ikonet',
@@ -3429,6 +3467,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Actie bij dubbel tikken',
         entity: 'Entiteit',
         force_circular_background: 'Geforceerde cirkelvormige achtergrond',
+        hide: 'Verbergen',
         hold_action: 'Actie bij lang ingedrukt houden',
         icon: 'Pictogram',
         icon_double_tap_action: 'Actie bij dubbel tikken op pictogram',
@@ -3545,6 +3584,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Akcja przy podwójnym naciśnięciu',
         entity: 'Encja',
         force_circular_background: 'Wymuś okrągłe tło',
+        hide: 'Ukryj',
         hold_action: 'Akcja przy długim naciśnięciu',
         icon: 'Ikona',
         icon_double_tap_action: 'Akcja przy podwójnym naciśnięciu ikony',
@@ -3661,6 +3701,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Ação ao tocar duas vezes',
         entity: 'Entidade',
         force_circular_background: 'Forçar fundo circular',
+        hide: 'Ocultar',
         hold_action: 'Ação ao manter pressionado',
         icon: 'Ícone',
         icon_double_tap_action: 'Ação ao tocar duas vezes no ícone',
@@ -3777,6 +3818,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Ação ao toque duplo',
         entity: 'Entidade',
         force_circular_background: 'Forçar fundo circular',
+        hide: 'Ocultar',
         hold_action: 'Ação ao toque longo',
         icon: 'Ícone',
         icon_double_tap_action: 'Ação ao tocar duplamente no ícone',
@@ -3893,6 +3935,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Acțiune la apăsare dublă',
         entity: 'Entitate',
         force_circular_background: 'Forțează fundal circular',
+        hide: 'Ascunde',
         hold_action: 'Acțiune la apăsare lungă',
         icon: 'Pictogramă',
         icon_double_tap_action: 'Acțiune la apăsare dublă a pictogramei',
@@ -4009,6 +4052,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Поведение при двойном нажатии',
         entity: 'Сущность',
         force_circular_background: 'Принудительный круглый фон',
+        hide: 'Скрыть',
         hold_action: 'Поведение при длительном нажатии',
         icon: 'Иконка',
         icon_double_tap_action: 'Поведение при двойном нажатии на иконку',
@@ -4125,6 +4169,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Akcia pri dvojitom ťuknutí',
         entity: 'Entita',
         force_circular_background: 'Vynútiť kruhové pozadie',
+        hide: 'Skryť',
         hold_action: 'Akcia pri dlhom podržaní',
         icon: 'Ikona',
         icon_double_tap_action: 'Akcia pri dvojitom ťuknutí ikony',
@@ -4241,6 +4286,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Akcija ob dvojni tap',
         entity: 'Entiteta',
         force_circular_background: 'Prisili krožno ozadje',
+        hide: 'Skrij',
         hold_action: 'Akcija ob dolgem pritisku',
         icon: 'Ikona',
         icon_double_tap_action: 'Akcija ob dvojni tap ikone',
@@ -4357,6 +4403,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Åtgärd vid dubbeltryck',
         entity: 'Enhet',
         force_circular_background: 'Tvinga cirkulär bakgrund',
+        hide: 'Dölj',
         hold_action: 'Åtgärd vid långt tryck',
         icon: 'Ikon',
         icon_double_tap_action: 'Åtgärd vid dubbeltryck på ikonen',
@@ -4473,6 +4520,7 @@ const TRANSLATIONS = {
         double_tap_action: '',
         entity: '',
         force_circular_background: '',
+        hide: 'true',
         hold_action: '',
         icon: '',
         icon_double_tap_action: '',
@@ -4589,6 +4637,7 @@ const TRANSLATIONS = {
         double_tap_action: 'พฤติกรรมการแตะสองครั้ง',
         entity: 'เอนทิตี',
         force_circular_background: 'บังคับพื้นหลังวงกลม',
+        hide: 'ซ่อน',
         hold_action: 'พฤติกรรมการกด',
         icon: 'ไอคอน',
         icon_double_tap_action: 'พฤติกรรมการแตะไอคอนสองครั้ง',
@@ -4705,6 +4754,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Çift dokunma davranışı',
         entity: 'Varlık',
         force_circular_background: 'Dairesel arka planı zorla',
+        hide: 'Gizle',
         hold_action: 'Uzun basma davranışı',
         icon: 'Simge',
         icon_double_tap_action: 'Simgeye çift dokunma davranışı',
@@ -4821,6 +4871,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Поведінка при подвійному дотику',
         entity: 'Сутність',
         force_circular_background: 'Примусовий круглий фон',
+        hide: 'Приховати',
         hold_action: 'Поведінка при утриманні',
         icon: 'Іконка',
         icon_double_tap_action: 'Поведінка подвійного дотику іконки',
@@ -4937,6 +4988,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Hành vi chạm đôi',
         entity: 'Thực thể',
         force_circular_background: 'Buộc nền hình tròn',
+        hide: 'Ẩn',
         hold_action: 'Hành vi giữ',
         icon: 'Biểu tượng',
         icon_double_tap_action: 'Hành vi chạm đôi biểu tượng',
@@ -5053,6 +5105,7 @@ const TRANSLATIONS = {
         double_tap_action: '双击动作',
         entity: '实体',
         force_circular_background: '强制圆形背景',
+        hide: '隐藏',
         hold_action: '长按动作',
         icon: '图标',
         icon_double_tap_action: '图标双击动作',
@@ -5169,6 +5222,7 @@ const TRANSLATIONS = {
         double_tap_action: '雙擊操作',
         entity: '實體',
         force_circular_background: '強制圓形背景',
+        hide: '隱藏',
         hold_action: '長按操作',
         icon: '圖示',
         icon_double_tap_action: '圖示雙擊操作',
@@ -5620,7 +5674,7 @@ ha-card.background {
 
 .${CARD.htmlStructure.elements.icon.class},
 .custom-icon-img {
-  --current-icon-size: var(--shape-default-size);
+  --current-icon-size: var(--icon-default-size);
 
   display: flex;
   align-items: center;
@@ -6004,7 +6058,7 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
   transform: scaleX(var(--scale-x,0)) scaleY(var(--scale-y,0));
   will-change: transform;
   backface-visibility: hidden;
-  contain: layout paint;  
+  contain: layout paint;
 }
 
 /* --- Animation ---*/
@@ -8577,21 +8631,21 @@ function struct(validator) {
   const preProcess = (data) => {
     const result = { ...data };
 
-  if (is.nonEmptyString(result.name)) {
-    result.name = [ { type: 'text', text: result.name } ];
-  } else if (is.plainObject(result.name)) {
-    result.name = [ result.name ];
-  }
+    if (!data.type.includes('template')) {
+      if (is.nonEmptyString(result.name)) {
+        result.name = [{ type: 'text', text: result.name }];
+      } else if (is.plainObject(result.name)) {
+        result.name = [result.name];
+      }
+    }
 
     if (is.nullish(result.icon_tap_action) && is.string(result.entity)) {
       const domain = HassProviderSingleton.getEntityDomain(result.entity);
-      const shouldPatch = ['light', 'switch', 'fan', 'input_boolean', 'media_player'].includes(domain);
+      const shouldPatch = HA_CONTEXT.actions.toggleDomain.includes(domain);
       if (shouldPatch) result.icon_tap_action = HA_CONTEXT.actions.toggle;
     }
 
     if (['top', 'bottom', 'overlay', 'background'].includes(result.bar_position)) delete result.bar_size; // avoid conflict
-
-    console.log('pre process: ', result);
 
     return result;
   };
@@ -9245,6 +9299,7 @@ class ViewCore {
     }
 
     this._configHelper.config = config;
+    console.log("DEBUG CONFIG: ", { config, newConfig: this._configHelper.config });
     Object.assign(this._currentValue, {
       value: this._configHelper.config.entity,
       stateContent: this._configHelper.stateContent,
@@ -10591,7 +10646,7 @@ class HACore extends HTMLElement {
         .map((key) => [key, this._cardView.config[key] || ''])
         .filter(([, value]) => is.nonEmptyString(value)),
     );
-    this._log.debug('validJinjaFields: ', { result });
+    this._log.debug('validJinjaFields: ', { handler: this._getJinjaHandlers(), config:this._cardView.config, result });
     return result;
   }
 
@@ -12040,6 +12095,7 @@ class EditorBase extends HTMLElement {
       maxValueAttribute: () => ({ attribute: { entity_id: this.#config.max_value ?? '' } }),
       number: () => ({ number: {} }),
       decimal: () => ({ number: { min: 0, max: 10, mode: 'box' } }),
+      slider: () => ({ number: { min: 0, max: 300, step: 1, mode: 'slider', unit_of_measurement: 'px' } }),
       template: () => ({ template: {} }),
       toggle: () => ({ boolean: {} }),
       action: () => ({ 'ui-action': {} }),
@@ -12196,6 +12252,7 @@ const EditorFieldsType = {
   stateContent: field('state_content'),
   text: field('text'),
   number: field('number'),
+  slider: field('slider'),
   decimal: field('decimal'),
   toggle: field('toggle'),
   tpl: field('template'),
@@ -12230,14 +12287,25 @@ const EditorFactory = {
         : {
             name: EditorFieldsType.entityName('name', { context: { entity: 'entity' } }),
           }),      
-      toggleName: EditorFieldsType.toggle('hide.name', { invert: true, array: true }),
+      toggleName: EditorFieldsType.toggle('hide.name', { invert: true, array: true, showIf: (c) => !is.jinja(c.hide) }),
       ...(template
         ? {
             secondary: EditorFieldsType.tpl('secondary'),
-            toggleSecondaryInfo: EditorFieldsType.toggle('hide.secondary_info', { invert: true, array: true }),
+            toggleSecondaryInfo: EditorFieldsType.toggle('hide.secondary_info', { invert: true, array: true, showIf: (c) => !is.jinja(c.hide) }),
             percent: EditorFieldsType.tpl('percent'),
           }
         : {
+            /* next release
+            bar_max_width: EditorFieldsType.slider('bar_max_width', {
+              target: 'bar_max_width',
+              resolveVirtual: (c) => parseInt(c.bar_max_width) || 0,
+              virtual: true,
+              onVirtualChange: (value, config) => ({
+                ...config,
+                bar_max_width: value ? `${value}px` : undefined,
+              }),
+            }),
+            */
             unit: EditorFieldsType.text('unit', { width: availableSpace(32, 0.2) }),
             decimal: EditorFieldsType.decimal('decimal', { width: availableSpace(32, 0.2) }),
             min_value: EditorFieldsType.number('min_value', { width: availableSpace(32, 0.6) }),
@@ -12262,8 +12330,8 @@ const EditorFactory = {
               selectorOf: 'max_value',
               showIf: (c) => typeof c.max_value === 'string' && c.max_value !== '',
             }),
-            toggleValue: EditorFieldsType.toggle('hide.value', { invert: true, array: true }),
-            toggleSecondaryInfo: EditorFieldsType.toggle('hide.secondary_info', { invert: true, array: true }),
+            toggleValue: EditorFieldsType.toggle('hide.value', { invert: true, array: true, showIf: (c) => !is.jinja(c.hide) }),
+            toggleSecondaryInfo: EditorFieldsType.toggle('hide.secondary_info', { invert: true, array: true, showIf: (c) => !is.jinja(c.hide) }),
             state_content: EditorFieldsType.stateContent('state_content', { context: { filter_entity: 'entity' }, }),            
           }),
     },
@@ -12279,7 +12347,7 @@ const EditorFactory = {
         showIf: (c) => is.nullish(c.theme),
         ...(template ? {} : { width: availableSpace() }),
       }),
-      toggleIcon: EditorFieldsType.toggle('hide.icon', { invert: true, array: true }),
+      toggleIcon: EditorFieldsType.toggle('hide.icon', { invert: true, array: true, showIf: (c) => !is.jinja(c.hide) }),
       ...(badge
         ? {}
         : {
@@ -12296,13 +12364,18 @@ const EditorFactory = {
       bar_orientation: EditorFieldsType.select('bar_orientation', template ? {} : { width: availableSpace() }),
       reverse_secondary_info_row: EditorFieldsType.toggle('reverse_secondary_info_row', { showIf: (c) => (!c.bar_position || c.bar_position === 'default') && c.layout === 'horizontal' }),
       center_zero: EditorFieldsType.toggle('center_zero'),
-      bar_effect: EditorFieldsType.tpl('bar_effect'),
-      toggleBar: EditorFieldsType.toggle('hide.progress_bar', { invert: true, array: true }),
+      bar_effect: EditorFieldsType.tpl('bar_effect', { showIf: (c) => is.jinja(c.bar_effect) }),
+      toggleBar: EditorFieldsType.toggle('hide.progress_bar', { invert: true, array: true, showIf: (c) => !is.jinja(c.hide) }),
       ...(badge
         ? {}
         : {
             badge_icon: EditorFieldsType.tpl('badge_icon'),
             badge_color: EditorFieldsType.tpl('badge_color'),
+          }),
+      hide: EditorFieldsType.tpl('hide', { showIf: (c) => is.jinja(c.hide) }),
+      ...(badge
+        ? {}
+        : {
             layout: EditorFieldsType.select('layout'),
           }),
     },

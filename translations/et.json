@@ -52,6 +52,7 @@
       "double_tap_action": "Topeltpuudutuse tegevus",
       "entity": "Objekt",
       "force_circular_background": "Sunnitud ümmargune taust",
+      "hide": "Peida",
       "hold_action": "Pikema vajutuse tegevus",
       "icon": "Ikoon",
       "icon_double_tap_action": "Ikooni topeltpuudutuse tegevus",

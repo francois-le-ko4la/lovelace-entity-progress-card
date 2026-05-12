@@ -52,6 +52,7 @@
       "double_tap_action": "Handling ved dobbelt tryk",
       "entity": "Enhed",
       "force_circular_background": "Tving cirkulær baggrund",
+      "hide": "Skjul",
       "hold_action": "Handling ved langt tryk",
       "icon": "Ikon",
       "icon_double_tap_action": "Handling ved dobbelt tryk på ikonet",

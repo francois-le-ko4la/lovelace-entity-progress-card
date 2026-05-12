@@ -52,6 +52,7 @@
       "double_tap_action": "ダブルタップしたときの動作",
       "entity": "エンティティ",
       "force_circular_background": "円形の背景を強制する",
+      "hide": "非表示",
       "hold_action": "長押ししたときの動作",
       "icon": "アイコン",
       "icon_double_tap_action": "アイコンをダブルタップしたときの動作",

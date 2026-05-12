@@ -52,6 +52,7 @@
       "double_tap_action": "Åtgärd vid dubbeltryck",
       "entity": "Enhet",
       "force_circular_background": "Tvinga cirkulär bakgrund",
+      "hide": "Dölj",
       "hold_action": "Åtgärd vid långt tryck",
       "icon": "Ikon",
       "icon_double_tap_action": "Åtgärd vid dubbeltryck på ikonen",

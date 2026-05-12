@@ -52,6 +52,7 @@
       "double_tap_action": "Acció al doble tocar",
       "entity": "Entitat",
       "force_circular_background": "Forçar fons circular",
+      "hide": "Amaga",
       "hold_action": "Acció en mantenir premut",
       "icon": "Icona",
       "icon_double_tap_action": "Acció al doble tocar la icona",

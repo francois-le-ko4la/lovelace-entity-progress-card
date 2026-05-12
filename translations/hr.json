@@ -52,6 +52,7 @@
       "double_tap_action": "Radnja na dupli dodir",
       "entity": "Entitet",
       "force_circular_background": "Prisili kružnu pozadinu",
+      "hide": "Sakrij",
       "hold_action": "Radnja na dugi dodir",
       "icon": "Ikona",
       "icon_double_tap_action": "Radnja na dupli dodir ikone",

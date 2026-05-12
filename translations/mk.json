@@ -52,6 +52,7 @@
       "double_tap_action": "Дејство при двоен допир",
       "entity": "Ентитет",
       "force_circular_background": "Принуди кружна позадина",
+      "hide": "Сокриј",
       "hold_action": "Дејство при долг допир",
       "icon": "Икона",
       "icon_double_tap_action": "Дејство при двоен допир на иконата",

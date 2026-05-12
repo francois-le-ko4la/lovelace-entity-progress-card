@@ -52,6 +52,7 @@
       "double_tap_action": "Double tap behavior",
       "entity": "Entity",
       "force_circular_background": "Force icon circular background",
+      "hide": "Hide",
       "hold_action": "Hold behavior",
       "icon": "Icon",
       "icon_double_tap_action": "Icon double tap behavior",

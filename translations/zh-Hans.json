@@ -52,6 +52,7 @@
       "double_tap_action": "双击动作",
       "entity": "实体",
       "force_circular_background": "强制圆形背景",
+      "hide": "隐藏",
       "hold_action": "长按动作",
       "icon": "图标",
       "icon_double_tap_action": "图标双击动作",

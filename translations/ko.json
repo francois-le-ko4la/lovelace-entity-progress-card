@@ -52,6 +52,7 @@
       "double_tap_action": "더블 탭 시 동작",
       "entity": "엔티티",
       "force_circular_background": "원형 배경 강제 적용",
+      "hide": "숨기기",
       "hold_action": "길게 누를 시 동작",
       "icon": "아이콘",
       "icon_double_tap_action": "아이콘 더블 탭 시 동작",

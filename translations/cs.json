@@ -52,6 +52,7 @@
       "double_tap_action": "Chování při dvojitém klepnutí",
       "entity": "Entita",
       "force_circular_background": "Vynutit kruhové pozadí",
+      "hide": "Skrýt",
       "hold_action": "Chování při podržení",
       "icon": "Ikona",
       "icon_double_tap_action": "Chování při dvojitém klepnutí na ikonu",

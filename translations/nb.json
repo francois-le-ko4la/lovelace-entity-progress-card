@@ -52,6 +52,7 @@
       "double_tap_action": "Handling ved dobbelt trykk",
       "entity": "Enhet",
       "force_circular_background": "Tving sirkulær bakgrunn",
+      "hide": "Skjul",
       "hold_action": "Handling ved langt trykk",
       "icon": "Ikon",
       "icon_double_tap_action": "Handling ved dobbelt trykk på ikonet",

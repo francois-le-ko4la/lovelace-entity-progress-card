@@ -52,6 +52,7 @@
       "double_tap_action": "พฤติกรรมการแตะสองครั้ง",
       "entity": "เอนทิตี",
       "force_circular_background": "บังคับพื้นหลังวงกลม",
+      "hide": "ซ่อน",
       "hold_action": "พฤติกรรมการกด",
       "icon": "ไอคอน",
       "icon_double_tap_action": "พฤติกรรมการแตะไอคอนสองครั้ง",

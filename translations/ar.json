@@ -52,6 +52,7 @@
       "double_tap_action": "الإجراء عند النقر المزدوج",
       "entity": "الكيان",
       "force_circular_background": "فرض خلفية دائرية",
+      "hide": "إخفاء",
       "hold_action": "الإجراء عند الضغط المطول",
       "icon": "أيقونة",
       "icon_double_tap_action": "الإجراء عند النقر المزدوج على الأيقونة",

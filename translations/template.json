@@ -52,6 +52,7 @@
       "double_tap_action": "",
       "entity": "",
       "force_circular_background": "",
+      "hide": true,
       "hold_action": "",
       "icon": "",
       "icon_double_tap_action": "",

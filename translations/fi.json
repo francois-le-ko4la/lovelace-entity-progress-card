@@ -52,6 +52,7 @@
       "double_tap_action": "Toiminto kahdella napautuksella",
       "entity": "Entiteetti",
       "force_circular_background": "Pakota pyöreä tausta",
+      "hide": "Piilota",
       "hold_action": "Toiminto pitkällä painalluksella",
       "icon": "Ikoni",
       "icon_double_tap_action": "Toiminto kahdella napautuksella kuvaketta",

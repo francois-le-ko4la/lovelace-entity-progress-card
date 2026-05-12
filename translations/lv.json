@@ -52,6 +52,7 @@
       "double_tap_action": "Divreiz pieskaroties",
       "entity": "Vienība",
       "force_circular_background": "Piespiest apļu fonu",
+      "hide": "Slēpt",
       "hold_action": "Ilgs pieskāriens",
       "icon": "Ikona",
       "icon_double_tap_action": "Ikonas dubults pieskāriens",

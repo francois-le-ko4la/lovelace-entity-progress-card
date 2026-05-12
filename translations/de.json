@@ -52,6 +52,7 @@
       "double_tap_action": "Aktion bei doppelt Tippen",
       "entity": "Entität",
       "force_circular_background": "Kreisförmigen Hintergrund erzwingen",
+      "hide": "Ausblenden",
       "hold_action": "Aktion bei langem Tippen",
       "icon": "Symbol",
       "icon_double_tap_action": "Aktion bei doppelt Tippen auf das Symbol",

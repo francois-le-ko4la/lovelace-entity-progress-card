@@ -52,6 +52,7 @@
       "double_tap_action": "Dviejų bakstelėjimų veiksmas",
       "entity": "Entity",
       "force_circular_background": "Priversti apvalų foną",
+      "hide": "Slėpti",
       "hold_action": "Ilgo paspaudimo veiksmas",
       "icon": "Ikona",
       "icon_double_tap_action": "Ikonos dviejų bakstelėjimų veiksmas",

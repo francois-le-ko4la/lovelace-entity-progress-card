@@ -52,6 +52,7 @@
       "double_tap_action": "Azione al doppio tocco",
       "entity": "Entità",
       "force_circular_background": "Forza sfondo circolare",
+      "hide": "Nascondi",
       "hold_action": "Azione al tocco prolungato",
       "icon": "Icona",
       "icon_double_tap_action": "Azione al doppio tocco dell'icona",

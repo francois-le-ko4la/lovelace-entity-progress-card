@@ -2,45 +2,45 @@
 # add-background-translation.sh
 
 declare -A translations=(
-  ["ar"]="خلفية البطاقة"
-  ["bn"]="কার্ড পটভূমি"
-  ["ca"]="Fons de la targeta"
-  ["cs"]="Pozadí karty"
-  ["da"]="Kortbaggrund"
-  ["de"]="Kartenhintergrund"
-  ["el"]="Φόντο κάρτας"
-  ["en"]="Full card background"
-  ["es"]="Fondo de la tarjeta"
-  ["es-419"]="Fondo de la tarjeta"
-  ["et"]="Kaardi taust"
-  ["fi"]="Kortin tausta"
-  ["fr"]="Arrière-plan de la carte"
-  ["hi"]="कार्ड पृष्ठभूमि"
-  ["hr"]="Pozadina kartice"
-  ["hu"]="Kártya háttér"
-  ["id"]="Latar belakang kartu"
-  ["it"]="Sfondo della scheda"
-  ["ja"]="カードの背景"
-  ["ko"]="카드 배경"
-  ["lt"]="Kortelės fonas"
-  ["lv"]="Kartes fons"
-  ["mk"]="Позадина на картичката"
-  ["nb"]="Kortbakgrunn"
-  ["nl"]="Kaartachtergrond"
-  ["pl"]="Tło karty"
-  ["pt"]="Fundo do cartão"
-  ["pt-BR"]="Fundo do cartão"
-  ["ro"]="Fundal card"
-  ["ru"]="Фон карточки"
-  ["sk"]="Pozadie karty"
-  ["sl"]="Ozadje kartice"
-  ["sv"]="Kortbakgrund"
-  ["th"]="พื้นหลังการ์ด"
-  ["tr"]="Kart arka planı"
-  ["uk"]="Фон картки"
-  ["vi"]="Nền thẻ"
-  ["zh-Hans"]="卡片背景"
-  ["zh-Hant"]="卡片背景"
+  ["ar"]="إخفاء"
+  ["bn"]="লুকান"
+  ["ca"]="Amaga"
+  ["cs"]="Skrýt"
+  ["da"]="Skjul"
+  ["de"]="Ausblenden"
+  ["el"]="Απόκρυψη"
+  ["en"]="Hide"
+  ["es"]="Ocultar"
+  ["es-419"]="Ocultar"
+  ["et"]="Peida"
+  ["fi"]="Piilota"
+  ["fr"]="Masquer"
+  ["hi"]="छिपाएँ"
+  ["hr"]="Sakrij"
+  ["hu"]="Elrejtés"
+  ["id"]="Sembunyikan"
+  ["it"]="Nascondi"
+  ["ja"]="非表示"
+  ["ko"]="숨기기"
+  ["lt"]="Slėpti"
+  ["lv"]="Slēpt"
+  ["mk"]="Сокриј"
+  ["nb"]="Skjul"
+  ["nl"]="Verbergen"
+  ["pl"]="Ukryj"
+  ["pt"]="Ocultar"
+  ["pt-BR"]="Ocultar"
+  ["ro"]="Ascunde"
+  ["ru"]="Скрыть"
+  ["sk"]="Skryť"
+  ["sl"]="Skrij"
+  ["sv"]="Dölj"
+  ["th"]="ซ่อน"
+  ["tr"]="Gizle"
+  ["uk"]="Приховати"
+  ["vi"]="Ẩn"
+  ["zh-Hans"]="隐藏"
+  ["zh-Hant"]="隱藏"
 )
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -56,21 +56,21 @@ for lang in "${!translations[@]}"; do
   fi
 
   # Vérifie si la clé existe déjà
-  if jq -e '.editor.option.bar_position.background' "$file" > /dev/null 2>&1; then
-    echo "✓  ${lang}.json already has background, skipping"
-    continue
-  fi
+  #if jq -e '.editor.option.bar_position.background' "$file" > /dev/null 2>&1; then
+  #  echo "✓  ${lang}.json already has background, skipping"
+  #  continue
+  #fi
 
   # Vérifie que le chemin parent existe
-  if ! jq -e '.editor.option.bar_position' "$file" > /dev/null 2>&1; then
-    echo "⚠️  Path editor.option.bar_position not found in ${lang}.json"
-    continue
-  fi
+  #if ! jq -e '.editor.option.bar_position' "$file" > /dev/null 2>&1; then
+  #  echo "⚠️  Path editor.option.bar_position not found in ${lang}.json"
+  #  continue
+  #fi
 
   # Ajoute la clé
   tmp=$(mktemp)
   jq --arg val "$value" \
-    '.editor.option.bar_position.background = $val' \
+    '.editor.field.hide = $val' \
     "$file" > "$tmp" && mv "$tmp" "$file"
 
   echo "✅  ${lang}.json updated"

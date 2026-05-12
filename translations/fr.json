@@ -52,6 +52,7 @@
       "double_tap_action": "Comportement lors d'un double appui",
       "entity": "Entité",
       "force_circular_background": "Forcer le fond circulaire",
+      "hide": "Masquer",
       "hold_action": "Comportement lors d'un appui long",
       "icon": "Icône",
       "icon_double_tap_action": "Comportement lors d'un double appui sur l'icône",
