@@ -11910,9 +11910,9 @@ class EditorDOMHelper extends DOMHelper {
       // Context
       if (def.context) {
         this.enqueue(name, 'context', () => {
-          const el = this._domElements.get(name);
-          if (!el) return;
-          el.context = Object.fromEntries(
+          const target = this._domElements.get(name);
+          if (!target) return;
+          target.context = Object.fromEntries(
             Object.entries(def.context).map(([k, v]) => [k, config[v] ?? ''])
           );
         });
