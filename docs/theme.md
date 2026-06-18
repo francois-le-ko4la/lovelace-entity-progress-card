@@ -208,8 +208,9 @@ theme: optimal_when_high
 | **Percentage Range** | **Color** | **Description** _(optional)_ |
 | :------------------- | :-------- | :--------------------------- |
 | 0% – 20%             | `red`     | Critical / Very low          |
-| 20% – 50%            | `amber`   | Low                          |
-| 50% – 80%            | `yellow`  | Moderate                     |
+| 20% – 40%            | `orange`  | Low                          |
+| 40% – 60%            | `yellow`  | Moderate                     |
+| 60% – 80%            | `lime`    | Good                         |
 | 80% – 100%           | `green`   | Optimal / High               |
 
 > [!NOTE]
@@ -236,8 +237,9 @@ theme: optimal_when_low
 | **Percentage Range** | **Color** | **Description** _(optional)_ |
 | :------------------- | :-------- | :--------------------------- |
 | 0% – 20%             | `green`   | Low level / Safe             |
-| 20% – 50%            | `yellow`  | Moderate                     |
-| 50% – 80%            | `amber`   | Elevated                     |
+| 20% – 40%            | `lime`    | Good                         |
+| 40% – 60%            | `yellow`  | Moderate                     |
+| 60% – 80%            | `orange`  | Elevated                     |
 | 80% – 100%           | `red`     | High / Critical              |
 
 > [!NOTE]
@@ -316,7 +318,7 @@ with a specific color:
 | 8°C – 16°C / 46.4°F – 60.8°F    | `var(--teal-color)`        | Mild            |
 | 16°C – 18°C / 60.8°F – 64.4°F   | `var(--green-teal-color)`  | Slightly warm   |
 | 18°C – 20°C / 64.4°F – 68°F     | `var(--light-green-color)` | Comfortable     |
-| 20°C – 25°C / 68°F – 77°F       | `var(--success-color)`     | Optimal         |
+| 20°C – 25°C / 68°F – 77°F       | `var(--green-color)`       | Optimal         |
 | 25°C – 27°C / 77°F – 80.6°F     | `var(--yellow-color)`      | Warm            |
 | 27°C – 29°C / 80.6°F – 84.2°F   | `var(--amber-color)`       | Hot             |
 | 29°C – 34°C / 84.2°F – 93.2°F   | `var(--deep-orange-color)` | Very hot        |
@@ -355,9 +357,9 @@ The ranges and their corresponding colors are as follows:
 | **Humidity Range** | **Color Variable**         | **Description**      |
 | :----------------- | :------------------------- | :------------------- |
 | 0% – 23%           | `var(--red-color)`         | Very dry air         |
-| 23% – 30%          | `var(--accent-color)`      | Dry air              |
+| 23% – 30%          | `var(--orange-color)`      | Dry air              |
 | 30% – 40%          | `var(--yellow-color)`      | Slightly dry air     |
-| 40% – 50%          | `var(--success-color)`     | Optimal humidity     |
+| 40% – 50%          | `var(--green-color)`       | Optimal humidity     |
 | 50% – 60%          | `var(--teal-color)`        | Comfortable humidity |
 | 60% – 65%          | `var(--light-blue-color)`  | Slightly humid air   |
 | 65% – 80%          | `var(--indigo-color)`      | Humid air            |
@@ -397,9 +399,9 @@ The ranges and their corresponding colors are as follows:
 
 | **TVOC Range (ppb)** | **Color Variable**         | **Description**        |
 | :------------------- | :------------------------- | :--------------------- |
-| 0 – 300              | `var(--success-color)`     | Good air quality       |
+| 0 – 300              | `var(--green-color)`       | Good air quality       |
 | 300 – 500            | `var(--yellow-color)`      | Acceptable air quality |
-| 500 – 3000           | `var(--accent-color)`      | Moderate air quality   |
+| 500 – 3000           | `var(--orange-color)`      | Moderate air quality   |
 | 3000 – 25,000        | `var(--red-color)`         | Poor air quality       |
 | 25,000 – 50,000      | `var(--deep-purple-color)` | Hazardous              |
 
@@ -449,9 +451,9 @@ The ranges and their corresponding colors are as follows:
 
 | **PM2.5 Range (µg/m³)** | **Color Variable**         | **Description**                |
 | :---------------------- | :------------------------- | :----------------------------- |
-| 0 – 12                  | `var(--success-color)`     | Good air quality               |
+| 0 – 12                  | `var(--green-color)`       | Good air quality               |
 | 12 – 35                 | `var(--yellow-color)`      | Moderate air quality           |
-| 35 – 55                 | `var(--accent-color)`      | Unhealthy for sensitive groups |
+| 35 – 55                 | `var(--orange-color)`      | Unhealthy for sensitive groups |
 | 55 – 150                | `var(--red-color)`         | Unhealthy air quality          |
 | 150 – 200               | `var(--deep-purple-color)` | Very unhealthy air quality     |
 
