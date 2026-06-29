@@ -1431,18 +1431,62 @@ following locale rules or overriding them explicitly.
 [![Template OK][Template-OK]](#compatibility)
 [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
-> **`center_zero`** [Boolean] _(optional, default: `false`)_
+> **`center_zero`** [Boolean | Object] _(optional, default: `false`)_
 
 Centers the progress bar at zero, allowing for better visualization of values
 that fluctuate around zero (e.g., positive/negative changes).
 
-_Example_:
+By default, the center point is `0`. If your sensor has a non-zero nominal
+value (e.g., a voltage sensor around `230V`, or a pressure sensor with a
+non-zero baseline), you can pass an object instead of `true` to customize
+the center point and how the value is displayed.
+
+| Property          | Type    | Default | Description                                                                                                  |
+| ----------------- | ------- | ------- | -------------------------------------------------------------------------------------------------------------------- |
+| `value`           | Number  | `0`     | The reference value used as the center point of the bar.                                                             |
+| `growth_percent`  | Boolean | `false` | When `true`, the displayed percentage shows growth/decrease **relative to `value`** instead of the bar's fill ratio. |
+
+> ⚠️ The bar's visual fill always reflects the distance from `value` to the
+> nearest bound (`min_value`/`max_value`). `growth_percent` only changes the
+> **displayed text**, not the bar itself.
+
+_Example — simple boolean (centered at 0)_:
 
 ```yaml
 type: custom:entity-progress-card
 entity: sensor.energy_balance
 center_zero: true
 ```
+
+_Example — custom center value (e.g., nominal voltage)_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.voltage
+attribute: current_position
+center_zero:
+  value: 230
+```
+
+With the example above, a sensor reading `236` will show a bar filled
+relative to the `230`–`max_value` range, but the displayed text will be
+`236` (the raw value), unless `growth_percent` is enabled (see below).
+
+_Example — custom center value with growth percentage display_:
+
+```yaml
+type: custom:entity-progress-card
+entity: cover.cuisine
+attribute: current_position
+center_zero:
+  value: 60
+  growth_percent: true
+```
+
+With `value: 60` and `growth_percent: true`, a cover at `66%` will display
+`+10%` (i.e. `(66 - 60) / 60 * 100`), representing how far the current value
+has grown relative to the center point — rather than the bar's raw fill
+ratio.
 
 [🔼 Back to top]
 
@@ -1625,28 +1669,47 @@ interpolate: true
 [![Template OK][Template-OK]](#compatibility)
 [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
-> **`hide`** [List] (optional)\_:
+> **`hide`** [List] or [JINJA] (optional):
 
 Defines which elements should be hidden in the card.
 
-The list can contain any of the following elments:
+hide accepts either:
 
-- `icon`: Hides the entity's icon.
-- `name`: Hides the entity's name.
-- `value`: Hides the current value.
-- `secondary_info`: Hides secondary information.
-- `progress_bar`: Hides the visual progress bar.
+- a list of elements to hide (static configuration), or
+- a Jinja template that dynamically returns a list of elements based on the current state.
 
-_Example_:
+When using the list syntax, the following elements are available:
+
+- icon: Hides the entity icon.
+- name: Hides the entity name.
+- value: Hides the current value.
+- secondary_info: Hides the secondary information.
+- progress_bar: Hides the visual progress bar.
+
+_Static example_:
 
 ```yaml
 type: custom:entity-progress-card
-····
+...
 hide:
   - icon
   - name
   - secondary_info
 ```
+
+_Dynamic (Jinja) example_:
+
+```yaml
+type: custom:entity-progress-card
+...
+hide: >
+  {% if is_state('input_boolean.simple_mode', 'on') %}
+    secondary_info, progress_bar
+  {% endif %}
+```
+
+The template must return a list containing any combination of the supported
+element names.
 
 [🔼 Back to top]
 

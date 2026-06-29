@@ -734,7 +734,10 @@ ha-card...
  │           └─ span.secondary-info-value
  └─ div.bar-container.vertical / top / bottom / below
      └─ div.progress-bar.center-zero
-         ├─ div.inner
+         ├─ div.bar-half.negative-zone
+         │   └─ div.inner.negative
+         ├─ div.bar-half.positive-zone
+         │   └─ div.inner.positive
          ├─ div.low.watermark.mark
          ├─ div.high.watermark.mark
          └─ div.zero.mark

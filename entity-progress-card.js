@@ -306,6 +306,7 @@ const CARD = {
           },
         },
         bar: { element: 'div', class: 'progress-bar', extraAttr: {'aria-hidden': 'true'} },
+        half: { element: 'div', class: 'bar-half', extraAttr: {'aria-hidden': 'true'} },
         inner: { element: 'div', class: 'inner', extraAttr: {'aria-hidden': 'true'}  },
         zeroMark: { element: 'div', class: 'zero', extraAttr: {'aria-hidden': 'true'} },
         lowWatermark: { element: 'div', class: 'low', extraAttr: {'aria-hidden': 'true'} },
@@ -651,11 +652,14 @@ const TRANSLATIONS = {
         badge_icon: 'أيقونة الشارة',
         bar_color: 'لون الشريط',
         bar_effect: 'تأثير الشريط',
+        bar_effect_jinja: 'تأثير الشريط (وضع Jinja)',
         bar_orientation: 'اتجاه الشريط',
         bar_position: 'موضع الشريط',
         bar_single_line: 'معلومات في سطر واحد (تراكب)',
         bar_size: 'حجم الشريط',
         center_zero: 'صفر في الوسط',
+        center_zero_value: 'قيمة المركز',
+        center_zero_growth_percent: 'نسبة النمو',
         color: 'اللون الأساسي',
         decimal: 'عشري',
         disable_unit: 'عرض الوحدة',
@@ -663,6 +667,7 @@ const TRANSLATIONS = {
         entity: 'الكيان',
         force_circular_background: 'فرض خلفية دائرية',
         hide: 'إخفاء',
+        hide_jinja: 'إخفاء (وضع Jinja)',
         hold_action: 'الإجراء عند الضغط المطول',
         icon: 'أيقونة',
         icon_double_tap_action: 'الإجراء عند النقر المزدوج على الأيقونة',
@@ -768,11 +773,14 @@ const TRANSLATIONS = {
         badge_icon: 'ব্যাজ আইকন',
         bar_color: 'বারের রঙ',
         bar_effect: 'বারের প্রভাব',
+        bar_effect_jinja: 'বারের প্রভাব (Jinja মোড)',
         bar_orientation: 'বারের অভিমুখ',
         bar_position: 'বারের অবস্থান',
         bar_single_line: 'এক লাইনে তথ্য (ওভারলে)',
         bar_size: 'বারের আকার',
         center_zero: 'মাঝে শূন্য',
+        center_zero_value: 'কেন্দ্রীয় মান',
+        center_zero_growth_percent: 'প্রবৃদ্ধির শতাংশ',
         color: 'প্রাথমিক রঙ',
         decimal: 'দশমিক',
         disable_unit: 'একক দেখান',
@@ -780,6 +788,7 @@ const TRANSLATIONS = {
         entity: 'সত্তা',
         force_circular_background: 'বৃত্তাকার পটভূমি জোর করুন',
         hide: 'লুকান',
+        hide_jinja: 'লুকান (Jinja মোড)',
         hold_action: 'হোল্ড আচরণ',
         icon: 'আইকন',
         icon_double_tap_action: 'আইকন ডাবল ট্যাপ আচরণ',
@@ -885,11 +894,14 @@ const TRANSLATIONS = {
         badge_icon: 'Icona de la insígnia',
         bar_color: 'Color principal',
         bar_effect: 'Efecte de la barra',
+        bar_effect_jinja: 'Efecte de la barra (mode Jinja)',
         bar_orientation: 'Orientació de la barra',
         bar_position: 'Posició de la barra',
         bar_single_line: 'Informació en una sola línia (overlay)',
         bar_size: 'Mida de la barra',
         center_zero: 'Zero al centre',
+        center_zero_value: 'Valor de centratge',
+        center_zero_growth_percent: 'Percentatge de creixement',
         color: 'Color principal',
         decimal: 'Decimal',
         disable_unit: 'Mostra la unitat',
@@ -897,6 +909,7 @@ const TRANSLATIONS = {
         entity: 'Entitat',
         force_circular_background: 'Forçar fons circular',
         hide: 'Amaga',
+        hide_jinja: 'Amaga (mode Jinja)',
         hold_action: 'Acció en mantenir premut',
         icon: 'Icona',
         icon_double_tap_action: 'Acció al doble tocar la icona',
@@ -1002,11 +1015,14 @@ const TRANSLATIONS = {
         badge_icon: 'Ikona odznaku',
         bar_color: 'Barva lišty',
         bar_effect: 'Efekt na liště',
+        bar_effect_jinja: 'Efekt na liště (režim Jinja)',
         bar_orientation: 'Orientace lišty',
         bar_position: 'Umístění lišty',
         bar_single_line: 'Info v jednom řádku (overlay)',
         bar_size: 'Velikost lišty',
         center_zero: 'Nula uprostřed',
+        center_zero_value: 'Hodnota středu',
+        center_zero_growth_percent: 'Procento růstu',
         color: 'Hlavní barva',
         decimal: 'desetinný',
         disable_unit: 'Zobrazit jednotku',
@@ -1014,6 +1030,7 @@ const TRANSLATIONS = {
         entity: 'Entita',
         force_circular_background: 'Vynutit kruhové pozadí',
         hide: 'Skrýt',
+        hide_jinja: 'Skrýt (režim Jinja)',
         hold_action: 'Chování při podržení',
         icon: 'Ikona',
         icon_double_tap_action: 'Chování při dvojitém klepnutí na ikonu',
@@ -1119,11 +1136,14 @@ const TRANSLATIONS = {
         badge_icon: 'Badge-ikon',
         bar_color: 'Farve til bar',
         bar_effect: 'Effekt på bar',
+        bar_effect_jinja: 'Effekt på bar (Jinja-tilstand)',
         bar_orientation: 'Bar-retning',
         bar_position: 'Bar-placering',
         bar_single_line: 'Info på én linje (overlay)',
         bar_size: 'Bar størrelse',
         center_zero: 'Center nul',
+        center_zero_value: 'Centerværdi',
+        center_zero_growth_percent: 'Vækstprocent',
         color: 'Primær farve',
         decimal: 'decimal',
         disable_unit: 'Vis enhed',
@@ -1131,6 +1151,7 @@ const TRANSLATIONS = {
         entity: 'Enhed',
         force_circular_background: 'Tving cirkulær baggrund',
         hide: 'Skjul',
+        hide_jinja: 'Skjul (Jinja-tilstand)',
         hold_action: 'Handling ved langt tryk',
         icon: 'Ikon',
         icon_double_tap_action: 'Handling ved dobbelt tryk på ikonet',
@@ -1236,11 +1257,14 @@ const TRANSLATIONS = {
         badge_icon: 'Symbol des Badges',
         bar_color: 'Farbe der Leiste',
         bar_effect: 'Effekt auf die Leiste',
+        bar_effect_jinja: 'Effekt auf die Leiste (Jinja-Modus)',
         bar_orientation: 'Ausrichtung der Leiste',
         bar_position: 'Position der Leiste',
         bar_single_line: 'Informationen in einer Zeile (Overlay)',
         bar_size: 'Größe der Bar',
         center_zero: 'Null in der Mitte',
+        center_zero_value: 'Zentrumswert',
+        center_zero_growth_percent: 'Wachstumsprozentsatz',
         color: 'Primärfarbe',
         decimal: 'dezimal',
         disable_unit: 'Einheit anzeigen',
@@ -1248,6 +1272,7 @@ const TRANSLATIONS = {
         entity: 'Entität',
         force_circular_background: 'Kreisförmigen Hintergrund erzwingen',
         hide: 'Ausblenden',
+        hide_jinja: 'Ausblenden (Jinja-Modus)',
         hold_action: 'Aktion bei langem Tippen',
         icon: 'Symbol',
         icon_double_tap_action: 'Aktion bei doppelt Tippen auf das Symbol',
@@ -1353,11 +1378,14 @@ const TRANSLATIONS = {
         badge_icon: 'Εικονίδιο εμβλήματος',
         bar_color: 'Χρώμα γραμμής',
         bar_effect: 'Εφέ γραμμής',
+        bar_effect_jinja: 'Εφέ γραμμής (λειτουργία Jinja)',
         bar_orientation: 'Κατεύθυνση γραμμής',
         bar_position: 'Θέση γραμμής',
         bar_single_line: 'Πληροφορίες σε μία γραμμή (overlay)',
         bar_size: 'Μέγεθος γραμμής',
         center_zero: 'Μηδέν στο κέντρο',
+        center_zero_value: 'Τιμή κέντρου',
+        center_zero_growth_percent: 'Ποσοστό μεταβολής',
         color: 'Κύριο χρώμα',
         decimal: 'δεκαδικά',
         disable_unit: 'Εμφάνιση μονάδας',
@@ -1365,6 +1393,7 @@ const TRANSLATIONS = {
         entity: 'Οντότητα',
         force_circular_background: 'Εξαναγκασμός κυκλικού φόντου',
         hide: 'Απόκρυψη',
+        hide_jinja: 'Απόκρυψη (λειτουργία Jinja)',
         hold_action: 'Ενέργεια κατά το παρατεταμένο πάτημα',
         icon: 'Εικονίδιο',
         icon_double_tap_action: 'Ενέργεια στο διπλό πάτημα του εικονιδίου',
@@ -1470,11 +1499,14 @@ const TRANSLATIONS = {
         badge_icon: 'Badge icon',
         bar_color: 'Color for the bar',
         bar_effect: 'Bar effect',
+        bar_effect_jinja: 'Bar effect (Jinja mode)',
         bar_orientation: 'Bar orientation',
         bar_position: 'Bar position',
         bar_single_line: 'Single line info (overlay)',
         bar_size: 'Bar size',
         center_zero: 'Zero at center',
+        center_zero_value: 'Center value',
+        center_zero_growth_percent: 'Growth percentage',
         color: 'Primary color',
         decimal: 'decimal',
         disable_unit: 'Show unit',
@@ -1482,6 +1514,7 @@ const TRANSLATIONS = {
         entity: 'Entity',
         force_circular_background: 'Force icon circular background',
         hide: 'Hide',
+        hide_jinja: 'Hide (Jinja mode)',
         hold_action: 'Hold behavior',
         icon: 'Icon',
         icon_double_tap_action: 'Icon double tap behavior',
@@ -1587,11 +1620,14 @@ const TRANSLATIONS = {
         badge_icon: 'Ícono del distintivo',
         bar_color: 'Color de la barra de progreso',
         bar_effect: 'Efecto de la barra de progreso',
+        bar_effect_jinja: 'Efecto de la barra de progreso (modo Jinja)',
         bar_orientation: 'Orientación de la barra',
         bar_position: 'Posición de la barra',
         bar_single_line: 'Información en línea (superpuesta)',
         bar_size: 'Tamaño de la barra',
         center_zero: 'Cero centrado',
+        center_zero_value: 'Valor de centrado',
+        center_zero_growth_percent: 'Porcentaje de crecimiento',
         color: 'Color principal',
         decimal: 'Decimal',
         disable_unit: 'Mostrar unidad',
@@ -1599,6 +1635,7 @@ const TRANSLATIONS = {
         entity: 'Entidad',
         force_circular_background: 'Forzar fondo circular',
         hide: 'Ocultar',
+        hide_jinja: 'Ocultar (modo Jinja)',
         hold_action: 'Acción al mantener presionado',
         icon: 'Ícono',
         icon_double_tap_action: 'Acción de doble toque en ícono',
@@ -1704,11 +1741,14 @@ const TRANSLATIONS = {
         badge_icon: 'Icono del badge',
         bar_color: 'Color principal',
         bar_effect: 'Efecto de la barra',
+        bar_effect_jinja: 'Efecto de la barra (modo Jinja)',
         bar_orientation: 'Orientación de la barra',
         bar_position: 'Posición de la barra',
         bar_single_line: 'Información en una sola línea (overlay)',
         bar_size: 'Tamaño de la barra',
         center_zero: 'Cero en el centro',
+        center_zero_value: 'Valor de centrado',
+        center_zero_growth_percent: 'Porcentaje de crecimiento',
         color: 'Color principal',
         decimal: 'decimal',
         disable_unit: 'Mostrar unidad',
@@ -1716,6 +1756,7 @@ const TRANSLATIONS = {
         entity: 'Entidad',
         force_circular_background: 'Forzar fondo circular',
         hide: 'Ocultar',
+        hide_jinja: 'Ocultar (modo Jinja)',
         hold_action: 'Acción al mantener pulsado',
         icon: 'Icono',
         icon_double_tap_action: 'Acción al pulsar dos veces el icono',
@@ -1821,11 +1862,14 @@ const TRANSLATIONS = {
         badge_icon: 'Märgi ikoon',
         bar_color: 'Riba värv',
         bar_effect: 'Riba efekt',
+        bar_effect_jinja: 'Riba efekt (Jinja režiim)',
         bar_orientation: 'Riba orientatsioon',
         bar_position: 'Riba positsioon',
         bar_single_line: 'Info ühel real (overlay)',
         bar_size: 'Riba suurus',
         center_zero: 'Null keskel',
+        center_zero_value: 'Keskväärtus',
+        center_zero_growth_percent: 'Kasvuprotsent',
         color: 'Ikooni värv',
         decimal: 'Kümnendkoht',
         disable_unit: 'Näita ühikut',
@@ -1833,6 +1877,7 @@ const TRANSLATIONS = {
         entity: 'Objekt',
         force_circular_background: 'Sunnitud ümmargune taust',
         hide: 'Peida',
+        hide_jinja: 'Peida (Jinja režiim)',
         hold_action: 'Pikema vajutuse tegevus',
         icon: 'Ikoon',
         icon_double_tap_action: 'Ikooni topeltpuudutuse tegevus',
@@ -1938,11 +1983,14 @@ const TRANSLATIONS = {
         badge_icon: 'Badge-ikoni',
         bar_color: 'Pääväri',
         bar_effect: 'Palkin efekti',
+        bar_effect_jinja: 'Palkin efekti (Jinja-tila)',
         bar_orientation: 'Palkin suunta',
         bar_position: 'Palkin sijainti',
         bar_single_line: 'Tiedot yhdellä rivillä (overlay)',
         bar_size: 'Palkin koko',
         center_zero: 'Nolla keskellä',
+        center_zero_value: 'Keskiarvo',
+        center_zero_growth_percent: 'Kasvuprosentti',
         color: 'Pääväri',
         decimal: 'desimaali',
         disable_unit: 'Näytä yksikkö',
@@ -1950,6 +1998,7 @@ const TRANSLATIONS = {
         entity: 'Entiteetti',
         force_circular_background: 'Pakota pyöreä tausta',
         hide: 'Piilota',
+        hide_jinja: 'Piilota (Jinja-tila)',
         hold_action: 'Toiminto pitkällä painalluksella',
         icon: 'Ikoni',
         icon_double_tap_action: 'Toiminto kahdella napautuksella kuvaketta',
@@ -2055,11 +2104,14 @@ const TRANSLATIONS = {
         badge_icon: 'Icône du badge',
         bar_color: 'Couleur de la barre',
         bar_effect: 'Effet sur la barre',
+        bar_effect_jinja: 'Effet sur la barre (mode Jinja)',
         bar_orientation: 'Orientation de la barre',
         bar_position: 'Position de la barre',
         bar_single_line: 'Infos sur une ligne (overlay)',
         bar_size: 'Taille de la barre',
         center_zero: 'Zéro au centre',
+        center_zero_value: 'Valeur de centrage',
+        center_zero_growth_percent: 'Pourcentage de croissance',
         color: 'Couleur de l\'icône',
         decimal: 'décimal',
         disable_unit: 'Afficher l\'unité',
@@ -2067,6 +2119,7 @@ const TRANSLATIONS = {
         entity: 'Entité',
         force_circular_background: 'Forcer le fond circulaire',
         hide: 'Masquer',
+        hide_jinja: 'Masquer (mode Jinja)',
         hold_action: 'Comportement lors d\'un appui long',
         icon: 'Icône',
         icon_double_tap_action: 'Comportement lors d\'un double appui sur l\'icône',
@@ -2172,11 +2225,14 @@ const TRANSLATIONS = {
         badge_icon: 'बैज का आइकन',
         bar_color: 'मुख्य रंग',
         bar_effect: 'बार पर प्रभाव',
+        bar_effect_jinja: 'बार पर प्रभाव (Jinja मोड)',
         bar_orientation: 'बार की दिशा',
         bar_position: 'बार की स्थिति',
         bar_single_line: 'एक पंक्ति में जानकारी (ओवरले)',
         bar_size: 'बार का आकार',
         center_zero: 'शून्य केंद्र में',
+        center_zero_value: 'केंद्र मान',
+        center_zero_growth_percent: 'वृद्धि प्रतिशत',
         color: 'मुख्य रंग',
         decimal: 'दशमलव',
         disable_unit: 'इकाई दिखाएँ',
@@ -2184,6 +2240,7 @@ const TRANSLATIONS = {
         entity: 'एंटिटी',
         force_circular_background: 'गोलाकार पृष्ठभूमि को बाध्य करें',
         hide: 'छिपाएँ',
+        hide_jinja: 'छिपाएँ (Jinja मोड)',
         hold_action: 'होल्ड व्यवहार',
         icon: 'आइकन',
         icon_double_tap_action: 'आइकन डबल टैप व्यवहार',
@@ -2289,11 +2346,14 @@ const TRANSLATIONS = {
         badge_icon: 'Ikona oznake',
         bar_color: 'Boja za traku',
         bar_effect: 'Efekt na traci',
+        bar_effect_jinja: 'Efekt na traci (Jinja način)',
         bar_orientation: 'Orijentacija trake',
         bar_position: 'Položaj trake',
         bar_single_line: 'Informacije u jednom retku (overlay)',
         bar_size: 'Veličina trake',
         center_zero: 'Nula u sredini',
+        center_zero_value: 'Vrijednost sredine',
+        center_zero_growth_percent: 'Postotak rasta',
         color: 'Primarna boja',
         decimal: 'decimalni',
         disable_unit: 'Prikaži jedinicu',
@@ -2301,6 +2361,7 @@ const TRANSLATIONS = {
         entity: 'Entitet',
         force_circular_background: 'Prisili kružnu pozadinu',
         hide: 'Sakrij',
+        hide_jinja: 'Sakrij (Jinja način)',
         hold_action: 'Radnja na dugi dodir',
         icon: 'Ikona',
         icon_double_tap_action: 'Radnja na dupli dodir ikone',
@@ -2406,11 +2467,14 @@ const TRANSLATIONS = {
         badge_icon: 'Jelvény ikon',
         bar_color: 'Sáv színe',
         bar_effect: 'Sáv effektus',
+        bar_effect_jinja: 'Sáv effektus (Jinja mód)',
         bar_orientation: 'Sáv iránya',
         bar_position: 'Sáv pozíciója',
         bar_single_line: 'Egy soros információ (overlay)',
         bar_size: 'Sáv mérete',
         center_zero: 'Nulla középen',
+        center_zero_value: 'Középérték',
+        center_zero_growth_percent: 'Növekedési százalék',
         color: 'Ikon színe',
         decimal: 'Tizedes',
         disable_unit: 'Egység megjelenítése',
@@ -2418,6 +2482,7 @@ const TRANSLATIONS = {
         entity: 'Entitás',
         force_circular_background: 'Kör alakú háttér erőltetése',
         hide: 'Elrejtés',
+        hide_jinja: 'Elrejtés (Jinja mód)',
         hold_action: 'Hosszan tartó nyomás művelet',
         icon: 'Ikon',
         icon_double_tap_action: 'Ikon dupla koppintás művelet',
@@ -2523,11 +2588,14 @@ const TRANSLATIONS = {
         badge_icon: 'Ikon lencana',
         bar_color: 'Warna bar',
         bar_effect: 'Efek pada bar',
+        bar_effect_jinja: 'Efek pada bar (mode Jinja)',
         bar_orientation: 'Orientasi bar',
         bar_position: 'Posisi bar',
         bar_single_line: 'Info dalam satu baris (overlay)',
         bar_size: 'Ukuran bar',
         center_zero: 'Nol di tengah',
+        center_zero_value: 'Nilai tengah',
+        center_zero_growth_percent: 'Persentase pertumbuhan',
         color: 'Warna utama',
         decimal: 'desimal',
         disable_unit: 'Tampilkan unit',
@@ -2535,6 +2603,7 @@ const TRANSLATIONS = {
         entity: 'Entitas',
         force_circular_background: 'Paksa latar belakang melingkar',
         hide: 'Sembunyikan',
+        hide_jinja: 'Sembunyikan (mode Jinja)',
         hold_action: 'Perilaku tahan',
         icon: 'Ikon',
         icon_double_tap_action: 'Perilaku ketuk ganda ikon',
@@ -2640,11 +2709,14 @@ const TRANSLATIONS = {
         badge_icon: 'Icona del badge',
         bar_color: 'Colore per la barra',
         bar_effect: 'Effetto sulla barra',
+        bar_effect_jinja: 'Effetto sulla barra (modalità Jinja)',
         bar_orientation: 'Orientamento della barra',
         bar_position: 'Posizione della barra',
         bar_single_line: 'Info su una riga (overlay)',
         bar_size: 'Dimensione della barra',
         center_zero: 'Zero al centro',
+        center_zero_value: 'Valore centrale',
+        center_zero_growth_percent: 'Percentuale di crescita',
         color: 'Colore dell\'icona',
         decimal: 'Decimale',
         disable_unit: 'Mostra unità',
@@ -2652,6 +2724,7 @@ const TRANSLATIONS = {
         entity: 'Entità',
         force_circular_background: 'Forza sfondo circolare',
         hide: 'Nascondi',
+        hide_jinja: 'Nascondi (modalità Jinja)',
         hold_action: 'Azione al tocco prolungato',
         icon: 'Icona',
         icon_double_tap_action: 'Azione al doppio tocco dell\'icona',
@@ -2757,11 +2830,14 @@ const TRANSLATIONS = {
         badge_icon: 'バッジのアイコン',
         bar_color: 'バーの色',
         bar_effect: 'バーのエフェクト',
+        bar_effect_jinja: 'バーのエフェクト (Jinjaモード)',
         bar_orientation: 'バーの向き',
         bar_position: 'バーの位置',
         bar_single_line: '1行で情報を表示（オーバーレイ）',
         bar_size: 'バーサイズ',
         center_zero: 'ゼロを中央に',
+        center_zero_value: '中心値',
+        center_zero_growth_percent: '成長率',
         color: 'メインカラー',
         decimal: '小数点',
         disable_unit: '単位を表示',
@@ -2769,6 +2845,7 @@ const TRANSLATIONS = {
         entity: 'エンティティ',
         force_circular_background: '円形の背景を強制する',
         hide: '非表示',
+        hide_jinja: '非表示 (Jinjaモード)',
         hold_action: '長押ししたときの動作',
         icon: 'アイコン',
         icon_double_tap_action: 'アイコンをダブルタップしたときの動作',
@@ -2874,11 +2951,14 @@ const TRANSLATIONS = {
         badge_icon: '배지 아이콘',
         bar_color: '바 색상',
         bar_effect: '바 효과',
+        bar_effect_jinja: '바 효과 (Jinja 모드)',
         bar_orientation: '바 방향',
         bar_position: '바 위치',
         bar_single_line: '한 줄로 정보 표시 (오버레이)',
         bar_size: '바 크기',
         center_zero: '중앙에 영점',
+        center_zero_value: '중앙값',
+        center_zero_growth_percent: '성장률',
         color: '기본 색상',
         decimal: '소수점',
         disable_unit: '단위 표시',
@@ -2886,6 +2966,7 @@ const TRANSLATIONS = {
         entity: '엔티티',
         force_circular_background: '원형 배경 강제 적용',
         hide: '숨기기',
+        hide_jinja: '숨기기 (Jinja 모드)',
         hold_action: '길게 누를 시 동작',
         icon: '아이콘',
         icon_double_tap_action: '아이콘 더블 탭 시 동작',
@@ -2991,11 +3072,14 @@ const TRANSLATIONS = {
         badge_icon: 'Ženklelio ikona',
         bar_color: 'Juostos spalva',
         bar_effect: 'Juostos efektas',
+        bar_effect_jinja: 'Juostos efektas (Jinja režimas)',
         bar_orientation: 'Juostos orientacija',
         bar_position: 'Juostos pozicija',
         bar_single_line: 'Informacija vienoje eilutėje (overlay)',
         bar_size: 'Juostos dydis',
         center_zero: 'Nulis centre',
+        center_zero_value: 'Centro reikšmė',
+        center_zero_growth_percent: 'Augimo procentas',
         color: 'Ikonos spalva',
         decimal: 'Dešimtainė',
         disable_unit: 'Rodyti vienetą',
@@ -3003,6 +3087,7 @@ const TRANSLATIONS = {
         entity: 'Entity',
         force_circular_background: 'Priversti apvalų foną',
         hide: 'Slėpti',
+        hide_jinja: 'Slėpti (Jinja režimas)',
         hold_action: 'Ilgo paspaudimo veiksmas',
         icon: 'Ikona',
         icon_double_tap_action: 'Ikonos dviejų bakstelėjimų veiksmas',
@@ -3108,11 +3193,14 @@ const TRANSLATIONS = {
         badge_icon: 'Žetona ikona',
         bar_color: 'Joslas krāsa',
         bar_effect: 'Joslas efekts',
+        bar_effect_jinja: 'Joslas efekts (Jinja režīms)',
         bar_orientation: 'Joslas orientācija',
         bar_position: 'Joslas pozīcija',
         bar_single_line: 'Informācija vienā rindā (overlay)',
         bar_size: 'Joslas izmērs',
         center_zero: 'Nulles centrā',
+        center_zero_value: 'Centra vērtība',
+        center_zero_growth_percent: 'Pieauguma procents',
         color: 'Ikonas krāsa',
         decimal: 'Decimāldaļa',
         disable_unit: 'Rādīt vienību',
@@ -3120,6 +3208,7 @@ const TRANSLATIONS = {
         entity: 'Vienība',
         force_circular_background: 'Piespiest apļu fonu',
         hide: 'Slēpt',
+        hide_jinja: 'Slēpt (Jinja režīms)',
         hold_action: 'Ilgs pieskāriens',
         icon: 'Ikona',
         icon_double_tap_action: 'Ikonas dubults pieskāriens',
@@ -3225,11 +3314,14 @@ const TRANSLATIONS = {
         badge_icon: 'Икона на значка',
         bar_color: 'Боја за лентата',
         bar_effect: 'Ефект на лентата',
+        bar_effect_jinja: 'Ефект на лентата (Jinja режим)',
         bar_orientation: 'Ориентација на лентата',
         bar_position: 'Позиција на лентата',
         bar_single_line: 'Инфо во еден ред (overlay)',
         bar_size: 'Големина на лента',
         center_zero: 'Нула во центарот',
+        center_zero_value: 'Централна вредност',
+        center_zero_growth_percent: 'Процент на растеж',
         color: 'Примарна боја',
         decimal: 'децемален',
         disable_unit: 'Прикажи единица',
@@ -3237,6 +3329,7 @@ const TRANSLATIONS = {
         entity: 'Ентитет',
         force_circular_background: 'Принуди кружна позадина',
         hide: 'Сокриј',
+        hide_jinja: 'Сокриј (Jinja режим)',
         hold_action: 'Дејство при долг допир',
         icon: 'Икона',
         icon_double_tap_action: 'Дејство при двоен допир на иконата',
@@ -3342,11 +3435,14 @@ const TRANSLATIONS = {
         badge_icon: 'Ikon for merke',
         bar_color: 'Farge for baren',
         bar_effect: 'Effekt på baren',
+        bar_effect_jinja: 'Effekt på baren (Jinja-modus)',
         bar_orientation: 'Orientering av baren',
         bar_position: 'Posisjon for baren',
         bar_single_line: 'Info på én linje (overlay)',
         bar_size: 'Bar størrelse',
         center_zero: 'Null i midten',
+        center_zero_value: 'Senterverdi',
+        center_zero_growth_percent: 'Vekstprosent',
         color: 'Primærfarge',
         decimal: 'desimal',
         disable_unit: 'Vis enhet',
@@ -3354,6 +3450,7 @@ const TRANSLATIONS = {
         entity: 'Enhet',
         force_circular_background: 'Tving sirkulær bakgrunn',
         hide: 'Skjul',
+        hide_jinja: 'Skjul (Jinja-modus)',
         hold_action: 'Handling ved langt trykk',
         icon: 'Ikon',
         icon_double_tap_action: 'Handling ved dobbelt trykk på ikonet',
@@ -3459,11 +3556,14 @@ const TRANSLATIONS = {
         badge_icon: 'Pictogram van badge',
         bar_color: 'Kleur voor de balk',
         bar_effect: 'Effect op de balk',
+        bar_effect_jinja: 'Effect op de balk (Jinja-modus)',
         bar_orientation: 'Oriëntatie van de balk',
         bar_position: 'Positie van de balk',
         bar_single_line: 'Info op één regel (overlay)',
         bar_size: 'Balkgrootte',
         center_zero: 'Nul in het midden',
+        center_zero_value: 'Centrumwaarde',
+        center_zero_growth_percent: 'Groeipercentage',
         color: 'Primaire kleur',
         decimal: 'decimaal',
         disable_unit: 'Eenheid weergeven',
@@ -3471,6 +3571,7 @@ const TRANSLATIONS = {
         entity: 'Entiteit',
         force_circular_background: 'Geforceerde cirkelvormige achtergrond',
         hide: 'Verbergen',
+        hide_jinja: 'Verbergen (Jinja-modus)',
         hold_action: 'Actie bij lang ingedrukt houden',
         icon: 'Pictogram',
         icon_double_tap_action: 'Actie bij dubbel tikken op pictogram',
@@ -3576,11 +3677,14 @@ const TRANSLATIONS = {
         badge_icon: 'Ikona odznaki',
         bar_color: 'Kolor paska',
         bar_effect: 'Efekt na pasku',
+        bar_effect_jinja: 'Efekt na pasku (tryb Jinja)',
         bar_orientation: 'Orientacja paska',
         bar_position: 'Pozycja paska',
         bar_single_line: 'Info w jednej linii (overlay)',
         bar_size: 'Rozmiar paska',
         center_zero: 'Zero na środku',
+        center_zero_value: 'Wartość środkowa',
+        center_zero_growth_percent: 'Procent wzrostu',
         color: 'Kolor podstawowy',
         decimal: 'dziesiętny',
         disable_unit: 'Pokaż jednostkę',
@@ -3588,6 +3692,7 @@ const TRANSLATIONS = {
         entity: 'Encja',
         force_circular_background: 'Wymuś okrągłe tło',
         hide: 'Ukryj',
+        hide_jinja: 'Ukryj (tryb Jinja)',
         hold_action: 'Akcja przy długim naciśnięciu',
         icon: 'Ikona',
         icon_double_tap_action: 'Akcja przy podwójnym naciśnięciu ikony',
@@ -3693,11 +3798,14 @@ const TRANSLATIONS = {
         badge_icon: 'Ícone do badge',
         bar_color: 'Cor da barra',
         bar_effect: 'Efeito na barra',
+        bar_effect_jinja: 'Efeito na barra (modo Jinja)',
         bar_orientation: 'Orientação da barra',
         bar_position: 'Posição da barra',
         bar_single_line: 'Informações em uma linha (overlay)',
         bar_size: 'Tamanho da barra',
         center_zero: 'Zero no centro',
+        center_zero_value: 'Valor central',
+        center_zero_growth_percent: 'Percentual de crescimento',
         color: 'Cor do ícone',
         decimal: 'Decimal',
         disable_unit: 'Mostrar unidade',
@@ -3705,6 +3813,7 @@ const TRANSLATIONS = {
         entity: 'Entidade',
         force_circular_background: 'Forçar fundo circular',
         hide: 'Ocultar',
+        hide_jinja: 'Ocultar (modo Jinja)',
         hold_action: 'Ação ao manter pressionado',
         icon: 'Ícone',
         icon_double_tap_action: 'Ação ao tocar duas vezes no ícone',
@@ -3810,11 +3919,14 @@ const TRANSLATIONS = {
         badge_icon: 'Ícone do crachá',
         bar_color: 'Cor para a barra',
         bar_effect: 'Efeito na barra',
+        bar_effect_jinja: 'Efeito na barra (modo Jinja)',
         bar_orientation: 'Orientação da barra',
         bar_position: 'Posição da barra',
         bar_single_line: 'Info numa só linha (overlay)',
         bar_size: 'Tamanho da barra',
         center_zero: 'Zero ao centro',
+        center_zero_value: 'Valor central',
+        center_zero_growth_percent: 'Percentagem de crescimento',
         color: 'Cor primária',
         decimal: 'decimal',
         disable_unit: 'Mostrar unidade',
@@ -3822,6 +3934,7 @@ const TRANSLATIONS = {
         entity: 'Entidade',
         force_circular_background: 'Forçar fundo circular',
         hide: 'Ocultar',
+        hide_jinja: 'Ocultar (modo Jinja)',
         hold_action: 'Ação ao toque longo',
         icon: 'Ícone',
         icon_double_tap_action: 'Ação ao tocar duplamente no ícone',
@@ -3927,11 +4040,14 @@ const TRANSLATIONS = {
         badge_icon: 'Pictogramă insignă',
         bar_color: 'Culoare bară',
         bar_effect: 'Efect pe bară',
+        bar_effect_jinja: 'Efect pe bară (mod Jinja)',
         bar_orientation: 'Orientarea barei',
         bar_position: 'Poziția barei',
         bar_single_line: 'Info pe un singur rând (overlay)',
         bar_size: 'Dimensiunea barei',
         center_zero: 'Zero la centru',
+        center_zero_value: 'Valoare centrală',
+        center_zero_growth_percent: 'Procent de creștere',
         color: 'Culoare principală',
         decimal: 'zecimal',
         disable_unit: 'Afișează unitatea',
@@ -3939,6 +4055,7 @@ const TRANSLATIONS = {
         entity: 'Entitate',
         force_circular_background: 'Forțează fundal circular',
         hide: 'Ascunde',
+        hide_jinja: 'Ascunde (mod Jinja)',
         hold_action: 'Acțiune la apăsare lungă',
         icon: 'Pictogramă',
         icon_double_tap_action: 'Acțiune la apăsare dublă a pictogramei',
@@ -4044,11 +4161,14 @@ const TRANSLATIONS = {
         badge_icon: 'Иконка значка',
         bar_color: 'Цвет полосы',
         bar_effect: 'Эффект на полосе',
+        bar_effect_jinja: 'Эффект на полосе (режим Jinja)',
         bar_orientation: 'Ориентация полосы',
         bar_position: 'Положение полосы',
         bar_single_line: 'Информация в одну строку (overlay)',
         bar_size: 'Размер полосы',
         center_zero: 'Ноль по центру',
+        center_zero_value: 'Центральное значение',
+        center_zero_growth_percent: 'Процент роста',
         color: 'Основной цвет',
         decimal: 'десятичные',
         disable_unit: 'Показать единицу измерения',
@@ -4056,6 +4176,7 @@ const TRANSLATIONS = {
         entity: 'Сущность',
         force_circular_background: 'Принудительный круглый фон',
         hide: 'Скрыть',
+        hide_jinja: 'Скрыть (режим Jinja)',
         hold_action: 'Поведение при длительном нажатии',
         icon: 'Иконка',
         icon_double_tap_action: 'Поведение при двойном нажатии на иконку',
@@ -4161,11 +4282,14 @@ const TRANSLATIONS = {
         badge_icon: 'Ikona odznaku',
         bar_color: 'Farba lišty',
         bar_effect: 'Efekt lišty',
+        bar_effect_jinja: 'Efekt lišty (režim Jinja)',
         bar_orientation: 'Orientácia lišty',
         bar_position: 'Pozícia lišty',
         bar_single_line: 'Informácie na jednej línii (overlay)',
         bar_size: 'Veľkosť lišty',
         center_zero: 'Nula v strede',
+        center_zero_value: 'Hodnota stredu',
+        center_zero_growth_percent: 'Percento rastu',
         color: 'Farba ikony',
         decimal: 'Desatinné',
         disable_unit: 'Zobraziť jednotku',
@@ -4173,6 +4297,7 @@ const TRANSLATIONS = {
         entity: 'Entita',
         force_circular_background: 'Vynútiť kruhové pozadie',
         hide: 'Skryť',
+        hide_jinja: 'Skryť (režim Jinja)',
         hold_action: 'Akcia pri dlhom podržaní',
         icon: 'Ikona',
         icon_double_tap_action: 'Akcia pri dvojitom ťuknutí ikony',
@@ -4278,11 +4403,14 @@ const TRANSLATIONS = {
         badge_icon: 'Ikona značke',
         bar_color: 'Barva vrstice',
         bar_effect: 'Učinek vrstice',
+        bar_effect_jinja: 'Učinek vrstice (način Jinja)',
         bar_orientation: 'Usmeritev vrstice',
         bar_position: 'Pozicija vrstice',
         bar_single_line: 'Informacije v eni vrstici (overlay)',
         bar_size: 'Velikost vrstice',
         center_zero: 'Ni ničle na sredini',
+        center_zero_value: 'Srednja vrednost',
+        center_zero_growth_percent: 'Odstotek rasti',
         color: 'Barva ikone',
         decimal: 'Decimalno',
         disable_unit: 'Prikaži enoto',
@@ -4290,6 +4418,7 @@ const TRANSLATIONS = {
         entity: 'Entiteta',
         force_circular_background: 'Prisili krožno ozadje',
         hide: 'Skrij',
+        hide_jinja: 'Skrij (način Jinja)',
         hold_action: 'Akcija ob dolgem pritisku',
         icon: 'Ikona',
         icon_double_tap_action: 'Akcija ob dvojni tap ikone',
@@ -4395,11 +4524,14 @@ const TRANSLATIONS = {
         badge_icon: 'Ikon för bricka',
         bar_color: 'Färg för baren',
         bar_effect: 'Effekt på baren',
+        bar_effect_jinja: 'Effekt på baren (Jinja-läge)',
         bar_orientation: 'Orientering av baren',
         bar_position: 'Position för baren',
         bar_single_line: 'Info på en rad (overlay)',
         bar_size: 'Barstorlek',
         center_zero: 'Noll i mitten',
+        center_zero_value: 'Centervärde',
+        center_zero_growth_percent: 'Tillväxtprocent',
         color: 'Primärfärg',
         decimal: 'decimal',
         disable_unit: 'Visa enhet',
@@ -4407,6 +4539,7 @@ const TRANSLATIONS = {
         entity: 'Enhet',
         force_circular_background: 'Tvinga cirkulär bakgrund',
         hide: 'Dölj',
+        hide_jinja: 'Dölj (Jinja-läge)',
         hold_action: 'Åtgärd vid långt tryck',
         icon: 'Ikon',
         icon_double_tap_action: 'Åtgärd vid dubbeltryck på ikonen',
@@ -4512,11 +4645,14 @@ const TRANSLATIONS = {
         badge_icon: '',
         bar_color: '',
         bar_effect: '',
+        bar_effect_jinja: '',
         bar_orientation: '',
         bar_position: '',
         bar_single_line: '',
         bar_size: '',
         center_zero: '',
+        center_zero_value: '',
+        center_zero_growth_percent: '',
         color: '',
         decimal: '',
         disable_unit: '',
@@ -4524,6 +4660,7 @@ const TRANSLATIONS = {
         entity: '',
         force_circular_background: '',
         hide: 'true',
+        hide_jinja: '',
         hold_action: '',
         icon: '',
         icon_double_tap_action: '',
@@ -4629,11 +4766,14 @@ const TRANSLATIONS = {
         badge_icon: 'ไอคอนของป้าย',
         bar_color: 'สีแถบ',
         bar_effect: 'เอฟเฟกต์บนแถบ',
+        bar_effect_jinja: 'เอฟเฟกต์บนแถบ (โหมด Jinja)',
         bar_orientation: 'การวางแนวแถบ',
         bar_position: 'ตำแหน่งแถบ',
         bar_single_line: 'ข้อมูลในบรรทัดเดียว (overlay)',
         bar_size: 'ขนาดแถบ',
         center_zero: 'ศูนย์ที่กึ่งกลาง',
+        center_zero_value: 'ค่ากึ่งกลาง',
+        center_zero_growth_percent: 'เปอร์เซ็นต์การเติบโต',
         color: 'สีหลัก',
         decimal: 'ทศนิยม',
         disable_unit: 'แสดงหน่วย',
@@ -4641,6 +4781,7 @@ const TRANSLATIONS = {
         entity: 'เอนทิตี',
         force_circular_background: 'บังคับพื้นหลังวงกลม',
         hide: 'ซ่อน',
+        hide_jinja: 'ซ่อน (โหมด Jinja)',
         hold_action: 'พฤติกรรมการกด',
         icon: 'ไอคอน',
         icon_double_tap_action: 'พฤติกรรมการแตะไอคอนสองครั้ง',
@@ -4746,11 +4887,14 @@ const TRANSLATIONS = {
         badge_icon: 'Rozet simgesi',
         bar_color: 'Çubuk rengi',
         bar_effect: 'Çubuk efekti',
+        bar_effect_jinja: "Çubuk efekti (Jinja modu)",
         bar_orientation: 'Çubuk yönü',
         bar_position: 'Çubuk konumu',
         bar_single_line: 'Bilgiyi tek satırda göster (overlay)',
         bar_size: 'Çubuk boyutu',
         center_zero: 'Sıfırı ortala',
+        center_zero_value: 'Merkez değeri',
+        center_zero_growth_percent: 'Büyüme yüzdesi',
         color: 'Birincil renk',
         decimal: 'ondalık',
         disable_unit: 'Birimi göster',
@@ -4758,6 +4902,7 @@ const TRANSLATIONS = {
         entity: 'Varlık',
         force_circular_background: 'Dairesel arka planı zorla',
         hide: 'Gizle',
+        hide_jinja: "Gizle (Jinja modu)",
         hold_action: 'Uzun basma davranışı',
         icon: 'Simge',
         icon_double_tap_action: 'Simgeye çift dokunma davranışı',
@@ -4863,11 +5008,14 @@ const TRANSLATIONS = {
         badge_icon: 'Іконка значка',
         bar_color: 'Колір панелі',
         bar_effect: 'Ефект на панелі',
+        bar_effect_jinja: 'Ефект на панелі (режим Jinja)',
         bar_orientation: 'Орієнтація панелі',
         bar_position: 'Положення панелі',
         bar_single_line: 'Інформація в один рядок (overlay)',
         bar_size: 'Розмір панелі',
         center_zero: 'Нуль по центру',
+        center_zero_value: 'Центральне значення',
+        center_zero_growth_percent: 'Відсоток зростання',
         color: 'Основний колір',
         decimal: 'десятковий',
         disable_unit: 'Показати одиницю',
@@ -4875,6 +5023,7 @@ const TRANSLATIONS = {
         entity: 'Сутність',
         force_circular_background: 'Примусовий круглий фон',
         hide: 'Приховати',
+        hide_jinja: 'Приховати (режим Jinja)',
         hold_action: 'Поведінка при утриманні',
         icon: 'Іконка',
         icon_double_tap_action: 'Поведінка подвійного дотику іконки',
@@ -4980,11 +5129,14 @@ const TRANSLATIONS = {
         badge_icon: 'Biểu tượng huy hiệu',
         bar_color: 'Màu thanh',
         bar_effect: 'Hiệu ứng thanh',
+        bar_effect_jinja: 'Hiệu ứng thanh (chế độ Jinja)',
         bar_orientation: 'Hướng thanh',
         bar_position: 'Vị trí thanh',
         bar_single_line: 'Thông tin trên một dòng (overlay)',
         bar_size: 'Kích thước thanh',
         center_zero: 'Không ở giữa',
+        center_zero_value: 'Giá trị tâm',
+        center_zero_growth_percent: 'Tỷ lệ tăng trưởng',
         color: 'Màu chính',
         decimal: 'thập phân',
         disable_unit: 'Hiển thị đơn vị',
@@ -4992,6 +5144,7 @@ const TRANSLATIONS = {
         entity: 'Thực thể',
         force_circular_background: 'Buộc nền hình tròn',
         hide: 'Ẩn',
+        hide_jinja: 'Ẩn (chế độ Jinja)',
         hold_action: 'Hành vi giữ',
         icon: 'Biểu tượng',
         icon_double_tap_action: 'Hành vi chạm đôi biểu tượng',
@@ -5097,11 +5250,14 @@ const TRANSLATIONS = {
         badge_icon: '徽章图标',
         bar_color: '进度条颜色',
         bar_effect: '进度条效果',
+        bar_effect_jinja: '进度条效果 (Jinja 模式)',
         bar_orientation: '进度条方向',
         bar_position: '进度条位置',
         bar_single_line: '单行信息（覆盖显示）',
         bar_size: '进度条大小',
         center_zero: '零点居中',
+        center_zero_value: '中心值',
+        center_zero_growth_percent: '增长百分比',
         color: '主色',
         decimal: '小数',
         disable_unit: '显示单位',
@@ -5109,6 +5265,7 @@ const TRANSLATIONS = {
         entity: '实体',
         force_circular_background: '强制圆形背景',
         hide: '隐藏',
+        hide_jinja: '隐藏 (Jinja 模式)',
         hold_action: '长按动作',
         icon: '图标',
         icon_double_tap_action: '图标双击动作',
@@ -5214,11 +5371,14 @@ const TRANSLATIONS = {
         badge_icon: '徽章圖示',
         bar_color: '進度條顏色',
         bar_effect: '進度條效果',
+        bar_effect_jinja: '進度條效果 (Jinja 模式)',
         bar_orientation: '進度條方向',
         bar_position: '進度條位置',
         bar_single_line: '單行資訊（疊加）',
         bar_size: '進度條大小',
         center_zero: '中心為零',
+        center_zero_value: '中心值',
+        center_zero_growth_percent: '增長百分比',
         color: '圖示顏色',
         decimal: '小數',
         disable_unit: '顯示單位',
@@ -5226,6 +5386,7 @@ const TRANSLATIONS = {
         entity: '實體',
         force_circular_background: '強制圓形背景',
         hide: '隱藏',
+        hide_jinja: '隱藏 (Jinja 模式)',
         hold_action: '長按操作',
         icon: '圖示',
         icon_double_tap_action: '圖示雙擊操作',
@@ -5332,7 +5493,7 @@ const CARD_CSS = `
   --card-active-mix: 85%;
 
   /* === TRANSITION VARIABLES === */
-  --progress-transition: 0.3s ease;
+  --progress-transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 
   /* === TYPOGRAPHY VARIABLES === */
   --name-letter-spacing: 0.1px;
@@ -6042,23 +6203,42 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
   --bar-max-height: 100%;
 }
 
+/* ==== HALF ZONES (center-zero clipping containers) === */
+.${CARD.htmlStructure.elements.progressBar.half.class} {
+  position: absolute;
+  overflow: hidden;
+}
+.horizontal-bar .${CARD.htmlStructure.elements.progressBar.half.class} {
+  top: 0;
+  bottom: 0;
+  width: 50%;
+}
+.horizontal-bar .${CARD.htmlStructure.elements.progressBar.half.class}.negative-zone { left: 0; }
+.horizontal-bar .${CARD.htmlStructure.elements.progressBar.half.class}.positive-zone { right: 0; }
+
+.vertical-bar .${CARD.htmlStructure.elements.progressBar.half.class} {
+  left: 0;
+  right: 0;
+  height: 50%;
+}
+.vertical-bar .${CARD.htmlStructure.elements.progressBar.half.class}.positive-zone { top: 0; }
+.vertical-bar .${CARD.htmlStructure.elements.progressBar.half.class}.negative-zone { bottom: 0; }
+
 /* ==== INNER === */
 
 /* --- Base ---*/
-
 .${CARD.htmlStructure.elements.progressBar.inner.class} {
   --inner-radius: 0; /* radius value */
   --_r: var(--epb-progress-inner-radius, var(--inner-radius)); /* user choice Vs system value */
   --inner-border-radius: var(--_r); /* schema */
-  
+
   position: absolute;
-  inset: var(--inner-inset, 0 0 0 0);
+  inset: 0;
 
   background: var(--inner-background);
   border-radius: var(--inner-border-radius);
 
-  transform-origin: var(--inner-transform-origin, left);
-  transform: scaleX(var(--scale-x,0)) scaleY(var(--scale-y,0));
+  transform: var(--inner-transform, translateX(-100%));
   will-change: transform;
   backface-visibility: hidden;
   contain: layout paint;
@@ -6066,56 +6246,53 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
 
 /* --- Animation ---*/
 .horizontal-bar .${CARD.htmlStructure.elements.progressBar.inner.class} {
-  --scale-x: 0;
-  --scale-y: 1;
+  --inner-transform: translateX(-100%);
 }
 .horizontal-bar.transition-ready .${CARD.htmlStructure.elements.progressBar.inner.class} {
-  --scale-x: var(--inner-size);
+  --inner-transform: translateX(calc((var(--inner-size, 0) - 1) * 100%));
   transition: transform var(--progress-transition);
 }
 .vertical-bar .${CARD.htmlStructure.elements.progressBar.inner.class} {
-  --scale-x: 1;
-  --scale-y: 0;
+  --inner-transform: translateY(100%);
 }
 .vertical-bar.transition-ready .${CARD.htmlStructure.elements.progressBar.inner.class} {
-  --scale-y: var(--inner-size);
+  --inner-transform: translateY(calc((1 - var(--inner-size, 0)) * 100%));
   transition: transform var(--progress-transition);
 }
 
-/*  center zero - positiveInner */
+/*  center zero - positiveInner (right half, grows from center to the right) */
 .center-zero.horizontal-bar .${CARD.htmlStructure.elements.progressBar.inner.class}.positive {
-  --inner-inset: 0 0 0 50%;
   --inner-border-radius: 0 var(--_r) var(--_r) 0;
 }
 
-/* center zero - negativeInner */
+/* center zero - negativeInner (left half, grows from center to the left) */
 .center-zero.horizontal-bar .${CARD.htmlStructure.elements.progressBar.inner.class}.negative {
-  --inner-inset: 0 50% 0 0;
+  --inner-transform: translateX(100%); /* même direction de masquage qu'à value=0 une fois "ready" */
   --inner-border-radius: var(--_r) 0 0 var(--_r);
-  --inner-transform-origin: right; 
+}
+.center-zero.horizontal-bar.transition-ready .${CARD.htmlStructure.elements.progressBar.inner.class}.negative {
+  --inner-transform: translateX(calc((1 - var(--inner-size, 0)) * 100%));
 }
 
 /* --- Vertical --- */
 .vertical-bar .${CARD.htmlStructure.elements.progressBar.inner.class}.positive {
-  --inner-transform-origin: bottom;
   --inner-border-radius: var(--_r) var(--_r) 0 0;
 }
-.vertical-bar.center-zero .${CARD.htmlStructure.elements.progressBar.inner.class}.positive {
-  --inner-inset: 0 0 50% 0;
-}
 .vertical-bar.center-zero .${CARD.htmlStructure.elements.progressBar.inner.class}.negative {
-  --inner-inset: 50% 0 0 0;
-  --inner-transform-origin: top;
+  --inner-transform: translateY(-100%); /* même direction de masquage qu'à value=0 une fois "ready" */
   --inner-border-radius: 0 0 var(--_r) var(--_r);
 }
+.vertical-bar.center-zero.transition-ready .${CARD.htmlStructure.elements.progressBar.inner.class}.negative {
+  --inner-transform: translateY(calc((1 - var(--inner-size, 0)) * -100%));
+}
 
-/* --- inner size/background --- */
+/* --- inner size/background (auto-clamped per zone: irrelevant zone resolves to 0) --- */
 .${CARD.htmlStructure.elements.progressBar.inner.class}.positive {
-  --inner-size: var(${CARD.style.dynamic.progressBar.value.var}, 0);
+  --inner-size: max(var(${CARD.style.dynamic.progressBar.value.var}, 0), 0);
   --inner-background: var(--epb-progress-bar-color, var(--progress-effect, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})));
 }
 .center-zero .${CARD.htmlStructure.elements.progressBar.inner.class}.negative {
-  --inner-size: calc(var(${CARD.style.dynamic.progressBar.value.var}, 0) * -1);
+  --inner-size: max(calc(var(${CARD.style.dynamic.progressBar.value.var}, 0) * -1), 0);
   --inner-background: var(--epb-progress-bar-color, var(--progress-effect-neg, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})));
 }
 
@@ -6806,7 +6983,15 @@ const StructureElements = {
       Element(CARD.htmlStructure.elements.progressBar.highWatermark, 'watermark mark').html() +
       (isCenterZero ? Element(CARD.htmlStructure.elements.progressBar.zeroMark, 'mark').html() : '');
 
-    const innerHtml = Element(CARD.htmlStructure.elements.progressBar.inner).html() + marks;
+    const innerHtml = isCenterZero
+      ? Element(CARD.htmlStructure.elements.progressBar.half, 'negative-zone').html(
+          Element(CARD.htmlStructure.elements.progressBar.inner, 'negative').html(),
+        ) +
+        Element(CARD.htmlStructure.elements.progressBar.half, 'positive-zone').html(
+          Element(CARD.htmlStructure.elements.progressBar.inner, 'positive').html(),
+        ) +
+        marks
+      : Element(CARD.htmlStructure.elements.progressBar.inner, 'positive').html() + marks;
 
     return Element(CARD.htmlStructure.elements.progressBar.container, extraClass).html(
       Element(CARD.htmlStructure.elements.progressBar.bar, isCenterZero ? CARD.style.dynamic.progressBar.centerZero.class : 'default').html(innerHtml),
@@ -7169,6 +7354,8 @@ class PercentHelper {
   #isTimer = false;
   #isReversed = false;
   #isCenterZero = false;
+  #zeroValue = 0;
+  #growthPercent = false;
   unitSpacing = CARD.config.unit.unitSpacing.auto;
 
   constructor() {
@@ -7233,10 +7420,10 @@ class PercentHelper {
   }
   get range() {
     if (!this.isCenterZero) return this.max - this.min;
-    return this.current >= 0 ? this.max : -this.min;
+    return this.current >= this.#zeroValue ? this.max - this.#zeroValue : this.#zeroValue - this.min;
   }
   get correctedValue() {
-    return this.isCenterZero ? this.current : this.actual - this.min;
+    return this.isCenterZero ? this.current - this.#zeroValue : this.actual - this.min;
   }
   get percent() {
     return this.isValid ? this.#percent : null;
@@ -7251,13 +7438,37 @@ class PercentHelper {
     return this.hasTimerUnit || this.hasFlexTimerUnit;
   }
   get processedValue() {
-    return this.unit === CARD.config.unit.default ? this.percent : this.actual;
+    if (this.unit !== CARD.config.unit.default) return this.actual;
+    return this.isCenterZero && this.#growthPercent ? this.growthPercentValue : this.percent;
   }
   set isCenterZero(newValue) {
     this.#isCenterZero = is.boolean(newValue) ? newValue : false;
   }
   get isCenterZero() {
     return this.#isCenterZero;
+  }
+  set zeroValue(newValue) {
+    this.#zeroValue = Number.isFinite(newValue) ? newValue : 0;
+  }
+  get zeroValue() {
+    return this.#zeroValue;
+  }
+  set growthPercent(newValue) {
+    this.#growthPercent = is.boolean(newValue) ? newValue : false;
+  }
+  get growthPercent() {
+    return this.#growthPercent;
+  }
+  /**
+   * Pourcentage de croissance/décroissance par rapport à la valeur de centrage (`zeroValue`),
+   * indépendant du ratio de remplissage de la barre (`percent`). N'a de sens que si
+   * `isCenterZero` et `growthPercent` sont actifs, et que `zeroValue` n'est pas 0
+   * (sinon le ratio est mathématiquement indéfini — on retombe alors sur `percent`).
+   */
+  get growthPercentValue() {
+    if (!this.isValid) return null;
+    if (this.#zeroValue === 0) return this.percent;
+    return Number((((this.current - this.#zeroValue) / this.#zeroValue) * 100).toFixed(this.decimal));
   }
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
@@ -8866,7 +9077,16 @@ class YamlSchemaFactory {
         bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
         bar_effect: types.jinjaOrArrayWithValidatedElem(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
         bar_position: types.enumsWithDefault(['default', 'top', 'bottom'], 'default'),
-        center_zero: types.optionalBooleanWithDefault(false),
+        center_zero: types.optionalWithDefault(
+          types.union(
+            types.boolean,
+            types.object({
+              value: types.optionalNumberWithDefault(0),
+              growth_percent: types.optionalBooleanWithDefault(false),
+            }),
+          ),
+          false,
+        ),
 
         // ─── Theme & Watermark ──────────────────────────────────────────────
         theme: types.theme(Object.keys(THEME)),
@@ -8918,7 +9138,16 @@ class YamlSchemaFactory {
         reverse: types.optionalBooleanWithDefault(false),
         reverse_secondary_info_row: types.optionalBooleanWithDefault(false),
         force_circular_background: types.optionalBooleanWithDefault(false),
-        center_zero: types.optionalBooleanWithDefault(false),
+        center_zero: types.optionalWithDefault(
+          types.union(
+            types.boolean,
+            types.object({
+              value: types.optionalNumberWithDefault(0),
+              growth_percent: types.optionalBooleanWithDefault(false),
+            }),
+          ),
+          false,
+        ),
         trend_indicator: types.optionalBooleanWithDefault(false),
         text_shadow: types.optionalBooleanWithDefault(false),
 
@@ -8999,7 +9228,16 @@ class YamlSchemaFactory {
         marginless: types.optionalBooleanWithDefault(false),
         reverse_secondary_info_row: types.optionalBooleanWithDefault(false),
         force_circular_background: types.optionalBooleanWithDefault(false),
-        center_zero: types.optionalBooleanWithDefault(false),
+        center_zero: types.optionalWithDefault(
+          types.union(
+            types.boolean,
+            types.object({
+              value: types.optionalNumberWithDefault(0),
+              growth_percent: types.optionalBooleanWithDefault(false),
+            }),
+          ),
+          false,
+        ),
         trend_indicator: types.optionalBooleanWithDefault(false),
         text_shadow: types.optionalBooleanWithDefault(false),
 
@@ -9055,6 +9293,7 @@ class BaseConfigHelper {
   #actionsReady = false;
   _isDefined = false;
   _configParsed = {};
+  _configResolved = {}; // valeurs dérivées de la config, calculées une seule fois par set config()
   _yamlSchema = null;
 
   constructor() {
@@ -9064,7 +9303,7 @@ class BaseConfigHelper {
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
   get config() {
-    return this._configParsed?.config;
+    return this._configResolved;
   }
 
   set config(config) {
@@ -9072,8 +9311,34 @@ class BaseConfigHelper {
     this._isDefined = true;
     BaseConfigHelper.#logDeprecatedOption(config);
     this._configParsed = this._yamlSchema.parse(this.constructor._customizeConfig(config));
+    this._configResolved = BaseConfigHelper.#resolveConfig(this._configParsed?.config);
 
     this.#lastMsgConsole = null;
+  }
+
+  // Calcule une seule fois, à partir de la config validée, la config brute + les valeurs
+  // dérivées consommées ailleurs (évite de recalculer à chaque accès).
+  static #resolveConfig(config) {
+    return {
+      ...config,
+      centerZero: BaseConfigHelper.#resolveCenterZero(config?.center_zero),
+    };
+  }
+
+  /**
+   * Normalise `center_zero` (boolean | { value: number }) en une forme exploitable.
+   * - false / undefined -> désactivé, zéro = 0
+   * - true               -> activé, zéro = 0
+   * - { value: 230 }     -> activé, zéro = 230
+   */
+  static #resolveCenterZero(centerZero) {
+    if (!centerZero) return { enabled: false, zeroValue: 0, growthPercent: false };
+    if (centerZero === true) return { enabled: true, zeroValue: 0, growthPercent: false };
+    return {
+      enabled: true,
+      zeroValue: Number.isFinite(centerZero.value) ? centerZero.value : 0,
+      growthPercent: Boolean(centerZero.growth_percent),
+    };
   }
 
   static _customizeConfig(config) {
@@ -9106,9 +9371,6 @@ class BaseConfigHelper {
   }
   get msg() {
     return this._isDefined && (this._configParsed.errorCode || this.#HAError) ? this._errorMessage : null;
-  }
-  get hasDisabledUnit() {
-    return this.config?.disable_unit;
   }
 
   get action() {
@@ -9511,10 +9773,13 @@ class ViewBase extends ViewCore {
       this.#entityCollection.addEntity(this._configHelper.config.entity, this._configHelper.config.attribute);
     }
 
+    const centerZero = this._configHelper.config.centerZero;
     Object.assign(this.#percentHelper, {
       unitSpacing: this._configHelper.config.unit_spacing,
-      hasDisabledUnit: this._configHelper.hasDisabledUnit,
-      isCenterZero: this._configHelper.config.center_zero,
+      hasDisabledUnit: this._configHelper.config.disable_unit,
+      isCenterZero: centerZero.enabled,
+      zeroValue: centerZero.zeroValue,
+      growthPercent: centerZero.growthPercent,
     });
 
     Object.assign(this.#theme, {
@@ -10443,6 +10708,7 @@ class HACore extends HTMLElement {
   }
 
   reset() {
+    this._dom.toggleClass(CARD.htmlStructure.card.element, 'transition-ready', false); // retire AVANT purge
     this.#isRendered = false;
     this._dom.destroy();
     if (this.shadowRoot) {
@@ -10599,19 +10865,13 @@ class HACore extends HTMLElement {
     throw new Error(`${this.constructor.name} must implement _updateCSS()`);
   }
 
-  _applyProgressCSS(progressValue, { barColor = null, iconColor = null, isCenterZero = false } = {}) {
+  _applyProgressCSS(progressValue, { barColor = null, iconColor = null } = {}) {
     const cardKey = CARD.htmlStructure.card.element;
 
     if (barColor !== null) this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.color.var, barColor);
     if (iconColor !== null) this._dom.setStyle(cardKey, CARD.style.dynamic.iconAndShape.color.var, iconColor);
 
     if (progressValue !== null) {
-      if (isCenterZero) {
-        this._dom.toggleClass('inner', 'negative', progressValue < 0);
-        this._dom.toggleClass('inner', 'positive', progressValue >= 0);
-      } else {
-        this._dom.addClass('inner', 'positive');
-      }
       this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.value.var, progressValue);
       this._dom.setAttribute(CARD.htmlStructure.elements.progressBar.container.class, 'aria-valuenow', Math.round(progressValue * 100));
     }
@@ -11381,9 +11641,8 @@ class EntityProgressCardBase extends HABase {
     this._applyProgressCSS(progressValue, {
       barColor: bar.barColor,
       iconColor: bar.iconColor,
-      isCenterZero: bar.config.center_zero,
     });
-    this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null, bar.config.center_zero);
+    this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null, bar._configHelper.config.centerZero.enabled);
   }
 
   // ─── STD FIELDS PROCESSING - CUSTOMIZATION ────────────────────────────────
@@ -11582,9 +11841,8 @@ class EntityProgressFeatures extends HACore {
     const progressValue = bar.percent / 100;
     this._applyProgressCSS(progressValue, {
       barColor: bar.barColor,
-      isCenterZero: bar.config.center_zero,
     });
-    this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null, bar.config.center_zero);
+    this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null, bar._configHelper.config.centerZero.enabled);
   }
 
   // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ─────────────────────────────
@@ -11650,7 +11908,7 @@ class EntityProgressTemplateBase extends HABase {
       barColor: bar.barColor,
       iconColor: bar.iconColor,
     });
-    this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null, bar.config.center_zero);
+    this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null, bar._configHelper.config.centerZero.enabled);
   }
 
   // ─── WATERMARK MANAGEMENT ─────────────────────────────────────────────────
@@ -11658,7 +11916,7 @@ class EntityProgressTemplateBase extends HABase {
   _updateWatermark() {
     if (!this._cardView.hasWatermark) return;
     this._cardView.refresh();
-    this._applyWatermarkCSS(this._cardView.watermark, this._cardView.config.center_zero);
+    this._applyWatermarkCSS(this._cardView.watermark, this._cardView._configHelper.config.centerZero.enabled);
   }
 
   // ─── ICON MANAGEMENT ──────────────────────────────────────────────────────
@@ -11719,9 +11977,7 @@ class EntityProgressTemplateBase extends HABase {
   }
 
   _renderPercentCSS(percent) {
-    this._applyProgressCSS(percent / 100, {
-      isCenterZero: this._cardView.config.center_zero,
-    });
+    this._applyProgressCSS(percent / 100);
   }
 
   // ─── TEMPLATE PROCESSING ===
@@ -11892,46 +12148,54 @@ class EditorDOMHelper extends DOMHelper {
    * @param {object}   config       — current card config
    * @param {function} resolveValue — (def, config) => raw value
    */
+  _applyContext(name, contextDef, config) {
+    this.enqueue(name, 'context', () => {
+      const target = this._domElements.get(name);
+      if (!target) return;
+      target.context = Object.fromEntries(
+        Object.entries(contextDef).map(([key, configKey]) => [key, config[configKey] ?? ''])
+      );
+    });
+  }
+
   updateAll(config, resolveValue) {
     for (const [name, el] of this._domElements) {
       const def = el._fieldDef;
-      if (!def) continue;
-
-      // Visibility
-      if (def.showIf) {
-        this.updateVisibility(name, def.showIf(config));
-      }
-
-      // Dynamic selector
-      if (def.selectorOf) {
-        this.updateSelector(name, { attribute: { entity_id: config[def.selectorOf] ?? '' } });
-      }
-
-      // Context
-      if (def.context) {
-        this.enqueue(name, 'context', () => {
-          const target = this._domElements.get(name);
-          if (!target) return;
-          target.context = Object.fromEntries(
-            Object.entries(def.context).map(([k, v]) => [k, config[v] ?? ''])
-          );
-        });
-      }
-
-      // Champs virtuels — pas de valeur dans le config, géré par showIf uniquement
-      if (def.virtual) {
-        if (def.resolveVirtual) {
-          const val = def.resolveVirtual(config);
-          this.updateValue(name, val);
-        }
-        continue;
-      }
-
-      // Value
-      const raw = resolveValue(def, config);
-      const val = def.invert ? !raw : raw;
-      this.updateValue(name, val);
+      if (def) this._updateField(name, def, config, resolveValue);
     }
+  }
+
+  _updateField(name, def, config, resolveValue) {
+    // Visibility
+    if (def.showIf) {
+      this.updateVisibility(name, def.showIf(config));
+    }
+
+    // Dynamic selector
+    if (def.selectorOf) {
+      this.updateSelector(name, { attribute: { entity_id: config[def.selectorOf] ?? '' } });
+    }
+
+    // Context
+    if (def.context) {
+      this._applyContext(name, def.context, config);
+    }
+
+    // Champs virtuels — pas de valeur dans le config, géré par showIf uniquement
+    if (def.virtual) {
+      this._updateVirtualValue(name, def, config);
+      return;
+    }
+
+    // Value
+    const raw = resolveValue(def, config);
+    const val = def.invert ? !raw : raw;
+    this.updateValue(name, val);
+  }
+
+  _updateVirtualValue(name, def, config) {
+    if (!def.resolveVirtual) return;
+    this.updateValue(name, def.resolveVirtual(config));
   }
 }
 
@@ -12174,7 +12438,11 @@ class EditorBase extends HTMLElement {
   // ─── UPDATE (every setConfig) ─────────────────────────────────────────────
 
   #updateFields() {
-    this.#dom.updateAll(this._configHelper.config, EditorBase.#resolveValue);
+    // this.#config = la copie BRUTE, jamais retouchée par la validation du schéma.
+    // Important pour les champs jinja en cours de frappe : this._configHelper.config
+    // (validé) retomberait sur la valeur par défaut (ex: []) dès que le texte est
+    // momentanément mal formé, faisant clignoter l'UI entre mode tableau et mode jinja.
+    this.#dom.updateAll(this.#config, EditorBase.#resolveValue);
   }
 
   // ─── EVENTS ───────────────────────────────────────────────────────────────
@@ -12290,11 +12558,11 @@ const EditorFactory = {
         : {
             name: EditorFieldsType.entityName('name', { context: { entity: 'entity' } }),
           }),      
-      toggleName: EditorFieldsType.toggle('hide.name', { invert: true, array: true, showIf: (c) => !is.jinja(c.hide) }),
+      toggleName: EditorFieldsType.toggle('hide.name', { invert: true, array: true, showIf: (c) => !is.nonEmptyString(c.hide) }),
       ...(template
         ? {
             secondary: EditorFieldsType.tpl('secondary'),
-            toggleSecondaryInfo: EditorFieldsType.toggle('hide.secondary_info', { invert: true, array: true, showIf: (c) => !is.jinja(c.hide) }),
+            toggleSecondaryInfo: EditorFieldsType.toggle('hide.secondary_info', { invert: true, array: true, showIf: (c) => !is.nonEmptyString(c.hide) }),
             percent: EditorFieldsType.tpl('percent'),
           }
         : {
@@ -12333,8 +12601,8 @@ const EditorFactory = {
               selectorOf: 'max_value',
               showIf: (c) => typeof c.max_value === 'string' && c.max_value !== '',
             }),
-            toggleValue: EditorFieldsType.toggle('hide.value', { invert: true, array: true, showIf: (c) => !is.jinja(c.hide) }),
-            toggleSecondaryInfo: EditorFieldsType.toggle('hide.secondary_info', { invert: true, array: true, showIf: (c) => !is.jinja(c.hide) }),
+            toggleValue: EditorFieldsType.toggle('hide.value', { invert: true, array: true, showIf: (c) => !is.nonEmptyString(c.hide) }),
+            toggleSecondaryInfo: EditorFieldsType.toggle('hide.secondary_info', { invert: true, array: true, showIf: (c) => !is.nonEmptyString(c.hide) }),
             state_content: EditorFieldsType.stateContent('state_content', { context: { filter_entity: 'entity' }, }),            
           }),
     },
@@ -12350,7 +12618,7 @@ const EditorFactory = {
         showIf: (c) => is.nullish(c.theme),
         ...(template ? {} : { width: availableSpace() }),
       }),
-      toggleIcon: EditorFieldsType.toggle('hide.icon', { invert: true, array: true, showIf: (c) => !is.jinja(c.hide) }),
+      toggleIcon: EditorFieldsType.toggle('hide.icon', { invert: true, array: true, showIf: (c) => !is.nonEmptyString(c.hide) }),
       ...(badge
         ? {}
         : {
@@ -12366,16 +12634,65 @@ const EditorFactory = {
       }),
       bar_orientation: EditorFieldsType.select('bar_orientation', template ? {} : { width: availableSpace() }),
       reverse_secondary_info_row: EditorFieldsType.toggle('reverse_secondary_info_row', { showIf: (c) => (!c.bar_position || c.bar_position === 'default') && c.layout === 'horizontal' }),
-      center_zero: EditorFieldsType.toggle('center_zero'),
-      bar_effect: EditorFieldsType.tpl('bar_effect', { showIf: (c) => is.jinja(c.bar_effect) }),
-      toggleBar: EditorFieldsType.toggle('hide.progress_bar', { invert: true, array: true, showIf: (c) => !is.jinja(c.hide) }),
+      center_zero: EditorFieldsType.toggle('center_zero', {
+        virtual: true,
+        resolveVirtual: (c) => Boolean(c.center_zero),
+        onVirtualChange: (value, config) => ({
+          ...config,
+          center_zero: value ? (typeof config.center_zero === 'object' && config.center_zero ? config.center_zero : true) : false,
+        }),
+      }),
+      center_zero_value: EditorFieldsType.number('center_zero_value', {
+        target: 'center_zero',
+        showIf: (c) => Boolean(c.center_zero),
+        virtual: true,
+        resolveVirtual: (c) => (typeof c.center_zero === 'object' && c.center_zero ? c.center_zero.value ?? 0 : 0),
+        onVirtualChange: (value, config) => {
+          const growthPercent = typeof config.center_zero === 'object' && config.center_zero ? Boolean(config.center_zero.growth_percent) : false;
+          return {
+            ...config,
+            center_zero: value || growthPercent ? { value: Number(value) || 0, growth_percent: growthPercent } : true,
+          };
+        },
+      }),
+      center_zero_growth_percent: EditorFieldsType.toggle('center_zero_growth_percent', {
+        target: 'center_zero',
+        showIf: (c) => Boolean(c.center_zero),
+        virtual: true,
+        resolveVirtual: (c) => (typeof c.center_zero === 'object' && c.center_zero ? Boolean(c.center_zero.growth_percent) : false),
+        onVirtualChange: (value, config) => {
+          const currentValue = typeof config.center_zero === 'object' && config.center_zero ? config.center_zero.value ?? 0 : 0;
+          return {
+            ...config,
+            center_zero: currentValue || value ? { value: currentValue, growth_percent: value } : true,
+          };
+        },
+      }),
+      bar_effect_jinja: EditorFieldsType.toggle('bar_effect_jinja', {
+        virtual: true,
+        resolveVirtual: (c) => is.nonEmptyString(c.bar_effect),
+        onVirtualChange: (value, config) => ({
+          ...config,
+          bar_effect: value ? '{{ }}' : [],
+        }),
+      }),
+      bar_effect: EditorFieldsType.tpl('bar_effect', { showIf: (c) => is.nonEmptyString(c.bar_effect) }),
+      toggleBar: EditorFieldsType.toggle('hide.progress_bar', { invert: true, array: true, showIf: (c) => !is.nonEmptyString(c.hide) }),
       ...(badge
         ? {}
         : {
             badge_icon: EditorFieldsType.tpl('badge_icon'),
             badge_color: EditorFieldsType.tpl('badge_color'),
           }),
-      hide: EditorFieldsType.tpl('hide', { showIf: (c) => is.jinja(c.hide) }),
+      hide_jinja: EditorFieldsType.toggle('hide_jinja', {
+        virtual: true,
+        resolveVirtual: (c) => is.nonEmptyString(c.hide),
+        onVirtualChange: (value, config) => ({
+          ...config,
+          hide: value ? '{{ }}' : [],
+        }),
+      }),
+      hide: EditorFieldsType.tpl('hide', { showIf: (c) => is.nonEmptyString(c.hide) }),
       ...(badge
         ? {}
         : {
