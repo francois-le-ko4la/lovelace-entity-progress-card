@@ -490,8 +490,10 @@ CARD.config.defaults = {
   center_zero: false,
   watermark: {
     low: 20,
+    low_as: 'auto',
     low_color: 'red',
     high: 80,
+    high_as: 'auto',
     high_color: 'red',
     opacity: 0.8,
     type: 'blended',
@@ -513,7 +515,7 @@ const THEME = {
     percent: true,
     style: [
       { min: 0, max: 20, icon: null, color: HA_CONTEXT.colors.green },
-      { min: 20, max: 40, icon: null, color: HA_CONTEXT.colors.lime },
+      { min: 20, max: 40, icon: null, color: HA_CONTEXT.colors.lightGreen },
       { min: 40, max: 60, icon: null, color: HA_CONTEXT.colors.yellow },
       { min: 60, max: 80, icon: null, color: HA_CONTEXT.colors.orange },
       { min: 80, max: 100, icon: null, color: HA_CONTEXT.colors.red },
@@ -526,7 +528,7 @@ const THEME = {
       { min: 0, max: 20, icon: null, color: HA_CONTEXT.colors.red },
       { min: 20, max: 40, icon: null, color: HA_CONTEXT.colors.orange },
       { min: 40, max: 60, icon: null, color: HA_CONTEXT.colors.yellow },
-      { min: 60, max: 80, icon: null, color: HA_CONTEXT.colors.lime },
+      { min: 60, max: 80, icon: null, color: HA_CONTEXT.colors.lightGreen },
       { min: 80, max: 100, icon: null, color: HA_CONTEXT.colors.green },
     ],
   },
@@ -7487,11 +7489,23 @@ class PercentHelper {
 
     return valueBasedOnPercentage || [CARD.config.unit.default, CARD.config.unit.disable].includes(this.unit) ? this.percent : value;
   }
+  #percentForValue(v) {
+    if (this.isCenterZero) {
+      const corrected = v - this.#zeroValue;
+      const halfRange = corrected >= 0 ? this.max - this.#zeroValue : this.#zeroValue - this.min;
+      return halfRange === 0 ? 0 : (corrected / halfRange) * 100;
+    }
+    const fullRange = this.max - this.min;
+    return fullRange === 0 ? 0 : ((v - this.min) / fullRange) * 100;
+  }
   refresh() {
-    this.#percent = this.isValid ? Number(((this.correctedValue / this.range) * 100).toFixed(this.decimal)) : 0;
+    const v = this.isCenterZero ? this.current : this.actual;
+    this.#percent = this.isValid ? Number(this.#percentForValue(v).toFixed(this.decimal)) : 0;
   }
   calcWatermark(value) {
-    return [CARD.config.unit.default, CARD.config.unit.disable].includes(this.unit) ? value : ((value - this.min) / this.range) * 100;
+    const v = is.number(value) ? value : (value?.current ?? 0);
+    const p = this.#percentForValue(v);
+    return this.isCenterZero ? 50 + p / 2 : p;
   }
   toString() {
     if (!this.isValid) {
@@ -9045,9 +9059,11 @@ const additionItem = types.fallbackTo(
 
 const watermarkSchema = {
   low: types.fallbackTo(types.union(types.number, types.string), CARD.config.defaults.watermark.low),
+  low_as: types.enumsWithDefault(['auto', 'percent'], CARD.config.defaults.watermark.low_as),
   low_attribute: types.optionalString(),
   low_color: types.optionalStringWithDefault(CARD.config.defaults.watermark.low_color),
   high: types.fallbackTo(types.union(types.number, types.string), CARD.config.defaults.watermark.high),
+  high_as: types.enumsWithDefault(['auto', 'percent'], CARD.config.defaults.watermark.high_as),
   high_attribute: types.optionalString(),
   high_color: types.optionalStringWithDefault(CARD.config.defaults.watermark.high_color),
   opacity: types.optionalNumberWithDefault(CARD.config.defaults.watermark.opacity),
@@ -9921,15 +9937,16 @@ class ViewBase extends ViewCore {
   }
   get watermark() {
     const { watermark } = this.config;
-    return watermark
-      ? {
-          ...watermark,
-          low: this.#percentHelper.calcWatermark(this._lowValue.value),
-          low_color: ThemeManager.adaptColor(watermark.low_color),
-          high: this.#percentHelper.calcWatermark(this._highValue.value),
-          high_color: ThemeManager.adaptColor(watermark.high_color),
-        }
-      : null;
+    if (!watermark) return null;
+    const toPos = (v, mode) =>
+      mode === 'percent' ? (is.number(v) ? v : (v?.current ?? 0)) : this.#percentHelper.calcWatermark(v);
+    return {
+      ...watermark,
+      low: toPos(this._lowValue.value, watermark.low_as),
+      low_color: ThemeManager.adaptColor(watermark.low_color),
+      high: toPos(this._highValue.value, watermark.high_as),
+      high_color: ThemeManager.adaptColor(watermark.high_color),
+    };
   }
   get hasEntityCollection() {
     return this.#entityCollection.count >= 2;
@@ -10877,24 +10894,21 @@ class HACore extends HTMLElement {
     }
   }
 
-  _applyWatermarkCSS(watermark, isCenterZero = false) {
+  _applyWatermarkCSS(watermark) {
     if (!watermark) return;
     const cardKey = CARD.htmlStructure.card.element;
-    HACore._getWatermarkProperties(watermark, isCenterZero).forEach(([variable, value]) => {
+    HACore._getWatermarkProperties(watermark).forEach(([variable, value]) => {
       if (value != null) this._dom.setStyle(cardKey, variable, value);
     });
   }
 
   // ─── WATERMARK MANAGEMENT ─────────────────────────────────────────────────
 
-  static _getWatermarkProperties(watermark, isCenterZero = false) {
-    const highWatermark = isCenterZero ? 50 + watermark.high / 2 : watermark.high;
-    const lowWatermark = isCenterZero ? 50 + watermark.low / 2 : watermark.low;
-
+  static _getWatermarkProperties(watermark) {
     return [
-      [CARD.style.dynamic.watermark.high.value.var, `${highWatermark}%`],
+      [CARD.style.dynamic.watermark.high.value.var, `${watermark.high}%`],
       [CARD.style.dynamic.watermark.high.color.var, watermark.high_color],
-      [CARD.style.dynamic.watermark.low.value.var, `${lowWatermark}%`],
+      [CARD.style.dynamic.watermark.low.value.var, `${watermark.low}%`],
       [CARD.style.dynamic.watermark.low.color.var, watermark.low_color],
       [CARD.style.dynamic.watermark.opacity.var, watermark.opacity],
       [CARD.style.dynamic.watermark.lineSize.var, watermark.line_size],
@@ -11642,7 +11656,7 @@ class EntityProgressCardBase extends HABase {
       barColor: bar.barColor,
       iconColor: bar.iconColor,
     });
-    this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null, bar._configHelper.config.centerZero.enabled);
+    this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null);
   }
 
   // ─── STD FIELDS PROCESSING - CUSTOMIZATION ────────────────────────────────
@@ -11842,7 +11856,7 @@ class EntityProgressFeatures extends HACore {
     this._applyProgressCSS(progressValue, {
       barColor: bar.barColor,
     });
-    this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null, bar._configHelper.config.centerZero.enabled);
+    this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null);
   }
 
   // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ─────────────────────────────
@@ -11908,7 +11922,7 @@ class EntityProgressTemplateBase extends HABase {
       barColor: bar.barColor,
       iconColor: bar.iconColor,
     });
-    this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null, bar._configHelper.config.centerZero.enabled);
+    this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null);
   }
 
   // ─── WATERMARK MANAGEMENT ─────────────────────────────────────────────────
@@ -11916,7 +11930,7 @@ class EntityProgressTemplateBase extends HABase {
   _updateWatermark() {
     if (!this._cardView.hasWatermark) return;
     this._cardView.refresh();
-    this._applyWatermarkCSS(this._cardView.watermark, this._cardView._configHelper.config.centerZero.enabled);
+    this._applyWatermarkCSS(this._cardView.watermark);
   }
 
   // ─── ICON MANAGEMENT ──────────────────────────────────────────────────────

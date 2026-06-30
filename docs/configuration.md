@@ -1747,30 +1747,63 @@ the current state at a glance.
 
 _Map definition_:
 
-- `high` (number/entity): The upper value where the bar will start indicating a
-  high zone (0–100).
-- `high_attribute`: Entity's attribute to define a high zone.
-- `high_color` (string): The CSS color used for the high watermark zone (can be
-  a name or hex).
-- `low` (number/entity): The lower value where the bar starts highlighting a low
-  zone (0–100).
-- `low_attribute`: Entity's attribute to define a low zone.
+- `high` (number/entity): The upper threshold value. How it is interpreted
+  depends on `high_as` (see below).
+- `high_as` (string): Controls how `high` is interpreted.
+  - `auto` (default): value in the entity’s own unit and scale (same as
+    `min_value`/`max_value`) — the card converts it to a bar position.
+  - `percent`: value is a direct bar position (0–100), bypassing any unit
+    conversion.
+- `high_attribute`: Entity’s attribute to use as the high threshold.
+- `high_color` (string): The CSS color used for the high watermark zone (name or
+  hex).
+- `low` (number/entity): The lower threshold value. How it is interpreted
+  depends on `low_as` (see below).
+- `low_as` (string): Controls how `low` is interpreted.
+  - `auto` (default): value in the entity’s own unit and scale (same as
+    `min_value`/`max_value`) — the card converts it to a bar position.
+  - `percent`: value is a direct bar position (0–100), bypassing any unit
+    conversion.
+- `low_attribute`: Entity’s attribute to use as the low threshold.
 - `low_color` (string): The CSS color used for the low watermark zone.
 - `type` (string): Defines the style of the watermark overlay.
   - `blended` (default): A subtle colored overlay that merges with the bar’s
     colors for a more integrated look.
   - `area`: A soft transparent shape placed over the bar, without blending into
-    the bar's colors.
+    the bar’s colors.
   - `striped`: Diagonal stripes for a patterned effect.
   - `triangle`: Triangle shapes as a watermark.
   - `round`: Rounded shapes applied as a watermark.
   - `line`: Vertical lines pattern (like a hatch effect).
 - `line_size` (string): Defines the thickness of the lines when the watermark
-  type is 'line' (e.g., "3px").
+  type is `line` (e.g., `"3px"`).
 - `opacity` (number): Adjusts the transparency of the watermark overlay (from 0
   = fully transparent to 1 = fully opaque).
 - `disable_low` (boolean): If set to true, disables the low watermark display.
 - `disable_high` (boolean): If set to true, disables the high watermark display.
+
+**Value interpretation**
+
+`low` and `high` are always expressed in the **entity’s native unit**, on the
+same scale defined by `min_value` and `max_value`. The card converts them to a
+bar position automatically — they are never raw percentages of the bar.
+
+| Scenario | `low_as` / `high_as` | `low` / `high` unit | Example |
+| --- | --- | --- | --- |
+| Percentage sensor (`%`), default range 0–100 | `auto` | Percentage (0–100) | `low: 20` → marker at 20 % on the bar |
+| Percentage sensor (`%`), custom range `min=-100 max=100` | `auto` | Same custom scale | `low: 10` → marker at 55 % visually |
+| Temperature sensor (`°C`), `min=-10 max=50` | `auto` | °C | `low: -5` → marker at −5 °C |
+| Power sensor (`W`), `min=-7000 max=7000` | `auto` | W | `low: -3700` → marker at −3700 W |
+| `max_value` is another entity (bar shows %) | `auto` | Still the entity’s unit | `low: 20` means 20 °C even if bar shows % |
+| `center_zero: true` | `auto` | Entity’s unit, full range | `low: -5` on a −10…50 scale → placed in the left (negative) half |
+| Any sensor, explicit bar position | `percent` | Bar position (0–100) | `low: 25, low_as: percent` → marker fixed at 25 % of the bar |
+
+> **`center_zero` note** — The bar is split into two visual halves: left
+> (min → zero) and right (zero → max). `low`/`high` values are mapped to their
+> correct half automatically regardless of whether the range is symmetric or not.
+> With `low_as: percent` / `high_as: percent`, the value is a direct position on
+> the full bar (0 = left edge, 100 = right edge), bypassing the two-half
+> mapping.
 
 _Example_:
 
@@ -1784,9 +1817,6 @@ watermark:
   low: 10           # 🔻 Lower threshold (e.g., minimum safe battery level)
   low_color: yellow # 🎨 Color to indicate the low watermark zone
 ```
-
-Thanks to automatic **unit detection**, the card intelligently interprets your
-thresholds depending on the entity’s native unit.
 
 ### Behavior And Actions
 

@@ -93,6 +93,35 @@ center_zero:
 
 ➡️ [Feature]: Add a possibility to set a zero value #115 (@aremishevsky)
 
+#### 💧 Watermark improvements
+
+**Smarter value interpretation**
+
+`low` and `high` are now always expressed in the entity's native unit, on the
+same scale as `min_value`/`max_value`. The card converts them to a bar position
+automatically — whether your sensor is in `°C`, `W`, `%`, or any other unit,
+you just set the threshold value and the card handles the rest.
+
+This also applies to `center_zero` mode: values are mapped to the correct visual
+half (left for negative, right for positive) regardless of whether the range is
+symmetric or not.
+
+**New `low_as` / `high_as` keys**
+
+For cases where you want to pin a watermark at an exact bar position regardless
+of the entity scale, you can now set `low_as: percent` or `high_as: percent`.
+The value is then used as a direct percentage (0–100) of the bar, bypassing
+any unit conversion. Each threshold is configured independently.
+
+```yaml
+watermark:
+  low: 25
+  low_as: percent   # fixed at 25 % of the bar
+  high: 3700        # in entity unit (e.g. W), converted automatically
+```
+
+The default is `auto`, which keeps the existing behaviour — no breaking changes.
+
 #### 🧩 `hide` now supports Jinja templates
 
 You can now hide card elements dynamically using a Jinja template, just like
@@ -229,6 +258,12 @@ badge_color: |-
 
 #### Other fixes:
 
+- Fixed watermark positions in `center_zero` mode
+  ➡️ [Bug]: wrong watermark positions in center_zero mode #114 (@aremishevsky)
+- Fixed watermark support for `number` and `counter`
+  
+- Update color mappings for various thresholds  
+  ➡️ Merge pull request #116 (@vemboy200)
 - Bug Fixes: Resolved issues related to accordion animations in the editor and
   CSS variable propagation removing home-made accordion and using native HA
   component.

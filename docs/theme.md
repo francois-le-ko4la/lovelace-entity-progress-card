@@ -205,13 +205,13 @@ entity: sensor.in2013_battery_level
 theme: optimal_when_high
 ```
 
-| **Percentage Range** | **Color** | **Description** _(optional)_ |
-| :------------------- | :-------- | :--------------------------- |
-| 0% – 20%             | `red`     | Critical / Very low          |
-| 20% – 40%            | `orange`  | Low                          |
-| 40% – 60%            | `yellow`  | Moderate                     |
-| 60% – 80%            | `lime`    | Good                         |
-| 80% – 100%           | `green`   | Optimal / High               |
+| **Percentage Range** | **Color**     | **Description** _(optional)_ |
+| :------------------- | :------------ | :--------------------------- |
+| 0% – 20%             | `red`         | Critical / Very low          |
+| 20% – 40%            | `orange`      | Low                          |
+| 40% – 60%            | `yellow`      | Moderate                     |
+| 60% – 80%            | `light-green` | Good                         |
+| 80% – 100%           | `green`       | Optimal / High               |
 
 > [!NOTE]
 > The icon is automatically retrieved from the entity but can be overridden
@@ -234,13 +234,13 @@ entity: sensor.system_monitor_cpu_usage
 theme: optimal_when_low
 ```
 
-| **Percentage Range** | **Color** | **Description** _(optional)_ |
-| :------------------- | :-------- | :--------------------------- |
-| 0% – 20%             | `green`   | Low level / Safe             |
-| 20% – 40%            | `lime`    | Good                         |
-| 40% – 60%            | `yellow`  | Moderate                     |
-| 60% – 80%            | `orange`  | Elevated                     |
-| 80% – 100%           | `red`     | High / Critical              |
+| **Percentage Range** | **Color**     | **Description** _(optional)_ |
+| :------------------- | :------------ | :--------------------------- |
+| 0% – 20%             | `green`       | Low level / Safe             |
+| 20% – 40%            | `light-green` | Good                         |
+| 40% – 60%            | `yellow`      | Moderate                     |
+| 60% – 80%            | `orange`      | Elevated                     |
+| 80% – 100%           | `red`         | High / Critical              |
 
 > [!NOTE]
 > The icon is automatically retrieved from the entity but can be overridden
