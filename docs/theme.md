@@ -13,6 +13,7 @@ Jump to the specific section:
   - 💧 [Humidity](#humidity)
   - 🦠 [VOC](#voc)
   - 🦠 [PM 2.5](#pm25)
+- [Custom theme & color_mode](#custom-theme)
 - [Adapt to HA custom theme](#adapt-to-ha-custom-theme)
   - [CSS variables](#css)
   - [Usage](#usage)
@@ -477,6 +478,97 @@ clear and intuitive display of PM2.5 pollution levels.
   alt="Image title" width="250"
 />
 </details>
+
+[🔼 Back to top]
+
+<a id="custom-theme"></a>
+
+## Custom theme & `color_mode`
+
+### Custom theme
+
+In addition to predefined themes, you can define your own color zones using the
+`theme` key as an array. Each entry requires `min`, `max`, and at least one
+color key (`color`, `bar_color`, or `icon_color`). Zones must be contiguous —
+the `max` of one entry must equal the `min` of the next.
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.battery_level
+theme:
+  - min: 0
+    max: 20
+    color: red
+  - min: 20
+    max: 80
+    color: green
+  - min: 80
+    max: 100
+    color: orange
+```
+
+You can also use separate colors for the bar and the icon:
+
+```yaml
+theme:
+  - min: 0
+    max: 50
+    bar_color: blue
+    icon_color: white
+  - min: 50
+    max: 100
+    bar_color: green
+    icon_color: green
+```
+
+> [!NOTE]
+> The `min`/`max` values are in the entity's native unit. For a sensor whose
+> values naturally match the percentage scale (e.g. a battery at 0–100 %), the
+> zone boundaries are also 0–100.
+
+### `color_mode`
+
+The `color_mode` parameter controls how theme colors are rendered on the
+progress bar. It works with both predefined and custom themes.
+
+| Value     | Description                                                       |
+| :-------- | :---------------------------------------------------------------- |
+| `auto`    | Default. The bar is filled with the solid color of the current zone. |
+| `segment` | Each zone is drawn as a distinct colored block up to the current value. |
+| `rainbow` | A smooth gradient flows across all visible zone colors.          |
+
+#### `segment` example
+
+For a battery at 69% with `optimal_when_high`, the bar shows each zone as a
+solid block:
+
+```
+[██ red ██][████ orange ████][██████ yellow ██████][████ light-green ▓▓▓]
+ 0%       20%               40%                   60%                 69%
+```
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.battery_level
+theme: optimal_when_high
+color_mode: segment
+```
+
+#### `rainbow` example
+
+The same sensor with a smooth gradient transitioning between zone colors:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.battery_level
+theme: optimal_when_high
+color_mode: rainbow
+```
+
+> [!NOTE]
+> `color_mode` has no effect when `center_zero` is enabled. For linear themes
+> (e.g. `light`), zone boundaries are derived automatically by splitting 0–100%
+> into equal segments (5 levels → 0–20%, 20–40%, …).
 
 [🔼 Back to top]
 

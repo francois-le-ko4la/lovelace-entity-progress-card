@@ -22,7 +22,7 @@
         - [Supported values](#supported-values)
         - [Jinja](#jinja-1)
       - [Typical description](#typical-description)
-  - [🧩 entity-progress-card / entity-progress-badge](#standard)
+  - [🧩 entity-progress-card / entity-progress-badge / entity-progress-feature](#standard)
     - [Data Options](#data-options)
       - [`entity`](#entity)
       - [`attribute`](#attribute)
@@ -47,6 +47,7 @@
       - [`bar_position`](#bar_position)
       - [`bar_single_line`](#bar_single_line)
       - [`bar_effect`](#bar_effect)
+      - [`color_mode`](#color_mode)
       - [`bar_max_width`](#bar_max_width)
       - [`bar_orientation`](#bar_orientation)
       - [`force_circular_background`](#force_circular_background)
@@ -240,6 +241,7 @@ work with specific configuration options:
 | :------------------------------------------------------- | ----------------------------- | ---------------------------------------------------- |
 | [![Card OK][Card-OK]](#compatibility)                    | **Card Compatible**           | This option works with the main card display         |
 | [![Badge OK][Badge-OK]](#compatibility)                  | **Badge Compatible**          | This option works with the card badge feature        |
+| [![Feature OK][Feature-OK]](#compatibility)              | **Tile Feature Compatible**   | This option works with the tile feature              |
 | [![Template OK][Template-OK]](#compatibility)            | **Template Compatible**       | This option supports Jinja2 templating               |
 | [![Badge Template OK][BadgeTemplate-OK]](#compatibility) | **Badge Template Compatible** | This option supports Jinja2 templating within badges |
 
@@ -305,7 +307,7 @@ option: sensor.hp_envy_6400_series_tri_color_cartridge
 
 <a id="standard"></a>
 
-## 🧩 entity-progress-card / entity-progress-badge
+## 🧩 entity-progress-card / entity-progress-badge / entity-progress-feature
 
 ### Data Options
 
@@ -314,6 +316,7 @@ Options related to entity data, attributes, value display logic, and metadata.
 #### `entity`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Feature OK][Feature-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
 [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
@@ -348,6 +351,7 @@ entity: sensor.hp_envy_6400_series_tri_color_cartridge
 #### `attribute`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Feature OK][Feature-OK]](#compatibility)
 
 > **`attribute`** [String] _(optional)_
 
@@ -552,6 +556,7 @@ decimal: 1
 #### `min_value`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Feature OK][Feature-OK]](#compatibility)
 
 > **`min_value`** [Float] _(optional, default: `0` or `-100`)_
 
@@ -585,6 +590,7 @@ Suppose you are measuring the weight of a connected litter box, where:
 #### `max_value`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Feature OK][Feature-OK]](#compatibility)
 
 > **`max_value`** [Float]|[String] _(optional, default: `100`)_
 
@@ -612,6 +618,7 @@ max_value: 255
 #### `max_value_attribute`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Feature OK][Feature-OK]](#compatibility)
 
 > **`max_value_attribute`** [String] _(optional)_
 
@@ -793,6 +800,7 @@ name_info: >-
 #### `additions`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Feature OK][Feature-OK]](#compatibility)
 [![YAML Only][yaml-only]](#yaml-only)
 
 > **`additions`** [List] _(optional)_
@@ -928,6 +936,7 @@ badge_color: >-
 #### `bar_color`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Feature OK][Feature-OK]](#compatibility)
 
 > **`bar_color`** [String] _(optional, default: `var(--state-icon-color)`)_
 
@@ -948,6 +957,7 @@ bar_color: rgb(110, 65, 171)
 #### `bar_size`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Feature OK][Feature-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
 [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
@@ -973,6 +983,7 @@ adjusts to accommodate the size of the progress bar.
 #### `bar_position`
 
 [![Card OK][Card-OK]](#compatibility)
+[![Feature OK][Feature-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
 
 > **`bar_position`** [String] _(optional, default: "default")_
@@ -1043,6 +1054,7 @@ _Default value_:
 #### `bar_effect`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Feature OK][Feature-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
 [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
@@ -1105,6 +1117,57 @@ bar_effect: |-
 
 [🔼 Back to top]
 
+#### `color_mode`
+
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Feature OK][Feature-OK]](#compatibility)
+
+> **`color_mode`** [String] ➡️ {`auto`|`segment`|`rainbow`} _(optional, default: `auto`)_
+
+Controls how theme colors are applied to the progress bar fill.
+
+- `auto` — default behavior: the bar is filled with the solid color of the
+  current theme zone. No change from previous versions.
+- `segment` — each color zone defined by the theme is rendered as a distinct
+  colored block, visible up to the current value. Useful to see at a glance how
+  far through each zone the entity has progressed.
+- `rainbow` — the bar displays a smooth color gradient across all visible zones,
+  transitioning between each zone's color up to the current value.
+
+> [!NOTE]
+> `color_mode` has no effect when `center_zero` is enabled — that mode always
+> uses `auto` coloring. For linear themes (e.g. `light`), zone boundaries are
+> derived automatically by splitting 0–100% into equal segments (5 levels →
+> 0–20%, 20–40%, …). It works with both predefined themes and
+> [`custom_theme`](#theme).
+
+_Examples_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.battery_level
+theme: optimal_when_high
+color_mode: segment
+```
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.battery_level
+theme:
+  - min: 0
+    max: 20
+    color: red
+  - min: 20
+    max: 80
+    color: green
+  - min: 80
+    max: 100
+    color: orange
+color_mode: rainbow
+```
+
+[🔼 Back to top]
+
 #### `bar_max_width`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
@@ -1131,6 +1194,7 @@ bar_max_width: 100px
 #### `bar_orientation`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Feature OK][Feature-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
 [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
@@ -1428,6 +1492,7 @@ following locale rules or overriding them explicitly.
 #### `center_zero`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Feature OK][Feature-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
 [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
@@ -1493,6 +1558,7 @@ ratio.
 #### `theme`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Feature OK][Feature-OK]](#compatibility)
 
 > **`theme`** [String] ➡️ {`optimal_when_low`|`optimal_when_high`|`light`|
 > `temperature`|`humidity`|`pm25`|`voc`} _(optional)_
@@ -1523,6 +1589,7 @@ theme: light
 #### `custom_theme`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Feature OK][Feature-OK]](#compatibility)
 [![YAML Only][yaml-only]](#yaml-only)
 
 > **`custom_theme`** [List] of [Map] _(optional)_
@@ -1634,6 +1701,7 @@ custom_theme:
 #### `interpolate`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Feature OK][Feature-OK]](#compatibility)
 [![YAML Only][yaml-only]](#yaml-only)
 
 > **`interpolate`** [Boolean] _(optional, default: `false`)_
@@ -1735,6 +1803,7 @@ disable_unit: true
 #### `watermark`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Feature OK][Feature-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
 [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 [![YAML Only][yaml-only]](#yaml-only)
@@ -1955,6 +2024,7 @@ available for Templates as well:
 | `bar_position`               | string (optional)  | `default`    | Position of the progress bar      | [Config Ref.](#bar_position)               |
 | `bar_single_line`            | boolean (optional) | `false`      | single-line mode for overlay bars | [Config Ref.](#bar_single_line)            |
 | `bar_effect`                 | string/list/jinja  | —            | Visual effects for the bar        | [Config Ref.](#bar_effect)                 |
+| `color_mode`                 | string (optional)  | `auto`       | Bar fill color rendering mode     | [Config Ref.](#color_mode)                 |
 | `bar_max_width`.             | string (optional)  | -            | Limits the max width of the bar   | [Config Ref.](#bar_max_width)              |
 | `bar_orientation`            | string (optional)  | `ltr`        | Bar direction                     | [Config Ref.](#bar_orientation)            |
 | `force_circular_background`  | boolean (optional) | `false`      | Force icon circle background      | [Config Ref.](#force_circular_background)  |
@@ -2140,6 +2210,7 @@ _This reference guide is adapted for entity-progress-card._
 [yaml-only]: https://img.shields.io/badge/YAML-Only-orange.svg?style=flat
 [Card-OK]: https://img.shields.io/badge/Card-OK-green.svg?style=flat
 [Badge-OK]: https://img.shields.io/badge/Badge-OK-green.svg?style=flat
+[Feature-OK]: https://img.shields.io/badge/Feature-OK-blue.svg?style=flat
 [Template-OK]: https://img.shields.io/badge/Template-OK-green.svg?style=flat
 [BadgeTemplate-OK]:
   https://img.shields.io/badge/Badge%20Template-OK-green.svg?style=flat

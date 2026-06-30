@@ -27,6 +27,7 @@ Jump to the specific section:
   - 🧩 [Entity Progress Card Template](#entity-progress-card-template)
   - 🧩 [Entity Progress Badge](#entity-progress-badge)
   - 🧩 [Entity Progress Badge Template](#entity-progress-badge-template)
+  - 🧩 [Entity Progress Tile Feature](#entity-progress-feature)
 - 🎨 [Theme](#theme)
 - 🌍 [Language \& Number Support](#language-number-support)
 - 🚨 [Errors, Deprecations \& Troubleshooting](#troubleshooting)
@@ -139,12 +140,13 @@ template versions), providing clear guidance.
 
 ### 📚 Component Overview
 
-| Component                          | Description                                                  |
-| ---------------------------------- | ------------------------------------------------------------ |
-| **Entity Progress Card**           | A simple card displaying a progress bar for a single entity. |
-| **Entity Progress Card Template**  | A more advanced version with full Jinja templating support.  |
-| **Entity Progress Badge**          | A compact badge with a mini progress bar.                    |
-| **Entity Progress Badge Template** | A templatable badge version for advanced use cases.          |
+| Component                          | Description                                                    |
+| ---------------------------------- | -------------------------------------------------------------- |
+| **Entity Progress Card**           | A simple card displaying a progress bar for a single entity.   |
+| **Entity Progress Card Template**  | A more advanced version with full Jinja templating support.    |
+| **Entity Progress Badge**          | A compact badge with a mini progress bar.                      |
+| **Entity Progress Badge Template** | A templatable badge version for advanced use cases.            |
+| **Entity Progress Tile Feature**   | A native tile feature embedding a progress bar in a Tile card. |
 
 Each component is suited for different use cases, depending on display needs,
 complexity, and UI layout.
@@ -268,6 +270,7 @@ This is the primary card for displaying entity progress.
 | `bar_position`               | string (optional)       | `default`                 | Position of the progress bar          | [Config Ref.][config-bar_position]               |
 | `bar_single_line`            | boolean (optional)      | `false`                   | single-line mode for overlay bars     | [Config Ref.][config-bar_single_line]            |
 | `bar_effect`                 | string/list/jinja       | —                         | Visual effects for the bar            | [Config Ref.][config-bar_effect]                 |
+| `color_mode`                 | string (optional)       | `auto`                    | Bar fill color rendering mode         | [Config Ref.][config-color_mode]                 |
 | `bar_max_width`.             | string (optional)       | -                         | Limits the maximum width of the bar   | [Config Ref.][config-bar_max_width]              |
 | `bar_orientation`            | string (optional)       | `ltr`                     | Bar direction                         | [Config Ref.][config-bar_orientation]            |
 | `force_circular_background`  | boolean (optional)      | `false`                   | Force icon circle background          | [Config Ref.][config-force_circular_background]  |
@@ -298,14 +301,13 @@ See [Full Configuration Reference][FCR].
 <summary><strong>Percentage Calculation (click to expand)</strong></summary>
 This card automatically calculates progress percentages based on the current
 entity, depending on the type of input it receives:
+
 - Timer:
   If the value represents a timer, the range (min, max) and the current value
   are taken directly from the timer entity. Attribute will not be used.
-
 - Counter or Number value: If the value is a counter or a Number ({ value, min,
   max }), it uses the provided value directly from the entity. The max value can
   also come from another entity by using max_value. Attribute will not be used.
-
 - Other entity: If the entity value is a number, it’s treated as the current
   value. The min and max boundaries are taken from default value (0/100) or
   configuration or external entities depending on the setup. If max_value is an
@@ -1161,6 +1163,7 @@ customizable badge format with a dynamic progress bar.
 | `bar_color`                  | string (optional)       | `var(--state-icon-color)` | Color of progress bar                 | [Config Ref.][config-bar_color]                  |
 | `bar_size`                   | string (optional)       | `small`                   | Size of the progress bar              | [Config Ref.][config-bar_size]                   |
 | `bar_effect`                 | string/list/jinja       | —                         | Visual effects for the bar            | [Config Ref.][config-bar_effect]                 |
+| `color_mode`                 | string (optional)       | `auto`                    | Bar fill color rendering mode         | [Config Ref.][config-color_mode]                 |
 | `bar_max_width`.             | string (optional)       | -                         | Limits the maximum width of the bar   | [Config Ref.][config-bar_max_width]              |
 | `bar_orientation`            | string (optional)       | `ltr`                     | Bar direction                         | [Config Ref.][config-bar_orientation]            |
 | `frameless`                  | boolean (optional)      | `false`                   | Remove card frame                     | [Config Ref.][config-frameless]                  |
@@ -1283,6 +1286,91 @@ percent: |-
   {% else %}
     0
   {% endif %}
+```
+
+</details>
+
+<br />
+
+[🔼 Back to top]
+
+<a id="entity-progress-feature"></a>
+
+### 🧩 Entity Progress Tile Feature
+
+The **Entity Progress Tile Feature** (`entity-progress-feature`) embeds a
+progress bar directly inside a standard Home Assistant **Tile** card. It
+renders as a native feature row and supports overlay positions (`top`,
+`bottom`) that anchor the bar to the card edge without increasing the tile
+height.
+
+#### 🛠️ Options
+
+<details>
+<summary><strong>Supported Options and Configuration (click to expand)</strong></summary>
+
+| **Option**                   | **Type**                | **Default**               | **Description**                       | **Link**                                         |
+| :--------------------------- | :---------------------- | :------------------------ | :------------------------------------ | :----------------------------------------------- |
+| **Data Options**             |                         |                           |                                       |                                                  |
+| `entity`                     | string (required)       | —                         | Main entity ID                        | [Config Ref.][config-entity]                     |
+| `attribute`                  | string (optional)       | depends on entity         | Attribute to use as value             | [Config Ref.][config-attribute]                  |
+| `min_value`                  | float (optional)        | `0`                       | Min for progress calculation          | [Config Ref.][config-min_value]                  |
+| `max_value`                  | float/string (optional) | `100`                     | Max for progress calculation          | [Config Ref.][config-max_value]                  |
+| `max_value_attribute`        | string (optional)       | —                         | Attribute from `max_value` entity     | [Config Ref.][config-max_value_attribute]        |
+| **Styling Options**          |                         |                           |                                       |                                                  |
+| `bar_color`                  | string (optional)       | `var(--state-icon-color)` | Color of progress bar                 | [Config Ref.][config-bar_color]                  |
+| `bar_size`                   | string (optional)       | `small`                   | Size of the progress bar              | [Config Ref.][config-bar_size]                   |
+| `bar_orientation`            | string (optional)       | `ltr`                     | Bar direction                         | [Config Ref.][config-bar_orientation]            |
+| `color_mode`                 | string (optional)       | `auto`                    | Bar fill color rendering mode         | [Config Ref.][config-color_mode]                 |
+| `bar_effect`                 | string/list/jinja       | —                         | Visual effects for the bar            | [Config Ref.][config-bar_effect]                 |
+| `bar_position`               | string (optional)       | `default`                 | Position of the bar inside the tile   | [Config Ref.][config-bar_position]               |
+| `center_zero`                | boolean/map (optional)  | `false`                   | Center the bar on 0                   | [Config Ref.][config-center_zero]                |
+| `theme`                      | string (optional)       | —                         | Applies a preset theme                | [Config Ref.][config-theme]                      |
+| `custom_theme`               | list (optional)         | —                         | Define color thresholds               | [Config Ref.][config-custom_theme]               |
+| `interpolate`                | boolean (optional)      | `false`                   | Enables smooth color transition       | [Config Ref.][config-interpolate]                |
+| `watermark`                  | map (optional)          | —                         | Adds min/max overlays                 | [Config Ref.][config-watermark]                  |
+| **Additions**                |                         |                           |                                       |                                                  |
+| `additions`                  | list (optional)         | —                         | Additional entities to display        | [Config Ref.][config-additions]                  |
+
+See [Full Configuration Reference][FCR].
+
+</details>
+
+#### 👉 Tile Feature Usage
+
+<details>
+<summary><strong>Simple example (click to expand)</strong></summary>
+
+```yaml
+type: tile
+entity: sensor.cpu_percent
+features:
+  - type: custom:entity-progress-feature
+    entity: sensor.cpu_percent
+```
+
+</details>
+
+<details>
+<summary><strong>Overlay mode (click to expand)</strong></summary>
+
+Anchor the bar to the top or bottom of the tile without increasing the card
+height:
+
+```yaml
+type: tile
+entity: sensor.bedroom_1_weather_humidity
+features:
+  - type: custom:entity-progress-feature
+    entity: sensor.bedroom_1_weather_humidity
+    bar_position: bottom
+    theme: optimal_when_high
+    color_mode: segment
+    watermark:
+      type: striped
+      low_color: white
+      high_color: white
+      opacity: 0.4
 ```
 
 </details>
@@ -1544,6 +1632,8 @@ This project is licensed under the [GPL-3.0 license].
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_single_line
 [config-bar_effect]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_effect
+[config-color_mode]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#color_mode
 [config-bar_max_width]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_max_width
 [config-bar_orientation]:

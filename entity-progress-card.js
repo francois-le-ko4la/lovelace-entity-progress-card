@@ -474,6 +474,7 @@ CARD.config.defaults = {
   interpolate: false,
   bar_size: CARD.style.bar.sizeOptions.small.label,
   bar_color: null,
+  color_mode: 'auto',
   bar_effect: [],
   bar_orientation: null,
   reverse: null,
@@ -659,6 +660,7 @@ const TRANSLATIONS = {
         bar_position: 'موضع الشريط',
         bar_single_line: 'معلومات في سطر واحد (تراكب)',
         bar_size: 'حجم الشريط',
+        color_mode: 'وضع اللون',
         center_zero: 'صفر في الوسط',
         center_zero_value: 'قيمة المركز',
         center_zero_growth_percent: 'نسبة النمو',
@@ -728,6 +730,11 @@ const TRANSLATIONS = {
         layout: {
           horizontal: 'أفقي (افتراضي)',
           vertical: 'رأسي'
+        },
+        color_mode: {
+          auto: 'تلقائي',
+          segment: 'مقطعي',
+          rainbow: 'قوس قزح'
         }
       }
     }
@@ -780,6 +787,7 @@ const TRANSLATIONS = {
         bar_position: 'বারের অবস্থান',
         bar_single_line: 'এক লাইনে তথ্য (ওভারলে)',
         bar_size: 'বারের আকার',
+        color_mode: 'রঙের মোড',
         center_zero: 'মাঝে শূন্য',
         center_zero_value: 'কেন্দ্রীয় মান',
         center_zero_growth_percent: 'প্রবৃদ্ধির শতাংশ',
@@ -849,6 +857,11 @@ const TRANSLATIONS = {
         layout: {
           horizontal: 'অনুভূমিক (ডিফল্ট)',
           vertical: 'উল্লম্ব'
+        },
+        color_mode: {
+          auto: 'স্বয়ংক্রিয়',
+          segment: 'বিভাগ',
+          rainbow: 'রেইনবো'
         }
       }
     }
@@ -901,6 +914,7 @@ const TRANSLATIONS = {
         bar_position: 'Posició de la barra',
         bar_single_line: 'Informació en una sola línia (overlay)',
         bar_size: 'Mida de la barra',
+        color_mode: 'Mode de color',
         center_zero: 'Zero al centre',
         center_zero_value: 'Valor de centratge',
         center_zero_growth_percent: 'Percentatge de creixement',
@@ -970,6 +984,11 @@ const TRANSLATIONS = {
         layout: {
           horizontal: 'Horitzontal (predeterminada)',
           vertical: 'Vertical'
+        },
+        color_mode: {
+          auto: 'Automàtic',
+          segment: 'Segments',
+          rainbow: 'Arc de Sant Martí'
         }
       }
     }
@@ -1022,6 +1041,7 @@ const TRANSLATIONS = {
         bar_position: 'Umístění lišty',
         bar_single_line: 'Info v jednom řádku (overlay)',
         bar_size: 'Velikost lišty',
+        color_mode: 'Barevný režim',
         center_zero: 'Nula uprostřed',
         center_zero_value: 'Hodnota středu',
         center_zero_growth_percent: 'Procento růstu',
@@ -1091,6 +1111,11 @@ const TRANSLATIONS = {
         layout: {
           horizontal: 'Horizontální (výchozí)',
           vertical: 'Vertikální'
+        },
+        color_mode: {
+          auto: 'Automaticky',
+          segment: 'Segmenty',
+          rainbow: 'Duha'
         }
       }
     }
@@ -1143,6 +1168,7 @@ const TRANSLATIONS = {
         bar_position: 'Bar-placering',
         bar_single_line: 'Info på én linje (overlay)',
         bar_size: 'Bar størrelse',
+        color_mode: 'Farvetilstand',
         center_zero: 'Center nul',
         center_zero_value: 'Centerværdi',
         center_zero_growth_percent: 'Vækstprocent',
@@ -1212,6 +1238,11 @@ const TRANSLATIONS = {
         layout: {
           horizontal: 'Horisontal (standard)',
           vertical: 'Vertikal'
+        },
+        color_mode: {
+          auto: 'Auto',
+          segment: 'Segmenter',
+          rainbow: 'Regnbue'
         }
       }
     }
@@ -1264,6 +1295,7 @@ const TRANSLATIONS = {
         bar_position: 'Position der Leiste',
         bar_single_line: 'Informationen in einer Zeile (Overlay)',
         bar_size: 'Größe der Bar',
+        color_mode: 'Farbmodus',
         center_zero: 'Null in der Mitte',
         center_zero_value: 'Zentrumswert',
         center_zero_growth_percent: 'Wachstumsprozentsatz',
@@ -1333,6 +1365,11 @@ const TRANSLATIONS = {
         layout: {
           horizontal: 'Horizontal (Standard)',
           vertical: 'Vertikal'
+        },
+        color_mode: {
+          auto: 'Automatisch',
+          segment: 'Segmente',
+          rainbow: 'Regenbogen'
         }
       }
     }
@@ -1385,6 +1422,7 @@ const TRANSLATIONS = {
         bar_position: 'Θέση γραμμής',
         bar_single_line: 'Πληροφορίες σε μία γραμμή (overlay)',
         bar_size: 'Μέγεθος γραμμής',
+        color_mode: 'Λειτουργία χρώματος',
         center_zero: 'Μηδέν στο κέντρο',
         center_zero_value: 'Τιμή κέντρου',
         center_zero_growth_percent: 'Ποσοστό μεταβολής',
@@ -1454,6 +1492,11 @@ const TRANSLATIONS = {
         layout: {
           horizontal: 'Οριζόντια (προεπιλογή)',
           vertical: 'Κατακόρυφη'
+        },
+        color_mode: {
+          auto: 'Αυτόματο',
+          segment: 'Τμήματα',
+          rainbow: 'Ουράνιο τόξο'
         }
       }
     }
@@ -1506,6 +1549,7 @@ const TRANSLATIONS = {
         bar_position: 'Bar position',
         bar_single_line: 'Single line info (overlay)',
         bar_size: 'Bar size',
+        color_mode: 'Color mode',
         center_zero: 'Zero at center',
         center_zero_value: 'Center value',
         center_zero_growth_percent: 'Growth percentage',
@@ -1575,6 +1619,11 @@ const TRANSLATIONS = {
         layout: {
           horizontal: 'Horizontal (default)',
           vertical: 'Vertical'
+        },
+        color_mode: {
+          auto: 'Auto',
+          segment: 'Segment',
+          rainbow: 'Rainbow'
         }
       }
     }
@@ -1627,6 +1676,7 @@ const TRANSLATIONS = {
         bar_position: 'Posición de la barra',
         bar_single_line: 'Información en línea (superpuesta)',
         bar_size: 'Tamaño de la barra',
+        color_mode: 'Modo de color',
         center_zero: 'Cero centrado',
         center_zero_value: 'Valor de centrado',
         center_zero_growth_percent: 'Porcentaje de crecimiento',
@@ -1696,6 +1746,11 @@ const TRANSLATIONS = {
         layout: {
           horizontal: 'Horizontal (predeterminado)',
           vertical: 'Vertical'
+        },
+        color_mode: {
+          auto: 'Auto',
+          segment: 'Segmentos',
+          rainbow: 'Arcoíris'
         }
       }
     }
@@ -1748,6 +1803,7 @@ const TRANSLATIONS = {
         bar_position: 'Posición de la barra',
         bar_single_line: 'Información en una sola línea (overlay)',
         bar_size: 'Tamaño de la barra',
+        color_mode: 'Modo de color',
         center_zero: 'Cero en el centro',
         center_zero_value: 'Valor de centrado',
         center_zero_growth_percent: 'Porcentaje de crecimiento',
@@ -1817,6 +1873,11 @@ const TRANSLATIONS = {
         layout: {
           horizontal: 'Horizontal (predeterminado)',
           vertical: 'Vertical'
+        },
+        color_mode: {
+          auto: 'Auto',
+          segment: 'Segmentos',
+          rainbow: 'Arcoíris'
         }
       }
     }
@@ -1869,6 +1930,7 @@ const TRANSLATIONS = {
         bar_position: 'Riba positsioon',
         bar_single_line: 'Info ühel real (overlay)',
         bar_size: 'Riba suurus',
+        color_mode: 'Värvirežiim',
         center_zero: 'Null keskel',
         center_zero_value: 'Keskväärtus',
         center_zero_growth_percent: 'Kasvuprotsent',
@@ -1938,6 +2000,11 @@ const TRANSLATIONS = {
         layout: {
           horizontal: 'Horisontaalne (vaikimisi)',
           vertical: 'Vertikaalne'
+        },
+        color_mode: {
+          auto: 'Automaatne',
+          segment: 'Segmendid',
+          rainbow: 'Vikerkaar'
         }
       }
     }
@@ -1990,6 +2057,7 @@ const TRANSLATIONS = {
         bar_position: 'Palkin sijainti',
         bar_single_line: 'Tiedot yhdellä rivillä (overlay)',
         bar_size: 'Palkin koko',
+        color_mode: 'Väritila',
         center_zero: 'Nolla keskellä',
         center_zero_value: 'Keskiarvo',
         center_zero_growth_percent: 'Kasvuprosentti',
@@ -2059,6 +2127,11 @@ const TRANSLATIONS = {
         layout: {
           horizontal: 'Vaakasuora (oletus)',
           vertical: 'Pystysuora'
+        },
+        color_mode: {
+          auto: 'Automaattinen',
+          segment: 'Segmentit',
+          rainbow: 'Sateenkaari'
         }
       }
     }
@@ -2111,6 +2184,7 @@ const TRANSLATIONS = {
         bar_position: 'Position de la barre',
         bar_single_line: 'Infos sur une ligne (overlay)',
         bar_size: 'Taille de la barre',
+        color_mode: 'Mode de couleur',
         center_zero: 'Zéro au centre',
         center_zero_value: 'Valeur de centrage',
         center_zero_growth_percent: 'Pourcentage de croissance',
@@ -2180,6 +2254,11 @@ const TRANSLATIONS = {
         layout: {
           horizontal: 'Horizontal (par défaut)',
           vertical: 'Vertical'
+        },
+        color_mode: {
+          auto: 'Auto',
+          segment: 'Segmenté',
+          rainbow: 'Arc-en-ciel'
         }
       }
     }
@@ -2232,6 +2311,7 @@ const TRANSLATIONS = {
         bar_position: 'बार की स्थिति',
         bar_single_line: 'एक पंक्ति में जानकारी (ओवरले)',
         bar_size: 'बार का आकार',
+        color_mode: 'रंग मोड',
         center_zero: 'शून्य केंद्र में',
         center_zero_value: 'केंद्र मान',
         center_zero_growth_percent: 'वृद्धि प्रतिशत',
@@ -2301,6 +2381,11 @@ const TRANSLATIONS = {
           pm25: 'PM2.5',
           temperature: 'तापमान',
           voc: 'VOC'
+        },
+        color_mode: {
+          auto: 'स्वचालित',
+          segment: 'खंड',
+          rainbow: 'इंद्रधनुष'
         }
       }
     }
@@ -2353,6 +2438,7 @@ const TRANSLATIONS = {
         bar_position: 'Položaj trake',
         bar_single_line: 'Informacije u jednom retku (overlay)',
         bar_size: 'Veličina trake',
+        color_mode: 'Način boje',
         center_zero: 'Nula u sredini',
         center_zero_value: 'Vrijednost sredine',
         center_zero_growth_percent: 'Postotak rasta',
@@ -2422,6 +2508,11 @@ const TRANSLATIONS = {
           pm25: 'PM2.5',
           temperature: 'Temperatura',
           voc: 'VOC'
+        },
+        color_mode: {
+          auto: 'Automatski',
+          segment: 'Segmenti',
+          rainbow: 'Duga'
         }
       }
     }
@@ -2474,6 +2565,7 @@ const TRANSLATIONS = {
         bar_position: 'Sáv pozíciója',
         bar_single_line: 'Egy soros információ (overlay)',
         bar_size: 'Sáv mérete',
+        color_mode: 'Szín mód',
         center_zero: 'Nulla középen',
         center_zero_value: 'Középérték',
         center_zero_growth_percent: 'Növekedési százalék',
@@ -2543,6 +2635,11 @@ const TRANSLATIONS = {
         layout: {
           horizontal: 'Vízszintes (alapértelmezett)',
           vertical: 'Függőleges'
+        },
+        color_mode: {
+          auto: 'Automatikus',
+          segment: 'Szegmens',
+          rainbow: 'Szivárvány'
         }
       }
     }
@@ -2595,6 +2692,7 @@ const TRANSLATIONS = {
         bar_position: 'Posisi bar',
         bar_single_line: 'Info dalam satu baris (overlay)',
         bar_size: 'Ukuran bar',
+        color_mode: 'Mode warna',
         center_zero: 'Nol di tengah',
         center_zero_value: 'Nilai tengah',
         center_zero_growth_percent: 'Persentase pertumbuhan',
@@ -2664,6 +2762,11 @@ const TRANSLATIONS = {
           pm25: 'PM2.5',
           temperature: 'Suhu',
           voc: 'VOC'
+        },
+        color_mode: {
+          auto: 'Otomatis',
+          segment: 'Segmen',
+          rainbow: 'Pelangi'
         }
       }
     }
@@ -2716,6 +2819,7 @@ const TRANSLATIONS = {
         bar_position: 'Posizione della barra',
         bar_single_line: 'Info su una riga (overlay)',
         bar_size: 'Dimensione della barra',
+        color_mode: 'Modalità colore',
         center_zero: 'Zero al centro',
         center_zero_value: 'Valore centrale',
         center_zero_growth_percent: 'Percentuale di crescita',
@@ -2785,6 +2889,11 @@ const TRANSLATIONS = {
           pm25: 'PM2.5',
           temperature: 'Temperatura',
           voc: 'VOC'
+        },
+        color_mode: {
+          auto: 'Automatico',
+          segment: 'Segmenti',
+          rainbow: 'Arcobaleno'
         }
       }
     }
@@ -2837,6 +2946,7 @@ const TRANSLATIONS = {
         bar_position: 'バーの位置',
         bar_single_line: '1行で情報を表示（オーバーレイ）',
         bar_size: 'バーサイズ',
+        color_mode: 'カラーモード',
         center_zero: 'ゼロを中央に',
         center_zero_value: '中心値',
         center_zero_growth_percent: '成長率',
@@ -2906,6 +3016,11 @@ const TRANSLATIONS = {
           pm25: 'PM2.5',
           temperature: '温度',
           voc: 'VOC'
+        },
+        color_mode: {
+          auto: '自動',
+          segment: 'セグメント',
+          rainbow: 'レインボー'
         }
       }
     }
@@ -2958,6 +3073,7 @@ const TRANSLATIONS = {
         bar_position: '바 위치',
         bar_single_line: '한 줄로 정보 표시 (오버레이)',
         bar_size: '바 크기',
+        color_mode: '색상 모드',
         center_zero: '중앙에 영점',
         center_zero_value: '중앙값',
         center_zero_growth_percent: '성장률',
@@ -3027,6 +3143,11 @@ const TRANSLATIONS = {
           pm25: 'PM2.5',
           temperature: '온도',
           voc: 'VOC'
+        },
+        color_mode: {
+          auto: '자동',
+          segment: '세그먼트',
+          rainbow: '무지개'
         }
       }
     }
@@ -3079,6 +3200,7 @@ const TRANSLATIONS = {
         bar_position: 'Juostos pozicija',
         bar_single_line: 'Informacija vienoje eilutėje (overlay)',
         bar_size: 'Juostos dydis',
+        color_mode: 'Spalvos režimas',
         center_zero: 'Nulis centre',
         center_zero_value: 'Centro reikšmė',
         center_zero_growth_percent: 'Augimo procentas',
@@ -3148,6 +3270,11 @@ const TRANSLATIONS = {
         layout: {
           horizontal: 'Horizontalus (numatyta)',
           vertical: 'Vertikalus'
+        },
+        color_mode: {
+          auto: 'Automatinis',
+          segment: 'Segmentai',
+          rainbow: 'Vaivorykštė'
         }
       }
     }
@@ -3200,6 +3327,7 @@ const TRANSLATIONS = {
         bar_position: 'Joslas pozīcija',
         bar_single_line: 'Informācija vienā rindā (overlay)',
         bar_size: 'Joslas izmērs',
+        color_mode: 'Krāsas režīms',
         center_zero: 'Nulles centrā',
         center_zero_value: 'Centra vērtība',
         center_zero_growth_percent: 'Pieauguma procents',
@@ -3269,6 +3397,11 @@ const TRANSLATIONS = {
         layout: {
           horizontal: 'Horizontāls (noklusēts)',
           vertical: 'Vertikāls'
+        },
+        color_mode: {
+          auto: 'Automātisks',
+          segment: 'Segmenti',
+          rainbow: 'Varavīksne'
         }
       }
     }
@@ -3321,6 +3454,7 @@ const TRANSLATIONS = {
         bar_position: 'Позиција на лентата',
         bar_single_line: 'Инфо во еден ред (overlay)',
         bar_size: 'Големина на лента',
+        color_mode: 'Режим на боја',
         center_zero: 'Нула во центарот',
         center_zero_value: 'Централна вредност',
         center_zero_growth_percent: 'Процент на растеж',
@@ -3390,6 +3524,11 @@ const TRANSLATIONS = {
           pm25: 'PM2.5',
           temperature: 'Температура',
           voc: 'VOC'
+        },
+        color_mode: {
+          auto: 'Автоматски',
+          segment: 'Сегменти',
+          rainbow: 'Виножито'
         }
       }
     }
@@ -3442,6 +3581,7 @@ const TRANSLATIONS = {
         bar_position: 'Posisjon for baren',
         bar_single_line: 'Info på én linje (overlay)',
         bar_size: 'Bar størrelse',
+        color_mode: 'Fargemodus',
         center_zero: 'Null i midten',
         center_zero_value: 'Senterverdi',
         center_zero_growth_percent: 'Vekstprosent',
@@ -3511,6 +3651,11 @@ const TRANSLATIONS = {
           pm25: 'PM2.5',
           temperature: 'Temperatur',
           voc: 'VOC'
+        },
+        color_mode: {
+          auto: 'Auto',
+          segment: 'Segmenter',
+          rainbow: 'Regnbue'
         }
       }
     }
@@ -3563,6 +3708,7 @@ const TRANSLATIONS = {
         bar_position: 'Positie van de balk',
         bar_single_line: 'Info op één regel (overlay)',
         bar_size: 'Balkgrootte',
+        color_mode: 'Kleurmodus',
         center_zero: 'Nul in het midden',
         center_zero_value: 'Centrumwaarde',
         center_zero_growth_percent: 'Groeipercentage',
@@ -3632,6 +3778,11 @@ const TRANSLATIONS = {
           pm25: 'PM2.5',
           temperature: 'Temperatuur',
           voc: 'VOC'
+        },
+        color_mode: {
+          auto: 'Automatisch',
+          segment: 'Segmenten',
+          rainbow: 'Regenboog'
         }
       }
     }
@@ -3684,6 +3835,7 @@ const TRANSLATIONS = {
         bar_position: 'Pozycja paska',
         bar_single_line: 'Info w jednej linii (overlay)',
         bar_size: 'Rozmiar paska',
+        color_mode: 'Tryb koloru',
         center_zero: 'Zero na środku',
         center_zero_value: 'Wartość środkowa',
         center_zero_growth_percent: 'Procent wzrostu',
@@ -3753,6 +3905,11 @@ const TRANSLATIONS = {
           pm25: 'PM2.5',
           temperature: 'Temperatura',
           voc: 'VOC'
+        },
+        color_mode: {
+          auto: 'Automatycznie',
+          segment: 'Segmenty',
+          rainbow: 'Tęcza'
         }
       }
     }
@@ -3805,7 +3962,8 @@ const TRANSLATIONS = {
         bar_position: 'Posição da barra',
         bar_single_line: 'Informações em uma linha (overlay)',
         bar_size: 'Tamanho da barra',
-        center_zero: 'Zero no centro',
+        color_mode: 'Modo de cor',
+        center_zero: 'Zero ao centro',
         center_zero_value: 'Valor central',
         center_zero_growth_percent: 'Percentual de crescimento',
         color: 'Cor do ícone',
@@ -3874,6 +4032,11 @@ const TRANSLATIONS = {
         layout: {
           horizontal: 'Horizontal (padrão)',
           vertical: 'Vertical'
+        },
+        color_mode: {
+          auto: 'Auto',
+          segment: 'Segmentos',
+          rainbow: 'Arco-Íris'
         }
       }
     }
@@ -3926,7 +4089,8 @@ const TRANSLATIONS = {
         bar_position: 'Posição da barra',
         bar_single_line: 'Info numa só linha (overlay)',
         bar_size: 'Tamanho da barra',
-        center_zero: 'Zero ao centro',
+        color_mode: 'Modo de cor',
+        center_zero: 'Zero no centro',
         center_zero_value: 'Valor central',
         center_zero_growth_percent: 'Percentagem de crescimento',
         color: 'Cor primária',
@@ -3995,6 +4159,11 @@ const TRANSLATIONS = {
           pm25: 'PM2.5',
           temperature: 'Temperatura',
           voc: 'VOC'
+        },
+        color_mode: {
+          auto: 'Auto',
+          segment: 'Segmentos',
+          rainbow: 'Arco-Íris'
         }
       }
     }
@@ -4047,6 +4216,7 @@ const TRANSLATIONS = {
         bar_position: 'Poziția barei',
         bar_single_line: 'Info pe un singur rând (overlay)',
         bar_size: 'Dimensiunea barei',
+        color_mode: 'Mod culoare',
         center_zero: 'Zero la centru',
         center_zero_value: 'Valoare centrală',
         center_zero_growth_percent: 'Procent de creștere',
@@ -4116,6 +4286,11 @@ const TRANSLATIONS = {
           pm25: 'PM2.5',
           temperature: 'Temperatură',
           voc: 'VOC'
+        },
+        color_mode: {
+          auto: 'Automat',
+          segment: 'Segmente',
+          rainbow: 'Curcubeu'
         }
       }
     }
@@ -4168,6 +4343,7 @@ const TRANSLATIONS = {
         bar_position: 'Положение полосы',
         bar_single_line: 'Информация в одну строку (overlay)',
         bar_size: 'Размер полосы',
+        color_mode: 'Режим цвета',
         center_zero: 'Ноль по центру',
         center_zero_value: 'Центральное значение',
         center_zero_growth_percent: 'Процент роста',
@@ -4237,6 +4413,11 @@ const TRANSLATIONS = {
           pm25: 'PM2.5',
           temperature: 'Температура',
           voc: 'ЛОС'
+        },
+        color_mode: {
+          auto: 'Авто',
+          segment: 'Сегменты',
+          rainbow: 'Радуга'
         }
       }
     }
@@ -4289,6 +4470,7 @@ const TRANSLATIONS = {
         bar_position: 'Pozícia lišty',
         bar_single_line: 'Informácie na jednej línii (overlay)',
         bar_size: 'Veľkosť lišty',
+        color_mode: 'Farebný režim',
         center_zero: 'Nula v strede',
         center_zero_value: 'Hodnota stredu',
         center_zero_growth_percent: 'Percento rastu',
@@ -4358,6 +4540,11 @@ const TRANSLATIONS = {
         layout: {
           horizontal: 'Horizontálne (predvolené)',
           vertical: 'Vertikálne'
+        },
+        color_mode: {
+          auto: 'Automaticky',
+          segment: 'Segmenty',
+          rainbow: 'Dúha'
         }
       }
     }
@@ -4410,6 +4597,7 @@ const TRANSLATIONS = {
         bar_position: 'Pozicija vrstice',
         bar_single_line: 'Informacije v eni vrstici (overlay)',
         bar_size: 'Velikost vrstice',
+        color_mode: 'Barvni način',
         center_zero: 'Ni ničle na sredini',
         center_zero_value: 'Srednja vrednost',
         center_zero_growth_percent: 'Odstotek rasti',
@@ -4479,6 +4667,11 @@ const TRANSLATIONS = {
         layout: {
           horizontal: 'Horizontalno (privzeto)',
           vertical: 'Vertikalno'
+        },
+        color_mode: {
+          auto: 'Samodejno',
+          segment: 'Segmenti',
+          rainbow: 'Mavrica'
         }
       }
     }
@@ -4531,6 +4724,7 @@ const TRANSLATIONS = {
         bar_position: 'Position för baren',
         bar_single_line: 'Info på en rad (overlay)',
         bar_size: 'Barstorlek',
+        color_mode: 'Färgläge',
         center_zero: 'Noll i mitten',
         center_zero_value: 'Centervärde',
         center_zero_growth_percent: 'Tillväxtprocent',
@@ -4600,6 +4794,11 @@ const TRANSLATIONS = {
           pm25: 'PM2.5',
           temperature: 'Temperatur',
           voc: 'VOC'
+        },
+        color_mode: {
+          auto: 'Auto',
+          segment: 'Segment',
+          rainbow: 'Regnbåge'
         }
       }
     }
@@ -4652,7 +4851,8 @@ const TRANSLATIONS = {
         bar_position: '',
         bar_single_line: '',
         bar_size: '',
-        center_zero: '',
+        color_mode: 'Färgläge',
+        center_zero: 'ศูนย์ที่กึ่งกลาง',
         center_zero_value: '',
         center_zero_growth_percent: '',
         color: '',
@@ -4721,6 +4921,11 @@ const TRANSLATIONS = {
         layout: {
           horizontal: '',
           vertical: ''
+        },
+        color_mode: {
+          auto: 'Auto',
+          segment: 'Segment',
+          rainbow: 'Regnbåge'
         }
       }
     }
@@ -4773,7 +4978,8 @@ const TRANSLATIONS = {
         bar_position: 'ตำแหน่งแถบ',
         bar_single_line: 'ข้อมูลในบรรทัดเดียว (overlay)',
         bar_size: 'ขนาดแถบ',
-        center_zero: 'ศูนย์ที่กึ่งกลาง',
+        color_mode: 'โหมดสี',
+        center_zero: 'Sıfırı ortala',
         center_zero_value: 'ค่ากึ่งกลาง',
         center_zero_growth_percent: 'เปอร์เซ็นต์การเติบโต',
         color: 'สีหลัก',
@@ -4842,6 +5048,11 @@ const TRANSLATIONS = {
           pm25: 'PM2.5',
           temperature: 'อุณหภูมิ',
           voc: 'VOC'
+        },
+        color_mode: {
+          auto: 'อัตโนมัติ',
+          segment: 'ส่วน',
+          rainbow: 'สีรุ้ง'
         }
       }
     }
@@ -4894,7 +5105,8 @@ const TRANSLATIONS = {
         bar_position: 'Çubuk konumu',
         bar_single_line: 'Bilgiyi tek satırda göster (overlay)',
         bar_size: 'Çubuk boyutu',
-        center_zero: 'Sıfırı ortala',
+        color_mode: 'Renk modu',
+        center_zero: 'Нуль по центру',
         center_zero_value: 'Merkez değeri',
         center_zero_growth_percent: 'Büyüme yüzdesi',
         color: 'Birincil renk',
@@ -4963,6 +5175,11 @@ const TRANSLATIONS = {
           pm25: 'PM2.5',
           temperature: 'Sıcaklık',
           voc: 'VOC'
+        },
+        color_mode: {
+          auto: 'Otomatik',
+          segment: 'Bölümler',
+          rainbow: 'Gökkuşağı'
         }
       }
     }
@@ -5015,7 +5232,8 @@ const TRANSLATIONS = {
         bar_position: 'Положення панелі',
         bar_single_line: 'Інформація в один рядок (overlay)',
         bar_size: 'Розмір панелі',
-        center_zero: 'Нуль по центру',
+        color_mode: 'Режим кольору',
+        center_zero: 'Không ở giữa',
         center_zero_value: 'Центральне значення',
         center_zero_growth_percent: 'Відсоток зростання',
         color: 'Основний колір',
@@ -5084,6 +5302,11 @@ const TRANSLATIONS = {
           pm25: 'PM2.5',
           temperature: 'Температура',
           voc: 'VOC'
+        },
+        color_mode: {
+          auto: 'Авто',
+          segment: 'Сегменти',
+          rainbow: 'Веселка'
         }
       }
     }
@@ -5136,7 +5359,8 @@ const TRANSLATIONS = {
         bar_position: 'Vị trí thanh',
         bar_single_line: 'Thông tin trên một dòng (overlay)',
         bar_size: 'Kích thước thanh',
-        center_zero: 'Không ở giữa',
+        color_mode: 'Chế độ màu',
+        center_zero: '零点居中',
         center_zero_value: 'Giá trị tâm',
         center_zero_growth_percent: 'Tỷ lệ tăng trưởng',
         color: 'Màu chính',
@@ -5205,6 +5429,11 @@ const TRANSLATIONS = {
           pm25: 'PM2.5',
           temperature: 'Nhiệt độ',
           voc: 'VOC'
+        },
+        color_mode: {
+          auto: 'Tự động',
+          segment: 'Phân đoạn',
+          rainbow: 'Cầu vồng'
         }
       }
     }
@@ -5257,7 +5486,8 @@ const TRANSLATIONS = {
         bar_position: '进度条位置',
         bar_single_line: '单行信息（覆盖显示）',
         bar_size: '进度条大小',
-        center_zero: '零点居中',
+        color_mode: '颜色模式',
+        center_zero: '中心為零',
         center_zero_value: '中心值',
         center_zero_growth_percent: '增长百分比',
         color: '主色',
@@ -5326,6 +5556,11 @@ const TRANSLATIONS = {
         layout: {
           horizontal: '水平（默认）',
           vertical: '垂直'
+        },
+        color_mode: {
+          auto: '自动',
+          segment: '分段',
+          rainbow: '彩虹'
         }
       }
     }
@@ -5378,7 +5613,7 @@ const TRANSLATIONS = {
         bar_position: '進度條位置',
         bar_single_line: '單行資訊（疊加）',
         bar_size: '進度條大小',
-        center_zero: '中心為零',
+        color_mode: '顏色模式',
         center_zero_value: '中心值',
         center_zero_growth_percent: '增長百分比',
         color: '圖示顏色',
@@ -5447,6 +5682,11 @@ const TRANSLATIONS = {
         layout: {
           horizontal: '水平（預設）',
           vertical: '垂直'
+        },
+        color_mode: {
+          auto: '自動',
+          segment: '分段',
+          rainbow: '彩虹'
         }
       }
     }
@@ -7704,6 +7944,51 @@ class ThemeManager {
   static adaptColor(curColor) {
     return HA_CONTEXT.haColors.get(curColor) ?? curColor;
   }
+
+  buildGradient(fillPercent, mode) {
+    if (!this.#isValid || !this.#currentStyle || mode === 'auto') return null;
+    if (!(fillPercent > 0)) return null;
+
+    // For linear themes, derive min/max boundaries by splitting 0–100% equally.
+    const style = this.#isLinear
+      ? this.#currentStyle.map((level, i, arr) => ({
+          ...level,
+          min: (i / arr.length) * 100,
+          max: ((i + 1) / arr.length) * 100,
+        }))
+      : this.#currentStyle;
+
+    const visible = style.filter((level) => level.min < fillPercent);
+    if (visible.length === 0) return null;
+
+    // Inner element uses translateX((value-1)*100%), shifted left by (100-fillPercent)%.
+    // A zone boundary at container position B → element position B + offset.
+    const offset = 100 - fillPercent;
+    const toElemPos = (b) => `${(b + offset).toFixed(2)}%`;
+    const col = (level) => ThemeManager.adaptColor(level.bar_color || level.color);
+
+    if (mode === 'segment') {
+      const stops = visible.flatMap((level, i) => {
+        const start = i === 0 ? '0%' : toElemPos(level.min);
+        const end = level.max >= fillPercent ? '100%' : toElemPos(level.max);
+        return [`${col(level)} ${start}`, `${col(level)} ${end}`];
+      });
+      return `linear-gradient(to right, ${stops.join(', ')})`;
+    }
+
+    if (mode === 'rainbow') {
+      const first = col(visible[0]);
+      const stops = [`${first} 0%`];
+      if (offset > 0) stops.push(`${first} ${offset.toFixed(2)}%`);
+      visible.forEach((level, i) => {
+        if (i > 0) stops.push(`${col(level)} ${toElemPos(level.min)}`);
+      });
+      stops.push(`${col(visible[visible.length - 1])} 100%`);
+      return `linear-gradient(to right, ${stops.join(', ')})`;
+    }
+
+    return null;
+  }
 }
 
 /******************************************************************************************
@@ -9091,6 +9376,7 @@ class YamlSchemaFactory {
           'small',
         ), //[('small', 'medium', 'large', 'xlarge')]
         bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
+        color_mode: types.enumsWithDefault(['auto', 'segment', 'rainbow'], 'auto'),
         bar_effect: types.jinjaOrArrayWithValidatedElem(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
         bar_position: types.enumsWithDefault(['default', 'top', 'bottom'], 'default'),
         center_zero: types.optionalWithDefault(
@@ -9139,6 +9425,7 @@ class YamlSchemaFactory {
           'small',
         ), //[('small', 'medium', 'large', 'xlarge')]
         bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
+        color_mode: types.enumsWithDefault(['auto', 'segment', 'rainbow'], 'auto'),
         bar_effect: types.jinjaOrArrayWithValidatedElem(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
         bar_position: types.enumsWithDefault(['default', 'below', 'top', 'bottom', 'overlay', 'background'], 'default'),
         bar_single_line: types.optionalBooleanWithDefault(false),
@@ -9876,6 +10163,10 @@ class ViewBase extends ViewCore {
       this._currentValue.defaultColor ||
       CARD.style.color.default;
     return this.hasEntityCollection ? this.#entityCollection.getEntitiesColor(curColor) : curColor;
+  }
+  get colorGradient() {
+    if (!this.isAvailable || this.#percentHelper.isCenterZero) return null;
+    return this.#theme.buildGradient(this.#percentHelper.percent, this._configHelper.config.color_mode);
   }
   get percent() {
     if (!this.isAvailable) return 0;
@@ -10882,10 +11173,11 @@ class HACore extends HTMLElement {
     throw new Error(`${this.constructor.name} must implement _updateCSS()`);
   }
 
-  _applyProgressCSS(progressValue, { barColor = null, iconColor = null } = {}) {
+  _applyProgressCSS(progressValue, { barColor = null, iconColor = null, gradient = null } = {}) {
     const cardKey = CARD.htmlStructure.card.element;
 
-    if (barColor !== null) this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.color.var, barColor);
+    const fillColor = gradient ?? barColor;
+    if (fillColor !== null) this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.color.var, fillColor);
     if (iconColor !== null) this._dom.setStyle(cardKey, CARD.style.dynamic.iconAndShape.color.var, iconColor);
 
     if (progressValue !== null) {
@@ -11655,6 +11947,7 @@ class EntityProgressCardBase extends HABase {
     this._applyProgressCSS(progressValue, {
       barColor: bar.barColor,
       iconColor: bar.iconColor,
+      gradient: bar.colorGradient,
     });
     this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null);
   }
@@ -11855,6 +12148,7 @@ class EntityProgressFeatures extends HACore {
     const progressValue = bar.percent / 100;
     this._applyProgressCSS(progressValue, {
       barColor: bar.barColor,
+      gradient: bar.colorGradient,
     });
     this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null);
   }
@@ -12386,6 +12680,7 @@ class EditorBase extends HTMLElement {
       bar_size: () => buildSelect(options.bar_size),
       bar_orientation: () => buildSelect(options.bar_orientation),
       bar_position: () => buildSelect(options.bar_position),
+      color_mode: () => buildSelect(options.color_mode),
       theme: () => buildSelect(options.theme),
       layout: () => buildBoxSelect(options.layout, tileImage),
     };
@@ -12627,6 +12922,11 @@ const EditorFactory = {
     icon: HA_CONTEXT.icons.listBox,
     fields: {
       ...(template ? {} : { theme: EditorFieldsType.select('theme') }),
+      ...(template ? {} : {
+        color_mode: EditorFieldsType.select('color_mode', {
+          showIf: (c) => !is.nullish(c.theme) || (Array.isArray(c.custom_theme) && c.custom_theme.length > 0),
+        }),
+      }),
       icon: EditorFieldsType.templateOrType('icon', template, 'icon', template ? {} : { width: availableSpace() }),
       color: EditorFieldsType.templateOrType('color', template, 'color', {
         showIf: (c) => is.nullish(c.theme),

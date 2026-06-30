@@ -73,6 +73,34 @@ card_mod:
     }
 ```
 
+#### 🎨 `color_mode` — Segmented & Rainbow bar coloring
+
+A new `color_mode` option gives you control over how theme colors are rendered
+on the progress bar fill. Three modes are available:
+
+- **`auto`** — the existing behavior: the bar displays the solid color of the
+  current theme zone. No visual change for existing configurations.
+- **`segment`** — each color zone defined by the active theme is rendered as a
+  distinct colored block, visible up to the current entity value. At a glance
+  you can see where the entity stands relative to each zone boundary.
+- **`rainbow`** — a smooth gradient flows across all visible zone colors,
+  transitioning between each zone's color at the correct threshold.
+
+Works with both predefined themes (`optimal_when_high`, `optimal_when_low`, …)
+and custom themes defined as arrays. Linear themes (e.g. `light`) are also
+supported — zone boundaries are derived automatically by splitting 0–100% into
+equal segments based on the number of levels.
+
+Available in the **visual editor** (card, badge, tile feature) — the field
+appears automatically when a theme or custom theme is configured.
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.battery_level
+theme: optimal_when_high
+color_mode: segment   # or rainbow
+```
+
 ### 🚀 New Features
 
 #### 🎯Configurable `center_zero`
