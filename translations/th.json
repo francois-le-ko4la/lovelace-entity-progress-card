@@ -40,13 +40,13 @@
       "badge_color": "สีของป้าย",
       "badge_icon": "ไอคอนของป้าย",
       "bar_color": "สีแถบ",
-      "bar_effect": "เอฟเฟกต์บนแถบ",
       "bar_effect_jinja": "เอฟเฟกต์บนแถบ (โหมด Jinja)",
       "bar_orientation": "การวางแนวแถบ",
       "bar_position": "ตำแหน่งแถบ",
       "bar_single_line": "ข้อมูลในบรรทัดเดียว (overlay)",
       "bar_size": "ขนาดแถบ",
-      "center_zero": "ศูนย์ที่กึ่งกลาง",
+      "color_mode": "โหมดสี",
+      "center_zero": "Sıfırı ortala",
       "center_zero_value": "ค่ากึ่งกลาง",
       "center_zero_growth_percent": "เปอร์เซ็นต์การเติบโต",
       "color": "สีหลัก",
@@ -55,7 +55,6 @@
       "double_tap_action": "พฤติกรรมการแตะสองครั้ง",
       "entity": "เอนทิตี",
       "force_circular_background": "บังคับพื้นหลังวงกลม",
-      "hide": "ซ่อน",
       "hide_jinja": "ซ่อน (โหมด Jinja)",
       "hold_action": "พฤติกรรมการกด",
       "icon": "ไอคอน",
@@ -65,7 +64,6 @@
       "layout": "รูปแบบเนื้อหา",
       "max_value": "ค่าสูงสุด",
       "max_value_attribute": "แอตทริบิวต์ (max_value)",
-      "max_value_entity": "ค่าสูงสุด",
       "min_value": "ค่าต่ำสุด",
       "name": "ชื่อ",
       "percent": "เปอร์เซ็นต์",
@@ -75,13 +73,19 @@
       "tap_action": "พฤติกรรมการแตะ",
       "text_shadow": "เพิ่มเงาให้ข้อความ (overlay)",
       "theme": "ธีม",
-      "toggle_icon": "แสดงไอคอน",
-      "toggle_name": "แสดงชื่อ",
-      "toggle_progress_bar": "แสดงแถบความคืบหน้า",
-      "toggle_secondary_info": "แสดงข้อมูลรอง",
-      "toggle_value": "แสดงค่า",
       "unit": "หน่วย",
-      "use_max_entity": "ใช้เอนทิตีสำหรับค่าสูงสุด"
+      "use_max_entity": "ใช้เอนทิตีสำหรับค่าสูงสุด",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "ข้อมูลรองที่กำหนดเอง",
+      "interpolate": "การสอดแทรกสี",
+      "name_info": "ข้อมูลชื่อที่กำหนดเอง",
+      "reverse": "กลับเวลานับถอยหลัง"
     },
     "option": {
       "bar_orientation": {
@@ -115,6 +119,60 @@
         "pm25": "PM2.5",
         "temperature": "อุณหภูมิ",
         "voc": "VOC"
+      },
+      "color_mode": {
+        "auto": "อัตโนมัติ",
+        "segment": "ส่วน",
+        "rainbow": "สีรุ้ง"
+      },
+      "bar_effect": {
+        "radius": "มุมโค้งมน",
+        "glass": "กระจก",
+        "gradient": "ไล่สี",
+        "gradient_reverse": "ไล่สีย้อน",
+        "shimmer": "แวววาว",
+        "shimmer_reverse": "แวววาวย้อน"
+      },
+      "hide": {
+        "icon": "ไอคอน",
+        "name": "ชื่อ",
+        "value": "ค่า",
+        "secondary_info": "ข้อมูล",
+        "progress_bar": "แถบ"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

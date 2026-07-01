@@ -40,12 +40,12 @@
       "badge_color": "Kleur van badge",
       "badge_icon": "Pictogram van badge",
       "bar_color": "Kleur voor de balk",
-      "bar_effect": "Effect op de balk",
       "bar_effect_jinja": "Effect op de balk (Jinja-modus)",
       "bar_orientation": "Oriëntatie van de balk",
       "bar_position": "Positie van de balk",
       "bar_single_line": "Info op één regel (overlay)",
       "bar_size": "Balkgrootte",
+      "color_mode": "Kleurmodus",
       "center_zero": "Nul in het midden",
       "center_zero_value": "Centrumwaarde",
       "center_zero_growth_percent": "Groeipercentage",
@@ -55,7 +55,6 @@
       "double_tap_action": "Actie bij dubbel tikken",
       "entity": "Entiteit",
       "force_circular_background": "Geforceerde cirkelvormige achtergrond",
-      "hide": "Verbergen",
       "hide_jinja": "Verbergen (Jinja-modus)",
       "hold_action": "Actie bij lang ingedrukt houden",
       "icon": "Pictogram",
@@ -65,7 +64,6 @@
       "layout": "Inhoudsindeling",
       "max_value": "Maximale waarde",
       "max_value_attribute": "Attribuut (max_value)",
-      "max_value_entity": "Maximale waarde",
       "min_value": "Minimale waarde",
       "name": "Naam",
       "percent": "Percentage",
@@ -75,13 +73,19 @@
       "tap_action": "Actie bij korte tik",
       "text_shadow": "Tekstschaduw toevoegen (overlay)",
       "theme": "Thema",
-      "toggle_icon": "Pictogram weergeven",
-      "toggle_name": "Naam weergeven",
-      "toggle_progress_bar": "Voortgangsbalk weergeven",
-      "toggle_secondary_info": "Secundaire informatie weergeven",
-      "toggle_value": "Waarde weergeven",
       "unit": "Eenheid",
-      "use_max_entity": "Entiteit gebruiken voor maximale waarde"
+      "use_max_entity": "Entiteit gebruiken voor maximale waarde",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "Aangepaste secundaire info",
+      "interpolate": "Kleuren interpoleren",
+      "name_info": "Aangepaste naaminfo",
+      "reverse": "Timer omdraaien"
     },
     "option": {
       "bar_orientation": {
@@ -115,6 +119,60 @@
         "pm25": "PM2.5",
         "temperature": "Temperatuur",
         "voc": "VOC"
+      },
+      "color_mode": {
+        "auto": "Automatisch",
+        "segment": "Segmenten",
+        "rainbow": "Regenboog"
+      },
+      "bar_effect": {
+        "radius": "Afgeronde hoeken",
+        "glass": "Glas",
+        "gradient": "Verloop",
+        "gradient_reverse": "Omgekeerd verloop",
+        "shimmer": "Glinstering",
+        "shimmer_reverse": "Omgekeerde glinstering"
+      },
+      "hide": {
+        "icon": "Pictogram",
+        "name": "Naam",
+        "value": "Waarde",
+        "secondary_info": "Info",
+        "progress_bar": "Balk"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

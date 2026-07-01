@@ -40,12 +40,12 @@
       "badge_color": "Farge på merke",
       "badge_icon": "Ikon for merke",
       "bar_color": "Farge for baren",
-      "bar_effect": "Effekt på baren",
       "bar_effect_jinja": "Effekt på baren (Jinja-modus)",
       "bar_orientation": "Orientering av baren",
       "bar_position": "Posisjon for baren",
       "bar_single_line": "Info på én linje (overlay)",
       "bar_size": "Bar størrelse",
+      "color_mode": "Fargemodus",
       "center_zero": "Null i midten",
       "center_zero_value": "Senterverdi",
       "center_zero_growth_percent": "Vekstprosent",
@@ -55,7 +55,6 @@
       "double_tap_action": "Handling ved dobbelt trykk",
       "entity": "Enhet",
       "force_circular_background": "Tving sirkulær bakgrunn",
-      "hide": "Skjul",
       "hide_jinja": "Skjul (Jinja-modus)",
       "hold_action": "Handling ved langt trykk",
       "icon": "Ikon",
@@ -65,7 +64,6 @@
       "layout": "Innholdslayout",
       "max_value": "Maksimal verdi",
       "max_value_attribute": "Attributt (max_value)",
-      "max_value_entity": "Maksimal verdi",
       "min_value": "Minste verdi",
       "name": "Navn",
       "percent": "Prosent",
@@ -75,13 +73,19 @@
       "tap_action": "Handling ved kort trykk",
       "text_shadow": "Legg til tekstskygge (overlay)",
       "theme": "Tema",
-      "toggle_icon": "Vis ikon",
-      "toggle_name": "Vis navn",
-      "toggle_progress_bar": "Vis fremdriftsbar",
-      "toggle_secondary_info": "Vis sekundær informasjon",
-      "toggle_value": "Vis verdi",
       "unit": "Enhet",
-      "use_max_entity": "Bruk enhet for maksimalverdi"
+      "use_max_entity": "Bruk enhet for maksimalverdi",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "Egendefinert sekundær info",
+      "interpolate": "Interpoler farger",
+      "name_info": "Egendefinert navneinfo",
+      "reverse": "Omvendt tidtaker"
     },
     "option": {
       "bar_orientation": {
@@ -115,6 +119,60 @@
         "pm25": "PM2.5",
         "temperature": "Temperatur",
         "voc": "VOC"
+      },
+      "color_mode": {
+        "auto": "Auto",
+        "segment": "Segmenter",
+        "rainbow": "Regnbue"
+      },
+      "bar_effect": {
+        "radius": "Avrundede hjørner",
+        "glass": "Glass",
+        "gradient": "Gradient",
+        "gradient_reverse": "Omvendt gradient",
+        "shimmer": "Glans",
+        "shimmer_reverse": "Omvendt glans"
+      },
+      "hide": {
+        "icon": "Ikon",
+        "name": "Navn",
+        "value": "Verdi",
+        "secondary_info": "Info",
+        "progress_bar": "Stolpe"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

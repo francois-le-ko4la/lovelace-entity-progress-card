@@ -40,12 +40,12 @@
       "badge_color": "Culoare insignă",
       "badge_icon": "Pictogramă insignă",
       "bar_color": "Culoare bară",
-      "bar_effect": "Efect pe bară",
       "bar_effect_jinja": "Efect pe bară (mod Jinja)",
       "bar_orientation": "Orientarea barei",
       "bar_position": "Poziția barei",
       "bar_single_line": "Info pe un singur rând (overlay)",
       "bar_size": "Dimensiunea barei",
+      "color_mode": "Mod culoare",
       "center_zero": "Zero la centru",
       "center_zero_value": "Valoare centrală",
       "center_zero_growth_percent": "Procent de creștere",
@@ -55,7 +55,6 @@
       "double_tap_action": "Acțiune la apăsare dublă",
       "entity": "Entitate",
       "force_circular_background": "Forțează fundal circular",
-      "hide": "Ascunde",
       "hide_jinja": "Ascunde (mod Jinja)",
       "hold_action": "Acțiune la apăsare lungă",
       "icon": "Pictogramă",
@@ -65,7 +64,6 @@
       "layout": "Aspect conținut",
       "max_value": "Valoare maximă",
       "max_value_attribute": "Atribut (max_value)",
-      "max_value_entity": "Valoare maximă",
       "min_value": "Valoare minimă",
       "name": "Nume",
       "percent": "Procent",
@@ -75,13 +73,19 @@
       "tap_action": "Acțiune la apăsare scurtă",
       "text_shadow": "Adaugă umbră textului (overlay)",
       "theme": "Temă",
-      "toggle_icon": "Afișează pictograma",
-      "toggle_name": "Afișează numele",
-      "toggle_progress_bar": "Afișează bara de progres",
-      "toggle_secondary_info": "Afișează informația secundară",
-      "toggle_value": "Afișează valoarea",
       "unit": "Unitate",
-      "use_max_entity": "Folosește entitate pentru valoarea maximă"
+      "use_max_entity": "Folosește entitate pentru valoarea maximă",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "Info secundară personalizată",
+      "interpolate": "Interpolare culori",
+      "name_info": "Info nume personalizată",
+      "reverse": "Cronometru inverso"
     },
     "option": {
       "bar_orientation": {
@@ -115,6 +119,60 @@
         "pm25": "PM2.5",
         "temperature": "Temperatură",
         "voc": "VOC"
+      },
+      "color_mode": {
+        "auto": "Automat",
+        "segment": "Segmente",
+        "rainbow": "Curcubeu"
+      },
+      "bar_effect": {
+        "radius": "Colțuri rotunjite",
+        "glass": "Sticlă",
+        "gradient": "Gradient",
+        "gradient_reverse": "Gradient inversat",
+        "shimmer": "Luciu",
+        "shimmer_reverse": "Luciu inversat"
+      },
+      "hide": {
+        "icon": "Pictogramă",
+        "name": "Nume",
+        "value": "Valoare",
+        "secondary_info": "Info",
+        "progress_bar": "Bară"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

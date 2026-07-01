@@ -40,12 +40,12 @@
       "badge_color": "Boja oznake",
       "badge_icon": "Ikona oznake",
       "bar_color": "Boja za traku",
-      "bar_effect": "Efekt na traci",
       "bar_effect_jinja": "Efekt na traci (Jinja način)",
       "bar_orientation": "Orijentacija trake",
       "bar_position": "Položaj trake",
       "bar_single_line": "Informacije u jednom retku (overlay)",
       "bar_size": "Veličina trake",
+      "color_mode": "Način boje",
       "center_zero": "Nula u sredini",
       "center_zero_value": "Vrijednost sredine",
       "center_zero_growth_percent": "Postotak rasta",
@@ -55,7 +55,6 @@
       "double_tap_action": "Radnja na dupli dodir",
       "entity": "Entitet",
       "force_circular_background": "Prisili kružnu pozadinu",
-      "hide": "Sakrij",
       "hide_jinja": "Sakrij (Jinja način)",
       "hold_action": "Radnja na dugi dodir",
       "icon": "Ikona",
@@ -65,7 +64,6 @@
       "layout": "Raspored sadržaja",
       "max_value": "Maksimalna vrijednost",
       "max_value_attribute": "Atribut (max_value)",
-      "max_value_entity": "Maksimalna vrijednost entiteta",
       "min_value": "Minimalna vrijednost",
       "name": "Ime",
       "percent": "Postotak",
@@ -75,13 +73,19 @@
       "tap_action": "Radnja na kratki dodir",
       "text_shadow": "Dodaj sjenu tekstu (overlay)",
       "theme": "Tema",
-      "toggle_icon": "Prikaži ikonu",
-      "toggle_name": "Prikaži ime",
-      "toggle_progress_bar": "Prikaži traku napretka",
-      "toggle_secondary_info": "Prikaži sekundarne informacije",
-      "toggle_value": "Prikaži vrijednost",
       "unit": "Jedinica",
-      "use_max_entity": "Koristi entitet za maksimalnu vrijednost"
+      "use_max_entity": "Koristi entitet za maksimalnu vrijednost",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "Prilagođena sekundarna informacija",
+      "interpolate": "Interpolacija boja",
+      "name_info": "Prilagođena informacija naziva",
+      "reverse": "Obrnuti tajmer"
     },
     "option": {
       "bar_orientation": {
@@ -115,6 +119,60 @@
         "pm25": "PM2.5",
         "temperature": "Temperatura",
         "voc": "VOC"
+      },
+      "color_mode": {
+        "auto": "Automatski",
+        "segment": "Segmenti",
+        "rainbow": "Duga"
+      },
+      "bar_effect": {
+        "radius": "Zaobljeni uglovi",
+        "glass": "Staklo",
+        "gradient": "Prijelaz",
+        "gradient_reverse": "Obrnuti prijelaz",
+        "shimmer": "Sjaj",
+        "shimmer_reverse": "Obrnuti sjaj"
+      },
+      "hide": {
+        "icon": "Ikona",
+        "name": "Ime",
+        "value": "Vrijednost",
+        "secondary_info": "Info",
+        "progress_bar": "Traka"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

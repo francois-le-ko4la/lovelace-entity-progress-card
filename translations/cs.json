@@ -40,12 +40,12 @@
       "badge_color": "Barva odznaku",
       "badge_icon": "Ikona odznaku",
       "bar_color": "Barva lišty",
-      "bar_effect": "Efekt na liště",
       "bar_effect_jinja": "Efekt na liště (režim Jinja)",
       "bar_orientation": "Orientace lišty",
       "bar_position": "Umístění lišty",
       "bar_single_line": "Info v jednom řádku (overlay)",
       "bar_size": "Velikost lišty",
+      "color_mode": "Barevný režim",
       "center_zero": "Nula uprostřed",
       "center_zero_value": "Hodnota středu",
       "center_zero_growth_percent": "Procento růstu",
@@ -55,7 +55,6 @@
       "double_tap_action": "Chování při dvojitém klepnutí",
       "entity": "Entita",
       "force_circular_background": "Vynutit kruhové pozadí",
-      "hide": "Skrýt",
       "hide_jinja": "Skrýt (režim Jinja)",
       "hold_action": "Chování při podržení",
       "icon": "Ikona",
@@ -65,7 +64,6 @@
       "layout": "Rozložení obsahu",
       "max_value": "Maximální hodnota",
       "max_value_attribute": "Atribut (max_value)",
-      "max_value_entity": "Použít entitu pro maximální hodnotu",
       "min_value": "Minimální hodnota",
       "name": "Název",
       "percent": "Procento",
@@ -75,13 +73,19 @@
       "tap_action": "Chování při klepnutí",
       "text_shadow": "Přidat stín textu (overlay)",
       "theme": "Motiv",
-      "toggle_icon": "Zobrazit ikonu",
-      "toggle_name": "Zobrazit název",
-      "toggle_progress_bar": "Zobrazit lištu postupu",
-      "toggle_secondary_info": "Zobrazit sekundární informace",
-      "toggle_value": "Zobrazit hodnotu",
       "unit": "Jednotka",
-      "use_max_entity": "Použít entitu pro max hodnotu"
+      "use_max_entity": "Použít entitu pro max hodnotu",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "Vlastní sekundární info",
+      "interpolate": "Interpolace barev",
+      "name_info": "Vlastní info názvu",
+      "reverse": "Obrátit časovač"
     },
     "option": {
       "theme": {
@@ -115,6 +119,60 @@
       "layout": {
         "horizontal": "Horizontální (výchozí)",
         "vertical": "Vertikální"
+      },
+      "color_mode": {
+        "auto": "Automaticky",
+        "segment": "Segmenty",
+        "rainbow": "Duha"
+      },
+      "bar_effect": {
+        "radius": "Zakulacené rohy",
+        "glass": "Sklo",
+        "gradient": "Přechod",
+        "gradient_reverse": "Přechod obráceně",
+        "shimmer": "Třpyt",
+        "shimmer_reverse": "Třpyt obráceně"
+      },
+      "hide": {
+        "icon": "Ikona",
+        "name": "Název",
+        "value": "Hodnota",
+        "secondary_info": "Info",
+        "progress_bar": "Lišta"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

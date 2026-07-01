@@ -40,13 +40,13 @@
       "badge_color": "徽章颜色",
       "badge_icon": "徽章图标",
       "bar_color": "进度条颜色",
-      "bar_effect": "进度条效果",
       "bar_effect_jinja": "进度条效果 (Jinja 模式)",
       "bar_orientation": "进度条方向",
       "bar_position": "进度条位置",
       "bar_single_line": "单行信息（覆盖显示）",
       "bar_size": "进度条大小",
-      "center_zero": "零点居中",
+      "color_mode": "颜色模式",
+      "center_zero": "中心為零",
       "center_zero_value": "中心值",
       "center_zero_growth_percent": "增长百分比",
       "color": "主色",
@@ -55,7 +55,6 @@
       "double_tap_action": "双击动作",
       "entity": "实体",
       "force_circular_background": "强制圆形背景",
-      "hide": "隐藏",
       "hide_jinja": "隐藏 (Jinja 模式)",
       "hold_action": "长按动作",
       "icon": "图标",
@@ -65,7 +64,6 @@
       "layout": "内容布局",
       "max_value": "最大值",
       "max_value_attribute": "属性（最大值）",
-      "max_value_entity": "使用实体的最大值",
       "min_value": "最小值",
       "name": "名称",
       "percent": "百分比",
@@ -75,13 +73,19 @@
       "tap_action": "点击动作",
       "text_shadow": "添加文本阴影（overlay）",
       "theme": "主题",
-      "toggle_icon": "显示图标",
-      "toggle_name": "显示名称",
-      "toggle_progress_bar": "显示进度条",
-      "toggle_secondary_info": "显示次要信息",
-      "toggle_value": "显示数值",
       "unit": "单位",
-      "use_max_entity": "使用实体作为最大值"
+      "use_max_entity": "使用实体作为最大值",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "自定义次要信息",
+      "interpolate": "颜色插值",
+      "name_info": "自定义名称信息",
+      "reverse": "反转计时器"
     },
     "option": {
       "theme": {
@@ -115,6 +119,60 @@
       "layout": {
         "horizontal": "水平（默认）",
         "vertical": "垂直"
+      },
+      "color_mode": {
+        "auto": "自动",
+        "segment": "分段",
+        "rainbow": "彩虹"
+      },
+      "bar_effect": {
+        "radius": "圆角",
+        "glass": "玻璃",
+        "gradient": "渐变",
+        "gradient_reverse": "反向渐变",
+        "shimmer": "微光",
+        "shimmer_reverse": "反向微光"
+      },
+      "hide": {
+        "icon": "图标",
+        "name": "名称",
+        "value": "数值",
+        "secondary_info": "补充信息",
+        "progress_bar": "进度条"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

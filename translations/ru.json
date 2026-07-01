@@ -40,12 +40,12 @@
       "badge_color": "Цвет значка",
       "badge_icon": "Иконка значка",
       "bar_color": "Цвет полосы",
-      "bar_effect": "Эффект на полосе",
       "bar_effect_jinja": "Эффект на полосе (режим Jinja)",
       "bar_orientation": "Ориентация полосы",
       "bar_position": "Положение полосы",
       "bar_single_line": "Информация в одну строку (overlay)",
       "bar_size": "Размер полосы",
+      "color_mode": "Режим цвета",
       "center_zero": "Ноль по центру",
       "center_zero_value": "Центральное значение",
       "center_zero_growth_percent": "Процент роста",
@@ -55,7 +55,6 @@
       "double_tap_action": "Поведение при двойном нажатии",
       "entity": "Сущность",
       "force_circular_background": "Принудительный круглый фон",
-      "hide": "Скрыть",
       "hide_jinja": "Скрыть (режим Jinja)",
       "hold_action": "Поведение при длительном нажатии",
       "icon": "Иконка",
@@ -65,7 +64,6 @@
       "layout": "Расположение содержимого",
       "max_value": "Максимальное значение",
       "max_value_attribute": "Атрибут (max_value)",
-      "max_value_entity": "Максимальное значение",
       "min_value": "Минимальное значение",
       "name": "Название",
       "percent": "Процент",
@@ -75,13 +73,19 @@
       "tap_action": "Поведение при нажатии",
       "text_shadow": "Добавить тень к тексту (overlay)",
       "theme": "Тема",
-      "toggle_icon": "Показать иконку",
-      "toggle_name": "Показать название",
-      "toggle_progress_bar": "Показать полосу прогресса",
-      "toggle_secondary_info": "Показать дополнительную информацию",
-      "toggle_value": "Показать значение",
       "unit": "Единица измерения",
-      "use_max_entity": "Использовать сущность для максимального значения"
+      "use_max_entity": "Использовать сущность для максимального значения",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "Дополнительная информация",
+      "interpolate": "Интерполяция цветов",
+      "name_info": "Доп. информация (имя)",
+      "reverse": "Обратный таймер"
     },
     "option": {
       "bar_orientation": {
@@ -115,6 +119,60 @@
         "pm25": "PM2.5",
         "temperature": "Температура",
         "voc": "ЛОС"
+      },
+      "color_mode": {
+        "auto": "Авто",
+        "segment": "Сегменты",
+        "rainbow": "Радуга"
+      },
+      "bar_effect": {
+        "radius": "Скруглённые углы",
+        "glass": "Стекло",
+        "gradient": "Градиент",
+        "gradient_reverse": "Обратный градиент",
+        "shimmer": "Мерцание",
+        "shimmer_reverse": "Обратное мерцание"
+      },
+      "hide": {
+        "icon": "Иконка",
+        "name": "Имя",
+        "value": "Значение",
+        "secondary_info": "Инфо",
+        "progress_bar": "Полоса"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

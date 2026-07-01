@@ -34,11 +34,11 @@ export default [
       'sonarjs/prefer-single-boolean-return': 'warn',
       'no-var': 'error',
       'prefer-const': 'error',
-      'no-unused-vars': 'warn',
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       'eol-last': ['error', 'always'],
       'space-infix-ops': 'error',
       'class-methods-use-this': ['error', {
-        exceptMethods: ['connectedCallback', 'disconnectedCallback', 'setConfig'],
+        exceptMethods: ['connectedCallback', 'disconnectedCallback', 'setConfig', '_validate'],
         enforceForClassFields: true,
       }],
     },

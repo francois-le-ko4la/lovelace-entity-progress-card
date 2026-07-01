@@ -40,13 +40,13 @@
       "badge_color": "Колір значка",
       "badge_icon": "Іконка значка",
       "bar_color": "Колір панелі",
-      "bar_effect": "Ефект на панелі",
       "bar_effect_jinja": "Ефект на панелі (режим Jinja)",
       "bar_orientation": "Орієнтація панелі",
       "bar_position": "Положення панелі",
       "bar_single_line": "Інформація в один рядок (overlay)",
       "bar_size": "Розмір панелі",
-      "center_zero": "Нуль по центру",
+      "color_mode": "Режим кольору",
+      "center_zero": "Không ở giữa",
       "center_zero_value": "Центральне значення",
       "center_zero_growth_percent": "Відсоток зростання",
       "color": "Основний колір",
@@ -55,7 +55,6 @@
       "double_tap_action": "Поведінка при подвійному дотику",
       "entity": "Сутність",
       "force_circular_background": "Примусовий круглий фон",
-      "hide": "Приховати",
       "hide_jinja": "Приховати (режим Jinja)",
       "hold_action": "Поведінка при утриманні",
       "icon": "Іконка",
@@ -65,7 +64,6 @@
       "layout": "Розташування вмісту",
       "max_value": "Максимальне значення",
       "max_value_attribute": "Атрибут (max_value)",
-      "max_value_entity": "Максимальне значення",
       "min_value": "Мінімальне значення",
       "name": "Назва",
       "percent": "Відсоток",
@@ -75,13 +73,19 @@
       "tap_action": "Поведінка при дотику",
       "text_shadow": "Додати тінь до тексту (overlay)",
       "theme": "Тема",
-      "toggle_icon": "Показати іконку",
-      "toggle_name": "Показати назву",
-      "toggle_progress_bar": "Показати панель прогресу",
-      "toggle_secondary_info": "Показати додаткову інформацію",
-      "toggle_value": "Показати значення",
       "unit": "Одиниця",
-      "use_max_entity": "Використовувати сутність для максимального значення"
+      "use_max_entity": "Використовувати сутність для максимального значення",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "Додаткова вторинна інформація",
+      "interpolate": "Інтерполяція кольорів",
+      "name_info": "Додаткова інформація (назва)",
+      "reverse": "Зворотній таймер"
     },
     "option": {
       "bar_orientation": {
@@ -115,6 +119,60 @@
         "pm25": "PM2.5",
         "temperature": "Температура",
         "voc": "VOC"
+      },
+      "color_mode": {
+        "auto": "Авто",
+        "segment": "Сегменти",
+        "rainbow": "Веселка"
+      },
+      "bar_effect": {
+        "radius": "Заокруглені кути",
+        "glass": "Скло",
+        "gradient": "Градієнт",
+        "gradient_reverse": "Зворотній градієнт",
+        "shimmer": "Мерехтіння",
+        "shimmer_reverse": "Зворотнє мерехтіння"
+      },
+      "hide": {
+        "icon": "Іконка",
+        "name": "Ім'я",
+        "value": "Значення",
+        "secondary_info": "Інфо",
+        "progress_bar": "Смуга"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

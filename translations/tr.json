@@ -40,13 +40,13 @@
       "badge_color": "Rozet rengi",
       "badge_icon": "Rozet simgesi",
       "bar_color": "Çubuk rengi",
-      "bar_effect": "Çubuk efekti",
       "bar_effect_jinja": "Çubuk efekti (Jinja modu)",
       "bar_orientation": "Çubuk yönü",
       "bar_position": "Çubuk konumu",
       "bar_single_line": "Bilgiyi tek satırda göster (overlay)",
       "bar_size": "Çubuk boyutu",
-      "center_zero": "Sıfırı ortala",
+      "color_mode": "Renk modu",
+      "center_zero": "Нуль по центру",
       "center_zero_value": "Merkez değeri",
       "center_zero_growth_percent": "Büyüme yüzdesi",
       "color": "Birincil renk",
@@ -55,7 +55,6 @@
       "double_tap_action": "Çift dokunma davranışı",
       "entity": "Varlık",
       "force_circular_background": "Dairesel arka planı zorla",
-      "hide": "Gizle",
       "hide_jinja": "Gizle (Jinja modu)",
       "hold_action": "Uzun basma davranışı",
       "icon": "Simge",
@@ -65,7 +64,6 @@
       "layout": "İçerik düzeni",
       "max_value": "Maksimum değer",
       "max_value_attribute": "Öznitelik (max_value)",
-      "max_value_entity": "Maksimum değer",
       "min_value": "Minimum değer",
       "name": "Ad",
       "percent": "Yüzde",
@@ -75,13 +73,19 @@
       "tap_action": "Kısa dokunma davranışı",
       "text_shadow": "Metne gölge ekle (overlay)",
       "theme": "Tema",
-      "toggle_icon": "Simgeyi göster",
-      "toggle_name": "Adı göster",
-      "toggle_progress_bar": "İlerleme çubuğunu göster",
-      "toggle_secondary_info": "İkincil bilgiyi göster",
-      "toggle_value": "Değeri göster",
       "unit": "Birim",
-      "use_max_entity": "Maksimum değer için varlık kullan"
+      "use_max_entity": "Maksimum değer için varlık kullan",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "Özel ikincil bilgi",
+      "interpolate": "Renk interpolasyonu",
+      "name_info": "Özel ad bilgisi",
+      "reverse": "Zamanlayıcıyı tersine çevir"
     },
     "option": {
       "bar_orientation": {
@@ -115,6 +119,60 @@
         "pm25": "PM2.5",
         "temperature": "Sıcaklık",
         "voc": "VOC"
+      },
+      "color_mode": {
+        "auto": "Otomatik",
+        "segment": "Bölümler",
+        "rainbow": "Gökkuşağı"
+      },
+      "bar_effect": {
+        "radius": "Yuvarlatılmış köşeler",
+        "glass": "Cam",
+        "gradient": "Gradyan",
+        "gradient_reverse": "Ters gradyan",
+        "shimmer": "Parıltı",
+        "shimmer_reverse": "Ters parıltı"
+      },
+      "hide": {
+        "icon": "Simge",
+        "name": "Ad",
+        "value": "Değer",
+        "secondary_info": "Bilgi",
+        "progress_bar": "Çubuk"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

@@ -40,12 +40,12 @@
       "badge_color": "Боја на значка",
       "badge_icon": "Икона на значка",
       "bar_color": "Боја за лентата",
-      "bar_effect": "Ефект на лентата",
       "bar_effect_jinja": "Ефект на лентата (Jinja режим)",
       "bar_orientation": "Ориентација на лентата",
       "bar_position": "Позиција на лентата",
       "bar_single_line": "Инфо во еден ред (overlay)",
       "bar_size": "Големина на лента",
+      "color_mode": "Режим на боја",
       "center_zero": "Нула во центарот",
       "center_zero_value": "Централна вредност",
       "center_zero_growth_percent": "Процент на растеж",
@@ -55,7 +55,6 @@
       "double_tap_action": "Дејство при двоен допир",
       "entity": "Ентитет",
       "force_circular_background": "Принуди кружна позадина",
-      "hide": "Сокриј",
       "hide_jinja": "Сокриј (Jinja режим)",
       "hold_action": "Дејство при долг допир",
       "icon": "Икона",
@@ -65,7 +64,6 @@
       "layout": "Распоред на содржината",
       "max_value": "Максимална вредност",
       "max_value_attribute": "Атрибут (max_value)",
-      "max_value_entity": "Максимална вредност",
       "min_value": "Минимална вредност",
       "name": "Име",
       "percent": "Процент",
@@ -75,13 +73,19 @@
       "tap_action": "Дејство при краток допир",
       "text_shadow": "Додај сенка на текст (overlay)",
       "theme": "Тема",
-      "toggle_icon": "Прикажи икона",
-      "toggle_name": "Прикажи име",
-      "toggle_progress_bar": "Прикажи лента на напредок",
-      "toggle_secondary_info": "Прикажи секундарни информации",
-      "toggle_value": "Прикажи вредност",
       "unit": "Јединство",
-      "use_max_entity": "Користи ентитет за максимална вредност"
+      "use_max_entity": "Користи ентитет за максимална вредност",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "Прилагодена секундарна информација",
+      "interpolate": "Интерполација на бои",
+      "name_info": "Прилагодена информација за имиња",
+      "reverse": "Обратен тајмер"
     },
     "option": {
       "bar_orientation": {
@@ -115,6 +119,60 @@
         "pm25": "PM2.5",
         "temperature": "Температура",
         "voc": "VOC"
+      },
+      "color_mode": {
+        "auto": "Автоматски",
+        "segment": "Сегменти",
+        "rainbow": "Виножито"
+      },
+      "bar_effect": {
+        "radius": "Заоблени агли",
+        "glass": "Стакло",
+        "gradient": "Градиент",
+        "gradient_reverse": "Обратен градиент",
+        "shimmer": "Сјај",
+        "shimmer_reverse": "Обратен сјај"
+      },
+      "hide": {
+        "icon": "Икона",
+        "name": "Име",
+        "value": "Вредност",
+        "secondary_info": "Инфо",
+        "progress_bar": "Лента"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

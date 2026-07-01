@@ -40,12 +40,12 @@
       "badge_color": "Badge color",
       "badge_icon": "Badge icon",
       "bar_color": "Color for the bar",
-      "bar_effect": "Bar effect",
       "bar_effect_jinja": "Bar effect (Jinja mode)",
       "bar_orientation": "Bar orientation",
       "bar_position": "Bar position",
       "bar_single_line": "Single line info (overlay)",
       "bar_size": "Bar size",
+      "color_mode": "Color mode",
       "center_zero": "Zero at center",
       "center_zero_value": "Center value",
       "center_zero_growth_percent": "Growth percentage",
@@ -55,7 +55,6 @@
       "double_tap_action": "Double tap behavior",
       "entity": "Entity",
       "force_circular_background": "Force icon circular background",
-      "hide": "Hide",
       "hide_jinja": "Hide (Jinja mode)",
       "hold_action": "Hold behavior",
       "icon": "Icon",
@@ -65,7 +64,6 @@
       "layout": "Content layout",
       "max_value": "Maximum value",
       "max_value_attribute": "Attribute (max_value)",
-      "max_value_entity": "Use entity as maximum value",
       "min_value": "Minimum value",
       "name": "Name",
       "percent": "Percentage",
@@ -75,13 +73,19 @@
       "tap_action": "Tap behavior",
       "text_shadow": "Add text shadow (overlay)",
       "theme": "Theme",
-      "toggle_icon": "Show icon",
-      "toggle_name": "Show name",
-      "toggle_progress_bar": "Show progress bar",
-      "toggle_secondary_info": "Show secondary info",
-      "toggle_value": "Show value",
       "unit": "Unit",
-      "use_max_entity": "Use entity for max value"
+      "use_max_entity": "Use entity as max value",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "Custom secondary info",
+      "interpolate": "Interpolate colors",
+      "name_info": "Custom name info",
+      "reverse": "Reverse timer"
     },
     "option": {
       "theme": {
@@ -115,6 +119,60 @@
       "layout": {
         "horizontal": "Horizontal (default)",
         "vertical": "Vertical"
+      },
+      "color_mode": {
+        "auto": "Auto",
+        "segment": "Segment",
+        "rainbow": "Rainbow"
+      },
+      "bar_effect": {
+        "radius": "Rounded corners",
+        "glass": "Glass",
+        "gradient": "Gradient",
+        "gradient_reverse": "Gradient reverse",
+        "shimmer": "Shimmer",
+        "shimmer_reverse": "Shimmer reverse"
+      },
+      "hide": {
+        "icon": "Icon",
+        "name": "Name",
+        "value": "Value",
+        "secondary_info": "Secondary info",
+        "progress_bar": "Bar"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

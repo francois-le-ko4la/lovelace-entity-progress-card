@@ -40,12 +40,12 @@
       "badge_color": "لون الشارة",
       "badge_icon": "أيقونة الشارة",
       "bar_color": "لون الشريط",
-      "bar_effect": "تأثير الشريط",
       "bar_effect_jinja": "تأثير الشريط (وضع Jinja)",
       "bar_orientation": "اتجاه الشريط",
       "bar_position": "موضع الشريط",
       "bar_single_line": "معلومات في سطر واحد (تراكب)",
       "bar_size": "حجم الشريط",
+      "color_mode": "وضع اللون",
       "center_zero": "صفر في الوسط",
       "center_zero_value": "قيمة المركز",
       "center_zero_growth_percent": "نسبة النمو",
@@ -55,7 +55,6 @@
       "double_tap_action": "الإجراء عند النقر المزدوج",
       "entity": "الكيان",
       "force_circular_background": "فرض خلفية دائرية",
-      "hide": "إخفاء",
       "hide_jinja": "إخفاء (وضع Jinja)",
       "hold_action": "الإجراء عند الضغط المطول",
       "icon": "أيقونة",
@@ -65,7 +64,6 @@
       "layout": "تخطيط المحتوى",
       "max_value": "القيمة القصوى",
       "max_value_attribute": "السمة (max_value)",
-      "max_value_entity": "استخدام الكيان للقيمة القصوى",
       "min_value": "القيمة الدنيا",
       "name": "الاسم",
       "percent": "النسبة المئوية",
@@ -75,13 +73,19 @@
       "tap_action": "الإجراء عند النقر القصير",
       "text_shadow": "إضافة ظل للنص (overlay)",
       "theme": "السمة",
-      "toggle_icon": "عرض الأيقونة",
-      "toggle_name": "عرض الاسم",
-      "toggle_progress_bar": "عرض شريط التقدم",
-      "toggle_secondary_info": "عرض المعلومات الثانوية",
-      "toggle_value": "عرض القيمة",
       "unit": "الوحدة",
-      "use_max_entity": "استخدام الكيان للقيمة القصوى"
+      "use_max_entity": "استخدام الكيان للقيمة القصوى",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "معلومات إضافية (ثانوية)",
+      "interpolate": "تدرج الألوان",
+      "name_info": "معلومات إضافية (الاسم)",
+      "reverse": "عكس المؤقت"
     },
     "option": {
       "theme": {
@@ -115,6 +119,60 @@
       "layout": {
         "horizontal": "أفقي (افتراضي)",
         "vertical": "رأسي"
+      },
+      "color_mode": {
+        "auto": "تلقائي",
+        "segment": "مقطعي",
+        "rainbow": "قوس قزح"
+      },
+      "bar_effect": {
+        "radius": "حواف دائرية",
+        "glass": "زجاج",
+        "gradient": "تدرج",
+        "gradient_reverse": "تدرج معكوس",
+        "shimmer": "لمعان",
+        "shimmer_reverse": "لمعان معكوس"
+      },
+      "hide": {
+        "icon": "أيقونة",
+        "name": "الاسم",
+        "value": "القيمة",
+        "secondary_info": "المعلومات",
+        "progress_bar": "الشريط"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

@@ -40,12 +40,12 @@
       "badge_color": "Χρώμα εμβλήματος",
       "badge_icon": "Εικονίδιο εμβλήματος",
       "bar_color": "Χρώμα γραμμής",
-      "bar_effect": "Εφέ γραμμής",
       "bar_effect_jinja": "Εφέ γραμμής (λειτουργία Jinja)",
       "bar_orientation": "Κατεύθυνση γραμμής",
       "bar_position": "Θέση γραμμής",
       "bar_single_line": "Πληροφορίες σε μία γραμμή (overlay)",
       "bar_size": "Μέγεθος γραμμής",
+      "color_mode": "Λειτουργία χρώματος",
       "center_zero": "Μηδέν στο κέντρο",
       "center_zero_value": "Τιμή κέντρου",
       "center_zero_growth_percent": "Ποσοστό μεταβολής",
@@ -55,7 +55,6 @@
       "double_tap_action": "Ενέργεια κατά το διπλό πάτημα",
       "entity": "Οντότητα",
       "force_circular_background": "Εξαναγκασμός κυκλικού φόντου",
-      "hide": "Απόκρυψη",
       "hide_jinja": "Απόκρυψη (λειτουργία Jinja)",
       "hold_action": "Ενέργεια κατά το παρατεταμένο πάτημα",
       "icon": "Εικονίδιο",
@@ -65,7 +64,6 @@
       "layout": "Διάταξη περιεχομένου",
       "max_value": "Μέγιστη τιμή",
       "max_value_attribute": "Χαρακτηριστικό (max_value)",
-      "max_value_entity": "Χρήση οντότητας ως μέγιστης τιμής",
       "min_value": "Ελάχιστη τιμή",
       "name": "Όνομα",
       "percent": "Ποσοστό",
@@ -75,13 +73,19 @@
       "tap_action": "Ενέργεια κατά το σύντομο πάτημα",
       "text_shadow": "Προσθήκη σκιάς στο κείμενο (overlay)",
       "theme": "Θέμα",
-      "toggle_icon": "Εμφάνιση εικονιδίου",
-      "toggle_name": "Εμφάνιση ονόματος",
-      "toggle_progress_bar": "Εμφάνιση γραμμής προόδου",
-      "toggle_secondary_info": "Εμφάνιση πρόσθετων πληροφοριών",
-      "toggle_value": "Εμφάνιση τιμής",
       "unit": "Μονάδα",
-      "use_max_entity": "Χρήση οντότητας ως μέγιστης τιμής"
+      "use_max_entity": "Χρήση οντότητας ως μέγιστης τιμής",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "Προσαρμοσμένη δευτερεύουσα πληροφορία",
+      "interpolate": "Παρεμβολή χρωμάτων",
+      "name_info": "Προσαρμοσμένη πληροφορία ονόματος",
+      "reverse": "Αντίστροφο χρονόμετρο"
     },
     "option": {
       "theme": {
@@ -115,6 +119,60 @@
       "layout": {
         "horizontal": "Οριζόντια (προεπιλογή)",
         "vertical": "Κατακόρυφη"
+      },
+      "color_mode": {
+        "auto": "Αυτόματο",
+        "segment": "Τμήματα",
+        "rainbow": "Ουράνιο τόξο"
+      },
+      "bar_effect": {
+        "radius": "Στρογγυλεμένες γωνίες",
+        "glass": "Γυαλί",
+        "gradient": "Ντεγκραντέ",
+        "gradient_reverse": "Ντεγκραντέ αντίστροφο",
+        "shimmer": "Αχτινοβολία",
+        "shimmer_reverse": "Αχτινοβολία αντίστροφη"
+      },
+      "hide": {
+        "icon": "Εικονίδιο",
+        "name": "Όνομα",
+        "value": "Τιμή",
+        "secondary_info": "Πληροφορίες",
+        "progress_bar": "Μπάρα"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

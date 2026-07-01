@@ -40,12 +40,12 @@
       "badge_color": "Märgi värv",
       "badge_icon": "Märgi ikoon",
       "bar_color": "Riba värv",
-      "bar_effect": "Riba efekt",
       "bar_effect_jinja": "Riba efekt (Jinja režiim)",
       "bar_orientation": "Riba orientatsioon",
       "bar_position": "Riba positsioon",
       "bar_single_line": "Info ühel real (overlay)",
       "bar_size": "Riba suurus",
+      "color_mode": "Värvirežiim",
       "center_zero": "Null keskel",
       "center_zero_value": "Keskväärtus",
       "center_zero_growth_percent": "Kasvuprotsent",
@@ -55,7 +55,6 @@
       "double_tap_action": "Topeltpuudutuse tegevus",
       "entity": "Objekt",
       "force_circular_background": "Sunnitud ümmargune taust",
-      "hide": "Peida",
       "hide_jinja": "Peida (Jinja režiim)",
       "hold_action": "Pikema vajutuse tegevus",
       "icon": "Ikoon",
@@ -65,7 +64,6 @@
       "layout": "Sisu paigutus",
       "max_value": "Maksimaalne väärtus",
       "max_value_attribute": "Atribuut (max_value)",
-      "max_value_entity": "Maksimaalne väärtus",
       "min_value": "Minimaalne väärtus",
       "name": "Nimi",
       "percent": "Protsent",
@@ -75,13 +73,19 @@
       "tap_action": "Puudutuse tegevus",
       "text_shadow": "Lisa teksti vari (overlay)",
       "theme": "Teema",
-      "toggle_icon": "Näita ikooni",
-      "toggle_name": "Näita nime",
-      "toggle_progress_bar": "Näita edenemisriba",
-      "toggle_secondary_info": "Näita täiendavat infot",
-      "toggle_value": "Näita väärtust",
       "unit": "Ühik",
-      "use_max_entity": "Kasuta objekti maksimaalse väärtuse jaoks"
+      "use_max_entity": "Kasuta objekti maksimaalse väärtuse jaoks",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "Kohandatud sekundaarne teave",
+      "interpolate": "Värvide interpoleerimine",
+      "name_info": "Kohandatud nime teave",
+      "reverse": "Pööratud taimer"
     },
     "option": {
       "theme": {
@@ -115,6 +119,60 @@
       "layout": {
         "horizontal": "Horisontaalne (vaikimisi)",
         "vertical": "Vertikaalne"
+      },
+      "color_mode": {
+        "auto": "Automaatne",
+        "segment": "Segmendid",
+        "rainbow": "Vikerkaar"
+      },
+      "bar_effect": {
+        "radius": "Ümarad nurgad",
+        "glass": "Klaas",
+        "gradient": "Gradient",
+        "gradient_reverse": "Gradient pööratud",
+        "shimmer": "Sära",
+        "shimmer_reverse": "Sära pööratud"
+      },
+      "hide": {
+        "icon": "Ikoon",
+        "name": "Nimi",
+        "value": "Väärtus",
+        "secondary_info": "Info",
+        "progress_bar": "Riba"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

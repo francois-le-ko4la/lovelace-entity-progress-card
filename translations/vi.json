@@ -40,13 +40,13 @@
       "badge_color": "Màu huy hiệu",
       "badge_icon": "Biểu tượng huy hiệu",
       "bar_color": "Màu thanh",
-      "bar_effect": "Hiệu ứng thanh",
       "bar_effect_jinja": "Hiệu ứng thanh (chế độ Jinja)",
       "bar_orientation": "Hướng thanh",
       "bar_position": "Vị trí thanh",
       "bar_single_line": "Thông tin trên một dòng (overlay)",
       "bar_size": "Kích thước thanh",
-      "center_zero": "Không ở giữa",
+      "color_mode": "Chế độ màu",
+      "center_zero": "零点居中",
       "center_zero_value": "Giá trị tâm",
       "center_zero_growth_percent": "Tỷ lệ tăng trưởng",
       "color": "Màu chính",
@@ -55,7 +55,6 @@
       "double_tap_action": "Hành vi chạm đôi",
       "entity": "Thực thể",
       "force_circular_background": "Buộc nền hình tròn",
-      "hide": "Ẩn",
       "hide_jinja": "Ẩn (chế độ Jinja)",
       "hold_action": "Hành vi giữ",
       "icon": "Biểu tượng",
@@ -65,7 +64,6 @@
       "layout": "Bố cục nội dung",
       "max_value": "Giá trị tối đa",
       "max_value_attribute": "Thuộc tính (max_value)",
-      "max_value_entity": "Giá trị tối đa",
       "min_value": "Giá trị tối thiểu",
       "name": "Tên",
       "percent": "Phần trăm",
@@ -75,13 +73,19 @@
       "tap_action": "Hành vi chạm",
       "text_shadow": "Thêm bóng cho văn bản (overlay)",
       "theme": "Chủ đề",
-      "toggle_icon": "Hiển thị biểu tượng",
-      "toggle_name": "Hiển thị tên",
-      "toggle_progress_bar": "Hiển thị thanh tiến trình",
-      "toggle_secondary_info": "Hiển thị thông tin phụ",
-      "toggle_value": "Hiển thị giá trị",
       "unit": "Đơn vị",
-      "use_max_entity": "Sử dụng thực thể cho giá trị tối đa"
+      "use_max_entity": "Sử dụng thực thể cho giá trị tối đa",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "Thông tin phụ tùy chỉnh",
+      "interpolate": "Nội suy màu sắc",
+      "name_info": "Thông tin tên tùy chỉnh",
+      "reverse": "Đảo ngược bộ đếm thời gian"
     },
     "option": {
       "bar_orientation": {
@@ -115,6 +119,60 @@
         "pm25": "PM2.5",
         "temperature": "Nhiệt độ",
         "voc": "VOC"
+      },
+      "color_mode": {
+        "auto": "Tự động",
+        "segment": "Phân đoạn",
+        "rainbow": "Cầu vồng"
+      },
+      "bar_effect": {
+        "radius": "Góc bo tròn",
+        "glass": "Kính",
+        "gradient": "Dốc màu",
+        "gradient_reverse": "Dốc màu ngược",
+        "shimmer": "Lấp lánh",
+        "shimmer_reverse": "Lấp lánh ngược"
+      },
+      "hide": {
+        "icon": "Biểu tượng",
+        "name": "Tên",
+        "value": "Giá trị",
+        "secondary_info": "Thông tin",
+        "progress_bar": "Thanh"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

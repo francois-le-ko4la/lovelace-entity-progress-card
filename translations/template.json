@@ -40,13 +40,13 @@
       "badge_color": "",
       "badge_icon": "",
       "bar_color": "",
-      "bar_effect": "",
       "bar_effect_jinja": "",
       "bar_orientation": "",
       "bar_position": "",
       "bar_single_line": "",
       "bar_size": "",
-      "center_zero": "",
+      "color_mode": "Färgläge",
+      "center_zero": "ศูนย์ที่กึ่งกลาง",
       "center_zero_value": "",
       "center_zero_growth_percent": "",
       "color": "",
@@ -55,7 +55,6 @@
       "double_tap_action": "",
       "entity": "",
       "force_circular_background": "",
-      "hide": "true",
       "hide_jinja": "",
       "hold_action": "",
       "icon": "",
@@ -65,7 +64,6 @@
       "layout": "",
       "max_value": "",
       "max_value_attribute": "",
-      "max_value_entity": "",
       "min_value": "",
       "name": "",
       "percent": "",
@@ -75,13 +73,19 @@
       "tap_action": "",
       "text_shadow": "",
       "theme": "",
-      "toggle_icon": "",
-      "toggle_name": "",
-      "toggle_progress_bar": "",
-      "toggle_secondary_info": "",
-      "toggle_value": "",
       "unit": "",
-      "use_max_entity": ""
+      "use_max_entity": "",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "Custom secondary info",
+      "interpolate": "Interpolate colors",
+      "name_info": "Custom name info",
+      "reverse": "Reverse timer"
     },
     "option": {
       "theme": {
@@ -115,6 +119,60 @@
       "layout": {
         "horizontal": "",
         "vertical": ""
+      },
+      "color_mode": {
+        "auto": "Auto",
+        "segment": "Segment",
+        "rainbow": "Regnbåge"
+      },
+      "bar_effect": {
+        "radius": "Rundade hörn",
+        "glass": "Glas",
+        "gradient": "Gradient",
+        "gradient_reverse": "Omvänd gradient",
+        "shimmer": "Glans",
+        "shimmer_reverse": "Omvänd glans"
+      },
+      "hide": {
+        "icon": "Ikon",
+        "name": "Namn",
+        "value": "Värde",
+        "secondary_info": "Info",
+        "progress_bar": "Stapel"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

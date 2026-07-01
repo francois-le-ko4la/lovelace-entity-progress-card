@@ -98,7 +98,7 @@ appears automatically when a theme or custom theme is configured.
 type: custom:entity-progress-card
 entity: sensor.battery_level
 theme: optimal_when_high
-color_mode: segment   # or rainbow
+color_mode: segment # or rainbow
 ```
 
 ### 🚀 New Features
@@ -127,8 +127,8 @@ center_zero:
 
 `low` and `high` are now always expressed in the entity's native unit, on the
 same scale as `min_value`/`max_value`. The card converts them to a bar position
-automatically — whether your sensor is in `°C`, `W`, `%`, or any other unit,
-you just set the threshold value and the card handles the rest.
+automatically — whether your sensor is in `°C`, `W`, `%`, or any other unit, you
+just set the threshold value and the card handles the rest.
 
 This also applies to `center_zero` mode: values are mapped to the correct visual
 half (left for negative, right for positive) regardless of whether the range is
@@ -138,14 +138,14 @@ symmetric or not.
 
 For cases where you want to pin a watermark at an exact bar position regardless
 of the entity scale, you can now set `low_as: percent` or `high_as: percent`.
-The value is then used as a direct percentage (0–100) of the bar, bypassing
-any unit conversion. Each threshold is configured independently.
+The value is then used as a direct percentage (0–100) of the bar, bypassing any
+unit conversion. Each threshold is configured independently.
 
 ```yaml
 watermark:
   low: 25
-  low_as: percent   # fixed at 25 % of the bar
-  high: 3700        # in entity unit (e.g. W), converted automatically
+  low_as: percent # fixed at 25 % of the bar
+  high: 3700 # in entity unit (e.g. W), converted automatically
 ```
 
 The default is `auto`, which keeps the existing behaviour — no breaking changes.
@@ -200,36 +200,34 @@ visual glitches or “flash” effects during state transitions.
 The visual editor (GUI) has been redesigned to be more intuitive:
 
 - Dynamic Fields: Improved the logic that shows or hides fields based on the
-  current configuration (e.g., attribute selectors now appear only after an
-  entity is selected).
-- Toggles: Relocated toggle switches to improve readability, replacing complex
-  option lists with simple Show/Hide switches.
+  current configuration.
 - Max Value Entity: Added better support for using a second entity or a specific
   attribute as the maximum value for the progress bar.
-- added: `badge_color`, `badge_icon`, `bar_effect`, `bar_orientation`,
-  `bar_position`, `bar_single_line`, `center_zero`, `center_zero`/`value`,
-  `center_zero`/`growth_percent`, `state_content`, `text_shadow`,
-  `reverse_secondary_info_row`.
 - Name Composition: Implemented a "Token" system for the name field. It now
   supports dynamic arrays (tokens) instead of just static strings.
 - Updated the layout selector to use a box mode, utilizing standard Home
   Assistant tile layout SVGs for a more native look.
-- New Resolvers: Added helper methods to fetch specific Home Assistant metadata
-- Validation: Refined the bar_position and bar_size logic to prevent conflicts
+- Validation: Refined the `bar_position` and `bar_size` logic to prevent conflicts
   when using full-card layouts.
-- Both `hide` and `bar_effect` accept an array _or_ a Jinja template. The editor
-  now exposes a dedicated **toggle** to switch into Jinja mode (mirroring the
-  existing `bar_effect_jinja` pattern, now also applied to `hide` via
-  `hide_jinja`):
+- Both `hide` and `bar_effect` accept an array or a Jinja template. The editor
+  now exposes a dedicated toggle to switch into Jinja mode:
   - Toggling on initializes an empty `{{ }}` template field for you to fill in.
   - Toggling off resets to `[]` and restores the per-item toggles.
-  - The toggle/field labels are now distinguishable in the UI (e.g. _"Bar effect
-    (Jinja mode)"_ vs _"Hide (Jinja mode)"_ — previously both showed an
-    ambiguous "Enable Jinja").
+- Smarter Interactions panel:
+  - action selectors now show the effective default directly inside the selector
+    box — e.g. _"Default (More info)"_ for `tap_action`, _"Default (toggle)"_
+    for `icon_tap_action` on lights and switches.
+  - Secondary actions (`hold_action`, `double_tap_action`, icon variants) are
+    hidden by default and revealed either when already configured or via the
+    _"Show all interactions"_ toggle.
+- added: `badge_color`, `badge_icon`, `bar_effect`, `bar_orientation`,
+  `bar_position`, `bar_single_line`, `center_zero`, `center_zero`/`value`,
+  `center_zero`/`growth_percent`, `state_content`, `text_shadow`,
+  `reverse_secondary_info_row`, `frameless`, `marginless`, `height`,
+  `min_width`, `bar_max_width`, `unit_spacing`, Watermark,
+  `name_info`, `custom_info`, `interpolate`, `reverse`
 
 ### ♿ Accessibility
-
-Accessibility has been significantly improved.
 
 The card now exposes its progress bar using proper ARIA attributes, while
 decorative elements are hidden from assistive technologies. Screen readers can
@@ -286,41 +284,36 @@ badge_color: |-
 
 #### Other fixes:
 
-- Fixed watermark positions in `center_zero` mode
+- Fixed: wrong watermark positions in `center_zero` mode  
   ➡️ [Bug]: wrong watermark positions in center_zero mode #114 (@aremishevsky)
 - Fixed watermark support for `number` and `counter`
-  
-- Update color mappings for various thresholds  
+- Fixed: Update color mappings for various thresholds  
   ➡️ Merge pull request #116 (@vemboy200)
 - Bug Fixes: Resolved issues related to accordion animations in the editor and
   CSS variable propagation removing home-made accordion and using native HA
   component.
 - Performance Optimization: Improved DOM management and rendering logic to
   ensure smoother updates.
-- Card structure refactor
-  - The way names, secondary info, and progress bars are organized has been
-    simplified and renamed for clarity.
+  - Refactoring structure/Reduced CSS complexity
   - Card spacing and padding are now more consistent in all layouts.
   - Improved grid layout behavior for vertical cards.
-- Reduced CSS complexity which improves browser rendering performance.
   - Watermark and zero mark rendering has been redesigned to be more flexible.
   - Improved support for low/high watermark visual styles (area, line, round,
     striped, triangle, etc.).
   - Removed duplication and cleanup
-- General refactoring and stability improvements on logs, Jinja & config
-  management.
+- Refactoring: stability improvements on logs, Jinja & config management.
 - Added: Card/Badge template now correctly displays colors based on priority —
   entity state color by default, overridden by Jinja `color` / `bar_color`
   parameters when defined.
 - Added: The card now respects the user `quote_decimal` / Swiss format setting.
-- Fixed Ripple effect for hover and tap animations  
+- Fixed: Ripple effect for hover and tap animations  
   ➡️ [Bug]: Ripple effect for hover and tap animations doesn't work on the
   template card. #110 (@WarC0zes)
-- Fixed an issue where the icon would disappear in the editor preview when
+- Fixed: issue where the icon would disappear in the editor preview when
   editing a badge template configuration and would not come back until a full
   page reload.
 - Fixed: guard against null/undefined config and prevent cascading errors
-- fixed(layout): center content vertically in horizontal xlarge card 🎨
+- Fixed(layout): center content vertically in horizontal xlarge card 🎨
   Improvements
 
 <!-- Links -->

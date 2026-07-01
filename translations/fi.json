@@ -40,12 +40,12 @@
       "badge_color": "Badge-väri",
       "badge_icon": "Badge-ikoni",
       "bar_color": "Pääväri",
-      "bar_effect": "Palkin efekti",
       "bar_effect_jinja": "Palkin efekti (Jinja-tila)",
       "bar_orientation": "Palkin suunta",
       "bar_position": "Palkin sijainti",
       "bar_single_line": "Tiedot yhdellä rivillä (overlay)",
       "bar_size": "Palkin koko",
+      "color_mode": "Väritila",
       "center_zero": "Nolla keskellä",
       "center_zero_value": "Keskiarvo",
       "center_zero_growth_percent": "Kasvuprosentti",
@@ -55,7 +55,6 @@
       "double_tap_action": "Toiminto kahdella napautuksella",
       "entity": "Entiteetti",
       "force_circular_background": "Pakota pyöreä tausta",
-      "hide": "Piilota",
       "hide_jinja": "Piilota (Jinja-tila)",
       "hold_action": "Toiminto pitkällä painalluksella",
       "icon": "Ikoni",
@@ -65,7 +64,6 @@
       "layout": "Sisällön asettelu",
       "max_value": "Maksimiarvo",
       "max_value_attribute": "Attribuutti (max_value)",
-      "max_value_entity": "Käytä entiteettiä maksimiarvona",
       "min_value": "Minimiarvo",
       "name": "Nimi",
       "percent": "Prosentti",
@@ -75,13 +73,19 @@
       "tap_action": "Toiminto lyhyellä napautuksella",
       "text_shadow": "Lisää tekstivarjo (overlay)",
       "theme": "Teema",
-      "toggle_icon": "Näytä ikoni",
-      "toggle_name": "Näytä nimi",
-      "toggle_progress_bar": "Näytä palkki",
-      "toggle_secondary_info": "Näytä lisätiedot",
-      "toggle_value": "Näytä arvo",
       "unit": "Yksikkö",
-      "use_max_entity": "Käytä entiteettiä maksimiarvona"
+      "use_max_entity": "Käytä entiteettiä maksimiarvona",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "Mukautettu toissijainen tieto",
+      "interpolate": "Interpoloi värit",
+      "name_info": "Mukautettu nimitieto",
+      "reverse": "Käänteinen ajastin"
     },
     "option": {
       "theme": {
@@ -115,6 +119,60 @@
       "layout": {
         "horizontal": "Vaakasuora (oletus)",
         "vertical": "Pystysuora"
+      },
+      "color_mode": {
+        "auto": "Automaattinen",
+        "segment": "Segmentit",
+        "rainbow": "Sateenkaari"
+      },
+      "bar_effect": {
+        "radius": "Pyöristetyt kulmat",
+        "glass": "Lasi",
+        "gradient": "Liukuväri",
+        "gradient_reverse": "Liukuväri käänteinen",
+        "shimmer": "Hohto",
+        "shimmer_reverse": "Hohto käänteinen"
+      },
+      "hide": {
+        "icon": "Kuvake",
+        "name": "Nimi",
+        "value": "Arvo",
+        "secondary_info": "Tiedot",
+        "progress_bar": "Palkki"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

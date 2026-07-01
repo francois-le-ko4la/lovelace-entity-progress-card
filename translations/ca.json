@@ -40,12 +40,12 @@
       "badge_color": "Color de la insígnia",
       "badge_icon": "Icona de la insígnia",
       "bar_color": "Color principal",
-      "bar_effect": "Efecte de la barra",
       "bar_effect_jinja": "Efecte de la barra (mode Jinja)",
       "bar_orientation": "Orientació de la barra",
       "bar_position": "Posició de la barra",
       "bar_single_line": "Informació en una sola línia (overlay)",
       "bar_size": "Mida de la barra",
+      "color_mode": "Mode de color",
       "center_zero": "Zero al centre",
       "center_zero_value": "Valor de centratge",
       "center_zero_growth_percent": "Percentatge de creixement",
@@ -55,7 +55,6 @@
       "double_tap_action": "Acció al doble tocar",
       "entity": "Entitat",
       "force_circular_background": "Forçar fons circular",
-      "hide": "Amaga",
       "hide_jinja": "Amaga (mode Jinja)",
       "hold_action": "Acció en mantenir premut",
       "icon": "Icona",
@@ -65,7 +64,6 @@
       "layout": "Disposició del contingut",
       "max_value": "Valor màxim",
       "max_value_attribute": "Atribut (valor màxim)",
-      "max_value_entity": "Usar entitat com a valor màxim",
       "min_value": "Valor mínim",
       "name": "Nom",
       "percent": "Percentatge",
@@ -75,13 +73,19 @@
       "tap_action": "Acció al tocar breument",
       "text_shadow": "Afegir ombra al text (overlay)",
       "theme": "Tema",
-      "toggle_icon": "Mostra icona",
-      "toggle_name": "Mostra nom",
-      "toggle_progress_bar": "Mostra barra de progrés",
-      "toggle_secondary_info": "Mostra informació secundària",
-      "toggle_value": "Mostra valor",
       "unit": "Unitat",
-      "use_max_entity": "Usar una entitat com a valor màxim"
+      "use_max_entity": "Usar una entitat com a valor màxim",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "Informació addicional (secundària)",
+      "interpolate": "Interpolar colors",
+      "name_info": "Informació addicional (nom)",
+      "reverse": "Temporitzador invers"
     },
     "option": {
       "theme": {
@@ -115,6 +119,60 @@
       "layout": {
         "horizontal": "Horitzontal (predeterminada)",
         "vertical": "Vertical"
+      },
+      "color_mode": {
+        "auto": "Automàtic",
+        "segment": "Segments",
+        "rainbow": "Arc de Sant Martí"
+      },
+      "bar_effect": {
+        "radius": "Cantonades arrodonides",
+        "glass": "Vidre",
+        "gradient": "Degradat",
+        "gradient_reverse": "Degradat invers",
+        "shimmer": "Resplendor",
+        "shimmer_reverse": "Resplendor invers"
+      },
+      "hide": {
+        "icon": "Icona",
+        "name": "Nom",
+        "value": "Valor",
+        "secondary_info": "Info",
+        "progress_bar": "Barra"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

@@ -40,12 +40,12 @@
       "badge_color": "バッジの色",
       "badge_icon": "バッジのアイコン",
       "bar_color": "バーの色",
-      "bar_effect": "バーのエフェクト",
       "bar_effect_jinja": "バーのエフェクト (Jinjaモード)",
       "bar_orientation": "バーの向き",
       "bar_position": "バーの位置",
       "bar_single_line": "1行で情報を表示（オーバーレイ）",
       "bar_size": "バーサイズ",
+      "color_mode": "カラーモード",
       "center_zero": "ゼロを中央に",
       "center_zero_value": "中心値",
       "center_zero_growth_percent": "成長率",
@@ -55,7 +55,6 @@
       "double_tap_action": "ダブルタップしたときの動作",
       "entity": "エンティティ",
       "force_circular_background": "円形の背景を強制する",
-      "hide": "非表示",
       "hide_jinja": "非表示 (Jinjaモード)",
       "hold_action": "長押ししたときの動作",
       "icon": "アイコン",
@@ -65,7 +64,6 @@
       "layout": "コンテンツのレイアウト",
       "max_value": "最大値",
       "max_value_attribute": "属性（最大値）",
-      "max_value_entity": "最大値",
       "min_value": "最小値",
       "name": "名前",
       "percent": "パーセント",
@@ -75,13 +73,19 @@
       "tap_action": "短くタップしたときの動作",
       "text_shadow": "テキストに影を追加 (オーバーレイ)",
       "theme": "テーマ",
-      "toggle_icon": "アイコンを表示",
-      "toggle_name": "名前を表示",
-      "toggle_progress_bar": "プログレスバーを表示",
-      "toggle_secondary_info": "補足情報を表示",
-      "toggle_value": "値を表示",
       "unit": "単位",
-      "use_max_entity": "最大値にエンティティを使用"
+      "use_max_entity": "最大値にエンティティを使用",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "カスタム補助情報",
+      "interpolate": "色の補間",
+      "name_info": "カスタム名前情報",
+      "reverse": "タイマーを逆にする"
     },
     "option": {
       "bar_orientation": {
@@ -115,6 +119,60 @@
         "pm25": "PM2.5",
         "temperature": "温度",
         "voc": "VOC"
+      },
+      "color_mode": {
+        "auto": "自動",
+        "segment": "セグメント",
+        "rainbow": "レインボー"
+      },
+      "bar_effect": {
+        "radius": "角丸",
+        "glass": "ガラス",
+        "gradient": "グラデーション",
+        "gradient_reverse": "逆グラデーション",
+        "shimmer": "シマー",
+        "shimmer_reverse": "逆シマー"
+      },
+      "hide": {
+        "icon": "アイコン",
+        "name": "名前",
+        "value": "値",
+        "secondary_info": "補足情報",
+        "progress_bar": "バー"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

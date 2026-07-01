@@ -40,12 +40,12 @@
       "badge_color": "Žetona krāsa",
       "badge_icon": "Žetona ikona",
       "bar_color": "Joslas krāsa",
-      "bar_effect": "Joslas efekts",
       "bar_effect_jinja": "Joslas efekts (Jinja režīms)",
       "bar_orientation": "Joslas orientācija",
       "bar_position": "Joslas pozīcija",
       "bar_single_line": "Informācija vienā rindā (overlay)",
       "bar_size": "Joslas izmērs",
+      "color_mode": "Krāsas režīms",
       "center_zero": "Nulles centrā",
       "center_zero_value": "Centra vērtība",
       "center_zero_growth_percent": "Pieauguma procents",
@@ -55,7 +55,6 @@
       "double_tap_action": "Divreiz pieskaroties",
       "entity": "Vienība",
       "force_circular_background": "Piespiest apļu fonu",
-      "hide": "Slēpt",
       "hide_jinja": "Slēpt (Jinja režīms)",
       "hold_action": "Ilgs pieskāriens",
       "icon": "Ikona",
@@ -65,7 +64,6 @@
       "layout": "Satura izkārtojums",
       "max_value": "Maksimālā vērtība",
       "max_value_attribute": "Atribūts (max_value)",
-      "max_value_entity": "Maksimālā vērtība",
       "min_value": "Minimālā vērtība",
       "name": "Nosaukums",
       "percent": "Procenti",
@@ -75,13 +73,19 @@
       "tap_action": "Pieskāriens",
       "text_shadow": "Pievienot teksta ēnu (overlay)",
       "theme": "Tēma",
-      "toggle_icon": "Rādīt ikonu",
-      "toggle_name": "Rādīt nosaukumu",
-      "toggle_progress_bar": "Rādīt progresa joslu",
-      "toggle_secondary_info": "Rādīt papildu info",
-      "toggle_value": "Rādīt vērtību",
       "unit": "Vienība",
-      "use_max_entity": "Izmantot vienību max vērtībai"
+      "use_max_entity": "Izmantot vienību max vērtībai",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "Pielāgota sekundārā informācija",
+      "interpolate": "Krāsu interpolācija",
+      "name_info": "Pielāgota nosaukuma informācija",
+      "reverse": "Apgriezts taimeris"
     },
     "option": {
       "theme": {
@@ -115,6 +119,60 @@
       "layout": {
         "horizontal": "Horizontāls (noklusēts)",
         "vertical": "Vertikāls"
+      },
+      "color_mode": {
+        "auto": "Automātisks",
+        "segment": "Segmenti",
+        "rainbow": "Varavīksne"
+      },
+      "bar_effect": {
+        "radius": "Noapaļoti stūri",
+        "glass": "Stikls",
+        "gradient": "Gradients",
+        "gradient_reverse": "Apgriezts gradients",
+        "shimmer": "Mirdzums",
+        "shimmer_reverse": "Apgriezts mirdzums"
+      },
+      "hide": {
+        "icon": "Ikona",
+        "name": "Nosaukums",
+        "value": "Vērtība",
+        "secondary_info": "Info",
+        "progress_bar": "Josla"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

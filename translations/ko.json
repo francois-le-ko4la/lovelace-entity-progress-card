@@ -40,12 +40,12 @@
       "badge_color": "배지 색상",
       "badge_icon": "배지 아이콘",
       "bar_color": "바 색상",
-      "bar_effect": "바 효과",
       "bar_effect_jinja": "바 효과 (Jinja 모드)",
       "bar_orientation": "바 방향",
       "bar_position": "바 위치",
       "bar_single_line": "한 줄로 정보 표시 (오버레이)",
       "bar_size": "바 크기",
+      "color_mode": "색상 모드",
       "center_zero": "중앙에 영점",
       "center_zero_value": "중앙값",
       "center_zero_growth_percent": "성장률",
@@ -55,7 +55,6 @@
       "double_tap_action": "더블 탭 시 동작",
       "entity": "엔티티",
       "force_circular_background": "원형 배경 강제 적용",
-      "hide": "숨기기",
       "hide_jinja": "숨기기 (Jinja 모드)",
       "hold_action": "길게 누를 시 동작",
       "icon": "아이콘",
@@ -65,7 +64,6 @@
       "layout": "콘텐츠 레이아웃",
       "max_value": "최대값",
       "max_value_attribute": "속성 (최대값)",
-      "max_value_entity": "최대값",
       "min_value": "최소값",
       "name": "이름",
       "percent": "퍼센트",
@@ -75,13 +73,19 @@
       "tap_action": "짧게 탭 시 동작",
       "text_shadow": "텍스트 그림자 추가 (오버레이)",
       "theme": "테마",
-      "toggle_icon": "아이콘 표시",
-      "toggle_name": "이름 표시",
-      "toggle_progress_bar": "진행 바 표시",
-      "toggle_secondary_info": "보조 정보 표시",
-      "toggle_value": "값 표시",
       "unit": "단위",
-      "use_max_entity": "최대값에 엔티티 사용"
+      "use_max_entity": "최대값에 엔티티 사용",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "사용자 정의 보조 정보",
+      "interpolate": "색상 보간",
+      "name_info": "사용자 정의 이름 정보",
+      "reverse": "타이머 역방향"
     },
     "option": {
       "bar_orientation": {
@@ -115,6 +119,60 @@
         "pm25": "PM2.5",
         "temperature": "온도",
         "voc": "VOC"
+      },
+      "color_mode": {
+        "auto": "자동",
+        "segment": "세그먼트",
+        "rainbow": "무지개"
+      },
+      "bar_effect": {
+        "radius": "둥근 모서리",
+        "glass": "유리",
+        "gradient": "그라디언트",
+        "gradient_reverse": "역 그라디언트",
+        "shimmer": "시머",
+        "shimmer_reverse": "역 시머"
+      },
+      "hide": {
+        "icon": "아이콘",
+        "name": "이름",
+        "value": "값",
+        "secondary_info": "부가 정보",
+        "progress_bar": "바"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

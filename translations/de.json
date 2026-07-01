@@ -40,12 +40,12 @@
       "badge_color": "Farbe des Badges",
       "badge_icon": "Symbol des Badges",
       "bar_color": "Farbe der Leiste",
-      "bar_effect": "Effekt auf die Leiste",
       "bar_effect_jinja": "Effekt auf die Leiste (Jinja-Modus)",
       "bar_orientation": "Ausrichtung der Leiste",
       "bar_position": "Position der Leiste",
       "bar_single_line": "Informationen in einer Zeile (Overlay)",
       "bar_size": "Größe der Bar",
+      "color_mode": "Farbmodus",
       "center_zero": "Null in der Mitte",
       "center_zero_value": "Zentrumswert",
       "center_zero_growth_percent": "Wachstumsprozentsatz",
@@ -55,7 +55,6 @@
       "double_tap_action": "Aktion bei doppelt Tippen",
       "entity": "Entität",
       "force_circular_background": "Kreisförmigen Hintergrund erzwingen",
-      "hide": "Ausblenden",
       "hide_jinja": "Ausblenden (Jinja-Modus)",
       "hold_action": "Aktion bei langem Tippen",
       "icon": "Symbol",
@@ -65,7 +64,6 @@
       "layout": "Inhaltslayout",
       "max_value": "Höchstwert",
       "max_value_attribute": "Attribut (max_value)",
-      "max_value_entity": "Entität für Maximalwert verwenden",
       "min_value": "Mindestwert",
       "name": "Name",
       "percent": "Prozent",
@@ -75,13 +73,19 @@
       "tap_action": "Aktion bei kurzem Tippen",
       "text_shadow": "Textschatten hinzufügen (Overlay)",
       "theme": "Thema",
-      "toggle_icon": "Icon anzeigen",
-      "toggle_name": "Name anzeigen",
-      "toggle_progress_bar": "Fortschrittsbalken anzeigen",
-      "toggle_secondary_info": "Sekundärinformationen anzeigen",
-      "toggle_value": "Wert anzeigen",
       "unit": "Einheit",
-      "use_max_entity": "Entität für Maximalwert verwenden"
+      "use_max_entity": "Entität für Maximalwert verwenden",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "Zusatzinfo (sekundär)",
+      "interpolate": "Farben interpolieren",
+      "name_info": "Zusatzinfo (Name)",
+      "reverse": "Timer umkehren"
     },
     "option": {
       "theme": {
@@ -115,6 +119,60 @@
       "layout": {
         "horizontal": "Horizontal (Standard)",
         "vertical": "Vertikal"
+      },
+      "color_mode": {
+        "auto": "Automatisch",
+        "segment": "Segmente",
+        "rainbow": "Regenbogen"
+      },
+      "bar_effect": {
+        "radius": "Abgerundete Ecken",
+        "glass": "Glas",
+        "gradient": "Verlauf",
+        "gradient_reverse": "Verlauf umgekehrt",
+        "shimmer": "Schimmer",
+        "shimmer_reverse": "Schimmer umgekehrt"
+      },
+      "hide": {
+        "icon": "Symbol",
+        "name": "Name",
+        "value": "Wert",
+        "secondary_info": "Info",
+        "progress_bar": "Balken"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

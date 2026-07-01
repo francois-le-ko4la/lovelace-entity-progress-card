@@ -40,12 +40,12 @@
       "badge_color": "Warna lencana",
       "badge_icon": "Ikon lencana",
       "bar_color": "Warna bar",
-      "bar_effect": "Efek pada bar",
       "bar_effect_jinja": "Efek pada bar (mode Jinja)",
       "bar_orientation": "Orientasi bar",
       "bar_position": "Posisi bar",
       "bar_single_line": "Info dalam satu baris (overlay)",
       "bar_size": "Ukuran bar",
+      "color_mode": "Mode warna",
       "center_zero": "Nol di tengah",
       "center_zero_value": "Nilai tengah",
       "center_zero_growth_percent": "Persentase pertumbuhan",
@@ -55,7 +55,6 @@
       "double_tap_action": "Perilaku ketuk ganda",
       "entity": "Entitas",
       "force_circular_background": "Paksa latar belakang melingkar",
-      "hide": "Sembunyikan",
       "hide_jinja": "Sembunyikan (mode Jinja)",
       "hold_action": "Perilaku tahan",
       "icon": "Ikon",
@@ -65,7 +64,6 @@
       "layout": "Tata letak konten",
       "max_value": "Nilai maksimum",
       "max_value_attribute": "Atribut (max_value)",
-      "max_value_entity": "Nilai maksimum",
       "min_value": "Nilai minimum",
       "name": "Nama",
       "percent": "Persentase",
@@ -75,13 +73,19 @@
       "tap_action": "Perilaku ketuk",
       "text_shadow": "Tambahkan bayangan teks (overlay)",
       "theme": "Tema",
-      "toggle_icon": "Tampilkan ikon",
-      "toggle_name": "Tampilkan nama",
-      "toggle_progress_bar": "Tampilkan bar kemajuan",
-      "toggle_secondary_info": "Tampilkan informasi sekunder",
-      "toggle_value": "Tampilkan nilai",
       "unit": "Unit",
-      "use_max_entity": "Gunakan entitas untuk nilai maksimum"
+      "use_max_entity": "Gunakan entitas untuk nilai maksimum",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "Info sekunder kustom",
+      "interpolate": "Interpolasi warna",
+      "name_info": "Info nama kustom",
+      "reverse": "Timer terbalik"
     },
     "option": {
       "bar_orientation": {
@@ -115,6 +119,60 @@
         "pm25": "PM2.5",
         "temperature": "Suhu",
         "voc": "VOC"
+      },
+      "color_mode": {
+        "auto": "Otomatis",
+        "segment": "Segmen",
+        "rainbow": "Pelangi"
+      },
+      "bar_effect": {
+        "radius": "Sudut membulat",
+        "glass": "Kaca",
+        "gradient": "Gradien",
+        "gradient_reverse": "Gradien terbalik",
+        "shimmer": "Kilau",
+        "shimmer_reverse": "Kilau terbalik"
+      },
+      "hide": {
+        "icon": "Ikon",
+        "name": "Nama",
+        "value": "Nilai",
+        "secondary_info": "Info",
+        "progress_bar": "Bilah"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

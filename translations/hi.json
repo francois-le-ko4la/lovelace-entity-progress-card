@@ -40,12 +40,12 @@
       "badge_color": "बैज का रंग",
       "badge_icon": "बैज का आइकन",
       "bar_color": "मुख्य रंग",
-      "bar_effect": "बार पर प्रभाव",
       "bar_effect_jinja": "बार पर प्रभाव (Jinja मोड)",
       "bar_orientation": "बार की दिशा",
       "bar_position": "बार की स्थिति",
       "bar_single_line": "एक पंक्ति में जानकारी (ओवरले)",
       "bar_size": "बार का आकार",
+      "color_mode": "रंग मोड",
       "center_zero": "शून्य केंद्र में",
       "center_zero_value": "केंद्र मान",
       "center_zero_growth_percent": "वृद्धि प्रतिशत",
@@ -55,7 +55,6 @@
       "double_tap_action": "डबल टैप व्यवहार",
       "entity": "एंटिटी",
       "force_circular_background": "गोलाकार पृष्ठभूमि को बाध्य करें",
-      "hide": "छिपाएँ",
       "hide_jinja": "छिपाएँ (Jinja मोड)",
       "hold_action": "होल्ड व्यवहार",
       "icon": "आइकन",
@@ -65,7 +64,6 @@
       "layout": "सामग्री लेआउट",
       "max_value": "अधिकतम मान",
       "max_value_attribute": "एट्रिब्यूट (max_value)",
-      "max_value_entity": "एंटिटी का अधिकतम मान",
       "min_value": "न्यूनतम मान",
       "name": "नाम",
       "percent": "प्रतिशत",
@@ -75,13 +73,19 @@
       "tap_action": "टैप व्यवहार",
       "text_shadow": "टेक्स्ट में छाया जोड़ें (overlay)",
       "theme": "थीम",
-      "toggle_icon": "आइकन दिखाएँ",
-      "toggle_name": "नाम दिखाएँ",
-      "toggle_progress_bar": "प्रगति बार दिखाएँ",
-      "toggle_secondary_info": "सहायक जानकारी दिखाएँ",
-      "toggle_value": "मान दिखाएँ",
       "unit": "इकाई",
-      "use_max_entity": "अधिकतम मान के लिए एंटिटी उपयोग करें"
+      "use_max_entity": "अधिकतम मान के लिए एंटिटी उपयोग करें",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "कस्टम द्वितीयक जानकारी",
+      "interpolate": "रंग इंटरपोलेशन",
+      "name_info": "कस्टम नाम जानकारी",
+      "reverse": "टाइमर उलटें"
     },
     "option": {
       "bar_orientation": {
@@ -115,6 +119,60 @@
         "pm25": "PM2.5",
         "temperature": "तापमान",
         "voc": "VOC"
+      },
+      "color_mode": {
+        "auto": "स्वचालित",
+        "segment": "खंड",
+        "rainbow": "इंद्रधनुष"
+      },
+      "bar_effect": {
+        "radius": "गोल कोने",
+        "glass": "कांच",
+        "gradient": "ग्रेडिएंट",
+        "gradient_reverse": "उल्टा ग्रेडिएंट",
+        "shimmer": "चमक",
+        "shimmer_reverse": "उल्टी चमक"
+      },
+      "hide": {
+        "icon": "आइकन",
+        "name": "नाम",
+        "value": "मूल्य",
+        "secondary_info": "जानकारी",
+        "progress_bar": "बार"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

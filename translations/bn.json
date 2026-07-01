@@ -40,12 +40,12 @@
       "badge_color": "ব্যাজের রঙ",
       "badge_icon": "ব্যাজ আইকন",
       "bar_color": "বারের রঙ",
-      "bar_effect": "বারের প্রভাব",
       "bar_effect_jinja": "বারের প্রভাব (Jinja মোড)",
       "bar_orientation": "বারের অভিমুখ",
       "bar_position": "বারের অবস্থান",
       "bar_single_line": "এক লাইনে তথ্য (ওভারলে)",
       "bar_size": "বারের আকার",
+      "color_mode": "রঙের মোড",
       "center_zero": "মাঝে শূন্য",
       "center_zero_value": "কেন্দ্রীয় মান",
       "center_zero_growth_percent": "প্রবৃদ্ধির শতাংশ",
@@ -55,7 +55,6 @@
       "double_tap_action": "ডাবল ট্যাপ আচরণ",
       "entity": "সত্তা",
       "force_circular_background": "বৃত্তাকার পটভূমি জোর করুন",
-      "hide": "লুকান",
       "hide_jinja": "লুকান (Jinja মোড)",
       "hold_action": "হোল্ড আচরণ",
       "icon": "আইকন",
@@ -65,7 +64,6 @@
       "layout": "বিষয়বস্তুর বিন্যাস",
       "max_value": "সর্বোচ্চ মান",
       "max_value_attribute": "বৈশিষ্ট্য (max_value)",
-      "max_value_entity": "সত্তার সর্বোচ্চ মান",
       "min_value": "ন্যূনতম মান",
       "name": "নাম",
       "percent": "শতাংশ",
@@ -75,13 +73,19 @@
       "tap_action": "ট্যাপ আচরণ",
       "text_shadow": "টেক্সটে ছায়া যোগ করুন (overlay)",
       "theme": "থিম",
-      "toggle_icon": "আইকন",
-      "toggle_name": "নাম",
-      "toggle_progress_bar": "বার",
-      "toggle_secondary_info": "তথ্য",
-      "toggle_value": "মান",
       "unit": "একক",
-      "use_max_entity": "সর্বোচ্চ মানের জন্য সত্তা ব্যবহার করুন"
+      "use_max_entity": "সর্বোচ্চ মানের জন্য সত্তা ব্যবহার করুন",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "কাস্টম সেকেন্ডারি তথ্য",
+      "interpolate": "রঙ ইন্টারপোলেশন",
+      "name_info": "কাস্টম নাম তথ্য",
+      "reverse": "টাইমার উল্টানো"
     },
     "option": {
       "theme": {
@@ -115,6 +119,60 @@
       "layout": {
         "horizontal": "অনুভূমিক (ডিফল্ট)",
         "vertical": "উল্লম্ব"
+      },
+      "color_mode": {
+        "auto": "স্বয়ংক্রিয়",
+        "segment": "বিভাগ",
+        "rainbow": "রেইনবো"
+      },
+      "bar_effect": {
+        "radius": "বৃত্তাকার কোণ",
+        "glass": "কাচ",
+        "gradient": "গ্রেডিয়েন্ট",
+        "gradient_reverse": "উল্টো গ্রেডিয়েন্ট",
+        "shimmer": "শিমার",
+        "shimmer_reverse": "উল্টো শিমার"
+      },
+      "hide": {
+        "icon": "আইকন",
+        "name": "নাম",
+        "value": "মান",
+        "secondary_info": "তথ্য",
+        "progress_bar": "বার"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

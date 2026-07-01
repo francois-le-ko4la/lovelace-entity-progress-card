@@ -40,12 +40,12 @@
       "badge_color": "Ženklelio spalva",
       "badge_icon": "Ženklelio ikona",
       "bar_color": "Juostos spalva",
-      "bar_effect": "Juostos efektas",
       "bar_effect_jinja": "Juostos efektas (Jinja režimas)",
       "bar_orientation": "Juostos orientacija",
       "bar_position": "Juostos pozicija",
       "bar_single_line": "Informacija vienoje eilutėje (overlay)",
       "bar_size": "Juostos dydis",
+      "color_mode": "Spalvos režimas",
       "center_zero": "Nulis centre",
       "center_zero_value": "Centro reikšmė",
       "center_zero_growth_percent": "Augimo procentas",
@@ -55,7 +55,6 @@
       "double_tap_action": "Dviejų bakstelėjimų veiksmas",
       "entity": "Entity",
       "force_circular_background": "Priversti apvalų foną",
-      "hide": "Slėpti",
       "hide_jinja": "Slėpti (Jinja režimas)",
       "hold_action": "Ilgo paspaudimo veiksmas",
       "icon": "Ikona",
@@ -65,7 +64,6 @@
       "layout": "Turinio išdėstymas",
       "max_value": "Maksimali reikšmė",
       "max_value_attribute": "Atributas (max_value)",
-      "max_value_entity": "Maksimali reikšmė",
       "min_value": "Minimali reikšmė",
       "name": "Pavadinimas",
       "percent": "Procentai",
@@ -75,13 +73,19 @@
       "tap_action": "Bakstelėjimo veiksmas",
       "text_shadow": "Pridėti teksto šešėlį (overlay)",
       "theme": "Tema",
-      "toggle_icon": "Rodyti ikoną",
-      "toggle_name": "Rodyti pavadinimą",
-      "toggle_progress_bar": "Rodyti progreso juostą",
-      "toggle_secondary_info": "Rodyti papildomą info",
-      "toggle_value": "Rodyti reikšmę",
       "unit": "Vienetas",
-      "use_max_entity": "Naudoti entity max reikšmei"
+      "use_max_entity": "Naudoti entity max reikšmei",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "Pasirinktinė papildoma informacija",
+      "interpolate": "Spalvų interpoliavimas",
+      "name_info": "Pasirinktinė pavadinimo informacija",
+      "reverse": "Atvirkštinis laikmatis"
     },
     "option": {
       "theme": {
@@ -115,6 +119,60 @@
       "layout": {
         "horizontal": "Horizontalus (numatyta)",
         "vertical": "Vertikalus"
+      },
+      "color_mode": {
+        "auto": "Automatinis",
+        "segment": "Segmentai",
+        "rainbow": "Vaivorykštė"
+      },
+      "bar_effect": {
+        "radius": "Suapvalinti kampai",
+        "glass": "Stiklas",
+        "gradient": "Gradientas",
+        "gradient_reverse": "Apverstas gradientas",
+        "shimmer": "Blizgesys",
+        "shimmer_reverse": "Apverstas blizgesys"
+      },
+      "hide": {
+        "icon": "Piktograma",
+        "name": "Pavadinimas",
+        "value": "Reikšmė",
+        "secondary_info": "Info",
+        "progress_bar": "Juosta"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

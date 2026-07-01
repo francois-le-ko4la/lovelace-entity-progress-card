@@ -630,7 +630,6 @@ entity. See `attribute`.
 #### `reverse`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
-[![YAML Only][yaml-only]](#yaml-only)
 
 > **`reverse`** [Boolean] _(optional, default: `false`)_
 
@@ -711,7 +710,6 @@ state_content:
 #### `custom_info`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
-[![YAML Only][yaml-only]](#yaml-only)
 
 > **`custom_info`** [JINJA] _(optional)_:
 
@@ -760,7 +758,6 @@ custom_info: >-
 #### `name_info`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
-[![YAML Only][yaml-only]](#yaml-only)
 
 > **`name_info`** [JINJA] _(optional)_:
 
@@ -1115,6 +1112,19 @@ bar_effect: |-
 > The shimmer effect is disabled when center_zero is enabled
 > (center_zero = true).
 
+_Effect incompatibilities_ — some effects cannot be combined:
+
+| Effect selected | Incompatible with |
+|---|---|
+| `glass` | `gradient`, `gradient_reverse` |
+| `gradient` | `gradient_reverse`, `glass` |
+| `gradient_reverse` | `gradient`, `glass` |
+| `shimmer` | `shimmer_reverse` |
+| `shimmer_reverse` | `shimmer` |
+
+The visual editor enforces these rules automatically by hiding incompatible chips
+when a conflicting effect is active.
+
 [🔼 Back to top]
 
 #### `color_mode`
@@ -1173,7 +1183,6 @@ color_mode: rainbow
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
 [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
-[![YAML Only][yaml-only]](#yaml-only)
 
 > **`bar_max_width`** [String] _(optional)_
 
@@ -1350,7 +1359,6 @@ layout: vertical
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
 [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
-[![YAML Only][yaml-only]](#yaml-only)
 
 > **`frameless`** [Boolean] _(optional, default: false)_
 
@@ -1382,7 +1390,6 @@ frameless: true
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
 [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
-[![YAML Only][yaml-only]](#yaml-only)
 
 > **`marginless`** [Boolean] _(optional, default: false)_
 
@@ -1402,7 +1409,6 @@ marginless: true
 
 [![Card OK][Card-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
-[![YAML Only][yaml-only]](#yaml-only)
 
 > **`height`** [String] (optional)
 
@@ -1429,7 +1435,6 @@ height: 140px
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
 [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
-[![YAML Only][yaml-only]](#yaml-only)
 
 > **`min_width`** [String] (optional)
 
@@ -1472,7 +1477,6 @@ reverse_secondary_info_row: true
 #### `unit_spacing`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
-[![YAML Only][yaml-only]](#yaml-only)
 
 > **`unit_spacing`** [String] ➡️ {`auto`|`space`|`no-space`} _(optional,
 > default: `auto`)_
@@ -1702,7 +1706,6 @@ custom_theme:
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 [![Feature OK][Feature-OK]](#compatibility)
-[![YAML Only][yaml-only]](#yaml-only)
 
 > **`interpolate`** [Boolean] _(optional, default: `false`)_
 
@@ -1806,7 +1809,6 @@ disable_unit: true
 [![Feature OK][Feature-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
 [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
-[![YAML Only][yaml-only]](#yaml-only)
 
 > **`watermark`** [Map] (optional)\_:
 

@@ -40,12 +40,12 @@
       "badge_color": "Jelvény színe",
       "badge_icon": "Jelvény ikon",
       "bar_color": "Sáv színe",
-      "bar_effect": "Sáv effektus",
       "bar_effect_jinja": "Sáv effektus (Jinja mód)",
       "bar_orientation": "Sáv iránya",
       "bar_position": "Sáv pozíciója",
       "bar_single_line": "Egy soros információ (overlay)",
       "bar_size": "Sáv mérete",
+      "color_mode": "Szín mód",
       "center_zero": "Nulla középen",
       "center_zero_value": "Középérték",
       "center_zero_growth_percent": "Növekedési százalék",
@@ -55,7 +55,6 @@
       "double_tap_action": "Kettős koppintás művelet",
       "entity": "Entitás",
       "force_circular_background": "Kör alakú háttér erőltetése",
-      "hide": "Elrejtés",
       "hide_jinja": "Elrejtés (Jinja mód)",
       "hold_action": "Hosszan tartó nyomás művelet",
       "icon": "Ikon",
@@ -65,7 +64,6 @@
       "layout": "Tartalom elrendezése",
       "max_value": "Maximális érték",
       "max_value_attribute": "Attribútum (max_value)",
-      "max_value_entity": "Maximális érték",
       "min_value": "Minimális érték",
       "name": "Név",
       "percent": "Százalék",
@@ -75,13 +73,19 @@
       "tap_action": "Koppintás művelet",
       "text_shadow": "Szöveg árnyék hozzáadása (overlay)",
       "theme": "Téma",
-      "toggle_icon": "Ikon megjelenítése",
-      "toggle_name": "Név megjelenítése",
-      "toggle_progress_bar": "Sáv megjelenítése",
-      "toggle_secondary_info": "Másodlagos info megjelenítése",
-      "toggle_value": "Érték megjelenítése",
       "unit": "Mértékegység",
-      "use_max_entity": "Entitás használata max értékhez"
+      "use_max_entity": "Entitás használata max értékhez",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "Egyéni másodlagos info",
+      "interpolate": "Színinterpoláció",
+      "name_info": "Egyéni névinfo",
+      "reverse": "Fordított időzítő"
     },
     "option": {
       "theme": {
@@ -115,6 +119,60 @@
       "layout": {
         "horizontal": "Vízszintes (alapértelmezett)",
         "vertical": "Függőleges"
+      },
+      "color_mode": {
+        "auto": "Automatikus",
+        "segment": "Szegmens",
+        "rainbow": "Szivárvány"
+      },
+      "bar_effect": {
+        "radius": "Lekerekített sarkok",
+        "glass": "Üveg",
+        "gradient": "Átmenet",
+        "gradient_reverse": "Fordított átmenet",
+        "shimmer": "Csillogás",
+        "shimmer_reverse": "Fordított csillogás"
+      },
+      "hide": {
+        "icon": "Ikon",
+        "name": "Név",
+        "value": "Érték",
+        "secondary_info": "Info",
+        "progress_bar": "Sáv"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }

@@ -40,12 +40,12 @@
       "badge_color": "Färg på bricka",
       "badge_icon": "Ikon för bricka",
       "bar_color": "Färg för baren",
-      "bar_effect": "Effekt på baren",
       "bar_effect_jinja": "Effekt på baren (Jinja-läge)",
       "bar_orientation": "Orientering av baren",
       "bar_position": "Position för baren",
       "bar_single_line": "Info på en rad (overlay)",
       "bar_size": "Barstorlek",
+      "color_mode": "Färgläge",
       "center_zero": "Noll i mitten",
       "center_zero_value": "Centervärde",
       "center_zero_growth_percent": "Tillväxtprocent",
@@ -55,7 +55,6 @@
       "double_tap_action": "Åtgärd vid dubbeltryck",
       "entity": "Enhet",
       "force_circular_background": "Tvinga cirkulär bakgrund",
-      "hide": "Dölj",
       "hide_jinja": "Dölj (Jinja-läge)",
       "hold_action": "Åtgärd vid långt tryck",
       "icon": "Ikon",
@@ -65,7 +64,6 @@
       "layout": "Innehållslayout",
       "max_value": "Maximalt värde",
       "max_value_attribute": "Attribut (max_value)",
-      "max_value_entity": "Maximalt värde",
       "min_value": "Minsta värde",
       "name": "Namn",
       "percent": "Procent",
@@ -75,13 +73,19 @@
       "tap_action": "Åtgärd vid kort tryck",
       "text_shadow": "Lägg till textskugga (overlay)",
       "theme": "Tema",
-      "toggle_icon": "Visa ikon",
-      "toggle_name": "Visa namn",
-      "toggle_progress_bar": "Visa förloppsfält",
-      "toggle_secondary_info": "Visa sekundär information",
-      "toggle_value": "Visa värde",
       "unit": "Enhet",
-      "use_max_entity": "Använd enhet för maximalt värde"
+      "use_max_entity": "Använd enhet för maximalt värde",
+      "bar_max_width": "Bar max width",
+      "frameless": "Frameless",
+      "height": "Height",
+      "marginless": "Marginless",
+      "min_width": "Min width",
+      "unit_spacing": "Unit spacing",
+      "watermark_toggle": "Watermark",
+      "custom_info": "Anpassad sekundär info",
+      "interpolate": "Interpolera färger",
+      "name_info": "Anpassad namninfo",
+      "reverse": "Omvänd timer"
     },
     "option": {
       "bar_orientation": {
@@ -115,6 +119,60 @@
         "pm25": "PM2.5",
         "temperature": "Temperatur",
         "voc": "VOC"
+      },
+      "color_mode": {
+        "auto": "Auto",
+        "segment": "Segment",
+        "rainbow": "Regnbåge"
+      },
+      "bar_effect": {
+        "radius": "Rundade hörn",
+        "glass": "Glas",
+        "gradient": "Gradient",
+        "gradient_reverse": "Omvänd gradient",
+        "shimmer": "Glans",
+        "shimmer_reverse": "Omvänd glans"
+      },
+      "hide": {
+        "icon": "Ikon",
+        "name": "Namn",
+        "value": "Värde",
+        "secondary_info": "Info",
+        "progress_bar": "Stapel"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "space": "Space",
+        "no-space": "No space"
+      },
+      "watermark_type": {
+        "blended": "Blended",
+        "area": "Area",
+        "striped": "Striped",
+        "triangle": "Triangle",
+        "round": "Round",
+        "line": "Line"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark": {
+        "low": "Low",
+        "high": "High",
+        "type": "Type",
+        "opacity": "Opacity",
+        "low_color": "Low color",
+        "high_color": "High color",
+        "low_as": "Low unit",
+        "high_as": "High unit",
+        "line_size": "Line size",
+        "disable_low": "Disable low",
+        "disable_high": "Disable high",
+        "low_entity_toggle": "Use entity as low watermark value",
+        "low_attribute": "Attribute",
+        "high_entity_toggle": "Use entity as high watermark value",
+        "high_attribute": "Attribute"
       }
     }
   }
