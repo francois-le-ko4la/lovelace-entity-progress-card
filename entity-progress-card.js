@@ -7683,12 +7683,12 @@ const CARD_CSS = `
 
 :host {
   /* === SPACING VARIABLES === */
-  --spacing: 10px;
+  --spacing: var(--epb-spacing, 10px);
   --gap-entities: 16px;
 
   /* === SIZE VARIABLES === */
-  --shape-default-size: 36px;
-  --icon-default-size: 24px;
+  --shape-default-size: var(--epb-shape-size, 36px);
+  --icon-default-size: var(--epb-icon-size, 24px);
   --entities-shape-size: 40px;
   --badge-size: 16px;
   --badge-icon-size: 12px;
@@ -7717,7 +7717,7 @@ const CARD_CSS = `
   --card-active-mix: 85%;
 
   /* === TRANSITION VARIABLES === */
-  --progress-transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  --progress-transition: var(--epb-progress-transition, 0.5s cubic-bezier(0.4, 0, 0.2, 1));
 
   /* === TYPOGRAPHY VARIABLES === */
   --name-letter-spacing: 0.1px;
@@ -7767,6 +7767,13 @@ ha-card.overlay {
 
 ${CARD.htmlStructure.card.element} {
   --ha-ripple-color: var(--epb-icon-and-shape-color, var(--icon-and-shape-color, var(--state-icon-color)));
+  /* Re-declared here (not only :host) so card_mod overrides set on ha-card are seen:
+     var() substitution happens on the declaring element, and ha-card is where users
+     apply per-card styles. The :host declarations keep theme-level overrides working. */
+  --spacing: var(--epb-spacing, 10px);
+  --shape-default-size: var(--epb-shape-size, 36px);
+  --icon-default-size: var(--epb-icon-size, 24px);
+  --progress-transition: var(--epb-progress-transition, 0.5s cubic-bezier(0.4, 0, 0.2, 1));
   --current-card-min-width: var(${CARD.style.dynamic.card.minWidth.var}, 100%);
   --current-card-min-height: 0;
   --current-card-height: var(${CARD.style.dynamic.card.height.var}, 100%);
@@ -9282,6 +9289,11 @@ class RegistrationHelper {
  ******************************************************************************************/
 
 const CONTENT_SLOT = '{{content}}';
+
+const VALUE_CHANGED_EVENT = 'value-changed';
+const HA_SELECTOR_TAG = 'ha-selector';
+const HA_CHIP_SET_TAG = 'ha-chip-set';
+const HA_SVG_ICON_TAG = 'ha-svg-icon';
 
 const Element = (obj, extraClass = '') => {
   const className = `${obj.class} ${extraClass}`.trim();
@@ -10818,6 +10830,7 @@ class EntityOrValue {
   get nameComposition()     { return this.#entity()?.nameComposition ?? null; }
   get formatedEntityState() { return this.#entity()?.formatedEntityState ?? null; }
   get stateContent()        { return this.#entity()?.stateContent ?? null; }
+  set stateContent(newValue){ const entity = this.#entity(); if (entity) entity.stateContent = newValue; }
   get stateContentToString(){ return this.#entity()?.stateContentToString ?? null; }
   get entityType()          { return this.#entity()?.entityType ?? { isTimer: false, isDuration: false, isNumber: false, isCounter: false, isSynced: false }; }
   get hasShapeByDefault()   { return this.#entity()?.hasShapeByDefault ?? false; }
@@ -10828,11 +10841,9 @@ class EntityOrValue {
   get unit()                { return this.#entity()?.unit ?? null; }
   get stateObj()            { return this.#entity()?.stateObj ?? null; }
   get nameTokens()          { return this.#entity()?.nameTokens ?? null; }
-  get attribute()           { return this.#entity()?.attribute ?? null; }
-
-  set attribute(newValue)   { const entity = this.#entity(); if (entity) entity.attribute = newValue; }
   set nameTokens(tok)       { const entity = this.#entity(); if (entity) entity.nameTokens = tok; }
-  set stateContent(newValue){ const entity = this.#entity(); if (entity) entity.stateContent = newValue; }
+  get attribute()           { return this.#entity()?.attribute ?? null; }
+  set attribute(newValue)   { const entity = this.#entity(); if (entity) entity.attribute = newValue; }
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
@@ -13469,7 +13480,7 @@ class HACore extends HTMLElement {
   }
 
   _validateProcessJinjaFields() {
-    return !!this._resourceManager && !(this._cardView.config?.entity && this._cardView.hasStandardEntityError);
+    return Boolean(this._resourceManager) && !(this._cardView.config?.entity && this._cardView.hasStandardEntityError);
   }
 
   _processJinjaFields() {
@@ -14034,7 +14045,7 @@ class HABase extends HACore {
     this._log.debug('📎 HABase._renderBadgeIcon():', { content });
     this.#jinjaStateBadge.icon = is.nonEmptyString(content) && content.includes(HA_CONTEXT.icons.prefix);
 
-    if (!is.nullish(this._cardView.badgeInfo)) return false; // alert -> cancel custom badge
+    if (!is.nullish(this._cardView.badgeInfo)) return; // alert -> cancel custom badge
     if (this.#jinjaStateBadge.icon) {
       this._setBadgeIcon(content);
     }
@@ -14044,7 +14055,7 @@ class HABase extends HACore {
     this._log.debug('📎 HABase._renderBadgeColor():', { content });
     this.#jinjaStateBadge.color = is.nonEmptyString(content);
 
-    if (!is.nullish(this._cardView.badgeInfo)) return false; // alert -> cancel custom badge
+    if (!is.nullish(this._cardView.badgeInfo)) return; // alert -> cancel custom badge
 
     if (this.#jinjaStateBadge.color) {
       const backgroundColor = ThemeManager.adaptColor(content);
@@ -14697,12 +14708,8 @@ class EditorDOMHelper extends DOMHelper {
   }
 }
 
-const VALUE_CHANGED_EVENT = 'value-changed';
-const HA_SELECTOR_TAG = 'ha-selector';
-const HA_CHIP_SET_TAG = 'ha-chip-set';
-const HA_SVG_ICON_TAG = 'ha-svg-icon';
-
-const CHIPS_HOST_STYLE = `:host { display: block; width: 100%; } ha-filter-chip[selected] { --md-filter-chip-selected-container-color: var(--primary-color); --md-filter-chip-selected-label-text-color: var(--text-primary-color, #fff); --md-filter-chip-selected-leading-icon-color: var(--text-primary-color, #fff); }`;
+const CHIPS_HOST_STYLE =
+  ':host { display: block; width: 100%; } ha-filter-chip[selected] { --md-filter-chip-selected-container-color: var(--primary-color); --md-filter-chip-selected-label-text-color: var(--text-primary-color, #fff); --md-filter-chip-selected-leading-icon-color: var(--text-primary-color, #fff); }';
 
 class ChipsBase extends HTMLElement {
   // CF5 - issue (major) resolved - setLabels() is called by the editor before the element is connected, when the chips Map is still empty; labels are now stored and applied at build time
@@ -14717,10 +14724,6 @@ class ChipsBase extends HTMLElement {
   _chipLabel(value) {
     return this._labels?.[value] ?? value;
   }
-
-  // Swallow the generic label assignment done by the editor on every field element.
-  // eslint-disable-next-line class-methods-use-this
-  set label(_) {}
 }
 
 class EntityProgressEffectChips extends ChipsBase {
@@ -14769,6 +14772,7 @@ class EntityProgressEffectChips extends ChipsBase {
     this.dispatchEvent(new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value: updated }, bubbles: true, composed: true }));
   }
 
+  get value() { return this.#selected; }
   set value(val) { this.#selected = is.array(val) ? val : []; this._render(); }
 
   updateConfig(config) { this.#config = config ?? {}; this._render(); }
@@ -14823,10 +14827,8 @@ class EntityProgressHideChips extends ChipsBase {
     this.dispatchEvent(new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value: updated }, bubbles: true, composed: true }));
   }
 
+  get value() { return this.#selected; }
   set value(val) { this.#selected = is.array(val) ? val : []; this._render(); }
-
-  // eslint-disable-next-line class-methods-use-this
-  updateConfig(_config) {}
 
   setLabels(labels) {
     this._labels = labels ?? null;
@@ -14870,11 +14872,13 @@ class EntityProgressAdditionsEditor extends HTMLElement {
     this.#render();
   }
 
+  get label() { return this.#labelText; }
   set label(val) {
     this.#labelText = val ?? '';
     if (this.#labelEl) this.#labelEl.textContent = this.#labelText;
   }
 
+  get hass() { return this.#hass; }
   set hass(hass) {
     this.#hass = hass;
     for (const { entitySel, attrSel } of this.#rows) {
@@ -14883,6 +14887,7 @@ class EntityProgressAdditionsEditor extends HTMLElement {
     }
   }
 
+  get value() { return this.#value; }
   set value(val) {
     this.#value = is.array(val) ? val.filter(is.plainObject) : [];
     if (this.#list) this.#render();

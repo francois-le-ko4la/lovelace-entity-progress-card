@@ -587,6 +587,10 @@ color_mode: rainbow
 | `--epb-card-border-radius`            | Card         | Border     | Card corner radius                                  | `20px`      |
 | `--epb-card-border-style`             | Card         | Border     | Border style                                        | `dashed`    |
 | `--epb-card-font-family`              | Card         | Typography | Card font family                                    | `monospace` |
+| `--epb-spacing`                       | Card         | Dimension  | Global density: paddings and gaps of the whole card | `6px`       |
+| `--epb-icon-size`                     | Icon         | Dimension  | Icon size (standard card layout)                    | `28px`      |
+| `--epb-shape-size`                    | Icon         | Dimension  | Circular shape size behind the icon                 | `42px`      |
+| `--epb-progress-transition`           | Progress Bar | Animation  | Bar fill transition (duration/easing, `none` to disable) | `0.2s linear` |
 | `--epb-progress-bar-color`            | Progress Bar | Color      | Progress bar fill color                             | `#ff6600`   |
 | `--epb-progress-bar-background-color` | Progress Bar | Color      | Progress bar background color                       | `#333333`   |
 | `--epb-progress-bar-size`             | Progress Bar | Dimension  | Forces the bar fill size (overrides computed value) | `60%`       |
