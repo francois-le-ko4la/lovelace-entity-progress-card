@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "Vaihda palkki ja teksti",
       "secondary": "Lisätiedot",
       "state_content": "Tilan sisältö",
+      "show_all_actions": "Näytä kaikki toiminnot",
       "tap_action": "Toiminto lyhyellä napautuksella",
       "text_shadow": "Lisää tekstivarjo (overlay)",
       "theme": "Teema",
@@ -85,7 +86,8 @@
       "custom_info": "Mukautettu toissijainen tieto",
       "interpolate": "Interpoloi värit",
       "name_info": "Mukautettu nimitieto",
-      "reverse": "Käänteinen ajastin"
+      "reverse": "Käänteinen ajastin",
+      "additions": "Lisäentiteetit"
     },
     "option": {
       "theme": {

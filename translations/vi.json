@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "Hoán đổi thanh và văn bản",
       "secondary": "Thông tin phụ",
       "state_content": "Nội dung trạng thái",
+      "show_all_actions": "Hiển thị tất cả hành động",
       "tap_action": "Hành vi chạm",
       "text_shadow": "Thêm bóng cho văn bản (overlay)",
       "theme": "Chủ đề",
@@ -85,7 +86,8 @@
       "custom_info": "Thông tin phụ tùy chỉnh",
       "interpolate": "Nội suy màu sắc",
       "name_info": "Thông tin tên tùy chỉnh",
-      "reverse": "Đảo ngược bộ đếm thời gian"
+      "reverse": "Đảo ngược bộ đếm thời gian",
+      "additions": "Thực thể bổ sung"
     },
     "option": {
       "bar_orientation": {

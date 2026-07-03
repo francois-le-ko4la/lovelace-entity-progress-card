@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "Çubuğu ve metni değiştir",
       "secondary": "İkincil bilgi",
       "state_content": "Durum içeriği",
+      "show_all_actions": "Tüm eylemleri göster",
       "tap_action": "Kısa dokunma davranışı",
       "text_shadow": "Metne gölge ekle (overlay)",
       "theme": "Tema",
@@ -85,7 +86,8 @@
       "custom_info": "Özel ikincil bilgi",
       "interpolate": "Renk interpolasyonu",
       "name_info": "Özel ad bilgisi",
-      "reverse": "Zamanlayıcıyı tersine çevir"
+      "reverse": "Zamanlayıcıyı tersine çevir",
+      "additions": "Ek varlıklar"
     },
     "option": {
       "bar_orientation": {

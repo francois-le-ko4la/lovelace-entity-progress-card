@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "تبديل الشريط والنص",
       "secondary": "معلومات ثانوية",
       "state_content": "محتوى الحالة",
+      "show_all_actions": "إظهار جميع الإجراءات",
       "tap_action": "الإجراء عند النقر القصير",
       "text_shadow": "إضافة ظل للنص (overlay)",
       "theme": "السمة",
@@ -85,7 +86,8 @@
       "custom_info": "معلومات إضافية (ثانوية)",
       "interpolate": "تدرج الألوان",
       "name_info": "معلومات إضافية (الاسم)",
-      "reverse": "عكس المؤقت"
+      "reverse": "عكس المؤقت",
+      "additions": "كيانات إضافية"
     },
     "option": {
       "theme": {

@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "막대와 텍스트 교체",
       "secondary": "보조 정보",
       "state_content": "상태 콘텐츠",
+      "show_all_actions": "모든 액션 표시",
       "tap_action": "짧게 탭 시 동작",
       "text_shadow": "텍스트 그림자 추가 (오버레이)",
       "theme": "테마",
@@ -85,7 +86,8 @@
       "custom_info": "사용자 정의 보조 정보",
       "interpolate": "색상 보간",
       "name_info": "사용자 정의 이름 정보",
-      "reverse": "타이머 역방향"
+      "reverse": "타이머 역방향",
+      "additions": "추가 엔티티"
     },
     "option": {
       "bar_orientation": {

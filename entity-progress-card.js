@@ -65,7 +65,7 @@ const META = {
 const CARD_CONTEXT = {
   dev: true,
   // editor: true, interactionHandler: true
-  debug: { card: true, editor: true, interactionHandler: true, ressourceManager: true, hass: false },
+  debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false, hass: false },
 };
 
 const devName = (name) => `${name}${CARD_CONTEXT.dev ? '-dev' : ''}`;
@@ -80,6 +80,7 @@ const HA_CONTEXT = {
     chevronUpBox: 'mdi:chevron-up-box',
     chevronDownBox: 'mdi:chevron-down-box',
     equalBox: 'mdi:equal-box',
+    progressQuestion: 'mdi:progress-question',
     focusHorizontal: 'mdi:focus-field-horizontal',
     focusVertical: 'mdi:focus-field-vertical',
     alert: 'mdi:alert',
@@ -697,11 +698,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'معلومات إضافية (ثانوية)',
         interpolate: 'تدرج الألوان',
         name_info: 'معلومات إضافية (الاسم)',
         reverse: 'عكس المؤقت',
-        watermark_toggle: 'Watermark'
+        additions: 'كيانات إضافية'
       },
       option: {
         theme: {
@@ -877,11 +879,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'কাস্টম সেকেন্ডারি তথ্য',
         interpolate: 'রঙ ইন্টারপোলেশন',
         name_info: 'কাস্টম নাম তথ্য',
         reverse: 'টাইমার উল্টানো',
-        watermark_toggle: 'Watermark'
+        additions: 'অতিরিক্ত সত্তা'
       },
       option: {
         theme: {
@@ -1057,11 +1060,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Informació addicional (secundària)',
         interpolate: 'Interpolar colors',
         name_info: 'Informació addicional (nom)',
         reverse: 'Temporitzador invers',
-        watermark_toggle: 'Watermark'
+        additions: 'Entitats addicionals'
       },
       option: {
         theme: {
@@ -1237,11 +1241,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Vlastní sekundární info',
         interpolate: 'Interpolace barev',
         name_info: 'Vlastní info názvu',
         reverse: 'Obrátit časovač',
-        watermark_toggle: 'Watermark'
+        additions: 'Další entity'
       },
       option: {
         theme: {
@@ -1417,11 +1422,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Tilpasset sekundær info',
         interpolate: 'Interpoler farver',
         name_info: 'Tilpasset navneinfo',
         reverse: 'Omvendt timer',
-        watermark_toggle: 'Watermark'
+        additions: 'Ekstra entiteter'
       },
       option: {
         theme: {
@@ -1597,11 +1603,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Zusatzinfo (sekundär)',
         interpolate: 'Farben interpolieren',
         name_info: 'Zusatzinfo (Name)',
         reverse: 'Timer umkehren',
-        watermark_toggle: 'Watermark'
+        additions: 'Weitere Entitäten'
       },
       option: {
         theme: {
@@ -1777,11 +1784,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Προσαρμοσμένη δευτερεύουσα πληροφορία',
         interpolate: 'Παρεμβολή χρωμάτων',
         name_info: 'Προσαρμοσμένη πληροφορία ονόματος',
         reverse: 'Αντίστροφο χρονόμετρο',
-        watermark_toggle: 'Watermark'
+        additions: 'Πρόσθετες οντότητες'
       },
       option: {
         theme: {
@@ -1957,11 +1965,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Custom secondary info',
         interpolate: 'Interpolate colors',
         name_info: 'Custom name info',
         reverse: 'Reverse timer',
-        watermark_toggle: 'Watermark'
+        additions: 'Additional entities'
       },
       option: {
         theme: {
@@ -2137,11 +2146,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Info secundaria personalizada',
         interpolate: 'Interpolación de colores',
         name_info: 'Info de nombre personalizada',
         reverse: 'Temporizador inverso',
-        watermark_toggle: 'Watermark'
+        additions: 'Entidades adicionales'
       },
       option: {
         theme: {
@@ -2317,11 +2327,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Info secundaria personalizada',
         interpolate: 'Interpolación de colores',
         name_info: 'Info de nombre personalizada',
         reverse: 'Temporizador inverso',
-        watermark_toggle: 'Watermark'
+        additions: 'Entidades adicionales'
       },
       option: {
         theme: {
@@ -2497,11 +2508,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Kohandatud sekundaarne teave',
         interpolate: 'Värvide interpoleerimine',
         name_info: 'Kohandatud nime teave',
         reverse: 'Pööratud taimer',
-        watermark_toggle: 'Watermark'
+        additions: 'Täiendavad üksused'
       },
       option: {
         theme: {
@@ -2677,11 +2689,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Mukautettu toissijainen tieto',
         interpolate: 'Interpoloi värit',
         name_info: 'Mukautettu nimitieto',
         reverse: 'Käänteinen ajastin',
-        watermark_toggle: 'Watermark'
+        additions: 'Lisäentiteetit'
       },
       option: {
         theme: {
@@ -2849,7 +2862,6 @@ const TRANSLATIONS = {
         tap_action: 'Comportement lors d\'un appui court',
         text_shadow: 'Ajouter une ombre au texte (overlay)',
         theme: 'Thème',
-        toggle_icon: 'Afficher l\'icône',
         unit: 'Unité',
         use_max_entity: 'Utiliser une entité pour la valeur max',
         bar_max_width: 'Bar max width',
@@ -2858,11 +2870,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Info secondaire personnalisée',
         interpolate: 'Interpoler les couleurs',
         name_info: 'Info nom personnalisée',
         reverse: 'Inverser le minuteur',
-        watermark_toggle: 'Watermark'
+        additions: 'Entités supplémentaires'
       },
       option: {
         theme: {
@@ -3038,11 +3051,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'कस्टम द्वितीयक जानकारी',
         interpolate: 'रंग इंटरपोलेशन',
         name_info: 'कस्टम नाम जानकारी',
         reverse: 'टाइमर उलटें',
-        watermark_toggle: 'Watermark'
+        additions: 'अतिरिक्त एंटिटी'
       },
       option: {
         bar_orientation: {
@@ -3218,11 +3232,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Prilagođena sekundarna informacija',
         interpolate: 'Interpolacija boja',
         name_info: 'Prilagođena informacija naziva',
         reverse: 'Obrnuti tajmer',
-        watermark_toggle: 'Watermark'
+        additions: 'Dodatni entiteti'
       },
       option: {
         bar_orientation: {
@@ -3398,11 +3413,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Egyéni másodlagos info',
         interpolate: 'Színinterpoláció',
         name_info: 'Egyéni névinfo',
         reverse: 'Fordított időzítő',
-        watermark_toggle: 'Watermark'
+        additions: 'További entitások'
       },
       option: {
         theme: {
@@ -3578,11 +3594,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Info sekunder kustom',
         interpolate: 'Interpolasi warna',
         name_info: 'Info nama kustom',
         reverse: 'Timer terbalik',
-        watermark_toggle: 'Watermark'
+        additions: 'Entitas tambahan'
       },
       option: {
         bar_orientation: {
@@ -3758,11 +3775,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Info secondaria personalizzata',
         interpolate: 'Interpolazione colori',
         name_info: 'Info nome personalizzata',
         reverse: 'Timer inverso',
-        watermark_toggle: 'Watermark'
+        additions: 'Entità aggiuntive'
       },
       option: {
         bar_orientation: {
@@ -3938,11 +3956,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'カスタム補助情報',
         interpolate: '色の補間',
         name_info: 'カスタム名前情報',
         reverse: 'タイマーを逆にする',
-        watermark_toggle: 'Watermark'
+        additions: '追加エンティティ'
       },
       option: {
         bar_orientation: {
@@ -4118,11 +4137,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: '사용자 정의 보조 정보',
         interpolate: '색상 보간',
         name_info: '사용자 정의 이름 정보',
         reverse: '타이머 역방향',
-        watermark_toggle: 'Watermark'
+        additions: '추가 엔티티'
       },
       option: {
         bar_orientation: {
@@ -4298,11 +4318,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Pasirinktinė papildoma informacija',
         interpolate: 'Spalvų interpoliavimas',
         name_info: 'Pasirinktinė pavadinimo informacija',
         reverse: 'Atvirkštinis laikmatis',
-        watermark_toggle: 'Watermark'
+        additions: 'Papildomos esybės'
       },
       option: {
         theme: {
@@ -4478,11 +4499,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Pielāgota sekundārā informācija',
         interpolate: 'Krāsu interpolācija',
         name_info: 'Pielāgota nosaukuma informācija',
         reverse: 'Apgriezts taimeris',
-        watermark_toggle: 'Watermark'
+        additions: 'Papildu entītijas'
       },
       option: {
         theme: {
@@ -4658,11 +4680,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Прилагодена секундарна информација',
         interpolate: 'Интерполација на бои',
         name_info: 'Прилагодена информација за имиња',
         reverse: 'Обратен тајмер',
-        watermark_toggle: 'Watermark'
+        additions: 'Дополнителни ентитети'
       },
       option: {
         bar_orientation: {
@@ -4838,11 +4861,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Egendefinert sekundær info',
         interpolate: 'Interpoler farger',
         name_info: 'Egendefinert navneinfo',
         reverse: 'Omvendt tidtaker',
-        watermark_toggle: 'Watermark'
+        additions: 'Ekstra enheter'
       },
       option: {
         bar_orientation: {
@@ -5018,11 +5042,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Aangepaste secundaire info',
         interpolate: 'Kleuren interpoleren',
         name_info: 'Aangepaste naaminfo',
         reverse: 'Timer omdraaien',
-        watermark_toggle: 'Watermark'
+        additions: 'Extra entiteiten'
       },
       option: {
         bar_orientation: {
@@ -5198,11 +5223,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Niestandardowa info pomocnicza',
         interpolate: 'Interpolacja kolorów',
         name_info: 'Niestandardowa info nazwy',
         reverse: 'Odwróć licznik',
-        watermark_toggle: 'Watermark'
+        additions: 'Dodatkowe encje'
       },
       option: {
         bar_orientation: {
@@ -5378,11 +5404,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Informação secundária personalizada',
         interpolate: 'Interpolar cores',
         name_info: 'Informação de nome personalizada',
         reverse: 'Temporizador inverso',
-        watermark_toggle: 'Watermark'
+        additions: 'Entidades adicionais'
       },
       option: {
         theme: {
@@ -5558,11 +5585,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Informação secundária personalizada',
         interpolate: 'Interpolar cores',
         name_info: 'Informação de nome personalizada',
         reverse: 'Temporizador inverso',
-        watermark_toggle: 'Watermark'
+        additions: 'Entidades adicionais'
       },
       option: {
         bar_orientation: {
@@ -5738,11 +5766,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Info secundară personalizată',
         interpolate: 'Interpolare culori',
         name_info: 'Info nume personalizată',
-        reverse: 'Cronometru invers',
-        watermark_toggle: 'Watermark'
+        reverse: 'Cronometru inverso',
+        additions: 'Entități suplimentare'
       },
       option: {
         bar_orientation: {
@@ -5918,11 +5947,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Дополнительная информация',
         interpolate: 'Интерполяция цветов',
         name_info: 'Доп. информация (имя)',
         reverse: 'Обратный таймер',
-        watermark_toggle: 'Watermark'
+        additions: 'Дополнительные объекты'
       },
       option: {
         bar_orientation: {
@@ -6098,11 +6128,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Vlastné sekundárne info',
         interpolate: 'Interpolácia farieb',
         name_info: 'Vlastné info názvu',
         reverse: 'Obrátený časovač',
-        watermark_toggle: 'Watermark'
+        additions: 'Ďalšie entity'
       },
       option: {
         theme: {
@@ -6278,11 +6309,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Prilagojena sekundarna informacija',
         interpolate: 'Interpolacija barv',
         name_info: 'Prilagojena informacija o imenu',
         reverse: 'Obrnjen časovnik',
-        watermark_toggle: 'Watermark'
+        additions: 'Dodatni entiteti'
       },
       option: {
         theme: {
@@ -6458,11 +6490,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Anpassad sekundär info',
         interpolate: 'Interpolera färger',
         name_info: 'Anpassad namninfo',
         reverse: 'Omvänd timer',
-        watermark_toggle: 'Watermark'
+        additions: 'Ytterligare entiteter'
       },
       option: {
         bar_orientation: {
@@ -6496,186 +6529,6 @@ const TRANSLATIONS = {
           pm25: 'PM2.5',
           temperature: 'Temperatur',
           voc: 'VOC'
-        },
-        color_mode: {
-          auto: 'Auto',
-          segment: 'Segment',
-          rainbow: 'Regnbåge'
-        },
-        bar_effect: {
-          radius: 'Rundade hörn',
-          glass: 'Glas',
-          gradient: 'Gradient',
-          gradient_reverse: 'Omvänd gradient',
-          shimmer: 'Glans',
-          shimmer_reverse: 'Omvänd glans'
-        },
-        hide: {
-          icon: 'Ikon',
-          name: 'Namn',
-          value: 'Värde',
-          secondary_info: 'Info',
-          progress_bar: 'Stapel'
-        },
-        unit_spacing: {
-          auto: 'Auto',
-          space: 'Space',
-          'no-space': 'No space'
-        },
-        watermark_type: {
-          blended: 'Blended',
-          area: 'Area',
-          striped: 'Striped',
-          triangle: 'Triangle',
-          round: 'Round',
-          line: 'Line'
-        },
-        watermark_as: {
-          auto: 'Auto',
-          percent: 'Percent'
-        },
-        watermark: {
-          low: 'Low',
-          high: 'High',
-          type: 'Type',
-          opacity: 'Opacity',
-          low_color: 'Low color',
-          high_color: 'High color',
-          low_as: 'Low unit',
-          high_as: 'High unit',
-          line_size: 'Line size',
-          disable_low: 'Disable low',
-          disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
-          low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
-          high_attribute: 'Attribute'
-        }
-      }
-    }
-  },
-  template: {
-    card: {
-      msg: {
-        appliedDefaultValue: '',
-        attributeNotFound: '',
-        discontinuousRange: '',
-        entityNotFound: '',
-        invalidActionObject: '',
-        invalidCustomThemeArray: '',
-        invalidCustomThemeEntry: '',
-        invalidDecimal: '',
-        invalidEntityId: '',
-        invalidEnumValue: '',
-        invalidIconType: '',
-        invalidMaxValue: '',
-        invalidMinValue: '',
-        invalidStateContent: '',
-        invalidStateContentEntry: '',
-        invalidTheme: '',
-        invalidTypeArray: '',
-        invalidTypeBoolean: '',
-        invalidTypeNumber: '',
-        invalidTypeObject: '',
-        invalidTypeString: '',
-        invalidUnionType: '',
-        minGreaterThanMax: '',
-        missingActionKey: '',
-        missingColorProperty: '',
-        missingRequiredProperty: ''
-      }
-    },
-    editor: {
-      title: {
-        content: '',
-        interaction: '',
-        theme: ''
-      },
-      field: {
-        attribute: '',
-        badge_color: '',
-        badge_icon: '',
-        bar_color: '',
-        bar_effect_jinja: '',
-        bar_orientation: '',
-        bar_position: '',
-        bar_single_line: '',
-        bar_size: '',
-        color_mode: 'Färgläge',
-        center_zero: 'ศูนย์ที่กึ่งกลาง',
-        center_zero_value: '',
-        center_zero_growth_percent: '',
-        color: '',
-        decimal: '',
-        disable_unit: '',
-        double_tap_action: '',
-        entity: '',
-        force_circular_background: '',
-        hide_jinja: '',
-        hold_action: '',
-        icon: '',
-        icon_double_tap_action: '',
-        icon_hold_action: '',
-        icon_tap_action: '',
-        layout: '',
-        max_value: '',
-        max_value_attribute: '',
-        min_value: '',
-        name: '',
-        percent: '',
-        reverse_secondary_info_row: '',
-        secondary: '',
-        state_content: '',
-        show_all_actions: 'Show all interactions',
-        tap_action: '',
-        text_shadow: '',
-        theme: '',
-        unit: '',
-        use_max_entity: '',
-        bar_max_width: 'Bar max width',
-        frameless: 'Frameless',
-        height: 'Height',
-        marginless: 'Marginless',
-        min_width: 'Min width',
-        unit_spacing: 'Unit spacing',
-        custom_info: 'Anpassad sekundär info',
-        interpolate: 'Interpolera färger',
-        name_info: 'Anpassad namninfo',
-        reverse: 'Omvänd timer',
-        watermark_toggle: 'Watermark'
-      },
-      option: {
-        theme: {
-          optimal_when_low: '',
-          optimal_when_high: '',
-          light: '',
-          temperature: '',
-          humidity: '',
-          pm25: '',
-          voc: ''
-        },
-        bar_size: {
-          small: '',
-          medium: '',
-          large: '',
-          xlarge: ''
-        },
-        bar_orientation: {
-          ltr: '',
-          rtl: '',
-          up: ''
-        },
-        bar_position: {
-          default: '',
-          below: '',
-          top: '',
-          bottom: '',
-          overlay: '',
-          background: ''
-        },
-        layout: {
-          horizontal: '',
-          vertical: ''
         },
         color_mode: {
           auto: 'Auto',
@@ -6818,11 +6671,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'ข้อมูลรองที่กำหนดเอง',
         interpolate: 'การสอดแทรกสี',
         name_info: 'ข้อมูลชื่อที่กำหนดเอง',
         reverse: 'กลับเวลานับถอยหลัง',
-        watermark_toggle: 'Watermark'
+        additions: 'เอนทิตีเพิ่มเติม'
       },
       option: {
         bar_orientation: {
@@ -6956,7 +6810,7 @@ const TRANSLATIONS = {
         badge_color: 'Rozet rengi',
         badge_icon: 'Rozet simgesi',
         bar_color: 'Çubuk rengi',
-        bar_effect_jinja: "Çubuk efekti (Jinja modu)",
+        bar_effect_jinja: 'Çubuk efekti (Jinja modu)',
         bar_orientation: 'Çubuk yönü',
         bar_position: 'Çubuk konumu',
         bar_single_line: 'Bilgiyi tek satırda göster (overlay)',
@@ -6971,7 +6825,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Çift dokunma davranışı',
         entity: 'Varlık',
         force_circular_background: 'Dairesel arka planı zorla',
-        hide_jinja: "Gizle (Jinja modu)",
+        hide_jinja: 'Gizle (Jinja modu)',
         hold_action: 'Uzun basma davranışı',
         icon: 'Simge',
         icon_double_tap_action: 'Simgeye çift dokunma davranışı',
@@ -6998,11 +6852,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Özel ikincil bilgi',
         interpolate: 'Renk interpolasyonu',
         name_info: 'Özel ad bilgisi',
         reverse: 'Zamanlayıcıyı tersine çevir',
-        watermark_toggle: 'Watermark'
+        additions: 'Ek varlıklar'
       },
       option: {
         bar_orientation: {
@@ -7178,11 +7033,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Додаткова вторинна інформація',
         interpolate: 'Інтерполяція кольорів',
         name_info: 'Додаткова інформація (назва)',
         reverse: 'Зворотній таймер',
-        watermark_toggle: 'Watermark'
+        additions: 'Додаткові об\'єкти'
       },
       option: {
         bar_orientation: {
@@ -7358,11 +7214,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: 'Thông tin phụ tùy chỉnh',
         interpolate: 'Nội suy màu sắc',
         name_info: 'Thông tin tên tùy chỉnh',
         reverse: 'Đảo ngược bộ đếm thời gian',
-        watermark_toggle: 'Watermark'
+        additions: 'Thực thể bổ sung'
       },
       option: {
         bar_orientation: {
@@ -7538,11 +7395,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: '自定义次要信息',
         interpolate: '颜色插值',
         name_info: '自定义名称信息',
         reverse: '反转计时器',
-        watermark_toggle: 'Watermark'
+        additions: '附加实体'
       },
       option: {
         theme: {
@@ -7682,6 +7540,7 @@ const TRANSLATIONS = {
         bar_single_line: '單行資訊（疊加）',
         bar_size: '進度條大小',
         color_mode: '顏色模式',
+        center_zero: '中心為零',
         center_zero_value: '中心值',
         center_zero_growth_percent: '增長百分比',
         color: '圖示顏色',
@@ -7717,11 +7576,12 @@ const TRANSLATIONS = {
         marginless: 'Marginless',
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
+        watermark_toggle: 'Watermark',
         custom_info: '自訂次要資訊',
         interpolate: '顏色插值',
         name_info: '自訂名稱資訊',
         reverse: '反轉計時器',
-        watermark_toggle: 'Watermark'
+        additions: '附加實體'
       },
       option: {
         theme: {
@@ -8400,9 +8260,9 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
 }
 
 .${CARD.htmlStructure.elements.secondaryInfoValue.class} {
-  --text-color: var(--epb-name-color, var(--primary-text-color));
-  --text-font-size: var(--ha-font-size-s);
-  --text-font-weight: var(--ha-font-weight-body);
+  --text-color: var(--epb-detail-color, var(--primary-text-color));
+  --text-font-size: var(--epb-detail-font-size, var(--ha-font-size-s));
+  --text-font-weight: var(--epb-detail-font-weight, var(--ha-font-weight-body));
   --text-height: var(--detail-height);
   --text-line-height: var(--detail-height);
   --text-letter-spacing: var(--epb-detail-letter-spacing, var(--detail-letter-spacing));
@@ -8739,6 +8599,125 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
   --progress-effect-neg: var(--progress-effect-gradient);
 }
 
+/* ----- gradient/glass: ::before compositor-only scale (no background-size repaint) -----
+   .inner translates (GPU). ::before carries the gradient and scales via transform-origin,
+   also GPU. Both share the same --progress-transition so they stay in perfect sync.
+   .inner background is cleared to solid so the gradient doesn't double-render.          */
+
+/* --- Solid fallback in .inner: remove gradient from background chain --- */
+.horizontal-bar:is(
+  .${CARD.style.dynamic.progressBar.effect.glass.class},
+  .${CARD.style.dynamic.progressBar.effect.gradient.class},
+  .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
+) .${CARD.htmlStructure.elements.progressBar.inner.class}.positive,
+.vertical-bar:is(
+  .${CARD.style.dynamic.progressBar.effect.glass.class},
+  .${CARD.style.dynamic.progressBar.effect.gradient.class},
+  .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
+) .${CARD.htmlStructure.elements.progressBar.inner.class}.positive {
+  --inner-background: var(--epb-progress-bar-color, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default}));
+}
+
+.horizontal-bar.center-zero:is(
+  .${CARD.style.dynamic.progressBar.effect.glass.class},
+  .${CARD.style.dynamic.progressBar.effect.gradient.class},
+  .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
+) .${CARD.htmlStructure.elements.progressBar.inner.class}.negative,
+.vertical-bar.center-zero:is(
+  .${CARD.style.dynamic.progressBar.effect.glass.class},
+  .${CARD.style.dynamic.progressBar.effect.gradient.class},
+  .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
+) .${CARD.htmlStructure.elements.progressBar.inner.class}.negative {
+  --inner-background: var(--epb-progress-bar-color, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default}));
+}
+
+/* --- Horizontal positive: gradient on ::before, scaleX from right --- */
+.horizontal-bar:is(
+  .${CARD.style.dynamic.progressBar.effect.glass.class},
+  .${CARD.style.dynamic.progressBar.effect.gradient.class},
+  .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
+) .${CARD.htmlStructure.elements.progressBar.inner.class}.positive::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--epb-progress-bar-color, var(--progress-effect));
+  transform-origin: right center;
+  transform: scaleX(var(--inner-size, 0));
+  will-change: transform;
+}
+
+/* --- Horizontal center-zero negative: gradient on ::before, scaleX from left --- */
+.horizontal-bar.center-zero:is(
+  .${CARD.style.dynamic.progressBar.effect.glass.class},
+  .${CARD.style.dynamic.progressBar.effect.gradient.class},
+  .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
+) .${CARD.htmlStructure.elements.progressBar.inner.class}.negative::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--epb-progress-bar-color, var(--progress-effect-neg));
+  transform-origin: left center;
+  transform: scaleX(var(--inner-size, 0));
+  will-change: transform;
+}
+
+/* --- Vertical positive: gradient on ::before, scaleY from top --- */
+.vertical-bar:is(
+  .${CARD.style.dynamic.progressBar.effect.glass.class},
+  .${CARD.style.dynamic.progressBar.effect.gradient.class},
+  .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
+) .${CARD.htmlStructure.elements.progressBar.inner.class}.positive::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--epb-progress-bar-color, var(--progress-effect));
+  transform-origin: center top;
+  transform: scaleY(var(--inner-size, 0));
+  will-change: transform;
+}
+
+/* --- Vertical center-zero negative: gradient on ::before, scaleY from bottom --- */
+.vertical-bar.center-zero:is(
+  .${CARD.style.dynamic.progressBar.effect.glass.class},
+  .${CARD.style.dynamic.progressBar.effect.gradient.class},
+  .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
+) .${CARD.htmlStructure.elements.progressBar.inner.class}.negative::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--epb-progress-bar-color, var(--progress-effect-neg));
+  transform-origin: center bottom;
+  transform: scaleY(var(--inner-size, 0));
+  will-change: transform;
+}
+
+/* --- Transition: sync ::before scale with .inner translate (transition-ready only) --- */
+.horizontal-bar.transition-ready:is(
+  .${CARD.style.dynamic.progressBar.effect.glass.class},
+  .${CARD.style.dynamic.progressBar.effect.gradient.class},
+  .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
+) .${CARD.htmlStructure.elements.progressBar.inner.class}.positive::before,
+.horizontal-bar.center-zero.transition-ready:is(
+  .${CARD.style.dynamic.progressBar.effect.glass.class},
+  .${CARD.style.dynamic.progressBar.effect.gradient.class},
+  .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
+) .${CARD.htmlStructure.elements.progressBar.inner.class}.negative::before {
+  transition: transform var(--progress-transition);
+}
+
+.vertical-bar.transition-ready:is(
+  .${CARD.style.dynamic.progressBar.effect.glass.class},
+  .${CARD.style.dynamic.progressBar.effect.gradient.class},
+  .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
+) .${CARD.htmlStructure.elements.progressBar.inner.class}.positive::before,
+.vertical-bar.center-zero.transition-ready:is(
+  .${CARD.style.dynamic.progressBar.effect.glass.class},
+  .${CARD.style.dynamic.progressBar.effect.gradient.class},
+  .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
+) .${CARD.htmlStructure.elements.progressBar.inner.class}.negative::before {
+  transition: transform var(--progress-transition);
+}
+
 /* ----- shimmer / shimmer-reverse ----- */
 .${CARD.style.dynamic.progressBar.effect.shimmer.class} .${CARD.htmlStructure.elements.progressBar.inner.class},
 .${CARD.style.dynamic.progressBar.effect.shimmerReverse.class} .${CARD.htmlStructure.elements.progressBar.inner.class} {
@@ -8756,6 +8735,7 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
   height: 100%;
   background: linear-gradient(var(--shimmer-direction, 90deg), transparent, rgba(255, 255, 255, 0.4), transparent);
   animation: var(--shimmer-animation) 2s infinite;
+  will-change: transform;
 }
 
 /* horizontales */
@@ -9084,9 +9064,12 @@ const is = {
   emptyString: (val) => typeof val === 'string' && val.trim() === '',
   nonEmptyString: (val) => typeof val === 'string' && val.trim() !== '',
   nullishOrEmptyString: (val) => val == null || (typeof val === 'string' && val.trim() === ''),
-  numericString: (val) => typeof val === 'string' && val.trim() !== '' && !isNaN(parseFloat(val)),
+  numericString: (val) => typeof val === 'string' && val.trim() !== '' && !isNaN(parseFloat(val)), // lax: '42 W' → true (leading number is extracted by callers)
+  // CF5 - issue (minor) resolved - the lax variant accepts '42abc'; the strict one rejects any string that is not entirely a finite number ('42abc', 'Infinity', …)
+  strictNumericString: (val) => typeof val === 'string' && val.trim() !== '' && Number.isFinite(Number(val)),
   number: (val) => Number.isFinite(val),
-  integer: (val) => typeof val === 'number' && Number.isInteger(val) && val >= 0,
+  // CF5 - issue (minor) resolved - renamed from is.integer: the name hid the val >= 0 constraint and invited misuse for signed integers
+  unsignedInteger: (val) => typeof val === 'number' && Number.isInteger(val) && val >= 0,
   func: (val) => typeof val === 'function',
   object: (val) => typeof val === 'object',
   plainObject: (val) => typeof val === 'object' && val !== null && !Array.isArray(val),
@@ -9477,20 +9460,29 @@ const StructureTemplates = {
 };
 
 class ObjStructure {
-  _options = {};
+  // CF5 - issue (perf) resolved - card.innerHTML re-parsed the full HTML string on every render (each card creation, each editor keystroke). The structure is now built once per unique option set into a <template> and cloned (~5-10x faster than parsing). The DOM depends on the config's structure options (barType, barPosition, layout, ...), so the cache is keyed on the exact options object: any setConfig producing different structure options gets its own template, identical configs share one.
+  #templates = new Map();
 
   constructor(cardType) {
     this._cardType = cardType;
   }
 
-  get options() {
-    return this._options;
+  render(options = {}) {
+    return StructureTemplates[this._cardType](options);
   }
-  set options(newOptions) {
-    this._options = newOptions;
-  }
-  get innerHTML() {
-    return StructureTemplates[this._cardType](this.options);
+
+  clone(options = {}) {
+    // Options are small flat objects of primitives built in a fixed key order
+    // by each class's _structureOptions getter -> JSON is a stable cache key.
+    // The option space is bounded (a handful of enums/booleans), so is the cache.
+    const key = JSON.stringify(options);
+    let tpl = this.#templates.get(key);
+    if (!tpl) {
+      tpl = document.createElement('template');
+      tpl.innerHTML = this.render(options);
+      this.#templates.set(key, tpl);
+    }
+    return tpl.content.cloneNode(true);
   }
 }
 
@@ -9569,14 +9561,21 @@ class NumberFormatter {
       case 'μs': // Microseconde
         return value * 0.000001; // 1 microseconde = 0.000001 seconde
       default:
-        throw new Error('Unknown case');
+        // CF5 - issue (critical) resolved - unknown/missing unit threw and crashed the card; return null so the caller can flag the entity as invalid
+        return null;
     }
   }
   static convertDuration(duration) {
-    const parts = duration.split(':').map(Number);
+    // CF5 - issue (critical) resolved - timer attributes (duration/remaining) can be missing during HA startup; null.split() crashed the card
+    if (!is.string(duration)) return 0;
+    // CF5 - issue (minor) resolved - Python timedelta strings for timers over 24h are "N day(s), H:MM:SS": the day prefix made every part NaN. Days are now parsed, and any malformed remainder returns 0 instead of propagating NaN.
+    const dayMatch = duration.match(/^(\d+) days?, (.*)$/);
+    const days = dayMatch ? parseInt(dayMatch[1], 10) : 0;
+    const parts = (dayMatch ? dayMatch[2] : duration).split(':').map(Number);
+    if (parts.length !== 3 || parts.some((p) => !Number.isFinite(p))) return 0;
     const [hours, minutes, seconds] = parts;
 
-    return (hours * 3600 + minutes * 60 + seconds) * CARD.config.msFactor;
+    return ((days * 24 + hours) * 3600 + minutes * 60 + seconds) * CARD.config.msFactor;
   }
 }
 
@@ -9644,7 +9643,8 @@ class UnitHelper {
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
   set value(newValue) {
-    this.#value = newValue.trim() ?? CARD.config.unit.default;
+    // CF5 - issue (critical) resolved - some integrations expose a non-string unit_of_measurement; .trim() crashed and the ?? fallback was dead code
+    this.#value = is.nullish(newValue) ? CARD.config.unit.default : String(newValue).trim();
   }
   get value() {
     return this.#isDisabled ? '' : this.#value;
@@ -9740,26 +9740,26 @@ class ProgressCalc {
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
   refresh() {
-    const v = this.isCenterZero ? this.current : this.actual;
-    this.#percent = this.isValid ? Number(this.#percentForValue(v).toFixed(this.decimal)) : 0;
+    const currentValue = this.isCenterZero ? this.current : this.actual;
+    this.#percent = this.isValid ? Number(this.#percentForValue(currentValue).toFixed(this.decimal)) : 0;
   }
 
   calcWatermark(value) {
-    const v = is.number(value) ? value : (value?.current ?? 0);
-    const p = this.#percentForValue(v);
-    return this.isCenterZero ? 50 + p / 2 : p;
+    const numericValue = is.number(value) ? value : (value?.current ?? 0);
+    const percent = this.#percentForValue(numericValue);
+    return this.isCenterZero ? 50 + percent / 2 : percent;
   }
 
   // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
 
-  #percentForValue(v) {
+  #percentForValue(value) {
     if (this.isCenterZero) {
-      const corrected = v - this.#zeroValue;
+      const corrected = value - this.#zeroValue;
       const halfRange = corrected >= 0 ? this.max - this.#zeroValue : this.#zeroValue - this.min;
       return halfRange === 0 ? 0 : (corrected / halfRange) * 100;
     }
     const fullRange = this.max - this.min;
-    return fullRange === 0 ? 0 : ((v - this.min) / fullRange) * 100;
+    return fullRange === 0 ? 0 : ((value - this.min) / fullRange) * 100;
   }
 }
 
@@ -10209,7 +10209,8 @@ class HassProviderSingleton {
     return attribute in attributes ? attributes[attribute] : null;
   }
   getEntityName(entityId) {
-    return this.#hass?.entities?.[entityId].name;
+    // CF5 - issue (critical) resolved - entities without unique_id are absent from hass.entities; missing optional chaining crashed name tokens (type: entity)
+    return this.#hass?.entities?.[entityId]?.name ?? null;
   }
   getEntityDevice(entityId) {
     const deviceId = this.#hass?.entities?.[entityId]?.device_id;
@@ -10326,16 +10327,15 @@ class ChangeTracker {
       this.#firstTime = false;
       return true;
     }
-    if (!is.nonEmptySet(this.#watchedEntities)) return true;
+    // CF5 - issue (perf) resolved - previously returned true, running the full refresh pipeline on every hass update of the whole install for cards with no watched entity (Jinja-only template cards). Their content arrives exclusively via push template subscriptions; nothing in the pipeline reads hass directly. If a future render path does, revisit this.
+    if (!is.nonEmptySet(this.#watchedEntities)) return false;
 
     for (const entityId of this.#watchedEntities) {
       const newState = newHass?.states?.[entityId];
-      const oldState = this.#entityCache?.[entityId];
 
       if (!newState) return true;
-      if (!oldState || JSON.stringify(newState) !== JSON.stringify(oldState)) {
-        return true;
-      }
+      // CF5 - issue (perf) resolved - HA state objects are immutable (the frontend swaps in a new object on every change), so a reference check replaces the two full JSON.stringify serializations previously run per entity on every hass update
+      if (newState !== this.#entityCache?.[entityId]) return true;
     }
 
     return false;
@@ -10354,6 +10354,10 @@ class ChangeTracker {
     if (entityId) {
       this.#watchedEntities.add(entityId);
     }
+  }
+
+  resetWatchedEntities() {
+    this.#watchedEntities.clear();
   }
 }
 
@@ -10561,7 +10565,8 @@ class EntityHelper {
     }
 
     if (this.#attribute)
-      this.#isValid = this.#hassProvider.getEntityAttribute(this.#entityId, this.#attribute) !== undefined;
+      // CF5 - issue (major) resolved - getEntityAttribute returns null (never undefined) when missing, so this check always passed and invalid attributes produced NaN downstream
+      this.#isValid = this.#hassProvider.getEntityAttribute(this.#entityId, this.#attribute) !== null;
 
     this.#state = this.#hassProvider.getEntityProp(this.#entityId, 'state');
     if (!this.isValid || !this.isAvailable) return;
@@ -10631,8 +10636,10 @@ class EntityHelper {
   _manageDurationEntity() {
     const unit = this.#hassProvider.getEntityProp(this.#entityId, 'unit_of_measurement');
     const value = parseFloat(this.#state);
-    this.#value = unit === undefined ? 0 : NumberFormatter.durationToSeconds(value, unit);
-    this.#isValid = unit !== undefined;
+    // CF5 - issue (critical) resolved - getEntityProp returns null (never undefined), so the guard never matched and a missing unit crashed in durationToSeconds
+    const seconds = is.nullish(unit) ? null : NumberFormatter.durationToSeconds(value, unit);
+    this.#value = seconds ?? 0;
+    this.#isValid = seconds !== null;
   }
 
   #getClimateColor() {
@@ -10705,13 +10712,17 @@ class EntityCollectionHelper {
     });
   }
 
-  getEntitiesColor(curColor) {
+  getEntitiesColor(curColor, progressRatio = 1) {
     const percentages = this.getPercentages();
     if (!percentages.length || !curColor) return null;
 
     const total = percentages.length;
     const gradientStops = [];
-    let currentPosition = 0;
+    // With translateX-based fill, the inner element is 100% wide but only the
+    // rightmost progressRatio% is visible. Segment stops must be offset so that
+    // they land inside the visible portion instead of starting from position 0.
+    const offset = (1 - progressRatio) * 100;
+    let currentPosition = offset;
 
     for (let i = 0; i < total; i++) {
       const item = percentages[i];
@@ -10722,7 +10733,7 @@ class EntityCollectionHelper {
       const color = `color-mix(in srgb, ${curColor} ${basePercent}%, black ${whitePercent}%)`;
 
       const start = currentPosition;
-      const end = currentPosition + item.percent;
+      const end = currentPosition + item.percent * progressRatio;
 
       gradientStops.push(`${color} ${start.toFixed(2)}%`, `${color} ${end.toFixed(2)}%`);
 
@@ -10819,9 +10830,9 @@ class EntityOrValue {
   get nameTokens()          { return this.#entity()?.nameTokens ?? null; }
   get attribute()           { return this.#entity()?.attribute ?? null; }
 
-  set attribute(newValue)   { const e = this.#entity(); if (e) e.attribute = newValue; }
-  set nameTokens(tok)       { const e = this.#entity(); if (e) e.nameTokens = tok; }
-  set stateContent(newValue){ const e = this.#entity(); if (e) e.stateContent = newValue; }
+  set attribute(newValue)   { const entity = this.#entity(); if (entity) entity.attribute = newValue; }
+  set nameTokens(tok)       { const entity = this.#entity(); if (entity) entity.nameTokens = tok; }
+  set stateContent(newValue){ const entity = this.#entity(); if (entity) entity.stateContent = newValue; }
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
@@ -11094,7 +11105,7 @@ const types = {
 
   decimal: (value, path = []) => {
     if (is.nullish(value)) return SKIP_PROPERTY;
-    if (!is.integer(value)) throw new ValidationError(path, ERROR_CODES.invalidDecimal.code, ERROR_CODES.invalidDecimal.severity);
+    if (!is.unsignedInteger(value)) throw new ValidationError(path, ERROR_CODES.invalidDecimal.code, ERROR_CODES.invalidDecimal.severity);
 
     return value;
   },
@@ -12100,6 +12111,8 @@ class ViewBase extends ViewCore {
 
     this._configHelper.config = config;
 
+    // CF5 - issue (major) resolved - the collection was never cleared: every setConfig (each editor keystroke) re-added all entities, inflating getTotalValue() with duplicates
+    this.#entityCollection.clear();
     if (this._configHelper.config.additions) {
       this._configHelper.config.additions.forEach(({ entity, attribute }) => {
         this.#entityCollection.addEntity(entity, attribute);
@@ -12193,7 +12206,7 @@ class ViewBase extends ViewCore {
       ThemeManager.adaptColor(this.#theme.barColor || this._configHelper.config.bar_color) ||
       this._currentValue.defaultColor ||
       CARD.style.color.default;
-    return this.hasEntityCollection ? this.#entityCollection.getEntitiesColor(curColor) : curColor;
+    return this.hasEntityCollection ? this.#entityCollection.getEntitiesColor(curColor, this.percent / 100) : curColor;
   }
   get colorGradient() {
     if (!this.isAvailable || this.#percentHelper.isCenterZero) return null;
@@ -12344,7 +12357,7 @@ class ViewBase extends ViewCore {
     return unit === null ? CARD.config.unit.default : unit;
   }
   #getCurrentDecimal(currentUnit) {
-    if (is.integer(this._configHelper.config.decimal)) return this._configHelper.config.decimal;
+    if (is.unsignedInteger(this._configHelper.config.decimal)) return this._configHelper.config.decimal;
     if (this._currentValue.precision) return this._currentValue.precision;
     if (this._currentValue.entityType.isTimer) return CARD.config.decimal.timer;
     if (this._currentValue.entityType.isCounter) return CARD.config.decimal.counter;
@@ -12508,18 +12521,23 @@ class ResourceManager {
     }
 
     const context = this.#throttles.get(keys.throttle);
+
+    // CF5 - issue (medium) resolved - the trailing timer was scheduled unconditionally, so a single isolated call always ran fn() twice (leading + trailing). The trailing run now only catches calls rejected by the throttle, and a leading run cancels any pending trailing.
     if (now - context.lastCall >= delay) {
       context.lastCall = now;
+      if (this.#resources.has(keys.debounce)) this.remove(keys.debounce);
       fn();
       this.#log.debug('ThrottleDebounce immediate - ', id);
+      return;
     }
 
-    // Debounce — exec after delay
+    // Debounce — catch up throttled calls after delay
     if (this.#resources.has(keys.debounce)) {
       this.remove(keys.debounce);
     }
     this.setTimeout(
       () => {
+        context.lastCall = Date.now();
         fn();
         this.#log.debug('ThrottleDebounce trailing - ', id);
       },
@@ -12712,8 +12730,55 @@ class DOMHelper {
     });
   }
 
+  // CF5 - issue (security) resolved - Jinja results are injected via innerHTML and may interpolate attacker-influenceable strings (media titles, network device names…); allowlist sanitization keeps the HTML formatting feature while neutralizing script execution
+  static #SAFE_HTML_TAGS = new Set(['B', 'I', 'U', 'SPAN', 'DIV', 'BR']);
+  static #SAFE_STYLE_PROPS = new Set(['color', 'background-color']);
+  static #DROP_CONTENT_TAGS = new Set(['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'EMBED', 'TEMPLATE', 'NOSCRIPT']);
+
+  static sanitizeHTML(value) {
+    const html = String(value);
+    if (!html.includes('<')) return html; // fast path: no markup, nothing to sanitize
+    const body = new DOMParser().parseFromString(html, 'text/html').body;
+    DOMHelper.#sanitizeNode(body);
+    return body.innerHTML;
+  }
+
+  static #sanitizeNode(node) {
+    for (const child of [...node.childNodes]) {
+      if (child.nodeType === Node.TEXT_NODE) continue;
+      if (child.nodeType !== Node.ELEMENT_NODE || DOMHelper.#DROP_CONTENT_TAGS.has(child.tagName)) {
+        child.remove(); // comments, script/style & co: dropped entirely, content included
+        continue;
+      }
+      if (!DOMHelper.#SAFE_HTML_TAGS.has(child.tagName)) {
+        DOMHelper.#sanitizeNode(child);
+        child.replaceWith(...child.childNodes); // unknown tag: unwrap, keep sanitized children
+        continue;
+      }
+      DOMHelper.#scrubAttributes(child);
+      DOMHelper.#sanitizeNode(child);
+    }
+  }
+
+  static #scrubAttributes(el) {
+    for (const attr of [...el.attributes]) {
+      if (attr.name === 'class') continue; // needed by the card's own markup (span.multiline); classes cannot execute code
+      if (attr.name !== 'style') {
+        el.removeAttribute(attr.name); // on* handlers, href, src…
+        continue;
+      }
+      const kept = [...el.style]
+        .filter((prop) => DOMHelper.#SAFE_STYLE_PROPS.has(prop))
+        .map((prop) => `${prop}: ${el.style.getPropertyValue(prop)}`)
+        .join('; ');
+      if (kept) el.setAttribute('style', kept);
+      else el.removeAttribute('style');
+    }
+  }
+
   /**
    * Sets the inner HTML of the element registered under the given key.
+   * Content is sanitized (tag/attribute allowlist) before injection.
    * Skipped if the value matches the cache.
    */
   setHTML(key, value) {
@@ -12725,7 +12790,7 @@ class DOMHelper {
     if (!el) return;
 
     this.enqueue(key, 'html', () => {
-      el.innerHTML = value;
+      el.innerHTML = DOMHelper.sanitizeHTML(value);
       this._appliedValues.set(cacheKey, value);
     });
   }
@@ -12820,18 +12885,37 @@ class ActionHelper {
   #target = null;
   #config = null;
   #fromIcon = false;
-  #iconClickSources = new Set(['shape', 'ha-svg-icon', 'img']);
+  #initialized = false;
+  #disableIconTap = false;
+  #iconClickSources = new Set(['shape', HA_SVG_ICON_TAG, 'img']);
 
   constructor(target) {
     this.#target = target;
   }
 
+  // CF5 - issue (major) resolved - the HA frontend creates <action-handler> lazily; querySelector could return null and crash if this card loads before any native card
+  static #getActionHandler() {
+    let handler = document.body.querySelector('action-handler');
+    if (!handler) {
+      handler = document.createElement('action-handler');
+      document.body.appendChild(handler);
+    }
+    return handler;
+  }
+
   init(config, disableIconTap) {
+    // Config and options are refreshed on every call (each connectedCallback);
+    // listeners are attached once — see below.
     this.#config = config;
+    this.#disableIconTap = disableIconTap;
 
     if (!this.#target) return;
 
-    document.querySelector('action-handler').bind(this.#target, {
+    // CF5 - issue (major) resolved - init() runs on every connectedCallback (view navigation, edit mode); listeners accumulated and a single tap dispatched N hass-action events. init is now idempotent.
+    if (this.#initialized) return;
+    this.#initialized = true;
+
+    ActionHelper.#getActionHandler().bind(this.#target, {
       hasHold: true,
       hasDoubleClick: true,
     });
@@ -12840,7 +12924,7 @@ class ActionHelper {
       'pointerdown',
       (ev) => {
         const localName = ev.composedPath()[0].localName;
-        this.#fromIcon = !disableIconTap && this.#iconClickSources.has(localName);
+        this.#fromIcon = !this.#disableIconTap && this.#iconClickSources.has(localName);
       },
       { passive: true },
     );
@@ -12908,13 +12992,51 @@ class ActionHelper {
  * - _getJinjaHandlers()     → handle Jinja2 template results
  *
  * Subclasses MAY override:
- * - _manageStructureOptions() → structure options passed to ObjStructure (barType, barPosition…)
+ * - _structureOptions (getter) → structure options passed to ObjStructure.clone() (barType, barPosition…)
  * - _buildStyle()             → CSS class application pipeline (watermark, bar effect, base classes)
  * - _updateDynamicElements()  → DOM update orchestration (CSS, Jinja processing)
  *
  * @abstract
  * @extends HTMLElement
  */
+
+/**
+ * Shared constructed stylesheets (Constructable Stylesheets API).
+ *
+ * CF5 - issue (perf) resolved - each card instance used to create its own
+ * <style> element holding the full ~47 KB CARD_CSS: N cards on a dashboard
+ * meant N parses and N CSSOM copies, re-done on every editor keystroke
+ * (setConfig → reset → render). A constructed CSSStyleSheet is parsed once
+ * per unique CSS text and shared BY REFERENCE by every shadowRoot that
+ * adopts it.
+ *
+ * Intent & constraints:
+ * - Progressive enhancement ONLY. The README promises Firefox 94+ and
+ *   Safari 15.4+, but `new CSSStyleSheet()` + `replaceSync` need
+ *   Firefox 101 / Safari 16.4. Older engines (e.g. wall-mounted iPads
+ *   stuck on iPadOS 15) must keep working: getSharedStyleSheet() returns
+ *   null there and the caller falls back to the legacy per-instance
+ *   <style> element — the exact pre-existing behavior, no better no worse.
+ * - The cache is keyed by CSS text (not by class) so a future subclass
+ *   overriding _cardStyle transparently gets its own shared sheet.
+ * - adoptedStyleSheets survive `shadowRoot.innerHTML = ''` (reset()):
+ *   adopting is done once per shadowRoot and needs no re-application on
+ *   re-render.
+ */
+const CONSTRUCTED_SHEETS = new Map();
+const getSharedStyleSheet = (cssText) => {
+  if (CONSTRUCTED_SHEETS.has(cssText)) return CONSTRUCTED_SHEETS.get(cssText);
+  let sheet = null;
+  try {
+    sheet = new CSSStyleSheet();
+    sheet.replaceSync(cssText);
+  } catch {
+    sheet = null; // Firefox < 101, Safari < 16.4 → legacy <style> fallback
+  }
+  CONSTRUCTED_SHEETS.set(cssText, sheet);
+  return sheet;
+};
+
 class HACore extends HTMLElement {
   static version = VERSION;
   static _baseClass = META.types.feature.typeName;
@@ -12929,6 +13051,8 @@ class HACore extends HTMLElement {
   _hassProvider = HassProviderSingleton.getInstance();
   _changeTracker = new ChangeTracker();
   #isRendered = false;
+  // CF5 - issue (perf) resolved - render_template subscriptions are push-based; tracking the signature (template + entity variable) of each live/in-flight subscription lets us skip the systematic unsubscribe/resubscribe cycle on every refresh
+  #templateSignatures = new Map();
 
   // ─── LIFECYCLE METHODS ===
   static get _loggedMethods() {
@@ -12940,7 +13064,6 @@ class HACore extends HTMLElement {
       'reset',
       'render',
       '_storeDOM',
-      '_manageStructureOptions',
       '_handleWatermarkClasses',
       '_handleBarEffect',
       '_updateDynamicElements',
@@ -12984,6 +13107,7 @@ class HACore extends HTMLElement {
   disconnectedCallback() {
     this._resourceManager?.cleanup();
     this._resourceManager = null;
+    this.#templateSignatures.clear(); // subscriptions died with cleanup() — allow resubscription on reconnect
   }
 
   _ensureResourceManager() {
@@ -13009,10 +13133,18 @@ class HACore extends HTMLElement {
   }
 
   _registerWatchedEntities(config) {
+    // CF5 - issue (minor) resolved - the watched set was only ever appended to: entities removed from the config (editor changes) stayed watched and kept triggering refreshes until reload. Rebuilt from scratch on every setConfig.
+    this._changeTracker.resetWatchedEntities();
     if (is.string(config.entity)) this._changeTracker.watchEntity(config.entity);
     if (is.string(config.max_value)) this._changeTracker.watchEntity(config.max_value);
     if (is.string(config?.watermark?.low)) this._changeTracker.watchEntity(config.watermark.low);
     if (is.string(config?.watermark?.high)) this._changeTracker.watchEntity(config.watermark.high);
+    // CF5 - issue (major) resolved - additions entities were not watched: when one of them changed state (main entity unchanged), the ChangeTracker reported no change and the displayed total stayed stale
+    if (is.array(config.additions)) {
+      for (const item of config.additions) {
+        if (is.plainObject(item) && is.string(item.entity)) this._changeTracker.watchEntity(item.entity);
+      }
+    }
   }
 
   /**
@@ -13061,10 +13193,6 @@ class HACore extends HTMLElement {
     }
   }
 
-  get innerHTML() {
-    return this.constructor._cardStructure.innerHTML;
-  }
-
   get cardStyle() {
     return this.constructor._cardStyle;
   }
@@ -13088,25 +13216,36 @@ class HACore extends HTMLElement {
   render() {
     if (this.isRendered) return;
     this.#isRendered = true;
-    this._manageStructureOptions();
     const element = this._createCardElements();
-    this.shadowRoot.replaceChildren(element.style, element.card);
+    // element.style is null when the shared constructed sheet is adopted
+    this.shadowRoot.replaceChildren(...(element.style ? [element.style, element.card] : [element.card]));
     this._storeDOM();
     requestAnimationFrame(() => {
       this._dom.addClass(CARD.htmlStructure.card.element, 'transition-ready');
     });
   }
 
-  _manageStructureOptions() {
-    this.constructor._cardStructure.options = {
+  get _structureOptions() {
+    return {
       barType: this._cardView.config.center_zero ? 'centerZero' : 'default', // ─── true
       barPosition: this._cardView.config.bar_position,
     };
   }
 
   _createCardElements() {
-    const style = document.createElement(CARD.style.element);
-    style.textContent = this.cardStyle;
+    // Preferred path: adopt the shared constructed sheet (parsed once for all
+    // instances). Fallback path (older Firefox/Safari, see getSharedStyleSheet):
+    // a per-instance <style> element, as before.
+    let style = null;
+    const sharedSheet = getSharedStyleSheet(this.cardStyle);
+    if (sharedSheet) {
+      if (!this.shadowRoot.adoptedStyleSheets.includes(sharedSheet)) {
+        this.shadowRoot.adoptedStyleSheets = [...this.shadowRoot.adoptedStyleSheets, sharedSheet];
+      }
+    } else {
+      style = document.createElement(CARD.style.element);
+      style.textContent = this.cardStyle;
+    }
 
     const card = document.createElement(this.cardElement);
     this._dom.destroy();
@@ -13118,19 +13257,32 @@ class HACore extends HTMLElement {
       });
     }
     this._buildStyle();
-    card.innerHTML = this.innerHTML;
+    // Cloned from the per-options <template> cache; _structureOptions is read
+    // fresh here so a setConfig that changes the structure picks the right template.
+    card.replaceChildren(this.constructor._cardStructure.clone(this._structureOptions));
 
     return { style, card };
   }
 
+  // CF5 - issue (medium) resolved - _storeDOM registered every element under its first CSS class: silent collisions were possible and the map carried dead weight. Only the elements actually driven through the DOMHelper are registered now.
+  static get _domKeys() {
+    return [
+      CARD.htmlStructure.elements.progressBar.container.class,
+      CARD.htmlStructure.elements.icon.class,
+      CARD.htmlStructure.elements.badge.icon.class,
+      CARD.htmlStructure.elements.trendIndicator.icon.class,
+      CARD.htmlStructure.elements.nameMain.class,
+      CARD.htmlStructure.elements.nameExtra.class,
+      CARD.htmlStructure.elements.secondaryInfoMain.class,
+      CARD.htmlStructure.elements.secondaryInfoExtra.class,
+    ];
+  }
+
   _storeDOM() {
-    const allElements = this.shadowRoot.querySelectorAll('*');
-    allElements.forEach((el) => {
-      if (el.classList.length > 0) {
-        const key = el.classList[0]; // 1st class only
-        this._dom.register(key, el);
-      }
-    });
+    for (const key of this.constructor._domKeys) {
+      const el = this.shadowRoot.querySelector(`.${CSS.escape(key)}`);
+      if (el) this._dom.register(key, el);
+    }
   }
 
   _buildStyle() {
@@ -13255,7 +13407,12 @@ class HACore extends HTMLElement {
     const handler = renderHandlers[key];
 
     if (handler) {
-      handler();
+      // CF5 - issue (critical) resolved - an exception inside a render handler propagated into the WebSocket message callback; log it instead of crashing the card
+      try {
+        handler();
+      } catch (error) {
+        this._log.error(`Jinja - render failed for ${key}:`, error);
+      }
     } else {
       console.error(`Jinja - Unknown case: ${key}`);
     }
@@ -13263,7 +13420,8 @@ class HACore extends HTMLElement {
 
   _refreshBarEffect(content) {
     this._log.debug('📎 HACore._refreshBarEffect():', { content });
-    const jinjaEffect = content.split(',').map((s) => s.trim());
+    // CF5 - issue (critical) resolved - render_template returns native types: a template yielding a list (e.g. {{ ['glass'] }}) crashed on .split()
+    const jinjaEffect = (is.array(content) ? content : String(content ?? '').split(',')).map((s) => String(s).trim());
     this._handleBarEffect(jinjaEffect);
   }
 
@@ -13291,6 +13449,7 @@ class HACore extends HTMLElement {
         for (const key of Object.keys(templates)) {
           this._resourceManager.remove(`template-${key}`);
         }
+        this.#templateSignatures.clear(); // connection lost — all subscriptions are dead server-side
       },
       { passive: true },
       CARD.network.disconnected,
@@ -13324,6 +13483,7 @@ class HACore extends HTMLElement {
     this._resourceManager?.throttleDebounce(
       () => {
         const templates = this.validJinjaFields;
+        this.#cleanupOrphanTemplates(templates);
         for (const [key, template] of Object.entries(templates)) {
           if (is.nonEmptyString(template)) this._subscribeToTemplate(key, template);
         }
@@ -13331,6 +13491,17 @@ class HACore extends HTMLElement {
       300,
       'jinjaProcess',
     );
+  }
+
+  // CF5 - issue (perf) resolved - a Jinja field removed from the config left its subscription alive (pushing results into a DOM that no longer expects them) until disconnect; drop subscriptions whose key is no longer configured
+  #cleanupOrphanTemplates(templates) {
+    for (const subscriptionKey of [...this.#templateSignatures.keys()]) {
+      const key = subscriptionKey.slice('template-'.length);
+      if (!is.nonEmptyString(templates[key])) {
+        this._resourceManager?.remove(subscriptionKey);
+        this.#templateSignatures.delete(subscriptionKey);
+      }
+    }
   }
 
   _getTemplateContext() {
@@ -13354,6 +13525,14 @@ class HACore extends HTMLElement {
       return;
     }
 
+    // CF5 - issue (perf) resolved - subscriptions are push-based: skip when an identical one is live or in-flight. Reserving the signature before the await also fixes a race where two overlapping calls created a duplicate (orphan) subscription.
+    const signature = `${template}\u0000${this._getTemplateContext().entity ?? ''}`;
+    if (this.#templateSignatures.get(subscriptionKey) === signature) {
+      this._log.debug(`[Template ${key}] Identical subscription live or in-flight, skipping.`);
+      return;
+    }
+    this.#templateSignatures.set(subscriptionKey, signature);
+
     try {
       this._log.debug('key:', key);
       this._log.debug('template:', template);
@@ -13365,19 +13544,28 @@ class HACore extends HTMLElement {
       });
 
       // Check again after the async operation
+      if (this.#templateSignatures.get(subscriptionKey) !== signature) {
+        // A newer subscription attempt superseded this one while we awaited.
+        unsub();
+        return;
+      }
       if (!this._resourceManager) {
         this._log.debug(`[Template ${key}] ResourceManager became null during subscription, cleaning up.`);
         unsub(); // Clean up the subscription
+        this.#templateSignatures.delete(subscriptionKey);
         return;
       } else if (!this.isConnected) {
         // DOM conn X
         unsub(); // Clean up the subscription
+        this.#templateSignatures.delete(subscriptionKey);
         return;
       } else {
         this._resourceManager.remove(subscriptionKey);
         this._resourceManager.addSubscription(unsub, subscriptionKey);
       }
     } catch (error) {
+      // Allow a retry on the next processing cycle.
+      if (this.#templateSignatures.get(subscriptionKey) === signature) this.#templateSignatures.delete(subscriptionKey);
       this._log.error(`Failed to subscribe to template ${key}:`, error);
     }
   }
@@ -13417,7 +13605,9 @@ class HABase extends HACore {
   _trendIcons = {
     up: HA_CONTEXT.icons.chevronUpBox,
     down: HA_CONTEXT.icons.chevronDownBox,
-    flat: HA_CONTEXT.equalBox,
+    // CF5 - issue (minor) resolved - HA_CONTEXT.equalBox (missing .icons) was undefined: the flat trend rendered an empty icon
+    flat: HA_CONTEXT.icons.equalBox,
+    error: HA_CONTEXT.icons.progressQuestion,
   };
   _icon = null;
   _cardView = new CardView();
@@ -13553,11 +13743,10 @@ class HABase extends HACore {
 
   // ─── CARD BUILDING ===
 
-  _manageStructureOptions() {
-    this.constructor._cardStructure.options = {
-      barType: this._cardView.config.center_zero ? 'centerZero' : 'default', // ─── true
+  get _structureOptions() {
+    return {
+      ...super._structureOptions,
       layout: this._cardView.config.layout,
-      barPosition: this._cardView.config.bar_position,
       barSingleLine: this._cardView.config.bar_single_line,
       trendIndicator: this._cardView.config.trend_indicator,
     };
@@ -13614,11 +13803,12 @@ class HABase extends HACore {
   _handleHiddenComponents(jinjaContent = null) {
     if (jinjaContent === null && is.jinja(this._cardView.config.hide)) return;
 
-    const items =
-      jinjaContent
-        ?.split(',')
-        .map((s) => s.trim())
-        .filter(Boolean) ?? null;
+    // CF5 - issue (critical) resolved - a hide Jinja template yielding a native list crashed on .split(); normalize list and string results alike
+    const items = is.nullish(jinjaContent)
+      ? null
+      : (is.array(jinjaContent) ? jinjaContent : String(jinjaContent).split(','))
+          .map((s) => String(s).trim())
+          .filter(Boolean);
 
     this.constructor._hiddenComponents.forEach((component) => {
       this._dom.toggleClass(
@@ -13921,7 +14111,8 @@ class EntityProgressCardBase extends HABase {
 
     if (!this._cardView.isActiveTimer) {
       this._stopAutoRefresh();
-    } else if (!this._resourceManager.has('autoRefresh')) {
+      // CF5 - issue (major) resolved - set hass calls _handleHassUpdate before _ensureResourceManager: with an active timer entity and hass assigned before connectedCallback (standard Lovelace order), _resourceManager was still null and .has() crashed
+    } else if (!this._resourceManager?.has('autoRefresh')) {
       this._startAutoRefresh();
     }
   }
@@ -14036,7 +14227,6 @@ class EntityProgressBadge extends EntityProgressCardBase {
 class EntityProgressFeatures extends HACore {
   static _baseClass = META.types.feature.typeName;
   static _cardElement = 'div';
-  #firstHack = true;
 
   // ─── STATIC ===
 
@@ -14062,16 +14252,18 @@ class EntityProgressFeatures extends HACore {
    * corrects it. A `fixing` flag prevents infinite loops between our correction
    * and the observer callback.
    *
-   * Only executed once per instance via the `#firstHack` guard.
+   * Executed once per connection: the observer is tracked by the ResourceManager
+   * (disconnected on cleanup) and its presence serves as the re-entry guard.
    *
    * @inspired by hass-progress-bar-feature (MIT License) — Copyright (c) ytilis
    * @see https://github.com/ytilis/hass-progress-bar-feature
    */
   #fixCardStyles() {
-    if (!['top', 'bottom'].includes(this._cardView.config.bar_position) || !this.#firstHack) return;
+    if (!['top', 'bottom'].includes(this._cardView.config.bar_position)) return;
+    // CF5 - issue (medium) resolved - the MutationObserver was never disconnected: it kept observing the external card container after the feature left the DOM (leak + callbacks on a dead element). It is now tracked by the ResourceManager, and its presence replaces the #firstHack guard so a reconnection re-installs it.
+    if (!this._resourceManager || this._resourceManager.has('featureRowFix')) return;
     const cardContainer = DOMHelper.walkUpThroughShadow(this, '.card');
     if (!cardContainer) return;
-    this.#firstHack = false;
 
     this._dom.register('ext:card', DOMHelper.walkUpThroughShadow(this, 'ha-card'));
     this._dom.register('ext:container', DOMHelper.walkUpThroughShadow(this, '.container'));
@@ -14094,10 +14286,12 @@ class EntityProgressFeatures extends HACore {
     };
 
     fix();
-    new MutationObserver(fix).observe(cardContainer, {
+    const observer = new MutationObserver(fix);
+    observer.observe(cardContainer, {
       attributes: true,
       attributeFilter: ['style'],
     });
+    this._resourceManager.add(() => observer.disconnect(), 'featureRowFix');
   }
 
   // ─── HANDLE UPDATE ────────────────────────────────────────────────────────
@@ -14152,7 +14346,6 @@ class EntityProgressTemplateBase extends HABase {
       ...super._loggedMethods,
       '_updateWatermark',
       '_showIcon',
-      '_forceJinjaProcessing',
       '_renderName',
       '_renderSecondary',
       '_managePercent',
@@ -14209,11 +14402,6 @@ class EntityProgressTemplateBase extends HABase {
 
   // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ─────────────────────────────
 
-  _forceJinjaProcessing() {
-    this._ensureResourceManager();
-    this._processJinjaFields();
-  }
-
   _getJinjaHandlers(content) {
     return {
       ...this._baseJinjaHandlers(content),
@@ -14241,19 +14429,25 @@ class EntityProgressTemplateBase extends HABase {
   }
 
   _managePercent(percent) {
-    this._updateTrend(percent);
-    this._renderPercentCSS(percent);
+    // CF5 - issue (minor) resolved - a percent template returning a numeric string was compared lexicographically in getTrend ('9' < '45' is false → wrong trend); non-numeric results now show an explicit error icon instead of corrupting the trend and the bar CSS
+    const value = is.number(percent) ? percent : is.strictNumericString(percent) ? Number(percent) : null;
+    if (value === null) {
+      this._updateTrend(NaN); // renders the error icon, keeps _lastPercent untouched
+      return;
+    }
+    this._updateTrend(value);
+    this._renderPercentCSS(value);
   }
 
   // Called without param from HABase._updateDynamicElements (pre-Jinja),
   // and with percent from _managePercent when the Jinja template resolves.
   _updateTrend(percent) {
     if (!this._cardView.config.trend_indicator) return;
-    this._dom.setAttribute(
-      CARD.htmlStructure.elements.trendIndicator.icon.class,
-      CARD.style.icon.badge.default.attribute,
-      this._trendIcons[this._cardView.getTrend(percent)],
-    );
+    // CF5 - issue (major) resolved - the paramless call from _updateDynamicElements ran getTrend(undefined), which clobbered _lastPercent on every refresh: the trend indicator stayed 'flat' whenever a hass update interleaved two Jinja percent pushes. Only Jinja pushes may update the trend.
+    if (percent === undefined) return;
+    // NaN = invalid template result: show the error icon without touching _lastPercent
+    const icon = Number.isNaN(percent) ? this._trendIcons.error : this._trendIcons[this._cardView.getTrend(percent)];
+    this._dom.setAttribute(CARD.htmlStructure.elements.trendIndicator.icon.class, CARD.style.icon.badge.default.attribute, icon);
   }
 
   _renderPercentCSS(percent) {
@@ -14285,7 +14479,6 @@ class EntityProgressTemplateCard extends EntityProgressTemplateBase {
 
 }
 
-
 /******************************************************************************************
  * 📦 EntityProgressTemplateBadge
  * ========================================================================================
@@ -14305,7 +14498,8 @@ class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
   setConfig(config) {
     super.setConfig(config);
     // Defer refresh by one tick so HA finishes its own DOM update cycle before we read state.
-    if (this.hass) setTimeout(() => this.refresh(), 0);
+    // CF5 - issue (minor) resolved - the raw setTimeout was untracked and could fire after disconnect; routed through ResourceManager so cleanup() cancels it (the shared id also dedupes rapid setConfig calls)
+    if (this.hass) this._resourceManager?.setTimeout(() => this.refresh(), 0, 'deferredRefresh');
   }
 
   static getStubConfig(hass) {
@@ -14488,7 +14682,7 @@ class EditorDOMHelper extends DOMHelper {
     const val = def.invert ? !raw : raw;
     this.updateValue(name, val);
 
-    // Allow custom elements (e.g. EntityProgressEffectChips) to receive full config
+    // Allow elements with updateConfig (e.g. chips fields) to receive full config
     const el = this._domElements.get(name);
     if (el && is.func(el.updateConfig)) el.updateConfig(config);
 
@@ -14503,44 +14697,43 @@ class EditorDOMHelper extends DOMHelper {
   }
 }
 
-const HA_CHIP_SET = 'ha-chip-set';
 const VALUE_CHANGED_EVENT = 'value-changed';
+const HA_SELECTOR_TAG = 'ha-selector';
+const HA_CHIP_SET_TAG = 'ha-chip-set';
+const HA_SVG_ICON_TAG = 'ha-svg-icon';
+
+const CHIPS_HOST_STYLE = `:host { display: block; width: 100%; } ha-filter-chip[selected] { --md-filter-chip-selected-container-color: var(--primary-color); --md-filter-chip-selected-label-text-color: var(--text-primary-color, #fff); --md-filter-chip-selected-leading-icon-color: var(--text-primary-color, #fff); }`;
 
 class ChipsBase extends HTMLElement {
+  // CF5 - issue (major) resolved - setLabels() is called by the editor before the element is connected, when the chips Map is still empty; labels are now stored and applied at build time
+  _labels = null;
+
   connectedCallback() {
     if (!this.shadowRoot) this.attachShadow({ mode: 'open' });
-    if (!this.shadowRoot.querySelector(HA_CHIP_SET)) this._buildDOM();
+    if (!this.shadowRoot.querySelector(HA_CHIP_SET_TAG)) this._buildDOM();
     this._render();
   }
 
+  _chipLabel(value) {
+    return this._labels?.[value] ?? value;
+  }
+
+  // Swallow the generic label assignment done by the editor on every field element.
   // eslint-disable-next-line class-methods-use-this
   set label(_) {}
 }
-
-/******************************************************************************************
- * 🎛️ EntityProgressEffectChips
- * ========================================================================================
- * Custom element that renders bar effects as filter chips (ha-filter-chip).
- * All chips are shown at once; selected ones are visually highlighted.
- * Handles mutual exclusion (shimmer ↔ shimmer_reverse, gradient ↔ gradient_reverse)
- * and color_mode conflict (gradient/gradient_reverse hidden when color_mode ≠ auto).
- *
- * @class
- * @extends ChipsBase
- */
 
 class EntityProgressEffectChips extends ChipsBase {
   static ELEMENT_NAME = 'entity-progress-effect-chips';
   static #EFFECTS = [
     { value: 'radius' },
-    { value: 'glass', showIf: (c) => c.color_mode === 'auto' || is.nullish(c.color_mode) },
-    { value: 'gradient', showIf: (c) => c.color_mode === 'auto' || is.nullish(c.color_mode) },
+    { value: 'glass',            showIf: (c) => c.color_mode === 'auto' || is.nullish(c.color_mode) },
+    { value: 'gradient',         showIf: (c) => c.color_mode === 'auto' || is.nullish(c.color_mode) },
     { value: 'gradient_reverse', showIf: (c) => c.color_mode === 'auto' || is.nullish(c.color_mode) },
     { value: 'shimmer' },
     { value: 'shimmer_reverse' },
   ];
 
-  // For each effect, lists the effects it cannot coexist with.
   static #INCOMPATIBLE = {
     gradient:         ['gradient_reverse', 'glass'],
     gradient_reverse: ['gradient', 'glass'],
@@ -14555,15 +14748,12 @@ class EntityProgressEffectChips extends ChipsBase {
 
   _buildDOM() {
     const style = document.createElement('style');
-    style.textContent = `:host { display: block; width: 100%; }`;
-    const chipSet = document.createElement(HA_CHIP_SET);
+    style.textContent = CHIPS_HOST_STYLE;
+    const chipSet = document.createElement(HA_CHIP_SET_TAG);
     for (const effect of EntityProgressEffectChips.#EFFECTS) {
       const chip = document.createElement('ha-filter-chip');
-      chip.label = effect.value;
-      chip.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.#toggle(effect.value);
-      });
+      chip.label = this._chipLabel(effect.value);
+      chip.addEventListener('click', (e) => { e.stopPropagation(); this.#toggle(effect.value); });
       chipSet.appendChild(chip);
       this.#chips.set(effect.value, chip);
     }
@@ -14572,34 +14762,20 @@ class EntityProgressEffectChips extends ChipsBase {
 
   #toggle(value) {
     const isSelected = this.#selected.includes(value);
-    let updated;
-    if (isSelected) {
-      updated = this.#selected.filter((v) => v !== value);
-    } else {
-      const blocked = EntityProgressEffectChips.#INCOMPATIBLE[value] ?? [];
-      updated = [...this.#selected.filter((v) => !blocked.includes(v)), value];
-    }
-    this.dispatchEvent(
-      new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value: updated }, bubbles: true, composed: true })
-    );
+    const blocked = isSelected ? [] : (EntityProgressEffectChips.#INCOMPATIBLE[value] ?? []);
+    const updated = isSelected
+      ? this.#selected.filter((v) => v !== value)
+      : [...this.#selected.filter((v) => !blocked.includes(v)), value];
+    this.dispatchEvent(new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value: updated }, bubbles: true, composed: true }));
   }
 
-  set value(val) {
-    this.#selected = is.array(val) ? val : [];
-    this._render();
-  }
+  set value(val) { this.#selected = is.array(val) ? val : []; this._render(); }
 
-  // Called by EditorDOMHelper after every config update
-  updateConfig(config) {
-    this.#config = config ?? {};
-    this._render();
-  }
+  updateConfig(config) { this.#config = config ?? {}; this._render(); }
 
-  // Called once after DOM is built to set localized labels
   setLabels(labels) {
-    for (const [value, chip] of this.#chips) {
-      chip.label = labels?.[value] ?? value;
-    }
+    this._labels = labels ?? null;
+    for (const [value, chip] of this.#chips) chip.label = this._chipLabel(value);
   }
 
   _render() {
@@ -14607,10 +14783,9 @@ class EntityProgressEffectChips extends ChipsBase {
     for (const effect of EntityProgressEffectChips.#EFFECTS) {
       const chip = this.#chips.get(effect.value);
       if (!chip) continue;
-      const visibleByRule = !effect.showIf || effect.showIf(this.#config);
-      const blocked = EntityProgressEffectChips.#INCOMPATIBLE[effect.value] ?? [];
-      const blockedBySelection = blocked.some((v) => this.#selected.includes(v));
-      chip.style.display = visibleByRule && !blockedBySelection ? '' : 'none';
+      const visible = !effect.showIf || effect.showIf(this.#config);
+      const blocked = (EntityProgressEffectChips.#INCOMPATIBLE[effect.value] ?? []).some((v) => this.#selected.includes(v));
+      chip.style.display = visible && !blocked ? '' : 'none';
       chip.selected = this.#selected.includes(effect.value);
     }
   }
@@ -14619,16 +14794,6 @@ class EntityProgressEffectChips extends ChipsBase {
 if (!customElements.get(EntityProgressEffectChips.ELEMENT_NAME)) {
   customElements.define(EntityProgressEffectChips.ELEMENT_NAME, EntityProgressEffectChips);
 }
-
-/******************************************************************************************
- * 🎛️ EntityProgressHideChips
- * ========================================================================================
- * Same chip pattern as EntityProgressEffectChips, used for the `hide` array.
- * No incompatibilities — all elements can be hidden simultaneously.
- *
- * @class
- * @extends ChipsBase
- */
 
 class EntityProgressHideChips extends ChipsBase {
   static ELEMENT_NAME = 'entity-progress-hide-chips';
@@ -14639,15 +14804,12 @@ class EntityProgressHideChips extends ChipsBase {
 
   _buildDOM() {
     const style = document.createElement('style');
-    style.textContent = `:host { display: block; width: 100%; }`;
-    const chipSet = document.createElement(HA_CHIP_SET);
+    style.textContent = CHIPS_HOST_STYLE;
+    const chipSet = document.createElement(HA_CHIP_SET_TAG);
     for (const item of EntityProgressHideChips.#ITEMS) {
       const chip = document.createElement('ha-filter-chip');
-      chip.label = item;
-      chip.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.#toggle(item);
-      });
+      chip.label = this._chipLabel(item);
+      chip.addEventListener('click', (e) => { e.stopPropagation(); this.#toggle(item); });
       chipSet.appendChild(chip);
       this.#chips.set(item, chip);
     }
@@ -14655,39 +14817,205 @@ class EntityProgressHideChips extends ChipsBase {
   }
 
   #toggle(value) {
-    const isSelected = this.#selected.includes(value);
-    const updated = isSelected
+    const updated = this.#selected.includes(value)
       ? this.#selected.filter((v) => v !== value)
       : [...this.#selected, value];
-    this.dispatchEvent(
-      new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value: updated }, bubbles: true, composed: true })
-    );
+    this.dispatchEvent(new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value: updated }, bubbles: true, composed: true }));
   }
 
-  set value(val) {
-    this.#selected = is.array(val) ? val : [];
-    this._render();
-  }
+  set value(val) { this.#selected = is.array(val) ? val : []; this._render(); }
 
-  // Called by EditorDOMHelper — no per-chip visibility rules, nothing to do
   // eslint-disable-next-line class-methods-use-this
   updateConfig(_config) {}
 
   setLabels(labels) {
-    for (const [item, chip] of this.#chips) {
-      chip.label = labels?.[item] ?? item;
-    }
+    this._labels = labels ?? null;
+    for (const [item, chip] of this.#chips) chip.label = this._chipLabel(item);
   }
 
   _render() {
-    for (const [item, chip] of this.#chips) {
-      chip.selected = this.#selected.includes(item);
-    }
+    for (const [item, chip] of this.#chips) chip.selected = this.#selected.includes(item);
   }
 }
 
 if (!customElements.get(EntityProgressHideChips.ELEMENT_NAME)) {
   customElements.define(EntityProgressHideChips.ELEMENT_NAME, EntityProgressHideChips);
+}
+
+/******************************************************************************************
+ * ➕ EntityProgressAdditionsEditor
+ * ========================================================================================
+ * Custom element that renders an editable list of entity/attribute pairs (additions).
+ * Each row shows an entity picker and an optional attribute picker.
+ * Dispatches value-changed with the filtered array of { entity, attribute? } objects.
+ *
+ * @class
+ * @extends HTMLElement
+ */
+
+class EntityProgressAdditionsEditor extends HTMLElement {
+  static ELEMENT_NAME = 'entity-progress-additions-editor';
+
+  #hass = null;
+  #labelText = '';
+  #value = [];
+  #rows = []; // { entitySel, attrSel } per rendered row
+  #list = null;
+  #labelEl = null;
+  #addBtn = null;
+
+  connectedCallback() {
+    if (!this.shadowRoot) this.attachShadow({ mode: 'open' });
+    if (!this.#list) this.#buildDOM();
+    this.#render();
+  }
+
+  set label(val) {
+    this.#labelText = val ?? '';
+    if (this.#labelEl) this.#labelEl.textContent = this.#labelText;
+  }
+
+  set hass(hass) {
+    this.#hass = hass;
+    for (const { entitySel, attrSel } of this.#rows) {
+      entitySel.hass = hass;
+      attrSel.hass = hass;
+    }
+  }
+
+  set value(val) {
+    this.#value = is.array(val) ? val.filter(is.plainObject) : [];
+    if (this.#list) this.#render();
+  }
+
+  #buildDOM() {
+    const style = document.createElement('style');
+    style.textContent = `
+      :host { display: block; width: 100%; }
+      .lbl {
+        display: block;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: var(--primary-text-color);
+        padding-bottom: 4px;
+      }
+      .row { display: flex; align-items: center; gap: 4px; margin-bottom: 8px; }
+      .sels { display: flex; flex: 1; gap: 8px; min-width: 0; }
+      .sel { flex: 1; min-width: 0; }
+      .del-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        align-self: center;
+        flex-shrink: 0;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+        color: var(--secondary-text-color);
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        box-sizing: border-box;
+      }
+      .del-btn:hover { color: var(--primary-color); }
+      .del-btn ha-svg-icon { width: 16px; height: 16px; }
+      .add-row { display: flex; justify-content: flex-start; margin-top: 4px; }
+    `;
+    this.#labelEl = document.createElement('div');
+    this.#labelEl.className = 'lbl';
+    this.#labelEl.textContent = this.#labelText;
+    this.#list = document.createElement('div');
+    this.#addBtn = document.createElement('ha-button');
+    const addIcon = document.createElement(HA_SVG_ICON_TAG);
+    addIcon.setAttribute('slot', 'icon');
+    addIcon.path = 'M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z';
+    this.#addBtn.appendChild(addIcon);
+    this.#addBtn.append('Add entity');
+    this.#addBtn.addEventListener('click', () => {
+      this.#value = [...this.#value, {}];
+      this.#render();
+    });
+    const addRow = document.createElement('div');
+    addRow.className = 'add-row';
+    addRow.appendChild(this.#addBtn);
+    this.shadowRoot.append(style, this.#labelEl, this.#list, addRow);
+  }
+
+  #updateItem(index, patch) {
+    this.#value = this.#value.map((item, i) => i === index ? { ...item, ...patch } : item);
+    this.#render();
+    this.#dispatch();
+  }
+
+  #deleteRow(index) {
+    this.#value = this.#value.filter((_, i) => i !== index);
+    this.#render();
+    this.#dispatch();
+  }
+
+  #dispatch() {
+    const clean = this.#value.filter((i) => i.entity);
+    this.dispatchEvent(new CustomEvent(VALUE_CHANGED_EVENT, {
+      detail: { value: clean.length ? clean : undefined },
+      bubbles: true,
+      composed: true,
+    }));
+  }
+
+  #render() {
+    this.#list.innerHTML = '';
+    this.#rows = [];
+    for (let i = 0; i < this.#value.length; i++) {
+      const item = this.#value[i];
+
+      const entitySel = document.createElement(HA_SELECTOR_TAG);
+      entitySel.hass = this.#hass;
+      entitySel.selector = { entity: {} };
+      entitySel.value = item.entity ?? '';
+      entitySel.required = false;
+      entitySel.className = 'sel';
+      entitySel.addEventListener(VALUE_CHANGED_EVENT, (e) => {
+        e.stopPropagation();
+        this.#updateItem(i, { entity: e.detail.value || undefined, attribute: undefined });
+      });
+
+      const attrSel = document.createElement(HA_SELECTOR_TAG);
+      attrSel.hass = this.#hass;
+      attrSel.selector = { attribute: { entity_id: item.entity ?? '' } };
+      attrSel.value = item.attribute ?? '';
+      attrSel.required = false;
+      attrSel.className = 'sel';
+      attrSel.style.display = item.entity ? '' : 'none';
+      attrSel.addEventListener(VALUE_CHANGED_EVENT, (e) => {
+        e.stopPropagation();
+        this.#updateItem(i, { attribute: e.detail.value || undefined });
+      });
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'del-btn';
+      delBtn.title = 'Delete';
+      const delIcon = document.createElement(HA_SVG_ICON_TAG);
+      delIcon.path = 'M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2C6.47,2 2,6.47 2,12C2,18.53 6.47,22 12,22C17.53,22 22,17.53 22,12C22,6.47 17.53,2 12,2M14.59,8L12,10.59L9.41,8L8,9.41L10.59,12L8,14.59L9.41,16L12,13.41L14.59,16L16,14.59L13.41,12L16,9.41L14.59,8Z';
+      delBtn.appendChild(delIcon);
+      delBtn.addEventListener('click', () => this.#deleteRow(i));
+
+      const sels = document.createElement('div');
+      sels.className = 'sels';
+      sels.append(entitySel, attrSel);
+
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.append(sels, delBtn);
+      this.#list.appendChild(row);
+      this.#rows.push({ entitySel, attrSel });
+    }
+  }
+}
+
+if (!customElements.get(EntityProgressAdditionsEditor.ELEMENT_NAME)) {
+  customElements.define(EntityProgressAdditionsEditor.ELEMENT_NAME, EntityProgressAdditionsEditor);
 }
 
 /******************************************************************************************
@@ -14726,7 +15054,11 @@ class EditorBase extends HTMLElement {
   #boundOnChanged = null;
   _configHelper = new BaseConfigHelper();
 
-  get #localizedOptions() { return this.#hassProvider.localize('editor.option'); }
+  get #localizedOptions() {
+    // CF5 - issue (minor) resolved - localize() returns the key string before translations load; select builders then crashed on Object.entries(undefined). Fall back to the default language.
+    const options = this.#hassProvider.localize('editor.option');
+    return is.plainObject(options) ? options : TRANSLATIONS[CARD.config.language].editor.option;
+  }
 
   // ─── LIFECYCLE ────────────────────────────────────────────────────────────
 
@@ -14913,11 +15245,23 @@ class EditorBase extends HTMLElement {
     return el;
   }
 
+  #buildAdditionsField(field) {
+    const el = document.createElement(EntityProgressAdditionsEditor.ELEMENT_NAME);
+    el.id = field.name;
+    el.style.width = '100%';
+    el.label = this.#hassProvider.localize('editor.field')?.[field.name] ?? field.name;
+    el.hass = this.hass;
+    el.value = is.array(this.#config?.[field.name]) ? this.#config[field.name] : [];
+    this.#dom.registerField(field.name, el, field);
+    return el;
+  }
+
   #buildField(field) {
     if (field.type === 'effect_chips') return this.#buildChipsField(field, EntityProgressEffectChips.ELEMENT_NAME, 'bar_effect');
     if (field.type === 'hide_chips') return this.#buildChipsField(field, EntityProgressHideChips.ELEMENT_NAME, 'hide');
+    if (field.type === 'additions_editor') return this.#buildAdditionsField(field);
 
-    const el = document.createElement('ha-selector');
+    const el = document.createElement(HA_SELECTOR_TAG);
 
     el.id = field.name;
     el.hass = this.hass;
@@ -15021,7 +15365,7 @@ class EditorBase extends HTMLElement {
       return;
     }
     const newConfig = { ...this.#config, [targetKey]: value };
-    this.#sendConfig(def?.onChange ? def.onChange(value, newConfig) : newConfig);
+    this.#sendConfig(def?.onChange ? def.onChange(value, newConfig, this.#config) : newConfig);
   }
 
   #onChanged(e) {
@@ -15143,6 +15487,16 @@ const EditorFactory = {
           selectorOf: 'entity',
           showIf: (c) => Boolean(c.entity),
         }),
+        // CF5 - issue (minor) resolved - clearing the last addition row dispatched value: undefined, leaving an undefined key in the config; onClear now removes the key cleanly
+        additions: {
+          name: 'additions',
+          type: 'additions_editor',
+          onClear: (config) => {
+            const rest = { ...config };
+            delete rest.additions;
+            return rest;
+          },
+        },
       }),
     },
   }),

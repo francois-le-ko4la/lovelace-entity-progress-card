@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "",
       "secondary": "",
       "state_content": "",
+      "show_all_actions": "Show all interactions",
       "tap_action": "",
       "text_shadow": "",
       "theme": "",
@@ -85,7 +86,8 @@
       "custom_info": "Custom secondary info",
       "interpolate": "Interpolate colors",
       "name_info": "Custom name info",
-      "reverse": "Reverse timer"
+      "reverse": "Reverse timer",
+      "additions": "Additional entities"
     },
     "option": {
       "theme": {

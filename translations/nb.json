@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "Bytt linje og tekst",
       "secondary": "Sekundær informasjon",
       "state_content": "Innhold i tilstand",
+      "show_all_actions": "Vis alle handlinger",
       "tap_action": "Handling ved kort trykk",
       "text_shadow": "Legg til tekstskygge (overlay)",
       "theme": "Tema",
@@ -85,7 +86,8 @@
       "custom_info": "Egendefinert sekundær info",
       "interpolate": "Interpoler farger",
       "name_info": "Egendefinert navneinfo",
-      "reverse": "Omvendt tidtaker"
+      "reverse": "Omvendt tidtaker",
+      "additions": "Ekstra enheter"
     },
     "option": {
       "bar_orientation": {

@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "Поменять местами панель и текст",
       "secondary": "Дополнительная информация",
       "state_content": "Содержимое состояния",
+      "show_all_actions": "Показать все действия",
       "tap_action": "Поведение при нажатии",
       "text_shadow": "Добавить тень к тексту (overlay)",
       "theme": "Тема",
@@ -85,7 +86,8 @@
       "custom_info": "Дополнительная информация",
       "interpolate": "Интерполяция цветов",
       "name_info": "Доп. информация (имя)",
-      "reverse": "Обратный таймер"
+      "reverse": "Обратный таймер",
+      "additions": "Дополнительные объекты"
     },
     "option": {
       "bar_orientation": {

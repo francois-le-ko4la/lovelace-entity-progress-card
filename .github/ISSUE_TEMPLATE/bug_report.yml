@@ -18,7 +18,7 @@ body:
           label: Current Behavior
           description: A concise description of what you're experiencing.
       validations:
-          required: false
+          required: true
     - type: textarea
       attributes:
           label: Expected Behavior
@@ -35,17 +35,21 @@ body:
               3. Run '...'
               4. See error...
       validations:
-          required: false
+          required: true
+    - type: textarea
+      attributes:
+          label: Card Configuration (YAML)
+          description: |
+              Please paste the card's YAML configuration (as shown in the dashboard's card editor, "Edit in YAML"). This is required to reproduce the issue.
+          render: yaml
+      validations:
+          required: true
     - type: textarea
       attributes:
           label: Context
           description: |
               If your issue is about a certain type of entity, please provide the entity state/attribute. You can find it in the [developer tools](https://my.home-assistant.io/redirect/developer_states/). Otherwise, you can leave this section blank.
-          value: |
-              YAML state
-              ```yaml
-
-              ```
+          render: yaml
       validations:
           required: false
     - type: textarea
@@ -62,7 +66,7 @@ body:
               - Entity Progress Card:
           render: markdown
       validations:
-          required: false
+          required: true
     - type: textarea
       attributes:
           label: Anything else?

@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "बार और टेक्स्ट बदलें",
       "secondary": "सहायक जानकारी",
       "state_content": "स्थिति की सामग्री",
+      "show_all_actions": "सभी क्रियाएँ दिखाएँ",
       "tap_action": "टैप व्यवहार",
       "text_shadow": "टेक्स्ट में छाया जोड़ें (overlay)",
       "theme": "थीम",
@@ -85,7 +86,8 @@
       "custom_info": "कस्टम द्वितीयक जानकारी",
       "interpolate": "रंग इंटरपोलेशन",
       "name_info": "कस्टम नाम जानकारी",
-      "reverse": "टाइमर उलटें"
+      "reverse": "टाइमर उलटें",
+      "additions": "अतिरिक्त एंटिटी"
     },
     "option": {
       "bar_orientation": {

@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "แถบและข้อความสลับกัน",
       "secondary": "ข้อมูลรอง",
       "state_content": "เนื้อหาของสถานะ",
+      "show_all_actions": "แสดงการโต้ตอบทั้งหมด",
       "tap_action": "พฤติกรรมการแตะ",
       "text_shadow": "เพิ่มเงาให้ข้อความ (overlay)",
       "theme": "ธีม",
@@ -85,7 +86,8 @@
       "custom_info": "ข้อมูลรองที่กำหนดเอง",
       "interpolate": "การสอดแทรกสี",
       "name_info": "ข้อมูลชื่อที่กำหนดเอง",
-      "reverse": "กลับเวลานับถอยหลัง"
+      "reverse": "กลับเวลานับถอยหลัง",
+      "additions": "เอนทิตีเพิ่มเติม"
     },
     "option": {
       "bar_orientation": {

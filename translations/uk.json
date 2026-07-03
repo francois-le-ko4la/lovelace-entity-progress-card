@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "Поміняти місцями панель і текст",
       "secondary": "Додаткова інформація",
       "state_content": "Вміст стану",
+      "show_all_actions": "Показати всі дії",
       "tap_action": "Поведінка при дотику",
       "text_shadow": "Додати тінь до тексту (overlay)",
       "theme": "Тема",
@@ -85,7 +86,8 @@
       "custom_info": "Додаткова вторинна інформація",
       "interpolate": "Інтерполяція кольорів",
       "name_info": "Додаткова інформація (назва)",
-      "reverse": "Зворотній таймер"
+      "reverse": "Зворотній таймер",
+      "additions": "Додаткові об'єкти"
     },
     "option": {
       "bar_orientation": {

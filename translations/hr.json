@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "Zamijeni traku i tekst",
       "secondary": "Sekundarne informacije",
       "state_content": "Sadržaj stanja",
+      "show_all_actions": "Prikaži sve radnje",
       "tap_action": "Radnja na kratki dodir",
       "text_shadow": "Dodaj sjenu tekstu (overlay)",
       "theme": "Tema",
@@ -85,7 +86,8 @@
       "custom_info": "Prilagođena sekundarna informacija",
       "interpolate": "Interpolacija boja",
       "name_info": "Prilagođena informacija naziva",
-      "reverse": "Obrnuti tajmer"
+      "reverse": "Obrnuti tajmer",
+      "additions": "Dodatni entiteti"
     },
     "option": {
       "bar_orientation": {

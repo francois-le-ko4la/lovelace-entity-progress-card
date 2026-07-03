@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "Skift bjælke og tekst",
       "secondary": "Sekundær info",
       "state_content": "Indhold af tilstand",
+      "show_all_actions": "Vis alle handlinger",
       "tap_action": "Handling ved kort tryk",
       "text_shadow": "Tilføj tekstskygge (overlay)",
       "theme": "Tema",
@@ -85,7 +86,8 @@
       "custom_info": "Tilpasset sekundær info",
       "interpolate": "Interpoler farver",
       "name_info": "Tilpasset navneinfo",
-      "reverse": "Omvendt timer"
+      "reverse": "Omvendt timer",
+      "additions": "Ekstra entiteter"
     },
     "option": {
       "theme": {

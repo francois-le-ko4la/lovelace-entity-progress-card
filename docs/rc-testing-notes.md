@@ -225,7 +225,10 @@ The visual editor (GUI) has been redesigned to be more intuitive:
   `center_zero`/`growth_percent`, `state_content`, `text_shadow`,
   `reverse_secondary_info_row`, `frameless`, `marginless`, `height`,
   `min_width`, `bar_max_width`, `unit_spacing`, Watermark,
-  `name_info`, `custom_info`, `interpolate`, `reverse`
+  `name_info`, `custom_info`, `interpolate`, `reverse`, `additions`
+  (entity/attribute pairs — each row shows an entity picker and an
+  optional attribute picker; adding an empty row is non-destructive
+  until an entity is selected)
 
 ### ♿ Accessibility
 
@@ -282,6 +285,97 @@ badge_color: |-
   {% endif %}
 ```
 
+#### Hardened against crashes (code audit)
+
+A defensive audit of the card runtime fixed several situations that could
+previously break the card with a red error screen:
+
+- **Name tokens with helper/template entities**: using a `name` token of type
+  `entity` on an entity without a `unique_id` (YAML template sensors, manual
+  MQTT sensors, …) crashed the card. It now falls back gracefully.
+- **Jinja templates returning lists**: `bar_effect` and `hide` templates can
+  now safely return a native list (e.g. `{{ ['glass', 'shimmer'] }}`) in
+  addition to a comma-separated string. Previously a list result crashed the
+  card. Any error inside a template render is now logged to the console
+  instead of breaking the card.
+- **Non-standard units**: integrations exposing a non-string
+  `unit_of_measurement` no longer crash the card.
+- **Duration sensors without a unit**: a `device_class: duration` sensor with
+  a missing or unknown unit crashed the card; it is now reported as an
+  invalid entity instead.
+- **Timers during HA startup**: a timer whose `duration`/`remaining`
+  attributes are not yet restored (e.g. right after a Home Assistant restart)
+  crashed the card. It now renders safely and recovers on the next update.
+- **Attribute validation**: configuring a non-existent attribute silently
+  produced `NaN` values; the card now correctly flags the configuration as
+  invalid, making the mistake visible in the editor preview.
+
+The visual editor was hardened as well: it no longer breaks if it renders
+before translations are loaded, and removing the last row of *Additional
+entities* now cleanly removes the `additions` key from the YAML instead of
+leaving an empty leftover.
+
+A second audit pass focused on lifecycle, state sharing and performance:
+
+- **Duplicate actions fixed**: navigating between dashboard views accumulated
+  internal event listeners — a single tap could end up firing an action
+  several times (e.g. a light toggling on/off repeatedly). Listeners are now
+  attached exactly once per card.
+- **`additions` totals fixed**: the entity collection was re-populated on
+  every editor keystroke without being cleared, inflating the displayed total
+  in the preview. The collection is now rebuilt cleanly on each config change.
+- **`additions` entities are now watched**: the card refreshes when one of the
+  additional entities changes state — previously the total stayed stale until
+  the main entity moved.
+- **Active timer crash fixed**: assigning `hass` before the card was attached
+  to the DOM (standard Lovelace order) crashed cards bound to a running timer.
+- **HTML sanitization**: Jinja results rendered as HTML (`name`, `secondary`,
+  `custom_info`, `name_info`) are now sanitized with a tag/attribute
+  allowlist (`b`, `i`, `u`, `span`, `div`, `br`; `class`; `style` limited to
+  colors). Formatting keeps working, but scripts, event handlers and embedded
+  content interpolated from untrusted strings (media titles, network device
+  names, …) can no longer execute. See the [Supported HTML] section of the
+  configuration reference.
+- **Trend indicator fixed on template cards**: the up/down arrows were being
+  reset by unrelated state refreshes and stayed stuck on "flat"; the "flat"
+  state itself rendered an empty icon due to a wrong constant. Both are
+  fixed. A `percent` template returning a numeric string is now compared
+  numerically (no more lexicographic `'9' > '45'` glitches), and a
+  non-numeric result shows an explicit `mdi:progress-question` error icon
+  instead of silently corrupting the trend and the bar.
+- **Timers longer than 24 h fixed**: durations like `1 day, 0:00:10` were not
+  parsed (broken bar); days are now handled.
+- **Less WebSocket traffic**: Jinja template subscriptions are push-based and
+  are no longer torn down and recreated on every state refresh — resubscribing
+  only happens when the template, the entity or the connection actually
+  changes. Subscriptions for template fields removed from the config are now
+  cleaned up immediately.
+- **Faster change detection**: entity change tracking now uses reference
+  comparison (relying on Home Assistant's immutable state objects) instead of
+  serializing full state objects to JSON on every update.
+- **Shared stylesheets**: on modern browsers the card CSS (~47 KB) is now
+  parsed once and shared by reference across every card instance
+  (Constructable Stylesheets), instead of being embedded and re-parsed per
+  card — a real memory and startup win on dashboards with many cards, and no
+  more CSS re-parsing on every keystroke in the editor. Older browsers
+  (Firefox < 101, Safari < 16.4 — e.g. wall-mounted iPads on iPadOS 15)
+  automatically fall back to the previous per-card `<style>` behavior, so the
+  browser support stated in the README is unchanged.
+- **Template-based rendering**: the card's HTML structure is no longer
+  re-parsed from a string on every render. Each unique structure (layout,
+  bar position, center-zero, …) is built once into a native `<template>` and
+  then cloned (~5-10× faster than parsing) — all identical cards on a
+  dashboard share the same template. Combined with the shared stylesheets,
+  an editor keystroke that doesn't change the card structure now costs a
+  tree clone instead of a full CSS + HTML parse.
+- **Idle template cards**: cards whose content is driven exclusively by Jinja
+  templates (no watched entity) no longer run the full refresh pipeline on
+  every state change of the whole installation — their content arrives via
+  push subscriptions and updates on its own.
+- Internal refactors: dead code paths in the render pipeline were removed,
+  shared mutable state between card instances was eliminated, and internal
+  debounce timers no longer run twice for a single event.
+
 #### Other fixes:
 
 - Fixed: wrong watermark positions in `center_zero` mode  
@@ -318,5 +412,7 @@ badge_color: |-
 
 <!-- Links -->
 
+[Supported HTML]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#supported-html
 [Theme Guide]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/theme.md

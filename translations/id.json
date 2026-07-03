@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "Tukar bilah dan teks",
       "secondary": "Informasi sekunder",
       "state_content": "Konten status",
+      "show_all_actions": "Tampilkan semua tindakan",
       "tap_action": "Perilaku ketuk",
       "text_shadow": "Tambahkan bayangan teks (overlay)",
       "theme": "Tema",
@@ -85,7 +86,8 @@
       "custom_info": "Info sekunder kustom",
       "interpolate": "Interpolasi warna",
       "name_info": "Info nama kustom",
-      "reverse": "Timer terbalik"
+      "reverse": "Timer terbalik",
+      "additions": "Entitas tambahan"
     },
     "option": {
       "bar_orientation": {

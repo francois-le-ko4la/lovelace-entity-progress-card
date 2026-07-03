@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "Mainīt joslu un tekstu",
       "secondary": "Papildu informācija",
       "state_content": "Stāvokļa saturs",
+      "show_all_actions": "Rādīt visas darbības",
       "tap_action": "Pieskāriens",
       "text_shadow": "Pievienot teksta ēnu (overlay)",
       "theme": "Tēma",
@@ -85,7 +86,8 @@
       "custom_info": "Pielāgota sekundārā informācija",
       "interpolate": "Krāsu interpolācija",
       "name_info": "Pielāgota nosaukuma informācija",
-      "reverse": "Apgriezts taimeris"
+      "reverse": "Apgriezts taimeris",
+      "additions": "Papildu entītijas"
     },
     "option": {
       "theme": {

@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "Intercanvia barra i text",
       "secondary": "Informació secundària",
       "state_content": "Contingut de l'estat",
+      "show_all_actions": "Mostra totes les accions",
       "tap_action": "Acció al tocar breument",
       "text_shadow": "Afegir ombra al text (overlay)",
       "theme": "Tema",
@@ -85,7 +86,8 @@
       "custom_info": "Informació addicional (secundària)",
       "interpolate": "Interpolar colors",
       "name_info": "Informació addicional (nom)",
-      "reverse": "Temporitzador invers"
+      "reverse": "Temporitzador invers",
+      "additions": "Entitats addicionals"
     },
     "option": {
       "theme": {

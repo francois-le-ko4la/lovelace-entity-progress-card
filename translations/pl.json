@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "Zamień pasek i tekst",
       "secondary": "Informacja dodatkowa",
       "state_content": "Zawartość stanu",
+      "show_all_actions": "Pokaż wszystkie akcje",
       "tap_action": "Akcja przy krótkim naciśnięciu",
       "text_shadow": "Dodaj cień tekstu (overlay)",
       "theme": "Motyw",
@@ -85,7 +86,8 @@
       "custom_info": "Niestandardowa info pomocnicza",
       "interpolate": "Interpolacja kolorów",
       "name_info": "Niestandardowa info nazwy",
-      "reverse": "Odwróć licznik"
+      "reverse": "Odwróć licznik",
+      "additions": "Dodatkowe encje"
     },
     "option": {
       "bar_orientation": {

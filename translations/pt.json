@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "Trocar barra e texto",
       "secondary": "Informação secundária",
       "state_content": "Conteúdo do estado",
+      "show_all_actions": "Mostrar todas as ações",
       "tap_action": "Ação ao toque curto",
       "text_shadow": "Adicionar sombra ao texto (overlay)",
       "theme": "Tema",
@@ -85,7 +86,8 @@
       "custom_info": "Informação secundária personalizada",
       "interpolate": "Interpolar cores",
       "name_info": "Informação de nome personalizada",
-      "reverse": "Temporizador inverso"
+      "reverse": "Temporizador inverso",
+      "additions": "Entidades adicionais"
     },
     "option": {
       "bar_orientation": {

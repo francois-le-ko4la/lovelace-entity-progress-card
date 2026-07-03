@@ -11,7 +11,7 @@ jobs:
   stale:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/stale@v6
+      - uses: actions/stale@v9
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -27,7 +27,7 @@ jobs:
             No worries though — if you still need assistance or want to continue the discussion, 
             just reply here and we’ll gladly reopen the issue and pick things back up with you!
   
-          exempt-issue-labels: 'planned'
+          exempt-issue-labels: 'planned,Next release,in progress'
 
           stale-pr-message: ''
           operations-per-run: 30

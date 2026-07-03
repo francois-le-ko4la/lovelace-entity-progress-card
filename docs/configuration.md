@@ -186,8 +186,19 @@ The expression is evaluated in the context of the entity's state and attributes.
 The keyword `entity` can be used to represent the entity defined at the card
 level.
 
-This is a very long line that definitely exceeds eighty characters and should be
-wrapped by prettier automatically.
+##### Supported HTML
+
+Fields that render Jinja results as HTML (`name`, `secondary`, `custom_info`,
+`name_info`) are **sanitized** before injection. Only the following markup is
+kept — everything else is stripped while its text content is preserved:
+
+- **Tags**: `<b>`, `<i>`, `<u>`, `<span>`, `<div>`, `<br>`
+- **Attributes**: `class`, and `style` limited to `color` and
+  `background-color`
+
+Scripts, event handlers (`onclick`, `onerror`, …), iframes, links and images
+are always removed. This protects your dashboard when a template interpolates
+strings you don't control (media titles, network device names, …).
 
 _Example_:
 
@@ -750,7 +761,8 @@ custom_info: >-
 
 > [!NOTE]
 >
-> - This field supports HTML for advanced formatting.
+> - This field supports HTML for advanced formatting — see
+>   [Supported HTML](#supported-html) for the allowed tags and styles.
 > - If the template evaluates to an empty string, nothing will be displayed.
 
 [🔼 Back to top]
@@ -789,7 +801,8 @@ name_info: >-
 
 > [!NOTE]
 >
-> - This field supports HTML for advanced formatting.
+> - This field supports HTML for advanced formatting — see
+>   [Supported HTML](#supported-html) for the allowed tags and styles.
 > - If the template evaluates to an empty string, nothing will be displayed.
 
 [🔼 Back to top]
@@ -798,7 +811,6 @@ name_info: >-
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 [![Feature OK][Feature-OK]](#compatibility)
-[![YAML Only][yaml-only]](#yaml-only)
 
 > **`additions`** [List] _(optional)_
 

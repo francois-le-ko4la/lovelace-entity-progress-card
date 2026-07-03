@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "Barra und Text tauschen",
       "secondary": "Sekundäre Informationen",
       "state_content": "Statusinhalt",
+      "show_all_actions": "Alle Aktionen anzeigen",
       "tap_action": "Aktion bei kurzem Tippen",
       "text_shadow": "Textschatten hinzufügen (Overlay)",
       "theme": "Thema",
@@ -85,7 +86,8 @@
       "custom_info": "Zusatzinfo (sekundär)",
       "interpolate": "Farben interpolieren",
       "name_info": "Zusatzinfo (Name)",
-      "reverse": "Timer umkehren"
+      "reverse": "Timer umkehren",
+      "additions": "Weitere Entitäten"
     },
     "option": {
       "theme": {

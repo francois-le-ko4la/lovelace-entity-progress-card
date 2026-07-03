@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "Zaměnit lištu a text",
       "secondary": "Sekundární informace",
       "state_content": "Obsah stavu",
+      "show_all_actions": "Zobrazit všechny akce",
       "tap_action": "Chování při klepnutí",
       "text_shadow": "Přidat stín textu (overlay)",
       "theme": "Motiv",
@@ -85,7 +86,8 @@
       "custom_info": "Vlastní sekundární info",
       "interpolate": "Interpolace barev",
       "name_info": "Vlastní info názvu",
-      "reverse": "Obrátit časovač"
+      "reverse": "Obrátit časovač",
+      "additions": "Další entity"
     },
     "option": {
       "theme": {

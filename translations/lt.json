@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "Sukeisti juostą ir tekstą",
       "secondary": "Papildoma informacija",
       "state_content": "Būsenos turinys",
+      "show_all_actions": "Rodyti visus veiksmus",
       "tap_action": "Bakstelėjimo veiksmas",
       "text_shadow": "Pridėti teksto šešėlį (overlay)",
       "theme": "Tema",
@@ -85,7 +86,8 @@
       "custom_info": "Pasirinktinė papildoma informacija",
       "interpolate": "Spalvų interpoliavimas",
       "name_info": "Pasirinktinė pavadinimo informacija",
-      "reverse": "Atvirkštinis laikmatis"
+      "reverse": "Atvirkštinis laikmatis",
+      "additions": "Papildomos esybės"
     },
     "option": {
       "theme": {

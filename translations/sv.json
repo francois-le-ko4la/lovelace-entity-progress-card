@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "Byt ut stapel och text",
       "secondary": "Sekundär information",
       "state_content": "Statusinnehåll",
+      "show_all_actions": "Visa alla åtgärder",
       "tap_action": "Åtgärd vid kort tryck",
       "text_shadow": "Lägg till textskugga (overlay)",
       "theme": "Tema",
@@ -85,7 +86,8 @@
       "custom_info": "Anpassad sekundär info",
       "interpolate": "Interpolera färger",
       "name_info": "Anpassad namninfo",
-      "reverse": "Omvänd timer"
+      "reverse": "Omvänd timer",
+      "additions": "Ytterligare entiteter"
     },
     "option": {
       "bar_orientation": {

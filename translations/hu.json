@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "Cserélje fel a sávot és a szöveget",
       "secondary": "Másodlagos információ",
       "state_content": "Állapot tartalma",
+      "show_all_actions": "Az összes művelet megjelenítése",
       "tap_action": "Koppintás művelet",
       "text_shadow": "Szöveg árnyék hozzáadása (overlay)",
       "theme": "Téma",
@@ -85,7 +86,8 @@
       "custom_info": "Egyéni másodlagos info",
       "interpolate": "Színinterpoláció",
       "name_info": "Egyéni névinfo",
-      "reverse": "Fordított időzítő"
+      "reverse": "Fordított időzítő",
+      "additions": "További entitások"
     },
     "option": {
       "theme": {

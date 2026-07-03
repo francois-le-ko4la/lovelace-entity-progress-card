@@ -46,6 +46,7 @@
       "bar_single_line": "單行資訊（疊加）",
       "bar_size": "進度條大小",
       "color_mode": "顏色模式",
+      "center_zero": "中心為零",
       "center_zero_value": "中心值",
       "center_zero_growth_percent": "增長百分比",
       "color": "圖示顏色",
@@ -69,6 +70,7 @@
       "reverse_secondary_info_row": "交換進度條和文字",
       "secondary": "次要資訊",
       "state_content": "狀態內容",
+      "show_all_actions": "顯示所有互動",
       "tap_action": "點擊操作",
       "text_shadow": "文字陰影（疊加）",
       "theme": "主題",
@@ -84,7 +86,8 @@
       "custom_info": "自訂次要資訊",
       "interpolate": "顏色插值",
       "name_info": "自訂名稱資訊",
-      "reverse": "反轉計時器"
+      "reverse": "反轉計時器",
+      "additions": "附加實體"
     },
     "option": {
       "theme": {

@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "বার এবং টেক্সট অদলবদল করুন",
       "secondary": "দ্বিতীয় তথ্য",
       "state_content": "স্টেটের বিষয়বস্তু",
+      "show_all_actions": "সব অ্যাকশন দেখান",
       "tap_action": "ট্যাপ আচরণ",
       "text_shadow": "টেক্সটে ছায়া যোগ করুন (overlay)",
       "theme": "থিম",
@@ -85,7 +86,8 @@
       "custom_info": "কাস্টম সেকেন্ডারি তথ্য",
       "interpolate": "রঙ ইন্টারপোলেশন",
       "name_info": "কাস্টম নাম তথ্য",
-      "reverse": "টাইমার উল্টানো"
+      "reverse": "টাইমার উল্টানো",
+      "additions": "অতিরিক্ত সত্তা"
     },
     "option": {
       "theme": {

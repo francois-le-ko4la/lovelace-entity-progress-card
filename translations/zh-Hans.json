@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "交换进度条和文本",
       "secondary": "次要信息",
       "state_content": "状态内容",
+      "show_all_actions": "显示所有交互",
       "tap_action": "点击动作",
       "text_shadow": "添加文本阴影（overlay）",
       "theme": "主题",
@@ -85,7 +86,8 @@
       "custom_info": "自定义次要信息",
       "interpolate": "颜色插值",
       "name_info": "自定义名称信息",
-      "reverse": "反转计时器"
+      "reverse": "反转计时器",
+      "additions": "附加实体"
     },
     "option": {
       "theme": {

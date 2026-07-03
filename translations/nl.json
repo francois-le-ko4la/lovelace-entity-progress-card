@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "Balk en tekst omwisselen",
       "secondary": "Secundaire informatie",
       "state_content": "Inhoud van de status",
+      "show_all_actions": "Toon alle acties",
       "tap_action": "Actie bij korte tik",
       "text_shadow": "Tekstschaduw toevoegen (overlay)",
       "theme": "Thema",
@@ -85,7 +86,8 @@
       "custom_info": "Aangepaste secundaire info",
       "interpolate": "Kleuren interpoleren",
       "name_info": "Aangepaste naaminfo",
-      "reverse": "Timer omdraaien"
+      "reverse": "Timer omdraaien",
+      "additions": "Extra entiteiten"
     },
     "option": {
       "bar_orientation": {

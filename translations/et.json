@@ -70,6 +70,7 @@
       "reverse_secondary_info_row": "Vaheta riba ja tekst",
       "secondary": "Täiendav info",
       "state_content": "Oleku sisu",
+      "show_all_actions": "Kuva kõik toimingud",
       "tap_action": "Puudutuse tegevus",
       "text_shadow": "Lisa teksti vari (overlay)",
       "theme": "Teema",
@@ -85,7 +86,8 @@
       "custom_info": "Kohandatud sekundaarne teave",
       "interpolate": "Värvide interpoleerimine",
       "name_info": "Kohandatud nime teave",
-      "reverse": "Pööratud taimer"
+      "reverse": "Pööratud taimer",
+      "additions": "Täiendavad üksused"
     },
     "option": {
       "theme": {
