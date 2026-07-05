@@ -3,17 +3,11 @@
     "msg": {
       "appliedDefaultValue": "Noklusējuma vērtība tika automātiski piemērota.",
       "attributeNotFound": "Atribūts nav atrasts Home Assistant.",
-      "discontinuousRange": "Norādītais diapazons nav nepārtraukts.",
       "entityNotFound": "Vienība nav atrasta Home Assistant.",
       "invalidActionObject": "Darbības objekts nav derīgs vai ir nepareizi strukturēts.",
-      "invalidCustomThemeArray": "Pielāgotajai tēmai jābūt masīvam.",
-      "invalidCustomThemeEntry": "Viena vai vairākas pielāgotās tēmas ievades nav derīgas.",
       "invalidDecimal": "Vērtībai jābūt pozitīvam veselajam skaitlim.",
       "invalidEntityId": "Vienības ID nav derīgs vai ir nepareizs.",
       "invalidEnumValue": "Ievadītā vērtība nav atļauto opciju sarakstā.",
-      "invalidIconType": "Norādītais ikonas tips nav derīgs vai nav zināms.",
-      "invalidMaxValue": "Maksimālā vērtība nav derīga vai pārsniedz atļauto robežu.",
-      "invalidMinValue": "Minimālā vērtība nav derīga vai zem atļautās robežas.",
       "invalidStateContent": "Stāvokļa saturs nav derīgs vai ir nepareizi strukturēts.",
       "invalidStateContentEntry": "Viena vai vairākas stāvokļa satura ievades nav derīgas.",
       "invalidTheme": "Norādītā tēma nav zināma. Tiks izmantota noklusējuma tēma.",
@@ -23,9 +17,7 @@
       "invalidTypeObject": "Tika gaidīta objekta tipa vērtība.",
       "invalidTypeString": "Tika gaidīta virknes tipa vērtība.",
       "invalidUnionType": "Vērtība neatbilst nevienam atļautajam tipam.",
-      "minGreaterThanMax": "Minimālā vērtība nevar būt lielāka par maksimālo.",
       "missingActionKey": "Trūkst obligātā atslēga darbības objektā.",
-      "missingColorProperty": "Trūkst obligātā krāsas īpašība.",
       "missingRequiredProperty": "Trūkst obligātā īpašība."
     }
   },
@@ -45,25 +37,25 @@
       "bar_position": "Joslas pozīcija",
       "bar_single_line": "Informācija vienā rindā (overlay)",
       "bar_size": "Joslas izmērs",
-      "color_mode": "Krāsas režīms",
+      "bar_segments": "Bar segments",
+      "bar_color_mode": "Krāsas režīms",
       "center_zero": "Nulles centrā",
       "center_zero_value": "Centra vērtība",
       "center_zero_growth_percent": "Pieauguma procents",
       "color": "Ikonas krāsa",
       "decimal": "Decimāldaļa",
-      "disable_unit": "Rādīt vienību",
       "double_tap_action": "Divreiz pieskaroties",
       "entity": "Vienība",
       "force_circular_background": "Piespiest apļu fonu",
       "hide_jinja": "Slēpt (Jinja režīms)",
       "hold_action": "Ilgs pieskāriens",
       "icon": "Ikona",
+      "icon_animation": "Icon animation",
       "icon_double_tap_action": "Ikonas dubults pieskāriens",
       "icon_hold_action": "Ikonas ilgs pieskāriens",
       "icon_tap_action": "Ikonas pieskāriens",
       "layout": "Satura izkārtojums",
       "max_value": "Maksimālā vērtība",
-      "max_value_attribute": "Atribūts (max_value)",
       "min_value": "Minimālā vērtība",
       "name": "Nosaukums",
       "percent": "Procenti",
@@ -73,9 +65,12 @@
       "show_all_actions": "Rādīt visas darbības",
       "tap_action": "Pieskāriens",
       "text_shadow": "Pievienot teksta ēnu (overlay)",
+      "theme_mode": "Theme mode",
       "theme": "Tēma",
+      "custom_theme": "Custom theme zones",
       "unit": "Vienība",
-      "use_max_entity": "Izmantot vienību max vērtībai",
+      "min_value_mode": "Min value source",
+      "max_value_mode": "Max value source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -83,6 +78,7 @@
       "min_width": "Min width",
       "unit_spacing": "Unit spacing",
       "watermark_toggle": "Watermark",
+      "alert_toggle": "Alert",
       "custom_info": "Pielāgota sekundārā informācija",
       "interpolate": "Krāsu interpolācija",
       "name_info": "Pielāgota nosaukuma informācija",
@@ -122,7 +118,7 @@
         "horizontal": "Horizontāls (noklusēts)",
         "vertical": "Vertikāls"
       },
-      "color_mode": {
+      "bar_color_mode": {
         "auto": "Automātisks",
         "segment": "Segmenti",
         "rainbow": "Varavīksne"
@@ -139,6 +135,7 @@
         "icon": "Ikona",
         "name": "Nosaukums",
         "value": "Vērtība",
+        "unit": "Vienība",
         "secondary_info": "Info",
         "progress_bar": "Josla"
       },
@@ -175,6 +172,41 @@
         "low_attribute": "Attribute",
         "high_entity_toggle": "Use entity as high watermark value",
         "high_attribute": "Attribute"
+      },
+      "icon_animation": {
+        "none": "None",
+        "spin": "Spin",
+        "pulse": "Pulse"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "alert_highlight": {
+        "border": "Border",
+        "background": "Background"
+      },
+      "min_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "max_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "theme_mode": {
+        "preset": "Preset",
+        "custom": "Custom"
+      },
+      "min_value": {
+        "attribute": "Attribute"
+      },
+      "max_value": {
+        "attribute": "Attribute"
       }
     }
   }

@@ -49,13 +49,16 @@ In this context, we have two types of deprecated options:
   of all those cards. Therefore, we allow time before disabling them, provide a
   system to detect if you are affected, and will remove them later.
 
-| Option / Value     | Status         | Replacement / Recommended Action | Since version | Current Behavior           |
-| ------------------ | -------------- | -------------------------------- | ------------- | -------------------------- |
-| `navigate_to`      | **Removed**    | Use `tap_action: navigate`       | `v1.2.0`      | Ignored, console warning   |
-| `show_more_info`   | **Removed**    | Use `tap_action: more-info`      | `v1.2.0`      | Ignored, console warning   |
-| `theme: 'battery'` | **Deprecated** | Use `optimal_when_xxx`           | `v1.1.8-11`   | Still works, shows warning |
-| `theme: 'cpu'`     | **Deprecated** | Same as above                    | `v1.1.8-11`   | Still works, shows warning |
-| `theme: 'memory'`  | **Deprecated** | Same as above                    | `v1.1.8-11`   | Still works, shows warning |
+| Option / Value               | Status         | Replacement / Recommended Action                          | Since version | Current Behavior                             |
+| ----------------------------- | -------------- | ---------------------------------------------------------- | ------------- | --------------------------------------------- |
+| `navigate_to`                | **Removed**    | Use `tap_action: navigate`                                 | `v1.2.0`      | Ignored, console warning                      |
+| `show_more_info`             | **Removed**    | Use `tap_action: more-info`                                 | `v1.2.0`      | Ignored, console warning                      |
+| `theme: 'battery'`           | **Deprecated** | Use `optimal_when_xxx`                                      | `v1.1.8-11`   | Still works, shows warning                    |
+| `theme: 'cpu'`               | **Deprecated** | Same as above                                               | `v1.1.8-11`   | Still works, shows warning                    |
+| `theme: 'memory'`            | **Deprecated** | Same as above                                               | `v1.1.8-11`   | Still works, shows warning                    |
+| `max_value: <entity id>`     | **Deprecated** | Use `max_value: { entity: <id>, attribute: <optional> }`    | `v1.6.0`      | Auto-migrated for the session, console warning |
+| `max_value_attribute`        | **Deprecated** | Fold into `max_value: { entity, attribute }`                | `v1.6.0`      | Auto-migrated for the session, console warning |
+| `disable_unit`               | **Deprecated** | Use `hide: ['unit', ...]`                                   | `v1.6.0`      | Auto-migrated for the session, console warning |
 
 <details>
 <summary><strong>Show the screenshot (click to expand)</strong></summary>
@@ -143,6 +146,29 @@ encounter an issue.
 - Browser used
 - YAML configuration snippets (if relevant)
 - Any visible error messages (from the console or logs)
+
+#### 🩺 Run the built-in diagnostic
+
+The card ships with a small diagnostic helper that collects most of the
+information above in one shot. Open your browser's developer console (`F12`
+or `Ctrl`/`Cmd` + `Shift` + `I`, then the **Console** tab) on a dashboard that
+has the card, and run:
+
+```js
+EPB_DIAG.dump();
+```
+
+It prints an anonymized report — card and Home Assistant versions, browser,
+dark mode / reduced motion status, registered card types, and whether the
+required HA components (`ha-card`, `ha-selector`, `action-handler`) are
+present — ready to copy/paste into your issue.
+
+It also flags a **duplicate resource load** on its own (`duplicate load:
+⚠️ YES`) — a common, hard-to-diagnose cause of erratic behavior where the
+card ends up installed **twice** (e.g. via HACS *and* a leftover manual
+resource in **Settings → Dashboards → Resources**). If you see this warning,
+remove the extra resource entry first — it resolves most "impossible to
+reproduce" issues on its own.
 
 #### Open an issue on GitHub
 

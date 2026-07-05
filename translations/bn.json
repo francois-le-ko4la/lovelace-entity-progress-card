@@ -3,17 +3,11 @@
     "msg": {
       "appliedDefaultValue": "ডিফল্ট মান স্বয়ংক্রিয়ভাবে প্রয়োগ করা হয়েছে।",
       "attributeNotFound": "HA তে বৈশিষ্ট্য পাওয়া যায়নি।",
-      "discontinuousRange": "নির্ধারিত পরিসর অবিচ্ছিন্ন নয়।",
       "entityNotFound": "HA তে সত্তা পাওয়া যায়নি।",
       "invalidActionObject": "অ্যাকশন অবজেক্ট অবৈধ বা ভুলভাবে গঠিত।",
-      "invalidCustomThemeArray": "কাস্টম থিম একটি অ্যারে হতে হবে।",
-      "invalidCustomThemeEntry": "কাস্টম থিমে একটি বা একাধিক এন্ট্রি অবৈধ।",
       "invalidDecimal": "মানটি একটি বৈধ দশমিক সংখ্যা হতে হবে।",
       "invalidEntityId": "সত্তার আইডি অবৈধ বা ভুলভাবে গঠিত।",
       "invalidEnumValue": "প্রদত্ত মানটি অনুমোদিত বিকল্পগুলির মধ্যে একটি নয়।",
-      "invalidIconType": "নির্দিষ্ট আইকন প্রকার অবৈধ বা অচেনা।",
-      "invalidMaxValue": "সর্বোচ্চ মান অবৈধ বা অনুমোদিত সীমার উপরে।",
-      "invalidMinValue": "ন্যূনতম মান অবৈধ বা অনুমোদিত সীমার নিচে।",
       "invalidStateContent": "অবস্থার বিষয়বস্তু অবৈধ বা ভুলভাবে গঠিত।",
       "invalidStateContentEntry": "অবস্থার বিষয়বস্তুতে একটি বা একাধিক এন্ট্রি অবৈধ।",
       "invalidTheme": "নির্দিষ্ট থিম অজানা। ডিফল্ট থিম ব্যবহার করা হবে।",
@@ -23,9 +17,7 @@
       "invalidTypeObject": "অবজেক্ট ধরনের একটি মান প্রত্যাশিত।",
       "invalidTypeString": "স্ট্রিং ধরনের একটি মান প্রত্যাশিত।",
       "invalidUnionType": "মানটি অনুমোদিত ধরনগুলির কোনোটির সাথে মেলে না।",
-      "minGreaterThanMax": "ন্যূনতম মান সর্বোচ্চ মানের চেয়ে বড় হতে পারে না।",
       "missingActionKey": "অ্যাকশন অবজেক্টে একটি প্রয়োজনীয় কী অনুপস্থিত।",
-      "missingColorProperty": "একটি প্রয়োজনীয় রঙের বৈশিষ্ট্য অনুপস্থিত।",
       "missingRequiredProperty": "প্রয়োজনীয় বৈশিষ্ট্য অনুপস্থিত।"
     }
   },
@@ -45,25 +37,25 @@
       "bar_position": "বারের অবস্থান",
       "bar_single_line": "এক লাইনে তথ্য (ওভারলে)",
       "bar_size": "বারের আকার",
-      "color_mode": "রঙের মোড",
+      "bar_segments": "Bar segments",
+      "bar_color_mode": "রঙের মোড",
       "center_zero": "মাঝে শূন্য",
       "center_zero_value": "কেন্দ্রীয় মান",
       "center_zero_growth_percent": "প্রবৃদ্ধির শতাংশ",
       "color": "প্রাথমিক রঙ",
       "decimal": "দশমিক",
-      "disable_unit": "একক দেখান",
       "double_tap_action": "ডাবল ট্যাপ আচরণ",
       "entity": "সত্তা",
       "force_circular_background": "বৃত্তাকার পটভূমি জোর করুন",
       "hide_jinja": "লুকান (Jinja মোড)",
       "hold_action": "হোল্ড আচরণ",
       "icon": "আইকন",
+      "icon_animation": "Icon animation",
       "icon_double_tap_action": "আইকন ডাবল ট্যাপ আচরণ",
       "icon_hold_action": "আইকন হোল্ড আচরণ",
       "icon_tap_action": "আইকন ট্যাপ আচরণ",
       "layout": "বিষয়বস্তুর বিন্যাস",
       "max_value": "সর্বোচ্চ মান",
-      "max_value_attribute": "বৈশিষ্ট্য (max_value)",
       "min_value": "ন্যূনতম মান",
       "name": "নাম",
       "percent": "শতাংশ",
@@ -73,9 +65,12 @@
       "show_all_actions": "সব অ্যাকশন দেখান",
       "tap_action": "ট্যাপ আচরণ",
       "text_shadow": "টেক্সটে ছায়া যোগ করুন (overlay)",
+      "theme_mode": "Theme mode",
       "theme": "থিম",
+      "custom_theme": "Custom theme zones",
       "unit": "একক",
-      "use_max_entity": "সর্বোচ্চ মানের জন্য সত্তা ব্যবহার করুন",
+      "min_value_mode": "Min value source",
+      "max_value_mode": "Max value source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -83,6 +78,7 @@
       "min_width": "Min width",
       "unit_spacing": "Unit spacing",
       "watermark_toggle": "Watermark",
+      "alert_toggle": "Alert",
       "custom_info": "কাস্টম সেকেন্ডারি তথ্য",
       "interpolate": "রঙ ইন্টারপোলেশন",
       "name_info": "কাস্টম নাম তথ্য",
@@ -122,7 +118,7 @@
         "horizontal": "অনুভূমিক (ডিফল্ট)",
         "vertical": "উল্লম্ব"
       },
-      "color_mode": {
+      "bar_color_mode": {
         "auto": "স্বয়ংক্রিয়",
         "segment": "বিভাগ",
         "rainbow": "রেইনবো"
@@ -139,6 +135,7 @@
         "icon": "আইকন",
         "name": "নাম",
         "value": "মান",
+        "unit": "একক",
         "secondary_info": "তথ্য",
         "progress_bar": "বার"
       },
@@ -175,6 +172,41 @@
         "low_attribute": "Attribute",
         "high_entity_toggle": "Use entity as high watermark value",
         "high_attribute": "Attribute"
+      },
+      "icon_animation": {
+        "none": "None",
+        "spin": "Spin",
+        "pulse": "Pulse"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "alert_highlight": {
+        "border": "Border",
+        "background": "Background"
+      },
+      "min_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "max_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "theme_mode": {
+        "preset": "Preset",
+        "custom": "Custom"
+      },
+      "min_value": {
+        "attribute": "Attribute"
+      },
+      "max_value": {
+        "attribute": "Attribute"
       }
     }
   }

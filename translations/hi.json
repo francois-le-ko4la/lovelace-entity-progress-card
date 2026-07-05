@@ -3,17 +3,11 @@
     "msg": {
       "appliedDefaultValue": "एक डिफ़ॉल्ट मान स्वचालित रूप से लागू किया गया है।",
       "attributeNotFound": "HA में एट्रिब्यूट नहीं मिला।",
-      "discontinuousRange": "परिभाषित रेंज असतत है।",
       "entityNotFound": "HA में एंटिटी नहीं मिली।",
       "invalidActionObject": "एक्शन ऑब्जेक्ट अमान्य या गलत तरीके से संरचित है।",
-      "invalidCustomThemeArray": "कस्टम थीम एक एरे होना चाहिए।",
-      "invalidCustomThemeEntry": "कस्टम थीम में एक या अधिक प्रविष्टियां अमान्य हैं।",
       "invalidDecimal": "मान एक वैध दशमलव संख्या होना चाहिए।",
       "invalidEntityId": "एंटिटी आईडी अमान्य या गलत तरीके से बनाई गई है।",
       "invalidEnumValue": "प्रदान किया गया मान अनुमतित विकल्पों में से एक नहीं है।",
-      "invalidIconType": "निर्दिष्ट आइकन प्रकार अमान्य या अपरिचित है।",
-      "invalidMaxValue": "अधिकतम मान अमान्य है या अनुमतित सीमा से ऊपर है।",
-      "invalidMinValue": "न्यूनतम मान अमान्य है या अनुमतित सीमा से नीचे है।",
       "invalidStateContent": "स्थिति सामग्री अमान्य या गलत तरीके से बनाई गई है।",
       "invalidStateContentEntry": "स्थिति सामग्री में एक या अधिक प्रविष्टियां अमान्य हैं।",
       "invalidTheme": "निर्दिष्ट थीम अज्ञात है। डिफ़ॉल्ट थीम का उपयोग किया जाएगा।",
@@ -23,9 +17,7 @@
       "invalidTypeObject": "ऑब्जेक्ट प्रकार का मान अपेक्षित है।",
       "invalidTypeString": "स्ट्रिंग प्रकार का मान अपेक्षित है।",
       "invalidUnionType": "मान अनुमतित प्रकारों में से किसी से मेल नहीं खाता।",
-      "minGreaterThanMax": "न्यूनतम मान अधिकतम मान से अधिक नहीं हो सकता।",
       "missingActionKey": "एक्शन ऑब्जेक्ट में एक आवश्यक कुंजी गायब है।",
-      "missingColorProperty": "एक आवश्यक रंग गुण गायब है।",
       "missingRequiredProperty": "आवश्यक गुण गायब है।"
     }
   },
@@ -45,25 +37,25 @@
       "bar_position": "बार की स्थिति",
       "bar_single_line": "एक पंक्ति में जानकारी (ओवरले)",
       "bar_size": "बार का आकार",
-      "color_mode": "रंग मोड",
+      "bar_segments": "Bar segments",
+      "bar_color_mode": "रंग मोड",
       "center_zero": "शून्य केंद्र में",
       "center_zero_value": "केंद्र मान",
       "center_zero_growth_percent": "वृद्धि प्रतिशत",
       "color": "मुख्य रंग",
       "decimal": "दशमलव",
-      "disable_unit": "इकाई दिखाएँ",
       "double_tap_action": "डबल टैप व्यवहार",
       "entity": "एंटिटी",
       "force_circular_background": "गोलाकार पृष्ठभूमि को बाध्य करें",
       "hide_jinja": "छिपाएँ (Jinja मोड)",
       "hold_action": "होल्ड व्यवहार",
       "icon": "आइकन",
+      "icon_animation": "Icon animation",
       "icon_double_tap_action": "आइकन डबल टैप व्यवहार",
       "icon_hold_action": "आइकन होल्ड व्यवहार",
       "icon_tap_action": "आइकन टैप व्यवहार",
       "layout": "सामग्री लेआउट",
       "max_value": "अधिकतम मान",
-      "max_value_attribute": "एट्रिब्यूट (max_value)",
       "min_value": "न्यूनतम मान",
       "name": "नाम",
       "percent": "प्रतिशत",
@@ -73,9 +65,12 @@
       "show_all_actions": "सभी क्रियाएँ दिखाएँ",
       "tap_action": "टैप व्यवहार",
       "text_shadow": "टेक्स्ट में छाया जोड़ें (overlay)",
+      "theme_mode": "Theme mode",
       "theme": "थीम",
+      "custom_theme": "Custom theme zones",
       "unit": "इकाई",
-      "use_max_entity": "अधिकतम मान के लिए एंटिटी उपयोग करें",
+      "min_value_mode": "Min value source",
+      "max_value_mode": "Max value source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -83,6 +78,7 @@
       "min_width": "Min width",
       "unit_spacing": "Unit spacing",
       "watermark_toggle": "Watermark",
+      "alert_toggle": "Alert",
       "custom_info": "कस्टम द्वितीयक जानकारी",
       "interpolate": "रंग इंटरपोलेशन",
       "name_info": "कस्टम नाम जानकारी",
@@ -122,7 +118,7 @@
         "temperature": "तापमान",
         "voc": "VOC"
       },
-      "color_mode": {
+      "bar_color_mode": {
         "auto": "स्वचालित",
         "segment": "खंड",
         "rainbow": "इंद्रधनुष"
@@ -139,6 +135,7 @@
         "icon": "आइकन",
         "name": "नाम",
         "value": "मूल्य",
+        "unit": "इकाई",
         "secondary_info": "जानकारी",
         "progress_bar": "बार"
       },
@@ -175,6 +172,41 @@
         "low_attribute": "Attribute",
         "high_entity_toggle": "Use entity as high watermark value",
         "high_attribute": "Attribute"
+      },
+      "icon_animation": {
+        "none": "None",
+        "spin": "Spin",
+        "pulse": "Pulse"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "alert_highlight": {
+        "border": "Border",
+        "background": "Background"
+      },
+      "min_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "max_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "theme_mode": {
+        "preset": "Preset",
+        "custom": "Custom"
+      },
+      "min_value": {
+        "attribute": "Attribute"
+      },
+      "max_value": {
+        "attribute": "Attribute"
       }
     }
   }

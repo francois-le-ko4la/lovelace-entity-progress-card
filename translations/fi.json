@@ -3,17 +3,11 @@
     "msg": {
       "appliedDefaultValue": "Oletusarvo on asetettu automaattisesti.",
       "attributeNotFound": "Attribuuttia ei löytynyt Home Assistantista.",
-      "discontinuousRange": "Määritetty alue on katkonainen.",
       "entityNotFound": "Entiteettiä ei löytynyt Home Assistantista.",
       "invalidActionObject": "Toiminto-objekti on virheellinen tai huonosti rakennettu.",
-      "invalidCustomThemeArray": "Mukautetun teeman on oltava taulukko.",
-      "invalidCustomThemeEntry": "Yksi tai useampi mukautetun teeman merkintä on virheellinen.",
       "invalidDecimal": "Arvon on oltava kelvollinen desimaaliluku.",
       "invalidEntityId": "Entiteetin tunniste on virheellinen tai väärin muotoiltu.",
       "invalidEnumValue": "Annettu arvo ei ole sallituista vaihtoehdoista.",
-      "invalidIconType": "Annettu kuvaketyyppi on virheellinen tai tuntematon.",
-      "invalidMaxValue": "Enimmäisarvo on virheellinen tai liian suuri.",
-      "invalidMinValue": "Vähimmäisarvo on virheellinen tai liian pieni.",
       "invalidStateContent": "Tilasisältö on virheellinen tai väärässä muodossa.",
       "invalidStateContentEntry": "Yksi tai useampi tilasisällön merkintä on virheellinen.",
       "invalidTheme": "Määritetty teema on tuntematon. Käytetään oletusteemaa.",
@@ -23,9 +17,7 @@
       "invalidTypeObject": "Odotettiin objektityyppistä arvoa.",
       "invalidTypeString": "Odotettiin merkkijonotyyppistä arvoa.",
       "invalidUnionType": "Arvo ei vastaa mitään sallituista tyypeistä.",
-      "minGreaterThanMax": "Vähimmäisarvo ei voi olla suurempi kuin enimmäisarvo.",
       "missingActionKey": "Toiminto-objektista puuttuu vaadittu avain.",
-      "missingColorProperty": "Pakollinen väriominaisuus puuttuu.",
       "missingRequiredProperty": "Pakollinen ominaisuus puuttuu."
     }
   },
@@ -45,25 +37,25 @@
       "bar_position": "Palkin sijainti",
       "bar_single_line": "Tiedot yhdellä rivillä (overlay)",
       "bar_size": "Palkin koko",
-      "color_mode": "Väritila",
+      "bar_segments": "Bar segments",
+      "bar_color_mode": "Väritila",
       "center_zero": "Nolla keskellä",
       "center_zero_value": "Keskiarvo",
       "center_zero_growth_percent": "Kasvuprosentti",
       "color": "Pääväri",
       "decimal": "desimaali",
-      "disable_unit": "Näytä yksikkö",
       "double_tap_action": "Toiminto kahdella napautuksella",
       "entity": "Entiteetti",
       "force_circular_background": "Pakota pyöreä tausta",
       "hide_jinja": "Piilota (Jinja-tila)",
       "hold_action": "Toiminto pitkällä painalluksella",
       "icon": "Ikoni",
+      "icon_animation": "Icon animation",
       "icon_double_tap_action": "Toiminto kahdella napautuksella kuvaketta",
       "icon_hold_action": "Toiminto pitkällä painalluksella kuvaketta",
       "icon_tap_action": "Toiminto kuvaketta napautettaessa",
       "layout": "Sisällön asettelu",
       "max_value": "Maksimiarvo",
-      "max_value_attribute": "Attribuutti (max_value)",
       "min_value": "Minimiarvo",
       "name": "Nimi",
       "percent": "Prosentti",
@@ -73,9 +65,12 @@
       "show_all_actions": "Näytä kaikki toiminnot",
       "tap_action": "Toiminto lyhyellä napautuksella",
       "text_shadow": "Lisää tekstivarjo (overlay)",
+      "theme_mode": "Theme mode",
       "theme": "Teema",
+      "custom_theme": "Custom theme zones",
       "unit": "Yksikkö",
-      "use_max_entity": "Käytä entiteettiä maksimiarvona",
+      "min_value_mode": "Min value source",
+      "max_value_mode": "Max value source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -83,6 +78,7 @@
       "min_width": "Min width",
       "unit_spacing": "Unit spacing",
       "watermark_toggle": "Watermark",
+      "alert_toggle": "Alert",
       "custom_info": "Mukautettu toissijainen tieto",
       "interpolate": "Interpoloi värit",
       "name_info": "Mukautettu nimitieto",
@@ -122,7 +118,7 @@
         "horizontal": "Vaakasuora (oletus)",
         "vertical": "Pystysuora"
       },
-      "color_mode": {
+      "bar_color_mode": {
         "auto": "Automaattinen",
         "segment": "Segmentit",
         "rainbow": "Sateenkaari"
@@ -139,6 +135,7 @@
         "icon": "Kuvake",
         "name": "Nimi",
         "value": "Arvo",
+        "unit": "Yksikkö",
         "secondary_info": "Tiedot",
         "progress_bar": "Palkki"
       },
@@ -175,6 +172,41 @@
         "low_attribute": "Attribute",
         "high_entity_toggle": "Use entity as high watermark value",
         "high_attribute": "Attribute"
+      },
+      "icon_animation": {
+        "none": "None",
+        "spin": "Spin",
+        "pulse": "Pulse"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "alert_highlight": {
+        "border": "Border",
+        "background": "Background"
+      },
+      "min_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "max_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "theme_mode": {
+        "preset": "Preset",
+        "custom": "Custom"
+      },
+      "min_value": {
+        "attribute": "Attribute"
+      },
+      "max_value": {
+        "attribute": "Attribute"
       }
     }
   }

@@ -484,6 +484,27 @@ whole workflow — run it without argument for the full help:
 
 ## Adding a new option
 
+### Naming rules
+
+The existing surface grew organically and carries some inconsistencies
+(`color` vs `bar_color`, `disable_unit` vs `frameless`…). **Every new option
+must follow these rules** so the API stops degrading:
+
+1. **Family prefix**: options belonging to a visual family share its prefix —
+   `bar_*`, `icon_*`, `badge_*`. A bare name (`color`) is ambiguous forever.
+2. **No negative booleans**: `show_x: false`, never `disable_x`/`hide_x`.
+3. **Nested object as soon as an option has ≥ 2 sub-settings**
+   (`alert_when: {above, color}`), never sibling flat keys
+   (`alert_above` + `alert_color`).
+4. **Booleans are nouns or adjectives** (`text_shadow`, `frameless`), never
+   imperative verbs (`force_*`).
+5. **Values in the entity's native unit** by default (like `watermark.low`);
+   percent-based needs an explicit `*_as: percent` companion.
+6. Renaming an existing option is a breaking change — add an **alias** in the
+   negotiation instead, and document the new name as canonical.
+
+### Checklist
+
 Checklist for a new YAML option, in the order that avoids back-tracking:
 
 1. **Default** — add it to the stub/default config object if it has one

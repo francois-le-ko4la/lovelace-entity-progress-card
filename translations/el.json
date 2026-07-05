@@ -3,17 +3,11 @@
     "msg": {
       "appliedDefaultValue": "Εφαρμόστηκε αυτόματα προεπιλεγμένη τιμή.",
       "attributeNotFound": "Το χαρακτηριστικό δεν βρέθηκε στο Home Assistant.",
-      "discontinuousRange": "Το καθορισμένο εύρος δεν είναι συνεχές.",
       "entityNotFound": "Η οντότητα δεν βρέθηκε στο Home Assistant.",
       "invalidActionObject": "Το αντικείμενο ενέργειας δεν είναι έγκυρο ή είναι κακώς δομημένο.",
-      "invalidCustomThemeArray": "Το προσαρμοσμένο θέμα πρέπει να είναι πίνακας.",
-      "invalidCustomThemeEntry": "Μία ή περισσότερες καταχωρήσεις στο προσαρμοσμένο θέμα δεν είναι έγκυρες.",
       "invalidDecimal": "Η τιμή πρέπει να είναι έγκυρος δεκαδικός αριθμός.",
       "invalidEntityId": "Το αναγνωριστικό οντότητας δεν είναι έγκυρο ή είναι κακώς διαμορφωμένο.",
       "invalidEnumValue": "Η παρεχόμενη τιμή δεν είναι αποδεκτή επιλογή.",
-      "invalidIconType": "Ο καθορισμένος τύπος εικονιδίου δεν είναι έγκυρος ή αναγνωρίσιμος.",
-      "invalidMaxValue": "Η μέγιστη τιμή δεν είναι έγκυρη ή ξεπερνά τα όρια.",
-      "invalidMinValue": "Η ελάχιστη τιμή δεν είναι έγκυρη ή είναι εκτός επιτρεπόμενων ορίων.",
       "invalidStateContent": "Το περιεχόμενο κατάστασης δεν είναι έγκυρο ή είναι κακώς διαμορφωμένο.",
       "invalidStateContentEntry": "Μία ή περισσότερες καταχωρήσεις στο περιεχόμενο κατάστασης είναι άκυρες.",
       "invalidTheme": "Το καθορισμένο θέμα είναι άγνωστο. Θα χρησιμοποιηθεί το προεπιλεγμένο θέμα.",
@@ -23,9 +17,7 @@
       "invalidTypeObject": "Αναμενόταν τιμή τύπου αντικειμένου.",
       "invalidTypeString": "Αναμενόταν τιμή τύπου συμβολοσειράς.",
       "invalidUnionType": "Η τιμή δεν ταιριάζει σε κανέναν από τους επιτρεπόμενους τύπους.",
-      "minGreaterThanMax": "Η ελάχιστη τιμή δεν μπορεί να είναι μεγαλύτερη από τη μέγιστη.",
       "missingActionKey": "Λείπει απαιτούμενο κλειδί στο αντικείμενο ενέργειας.",
-      "missingColorProperty": "Λείπει απαιτούμενη ιδιότητα χρώματος.",
       "missingRequiredProperty": "Λείπει μια απαιτούμενη ιδιότητα."
     }
   },
@@ -45,25 +37,25 @@
       "bar_position": "Θέση γραμμής",
       "bar_single_line": "Πληροφορίες σε μία γραμμή (overlay)",
       "bar_size": "Μέγεθος γραμμής",
-      "color_mode": "Λειτουργία χρώματος",
+      "bar_segments": "Bar segments",
+      "bar_color_mode": "Λειτουργία χρώματος",
       "center_zero": "Μηδέν στο κέντρο",
       "center_zero_value": "Τιμή κέντρου",
       "center_zero_growth_percent": "Ποσοστό μεταβολής",
       "color": "Κύριο χρώμα",
       "decimal": "δεκαδικά",
-      "disable_unit": "Εμφάνιση μονάδας",
       "double_tap_action": "Ενέργεια κατά το διπλό πάτημα",
       "entity": "Οντότητα",
       "force_circular_background": "Εξαναγκασμός κυκλικού φόντου",
       "hide_jinja": "Απόκρυψη (λειτουργία Jinja)",
       "hold_action": "Ενέργεια κατά το παρατεταμένο πάτημα",
       "icon": "Εικονίδιο",
+      "icon_animation": "Icon animation",
       "icon_double_tap_action": "Ενέργεια στο διπλό πάτημα του εικονιδίου",
       "icon_hold_action": "Ενέργεια στο παρατεταμένο πάτημα του εικονιδίου",
       "icon_tap_action": "Ενέργεια στο πάτημα του εικονιδίου",
       "layout": "Διάταξη περιεχομένου",
       "max_value": "Μέγιστη τιμή",
-      "max_value_attribute": "Χαρακτηριστικό (max_value)",
       "min_value": "Ελάχιστη τιμή",
       "name": "Όνομα",
       "percent": "Ποσοστό",
@@ -73,9 +65,12 @@
       "show_all_actions": "Εμφάνιση όλων των ενεργειών",
       "tap_action": "Ενέργεια κατά το σύντομο πάτημα",
       "text_shadow": "Προσθήκη σκιάς στο κείμενο (overlay)",
+      "theme_mode": "Theme mode",
       "theme": "Θέμα",
+      "custom_theme": "Custom theme zones",
       "unit": "Μονάδα",
-      "use_max_entity": "Χρήση οντότητας ως μέγιστης τιμής",
+      "min_value_mode": "Min value source",
+      "max_value_mode": "Max value source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -83,6 +78,7 @@
       "min_width": "Min width",
       "unit_spacing": "Unit spacing",
       "watermark_toggle": "Watermark",
+      "alert_toggle": "Alert",
       "custom_info": "Προσαρμοσμένη δευτερεύουσα πληροφορία",
       "interpolate": "Παρεμβολή χρωμάτων",
       "name_info": "Προσαρμοσμένη πληροφορία ονόματος",
@@ -122,7 +118,7 @@
         "horizontal": "Οριζόντια (προεπιλογή)",
         "vertical": "Κατακόρυφη"
       },
-      "color_mode": {
+      "bar_color_mode": {
         "auto": "Αυτόματο",
         "segment": "Τμήματα",
         "rainbow": "Ουράνιο τόξο"
@@ -139,6 +135,7 @@
         "icon": "Εικονίδιο",
         "name": "Όνομα",
         "value": "Τιμή",
+        "unit": "Μονάδα",
         "secondary_info": "Πληροφορίες",
         "progress_bar": "Μπάρα"
       },
@@ -175,6 +172,41 @@
         "low_attribute": "Attribute",
         "high_entity_toggle": "Use entity as high watermark value",
         "high_attribute": "Attribute"
+      },
+      "icon_animation": {
+        "none": "None",
+        "spin": "Spin",
+        "pulse": "Pulse"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "alert_highlight": {
+        "border": "Border",
+        "background": "Background"
+      },
+      "min_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "max_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "theme_mode": {
+        "preset": "Preset",
+        "custom": "Custom"
+      },
+      "min_value": {
+        "attribute": "Attribute"
+      },
+      "max_value": {
+        "attribute": "Attribute"
       }
     }
   }

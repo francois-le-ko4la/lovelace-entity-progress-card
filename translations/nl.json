@@ -3,17 +3,11 @@
     "msg": {
       "appliedDefaultValue": "Een standaardwaarde is automatisch toegepast.",
       "attributeNotFound": "Attribuut niet gevonden in Home Assistant.",
-      "discontinuousRange": "Het opgegeven bereik is niet aaneengesloten.",
       "entityNotFound": "Entiteit niet gevonden in Home Assistant.",
       "invalidActionObject": "Het actieobject is ongeldig of onjuist gestructureerd.",
-      "invalidCustomThemeArray": "Het aangepaste thema moet een array zijn.",
-      "invalidCustomThemeEntry": "Een of meer invoeren in het aangepaste thema zijn ongeldig.",
       "invalidDecimal": "De waarde moet een geldig decimaal getal zijn.",
       "invalidEntityId": "De entity ID is ongeldig of foutief geformatteerd.",
       "invalidEnumValue": "De opgegeven waarde is geen geldige optie.",
-      "invalidIconType": "Het opgegeven pictogramtype is ongeldig of niet herkend.",
-      "invalidMaxValue": "De maximumwaarde is ongeldig of te hoog.",
-      "invalidMinValue": "De minimumwaarde is ongeldig of te laag.",
       "invalidStateContent": "De statusinhoud is ongeldig of foutief.",
       "invalidStateContentEntry": "Een of meer onderdelen van de statusinhoud zijn ongeldig.",
       "invalidTheme": "Het opgegeven thema is onbekend. Het standaardthema wordt gebruikt.",
@@ -23,9 +17,7 @@
       "invalidTypeObject": "Verwachte waarde van het type object.",
       "invalidTypeString": "Verwachte waarde van het type string.",
       "invalidUnionType": "De waarde komt niet overeen met toegestane types.",
-      "minGreaterThanMax": "Minimumwaarde kan niet groter zijn dan de maximumwaarde.",
       "missingActionKey": "Er ontbreekt een verplichte sleutel in het actieobject.",
-      "missingColorProperty": "Een verplichte kleur-eigenschap ontbreekt.",
       "missingRequiredProperty": "Vereiste eigenschap ontbreekt."
     }
   },
@@ -39,31 +31,31 @@
       "attribute": "Attribuut",
       "badge_color": "Kleur van badge",
       "badge_icon": "Pictogram van badge",
-      "bar_color": "Kleur voor de balk",
+      "bar_color": "Kleur van de balk",
       "bar_effect_jinja": "Effect op de balk (Jinja-modus)",
       "bar_orientation": "Oriëntatie van de balk",
       "bar_position": "Positie van de balk",
       "bar_single_line": "Info op één regel (overlay)",
       "bar_size": "Balkgrootte",
-      "color_mode": "Kleurmodus",
+      "bar_segments": "Bar segments",
+      "bar_color_mode": "Balkkleurmodus",
       "center_zero": "Nul in het midden",
       "center_zero_value": "Centrumwaarde",
       "center_zero_growth_percent": "Groeipercentage",
-      "color": "Primaire kleur",
+      "color": "Kleur van het pictogram",
       "decimal": "decimaal",
-      "disable_unit": "Eenheid weergeven",
       "double_tap_action": "Actie bij dubbel tikken",
       "entity": "Entiteit",
       "force_circular_background": "Geforceerde cirkelvormige achtergrond",
       "hide_jinja": "Verbergen (Jinja-modus)",
       "hold_action": "Actie bij lang ingedrukt houden",
       "icon": "Pictogram",
+      "icon_animation": "Icon animation",
       "icon_double_tap_action": "Actie bij dubbel tikken op pictogram",
       "icon_hold_action": "Actie bij lang ingedrukt houden op pictogram",
       "icon_tap_action": "Actie bij tikken op pictogram",
       "layout": "Inhoudsindeling",
       "max_value": "Maximale waarde",
-      "max_value_attribute": "Attribuut (max_value)",
       "min_value": "Minimale waarde",
       "name": "Naam",
       "percent": "Percentage",
@@ -73,9 +65,12 @@
       "show_all_actions": "Toon alle acties",
       "tap_action": "Actie bij korte tik",
       "text_shadow": "Tekstschaduw toevoegen (overlay)",
+      "theme_mode": "Theme mode",
       "theme": "Thema",
+      "custom_theme": "Aangepaste themazones",
       "unit": "Eenheid",
-      "use_max_entity": "Entiteit gebruiken voor maximale waarde",
+      "min_value_mode": "Min value source",
+      "max_value_mode": "Max value source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -83,6 +78,7 @@
       "min_width": "Min width",
       "unit_spacing": "Unit spacing",
       "watermark_toggle": "Watermark",
+      "alert_toggle": "Alert",
       "custom_info": "Aangepaste secundaire info",
       "interpolate": "Kleuren interpoleren",
       "name_info": "Aangepaste naaminfo",
@@ -122,7 +118,7 @@
         "temperature": "Temperatuur",
         "voc": "VOC"
       },
-      "color_mode": {
+      "bar_color_mode": {
         "auto": "Automatisch",
         "segment": "Segmenten",
         "rainbow": "Regenboog"
@@ -139,6 +135,7 @@
         "icon": "Pictogram",
         "name": "Naam",
         "value": "Waarde",
+        "unit": "Eenheid",
         "secondary_info": "Info",
         "progress_bar": "Balk"
       },
@@ -160,21 +157,56 @@
         "percent": "Percent"
       },
       "watermark": {
-        "low": "Low",
-        "high": "High",
+        "low": "Lage waarde",
+        "high": "Hoge waarde",
         "type": "Type",
-        "opacity": "Opacity",
-        "low_color": "Low color",
-        "high_color": "High color",
-        "low_as": "Low unit",
-        "high_as": "High unit",
-        "line_size": "Line size",
-        "disable_low": "Disable low",
-        "disable_high": "Disable high",
-        "low_entity_toggle": "Use entity as low watermark value",
-        "low_attribute": "Attribute",
-        "high_entity_toggle": "Use entity as high watermark value",
-        "high_attribute": "Attribute"
+        "opacity": "Dekking",
+        "low_color": "Lage kleur",
+        "high_color": "Hoge kleur",
+        "low_as": "Eenheid (lage waarde)",
+        "high_as": "Eenheid (hoge waarde)",
+        "line_size": "Lijndikte",
+        "disable_low": "Lage waarde uitschakelen",
+        "disable_high": "Hoge waarde uitschakelen",
+        "low_entity_toggle": "Entiteit gebruiken voor lage waarde",
+        "low_attribute": "Attribuut",
+        "high_entity_toggle": "Entiteit gebruiken voor hoge waarde",
+        "high_attribute": "Attribuut"
+      },
+      "icon_animation": {
+        "none": "Geen",
+        "spin": "Draaien",
+        "pulse": "Pulseren"
+      },
+      "alert_when": {
+        "above": "Alarm boven",
+        "below": "Alarm onder",
+        "color": "Alarmkleur",
+        "highlight": "Markering"
+      },
+      "alert_highlight": {
+        "border": "Rand",
+        "background": "Achtergrond"
+      },
+      "min_value_mode": {
+        "standard": "Vaste waarde",
+        "entity": "Entiteit",
+        "jinja": "Sjabloon"
+      },
+      "max_value_mode": {
+        "standard": "Vaste waarde",
+        "entity": "Entiteit",
+        "jinja": "Sjabloon"
+      },
+      "theme_mode": {
+        "preset": "Voorinstelling",
+        "custom": "Aangepast"
+      },
+      "min_value": {
+        "attribute": "Attribuut"
+      },
+      "max_value": {
+        "attribute": "Attribuut"
       }
     }
   }

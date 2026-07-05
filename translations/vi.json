@@ -3,17 +3,11 @@
     "msg": {
       "appliedDefaultValue": "Một giá trị mặc định đã được áp dụng tự động.",
       "attributeNotFound": "Không tìm thấy thuộc tính trong HA.",
-      "discontinuousRange": "Phạm vi được xác định không liên tục.",
       "entityNotFound": "Không tìm thấy thực thể trong HA.",
       "invalidActionObject": "Đối tượng hành động không hợp lệ hoặc cấu trúc không đúng.",
-      "invalidCustomThemeArray": "Chủ đề tùy chỉnh phải là một mảng.",
-      "invalidCustomThemeEntry": "Một hoặc nhiều mục trong chủ đề tùy chỉnh không hợp lệ.",
       "invalidDecimal": "Giá trị phải là một số thập phân hợp lệ.",
       "invalidEntityId": "ID thực thể không hợp lệ hoặc không đúng định dạng.",
       "invalidEnumValue": "Giá trị được cung cấp không nằm trong các tùy chọn được phép.",
-      "invalidIconType": "Loại biểu tượng được chỉ định không hợp lệ hoặc không được nhận dạng.",
-      "invalidMaxValue": "Giá trị tối đa không hợp lệ hoặc vượt quá giới hạn cho phép.",
-      "invalidMinValue": "Giá trị tối thiểu không hợp lệ hoặc dưới giới hạn cho phép.",
       "invalidStateContent": "Nội dung trạng thái không hợp lệ hoặc không đúng định dạng.",
       "invalidStateContentEntry": "Một hoặc nhiều mục trong nội dung trạng thái không hợp lệ.",
       "invalidTheme": "Chủ đề được chỉ định không xác định. Chủ đề mặc định sẽ được sử dụng.",
@@ -23,9 +17,7 @@
       "invalidTypeObject": "Mong đợi một giá trị kiểu đối tượng.",
       "invalidTypeString": "Mong đợi một giá trị kiểu chuỗi.",
       "invalidUnionType": "Giá trị không khớp với bất kỳ loại nào được phép.",
-      "minGreaterThanMax": "Giá trị tối thiểu không thể lớn hơn giá trị tối đa.",
       "missingActionKey": "Một khóa bắt buộc bị thiếu trong đối tượng hành động.",
-      "missingColorProperty": "Một thuộc tính màu bắt buộc bị thiếu.",
       "missingRequiredProperty": "Thuộc tính bắt buộc bị thiếu."
     }
   },
@@ -45,25 +37,25 @@
       "bar_position": "Vị trí thanh",
       "bar_single_line": "Thông tin trên một dòng (overlay)",
       "bar_size": "Kích thước thanh",
-      "color_mode": "Chế độ màu",
+      "bar_segments": "Bar segments",
+      "bar_color_mode": "Chế độ màu",
       "center_zero": "零点居中",
       "center_zero_value": "Giá trị tâm",
       "center_zero_growth_percent": "Tỷ lệ tăng trưởng",
       "color": "Màu chính",
       "decimal": "thập phân",
-      "disable_unit": "Hiển thị đơn vị",
       "double_tap_action": "Hành vi chạm đôi",
       "entity": "Thực thể",
       "force_circular_background": "Buộc nền hình tròn",
       "hide_jinja": "Ẩn (chế độ Jinja)",
       "hold_action": "Hành vi giữ",
       "icon": "Biểu tượng",
+      "icon_animation": "Icon animation",
       "icon_double_tap_action": "Hành vi chạm đôi biểu tượng",
       "icon_hold_action": "Hành vi giữ biểu tượng",
       "icon_tap_action": "Hành vi chạm biểu tượng",
       "layout": "Bố cục nội dung",
       "max_value": "Giá trị tối đa",
-      "max_value_attribute": "Thuộc tính (max_value)",
       "min_value": "Giá trị tối thiểu",
       "name": "Tên",
       "percent": "Phần trăm",
@@ -73,9 +65,12 @@
       "show_all_actions": "Hiển thị tất cả hành động",
       "tap_action": "Hành vi chạm",
       "text_shadow": "Thêm bóng cho văn bản (overlay)",
+      "theme_mode": "Theme mode",
       "theme": "Chủ đề",
+      "custom_theme": "Custom theme zones",
       "unit": "Đơn vị",
-      "use_max_entity": "Sử dụng thực thể cho giá trị tối đa",
+      "min_value_mode": "Min value source",
+      "max_value_mode": "Max value source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -83,6 +78,7 @@
       "min_width": "Min width",
       "unit_spacing": "Unit spacing",
       "watermark_toggle": "Watermark",
+      "alert_toggle": "Alert",
       "custom_info": "Thông tin phụ tùy chỉnh",
       "interpolate": "Nội suy màu sắc",
       "name_info": "Thông tin tên tùy chỉnh",
@@ -122,7 +118,7 @@
         "temperature": "Nhiệt độ",
         "voc": "VOC"
       },
-      "color_mode": {
+      "bar_color_mode": {
         "auto": "Tự động",
         "segment": "Phân đoạn",
         "rainbow": "Cầu vồng"
@@ -139,6 +135,7 @@
         "icon": "Biểu tượng",
         "name": "Tên",
         "value": "Giá trị",
+        "unit": "Đơn vị",
         "secondary_info": "Thông tin",
         "progress_bar": "Thanh"
       },
@@ -175,6 +172,41 @@
         "low_attribute": "Attribute",
         "high_entity_toggle": "Use entity as high watermark value",
         "high_attribute": "Attribute"
+      },
+      "icon_animation": {
+        "none": "None",
+        "spin": "Spin",
+        "pulse": "Pulse"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "alert_highlight": {
+        "border": "Border",
+        "background": "Background"
+      },
+      "min_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "max_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "theme_mode": {
+        "preset": "Preset",
+        "custom": "Custom"
+      },
+      "min_value": {
+        "attribute": "Attribute"
+      },
+      "max_value": {
+        "attribute": "Attribute"
       }
     }
   }

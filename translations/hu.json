@@ -3,17 +3,11 @@
     "msg": {
       "appliedDefaultValue": "Alapértelmezett érték automatikusan alkalmazva.",
       "attributeNotFound": "Az attribútum nem található a Home Assistantban.",
-      "discontinuousRange": "A megadott tartomány nem folytonos.",
       "entityNotFound": "Az entitás nem található a Home Assistantban.",
       "invalidActionObject": "Az action objektum érvénytelen vagy hibás felépítésű.",
-      "invalidCustomThemeArray": "Az egyéni témának tömbnek kell lennie.",
-      "invalidCustomThemeEntry": "Az egyéni téma egy vagy több bejegyzése érvénytelen.",
       "invalidDecimal": "Az értéknek pozitív egész számnak kell lennie.",
       "invalidEntityId": "Az entitás azonosító érvénytelen vagy hibás.",
       "invalidEnumValue": "A megadott érték nem része az engedélyezett opcióknak.",
-      "invalidIconType": "A megadott ikon típus érvénytelen vagy nem ismert.",
-      "invalidMaxValue": "A maximális érték érvénytelen vagy túl magas.",
-      "invalidMinValue": "A minimális érték érvénytelen vagy túl alacsony.",
       "invalidStateContent": "Az állapot tartalma érvénytelen vagy hibás.",
       "invalidStateContentEntry": "Az állapot tartalmának egy vagy több eleme érvénytelen.",
       "invalidTheme": "Az adott téma ismeretlen. Az alapértelmezett téma lesz használva.",
@@ -23,9 +17,7 @@
       "invalidTypeObject": "Objektum típusú érték volt elvárva.",
       "invalidTypeString": "Szöveg típusú érték volt elvárva.",
       "invalidUnionType": "Az érték nem felel meg egyik engedélyezett típusnak sem.",
-      "minGreaterThanMax": "A minimális érték nem lehet nagyobb a maximálisnál.",
       "missingActionKey": "Egy kötelező kulcs hiányzik az action objektumból.",
-      "missingColorProperty": "Egy kötelező szín tulajdonság hiányzik.",
       "missingRequiredProperty": "Egy kötelező tulajdonság hiányzik."
     }
   },
@@ -45,25 +37,25 @@
       "bar_position": "Sáv pozíciója",
       "bar_single_line": "Egy soros információ (overlay)",
       "bar_size": "Sáv mérete",
-      "color_mode": "Szín mód",
+      "bar_segments": "Bar segments",
+      "bar_color_mode": "Szín mód",
       "center_zero": "Nulla középen",
       "center_zero_value": "Középérték",
       "center_zero_growth_percent": "Növekedési százalék",
       "color": "Ikon színe",
       "decimal": "Tizedes",
-      "disable_unit": "Egység megjelenítése",
       "double_tap_action": "Kettős koppintás művelet",
       "entity": "Entitás",
       "force_circular_background": "Kör alakú háttér erőltetése",
       "hide_jinja": "Elrejtés (Jinja mód)",
       "hold_action": "Hosszan tartó nyomás művelet",
       "icon": "Ikon",
+      "icon_animation": "Icon animation",
       "icon_double_tap_action": "Ikon dupla koppintás művelet",
       "icon_hold_action": "Ikon hosszan nyomás művelet",
       "icon_tap_action": "Ikon koppintás művelet",
       "layout": "Tartalom elrendezése",
       "max_value": "Maximális érték",
-      "max_value_attribute": "Attribútum (max_value)",
       "min_value": "Minimális érték",
       "name": "Név",
       "percent": "Százalék",
@@ -73,9 +65,12 @@
       "show_all_actions": "Az összes művelet megjelenítése",
       "tap_action": "Koppintás művelet",
       "text_shadow": "Szöveg árnyék hozzáadása (overlay)",
+      "theme_mode": "Theme mode",
       "theme": "Téma",
+      "custom_theme": "Custom theme zones",
       "unit": "Mértékegység",
-      "use_max_entity": "Entitás használata max értékhez",
+      "min_value_mode": "Min value source",
+      "max_value_mode": "Max value source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -83,6 +78,7 @@
       "min_width": "Min width",
       "unit_spacing": "Unit spacing",
       "watermark_toggle": "Watermark",
+      "alert_toggle": "Alert",
       "custom_info": "Egyéni másodlagos info",
       "interpolate": "Színinterpoláció",
       "name_info": "Egyéni névinfo",
@@ -122,7 +118,7 @@
         "horizontal": "Vízszintes (alapértelmezett)",
         "vertical": "Függőleges"
       },
-      "color_mode": {
+      "bar_color_mode": {
         "auto": "Automatikus",
         "segment": "Szegmens",
         "rainbow": "Szivárvány"
@@ -139,6 +135,7 @@
         "icon": "Ikon",
         "name": "Név",
         "value": "Érték",
+        "unit": "Egység",
         "secondary_info": "Info",
         "progress_bar": "Sáv"
       },
@@ -175,6 +172,41 @@
         "low_attribute": "Attribute",
         "high_entity_toggle": "Use entity as high watermark value",
         "high_attribute": "Attribute"
+      },
+      "icon_animation": {
+        "none": "None",
+        "spin": "Spin",
+        "pulse": "Pulse"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "alert_highlight": {
+        "border": "Border",
+        "background": "Background"
+      },
+      "min_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "max_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "theme_mode": {
+        "preset": "Preset",
+        "custom": "Custom"
+      },
+      "min_value": {
+        "attribute": "Attribute"
+      },
+      "max_value": {
+        "attribute": "Attribute"
       }
     }
   }

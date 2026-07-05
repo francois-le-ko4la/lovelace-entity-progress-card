@@ -3,17 +3,11 @@
     "msg": {
       "appliedDefaultValue": "Predvolená hodnota bola automaticky použitá.",
       "attributeNotFound": "Atribút sa nenašiel v Home Assistant.",
-      "discontinuousRange": "Zadaný rozsah nie je spojitý.",
       "entityNotFound": "Entita sa nenašla v Home Assistant.",
       "invalidActionObject": "Objekt akcie je neplatný alebo nesprávne štruktúrovaný.",
-      "invalidCustomThemeArray": "Vlastná téma musí byť pole.",
-      "invalidCustomThemeEntry": "Jedna alebo viac položiek vlastnej témy je neplatných.",
       "invalidDecimal": "Hodnota musí byť kladné celé číslo.",
       "invalidEntityId": "ID entity je neplatné alebo nesprávne.",
       "invalidEnumValue": "Zadaná hodnota nie je súčasťou povolených možností.",
-      "invalidIconType": "Zadaný typ ikony je neplatný alebo neznámy.",
-      "invalidMaxValue": "Maximálna hodnota je neplatná alebo nad limitom.",
-      "invalidMinValue": "Minimálna hodnota je neplatná alebo pod limitom.",
       "invalidStateContent": "Obsah stavu je neplatný alebo nesprávny.",
       "invalidStateContentEntry": "Jedna alebo viac položiek obsahu stavu je neplatných.",
       "invalidTheme": "Zadaná téma je neznáma. Použije sa predvolená téma.",
@@ -23,9 +17,7 @@
       "invalidTypeObject": "Očakávala sa hodnota typu objekt.",
       "invalidTypeString": "Očakávala sa hodnota typu reťazec.",
       "invalidUnionType": "Hodnota nezodpovedá žiadnemu povolenému typu.",
-      "minGreaterThanMax": "Minimálna hodnota nemôže byť väčšia ako maximálna.",
       "missingActionKey": "Chýba povinný kľúč v objekte akcie.",
-      "missingColorProperty": "Chýba povinná vlastnosť farby.",
       "missingRequiredProperty": "Chýba povinná vlastnosť."
     }
   },
@@ -45,25 +37,25 @@
       "bar_position": "Pozícia lišty",
       "bar_single_line": "Informácie na jednej línii (overlay)",
       "bar_size": "Veľkosť lišty",
-      "color_mode": "Farebný režim",
+      "bar_segments": "Bar segments",
+      "bar_color_mode": "Farebný režim",
       "center_zero": "Nula v strede",
       "center_zero_value": "Hodnota stredu",
       "center_zero_growth_percent": "Percento rastu",
       "color": "Farba ikony",
       "decimal": "Desatinné",
-      "disable_unit": "Zobraziť jednotku",
       "double_tap_action": "Akcia pri dvojitom ťuknutí",
       "entity": "Entita",
       "force_circular_background": "Vynútiť kruhové pozadie",
       "hide_jinja": "Skryť (režim Jinja)",
       "hold_action": "Akcia pri dlhom podržaní",
       "icon": "Ikona",
+      "icon_animation": "Icon animation",
       "icon_double_tap_action": "Akcia pri dvojitom ťuknutí ikony",
       "icon_hold_action": "Akcia pri dlhom podržaní ikony",
       "icon_tap_action": "Akcia pri ťuknutí ikony",
       "layout": "Rozloženie obsahu",
       "max_value": "Maximálna hodnota",
-      "max_value_attribute": "Atribút (max_value)",
       "min_value": "Minimálna hodnota",
       "name": "Názov",
       "percent": "Percento",
@@ -73,9 +65,12 @@
       "show_all_actions": "Zobraziť všetky akcie",
       "tap_action": "Akcia pri ťuknutí",
       "text_shadow": "Pridať tieň textu (overlay)",
+      "theme_mode": "Theme mode",
       "theme": "Téma",
+      "custom_theme": "Custom theme zones",
       "unit": "Jednotka",
-      "use_max_entity": "Použiť entitu pre max hodnotu",
+      "min_value_mode": "Min value source",
+      "max_value_mode": "Max value source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -83,6 +78,7 @@
       "min_width": "Min width",
       "unit_spacing": "Unit spacing",
       "watermark_toggle": "Watermark",
+      "alert_toggle": "Alert",
       "custom_info": "Vlastné sekundárne info",
       "interpolate": "Interpolácia farieb",
       "name_info": "Vlastné info názvu",
@@ -122,7 +118,7 @@
         "horizontal": "Horizontálne (predvolené)",
         "vertical": "Vertikálne"
       },
-      "color_mode": {
+      "bar_color_mode": {
         "auto": "Automaticky",
         "segment": "Segmenty",
         "rainbow": "Dúha"
@@ -139,6 +135,7 @@
         "icon": "Ikona",
         "name": "Názov",
         "value": "Hodnota",
+        "unit": "Jednotka",
         "secondary_info": "Info",
         "progress_bar": "Lišta"
       },
@@ -175,6 +172,41 @@
         "low_attribute": "Attribute",
         "high_entity_toggle": "Use entity as high watermark value",
         "high_attribute": "Attribute"
+      },
+      "icon_animation": {
+        "none": "None",
+        "spin": "Spin",
+        "pulse": "Pulse"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "alert_highlight": {
+        "border": "Border",
+        "background": "Background"
+      },
+      "min_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "max_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "theme_mode": {
+        "preset": "Preset",
+        "custom": "Custom"
+      },
+      "min_value": {
+        "attribute": "Attribute"
+      },
+      "max_value": {
+        "attribute": "Attribute"
       }
     }
   }

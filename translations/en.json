@@ -3,17 +3,11 @@
     "msg": {
       "appliedDefaultValue": "A default value has been applied automatically.",
       "attributeNotFound": "Attribute not found in HA.",
-      "discontinuousRange": "The defined range is discontinuous.",
       "entityNotFound": "Entity not found in HA.",
       "invalidActionObject": "The action object is invalid or improperly structured.",
-      "invalidCustomThemeArray": "The custom theme must be an array.",
-      "invalidCustomThemeEntry": "One or more entries in the custom theme are invalid.",
       "invalidDecimal": "The value must be a valid decimal number.",
       "invalidEntityId": "The entity ID is invalid or malformed.",
       "invalidEnumValue": "The provided value is not one of the allowed options.",
-      "invalidIconType": "The specified icon type is invalid or unrecognized.",
-      "invalidMaxValue": "The maximum value is invalid or above allowed limits.",
-      "invalidMinValue": "The minimum value is invalid or below allowed limits.",
       "invalidStateContent": "The state content is invalid or malformed.",
       "invalidStateContentEntry": "One or more entries in the state content are invalid.",
       "invalidTheme": "The specified theme is unknown. Default theme will be used.",
@@ -23,9 +17,7 @@
       "invalidTypeObject": "Expected a value of type object.",
       "invalidTypeString": "Expected a value of type string.",
       "invalidUnionType": "The value does not match any of the allowed types.",
-      "minGreaterThanMax": "Minimum value cannot be greater than maximum value.",
       "missingActionKey": "A required key is missing in the action object.",
-      "missingColorProperty": "A required color property is missing.",
       "missingRequiredProperty": "Required property is missing."
     }
   },
@@ -39,31 +31,31 @@
       "attribute": "Attribute",
       "badge_color": "Badge color",
       "badge_icon": "Badge icon",
-      "bar_color": "Color for the bar",
+      "bar_color": "Bar color",
       "bar_effect_jinja": "Bar effect (Jinja mode)",
       "bar_orientation": "Bar orientation",
       "bar_position": "Bar position",
       "bar_single_line": "Single line info (overlay)",
       "bar_size": "Bar size",
-      "color_mode": "Color mode",
+      "bar_segments": "Bar segments",
+      "bar_color_mode": "Bar color mode",
       "center_zero": "Zero at center",
       "center_zero_value": "Center value",
       "center_zero_growth_percent": "Growth percentage",
-      "color": "Primary color",
+      "color": "Icon color",
       "decimal": "decimal",
-      "disable_unit": "Show unit",
       "double_tap_action": "Double tap behavior",
       "entity": "Entity",
       "force_circular_background": "Force icon circular background",
       "hide_jinja": "Hide (Jinja mode)",
       "hold_action": "Hold behavior",
       "icon": "Icon",
+      "icon_animation": "Icon animation",
       "icon_double_tap_action": "Icon double tap behavior",
       "icon_hold_action": "Icon hold behavior",
       "icon_tap_action": "Icon tap behavior",
       "layout": "Content layout",
       "max_value": "Maximum value",
-      "max_value_attribute": "Attribute (max_value)",
       "min_value": "Minimum value",
       "name": "Name",
       "percent": "Percentage",
@@ -73,9 +65,12 @@
       "show_all_actions": "Show all interactions",
       "tap_action": "Tap behavior",
       "text_shadow": "Add text shadow (overlay)",
+      "theme_mode": "Theme mode",
       "theme": "Theme",
+      "custom_theme": "Custom theme zones",
       "unit": "Unit",
-      "use_max_entity": "Use entity as max value",
+      "min_value_mode": "Min value source",
+      "max_value_mode": "Max value source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -83,6 +78,7 @@
       "min_width": "Min width",
       "unit_spacing": "Unit spacing",
       "watermark_toggle": "Watermark",
+      "alert_toggle": "Alert",
       "custom_info": "Custom secondary info",
       "interpolate": "Interpolate colors",
       "name_info": "Custom name info",
@@ -122,7 +118,7 @@
         "horizontal": "Horizontal (default)",
         "vertical": "Vertical"
       },
-      "color_mode": {
+      "bar_color_mode": {
         "auto": "Auto",
         "segment": "Segment",
         "rainbow": "Rainbow"
@@ -139,6 +135,7 @@
         "icon": "Icon",
         "name": "Name",
         "value": "Value",
+        "unit": "Unit",
         "secondary_info": "Secondary info",
         "progress_bar": "Bar"
       },
@@ -175,6 +172,41 @@
         "low_attribute": "Attribute",
         "high_entity_toggle": "Use entity as high watermark value",
         "high_attribute": "Attribute"
+      },
+      "icon_animation": {
+        "none": "None",
+        "spin": "Spin",
+        "pulse": "Pulse"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "alert_highlight": {
+        "border": "Border",
+        "background": "Background"
+      },
+      "min_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "max_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "theme_mode": {
+        "preset": "Preset",
+        "custom": "Custom"
+      },
+      "min_value": {
+        "attribute": "Attribute"
+      },
+      "max_value": {
+        "attribute": "Attribute"
       }
     }
   }

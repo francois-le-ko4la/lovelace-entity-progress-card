@@ -3,17 +3,11 @@
     "msg": {
       "appliedDefaultValue": "Výchozí hodnota byla automaticky aplikována.",
       "attributeNotFound": "Atribut nebyl nalezen v HA.",
-      "discontinuousRange": "Definovaný rozsah je nespojitý.",
       "entityNotFound": "Entita nebyla nalezena v HA.",
       "invalidActionObject": "Objekt akce je neplatný nebo špatně strukturovaný.",
-      "invalidCustomThemeArray": "Vlastní motiv musí být pole.",
-      "invalidCustomThemeEntry": "Jedna nebo více položek ve vlastním motivu je neplatných.",
       "invalidDecimal": "Hodnota musí být platné desítkové číslo.",
       "invalidEntityId": "ID entity je neplatné nebo špatně formátované.",
       "invalidEnumValue": "Poskytnutá hodnota není jednou z povolených možností.",
-      "invalidIconType": "Zadaný typ ikony je neplatný nebo nerozpoznaný.",
-      "invalidMaxValue": "Maximální hodnota je neplatná nebo nad povolenými limity.",
-      "invalidMinValue": "Minimální hodnota je neplatná nebo pod povolenými limity.",
       "invalidStateContent": "Obsah stavu je neplatný nebo špatně formátovaný.",
       "invalidStateContentEntry": "Jedna nebo více položek v obsahu stavu je neplatných.",
       "invalidTheme": "Zadaný motiv je neznámý. Bude použit výchozí motiv.",
@@ -23,9 +17,7 @@
       "invalidTypeObject": "Očekávána hodnota typu objekt.",
       "invalidTypeString": "Očekávána hodnota typu řetězec.",
       "invalidUnionType": "Hodnota neodpovídá žádnému z povolených typů.",
-      "minGreaterThanMax": "Minimální hodnota nemůže být větší než maximální hodnota.",
       "missingActionKey": "V objektu akce chybí požadovaný klíč.",
-      "missingColorProperty": "Chybí povinná vlastnost barvy.",
       "missingRequiredProperty": "Chybí povinná vlastnost."
     }
   },
@@ -45,25 +37,25 @@
       "bar_position": "Umístění lišty",
       "bar_single_line": "Info v jednom řádku (overlay)",
       "bar_size": "Velikost lišty",
-      "color_mode": "Barevný režim",
+      "bar_segments": "Bar segments",
+      "bar_color_mode": "Barevný režim",
       "center_zero": "Nula uprostřed",
       "center_zero_value": "Hodnota středu",
       "center_zero_growth_percent": "Procento růstu",
       "color": "Hlavní barva",
       "decimal": "desetinný",
-      "disable_unit": "Zobrazit jednotku",
       "double_tap_action": "Chování při dvojitém klepnutí",
       "entity": "Entita",
       "force_circular_background": "Vynutit kruhové pozadí",
       "hide_jinja": "Skrýt (režim Jinja)",
       "hold_action": "Chování při podržení",
       "icon": "Ikona",
+      "icon_animation": "Icon animation",
       "icon_double_tap_action": "Chování při dvojitém klepnutí na ikonu",
       "icon_hold_action": "Chování při podržení ikony",
       "icon_tap_action": "Chování při klepnutí na ikonu",
       "layout": "Rozložení obsahu",
       "max_value": "Maximální hodnota",
-      "max_value_attribute": "Atribut (max_value)",
       "min_value": "Minimální hodnota",
       "name": "Název",
       "percent": "Procento",
@@ -73,9 +65,12 @@
       "show_all_actions": "Zobrazit všechny akce",
       "tap_action": "Chování při klepnutí",
       "text_shadow": "Přidat stín textu (overlay)",
+      "theme_mode": "Theme mode",
       "theme": "Motiv",
+      "custom_theme": "Custom theme zones",
       "unit": "Jednotka",
-      "use_max_entity": "Použít entitu pro max hodnotu",
+      "min_value_mode": "Min value source",
+      "max_value_mode": "Max value source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -83,6 +78,7 @@
       "min_width": "Min width",
       "unit_spacing": "Unit spacing",
       "watermark_toggle": "Watermark",
+      "alert_toggle": "Alert",
       "custom_info": "Vlastní sekundární info",
       "interpolate": "Interpolace barev",
       "name_info": "Vlastní info názvu",
@@ -122,7 +118,7 @@
         "horizontal": "Horizontální (výchozí)",
         "vertical": "Vertikální"
       },
-      "color_mode": {
+      "bar_color_mode": {
         "auto": "Automaticky",
         "segment": "Segmenty",
         "rainbow": "Duha"
@@ -139,6 +135,7 @@
         "icon": "Ikona",
         "name": "Název",
         "value": "Hodnota",
+        "unit": "Jednotka",
         "secondary_info": "Info",
         "progress_bar": "Lišta"
       },
@@ -175,6 +172,41 @@
         "low_attribute": "Attribute",
         "high_entity_toggle": "Use entity as high watermark value",
         "high_attribute": "Attribute"
+      },
+      "icon_animation": {
+        "none": "None",
+        "spin": "Spin",
+        "pulse": "Pulse"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "alert_highlight": {
+        "border": "Border",
+        "background": "Background"
+      },
+      "min_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "max_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "theme_mode": {
+        "preset": "Preset",
+        "custom": "Custom"
+      },
+      "min_value": {
+        "attribute": "Attribute"
+      },
+      "max_value": {
+        "attribute": "Attribute"
       }
     }
   }

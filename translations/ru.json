@@ -3,17 +3,11 @@
     "msg": {
       "appliedDefaultValue": "Значение по умолчанию было применено автоматически.",
       "attributeNotFound": "Атрибут не найден в Home Assistant.",
-      "discontinuousRange": "Определённый диапазон является прерывистым.",
       "entityNotFound": "Сущность не найдена в Home Assistant.",
       "invalidActionObject": "Объект действия недействителен или неправильно структурирован.",
-      "invalidCustomThemeArray": "Пользовательская тема должна быть массивом.",
-      "invalidCustomThemeEntry": "Одна или несколько записей в пользовательской теме недействительны.",
       "invalidDecimal": "Значение должно быть действительным десятичным числом.",
       "invalidEntityId": "Идентификатор сущности недействителен или неправильно сформирован.",
       "invalidEnumValue": "Предоставленное значение не является одним из разрешённых вариантов.",
-      "invalidIconType": "Указанный тип иконки недействителен или не распознан.",
-      "invalidMaxValue": "Максимальное значение недействительно или выше разрешённых пределов.",
-      "invalidMinValue": "Минимальное значение недействительно или ниже разрешённых пределов.",
       "invalidStateContent": "Содержимое состояния недействительно или неправильно сформировано.",
       "invalidStateContentEntry": "Одна или несколько записей в содержимом состояния недействительны.",
       "invalidTheme": "Указанная тема неизвестна. Будет использована тема по умолчанию.",
@@ -23,9 +17,7 @@
       "invalidTypeObject": "Ожидается значение типа объект.",
       "invalidTypeString": "Ожидается значение строкового типа.",
       "invalidUnionType": "Значение не соответствует ни одному из разрешённых типов.",
-      "minGreaterThanMax": "Минимальное значение не может быть больше максимального значения.",
       "missingActionKey": "В объекте действия отсутствует обязательный ключ.",
-      "missingColorProperty": "Отсутствует обязательное свойство цвета.",
       "missingRequiredProperty": "Отсутствует обязательное свойство."
     }
   },
@@ -45,25 +37,25 @@
       "bar_position": "Положение полосы",
       "bar_single_line": "Информация в одну строку (overlay)",
       "bar_size": "Размер полосы",
-      "color_mode": "Режим цвета",
+      "bar_segments": "Bar segments",
+      "bar_color_mode": "Режим цвета",
       "center_zero": "Ноль по центру",
       "center_zero_value": "Центральное значение",
       "center_zero_growth_percent": "Процент роста",
       "color": "Основной цвет",
       "decimal": "десятичные",
-      "disable_unit": "Показать единицу измерения",
       "double_tap_action": "Поведение при двойном нажатии",
       "entity": "Сущность",
       "force_circular_background": "Принудительный круглый фон",
       "hide_jinja": "Скрыть (режим Jinja)",
       "hold_action": "Поведение при длительном нажатии",
       "icon": "Иконка",
+      "icon_animation": "Icon animation",
       "icon_double_tap_action": "Поведение при двойном нажатии на иконку",
       "icon_hold_action": "Поведение при длительном нажатии на иконку",
       "icon_tap_action": "Поведение при нажатии на иконку",
       "layout": "Расположение содержимого",
       "max_value": "Максимальное значение",
-      "max_value_attribute": "Атрибут (max_value)",
       "min_value": "Минимальное значение",
       "name": "Название",
       "percent": "Процент",
@@ -73,9 +65,12 @@
       "show_all_actions": "Показать все действия",
       "tap_action": "Поведение при нажатии",
       "text_shadow": "Добавить тень к тексту (overlay)",
+      "theme_mode": "Theme mode",
       "theme": "Тема",
+      "custom_theme": "Custom theme zones",
       "unit": "Единица измерения",
-      "use_max_entity": "Использовать сущность для максимального значения",
+      "min_value_mode": "Min value source",
+      "max_value_mode": "Max value source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -83,6 +78,7 @@
       "min_width": "Min width",
       "unit_spacing": "Unit spacing",
       "watermark_toggle": "Watermark",
+      "alert_toggle": "Alert",
       "custom_info": "Дополнительная информация",
       "interpolate": "Интерполяция цветов",
       "name_info": "Доп. информация (имя)",
@@ -122,7 +118,7 @@
         "temperature": "Температура",
         "voc": "ЛОС"
       },
-      "color_mode": {
+      "bar_color_mode": {
         "auto": "Авто",
         "segment": "Сегменты",
         "rainbow": "Радуга"
@@ -139,6 +135,7 @@
         "icon": "Иконка",
         "name": "Имя",
         "value": "Значение",
+        "unit": "Единица",
         "secondary_info": "Инфо",
         "progress_bar": "Полоса"
       },
@@ -175,6 +172,41 @@
         "low_attribute": "Attribute",
         "high_entity_toggle": "Use entity as high watermark value",
         "high_attribute": "Attribute"
+      },
+      "icon_animation": {
+        "none": "None",
+        "spin": "Spin",
+        "pulse": "Pulse"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "alert_highlight": {
+        "border": "Border",
+        "background": "Background"
+      },
+      "min_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "max_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "theme_mode": {
+        "preset": "Preset",
+        "custom": "Custom"
+      },
+      "min_value": {
+        "attribute": "Attribute"
+      },
+      "max_value": {
+        "attribute": "Attribute"
       }
     }
   }

@@ -3,17 +3,11 @@
     "msg": {
       "appliedDefaultValue": "Se ha aplicado un valor predeterminado automáticamente.",
       "attributeNotFound": "Atributo no encontrado en Home Assistant.",
-      "discontinuousRange": "El rango definido es discontinuo.",
       "entityNotFound": "Entidad no encontrada en Home Assistant.",
       "invalidActionObject": "El objeto de acción es inválido o está mal estructurado.",
-      "invalidCustomThemeArray": "El tema personalizado debe ser un arreglo.",
-      "invalidCustomThemeEntry": "Una o más entradas en el tema personalizado son inválidas.",
       "invalidDecimal": "El valor debe ser un número decimal válido.",
       "invalidEntityId": "El ID de la entidad no es válido o está mal formado.",
       "invalidEnumValue": "El valor proporcionado no es una opción válida.",
-      "invalidIconType": "El tipo de icono especificado es inválido o no reconocido.",
-      "invalidMaxValue": "El valor máximo es inválido o excede el límite permitido.",
-      "invalidMinValue": "El valor mínimo es inválido o está por debajo del límite permitido.",
       "invalidStateContent": "El contenido del estado es inválido o está mal formado.",
       "invalidStateContentEntry": "Una o más entradas en el contenido del estado son inválidas.",
       "invalidTheme": "El tema especificado es desconocido. Se usará el tema por defecto.",
@@ -23,9 +17,7 @@
       "invalidTypeObject": "Se esperaba un valor de tipo objeto.",
       "invalidTypeString": "Se esperaba un valor de tipo cadena.",
       "invalidUnionType": "El valor no coincide con ninguno de los tipos permitidos.",
-      "minGreaterThanMax": "El valor mínimo no puede ser mayor que el valor máximo.",
       "missingActionKey": "Falta una clave obligatoria en el objeto de acción.",
-      "missingColorProperty": "Falta una propiedad de color obligatoria.",
       "missingRequiredProperty": "Falta una propiedad obligatoria."
     }
   },
@@ -39,31 +31,31 @@
       "attribute": "Atributo",
       "badge_color": "Color del badge",
       "badge_icon": "Icono del badge",
-      "bar_color": "Color principal",
+      "bar_color": "Color de la barra",
       "bar_effect_jinja": "Efecto de la barra (modo Jinja)",
       "bar_orientation": "Orientación de la barra",
       "bar_position": "Posición de la barra",
       "bar_single_line": "Información en una sola línea (overlay)",
       "bar_size": "Tamaño de la barra",
-      "color_mode": "Modo de color",
+      "bar_segments": "Bar segments",
+      "bar_color_mode": "Modo de color de la barra",
       "center_zero": "Cero en el centro",
       "center_zero_value": "Valor de centrado",
       "center_zero_growth_percent": "Porcentaje de crecimiento",
-      "color": "Color principal",
+      "color": "Color del icono",
       "decimal": "decimal",
-      "disable_unit": "Mostrar unidad",
       "double_tap_action": "Acción al pulsar dos veces",
       "entity": "Entidad",
       "force_circular_background": "Forzar fondo circular",
       "hide_jinja": "Ocultar (modo Jinja)",
       "hold_action": "Acción al mantener pulsado",
       "icon": "Icono",
+      "icon_animation": "Icon animation",
       "icon_double_tap_action": "Acción al pulsar dos veces el icono",
       "icon_hold_action": "Acción al mantener pulsado el icono",
       "icon_tap_action": "Acción al pulsar el icono",
       "layout": "Disposición del contenido",
       "max_value": "Valor máximo",
-      "max_value_attribute": "Atributo (max_value)",
       "min_value": "Valor mínimo",
       "name": "Nombre",
       "percent": "Porcentaje",
@@ -73,9 +65,12 @@
       "show_all_actions": "Mostrar todas las acciones",
       "tap_action": "Acción al pulsar brevemente",
       "text_shadow": "Añadir sombra al texto (overlay)",
+      "theme_mode": "Theme mode",
       "theme": "Tema",
+      "custom_theme": "Zonas de tema personalizado",
       "unit": "Unidad",
-      "use_max_entity": "Usar una entidad para el valor máximo",
+      "min_value_mode": "Min value source",
+      "max_value_mode": "Max value source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -83,6 +78,7 @@
       "min_width": "Min width",
       "unit_spacing": "Unit spacing",
       "watermark_toggle": "Watermark",
+      "alert_toggle": "Alert",
       "custom_info": "Info secundaria personalizada",
       "interpolate": "Interpolación de colores",
       "name_info": "Info de nombre personalizada",
@@ -122,7 +118,7 @@
         "horizontal": "Horizontal (predeterminado)",
         "vertical": "Vertical"
       },
-      "color_mode": {
+      "bar_color_mode": {
         "auto": "Auto",
         "segment": "Segmentos",
         "rainbow": "Arcoíris"
@@ -139,6 +135,7 @@
         "icon": "Icono",
         "name": "Nombre",
         "value": "Valor",
+        "unit": "Unidad",
         "secondary_info": "Info",
         "progress_bar": "Barra"
       },
@@ -160,21 +157,56 @@
         "percent": "Percent"
       },
       "watermark": {
-        "low": "Low",
-        "high": "High",
-        "type": "Type",
-        "opacity": "Opacity",
-        "low_color": "Low color",
-        "high_color": "High color",
-        "low_as": "Low unit",
-        "high_as": "High unit",
-        "line_size": "Line size",
-        "disable_low": "Disable low",
-        "disable_high": "Disable high",
-        "low_entity_toggle": "Use entity as low watermark value",
-        "low_attribute": "Attribute",
-        "high_entity_toggle": "Use entity as high watermark value",
-        "high_attribute": "Attribute"
+        "low": "Umbral bajo",
+        "high": "Umbral alto",
+        "type": "Tipo",
+        "opacity": "Opacidad",
+        "low_color": "Color del umbral bajo",
+        "high_color": "Color del umbral alto",
+        "low_as": "Unidad (umbral bajo)",
+        "high_as": "Unidad (umbral alto)",
+        "line_size": "Grosor de línea",
+        "disable_low": "Desactivar umbral bajo",
+        "disable_high": "Desactivar umbral alto",
+        "low_entity_toggle": "Usar una entidad para el umbral bajo",
+        "low_attribute": "Atributo",
+        "high_entity_toggle": "Usar una entidad para el umbral alto",
+        "high_attribute": "Atributo"
+      },
+      "icon_animation": {
+        "none": "Ninguna",
+        "spin": "Girar",
+        "pulse": "Pulso"
+      },
+      "alert_when": {
+        "above": "Alerta por encima de",
+        "below": "Alerta por debajo de",
+        "color": "Color de alerta",
+        "highlight": "Resaltado"
+      },
+      "alert_highlight": {
+        "border": "Borde",
+        "background": "Fondo"
+      },
+      "min_value_mode": {
+        "standard": "Valor fijo",
+        "entity": "Entidad",
+        "jinja": "Plantilla"
+      },
+      "max_value_mode": {
+        "standard": "Valor fijo",
+        "entity": "Entidad",
+        "jinja": "Plantilla"
+      },
+      "theme_mode": {
+        "preset": "Preestablecido",
+        "custom": "Personalizado"
+      },
+      "min_value": {
+        "attribute": "Atributo"
+      },
+      "max_value": {
+        "attribute": "Atributo"
       }
     }
   }

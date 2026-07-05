@@ -31,7 +31,6 @@
       - [`decimal`](#decimal)
       - [`min_value`](#min_value)
       - [`max_value`](#max_value)
-      - [`max_value_attribute`](#max_value_attribute)
       - [`reverse`](#reverse)
       - [`state_content`](#state_content)
       - [`custom_info`](#custom_info)
@@ -40,14 +39,16 @@
     - [Styling Options](#styling-options)
       - [`icon`](#icon)
       - [`color`](#color)
+      - [`icon_animation`](#icon_animation)
       - [`badge_icon`](#badge_icon)
       - [`badge_color`](#badge_color)
       - [`bar_color`](#bar_color)
       - [`bar_size`](#bar_size)
       - [`bar_position`](#bar_position)
       - [`bar_single_line`](#bar_single_line)
+      - [`bar_segments`](#bar_segments)
       - [`bar_effect`](#bar_effect)
-      - [`color_mode`](#color_mode)
+      - [`bar_color_mode`](#bar_color_mode)
       - [`bar_max_width`](#bar_max_width)
       - [`bar_orientation`](#bar_orientation)
       - [`force_circular_background`](#force_circular_background)
@@ -66,6 +67,7 @@
       - [`hide`](#hide)
       - [`disable_unit`](#disable_unit)
       - [`watermark`](#watermark)
+      - [`alert_when`](#alert_when)
     - [Behavior And Actions](#behavior-and-actions)
       - [`xyz_action`](#xyz_action)
   - [🧩 entity-progress-card-template / entity-progress-badge-template](#template)
@@ -569,7 +571,7 @@ decimal: 1
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 [![Feature OK][Feature-OK]](#compatibility)
 
-> **`min_value`** [Float] _(optional, default: `0` or `-100`)_
+> **`min_value`** [Float]|[Map] _(optional, default: `0` or `-100`)_
 
 Defines the minimum value to be used when calculating the percentage.
 
@@ -579,9 +581,24 @@ represents 0%) and a maximum (`max_value`, which represents 100%).
 When `center_zero` is enabled, the default `min_value` is -100, offering a
 clearer and more intuitive display.
 
-This value must be numeric (either a float or an integer).
+`min_value` accepts three forms — like `max_value`, each mode uses its own
+explicit key, so there is nothing to guess from the value's shape:
 
-_Example_:
+- a fixed numeric value (float or integer) — same as before,
+- `{ entity: ..., attribute: ... }` — an entity ID whose state is used as the
+  minimum (`attribute` is optional, to read a specific attribute instead of
+  the state),
+- `{ jinja: ... }` — a Jinja template that dynamically returns a number.
+
+In the visual editor, a chip selector (Fixed value / Entity / Template) lets
+you switch between the three modes.
+
+> [!NOTE]
+>
+> The Jinja mode is available on the Card and the Badge. On the Tile Feature,
+> only the fixed value and entity modes apply.
+
+_Fixed value example_:
 
 ```yaml
 type: custom:entity-progress-card
@@ -596,6 +613,25 @@ Suppose you are measuring the weight of a connected litter box, where:
 - `value` = 8 (the current weight).
 - `percentage` = 40%
 
+_Entity example_:
+
+```yaml
+type: custom:entity-progress-card
+····
+min_value:
+  entity: sensor.night_baseline_power
+  attribute: today  # optional
+```
+
+_Jinja example_:
+
+```yaml
+type: custom:entity-progress-card
+····
+min_value:
+  jinja: "{{ states('input_number.floor') | float }}"
+```
+
 [🔼 Back to top]
 
 #### `max_value`
@@ -603,17 +639,42 @@ Suppose you are measuring the weight of a connected litter box, where:
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 [![Feature OK][Feature-OK]](#compatibility)
 
-> **`max_value`** [Float]|[String] _(optional, default: `100`)_
+> **`max_value`** [Float]|[Map] _(optional, default: `100`)_
 
 Allows representing standard values and calculating the percentage relative to
-the maximum value. This value can be numeric (float/int) or an entity and real
-value must be > 0.
+the maximum value. Real value must be > 0.
+
+`max_value` accepts three forms — like `min_value`, each mode uses its own
+explicit key, so there is nothing to guess from the value's shape:
+
+- a fixed numeric value (float or integer) — same as before,
+- `{ entity: ..., attribute: ... }` — an entity ID whose state is used as the
+  maximum (`attribute` is optional, to read a specific attribute instead of
+  the state),
+- `{ jinja: ... }` — a Jinja template that dynamically returns a number.
+
+In the visual editor, a chip selector (Fixed value / Entity / Template) lets
+you switch between the three modes.
+
+> [!NOTE]
+>
+> The Jinja mode is available on the Card and the Badge. On the Tile Feature,
+> only the fixed value and entity modes apply.
+
+> [!IMPORTANT]
+>
+> Prior to 1.6, `max_value` also accepted a bare entity ID string
+> (`max_value: sensor.xxx`), disambiguated from a fixed value at runtime by
+> its type. **This form is deprecated** (a console warning is logged) but
+> still works — it is automatically migrated to the map form for you,
+> together with the also-deprecated `max_value_attribute` option. Please
+> update your YAML to the new form when convenient.
 
 _Default_:
 
-- `100%`
+- `100`
 
-_Example_:
+_Fixed value example_:
 
 ```yaml
 type: custom:entity-progress-card
@@ -621,20 +682,24 @@ type: custom:entity-progress-card
 max_value: 255
 ```
 
-- LQI @ 150 (entity) with max_value @ 255 (static value -> max_value = 255)
-- A (entity_a) with max_value (entity_b)
+_Entity example_:
 
-[🔼 Back to top]
+```yaml
+type: custom:entity-progress-card
+····
+max_value:
+  entity: sensor.total_capacity
+  attribute: today  # optional
+```
 
-#### `max_value_attribute`
+_Jinja example_:
 
-[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
-[![Feature OK][Feature-OK]](#compatibility)
-
-> **`max_value_attribute`** [String] _(optional)_
-
-The Home Assistant `max_value`'s attribute to display. `max_value` must be an
-entity. See `attribute`.
+```yaml
+type: custom:entity-progress-card
+····
+max_value:
+  jinja: "{{ states('input_number.ceiling') | float }}"
+```
 
 [🔼 Back to top]
 
@@ -882,6 +947,42 @@ color: rgb(110, 65, 171)
 
 [🔼 Back to top]
 
+#### `icon_animation`
+
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+
+> **`icon_animation`** [String] ➡️ {`none`|`spin`|`pulse`} _(optional, default:
+> `none`)_
+
+Animates the icon while the entity is in an active state — a spinning fan, a
+pulsing media player icon...
+
+The animation only plays while the entity is genuinely "active": it is
+automatically disabled for entities without an active/inactive concept (plain
+sensors, numbers, batteries...) and for entities in a resting state (`off`,
+`idle`, `paused`, `closed`, `locked`, ...). It also respects the system-level
+"Reduce Motion" accessibility setting (see [Accessibility] in the README).
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+entity: fan.living_room
+icon_animation: spin
+```
+
+_Options_:
+
+| option   | description                          |
+| :------- | :----------------------------------- |
+| `none`   | No animation (default)               |
+| `spin`   | Continuous rotation                  |
+| `pulse`  | Gentle scale/opacity pulse           |
+
+[🔼 Back to top]
+
 #### `badge_icon`
 
 [![Card OK][Card-OK]](#compatibility)
@@ -1060,6 +1161,33 @@ _Default value_:
 
 [🔼 Back to top]
 
+#### `bar_segments`
+
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Feature OK][Feature-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+
+> **`bar_segments`** [Integer] _(optional)_
+
+Renders the progress bar as discrete blocks — like battery cells or a signal
+strength indicator — instead of a continuous fill. Both the track and the
+fill are segmented, so gaps are visible in both the empty and filled portions
+of the bar.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.battery
+bar_segments: 10
+```
+
+Works with any bar orientation, size, and color mode/effect. The visual
+editor exposes this as a numeric field.
+
+[🔼 Back to top]
+
 #### `bar_effect`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
@@ -1139,12 +1267,12 @@ when a conflicting effect is active.
 
 [🔼 Back to top]
 
-#### `color_mode`
+#### `bar_color_mode`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 [![Feature OK][Feature-OK]](#compatibility)
 
-> **`color_mode`** [String] ➡️ {`auto`|`segment`|`rainbow`} _(optional, default: `auto`)_
+> **`bar_color_mode`** [String] ➡️ {`auto`|`segment`|`rainbow`} _(optional, default: `auto`)_
 
 Controls how theme colors are applied to the progress bar fill.
 
@@ -1157,11 +1285,18 @@ Controls how theme colors are applied to the progress bar fill.
   transitioning between each zone's color up to the current value.
 
 > [!NOTE]
-> `color_mode` has no effect when `center_zero` is enabled — that mode always
-> uses `auto` coloring. For linear themes (e.g. `light`), zone boundaries are
-> derived automatically by splitting 0–100% into equal segments (5 levels →
-> 0–20%, 20–40%, …). It works with both predefined themes and
-> [`custom_theme`](#theme).
+> `bar_color_mode` has no effect when `center_zero` is enabled — that mode
+> always uses `auto` coloring. For linear themes (e.g. `light`), zone
+> boundaries are derived automatically by splitting 0–100% into equal
+> segments (5 levels → 0–20%, 20–40%, …). It works with both predefined
+> themes and [`custom_theme`](#custom_theme).
+
+> [!NOTE]
+> With [`custom_theme`](#custom_theme), a zone without its own
+> `color`/`bar_color` doesn't render as a flat neutral stop in `segment`/
+> `rainbow` mode — it falls back to the entity's own negotiated color (e.g. a
+> cover is pink open / grey closed) before the card's generic default, the
+> same fallback chain the single-color `auto` mode already uses.
 
 _Examples_:
 
@@ -1169,13 +1304,13 @@ _Examples_:
 type: custom:entity-progress-card
 entity: sensor.battery_level
 theme: optimal_when_high
-color_mode: segment
+bar_color_mode: segment
 ```
 
 ```yaml
 type: custom:entity-progress-card
 entity: sensor.battery_level
-theme:
+custom_theme:
   - min: 0
     max: 20
     color: red
@@ -1185,7 +1320,7 @@ theme:
   - min: 80
     max: 100
     color: orange
-color_mode: rainbow
+bar_color_mode: rainbow
 ```
 
 [🔼 Back to top]
@@ -1606,24 +1741,24 @@ theme: light
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 [![Feature OK][Feature-OK]](#compatibility)
-[![YAML Only][yaml-only]](#yaml-only)
 
 > **`custom_theme`** [List] of [Map] _(optional)_
 
 Defines a list of custom theme rules based on value ranges. Setting this
-variable disables the theme variable. This variable can only be defined in YAML.
+variable disables the `theme` variable.
+
+In the visual editor, a chip selector (Preset / Custom) switches between the
+`theme` dropdown and this list of zones — each zone is its own row with min,
+max, colors and an icon.
 
 _Map definition:_
 
 - min [number] (required): The minimum value for this range.
 - max [number] (required): The maximum value for this range.
-- color [string] (\*): The color of the icon and the progress bar.
-- icon_color [string] (\*): Color specifically for the icon.
-- bar_color [string] (\*): Color specifically for the progress bar.
+- color [string] (optional): The color of the icon and the progress bar.
+- icon_color [string] (optional): Color specifically for the icon, overrides `color`.
+- bar_color [string] (optional): Color specifically for the progress bar, overrides `color`.
 - icon [string] (optional): The icon to display.
-
-(\*): each object in the custom_theme list must contain at least one of this
-following color-related keys.
 
 _Order of Priority for the Icon:_
 
@@ -1654,23 +1789,23 @@ custom_theme:
 
 > [!IMPORTANT]
 >
-> Please ensure your themes follow these guidelines: Each interval must be
-> valid, respecting the rule `min` < `max`. The transitions between ranges
-> should be seamless, with each max connecting smoothly to the next min to avoid
-> gaps or overlaps. If a value falls below the lowest defined interval, the
-> lowest range will be applied, while values exceeding the highest interval will
-> use the highest range.
+> Each zone only needs a valid `min` < `max` to be taken into account — a
+> zone missing `min`/`max`, or with `min` >= `max`, is ignored on its own
+> without affecting the rest of the list. Zones don't need to be contiguous
+> or declared in order: gaps between zones are allowed, and the list is
+> sorted by `min` automatically.
 >
-> This is an advanced feature that may require some trial and error during
-> customization. For a seamless editing experience, if the theme definition is
-> incorrect, the card simulation will revert to a standard configuration and
-> ignore the `custom_theme` definition.
-
-> [!TIP]
+> - Below the lowest zone or above the highest one, the closest edge zone is
+>   used (same as before).
+> - Inside a **gap** between two zones, `custom_theme` disengages entirely
+>   for that value instead of guessing a color: the icon and colors fall
+>   back to [`color`](#color)/[`icon`](#icon) if set, then to the entity's
+>   own default.
+> - If two zones **overlap**, the one with the lowest `min` wins.
 >
-> If you wish to define colors for discontinuous ranges, you will need to create
-> intermediary ranges to ensure continuity, using default colors such as
-> `var(--state-icon-color)` for these filler ranges.
+> This tolerant behavior is what makes the visual editor's row-by-row
+> workflow practical — an unfinished zone (still missing a color, or not
+> yet connected to its neighbor) never breaks the rest of your custom theme.
 
 ```yaml
 # Default settings:
@@ -1901,6 +2036,51 @@ watermark:
   low_color: yellow # 🎨 Color to indicate the low watermark zone
 ```
 
+[🔼 Back to top]
+
+#### `alert_when`
+
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+
+> **`alert_when`** [Map] _(optional)_
+
+Draws attention to the card when the value crosses a threshold — a step
+further than theme colors: the card itself reacts, which is more noticeable
+on a wall-mounted dashboard.
+
+_Map definition_:
+
+- `above` (number): Alert when the value goes above this threshold.
+- `below` (number): Alert when the value goes below this threshold.
+- `color` (string): CSS color used for the alert (name or hex). Defaults to
+  the theme's error color.
+- `highlight` (string): How the alert is displayed.
+  - `border` (default): A pulsing border in the alert color — the motion
+    draws the eye.
+  - `background`: A steady tint of the card background — no motion, calmer.
+
+`above` and `below` are expressed in the entity's native unit, on the same
+scale as `min_value`/`max_value` — like `watermark.low`/`watermark.high`.
+Both can be combined; the alert triggers if either condition is met.
+
+The pulsing border animation is disabled automatically when the system-level
+"Reduce Motion" accessibility setting is on (see [Accessibility] in the
+README) — the border then stays statically colored, so the alert remains
+visible without the motion.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.cpu_temperature
+alert_when:
+  above: 80
+  color: red
+  highlight: border
+```
+
+[🔼 Back to top]
+
 ### Behavior And Actions
 
 Define interactions on tap, double tap, or hold gestures.
@@ -2037,10 +2217,11 @@ available for Templates as well:
 | `bar_size`                   | string (optional)  | `small`      | Size of the progress bar          | [Config Ref.](#bar_size)                   |
 | `bar_position`               | string (optional)  | `default`    | Position of the progress bar      | [Config Ref.](#bar_position)               |
 | `bar_single_line`            | boolean (optional) | `false`      | single-line mode for overlay bars | [Config Ref.](#bar_single_line)            |
+| `bar_segments`               | integer (optional) | —            | Render bar as discrete segments   | [Config Ref.](#bar_segments)               |
 | `bar_effect`                 | string/list/jinja  | —            | Visual effects for the bar        | [Config Ref.](#bar_effect)                 |
-| `color_mode`                 | string (optional)  | `auto`       | Bar fill color rendering mode     | [Config Ref.](#color_mode)                 |
 | `bar_max_width`.             | string (optional)  | -            | Limits the max width of the bar   | [Config Ref.](#bar_max_width)              |
 | `bar_orientation`            | string (optional)  | `ltr`        | Bar direction                     | [Config Ref.](#bar_orientation)            |
+| `icon_animation`             | string (optional)  | `none`       | Animate icon on active state      | [Config Ref.](#icon_animation)             |
 | `force_circular_background`  | boolean (optional) | `false`      | Force icon circle background      | [Config Ref.](#force_circular_background)  |
 | `trend_indicator`            | string (optional)  | `false`      | Displays trend icons.             | [Config Ref.](#trend_indicator)            |
 | `layout`                     | string (optional)  | `horizontal` | Layout direction                  | [Config Ref.](#layout)                     |
@@ -2238,3 +2419,5 @@ _This reference guide is adapted for entity-progress-card._
 [ha-jinja]: https://www.home-assistant.io/docs/configuration/templating/
 [token-color]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/theme.md#token-color
+[Accessibility]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/README.md#accessibility

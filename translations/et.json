@@ -3,17 +3,11 @@
     "msg": {
       "appliedDefaultValue": "Vaikimisi väärtus rakendati automaatselt.",
       "attributeNotFound": "Atribuut ei leitud Home Assistantis.",
-      "discontinuousRange": "Määratud vahemik ei ole katkematu.",
       "entityNotFound": "Objekti ei leitud Home Assistantis.",
       "invalidActionObject": "Tegevuse objekt on vigane või valesti struktureeritud.",
-      "invalidCustomThemeArray": "Kohandatud teema peab olema massiiv.",
-      "invalidCustomThemeEntry": "Üks või mitu kohandatud teema kirjet on vigased.",
       "invalidDecimal": "Väärtus peab olema positiivne täisarv.",
       "invalidEntityId": "Objekti ID on vigane või valesti vormistatud.",
       "invalidEnumValue": "Antud väärtus ei kuulu lubatud valikute hulka.",
-      "invalidIconType": "Määratud ikooni tüüp on vigane või tundmatu.",
-      "invalidMaxValue": "Maksimaalne väärtus on vigane või ületab lubatud piiri.",
-      "invalidMinValue": "Minimaalne väärtus on vigane või alla lubatud piiri.",
       "invalidStateContent": "Seisundi sisu on vigane või valesti vormistatud.",
       "invalidStateContentEntry": "Üks või mitu seisundi sisu kirjet on vigased.",
       "invalidTheme": "Määratud teema on tundmatu. Kasutatakse vaikimisi teemat.",
@@ -23,9 +17,7 @@
       "invalidTypeObject": "Oodati objekti tüüpi väärtust.",
       "invalidTypeString": "Oodati stringi tüüpi väärtust.",
       "invalidUnionType": "Väärtus ei vasta ühelegi lubatud tüübile.",
-      "minGreaterThanMax": "Minimaalne väärtus ei saa olla suurem kui maksimaalne.",
       "missingActionKey": "Tegevuse objektist puudub kohustuslik võti.",
-      "missingColorProperty": "Puudub kohustuslik värvi atribuut.",
       "missingRequiredProperty": "Puudub kohustuslik atribuut."
     }
   },
@@ -45,25 +37,25 @@
       "bar_position": "Riba positsioon",
       "bar_single_line": "Info ühel real (overlay)",
       "bar_size": "Riba suurus",
-      "color_mode": "Värvirežiim",
+      "bar_segments": "Bar segments",
+      "bar_color_mode": "Värvirežiim",
       "center_zero": "Null keskel",
       "center_zero_value": "Keskväärtus",
       "center_zero_growth_percent": "Kasvuprotsent",
       "color": "Ikooni värv",
       "decimal": "Kümnendkoht",
-      "disable_unit": "Näita ühikut",
       "double_tap_action": "Topeltpuudutuse tegevus",
       "entity": "Objekt",
       "force_circular_background": "Sunnitud ümmargune taust",
       "hide_jinja": "Peida (Jinja režiim)",
       "hold_action": "Pikema vajutuse tegevus",
       "icon": "Ikoon",
+      "icon_animation": "Icon animation",
       "icon_double_tap_action": "Ikooni topeltpuudutuse tegevus",
       "icon_hold_action": "Ikooni pika vajutuse tegevus",
       "icon_tap_action": "Ikooni puudutuse tegevus",
       "layout": "Sisu paigutus",
       "max_value": "Maksimaalne väärtus",
-      "max_value_attribute": "Atribuut (max_value)",
       "min_value": "Minimaalne väärtus",
       "name": "Nimi",
       "percent": "Protsent",
@@ -73,9 +65,12 @@
       "show_all_actions": "Kuva kõik toimingud",
       "tap_action": "Puudutuse tegevus",
       "text_shadow": "Lisa teksti vari (overlay)",
+      "theme_mode": "Theme mode",
       "theme": "Teema",
+      "custom_theme": "Custom theme zones",
       "unit": "Ühik",
-      "use_max_entity": "Kasuta objekti maksimaalse väärtuse jaoks",
+      "min_value_mode": "Min value source",
+      "max_value_mode": "Max value source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -83,6 +78,7 @@
       "min_width": "Min width",
       "unit_spacing": "Unit spacing",
       "watermark_toggle": "Watermark",
+      "alert_toggle": "Alert",
       "custom_info": "Kohandatud sekundaarne teave",
       "interpolate": "Värvide interpoleerimine",
       "name_info": "Kohandatud nime teave",
@@ -122,7 +118,7 @@
         "horizontal": "Horisontaalne (vaikimisi)",
         "vertical": "Vertikaalne"
       },
-      "color_mode": {
+      "bar_color_mode": {
         "auto": "Automaatne",
         "segment": "Segmendid",
         "rainbow": "Vikerkaar"
@@ -139,6 +135,7 @@
         "icon": "Ikoon",
         "name": "Nimi",
         "value": "Väärtus",
+        "unit": "Ühik",
         "secondary_info": "Info",
         "progress_bar": "Riba"
       },
@@ -175,6 +172,41 @@
         "low_attribute": "Attribute",
         "high_entity_toggle": "Use entity as high watermark value",
         "high_attribute": "Attribute"
+      },
+      "icon_animation": {
+        "none": "None",
+        "spin": "Spin",
+        "pulse": "Pulse"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "alert_highlight": {
+        "border": "Border",
+        "background": "Background"
+      },
+      "min_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "max_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "theme_mode": {
+        "preset": "Preset",
+        "custom": "Custom"
+      },
+      "min_value": {
+        "attribute": "Attribute"
+      },
+      "max_value": {
+        "attribute": "Attribute"
       }
     }
   }

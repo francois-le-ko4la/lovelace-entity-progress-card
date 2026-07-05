@@ -3,17 +3,11 @@
     "msg": {
       "appliedDefaultValue": "Privzeta vrednost je bila samodejno uporabljena.",
       "attributeNotFound": "Atribut ni bil najden v Home Assistant.",
-      "discontinuousRange": "Določeno območje ni neprekinjeno.",
       "entityNotFound": "Entiteta ni bila najdena v Home Assistant.",
       "invalidActionObject": "Objekt akcije je neveljaven ali napačno strukturiran.",
-      "invalidCustomThemeArray": "Prilagojena tema mora biti polje.",
-      "invalidCustomThemeEntry": "Ena ali več vnosov prilagojene teme je neveljavnih.",
       "invalidDecimal": "Vrednost mora biti pozitivno celo število.",
       "invalidEntityId": "ID entitete je neveljaven ali napačen.",
       "invalidEnumValue": "Podana vrednost ni med dovoljenimi možnostmi.",
-      "invalidIconType": "Podana vrsta ikone je neveljavna ali neznana.",
-      "invalidMaxValue": "Največja vrednost je neveljavna ali presega omejitve.",
-      "invalidMinValue": "Najmanjša vrednost je neveljavna ali pod dovoljenimi mejami.",
       "invalidStateContent": "Vsebina stanja je neveljavna ali napačno oblikovana.",
       "invalidStateContentEntry": "Eden ali več vnosov vsebine stanja je neveljavno.",
       "invalidTheme": "Določena tema je neznana. Uporabila se bo privzeta tema.",
@@ -23,9 +17,7 @@
       "invalidTypeObject": "Pričakovana je bila vrednost tipa objekt.",
       "invalidTypeString": "Pričakovana je bila vrednost tipa niz.",
       "invalidUnionType": "Vrednost ne ustreza nobeni dovoljeni vrsti.",
-      "minGreaterThanMax": "Najmanjša vrednost ne sme biti večja od največje.",
       "missingActionKey": "Manjka obvezni ključ v objektu akcije.",
-      "missingColorProperty": "Manjka obvezna lastnost barve.",
       "missingRequiredProperty": "Manjka obvezna lastnost."
     }
   },
@@ -45,25 +37,25 @@
       "bar_position": "Pozicija vrstice",
       "bar_single_line": "Informacije v eni vrstici (overlay)",
       "bar_size": "Velikost vrstice",
-      "color_mode": "Barvni način",
+      "bar_segments": "Bar segments",
+      "bar_color_mode": "Barvni način",
       "center_zero": "Ni ničle na sredini",
       "center_zero_value": "Srednja vrednost",
       "center_zero_growth_percent": "Odstotek rasti",
       "color": "Barva ikone",
       "decimal": "Decimalno",
-      "disable_unit": "Prikaži enoto",
       "double_tap_action": "Akcija ob dvojni tap",
       "entity": "Entiteta",
       "force_circular_background": "Prisili krožno ozadje",
       "hide_jinja": "Skrij (način Jinja)",
       "hold_action": "Akcija ob dolgem pritisku",
       "icon": "Ikona",
+      "icon_animation": "Icon animation",
       "icon_double_tap_action": "Akcija ob dvojni tap ikone",
       "icon_hold_action": "Akcija ob dolgem pritisku ikone",
       "icon_tap_action": "Akcija ob tap ikone",
       "layout": "Postavitev vsebine",
       "max_value": "Največja vrednost",
-      "max_value_attribute": "Atribut (max_value)",
       "min_value": "Najmanjša vrednost",
       "name": "Ime",
       "percent": "Odstotek",
@@ -73,9 +65,12 @@
       "show_all_actions": "Prikaži vsa dejanja",
       "tap_action": "Akcija ob tap",
       "text_shadow": "Dodaj senco besedila (overlay)",
+      "theme_mode": "Theme mode",
       "theme": "Tema",
+      "custom_theme": "Custom theme zones",
       "unit": "Enota",
-      "use_max_entity": "Uporabi entiteto za max vrednost",
+      "min_value_mode": "Min value source",
+      "max_value_mode": "Max value source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -83,6 +78,7 @@
       "min_width": "Min width",
       "unit_spacing": "Unit spacing",
       "watermark_toggle": "Watermark",
+      "alert_toggle": "Alert",
       "custom_info": "Prilagojena sekundarna informacija",
       "interpolate": "Interpolacija barv",
       "name_info": "Prilagojena informacija o imenu",
@@ -122,7 +118,7 @@
         "horizontal": "Horizontalno (privzeto)",
         "vertical": "Vertikalno"
       },
-      "color_mode": {
+      "bar_color_mode": {
         "auto": "Samodejno",
         "segment": "Segmenti",
         "rainbow": "Mavrica"
@@ -139,6 +135,7 @@
         "icon": "Ikona",
         "name": "Ime",
         "value": "Vrednost",
+        "unit": "Enota",
         "secondary_info": "Info",
         "progress_bar": "Vrstica"
       },
@@ -175,6 +172,41 @@
         "low_attribute": "Attribute",
         "high_entity_toggle": "Use entity as high watermark value",
         "high_attribute": "Attribute"
+      },
+      "icon_animation": {
+        "none": "None",
+        "spin": "Spin",
+        "pulse": "Pulse"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "alert_highlight": {
+        "border": "Border",
+        "background": "Background"
+      },
+      "min_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "max_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "theme_mode": {
+        "preset": "Preset",
+        "custom": "Custom"
+      },
+      "min_value": {
+        "attribute": "Attribute"
+      },
+      "max_value": {
+        "attribute": "Attribute"
       }
     }
   }

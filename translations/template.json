@@ -3,17 +3,11 @@
     "msg": {
       "appliedDefaultValue": "",
       "attributeNotFound": "",
-      "discontinuousRange": "",
       "entityNotFound": "",
       "invalidActionObject": "",
-      "invalidCustomThemeArray": "",
-      "invalidCustomThemeEntry": "",
       "invalidDecimal": "",
       "invalidEntityId": "",
       "invalidEnumValue": "",
-      "invalidIconType": "",
-      "invalidMaxValue": "",
-      "invalidMinValue": "",
       "invalidStateContent": "",
       "invalidStateContentEntry": "",
       "invalidTheme": "",
@@ -23,9 +17,7 @@
       "invalidTypeObject": "",
       "invalidTypeString": "",
       "invalidUnionType": "",
-      "minGreaterThanMax": "",
       "missingActionKey": "",
-      "missingColorProperty": "",
       "missingRequiredProperty": ""
     }
   },
@@ -45,25 +37,25 @@
       "bar_position": "",
       "bar_single_line": "",
       "bar_size": "",
-      "color_mode": "Färgläge",
+      "bar_segments": "Bar segments",
+      "bar_color_mode": "Färgläge",
       "center_zero": "ศูนย์ที่กึ่งกลาง",
       "center_zero_value": "",
       "center_zero_growth_percent": "",
       "color": "",
       "decimal": "",
-      "disable_unit": "",
       "double_tap_action": "",
       "entity": "",
       "force_circular_background": "",
       "hide_jinja": "",
       "hold_action": "",
       "icon": "",
+      "icon_animation": "Icon animation",
       "icon_double_tap_action": "",
       "icon_hold_action": "",
       "icon_tap_action": "",
       "layout": "",
       "max_value": "",
-      "max_value_attribute": "",
       "min_value": "",
       "name": "",
       "percent": "",
@@ -73,9 +65,12 @@
       "show_all_actions": "Show all interactions",
       "tap_action": "",
       "text_shadow": "",
+      "theme_mode": "Theme mode",
       "theme": "",
+      "custom_theme": "Custom theme zones",
       "unit": "",
-      "use_max_entity": "",
+      "min_value_mode": "Min value source",
+      "max_value_mode": "Max value source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -83,6 +78,7 @@
       "min_width": "Min width",
       "unit_spacing": "Unit spacing",
       "watermark_toggle": "Watermark",
+      "alert_toggle": "Alert",
       "custom_info": "Custom secondary info",
       "interpolate": "Interpolate colors",
       "name_info": "Custom name info",
@@ -122,7 +118,7 @@
         "horizontal": "",
         "vertical": ""
       },
-      "color_mode": {
+      "bar_color_mode": {
         "auto": "Auto",
         "segment": "Segment",
         "rainbow": "Regnbåge"
@@ -139,6 +135,7 @@
         "icon": "Ikon",
         "name": "Namn",
         "value": "Värde",
+        "unit": "Unit",
         "secondary_info": "Info",
         "progress_bar": "Stapel"
       },
@@ -175,6 +172,41 @@
         "low_attribute": "Attribute",
         "high_entity_toggle": "Use entity as high watermark value",
         "high_attribute": "Attribute"
+      },
+      "icon_animation": {
+        "none": "None",
+        "spin": "Spin",
+        "pulse": "Pulse"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "alert_highlight": {
+        "border": "Border",
+        "background": "Background"
+      },
+      "min_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "max_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "theme_mode": {
+        "preset": "Preset",
+        "custom": "Custom"
+      },
+      "min_value": {
+        "attribute": "Attribute"
+      },
+      "max_value": {
+        "attribute": "Attribute"
       }
     }
   }

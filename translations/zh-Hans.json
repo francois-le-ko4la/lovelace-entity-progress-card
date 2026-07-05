@@ -3,17 +3,11 @@
     "msg": {
       "appliedDefaultValue": "默认值已自动应用。",
       "attributeNotFound": "在 Home Assistant 中未找到属性。",
-      "discontinuousRange": "定义的范围不连续。",
       "entityNotFound": "在 Home Assistant 中未找到实体。",
       "invalidActionObject": "操作对象无效或结构错误。",
-      "invalidCustomThemeArray": "自定义主题必须为数组。",
-      "invalidCustomThemeEntry": "自定义主题中的一项或多项无效。",
       "invalidDecimal": "值必须为有效的小数。",
       "invalidEntityId": "实体 ID 无效或格式错误。",
       "invalidEnumValue": "提供的值不在允许选项内。",
-      "invalidIconType": "指定的图标类型无效或无法识别。",
-      "invalidMaxValue": "最大值无效或超出允许范围。",
-      "invalidMinValue": "最小值无效或低于允许范围。",
       "invalidStateContent": "状态内容无效或格式错误。",
       "invalidStateContentEntry": "状态内容中的一项或多项无效。",
       "invalidTheme": "指定的主题未知，将使用默认主题。",
@@ -23,9 +17,7 @@
       "invalidTypeObject": "应为对象类型的值。",
       "invalidTypeString": "应为字符串类型的值。",
       "invalidUnionType": "值不符合任何允许类型。",
-      "minGreaterThanMax": "最小值不能大于最大值。",
       "missingActionKey": "操作对象缺少必需的键。",
-      "missingColorProperty": "缺少必需的颜色属性。",
       "missingRequiredProperty": "缺少必需的属性。"
     }
   },
@@ -45,25 +37,25 @@
       "bar_position": "进度条位置",
       "bar_single_line": "单行信息（覆盖显示）",
       "bar_size": "进度条大小",
-      "color_mode": "颜色模式",
+      "bar_segments": "Bar segments",
+      "bar_color_mode": "颜色模式",
       "center_zero": "中心為零",
       "center_zero_value": "中心值",
       "center_zero_growth_percent": "增长百分比",
       "color": "主色",
       "decimal": "小数",
-      "disable_unit": "显示单位",
       "double_tap_action": "双击动作",
       "entity": "实体",
       "force_circular_background": "强制圆形背景",
       "hide_jinja": "隐藏 (Jinja 模式)",
       "hold_action": "长按动作",
       "icon": "图标",
+      "icon_animation": "Icon animation",
       "icon_double_tap_action": "图标双击动作",
       "icon_hold_action": "图标长按动作",
       "icon_tap_action": "图标点击动作",
       "layout": "内容布局",
       "max_value": "最大值",
-      "max_value_attribute": "属性（最大值）",
       "min_value": "最小值",
       "name": "名称",
       "percent": "百分比",
@@ -73,9 +65,12 @@
       "show_all_actions": "显示所有交互",
       "tap_action": "点击动作",
       "text_shadow": "添加文本阴影（overlay）",
+      "theme_mode": "Theme mode",
       "theme": "主题",
+      "custom_theme": "Custom theme zones",
       "unit": "单位",
-      "use_max_entity": "使用实体作为最大值",
+      "min_value_mode": "Min value source",
+      "max_value_mode": "Max value source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -83,6 +78,7 @@
       "min_width": "Min width",
       "unit_spacing": "Unit spacing",
       "watermark_toggle": "Watermark",
+      "alert_toggle": "Alert",
       "custom_info": "自定义次要信息",
       "interpolate": "颜色插值",
       "name_info": "自定义名称信息",
@@ -122,7 +118,7 @@
         "horizontal": "水平（默认）",
         "vertical": "垂直"
       },
-      "color_mode": {
+      "bar_color_mode": {
         "auto": "自动",
         "segment": "分段",
         "rainbow": "彩虹"
@@ -139,6 +135,7 @@
         "icon": "图标",
         "name": "名称",
         "value": "数值",
+        "unit": "单位",
         "secondary_info": "补充信息",
         "progress_bar": "进度条"
       },
@@ -175,6 +172,41 @@
         "low_attribute": "Attribute",
         "high_entity_toggle": "Use entity as high watermark value",
         "high_attribute": "Attribute"
+      },
+      "icon_animation": {
+        "none": "None",
+        "spin": "Spin",
+        "pulse": "Pulse"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "alert_highlight": {
+        "border": "Border",
+        "background": "Background"
+      },
+      "min_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "max_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "theme_mode": {
+        "preset": "Preset",
+        "custom": "Custom"
+      },
+      "min_value": {
+        "attribute": "Attribute"
+      },
+      "max_value": {
+        "attribute": "Attribute"
       }
     }
   }

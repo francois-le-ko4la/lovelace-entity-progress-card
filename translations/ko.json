@@ -3,17 +3,11 @@
     "msg": {
       "appliedDefaultValue": "기본값이 자동으로 적용되었습니다.",
       "attributeNotFound": "Home Assistant에서 속성을 찾을 수 없습니다.",
-      "discontinuousRange": "정의된 범위가 연속적이지 않습니다.",
       "entityNotFound": "Home Assistant에서 엔티티를 찾을 수 없습니다.",
       "invalidActionObject": "액션 객체가 잘못되었거나 구조가 올바르지 않습니다.",
-      "invalidCustomThemeArray": "사용자 정의 테마는 배열이어야 합니다.",
-      "invalidCustomThemeEntry": "사용자 정의 테마에 하나 이상의 잘못된 항목이 있습니다.",
       "invalidDecimal": "값은 유효한 소수여야 합니다.",
       "invalidEntityId": "엔티티 ID가 잘못되었거나 형식이 잘못되었습니다.",
       "invalidEnumValue": "제공된 값이 허용된 옵션 중 하나가 아닙니다.",
-      "invalidIconType": "지정된 아이콘 유형이 잘못되었거나 인식되지 않습니다.",
-      "invalidMaxValue": "최대값이 유효하지 않거나 허용된 범위를 초과합니다.",
-      "invalidMinValue": "최소값이 유효하지 않거나 허용된 범위보다 작습니다.",
       "invalidStateContent": "상태 콘텐츠가 잘못되었거나 형식이 잘못되었습니다.",
       "invalidStateContentEntry": "상태 콘텐츠에 하나 이상의 잘못된 항목이 있습니다.",
       "invalidTheme": "지정된 테마를 알 수 없습니다. 기본 테마가 사용됩니다.",
@@ -23,9 +17,7 @@
       "invalidTypeObject": "객체 유형의 값이 필요합니다.",
       "invalidTypeString": "문자열 유형의 값이 필요합니다.",
       "invalidUnionType": "값이 허용된 유형 중 어떤 것과도 일치하지 않습니다.",
-      "minGreaterThanMax": "최소값은 최대값보다 클 수 없습니다.",
       "missingActionKey": "액션 객체에 필수 키가 없습니다.",
-      "missingColorProperty": "필수 색상 속성이 누락되었습니다.",
       "missingRequiredProperty": "필수 속성이 누락되었습니다."
     }
   },
@@ -45,25 +37,25 @@
       "bar_position": "바 위치",
       "bar_single_line": "한 줄로 정보 표시 (오버레이)",
       "bar_size": "바 크기",
-      "color_mode": "색상 모드",
+      "bar_segments": "Bar segments",
+      "bar_color_mode": "색상 모드",
       "center_zero": "중앙에 영점",
       "center_zero_value": "중앙값",
       "center_zero_growth_percent": "성장률",
       "color": "기본 색상",
       "decimal": "소수점",
-      "disable_unit": "단위 표시",
       "double_tap_action": "더블 탭 시 동작",
       "entity": "엔티티",
       "force_circular_background": "원형 배경 강제 적용",
       "hide_jinja": "숨기기 (Jinja 모드)",
       "hold_action": "길게 누를 시 동작",
       "icon": "아이콘",
+      "icon_animation": "Icon animation",
       "icon_double_tap_action": "아이콘 더블 탭 시 동작",
       "icon_hold_action": "아이콘 길게 누를 시 동작",
       "icon_tap_action": "아이콘 탭 시 동작",
       "layout": "콘텐츠 레이아웃",
       "max_value": "최대값",
-      "max_value_attribute": "속성 (최대값)",
       "min_value": "최소값",
       "name": "이름",
       "percent": "퍼센트",
@@ -73,9 +65,12 @@
       "show_all_actions": "모든 액션 표시",
       "tap_action": "짧게 탭 시 동작",
       "text_shadow": "텍스트 그림자 추가 (오버레이)",
+      "theme_mode": "Theme mode",
       "theme": "테마",
+      "custom_theme": "Custom theme zones",
       "unit": "단위",
-      "use_max_entity": "최대값에 엔티티 사용",
+      "min_value_mode": "Min value source",
+      "max_value_mode": "Max value source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -83,6 +78,7 @@
       "min_width": "Min width",
       "unit_spacing": "Unit spacing",
       "watermark_toggle": "Watermark",
+      "alert_toggle": "Alert",
       "custom_info": "사용자 정의 보조 정보",
       "interpolate": "색상 보간",
       "name_info": "사용자 정의 이름 정보",
@@ -122,7 +118,7 @@
         "temperature": "온도",
         "voc": "VOC"
       },
-      "color_mode": {
+      "bar_color_mode": {
         "auto": "자동",
         "segment": "세그먼트",
         "rainbow": "무지개"
@@ -139,6 +135,7 @@
         "icon": "아이콘",
         "name": "이름",
         "value": "값",
+        "unit": "단위",
         "secondary_info": "부가 정보",
         "progress_bar": "바"
       },
@@ -175,6 +172,41 @@
         "low_attribute": "Attribute",
         "high_entity_toggle": "Use entity as high watermark value",
         "high_attribute": "Attribute"
+      },
+      "icon_animation": {
+        "none": "None",
+        "spin": "Spin",
+        "pulse": "Pulse"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "alert_highlight": {
+        "border": "Border",
+        "background": "Background"
+      },
+      "min_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "max_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "theme_mode": {
+        "preset": "Preset",
+        "custom": "Custom"
+      },
+      "min_value": {
+        "attribute": "Attribute"
+      },
+      "max_value": {
+        "attribute": "Attribute"
       }
     }
   }

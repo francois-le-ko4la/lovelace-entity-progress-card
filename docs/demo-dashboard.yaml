@@ -1,0 +1,131 @@
+# =============================================================================
+# Entity Progress Card — Demo dashboard
+# =============================================================================
+# 1. Create the demo helpers below (Settings → Devices & services → Helpers,
+#    or paste the `# --- helpers ---` block into your configuration.yaml).
+# 2. Create a new dashboard (Settings → Dashboards → Add) in YAML mode and
+#    paste the `views:` block, or add the cards one by one to any dashboard.
+# 3. Move the input_number sliders to see the cards react.
+#
+# --- helpers (configuration.yaml) ----------------------------------------
+# input_number:
+#   epb_demo_battery:
+#     name: Demo battery
+#     min: 0
+#     max: 100
+#     step: 1
+#     initial: 42
+#     unit_of_measurement: "%"
+#     icon: mdi:battery-50
+#   epb_demo_temperature:
+#     name: Demo temperature
+#     min: -20
+#     max: 40
+#     step: 0.5
+#     initial: 21
+#     unit_of_measurement: "°C"
+#     icon: mdi:thermometer
+#   epb_demo_power:
+#     name: Demo power
+#     min: -3000
+#     max: 3000
+#     step: 50
+#     initial: -750
+#     unit_of_measurement: "W"
+#     icon: mdi:transmission-tower
+# timer:
+#   epb_demo_timer:
+#     name: Demo timer
+#     duration: "00:05:00"
+# --------------------------------------------------------------------------
+
+views:
+  - title: Entity Progress Card demo
+    type: sections
+    max_columns: 3
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Basics
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: Zero config
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: Theme + segments
+            theme: optimal_when_high
+            bar_color_mode: segment
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: Glass & radius
+            bar_effect:
+              - radius
+              - glass
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: Shimmer + gradient
+            bar_effect:
+              - gradient
+              - shimmer
+
+      - type: grid
+        cards:
+          - type: heading
+            heading: Layouts & watermarks
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: Vertical
+            layout: vertical
+            bar_size: large
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: Watermarks
+            watermark:
+              low: 20
+              low_color: red
+              high: 80
+              high_color: green
+              type: line
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_power
+            name: Center zero (grid power)
+            center_zero: true
+            min_value: -3000
+            max_value: 3000
+          - type: custom:entity-progress-card
+            entity: timer.epb_demo_timer
+            name: Timer (start it!)
+            tap_action:
+              action: call-service
+              service: timer.start
+              target:
+                entity_id: timer.epb_demo_timer
+
+      - type: grid
+        cards:
+          - type: heading
+            heading: Templates, badge & tile feature
+          - type: custom:entity-progress-card-template
+            entity: input_number.epb_demo_temperature
+            name: "{{ state_attr(entity, 'friendly_name') }}"
+            secondary: >-
+              {% set t = states(entity) | float %}
+              {% if t > 25 %}<span style="color: red">{{ t }} °C — hot</span>
+              {% else %}<span style="color: skyblue">{{ t }} °C — cool</span>
+              {% endif %}
+            percent: >-
+              {{ ((states(entity) | float + 20) / 60 * 100) | round(1) }}
+            icon: >-
+              {% if states(entity) | float > 25 %}mdi:thermometer-alert
+              {% else %}mdi:thermometer{% endif %}
+          - type: tile
+            entity: input_number.epb_demo_battery
+            features:
+              - type: custom:entity-progress-feature
+                entity: input_number.epb_demo_battery
+                bar_position: bottom
+    badges:
+      - type: custom:entity-progress-badge
+        entity: input_number.epb_demo_battery
+        theme: optimal_when_high

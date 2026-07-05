@@ -416,6 +416,7 @@ const CARD = {
         name: { label: 'name', class: 'hide-name' },
         secondary_info: { label: 'secondary_info', class: 'hide-secondary-info' },
         value: { label: 'value' },
+        unit: { label: 'unit' },
         progress_bar: { label: 'progress_bar', class: 'hide-progress-bar' },
       },
       frameless: { class: 'frameless' },
@@ -441,10 +442,6 @@ const CARD = {
   theme: {
     default: '**CUSTOM**',
     battery: { label: 'battery', icon: 'battery' },
-    customTheme: {
-      expectedKeys: ['min', 'max'],
-      colorKeys: ['color', 'icon_color', 'bar_color'],
-    },
   },
   network: {
     ready: 'ws-ready',
@@ -476,7 +473,6 @@ CARD.config.defaults = {
   interpolate: false,
   bar_size: CARD.style.bar.sizeOptions.small.label,
   bar_color: null,
-  color_mode: 'auto',
   bar_effect: [],
   bar_orientation: null,
   reverse: null,
@@ -619,17 +615,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'تم تطبيق قيمة افتراضية تلقائيًا.',
         attributeNotFound: 'لم يتم العثور على الخاصية في Home Assistant.',
-        discontinuousRange: 'النطاق المحدد غير متصل.',
         entityNotFound: 'لم يتم العثور على الكيان في Home Assistant.',
         invalidActionObject: 'كائن الإجراء غير صالح أو غير منظم بشكل صحيح.',
-        invalidCustomThemeArray: 'يجب أن يكون السمة المخصصة عبارة عن مصفوفة.',
-        invalidCustomThemeEntry: 'إدخال أو أكثر في السمة المخصصة غير صالحة.',
         invalidDecimal: 'يجب أن تكون القيمة رقمًا عشريًا صحيحًا.',
         invalidEntityId: 'معرّف الكيان غير صالح أو به خلل.',
         invalidEnumValue: 'القيمة المُقدمة ليست من الخيارات المسموح بها.',
-        invalidIconType: 'نوع الأيقونة المحدد غير صالح أو غير معروف.',
-        invalidMaxValue: 'القيمة القصوى غير صالحة أو أعلى من الحد المسموح به.',
-        invalidMinValue: 'القيمة الدنيا غير صالحة أو أقل من الحدود المسموح بها.',
         invalidStateContent: 'محتوى الحالة غير صالح أو معيب.',
         invalidStateContentEntry: 'إدخال أو أكثر في محتوى الحالة غير صالحة.',
         invalidTheme: 'السمة المحددة غير معروفة. سيتم استخدام السمة الافتراضية.',
@@ -639,9 +629,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'كان من المتوقع قيمة من نوع كائن.',
         invalidTypeString: 'كان من المتوقع قيمة من نوع سلسلة.',
         invalidUnionType: 'القيمة لا تطابق أي نوع مسموح.',
-        minGreaterThanMax: 'لا يمكن أن تكون القيمة الدنيا أكبر من القيمة القصوى.',
         missingActionKey: 'مفتاح مطلوب مفقود في كائن الإجراء.',
-        missingColorProperty: 'خاصية اللون المطلوبة مفقودة.',
         missingRequiredProperty: 'خاصية مطلوبة مفقودة.'
       }
     },
@@ -661,25 +649,25 @@ const TRANSLATIONS = {
         bar_position: 'موضع الشريط',
         bar_single_line: 'معلومات في سطر واحد (تراكب)',
         bar_size: 'حجم الشريط',
-        color_mode: 'وضع اللون',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'وضع اللون',
         center_zero: 'صفر في الوسط',
         center_zero_value: 'قيمة المركز',
         center_zero_growth_percent: 'نسبة النمو',
         color: 'اللون الأساسي',
         decimal: 'عشري',
-        disable_unit: 'عرض الوحدة',
         double_tap_action: 'الإجراء عند النقر المزدوج',
         entity: 'الكيان',
         force_circular_background: 'فرض خلفية دائرية',
         hide_jinja: 'إخفاء (وضع Jinja)',
         hold_action: 'الإجراء عند الضغط المطول',
         icon: 'أيقونة',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'الإجراء عند النقر المزدوج على الأيقونة',
         icon_hold_action: 'الإجراء عند الضغط المطول على الأيقونة',
         icon_tap_action: 'الإجراء عند النقر على الأيقونة',
         layout: 'تخطيط المحتوى',
         max_value: 'القيمة القصوى',
-        max_value_attribute: 'السمة (max_value)',
         min_value: 'القيمة الدنيا',
         name: 'الاسم',
         percent: 'النسبة المئوية',
@@ -689,9 +677,12 @@ const TRANSLATIONS = {
         show_all_actions: 'إظهار جميع الإجراءات',
         tap_action: 'الإجراء عند النقر القصير',
         text_shadow: 'إضافة ظل للنص (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'السمة',
+        custom_theme: 'Custom theme zones',
         unit: 'الوحدة',
-        use_max_entity: 'استخدام الكيان للقيمة القصوى',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -699,6 +690,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'معلومات إضافية (ثانوية)',
         interpolate: 'تدرج الألوان',
         name_info: 'معلومات إضافية (الاسم)',
@@ -738,7 +730,7 @@ const TRANSLATIONS = {
           horizontal: 'أفقي (افتراضي)',
           vertical: 'رأسي'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'تلقائي',
           segment: 'مقطعي',
           rainbow: 'قوس قزح'
@@ -755,6 +747,7 @@ const TRANSLATIONS = {
           icon: 'أيقونة',
           name: 'الاسم',
           value: 'القيمة',
+          unit: 'الوحدة',
           secondary_info: 'المعلومات',
           progress_bar: 'الشريط'
         },
@@ -791,6 +784,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -800,17 +828,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'ডিফল্ট মান স্বয়ংক্রিয়ভাবে প্রয়োগ করা হয়েছে।',
         attributeNotFound: 'HA তে বৈশিষ্ট্য পাওয়া যায়নি।',
-        discontinuousRange: 'নির্ধারিত পরিসর অবিচ্ছিন্ন নয়।',
         entityNotFound: 'HA তে সত্তা পাওয়া যায়নি।',
         invalidActionObject: 'অ্যাকশন অবজেক্ট অবৈধ বা ভুলভাবে গঠিত।',
-        invalidCustomThemeArray: 'কাস্টম থিম একটি অ্যারে হতে হবে।',
-        invalidCustomThemeEntry: 'কাস্টম থিমে একটি বা একাধিক এন্ট্রি অবৈধ।',
         invalidDecimal: 'মানটি একটি বৈধ দশমিক সংখ্যা হতে হবে।',
         invalidEntityId: 'সত্তার আইডি অবৈধ বা ভুলভাবে গঠিত।',
         invalidEnumValue: 'প্রদত্ত মানটি অনুমোদিত বিকল্পগুলির মধ্যে একটি নয়।',
-        invalidIconType: 'নির্দিষ্ট আইকন প্রকার অবৈধ বা অচেনা।',
-        invalidMaxValue: 'সর্বোচ্চ মান অবৈধ বা অনুমোদিত সীমার উপরে।',
-        invalidMinValue: 'ন্যূনতম মান অবৈধ বা অনুমোদিত সীমার নিচে।',
         invalidStateContent: 'অবস্থার বিষয়বস্তু অবৈধ বা ভুলভাবে গঠিত।',
         invalidStateContentEntry: 'অবস্থার বিষয়বস্তুতে একটি বা একাধিক এন্ট্রি অবৈধ।',
         invalidTheme: 'নির্দিষ্ট থিম অজানা। ডিফল্ট থিম ব্যবহার করা হবে।',
@@ -820,9 +842,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'অবজেক্ট ধরনের একটি মান প্রত্যাশিত।',
         invalidTypeString: 'স্ট্রিং ধরনের একটি মান প্রত্যাশিত।',
         invalidUnionType: 'মানটি অনুমোদিত ধরনগুলির কোনোটির সাথে মেলে না।',
-        minGreaterThanMax: 'ন্যূনতম মান সর্বোচ্চ মানের চেয়ে বড় হতে পারে না।',
         missingActionKey: 'অ্যাকশন অবজেক্টে একটি প্রয়োজনীয় কী অনুপস্থিত।',
-        missingColorProperty: 'একটি প্রয়োজনীয় রঙের বৈশিষ্ট্য অনুপস্থিত।',
         missingRequiredProperty: 'প্রয়োজনীয় বৈশিষ্ট্য অনুপস্থিত।'
       }
     },
@@ -842,25 +862,25 @@ const TRANSLATIONS = {
         bar_position: 'বারের অবস্থান',
         bar_single_line: 'এক লাইনে তথ্য (ওভারলে)',
         bar_size: 'বারের আকার',
-        color_mode: 'রঙের মোড',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'রঙের মোড',
         center_zero: 'মাঝে শূন্য',
         center_zero_value: 'কেন্দ্রীয় মান',
         center_zero_growth_percent: 'প্রবৃদ্ধির শতাংশ',
         color: 'প্রাথমিক রঙ',
         decimal: 'দশমিক',
-        disable_unit: 'একক দেখান',
         double_tap_action: 'ডাবল ট্যাপ আচরণ',
         entity: 'সত্তা',
         force_circular_background: 'বৃত্তাকার পটভূমি জোর করুন',
         hide_jinja: 'লুকান (Jinja মোড)',
         hold_action: 'হোল্ড আচরণ',
         icon: 'আইকন',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'আইকন ডাবল ট্যাপ আচরণ',
         icon_hold_action: 'আইকন হোল্ড আচরণ',
         icon_tap_action: 'আইকন ট্যাপ আচরণ',
         layout: 'বিষয়বস্তুর বিন্যাস',
         max_value: 'সর্বোচ্চ মান',
-        max_value_attribute: 'বৈশিষ্ট্য (max_value)',
         min_value: 'ন্যূনতম মান',
         name: 'নাম',
         percent: 'শতাংশ',
@@ -870,9 +890,12 @@ const TRANSLATIONS = {
         show_all_actions: 'সব অ্যাকশন দেখান',
         tap_action: 'ট্যাপ আচরণ',
         text_shadow: 'টেক্সটে ছায়া যোগ করুন (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'থিম',
+        custom_theme: 'Custom theme zones',
         unit: 'একক',
-        use_max_entity: 'সর্বোচ্চ মানের জন্য সত্তা ব্যবহার করুন',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -880,6 +903,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'কাস্টম সেকেন্ডারি তথ্য',
         interpolate: 'রঙ ইন্টারপোলেশন',
         name_info: 'কাস্টম নাম তথ্য',
@@ -919,7 +943,7 @@ const TRANSLATIONS = {
           horizontal: 'অনুভূমিক (ডিফল্ট)',
           vertical: 'উল্লম্ব'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'স্বয়ংক্রিয়',
           segment: 'বিভাগ',
           rainbow: 'রেইনবো'
@@ -936,6 +960,7 @@ const TRANSLATIONS = {
           icon: 'আইকন',
           name: 'নাম',
           value: 'মান',
+          unit: 'একক',
           secondary_info: 'তথ্য',
           progress_bar: 'বার'
         },
@@ -972,6 +997,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -981,17 +1041,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'S\'ha aplicat automàticament un valor per defecte.',
         attributeNotFound: 'No s\'ha trobat l\'atribut a Home Assistant.',
-        discontinuousRange: 'El rang definit és discontinu.',
         entityNotFound: 'No s\'ha trobat l\'entitat a Home Assistant.',
         invalidActionObject: 'L\'objecte d\'acció és invàlid o té una estructura incorrecta.',
-        invalidCustomThemeArray: 'El tema personalitzat ha de ser un array.',
-        invalidCustomThemeEntry: 'Una o més entrades del tema personalitzat són invàlides.',
         invalidDecimal: 'El valor ha de ser un decimal vàlid.',
         invalidEntityId: 'L\'ID de l\'entitat no és vàlid o té un format incorrecte.',
         invalidEnumValue: 'El valor proporcionat no és una opció vàlida.',
-        invalidIconType: 'El tipus d\'icona especificat és invàlid o desconegut.',
-        invalidMaxValue: 'El valor màxim és invàlid o supera el límit permès.',
-        invalidMinValue: 'El valor mínim és invàlid o està per sota del límit permès.',
         invalidStateContent: 'El contingut de l\'estat és invàlid o té un format incorrecte.',
         invalidStateContentEntry: 'Una o més entrades del contingut de l\'estat són invàlides.',
         invalidTheme: 'El tema especificat és desconegut. S\'utilitzarà el tema per defecte.',
@@ -1001,9 +1055,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'S\'esperava un valor de tipus objecte.',
         invalidTypeString: 'S\'esperava un valor de tipus cadena.',
         invalidUnionType: 'El valor no coincideix amb cap dels tipus permesos.',
-        minGreaterThanMax: 'El valor mínim no pot ser més gran que el valor màxim.',
         missingActionKey: 'Falta una clau obligatòria a l\'objecte d\'acció.',
-        missingColorProperty: 'Falta una propietat de color obligatòria.',
         missingRequiredProperty: 'Falta una propietat obligatòria.'
       }
     },
@@ -1023,25 +1075,25 @@ const TRANSLATIONS = {
         bar_position: 'Posició de la barra',
         bar_single_line: 'Informació en una sola línia (overlay)',
         bar_size: 'Mida de la barra',
-        color_mode: 'Mode de color',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Mode de color',
         center_zero: 'Zero al centre',
         center_zero_value: 'Valor de centratge',
         center_zero_growth_percent: 'Percentatge de creixement',
         color: 'Color principal',
         decimal: 'Decimal',
-        disable_unit: 'Mostra la unitat',
         double_tap_action: 'Acció al doble tocar',
         entity: 'Entitat',
         force_circular_background: 'Forçar fons circular',
         hide_jinja: 'Amaga (mode Jinja)',
         hold_action: 'Acció en mantenir premut',
         icon: 'Icona',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Acció al doble tocar la icona',
         icon_hold_action: 'Acció en mantenir premuda la icona',
         icon_tap_action: 'Acció al tocar la icona',
         layout: 'Disposició del contingut',
         max_value: 'Valor màxim',
-        max_value_attribute: 'Atribut (valor màxim)',
         min_value: 'Valor mínim',
         name: 'Nom',
         percent: 'Percentatge',
@@ -1051,9 +1103,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Mostra totes les accions',
         tap_action: 'Acció al tocar breument',
         text_shadow: 'Afegir ombra al text (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Tema',
+        custom_theme: 'Custom theme zones',
         unit: 'Unitat',
-        use_max_entity: 'Usar una entitat com a valor màxim',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -1061,6 +1116,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Informació addicional (secundària)',
         interpolate: 'Interpolar colors',
         name_info: 'Informació addicional (nom)',
@@ -1100,7 +1156,7 @@ const TRANSLATIONS = {
           horizontal: 'Horitzontal (predeterminada)',
           vertical: 'Vertical'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Automàtic',
           segment: 'Segments',
           rainbow: 'Arc de Sant Martí'
@@ -1117,6 +1173,7 @@ const TRANSLATIONS = {
           icon: 'Icona',
           name: 'Nom',
           value: 'Valor',
+          unit: 'Unitat',
           secondary_info: 'Info',
           progress_bar: 'Barra'
         },
@@ -1153,6 +1210,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -1162,17 +1254,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Výchozí hodnota byla automaticky aplikována.',
         attributeNotFound: 'Atribut nebyl nalezen v HA.',
-        discontinuousRange: 'Definovaný rozsah je nespojitý.',
         entityNotFound: 'Entita nebyla nalezena v HA.',
         invalidActionObject: 'Objekt akce je neplatný nebo špatně strukturovaný.',
-        invalidCustomThemeArray: 'Vlastní motiv musí být pole.',
-        invalidCustomThemeEntry: 'Jedna nebo více položek ve vlastním motivu je neplatných.',
         invalidDecimal: 'Hodnota musí být platné desítkové číslo.',
         invalidEntityId: 'ID entity je neplatné nebo špatně formátované.',
         invalidEnumValue: 'Poskytnutá hodnota není jednou z povolených možností.',
-        invalidIconType: 'Zadaný typ ikony je neplatný nebo nerozpoznaný.',
-        invalidMaxValue: 'Maximální hodnota je neplatná nebo nad povolenými limity.',
-        invalidMinValue: 'Minimální hodnota je neplatná nebo pod povolenými limity.',
         invalidStateContent: 'Obsah stavu je neplatný nebo špatně formátovaný.',
         invalidStateContentEntry: 'Jedna nebo více položek v obsahu stavu je neplatných.',
         invalidTheme: 'Zadaný motiv je neznámý. Bude použit výchozí motiv.',
@@ -1182,9 +1268,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Očekávána hodnota typu objekt.',
         invalidTypeString: 'Očekávána hodnota typu řetězec.',
         invalidUnionType: 'Hodnota neodpovídá žádnému z povolených typů.',
-        minGreaterThanMax: 'Minimální hodnota nemůže být větší než maximální hodnota.',
         missingActionKey: 'V objektu akce chybí požadovaný klíč.',
-        missingColorProperty: 'Chybí povinná vlastnost barvy.',
         missingRequiredProperty: 'Chybí povinná vlastnost.'
       }
     },
@@ -1204,25 +1288,25 @@ const TRANSLATIONS = {
         bar_position: 'Umístění lišty',
         bar_single_line: 'Info v jednom řádku (overlay)',
         bar_size: 'Velikost lišty',
-        color_mode: 'Barevný režim',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Barevný režim',
         center_zero: 'Nula uprostřed',
         center_zero_value: 'Hodnota středu',
         center_zero_growth_percent: 'Procento růstu',
         color: 'Hlavní barva',
         decimal: 'desetinný',
-        disable_unit: 'Zobrazit jednotku',
         double_tap_action: 'Chování při dvojitém klepnutí',
         entity: 'Entita',
         force_circular_background: 'Vynutit kruhové pozadí',
         hide_jinja: 'Skrýt (režim Jinja)',
         hold_action: 'Chování při podržení',
         icon: 'Ikona',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Chování při dvojitém klepnutí na ikonu',
         icon_hold_action: 'Chování při podržení ikony',
         icon_tap_action: 'Chování při klepnutí na ikonu',
         layout: 'Rozložení obsahu',
         max_value: 'Maximální hodnota',
-        max_value_attribute: 'Atribut (max_value)',
         min_value: 'Minimální hodnota',
         name: 'Název',
         percent: 'Procento',
@@ -1232,9 +1316,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Zobrazit všechny akce',
         tap_action: 'Chování při klepnutí',
         text_shadow: 'Přidat stín textu (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Motiv',
+        custom_theme: 'Custom theme zones',
         unit: 'Jednotka',
-        use_max_entity: 'Použít entitu pro max hodnotu',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -1242,6 +1329,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Vlastní sekundární info',
         interpolate: 'Interpolace barev',
         name_info: 'Vlastní info názvu',
@@ -1281,7 +1369,7 @@ const TRANSLATIONS = {
           horizontal: 'Horizontální (výchozí)',
           vertical: 'Vertikální'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Automaticky',
           segment: 'Segmenty',
           rainbow: 'Duha'
@@ -1298,6 +1386,7 @@ const TRANSLATIONS = {
           icon: 'Ikona',
           name: 'Název',
           value: 'Hodnota',
+          unit: 'Jednotka',
           secondary_info: 'Info',
           progress_bar: 'Lišta'
         },
@@ -1334,6 +1423,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -1343,17 +1467,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Standardværdi er blevet anvendt automatisk.',
         attributeNotFound: 'Egenskab blev ikke fundet i Home Assistant.',
-        discontinuousRange: 'Det definerede interval er usammenhængende.',
         entityNotFound: 'Enheden blev ikke fundet i Home Assistant.',
         invalidActionObject: 'Handlingsobjektet er ugyldigt eller forkert struktureret.',
-        invalidCustomThemeArray: 'Det brugerdefinerede tema skal være en array.',
-        invalidCustomThemeEntry: 'En eller flere indgange i det brugerdefinerede tema er ugyldige.',
         invalidDecimal: 'Værdien skal være et gyldigt decimaltal.',
         invalidEntityId: 'Enheds-ID er ugyldigt eller forkert formateret.',
         invalidEnumValue: 'Den angivne værdi er ikke en tilladt mulighed.',
-        invalidIconType: 'Den angivne ikontype er ugyldig eller ukendt.',
-        invalidMaxValue: 'Maksimumværdi er ugyldig eller overstiger den tilladte grænse.',
-        invalidMinValue: 'Mindsteværdi er ugyldig eller under den tilladte grænse.',
         invalidStateContent: 'Tilstandsindholdet er ugyldigt eller fejlbehæftet.',
         invalidStateContentEntry: 'En eller flere poster i tilstandsindholdet er ugyldige.',
         invalidTheme: 'Det angivne tema er ukendt. Standardtema anvendes.',
@@ -1363,9 +1481,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Forventede en objektværdi.',
         invalidTypeString: 'Forventede en strengværdi.',
         invalidUnionType: 'Værdien matcher ingen af de tilladte typer.',
-        minGreaterThanMax: 'Mindsteværdi kan ikke være større end maksimumværdi.',
         missingActionKey: 'En påkrævet nøgle mangler i handlingsobjektet.',
-        missingColorProperty: 'En påkrævet farveegenskab mangler.',
         missingRequiredProperty: 'En påkrævet egenskab mangler.'
       }
     },
@@ -1385,25 +1501,25 @@ const TRANSLATIONS = {
         bar_position: 'Bar-placering',
         bar_single_line: 'Info på én linje (overlay)',
         bar_size: 'Bar størrelse',
-        color_mode: 'Farvetilstand',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Farvetilstand',
         center_zero: 'Center nul',
         center_zero_value: 'Centerværdi',
         center_zero_growth_percent: 'Vækstprocent',
         color: 'Primær farve',
         decimal: 'decimal',
-        disable_unit: 'Vis enhed',
         double_tap_action: 'Handling ved dobbelt tryk',
         entity: 'Enhed',
         force_circular_background: 'Tving cirkulær baggrund',
         hide_jinja: 'Skjul (Jinja-tilstand)',
         hold_action: 'Handling ved langt tryk',
         icon: 'Ikon',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Handling ved dobbelt tryk på ikonet',
         icon_hold_action: 'Handling ved langt tryk på ikonet',
         icon_tap_action: 'Handling ved tryk på ikonet',
         layout: 'Indholdslayout',
         max_value: 'Maksimal værdi',
-        max_value_attribute: 'Attribut (max_value)',
         min_value: 'Minimumsværdi',
         name: 'Navn',
         percent: 'Procent',
@@ -1413,9 +1529,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Vis alle handlinger',
         tap_action: 'Handling ved kort tryk',
         text_shadow: 'Tilføj tekstskygge (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Tema',
+        custom_theme: 'Custom theme zones',
         unit: 'Enhed',
-        use_max_entity: 'Brug enhed for max-værdi',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -1423,6 +1542,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Tilpasset sekundær info',
         interpolate: 'Interpoler farver',
         name_info: 'Tilpasset navneinfo',
@@ -1462,7 +1582,7 @@ const TRANSLATIONS = {
           horizontal: 'Horisontal (standard)',
           vertical: 'Vertikal'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Auto',
           segment: 'Segmenter',
           rainbow: 'Regnbue'
@@ -1479,6 +1599,7 @@ const TRANSLATIONS = {
           icon: 'Ikon',
           name: 'Navn',
           value: 'Værdi',
+          unit: 'Enhed',
           secondary_info: 'Info',
           progress_bar: 'Bjælke'
         },
@@ -1515,6 +1636,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -1524,17 +1680,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Ein Standardwert wurde automatisch angewendet.',
         attributeNotFound: 'Attribut in Home Assistant nicht gefunden.',
-        discontinuousRange: 'Der definierte Bereich ist nicht kontinuierlich.',
         entityNotFound: 'Entität in Home Assistant nicht gefunden.',
         invalidActionObject: 'Das Aktionsobjekt ist ungültig oder falsch strukturiert.',
-        invalidCustomThemeArray: 'Das benutzerdefinierte Theme muss ein Array sein.',
-        invalidCustomThemeEntry: 'Ein oder mehrere Einträge im benutzerdefinierten Theme sind ungültig.',
         invalidDecimal: 'Der Wert muss eine gültige Dezimalzahl sein.',
         invalidEntityId: 'Die Entity-ID ist ungültig oder fehlerhaft.',
         invalidEnumValue: 'Der angegebene Wert gehört nicht zu den erlaubten Optionen.',
-        invalidIconType: 'Der angegebene Symboltyp ist ungültig oder nicht erkannt.',
-        invalidMaxValue: 'Der Maximalwert ist ungültig oder überschreitet den erlaubten Bereich.',
-        invalidMinValue: 'Der Minimalwert ist ungültig oder liegt unterhalb des erlaubten Bereichs.',
         invalidStateContent: 'Der Statusinhalt ist ungültig oder fehlerhaft.',
         invalidStateContentEntry: 'Ein oder mehrere Einträge im Statusinhalt sind ungültig.',
         invalidTheme: 'Das angegebene Theme ist unbekannt. Das Standard-Theme wird verwendet.',
@@ -1544,9 +1694,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Ein Wert vom Typ Objekt wurde erwartet.',
         invalidTypeString: 'Ein Wert vom Typ Zeichenkette wurde erwartet.',
         invalidUnionType: 'Der Wert entspricht keinem der erlaubten Typen.',
-        minGreaterThanMax: 'Der Minimalwert darf nicht größer als der Maximalwert sein.',
         missingActionKey: 'Ein erforderlicher Schlüssel fehlt im Aktionsobjekt.',
-        missingColorProperty: 'Eine erforderliche Farbeigenschaft fehlt.',
         missingRequiredProperty: 'Eine erforderliche Eigenschaft fehlt.'
       }
     },
@@ -1560,31 +1708,31 @@ const TRANSLATIONS = {
         attribute: 'Attribut',
         badge_color: 'Farbe des Badges',
         badge_icon: 'Symbol des Badges',
-        bar_color: 'Farbe der Leiste',
+        bar_color: 'Balkenfarbe',
         bar_effect_jinja: 'Effekt auf die Leiste (Jinja-Modus)',
         bar_orientation: 'Ausrichtung der Leiste',
         bar_position: 'Position der Leiste',
         bar_single_line: 'Informationen in einer Zeile (Overlay)',
         bar_size: 'Größe der Bar',
-        color_mode: 'Farbmodus',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Balkenfarbmodus',
         center_zero: 'Null in der Mitte',
         center_zero_value: 'Zentrumswert',
         center_zero_growth_percent: 'Wachstumsprozentsatz',
-        color: 'Primärfarbe',
+        color: 'Symbolfarbe',
         decimal: 'dezimal',
-        disable_unit: 'Einheit anzeigen',
         double_tap_action: 'Aktion bei doppelt Tippen',
         entity: 'Entität',
         force_circular_background: 'Kreisförmigen Hintergrund erzwingen',
         hide_jinja: 'Ausblenden (Jinja-Modus)',
         hold_action: 'Aktion bei langem Tippen',
         icon: 'Symbol',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Aktion bei doppelt Tippen auf das Symbol',
         icon_hold_action: 'Aktion bei langem Tippen auf das Symbol',
         icon_tap_action: 'Aktion beim Tippen auf das Symbol',
         layout: 'Inhaltslayout',
         max_value: 'Höchstwert',
-        max_value_attribute: 'Attribut (max_value)',
         min_value: 'Mindestwert',
         name: 'Name',
         percent: 'Prozent',
@@ -1594,9 +1742,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Alle Aktionen anzeigen',
         tap_action: 'Aktion bei kurzem Tippen',
         text_shadow: 'Textschatten hinzufügen (Overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Thema',
+        custom_theme: 'Benutzerdefinierte Themenzonen',
         unit: 'Einheit',
-        use_max_entity: 'Entität für Maximalwert verwenden',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -1604,6 +1755,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Zusatzinfo (sekundär)',
         interpolate: 'Farben interpolieren',
         name_info: 'Zusatzinfo (Name)',
@@ -1643,7 +1795,7 @@ const TRANSLATIONS = {
           horizontal: 'Horizontal (Standard)',
           vertical: 'Vertikal'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Automatisch',
           segment: 'Segmente',
           rainbow: 'Regenbogen'
@@ -1660,6 +1812,7 @@ const TRANSLATIONS = {
           icon: 'Symbol',
           name: 'Name',
           value: 'Wert',
+          unit: 'Einheit',
           secondary_info: 'Info',
           progress_bar: 'Balken'
         },
@@ -1681,21 +1834,56 @@ const TRANSLATIONS = {
           percent: 'Percent'
         },
         watermark: {
-          low: 'Low',
-          high: 'High',
-          type: 'Type',
-          opacity: 'Opacity',
-          low_color: 'Low color',
-          high_color: 'High color',
-          low_as: 'Low unit',
-          high_as: 'High unit',
-          line_size: 'Line size',
-          disable_low: 'Disable low',
-          disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
-          low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
-          high_attribute: 'Attribute'
+          low: 'Unterer Wert',
+          high: 'Oberer Wert',
+          type: 'Typ',
+          opacity: 'Deckkraft',
+          low_color: 'Untere Farbe',
+          high_color: 'Obere Farbe',
+          low_as: 'Einheit (unterer Wert)',
+          high_as: 'Einheit (oberer Wert)',
+          line_size: 'Linienstärke',
+          disable_low: 'Unteren Wert deaktivieren',
+          disable_high: 'Oberen Wert deaktivieren',
+          low_entity_toggle: 'Entität für unteren Wert verwenden',
+          low_attribute: 'Attribut',
+          high_entity_toggle: 'Entität für oberen Wert verwenden',
+          high_attribute: 'Attribut'
+        },
+        icon_animation: {
+          none: 'Keine',
+          spin: 'Drehen',
+          pulse: 'Pulsieren'
+        },
+        alert_when: {
+          above: 'Alarm über',
+          below: 'Alarm unter',
+          color: 'Alarmfarbe',
+          highlight: 'Hervorhebung'
+        },
+        alert_highlight: {
+          border: 'Rahmen',
+          background: 'Hintergrund'
+        },
+        min_value_mode: {
+          standard: 'Fester Wert',
+          entity: 'Entität',
+          jinja: 'Vorlage'
+        },
+        max_value_mode: {
+          standard: 'Fester Wert',
+          entity: 'Entität',
+          jinja: 'Vorlage'
+        },
+        theme_mode: {
+          preset: 'Voreinstellung',
+          custom: 'Benutzerdefiniert'
+        },
+        min_value: {
+          attribute: 'Attribut'
+        },
+        max_value: {
+          attribute: 'Attribut'
         }
       }
     }
@@ -1705,17 +1893,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Εφαρμόστηκε αυτόματα προεπιλεγμένη τιμή.',
         attributeNotFound: 'Το χαρακτηριστικό δεν βρέθηκε στο Home Assistant.',
-        discontinuousRange: 'Το καθορισμένο εύρος δεν είναι συνεχές.',
         entityNotFound: 'Η οντότητα δεν βρέθηκε στο Home Assistant.',
         invalidActionObject: 'Το αντικείμενο ενέργειας δεν είναι έγκυρο ή είναι κακώς δομημένο.',
-        invalidCustomThemeArray: 'Το προσαρμοσμένο θέμα πρέπει να είναι πίνακας.',
-        invalidCustomThemeEntry: 'Μία ή περισσότερες καταχωρήσεις στο προσαρμοσμένο θέμα δεν είναι έγκυρες.',
         invalidDecimal: 'Η τιμή πρέπει να είναι έγκυρος δεκαδικός αριθμός.',
         invalidEntityId: 'Το αναγνωριστικό οντότητας δεν είναι έγκυρο ή είναι κακώς διαμορφωμένο.',
         invalidEnumValue: 'Η παρεχόμενη τιμή δεν είναι αποδεκτή επιλογή.',
-        invalidIconType: 'Ο καθορισμένος τύπος εικονιδίου δεν είναι έγκυρος ή αναγνωρίσιμος.',
-        invalidMaxValue: 'Η μέγιστη τιμή δεν είναι έγκυρη ή ξεπερνά τα όρια.',
-        invalidMinValue: 'Η ελάχιστη τιμή δεν είναι έγκυρη ή είναι εκτός επιτρεπόμενων ορίων.',
         invalidStateContent: 'Το περιεχόμενο κατάστασης δεν είναι έγκυρο ή είναι κακώς διαμορφωμένο.',
         invalidStateContentEntry: 'Μία ή περισσότερες καταχωρήσεις στο περιεχόμενο κατάστασης είναι άκυρες.',
         invalidTheme: 'Το καθορισμένο θέμα είναι άγνωστο. Θα χρησιμοποιηθεί το προεπιλεγμένο θέμα.',
@@ -1725,9 +1907,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Αναμενόταν τιμή τύπου αντικειμένου.',
         invalidTypeString: 'Αναμενόταν τιμή τύπου συμβολοσειράς.',
         invalidUnionType: 'Η τιμή δεν ταιριάζει σε κανέναν από τους επιτρεπόμενους τύπους.',
-        minGreaterThanMax: 'Η ελάχιστη τιμή δεν μπορεί να είναι μεγαλύτερη από τη μέγιστη.',
         missingActionKey: 'Λείπει απαιτούμενο κλειδί στο αντικείμενο ενέργειας.',
-        missingColorProperty: 'Λείπει απαιτούμενη ιδιότητα χρώματος.',
         missingRequiredProperty: 'Λείπει μια απαιτούμενη ιδιότητα.'
       }
     },
@@ -1747,25 +1927,25 @@ const TRANSLATIONS = {
         bar_position: 'Θέση γραμμής',
         bar_single_line: 'Πληροφορίες σε μία γραμμή (overlay)',
         bar_size: 'Μέγεθος γραμμής',
-        color_mode: 'Λειτουργία χρώματος',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Λειτουργία χρώματος',
         center_zero: 'Μηδέν στο κέντρο',
         center_zero_value: 'Τιμή κέντρου',
         center_zero_growth_percent: 'Ποσοστό μεταβολής',
         color: 'Κύριο χρώμα',
         decimal: 'δεκαδικά',
-        disable_unit: 'Εμφάνιση μονάδας',
         double_tap_action: 'Ενέργεια κατά το διπλό πάτημα',
         entity: 'Οντότητα',
         force_circular_background: 'Εξαναγκασμός κυκλικού φόντου',
         hide_jinja: 'Απόκρυψη (λειτουργία Jinja)',
         hold_action: 'Ενέργεια κατά το παρατεταμένο πάτημα',
         icon: 'Εικονίδιο',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Ενέργεια στο διπλό πάτημα του εικονιδίου',
         icon_hold_action: 'Ενέργεια στο παρατεταμένο πάτημα του εικονιδίου',
         icon_tap_action: 'Ενέργεια στο πάτημα του εικονιδίου',
         layout: 'Διάταξη περιεχομένου',
         max_value: 'Μέγιστη τιμή',
-        max_value_attribute: 'Χαρακτηριστικό (max_value)',
         min_value: 'Ελάχιστη τιμή',
         name: 'Όνομα',
         percent: 'Ποσοστό',
@@ -1775,9 +1955,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Εμφάνιση όλων των ενεργειών',
         tap_action: 'Ενέργεια κατά το σύντομο πάτημα',
         text_shadow: 'Προσθήκη σκιάς στο κείμενο (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Θέμα',
+        custom_theme: 'Custom theme zones',
         unit: 'Μονάδα',
-        use_max_entity: 'Χρήση οντότητας ως μέγιστης τιμής',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -1785,6 +1968,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Προσαρμοσμένη δευτερεύουσα πληροφορία',
         interpolate: 'Παρεμβολή χρωμάτων',
         name_info: 'Προσαρμοσμένη πληροφορία ονόματος',
@@ -1824,7 +2008,7 @@ const TRANSLATIONS = {
           horizontal: 'Οριζόντια (προεπιλογή)',
           vertical: 'Κατακόρυφη'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Αυτόματο',
           segment: 'Τμήματα',
           rainbow: 'Ουράνιο τόξο'
@@ -1841,6 +2025,7 @@ const TRANSLATIONS = {
           icon: 'Εικονίδιο',
           name: 'Όνομα',
           value: 'Τιμή',
+          unit: 'Μονάδα',
           secondary_info: 'Πληροφορίες',
           progress_bar: 'Μπάρα'
         },
@@ -1877,6 +2062,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -1886,17 +2106,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'A default value has been applied automatically.',
         attributeNotFound: 'Attribute not found in HA.',
-        discontinuousRange: 'The defined range is discontinuous.',
         entityNotFound: 'Entity not found in HA.',
         invalidActionObject: 'The action object is invalid or improperly structured.',
-        invalidCustomThemeArray: 'The custom theme must be an array.',
-        invalidCustomThemeEntry: 'One or more entries in the custom theme are invalid.',
         invalidDecimal: 'The value must be a valid decimal number.',
         invalidEntityId: 'The entity ID is invalid or malformed.',
         invalidEnumValue: 'The provided value is not one of the allowed options.',
-        invalidIconType: 'The specified icon type is invalid or unrecognized.',
-        invalidMaxValue: 'The maximum value is invalid or above allowed limits.',
-        invalidMinValue: 'The minimum value is invalid or below allowed limits.',
         invalidStateContent: 'The state content is invalid or malformed.',
         invalidStateContentEntry: 'One or more entries in the state content are invalid.',
         invalidTheme: 'The specified theme is unknown. Default theme will be used.',
@@ -1906,9 +2120,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Expected a value of type object.',
         invalidTypeString: 'Expected a value of type string.',
         invalidUnionType: 'The value does not match any of the allowed types.',
-        minGreaterThanMax: 'Minimum value cannot be greater than maximum value.',
         missingActionKey: 'A required key is missing in the action object.',
-        missingColorProperty: 'A required color property is missing.',
         missingRequiredProperty: 'Required property is missing.'
       }
     },
@@ -1922,31 +2134,31 @@ const TRANSLATIONS = {
         attribute: 'Attribute',
         badge_color: 'Badge color',
         badge_icon: 'Badge icon',
-        bar_color: 'Color for the bar',
+        bar_color: 'Bar color',
         bar_effect_jinja: 'Bar effect (Jinja mode)',
         bar_orientation: 'Bar orientation',
         bar_position: 'Bar position',
         bar_single_line: 'Single line info (overlay)',
         bar_size: 'Bar size',
-        color_mode: 'Color mode',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Bar color mode',
         center_zero: 'Zero at center',
         center_zero_value: 'Center value',
         center_zero_growth_percent: 'Growth percentage',
-        color: 'Primary color',
+        color: 'Icon color',
         decimal: 'decimal',
-        disable_unit: 'Show unit',
         double_tap_action: 'Double tap behavior',
         entity: 'Entity',
         force_circular_background: 'Force icon circular background',
         hide_jinja: 'Hide (Jinja mode)',
         hold_action: 'Hold behavior',
         icon: 'Icon',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Icon double tap behavior',
         icon_hold_action: 'Icon hold behavior',
         icon_tap_action: 'Icon tap behavior',
         layout: 'Content layout',
         max_value: 'Maximum value',
-        max_value_attribute: 'Attribute (max_value)',
         min_value: 'Minimum value',
         name: 'Name',
         percent: 'Percentage',
@@ -1956,9 +2168,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Show all interactions',
         tap_action: 'Tap behavior',
         text_shadow: 'Add text shadow (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Theme',
+        custom_theme: 'Custom theme zones',
         unit: 'Unit',
-        use_max_entity: 'Use entity as max value',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -1966,6 +2181,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Custom secondary info',
         interpolate: 'Interpolate colors',
         name_info: 'Custom name info',
@@ -2005,7 +2221,7 @@ const TRANSLATIONS = {
           horizontal: 'Horizontal (default)',
           vertical: 'Vertical'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Auto',
           segment: 'Segment',
           rainbow: 'Rainbow'
@@ -2022,6 +2238,7 @@ const TRANSLATIONS = {
           icon: 'Icon',
           name: 'Name',
           value: 'Value',
+          unit: 'Unit',
           secondary_info: 'Secondary info',
           progress_bar: 'Bar'
         },
@@ -2058,6 +2275,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -2067,17 +2319,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Se aplicó automáticamente el valor predeterminado.',
         attributeNotFound: 'No se encontró el atributo en Home Assistant.',
-        discontinuousRange: 'El rango definido no es continuo.',
         entityNotFound: 'No se encontró la entidad en Home Assistant.',
         invalidActionObject: 'Objeto de acción inválido o mal estructurado.',
-        invalidCustomThemeArray: 'El tema personalizado debe ser un arreglo.',
-        invalidCustomThemeEntry: 'Uno o más elementos del tema personalizado son inválidos.',
         invalidDecimal: 'El valor debe ser un decimal válido.',
         invalidEntityId: 'ID de entidad inválido o mal formado.',
         invalidEnumValue: 'El valor proporcionado no está dentro de las opciones permitidas.',
-        invalidIconType: 'El tipo de ícono especificado es inválido o desconocido.',
-        invalidMaxValue: 'El valor máximo es inválido o excede el límite permitido.',
-        invalidMinValue: 'El valor mínimo es inválido o está por debajo del límite permitido.',
         invalidStateContent: 'Contenido del estado inválido o mal formado.',
         invalidStateContentEntry: 'Uno o más elementos del contenido del estado son inválidos.',
         invalidTheme: 'El tema especificado es desconocido; se usará el tema predeterminado.',
@@ -2087,9 +2333,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Se esperaba un valor de tipo objeto.',
         invalidTypeString: 'Se esperaba un valor de tipo cadena.',
         invalidUnionType: 'El valor no coincide con ningún tipo permitido.',
-        minGreaterThanMax: 'El valor mínimo no puede ser mayor que el máximo.',
         missingActionKey: 'Falta una clave obligatoria en el objeto de acción.',
-        missingColorProperty: 'Falta una propiedad de color obligatoria.',
         missingRequiredProperty: 'Falta una propiedad obligatoria.'
       }
     },
@@ -2109,25 +2353,25 @@ const TRANSLATIONS = {
         bar_position: 'Posición de la barra',
         bar_single_line: 'Información en línea (superpuesta)',
         bar_size: 'Tamaño de la barra',
-        color_mode: 'Modo de color',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Modo de color',
         center_zero: 'Cero centrado',
         center_zero_value: 'Valor de centrado',
         center_zero_growth_percent: 'Porcentaje de crecimiento',
         color: 'Color principal',
         decimal: 'Decimal',
-        disable_unit: 'Mostrar unidad',
         double_tap_action: 'Acción al doble toque',
         entity: 'Entidad',
         force_circular_background: 'Forzar fondo circular',
         hide_jinja: 'Ocultar (modo Jinja)',
         hold_action: 'Acción al mantener presionado',
         icon: 'Ícono',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Acción de doble toque en ícono',
         icon_hold_action: 'Acción al mantener presionado ícono',
         icon_tap_action: 'Acción al tocar ícono',
         layout: 'Disposición del contenido',
         max_value: 'Valor máximo',
-        max_value_attribute: 'Atributo (valor máximo)',
         min_value: 'Valor mínimo',
         name: 'Nombre',
         percent: 'Porcentaje',
@@ -2137,9 +2381,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Mostrar todas las acciones',
         tap_action: 'Acción al tocar',
         text_shadow: 'Agregar sombra al texto (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Tema',
+        custom_theme: 'Custom theme zones',
         unit: 'Unidad',
-        use_max_entity: 'Usar entidad como valor máximo',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -2147,6 +2394,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Info secundaria personalizada',
         interpolate: 'Interpolación de colores',
         name_info: 'Info de nombre personalizada',
@@ -2186,7 +2434,7 @@ const TRANSLATIONS = {
           horizontal: 'Horizontal (predeterminado)',
           vertical: 'Vertical'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Auto',
           segment: 'Segmentos',
           rainbow: 'Arcoíris'
@@ -2203,6 +2451,7 @@ const TRANSLATIONS = {
           icon: 'Icono',
           name: 'Nombre',
           value: 'Valor',
+          unit: 'Unidad',
           secondary_info: 'Info',
           progress_bar: 'Barra'
         },
@@ -2239,6 +2488,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -2248,17 +2532,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Se ha aplicado un valor predeterminado automáticamente.',
         attributeNotFound: 'Atributo no encontrado en Home Assistant.',
-        discontinuousRange: 'El rango definido es discontinuo.',
         entityNotFound: 'Entidad no encontrada en Home Assistant.',
         invalidActionObject: 'El objeto de acción es inválido o está mal estructurado.',
-        invalidCustomThemeArray: 'El tema personalizado debe ser un arreglo.',
-        invalidCustomThemeEntry: 'Una o más entradas en el tema personalizado son inválidas.',
         invalidDecimal: 'El valor debe ser un número decimal válido.',
         invalidEntityId: 'El ID de la entidad no es válido o está mal formado.',
         invalidEnumValue: 'El valor proporcionado no es una opción válida.',
-        invalidIconType: 'El tipo de icono especificado es inválido o no reconocido.',
-        invalidMaxValue: 'El valor máximo es inválido o excede el límite permitido.',
-        invalidMinValue: 'El valor mínimo es inválido o está por debajo del límite permitido.',
         invalidStateContent: 'El contenido del estado es inválido o está mal formado.',
         invalidStateContentEntry: 'Una o más entradas en el contenido del estado son inválidas.',
         invalidTheme: 'El tema especificado es desconocido. Se usará el tema por defecto.',
@@ -2268,9 +2546,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Se esperaba un valor de tipo objeto.',
         invalidTypeString: 'Se esperaba un valor de tipo cadena.',
         invalidUnionType: 'El valor no coincide con ninguno de los tipos permitidos.',
-        minGreaterThanMax: 'El valor mínimo no puede ser mayor que el valor máximo.',
         missingActionKey: 'Falta una clave obligatoria en el objeto de acción.',
-        missingColorProperty: 'Falta una propiedad de color obligatoria.',
         missingRequiredProperty: 'Falta una propiedad obligatoria.'
       }
     },
@@ -2284,31 +2560,31 @@ const TRANSLATIONS = {
         attribute: 'Atributo',
         badge_color: 'Color del badge',
         badge_icon: 'Icono del badge',
-        bar_color: 'Color principal',
+        bar_color: 'Color de la barra',
         bar_effect_jinja: 'Efecto de la barra (modo Jinja)',
         bar_orientation: 'Orientación de la barra',
         bar_position: 'Posición de la barra',
         bar_single_line: 'Información en una sola línea (overlay)',
         bar_size: 'Tamaño de la barra',
-        color_mode: 'Modo de color',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Modo de color de la barra',
         center_zero: 'Cero en el centro',
         center_zero_value: 'Valor de centrado',
         center_zero_growth_percent: 'Porcentaje de crecimiento',
-        color: 'Color principal',
+        color: 'Color del icono',
         decimal: 'decimal',
-        disable_unit: 'Mostrar unidad',
         double_tap_action: 'Acción al pulsar dos veces',
         entity: 'Entidad',
         force_circular_background: 'Forzar fondo circular',
         hide_jinja: 'Ocultar (modo Jinja)',
         hold_action: 'Acción al mantener pulsado',
         icon: 'Icono',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Acción al pulsar dos veces el icono',
         icon_hold_action: 'Acción al mantener pulsado el icono',
         icon_tap_action: 'Acción al pulsar el icono',
         layout: 'Disposición del contenido',
         max_value: 'Valor máximo',
-        max_value_attribute: 'Atributo (max_value)',
         min_value: 'Valor mínimo',
         name: 'Nombre',
         percent: 'Porcentaje',
@@ -2318,9 +2594,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Mostrar todas las acciones',
         tap_action: 'Acción al pulsar brevemente',
         text_shadow: 'Añadir sombra al texto (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Tema',
+        custom_theme: 'Zonas de tema personalizado',
         unit: 'Unidad',
-        use_max_entity: 'Usar una entidad para el valor máximo',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -2328,6 +2607,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Info secundaria personalizada',
         interpolate: 'Interpolación de colores',
         name_info: 'Info de nombre personalizada',
@@ -2367,7 +2647,7 @@ const TRANSLATIONS = {
           horizontal: 'Horizontal (predeterminado)',
           vertical: 'Vertical'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Auto',
           segment: 'Segmentos',
           rainbow: 'Arcoíris'
@@ -2384,6 +2664,7 @@ const TRANSLATIONS = {
           icon: 'Icono',
           name: 'Nombre',
           value: 'Valor',
+          unit: 'Unidad',
           secondary_info: 'Info',
           progress_bar: 'Barra'
         },
@@ -2405,21 +2686,56 @@ const TRANSLATIONS = {
           percent: 'Percent'
         },
         watermark: {
-          low: 'Low',
-          high: 'High',
-          type: 'Type',
-          opacity: 'Opacity',
-          low_color: 'Low color',
-          high_color: 'High color',
-          low_as: 'Low unit',
-          high_as: 'High unit',
-          line_size: 'Line size',
-          disable_low: 'Disable low',
-          disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
-          low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
-          high_attribute: 'Attribute'
+          low: 'Umbral bajo',
+          high: 'Umbral alto',
+          type: 'Tipo',
+          opacity: 'Opacidad',
+          low_color: 'Color del umbral bajo',
+          high_color: 'Color del umbral alto',
+          low_as: 'Unidad (umbral bajo)',
+          high_as: 'Unidad (umbral alto)',
+          line_size: 'Grosor de línea',
+          disable_low: 'Desactivar umbral bajo',
+          disable_high: 'Desactivar umbral alto',
+          low_entity_toggle: 'Usar una entidad para el umbral bajo',
+          low_attribute: 'Atributo',
+          high_entity_toggle: 'Usar una entidad para el umbral alto',
+          high_attribute: 'Atributo'
+        },
+        icon_animation: {
+          none: 'Ninguna',
+          spin: 'Girar',
+          pulse: 'Pulso'
+        },
+        alert_when: {
+          above: 'Alerta por encima de',
+          below: 'Alerta por debajo de',
+          color: 'Color de alerta',
+          highlight: 'Resaltado'
+        },
+        alert_highlight: {
+          border: 'Borde',
+          background: 'Fondo'
+        },
+        min_value_mode: {
+          standard: 'Valor fijo',
+          entity: 'Entidad',
+          jinja: 'Plantilla'
+        },
+        max_value_mode: {
+          standard: 'Valor fijo',
+          entity: 'Entidad',
+          jinja: 'Plantilla'
+        },
+        theme_mode: {
+          preset: 'Preestablecido',
+          custom: 'Personalizado'
+        },
+        min_value: {
+          attribute: 'Atributo'
+        },
+        max_value: {
+          attribute: 'Atributo'
         }
       }
     }
@@ -2429,17 +2745,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Vaikimisi väärtus rakendati automaatselt.',
         attributeNotFound: 'Atribuut ei leitud Home Assistantis.',
-        discontinuousRange: 'Määratud vahemik ei ole katkematu.',
         entityNotFound: 'Objekti ei leitud Home Assistantis.',
         invalidActionObject: 'Tegevuse objekt on vigane või valesti struktureeritud.',
-        invalidCustomThemeArray: 'Kohandatud teema peab olema massiiv.',
-        invalidCustomThemeEntry: 'Üks või mitu kohandatud teema kirjet on vigased.',
         invalidDecimal: 'Väärtus peab olema positiivne täisarv.',
         invalidEntityId: 'Objekti ID on vigane või valesti vormistatud.',
         invalidEnumValue: 'Antud väärtus ei kuulu lubatud valikute hulka.',
-        invalidIconType: 'Määratud ikooni tüüp on vigane või tundmatu.',
-        invalidMaxValue: 'Maksimaalne väärtus on vigane või ületab lubatud piiri.',
-        invalidMinValue: 'Minimaalne väärtus on vigane või alla lubatud piiri.',
         invalidStateContent: 'Seisundi sisu on vigane või valesti vormistatud.',
         invalidStateContentEntry: 'Üks või mitu seisundi sisu kirjet on vigased.',
         invalidTheme: 'Määratud teema on tundmatu. Kasutatakse vaikimisi teemat.',
@@ -2449,9 +2759,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Oodati objekti tüüpi väärtust.',
         invalidTypeString: 'Oodati stringi tüüpi väärtust.',
         invalidUnionType: 'Väärtus ei vasta ühelegi lubatud tüübile.',
-        minGreaterThanMax: 'Minimaalne väärtus ei saa olla suurem kui maksimaalne.',
         missingActionKey: 'Tegevuse objektist puudub kohustuslik võti.',
-        missingColorProperty: 'Puudub kohustuslik värvi atribuut.',
         missingRequiredProperty: 'Puudub kohustuslik atribuut.'
       }
     },
@@ -2471,25 +2779,25 @@ const TRANSLATIONS = {
         bar_position: 'Riba positsioon',
         bar_single_line: 'Info ühel real (overlay)',
         bar_size: 'Riba suurus',
-        color_mode: 'Värvirežiim',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Värvirežiim',
         center_zero: 'Null keskel',
         center_zero_value: 'Keskväärtus',
         center_zero_growth_percent: 'Kasvuprotsent',
         color: 'Ikooni värv',
         decimal: 'Kümnendkoht',
-        disable_unit: 'Näita ühikut',
         double_tap_action: 'Topeltpuudutuse tegevus',
         entity: 'Objekt',
         force_circular_background: 'Sunnitud ümmargune taust',
         hide_jinja: 'Peida (Jinja režiim)',
         hold_action: 'Pikema vajutuse tegevus',
         icon: 'Ikoon',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Ikooni topeltpuudutuse tegevus',
         icon_hold_action: 'Ikooni pika vajutuse tegevus',
         icon_tap_action: 'Ikooni puudutuse tegevus',
         layout: 'Sisu paigutus',
         max_value: 'Maksimaalne väärtus',
-        max_value_attribute: 'Atribuut (max_value)',
         min_value: 'Minimaalne väärtus',
         name: 'Nimi',
         percent: 'Protsent',
@@ -2499,9 +2807,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Kuva kõik toimingud',
         tap_action: 'Puudutuse tegevus',
         text_shadow: 'Lisa teksti vari (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Teema',
+        custom_theme: 'Custom theme zones',
         unit: 'Ühik',
-        use_max_entity: 'Kasuta objekti maksimaalse väärtuse jaoks',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -2509,6 +2820,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Kohandatud sekundaarne teave',
         interpolate: 'Värvide interpoleerimine',
         name_info: 'Kohandatud nime teave',
@@ -2548,7 +2860,7 @@ const TRANSLATIONS = {
           horizontal: 'Horisontaalne (vaikimisi)',
           vertical: 'Vertikaalne'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Automaatne',
           segment: 'Segmendid',
           rainbow: 'Vikerkaar'
@@ -2565,6 +2877,7 @@ const TRANSLATIONS = {
           icon: 'Ikoon',
           name: 'Nimi',
           value: 'Väärtus',
+          unit: 'Ühik',
           secondary_info: 'Info',
           progress_bar: 'Riba'
         },
@@ -2601,6 +2914,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -2610,17 +2958,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Oletusarvo on asetettu automaattisesti.',
         attributeNotFound: 'Attribuuttia ei löytynyt Home Assistantista.',
-        discontinuousRange: 'Määritetty alue on katkonainen.',
         entityNotFound: 'Entiteettiä ei löytynyt Home Assistantista.',
         invalidActionObject: 'Toiminto-objekti on virheellinen tai huonosti rakennettu.',
-        invalidCustomThemeArray: 'Mukautetun teeman on oltava taulukko.',
-        invalidCustomThemeEntry: 'Yksi tai useampi mukautetun teeman merkintä on virheellinen.',
         invalidDecimal: 'Arvon on oltava kelvollinen desimaaliluku.',
         invalidEntityId: 'Entiteetin tunniste on virheellinen tai väärin muotoiltu.',
         invalidEnumValue: 'Annettu arvo ei ole sallituista vaihtoehdoista.',
-        invalidIconType: 'Annettu kuvaketyyppi on virheellinen tai tuntematon.',
-        invalidMaxValue: 'Enimmäisarvo on virheellinen tai liian suuri.',
-        invalidMinValue: 'Vähimmäisarvo on virheellinen tai liian pieni.',
         invalidStateContent: 'Tilasisältö on virheellinen tai väärässä muodossa.',
         invalidStateContentEntry: 'Yksi tai useampi tilasisällön merkintä on virheellinen.',
         invalidTheme: 'Määritetty teema on tuntematon. Käytetään oletusteemaa.',
@@ -2630,9 +2972,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Odotettiin objektityyppistä arvoa.',
         invalidTypeString: 'Odotettiin merkkijonotyyppistä arvoa.',
         invalidUnionType: 'Arvo ei vastaa mitään sallituista tyypeistä.',
-        minGreaterThanMax: 'Vähimmäisarvo ei voi olla suurempi kuin enimmäisarvo.',
         missingActionKey: 'Toiminto-objektista puuttuu vaadittu avain.',
-        missingColorProperty: 'Pakollinen väriominaisuus puuttuu.',
         missingRequiredProperty: 'Pakollinen ominaisuus puuttuu.'
       }
     },
@@ -2652,25 +2992,25 @@ const TRANSLATIONS = {
         bar_position: 'Palkin sijainti',
         bar_single_line: 'Tiedot yhdellä rivillä (overlay)',
         bar_size: 'Palkin koko',
-        color_mode: 'Väritila',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Väritila',
         center_zero: 'Nolla keskellä',
         center_zero_value: 'Keskiarvo',
         center_zero_growth_percent: 'Kasvuprosentti',
         color: 'Pääväri',
         decimal: 'desimaali',
-        disable_unit: 'Näytä yksikkö',
         double_tap_action: 'Toiminto kahdella napautuksella',
         entity: 'Entiteetti',
         force_circular_background: 'Pakota pyöreä tausta',
         hide_jinja: 'Piilota (Jinja-tila)',
         hold_action: 'Toiminto pitkällä painalluksella',
         icon: 'Ikoni',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Toiminto kahdella napautuksella kuvaketta',
         icon_hold_action: 'Toiminto pitkällä painalluksella kuvaketta',
         icon_tap_action: 'Toiminto kuvaketta napautettaessa',
         layout: 'Sisällön asettelu',
         max_value: 'Maksimiarvo',
-        max_value_attribute: 'Attribuutti (max_value)',
         min_value: 'Minimiarvo',
         name: 'Nimi',
         percent: 'Prosentti',
@@ -2680,9 +3020,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Näytä kaikki toiminnot',
         tap_action: 'Toiminto lyhyellä napautuksella',
         text_shadow: 'Lisää tekstivarjo (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Teema',
+        custom_theme: 'Custom theme zones',
         unit: 'Yksikkö',
-        use_max_entity: 'Käytä entiteettiä maksimiarvona',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -2690,6 +3033,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Mukautettu toissijainen tieto',
         interpolate: 'Interpoloi värit',
         name_info: 'Mukautettu nimitieto',
@@ -2729,7 +3073,7 @@ const TRANSLATIONS = {
           horizontal: 'Vaakasuora (oletus)',
           vertical: 'Pystysuora'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Automaattinen',
           segment: 'Segmentit',
           rainbow: 'Sateenkaari'
@@ -2746,6 +3090,7 @@ const TRANSLATIONS = {
           icon: 'Kuvake',
           name: 'Nimi',
           value: 'Arvo',
+          unit: 'Yksikkö',
           secondary_info: 'Tiedot',
           progress_bar: 'Palkki'
         },
@@ -2782,6 +3127,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -2791,17 +3171,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Une valeur par défaut a été appliquée automatiquement.',
         attributeNotFound: 'Attribut introuvable dans Home Assistant.',
-        discontinuousRange: 'L’intervalle défini est discontinu.',
         entityNotFound: 'Entité introuvable dans Home Assistant.',
         invalidActionObject: 'L’objet action est invalide ou mal structuré.',
-        invalidCustomThemeArray: 'Le thème personnalisé doit être un tableau.',
-        invalidCustomThemeEntry: 'Une ou plusieurs entrées du thème personnalisé sont invalides.',
         invalidDecimal: 'La valeur doit être un nombre entier positif.',
         invalidEntityId: 'L’identifiant de l’entité est invalide ou mal formé.',
         invalidEnumValue: 'La valeur fournie ne fait pas partie des options autorisées.',
-        invalidIconType: 'Le type d’icône spécifié est invalide ou non reconnu.',
-        invalidMaxValue: 'La valeur maximale est invalide ou au-dessus des limites autorisées.',
-        invalidMinValue: 'La valeur minimale est invalide ou en dessous des limites autorisées.',
         invalidStateContent: 'Le contenu d’état est invalide ou mal formé.',
         invalidStateContentEntry: 'Une ou plusieurs entrées du contenu d’état sont invalides.',
         invalidTheme: 'Le thème spécifié est inconnu. Le thème par défaut sera utilisé.',
@@ -2811,9 +3185,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Une valeur de type objet était attendue.',
         invalidTypeString: 'Une valeur de type chaîne de caractères était attendue.',
         invalidUnionType: 'La valeur ne correspond à aucun des types autorisés.',
-        minGreaterThanMax: 'La valeur minimale ne peut pas être supérieure à la valeur maximale.',
         missingActionKey: 'Une clé requise est manquante dans l’objet action.',
-        missingColorProperty: 'Une propriété de couleur requise est manquante.',
         missingRequiredProperty: 'Une propriété requise est manquante.'
       }
     },
@@ -2833,25 +3205,25 @@ const TRANSLATIONS = {
         bar_position: 'Position de la barre',
         bar_single_line: 'Infos sur une ligne (overlay)',
         bar_size: 'Taille de la barre',
-        color_mode: 'Mode de couleur',
+        bar_segments: 'Segments de barre',
+        bar_color_mode: 'Mode de couleur de la barre',
         center_zero: 'Zéro au centre',
         center_zero_value: 'Valeur de centrage',
         center_zero_growth_percent: 'Pourcentage de croissance',
         color: 'Couleur de l\'icône',
         decimal: 'décimal',
-        disable_unit: 'Afficher l\'unité',
         double_tap_action: 'Comportement lors d\'un double appui',
         entity: 'Entité',
         force_circular_background: 'Forcer le fond circulaire',
         hide_jinja: 'Masquer (mode Jinja)',
         hold_action: 'Comportement lors d\'un appui long',
         icon: 'Icône',
+        icon_animation: 'Animation de l\'icône',
         icon_double_tap_action: 'Comportement lors d\'un double appui sur l\'icône',
         icon_hold_action: 'Comportement lors d\'un appui long sur l\'icône',
         icon_tap_action: 'Comportement lors de l\'appui sur l\'icône',
         layout: 'Disposition du contenu',
         max_value: 'Valeur maximum',
-        max_value_attribute: 'Attribut (max_value)',
         min_value: 'Valeur minimum',
         name: 'Nom',
         percent: 'Pourcentage',
@@ -2861,9 +3233,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Afficher toutes les interactions',
         tap_action: 'Comportement lors d\'un appui court',
         text_shadow: 'Ajouter une ombre au texte (overlay)',
+        theme_mode: 'Mode de thème',
         theme: 'Thème',
+        custom_theme: 'Zones de thème personnalisé',
         unit: 'Unité',
-        use_max_entity: 'Utiliser une entité pour la valeur max',
+        min_value_mode: 'Source de la valeur min',
+        max_value_mode: 'Source de la valeur max',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -2871,6 +3246,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alerte',
         custom_info: 'Info secondaire personnalisée',
         interpolate: 'Interpoler les couleurs',
         name_info: 'Info nom personnalisée',
@@ -2910,7 +3286,7 @@ const TRANSLATIONS = {
           horizontal: 'Horizontal (par défaut)',
           vertical: 'Vertical'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Auto',
           segment: 'Segmenté',
           rainbow: 'Arc-en-ciel'
@@ -2927,6 +3303,7 @@ const TRANSLATIONS = {
           icon: 'Icône',
           name: 'Nom',
           value: 'Valeur',
+          unit: 'Unité',
           secondary_info: 'Info',
           progress_bar: 'Barre'
         },
@@ -2948,21 +3325,56 @@ const TRANSLATIONS = {
           percent: 'Percent'
         },
         watermark: {
-          low: 'Low',
-          high: 'High',
+          low: 'Seuil bas',
+          high: 'Seuil haut',
           type: 'Type',
-          opacity: 'Opacity',
-          low_color: 'Low color',
-          high_color: 'High color',
-          low_as: 'Low unit',
-          high_as: 'High unit',
-          line_size: 'Line size',
-          disable_low: 'Disable low',
-          disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
-          low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
-          high_attribute: 'Attribute'
+          opacity: 'Opacité',
+          low_color: 'Couleur du seuil bas',
+          high_color: 'Couleur du seuil haut',
+          low_as: 'Unité (seuil bas)',
+          high_as: 'Unité (seuil haut)',
+          line_size: 'Épaisseur de ligne',
+          disable_low: 'Désactiver le seuil bas',
+          disable_high: 'Désactiver le seuil haut',
+          low_entity_toggle: 'Utiliser une entité pour le seuil bas',
+          low_attribute: 'Attribut',
+          high_entity_toggle: 'Utiliser une entité pour le seuil haut',
+          high_attribute: 'Attribut'
+        },
+        icon_animation: {
+          none: 'Aucune',
+          spin: 'Rotation',
+          pulse: 'Pulsation'
+        },
+        alert_when: {
+          above: 'Alerte au-dessus de',
+          below: 'Alerte en dessous de',
+          color: 'Couleur d\'alerte',
+          highlight: 'Mise en évidence'
+        },
+        alert_highlight: {
+          border: 'Bordure',
+          background: 'Fond'
+        },
+        min_value_mode: {
+          standard: 'Valeur fixe',
+          entity: 'Entité',
+          jinja: 'Modèle'
+        },
+        max_value_mode: {
+          standard: 'Valeur fixe',
+          entity: 'Entité',
+          jinja: 'Modèle'
+        },
+        theme_mode: {
+          preset: 'Prédéfini',
+          custom: 'Personnalisé'
+        },
+        min_value: {
+          attribute: 'Attribut'
+        },
+        max_value: {
+          attribute: 'Attribut'
         }
       }
     }
@@ -2972,17 +3384,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'एक डिफ़ॉल्ट मान स्वचालित रूप से लागू किया गया है।',
         attributeNotFound: 'HA में एट्रिब्यूट नहीं मिला।',
-        discontinuousRange: 'परिभाषित रेंज असतत है।',
         entityNotFound: 'HA में एंटिटी नहीं मिली।',
         invalidActionObject: 'एक्शन ऑब्जेक्ट अमान्य या गलत तरीके से संरचित है।',
-        invalidCustomThemeArray: 'कस्टम थीम एक एरे होना चाहिए।',
-        invalidCustomThemeEntry: 'कस्टम थीम में एक या अधिक प्रविष्टियां अमान्य हैं।',
         invalidDecimal: 'मान एक वैध दशमलव संख्या होना चाहिए।',
         invalidEntityId: 'एंटिटी आईडी अमान्य या गलत तरीके से बनाई गई है।',
         invalidEnumValue: 'प्रदान किया गया मान अनुमतित विकल्पों में से एक नहीं है।',
-        invalidIconType: 'निर्दिष्ट आइकन प्रकार अमान्य या अपरिचित है।',
-        invalidMaxValue: 'अधिकतम मान अमान्य है या अनुमतित सीमा से ऊपर है।',
-        invalidMinValue: 'न्यूनतम मान अमान्य है या अनुमतित सीमा से नीचे है।',
         invalidStateContent: 'स्थिति सामग्री अमान्य या गलत तरीके से बनाई गई है।',
         invalidStateContentEntry: 'स्थिति सामग्री में एक या अधिक प्रविष्टियां अमान्य हैं।',
         invalidTheme: 'निर्दिष्ट थीम अज्ञात है। डिफ़ॉल्ट थीम का उपयोग किया जाएगा।',
@@ -2992,9 +3398,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'ऑब्जेक्ट प्रकार का मान अपेक्षित है।',
         invalidTypeString: 'स्ट्रिंग प्रकार का मान अपेक्षित है।',
         invalidUnionType: 'मान अनुमतित प्रकारों में से किसी से मेल नहीं खाता।',
-        minGreaterThanMax: 'न्यूनतम मान अधिकतम मान से अधिक नहीं हो सकता।',
         missingActionKey: 'एक्शन ऑब्जेक्ट में एक आवश्यक कुंजी गायब है।',
-        missingColorProperty: 'एक आवश्यक रंग गुण गायब है।',
         missingRequiredProperty: 'आवश्यक गुण गायब है।'
       }
     },
@@ -3014,25 +3418,25 @@ const TRANSLATIONS = {
         bar_position: 'बार की स्थिति',
         bar_single_line: 'एक पंक्ति में जानकारी (ओवरले)',
         bar_size: 'बार का आकार',
-        color_mode: 'रंग मोड',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'रंग मोड',
         center_zero: 'शून्य केंद्र में',
         center_zero_value: 'केंद्र मान',
         center_zero_growth_percent: 'वृद्धि प्रतिशत',
         color: 'मुख्य रंग',
         decimal: 'दशमलव',
-        disable_unit: 'इकाई दिखाएँ',
         double_tap_action: 'डबल टैप व्यवहार',
         entity: 'एंटिटी',
         force_circular_background: 'गोलाकार पृष्ठभूमि को बाध्य करें',
         hide_jinja: 'छिपाएँ (Jinja मोड)',
         hold_action: 'होल्ड व्यवहार',
         icon: 'आइकन',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'आइकन डबल टैप व्यवहार',
         icon_hold_action: 'आइकन होल्ड व्यवहार',
         icon_tap_action: 'आइकन टैप व्यवहार',
         layout: 'सामग्री लेआउट',
         max_value: 'अधिकतम मान',
-        max_value_attribute: 'एट्रिब्यूट (max_value)',
         min_value: 'न्यूनतम मान',
         name: 'नाम',
         percent: 'प्रतिशत',
@@ -3042,9 +3446,12 @@ const TRANSLATIONS = {
         show_all_actions: 'सभी क्रियाएँ दिखाएँ',
         tap_action: 'टैप व्यवहार',
         text_shadow: 'टेक्स्ट में छाया जोड़ें (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'थीम',
+        custom_theme: 'Custom theme zones',
         unit: 'इकाई',
-        use_max_entity: 'अधिकतम मान के लिए एंटिटी उपयोग करें',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -3052,6 +3459,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'कस्टम द्वितीयक जानकारी',
         interpolate: 'रंग इंटरपोलेशन',
         name_info: 'कस्टम नाम जानकारी',
@@ -3091,7 +3499,7 @@ const TRANSLATIONS = {
           temperature: 'तापमान',
           voc: 'VOC'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'स्वचालित',
           segment: 'खंड',
           rainbow: 'इंद्रधनुष'
@@ -3108,6 +3516,7 @@ const TRANSLATIONS = {
           icon: 'आइकन',
           name: 'नाम',
           value: 'मूल्य',
+          unit: 'इकाई',
           secondary_info: 'जानकारी',
           progress_bar: 'बार'
         },
@@ -3144,6 +3553,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -3153,17 +3597,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Zadana vrijednost automatski je primijenjena.',
         attributeNotFound: 'Atribut nije pronađen u Home Assistantu.',
-        discontinuousRange: 'Definirani raspon nije kontinuiran.',
         entityNotFound: 'Entitet nije pronađen u Home Assistantu.',
         invalidActionObject: 'Objekt radnje je nevažeći ili loše strukturiran.',
-        invalidCustomThemeArray: 'Prilagođena tema mora biti polje.',
-        invalidCustomThemeEntry: 'Jedan ili više unosa u temi su nevažeći.',
         invalidDecimal: 'Vrijednost mora biti valjani decimalni broj.',
         invalidEntityId: 'ID entiteta je nevažeći ili pogrešno formatiran.',
         invalidEnumValue: 'Navedena vrijednost nije među dopuštenim opcijama.',
-        invalidIconType: 'Naveden tip ikone je nevažeći ili neprepoznatljiv.',
-        invalidMaxValue: 'Maksimalna vrijednost je nevažeća ili previsoka.',
-        invalidMinValue: 'Minimalna vrijednost je nevažeća ili preniska.',
         invalidStateContent: 'Sadržaj stanja je nevažeći ili pogrešno formatiran.',
         invalidStateContentEntry: 'Jedan ili više unosa stanja su nevažeći.',
         invalidTheme: 'Navedena tema je nepoznata. Koristi se zadana tema.',
@@ -3173,9 +3611,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Očekivana je vrijednost tipa objekt.',
         invalidTypeString: 'Očekivana je vrijednost tipa string.',
         invalidUnionType: 'Vrijednost ne odgovara nijednom dopuštenom tipu.',
-        minGreaterThanMax: 'Minimalna vrijednost ne može biti veća od maksimalne.',
         missingActionKey: 'Nedostaje obavezni ključ u objektu radnje.',
-        missingColorProperty: 'Nedostaje obavezno svojstvo boje.',
         missingRequiredProperty: 'Nedostaje obavezno svojstvo.'
       }
     },
@@ -3195,25 +3631,25 @@ const TRANSLATIONS = {
         bar_position: 'Položaj trake',
         bar_single_line: 'Informacije u jednom retku (overlay)',
         bar_size: 'Veličina trake',
-        color_mode: 'Način boje',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Način boje',
         center_zero: 'Nula u sredini',
         center_zero_value: 'Vrijednost sredine',
         center_zero_growth_percent: 'Postotak rasta',
         color: 'Primarna boja',
         decimal: 'decimalni',
-        disable_unit: 'Prikaži jedinicu',
         double_tap_action: 'Radnja na dupli dodir',
         entity: 'Entitet',
         force_circular_background: 'Prisili kružnu pozadinu',
         hide_jinja: 'Sakrij (Jinja način)',
         hold_action: 'Radnja na dugi dodir',
         icon: 'Ikona',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Radnja na dupli dodir ikone',
         icon_hold_action: 'Radnja na dugi dodir ikone',
         icon_tap_action: 'Radnja na dodir ikone',
         layout: 'Raspored sadržaja',
         max_value: 'Maksimalna vrijednost',
-        max_value_attribute: 'Atribut (max_value)',
         min_value: 'Minimalna vrijednost',
         name: 'Ime',
         percent: 'Postotak',
@@ -3223,9 +3659,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Prikaži sve radnje',
         tap_action: 'Radnja na kratki dodir',
         text_shadow: 'Dodaj sjenu tekstu (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Tema',
+        custom_theme: 'Custom theme zones',
         unit: 'Jedinica',
-        use_max_entity: 'Koristi entitet za maksimalnu vrijednost',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -3233,6 +3672,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Prilagođena sekundarna informacija',
         interpolate: 'Interpolacija boja',
         name_info: 'Prilagođena informacija naziva',
@@ -3272,7 +3712,7 @@ const TRANSLATIONS = {
           temperature: 'Temperatura',
           voc: 'VOC'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Automatski',
           segment: 'Segmenti',
           rainbow: 'Duga'
@@ -3289,6 +3729,7 @@ const TRANSLATIONS = {
           icon: 'Ikona',
           name: 'Ime',
           value: 'Vrijednost',
+          unit: 'Jedinica',
           secondary_info: 'Info',
           progress_bar: 'Traka'
         },
@@ -3325,6 +3766,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -3334,17 +3810,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Alapértelmezett érték automatikusan alkalmazva.',
         attributeNotFound: 'Az attribútum nem található a Home Assistantban.',
-        discontinuousRange: 'A megadott tartomány nem folytonos.',
         entityNotFound: 'Az entitás nem található a Home Assistantban.',
         invalidActionObject: 'Az action objektum érvénytelen vagy hibás felépítésű.',
-        invalidCustomThemeArray: 'Az egyéni témának tömbnek kell lennie.',
-        invalidCustomThemeEntry: 'Az egyéni téma egy vagy több bejegyzése érvénytelen.',
         invalidDecimal: 'Az értéknek pozitív egész számnak kell lennie.',
         invalidEntityId: 'Az entitás azonosító érvénytelen vagy hibás.',
         invalidEnumValue: 'A megadott érték nem része az engedélyezett opcióknak.',
-        invalidIconType: 'A megadott ikon típus érvénytelen vagy nem ismert.',
-        invalidMaxValue: 'A maximális érték érvénytelen vagy túl magas.',
-        invalidMinValue: 'A minimális érték érvénytelen vagy túl alacsony.',
         invalidStateContent: 'Az állapot tartalma érvénytelen vagy hibás.',
         invalidStateContentEntry: 'Az állapot tartalmának egy vagy több eleme érvénytelen.',
         invalidTheme: 'Az adott téma ismeretlen. Az alapértelmezett téma lesz használva.',
@@ -3354,9 +3824,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Objektum típusú érték volt elvárva.',
         invalidTypeString: 'Szöveg típusú érték volt elvárva.',
         invalidUnionType: 'Az érték nem felel meg egyik engedélyezett típusnak sem.',
-        minGreaterThanMax: 'A minimális érték nem lehet nagyobb a maximálisnál.',
         missingActionKey: 'Egy kötelező kulcs hiányzik az action objektumból.',
-        missingColorProperty: 'Egy kötelező szín tulajdonság hiányzik.',
         missingRequiredProperty: 'Egy kötelező tulajdonság hiányzik.'
       }
     },
@@ -3376,25 +3844,25 @@ const TRANSLATIONS = {
         bar_position: 'Sáv pozíciója',
         bar_single_line: 'Egy soros információ (overlay)',
         bar_size: 'Sáv mérete',
-        color_mode: 'Szín mód',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Szín mód',
         center_zero: 'Nulla középen',
         center_zero_value: 'Középérték',
         center_zero_growth_percent: 'Növekedési százalék',
         color: 'Ikon színe',
         decimal: 'Tizedes',
-        disable_unit: 'Egység megjelenítése',
         double_tap_action: 'Kettős koppintás művelet',
         entity: 'Entitás',
         force_circular_background: 'Kör alakú háttér erőltetése',
         hide_jinja: 'Elrejtés (Jinja mód)',
         hold_action: 'Hosszan tartó nyomás művelet',
         icon: 'Ikon',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Ikon dupla koppintás művelet',
         icon_hold_action: 'Ikon hosszan nyomás művelet',
         icon_tap_action: 'Ikon koppintás művelet',
         layout: 'Tartalom elrendezése',
         max_value: 'Maximális érték',
-        max_value_attribute: 'Attribútum (max_value)',
         min_value: 'Minimális érték',
         name: 'Név',
         percent: 'Százalék',
@@ -3404,9 +3872,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Az összes művelet megjelenítése',
         tap_action: 'Koppintás művelet',
         text_shadow: 'Szöveg árnyék hozzáadása (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Téma',
+        custom_theme: 'Custom theme zones',
         unit: 'Mértékegység',
-        use_max_entity: 'Entitás használata max értékhez',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -3414,6 +3885,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Egyéni másodlagos info',
         interpolate: 'Színinterpoláció',
         name_info: 'Egyéni névinfo',
@@ -3453,7 +3925,7 @@ const TRANSLATIONS = {
           horizontal: 'Vízszintes (alapértelmezett)',
           vertical: 'Függőleges'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Automatikus',
           segment: 'Szegmens',
           rainbow: 'Szivárvány'
@@ -3470,6 +3942,7 @@ const TRANSLATIONS = {
           icon: 'Ikon',
           name: 'Név',
           value: 'Érték',
+          unit: 'Egység',
           secondary_info: 'Info',
           progress_bar: 'Sáv'
         },
@@ -3506,6 +3979,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -3515,17 +4023,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Nilai default telah diterapkan secara otomatis.',
         attributeNotFound: 'Atribut tidak ditemukan di HA.',
-        discontinuousRange: 'Range yang didefinisikan tidak kontinu.',
         entityNotFound: 'Entitas tidak ditemukan di HA.',
         invalidActionObject: 'Objek aksi tidak valid atau struktur salah.',
-        invalidCustomThemeArray: 'Tema kustom harus berupa array.',
-        invalidCustomThemeEntry: 'Satu atau lebih entri dalam tema kustom tidak valid.',
         invalidDecimal: 'Nilai harus berupa angka desimal yang valid.',
         invalidEntityId: 'ID entitas tidak valid atau salah format.',
         invalidEnumValue: 'Nilai yang diberikan bukan salah satu dari opsi yang diizinkan.',
-        invalidIconType: 'Tipe ikon yang ditentukan tidak valid atau tidak dikenali.',
-        invalidMaxValue: 'Nilai maksimum tidak valid atau di atas batas yang diizinkan.',
-        invalidMinValue: 'Nilai minimum tidak valid atau di bawah batas yang diizinkan.',
         invalidStateContent: 'Konten state tidak valid atau salah format.',
         invalidStateContentEntry: 'Satu atau lebih entri dalam konten state tidak valid.',
         invalidTheme: 'Tema yang ditentukan tidak dikenal. Tema default akan digunakan.',
@@ -3535,9 +4037,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Mengharapkan nilai bertipe object.',
         invalidTypeString: 'Mengharapkan nilai bertipe string.',
         invalidUnionType: 'Nilai tidak cocok dengan tipe yang diizinkan.',
-        minGreaterThanMax: 'Nilai minimum tidak boleh lebih besar dari nilai maksimum.',
         missingActionKey: 'Kunci yang diperlukan hilang dalam objek aksi.',
-        missingColorProperty: 'Properti warna yang diperlukan hilang.',
         missingRequiredProperty: 'Properti yang diperlukan hilang.'
       }
     },
@@ -3557,25 +4057,25 @@ const TRANSLATIONS = {
         bar_position: 'Posisi bar',
         bar_single_line: 'Info dalam satu baris (overlay)',
         bar_size: 'Ukuran bar',
-        color_mode: 'Mode warna',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Mode warna',
         center_zero: 'Nol di tengah',
         center_zero_value: 'Nilai tengah',
         center_zero_growth_percent: 'Persentase pertumbuhan',
         color: 'Warna utama',
         decimal: 'desimal',
-        disable_unit: 'Tampilkan unit',
         double_tap_action: 'Perilaku ketuk ganda',
         entity: 'Entitas',
         force_circular_background: 'Paksa latar belakang melingkar',
         hide_jinja: 'Sembunyikan (mode Jinja)',
         hold_action: 'Perilaku tahan',
         icon: 'Ikon',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Perilaku ketuk ganda ikon',
         icon_hold_action: 'Perilaku tahan ikon',
         icon_tap_action: 'Perilaku ketuk ikon',
         layout: 'Tata letak konten',
         max_value: 'Nilai maksimum',
-        max_value_attribute: 'Atribut (max_value)',
         min_value: 'Nilai minimum',
         name: 'Nama',
         percent: 'Persentase',
@@ -3585,9 +4085,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Tampilkan semua tindakan',
         tap_action: 'Perilaku ketuk',
         text_shadow: 'Tambahkan bayangan teks (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Tema',
+        custom_theme: 'Custom theme zones',
         unit: 'Unit',
-        use_max_entity: 'Gunakan entitas untuk nilai maksimum',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -3595,6 +4098,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Info sekunder kustom',
         interpolate: 'Interpolasi warna',
         name_info: 'Info nama kustom',
@@ -3634,7 +4138,7 @@ const TRANSLATIONS = {
           temperature: 'Suhu',
           voc: 'VOC'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Otomatis',
           segment: 'Segmen',
           rainbow: 'Pelangi'
@@ -3651,6 +4155,7 @@ const TRANSLATIONS = {
           icon: 'Ikon',
           name: 'Nama',
           value: 'Nilai',
+          unit: 'Unit',
           secondary_info: 'Info',
           progress_bar: 'Bilah'
         },
@@ -3687,6 +4192,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -3696,17 +4236,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'È stato applicato automaticamente un valore predefinito.',
         attributeNotFound: 'Attributo non trovato in Home Assistant.',
-        discontinuousRange: 'L\'intervallo definito è discontinuo.',
         entityNotFound: 'Entità non trovata in Home Assistant.',
         invalidActionObject: 'L\'oggetto azione non è valido o è strutturato in modo errato.',
-        invalidCustomThemeArray: 'Il tema personalizzato deve essere un array.',
-        invalidCustomThemeEntry: 'Una o più voci del tema personalizzato non sono valide.',
         invalidDecimal: 'Il valore deve essere un numero decimale valido.',
         invalidEntityId: 'L\'ID dell\'entità non è valido o è mal formattato.',
         invalidEnumValue: 'Il valore fornito non è tra quelli consentiti.',
-        invalidIconType: 'Il tipo di icona specificato non è valido o non è riconosciuto.',
-        invalidMaxValue: 'Il valore massimo non è valido o supera il limite consentito.',
-        invalidMinValue: 'Il valore minimo non è valido o è al di sotto del limite consentito.',
         invalidStateContent: 'Il contenuto dello stato non è valido o è mal formattato.',
         invalidStateContentEntry: 'Una o più voci nel contenuto dello stato non sono valide.',
         invalidTheme: 'Il tema specificato è sconosciuto. Verrà utilizzato il tema predefinito.',
@@ -3716,9 +4250,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Atteso un valore di tipo oggetto.',
         invalidTypeString: 'Atteso un valore di tipo stringa.',
         invalidUnionType: 'Il valore non corrisponde a nessuno dei tipi consentiti.',
-        minGreaterThanMax: 'Il valore minimo non può essere superiore al valore massimo.',
         missingActionKey: 'Manca una chiave obbligatoria nell\'oggetto azione.',
-        missingColorProperty: 'Manca una proprietà colore obbligatoria.',
         missingRequiredProperty: 'Proprietà obbligatoria mancante.'
       }
     },
@@ -3732,31 +4264,31 @@ const TRANSLATIONS = {
         attribute: 'Attributo',
         badge_color: 'Colore del badge',
         badge_icon: 'Icona del badge',
-        bar_color: 'Colore per la barra',
+        bar_color: 'Colore della barra',
         bar_effect_jinja: 'Effetto sulla barra (modalità Jinja)',
         bar_orientation: 'Orientamento della barra',
         bar_position: 'Posizione della barra',
         bar_single_line: 'Info su una riga (overlay)',
         bar_size: 'Dimensione della barra',
-        color_mode: 'Modalità colore',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Modalità colore barra',
         center_zero: 'Zero al centro',
         center_zero_value: 'Valore centrale',
         center_zero_growth_percent: 'Percentuale di crescita',
         color: 'Colore dell\'icona',
         decimal: 'Decimale',
-        disable_unit: 'Mostra unità',
         double_tap_action: 'Azione al doppio tocco',
         entity: 'Entità',
         force_circular_background: 'Forza sfondo circolare',
         hide_jinja: 'Nascondi (modalità Jinja)',
         hold_action: 'Azione al tocco prolungato',
         icon: 'Icona',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Azione al doppio tocco dell\'icona',
         icon_hold_action: 'Azione al tocco prolungato dell\'icona',
         icon_tap_action: 'Azione al tocco dell\'icona',
         layout: 'Layout del contenuto',
         max_value: 'Valore massimo',
-        max_value_attribute: 'Attributo (max_value)',
         min_value: 'Valore minimo',
         name: 'Nome',
         percent: 'Percentuale',
@@ -3766,9 +4298,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Mostra tutte le azioni',
         tap_action: 'Azione al tocco breve',
         text_shadow: 'Aggiungi ombra al testo (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Tema',
+        custom_theme: 'Zone tema personalizzato',
         unit: 'Unità',
-        use_max_entity: 'Usa un\'entità per il valore massimo',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -3776,6 +4311,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Info secondaria personalizzata',
         interpolate: 'Interpolazione colori',
         name_info: 'Info nome personalizzata',
@@ -3815,7 +4351,7 @@ const TRANSLATIONS = {
           temperature: 'Temperatura',
           voc: 'VOC'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Automatico',
           segment: 'Segmenti',
           rainbow: 'Arcobaleno'
@@ -3832,6 +4368,7 @@ const TRANSLATIONS = {
           icon: 'Icona',
           name: 'Nome',
           value: 'Valore',
+          unit: 'Unità',
           secondary_info: 'Info',
           progress_bar: 'Barra'
         },
@@ -3853,21 +4390,56 @@ const TRANSLATIONS = {
           percent: 'Percent'
         },
         watermark: {
-          low: 'Low',
-          high: 'High',
-          type: 'Type',
-          opacity: 'Opacity',
-          low_color: 'Low color',
-          high_color: 'High color',
-          low_as: 'Low unit',
-          high_as: 'High unit',
-          line_size: 'Line size',
-          disable_low: 'Disable low',
-          disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
-          low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
-          high_attribute: 'Attribute'
+          low: 'Soglia bassa',
+          high: 'Soglia alta',
+          type: 'Tipo',
+          opacity: 'Opacità',
+          low_color: 'Colore soglia bassa',
+          high_color: 'Colore soglia alta',
+          low_as: 'Unità (soglia bassa)',
+          high_as: 'Unità (soglia alta)',
+          line_size: 'Spessore linea',
+          disable_low: 'Disattiva soglia bassa',
+          disable_high: 'Disattiva soglia alta',
+          low_entity_toggle: 'Usa un\'entità per la soglia bassa',
+          low_attribute: 'Attributo',
+          high_entity_toggle: 'Usa un\'entità per la soglia alta',
+          high_attribute: 'Attributo'
+        },
+        icon_animation: {
+          none: 'Nessuna',
+          spin: 'Rotazione',
+          pulse: 'Pulsazione'
+        },
+        alert_when: {
+          above: 'Allerta sopra',
+          below: 'Allerta sotto',
+          color: 'Colore allerta',
+          highlight: 'Evidenziazione'
+        },
+        alert_highlight: {
+          border: 'Bordo',
+          background: 'Sfondo'
+        },
+        min_value_mode: {
+          standard: 'Valore fisso',
+          entity: 'Entità',
+          jinja: 'Modello'
+        },
+        max_value_mode: {
+          standard: 'Valore fisso',
+          entity: 'Entità',
+          jinja: 'Modello'
+        },
+        theme_mode: {
+          preset: 'Predefinito',
+          custom: 'Personalizzato'
+        },
+        min_value: {
+          attribute: 'Attributo'
+        },
+        max_value: {
+          attribute: 'Attributo'
         }
       }
     }
@@ -3877,17 +4449,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'デフォルト値が自動的に適用されました。',
         attributeNotFound: 'Home Assistant に属性が見つかりません。',
-        discontinuousRange: '定義された範囲が連続していません。',
         entityNotFound: 'Home Assistant にエンティティが見つかりません。',
         invalidActionObject: 'アクションオブジェクトが無効または構造が不正です。',
-        invalidCustomThemeArray: 'カスタムテーマは配列である必要があります。',
-        invalidCustomThemeEntry: 'カスタムテーマの1つ以上のエントリが無効です。',
         invalidDecimal: '値は有効な小数である必要があります。',
         invalidEntityId: 'エンティティ ID が無効か、形式が正しくありません。',
         invalidEnumValue: '指定された値は許可されたオプションのいずれでもありません。',
-        invalidIconType: '指定されたアイコンタイプが無効または認識されません。',
-        invalidMaxValue: '最大値が無効か、許容範囲を超えています。',
-        invalidMinValue: '最小値が無効か、許容範囲を下回っています。',
         invalidStateContent: '状態の内容が無効または形式が不正です。',
         invalidStateContentEntry: '状態の内容の1つ以上のエントリが無効です。',
         invalidTheme: '指定されたテーマは不明です。デフォルトのテーマが使用されます。',
@@ -3897,9 +4463,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'オブジェクト型の値が必要です。',
         invalidTypeString: '文字列型の値が必要です。',
         invalidUnionType: '値が許可された型のいずれにも一致しません。',
-        minGreaterThanMax: '最小値は最大値より大きくできません。',
         missingActionKey: 'アクションオブジェクトに必要なキーが欠落しています。',
-        missingColorProperty: '必要な色のプロパティが欠落しています。',
         missingRequiredProperty: '必要なプロパティが欠落しています。'
       }
     },
@@ -3919,25 +4483,25 @@ const TRANSLATIONS = {
         bar_position: 'バーの位置',
         bar_single_line: '1行で情報を表示（オーバーレイ）',
         bar_size: 'バーサイズ',
-        color_mode: 'カラーモード',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'カラーモード',
         center_zero: 'ゼロを中央に',
         center_zero_value: '中心値',
         center_zero_growth_percent: '成長率',
         color: 'メインカラー',
         decimal: '小数点',
-        disable_unit: '単位を表示',
         double_tap_action: 'ダブルタップしたときの動作',
         entity: 'エンティティ',
         force_circular_background: '円形の背景を強制する',
         hide_jinja: '非表示 (Jinjaモード)',
         hold_action: '長押ししたときの動作',
         icon: 'アイコン',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'アイコンをダブルタップしたときの動作',
         icon_hold_action: 'アイコンを長押ししたときの動作',
         icon_tap_action: 'アイコンをタップしたときの動作',
         layout: 'コンテンツのレイアウト',
         max_value: '最大値',
-        max_value_attribute: '属性（最大値）',
         min_value: '最小値',
         name: '名前',
         percent: 'パーセント',
@@ -3947,9 +4511,12 @@ const TRANSLATIONS = {
         show_all_actions: 'すべての操作を表示',
         tap_action: '短くタップしたときの動作',
         text_shadow: 'テキストに影を追加 (オーバーレイ)',
+        theme_mode: 'Theme mode',
         theme: 'テーマ',
+        custom_theme: 'Custom theme zones',
         unit: '単位',
-        use_max_entity: '最大値にエンティティを使用',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -3957,6 +4524,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'カスタム補助情報',
         interpolate: '色の補間',
         name_info: 'カスタム名前情報',
@@ -3996,7 +4564,7 @@ const TRANSLATIONS = {
           temperature: '温度',
           voc: 'VOC'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: '自動',
           segment: 'セグメント',
           rainbow: 'レインボー'
@@ -4013,6 +4581,7 @@ const TRANSLATIONS = {
           icon: 'アイコン',
           name: '名前',
           value: '値',
+          unit: '単位',
           secondary_info: '補足情報',
           progress_bar: 'バー'
         },
@@ -4049,6 +4618,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -4058,17 +4662,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: '기본값이 자동으로 적용되었습니다.',
         attributeNotFound: 'Home Assistant에서 속성을 찾을 수 없습니다.',
-        discontinuousRange: '정의된 범위가 연속적이지 않습니다.',
         entityNotFound: 'Home Assistant에서 엔티티를 찾을 수 없습니다.',
         invalidActionObject: '액션 객체가 잘못되었거나 구조가 올바르지 않습니다.',
-        invalidCustomThemeArray: '사용자 정의 테마는 배열이어야 합니다.',
-        invalidCustomThemeEntry: '사용자 정의 테마에 하나 이상의 잘못된 항목이 있습니다.',
         invalidDecimal: '값은 유효한 소수여야 합니다.',
         invalidEntityId: '엔티티 ID가 잘못되었거나 형식이 잘못되었습니다.',
         invalidEnumValue: '제공된 값이 허용된 옵션 중 하나가 아닙니다.',
-        invalidIconType: '지정된 아이콘 유형이 잘못되었거나 인식되지 않습니다.',
-        invalidMaxValue: '최대값이 유효하지 않거나 허용된 범위를 초과합니다.',
-        invalidMinValue: '최소값이 유효하지 않거나 허용된 범위보다 작습니다.',
         invalidStateContent: '상태 콘텐츠가 잘못되었거나 형식이 잘못되었습니다.',
         invalidStateContentEntry: '상태 콘텐츠에 하나 이상의 잘못된 항목이 있습니다.',
         invalidTheme: '지정된 테마를 알 수 없습니다. 기본 테마가 사용됩니다.',
@@ -4078,9 +4676,7 @@ const TRANSLATIONS = {
         invalidTypeObject: '객체 유형의 값이 필요합니다.',
         invalidTypeString: '문자열 유형의 값이 필요합니다.',
         invalidUnionType: '값이 허용된 유형 중 어떤 것과도 일치하지 않습니다.',
-        minGreaterThanMax: '최소값은 최대값보다 클 수 없습니다.',
         missingActionKey: '액션 객체에 필수 키가 없습니다.',
-        missingColorProperty: '필수 색상 속성이 누락되었습니다.',
         missingRequiredProperty: '필수 속성이 누락되었습니다.'
       }
     },
@@ -4100,25 +4696,25 @@ const TRANSLATIONS = {
         bar_position: '바 위치',
         bar_single_line: '한 줄로 정보 표시 (오버레이)',
         bar_size: '바 크기',
-        color_mode: '색상 모드',
+        bar_segments: 'Bar segments',
+        bar_color_mode: '색상 모드',
         center_zero: '중앙에 영점',
         center_zero_value: '중앙값',
         center_zero_growth_percent: '성장률',
         color: '기본 색상',
         decimal: '소수점',
-        disable_unit: '단위 표시',
         double_tap_action: '더블 탭 시 동작',
         entity: '엔티티',
         force_circular_background: '원형 배경 강제 적용',
         hide_jinja: '숨기기 (Jinja 모드)',
         hold_action: '길게 누를 시 동작',
         icon: '아이콘',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: '아이콘 더블 탭 시 동작',
         icon_hold_action: '아이콘 길게 누를 시 동작',
         icon_tap_action: '아이콘 탭 시 동작',
         layout: '콘텐츠 레이아웃',
         max_value: '최대값',
-        max_value_attribute: '속성 (최대값)',
         min_value: '최소값',
         name: '이름',
         percent: '퍼센트',
@@ -4128,9 +4724,12 @@ const TRANSLATIONS = {
         show_all_actions: '모든 액션 표시',
         tap_action: '짧게 탭 시 동작',
         text_shadow: '텍스트 그림자 추가 (오버레이)',
+        theme_mode: 'Theme mode',
         theme: '테마',
+        custom_theme: 'Custom theme zones',
         unit: '단위',
-        use_max_entity: '최대값에 엔티티 사용',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -4138,6 +4737,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: '사용자 정의 보조 정보',
         interpolate: '색상 보간',
         name_info: '사용자 정의 이름 정보',
@@ -4177,7 +4777,7 @@ const TRANSLATIONS = {
           temperature: '온도',
           voc: 'VOC'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: '자동',
           segment: '세그먼트',
           rainbow: '무지개'
@@ -4194,6 +4794,7 @@ const TRANSLATIONS = {
           icon: '아이콘',
           name: '이름',
           value: '값',
+          unit: '단위',
           secondary_info: '부가 정보',
           progress_bar: '바'
         },
@@ -4230,6 +4831,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -4239,17 +4875,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Numatytoji reikšmė buvo automatiškai pritaikyta.',
         attributeNotFound: 'Atributas nerastas Home Assistant.',
-        discontinuousRange: 'Nustatytas intervalas nėra tęstinis.',
         entityNotFound: 'Entity nerasta Home Assistant.',
         invalidActionObject: 'Veiksmo objektas negalioja arba neteisingai suformuotas.',
-        invalidCustomThemeArray: 'Individuali tema turi būti masyvas.',
-        invalidCustomThemeEntry: 'Viena ar daugiau individualios temos įrašų negalioja.',
         invalidDecimal: 'Reikšmė turi būti teigiamas sveikasis skaičius.',
         invalidEntityId: 'Entity ID negalioja arba neteisingas.',
         invalidEnumValue: 'Pateikta reikšmė nėra tarp leidžiamų parinkčių.',
-        invalidIconType: 'Nurodytas piktogramos tipas negalioja arba nežinomas.',
-        invalidMaxValue: 'Maksimali reikšmė negalioja arba viršija leistiną ribą.',
-        invalidMinValue: 'Minimali reikšmė negalioja arba žemesnė už leistiną ribą.',
         invalidStateContent: 'Būsenos turinys negalioja arba neteisingai suformuotas.',
         invalidStateContentEntry: 'Viena ar daugiau būsenos turinio įrašų negalioja.',
         invalidTheme: 'Nurodyta tema nežinoma. Bus naudojama numatytoji tema.',
@@ -4259,9 +4889,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Tikėtasi objekto tipo reikšmės.',
         invalidTypeString: 'Tikėtasi eilutės tipo reikšmės.',
         invalidUnionType: 'Reikšmė neatitinka nė vieno leidžiamo tipo.',
-        minGreaterThanMax: 'Minimali reikšmė negali būti didesnė už maksimalų.',
         missingActionKey: 'Trūksta privalomo rakto veiksmo objekte.',
-        missingColorProperty: 'Trūksta privalomos spalvos savybės.',
         missingRequiredProperty: 'Trūksta privalomos savybės.'
       }
     },
@@ -4281,25 +4909,25 @@ const TRANSLATIONS = {
         bar_position: 'Juostos pozicija',
         bar_single_line: 'Informacija vienoje eilutėje (overlay)',
         bar_size: 'Juostos dydis',
-        color_mode: 'Spalvos režimas',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Spalvos režimas',
         center_zero: 'Nulis centre',
         center_zero_value: 'Centro reikšmė',
         center_zero_growth_percent: 'Augimo procentas',
         color: 'Ikonos spalva',
         decimal: 'Dešimtainė',
-        disable_unit: 'Rodyti vienetą',
         double_tap_action: 'Dviejų bakstelėjimų veiksmas',
         entity: 'Entity',
         force_circular_background: 'Priversti apvalų foną',
         hide_jinja: 'Slėpti (Jinja režimas)',
         hold_action: 'Ilgo paspaudimo veiksmas',
         icon: 'Ikona',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Ikonos dviejų bakstelėjimų veiksmas',
         icon_hold_action: 'Ikonos ilgo paspaudimo veiksmas',
         icon_tap_action: 'Ikonos bakstelėjimo veiksmas',
         layout: 'Turinio išdėstymas',
         max_value: 'Maksimali reikšmė',
-        max_value_attribute: 'Atributas (max_value)',
         min_value: 'Minimali reikšmė',
         name: 'Pavadinimas',
         percent: 'Procentai',
@@ -4309,9 +4937,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Rodyti visus veiksmus',
         tap_action: 'Bakstelėjimo veiksmas',
         text_shadow: 'Pridėti teksto šešėlį (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Tema',
+        custom_theme: 'Custom theme zones',
         unit: 'Vienetas',
-        use_max_entity: 'Naudoti entity max reikšmei',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -4319,6 +4950,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Pasirinktinė papildoma informacija',
         interpolate: 'Spalvų interpoliavimas',
         name_info: 'Pasirinktinė pavadinimo informacija',
@@ -4358,7 +4990,7 @@ const TRANSLATIONS = {
           horizontal: 'Horizontalus (numatyta)',
           vertical: 'Vertikalus'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Automatinis',
           segment: 'Segmentai',
           rainbow: 'Vaivorykštė'
@@ -4375,6 +5007,7 @@ const TRANSLATIONS = {
           icon: 'Piktograma',
           name: 'Pavadinimas',
           value: 'Reikšmė',
+          unit: 'Vienetas',
           secondary_info: 'Info',
           progress_bar: 'Juosta'
         },
@@ -4411,6 +5044,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -4420,17 +5088,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Noklusējuma vērtība tika automātiski piemērota.',
         attributeNotFound: 'Atribūts nav atrasts Home Assistant.',
-        discontinuousRange: 'Norādītais diapazons nav nepārtraukts.',
         entityNotFound: 'Vienība nav atrasta Home Assistant.',
         invalidActionObject: 'Darbības objekts nav derīgs vai ir nepareizi strukturēts.',
-        invalidCustomThemeArray: 'Pielāgotajai tēmai jābūt masīvam.',
-        invalidCustomThemeEntry: 'Viena vai vairākas pielāgotās tēmas ievades nav derīgas.',
         invalidDecimal: 'Vērtībai jābūt pozitīvam veselajam skaitlim.',
         invalidEntityId: 'Vienības ID nav derīgs vai ir nepareizs.',
         invalidEnumValue: 'Ievadītā vērtība nav atļauto opciju sarakstā.',
-        invalidIconType: 'Norādītais ikonas tips nav derīgs vai nav zināms.',
-        invalidMaxValue: 'Maksimālā vērtība nav derīga vai pārsniedz atļauto robežu.',
-        invalidMinValue: 'Minimālā vērtība nav derīga vai zem atļautās robežas.',
         invalidStateContent: 'Stāvokļa saturs nav derīgs vai ir nepareizi strukturēts.',
         invalidStateContentEntry: 'Viena vai vairākas stāvokļa satura ievades nav derīgas.',
         invalidTheme: 'Norādītā tēma nav zināma. Tiks izmantota noklusējuma tēma.',
@@ -4440,9 +5102,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Tika gaidīta objekta tipa vērtība.',
         invalidTypeString: 'Tika gaidīta virknes tipa vērtība.',
         invalidUnionType: 'Vērtība neatbilst nevienam atļautajam tipam.',
-        minGreaterThanMax: 'Minimālā vērtība nevar būt lielāka par maksimālo.',
         missingActionKey: 'Trūkst obligātā atslēga darbības objektā.',
-        missingColorProperty: 'Trūkst obligātā krāsas īpašība.',
         missingRequiredProperty: 'Trūkst obligātā īpašība.'
       }
     },
@@ -4462,25 +5122,25 @@ const TRANSLATIONS = {
         bar_position: 'Joslas pozīcija',
         bar_single_line: 'Informācija vienā rindā (overlay)',
         bar_size: 'Joslas izmērs',
-        color_mode: 'Krāsas režīms',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Krāsas režīms',
         center_zero: 'Nulles centrā',
         center_zero_value: 'Centra vērtība',
         center_zero_growth_percent: 'Pieauguma procents',
         color: 'Ikonas krāsa',
         decimal: 'Decimāldaļa',
-        disable_unit: 'Rādīt vienību',
         double_tap_action: 'Divreiz pieskaroties',
         entity: 'Vienība',
         force_circular_background: 'Piespiest apļu fonu',
         hide_jinja: 'Slēpt (Jinja režīms)',
         hold_action: 'Ilgs pieskāriens',
         icon: 'Ikona',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Ikonas dubults pieskāriens',
         icon_hold_action: 'Ikonas ilgs pieskāriens',
         icon_tap_action: 'Ikonas pieskāriens',
         layout: 'Satura izkārtojums',
         max_value: 'Maksimālā vērtība',
-        max_value_attribute: 'Atribūts (max_value)',
         min_value: 'Minimālā vērtība',
         name: 'Nosaukums',
         percent: 'Procenti',
@@ -4490,9 +5150,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Rādīt visas darbības',
         tap_action: 'Pieskāriens',
         text_shadow: 'Pievienot teksta ēnu (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Tēma',
+        custom_theme: 'Custom theme zones',
         unit: 'Vienība',
-        use_max_entity: 'Izmantot vienību max vērtībai',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -4500,6 +5163,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Pielāgota sekundārā informācija',
         interpolate: 'Krāsu interpolācija',
         name_info: 'Pielāgota nosaukuma informācija',
@@ -4539,7 +5203,7 @@ const TRANSLATIONS = {
           horizontal: 'Horizontāls (noklusēts)',
           vertical: 'Vertikāls'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Automātisks',
           segment: 'Segmenti',
           rainbow: 'Varavīksne'
@@ -4556,6 +5220,7 @@ const TRANSLATIONS = {
           icon: 'Ikona',
           name: 'Nosaukums',
           value: 'Vērtība',
+          unit: 'Vienība',
           secondary_info: 'Info',
           progress_bar: 'Josla'
         },
@@ -4592,6 +5257,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -4601,17 +5301,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Автоматски е применета стандардна вредност.',
         attributeNotFound: 'Атрибутот не е пронајден во Home Assistant.',
-        discontinuousRange: 'Дефинираниот опсег е дисконинуиран.',
         entityNotFound: 'Ентитетот не е пронајден во Home Assistant.',
         invalidActionObject: 'Објектот за акција е невалиден или неправилно структуриран.',
-        invalidCustomThemeArray: 'Прилагодената тема мора да биде низа.',
-        invalidCustomThemeEntry: 'Еден или повеќе елементи во прилагодената тема се невалидни.',
         invalidDecimal: 'Вредноста мора да биде валиден децимален број.',
         invalidEntityId: 'ID-то на ентитетот е невалидно или лошо форматирано.',
         invalidEnumValue: 'Дадената вредност не е дозволена опција.',
-        invalidIconType: 'Типот на икона е невалиден или непознат.',
-        invalidMaxValue: 'Максималната вредност е невалидна или над дозволеното.',
-        invalidMinValue: 'Минималната вредност е невалидна или под дозволеното.',
         invalidStateContent: 'Состојбата е невалидна или лошо форматирана.',
         invalidStateContentEntry: 'Еден или повеќе елементи во состојбата се невалидни.',
         invalidTheme: 'Темата е непозната. Ќе се користи стандардна тема.',
@@ -4621,9 +5315,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Се очекуваше вредност од тип објект.',
         invalidTypeString: 'Се очекуваше вредност од тип string.',
         invalidUnionType: 'Вредноста не одговара на дозволените типови.',
-        minGreaterThanMax: 'Минималната вредност не може да биде поголема од максималната.',
         missingActionKey: 'Недостасува потребен клуч во објектот за акција.',
-        missingColorProperty: 'Недостасува потребна карактеристика за боја.',
         missingRequiredProperty: 'Недостасува потребно својство.'
       }
     },
@@ -4643,25 +5335,25 @@ const TRANSLATIONS = {
         bar_position: 'Позиција на лентата',
         bar_single_line: 'Инфо во еден ред (overlay)',
         bar_size: 'Големина на лента',
-        color_mode: 'Режим на боја',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Режим на боја',
         center_zero: 'Нула во центарот',
         center_zero_value: 'Централна вредност',
         center_zero_growth_percent: 'Процент на растеж',
         color: 'Примарна боја',
         decimal: 'децемален',
-        disable_unit: 'Прикажи единица',
         double_tap_action: 'Дејство при двоен допир',
         entity: 'Ентитет',
         force_circular_background: 'Принуди кружна позадина',
         hide_jinja: 'Сокриј (Jinja режим)',
         hold_action: 'Дејство при долг допир',
         icon: 'Икона',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Дејство при двоен допир на иконата',
         icon_hold_action: 'Дејство при долг допир на иконата',
         icon_tap_action: 'Дејство при допир на иконата',
         layout: 'Распоред на содржината',
         max_value: 'Максимална вредност',
-        max_value_attribute: 'Атрибут (max_value)',
         min_value: 'Минимална вредност',
         name: 'Име',
         percent: 'Процент',
@@ -4671,9 +5363,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Прикажи ги сите дејства',
         tap_action: 'Дејство при краток допир',
         text_shadow: 'Додај сенка на текст (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Тема',
+        custom_theme: 'Custom theme zones',
         unit: 'Јединство',
-        use_max_entity: 'Користи ентитет за максимална вредност',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -4681,6 +5376,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Прилагодена секундарна информација',
         interpolate: 'Интерполација на бои',
         name_info: 'Прилагодена информација за имиња',
@@ -4720,7 +5416,7 @@ const TRANSLATIONS = {
           temperature: 'Температура',
           voc: 'VOC'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Автоматски',
           segment: 'Сегменти',
           rainbow: 'Виножито'
@@ -4737,6 +5433,7 @@ const TRANSLATIONS = {
           icon: 'Икона',
           name: 'Име',
           value: 'Вредност',
+          unit: 'Единица',
           secondary_info: 'Инфо',
           progress_bar: 'Лента'
         },
@@ -4773,6 +5470,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -4782,17 +5514,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'En standardverdi har blitt brukt automatisk.',
         attributeNotFound: 'Attributtet ble ikke funnet i Home Assistant.',
-        discontinuousRange: 'Det definerte området er ikke sammenhengende.',
         entityNotFound: 'Enheten ble ikke funnet i Home Assistant.',
         invalidActionObject: 'Handlingsobjektet er ugyldig eller feil strukturert.',
-        invalidCustomThemeArray: 'Tilpasset tema må være en array.',
-        invalidCustomThemeEntry: 'Én eller flere oppføringer i temaet er ugyldige.',
         invalidDecimal: 'Verdien må være et gyldig desimaltall.',
         invalidEntityId: 'Enhets-ID er ugyldig eller feil formatert.',
         invalidEnumValue: 'Den oppgitte verdien er ikke en gyldig mulighet.',
-        invalidIconType: 'Angitt ikon-type er ugyldig eller ukjent.',
-        invalidMaxValue: 'Maksverdi er ugyldig eller for høy.',
-        invalidMinValue: 'Minsteverdi er ugyldig eller for lav.',
         invalidStateContent: 'Tilstandsinnholdet er ugyldig eller feil formatert.',
         invalidStateContentEntry: 'En eller flere oppføringer i tilstandsinnholdet er ugyldige.',
         invalidTheme: 'Angitt tema er ukjent. Standardtema vil bli brukt.',
@@ -4802,9 +5528,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Forventet en verdi av typen objekt.',
         invalidTypeString: 'Forventet en verdi av typen string.',
         invalidUnionType: 'Verdien samsvarer ikke med noen av de tillatte typene.',
-        minGreaterThanMax: 'Minsteverdi kan ikke være større enn maksverdi.',
         missingActionKey: 'En påkrevd nøkkel mangler i handlingsobjektet.',
-        missingColorProperty: 'En nødvendig fargeegenskap mangler.',
         missingRequiredProperty: 'En påkrevd egenskap mangler.'
       }
     },
@@ -4824,25 +5548,25 @@ const TRANSLATIONS = {
         bar_position: 'Posisjon for baren',
         bar_single_line: 'Info på én linje (overlay)',
         bar_size: 'Bar størrelse',
-        color_mode: 'Fargemodus',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Fargemodus',
         center_zero: 'Null i midten',
         center_zero_value: 'Senterverdi',
         center_zero_growth_percent: 'Vekstprosent',
         color: 'Primærfarge',
         decimal: 'desimal',
-        disable_unit: 'Vis enhet',
         double_tap_action: 'Handling ved dobbelt trykk',
         entity: 'Enhet',
         force_circular_background: 'Tving sirkulær bakgrunn',
         hide_jinja: 'Skjul (Jinja-modus)',
         hold_action: 'Handling ved langt trykk',
         icon: 'Ikon',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Handling ved dobbelt trykk på ikonet',
         icon_hold_action: 'Handling ved langt trykk på ikonet',
         icon_tap_action: 'Handling ved trykk på ikonet',
         layout: 'Innholdslayout',
         max_value: 'Maksimal verdi',
-        max_value_attribute: 'Attributt (max_value)',
         min_value: 'Minste verdi',
         name: 'Navn',
         percent: 'Prosent',
@@ -4852,9 +5576,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Vis alle handlinger',
         tap_action: 'Handling ved kort trykk',
         text_shadow: 'Legg til tekstskygge (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Tema',
+        custom_theme: 'Custom theme zones',
         unit: 'Enhet',
-        use_max_entity: 'Bruk enhet for maksimalverdi',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -4862,6 +5589,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Egendefinert sekundær info',
         interpolate: 'Interpoler farger',
         name_info: 'Egendefinert navneinfo',
@@ -4901,7 +5629,7 @@ const TRANSLATIONS = {
           temperature: 'Temperatur',
           voc: 'VOC'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Auto',
           segment: 'Segmenter',
           rainbow: 'Regnbue'
@@ -4918,6 +5646,7 @@ const TRANSLATIONS = {
           icon: 'Ikon',
           name: 'Navn',
           value: 'Verdi',
+          unit: 'Enhet',
           secondary_info: 'Info',
           progress_bar: 'Stolpe'
         },
@@ -4954,6 +5683,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -4963,17 +5727,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Een standaardwaarde is automatisch toegepast.',
         attributeNotFound: 'Attribuut niet gevonden in Home Assistant.',
-        discontinuousRange: 'Het opgegeven bereik is niet aaneengesloten.',
         entityNotFound: 'Entiteit niet gevonden in Home Assistant.',
         invalidActionObject: 'Het actieobject is ongeldig of onjuist gestructureerd.',
-        invalidCustomThemeArray: 'Het aangepaste thema moet een array zijn.',
-        invalidCustomThemeEntry: 'Een of meer invoeren in het aangepaste thema zijn ongeldig.',
         invalidDecimal: 'De waarde moet een geldig decimaal getal zijn.',
         invalidEntityId: 'De entity ID is ongeldig of foutief geformatteerd.',
         invalidEnumValue: 'De opgegeven waarde is geen geldige optie.',
-        invalidIconType: 'Het opgegeven pictogramtype is ongeldig of niet herkend.',
-        invalidMaxValue: 'De maximumwaarde is ongeldig of te hoog.',
-        invalidMinValue: 'De minimumwaarde is ongeldig of te laag.',
         invalidStateContent: 'De statusinhoud is ongeldig of foutief.',
         invalidStateContentEntry: 'Een of meer onderdelen van de statusinhoud zijn ongeldig.',
         invalidTheme: 'Het opgegeven thema is onbekend. Het standaardthema wordt gebruikt.',
@@ -4983,9 +5741,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Verwachte waarde van het type object.',
         invalidTypeString: 'Verwachte waarde van het type string.',
         invalidUnionType: 'De waarde komt niet overeen met toegestane types.',
-        minGreaterThanMax: 'Minimumwaarde kan niet groter zijn dan de maximumwaarde.',
         missingActionKey: 'Er ontbreekt een verplichte sleutel in het actieobject.',
-        missingColorProperty: 'Een verplichte kleur-eigenschap ontbreekt.',
         missingRequiredProperty: 'Vereiste eigenschap ontbreekt.'
       }
     },
@@ -4999,31 +5755,31 @@ const TRANSLATIONS = {
         attribute: 'Attribuut',
         badge_color: 'Kleur van badge',
         badge_icon: 'Pictogram van badge',
-        bar_color: 'Kleur voor de balk',
+        bar_color: 'Kleur van de balk',
         bar_effect_jinja: 'Effect op de balk (Jinja-modus)',
         bar_orientation: 'Oriëntatie van de balk',
         bar_position: 'Positie van de balk',
         bar_single_line: 'Info op één regel (overlay)',
         bar_size: 'Balkgrootte',
-        color_mode: 'Kleurmodus',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Balkkleurmodus',
         center_zero: 'Nul in het midden',
         center_zero_value: 'Centrumwaarde',
         center_zero_growth_percent: 'Groeipercentage',
-        color: 'Primaire kleur',
+        color: 'Kleur van het pictogram',
         decimal: 'decimaal',
-        disable_unit: 'Eenheid weergeven',
         double_tap_action: 'Actie bij dubbel tikken',
         entity: 'Entiteit',
         force_circular_background: 'Geforceerde cirkelvormige achtergrond',
         hide_jinja: 'Verbergen (Jinja-modus)',
         hold_action: 'Actie bij lang ingedrukt houden',
         icon: 'Pictogram',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Actie bij dubbel tikken op pictogram',
         icon_hold_action: 'Actie bij lang ingedrukt houden op pictogram',
         icon_tap_action: 'Actie bij tikken op pictogram',
         layout: 'Inhoudsindeling',
         max_value: 'Maximale waarde',
-        max_value_attribute: 'Attribuut (max_value)',
         min_value: 'Minimale waarde',
         name: 'Naam',
         percent: 'Percentage',
@@ -5033,9 +5789,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Toon alle acties',
         tap_action: 'Actie bij korte tik',
         text_shadow: 'Tekstschaduw toevoegen (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Thema',
+        custom_theme: 'Aangepaste themazones',
         unit: 'Eenheid',
-        use_max_entity: 'Entiteit gebruiken voor maximale waarde',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -5043,6 +5802,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Aangepaste secundaire info',
         interpolate: 'Kleuren interpoleren',
         name_info: 'Aangepaste naaminfo',
@@ -5082,7 +5842,7 @@ const TRANSLATIONS = {
           temperature: 'Temperatuur',
           voc: 'VOC'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Automatisch',
           segment: 'Segmenten',
           rainbow: 'Regenboog'
@@ -5099,6 +5859,7 @@ const TRANSLATIONS = {
           icon: 'Pictogram',
           name: 'Naam',
           value: 'Waarde',
+          unit: 'Eenheid',
           secondary_info: 'Info',
           progress_bar: 'Balk'
         },
@@ -5120,21 +5881,56 @@ const TRANSLATIONS = {
           percent: 'Percent'
         },
         watermark: {
-          low: 'Low',
-          high: 'High',
+          low: 'Lage waarde',
+          high: 'Hoge waarde',
           type: 'Type',
-          opacity: 'Opacity',
-          low_color: 'Low color',
-          high_color: 'High color',
-          low_as: 'Low unit',
-          high_as: 'High unit',
-          line_size: 'Line size',
-          disable_low: 'Disable low',
-          disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
-          low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
-          high_attribute: 'Attribute'
+          opacity: 'Dekking',
+          low_color: 'Lage kleur',
+          high_color: 'Hoge kleur',
+          low_as: 'Eenheid (lage waarde)',
+          high_as: 'Eenheid (hoge waarde)',
+          line_size: 'Lijndikte',
+          disable_low: 'Lage waarde uitschakelen',
+          disable_high: 'Hoge waarde uitschakelen',
+          low_entity_toggle: 'Entiteit gebruiken voor lage waarde',
+          low_attribute: 'Attribuut',
+          high_entity_toggle: 'Entiteit gebruiken voor hoge waarde',
+          high_attribute: 'Attribuut'
+        },
+        icon_animation: {
+          none: 'Geen',
+          spin: 'Draaien',
+          pulse: 'Pulseren'
+        },
+        alert_when: {
+          above: 'Alarm boven',
+          below: 'Alarm onder',
+          color: 'Alarmkleur',
+          highlight: 'Markering'
+        },
+        alert_highlight: {
+          border: 'Rand',
+          background: 'Achtergrond'
+        },
+        min_value_mode: {
+          standard: 'Vaste waarde',
+          entity: 'Entiteit',
+          jinja: 'Sjabloon'
+        },
+        max_value_mode: {
+          standard: 'Vaste waarde',
+          entity: 'Entiteit',
+          jinja: 'Sjabloon'
+        },
+        theme_mode: {
+          preset: 'Voorinstelling',
+          custom: 'Aangepast'
+        },
+        min_value: {
+          attribute: 'Attribuut'
+        },
+        max_value: {
+          attribute: 'Attribuut'
         }
       }
     }
@@ -5144,17 +5940,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Zastosowano domyślną wartość automatycznie.',
         attributeNotFound: 'Nie znaleziono atrybutu w Home Assistant.',
-        discontinuousRange: 'Zdefiniowany zakres jest nieciągły.',
         entityNotFound: 'Nie znaleziono encji w Home Assistant.',
         invalidActionObject: 'Obiekt akcji jest nieprawidłowy lub ma złą strukturę.',
-        invalidCustomThemeArray: 'Własny motyw musi być tablicą.',
-        invalidCustomThemeEntry: 'Jedna lub więcej pozycji motywu jest nieprawidłowa.',
         invalidDecimal: 'Wartość musi być poprawną liczbą dziesiętną.',
         invalidEntityId: 'ID encji jest nieprawidłowe lub ma zły format.',
         invalidEnumValue: 'Podana wartość nie jest jedną z dozwolonych opcji.',
-        invalidIconType: 'Określony typ ikony jest nieprawidłowy lub nieznany.',
-        invalidMaxValue: 'Maksymalna wartość jest nieprawidłowa lub zbyt wysoka.',
-        invalidMinValue: 'Minimalna wartość jest nieprawidłowa lub zbyt niska.',
         invalidStateContent: 'Zawartość stanu jest nieprawidłowa lub uszkodzona.',
         invalidStateContentEntry: 'Jedna lub więcej pozycji zawartości stanu jest nieprawidłowa.',
         invalidTheme: 'Podany motyw jest nieznany. Zostanie użyty domyślny motyw.',
@@ -5164,9 +5954,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Oczekiwano wartości typu obiekt.',
         invalidTypeString: 'Oczekiwano wartości typu string.',
         invalidUnionType: 'Wartość nie pasuje do żadnego z dozwolonych typów.',
-        minGreaterThanMax: 'Wartość minimalna nie może być większa niż maksymalna.',
         missingActionKey: 'W obiekcie akcji brakuje wymaganej właściwości.',
-        missingColorProperty: 'Brakuje wymaganej właściwości koloru.',
         missingRequiredProperty: 'Brakuje wymaganej właściwości.'
       }
     },
@@ -5186,25 +5974,25 @@ const TRANSLATIONS = {
         bar_position: 'Pozycja paska',
         bar_single_line: 'Info w jednej linii (overlay)',
         bar_size: 'Rozmiar paska',
-        color_mode: 'Tryb koloru',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Tryb koloru',
         center_zero: 'Zero na środku',
         center_zero_value: 'Wartość środkowa',
         center_zero_growth_percent: 'Procent wzrostu',
         color: 'Kolor podstawowy',
         decimal: 'dziesiętny',
-        disable_unit: 'Pokaż jednostkę',
         double_tap_action: 'Akcja przy podwójnym naciśnięciu',
         entity: 'Encja',
         force_circular_background: 'Wymuś okrągłe tło',
         hide_jinja: 'Ukryj (tryb Jinja)',
         hold_action: 'Akcja przy długim naciśnięciu',
         icon: 'Ikona',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Akcja przy podwójnym naciśnięciu ikony',
         icon_hold_action: 'Akcja przy długim naciśnięciu ikony',
         icon_tap_action: 'Akcja przy naciśnięciu ikony',
         layout: 'Układ treści',
         max_value: 'Wartość maksymalna',
-        max_value_attribute: 'Atrybut (max_value)',
         min_value: 'Wartość minimalna',
         name: 'Nazwa',
         percent: 'Procent',
@@ -5214,9 +6002,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Pokaż wszystkie akcje',
         tap_action: 'Akcja przy krótkim naciśnięciu',
         text_shadow: 'Dodaj cień tekstu (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Motyw',
+        custom_theme: 'Custom theme zones',
         unit: 'Jednostka',
-        use_max_entity: 'Użyj encji dla wartości maksymalnej',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -5224,6 +6015,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Niestandardowa info pomocnicza',
         interpolate: 'Interpolacja kolorów',
         name_info: 'Niestandardowa info nazwy',
@@ -5263,7 +6055,7 @@ const TRANSLATIONS = {
           temperature: 'Temperatura',
           voc: 'VOC'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Automatycznie',
           segment: 'Segmenty',
           rainbow: 'Tęcza'
@@ -5280,6 +6072,7 @@ const TRANSLATIONS = {
           icon: 'Ikona',
           name: 'Nazwa',
           value: 'Wartość',
+          unit: 'Jednostka',
           secondary_info: 'Info',
           progress_bar: 'Pasek'
         },
@@ -5316,6 +6109,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -5325,17 +6153,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Um valor padrão foi aplicado automaticamente.',
         attributeNotFound: 'Atributo não encontrado no Home Assistant.',
-        discontinuousRange: 'O intervalo definido é descontínuo.',
         entityNotFound: 'Entidade não encontrada no Home Assistant.',
         invalidActionObject: 'O objeto de ação é inválido ou mal estruturado.',
-        invalidCustomThemeArray: 'O tema personalizado deve ser um array.',
-        invalidCustomThemeEntry: 'Uma ou mais entradas do tema personalizado são inválidas.',
         invalidDecimal: 'O valor deve ser um número inteiro positivo.',
         invalidEntityId: 'O ID da entidade é inválido ou mal formado.',
         invalidEnumValue: 'O valor fornecido não faz parte das opções permitidas.',
-        invalidIconType: 'O tipo de ícone especificado é inválido ou desconhecido.',
-        invalidMaxValue: 'O valor máximo é inválido ou excede os limites permitidos.',
-        invalidMinValue: 'O valor mínimo é inválido ou abaixo dos limites permitidos.',
         invalidStateContent: 'O conteúdo do estado é inválido ou mal formado.',
         invalidStateContentEntry: 'Uma ou mais entradas do conteúdo do estado são inválidas.',
         invalidTheme: 'O tema especificado é desconhecido. O tema padrão será usado.',
@@ -5345,9 +6167,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Um valor do tipo objeto era esperado.',
         invalidTypeString: 'Um valor do tipo string era esperado.',
         invalidUnionType: 'O valor não corresponde a nenhum dos tipos permitidos.',
-        minGreaterThanMax: 'O valor mínimo não pode ser maior que o valor máximo.',
         missingActionKey: 'Uma chave obrigatória está ausente no objeto de ação.',
-        missingColorProperty: 'Uma propriedade de cor obrigatória está ausente.',
         missingRequiredProperty: 'Uma propriedade obrigatória está ausente.'
       }
     },
@@ -5367,25 +6187,25 @@ const TRANSLATIONS = {
         bar_position: 'Posição da barra',
         bar_single_line: 'Informações em uma linha (overlay)',
         bar_size: 'Tamanho da barra',
-        color_mode: 'Modo de cor',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Modo de cor',
         center_zero: 'Zero ao centro',
         center_zero_value: 'Valor central',
         center_zero_growth_percent: 'Percentual de crescimento',
         color: 'Cor do ícone',
         decimal: 'Decimal',
-        disable_unit: 'Mostrar unidade',
         double_tap_action: 'Ação ao tocar duas vezes',
         entity: 'Entidade',
         force_circular_background: 'Forçar fundo circular',
         hide_jinja: 'Ocultar (modo Jinja)',
         hold_action: 'Ação ao manter pressionado',
         icon: 'Ícone',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Ação ao tocar duas vezes no ícone',
         icon_hold_action: 'Ação ao manter pressionado o ícone',
         icon_tap_action: 'Ação ao tocar no ícone',
         layout: 'Layout do conteúdo',
         max_value: 'Valor máximo',
-        max_value_attribute: 'Atributo (max_value)',
         min_value: 'Valor mínimo',
         name: 'Nome',
         percent: 'Porcentagem',
@@ -5395,9 +6215,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Mostrar todas as ações',
         tap_action: 'Ação ao tocar',
         text_shadow: 'Adicionar sombra ao texto (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Tema',
+        custom_theme: 'Custom theme zones',
         unit: 'Unidade',
-        use_max_entity: 'Usar entidade para valor máximo',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -5405,6 +6228,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Informação secundária personalizada',
         interpolate: 'Interpolar cores',
         name_info: 'Informação de nome personalizada',
@@ -5444,7 +6268,7 @@ const TRANSLATIONS = {
           horizontal: 'Horizontal (padrão)',
           vertical: 'Vertical'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Auto',
           segment: 'Segmentos',
           rainbow: 'Arco-Íris'
@@ -5461,6 +6285,7 @@ const TRANSLATIONS = {
           icon: 'Ícone',
           name: 'Nome',
           value: 'Valor',
+          unit: 'Unidade',
           secondary_info: 'Info',
           progress_bar: 'Barra'
         },
@@ -5497,6 +6322,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -5506,17 +6366,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Um valor padrão foi aplicado automaticamente.',
         attributeNotFound: 'Atributo não encontrado no Home Assistant.',
-        discontinuousRange: 'O intervalo definido é descontínuo.',
         entityNotFound: 'Entidade não encontrada no Home Assistant.',
         invalidActionObject: 'O objeto de ação é inválido ou mal estruturado.',
-        invalidCustomThemeArray: 'O tema personalizado deve ser um array.',
-        invalidCustomThemeEntry: 'Uma ou mais entradas no tema personalizado são inválidas.',
         invalidDecimal: 'O valor deve ser um número decimal válido.',
         invalidEntityId: 'O ID da entidade é inválido ou mal formatado.',
         invalidEnumValue: 'O valor fornecido não é uma opção válida.',
-        invalidIconType: 'O tipo de ícone especificado é inválido ou desconhecido.',
-        invalidMaxValue: 'O valor máximo é inválido ou acima do permitido.',
-        invalidMinValue: 'O valor mínimo é inválido ou abaixo do permitido.',
         invalidStateContent: 'O conteúdo do estado é inválido ou mal formatado.',
         invalidStateContentEntry: 'Uma ou mais entradas do conteúdo do estado são inválidas.',
         invalidTheme: 'O tema especificado é desconhecido. Tema padrão será usado.',
@@ -5526,9 +6380,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Esperava-se um valor do tipo objeto.',
         invalidTypeString: 'Esperava-se um valor do tipo string.',
         invalidUnionType: 'O valor não corresponde a nenhum dos tipos permitidos.',
-        minGreaterThanMax: 'O valor mínimo não pode ser maior que o valor máximo.',
         missingActionKey: 'Uma chave obrigatória está faltando no objeto de ação.',
-        missingColorProperty: 'Uma propriedade de cor obrigatória está faltando.',
         missingRequiredProperty: 'Propriedade obrigatória ausente.'
       }
     },
@@ -5542,31 +6394,31 @@ const TRANSLATIONS = {
         attribute: 'Atributo',
         badge_color: 'Cor do crachá',
         badge_icon: 'Ícone do crachá',
-        bar_color: 'Cor para a barra',
+        bar_color: 'Cor da barra',
         bar_effect_jinja: 'Efeito na barra (modo Jinja)',
         bar_orientation: 'Orientação da barra',
         bar_position: 'Posição da barra',
         bar_single_line: 'Info numa só linha (overlay)',
         bar_size: 'Tamanho da barra',
-        color_mode: 'Modo de cor',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Modo de cor da barra',
         center_zero: 'Zero no centro',
         center_zero_value: 'Valor central',
         center_zero_growth_percent: 'Percentagem de crescimento',
-        color: 'Cor primária',
+        color: 'Cor do ícone',
         decimal: 'decimal',
-        disable_unit: 'Mostrar unidade',
         double_tap_action: 'Ação ao toque duplo',
         entity: 'Entidade',
         force_circular_background: 'Forçar fundo circular',
         hide_jinja: 'Ocultar (modo Jinja)',
         hold_action: 'Ação ao toque longo',
         icon: 'Ícone',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Ação ao tocar duplamente no ícone',
         icon_hold_action: 'Ação ao manter o toque no ícone',
         icon_tap_action: 'Ação ao tocar no ícone',
         layout: 'Layout do conteúdo',
         max_value: 'Valor máximo',
-        max_value_attribute: 'Atributo (max_value)',
         min_value: 'Valor mínimo',
         name: 'Nome',
         percent: 'Percentagem',
@@ -5576,9 +6428,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Mostrar todas as ações',
         tap_action: 'Ação ao toque curto',
         text_shadow: 'Adicionar sombra ao texto (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Tema',
+        custom_theme: 'Zonas de tema personalizado',
         unit: 'Unidade',
-        use_max_entity: 'Usar entidade para o valor máximo',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -5586,6 +6441,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Informação secundária personalizada',
         interpolate: 'Interpolar cores',
         name_info: 'Informação de nome personalizada',
@@ -5625,7 +6481,7 @@ const TRANSLATIONS = {
           temperature: 'Temperatura',
           voc: 'VOC'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Auto',
           segment: 'Segmentos',
           rainbow: 'Arco-Íris'
@@ -5642,6 +6498,7 @@ const TRANSLATIONS = {
           icon: 'Ícone',
           name: 'Nome',
           value: 'Valor',
+          unit: 'Unidade',
           secondary_info: 'Info',
           progress_bar: 'Barra'
         },
@@ -5663,21 +6520,56 @@ const TRANSLATIONS = {
           percent: 'Percent'
         },
         watermark: {
-          low: 'Low',
-          high: 'High',
-          type: 'Type',
-          opacity: 'Opacity',
-          low_color: 'Low color',
-          high_color: 'High color',
-          low_as: 'Low unit',
-          high_as: 'High unit',
-          line_size: 'Line size',
-          disable_low: 'Disable low',
-          disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
-          low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
-          high_attribute: 'Attribute'
+          low: 'Limite baixo',
+          high: 'Limite alto',
+          type: 'Tipo',
+          opacity: 'Opacidade',
+          low_color: 'Cor do limite baixo',
+          high_color: 'Cor do limite alto',
+          low_as: 'Unidade (limite baixo)',
+          high_as: 'Unidade (limite alto)',
+          line_size: 'Espessura da linha',
+          disable_low: 'Desativar limite baixo',
+          disable_high: 'Desativar limite alto',
+          low_entity_toggle: 'Usar uma entidade para o limite baixo',
+          low_attribute: 'Atributo',
+          high_entity_toggle: 'Usar uma entidade para o limite alto',
+          high_attribute: 'Atributo'
+        },
+        icon_animation: {
+          none: 'Nenhuma',
+          spin: 'Girar',
+          pulse: 'Pulsar'
+        },
+        alert_when: {
+          above: 'Alerta acima de',
+          below: 'Alerta abaixo de',
+          color: 'Cor do alerta',
+          highlight: 'Destaque'
+        },
+        alert_highlight: {
+          border: 'Borda',
+          background: 'Fundo'
+        },
+        min_value_mode: {
+          standard: 'Valor fixo',
+          entity: 'Entidade',
+          jinja: 'Modelo'
+        },
+        max_value_mode: {
+          standard: 'Valor fixo',
+          entity: 'Entidade',
+          jinja: 'Modelo'
+        },
+        theme_mode: {
+          preset: 'Predefinido',
+          custom: 'Personalizado'
+        },
+        min_value: {
+          attribute: 'Atributo'
+        },
+        max_value: {
+          attribute: 'Atributo'
         }
       }
     }
@@ -5687,17 +6579,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'A fost aplicată automat o valoare implicită.',
         attributeNotFound: 'Atributul nu a fost găsit în Home Assistant.',
-        discontinuousRange: 'Intervalul definit este discontinuu.',
         entityNotFound: 'Entitatea nu a fost găsită în Home Assistant.',
         invalidActionObject: 'Obiectul acțiune este invalid sau structurat incorect.',
-        invalidCustomThemeArray: 'Tema personalizată trebuie să fie un array.',
-        invalidCustomThemeEntry: 'Una sau mai multe intrări din temă sunt invalide.',
         invalidDecimal: 'Valoarea trebuie să fie un număr zecimal valid.',
         invalidEntityId: 'ID-ul entității este invalid sau formatat greșit.',
         invalidEnumValue: 'Valoarea furnizată nu este una dintre opțiunile permise.',
-        invalidIconType: 'Tipul de pictogramă specificat este invalid sau necunoscut.',
-        invalidMaxValue: 'Valoarea maximă este invalidă sau prea mare.',
-        invalidMinValue: 'Valoarea minimă este invalidă sau prea mică.',
         invalidStateContent: 'Conținutul stării este invalid sau formatat greșit.',
         invalidStateContentEntry: 'Una sau mai multe intrări în conținutul stării sunt invalide.',
         invalidTheme: 'Tema specificată este necunoscută. Va fi utilizată tema implicită.',
@@ -5707,9 +6593,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Se aștepta o valoare de tip obiect.',
         invalidTypeString: 'Se aștepta o valoare de tip șir.',
         invalidUnionType: 'Valoarea nu se potrivește niciunui tip permis.',
-        minGreaterThanMax: 'Valoarea minimă nu poate fi mai mare decât valoarea maximă.',
         missingActionKey: 'Lipsește o cheie necesară în obiectul acțiune.',
-        missingColorProperty: 'Lipsește o proprietate de culoare necesară.',
         missingRequiredProperty: 'Lipsește o proprietate necesară.'
       }
     },
@@ -5729,25 +6613,25 @@ const TRANSLATIONS = {
         bar_position: 'Poziția barei',
         bar_single_line: 'Info pe un singur rând (overlay)',
         bar_size: 'Dimensiunea barei',
-        color_mode: 'Mod culoare',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Mod culoare',
         center_zero: 'Zero la centru',
         center_zero_value: 'Valoare centrală',
         center_zero_growth_percent: 'Procent de creștere',
         color: 'Culoare principală',
         decimal: 'zecimal',
-        disable_unit: 'Afișează unitatea',
         double_tap_action: 'Acțiune la apăsare dublă',
         entity: 'Entitate',
         force_circular_background: 'Forțează fundal circular',
         hide_jinja: 'Ascunde (mod Jinja)',
         hold_action: 'Acțiune la apăsare lungă',
         icon: 'Pictogramă',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Acțiune la apăsare dublă a pictogramei',
         icon_hold_action: 'Acțiune la apăsare lungă a pictogramei',
         icon_tap_action: 'Acțiune la apăsarea pictogramei',
         layout: 'Aspect conținut',
         max_value: 'Valoare maximă',
-        max_value_attribute: 'Atribut (max_value)',
         min_value: 'Valoare minimă',
         name: 'Nume',
         percent: 'Procent',
@@ -5757,9 +6641,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Afișează toate acțiunile',
         tap_action: 'Acțiune la apăsare scurtă',
         text_shadow: 'Adaugă umbră textului (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Temă',
+        custom_theme: 'Custom theme zones',
         unit: 'Unitate',
-        use_max_entity: 'Folosește entitate pentru valoarea maximă',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -5767,6 +6654,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Info secundară personalizată',
         interpolate: 'Interpolare culori',
         name_info: 'Info nume personalizată',
@@ -5806,7 +6694,7 @@ const TRANSLATIONS = {
           temperature: 'Temperatură',
           voc: 'VOC'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Automat',
           segment: 'Segmente',
           rainbow: 'Curcubeu'
@@ -5823,6 +6711,7 @@ const TRANSLATIONS = {
           icon: 'Pictogramă',
           name: 'Nume',
           value: 'Valoare',
+          unit: 'Unitate',
           secondary_info: 'Info',
           progress_bar: 'Bară'
         },
@@ -5859,6 +6748,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -5868,17 +6792,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Значение по умолчанию было применено автоматически.',
         attributeNotFound: 'Атрибут не найден в Home Assistant.',
-        discontinuousRange: 'Определённый диапазон является прерывистым.',
         entityNotFound: 'Сущность не найдена в Home Assistant.',
         invalidActionObject: 'Объект действия недействителен или неправильно структурирован.',
-        invalidCustomThemeArray: 'Пользовательская тема должна быть массивом.',
-        invalidCustomThemeEntry: 'Одна или несколько записей в пользовательской теме недействительны.',
         invalidDecimal: 'Значение должно быть действительным десятичным числом.',
         invalidEntityId: 'Идентификатор сущности недействителен или неправильно сформирован.',
         invalidEnumValue: 'Предоставленное значение не является одним из разрешённых вариантов.',
-        invalidIconType: 'Указанный тип иконки недействителен или не распознан.',
-        invalidMaxValue: 'Максимальное значение недействительно или выше разрешённых пределов.',
-        invalidMinValue: 'Минимальное значение недействительно или ниже разрешённых пределов.',
         invalidStateContent: 'Содержимое состояния недействительно или неправильно сформировано.',
         invalidStateContentEntry: 'Одна или несколько записей в содержимом состояния недействительны.',
         invalidTheme: 'Указанная тема неизвестна. Будет использована тема по умолчанию.',
@@ -5888,9 +6806,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Ожидается значение типа объект.',
         invalidTypeString: 'Ожидается значение строкового типа.',
         invalidUnionType: 'Значение не соответствует ни одному из разрешённых типов.',
-        minGreaterThanMax: 'Минимальное значение не может быть больше максимального значения.',
         missingActionKey: 'В объекте действия отсутствует обязательный ключ.',
-        missingColorProperty: 'Отсутствует обязательное свойство цвета.',
         missingRequiredProperty: 'Отсутствует обязательное свойство.'
       }
     },
@@ -5910,25 +6826,25 @@ const TRANSLATIONS = {
         bar_position: 'Положение полосы',
         bar_single_line: 'Информация в одну строку (overlay)',
         bar_size: 'Размер полосы',
-        color_mode: 'Режим цвета',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Режим цвета',
         center_zero: 'Ноль по центру',
         center_zero_value: 'Центральное значение',
         center_zero_growth_percent: 'Процент роста',
         color: 'Основной цвет',
         decimal: 'десятичные',
-        disable_unit: 'Показать единицу измерения',
         double_tap_action: 'Поведение при двойном нажатии',
         entity: 'Сущность',
         force_circular_background: 'Принудительный круглый фон',
         hide_jinja: 'Скрыть (режим Jinja)',
         hold_action: 'Поведение при длительном нажатии',
         icon: 'Иконка',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Поведение при двойном нажатии на иконку',
         icon_hold_action: 'Поведение при длительном нажатии на иконку',
         icon_tap_action: 'Поведение при нажатии на иконку',
         layout: 'Расположение содержимого',
         max_value: 'Максимальное значение',
-        max_value_attribute: 'Атрибут (max_value)',
         min_value: 'Минимальное значение',
         name: 'Название',
         percent: 'Процент',
@@ -5938,9 +6854,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Показать все действия',
         tap_action: 'Поведение при нажатии',
         text_shadow: 'Добавить тень к тексту (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Тема',
+        custom_theme: 'Custom theme zones',
         unit: 'Единица измерения',
-        use_max_entity: 'Использовать сущность для максимального значения',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -5948,6 +6867,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Дополнительная информация',
         interpolate: 'Интерполяция цветов',
         name_info: 'Доп. информация (имя)',
@@ -5987,7 +6907,7 @@ const TRANSLATIONS = {
           temperature: 'Температура',
           voc: 'ЛОС'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Авто',
           segment: 'Сегменты',
           rainbow: 'Радуга'
@@ -6004,6 +6924,7 @@ const TRANSLATIONS = {
           icon: 'Иконка',
           name: 'Имя',
           value: 'Значение',
+          unit: 'Единица',
           secondary_info: 'Инфо',
           progress_bar: 'Полоса'
         },
@@ -6040,6 +6961,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -6049,17 +7005,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Predvolená hodnota bola automaticky použitá.',
         attributeNotFound: 'Atribút sa nenašiel v Home Assistant.',
-        discontinuousRange: 'Zadaný rozsah nie je spojitý.',
         entityNotFound: 'Entita sa nenašla v Home Assistant.',
         invalidActionObject: 'Objekt akcie je neplatný alebo nesprávne štruktúrovaný.',
-        invalidCustomThemeArray: 'Vlastná téma musí byť pole.',
-        invalidCustomThemeEntry: 'Jedna alebo viac položiek vlastnej témy je neplatných.',
         invalidDecimal: 'Hodnota musí byť kladné celé číslo.',
         invalidEntityId: 'ID entity je neplatné alebo nesprávne.',
         invalidEnumValue: 'Zadaná hodnota nie je súčasťou povolených možností.',
-        invalidIconType: 'Zadaný typ ikony je neplatný alebo neznámy.',
-        invalidMaxValue: 'Maximálna hodnota je neplatná alebo nad limitom.',
-        invalidMinValue: 'Minimálna hodnota je neplatná alebo pod limitom.',
         invalidStateContent: 'Obsah stavu je neplatný alebo nesprávny.',
         invalidStateContentEntry: 'Jedna alebo viac položiek obsahu stavu je neplatných.',
         invalidTheme: 'Zadaná téma je neznáma. Použije sa predvolená téma.',
@@ -6069,9 +7019,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Očakávala sa hodnota typu objekt.',
         invalidTypeString: 'Očakávala sa hodnota typu reťazec.',
         invalidUnionType: 'Hodnota nezodpovedá žiadnemu povolenému typu.',
-        minGreaterThanMax: 'Minimálna hodnota nemôže byť väčšia ako maximálna.',
         missingActionKey: 'Chýba povinný kľúč v objekte akcie.',
-        missingColorProperty: 'Chýba povinná vlastnosť farby.',
         missingRequiredProperty: 'Chýba povinná vlastnosť.'
       }
     },
@@ -6091,25 +7039,25 @@ const TRANSLATIONS = {
         bar_position: 'Pozícia lišty',
         bar_single_line: 'Informácie na jednej línii (overlay)',
         bar_size: 'Veľkosť lišty',
-        color_mode: 'Farebný režim',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Farebný režim',
         center_zero: 'Nula v strede',
         center_zero_value: 'Hodnota stredu',
         center_zero_growth_percent: 'Percento rastu',
         color: 'Farba ikony',
         decimal: 'Desatinné',
-        disable_unit: 'Zobraziť jednotku',
         double_tap_action: 'Akcia pri dvojitom ťuknutí',
         entity: 'Entita',
         force_circular_background: 'Vynútiť kruhové pozadie',
         hide_jinja: 'Skryť (režim Jinja)',
         hold_action: 'Akcia pri dlhom podržaní',
         icon: 'Ikona',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Akcia pri dvojitom ťuknutí ikony',
         icon_hold_action: 'Akcia pri dlhom podržaní ikony',
         icon_tap_action: 'Akcia pri ťuknutí ikony',
         layout: 'Rozloženie obsahu',
         max_value: 'Maximálna hodnota',
-        max_value_attribute: 'Atribút (max_value)',
         min_value: 'Minimálna hodnota',
         name: 'Názov',
         percent: 'Percento',
@@ -6119,9 +7067,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Zobraziť všetky akcie',
         tap_action: 'Akcia pri ťuknutí',
         text_shadow: 'Pridať tieň textu (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Téma',
+        custom_theme: 'Custom theme zones',
         unit: 'Jednotka',
-        use_max_entity: 'Použiť entitu pre max hodnotu',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -6129,6 +7080,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Vlastné sekundárne info',
         interpolate: 'Interpolácia farieb',
         name_info: 'Vlastné info názvu',
@@ -6168,7 +7120,7 @@ const TRANSLATIONS = {
           horizontal: 'Horizontálne (predvolené)',
           vertical: 'Vertikálne'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Automaticky',
           segment: 'Segmenty',
           rainbow: 'Dúha'
@@ -6185,6 +7137,7 @@ const TRANSLATIONS = {
           icon: 'Ikona',
           name: 'Názov',
           value: 'Hodnota',
+          unit: 'Jednotka',
           secondary_info: 'Info',
           progress_bar: 'Lišta'
         },
@@ -6221,6 +7174,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -6230,17 +7218,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Privzeta vrednost je bila samodejno uporabljena.',
         attributeNotFound: 'Atribut ni bil najden v Home Assistant.',
-        discontinuousRange: 'Določeno območje ni neprekinjeno.',
         entityNotFound: 'Entiteta ni bila najdena v Home Assistant.',
         invalidActionObject: 'Objekt akcije je neveljaven ali napačno strukturiran.',
-        invalidCustomThemeArray: 'Prilagojena tema mora biti polje.',
-        invalidCustomThemeEntry: 'Ena ali več vnosov prilagojene teme je neveljavnih.',
         invalidDecimal: 'Vrednost mora biti pozitivno celo število.',
         invalidEntityId: 'ID entitete je neveljaven ali napačen.',
         invalidEnumValue: 'Podana vrednost ni med dovoljenimi možnostmi.',
-        invalidIconType: 'Podana vrsta ikone je neveljavna ali neznana.',
-        invalidMaxValue: 'Največja vrednost je neveljavna ali presega omejitve.',
-        invalidMinValue: 'Najmanjša vrednost je neveljavna ali pod dovoljenimi mejami.',
         invalidStateContent: 'Vsebina stanja je neveljavna ali napačno oblikovana.',
         invalidStateContentEntry: 'Eden ali več vnosov vsebine stanja je neveljavno.',
         invalidTheme: 'Določena tema je neznana. Uporabila se bo privzeta tema.',
@@ -6250,9 +7232,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Pričakovana je bila vrednost tipa objekt.',
         invalidTypeString: 'Pričakovana je bila vrednost tipa niz.',
         invalidUnionType: 'Vrednost ne ustreza nobeni dovoljeni vrsti.',
-        minGreaterThanMax: 'Najmanjša vrednost ne sme biti večja od največje.',
         missingActionKey: 'Manjka obvezni ključ v objektu akcije.',
-        missingColorProperty: 'Manjka obvezna lastnost barve.',
         missingRequiredProperty: 'Manjka obvezna lastnost.'
       }
     },
@@ -6272,25 +7252,25 @@ const TRANSLATIONS = {
         bar_position: 'Pozicija vrstice',
         bar_single_line: 'Informacije v eni vrstici (overlay)',
         bar_size: 'Velikost vrstice',
-        color_mode: 'Barvni način',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Barvni način',
         center_zero: 'Ni ničle na sredini',
         center_zero_value: 'Srednja vrednost',
         center_zero_growth_percent: 'Odstotek rasti',
         color: 'Barva ikone',
         decimal: 'Decimalno',
-        disable_unit: 'Prikaži enoto',
         double_tap_action: 'Akcija ob dvojni tap',
         entity: 'Entiteta',
         force_circular_background: 'Prisili krožno ozadje',
         hide_jinja: 'Skrij (način Jinja)',
         hold_action: 'Akcija ob dolgem pritisku',
         icon: 'Ikona',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Akcija ob dvojni tap ikone',
         icon_hold_action: 'Akcija ob dolgem pritisku ikone',
         icon_tap_action: 'Akcija ob tap ikone',
         layout: 'Postavitev vsebine',
         max_value: 'Največja vrednost',
-        max_value_attribute: 'Atribut (max_value)',
         min_value: 'Najmanjša vrednost',
         name: 'Ime',
         percent: 'Odstotek',
@@ -6300,9 +7280,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Prikaži vsa dejanja',
         tap_action: 'Akcija ob tap',
         text_shadow: 'Dodaj senco besedila (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Tema',
+        custom_theme: 'Custom theme zones',
         unit: 'Enota',
-        use_max_entity: 'Uporabi entiteto za max vrednost',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -6310,6 +7293,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Prilagojena sekundarna informacija',
         interpolate: 'Interpolacija barv',
         name_info: 'Prilagojena informacija o imenu',
@@ -6349,7 +7333,7 @@ const TRANSLATIONS = {
           horizontal: 'Horizontalno (privzeto)',
           vertical: 'Vertikalno'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Samodejno',
           segment: 'Segmenti',
           rainbow: 'Mavrica'
@@ -6366,6 +7350,7 @@ const TRANSLATIONS = {
           icon: 'Ikona',
           name: 'Ime',
           value: 'Vrednost',
+          unit: 'Enota',
           secondary_info: 'Info',
           progress_bar: 'Vrstica'
         },
@@ -6402,6 +7387,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -6411,17 +7431,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Ett standardvärde har tillämpats automatiskt.',
         attributeNotFound: 'Attributet kunde inte hittas i Home Assistant.',
-        discontinuousRange: 'Det angivna intervallet är inte sammanhängande.',
         entityNotFound: 'Enheten kunde inte hittas i Home Assistant.',
         invalidActionObject: 'Åtgärdsobjektet är ogiltigt eller felstrukturerat.',
-        invalidCustomThemeArray: 'Det anpassade temat måste vara en array.',
-        invalidCustomThemeEntry: 'En eller flera poster i det anpassade temat är ogiltiga.',
         invalidDecimal: 'Värdet måste vara ett giltigt decimaltal.',
         invalidEntityId: 'Enhets-ID är ogiltigt eller felaktigt formaterat.',
         invalidEnumValue: 'Det angivna värdet är inte ett giltigt alternativ.',
-        invalidIconType: 'Den angivna ikontypen är ogiltig eller okänd.',
-        invalidMaxValue: 'Maximivärdet är ogiltigt eller för högt.',
-        invalidMinValue: 'Minimivärdet är ogiltigt eller för lågt.',
         invalidStateContent: 'Tillståndsinnehållet är ogiltigt eller felaktigt.',
         invalidStateContentEntry: 'En eller flera poster i tillståndsinnehållet är ogiltiga.',
         invalidTheme: 'Det angivna temat är okänt. Standardtema används.',
@@ -6431,9 +7445,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Förväntade ett värde av typen objekt.',
         invalidTypeString: 'Förväntade ett värde av typen sträng.',
         invalidUnionType: 'Värdet matchar inte något av de tillåtna typerna.',
-        minGreaterThanMax: 'Minimivärdet kan inte vara större än maximivärdet.',
         missingActionKey: 'En obligatorisk nyckel saknas i åtgärdsobjektet.',
-        missingColorProperty: 'En obligatorisk färgegenskap saknas.',
         missingRequiredProperty: 'En obligatorisk egenskap saknas.'
       }
     },
@@ -6453,25 +7465,25 @@ const TRANSLATIONS = {
         bar_position: 'Position för baren',
         bar_single_line: 'Info på en rad (overlay)',
         bar_size: 'Barstorlek',
-        color_mode: 'Färgläge',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Färgläge',
         center_zero: 'Noll i mitten',
         center_zero_value: 'Centervärde',
         center_zero_growth_percent: 'Tillväxtprocent',
         color: 'Primärfärg',
         decimal: 'decimal',
-        disable_unit: 'Visa enhet',
         double_tap_action: 'Åtgärd vid dubbeltryck',
         entity: 'Enhet',
         force_circular_background: 'Tvinga cirkulär bakgrund',
         hide_jinja: 'Dölj (Jinja-läge)',
         hold_action: 'Åtgärd vid långt tryck',
         icon: 'Ikon',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Åtgärd vid dubbeltryck på ikonen',
         icon_hold_action: 'Åtgärd vid långt tryck på ikonen',
         icon_tap_action: 'Åtgärd vid tryck på ikonen',
         layout: 'Innehållslayout',
         max_value: 'Maximalt värde',
-        max_value_attribute: 'Attribut (max_value)',
         min_value: 'Minsta värde',
         name: 'Namn',
         percent: 'Procent',
@@ -6481,9 +7493,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Visa alla åtgärder',
         tap_action: 'Åtgärd vid kort tryck',
         text_shadow: 'Lägg till textskugga (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Tema',
+        custom_theme: 'Custom theme zones',
         unit: 'Enhet',
-        use_max_entity: 'Använd enhet för maximalt värde',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -6491,6 +7506,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Anpassad sekundär info',
         interpolate: 'Interpolera färger',
         name_info: 'Anpassad namninfo',
@@ -6530,7 +7546,7 @@ const TRANSLATIONS = {
           temperature: 'Temperatur',
           voc: 'VOC'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Auto',
           segment: 'Segment',
           rainbow: 'Regnbåge'
@@ -6547,6 +7563,7 @@ const TRANSLATIONS = {
           icon: 'Ikon',
           name: 'Namn',
           value: 'Värde',
+          unit: 'Enhet',
           secondary_info: 'Info',
           progress_bar: 'Stapel'
         },
@@ -6583,6 +7600,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -6592,17 +7644,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'ค่าเริ่มต้นถูกนำไปใช้โดยอัตโนมัติ',
         attributeNotFound: 'ไม่พบแอตทริบิวต์ใน HA',
-        discontinuousRange: 'ช่วงที่กำหนดไม่ต่อเนื่อง',
         entityNotFound: 'ไม่พบเอนทิตีใน HA',
         invalidActionObject: 'ออบเจ็กต์แอ็กชันไม่ถูกต้องหรือโครงสร้างผิด',
-        invalidCustomThemeArray: 'ธีมกำหนดเองต้องเป็นอาร์เรย์',
-        invalidCustomThemeEntry: 'หนึ่งหรือหลายรายการในธีมกำหนดเองไม่ถูกต้อง',
         invalidDecimal: 'ค่าต้องเป็นตัวเลขทศนิยมที่ถูกต้อง',
         invalidEntityId: 'ID เอนทิตีไม่ถูกต้องหรือรูปแบบผิด',
         invalidEnumValue: 'ค่าที่ให้มาไม่ใช่หนึ่งในตัวเลือกที่อนุญาต',
-        invalidIconType: 'ประเภทไอคอนที่ระบุไม่ถูกต้องหรือไม่รู้จัก',
-        invalidMaxValue: 'ค่าสูงสุดไม่ถูกต้องหรือสูงกว่าขีดจำกัดที่อนุญาต',
-        invalidMinValue: 'ค่าต่ำสุดไม่ถูกต้องหรือต่ำกว่าขีดจำกัดที่อนุญาต',
         invalidStateContent: 'เนื้อหาสถานะไม่ถูกต้องหรือรูปแบบผิด',
         invalidStateContentEntry: 'หนึ่งหรือหลายรายการในเนื้อหาสถานะไม่ถูกต้อง',
         invalidTheme: 'ธีมที่ระบุไม่รู้จัก จะใช้ธีมเริ่มต้น',
@@ -6612,9 +7658,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'คาดหวังค่าประเภทออบเจ็กต์',
         invalidTypeString: 'คาดหวังค่าประเภทสตริง',
         invalidUnionType: 'ค่าไม่ตรงกับประเภทที่อนุญาตใด ๆ',
-        minGreaterThanMax: 'ค่าต่ำสุดไม่สามารถมากกว่าค่าสูงสุด',
         missingActionKey: 'ขาดคีย์ที่จำเป็นในออบเจ็กต์แอ็กชัน',
-        missingColorProperty: 'ขาดคุณสมบัติสีที่จำเป็น',
         missingRequiredProperty: 'ขาดคุณสมบัติที่จำเป็น'
       }
     },
@@ -6634,25 +7678,25 @@ const TRANSLATIONS = {
         bar_position: 'ตำแหน่งแถบ',
         bar_single_line: 'ข้อมูลในบรรทัดเดียว (overlay)',
         bar_size: 'ขนาดแถบ',
-        color_mode: 'โหมดสี',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'โหมดสี',
         center_zero: 'Sıfırı ortala',
         center_zero_value: 'ค่ากึ่งกลาง',
         center_zero_growth_percent: 'เปอร์เซ็นต์การเติบโต',
         color: 'สีหลัก',
         decimal: 'ทศนิยม',
-        disable_unit: 'แสดงหน่วย',
         double_tap_action: 'พฤติกรรมการแตะสองครั้ง',
         entity: 'เอนทิตี',
         force_circular_background: 'บังคับพื้นหลังวงกลม',
         hide_jinja: 'ซ่อน (โหมด Jinja)',
         hold_action: 'พฤติกรรมการกด',
         icon: 'ไอคอน',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'พฤติกรรมการแตะไอคอนสองครั้ง',
         icon_hold_action: 'พฤติกรรมการกดไอคอน',
         icon_tap_action: 'พฤติกรรมการแตะไอคอน',
         layout: 'รูปแบบเนื้อหา',
         max_value: 'ค่าสูงสุด',
-        max_value_attribute: 'แอตทริบิวต์ (max_value)',
         min_value: 'ค่าต่ำสุด',
         name: 'ชื่อ',
         percent: 'เปอร์เซ็นต์',
@@ -6662,9 +7706,12 @@ const TRANSLATIONS = {
         show_all_actions: 'แสดงการโต้ตอบทั้งหมด',
         tap_action: 'พฤติกรรมการแตะ',
         text_shadow: 'เพิ่มเงาให้ข้อความ (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'ธีม',
+        custom_theme: 'Custom theme zones',
         unit: 'หน่วย',
-        use_max_entity: 'ใช้เอนทิตีสำหรับค่าสูงสุด',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -6672,6 +7719,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'ข้อมูลรองที่กำหนดเอง',
         interpolate: 'การสอดแทรกสี',
         name_info: 'ข้อมูลชื่อที่กำหนดเอง',
@@ -6711,7 +7759,7 @@ const TRANSLATIONS = {
           temperature: 'อุณหภูมิ',
           voc: 'VOC'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'อัตโนมัติ',
           segment: 'ส่วน',
           rainbow: 'สีรุ้ง'
@@ -6728,6 +7776,7 @@ const TRANSLATIONS = {
           icon: 'ไอคอน',
           name: 'ชื่อ',
           value: 'ค่า',
+          unit: 'หน่วย',
           secondary_info: 'ข้อมูล',
           progress_bar: 'แถบ'
         },
@@ -6764,6 +7813,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -6773,17 +7857,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Varsayılan değer otomatik olarak uygulandı.',
         attributeNotFound: 'Öznitelik Home Assistant\'ta bulunamadı.',
-        discontinuousRange: 'Tanımlanan aralık süreksizdir.',
         entityNotFound: 'Varlık Home Assistant\'ta bulunamadı.',
         invalidActionObject: 'Eylem nesnesi geçersiz veya hatalı yapılandırılmış.',
-        invalidCustomThemeArray: 'Özel tema bir dizi olmalıdır.',
-        invalidCustomThemeEntry: 'Özel temadaki bir veya daha fazla giriş geçersiz.',
         invalidDecimal: 'Değer geçerli bir ondalık sayı olmalıdır.',
         invalidEntityId: 'Varlık kimliği geçersiz veya hatalı biçimlendirilmiş.',
         invalidEnumValue: 'Sağlanan değer izin verilen seçeneklerden biri değil.',
-        invalidIconType: 'Belirtilen simge türü geçersiz veya tanınmıyor.',
-        invalidMaxValue: 'Maksimum değer geçersiz veya sınırların üzerinde.',
-        invalidMinValue: 'Minimum değer geçersiz veya sınırların altında.',
         invalidStateContent: 'Durum içeriği geçersiz veya hatalı biçimlendirilmiş.',
         invalidStateContentEntry: 'Durum içeriğindeki bir veya daha fazla giriş geçersiz.',
         invalidTheme: 'Belirtilen tema bilinmiyor. Varsayılan tema kullanılacak.',
@@ -6793,9 +7871,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Nesne türünde bir değer bekleniyordu.',
         invalidTypeString: 'Dize (string) türünde bir değer bekleniyordu.',
         invalidUnionType: 'Değer izin verilen türlerden hiçbirine uymuyor.',
-        minGreaterThanMax: 'Minimum değer maksimum değerden büyük olamaz.',
         missingActionKey: 'Eylem nesnesinde gerekli bir anahtar eksik.',
-        missingColorProperty: 'Gerekli bir renk özelliği eksik.',
         missingRequiredProperty: 'Gerekli bir özellik eksik.'
       }
     },
@@ -6815,25 +7891,25 @@ const TRANSLATIONS = {
         bar_position: 'Çubuk konumu',
         bar_single_line: 'Bilgiyi tek satırda göster (overlay)',
         bar_size: 'Çubuk boyutu',
-        color_mode: 'Renk modu',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Renk modu',
         center_zero: 'Нуль по центру',
         center_zero_value: 'Merkez değeri',
         center_zero_growth_percent: 'Büyüme yüzdesi',
         color: 'Birincil renk',
         decimal: 'ondalık',
-        disable_unit: 'Birimi göster',
         double_tap_action: 'Çift dokunma davranışı',
         entity: 'Varlık',
         force_circular_background: 'Dairesel arka planı zorla',
         hide_jinja: 'Gizle (Jinja modu)',
         hold_action: 'Uzun basma davranışı',
         icon: 'Simge',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Simgeye çift dokunma davranışı',
         icon_hold_action: 'Simgeye uzun basma davranışı',
         icon_tap_action: 'Simgeye dokunma davranışı',
         layout: 'İçerik düzeni',
         max_value: 'Maksimum değer',
-        max_value_attribute: 'Öznitelik (max_value)',
         min_value: 'Minimum değer',
         name: 'Ad',
         percent: 'Yüzde',
@@ -6843,9 +7919,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Tüm eylemleri göster',
         tap_action: 'Kısa dokunma davranışı',
         text_shadow: 'Metne gölge ekle (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Tema',
+        custom_theme: 'Custom theme zones',
         unit: 'Birim',
-        use_max_entity: 'Maksimum değer için varlık kullan',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -6853,6 +7932,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Özel ikincil bilgi',
         interpolate: 'Renk interpolasyonu',
         name_info: 'Özel ad bilgisi',
@@ -6892,7 +7972,7 @@ const TRANSLATIONS = {
           temperature: 'Sıcaklık',
           voc: 'VOC'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Otomatik',
           segment: 'Bölümler',
           rainbow: 'Gökkuşağı'
@@ -6909,6 +7989,7 @@ const TRANSLATIONS = {
           icon: 'Simge',
           name: 'Ad',
           value: 'Değer',
+          unit: 'Birim',
           secondary_info: 'Bilgi',
           progress_bar: 'Çubuk'
         },
@@ -6945,6 +8026,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -6954,17 +8070,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Значення за замовчуванням було застосовано автоматично.',
         attributeNotFound: 'Атрибут не знайдено в HA.',
-        discontinuousRange: 'Визначений діапазон є розривним.',
         entityNotFound: 'Сутність не знайдена в HA.',
         invalidActionObject: 'Об\'єкт дії недійсний або неправильно структурований.',
-        invalidCustomThemeArray: 'Користувацька тема повинна бути масивом.',
-        invalidCustomThemeEntry: 'Один або кілька записів у користувацькій темі недійсні.',
         invalidDecimal: 'Значення повинно бути дійсним десятковим числом.',
         invalidEntityId: 'ID сутності недійсний або неправильно сформований.',
         invalidEnumValue: 'Надане значення не є одним з дозволених варіантів.',
-        invalidIconType: 'Зазначений тип іконки недійсний або нерозпізнаний.',
-        invalidMaxValue: 'Максимальне значення недійсне або вище дозволених меж.',
-        invalidMinValue: 'Мінімальне значення недійсне або нижче дозволених меж.',
         invalidStateContent: 'Вміст стану недійсний або неправильно сформований.',
         invalidStateContentEntry: 'Один або кілька записів у вмісті стану недійсні.',
         invalidTheme: 'Зазначена тема невідома. Буде використана тема за замовчуванням.',
@@ -6974,9 +8084,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Очікується значення типу об\'єкт.',
         invalidTypeString: 'Очікується значення типу рядок.',
         invalidUnionType: 'Значення не відповідає жодному з дозволених типів.',
-        minGreaterThanMax: 'Мінімальне значення не може бути більшим за максимальне.',
         missingActionKey: 'Відсутній обов\'язковий ключ в об\'єкті дії.',
-        missingColorProperty: 'Відсутня обов\'язкова властивість кольору.',
         missingRequiredProperty: 'Відсутня обов\'язкова властивість.'
       }
     },
@@ -6996,25 +8104,25 @@ const TRANSLATIONS = {
         bar_position: 'Положення панелі',
         bar_single_line: 'Інформація в один рядок (overlay)',
         bar_size: 'Розмір панелі',
-        color_mode: 'Режим кольору',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Режим кольору',
         center_zero: 'Không ở giữa',
         center_zero_value: 'Центральне значення',
         center_zero_growth_percent: 'Відсоток зростання',
         color: 'Основний колір',
         decimal: 'десятковий',
-        disable_unit: 'Показати одиницю',
         double_tap_action: 'Поведінка при подвійному дотику',
         entity: 'Сутність',
         force_circular_background: 'Примусовий круглий фон',
         hide_jinja: 'Приховати (режим Jinja)',
         hold_action: 'Поведінка при утриманні',
         icon: 'Іконка',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Поведінка подвійного дотику іконки',
         icon_hold_action: 'Поведінка утримання іконки',
         icon_tap_action: 'Поведінка дотику іконки',
         layout: 'Розташування вмісту',
         max_value: 'Максимальне значення',
-        max_value_attribute: 'Атрибут (max_value)',
         min_value: 'Мінімальне значення',
         name: 'Назва',
         percent: 'Відсоток',
@@ -7024,9 +8132,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Показати всі дії',
         tap_action: 'Поведінка при дотику',
         text_shadow: 'Додати тінь до тексту (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Тема',
+        custom_theme: 'Custom theme zones',
         unit: 'Одиниця',
-        use_max_entity: 'Використовувати сутність для максимального значення',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -7034,6 +8145,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Додаткова вторинна інформація',
         interpolate: 'Інтерполяція кольорів',
         name_info: 'Додаткова інформація (назва)',
@@ -7073,7 +8185,7 @@ const TRANSLATIONS = {
           temperature: 'Температура',
           voc: 'VOC'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Авто',
           segment: 'Сегменти',
           rainbow: 'Веселка'
@@ -7090,6 +8202,7 @@ const TRANSLATIONS = {
           icon: 'Іконка',
           name: 'Ім\'я',
           value: 'Значення',
+          unit: 'Одиниця',
           secondary_info: 'Інфо',
           progress_bar: 'Смуга'
         },
@@ -7126,6 +8239,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -7135,17 +8283,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: 'Một giá trị mặc định đã được áp dụng tự động.',
         attributeNotFound: 'Không tìm thấy thuộc tính trong HA.',
-        discontinuousRange: 'Phạm vi được xác định không liên tục.',
         entityNotFound: 'Không tìm thấy thực thể trong HA.',
         invalidActionObject: 'Đối tượng hành động không hợp lệ hoặc cấu trúc không đúng.',
-        invalidCustomThemeArray: 'Chủ đề tùy chỉnh phải là một mảng.',
-        invalidCustomThemeEntry: 'Một hoặc nhiều mục trong chủ đề tùy chỉnh không hợp lệ.',
         invalidDecimal: 'Giá trị phải là một số thập phân hợp lệ.',
         invalidEntityId: 'ID thực thể không hợp lệ hoặc không đúng định dạng.',
         invalidEnumValue: 'Giá trị được cung cấp không nằm trong các tùy chọn được phép.',
-        invalidIconType: 'Loại biểu tượng được chỉ định không hợp lệ hoặc không được nhận dạng.',
-        invalidMaxValue: 'Giá trị tối đa không hợp lệ hoặc vượt quá giới hạn cho phép.',
-        invalidMinValue: 'Giá trị tối thiểu không hợp lệ hoặc dưới giới hạn cho phép.',
         invalidStateContent: 'Nội dung trạng thái không hợp lệ hoặc không đúng định dạng.',
         invalidStateContentEntry: 'Một hoặc nhiều mục trong nội dung trạng thái không hợp lệ.',
         invalidTheme: 'Chủ đề được chỉ định không xác định. Chủ đề mặc định sẽ được sử dụng.',
@@ -7155,9 +8297,7 @@ const TRANSLATIONS = {
         invalidTypeObject: 'Mong đợi một giá trị kiểu đối tượng.',
         invalidTypeString: 'Mong đợi một giá trị kiểu chuỗi.',
         invalidUnionType: 'Giá trị không khớp với bất kỳ loại nào được phép.',
-        minGreaterThanMax: 'Giá trị tối thiểu không thể lớn hơn giá trị tối đa.',
         missingActionKey: 'Một khóa bắt buộc bị thiếu trong đối tượng hành động.',
-        missingColorProperty: 'Một thuộc tính màu bắt buộc bị thiếu.',
         missingRequiredProperty: 'Thuộc tính bắt buộc bị thiếu.'
       }
     },
@@ -7177,25 +8317,25 @@ const TRANSLATIONS = {
         bar_position: 'Vị trí thanh',
         bar_single_line: 'Thông tin trên một dòng (overlay)',
         bar_size: 'Kích thước thanh',
-        color_mode: 'Chế độ màu',
+        bar_segments: 'Bar segments',
+        bar_color_mode: 'Chế độ màu',
         center_zero: '零点居中',
         center_zero_value: 'Giá trị tâm',
         center_zero_growth_percent: 'Tỷ lệ tăng trưởng',
         color: 'Màu chính',
         decimal: 'thập phân',
-        disable_unit: 'Hiển thị đơn vị',
         double_tap_action: 'Hành vi chạm đôi',
         entity: 'Thực thể',
         force_circular_background: 'Buộc nền hình tròn',
         hide_jinja: 'Ẩn (chế độ Jinja)',
         hold_action: 'Hành vi giữ',
         icon: 'Biểu tượng',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: 'Hành vi chạm đôi biểu tượng',
         icon_hold_action: 'Hành vi giữ biểu tượng',
         icon_tap_action: 'Hành vi chạm biểu tượng',
         layout: 'Bố cục nội dung',
         max_value: 'Giá trị tối đa',
-        max_value_attribute: 'Thuộc tính (max_value)',
         min_value: 'Giá trị tối thiểu',
         name: 'Tên',
         percent: 'Phần trăm',
@@ -7205,9 +8345,12 @@ const TRANSLATIONS = {
         show_all_actions: 'Hiển thị tất cả hành động',
         tap_action: 'Hành vi chạm',
         text_shadow: 'Thêm bóng cho văn bản (overlay)',
+        theme_mode: 'Theme mode',
         theme: 'Chủ đề',
+        custom_theme: 'Custom theme zones',
         unit: 'Đơn vị',
-        use_max_entity: 'Sử dụng thực thể cho giá trị tối đa',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -7215,6 +8358,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: 'Thông tin phụ tùy chỉnh',
         interpolate: 'Nội suy màu sắc',
         name_info: 'Thông tin tên tùy chỉnh',
@@ -7254,7 +8398,7 @@ const TRANSLATIONS = {
           temperature: 'Nhiệt độ',
           voc: 'VOC'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: 'Tự động',
           segment: 'Phân đoạn',
           rainbow: 'Cầu vồng'
@@ -7271,6 +8415,7 @@ const TRANSLATIONS = {
           icon: 'Biểu tượng',
           name: 'Tên',
           value: 'Giá trị',
+          unit: 'Đơn vị',
           secondary_info: 'Thông tin',
           progress_bar: 'Thanh'
         },
@@ -7307,6 +8452,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -7316,17 +8496,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: '默认值已自动应用。',
         attributeNotFound: '在 Home Assistant 中未找到属性。',
-        discontinuousRange: '定义的范围不连续。',
         entityNotFound: '在 Home Assistant 中未找到实体。',
         invalidActionObject: '操作对象无效或结构错误。',
-        invalidCustomThemeArray: '自定义主题必须为数组。',
-        invalidCustomThemeEntry: '自定义主题中的一项或多项无效。',
         invalidDecimal: '值必须为有效的小数。',
         invalidEntityId: '实体 ID 无效或格式错误。',
         invalidEnumValue: '提供的值不在允许选项内。',
-        invalidIconType: '指定的图标类型无效或无法识别。',
-        invalidMaxValue: '最大值无效或超出允许范围。',
-        invalidMinValue: '最小值无效或低于允许范围。',
         invalidStateContent: '状态内容无效或格式错误。',
         invalidStateContentEntry: '状态内容中的一项或多项无效。',
         invalidTheme: '指定的主题未知，将使用默认主题。',
@@ -7336,9 +8510,7 @@ const TRANSLATIONS = {
         invalidTypeObject: '应为对象类型的值。',
         invalidTypeString: '应为字符串类型的值。',
         invalidUnionType: '值不符合任何允许类型。',
-        minGreaterThanMax: '最小值不能大于最大值。',
         missingActionKey: '操作对象缺少必需的键。',
-        missingColorProperty: '缺少必需的颜色属性。',
         missingRequiredProperty: '缺少必需的属性。'
       }
     },
@@ -7358,25 +8530,25 @@ const TRANSLATIONS = {
         bar_position: '进度条位置',
         bar_single_line: '单行信息（覆盖显示）',
         bar_size: '进度条大小',
-        color_mode: '颜色模式',
+        bar_segments: 'Bar segments',
+        bar_color_mode: '颜色模式',
         center_zero: '中心為零',
         center_zero_value: '中心值',
         center_zero_growth_percent: '增长百分比',
         color: '主色',
         decimal: '小数',
-        disable_unit: '显示单位',
         double_tap_action: '双击动作',
         entity: '实体',
         force_circular_background: '强制圆形背景',
         hide_jinja: '隐藏 (Jinja 模式)',
         hold_action: '长按动作',
         icon: '图标',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: '图标双击动作',
         icon_hold_action: '图标长按动作',
         icon_tap_action: '图标点击动作',
         layout: '内容布局',
         max_value: '最大值',
-        max_value_attribute: '属性（最大值）',
         min_value: '最小值',
         name: '名称',
         percent: '百分比',
@@ -7386,9 +8558,12 @@ const TRANSLATIONS = {
         show_all_actions: '显示所有交互',
         tap_action: '点击动作',
         text_shadow: '添加文本阴影（overlay）',
+        theme_mode: 'Theme mode',
         theme: '主题',
+        custom_theme: 'Custom theme zones',
         unit: '单位',
-        use_max_entity: '使用实体作为最大值',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -7396,6 +8571,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: '自定义次要信息',
         interpolate: '颜色插值',
         name_info: '自定义名称信息',
@@ -7435,7 +8611,7 @@ const TRANSLATIONS = {
           horizontal: '水平（默认）',
           vertical: '垂直'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: '自动',
           segment: '分段',
           rainbow: '彩虹'
@@ -7452,6 +8628,7 @@ const TRANSLATIONS = {
           icon: '图标',
           name: '名称',
           value: '数值',
+          unit: '单位',
           secondary_info: '补充信息',
           progress_bar: '进度条'
         },
@@ -7488,6 +8665,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -7497,17 +8709,11 @@ const TRANSLATIONS = {
       msg: {
         appliedDefaultValue: '已自動套用預設值。',
         attributeNotFound: '在 Home Assistant 中找不到此屬性。',
-        discontinuousRange: '定義的範圍不連續。',
         entityNotFound: '在 Home Assistant 中找不到此實體。',
         invalidActionObject: '動作物件無效或結構不正確。',
-        invalidCustomThemeArray: '自訂主題必須是陣列。',
-        invalidCustomThemeEntry: '一個或多個自訂主題項目無效。',
         invalidDecimal: '數值必須是正整數。',
         invalidEntityId: '實體 ID 無效或格式不正確。',
         invalidEnumValue: '提供的值不在允許的選項中。',
-        invalidIconType: '指定的圖示類型無效或未知。',
-        invalidMaxValue: '最大值無效或超出允許範圍。',
-        invalidMinValue: '最小值無效或低於允許範圍。',
         invalidStateContent: '狀態內容無效或格式不正確。',
         invalidStateContentEntry: '一個或多個狀態內容項目無效。',
         invalidTheme: '指定的主題未知，將使用預設主題。',
@@ -7517,9 +8723,7 @@ const TRANSLATIONS = {
         invalidTypeObject: '預期為物件類型的值。',
         invalidTypeString: '預期為字串類型的值。',
         invalidUnionType: '值不符合任何允許的類型。',
-        minGreaterThanMax: '最小值不能大於最大值。',
         missingActionKey: '動作物件中缺少必要鍵。',
-        missingColorProperty: '缺少必要的顏色屬性。',
         missingRequiredProperty: '缺少必要屬性。'
       }
     },
@@ -7539,25 +8743,25 @@ const TRANSLATIONS = {
         bar_position: '進度條位置',
         bar_single_line: '單行資訊（疊加）',
         bar_size: '進度條大小',
-        color_mode: '顏色模式',
+        bar_segments: 'Bar segments',
+        bar_color_mode: '顏色模式',
         center_zero: '中心為零',
         center_zero_value: '中心值',
         center_zero_growth_percent: '增長百分比',
         color: '圖示顏色',
         decimal: '小數',
-        disable_unit: '顯示單位',
         double_tap_action: '雙擊操作',
         entity: '實體',
         force_circular_background: '強制圓形背景',
         hide_jinja: '隱藏 (Jinja 模式)',
         hold_action: '長按操作',
         icon: '圖示',
+        icon_animation: 'Icon animation',
         icon_double_tap_action: '圖示雙擊操作',
         icon_hold_action: '圖示長按操作',
         icon_tap_action: '圖示點擊操作',
         layout: '內容佈局',
         max_value: '最大值',
-        max_value_attribute: '屬性（max_value）',
         min_value: '最小值',
         name: '名稱',
         percent: '百分比',
@@ -7567,9 +8771,12 @@ const TRANSLATIONS = {
         show_all_actions: '顯示所有互動',
         tap_action: '點擊操作',
         text_shadow: '文字陰影（疊加）',
+        theme_mode: 'Theme mode',
         theme: '主題',
+        custom_theme: 'Custom theme zones',
         unit: '單位',
-        use_max_entity: '使用實體作為最大值',
+        min_value_mode: 'Min value source',
+        max_value_mode: 'Max value source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -7577,6 +8784,7 @@ const TRANSLATIONS = {
         min_width: 'Min width',
         unit_spacing: 'Unit spacing',
         watermark_toggle: 'Watermark',
+        alert_toggle: 'Alert',
         custom_info: '自訂次要資訊',
         interpolate: '顏色插值',
         name_info: '自訂名稱資訊',
@@ -7616,7 +8824,7 @@ const TRANSLATIONS = {
           horizontal: '水平（預設）',
           vertical: '垂直'
         },
-        color_mode: {
+        bar_color_mode: {
           auto: '自動',
           segment: '分段',
           rainbow: '彩虹'
@@ -7633,6 +8841,7 @@ const TRANSLATIONS = {
           icon: '圖示',
           name: '名稱',
           value: '數值',
+          unit: '單位',
           secondary_info: '補充資訊',
           progress_bar: '進度條'
         },
@@ -7669,6 +8878,41 @@ const TRANSLATIONS = {
           low_attribute: 'Attribute',
           high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
+        },
+        icon_animation: {
+          none: 'None',
+          spin: 'Spin',
+          pulse: 'Pulse'
+        },
+        alert_when: {
+          above: 'Alert above',
+          below: 'Alert below',
+          color: 'Alert color',
+          highlight: 'Highlight'
+        },
+        alert_highlight: {
+          border: 'Border',
+          background: 'Background'
+        },
+        min_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        theme_mode: {
+          preset: 'Preset',
+          custom: 'Custom'
+        },
+        min_value: {
+          attribute: 'Attribute'
+        },
+        max_value: {
+          attribute: 'Attribute'
         }
       }
     }
@@ -8532,6 +9776,90 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
   transform: scaleX(-1);
 }
 
+/* === SEGMENTED BAR (bar_segments: N) ===
+   Discrete blocks (battery cells / signal bars) via a mask on the whole bar:
+   both the track and the fill are chopped, so the cells read as real cells.
+   The mask uses the element itself as reference (no fixed pixel width needed);
+   gap is fixed at 2px inside each 100%/N cell.
+   border-radius is forced to 0: the container also clips via border-radius
+   (overflow: hidden), and that curve was cutting into the first/last mask
+   stripe near the rounded corner — a cell there looked truncated compared to
+   the others. Flush ends read like real battery/signal-bar hardware anyway. */
+.bar-segmented .${CARD.htmlStructure.elements.progressBar.bar.class} {
+  border-radius: 0;
+  -webkit-mask-image: repeating-linear-gradient(
+    to right,
+    #000 0,
+    #000 calc(100% / var(--bar-segments, 10) - 2px),
+    transparent calc(100% / var(--bar-segments, 10) - 2px),
+    transparent calc(100% / var(--bar-segments, 10))
+  );
+  mask-image: repeating-linear-gradient(
+    to right,
+    #000 0,
+    #000 calc(100% / var(--bar-segments, 10) - 2px),
+    transparent calc(100% / var(--bar-segments, 10) - 2px),
+    transparent calc(100% / var(--bar-segments, 10))
+  );
+}
+
+.vertical-bar.bar-segmented .${CARD.htmlStructure.elements.progressBar.bar.class} {
+  -webkit-mask-image: repeating-linear-gradient(
+    to bottom,
+    #000 0,
+    #000 calc(100% / var(--bar-segments, 10) - 2px),
+    transparent calc(100% / var(--bar-segments, 10) - 2px),
+    transparent calc(100% / var(--bar-segments, 10))
+  );
+  mask-image: repeating-linear-gradient(
+    to bottom,
+    #000 0,
+    #000 calc(100% / var(--bar-segments, 10) - 2px),
+    transparent calc(100% / var(--bar-segments, 10) - 2px),
+    transparent calc(100% / var(--bar-segments, 10))
+  );
+}
+
+/* === ICON ANIMATION (icon_animation: spin|pulse, active state only) === */
+@keyframes epb-icon-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes epb-icon-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.7; }
+}
+
+.icon-anim-spin .${CARD.htmlStructure.elements.icon.class} {
+  animation: epb-icon-spin 2s linear infinite;
+}
+
+.icon-anim-pulse .${CARD.htmlStructure.elements.icon.class} {
+  animation: epb-icon-pulse 1.6s ease-in-out infinite;
+}
+
+/* === ALERT (alert_when: {above/below, color, highlight}) ===
+   border (default): pulsing border in the alert color — motion draws the eye.
+   background: steady tint of the card background — calmer, no motion.
+   The global prefers-reduced-motion block stops the pulse; the border then
+   stays statically colored, so the alert remains visible. */
+@keyframes epb-alert-border {
+  0%, 100% { border-color: var(--alert-color-final); }
+  50% { border-color: var(--epb-card-border-color, var(--ha-card-border-color, var(--divider-color, #e0e0e0))); }
+}
+
+.alert-active {
+  --alert-color-final: var(--alert-color, var(--error-color, #db4437));
+  border-color: var(--alert-color-final);
+  animation: epb-alert-border 1.2s ease-in-out infinite;
+}
+
+.alert-active.alert-background {
+  animation: none;
+  border-color: var(--epb-card-border-color, var(--ha-card-border-color, var(--divider-color, #e0e0e0)));
+  background-color: color-mix(in srgb, var(--alert-color-final) 15%, var(--ha-card-background, var(--card-background-color)));
+}
+
 /* === RADIUS EFFECT === */
 /* positiveInner / negativeInner */
 .entity-progress-feature
@@ -8611,14 +9939,15 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
    also GPU. Both share the same --progress-transition so they stay in perfect sync.
    .inner background is cleared to solid so the gradient doesn't double-render.          */
 
-/* --- Solid fallback in .inner: remove gradient from background chain --- */
+/* --- .inner background under the ::before layer ---
+   gradient/gradient-reverse: opaque gradient on ::before → solid color underneath (no seams).
+   glass: the effect IS a translucent white gradient over the track → .inner must stay
+   transparent, otherwise the solid color underneath washes the effect out entirely. */
 .horizontal-bar:is(
-  .${CARD.style.dynamic.progressBar.effect.glass.class},
   .${CARD.style.dynamic.progressBar.effect.gradient.class},
   .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
 ) .${CARD.htmlStructure.elements.progressBar.inner.class}.positive,
 .vertical-bar:is(
-  .${CARD.style.dynamic.progressBar.effect.glass.class},
   .${CARD.style.dynamic.progressBar.effect.gradient.class},
   .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
 ) .${CARD.htmlStructure.elements.progressBar.inner.class}.positive {
@@ -8626,16 +9955,21 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
 }
 
 .horizontal-bar.center-zero:is(
-  .${CARD.style.dynamic.progressBar.effect.glass.class},
   .${CARD.style.dynamic.progressBar.effect.gradient.class},
   .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
 ) .${CARD.htmlStructure.elements.progressBar.inner.class}.negative,
 .vertical-bar.center-zero:is(
-  .${CARD.style.dynamic.progressBar.effect.glass.class},
   .${CARD.style.dynamic.progressBar.effect.gradient.class},
   .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
 ) .${CARD.htmlStructure.elements.progressBar.inner.class}.negative {
   --inner-background: var(--epb-progress-bar-color, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default}));
+}
+
+.horizontal-bar.${CARD.style.dynamic.progressBar.effect.glass.class} .${CARD.htmlStructure.elements.progressBar.inner.class}.positive,
+.vertical-bar.${CARD.style.dynamic.progressBar.effect.glass.class} .${CARD.htmlStructure.elements.progressBar.inner.class}.positive,
+.horizontal-bar.center-zero.${CARD.style.dynamic.progressBar.effect.glass.class} .${CARD.htmlStructure.elements.progressBar.inner.class}.negative,
+.vertical-bar.center-zero.${CARD.style.dynamic.progressBar.effect.glass.class} .${CARD.htmlStructure.elements.progressBar.inner.class}.negative {
+  --inner-background: transparent;
 }
 
 /* --- Horizontal positive: gradient on ::before, scaleX from right --- */
@@ -9292,8 +10626,11 @@ const CONTENT_SLOT = '{{content}}';
 
 const VALUE_CHANGED_EVENT = 'value-changed';
 const HA_SELECTOR_TAG = 'ha-selector';
-const HA_CHIP_SET_TAG = 'ha-chip-set';
 const HA_SVG_ICON_TAG = 'ha-svg-icon';
+const HA_ACTION_HANDLER_TAG = 'action-handler';
+const EDITOR_FIELD_NS = 'editor.field';
+const MIN_VALUE_ENTITY_PATH = 'min_value.entity';
+const MAX_VALUE_ENTITY_PATH = 'max_value.entity';
 
 const Element = (obj, extraClass = '') => {
   const className = `${obj.class} ${extraClass}`.trim();
@@ -9879,10 +11216,11 @@ class ThemeManager {
   get theme() {
     return this.#theme;
   }
+  // Only a presence/shape check: per-zone validity (numeric min < max, sorted) is
+  // already guaranteed by the schema's customTheme validator, the sole path a config
+  // reaches here through — see BaseConfigHelper.set config.
   set customTheme(newTheme) {
-    if (!ThemeManager.#validateCustomTheme(newTheme)) {
-      return;
-    }
+    if (!is.nonEmptyArray(newTheme)) return;
     this.#theme = CARD.theme.default;
     this.#currentStyle = newTheme;
     this.#isValid = true;
@@ -9962,7 +11300,6 @@ class ThemeManager {
   }
 
   #setStyle() {
-    // eslint-disable-next-line no-useless-assignment
     let [themeData, nextThemeData, ratio] = [null, null, 0];
 
     if (this.#value >= this.#currentStyle[this.#currentStyle.length - 1].max) {
@@ -9970,16 +11307,28 @@ class ThemeManager {
     } else if (this.#value < this.#currentStyle[0].min) {
       themeData = this.#currentStyle[0];
     } else {
+      // custom_theme zones no longer have to tile perfectly (gaps are tolerated), so a
+      // value can land in a gap between two of them — themeData then stays null and
+      // #applyColors disengages the theme for this render, deferring to whatever color
+      // source is next in priority (see CardView.iconColor/barColor).
       const index = this.#currentStyle.findIndex((level) => this.#value >= level.min && this.#value < level.max);
-      themeData = this.#currentStyle[index];
-      nextThemeData = this.#currentStyle[index + 1] ?? null;
-      ratio = (this.#value - themeData.min) / (themeData.max - themeData.min);
+      if (index !== -1) {
+        themeData = this.#currentStyle[index];
+        nextThemeData = this.#currentStyle[index + 1] ?? null;
+        ratio = (this.#value - themeData.min) / (themeData.max - themeData.min);
+      }
     }
 
     this.#applyColors(themeData, nextThemeData, ratio);
   }
 
   #applyColors(themeData, nextThemeData, ratio) {
+    if (!themeData) {
+      this.#icon = null;
+      this.#iconColor = null;
+      this.#barColor = null;
+      return;
+    }
     this.#icon = themeData.icon || null;
 
     if (this.#interpolate && nextThemeData) {
@@ -10005,33 +11354,13 @@ class ThemeManager {
     const pct = Math.round(ratio * 100);
     return `color-mix(in srgb, ${to} ${pct}%, ${from})`; // from/to déjà adaptés
   }
-  static #validateCustomTheme(customTheme) {
-    if (!is.nonEmptyArray(customTheme)) return false;
-
-    let isFirstItem = true;
-    let lastMax = null;
-
-    return customTheme.every((item) => {
-      if (!is.plainObject(item)) return false;
-      if (!CARD.theme.customTheme.expectedKeys.every((key) => key in item)) return false;
-      if (!CARD.theme.customTheme.colorKeys.some((key) => key in item)) return false;
-      if (item.min >= item.max) return false;
-      if (!isFirstItem && item.min !== lastMax) return false;
-
-      isFirstItem = false;
-      lastMax = item.max;
-
-      return true;
-    });
-  }
-
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
   static adaptColor(curColor) {
     return HA_CONTEXT.haColors.get(curColor) ?? curColor;
   }
 
-  buildGradient(fillPercent, mode) {
+  buildGradient(fillPercent, mode, defaultColor = null) {
     if (!this.#isValid || !this.#currentStyle || mode === 'auto') return null;
     if (!(fillPercent > 0)) return null;
 
@@ -10051,7 +11380,11 @@ class ThemeManager {
     // A zone boundary at container position B → element position B + offset.
     const offset = 100 - fillPercent;
     const toElemPos = (b) => `${(b + offset).toFixed(2)}%`;
-    const col = (level) => ThemeManager.adaptColor(level.bar_color || level.color);
+    // color is optional per zone now (see types.customTheme) — a color-less zone falls
+    // back the same way iconColor/barColor already do: the entity's own negotiated
+    // color (e.g. a cover is pink open / grey closed, see EntityHelper.defaultColor),
+    // then the card's generic default, rather than a flat neutral for every domain.
+    const col = (level) => ThemeManager.adaptColor(level.bar_color || level.color) || defaultColor || CARD.style.color.default;
 
     if (mode === 'segment') {
       const stops = visible.flatMap((level, i) => {
@@ -10889,15 +12222,7 @@ const ERROR_CODES = {
   invalidDecimal: { code: 'invalidDecimal', severity: SEV.error },
   invalidActionObject: { code: 'invalidActionObject', severity: SEV.error },
   missingActionKey: { code: 'missingActionKey', severity: SEV.error },
-  invalidCustomThemeArray: { code: 'invalidCustomThemeArray', severity: SEV.error },
-  invalidCustomThemeEntry: { code: 'invalidCustomThemeEntry', severity: SEV.error },
-  invalidMinValue: { code: 'invalidMinValue', severity: SEV.error },
-  invalidMaxValue: { code: 'invalidMaxValue', severity: SEV.error },
   invalidTheme: { code: 'invalidTheme', severity: SEV.info },
-  minGreaterThanMax: { code: 'minGreaterThanMax', severity: SEV.error },
-  discontinuousRange: { code: 'discontinuousRange', severity: SEV.error },
-  missingColorProperty: { code: 'missingColorProperty', severity: SEV.error },
-  invalidIconType: { code: 'invalidIconType', severity: SEV.error },
   invalidStateContent: { code: 'invalidStateContent', severity: SEV.error },
   invalidStateContentEntry: { code: 'invalidStateContentEntry', severity: SEV.error },
   appliedDefaultValue: { code: 'appliedDefaultValue', severity: SEV.info },
@@ -11134,48 +12459,32 @@ const types = {
 
   tapActionWithDefault: (defaultVal) => types.fallbackTo(types.tapAction, defaultVal),
 
-  customTheme: (value, path = []) => {
+  // CF5 - issue (major) resolved - this used to throw (discarding the WHOLE array via
+  // types.fallbackTo(..., SKIP_PROPERTY)) the instant any single zone was momentarily
+  // incomplete or two zones didn't tile perfectly — harmless for a YAML power user
+  // writing the whole list at once, but a hard "theme disappears" break for the visual
+  // editor's row-by-row workflow (add a zone, then fill in min, then max, then a color).
+  // Each zone is now kept independently as long as it has a numeric min < max; missing
+  // colors/icon or gaps between zones are tolerated (the card just won't recolor a range
+  // nothing covers), and zones are sorted by min so edit order never matters — mirrors
+  // additionItem's own per-item SKIP_PROPERTY leniency instead of an all-or-nothing gate.
+  customTheme: (value, _path = []) => {
     if (is.nullish(value)) return SKIP_PROPERTY;
-    if (!is.array(value)) throw new ValidationError(path, ERROR_CODES.invalidCustomThemeArray.code, ERROR_CODES.invalidCustomThemeArray.severity);
+    if (!is.array(value)) return SKIP_PROPERTY;
 
-    let previousMax = null;
-
-    return value.map((item, index) => {
-      const itemPath = [...path, index];
-      if (!is.plainObject(item))
-        throw new ValidationError(itemPath, ERROR_CODES.invalidCustomThemeEntry.code, ERROR_CODES.invalidCustomThemeEntry.severity);
-
-      const { min, max, color, icon_color, bar_color, icon } = item;
-      if (!is.number(min)) throw new ValidationError([...itemPath, 'min'], ERROR_CODES.invalidMinValue.code, ERROR_CODES.invalidMinValue.severity);
-      if (!is.number(max)) throw new ValidationError([...itemPath, 'max'], ERROR_CODES.invalidMaxValue.code, ERROR_CODES.invalidMaxValue.severity);
-
-      if (min >= max) throw new ValidationError(itemPath, ERROR_CODES.minGreaterThanMax.code, ERROR_CODES.minGreaterThanMax.severity);
-
-      if (previousMax !== null && min !== previousMax) {
-        throw new ValidationError([...itemPath, 'min'], ERROR_CODES.discontinuousRange.code, ERROR_CODES.discontinuousRange.severity);
-      }
-
-      const hasColor = is.string(color) || is.string(icon_color) || is.string(bar_color);
-
-      if (!hasColor) {
-        throw new ValidationError(itemPath, ERROR_CODES.missingColorProperty.code, ERROR_CODES.missingColorProperty.severity);
-      }
-
-      if (icon !== undefined && !is.string(icon)) {
-        throw new ValidationError([...itemPath, 'icon'], ERROR_CODES.invalidIconType.code, ERROR_CODES.invalidIconType.severity);
-      }
-
-      previousMax = max;
-
-      return {
+    const validItems = value
+      .filter((item) => is.plainObject(item) && is.number(item.min) && is.number(item.max) && item.min < item.max)
+      .map(({ min, max, color, icon_color, bar_color, icon }) => ({
         min,
         max,
-        ...(color !== undefined && { color }),
-        ...(icon_color !== undefined && { icon_color }),
-        ...(bar_color !== undefined && { bar_color }),
-        ...(icon !== undefined && { icon }),
-      };
-    });
+        ...(is.string(color) && { color }),
+        ...(is.string(icon_color) && { icon_color }),
+        ...(is.string(bar_color) && { bar_color }),
+        ...(is.string(icon) && { icon }),
+      }))
+      .sort((a, b) => a.min - b.min);
+
+    return validItems.length ? validItems : SKIP_PROPERTY;
   },
 
   stateContent: (value, path = []) => {
@@ -11419,9 +12728,28 @@ class YamlSchemaFactory {
         // ─── Entity & Data ──────────────────────────────────────────────────
         entity: types.entityId,
         attribute: types.optionalString(),
-        min_value: types.optionalNumber(),
-        max_value: types.fallbackTo(types.union(types.number, types.string), 100),
-        max_value_attribute: types.optionalString(),
+        // Explicit shape instead of type-sniffing a scalar (number vs entity-id string vs
+        // jinja-looking string): min_value: 10 | {value: 10} | {entity, attribute} | {jinja}.
+        min_value: types.optional(
+          types.union(
+            types.number,
+            types.object({ value: types.number }),
+            types.object({ entity: types.entityId, attribute: types.optionalString() }),
+            types.object({ jinja: types.string }),
+          ),
+        ),
+        // Explicit shape, mirrors min_value: max_value: 10 | {entity, attribute} | {jinja}. The
+        // legacy bare entity-id string is rewritten into the map form by _customizeConfig before
+        // this schema ever sees it (single call site, see BaseConfigHelper.set config), so no
+        // string form is needed here.
+        max_value: types.fallbackTo(
+          types.union(
+            types.number,
+            types.object({ entity: types.entityId, attribute: types.optionalString() }),
+            types.object({ jinja: types.string }),
+          ),
+          100,
+        ),
 
         // ─── Appearance ─────────────────────────────────────────────────────
         bar_color: types.optionalString(),
@@ -11430,9 +12758,10 @@ class YamlSchemaFactory {
           'small',
         ), //[('small', 'medium', 'large', 'xlarge')]
         bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
-        color_mode: types.enumsWithDefault(['auto', 'segment', 'rainbow'], 'auto'),
+        bar_color_mode: types.enumsWithDefault(['auto', 'segment', 'rainbow'], 'auto'),
         bar_effect: types.jinjaOrArrayWithValidatedElem(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
         bar_position: types.enumsWithDefault(['default', 'top', 'bottom'], 'default'),
+        bar_segments: types.optionalNumber(),
         center_zero: types.optionalWithDefault(
           types.union(
             types.boolean,
@@ -11466,9 +12795,28 @@ class YamlSchemaFactory {
         unit: types.optionalString(),
         disable_unit: types.optionalBooleanWithDefault(false),
         unit_spacing: types.enumsWithDefault(Object.values(CARD.config.unit.unitSpacing), 'auto'), //['auto', 'space', 'no-space']
-        min_value: types.optionalNumber(),
-        max_value: types.fallbackTo(types.union(types.number, types.string), 100),
-        max_value_attribute: types.optionalString(),
+        // Explicit shape instead of type-sniffing a scalar (number vs entity-id string vs
+        // jinja-looking string): min_value: 10 | {value: 10} | {entity, attribute} | {jinja}.
+        min_value: types.optional(
+          types.union(
+            types.number,
+            types.object({ value: types.number }),
+            types.object({ entity: types.entityId, attribute: types.optionalString() }),
+            types.object({ jinja: types.string }),
+          ),
+        ),
+        // Explicit shape, mirrors min_value: max_value: 10 | {entity, attribute} | {jinja}. The
+        // legacy bare entity-id string is rewritten into the map form by _customizeConfig before
+        // this schema ever sees it (single call site, see BaseConfigHelper.set config), so no
+        // string form is needed here.
+        max_value: types.fallbackTo(
+          types.union(
+            types.number,
+            types.object({ entity: types.entityId, attribute: types.optionalString() }),
+            types.object({ jinja: types.string }),
+          ),
+          100,
+        ),
 
         // ─── Appearance ===
         icon: types.optionalString(),
@@ -11479,11 +12827,13 @@ class YamlSchemaFactory {
           'small',
         ), //[('small', 'medium', 'large', 'xlarge')]
         bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
-        color_mode: types.enumsWithDefault(['auto', 'segment', 'rainbow'], 'auto'),
+        bar_color_mode: types.enumsWithDefault(['auto', 'segment', 'rainbow'], 'auto'),
         bar_effect: types.jinjaOrArrayWithValidatedElem(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
         bar_position: types.enumsWithDefault(['default', 'below', 'top', 'bottom', 'overlay', 'background'], 'default'),
         bar_single_line: types.optionalBooleanWithDefault(false),
         bar_max_width: types.optionalString(),
+        bar_segments: types.optionalNumber(),
+        icon_animation: types.enumsWithDefault(['none', 'spin', 'pulse'], 'none'),
         layout: types.enumsWithDefault(
           Object.values(CARD.layout.orientations).map((e) => e.label),
           'horizontal',
@@ -11509,7 +12859,7 @@ class YamlSchemaFactory {
         text_shadow: types.optionalBooleanWithDefault(false),
 
         // ─── Visibility & Content ===
-        hide: types.jinjaOrArrayWithValidatedElem(['icon', 'name', 'value', 'secondary_info', 'progress_bar']),
+        hide: types.jinjaOrArrayWithValidatedElem(['icon', 'name', 'value', 'unit', 'secondary_info', 'progress_bar']),
         name_info: types.optionalString(),
         custom_info: types.optionalString(),
         state_content: types.optional(types.fallbackTo(types.stateContent, SKIP_PROPERTY)),
@@ -11524,6 +12874,14 @@ class YamlSchemaFactory {
         custom_theme: types.fallbackTo(types.customTheme, SKIP_PROPERTY),
         interpolate: types.optionalBooleanWithDefault(false),
         watermark: types.watermarkObject(watermarkSchema, CARD.config.defaults.watermark),
+        alert_when: types.optional(
+          types.object({
+            above: types.optionalNumber(),
+            below: types.optionalNumber(),
+            color: types.optionalString(),
+            highlight: types.enumsWithDefault(['border', 'background'], 'border'),
+          }),
+        ),
 
         // ─── Additions ===
         additions: types.optional(types.array(additionItem)),
@@ -11575,6 +12933,8 @@ class YamlSchemaFactory {
         bar_position: types.enumsWithDefault(['default', 'below', 'top', 'bottom', 'overlay', 'background'], 'default'),
         bar_single_line: types.optionalBooleanWithDefault(false),
         bar_max_width: types.optionalString(),
+        bar_segments: types.optionalNumber(),
+        icon_animation: types.enumsWithDefault(['none', 'spin', 'pulse'], 'none'),
         layout: types.enumsWithDefault(
           Object.values(CARD.layout.orientations).map((e) => e.label),
           'horizontal',
@@ -11713,6 +13073,20 @@ class BaseConfigHelper {
           config.theme
         } is deprecated and will be removed in a future release. Please migrate to the recommended alternative...`,
       );
+    // max_value used to be number|entity-id-string, disambiguated by sniffing the value's
+    // shape at runtime (the same pattern that caused min_value's freeze bug). The entity
+    // form is now an explicit map; the bare string form is auto-migrated for this session
+    // (see CardConfigHelper._customizeConfig) but should be updated in the YAML.
+    if (is.nonEmptyString(config.max_value))
+      console.warn(
+        `${META.types.card.typeName.toUpperCase()} - max_value: <entity id> is deprecated and will be removed in a future release. ` +
+          `Please migrate to max_value: { entity: <entity id>, attribute: <optional> }. Your configuration was automatically migrated for this session.`,
+      );
+    if (config.disable_unit !== undefined)
+      console.warn(
+        `${META.types.card.typeName.toUpperCase()} - disable_unit is deprecated and will be removed in a future release. ` +
+          `Please migrate to hide: ['unit', ...]. Your configuration was automatically migrated for this session.`,
+      );
   }
 
   get isValid() {
@@ -11770,10 +13144,17 @@ class BaseConfigHelper {
   }
 
   _checkHAEnvironment() {
+    const ENTITY_NOT_FOUND = 'entityNotFound';
+    const ATTRIBUTE_NOT_FOUND = 'attributeNotFound';
     const resolve = (key) => (is.nonEmptyString(key) ? this._hassProvider.getEntityStateObj(key) : null);
 
     const entityState = resolve(this.config.entity);
-    const maxValueState = resolve(this.config.max_value);
+    const maxValueEntity = is.plainObject(this.config.max_value) ? this.config.max_value.entity : null;
+    const maxValueAttr = is.plainObject(this.config.max_value) ? this.config.max_value.attribute : null;
+    const maxValueState = resolve(maxValueEntity);
+    const minValueEntity = is.plainObject(this.config.min_value) ? this.config.min_value.entity : null;
+    const minValueAttr = is.plainObject(this.config.min_value) ? this.config.min_value.attribute : null;
+    const minValueState = resolve(minValueEntity);
     const lowWMState = resolve(this.config?.watermark?.low);
     const highWMState = resolve(this.config?.watermark?.high);
 
@@ -11781,32 +13162,45 @@ class BaseConfigHelper {
       {
         condition: is.string(this.config.attribute) && entityState && !has.own(entityState.attributes, this.config.attribute),
         path: 'attribute',
-        errorCode: 'attributeNotFound',
+        errorCode: ATTRIBUTE_NOT_FOUND,
       },
-      { condition: is.nonEmptyString(this.config.max_value) && !maxValueState, path: 'max_value', errorCode: 'entityNotFound' },
       {
-        condition:
-          is.nonEmptyString(this.config.max_value_attribute) && maxValueState && !has.own(maxValueState.attributes, this.config.max_value_attribute),
-        path: 'max_value_attribute',
-        errorCode: 'attributeNotFound',
+        condition: is.nonEmptyString(maxValueEntity) && !maxValueState,
+        path: MAX_VALUE_ENTITY_PATH,
+        errorCode: ENTITY_NOT_FOUND,
       },
-      { condition: is.nonEmptyString(this.config.watermark?.low) && !lowWMState, path: 'watermark.low', errorCode: 'entityNotFound' },
+      {
+        condition: is.nonEmptyString(maxValueAttr) && maxValueState && !has.own(maxValueState.attributes, maxValueAttr),
+        path: 'max_value.attribute',
+        errorCode: ATTRIBUTE_NOT_FOUND,
+      },
+      {
+        condition: is.nonEmptyString(minValueEntity) && !minValueState,
+        path: MIN_VALUE_ENTITY_PATH,
+        errorCode: ENTITY_NOT_FOUND,
+      },
+      {
+        condition: is.nonEmptyString(minValueAttr) && minValueState && !has.own(minValueState.attributes, minValueAttr),
+        path: 'min_value.attribute',
+        errorCode: ATTRIBUTE_NOT_FOUND,
+      },
+      { condition: is.nonEmptyString(this.config.watermark?.low) && !lowWMState, path: 'watermark.low', errorCode: ENTITY_NOT_FOUND },
       {
         condition:
           is.nonEmptyString(this.config.watermark?.low_attribute) &&
           lowWMState &&
           !has.own(lowWMState.attributes, this.config.watermark.low_attribute),
         path: 'watermark.low_attribute',
-        errorCode: 'attributeNotFound',
+        errorCode: ATTRIBUTE_NOT_FOUND,
       },
-      { condition: is.nonEmptyString(this.config.watermark?.high) && !highWMState, path: 'watermark.high', errorCode: 'entityNotFound' },
+      { condition: is.nonEmptyString(this.config.watermark?.high) && !highWMState, path: 'watermark.high', errorCode: ENTITY_NOT_FOUND },
       {
         condition:
           is.nonEmptyString(this.config.watermark?.high_attribute) &&
           highWMState &&
           !has.own(highWMState.attributes, this.config.watermark.high_attribute),
         path: 'watermark.high_attribute',
-        errorCode: 'attributeNotFound',
+        errorCode: ATTRIBUTE_NOT_FOUND,
       },
     ];
 
@@ -11822,28 +13216,46 @@ class BaseConfigHelper {
 class CardConfigHelper extends BaseConfigHelper {
   _yamlSchema = YamlSchemaFactory.card;
 
+  // CF5 - issue (major) resolved - max_value used to be number|entity-id-string with the
+  // mode sniffed at runtime (is.number/is.string), the exact pattern that caused min_value's
+  // freeze bug. Bare-entity-string configs (pre-1.6) are migrated here into the explicit
+  // { entity, attribute } map before validation, so every downstream consumer only ever
+  // sees a number or that map — no sniffing left anywhere. The deprecation warning for the
+  // bare form is logged separately, see BaseConfigHelper.#logDeprecatedOption.
   static _customizeConfig(config) {
+    let normalized = config;
+    if (is.nonEmptyString(config?.max_value)) {
+      normalized = { ...config, max_value: { entity: config.max_value, attribute: config.max_value_attribute }, max_value_attribute: undefined };
+    }
+    // disable_unit used to be a dedicated boolean; 'unit' is now just another hide target,
+    // consistent with icon/name/value/progress_bar. Skip the fold when hide is a Jinja
+    // template (a string): merging into user-authored template logic isn't possible, so
+    // disable_unit is left untouched and the runtime keeps honoring it as a fallback
+    // (see ViewBase's #percentHelper.configure call, hasDisabledUnit).
+    if (config?.disable_unit === true && !is.jinja(config?.hide)) {
+      const currentHide = is.array(config.hide) ? config.hide : [];
+      normalized = {
+        ...normalized,
+        hide: currentHide.includes('unit') ? currentHide : [...currentHide, 'unit'],
+        disable_unit: undefined,
+      };
+    }
     return {
-      ...config,
-      ...(is.nonEmptyString(config?.entity) && is.nullish(config?.attribute)
-        ? { attribute: HA_CONTEXT.attributeMapping[HassProviderSingleton.getEntityDomain(config?.entity)]?.attribute }
+      ...normalized,
+      ...(is.nonEmptyString(normalized?.entity) && is.nullish(normalized?.attribute)
+        ? { attribute: HA_CONTEXT.attributeMapping[HassProviderSingleton.getEntityDomain(normalized?.entity)]?.attribute }
         : {}),
-      ...(is.nonEmptyString(config?.max_value) && is.nullish(config?.max_value_attribute)
-        ? { max_value_attribute: HA_CONTEXT.attributeMapping[HassProviderSingleton.getEntityDomain(config?.max_value)]?.attribute }
+      ...(is.nonEmptyString(normalized?.max_value?.entity) && is.nullish(normalized?.max_value?.attribute)
+        ? {
+            max_value: {
+              ...normalized.max_value,
+              attribute: HA_CONTEXT.attributeMapping[HassProviderSingleton.getEntityDomain(normalized.max_value.entity)]?.attribute,
+            },
+          }
         : {}),
     };
   }
 
-  get max_value() {
-    if (!this.config.max_value) return CARD.config.value.max;
-    if (is.number(this.config.max_value)) return this.config.max_value;
-    if (is.string(this.config.max_value)) {
-      const state = this._hassProvider.getEntityProp(this.config.max_value, 'state');
-      const parsedState = parseFloat(state);
-      if (!isNaN(parsedState)) return parsedState;
-    }
-    return null;
-  }
   get stateContent() {
     return this.config?.state_content ?? [];
   }
@@ -12022,6 +13434,33 @@ class ViewCore {
     return result;
   }
 
+  // icon_animation only makes sense for domains with a real on/active vs off/idle
+  // semantics (fan spinning, media playing…). A plain measurement (sensor, battery %,
+  // input_number…) has no such state — without this gate a battery sensor spun forever,
+  // since its numeric state never matched the resting-state exclusion list below.
+  static #ANIMATABLE_DOMAINS = new Set([
+    'fan', 'light', 'switch', 'climate', 'humidifier', 'vacuum', 'media_player',
+    'water_heater', 'siren', 'alarm_control_panel', 'automation', 'script',
+    'input_boolean', 'remote', 'lock', 'cover', 'valve', 'binary_sensor',
+  ]);
+
+  get isEntityActive() {
+    if (!this._currentValue.isAvailable) return false;
+    if (!ViewCore.#ANIMATABLE_DOMAINS.has(HassProviderSingleton.getEntityDomain(this.entity))) return false;
+    const state = String(this._currentValue.state ?? '').toLowerCase();
+    return !['off', 'idle', 'standby', 'paused', 'closed', 'locked', 'docked', 'disarmed', 'none', ''].includes(state);
+  }
+
+  /** alert_when thresholds are expressed in the entity's native unit (like watermark.low/high). */
+  get isAlertActive() {
+    const alert = this.config?.alert_when;
+    if (!alert || !this._currentValue.isAvailable) return false;
+    const raw = this._currentValue.value;
+    const value = is.number(raw) ? raw : raw?.current;
+    if (!is.number(value)) return false;
+    return (is.number(alert.above) && value > alert.above) || (is.number(alert.below) && value < alert.below);
+  }
+
   hasComponentHiddenFlag(component) {
     return this._hasInConfigArray('hide', component);
   }
@@ -12105,6 +13544,10 @@ class ViewBase extends ViewCore {
   #percentHelper = new PercentHelper();
   #theme = new ThemeManager();
   #maxValue = new EntityOrValue();
+  #minValue = new EntityOrValue();
+  // min_value/max_value resolved from a Jinja subscription (standard cards); null = no override
+  #jinjaMinValue = null;
+  #jinjaMaxValue = null;
   #entityCollection = new EntityCollectionHelper();
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
@@ -12134,7 +13577,9 @@ class ViewBase extends ViewCore {
     const centerZero = this._configHelper.config.centerZero;
     this.#percentHelper.configure({
       unitSpacing: this._configHelper.config.unit_spacing,
-      hasDisabledUnit: this._configHelper.config.disable_unit,
+      // disable_unit is deprecated (folded into hide: ['unit', ...] by _customizeConfig)
+      // but left untouched, and thus still checked here, when hide is a Jinja template.
+      hasDisabledUnit: this._configHelper.config.disable_unit || this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.unit.label),
       isCenterZero: centerZero.enabled,
       zeroValue: centerZero.zeroValue,
       growthPercent: centerZero.growthPercent,
@@ -12156,10 +13601,14 @@ class ViewBase extends ViewCore {
       this.#maxValue.value = CARD.config.value.max;
     } else {
       this._currentValue.attribute = this._configHelper.config.attribute;
-      Object.assign(this.#maxValue, {
-        value: this._configHelper.config.max_value ?? CARD.config.value.max,
-        attribute: this._configHelper.config.max_value_attribute,
-      });
+      // max_value/min_value: number (legacy) | {value} | {entity, attribute} | {jinja}.
+      // Jinja mode is fed by the template subscription (#jinjaMaxValue/#jinjaMinValue),
+      // not by EntityOrValue — see #resolveMaxValue/#resolveMinValue for the per-shape
+      // resolution, kept out of this method to avoid nesting their ternaries in here.
+      Object.assign(this.#maxValue, ViewBase.#resolveMaxValue(this._configHelper.config.max_value));
+      this.#jinjaMaxValue = null;
+      Object.assign(this.#minValue, ViewBase.#resolveMinValue(this._configHelper.config.min_value));
+      this.#jinjaMinValue = null;
       Object.assign(this._lowValue, {
         value: this._configHelper.config?.watermark?.low,
         attribute: this._configHelper.config?.watermark?.low_attribute,
@@ -12172,6 +13621,20 @@ class ViewBase extends ViewCore {
   }
   get config() {
     return this._configHelper.config;
+  }
+  static #resolveMaxValue(maxCfg) {
+    const isMaxObj = is.plainObject(maxCfg);
+    return {
+      value: isMaxObj ? (maxCfg.jinja ? null : (maxCfg.entity ?? CARD.config.value.max)) : (maxCfg ?? CARD.config.value.max),
+      attribute: isMaxObj ? maxCfg.attribute : undefined,
+    };
+  }
+  static #resolveMinValue(minCfg) {
+    const isMinObj = is.plainObject(minCfg);
+    return {
+      value: isMinObj ? (minCfg.jinja ? null : (minCfg.entity ?? minCfg.value ?? null)) : minCfg,
+      attribute: isMinObj ? minCfg.attribute : undefined,
+    };
   }
   #hasState(state) {
     const toEVal = this.hasWatermark ? [this._currentValue, this.#maxValue, this._lowValue, this._highValue] : [this._currentValue, this.#maxValue];
@@ -12187,9 +13650,13 @@ class ViewBase extends ViewCore {
     return this.#hasState(HA_CONTEXT.entity.state.notFound);
   }
   get isAvailable() {
+    // note: this used to test `this._configHelper.maxValue`, a getter that never existed
+    // (always undefined), silently disabling the max-entity availability check.
+    const minIsEntity = is.nonEmptyString(this._configHelper.config?.min_value?.entity);
     return !(
       !this._currentValue.isAvailable ||
-      (!this.#maxValue.isAvailable && this._configHelper.maxValue) ||
+      (!this.#maxValue.isAvailable && is.nonEmptyString(this._configHelper.config?.max_value?.entity)) ||
+      (!this.#minValue.isAvailable && minIsEntity) ||
       (!this._lowValue.isAvailable && this._configHelper.config?.watermark?.low) ||
       (!this._highValue.isAvailable && this._configHelper.config?.watermark?.high)
     );
@@ -12221,7 +13688,7 @@ class ViewBase extends ViewCore {
   }
   get colorGradient() {
     if (!this.isAvailable || this.#percentHelper.isCenterZero) return null;
-    return this.#theme.buildGradient(this.#percentHelper.percent, this._configHelper.config.color_mode);
+    return this.#theme.buildGradient(this.#percentHelper.percent, this._configHelper.config.bar_color_mode, this._currentValue.defaultColor);
   }
   get percent() {
     if (!this.isAvailable) return 0;
@@ -12307,6 +13774,7 @@ class ViewBase extends ViewCore {
   refresh(hass) {
     super.refresh(hass); // _hassProvider, _currentValue, _lowValue, _highValue
     this.#maxValue.refresh();
+    this.#minValue.refresh();
     this._configHelper.checkConfig();
     this.#entityCollection.refreshAll();
 
@@ -12355,9 +13823,22 @@ class ViewBase extends ViewCore {
     const currentValue = this.hasEntityCollection ? this.#entityCollection.getTotalValue() : this._currentValue.value;
     Object.assign(this.#percentHelper, {
       current: currentValue,
-      min: this._configHelper.config.min_value,
-      max: this.#maxValue.value?.current ?? this.#maxValue.value,
+      min: this.#jinjaMinValue ?? this.#minValue.value?.current ?? this.#minValue.value,
+      max: this.#jinjaMaxValue ?? this.#maxValue.value?.current ?? this.#maxValue.value,
     });
+  }
+
+  get jinjaMinValue() {
+    return this.#jinjaMinValue;
+  }
+  set jinjaMinValue(value) {
+    this.#jinjaMinValue = is.number(value) ? value : null;
+  }
+  get jinjaMaxValue() {
+    return this.#jinjaMaxValue;
+  }
+  set jinjaMaxValue(value) {
+    this.#jinjaMaxValue = is.number(value) ? value : null;
   }
 
   #getCurrentUnit() {
@@ -12906,9 +14387,9 @@ class ActionHelper {
 
   // CF5 - issue (major) resolved - the HA frontend creates <action-handler> lazily; querySelector could return null and crash if this card loads before any native card
   static #getActionHandler() {
-    let handler = document.body.querySelector('action-handler');
+    let handler = document.body.querySelector(HA_ACTION_HANDLER_TAG);
     if (!handler) {
-      handler = document.createElement('action-handler');
+      handler = document.createElement(HA_ACTION_HANDLER_TAG);
       document.body.appendChild(handler);
     }
     return handler;
@@ -13037,7 +14518,7 @@ class ActionHelper {
 const CONSTRUCTED_SHEETS = new Map();
 const getSharedStyleSheet = (cssText) => {
   if (CONSTRUCTED_SHEETS.has(cssText)) return CONSTRUCTED_SHEETS.get(cssText);
-  let sheet = null;
+  let sheet;
   try {
     sheet = new CSSStyleSheet();
     sheet.replaceSync(cssText);
@@ -13147,7 +14628,8 @@ class HACore extends HTMLElement {
     // CF5 - issue (minor) resolved - the watched set was only ever appended to: entities removed from the config (editor changes) stayed watched and kept triggering refreshes until reload. Rebuilt from scratch on every setConfig.
     this._changeTracker.resetWatchedEntities();
     if (is.string(config.entity)) this._changeTracker.watchEntity(config.entity);
-    if (is.string(config.max_value)) this._changeTracker.watchEntity(config.max_value);
+    if (is.nonEmptyString(config.max_value?.entity)) this._changeTracker.watchEntity(config.max_value.entity);
+    if (is.nonEmptyString(config.min_value?.entity)) this._changeTracker.watchEntity(config.min_value.entity);
     if (is.string(config?.watermark?.low)) this._changeTracker.watchEntity(config.watermark.low);
     if (is.string(config?.watermark?.high)) this._changeTracker.watchEntity(config.watermark.high);
     // CF5 - issue (major) resolved - additions entities were not watched: when one of them changed state (main entity unchanged), the ChangeTracker reported no change and the displayed total stayed stale
@@ -13300,6 +14782,14 @@ class HACore extends HTMLElement {
     this._addBaseClasses();
     this._handleWatermarkClasses();
     this._handleBarEffect();
+    this._handleBarSegments();
+  }
+
+  _handleBarSegments() {
+    const count = this._cardView.config.bar_segments;
+    const active = is.number(count) && count >= 2;
+    this._dom.toggleClass(CARD.htmlStructure.card.element, 'bar-segmented', active);
+    if (active) this._dom.setStyle(CARD.htmlStructure.card.element, '--bar-segments', Math.round(count));
   }
 
   _addBaseClasses() {
@@ -13398,9 +14888,15 @@ class HACore extends HTMLElement {
   // ─── JINJA TEMPLATE RENDERING ─────────────────────────────────────────────
 
   get validJinjaFields() {
+    // Most Jinja-capable options are flat string config values, but some (min_value) use an
+    // explicit { jinja: "..." } map form instead of sniffing a bare string — extract accordingly.
+    const rawValueFor = (key) => {
+      const raw = this._cardView.config[key];
+      return is.plainObject(raw) ? (raw.jinja ?? '') : (raw || '');
+    };
     const result = Object.fromEntries(
       Object.keys(this._getJinjaHandlers())
-        .map((key) => [key, this._cardView.config[key] || ''])
+        .map((key) => [key, rawValueFor(key)])
         .filter(([, value]) => is.nonEmptyString(value)),
     );
     this._log.debug('validJinjaFields: ', { handler: this._getJinjaHandlers(), config:this._cardView.config, result });
@@ -13791,6 +15287,7 @@ class HABase extends HACore {
       [config.min_width, CARD.style.dynamic.card.minWidth.var, config.min_width],
       [config.height, CARD.style.dynamic.card.height.var, config.height],
       [config.bar_max_width, CARD.style.dynamic.progressBar.maxWidth.var, config.bar_max_width],
+      [config.alert_when?.color, '--alert-color', ThemeManager.adaptColor(config.alert_when?.color)],
     ].forEach(([condition, prop, value]) => {
       if (condition) this._dom.setStyle(cardKey, prop, value);
     });
@@ -13802,6 +15299,10 @@ class HABase extends HACore {
       [CARD.style.dynamic.clickable.icon, this._cardView.hasClickableIcon],
       [CARD.style.dynamic.frameless.class, this._cardView.config.frameless],
       [CARD.style.dynamic.marginless.class, this._cardView.config.marginless],
+      ['icon-anim-spin', this._cardView.config.icon_animation === 'spin' && this._cardView.isEntityActive],
+      ['icon-anim-pulse', this._cardView.config.icon_animation === 'pulse' && this._cardView.isEntityActive],
+      ['alert-active', this._cardView.isAlertActive],
+      ['alert-background', this._cardView.isAlertActive && this._cardView.config.alert_when?.highlight === 'background'],
     ]);
   }
 
@@ -13838,6 +15339,10 @@ class HABase extends HACore {
     this._manageShape();
     this._updateTrend();
     this._updateCSS();
+    // Re-applied on every refresh (not only at render): some conditions are
+    // state-driven (icon_animation active state, entity error), and toggleClass
+    // is value-cached so unchanged classes cost nothing.
+    this._applyConditionalClasses();
     this._processJinjaFields();
     this._processStandardFields();
   }
@@ -14166,7 +15671,36 @@ class EntityProgressCardBase extends HABase {
       badge_color: () => this._renderBadgeColor(content),
       custom_info: () => this._renderCustomInfo(content),
       name_info: () => this._renderNameInfo(content),
+      min_value: () => this._renderMinValue(content),
+      max_value: () => this._renderMaxValue(content),
     };
+  }
+
+  _renderMinValue(content) {
+    // Defensive: only apply if min_value is still in { jinja: "..." } mode — guards against
+    // a push arriving right as the user switches mode away from Jinja.
+    if (!is.nonEmptyString(this._cardView.config.min_value?.jinja)) return;
+    const value = is.number(content) ? content : is.strictNumericString(content) ? Number(content) : null;
+    if (value === this._cardView.jinjaMinValue) return; // unchanged — skip the recompute below
+    this._cardView.jinjaMinValue = value;
+    // Lightweight, like _managePercent on template cards: recompute + repaint the bar only.
+    // A full this.refresh() re-ran icon/badge/shape/trend AND _processJinjaFields() (which
+    // re-scans every Jinja field on the card) on every single push — while typing the
+    // min_value template in the editor, each keystroke produces a push, so the full pipeline
+    // ran on every keystroke and made the editor feel like it had frozen.
+    this._cardView.refresh(this.hass);
+    this._updateCSS();
+  }
+  _renderMaxValue(content) {
+    // Mirrors _renderMinValue exactly — see its comments for why this stays lightweight
+    // (recompute + repaint only, not a full refresh) and why it's a no-op once the config
+    // has moved on from Jinja mode.
+    if (!is.nonEmptyString(this._cardView.config.max_value?.jinja)) return;
+    const value = is.number(content) ? content : is.strictNumericString(content) ? Number(content) : null;
+    if (value === this._cardView.jinjaMaxValue) return;
+    this._cardView.jinjaMaxValue = value;
+    this._cardView.refresh(this.hass);
+    this._updateCSS();
   }
   _renderCustomInfo(content) {
     this._dom.setHTML(CARD.htmlStructure.elements.secondaryInfoExtra.class, `${content}&nbsp;`);
@@ -14216,11 +15750,17 @@ class EntityProgressBadge extends EntityProgressCardBase {
   static _cardStructure = new ObjStructure('badge');
 
   // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ===
+  // CF5 - issue (medium) resolved - this override replaces (not extends) the base class's
+  // handler map and had never picked up min_value, so the documented "Jinja mode works on
+  // Card and Badge" was false for Badge: the template subscription was simply never wired,
+  // even though BadgeView (via ViewBase) already fully supports jinjaMinValue/jinjaMaxValue.
   _getJinjaHandlers(content) {
     return {
       ...this._baseJinjaHandlers(content),
       custom_info: () => this._renderCustomInfo(content),
       name_info: () => this._renderNameInfo(content),
+      min_value: () => this._renderMinValue(content),
+      max_value: () => this._renderMaxValue(content),
     };
   }
 }
@@ -14592,10 +16132,14 @@ class EditorDOMHelper extends DOMHelper {
    * @param {boolean} visible
    */
   updateVisibility(name, visible) {
+    const cacheKey = `${name}:display`;
+    if (this._appliedValues.get(cacheKey) === visible) return;
+
     this.enqueue(name, 'display', () => {
       const el = this._domElements.get(name);
       if (!el) return;
       el.style.display = visible ? '' : 'none';
+      this._appliedValues.set(cacheKey, visible);
     });
   }
 
@@ -14630,10 +16174,19 @@ class EditorDOMHelper extends DOMHelper {
    * @param {object} selector
    */
   updateSelector(name, selector) {
+    // Was reassigned unconditionally on every #updateFields() pass (i.e. every editor
+    // keystroke, for every field with selectorOf — not just the one being edited), forcing
+    // the child ha-selector's attribute picker to fully re-render each time regardless of
+    // whether the referenced entity actually changed. Value-cached like the other setters.
+    const cacheKey = `${name}:selector`;
+    const serialized = JSON.stringify(selector);
+    if (this._appliedValues.get(cacheKey) === serialized) return;
+
     this.enqueue(name, 'selector', () => {
       const el = this._domElements.get(name);
       if (!el) return;
       el.selector = selector;
+      this._appliedValues.set(cacheKey, serialized);
     });
   }
 
@@ -14647,12 +16200,22 @@ class EditorDOMHelper extends DOMHelper {
    * @param {function} resolveValue — (def, config) => raw value
    */
   _applyContext(name, contextDef, config) {
+    // Same class of bug as updateSelector: reassigned a brand-new object on every
+    // #updateFields() pass (i.e. on every keystroke anywhere in the form, not just
+    // in this field), forcing the child selector (e.g. state_content's entity/attribute
+    // picker) to fully re-render every time regardless of whether anything changed.
+    const cacheKey = `${name}:context`;
+    const resolved = Object.fromEntries(
+      Object.entries(contextDef).map(([key, configKey]) => [key, config[configKey] ?? ''])
+    );
+    const serialized = JSON.stringify(resolved);
+    if (this._appliedValues.get(cacheKey) === serialized) return;
+
     this.enqueue(name, 'context', () => {
       const target = this._domElements.get(name);
       if (!target) return;
-      target.context = Object.fromEntries(
-        Object.entries(contextDef).map(([key, configKey]) => [key, config[configKey] ?? ''])
-      );
+      target.context = resolved;
+      this._appliedValues.set(cacheKey, serialized);
     });
   }
 
@@ -14709,20 +16272,68 @@ class EditorDOMHelper extends DOMHelper {
 }
 
 const CHIPS_HOST_STYLE =
-  ':host { display: block; width: 100%; } ha-filter-chip[selected] { --md-filter-chip-selected-container-color: var(--primary-color); --md-filter-chip-selected-label-text-color: var(--text-primary-color, #fff); --md-filter-chip-selected-leading-icon-color: var(--text-primary-color, #fff); }';
+  ':host { display: block; width: 100%; }' +
+  ' .lbl { display: block; font-size: 1rem; font-weight: 400; line-height: 1.5;' +
+  ' color: var(--primary-text-color); padding-bottom: 4px; }' +
+  ' .chip-set { display: flex; flex-wrap: wrap; gap: 8px; }' +
+  ' .chip { display: inline-flex; align-items: center; height: 32px; padding: 0 16px; box-sizing: border-box;' +
+  ' border: 1px solid var(--divider-color, #e0e0e0); border-radius: 8px; background: transparent;' +
+  ' color: var(--primary-text-color); font-family: inherit; font-size: 14px; line-height: 1; cursor: pointer;' +
+  ' transition: background-color 0.15s, border-color 0.15s; }' +
+  ' .chip:hover { background: color-mix(in srgb, var(--primary-text-color) 8%, transparent); }' +
+  ' .chip.selected { background: var(--primary-color); border-color: var(--primary-color);' +
+  ' color: var(--text-primary-color, #fff); }';
 
 class ChipsBase extends HTMLElement {
   // CF5 - issue (major) resolved - setLabels() is called by the editor before the element is connected, when the chips Map is still empty; labels are now stored and applied at build time
   _labels = null;
+  #labelText = '';
+  #labelEl = null;
 
   connectedCallback() {
     if (!this.shadowRoot) this.attachShadow({ mode: 'open' });
-    if (!this.shadowRoot.querySelector(HA_CHIP_SET_TAG)) this._buildDOM();
+    if (!this.shadowRoot.querySelector('.chip-set')) this._buildDOM();
     this._render();
+  }
+
+  get label() { return this.#labelText; }
+  set label(val) {
+    this.#labelText = val ?? '';
+    if (this.#labelEl) this.#labelEl.textContent = this.#labelText;
   }
 
   _chipLabel(value) {
     return this._labels?.[value] ?? value;
+  }
+
+  _createChip(value, onToggle) {
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'chip';
+    chip.textContent = this._chipLabel(value);
+    chip.addEventListener('click', (clickEvent) => { clickEvent.stopPropagation(); onToggle(value); });
+    return chip;
+  }
+
+  _buildChipSet(values, onToggle, chipsMap) {
+    const style = document.createElement('style');
+    style.textContent = CHIPS_HOST_STYLE;
+    const frag = [style];
+    if (this.#labelText) {
+      this.#labelEl = document.createElement('div');
+      this.#labelEl.className = 'lbl';
+      this.#labelEl.textContent = this.#labelText;
+      frag.push(this.#labelEl);
+    }
+    const chipSet = document.createElement('div');
+    chipSet.className = 'chip-set';
+    for (const value of values) {
+      const chip = this._createChip(value, onToggle);
+      chipSet.appendChild(chip);
+      chipsMap.set(value, chip);
+    }
+    frag.push(chipSet);
+    this.shadowRoot.append(...frag);
   }
 }
 
@@ -14730,9 +16341,9 @@ class EntityProgressEffectChips extends ChipsBase {
   static ELEMENT_NAME = 'entity-progress-effect-chips';
   static #EFFECTS = [
     { value: 'radius' },
-    { value: 'glass',            showIf: (c) => c.color_mode === 'auto' || is.nullish(c.color_mode) },
-    { value: 'gradient',         showIf: (c) => c.color_mode === 'auto' || is.nullish(c.color_mode) },
-    { value: 'gradient_reverse', showIf: (c) => c.color_mode === 'auto' || is.nullish(c.color_mode) },
+    { value: 'glass',            showIf: (c) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode) },
+    { value: 'gradient',         showIf: (c) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode) },
+    { value: 'gradient_reverse', showIf: (c) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode) },
     { value: 'shimmer' },
     { value: 'shimmer_reverse' },
   ];
@@ -14750,17 +16361,11 @@ class EntityProgressEffectChips extends ChipsBase {
   #chips = new Map();
 
   _buildDOM() {
-    const style = document.createElement('style');
-    style.textContent = CHIPS_HOST_STYLE;
-    const chipSet = document.createElement(HA_CHIP_SET_TAG);
-    for (const effect of EntityProgressEffectChips.#EFFECTS) {
-      const chip = document.createElement('ha-filter-chip');
-      chip.label = this._chipLabel(effect.value);
-      chip.addEventListener('click', (e) => { e.stopPropagation(); this.#toggle(effect.value); });
-      chipSet.appendChild(chip);
-      this.#chips.set(effect.value, chip);
-    }
-    this.shadowRoot.append(style, chipSet);
+    this._buildChipSet(
+      EntityProgressEffectChips.#EFFECTS.map((effect) => effect.value),
+      (value) => this.#toggle(value),
+      this.#chips,
+    );
   }
 
   #toggle(value) {
@@ -14779,7 +16384,7 @@ class EntityProgressEffectChips extends ChipsBase {
 
   setLabels(labels) {
     this._labels = labels ?? null;
-    for (const [value, chip] of this.#chips) chip.label = this._chipLabel(value);
+    for (const [value, chip] of this.#chips) chip.textContent = this._chipLabel(value);
   }
 
   _render() {
@@ -14790,7 +16395,7 @@ class EntityProgressEffectChips extends ChipsBase {
       const visible = !effect.showIf || effect.showIf(this.#config);
       const blocked = (EntityProgressEffectChips.#INCOMPATIBLE[effect.value] ?? []).some((v) => this.#selected.includes(v));
       chip.style.display = visible && !blocked ? '' : 'none';
-      chip.selected = this.#selected.includes(effect.value);
+      chip.classList.toggle('selected', this.#selected.includes(effect.value));
     }
   }
 }
@@ -14801,23 +16406,13 @@ if (!customElements.get(EntityProgressEffectChips.ELEMENT_NAME)) {
 
 class EntityProgressHideChips extends ChipsBase {
   static ELEMENT_NAME = 'entity-progress-hide-chips';
-  static #ITEMS = ['icon', 'name', 'value', 'secondary_info', 'progress_bar'];
+  static #ITEMS = ['icon', 'name', 'value', 'unit', 'secondary_info', 'progress_bar'];
 
   #selected = [];
   #chips = new Map();
 
   _buildDOM() {
-    const style = document.createElement('style');
-    style.textContent = CHIPS_HOST_STYLE;
-    const chipSet = document.createElement(HA_CHIP_SET_TAG);
-    for (const item of EntityProgressHideChips.#ITEMS) {
-      const chip = document.createElement('ha-filter-chip');
-      chip.label = this._chipLabel(item);
-      chip.addEventListener('click', (e) => { e.stopPropagation(); this.#toggle(item); });
-      chipSet.appendChild(chip);
-      this.#chips.set(item, chip);
-    }
-    this.shadowRoot.append(style, chipSet);
+    this._buildChipSet(EntityProgressHideChips.#ITEMS, (value) => this.#toggle(value), this.#chips);
   }
 
   #toggle(value) {
@@ -14832,16 +16427,75 @@ class EntityProgressHideChips extends ChipsBase {
 
   setLabels(labels) {
     this._labels = labels ?? null;
-    for (const [item, chip] of this.#chips) chip.label = this._chipLabel(item);
+    for (const [item, chip] of this.#chips) chip.textContent = this._chipLabel(item);
   }
 
   _render() {
-    for (const [item, chip] of this.#chips) chip.selected = this.#selected.includes(item);
+    for (const [item, chip] of this.#chips) chip.classList.toggle('selected', this.#selected.includes(item));
   }
 }
 
 if (!customElements.get(EntityProgressHideChips.ELEMENT_NAME)) {
   customElements.define(EntityProgressHideChips.ELEMENT_NAME, EntityProgressHideChips);
+}
+
+// Single-select variant: exactly one mode is always active (no deselect-to-empty),
+// unlike EffectChips/HideChips which toggle membership in an array. Concrete subclasses
+// only need to declare `static MODES`; `this.constructor.MODES` resolves polymorphically.
+class SingleSelectChipsBase extends ChipsBase {
+  #selected = null;
+  #chips = new Map();
+
+  _buildDOM() {
+    this.#selected ??= this.constructor.MODES[0];
+    this._buildChipSet(this.constructor.MODES, (value) => this.#select(value), this.#chips);
+  }
+
+  #select(value) {
+    if (value === this.#selected) return;
+    this.#selected = value;
+    this._render();
+    this.dispatchEvent(new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value }, bubbles: true, composed: true }));
+  }
+
+  get value() { return this.#selected ?? this.constructor.MODES[0]; }
+  set value(val) {
+    this.#selected = this.constructor.MODES.includes(val) ? val : this.constructor.MODES[0];
+    this._render();
+  }
+
+  setLabels(labels) {
+    this._labels = labels ?? null;
+    for (const [item, chip] of this.#chips) chip.textContent = this._chipLabel(item);
+  }
+
+  _render() {
+    for (const [item, chip] of this.#chips) chip.classList.toggle('selected', item === this.#selected);
+  }
+}
+
+class EntityProgressMinValueModeChips extends SingleSelectChipsBase {
+  static ELEMENT_NAME = 'entity-progress-min-value-mode-chips';
+  static MODES = ['standard', 'entity', 'jinja'];
+}
+if (!customElements.get(EntityProgressMinValueModeChips.ELEMENT_NAME)) {
+  customElements.define(EntityProgressMinValueModeChips.ELEMENT_NAME, EntityProgressMinValueModeChips);
+}
+
+class EntityProgressMaxValueModeChips extends SingleSelectChipsBase {
+  static ELEMENT_NAME = 'entity-progress-max-value-mode-chips';
+  static MODES = ['standard', 'entity', 'jinja'];
+}
+if (!customElements.get(EntityProgressMaxValueModeChips.ELEMENT_NAME)) {
+  customElements.define(EntityProgressMaxValueModeChips.ELEMENT_NAME, EntityProgressMaxValueModeChips);
+}
+
+class EntityProgressThemeModeChips extends SingleSelectChipsBase {
+  static ELEMENT_NAME = 'entity-progress-theme-mode-chips';
+  static MODES = ['preset', 'custom'];
+}
+if (!customElements.get(EntityProgressThemeModeChips.ELEMENT_NAME)) {
+  customElements.define(EntityProgressThemeModeChips.ELEMENT_NAME, EntityProgressThemeModeChips);
 }
 
 /******************************************************************************************
@@ -14855,28 +16509,56 @@ if (!customElements.get(EntityProgressHideChips.ELEMENT_NAME)) {
  * @extends HTMLElement
  */
 
-class EntityProgressAdditionsEditor extends HTMLElement {
-  static ELEMENT_NAME = 'entity-progress-additions-editor';
-
-  #hass = null;
-  #labelText = '';
-  #value = [];
-  #rows = []; // { entitySel, attrSel } per rendered row
-  #list = null;
-  #labelEl = null;
-  #addBtn = null;
+/******************************************************************************************
+ * 📝 ListEditorBase
+ * ========================================================================================
+ * Shared base for custom elements that edit an array of row-objects: a label, a
+ * list container, connectedCallback's build-once-then-render lifecycle, the
+ * value setter, and delete-by-index all follow the exact same shape regardless
+ * of what a row actually contains. Concrete subclasses implement _buildDOM()/
+ * _render()/_dispatch() — the same template-method pattern ChipsBase already
+ * uses for the chip family (_buildDOM overridden per concrete chip type).
+ *
+ * @class
+ * @extends HTMLElement
+ */
+class ListEditorBase extends HTMLElement {
+  _labelText = '';
+  _value = [];
+  _list = null;
+  _labelEl = null;
 
   connectedCallback() {
     if (!this.shadowRoot) this.attachShadow({ mode: 'open' });
-    if (!this.#list) this.#buildDOM();
-    this.#render();
+    if (!this._list) this._buildDOM();
+    this._render();
   }
 
-  get label() { return this.#labelText; }
+  get label() { return this._labelText; }
   set label(val) {
-    this.#labelText = val ?? '';
-    if (this.#labelEl) this.#labelEl.textContent = this.#labelText;
+    this._labelText = val ?? '';
+    if (this._labelEl) this._labelEl.textContent = this._labelText;
   }
+
+  get value() { return this._value; }
+  set value(val) {
+    this._value = is.array(val) ? val.filter(is.plainObject) : [];
+    if (this._list) this._render();
+  }
+
+  _deleteRow(index) {
+    this._value = this._value.filter((_, i) => i !== index);
+    this._render();
+    this._dispatch();
+  }
+}
+
+class EntityProgressAdditionsEditor extends ListEditorBase {
+  static ELEMENT_NAME = 'entity-progress-additions-editor';
+
+  #hass = null;
+  #rows = []; // { entitySel, attrSel } per rendered row
+  #addBtn = null;
 
   get hass() { return this.#hass; }
   set hass(hass) {
@@ -14887,13 +16569,7 @@ class EntityProgressAdditionsEditor extends HTMLElement {
     }
   }
 
-  get value() { return this.#value; }
-  set value(val) {
-    this.#value = is.array(val) ? val.filter(is.plainObject) : [];
-    if (this.#list) this.#render();
-  }
-
-  #buildDOM() {
+  _buildDOM() {
     const style = document.createElement('style');
     style.textContent = `
       :host { display: block; width: 100%; }
@@ -14928,10 +16604,10 @@ class EntityProgressAdditionsEditor extends HTMLElement {
       .del-btn ha-svg-icon { width: 16px; height: 16px; }
       .add-row { display: flex; justify-content: flex-start; margin-top: 4px; }
     `;
-    this.#labelEl = document.createElement('div');
-    this.#labelEl.className = 'lbl';
-    this.#labelEl.textContent = this.#labelText;
-    this.#list = document.createElement('div');
+    this._labelEl = document.createElement('div');
+    this._labelEl.className = 'lbl';
+    this._labelEl.textContent = this._labelText;
+    this._list = document.createElement('div');
     this.#addBtn = document.createElement('ha-button');
     const addIcon = document.createElement(HA_SVG_ICON_TAG);
     addIcon.setAttribute('slot', 'icon');
@@ -14939,29 +16615,23 @@ class EntityProgressAdditionsEditor extends HTMLElement {
     this.#addBtn.appendChild(addIcon);
     this.#addBtn.append('Add entity');
     this.#addBtn.addEventListener('click', () => {
-      this.#value = [...this.#value, {}];
-      this.#render();
+      this._value = [...this._value, {}];
+      this._render();
     });
     const addRow = document.createElement('div');
     addRow.className = 'add-row';
     addRow.appendChild(this.#addBtn);
-    this.shadowRoot.append(style, this.#labelEl, this.#list, addRow);
+    this.shadowRoot.append(style, this._labelEl, this._list, addRow);
   }
 
   #updateItem(index, patch) {
-    this.#value = this.#value.map((item, i) => i === index ? { ...item, ...patch } : item);
-    this.#render();
-    this.#dispatch();
+    this._value = this._value.map((item, i) => i === index ? { ...item, ...patch } : item);
+    this._render();
+    this._dispatch();
   }
 
-  #deleteRow(index) {
-    this.#value = this.#value.filter((_, i) => i !== index);
-    this.#render();
-    this.#dispatch();
-  }
-
-  #dispatch() {
-    const clean = this.#value.filter((i) => i.entity);
+  _dispatch() {
+    const clean = this._value.filter((i) => i.entity);
     this.dispatchEvent(new CustomEvent(VALUE_CHANGED_EVENT, {
       detail: { value: clean.length ? clean : undefined },
       bubbles: true,
@@ -14969,11 +16639,11 @@ class EntityProgressAdditionsEditor extends HTMLElement {
     }));
   }
 
-  #render() {
-    this.#list.innerHTML = '';
+  _render() {
+    this._list.innerHTML = '';
     this.#rows = [];
-    for (let i = 0; i < this.#value.length; i++) {
-      const item = this.#value[i];
+    for (let i = 0; i < this._value.length; i++) {
+      const item = this._value[i];
 
       const entitySel = document.createElement(HA_SELECTOR_TAG);
       entitySel.hass = this.#hass;
@@ -15004,7 +16674,7 @@ class EntityProgressAdditionsEditor extends HTMLElement {
       const delIcon = document.createElement(HA_SVG_ICON_TAG);
       delIcon.path = 'M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2C6.47,2 2,6.47 2,12C2,18.53 6.47,22 12,22C17.53,22 22,17.53 22,12C22,6.47 17.53,2 12,2M14.59,8L12,10.59L9.41,8L8,9.41L10.59,12L8,14.59L9.41,16L12,13.41L14.59,16L16,14.59L13.41,12L16,9.41L14.59,8Z';
       delBtn.appendChild(delIcon);
-      delBtn.addEventListener('click', () => this.#deleteRow(i));
+      delBtn.addEventListener('click', () => this._deleteRow(i));
 
       const sels = document.createElement('div');
       sels.className = 'sels';
@@ -15013,7 +16683,7 @@ class EntityProgressAdditionsEditor extends HTMLElement {
       const row = document.createElement('div');
       row.className = 'row';
       row.append(sels, delBtn);
-      this.#list.appendChild(row);
+      this._list.appendChild(row);
       this.#rows.push({ entitySel, attrSel });
     }
   }
@@ -15021,6 +16691,201 @@ class EntityProgressAdditionsEditor extends HTMLElement {
 
 if (!customElements.get(EntityProgressAdditionsEditor.ELEMENT_NAME)) {
   customElements.define(EntityProgressAdditionsEditor.ELEMENT_NAME, EntityProgressAdditionsEditor);
+}
+
+/******************************************************************************************
+ * 🎨 EntityProgressCustomThemeEditor
+ * ========================================================================================
+ * Custom element that renders an editable list of custom_theme zones, each a
+ * contiguous { min, max, color?, icon_color?, bar_color?, icon? } range.
+ * Mirrors EntityProgressAdditionsEditor's row-list pattern (label, list, add
+ * button, value-changed with the filtered array), with a richer per-row form.
+ *
+ * @class
+ * @extends HTMLElement
+ */
+
+class EntityProgressCustomThemeEditor extends ListEditorBase {
+  static ELEMENT_NAME = 'entity-progress-custom-theme-editor';
+
+  #hass = null;
+  #addBtn = null;
+  #addLabel = 'Add zone';
+
+  setAddLabel(val) {
+    this.#addLabel = val ?? this.#addLabel;
+    if (this.#addBtn) this.#addBtn.lastChild.textContent = this.#addLabel;
+  }
+
+  get hass() { return this.#hass; }
+  set hass(hass) {
+    this.#hass = hass;
+    for (const el of this.shadowRoot?.querySelectorAll(HA_SELECTOR_TAG) ?? []) el.hass = hass;
+  }
+
+  _buildDOM() {
+    const style = document.createElement('style');
+    style.textContent = `
+      :host { display: block; width: 100%; }
+      .lbl {
+        display: block;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: var(--primary-text-color);
+        padding-bottom: 4px;
+      }
+      .zone {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        border: 1px solid var(--divider-color, #e0e0e0);
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 16px;
+      }
+      .zone-header { display: flex; align-items: center; justify-content: space-between; }
+      .zone-title { font-size: 0.9rem; color: var(--secondary-text-color); }
+      .numbers-row { display: flex; gap: 16px; }
+      .numbers-row > * { width: calc((100% - 16px) * 0.5); }
+      .del-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+        color: var(--secondary-text-color);
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        box-sizing: border-box;
+      }
+      .del-btn:hover { color: var(--primary-color); }
+      .del-btn ha-svg-icon { width: 16px; height: 16px; }
+      .add-row { display: flex; justify-content: flex-start; margin-top: 4px; }
+    `;
+    this._labelEl = document.createElement('div');
+    this._labelEl.className = 'lbl';
+    this._labelEl.textContent = this._labelText;
+    this._list = document.createElement('div');
+    this.#addBtn = document.createElement('ha-button');
+    const addIcon = document.createElement(HA_SVG_ICON_TAG);
+    addIcon.setAttribute('slot', 'icon');
+    addIcon.path = 'M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z';
+    this.#addBtn.appendChild(addIcon);
+    this.#addBtn.append(this.#addLabel);
+    this.#addBtn.addEventListener('click', () => {
+      this._value = [...this._value, {}];
+      this._render();
+    });
+    const addRow = document.createElement('div');
+    addRow.className = 'add-row';
+    addRow.appendChild(this.#addBtn);
+    this.shadowRoot.append(style, this._labelEl, this._list, addRow);
+  }
+
+  #updateItem(index, patch) {
+    this._value = this._value.map((item, i) => (i === index ? { ...item, ...patch } : item));
+    this._render();
+    this._dispatch();
+  }
+
+  _dispatch() {
+    const isEmpty = (item) =>
+      !is.number(item.min) && !is.number(item.max) && !item.color && !item.icon_color && !item.bar_color && !item.icon;
+    const clean = this._value.filter((item) => !isEmpty(item));
+    this.dispatchEvent(new CustomEvent(VALUE_CHANGED_EVENT, {
+      detail: { value: clean.length ? clean : undefined },
+      bubbles: true,
+      composed: true,
+    }));
+  }
+
+  #numberField(item, index, key) {
+    const el = document.createElement(HA_SELECTOR_TAG);
+    el.hass = this.#hass;
+    el.selector = { number: {} };
+    el.label = key === 'min' ? 'Min' : 'Max';
+    el.value = is.number(item[key]) ? item[key] : undefined;
+    el.addEventListener(VALUE_CHANGED_EVENT, (e) => {
+      e.stopPropagation();
+      this.#updateItem(index, { [key]: is.number(e.detail.value) ? e.detail.value : undefined });
+    });
+    return el;
+  }
+
+  #colorField(item, index, key, label) {
+    const el = document.createElement(HA_SELECTOR_TAG);
+    el.hass = this.#hass;
+    el.selector = { 'ui-color': {} };
+    el.label = label;
+    el.style.width = '100%';
+    el.value = item[key] ?? '';
+    el.addEventListener(VALUE_CHANGED_EVENT, (e) => {
+      e.stopPropagation();
+      this.#updateItem(index, { [key]: e.detail.value || undefined });
+    });
+    return el;
+  }
+
+  #iconField(item, index) {
+    const el = document.createElement(HA_SELECTOR_TAG);
+    el.hass = this.#hass;
+    el.selector = { icon: { icon_set: ['mdi'] } };
+    el.label = 'Icon';
+    el.style.width = '100%';
+    el.value = item.icon ?? '';
+    el.addEventListener(VALUE_CHANGED_EVENT, (e) => {
+      e.stopPropagation();
+      this.#updateItem(index, { icon: e.detail.value || undefined });
+    });
+    return el;
+  }
+
+  _render() {
+    this._list.innerHTML = '';
+    for (let i = 0; i < this._value.length; i++) {
+      const item = this._value[i];
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'del-btn';
+      delBtn.title = 'Delete';
+      const delIcon = document.createElement(HA_SVG_ICON_TAG);
+      delIcon.path = 'M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2C6.47,2 2,6.47 2,12C2,18.53 6.47,22 12,22C17.53,22 22,17.53 22,12C22,6.47 17.53,2 12,2M14.59,8L12,10.59L9.41,8L8,9.41L10.59,12L8,14.59L9.41,16L12,13.41L14.59,16L16,14.59L13.41,12L16,9.41L14.59,8Z';
+      delBtn.appendChild(delIcon);
+      delBtn.addEventListener('click', () => this._deleteRow(i));
+
+      const header = document.createElement('div');
+      header.className = 'zone-header';
+      const title = document.createElement('span');
+      title.className = 'zone-title';
+      title.textContent = `Zone ${i + 1}`;
+      header.append(title, delBtn);
+
+      const numbers = document.createElement('div');
+      numbers.className = 'numbers-row';
+      numbers.append(this.#numberField(item, i, 'min'), this.#numberField(item, i, 'max'));
+
+      const zone = document.createElement('div');
+      zone.className = 'zone';
+      zone.append(
+        header,
+        numbers,
+        this.#iconField(item, i),
+        this.#colorField(item, i, 'color', 'Icon & bar color'),
+        this.#colorField(item, i, 'icon_color', 'Icon color'),
+        this.#colorField(item, i, 'bar_color', 'Bar color'),
+      );
+      this._list.appendChild(zone);
+    }
+  }
+}
+
+if (!customElements.get(EntityProgressCustomThemeEditor.ELEMENT_NAME)) {
+  customElements.define(EntityProgressCustomThemeEditor.ELEMENT_NAME, EntityProgressCustomThemeEditor);
 }
 
 /******************************************************************************************
@@ -15057,6 +16922,8 @@ class EditorBase extends HTMLElement {
   #hassProvider = null;
   #dom = null;
   #boundOnChanged = null;
+  #pendingSentConfig = null;
+  #sendConfigScheduled = false;
   _configHelper = new BaseConfigHelper();
 
   get #localizedOptions() {
@@ -15194,7 +17061,8 @@ class EditorBase extends HTMLElement {
       entity_name: () => ({ entity_name: {} }),
       state_content: () => ({ ui_state_content: { allow_context: true } }),
       attribute: () => ({ attribute: { entity_id: this.#config.entity ?? '' } }),
-      maxValueAttribute: () => ({ attribute: { entity_id: this.#config.max_value ?? '' } }),
+      maxValueAttribute: () => ({ attribute: { entity_id: this.#config.max_value?.entity ?? '' } }),
+      minValueAttribute: () => ({ attribute: { entity_id: this.#config.min_value?.entity ?? '' } }),
       number: () => ({ number: {} }),
       decimal: () => ({ number: { min: 0, max: 10, mode: 'box' } }),
       opacity: () => ({ number: { min: 0, max: 1, step: 0.05, mode: 'box' } }),
@@ -15208,7 +17076,9 @@ class EditorBase extends HTMLElement {
       bar_size: () => buildSelect(options.bar_size),
       bar_orientation: () => buildSelect(options.bar_orientation),
       bar_position: () => buildSelect(options.bar_position),
-      color_mode: () => buildSelect(options.color_mode),
+      bar_color_mode: () => buildSelect(options.bar_color_mode),
+      icon_animation: () => buildSelect(options.icon_animation),
+      alert_highlight: () => buildSelect(options.alert_highlight),
       theme: () => buildSelect(options.theme),
       layout: () => buildBoxSelect(options.layout, tileImage),
       unit_spacing: () => buildSelect(options.unit_spacing),
@@ -15229,9 +17099,20 @@ class EditorBase extends HTMLElement {
 
     return {
       label: field.noLabel ? '' : (() => {
-        const fields = this.#hassProvider.localize('editor.field');
-        const fieldKey = isNested ? `toggle_${childKey}` : field.name;
-        return fields[fieldKey] ?? (isNested ? this.#localizedOptions?.[field.name.split('.')[0]]?.[childKey] : undefined);
+        const explicit = isNested
+          ? this.#localizedOptions?.[field.name.split('.')[0]]?.[childKey]
+          : this.#hassProvider.localize(EDITOR_FIELD_NS)[field.name];
+        if (explicit !== undefined) return explicit;
+        // Guard rail: keep the "<Noun> color" pattern already established by
+        // badge_color/bar_color/color/alert_when.color for any future "..._color"
+        // field that ships without its own translation yet, instead of silently
+        // falling back to the raw key name.
+        const colorMatch = !isNested && field.name.match(/^(.+)_color$/);
+        if (colorMatch) {
+          const noun = colorMatch[1].replace(/_/g, ' ');
+          return `${noun.charAt(0).toUpperCase()}${noun.slice(1)} color`;
+        }
+        return undefined;
       })(),
       value: isInverted ? !raw : raw,
       isInverted,
@@ -15250,21 +17131,60 @@ class EditorBase extends HTMLElement {
     return el;
   }
 
+  #buildModeChipsField(field, tagName) {
+    const el = document.createElement(tagName);
+    el.id = field.name;
+    el.style.width = '100%';
+    el.label = this.#hassProvider.localize(EDITOR_FIELD_NS)?.[field.name] ?? field.name;
+    el.setLabels(this.#localizedOptions?.[field.name]);
+    // Mirrors the generic ha-selector path (#resolveFieldMeta), not #buildChipsField:
+    // this is a single virtual string value (resolveVirtual), not an array read from config[target].
+    el.value = this.#resolveFieldMeta(field).value;
+    this.#dom.registerField(field.name, el, field);
+    return el;
+  }
+
   #buildAdditionsField(field) {
     const el = document.createElement(EntityProgressAdditionsEditor.ELEMENT_NAME);
     el.id = field.name;
     el.style.width = '100%';
-    el.label = this.#hassProvider.localize('editor.field')?.[field.name] ?? field.name;
+    el.label = this.#hassProvider.localize(EDITOR_FIELD_NS)?.[field.name] ?? field.name;
     el.hass = this.hass;
     el.value = is.array(this.#config?.[field.name]) ? this.#config[field.name] : [];
     this.#dom.registerField(field.name, el, field);
     return el;
   }
 
+  #buildCustomThemeField(field) {
+    const el = document.createElement(EntityProgressCustomThemeEditor.ELEMENT_NAME);
+    el.id = field.name;
+    el.style.width = '100%';
+    el.label = this.#hassProvider.localize(EDITOR_FIELD_NS)?.[field.name] ?? field.name;
+    el.hass = this.hass;
+    el.value = is.array(this.#config?.[field.name]) ? this.#config[field.name] : [];
+    this.#dom.registerField(field.name, el, field);
+    return el;
+  }
+
+  // Dispatch table (mirrors #getSelectorForType's own pattern) instead of a chain of
+  // sequential ifs, which had grown one field type at a time into a cognitive-complexity
+  // warning — a lookup miss just falls through to the generic ha-selector path below.
+  #buildSpecialField(field) {
+    const builders = {
+      effect_chips: () => this.#buildChipsField(field, EntityProgressEffectChips.ELEMENT_NAME, 'bar_effect'),
+      hide_chips: () => this.#buildChipsField(field, EntityProgressHideChips.ELEMENT_NAME, 'hide'),
+      min_value_mode: () => this.#buildModeChipsField(field, EntityProgressMinValueModeChips.ELEMENT_NAME),
+      max_value_mode: () => this.#buildModeChipsField(field, EntityProgressMaxValueModeChips.ELEMENT_NAME),
+      theme_mode: () => this.#buildModeChipsField(field, EntityProgressThemeModeChips.ELEMENT_NAME),
+      additions_editor: () => this.#buildAdditionsField(field),
+      custom_theme_editor: () => this.#buildCustomThemeField(field),
+    };
+    return builders[field.type]?.();
+  }
+
   #buildField(field) {
-    if (field.type === 'effect_chips') return this.#buildChipsField(field, EntityProgressEffectChips.ELEMENT_NAME, 'bar_effect');
-    if (field.type === 'hide_chips') return this.#buildChipsField(field, EntityProgressHideChips.ELEMENT_NAME, 'hide');
-    if (field.type === 'additions_editor') return this.#buildAdditionsField(field);
+    const special = this.#buildSpecialField(field);
+    if (special) return special;
 
     const el = document.createElement(HA_SELECTOR_TAG);
 
@@ -15326,7 +17246,27 @@ class EditorBase extends HTMLElement {
 
   // ─── UPDATE (every setConfig) ─────────────────────────────────────────────
 
+  // CF5 - issue (major) resolved - setConfig() is called on every keystroke of the raw YAML
+  // editor too (HA keeps the visual editor instance mounted, just hidden, while "Edit in
+  // YAML" is active) — this used to run the full #applyUpdateFields() pass (iterate every
+  // registered field: showIf, selectorOf, context, value) synchronously on every single
+  // character typed, with no throttling, unlike #sendConfig which only covers the outgoing
+  // direction. rAF-coalescing here mirrors that fix for the incoming direction: whatever
+  // #config/_configHelper.config hold when the frame finally runs is always the latest,
+  // since those are still assigned synchronously in setConfig() — only the expensive DOM
+  // pass is deferred and collapsed to at most once per frame.
+  #updateFieldsScheduled = false;
+
   #updateFields() {
+    if (this.#updateFieldsScheduled) return;
+    this.#updateFieldsScheduled = true;
+    requestAnimationFrame(() => {
+      this.#updateFieldsScheduled = false;
+      this.#applyUpdateFields();
+    });
+  }
+
+  #applyUpdateFields() {
     // template/action fields read from raw config to avoid Jinja flicker during typing:
     // the validated config would fall back to default (e.g. []) the moment the expression
     // is temporarily malformed, causing the UI to flash between chip and Jinja mode.
@@ -15343,8 +17283,9 @@ class EditorBase extends HTMLElement {
     const newConfig = def.onVirtualChange(value, { ...this.#config });
     if (newConfig) {
       this.#config = newConfig;
-      // Update fields immediately: HA may skip setConfig if the stripped config is unchanged
-      // (e.g. toggling _show_all_actions produces the same visible config as before).
+      // Update fields ourselves (next frame): HA may skip calling setConfig back if the
+      // stripped config is unchanged (e.g. toggling _show_all_actions produces the same
+      // visible config as before), so we can't rely on that round trip alone.
       this.#updateFields();
       this.#sendConfig(newConfig);
     }
@@ -15353,24 +17294,32 @@ class EditorBase extends HTMLElement {
   #handleNestedArrayField(parentKey, childKey, value) {
     const current = [...(this.#config[parentKey] ?? [])];
     const updated = value ? [...current, childKey] : current.filter((v) => v !== childKey);
-    this.#sendConfig({ ...this.#config, [parentKey]: updated });
+    // Mirrors #handleVirtualField: keep #config in sync locally instead of waiting for
+    // HA's setConfig round trip, which #sendConfig now defers by up to one frame — without
+    // this, two different fields edited within that same frame would each compute their
+    // newConfig off a stale base and could clobber each other's change on send.
+    this.#config = { ...this.#config, [parentKey]: updated };
+    this.#sendConfig(this.#config);
   }
 
   #handleNestedField(parentKey, childKey, value) {
-    this.#sendConfig({
+    this.#config = {
       ...this.#config,
       [parentKey]: { ...this.#config[parentKey], [childKey]: value },
-    });
+    };
+    this.#sendConfig(this.#config);
   }
 
   #handleStdField(def, key, value) {
     const targetKey = def?.target ?? key;
     if (!value && def?.onClear) {
-      this.#sendConfig(def.onClear({ ...this.#config }));
+      this.#config = def.onClear({ ...this.#config });
+      this.#sendConfig(this.#config);
       return;
     }
     const newConfig = { ...this.#config, [targetKey]: value };
-    this.#sendConfig(def?.onChange ? def.onChange(value, newConfig, this.#config) : newConfig);
+    this.#config = def?.onChange ? def.onChange(value, newConfig, this.#config) : newConfig;
+    this.#sendConfig(this.#config);
   }
 
   #onChanged(e) {
@@ -15397,16 +17346,35 @@ class EditorBase extends HTMLElement {
     else this.#handleStdField(def, key, value);
   }
 
+  // CF5 - issue (major) resolved - a single #sendConfig() round trip is expensive: dispatching
+  // config-changed makes HA call setConfig back on this editor (full schema re-validation +
+  // #updateFields over every registered field) AND re-render the separate preview card. A
+  // number field's native spinner arrows fire a native 'input' event on every repeat while
+  // held (browser auto-repeat, ~20-30/s) — each one used to trigger that full round trip
+  // synchronously, and once the round-trip cost caught up with the repeat rate the event
+  // queue backlogged faster than it could drain, which is what Chrome's "Page Unresponsive"
+  // warning reports. rAF-coalescing collapses any burst arriving within/faster than a frame
+  // into a single dispatch of the latest config — each individual input event now only does
+  // O(1) work (store + maybe schedule), so the browser can no longer fall behind regardless
+  // of how fast native events fire. The 1-frame delay (~16ms) is not perceptible.
   #sendConfig(config) {
     // Strip _-prefixed UI state keys — they are editor-only and must never reach the saved YAML.
-    const clean = Object.fromEntries(Object.entries(config).filter(([k]) => !k.startsWith('_')));
-    this.dispatchEvent(
-      new CustomEvent('config-changed', {
-        detail: { config: clean },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    this.#pendingSentConfig = Object.fromEntries(Object.entries(config).filter(([k]) => !k.startsWith('_')));
+    if (this.#sendConfigScheduled) return;
+    this.#sendConfigScheduled = true;
+
+    requestAnimationFrame(() => {
+      this.#sendConfigScheduled = false;
+      const clean = this.#pendingSentConfig;
+      this.#pendingSentConfig = null;
+      this.dispatchEvent(
+        new CustomEvent('config-changed', {
+          detail: { config: clean },
+          bubbles: true,
+          composed: true,
+        }),
+      );
+    });
   }
 }
 
@@ -15535,46 +17503,89 @@ const EditorFactory = {
               }),
             }),
             */
-            unit: EditorFieldsType.text('unit', { width: availableSpace(32, 0.2) }),
-            decimal: EditorFieldsType.decimal('decimal', { width: availableSpace(32, 0.2) }),
-            min_value: EditorFieldsType.number('min_value', {
-              width: availableSpace(32, 0.6),
-              default: (c) => (c.center_zero ? -100 : 0),
-            }),
-            toggleUnit: EditorFieldsType.toggle('disable_unit', {
-              invert: true,
-              virtual: true,
-              resolveVirtual: (c) => !c.disable_unit,
-              onVirtualChange: (showUnit, config) => ({
-                ...config,
-                disable_unit: !showUnit,
-                ...(!showUnit ? { unit_spacing: undefined } : {}),
-              }),
-            }),
+            unit: EditorFieldsType.text('unit', { width: availableSpace(32, 1 / 3) }),
+            // disable_unit is deprecated (see BaseConfigHelper.#logDeprecatedOption): 'unit'
+            // is now just another hide target, folded into hide by _customizeConfig. The
+            // disable_unit check here only matters for a legacy raw config on first load,
+            // before that fold has round-tripped through the editor's own config-changed.
             unit_spacing: EditorFieldsType.select('unit_spacing', {
               type: 'unit_spacing',
-              showIf: (c) => !c.disable_unit,
+              width: availableSpace(32, 1 / 3),
+              showIf: (c) => !(c.disable_unit || (is.array(c.hide) && c.hide.includes('unit'))),
             }),
-            use_max_entity: EditorFieldsType.toggle('use_max_entity', {
+            decimal: EditorFieldsType.decimal('decimal', { width: availableSpace(32, 1 / 3) }),
+            // A 2-state toggle can't represent 3 mutually exclusive modes (standard/entity/
+            // Jinja) — a single-select chip group replaces the previous pair of toggles,
+            // which could both show at once and left the mode ambiguous.
+            //
+            // min_value's config shape is also explicit rather than sniffed: a bare number
+            // is the fixed value (legacy, unchanged), and { entity, attribute } / { jinja }
+            // replace what used to be a single overloaded string disambiguated at runtime
+            // by an is.jinja() regex test. This removes that sniffing entirely and reuses
+            // the codebase's existing nested dotted-field machinery (like watermark.*).
+            min_value_mode: {
+              name: 'min_value_mode',
+              type: 'min_value_mode',
               virtual: true,
-              resolveVirtual: (c) => is.string(c.max_value),
-              onVirtualChange: (value, config) => ({
-                ...config,
-                max_value: value ? '' : 100,
-                max_value_attribute: value ? config.max_value_attribute : undefined,
-              }),
+              resolveVirtual: (c) => (is.nonEmptyString(c.min_value?.jinja) ? 'jinja' : is.plainObject(c.min_value) ? 'entity' : 'standard'),
+              onVirtualChange: (mode, config) => {
+                if (mode === 'entity') {
+                  return { ...config, min_value: is.nonEmptyString(config.min_value?.entity) ? config.min_value : { entity: '' } };
+                }
+                if (mode === 'jinja') {
+                  return { ...config, min_value: is.nonEmptyString(config.min_value?.jinja) ? config.min_value : { jinja: '{{ }}' } };
+                }
+                return { ...config, min_value: undefined };
+              },
+            },
+            min_value: EditorFieldsType.number('min_value', {
+              default: (c) => (c.center_zero ? -100 : 0),
+              showIf: (c) => !is.plainObject(c.min_value),
             }),
-            max_value: EditorFieldsType.number('max_value', { showIf: (c) => !is.string(c.max_value) }),
-            max_value_entity: EditorFieldsType.entity('max_value_entity', {
-              target: 'max_value',
+            [MIN_VALUE_ENTITY_PATH]: EditorFieldsType.entity(MIN_VALUE_ENTITY_PATH, {
               noLabel: true,
-              showIf: (c) => is.string(c.max_value),
-              onClear: (config) => ({ ...config, max_value: 100, max_value_attribute: undefined }),
+              showIf: (c) => is.plainObject(c.min_value) && !is.nonEmptyString(c.min_value.jinja),
             }),
-            max_value_attribute: EditorFieldsType.select('max_value_attribute', {
+            'min_value.attribute': EditorFieldsType.select('min_value.attribute', {
+              type: 'minValueAttribute',
+              selectorOf: MIN_VALUE_ENTITY_PATH,
+              showIf: (c) => is.plainObject(c.min_value) && is.nonEmptyString(c.min_value.entity),
+            }),
+            'min_value.jinja': EditorFieldsType.tpl('min_value.jinja', {
+              noLabel: true,
+              showIf: (c) => is.nonEmptyString(c.min_value?.jinja),
+            }),
+            // Explicit map shape (mirrors min_value): max_value: 10 | { entity, attribute } | { jinja }.
+            // Reuses the codebase's nested dotted-field machinery instead of a target-based
+            // flat field, so sibling keys (attribute) merge naturally on write.
+            max_value_mode: {
+              name: 'max_value_mode',
+              type: 'max_value_mode',
+              virtual: true,
+              resolveVirtual: (c) => (is.nonEmptyString(c.max_value?.jinja) ? 'jinja' : is.plainObject(c.max_value) ? 'entity' : 'standard'),
+              onVirtualChange: (mode, config) => {
+                if (mode === 'entity') {
+                  return { ...config, max_value: is.nonEmptyString(config.max_value?.entity) ? config.max_value : { entity: '' } };
+                }
+                if (mode === 'jinja') {
+                  return { ...config, max_value: is.nonEmptyString(config.max_value?.jinja) ? config.max_value : { jinja: '{{ }}' } };
+                }
+                return { ...config, max_value: undefined };
+              },
+            },
+            max_value: EditorFieldsType.number('max_value', { showIf: (c) => !is.plainObject(c.max_value) }),
+            [MAX_VALUE_ENTITY_PATH]: EditorFieldsType.entity(MAX_VALUE_ENTITY_PATH, {
+              noLabel: true,
+              showIf: (c) => is.plainObject(c.max_value) && !is.nonEmptyString(c.max_value.jinja),
+            }),
+            'max_value.attribute': EditorFieldsType.select('max_value.attribute', {
               type: 'maxValueAttribute',
-              selectorOf: 'max_value',
-              showIf: (c) => is.string(c.max_value) && c.max_value !== '',
+              selectorOf: MAX_VALUE_ENTITY_PATH,
+              showIf: (c) => is.plainObject(c.max_value) && is.nonEmptyString(c.max_value.entity),
+            }),
+            'max_value.jinja': EditorFieldsType.tpl('max_value.jinja', {
+              noLabel: true,
+              showIf: (c) => is.nonEmptyString(c.max_value?.jinja),
             }),
             state_content: EditorFieldsType.stateContent('state_content', { context: { filter_entity: 'entity' }, }),
             custom_info: EditorFieldsType.tpl('custom_info'),
@@ -15585,25 +17596,70 @@ const EditorFactory = {
     },
   }),
 
+  // A theme is either a preset (dropdown, existing behavior) or a custom set of color
+  // zones — ThemeManager.configure() always lets a valid custom_theme win over theme
+  // when both happen to be set, so the editor makes that an explicit either/or via mode
+  // chips rather than letting the two silently race. Pulled out of theme() itself so
+  // that factory's own cognitive complexity doesn't grow with this trio's own ternaries.
+  //
+  // CF5 - issue (major) resolved - switching modes used to hard-clear the field being
+  // left behind (theme when entering custom, custom_theme when leaving it), destroying
+  // a carefully-built zone list the moment someone peeked at a preset and came back.
+  // The inactive side is now parked in a `_`-prefixed draft (session-only, stripped
+  // before dispatch by #sendConfig, same mechanism as _show_all_actions) and restored
+  // when its mode is selected again.
+  themeModeFields: (template) => (template ? {} : {
+    theme_mode: {
+      name: 'theme_mode',
+      type: 'theme_mode',
+      virtual: true,
+      // is.array (not is.nonEmptyArray): a freshly-entered custom mode starts as an
+      // empty [] before the user adds a first zone, and must still read as 'custom'.
+      resolveVirtual: (c) => (is.array(c.custom_theme) ? 'custom' : 'preset'),
+      onVirtualChange: (mode, config) => {
+        const wantsCustom = mode === 'custom';
+        return {
+          ...config,
+          theme: wantsCustom ? undefined : (config._theme_draft ?? config.theme),
+          _theme_draft: wantsCustom ? (config.theme ?? config._theme_draft) : undefined,
+          custom_theme: wantsCustom ? (config._custom_theme_draft ?? config.custom_theme ?? []) : undefined,
+          _custom_theme_draft: wantsCustom ? undefined : (config.custom_theme ?? config._custom_theme_draft),
+        };
+      },
+    },
+    theme: EditorFieldsType.select('theme', { showIf: (c) => !is.array(c.custom_theme) }),
+    custom_theme: {
+      name: 'custom_theme',
+      type: 'custom_theme_editor',
+      showIf: (c) => is.array(c.custom_theme),
+      onClear: (config) => {
+        const rest = { ...config };
+        delete rest.custom_theme;
+        return rest;
+      },
+    },
+  }),
+
   theme: (template, badge) => ({
     title: 'editor.title.theme',
     icon: HA_CONTEXT.icons.listBox,
     fields: {
-      ...(template ? {} : { theme: EditorFieldsType.select('theme') }),
+      ...EditorFactory.themeModeFields(template),
       ...(template ? {} : {
-        color_mode: EditorFieldsType.select('color_mode', {
+        bar_color_mode: EditorFieldsType.select('bar_color_mode', {
           showIf: (c) => (!is.nullish(c.theme) || is.nonEmptyArray(c.custom_theme)) && !c.center_zero,
           // Selecting a non-auto color mode is incompatible with interpolate: clear it.
           onChange: (value, config) => (value && value !== 'auto') ? { ...config, interpolate: undefined } : config,
         }),
         interpolate: EditorFieldsType.toggle('interpolate', {
           showIf: (c) => (!is.nullish(c.theme) || is.nonEmptyArray(c.custom_theme))
-            && (is.nullish(c.color_mode) || c.color_mode === 'auto'),
+            && (is.nullish(c.bar_color_mode) || c.bar_color_mode === 'auto'),
         }),
       }),
       icon: EditorFieldsType.templateOrType('icon', template, 'icon', template ? {} : { width: availableSpace() }),
+      icon_animation: EditorFieldsType.select('icon_animation', { width: availableSpace() }),
       color: EditorFieldsType.templateOrType('color', template, 'color', {
-        showIf: (c) => is.nullish(c.theme),
+        showIf: (c) => is.nullish(c.theme) && !is.array(c.custom_theme),
         ...(template ? {} : { width: availableSpace() }),
       }),
       ...(badge
@@ -15612,18 +17668,23 @@ const EditorFactory = {
             force_circular_background: EditorFieldsType.toggle('force_circular_background'),
             bar_size: EditorFieldsType.select('bar_size', { width: availableSpace() }),
             bar_position: EditorFieldsType.select('bar_position', { width: availableSpace() }),
-            bar_single_line: EditorFieldsType.toggle('bar_single_line', { showIf: (c) => c.bar_position === 'overlay' }),
-            text_shadow: EditorFieldsType.toggle('text_shadow', { showIf: (c) => c.bar_position === 'overlay' }),
           }),
       bar_color: EditorFieldsType.templateOrType('bar_color', template, 'color', {
-        showIf: (c) => is.nullish(c.theme),
+        showIf: (c) => is.nullish(c.theme) && !is.array(c.custom_theme),
         ...(template ? {} : { width: availableSpace() }),
       }),
+      ...(badge
+        ? {}
+        : {
+            bar_single_line: EditorFieldsType.toggle('bar_single_line', { showIf: (c) => c.bar_position === 'overlay' }),
+            text_shadow: EditorFieldsType.toggle('text_shadow', { showIf: (c) => c.bar_position === 'overlay' }),
+            bar_segments: EditorFieldsType.number('bar_segments', { width: availableSpace() }),
+          }),
       bar_orientation: EditorFieldsType.select('bar_orientation', template ? {} : { width: availableSpace() }),
       reverse_secondary_info_row: EditorFieldsType.toggle('reverse_secondary_info_row', { showIf: (c) => (!c.bar_position || c.bar_position === 'default') && c.layout === 'horizontal' }),
       center_zero: EditorFieldsType.toggle('center_zero', {
         virtual: true,
-        showIf: (c) => c.color_mode === 'auto' || is.nullish(c.color_mode),
+        showIf: (c) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode),
         resolveVirtual: (c) => Boolean(c.center_zero),
         onVirtualChange: (value, config) => ({
           ...config,
@@ -15632,7 +17693,7 @@ const EditorFactory = {
       }),
       center_zero_value: EditorFieldsType.number('center_zero_value', {
         target: 'center_zero',
-        showIf: (c) => Boolean(c.center_zero) && (c.color_mode === 'auto' || is.nullish(c.color_mode)),
+        showIf: (c) => Boolean(c.center_zero) && (c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode)),
         virtual: true,
         resolveVirtual: (c) => (is.plainObject(c.center_zero) ? c.center_zero.value ?? 0 : 0),
         onVirtualChange: (value, config) => {
@@ -15645,7 +17706,7 @@ const EditorFactory = {
       }),
       center_zero_growth_percent: EditorFieldsType.toggle('center_zero_growth_percent', {
         target: 'center_zero',
-        showIf: (c) => Boolean(c.center_zero) && (c.color_mode === 'auto' || is.nullish(c.color_mode)),
+        showIf: (c) => Boolean(c.center_zero) && (c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode)),
         virtual: true,
         resolveVirtual: (c) => (is.plainObject(c.center_zero) ? Boolean(c.center_zero.growth_percent) : false),
         onVirtualChange: (value, config) => {
@@ -15721,6 +17782,35 @@ const EditorFactory = {
         showIf: (c) => !is.nonEmptyString(c.hide),
       }),
       hide: EditorFieldsType.tpl('hide', { noLabel: true, showIf: (c) => is.nonEmptyString(c.hide) }),
+      // ── Alert (alert_when) — not in the template schema ─────────────────
+      ...(!template ? {
+        alert_toggle: EditorFieldsType.toggle('alert_toggle', {
+          virtual: true,
+          resolveVirtual: (c) => Boolean(c.alert_when),
+          onVirtualChange: (value, config) => ({
+            ...config,
+            alert_when: value ? {} : undefined,
+          }),
+        }),
+        'alert_when.above': EditorFieldsType.number('alert_when.above', {
+          showIf: (c) => Boolean(c.alert_when),
+          width: availableSpace(),
+        }),
+        'alert_when.below': EditorFieldsType.number('alert_when.below', {
+          showIf: (c) => Boolean(c.alert_when),
+          width: availableSpace(),
+        }),
+        'alert_when.color': EditorFieldsType.select('alert_when.color', {
+          type: 'color',
+          showIf: (c) => Boolean(c.alert_when),
+          width: availableSpace(),
+        }),
+        'alert_when.highlight': EditorFieldsType.select('alert_when.highlight', {
+          type: 'alert_highlight',
+          showIf: (c) => Boolean(c.alert_when),
+          width: availableSpace(),
+        }),
+      } : {}),
       // ── Card-only layout options ──────────────────────────────────────────
       ...(!badge ? {
         frameless: EditorFieldsType.toggle('frameless', { width: availableSpace() }),
@@ -15837,6 +17927,40 @@ RegistrationHelper.registerBadge(META.types.badge, EntityProgressBadge, EntityPr
 RegistrationHelper.registerCard(META.types.template, EntityProgressTemplateCard, EntityProgressTemplateEditor);
 RegistrationHelper.registerBadge(META.types.badgeTemplate, EntityProgressTemplateBadge, EntityProgressBadgeTemplateEditor);
 RegistrationHelper.registerCardFeature(META.types.feature, EntityProgressFeatures);
+
+/******************************************************************************************
+ * 🔧 Diagnostic helper — `window.EPB_DIAG.dump()` in the browser console
+ * prints an anonymized environment report to paste into bug reports.
+ */
+
+if (!window.EPB_DIAG) {
+  window.EPB_DIAG = Object.freeze({
+    version: VERSION,
+    dump() {
+      const hass = HassProviderSingleton.getInstance().hass;
+      // Multiple registrations of the same EPB type = duplicate resource (HACS + manual),
+      // the classic root cause of "impossible" bugs. Surface it front and center.
+      const epbEntries = (window.customCards ?? []).filter((card) => card.type?.startsWith('entity-progress'));
+      const duplicates = epbEntries.length !== new Set(epbEntries.map((card) => card.type)).size;
+      const report = [
+        '=== Entity Progress Card — diagnostic ===',
+        `card version   : ${VERSION}${CARD_CONTEXT.dev ? ' (dev mode)' : ''}`,
+        `HA core        : ${hass?.config?.version ?? 'unknown (no hass yet)'}`,
+        `language       : ${hass?.locale?.language ?? navigator.language}`,
+        `browser        : ${navigator.userAgent}`,
+        `dark mode      : ${window.matchMedia?.('(prefers-color-scheme: dark)')?.matches ?? 'n/a'}`,
+        `reduced motion : ${window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? 'n/a'}`,
+        `EPB registered : ${epbEntries.map((card) => `${card.type}@${card.version ?? '?'}`).join(', ') || 'none'}`,
+        `duplicate load : ${duplicates ? '⚠️ YES — remove one of the two resources!' : 'no'}`,
+        `HA elements    : ha-card=${!!customElements.get('ha-card')} ha-selector=${!!customElements.get(HA_SELECTOR_TAG)} action-handler=${!!customElements.get(HA_ACTION_HANDLER_TAG)}`,
+        `constructed CSS: ${CONSTRUCTED_SHEETS.size > 0 && [...CONSTRUCTED_SHEETS.values()].some(Boolean) ? 'shared (modern)' : 'per-card fallback'}`,
+        '=========================================',
+      ].join('\n');
+      console.info(report);
+      return report;
+    },
+  });
+}
 
 /******************************************************************************************
  * 🔧 Show module info

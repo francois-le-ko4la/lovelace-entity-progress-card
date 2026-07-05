@@ -3,17 +3,11 @@
     "msg": {
       "appliedDefaultValue": "Nilai default telah diterapkan secara otomatis.",
       "attributeNotFound": "Atribut tidak ditemukan di HA.",
-      "discontinuousRange": "Range yang didefinisikan tidak kontinu.",
       "entityNotFound": "Entitas tidak ditemukan di HA.",
       "invalidActionObject": "Objek aksi tidak valid atau struktur salah.",
-      "invalidCustomThemeArray": "Tema kustom harus berupa array.",
-      "invalidCustomThemeEntry": "Satu atau lebih entri dalam tema kustom tidak valid.",
       "invalidDecimal": "Nilai harus berupa angka desimal yang valid.",
       "invalidEntityId": "ID entitas tidak valid atau salah format.",
       "invalidEnumValue": "Nilai yang diberikan bukan salah satu dari opsi yang diizinkan.",
-      "invalidIconType": "Tipe ikon yang ditentukan tidak valid atau tidak dikenali.",
-      "invalidMaxValue": "Nilai maksimum tidak valid atau di atas batas yang diizinkan.",
-      "invalidMinValue": "Nilai minimum tidak valid atau di bawah batas yang diizinkan.",
       "invalidStateContent": "Konten state tidak valid atau salah format.",
       "invalidStateContentEntry": "Satu atau lebih entri dalam konten state tidak valid.",
       "invalidTheme": "Tema yang ditentukan tidak dikenal. Tema default akan digunakan.",
@@ -23,9 +17,7 @@
       "invalidTypeObject": "Mengharapkan nilai bertipe object.",
       "invalidTypeString": "Mengharapkan nilai bertipe string.",
       "invalidUnionType": "Nilai tidak cocok dengan tipe yang diizinkan.",
-      "minGreaterThanMax": "Nilai minimum tidak boleh lebih besar dari nilai maksimum.",
       "missingActionKey": "Kunci yang diperlukan hilang dalam objek aksi.",
-      "missingColorProperty": "Properti warna yang diperlukan hilang.",
       "missingRequiredProperty": "Properti yang diperlukan hilang."
     }
   },
@@ -45,25 +37,25 @@
       "bar_position": "Posisi bar",
       "bar_single_line": "Info dalam satu baris (overlay)",
       "bar_size": "Ukuran bar",
-      "color_mode": "Mode warna",
+      "bar_segments": "Bar segments",
+      "bar_color_mode": "Mode warna",
       "center_zero": "Nol di tengah",
       "center_zero_value": "Nilai tengah",
       "center_zero_growth_percent": "Persentase pertumbuhan",
       "color": "Warna utama",
       "decimal": "desimal",
-      "disable_unit": "Tampilkan unit",
       "double_tap_action": "Perilaku ketuk ganda",
       "entity": "Entitas",
       "force_circular_background": "Paksa latar belakang melingkar",
       "hide_jinja": "Sembunyikan (mode Jinja)",
       "hold_action": "Perilaku tahan",
       "icon": "Ikon",
+      "icon_animation": "Icon animation",
       "icon_double_tap_action": "Perilaku ketuk ganda ikon",
       "icon_hold_action": "Perilaku tahan ikon",
       "icon_tap_action": "Perilaku ketuk ikon",
       "layout": "Tata letak konten",
       "max_value": "Nilai maksimum",
-      "max_value_attribute": "Atribut (max_value)",
       "min_value": "Nilai minimum",
       "name": "Nama",
       "percent": "Persentase",
@@ -73,9 +65,12 @@
       "show_all_actions": "Tampilkan semua tindakan",
       "tap_action": "Perilaku ketuk",
       "text_shadow": "Tambahkan bayangan teks (overlay)",
+      "theme_mode": "Theme mode",
       "theme": "Tema",
+      "custom_theme": "Custom theme zones",
       "unit": "Unit",
-      "use_max_entity": "Gunakan entitas untuk nilai maksimum",
+      "min_value_mode": "Min value source",
+      "max_value_mode": "Max value source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -83,6 +78,7 @@
       "min_width": "Min width",
       "unit_spacing": "Unit spacing",
       "watermark_toggle": "Watermark",
+      "alert_toggle": "Alert",
       "custom_info": "Info sekunder kustom",
       "interpolate": "Interpolasi warna",
       "name_info": "Info nama kustom",
@@ -122,7 +118,7 @@
         "temperature": "Suhu",
         "voc": "VOC"
       },
-      "color_mode": {
+      "bar_color_mode": {
         "auto": "Otomatis",
         "segment": "Segmen",
         "rainbow": "Pelangi"
@@ -139,6 +135,7 @@
         "icon": "Ikon",
         "name": "Nama",
         "value": "Nilai",
+        "unit": "Unit",
         "secondary_info": "Info",
         "progress_bar": "Bilah"
       },
@@ -175,6 +172,41 @@
         "low_attribute": "Attribute",
         "high_entity_toggle": "Use entity as high watermark value",
         "high_attribute": "Attribute"
+      },
+      "icon_animation": {
+        "none": "None",
+        "spin": "Spin",
+        "pulse": "Pulse"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "alert_highlight": {
+        "border": "Border",
+        "background": "Background"
+      },
+      "min_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "max_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "theme_mode": {
+        "preset": "Preset",
+        "custom": "Custom"
+      },
+      "min_value": {
+        "attribute": "Attribute"
+      },
+      "max_value": {
+        "attribute": "Attribute"
       }
     }
   }

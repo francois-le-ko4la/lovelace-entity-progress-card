@@ -3,17 +3,11 @@
     "msg": {
       "appliedDefaultValue": "Um valor padrão foi aplicado automaticamente.",
       "attributeNotFound": "Atributo não encontrado no Home Assistant.",
-      "discontinuousRange": "O intervalo definido é descontínuo.",
       "entityNotFound": "Entidade não encontrada no Home Assistant.",
       "invalidActionObject": "O objeto de ação é inválido ou mal estruturado.",
-      "invalidCustomThemeArray": "O tema personalizado deve ser um array.",
-      "invalidCustomThemeEntry": "Uma ou mais entradas no tema personalizado são inválidas.",
       "invalidDecimal": "O valor deve ser um número decimal válido.",
       "invalidEntityId": "O ID da entidade é inválido ou mal formatado.",
       "invalidEnumValue": "O valor fornecido não é uma opção válida.",
-      "invalidIconType": "O tipo de ícone especificado é inválido ou desconhecido.",
-      "invalidMaxValue": "O valor máximo é inválido ou acima do permitido.",
-      "invalidMinValue": "O valor mínimo é inválido ou abaixo do permitido.",
       "invalidStateContent": "O conteúdo do estado é inválido ou mal formatado.",
       "invalidStateContentEntry": "Uma ou mais entradas do conteúdo do estado são inválidas.",
       "invalidTheme": "O tema especificado é desconhecido. Tema padrão será usado.",
@@ -23,9 +17,7 @@
       "invalidTypeObject": "Esperava-se um valor do tipo objeto.",
       "invalidTypeString": "Esperava-se um valor do tipo string.",
       "invalidUnionType": "O valor não corresponde a nenhum dos tipos permitidos.",
-      "minGreaterThanMax": "O valor mínimo não pode ser maior que o valor máximo.",
       "missingActionKey": "Uma chave obrigatória está faltando no objeto de ação.",
-      "missingColorProperty": "Uma propriedade de cor obrigatória está faltando.",
       "missingRequiredProperty": "Propriedade obrigatória ausente."
     }
   },
@@ -39,31 +31,31 @@
       "attribute": "Atributo",
       "badge_color": "Cor do crachá",
       "badge_icon": "Ícone do crachá",
-      "bar_color": "Cor para a barra",
+      "bar_color": "Cor da barra",
       "bar_effect_jinja": "Efeito na barra (modo Jinja)",
       "bar_orientation": "Orientação da barra",
       "bar_position": "Posição da barra",
       "bar_single_line": "Info numa só linha (overlay)",
       "bar_size": "Tamanho da barra",
-      "color_mode": "Modo de cor",
+      "bar_segments": "Bar segments",
+      "bar_color_mode": "Modo de cor da barra",
       "center_zero": "Zero no centro",
       "center_zero_value": "Valor central",
       "center_zero_growth_percent": "Percentagem de crescimento",
-      "color": "Cor primária",
+      "color": "Cor do ícone",
       "decimal": "decimal",
-      "disable_unit": "Mostrar unidade",
       "double_tap_action": "Ação ao toque duplo",
       "entity": "Entidade",
       "force_circular_background": "Forçar fundo circular",
       "hide_jinja": "Ocultar (modo Jinja)",
       "hold_action": "Ação ao toque longo",
       "icon": "Ícone",
+      "icon_animation": "Icon animation",
       "icon_double_tap_action": "Ação ao tocar duplamente no ícone",
       "icon_hold_action": "Ação ao manter o toque no ícone",
       "icon_tap_action": "Ação ao tocar no ícone",
       "layout": "Layout do conteúdo",
       "max_value": "Valor máximo",
-      "max_value_attribute": "Atributo (max_value)",
       "min_value": "Valor mínimo",
       "name": "Nome",
       "percent": "Percentagem",
@@ -73,9 +65,12 @@
       "show_all_actions": "Mostrar todas as ações",
       "tap_action": "Ação ao toque curto",
       "text_shadow": "Adicionar sombra ao texto (overlay)",
+      "theme_mode": "Theme mode",
       "theme": "Tema",
+      "custom_theme": "Zonas de tema personalizado",
       "unit": "Unidade",
-      "use_max_entity": "Usar entidade para o valor máximo",
+      "min_value_mode": "Min value source",
+      "max_value_mode": "Max value source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -83,6 +78,7 @@
       "min_width": "Min width",
       "unit_spacing": "Unit spacing",
       "watermark_toggle": "Watermark",
+      "alert_toggle": "Alert",
       "custom_info": "Informação secundária personalizada",
       "interpolate": "Interpolar cores",
       "name_info": "Informação de nome personalizada",
@@ -122,7 +118,7 @@
         "temperature": "Temperatura",
         "voc": "VOC"
       },
-      "color_mode": {
+      "bar_color_mode": {
         "auto": "Auto",
         "segment": "Segmentos",
         "rainbow": "Arco-Íris"
@@ -139,6 +135,7 @@
         "icon": "Ícone",
         "name": "Nome",
         "value": "Valor",
+        "unit": "Unidade",
         "secondary_info": "Info",
         "progress_bar": "Barra"
       },
@@ -160,21 +157,56 @@
         "percent": "Percent"
       },
       "watermark": {
-        "low": "Low",
-        "high": "High",
-        "type": "Type",
-        "opacity": "Opacity",
-        "low_color": "Low color",
-        "high_color": "High color",
-        "low_as": "Low unit",
-        "high_as": "High unit",
-        "line_size": "Line size",
-        "disable_low": "Disable low",
-        "disable_high": "Disable high",
-        "low_entity_toggle": "Use entity as low watermark value",
-        "low_attribute": "Attribute",
-        "high_entity_toggle": "Use entity as high watermark value",
-        "high_attribute": "Attribute"
+        "low": "Limite baixo",
+        "high": "Limite alto",
+        "type": "Tipo",
+        "opacity": "Opacidade",
+        "low_color": "Cor do limite baixo",
+        "high_color": "Cor do limite alto",
+        "low_as": "Unidade (limite baixo)",
+        "high_as": "Unidade (limite alto)",
+        "line_size": "Espessura da linha",
+        "disable_low": "Desativar limite baixo",
+        "disable_high": "Desativar limite alto",
+        "low_entity_toggle": "Usar uma entidade para o limite baixo",
+        "low_attribute": "Atributo",
+        "high_entity_toggle": "Usar uma entidade para o limite alto",
+        "high_attribute": "Atributo"
+      },
+      "icon_animation": {
+        "none": "Nenhuma",
+        "spin": "Girar",
+        "pulse": "Pulsar"
+      },
+      "alert_when": {
+        "above": "Alerta acima de",
+        "below": "Alerta abaixo de",
+        "color": "Cor do alerta",
+        "highlight": "Destaque"
+      },
+      "alert_highlight": {
+        "border": "Borda",
+        "background": "Fundo"
+      },
+      "min_value_mode": {
+        "standard": "Valor fixo",
+        "entity": "Entidade",
+        "jinja": "Modelo"
+      },
+      "max_value_mode": {
+        "standard": "Valor fixo",
+        "entity": "Entidade",
+        "jinja": "Modelo"
+      },
+      "theme_mode": {
+        "preset": "Predefinido",
+        "custom": "Personalizado"
+      },
+      "min_value": {
+        "attribute": "Atributo"
+      },
+      "max_value": {
+        "attribute": "Atributo"
       }
     }
   }

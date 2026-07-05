@@ -3,17 +3,11 @@
     "msg": {
       "appliedDefaultValue": "Zastosowano domyślną wartość automatycznie.",
       "attributeNotFound": "Nie znaleziono atrybutu w Home Assistant.",
-      "discontinuousRange": "Zdefiniowany zakres jest nieciągły.",
       "entityNotFound": "Nie znaleziono encji w Home Assistant.",
       "invalidActionObject": "Obiekt akcji jest nieprawidłowy lub ma złą strukturę.",
-      "invalidCustomThemeArray": "Własny motyw musi być tablicą.",
-      "invalidCustomThemeEntry": "Jedna lub więcej pozycji motywu jest nieprawidłowa.",
       "invalidDecimal": "Wartość musi być poprawną liczbą dziesiętną.",
       "invalidEntityId": "ID encji jest nieprawidłowe lub ma zły format.",
       "invalidEnumValue": "Podana wartość nie jest jedną z dozwolonych opcji.",
-      "invalidIconType": "Określony typ ikony jest nieprawidłowy lub nieznany.",
-      "invalidMaxValue": "Maksymalna wartość jest nieprawidłowa lub zbyt wysoka.",
-      "invalidMinValue": "Minimalna wartość jest nieprawidłowa lub zbyt niska.",
       "invalidStateContent": "Zawartość stanu jest nieprawidłowa lub uszkodzona.",
       "invalidStateContentEntry": "Jedna lub więcej pozycji zawartości stanu jest nieprawidłowa.",
       "invalidTheme": "Podany motyw jest nieznany. Zostanie użyty domyślny motyw.",
@@ -23,9 +17,7 @@
       "invalidTypeObject": "Oczekiwano wartości typu obiekt.",
       "invalidTypeString": "Oczekiwano wartości typu string.",
       "invalidUnionType": "Wartość nie pasuje do żadnego z dozwolonych typów.",
-      "minGreaterThanMax": "Wartość minimalna nie może być większa niż maksymalna.",
       "missingActionKey": "W obiekcie akcji brakuje wymaganej właściwości.",
-      "missingColorProperty": "Brakuje wymaganej właściwości koloru.",
       "missingRequiredProperty": "Brakuje wymaganej właściwości."
     }
   },
@@ -45,25 +37,25 @@
       "bar_position": "Pozycja paska",
       "bar_single_line": "Info w jednej linii (overlay)",
       "bar_size": "Rozmiar paska",
-      "color_mode": "Tryb koloru",
+      "bar_segments": "Bar segments",
+      "bar_color_mode": "Tryb koloru",
       "center_zero": "Zero na środku",
       "center_zero_value": "Wartość środkowa",
       "center_zero_growth_percent": "Procent wzrostu",
       "color": "Kolor podstawowy",
       "decimal": "dziesiętny",
-      "disable_unit": "Pokaż jednostkę",
       "double_tap_action": "Akcja przy podwójnym naciśnięciu",
       "entity": "Encja",
       "force_circular_background": "Wymuś okrągłe tło",
       "hide_jinja": "Ukryj (tryb Jinja)",
       "hold_action": "Akcja przy długim naciśnięciu",
       "icon": "Ikona",
+      "icon_animation": "Icon animation",
       "icon_double_tap_action": "Akcja przy podwójnym naciśnięciu ikony",
       "icon_hold_action": "Akcja przy długim naciśnięciu ikony",
       "icon_tap_action": "Akcja przy naciśnięciu ikony",
       "layout": "Układ treści",
       "max_value": "Wartość maksymalna",
-      "max_value_attribute": "Atrybut (max_value)",
       "min_value": "Wartość minimalna",
       "name": "Nazwa",
       "percent": "Procent",
@@ -73,9 +65,12 @@
       "show_all_actions": "Pokaż wszystkie akcje",
       "tap_action": "Akcja przy krótkim naciśnięciu",
       "text_shadow": "Dodaj cień tekstu (overlay)",
+      "theme_mode": "Theme mode",
       "theme": "Motyw",
+      "custom_theme": "Custom theme zones",
       "unit": "Jednostka",
-      "use_max_entity": "Użyj encji dla wartości maksymalnej",
+      "min_value_mode": "Min value source",
+      "max_value_mode": "Max value source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -83,6 +78,7 @@
       "min_width": "Min width",
       "unit_spacing": "Unit spacing",
       "watermark_toggle": "Watermark",
+      "alert_toggle": "Alert",
       "custom_info": "Niestandardowa info pomocnicza",
       "interpolate": "Interpolacja kolorów",
       "name_info": "Niestandardowa info nazwy",
@@ -122,7 +118,7 @@
         "temperature": "Temperatura",
         "voc": "VOC"
       },
-      "color_mode": {
+      "bar_color_mode": {
         "auto": "Automatycznie",
         "segment": "Segmenty",
         "rainbow": "Tęcza"
@@ -139,6 +135,7 @@
         "icon": "Ikona",
         "name": "Nazwa",
         "value": "Wartość",
+        "unit": "Jednostka",
         "secondary_info": "Info",
         "progress_bar": "Pasek"
       },
@@ -175,6 +172,41 @@
         "low_attribute": "Attribute",
         "high_entity_toggle": "Use entity as high watermark value",
         "high_attribute": "Attribute"
+      },
+      "icon_animation": {
+        "none": "None",
+        "spin": "Spin",
+        "pulse": "Pulse"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "alert_highlight": {
+        "border": "Border",
+        "background": "Background"
+      },
+      "min_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "max_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "theme_mode": {
+        "preset": "Preset",
+        "custom": "Custom"
+      },
+      "min_value": {
+        "attribute": "Attribute"
+      },
+      "max_value": {
+        "attribute": "Attribute"
       }
     }
   }

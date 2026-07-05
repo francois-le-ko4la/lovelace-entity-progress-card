@@ -3,17 +3,11 @@
     "msg": {
       "appliedDefaultValue": "Numatytoji reikšmė buvo automatiškai pritaikyta.",
       "attributeNotFound": "Atributas nerastas Home Assistant.",
-      "discontinuousRange": "Nustatytas intervalas nėra tęstinis.",
       "entityNotFound": "Entity nerasta Home Assistant.",
       "invalidActionObject": "Veiksmo objektas negalioja arba neteisingai suformuotas.",
-      "invalidCustomThemeArray": "Individuali tema turi būti masyvas.",
-      "invalidCustomThemeEntry": "Viena ar daugiau individualios temos įrašų negalioja.",
       "invalidDecimal": "Reikšmė turi būti teigiamas sveikasis skaičius.",
       "invalidEntityId": "Entity ID negalioja arba neteisingas.",
       "invalidEnumValue": "Pateikta reikšmė nėra tarp leidžiamų parinkčių.",
-      "invalidIconType": "Nurodytas piktogramos tipas negalioja arba nežinomas.",
-      "invalidMaxValue": "Maksimali reikšmė negalioja arba viršija leistiną ribą.",
-      "invalidMinValue": "Minimali reikšmė negalioja arba žemesnė už leistiną ribą.",
       "invalidStateContent": "Būsenos turinys negalioja arba neteisingai suformuotas.",
       "invalidStateContentEntry": "Viena ar daugiau būsenos turinio įrašų negalioja.",
       "invalidTheme": "Nurodyta tema nežinoma. Bus naudojama numatytoji tema.",
@@ -23,9 +17,7 @@
       "invalidTypeObject": "Tikėtasi objekto tipo reikšmės.",
       "invalidTypeString": "Tikėtasi eilutės tipo reikšmės.",
       "invalidUnionType": "Reikšmė neatitinka nė vieno leidžiamo tipo.",
-      "minGreaterThanMax": "Minimali reikšmė negali būti didesnė už maksimalų.",
       "missingActionKey": "Trūksta privalomo rakto veiksmo objekte.",
-      "missingColorProperty": "Trūksta privalomos spalvos savybės.",
       "missingRequiredProperty": "Trūksta privalomos savybės."
     }
   },
@@ -45,25 +37,25 @@
       "bar_position": "Juostos pozicija",
       "bar_single_line": "Informacija vienoje eilutėje (overlay)",
       "bar_size": "Juostos dydis",
-      "color_mode": "Spalvos režimas",
+      "bar_segments": "Bar segments",
+      "bar_color_mode": "Spalvos režimas",
       "center_zero": "Nulis centre",
       "center_zero_value": "Centro reikšmė",
       "center_zero_growth_percent": "Augimo procentas",
       "color": "Ikonos spalva",
       "decimal": "Dešimtainė",
-      "disable_unit": "Rodyti vienetą",
       "double_tap_action": "Dviejų bakstelėjimų veiksmas",
       "entity": "Entity",
       "force_circular_background": "Priversti apvalų foną",
       "hide_jinja": "Slėpti (Jinja režimas)",
       "hold_action": "Ilgo paspaudimo veiksmas",
       "icon": "Ikona",
+      "icon_animation": "Icon animation",
       "icon_double_tap_action": "Ikonos dviejų bakstelėjimų veiksmas",
       "icon_hold_action": "Ikonos ilgo paspaudimo veiksmas",
       "icon_tap_action": "Ikonos bakstelėjimo veiksmas",
       "layout": "Turinio išdėstymas",
       "max_value": "Maksimali reikšmė",
-      "max_value_attribute": "Atributas (max_value)",
       "min_value": "Minimali reikšmė",
       "name": "Pavadinimas",
       "percent": "Procentai",
@@ -73,9 +65,12 @@
       "show_all_actions": "Rodyti visus veiksmus",
       "tap_action": "Bakstelėjimo veiksmas",
       "text_shadow": "Pridėti teksto šešėlį (overlay)",
+      "theme_mode": "Theme mode",
       "theme": "Tema",
+      "custom_theme": "Custom theme zones",
       "unit": "Vienetas",
-      "use_max_entity": "Naudoti entity max reikšmei",
+      "min_value_mode": "Min value source",
+      "max_value_mode": "Max value source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -83,6 +78,7 @@
       "min_width": "Min width",
       "unit_spacing": "Unit spacing",
       "watermark_toggle": "Watermark",
+      "alert_toggle": "Alert",
       "custom_info": "Pasirinktinė papildoma informacija",
       "interpolate": "Spalvų interpoliavimas",
       "name_info": "Pasirinktinė pavadinimo informacija",
@@ -122,7 +118,7 @@
         "horizontal": "Horizontalus (numatyta)",
         "vertical": "Vertikalus"
       },
-      "color_mode": {
+      "bar_color_mode": {
         "auto": "Automatinis",
         "segment": "Segmentai",
         "rainbow": "Vaivorykštė"
@@ -139,6 +135,7 @@
         "icon": "Piktograma",
         "name": "Pavadinimas",
         "value": "Reikšmė",
+        "unit": "Vienetas",
         "secondary_info": "Info",
         "progress_bar": "Juosta"
       },
@@ -175,6 +172,41 @@
         "low_attribute": "Attribute",
         "high_entity_toggle": "Use entity as high watermark value",
         "high_attribute": "Attribute"
+      },
+      "icon_animation": {
+        "none": "None",
+        "spin": "Spin",
+        "pulse": "Pulse"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "alert_highlight": {
+        "border": "Border",
+        "background": "Background"
+      },
+      "min_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "max_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "theme_mode": {
+        "preset": "Preset",
+        "custom": "Custom"
+      },
+      "min_value": {
+        "attribute": "Attribute"
+      },
+      "max_value": {
+        "attribute": "Attribute"
       }
     }
   }
