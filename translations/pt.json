@@ -83,7 +83,8 @@
       "interpolate": "Interpolar cores",
       "name_info": "Informação de nome personalizada",
       "reverse": "Temporizador inverso",
-      "additions": "Entidades adicionais"
+      "bar_stack_mode": "Modo de empilhamento",
+      "bar_stack": "Entidades adicionais"
     },
     "option": {
       "bar_orientation": {
@@ -207,6 +208,11 @@
       },
       "max_value": {
         "attribute": "Atributo"
+      },
+      "bar_stack_mode": {
+        "stacked": "Empilhado",
+        "proportional": "Proporcional",
+        "net": "Líquido"
       }
     }
   }

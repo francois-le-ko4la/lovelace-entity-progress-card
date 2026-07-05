@@ -59,6 +59,7 @@ In this context, we have two types of deprecated options:
 | `max_value: <entity id>`     | **Deprecated** | Use `max_value: { entity: <id>, attribute: <optional> }`    | `v1.6.0`      | Auto-migrated for the session, console warning |
 | `max_value_attribute`        | **Deprecated** | Fold into `max_value: { entity, attribute }`                | `v1.6.0`      | Auto-migrated for the session, console warning |
 | `disable_unit`               | **Deprecated** | Use `hide: ['unit', ...]`                                   | `v1.6.0`      | Auto-migrated for the session, console warning |
+| `additions`                  | **Deprecated** | Use `bar_stack: { mode: 'proportional', entities: [...] }`  | `v1.6.0`      | Auto-migrated for the session, console warning |
 
 <details>
 <summary><strong>Show the screenshot (click to expand)</strong></summary>

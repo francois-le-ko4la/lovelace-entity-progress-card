@@ -84,7 +84,7 @@ classDiagram
 | `EntityProgressCardBase` | Full card behavior (auto-refresh for timers, CSS updates, standard fields). |
 | `EntityProgressCard` / `EntityProgressBadge` | Concrete card/badge: static metadata (`_cardStructure`, `_baseClass`), stub config. |
 | `EntityProgressTemplateBase` | Jinja-first variants: every visible field comes from a template subscription. |
-| `EntityProgressFeatures` | Tile feature (progress bar embedded in a native Tile card), including the row-size fix for `top`/`bottom` positions. |
+| `EntityProgressFeatures` | Tile feature (progress bar embedded in a native Tile card), including the row-size fix for `top`/`bottom` positions. Extends `HACore` directly (not `EntityProgressCardBase`) and has its own `_updateCSS()` — a separate implementation from Card/Badge's shared one, not a missing one. Its view (`FeatureView`) still extends `ViewBase` and its HTML still comes from the same `StructureElements.progressBar` builder as Card/Badge, so anything `ViewBase` exposes (theme, watermark, `bar_stack`, `center_zero`, …) works identically here — YAML-only, since the Tile Feature has no visual editor. |
 
 Each concrete class carries **static** metadata consumed by the shared
 pipeline: `_cardStructure` (an `ObjStructure` instance), `_cardStyle` (CSS
@@ -110,7 +110,7 @@ classDiagram
 - `ViewCore` — config storage, entity value wrappers (`EntityOrValue`),
   watermark values, action helpers, trend memory.
 - `ViewBase` — adds the full entity pipeline: `PercentHelper`,
-  `ThemeManager`, `EntityCollectionHelper` (additions), max-value entity,
+  `ThemeManager`, `EntityCollectionHelper` (bar_stack), max-value entity,
   color resolution, badge info.
 - Template views (`CardTemplateView`, `BadgeTemplateView`) intentionally skip
   `ViewBase`: their content comes from Jinja subscriptions, not from entity
@@ -126,7 +126,7 @@ Each view owns a matching **config helper** (`CardConfigHelper`,
 | `HassProviderSingleton` | Single access point to the `hass` object: entity props, attributes, names/areas/floors, localization, locale-aware formatting. Shared by all cards on the page. |
 | `ChangeTracker` | Per-card filter deciding whether a `hass` update concerns this card (reference comparison of watched entities' state objects). |
 | `EntityHelper` / `EntityOrValue` | Wraps one entity (or a literal value): type detection (timer, counter, number, duration), value extraction, validity/availability. |
-| `EntityCollectionHelper` | The `additions` feature: sums several entities, computes per-entity percentages. |
+| `EntityCollectionHelper` | The `bar_stack` feature: `proportional` mode renormalizes shares against the combined total (a.k.a. "100% stacked"), `stacked` places each entity at its own position on the min/max scale, `net` reduces everything to one algebraic total. Width/share math always runs on `#magnitude` (`Math.abs`) - a raw negative value must never produce a negative width. An entity counts as negative (`net`'s sign, or the arm it lands in with `center_zero`) via `#isNegative`: marked `subtract`, **or** its own raw value is already negative - checking both instead of just flipping the sign on `subtract` avoids double-negating an already-negative value back to positive. With `center_zero`, `stacked`/`proportional` split by that same `#isNegative` into two independent arm gradients (`getDivergingGradients`) applied via dedicated CSS variables (`--epb-stack-*`) instead of the single shared fill. |
 | `ProgressCalc` / `PercentHelper` | Percentage math (min/max/center-zero/reversed) and locale-aware value+unit formatting. |
 | `ThemeManager` | Built-in & custom themes: color/icon per value zone, `segment`/`rainbow` gradients, HA color name adaptation. |
 | `NumberFormatter` | Value/unit/duration formatting (`Intl.NumberFormat`, timedelta parsing). |
@@ -136,7 +136,7 @@ Each view owns a matching **config helper** (`CardConfigHelper`,
 
 | Class | Role |
 | --- | --- |
-| `DOMHelper` | Registered-element map + **RAF-batched, value-cached DOM writes** (`setStyle`, `setHTML`, `toggleClass`, …). A write whose value matches the cache is skipped before touching the DOM; pending writes are flushed once per animation frame. Also hosts the HTML sanitizer. |
+| `DOMHelper` | Registered-element map + **RAF-batched, value-cached DOM writes** (`setStyle`, `setHTML`, `toggleClass`, …). A write whose value matches the cache is skipped before touching the DOM; pending writes are flushed once per animation frame. Also hosts the HTML sanitizer. `setStyle` never unsets a value on its own (nullish writes are just skipped) — a CSS custom property that's only conditionally applied (e.g. `bar_stack`'s diverging-arm gradient) needs an explicit `removeStyle` call when the condition stops holding, or it stays stuck from a stale render. |
 | `ResourceManager` | Ownership of every disposable resource (intervals, timeouts, listeners, WS subscriptions, observers) keyed by id; `cleanup()` releases everything on disconnect. Also provides `throttle` / `throttleDebounce`. |
 | `ActionHelper` | Bridges HA's `action-handler` (tap/hold/double-tap) to `hass-action` events, with icon-vs-card hit detection. Idempotent `init()`. |
 | `Logger` | Per-class leveled logging with optional method wrapping (`wrapAll`) for call tracing. |
@@ -406,7 +406,7 @@ Editors share `EditorBase`:
 - A declarative **field map** (`static _fields`) organized in expansion
   panels; each field is an `ha-selector` (or a custom element:
   `entity-progress-effect-chips`, `entity-progress-hide-chips`,
-  `entity-progress-additions-editor`).
+  `entity-progress-bar-stack-editor`).
 - **Render once, update forever**: the DOM is built on first
   `connectedCallback`; every subsequent `setConfig` only pushes values,
   visibility (`showIf`) and dynamic selectors through `EditorDOMHelper`
@@ -417,6 +417,13 @@ Editors share `EditorBase`:
 - `virtual` fields (UI-only toggles), `target` remapping, `onChange`/`onClear`
   hooks cover the YAML↔UI mismatches; `_`-prefixed keys carry ephemeral UI
   state and are stripped before `config-changed` is dispatched.
+- Custom elements that edit an **array of row-objects** (`bar_stack`'s
+  entities, `custom_theme`'s zones) share `ListEditorBase`: a label, a list
+  container, the build-once/render-on-change lifecycle, and `_deleteRow`/
+  `_updateItem` — the same template-method pattern `ChipsBase`/
+  `SingleSelectChipsBase` use for the chip family. A concrete row editor only
+  implements `_buildDOM()`/`_render()`/`_dispatch()` and its own per-field
+  builders.
 
 ## Internationalization
 
@@ -522,7 +529,11 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
    structure**, it must flow through `_structureOptions` so the
    `ObjStructure` template cache keys on it.
 4. **Rendering** — apply it via `DOMHelper` (class toggle, CSS custom
-   property, `setText`/`setHTML`). Never touch the DOM directly.
+   property, `setText`/`setHTML`). Never touch the DOM directly. If a CSS
+   custom property is only set *conditionally*, pair `setStyle` with
+   `removeStyle` for the case where the condition stops holding —
+   `setStyle` never unsets a value on its own, so a stale one would
+   otherwise survive into a render where it no longer applies.
 5. **Editor** — add the field to the relevant `static _fields` maps
    (`EditorFactory`), with `showIf` for conditional visibility and
    `onChange`/`onClear` if the YAML shape differs from the UI shape. New

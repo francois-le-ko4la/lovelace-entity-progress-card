@@ -33,6 +33,30 @@
 #     initial: -750
 #     unit_of_measurement: "W"
 #     icon: mdi:transmission-tower
+#   epb_demo_battery_reserved:
+#     name: Demo battery (reserved)
+#     min: 0
+#     max: 100
+#     step: 1
+#     initial: 15
+#     unit_of_measurement: "%"
+#     icon: mdi:battery-lock
+#   epb_demo_grid_consumption:
+#     name: Demo grid consumption
+#     min: 0
+#     max: 3000
+#     step: 50
+#     initial: 900
+#     unit_of_measurement: "W"
+#     icon: mdi:transmission-tower
+#   epb_demo_solar_production:
+#     name: Demo solar production
+#     min: 0
+#     max: 3000
+#     step: 50
+#     initial: 1600
+#     unit_of_measurement: "W"
+#     icon: mdi:solar-power
 # timer:
 #   epb_demo_timer:
 #     name: Demo timer
@@ -68,6 +92,13 @@ views:
             bar_effect:
               - gradient
               - shimmer
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: Bar stack (charged + reserved)
+            bar_stack:
+              entities:
+                - entity: input_number.epb_demo_battery_reserved
+                  color: orange
 
       - type: grid
         cards:
@@ -93,6 +124,28 @@ views:
             center_zero: true
             min_value: -3000
             max_value: 3000
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_grid_consumption
+            name: Net balance (consumption − production)
+            center_zero: true
+            min_value: -3000
+            max_value: 3000
+            bar_stack:
+              mode: net
+              entities:
+                - entity: input_number.epb_demo_solar_production
+                  subtract: true
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_grid_consumption
+            name: Consumption + production (both shown at once)
+            center_zero: true
+            min_value: -3000
+            max_value: 3000
+            bar_stack:
+              entities:
+                - entity: input_number.epb_demo_solar_production
+                  subtract: true
+                  color: green
           - type: custom:entity-progress-card
             entity: timer.epb_demo_timer
             name: Timer (start it!)

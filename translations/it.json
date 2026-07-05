@@ -83,7 +83,8 @@
       "interpolate": "Interpolazione colori",
       "name_info": "Info nome personalizzata",
       "reverse": "Timer inverso",
-      "additions": "Entità aggiuntive"
+      "bar_stack_mode": "Modalità di impilamento",
+      "bar_stack": "Entità aggiuntive"
     },
     "option": {
       "bar_orientation": {
@@ -207,6 +208,11 @@
       },
       "max_value": {
         "attribute": "Attributo"
+      },
+      "bar_stack_mode": {
+        "stacked": "Impilato",
+        "proportional": "Proporzionale",
+        "net": "Netto"
       }
     }
   }

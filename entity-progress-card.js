@@ -390,6 +390,13 @@ const CARD = {
         value: { var: '--progress-bar-value', default: '0' },
         maxWidth: { var: '--progress-bar-max-width', default: null },
         background: { var: '--epb-progress-bar-background-color' },
+        // bar_stack 'stacked'/'proportional' + center_zero only: independent per-arm fill
+        // size/gradient, layered above the normal single-value derivation (see #9999-10006-ish
+        // CSS) but below --epb-progress-bar-color and bar_effect's --progress-effect(-neg).
+        stackGradientPos: { var: '--epb-stack-gradient-pos' },
+        stackGradientNeg: { var: '--epb-stack-gradient-neg' },
+        stackSizePos: { var: '--epb-stack-size-pos' },
+        stackSizeNeg: { var: '--epb-stack-size-neg' },
         orientation: { rtl: 'rtl-orientation', ltr: 'ltr-orientation', up: 'up-orientation' },
         effect: {
           radius: { label: 'radius', class: 'progress-bar-effect-radius' },
@@ -695,7 +702,8 @@ const TRANSLATIONS = {
         interpolate: 'تدرج الألوان',
         name_info: 'معلومات إضافية (الاسم)',
         reverse: 'عكس المؤقت',
-        additions: 'كيانات إضافية'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'كيانات إضافية'
       },
       option: {
         theme: {
@@ -819,6 +827,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -908,7 +921,8 @@ const TRANSLATIONS = {
         interpolate: 'রঙ ইন্টারপোলেশন',
         name_info: 'কাস্টম নাম তথ্য',
         reverse: 'টাইমার উল্টানো',
-        additions: 'অতিরিক্ত সত্তা'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'অতিরিক্ত সত্তা'
       },
       option: {
         theme: {
@@ -1032,6 +1046,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -1121,7 +1140,8 @@ const TRANSLATIONS = {
         interpolate: 'Interpolar colors',
         name_info: 'Informació addicional (nom)',
         reverse: 'Temporitzador invers',
-        additions: 'Entitats addicionals'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'Entitats addicionals'
       },
       option: {
         theme: {
@@ -1245,6 +1265,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -1334,7 +1359,8 @@ const TRANSLATIONS = {
         interpolate: 'Interpolace barev',
         name_info: 'Vlastní info názvu',
         reverse: 'Obrátit časovač',
-        additions: 'Další entity'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'Další entity'
       },
       option: {
         theme: {
@@ -1458,6 +1484,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -1547,7 +1578,8 @@ const TRANSLATIONS = {
         interpolate: 'Interpoler farver',
         name_info: 'Tilpasset navneinfo',
         reverse: 'Omvendt timer',
-        additions: 'Ekstra entiteter'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'Ekstra entiteter'
       },
       option: {
         theme: {
@@ -1671,6 +1703,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -1760,7 +1797,8 @@ const TRANSLATIONS = {
         interpolate: 'Farben interpolieren',
         name_info: 'Zusatzinfo (Name)',
         reverse: 'Timer umkehren',
-        additions: 'Weitere Entitäten'
+        bar_stack_mode: 'Stapelmodus',
+        bar_stack: 'Weitere Entitäten'
       },
       option: {
         theme: {
@@ -1884,6 +1922,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribut'
+        },
+        bar_stack_mode: {
+          stacked: 'Gestapelt',
+          proportional: 'Proportional',
+          net: 'Netto'
         }
       }
     }
@@ -1973,7 +2016,8 @@ const TRANSLATIONS = {
         interpolate: 'Παρεμβολή χρωμάτων',
         name_info: 'Προσαρμοσμένη πληροφορία ονόματος',
         reverse: 'Αντίστροφο χρονόμετρο',
-        additions: 'Πρόσθετες οντότητες'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'Πρόσθετες οντότητες'
       },
       option: {
         theme: {
@@ -2097,6 +2141,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -2186,7 +2235,8 @@ const TRANSLATIONS = {
         interpolate: 'Interpolate colors',
         name_info: 'Custom name info',
         reverse: 'Reverse timer',
-        additions: 'Additional entities'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'Additional entities'
       },
       option: {
         theme: {
@@ -2310,6 +2360,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Proportional',
+          net: 'Net'
         }
       }
     }
@@ -2399,7 +2454,8 @@ const TRANSLATIONS = {
         interpolate: 'Interpolación de colores',
         name_info: 'Info de nombre personalizada',
         reverse: 'Temporizador inverso',
-        additions: 'Entidades adicionales'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'Entidades adicionales'
       },
       option: {
         theme: {
@@ -2523,6 +2579,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -2612,7 +2673,8 @@ const TRANSLATIONS = {
         interpolate: 'Interpolación de colores',
         name_info: 'Info de nombre personalizada',
         reverse: 'Temporizador inverso',
-        additions: 'Entidades adicionales'
+        bar_stack_mode: 'Modo de apilado',
+        bar_stack: 'Entidades adicionales'
       },
       option: {
         theme: {
@@ -2736,6 +2798,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Atributo'
+        },
+        bar_stack_mode: {
+          stacked: 'Apilado',
+          proportional: 'Proporcional',
+          net: 'Neto'
         }
       }
     }
@@ -2825,7 +2892,8 @@ const TRANSLATIONS = {
         interpolate: 'Värvide interpoleerimine',
         name_info: 'Kohandatud nime teave',
         reverse: 'Pööratud taimer',
-        additions: 'Täiendavad üksused'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'Täiendavad üksused'
       },
       option: {
         theme: {
@@ -2949,6 +3017,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -3038,7 +3111,8 @@ const TRANSLATIONS = {
         interpolate: 'Interpoloi värit',
         name_info: 'Mukautettu nimitieto',
         reverse: 'Käänteinen ajastin',
-        additions: 'Lisäentiteetit'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'Lisäentiteetit'
       },
       option: {
         theme: {
@@ -3162,6 +3236,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -3251,7 +3330,8 @@ const TRANSLATIONS = {
         interpolate: 'Interpoler les couleurs',
         name_info: 'Info nom personnalisée',
         reverse: 'Inverser le minuteur',
-        additions: 'Entités supplémentaires'
+        bar_stack_mode: 'Mode d\'empilement',
+        bar_stack: 'Entités supplémentaires'
       },
       option: {
         theme: {
@@ -3375,6 +3455,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribut'
+        },
+        bar_stack_mode: {
+          stacked: 'Empilé',
+          proportional: 'Proportionnel',
+          net: 'Net'
         }
       }
     }
@@ -3464,7 +3549,8 @@ const TRANSLATIONS = {
         interpolate: 'रंग इंटरपोलेशन',
         name_info: 'कस्टम नाम जानकारी',
         reverse: 'टाइमर उलटें',
-        additions: 'अतिरिक्त एंटिटी'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'अतिरिक्त एंटिटी'
       },
       option: {
         bar_orientation: {
@@ -3588,6 +3674,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -3677,7 +3768,8 @@ const TRANSLATIONS = {
         interpolate: 'Interpolacija boja',
         name_info: 'Prilagođena informacija naziva',
         reverse: 'Obrnuti tajmer',
-        additions: 'Dodatni entiteti'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'Dodatni entiteti'
       },
       option: {
         bar_orientation: {
@@ -3801,6 +3893,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -3890,7 +3987,8 @@ const TRANSLATIONS = {
         interpolate: 'Színinterpoláció',
         name_info: 'Egyéni névinfo',
         reverse: 'Fordított időzítő',
-        additions: 'További entitások'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'További entitások'
       },
       option: {
         theme: {
@@ -4014,6 +4112,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -4103,7 +4206,8 @@ const TRANSLATIONS = {
         interpolate: 'Interpolasi warna',
         name_info: 'Info nama kustom',
         reverse: 'Timer terbalik',
-        additions: 'Entitas tambahan'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'Entitas tambahan'
       },
       option: {
         bar_orientation: {
@@ -4227,6 +4331,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -4316,7 +4425,8 @@ const TRANSLATIONS = {
         interpolate: 'Interpolazione colori',
         name_info: 'Info nome personalizzata',
         reverse: 'Timer inverso',
-        additions: 'Entità aggiuntive'
+        bar_stack_mode: 'Modalità di impilamento',
+        bar_stack: 'Entità aggiuntive'
       },
       option: {
         bar_orientation: {
@@ -4440,6 +4550,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attributo'
+        },
+        bar_stack_mode: {
+          stacked: 'Impilato',
+          proportional: 'Proporzionale',
+          net: 'Netto'
         }
       }
     }
@@ -4529,7 +4644,8 @@ const TRANSLATIONS = {
         interpolate: '色の補間',
         name_info: 'カスタム名前情報',
         reverse: 'タイマーを逆にする',
-        additions: '追加エンティティ'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: '追加エンティティ'
       },
       option: {
         bar_orientation: {
@@ -4653,6 +4769,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -4742,7 +4863,8 @@ const TRANSLATIONS = {
         interpolate: '색상 보간',
         name_info: '사용자 정의 이름 정보',
         reverse: '타이머 역방향',
-        additions: '추가 엔티티'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: '추가 엔티티'
       },
       option: {
         bar_orientation: {
@@ -4866,6 +4988,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -4955,7 +5082,8 @@ const TRANSLATIONS = {
         interpolate: 'Spalvų interpoliavimas',
         name_info: 'Pasirinktinė pavadinimo informacija',
         reverse: 'Atvirkštinis laikmatis',
-        additions: 'Papildomos esybės'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'Papildomos esybės'
       },
       option: {
         theme: {
@@ -5079,6 +5207,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -5168,7 +5301,8 @@ const TRANSLATIONS = {
         interpolate: 'Krāsu interpolācija',
         name_info: 'Pielāgota nosaukuma informācija',
         reverse: 'Apgriezts taimeris',
-        additions: 'Papildu entītijas'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'Papildu entītijas'
       },
       option: {
         theme: {
@@ -5292,6 +5426,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -5381,7 +5520,8 @@ const TRANSLATIONS = {
         interpolate: 'Интерполација на бои',
         name_info: 'Прилагодена информација за имиња',
         reverse: 'Обратен тајмер',
-        additions: 'Дополнителни ентитети'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'Дополнителни ентитети'
       },
       option: {
         bar_orientation: {
@@ -5505,6 +5645,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -5594,7 +5739,8 @@ const TRANSLATIONS = {
         interpolate: 'Interpoler farger',
         name_info: 'Egendefinert navneinfo',
         reverse: 'Omvendt tidtaker',
-        additions: 'Ekstra enheter'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'Ekstra enheter'
       },
       option: {
         bar_orientation: {
@@ -5718,6 +5864,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -5807,7 +5958,8 @@ const TRANSLATIONS = {
         interpolate: 'Kleuren interpoleren',
         name_info: 'Aangepaste naaminfo',
         reverse: 'Timer omdraaien',
-        additions: 'Extra entiteiten'
+        bar_stack_mode: 'Stapelmodus',
+        bar_stack: 'Extra entiteiten'
       },
       option: {
         bar_orientation: {
@@ -5931,6 +6083,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribuut'
+        },
+        bar_stack_mode: {
+          stacked: 'Gestapeld',
+          proportional: 'Proportioneel',
+          net: 'Netto'
         }
       }
     }
@@ -6020,7 +6177,8 @@ const TRANSLATIONS = {
         interpolate: 'Interpolacja kolorów',
         name_info: 'Niestandardowa info nazwy',
         reverse: 'Odwróć licznik',
-        additions: 'Dodatkowe encje'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'Dodatkowe encje'
       },
       option: {
         bar_orientation: {
@@ -6144,6 +6302,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -6233,7 +6396,8 @@ const TRANSLATIONS = {
         interpolate: 'Interpolar cores',
         name_info: 'Informação de nome personalizada',
         reverse: 'Temporizador inverso',
-        additions: 'Entidades adicionais'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'Entidades adicionais'
       },
       option: {
         theme: {
@@ -6357,6 +6521,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -6446,7 +6615,8 @@ const TRANSLATIONS = {
         interpolate: 'Interpolar cores',
         name_info: 'Informação de nome personalizada',
         reverse: 'Temporizador inverso',
-        additions: 'Entidades adicionais'
+        bar_stack_mode: 'Modo de empilhamento',
+        bar_stack: 'Entidades adicionais'
       },
       option: {
         bar_orientation: {
@@ -6570,6 +6740,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Atributo'
+        },
+        bar_stack_mode: {
+          stacked: 'Empilhado',
+          proportional: 'Proporcional',
+          net: 'Líquido'
         }
       }
     }
@@ -6659,7 +6834,8 @@ const TRANSLATIONS = {
         interpolate: 'Interpolare culori',
         name_info: 'Info nume personalizată',
         reverse: 'Cronometru inverso',
-        additions: 'Entități suplimentare'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'Entități suplimentare'
       },
       option: {
         bar_orientation: {
@@ -6783,6 +6959,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -6872,7 +7053,8 @@ const TRANSLATIONS = {
         interpolate: 'Интерполяция цветов',
         name_info: 'Доп. информация (имя)',
         reverse: 'Обратный таймер',
-        additions: 'Дополнительные объекты'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'Дополнительные объекты'
       },
       option: {
         bar_orientation: {
@@ -6996,6 +7178,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -7085,7 +7272,8 @@ const TRANSLATIONS = {
         interpolate: 'Interpolácia farieb',
         name_info: 'Vlastné info názvu',
         reverse: 'Obrátený časovač',
-        additions: 'Ďalšie entity'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'Ďalšie entity'
       },
       option: {
         theme: {
@@ -7209,6 +7397,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -7298,7 +7491,8 @@ const TRANSLATIONS = {
         interpolate: 'Interpolacija barv',
         name_info: 'Prilagojena informacija o imenu',
         reverse: 'Obrnjen časovnik',
-        additions: 'Dodatni entiteti'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'Dodatni entiteti'
       },
       option: {
         theme: {
@@ -7422,6 +7616,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -7511,7 +7710,8 @@ const TRANSLATIONS = {
         interpolate: 'Interpolera färger',
         name_info: 'Anpassad namninfo',
         reverse: 'Omvänd timer',
-        additions: 'Ytterligare entiteter'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'Ytterligare entiteter'
       },
       option: {
         bar_orientation: {
@@ -7635,6 +7835,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -7724,7 +7929,8 @@ const TRANSLATIONS = {
         interpolate: 'การสอดแทรกสี',
         name_info: 'ข้อมูลชื่อที่กำหนดเอง',
         reverse: 'กลับเวลานับถอยหลัง',
-        additions: 'เอนทิตีเพิ่มเติม'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'เอนทิตีเพิ่มเติม'
       },
       option: {
         bar_orientation: {
@@ -7848,6 +8054,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -7937,7 +8148,8 @@ const TRANSLATIONS = {
         interpolate: 'Renk interpolasyonu',
         name_info: 'Özel ad bilgisi',
         reverse: 'Zamanlayıcıyı tersine çevir',
-        additions: 'Ek varlıklar'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'Ek varlıklar'
       },
       option: {
         bar_orientation: {
@@ -8061,6 +8273,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -8150,7 +8367,8 @@ const TRANSLATIONS = {
         interpolate: 'Інтерполяція кольорів',
         name_info: 'Додаткова інформація (назва)',
         reverse: 'Зворотній таймер',
-        additions: 'Додаткові об\'єкти'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'Додаткові об\'єкти'
       },
       option: {
         bar_orientation: {
@@ -8274,6 +8492,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -8363,7 +8586,8 @@ const TRANSLATIONS = {
         interpolate: 'Nội suy màu sắc',
         name_info: 'Thông tin tên tùy chỉnh',
         reverse: 'Đảo ngược bộ đếm thời gian',
-        additions: 'Thực thể bổ sung'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: 'Thực thể bổ sung'
       },
       option: {
         bar_orientation: {
@@ -8487,6 +8711,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -8576,7 +8805,8 @@ const TRANSLATIONS = {
         interpolate: '颜色插值',
         name_info: '自定义名称信息',
         reverse: '反转计时器',
-        additions: '附加实体'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: '附加实体'
       },
       option: {
         theme: {
@@ -8700,6 +8930,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -8789,7 +9024,8 @@ const TRANSLATIONS = {
         interpolate: '顏色插值',
         name_info: '自訂名稱資訊',
         reverse: '反轉計時器',
-        additions: '附加實體'
+        bar_stack_mode: 'Stack mode',
+        bar_stack: '附加實體'
       },
       option: {
         theme: {
@@ -8913,6 +9149,11 @@ const TRANSLATIONS = {
         },
         max_value: {
           attribute: 'Attribute'
+        },
+        bar_stack_mode: {
+          stacked: 'Stacked',
+          proportional: 'Sum',
+          net: 'Net'
         }
       }
     }
@@ -9763,12 +10004,12 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
 
 /* --- inner size/background (auto-clamped per zone: irrelevant zone resolves to 0) --- */
 .${CARD.htmlStructure.elements.progressBar.inner.class}.positive {
-  --inner-size: max(var(${CARD.style.dynamic.progressBar.value.var}, 0), 0);
-  --inner-background: var(--epb-progress-bar-color, var(--progress-effect, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})));
+  --inner-size: var(${CARD.style.dynamic.progressBar.stackSizePos.var}, max(var(${CARD.style.dynamic.progressBar.value.var}, 0), 0));
+  --inner-background: var(--epb-progress-bar-color, var(--progress-effect, var(${CARD.style.dynamic.progressBar.stackGradientPos.var}, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default}))));
 }
 .center-zero .${CARD.htmlStructure.elements.progressBar.inner.class}.negative {
-  --inner-size: max(calc(var(${CARD.style.dynamic.progressBar.value.var}, 0) * -1), 0);
-  --inner-background: var(--epb-progress-bar-color, var(--progress-effect-neg, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})));
+  --inner-size: var(${CARD.style.dynamic.progressBar.stackSizeNeg.var}, max(calc(var(${CARD.style.dynamic.progressBar.value.var}, 0) * -1), 0));
+  --inner-background: var(--epb-progress-bar-color, var(--progress-effect-neg, var(${CARD.style.dynamic.progressBar.stackGradientNeg.var}, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default}))));
 }
 
 /* === ORIENTATION === */
@@ -11721,6 +11962,9 @@ class EntityHelper {
   #value = {};
   #entityId = null;
   #attribute = null;
+  #color = null;
+  #subtract = false;
+  #isMain = false;
   #state = null;
   #domain = null;
   #entityType = null;
@@ -11759,6 +12003,24 @@ class EntityHelper {
   }
   get attribute() {
     return this.#attribute;
+  }
+  set color(newValue) {
+    this.#color = newValue ?? null;
+  }
+  get color() {
+    return this.#color;
+  }
+  set subtract(newValue) {
+    this.#subtract = Boolean(newValue);
+  }
+  get subtract() {
+    return this.#subtract;
+  }
+  set isMain(newValue) {
+    this.#isMain = Boolean(newValue);
+  }
+  get isMain() {
+    return this.#isMain;
   }
   set nameTokens(tok) {
     this.#nameTokens = is.nonEmptyArray(tok) ? tok : null;
@@ -12016,11 +12278,53 @@ class EntityHelper {
 
 class EntityCollectionHelper {
   #entities = [];
+  #mode = 'stacked';
 
-  addEntity(entityId, attribute = null) {
+  static #numericValue(helper) {
+    const value = helper.value;
+    return is.number(value) ? value : (value?.current ?? 0);
+  }
+
+  // Width/share math always wants a magnitude - a negative raw value must never turn into
+  // a negative width (nonsensical for a gradient stop or an arm size).
+  static #magnitude(helper) {
+    return Math.abs(EntityCollectionHelper.#numericValue(helper));
+  }
+
+  // An entity counts as a negative contributor if explicitly marked `subtract`, or if its own
+  // raw value is already negative (e.g. a grid-power sensor signed by convention - see the
+  // `net` mode note in configuration.md). Checking both - rather than just blindly negating
+  // when `subtract` is set - means `subtract: true` on an already-negative value can't
+  // double-negate it back to positive.
+  static #isNegative(helper) {
+    return helper.subtract || EntityCollectionHelper.#numericValue(helper) < 0;
+  }
+
+  static #magnitudeSum(entities) {
+    return entities.reduce((sum, helper) => sum + EntityCollectionHelper.#magnitude(helper), 0);
+  }
+
+  static #splitByNegative(entities) {
+    return {
+      positive: entities.filter((helper) => !EntityCollectionHelper.#isNegative(helper)),
+      negative: entities.filter((helper) => EntityCollectionHelper.#isNegative(helper)),
+    };
+  }
+
+  set mode(newMode) {
+    this.#mode = ['proportional', 'net'].includes(newMode) ? newMode : 'stacked';
+  }
+  get mode() {
+    return this.#mode;
+  }
+
+  addEntity(entityId, attribute = null, color = null, subtract = false, isMain = false) {
     const helper = new EntityHelper();
     helper.entityId = entityId;
     if (attribute) helper.attribute = attribute;
+    if (color) helper.color = color;
+    helper.subtract = subtract;
+    helper.isMain = isMain;
     this.#entities.push(helper);
   }
 
@@ -12028,40 +12332,77 @@ class EntityCollectionHelper {
     this.#entities.forEach((helper) => helper.refresh());
   }
 
+  // Plain magnitude sum, mode-agnostic - the fill amount for 'stacked'/'proportional' (both
+  // centered and not) and the non-centered text/value. See getNetValue() for the
+  // sign-aware total ('net' mode, and 'stacked'/'proportional' + center_zero's label).
   getTotalValue() {
-    return this.#entities
-      .filter((helper) => helper.isValid && helper.isAvailable)
-      .reduce((sum, helper) => {
-        const value = helper.value;
-        return sum + (is.number(value) ? value : (value?.current ?? 0));
-      }, 0);
+    return EntityCollectionHelper.#magnitudeSum(this.getAvailableEntities());
   }
   getAvailableEntities() {
     return this.#entities.filter((helper) => helper.isValid && helper.isAvailable);
   }
 
-  getPercentages() {
-    const total = this.getTotalValue();
-    if (total === 0) return [];
-
-    return this.getAvailableEntities().map((helper) => {
-      const rawValue = helper.value;
-      const value = is.number(rawValue) ? rawValue : (rawValue?.current ?? 0);
-      const percent = (value / total) * 100;
-
-      return {
-        entityId: helper.entityId,
-        value,
-        percent,
-      };
-    });
+  // Algebraic total (positive arm's magnitude sum minus negative arm's): 'net' mode's own
+  // total, and also what 'stacked'/'proportional' should show as their text/value once
+  // center_zero splits them into two arms - a single flat "88%" reading makes no sense once
+  // the bar itself is showing two independent, possibly-opposing lengths (see ViewBase).
+  getNetValue() {
+    const { positive, negative } = EntityCollectionHelper.#splitByNegative(this.getAvailableEntities());
+    return EntityCollectionHelper.#magnitudeSum(positive) - EntityCollectionHelper.#magnitudeSum(negative);
   }
 
-  getEntitiesColor(curColor, progressRatio = 1) {
-    const percentages = this.getPercentages();
-    if (!percentages.length || !curColor) return null;
+  // Auto-shaded fallback (darkest -> pure base color, by position among entities lacking an
+  // explicit color) for an entity with no color override - the only differentiation available
+  // before bar_stack.entities[].color existed. The main entity is never part of this: it
+  // always keeps its own negotiated curColor, unshaded, regardless of its position in the
+  // collection (index 0 in 'stacked', last in 'proportional' - shading by raw position used
+  // to darken whichever one landed first).
+  static #entityColor(helper, index, total, curColor) {
+    if (helper.isMain) return curColor;
+    if (helper.color) return ThemeManager.adaptColor(helper.color) ?? curColor;
+    const whitePercent = Math.round((1 - index / (total - 1 || 1)) * 50); // de 50 → 0
+    return `color-mix(in srgb, ${curColor} ${100 - whitePercent}%, black ${whitePercent}%)`;
+  }
 
-    const total = percentages.length;
+  getEntitiesColor(curColor, progressRatio = 1, range = 0) {
+    const available = this.getAvailableEntities();
+    if (!available.length || !curColor) return null;
+    return this.#mode === 'stacked'
+      ? EntityCollectionHelper.#stackedGradient(available, curColor, progressRatio, range)
+      : EntityCollectionHelper.#proportionalGradient(available, curColor, progressRatio);
+  }
+
+  // 'stacked'/'proportional' + center_zero only ('net' has its own single-segment path,
+  // see ViewBase.barColor): entities split into two independent arms (see #splitByNegative),
+  // each laid out with the exact same per-mode algorithm as the non-centered case (on
+  // magnitudes, see #magnitude), just scoped to its own half-range (max-zeroValue /
+  // zeroValue-min).
+  getDivergingGradients(curColor, { min, max, zeroValue }) {
+    const available = this.getAvailableEntities();
+    if (!available.length || !curColor) return null;
+
+    const build = this.#mode === 'stacked' ? EntityCollectionHelper.#stackedGradient : EntityCollectionHelper.#proportionalGradient;
+    const arm = (entities, range) => {
+      if (!entities.length || range <= 0) return { gradient: null, size: 0 };
+      const size = Math.min(1, Math.max(0, EntityCollectionHelper.#magnitudeSum(entities) / range));
+      return { gradient: build(entities, curColor, size, range), size };
+    };
+
+    const { positive, negative } = EntityCollectionHelper.#splitByNegative(available);
+    const pos = arm(positive, max - zeroValue);
+    const neg = arm(negative, zeroValue - min);
+    return { posGradient: pos.gradient, negGradient: neg.gradient, posSize: pos.size, negSize: neg.size };
+  }
+
+  // 'proportional' mode (legacy `additions` behavior, a.k.a. "100% stacked"): each entity's
+  // share is renormalized against the combined total, so the visible fill is always divided
+  // between entities regardless of how that total compares to min_value/max_value.
+  static #proportionalGradient(available, curColor, progressRatio) {
+    const total = EntityCollectionHelper.#magnitudeSum(available);
+    if (total === 0) return null;
+
+    const shadeTotal = available.filter((helper) => !helper.isMain).length;
+    let shadeIndex = 0;
     const gradientStops = [];
     // With translateX-based fill, the inner element is 100% wide but only the
     // rightmost progressRatio% is visible. Segment stops must be offset so that
@@ -12069,23 +12410,45 @@ class EntityCollectionHelper {
     const offset = (1 - progressRatio) * 100;
     let currentPosition = offset;
 
-    for (let i = 0; i < total; i++) {
-      const item = percentages[i];
+    available.forEach((helper) => {
+      const share = (EntityCollectionHelper.#magnitude(helper) / total) * 100;
+      const color = EntityCollectionHelper.#entityColor(helper, shadeIndex, shadeTotal, curColor);
+      if (!helper.isMain) shadeIndex++;
+      const end = currentPosition + share * progressRatio;
 
-      const whitePercent = Math.round((1 - i / (total - 1 || 1)) * 50); // de 50 → 0
-      const basePercent = 100 - whitePercent;
+      gradientStops.push(`${color} ${currentPosition.toFixed(2)}%`, `${color} ${end.toFixed(2)}%`);
+      currentPosition = end;
+    });
 
-      const color = `color-mix(in srgb, ${curColor} ${basePercent}%, black ${whitePercent}%)`;
+    return `linear-gradient(to right, ${gradientStops.join(', ')})`;
+  }
 
-      const start = currentPosition;
-      const end = currentPosition + item.percent * progressRatio;
+  // 'stacked' mode: each entity occupies its own literal width on the card's min_value/
+  // max_value scale (not renormalized against the others) - entities placed in list order,
+  // starting right after the previous one. Leftover space past the last entity stays empty
+  // (no gap-filling color), and entities are clipped/skipped once the cumulative width
+  // reaches 100% instead of shrinking everyone to fit.
+  static #stackedGradient(available, curColor, progressRatio, range) {
+    if (!range) return null;
 
-      gradientStops.push(`${color} ${start.toFixed(2)}%`, `${color} ${end.toFixed(2)}%`);
+    const shadeTotal = available.filter((helper) => !helper.isMain).length;
+    let shadeIndex = 0;
+    const gradientStops = [];
+    const offset = (1 - progressRatio) * 100;
+    let currentPosition = offset;
 
+    for (let i = 0; i < available.length && currentPosition < 100; i++) {
+      const helper = available[i];
+      const width = (EntityCollectionHelper.#magnitude(helper) / range) * 100;
+      const color = EntityCollectionHelper.#entityColor(helper, shadeIndex, shadeTotal, curColor);
+      if (!helper.isMain) shadeIndex++;
+      const end = Math.min(100, currentPosition + width);
+
+      gradientStops.push(`${color} ${currentPosition.toFixed(2)}%`, `${color} ${end.toFixed(2)}%`);
       currentPosition = end;
     }
 
-    return `linear-gradient(to right, ${gradientStops.join(', ')})`;
+    return gradientStops.length ? `linear-gradient(to right, ${gradientStops.join(', ')})` : null;
   }
 
   getAvailableCount() {
@@ -12467,7 +12830,7 @@ const types = {
   // Each zone is now kept independently as long as it has a numeric min < max; missing
   // colors/icon or gaps between zones are tolerated (the card just won't recolor a range
   // nothing covers), and zones are sorted by min so edit order never matters — mirrors
-  // additionItem's own per-item SKIP_PROPERTY leniency instead of an all-or-nothing gate.
+  // barStackEntity's own per-item SKIP_PROPERTY leniency instead of an all-or-nothing gate.
   customTheme: (value, _path = []) => {
     if (is.nullish(value)) return SKIP_PROPERTY;
     if (!is.array(value)) return SKIP_PROPERTY;
@@ -12697,10 +13060,14 @@ const nameItem = types.discriminatedUnion('type', {
 
 types.name = types.array(nameItem);
 
-const additionItem = types.fallbackTo(
+const barStackEntity = types.fallbackTo(
   types.object({
     entity: types.entityId,
     attribute: types.optional(types.string),
+    color: types.optionalString(),
+    // 'net': subtracted from the algebraic total. 'stacked'/'proportional' + center_zero:
+    // placed on the negative arm instead of the positive one. No-op otherwise.
+    subtract: types.optionalBooleanWithDefault(false),
   }),
   SKIP_PROPERTY,
 );
@@ -12779,8 +13146,13 @@ class YamlSchemaFactory {
         interpolate: types.optionalBooleanWithDefault(false),
         watermark: types.watermarkObject(watermarkSchema, CARD.config.defaults.watermark),
 
-        // ─── Additions ──────────────────────────────────────────────────────
-        additions: types.optional(types.array(additionItem)),
+        // ─── Bar Stack ──────────────────────────────────────────────────────
+        bar_stack: types.optional(
+          types.object({
+            mode: types.enumsWithDefault(['stacked', 'proportional', 'net'], 'stacked'),
+            entities: types.optional(types.array(barStackEntity)),
+          }),
+        ),
       }),
     );
   }
@@ -12883,8 +13255,13 @@ class YamlSchemaFactory {
           }),
         ),
 
-        // ─── Additions ===
-        additions: types.optional(types.array(additionItem)),
+        // ─── Bar Stack ===
+        bar_stack: types.optional(
+          types.object({
+            mode: types.enumsWithDefault(['stacked', 'proportional', 'net'], 'stacked'),
+            entities: types.optional(types.array(barStackEntity)),
+          }),
+        ),
 
         // ─── Actions ===
         tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.moreInfo),
@@ -13087,6 +13464,14 @@ class BaseConfigHelper {
         `${META.types.card.typeName.toUpperCase()} - disable_unit is deprecated and will be removed in a future release. ` +
           `Please migrate to hide: ['unit', ...]. Your configuration was automatically migrated for this session.`,
       );
+    // additions used to be a bare array of {entity, attribute}; it is now the entities
+    // list of bar_stack, alongside a mode ('stacked' by default, 'proportional' preserves
+    // the legacy renormalized-total behavior exactly - see CardConfigHelper._customizeConfig.
+    if (is.array(config.additions))
+      console.warn(
+        `${META.types.card.typeName.toUpperCase()} - additions is deprecated and will be removed in a future release. ` +
+          `Please migrate to bar_stack: { mode: 'proportional', entities: [...] }. Your configuration was automatically migrated for this session.`,
+      );
   }
 
   get isValid() {
@@ -13216,6 +13601,17 @@ class BaseConfigHelper {
 class CardConfigHelper extends BaseConfigHelper {
   _yamlSchema = YamlSchemaFactory.card;
 
+  // center_zero with no explicit min_value would otherwise default to 0 (CARD.config.value.min),
+  // making the negative half meaningless (zeroValue - min = 0, nothing to render on that side).
+  // Default it to the symmetric negative of max_value instead - but only when max_value is a
+  // plain number (or absent, i.e. the 100 default); an entity/jinja-based max can't be mirrored
+  // at this config-negotiation stage. An explicit min_value (even 0) is always left untouched.
+  static _applyCenterZeroMinDefault(config, normalized) {
+    if (!config?.center_zero || !is.nullish(config?.min_value)) return normalized;
+    const maxForSymmetry = is.number(normalized?.max_value) ? normalized.max_value : CARD.config.value.max;
+    return { ...normalized, min_value: -maxForSymmetry };
+  }
+
   // CF5 - issue (major) resolved - max_value used to be number|entity-id-string with the
   // mode sniffed at runtime (is.number/is.string), the exact pattern that caused min_value's
   // freeze bug. Bare-entity-string configs (pre-1.6) are migrated here into the explicit
@@ -13227,6 +13623,7 @@ class CardConfigHelper extends BaseConfigHelper {
     if (is.nonEmptyString(config?.max_value)) {
       normalized = { ...config, max_value: { entity: config.max_value, attribute: config.max_value_attribute }, max_value_attribute: undefined };
     }
+    normalized = CardConfigHelper._applyCenterZeroMinDefault(config, normalized);
     // disable_unit used to be a dedicated boolean; 'unit' is now just another hide target,
     // consistent with icon/name/value/progress_bar. Skip the fold when hide is a Jinja
     // template (a string): merging into user-authored template logic isn't possible, so
@@ -13239,6 +13636,11 @@ class CardConfigHelper extends BaseConfigHelper {
         hide: currentHide.includes('unit') ? currentHide : [...currentHide, 'unit'],
         disable_unit: undefined,
       };
+    }
+    // additions (bare array) -> bar_stack.entities, under the 'proportional' mode so the
+    // renormalized-total rendering behaves exactly as before (see #logDeprecatedOption).
+    if (is.array(config?.additions)) {
+      normalized = { ...normalized, bar_stack: { mode: 'proportional', entities: config.additions }, additions: undefined };
     }
     return {
       ...normalized,
@@ -13565,16 +13967,33 @@ class ViewBase extends ViewCore {
 
     this._configHelper.config = config;
 
+    const centerZero = this._configHelper.config.centerZero;
+
     // CF5 - issue (major) resolved - the collection was never cleared: every setConfig (each editor keystroke) re-added all entities, inflating getTotalValue() with duplicates
     this.#entityCollection.clear();
-    if (this._configHelper.config.additions) {
-      this._configHelper.config.additions.forEach(({ entity, attribute }) => {
-        this.#entityCollection.addEntity(entity, attribute);
-      });
-      this.#entityCollection.addEntity(this._configHelper.config.entity, this._configHelper.config.attribute);
+    if (is.nonEmptyArray(this._configHelper.config.bar_stack?.entities)) {
+      const { mode, entities } = this._configHelper.config.bar_stack;
+      this.#entityCollection.mode = mode;
+      const addMain = () =>
+        this.#entityCollection.addEntity(this._configHelper.config.entity, this._configHelper.config.attribute, null, false, true);
+      const addOne = ({ entity, attribute, color, subtract }) => this.#entityCollection.addEntity(entity, attribute, color, subtract);
+      // One consistent order for both modes: main entity first, then entities[] in list order.
+      // Exception: without center_zero, `subtract` is otherwise a silent no-op (there's no
+      // negative arm to place it in - see docs) - move subtract-marked entities before the
+      // main entity instead, as a visual tell that something atypical is configured here.
+      // Based on the static `subtract` flag only: an entity's live value isn't known yet at
+      // this point (only once refresh(hass) runs), so a naturally-negative-but-unmarked entity
+      // can't be detected here and keeps its normal after-main position.
+      if (!centerZero.enabled) {
+        entities.filter((e) => e.subtract).forEach(addOne);
+        addMain();
+        entities.filter((e) => !e.subtract).forEach(addOne);
+      } else {
+        addMain();
+        entities.forEach(addOne);
+      }
     }
 
-    const centerZero = this._configHelper.config.centerZero;
     this.#percentHelper.configure({
       unitSpacing: this._configHelper.config.unit_spacing,
       // disable_unit is deprecated (folded into hide: ['unit', ...] by _customizeConfig)
@@ -13678,13 +14097,34 @@ class ViewBase extends ViewCore {
       ThemeManager.adaptColor(this.#theme.iconColor || this._configHelper.config.color) || this._currentValue.defaultColor || CARD.style.color.default
     );
   }
-  get barColor() {
-    if (!this.isAvailable) return this.isUnknown ? CARD.style.color.default : CARD.style.color.disabled;
-    const curColor =
+  #curBarColor() {
+    return (
       ThemeManager.adaptColor(this.#theme.barColor || this._configHelper.config.bar_color) ||
       this._currentValue.defaultColor ||
-      CARD.style.color.default;
-    return this.hasEntityCollection ? this.#entityCollection.getEntitiesColor(curColor, this.percent / 100) : curColor;
+      CARD.style.color.default
+    );
+  }
+  get barColor() {
+    if (!this.isAvailable) return this.isUnknown ? CARD.style.color.default : CARD.style.color.disabled;
+    const curColor = this.#curBarColor();
+    // 'net' is always a single flat segment. The center_zero + stacked/proportional case is
+    // handled separately by divergingBarStack (its own CSS variables, two independent arms) -
+    // this path only owns the non-centered multi-segment gradient and the plain fallback.
+    return this.hasEntityCollection && this.#entityCollection.mode !== 'net' && !this.#percentHelper.isCenterZero
+      ? this.#entityCollection.getEntitiesColor(curColor, this.percent / 100, this.#percentHelper.max - this.#percentHelper.min)
+      : curColor;
+  }
+  // 'stacked'/'proportional' + center_zero: two independent per-arm gradients (see
+  // EntityCollectionHelper.getDivergingGradients). null when not applicable, so callers can
+  // tell whether to apply or clear the dedicated CSS variables.
+  get divergingBarStack() {
+    if (!this.isAvailable || !this.#percentHelper.isCenterZero) return null;
+    if (!this.hasEntityCollection || this.#entityCollection.mode === 'net') return null;
+    return this.#entityCollection.getDivergingGradients(this.#curBarColor(), {
+      min: this.#percentHelper.min,
+      max: this.#percentHelper.max,
+      zeroValue: this.#percentHelper.zeroValue,
+    });
   }
   get colorGradient() {
     if (!this.isAvailable || this.#percentHelper.isCenterZero) return null;
@@ -13765,10 +14205,6 @@ class ViewBase extends ViewCore {
     return this.#entityCollection.count >= 2;
   }
 
-  get entityCollectionPercentage() {
-    return this.#entityCollection.getPercentages();
-  }
-
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
   refresh(hass) {
@@ -13820,7 +14256,15 @@ class ViewBase extends ViewCore {
   }
 
   #setStdValues() {
-    const currentValue = this.hasEntityCollection ? this.#entityCollection.getTotalValue() : this._currentValue.value;
+    // 'net' mode always wants the algebraic total. 'stacked'/'proportional' switch to it too
+    // once center_zero splits them into two arms - a single flat percentage doesn't mean
+    // anything once the bar itself shows two independent, possibly-opposing lengths (see
+    // EntityCollectionHelper.getNetValue). Without center_zero, both modes keep the plain
+    // magnitude sum, matching what the bar itself visually adds up to.
+    const useNetValue = this.hasEntityCollection && (this.#entityCollection.mode === 'net' || this.#percentHelper.isCenterZero);
+    const currentValue = this.hasEntityCollection
+      ? (useNetValue ? this.#entityCollection.getNetValue() : this.#entityCollection.getTotalValue())
+      : this._currentValue.value;
     Object.assign(this.#percentHelper, {
       current: currentValue,
       min: this.#jinjaMinValue ?? this.#minValue.value?.current ?? this.#minValue.value,
@@ -14187,6 +14631,25 @@ class DOMHelper {
     this.enqueue(key, `style:${prop}`, () => {
       el.style.setProperty(prop, value);
       this._appliedValues.set(cacheKey, value);
+    });
+  }
+
+  /**
+   * Removes a previously-set CSS custom property. setStyle() never unsets a value on its
+   * own (it only skips nullish writes), so a property that was conditionally set on an
+   * earlier render (e.g. the bar_stack diverging-arm gradient) needs this to go away once
+   * the condition no longer applies - otherwise it stays stuck from a stale render.
+   */
+  removeStyle(key, prop) {
+    const cacheKey = `${key}:style:${prop}`;
+    if (!this._appliedValues.has(cacheKey)) return;
+
+    const el = this._domElements.get(key);
+    if (!el) return;
+
+    this.enqueue(key, `style:${prop}`, () => {
+      el.style.removeProperty(prop);
+      this._appliedValues.delete(cacheKey);
     });
   }
 
@@ -14633,8 +15096,8 @@ class HACore extends HTMLElement {
     if (is.string(config?.watermark?.low)) this._changeTracker.watchEntity(config.watermark.low);
     if (is.string(config?.watermark?.high)) this._changeTracker.watchEntity(config.watermark.high);
     // CF5 - issue (major) resolved - additions entities were not watched: when one of them changed state (main entity unchanged), the ChangeTracker reported no change and the displayed total stayed stale
-    if (is.array(config.additions)) {
-      for (const item of config.additions) {
+    if (is.array(config.bar_stack?.entities)) {
+      for (const item of config.bar_stack.entities) {
         if (is.plainObject(item) && is.string(item.entity)) this._changeTracker.watchEntity(item.entity);
       }
     }
@@ -14851,17 +15314,39 @@ class HACore extends HTMLElement {
     throw new Error(`${this.constructor.name} must implement _updateCSS()`);
   }
 
-  _applyProgressCSS(progressValue, { barColor = null, iconColor = null, gradient = null } = {}) {
+  _applyProgressCSS(progressValue, { barColor = null, iconColor = null, gradient = null, diverging = null } = {}) {
     const cardKey = CARD.htmlStructure.card.element;
 
     const fillColor = gradient ?? barColor;
     if (fillColor !== null) this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.color.var, fillColor);
     if (iconColor !== null) this._dom.setStyle(cardKey, CARD.style.dynamic.iconAndShape.color.var, iconColor);
 
+    this._applyDivergingBarStackCSS(cardKey, diverging);
+
     if (progressValue !== null) {
       this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.value.var, progressValue);
       this._dom.setAttribute(CARD.htmlStructure.elements.progressBar.container.class, 'aria-valuenow', Math.round(progressValue * 100));
     }
+  }
+
+  // bar_stack 'stacked'/'proportional' + center_zero: two independent per-arm gradients/sizes
+  // (see ViewBase.divergingBarStack). Explicitly removed (not left stale) when not
+  // applicable - setStyle() never unsets a value on its own once written.
+  _applyDivergingBarStackCSS(cardKey, diverging) {
+    const pb = CARD.style.dynamic.progressBar;
+    if (!diverging) {
+      this._dom.removeStyle(cardKey, pb.stackGradientPos.var);
+      this._dom.removeStyle(cardKey, pb.stackGradientNeg.var);
+      this._dom.removeStyle(cardKey, pb.stackSizePos.var);
+      this._dom.removeStyle(cardKey, pb.stackSizeNeg.var);
+      return;
+    }
+    if (diverging.posGradient) this._dom.setStyle(cardKey, pb.stackGradientPos.var, diverging.posGradient);
+    else this._dom.removeStyle(cardKey, pb.stackGradientPos.var);
+    if (diverging.negGradient) this._dom.setStyle(cardKey, pb.stackGradientNeg.var, diverging.negGradient);
+    else this._dom.removeStyle(cardKey, pb.stackGradientNeg.var);
+    this._dom.setStyle(cardKey, pb.stackSizePos.var, diverging.posSize);
+    this._dom.setStyle(cardKey, pb.stackSizeNeg.var, diverging.negSize);
   }
 
   _applyWatermarkCSS(watermark) {
@@ -15645,6 +16130,7 @@ class EntityProgressCardBase extends HABase {
       barColor: bar.barColor,
       iconColor: bar.iconColor,
       gradient: bar.colorGradient,
+      diverging: bar.divergingBarStack,
     });
     this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null);
   }
@@ -15860,6 +16346,7 @@ class EntityProgressFeatures extends HACore {
     this._applyProgressCSS(progressValue, {
       barColor: bar.barColor,
       gradient: bar.colorGradient,
+      diverging: bar.divergingBarStack,
     });
     this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null);
   }
@@ -16498,16 +16985,13 @@ if (!customElements.get(EntityProgressThemeModeChips.ELEMENT_NAME)) {
   customElements.define(EntityProgressThemeModeChips.ELEMENT_NAME, EntityProgressThemeModeChips);
 }
 
-/******************************************************************************************
- * ➕ EntityProgressAdditionsEditor
- * ========================================================================================
- * Custom element that renders an editable list of entity/attribute pairs (additions).
- * Each row shows an entity picker and an optional attribute picker.
- * Dispatches value-changed with the filtered array of { entity, attribute? } objects.
- *
- * @class
- * @extends HTMLElement
- */
+class EntityProgressBarStackModeChips extends SingleSelectChipsBase {
+  static ELEMENT_NAME = 'entity-progress-bar-stack-mode-chips';
+  static MODES = ['stacked', 'proportional', 'net'];
+}
+if (!customElements.get(EntityProgressBarStackModeChips.ELEMENT_NAME)) {
+  customElements.define(EntityProgressBarStackModeChips.ELEMENT_NAME, EntityProgressBarStackModeChips);
+}
 
 /******************************************************************************************
  * 📝 ListEditorBase
@@ -16551,22 +17035,24 @@ class ListEditorBase extends HTMLElement {
     this._render();
     this._dispatch();
   }
+
+  _updateItem(index, patch) {
+    this._value = this._value.map((item, i) => (i === index ? { ...item, ...patch } : item));
+    this._render();
+    this._dispatch();
+  }
 }
 
-class EntityProgressAdditionsEditor extends ListEditorBase {
-  static ELEMENT_NAME = 'entity-progress-additions-editor';
+class EntityProgressBarStackEditor extends ListEditorBase {
+  static ELEMENT_NAME = 'entity-progress-bar-stack-editor';
 
   #hass = null;
-  #rows = []; // { entitySel, attrSel } per rendered row
   #addBtn = null;
 
   get hass() { return this.#hass; }
   set hass(hass) {
     this.#hass = hass;
-    for (const { entitySel, attrSel } of this.#rows) {
-      entitySel.hass = hass;
-      attrSel.hass = hass;
-    }
+    for (const el of this.shadowRoot?.querySelectorAll(HA_SELECTOR_TAG) ?? []) el.hass = hass;
   }
 
   _buildDOM() {
@@ -16581,14 +17067,21 @@ class EntityProgressAdditionsEditor extends ListEditorBase {
         color: var(--primary-text-color);
         padding-bottom: 4px;
       }
-      .row { display: flex; align-items: center; gap: 4px; margin-bottom: 8px; }
-      .sels { display: flex; flex: 1; gap: 8px; min-width: 0; }
-      .sel { flex: 1; min-width: 0; }
+      .row-card {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        border: 1px solid var(--divider-color, #e0e0e0);
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 16px;
+      }
+      .row-header { display: flex; align-items: center; justify-content: space-between; }
+      .row-title { font-size: 0.9rem; color: var(--secondary-text-color); }
       .del-btn {
         display: flex;
         align-items: center;
         justify-content: center;
-        align-self: center;
         flex-shrink: 0;
         background: none;
         border: none;
@@ -16624,14 +17117,8 @@ class EntityProgressAdditionsEditor extends ListEditorBase {
     this.shadowRoot.append(style, this._labelEl, this._list, addRow);
   }
 
-  #updateItem(index, patch) {
-    this._value = this._value.map((item, i) => i === index ? { ...item, ...patch } : item);
-    this._render();
-    this._dispatch();
-  }
-
   _dispatch() {
-    const clean = this._value.filter((i) => i.entity);
+    const clean = this._value.filter((item) => item.entity);
     this.dispatchEvent(new CustomEvent(VALUE_CHANGED_EVENT, {
       detail: { value: clean.length ? clean : undefined },
       bubbles: true,
@@ -16639,34 +17126,70 @@ class EntityProgressAdditionsEditor extends ListEditorBase {
     }));
   }
 
+  #entityField(item, index) {
+    const el = document.createElement(HA_SELECTOR_TAG);
+    el.hass = this.#hass;
+    el.selector = { entity: {} };
+    el.value = item.entity ?? '';
+    el.required = false;
+    el.style.width = '100%';
+    el.addEventListener(VALUE_CHANGED_EVENT, (e) => {
+      e.stopPropagation();
+      this._updateItem(index, { entity: e.detail.value || undefined, attribute: undefined });
+    });
+    return el;
+  }
+
+  #attributeField(item, index) {
+    const el = document.createElement(HA_SELECTOR_TAG);
+    el.hass = this.#hass;
+    el.selector = { attribute: { entity_id: item.entity ?? '' } };
+    el.value = item.attribute ?? '';
+    el.required = false;
+    el.style.width = '100%';
+    el.addEventListener(VALUE_CHANGED_EVENT, (e) => {
+      e.stopPropagation();
+      this._updateItem(index, { attribute: e.detail.value || undefined });
+    });
+    return el;
+  }
+
+  #colorField(item, index) {
+    const el = document.createElement(HA_SELECTOR_TAG);
+    el.hass = this.#hass;
+    el.selector = { 'ui-color': {} };
+    el.label = 'Color';
+    el.style.width = '100%';
+    el.value = item.color ?? '';
+    el.addEventListener(VALUE_CHANGED_EVENT, (e) => {
+      e.stopPropagation();
+      this._updateItem(index, { color: e.detail.value || undefined });
+    });
+    return el;
+  }
+
+  // 'net': subtracted from the algebraic total. 'stacked'/'proportional' + center_zero:
+  // placed on the negative arm instead of the positive one. No effect otherwise (harmless
+  // no-op) - kept simple rather than conditionally hiding this per-row based on sibling
+  // fields (mode, center_zero) the row editor doesn't otherwise need to know about.
+  #subtractField(item, index) {
+    const el = document.createElement(HA_SELECTOR_TAG);
+    el.hass = this.#hass;
+    el.selector = { boolean: {} };
+    el.label = 'Subtract / negative side';
+    el.style.width = '100%';
+    el.value = item.subtract ?? false;
+    el.addEventListener(VALUE_CHANGED_EVENT, (e) => {
+      e.stopPropagation();
+      this._updateItem(index, { subtract: e.detail.value || undefined });
+    });
+    return el;
+  }
+
   _render() {
     this._list.innerHTML = '';
-    this.#rows = [];
     for (let i = 0; i < this._value.length; i++) {
       const item = this._value[i];
-
-      const entitySel = document.createElement(HA_SELECTOR_TAG);
-      entitySel.hass = this.#hass;
-      entitySel.selector = { entity: {} };
-      entitySel.value = item.entity ?? '';
-      entitySel.required = false;
-      entitySel.className = 'sel';
-      entitySel.addEventListener(VALUE_CHANGED_EVENT, (e) => {
-        e.stopPropagation();
-        this.#updateItem(i, { entity: e.detail.value || undefined, attribute: undefined });
-      });
-
-      const attrSel = document.createElement(HA_SELECTOR_TAG);
-      attrSel.hass = this.#hass;
-      attrSel.selector = { attribute: { entity_id: item.entity ?? '' } };
-      attrSel.value = item.attribute ?? '';
-      attrSel.required = false;
-      attrSel.className = 'sel';
-      attrSel.style.display = item.entity ? '' : 'none';
-      attrSel.addEventListener(VALUE_CHANGED_EVENT, (e) => {
-        e.stopPropagation();
-        this.#updateItem(i, { attribute: e.detail.value || undefined });
-      });
 
       const delBtn = document.createElement('button');
       delBtn.className = 'del-btn';
@@ -16676,21 +17199,27 @@ class EntityProgressAdditionsEditor extends ListEditorBase {
       delBtn.appendChild(delIcon);
       delBtn.addEventListener('click', () => this._deleteRow(i));
 
-      const sels = document.createElement('div');
-      sels.className = 'sels';
-      sels.append(entitySel, attrSel);
+      const title = document.createElement('span');
+      title.className = 'row-title';
+      title.textContent = `#${i + 1}`;
 
-      const row = document.createElement('div');
-      row.className = 'row';
-      row.append(sels, delBtn);
-      this._list.appendChild(row);
-      this.#rows.push({ entitySel, attrSel });
+      const header = document.createElement('div');
+      header.className = 'row-header';
+      header.append(title, delBtn);
+
+      const card = document.createElement('div');
+      card.className = 'row-card';
+      card.append(header, this.#entityField(item, i));
+      if (item.entity) card.append(this.#attributeField(item, i));
+      card.append(this.#colorField(item, i), this.#subtractField(item, i));
+
+      this._list.appendChild(card);
     }
   }
 }
 
-if (!customElements.get(EntityProgressAdditionsEditor.ELEMENT_NAME)) {
-  customElements.define(EntityProgressAdditionsEditor.ELEMENT_NAME, EntityProgressAdditionsEditor);
+if (!customElements.get(EntityProgressBarStackEditor.ELEMENT_NAME)) {
+  customElements.define(EntityProgressBarStackEditor.ELEMENT_NAME, EntityProgressBarStackEditor);
 }
 
 /******************************************************************************************
@@ -16698,7 +17227,7 @@ if (!customElements.get(EntityProgressAdditionsEditor.ELEMENT_NAME)) {
  * ========================================================================================
  * Custom element that renders an editable list of custom_theme zones, each a
  * contiguous { min, max, color?, icon_color?, bar_color?, icon? } range.
- * Mirrors EntityProgressAdditionsEditor's row-list pattern (label, list, add
+ * Mirrors EntityProgressBarStackEditor's row-list pattern (label, list, add
  * button, value-changed with the filtered array), with a richer per-row form.
  *
  * @class
@@ -16787,12 +17316,6 @@ class EntityProgressCustomThemeEditor extends ListEditorBase {
     this.shadowRoot.append(style, this._labelEl, this._list, addRow);
   }
 
-  #updateItem(index, patch) {
-    this._value = this._value.map((item, i) => (i === index ? { ...item, ...patch } : item));
-    this._render();
-    this._dispatch();
-  }
-
   _dispatch() {
     const isEmpty = (item) =>
       !is.number(item.min) && !is.number(item.max) && !item.color && !item.icon_color && !item.bar_color && !item.icon;
@@ -16812,7 +17335,7 @@ class EntityProgressCustomThemeEditor extends ListEditorBase {
     el.value = is.number(item[key]) ? item[key] : undefined;
     el.addEventListener(VALUE_CHANGED_EVENT, (e) => {
       e.stopPropagation();
-      this.#updateItem(index, { [key]: is.number(e.detail.value) ? e.detail.value : undefined });
+      this._updateItem(index, { [key]: is.number(e.detail.value) ? e.detail.value : undefined });
     });
     return el;
   }
@@ -16826,7 +17349,7 @@ class EntityProgressCustomThemeEditor extends ListEditorBase {
     el.value = item[key] ?? '';
     el.addEventListener(VALUE_CHANGED_EVENT, (e) => {
       e.stopPropagation();
-      this.#updateItem(index, { [key]: e.detail.value || undefined });
+      this._updateItem(index, { [key]: e.detail.value || undefined });
     });
     return el;
   }
@@ -16840,7 +17363,7 @@ class EntityProgressCustomThemeEditor extends ListEditorBase {
     el.value = item.icon ?? '';
     el.addEventListener(VALUE_CHANGED_EVENT, (e) => {
       e.stopPropagation();
-      this.#updateItem(index, { icon: e.detail.value || undefined });
+      this._updateItem(index, { icon: e.detail.value || undefined });
     });
     return el;
   }
@@ -17144,13 +17667,13 @@ class EditorBase extends HTMLElement {
     return el;
   }
 
-  #buildAdditionsField(field) {
-    const el = document.createElement(EntityProgressAdditionsEditor.ELEMENT_NAME);
+  #buildBarStackField(field) {
+    const el = document.createElement(EntityProgressBarStackEditor.ELEMENT_NAME);
     el.id = field.name;
     el.style.width = '100%';
-    el.label = this.#hassProvider.localize(EDITOR_FIELD_NS)?.[field.name] ?? field.name;
+    el.label = this.#hassProvider.localize(EDITOR_FIELD_NS)?.bar_stack ?? 'bar_stack';
     el.hass = this.hass;
-    el.value = is.array(this.#config?.[field.name]) ? this.#config[field.name] : [];
+    el.value = is.array(this.#config?.bar_stack?.entities) ? this.#config.bar_stack.entities : [];
     this.#dom.registerField(field.name, el, field);
     return el;
   }
@@ -17176,7 +17699,8 @@ class EditorBase extends HTMLElement {
       min_value_mode: () => this.#buildModeChipsField(field, EntityProgressMinValueModeChips.ELEMENT_NAME),
       max_value_mode: () => this.#buildModeChipsField(field, EntityProgressMaxValueModeChips.ELEMENT_NAME),
       theme_mode: () => this.#buildModeChipsField(field, EntityProgressThemeModeChips.ELEMENT_NAME),
-      additions_editor: () => this.#buildAdditionsField(field),
+      bar_stack_mode: () => this.#buildModeChipsField(field, EntityProgressBarStackModeChips.ELEMENT_NAME),
+      bar_stack_editor: () => this.#buildBarStackField(field),
       custom_theme_editor: () => this.#buildCustomThemeField(field),
     };
     return builders[field.type]?.();
@@ -17460,15 +17984,27 @@ const EditorFactory = {
           selectorOf: 'entity',
           showIf: (c) => Boolean(c.entity),
         }),
-        // CF5 - issue (minor) resolved - clearing the last addition row dispatched value: undefined, leaving an undefined key in the config; onClear now removes the key cleanly
-        additions: {
-          name: 'additions',
-          type: 'additions_editor',
-          onClear: (config) => {
-            const rest = { ...config };
-            delete rest.additions;
-            return rest;
-          },
+        bar_stack_mode: {
+          name: 'bar_stack_mode',
+          type: 'bar_stack_mode',
+          virtual: true,
+          showIf: (c) => is.nonEmptyArray(c.bar_stack?.entities),
+          resolveVirtual: (c) => c.bar_stack?.mode ?? 'stacked',
+          onVirtualChange: (mode, config) => ({ ...config, bar_stack: { ...config.bar_stack, mode } }),
+        },
+        // CF5 - issue (major) resolved - a flat 'bar_stack' field name meant the generic
+        // round-trip resolver (#resolveValue, run on every setConfig - not just this field's
+        // own onChange) read config.bar_stack as a whole (the {mode, entities} object, not
+        // the array the row editor's `value` setter expects) and reset it to [] on every
+        // single re-render, making any just-added row vanish from the editor immediately.
+        // The dot-path name routes through the existing generic nested-field read/write
+        // (#resolveValue / #handleNestedField) instead, exactly like watermark.low or
+        // min_value.attribute - entities are read from and written to bar_stack.entities
+        // directly, and bar_stack.mode is left untouched by construction (no custom
+        // onChange/onClear needed to preserve it).
+        'bar_stack.entities': {
+          name: 'bar_stack.entities',
+          type: 'bar_stack_editor',
         },
       }),
     },

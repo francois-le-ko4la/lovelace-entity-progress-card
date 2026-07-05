@@ -83,7 +83,8 @@
       "interpolate": "การสอดแทรกสี",
       "name_info": "ข้อมูลชื่อที่กำหนดเอง",
       "reverse": "กลับเวลานับถอยหลัง",
-      "additions": "เอนทิตีเพิ่มเติม"
+      "bar_stack_mode": "Stack mode",
+      "bar_stack": "เอนทิตีเพิ่มเติม"
     },
     "option": {
       "bar_orientation": {
@@ -207,6 +208,11 @@
       },
       "max_value": {
         "attribute": "Attribute"
+      },
+      "bar_stack_mode": {
+        "stacked": "Stacked",
+        "proportional": "Sum",
+        "net": "Net"
       }
     }
   }

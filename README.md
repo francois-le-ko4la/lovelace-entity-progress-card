@@ -259,7 +259,7 @@ This is the primary card for displaying entity progress.
 | `state_content`              | string/list (optional)  | depends on domain         | Attribute to show near value          | [Config Ref.][config-state_content]              |
 | `custom_info`                | Jinja (optional)        | —                         | Extra info near value                 | [Config Ref.][config-custom_info]                |
 | `name_info`                  | Jinja (optional)        | —                         | Extra info near name                  | [Config Ref.][config-name_info]                  |
-| `additions`                  | list (optional)         | —                         | Additional entities to display        | [Config Ref.][config-additions]                  |
+| `bar_stack`                  | Map (optional)          | —                         | Combine several entities in one bar   | [Config Ref.][config-bar_stack]                  |
 | **Styling Options**          |                         |                           |                                       |                                                  |
 | `icon`                       | string (optional)       | —                         | Icon override                         | [Config Ref.][config-icon]                       |
 | `color`                      | string (optional)       | based on entity           | Icon color                            | [Config Ref.][config-color]                      |
@@ -1159,7 +1159,7 @@ customizable badge format with a dynamic progress bar.
 | `state_content`              | string/list (optional)  | depends on domain         | Attribute to show near value          | [Config Ref.][config-state_content]              |
 | `custom_info`                | Jinja (optional)        | —                         | Extra info near value                 | [Config Ref.][config-custom_info]                |
 | `name_info`                  | Jinja (optional)        | —                         | Extra info near name                  | [Config Ref.][config-name_info]                  |
-| `additions`                  | list (optional)         | —                         | Additional entities to display        | [Config Ref.][config-additions]                  |
+| `bar_stack`                  | Map (optional)          | —                         | Combine several entities in one bar   | [Config Ref.][config-bar_stack]                  |
 | **Styling Options**          |                         |                           |                                       |                                                  |
 | `icon`                       | string (optional)       | —                         | Icon override                         | [Config Ref.][config-icon]                       |
 | `color`                      | string (optional)       | based on entity           | Icon color                            | [Config Ref.][config-color]                      |
@@ -1336,8 +1336,8 @@ height.
 | `custom_theme`               | list (optional)         | —                         | Define color thresholds               | [Config Ref.][config-custom_theme]               |
 | `interpolate`                | boolean (optional)      | `false`                   | Enables smooth color transition       | [Config Ref.][config-interpolate]                |
 | `watermark`                  | map (optional)          | —                         | Adds min/max overlays                 | [Config Ref.][config-watermark]                  |
-| **Additions**                |                         |                           |                                       |                                                  |
-| `additions`                  | list (optional)         | —                         | Additional entities to display        | [Config Ref.][config-additions]                  |
+| **Bar Stack**                |                         |                           |                                       |                                                  |
+| `bar_stack`                  | Map (optional)          | —                         | Combine several entities in one bar   | [Config Ref.][config-bar_stack]                  |
 
 See [Full Configuration Reference][FCR].
 
@@ -1640,8 +1640,8 @@ This project is licensed under the [GPL-3.0 license].
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#custom_info
 [config-name_info]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#name_info
-[config-additions]:
-  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#additions
+[config-bar_stack]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_stack
 [config-icon]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#icon
 [config-color]:

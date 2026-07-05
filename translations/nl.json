@@ -83,7 +83,8 @@
       "interpolate": "Kleuren interpoleren",
       "name_info": "Aangepaste naaminfo",
       "reverse": "Timer omdraaien",
-      "additions": "Extra entiteiten"
+      "bar_stack_mode": "Stapelmodus",
+      "bar_stack": "Extra entiteiten"
     },
     "option": {
       "bar_orientation": {
@@ -207,6 +208,11 @@
       },
       "max_value": {
         "attribute": "Attribuut"
+      },
+      "bar_stack_mode": {
+        "stacked": "Gestapeld",
+        "proportional": "Proportioneel",
+        "net": "Netto"
       }
     }
   }

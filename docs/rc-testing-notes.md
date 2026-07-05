@@ -44,34 +44,14 @@ With a theme active, choose how the bar is painted (`bar_color_mode`):
 
 ### 🧘 Breaking Changes (Don't Panic)
 
-Two options have a new, clearer syntax. **Your dashboards keep working as they
-are** — the card understands the old syntax and converts it on the fly. You'll
-just see a gentle reminder in the browser console; update your YAML whenever
-you feel like it.
+A few options have a new, clearer syntax. **Your dashboards keep working as
+they are** — the card understands the old syntax and converts it on the fly.
+You'll just see a gentle reminder in the browser console; update your YAML
+whenever you feel like it.
 
-#### Using another entity as the maximum
-
-```yaml
-# Before (still works)
-max_value: sensor.total_capacity
-max_value_attribute: today
-
-# Now
-max_value:
-  entity: sensor.total_capacity
-  attribute: today
-```
-
-#### Hiding the unit
-
-```yaml
-# Before (still works)
-disable_unit: true
-
-# Now
-hide:
-  - unit
-```
+- `max_value: <entity id>` / `max_value_attribute` → folded into [max_value]
+- `disable_unit` → folded into [hide]
+- `additions` → renamed to [bar_stack]
 
 ### 🚀 New Features
 
@@ -80,6 +60,14 @@ hide:
 Display the bar as separate blocks — like battery cells or signal bars — with
 `bar_segments: 10`. Works in every orientation, with every effect and color
 mode.
+
+#### 📊 Bar stack: combine several entities in one bar
+
+`bar_stack` (formerly `additions`) combines several entities into one bar,
+with three modes (`stacked`, `proportional`, `net`), per-entity colors, and
+`center_zero` support for values that can go either way — switchable from
+the visual editor on the Card and the Badge (YAML only on the Tile
+Feature). Full details in the [bar_stack] reference.
 
 #### 🌀 Animated icons
 
@@ -176,7 +164,10 @@ Compatible with Home Assistant 2026.2+. Among the notable fixes:
 - Fixed: Badge icon and color no longer flicker during state changes.
 - Fixed: Trend arrows no longer get stuck on template cards.
 - Fixed: Watermarks are now placed correctly in `center_zero` and for
-  `number`/`counter` entities.  
+  `number`/`counter` entities.
+- Fixed: `center_zero` with no `min_value` set used to leave the negative half
+  with no range at all (nothing could ever show there). It now defaults
+  `min_value` to `-max_value` automatically.  
   ➡️ [Bug]: wrong watermark positions in center_zero mode #114 (@aremishevsky)
 - Fixed: Ripple effect on template cards.
   ➡️ [Bug]: Ripple effect for hover and tap animations doesn't work on the
@@ -196,3 +187,9 @@ Thanks to everyone who reported, tested and contributed! 🙏
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#supported-html
 [Theme Guide]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/theme.md
+[bar_stack]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_stack
+[max_value]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#max_value
+[hide]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#hide

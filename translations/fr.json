@@ -83,7 +83,8 @@
       "interpolate": "Interpoler les couleurs",
       "name_info": "Info nom personnalisée",
       "reverse": "Inverser le minuteur",
-      "additions": "Entités supplémentaires"
+      "bar_stack_mode": "Mode d'empilement",
+      "bar_stack": "Entités supplémentaires"
     },
     "option": {
       "theme": {
@@ -207,6 +208,11 @@
       },
       "max_value": {
         "attribute": "Attribut"
+      },
+      "bar_stack_mode": {
+        "stacked": "Empilé",
+        "proportional": "Proportionnel",
+        "net": "Net"
       }
     }
   }

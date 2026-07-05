@@ -83,7 +83,8 @@
       "interpolate": "Farben interpolieren",
       "name_info": "Zusatzinfo (Name)",
       "reverse": "Timer umkehren",
-      "additions": "Weitere Entitäten"
+      "bar_stack_mode": "Stapelmodus",
+      "bar_stack": "Weitere Entitäten"
     },
     "option": {
       "theme": {
@@ -207,6 +208,11 @@
       },
       "max_value": {
         "attribute": "Attribut"
+      },
+      "bar_stack_mode": {
+        "stacked": "Gestapelt",
+        "proportional": "Proportional",
+        "net": "Netto"
       }
     }
   }

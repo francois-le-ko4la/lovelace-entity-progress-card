@@ -35,7 +35,7 @@
       - [`state_content`](#state_content)
       - [`custom_info`](#custom_info)
       - [`name_info`](#name_info)
-      - [`additions`](#additions)
+      - [`bar_stack`](#bar_stack)
     - [Styling Options](#styling-options)
       - [`icon`](#icon)
       - [`color`](#color)
@@ -578,8 +578,11 @@ Defines the minimum value to be used when calculating the percentage.
 This allows the percentage to be relative to both a minimum (`min_value`, which
 represents 0%) and a maximum (`max_value`, which represents 100%).
 
-When `center_zero` is enabled, the default `min_value` is -100, offering a
-clearer and more intuitive display.
+When `center_zero` is enabled and `min_value` isn't set, it defaults to the
+negative of `max_value` instead of `0` — e.g. `-100` if `max_value` is also
+left at its default, or `-3000` if `max_value: 3000`. Without this, the
+negative half would have no range at all (`0` to `0`) and could never show
+anything. Set `min_value` explicitly (even to `0`) to override this.
 
 `min_value` accepts three forms — like `max_value`, each mode uses its own
 explicit key, so there is nothing to guess from the value's shape:
@@ -872,27 +875,187 @@ name_info: >-
 
 [🔼 Back to top]
 
-#### `additions`
+#### `bar_stack`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 [![Feature OK][Feature-OK]](#compatibility)
 
-> **`additions`** [List] _(optional)_
+> **`bar_stack`** [Map] _(optional)_
 
-Displays multiple entities within the same card. Each entry follows the same
-structure (`entity`/`attribute`) as a primary entity. Used to show combined
-values and gradients.
+Combines several entities into the same progress bar. Available in the
+visual editor via a dedicated row editor (entity/attribute/color/subtract
+per row) and a Stacked/Proportional/Net mode switch.
 
-_Example_:
+| Key        | Type                                  | Default   | Description                                                                                                    |
+| ---------- | -------------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------- |
+| `mode`     | `stacked` / `proportional` / `net`     | `stacked` | See below                                                                                                       |
+| `entities` | List                                    | —         | Each entry: `entity` _(required)_, `attribute` _(optional)_, `color` _(optional, falls back to an automatic shade of the main entity's own color; ignored in `net` mode)_, `subtract` _(optional boolean — see below)_ |
+
+- **`stacked`**: each entity keeps its own literal width on the
+  `min_value`/`max_value` scale, placed one after another (see *Order*
+  below). Space left over past the last entity stays empty — useful for a
+  breakdown that doesn't necessarily add up to the full range (e.g. a home
+  battery's charged / reserved capacity, with the remainder implicitly
+  "free").
+- **`proportional`**: the main entity and every `entities` value are added
+  together to drive the bar, and each segment's width is its *share* of
+  that combined total — the bar is always filled edge-to-edge, like a
+  "100% stacked" chart in a spreadsheet. Useful for combining several
+  sensors toward one shared target (e.g. several circuits against a
+  breaker limit).
+- **`net`**: the main entity and every `entities` value are added into a
+  single algebraic total, rendered as one plain segment (no per-entity
+  breakdown, no per-entity `color`) — the normal bar color/theme applies as
+  if `bar_stack` weren't there at all. Combined with `center_zero`, this is
+  the way to show a balance that can go either way — e.g. grid consumption
+  minus solar production, positive when you're drawing from the grid,
+  negative when you're exporting surplus.
+
+`subtract: true` on an entity means "this value counts against the total
+instead of with it" — what that looks like depends on the mode:
+
+- In **`net`**, it's subtracted from the algebraic total (see the example
+  below).
+- In **`stacked`/`proportional`** *combined with `center_zero`*, entities
+  split into two independent arms instead of a single breakdown: every
+  entity goes to the *positive* arm (growing right from the zero point) by
+  default — except the main entity, which is always positive — and to the
+  *negative* arm (growing left) if it's marked `subtract` **or its own raw
+  value is already negative** (see below). Both arms render and fill
+  independently — e.g. a consumption arm and a production arm both visible
+  at once, each showing its own true length, rather than one value
+  canceling the other out.
+- Without `center_zero`, `subtract` has no effect on `stacked`/`proportional`
+  (there's only one direction to place segments in) — every entity
+  contributes its magnitude regardless of sign.
+
+> [!IMPORTANT]
+>
+> `subtract` always makes a value *count negatively* — it never blindly
+> flips whatever sign the sensor already reports. An entity that already
+> reports a negative number (e.g. a Linky/DSMR-style signed grid sensor, see
+> the note below) counts as negative on its own, with or without
+> `subtract: true`; marking it `subtract` too would not double-negate it
+> back to positive. This also means a plain, always-positive sensor never
+> needs `subtract` to be read as negative — only a value that should be
+> negative but happens to come from an always-positive sensor does.
+
+> [!NOTE]
+>
+> `stacked`/`proportional` only look different once the entities overflow
+> the bar's range (sum of values > `max_value`, or > half-range per arm
+> when centered): `stacked` keeps every entity's true width and truncates
+> whoever doesn't fit, so you can see at a glance that something doesn't
+> fit; `proportional` shrinks everyone by the same ratio so the bar (or
+> that arm) always reads as "100%", but two entities that individually
+> overflow can look identical to two that fit exactly. Below that overflow
+> point, both modes render the same widths. `net` doesn't have this
+> ambiguity, since it never renders more than one segment.
+
+**Order**: the main entity is always first, followed by `entities` in list
+order — the same rule for both `stacked` and `proportional`. The one
+exception: without `center_zero`, an entity marked `subtract` renders before
+the main entity instead of after, as a visual sign that something atypical
+is configured (`subtract` otherwise has no visible effect in that case —
+see above). This only looks at the `subtract` flag, not at whether the
+entity's own live value happens to be negative — the two are otherwise
+treated the same (see the `subtract` note above), but this particular rule
+is decided before any entity state is available, so only the flag can be
+checked.
+
+**Color**: the main entity always renders in its own negotiated color,
+never auto-shaded, regardless of where it falls in that order. Only
+`entities` items without an explicit `color` are auto-shaded (darkest to
+full color), and that shading is positioned only among themselves — the
+main entity never takes up a "slot" in it.
+
+**Label**: with `center_zero`, the displayed value switches to the
+algebraic total (positive entities minus negative ones — the same number
+`net` mode always shows) instead of the plain sum, since a single flat
+percentage stops meaning anything once the bar itself is showing two
+independent, possibly-opposing arms. Without `center_zero`, the displayed
+value stays the plain sum, matching what the bar visually adds up to.
+
+_Example (`stacked`, home battery breakdown)_:
 
 ```yaml
 type: custom:entity-progress-card
-entity: sensor.solar_power
-additions:
-  - entity: sensor.battery_power
-  - entity: sensor.grid_power
-    attribute: current_value
+entity: sensor.battery_storage_soc # charged, e.g. 60
+bar_stack:
+  entities:
+    - entity: sensor.battery_storage_reserved # e.g. 20, locked
+      color: orange
 ```
+
+_Example (`proportional`, combined circuits)_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.circuit_a_power
+max_value: 3000
+bar_stack:
+  mode: proportional
+  entities:
+    - entity: sensor.circuit_b_power
+    - entity: sensor.circuit_c_power
+```
+
+_Example (`net`, grid balance centered on zero)_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.grid_consumption_power # always >= 0
+min_value: -3000
+max_value: 3000
+center_zero: true
+bar_stack:
+  mode: net
+  entities:
+    - entity: sensor.solar_production_power # always >= 0
+      subtract: true
+```
+
+> [!NOTE]
+>
+> There's no single Home Assistant-wide sign convention for grid power
+> sensors. Some integrations (e.g. Linky, DSMR/P1 smart meters) already
+> report a single signed value — positive while importing, negative while
+> exporting — in which case `net` isn't even needed: just point `entity` at
+> it directly with `center_zero`. `net` is for the common case of two
+> separate, always-positive sensors (consumption and production) that need
+> to be combined into that same signed balance.
+
+_Example (`stacked` + `center_zero`, consumption and production shown at once)_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.grid_consumption_power # always >= 0, positive arm
+min_value: -3000
+max_value: 3000
+center_zero: true
+bar_stack:
+  entities:
+    - entity: sensor.solar_production_power # always >= 0, negative arm
+      subtract: true
+      color: green
+```
+
+Unlike the `net` example above, this doesn't collapse both sensors into a
+single balance — it draws a consumption bar growing right and a production
+bar growing left, each at its own true length, so you can compare the two
+at a glance instead of only seeing their difference.
+
+> [!IMPORTANT]
+>
+> Prior to 1.6, this feature was a bare list under the `additions` key
+> (`additions: [{entity, attribute}]`). **This form is deprecated** (a
+> console warning is logged) but still works — it is automatically migrated
+> to `bar_stack: { mode: proportional, entities: [...] }`, which computes
+> the exact same values as before. The only visible difference is segment
+> *order*: `additions` always drew its entities before the main one,
+> whereas the migrated form now follows the same main-first order as
+> everything else (see *Order* above) — colors and proportions are
+> unaffected. Please update your YAML to the new form when convenient.
 
 ### Styling Options
 
@@ -2190,8 +2353,9 @@ _Example_:
 ```yaml
 type: custom:entity-progress-card
 entity: sensor.pv1_power
-additions:
-  - entity: sensor.pv2_power
+bar_stack:
+  entities:
+    - entity: sensor.pv2_power
 ····
 tap_action:
   action: more-info

@@ -83,7 +83,8 @@
       "interpolate": "রঙ ইন্টারপোলেশন",
       "name_info": "কাস্টম নাম তথ্য",
       "reverse": "টাইমার উল্টানো",
-      "additions": "অতিরিক্ত সত্তা"
+      "bar_stack_mode": "Stack mode",
+      "bar_stack": "অতিরিক্ত সত্তা"
     },
     "option": {
       "theme": {
@@ -207,6 +208,11 @@
       },
       "max_value": {
         "attribute": "Attribute"
+      },
+      "bar_stack_mode": {
+        "stacked": "Stacked",
+        "proportional": "Sum",
+        "net": "Net"
       }
     }
   }
