@@ -8,39 +8,26 @@ effortless styling. Everything below can be set up from the visual editor.
 
 #### 🧩 Put a progress bar inside a Tile card
 
-The card now works as a native **Tile feature**: add it to any Tile card and get
-a progress bar inside it — or anchor the bar to the top or bottom edge of the
-tile as a slim overlay.
-
-```yaml
-type: tile
-entity: sensor.cpu_percent
-features:
-  - type: custom:entity-progress-feature
-    entity: sensor.cpu_percent
-```
+The card now works as a native **Tile feature**: add it to any Tile card, or
+anchor it to the top/bottom edge as a slim overlay. See [Card types].
 
 ➡️ [Feature]: Adding the progress bar as a feature in a card #95 (@Gunth)
 
 #### 🖱️ Taps and gestures feel native
 
-Tap, hold and double-tap now use Home Assistant's own gesture system — they
-behave exactly like official cards on every device. Animations are noticeably
-smoother too, even on large dashboards.
+Tap, hold and double-tap now use Home Assistant's own gesture system — same
+behavior as official cards, on every device.
 
 #### 🎨 Style it from your theme
 
-Want a thicker bar? Rounder corners? Different colors? The card now exposes
-friendly `--epb-*` style variables you can set from your theme or via `card_mod`
-— no hacks needed. See the [Theme Guide].
+Friendly `--epb-*` style variables you can set from your theme or via
+`card_mod` — no hacks needed. See the [Theme Guide].
 
 #### 🌈 New bar coloring styles
 
-With a theme active, choose how the bar is painted (`bar_color_mode`):
-
-- `segment` — each color zone appears as a distinct block,
-- `rainbow` — a smooth gradient through all the zone colors,
-- or keep `auto` — the current look, nothing changes if you do nothing.
+With a theme active, choose how the bar is painted: distinct blocks
+(`segment`), a smooth gradient (`rainbow`), or keep the current look
+(`auto`). See [bar_color_mode].
 
 ### 🧘 Breaking Changes (Don't Panic)
 
@@ -53,61 +40,59 @@ whenever you feel like it.
 - `disable_unit` → folded into [hide]
 - `additions` → renamed to [bar_stack]
 
+Prefer not to wait? Open the editor and a **Migrate config** button rewrites
+your YAML for you. See [Deprecated Options].
+
 ### 🚀 New Features
 
 #### 🔋 Battery-style segmented bar
 
-Display the bar as separate blocks — like battery cells or signal bars — with
-`bar_segments: 10`. Works in every orientation, with every effect and color
-mode.
+Display the bar as separate blocks — like battery cells or signal bars. See
+[bar_segments].
 
 #### 📊 Bar stack: combine several entities in one bar
 
 `bar_stack` (formerly `additions`) combines several entities into one bar,
-with three modes (`stacked`, `proportional`, `net`), per-entity colors, and
-`center_zero` support for values that can go either way — switchable from
-the visual editor on the Card and the Badge (YAML only on the Tile
-Feature). Full details in the [bar_stack] reference.
+with three modes, per-entity colors, and `center_zero` support. See
+[bar_stack].
 
 #### 🌀 Animated icons
 
-Make the icon spin while the fan is running, or pulse while music plays:
-`icon_animation: spin` / `pulse`. The animation stops by itself when the entity
-is off, and respects your device's "reduce motion" setting.
+6 styles now available (`spin`, `pulse`, `bounce`, `shake`, `ping`,
+`reveal`), active-state only. See [icon_animation].
 
 #### 🚨 Get alerted at a glance
 
-Have the card call for attention when a value crosses a limit — a pulsing border
-or a tinted background, in the color of your choice:
-
-```yaml
-alert_when:
-  above: 90
-```
+Have the card call for attention when a value crosses a limit — a pulsing
+border or a tinted background, in the color of your choice. See
+[alert_when].
 
 #### 📉 Dynamic min & max
 
-The bar's range no longer has to be fixed numbers: min and max can each follow
-another entity or a template. Pick the mode with the new selector chips in the
-editor (Fixed value / Entity / Template).
+The bar's range no longer has to be fixed numbers: min and max can each
+follow another entity or a template. See [min_value] / [max_value].
 
 #### 🎯 Center the bar on any value
 
-`center_zero` can now center the bar on a nominal value other than 0 (say, 230
-V) and even display the deviation as a percentage.
+`center_zero` can now center the bar on a nominal value other than 0, and
+display the deviation as a percentage. See [center_zero].
 
 ➡️ [Feature]: Add a possibility to set a zero value #115 (@aremishevsky)
 
 #### 💧 Simpler watermarks
 
-Set your `low`/`high` thresholds directly in the sensor's own unit (°C, W, %…) —
-the card places them on the bar for you. Prefer a fixed position?
-`low_as: percent` / `high_as: percent` are there for that.
+Set `low`/`high` thresholds directly in the sensor's own unit, or follow a
+template like min/max. See [watermark].
+
+#### 📈 Logarithmic bar scale
+
+`bar_scale: log` maps the value to the bar's width on a log scale instead of
+linear, for sensors spanning several orders of magnitude. See [bar_scale].
 
 #### 🫥 Hide elements dynamically
 
-The `hide` option now also accepts a template, so parts of the card can appear
-and disappear based on conditions.
+`hide` now also accepts a template, so parts of the card can appear and
+disappear based on conditions. See [hide].
 
 ➡️ [Feature]: Allow dynamically hiding/showing the progress bar #112 (amaurylam)
 
@@ -187,9 +172,29 @@ Thanks to everyone who reported, tested and contributed! 🙏
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#supported-html
 [Theme Guide]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/theme.md
+[Deprecated Options]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/troubleshooting.md#deprecated-options
 [bar_stack]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_stack
 [max_value]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#max_value
 [hide]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#hide
+[Card types]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#standard
+[bar_color_mode]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_color_mode
+[bar_segments]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_segments
+[icon_animation]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#icon_animation
+[alert_when]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#alert_when
+[min_value]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#min_value
+[center_zero]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#center_zero
+[watermark]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#watermark
+[bar_scale]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_scale

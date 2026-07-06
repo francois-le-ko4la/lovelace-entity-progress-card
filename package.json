@@ -1,0 +1,40 @@
+{
+  "name": "lovelace-entity-progress-card",
+  "version": "1.0.0",
+  "description": "A modern Entity progress card for Home Assistant's Lovelace UI.",
+  "main": "entity-progress-card.js",
+  "private": true,
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "check": "node --check entity-progress-card.js",
+    "lint": "eslint entity-progress-card.js",
+    "i18n:validate": "node scripts/translations.js validate",
+    "i18n:sync": "node scripts/translations.js synchronize --to-js",
+    "validate": "npm run check && npm run lint && npm run i18n:validate"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/francois-le-ko4la/lovelace-entity-progress-card.git"
+  },
+  "keywords": [
+    "home-assistant",
+    "lovelace",
+    "custom-card",
+    "hacs"
+  ],
+  "author": "ko4la",
+  "license": "GPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues"
+  },
+  "homepage": "https://github.com/francois-le-ko4la/lovelace-entity-progress-card#readme",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.6.0",
+    "eslint-plugin-compat": "^7.0.2",
+    "eslint-plugin-sonarjs": "^4.1.0",
+    "globals": "^17.7.0"
+  }
+}

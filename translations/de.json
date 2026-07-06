@@ -39,6 +39,7 @@
       "bar_size": "Größe der Bar",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Balkenfarbmodus",
+      "bar_scale": "Balkenskala",
       "center_zero": "Null in der Mitte",
       "center_zero_value": "Zentrumswert",
       "center_zero_growth_percent": "Wachstumsprozentsatz",
@@ -71,6 +72,8 @@
       "unit": "Einheit",
       "min_value_mode": "Min value source",
       "max_value_mode": "Max value source",
+      "watermark_low_mode": "Low watermark source",
+      "watermark_high_mode": "High watermark source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -84,7 +87,8 @@
       "name_info": "Zusatzinfo (Name)",
       "reverse": "Timer umkehren",
       "bar_stack_mode": "Stapelmodus",
-      "bar_stack": "Weitere Entitäten"
+      "bar_stack": "Weitere Entitäten",
+      "migrate_config": "Konfiguration migrieren"
     },
     "option": {
       "theme": {
@@ -123,6 +127,10 @@
         "auto": "Automatisch",
         "segment": "Segmente",
         "rainbow": "Regenbogen"
+      },
+      "bar_scale": {
+        "linear": "Linear",
+        "log": "Logarithmisch"
       },
       "bar_effect": {
         "radius": "Abgerundete Ecken",
@@ -169,15 +177,17 @@
         "line_size": "Linienstärke",
         "disable_low": "Unteren Wert deaktivieren",
         "disable_high": "Oberen Wert deaktivieren",
-        "low_entity_toggle": "Entität für unteren Wert verwenden",
         "low_attribute": "Attribut",
-        "high_entity_toggle": "Entität für oberen Wert verwenden",
         "high_attribute": "Attribut"
       },
       "icon_animation": {
         "none": "Keine",
         "spin": "Drehen",
-        "pulse": "Pulsieren"
+        "pulse": "Pulsieren",
+        "bounce": "Hüpfen",
+        "shake": "Wackeln",
+        "ping": "Ping",
+        "reveal": "Einblenden"
       },
       "alert_when": {
         "above": "Alarm über",
@@ -195,6 +205,16 @@
         "jinja": "Vorlage"
       },
       "max_value_mode": {
+        "standard": "Fester Wert",
+        "entity": "Entität",
+        "jinja": "Vorlage"
+      },
+      "watermark_low_mode": {
+        "standard": "Fester Wert",
+        "entity": "Entität",
+        "jinja": "Vorlage"
+      },
+      "watermark_high_mode": {
         "standard": "Fester Wert",
         "entity": "Entität",
         "jinja": "Vorlage"

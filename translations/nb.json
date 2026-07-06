@@ -39,6 +39,7 @@
       "bar_size": "Bar størrelse",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Fargemodus",
+      "bar_scale": "Bar scale",
       "center_zero": "Null i midten",
       "center_zero_value": "Senterverdi",
       "center_zero_growth_percent": "Vekstprosent",
@@ -71,6 +72,8 @@
       "unit": "Enhet",
       "min_value_mode": "Min value source",
       "max_value_mode": "Max value source",
+      "watermark_low_mode": "Low watermark source",
+      "watermark_high_mode": "High watermark source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -84,7 +87,8 @@
       "name_info": "Egendefinert navneinfo",
       "reverse": "Omvendt tidtaker",
       "bar_stack_mode": "Stack mode",
-      "bar_stack": "Ekstra enheter"
+      "bar_stack": "Ekstra enheter",
+      "migrate_config": "Migrate config"
     },
     "option": {
       "bar_orientation": {
@@ -123,6 +127,10 @@
         "auto": "Auto",
         "segment": "Segmenter",
         "rainbow": "Regnbue"
+      },
+      "bar_scale": {
+        "linear": "Linear",
+        "log": "Logarithmic"
       },
       "bar_effect": {
         "radius": "Avrundede hjørner",
@@ -169,15 +177,17 @@
         "line_size": "Line size",
         "disable_low": "Disable low",
         "disable_high": "Disable high",
-        "low_entity_toggle": "Use entity as low watermark value",
         "low_attribute": "Attribute",
-        "high_entity_toggle": "Use entity as high watermark value",
         "high_attribute": "Attribute"
       },
       "icon_animation": {
         "none": "None",
         "spin": "Spin",
-        "pulse": "Pulse"
+        "pulse": "Pulse",
+        "bounce": "Bounce",
+        "shake": "Shake",
+        "ping": "Ping",
+        "reveal": "Reveal"
       },
       "alert_when": {
         "above": "Alert above",
@@ -195,6 +205,16 @@
         "jinja": "Template"
       },
       "max_value_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "watermark_low_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "watermark_high_mode": {
         "standard": "Fixed value",
         "entity": "Entity",
         "jinja": "Template"

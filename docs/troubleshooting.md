@@ -30,6 +30,8 @@ stays clean and stable. We handle two main categories of errors in the card:
    ![image](https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/errors.png)
    </details>
 
+<a id="deprecated-options"></a>
+
 ## ⚠️ Deprecated Options
 
 Over time, some configuration options have been deprecated in favor of more
@@ -53,9 +55,9 @@ In this context, we have two types of deprecated options:
 | ----------------------------- | -------------- | ---------------------------------------------------------- | ------------- | --------------------------------------------- |
 | `navigate_to`                | **Removed**    | Use `tap_action: navigate`                                 | `v1.2.0`      | Ignored, console warning                      |
 | `show_more_info`             | **Removed**    | Use `tap_action: more-info`                                 | `v1.2.0`      | Ignored, console warning                      |
-| `theme: 'battery'`           | **Deprecated** | Use `optimal_when_xxx`                                      | `v1.1.8-11`   | Still works, shows warning                    |
-| `theme: 'cpu'`               | **Deprecated** | Same as above                                               | `v1.1.8-11`   | Still works, shows warning                    |
-| `theme: 'memory'`            | **Deprecated** | Same as above                                               | `v1.1.8-11`   | Still works, shows warning                    |
+| `theme: 'battery'`           | **Deprecated** | Use `optimal_when_high`                                     | `v1.1.8-11`   | Still works, shows warning                    |
+| `theme: 'cpu'`               | **Deprecated** | Use `optimal_when_low`                                      | `v1.1.8-11`   | Still works, shows warning                    |
+| `theme: 'memory'`            | **Deprecated** | Use `optimal_when_low`                                      | `v1.1.8-11`   | Still works, shows warning                    |
 | `max_value: <entity id>`     | **Deprecated** | Use `max_value: { entity: <id>, attribute: <optional> }`    | `v1.6.0`      | Auto-migrated for the session, console warning |
 | `max_value_attribute`        | **Deprecated** | Fold into `max_value: { entity, attribute }`                | `v1.6.0`      | Auto-migrated for the session, console warning |
 | `disable_unit`               | **Deprecated** | Use `hide: ['unit', ...]`                                   | `v1.6.0`      | Auto-migrated for the session, console warning |
@@ -65,6 +67,25 @@ In this context, we have two types of deprecated options:
 <summary><strong>Show the screenshot (click to expand)</strong></summary>
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/deprecated.png" alt="deprecated" width="1000px"/>
 </details>
+
+### 🔄 How migration works
+
+You don't have to rewrite anything by hand:
+
+- **Deprecated** options (table above) keep working exactly as before — the
+  card understands them internally and applies the modern equivalent
+  automatically, whether or not you ever open the editor.
+- **Removed** options (`navigate_to`, `show_more_info`) have had no effect
+  for a long time already; migrating just cleans them up rather than
+  guessing a replacement for something that hasn't run in years.
+
+When you open the visual editor on a card that still uses a legacy option, a
+**Migrate config** button appears in the top-right corner. One click
+rewrites your YAML to the current syntax — the rendered card doesn't
+change, only how it's written.
+
+As with any edit: check that the card still looks right, and that the
+values it displays match what you expect, before saving the dashboard.
 
 ## 🐞 Troubleshooting
 

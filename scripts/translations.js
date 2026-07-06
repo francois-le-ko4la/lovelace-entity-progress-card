@@ -101,13 +101,18 @@ const readJsTranslations = () => {
   return vm.runInNewContext(`(${blockMatch[1]})`);
 };
 
+// Backslashes must be escaped before quotes (order matters), and literal newlines must
+// become \n: a translation value containing either would otherwise generate a corrupted
+// (or syntactically invalid) TRANSLATIONS block without any error at generation time.
+const jsString = (s) => `'${String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n').replace(/\r/g, '')}'`;
+
 const formatJS = (obj, indent = 0) => {
   const pad = '  '.repeat(indent);
   const pad1 = '  '.repeat(indent + 1);
   const entries = Object.entries(obj).map(([k, v]) => {
     const needsQuotes = !/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(k);
-    const key = needsQuotes ? `'${k.replace(/'/g, "\\'")}'` : k;
-    const val = v !== null && typeof v === 'object' ? formatJS(v, indent + 1) : `'${String(v).replace(/'/g, "\\'")}'`;
+    const key = needsQuotes ? jsString(k) : k;
+    const val = v !== null && typeof v === 'object' ? formatJS(v, indent + 1) : jsString(v);
     return `${pad1}${key}: ${val}`;
   });
   return `{\n${entries.join(',\n')}\n${pad}}`;
@@ -115,9 +120,10 @@ const formatJS = (obj, indent = 0) => {
 
 const writeJsTranslations = (translations) => {
   const src = fs.readFileSync(JS_FILE, 'utf8');
-  const updated = src.replace(JS_BLOCK_RE, `const TRANSLATIONS = ${formatJS(translations)};`);
-  if (src === updated) die('TRANSLATIONS block not found in JS file');
-  fs.writeFileSync(JS_FILE, updated);
+  // Presence is checked directly: comparing src to the replacement output conflated
+  // "block not found" with "block already up to date", making idempotent re-runs die.
+  if (!JS_BLOCK_RE.test(src)) die('TRANSLATIONS block not found in JS file');
+  fs.writeFileSync(JS_FILE, src.replace(JS_BLOCK_RE, `const TRANSLATIONS = ${formatJS(translations)};`));
 };
 
 /** JS source with the TRANSLATIONS block removed — for code-usage searches. */

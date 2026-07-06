@@ -39,6 +39,7 @@
       "bar_size": "Balkgrootte",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Balkkleurmodus",
+      "bar_scale": "Balkschaal",
       "center_zero": "Nul in het midden",
       "center_zero_value": "Centrumwaarde",
       "center_zero_growth_percent": "Groeipercentage",
@@ -71,6 +72,8 @@
       "unit": "Eenheid",
       "min_value_mode": "Min value source",
       "max_value_mode": "Max value source",
+      "watermark_low_mode": "Low watermark source",
+      "watermark_high_mode": "High watermark source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -84,7 +87,8 @@
       "name_info": "Aangepaste naaminfo",
       "reverse": "Timer omdraaien",
       "bar_stack_mode": "Stapelmodus",
-      "bar_stack": "Extra entiteiten"
+      "bar_stack": "Extra entiteiten",
+      "migrate_config": "Configuratie migreren"
     },
     "option": {
       "bar_orientation": {
@@ -123,6 +127,10 @@
         "auto": "Automatisch",
         "segment": "Segmenten",
         "rainbow": "Regenboog"
+      },
+      "bar_scale": {
+        "linear": "Lineair",
+        "log": "Logaritmisch"
       },
       "bar_effect": {
         "radius": "Afgeronde hoeken",
@@ -169,15 +177,17 @@
         "line_size": "Lijndikte",
         "disable_low": "Lage waarde uitschakelen",
         "disable_high": "Hoge waarde uitschakelen",
-        "low_entity_toggle": "Entiteit gebruiken voor lage waarde",
         "low_attribute": "Attribuut",
-        "high_entity_toggle": "Entiteit gebruiken voor hoge waarde",
         "high_attribute": "Attribuut"
       },
       "icon_animation": {
         "none": "Geen",
         "spin": "Draaien",
-        "pulse": "Pulseren"
+        "pulse": "Pulseren",
+        "bounce": "Stuiteren",
+        "shake": "Trillen",
+        "ping": "Ping",
+        "reveal": "Onthullen"
       },
       "alert_when": {
         "above": "Alarm boven",
@@ -195,6 +205,16 @@
         "jinja": "Sjabloon"
       },
       "max_value_mode": {
+        "standard": "Vaste waarde",
+        "entity": "Entiteit",
+        "jinja": "Sjabloon"
+      },
+      "watermark_low_mode": {
+        "standard": "Vaste waarde",
+        "entity": "Entiteit",
+        "jinja": "Sjabloon"
+      },
+      "watermark_high_mode": {
         "standard": "Vaste waarde",
         "entity": "Entiteit",
         "jinja": "Sjabloon"

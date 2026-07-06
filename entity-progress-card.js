@@ -16,7 +16,6 @@
  *   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- * @version 1.5.3-dev
  *
  */
 
@@ -658,6 +657,7 @@ const TRANSLATIONS = {
         bar_size: 'حجم الشريط',
         bar_segments: 'Bar segments',
         bar_color_mode: 'وضع اللون',
+        bar_scale: 'Bar scale',
         center_zero: 'صفر في الوسط',
         center_zero_value: 'قيمة المركز',
         center_zero_growth_percent: 'نسبة النمو',
@@ -690,6 +690,8 @@ const TRANSLATIONS = {
         unit: 'الوحدة',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -703,7 +705,8 @@ const TRANSLATIONS = {
         name_info: 'معلومات إضافية (الاسم)',
         reverse: 'عكس المؤقت',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'كيانات إضافية'
+        bar_stack: 'كيانات إضافية',
+        migrate_config: 'Migrate config'
       },
       option: {
         theme: {
@@ -742,6 +745,10 @@ const TRANSLATIONS = {
           auto: 'تلقائي',
           segment: 'مقطعي',
           rainbow: 'قوس قزح'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'حواف دائرية',
@@ -788,15 +795,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -814,6 +823,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -877,6 +896,7 @@ const TRANSLATIONS = {
         bar_size: 'বারের আকার',
         bar_segments: 'Bar segments',
         bar_color_mode: 'রঙের মোড',
+        bar_scale: 'Bar scale',
         center_zero: 'মাঝে শূন্য',
         center_zero_value: 'কেন্দ্রীয় মান',
         center_zero_growth_percent: 'প্রবৃদ্ধির শতাংশ',
@@ -909,6 +929,8 @@ const TRANSLATIONS = {
         unit: 'একক',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -922,7 +944,8 @@ const TRANSLATIONS = {
         name_info: 'কাস্টম নাম তথ্য',
         reverse: 'টাইমার উল্টানো',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'অতিরিক্ত সত্তা'
+        bar_stack: 'অতিরিক্ত সত্তা',
+        migrate_config: 'Migrate config'
       },
       option: {
         theme: {
@@ -961,6 +984,10 @@ const TRANSLATIONS = {
           auto: 'স্বয়ংক্রিয়',
           segment: 'বিভাগ',
           rainbow: 'রেইনবো'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'বৃত্তাকার কোণ',
@@ -1007,15 +1034,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -1033,6 +1062,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -1096,6 +1135,7 @@ const TRANSLATIONS = {
         bar_size: 'Mida de la barra',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Mode de color',
+        bar_scale: 'Bar scale',
         center_zero: 'Zero al centre',
         center_zero_value: 'Valor de centratge',
         center_zero_growth_percent: 'Percentatge de creixement',
@@ -1128,6 +1168,8 @@ const TRANSLATIONS = {
         unit: 'Unitat',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -1141,7 +1183,8 @@ const TRANSLATIONS = {
         name_info: 'Informació addicional (nom)',
         reverse: 'Temporitzador invers',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'Entitats addicionals'
+        bar_stack: 'Entitats addicionals',
+        migrate_config: 'Migrate config'
       },
       option: {
         theme: {
@@ -1180,6 +1223,10 @@ const TRANSLATIONS = {
           auto: 'Automàtic',
           segment: 'Segments',
           rainbow: 'Arc de Sant Martí'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Cantonades arrodonides',
@@ -1226,15 +1273,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -1252,6 +1301,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -1315,6 +1374,7 @@ const TRANSLATIONS = {
         bar_size: 'Velikost lišty',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Barevný režim',
+        bar_scale: 'Bar scale',
         center_zero: 'Nula uprostřed',
         center_zero_value: 'Hodnota středu',
         center_zero_growth_percent: 'Procento růstu',
@@ -1347,6 +1407,8 @@ const TRANSLATIONS = {
         unit: 'Jednotka',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -1360,7 +1422,8 @@ const TRANSLATIONS = {
         name_info: 'Vlastní info názvu',
         reverse: 'Obrátit časovač',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'Další entity'
+        bar_stack: 'Další entity',
+        migrate_config: 'Migrate config'
       },
       option: {
         theme: {
@@ -1399,6 +1462,10 @@ const TRANSLATIONS = {
           auto: 'Automaticky',
           segment: 'Segmenty',
           rainbow: 'Duha'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Zakulacené rohy',
@@ -1445,15 +1512,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -1471,6 +1540,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -1534,6 +1613,7 @@ const TRANSLATIONS = {
         bar_size: 'Bar størrelse',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Farvetilstand',
+        bar_scale: 'Bar scale',
         center_zero: 'Center nul',
         center_zero_value: 'Centerværdi',
         center_zero_growth_percent: 'Vækstprocent',
@@ -1566,6 +1646,8 @@ const TRANSLATIONS = {
         unit: 'Enhed',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -1579,7 +1661,8 @@ const TRANSLATIONS = {
         name_info: 'Tilpasset navneinfo',
         reverse: 'Omvendt timer',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'Ekstra entiteter'
+        bar_stack: 'Ekstra entiteter',
+        migrate_config: 'Migrate config'
       },
       option: {
         theme: {
@@ -1618,6 +1701,10 @@ const TRANSLATIONS = {
           auto: 'Auto',
           segment: 'Segmenter',
           rainbow: 'Regnbue'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Afrundede hjørner',
@@ -1664,15 +1751,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -1690,6 +1779,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -1753,6 +1852,7 @@ const TRANSLATIONS = {
         bar_size: 'Größe der Bar',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Balkenfarbmodus',
+        bar_scale: 'Balkenskala',
         center_zero: 'Null in der Mitte',
         center_zero_value: 'Zentrumswert',
         center_zero_growth_percent: 'Wachstumsprozentsatz',
@@ -1785,6 +1885,8 @@ const TRANSLATIONS = {
         unit: 'Einheit',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -1798,7 +1900,8 @@ const TRANSLATIONS = {
         name_info: 'Zusatzinfo (Name)',
         reverse: 'Timer umkehren',
         bar_stack_mode: 'Stapelmodus',
-        bar_stack: 'Weitere Entitäten'
+        bar_stack: 'Weitere Entitäten',
+        migrate_config: 'Konfiguration migrieren'
       },
       option: {
         theme: {
@@ -1837,6 +1940,10 @@ const TRANSLATIONS = {
           auto: 'Automatisch',
           segment: 'Segmente',
           rainbow: 'Regenbogen'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmisch'
         },
         bar_effect: {
           radius: 'Abgerundete Ecken',
@@ -1883,15 +1990,17 @@ const TRANSLATIONS = {
           line_size: 'Linienstärke',
           disable_low: 'Unteren Wert deaktivieren',
           disable_high: 'Oberen Wert deaktivieren',
-          low_entity_toggle: 'Entität für unteren Wert verwenden',
           low_attribute: 'Attribut',
-          high_entity_toggle: 'Entität für oberen Wert verwenden',
           high_attribute: 'Attribut'
         },
         icon_animation: {
           none: 'Keine',
           spin: 'Drehen',
-          pulse: 'Pulsieren'
+          pulse: 'Pulsieren',
+          bounce: 'Hüpfen',
+          shake: 'Wackeln',
+          ping: 'Ping',
+          reveal: 'Einblenden'
         },
         alert_when: {
           above: 'Alarm über',
@@ -1909,6 +2018,16 @@ const TRANSLATIONS = {
           jinja: 'Vorlage'
         },
         max_value_mode: {
+          standard: 'Fester Wert',
+          entity: 'Entität',
+          jinja: 'Vorlage'
+        },
+        watermark_low_mode: {
+          standard: 'Fester Wert',
+          entity: 'Entität',
+          jinja: 'Vorlage'
+        },
+        watermark_high_mode: {
           standard: 'Fester Wert',
           entity: 'Entität',
           jinja: 'Vorlage'
@@ -1972,6 +2091,7 @@ const TRANSLATIONS = {
         bar_size: 'Μέγεθος γραμμής',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Λειτουργία χρώματος',
+        bar_scale: 'Bar scale',
         center_zero: 'Μηδέν στο κέντρο',
         center_zero_value: 'Τιμή κέντρου',
         center_zero_growth_percent: 'Ποσοστό μεταβολής',
@@ -2004,6 +2124,8 @@ const TRANSLATIONS = {
         unit: 'Μονάδα',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -2017,7 +2139,8 @@ const TRANSLATIONS = {
         name_info: 'Προσαρμοσμένη πληροφορία ονόματος',
         reverse: 'Αντίστροφο χρονόμετρο',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'Πρόσθετες οντότητες'
+        bar_stack: 'Πρόσθετες οντότητες',
+        migrate_config: 'Migrate config'
       },
       option: {
         theme: {
@@ -2056,6 +2179,10 @@ const TRANSLATIONS = {
           auto: 'Αυτόματο',
           segment: 'Τμήματα',
           rainbow: 'Ουράνιο τόξο'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Στρογγυλεμένες γωνίες',
@@ -2102,15 +2229,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -2128,6 +2257,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -2191,6 +2330,7 @@ const TRANSLATIONS = {
         bar_size: 'Bar size',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Bar color mode',
+        bar_scale: 'Bar scale',
         center_zero: 'Zero at center',
         center_zero_value: 'Center value',
         center_zero_growth_percent: 'Growth percentage',
@@ -2223,6 +2363,8 @@ const TRANSLATIONS = {
         unit: 'Unit',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -2236,7 +2378,8 @@ const TRANSLATIONS = {
         name_info: 'Custom name info',
         reverse: 'Reverse timer',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'Additional entities'
+        bar_stack: 'Additional entities',
+        migrate_config: 'Migrate config'
       },
       option: {
         theme: {
@@ -2275,6 +2418,10 @@ const TRANSLATIONS = {
           auto: 'Auto',
           segment: 'Segment',
           rainbow: 'Rainbow'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Rounded corners',
@@ -2321,15 +2468,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -2347,6 +2496,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -2410,6 +2569,7 @@ const TRANSLATIONS = {
         bar_size: 'Tamaño de la barra',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Modo de color',
+        bar_scale: 'Bar scale',
         center_zero: 'Cero centrado',
         center_zero_value: 'Valor de centrado',
         center_zero_growth_percent: 'Porcentaje de crecimiento',
@@ -2442,6 +2602,8 @@ const TRANSLATIONS = {
         unit: 'Unidad',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -2455,7 +2617,8 @@ const TRANSLATIONS = {
         name_info: 'Info de nombre personalizada',
         reverse: 'Temporizador inverso',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'Entidades adicionales'
+        bar_stack: 'Entidades adicionales',
+        migrate_config: 'Migrate config'
       },
       option: {
         theme: {
@@ -2494,6 +2657,10 @@ const TRANSLATIONS = {
           auto: 'Auto',
           segment: 'Segmentos',
           rainbow: 'Arcoíris'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Esquinas redondeadas',
@@ -2540,15 +2707,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -2566,6 +2735,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -2629,6 +2808,7 @@ const TRANSLATIONS = {
         bar_size: 'Tamaño de la barra',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Modo de color de la barra',
+        bar_scale: 'Escala de la barra',
         center_zero: 'Cero en el centro',
         center_zero_value: 'Valor de centrado',
         center_zero_growth_percent: 'Porcentaje de crecimiento',
@@ -2661,6 +2841,8 @@ const TRANSLATIONS = {
         unit: 'Unidad',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -2674,7 +2856,8 @@ const TRANSLATIONS = {
         name_info: 'Info de nombre personalizada',
         reverse: 'Temporizador inverso',
         bar_stack_mode: 'Modo de apilado',
-        bar_stack: 'Entidades adicionales'
+        bar_stack: 'Entidades adicionales',
+        migrate_config: 'Migrar configuración'
       },
       option: {
         theme: {
@@ -2713,6 +2896,10 @@ const TRANSLATIONS = {
           auto: 'Auto',
           segment: 'Segmentos',
           rainbow: 'Arcoíris'
+        },
+        bar_scale: {
+          linear: 'Lineal',
+          log: 'Logarítmica'
         },
         bar_effect: {
           radius: 'Esquinas redondeadas',
@@ -2759,15 +2946,17 @@ const TRANSLATIONS = {
           line_size: 'Grosor de línea',
           disable_low: 'Desactivar umbral bajo',
           disable_high: 'Desactivar umbral alto',
-          low_entity_toggle: 'Usar una entidad para el umbral bajo',
           low_attribute: 'Atributo',
-          high_entity_toggle: 'Usar una entidad para el umbral alto',
           high_attribute: 'Atributo'
         },
         icon_animation: {
           none: 'Ninguna',
           spin: 'Girar',
-          pulse: 'Pulso'
+          pulse: 'Pulso',
+          bounce: 'Rebote',
+          shake: 'Vibración',
+          ping: 'Ping',
+          reveal: 'Revelar'
         },
         alert_when: {
           above: 'Alerta por encima de',
@@ -2785,6 +2974,16 @@ const TRANSLATIONS = {
           jinja: 'Plantilla'
         },
         max_value_mode: {
+          standard: 'Valor fijo',
+          entity: 'Entidad',
+          jinja: 'Plantilla'
+        },
+        watermark_low_mode: {
+          standard: 'Valor fijo',
+          entity: 'Entidad',
+          jinja: 'Plantilla'
+        },
+        watermark_high_mode: {
           standard: 'Valor fijo',
           entity: 'Entidad',
           jinja: 'Plantilla'
@@ -2848,6 +3047,7 @@ const TRANSLATIONS = {
         bar_size: 'Riba suurus',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Värvirežiim',
+        bar_scale: 'Bar scale',
         center_zero: 'Null keskel',
         center_zero_value: 'Keskväärtus',
         center_zero_growth_percent: 'Kasvuprotsent',
@@ -2880,6 +3080,8 @@ const TRANSLATIONS = {
         unit: 'Ühik',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -2893,7 +3095,8 @@ const TRANSLATIONS = {
         name_info: 'Kohandatud nime teave',
         reverse: 'Pööratud taimer',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'Täiendavad üksused'
+        bar_stack: 'Täiendavad üksused',
+        migrate_config: 'Migrate config'
       },
       option: {
         theme: {
@@ -2932,6 +3135,10 @@ const TRANSLATIONS = {
           auto: 'Automaatne',
           segment: 'Segmendid',
           rainbow: 'Vikerkaar'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Ümarad nurgad',
@@ -2978,15 +3185,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -3004,6 +3213,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -3067,6 +3286,7 @@ const TRANSLATIONS = {
         bar_size: 'Palkin koko',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Väritila',
+        bar_scale: 'Bar scale',
         center_zero: 'Nolla keskellä',
         center_zero_value: 'Keskiarvo',
         center_zero_growth_percent: 'Kasvuprosentti',
@@ -3099,6 +3319,8 @@ const TRANSLATIONS = {
         unit: 'Yksikkö',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -3112,7 +3334,8 @@ const TRANSLATIONS = {
         name_info: 'Mukautettu nimitieto',
         reverse: 'Käänteinen ajastin',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'Lisäentiteetit'
+        bar_stack: 'Lisäentiteetit',
+        migrate_config: 'Migrate config'
       },
       option: {
         theme: {
@@ -3151,6 +3374,10 @@ const TRANSLATIONS = {
           auto: 'Automaattinen',
           segment: 'Segmentit',
           rainbow: 'Sateenkaari'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Pyöristetyt kulmat',
@@ -3197,15 +3424,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -3223,6 +3452,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -3286,6 +3525,7 @@ const TRANSLATIONS = {
         bar_size: 'Taille de la barre',
         bar_segments: 'Segments de barre',
         bar_color_mode: 'Mode de couleur de la barre',
+        bar_scale: 'Échelle de la barre',
         center_zero: 'Zéro au centre',
         center_zero_value: 'Valeur de centrage',
         center_zero_growth_percent: 'Pourcentage de croissance',
@@ -3318,6 +3558,8 @@ const TRANSLATIONS = {
         unit: 'Unité',
         min_value_mode: 'Source de la valeur min',
         max_value_mode: 'Source de la valeur max',
+        watermark_low_mode: 'Source du seuil bas',
+        watermark_high_mode: 'Source du seuil haut',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -3331,7 +3573,8 @@ const TRANSLATIONS = {
         name_info: 'Info nom personnalisée',
         reverse: 'Inverser le minuteur',
         bar_stack_mode: 'Mode d\'empilement',
-        bar_stack: 'Entités supplémentaires'
+        bar_stack: 'Entités supplémentaires',
+        migrate_config: 'Migrer la config'
       },
       option: {
         theme: {
@@ -3370,6 +3613,10 @@ const TRANSLATIONS = {
           auto: 'Auto',
           segment: 'Segmenté',
           rainbow: 'Arc-en-ciel'
+        },
+        bar_scale: {
+          linear: 'Linéaire',
+          log: 'Logarithmique'
         },
         bar_effect: {
           radius: 'Coins arrondis',
@@ -3416,15 +3663,17 @@ const TRANSLATIONS = {
           line_size: 'Épaisseur de ligne',
           disable_low: 'Désactiver le seuil bas',
           disable_high: 'Désactiver le seuil haut',
-          low_entity_toggle: 'Utiliser une entité pour le seuil bas',
           low_attribute: 'Attribut',
-          high_entity_toggle: 'Utiliser une entité pour le seuil haut',
           high_attribute: 'Attribut'
         },
         icon_animation: {
           none: 'Aucune',
           spin: 'Rotation',
-          pulse: 'Pulsation'
+          pulse: 'Pulsation',
+          bounce: 'Rebond',
+          shake: 'Secousse',
+          ping: 'Ping',
+          reveal: 'Apparition'
         },
         alert_when: {
           above: 'Alerte au-dessus de',
@@ -3442,6 +3691,16 @@ const TRANSLATIONS = {
           jinja: 'Modèle'
         },
         max_value_mode: {
+          standard: 'Valeur fixe',
+          entity: 'Entité',
+          jinja: 'Modèle'
+        },
+        watermark_low_mode: {
+          standard: 'Valeur fixe',
+          entity: 'Entité',
+          jinja: 'Modèle'
+        },
+        watermark_high_mode: {
           standard: 'Valeur fixe',
           entity: 'Entité',
           jinja: 'Modèle'
@@ -3505,6 +3764,7 @@ const TRANSLATIONS = {
         bar_size: 'बार का आकार',
         bar_segments: 'Bar segments',
         bar_color_mode: 'रंग मोड',
+        bar_scale: 'Bar scale',
         center_zero: 'शून्य केंद्र में',
         center_zero_value: 'केंद्र मान',
         center_zero_growth_percent: 'वृद्धि प्रतिशत',
@@ -3537,6 +3797,8 @@ const TRANSLATIONS = {
         unit: 'इकाई',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -3550,7 +3812,8 @@ const TRANSLATIONS = {
         name_info: 'कस्टम नाम जानकारी',
         reverse: 'टाइमर उलटें',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'अतिरिक्त एंटिटी'
+        bar_stack: 'अतिरिक्त एंटिटी',
+        migrate_config: 'Migrate config'
       },
       option: {
         bar_orientation: {
@@ -3589,6 +3852,10 @@ const TRANSLATIONS = {
           auto: 'स्वचालित',
           segment: 'खंड',
           rainbow: 'इंद्रधनुष'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'गोल कोने',
@@ -3635,15 +3902,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -3661,6 +3930,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -3724,6 +4003,7 @@ const TRANSLATIONS = {
         bar_size: 'Veličina trake',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Način boje',
+        bar_scale: 'Bar scale',
         center_zero: 'Nula u sredini',
         center_zero_value: 'Vrijednost sredine',
         center_zero_growth_percent: 'Postotak rasta',
@@ -3756,6 +4036,8 @@ const TRANSLATIONS = {
         unit: 'Jedinica',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -3769,7 +4051,8 @@ const TRANSLATIONS = {
         name_info: 'Prilagođena informacija naziva',
         reverse: 'Obrnuti tajmer',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'Dodatni entiteti'
+        bar_stack: 'Dodatni entiteti',
+        migrate_config: 'Migrate config'
       },
       option: {
         bar_orientation: {
@@ -3808,6 +4091,10 @@ const TRANSLATIONS = {
           auto: 'Automatski',
           segment: 'Segmenti',
           rainbow: 'Duga'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Zaobljeni uglovi',
@@ -3854,15 +4141,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -3880,6 +4169,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -3943,6 +4242,7 @@ const TRANSLATIONS = {
         bar_size: 'Sáv mérete',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Szín mód',
+        bar_scale: 'Bar scale',
         center_zero: 'Nulla középen',
         center_zero_value: 'Középérték',
         center_zero_growth_percent: 'Növekedési százalék',
@@ -3975,6 +4275,8 @@ const TRANSLATIONS = {
         unit: 'Mértékegység',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -3988,7 +4290,8 @@ const TRANSLATIONS = {
         name_info: 'Egyéni névinfo',
         reverse: 'Fordított időzítő',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'További entitások'
+        bar_stack: 'További entitások',
+        migrate_config: 'Migrate config'
       },
       option: {
         theme: {
@@ -4027,6 +4330,10 @@ const TRANSLATIONS = {
           auto: 'Automatikus',
           segment: 'Szegmens',
           rainbow: 'Szivárvány'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Lekerekített sarkok',
@@ -4073,15 +4380,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -4099,6 +4408,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -4162,6 +4481,7 @@ const TRANSLATIONS = {
         bar_size: 'Ukuran bar',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Mode warna',
+        bar_scale: 'Bar scale',
         center_zero: 'Nol di tengah',
         center_zero_value: 'Nilai tengah',
         center_zero_growth_percent: 'Persentase pertumbuhan',
@@ -4194,6 +4514,8 @@ const TRANSLATIONS = {
         unit: 'Unit',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -4207,7 +4529,8 @@ const TRANSLATIONS = {
         name_info: 'Info nama kustom',
         reverse: 'Timer terbalik',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'Entitas tambahan'
+        bar_stack: 'Entitas tambahan',
+        migrate_config: 'Migrate config'
       },
       option: {
         bar_orientation: {
@@ -4246,6 +4569,10 @@ const TRANSLATIONS = {
           auto: 'Otomatis',
           segment: 'Segmen',
           rainbow: 'Pelangi'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Sudut membulat',
@@ -4292,15 +4619,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -4318,6 +4647,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -4381,6 +4720,7 @@ const TRANSLATIONS = {
         bar_size: 'Dimensione della barra',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Modalità colore barra',
+        bar_scale: 'Scala della barra',
         center_zero: 'Zero al centro',
         center_zero_value: 'Valore centrale',
         center_zero_growth_percent: 'Percentuale di crescita',
@@ -4413,6 +4753,8 @@ const TRANSLATIONS = {
         unit: 'Unità',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -4426,7 +4768,8 @@ const TRANSLATIONS = {
         name_info: 'Info nome personalizzata',
         reverse: 'Timer inverso',
         bar_stack_mode: 'Modalità di impilamento',
-        bar_stack: 'Entità aggiuntive'
+        bar_stack: 'Entità aggiuntive',
+        migrate_config: 'Migra configurazione'
       },
       option: {
         bar_orientation: {
@@ -4465,6 +4808,10 @@ const TRANSLATIONS = {
           auto: 'Automatico',
           segment: 'Segmenti',
           rainbow: 'Arcobaleno'
+        },
+        bar_scale: {
+          linear: 'Lineare',
+          log: 'Logaritmica'
         },
         bar_effect: {
           radius: 'Angoli arrotondati',
@@ -4511,15 +4858,17 @@ const TRANSLATIONS = {
           line_size: 'Spessore linea',
           disable_low: 'Disattiva soglia bassa',
           disable_high: 'Disattiva soglia alta',
-          low_entity_toggle: 'Usa un\'entità per la soglia bassa',
           low_attribute: 'Attributo',
-          high_entity_toggle: 'Usa un\'entità per la soglia alta',
           high_attribute: 'Attributo'
         },
         icon_animation: {
           none: 'Nessuna',
           spin: 'Rotazione',
-          pulse: 'Pulsazione'
+          pulse: 'Pulsazione',
+          bounce: 'Rimbalzo',
+          shake: 'Vibrazione',
+          ping: 'Ping',
+          reveal: 'Comparsa'
         },
         alert_when: {
           above: 'Allerta sopra',
@@ -4537,6 +4886,16 @@ const TRANSLATIONS = {
           jinja: 'Modello'
         },
         max_value_mode: {
+          standard: 'Valore fisso',
+          entity: 'Entità',
+          jinja: 'Modello'
+        },
+        watermark_low_mode: {
+          standard: 'Valore fisso',
+          entity: 'Entità',
+          jinja: 'Modello'
+        },
+        watermark_high_mode: {
           standard: 'Valore fisso',
           entity: 'Entità',
           jinja: 'Modello'
@@ -4600,6 +4959,7 @@ const TRANSLATIONS = {
         bar_size: 'バーサイズ',
         bar_segments: 'Bar segments',
         bar_color_mode: 'カラーモード',
+        bar_scale: 'Bar scale',
         center_zero: 'ゼロを中央に',
         center_zero_value: '中心値',
         center_zero_growth_percent: '成長率',
@@ -4632,6 +4992,8 @@ const TRANSLATIONS = {
         unit: '単位',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -4645,7 +5007,8 @@ const TRANSLATIONS = {
         name_info: 'カスタム名前情報',
         reverse: 'タイマーを逆にする',
         bar_stack_mode: 'Stack mode',
-        bar_stack: '追加エンティティ'
+        bar_stack: '追加エンティティ',
+        migrate_config: 'Migrate config'
       },
       option: {
         bar_orientation: {
@@ -4684,6 +5047,10 @@ const TRANSLATIONS = {
           auto: '自動',
           segment: 'セグメント',
           rainbow: 'レインボー'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: '角丸',
@@ -4730,15 +5097,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -4756,6 +5125,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -4819,6 +5198,7 @@ const TRANSLATIONS = {
         bar_size: '바 크기',
         bar_segments: 'Bar segments',
         bar_color_mode: '색상 모드',
+        bar_scale: 'Bar scale',
         center_zero: '중앙에 영점',
         center_zero_value: '중앙값',
         center_zero_growth_percent: '성장률',
@@ -4851,6 +5231,8 @@ const TRANSLATIONS = {
         unit: '단위',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -4864,7 +5246,8 @@ const TRANSLATIONS = {
         name_info: '사용자 정의 이름 정보',
         reverse: '타이머 역방향',
         bar_stack_mode: 'Stack mode',
-        bar_stack: '추가 엔티티'
+        bar_stack: '추가 엔티티',
+        migrate_config: 'Migrate config'
       },
       option: {
         bar_orientation: {
@@ -4903,6 +5286,10 @@ const TRANSLATIONS = {
           auto: '자동',
           segment: '세그먼트',
           rainbow: '무지개'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: '둥근 모서리',
@@ -4949,15 +5336,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -4975,6 +5364,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -5038,6 +5437,7 @@ const TRANSLATIONS = {
         bar_size: 'Juostos dydis',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Spalvos režimas',
+        bar_scale: 'Bar scale',
         center_zero: 'Nulis centre',
         center_zero_value: 'Centro reikšmė',
         center_zero_growth_percent: 'Augimo procentas',
@@ -5070,6 +5470,8 @@ const TRANSLATIONS = {
         unit: 'Vienetas',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -5083,7 +5485,8 @@ const TRANSLATIONS = {
         name_info: 'Pasirinktinė pavadinimo informacija',
         reverse: 'Atvirkštinis laikmatis',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'Papildomos esybės'
+        bar_stack: 'Papildomos esybės',
+        migrate_config: 'Migrate config'
       },
       option: {
         theme: {
@@ -5122,6 +5525,10 @@ const TRANSLATIONS = {
           auto: 'Automatinis',
           segment: 'Segmentai',
           rainbow: 'Vaivorykštė'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Suapvalinti kampai',
@@ -5168,15 +5575,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -5194,6 +5603,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -5257,6 +5676,7 @@ const TRANSLATIONS = {
         bar_size: 'Joslas izmērs',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Krāsas režīms',
+        bar_scale: 'Bar scale',
         center_zero: 'Nulles centrā',
         center_zero_value: 'Centra vērtība',
         center_zero_growth_percent: 'Pieauguma procents',
@@ -5289,6 +5709,8 @@ const TRANSLATIONS = {
         unit: 'Vienība',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -5302,7 +5724,8 @@ const TRANSLATIONS = {
         name_info: 'Pielāgota nosaukuma informācija',
         reverse: 'Apgriezts taimeris',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'Papildu entītijas'
+        bar_stack: 'Papildu entītijas',
+        migrate_config: 'Migrate config'
       },
       option: {
         theme: {
@@ -5341,6 +5764,10 @@ const TRANSLATIONS = {
           auto: 'Automātisks',
           segment: 'Segmenti',
           rainbow: 'Varavīksne'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Noapaļoti stūri',
@@ -5387,15 +5814,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -5413,6 +5842,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -5476,6 +5915,7 @@ const TRANSLATIONS = {
         bar_size: 'Големина на лента',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Режим на боја',
+        bar_scale: 'Bar scale',
         center_zero: 'Нула во центарот',
         center_zero_value: 'Централна вредност',
         center_zero_growth_percent: 'Процент на растеж',
@@ -5508,6 +5948,8 @@ const TRANSLATIONS = {
         unit: 'Јединство',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -5521,7 +5963,8 @@ const TRANSLATIONS = {
         name_info: 'Прилагодена информација за имиња',
         reverse: 'Обратен тајмер',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'Дополнителни ентитети'
+        bar_stack: 'Дополнителни ентитети',
+        migrate_config: 'Migrate config'
       },
       option: {
         bar_orientation: {
@@ -5560,6 +6003,10 @@ const TRANSLATIONS = {
           auto: 'Автоматски',
           segment: 'Сегменти',
           rainbow: 'Виножито'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Заоблени агли',
@@ -5606,15 +6053,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -5632,6 +6081,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -5695,6 +6154,7 @@ const TRANSLATIONS = {
         bar_size: 'Bar størrelse',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Fargemodus',
+        bar_scale: 'Bar scale',
         center_zero: 'Null i midten',
         center_zero_value: 'Senterverdi',
         center_zero_growth_percent: 'Vekstprosent',
@@ -5727,6 +6187,8 @@ const TRANSLATIONS = {
         unit: 'Enhet',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -5740,7 +6202,8 @@ const TRANSLATIONS = {
         name_info: 'Egendefinert navneinfo',
         reverse: 'Omvendt tidtaker',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'Ekstra enheter'
+        bar_stack: 'Ekstra enheter',
+        migrate_config: 'Migrate config'
       },
       option: {
         bar_orientation: {
@@ -5779,6 +6242,10 @@ const TRANSLATIONS = {
           auto: 'Auto',
           segment: 'Segmenter',
           rainbow: 'Regnbue'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Avrundede hjørner',
@@ -5825,15 +6292,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -5851,6 +6320,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -5914,6 +6393,7 @@ const TRANSLATIONS = {
         bar_size: 'Balkgrootte',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Balkkleurmodus',
+        bar_scale: 'Balkschaal',
         center_zero: 'Nul in het midden',
         center_zero_value: 'Centrumwaarde',
         center_zero_growth_percent: 'Groeipercentage',
@@ -5946,6 +6426,8 @@ const TRANSLATIONS = {
         unit: 'Eenheid',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -5959,7 +6441,8 @@ const TRANSLATIONS = {
         name_info: 'Aangepaste naaminfo',
         reverse: 'Timer omdraaien',
         bar_stack_mode: 'Stapelmodus',
-        bar_stack: 'Extra entiteiten'
+        bar_stack: 'Extra entiteiten',
+        migrate_config: 'Configuratie migreren'
       },
       option: {
         bar_orientation: {
@@ -5998,6 +6481,10 @@ const TRANSLATIONS = {
           auto: 'Automatisch',
           segment: 'Segmenten',
           rainbow: 'Regenboog'
+        },
+        bar_scale: {
+          linear: 'Lineair',
+          log: 'Logaritmisch'
         },
         bar_effect: {
           radius: 'Afgeronde hoeken',
@@ -6044,15 +6531,17 @@ const TRANSLATIONS = {
           line_size: 'Lijndikte',
           disable_low: 'Lage waarde uitschakelen',
           disable_high: 'Hoge waarde uitschakelen',
-          low_entity_toggle: 'Entiteit gebruiken voor lage waarde',
           low_attribute: 'Attribuut',
-          high_entity_toggle: 'Entiteit gebruiken voor hoge waarde',
           high_attribute: 'Attribuut'
         },
         icon_animation: {
           none: 'Geen',
           spin: 'Draaien',
-          pulse: 'Pulseren'
+          pulse: 'Pulseren',
+          bounce: 'Stuiteren',
+          shake: 'Trillen',
+          ping: 'Ping',
+          reveal: 'Onthullen'
         },
         alert_when: {
           above: 'Alarm boven',
@@ -6070,6 +6559,16 @@ const TRANSLATIONS = {
           jinja: 'Sjabloon'
         },
         max_value_mode: {
+          standard: 'Vaste waarde',
+          entity: 'Entiteit',
+          jinja: 'Sjabloon'
+        },
+        watermark_low_mode: {
+          standard: 'Vaste waarde',
+          entity: 'Entiteit',
+          jinja: 'Sjabloon'
+        },
+        watermark_high_mode: {
           standard: 'Vaste waarde',
           entity: 'Entiteit',
           jinja: 'Sjabloon'
@@ -6133,6 +6632,7 @@ const TRANSLATIONS = {
         bar_size: 'Rozmiar paska',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Tryb koloru',
+        bar_scale: 'Bar scale',
         center_zero: 'Zero na środku',
         center_zero_value: 'Wartość środkowa',
         center_zero_growth_percent: 'Procent wzrostu',
@@ -6165,6 +6665,8 @@ const TRANSLATIONS = {
         unit: 'Jednostka',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -6178,7 +6680,8 @@ const TRANSLATIONS = {
         name_info: 'Niestandardowa info nazwy',
         reverse: 'Odwróć licznik',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'Dodatkowe encje'
+        bar_stack: 'Dodatkowe encje',
+        migrate_config: 'Migrate config'
       },
       option: {
         bar_orientation: {
@@ -6217,6 +6720,10 @@ const TRANSLATIONS = {
           auto: 'Automatycznie',
           segment: 'Segmenty',
           rainbow: 'Tęcza'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Zaokrąglone rogi',
@@ -6263,15 +6770,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -6289,6 +6798,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -6352,6 +6871,7 @@ const TRANSLATIONS = {
         bar_size: 'Tamanho da barra',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Modo de cor',
+        bar_scale: 'Bar scale',
         center_zero: 'Zero ao centro',
         center_zero_value: 'Valor central',
         center_zero_growth_percent: 'Percentual de crescimento',
@@ -6384,6 +6904,8 @@ const TRANSLATIONS = {
         unit: 'Unidade',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -6397,7 +6919,8 @@ const TRANSLATIONS = {
         name_info: 'Informação de nome personalizada',
         reverse: 'Temporizador inverso',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'Entidades adicionais'
+        bar_stack: 'Entidades adicionais',
+        migrate_config: 'Migrate config'
       },
       option: {
         theme: {
@@ -6436,6 +6959,10 @@ const TRANSLATIONS = {
           auto: 'Auto',
           segment: 'Segmentos',
           rainbow: 'Arco-Íris'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Cantos arredondados',
@@ -6482,15 +7009,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -6508,6 +7037,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -6571,6 +7110,7 @@ const TRANSLATIONS = {
         bar_size: 'Tamanho da barra',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Modo de cor da barra',
+        bar_scale: 'Escala da barra',
         center_zero: 'Zero no centro',
         center_zero_value: 'Valor central',
         center_zero_growth_percent: 'Percentagem de crescimento',
@@ -6603,6 +7143,8 @@ const TRANSLATIONS = {
         unit: 'Unidade',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -6616,7 +7158,8 @@ const TRANSLATIONS = {
         name_info: 'Informação de nome personalizada',
         reverse: 'Temporizador inverso',
         bar_stack_mode: 'Modo de empilhamento',
-        bar_stack: 'Entidades adicionais'
+        bar_stack: 'Entidades adicionais',
+        migrate_config: 'Migrar configuração'
       },
       option: {
         bar_orientation: {
@@ -6655,6 +7198,10 @@ const TRANSLATIONS = {
           auto: 'Auto',
           segment: 'Segmentos',
           rainbow: 'Arco-Íris'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarítmica'
         },
         bar_effect: {
           radius: 'Cantos arredondados',
@@ -6701,15 +7248,17 @@ const TRANSLATIONS = {
           line_size: 'Espessura da linha',
           disable_low: 'Desativar limite baixo',
           disable_high: 'Desativar limite alto',
-          low_entity_toggle: 'Usar uma entidade para o limite baixo',
           low_attribute: 'Atributo',
-          high_entity_toggle: 'Usar uma entidade para o limite alto',
           high_attribute: 'Atributo'
         },
         icon_animation: {
           none: 'Nenhuma',
           spin: 'Girar',
-          pulse: 'Pulsar'
+          pulse: 'Pulsar',
+          bounce: 'Saltar',
+          shake: 'Vibração',
+          ping: 'Ping',
+          reveal: 'Revelar'
         },
         alert_when: {
           above: 'Alerta acima de',
@@ -6727,6 +7276,16 @@ const TRANSLATIONS = {
           jinja: 'Modelo'
         },
         max_value_mode: {
+          standard: 'Valor fixo',
+          entity: 'Entidade',
+          jinja: 'Modelo'
+        },
+        watermark_low_mode: {
+          standard: 'Valor fixo',
+          entity: 'Entidade',
+          jinja: 'Modelo'
+        },
+        watermark_high_mode: {
           standard: 'Valor fixo',
           entity: 'Entidade',
           jinja: 'Modelo'
@@ -6790,6 +7349,7 @@ const TRANSLATIONS = {
         bar_size: 'Dimensiunea barei',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Mod culoare',
+        bar_scale: 'Bar scale',
         center_zero: 'Zero la centru',
         center_zero_value: 'Valoare centrală',
         center_zero_growth_percent: 'Procent de creștere',
@@ -6822,6 +7382,8 @@ const TRANSLATIONS = {
         unit: 'Unitate',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -6835,7 +7397,8 @@ const TRANSLATIONS = {
         name_info: 'Info nume personalizată',
         reverse: 'Cronometru inverso',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'Entități suplimentare'
+        bar_stack: 'Entități suplimentare',
+        migrate_config: 'Migrate config'
       },
       option: {
         bar_orientation: {
@@ -6874,6 +7437,10 @@ const TRANSLATIONS = {
           auto: 'Automat',
           segment: 'Segmente',
           rainbow: 'Curcubeu'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Colțuri rotunjite',
@@ -6920,15 +7487,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -6946,6 +7515,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -7009,6 +7588,7 @@ const TRANSLATIONS = {
         bar_size: 'Размер полосы',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Режим цвета',
+        bar_scale: 'Bar scale',
         center_zero: 'Ноль по центру',
         center_zero_value: 'Центральное значение',
         center_zero_growth_percent: 'Процент роста',
@@ -7041,6 +7621,8 @@ const TRANSLATIONS = {
         unit: 'Единица измерения',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -7054,7 +7636,8 @@ const TRANSLATIONS = {
         name_info: 'Доп. информация (имя)',
         reverse: 'Обратный таймер',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'Дополнительные объекты'
+        bar_stack: 'Дополнительные объекты',
+        migrate_config: 'Migrate config'
       },
       option: {
         bar_orientation: {
@@ -7093,6 +7676,10 @@ const TRANSLATIONS = {
           auto: 'Авто',
           segment: 'Сегменты',
           rainbow: 'Радуга'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Скруглённые углы',
@@ -7139,15 +7726,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -7165,6 +7754,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -7228,6 +7827,7 @@ const TRANSLATIONS = {
         bar_size: 'Veľkosť lišty',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Farebný režim',
+        bar_scale: 'Bar scale',
         center_zero: 'Nula v strede',
         center_zero_value: 'Hodnota stredu',
         center_zero_growth_percent: 'Percento rastu',
@@ -7260,6 +7860,8 @@ const TRANSLATIONS = {
         unit: 'Jednotka',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -7273,7 +7875,8 @@ const TRANSLATIONS = {
         name_info: 'Vlastné info názvu',
         reverse: 'Obrátený časovač',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'Ďalšie entity'
+        bar_stack: 'Ďalšie entity',
+        migrate_config: 'Migrate config'
       },
       option: {
         theme: {
@@ -7312,6 +7915,10 @@ const TRANSLATIONS = {
           auto: 'Automaticky',
           segment: 'Segmenty',
           rainbow: 'Dúha'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Zaoblené rohy',
@@ -7358,15 +7965,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -7384,6 +7993,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -7447,6 +8066,7 @@ const TRANSLATIONS = {
         bar_size: 'Velikost vrstice',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Barvni način',
+        bar_scale: 'Bar scale',
         center_zero: 'Ni ničle na sredini',
         center_zero_value: 'Srednja vrednost',
         center_zero_growth_percent: 'Odstotek rasti',
@@ -7479,6 +8099,8 @@ const TRANSLATIONS = {
         unit: 'Enota',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -7492,7 +8114,8 @@ const TRANSLATIONS = {
         name_info: 'Prilagojena informacija o imenu',
         reverse: 'Obrnjen časovnik',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'Dodatni entiteti'
+        bar_stack: 'Dodatni entiteti',
+        migrate_config: 'Migrate config'
       },
       option: {
         theme: {
@@ -7531,6 +8154,10 @@ const TRANSLATIONS = {
           auto: 'Samodejno',
           segment: 'Segmenti',
           rainbow: 'Mavrica'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Zaobljeni robovi',
@@ -7577,15 +8204,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -7603,6 +8232,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -7666,6 +8305,7 @@ const TRANSLATIONS = {
         bar_size: 'Barstorlek',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Färgläge',
+        bar_scale: 'Bar scale',
         center_zero: 'Noll i mitten',
         center_zero_value: 'Centervärde',
         center_zero_growth_percent: 'Tillväxtprocent',
@@ -7698,6 +8338,8 @@ const TRANSLATIONS = {
         unit: 'Enhet',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -7711,7 +8353,8 @@ const TRANSLATIONS = {
         name_info: 'Anpassad namninfo',
         reverse: 'Omvänd timer',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'Ytterligare entiteter'
+        bar_stack: 'Ytterligare entiteter',
+        migrate_config: 'Migrate config'
       },
       option: {
         bar_orientation: {
@@ -7750,6 +8393,10 @@ const TRANSLATIONS = {
           auto: 'Auto',
           segment: 'Segment',
           rainbow: 'Regnbåge'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Rundade hörn',
@@ -7796,15 +8443,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -7822,6 +8471,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -7885,6 +8544,7 @@ const TRANSLATIONS = {
         bar_size: 'ขนาดแถบ',
         bar_segments: 'Bar segments',
         bar_color_mode: 'โหมดสี',
+        bar_scale: 'Bar scale',
         center_zero: 'Sıfırı ortala',
         center_zero_value: 'ค่ากึ่งกลาง',
         center_zero_growth_percent: 'เปอร์เซ็นต์การเติบโต',
@@ -7917,6 +8577,8 @@ const TRANSLATIONS = {
         unit: 'หน่วย',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -7930,7 +8592,8 @@ const TRANSLATIONS = {
         name_info: 'ข้อมูลชื่อที่กำหนดเอง',
         reverse: 'กลับเวลานับถอยหลัง',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'เอนทิตีเพิ่มเติม'
+        bar_stack: 'เอนทิตีเพิ่มเติม',
+        migrate_config: 'Migrate config'
       },
       option: {
         bar_orientation: {
@@ -7969,6 +8632,10 @@ const TRANSLATIONS = {
           auto: 'อัตโนมัติ',
           segment: 'ส่วน',
           rainbow: 'สีรุ้ง'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'มุมโค้งมน',
@@ -8015,15 +8682,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -8041,6 +8710,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -8104,6 +8783,7 @@ const TRANSLATIONS = {
         bar_size: 'Çubuk boyutu',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Renk modu',
+        bar_scale: 'Bar scale',
         center_zero: 'Нуль по центру',
         center_zero_value: 'Merkez değeri',
         center_zero_growth_percent: 'Büyüme yüzdesi',
@@ -8136,6 +8816,8 @@ const TRANSLATIONS = {
         unit: 'Birim',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -8149,7 +8831,8 @@ const TRANSLATIONS = {
         name_info: 'Özel ad bilgisi',
         reverse: 'Zamanlayıcıyı tersine çevir',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'Ek varlıklar'
+        bar_stack: 'Ek varlıklar',
+        migrate_config: 'Migrate config'
       },
       option: {
         bar_orientation: {
@@ -8188,6 +8871,10 @@ const TRANSLATIONS = {
           auto: 'Otomatik',
           segment: 'Bölümler',
           rainbow: 'Gökkuşağı'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Yuvarlatılmış köşeler',
@@ -8234,15 +8921,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -8260,6 +8949,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -8323,6 +9022,7 @@ const TRANSLATIONS = {
         bar_size: 'Розмір панелі',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Режим кольору',
+        bar_scale: 'Bar scale',
         center_zero: 'Không ở giữa',
         center_zero_value: 'Центральне значення',
         center_zero_growth_percent: 'Відсоток зростання',
@@ -8355,6 +9055,8 @@ const TRANSLATIONS = {
         unit: 'Одиниця',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -8368,7 +9070,8 @@ const TRANSLATIONS = {
         name_info: 'Додаткова інформація (назва)',
         reverse: 'Зворотній таймер',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'Додаткові об\'єкти'
+        bar_stack: 'Додаткові об\'єкти',
+        migrate_config: 'Migrate config'
       },
       option: {
         bar_orientation: {
@@ -8407,6 +9110,10 @@ const TRANSLATIONS = {
           auto: 'Авто',
           segment: 'Сегменти',
           rainbow: 'Веселка'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Заокруглені кути',
@@ -8453,15 +9160,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -8479,6 +9188,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -8542,6 +9261,7 @@ const TRANSLATIONS = {
         bar_size: 'Kích thước thanh',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Chế độ màu',
+        bar_scale: 'Bar scale',
         center_zero: '零点居中',
         center_zero_value: 'Giá trị tâm',
         center_zero_growth_percent: 'Tỷ lệ tăng trưởng',
@@ -8574,6 +9294,8 @@ const TRANSLATIONS = {
         unit: 'Đơn vị',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -8587,7 +9309,8 @@ const TRANSLATIONS = {
         name_info: 'Thông tin tên tùy chỉnh',
         reverse: 'Đảo ngược bộ đếm thời gian',
         bar_stack_mode: 'Stack mode',
-        bar_stack: 'Thực thể bổ sung'
+        bar_stack: 'Thực thể bổ sung',
+        migrate_config: 'Migrate config'
       },
       option: {
         bar_orientation: {
@@ -8626,6 +9349,10 @@ const TRANSLATIONS = {
           auto: 'Tự động',
           segment: 'Phân đoạn',
           rainbow: 'Cầu vồng'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: 'Góc bo tròn',
@@ -8672,15 +9399,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -8698,6 +9427,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -8761,6 +9500,7 @@ const TRANSLATIONS = {
         bar_size: '进度条大小',
         bar_segments: 'Bar segments',
         bar_color_mode: '颜色模式',
+        bar_scale: 'Bar scale',
         center_zero: '中心為零',
         center_zero_value: '中心值',
         center_zero_growth_percent: '增长百分比',
@@ -8793,6 +9533,8 @@ const TRANSLATIONS = {
         unit: '单位',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -8806,7 +9548,8 @@ const TRANSLATIONS = {
         name_info: '自定义名称信息',
         reverse: '反转计时器',
         bar_stack_mode: 'Stack mode',
-        bar_stack: '附加实体'
+        bar_stack: '附加实体',
+        migrate_config: 'Migrate config'
       },
       option: {
         theme: {
@@ -8845,6 +9588,10 @@ const TRANSLATIONS = {
           auto: '自动',
           segment: '分段',
           rainbow: '彩虹'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: '圆角',
@@ -8891,15 +9638,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -8917,6 +9666,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -8980,6 +9739,7 @@ const TRANSLATIONS = {
         bar_size: '進度條大小',
         bar_segments: 'Bar segments',
         bar_color_mode: '顏色模式',
+        bar_scale: 'Bar scale',
         center_zero: '中心為零',
         center_zero_value: '中心值',
         center_zero_growth_percent: '增長百分比',
@@ -9012,6 +9772,8 @@ const TRANSLATIONS = {
         unit: '單位',
         min_value_mode: 'Min value source',
         max_value_mode: 'Max value source',
+        watermark_low_mode: 'Low watermark source',
+        watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
@@ -9025,7 +9787,8 @@ const TRANSLATIONS = {
         name_info: '自訂名稱資訊',
         reverse: '反轉計時器',
         bar_stack_mode: 'Stack mode',
-        bar_stack: '附加實體'
+        bar_stack: '附加實體',
+        migrate_config: 'Migrate config'
       },
       option: {
         theme: {
@@ -9064,6 +9827,10 @@ const TRANSLATIONS = {
           auto: '自動',
           segment: '分段',
           rainbow: '彩虹'
+        },
+        bar_scale: {
+          linear: 'Linear',
+          log: 'Logarithmic'
         },
         bar_effect: {
           radius: '圓角',
@@ -9110,15 +9877,17 @@ const TRANSLATIONS = {
           line_size: 'Line size',
           disable_low: 'Disable low',
           disable_high: 'Disable high',
-          low_entity_toggle: 'Use entity as low watermark value',
           low_attribute: 'Attribute',
-          high_entity_toggle: 'Use entity as high watermark value',
           high_attribute: 'Attribute'
         },
         icon_animation: {
           none: 'None',
           spin: 'Spin',
-          pulse: 'Pulse'
+          pulse: 'Pulse',
+          bounce: 'Bounce',
+          shake: 'Shake',
+          ping: 'Ping',
+          reveal: 'Reveal'
         },
         alert_when: {
           above: 'Alert above',
@@ -9136,6 +9905,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         max_value_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_low_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        watermark_high_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -10061,7 +10840,7 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
   );
 }
 
-/* === ICON ANIMATION (icon_animation: spin|pulse, active state only) === */
+/* === ICON ANIMATION (icon_animation: spin|pulse|bounce|shake|ping|reveal, active state only) === */
 @keyframes epb-icon-spin {
   to { transform: rotate(360deg); }
 }
@@ -10071,12 +10850,63 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
   50% { transform: scale(1.15); opacity: 0.7; }
 }
 
+@keyframes epb-icon-bounce {
+  0% { transform: scale3d(1, 1, 1); }
+  7% { transform: scale3d(1.25, 0.75, 1); }
+  10% { transform: scale3d(0.75, 1.25, 1); }
+  12% { transform: scale3d(1.15, 0.85, 1); }
+  16% { transform: scale3d(0.95, 1.05, 1); }
+  19% { transform: scale3d(1.05, 0.95, 1); }
+  25% { transform: scale3d(1, 1, 1); }
+}
+
+@keyframes epb-icon-shake {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  20% { transform: translate(0.4px, -0.4px) rotate(-4deg); }
+  40% { transform: translate(-0.4px, 0.4px) rotate(4deg); }
+  60% { transform: translate(0.4px, 0.4px) rotate(-4deg); }
+  80% { transform: translate(-0.4px, -0.4px) rotate(4deg); }
+}
+
+/* ring bursts from the shape's own border, using the same icon/shape color as everywhere else */
+@keyframes epb-icon-ping {
+  60% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default})) 70%, transparent);
+  }
+  100% { box-shadow: 0 0 5px 15px transparent; }
+}
+
+@keyframes epb-icon-reveal {
+  0% { clip-path: circle(0% at 50% 85%); }
+  20% { clip-path: circle(30% at 50% 85%); }
+  40% { clip-path: circle(55% at 50% 85%); }
+  60% { clip-path: circle(80% at 50% 85%); }
+}
+
 .icon-anim-spin .${CARD.htmlStructure.elements.icon.class} {
   animation: epb-icon-spin 2s linear infinite;
 }
 
 .icon-anim-pulse .${CARD.htmlStructure.elements.icon.class} {
   animation: epb-icon-pulse 1.6s ease-in-out infinite;
+}
+
+.icon-anim-bounce .${CARD.htmlStructure.elements.icon.class} {
+  animation: epb-icon-bounce 3s ease infinite;
+  transform-origin: 50% 90%;
+}
+
+.icon-anim-shake .${CARD.htmlStructure.elements.icon.class} {
+  animation: epb-icon-shake 800ms ease-in-out infinite;
+  transform-origin: 50% 110%;
+}
+
+.icon-anim-ping .${CARD.htmlStructure.elements.shape.class} {
+  animation: epb-icon-ping 2s infinite;
+}
+
+.icon-anim-reveal .${CARD.htmlStructure.elements.icon.class} {
+  animation: epb-icon-reveal 2s steps(1) infinite;
 }
 
 /* === ALERT (alert_when: {above/below, color, highlight}) ===
@@ -11174,7 +12004,7 @@ class NumberFormatter {
  * ========================================================================================
  *
  * ✅ Helper class for managing numeric values.
- * This class validates and stor a numeric value.
+ * This class validates and stores a numeric value.
  *
  * @class
  */
@@ -11277,6 +12107,7 @@ class ProgressCalc {
   #isCenterZero = false;
   #zeroValue = 0;
   #growthPercent = false;
+  #scale = 'linear';
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
@@ -11303,6 +12134,14 @@ class ProgressCalc {
 
   set growthPercent(newValue) { this.#growthPercent = is.boolean(newValue) ? newValue : false; }
   get growthPercent() { return this.#growthPercent; }
+
+  set scale(newValue) { this.#scale = newValue === 'log' ? 'log' : 'linear'; }
+  get scale() { return this.#scale; }
+
+  // log scale requires a well-formed positive range (log(0) or log(negative) is undefined) —
+  // center_zero's own zeroValue/min/max split has no meaningful log equivalent either, so both
+  // silently fall back to plain linear math in #percentForValue rather than producing NaN.
+  get isLogScale() { return this.#scale === 'log' && !this.isCenterZero && this.min > 0 && this.max > this.min; }
 
   get actual() { return this.#isReversed ? this.max - this.current : this.current; }
   get isValid() { return this.range !== 0; }
@@ -11348,6 +12187,13 @@ class ProgressCalc {
       const halfRange = corrected >= 0 ? this.max - this.#zeroValue : this.#zeroValue - this.min;
       return halfRange === 0 ? 0 : (corrected / halfRange) * 100;
     }
+    if (this.isLogScale) {
+      // Clamp below-range values to min before taking the log: value <= 0 would otherwise
+      // produce NaN/-Infinity instead of the same "0%, let CSS clamp it" behavior linear gets
+      // for a below-range value.
+      const clamped = Math.max(value, this.min);
+      return ((Math.log(clamped) - Math.log(this.min)) / (Math.log(this.max) - Math.log(this.min))) * 100;
+    }
     const fullRange = this.max - this.min;
     return fullRange === 0 ? 0 : ((value - this.min) / fullRange) * 100;
   }
@@ -11391,12 +12237,13 @@ class PercentHelper extends ProgressCalc {
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
-  configure({ unitSpacing, hasDisabledUnit, isCenterZero, zeroValue, growthPercent }) {
+  configure({ unitSpacing, hasDisabledUnit, isCenterZero, zeroValue, growthPercent, scale }) {
     this.#unitSpacing = unitSpacing;
     this.#unit.isDisabled = hasDisabledUnit;
     this.isCenterZero = isCenterZero;
     this.zeroValue = zeroValue;
     this.growthPercent = growthPercent;
+    this.scale = scale;
   }
 
   valueForThemes(isCustomTheme, valueBasedOnPercentage) {
@@ -12451,20 +13298,8 @@ class EntityCollectionHelper {
     return gradientStops.length ? `linear-gradient(to right, ${gradientStops.join(', ')})` : null;
   }
 
-  getAvailableCount() {
-    return this.getAvailableEntities().length;
-  }
-
   get count() {
     return this.#entities.length;
-  }
-
-  get validEntities() {
-    return this.#entities.filter((e) => e.isValid && e.isAvailable);
-  }
-
-  get all() {
-    return this.#entities;
   }
 
   clear() {
@@ -13073,11 +13908,14 @@ const barStackEntity = types.fallbackTo(
 );
 
 const watermarkSchema = {
-  low: types.fallbackTo(types.union(types.number, types.string), CARD.config.defaults.watermark.low),
+  // number (fixed) | string (entity id) | { jinja } - mirrors min_value/max_value's explicit
+  // jinja shape rather than sniffing a bare string (an entity id and a Jinja template are both
+  // strings; disambiguating them at runtime is exactly what min_value/max_value moved away from).
+  low: types.fallbackTo(types.union(types.number, types.string, types.object({ jinja: types.string })), CARD.config.defaults.watermark.low),
   low_as: types.enumsWithDefault(['auto', 'percent'], CARD.config.defaults.watermark.low_as),
   low_attribute: types.optionalString(),
   low_color: types.optionalStringWithDefault(CARD.config.defaults.watermark.low_color),
-  high: types.fallbackTo(types.union(types.number, types.string), CARD.config.defaults.watermark.high),
+  high: types.fallbackTo(types.union(types.number, types.string, types.object({ jinja: types.string })), CARD.config.defaults.watermark.high),
   high_as: types.enumsWithDefault(['auto', 'percent'], CARD.config.defaults.watermark.high_as),
   high_attribute: types.optionalString(),
   high_color: types.optionalStringWithDefault(CARD.config.defaults.watermark.high_color),
@@ -13126,6 +13964,10 @@ class YamlSchemaFactory {
         ), //[('small', 'medium', 'large', 'xlarge')]
         bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
         bar_color_mode: types.enumsWithDefault(['auto', 'segment', 'rainbow'], 'auto'),
+        // Only engages outside center_zero with a well-formed positive range (min > 0, max >
+        // min) — ProgressCalc.isLogScale falls back to linear otherwise, so an invalid
+        // combination degrades quietly instead of producing NaN.
+        bar_scale: types.enumsWithDefault(['linear', 'log'], 'linear'),
         bar_effect: types.jinjaOrArrayWithValidatedElem(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
         bar_position: types.enumsWithDefault(['default', 'top', 'bottom'], 'default'),
         bar_segments: types.optionalNumber(),
@@ -13200,12 +14042,16 @@ class YamlSchemaFactory {
         ), //[('small', 'medium', 'large', 'xlarge')]
         bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
         bar_color_mode: types.enumsWithDefault(['auto', 'segment', 'rainbow'], 'auto'),
+        // Only engages outside center_zero with a well-formed positive range (min > 0, max >
+        // min) — ProgressCalc.isLogScale falls back to linear otherwise, so an invalid
+        // combination degrades quietly instead of producing NaN.
+        bar_scale: types.enumsWithDefault(['linear', 'log'], 'linear'),
         bar_effect: types.jinjaOrArrayWithValidatedElem(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
         bar_position: types.enumsWithDefault(['default', 'below', 'top', 'bottom', 'overlay', 'background'], 'default'),
         bar_single_line: types.optionalBooleanWithDefault(false),
         bar_max_width: types.optionalString(),
         bar_segments: types.optionalNumber(),
-        icon_animation: types.enumsWithDefault(['none', 'spin', 'pulse'], 'none'),
+        icon_animation: types.enumsWithDefault(['none', 'spin', 'pulse', 'bounce', 'shake', 'ping', 'reveal'], 'none'),
         layout: types.enumsWithDefault(
           Object.values(CARD.layout.orientations).map((e) => e.label),
           'horizontal',
@@ -13311,7 +14157,7 @@ class YamlSchemaFactory {
         bar_single_line: types.optionalBooleanWithDefault(false),
         bar_max_width: types.optionalString(),
         bar_segments: types.optionalNumber(),
-        icon_animation: types.enumsWithDefault(['none', 'spin', 'pulse'], 'none'),
+        icon_animation: types.enumsWithDefault(['none', 'spin', 'pulse', 'bounce', 'shake', 'ping', 'reveal'], 'none'),
         layout: types.enumsWithDefault(
           Object.values(CARD.layout.orientations).map((e) => e.label),
           'horizontal',
@@ -13439,6 +14285,13 @@ class BaseConfigHelper {
     return config;
   }
 
+  // No-op here: Template/BadgeTemplate cards' schema never had max_value/disable_unit/additions
+  // to begin with. Matches _customizeConfig's own polymorphic no-op above, so the editor's
+  // "Migrate config" button can call this generically regardless of which config helper is active.
+  static _migrateLegacyOptions(config) {
+    return config;
+  }
+
   static #logDeprecatedOption(config) {
     if (config.navigate_to !== undefined)
       console.warn(`${META.types.card.typeName.toUpperCase()} - navigate_to option is deprecated and has been removed.`);
@@ -13457,12 +14310,12 @@ class BaseConfigHelper {
     if (is.nonEmptyString(config.max_value))
       console.warn(
         `${META.types.card.typeName.toUpperCase()} - max_value: <entity id> is deprecated and will be removed in a future release. ` +
-          `Please migrate to max_value: { entity: <entity id>, attribute: <optional> }. Your configuration was automatically migrated for this session.`,
+          'Please migrate to max_value: { entity: <entity id>, attribute: <optional> }. Your configuration was automatically migrated for this session.',
       );
     if (config.disable_unit !== undefined)
       console.warn(
         `${META.types.card.typeName.toUpperCase()} - disable_unit is deprecated and will be removed in a future release. ` +
-          `Please migrate to hide: ['unit', ...]. Your configuration was automatically migrated for this session.`,
+          "Please migrate to hide: ['unit', ...]. Your configuration was automatically migrated for this session.",
       );
     // additions used to be a bare array of {entity, attribute}; it is now the entities
     // list of bar_stack, alongside a mode ('stacked' by default, 'proportional' preserves
@@ -13470,7 +14323,7 @@ class BaseConfigHelper {
     if (is.array(config.additions))
       console.warn(
         `${META.types.card.typeName.toUpperCase()} - additions is deprecated and will be removed in a future release. ` +
-          `Please migrate to bar_stack: { mode: 'proportional', entities: [...] }. Your configuration was automatically migrated for this session.`,
+          "Please migrate to bar_stack: { mode: 'proportional', entities: [...] }. Your configuration was automatically migrated for this session.",
       );
   }
 
@@ -13612,18 +14465,22 @@ class CardConfigHelper extends BaseConfigHelper {
     return { ...normalized, min_value: -maxForSymmetry };
   }
 
+  // Legacy-syntax rewriting only — never touches unrelated defaults (center_zero's
+  // min_value fill-in, device_class attribute defaults live in _customizeConfig instead).
+  // Extracted so the editor's "Migrate config" button can reuse exactly this transformation
+  // (via the config helper, polymorphically) without also re-applying those unrelated defaults.
+  //
   // CF5 - issue (major) resolved - max_value used to be number|entity-id-string with the
   // mode sniffed at runtime (is.number/is.string), the exact pattern that caused min_value's
   // freeze bug. Bare-entity-string configs (pre-1.6) are migrated here into the explicit
   // { entity, attribute } map before validation, so every downstream consumer only ever
   // sees a number or that map — no sniffing left anywhere. The deprecation warning for the
   // bare form is logged separately, see BaseConfigHelper.#logDeprecatedOption.
-  static _customizeConfig(config) {
+  static _migrateLegacyOptions(config) {
     let normalized = config;
     if (is.nonEmptyString(config?.max_value)) {
       normalized = { ...config, max_value: { entity: config.max_value, attribute: config.max_value_attribute }, max_value_attribute: undefined };
     }
-    normalized = CardConfigHelper._applyCenterZeroMinDefault(config, normalized);
     // disable_unit used to be a dedicated boolean; 'unit' is now just another hide target,
     // consistent with icon/name/value/progress_bar. Skip the fold when hide is a Jinja
     // template (a string): merging into user-authored template logic isn't possible, so
@@ -13642,6 +14499,12 @@ class CardConfigHelper extends BaseConfigHelper {
     if (is.array(config?.additions)) {
       normalized = { ...normalized, bar_stack: { mode: 'proportional', entities: config.additions }, additions: undefined };
     }
+    return normalized;
+  }
+
+  static _customizeConfig(config) {
+    let normalized = CardConfigHelper._migrateLegacyOptions(config);
+    normalized = CardConfigHelper._applyCenterZeroMinDefault(config, normalized);
     return {
       ...normalized,
       ...(is.nonEmptyString(normalized?.entity) && is.nullish(normalized?.attribute)
@@ -13950,6 +14813,9 @@ class ViewBase extends ViewCore {
   // min_value/max_value resolved from a Jinja subscription (standard cards); null = no override
   #jinjaMinValue = null;
   #jinjaMaxValue = null;
+  // watermark.low/.high resolved from a Jinja subscription; null = no override
+  #jinjaWatermarkLow = null;
+  #jinjaWatermarkHigh = null;
   #entityCollection = new EntityCollectionHelper();
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
@@ -14002,6 +14868,7 @@ class ViewBase extends ViewCore {
       isCenterZero: centerZero.enabled,
       zeroValue: centerZero.zeroValue,
       growthPercent: centerZero.growthPercent,
+      scale: this._configHelper.config.bar_scale,
     });
 
     this.#theme.configure({
@@ -14028,15 +14895,21 @@ class ViewBase extends ViewCore {
       this.#jinjaMaxValue = null;
       Object.assign(this.#minValue, ViewBase.#resolveMinValue(this._configHelper.config.min_value));
       this.#jinjaMinValue = null;
-      Object.assign(this._lowValue, {
-        value: this._configHelper.config?.watermark?.low,
-        attribute: this._configHelper.config?.watermark?.low_attribute,
-      });
-      Object.assign(this._highValue, {
-        value: this._configHelper.config?.watermark?.high,
-        attribute: this._configHelper.config?.watermark?.high_attribute,
-      });
     }
+    // Watermark low/high are wired for timers too (unlike attribute/min/max above, which a
+    // timer overrides): the schema defaults watermark: {} to low: 20 / high: 80, so leaving
+    // these helpers unset on a timer made isAvailable() permanently false — a timer card
+    // with any watermark configured froze instead of rendering.
+    Object.assign(this._lowValue, {
+      value: ViewBase.#resolveWatermarkValue(this._configHelper.config?.watermark?.low),
+      attribute: this._configHelper.config?.watermark?.low_attribute,
+    });
+    this.#jinjaWatermarkLow = null;
+    Object.assign(this._highValue, {
+      value: ViewBase.#resolveWatermarkValue(this._configHelper.config?.watermark?.high),
+      attribute: this._configHelper.config?.watermark?.high_attribute,
+    });
+    this.#jinjaWatermarkHigh = null;
   }
   get config() {
     return this._configHelper.config;
@@ -14054,6 +14927,12 @@ class ViewBase extends ViewCore {
       value: isMinObj ? (minCfg.jinja ? null : (minCfg.entity ?? minCfg.value ?? null)) : minCfg,
       attribute: isMinObj ? minCfg.attribute : undefined,
     };
+  }
+  // watermark.low/.high: number (fixed) | string (entity id) | {jinja}. A {jinja} object is fed
+  // by the template subscription (#jinjaWatermarkLow/#jinjaWatermarkHigh), not by EntityOrValue,
+  // so it resolves to null here — mirrors #resolveMaxValue/#resolveMinValue's own jinja split.
+  static #resolveWatermarkValue(sideCfg) {
+    return is.plainObject(sideCfg) ? null : sideCfg;
   }
   #hasState(state) {
     const toEVal = this.hasWatermark ? [this._currentValue, this.#maxValue, this._lowValue, this._highValue] : [this._currentValue, this.#maxValue];
@@ -14195,9 +15074,9 @@ class ViewBase extends ViewCore {
       mode === 'percent' ? (is.number(v) ? v : (v?.current ?? 0)) : this.#percentHelper.calcWatermark(v);
     return {
       ...watermark,
-      low: toPos(this._lowValue.value, watermark.low_as),
+      low: toPos(this.#jinjaWatermarkLow ?? this._lowValue.value, watermark.low_as),
       low_color: ThemeManager.adaptColor(watermark.low_color),
-      high: toPos(this._highValue.value, watermark.high_as),
+      high: toPos(this.#jinjaWatermarkHigh ?? this._highValue.value, watermark.high_as),
       high_color: ThemeManager.adaptColor(watermark.high_color),
     };
   }
@@ -14283,6 +15162,18 @@ class ViewBase extends ViewCore {
   }
   set jinjaMaxValue(value) {
     this.#jinjaMaxValue = is.number(value) ? value : null;
+  }
+  get jinjaWatermarkLow() {
+    return this.#jinjaWatermarkLow;
+  }
+  set jinjaWatermarkLow(value) {
+    this.#jinjaWatermarkLow = is.number(value) ? value : null;
+  }
+  get jinjaWatermarkHigh() {
+    return this.#jinjaWatermarkHigh;
+  }
+  set jinjaWatermarkHigh(value) {
+    this.#jinjaWatermarkHigh = is.number(value) ? value : null;
   }
 
   #getCurrentUnit() {
@@ -15373,18 +16264,21 @@ class HACore extends HTMLElement {
   // ─── JINJA TEMPLATE RENDERING ─────────────────────────────────────────────
 
   get validJinjaFields() {
-    // Most Jinja-capable options are flat string config values, but some (min_value) use an
-    // explicit { jinja: "..." } map form instead of sniffing a bare string — extract accordingly.
+    // Most Jinja-capable options are flat string config values, but some (min_value,
+    // watermark.low/.high) use an explicit { jinja: "..." } map form instead of sniffing a bare
+    // string — extract accordingly. Dot-path keys (watermark.low) walk one level of nesting;
+    // existing flat keys (min_value) are unaffected since a 1-element path resolves identically.
     const rawValueFor = (key) => {
-      const raw = this._cardView.config[key];
+      const raw = key.includes('.') ? key.split('.').reduce((obj, k) => obj?.[k], this._cardView.config) : this._cardView.config[key];
       return is.plainObject(raw) ? (raw.jinja ?? '') : (raw || '');
     };
+    const handlers = this._getJinjaHandlers();
     const result = Object.fromEntries(
-      Object.keys(this._getJinjaHandlers())
+      Object.keys(handlers)
         .map((key) => [key, rawValueFor(key)])
         .filter(([, value]) => is.nonEmptyString(value)),
     );
-    this._log.debug('validJinjaFields: ', { handler: this._getJinjaHandlers(), config:this._cardView.config, result });
+    this._log.debug('validJinjaFields: ', { handler: handlers, config: this._cardView.config, result });
     return result;
   }
 
@@ -15786,6 +16680,10 @@ class HABase extends HACore {
       [CARD.style.dynamic.marginless.class, this._cardView.config.marginless],
       ['icon-anim-spin', this._cardView.config.icon_animation === 'spin' && this._cardView.isEntityActive],
       ['icon-anim-pulse', this._cardView.config.icon_animation === 'pulse' && this._cardView.isEntityActive],
+      ['icon-anim-bounce', this._cardView.config.icon_animation === 'bounce' && this._cardView.isEntityActive],
+      ['icon-anim-shake', this._cardView.config.icon_animation === 'shake' && this._cardView.isEntityActive],
+      ['icon-anim-ping', this._cardView.config.icon_animation === 'ping' && this._cardView.isEntityActive],
+      ['icon-anim-reveal', this._cardView.config.icon_animation === 'reveal' && this._cardView.isEntityActive],
       ['alert-active', this._cardView.isAlertActive],
       ['alert-background', this._cardView.isAlertActive && this._cardView.config.alert_when?.highlight === 'background'],
     ]);
@@ -16150,6 +17048,9 @@ class EntityProgressCardBase extends HABase {
   }
 
   // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ─────────────────────────────
+  // The four numeric Jinja options share one mechanism (_renderJinjaNumber); each entry
+  // below only states its two specifics: which config path must still be in { jinja }
+  // mode, and which view property receives the resolved number.
   _getJinjaHandlers(content) {
     return {
       ...this._baseJinjaHandlers(content),
@@ -16157,34 +17058,25 @@ class EntityProgressCardBase extends HABase {
       badge_color: () => this._renderBadgeColor(content),
       custom_info: () => this._renderCustomInfo(content),
       name_info: () => this._renderNameInfo(content),
-      min_value: () => this._renderMinValue(content),
-      max_value: () => this._renderMaxValue(content),
+      min_value: () => this._renderJinjaNumber(content, (c) => c.min_value?.jinja, 'jinjaMinValue'),
+      max_value: () => this._renderJinjaNumber(content, (c) => c.max_value?.jinja, 'jinjaMaxValue'),
+      'watermark.low': () => this._renderJinjaNumber(content, (c) => c.watermark?.low?.jinja, 'jinjaWatermarkLow'),
+      'watermark.high': () => this._renderJinjaNumber(content, (c) => c.watermark?.high?.jinja, 'jinjaWatermarkHigh'),
     };
   }
 
-  _renderMinValue(content) {
-    // Defensive: only apply if min_value is still in { jinja: "..." } mode — guards against
-    // a push arriving right as the user switches mode away from Jinja.
-    if (!is.nonEmptyString(this._cardView.config.min_value?.jinja)) return;
+  _renderJinjaNumber(content, getJinja, viewProp) {
+    // Defensive: only apply while the option is still in { jinja: "..." } mode — guards
+    // against a push arriving right as the user switches the mode chips away from Jinja.
+    if (!is.nonEmptyString(getJinja(this._cardView.config))) return;
     const value = is.number(content) ? content : is.strictNumericString(content) ? Number(content) : null;
-    if (value === this._cardView.jinjaMinValue) return; // unchanged — skip the recompute below
-    this._cardView.jinjaMinValue = value;
+    if (value === this._cardView[viewProp]) return; // unchanged — skip the recompute below
+    this._cardView[viewProp] = value;
     // Lightweight, like _managePercent on template cards: recompute + repaint the bar only.
     // A full this.refresh() re-ran icon/badge/shape/trend AND _processJinjaFields() (which
     // re-scans every Jinja field on the card) on every single push — while typing the
-    // min_value template in the editor, each keystroke produces a push, so the full pipeline
-    // ran on every keystroke and made the editor feel like it had frozen.
-    this._cardView.refresh(this.hass);
-    this._updateCSS();
-  }
-  _renderMaxValue(content) {
-    // Mirrors _renderMinValue exactly — see its comments for why this stays lightweight
-    // (recompute + repaint only, not a full refresh) and why it's a no-op once the config
-    // has moved on from Jinja mode.
-    if (!is.nonEmptyString(this._cardView.config.max_value?.jinja)) return;
-    const value = is.number(content) ? content : is.strictNumericString(content) ? Number(content) : null;
-    if (value === this._cardView.jinjaMaxValue) return;
-    this._cardView.jinjaMaxValue = value;
+    // template in the editor, each keystroke produces a push, so the full pipeline ran on
+    // every keystroke and made the editor feel like it had frozen.
     this._cardView.refresh(this.hass);
     this._updateCSS();
   }
@@ -16236,18 +17128,14 @@ class EntityProgressBadge extends EntityProgressCardBase {
   static _cardStructure = new ObjStructure('badge');
 
   // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ===
-  // CF5 - issue (medium) resolved - this override replaces (not extends) the base class's
-  // handler map and had never picked up min_value, so the documented "Jinja mode works on
-  // Card and Badge" was false for Badge: the template subscription was simply never wired,
-  // even though BadgeView (via ViewBase) already fully supports jinjaMinValue/jinjaMaxValue.
+  // Derived from the Card map (minus the badge-only handlers) instead of hand-mirroring it:
+  // an earlier hand-maintained copy silently missed min_value for months (CF5, medium), so
+  // any handler added on the base class is now picked up here automatically by construction.
   _getJinjaHandlers(content) {
-    return {
-      ...this._baseJinjaHandlers(content),
-      custom_info: () => this._renderCustomInfo(content),
-      name_info: () => this._renderNameInfo(content),
-      min_value: () => this._renderMinValue(content),
-      max_value: () => this._renderMaxValue(content),
-    };
+    const handlers = super._getJinjaHandlers(content);
+    delete handlers.badge_icon;
+    delete handlers.badge_color;
+    return handlers;
   }
 }
 
@@ -16721,10 +17609,12 @@ class EditorDOMHelper extends DOMHelper {
 
     // Dynamic selector
     if (def.selectorOf) {
-      const entityId = def.selectorOf.includes('.')
-        ? def.selectorOf.split('.').reduce((obj, k) => obj?.[k], config) ?? ''
-        : config[def.selectorOf] ?? '';
-      this.updateSelector(name, { attribute: { entity_id: entityId } });
+      const resolved = def.selectorOf.includes('.')
+        ? def.selectorOf.split('.').reduce((obj, k) => obj?.[k], config)
+        : config[def.selectorOf];
+      // The source key can hold a non-string shape (watermark.low: { jinja }) — the native
+      // attribute selector expects an entity-id string, so anything else degrades to ''.
+      this.updateSelector(name, { attribute: { entity_id: is.string(resolved) ? resolved : '' } });
     }
 
     // Context
@@ -16961,20 +17851,18 @@ class SingleSelectChipsBase extends ChipsBase {
   }
 }
 
-class EntityProgressMinValueModeChips extends SingleSelectChipsBase {
-  static ELEMENT_NAME = 'entity-progress-min-value-mode-chips';
+// One element for every "value source" selector (min_value, max_value, watermark.low,
+// watermark.high): the modes are identical, and everything field-specific (id, label,
+// localized option labels, resolveVirtual/onVirtualChange) is per-instance, set by
+// #buildModeChipsField from the field definition — the class itself carries nothing to
+// specialize. A field whose modes ever diverge stops being a "value source" and gets its
+// own class, like theme_mode/bar_stack_mode below.
+class EntityProgressValueSourceModeChips extends SingleSelectChipsBase {
+  static ELEMENT_NAME = 'entity-progress-value-source-mode-chips';
   static MODES = ['standard', 'entity', 'jinja'];
 }
-if (!customElements.get(EntityProgressMinValueModeChips.ELEMENT_NAME)) {
-  customElements.define(EntityProgressMinValueModeChips.ELEMENT_NAME, EntityProgressMinValueModeChips);
-}
-
-class EntityProgressMaxValueModeChips extends SingleSelectChipsBase {
-  static ELEMENT_NAME = 'entity-progress-max-value-mode-chips';
-  static MODES = ['standard', 'entity', 'jinja'];
-}
-if (!customElements.get(EntityProgressMaxValueModeChips.ELEMENT_NAME)) {
-  customElements.define(EntityProgressMaxValueModeChips.ELEMENT_NAME, EntityProgressMaxValueModeChips);
+if (!customElements.get(EntityProgressValueSourceModeChips.ELEMENT_NAME)) {
+  customElements.define(EntityProgressValueSourceModeChips.ELEMENT_NAME, EntityProgressValueSourceModeChips);
 }
 
 class EntityProgressThemeModeChips extends SingleSelectChipsBase {
@@ -17421,7 +18309,7 @@ if (!customElements.get(EntityProgressCustomThemeEditor.ELEMENT_NAME)) {
 
 class EditorBase extends HTMLElement {
   static _fields = {
-    /* --- cutomizee it
+    /* --- customize it
     general: {
       flat: true,
       fields: {
@@ -17510,16 +18398,77 @@ class EditorBase extends HTMLElement {
       .editor { display: flex; flex-direction: column; gap: 16px; }
       .panel-body { display: flex; flex-direction: row; gap: 16px; flex-wrap: wrap; align-content: flex-start; padding: 8px 0; }
       .panel-body ha-selector.field-toggle { margin-block: -18px; }
+      .migrate-header { display: flex; justify-content: flex-end; }
     `;
 
     const container = document.createElement('div');
     container.className = 'editor';
+
+    container.appendChild(this.#buildMigrateHeader());
 
     for (const [section, def] of Object.entries(this.constructor._fields)) {
       container.appendChild(this.#buildExpansionPanel(section, def));
     }
 
     this.shadowRoot.append(style, container);
+  }
+
+  // Deprecated options this card can rewrite in one click, top-right of the editor —
+  // see docs/troubleshooting.md#deprecated-options for the user-facing explanation.
+  // Aliases mirror types.theme's own internal remap exactly (kept in sync manually: both
+  // are small, frozen/historical lists that are very unlikely to grow further).
+  static #THEME_ALIASES = { battery: 'optimal_when_high', memory: 'optimal_when_low', cpu: 'optimal_when_low' };
+
+  static #hasDeprecatedOptions(config) {
+    return Boolean(
+      is.nonEmptyString(config?.max_value) ||
+        config?.disable_unit !== undefined ||
+        is.array(config?.additions) ||
+        config?.navigate_to !== undefined ||
+        config?.show_more_info !== undefined ||
+        EditorBase.#THEME_ALIASES[config?.theme],
+    );
+  }
+
+  // Rewrites deprecated syntax to its modern equivalent only — never the unrelated defaults
+  // _customizeConfig also applies (center_zero's min_value fill-in, device_class attribute
+  // defaults), so the button only ever changes what it documents. `navigate_to`/`show_more_info`
+  // are deleted rather than converted to tap_action: both have been fully inert since v1.2.0,
+  // so reconstructing one from a value that hasn't run in years would be a guess, not a migration
+  // — and could clobber a tap_action the user configured since. max_value/disable_unit/additions
+  // are delegated to the active config helper's own _migrateLegacyOptions, so Template editors
+  // (whose schema never had those options) safely no-op there instead of needing a special case.
+  static #migrateDeprecatedConfig(config, configHelper) {
+    let migrated = configHelper.constructor._migrateLegacyOptions(config);
+    const themeAlias = EditorBase.#THEME_ALIASES[migrated.theme];
+    if (themeAlias) migrated = { ...migrated, theme: themeAlias };
+    if (migrated.navigate_to !== undefined) migrated = { ...migrated, navigate_to: undefined };
+    if (migrated.show_more_info !== undefined) migrated = { ...migrated, show_more_info: undefined };
+    return migrated;
+  }
+
+  #buildMigrateHeader() {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'migrate-header';
+
+    const button = document.createElement('ha-button');
+    const fieldName = '_migrate_config';
+    button.id = fieldName;
+    button.append(this.#hassProvider.localize(EDITOR_FIELD_NS)?.migrate_config ?? 'Migrate config');
+    button.addEventListener('click', () => {
+      button.dispatchEvent(new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value: true }, bubbles: true, composed: true }));
+    });
+
+    const field = {
+      name: fieldName,
+      virtual: true,
+      showIf: (config) => EditorBase.#hasDeprecatedOptions(config),
+      onVirtualChange: (_value, config) => EditorBase.#migrateDeprecatedConfig(config, this._configHelper),
+    };
+    this.#dom.registerField(fieldName, button, field);
+
+    wrapper.appendChild(button);
+    return wrapper;
   }
 
   #buildExpansionPanel(section, def) {
@@ -17600,6 +18549,7 @@ class EditorBase extends HTMLElement {
       bar_orientation: () => buildSelect(options.bar_orientation),
       bar_position: () => buildSelect(options.bar_position),
       bar_color_mode: () => buildSelect(options.bar_color_mode),
+      bar_scale: () => buildSelect(options.bar_scale),
       icon_animation: () => buildSelect(options.icon_animation),
       alert_highlight: () => buildSelect(options.alert_highlight),
       theme: () => buildSelect(options.theme),
@@ -17667,24 +18617,16 @@ class EditorBase extends HTMLElement {
     return el;
   }
 
-  #buildBarStackField(field) {
-    const el = document.createElement(EntityProgressBarStackEditor.ELEMENT_NAME);
+  // Shared by every ListEditorBase-backed field. labelKey is passed separately from
+  // field.name because a dot-path field ('bar_stack.entities') labels itself under its
+  // parent's translation key ('bar_stack'); rows is the config array the editor round-trips.
+  #buildListEditorField(field, tagName, labelKey, rows) {
+    const el = document.createElement(tagName);
     el.id = field.name;
     el.style.width = '100%';
-    el.label = this.#hassProvider.localize(EDITOR_FIELD_NS)?.bar_stack ?? 'bar_stack';
+    el.label = this.#hassProvider.localize(EDITOR_FIELD_NS)?.[labelKey] ?? labelKey;
     el.hass = this.hass;
-    el.value = is.array(this.#config?.bar_stack?.entities) ? this.#config.bar_stack.entities : [];
-    this.#dom.registerField(field.name, el, field);
-    return el;
-  }
-
-  #buildCustomThemeField(field) {
-    const el = document.createElement(EntityProgressCustomThemeEditor.ELEMENT_NAME);
-    el.id = field.name;
-    el.style.width = '100%';
-    el.label = this.#hassProvider.localize(EDITOR_FIELD_NS)?.[field.name] ?? field.name;
-    el.hass = this.hass;
-    el.value = is.array(this.#config?.[field.name]) ? this.#config[field.name] : [];
+    el.value = is.array(rows) ? rows : [];
     this.#dom.registerField(field.name, el, field);
     return el;
   }
@@ -17696,12 +18638,16 @@ class EditorBase extends HTMLElement {
     const builders = {
       effect_chips: () => this.#buildChipsField(field, EntityProgressEffectChips.ELEMENT_NAME, 'bar_effect'),
       hide_chips: () => this.#buildChipsField(field, EntityProgressHideChips.ELEMENT_NAME, 'hide'),
-      min_value_mode: () => this.#buildModeChipsField(field, EntityProgressMinValueModeChips.ELEMENT_NAME),
-      max_value_mode: () => this.#buildModeChipsField(field, EntityProgressMaxValueModeChips.ELEMENT_NAME),
+      min_value_mode: () => this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME),
+      max_value_mode: () => this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME),
+      watermark_low_mode: () => this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME),
+      watermark_high_mode: () => this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME),
       theme_mode: () => this.#buildModeChipsField(field, EntityProgressThemeModeChips.ELEMENT_NAME),
       bar_stack_mode: () => this.#buildModeChipsField(field, EntityProgressBarStackModeChips.ELEMENT_NAME),
-      bar_stack_editor: () => this.#buildBarStackField(field),
-      custom_theme_editor: () => this.#buildCustomThemeField(field),
+      bar_stack_editor: () =>
+        this.#buildListEditorField(field, EntityProgressBarStackEditor.ELEMENT_NAME, 'bar_stack', this.#config?.bar_stack?.entities),
+      custom_theme_editor: () =>
+        this.#buildListEditorField(field, EntityProgressCustomThemeEditor.ELEMENT_NAME, field.name, this.#config?.[field.name]),
     };
     return builders[field.type]?.();
   }
@@ -17927,24 +18873,43 @@ const EditorFieldsType = {
 const wmSide = (side, defaultVal) => {
   const disableKey = `disable_${side}`;
   const attrType = `watermark${side.charAt(0).toUpperCase() + side.slice(1)}Attribute`;
+  const modeType = `watermark_${side}_mode`;
   const wm  = (extra) => (c) => Boolean(c.watermark) && extra(c);
   const on  = (c) => !c.watermark?.[disableKey];
   const ent = (c) => is.string(c.watermark?.[side]);
+  const tpl = (c) => is.nonEmptyString(c.watermark?.[side]?.jinja);
   return {
     [`watermark.${disableKey}`]: EditorFieldsType.toggle(`watermark.${disableKey}`, {
       showIf: (c) => Boolean(c.watermark),
     }),
-    [`watermark.${side}_entity_toggle`]: EditorFieldsType.toggle(`watermark.${side}_entity_toggle`, {
+    // A 2-state toggle can't represent 3 mutually exclusive modes (standard/entity/Jinja) —
+    // mirrors min_value_mode/max_value_mode exactly, replacing the previous entity-only toggle.
+    [modeType]: {
+      name: modeType,
+      type: modeType,
       virtual: true,
       showIf: wm(on),
-      resolveVirtual: (c) => is.string(c.watermark?.[side]),
-      onVirtualChange: (value, config) => ({
-        ...config,
-        watermark: { ...config.watermark, [side]: value ? '' : defaultVal, ...(!value ? { [`${side}_attribute`]: undefined } : {}) },
-      }),
-    }),
+      resolveVirtual: (c) => (tpl(c) ? 'jinja' : ent(c) ? 'entity' : 'standard'),
+      onVirtualChange: (mode, config) => {
+        const attrKey = `${side}_attribute`;
+        if (mode === 'entity') {
+          return { ...config, watermark: { ...config.watermark, [side]: is.string(config.watermark?.[side]) ? config.watermark[side] : '' } };
+        }
+        if (mode === 'jinja') {
+          return {
+            ...config,
+            watermark: {
+              ...config.watermark,
+              [side]: is.nonEmptyString(config.watermark?.[side]?.jinja) ? config.watermark[side] : { jinja: '{{ }}' },
+              [attrKey]: undefined,
+            },
+          };
+        }
+        return { ...config, watermark: { ...config.watermark, [side]: defaultVal, [attrKey]: undefined } };
+      },
+    },
     [`watermark.${side}`]: EditorFieldsType.number(`watermark.${side}`, {
-      showIf: wm((c) => on(c) && !ent(c)),
+      showIf: wm((c) => on(c) && !ent(c) && !tpl(c)),
     }),
     [`watermark.${side}_entity`]: EditorFieldsType.entity(`watermark.${side}_entity`, {
       virtual: true,
@@ -17960,6 +18925,19 @@ const wmSide = (side, defaultVal) => {
       type: attrType,
       selectorOf: `watermark.${side}`,
       showIf: wm((c) => on(c) && ent(c) && c.watermark[side] !== ''),
+    }),
+    // Virtual (not a plain dot-path field): the template string lives 2 levels deep
+    // (watermark.<side>.jinja), one level past what the generic nested-field machinery
+    // (#resolveValue/#handleNestedField) resolves — this reads/writes that path directly.
+    [`watermark_${side}_jinja`]: EditorFieldsType.tpl(`watermark_${side}_jinja`, {
+      noLabel: true,
+      virtual: true,
+      showIf: wm((c) => on(c) && tpl(c)),
+      resolveVirtual: (c) => c.watermark?.[side]?.jinja ?? '',
+      onVirtualChange: (value, config) => ({
+        ...config,
+        watermark: { ...config.watermark, [side]: { jinja: value } },
+      }),
     }),
     [`watermark.${side}_as`]: EditorFieldsType.select(`watermark.${side}_as`, {
       type: 'watermark_as',
@@ -18216,6 +19194,7 @@ const EditorFactory = {
             text_shadow: EditorFieldsType.toggle('text_shadow', { showIf: (c) => c.bar_position === 'overlay' }),
             bar_segments: EditorFieldsType.number('bar_segments', { width: availableSpace() }),
           }),
+      bar_scale: EditorFieldsType.select('bar_scale', { width: availableSpace(), showIf: (c) => !c.center_zero }),
       bar_orientation: EditorFieldsType.select('bar_orientation', template ? {} : { width: availableSpace() }),
       reverse_secondary_info_row: EditorFieldsType.toggle('reverse_secondary_info_row', { showIf: (c) => (!c.bar_position || c.bar_position === 'default') && c.layout === 'horizontal' }),
       center_zero: EditorFieldsType.toggle('center_zero', {
@@ -18488,7 +19467,7 @@ if (!window.EPB_DIAG) {
         `reduced motion : ${window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? 'n/a'}`,
         `EPB registered : ${epbEntries.map((card) => `${card.type}@${card.version ?? '?'}`).join(', ') || 'none'}`,
         `duplicate load : ${duplicates ? '⚠️ YES — remove one of the two resources!' : 'no'}`,
-        `HA elements    : ha-card=${!!customElements.get('ha-card')} ha-selector=${!!customElements.get(HA_SELECTOR_TAG)} action-handler=${!!customElements.get(HA_ACTION_HANDLER_TAG)}`,
+        `HA elements    : ha-card=${Boolean(customElements.get('ha-card'))} ha-selector=${Boolean(customElements.get(HA_SELECTOR_TAG))} action-handler=${Boolean(customElements.get(HA_ACTION_HANDLER_TAG))}`,
         `constructed CSS: ${CONSTRUCTED_SHEETS.size > 0 && [...CONSTRUCTED_SHEETS.values()].some(Boolean) ? 'shared (modern)' : 'per-card fallback'}`,
         '=========================================',
       ].join('\n');

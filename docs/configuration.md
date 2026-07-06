@@ -49,6 +49,7 @@
       - [`bar_segments`](#bar_segments)
       - [`bar_effect`](#bar_effect)
       - [`bar_color_mode`](#bar_color_mode)
+      - [`bar_scale`](#bar_scale)
       - [`bar_max_width`](#bar_max_width)
       - [`bar_orientation`](#bar_orientation)
       - [`force_circular_background`](#force_circular_background)
@@ -1116,8 +1117,9 @@ color: rgb(110, 65, 171)
 [![Template OK][Template-OK]](#compatibility)
 [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
-> **`icon_animation`** [String] ➡️ {`none`|`spin`|`pulse`} _(optional, default:
-> `none`)_
+> **`icon_animation`** [String] ➡️
+> {`none`|`spin`|`pulse`|`bounce`|`shake`|`ping`|`reveal`} _(optional,
+> default: `none`)_
 
 Animates the icon while the entity is in an active state — a spinning fan, a
 pulsing media player icon...
@@ -1138,11 +1140,15 @@ icon_animation: spin
 
 _Options_:
 
-| option   | description                          |
-| :------- | :----------------------------------- |
-| `none`   | No animation (default)               |
-| `spin`   | Continuous rotation                  |
-| `pulse`  | Gentle scale/opacity pulse           |
+| option   | description                                    |
+| :------- | :---------------------------------------------- |
+| `none`   | No animation (default)                         |
+| `spin`   | Continuous rotation                            |
+| `pulse`  | Gentle scale/opacity pulse                     |
+| `bounce` | Squash-and-stretch bounce                      |
+| `shake`  | Small vibration jitter                         |
+| `ping`   | Expanding ring pulse around the icon's shape   |
+| `reveal` | Icon grows into view in circular steps         |
 
 [🔼 Back to top]
 
@@ -1484,6 +1490,43 @@ custom_theme:
     max: 100
     color: orange
 bar_color_mode: rainbow
+```
+
+[🔼 Back to top]
+
+#### `bar_scale`
+
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Feature OK][Feature-OK]](#compatibility)
+
+> **`bar_scale`** [String] ➡️ {`linear`|`log`} _(optional, default: `linear`)_
+
+Controls how the value maps to the bar's fill width.
+
+- `linear` (default) — no change from previous versions: the fill width is
+  directly proportional to the value.
+- `log` — the fill width follows a base-10 logarithmic scale instead. Useful
+  for values that span several orders of magnitude (illuminance in lux,
+  network throughput, particle counts…), where a linear bar would make
+  everything below the top of the range look empty.
+
+Watermarks, theme zones and marks all stay visually consistent with the
+chosen scale — they share the same value → position math as the bar fill.
+
+> [!NOTE]
+> `log` requires a strictly positive range (`min_value > 0` and
+> `max_value > min_value`) and has no meaning combined with `center_zero`
+> (there is no logarithm of a range that crosses zero). Either condition
+> falls back to `linear` automatically — no error, no broken bar.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.living_room_illuminance
+min_value: 1
+max_value: 100000
+bar_scale: log
 ```
 
 [🔼 Back to top]
@@ -2128,8 +2171,8 @@ the current state at a glance.
 
 _Map definition_:
 
-- `high` (number/entity): The upper threshold value. How it is interpreted
-  depends on `high_as` (see below).
+- `high` (number/entity/template): The upper threshold value. How it is
+  interpreted depends on `high_as` (see below).
 - `high_as` (string): Controls how `high` is interpreted.
   - `auto` (default): value in the entity’s own unit and scale (same as
     `min_value`/`max_value`) — the card converts it to a bar position.
@@ -2138,8 +2181,8 @@ _Map definition_:
 - `high_attribute`: Entity’s attribute to use as the high threshold.
 - `high_color` (string): The CSS color used for the high watermark zone (name or
   hex).
-- `low` (number/entity): The lower threshold value. How it is interpreted
-  depends on `low_as` (see below).
+- `low` (number/entity/template): The lower threshold value. How it is
+  interpreted depends on `low_as` (see below).
 - `low_as` (string): Controls how `low` is interpreted.
   - `auto` (default): value in the entity’s own unit and scale (same as
     `min_value`/`max_value`) — the card converts it to a bar position.
@@ -2162,6 +2205,35 @@ _Map definition_:
   = fully transparent to 1 = fully opaque).
 - `disable_low` (boolean): If set to true, disables the low watermark display.
 - `disable_high` (boolean): If set to true, disables the high watermark display.
+
+`low` and `high` each accept three forms — like `min_value`/`max_value`, a
+`{ jinja: ... }` map is explicit rather than sniffed from a bare string (an
+entity ID and a Jinja template are both strings):
+
+- a fixed numeric value — same as before,
+- an entity ID (string) — same as before, optionally paired with
+  `low_attribute`/`high_attribute`,
+- `{ jinja: ... }` — a Jinja template that dynamically returns a number.
+
+In the visual editor, a chip selector (Fixed value / Entity / Template) lets
+you switch between the three modes, mirroring `min_value`/`max_value`.
+
+> [!NOTE]
+>
+> The Jinja mode for `low`/`high` is available on the Card and the Badge
+> only. On the Tile Feature and the Template card, only the fixed value and
+> entity modes apply.
+
+_Jinja example_:
+
+```yaml
+type: custom:entity-progress-card
+····
+watermark:
+  low:
+    jinja: "{{ states('input_number.night_floor') | float }}"
+  high: 80
+```
 
 **Value interpretation**
 
@@ -2385,6 +2457,7 @@ available for Templates as well:
 | `bar_effect`                 | string/list/jinja  | —            | Visual effects for the bar        | [Config Ref.](#bar_effect)                 |
 | `bar_max_width`.             | string (optional)  | -            | Limits the max width of the bar   | [Config Ref.](#bar_max_width)              |
 | `bar_orientation`            | string (optional)  | `ltr`        | Bar direction                     | [Config Ref.](#bar_orientation)            |
+| `bar_scale`                  | string (optional)  | `linear`     | Value-to-width mapping            | [Config Ref.](#bar_scale)                  |
 | `icon_animation`             | string (optional)  | `none`       | Animate icon on active state      | [Config Ref.](#icon_animation)             |
 | `force_circular_background`  | boolean (optional) | `false`      | Force icon circle background      | [Config Ref.](#force_circular_background)  |
 | `trend_indicator`            | string (optional)  | `false`      | Displays trend icons.             | [Config Ref.](#trend_indicator)            |

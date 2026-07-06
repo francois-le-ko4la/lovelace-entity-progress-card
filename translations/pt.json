@@ -39,6 +39,7 @@
       "bar_size": "Tamanho da barra",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Modo de cor da barra",
+      "bar_scale": "Escala da barra",
       "center_zero": "Zero no centro",
       "center_zero_value": "Valor central",
       "center_zero_growth_percent": "Percentagem de crescimento",
@@ -71,6 +72,8 @@
       "unit": "Unidade",
       "min_value_mode": "Min value source",
       "max_value_mode": "Max value source",
+      "watermark_low_mode": "Low watermark source",
+      "watermark_high_mode": "High watermark source",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -84,7 +87,8 @@
       "name_info": "Informação de nome personalizada",
       "reverse": "Temporizador inverso",
       "bar_stack_mode": "Modo de empilhamento",
-      "bar_stack": "Entidades adicionais"
+      "bar_stack": "Entidades adicionais",
+      "migrate_config": "Migrar configuração"
     },
     "option": {
       "bar_orientation": {
@@ -123,6 +127,10 @@
         "auto": "Auto",
         "segment": "Segmentos",
         "rainbow": "Arco-Íris"
+      },
+      "bar_scale": {
+        "linear": "Linear",
+        "log": "Logarítmica"
       },
       "bar_effect": {
         "radius": "Cantos arredondados",
@@ -169,15 +177,17 @@
         "line_size": "Espessura da linha",
         "disable_low": "Desativar limite baixo",
         "disable_high": "Desativar limite alto",
-        "low_entity_toggle": "Usar uma entidade para o limite baixo",
         "low_attribute": "Atributo",
-        "high_entity_toggle": "Usar uma entidade para o limite alto",
         "high_attribute": "Atributo"
       },
       "icon_animation": {
         "none": "Nenhuma",
         "spin": "Girar",
-        "pulse": "Pulsar"
+        "pulse": "Pulsar",
+        "bounce": "Saltar",
+        "shake": "Vibração",
+        "ping": "Ping",
+        "reveal": "Revelar"
       },
       "alert_when": {
         "above": "Alerta acima de",
@@ -195,6 +205,16 @@
         "jinja": "Modelo"
       },
       "max_value_mode": {
+        "standard": "Valor fixo",
+        "entity": "Entidade",
+        "jinja": "Modelo"
+      },
+      "watermark_low_mode": {
+        "standard": "Valor fixo",
+        "entity": "Entidade",
+        "jinja": "Modelo"
+      },
+      "watermark_high_mode": {
         "standard": "Valor fixo",
         "entity": "Entidade",
         "jinja": "Modelo"

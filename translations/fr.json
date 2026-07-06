@@ -39,6 +39,7 @@
       "bar_size": "Taille de la barre",
       "bar_segments": "Segments de barre",
       "bar_color_mode": "Mode de couleur de la barre",
+      "bar_scale": "Échelle de la barre",
       "center_zero": "Zéro au centre",
       "center_zero_value": "Valeur de centrage",
       "center_zero_growth_percent": "Pourcentage de croissance",
@@ -71,6 +72,8 @@
       "unit": "Unité",
       "min_value_mode": "Source de la valeur min",
       "max_value_mode": "Source de la valeur max",
+      "watermark_low_mode": "Source du seuil bas",
+      "watermark_high_mode": "Source du seuil haut",
       "bar_max_width": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
@@ -84,7 +87,8 @@
       "name_info": "Info nom personnalisée",
       "reverse": "Inverser le minuteur",
       "bar_stack_mode": "Mode d'empilement",
-      "bar_stack": "Entités supplémentaires"
+      "bar_stack": "Entités supplémentaires",
+      "migrate_config": "Migrer la config"
     },
     "option": {
       "theme": {
@@ -123,6 +127,10 @@
         "auto": "Auto",
         "segment": "Segmenté",
         "rainbow": "Arc-en-ciel"
+      },
+      "bar_scale": {
+        "linear": "Linéaire",
+        "log": "Logarithmique"
       },
       "bar_effect": {
         "radius": "Coins arrondis",
@@ -169,15 +177,17 @@
         "line_size": "Épaisseur de ligne",
         "disable_low": "Désactiver le seuil bas",
         "disable_high": "Désactiver le seuil haut",
-        "low_entity_toggle": "Utiliser une entité pour le seuil bas",
         "low_attribute": "Attribut",
-        "high_entity_toggle": "Utiliser une entité pour le seuil haut",
         "high_attribute": "Attribut"
       },
       "icon_animation": {
         "none": "Aucune",
         "spin": "Rotation",
-        "pulse": "Pulsation"
+        "pulse": "Pulsation",
+        "bounce": "Rebond",
+        "shake": "Secousse",
+        "ping": "Ping",
+        "reveal": "Apparition"
       },
       "alert_when": {
         "above": "Alerte au-dessus de",
@@ -195,6 +205,16 @@
         "jinja": "Modèle"
       },
       "max_value_mode": {
+        "standard": "Valeur fixe",
+        "entity": "Entité",
+        "jinja": "Modèle"
+      },
+      "watermark_low_mode": {
+        "standard": "Valeur fixe",
+        "entity": "Entité",
+        "jinja": "Modèle"
+      },
+      "watermark_high_mode": {
         "standard": "Valeur fixe",
         "entity": "Entité",
         "jinja": "Modèle"

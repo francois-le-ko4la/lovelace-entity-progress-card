@@ -340,11 +340,23 @@ Techniques used to keep N cards cheap on a dashboard that updates constantly:
 
 ## Jinja template subscriptions
 
-Template-capable options (`badge_icon`, `bar_effect`, `hide`, and all fields
-of the template cards) are rendered **server-side by HA** via
-`render_template` WebSocket subscriptions: HA pushes a new result whenever an
-entity referenced inside the template changes. The card never evaluates
-Jinja itself.
+Template-capable options (`badge_icon`, `bar_effect`, `hide`, `min_value`,
+`max_value`, `watermark.low`, `watermark.high`, and all fields of the
+template cards) are rendered **server-side by HA** via `render_template`
+WebSocket subscriptions: HA pushes a new result whenever an entity
+referenced inside the template changes. The card never evaluates Jinja
+itself.
+
+`min_value`/`max_value`/`watermark.low`/`watermark.high` use an explicit
+`{ jinja: "..." }` map rather than sniffing a bare string, because a plain
+string is already meaningful there (an entity ID) — disambiguating the two
+at runtime is exactly what this shape avoids. `validJinjaFields`'s
+`rawValueFor` resolves both flat keys (`min_value`) and one level of nested
+dot-path keys (`watermark.low`) the same way `#resolveValue` does for editor
+fields. The resolved number is cached on the view (`jinjaMinValue`,
+`jinjaWatermarkLow`, …) and read with `??` ahead of the static value in
+`#setStdValues`/the `watermark` getter — never written directly into
+`EntityOrValue`, which only understands numbers and entity IDs.
 
 Key mechanics (`_processJinjaFields` / `_subscribeToTemplate`):
 
