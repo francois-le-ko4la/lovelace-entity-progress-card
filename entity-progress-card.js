@@ -15872,12 +15872,13 @@ class ActionHelper {
 const CONSTRUCTED_SHEETS = new Map();
 const getSharedStyleSheet = (cssText) => {
   if (CONSTRUCTED_SHEETS.has(cssText)) return CONSTRUCTED_SHEETS.get(cssText);
-  let sheet;
+  let sheet = null;
   try {
-    sheet = new CSSStyleSheet();
-    sheet.replaceSync(cssText);
+    const constructed = new CSSStyleSheet();
+    constructed.replaceSync(cssText);
+    sheet = constructed;
   } catch {
-    sheet = null; // Firefox < 101, Safari < 16.4 → legacy <style> fallback
+    // Firefox < 101, Safari < 16.4 (not constructible) → keep null, legacy <style> fallback
   }
   CONSTRUCTED_SHEETS.set(cssText, sheet);
   return sheet;

@@ -150,6 +150,8 @@ Compatible with Home Assistant 2026.2+. Among the notable fixes:
 - Fixed: Trend arrows no longer get stuck on template cards.
 - Fixed: Watermarks are now placed correctly in `center_zero` and for
   `number`/`counter` entities.
+- Fixed: A timer card with a watermark configured used to freeze entirely
+  (the bar never updated); the combination now works.
 - Fixed: `center_zero` with no `min_value` set used to leave the negative half
   with no range at all (nothing could ever show there). It now defaults
   `min_value` to `-max_value` automatically.  
