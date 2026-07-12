@@ -258,6 +258,7 @@ This is the primary card for displaying entity progress.
 | `reverse`                    | boolean (optional)      | depends on entity         | Countdown-style behavior              | [Config Ref.][config-reverse]                    |
 | `state_content`              | string/list (optional)  | depends on domain         | Attribute to show near value          | [Config Ref.][config-state_content]              |
 | `custom_info`                | Jinja (optional)        | —                         | Extra info near value                 | [Config Ref.][config-custom_info]                |
+| `multiline`                  | boolean (optional)      | `false`                   | Split secondary text on 2 lines       | [Config Ref.][config-multiline]                  |
 | `name_info`                  | Jinja (optional)        | —                         | Extra info near name                  | [Config Ref.][config-name_info]                  |
 | `bar_stack`                  | Map (optional)          | —                         | Combine several entities in one bar   | [Config Ref.][config-bar_stack]                  |
 | **Styling Options**          |                         |                           |                                       |                                                  |
@@ -631,6 +632,63 @@ manner.
 </details>
 
 <details>
+<summary><strong>Washing Machine Progress: Three Brands, Three Approaches (click to expand)</strong></summary>
+
+**Why?**
+
+Not every washing-machine integration exposes the same data, so how you get a
+progress percentage on the card depends entirely on which integration you're
+using. Here are three real, verified examples — from "just point the card at
+it" to "you need a helper".
+
+**1. Home Connect (Bosch/Siemens) — direct, no extra config**
+
+Home Connect exposes progress natively as a percentage sensor
+(`sensor.<appliance>_program_progress`, 0-100%). Just point `entity` at it:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.washing_machine_program_progress
+name: Washing Machine
+```
+
+**2. Miele — Jinja `max_value`, no helper needed**
+
+Miele exposes `elapsed_time` and `remaining_time` (minutes) but no
+ready-made percentage. Combine them with a Jinja `max_value`. `unit: '%'`
+is required here: `elapsed_time` has `device_class: duration`, and without
+it the card would show the raw elapsed time instead of the percentage (the
+bar fill itself is correct either way — only the text label is affected):
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.washing_machine_elapsed_time
+unit: '%'
+max_value:
+  jinja: >
+    {{ (states('sensor.washing_machine_elapsed_time') | float(0))
+       + (states('sensor.washing_machine_remaining_time') | float(0)) }}
+```
+
+**3. Samsung (SmartThings) — the worst case, full helper setup**
+
+SmartThings is the hardest of the three: it only exposes `machine_state`
+(run/pause/stop), `job_state` (current phase), and `completion_time` (an
+absolute end-of-cycle timestamp) — no elapsed time, no remaining time, and
+no start time to anchor a calculation. Unlike the previous two, this can't
+be solved with card config alone: you first need to *create* a start time
+yourself, then apply the "Simple Helper" technique from the next section:
+
+- Create an `input_datetime` helper (e.g. `input_datetime.washer_start`).
+- Add an automation that sets it to `now()` whenever
+  `sensor.washing_machine_machine_state` changes to `run`.
+- Follow "Cracking a Complex Case with a Simple Helper" just below, using
+  `input_datetime.washer_start` as the start time and
+  `sensor.washing_machine_completion_time` as the end time.
+
+</details>
+
+<details>
 <summary><strong>Cracking a Complex Case with a Simple Helper (click to expand)</strong></summary>
 
 **Why ?**
@@ -936,6 +994,7 @@ The following options remain fully compatible with this new card:
 | `height`                     | string (optional)  | Card height                                                                    | [Config Ref.][config-height]                     |
 | `min_width`                  | string (optional)  | Set a minimum width for the template to ensure consistent layout.              | [Config Ref.][config-min_width]                  |
 | `reverse_secondary_info_row` | boolean (optional) | Flip info bar layout.                                                          | [Config Ref.][config-reverse_secondary_info_row] |
+| `multiline`                  | boolean (optional) | Split secondary text on 2 lines.                                               | [Config Ref.][config-multiline]                  |
 | `center_zero`                | boolean (optional) | Center the bar on 0.                                                           | [Config Ref.][config-center_zero]                |
 | `hide`                       | list (optional)    | Hide parts of the card.                                                        | [Config Ref.][config-hide]                       |
 | `watermark`                  | map (optional)     | Adds min/max overlays.                                                         | [Config Ref.][config-watermark]                  |
@@ -1163,7 +1222,6 @@ customizable badge format with a dynamic progress bar.
 | **Styling Options**          |                         |                           |                                       |                                                  |
 | `icon`                       | string (optional)       | —                         | Icon override                         | [Config Ref.][config-icon]                       |
 | `color`                      | string (optional)       | based on entity           | Icon color                            | [Config Ref.][config-color]                      |
-| `icon_animation`             | string (optional)       | `none`                    | Animate icon on active state          | [Config Ref.][config-icon_animation]             |
 | `bar_color`                  | string (optional)       | `var(--state-icon-color)` | Color of progress bar                 | [Config Ref.][config-bar_color]                  |
 | `bar_size`                   | string (optional)       | `small`                   | Size of the progress bar              | [Config Ref.][config-bar_size]                   |
 | `bar_segments`               | integer (optional)      | —                         | Render bar as discrete segments       | [Config Ref.][config-bar_segments]               |
@@ -1256,7 +1314,6 @@ The following options remain fully compatible with this new card:
 | `bar_effect`                 | string/list/jinja  | Visual effects for the bar                                                     | [Config Ref.][config-bar_effect]                 |
 | `bar_max_width`.             | string (optional)  | Limits the maximum width of the bar                                            | [Config Ref.][config-bar_max_width]              |
 | `bar_orientation`            | string (optional)  | Define the direction of the progress bar (e.g., `ltr`, `rtl`).                 | [Config Ref.][config-bar_orientation]            |
-| `icon_animation`             | string (optional)  | Animate icon on active state                                                   | [Config Ref.][config-icon_animation]             |
 | `frameless`                  | boolean (optional) | Remove the default card border and background for a seamless, flat appearance. | [Config Ref.][config-frameless]                  |
 | `marginless`                 | boolean (optional) | Remove vertical margin for a more compact template display.                    | [Config Ref.][config-marginless]                 |
 | `min_width`                  | string (optional)  | Set a minimum width for the template to ensure consistent layout.              | [Config Ref.][config-min_width]                  |
@@ -1638,6 +1695,8 @@ This project is licensed under the [GPL-3.0 license].
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#state_content
 [config-custom_info]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#custom_info
+[config-multiline]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#multiline
 [config-name_info]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#name_info
 [config-bar_stack]:

@@ -83,6 +83,7 @@
       "watermark_toggle": "Watermark",
       "alert_toggle": "Alert",
       "custom_info": "Egendefinert sekundær info",
+      "multiline": "Multiline",
       "interpolate": "Interpoler farger",
       "name_info": "Egendefinert navneinfo",
       "reverse": "Omvendt tidtaker",
@@ -187,7 +188,9 @@
         "bounce": "Bounce",
         "shake": "Shake",
         "ping": "Ping",
-        "reveal": "Reveal"
+        "reveal": "Reveal",
+        "washing_machine": "Washing machine",
+        "battery_charging": "Battery charging"
       },
       "alert_when": {
         "above": "Alert above",

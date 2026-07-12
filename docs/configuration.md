@@ -34,6 +34,7 @@
       - [`reverse`](#reverse)
       - [`state_content`](#state_content)
       - [`custom_info`](#custom_info)
+      - [`multiline`](#multiline)
       - [`name_info`](#name_info)
       - [`bar_stack`](#bar_stack)
     - [Styling Options](#styling-options)
@@ -195,13 +196,21 @@ Fields that render Jinja results as HTML (`name`, `secondary`, `custom_info`,
 `name_info`) are **sanitized** before injection. Only the following markup is
 kept — everything else is stripped while its text content is preserved:
 
-- **Tags**: `<b>`, `<i>`, `<u>`, `<span>`, `<div>`, `<br>`
+- **Tags**: `<b>`, `<i>`, `<u>`, `<span>`, `<div>`
 - **Attributes**: `class`, and `style` limited to `color` and
   `background-color`
 
 Scripts, event handlers (`onclick`, `onerror`, …), iframes, links and images
 are always removed. This protects your dashboard when a template interpolates
 strings you don't control (media titles, network device names, …).
+
+> [!NOTE]
+>
+> `<br>` is not in that list — it's handled separately, only on
+> `custom_info`/`secondary`, only when [`multiline`](#multiline) is `true`. Any
+> other `<br>` (including in `name`/`name_info`, which have no multiline mode
+> at all) is stripped rather than kept, since none of these fields can wrap
+> onto a second line outside that one opt-in case.
 
 _Example_:
 
@@ -705,6 +714,34 @@ max_value:
   jinja: "{{ states('input_number.ceiling') | float }}"
 ```
 
+_Appliance progress example_:
+
+Some appliance integrations expose a ready-made percentage — Home Connect
+(Bosch/Siemens) has `sensor.<appliance>_program_progress` (0-100 %), so
+`entity` alone is enough, no `max_value` needed:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.washing_machine_program_progress
+```
+
+Miele doesn't expose a percentage, but does expose `elapsed_time` and
+`remaining_time` (minutes) — combine them into a dynamic `max_value` so
+elapsed time becomes the progress. `unit: '%'` is required here: `entity`
+has `device_class: duration`, and without an explicit `unit` the card shows
+the elapsed time itself (e.g. "23 min") instead of the percentage — the bar
+fill is correct either way, only the text label is affected:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.washing_machine_elapsed_time
+unit: '%'
+max_value:
+  jinja: >
+    {{ (states('sensor.washing_machine_elapsed_time') | float(0))
+       + (states('sensor.washing_machine_remaining_time') | float(0)) }}
+```
+
 [🔼 Back to top]
 
 #### `reverse`
@@ -833,6 +870,39 @@ custom_info: >-
 > - This field supports HTML for advanced formatting — see
 >   [Supported HTML](#supported-html) for the allowed tags and styles.
 > - If the template evaluates to an empty string, nothing will be displayed.
+
+[🔼 Back to top]
+
+#### `multiline`
+
+[![Card OK][Card-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+
+> **`multiline`** [Boolean] _(optional, default: `false`)_:
+
+Splits [`custom_info`](#custom_info) (or [`secondary`](#secondary-jinja) on
+Template cards) across two lines instead of one. Insert a `<br>` (or `<br />`)
+in the Jinja output at the point where the second line should start.
+
+- Only the first `<br>` is honored — anything after a second one is discarded.
+- When `multiline` is `false` (the default), any `<br>` in the output is
+  stripped and the text stays on a single, ellipsis-truncated line.
+- Not available on `entity-progress-badge` / `entity-progress-badge-template`:
+  the row is too small to fit a second line.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+····
+multiline: true
+custom_info: >-
+  {% if states('sensor.temperature') | float > 25 %}
+    <span style="color: red;">{{ states('sensor.temperature') }} °C</span><br>– Hot
+  {% else %}
+    <span style="color: blue;">{{ states('sensor.temperature') }} °C</span><br>– Cool
+  {% endif %}
+```
 
 [🔼 Back to top]
 
@@ -1113,22 +1183,86 @@ color: rgb(110, 65, 171)
 
 #### `icon_animation`
 
-[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
-[![Template OK][Template-OK]](#compatibility)
-[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+[![Card OK][Card-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility)
 
 > **`icon_animation`** [String] ➡️
-> {`none`|`spin`|`pulse`|`bounce`|`shake`|`ping`|`reveal`} _(optional,
-> default: `none`)_
+> {`none`|`spin`|`pulse`|`bounce`|`shake`|`ping`|`reveal`|`washing_machine`|`battery_charging`}
+> _(optional, default: `none`)_
 
 Animates the icon while the entity is in an active state — a spinning fan, a
 pulsing media player icon...
 
-The animation only plays while the entity is genuinely "active": it is
+Most options only play while the entity is genuinely "active": they are
 automatically disabled for entities without an active/inactive concept (plain
 sensors, numbers, batteries...) and for entities in a resting state (`off`,
-`idle`, `paused`, `closed`, `locked`, ...). It also respects the system-level
-"Reduce Motion" accessibility setting (see [Accessibility] in the README).
+`idle`, `paused`, `closed`, `locked`, ...). `washing_machine` and
+`battery_charging` are the two exceptions.
+
+`washing_machine` also triggers when `entity` — or another `sensor` on the
+same device, since `entity` is often the progress percentage rather than
+the status itself (see [max_value] below) — has a state of exactly `run`
+or `in_use` (see the table below). No config needed: every same-device
+sensor is checked automatically, the same way `battery_charging` resolves
+its own status entity. A `binary_sensor`/`switch` based setup (e.g. a
+smart-plug power monitor) keeps working as before, with no extra state
+check needed.
+
+Verified against these appliance integrations:
+
+| Brand | Entity | Recognized as running |
+| --- | --- | --- |
+| Home Connect, Bosch/Siemens ([official HA core]) | `sensor.<appliance>_operation_state` (`device_class: enum`) | state `run` |
+| Miele ([official HA core]) | `sensor.<appliance>_status` (`device_class: enum`, key `state_status`) | state `in_use` |
+
+`battery_charging` has no active/inactive concept to key off at all, so it
+instead considers the entity charging when either is true:
+
+- its own state is one of `charging`, `charge_in_progress`,
+  `v2g_charging_normal`, `charging (ac)`, `charging (dc)`, `super offboard
+  charging`, or
+- it's a `binary_sensor` with `device_class: battery_charging` and its state
+  is `on`, or
+- one of these attributes is present and truthy: `battery_charging`,
+  `charging`, `is_charging` (boolean `true`, or a `'charging'`-valued string).
+
+Most integrations split this across two entities on the same device: one
+reporting the battery percentage (the `entity` you point the card at) and
+one reporting the charging status. If `entity` doesn't itself report
+charging, the card checks every other entity on the same device against the
+rules above — no extra config needed, and no assumption about how that
+entity is named (Home Assistant's own Companion App, for example, calls its
+charging-status sensor `battery_state`, with no "charging" anywhere in its
+entity_id). All options respect the system-level "Reduce Motion"
+accessibility setting (see [Accessibility] in the README).
+
+Verified against these integrations:
+
+| Brand | Main entity (`entity`, the %) | Charging-status entity (auto-detected) | Recognized as charging |
+| --- | --- | --- | --- |
+| Tesla Fleet ([official HA core]) | `sensor.<car>_battery` (`device_class: battery`) | `sensor.<car>_charging_state` (`device_class: enum`) | state `charging` |
+| Renault ([official HA core]) | `sensor.<car>_battery` (key `battery_level`, `device_class: battery`) | `binary_sensor.<car>_charging` (`device_class: battery_charging`) **or** `sensor.<car>_charge_state` (key `charge_state`) | binary_sensor state `on`, or sensor state `charge_in_progress` / `v2g_charging_normal` |
+| BYD ([jkaberg/hass-byd-vehicle]) | `sensor` key `elec_percent` (`device_class: battery`) | `binary_sensor` key `is_charging` (`device_class: battery_charging`) | state `on` |
+| MG SAIC ([townsmcp/mg-saic-ha]) | "State of Charge" sensor (key `bmsPackSOCDsp`, `device_class: battery`) | "Charging Status" sensor (key `bmsChrgSts`) | state `Charging (AC)` / `Charging (DC)` / `Charging` / `Super Offboard Charging` |
+| Xpeng, Enode-based ([mnordseth/xpeng-homeassistant]) | "battery" sensor (`device_class: battery`) | "charging" binary_sensor (`device_class: battery_charging`) | state `on` |
+| Toyota ([pytoyoda/ha_toyota]) | "Battery Level" sensor (key `battery_level`, `device_class: battery`) | "Charging Status" sensor (key `charging_status`, `device_class: enum`) | state `charging` |
+| Volkswagen We Connect ID ([mitch-dc/volkswagen_we_connect_id]) | "State of Charge" sensor (key `currentSOC_pct`, `device_class: battery`) | "Charging State" sensor (key `chargingState`) | state `charging` |
+| Home Assistant Companion App ([official HA core]) | `sensor.<device>_battery_level` (`device_class: battery`) | `sensor.<device>_battery_state` (key `battery_state`, `device_class: enum`) — disabled by default, enable it in the entity's settings | state `charging` |
+
+Since detection reads state/attribute values, not entity_id or brand, any
+other integration following the same conventions — a `battery_charging`-class
+`binary_sensor`, or a same-device `sensor`/attribute whose state is an exact
+match from the list earlier in this section — is detected automatically too,
+without a code change.
+
+The fill animation itself is drawn by the card (a clip-path sweep), not by
+the icon — it's calibrated for the plain `mdi:battery` outline. If the icon
+actually shown (your `icon:` override, or the entity's own native icon)
+contains `charging` or `bluetooth` (e.g. `mdi:battery-charging-80`,
+`mdi:battery-charging-wireless`, `mdi:battery-bluetooth`), the icon already
+draws its own bolt/bluetooth glyph at a different position, so the card
+automatically nudges the sweep to compensate instead of changing the icon.
+This compensation is tuned against MDI's `battery-charging*` icons; other
+icon packs, or `battery-bluetooth*`, aren't verified and may not line up.
 
 _Example_:
 
@@ -1149,6 +1283,8 @@ _Options_:
 | `shake`  | Small vibration jitter                         |
 | `ping`   | Expanding ring pulse around the icon's shape   |
 | `reveal` | Icon grows into view in circular steps         |
+| `washing_machine` | Shake + porthole wipe, for washer/dryer entities |
+| `battery_charging` | Sweeping fill wipe, active while charging (device battery attribute or EV `charging` state) |
 
 [🔼 Back to top]
 
@@ -2467,6 +2603,7 @@ available for Templates as well:
 | `height`                     | string (optional)  | —            | Card height                       | [Config Ref.](#height)                     |
 | `min_width`                  | string (optional)  | —            | Minimum width                     | [Config Ref.](#min_width)                  |
 | `reverse_secondary_info_row` | boolean (optional) | `false`      | Flip info bar layout              | [Config Ref.](#reverse_secondary_info_row) |
+| `multiline`                  | boolean (optional) | `false`      | Split secondary text on 2 lines   | [Config Ref.](#multiline)                  |
 | `center_zero`                | boolean (optional) | `false`      | Center the bar on 0               | [Config Ref.](#center_zero)                |
 | `hide`                       | list (optional)    | —            | Hide parts of the card            | [Config Ref.](#hide)                       |
 | `watermark`                  | map (optional)     | —            | Adds min/max overlays             | [Config Ref.](#watermark)                  |
@@ -2658,3 +2795,10 @@ _This reference guide is adapted for entity-progress-card._
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/theme.md#token-color
 [Accessibility]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/README.md#accessibility
+[official HA core]: https://github.com/home-assistant/core/tree/dev/homeassistant/components
+[jkaberg/hass-byd-vehicle]: https://github.com/jkaberg/hass-byd-vehicle
+[townsmcp/mg-saic-ha]: https://github.com/townsmcp/mg-saic-ha
+[mnordseth/xpeng-homeassistant]: https://github.com/mnordseth/xpeng-homeassistant
+[pytoyoda/ha_toyota]: https://github.com/pytoyoda/ha_toyota
+[mitch-dc/volkswagen_we_connect_id]:
+  https://github.com/mitch-dc/volkswagen_we_connect_id

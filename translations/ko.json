@@ -83,6 +83,7 @@
       "watermark_toggle": "Watermark",
       "alert_toggle": "Alert",
       "custom_info": "사용자 정의 보조 정보",
+      "multiline": "Multiline",
       "interpolate": "색상 보간",
       "name_info": "사용자 정의 이름 정보",
       "reverse": "타이머 역방향",
@@ -187,7 +188,9 @@
         "bounce": "Bounce",
         "shake": "Shake",
         "ping": "Ping",
-        "reveal": "Reveal"
+        "reveal": "Reveal",
+        "washing_machine": "Washing machine",
+        "battery_charging": "Battery charging"
       },
       "alert_when": {
         "above": "Alert above",

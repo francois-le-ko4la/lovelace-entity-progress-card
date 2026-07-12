@@ -58,8 +58,17 @@ with three modes, per-entity colors, and `center_zero` support. See
 
 #### 🌀 Animated icons
 
-6 styles now available (`spin`, `pulse`, `bounce`, `shake`, `ping`,
-`reveal`), active-state only. See [icon_animation].
+8 styles now available (`spin`, `pulse`, `bounce`, `shake`, `ping`, `reveal`,
+`washing_machine`, `battery_charging`) — most are active-state only, but
+`washing_machine` and `battery_charging` also auto-detect a same-device
+entity when `entity` itself doesn't carry the signal (e.g. Tesla Fleet's
+separate `sensor.<car>_charging_state`, or a Home Connect/Miele appliance
+where `entity` is the progress % and the running state lives on another
+sensor). `battery_charging`'s fill sweep also self-adjusts when the shown
+icon is a `battery-charging*`/`battery-bluetooth*` MDI variant, so it lines
+up with that icon's own glyph instead of assuming a plain `mdi:battery`.
+See [icon_animation]. Displaying a real progress percentage for these
+appliances (Home Connect, Miele) has its own recipe under [max_value].
 
 #### 🚨 Get alerted at a glance
 
@@ -102,6 +111,12 @@ disappear based on conditions. See [hide].
   cards.
 - New `background` position: the bar fills the whole card.
 - The card automatically matches your theme's corner roundness.
+
+#### 📝 Two-line secondary info
+
+Add `multiline: true` and insert a `<br>` in `custom_info` (or `secondary` on
+Template cards) to split it across two lines instead of one — name and
+progress bar layout stay untouched. See [multiline].
 
 ### 🎨 A friendlier visual editor
 
@@ -147,6 +162,10 @@ Compatible with Home Assistant 2026.2+. Among the notable fixes:
 - Fixed: A tap could sometimes trigger an action twice after navigating between
   views
 - Fixed: Badge icon and color no longer flicker during state changes.
+- Fixed: A `fan` on a dynamic preset (e.g. `auto`) showed the same grey color
+  as a stopped fan — the default color now follows the entity's actual state
+  instead of its percentage attribute, which a fan can report as `0` while
+  genuinely on.
 - Fixed: Trend arrows no longer get stuck on template cards.
 - Fixed: Watermarks are now placed correctly in `center_zero` and for
   `number`/`counter` entities.
@@ -200,3 +219,5 @@ Thanks to everyone who reported, tested and contributed! 🙏
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#watermark
 [bar_scale]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_scale
+[multiline]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#multiline

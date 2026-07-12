@@ -162,10 +162,11 @@ views:
           - type: custom:entity-progress-card-template
             entity: input_number.epb_demo_temperature
             name: "{{ state_attr(entity, 'friendly_name') }}"
+            multiline: true
             secondary: >-
               {% set t = states(entity) | float %}
-              {% if t > 25 %}<span style="color: red">{{ t }} °C — hot</span>
-              {% else %}<span style="color: skyblue">{{ t }} °C — cool</span>
+              {% if t > 25 %}<span style="color: red">{{ t }} °C</span><br>— hot
+              {% else %}<span style="color: skyblue">{{ t }} °C</span><br>— cool
               {% endif %}
             percent: >-
               {{ ((states(entity) | float + 20) / 60 * 100) | round(1) }}

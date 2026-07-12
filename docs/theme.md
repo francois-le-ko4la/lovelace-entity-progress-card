@@ -711,9 +711,10 @@ guide you in updating your custom card modifications.
 | `name`                           | `name-main`              | Main name text                                       |
 | `name-custom-info`               | `name-extra`             | Extra name info, appended after main name            |
 | `secondary-info-detail-group`    | `secondary-info-wrapper` | Container for secondary info (state/progress/custom) |
-| `secondary-info-detail-combined` | `secondary-info-value`   | Displays main + extra secondary info                 |
+| `secondary-info-detail-combined` | `secondary-info-value`   | Displays main + extra secondary info — now a `<div>`, was a `<span>` |
 | `state-and-progress-info`        | `secondary-info-main`    | Main secondary info (was progress/state)             |
-| `secondary-info-custom-info`     | `secondary-info-extra`   | Extra secondary info (was custom info)               |
+| `secondary-info-custom-info`     | `secondary-info-extra-1` | Extra secondary info, line 1 (was custom info)       |
+| —                                 | `secondary-info-extra-2` | Extra secondary info, line 2 — only exists with [`multiline: true`](configuration.md#multiline) |
 | `progress-bar-container`         | `bar-container`          | Progress bar wrapper                                 |
 | `progress-bar-inner`             | `inner`                  | Single inner bar element (positive/negative unified) |
 | `progress-bar-low-zero`          | `zero`                   | Zero mark for center-zero bars                       |
@@ -746,11 +747,11 @@ ha-card.entity-progress-card...
  │       │           ├─ span.name-main
  │       │           └─ span.name-extra (optional)
  │       └─ div.secondary-info
- │           └─ div.secondary-info-group
+ │           └─ div.secondary-info-wrapper
  │               └─ div.ellipsis-wrapper
- │                   └─ span.secondary-info-value
- │                       ├─ span.secondary-info-main
- │                       └─ span.secondary-info-extra (optional)
+ │                   └─ div.secondary-info-value
+ │                       ├─ span.secondary-info-extra-1 (optional)
+ │                       └─ span.secondary-info-main
  └─ div.top-container / div.bottom-container / div.below-container (depends on barPosition)
      └─ div.bar-container
          └─ div.progress-bar.default / center-zero (depends on bar type)
@@ -759,6 +760,26 @@ ha-card.entity-progress-card...
              ├─ div.high.watermark.mark
              └─ div.zero.mark (if center-zero)
 ```
+
+With [`multiline: true`](configuration.md#multiline), `div.secondary-info-wrapper` looks like this
+instead — two independent single-line boxes rather than one shared line:
+
+```text
+div.secondary-info-wrapper
+ ├─ div.ellipsis-wrapper.secondary-info-line-1
+ │   └─ div.secondary-info-value
+ │       └─ span.secondary-info-extra-1
+ └─ div.ellipsis-wrapper.secondary-info-line-2
+     └─ div.secondary-info-value
+         ├─ span.secondary-info-extra-2 (optional)
+         └─ span.secondary-info-main
+```
+
+> [!NOTE]
+> The two multiline lines are sized to fit within the same total height as one
+> standard line, so their font size and line height are fixed and don't follow
+> `--epb-detail-font-size`. Color, weight and letter spacing still do
+> (`--epb-detail-color`, `--epb-detail-font-weight`, `--epb-detail-letter-spacing`).
 
 #### Template
 
@@ -782,11 +803,10 @@ ha-card...
  │       │           ├─ span.name-main
  │       │           └─ span.name-extra (optional)
  │       └─ div.secondary-info
- │           └─ div.secondary-info-group
+ │           └─ div.secondary-info-wrapper
  │               └─ div.ellipsis-wrapper
- │                   └─ span.secondary-info-value
- │                       ├─ span.secondary-info-main
- │                       └─ span.secondary-info-extra (optional)
+ │                   └─ div.secondary-info-value
+ │                       └─ span.secondary-info-extra-1
  └─ div.top-container / div.bottom-container / div.below-container (if barPosition)
      └─ div.bar-container
          └─ div.progress-bar.default / center-zero
@@ -794,6 +814,21 @@ ha-card...
              ├─ div.low.watermark.mark
              ├─ div.high.watermark.mark
              └─ div.zero.mark (if center-zero)
+```
+
+With [`multiline: true`](configuration.md#multiline), `div.secondary-info-wrapper` looks like this
+instead. Template cards never have a `secondary-info-main` span (their value comes through
+[`percent`](configuration.md#percent-jinja)/[`secondary`](configuration.md#secondary-jinja)
+instead), so unlike the standard card, line 2 is `secondary-info-extra-2` alone:
+
+```text
+div.secondary-info-wrapper
+ ├─ div.ellipsis-wrapper.secondary-info-line-1
+ │   └─ div.secondary-info-value
+ │       └─ span.secondary-info-extra-1
+ └─ div.ellipsis-wrapper.secondary-info-line-2
+     └─ div.secondary-info-value
+         └─ span.secondary-info-extra-2
 ```
 
 #### Badge
@@ -813,13 +848,16 @@ ha-card...
  │       │           ├─ span.name-main
  │       │           └─ span.name-extra (optional)
  │       └─ div.secondary-info
- │           └─ div.secondary-info-group
+ │           └─ div.secondary-info-wrapper
  │               └─ div.ellipsis-wrapper
- │                   └─ span.secondary-info-value
- │                       ├─ span.secondary-info-main
- │                       └─ span.secondary-info-extra (optional)
+ │                   └─ div.secondary-info-value
+ │                       ├─ span.secondary-info-extra-1 (optional)
+ │                       └─ span.secondary-info-main
 
 ```
+
+`multiline` is not available on badges — the row is too small for a second line
+(see [`multiline`](configuration.md#multiline)).
 
 #### Center-Zero / Vertical Bars (Additional Variants)
 
@@ -831,7 +869,7 @@ ha-card...
  │       ├─ div.name
  │       │   └─ span.name-value
  │       └─ div.secondary-info
- │           └─ span.secondary-info-value
+ │           └─ div.secondary-info-value
  └─ div.bar-container.vertical / top / bottom / below
      └─ div.progress-bar.center-zero
          ├─ div.bar-half.negative-zone

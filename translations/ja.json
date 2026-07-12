@@ -83,6 +83,7 @@
       "watermark_toggle": "Watermark",
       "alert_toggle": "Alert",
       "custom_info": "カスタム補助情報",
+      "multiline": "Multiline",
       "interpolate": "色の補間",
       "name_info": "カスタム名前情報",
       "reverse": "タイマーを逆にする",
@@ -187,7 +188,9 @@
         "bounce": "Bounce",
         "shake": "Shake",
         "ping": "Ping",
-        "reveal": "Reveal"
+        "reveal": "Reveal",
+        "washing_machine": "Washing machine",
+        "battery_charging": "Battery charging"
       },
       "alert_when": {
         "above": "Alert above",

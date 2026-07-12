@@ -83,6 +83,7 @@
       "watermark_toggle": "Watermark",
       "alert_toggle": "Alert",
       "custom_info": "Özel ikincil bilgi",
+      "multiline": "Multiline",
       "interpolate": "Renk interpolasyonu",
       "name_info": "Özel ad bilgisi",
       "reverse": "Zamanlayıcıyı tersine çevir",
@@ -187,7 +188,9 @@
         "bounce": "Bounce",
         "shake": "Shake",
         "ping": "Ping",
-        "reveal": "Reveal"
+        "reveal": "Reveal",
+        "washing_machine": "Washing machine",
+        "battery_charging": "Battery charging"
       },
       "alert_when": {
         "above": "Alert above",

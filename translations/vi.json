@@ -83,6 +83,7 @@
       "watermark_toggle": "Watermark",
       "alert_toggle": "Alert",
       "custom_info": "Thông tin phụ tùy chỉnh",
+      "multiline": "Multiline",
       "interpolate": "Nội suy màu sắc",
       "name_info": "Thông tin tên tùy chỉnh",
       "reverse": "Đảo ngược bộ đếm thời gian",
@@ -187,7 +188,9 @@
         "bounce": "Bounce",
         "shake": "Shake",
         "ping": "Ping",
-        "reveal": "Reveal"
+        "reveal": "Reveal",
+        "washing_machine": "Washing machine",
+        "battery_charging": "Battery charging"
       },
       "alert_when": {
         "above": "Alert above",

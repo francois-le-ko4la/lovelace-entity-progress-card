@@ -83,6 +83,7 @@
       "watermark_toggle": "Watermark",
       "alert_toggle": "Alert",
       "custom_info": "Zusatzinfo (sekundär)",
+      "multiline": "Mehrzeilig",
       "interpolate": "Farben interpolieren",
       "name_info": "Zusatzinfo (Name)",
       "reverse": "Timer umkehren",
@@ -187,7 +188,9 @@
         "bounce": "Hüpfen",
         "shake": "Wackeln",
         "ping": "Ping",
-        "reveal": "Einblenden"
+        "reveal": "Einblenden",
+        "washing_machine": "Waschmaschine",
+        "battery_charging": "Akku lädt"
       },
       "alert_when": {
         "above": "Alarm über",

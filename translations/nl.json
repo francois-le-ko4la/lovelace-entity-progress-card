@@ -83,6 +83,7 @@
       "watermark_toggle": "Watermark",
       "alert_toggle": "Alert",
       "custom_info": "Aangepaste secundaire info",
+      "multiline": "Meerdere regels",
       "interpolate": "Kleuren interpoleren",
       "name_info": "Aangepaste naaminfo",
       "reverse": "Timer omdraaien",
@@ -187,7 +188,9 @@
         "bounce": "Stuiteren",
         "shake": "Trillen",
         "ping": "Ping",
-        "reveal": "Onthullen"
+        "reveal": "Onthullen",
+        "washing_machine": "Wasmachine",
+        "battery_charging": "Batterij wordt opgeladen"
       },
       "alert_when": {
         "above": "Alarm boven",

@@ -24,7 +24,7 @@
  */
 
 // prettier-ignore-start
-const VERSION = '1.5.3-dev';
+const VERSION = '1.6.0';
 
 const META = {
   documentation: 'https://github.com/francois-le-ko4la/lovelace-entity-progress-card/',
@@ -58,18 +58,18 @@ const META = {
       name: 'Entity Progress Feature',
       description: 'A cool custom feature in tile to show current entity status with a progress bar.',
     },
-  }
+  },
 };
 
 const CARD_CONTEXT = {
   dev: true,
-  // editor: true, interactionHandler: true
   debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false, hass: false },
 };
 
 const devName = (name) => `${name}${CARD_CONTEXT.dev ? '-dev' : ''}`;
 
-// from: https://github.com/home-assistant/frontend/blob/master/src/resources/theme/color/color.globals.ts
+// from:
+// https://github.com/home-assistant/frontend/blob/master/src/resources/theme/color/color.globals.ts
 const HA_CONTEXT = {
   icons: {
     prefix: 'mdi:',
@@ -137,46 +137,135 @@ const HA_CONTEXT = {
   haColors: new Map(
     [
       // texte
-      'primary-text', 'secondary-text', 'text-primary', 'text-light-primary', 'disabled-text',
+      'primary-text',
+      'secondary-text',
+      'text-primary',
+      'text-light-primary',
+      'disabled-text',
       // interface
-      'dark-primary', 'darker-primary', 'light-primary', 'divider', 'outline', 'outline-hover',
-      'shadow',    
+      'dark-primary',
+      'darker-primary',
+      'light-primary',
+      'divider',
+      'outline',
+      'outline-hover',
+      'shadow',
       // material color
-      'primary', 'accent', 'red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue',
-      'light-blue', 'cyan', 'teal', 'green', 'light-green', 'lime', 'yellow', 'amber',
-      'orange', 'deep-orange', 'brown', 'light-grey', 'grey', 'dark-grey', 'blue-grey',
-      'black', 'white',
+      'primary',
+      'accent',
+      'red',
+      'pink',
+      'purple',
+      'deep-purple',
+      'indigo',
+      'blue',
+      'light-blue',
+      'cyan',
+      'teal',
+      'green',
+      'light-green',
+      'lime',
+      'yellow',
+      'amber',
+      'orange',
+      'deep-orange',
+      'brown',
+      'light-grey',
+      'grey',
+      'dark-grey',
+      'blue-grey',
+      'black',
+      'white',
       // HA
-      'success', 'warning', 'error', 'info', 'disabled',
+      'success',
+      'warning',
+      'error',
+      'info',
+      'disabled',
       // State
-      'state-icon', 'state-active', 'state-inactive', 'state-unavailable',
-      'state-alarm_control_panel-armed_away', 'state-alarm_control_panel-armed_custom_bypass',
-      'state-alarm_control_panel-armed_home', 'state-alarm_control_panel-armed_night',
-      'state-alarm_control_panel-armed_vacation', 'state-alarm_control_panel-arming',
-      'state-alarm_control_panel-disarming', 'state-alarm_control_panel-pending',
-      'state-alarm_control_panel-triggered', 'state-alert-off', 'state-alert-on',
-      'state-binary_sensor-active', 'state-binary_sensor-battery-on',
-      'state-binary_sensor-carbon_monoxide-on', 'state-binary_sensor-gas-on',
-      'state-binary_sensor-heat-on', 'state-binary_sensor-lock-on', 'state-binary_sensor-moisture-on',
-      'state-binary_sensor-problem-on', 'state-binary_sensor-safety-on', 'state-binary_sensor-smoke-on',
-      'state-binary_sensor-sound-on', 'state-binary_sensor-tamper-on',
-      'state-climate-auto', 'state-climate-cool', 'state-climate-dry', 'state-climate-fan_only',
-      'state-climate-heat', 'state-climate-heat-cool', 'state-cover-active',
-      'state-device_tracker-active', 'state-device_tracker-home', 'state-fan-active',
-      'state-humidifier-on', 'state-lawn_mower-error', 'state-lawn_mower-mowing',
-      'state-light-active', 'state-lock-jammed', 'state-lock-locked', 'state-lock-locking',
-      'state-lock-unlocked', 'state-lock-unlocking', 'state-lock-open', 'state-lock-opening',
-      'state-media_player-active', 'state-person-active', 'state-person-home', 'state-plant-active',
-      'state-siren-active', 'state-sun-above_horizon', 'state-sun-below_horizon', 'state-switch-active',
-      'state-update-active', 'state-vacuum-active', 'state-valve-active', 'state-sensor-battery-high',
-      'state-sensor-battery-low', 'state-sensor-battery-medium', 'state-water_heater-eco',
-      'state-water_heater-electric', 'state-water_heater-gas', 'state-water_heater-heat_pump',
-      'state-water_heater-high_demand', 'state-water_heater-performance',
-      'state-weather-clear_night', 'state-weather-cloudy', 'state-weather-exceptional', 'state-weather-fog',
-      'state-weather-hail', 'state-weather-lightning_rainy', 'state-weather-lightning',
-      'state-weather-partlycloudy', 'state-weather-pouring', 'state-weather-rainy',
-      'state-weather-snowy_rainy', 'state-weather-snowy', 'state-weather-sunny',
-      'state-weather-windy_variant', 'state-weather-windy'
+      'state-icon',
+      'state-active',
+      'state-inactive',
+      'state-unavailable',
+      'state-alarm_control_panel-armed_away',
+      'state-alarm_control_panel-armed_custom_bypass',
+      'state-alarm_control_panel-armed_home',
+      'state-alarm_control_panel-armed_night',
+      'state-alarm_control_panel-armed_vacation',
+      'state-alarm_control_panel-arming',
+      'state-alarm_control_panel-disarming',
+      'state-alarm_control_panel-pending',
+      'state-alarm_control_panel-triggered',
+      'state-alert-off',
+      'state-alert-on',
+      'state-binary_sensor-active',
+      'state-binary_sensor-battery-on',
+      'state-binary_sensor-carbon_monoxide-on',
+      'state-binary_sensor-gas-on',
+      'state-binary_sensor-heat-on',
+      'state-binary_sensor-lock-on',
+      'state-binary_sensor-moisture-on',
+      'state-binary_sensor-problem-on',
+      'state-binary_sensor-safety-on',
+      'state-binary_sensor-smoke-on',
+      'state-binary_sensor-sound-on',
+      'state-binary_sensor-tamper-on',
+      'state-climate-auto',
+      'state-climate-cool',
+      'state-climate-dry',
+      'state-climate-fan_only',
+      'state-climate-heat',
+      'state-climate-heat-cool',
+      'state-cover-active',
+      'state-device_tracker-active',
+      'state-device_tracker-home',
+      'state-fan-active',
+      'state-humidifier-on',
+      'state-lawn_mower-error',
+      'state-lawn_mower-mowing',
+      'state-light-active',
+      'state-lock-jammed',
+      'state-lock-locked',
+      'state-lock-locking',
+      'state-lock-unlocked',
+      'state-lock-unlocking',
+      'state-lock-open',
+      'state-lock-opening',
+      'state-media_player-active',
+      'state-person-active',
+      'state-person-home',
+      'state-plant-active',
+      'state-siren-active',
+      'state-sun-above_horizon',
+      'state-sun-below_horizon',
+      'state-switch-active',
+      'state-update-active',
+      'state-vacuum-active',
+      'state-valve-active',
+      'state-sensor-battery-high',
+      'state-sensor-battery-low',
+      'state-sensor-battery-medium',
+      'state-water_heater-eco',
+      'state-water_heater-electric',
+      'state-water_heater-gas',
+      'state-water_heater-heat_pump',
+      'state-water_heater-high_demand',
+      'state-water_heater-performance',
+      'state-weather-clear_night',
+      'state-weather-cloudy',
+      'state-weather-exceptional',
+      'state-weather-fog',
+      'state-weather-hail',
+      'state-weather-lightning_rainy',
+      'state-weather-lightning',
+      'state-weather-partlycloudy',
+      'state-weather-pouring',
+      'state-weather-rainy',
+      'state-weather-snowy_rainy',
+      'state-weather-snowy',
+      'state-weather-sunny',
+      'state-weather-windy_variant',
+      'state-weather-windy',
     ].map((c) => [c, `var(--${c}-color)`]),
   ),
   attributeMapping: {
@@ -191,8 +280,26 @@ const HA_CONTEXT = {
     quote_decimal: 'de-CH', // 12'345.60 (Switzerland)
   },
   entity: {
-    state: { unavailable: 'unavailable', unknown: 'unknown', notFound: 'notFound', idle: 'idle', active: 'active', paused: 'paused' },
-    type: { timer: 'timer', light: 'light', cover: 'cover', fan: 'fan', climate: 'climate', counter: 'counter', number: 'number', duration: 'duration', default: 'default'},
+    state: {
+      unavailable: 'unavailable',
+      unknown: 'unknown',
+      notFound: 'notFound',
+      idle: 'idle',
+      active: 'active',
+      paused: 'paused',
+      on: 'on',
+    },
+    type: {
+      timer: 'timer',
+      light: 'light',
+      cover: 'cover',
+      fan: 'fan',
+      climate: 'climate',
+      counter: 'counter',
+      number: 'number',
+      duration: 'duration',
+      default: 'default',
+    },
     class: { shutter: 'shutter', battery: 'battery' },
   },
   actions: {
@@ -206,7 +313,7 @@ const HA_CONTEXT = {
     none: { action: 'none' },
     toggleDomain: [
       'light',
-      'switch', 
+      'switch',
       'fan',
       'input_boolean',
       'media_player',
@@ -222,7 +329,7 @@ const HA_CONTEXT = {
   styles: {
     rowSize: '--row-size',
   },
-}
+};
 
 const CARD = {
   config: {
@@ -274,7 +381,7 @@ const CARD = {
       topContainer: { element: 'div', class: 'top-container' },
       bottomContainer: { element: 'div', class: 'bottom-container' },
       backgroundContainer: { element: 'div', class: 'background-container' },
-      icon: { element: 'div', class: 'icon-section', extraAttr: {'aria-hidden': 'true'} },
+      icon: { element: 'div', class: 'icon-section', extraAttr: { 'aria-hidden': 'true' } },
       content: { element: 'div', class: 'content-section' },
     },
     elements: {
@@ -291,9 +398,19 @@ const CARD = {
       },
       secondaryInfo: { element: 'div', class: 'secondary-info' },
       secondaryInfoWrapper: { element: 'div', class: 'secondary-info-wrapper' },
-      secondaryInfoValue: { element: 'span', class: 'secondary-info-value' },
+      // div, not span: a span here is forced `display: inline` by the
+      // `.ellipsis-wrapper span` rule below, and inline boxes are
+      // baseline-aligned rather than top-aligned - in the 8px-tall multiline
+      // lines that pushed the text down and truncated it against the line's own
+      // overflow:hidden. A div lays out from the top like every other block.
+      secondaryInfoValue: { element: 'div', class: 'secondary-info-value' },
       secondaryInfoMain: { element: 'span', class: 'secondary-info-main', id: 'entity-value' },
-      secondaryInfoExtra: { element: 'span', class: 'secondary-info-extra' },
+      // secondaryInfoExtra is "line 1": in single-line mode it's the only extra
+      // span; in multiline mode it's always the first of the two stacked lines
+      // (see StructureElements.secondaryInfoLine, which never gives line 1 a
+      // main).
+      secondaryInfoExtra: { element: 'span', class: 'secondary-info-extra-1' },
+      secondaryInfoExtra2: { element: 'span', class: 'secondary-info-extra-2' },
       progressBar: {
         container: {
           element: 'div',
@@ -307,16 +424,16 @@ const CARD = {
             'aria-describedby': 'entity-value',
           },
         },
-        bar: { element: 'div', class: 'progress-bar', extraAttr: {'aria-hidden': 'true'} },
-        half: { element: 'div', class: 'bar-half', extraAttr: {'aria-hidden': 'true'} },
-        inner: { element: 'div', class: 'inner', extraAttr: {'aria-hidden': 'true'}  },
-        zeroMark: { element: 'div', class: 'zero', extraAttr: {'aria-hidden': 'true'} },
-        lowWatermark: { element: 'div', class: 'low', extraAttr: {'aria-hidden': 'true'} },
-        highWatermark: { element: 'div', class: 'high', extraAttr: {'aria-hidden': 'true'} },
+        bar: { element: 'div', class: 'progress-bar', extraAttr: { 'aria-hidden': 'true' } },
+        half: { element: 'div', class: 'bar-half', extraAttr: { 'aria-hidden': 'true' } },
+        inner: { element: 'div', class: 'inner', extraAttr: { 'aria-hidden': 'true' } },
+        zeroMark: { element: 'div', class: 'zero', extraAttr: { 'aria-hidden': 'true' } },
+        lowWatermark: { element: 'div', class: 'low', extraAttr: { 'aria-hidden': 'true' } },
+        highWatermark: { element: 'div', class: 'high', extraAttr: { 'aria-hidden': 'true' } },
         watermark: { class: 'progress-bar-wm' },
       },
       badge: {
-        container: { element: 'div', class: 'badge', extraAttr: {'aria-hidden': 'true'} },
+        container: { element: 'div', class: 'badge', extraAttr: { 'aria-hidden': 'true' } },
         icon: { element: 'ha-icon', class: 'badge-icon' },
       },
     },
@@ -351,11 +468,31 @@ const CARD = {
       notFound: { icon: HA_CONTEXT.icons.help },
       badge: {
         default: { attribute: 'icon' },
-        unavailable: { icon: HA_CONTEXT.icons.exclamationThick, color: 'white', backgroundColor: HA_CONTEXT.colors.orange, attribute: 'icon' },
-        notFound: { icon: HA_CONTEXT.icons.exclamationThick, color: 'white', backgroundColor: HA_CONTEXT.colors.red, attribute: 'icon' },
+        unavailable: {
+          icon: HA_CONTEXT.icons.exclamationThick,
+          color: 'white',
+          backgroundColor: HA_CONTEXT.colors.orange,
+          attribute: 'icon',
+        },
+        notFound: {
+          icon: HA_CONTEXT.icons.exclamationThick,
+          color: 'white',
+          backgroundColor: HA_CONTEXT.colors.red,
+          attribute: 'icon',
+        },
         timer: {
-          active: { icon: HA_CONTEXT.icons.play, color: 'white', backgroundColor: HA_CONTEXT.colors.success, attribute: 'icon' },
-          paused: { icon: HA_CONTEXT.icons.pause, color: 'white', backgroundColor: HA_CONTEXT.colors.stateIcon, attribute: 'icon' },
+          active: {
+            icon: HA_CONTEXT.icons.play,
+            color: 'white',
+            backgroundColor: HA_CONTEXT.colors.success,
+            attribute: 'icon',
+          },
+          paused: {
+            icon: HA_CONTEXT.icons.pause,
+            color: 'white',
+            backgroundColor: HA_CONTEXT.colors.stateIcon,
+            attribute: 'icon',
+          },
         },
       },
     },
@@ -389,9 +526,10 @@ const CARD = {
         value: { var: '--progress-bar-value', default: '0' },
         maxWidth: { var: '--progress-bar-max-width', default: null },
         background: { var: '--epb-progress-bar-background-color' },
-        // bar_stack 'stacked'/'proportional' + center_zero only: independent per-arm fill
-        // size/gradient, layered above the normal single-value derivation (see #9999-10006-ish
-        // CSS) but below --epb-progress-bar-color and bar_effect's --progress-effect(-neg).
+        // bar_stack 'stacked'/'proportional' + center_zero only: independent
+        // per-arm fill size/gradient, layered above the normal single-value
+        // derivation (see #9999-10006-ish CSS) but below
+        // --epb-progress-bar-color and bar_effect's --progress-effect(-neg).
         stackGradientPos: { var: '--epb-stack-gradient-pos' },
         stackGradientNeg: { var: '--epb-stack-gradient-neg' },
         stackSizePos: { var: '--epb-stack-size-pos' },
@@ -408,8 +546,14 @@ const CARD = {
         centerZero: { class: 'center-zero' },
       },
       watermark: {
-        low: { value: { var: '--low-watermark-value', default: 20 }, color: { var: '--low-watermark-color', default: 'red' } },
-        high: { value: { var: '--high-watermark-value', default: 80 }, color: { var: '--high-watermark-color', default: 'red' } },
+        low: {
+          value: { var: '--low-watermark-value', default: 20 },
+          color: { var: '--low-watermark-color', default: 'red' },
+        },
+        high: {
+          value: { var: '--high-watermark-value', default: 80 },
+          color: { var: '--high-watermark-color', default: 'red' },
+        },
         lineSize: { var: '--watermark-line-size' },
         opacity: { var: '--watermark-opacity-value' },
       },
@@ -701,6 +845,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'معلومات إضافية (ثانوية)',
+        multiline: 'Multiline',
         interpolate: 'تدرج الألوان',
         name_info: 'معلومات إضافية (الاسم)',
         reverse: 'عكس المؤقت',
@@ -805,7 +950,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -940,6 +1087,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'কাস্টম সেকেন্ডারি তথ্য',
+        multiline: 'Multiline',
         interpolate: 'রঙ ইন্টারপোলেশন',
         name_info: 'কাস্টম নাম তথ্য',
         reverse: 'টাইমার উল্টানো',
@@ -1044,7 +1192,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -1179,6 +1329,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Informació addicional (secundària)',
+        multiline: 'Multiline',
         interpolate: 'Interpolar colors',
         name_info: 'Informació addicional (nom)',
         reverse: 'Temporitzador invers',
@@ -1283,7 +1434,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -1418,6 +1571,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Vlastní sekundární info',
+        multiline: 'Multiline',
         interpolate: 'Interpolace barev',
         name_info: 'Vlastní info názvu',
         reverse: 'Obrátit časovač',
@@ -1522,7 +1676,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -1657,6 +1813,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Tilpasset sekundær info',
+        multiline: 'Multiline',
         interpolate: 'Interpoler farver',
         name_info: 'Tilpasset navneinfo',
         reverse: 'Omvendt timer',
@@ -1761,7 +1918,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -1896,6 +2055,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Zusatzinfo (sekundär)',
+        multiline: 'Mehrzeilig',
         interpolate: 'Farben interpolieren',
         name_info: 'Zusatzinfo (Name)',
         reverse: 'Timer umkehren',
@@ -2000,7 +2160,9 @@ const TRANSLATIONS = {
           bounce: 'Hüpfen',
           shake: 'Wackeln',
           ping: 'Ping',
-          reveal: 'Einblenden'
+          reveal: 'Einblenden',
+          washing_machine: 'Waschmaschine',
+          battery_charging: 'Akku lädt'
         },
         alert_when: {
           above: 'Alarm über',
@@ -2135,6 +2297,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Προσαρμοσμένη δευτερεύουσα πληροφορία',
+        multiline: 'Multiline',
         interpolate: 'Παρεμβολή χρωμάτων',
         name_info: 'Προσαρμοσμένη πληροφορία ονόματος',
         reverse: 'Αντίστροφο χρονόμετρο',
@@ -2239,7 +2402,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -2374,6 +2539,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Custom secondary info',
+        multiline: 'Multiline',
         interpolate: 'Interpolate colors',
         name_info: 'Custom name info',
         reverse: 'Reverse timer',
@@ -2478,7 +2644,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -2613,6 +2781,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Info secundaria personalizada',
+        multiline: 'Multiline',
         interpolate: 'Interpolación de colores',
         name_info: 'Info de nombre personalizada',
         reverse: 'Temporizador inverso',
@@ -2717,7 +2886,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -2852,6 +3023,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Info secundaria personalizada',
+        multiline: 'Multilínea',
         interpolate: 'Interpolación de colores',
         name_info: 'Info de nombre personalizada',
         reverse: 'Temporizador inverso',
@@ -2956,7 +3128,9 @@ const TRANSLATIONS = {
           bounce: 'Rebote',
           shake: 'Vibración',
           ping: 'Ping',
-          reveal: 'Revelar'
+          reveal: 'Revelar',
+          washing_machine: 'Lavadora',
+          battery_charging: 'Batería cargando'
         },
         alert_when: {
           above: 'Alerta por encima de',
@@ -3091,6 +3265,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Kohandatud sekundaarne teave',
+        multiline: 'Multiline',
         interpolate: 'Värvide interpoleerimine',
         name_info: 'Kohandatud nime teave',
         reverse: 'Pööratud taimer',
@@ -3195,7 +3370,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -3330,6 +3507,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Mukautettu toissijainen tieto',
+        multiline: 'Multiline',
         interpolate: 'Interpoloi värit',
         name_info: 'Mukautettu nimitieto',
         reverse: 'Käänteinen ajastin',
@@ -3434,7 +3612,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -3569,6 +3749,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alerte',
         custom_info: 'Info secondaire personnalisée',
+        multiline: 'Multiligne',
         interpolate: 'Interpoler les couleurs',
         name_info: 'Info nom personnalisée',
         reverse: 'Inverser le minuteur',
@@ -3673,7 +3854,9 @@ const TRANSLATIONS = {
           bounce: 'Rebond',
           shake: 'Secousse',
           ping: 'Ping',
-          reveal: 'Apparition'
+          reveal: 'Apparition',
+          washing_machine: 'Machine à laver',
+          battery_charging: 'Batterie en charge'
         },
         alert_when: {
           above: 'Alerte au-dessus de',
@@ -3808,6 +3991,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'कस्टम द्वितीयक जानकारी',
+        multiline: 'Multiline',
         interpolate: 'रंग इंटरपोलेशन',
         name_info: 'कस्टम नाम जानकारी',
         reverse: 'टाइमर उलटें',
@@ -3912,7 +4096,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -4047,6 +4233,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Prilagođena sekundarna informacija',
+        multiline: 'Multiline',
         interpolate: 'Interpolacija boja',
         name_info: 'Prilagođena informacija naziva',
         reverse: 'Obrnuti tajmer',
@@ -4151,7 +4338,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -4286,6 +4475,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Egyéni másodlagos info',
+        multiline: 'Multiline',
         interpolate: 'Színinterpoláció',
         name_info: 'Egyéni névinfo',
         reverse: 'Fordított időzítő',
@@ -4390,7 +4580,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -4525,6 +4717,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Info sekunder kustom',
+        multiline: 'Multiline',
         interpolate: 'Interpolasi warna',
         name_info: 'Info nama kustom',
         reverse: 'Timer terbalik',
@@ -4629,7 +4822,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -4764,6 +4959,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Info secondaria personalizzata',
+        multiline: 'Multilinea',
         interpolate: 'Interpolazione colori',
         name_info: 'Info nome personalizzata',
         reverse: 'Timer inverso',
@@ -4868,7 +5064,9 @@ const TRANSLATIONS = {
           bounce: 'Rimbalzo',
           shake: 'Vibrazione',
           ping: 'Ping',
-          reveal: 'Comparsa'
+          reveal: 'Comparsa',
+          washing_machine: 'Lavatrice',
+          battery_charging: 'Batteria in carica'
         },
         alert_when: {
           above: 'Allerta sopra',
@@ -5003,6 +5201,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'カスタム補助情報',
+        multiline: 'Multiline',
         interpolate: '色の補間',
         name_info: 'カスタム名前情報',
         reverse: 'タイマーを逆にする',
@@ -5107,7 +5306,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -5242,6 +5443,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: '사용자 정의 보조 정보',
+        multiline: 'Multiline',
         interpolate: '색상 보간',
         name_info: '사용자 정의 이름 정보',
         reverse: '타이머 역방향',
@@ -5346,7 +5548,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -5481,6 +5685,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Pasirinktinė papildoma informacija',
+        multiline: 'Multiline',
         interpolate: 'Spalvų interpoliavimas',
         name_info: 'Pasirinktinė pavadinimo informacija',
         reverse: 'Atvirkštinis laikmatis',
@@ -5585,7 +5790,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -5720,6 +5927,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Pielāgota sekundārā informācija',
+        multiline: 'Multiline',
         interpolate: 'Krāsu interpolācija',
         name_info: 'Pielāgota nosaukuma informācija',
         reverse: 'Apgriezts taimeris',
@@ -5824,7 +6032,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -5959,6 +6169,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Прилагодена секундарна информација',
+        multiline: 'Multiline',
         interpolate: 'Интерполација на бои',
         name_info: 'Прилагодена информација за имиња',
         reverse: 'Обратен тајмер',
@@ -6063,7 +6274,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -6198,6 +6411,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Egendefinert sekundær info',
+        multiline: 'Multiline',
         interpolate: 'Interpoler farger',
         name_info: 'Egendefinert navneinfo',
         reverse: 'Omvendt tidtaker',
@@ -6302,7 +6516,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -6437,6 +6653,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Aangepaste secundaire info',
+        multiline: 'Meerdere regels',
         interpolate: 'Kleuren interpoleren',
         name_info: 'Aangepaste naaminfo',
         reverse: 'Timer omdraaien',
@@ -6541,7 +6758,9 @@ const TRANSLATIONS = {
           bounce: 'Stuiteren',
           shake: 'Trillen',
           ping: 'Ping',
-          reveal: 'Onthullen'
+          reveal: 'Onthullen',
+          washing_machine: 'Wasmachine',
+          battery_charging: 'Batterij wordt opgeladen'
         },
         alert_when: {
           above: 'Alarm boven',
@@ -6676,6 +6895,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Niestandardowa info pomocnicza',
+        multiline: 'Multiline',
         interpolate: 'Interpolacja kolorów',
         name_info: 'Niestandardowa info nazwy',
         reverse: 'Odwróć licznik',
@@ -6780,7 +7000,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -6915,6 +7137,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Informação secundária personalizada',
+        multiline: 'Multiline',
         interpolate: 'Interpolar cores',
         name_info: 'Informação de nome personalizada',
         reverse: 'Temporizador inverso',
@@ -7019,7 +7242,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -7154,6 +7379,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Informação secundária personalizada',
+        multiline: 'Multilinha',
         interpolate: 'Interpolar cores',
         name_info: 'Informação de nome personalizada',
         reverse: 'Temporizador inverso',
@@ -7258,7 +7484,9 @@ const TRANSLATIONS = {
           bounce: 'Saltar',
           shake: 'Vibração',
           ping: 'Ping',
-          reveal: 'Revelar'
+          reveal: 'Revelar',
+          washing_machine: 'Máquina de lavar',
+          battery_charging: 'Bateria a carregar'
         },
         alert_when: {
           above: 'Alerta acima de',
@@ -7393,6 +7621,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Info secundară personalizată',
+        multiline: 'Multiline',
         interpolate: 'Interpolare culori',
         name_info: 'Info nume personalizată',
         reverse: 'Cronometru inverso',
@@ -7497,7 +7726,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -7632,6 +7863,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Дополнительная информация',
+        multiline: 'Multiline',
         interpolate: 'Интерполяция цветов',
         name_info: 'Доп. информация (имя)',
         reverse: 'Обратный таймер',
@@ -7736,7 +7968,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -7871,6 +8105,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Vlastné sekundárne info',
+        multiline: 'Multiline',
         interpolate: 'Interpolácia farieb',
         name_info: 'Vlastné info názvu',
         reverse: 'Obrátený časovač',
@@ -7975,7 +8210,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -8110,6 +8347,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Prilagojena sekundarna informacija',
+        multiline: 'Multiline',
         interpolate: 'Interpolacija barv',
         name_info: 'Prilagojena informacija o imenu',
         reverse: 'Obrnjen časovnik',
@@ -8214,7 +8452,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -8349,6 +8589,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Anpassad sekundär info',
+        multiline: 'Multiline',
         interpolate: 'Interpolera färger',
         name_info: 'Anpassad namninfo',
         reverse: 'Omvänd timer',
@@ -8453,7 +8694,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -8588,6 +8831,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'ข้อมูลรองที่กำหนดเอง',
+        multiline: 'Multiline',
         interpolate: 'การสอดแทรกสี',
         name_info: 'ข้อมูลชื่อที่กำหนดเอง',
         reverse: 'กลับเวลานับถอยหลัง',
@@ -8692,7 +8936,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -8827,6 +9073,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Özel ikincil bilgi',
+        multiline: 'Multiline',
         interpolate: 'Renk interpolasyonu',
         name_info: 'Özel ad bilgisi',
         reverse: 'Zamanlayıcıyı tersine çevir',
@@ -8931,7 +9178,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -9066,6 +9315,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Додаткова вторинна інформація',
+        multiline: 'Multiline',
         interpolate: 'Інтерполяція кольорів',
         name_info: 'Додаткова інформація (назва)',
         reverse: 'Зворотній таймер',
@@ -9170,7 +9420,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -9305,6 +9557,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: 'Thông tin phụ tùy chỉnh',
+        multiline: 'Multiline',
         interpolate: 'Nội suy màu sắc',
         name_info: 'Thông tin tên tùy chỉnh',
         reverse: 'Đảo ngược bộ đếm thời gian',
@@ -9409,7 +9662,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -9544,6 +9799,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: '自定义次要信息',
+        multiline: 'Multiline',
         interpolate: '颜色插值',
         name_info: '自定义名称信息',
         reverse: '反转计时器',
@@ -9648,7 +9904,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -9783,6 +10041,7 @@ const TRANSLATIONS = {
         watermark_toggle: 'Watermark',
         alert_toggle: 'Alert',
         custom_info: '自訂次要資訊',
+        multiline: 'Multiline',
         interpolate: '顏色插值',
         name_info: '自訂名稱資訊',
         reverse: '反轉計時器',
@@ -9887,7 +10146,9 @@ const TRANSLATIONS = {
           bounce: 'Bounce',
           shake: 'Shake',
           ping: 'Ping',
-          reveal: 'Reveal'
+          reveal: 'Reveal',
+          washing_machine: 'Washing machine',
+          battery_charging: 'Battery charging'
         },
         alert_when: {
           above: 'Alert above',
@@ -10531,6 +10792,12 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
 }
 
 .${CARD.htmlStructure.elements.secondaryInfoValue.class} {
+  /* Now a div (see CARD.htmlStructure.elements.secondaryInfoValue): it's the direct
+     block-level parent of the extra/main spans, so it - not just the outer
+     .ellipsis-wrapper - needs its own single-line ellipsis truncation. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   --text-color: var(--epb-detail-color, var(--primary-text-color));
   --text-font-size: var(--epb-detail-font-size, var(--ha-font-size-s));
   --text-font-weight: var(--epb-detail-font-weight, var(--ha-font-weight-body));
@@ -10587,7 +10854,7 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
   justify-content: space-between;
 }
 
-.secondary-info-wrapper:has(.secondary-info-extra:empty):has(.secondary-info-main:empty) {
+.secondary-info-wrapper:has(.secondary-info-extra-1:empty):has(.secondary-info-main:empty) {
   display: none;
 }
 
@@ -10611,31 +10878,59 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
   --current-secondary-info-gap: 5px;
 }
 
-.multiline {
-  display: inline-block;
-  height: 16px;
+/* === MULTILINE SECONDARY INFO ===
+   Two independent single-line boxes stacked in the wrapper (see
+   StructureElements.secondaryInfoLine) instead of one box trying to hold two
+   roles at once - each line keeps its own ellipsis truncation via the shared
+   .ellipsis-wrapper rules, and neither touches the progress bar's own sizing.
+   10px/line (20px total). Rather than growing the card by those extra 4px,
+   --name-height gives up the same 4px it doesn't need (name stays single-line,
+   never short on room) to --detail-height, so .content-section's own height
+   formula (name + detail) is untouched - the card's total height doesn't
+   change at all. */
+ha-card.info-multiline {
+  --name-height: 16px;
+  --detail-height: 20px;
+}
+
+.info-multiline .secondary-info-wrapper {
+  flex-direction: column;
+  /* --group-justify-content/--group-align-items, not the properties directly: this is
+     the same --group-* indirection .secondary-info-wrapper's own base rule already reads
+     (see "flex layout, dimensions, overflow, alignement" above) - overriding the variable
+     keeps this a one-line diff against that rule instead of a second, competing source of
+     truth for the same properties. */
+  --group-justify-content: center;
+  --group-align-items: stretch;
+  gap: 0;
+  /* Without this, mobile/Chromium font-boosting (text autosizing) bumps a small
+     declared size up to whatever it judges "readable" for the container width -
+     seen in the wild inflating 8px to ~10.5px, which no longer fits the budget. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.info-multiline .secondary-info-wrapper > .ellipsis-wrapper {
+  height: 10px;
   line-height: 0.95;
-  font-size: 8px;
   margin: 0;
   padding: 0;
 }
 
-.info-multiline .secondary-info,
-.info-multiline .secondary-info * {
-  height: 18px;
-  font-size: 9px;
+.info-multiline .secondary-info-wrapper .secondary-info-value {
+  --text-height: 10px;
+  --text-line-height: 0.95;
+  --text-font-size: 10px;
 }
 
-.vertical.info-multiline :is(
-  .secondary-info,
-  .secondary-info .secondary-info-wrapper,
-  .secondary-info .secondary-info-extra
-) {
-  height: unset !important;
+.info-multiline .secondary-info-wrapper:has(.secondary-info-extra-1:empty):has(.secondary-info-extra-2:empty):not(:has(.secondary-info-main:not(:empty))) {
+  display: none;
 }
 
-.vertical.info-multiline .secondary-info .bar-container {
-  height: 16px;
+.info-multiline .secondary-info .bar-container {
+  /* .secondary-info stretches its children by default (see --current-secondary-info-align-items
+     above) so the bar would otherwise be pulled to the 2-line wrapper's height. */
+  align-self: center;
 }
 
 /* =============================================================================
@@ -10781,7 +11076,10 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
   --inner-transform: translateY(calc((1 - var(--inner-size, 0)) * -100%));
 }
 
-/* --- inner size/background (auto-clamped per zone: irrelevant zone resolves to 0) --- */
+/**
+ * --- inner size/background (auto-clamped per zone: irrelevant zone resolves to
+ * 0) ---
+ */
 .${CARD.htmlStructure.elements.progressBar.inner.class}.positive {
   --inner-size: var(${CARD.style.dynamic.progressBar.stackSizePos.var}, max(var(${CARD.style.dynamic.progressBar.value.var}, 0), 0));
   --inner-background: var(--epb-progress-bar-color, var(--progress-effect, var(${CARD.style.dynamic.progressBar.stackGradientPos.var}, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default}))));
@@ -10840,7 +11138,12 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
   );
 }
 
-/* === ICON ANIMATION (icon_animation: spin|pulse|bounce|shake|ping|reveal, active state only) === */
+/**
+ * === ICON ANIMATION (icon_animation:
+ * spin|pulse|bounce|shake|ping|reveal|washing_machine|battery_charging;
+ * battery_charging triggers on a charging attribute, the rest on active
+ * state) ===
+ */
 @keyframes epb-icon-spin {
   to { transform: rotate(360deg); }
 }
@@ -10868,7 +11171,10 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
   80% { transform: translate(-0.4px, -0.4px) rotate(4deg); }
 }
 
-/* ring bursts from the shape's own border, using the same icon/shape color as everywhere else */
+/**
+ * ring bursts from the shape's own border, using the same icon/shape color as
+ * everywhere else
+ */
 @keyframes epb-icon-ping {
   60% {
     box-shadow: 0 0 0 0 color-mix(in srgb, var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default})) 70%, transparent);
@@ -10881,6 +11187,67 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
   20% { clip-path: circle(30% at 50% 85%); }
   40% { clip-path: circle(55% at 50% 85%); }
   60% { clip-path: circle(80% at 50% 85%); }
+}
+
+/* porthole wipe, mid-cycle only - the implicit 0%/100% (no clip-path, icon
+   fully visible) is the resting frame; paired with epb-icon-shake (already
+   defined above) on .icon-anim-washing-machine for the drum-spin look */
+@keyframes epb-icon-drum {
+  50% {
+    clip-path: polygon(0 0, 0 100%, 35% 100%, 34% 68%, 60% 41%, 71% 56%, 65% 74%, 47% 79%, 32% 69%, 35% 100%, 100% 100%, 100% 0);
+  }
+}
+
+/* battery-bolt fill wipe: a clip-path window sliding down the icon, repeating
+   - the 80%-100% hold is the pause between charge sweeps
+   - the bolt's x-edges are CSS vars (--epb-charge-x1/x2, default 34%/67%) so
+     .icon-anim-battery-charging-shifted can compensate for icon variants
+     (battery-charging-*, battery-bluetooth-*) whose glyph isn't centered the
+     same way the plain battery outline is - see ViewCore.isBatteryIconShifted */
+@keyframes epb-icon-charge {
+  0%, 80% { clip-path: inset(0 0 0 0); }
+  10% {
+    clip-path: polygon(
+      0% 0%, 0% 100%, var(--epb-charge-x1, 34%) 100%, var(--epb-charge-x1, 34%) 29%, var(--epb-charge-x2, 67%) 29%,
+      var(--epb-charge-x2, 67%) 89%, var(--epb-charge-x1, 34%) 89%, var(--epb-charge-x1, 34%) 100%, 100% 100%, 100% 0%
+    );
+  }
+  20% {
+    clip-path: polygon(
+      0% 0%, 0% 100%, var(--epb-charge-x1, 34%) 100%, var(--epb-charge-x1, 34%) 29%, var(--epb-charge-x2, 67%) 29%,
+      var(--epb-charge-x2, 67%) 79%, var(--epb-charge-x1, 34%) 79%, var(--epb-charge-x1, 34%) 100%, 100% 100%, 100% 0%
+    );
+  }
+  30% {
+    clip-path: polygon(
+      0% 0%, 0% 100%, var(--epb-charge-x1, 34%) 100%, var(--epb-charge-x1, 34%) 29%, var(--epb-charge-x2, 67%) 29%,
+      var(--epb-charge-x2, 67%) 69%, var(--epb-charge-x1, 34%) 69%, var(--epb-charge-x1, 34%) 100%, 100% 100%, 100% 0%
+    );
+  }
+  40% {
+    clip-path: polygon(
+      0% 0%, 0% 100%, var(--epb-charge-x1, 34%) 100%, var(--epb-charge-x1, 34%) 29%, var(--epb-charge-x2, 67%) 29%,
+      var(--epb-charge-x2, 67%) 59%, var(--epb-charge-x1, 34%) 59%, var(--epb-charge-x1, 34%) 100%, 100% 100%, 100% 0%
+    );
+  }
+  50% {
+    clip-path: polygon(
+      0% 0%, 0% 100%, var(--epb-charge-x1, 34%) 100%, var(--epb-charge-x1, 34%) 29%, var(--epb-charge-x2, 67%) 29%,
+      var(--epb-charge-x2, 67%) 49%, var(--epb-charge-x1, 34%) 49%, var(--epb-charge-x1, 34%) 100%, 100% 100%, 100% 0%
+    );
+  }
+  60% {
+    clip-path: polygon(
+      0% 0%, 0% 100%, var(--epb-charge-x1, 34%) 100%, var(--epb-charge-x1, 34%) 29%, var(--epb-charge-x2, 67%) 29%,
+      var(--epb-charge-x2, 67%) 39%, var(--epb-charge-x1, 34%) 39%, var(--epb-charge-x1, 34%) 100%, 100% 100%, 100% 0%
+    );
+  }
+  70% {
+    clip-path: polygon(
+      0% 0%, 0% 100%, var(--epb-charge-x1, 34%) 100%, var(--epb-charge-x1, 34%) 29%, var(--epb-charge-x2, 67%) 29%,
+      var(--epb-charge-x2, 67%) 29%, var(--epb-charge-x1, 34%) 29%, var(--epb-charge-x1, 34%) 100%, 100% 100%, 100% 0%
+    );
+  }
 }
 
 .icon-anim-spin .${CARD.htmlStructure.elements.icon.class} {
@@ -10905,8 +11272,24 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
   animation: epb-icon-ping 2s infinite;
 }
 
+.icon-anim-washing-machine .${CARD.htmlStructure.elements.icon.class} {
+  animation: epb-icon-shake 400ms ease-in-out infinite, epb-icon-drum 2s ease infinite;
+  transform-origin: 50% 110%;
+}
+
 .icon-anim-reveal .${CARD.htmlStructure.elements.icon.class} {
   animation: epb-icon-reveal 2s steps(1) infinite;
+}
+
+.icon-anim-battery-charging .${CARD.htmlStructure.elements.icon.class} {
+  animation: epb-icon-charge 3s linear infinite;
+}
+
+/* Placeholder offset for battery-charging/battery-bluetooth icon variants -
+   needs live tuning against the actual glyph, see ViewCore.isBatteryIconShifted */
+.icon-anim-battery-charging-shifted .${CARD.htmlStructure.elements.icon.class} {
+  --epb-charge-x1: 17%;
+  --epb-charge-x2: 50%;
 }
 
 /* === ALERT (alert_when: {above/below, color, highlight}) ===
@@ -11058,7 +11441,10 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
   will-change: transform;
 }
 
-/* --- Horizontal center-zero negative: gradient on ::before, scaleX from left --- */
+/**
+ * --- Horizontal center-zero negative: gradient on ::before, scaleX from left
+ * ---
+ */
 .horizontal-bar.center-zero:is(
   .${CARD.style.dynamic.progressBar.effect.glass.class},
   .${CARD.style.dynamic.progressBar.effect.gradient.class},
@@ -11088,7 +11474,10 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
   will-change: transform;
 }
 
-/* --- Vertical center-zero negative: gradient on ::before, scaleY from bottom --- */
+/**
+ * --- Vertical center-zero negative: gradient on ::before, scaleY from bottom
+ * ---
+ */
 .vertical-bar.center-zero:is(
   .${CARD.style.dynamic.progressBar.effect.glass.class},
   .${CARD.style.dynamic.progressBar.effect.gradient.class},
@@ -11103,7 +11492,10 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
   will-change: transform;
 }
 
-/* --- Transition: sync ::before scale with .inner translate (transition-ready only) --- */
+/**
+ * --- Transition: sync ::before scale with .inner translate (transition-ready
+ * only) ---
+ */
 .horizontal-bar.transition-ready:is(
   .${CARD.style.dynamic.progressBar.effect.glass.class},
   .${CARD.style.dynamic.progressBar.effect.gradient.class},
@@ -11465,9 +11857,9 @@ ${CARD.htmlStructure.card.element}:not(.${CARD.style.dynamic.clickable.icon}) .$
 }
 `;
 
-/******************************************************************************************
+/******************************************************************************
  * 📦 Test utils
- ******************************************************************************************/
+ ******************************************************************************/
 
 const is = {
   nullish: (val) => val == null, // null or undefined
@@ -11476,11 +11868,15 @@ const is = {
   emptyString: (val) => typeof val === 'string' && val.trim() === '',
   nonEmptyString: (val) => typeof val === 'string' && val.trim() !== '',
   nullishOrEmptyString: (val) => val == null || (typeof val === 'string' && val.trim() === ''),
-  numericString: (val) => typeof val === 'string' && val.trim() !== '' && !isNaN(parseFloat(val)), // lax: '42 W' → true (leading number is extracted by callers)
-  // CF5 - issue (minor) resolved - the lax variant accepts '42abc'; the strict one rejects any string that is not entirely a finite number ('42abc', 'Infinity', …)
+  // lax: '42 W' → true (leading number is extracted by callers)
+  numericString: (val) => typeof val === 'string' && val.trim() !== '' && !isNaN(parseFloat(val)),
+  // CF5 - issue (minor) resolved - the lax variant accepts '42abc'; the strict
+  // one rejects any string that is not entirely a finite number ('42abc',
+  // 'Infinity', …)
   strictNumericString: (val) => typeof val === 'string' && val.trim() !== '' && Number.isFinite(Number(val)),
   number: (val) => Number.isFinite(val),
-  // CF5 - issue (minor) resolved - renamed from is.integer: the name hid the val >= 0 constraint and invited misuse for signed integers
+  // CF5 - issue (minor) resolved - renamed from is.integer: the name hid the
+  // val >= 0 constraint and invited misuse for signed integers
   unsignedInteger: (val) => typeof val === 'number' && Number.isInteger(val) && val >= 0,
   func: (val) => typeof val === 'function',
   object: (val) => typeof val === 'object',
@@ -11501,11 +11897,11 @@ const has = {
   validKey: (obj, key) => typeof key === 'string' && key !== '' && has.own(obj, key),
 };
 
-/******************************************************************************************
+/******************************************************************************
  * 📦 Logging utils
- ******************************************************************************************/
+ ******************************************************************************/
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ Logger
  */
 
@@ -11520,18 +11916,24 @@ const Logger = {
       name,
       level,
 
-      debug: (msg, data) => shouldLog(SEV.debug) && console.debug(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
-      info: (msg, data) => shouldLog(SEV.info) && console.info(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
-      warning: (msg, data) => shouldLog(SEV.warning) && console.warn(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
-      error: (msg, data) => shouldLog(SEV.error) && console.error(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
+      debug: (msg, data) =>
+        shouldLog(SEV.debug) && console.debug(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
+      info: (msg, data) =>
+        shouldLog(SEV.info) && console.info(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
+      warning: (msg, data) =>
+        shouldLog(SEV.warning) && console.warn(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
+      error: (msg, data) =>
+        shouldLog(SEV.error) && console.error(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
 
       wrap: (fn, fnName) => {
         const isAsync = fn.constructor.name === 'AsyncFunction';
 
         const logStart = () => shouldLog(SEV.debug) && console.debug(`[${name}] 👉 ${fnName}`);
-        const logSuccess = (start) => shouldLog(SEV.debug) && console.debug(`[${name}] ✅ ${fnName} (${(performance.now() - start).toFixed(2)}ms)`);
+        const logSuccess = (start) =>
+          shouldLog(SEV.debug) && console.debug(`[${name}] ✅ ${fnName} (${(performance.now() - start).toFixed(2)}ms)`);
         const logError = (start, error) =>
-          shouldLog(SEV.error) && console.error(`[${name}] ❌ ${fnName} failed (${(performance.now() - start).toFixed(2)}ms)`, error);
+          shouldLog(SEV.error) &&
+          console.error(`[${name}] ❌ ${fnName} failed (${(performance.now() - start).toFixed(2)}ms)`, error);
 
         if (isAsync) {
           return async (...args) => {
@@ -11597,13 +11999,13 @@ function initLogger(ctx, debugFlag, methodNames = []) {
   return logger;
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 📦 Components registration
- ******************************************************************************************/
+ ******************************************************************************/
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ RegistrationHelper
- * ========================================================================================
+ * ============================================================================
  *
  * ✅ Helper to register component.
  *
@@ -11642,7 +12044,8 @@ class RegistrationHelper {
     try {
       // On tente l'enregistrement technique
       if (!customElements.get(component.typeName)) customElements.define(component.typeName, elementClass);
-      if (editorClass && component.editor && !customElements.get(component.editor)) customElements.define(component.editor, editorClass);
+      if (editorClass && component.editor && !customElements.get(component.editor))
+        customElements.define(component.editor, editorClass);
     } catch (error) {
       // Si ça échoue (déjà défini), on log mais on ne bloque pas la suite
       console.warn(`[Entity Progress Card] Registration alert: ${error.message}`);
@@ -11689,9 +12092,9 @@ class RegistrationHelper {
   }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 📦 CARD LIB
- ******************************************************************************************/
+ ******************************************************************************/
 
 const CONTENT_SLOT = '{{content}}';
 
@@ -11722,37 +12125,70 @@ const Element = (obj, extraClass = '') => {
 
 const StructureElements = {
   ripple: () => '<ha-ripple></ha-ripple>',
-  container: (options) => StructureElements.ripple() + Element(CARD.htmlStructure.sections.container, options.layout).html(CONTENT_SLOT),
+  container: (options) =>
+    StructureElements.ripple() + Element(CARD.htmlStructure.sections.container, options.layout).html(CONTENT_SLOT),
   belowContainer: () => Element(CARD.htmlStructure.sections.belowContainer).html(CONTENT_SLOT),
   topContainer: () => Element(CARD.htmlStructure.sections.topContainer).html(CONTENT_SLOT),
   backgroundContainer: () => Element(CARD.htmlStructure.sections.backgroundContainer).html(CONTENT_SLOT),
   bottomContainer: () => Element(CARD.htmlStructure.sections.bottomContainer).html(CONTENT_SLOT),
 
-  iconAndShape: () => Element(CARD.htmlStructure.elements.shape).html(StructureElements.ripple() + Element(CARD.htmlStructure.elements.icon).html()),
-  badge: () => Element(CARD.htmlStructure.elements.badge.container).html(Element(CARD.htmlStructure.elements.badge.icon).html()),
+  iconAndShape: () =>
+    Element(CARD.htmlStructure.elements.shape).html(
+      StructureElements.ripple() + Element(CARD.htmlStructure.elements.icon).html(),
+    ),
+  badge: () =>
+    Element(CARD.htmlStructure.elements.badge.container).html(Element(CARD.htmlStructure.elements.badge.icon).html()),
   nameContent: (minimal = false) =>
     Element(CARD.htmlStructure.elements.nameContent).html(
       Element(CARD.htmlStructure.elements.ellipsisWrapper).html(
         Element(CARD.htmlStructure.elements.nameValue).html(
-          Element(CARD.htmlStructure.elements.nameMain).html() + (minimal ? '' : Element(CARD.htmlStructure.elements.nameExtra).html()),
+          Element(CARD.htmlStructure.elements.nameMain).html() +
+            (minimal ? '' : Element(CARD.htmlStructure.elements.nameExtra).html()),
         ),
       ),
     ),
-  secondaryInfoWrapper: () =>
-    Element(CARD.htmlStructure.elements.secondaryInfoWrapper).html(
-      Element(CARD.htmlStructure.elements.ellipsisWrapper).html(
-        Element(CARD.htmlStructure.elements.secondaryInfoValue).html(
-          Element(CARD.htmlStructure.elements.secondaryInfoExtra).html() + Element(CARD.htmlStructure.elements.secondaryInfoMain).html(),
-        ),
+  // One line of a multiline secondary-info block: line 1 is always extra-only
+  // (never a main, whatever the caller passes); line 2 adds the main span only
+  // when this card type actually has one (card/badge: yes, template: no slot at
+  // all - see StructureElements.secondaryInfoWrapperMinimal).
+  secondaryInfoLine: (index, hasMain) => {
+    const extraEl =
+      index === 1 ? CARD.htmlStructure.elements.secondaryInfoExtra : CARD.htmlStructure.elements.secondaryInfoExtra2;
+    const showMain = index === 2 && hasMain;
+    return Element(CARD.htmlStructure.elements.ellipsisWrapper, `secondary-info-line-${index}`).html(
+      Element(CARD.htmlStructure.elements.secondaryInfoValue).html(
+        Element(extraEl).html() + (showMain ? Element(CARD.htmlStructure.elements.secondaryInfoMain).html() : ''),
       ),
+    );
+  },
+
+  secondaryInfoWrapperMultiline: (hasMain) =>
+    Element(CARD.htmlStructure.elements.secondaryInfoWrapper).html(
+      StructureElements.secondaryInfoLine(1, hasMain) + StructureElements.secondaryInfoLine(2, hasMain),
     ),
 
-  secondaryInfoWrapperMinimal: () =>
-    Element(CARD.htmlStructure.elements.secondaryInfoWrapper).html(
-      Element(CARD.htmlStructure.elements.ellipsisWrapper).html(
-        Element(CARD.htmlStructure.elements.secondaryInfoValue).html(Element(CARD.htmlStructure.elements.secondaryInfoExtra).html()),
-      ),
-    ),
+  secondaryInfoWrapper: (options = {}) =>
+    options.multiline
+      ? StructureElements.secondaryInfoWrapperMultiline(true)
+      : Element(CARD.htmlStructure.elements.secondaryInfoWrapper).html(
+          Element(CARD.htmlStructure.elements.ellipsisWrapper).html(
+            Element(CARD.htmlStructure.elements.secondaryInfoValue).html(
+              Element(CARD.htmlStructure.elements.secondaryInfoExtra).html() +
+                Element(CARD.htmlStructure.elements.secondaryInfoMain).html(),
+            ),
+          ),
+        ),
+
+  secondaryInfoWrapperMinimal: (options = {}) =>
+    options.multiline
+      ? StructureElements.secondaryInfoWrapperMultiline(false)
+      : Element(CARD.htmlStructure.elements.secondaryInfoWrapper).html(
+          Element(CARD.htmlStructure.elements.ellipsisWrapper).html(
+            Element(CARD.htmlStructure.elements.secondaryInfoValue).html(
+              Element(CARD.htmlStructure.elements.secondaryInfoExtra).html(),
+            ),
+          ),
+        ),
 
   progressBar: (options) => {
     const extraClass = options.barPosition === 'overlay' ? 'overlay' : '';
@@ -11773,8 +12209,11 @@ const StructureElements = {
       : Element(CARD.htmlStructure.elements.progressBar.inner, 'positive').html() + marks;
 
     return Element(CARD.htmlStructure.elements.progressBar.container, extraClass).html(
-      Element(CARD.htmlStructure.elements.progressBar.bar, isCenterZero ? CARD.style.dynamic.progressBar.centerZero.class : 'default').html(innerHtml),
-      isCenterZero ? { 'aria-valuemin': '-100' } : {}
+      Element(
+        CARD.htmlStructure.elements.progressBar.bar,
+        isCenterZero ? CARD.style.dynamic.progressBar.centerZero.class : 'default',
+      ).html(innerHtml),
+      isCenterZero ? { 'aria-valuemin': '-100' } : {},
     );
   },
 
@@ -11783,7 +12222,7 @@ const StructureElements = {
     const excludedPositions = ['top', 'bottom', 'below', 'overlay', 'background'];
     const excludedLayouts = ['vertical'];
 
-    let content = secondaryInfoWrapperFn();
+    let content = secondaryInfoWrapperFn(options);
 
     if (!excludedPositions.includes(barPosition) && !excludedLayouts.includes(layout)) {
       content += StructureElements.progressBar(options);
@@ -11794,7 +12233,8 @@ const StructureElements = {
 
   secondaryInfo: (options) => StructureElements.createSecondaryInfo(options, StructureElements.secondaryInfoWrapper),
 
-  secondaryInfoMinimal: (options) => StructureElements.createSecondaryInfo(options, StructureElements.secondaryInfoWrapperMinimal),
+  secondaryInfoMinimal: (options) =>
+    StructureElements.createSecondaryInfo(options, StructureElements.secondaryInfoWrapperMinimal),
 
   createContent: (options, rightContent) => {
     const isOverlay = options.barPosition === 'overlay';
@@ -11810,16 +12250,26 @@ const StructureElements = {
     return Element(CARD.htmlStructure.sections.content, extraClass).html(content);
   },
 
-  contentFull: (options) => StructureElements.createContent(options, StructureElements.nameContent() + StructureElements.secondaryInfo(options)),
+  contentFull: (options) =>
+    StructureElements.createContent(
+      options,
+      StructureElements.nameContent() + StructureElements.secondaryInfo(options),
+    ),
   contentMini: (options) =>
-    StructureElements.createContent(options, StructureElements.nameContent(true) + StructureElements.secondaryInfoMinimal(options)),
+    StructureElements.createContent(
+      options,
+      StructureElements.nameContent(true) + StructureElements.secondaryInfoMinimal(options),
+    ),
 
-  iconSection: () => Element(CARD.htmlStructure.sections.icon).html(StructureElements.iconAndShape() + StructureElements.badge()),
+  iconSection: () =>
+    Element(CARD.htmlStructure.sections.icon).html(StructureElements.iconAndShape() + StructureElements.badge()),
   iconSectionWoBadge: () => Element(CARD.htmlStructure.sections.icon).html(StructureElements.iconAndShape()),
 
   trendIndicator: (options) =>
     options.trendIndicator
-      ? Element(CARD.htmlStructure.elements.trendIndicator.container).html(Element(CARD.htmlStructure.elements.trendIndicator.icon).html())
+      ? Element(CARD.htmlStructure.elements.trendIndicator.container).html(
+          Element(CARD.htmlStructure.elements.trendIndicator.icon).html(),
+        )
       : '',
 
   wrapWithBarPosition: (content, options) => {
@@ -11844,7 +12294,9 @@ const StructureTemplates = {
     return StructureElements.wrapWithBarPosition(
       StructureElements.container(options).replace(
         CONTENT_SLOT,
-        StructureElements.trendIndicator(options) + StructureElements.iconSection() + StructureElements.contentFull(options),
+        StructureElements.trendIndicator(options) +
+          StructureElements.iconSection() +
+          StructureElements.contentFull(options),
       ),
       options,
     );
@@ -11861,7 +12313,9 @@ const StructureTemplates = {
     return StructureElements.wrapWithBarPosition(
       StructureElements.container(options).replace(
         CONTENT_SLOT,
-        StructureElements.trendIndicator(options) + StructureElements.iconSection() + StructureElements.contentMini(options),
+        StructureElements.trendIndicator(options) +
+          StructureElements.iconSection() +
+          StructureElements.contentMini(options),
       ),
       options,
     );
@@ -11880,7 +12334,13 @@ const StructureTemplates = {
 };
 
 class ObjStructure {
-  // CF5 - issue (perf) resolved - card.innerHTML re-parsed the full HTML string on every render (each card creation, each editor keystroke). The structure is now built once per unique option set into a <template> and cloned (~5-10x faster than parsing). The DOM depends on the config's structure options (barType, barPosition, layout, ...), so the cache is keyed on the exact options object: any setConfig producing different structure options gets its own template, identical configs share one.
+  // CF5 - issue (perf) resolved - card.innerHTML re-parsed the full HTML string
+  // on every render (each card creation, each editor keystroke). The structure
+  // is now built once per unique option set into a <template> and cloned
+  // (~5-10x faster than parsing). The DOM depends on the config's structure
+  // options (barType, barPosition, layout, ...), so the cache is keyed on the
+  // exact options object: any setConfig producing different structure options
+  // gets its own template, identical configs share one.
   #templates = new Map();
 
   constructor(cardType) {
@@ -11894,7 +12354,8 @@ class ObjStructure {
   clone(options = {}) {
     // Options are small flat objects of primitives built in a fixed key order
     // by each class's _structureOptions getter -> JSON is a stable cache key.
-    // The option space is bounded (a handful of enums/booleans), so is the cache.
+    // The option space is bounded (a handful of enums/booleans), so is the
+    // cache.
     const key = JSON.stringify(options);
     let tpl = this.#templates.get(key);
     if (!tpl) {
@@ -11906,14 +12367,14 @@ class ObjStructure {
   }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ NumberFormatter
- * ========================================================================================
+ * ============================================================================
  *
  * ✅ class for formatting value && unit.
  *
- * This class uses `Value`, `Unit`, and `Decimal` objects to manage and validate its
- * internal data.
+ * This class uses `Value`, `Unit`, and `Decimal` objects to manage and validate
+ * its internal data.
  *
  * @class
  */
@@ -11929,7 +12390,13 @@ class NumberFormatter {
     return set.has(unit.toLowerCase()) ? '' : CARD.config.unit.space;
   }
 
-  static formatValueAndUnit(value, decimal = 2, unit = '', locale = 'en-US', unitSpacing = CARD.config.unit.unitSpacing.auto) {
+  static formatValueAndUnit(
+    value,
+    decimal = 2,
+    unit = '',
+    locale = 'en-US',
+    unitSpacing = CARD.config.unit.unitSpacing.auto,
+  ) {
     if (is.nullish(value)) return '';
 
     const formattedValue = new Intl.NumberFormat(locale, {
@@ -11949,7 +12416,13 @@ class NumberFormatter {
 
     return `${formattedValue}${space}${unit}`;
   }
-  static formatTiming(totalSeconds, decimal = 0, locale = 'en-US', flex = false, unitSpacing = CARD.config.unit.unitSpacing.auto) {
+  static formatTiming(
+    totalSeconds,
+    decimal = 0,
+    locale = 'en-US',
+    flex = false,
+    unitSpacing = CARD.config.unit.unitSpacing.auto,
+  ) {
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     let seconds = (totalSeconds % 60).toFixed(decimal);
@@ -11960,7 +12433,8 @@ class NumberFormatter {
     seconds = decimalPart !== undefined ? `${pad(intPart)}.${decimalPart}` : pad(seconds);
 
     if (flex) {
-      if (totalSeconds < 60) return NumberFormatter.formatValueAndUnit(parseFloat(seconds), decimal, 's', locale, unitSpacing);
+      if (totalSeconds < 60)
+        return NumberFormatter.formatValueAndUnit(parseFloat(seconds), decimal, 's', locale, unitSpacing);
       if (totalSeconds < 3600) return `${pad(minutes)}:${seconds}`;
     }
 
@@ -11981,14 +12455,20 @@ class NumberFormatter {
       case 'μs': // Microseconde
         return value * 0.000001; // 1 microseconde = 0.000001 seconde
       default:
-        // CF5 - issue (critical) resolved - unknown/missing unit threw and crashed the card; return null so the caller can flag the entity as invalid
+        // CF5 - issue (critical) resolved - unknown/missing unit threw and
+        // crashed the card; return null so the caller can flag the entity as
+        // invalid
         return null;
     }
   }
   static convertDuration(duration) {
-    // CF5 - issue (critical) resolved - timer attributes (duration/remaining) can be missing during HA startup; null.split() crashed the card
+    // CF5 - issue (critical) resolved - timer attributes (duration/remaining)
+    // can be missing during HA startup; null.split() crashed the card
     if (!is.string(duration)) return 0;
-    // CF5 - issue (minor) resolved - Python timedelta strings for timers over 24h are "N day(s), H:MM:SS": the day prefix made every part NaN. Days are now parsed, and any malformed remainder returns 0 instead of propagating NaN.
+    // CF5 - issue (minor) resolved - Python timedelta strings for timers over
+    // 24h are "N day(s), H:MM:SS": the day prefix made every part NaN. Days are
+    // now parsed, and any malformed remainder returns 0 instead of propagating
+    // NaN.
     const dayMatch = duration.match(/^(\d+) days?, (.*)$/);
     const days = dayMatch ? parseInt(dayMatch[1], 10) : 0;
     const parts = (dayMatch ? dayMatch[2] : duration).split(':').map(Number);
@@ -11999,9 +12479,9 @@ class NumberFormatter {
   }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ ValueHelper
- * ========================================================================================
+ * ============================================================================
  *
  * ✅ Helper class for managing numeric values.
  * This class validates and stores a numeric value.
@@ -12029,28 +12509,34 @@ class TypedValueHelper {
     return this.#isValid;
   }
 
-  _validate(_value) { return false; }
+  _validate(_value) {
+    return false;
+  }
 }
 
 class ValueHelper extends TypedValueHelper {
-  _validate(v) { return is.number(v); }
+  _validate(v) {
+    return is.number(v);
+  }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ DecimalHelper
- * ========================================================================================
+ * ============================================================================
  *
  * ✅ Represents a non-negative integer value that can be valid or invalid.
  *
  * @class
  */
 class DecimalHelper extends TypedValueHelper {
-  _validate(v) { return Number.isInteger(v) && v >= 0; }
+  _validate(v) {
+    return Number.isInteger(v) && v >= 0;
+  }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ UnitHelper
- * ========================================================================================
+ * ============================================================================
  *
  * ✅ Represents a unit of measurement, stored as a string.
  *
@@ -12063,7 +12549,8 @@ class UnitHelper {
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
   set value(newValue) {
-    // CF5 - issue (critical) resolved - some integrations expose a non-string unit_of_measurement; .trim() crashed and the ?? fallback was dead code
+    // CF5 - issue (critical) resolved - some integrations expose a non-string
+    // unit_of_measurement; .trim() crashed and the ?? fallback was dead code
     this.#value = is.nullish(newValue) ? CARD.config.unit.default : String(newValue).trim();
   }
   get value() {
@@ -12089,9 +12576,9 @@ class UnitHelper {
   }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ PercentHelper
- * ========================================================================================
+ * ============================================================================
  *
  * ✅ class for calculating and formatting percentages.
  *
@@ -12111,40 +12598,83 @@ class ProgressCalc {
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
-  set isReversed(newValue) { this.#isReversed = is.boolean(newValue) ? newValue : CARD.config.reverse; }
-  get isReversed() { return this.#isReversed; }
+  set isReversed(newValue) {
+    this.#isReversed = is.boolean(newValue) ? newValue : CARD.config.reverse;
+  }
+  get isReversed() {
+    return this.#isReversed;
+  }
 
-  set min(newValue) { this.#min.value = newValue; }
-  get min() { return this.#min.value; }
+  set min(newValue) {
+    this.#min.value = newValue;
+  }
+  get min() {
+    return this.#min.value;
+  }
 
-  set max(newValue) { this.#max.value = newValue; }
-  get max() { return this.#max.value; }
+  set max(newValue) {
+    this.#max.value = newValue;
+  }
+  get max() {
+    return this.#max.value;
+  }
 
-  set current(newCurrent) { this.#current.value = newCurrent; }
-  get current() { return this.#current.value; }
+  set current(newCurrent) {
+    this.#current.value = newCurrent;
+  }
+  get current() {
+    return this.#current.value;
+  }
 
-  set decimal(newValue) { this.#decimal.value = newValue; }
-  get decimal() { return this.#decimal.value; }
+  set decimal(newValue) {
+    this.#decimal.value = newValue;
+  }
+  get decimal() {
+    return this.#decimal.value;
+  }
 
-  set isCenterZero(newValue) { this.#isCenterZero = is.boolean(newValue) ? newValue : false; }
-  get isCenterZero() { return this.#isCenterZero; }
+  set isCenterZero(newValue) {
+    this.#isCenterZero = is.boolean(newValue) ? newValue : false;
+  }
+  get isCenterZero() {
+    return this.#isCenterZero;
+  }
 
-  set zeroValue(newValue) { this.#zeroValue = is.number(newValue) ? newValue : 0; }
-  get zeroValue() { return this.#zeroValue; }
+  set zeroValue(newValue) {
+    this.#zeroValue = is.number(newValue) ? newValue : 0;
+  }
+  get zeroValue() {
+    return this.#zeroValue;
+  }
 
-  set growthPercent(newValue) { this.#growthPercent = is.boolean(newValue) ? newValue : false; }
-  get growthPercent() { return this.#growthPercent; }
+  set growthPercent(newValue) {
+    this.#growthPercent = is.boolean(newValue) ? newValue : false;
+  }
+  get growthPercent() {
+    return this.#growthPercent;
+  }
 
-  set scale(newValue) { this.#scale = newValue === 'log' ? 'log' : 'linear'; }
-  get scale() { return this.#scale; }
+  set scale(newValue) {
+    this.#scale = newValue === 'log' ? 'log' : 'linear';
+  }
+  get scale() {
+    return this.#scale;
+  }
 
-  // log scale requires a well-formed positive range (log(0) or log(negative) is undefined) —
-  // center_zero's own zeroValue/min/max split has no meaningful log equivalent either, so both
-  // silently fall back to plain linear math in #percentForValue rather than producing NaN.
-  get isLogScale() { return this.#scale === 'log' && !this.isCenterZero && this.min > 0 && this.max > this.min; }
+  // log scale requires a well-formed positive range (log(0) or log(negative) is
+  // undefined) — center_zero's own zeroValue/min/max split has no meaningful
+  // log equivalent either, so both silently fall back to plain linear math in
+  // #percentForValue rather than producing NaN.
+  get isLogScale() {
+    return this.#scale === 'log' && !this.isCenterZero && this.min > 0 && this.max > this.min;
+  }
 
-  get actual() { return this.#isReversed ? this.max - this.current : this.current; }
-  get isValid() { return this.range !== 0; }
+  get actual() {
+    return this.#isReversed ? this.max - this.current : this.current;
+  }
+  get isValid() {
+    return this.range !== 0;
+  }
   get range() {
     if (!this.isCenterZero) return this.max - this.min;
     return this.current >= this.#zeroValue ? this.max - this.#zeroValue : this.#zeroValue - this.min;
@@ -12152,13 +12682,16 @@ class ProgressCalc {
   get correctedValue() {
     return this.isCenterZero ? this.current - this.#zeroValue : this.actual - this.min;
   }
-  get percent() { return this.isValid ? this.#percent : null; }
+  get percent() {
+    return this.isValid ? this.#percent : null;
+  }
 
   /**
-   * Pourcentage de croissance/décroissance par rapport à la valeur de centrage (`zeroValue`),
-   * indépendant du ratio de remplissage de la barre (`percent`). N'a de sens que si
-   * `isCenterZero` et `growthPercent` sont actifs, et que `zeroValue` n'est pas 0
-   * (sinon le ratio est mathématiquement indéfini — on retombe alors sur `percent`).
+   * Pourcentage de croissance/décroissance par rapport à la valeur de centrage
+   * (`zeroValue`), indépendant du ratio de remplissage de la barre (`percent`).
+   * N'a de sens que si `isCenterZero` et `growthPercent` sont actifs, et que
+   * `zeroValue` n'est pas 0 (sinon le ratio est mathématiquement indéfini — on
+   * retombe alors sur `percent`).
    */
   get growthPercentValue() {
     if (!this.isValid) return null;
@@ -12188,9 +12721,9 @@ class ProgressCalc {
       return halfRange === 0 ? 0 : (corrected / halfRange) * 100;
     }
     if (this.isLogScale) {
-      // Clamp below-range values to min before taking the log: value <= 0 would otherwise
-      // produce NaN/-Infinity instead of the same "0%, let CSS clamp it" behavior linear gets
-      // for a below-range value.
+      // Clamp below-range values to min before taking the log: value <= 0 would
+      // otherwise produce NaN/-Infinity instead of the same "0%, let CSS clamp
+      // it" behavior linear gets for a below-range value.
       const clamped = Math.max(value, this.min);
       return ((Math.log(clamped) - Math.log(this.min)) / (Math.log(this.max) - Math.log(this.min))) * 100;
     }
@@ -12199,9 +12732,9 @@ class ProgressCalc {
   }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ PercentHelper
- * ========================================================================================
+ * ============================================================================
  *
  * ✅ class for calculating and formatting percentages.
  *
@@ -12220,15 +12753,29 @@ class PercentHelper extends ProgressCalc {
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
-  set isTimer(newValue) { this.#isTimer = is.boolean(newValue) ? newValue : false; }
-  get isTimer() { return this.#isTimer; }
+  set isTimer(newValue) {
+    this.#isTimer = is.boolean(newValue) ? newValue : false;
+  }
+  get isTimer() {
+    return this.#isTimer;
+  }
 
-  get unit() { return this.#unit.value; }
-  set unit(newValue) { this.#unit.value = newValue ?? ''; }
+  get unit() {
+    return this.#unit.value;
+  }
+  set unit(newValue) {
+    this.#unit.value = newValue ?? '';
+  }
 
-  get hasTimerUnit() { return this.#isTimer && this.#unit.isTimerUnit; }
-  get hasFlexTimerUnit() { return this.#isTimer && this.#unit.isFlexTimerUnit; }
-  get hasTimerOrFlexTimerUnit() { return this.hasTimerUnit || this.hasFlexTimerUnit; }
+  get hasTimerUnit() {
+    return this.#isTimer && this.#unit.isTimerUnit;
+  }
+  get hasFlexTimerUnit() {
+    return this.#isTimer && this.#unit.isFlexTimerUnit;
+  }
+  get hasTimerOrFlexTimerUnit() {
+    return this.hasTimerUnit || this.hasFlexTimerUnit;
+  }
 
   get processedValue() {
     if (this.unit !== CARD.config.unit.default) return this.actual;
@@ -12248,30 +12795,47 @@ class PercentHelper extends ProgressCalc {
 
   valueForThemes(isCustomTheme, valueBasedOnPercentage) {
     /*
-     * Calculates the value to display based on the selected theme and unit system.
+     * Calculates the value to display based on the selected theme and unit
+     * system.
      *
-     * - If the unit is Fahrenheit, the temperature is converted to Celsius before returning.
-     * - If the theme is linear or the unit is the default, the percentage value is returned.
+     * - If the unit is Fahrenheit, the temperature is converted to Celsius
+     * before returning. - If the theme is linear or the unit is the default,
+     * the percentage value is returned.
      */
     let value = this.actual;
     if (isCustomTheme) return value;
     if (this.unit === CARD.config.unit.fahrenheit) value = ((value - 32) * 5) / 9;
-    return valueBasedOnPercentage || [CARD.config.unit.default, CARD.config.unit.disable].includes(this.unit) ? this.percent : value;
+    return valueBasedOnPercentage || [CARD.config.unit.default, CARD.config.unit.disable].includes(this.unit)
+      ? this.percent
+      : value;
   }
 
   toString() {
     if (!this.isValid) return 'Div0';
     if (this.hasTimerOrFlexTimerUnit)
-      return NumberFormatter.formatTiming(this.actual, this.decimal, this.#hassProvider.numberFormat, this.hasFlexTimerUnit, this.#unitSpacing);
-    return NumberFormatter.formatValueAndUnit(this.processedValue, this.decimal, this.unit, this.#hassProvider.numberFormat, this.#unitSpacing);
+      return NumberFormatter.formatTiming(
+        this.actual,
+        this.decimal,
+        this.#hassProvider.numberFormat,
+        this.hasFlexTimerUnit,
+        this.#unitSpacing,
+      );
+    return NumberFormatter.formatValueAndUnit(
+      this.processedValue,
+      this.decimal,
+      this.unit,
+      this.#hassProvider.numberFormat,
+      this.#unitSpacing,
+    );
   }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ ThemeManager
- * ========================================================================================
+ * ============================================================================
  *
- * ✅ Manages the theme and its associated icon and color based on a percentage value.
+ * ✅ Manages the theme and its associated icon and color based on a percentage
+ * value.
  *
  * @class
  */
@@ -12304,9 +12868,9 @@ class ThemeManager {
   get theme() {
     return this.#theme;
   }
-  // Only a presence/shape check: per-zone validity (numeric min < max, sorted) is
-  // already guaranteed by the schema's customTheme validator, the sole path a config
-  // reaches here through — see BaseConfigHelper.set config.
+  // Only a presence/shape check: per-zone validity (numeric min < max, sorted)
+  // is already guaranteed by the schema's customTheme validator, the sole path
+  // a config reaches here through — see BaseConfigHelper.set config.
   set customTheme(newTheme) {
     if (!is.nonEmptyArray(newTheme)) return;
     this.#theme = CARD.theme.default;
@@ -12395,10 +12959,11 @@ class ThemeManager {
     } else if (this.#value < this.#currentStyle[0].min) {
       themeData = this.#currentStyle[0];
     } else {
-      // custom_theme zones no longer have to tile perfectly (gaps are tolerated), so a
-      // value can land in a gap between two of them — themeData then stays null and
-      // #applyColors disengages the theme for this render, deferring to whatever color
-      // source is next in priority (see CardView.iconColor/barColor).
+      // custom_theme zones no longer have to tile perfectly (gaps are
+      // tolerated), so a value can land in a gap between two of them —
+      // themeData then stays null and #applyColors disengages the theme for
+      // this render, deferring to whatever color source is next in priority
+      // (see CardView.iconColor/barColor).
       const index = this.#currentStyle.findIndex((level) => this.#value >= level.min && this.#value < level.max);
       if (index !== -1) {
         themeData = this.#currentStyle[index];
@@ -12464,15 +13029,18 @@ class ThemeManager {
     const visible = style.filter((level) => level.min < fillPercent);
     if (visible.length === 0) return null;
 
-    // Inner element uses translateX((value-1)*100%), shifted left by (100-fillPercent)%.
-    // A zone boundary at container position B → element position B + offset.
+    // Inner element uses translateX((value-1)*100%), shifted left by
+    // (100-fillPercent)%. A zone boundary at container position B → element
+    // position B + offset.
     const offset = 100 - fillPercent;
     const toElemPos = (b) => `${(b + offset).toFixed(2)}%`;
-    // color is optional per zone now (see types.customTheme) — a color-less zone falls
-    // back the same way iconColor/barColor already do: the entity's own negotiated
-    // color (e.g. a cover is pink open / grey closed, see EntityHelper.defaultColor),
-    // then the card's generic default, rather than a flat neutral for every domain.
-    const col = (level) => ThemeManager.adaptColor(level.bar_color || level.color) || defaultColor || CARD.style.color.default;
+    // color is optional per zone now (see types.customTheme) — a color-less
+    // zone falls back the same way iconColor/barColor already do: the entity's
+    // own negotiated color (e.g. a cover is pink open / grey closed, see
+    // EntityHelper.defaultColor), then the card's generic default, rather than
+    // a flat neutral for every domain.
+    const col = (level) =>
+      ThemeManager.adaptColor(level.bar_color || level.color) || defaultColor || CARD.style.color.default;
 
     if (mode === 'segment') {
       const stops = visible.flatMap((level, i) => {
@@ -12498,9 +13066,9 @@ class ThemeManager {
   }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ HassProviderSingleton
- * ========================================================================================
+ * ============================================================================
  *
  * ✅ Provides access to the Home Assistant object.
  * This class implements a singleton pattern to ensure only one instance exists.
@@ -12620,10 +13188,12 @@ class HassProviderSingleton {
     return resolvers[mapping.source]?.() ?? null;
   }
   #formatEntityProp(entityId, prop) {
-    if (prop === 'last_changed' || prop === 'last_updated') return this.getRelativeTime(this.#resolveEntityProp(entityId, prop));
+    if (prop === 'last_changed' || prop === 'last_updated')
+      return this.getRelativeTime(this.#resolveEntityProp(entityId, prop));
 
     const stateObj = this.getEntityStateObj(entityId);
-    if (prop === 'state') return stateObj ? (this.#hass?.formatEntityState?.(stateObj) ?? '') : this.localize('card.msg.entityNotFound');
+    if (prop === 'state')
+      return stateObj ? (this.#hass?.formatEntityState?.(stateObj) ?? '') : this.localize('card.msg.entityNotFound');
 
     return this.#hass?.formatEntityAttributeValue?.(stateObj, prop) ?? '';
   }
@@ -12642,7 +13212,9 @@ class HassProviderSingleton {
     return attribute in attributes ? attributes[attribute] : null;
   }
   getEntityName(entityId) {
-    // CF5 - issue (critical) resolved - entities without unique_id are absent from hass.entities; missing optional chaining crashed name tokens (type: entity)
+    // CF5 - issue (critical) resolved - entities without unique_id are absent
+    // from hass.entities; missing optional chaining crashed name tokens (type:
+    // entity)
     return this.#hass?.entities?.[entityId]?.name ?? null;
   }
   getEntityDevice(entityId) {
@@ -12650,18 +13222,33 @@ class HassProviderSingleton {
     if (!deviceId) return null;
     return this.#hass?.devices?.[deviceId]?.name ?? null;
   }
+  // Used by ViewCore.isBatteryCharging/isWashingMachineActive to look at
+  // other entities on the same device as the card's own `entity`, each then
+  // filtering by state, not by entity_id: an id-based guess (e.g. requiring
+  // "charg" in the name) misses integrations that don't name their status
+  // entity after what it reports - Home Assistant's own Companion App calls
+  // its charging-status sensor battery_state, not anything containing
+  // "charg".
+  getSameDeviceEntities(entityId) {
+    const deviceId = this.#hass?.entities?.[entityId]?.device_id;
+    if (!deviceId) return [];
+    return Object.keys(this.#hass?.entities ?? {}).filter(
+      (id) => id !== entityId && this.#hass.entities[id].device_id === deviceId,
+    );
+  }
   getEntityArea(entityId) {
     const entityAreaId = this.#hass?.entities?.[entityId]?.area_id;
     if (entityAreaId) return this.#hass?.areas?.[entityAreaId]?.name ?? null;
- 
+
     const deviceId = this.#hass?.entities?.[entityId]?.device_id;
     if (!deviceId) return null;
     const deviceAreaId = this.#hass?.devices?.[deviceId]?.area_id;
     return this.#hass?.areas?.[deviceAreaId]?.name ?? null;
   }
   getEntityFloor(entityId) {
-    const areaId = this.#hass?.entities?.[entityId]?.area_id
-      ?? this.#hass?.devices?.[this.#hass?.entities?.[entityId]?.device_id]?.area_id;
+    const areaId =
+      this.#hass?.entities?.[entityId]?.area_id ??
+      this.#hass?.devices?.[this.#hass?.entities?.[entityId]?.device_id]?.area_id;
     if (!areaId) return null;
     const floorId = this.#hass?.areas?.[areaId]?.floor_id;
     return this.#hass?.floors?.[floorId]?.name ?? null;
@@ -12760,14 +13347,21 @@ class ChangeTracker {
       this.#firstTime = false;
       return true;
     }
-    // CF5 - issue (perf) resolved - previously returned true, running the full refresh pipeline on every hass update of the whole install for cards with no watched entity (Jinja-only template cards). Their content arrives exclusively via push template subscriptions; nothing in the pipeline reads hass directly. If a future render path does, revisit this.
+    // CF5 - issue (perf) resolved - previously returned true, running the full
+    // refresh pipeline on every hass update of the whole install for cards with
+    // no watched entity (Jinja-only template cards). Their content arrives
+    // exclusively via push template subscriptions; nothing in the pipeline
+    // reads hass directly. If a future render path does, revisit this.
     if (!is.nonEmptySet(this.#watchedEntities)) return false;
 
     for (const entityId of this.#watchedEntities) {
       const newState = newHass?.states?.[entityId];
 
       if (!newState) return true;
-      // CF5 - issue (perf) resolved - HA state objects are immutable (the frontend swaps in a new object on every change), so a reference check replaces the two full JSON.stringify serializations previously run per entity on every hass update
+      // CF5 - issue (perf) resolved - HA state objects are immutable (the
+      // frontend swaps in a new object on every change), so a reference check
+      // replaces the two full JSON.stringify serializations previously run per
+      // entity on every hass update
       if (newState !== this.#entityCache?.[entityId]) return true;
     }
 
@@ -12794,12 +13388,12 @@ class ChangeTracker {
   }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ EntityHelper
- * ========================================================================================
+ * ============================================================================
  *
- * ✅ Helper class for managing entities.
- * This class validates and retrieves information from Home Assistant if it's an entity.
+ * ✅ Helper class for managing entities. This class validates and retrieves
+ * information from Home Assistant if it's an entity.
  *
  * @class
  */
@@ -12894,7 +13488,11 @@ class EntityHelper {
     return this.#hassProvider.isEntityAvailable(this.#entityId);
   }
   get attributes() {
-    return this.#isValid && !this.entityType.isCounter && !this.entityType.isNumber && !this.entityType.isDuration && !this.entityType.isTimer
+    return this.#isValid &&
+      !this.entityType.isCounter &&
+      !this.entityType.isNumber &&
+      !this.entityType.isDuration &&
+      !this.entityType.isTimer
       ? this.#hassProvider.getNumericAttributes(this.#entityId)
       : {};
   }
@@ -12927,12 +13525,10 @@ class EntityHelper {
         }
       })
       .filter((v) => is.nonEmptyString(v))
-      .join(' ');    
+      .join(' ');
   }
   get nameComposition() {
-    return this.#nameTokens
-      ? this._nameResolver()
-      : this.name;
+    return this.#nameTokens ? this._nameResolver() : this.name;
   }
   get stateObj() {
     return this.#hassProvider.getEntityStateObj(this.#entityId);
@@ -12965,10 +13561,15 @@ class EntityHelper {
   }
   get defaultColor() {
     const colorMap = {
-      [HA_CONTEXT.entity.type.timer]: this.value?.state === HA_CONTEXT.entity.state.active ? CARD.style.color.active : CARD.style.color.inactive,
+      [HA_CONTEXT.entity.type.timer]:
+        this.value?.state === HA_CONTEXT.entity.state.active ? CARD.style.color.active : CARD.style.color.inactive,
       [HA_CONTEXT.entity.type.cover]: this.value > 0 ? CARD.style.color.coverActive : CARD.style.color.inactive,
       [HA_CONTEXT.entity.type.light]: this.value > 0 ? CARD.style.color.lightActive : CARD.style.color.inactive,
-      [HA_CONTEXT.entity.type.fan]: this.value > 0 ? CARD.style.color.fanActive : CARD.style.color.inactive,
+      // state, not value: a fan on a dynamic preset (e.g. "auto") is genuinely
+      // on but its percentage attribute can legitimately read 0 - the fan
+      // decides its own speed rather than reporting a fixed one.
+      [HA_CONTEXT.entity.type.fan]:
+        this.state === HA_CONTEXT.entity.state.on ? CARD.style.color.fanActive : CARD.style.color.inactive,
       [HA_CONTEXT.entity.type.climate]: this.#getClimateColor(),
       [HA_CONTEXT.entity.class.battery]: this.#getBatteryColor(),
     };
@@ -13003,7 +13604,8 @@ class EntityHelper {
   getEntityType() {
     this.#entityType ??= EntityHelper.#handleRefreshType.has(this.#domain)
       ? this.#domain
-      : this.#hassProvider.getEntityProp(this.#entityId, 'device_class') === HA_CONTEXT.entity.type.duration && !this.#attribute
+      : this.#hassProvider.getEntityProp(this.#entityId, 'device_class') === HA_CONTEXT.entity.type.duration &&
+          !this.#attribute
         ? HA_CONTEXT.entity.type.duration
         : HA_CONTEXT.entity.type.default;
 
@@ -13019,14 +13621,17 @@ class EntityHelper {
     }
 
     if (this.#attribute)
-      // CF5 - issue (major) resolved - getEntityAttribute returns null (never undefined) when missing, so this check always passed and invalid attributes produced NaN downstream
+      // CF5 - issue (major) resolved - getEntityAttribute returns null (never
+      // undefined) when missing, so this check always passed and invalid
+      // attributes produced NaN downstream
       this.#isValid = this.#hassProvider.getEntityAttribute(this.#entityId, this.#attribute) !== null;
 
     this.#state = this.#hassProvider.getEntityProp(this.#entityId, 'state');
     if (!this.isValid || !this.isAvailable) return;
 
     const type = this.getEntityType();
-    const handler = EntityHelper.#handleRefreshType.get(type) ?? EntityHelper.#handleRefreshType.get(HA_CONTEXT.entity.type.default);
+    const handler =
+      EntityHelper.#handleRefreshType.get(type) ?? EntityHelper.#handleRefreshType.get(HA_CONTEXT.entity.type.default);
     handler(this);
   }
 
@@ -13043,7 +13648,10 @@ class EntityHelper {
 
     if (is.numericString(attrValue) || is.number(attrValue)) {
       this.#value = parseFloat(attrValue);
-      if (this.#domain === HA_CONTEXT.attributeMapping.light.label && this.#attribute === HA_CONTEXT.attributeMapping.light.attribute) {
+      if (
+        this.#domain === HA_CONTEXT.attributeMapping.light.label &&
+        this.#attribute === HA_CONTEXT.attributeMapping.light.attribute
+      ) {
         this.#value = (100 * this.#value) / 255;
       }
     } else {
@@ -13070,7 +13678,9 @@ class EntityHelper {
         break;
       }
       case HA_CONTEXT.entity.state.paused: {
-        const remaining = NumberFormatter.convertDuration(this.#hassProvider.getEntityProp(this.#entityId, 'remaining'));
+        const remaining = NumberFormatter.convertDuration(
+          this.#hassProvider.getEntityProp(this.#entityId, 'remaining'),
+        );
         duration = NumberFormatter.convertDuration(this.#hassProvider.getEntityProp(this.#entityId, 'duration'));
         elapsed = duration - remaining;
         break;
@@ -13078,7 +13688,12 @@ class EntityHelper {
       default:
         throw new Error('Timer entity - Unknown case');
     }
-    this.#value = { current: elapsed / CARD.config.msFactor, min: CARD.config.value.min, max: duration / CARD.config.msFactor, state: this.#state };
+    this.#value = {
+      current: elapsed / CARD.config.msFactor,
+      min: CARD.config.value.min,
+      max: duration / CARD.config.msFactor,
+      state: this.#state,
+    };
   }
   _manageCounterAndNumberEntity(min, max) {
     this.#value = {
@@ -13090,7 +13705,9 @@ class EntityHelper {
   _manageDurationEntity() {
     const unit = this.#hassProvider.getEntityProp(this.#entityId, 'unit_of_measurement');
     const value = parseFloat(this.#state);
-    // CF5 - issue (critical) resolved - getEntityProp returns null (never undefined), so the guard never matched and a missing unit crashed in durationToSeconds
+    // CF5 - issue (critical) resolved - getEntityProp returns null (never
+    // undefined), so the guard never matched and a missing unit crashed in
+    // durationToSeconds
     const seconds = is.nullish(unit) ? null : NumberFormatter.durationToSeconds(value, unit);
     this.#value = seconds ?? 0;
     this.#isValid = seconds !== null;
@@ -13114,9 +13731,9 @@ class EntityHelper {
   }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ EntityCollectionHelper
- * ========================================================================================
+ * ============================================================================
  *
  * ✅ Helper class for managing entities collection.
  *
@@ -13132,17 +13749,19 @@ class EntityCollectionHelper {
     return is.number(value) ? value : (value?.current ?? 0);
   }
 
-  // Width/share math always wants a magnitude - a negative raw value must never turn into
-  // a negative width (nonsensical for a gradient stop or an arm size).
+  // Width/share math always wants a magnitude - a negative raw value must never
+  // turn into a negative width (nonsensical for a gradient stop or an arm
+  // size).
   static #magnitude(helper) {
     return Math.abs(EntityCollectionHelper.#numericValue(helper));
   }
 
-  // An entity counts as a negative contributor if explicitly marked `subtract`, or if its own
-  // raw value is already negative (e.g. a grid-power sensor signed by convention - see the
-  // `net` mode note in configuration.md). Checking both - rather than just blindly negating
-  // when `subtract` is set - means `subtract: true` on an already-negative value can't
-  // double-negate it back to positive.
+  // An entity counts as a negative contributor if explicitly marked `subtract`,
+  // or if its own raw value is already negative (e.g. a grid-power sensor
+  // signed by convention - see the `net` mode note in configuration.md).
+  // Checking both - rather than just blindly negating when `subtract` is set -
+  // means `subtract: true` on an already-negative value can't double-negate it
+  // back to positive.
   static #isNegative(helper) {
     return helper.subtract || EntityCollectionHelper.#numericValue(helper) < 0;
   }
@@ -13179,9 +13798,10 @@ class EntityCollectionHelper {
     this.#entities.forEach((helper) => helper.refresh());
   }
 
-  // Plain magnitude sum, mode-agnostic - the fill amount for 'stacked'/'proportional' (both
-  // centered and not) and the non-centered text/value. See getNetValue() for the
-  // sign-aware total ('net' mode, and 'stacked'/'proportional' + center_zero's label).
+  // Plain magnitude sum, mode-agnostic - the fill amount for
+  // 'stacked'/'proportional' (both centered and not) and the non-centered
+  // text/value. See getNetValue() for the sign-aware total ('net' mode, and
+  // 'stacked'/'proportional' + center_zero's label).
   getTotalValue() {
     return EntityCollectionHelper.#magnitudeSum(this.getAvailableEntities());
   }
@@ -13189,21 +13809,23 @@ class EntityCollectionHelper {
     return this.#entities.filter((helper) => helper.isValid && helper.isAvailable);
   }
 
-  // Algebraic total (positive arm's magnitude sum minus negative arm's): 'net' mode's own
-  // total, and also what 'stacked'/'proportional' should show as their text/value once
-  // center_zero splits them into two arms - a single flat "88%" reading makes no sense once
-  // the bar itself is showing two independent, possibly-opposing lengths (see ViewBase).
+  // Algebraic total (positive arm's magnitude sum minus negative arm's): 'net'
+  // mode's own total, and also what 'stacked'/'proportional' should show as
+  // their text/value once center_zero splits them into two arms - a single flat
+  // "88%" reading makes no sense once the bar itself is showing two
+  // independent, possibly-opposing lengths (see ViewBase).
   getNetValue() {
     const { positive, negative } = EntityCollectionHelper.#splitByNegative(this.getAvailableEntities());
     return EntityCollectionHelper.#magnitudeSum(positive) - EntityCollectionHelper.#magnitudeSum(negative);
   }
 
-  // Auto-shaded fallback (darkest -> pure base color, by position among entities lacking an
-  // explicit color) for an entity with no color override - the only differentiation available
-  // before bar_stack.entities[].color existed. The main entity is never part of this: it
-  // always keeps its own negotiated curColor, unshaded, regardless of its position in the
-  // collection (index 0 in 'stacked', last in 'proportional' - shading by raw position used
-  // to darken whichever one landed first).
+  // Auto-shaded fallback (darkest -> pure base color, by position among
+  // entities lacking an explicit color) for an entity with no color override -
+  // the only differentiation available before bar_stack.entities[].color
+  // existed. The main entity is never part of this: it always keeps its own
+  // negotiated curColor, unshaded, regardless of its position in the collection
+  // (index 0 in 'stacked', last in 'proportional' - shading by raw position
+  // used to darken whichever one landed first).
   static #entityColor(helper, index, total, curColor) {
     if (helper.isMain) return curColor;
     if (helper.color) return ThemeManager.adaptColor(helper.color) ?? curColor;
@@ -13219,16 +13841,18 @@ class EntityCollectionHelper {
       : EntityCollectionHelper.#proportionalGradient(available, curColor, progressRatio);
   }
 
-  // 'stacked'/'proportional' + center_zero only ('net' has its own single-segment path,
-  // see ViewBase.barColor): entities split into two independent arms (see #splitByNegative),
-  // each laid out with the exact same per-mode algorithm as the non-centered case (on
-  // magnitudes, see #magnitude), just scoped to its own half-range (max-zeroValue /
+  // 'stacked'/'proportional' + center_zero only ('net' has its own
+  // single-segment path, see ViewBase.barColor): entities split into two
+  // independent arms (see #splitByNegative), each laid out with the exact same
+  // per-mode algorithm as the non-centered case (on magnitudes, see
+  // #magnitude), just scoped to its own half-range (max-zeroValue /
   // zeroValue-min).
   getDivergingGradients(curColor, { min, max, zeroValue }) {
     const available = this.getAvailableEntities();
     if (!available.length || !curColor) return null;
 
-    const build = this.#mode === 'stacked' ? EntityCollectionHelper.#stackedGradient : EntityCollectionHelper.#proportionalGradient;
+    const build =
+      this.#mode === 'stacked' ? EntityCollectionHelper.#stackedGradient : EntityCollectionHelper.#proportionalGradient;
     const arm = (entities, range) => {
       if (!entities.length || range <= 0) return { gradient: null, size: 0 };
       const size = Math.min(1, Math.max(0, EntityCollectionHelper.#magnitudeSum(entities) / range));
@@ -13241,9 +13865,10 @@ class EntityCollectionHelper {
     return { posGradient: pos.gradient, negGradient: neg.gradient, posSize: pos.size, negSize: neg.size };
   }
 
-  // 'proportional' mode (legacy `additions` behavior, a.k.a. "100% stacked"): each entity's
-  // share is renormalized against the combined total, so the visible fill is always divided
-  // between entities regardless of how that total compares to min_value/max_value.
+  // 'proportional' mode (legacy `additions` behavior, a.k.a. "100% stacked"):
+  // each entity's share is renormalized against the combined total, so the
+  // visible fill is always divided between entities regardless of how that
+  // total compares to min_value/max_value.
   static #proportionalGradient(available, curColor, progressRatio) {
     const total = EntityCollectionHelper.#magnitudeSum(available);
     if (total === 0) return null;
@@ -13270,11 +13895,12 @@ class EntityCollectionHelper {
     return `linear-gradient(to right, ${gradientStops.join(', ')})`;
   }
 
-  // 'stacked' mode: each entity occupies its own literal width on the card's min_value/
-  // max_value scale (not renormalized against the others) - entities placed in list order,
-  // starting right after the previous one. Leftover space past the last entity stays empty
-  // (no gap-filling color), and entities are clipped/skipped once the cumulative width
-  // reaches 100% instead of shrinking everyone to fit.
+  // 'stacked' mode: each entity occupies its own literal width on the card's
+  // min_value/ max_value scale (not renormalized against the others) - entities
+  // placed in list order, starting right after the previous one. Leftover space
+  // past the last entity stays empty (no gap-filling color), and entities are
+  // clipped/skipped once the cumulative width reaches 100% instead of shrinking
+  // everyone to fit.
   static #stackedGradient(available, curColor, progressRatio, range) {
     if (!range) return null;
 
@@ -13307,12 +13933,13 @@ class EntityCollectionHelper {
   }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ EntityOrValue
- * ========================================================================================
+ * ============================================================================
  *
- * ✅ Represents either an entity ID or a direct value.
- * This class validates the provided value and retrieves information from Home Assistant if it's an entity.
+ * ✅ Represents either an entity ID or a direct value. This class validates the
+ * provided value and retrieves information from Home Assistant if it's an
+ * entity.
  *
  * @class
  */
@@ -13347,43 +13974,102 @@ class EntityOrValue {
     }
   }
 
-  get value()               { return this.#activeHelper?.value ?? null; }
-  get isEntity()            { return this.#isEntity; }
-  get isValid()             { return this.#activeHelper?.isValid ?? false; }
+  get value() {
+    return this.#activeHelper?.value ?? null;
+  }
+  get isEntity() {
+    return this.#isEntity;
+  }
+  get isValid() {
+    return this.#activeHelper?.isValid ?? false;
+  }
   get isAvailable() {
     if (!this.#activeHelper) return false;
     return this.#isEntity ? this.#activeHelper.isAvailable || this.#activeHelper.isValid : this.#activeHelper.isValid;
   }
 
-  get state()               { return this.#entity()?.state ?? null; }
-  get precision()           { return this.#entity()?.precision ?? null; }
-  get name()                { return this.#entity()?.name ?? null; }
-  get nameComposition()     { return this.#entity()?.nameComposition ?? null; }
-  get formatedEntityState() { return this.#entity()?.formatedEntityState ?? null; }
-  get stateContent()        { return this.#entity()?.stateContent ?? null; }
-  set stateContent(newValue){ const entity = this.#entity(); if (entity) entity.stateContent = newValue; }
-  get stateContentToString(){ return this.#entity()?.stateContentToString ?? null; }
-  get entityType()          { return this.#entity()?.entityType ?? { isTimer: false, isDuration: false, isNumber: false, isCounter: false, isSynced: false }; }
-  get hasShapeByDefault()   { return this.#entity()?.hasShapeByDefault ?? false; }
-  get defaultColor()        { return this.#entity()?.defaultColor ?? false; }
-  get hasAttribute()        { return this.#entity()?.hasAttribute ?? false; }
-  get defaultAttribute()    { return this.#entity()?.defaultAttribute ?? null; }
-  get attributes()          { return this.#entity()?.attributes ?? null; }
-  get unit()                { return this.#entity()?.unit ?? null; }
-  get stateObj()            { return this.#entity()?.stateObj ?? null; }
-  get nameTokens()          { return this.#entity()?.nameTokens ?? null; }
-  set nameTokens(tok)       { const entity = this.#entity(); if (entity) entity.nameTokens = tok; }
-  get attribute()           { return this.#entity()?.attribute ?? null; }
-  set attribute(newValue)   { const entity = this.#entity(); if (entity) entity.attribute = newValue; }
+  get state() {
+    return this.#entity()?.state ?? null;
+  }
+  get precision() {
+    return this.#entity()?.precision ?? null;
+  }
+  get name() {
+    return this.#entity()?.name ?? null;
+  }
+  get nameComposition() {
+    return this.#entity()?.nameComposition ?? null;
+  }
+  get formatedEntityState() {
+    return this.#entity()?.formatedEntityState ?? null;
+  }
+  get stateContent() {
+    return this.#entity()?.stateContent ?? null;
+  }
+  set stateContent(newValue) {
+    const entity = this.#entity();
+    if (entity) entity.stateContent = newValue;
+  }
+  get stateContentToString() {
+    return this.#entity()?.stateContentToString ?? null;
+  }
+  get entityType() {
+    return (
+      this.#entity()?.entityType ?? {
+        isTimer: false,
+        isDuration: false,
+        isNumber: false,
+        isCounter: false,
+        isSynced: false,
+      }
+    );
+  }
+  get hasShapeByDefault() {
+    return this.#entity()?.hasShapeByDefault ?? false;
+  }
+  get defaultColor() {
+    return this.#entity()?.defaultColor ?? false;
+  }
+  get hasAttribute() {
+    return this.#entity()?.hasAttribute ?? false;
+  }
+  get defaultAttribute() {
+    return this.#entity()?.defaultAttribute ?? null;
+  }
+  get attributes() {
+    return this.#entity()?.attributes ?? null;
+  }
+  get unit() {
+    return this.#entity()?.unit ?? null;
+  }
+  get stateObj() {
+    return this.#entity()?.stateObj ?? null;
+  }
+  get nameTokens() {
+    return this.#entity()?.nameTokens ?? null;
+  }
+  set nameTokens(tok) {
+    const entity = this.#entity();
+    if (entity) entity.nameTokens = tok;
+  }
+  get attribute() {
+    return this.#entity()?.attribute ?? null;
+  }
+  set attribute(newValue) {
+    const entity = this.#entity();
+    if (entity) entity.attribute = newValue;
+  }
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
-  refresh() { this.#entity()?.refresh(); }
+  refresh() {
+    this.#entity()?.refresh();
+  }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ Manage YAML options
- * ========================================================================================
+ * ============================================================================
  * structural validation ideas to manage inputs (1.5+).
  * deliberately verbose by design: no external dependencies, fully typed errors,
  * and scales cleanly across multiple card types.
@@ -13393,7 +14079,14 @@ class EntityOrValue {
  */
 
 class ValidationError extends Error {
-  constructor(path = [], errorCode = null, severity = SEV.error, fallback = null, partialConfig = null, allErrors = []) {
+  constructor(
+    path = [],
+    errorCode = null,
+    severity = SEV.error,
+    fallback = null,
+    partialConfig = null,
+    allErrors = [],
+  ) {
     super();
     this.name = 'ValidationError';
     this.path = path;
@@ -13429,7 +14122,12 @@ const ERROR_CODES = {
 const validateType =
   (typeCheck, errorCode) =>
   (value, path = []) => {
-    if (is.nullish(value)) throw new ValidationError(path, ERROR_CODES.missingRequiredProperty.code, ERROR_CODES.missingRequiredProperty.severity);
+    if (is.nullish(value))
+      throw new ValidationError(
+        path,
+        ERROR_CODES.missingRequiredProperty.code,
+        ERROR_CODES.missingRequiredProperty.severity,
+      );
     if (!typeCheck(value)) throw new ValidationError(path, errorCode.code, errorCode.severity);
     return value;
   };
@@ -13442,7 +14140,8 @@ const types = {
   array:
     (itemValidator) =>
     (value, path = []) => {
-      if (!is.array(value)) throw new ValidationError(path, ERROR_CODES.invalidTypeArray.code, ERROR_CODES.invalidTypeArray.severity);
+      if (!is.array(value))
+        throw new ValidationError(path, ERROR_CODES.invalidTypeArray.code, ERROR_CODES.invalidTypeArray.severity);
 
       const validItems = [];
       value.forEach((item, index) => {
@@ -13540,7 +14239,11 @@ const types = {
     (allowedValues) =>
     (value, path = []) => {
       if (is.nullish(value)) {
-        throw new ValidationError(path, ERROR_CODES.missingRequiredProperty.code, ERROR_CODES.missingRequiredProperty.severity);
+        throw new ValidationError(
+          path,
+          ERROR_CODES.missingRequiredProperty.code,
+          ERROR_CODES.missingRequiredProperty.severity,
+        );
       }
       if (!allowedValues.includes(value)) {
         throw new ValidationError(path, ERROR_CODES.invalidEnumValue.code, ERROR_CODES.invalidEnumValue.severity);
@@ -13560,7 +14263,8 @@ const types = {
         cpu: 'optimal_when_low',
       };
       value = themeMap[value] || value;
-      if (!allowedValues.includes(value)) throw new ValidationError(path, ERROR_CODES.invalidTheme.code, ERROR_CODES.invalidTheme.severity);
+      if (!allowedValues.includes(value))
+        throw new ValidationError(path, ERROR_CODES.invalidTheme.code, ERROR_CODES.invalidTheme.severity);
       return value;
     },
 
@@ -13617,9 +14321,7 @@ const types = {
       const results = Object.entries(schema).map(([key, validator]) => validateEntry(key, validator));
       const errors = results.filter((r) => r.error).map((r) => r.error);
       const result = Object.fromEntries(
-        results
-          .filter((r) => r.value !== SKIP_PROPERTY && r.value !== undefined)
-          .map((r) => [r.key, r.value])
+        results.filter((r) => r.value !== SKIP_PROPERTY && r.value !== undefined).map((r) => [r.key, r.value]),
       );
 
       if (errors.length > 0) {
@@ -13630,16 +14332,24 @@ const types = {
     },
 
   entityId: (value, path = []) => {
-    if (is.nullish(value)) throw new ValidationError(path, ERROR_CODES.missingRequiredProperty.code, ERROR_CODES.missingRequiredProperty.severity);
-    if (!is.string(value)) throw new ValidationError(path, ERROR_CODES.invalidTypeString.code, ERROR_CODES.invalidTypeString.severity);
-    if (!/^[a-z_]+\.[a-z0-9_]+$/.test(value)) throw new ValidationError(path, ERROR_CODES.invalidEntityId.code, ERROR_CODES.invalidEntityId.severity);
+    if (is.nullish(value))
+      throw new ValidationError(
+        path,
+        ERROR_CODES.missingRequiredProperty.code,
+        ERROR_CODES.missingRequiredProperty.severity,
+      );
+    if (!is.string(value))
+      throw new ValidationError(path, ERROR_CODES.invalidTypeString.code, ERROR_CODES.invalidTypeString.severity);
+    if (!/^[a-z_]+\.[a-z0-9_]+$/.test(value))
+      throw new ValidationError(path, ERROR_CODES.invalidEntityId.code, ERROR_CODES.invalidEntityId.severity);
 
     return value;
   },
 
   decimal: (value, path = []) => {
     if (is.nullish(value)) return SKIP_PROPERTY;
-    if (!is.unsignedInteger(value)) throw new ValidationError(path, ERROR_CODES.invalidDecimal.code, ERROR_CODES.invalidDecimal.severity);
+    if (!is.unsignedInteger(value))
+      throw new ValidationError(path, ERROR_CODES.invalidDecimal.code, ERROR_CODES.invalidDecimal.severity);
 
     return value;
   },
@@ -13649,7 +14359,11 @@ const types = {
       throw new ValidationError(path, ERROR_CODES.invalidActionObject.code, ERROR_CODES.invalidActionObject.severity);
     }
     if (!is.string(value.action)) {
-      throw new ValidationError([...path, 'action'], ERROR_CODES.missingActionKey.code, ERROR_CODES.missingActionKey.severity);
+      throw new ValidationError(
+        [...path, 'action'],
+        ERROR_CODES.missingActionKey.code,
+        ERROR_CODES.missingActionKey.severity,
+      );
     }
 
     return value;
@@ -13657,15 +14371,17 @@ const types = {
 
   tapActionWithDefault: (defaultVal) => types.fallbackTo(types.tapAction, defaultVal),
 
-  // CF5 - issue (major) resolved - this used to throw (discarding the WHOLE array via
-  // types.fallbackTo(..., SKIP_PROPERTY)) the instant any single zone was momentarily
-  // incomplete or two zones didn't tile perfectly — harmless for a YAML power user
-  // writing the whole list at once, but a hard "theme disappears" break for the visual
-  // editor's row-by-row workflow (add a zone, then fill in min, then max, then a color).
-  // Each zone is now kept independently as long as it has a numeric min < max; missing
-  // colors/icon or gaps between zones are tolerated (the card just won't recolor a range
-  // nothing covers), and zones are sorted by min so edit order never matters — mirrors
-  // barStackEntity's own per-item SKIP_PROPERTY leniency instead of an all-or-nothing gate.
+  // CF5 - issue (major) resolved - this used to throw (discarding the WHOLE
+  // array via types.fallbackTo(..., SKIP_PROPERTY)) the instant any single zone
+  // was momentarily incomplete or two zones didn't tile perfectly — harmless
+  // for a YAML power user writing the whole list at once, but a hard "theme
+  // disappears" break for the visual editor's row-by-row workflow (add a zone,
+  // then fill in min, then max, then a color). Each zone is now kept
+  // independently as long as it has a numeric min < max; missing colors/icon or
+  // gaps between zones are tolerated (the card just won't recolor a range
+  // nothing covers), and zones are sorted by min so edit order never matters —
+  // mirrors barStackEntity's own per-item SKIP_PROPERTY leniency instead of an
+  // all-or-nothing gate.
   customTheme: (value, _path = []) => {
     if (is.nullish(value)) return SKIP_PROPERTY;
     if (!is.array(value)) return SKIP_PROPERTY;
@@ -13692,7 +14408,11 @@ const types = {
     if (is.array(value)) {
       const invalidIndex = value.findIndex((v) => !is.string(v));
       if (invalidIndex !== -1) {
-        throw new ValidationError([...path, invalidIndex], ERROR_CODES.invalidStateContentEntry.code, ERROR_CODES.invalidStateContentEntry.severity);
+        throw new ValidationError(
+          [...path, invalidIndex],
+          ERROR_CODES.invalidStateContentEntry.code,
+          ERROR_CODES.invalidStateContentEntry.severity,
+        );
       }
       return value;
     }
@@ -13728,7 +14448,8 @@ function struct(validator) {
 
     if (!result.layout) result.layout = CARD.layout.orientations.horizontal.label;
 
-    if (result.bar_size === CARD.style.bar.sizeOptions.xlarge.label && result.bar_position === 'default') result.bar_position = 'below';
+    if (result.bar_size === CARD.style.bar.sizeOptions.xlarge.label && result.bar_position === 'default')
+      result.bar_position = 'below';
 
     if (result.bar_position !== 'overlay' && result.bar_single_line) result.bar_single_line = false;
 
@@ -13842,33 +14563,35 @@ function struct(validator) {
   };
 }
 
-types.discriminatedUnion = (key, mapping) => (value, path = []) => {
-  if (!is.plainObject(value)) {
-    throw new ValidationError(path, ERROR_CODES.invalidTypeObject.code, ERROR_CODES.invalidTypeObject.severity);
-  }
+types.discriminatedUnion =
+  (key, mapping) =>
+  (value, path = []) => {
+    if (!is.plainObject(value)) {
+      throw new ValidationError(path, ERROR_CODES.invalidTypeObject.code, ERROR_CODES.invalidTypeObject.severity);
+    }
 
-  const discriminator = value[key];
+    const discriminator = value[key];
 
-  if (!is.string(discriminator)) {
-    throw new ValidationError(
-      [...path, key],
-      ERROR_CODES.invalidTypeString.code,
-      ERROR_CODES.invalidTypeString.severity
-    );
-  }
+    if (!is.string(discriminator)) {
+      throw new ValidationError(
+        [...path, key],
+        ERROR_CODES.invalidTypeString.code,
+        ERROR_CODES.invalidTypeString.severity,
+      );
+    }
 
-  const validator = mapping[discriminator];
+    const validator = mapping[discriminator];
 
-  if (!validator) {
-    throw new ValidationError(
-      [...path, key],
-      ERROR_CODES.invalidEnumValue.code,
-      ERROR_CODES.invalidEnumValue.severity
-    );
-  }
+    if (!validator) {
+      throw new ValidationError(
+        [...path, key],
+        ERROR_CODES.invalidEnumValue.code,
+        ERROR_CODES.invalidEnumValue.severity,
+      );
+    }
 
-  return validator(value, path);
-};
+    return validator(value, path);
+  };
 
 const nameItem = types.discriminatedUnion('type', {
   text: types.object({
@@ -13900,27 +14623,38 @@ const barStackEntity = types.fallbackTo(
     entity: types.entityId,
     attribute: types.optional(types.string),
     color: types.optionalString(),
-    // 'net': subtracted from the algebraic total. 'stacked'/'proportional' + center_zero:
-    // placed on the negative arm instead of the positive one. No-op otherwise.
+    // 'net': subtracted from the algebraic total. 'stacked'/'proportional' +
+    // center_zero: placed on the negative arm instead of the positive one.
+    // No-op otherwise.
     subtract: types.optionalBooleanWithDefault(false),
   }),
   SKIP_PROPERTY,
 );
 
 const watermarkSchema = {
-  // number (fixed) | string (entity id) | { jinja } - mirrors min_value/max_value's explicit
-  // jinja shape rather than sniffing a bare string (an entity id and a Jinja template are both
-  // strings; disambiguating them at runtime is exactly what min_value/max_value moved away from).
-  low: types.fallbackTo(types.union(types.number, types.string, types.object({ jinja: types.string })), CARD.config.defaults.watermark.low),
+  // number (fixed) | string (entity id) | { jinja } - mirrors
+  // min_value/max_value's explicit jinja shape rather than sniffing a bare
+  // string (an entity id and a Jinja template are both strings; disambiguating
+  // them at runtime is exactly what min_value/max_value moved away from).
+  low: types.fallbackTo(
+    types.union(types.number, types.string, types.object({ jinja: types.string })),
+    CARD.config.defaults.watermark.low,
+  ),
   low_as: types.enumsWithDefault(['auto', 'percent'], CARD.config.defaults.watermark.low_as),
   low_attribute: types.optionalString(),
   low_color: types.optionalStringWithDefault(CARD.config.defaults.watermark.low_color),
-  high: types.fallbackTo(types.union(types.number, types.string, types.object({ jinja: types.string })), CARD.config.defaults.watermark.high),
+  high: types.fallbackTo(
+    types.union(types.number, types.string, types.object({ jinja: types.string })),
+    CARD.config.defaults.watermark.high,
+  ),
   high_as: types.enumsWithDefault(['auto', 'percent'], CARD.config.defaults.watermark.high_as),
   high_attribute: types.optionalString(),
   high_color: types.optionalStringWithDefault(CARD.config.defaults.watermark.high_color),
   opacity: types.optionalNumberWithDefault(CARD.config.defaults.watermark.opacity),
-  type: types.enumsWithDefault(['blended', 'area', 'striped', 'triangle', 'round', 'line'], CARD.config.defaults.watermark.type),
+  type: types.enumsWithDefault(
+    ['blended', 'area', 'striped', 'triangle', 'round', 'line'],
+    CARD.config.defaults.watermark.type,
+  ),
   line_size: types.optionalStringWithDefault(CARD.config.defaults.watermark.line_size),
   disable_low: types.optionalBooleanWithDefault(CARD.config.defaults.watermark.disable_low),
   disable_high: types.optionalBooleanWithDefault(CARD.config.defaults.watermark.disable_high),
@@ -13933,8 +14667,9 @@ class YamlSchemaFactory {
         // ─── Entity & Data ──────────────────────────────────────────────────
         entity: types.entityId,
         attribute: types.optionalString(),
-        // Explicit shape instead of type-sniffing a scalar (number vs entity-id string vs
-        // jinja-looking string): min_value: 10 | {value: 10} | {entity, attribute} | {jinja}.
+        // Explicit shape instead of type-sniffing a scalar (number vs entity-id
+        // string vs jinja-looking string): min_value: 10 | {value: 10} |
+        // {entity, attribute} | {jinja}.
         min_value: types.optional(
           types.union(
             types.number,
@@ -13943,10 +14678,11 @@ class YamlSchemaFactory {
             types.object({ jinja: types.string }),
           ),
         ),
-        // Explicit shape, mirrors min_value: max_value: 10 | {entity, attribute} | {jinja}. The
-        // legacy bare entity-id string is rewritten into the map form by _customizeConfig before
-        // this schema ever sees it (single call site, see BaseConfigHelper.set config), so no
-        // string form is needed here.
+        // Explicit shape, mirrors min_value: max_value: 10 | {entity,
+        // attribute} | {jinja}. The legacy bare entity-id string is rewritten
+        // into the map form by _customizeConfig before this schema ever sees it
+        // (single call site, see BaseConfigHelper.set config), so no string
+        // form is needed here.
         max_value: types.fallbackTo(
           types.union(
             types.number,
@@ -13964,11 +14700,15 @@ class YamlSchemaFactory {
         ), //[('small', 'medium', 'large', 'xlarge')]
         bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
         bar_color_mode: types.enumsWithDefault(['auto', 'segment', 'rainbow'], 'auto'),
-        // Only engages outside center_zero with a well-formed positive range (min > 0, max >
-        // min) — ProgressCalc.isLogScale falls back to linear otherwise, so an invalid
-        // combination degrades quietly instead of producing NaN.
+        // Only engages outside center_zero with a well-formed positive range
+        // (min > 0, max > min) — ProgressCalc.isLogScale falls back to linear
+        // otherwise, so an invalid combination degrades quietly instead of
+        // producing NaN.
         bar_scale: types.enumsWithDefault(['linear', 'log'], 'linear'),
-        bar_effect: types.jinjaOrArrayWithValidatedElem(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
+        // [('radius', 'glass', 'gradient', 'shimmer')]
+        bar_effect: types.jinjaOrArrayWithValidatedElem(
+          Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label),
+        ),
         bar_position: types.enumsWithDefault(['default', 'top', 'bottom'], 'default'),
         bar_segments: types.optionalNumber(),
         center_zero: types.optionalWithDefault(
@@ -14009,8 +14749,9 @@ class YamlSchemaFactory {
         unit: types.optionalString(),
         disable_unit: types.optionalBooleanWithDefault(false),
         unit_spacing: types.enumsWithDefault(Object.values(CARD.config.unit.unitSpacing), 'auto'), //['auto', 'space', 'no-space']
-        // Explicit shape instead of type-sniffing a scalar (number vs entity-id string vs
-        // jinja-looking string): min_value: 10 | {value: 10} | {entity, attribute} | {jinja}.
+        // Explicit shape instead of type-sniffing a scalar (number vs entity-id
+        // string vs jinja-looking string): min_value: 10 | {value: 10} |
+        // {entity, attribute} | {jinja}.
         min_value: types.optional(
           types.union(
             types.number,
@@ -14019,10 +14760,11 @@ class YamlSchemaFactory {
             types.object({ jinja: types.string }),
           ),
         ),
-        // Explicit shape, mirrors min_value: max_value: 10 | {entity, attribute} | {jinja}. The
-        // legacy bare entity-id string is rewritten into the map form by _customizeConfig before
-        // this schema ever sees it (single call site, see BaseConfigHelper.set config), so no
-        // string form is needed here.
+        // Explicit shape, mirrors min_value: max_value: 10 | {entity,
+        // attribute} | {jinja}. The legacy bare entity-id string is rewritten
+        // into the map form by _customizeConfig before this schema ever sees it
+        // (single call site, see BaseConfigHelper.set config), so no string
+        // form is needed here.
         max_value: types.fallbackTo(
           types.union(
             types.number,
@@ -14042,16 +14784,23 @@ class YamlSchemaFactory {
         ), //[('small', 'medium', 'large', 'xlarge')]
         bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
         bar_color_mode: types.enumsWithDefault(['auto', 'segment', 'rainbow'], 'auto'),
-        // Only engages outside center_zero with a well-formed positive range (min > 0, max >
-        // min) — ProgressCalc.isLogScale falls back to linear otherwise, so an invalid
-        // combination degrades quietly instead of producing NaN.
+        // Only engages outside center_zero with a well-formed positive range
+        // (min > 0, max > min) — ProgressCalc.isLogScale falls back to linear
+        // otherwise, so an invalid combination degrades quietly instead of
+        // producing NaN.
         bar_scale: types.enumsWithDefault(['linear', 'log'], 'linear'),
-        bar_effect: types.jinjaOrArrayWithValidatedElem(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
+        // [('radius', 'glass', 'gradient', 'shimmer')]
+        bar_effect: types.jinjaOrArrayWithValidatedElem(
+          Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label),
+        ),
         bar_position: types.enumsWithDefault(['default', 'below', 'top', 'bottom', 'overlay', 'background'], 'default'),
         bar_single_line: types.optionalBooleanWithDefault(false),
         bar_max_width: types.optionalString(),
         bar_segments: types.optionalNumber(),
-        icon_animation: types.enumsWithDefault(['none', 'spin', 'pulse', 'bounce', 'shake', 'ping', 'reveal'], 'none'),
+        icon_animation: types.enumsWithDefault(
+          ['none', 'spin', 'pulse', 'bounce', 'shake', 'ping', 'reveal', 'washing_machine', 'battery_charging'],
+          'none',
+        ),
         layout: types.enumsWithDefault(
           Object.values(CARD.layout.orientations).map((e) => e.label),
           'horizontal',
@@ -14080,14 +14829,18 @@ class YamlSchemaFactory {
         hide: types.jinjaOrArrayWithValidatedElem(['icon', 'name', 'value', 'unit', 'secondary_info', 'progress_bar']),
         name_info: types.optionalString(),
         custom_info: types.optionalString(),
+        // Badge/badgeTemplate opt out (see their own .delete(['multiline'])):
+        // the row is too small for a second line there.
+        multiline: types.optionalBooleanWithDefault(false),
         state_content: types.optional(types.fallbackTo(types.stateContent, SKIP_PROPERTY)),
 
         // ─── Badges ===
         badge_icon: types.optionalString(),
         badge_color: types.optionalString(),
 
-        // ─── Theme & Watermark ===
-        // theme: types.theme(['optimal_when_low', 'optimal_when_high', 'light', 'temperature', 'humidity', 'pm25', 'voc']),
+        // ─── Theme & Watermark === theme: types.theme(['optimal_when_low',
+        // 'optimal_when_high', 'light', 'temperature', 'humidity', 'pm25',
+        // 'voc']),
         theme: types.theme(Object.keys(THEME)),
         custom_theme: types.fallbackTo(types.customTheme, SKIP_PROPERTY),
         interpolate: types.optionalBooleanWithDefault(false),
@@ -14131,6 +14884,8 @@ class YamlSchemaFactory {
       'icon_tap_action',
       'icon_hold_action',
       'icon_double_tap_action',
+      'multiline',
+      'icon_animation',
     ]);
   }
 
@@ -14141,6 +14896,9 @@ class YamlSchemaFactory {
         entity: types.optional(types.entityId),
         name: types.optionalString(),
         secondary: types.optionalString(),
+        // badgeTemplate opts out (see its own .delete(['multiline'])): the row
+        // is too small for a second line there.
+        multiline: types.optionalBooleanWithDefault(false),
         percent: types.optionalString(),
 
         // ─── Appearance ===
@@ -14152,12 +14910,18 @@ class YamlSchemaFactory {
           'small',
         ), //[('small', 'medium', 'large', 'xlarge')]
         bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
-        bar_effect: types.jinjaOrArrayWithValidatedElem(Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label)), //[('radius', 'glass', 'gradient', 'shimmer')]
+        // [('radius', 'glass', 'gradient', 'shimmer')]
+        bar_effect: types.jinjaOrArrayWithValidatedElem(
+          Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label),
+        ),
         bar_position: types.enumsWithDefault(['default', 'below', 'top', 'bottom', 'overlay', 'background'], 'default'),
         bar_single_line: types.optionalBooleanWithDefault(false),
         bar_max_width: types.optionalString(),
         bar_segments: types.optionalNumber(),
-        icon_animation: types.enumsWithDefault(['none', 'spin', 'pulse', 'bounce', 'shake', 'ping', 'reveal'], 'none'),
+        icon_animation: types.enumsWithDefault(
+          ['none', 'spin', 'pulse', 'bounce', 'shake', 'ping', 'reveal', 'washing_machine', 'battery_charging'],
+          'none',
+        ),
         layout: types.enumsWithDefault(
           Object.values(CARD.layout.orientations).map((e) => e.label),
           'horizontal',
@@ -14208,13 +14972,15 @@ class YamlSchemaFactory {
       'icon_tap_action',
       'icon_hold_action',
       'icon_double_tap_action',
+      'multiline',
+      'icon_animation',
     ]);
   }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ BaseConfigHelper
- * ========================================================================================
+ * ============================================================================
  *
  * ✅ base class for managing and validating all card configuration.
  *
@@ -14256,8 +15022,9 @@ class BaseConfigHelper {
     this.#lastMsgConsole = null;
   }
 
-  // Calcule une seule fois, à partir de la config validée, la config brute + les valeurs
-  // dérivées consommées ailleurs (évite de recalculer à chaque accès).
+  // Calcule une seule fois, à partir de la config validée, la config brute +
+  // les valeurs dérivées consommées ailleurs (évite de recalculer à chaque
+  // accès).
   static #resolveConfig(config) {
     return {
       ...config,
@@ -14266,10 +15033,9 @@ class BaseConfigHelper {
   }
 
   /**
-   * Normalise `center_zero` (boolean | { value: number }) en une forme exploitable.
-   * - false / undefined -> désactivé, zéro = 0
-   * - true               -> activé, zéro = 0
-   * - { value: 230 }     -> activé, zéro = 230
+   * Normalise `center_zero` (boolean | { value: number }) en une forme
+   * exploitable. - false / undefined -> désactivé, zéro = 0 - true -> activé,
+   * zéro = 0 - { value: 230 } -> activé, zéro = 230
    */
   static #resolveCenterZero(centerZero) {
     if (!centerZero) return { enabled: false, zeroValue: 0, growthPercent: false };
@@ -14285,28 +15051,34 @@ class BaseConfigHelper {
     return config;
   }
 
-  // No-op here: Template/BadgeTemplate cards' schema never had max_value/disable_unit/additions
-  // to begin with. Matches _customizeConfig's own polymorphic no-op above, so the editor's
-  // "Migrate config" button can call this generically regardless of which config helper is active.
+  // No-op here: Template/BadgeTemplate cards' schema never had
+  // max_value/disable_unit/additions to begin with. Matches _customizeConfig's
+  // own polymorphic no-op above, so the editor's "Migrate config" button can
+  // call this generically regardless of which config helper is active.
   static _migrateLegacyOptions(config) {
     return config;
   }
 
   static #logDeprecatedOption(config) {
     if (config.navigate_to !== undefined)
-      console.warn(`${META.types.card.typeName.toUpperCase()} - navigate_to option is deprecated and has been removed.`);
+      console.warn(
+        `${META.types.card.typeName.toUpperCase()} - navigate_to option is deprecated and has been removed.`,
+      );
     if (config.show_more_info !== undefined)
-      console.warn(`${META.types.card.typeName.toUpperCase()} - show_more_info option is deprecated and has been removed.`);
+      console.warn(
+        `${META.types.card.typeName.toUpperCase()} - show_more_info option is deprecated and has been removed.`,
+      );
     if (['battery', 'cpu', 'memory'].includes(config.theme))
       console.warn(
         `${META.types.card.typeName.toUpperCase()} - theme: ${
           config.theme
         } is deprecated and will be removed in a future release. Please migrate to the recommended alternative...`,
       );
-    // max_value used to be number|entity-id-string, disambiguated by sniffing the value's
-    // shape at runtime (the same pattern that caused min_value's freeze bug). The entity
-    // form is now an explicit map; the bare string form is auto-migrated for this session
-    // (see CardConfigHelper._customizeConfig) but should be updated in the YAML.
+    // max_value used to be number|entity-id-string, disambiguated by sniffing
+    // the value's shape at runtime (the same pattern that caused min_value's
+    // freeze bug). The entity form is now an explicit map; the bare string form
+    // is auto-migrated for this session (see CardConfigHelper._customizeConfig)
+    // but should be updated in the YAML.
     if (is.nonEmptyString(config.max_value))
       console.warn(
         `${META.types.card.typeName.toUpperCase()} - max_value: <entity id> is deprecated and will be removed in a future release. ` +
@@ -14317,9 +15089,10 @@ class BaseConfigHelper {
         `${META.types.card.typeName.toUpperCase()} - disable_unit is deprecated and will be removed in a future release. ` +
           "Please migrate to hide: ['unit', ...]. Your configuration was automatically migrated for this session.",
       );
-    // additions used to be a bare array of {entity, attribute}; it is now the entities
-    // list of bar_stack, alongside a mode ('stacked' by default, 'proportional' preserves
-    // the legacy renormalized-total behavior exactly - see CardConfigHelper._customizeConfig.
+    // additions used to be a bare array of {entity, attribute}; it is now the
+    // entities list of bar_stack, alongside a mode ('stacked' by default,
+    // 'proportional' preserves the legacy renormalized-total behavior exactly -
+    // see CardConfigHelper._customizeConfig.
     if (is.array(config.additions))
       console.warn(
         `${META.types.card.typeName.toUpperCase()} - additions is deprecated and will be removed in a future release. ` +
@@ -14398,7 +15171,8 @@ class BaseConfigHelper {
 
     const checks = [
       {
-        condition: is.string(this.config.attribute) && entityState && !has.own(entityState.attributes, this.config.attribute),
+        condition:
+          is.string(this.config.attribute) && entityState && !has.own(entityState.attributes, this.config.attribute),
         path: 'attribute',
         errorCode: ATTRIBUTE_NOT_FOUND,
       },
@@ -14422,7 +15196,11 @@ class BaseConfigHelper {
         path: 'min_value.attribute',
         errorCode: ATTRIBUTE_NOT_FOUND,
       },
-      { condition: is.nonEmptyString(this.config.watermark?.low) && !lowWMState, path: 'watermark.low', errorCode: ENTITY_NOT_FOUND },
+      {
+        condition: is.nonEmptyString(this.config.watermark?.low) && !lowWMState,
+        path: 'watermark.low',
+        errorCode: ENTITY_NOT_FOUND,
+      },
       {
         condition:
           is.nonEmptyString(this.config.watermark?.low_attribute) &&
@@ -14431,7 +15209,11 @@ class BaseConfigHelper {
         path: 'watermark.low_attribute',
         errorCode: ATTRIBUTE_NOT_FOUND,
       },
-      { condition: is.nonEmptyString(this.config.watermark?.high) && !highWMState, path: 'watermark.high', errorCode: ENTITY_NOT_FOUND },
+      {
+        condition: is.nonEmptyString(this.config.watermark?.high) && !highWMState,
+        path: 'watermark.high',
+        errorCode: ENTITY_NOT_FOUND,
+      },
       {
         condition:
           is.nonEmptyString(this.config.watermark?.high_attribute) &&
@@ -14454,38 +15236,46 @@ class BaseConfigHelper {
 class CardConfigHelper extends BaseConfigHelper {
   _yamlSchema = YamlSchemaFactory.card;
 
-  // center_zero with no explicit min_value would otherwise default to 0 (CARD.config.value.min),
-  // making the negative half meaningless (zeroValue - min = 0, nothing to render on that side).
-  // Default it to the symmetric negative of max_value instead - but only when max_value is a
-  // plain number (or absent, i.e. the 100 default); an entity/jinja-based max can't be mirrored
-  // at this config-negotiation stage. An explicit min_value (even 0) is always left untouched.
+  // center_zero with no explicit min_value would otherwise default to 0
+  // (CARD.config.value.min), making the negative half meaningless (zeroValue -
+  // min = 0, nothing to render on that side). Default it to the symmetric
+  // negative of max_value instead - but only when max_value is a plain number
+  // (or absent, i.e. the 100 default); an entity/jinja-based max can't be
+  // mirrored at this config-negotiation stage. An explicit min_value (even 0)
+  // is always left untouched.
   static _applyCenterZeroMinDefault(config, normalized) {
     if (!config?.center_zero || !is.nullish(config?.min_value)) return normalized;
     const maxForSymmetry = is.number(normalized?.max_value) ? normalized.max_value : CARD.config.value.max;
     return { ...normalized, min_value: -maxForSymmetry };
   }
 
-  // Legacy-syntax rewriting only — never touches unrelated defaults (center_zero's
-  // min_value fill-in, device_class attribute defaults live in _customizeConfig instead).
-  // Extracted so the editor's "Migrate config" button can reuse exactly this transformation
-  // (via the config helper, polymorphically) without also re-applying those unrelated defaults.
-  //
-  // CF5 - issue (major) resolved - max_value used to be number|entity-id-string with the
-  // mode sniffed at runtime (is.number/is.string), the exact pattern that caused min_value's
-  // freeze bug. Bare-entity-string configs (pre-1.6) are migrated here into the explicit
-  // { entity, attribute } map before validation, so every downstream consumer only ever
-  // sees a number or that map — no sniffing left anywhere. The deprecation warning for the
-  // bare form is logged separately, see BaseConfigHelper.#logDeprecatedOption.
+  // Legacy-syntax rewriting only — never touches unrelated defaults
+  // (center_zero's min_value fill-in, device_class attribute defaults live in
+  // _customizeConfig instead). Extracted so the editor's "Migrate config"
+  // button can reuse exactly this transformation (via the config helper,
+  // polymorphically) without also re-applying those unrelated defaults. CF5 -
+  // issue (major) resolved - max_value used to be number|entity-id-string with
+  // the mode sniffed at runtime (is.number/is.string), the exact pattern that
+  // caused min_value's freeze bug. Bare-entity-string configs (pre-1.6) are
+  // migrated here into the explicit { entity, attribute } map before
+  // validation, so every downstream consumer only ever sees a number or that
+  // map — no sniffing left anywhere. The deprecation warning for the bare form
+  // is logged separately, see BaseConfigHelper.#logDeprecatedOption.
   static _migrateLegacyOptions(config) {
     let normalized = config;
     if (is.nonEmptyString(config?.max_value)) {
-      normalized = { ...config, max_value: { entity: config.max_value, attribute: config.max_value_attribute }, max_value_attribute: undefined };
+      normalized = {
+        ...config,
+        max_value: { entity: config.max_value, attribute: config.max_value_attribute },
+        max_value_attribute: undefined,
+      };
     }
-    // disable_unit used to be a dedicated boolean; 'unit' is now just another hide target,
-    // consistent with icon/name/value/progress_bar. Skip the fold when hide is a Jinja
-    // template (a string): merging into user-authored template logic isn't possible, so
-    // disable_unit is left untouched and the runtime keeps honoring it as a fallback
-    // (see ViewBase's #percentHelper.configure call, hasDisabledUnit).
+    // disable_unit used to be a dedicated boolean; 'unit' is now just another
+    // hide target, consistent with icon/name/value/progress_bar. Skip the fold
+    // when hide is a Jinja template (a string): merging into user-authored
+    // template logic isn't possible, so disable_unit is left untouched and the
+    // runtime keeps honoring it as a fallback (see ViewBase's
+    // #percentHelper.configure call, hasDisabledUnit).
     if (config?.disable_unit === true && !is.jinja(config?.hide)) {
       const currentHide = is.array(config.hide) ? config.hide : [];
       normalized = {
@@ -14494,10 +15284,15 @@ class CardConfigHelper extends BaseConfigHelper {
         disable_unit: undefined,
       };
     }
-    // additions (bare array) -> bar_stack.entities, under the 'proportional' mode so the
-    // renormalized-total rendering behaves exactly as before (see #logDeprecatedOption).
+    // additions (bare array) -> bar_stack.entities, under the 'proportional'
+    // mode so the renormalized-total rendering behaves exactly as before (see
+    // #logDeprecatedOption).
     if (is.array(config?.additions)) {
-      normalized = { ...normalized, bar_stack: { mode: 'proportional', entities: config.additions }, additions: undefined };
+      normalized = {
+        ...normalized,
+        bar_stack: { mode: 'proportional', entities: config.additions },
+        additions: undefined,
+      };
     }
     return normalized;
   }
@@ -14508,13 +15303,18 @@ class CardConfigHelper extends BaseConfigHelper {
     return {
       ...normalized,
       ...(is.nonEmptyString(normalized?.entity) && is.nullish(normalized?.attribute)
-        ? { attribute: HA_CONTEXT.attributeMapping[HassProviderSingleton.getEntityDomain(normalized?.entity)]?.attribute }
+        ? {
+            attribute:
+              HA_CONTEXT.attributeMapping[HassProviderSingleton.getEntityDomain(normalized?.entity)]?.attribute,
+          }
         : {}),
       ...(is.nonEmptyString(normalized?.max_value?.entity) && is.nullish(normalized?.max_value?.attribute)
         ? {
             max_value: {
               ...normalized.max_value,
-              attribute: HA_CONTEXT.attributeMapping[HassProviderSingleton.getEntityDomain(normalized.max_value.entity)]?.attribute,
+              attribute:
+                HA_CONTEXT.attributeMapping[HassProviderSingleton.getEntityDomain(normalized.max_value.entity)]
+                  ?.attribute,
             },
           }
         : {}),
@@ -14542,26 +15342,23 @@ class BadgeTemplateConfigHelper extends BaseConfigHelper {
   _yamlSchema = YamlSchemaFactory.badgeTemplate;
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ ViewCore
- * ========================================================================================
+ * ============================================================================
  *
- * ✅ A view class for rendering minimal cards in a user interface.
- * This class manages configuration, entity states, user interactions, and visual
- * appearance of cards including layouts, orientations, watermarks, and interactive elements.
+ * ✅ A view class for rendering minimal cards in a user interface. This class
+ * manages configuration, entity states, user interactions, and visual
+ * appearance of cards including layouts, orientations, watermarks, and
+ * interactive elements.
  *
- * ViewCore
- * ├── ViewBase
- * │   ├── CardView
- * │   ├── BadgeView
- * │   └── FeatureView
- * ├── CardTemplateView
- * └── BadgeTemplateView
+ * ViewCore ├── ViewBase │ ├── CardView │ ├── BadgeView │ └── FeatureView ├──
+ * CardTemplateView └── BadgeTemplateView
  *
  * @class
- * @description Handles the display and behavior of minimal cards with support for
- *              Home Assistant entities, user actions, and visual customization
- *              (watermarks, shapes, orientations, clickable elements).
+ * @description Handles the display and behavior of minimal cards with support
+ *              for Home Assistant entities, user actions, and visual
+ *              customization (watermarks, shapes, orientations, clickable
+ *              elements).
  *
  * @example
  * const cardView = new ViewCore();
@@ -14625,7 +15422,9 @@ class ViewCore {
     return this.config?.entity;
   }
   get cardSize() {
-    return this.config ? (CARD.layout.orientations[this.config.layout]?.grid?.grid_rows ?? 1) : CARD.layout.orientations.horizontal.grid.grid_rows;
+    return this.config
+      ? (CARD.layout.orientations[this.config.layout]?.grid?.grid_rows ?? 1)
+      : CARD.layout.orientations.horizontal.grid.grid_rows;
   }
   get cardLayoutOptions() {
     if (!this.config) return CARD.layout.orientations.horizontal.grid;
@@ -14634,8 +15433,10 @@ class ViewCore {
       ? 1
       : layout.grid.grid_min_rows +
         (this.config.bar_size === CARD.style.bar.sizeOptions.xlarge.label ||
-        this.config.layout === 'horizontal' && this.config.bar_position === 'below' ||
-        (this.config.layout === 'vertical' && ['default', 'below'].includes(this.config.bar_position) && this.config.bar_size !== 'small')
+        (this.config.layout === 'horizontal' && this.config.bar_position === 'below') ||
+        (this.config.layout === 'vertical' &&
+          ['default', 'below'].includes(this.config.bar_position) &&
+          this.config.bar_size !== 'small')
           ? 1
           : 0);
     return layout.grid;
@@ -14653,16 +15454,29 @@ class ViewCore {
     return this.entity && !this._configHelper.config.color ? this._getEntityColor() : null;
   }
   get hasClickableIcon() {
-    return ViewCore.#hasAction([this._configHelper.action.icon.tap, this._configHelper.action.icon.hold, this._configHelper.action.icon.doubleTap]);
+    return ViewCore.#hasAction([
+      this._configHelper.action.icon.tap,
+      this._configHelper.action.icon.hold,
+      this._configHelper.action.icon.doubleTap,
+    ]);
   }
   get hasClickableCard() {
-    return ViewCore.#hasAction([this._configHelper.action.card.tap, this._configHelper.action.card.hold, this._configHelper.action.card.doubleTap]);
+    return ViewCore.#hasAction([
+      this._configHelper.action.card.tap,
+      this._configHelper.action.card.hold,
+      this._configHelper.action.card.doubleTap,
+    ]);
   }
   get hasReversedSecondaryInfoRow() {
-    return this.config.layout === 'horizontal' && this.config.bar_position === 'default' && this.config.reverse_secondary_info_row; // ─── true
+    return (
+      this.config.layout === 'horizontal' &&
+      this.config.bar_position === 'default' &&
+      this.config.reverse_secondary_info_row
+    ); // ─── true
   }
   get hasVisibleShape() {
-    return this.config.force_circular_background || this._hasDefaultShape || this._hasInteractiveShape; // this.config.force_circular_background === true
+    // this.config.force_circular_background === true
+    return this.config.force_circular_background || this._hasDefaultShape || this._hasInteractiveShape;
   }
   get _hasDefaultShape() {
     return this._currentValue.hasShapeByDefault && ViewCore.#hasAction([this._configHelper.action.icon.tap]);
@@ -14693,20 +15507,43 @@ class ViewCore {
 
   getTrend(currentPercent) {
     const result =
-      this._lastPercent === null ? 'flat' : this._lastPercent < currentPercent ? 'up' : this._lastPercent > currentPercent ? 'down' : 'flat';
+      this._lastPercent === null
+        ? 'flat'
+        : this._lastPercent < currentPercent
+          ? 'up'
+          : this._lastPercent > currentPercent
+            ? 'down'
+            : 'flat';
     this._lastPercent = currentPercent;
 
     return result;
   }
 
-  // icon_animation only makes sense for domains with a real on/active vs off/idle
-  // semantics (fan spinning, media playing…). A plain measurement (sensor, battery %,
-  // input_number…) has no such state — without this gate a battery sensor spun forever,
-  // since its numeric state never matched the resting-state exclusion list below.
+  // icon_animation only makes sense for domains with a real on/active vs
+  // off/idle semantics (fan spinning, media playing…). A plain measurement
+  // (sensor, battery %, input_number…) has no such state — without this gate a
+  // battery sensor spun forever, since its numeric state never matched the
+  // resting-state exclusion list below.
   static #ANIMATABLE_DOMAINS = new Set([
-    'fan', 'light', 'switch', 'climate', 'humidifier', 'vacuum', 'media_player',
-    'water_heater', 'siren', 'alarm_control_panel', 'automation', 'script',
-    'input_boolean', 'remote', 'lock', 'cover', 'valve', 'binary_sensor',
+    'fan',
+    'light',
+    'switch',
+    'climate',
+    'humidifier',
+    'vacuum',
+    'media_player',
+    'water_heater',
+    'siren',
+    'alarm_control_panel',
+    'automation',
+    'script',
+    'input_boolean',
+    'remote',
+    'lock',
+    'cover',
+    'valve',
+    'binary_sensor',
+    'timer',
   ]);
 
   get isEntityActive() {
@@ -14716,7 +15553,113 @@ class ViewCore {
     return !['off', 'idle', 'standby', 'paused', 'closed', 'locked', 'docked', 'disarmed', 'none', ''].includes(state);
   }
 
-  /** alert_when thresholds are expressed in the entity's native unit (like watermark.low/high). */
+  // No standard domain/state pair means "charging" the way isEntityActive's
+  // resting-state list means "off" - it's usually an attribute on the entity
+  // itself, and its name isn't standardized across integrations. Checked in
+  // likelihood order; first one present wins. Covers both a boolean flag
+  // (true) and a string status enum (e.g. battery_state: 'charging').
+  static #CHARGING_ATTRIBUTES = ['battery_charging', 'charging', 'is_charging'];
+
+  // Exact enum values, not a substring match: Renault's own charge_state
+  // sensor has both 'charge_in_progress' AND 'charge_ended' /
+  // 'waiting_for_a_planned_charge', which all contain "charge" - a loose
+  // match would treat "finished" and "not yet started" as charging too. Same
+  // trap with MG SAIC's "Charging Status" sensor (bmsChrgSts): "charging
+  // (ac)"/"charging (dc)"/"super offboard charging" are actively charging,
+  // but "charging finished"/"charging stopped"/"fault charging"/"scheduled
+  // charging" all also contain "charging" while meaning the opposite.
+  static #CHARGING_STATES = new Set([
+    'charging',
+    'charge_in_progress',
+    'v2g_charging_normal',
+    'charging (ac)',
+    'charging (dc)',
+    'super offboard charging',
+  ]);
+
+  // EV integrations tend to report charging as the entity's own state rather
+  // than an attribute, in one of two shapes: a text status sensor (Tesla
+  // Fleet's sensor.<car>_charging_state, state === 'charging') or, more
+  // canonically, a binary_sensor with device_class: battery_charging (BYD's
+  // hass-byd-vehicle "is_charging"), where 'on' means charging - never
+  // 'charging' itself, since binary_sensor is always on/off. The device_class
+  // check keeps a bare 'on' from matching any unrelated on/off entity a user
+  // might point icon_animation at.
+  static #entityReportsCharging(hassProvider, entityId) {
+    if (!hassProvider.isEntityAvailable(entityId)) return false;
+    const state = String(hassProvider.getEntityProp(entityId, 'state') ?? '').toLowerCase();
+    if (ViewCore.#CHARGING_STATES.has(state)) return true;
+    if (state === 'on' && hassProvider.getEntityProp(entityId, 'device_class') === 'battery_charging') return true;
+    return ViewCore.#CHARGING_ATTRIBUTES.some((attr) => {
+      const value = hassProvider.getEntityAttribute(entityId, attr);
+      return value === true || String(value).toLowerCase() === 'charging';
+    });
+  }
+
+  // Trust the card's own `entity` first - it's what the user actually
+  // configured, and a same-device sibling should never shadow a signal
+  // already present on it. Falls back to scanning every same-device entity
+  // (not just ones whose id contains "charg") for integrations that split
+  // the percentage and the charging status across two entities: Home
+  // Assistant's own Companion App is the case that forced this - its
+  // charging-status entity is named battery_state, no "charg" substring
+  // anywhere, which an entity_id-based guess (like washing_machine's brands)
+  // would never find, even though its state is plain 'charging'.
+  get isBatteryCharging() {
+    const hassProvider = HassProviderSingleton.getInstance();
+    if (ViewCore.#entityReportsCharging(hassProvider, this.entity)) return true;
+    return hassProvider
+      .getSameDeviceEntities(this.entity)
+      .some((id) => ViewCore.#entityReportsCharging(hassProvider, id));
+  }
+
+  // epb-icon-charge's clip-path is calibrated to the plain "mdi:battery"
+  // outline. MDI's charging/bluetooth battery variants (battery-charging-60,
+  // battery-bluetooth...) draw a bolt or bluetooth glyph that shifts the
+  // outline within the icon's viewBox, so the fill wipe no longer lines up on
+  // those - the CSS applies a compensating offset via this flag instead of
+  // changing which icon is shown.
+  get isBatteryIconShifted() {
+    const icon = this._configHelper.config.icon || this._hassProvider.getEntityProp(this.entity, 'icon');
+    return is.nonEmptyString(icon) && /charging|bluetooth/i.test(icon);
+  }
+
+  // Home Connect's sensor.<appliance>_operation_state uses 'run', Miele's
+  // sensor.<appliance>_status uses 'in_use' - both plain `sensor` entities,
+  // which isEntityActive's domain gate deliberately excludes (see
+  // #ANIMATABLE_DOMAINS). Checked in addition to, not instead of,
+  // isEntityActive, so a binary_sensor/switch-based washing setup (e.g. a
+  // smart-plug power monitor) keeps working exactly as before.
+  static #WASHING_ACTIVE_STATES = new Set(['run', 'in_use']);
+
+  static #sensorReportsWashing(hassProvider, entityId) {
+    if (!hassProvider.isEntityAvailable(entityId)) return false;
+    if (HassProviderSingleton.getEntityDomain(entityId) !== 'sensor') return false;
+    const state = String(hassProvider.getEntityProp(entityId, 'state') ?? '').toLowerCase();
+    return ViewCore.#WASHING_ACTIVE_STATES.has(state);
+  }
+
+  // Same split as isBatteryCharging: the card's `entity` is usually the
+  // progress value (Home Connect's program_progress %, Miele's
+  // elapsed_time), not the status sensor that actually carries 'run'/
+  // 'in_use' (operation_state/status) - a different entity on the same
+  // device. Unlike charging, there's no shared entity_id keyword across
+  // brands to filter on (operation_state/status/machine_state don't share a
+  // substring), so the fallback checks every same-device sensor's state
+  // instead of its name.
+  get isWashingMachineActive() {
+    if (this.isEntityActive) return true;
+    const hassProvider = HassProviderSingleton.getInstance();
+    if (ViewCore.#sensorReportsWashing(hassProvider, this.entity)) return true;
+    return hassProvider
+      .getSameDeviceEntities(this.entity)
+      .some((id) => ViewCore.#sensorReportsWashing(hassProvider, id));
+  }
+
+  /**
+   * alert_when thresholds are expressed in the entity's native unit (like
+   * watermark.low/high).
+   */
   get isAlertActive() {
     const alert = this.config?.alert_when;
     if (!alert || !this._currentValue.isAvailable) return false;
@@ -14744,13 +15687,14 @@ class ViewCore {
     return actions.some((action) => action !== HA_CONTEXT.actions.none.action);
   }
 }
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ ViewBase
- * ========================================================================================
+ * ============================================================================
  *
- * ✅ A comprehensive base card view that extends ViewCore to manage all information
- * required for creating cards and badges. This class handles entity states, theme management,
- * percentage calculations, timers, and provides a complete API for card rendering.
+ * ✅ A comprehensive base card view that extends ViewCore to manage all
+ * information required for creating cards and badges. This class handles entity
+ * states, theme management, percentage calculations, timers, and provides a
+ * complete API for card rendering.
  *
  *       ViewCore
  *       │
@@ -14762,7 +15706,7 @@ class ViewCore {
  *       └── (direct)
  *           ├── CardTemplateView          (TemplateConfigHelper)
  *           └── BadgeTemplateView         (BadgeTemplateConfigHelper)
- * 
+ *
  * @class
  * @extends ViewCore
  * @description Manages the complete lifecycle of card display including:
@@ -14810,7 +15754,8 @@ class ViewBase extends ViewCore {
   #theme = new ThemeManager();
   #maxValue = new EntityOrValue();
   #minValue = new EntityOrValue();
-  // min_value/max_value resolved from a Jinja subscription (standard cards); null = no override
+  // min_value/max_value resolved from a Jinja subscription (standard cards);
+  // null = no override
   #jinjaMinValue = null;
   #jinjaMaxValue = null;
   // watermark.low/.high resolved from a Jinja subscription; null = no override
@@ -14835,21 +15780,32 @@ class ViewBase extends ViewCore {
 
     const centerZero = this._configHelper.config.centerZero;
 
-    // CF5 - issue (major) resolved - the collection was never cleared: every setConfig (each editor keystroke) re-added all entities, inflating getTotalValue() with duplicates
+    // CF5 - issue (major) resolved - the collection was never cleared: every
+    // setConfig (each editor keystroke) re-added all entities, inflating
+    // getTotalValue() with duplicates
     this.#entityCollection.clear();
     if (is.nonEmptyArray(this._configHelper.config.bar_stack?.entities)) {
       const { mode, entities } = this._configHelper.config.bar_stack;
       this.#entityCollection.mode = mode;
       const addMain = () =>
-        this.#entityCollection.addEntity(this._configHelper.config.entity, this._configHelper.config.attribute, null, false, true);
-      const addOne = ({ entity, attribute, color, subtract }) => this.#entityCollection.addEntity(entity, attribute, color, subtract);
-      // One consistent order for both modes: main entity first, then entities[] in list order.
-      // Exception: without center_zero, `subtract` is otherwise a silent no-op (there's no
-      // negative arm to place it in - see docs) - move subtract-marked entities before the
-      // main entity instead, as a visual tell that something atypical is configured here.
-      // Based on the static `subtract` flag only: an entity's live value isn't known yet at
-      // this point (only once refresh(hass) runs), so a naturally-negative-but-unmarked entity
-      // can't be detected here and keeps its normal after-main position.
+        this.#entityCollection.addEntity(
+          this._configHelper.config.entity,
+          this._configHelper.config.attribute,
+          null,
+          false,
+          true,
+        );
+      const addOne = ({ entity, attribute, color, subtract }) =>
+        this.#entityCollection.addEntity(entity, attribute, color, subtract);
+      // One consistent order for both modes: main entity first, then entities[]
+      // in list order. Exception: without center_zero, `subtract` is otherwise
+      // a silent no-op (there's no negative arm to place it in - see docs) -
+      // move subtract-marked entities before the main entity instead, as a
+      // visual tell that something atypical is configured here. Based on the
+      // static `subtract` flag only: an entity's live value isn't known yet at
+      // this point (only once refresh(hass) runs), so a
+      // naturally-negative-but-unmarked entity can't be detected here and keeps
+      // its normal after-main position.
       if (!centerZero.enabled) {
         entities.filter((e) => e.subtract).forEach(addOne);
         addMain();
@@ -14862,9 +15818,12 @@ class ViewBase extends ViewCore {
 
     this.#percentHelper.configure({
       unitSpacing: this._configHelper.config.unit_spacing,
-      // disable_unit is deprecated (folded into hide: ['unit', ...] by _customizeConfig)
-      // but left untouched, and thus still checked here, when hide is a Jinja template.
-      hasDisabledUnit: this._configHelper.config.disable_unit || this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.unit.label),
+      // disable_unit is deprecated (folded into hide: ['unit', ...] by
+      // _customizeConfig) but left untouched, and thus still checked here, when
+      // hide is a Jinja template.
+      hasDisabledUnit:
+        this._configHelper.config.disable_unit ||
+        this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.unit.label),
       isCenterZero: centerZero.enabled,
       zeroValue: centerZero.zeroValue,
       growthPercent: centerZero.growthPercent,
@@ -14887,19 +15846,21 @@ class ViewBase extends ViewCore {
       this.#maxValue.value = CARD.config.value.max;
     } else {
       this._currentValue.attribute = this._configHelper.config.attribute;
-      // max_value/min_value: number (legacy) | {value} | {entity, attribute} | {jinja}.
-      // Jinja mode is fed by the template subscription (#jinjaMaxValue/#jinjaMinValue),
-      // not by EntityOrValue — see #resolveMaxValue/#resolveMinValue for the per-shape
-      // resolution, kept out of this method to avoid nesting their ternaries in here.
+      // max_value/min_value: number (legacy) | {value} | {entity, attribute} |
+      // {jinja}. Jinja mode is fed by the template subscription
+      // (#jinjaMaxValue/#jinjaMinValue), not by EntityOrValue — see
+      // #resolveMaxValue/#resolveMinValue for the per-shape resolution, kept
+      // out of this method to avoid nesting their ternaries in here.
       Object.assign(this.#maxValue, ViewBase.#resolveMaxValue(this._configHelper.config.max_value));
       this.#jinjaMaxValue = null;
       Object.assign(this.#minValue, ViewBase.#resolveMinValue(this._configHelper.config.min_value));
       this.#jinjaMinValue = null;
     }
-    // Watermark low/high are wired for timers too (unlike attribute/min/max above, which a
-    // timer overrides): the schema defaults watermark: {} to low: 20 / high: 80, so leaving
-    // these helpers unset on a timer made isAvailable() permanently false — a timer card
-    // with any watermark configured froze instead of rendering.
+    // Watermark low/high are wired for timers too (unlike attribute/min/max
+    // above, which a timer overrides): the schema defaults watermark: {} to
+    // low: 20 / high: 80, so leaving these helpers unset on a timer made
+    // isAvailable() permanently false — a timer card with any watermark
+    // configured froze instead of rendering.
     Object.assign(this._lowValue, {
       value: ViewBase.#resolveWatermarkValue(this._configHelper.config?.watermark?.low),
       attribute: this._configHelper.config?.watermark?.low_attribute,
@@ -14917,7 +15878,11 @@ class ViewBase extends ViewCore {
   static #resolveMaxValue(maxCfg) {
     const isMaxObj = is.plainObject(maxCfg);
     return {
-      value: isMaxObj ? (maxCfg.jinja ? null : (maxCfg.entity ?? CARD.config.value.max)) : (maxCfg ?? CARD.config.value.max),
+      value: isMaxObj
+        ? maxCfg.jinja
+          ? null
+          : (maxCfg.entity ?? CARD.config.value.max)
+        : (maxCfg ?? CARD.config.value.max),
       attribute: isMaxObj ? maxCfg.attribute : undefined,
     };
   }
@@ -14928,14 +15893,18 @@ class ViewBase extends ViewCore {
       attribute: isMinObj ? minCfg.attribute : undefined,
     };
   }
-  // watermark.low/.high: number (fixed) | string (entity id) | {jinja}. A {jinja} object is fed
-  // by the template subscription (#jinjaWatermarkLow/#jinjaWatermarkHigh), not by EntityOrValue,
-  // so it resolves to null here — mirrors #resolveMaxValue/#resolveMinValue's own jinja split.
+  // watermark.low/.high: number (fixed) | string (entity id) | {jinja}. A
+  // {jinja} object is fed by the template subscription
+  // (#jinjaWatermarkLow/#jinjaWatermarkHigh), not by EntityOrValue, so it
+  // resolves to null here — mirrors #resolveMaxValue/#resolveMinValue's own
+  // jinja split.
   static #resolveWatermarkValue(sideCfg) {
     return is.plainObject(sideCfg) ? null : sideCfg;
   }
   #hasState(state) {
-    const toEVal = this.hasWatermark ? [this._currentValue, this.#maxValue, this._lowValue, this._highValue] : [this._currentValue, this.#maxValue];
+    const toEVal = this.hasWatermark
+      ? [this._currentValue, this.#maxValue, this._lowValue, this._highValue]
+      : [this._currentValue, this.#maxValue];
     return toEVal.some((v) => v.state === state);
   }
   get isUnknown() {
@@ -14948,8 +15917,9 @@ class ViewBase extends ViewCore {
     return this.#hasState(HA_CONTEXT.entity.state.notFound);
   }
   get isAvailable() {
-    // note: this used to test `this._configHelper.maxValue`, a getter that never existed
-    // (always undefined), silently disabling the max-entity availability check.
+    // note: this used to test `this._configHelper.maxValue`, a getter that
+    // never existed (always undefined), silently disabling the max-entity
+    // availability check.
     const minIsEntity = is.nonEmptyString(this._configHelper.config?.min_value?.entity);
     return !(
       !this._currentValue.isAvailable ||
@@ -14964,7 +15934,7 @@ class ViewBase extends ViewCore {
   }
 
   // ─── Getters for card ─────────────────────────────────────────────────────
-  
+
   get icon() {
     const notFound = this.isNotFound ? CARD.style.icon.notFound.icon : null;
     return notFound || this.#theme.icon || this._configHelper.config.icon;
@@ -14973,7 +15943,9 @@ class ViewBase extends ViewCore {
     if (this.isUnavailable) return CARD.style.color.unavailable;
     if (this.isNotFound) return CARD.style.color.notFound;
     return (
-      ThemeManager.adaptColor(this.#theme.iconColor || this._configHelper.config.color) || this._currentValue.defaultColor || CARD.style.color.default
+      ThemeManager.adaptColor(this.#theme.iconColor || this._configHelper.config.color) ||
+      this._currentValue.defaultColor ||
+      CARD.style.color.default
     );
   }
   #curBarColor() {
@@ -14986,16 +15958,22 @@ class ViewBase extends ViewCore {
   get barColor() {
     if (!this.isAvailable) return this.isUnknown ? CARD.style.color.default : CARD.style.color.disabled;
     const curColor = this.#curBarColor();
-    // 'net' is always a single flat segment. The center_zero + stacked/proportional case is
-    // handled separately by divergingBarStack (its own CSS variables, two independent arms) -
-    // this path only owns the non-centered multi-segment gradient and the plain fallback.
+    // 'net' is always a single flat segment. The center_zero +
+    // stacked/proportional case is handled separately by divergingBarStack (its
+    // own CSS variables, two independent arms) - this path only owns the
+    // non-centered multi-segment gradient and the plain fallback.
     return this.hasEntityCollection && this.#entityCollection.mode !== 'net' && !this.#percentHelper.isCenterZero
-      ? this.#entityCollection.getEntitiesColor(curColor, this.percent / 100, this.#percentHelper.max - this.#percentHelper.min)
+      ? this.#entityCollection.getEntitiesColor(
+          curColor,
+          this.percent / 100,
+          this.#percentHelper.max - this.#percentHelper.min,
+        )
       : curColor;
   }
-  // 'stacked'/'proportional' + center_zero: two independent per-arm gradients (see
-  // EntityCollectionHelper.getDivergingGradients). null when not applicable, so callers can
-  // tell whether to apply or clear the dedicated CSS variables.
+  // 'stacked'/'proportional' + center_zero: two independent per-arm gradients
+  // (see EntityCollectionHelper.getDivergingGradients). null when not
+  // applicable, so callers can tell whether to apply or clear the dedicated CSS
+  // variables.
   get divergingBarStack() {
     if (!this.isAvailable || !this.#percentHelper.isCenterZero) return null;
     if (!this.hasEntityCollection || this.#entityCollection.mode === 'net') return null;
@@ -15007,7 +15985,11 @@ class ViewBase extends ViewCore {
   }
   get colorGradient() {
     if (!this.isAvailable || this.#percentHelper.isCenterZero) return null;
-    return this.#theme.buildGradient(this.#percentHelper.percent, this._configHelper.config.bar_color_mode, this._currentValue.defaultColor);
+    return this.#theme.buildGradient(
+      this.#percentHelper.percent,
+      this._configHelper.config.bar_color_mode,
+      this._currentValue.defaultColor,
+    );
   }
   get percent() {
     if (!this.isAvailable) return 0;
@@ -15021,7 +16003,10 @@ class ViewBase extends ViewCore {
   }
 
   get secondaryInfoMain() {
-    if (this.hasStandardEntityError || (this._currentValue.entityType.isTimer && this._currentValue.value.state === HA_CONTEXT.entity.state.idle))
+    if (
+      this.hasStandardEntityError ||
+      (this._currentValue.entityType.isTimer && this._currentValue.value.state === HA_CONTEXT.entity.state.idle)
+    )
       return this._currentValue.formatedEntityState;
 
     const additionalInfo = this._currentValue.stateContentToString;
@@ -15062,7 +16047,9 @@ class ViewBase extends ViewCore {
     return this._hassProvider.hasNewShapeStrategy ? super.hasVisibleShape : true;
   }
   get timerIsReversed() {
-    return this._configHelper.config.reverse !== false && this._currentValue.value.state !== HA_CONTEXT.entity.state.idle;
+    return (
+      this._configHelper.config.reverse !== false && this._currentValue.value.state !== HA_CONTEXT.entity.state.idle
+    );
   }
   get hasWatermark() {
     return this._configHelper.config.watermark !== undefined;
@@ -15130,19 +16117,26 @@ class ViewBase extends ViewCore {
     Object.assign(this.#percentHelper, {
       current: this._currentValue.value.current,
       min: this._currentValue.value.min,
-      max: this.#maxValue.isEntity ? (this.#maxValue.value?.current ?? this.#maxValue.value) : this._currentValue.value.max,
+      max: this.#maxValue.isEntity
+        ? (this.#maxValue.value?.current ?? this.#maxValue.value)
+        : this._currentValue.value.max,
     });
   }
 
   #setStdValues() {
-    // 'net' mode always wants the algebraic total. 'stacked'/'proportional' switch to it too
-    // once center_zero splits them into two arms - a single flat percentage doesn't mean
-    // anything once the bar itself shows two independent, possibly-opposing lengths (see
-    // EntityCollectionHelper.getNetValue). Without center_zero, both modes keep the plain
-    // magnitude sum, matching what the bar itself visually adds up to.
-    const useNetValue = this.hasEntityCollection && (this.#entityCollection.mode === 'net' || this.#percentHelper.isCenterZero);
+    // 'net' mode always wants the algebraic total. 'stacked'/'proportional'
+    // switch to it too once center_zero splits them into two arms - a single
+    // flat percentage doesn't mean anything once the bar itself shows two
+    // independent, possibly-opposing lengths (see
+    // EntityCollectionHelper.getNetValue). Without center_zero, both modes keep
+    // the plain magnitude sum, matching what the bar itself visually adds up
+    // to.
+    const useNetValue =
+      this.hasEntityCollection && (this.#entityCollection.mode === 'net' || this.#percentHelper.isCenterZero);
     const currentValue = this.hasEntityCollection
-      ? (useNetValue ? this.#entityCollection.getNetValue() : this.#entityCollection.getTotalValue())
+      ? useNetValue
+        ? this.#entityCollection.getNetValue()
+        : this.#entityCollection.getTotalValue()
       : this._currentValue.value;
     Object.assign(this.#percentHelper, {
       current: currentValue,
@@ -15192,26 +16186,29 @@ class ViewBase extends ViewCore {
     if (['j', 'd', 'h', 'min', 's', 'ms', 'μs'].includes(this._currentValue.unit)) return CARD.config.decimal.duration;
 
     if (this._configHelper.config.unit)
-      return this._configHelper.config.unit === CARD.config.unit.default ? CARD.config.decimal.percentage : CARD.config.decimal.other;
+      return this._configHelper.config.unit === CARD.config.unit.default
+        ? CARD.config.decimal.percentage
+        : CARD.config.decimal.other;
 
     return currentUnit === CARD.config.unit.default ? CARD.config.decimal.percentage : CARD.config.decimal.other;
   }
 }
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ CardView
- * ========================================================================================
+ * ============================================================================
  *
  * A specialized card view implementation that extends ViewBase specifically for
- * rendering full card components. This class provides the complete card functionality
- * with proper configuration management through CardConfigHelper.
+ * rendering full card components. This class provides the complete card
+ * functionality with proper configuration management through CardConfigHelper.
  *
  * @class CardView
  * @extends ViewBase
- * @description A concrete implementation of ViewBase designed for full card rendering.
- *              This class uses CardConfigHelper to handle card-specific configuration
- *              validation, processing, and management. It inherits all entity management,
- *              theme handling, and state processing capabilities from ViewBase while
- *              providing card-specific configuration logic.
+ * @description A concrete implementation of ViewBase designed for full card
+ * rendering. This class uses CardConfigHelper to handle
+ * card-specific configuration validation, processing, and
+ * management. It inherits all entity management, theme handling,
+ * and state processing capabilities from ViewBase while providing
+ * card-specific configuration logic.
  *
  * @see ViewBase For inherited functionality
  * @see CardConfigHelper For configuration management details
@@ -15238,9 +16235,9 @@ class BadgeTemplateView extends ViewCore {
   icon = null;
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ ResourceManager
- * ========================================================================================
+ * ============================================================================
  *
  * ✅ Manage ressources: interval, timeout, listener, subscription.
  *
@@ -15349,7 +16346,10 @@ class ResourceManager {
 
     const context = this.#throttles.get(keys.throttle);
 
-    // CF5 - issue (medium) resolved - the trailing timer was scheduled unconditionally, so a single isolated call always ran fn() twice (leading + trailing). The trailing run now only catches calls rejected by the throttle, and a leading run cancels any pending trailing.
+    // CF5 - issue (medium) resolved - the trailing timer was scheduled
+    // unconditionally, so a single isolated call always ran fn() twice (leading
+    // + trailing). The trailing run now only catches calls rejected by the
+    // throttle, and a leading run cancels any pending trailing.
     if (now - context.lastCall >= delay) {
       context.lastCall = now;
       if (this.#resources.has(keys.debounce)) this.remove(keys.debounce);
@@ -15416,9 +16416,9 @@ class ResourceManager {
   }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ DOMHelper
- * ========================================================================================
+ * ============================================================================
  *
  * ✅ Manages DOM elements, RAF queue, and applied values cache.
  *
@@ -15481,8 +16481,8 @@ class DOMHelper {
   // ─── RAF queue ────────────────────────────────────────────────────────────
 
   /**
-   * Enqueues a DOM update identified by a unique key + prop combination.
-   * If the same key:prop is enqueued multiple times, only the latest function runs.
+   * Enqueues a DOM update identified by a unique key + prop combination. If the
+   * same key:prop is enqueued multiple times, only the latest function runs.
    * Schedules a single RAF flush if not already pending.
    */
   enqueue(key, prop, updateFn) {
@@ -15526,10 +16526,11 @@ class DOMHelper {
   }
 
   /**
-   * Removes a previously-set CSS custom property. setStyle() never unsets a value on its
-   * own (it only skips nullish writes), so a property that was conditionally set on an
-   * earlier render (e.g. the bar_stack diverging-arm gradient) needs this to go away once
-   * the condition no longer applies - otherwise it stays stuck from a stale render.
+   * Removes a previously-set CSS custom property. setStyle() never unsets a
+   * value on its own (it only skips nullish writes), so a property that was
+   * conditionally set on an earlier render (e.g. the bar_stack diverging-arm
+   * gradient) needs this to go away once the condition no longer applies -
+   * otherwise it stays stuck from a stale render.
    */
   removeStyle(key, prop) {
     const cacheKey = `${key}:style:${prop}`;
@@ -15545,8 +16546,8 @@ class DOMHelper {
   }
 
   /**
-   * Sets a CSS custom property synchronously — no RAF, no cache check, no queue.
-   * Use when immediate DOM update is required.
+   * Sets a CSS custom property synchronously — no RAF, no cache check, no
+   * queue. Use when immediate DOM update is required.
    */
   setStyleNow(key, prop, value) {
     if (is.nullish(value)) return;
@@ -15576,8 +16577,17 @@ class DOMHelper {
     });
   }
 
-  // CF5 - issue (security) resolved - Jinja results are injected via innerHTML and may interpolate attacker-influenceable strings (media titles, network device names…); allowlist sanitization keeps the HTML formatting feature while neutralizing script execution
-  static #SAFE_HTML_TAGS = new Set(['B', 'I', 'U', 'SPAN', 'DIV', 'BR']);
+  // CF5 - issue (security) resolved - Jinja results are injected via innerHTML
+  // and may interpolate attacker-influenceable strings (media titles, network
+  // device names…); allowlist sanitization keeps the HTML formatting feature
+  // while neutralizing script execution No BR here on purpose: name/name_info
+  // have no multiline option at all (see
+  // StructureElements.secondaryInfoWrapperMinimal) and must never wrap, while
+  // custom_info/secondary's own <br> is already consumed by
+  // HABase#_splitAtFirstBreak before it ever reaches this sanitizer - a literal
+  // <br> surviving to this point would only ever be an unhandled edge case, not
+  // a feature to preserve.
+  static #SAFE_HTML_TAGS = new Set(['B', 'I', 'U', 'SPAN', 'DIV']);
   static #SAFE_STYLE_PROPS = new Set(['color', 'background-color']);
   static #DROP_CONTENT_TAGS = new Set(['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'EMBED', 'TEMPLATE', 'NOSCRIPT']);
 
@@ -15608,7 +16618,7 @@ class DOMHelper {
 
   static #scrubAttributes(el) {
     for (const attr of [...el.attributes]) {
-      if (attr.name === 'class') continue; // needed by the card's own markup (span.multiline); classes cannot execute code
+      if (attr.name === 'class') continue; // kept for user Jinja markup relying on class-based styling (e.g. card_mod); classes cannot execute code
       if (attr.name !== 'style') {
         el.removeAttribute(attr.name); // on* handlers, href, src…
         continue;
@@ -15715,16 +16725,16 @@ class DOMHelper {
   }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ ActionHelper — Utility Class
- * ========================================================================================
+ * ============================================================================
  *
  * ✅ Centralized handler for `xyz_action` logic.
  * Deprecated for HA 2026.3+
  *
- * 📌 Purpose:
- *   - Encapsulates and manages the execution, validation, and dispatch of `xyz_action`.
- *   - Promotes reusable, maintainable logic for action-related features.
+ * 📌 Purpose: - Encapsulates and manages the execution, validation, and
+ * dispatch of `xyz_action`. - Promotes reusable, maintainable logic for
+ * action-related features.
  */
 
 class ActionHelper {
@@ -15739,7 +16749,9 @@ class ActionHelper {
     this.#target = target;
   }
 
-  // CF5 - issue (major) resolved - the HA frontend creates <action-handler> lazily; querySelector could return null and crash if this card loads before any native card
+  // CF5 - issue (major) resolved - the HA frontend creates <action-handler>
+  // lazily; querySelector could return null and crash if this card loads before
+  // any native card
   static #getActionHandler() {
     let handler = document.body.querySelector(HA_ACTION_HANDLER_TAG);
     if (!handler) {
@@ -15757,7 +16769,9 @@ class ActionHelper {
 
     if (!this.#target) return;
 
-    // CF5 - issue (major) resolved - init() runs on every connectedCallback (view navigation, edit mode); listeners accumulated and a single tap dispatched N hass-action events. init is now idempotent.
+    // CF5 - issue (major) resolved - init() runs on every connectedCallback
+    // (view navigation, edit mode); listeners accumulated and a single tap
+    // dispatched N hass-action events. init is now idempotent.
     if (this.#initialized) return;
     this.#initialized = true;
 
@@ -15784,7 +16798,10 @@ class ActionHelper {
     const action = ev.detail.action;
     const iconActionKey = `icon_${action}_action`;
 
-    const actionConfig = fromIcon && this.#config[iconActionKey]?.action !== 'none' ? this.#config[iconActionKey] : this.#config[`${action}_action`];
+    const actionConfig =
+      fromIcon && this.#config[iconActionKey]?.action !== 'none'
+        ? this.#config[iconActionKey]
+        : this.#config[`${action}_action`];
 
     if (!actionConfig) return;
 
@@ -15804,43 +16821,34 @@ class ActionHelper {
   }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ HACore
- * ========================================================================================
+ * ============================================================================
  *
  * Base class for Home Assistant custom elements (cards, badges, features).
  *
- *       HTMLElement
- *       │
- *       ├── HACore
- *       │   ├── HABase
- *       │   │   ├── EntityProgressCardBase
- *       │   │   │   ├── EntityProgressCard
- *       │   │   │   └── EntityProgressBadge
- *       │   │   └── EntityProgressTemplateBase
- *       │   │       ├── EntityProgressTemplateCard
- *       │   │       └── EntityProgressTemplateBadge
- *       │   │
- *       │   └── EntityProgressFeatures
+ * HTMLElement │ ├── HACore │ ├── HABase │ │ ├── EntityProgressCardBase │ │ │
+ * ├── EntityProgressCard │ │ │ └── EntityProgressBadge │ │ └──
+ * EntityProgressTemplateBase │ │ ├── EntityProgressTemplateCard │ │ └──
+ * EntityProgressTemplateBadge │ │ │ └── EntityProgressFeatures
  *
- * Provides:
- * - Shadow DOM initialization and lifecycle management (connectedCallback, disconnectedCallback)
- * - Configuration handling via setConfig()
- * - Hass state tracking and change detection
- * - DOM rendering pipeline: render() → _createCardElements() → _buildStyle()
- * - Batched DOM updates via DOMHelper (RAF queue + value cache)
- * - Jinja2 template subscriptions via WebSocket
- * - Resource lifecycle management (listeners, subscriptions, intervals)
+ * Provides: - Shadow DOM initialization and lifecycle management
+ * (connectedCallback, disconnectedCallback) - Configuration handling via
+ * setConfig() - Hass state tracking and change detection - DOM rendering
+ * pipeline: render() → _createCardElements() → _buildStyle() - Batched DOM
+ * updates via DOMHelper (RAF queue + value cache) - Jinja2 template
+ * subscriptions via WebSocket - Resource lifecycle management (listeners,
+ * subscriptions, intervals)
  *
  * Subclasses MUST implement:
  * - _handleHassUpdate()     → react to hass state changes
  * - _updateCSS()            → apply dynamic CSS custom properties
  * - _getJinjaHandlers()     → handle Jinja2 template results
  *
- * Subclasses MAY override:
- * - _structureOptions (getter) → structure options passed to ObjStructure.clone() (barType, barPosition…)
- * - _buildStyle()             → CSS class application pipeline (watermark, bar effect, base classes)
- * - _updateDynamicElements()  → DOM update orchestration (CSS, Jinja processing)
+ * Subclasses MAY override: - _structureOptions (getter) → structure options
+ * passed to ObjStructure.clone() (barType, barPosition…) - _buildStyle() → CSS
+ * class application pipeline (watermark, bar effect, base classes) -
+ * _updateDynamicElements() → DOM update orchestration (CSS, Jinja processing)
  *
  * @abstract
  * @extends HTMLElement
@@ -15878,7 +16886,8 @@ const getSharedStyleSheet = (cssText) => {
     constructed.replaceSync(cssText);
     sheet = constructed;
   } catch {
-    // Firefox < 101, Safari < 16.4 (not constructible) → keep null, legacy <style> fallback
+    // Firefox < 101, Safari < 16.4 (not constructible) → keep null, legacy
+    // <style> fallback
   }
   CONSTRUCTED_SHEETS.set(cssText, sheet);
   return sheet;
@@ -15898,7 +16907,10 @@ class HACore extends HTMLElement {
   _hassProvider = HassProviderSingleton.getInstance();
   _changeTracker = new ChangeTracker();
   #isRendered = false;
-  // CF5 - issue (perf) resolved - render_template subscriptions are push-based; tracking the signature (template + entity variable) of each live/in-flight subscription lets us skip the systematic unsubscribe/resubscribe cycle on every refresh
+  // CF5 - issue (perf) resolved - render_template subscriptions are push-based;
+  // tracking the signature (template + entity variable) of each live/in-flight
+  // subscription lets us skip the systematic unsubscribe/resubscribe cycle on
+  // every refresh
   #templateSignatures = new Map();
 
   // ─── LIFECYCLE METHODS ===
@@ -15980,14 +16992,19 @@ class HACore extends HTMLElement {
   }
 
   _registerWatchedEntities(config) {
-    // CF5 - issue (minor) resolved - the watched set was only ever appended to: entities removed from the config (editor changes) stayed watched and kept triggering refreshes until reload. Rebuilt from scratch on every setConfig.
+    // CF5 - issue (minor) resolved - the watched set was only ever appended to:
+    // entities removed from the config (editor changes) stayed watched and kept
+    // triggering refreshes until reload. Rebuilt from scratch on every
+    // setConfig.
     this._changeTracker.resetWatchedEntities();
     if (is.string(config.entity)) this._changeTracker.watchEntity(config.entity);
     if (is.nonEmptyString(config.max_value?.entity)) this._changeTracker.watchEntity(config.max_value.entity);
     if (is.nonEmptyString(config.min_value?.entity)) this._changeTracker.watchEntity(config.min_value.entity);
     if (is.string(config?.watermark?.low)) this._changeTracker.watchEntity(config.watermark.low);
     if (is.string(config?.watermark?.high)) this._changeTracker.watchEntity(config.watermark.high);
-    // CF5 - issue (major) resolved - additions entities were not watched: when one of them changed state (main entity unchanged), the ChangeTracker reported no change and the displayed total stayed stale
+    // CF5 - issue (major) resolved - additions entities were not watched: when
+    // one of them changed state (main entity unchanged), the ChangeTracker
+    // reported no change and the displayed total stayed stale
     if (is.array(config.bar_stack?.entities)) {
       for (const item of config.bar_stack.entities) {
         if (is.plainObject(item) && is.string(item.entity)) this._changeTracker.watchEntity(item.entity);
@@ -16058,8 +17075,8 @@ class HACore extends HTMLElement {
   /**
    * Builds and initializes the structure of the custom card component.
    *
-   * This method creates the visual and structural elements of the card and injects
-   * them into the component's Shadow DOM.
+   * This method creates the visual and structural elements of the card and
+   * injects them into the component's Shadow DOM.
    */
   render() {
     if (this.isRendered) return;
@@ -16082,8 +17099,8 @@ class HACore extends HTMLElement {
 
   _createCardElements() {
     // Preferred path: adopt the shared constructed sheet (parsed once for all
-    // instances). Fallback path (older Firefox/Safari, see getSharedStyleSheet):
-    // a per-instance <style> element, as before.
+    // instances). Fallback path (older Firefox/Safari, see
+    // getSharedStyleSheet): a per-instance <style> element, as before.
     let style = null;
     const sharedSheet = getSharedStyleSheet(this.cardStyle);
     if (sharedSheet) {
@@ -16106,13 +17123,17 @@ class HACore extends HTMLElement {
     }
     this._buildStyle();
     // Cloned from the per-options <template> cache; _structureOptions is read
-    // fresh here so a setConfig that changes the structure picks the right template.
+    // fresh here so a setConfig that changes the structure picks the right
+    // template.
     card.replaceChildren(this.constructor._cardStructure.clone(this._structureOptions));
 
     return { style, card };
   }
 
-  // CF5 - issue (medium) resolved - _storeDOM registered every element under its first CSS class: silent collisions were possible and the map carried dead weight. Only the elements actually driven through the DOMHelper are registered now.
+  // CF5 - issue (medium) resolved - _storeDOM registered every element under
+  // its first CSS class: silent collisions were possible and the map carried
+  // dead weight. Only the elements actually driven through the DOMHelper are
+  // registered now.
   static get _domKeys() {
     return [
       CARD.htmlStructure.elements.progressBar.container.class,
@@ -16123,6 +17144,7 @@ class HACore extends HTMLElement {
       CARD.htmlStructure.elements.nameExtra.class,
       CARD.htmlStructure.elements.secondaryInfoMain.class,
       CARD.htmlStructure.elements.secondaryInfoExtra.class,
+      CARD.htmlStructure.elements.secondaryInfoExtra2.class,
     ];
   }
 
@@ -16153,7 +17175,9 @@ class HACore extends HTMLElement {
       this.baseClass,
       this._cardView.config.layout,
       this._cardView.config.bar_size,
-      this._cardView.config.bar_orientation ? CARD.style.dynamic.progressBar.orientation[this._cardView.config.bar_orientation] : null,
+      this._cardView.config.bar_orientation
+        ? CARD.style.dynamic.progressBar.orientation[this._cardView.config.bar_orientation]
+        : null,
       this._cardView.config.center_zero ? CARD.style.dynamic.progressBar.centerZero.class : null,
       (this._cardView.config.layout === 'vertical' &&
         this._cardView.config.bar_orientation === 'up' &&
@@ -16217,13 +17241,18 @@ class HACore extends HTMLElement {
 
     if (progressValue !== null) {
       this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.value.var, progressValue);
-      this._dom.setAttribute(CARD.htmlStructure.elements.progressBar.container.class, 'aria-valuenow', Math.round(progressValue * 100));
+      this._dom.setAttribute(
+        CARD.htmlStructure.elements.progressBar.container.class,
+        'aria-valuenow',
+        Math.round(progressValue * 100),
+      );
     }
   }
 
-  // bar_stack 'stacked'/'proportional' + center_zero: two independent per-arm gradients/sizes
-  // (see ViewBase.divergingBarStack). Explicitly removed (not left stale) when not
-  // applicable - setStyle() never unsets a value on its own once written.
+  // bar_stack 'stacked'/'proportional' + center_zero: two independent per-arm
+  // gradients/sizes (see ViewBase.divergingBarStack). Explicitly removed (not
+  // left stale) when not applicable - setStyle() never unsets a value on its
+  // own once written.
   _applyDivergingBarStackCSS(cardKey, diverging) {
     const pb = CARD.style.dynamic.progressBar;
     if (!diverging) {
@@ -16265,13 +17294,16 @@ class HACore extends HTMLElement {
   // ─── JINJA TEMPLATE RENDERING ─────────────────────────────────────────────
 
   get validJinjaFields() {
-    // Most Jinja-capable options are flat string config values, but some (min_value,
-    // watermark.low/.high) use an explicit { jinja: "..." } map form instead of sniffing a bare
-    // string — extract accordingly. Dot-path keys (watermark.low) walk one level of nesting;
-    // existing flat keys (min_value) are unaffected since a 1-element path resolves identically.
+    // Most Jinja-capable options are flat string config values, but some
+    // (min_value, watermark.low/.high) use an explicit { jinja: "..." } map
+    // form instead of sniffing a bare string — extract accordingly. Dot-path
+    // keys (watermark.low) walk one level of nesting; existing flat keys
+    // (min_value) are unaffected since a 1-element path resolves identically.
     const rawValueFor = (key) => {
-      const raw = key.includes('.') ? key.split('.').reduce((obj, k) => obj?.[k], this._cardView.config) : this._cardView.config[key];
-      return is.plainObject(raw) ? (raw.jinja ?? '') : (raw || '');
+      const raw = key.includes('.')
+        ? key.split('.').reduce((obj, k) => obj?.[k], this._cardView.config)
+        : this._cardView.config[key];
+      return is.plainObject(raw) ? (raw.jinja ?? '') : raw || '';
     };
     const handlers = this._getJinjaHandlers();
     const result = Object.fromEntries(
@@ -16294,7 +17326,9 @@ class HACore extends HTMLElement {
     const handler = renderHandlers[key];
 
     if (handler) {
-      // CF5 - issue (critical) resolved - an exception inside a render handler propagated into the WebSocket message callback; log it instead of crashing the card
+      // CF5 - issue (critical) resolved - an exception inside a render handler
+      // propagated into the WebSocket message callback; log it instead of
+      // crashing the card
       try {
         handler();
       } catch (error) {
@@ -16307,7 +17341,8 @@ class HACore extends HTMLElement {
 
   _refreshBarEffect(content) {
     this._log.debug('📎 HACore._refreshBarEffect():', { content });
-    // CF5 - issue (critical) resolved - render_template returns native types: a template yielding a list (e.g. {{ ['glass'] }}) crashed on .split()
+    // CF5 - issue (critical) resolved - render_template returns native types: a
+    // template yielding a list (e.g. {{ ['glass'] }}) crashed on .split()
     const jinjaEffect = (is.array(content) ? content : String(content ?? '').split(',')).map((s) => String(s).trim());
     this._handleBarEffect(jinjaEffect);
   }
@@ -16380,7 +17415,10 @@ class HACore extends HTMLElement {
     );
   }
 
-  // CF5 - issue (perf) resolved - a Jinja field removed from the config left its subscription alive (pushing results into a DOM that no longer expects them) until disconnect; drop subscriptions whose key is no longer configured
+  // CF5 - issue (perf) resolved - a Jinja field removed from the config left
+  // its subscription alive (pushing results into a DOM that no longer expects
+  // them) until disconnect; drop subscriptions whose key is no longer
+  // configured
   #cleanupOrphanTemplates(templates) {
     for (const subscriptionKey of [...this.#templateSignatures.keys()]) {
       const key = subscriptionKey.slice('template-'.length);
@@ -16412,7 +17450,10 @@ class HACore extends HTMLElement {
       return;
     }
 
-    // CF5 - issue (perf) resolved - subscriptions are push-based: skip when an identical one is live or in-flight. Reserving the signature before the await also fixes a race where two overlapping calls created a duplicate (orphan) subscription.
+    // CF5 - issue (perf) resolved - subscriptions are push-based: skip when an
+    // identical one is live or in-flight. Reserving the signature before the
+    // await also fixes a race where two overlapping calls created a duplicate
+    // (orphan) subscription.
     const signature = `${template}\u0000${this._getTemplateContext().entity ?? ''}`;
     if (this.#templateSignatures.get(subscriptionKey) === signature) {
       this._log.debug(`[Template ${key}] Identical subscription live or in-flight, skipping.`);
@@ -16458,21 +17499,22 @@ class HACore extends HTMLElement {
   }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ HABase
- * ========================================================================================
+ * ============================================================================
  *
- * Extends HACore with entity rendering: icon, badge, shape, trend, hidden components,
- * standard fields, and Jinja badge handlers.
+ * Extends HACore with entity rendering: icon, badge, shape, trend, hidden
+ * components, standard fields, and Jinja badge handlers.
  *
- * Subclasses MUST implement:
- * - _updateCSS()            → apply dynamic CSS (percent, colors, watermark)
+ * Subclasses MUST implement: - _updateCSS() → apply dynamic CSS (percent,
+ * colors, watermark)
  *
- * Subclasses MAY override:
- * - _buildStyle()           → CSS class pipeline (calls super then adds entity-specific classes)
- * - _updateDynamicElements() → DOM update orchestration (icon, badge, shape, trend, CSS, Jinja)
- * - _getStandardFields()    → static — returns [{className, value}] for text fields to render
- * - _hiddenComponents       → static — extend the array to add card-type-specific hide targets
+ * Subclasses MAY override: - _buildStyle() → CSS class pipeline (calls super
+ * then adds entity-specific classes) - _updateDynamicElements() → DOM update
+ * orchestration (icon, badge, shape, trend, CSS, Jinja) - _getStandardFields()
+ * → static — returns [{className, value}] for text fields to render -
+ * _hiddenComponents → static — extend the array to add card-type-specific hide
+ * targets
  *
  * @abstract
  * @extends HACore
@@ -16488,11 +17530,10 @@ class HABase extends HACore {
     CARD.style.dynamic.hiddenComponent.name,
     CARD.style.dynamic.hiddenComponent.secondary_info,
     CARD.style.dynamic.hiddenComponent.progress_bar,
-  ];  
+  ];
   _trendIcons = {
     up: HA_CONTEXT.icons.chevronUpBox,
     down: HA_CONTEXT.icons.chevronDownBox,
-    // CF5 - issue (minor) resolved - HA_CONTEXT.equalBox (missing .icons) was undefined: the flat trend rendered an empty icon
     flat: HA_CONTEXT.icons.equalBox,
     error: HA_CONTEXT.icons.progressQuestion,
   };
@@ -16599,7 +17640,10 @@ class HABase extends HACore {
   // ─── ERROR MESSAGE MANAGEMENT ─────────────────────────────────────────────
 
   _manageErrorMessage() {
-    if (this._cardView.msg && (is.nullish(this._cardView.entity) || (this._cardView.isAvailable && !this._cardView.hasValidatedConfig))) {
+    if (
+      this._cardView.msg &&
+      (is.nullish(this._cardView.entity) || (this._cardView.isAvailable && !this._cardView.hasValidatedConfig))
+    ) {
       this._renderMessage(this._cardView.msg);
       return true;
     }
@@ -16636,6 +17680,7 @@ class HABase extends HACore {
       layout: this._cardView.config.layout,
       barSingleLine: this._cardView.config.bar_single_line,
       trendIndicator: this._cardView.config.trend_indicator,
+      multiline: Boolean(this._cardView.config.multiline),
     };
   }
 
@@ -16679,14 +17724,45 @@ class HABase extends HACore {
       [CARD.style.dynamic.clickable.icon, this._cardView.hasClickableIcon],
       [CARD.style.dynamic.frameless.class, this._cardView.config.frameless],
       [CARD.style.dynamic.marginless.class, this._cardView.config.marginless],
+      // One card-level flag every ancestor that needs to relax its single-line
+      // assumptions (.content's height, .secondary-info's bar stretch, …) reads
+      // via a plain descendant selector (.info-multiline .content {...}) — not
+      // a :has() re-derived at each level, which is what made every earlier
+      // attempt only fix one ancestor at a time.
+      ['info-multiline', Boolean(this._cardView.config.multiline)],
       ['icon-anim-spin', this._cardView.config.icon_animation === 'spin' && this._cardView.isEntityActive],
       ['icon-anim-pulse', this._cardView.config.icon_animation === 'pulse' && this._cardView.isEntityActive],
       ['icon-anim-bounce', this._cardView.config.icon_animation === 'bounce' && this._cardView.isEntityActive],
       ['icon-anim-shake', this._cardView.config.icon_animation === 'shake' && this._cardView.isEntityActive],
       ['icon-anim-ping', this._cardView.config.icon_animation === 'ping' && this._cardView.isEntityActive],
       ['icon-anim-reveal', this._cardView.config.icon_animation === 'reveal' && this._cardView.isEntityActive],
+      [
+        // Not isEntityActive alone: appliance integrations (Home Connect,
+        // Miele) report the running program as a plain `sensor`, which
+        // isEntityActive's domain gate excludes on purpose - see
+        // ViewCore.isWashingMachineActive.
+        'icon-anim-washing-machine',
+        this._cardView.config.icon_animation === 'washing_machine' && this._cardView.isWashingMachineActive,
+      ],
+      [
+        // Not isEntityActive: charging isn't a domain/state pair, it's an
+        // attribute (see ViewCore.isBatteryCharging) — its own trigger.
+        'icon-anim-battery-charging',
+        this._cardView.config.icon_animation === 'battery_charging' && this._cardView.isBatteryCharging,
+      ],
+      [
+        // See ViewCore.isBatteryIconShifted: compensates the fill wipe for
+        // charging/bluetooth battery icon variants, without changing the icon.
+        'icon-anim-battery-charging-shifted',
+        this._cardView.config.icon_animation === 'battery_charging' &&
+          this._cardView.isBatteryCharging &&
+          this._cardView.isBatteryIconShifted,
+      ],
       ['alert-active', this._cardView.isAlertActive],
-      ['alert-background', this._cardView.isAlertActive && this._cardView.config.alert_when?.highlight === 'background'],
+      [
+        'alert-background',
+        this._cardView.isAlertActive && this._cardView.config.alert_when?.highlight === 'background',
+      ],
     ]);
   }
 
@@ -16699,7 +17775,8 @@ class HABase extends HACore {
   _handleHiddenComponents(jinjaContent = null) {
     if (jinjaContent === null && is.jinja(this._cardView.config.hide)) return;
 
-    // CF5 - issue (critical) resolved - a hide Jinja template yielding a native list crashed on .split(); normalize list and string results alike
+    // CF5 - issue (critical) resolved - a hide Jinja template yielding a native
+    // list crashed on .split(); normalize list and string results alike
     const items = is.nullish(jinjaContent)
       ? null
       : (is.array(jinjaContent) ? jinjaContent : String(jinjaContent).split(','))
@@ -16974,15 +18051,75 @@ class HABase extends HACore {
     };
   }
 
+  static #BREAK_RE = /<br\s*\/?>/gi;
+
+  // Splits Jinja-sourced HTML at the first <br> — shared by _renderCustomInfo
+  // (card/badge) and _renderSecondary (template/badgeTemplate), the only two
+  // callers. When `multiline` is off, any <br> is stripped instead of honored:
+  // [content, null]. When on, only the first <br> is kept; anything from a 2nd
+  // <br> onward is discarded. A tag straddling the break (e.g.
+  // <span style="color:red">A<br>B</span>) is re-wrapped on both halves via
+  // #domSplitOnce's ancestor cloning, instead of a naive string split that
+  // would leave one half with an unclosed/orphaned tag.
+  _splitAtFirstBreak(content) {
+    const html = String(content);
+    if (!this._cardView.config.multiline) return [html.replace(HABase.#BREAK_RE, ''), null];
+
+    const [before, afterRaw] = HABase.#domSplitOnce(html);
+    if (afterRaw === null) return [before, null];
+    const [after] = HABase.#domSplitOnce(afterRaw); // drop anything from a 2nd <br> onward
+    return [before, after];
+  }
+
+  // Single split at the first <br> element node, tree-aware: everything before
+  // it goes to `before`, everything after to `after`, each re-wrapped in a
+  // shallow clone of every ancestor it passed through so nested tags keep their
+  // attributes on both halves. Returns [html, null] when there is no <br> at
+  // all.
+  static #domSplitOnce(html) {
+    // Own non-global literal on purpose: #BREAK_RE carries the /g flag for the
+    // .replace() call above, and .test() on a /g regex mutates lastIndex, which
+    // would corrupt the *next* call's match position (this runs twice per
+    // multiline render, back to back, for the 2nd-<br> check).
+    if (!/<br\s*\/?>/i.test(html)) return [html, null];
+
+    const root = new DOMParser().parseFromString(`<body>${html}</body>`, 'text/html').body;
+    let found = false;
+    const split = (node) => {
+      const before = node.cloneNode(false);
+      const after = node.cloneNode(false);
+      for (const child of Array.from(node.childNodes)) {
+        if (found) {
+          after.appendChild(child.cloneNode(true));
+        } else if (child.nodeName === 'BR') {
+          found = true;
+        } else if (child.nodeType === Node.ELEMENT_NODE) {
+          const [childBefore, childAfter] = split(child);
+          before.appendChild(childBefore);
+          if (found) after.appendChild(childAfter);
+        } else {
+          before.appendChild(child.cloneNode(true));
+        }
+      }
+      return [before, after];
+    };
+
+    const [before, after] = split(root);
+    return [before.innerHTML, after.innerHTML];
+  }
+
   // ─── getStubConfig -> select entity ───────────────────────────────────────
   static getStubEntity(hass) {
-    return Object.keys(hass.states).find((id) => /^(sensor\..*battery|fan\.|cover\.|light\.)/i.test(id)) || 'sensor.temperature';
+    return (
+      Object.keys(hass.states).find((id) => /^(sensor\..*battery|fan\.|cover\.|light\.)/i.test(id)) ||
+      'sensor.temperature'
+    );
   }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ EntityProgressCardBase
- * ========================================================================================
+ * ============================================================================
  *
  * ✅ Represents the base class for all standard cards:
  *  - EntityProgressCardBase / "entity-progress-card"
@@ -16994,10 +18131,7 @@ class HABase extends HACore {
  */
 
 class EntityProgressCardBase extends HABase {
-  static _hiddenComponents = [
-    ...super._hiddenComponents,
-    CARD.style.dynamic.hiddenComponent.value,
-  ];
+  static _hiddenComponents = [...super._hiddenComponents, CARD.style.dynamic.hiddenComponent.value];
 
   static getStubConfig(hass) {
     return { type: `custom:${devName(this._baseClass)}`, entity: HABase.getStubEntity(hass) };
@@ -17011,7 +18145,10 @@ class EntityProgressCardBase extends HABase {
 
     if (!this._cardView.isActiveTimer) {
       this._stopAutoRefresh();
-      // CF5 - issue (major) resolved - set hass calls _handleHassUpdate before _ensureResourceManager: with an active timer entity and hass assigned before connectedCallback (standard Lovelace order), _resourceManager was still null and .has() crashed
+      // CF5 - issue (major) resolved - set hass calls _handleHassUpdate before
+      // _ensureResourceManager: with an active timer entity and hass assigned
+      // before connectedCallback (standard Lovelace order), _resourceManager
+      // was still null and .has() crashed
     } else if (!this._resourceManager?.has('autoRefresh')) {
       this._startAutoRefresh();
     }
@@ -17019,7 +18156,10 @@ class EntityProgressCardBase extends HABase {
 
   // ─── CSS - CUSTOMIZATION ──────────────────────────────────────────────────
   get conditionalStyle() {
-    return new Map([...super.conditionalStyle, [CARD.style.dynamic.secondaryInfoError.class, this._cardView.hasStandardEntityError]]);
+    return new Map([
+      ...super.conditionalStyle,
+      [CARD.style.dynamic.secondaryInfoError.class, this._cardView.hasStandardEntityError],
+    ]);
   }
 
   _updateCSS() {
@@ -17049,9 +18189,10 @@ class EntityProgressCardBase extends HABase {
   }
 
   // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ─────────────────────────────
-  // The four numeric Jinja options share one mechanism (_renderJinjaNumber); each entry
-  // below only states its two specifics: which config path must still be in { jinja }
-  // mode, and which view property receives the resolved number.
+  // The four numeric Jinja options share one mechanism (_renderJinjaNumber);
+  // each entry below only states its two specifics: which config path must
+  // still be in { jinja } mode, and which view property receives the resolved
+  // number.
   _getJinjaHandlers(content) {
     return {
       ...this._baseJinjaHandlers(content),
@@ -17067,22 +18208,32 @@ class EntityProgressCardBase extends HABase {
   }
 
   _renderJinjaNumber(content, getJinja, viewProp) {
-    // Defensive: only apply while the option is still in { jinja: "..." } mode — guards
-    // against a push arriving right as the user switches the mode chips away from Jinja.
+    // Defensive: only apply while the option is still in { jinja: "..." } mode
+    // — guards against a push arriving right as the user switches the mode
+    // chips away from Jinja.
     if (!is.nonEmptyString(getJinja(this._cardView.config))) return;
     const value = is.number(content) ? content : is.strictNumericString(content) ? Number(content) : null;
     if (value === this._cardView[viewProp]) return; // unchanged — skip the recompute below
     this._cardView[viewProp] = value;
-    // Lightweight, like _managePercent on template cards: recompute + repaint the bar only.
-    // A full this.refresh() re-ran icon/badge/shape/trend AND _processJinjaFields() (which
-    // re-scans every Jinja field on the card) on every single push — while typing the
-    // template in the editor, each keystroke produces a push, so the full pipeline ran on
-    // every keystroke and made the editor feel like it had frozen.
+    // Lightweight, like _managePercent on template cards: recompute + repaint
+    // the bar only. A full this.refresh() re-ran icon/badge/shape/trend AND
+    // _processJinjaFields() (which re-scans every Jinja field on the card) on
+    // every single push — while typing the template in the editor, each
+    // keystroke produces a push, so the full pipeline ran on every keystroke
+    // and made the editor feel like it had frozen.
     this._cardView.refresh(this.hass);
     this._updateCSS();
   }
   _renderCustomInfo(content) {
-    this._dom.setHTML(CARD.htmlStructure.elements.secondaryInfoExtra.class, `${content}&nbsp;`);
+    // Line 1 never carries a main (see StructureElements.secondaryInfoLine), so
+    // it only gets the &nbsp; spacer in single-line mode, where it precedes the
+    // main span on the same line. Line 2 always carries main here (card/badge
+    // has that slot) — see _renderSecondary for the template equivalent, which
+    // has no main slot at all.
+    const multiline = Boolean(this._cardView.config.multiline);
+    const [line1, line2] = this._splitAtFirstBreak(content);
+    this._dom.setHTML(CARD.htmlStructure.elements.secondaryInfoExtra.class, multiline ? line1 : `${line1}&nbsp;`);
+    if (multiline) this._dom.setHTML(CARD.htmlStructure.elements.secondaryInfoExtra2.class, `${line2 ?? ''}&nbsp;`);
   }
 
   _renderNameInfo(content) {
@@ -17090,9 +18241,9 @@ class EntityProgressCardBase extends HABase {
   }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 📦 EntityProgressCard
- * ========================================================================================
+ * ============================================================================
  *
  * ✅ HA CARD "entity-progress-card"
  *
@@ -17108,13 +18259,11 @@ class EntityProgressCard extends EntityProgressCardBase {
   static get _loggedMethods() {
     return [...super._loggedMethods, 'getCardSize', 'getLayoutOptions'];
   }
-
 }
 
-
-/******************************************************************************************
+/******************************************************************************
  * 📦 EntityProgressBadge
- * ========================================================================================
+ * ============================================================================
  *
  * ✅ HA CARD "entity-progress-badge"
  *
@@ -17128,10 +18277,11 @@ class EntityProgressBadge extends EntityProgressCardBase {
   static _hasDisabledBadge = true;
   static _cardStructure = new ObjStructure('badge');
 
-  // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ===
-  // Derived from the Card map (minus the badge-only handlers) instead of hand-mirroring it:
-  // an earlier hand-maintained copy silently missed min_value for months (CF5, medium), so
-  // any handler added on the base class is now picked up here automatically by construction.
+  // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION === Derived from the Card map
+  // (minus the badge-only handlers) instead of hand-mirroring it: an earlier
+  // hand-maintained copy silently missed min_value for months (CF5, medium), so
+  // any handler added on the base class is now picked up here automatically by
+  // construction.
   _getJinjaHandlers(content) {
     const handlers = super._getJinjaHandlers(content);
     delete handlers.badge_icon;
@@ -17140,9 +18290,9 @@ class EntityProgressBadge extends EntityProgressCardBase {
   }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 📦 EntityProgressFeatures
- * ========================================================================================
+ * ============================================================================
  *
  * ✅ HA CARD "entity-progress-feature"
  *
@@ -17168,25 +18318,30 @@ class EntityProgressFeatures extends HACore {
    * piercing through multiple Shadow DOM boundaries to directly manipulate the
    * parent card's layout properties.
    *
-   * The following adjustments are made:
-   * - `.container` and `hui-card-features` are set to `position: static` so the
-   *   feature can be positioned absolutely relative to `ha-card`
-   * - `ha-card` gets `overflow: hidden` to clip the feature to the card's border radius
-   * - `--row-size` is decremented by 1 to cancel the extra row reserved by HA
+   * The following adjustments are made: - `.container` and `hui-card-features`
+   * are set to `position: static` so the feature can be positioned absolutely
+   * relative to `ha-card` - `ha-card` gets `overflow: hidden` to clip the
+   * feature to the card's border radius - `--row-size` is decremented by 1 to
+   * cancel the extra row reserved by HA
    *
    * A MutationObserver watches for HA re-applying `--row-size` and immediately
    * corrects it. A `fixing` flag prevents infinite loops between our correction
    * and the observer callback.
    *
-   * Executed once per connection: the observer is tracked by the ResourceManager
-   * (disconnected on cleanup) and its presence serves as the re-entry guard.
+   * Executed once per connection: the observer is tracked by the
+   * ResourceManager (disconnected on cleanup) and its presence serves as the
+   * re-entry guard.
    *
    * @inspired by hass-progress-bar-feature (MIT License) — Copyright (c) ytilis
    * @see https://github.com/ytilis/hass-progress-bar-feature
    */
   #fixCardStyles() {
     if (!['top', 'bottom'].includes(this._cardView.config.bar_position)) return;
-    // CF5 - issue (medium) resolved - the MutationObserver was never disconnected: it kept observing the external card container after the feature left the DOM (leak + callbacks on a dead element). It is now tracked by the ResourceManager, and its presence replaces the #firstHack guard so a reconnection re-installs it.
+    // CF5 - issue (medium) resolved - the MutationObserver was never
+    // disconnected: it kept observing the external card container after the
+    // feature left the DOM (leak + callbacks on a dead element). It is now
+    // tracked by the ResourceManager, and its presence replaces the #firstHack
+    // guard so a reconnection re-installs it.
     if (!this._resourceManager || this._resourceManager.has('featureRowFix')) return;
     const cardContainer = DOMHelper.walkUpThroughShadow(this, '.card');
     if (!cardContainer) return;
@@ -17249,17 +18404,17 @@ class EntityProgressFeatures extends HACore {
   }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ EntityProgressTemplateBase
- * ========================================================================================
+ * ============================================================================
  *
- * HABase subclass for Jinja-driven template cards. Unlike standard cards, all display
- * fields (name, secondary, icon, percent, badge, bar_effect) are controlled via Jinja
- * template subscriptions rather than entity state.
+ * HABase subclass for Jinja-driven template cards. Unlike standard cards, all
+ * display fields (name, secondary, icon, percent, badge, bar_effect) are
+ * controlled via Jinja template subscriptions rather than entity state.
  *
- * Subclasses MAY override:
- * - _cardStructure  → static ObjStructure instance (e.g. 'badge' for template badges)
- * - _cardView       → view instance (e.g. BadgeTemplateView for template badges)
+ * Subclasses MAY override: - _cardStructure → static ObjStructure instance
+ * (e.g. 'badge' for template badges) - _cardView → view instance (e.g.
+ * BadgeTemplateView for template badges)
  *
  * @abstract
  * @extends HABase
@@ -17338,9 +18493,18 @@ class EntityProgressTemplateBase extends HABase {
       secondary: () => this._renderSecondary(content),
       icon: () => this._showIcon(content),
       percent: () => this._managePercent(content),
-      color: () => this._dom.setStyle(CARD.htmlStructure.card.element, CARD.style.dynamic.iconAndShape.color.var, ThemeManager.adaptColor(content)),
+      color: () =>
+        this._dom.setStyle(
+          CARD.htmlStructure.card.element,
+          CARD.style.dynamic.iconAndShape.color.var,
+          ThemeManager.adaptColor(content),
+        ),
       bar_color: () =>
-        this._dom.setStyle(CARD.htmlStructure.card.element, CARD.style.dynamic.progressBar.color.var, ThemeManager.adaptColor(content)),
+        this._dom.setStyle(
+          CARD.htmlStructure.card.element,
+          CARD.style.dynamic.progressBar.color.var,
+          ThemeManager.adaptColor(content),
+        ),
     };
   }
 
@@ -17349,14 +18513,22 @@ class EntityProgressTemplateBase extends HABase {
   }
 
   _renderSecondary(content) {
-    const hasLineBreak = /<br\s*\/?>/i.test(content);
-    const wrappedContent = hasLineBreak ? `<span class="multiline">${content}</span>` : `${content}`;
-    this._dom.toggleClass(CARD.htmlStructure.card.element, 'info-multiline', hasLineBreak);
-    this._dom.setHTML(CARD.htmlStructure.elements.secondaryInfoExtra.class, wrappedContent.trim());
+    // Template has no secondary-info-main slot at all (see
+    // StructureElements.secondaryInfoWrapperMinimal), so neither line ever
+    // needs the &nbsp; spacer that card/badge's _renderCustomInfo adds before
+    // main. `info-multiline` itself is applied via conditionalStyle
+    // (config-driven), not here.
+    const multiline = Boolean(this._cardView.config.multiline);
+    const [line1, line2] = this._splitAtFirstBreak(content);
+    this._dom.setHTML(CARD.htmlStructure.elements.secondaryInfoExtra.class, line1.trim());
+    if (multiline) this._dom.setHTML(CARD.htmlStructure.elements.secondaryInfoExtra2.class, (line2 ?? '').trim());
   }
 
   _managePercent(percent) {
-    // CF5 - issue (minor) resolved - a percent template returning a numeric string was compared lexicographically in getTrend ('9' < '45' is false → wrong trend); non-numeric results now show an explicit error icon instead of corrupting the trend and the bar CSS
+    // CF5 - issue (minor) resolved - a percent template returning a numeric
+    // string was compared lexicographically in getTrend ('9' < '45' is false →
+    // wrong trend); non-numeric results now show an explicit error icon instead
+    // of corrupting the trend and the bar CSS
     const value = is.number(percent) ? percent : is.strictNumericString(percent) ? Number(percent) : null;
     if (value === null) {
       this._updateTrend(NaN); // renders the error icon, keeps _lastPercent untouched
@@ -17370,11 +18542,20 @@ class EntityProgressTemplateBase extends HABase {
   // and with percent from _managePercent when the Jinja template resolves.
   _updateTrend(percent) {
     if (!this._cardView.config.trend_indicator) return;
-    // CF5 - issue (major) resolved - the paramless call from _updateDynamicElements ran getTrend(undefined), which clobbered _lastPercent on every refresh: the trend indicator stayed 'flat' whenever a hass update interleaved two Jinja percent pushes. Only Jinja pushes may update the trend.
+    // CF5 - issue (major) resolved - the paramless call from
+    // _updateDynamicElements ran getTrend(undefined), which clobbered
+    // _lastPercent on every refresh: the trend indicator stayed 'flat' whenever
+    // a hass update interleaved two Jinja percent pushes. Only Jinja pushes may
+    // update the trend.
     if (percent === undefined) return;
-    // NaN = invalid template result: show the error icon without touching _lastPercent
+    // NaN = invalid template result: show the error icon without touching
+    // _lastPercent
     const icon = Number.isNaN(percent) ? this._trendIcons.error : this._trendIcons[this._cardView.getTrend(percent)];
-    this._dom.setAttribute(CARD.htmlStructure.elements.trendIndicator.icon.class, CARD.style.icon.badge.default.attribute, icon);
+    this._dom.setAttribute(
+      CARD.htmlStructure.elements.trendIndicator.icon.class,
+      CARD.style.icon.badge.default.attribute,
+      icon,
+    );
   }
 
   _renderPercentCSS(percent) {
@@ -17388,9 +18569,9 @@ class EntityProgressTemplateBase extends HABase {
   }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 📦 EntityProgressTemplateCard
- * ========================================================================================
+ * ============================================================================
  *
  * ✅ HA CARD "entity-progress-card-template"
  *
@@ -17403,12 +18584,11 @@ class EntityProgressTemplateCard extends EntityProgressTemplateBase {
   static get _loggedMethods() {
     return [...super._loggedMethods, 'getCardSize', 'getLayoutOptions'];
   }
-
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 📦 EntityProgressTemplateBadge
- * ========================================================================================
+ * ============================================================================
  *
  * ✅ HA CARD "entity-progress-badge-template"
  *
@@ -17424,8 +18604,11 @@ class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
 
   setConfig(config) {
     super.setConfig(config);
-    // Defer refresh by one tick so HA finishes its own DOM update cycle before we read state.
-    // CF5 - issue (minor) resolved - the raw setTimeout was untracked and could fire after disconnect; routed through ResourceManager so cleanup() cancels it (the shared id also dedupes rapid setConfig calls)
+    // Defer refresh by one tick so HA finishes its own DOM update cycle before
+    // we read state. CF5 - issue (minor) resolved - the raw setTimeout was
+    // untracked and could fire after disconnect; routed through ResourceManager
+    // so cleanup() cancels it (the shared id also dedupes rapid setConfig
+    // calls)
     if (this.hass) this._resourceManager?.setTimeout(() => this.refresh(), 0, 'deferredRefresh');
   }
 
@@ -17434,15 +18617,15 @@ class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
   }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 📦 CARD/BADGE EDITOR
- ******************************************************************************************/
+ ******************************************************************************/
 
 const availableSpace = (gap = 16, factor = 0.5) => `calc((100% - ${gap}px) * ${factor})`;
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ EditorDOMHelper
- * ========================================================================================
+ * ============================================================================
  *
  * @class
  * @extends DOMHelper
@@ -17543,17 +18726,18 @@ class EditorDOMHelper extends DOMHelper {
   // ─── Dynamic selector ─────────────────────────────────────────────────────
 
   /**
-   * Updates the selector of a ha-selector field.
-   * Used for fields whose options depend on another field (e.g. attribute → entity).
+   * Updates the selector of a ha-selector field. Used for fields whose options
+   * depend on another field (e.g. attribute → entity).
    *
    * @param {string} name
    * @param {object} selector
    */
   updateSelector(name, selector) {
-    // Was reassigned unconditionally on every #updateFields() pass (i.e. every editor
-    // keystroke, for every field with selectorOf — not just the one being edited), forcing
-    // the child ha-selector's attribute picker to fully re-render each time regardless of
-    // whether the referenced entity actually changed. Value-cached like the other setters.
+    // Was reassigned unconditionally on every #updateFields() pass (i.e. every
+    // editor keystroke, for every field with selectorOf — not just the one
+    // being edited), forcing the child ha-selector's attribute picker to fully
+    // re-render each time regardless of whether the referenced entity actually
+    // changed. Value-cached like the other setters.
     const cacheKey = `${name}:selector`;
     const serialized = JSON.stringify(selector);
     if (this._appliedValues.get(cacheKey) === serialized) return;
@@ -17576,13 +18760,14 @@ class EditorDOMHelper extends DOMHelper {
    * @param {function} resolveValue — (def, config) => raw value
    */
   _applyContext(name, contextDef, config) {
-    // Same class of bug as updateSelector: reassigned a brand-new object on every
-    // #updateFields() pass (i.e. on every keystroke anywhere in the form, not just
-    // in this field), forcing the child selector (e.g. state_content's entity/attribute
-    // picker) to fully re-render every time regardless of whether anything changed.
+    // Same class of bug as updateSelector: reassigned a brand-new object on
+    // every #updateFields() pass (i.e. on every keystroke anywhere in the form,
+    // not just in this field), forcing the child selector (e.g. state_content's
+    // entity/attribute picker) to fully re-render every time regardless of
+    // whether anything changed.
     const cacheKey = `${name}:context`;
     const resolved = Object.fromEntries(
-      Object.entries(contextDef).map(([key, configKey]) => [key, config[configKey] ?? ''])
+      Object.entries(contextDef).map(([key, configKey]) => [key, config[configKey] ?? '']),
     );
     const serialized = JSON.stringify(resolved);
     if (this._appliedValues.get(cacheKey) === serialized) return;
@@ -17613,8 +18798,9 @@ class EditorDOMHelper extends DOMHelper {
       const resolved = def.selectorOf.includes('.')
         ? def.selectorOf.split('.').reduce((obj, k) => obj?.[k], config)
         : config[def.selectorOf];
-      // The source key can hold a non-string shape (watermark.low: { jinja }) — the native
-      // attribute selector expects an entity-id string, so anything else degrades to ''.
+      // The source key can hold a non-string shape (watermark.low: { jinja }) —
+      // the native attribute selector expects an entity-id string, so anything
+      // else degrades to ''.
       this.updateSelector(name, { attribute: { entity_id: is.string(resolved) ? resolved : '' } });
     }
 
@@ -17623,7 +18809,8 @@ class EditorDOMHelper extends DOMHelper {
       this._applyContext(name, def.context, config);
     }
 
-    // Champs virtuels — pas de valeur dans le config, géré par showIf uniquement
+    // Champs virtuels — pas de valeur dans le config, géré par showIf
+    // uniquement
     if (def.virtual) {
       this._updateVirtualValue(name, def, config);
       return;
@@ -17634,14 +18821,15 @@ class EditorDOMHelper extends DOMHelper {
     const val = def.invert ? !raw : raw;
     this.updateValue(name, val);
 
-    // Allow elements with updateConfig (e.g. chips fields) to receive full config
+    // Allow elements with updateConfig (e.g. chips fields) to receive full
+    // config
     const el = this._domElements.get(name);
     if (el && is.func(el.updateConfig)) el.updateConfig(config);
 
-    // Inject effective default_action so ha-selector renders "Default (action-name)"
+    // Inject effective default_action so ha-selector renders "Default
+    // (action-name)"
     if (def.type === 'action') this._updateActionSelector(name, def, config);
   }
-
 
   _updateVirtualValue(name, def, config) {
     if (!def.resolveVirtual) return;
@@ -17663,7 +18851,9 @@ const CHIPS_HOST_STYLE =
   ' color: var(--text-primary-color, #fff); }';
 
 class ChipsBase extends HTMLElement {
-  // CF5 - issue (major) resolved - setLabels() is called by the editor before the element is connected, when the chips Map is still empty; labels are now stored and applied at build time
+  // CF5 - issue (major) resolved - setLabels() is called by the editor before
+  // the element is connected, when the chips Map is still empty; labels are now
+  // stored and applied at build time
   _labels = null;
   #labelText = '';
   #labelEl = null;
@@ -17674,7 +18864,9 @@ class ChipsBase extends HTMLElement {
     this._render();
   }
 
-  get label() { return this.#labelText; }
+  get label() {
+    return this.#labelText;
+  }
   set label(val) {
     this.#labelText = val ?? '';
     if (this.#labelEl) this.#labelEl.textContent = this.#labelText;
@@ -17689,7 +18881,10 @@ class ChipsBase extends HTMLElement {
     chip.type = 'button';
     chip.className = 'chip';
     chip.textContent = this._chipLabel(value);
-    chip.addEventListener('click', (clickEvent) => { clickEvent.stopPropagation(); onToggle(value); });
+    chip.addEventListener('click', (clickEvent) => {
+      clickEvent.stopPropagation();
+      onToggle(value);
+    });
     return chip;
   }
 
@@ -17719,19 +18914,19 @@ class EntityProgressEffectChips extends ChipsBase {
   static ELEMENT_NAME = 'entity-progress-effect-chips';
   static #EFFECTS = [
     { value: 'radius' },
-    { value: 'glass',            showIf: (c) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode) },
-    { value: 'gradient',         showIf: (c) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode) },
+    { value: 'glass', showIf: (c) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode) },
+    { value: 'gradient', showIf: (c) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode) },
     { value: 'gradient_reverse', showIf: (c) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode) },
     { value: 'shimmer' },
     { value: 'shimmer_reverse' },
   ];
 
   static #INCOMPATIBLE = {
-    gradient:         ['gradient_reverse', 'glass'],
+    gradient: ['gradient_reverse', 'glass'],
     gradient_reverse: ['gradient', 'glass'],
-    glass:            ['gradient', 'gradient_reverse'],
-    shimmer:          ['shimmer_reverse'],
-    shimmer_reverse:  ['shimmer'],
+    glass: ['gradient', 'gradient_reverse'],
+    shimmer: ['shimmer_reverse'],
+    shimmer_reverse: ['shimmer'],
   };
 
   #selected = [];
@@ -17752,13 +18947,23 @@ class EntityProgressEffectChips extends ChipsBase {
     const updated = isSelected
       ? this.#selected.filter((v) => v !== value)
       : [...this.#selected.filter((v) => !blocked.includes(v)), value];
-    this.dispatchEvent(new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value: updated }, bubbles: true, composed: true }));
+    this.dispatchEvent(
+      new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value: updated }, bubbles: true, composed: true }),
+    );
   }
 
-  get value() { return this.#selected; }
-  set value(val) { this.#selected = is.array(val) ? val : []; this._render(); }
+  get value() {
+    return this.#selected;
+  }
+  set value(val) {
+    this.#selected = is.array(val) ? val : [];
+    this._render();
+  }
 
-  updateConfig(config) { this.#config = config ?? {}; this._render(); }
+  updateConfig(config) {
+    this.#config = config ?? {};
+    this._render();
+  }
 
   setLabels(labels) {
     this._labels = labels ?? null;
@@ -17771,7 +18976,9 @@ class EntityProgressEffectChips extends ChipsBase {
       const chip = this.#chips.get(effect.value);
       if (!chip) continue;
       const visible = !effect.showIf || effect.showIf(this.#config);
-      const blocked = (EntityProgressEffectChips.#INCOMPATIBLE[effect.value] ?? []).some((v) => this.#selected.includes(v));
+      const blocked = (EntityProgressEffectChips.#INCOMPATIBLE[effect.value] ?? []).some((v) =>
+        this.#selected.includes(v),
+      );
       chip.style.display = visible && !blocked ? '' : 'none';
       chip.classList.toggle('selected', this.#selected.includes(effect.value));
     }
@@ -17797,11 +19004,18 @@ class EntityProgressHideChips extends ChipsBase {
     const updated = this.#selected.includes(value)
       ? this.#selected.filter((v) => v !== value)
       : [...this.#selected, value];
-    this.dispatchEvent(new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value: updated }, bubbles: true, composed: true }));
+    this.dispatchEvent(
+      new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value: updated }, bubbles: true, composed: true }),
+    );
   }
 
-  get value() { return this.#selected; }
-  set value(val) { this.#selected = is.array(val) ? val : []; this._render(); }
+  get value() {
+    return this.#selected;
+  }
+  set value(val) {
+    this.#selected = is.array(val) ? val : [];
+    this._render();
+  }
 
   setLabels(labels) {
     this._labels = labels ?? null;
@@ -17817,9 +19031,10 @@ if (!customElements.get(EntityProgressHideChips.ELEMENT_NAME)) {
   customElements.define(EntityProgressHideChips.ELEMENT_NAME, EntityProgressHideChips);
 }
 
-// Single-select variant: exactly one mode is always active (no deselect-to-empty),
-// unlike EffectChips/HideChips which toggle membership in an array. Concrete subclasses
-// only need to declare `static MODES`; `this.constructor.MODES` resolves polymorphically.
+// Single-select variant: exactly one mode is always active (no
+// deselect-to-empty), unlike EffectChips/HideChips which toggle membership in
+// an array. Concrete subclasses only need to declare `static MODES`;
+// `this.constructor.MODES` resolves polymorphically.
 class SingleSelectChipsBase extends ChipsBase {
   #selected = null;
   #chips = new Map();
@@ -17836,7 +19051,9 @@ class SingleSelectChipsBase extends ChipsBase {
     this.dispatchEvent(new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value }, bubbles: true, composed: true }));
   }
 
-  get value() { return this.#selected ?? this.constructor.MODES[0]; }
+  get value() {
+    return this.#selected ?? this.constructor.MODES[0];
+  }
   set value(val) {
     this.#selected = this.constructor.MODES.includes(val) ? val : this.constructor.MODES[0];
     this._render();
@@ -17852,12 +19069,13 @@ class SingleSelectChipsBase extends ChipsBase {
   }
 }
 
-// One element for every "value source" selector (min_value, max_value, watermark.low,
-// watermark.high): the modes are identical, and everything field-specific (id, label,
-// localized option labels, resolveVirtual/onVirtualChange) is per-instance, set by
-// #buildModeChipsField from the field definition — the class itself carries nothing to
-// specialize. A field whose modes ever diverge stops being a "value source" and gets its
-// own class, like theme_mode/bar_stack_mode below.
+// One element for every "value source" selector (min_value, max_value,
+// watermark.low, watermark.high): the modes are identical, and everything
+// field-specific (id, label, localized option labels,
+// resolveVirtual/onVirtualChange) is per-instance, set by #buildModeChipsField
+// from the field definition — the class itself carries nothing to specialize. A
+// field whose modes ever diverge stops being a "value source" and gets its own
+// class, like theme_mode/bar_stack_mode below.
 class EntityProgressValueSourceModeChips extends SingleSelectChipsBase {
   static ELEMENT_NAME = 'entity-progress-value-source-mode-chips';
   static MODES = ['standard', 'entity', 'jinja'];
@@ -17882,9 +19100,9 @@ if (!customElements.get(EntityProgressBarStackModeChips.ELEMENT_NAME)) {
   customElements.define(EntityProgressBarStackModeChips.ELEMENT_NAME, EntityProgressBarStackModeChips);
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 📝 ListEditorBase
- * ========================================================================================
+ * ============================================================================
  * Shared base for custom elements that edit an array of row-objects: a label, a
  * list container, connectedCallback's build-once-then-render lifecycle, the
  * value setter, and delete-by-index all follow the exact same shape regardless
@@ -17907,13 +19125,17 @@ class ListEditorBase extends HTMLElement {
     this._render();
   }
 
-  get label() { return this._labelText; }
+  get label() {
+    return this._labelText;
+  }
   set label(val) {
     this._labelText = val ?? '';
     if (this._labelEl) this._labelEl.textContent = this._labelText;
   }
 
-  get value() { return this._value; }
+  get value() {
+    return this._value;
+  }
   set value(val) {
     this._value = is.array(val) ? val.filter(is.plainObject) : [];
     if (this._list) this._render();
@@ -17938,7 +19160,9 @@ class EntityProgressBarStackEditor extends ListEditorBase {
   #hass = null;
   #addBtn = null;
 
-  get hass() { return this.#hass; }
+  get hass() {
+    return this.#hass;
+  }
   set hass(hass) {
     this.#hass = hass;
     for (const el of this.shadowRoot?.querySelectorAll(HA_SELECTOR_TAG) ?? []) el.hass = hass;
@@ -18008,11 +19232,13 @@ class EntityProgressBarStackEditor extends ListEditorBase {
 
   _dispatch() {
     const clean = this._value.filter((item) => item.entity);
-    this.dispatchEvent(new CustomEvent(VALUE_CHANGED_EVENT, {
-      detail: { value: clean.length ? clean : undefined },
-      bubbles: true,
-      composed: true,
-    }));
+    this.dispatchEvent(
+      new CustomEvent(VALUE_CHANGED_EVENT, {
+        detail: { value: clean.length ? clean : undefined },
+        bubbles: true,
+        composed: true,
+      }),
+    );
   }
 
   #entityField(item, index) {
@@ -18057,10 +19283,11 @@ class EntityProgressBarStackEditor extends ListEditorBase {
     return el;
   }
 
-  // 'net': subtracted from the algebraic total. 'stacked'/'proportional' + center_zero:
-  // placed on the negative arm instead of the positive one. No effect otherwise (harmless
-  // no-op) - kept simple rather than conditionally hiding this per-row based on sibling
-  // fields (mode, center_zero) the row editor doesn't otherwise need to know about.
+  // 'net': subtracted from the algebraic total. 'stacked'/'proportional' +
+  // center_zero: placed on the negative arm instead of the positive one. No
+  // effect otherwise (harmless no-op) - kept simple rather than conditionally
+  // hiding this per-row based on sibling fields (mode, center_zero) the row
+  // editor doesn't otherwise need to know about.
   #subtractField(item, index) {
     const el = document.createElement(HA_SELECTOR_TAG);
     el.hass = this.#hass;
@@ -18084,7 +19311,8 @@ class EntityProgressBarStackEditor extends ListEditorBase {
       delBtn.className = 'del-btn';
       delBtn.title = 'Delete';
       const delIcon = document.createElement(HA_SVG_ICON_TAG);
-      delIcon.path = 'M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2C6.47,2 2,6.47 2,12C2,18.53 6.47,22 12,22C17.53,22 22,17.53 22,12C22,6.47 17.53,2 12,2M14.59,8L12,10.59L9.41,8L8,9.41L10.59,12L8,14.59L9.41,16L12,13.41L14.59,16L16,14.59L13.41,12L16,9.41L14.59,8Z';
+      delIcon.path =
+        'M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2C6.47,2 2,6.47 2,12C2,18.53 6.47,22 12,22C17.53,22 22,17.53 22,12C22,6.47 17.53,2 12,2M14.59,8L12,10.59L9.41,8L8,9.41L10.59,12L8,14.59L9.41,16L12,13.41L14.59,16L16,14.59L13.41,12L16,9.41L14.59,8Z';
       delBtn.appendChild(delIcon);
       delBtn.addEventListener('click', () => this._deleteRow(i));
 
@@ -18111,9 +19339,9 @@ if (!customElements.get(EntityProgressBarStackEditor.ELEMENT_NAME)) {
   customElements.define(EntityProgressBarStackEditor.ELEMENT_NAME, EntityProgressBarStackEditor);
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🎨 EntityProgressCustomThemeEditor
- * ========================================================================================
+ * ============================================================================
  * Custom element that renders an editable list of custom_theme zones, each a
  * contiguous { min, max, color?, icon_color?, bar_color?, icon? } range.
  * Mirrors EntityProgressBarStackEditor's row-list pattern (label, list, add
@@ -18135,7 +19363,9 @@ class EntityProgressCustomThemeEditor extends ListEditorBase {
     if (this.#addBtn) this.#addBtn.lastChild.textContent = this.#addLabel;
   }
 
-  get hass() { return this.#hass; }
+  get hass() {
+    return this.#hass;
+  }
   set hass(hass) {
     this.#hass = hass;
     for (const el of this.shadowRoot?.querySelectorAll(HA_SELECTOR_TAG) ?? []) el.hass = hass;
@@ -18209,11 +19439,13 @@ class EntityProgressCustomThemeEditor extends ListEditorBase {
     const isEmpty = (item) =>
       !is.number(item.min) && !is.number(item.max) && !item.color && !item.icon_color && !item.bar_color && !item.icon;
     const clean = this._value.filter((item) => !isEmpty(item));
-    this.dispatchEvent(new CustomEvent(VALUE_CHANGED_EVENT, {
-      detail: { value: clean.length ? clean : undefined },
-      bubbles: true,
-      composed: true,
-    }));
+    this.dispatchEvent(
+      new CustomEvent(VALUE_CHANGED_EVENT, {
+        detail: { value: clean.length ? clean : undefined },
+        bubbles: true,
+        composed: true,
+      }),
+    );
   }
 
   #numberField(item, index, key) {
@@ -18266,7 +19498,8 @@ class EntityProgressCustomThemeEditor extends ListEditorBase {
       delBtn.className = 'del-btn';
       delBtn.title = 'Delete';
       const delIcon = document.createElement(HA_SVG_ICON_TAG);
-      delIcon.path = 'M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2C6.47,2 2,6.47 2,12C2,18.53 6.47,22 12,22C17.53,22 22,17.53 22,12C22,6.47 17.53,2 12,2M14.59,8L12,10.59L9.41,8L8,9.41L10.59,12L8,14.59L9.41,16L12,13.41L14.59,16L16,14.59L13.41,12L16,9.41L14.59,8Z';
+      delIcon.path =
+        'M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2C6.47,2 2,6.47 2,12C2,18.53 6.47,22 12,22C17.53,22 22,17.53 22,12C22,6.47 17.53,2 12,2M14.59,8L12,10.59L9.41,8L8,9.41L10.59,12L8,14.59L9.41,16L12,13.41L14.59,16L16,14.59L13.41,12L16,9.41L14.59,8Z';
       delBtn.appendChild(delIcon);
       delBtn.addEventListener('click', () => this._deleteRow(i));
 
@@ -18300,9 +19533,9 @@ if (!customElements.get(EntityProgressCustomThemeEditor.ELEMENT_NAME)) {
   customElements.define(EntityProgressCustomThemeEditor.ELEMENT_NAME, EntityProgressCustomThemeEditor);
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ EditorBase
- * ========================================================================================
+ * ============================================================================
  *
  * @class
  * @extends HTMLElement
@@ -18339,7 +19572,9 @@ class EditorBase extends HTMLElement {
   _configHelper = new BaseConfigHelper();
 
   get #localizedOptions() {
-    // CF5 - issue (minor) resolved - localize() returns the key string before translations load; select builders then crashed on Object.entries(undefined). Fall back to the default language.
+    // CF5 - issue (minor) resolved - localize() returns the key string before
+    // translations load; select builders then crashed on
+    // Object.entries(undefined). Fall back to the default language.
     const options = this.#hassProvider.localize('editor.option');
     return is.plainObject(options) ? options : TRANSLATIONS[CARD.config.language].editor.option;
   }
@@ -18378,12 +19613,11 @@ class EditorBase extends HTMLElement {
 
   setConfig(config) {
     if (!config) throw new Error(CARD.config.configError);
-    // _-prefixed keys are ephemeral UI state (e.g. _show_all_actions): stripped from
-    // config-changed before dispatch so HA never saves them, but preserved here across
-    // setConfig calls so the editor state survives HA's config-changed → setConfig roundtrip.
-    const uiState = Object.fromEntries(
-      Object.entries(this.#config ?? {}).filter(([k]) => k.startsWith('_'))
-    );
+    // _-prefixed keys are ephemeral UI state (e.g. _show_all_actions): stripped
+    // from config-changed before dispatch so HA never saves them, but preserved
+    // here across setConfig calls so the editor state survives HA's
+    // config-changed → setConfig roundtrip.
+    const uiState = Object.fromEntries(Object.entries(this.#config ?? {}).filter(([k]) => k.startsWith('_')));
     this._configHelper.config = config;
     this.#config = { ...config, ...uiState };
     this.#updateFields();
@@ -18414,31 +19648,34 @@ class EditorBase extends HTMLElement {
     this.shadowRoot.append(style, container);
   }
 
-  // Deprecated options this card can rewrite in one click, top-right of the editor —
-  // see docs/troubleshooting.md#deprecated-options for the user-facing explanation.
-  // Aliases mirror types.theme's own internal remap exactly (kept in sync manually: both
-  // are small, frozen/historical lists that are very unlikely to grow further).
+  // Deprecated options this card can rewrite in one click, top-right of the
+  // editor — see docs/troubleshooting.md#deprecated-options for the user-facing
+  // explanation. Aliases mirror types.theme's own internal remap exactly (kept
+  // in sync manually: both are small, frozen/historical lists that are very
+  // unlikely to grow further).
   static #THEME_ALIASES = { battery: 'optimal_when_high', memory: 'optimal_when_low', cpu: 'optimal_when_low' };
 
   static #hasDeprecatedOptions(config) {
     return Boolean(
       is.nonEmptyString(config?.max_value) ||
-        config?.disable_unit !== undefined ||
-        is.array(config?.additions) ||
-        config?.navigate_to !== undefined ||
-        config?.show_more_info !== undefined ||
-        EditorBase.#THEME_ALIASES[config?.theme],
+      config?.disable_unit !== undefined ||
+      is.array(config?.additions) ||
+      config?.navigate_to !== undefined ||
+      config?.show_more_info !== undefined ||
+      EditorBase.#THEME_ALIASES[config?.theme],
     );
   }
 
-  // Rewrites deprecated syntax to its modern equivalent only — never the unrelated defaults
-  // _customizeConfig also applies (center_zero's min_value fill-in, device_class attribute
-  // defaults), so the button only ever changes what it documents. `navigate_to`/`show_more_info`
-  // are deleted rather than converted to tap_action: both have been fully inert since v1.2.0,
-  // so reconstructing one from a value that hasn't run in years would be a guess, not a migration
-  // — and could clobber a tap_action the user configured since. max_value/disable_unit/additions
-  // are delegated to the active config helper's own _migrateLegacyOptions, so Template editors
-  // (whose schema never had those options) safely no-op there instead of needing a special case.
+  // Rewrites deprecated syntax to its modern equivalent only — never the
+  // unrelated defaults _customizeConfig also applies (center_zero's min_value
+  // fill-in, device_class attribute defaults), so the button only ever changes
+  // what it documents. `navigate_to`/`show_more_info` are deleted rather than
+  // converted to tap_action: both have been fully inert since v1.2.0, so
+  // reconstructing one from a value that hasn't run in years would be a guess,
+  // not a migration — and could clobber a tap_action the user configured since.
+  // max_value/disable_unit/additions are delegated to the active config
+  // helper's own _migrateLegacyOptions, so Template editors (whose schema never
+  // had those options) safely no-op there instead of needing a special case.
   static #migrateDeprecatedConfig(config, configHelper) {
     let migrated = configHelper.constructor._migrateLegacyOptions(config);
     const themeAlias = EditorBase.#THEME_ALIASES[migrated.theme];
@@ -18457,7 +19694,9 @@ class EditorBase extends HTMLElement {
     button.id = fieldName;
     button.append(this.#hassProvider.localize(EDITOR_FIELD_NS)?.migrate_config ?? 'Migrate config');
     button.addEventListener('click', () => {
-      button.dispatchEvent(new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value: true }, bubbles: true, composed: true }));
+      button.dispatchEvent(
+        new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value: true }, bubbles: true, composed: true }),
+      );
     });
 
     const field = {
@@ -18510,7 +19749,8 @@ class EditorBase extends HTMLElement {
     });
 
     const buildBoxSelect = (opts, imageFn = null) => ({
-      // see https://github.com/home-assistant/frontend/blob/dev/src/panels/lovelace/editor/config-elements/hui-tile-card-editor.ts#L158
+      // see
+      // https://github.com/home-assistant/frontend/blob/dev/src/panels/lovelace/editor/config-elements/hui-tile-card-editor.ts#L158
       select: {
         mode: 'box',
         options: Object.entries(opts).map(([value, label]) => ({
@@ -18522,7 +19762,8 @@ class EditorBase extends HTMLElement {
     });
     const options = this.#localizedOptions;
     const tileImage = (value) => ({
-      // see https://github.com/home-assistant/frontend/blob/dev/src/panels/lovelace/editor/config-elements/hui-tile-card-editor.ts#L158
+      // see
+      // https://github.com/home-assistant/frontend/blob/dev/src/panels/lovelace/editor/config-elements/hui-tile-card-editor.ts#L158
       src: `/static/images/form/tile_content_layout_${value}.svg`,
       src_dark: `/static/images/form/tile_content_layout_${value}_dark.svg`,
       flip_rtl: true,
@@ -18572,22 +19813,24 @@ class EditorBase extends HTMLElement {
     const isInverted = field.invert ?? false;
 
     return {
-      label: field.noLabel ? '' : (() => {
-        const explicit = isNested
-          ? this.#localizedOptions?.[field.name.split('.')[0]]?.[childKey]
-          : this.#hassProvider.localize(EDITOR_FIELD_NS)[field.name];
-        if (explicit !== undefined) return explicit;
-        // Guard rail: keep the "<Noun> color" pattern already established by
-        // badge_color/bar_color/color/alert_when.color for any future "..._color"
-        // field that ships without its own translation yet, instead of silently
-        // falling back to the raw key name.
-        const colorMatch = !isNested && field.name.match(/^(.+)_color$/);
-        if (colorMatch) {
-          const noun = colorMatch[1].replace(/_/g, ' ');
-          return `${noun.charAt(0).toUpperCase()}${noun.slice(1)} color`;
-        }
-        return undefined;
-      })(),
+      label: field.noLabel
+        ? ''
+        : (() => {
+            const explicit = isNested
+              ? this.#localizedOptions?.[field.name.split('.')[0]]?.[childKey]
+              : this.#hassProvider.localize(EDITOR_FIELD_NS)[field.name];
+            if (explicit !== undefined) return explicit;
+            // Guard rail: keep the "<Noun> color" pattern already established
+            // by badge_color/bar_color/color/alert_when.color for any future
+            // "..._color" field that ships without its own translation yet,
+            // instead of silently falling back to the raw key name.
+            const colorMatch = !isNested && field.name.match(/^(.+)_color$/);
+            if (colorMatch) {
+              const noun = colorMatch[1].replace(/_/g, ' ');
+              return `${noun.charAt(0).toUpperCase()}${noun.slice(1)} color`;
+            }
+            return undefined;
+          })(),
       value: isInverted ? !raw : raw,
       isInverted,
     };
@@ -18598,9 +19841,7 @@ class EditorBase extends HTMLElement {
     el.id = field.name;
     el.style.width = '100%';
     el.setLabels(this.#localizedOptions?.[optionKey]);
-    el.value = is.array(this.#config?.[field.target ?? field.name])
-      ? this.#config[field.target ?? field.name]
-      : [];
+    el.value = is.array(this.#config?.[field.target ?? field.name]) ? this.#config[field.target ?? field.name] : [];
     this.#dom.registerField(field.name, el, field);
     return el;
   }
@@ -18611,16 +19852,18 @@ class EditorBase extends HTMLElement {
     el.style.width = '100%';
     el.label = this.#hassProvider.localize(EDITOR_FIELD_NS)?.[field.name] ?? field.name;
     el.setLabels(this.#localizedOptions?.[field.name]);
-    // Mirrors the generic ha-selector path (#resolveFieldMeta), not #buildChipsField:
-    // this is a single virtual string value (resolveVirtual), not an array read from config[target].
+    // Mirrors the generic ha-selector path (#resolveFieldMeta), not
+    // #buildChipsField: this is a single virtual string value (resolveVirtual),
+    // not an array read from config[target].
     el.value = this.#resolveFieldMeta(field).value;
     this.#dom.registerField(field.name, el, field);
     return el;
   }
 
-  // Shared by every ListEditorBase-backed field. labelKey is passed separately from
-  // field.name because a dot-path field ('bar_stack.entities') labels itself under its
-  // parent's translation key ('bar_stack'); rows is the config array the editor round-trips.
+  // Shared by every ListEditorBase-backed field. labelKey is passed separately
+  // from field.name because a dot-path field ('bar_stack.entities') labels
+  // itself under its parent's translation key ('bar_stack'); rows is the config
+  // array the editor round-trips.
   #buildListEditorField(field, tagName, labelKey, rows) {
     const el = document.createElement(tagName);
     el.id = field.name;
@@ -18632,9 +19875,10 @@ class EditorBase extends HTMLElement {
     return el;
   }
 
-  // Dispatch table (mirrors #getSelectorForType's own pattern) instead of a chain of
-  // sequential ifs, which had grown one field type at a time into a cognitive-complexity
-  // warning — a lookup miss just falls through to the generic ha-selector path below.
+  // Dispatch table (mirrors #getSelectorForType's own pattern) instead of a
+  // chain of sequential ifs, which had grown one field type at a time into a
+  // cognitive-complexity warning — a lookup miss just falls through to the
+  // generic ha-selector path below.
   #buildSpecialField(field) {
     const builders = {
       effect_chips: () => this.#buildChipsField(field, EntityProgressEffectChips.ELEMENT_NAME, 'bar_effect'),
@@ -18646,9 +19890,19 @@ class EditorBase extends HTMLElement {
       theme_mode: () => this.#buildModeChipsField(field, EntityProgressThemeModeChips.ELEMENT_NAME),
       bar_stack_mode: () => this.#buildModeChipsField(field, EntityProgressBarStackModeChips.ELEMENT_NAME),
       bar_stack_editor: () =>
-        this.#buildListEditorField(field, EntityProgressBarStackEditor.ELEMENT_NAME, 'bar_stack', this.#config?.bar_stack?.entities),
+        this.#buildListEditorField(
+          field,
+          EntityProgressBarStackEditor.ELEMENT_NAME,
+          'bar_stack',
+          this.#config?.bar_stack?.entities,
+        ),
       custom_theme_editor: () =>
-        this.#buildListEditorField(field, EntityProgressCustomThemeEditor.ELEMENT_NAME, field.name, this.#config?.[field.name]),
+        this.#buildListEditorField(
+          field,
+          EntityProgressCustomThemeEditor.ELEMENT_NAME,
+          field.name,
+          this.#config?.[field.name],
+        ),
     };
     return builders[field.type]?.();
   }
@@ -18675,9 +19929,7 @@ class EditorBase extends HTMLElement {
     el.isInverted = isInverted;
 
     if (field.context) {
-      el.context = Object.fromEntries(
-        Object.entries(field.context).map(([k, v]) => [k, this.#config[v] ?? ''])
-      );
+      el.context = Object.fromEntries(Object.entries(field.context).map(([k, v]) => [k, this.#config[v] ?? '']));
     }
 
     this.#dom.registerField(field.name, el, field);
@@ -18698,14 +19950,15 @@ class EditorBase extends HTMLElement {
     if (def.virtual && def.resolveVirtual) return def.resolveVirtual(rawConfig);
 
     // template/action always use raw config — see #updateFields comment.
-    const config = (negotiated && !['template', 'action'].includes(def.type)) ? negotiated : rawConfig;
+    const config = negotiated && !['template', 'action'].includes(def.type) ? negotiated : rawConfig;
 
     const isNested = def.name.includes('.');
     const [parentKey, childKey] = isNested ? def.name.split('.') : [def.name, null];
     const key = def.target ?? def.name;
     const fallback = EditorBase.#fallback(def, config, empty);
 
-    // Array membership is always checked on raw config (explicit user selections).
+    // Array membership is always checked on raw config (explicit user
+    // selections).
     if (isNested && def.array) return rawConfig[parentKey]?.includes(childKey) ?? false;
     if (isNested) {
       const val = config[parentKey]?.[childKey];
@@ -18717,15 +19970,17 @@ class EditorBase extends HTMLElement {
 
   // ─── UPDATE (every setConfig) ─────────────────────────────────────────────
 
-  // CF5 - issue (major) resolved - setConfig() is called on every keystroke of the raw YAML
-  // editor too (HA keeps the visual editor instance mounted, just hidden, while "Edit in
-  // YAML" is active) — this used to run the full #applyUpdateFields() pass (iterate every
-  // registered field: showIf, selectorOf, context, value) synchronously on every single
-  // character typed, with no throttling, unlike #sendConfig which only covers the outgoing
-  // direction. rAF-coalescing here mirrors that fix for the incoming direction: whatever
-  // #config/_configHelper.config hold when the frame finally runs is always the latest,
-  // since those are still assigned synchronously in setConfig() — only the expensive DOM
-  // pass is deferred and collapsed to at most once per frame.
+  // CF5 - issue (major) resolved - setConfig() is called on every keystroke of
+  // the raw YAML editor too (HA keeps the visual editor instance mounted, just
+  // hidden, while "Edit in YAML" is active) — this used to run the full
+  // #applyUpdateFields() pass (iterate every registered field: showIf,
+  // selectorOf, context, value) synchronously on every single character typed,
+  // with no throttling, unlike #sendConfig which only covers the outgoing
+  // direction. rAF-coalescing here mirrors that fix for the incoming direction:
+  // whatever #config/_configHelper.config hold when the frame finally runs is
+  // always the latest, since those are still assigned synchronously in
+  // setConfig() — only the expensive DOM pass is deferred and collapsed to at
+  // most once per frame.
   #updateFieldsScheduled = false;
 
   #updateFields() {
@@ -18738,11 +19993,12 @@ class EditorBase extends HTMLElement {
   }
 
   #applyUpdateFields() {
-    // template/action fields read from raw config to avoid Jinja flicker during typing:
-    // the validated config would fall back to default (e.g. []) the moment the expression
-    // is temporarily malformed, causing the UI to flash between chip and Jinja mode.
-    // All other fields (select, toggle, number…) read from the negotiated config so that
-    // entity defaults (e.g. a light's default %) are reflected immediately.
+    // template/action fields read from raw config to avoid Jinja flicker during
+    // typing: the validated config would fall back to default (e.g. []) the
+    // moment the expression is temporarily malformed, causing the UI to flash
+    // between chip and Jinja mode. All other fields (select, toggle, number…)
+    // read from the negotiated config so that entity defaults (e.g. a light's
+    // default %) are reflected immediately.
     const negotiated = this._configHelper.config;
     this.#dom.updateAll(this.#config, (def, raw) => EditorBase.#resolveValue(def, raw, negotiated), negotiated);
   }
@@ -18754,9 +20010,10 @@ class EditorBase extends HTMLElement {
     const newConfig = def.onVirtualChange(value, { ...this.#config });
     if (newConfig) {
       this.#config = newConfig;
-      // Update fields ourselves (next frame): HA may skip calling setConfig back if the
-      // stripped config is unchanged (e.g. toggling _show_all_actions produces the same
-      // visible config as before), so we can't rely on that round trip alone.
+      // Update fields ourselves (next frame): HA may skip calling setConfig
+      // back if the stripped config is unchanged (e.g. toggling
+      // _show_all_actions produces the same visible config as before), so we
+      // can't rely on that round trip alone.
       this.#updateFields();
       this.#sendConfig(newConfig);
     }
@@ -18765,10 +20022,11 @@ class EditorBase extends HTMLElement {
   #handleNestedArrayField(parentKey, childKey, value) {
     const current = [...(this.#config[parentKey] ?? [])];
     const updated = value ? [...current, childKey] : current.filter((v) => v !== childKey);
-    // Mirrors #handleVirtualField: keep #config in sync locally instead of waiting for
-    // HA's setConfig round trip, which #sendConfig now defers by up to one frame — without
-    // this, two different fields edited within that same frame would each compute their
-    // newConfig off a stale base and could clobber each other's change on send.
+    // Mirrors #handleVirtualField: keep #config in sync locally instead of
+    // waiting for HA's setConfig round trip, which #sendConfig now defers by up
+    // to one frame — without this, two different fields edited within that same
+    // frame would each compute their newConfig off a stale base and could
+    // clobber each other's change on send.
     this.#config = { ...this.#config, [parentKey]: updated };
     this.#sendConfig(this.#config);
   }
@@ -18817,19 +20075,22 @@ class EditorBase extends HTMLElement {
     else this.#handleStdField(def, key, value);
   }
 
-  // CF5 - issue (major) resolved - a single #sendConfig() round trip is expensive: dispatching
-  // config-changed makes HA call setConfig back on this editor (full schema re-validation +
-  // #updateFields over every registered field) AND re-render the separate preview card. A
-  // number field's native spinner arrows fire a native 'input' event on every repeat while
-  // held (browser auto-repeat, ~20-30/s) — each one used to trigger that full round trip
-  // synchronously, and once the round-trip cost caught up with the repeat rate the event
-  // queue backlogged faster than it could drain, which is what Chrome's "Page Unresponsive"
-  // warning reports. rAF-coalescing collapses any burst arriving within/faster than a frame
-  // into a single dispatch of the latest config — each individual input event now only does
-  // O(1) work (store + maybe schedule), so the browser can no longer fall behind regardless
-  // of how fast native events fire. The 1-frame delay (~16ms) is not perceptible.
+  // CF5 - issue (major) resolved - a single #sendConfig() round trip is
+  // expensive: dispatching config-changed makes HA call setConfig back on this
+  // editor (full schema re-validation + #updateFields over every registered
+  // field) AND re-render the separate preview card. A number field's native
+  // spinner arrows fire a native 'input' event on every repeat while held
+  // (browser auto-repeat, ~20-30/s) — each one used to trigger that full round
+  // trip synchronously, and once the round-trip cost caught up with the repeat
+  // rate the event queue backlogged faster than it could drain, which is what
+  // Chrome's "Page Unresponsive" warning reports. rAF-coalescing collapses any
+  // burst arriving within/faster than a frame into a single dispatch of the
+  // latest config — each individual input event now only does O(1) work (store
+  // + maybe schedule), so the browser can no longer fall behind regardless of
+  // how fast native events fire. The 1-frame delay (~16ms) is not perceptible.
   #sendConfig(config) {
-    // Strip _-prefixed UI state keys — they are editor-only and must never reach the saved YAML.
+    // Strip _-prefixed UI state keys — they are editor-only and must never
+    // reach the saved YAML.
     this.#pendingSentConfig = Object.fromEntries(Object.entries(config).filter(([k]) => !k.startsWith('_')));
     if (this.#sendConfigScheduled) return;
     this.#sendConfigScheduled = true;
@@ -18849,12 +20110,14 @@ class EditorBase extends HTMLElement {
   }
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ EditorFieldsType/EditorFactory
- * ========================================================================================
+ * ============================================================================
  */
 
-const field = (type) => (name, o = {}) => ({ name, type, ...o });
+const field =
+  (type) =>
+  (name, o = {}) => ({ name, type, ...o });
 
 const EditorFieldsType = {
   entity: field('entity'),
@@ -18875,16 +20138,17 @@ const wmSide = (side, defaultVal) => {
   const disableKey = `disable_${side}`;
   const attrType = `watermark${side.charAt(0).toUpperCase() + side.slice(1)}Attribute`;
   const modeType = `watermark_${side}_mode`;
-  const wm  = (extra) => (c) => Boolean(c.watermark) && extra(c);
-  const on  = (c) => !c.watermark?.[disableKey];
+  const wm = (extra) => (c) => Boolean(c.watermark) && extra(c);
+  const on = (c) => !c.watermark?.[disableKey];
   const ent = (c) => is.string(c.watermark?.[side]);
   const tpl = (c) => is.nonEmptyString(c.watermark?.[side]?.jinja);
   return {
     [`watermark.${disableKey}`]: EditorFieldsType.toggle(`watermark.${disableKey}`, {
       showIf: (c) => Boolean(c.watermark),
     }),
-    // A 2-state toggle can't represent 3 mutually exclusive modes (standard/entity/Jinja) —
-    // mirrors min_value_mode/max_value_mode exactly, replacing the previous entity-only toggle.
+    // A 2-state toggle can't represent 3 mutually exclusive modes
+    // (standard/entity/Jinja) — mirrors min_value_mode/max_value_mode exactly,
+    // replacing the previous entity-only toggle.
     [modeType]: {
       name: modeType,
       type: modeType,
@@ -18894,7 +20158,13 @@ const wmSide = (side, defaultVal) => {
       onVirtualChange: (mode, config) => {
         const attrKey = `${side}_attribute`;
         if (mode === 'entity') {
-          return { ...config, watermark: { ...config.watermark, [side]: is.string(config.watermark?.[side]) ? config.watermark[side] : '' } };
+          return {
+            ...config,
+            watermark: {
+              ...config.watermark,
+              [side]: is.string(config.watermark?.[side]) ? config.watermark[side] : '',
+            },
+          };
         }
         if (mode === 'jinja') {
           return {
@@ -18919,7 +20189,11 @@ const wmSide = (side, defaultVal) => {
       resolveVirtual: (c) => (is.string(c.watermark?.[side]) ? c.watermark[side] : ''),
       onVirtualChange: (value, config) => ({
         ...config,
-        watermark: { ...config.watermark, [side]: value || defaultVal, ...(!value ? { [`${side}_attribute`]: undefined } : {}) },
+        watermark: {
+          ...config.watermark,
+          [side]: value || defaultVal,
+          ...(!value ? { [`${side}_attribute`]: undefined } : {}),
+        },
       }),
     }),
     [`watermark.${side}_attribute`]: EditorFieldsType.select(`watermark.${side}_attribute`, {
@@ -18927,9 +20201,10 @@ const wmSide = (side, defaultVal) => {
       selectorOf: `watermark.${side}`,
       showIf: wm((c) => on(c) && ent(c) && c.watermark[side] !== ''),
     }),
-    // Virtual (not a plain dot-path field): the template string lives 2 levels deep
-    // (watermark.<side>.jinja), one level past what the generic nested-field machinery
-    // (#resolveValue/#handleNestedField) resolves — this reads/writes that path directly.
+    // Virtual (not a plain dot-path field): the template string lives 2 levels
+    // deep (watermark.<side>.jinja), one level past what the generic
+    // nested-field machinery (#resolveValue/#handleNestedField) resolves — this
+    // reads/writes that path directly.
     [`watermark_${side}_jinja`]: EditorFieldsType.tpl(`watermark_${side}_jinja`, {
       noLabel: true,
       virtual: true,
@@ -18971,16 +20246,18 @@ const EditorFactory = {
           resolveVirtual: (c) => c.bar_stack?.mode ?? 'stacked',
           onVirtualChange: (mode, config) => ({ ...config, bar_stack: { ...config.bar_stack, mode } }),
         },
-        // CF5 - issue (major) resolved - a flat 'bar_stack' field name meant the generic
-        // round-trip resolver (#resolveValue, run on every setConfig - not just this field's
-        // own onChange) read config.bar_stack as a whole (the {mode, entities} object, not
-        // the array the row editor's `value` setter expects) and reset it to [] on every
-        // single re-render, making any just-added row vanish from the editor immediately.
-        // The dot-path name routes through the existing generic nested-field read/write
-        // (#resolveValue / #handleNestedField) instead, exactly like watermark.low or
-        // min_value.attribute - entities are read from and written to bar_stack.entities
-        // directly, and bar_stack.mode is left untouched by construction (no custom
-        // onChange/onClear needed to preserve it).
+        // CF5 - issue (major) resolved - a flat 'bar_stack' field name meant
+        // the generic round-trip resolver (#resolveValue, run on every
+        // setConfig - not just this field's own onChange) read config.bar_stack
+        // as a whole (the {mode, entities} object, not the array the row
+        // editor's `value` setter expects) and reset it to [] on every single
+        // re-render, making any just-added row vanish from the editor
+        // immediately. The dot-path name routes through the existing generic
+        // nested-field read/write (#resolveValue / #handleNestedField) instead,
+        // exactly like watermark.low or min_value.attribute - entities are read
+        // from and written to bar_stack.entities directly, and bar_stack.mode
+        // is left untouched by construction (no custom onChange/onClear needed
+        // to preserve it).
         'bar_stack.entities': {
           name: 'bar_stack.entities',
           type: 'bar_stack_editor',
@@ -18989,7 +20266,7 @@ const EditorFactory = {
     },
   }),
 
-  content: (template) => ({
+  content: (template, badge) => ({
     title: 'editor.title.content',
     icon: HA_CONTEXT.icons.textShort,
     fields: {
@@ -19004,6 +20281,10 @@ const EditorFactory = {
       ...(template
         ? {
             secondary: EditorFieldsType.tpl('secondary'),
+            // Badge/badgeTemplate opt out (see YamlSchemaFactory's own
+            // .delete(['multiline'])): the row is too small for a second line
+            // there.
+            ...(!badge ? { multiline: EditorFieldsType.toggle('multiline') } : {}),
             percent: EditorFieldsType.tpl('percent'),
           }
         : {
@@ -19019,36 +20300,46 @@ const EditorFactory = {
             }),
             */
             unit: EditorFieldsType.text('unit', { width: availableSpace(32, 1 / 3) }),
-            // disable_unit is deprecated (see BaseConfigHelper.#logDeprecatedOption): 'unit'
-            // is now just another hide target, folded into hide by _customizeConfig. The
-            // disable_unit check here only matters for a legacy raw config on first load,
-            // before that fold has round-tripped through the editor's own config-changed.
+            // disable_unit is deprecated (see
+            // BaseConfigHelper.#logDeprecatedOption): 'unit' is now just
+            // another hide target, folded into hide by _customizeConfig. The
+            // disable_unit check here only matters for a legacy raw config on
+            // first load, before that fold has round-tripped through the
+            // editor's own config-changed.
             unit_spacing: EditorFieldsType.select('unit_spacing', {
               type: 'unit_spacing',
               width: availableSpace(32, 1 / 3),
               showIf: (c) => !(c.disable_unit || (is.array(c.hide) && c.hide.includes('unit'))),
             }),
             decimal: EditorFieldsType.decimal('decimal', { width: availableSpace(32, 1 / 3) }),
-            // A 2-state toggle can't represent 3 mutually exclusive modes (standard/entity/
-            // Jinja) — a single-select chip group replaces the previous pair of toggles,
-            // which could both show at once and left the mode ambiguous.
-            //
-            // min_value's config shape is also explicit rather than sniffed: a bare number
-            // is the fixed value (legacy, unchanged), and { entity, attribute } / { jinja }
-            // replace what used to be a single overloaded string disambiguated at runtime
-            // by an is.jinja() regex test. This removes that sniffing entirely and reuses
-            // the codebase's existing nested dotted-field machinery (like watermark.*).
+            // A 2-state toggle can't represent 3 mutually exclusive modes
+            // (standard/entity/ Jinja) — a single-select chip group replaces
+            // the previous pair of toggles, which could both show at once and
+            // left the mode ambiguous. min_value's config shape is also
+            // explicit rather than sniffed: a bare number is the fixed value
+            // (legacy, unchanged), and { entity, attribute } / { jinja }
+            // replace what used to be a single overloaded string disambiguated
+            // at runtime by an is.jinja() regex test. This removes that
+            // sniffing entirely and reuses the codebase's existing nested
+            // dotted-field machinery (like watermark.*).
             min_value_mode: {
               name: 'min_value_mode',
               type: 'min_value_mode',
               virtual: true,
-              resolveVirtual: (c) => (is.nonEmptyString(c.min_value?.jinja) ? 'jinja' : is.plainObject(c.min_value) ? 'entity' : 'standard'),
+              resolveVirtual: (c) =>
+                is.nonEmptyString(c.min_value?.jinja) ? 'jinja' : is.plainObject(c.min_value) ? 'entity' : 'standard',
               onVirtualChange: (mode, config) => {
                 if (mode === 'entity') {
-                  return { ...config, min_value: is.nonEmptyString(config.min_value?.entity) ? config.min_value : { entity: '' } };
+                  return {
+                    ...config,
+                    min_value: is.nonEmptyString(config.min_value?.entity) ? config.min_value : { entity: '' },
+                  };
                 }
                 if (mode === 'jinja') {
-                  return { ...config, min_value: is.nonEmptyString(config.min_value?.jinja) ? config.min_value : { jinja: '{{ }}' } };
+                  return {
+                    ...config,
+                    min_value: is.nonEmptyString(config.min_value?.jinja) ? config.min_value : { jinja: '{{ }}' },
+                  };
                 }
                 return { ...config, min_value: undefined };
               },
@@ -19070,20 +20361,28 @@ const EditorFactory = {
               noLabel: true,
               showIf: (c) => is.nonEmptyString(c.min_value?.jinja),
             }),
-            // Explicit map shape (mirrors min_value): max_value: 10 | { entity, attribute } | { jinja }.
-            // Reuses the codebase's nested dotted-field machinery instead of a target-based
-            // flat field, so sibling keys (attribute) merge naturally on write.
+            // Explicit map shape (mirrors min_value): max_value: 10 | { entity,
+            // attribute } | { jinja }. Reuses the codebase's nested
+            // dotted-field machinery instead of a target-based flat field, so
+            // sibling keys (attribute) merge naturally on write.
             max_value_mode: {
               name: 'max_value_mode',
               type: 'max_value_mode',
               virtual: true,
-              resolveVirtual: (c) => (is.nonEmptyString(c.max_value?.jinja) ? 'jinja' : is.plainObject(c.max_value) ? 'entity' : 'standard'),
+              resolveVirtual: (c) =>
+                is.nonEmptyString(c.max_value?.jinja) ? 'jinja' : is.plainObject(c.max_value) ? 'entity' : 'standard',
               onVirtualChange: (mode, config) => {
                 if (mode === 'entity') {
-                  return { ...config, max_value: is.nonEmptyString(config.max_value?.entity) ? config.max_value : { entity: '' } };
+                  return {
+                    ...config,
+                    max_value: is.nonEmptyString(config.max_value?.entity) ? config.max_value : { entity: '' },
+                  };
                 }
                 if (mode === 'jinja') {
-                  return { ...config, max_value: is.nonEmptyString(config.max_value?.jinja) ? config.max_value : { jinja: '{{ }}' } };
+                  return {
+                    ...config,
+                    max_value: is.nonEmptyString(config.max_value?.jinja) ? config.max_value : { jinja: '{{ }}' },
+                  };
                 }
                 return { ...config, max_value: undefined };
               },
@@ -19102,8 +20401,12 @@ const EditorFactory = {
               noLabel: true,
               showIf: (c) => is.nonEmptyString(c.max_value?.jinja),
             }),
-            state_content: EditorFieldsType.stateContent('state_content', { context: { filter_entity: 'entity' }, }),
+            state_content: EditorFieldsType.stateContent('state_content', { context: { filter_entity: 'entity' } }),
             custom_info: EditorFieldsType.tpl('custom_info'),
+            // Badge opts out (see YamlSchemaFactory's own
+            // .delete(['multiline'])): the row is too small for a second line
+            // there.
+            ...(!badge ? { multiline: EditorFieldsType.toggle('multiline') } : {}),
             reverse: EditorFieldsType.toggle('reverse', {
               showIf: (c) => Boolean(c.entity) && HassProviderSingleton.getEntityDomain(c.entity) === 'timer',
             }),
@@ -19111,68 +20414,75 @@ const EditorFactory = {
     },
   }),
 
-  // A theme is either a preset (dropdown, existing behavior) or a custom set of color
-  // zones — ThemeManager.configure() always lets a valid custom_theme win over theme
-  // when both happen to be set, so the editor makes that an explicit either/or via mode
-  // chips rather than letting the two silently race. Pulled out of theme() itself so
-  // that factory's own cognitive complexity doesn't grow with this trio's own ternaries.
-  //
-  // CF5 - issue (major) resolved - switching modes used to hard-clear the field being
-  // left behind (theme when entering custom, custom_theme when leaving it), destroying
-  // a carefully-built zone list the moment someone peeked at a preset and came back.
-  // The inactive side is now parked in a `_`-prefixed draft (session-only, stripped
-  // before dispatch by #sendConfig, same mechanism as _show_all_actions) and restored
-  // when its mode is selected again.
-  themeModeFields: (template) => (template ? {} : {
-    theme_mode: {
-      name: 'theme_mode',
-      type: 'theme_mode',
-      virtual: true,
-      // is.array (not is.nonEmptyArray): a freshly-entered custom mode starts as an
-      // empty [] before the user adds a first zone, and must still read as 'custom'.
-      resolveVirtual: (c) => (is.array(c.custom_theme) ? 'custom' : 'preset'),
-      onVirtualChange: (mode, config) => {
-        const wantsCustom = mode === 'custom';
-        return {
-          ...config,
-          theme: wantsCustom ? undefined : (config._theme_draft ?? config.theme),
-          _theme_draft: wantsCustom ? (config.theme ?? config._theme_draft) : undefined,
-          custom_theme: wantsCustom ? (config._custom_theme_draft ?? config.custom_theme ?? []) : undefined,
-          _custom_theme_draft: wantsCustom ? undefined : (config.custom_theme ?? config._custom_theme_draft),
-        };
-      },
-    },
-    theme: EditorFieldsType.select('theme', { showIf: (c) => !is.array(c.custom_theme) }),
-    custom_theme: {
-      name: 'custom_theme',
-      type: 'custom_theme_editor',
-      showIf: (c) => is.array(c.custom_theme),
-      onClear: (config) => {
-        const rest = { ...config };
-        delete rest.custom_theme;
-        return rest;
-      },
-    },
-  }),
+  // A theme is either a preset (dropdown, existing behavior) or a custom set of
+  // color zones — ThemeManager.configure() always lets a valid custom_theme win
+  // over theme when both happen to be set, so the editor makes that an explicit
+  // either/or via mode chips rather than letting the two silently race. Pulled
+  // out of theme() itself so that factory's own cognitive complexity doesn't
+  // grow with this trio's own ternaries. CF5 - issue (major) resolved -
+  // switching modes used to hard-clear the field being left behind (theme when
+  // entering custom, custom_theme when leaving it), destroying a
+  // carefully-built zone list the moment someone peeked at a preset and came
+  // back. The inactive side is now parked in a `_`-prefixed draft
+  // (session-only, stripped before dispatch by #sendConfig, same mechanism as
+  // _show_all_actions) and restored when its mode is selected again.
+  themeModeFields: (template) =>
+    template
+      ? {}
+      : {
+          theme_mode: {
+            name: 'theme_mode',
+            type: 'theme_mode',
+            virtual: true,
+            // is.array (not is.nonEmptyArray): a freshly-entered custom mode
+            // starts as an empty [] before the user adds a first zone, and must
+            // still read as 'custom'.
+            resolveVirtual: (c) => (is.array(c.custom_theme) ? 'custom' : 'preset'),
+            onVirtualChange: (mode, config) => {
+              const wantsCustom = mode === 'custom';
+              return {
+                ...config,
+                theme: wantsCustom ? undefined : (config._theme_draft ?? config.theme),
+                _theme_draft: wantsCustom ? (config.theme ?? config._theme_draft) : undefined,
+                custom_theme: wantsCustom ? (config._custom_theme_draft ?? config.custom_theme ?? []) : undefined,
+                _custom_theme_draft: wantsCustom ? undefined : (config.custom_theme ?? config._custom_theme_draft),
+              };
+            },
+          },
+          theme: EditorFieldsType.select('theme', { showIf: (c) => !is.array(c.custom_theme) }),
+          custom_theme: {
+            name: 'custom_theme',
+            type: 'custom_theme_editor',
+            showIf: (c) => is.array(c.custom_theme),
+            onClear: (config) => {
+              const rest = { ...config };
+              delete rest.custom_theme;
+              return rest;
+            },
+          },
+        },
 
   theme: (template, badge) => ({
     title: 'editor.title.theme',
     icon: HA_CONTEXT.icons.listBox,
     fields: {
       ...EditorFactory.themeModeFields(template),
-      ...(template ? {} : {
-        bar_color_mode: EditorFieldsType.select('bar_color_mode', {
-          showIf: (c) => (!is.nullish(c.theme) || is.nonEmptyArray(c.custom_theme)) && !c.center_zero,
-          // Selecting a non-auto color mode is incompatible with interpolate: clear it.
-          onChange: (value, config) => (value && value !== 'auto') ? { ...config, interpolate: undefined } : config,
-        }),
-        interpolate: EditorFieldsType.toggle('interpolate', {
-          showIf: (c) => (!is.nullish(c.theme) || is.nonEmptyArray(c.custom_theme))
-            && (is.nullish(c.bar_color_mode) || c.bar_color_mode === 'auto'),
-        }),
-      }),
+      ...(template
+        ? {}
+        : {
+            bar_color_mode: EditorFieldsType.select('bar_color_mode', {
+              showIf: (c) => (!is.nullish(c.theme) || is.nonEmptyArray(c.custom_theme)) && !c.center_zero,
+              // Selecting a non-auto color mode is incompatible with
+              // interpolate: clear it.
+              onChange: (value, config) => (value && value !== 'auto' ? { ...config, interpolate: undefined } : config),
+            }),
+            interpolate: EditorFieldsType.toggle('interpolate', {
+              showIf: (c) =>
+                (!is.nullish(c.theme) || is.nonEmptyArray(c.custom_theme)) &&
+                (is.nullish(c.bar_color_mode) || c.bar_color_mode === 'auto'),
+            }),
+          }),
       icon: EditorFieldsType.templateOrType('icon', template, 'icon', template ? {} : { width: availableSpace() }),
-      icon_animation: EditorFieldsType.select('icon_animation', { width: availableSpace() }),
       color: EditorFieldsType.templateOrType('color', template, 'color', {
         showIf: (c) => is.nullish(c.theme) && !is.array(c.custom_theme),
         ...(template ? {} : { width: availableSpace() }),
@@ -19180,6 +20490,7 @@ const EditorFactory = {
       ...(badge
         ? {}
         : {
+            icon_animation: EditorFieldsType.select('icon_animation'),
             force_circular_background: EditorFieldsType.toggle('force_circular_background'),
             bar_size: EditorFieldsType.select('bar_size', { width: availableSpace() }),
             bar_position: EditorFieldsType.select('bar_position', { width: availableSpace() }),
@@ -19191,13 +20502,17 @@ const EditorFactory = {
       ...(badge
         ? {}
         : {
-            bar_single_line: EditorFieldsType.toggle('bar_single_line', { showIf: (c) => c.bar_position === 'overlay' }),
+            bar_single_line: EditorFieldsType.toggle('bar_single_line', {
+              showIf: (c) => c.bar_position === 'overlay',
+            }),
             text_shadow: EditorFieldsType.toggle('text_shadow', { showIf: (c) => c.bar_position === 'overlay' }),
             bar_segments: EditorFieldsType.number('bar_segments', { width: availableSpace() }),
           }),
       bar_scale: EditorFieldsType.select('bar_scale', { width: availableSpace(), showIf: (c) => !c.center_zero }),
       bar_orientation: EditorFieldsType.select('bar_orientation', template ? {} : { width: availableSpace() }),
-      reverse_secondary_info_row: EditorFieldsType.toggle('reverse_secondary_info_row', { showIf: (c) => (!c.bar_position || c.bar_position === 'default') && c.layout === 'horizontal' }),
+      reverse_secondary_info_row: EditorFieldsType.toggle('reverse_secondary_info_row', {
+        showIf: (c) => (!c.bar_position || c.bar_position === 'default') && c.layout === 'horizontal',
+      }),
       center_zero: EditorFieldsType.toggle('center_zero', {
         virtual: true,
         showIf: (c) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode),
@@ -19211,7 +20526,7 @@ const EditorFactory = {
         target: 'center_zero',
         showIf: (c) => Boolean(c.center_zero) && (c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode)),
         virtual: true,
-        resolveVirtual: (c) => (is.plainObject(c.center_zero) ? c.center_zero.value ?? 0 : 0),
+        resolveVirtual: (c) => (is.plainObject(c.center_zero) ? (c.center_zero.value ?? 0) : 0),
         onVirtualChange: (value, config) => {
           const growthPercent = is.plainObject(config.center_zero) ? Boolean(config.center_zero.growth_percent) : false;
           return {
@@ -19226,7 +20541,7 @@ const EditorFactory = {
         virtual: true,
         resolveVirtual: (c) => (is.plainObject(c.center_zero) ? Boolean(c.center_zero.growth_percent) : false),
         onVirtualChange: (value, config) => {
-          const currentValue = is.plainObject(config.center_zero) ? config.center_zero.value ?? 0 : 0;
+          const currentValue = is.plainObject(config.center_zero) ? (config.center_zero.value ?? 0) : 0;
           return {
             ...config,
             center_zero: currentValue || value ? { value: currentValue, growth_percent: value } : true,
@@ -19248,34 +20563,38 @@ const EditorFactory = {
       }),
       bar_effect: EditorFieldsType.tpl('bar_effect', { noLabel: true, showIf: (c) => is.nonEmptyString(c.bar_effect) }),
       // ── Watermark ────────────────────────────────────────────────────────
-      ...(!template ? (() => {
-        const wm = (extra) => (c) => Boolean(c.watermark) && (extra ? extra(c) : true);
-        return {
-        watermark_toggle: EditorFieldsType.toggle('watermark_toggle', {
-          virtual: true,
-          resolveVirtual: (c) => Boolean(c.watermark),
-          onVirtualChange: (value, config) => ({
-            ...config,
-            watermark: value ? {} : undefined,
-          }),
-        }),
-        'watermark.type': EditorFieldsType.select('watermark.type', {
-          type: 'watermark_type',
-          showIf: wm(),
-          width: availableSpace(),
-        }),
-        'watermark.opacity': EditorFieldsType.decimal('watermark.opacity', {
-          type: 'opacity',
-          showIf: wm(),
-          width: availableSpace(),
-        }),
-        // ── Groupes LOW / HIGH (générés par wmSide) ────────────────────────
-        ...wmSide('low', 20),
-        ...wmSide('high', 80),
-        'watermark.line_size': EditorFieldsType.text('watermark.line_size', {
-          showIf: wm((c) => c.watermark?.type === 'line'),
-        }),
-        }; })() : {}),
+      ...(!template
+        ? (() => {
+            const wm = (extra) => (c) => Boolean(c.watermark) && (extra ? extra(c) : true);
+            return {
+              watermark_toggle: EditorFieldsType.toggle('watermark_toggle', {
+                virtual: true,
+                resolveVirtual: (c) => Boolean(c.watermark),
+                onVirtualChange: (value, config) => ({
+                  ...config,
+                  watermark: value ? {} : undefined,
+                }),
+              }),
+              'watermark.type': EditorFieldsType.select('watermark.type', {
+                type: 'watermark_type',
+                showIf: wm(),
+                width: availableSpace(),
+              }),
+              'watermark.opacity': EditorFieldsType.decimal('watermark.opacity', {
+                type: 'opacity',
+                showIf: wm(),
+                width: availableSpace(),
+              }),
+              // ── Groupes LOW / HIGH (générés par wmSide)
+              // ────────────────────────
+              ...wmSide('low', 20),
+              ...wmSide('high', 80),
+              'watermark.line_size': EditorFieldsType.text('watermark.line_size', {
+                showIf: wm((c) => c.watermark?.type === 'line'),
+              }),
+            };
+          })()
+        : {}),
       // ── Badge fields ─────────────────────────────────────────────────────
       ...(badge
         ? {}
@@ -19299,52 +20618,58 @@ const EditorFactory = {
       }),
       hide: EditorFieldsType.tpl('hide', { noLabel: true, showIf: (c) => is.nonEmptyString(c.hide) }),
       // ── Alert (alert_when) — not in the template schema ─────────────────
-      ...(!template ? {
-        alert_toggle: EditorFieldsType.toggle('alert_toggle', {
-          virtual: true,
-          resolveVirtual: (c) => Boolean(c.alert_when),
-          onVirtualChange: (value, config) => ({
-            ...config,
-            alert_when: value ? {} : undefined,
-          }),
-        }),
-        'alert_when.above': EditorFieldsType.number('alert_when.above', {
-          showIf: (c) => Boolean(c.alert_when),
-          width: availableSpace(),
-        }),
-        'alert_when.below': EditorFieldsType.number('alert_when.below', {
-          showIf: (c) => Boolean(c.alert_when),
-          width: availableSpace(),
-        }),
-        'alert_when.color': EditorFieldsType.select('alert_when.color', {
-          type: 'color',
-          showIf: (c) => Boolean(c.alert_when),
-          width: availableSpace(),
-        }),
-        'alert_when.highlight': EditorFieldsType.select('alert_when.highlight', {
-          type: 'alert_highlight',
-          showIf: (c) => Boolean(c.alert_when),
-          width: availableSpace(),
-        }),
-      } : {}),
+      ...(!template
+        ? {
+            alert_toggle: EditorFieldsType.toggle('alert_toggle', {
+              virtual: true,
+              resolveVirtual: (c) => Boolean(c.alert_when),
+              onVirtualChange: (value, config) => ({
+                ...config,
+                alert_when: value ? {} : undefined,
+              }),
+            }),
+            'alert_when.above': EditorFieldsType.number('alert_when.above', {
+              showIf: (c) => Boolean(c.alert_when),
+              width: availableSpace(),
+            }),
+            'alert_when.below': EditorFieldsType.number('alert_when.below', {
+              showIf: (c) => Boolean(c.alert_when),
+              width: availableSpace(),
+            }),
+            'alert_when.color': EditorFieldsType.select('alert_when.color', {
+              type: 'color',
+              showIf: (c) => Boolean(c.alert_when),
+              width: availableSpace(),
+            }),
+            'alert_when.highlight': EditorFieldsType.select('alert_when.highlight', {
+              type: 'alert_highlight',
+              showIf: (c) => Boolean(c.alert_when),
+              width: availableSpace(),
+            }),
+          }
+        : {}),
       // ── Card-only layout options ──────────────────────────────────────────
-      ...(!badge ? {
-        frameless: EditorFieldsType.toggle('frameless', { width: availableSpace() }),
-        marginless: EditorFieldsType.toggle('marginless', { width: availableSpace() }),
-        height: EditorFieldsType.text('height', { width: availableSpace() }),
-        min_width: EditorFieldsType.text('min_width', { width: availableSpace() }),
-      } : {}),
-      ...(!template && !badge ? {
-        bar_max_width: EditorFieldsType.slider('bar_max_width', {
-          virtual: true,
-          showIf: (c) => (c.layout ?? 'horizontal') === 'vertical',
-          resolveVirtual: (c) => parseInt(c.bar_max_width) || 0,
-          onVirtualChange: (value, config) => ({
-            ...config,
-            bar_max_width: value ? `${value}px` : undefined,
-          }),
-        }),
-      } : {}),
+      ...(!badge
+        ? {
+            frameless: EditorFieldsType.toggle('frameless', { width: availableSpace() }),
+            marginless: EditorFieldsType.toggle('marginless', { width: availableSpace() }),
+            height: EditorFieldsType.text('height', { width: availableSpace() }),
+            min_width: EditorFieldsType.text('min_width', { width: availableSpace() }),
+          }
+        : {}),
+      ...(!template && !badge
+        ? {
+            bar_max_width: EditorFieldsType.slider('bar_max_width', {
+              virtual: true,
+              showIf: (c) => (c.layout ?? 'horizontal') === 'vertical',
+              resolveVirtual: (c) => parseInt(c.bar_max_width) || 0,
+              onVirtualChange: (value, config) => ({
+                ...config,
+                bar_max_width: value ? `${value}px` : undefined,
+              }),
+            }),
+          }
+        : {}),
       // ── Layout (always last) ──────────────────────────────────────────────
       ...(badge
         ? {}
@@ -19355,68 +20680,78 @@ const EditorFactory = {
   }),
 
   interactions: (badge) => {
-    // isActive: show a field only if its negotiated action differs from the 'none' default.
-    // orAll: also show when the "show all" toggle (_show_all_actions) is on.
-    // _show_all_actions is ephemeral UI state: stored in raw config with _ prefix,
-    // stripped before config-changed dispatch, never saved to YAML.
-    //
-    // tap_action and icon_tap_action are always visible (no showIf):
-    //   - tap_action default is 'more-info' — always relevant.
-    //   - icon_tap_action default depends on the entity domain: 'none' for most entities,
-    //     'toggle' for lights, switches, etc. (patched at validation time via toggleDomain).
-    //     Always showing it lets the hint reveal the effective default.
+    // isActive: show a field only if its negotiated action differs from the
+    // 'none' default. orAll: also show when the "show all" toggle
+    // (_show_all_actions) is on. _show_all_actions is ephemeral UI state:
+    // stored in raw config with _ prefix, stripped before config-changed
+    // dispatch, never saved to YAML. tap_action and icon_tap_action are always
+    // visible (no showIf): - tap_action default is 'more-info' — always
+    // relevant. - icon_tap_action default depends on the entity domain: 'none'
+    // for most entities, 'toggle' for lights, switches, etc. (patched at
+    // validation time via toggleDomain). Always showing it lets the hint reveal
+    // the effective default.
     const isActive = (key) => (_, n) => n?.[key]?.action !== 'none';
-    const orAll   = (pred) => (c, n) => Boolean(c._show_all_actions) || pred(c, n);
+    const orAll = (pred) => (c, n) => Boolean(c._show_all_actions) || pred(c, n);
     return {
       title: 'editor.title.interaction',
       icon: HA_CONTEXT.icons.gestureTapHold,
       fields: {
         show_all_actions: {
-          name: 'show_all_actions', type: 'toggle', virtual: true,
+          name: 'show_all_actions',
+          type: 'toggle',
+          virtual: true,
           resolveVirtual: (c) => Boolean(c._show_all_actions),
           onVirtualChange: (value, config) => ({ ...config, _show_all_actions: value }),
         },
-        tap_action:        EditorFieldsType.action('tap_action'),
-        hold_action:       EditorFieldsType.action('hold_action',       { showIf: orAll(isActive('hold_action')) }),
-        double_tap_action: EditorFieldsType.action('double_tap_action', { showIf: orAll(isActive('double_tap_action')) }),
-        ...(!badge ? {
-          icon_tap_action:        EditorFieldsType.action('icon_tap_action'),
-          icon_hold_action:       EditorFieldsType.action('icon_hold_action',       { showIf: orAll(isActive('icon_hold_action')) }),
-          icon_double_tap_action: EditorFieldsType.action('icon_double_tap_action', { showIf: orAll(isActive('icon_double_tap_action')) }),
-        } : {}),
+        tap_action: EditorFieldsType.action('tap_action'),
+        hold_action: EditorFieldsType.action('hold_action', { showIf: orAll(isActive('hold_action')) }),
+        double_tap_action: EditorFieldsType.action('double_tap_action', {
+          showIf: orAll(isActive('double_tap_action')),
+        }),
+        ...(!badge
+          ? {
+              icon_tap_action: EditorFieldsType.action('icon_tap_action'),
+              icon_hold_action: EditorFieldsType.action('icon_hold_action', {
+                showIf: orAll(isActive('icon_hold_action')),
+              }),
+              icon_double_tap_action: EditorFieldsType.action('icon_double_tap_action', {
+                showIf: orAll(isActive('icon_double_tap_action')),
+              }),
+            }
+          : {}),
       },
     };
   },
 
   build: (template, badge) => ({
     general: EditorFactory.general(template),
-    content: EditorFactory.content(template),
+    content: EditorFactory.content(template, badge),
     theme: EditorFactory.theme(template, badge),
     interactions: EditorFactory.interactions(badge),
   }),
 };
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ EntityProgressCardEditor
- * ========================================================================================
+ * ============================================================================
  */
 class EntityProgressCardEditor extends EditorBase {
   _configHelper = new CardConfigHelper();
   static _fields = EditorFactory.build(false, false);
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ EntityProgressBadgeEditor
- * ========================================================================================
+ * ============================================================================
  */
 class EntityProgressBadgeEditor extends EditorBase {
   _configHelper = new BadgeConfigHelper();
   static _fields = EditorFactory.build(false, true);
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ EntityProgressTemplateEditor
- * ========================================================================================
+ * ============================================================================
  */
 
 class EntityProgressTemplateEditor extends EditorBase {
@@ -19424,9 +20759,9 @@ class EntityProgressTemplateEditor extends EditorBase {
   static _fields = EditorFactory.build(true, false);
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🛠️ EntityProgressBadgeTemplateEditor
- * ========================================================================================
+ * ============================================================================
  */
 
 class EntityProgressBadgeTemplateEditor extends EditorBase {
@@ -19434,17 +20769,21 @@ class EntityProgressBadgeTemplateEditor extends EditorBase {
   static _fields = EditorFactory.build(true, true);
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🔧 Register components
  */
 
 RegistrationHelper.registerCard(META.types.card, EntityProgressCard, EntityProgressCardEditor);
 RegistrationHelper.registerBadge(META.types.badge, EntityProgressBadge, EntityProgressBadgeEditor);
 RegistrationHelper.registerCard(META.types.template, EntityProgressTemplateCard, EntityProgressTemplateEditor);
-RegistrationHelper.registerBadge(META.types.badgeTemplate, EntityProgressTemplateBadge, EntityProgressBadgeTemplateEditor);
+RegistrationHelper.registerBadge(
+  META.types.badgeTemplate,
+  EntityProgressTemplateBadge,
+  EntityProgressBadgeTemplateEditor,
+);
 RegistrationHelper.registerCardFeature(META.types.feature, EntityProgressFeatures);
 
-/******************************************************************************************
+/******************************************************************************
  * 🔧 Diagnostic helper — `window.EPB_DIAG.dump()` in the browser console
  * prints an anonymized environment report to paste into bug reports.
  */
@@ -19454,9 +20793,18 @@ if (!window.EPB_DIAG) {
     version: VERSION,
     dump() {
       const hass = HassProviderSingleton.getInstance().hass;
-      // Multiple registrations of the same EPB type = duplicate resource (HACS + manual),
-      // the classic root cause of "impossible" bugs. Surface it front and center.
-      const epbEntries = (window.customCards ?? []).filter((card) => card.type?.startsWith('entity-progress'));
+      // Multiple registrations of the same EPB type = duplicate resource (HACS
+      // + manual), the classic root cause of "impossible" bugs. Surface it
+      // front and center.
+      // Badges/badgeTemplate register under window.customBadges and the tile
+      // feature under window.customCardFeatures (see RegistrationHelper) -
+      // window.customCards alone only ever surfaces card/template.
+      const allRegistered = [
+        ...(window.customCards ?? []),
+        ...(window.customBadges ?? []),
+        ...(window.customCardFeatures ?? []),
+      ];
+      const epbEntries = allRegistered.filter((card) => card.type?.startsWith('entity-progress'));
       const duplicates = epbEntries.length !== new Set(epbEntries.map((card) => card.type)).size;
       const report = [
         '=== Entity Progress Card — diagnostic ===',
@@ -19478,7 +20826,7 @@ if (!window.EPB_DIAG) {
   });
 }
 
-/******************************************************************************************
+/******************************************************************************
  * 🔧 Show module info
  */
 

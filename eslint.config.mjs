@@ -35,6 +35,14 @@ export default [
       'no-var': 'error',
       'prefer-const': 'error',
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      'max-len': ['warn', {
+        code: 120,
+        comments: 80,
+        ignoreUrls: true,
+        ignoreStrings: true,
+        ignoreTemplateLiterals: true,
+        ignoreRegExpLiterals: true,
+      }],
       'eol-last': ['error', 'always'],
       'space-infix-ops': 'error',
       'class-methods-use-this': ['error', {

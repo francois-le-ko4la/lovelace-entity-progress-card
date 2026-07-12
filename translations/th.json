@@ -83,6 +83,7 @@
       "watermark_toggle": "Watermark",
       "alert_toggle": "Alert",
       "custom_info": "ข้อมูลรองที่กำหนดเอง",
+      "multiline": "Multiline",
       "interpolate": "การสอดแทรกสี",
       "name_info": "ข้อมูลชื่อที่กำหนดเอง",
       "reverse": "กลับเวลานับถอยหลัง",
@@ -187,7 +188,9 @@
         "bounce": "Bounce",
         "shake": "Shake",
         "ping": "Ping",
-        "reveal": "Reveal"
+        "reveal": "Reveal",
+        "washing_machine": "Washing machine",
+        "battery_charging": "Battery charging"
       },
       "alert_when": {
         "above": "Alert above",

@@ -83,6 +83,7 @@
       "watermark_toggle": "Watermark",
       "alert_toggle": "Alert",
       "custom_info": "कस्टम द्वितीयक जानकारी",
+      "multiline": "Multiline",
       "interpolate": "रंग इंटरपोलेशन",
       "name_info": "कस्टम नाम जानकारी",
       "reverse": "टाइमर उलटें",
@@ -187,7 +188,9 @@
         "bounce": "Bounce",
         "shake": "Shake",
         "ping": "Ping",
-        "reveal": "Reveal"
+        "reveal": "Reveal",
+        "washing_machine": "Washing machine",
+        "battery_charging": "Battery charging"
       },
       "alert_when": {
         "above": "Alert above",

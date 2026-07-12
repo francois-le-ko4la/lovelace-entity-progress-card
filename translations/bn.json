@@ -83,6 +83,7 @@
       "watermark_toggle": "Watermark",
       "alert_toggle": "Alert",
       "custom_info": "কাস্টম সেকেন্ডারি তথ্য",
+      "multiline": "Multiline",
       "interpolate": "রঙ ইন্টারপোলেশন",
       "name_info": "কাস্টম নাম তথ্য",
       "reverse": "টাইমার উল্টানো",
@@ -187,7 +188,9 @@
         "bounce": "Bounce",
         "shake": "Shake",
         "ping": "Ping",
-        "reveal": "Reveal"
+        "reveal": "Reveal",
+        "washing_machine": "Washing machine",
+        "battery_charging": "Battery charging"
       },
       "alert_when": {
         "above": "Alert above",
