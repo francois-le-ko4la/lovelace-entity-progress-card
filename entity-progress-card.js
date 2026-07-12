@@ -24,7 +24,7 @@
  */
 
 // prettier-ignore-start
-const VERSION = '1.6.0';
+const VERSION = '1.6.0-rc1';
 
 const META = {
   documentation: 'https://github.com/francois-le-ko4la/lovelace-entity-progress-card/',
@@ -62,7 +62,7 @@ const META = {
 };
 
 const CARD_CONTEXT = {
-  dev: true,
+  dev: false,
   debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false, hass: false },
 };
 
