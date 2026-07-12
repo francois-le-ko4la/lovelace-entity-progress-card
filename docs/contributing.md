@@ -112,6 +112,13 @@ We welcome translations for new languages! Currently supported languages:
    cd lovelace-entity-progress-card
    ```
 
+3. Install dependencies (needed to run lint/validate locally, see [Testing
+   Your Changes](#contribution-guidelines)):
+
+   ```bash
+   npm install
+   ```
+
 <a id="contribution-guidelines"></a>
 
 ## 📝 Contribution Guidelines
@@ -131,6 +138,13 @@ We welcome translations for new languages! Currently supported languages:
   ([code](https://developers.home-assistant.io/docs/voice/intent-recognition/supported-languages/))
 - Fill in all the empty values in `xx.json` with your translations.
 - Submit a pull request with your `xx.json`
+
+> [!NOTE]
+>
+> CI only checks that your JSON is well-formed and matches
+> `template.json`'s structure (`npm run i18n:validate:structure`). You don't
+> need to touch anything else — merging translations into the JS bundle is a
+> maintainer step done before release.
 
 ### Commit Messages
 
@@ -153,6 +167,8 @@ test: add validation for custom theme ranges
 
 Before submitting a PR, please ensure:
 
+- ✅ `npm run validate` passes locally (syntax check + lint + translations
+  sync) — CI runs the same check on `entity-progress-card.js` changes
 - ✅ **Card loads** without console errors
 - ✅ **All existing features** still work
 - ✅ **New features** work as expected

@@ -1,0 +1,36 @@
+name: Validate JS
+
+on:
+  push:
+    paths:
+      - "entity-progress-card.js"
+      - "eslint.config.mjs"
+      - "package.json"
+      - "package-lock.json"
+  pull_request:
+    paths:
+      - "entity-progress-card.js"
+      - "eslint.config.mjs"
+      - "package.json"
+      - "package-lock.json"
+  workflow_dispatch:
+
+jobs:
+  validate-hacs:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: HACS validation
+        uses: "hacs/action@main"
+        with:
+          category: "plugin"
+
+  validate-js:
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - run: npm ci
+      - name: Syntax, lint and full translations sync (JSON ↔ JS ↔ template)
+        run: npm run validate

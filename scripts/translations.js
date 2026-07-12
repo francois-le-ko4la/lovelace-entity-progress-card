@@ -144,7 +144,13 @@ const diffFlat = (a, b) => {
 // ─── commands ────────────────────────────────────────────────────────────────
 
 /** validate: JSON ↔ JS per language + JSON ↔ template structure. Returns issue count. */
-const cmdValidate = ({ quiet = false } = {}) => {
+// structureOnly skips the JSON↔JS sync check (steps 1 and 3 below): a
+// contributor editing only translations/*.json has no reachable way to
+// regenerate the JS block themselves (synchronize --to-js is a maintainer
+// step run before release), so gating their PR on JS sync would block
+// translation contributions on something they can't fix. Well-formed JSON +
+// template structure is the part they actually control and can act on.
+const cmdValidate = ({ quiet = false, structureOnly = false } = {}) => {
   const jsTr = readJsTranslations();
   const template = flatten(readJSON(path.join(DIR, TEMPLATE)));
   let issues = 0;
@@ -155,14 +161,16 @@ const cmdValidate = ({ quiet = false } = {}) => {
     const problems = [];
 
     // 1. JSON ↔ JS (per-language content sync)
-    if (!jsTr[lang]) {
-      problems.push('  language missing in JS (run: synchronize --to-js)');
-    } else {
-      const js = flatten(jsTr[lang]);
-      const contentDiff = diffFlat(json, js);
-      for (const k of contentDiff.missing) problems.push(`  in JSON only (JS outdated): ${k}`);
-      for (const k of contentDiff.extra) problems.push(`  in JS only (JSON is the source!): ${k}`);
-      for (const k of contentDiff.changed) problems.push(`  value differs (JSON ≠ JS): ${k}`);
+    if (!structureOnly) {
+      if (!jsTr[lang]) {
+        problems.push('  language missing in JS (run: synchronize --to-js)');
+      } else {
+        const js = flatten(jsTr[lang]);
+        const contentDiff = diffFlat(json, js);
+        for (const k of contentDiff.missing) problems.push(`  in JSON only (JS outdated): ${k}`);
+        for (const k of contentDiff.extra) problems.push(`  in JS only (JSON is the source!): ${k}`);
+        for (const k of contentDiff.changed) problems.push(`  value differs (JSON ≠ JS): ${k}`);
+      }
     }
 
     // 2. JSON ↔ template (structural reference)
@@ -180,15 +188,27 @@ const cmdValidate = ({ quiet = false } = {}) => {
   }
 
   // 3. languages present in JS but with no JSON file
-  for (const lang of Object.keys(jsTr)) {
-    if (!allLangs().includes(lang)) {
-      issues++;
-      console.log(`❌ ${lang}: present in JS but has no JSON file (ghost language)`);
+  if (!structureOnly) {
+    for (const lang of Object.keys(jsTr)) {
+      if (!allLangs().includes(lang)) {
+        issues++;
+        console.log(`❌ ${lang}: present in JS but has no JSON file (ghost language)`);
+      }
     }
   }
 
   if (!quiet && ok.length) console.log(`✅ ${ok.join(', ')}`);
-  console.log(issues === 0 ? '✅ All translations are in sync.' : `❌ ${issues} issue(s). Source of truth: translations/*.json`);
+  if (issues === 0) {
+    console.log(
+      structureOnly
+        ? '✅ All translations are well-formed and match the template structure.'
+        : '✅ All translations are in sync.',
+    );
+  } else {
+    console.log(
+      `❌ ${issues} issue(s)${structureOnly ? ' (structure only — JS sync not checked)' : ''}. Source of truth: translations/*.json`,
+    );
+  }
   return issues;
 };
 
@@ -425,7 +445,9 @@ const cmdNewLang = (args) => {
 
 const HELP = `translations.js — unified translation toolchain (source of truth: translations/*.json)
 
-  validate                     compare JSON ↔ JS ↔ template, report every drift (exit 1 if any)
+  validate [--structure-only]  compare JSON ↔ JS ↔ template, report every drift (exit 1 if any)
+                               --structure-only: skip the JS sync check, only validate
+                               well-formed JSON + template structure (for contributor CI)
   synchronize [--to-js|--to-json] [--dry-run]
                                validate then apply: JSON → JS (nominal) or JS → JSON (backport)
   orphans                      heuristic: translation keys unused by the code + broken localize() paths
@@ -445,7 +467,9 @@ const main = async () => {
   const [cmd, ...args] = process.argv.slice(2);
   try {
     switch (cmd) {
-      case 'validate': process.exitCode = cmdValidate() === 0 ? 0 : 1; break;
+      case 'validate':
+        process.exitCode = cmdValidate({ structureOnly: args.includes('--structure-only') }) === 0 ? 0 : 1;
+        break;
       case 'synchronize': await cmdSynchronize(args); break;
       case 'orphans': process.exitCode = cmdOrphans(); break;
       case 'stats': cmdStats(); break;

@@ -11,8 +11,11 @@
     "check": "node --check entity-progress-card.js",
     "lint": "eslint entity-progress-card.js",
     "i18n:validate": "node scripts/translations.js validate",
+    "i18n:validate:structure": "node scripts/translations.js validate --structure-only",
     "i18n:sync": "node scripts/translations.js synchronize --to-js",
-    "validate": "npm run check && npm run lint && npm run i18n:validate"
+    "validate": "npm run check && npm run lint && npm run i18n:validate",
+    "check:release-flags": "node scripts/check-release-flags.js",
+    "build": "esbuild entity-progress-card.js --minify --target=es2022 --outdir=dist"
   },
   "repository": {
     "type": "git",
@@ -32,6 +35,7 @@
   "homepage": "https://github.com/francois-le-ko4la/lovelace-entity-progress-card#readme",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "esbuild": "^0.28.1",
     "eslint": "^10.6.0",
     "eslint-plugin-compat": "^7.0.2",
     "eslint-plugin-sonarjs": "^4.1.0",

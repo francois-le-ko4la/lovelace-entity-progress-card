@@ -13,18 +13,20 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
-      - name: Copy sources to temp
-        run: |
-          mkdir temp
-          cp *.js temp/
-      - name: Process JS Files
-        run: |
-          npx esbuild temp/*.js --minify --target=es2022 --outdir=dist
+      - run: npm ci
+      - name: Ensure dev mode and debug logging are off
+        run: npm run check:release-flags
+      - name: Validate before publishing (syntax, lint, translations sync)
+        run: npm run validate
+      - name: Build (minify)
+        run: npm run build
+      - name: Sanity-check the minified output
+        run: node --check dist/entity-progress-card.js
       - name: Upload to Release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: dist/*
           file_glob: true
-          tag: ${{ github.ref }}
+          tag: ${{ github.event.release.tag_name }}
           overwrite: true

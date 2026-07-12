@@ -1,0 +1,21 @@
+name: Validate translations
+
+on:
+  push:
+    paths:
+      - "translations/**"
+  pull_request:
+    paths:
+      - "translations/**"
+  workflow_dispatch:
+
+jobs:
+  validate-translations:
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Translations well-formed + template structure (JSON only, no JS sync required)
+        run: npm run i18n:validate:structure
