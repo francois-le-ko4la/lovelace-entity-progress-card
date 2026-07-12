@@ -324,7 +324,9 @@ entity, depending on the type of input it receives:
 
 Here are some examples of how to use the Standard Lovelace Entity Progress Card.
 
-> [!TIP] Use Material Design Icons (MDI) for a consistent look. Browse available
+> [!TIP]
+>
+> Use Material Design Icons (MDI) for a consistent look. Browse available
 > icons at Material Design Icons. Experiment with color codes like HEX or RGB
 > for precise customization. Combine with other Lovelace cards to create a
 > visually cohesive dashboard.
@@ -473,7 +475,9 @@ card_mod:
 
 </details>
 
-> [!TIP] We expose the `.icon` and `.shape` to properly animate the card.
+> [!TIP]
+>
+> We expose the `.icon` and `.shape` to properly animate the card.
 
 <details>
 <summary><strong>vertical-stack-in-card Example (click to expand)</strong></summary>
