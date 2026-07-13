@@ -4,6 +4,7 @@ We provide a process designed to be as safe as possible, but please always
 verify your backups before proceeding.
 
 > [!WARNING]
+>
 > **Development Status**
 >
 > - Release candidate version - not intended for production use
@@ -12,6 +13,7 @@ verify your backups before proceeding.
 > - Thorough testing required before wider deployment
 
 > [!IMPORTANT]
+>
 > Join the Discord server and go to the #rc-testing channel to:
 >
 > - Get the latest release candidate info
@@ -19,9 +21,10 @@ verify your backups before proceeding.
 > - Check for known issues or required changes
 
 > [!WARNING]
-> To avoid interfering with your HA environment or HACS-installed
-> versions, **do not** overwrite the HACS installation. Instead, follow this
-> isolated setup process.
+>
+> To avoid interfering with your HA environment or HACS-installed versions, **do
+> not** overwrite the HACS installation. Instead, follow this isolated setup
+> process.
 
 ## ⬇️ Install the RC version
 
@@ -36,8 +39,10 @@ In your Home Assistant config folder, create a `test` folder.
 mkdir -p config/www/test/
 ```
 
-> [!NOTE] This allows for clean separation between official HACS components and
-> manually tested files.
+> [!NOTE]
+>
+> This allows for clean separation between official HACS components and manually
+> tested files.
 
 ### ⬇️ Download and Add the RC version
 

@@ -15,7 +15,7 @@ Explain the motivation behind these changes.
 
 ## Related Issue
 
-Link the issue this PR addresses (if applicable):  
+Link the issue this PR addresses (if applicable):
 
 ## Checklist
 

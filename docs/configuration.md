@@ -197,20 +197,19 @@ Fields that render Jinja results as HTML (`name`, `secondary`, `custom_info`,
 kept — everything else is stripped while its text content is preserved:
 
 - **Tags**: `<b>`, `<i>`, `<u>`, `<span>`, `<div>`
-- **Attributes**: `class`, and `style` limited to `color` and
-  `background-color`
+- **Attributes**: `class`, and `style` limited to `color` and `background-color`
 
-Scripts, event handlers (`onclick`, `onerror`, …), iframes, links and images
-are always removed. This protects your dashboard when a template interpolates
+Scripts, event handlers (`onclick`, `onerror`, …), iframes, links and images are
+always removed. This protects your dashboard when a template interpolates
 strings you don't control (media titles, network device names, …).
 
 > [!NOTE]
 >
 > `<br>` is not in that list — it's handled separately, only on
 > `custom_info`/`secondary`, only when [`multiline`](#multiline) is `true`. Any
-> other `<br>` (including in `name`/`name_info`, which have no multiline mode
-> at all) is stripped rather than kept, since none of these fields can wrap
-> onto a second line outside that one opt-in case.
+> other `<br>` (including in `name`/`name_info`, which have no multiline mode at
+> all) is stripped rather than kept, since none of these fields can wrap onto a
+> second line outside that one opt-in case.
 
 _Example_:
 
@@ -417,8 +416,8 @@ _default attribute:_
 
 > **`name`** [String] _(optional)_
 
-The name displayed on the progress bar. If omitted, the entity's
-`friendly name` will be used.
+The name displayed on the progress bar. If omitted, the entity's `friendly name`
+will be used.
 
 _Default_:
 
@@ -437,8 +436,8 @@ name: ABC
 _Advanced Usage_:
 
 To build a dynamic name, you can provide a list of objects. This allows you to
-combine static text with Home Assistant metadata. Elements are concatenated
-with a space automatically.
+combine static text with Home Assistant metadata. Elements are concatenated with
+a space automatically.
 
 ```yaml
 type: custom:entity-progress-card
@@ -589,22 +588,22 @@ This allows the percentage to be relative to both a minimum (`min_value`, which
 represents 0%) and a maximum (`max_value`, which represents 100%).
 
 When `center_zero` is enabled and `min_value` isn't set, it defaults to the
-negative of `max_value` instead of `0` — e.g. `-100` if `max_value` is also
-left at its default, or `-3000` if `max_value: 3000`. Without this, the
-negative half would have no range at all (`0` to `0`) and could never show
-anything. Set `min_value` explicitly (even to `0`) to override this.
+negative of `max_value` instead of `0` — e.g. `-100` if `max_value` is also left
+at its default, or `-3000` if `max_value: 3000`. Without this, the negative half
+would have no range at all (`0` to `0`) and could never show anything. Set
+`min_value` explicitly (even to `0`) to override this.
 
 `min_value` accepts three forms — like `max_value`, each mode uses its own
 explicit key, so there is nothing to guess from the value's shape:
 
 - a fixed numeric value (float or integer) — same as before,
 - `{ entity: ..., attribute: ... }` — an entity ID whose state is used as the
-  minimum (`attribute` is optional, to read a specific attribute instead of
-  the state),
+  minimum (`attribute` is optional, to read a specific attribute instead of the
+  state),
 - `{ jinja: ... }` — a Jinja template that dynamically returns a number.
 
-In the visual editor, a chip selector (Fixed value / Entity / Template) lets
-you switch between the three modes.
+In the visual editor, a chip selector (Fixed value / Entity / Template) lets you
+switch between the three modes.
 
 > [!NOTE]
 >
@@ -662,12 +661,12 @@ explicit key, so there is nothing to guess from the value's shape:
 
 - a fixed numeric value (float or integer) — same as before,
 - `{ entity: ..., attribute: ... }` — an entity ID whose state is used as the
-  maximum (`attribute` is optional, to read a specific attribute instead of
-  the state),
+  maximum (`attribute` is optional, to read a specific attribute instead of the
+  state),
 - `{ jinja: ... }` — a Jinja template that dynamically returns a number.
 
-In the visual editor, a chip selector (Fixed value / Entity / Template) lets
-you switch between the three modes.
+In the visual editor, a chip selector (Fixed value / Entity / Template) lets you
+switch between the three modes.
 
 > [!NOTE]
 >
@@ -677,11 +676,11 @@ you switch between the three modes.
 > [!IMPORTANT]
 >
 > Prior to 1.6, `max_value` also accepted a bare entity ID string
-> (`max_value: sensor.xxx`), disambiguated from a fixed value at runtime by
-> its type. **This form is deprecated** (a console warning is logged) but
-> still works — it is automatically migrated to the map form for you,
-> together with the also-deprecated `max_value_attribute` option. Please
-> update your YAML to the new form when convenient.
+> (`max_value: sensor.xxx`), disambiguated from a fixed value at runtime by its
+> type. **This form is deprecated** (a console warning is logged) but still
+> works — it is automatically migrated to the map form for you, together with
+> the also-deprecated `max_value_attribute` option. Please update your YAML to
+> the new form when convenient.
 
 _Default_:
 
@@ -717,8 +716,8 @@ max_value:
 _Appliance progress example_:
 
 Some appliance integrations expose a ready-made percentage — Home Connect
-(Bosch/Siemens) has `sensor.<appliance>_program_progress` (0-100 %), so
-`entity` alone is enough, no `max_value` needed:
+(Bosch/Siemens) has `sensor.<appliance>_program_progress` (0-100 %), so `entity`
+alone is enough, no `max_value` needed:
 
 ```yaml
 type: custom:entity-progress-card
@@ -726,11 +725,11 @@ entity: sensor.washing_machine_program_progress
 ```
 
 Miele doesn't expose a percentage, but does expose `elapsed_time` and
-`remaining_time` (minutes) — combine them into a dynamic `max_value` so
-elapsed time becomes the progress. `unit: '%'` is required here: `entity`
-has `device_class: duration`, and without an explicit `unit` the card shows
-the elapsed time itself (e.g. "23 min") instead of the percentage — the bar
-fill is correct either way, only the text label is affected:
+`remaining_time` (minutes) — combine them into a dynamic `max_value` so elapsed
+time becomes the progress. `unit: '%'` is required here: `entity` has
+`device_class: duration`, and without an explicit `unit` the card shows the
+elapsed time itself (e.g. "23 min") instead of the percentage — the bar fill is
+correct either way, only the text label is affected:
 
 ```yaml
 type: custom:entity-progress-card
@@ -818,7 +817,8 @@ state_content:
 >
 > - The selected attribute is shown before the main numerical display on the
 >   card.
-> - If an attribute listed does not exist, the card immediately displays unknown.
+> - If an attribute listed does not exist, the card immediately displays
+>   unknown.
 > - This feature is useful for adding additional context (e.g., position,
 >   status...) to the main progress value.
 
@@ -953,99 +953,95 @@ name_info: >-
 
 > **`bar_stack`** [Map] _(optional)_
 
-Combines several entities into the same progress bar. Available in the
-visual editor via a dedicated row editor (entity/attribute/color/subtract
-per row) and a Stacked/Proportional/Net mode switch.
+Combines several entities into the same progress bar. Available in the visual
+editor via a dedicated row editor (entity/attribute/color/subtract per row) and
+a Stacked/Proportional/Net mode switch.
 
-| Key        | Type                                  | Default   | Description                                                                                                    |
-| ---------- | -------------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------- |
-| `mode`     | `stacked` / `proportional` / `net`     | `stacked` | See below                                                                                                       |
-| `entities` | List                                    | —         | Each entry: `entity` _(required)_, `attribute` _(optional)_, `color` _(optional, falls back to an automatic shade of the main entity's own color; ignored in `net` mode)_, `subtract` _(optional boolean — see below)_ |
+| Key        | Type                               | Default   | Description                                                                                                                                                                                                            |
+| ---------- | ---------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mode`     | `stacked` / `proportional` / `net` | `stacked` | See below                                                                                                                                                                                                              |
+| `entities` | List                               | —         | Each entry: `entity` _(required)_, `attribute` _(optional)_, `color` _(optional, falls back to an automatic shade of the main entity's own color; ignored in `net` mode)_, `subtract` _(optional boolean — see below)_ |
 
 - **`stacked`**: each entity keeps its own literal width on the
-  `min_value`/`max_value` scale, placed one after another (see *Order*
-  below). Space left over past the last entity stays empty — useful for a
-  breakdown that doesn't necessarily add up to the full range (e.g. a home
-  battery's charged / reserved capacity, with the remainder implicitly
-  "free").
+  `min_value`/`max_value` scale, placed one after another (see _Order_ below).
+  Space left over past the last entity stays empty — useful for a breakdown that
+  doesn't necessarily add up to the full range (e.g. a home battery's charged /
+  reserved capacity, with the remainder implicitly "free").
 - **`proportional`**: the main entity and every `entities` value are added
-  together to drive the bar, and each segment's width is its *share* of
-  that combined total — the bar is always filled edge-to-edge, like a
-  "100% stacked" chart in a spreadsheet. Useful for combining several
-  sensors toward one shared target (e.g. several circuits against a
-  breaker limit).
-- **`net`**: the main entity and every `entities` value are added into a
-  single algebraic total, rendered as one plain segment (no per-entity
-  breakdown, no per-entity `color`) — the normal bar color/theme applies as
-  if `bar_stack` weren't there at all. Combined with `center_zero`, this is
-  the way to show a balance that can go either way — e.g. grid consumption
-  minus solar production, positive when you're drawing from the grid,
-  negative when you're exporting surplus.
+  together to drive the bar, and each segment's width is its _share_ of that
+  combined total — the bar is always filled edge-to-edge, like a "100% stacked"
+  chart in a spreadsheet. Useful for combining several sensors toward one shared
+  target (e.g. several circuits against a breaker limit).
+- **`net`**: the main entity and every `entities` value are added into a single
+  algebraic total, rendered as one plain segment (no per-entity breakdown, no
+  per-entity `color`) — the normal bar color/theme applies as if `bar_stack`
+  weren't there at all. Combined with `center_zero`, this is the way to show a
+  balance that can go either way — e.g. grid consumption minus solar production,
+  positive when you're drawing from the grid, negative when you're exporting
+  surplus.
 
-`subtract: true` on an entity means "this value counts against the total
-instead of with it" — what that looks like depends on the mode:
+`subtract: true` on an entity means "this value counts against the total instead
+of with it" — what that looks like depends on the mode:
 
 - In **`net`**, it's subtracted from the algebraic total (see the example
   below).
-- In **`stacked`/`proportional`** *combined with `center_zero`*, entities
-  split into two independent arms instead of a single breakdown: every
-  entity goes to the *positive* arm (growing right from the zero point) by
-  default — except the main entity, which is always positive — and to the
-  *negative* arm (growing left) if it's marked `subtract` **or its own raw
-  value is already negative** (see below). Both arms render and fill
-  independently — e.g. a consumption arm and a production arm both visible
-  at once, each showing its own true length, rather than one value
-  canceling the other out.
+- In **`stacked`/`proportional`** _combined with `center_zero`_, entities split
+  into two independent arms instead of a single breakdown: every entity goes to
+  the _positive_ arm (growing right from the zero point) by default — except the
+  main entity, which is always positive — and to the _negative_ arm (growing
+  left) if it's marked `subtract` **or its own raw value is already negative**
+  (see below). Both arms render and fill independently — e.g. a consumption arm
+  and a production arm both visible at once, each showing its own true length,
+  rather than one value canceling the other out.
 - Without `center_zero`, `subtract` has no effect on `stacked`/`proportional`
-  (there's only one direction to place segments in) — every entity
-  contributes its magnitude regardless of sign.
+  (there's only one direction to place segments in) — every entity contributes
+  its magnitude regardless of sign.
 
 > [!IMPORTANT]
 >
-> `subtract` always makes a value *count negatively* — it never blindly
-> flips whatever sign the sensor already reports. An entity that already
-> reports a negative number (e.g. a Linky/DSMR-style signed grid sensor, see
-> the note below) counts as negative on its own, with or without
-> `subtract: true`; marking it `subtract` too would not double-negate it
-> back to positive. This also means a plain, always-positive sensor never
-> needs `subtract` to be read as negative — only a value that should be
-> negative but happens to come from an always-positive sensor does.
+> `subtract` always makes a value _count negatively_ — it never blindly flips
+> whatever sign the sensor already reports. An entity that already reports a
+> negative number (e.g. a Linky/DSMR-style signed grid sensor, see the note
+> below) counts as negative on its own, with or without `subtract: true`;
+> marking it `subtract` too would not double-negate it back to positive. This
+> also means a plain, always-positive sensor never needs `subtract` to be read
+> as negative — only a value that should be negative but happens to come from an
+> always-positive sensor does.
 
 > [!NOTE]
 >
-> `stacked`/`proportional` only look different once the entities overflow
-> the bar's range (sum of values > `max_value`, or > half-range per arm
-> when centered): `stacked` keeps every entity's true width and truncates
-> whoever doesn't fit, so you can see at a glance that something doesn't
-> fit; `proportional` shrinks everyone by the same ratio so the bar (or
-> that arm) always reads as "100%", but two entities that individually
-> overflow can look identical to two that fit exactly. Below that overflow
-> point, both modes render the same widths. `net` doesn't have this
-> ambiguity, since it never renders more than one segment.
+> `stacked`/`proportional` only look different once the entities overflow the
+> bar's range (sum of values > `max_value`, or > half-range per arm when
+> centered): `stacked` keeps every entity's true width and truncates whoever
+> doesn't fit, so you can see at a glance that something doesn't fit;
+> `proportional` shrinks everyone by the same ratio so the bar (or that arm)
+> always reads as "100%", but two entities that individually overflow can look
+> identical to two that fit exactly. Below that overflow point, both modes
+> render the same widths. `net` doesn't have this ambiguity, since it never
+> renders more than one segment.
 
-**Order**: the main entity is always first, followed by `entities` in list
-order — the same rule for both `stacked` and `proportional`. The one
-exception: without `center_zero`, an entity marked `subtract` renders before
-the main entity instead of after, as a visual sign that something atypical
-is configured (`subtract` otherwise has no visible effect in that case —
-see above). This only looks at the `subtract` flag, not at whether the
-entity's own live value happens to be negative — the two are otherwise
-treated the same (see the `subtract` note above), but this particular rule
-is decided before any entity state is available, so only the flag can be
-checked.
+**Order**: the main entity is always first, followed by `entities` in list order
+— the same rule for both `stacked` and `proportional`. The one exception:
+without `center_zero`, an entity marked `subtract` renders before the main
+entity instead of after, as a visual sign that something atypical is configured
+(`subtract` otherwise has no visible effect in that case — see above). This only
+looks at the `subtract` flag, not at whether the entity's own live value happens
+to be negative — the two are otherwise treated the same (see the `subtract` note
+above), but this particular rule is decided before any entity state is
+available, so only the flag can be checked.
 
-**Color**: the main entity always renders in its own negotiated color,
-never auto-shaded, regardless of where it falls in that order. Only
-`entities` items without an explicit `color` are auto-shaded (darkest to
-full color), and that shading is positioned only among themselves — the
-main entity never takes up a "slot" in it.
+**Color**: the main entity always renders in its own negotiated color, never
+auto-shaded, regardless of where it falls in that order. Only `entities` items
+without an explicit `color` are auto-shaded (darkest to full color), and that
+shading is positioned only among themselves — the main entity never takes up a
+"slot" in it.
 
-**Label**: with `center_zero`, the displayed value switches to the
-algebraic total (positive entities minus negative ones — the same number
-`net` mode always shows) instead of the plain sum, since a single flat
-percentage stops meaning anything once the bar itself is showing two
-independent, possibly-opposing arms. Without `center_zero`, the displayed
-value stays the plain sum, matching what the bar visually adds up to.
+**Label**: with `center_zero`, the displayed value switches to the algebraic
+total (positive entities minus negative ones — the same number `net` mode always
+shows) instead of the plain sum, since a single flat percentage stops meaning
+anything once the bar itself is showing two independent, possibly-opposing arms.
+Without `center_zero`, the displayed value stays the plain sum, matching what
+the bar visually adds up to.
 
 _Example (`stacked`, home battery breakdown)_:
 
@@ -1088,13 +1084,13 @@ bar_stack:
 
 > [!NOTE]
 >
-> There's no single Home Assistant-wide sign convention for grid power
-> sensors. Some integrations (e.g. Linky, DSMR/P1 smart meters) already
-> report a single signed value — positive while importing, negative while
-> exporting — in which case `net` isn't even needed: just point `entity` at
-> it directly with `center_zero`. `net` is for the common case of two
-> separate, always-positive sensors (consumption and production) that need
-> to be combined into that same signed balance.
+> There's no single Home Assistant-wide sign convention for grid power sensors.
+> Some integrations (e.g. Linky, DSMR/P1 smart meters) already report a single
+> signed value — positive while importing, negative while exporting — in which
+> case `net` isn't even needed: just point `entity` at it directly with
+> `center_zero`. `net` is for the common case of two separate, always-positive
+> sensors (consumption and production) that need to be combined into that same
+> signed balance.
 
 _Example (`stacked` + `center_zero`, consumption and production shown at once)_:
 
@@ -1111,22 +1107,22 @@ bar_stack:
       color: green
 ```
 
-Unlike the `net` example above, this doesn't collapse both sensors into a
-single balance — it draws a consumption bar growing right and a production
-bar growing left, each at its own true length, so you can compare the two
-at a glance instead of only seeing their difference.
+Unlike the `net` example above, this doesn't collapse both sensors into a single
+balance — it draws a consumption bar growing right and a production bar growing
+left, each at its own true length, so you can compare the two at a glance
+instead of only seeing their difference.
 
 > [!IMPORTANT]
 >
 > Prior to 1.6, this feature was a bare list under the `additions` key
-> (`additions: [{entity, attribute}]`). **This form is deprecated** (a
-> console warning is logged) but still works — it is automatically migrated
-> to `bar_stack: { mode: proportional, entities: [...] }`, which computes
-> the exact same values as before. The only visible difference is segment
-> *order*: `additions` always drew its entities before the main one,
-> whereas the migrated form now follows the same main-first order as
-> everything else (see *Order* above) — colors and proportions are
-> unaffected. Please update your YAML to the new form when convenient.
+> (`additions: [{entity, attribute}]`). **This form is deprecated** (a console
+> warning is logged) but still works — it is automatically migrated to
+> `bar_stack: { mode: proportional, entities: [...] }`, which computes the exact
+> same values as before. The only visible difference is segment _order_:
+> `additions` always drew its entities before the main one, whereas the migrated
+> form now follows the same main-first order as everything else (see _Order_
+> above) — colors and proportions are unaffected. Please update your YAML to the
+> new form when convenient.
 
 ### Styling Options
 
@@ -1183,7 +1179,8 @@ color: rgb(110, 65, 171)
 
 #### `icon_animation`
 
-[![Card OK][Card-OK]](#compatibility) [![Template OK][Template-OK]](#compatibility)
+[![Card OK][Card-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
 
 > **`icon_animation`** [String] ➡️
 > {`none`|`spin`|`pulse`|`bounce`|`shake`|`ping`|`reveal`|`washing_machine`|`battery_charging`}
@@ -1198,71 +1195,70 @@ sensors, numbers, batteries...) and for entities in a resting state (`off`,
 `idle`, `paused`, `closed`, `locked`, ...). `washing_machine` and
 `battery_charging` are the two exceptions.
 
-`washing_machine` also triggers when `entity` — or another `sensor` on the
-same device, since `entity` is often the progress percentage rather than
-the status itself (see [max_value] below) — has a state of exactly `run`
-or `in_use` (see the table below). No config needed: every same-device
-sensor is checked automatically, the same way `battery_charging` resolves
-its own status entity. A `binary_sensor`/`switch` based setup (e.g. a
-smart-plug power monitor) keeps working as before, with no extra state
-check needed.
+`washing_machine` also triggers when `entity` — or another `sensor` on the same
+device, since `entity` is often the progress percentage rather than the status
+itself (see [max_value] below) — has a state of exactly `run` or `in_use` (see
+the table below). No config needed: every same-device sensor is checked
+automatically, the same way `battery_charging` resolves its own status entity. A
+`binary_sensor`/`switch` based setup (e.g. a smart-plug power monitor) keeps
+working as before, with no extra state check needed.
 
 Verified against these appliance integrations:
 
-| Brand | Entity | Recognized as running |
-| --- | --- | --- |
-| Home Connect, Bosch/Siemens ([official HA core]) | `sensor.<appliance>_operation_state` (`device_class: enum`) | state `run` |
-| Miele ([official HA core]) | `sensor.<appliance>_status` (`device_class: enum`, key `state_status`) | state `in_use` |
+| Brand                                            | Entity                                                                 | Recognized as running |
+| ------------------------------------------------ | ---------------------------------------------------------------------- | --------------------- |
+| Home Connect, Bosch/Siemens ([official HA core]) | `sensor.<appliance>_operation_state` (`device_class: enum`)            | state `run`           |
+| Miele ([official HA core])                       | `sensor.<appliance>_status` (`device_class: enum`, key `state_status`) | state `in_use`        |
 
 `battery_charging` has no active/inactive concept to key off at all, so it
 instead considers the entity charging when either is true:
 
 - its own state is one of `charging`, `charge_in_progress`,
-  `v2g_charging_normal`, `charging (ac)`, `charging (dc)`, `super offboard
-  charging`, or
-- it's a `binary_sensor` with `device_class: battery_charging` and its state
-  is `on`, or
-- one of these attributes is present and truthy: `battery_charging`,
-  `charging`, `is_charging` (boolean `true`, or a `'charging'`-valued string).
+  `v2g_charging_normal`, `charging (ac)`, `charging (dc)`,
+  `super offboard charging`, or
+- it's a `binary_sensor` with `device_class: battery_charging` and its state is
+  `on`, or
+- one of these attributes is present and truthy: `battery_charging`, `charging`,
+  `is_charging` (boolean `true`, or a `'charging'`-valued string).
 
 Most integrations split this across two entities on the same device: one
-reporting the battery percentage (the `entity` you point the card at) and
-one reporting the charging status. If `entity` doesn't itself report
-charging, the card checks every other entity on the same device against the
-rules above — no extra config needed, and no assumption about how that
-entity is named (Home Assistant's own Companion App, for example, calls its
-charging-status sensor `battery_state`, with no "charging" anywhere in its
-entity_id). All options respect the system-level "Reduce Motion"
-accessibility setting (see [Accessibility] in the README).
+reporting the battery percentage (the `entity` you point the card at) and one
+reporting the charging status. If `entity` doesn't itself report charging, the
+card checks every other entity on the same device against the rules above — no
+extra config needed, and no assumption about how that entity is named (Home
+Assistant's own Companion App, for example, calls its charging-status sensor
+`battery_state`, with no "charging" anywhere in its entity_id). All options
+respect the system-level "Reduce Motion" accessibility setting (see
+[Accessibility] in the README).
 
 Verified against these integrations:
 
-| Brand | Main entity (`entity`, the %) | Charging-status entity (auto-detected) | Recognized as charging |
-| --- | --- | --- | --- |
-| Tesla Fleet ([official HA core]) | `sensor.<car>_battery` (`device_class: battery`) | `sensor.<car>_charging_state` (`device_class: enum`) | state `charging` |
-| Renault ([official HA core]) | `sensor.<car>_battery` (key `battery_level`, `device_class: battery`) | `binary_sensor.<car>_charging` (`device_class: battery_charging`) **or** `sensor.<car>_charge_state` (key `charge_state`) | binary_sensor state `on`, or sensor state `charge_in_progress` / `v2g_charging_normal` |
-| BYD ([jkaberg/hass-byd-vehicle]) | `sensor` key `elec_percent` (`device_class: battery`) | `binary_sensor` key `is_charging` (`device_class: battery_charging`) | state `on` |
-| MG SAIC ([townsmcp/mg-saic-ha]) | "State of Charge" sensor (key `bmsPackSOCDsp`, `device_class: battery`) | "Charging Status" sensor (key `bmsChrgSts`) | state `Charging (AC)` / `Charging (DC)` / `Charging` / `Super Offboard Charging` |
-| Xpeng, Enode-based ([mnordseth/xpeng-homeassistant]) | "battery" sensor (`device_class: battery`) | "charging" binary_sensor (`device_class: battery_charging`) | state `on` |
-| Toyota ([pytoyoda/ha_toyota]) | "Battery Level" sensor (key `battery_level`, `device_class: battery`) | "Charging Status" sensor (key `charging_status`, `device_class: enum`) | state `charging` |
-| Volkswagen We Connect ID ([mitch-dc/volkswagen_we_connect_id]) | "State of Charge" sensor (key `currentSOC_pct`, `device_class: battery`) | "Charging State" sensor (key `chargingState`) | state `charging` |
-| Home Assistant Companion App ([official HA core]) | `sensor.<device>_battery_level` (`device_class: battery`) | `sensor.<device>_battery_state` (key `battery_state`, `device_class: enum`) — disabled by default, enable it in the entity's settings | state `charging` |
+| Brand                                                          | Main entity (`entity`, the %)                                            | Charging-status entity (auto-detected)                                                                                                | Recognized as charging                                                                 |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Tesla Fleet ([official HA core])                               | `sensor.<car>_battery` (`device_class: battery`)                         | `sensor.<car>_charging_state` (`device_class: enum`)                                                                                  | state `charging`                                                                       |
+| Renault ([official HA core])                                   | `sensor.<car>_battery` (key `battery_level`, `device_class: battery`)    | `binary_sensor.<car>_charging` (`device_class: battery_charging`) **or** `sensor.<car>_charge_state` (key `charge_state`)             | binary_sensor state `on`, or sensor state `charge_in_progress` / `v2g_charging_normal` |
+| BYD ([jkaberg/hass-byd-vehicle])                               | `sensor` key `elec_percent` (`device_class: battery`)                    | `binary_sensor` key `is_charging` (`device_class: battery_charging`)                                                                  | state `on`                                                                             |
+| MG SAIC ([townsmcp/mg-saic-ha])                                | "State of Charge" sensor (key `bmsPackSOCDsp`, `device_class: battery`)  | "Charging Status" sensor (key `bmsChrgSts`)                                                                                           | state `Charging (AC)` / `Charging (DC)` / `Charging` / `Super Offboard Charging`       |
+| Xpeng, Enode-based ([mnordseth/xpeng-homeassistant])           | "battery" sensor (`device_class: battery`)                               | "charging" binary_sensor (`device_class: battery_charging`)                                                                           | state `on`                                                                             |
+| Toyota ([pytoyoda/ha_toyota])                                  | "Battery Level" sensor (key `battery_level`, `device_class: battery`)    | "Charging Status" sensor (key `charging_status`, `device_class: enum`)                                                                | state `charging`                                                                       |
+| Volkswagen We Connect ID ([mitch-dc/volkswagen_we_connect_id]) | "State of Charge" sensor (key `currentSOC_pct`, `device_class: battery`) | "Charging State" sensor (key `chargingState`)                                                                                         | state `charging`                                                                       |
+| Home Assistant Companion App ([official HA core])              | `sensor.<device>_battery_level` (`device_class: battery`)                | `sensor.<device>_battery_state` (key `battery_state`, `device_class: enum`) — disabled by default, enable it in the entity's settings | state `charging`                                                                       |
 
-Since detection reads state/attribute values, not entity_id or brand, any
-other integration following the same conventions — a `battery_charging`-class
+Since detection reads state/attribute values, not entity_id or brand, any other
+integration following the same conventions — a `battery_charging`-class
 `binary_sensor`, or a same-device `sensor`/attribute whose state is an exact
 match from the list earlier in this section — is detected automatically too,
 without a code change.
 
-The fill animation itself is drawn by the card (a clip-path sweep), not by
-the icon — it's calibrated for the plain `mdi:battery` outline. If the icon
-actually shown (your `icon:` override, or the entity's own native icon)
-contains `charging` or `bluetooth` (e.g. `mdi:battery-charging-80`,
+The fill animation itself is drawn by the card (a clip-path sweep), not by the
+icon — it's calibrated for the plain `mdi:battery` outline. If the icon actually
+shown (your `icon:` override, or the entity's own native icon) contains
+`charging` or `bluetooth` (e.g. `mdi:battery-charging-80`,
 `mdi:battery-charging-wireless`, `mdi:battery-bluetooth`), the icon already
 draws its own bolt/bluetooth glyph at a different position, so the card
-automatically nudges the sweep to compensate instead of changing the icon.
-This compensation is tuned against MDI's `battery-charging*` icons; other
-icon packs, or `battery-bluetooth*`, aren't verified and may not line up.
+automatically nudges the sweep to compensate instead of changing the icon. This
+compensation is tuned against MDI's `battery-charging*` icons; other icon packs,
+or `battery-bluetooth*`, aren't verified and may not line up.
 
 _Example_:
 
@@ -1274,16 +1270,16 @@ icon_animation: spin
 
 _Options_:
 
-| option   | description                                    |
-| :------- | :---------------------------------------------- |
-| `none`   | No animation (default)                         |
-| `spin`   | Continuous rotation                            |
-| `pulse`  | Gentle scale/opacity pulse                     |
-| `bounce` | Squash-and-stretch bounce                      |
-| `shake`  | Small vibration jitter                         |
-| `ping`   | Expanding ring pulse around the icon's shape   |
-| `reveal` | Icon grows into view in circular steps         |
-| `washing_machine` | Shake + porthole wipe, for washer/dryer entities |
+| option             | description                                                                                 |
+| :----------------- | :------------------------------------------------------------------------------------------ |
+| `none`             | No animation (default)                                                                      |
+| `spin`             | Continuous rotation                                                                         |
+| `pulse`            | Gentle scale/opacity pulse                                                                  |
+| `bounce`           | Squash-and-stretch bounce                                                                   |
+| `shake`            | Small vibration jitter                                                                      |
+| `ping`             | Expanding ring pulse around the icon's shape                                                |
+| `reveal`           | Icon grows into view in circular steps                                                      |
+| `washing_machine`  | Shake + porthole wipe, for washer/dryer entities                                            |
 | `battery_charging` | Sweeping fill wipe, active while charging (device battery attribute or EV `charging` state) |
 
 [🔼 Back to top]
@@ -1420,13 +1416,13 @@ bar_position: overlay
 
 _Options:_
 
-| option    | description                                          |
-| :-------- | :--------------------------------------------------- |
-| `default` | Standard position (inline with content)              |
-| `below`   | Below the content as a dedicated row                 |
-| `top`     | At the top of the card edge                          |
-| `bottom`  | At the bottom of the card edge                       |
-| `overlay` | Overlaid on top of the content                       |
+| option    | description                             |
+| :-------- | :-------------------------------------- |
+| `default` | Standard position (inline with content) |
+| `below`   | Below the content as a dedicated row    |
+| `top`     | At the top of the card edge             |
+| `bottom`  | At the bottom of the card edge          |
+| `overlay` | Overlaid on top of the content          |
 
 _Default value_:
 
@@ -1476,9 +1472,9 @@ _Default value_:
 > **`bar_segments`** [Integer] _(optional)_
 
 Renders the progress bar as discrete blocks — like battery cells or a signal
-strength indicator — instead of a continuous fill. Both the track and the
-fill are segmented, so gaps are visible in both the empty and filled portions
-of the bar.
+strength indicator — instead of a continuous fill. Both the track and the fill
+are segmented, so gaps are visible in both the empty and filled portions of the
+bar.
 
 _Example_:
 
@@ -1488,8 +1484,8 @@ entity: sensor.battery
 bar_segments: 10
 ```
 
-Works with any bar orientation, size, and color mode/effect. The visual
-editor exposes this as a numeric field.
+Works with any bar orientation, size, and color mode/effect. The visual editor
+exposes this as a numeric field.
 
 [🔼 Back to top]
 
@@ -1554,21 +1550,21 @@ bar_effect: |-
 
 > [!NOTE]
 >
-> The shimmer effect is disabled when center_zero is enabled
-> (center_zero = true).
+> The shimmer effect is disabled when center_zero is enabled (center_zero =
+> true).
 
 _Effect incompatibilities_ — some effects cannot be combined:
 
-| Effect selected | Incompatible with |
-|---|---|
-| `glass` | `gradient`, `gradient_reverse` |
-| `gradient` | `gradient_reverse`, `glass` |
-| `gradient_reverse` | `gradient`, `glass` |
-| `shimmer` | `shimmer_reverse` |
-| `shimmer_reverse` | `shimmer` |
+| Effect selected    | Incompatible with              |
+| ------------------ | ------------------------------ |
+| `glass`            | `gradient`, `gradient_reverse` |
+| `gradient`         | `gradient_reverse`, `glass`    |
+| `gradient_reverse` | `gradient`, `glass`            |
+| `shimmer`          | `shimmer_reverse`              |
+| `shimmer_reverse`  | `shimmer`                      |
 
-The visual editor enforces these rules automatically by hiding incompatible chips
-when a conflicting effect is active.
+The visual editor enforces these rules automatically by hiding incompatible
+chips when a conflicting effect is active.
 
 [🔼 Back to top]
 
@@ -1577,7 +1573,8 @@ when a conflicting effect is active.
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 [![Feature OK][Feature-OK]](#compatibility)
 
-> **`bar_color_mode`** [String] ➡️ {`auto`|`segment`|`rainbow`} _(optional, default: `auto`)_
+> **`bar_color_mode`** [String] ➡️ {`auto`|`segment`|`rainbow`} _(optional,
+> default: `auto`)_
 
 Controls how theme colors are applied to the progress bar fill.
 
@@ -1590,18 +1587,20 @@ Controls how theme colors are applied to the progress bar fill.
   transitioning between each zone's color up to the current value.
 
 > [!NOTE]
+>
 > `bar_color_mode` has no effect when `center_zero` is enabled — that mode
-> always uses `auto` coloring. For linear themes (e.g. `light`), zone
-> boundaries are derived automatically by splitting 0–100% into equal
-> segments (5 levels → 0–20%, 20–40%, …). It works with both predefined
-> themes and [`custom_theme`](#custom_theme).
+> always uses `auto` coloring. For linear themes (e.g. `light`), zone boundaries
+> are derived automatically by splitting 0–100% into equal segments (5 levels →
+> 0–20%, 20–40%, …). It works with both predefined themes and
+> [`custom_theme`](#custom_theme).
 
 > [!NOTE]
+>
 > With [`custom_theme`](#custom_theme), a zone without its own
 > `color`/`bar_color` doesn't render as a flat neutral stop in `segment`/
 > `rainbow` mode — it falls back to the entity's own negotiated color (e.g. a
-> cover is pink open / grey closed) before the card's generic default, the
-> same fallback chain the single-color `auto` mode already uses.
+> cover is pink open / grey closed) before the card's generic default, the same
+> fallback chain the single-color `auto` mode already uses.
 
 _Examples_:
 
@@ -1641,19 +1640,20 @@ Controls how the value maps to the bar's fill width.
 
 - `linear` (default) — no change from previous versions: the fill width is
   directly proportional to the value.
-- `log` — the fill width follows a base-10 logarithmic scale instead. Useful
-  for values that span several orders of magnitude (illuminance in lux,
-  network throughput, particle counts…), where a linear bar would make
-  everything below the top of the range look empty.
+- `log` — the fill width follows a base-10 logarithmic scale instead. Useful for
+  values that span several orders of magnitude (illuminance in lux, network
+  throughput, particle counts…), where a linear bar would make everything below
+  the top of the range look empty.
 
-Watermarks, theme zones and marks all stay visually consistent with the
-chosen scale — they share the same value → position math as the bar fill.
+Watermarks, theme zones and marks all stay visually consistent with the chosen
+scale — they share the same value → position math as the bar fill.
 
 > [!NOTE]
+>
 > `log` requires a strictly positive range (`min_value > 0` and
-> `max_value > min_value`) and has no meaning combined with `center_zero`
-> (there is no logarithm of a range that crosses zero). Either condition
-> falls back to `linear` automatically — no error, no broken bar.
+> `max_value > min_value`) and has no meaning combined with `center_zero` (there
+> is no logarithm of a range that crosses zero). Either condition falls back to
+> `linear` automatically — no error, no broken bar.
 
 _Example_:
 
@@ -1675,9 +1675,8 @@ bar_scale: log
 
 > **`bar_max_width`** [String] _(optional)_
 
-Limits the maximum width of the progress bar in vertical layout.
-Only applies to vertical layout (`small`, `medium`, `large` sizes). Has no
-effect on `xlarge`.
+Limits the maximum width of the progress bar in vertical layout. Only applies to
+vertical layout (`small`, `medium`, `large` sizes). Has no effect on `xlarge`.
 
 _Example_:
 
@@ -1725,6 +1724,7 @@ reverse: true
 > any entity where a reversed progress bar is needed.
 
 > [!IMPORTANT]
+>
 > 'up' can only be used with the vertical card layout and when the bar position
 > is set to overlay.
 
@@ -1994,15 +1994,15 @@ following locale rules or overriding them explicitly.
 Centers the progress bar at zero, allowing for better visualization of values
 that fluctuate around zero (e.g., positive/negative changes).
 
-By default, the center point is `0`. If your sensor has a non-zero nominal
-value (e.g., a voltage sensor around `230V`, or a pressure sensor with a
-non-zero baseline), you can pass an object instead of `true` to customize
-the center point and how the value is displayed.
+By default, the center point is `0`. If your sensor has a non-zero nominal value
+(e.g., a voltage sensor around `230V`, or a pressure sensor with a non-zero
+baseline), you can pass an object instead of `true` to customize the center
+point and how the value is displayed.
 
-| Property          | Type    | Default | Description                                                                                                  |
-| ----------------- | ------- | ------- | -------------------------------------------------------------------------------------------------------------------- |
-| `value`           | Number  | `0`     | The reference value used as the center point of the bar.                                                             |
-| `growth_percent`  | Boolean | `false` | When `true`, the displayed percentage shows growth/decrease **relative to `value`** instead of the bar's fill ratio. |
+| Property         | Type    | Default | Description                                                                                                          |
+| ---------------- | ------- | ------- | -------------------------------------------------------------------------------------------------------------------- |
+| `value`          | Number  | `0`     | The reference value used as the center point of the bar.                                                             |
+| `growth_percent` | Boolean | `false` | When `true`, the displayed percentage shows growth/decrease **relative to `value`** instead of the bar's fill ratio. |
 
 > ⚠️ The bar's visual fill always reflects the distance from `value` to the
 > nearest bound (`min_value`/`max_value`). `growth_percent` only changes the
@@ -2026,9 +2026,9 @@ center_zero:
   value: 230
 ```
 
-With the example above, a sensor reading `236` will show a bar filled
-relative to the `230`–`max_value` range, but the displayed text will be
-`236` (the raw value), unless `growth_percent` is enabled (see below).
+With the example above, a sensor reading `236` will show a bar filled relative
+to the `230`–`max_value` range, but the displayed text will be `236` (the raw
+value), unless `growth_percent` is enabled (see below).
 
 _Example — custom center value with growth percentage display_:
 
@@ -2042,9 +2042,8 @@ center_zero:
 ```
 
 With `value: 60` and `growth_percent: true`, a cover at `66%` will display
-`+10%` (i.e. `(66 - 60) / 60 * 100`), representing how far the current value
-has grown relative to the center point — rather than the bar's raw fill
-ratio.
+`+10%` (i.e. `(66 - 60) / 60 * 100`), representing how far the current value has
+grown relative to the center point — rather than the bar's raw fill ratio.
 
 [🔼 Back to top]
 
@@ -2071,11 +2070,11 @@ theme: light
 
 > [!WARNING]
 >
-> The `battery`, `cpu`, and `memory` parameters are deprecated and
-> SHOULD no longer be used. Although these parameters are still valid, they MUST
-> be replaced by `optimal_when_low` or `optimal_when_high`. These new
-> parameters, introduced in version `1.1.7`, eliminate the need for multiple
-> theme definitions and are sufficient to replace the deprecated themes.
+> The `battery`, `cpu`, and `memory` parameters are deprecated and SHOULD no
+> longer be used. Although these parameters are still valid, they MUST be
+> replaced by `optimal_when_low` or `optimal_when_high`. These new parameters,
+> introduced in version `1.1.7`, eliminate the need for multiple theme
+> definitions and are sufficient to replace the deprecated themes.
 
 [🔼 Back to top]
 
@@ -2098,8 +2097,10 @@ _Map definition:_
 - min [number] (required): The minimum value for this range.
 - max [number] (required): The maximum value for this range.
 - color [string] (optional): The color of the icon and the progress bar.
-- icon_color [string] (optional): Color specifically for the icon, overrides `color`.
-- bar_color [string] (optional): Color specifically for the progress bar, overrides `color`.
+- icon_color [string] (optional): Color specifically for the icon, overrides
+  `color`.
+- bar_color [string] (optional): Color specifically for the progress bar,
+  overrides `color`.
 - icon [string] (optional): The icon to display.
 
 _Order of Priority for the Icon:_
@@ -2131,23 +2132,22 @@ custom_theme:
 
 > [!IMPORTANT]
 >
-> Each zone only needs a valid `min` < `max` to be taken into account — a
-> zone missing `min`/`max`, or with `min` >= `max`, is ignored on its own
-> without affecting the rest of the list. Zones don't need to be contiguous
-> or declared in order: gaps between zones are allowed, and the list is
-> sorted by `min` automatically.
+> Each zone only needs a valid `min` < `max` to be taken into account — a zone
+> missing `min`/`max`, or with `min` >= `max`, is ignored on its own without
+> affecting the rest of the list. Zones don't need to be contiguous or declared
+> in order: gaps between zones are allowed, and the list is sorted by `min`
+> automatically.
 >
 > - Below the lowest zone or above the highest one, the closest edge zone is
 >   used (same as before).
-> - Inside a **gap** between two zones, `custom_theme` disengages entirely
->   for that value instead of guessing a color: the icon and colors fall
->   back to [`color`](#color)/[`icon`](#icon) if set, then to the entity's
->   own default.
+> - Inside a **gap** between two zones, `custom_theme` disengages entirely for
+>   that value instead of guessing a color: the icon and colors fall back to
+>   [`color`](#color)/[`icon`](#icon) if set, then to the entity's own default.
 > - If two zones **overlap**, the one with the lowest `min` wins.
 >
-> This tolerant behavior is what makes the visual editor's row-by-row
-> workflow practical — an unfinished zone (still missing a color, or not
-> yet connected to its neighbor) never breaks the rest of your custom theme.
+> This tolerant behavior is what makes the visual editor's row-by-row workflow
+> practical — an unfinished zone (still missing a color, or not yet connected to
+> its neighbor) never breaks the rest of your custom theme.
 
 ```yaml
 # Default settings:
@@ -2236,7 +2236,8 @@ Defines which elements should be hidden in the card.
 hide accepts either:
 
 - a list of elements to hide (static configuration), or
-- a Jinja template that dynamically returns a list of elements based on the current state.
+- a Jinja template that dynamically returns a list of elements based on the
+  current state.
 
 When using the list syntax, the following elements are available:
 
@@ -2351,14 +2352,14 @@ entity ID and a Jinja template are both strings):
   `low_attribute`/`high_attribute`,
 - `{ jinja: ... }` — a Jinja template that dynamically returns a number.
 
-In the visual editor, a chip selector (Fixed value / Entity / Template) lets
-you switch between the three modes, mirroring `min_value`/`max_value`.
+In the visual editor, a chip selector (Fixed value / Entity / Template) lets you
+switch between the three modes, mirroring `min_value`/`max_value`.
 
 > [!NOTE]
 >
-> The Jinja mode for `low`/`high` is available on the Card and the Badge
-> only. On the Tile Feature and the Template card, only the fixed value and
-> entity modes apply.
+> The Jinja mode for `low`/`high` is available on the Card and the Badge only.
+> On the Tile Feature and the Template card, only the fixed value and entity
+> modes apply.
 
 _Jinja example_:
 
@@ -2377,22 +2378,21 @@ watermark:
 same scale defined by `min_value` and `max_value`. The card converts them to a
 bar position automatically — they are never raw percentages of the bar.
 
-| Scenario | `low_as` / `high_as` | `low` / `high` unit | Example |
-| --- | --- | --- | --- |
-| Percentage sensor (`%`), default range 0–100 | `auto` | Percentage (0–100) | `low: 20` → marker at 20 % on the bar |
-| Percentage sensor (`%`), custom range `min=-100 max=100` | `auto` | Same custom scale | `low: 10` → marker at 55 % visually |
-| Temperature sensor (`°C`), `min=-10 max=50` | `auto` | °C | `low: -5` → marker at −5 °C |
-| Power sensor (`W`), `min=-7000 max=7000` | `auto` | W | `low: -3700` → marker at −3700 W |
-| `max_value` is another entity (bar shows %) | `auto` | Still the entity’s unit | `low: 20` means 20 °C even if bar shows % |
-| `center_zero: true` | `auto` | Entity’s unit, full range | `low: -5` on a −10…50 scale → placed in the left (negative) half |
-| Any sensor, explicit bar position | `percent` | Bar position (0–100) | `low: 25, low_as: percent` → marker fixed at 25 % of the bar |
+| Scenario                                                 | `low_as` / `high_as` | `low` / `high` unit       | Example                                                          |
+| -------------------------------------------------------- | -------------------- | ------------------------- | ---------------------------------------------------------------- |
+| Percentage sensor (`%`), default range 0–100             | `auto`               | Percentage (0–100)        | `low: 20` → marker at 20 % on the bar                            |
+| Percentage sensor (`%`), custom range `min=-100 max=100` | `auto`               | Same custom scale         | `low: 10` → marker at 55 % visually                              |
+| Temperature sensor (`°C`), `min=-10 max=50`              | `auto`               | °C                        | `low: -5` → marker at −5 °C                                      |
+| Power sensor (`W`), `min=-7000 max=7000`                 | `auto`               | W                         | `low: -3700` → marker at −3700 W                                 |
+| `max_value` is another entity (bar shows %)              | `auto`               | Still the entity’s unit   | `low: 20` means 20 °C even if bar shows %                        |
+| `center_zero: true`                                      | `auto`               | Entity’s unit, full range | `low: -5` on a −10…50 scale → placed in the left (negative) half |
+| Any sensor, explicit bar position                        | `percent`            | Bar position (0–100)      | `low: 25, low_as: percent` → marker fixed at 25 % of the bar     |
 
-> **`center_zero` note** — The bar is split into two visual halves: left
-> (min → zero) and right (zero → max). `low`/`high` values are mapped to their
-> correct half automatically regardless of whether the range is symmetric or not.
-> With `low_as: percent` / `high_as: percent`, the value is a direct position on
-> the full bar (0 = left edge, 100 = right edge), bypassing the two-half
-> mapping.
+> **`center_zero` note** — The bar is split into two visual halves: left (min →
+> zero) and right (zero → max). `low`/`high` values are mapped to their correct
+> half automatically regardless of whether the range is symmetric or not. With
+> `low_as: percent` / `high_as: percent`, the value is a direct position on the
+> full bar (0 = left edge, 100 = right edge), bypassing the two-half mapping.
 
 _Example_:
 
@@ -2415,29 +2415,29 @@ watermark:
 
 > **`alert_when`** [Map] _(optional)_
 
-Draws attention to the card when the value crosses a threshold — a step
-further than theme colors: the card itself reacts, which is more noticeable
-on a wall-mounted dashboard.
+Draws attention to the card when the value crosses a threshold — a step further
+than theme colors: the card itself reacts, which is more noticeable on a
+wall-mounted dashboard.
 
 _Map definition_:
 
 - `above` (number): Alert when the value goes above this threshold.
 - `below` (number): Alert when the value goes below this threshold.
-- `color` (string): CSS color used for the alert (name or hex). Defaults to
-  the theme's error color.
+- `color` (string): CSS color used for the alert (name or hex). Defaults to the
+  theme's error color.
 - `highlight` (string): How the alert is displayed.
-  - `border` (default): A pulsing border in the alert color — the motion
-    draws the eye.
+  - `border` (default): A pulsing border in the alert color — the motion draws
+    the eye.
   - `background`: A steady tint of the card background — no motion, calmer.
 
-`above` and `below` are expressed in the entity's native unit, on the same
-scale as `min_value`/`max_value` — like `watermark.low`/`watermark.high`.
-Both can be combined; the alert triggers if either condition is met.
+`above` and `below` are expressed in the entity's native unit, on the same scale
+as `min_value`/`max_value` — like `watermark.low`/`watermark.high`. Both can be
+combined; the alert triggers if either condition is met.
 
 The pulsing border animation is disabled automatically when the system-level
-"Reduce Motion" accessibility setting is on (see [Accessibility] in the
-README) — the border then stays statically colored, so the alert remains
-visible without the motion.
+"Reduce Motion" accessibility setting is on (see [Accessibility] in the README)
+— the border then stays statically colored, so the alert remains visible without
+the motion.
 
 _Example_:
 
@@ -2795,10 +2795,12 @@ _This reference guide is adapted for entity-progress-card._
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/theme.md#token-color
 [Accessibility]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/README.md#accessibility
-[official HA core]: https://github.com/home-assistant/core/tree/dev/homeassistant/components
+[official HA core]:
+  https://github.com/home-assistant/core/tree/dev/homeassistant/components
 [jkaberg/hass-byd-vehicle]: https://github.com/jkaberg/hass-byd-vehicle
 [townsmcp/mg-saic-ha]: https://github.com/townsmcp/mg-saic-ha
-[mnordseth/xpeng-homeassistant]: https://github.com/mnordseth/xpeng-homeassistant
+[mnordseth/xpeng-homeassistant]:
+  https://github.com/mnordseth/xpeng-homeassistant
 [pytoyoda/ha_toyota]: https://github.com/pytoyoda/ha_toyota
 [mitch-dc/volkswagen_we_connect_id]:
   https://github.com/mitch-dc/volkswagen_we_connect_id

@@ -20,21 +20,21 @@ behavior as official cards, on every device.
 
 #### 🎨 Style it from your theme
 
-Friendly `--epb-*` style variables you can set from your theme or via
-`card_mod` — no hacks needed. See the [Theme Guide].
+Friendly `--epb-*` style variables you can set from your theme or via `card_mod`
+— no hacks needed. See the [Theme Guide].
 
 #### 🌈 New bar coloring styles
 
-With a theme active, choose how the bar is painted: distinct blocks
-(`segment`), a smooth gradient (`rainbow`), or keep the current look
-(`auto`). See [bar_color_mode].
+With a theme active, choose how the bar is painted: distinct blocks (`segment`),
+a smooth gradient (`rainbow`), or keep the current look (`auto`). See
+[bar_color_mode].
 
 ### 🧘 Breaking Changes (Don't Panic)
 
-A few options have a new, clearer syntax. **Your dashboards keep working as
-they are** — the card understands the old syntax and converts it on the fly.
-You'll just see a gentle reminder in the browser console; update your YAML
-whenever you feel like it.
+A few options have a new, clearer syntax. **Your dashboards keep working as they
+are** — the card understands the old syntax and converts it on the fly. You'll
+just see a gentle reminder in the browser console; update your YAML whenever you
+feel like it.
 
 - `max_value: <entity id>` / `max_value_attribute` → folded into [max_value]
 - `disable_unit` → folded into [hide]
@@ -52,34 +52,32 @@ Display the bar as separate blocks — like battery cells or signal bars. See
 
 #### 📊 Bar stack: combine several entities in one bar
 
-`bar_stack` (formerly `additions`) combines several entities into one bar,
-with three modes, per-entity colors, and `center_zero` support. See
-[bar_stack].
+`bar_stack` (formerly `additions`) combines several entities into one bar, with
+three modes, per-entity colors, and `center_zero` support. See [bar_stack].
 
 #### 🌀 Animated icons
 
 8 styles now available (`spin`, `pulse`, `bounce`, `shake`, `ping`, `reveal`,
 `washing_machine`, `battery_charging`) — most are active-state only, but
-`washing_machine` and `battery_charging` also auto-detect a same-device
-entity when `entity` itself doesn't carry the signal (e.g. Tesla Fleet's
-separate `sensor.<car>_charging_state`, or a Home Connect/Miele appliance
-where `entity` is the progress % and the running state lives on another
-sensor). `battery_charging`'s fill sweep also self-adjusts when the shown
-icon is a `battery-charging*`/`battery-bluetooth*` MDI variant, so it lines
-up with that icon's own glyph instead of assuming a plain `mdi:battery`.
-See [icon_animation]. Displaying a real progress percentage for these
-appliances (Home Connect, Miele) has its own recipe under [max_value].
+`washing_machine` and `battery_charging` also auto-detect a same-device entity
+when `entity` itself doesn't carry the signal (e.g. Tesla Fleet's separate
+`sensor.<car>_charging_state`, or a Home Connect/Miele appliance where `entity`
+is the progress % and the running state lives on another sensor).
+`battery_charging`'s fill sweep also self-adjusts when the shown icon is a
+`battery-charging*`/`battery-bluetooth*` MDI variant, so it lines up with that
+icon's own glyph instead of assuming a plain `mdi:battery`. See
+[icon_animation]. Displaying a real progress percentage for these appliances
+(Home Connect, Miele) has its own recipe under [max_value].
 
 #### 🚨 Get alerted at a glance
 
-Have the card call for attention when a value crosses a limit — a pulsing
-border or a tinted background, in the color of your choice. See
-[alert_when].
+Have the card call for attention when a value crosses a limit — a pulsing border
+or a tinted background, in the color of your choice. See [alert_when].
 
 #### 📉 Dynamic min & max
 
-The bar's range no longer has to be fixed numbers: min and max can each
-follow another entity or a template. See [min_value] / [max_value].
+The bar's range no longer has to be fixed numbers: min and max can each follow
+another entity or a template. See [min_value] / [max_value].
 
 #### 🎯 Center the bar on any value
 
@@ -115,8 +113,8 @@ disappear based on conditions. See [hide].
 #### 📝 Two-line secondary info
 
 Add `multiline: true` and insert a `<br>` in `custom_info` (or `secondary` on
-Template cards) to split it across two lines instead of one — name and
-progress bar layout stay untouched. See [multiline].
+Template cards) to split it across two lines instead of one — name and progress
+bar layout stay untouched. See [multiline].
 
 ### 🎨 A friendlier visual editor
 
@@ -162,22 +160,21 @@ Compatible with Home Assistant 2026.2+. Among the notable fixes:
 - Fixed: A tap could sometimes trigger an action twice after navigating between
   views
 - Fixed: Badge icon and color no longer flicker during state changes.
-- Fixed: A `fan` on a dynamic preset (e.g. `auto`) showed the same grey color
-  as a stopped fan — the default color now follows the entity's actual state
+- Fixed: A `fan` on a dynamic preset (e.g. `auto`) showed the same grey color as
+  a stopped fan — the default color now follows the entity's actual state
   instead of its percentage attribute, which a fan can report as `0` while
   genuinely on.
 - Fixed: Trend arrows no longer get stuck on template cards.
 - Fixed: Watermarks are now placed correctly in `center_zero` and for
   `number`/`counter` entities.
-- Fixed: A timer card with a watermark configured used to freeze entirely
-  (the bar never updated); the combination now works.
+- Fixed: A timer card with a watermark configured used to freeze entirely (the
+  bar never updated); the combination now works.
 - Fixed: `center_zero` with no `min_value` set used to leave the negative half
   with no range at all (nothing could ever show there). It now defaults
   `min_value` to `-max_value` automatically.  
   ➡️ [Bug]: wrong watermark positions in center_zero mode #114 (@aremishevsky)
-- Fixed: Ripple effect on template cards.
-  ➡️ [Bug]: Ripple effect for hover and tap animations doesn't work on the
-  template card. #110 (@WarC0zes)
+- Fixed: Ripple effect on template cards. ➡️ [Bug]: Ripple effect for hover and
+  tap animations doesn't work on the template card. #110 (@WarC0zes)
 - Color mappings updated for the built-in themes  
   ➡️ Merge pull request #116 (@vemboy200)
 - The card respects your number format setting (e.g. Swiss format).

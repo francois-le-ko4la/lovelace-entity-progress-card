@@ -15,6 +15,8 @@
     "i18n:sync": "node scripts/translations.js synchronize --to-js",
     "validate": "npm run check && npm run lint && npm run i18n:validate",
     "check:release-flags": "node scripts/check-release-flags.js",
+    "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
+    "format:md": "prettier --write \"**/*.md\" \"!node_modules/**\"",
     "build": "esbuild entity-progress-card.js --minify --target=es2022 --outdir=dist"
   },
   "repository": {
@@ -39,6 +41,8 @@
     "eslint": "^10.6.0",
     "eslint-plugin-compat": "^7.0.2",
     "eslint-plugin-sonarjs": "^4.1.0",
-    "globals": "^17.7.0"
+    "globals": "^17.7.0",
+    "markdownlint-cli2": "^0.23.0",
+    "prettier": "^3.9.5"
   }
 }

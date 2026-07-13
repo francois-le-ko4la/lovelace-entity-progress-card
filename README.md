@@ -7,6 +7,7 @@
 
 A modern Entity progress card for Home Assistant's Lovelace UI.
 
+<!-- markdownlint-disable-next-line MD013 -->
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/thumbnail.png" alt="thumbnail" width="700"/>
 
 ## Table of Contents
@@ -44,6 +45,7 @@ Jump to the specific section:
 
 ### 🔍 Description
 
+<!-- markdownlint-disable-next-line MD013 -->
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/example.png" alt="example" width="400"/>
 
 This custom version of the **Bar Card** for Home Assistant allows you to display
@@ -72,8 +74,10 @@ code to fine-tune the appearance.
 - **Performance Optimized**: Code enhancements ensure better performance and
   maintainability, offering a more stable and responsive experience.
 - **Multi-Language Support**: Provides localized error messages and
-  descriptions, supporting multiple languages 🇸🇦 🇧🇩 🇨🇿 🇩🇰 🇩🇪 🇬🇷 🇬🇧 🇪🇸 🇫🇮 🇫🇷 🇮🇳🇭🇷
-  🇮🇩 🇮🇹 🇯🇵 🇰🇷 🇲🇰 🇳🇴 (bokmål) 🇳🇱 🇵🇱 🇵🇹 🇷🇴 🇸🇪 🇹🇭 🇹🇷 🇺🇦 🇻🇳 🇨🇳.
+  descriptions, supporting multiple languages
+  <!-- markdownlint-disable-next-line MD013 -->
+  🇸🇦 🇧🇩 🇨🇿 🇩🇰 🇩🇪 🇬🇷 🇬🇧 🇪🇸 🇫🇮 🇫🇷 🇮🇳 🇭🇷 🇮🇩 🇮🇹 🇯🇵 🇰🇷 🇲🇰 🇳🇴 (bokmål) 🇳🇱 🇵🇱 🇵🇹 🇷🇴 🇸🇪
+  🇹🇭 🇹🇷 🇺🇦 🇻🇳 🇨🇳.
 
 [🔼 Back to top]
 
@@ -238,6 +242,7 @@ The card editor allows you to quickly set up and customize the card.
 
 This is the primary card for displaying entity progress.
 
+<!-- markdownlint-disable-next-line MD013 -->
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/pm.png" alt="Example PM" width="250"/>
 
 #### 🛠️ Options and percentage ?
@@ -245,56 +250,56 @@ This is the primary card for displaying entity progress.
 <details>
 <summary><strong>Options and Configuration (click to expand)</strong></summary>
 
-| **Option**                   | **Type**                | **Default**               | **Description**                       | **Link**                                         |
-| :--------------------------- | :---------------------- | :------------------------ | :------------------------------------ | :----------------------------------------------- |
-| **Data Options**             |                         |                           |                                       |                                                  |
-| `entity`                     | string (required)       | —                         | Main entity ID                        | [Config Ref.][config-entity]                     |
-| `attribute`                  | string (optional)       | depends on entity         | Attribute to use as value             | [Config Ref.][config-attribute]                  |
-| `name`                       | string (optional)       | entity name               | Custom name to show                   | [Config Ref.][config-name]                       |
-| `unit`                       | string (optional)       | `auto`                    | Unit displayed                        | [Config Ref.][config-unit]                       |
-| `decimal`                    | integer (optional)      | context-based             | Number of decimal places              | [Config Ref.][config-decimal]                    |
-| `min_value`                  | float/Map (optional)    | `0` or `-100`             | Min for progress calculation          | [Config Ref.][config-min_value]                  |
-| `max_value`                  | float/Map (optional)    | `100`                     | Max for progress calculation          | [Config Ref.][config-max_value]                  |
-| `reverse`                    | boolean (optional)      | depends on entity         | Countdown-style behavior              | [Config Ref.][config-reverse]                    |
-| `state_content`              | string/list (optional)  | depends on domain         | Attribute to show near value          | [Config Ref.][config-state_content]              |
-| `custom_info`                | Jinja (optional)        | —                         | Extra info near value                 | [Config Ref.][config-custom_info]                |
-| `multiline`                  | boolean (optional)      | `false`                   | Split secondary text on 2 lines       | [Config Ref.][config-multiline]                  |
-| `name_info`                  | Jinja (optional)        | —                         | Extra info near name                  | [Config Ref.][config-name_info]                  |
-| `bar_stack`                  | Map (optional)          | —                         | Combine several entities in one bar   | [Config Ref.][config-bar_stack]                  |
-| **Styling Options**          |                         |                           |                                       |                                                  |
-| `icon`                       | string (optional)       | —                         | Icon override                         | [Config Ref.][config-icon]                       |
-| `color`                      | string (optional)       | based on entity           | Icon color                            | [Config Ref.][config-color]                      |
-| `icon_animation`             | string (optional)       | `none`                    | Animate icon on active state          | [Config Ref.][config-icon_animation]             |
-| `badge_icon`                 | Jinja (optional)        | —                         | Dynamic badge icon                    | [Config Ref.][config-badge_icon]                 |
-| `badge_color`                | Jinja (optional)        | —                         | Dynamic badge color                   | [Config Ref.][config-badge_color]                |
-| `bar_color`                  | string (optional)       | `var(--state-icon-color)` | Color of progress bar                 | [Config Ref.][config-bar_color]                  |
-| `bar_size`                   | string (optional)       | `small`                   | Size of the progress bar              | [Config Ref.][config-bar_size]                   |
-| `bar_position`               | string (optional)       | `default`                 | Position of the progress bar          | [Config Ref.][config-bar_position]               |
-| `bar_single_line`            | boolean (optional)      | `false`                   | single-line mode for overlay bars     | [Config Ref.][config-bar_single_line]            |
-| `bar_segments`               | integer (optional)      | —                         | Render bar as discrete segments       | [Config Ref.][config-bar_segments]               |
-| `bar_effect`                 | string/list/jinja       | —                         | Visual effects for the bar            | [Config Ref.][config-bar_effect]                 |
-| `bar_color_mode`             | string (optional)       | `auto`                    | Bar fill color rendering mode         | [Config Ref.][config-bar_color_mode]             |
-| `bar_max_width`.             | string (optional)       | -                         | Limits the maximum width of the bar   | [Config Ref.][config-bar_max_width]              |
-| `bar_orientation`            | string (optional)       | `ltr`                     | Bar direction                         | [Config Ref.][config-bar_orientation]            |
-| `force_circular_background`  | boolean (optional)      | `false`                   | Force icon circle background          | [Config Ref.][config-force_circular_background]  |
-| `trend_indicator`            | string (optional)       | `false`                   | Displays trend icons.                 | [Config Ref.][config-trend_indicator]            |
-| `text_shadow`                | boolean (optional)      | `false`                   | Display a text shadow (overlay)       | [Config Ref.][config-text_shadow]                |
-| `layout`                     | string (optional)       | `horizontal`              | Layout direction                      | [Config Ref.][config-layout]                     |
-| `frameless`                  | boolean (optional)      | `false`                   | Remove card frame                     | [Config Ref.][config-frameless]                  |
-| `marginless`                 | boolean (optional)      | `false`                   | Remove top/bottom margin              | [Config Ref.][config-marginless]                 |
-| `height`                     | string (optional)       | —                         | Card height                           | [Config Ref.][config-height]                     |
-| `min_width`                  | string (optional)       | —                         | Minimum width                         | [Config Ref.][config-min_width]                  |
-| `reverse_secondary_info_row` | boolean (optional)      | `false`                   | Flip info bar layout                  | [Config Ref.][config-reverse_secondary_info_row] |
-| `unit_spacing`               | string (optional)       | `auto`                    | Controls space between value and unit | [Config Ref.][config-unit_spacing]               |
-| `center_zero`                | boolean (optional)      | `false`                   | Center the bar on 0                   | [Config Ref.][config-center_zero]                |
-| `theme`                      | string (optional)       | —                         | Applies a preset theme                | [Config Ref.][config-theme]                      |
-| `custom_theme`               | list (optional)         | —                         | Define color thresholds               | [Config Ref.][config-custom_theme]               |
-| `interpolate`                | boolean (optional)      | —                         | Enables smooth color transition       | [Config Ref.][config-custom_theme]               |
-| `hide`                       | list (optional)         | —                         | Hide parts of the card                | [Config Ref.][config-hide]                       |
-| `watermark`                  | map (optional)          | —                         | Adds min/max overlays                 | [Config Ref.][config-watermark]                  |
-| `alert_when`                 | map (optional)          | —                         | Highlight card on threshold crossing  | [Config Ref.][config-alert_when]                 |
-| **Behavior And Actions**     |                         |                           |                                       |                                                  |
-| `xyz_action`                 | map (optional)          | see defaults              | Tap/double/hold actions               | [Config Ref.][config-xyz_action]                 |
+| **Option**                   | **Type**               | **Default**               | **Description**                       | **Link**                                         |
+| :--------------------------- | :--------------------- | :------------------------ | :------------------------------------ | :----------------------------------------------- |
+| **Data Options**             |                        |                           |                                       |                                                  |
+| `entity`                     | string (required)      | —                         | Main entity ID                        | [Config Ref.][config-entity]                     |
+| `attribute`                  | string (optional)      | depends on entity         | Attribute to use as value             | [Config Ref.][config-attribute]                  |
+| `name`                       | string (optional)      | entity name               | Custom name to show                   | [Config Ref.][config-name]                       |
+| `unit`                       | string (optional)      | `auto`                    | Unit displayed                        | [Config Ref.][config-unit]                       |
+| `decimal`                    | integer (optional)     | context-based             | Number of decimal places              | [Config Ref.][config-decimal]                    |
+| `min_value`                  | float/Map (optional)   | `0` or `-100`             | Min for progress calculation          | [Config Ref.][config-min_value]                  |
+| `max_value`                  | float/Map (optional)   | `100`                     | Max for progress calculation          | [Config Ref.][config-max_value]                  |
+| `reverse`                    | boolean (optional)     | depends on entity         | Countdown-style behavior              | [Config Ref.][config-reverse]                    |
+| `state_content`              | string/list (optional) | depends on domain         | Attribute to show near value          | [Config Ref.][config-state_content]              |
+| `custom_info`                | Jinja (optional)       | —                         | Extra info near value                 | [Config Ref.][config-custom_info]                |
+| `multiline`                  | boolean (optional)     | `false`                   | Split secondary text on 2 lines       | [Config Ref.][config-multiline]                  |
+| `name_info`                  | Jinja (optional)       | —                         | Extra info near name                  | [Config Ref.][config-name_info]                  |
+| `bar_stack`                  | Map (optional)         | —                         | Combine several entities in one bar   | [Config Ref.][config-bar_stack]                  |
+| **Styling Options**          |                        |                           |                                       |                                                  |
+| `icon`                       | string (optional)      | —                         | Icon override                         | [Config Ref.][config-icon]                       |
+| `color`                      | string (optional)      | based on entity           | Icon color                            | [Config Ref.][config-color]                      |
+| `icon_animation`             | string (optional)      | `none`                    | Animate icon on active state          | [Config Ref.][config-icon_animation]             |
+| `badge_icon`                 | Jinja (optional)       | —                         | Dynamic badge icon                    | [Config Ref.][config-badge_icon]                 |
+| `badge_color`                | Jinja (optional)       | —                         | Dynamic badge color                   | [Config Ref.][config-badge_color]                |
+| `bar_color`                  | string (optional)      | `var(--state-icon-color)` | Color of progress bar                 | [Config Ref.][config-bar_color]                  |
+| `bar_size`                   | string (optional)      | `small`                   | Size of the progress bar              | [Config Ref.][config-bar_size]                   |
+| `bar_position`               | string (optional)      | `default`                 | Position of the progress bar          | [Config Ref.][config-bar_position]               |
+| `bar_single_line`            | boolean (optional)     | `false`                   | single-line mode for overlay bars     | [Config Ref.][config-bar_single_line]            |
+| `bar_segments`               | integer (optional)     | —                         | Render bar as discrete segments       | [Config Ref.][config-bar_segments]               |
+| `bar_effect`                 | string/list/jinja      | —                         | Visual effects for the bar            | [Config Ref.][config-bar_effect]                 |
+| `bar_color_mode`             | string (optional)      | `auto`                    | Bar fill color rendering mode         | [Config Ref.][config-bar_color_mode]             |
+| `bar_max_width`.             | string (optional)      | -                         | Limits the maximum width of the bar   | [Config Ref.][config-bar_max_width]              |
+| `bar_orientation`            | string (optional)      | `ltr`                     | Bar direction                         | [Config Ref.][config-bar_orientation]            |
+| `force_circular_background`  | boolean (optional)     | `false`                   | Force icon circle background          | [Config Ref.][config-force_circular_background]  |
+| `trend_indicator`            | string (optional)      | `false`                   | Displays trend icons.                 | [Config Ref.][config-trend_indicator]            |
+| `text_shadow`                | boolean (optional)     | `false`                   | Display a text shadow (overlay)       | [Config Ref.][config-text_shadow]                |
+| `layout`                     | string (optional)      | `horizontal`              | Layout direction                      | [Config Ref.][config-layout]                     |
+| `frameless`                  | boolean (optional)     | `false`                   | Remove card frame                     | [Config Ref.][config-frameless]                  |
+| `marginless`                 | boolean (optional)     | `false`                   | Remove top/bottom margin              | [Config Ref.][config-marginless]                 |
+| `height`                     | string (optional)      | —                         | Card height                           | [Config Ref.][config-height]                     |
+| `min_width`                  | string (optional)      | —                         | Minimum width                         | [Config Ref.][config-min_width]                  |
+| `reverse_secondary_info_row` | boolean (optional)     | `false`                   | Flip info bar layout                  | [Config Ref.][config-reverse_secondary_info_row] |
+| `unit_spacing`               | string (optional)      | `auto`                    | Controls space between value and unit | [Config Ref.][config-unit_spacing]               |
+| `center_zero`                | boolean (optional)     | `false`                   | Center the bar on 0                   | [Config Ref.][config-center_zero]                |
+| `theme`                      | string (optional)      | —                         | Applies a preset theme                | [Config Ref.][config-theme]                      |
+| `custom_theme`               | list (optional)        | —                         | Define color thresholds               | [Config Ref.][config-custom_theme]               |
+| `interpolate`                | boolean (optional)     | —                         | Enables smooth color transition       | [Config Ref.][config-custom_theme]               |
+| `hide`                       | list (optional)        | —                         | Hide parts of the card                | [Config Ref.][config-hide]                       |
+| `watermark`                  | map (optional)         | —                         | Adds min/max overlays                 | [Config Ref.][config-watermark]                  |
+| `alert_when`                 | map (optional)         | —                         | Highlight card on threshold crossing  | [Config Ref.][config-alert_when]                 |
+| **Behavior And Actions**     |                        |                           |                                       |                                                  |
+| `xyz_action`                 | map (optional)         | see defaults              | Tap/double/hold actions               | [Config Ref.][config-xyz_action]                 |
 
 See [Full Configuration Reference][FCR].
 
@@ -305,9 +310,8 @@ See [Full Configuration Reference][FCR].
 This card automatically calculates progress percentages based on the current
 entity, depending on the type of input it receives:
 
-- Timer:
-  If the value represents a timer, the range (min, max) and the current value
-  are taken directly from the timer entity. Attribute will not be used.
+- Timer: If the value represents a timer, the range (min, max) and the current
+  value are taken directly from the timer entity. Attribute will not be used.
 - Counter or Number value: If the value is a counter or a Number ({ value, min,
   max }), it uses the provided value directly from the entity. The max value can
   also come from another entity by using max_value. Attribute will not be used.
@@ -326,10 +330,10 @@ Here are some examples of how to use the Standard Lovelace Entity Progress Card.
 
 > [!TIP]
 >
-> Use Material Design Icons (MDI) for a consistent look. Browse available
-> icons at Material Design Icons. Experiment with color codes like HEX or RGB
-> for precise customization. Combine with other Lovelace cards to create a
-> visually cohesive dashboard.
+> Use Material Design Icons (MDI) for a consistent look. Browse available icons
+> at Material Design Icons. Experiment with color codes like HEX or RGB for
+> precise customization. Combine with other Lovelace cards to create a visually
+> cohesive dashboard.
 
 In addition to styling tips, it’s important to understand how this card
 interacts with other powerful Lovelace tools.
@@ -362,6 +366,7 @@ icon_tap_action:
   action: more-info
 ```
 
+<!-- markdownlint-disable-next-line MD013 -->
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/RVB.png" alt="Example RVB" width="250px"/>
 </details>
 
@@ -385,6 +390,7 @@ grid_options:
   rows: 2
 ```
 
+<!-- markdownlint-disable-next-line MD013 -->
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/RVB_vertical.png" alt="Example vertical" width="118px"/>
 </details>
 
@@ -418,6 +424,7 @@ sort:
   ignore_case: false
 ```
 
+<!-- markdownlint-disable-next-line MD013 -->
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/battery_dashboard.png" alt="battery dashboard" width="500"/>
 </details>
 
@@ -522,6 +529,7 @@ cards:
     card_param: cards
 ```
 
+<!-- markdownlint-disable-next-line MD013 -->
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/stack.png" alt="Stack" width="500"/>
 </details>
 
@@ -552,6 +560,7 @@ visibility:
 ##### 🚀 Power Features
 
 <details>
+<!-- markdownlint-disable-next-line MD013 -->
 <summary><strong>The Laundry Mystery: Decoding Washer Entities Across Brands (click to expand)</strong></summary>
 
 **Why?**
@@ -636,14 +645,15 @@ manner.
 </details>
 
 <details>
+<!-- markdownlint-disable-next-line MD013 -->
 <summary><strong>Washing Machine Progress: Three Brands, Three Approaches (click to expand)</strong></summary>
 
 **Why?**
 
 Not every washing-machine integration exposes the same data, so how you get a
 progress percentage on the card depends entirely on which integration you're
-using. Here are three real, verified examples — from "just point the card at
-it" to "you need a helper".
+using. Here are three real, verified examples — from "just point the card at it"
+to "you need a helper".
 
 **1. Home Connect (Bosch/Siemens) — direct, no extra config**
 
@@ -658,11 +668,11 @@ name: Washing Machine
 
 **2. Miele — Jinja `max_value`, no helper needed**
 
-Miele exposes `elapsed_time` and `remaining_time` (minutes) but no
-ready-made percentage. Combine them with a Jinja `max_value`. `unit: '%'`
-is required here: `elapsed_time` has `device_class: duration`, and without
-it the card would show the raw elapsed time instead of the percentage (the
-bar fill itself is correct either way — only the text label is affected):
+Miele exposes `elapsed_time` and `remaining_time` (minutes) but no ready-made
+percentage. Combine them with a Jinja `max_value`. `unit: '%'` is required here:
+`elapsed_time` has `device_class: duration`, and without it the card would show
+the raw elapsed time instead of the percentage (the bar fill itself is correct
+either way — only the text label is affected):
 
 ```yaml
 type: custom:entity-progress-card
@@ -678,10 +688,10 @@ max_value:
 
 SmartThings is the hardest of the three: it only exposes `machine_state`
 (run/pause/stop), `job_state` (current phase), and `completion_time` (an
-absolute end-of-cycle timestamp) — no elapsed time, no remaining time, and
-no start time to anchor a calculation. Unlike the previous two, this can't
-be solved with card config alone: you first need to *create* a start time
-yourself, then apply the "Simple Helper" technique from the next section:
+absolute end-of-cycle timestamp) — no elapsed time, no remaining time, and no
+start time to anchor a calculation. Unlike the previous two, this can't be
+solved with card config alone: you first need to _create_ a start time yourself,
+then apply the "Simple Helper" technique from the next section:
 
 - Create an `input_datetime` helper (e.g. `input_datetime.washer_start`).
 - Add an automation that sets it to `now()` whenever
@@ -1208,45 +1218,45 @@ customizable badge format with a dynamic progress bar.
 <details>
 <summary><strong>Supported Options and Configuration (click to expand)</strong></summary>
 
-| **Option**                   | **Type**                | **Default**               | **Description**                       | **Link**                                         |
-| :--------------------------- | :---------------------- | :------------------------ | :------------------------------------ | :----------------------------------------------- |
-| **Data Options**             |                         |                           |                                       |                                                  |
-| `entity`                     | string (required)       | —                         | Main entity ID                        | [Config Ref.][config-entity]                     |
-| `attribute`                  | string (optional)       | depends on entity         | Attribute to use as value             | [Config Ref.][config-attribute]                  |
-| `name`                       | string (optional)       | entity name               | Custom name to show                   | [Config Ref.][config-name]                       |
-| `unit`                       | string (optional)       | `auto`                    | Unit displayed                        | [Config Ref.][config-unit]                       |
-| `decimal`                    | integer (optional)      | context-based             | Number of decimal places              | [Config Ref.][config-decimal]                    |
-| `min_value`                  | float/Map (optional)    | `0` or `-100`             | Min for progress calculation          | [Config Ref.][config-min_value]                  |
-| `max_value`                  | float/Map (optional)    | `100`                     | Max for progress calculation          | [Config Ref.][config-max_value]                  |
-| `reverse`                    | boolean (optional)      | depends on entity         | Countdown-style behavior              | [Config Ref.][config-reverse]                    |
-| `state_content`              | string/list (optional)  | depends on domain         | Attribute to show near value          | [Config Ref.][config-state_content]              |
-| `custom_info`                | Jinja (optional)        | —                         | Extra info near value                 | [Config Ref.][config-custom_info]                |
-| `name_info`                  | Jinja (optional)        | —                         | Extra info near name                  | [Config Ref.][config-name_info]                  |
-| `bar_stack`                  | Map (optional)          | —                         | Combine several entities in one bar   | [Config Ref.][config-bar_stack]                  |
-| **Styling Options**          |                         |                           |                                       |                                                  |
-| `icon`                       | string (optional)       | —                         | Icon override                         | [Config Ref.][config-icon]                       |
-| `color`                      | string (optional)       | based on entity           | Icon color                            | [Config Ref.][config-color]                      |
-| `bar_color`                  | string (optional)       | `var(--state-icon-color)` | Color of progress bar                 | [Config Ref.][config-bar_color]                  |
-| `bar_size`                   | string (optional)       | `small`                   | Size of the progress bar              | [Config Ref.][config-bar_size]                   |
-| `bar_segments`               | integer (optional)      | —                         | Render bar as discrete segments       | [Config Ref.][config-bar_segments]               |
-| `bar_effect`                 | string/list/jinja       | —                         | Visual effects for the bar            | [Config Ref.][config-bar_effect]                 |
-| `bar_color_mode`             | string (optional)       | `auto`                    | Bar fill color rendering mode         | [Config Ref.][config-bar_color_mode]             |
-| `bar_max_width`.             | string (optional)       | -                         | Limits the maximum width of the bar   | [Config Ref.][config-bar_max_width]              |
-| `bar_orientation`            | string (optional)       | `ltr`                     | Bar direction                         | [Config Ref.][config-bar_orientation]            |
-| `frameless`                  | boolean (optional)      | `false`                   | Remove card frame                     | [Config Ref.][config-frameless]                  |
-| `marginless`                 | boolean (optional)      | `false`                   | Remove top/bottom margin              | [Config Ref.][config-marginless]                 |
-| `min_width`                  | string (optional)       | —                         | Minimum width                         | [Config Ref.][config-min_width]                  |
-| `reverse_secondary_info_row` | boolean (optional)      | `false`                   | Flip info bar layout                  | [Config Ref.][config-reverse_secondary_info_row] |
-| `unit_spacing`               | string (optional)       | `auto`                    | Controls space between value and unit | [Config Ref.][config-unit_spacing]               |
-| `center_zero`                | boolean (optional)      | `false`                   | Center the bar on 0                   | [Config Ref.][config-center_zero]                |
-| `theme`                      | string (optional)       | —                         | Applies a preset theme                | [Config Ref.][config-theme]                      |
-| `custom_theme`               | list (optional)         | —                         | Define color thresholds               | [Config Ref.][config-custom_theme]               |
-| `interpolate`                | boolean (optional)      | —                         | Enables smooth color transition       | [Config Ref.][config-interpolate]                |
-| `hide`                       | list (optional)         | —                         | Hide parts of the card                | [Config Ref.][config-hide]                       |
-| `watermark`                  | map (optional)          | —                         | Adds min/max overlays                 | [Config Ref.][config-watermark]                  |
-| `alert_when`                 | map (optional)          | —                         | Highlight card on threshold crossing  | [Config Ref.][config-alert_when]                 |
-| **Behavior And Actions**     |                         |                           |                                       |                                                  |
-| `xyz_action`                 | map (optional)          | see defaults              | Tap/double/hold actions               | [Config Ref.][config-xyz_action]                 |
+| **Option**                   | **Type**               | **Default**               | **Description**                       | **Link**                                         |
+| :--------------------------- | :--------------------- | :------------------------ | :------------------------------------ | :----------------------------------------------- |
+| **Data Options**             |                        |                           |                                       |                                                  |
+| `entity`                     | string (required)      | —                         | Main entity ID                        | [Config Ref.][config-entity]                     |
+| `attribute`                  | string (optional)      | depends on entity         | Attribute to use as value             | [Config Ref.][config-attribute]                  |
+| `name`                       | string (optional)      | entity name               | Custom name to show                   | [Config Ref.][config-name]                       |
+| `unit`                       | string (optional)      | `auto`                    | Unit displayed                        | [Config Ref.][config-unit]                       |
+| `decimal`                    | integer (optional)     | context-based             | Number of decimal places              | [Config Ref.][config-decimal]                    |
+| `min_value`                  | float/Map (optional)   | `0` or `-100`             | Min for progress calculation          | [Config Ref.][config-min_value]                  |
+| `max_value`                  | float/Map (optional)   | `100`                     | Max for progress calculation          | [Config Ref.][config-max_value]                  |
+| `reverse`                    | boolean (optional)     | depends on entity         | Countdown-style behavior              | [Config Ref.][config-reverse]                    |
+| `state_content`              | string/list (optional) | depends on domain         | Attribute to show near value          | [Config Ref.][config-state_content]              |
+| `custom_info`                | Jinja (optional)       | —                         | Extra info near value                 | [Config Ref.][config-custom_info]                |
+| `name_info`                  | Jinja (optional)       | —                         | Extra info near name                  | [Config Ref.][config-name_info]                  |
+| `bar_stack`                  | Map (optional)         | —                         | Combine several entities in one bar   | [Config Ref.][config-bar_stack]                  |
+| **Styling Options**          |                        |                           |                                       |                                                  |
+| `icon`                       | string (optional)      | —                         | Icon override                         | [Config Ref.][config-icon]                       |
+| `color`                      | string (optional)      | based on entity           | Icon color                            | [Config Ref.][config-color]                      |
+| `bar_color`                  | string (optional)      | `var(--state-icon-color)` | Color of progress bar                 | [Config Ref.][config-bar_color]                  |
+| `bar_size`                   | string (optional)      | `small`                   | Size of the progress bar              | [Config Ref.][config-bar_size]                   |
+| `bar_segments`               | integer (optional)     | —                         | Render bar as discrete segments       | [Config Ref.][config-bar_segments]               |
+| `bar_effect`                 | string/list/jinja      | —                         | Visual effects for the bar            | [Config Ref.][config-bar_effect]                 |
+| `bar_color_mode`             | string (optional)      | `auto`                    | Bar fill color rendering mode         | [Config Ref.][config-bar_color_mode]             |
+| `bar_max_width`.             | string (optional)      | -                         | Limits the maximum width of the bar   | [Config Ref.][config-bar_max_width]              |
+| `bar_orientation`            | string (optional)      | `ltr`                     | Bar direction                         | [Config Ref.][config-bar_orientation]            |
+| `frameless`                  | boolean (optional)     | `false`                   | Remove card frame                     | [Config Ref.][config-frameless]                  |
+| `marginless`                 | boolean (optional)     | `false`                   | Remove top/bottom margin              | [Config Ref.][config-marginless]                 |
+| `min_width`                  | string (optional)      | —                         | Minimum width                         | [Config Ref.][config-min_width]                  |
+| `reverse_secondary_info_row` | boolean (optional)     | `false`                   | Flip info bar layout                  | [Config Ref.][config-reverse_secondary_info_row] |
+| `unit_spacing`               | string (optional)      | `auto`                    | Controls space between value and unit | [Config Ref.][config-unit_spacing]               |
+| `center_zero`                | boolean (optional)     | `false`                   | Center the bar on 0                   | [Config Ref.][config-center_zero]                |
+| `theme`                      | string (optional)      | —                         | Applies a preset theme                | [Config Ref.][config-theme]                      |
+| `custom_theme`               | list (optional)        | —                         | Define color thresholds               | [Config Ref.][config-custom_theme]               |
+| `interpolate`                | boolean (optional)     | —                         | Enables smooth color transition       | [Config Ref.][config-interpolate]                |
+| `hide`                       | list (optional)        | —                         | Hide parts of the card                | [Config Ref.][config-hide]                       |
+| `watermark`                  | map (optional)         | —                         | Adds min/max overlays                 | [Config Ref.][config-watermark]                  |
+| `alert_when`                 | map (optional)         | —                         | Highlight card on threshold crossing  | [Config Ref.][config-alert_when]                 |
+| **Behavior And Actions**     |                        |                           |                                       |                                                  |
+| `xyz_action`                 | map (optional)         | see defaults              | Tap/double/hold actions               | [Config Ref.][config-xyz_action]                 |
 
 See [Full Configuration Reference][FCR].  
 We use the same syntax as the card.
@@ -1367,38 +1377,37 @@ percent: |-
 ### 🧩 Entity Progress Tile Feature
 
 The **Entity Progress Tile Feature** (`entity-progress-feature`) embeds a
-progress bar directly inside a standard Home Assistant **Tile** card. It
-renders as a native feature row and supports overlay positions (`top`,
-`bottom`) that anchor the bar to the card edge without increasing the tile
-height.
+progress bar directly inside a standard Home Assistant **Tile** card. It renders
+as a native feature row and supports overlay positions (`top`, `bottom`) that
+anchor the bar to the card edge without increasing the tile height.
 
 #### 🛠️ Options
 
 <details>
 <summary><strong>Supported Options and Configuration (click to expand)</strong></summary>
 
-| **Option**                   | **Type**                | **Default**               | **Description**                       | **Link**                                         |
-| :--------------------------- | :---------------------- | :------------------------ | :------------------------------------ | :----------------------------------------------- |
-| **Data Options**             |                         |                           |                                       |                                                  |
-| `entity`                     | string (required)       | —                         | Main entity ID                        | [Config Ref.][config-entity]                     |
-| `attribute`                  | string (optional)       | depends on entity         | Attribute to use as value             | [Config Ref.][config-attribute]                  |
-| `min_value`                  | float/Map (optional)    | `0`                       | Min for progress calculation          | [Config Ref.][config-min_value]                  |
-| `max_value`                  | float/Map (optional)    | `100`                     | Max for progress calculation          | [Config Ref.][config-max_value]                  |
-| **Styling Options**          |                         |                           |                                       |                                                  |
-| `bar_color`                  | string (optional)       | `var(--state-icon-color)` | Color of progress bar                 | [Config Ref.][config-bar_color]                  |
-| `bar_size`                   | string (optional)       | `small`                   | Size of the progress bar              | [Config Ref.][config-bar_size]                   |
-| `bar_orientation`            | string (optional)       | `ltr`                     | Bar direction                         | [Config Ref.][config-bar_orientation]            |
-| `bar_color_mode`             | string (optional)       | `auto`                    | Bar fill color rendering mode         | [Config Ref.][config-bar_color_mode]             |
-| `bar_effect`                 | string/list/jinja       | —                         | Visual effects for the bar            | [Config Ref.][config-bar_effect]                 |
-| `bar_position`               | string (optional)       | `default`                 | Position of the bar inside the tile   | [Config Ref.][config-bar_position]               |
-| `bar_segments`               | integer (optional)      | —                         | Render bar as discrete segments       | [Config Ref.][config-bar_segments]               |
-| `center_zero`                | boolean/map (optional)  | `false`                   | Center the bar on 0                   | [Config Ref.][config-center_zero]                |
-| `theme`                      | string (optional)       | —                         | Applies a preset theme                | [Config Ref.][config-theme]                      |
-| `custom_theme`               | list (optional)         | —                         | Define color thresholds               | [Config Ref.][config-custom_theme]               |
-| `interpolate`                | boolean (optional)      | `false`                   | Enables smooth color transition       | [Config Ref.][config-interpolate]                |
-| `watermark`                  | map (optional)          | —                         | Adds min/max overlays                 | [Config Ref.][config-watermark]                  |
-| **Bar Stack**                |                         |                           |                                       |                                                  |
-| `bar_stack`                  | Map (optional)          | —                         | Combine several entities in one bar   | [Config Ref.][config-bar_stack]                  |
+| **Option**          | **Type**               | **Default**               | **Description**                     | **Link**                              |
+| :------------------ | :--------------------- | :------------------------ | :---------------------------------- | :------------------------------------ |
+| **Data Options**    |                        |                           |                                     |                                       |
+| `entity`            | string (required)      | —                         | Main entity ID                      | [Config Ref.][config-entity]          |
+| `attribute`         | string (optional)      | depends on entity         | Attribute to use as value           | [Config Ref.][config-attribute]       |
+| `min_value`         | float/Map (optional)   | `0`                       | Min for progress calculation        | [Config Ref.][config-min_value]       |
+| `max_value`         | float/Map (optional)   | `100`                     | Max for progress calculation        | [Config Ref.][config-max_value]       |
+| **Styling Options** |                        |                           |                                     |                                       |
+| `bar_color`         | string (optional)      | `var(--state-icon-color)` | Color of progress bar               | [Config Ref.][config-bar_color]       |
+| `bar_size`          | string (optional)      | `small`                   | Size of the progress bar            | [Config Ref.][config-bar_size]        |
+| `bar_orientation`   | string (optional)      | `ltr`                     | Bar direction                       | [Config Ref.][config-bar_orientation] |
+| `bar_color_mode`    | string (optional)      | `auto`                    | Bar fill color rendering mode       | [Config Ref.][config-bar_color_mode]  |
+| `bar_effect`        | string/list/jinja      | —                         | Visual effects for the bar          | [Config Ref.][config-bar_effect]      |
+| `bar_position`      | string (optional)      | `default`                 | Position of the bar inside the tile | [Config Ref.][config-bar_position]    |
+| `bar_segments`      | integer (optional)     | —                         | Render bar as discrete segments     | [Config Ref.][config-bar_segments]    |
+| `center_zero`       | boolean/map (optional) | `false`                   | Center the bar on 0                 | [Config Ref.][config-center_zero]     |
+| `theme`             | string (optional)      | —                         | Applies a preset theme              | [Config Ref.][config-theme]           |
+| `custom_theme`      | list (optional)        | —                         | Define color thresholds             | [Config Ref.][config-custom_theme]    |
+| `interpolate`       | boolean (optional)     | `false`                   | Enables smooth color transition     | [Config Ref.][config-interpolate]     |
+| `watermark`         | map (optional)         | —                         | Adds min/max overlays               | [Config Ref.][config-watermark]       |
+| **Bar Stack**       |                        |                           |                                     |                                       |
+| `bar_stack`         | Map (optional)         | —                         | Combine several entities in one bar | [Config Ref.][config-bar_stack]       |
 
 See [Full Configuration Reference][FCR].
 
@@ -1463,17 +1472,17 @@ reading the [Theme Guide].
 The card is designed to work well for everyone, out of the box:
 
 - **Screen readers**: the progress bar exposes proper ARIA semantics
-  (`role="progressbar"` with live `aria-valuenow`, including negative ranges
-  in `center_zero` mode). Purely decorative elements (fill layers, watermarks,
-  icon shape) are hidden from assistive technologies, so the card is announced
-  once, with the right value — not as a pile of divs.
-- **Reduce Motion**: the card respects the system-level "Reduce Motion"
-  setting (iOS/macOS, Android, Windows). When enabled, bar transitions and
-  shimmer animations are disabled automatically to prevent dizziness,
-  migraines or distraction.
-- **Manual control**: animations can also be tuned or disabled per card or
-  per theme through the CSS API — e.g. `--epb-progress-transition: none`
-  (see the [Theme Guide]).
+  (`role="progressbar"` with live `aria-valuenow`, including negative ranges in
+  `center_zero` mode). Purely decorative elements (fill layers, watermarks, icon
+  shape) are hidden from assistive technologies, so the card is announced once,
+  with the right value — not as a pile of divs.
+- **Reduce Motion**: the card respects the system-level "Reduce Motion" setting
+  (iOS/macOS, Android, Windows). When enabled, bar transitions and shimmer
+  animations are disabled automatically to prevent dizziness, migraines or
+  distraction.
+- **Manual control**: animations can also be tuned or disabled per card or per
+  theme through the CSS API — e.g. `--epb-progress-transition: none` (see the
+  [Theme Guide]).
 - **Interactions**: tap, hold and double-tap are handled by Home Assistant's
   native action system, so they behave consistently with official cards.
 
@@ -1499,53 +1508,56 @@ This card supports multiple languages to provide:
 
 We strive to make this card as inclusive as possible, with support for:
 
-| Flag | Code    | Language (English / Native)                       |
-| ---- | ------- | ------------------------------------------------- |
-| 🇸🇦   | ar      | Arabic / العربية                                  |
-| 🇧🇩   | bn      | Bengali / বাংলা                                      |
-| <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/refs/heads/main/docs/images/ca.svg" alt="" width="14px" />   | ca      | Catalan / Català                                  |
-| 🇨🇿   | cs      | Czech / Čeština                                   |
-| 🇩🇰   | da      | Danish / Dansk                                    |
-| 🇩🇪   | de      | German / Deutsch                                  |
-| 🇬🇷   | el      | Greek / Ελληνικά                                  |
-| 🇬🇧   | en      | English / English                                 |
-| 🇪🇸   | es      | Spanish / Español                                 |
-| 🌎   | es-419  | Spanish (Latin America) / Español (Latinoamérica) |
-| 🇫🇮   | fi      | Finnish / Suomi                                   |
-| 🇫🇷   | fr      | French / Français                                 |
-| 🇮🇳   | hi      | Hindi / हिन्दी                                        |
-| 🇭🇷   | hr      | Croatian / Hrvatski                               |
-| 🇮🇩   | id      | Indonesian / Bahasa Indonesia                     |
-| 🇮🇹   | it      | Italian / Italiano                                |
-| 🇯🇵   | ja      | Japanese / 日本語                                 |
-| 🇰🇷   | ko      | Korean / 한국어                                   |
-| 🇲🇰   | mk      | Macedonian / Македонски                           |
-| 🇱🇹   | lt      | Lithuanian / Lietuvių                             |
-| 🇱🇻   | lv      | Latvian / Latviešu                                |
-| 🇪🇪   | et      | Estonian / Eesti                                  |
-| 🇳🇴   | nb      | Norwegian Bokmål / Norsk Bokmål                   |
-| 🇳🇱   | nl      | Dutch / Nederlands                                |
-| 🇵🇱   | pl      | Polish / Polski                                   |
-| 🇵🇹   | pt      | Portuguese / Português (Portugal)                 |
-| 🇧🇷   | pt-BR   | Portuguese / Português (Brazil)                   |
-| 🇷🇴   | ro      | Romanian / Română                                 |
-| 🇷🇺   | ru      | Russian / Русский                                 |
-| 🇸🇰   | sk      | Slovak / Slovenský                                |
-| 🇸🇮   | sl      | Slovene / Slovenščina                             |
-| 🇭🇺   | hu      | Hungarian / Magyar                                |
-| 🇸🇪   | sv      | Swedish / Svenska                                 |
-| 🇹🇭   | th      | Thai / ไทย                                        |
-| 🇹🇷   | tr      | Turkish / Türkçe                                  |
-| 🇺🇦   | uk      | Ukrainian / Українська                            |
-| 🇻🇳   | vi      | Vietnamese / Tiếng Việt                           |
-| 🇨🇳   | zh-Hans | Chinese (Simplified) / 中文（简体）               |
-| 🇹🇼   | zh-Hant | Chinese (Traditional) / 中文（繁體）              |
+<!-- markdownlint-disable MD060 -->
 
+| Flag                                                                                                                                                   | Code    | Language (English / Native)                       |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------- | ------------------------------------------------- |
+| 🇸🇦                                                                                                                                                     | ar      | Arabic / العربية                                  |
+| 🇧🇩                                                                                                                                                     | bn      | Bengali / বাংলা                                   |
+| <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/refs/heads/main/docs/images/ca.svg" alt="" width="14px" /> | ca      | Catalan / Català                                  |
+| 🇨🇿                                                                                                                                                     | cs      | Czech / Čeština                                   |
+| 🇩🇰                                                                                                                                                     | da      | Danish / Dansk                                    |
+| 🇩🇪                                                                                                                                                     | de      | German / Deutsch                                  |
+| 🇬🇷                                                                                                                                                     | el      | Greek / Ελληνικά                                  |
+| 🇬🇧                                                                                                                                                     | en      | English / English                                 |
+| 🇪🇸                                                                                                                                                     | es      | Spanish / Español                                 |
+| 🌎                                                                                                                                                     | es-419  | Spanish (Latin America) / Español (Latinoamérica) |
+| 🇪🇪                                                                                                                                                     | et      | Estonian / Eesti                                  |
+| 🇫🇮                                                                                                                                                     | fi      | Finnish / Suomi                                   |
+| 🇫🇷                                                                                                                                                     | fr      | French / Français                                 |
+| 🇮🇳                                                                                                                                                     | hi      | Hindi / हिन्दी                                    |
+| 🇭🇷                                                                                                                                                     | hr      | Croatian / Hrvatski                               |
+| 🇭🇺                                                                                                                                                     | hu      | Hungarian / Magyar                                |
+| 🇮🇩                                                                                                                                                     | id      | Indonesian / Bahasa Indonesia                     |
+| 🇮🇹                                                                                                                                                     | it      | Italian / Italiano                                |
+| 🇯🇵                                                                                                                                                     | ja      | Japanese / 日本語                                 |
+| 🇰🇷                                                                                                                                                     | ko      | Korean / 한국어                                   |
+| 🇱🇹                                                                                                                                                     | lt      | Lithuanian / Lietuvių                             |
+| 🇱🇻                                                                                                                                                     | lv      | Latvian / Latviešu                                |
+| 🇲🇰                                                                                                                                                     | mk      | Macedonian / Македонски                           |
+| 🇳🇴                                                                                                                                                     | nb      | Norwegian Bokmål / Norsk Bokmål                   |
+| 🇳🇱                                                                                                                                                     | nl      | Dutch / Nederlands                                |
+| 🇵🇱                                                                                                                                                     | pl      | Polish / Polski                                   |
+| 🇵🇹                                                                                                                                                     | pt      | Portuguese / Português (Portugal)                 |
+| 🇧🇷                                                                                                                                                     | pt-BR   | Portuguese / Português (Brazil)                   |
+| 🇷🇴                                                                                                                                                     | ro      | Romanian / Română                                 |
+| 🇷🇺                                                                                                                                                     | ru      | Russian / Русский                                 |
+| 🇸🇰                                                                                                                                                     | sk      | Slovak / Slovenský                                |
+| 🇸🇮                                                                                                                                                     | sl      | Slovene / Slovenščina                             |
+| 🇸🇪                                                                                                                                                     | sv      | Swedish / Svenska                                 |
+| 🇹🇭                                                                                                                                                     | th      | Thai / ไทย                                        |
+| 🇹🇷                                                                                                                                                     | tr      | Turkish / Türkçe                                  |
+| 🇺🇦                                                                                                                                                     | uk      | Ukrainian / Українська                            |
+| 🇻🇳                                                                                                                                                     | vi      | Vietnamese / Tiếng Việt                           |
+| 🇨🇳                                                                                                                                                     | zh-Hans | Chinese (Simplified) / 中文（简体）               |
+| 🇹🇼                                                                                                                                                     | zh-Hant | Chinese (Traditional) / 中文（繁體）              |
 
+<!-- markdownlint-enable MD060 -->
 
-
-> [!IMPORTANT] I use translation tools to help bridge language gaps, as I'm not
-> fluent in every language.
+> [!IMPORTANT]
+>
+> I use translation tools to help bridge language gaps, as I'm not fluent in
+> every language.
 >
 > If you notice any mistakes, please understand they are **purely
 > unintentional** — feel free to reach out on GitHub or Discord to fix it.
@@ -1591,8 +1603,11 @@ Check out the [Contributing Guide] to get started.
   ➡️ [Custom Card Documentation](https://developers.home-assistant.io/docs/frontend/custom-ui/custom-card/)
 
 - **Resources from [@thomasloven](https://github.com/thomasloven)** – _thank
-  you!_  
-  ➡️ [PreLoading Lovelace Elements](https://github.com/thomasloven/hass-config/wiki/PreLoading-Lovelace-Elements)  
+  you!_
+  <!-- markdownlint-disable-next-line MD013 -->
+
+  ➡️
+  [PreLoading Lovelace Elements](https://github.com/thomasloven/hass-config/wiki/PreLoading-Lovelace-Elements)  
   ➡️
   [Custom Element Loader Gist](https://gist.github.com/thomasloven/5f965bd26e5f69876890886c09dd9ba8)
 

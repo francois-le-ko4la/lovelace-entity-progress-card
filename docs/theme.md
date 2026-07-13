@@ -215,6 +215,7 @@ theme: optimal_when_high
 | 80% – 100%           | `green`       | Optimal / High               |
 
 > [!NOTE]
+>
 > The icon is automatically retrieved from the entity but can be overridden
 > using the `icon` parameter.
 
@@ -244,6 +245,7 @@ theme: optimal_when_low
 | 80% – 100%           | `red`         | High / Critical              |
 
 > [!NOTE]
+>
 > The icon is automatically retrieved from the entity but can be overridden
 > using the `icon` parameter.
 
@@ -326,6 +328,7 @@ with a specific color:
 | 34°C – 50°C / 93.2°F – 122°F    | `var(--red-color)`         | Extremely hot   |
 
 > [!IMPORTANT]
+>
 > Fahrenheit values are converted to apply the correct color. Make sure to set
 > your unit to `°F` correctly in order to see the accurate color representation.
 
@@ -407,6 +410,7 @@ The ranges and their corresponding colors are as follows:
 | 25,000 – 50,000      | `var(--deep-purple-color)` | Hazardous              |
 
 > [!IMPORTANT]
+>
 > The information provided in this HA card is based on thresholds from the
 > following
 > [source](https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element).
@@ -459,6 +463,7 @@ The ranges and their corresponding colors are as follows:
 | 150 – 200               | `var(--deep-purple-color)` | Very unhealthy air quality     |
 
 > [!IMPORTANT]
+>
 > The information provided in this HA card is based on thresholds from the
 > following
 > [source](https://support.getawair.com/hc/en-us/articles/19504367520023-Understanding-Awair-Score-and-Air-Quality-Factors-Measured-By-Awair-Element).
@@ -488,9 +493,9 @@ clear and intuitive display of PM2.5 pollution levels.
 ### Custom theme
 
 In addition to predefined themes, you can define your own color zones using
-[`custom_theme`](configuration.md#custom_theme) as an array. Each entry
-needs `min` and `max`; a color key (`color`, `bar_color`, `icon_color`) and
-`icon` are optional.
+[`custom_theme`](configuration.md#custom_theme) as an array. Each entry needs
+`min` and `max`; a color key (`color`, `bar_color`, `icon_color`) and `icon` are
+optional.
 
 ```yaml
 type: custom:entity-progress-card
@@ -522,31 +527,32 @@ custom_theme:
 ```
 
 > [!NOTE]
+>
 > The `min`/`max` values are in the entity's native unit. For a sensor whose
 > values naturally match the percentage scale (e.g. a battery at 0–100 %), the
 > zone boundaries are also 0–100.
 >
 > Zones don't need to be contiguous or declared in order — see
-> [`custom_theme`](configuration.md#custom_theme) in the configuration
-> reference for exactly how gaps, overlaps, and incomplete zones behave.
+> [`custom_theme`](configuration.md#custom_theme) in the configuration reference
+> for exactly how gaps, overlaps, and incomplete zones behave.
 
 ### `bar_color_mode`
 
 The `bar_color_mode` parameter controls how theme colors are rendered on the
 progress bar. It works with both predefined and custom themes.
 
-| Value     | Description                                                       |
-| :-------- | :---------------------------------------------------------------- |
-| `auto`    | Default. The bar is filled with the solid color of the current zone. |
+| Value     | Description                                                             |
+| :-------- | :---------------------------------------------------------------------- |
+| `auto`    | Default. The bar is filled with the solid color of the current zone.    |
 | `segment` | Each zone is drawn as a distinct colored block up to the current value. |
-| `rainbow` | A smooth gradient flows across all visible zone colors.          |
+| `rainbow` | A smooth gradient flows across all visible zone colors.                 |
 
 #### `segment` example
 
 For a battery at 69% with `optimal_when_high`, the bar shows each zone as a
 solid block:
 
-```
+```text
 [██ red ██][████ orange ████][██████ yellow ██████][████ light-green ▓▓▓]
  0%       20%               40%                   60%                 69%
 ```
@@ -570,9 +576,10 @@ bar_color_mode: rainbow
 ```
 
 > [!NOTE]
+>
 > `bar_color_mode` has no effect when `center_zero` is enabled. For linear
-> themes (e.g. `light`), zone boundaries are derived automatically by
-> splitting 0–100% into equal segments (5 levels → 0–20%, 20–40%, …).
+> themes (e.g. `light`), zone boundaries are derived automatically by splitting
+> 0–100% into equal segments (5 levels → 0–20%, 20–40%, …).
 
 [🔼 Back to top]
 
@@ -582,39 +589,39 @@ bar_color_mode: rainbow
 
 ### CSS variables
 
-| Variable                              | Target       | Category   | Description                                         | Example     |
-| ------------------------------------- | ------------ | ---------- | --------------------------------------------------- | ----------- |
-| `--epb-card-height`                   | Card         | Dimension  | Card height                                         | `80px`      |
-| `--epb-card-width`                    | Card         | Dimension  | Card width                                          | `300px`     |
-| `--epb-card-border-width`             | Card         | Border     | Border thickness                                    | `2px`       |
-| `--epb-card-border-color`             | Card         | Border     | Border color                                        | `#ff6600`   |
-| `--epb-card-border-radius`            | Card         | Border     | Card corner radius                                  | `20px`      |
-| `--epb-card-border-style`             | Card         | Border     | Border style                                        | `dashed`    |
-| `--epb-card-font-family`              | Card         | Typography | Card font family                                    | `monospace` |
-| `--epb-spacing`                       | Card         | Dimension  | Global density: paddings and gaps of the whole card | `6px`       |
-| `--epb-icon-size`                     | Icon         | Dimension  | Icon size (standard card layout)                    | `28px`      |
-| `--epb-shape-size`                    | Icon         | Dimension  | Circular shape size behind the icon                 | `42px`      |
+| Variable                              | Target       | Category   | Description                                              | Example       |
+| ------------------------------------- | ------------ | ---------- | -------------------------------------------------------- | ------------- |
+| `--epb-card-height`                   | Card         | Dimension  | Card height                                              | `80px`        |
+| `--epb-card-width`                    | Card         | Dimension  | Card width                                               | `300px`       |
+| `--epb-card-border-width`             | Card         | Border     | Border thickness                                         | `2px`         |
+| `--epb-card-border-color`             | Card         | Border     | Border color                                             | `#ff6600`     |
+| `--epb-card-border-radius`            | Card         | Border     | Card corner radius                                       | `20px`        |
+| `--epb-card-border-style`             | Card         | Border     | Border style                                             | `dashed`      |
+| `--epb-card-font-family`              | Card         | Typography | Card font family                                         | `monospace`   |
+| `--epb-spacing`                       | Card         | Dimension  | Global density: paddings and gaps of the whole card      | `6px`         |
+| `--epb-icon-size`                     | Icon         | Dimension  | Icon size (standard card layout)                         | `28px`        |
+| `--epb-shape-size`                    | Icon         | Dimension  | Circular shape size behind the icon                      | `42px`        |
 | `--epb-progress-transition`           | Progress Bar | Animation  | Bar fill transition (duration/easing, `none` to disable) | `0.2s linear` |
-| `--epb-progress-bar-color`            | Progress Bar | Color      | Progress bar fill color                             | `#ff6600`   |
-| `--epb-progress-bar-background-color` | Progress Bar | Color      | Progress bar background color                       | `#333333`   |
-| `--epb-progress-bar-size`             | Progress Bar | Dimension  | Forces the bar fill size (overrides computed value) | `60%`       |
-| `--epb-progress-bar-radius`           | Progress Bar | Border     | Progress bar container border radius                | `4px`       |
-| `--epb-progress-inner-radius`         | Progress Bar | Border     | Progress bar inner fill border radius               | `4px`       |
-| `--epb-icon-and-shape-color`          | Icon         | Color      | Icon and shape background color                     | `#ff6600`   |
-| `--epb-name-color`                    | Name         | Color      | Name color                                          | `#ffffff`   |
-| `--epb-name-font-size`                | Name         | Typography | Name font size                                      | `16px`      |
-| `--epb-name-font-weight`              | Name         | Typography | Name font weight                                    | `700`       |
-| `--epb-name-letter-spacing`           | Name         | Typography | Name letter spacing                                 | `2px`       |
-| `--epb-detail-color`                  | Detail       | Color      | Detail color                                        | `#aaaaaa`   |
-| `--epb-detail-font-size`              | Detail       | Typography | Detail font size                                    | `12px`      |
-| `--epb-detail-font-weight`            | Detail       | Typography | Detail font weight                                  | `300`       |
-| `--epb-detail-letter-spacing`         | Detail       | Typography | Detail letter spacing                               | `1px`       |
-| `--epb-watermark-line-size`           | Watermark    | Dimension  | Line watermark thickness                            | `3px`       |
-| `--epb-watermark-opacity`             | Watermark    | Opacity    | Watermark opacity                                   | `0.5`       |
-| `--epb-low-watermark-color`           | Watermark    | Color      | Low watermark color                                 | `#ff0000`   |
-| `--epb-high-watermark-color`          | Watermark    | Color      | High watermark color                                | `#00ff00`   |
-| `--epb-zero-mark-width`               | Marker       | Dimension  | Zero marker thickness                               | `2px`       |
-| `--epb-zero-mark-color`               | Marker       | Color      | Zero marker color                                   | `#ff0000`   |
+| `--epb-progress-bar-color`            | Progress Bar | Color      | Progress bar fill color                                  | `#ff6600`     |
+| `--epb-progress-bar-background-color` | Progress Bar | Color      | Progress bar background color                            | `#333333`     |
+| `--epb-progress-bar-size`             | Progress Bar | Dimension  | Forces the bar fill size (overrides computed value)      | `60%`         |
+| `--epb-progress-bar-radius`           | Progress Bar | Border     | Progress bar container border radius                     | `4px`         |
+| `--epb-progress-inner-radius`         | Progress Bar | Border     | Progress bar inner fill border radius                    | `4px`         |
+| `--epb-icon-and-shape-color`          | Icon         | Color      | Icon and shape background color                          | `#ff6600`     |
+| `--epb-name-color`                    | Name         | Color      | Name color                                               | `#ffffff`     |
+| `--epb-name-font-size`                | Name         | Typography | Name font size                                           | `16px`        |
+| `--epb-name-font-weight`              | Name         | Typography | Name font weight                                         | `700`         |
+| `--epb-name-letter-spacing`           | Name         | Typography | Name letter spacing                                      | `2px`         |
+| `--epb-detail-color`                  | Detail       | Color      | Detail color                                             | `#aaaaaa`     |
+| `--epb-detail-font-size`              | Detail       | Typography | Detail font size                                         | `12px`        |
+| `--epb-detail-font-weight`            | Detail       | Typography | Detail font weight                                       | `300`         |
+| `--epb-detail-letter-spacing`         | Detail       | Typography | Detail letter spacing                                    | `1px`         |
+| `--epb-watermark-line-size`           | Watermark    | Dimension  | Line watermark thickness                                 | `3px`         |
+| `--epb-watermark-opacity`             | Watermark    | Opacity    | Watermark opacity                                        | `0.5`         |
+| `--epb-low-watermark-color`           | Watermark    | Color      | Low watermark color                                      | `#ff0000`     |
+| `--epb-high-watermark-color`          | Watermark    | Color      | High watermark color                                     | `#00ff00`     |
+| `--epb-zero-mark-width`               | Marker       | Dimension  | Zero marker thickness                                    | `2px`         |
+| `--epb-zero-mark-color`               | Marker       | Color      | Zero marker color                                        | `#ff0000`     |
 
 <a id="usage"></a>
 
@@ -636,8 +643,9 @@ my_custom_theme:
 ```
 
 > [!NOTE]
-> When declaring CSS variables in a theme YAML file, omit the `--`
-> prefix — Home Assistant adds it automatically.
+>
+> When declaring CSS variables in a theme YAML file, omit the `--` prefix — Home
+> Assistant adds it automatically.
 
 This applies to all cards using that theme.
 
@@ -704,22 +712,22 @@ To help you transition to this new class naming scheme, you will find the table
 below, which shows the mapping between the old and new class names. This should
 guide you in updating your custom card modifications.
 
-| **Old Class**                    | **New Class**            | **Notes / Usage**                                    |
-| -------------------------------- | ------------------------ | ---------------------------------------------------- |
-| `name-group`                     | `name`                   | Main container for the name block                    |
-| `name-combined`                  | `name-value`             | Displays the combined main and extra name            |
-| `name`                           | `name-main`              | Main name text                                       |
-| `name-custom-info`               | `name-extra`             | Extra name info, appended after main name            |
-| `secondary-info-detail-group`    | `secondary-info-wrapper` | Container for secondary info (state/progress/custom) |
-| `secondary-info-detail-combined` | `secondary-info-value`   | Displays main + extra secondary info — now a `<div>`, was a `<span>` |
-| `state-and-progress-info`        | `secondary-info-main`    | Main secondary info (was progress/state)             |
-| `secondary-info-custom-info`     | `secondary-info-extra-1` | Extra secondary info, line 1 (was custom info)       |
-| —                                 | `secondary-info-extra-2` | Extra secondary info, line 2 — only exists with [`multiline: true`](configuration.md#multiline) |
-| `progress-bar-container`         | `bar-container`          | Progress bar wrapper                                 |
-| `progress-bar-inner`             | `inner`                  | Single inner bar element (positive/negative unified) |
-| `progress-bar-low-zero`          | `zero`                   | Zero mark for center-zero bars                       |
-| `progress-bar-low-wm`            | `low`                    | Low watermark marker                                 |
-| `progress-bar-high-wm`           | `high`                   | High watermark marker                                |
+| **Old Class**                    | **New Class**            | **Notes / Usage**                                                                               |
+| -------------------------------- | ------------------------ | ----------------------------------------------------------------------------------------------- |
+| `name-group`                     | `name`                   | Main container for the name block                                                               |
+| `name-combined`                  | `name-value`             | Displays the combined main and extra name                                                       |
+| `name`                           | `name-main`              | Main name text                                                                                  |
+| `name-custom-info`               | `name-extra`             | Extra name info, appended after main name                                                       |
+| `secondary-info-detail-group`    | `secondary-info-wrapper` | Container for secondary info (state/progress/custom)                                            |
+| `secondary-info-detail-combined` | `secondary-info-value`   | Displays main + extra secondary info — now a `<div>`, was a `<span>`                            |
+| `state-and-progress-info`        | `secondary-info-main`    | Main secondary info (was progress/state)                                                        |
+| `secondary-info-custom-info`     | `secondary-info-extra-1` | Extra secondary info, line 1 (was custom info)                                                  |
+| —                                | `secondary-info-extra-2` | Extra secondary info, line 2 — only exists with [`multiline: true`](configuration.md#multiline) |
+| `progress-bar-container`         | `bar-container`          | Progress bar wrapper                                                                            |
+| `progress-bar-inner`             | `inner`                  | Single inner bar element (positive/negative unified)                                            |
+| `progress-bar-low-zero`          | `zero`                   | Zero mark for center-zero bars                                                                  |
+| `progress-bar-low-wm`            | `low`                    | Low watermark marker                                                                            |
+| `progress-bar-high-wm`           | `high`                   | High watermark marker                                                                           |
 
 [🔼 Back to top]
 
@@ -761,8 +769,9 @@ ha-card.entity-progress-card...
              └─ div.zero.mark (if center-zero)
 ```
 
-With [`multiline: true`](configuration.md#multiline), `div.secondary-info-wrapper` looks like this
-instead — two independent single-line boxes rather than one shared line:
+With [`multiline: true`](configuration.md#multiline),
+`div.secondary-info-wrapper` looks like this instead — two independent
+single-line boxes rather than one shared line:
 
 ```text
 div.secondary-info-wrapper
@@ -776,10 +785,12 @@ div.secondary-info-wrapper
 ```
 
 > [!NOTE]
+>
 > The two multiline lines are sized to fit within the same total height as one
 > standard line, so their font size and line height are fixed and don't follow
 > `--epb-detail-font-size`. Color, weight and letter spacing still do
-> (`--epb-detail-color`, `--epb-detail-font-weight`, `--epb-detail-letter-spacing`).
+> (`--epb-detail-color`, `--epb-detail-font-weight`,
+> `--epb-detail-letter-spacing`).
 
 #### Template
 
@@ -816,8 +827,9 @@ ha-card...
              └─ div.zero.mark (if center-zero)
 ```
 
-With [`multiline: true`](configuration.md#multiline), `div.secondary-info-wrapper` looks like this
-instead. Template cards never have a `secondary-info-main` span (their value comes through
+With [`multiline: true`](configuration.md#multiline),
+`div.secondary-info-wrapper` looks like this instead. Template cards never have
+a `secondary-info-main` span (their value comes through
 [`percent`](configuration.md#percent-jinja)/[`secondary`](configuration.md#secondary-jinja)
 instead), so unlike the standard card, line 2 is `secondary-info-extra-2` alone:
 

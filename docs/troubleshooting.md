@@ -51,20 +51,21 @@ In this context, we have two types of deprecated options:
   of all those cards. Therefore, we allow time before disabling them, provide a
   system to detect if you are affected, and will remove them later.
 
-| Option / Value               | Status         | Replacement / Recommended Action                          | Since version | Current Behavior                             |
-| ----------------------------- | -------------- | ---------------------------------------------------------- | ------------- | --------------------------------------------- |
-| `navigate_to`                | **Removed**    | Use `tap_action: navigate`                                 | `v1.2.0`      | Ignored, console warning                      |
-| `show_more_info`             | **Removed**    | Use `tap_action: more-info`                                 | `v1.2.0`      | Ignored, console warning                      |
-| `theme: 'battery'`           | **Deprecated** | Use `optimal_when_high`                                     | `v1.1.8-11`   | Still works, shows warning                    |
-| `theme: 'cpu'`               | **Deprecated** | Use `optimal_when_low`                                      | `v1.1.8-11`   | Still works, shows warning                    |
-| `theme: 'memory'`            | **Deprecated** | Use `optimal_when_low`                                      | `v1.1.8-11`   | Still works, shows warning                    |
-| `max_value: <entity id>`     | **Deprecated** | Use `max_value: { entity: <id>, attribute: <optional> }`    | `v1.6.0`      | Auto-migrated for the session, console warning |
-| `max_value_attribute`        | **Deprecated** | Fold into `max_value: { entity, attribute }`                | `v1.6.0`      | Auto-migrated for the session, console warning |
-| `disable_unit`               | **Deprecated** | Use `hide: ['unit', ...]`                                   | `v1.6.0`      | Auto-migrated for the session, console warning |
-| `additions`                  | **Deprecated** | Use `bar_stack: { mode: 'proportional', entities: [...] }`  | `v1.6.0`      | Auto-migrated for the session, console warning |
+| Option / Value           | Status         | Replacement / Recommended Action                           | Since version | Current Behavior                               |
+| ------------------------ | -------------- | ---------------------------------------------------------- | ------------- | ---------------------------------------------- |
+| `navigate_to`            | **Removed**    | Use `tap_action: navigate`                                 | `v1.2.0`      | Ignored, console warning                       |
+| `show_more_info`         | **Removed**    | Use `tap_action: more-info`                                | `v1.2.0`      | Ignored, console warning                       |
+| `theme: 'battery'`       | **Deprecated** | Use `optimal_when_high`                                    | `v1.1.8-11`   | Still works, shows warning                     |
+| `theme: 'cpu'`           | **Deprecated** | Use `optimal_when_low`                                     | `v1.1.8-11`   | Still works, shows warning                     |
+| `theme: 'memory'`        | **Deprecated** | Use `optimal_when_low`                                     | `v1.1.8-11`   | Still works, shows warning                     |
+| `max_value: <entity id>` | **Deprecated** | Use `max_value: { entity: <id>, attribute: <optional> }`   | `v1.6.0`      | Auto-migrated for the session, console warning |
+| `max_value_attribute`    | **Deprecated** | Fold into `max_value: { entity, attribute }`               | `v1.6.0`      | Auto-migrated for the session, console warning |
+| `disable_unit`           | **Deprecated** | Use `hide: ['unit', ...]`                                  | `v1.6.0`      | Auto-migrated for the session, console warning |
+| `additions`              | **Deprecated** | Use `bar_stack: { mode: 'proportional', entities: [...] }` | `v1.6.0`      | Auto-migrated for the session, console warning |
 
 <details>
 <summary><strong>Show the screenshot (click to expand)</strong></summary>
+<!-- markdownlint-disable-next-line MD013 -->
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/deprecated.png" alt="deprecated" width="1000px"/>
 </details>
 
@@ -72,20 +73,20 @@ In this context, we have two types of deprecated options:
 
 You don't have to rewrite anything by hand:
 
-- **Deprecated** options (table above) keep working exactly as before — the
-  card understands them internally and applies the modern equivalent
-  automatically, whether or not you ever open the editor.
-- **Removed** options (`navigate_to`, `show_more_info`) have had no effect
-  for a long time already; migrating just cleans them up rather than
-  guessing a replacement for something that hasn't run in years.
+- **Deprecated** options (table above) keep working exactly as before — the card
+  understands them internally and applies the modern equivalent automatically,
+  whether or not you ever open the editor.
+- **Removed** options (`navigate_to`, `show_more_info`) have had no effect for a
+  long time already; migrating just cleans them up rather than guessing a
+  replacement for something that hasn't run in years.
 
 When you open the visual editor on a card that still uses a legacy option, a
-**Migrate config** button appears in the top-right corner. One click
-rewrites your YAML to the current syntax — the rendered card doesn't
-change, only how it's written.
+**Migrate config** button appears in the top-right corner. One click rewrites
+your YAML to the current syntax — the rendered card doesn't change, only how
+it's written.
 
-As with any edit: check that the card still looks right, and that the
-values it displays match what you expect, before saving the dashboard.
+As with any edit: check that the card still looks right, and that the values it
+displays match what you expect, before saving the dashboard.
 
 ## 🐞 Troubleshooting
 
@@ -95,7 +96,8 @@ Despite all efforts to provide a stable and bug-free card, you might still
 encounter an issue.
 
 > [!IMPORTANT]
-> **Don't panic! And above all, do not delete your dashboards!**  
+>
+> **Don't panic! And above all, do not delete your dashboards!**
 >
 > This card **does not alter** your existing configuration. It only displays
 > entities — nothing is modified, removed, or broken in your actual setup.
@@ -110,6 +112,10 @@ encounter an issue.
   ➡️ Try clearing your browser cache or restarting Home Assistant.
 - **Still not working?**  
   ➡️ Open your browser’s JavaScript console to check for any errors.
+
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable MD007 MD022 MD023 -->
+
    <details>
    <summary> How to open the JavaScript console (click to expand)</summary>
 
@@ -152,15 +158,19 @@ encounter an issue.
     Select the **Console** tab
 
   #### 🧱 Edge
-  
+
   - **Method 1: Keyboard Shortcut**  
     Press **`F12`** or **`Ctrl`** + **`Shift`** + **`I`** (Mac: **`⌘`** +
     **`⌥`** + **`I`**)
   - **Method 2: Menu Navigation**  
-   Click the **`⋯`** three-dot menu (top-right)  
-   Go to **More tools** ➡️ **Developer tools**  
-   Select the **Console** tab
+    Click the **`⋯`** three-dot menu (top-right)  
+    Go to **More tools** ➡️ **Developer tools**  
+    Select the **Console** tab
+
   </details>
+
+<!-- markdownlint-enable MD007 MD022 MD023 -->
+<!-- prettier-ignore-end -->
 
 #### Gather some useful information
 
@@ -172,25 +182,25 @@ encounter an issue.
 #### 🩺 Run the built-in diagnostic
 
 The card ships with a small diagnostic helper that collects most of the
-information above in one shot. Open your browser's developer console (`F12`
-or `Ctrl`/`Cmd` + `Shift` + `I`, then the **Console** tab) on a dashboard that
-has the card, and run:
+information above in one shot. Open your browser's developer console (`F12` or
+`Ctrl`/`Cmd` + `Shift` + `I`, then the **Console** tab) on a dashboard that has
+the card, and run:
 
 ```js
 EPB_DIAG.dump();
 ```
 
-It prints an anonymized report — card and Home Assistant versions, browser,
-dark mode / reduced motion status, registered card types, and whether the
-required HA components (`ha-card`, `ha-selector`, `action-handler`) are
-present — ready to copy/paste into your issue.
+It prints an anonymized report — card and Home Assistant versions, browser, dark
+mode / reduced motion status, registered card types, and whether the required HA
+components (`ha-card`, `ha-selector`, `action-handler`) are present — ready to
+copy/paste into your issue.
 
-It also flags a **duplicate resource load** on its own (`duplicate load:
-⚠️ YES`) — a common, hard-to-diagnose cause of erratic behavior where the
-card ends up installed **twice** (e.g. via HACS *and* a leftover manual
-resource in **Settings → Dashboards → Resources**). If you see this warning,
-remove the extra resource entry first — it resolves most "impossible to
-reproduce" issues on its own.
+It also flags a **duplicate resource load** on its own
+(`duplicate load: ⚠️ YES`) — a common, hard-to-diagnose cause of erratic
+behavior where the card ends up installed **twice** (e.g. via HACS _and_ a
+leftover manual resource in **Settings → Dashboards → Resources**). If you see
+this warning, remove the extra resource entry first — it resolves most
+"impossible to reproduce" issues on its own.
 
 #### Open an issue on GitHub
 
@@ -205,6 +215,7 @@ or an advanced user, your feedback is valuable!
   with all the relevant information.
 
 > [!NOTE]
+>
 > When opening an issue, try to include as much information as possible.
 >
 > The more context you provide, the faster and more accurately I can help -
@@ -215,6 +226,7 @@ or an advanced user, your feedback is valuable!
 
   <details>
   <summary><strong>Show the screenshot (click to expand)</strong></summary>
+  <!-- markdownlint-disable-next-line MD013 -->
   <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/create_issue.png" alt="create issue" width="750px"/>
   </details>
 
