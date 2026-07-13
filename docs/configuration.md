@@ -20,7 +20,7 @@
         - [YAML Only](#yaml-only)
       - [Parameter specification](#parameter-specification)
         - [Supported values](#supported-values)
-        - [Jinja](#jinja-1)
+        - [Jinja](#jinja)
       - [Typical description](#typical-description)
   - [🧩 entity-progress-card / entity-progress-badge / entity-progress-feature](#standard)
     - [Data Options](#data-options)
@@ -269,7 +269,7 @@ work with specific configuration options:
 
 ##### YAML Only
 
-The following badges is used throughout this documentation:
+The following badge is used throughout this documentation:
 
 [![YAML Only][yaml-only]](#yaml-only)
 
@@ -323,7 +323,7 @@ option: sensor.hp_envy_6400_series_tri_color_cartridge
 
 > [!NOTE]
 >
-> the most important note !
+> the most important note!
 
 [🔼 Back to top]
 
@@ -365,7 +365,7 @@ entity: sensor.hp_envy_6400_series_tri_color_cartridge
 
 > [!IMPORTANT]
 >
-> Timer are supported (1.0.43). `attribute`, `min`, `max` parameters are not
+> Timers are supported (1.0.43). `attribute`, `min`, `max` parameters are not
 > considered.
 
 [🔼 Back to top]
@@ -514,13 +514,13 @@ unit: ABC
 - `kWh` for energy consumption.
 - `s` for timer
 - `timer` for timer (display HH:MM:SS without unit)
-- `flextimer` for timer (same than timer but truncate the display according to
-  the current value)
+- `flextimer` for timer (same as timer but truncate the display according to the
+  current value)
 
 > [!TIP]
 >
-> Disabling the Unit: To completely hide the unit from display, set the
-> disable_unit option to true.
+> Disabling the Unit: To completely hide the unit from display, use
+> `hide: ['unit']` (see [`hide`](#hide)).
 
 [🔼 Back to top]
 
@@ -1311,8 +1311,8 @@ badge_icon: >-
 
 > [!NOTE]
 >
-> If the returns nothing (i.e., empty string or None), the badge will not be
-> displayed.
+> If the template returns nothing (i.e., empty string or None), the badge will
+> not be displayed.
 
 [🔼 Back to top]
 
@@ -1501,8 +1501,6 @@ exposes this as a numeric field.
 Defines visual effects applied to the progress bar. You can use a single effect
 or combine multiple in a list.
 
-Defines visual effects applied to the progress bar.
-
 - If a **[String]** is provided (e.g. `"gradient"`), only one effect is applied.
 - If a **[List]** is provided (e.g. `["radius", "shimmer"]`), effects are
   combined.
@@ -1675,8 +1673,9 @@ bar_scale: log
 
 > **`bar_max_width`** [String] _(optional)_
 
-Limits the maximum width of the progress bar in vertical layout. Only applies to
-vertical layout (`small`, `medium`, `large` sizes). Has no effect on `xlarge`.
+Limits the maximum width of the progress bar in horizontal layout. Only applies
+to horizontal layout (`small`, `medium`, `large` sizes). Has no effect on
+`xlarge`.
 
 _Example_:
 
@@ -1735,17 +1734,17 @@ reverse: true
 [![Card OK][Card-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
 
-> **`force_circular_background`** [String] _(optional: false)_
+> **`force_circular_background`** [Boolean] _(optional, default: false)_
 
 This option forces a **circular background** to be displayed behind the icon
 shown on the card.
 
-HA 2025.3 bring a lot of improvement and change the circular background
+HA 2025.3 brings a lot of improvements and changes the circular background
 strategy: <https://www.home-assistant.io/blog/2025/03/05/release-20253/>
 
-This card evaluate HA version and adapt it according to your entity domain and
-your action strategy. If you want to avoid this strategy you can use this
-parameter.
+This card evaluates the HA version and adapts to it according to your entity
+domain and your action strategy. If you want to avoid this strategy you can use
+this parameter.
 
 When set to `true`, a circular shape will appear behind the icon, regardless of
 the HA version, entity domain or action defined. This helps create a cleaner,
@@ -2021,7 +2020,6 @@ _Example — custom center value (e.g., nominal voltage)_:
 ```yaml
 type: custom:entity-progress-card
 entity: sensor.voltage
-attribute: current_position
 center_zero:
   value: 230
 ```
@@ -2058,7 +2056,7 @@ grown relative to the center point — rather than the bar's raw fill ratio.
 Allows customization of the progress bar's appearance using a predefined theme.
 This theme dynamically adjusts the `icon`, `color` and `bar-color` parameters
 based on the battery level, eliminating the need for manual adjustments or
-complex Jinja2 s.
+complex Jinja2 templates.
 
 _Example_:
 
@@ -2233,7 +2231,7 @@ interpolate: true
 
 Defines which elements should be hidden in the card.
 
-hide accepts either:
+`hide` accepts either:
 
 - a list of elements to hide (static configuration), or
 - a Jinja template that dynamically returns a list of elements based on the
@@ -2244,6 +2242,8 @@ When using the list syntax, the following elements are available:
 - icon: Hides the entity icon.
 - name: Hides the entity name.
 - value: Hides the current value.
+- unit: Hides the unit (Card/Badge only — replaces the deprecated `disable_unit`
+  option, see [Deprecated Options]).
 - secondary_info: Hides the secondary information.
 - progress_bar: Hides the visual progress bar.
 
@@ -2280,6 +2280,13 @@ element names.
 
 > **`disable_unit`** [Boolean] _(optional, default: `false`)_
 
+> [!IMPORTANT]
+>
+> **Deprecated since 1.6.0** (a console warning is logged) — use
+> [`hide: ['unit']`](#hide) instead. `disable_unit` still works and is
+> automatically migrated for the session, but please update your YAML to the new
+> form when convenient. See [Deprecated Options].
+
 Disables the display of the unit when set to `true`. If not defined or set to
 `false`, the unit will be shown.
 
@@ -2300,7 +2307,7 @@ disable_unit: true
 [![Template OK][Template-OK]](#compatibility)
 [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
-> **`watermark`** [Map] (optional)\_:
+> **`watermark`** [Map] _(optional)_
 
 The `watermark` option allows you to visually highlight specific value
 thresholds (low and high) within the progress bar, helping you better interpret
@@ -2591,7 +2598,7 @@ available for Templates as well:
 | `bar_single_line`            | boolean (optional) | `false`      | single-line mode for overlay bars | [Config Ref.](#bar_single_line)            |
 | `bar_segments`               | integer (optional) | —            | Render bar as discrete segments   | [Config Ref.](#bar_segments)               |
 | `bar_effect`                 | string/list/jinja  | —            | Visual effects for the bar        | [Config Ref.](#bar_effect)                 |
-| `bar_max_width`.             | string (optional)  | -            | Limits the max width of the bar   | [Config Ref.](#bar_max_width)              |
+| `bar_max_width`              | string (optional)  | -            | Limits the max width of the bar   | [Config Ref.](#bar_max_width)              |
 | `bar_orientation`            | string (optional)  | `ltr`        | Bar direction                     | [Config Ref.](#bar_orientation)            |
 | `bar_scale`                  | string (optional)  | `linear`     | Value-to-width mapping            | [Config Ref.](#bar_scale)                  |
 | `icon_animation`             | string (optional)  | `none`       | Animate icon on active state      | [Config Ref.](#icon_animation)             |
@@ -2791,6 +2798,8 @@ _This reference guide is adapted for entity-progress-card._
 [Map]: #map-object
 [JINJA]: #jinja
 [ha-jinja]: https://www.home-assistant.io/docs/configuration/templating/
+[Deprecated Options]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/troubleshooting.md#deprecated-options
 [token-color]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/theme.md#token-color
 [Accessibility]:

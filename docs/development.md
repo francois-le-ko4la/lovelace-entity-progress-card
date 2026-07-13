@@ -430,14 +430,14 @@ Editors share `EditorBase`:
   and are stripped before `config-changed` is dispatched.
 - Custom elements that edit an **array of row-objects** (`bar_stack`'s entities,
   `custom_theme`'s zones) share `ListEditorBase`: a label, a list container, the
-  build-once/render-on-change lifecycle, and `_deleteRow`/ `_updateItem` — the
-  same template-method pattern `ChipsBase`/ `SingleSelectChipsBase` use for the
+  build-once/render-on-change lifecycle, and `_deleteRow`/`_updateItem` — the
+  same template-method pattern `ChipsBase`/`SingleSelectChipsBase` use for the
   chip family. A concrete row editor only implements
   `_buildDOM()`/`_render()`/`_dispatch()` and its own per-field builders.
 
 ## Internationalization
 
-All user-visible strings live in the module-level `TRANSLATIONS` constant — **35
+All user-visible strings live in the module-level `TRANSLATIONS` constant — **39
 languages**, one flat object per language code:
 
 ```js
@@ -566,16 +566,28 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
 - **Versioning**: `const VERSION = 'x.y.z[-dev]'` at the top of the file is the
   single source of truth displayed in the console banner; keep it in sync with
   the git tag. `-dev` marks unreleased builds.
-- **CI** (`.github/workflows/`):
-  - `validate.yaml` — HACS validation (`hacs/action`, category `plugin`) on
-    every push/PR.
-  - `release.yaml` — on a **published GitHub release**: minifies the JS with
-    esbuild (`--target=es2022`) and uploads the artifact to the release assets.
-    HACS serves that asset.
+- **CI** (`.github/workflows/`), each path-scoped so a PR only triggers the
+  checks relevant to what it touches:
+  - `validate-js.yaml` — on `entity-progress-card.js`/`eslint.config.mjs`/
+    `package.json`/`package-lock.json` changes: HACS validation (`hacs/action`,
+    category `plugin`) + `npm run validate` (syntax check, lint, full
+    translations sync).
+  - `validate-i18n.yaml` — on `translations/**` changes:
+    `npm run i18n:validate:structure` (well-formed JSON + template structure
+    only — no JS sync required, so a translation-only PR isn't blocked on
+    something a contributor can't fix themselves; see
+    [Internationalization](#internationalization)).
+  - `validate-md.yaml` — on `**/*.md` changes: `npm run lint:md`.
+  - `release.yaml` — on a **published GitHub release**:
+    `npm run check:release-flags` (fails if `CARD_CONTEXT.dev`/`debug` is left
+    `true` — see [Logging & debugging](#logging--debugging)),
+    `npm run validate`, `npm run build` (esbuild, `--target=es2022`, pinned as a
+    devDependency), a `node --check` sanity pass on the minified output, then
+    uploads the artifact to the release assets. HACS serves that asset.
 - **Language floor**: the esbuild target is `es2022` — private fields and class
   static blocks are fine, but syntax newer than es2022 will fail the release
   build even though it runs in dev. Test a release build locally with
-  `npx esbuild entity-progress-card.js --minify --target=es2022` when in doubt.
+  `npm run build` when in doubt.
 - **HACS**: `hacs.json` declares `content_in_root` + the filename; the in-repo
   file is what HACS installs for users tracking the default branch, the minified
   release asset is what tagged installs get — both must work (hence: no

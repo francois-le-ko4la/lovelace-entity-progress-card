@@ -146,8 +146,8 @@ navigate directly to the card and announce progress values correctly.
 
 ### 🌐 New Languages
 
-This release adds six new languages: ca, es-419, et, hu, lt, lv, pt-BR, sk, sl,
-zh-Hans, and zh-Hant — contributions welcome!
+This release adds eleven new languages: ca, es-419, et, hu, lt, lv, pt-BR, sk,
+sl, zh-Hans, and zh-Hant — contributions welcome!
 
 ### 🛡️ Fixes
 

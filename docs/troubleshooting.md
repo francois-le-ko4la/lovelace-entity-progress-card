@@ -27,7 +27,8 @@ stays clean and stable. We handle two main categories of errors in the card:
    - Entity is not found, unavailable or offline
    <details>
    <summary><strong>Show the screenshot (click to expand)</strong></summary>
-   ![image](https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/errors.png)
+   <!-- markdownlint-disable-next-line MD013 -->
+   <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/errors.png" alt="errors" width="1000px"/>
    </details>
 
 <a id="deprecated-options"></a>
@@ -211,7 +212,7 @@ or an advanced user, your feedback is valuable!
   **[check existing issues](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues)**
   to see if the problem has already been reported.
 - If not, feel free to
-  **[submit a new issues](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues)**
+  **[submit a new issue](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues)**
   with all the relevant information.
 
 > [!NOTE]

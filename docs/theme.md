@@ -17,6 +17,9 @@ Jump to the specific section:
 - [Adapt to HA custom theme](#adapt-to-ha-custom-theme)
   - [CSS variables](#css)
   - [Usage](#usage)
+- [card_mod and card structure](#card-mod-and-card-structure)
+  - [Class Name Updates & Migration Guide](#class-name-migration)
+  - [DOM](#dom)
 
 ## Token color
 
@@ -482,7 +485,6 @@ clear and intuitive display of PM2.5 pollution levels.
   src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/pm.png"
   alt="Image title" width="250"
 />
-</details>
 
 [🔼 Back to top]
 
@@ -696,7 +698,11 @@ card_mod:
 
 [🔼 Back to top]
 
+<a id="card-mod-and-card-structure"></a>
+
 ## card_mod and card structure
+
+<a id="class-name-migration"></a>
 
 ### Class Name Updates & Migration Guide (v1.5.3+)
 

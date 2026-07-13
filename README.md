@@ -1,6 +1,6 @@
 <a id="top"></a>
 
-# Lovelace Entity Progress Card [![ReadMe](https://img.shields.io/badge/ReadMe-018EF5?logo=readme&logoColor=fff)](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/1.4.12/README.md)
+# Lovelace Entity Progress Card [![ReadMe](https://img.shields.io/badge/ReadMe-018EF5?logo=readme&logoColor=fff)](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/README.md)
 
 [![Home Assistant][ha-badge]][repo-link] [![JavaScript][js-badge]][repo-link]
 [![Discord][discord-badge]][discord-link]
@@ -48,11 +48,11 @@ Jump to the specific section:
 <!-- markdownlint-disable-next-line MD013 -->
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/example.png" alt="example" width="400"/>
 
-This custom version of the **Bar Card** for Home Assistant allows you to display
-a simple percentage bar that is quick and easy to integrate into your Lovelace
-cards. It blends seamlessly with the `Tile`/`Mushroom` look & feel of the latest
-Home Assistant versions. This card is based on custom CSS and leverages existing
-code to fine-tune the appearance.
+A custom progress bar card for Home Assistant, inspired by **Bar Card**, that
+allows you to display a simple percentage bar that is quick and easy to
+integrate into your Lovelace cards. It blends seamlessly with the
+`Tile`/`Mushroom` look & feel of the latest Home Assistant versions. This card
+is based on custom CSS and leverages existing code to fine-tune the appearance.
 
 ### 🚀 Features
 
@@ -123,7 +123,7 @@ Use this link to directly go to the repository in HACS
 - Add `/local/entity-progress-card.js` to your Lovelace resources:
   - Go to **Settings** ➡️ **Dashboards** ➡️ **Resources** ➡️ **`⋮`** ➡️ **Add
     Resource**
-  - Set :
+  - Set:
     - URL: `/local/www/entity-progress-card.js`
     - Type: `JavaScript Module`
   - Save
@@ -184,7 +184,7 @@ card.
 
 <a id="purpose-template"></a>
 
-#### 🧠 When to Use the Template Version ?
+#### 🧠 When to Use the Template Version?
 
 Use the Template version (card or badge) when:
 
@@ -245,7 +245,7 @@ This is the primary card for displaying entity progress.
 <!-- markdownlint-disable-next-line MD013 -->
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/pm.png" alt="Example PM" width="250"/>
 
-#### 🛠️ Options and percentage ?
+#### 🛠️ Options and percentage?
 
 <details>
 <summary><strong>Options and Configuration (click to expand)</strong></summary>
@@ -279,7 +279,8 @@ This is the primary card for displaying entity progress.
 | `bar_segments`               | integer (optional)     | —                         | Render bar as discrete segments       | [Config Ref.][config-bar_segments]               |
 | `bar_effect`                 | string/list/jinja      | —                         | Visual effects for the bar            | [Config Ref.][config-bar_effect]                 |
 | `bar_color_mode`             | string (optional)      | `auto`                    | Bar fill color rendering mode         | [Config Ref.][config-bar_color_mode]             |
-| `bar_max_width`.             | string (optional)      | -                         | Limits the maximum width of the bar   | [Config Ref.][config-bar_max_width]              |
+| `bar_scale`                  | string (optional)      | `linear`                  | Value-to-width mapping (linear/log)   | [Config Ref.][config-bar_scale]                  |
+| `bar_max_width`              | string (optional)      | -                         | Limits the maximum width of the bar   | [Config Ref.][config-bar_max_width]              |
 | `bar_orientation`            | string (optional)      | `ltr`                     | Bar direction                         | [Config Ref.][config-bar_orientation]            |
 | `force_circular_background`  | boolean (optional)     | `false`                   | Force icon circle background          | [Config Ref.][config-force_circular_background]  |
 | `trend_indicator`            | string (optional)      | `false`                   | Displays trend icons.                 | [Config Ref.][config-trend_indicator]            |
@@ -353,7 +354,7 @@ interacts with other powerful Lovelace tools.
 <details>
 <summary><strong>Basic Usage (YAML Example)</strong></summary>
 
-Here’s our example of how to use the Custom Bar Card with custom styles:
+Here’s our example of how to use the card with custom styles:
 
 ```yaml
 type: custom:entity-progress-card
@@ -517,8 +518,8 @@ cards:
               style:
                 .: |-
                   :host {
-                    --ha-card-border-width: 0px !important; /* Forcer la suppression des bordures */
-                    box-shadow: none !important; /* Supprimer l'ombre pour enlever tout contour */
+                    --ha-card-border-width: 0px !important; /* force-remove the border */
+                    box-shadow: none !important; /* remove the shadow to drop any outline */
                   }
     sort:
       method: friendly_name
@@ -705,7 +706,7 @@ then apply the "Simple Helper" technique from the next section:
 <details>
 <summary><strong>Cracking a Complex Case with a Simple Helper (click to expand)</strong></summary>
 
-**Why ?**
+**Why?**
 
 We want to monitor a process and we have entities for:
 
@@ -715,7 +716,7 @@ We want to monitor a process and we have entities for:
 
 Our goal is to display the percentage of remaining time and show the remaining
 time in minutes. Unfortunately, the standard usage of this card cannot achieve
-what we need. We read the README it seems to be impossible but...
+what we need. We read the README, and it seems impossible, but...
 
 **Mathematical Model**
 
@@ -733,7 +734,7 @@ The good news is that we can use an entity to define the `max_value` and
 dynamically calculate the percentage. Therefore, we need to find a way to
 determine $\Delta T$.
 
-**How ?**
+**How?**
 
 We'll use a Helper (Number) to handle this calculation. It’s simple to define
 and can be set up according to various needs.
@@ -776,13 +777,13 @@ By implementing this model through the helper, we can accurately calculate and
 display the percentage of remaining time for any task. This approach provides a
 dynamic and intuitive way to monitor progress, ensuring that the displayed
 percentage accurately reflects the time remaining regardless of the task’s total
-duration. This solution effectively extend our card usage vision, and enhances
+duration. This solution effectively extends our card usage vision, and enhances
 the user experience.
 
 </details>
 
 <details>
-<summary><strong>Don't Let It Expire ! (click to expand)</strong></summary>
+<summary><strong>Don't Let It Expire! (click to expand)</strong></summary>
 
 This example is similar to the previous one that used a Home Assistant helper
 but relying more on system-level tools—offering potentially greater efficiency
@@ -886,7 +887,7 @@ tools, and whenever possible, they should be preferred to simplify
 implementation.
 
 With `cert_expiry` entity we can define a template helper (number) to generate a
-countdown with :
+countdown with:
 
 - create the template helper
 - define a name (number.cert_expiry_entity_id)
@@ -941,7 +942,7 @@ Let's Encrypt certificate, it's recommended to:
 - have a renewal process in place
 - add a trigger to generate an alert before the certificate expires
 
-This topics are beyond the scope of this guide.
+These topics are beyond the scope of this guide.
 
 </details>
 <br />
@@ -996,7 +997,7 @@ The following options remain fully compatible with this new card:
 | `bar_single_line`            | boolean (optional) | single-line mode for overlay bars                                              | [Config Ref.][config-bar_single_line]            |
 | `bar_segments`               | integer (optional) | Render bar as discrete segments                                                | [Config Ref.][config-bar_segments]               |
 | `bar_effect`                 | string/list/jinja  | Visual effects for the bar                                                     | [Config Ref.][config-bar_effect]                 |
-| `bar_max_width`.             | string (optional)  | Limits the maximum width of the bar                                            | [Config Ref.][config-bar_max_width]              |
+| `bar_max_width`              | string (optional)  | Limits the maximum width of the bar                                            | [Config Ref.][config-bar_max_width]              |
 | `bar_orientation`            | string (optional)  | Define the direction of the progress bar (e.g., `ltr`, `rtl`).                 | [Config Ref.][config-bar_orientation]            |
 | `icon_animation`             | string (optional)  | Animate icon on active state                                                   | [Config Ref.][config-icon_animation]             |
 | `force_circular_background`  | boolean (optional) | Force icon circle background.                                                  | [Config Ref.][config-force_circular_background]  |
@@ -1122,7 +1123,7 @@ name: >
       Next Setting: {{ sunset.timestamp() | timestamp_custom('%H:%M', true) }}
     {% endif %}
   {% else %}
-    Suninformation not available
+    Sun information not available
   {% endif %}
 entity: sun.sun
 bar_color: |
@@ -1241,7 +1242,8 @@ customizable badge format with a dynamic progress bar.
 | `bar_segments`               | integer (optional)     | —                         | Render bar as discrete segments       | [Config Ref.][config-bar_segments]               |
 | `bar_effect`                 | string/list/jinja      | —                         | Visual effects for the bar            | [Config Ref.][config-bar_effect]                 |
 | `bar_color_mode`             | string (optional)      | `auto`                    | Bar fill color rendering mode         | [Config Ref.][config-bar_color_mode]             |
-| `bar_max_width`.             | string (optional)      | -                         | Limits the maximum width of the bar   | [Config Ref.][config-bar_max_width]              |
+| `bar_scale`                  | string (optional)      | `linear`                  | Value-to-width mapping (linear/log)   | [Config Ref.][config-bar_scale]                  |
+| `bar_max_width`              | string (optional)      | -                         | Limits the maximum width of the bar   | [Config Ref.][config-bar_max_width]              |
 | `bar_orientation`            | string (optional)      | `ltr`                     | Bar direction                         | [Config Ref.][config-bar_orientation]            |
 | `frameless`                  | boolean (optional)     | `false`                   | Remove card frame                     | [Config Ref.][config-frameless]                  |
 | `marginless`                 | boolean (optional)     | `false`                   | Remove top/bottom margin              | [Config Ref.][config-marginless]                 |
@@ -1326,7 +1328,7 @@ The following options remain fully compatible with this new card:
 | `bar_size`                   | string (optional)  | Customize the size or thickness of the progress bar.                           | [Config Ref.][config-bar_size]                   |
 | `bar_segments`               | integer (optional) | Render bar as discrete segments                                                | [Config Ref.][config-bar_segments]               |
 | `bar_effect`                 | string/list/jinja  | Visual effects for the bar                                                     | [Config Ref.][config-bar_effect]                 |
-| `bar_max_width`.             | string (optional)  | Limits the maximum width of the bar                                            | [Config Ref.][config-bar_max_width]              |
+| `bar_max_width`              | string (optional)  | Limits the maximum width of the bar                                            | [Config Ref.][config-bar_max_width]              |
 | `bar_orientation`            | string (optional)  | Define the direction of the progress bar (e.g., `ltr`, `rtl`).                 | [Config Ref.][config-bar_orientation]            |
 | `frameless`                  | boolean (optional) | Remove the default card border and background for a seamless, flat appearance. | [Config Ref.][config-frameless]                  |
 | `marginless`                 | boolean (optional) | Remove vertical margin for a more compact template display.                    | [Config Ref.][config-marginless]                 |
@@ -1398,6 +1400,7 @@ anchor the bar to the card edge without increasing the tile height.
 | `bar_size`          | string (optional)      | `small`                   | Size of the progress bar            | [Config Ref.][config-bar_size]        |
 | `bar_orientation`   | string (optional)      | `ltr`                     | Bar direction                       | [Config Ref.][config-bar_orientation] |
 | `bar_color_mode`    | string (optional)      | `auto`                    | Bar fill color rendering mode       | [Config Ref.][config-bar_color_mode]  |
+| `bar_scale`         | string (optional)      | `linear`                  | Value-to-width mapping (linear/log) | [Config Ref.][config-bar_scale]       |
 | `bar_effect`        | string/list/jinja      | —                         | Visual effects for the bar          | [Config Ref.][config-bar_effect]      |
 | `bar_position`      | string (optional)      | `default`                 | Position of the bar inside the tile | [Config Ref.][config-bar_position]    |
 | `bar_segments`      | integer (optional)     | —                         | Render bar as discrete segments     | [Config Ref.][config-bar_segments]    |
@@ -1744,6 +1747,8 @@ This project is licensed under the [GPL-3.0 license].
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_effect
 [config-bar_color_mode]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_color_mode
+[config-bar_scale]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_scale
 [config-bar_max_width]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_max_width
 [config-bar_orientation]:

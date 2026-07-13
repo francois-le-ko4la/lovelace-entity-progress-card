@@ -51,7 +51,7 @@ mkdir -p config/www/test/
 - Add `/local/test/entity-progress-card.js` to your Lovelace resources:
   - Go to **Settings** ➡️ **Dashboards** ➡️ **Resources** ➡️ **`⋮`** ➡️ **Add
     Resource**
-  - Set :
+  - Set:
     - URL: `/local/test/entity-progress-card.js`
     - Type: `JavaScript Module`
   - Save
@@ -63,7 +63,7 @@ mkdir -p config/www/test/
 
 We strongly recommend duplicating an existing card and modifying only the type.
 
-Your original card use:
+Your original card:
 
 ```yaml
 type: custom:entity-progress-card
