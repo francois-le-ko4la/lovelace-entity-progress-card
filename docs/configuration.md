@@ -188,7 +188,21 @@ templates][ha-jinja], allowing the option to be conditionally rendered.
 
 The expression is evaluated in the context of the entity's state and attributes.
 The keyword `entity` can be used to represent the entity defined at the card
-level.
+level, so you don't have to repeat the entity ID in every Jinja field.
+
+> [!IMPORTANT]
+>
+> `entity` is only defined when the card's own `entity` option is set. If it's
+> omitted, `entity` doesn't exist in the template context at all (not an empty
+> string) — using it then raises a Jinja error rather than rendering nothing.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card-template
+entity: sensor.sma_current_day_yield
+secondary: '{{ states(entity, with_unit=True) }}'
+```
 
 ##### Supported HTML
 
@@ -1373,10 +1387,22 @@ bar_color: rgb(110, 65, 171)
 [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
 > **`bar_size`** [String] ➡️ {`small`|`medium`|`large`|`xlarge`} _(optional,
-> default: `small`)_
+> default: `small`, `xlarge` for the Tile Feature)_
 
 Customizes the appearance of the progress bar by selecting a predefined size.
 Choose from small, medium, or large to adjust the visual scale of the bar.
+
+> [!NOTE]
+>
+> The Tile Feature defaults to `xlarge` instead of `small`: unlike Card/Badge/
+> Template, its row height is fixed (it doesn't grow or shrink with `bar_size`),
+> so a thin `small` bar looks lost inside that space.
+
+> [!IMPORTANT]
+>
+> Badge and Badge Template don't offer `xlarge` ({`small`|`medium`|`large`}
+> only): it sets a fixed 42px bar height, taller than a badge's entire height
+> (`--ha-badge-size`, 36px by default), so it would overflow the badge.
 
 _Example_:
 
@@ -1385,9 +1411,6 @@ type: custom:entity-progress-card
 ····
 bar_size: medium
 ```
-
-`xlarge` can only be configured via YAML, and the interface automatically
-adjusts to accommodate the size of the progress bar.
 
 [🔼 Back to top]
 
@@ -1416,13 +1439,21 @@ bar_position: overlay
 
 _Options:_
 
-| option    | description                             |
-| :-------- | :-------------------------------------- |
-| `default` | Standard position (inline with content) |
-| `below`   | Below the content as a dedicated row    |
-| `top`     | At the top of the card edge             |
-| `bottom`  | At the bottom of the card edge          |
-| `overlay` | Overlaid on top of the content          |
+| option       | description                                                     | Card | Template | Feature |
+| :----------- | :-------------------------------------------------------------- | :--: | :------: | :-----: |
+| `default`    | Standard position (inline with content)                         |  ✅  |    ✅    |   ✅    |
+| `below`      | Below the content as a dedicated row                            |  ✅  |    ✅    |    —    |
+| `top`        | At the top of the card edge                                     |  ✅  |    ✅    |   ✅    |
+| `bottom`     | At the bottom of the card edge                                  |  ✅  |    ✅    |   ✅    |
+| `overlay`    | Overlaid on top of the content                                  |  ✅  |    ✅    |    —    |
+| `background` | Fills the entire card as a background layer, behind the content |  ✅  |    ✅    |    —    |
+
+> [!NOTE]
+>
+> The Tile Feature only supports `default`/`top`/`bottom`: it's a single row
+> added to an existing Tile card, not a full card with its own dedicated rows or
+> content to overlay/background — `below`, `overlay`, and `background` don't
+> apply to that context. Badge and Badge Template don't have this option at all.
 
 _Default value_:
 
@@ -1667,9 +1698,8 @@ bar_scale: log
 
 #### `bar_max_width`
 
-[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Card OK][Card-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
-[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
 > **`bar_max_width`** [String] _(optional)_
 
@@ -1725,7 +1755,8 @@ reverse: true
 > [!IMPORTANT]
 >
 > 'up' can only be used with the vertical card layout and when the bar position
-> is set to overlay.
+> is set to overlay. Neither Badge/Badge Template nor the Tile Feature have a
+> vertical layout — `up` isn't offered there ({`rtl`|`ltr`} only).
 
 [🔼 Back to top]
 
@@ -2385,6 +2416,14 @@ watermark:
 same scale defined by `min_value` and `max_value`. The card converts them to a
 bar position automatically — they are never raw percentages of the bar.
 
+> [!IMPORTANT]
+>
+> For a `timer` entity, `auto` behaves like `percent` instead: a timer's `max`
+> is the running instance's actual duration, not a stable scale — a 20-minute
+> run and a 5-minute run have a different `max`, so a raw value would land at a
+> different position every time. `auto` keeps `low`/`high` as a stable
+> percentage of the bar for timers, regardless of how long any given run is.
+
 | Scenario                                                 | `low_as` / `high_as` | `low` / `high` unit       | Example                                                          |
 | -------------------------------------------------------- | -------------------- | ------------------------- | ---------------------------------------------------------------- |
 | Percentage sensor (`%`), default range 0–100             | `auto`               | Percentage (0–100)        | `low: 20` → marker at 20 % on the bar                            |
@@ -2432,19 +2471,27 @@ _Map definition_:
 - `below` (number): Alert when the value goes below this threshold.
 - `color` (string): CSS color used for the alert (name or hex). Defaults to the
   theme's error color.
-- `highlight` (string): How the alert is displayed.
-  - `border` (default): A pulsing border in the alert color — the motion draws
-    the eye.
-  - `background`: A steady tint of the card background — no motion, calmer.
+- `highlight` (string): What reacts to the alert.
+  - `border` (default): The card border takes the alert color.
+  - `background`: A tint of the card background instead — the border stays
+    neutral.
+- `animation` (string, optional): How that reaction moves. If omitted, it
+  defaults to `blink` for `border` and `static` for `background` (this matches
+  the behavior before `animation` existed, so old configs are unaffected).
+  - `static`: No motion — steady color.
+  - `blink`: Pulses between the alert color and the resting color.
+  - `ping`: A ring bursts from the card border. Border-only: combined with
+    `highlight: background` it has no matching effect and falls back to
+    `static`.
 
 `above` and `below` are expressed in the entity's native unit, on the same scale
 as `min_value`/`max_value` — like `watermark.low`/`watermark.high`. Both can be
 combined; the alert triggers if either condition is met.
 
-The pulsing border animation is disabled automatically when the system-level
-"Reduce Motion" accessibility setting is on (see [Accessibility] in the README)
-— the border then stays statically colored, so the alert remains visible without
-the motion.
+`blink` and `ping` are disabled automatically when the system-level "Reduce
+Motion" accessibility setting is on (see [Accessibility] in the README) — the
+border or background then stays statically colored, so the alert remains visible
+without the motion.
 
 _Example_:
 
@@ -2455,6 +2502,7 @@ alert_when:
   above: 80
   color: red
   highlight: border
+  animation: ping
 ```
 
 [🔼 Back to top]

@@ -75,6 +75,7 @@
       "watermark_low_mode": "Low watermark source",
       "watermark_high_mode": "High watermark source",
       "bar_max_width": "Bar max width",
+      "bar_max_width_toggle": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
       "marginless": "Marginless",
@@ -196,11 +197,17 @@
         "above": "Alarm boven",
         "below": "Alarm onder",
         "color": "Alarmkleur",
-        "highlight": "Markering"
+        "highlight": "Markering",
+        "animation": "Animation"
       },
       "alert_highlight": {
         "border": "Rand",
         "background": "Achtergrond"
+      },
+      "alert_animation": {
+        "static": "Static",
+        "blink": "Blink",
+        "ping": "Ping"
       },
       "min_value_mode": {
         "standard": "Vaste waarde",

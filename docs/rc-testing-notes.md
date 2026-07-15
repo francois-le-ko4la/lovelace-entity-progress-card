@@ -169,6 +169,9 @@ Compatible with Home Assistant 2026.2+. Among the notable fixes:
   `number`/`counter` entities.
 - Fixed: A timer card with a watermark configured used to freeze entirely (the
   bar never updated); the combination now works.
+- Fixed: A timer's watermark could land at the wrong spot, or cover the whole
+  bar while the timer was idle. Timer watermarks are now a stable percentage,
+  regardless of the entity's state or how long any given run actually lasts.
 - Fixed: `center_zero` with no `min_value` set used to leave the negative half
   with no range at all (nothing could ever show there). It now defaults
   `min_value` to `-max_value` automatically.  

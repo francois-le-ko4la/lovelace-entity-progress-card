@@ -75,6 +75,7 @@
       "watermark_low_mode": "Low watermark source",
       "watermark_high_mode": "High watermark source",
       "bar_max_width": "Bar max width",
+      "bar_max_width_toggle": "Bar max width",
       "frameless": "Frameless",
       "height": "Height",
       "marginless": "Marginless",
@@ -196,11 +197,17 @@
         "above": "Allerta sopra",
         "below": "Allerta sotto",
         "color": "Colore allerta",
-        "highlight": "Evidenziazione"
+        "highlight": "Evidenziazione",
+        "animation": "Animation"
       },
       "alert_highlight": {
         "border": "Bordo",
         "background": "Sfondo"
+      },
+      "alert_animation": {
+        "static": "Static",
+        "blink": "Blink",
+        "ping": "Ping"
       },
       "min_value_mode": {
         "standard": "Valore fisso",

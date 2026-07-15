@@ -957,38 +957,22 @@ This card is designed to handle more advanced use cases that aren't fully
 supported by the base card. It avoids the need for custom helpers by allowing
 you to implement your desired mathematical modeling directly through templating.
 
-#### 🛠️ Available Jinja Options and Supported Options
+#### 🛠️ Options
 
 <details>
-<summary><strong>Available Jinja Options (click to expand)</strong></summary>
-
-| **Options** | **Type** | **Description**                                                            | **Doc**                        |
-| :---------- | :------- | :------------------------------------------------------------------------- | :----------------------------- |
-| `name`      | JINJA    | Renders the customized entity name                                         | [Config Ref.][name-jinja]      |
-| `icon`      | JINJA    | Main icon shown on the card                                                | [Config Ref.][icon-jinja]      |
-| `secondary` | JINJA    | Renders the secondary content (e.g., unit, status, additional info)        | [Config Ref.][secondary-jinja] |
-| `percent`   | JINJA    | Numerical value representing progress (0–100%), affects progress bar width | [Config Ref.][percent-jinja]   |
-| `color`     | JINJA    | Dynamic color for the icon and shape, adapted using `ThemeManager`         | [Config Ref.][color-jinja]     |
-| `bar_color` | JINJA    | Dynamic progress bar color, also handled through `ThemeManager`            | [Config Ref.][bar_color-jinja] |
-
-See [Full Configuration Reference][FCR].
-
-</details>
-
-> [!NOTE]
->
-> The keyword `entity` can be used in Jinja to represent the entity defined at
-> the card level.
-
-<details>
-<summary><strong>Supported Options (click to expand)</strong></summary>
-
-The following options remain fully compatible with this new card:
+<summary><strong>Supported Options and Configuration (click to expand)</strong></summary>
 
 | **Option**                   | **Type**           | **Description**                                                                | **Link**                                         |
 | :--------------------------- | :----------------- | :----------------------------------------------------------------------------- | :----------------------------------------------- |
 | **Data Options**             |                    |                                                                                |                                                  |
 | `entity`                     | string (optional)  | Entity ID.                                                                     | [Config Ref.][config-entity]                     |
+| **Jinja Options**            |                    |                                                                                |                                                  |
+| `name`                       | JINJA              | Renders the customized entity name                                             | [Config Ref.][name-jinja]                        |
+| `icon`                       | JINJA              | Main icon shown on the card                                                    | [Config Ref.][icon-jinja]                        |
+| `secondary`                  | JINJA              | Renders the secondary content (e.g., unit, status, additional info)            | [Config Ref.][secondary-jinja]                   |
+| `percent`                    | JINJA              | Numerical value representing progress (0–100%), affects progress bar width     | [Config Ref.][percent-jinja]                     |
+| `color`                      | JINJA              | Dynamic color for the icon and shape, adapted using `ThemeManager`             | [Config Ref.][color-jinja]                       |
+| `bar_color`                  | JINJA              | Dynamic progress bar color, also handled through `ThemeManager`                | [Config Ref.][bar_color-jinja]                   |
 | **Styling Options**          |                    |                                                                                |                                                  |
 | `badge_icon`                 | Jinja (optional)   | Dynamic badge icon                                                             | [Config Ref.][config-badge_icon]                 |
 | `badge_color`                | Jinja (optional)   | Dynamic badge color                                                            | [Config Ref.][config-badge_color]                |
@@ -1019,6 +1003,11 @@ The following options remain fully compatible with this new card:
 See [Full Configuration Reference][FCR].
 
 </details>
+
+> [!NOTE]
+>
+> The keyword `entity` can be used in Jinja to represent the entity defined at
+> the card level.
 
 #### 👉 Template Card Usage
 
@@ -1243,7 +1232,6 @@ customizable badge format with a dynamic progress bar.
 | `bar_effect`                 | string/list/jinja      | —                         | Visual effects for the bar            | [Config Ref.][config-bar_effect]                 |
 | `bar_color_mode`             | string (optional)      | `auto`                    | Bar fill color rendering mode         | [Config Ref.][config-bar_color_mode]             |
 | `bar_scale`                  | string (optional)      | `linear`                  | Value-to-width mapping (linear/log)   | [Config Ref.][config-bar_scale]                  |
-| `bar_max_width`              | string (optional)      | -                         | Limits the maximum width of the bar   | [Config Ref.][config-bar_max_width]              |
 | `bar_orientation`            | string (optional)      | `ltr`                     | Bar direction                         | [Config Ref.][config-bar_orientation]            |
 | `frameless`                  | boolean (optional)     | `false`                   | Remove card frame                     | [Config Ref.][config-frameless]                  |
 | `marginless`                 | boolean (optional)     | `false`                   | Remove top/bottom margin              | [Config Ref.][config-marginless]                 |
@@ -1292,43 +1280,26 @@ This badge is designed to display the progress of an entity in a compact,
 customizable format with a dynamic progress bar. The entire template is now
 written in Jinja, offering significantly more flexibility and dynamic behavior.
 
-#### 🛠️ Available Jinja Options and Supported Options
+#### 🛠️ Options
 
 <details>
-<summary><strong>Available Jinja Options (click to expand)</strong></summary>
-
-| **Options** | **Type** | **Description**                                                            | **Doc**                        |
-| :---------- | :------- | :------------------------------------------------------------------------- | :----------------------------- |
-| `name`      | JINJA    | Renders the customized entity name                                         | [Config Ref.][name-jinja]      |
-| `icon`      | JINJA    | Main icon shown on the card                                                | [Config Ref.][icon-jinja]      |
-| `secondary` | JINJA    | Renders the secondary content (e.g., unit, status, additional info)        | [Config Ref.][secondary-jinja] |
-| `percent`   | JINJA    | Numerical value representing progress (0–100%), affects progress bar width | [Config Ref.][percent-jinja]   |
-| `color`     | JINJA    | Dynamic color for the icon and shape, adapted using `ThemeManager`         | [Config Ref.][color-jinja]     |
-| `bar_color` | JINJA    | Dynamic progress bar color, also handled through `ThemeManager`            | [Config Ref.][bar_color-jinja] |
-
-See [Full Configuration Reference][FCR].
-
-</details>
-
-> [!NOTE]
->
-> The keyword `entity` can be used in Jinja to represent the entity defined at
-> the card level.
-
-<details>
-<summary><strong>Supported Options (click to expand)</strong></summary>
-
-The following options remain fully compatible with this new card:
+<summary><strong>Supported Options and Configuration (click to expand)</strong></summary>
 
 | **Option**                   | **Type**           | **Description**                                                                | **Link**                                         |
 | :--------------------------- | :----------------- | :----------------------------------------------------------------------------- | :----------------------------------------------- |
 | **Data Options**             |                    |                                                                                |                                                  |
 | `entity`                     | string (optional)  | Entity ID.                                                                     | [Config Ref.][config-entity]                     |
+| **Jinja Options**            |                    |                                                                                |                                                  |
+| `name`                       | JINJA              | Renders the customized entity name                                             | [Config Ref.][name-jinja]                        |
+| `icon`                       | JINJA              | Main icon shown on the card                                                    | [Config Ref.][icon-jinja]                        |
+| `secondary`                  | JINJA              | Renders the secondary content (e.g., unit, status, additional info)            | [Config Ref.][secondary-jinja]                   |
+| `percent`                    | JINJA              | Numerical value representing progress (0–100%), affects progress bar width     | [Config Ref.][percent-jinja]                     |
+| `color`                      | JINJA              | Dynamic color for the icon and shape, adapted using `ThemeManager`             | [Config Ref.][color-jinja]                       |
+| `bar_color`                  | JINJA              | Dynamic progress bar color, also handled through `ThemeManager`                | [Config Ref.][bar_color-jinja]                   |
 | **Styling Options**          |                    |                                                                                |                                                  |
 | `bar_size`                   | string (optional)  | Customize the size or thickness of the progress bar.                           | [Config Ref.][config-bar_size]                   |
 | `bar_segments`               | integer (optional) | Render bar as discrete segments                                                | [Config Ref.][config-bar_segments]               |
 | `bar_effect`                 | string/list/jinja  | Visual effects for the bar                                                     | [Config Ref.][config-bar_effect]                 |
-| `bar_max_width`              | string (optional)  | Limits the maximum width of the bar                                            | [Config Ref.][config-bar_max_width]              |
 | `bar_orientation`            | string (optional)  | Define the direction of the progress bar (e.g., `ltr`, `rtl`).                 | [Config Ref.][config-bar_orientation]            |
 | `frameless`                  | boolean (optional) | Remove the default card border and background for a seamless, flat appearance. | [Config Ref.][config-frameless]                  |
 | `marginless`                 | boolean (optional) | Remove vertical margin for a more compact template display.                    | [Config Ref.][config-marginless]                 |
@@ -1343,6 +1314,11 @@ The following options remain fully compatible with this new card:
 See [Full Configuration Reference][FCR].
 
 </details>
+
+> [!NOTE]
+>
+> The keyword `entity` can be used in Jinja to represent the entity defined at
+> the card level.
 
 #### 👉 Badge Template Usage
 
@@ -1397,7 +1373,7 @@ anchor the bar to the card edge without increasing the tile height.
 | `max_value`         | float/Map (optional)   | `100`                     | Max for progress calculation        | [Config Ref.][config-max_value]       |
 | **Styling Options** |                        |                           |                                     |                                       |
 | `bar_color`         | string (optional)      | `var(--state-icon-color)` | Color of progress bar               | [Config Ref.][config-bar_color]       |
-| `bar_size`          | string (optional)      | `small`                   | Size of the progress bar            | [Config Ref.][config-bar_size]        |
+| `bar_size`          | string (optional)      | `xlarge`                  | Size of the progress bar            | [Config Ref.][config-bar_size]        |
 | `bar_orientation`   | string (optional)      | `ltr`                     | Bar direction                       | [Config Ref.][config-bar_orientation] |
 | `bar_color_mode`    | string (optional)      | `auto`                    | Bar fill color rendering mode       | [Config Ref.][config-bar_color_mode]  |
 | `bar_scale`         | string (optional)      | `linear`                  | Value-to-width mapping (linear/log) | [Config Ref.][config-bar_scale]       |

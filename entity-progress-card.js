@@ -24,7 +24,7 @@
  */
 
 // prettier-ignore-start
-const VERSION = '1.6.0-rc1';
+const VERSION = '1.6.0-rc2';
 
 const META = {
   documentation: 'https://github.com/francois-le-ko4la/lovelace-entity-progress-card/',
@@ -543,6 +543,18 @@ const CARD = {
           shimmer: { label: 'shimmer', class: 'progress-bar-effect-shimmer' },
           shimmerReverse: { label: 'shimmer_reverse', class: 'progress-bar-effect-shimmer-reverse' },
         },
+        // Single source of truth for mutually-exclusive effects (both
+        // EntityProgressEffectChips - the visual editor - and
+        // HACore._handleBarEffect - the runtime guard for Jinja/raw-array
+        // configs the editor can't filter - read this same map, so the two
+        // never drift apart.
+        effectIncompatibilities: {
+          glass: ['gradient', 'gradient_reverse'],
+          gradient: ['gradient_reverse', 'glass'],
+          gradient_reverse: ['gradient', 'glass'],
+          shimmer: ['shimmer_reverse'],
+          shimmer_reverse: ['shimmer'],
+        },
         centerZero: { class: 'center-zero' },
       },
       watermark: {
@@ -579,15 +591,32 @@ const CARD = {
         label: 'horizontal',
         grid: { grid_rows: 1, grid_min_rows: 1, grid_columns: 2, grid_min_columns: 2 },
         mdi: HA_CONTEXT.icons.focusHorizontal,
-        minHeight: '56px',
+        // 1 Sections grid row. Reads HA's own row-height var (custom
+        // properties cross shadow boundaries) instead of a static copy, so a
+        // theme override of --ha-section-grid-row-height is followed instead
+        // of silently drifting. 56px is HA's own default, kept as the
+        // fallback for masonry/other views where the var isn't set.
+        minHeight: 'var(--ha-section-grid-row-height, 56px)',
       },
       vertical: {
         label: 'vertical',
         grid: { grid_rows: 2, grid_min_rows: 2, grid_columns: 1, grid_min_columns: 1 },
         mdi: HA_CONTEXT.icons.focusVertical,
-        minHeight: '120px',
+        // 2 Sections grid rows: HA's own formula is
+        // (row_size * (row_height + row_gap)) - row_gap - see
+        // hui-grid-section.ts's `.card.fit-rows` rule. 120px (HA's defaults:
+        // 56px row height + 8px row gap) is the fallback for masonry/other
+        // views.
+        minHeight:
+          'calc((2 * (var(--ha-section-grid-row-height, 56px) + var(--ha-section-grid-row-gap, 8px))) - var(--ha-section-grid-row-gap, 8px))',
       },
     },
+    // HA's own getGridOptions() uses a 12-column grid; getLayoutOptions()
+    // (grid_columns above) uses the older 4-column one. HA's own migration
+    // helper (migrateLayoutToGridOptions, compute-card-grid-size.ts)
+    // multiplies by this same factor - kept here so our own getGridOptions()
+    // mirrors it instead of guessing.
+    gridColumnMultiplier: 3,
   },
   theme: {
     default: '**CUSTOM**',
@@ -837,6 +866,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -958,11 +988,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -1079,6 +1115,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -1200,11 +1237,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -1321,6 +1364,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -1442,11 +1486,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -1563,6 +1613,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -1684,11 +1735,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -1805,6 +1862,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -1926,11 +1984,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -2047,6 +2111,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -2168,11 +2233,17 @@ const TRANSLATIONS = {
           above: 'Alarm über',
           below: 'Alarm unter',
           color: 'Alarmfarbe',
-          highlight: 'Hervorhebung'
+          highlight: 'Hervorhebung',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Rahmen',
           background: 'Hintergrund'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fester Wert',
@@ -2289,6 +2360,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -2410,11 +2482,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -2531,6 +2609,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -2652,11 +2731,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -2773,6 +2858,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -2894,11 +2980,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -3015,6 +3107,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -3136,11 +3229,17 @@ const TRANSLATIONS = {
           above: 'Alerta por encima de',
           below: 'Alerta por debajo de',
           color: 'Color de alerta',
-          highlight: 'Resaltado'
+          highlight: 'Resaltado',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Borde',
           background: 'Fondo'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Valor fijo',
@@ -3257,6 +3356,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -3378,11 +3478,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -3499,6 +3605,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -3620,11 +3727,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -3741,6 +3854,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Source du seuil bas',
         watermark_high_mode: 'Source du seuil haut',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -3862,11 +3976,17 @@ const TRANSLATIONS = {
           above: 'Alerte au-dessus de',
           below: 'Alerte en dessous de',
           color: 'Couleur d\'alerte',
-          highlight: 'Mise en évidence'
+          highlight: 'Mise en évidence',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Bordure',
           background: 'Fond'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Valeur fixe',
@@ -3983,6 +4103,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -4104,11 +4225,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -4225,6 +4352,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -4346,11 +4474,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -4467,6 +4601,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -4588,11 +4723,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -4709,6 +4850,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -4830,11 +4972,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -4951,6 +5099,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -5072,11 +5221,17 @@ const TRANSLATIONS = {
           above: 'Allerta sopra',
           below: 'Allerta sotto',
           color: 'Colore allerta',
-          highlight: 'Evidenziazione'
+          highlight: 'Evidenziazione',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Bordo',
           background: 'Sfondo'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Valore fisso',
@@ -5193,6 +5348,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -5314,11 +5470,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -5435,6 +5597,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -5556,11 +5719,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -5677,6 +5846,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -5798,11 +5968,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -5919,6 +6095,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -6040,11 +6217,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -6161,6 +6344,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -6282,11 +6466,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -6403,6 +6593,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -6524,11 +6715,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -6645,6 +6842,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -6766,11 +6964,17 @@ const TRANSLATIONS = {
           above: 'Alarm boven',
           below: 'Alarm onder',
           color: 'Alarmkleur',
-          highlight: 'Markering'
+          highlight: 'Markering',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Rand',
           background: 'Achtergrond'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Vaste waarde',
@@ -6887,6 +7091,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -7008,11 +7213,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -7129,6 +7340,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -7250,11 +7462,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -7371,6 +7589,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -7492,11 +7711,17 @@ const TRANSLATIONS = {
           above: 'Alerta acima de',
           below: 'Alerta abaixo de',
           color: 'Cor do alerta',
-          highlight: 'Destaque'
+          highlight: 'Destaque',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Borda',
           background: 'Fundo'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Valor fixo',
@@ -7613,6 +7838,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -7734,11 +7960,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -7855,6 +8087,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -7976,11 +8209,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -8097,6 +8336,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -8218,11 +8458,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -8339,6 +8585,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -8460,11 +8707,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -8581,6 +8834,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -8702,11 +8956,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -8823,6 +9083,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -8944,11 +9205,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -9065,6 +9332,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -9186,11 +9454,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -9307,6 +9581,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -9428,11 +9703,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -9549,6 +9830,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -9670,11 +9952,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -9791,6 +10079,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -9912,11 +10201,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -10033,6 +10328,7 @@ const TRANSLATIONS = {
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
         bar_max_width: 'Bar max width',
+        bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
         height: 'Height',
         marginless: 'Marginless',
@@ -10154,11 +10450,17 @@ const TRANSLATIONS = {
           above: 'Alert above',
           below: 'Alert below',
           color: 'Alert color',
-          highlight: 'Highlight'
+          highlight: 'Highlight',
+          animation: 'Animation'
         },
         alert_highlight: {
           border: 'Border',
           background: 'Background'
+        },
+        alert_animation: {
+          static: 'Static',
+          blink: 'Blink',
+          ping: 'Ping'
         },
         min_value_mode: {
           standard: 'Fixed value',
@@ -10235,11 +10537,6 @@ const CARD_CSS = `
 
   /* === COLOR OPACITY VARIABLES === */
   --shape-opacity: 20%;
-  --hover-opacity: 4%;
-  --active-opacity: 15%;
-  --icon-hover-opacity: 40%;
-  --card-hover-mix: 96%;
-  --card-active-mix: 85%;
 
   /* === TRANSITION VARIABLES === */
   --progress-transition: var(--epb-progress-transition, 0.5s cubic-bezier(0.4, 0, 0.2, 1));
@@ -10284,6 +10581,22 @@ ha-card.overlay {
 .bottom-container, .top-container {
   --progress-size: var(--epb-progress-bar-size, var(--progress-size-xs));
   --progress-container-height: var(--progress-size-xs);
+}
+
+/* A Feature's row height must not shrink to the bar's own thickness
+   (bar_size only sets --progress-size above) - HA reserves a fixed row
+   regardless, and .progress-container already centers the bar inside it
+   (align-items/justify-content: center). --feature-height is HA's own
+   variable for a card-feature row (see hui-card-features.ts); reading it
+   live keeps us in sync with HA/theme overrides instead of a static copy.
+   Placed after the bar_size/xlarge rules above so it always wins for the
+   'default' bar_position. .top-container/.bottom-container ('top'/'bottom'
+   bar_position - the only other values the Feature schema allows) are
+   separate child elements that re-declare --progress-container-height
+   themselves, so this doesn't reach them - #fixCardStyles already handles
+   sizing for those overlay-style positions. */
+.entity-progress-feature {
+  --progress-container-height: var(--feature-height, 42px);
 }
 
 /* =============================================================================
@@ -10397,7 +10710,6 @@ ${CARD.htmlStructure.card.element} {
 .horizontal {
   --current-container-flex-direction: row;
   --current-container-padding-top: 0;
-  --current-container-min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.horizontal.minHeight});
   --current-container-overflow: visible;
   --current-container-gap: var(--spacing);
   --current-container-box-sizing: content-box;
@@ -10406,7 +10718,6 @@ ${CARD.htmlStructure.card.element} {
 
 .vertical {
   --current-container-flex-direction: column;
-  --current-container-min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.vertical.minHeight});
   --current-container-overflow: hidden;
   --current-container-gap: var(--spacing);
   --current-container-box-sizing: border-box;
@@ -10423,11 +10734,9 @@ ${CARD.htmlStructure.card.element} {
 
 .type-entities .${CARD.htmlStructure.sections.container.class} {
   --current-container-gap: var(--gap-entities);
-  --current-container-min-height: var(--entities-card-min-height);
 }
 
 .${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class} {
-  --current-container-min-height: 0;
   --current-container-padding-top: 0;
 }
 
@@ -11292,26 +11601,55 @@ ha-card.info-multiline {
   --epb-charge-x2: 50%;
 }
 
-/* === ALERT (alert_when: {above/below, color, highlight}) ===
-   border (default): pulsing border in the alert color — motion draws the eye.
-   background: steady tint of the card background — calmer, no motion.
-   The global prefers-reduced-motion block stops the pulse; the border then
-   stays statically colored, so the alert remains visible. */
+/* === ALERT (alert_when: {above/below, color, highlight, animation}) ===
+   highlight: border (default) colors the border; background tints the card
+   background instead and leaves the border neutral.
+   animation: static (no motion) / blink (pulse) / ping (border ring burst,
+   border target only - see ViewCore.alertAnimation for the background
+   fallback). Omitting it keeps the pre-1.6 defaults: blink for border,
+   static for background.
+   The global prefers-reduced-motion block (animation-iteration-count: 1)
+   stops blink/ping after a single, near-instant pass; the border/background
+   base color from .alert-active(.alert-background) remains, so the alert
+   stays visible without the motion. */
 @keyframes epb-alert-border {
   0%, 100% { border-color: var(--alert-color-final); }
   50% { border-color: var(--epb-card-border-color, var(--ha-card-border-color, var(--divider-color, #e0e0e0))); }
 }
 
+@keyframes epb-alert-background {
+  0%, 100% { background-color: color-mix(in srgb, var(--alert-color-final) 15%, var(--ha-card-background, var(--card-background-color))); }
+  50% { background-color: var(--ha-card-background, var(--card-background-color)); }
+}
+
+/* ring bursts from the card's own border, reusing the epb-icon-ping technique */
+@keyframes epb-alert-ping {
+  60% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--alert-color-final) 70%, transparent);
+  }
+  100% { box-shadow: 0 0 5px 15px transparent; }
+}
+
 .alert-active {
   --alert-color-final: var(--alert-color, var(--error-color, #db4437));
   border-color: var(--alert-color-final);
+}
+
+.alert-active.alert-anim-blink {
   animation: epb-alert-border 1.2s ease-in-out infinite;
 }
 
+.alert-active.alert-anim-ping {
+  animation: epb-alert-ping 1.5s ease-out infinite;
+}
+
 .alert-active.alert-background {
-  animation: none;
   border-color: var(--epb-card-border-color, var(--ha-card-border-color, var(--divider-color, #e0e0e0)));
   background-color: color-mix(in srgb, var(--alert-color-final) 15%, var(--ha-card-background, var(--card-background-color)));
+}
+
+.alert-active.alert-background.alert-anim-blink {
+  animation: epb-alert-background 1.2s ease-in-out infinite;
 }
 
 /* === RADIUS EFFECT === */
@@ -13665,8 +14003,14 @@ class EntityHelper {
     let [duration, elapsed] = [null, null];
     switch (this.#state) {
       case HA_CONTEXT.entity.state.idle: {
-        elapsed = CARD.config.value.min;
-        duration = CARD.config.value.max;
+        // elapsed/duration aren't real millisecond durations here (no timer
+        // is running) - just the generic [0, 100] placeholder range.
+        // Pre-multiplied so the shared `/ CARD.config.msFactor` below cancels
+        // out to that same [0, 100] range instead of collapsing it to
+        // [0, 0.1], which sent anything reading this.#value (e.g. a
+        // watermark's high/low position) wildly out of bounds.
+        elapsed = CARD.config.value.min * CARD.config.msFactor;
+        duration = CARD.config.value.max * CARD.config.msFactor;
         break;
       }
       case HA_CONTEXT.entity.state.active: {
@@ -14421,7 +14765,7 @@ const types = {
   },
 };
 
-function struct(validator) {
+function struct(validator, { allowBelowBarPosition = true } = {}) {
   const preProcess = (data) => {
     const result = { ...data };
 
@@ -14448,7 +14792,14 @@ function struct(validator) {
 
     if (!result.layout) result.layout = CARD.layout.orientations.horizontal.label;
 
-    if (result.bar_size === CARD.style.bar.sizeOptions.xlarge.label && result.bar_position === 'default')
+    // 'below' isn't a legal bar_position for every schema (the Feature one
+    // restricts it to ['default', 'top', 'bottom']) - this rewrite would
+    // otherwise inject a value never validated as legal there.
+    if (
+      allowBelowBarPosition &&
+      result.bar_size === CARD.style.bar.sizeOptions.xlarge.label &&
+      result.bar_position === 'default'
+    )
       result.bar_position = 'below';
 
     if (result.bar_position !== 'overlay' && result.bar_single_line) result.bar_single_line = false;
@@ -14694,11 +15045,19 @@ class YamlSchemaFactory {
 
         // ─── Appearance ─────────────────────────────────────────────────────
         bar_color: types.optionalString(),
+        // Unlike Card/Badge/Template, a Feature's row height is fixed
+        // (--feature-height, see the .entity-progress-feature CSS rule) and
+        // doesn't scale with bar_size - so 'small' (8px) looks lost inside a
+        // 42px row. 'xlarge' matches --feature-height by construction.
         bar_size: types.enumsWithDefault(
           Object.values(CARD.style.bar.sizeOptions).map((e) => e.label),
-          'small',
+          'xlarge',
         ), //[('small', 'medium', 'large', 'xlarge')]
-        bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
+        // 'up' is excluded here (Card/Template only): every CSS rule for
+        // up-orientation is scoped .vertical.up-orientation, and a Feature
+        // never gets the .vertical class (no 'layout' option in this
+        // schema) - it would validate but have zero visual effect.
+        bar_orientation: types.enumsWithDefault(['ltr', 'rtl'], 'ltr'),
         bar_color_mode: types.enumsWithDefault(['auto', 'segment', 'rainbow'], 'auto'),
         // Only engages outside center_zero with a well-formed positive range
         // (min > 0, max > min) — ProgressCalc.isLogScale falls back to linear
@@ -14736,6 +15095,7 @@ class YamlSchemaFactory {
           }),
         ),
       }),
+      { allowBelowBarPosition: false },
     );
   }
   static get card() {
@@ -14851,6 +15211,11 @@ class YamlSchemaFactory {
             below: types.optionalNumber(),
             color: types.optionalString(),
             highlight: types.enumsWithDefault(['border', 'background'], 'border'),
+            // Left genuinely optional (no forced default): the effective
+            // default depends on `highlight` (border -> blink, background ->
+            // static, both unchanged from pre-1.6 behavior) and is resolved
+            // in CSS/ViewCore, not here - see .alert-active in the stylesheet.
+            animation: types.optional(types.enums(['static', 'blink', 'ping'])),
           }),
         ),
 
@@ -14886,7 +15251,32 @@ class YamlSchemaFactory {
       'icon_double_tap_action',
       'multiline',
       'icon_animation',
-    ]);
+      // Requires the 'horizontal' layout class (see the CSS rule on
+      // .progress-container), which badges never get since they have no
+      // 'layout' key (deleted above) - keeping it would accept a config that
+      // silently has no visual effect.
+      'bar_max_width',
+      // Both only ever apply via the .overlay class (see .overlay.single-line
+      // and .overlay.text-shadow), which requires bar_position: 'overlay' -
+      // deleted above, so badges never get it either. Same dead-option
+      // reasoning as bar_max_width.
+      'bar_single_line',
+      'text_shadow',
+      // Not CSS-dead like the two above - a design choice: a trend arrow
+      // icon doesn't read well at badge scale (--ha-badge-size, ~36px).
+      'trend_indicator',
+    ]).extend({
+      // 'up' needs .vertical.overlay (see bar_orientation's CSS) - a badge
+      // has neither `layout` nor `bar_position` (both deleted above), so it
+      // would validate but have zero visual effect, same reasoning as
+      // YamlSchemaFactory.feature.
+      bar_orientation: types.enumsWithDefault(['ltr', 'rtl'], 'ltr'),
+      // 'xlarge' unconditionally sets --progress-container-height to 42px
+      // (see the .xlarge CSS rule) - a badge's total height is capped at
+      // --ha-badge-size (36px default), so xlarge would demand a taller
+      // progress-container than the badge itself, overflowing it.
+      bar_size: types.enumsWithDefault(['small', 'medium', 'large'], 'small'),
+    });
   }
 
   static get template() {
@@ -14974,7 +15364,26 @@ class YamlSchemaFactory {
       'icon_double_tap_action',
       'multiline',
       'icon_animation',
-    ]);
+      // Same reason as YamlSchemaFactory.badge: no 'layout' key means no
+      // 'horizontal' class, so the CSS rule never engages.
+      'bar_max_width',
+      // Same reason as YamlSchemaFactory.badge: both only apply via the
+      // .overlay class, which requires bar_position: 'overlay' - deleted
+      // above.
+      'bar_single_line',
+      'text_shadow',
+      // Same design choice as YamlSchemaFactory.badge: too small a scale for
+      // a trend arrow icon to read well.
+      'trend_indicator',
+    ]).extend({
+      // Same reason as YamlSchemaFactory.badge: 'up' needs .vertical.overlay,
+      // neither of which a badge template ever gets.
+      bar_orientation: types.enumsWithDefault(['ltr', 'rtl'], 'ltr'),
+      // Same reason as YamlSchemaFactory.badge: 'xlarge' would demand a
+      // 42px-tall progress-container inside a badge capped at
+      // --ha-badge-size (36px), overflowing it.
+      bar_size: types.enumsWithDefault(['small', 'medium', 'large'], 'small'),
+    });
   }
 }
 
@@ -15669,12 +16078,24 @@ class ViewCore {
     return (is.number(alert.above) && value > alert.above) || (is.number(alert.below) && value < alert.below);
   }
 
-  hasComponentHiddenFlag(component) {
-    return this._hasInConfigArray('hide', component);
+  /**
+   * Resolves the effective alert animation: an explicit `animation` wins;
+   * otherwise falls back to the pre-1.6 default for the current `highlight`
+   * (border -> blink, background -> static), so omitting it keeps old configs
+   * looking exactly as before. `ping` is a border-only ring burst - paired
+   * with `highlight: background` it has no matching CSS rule, so it degrades
+   * to that target's own default instead of silently doing nothing.
+   */
+  get alertAnimation() {
+    const alert = this.config?.alert_when;
+    if (!alert) return null;
+    const isBackground = alert.highlight === 'background';
+    if (alert.animation === 'ping' && isBackground) return 'static';
+    return alert.animation ?? (isBackground ? 'static' : 'blink');
   }
 
-  hasBarEffect(component) {
-    return this._hasInConfigArray('bar_effect', component);
+  hasComponentHiddenFlag(component) {
+    return this._hasInConfigArray('hide', component);
   }
 
   // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
@@ -16057,8 +16478,15 @@ class ViewBase extends ViewCore {
   get watermark() {
     const { watermark } = this.config;
     if (!watermark) return null;
+    // A timer's own `max` isn't a stable scale the way a sensor's min/max is
+    // - it's the running instance's actual duration (idle uses a [0, 100]
+    // placeholder, see ViewCore#manageTimerEntity), so a raw watermark value
+    // means a different position every run. 'auto' resolves to 'percent'
+    // behavior for timers instead, so the configured value stays a stable
+    // percentage regardless of how long any given run happens to be.
+    const isTimer = this._currentValue.entityType.isTimer;
     const toPos = (v, mode) =>
-      mode === 'percent' ? (is.number(v) ? v : (v?.current ?? 0)) : this.#percentHelper.calcWatermark(v);
+      mode === 'percent' || isTimer ? (is.number(v) ? v : (v?.current ?? 0)) : this.#percentHelper.calcWatermark(v);
     return {
       ...watermark,
       low: toPos(this.#jinjaWatermarkLow ?? this._lowValue.value, watermark.low_as),
@@ -16827,10 +17255,16 @@ class ActionHelper {
  *
  * Base class for Home Assistant custom elements (cards, badges, features).
  *
- * HTMLElement │ ├── HACore │ ├── HABase │ │ ├── EntityProgressCardBase │ │ │
- * ├── EntityProgressCard │ │ │ └── EntityProgressBadge │ │ └──
- * EntityProgressTemplateBase │ │ ├── EntityProgressTemplateCard │ │ └──
- * EntityProgressTemplateBadge │ │ │ └── EntityProgressFeatures
+ * HTMLElement
+ * └── HACore
+ *     ├── HABase
+ *     │   ├── EntityProgressCardBase
+ *     │   │   ├── EntityProgressCard
+ *     │   │   └── EntityProgressBadge
+ *     │   └── EntityProgressTemplateBase
+ *     │       ├── EntityProgressTemplateCard
+ *     │       └── EntityProgressTemplateBadge
+ *     └── EntityProgressFeatures
  *
  * Provides: - Shadow DOM initialization and lifecycle management
  * (connectedCallback, disconnectedCallback) - Configuration handling via
@@ -16935,6 +17369,8 @@ class HACore extends HTMLElement {
       '_watchWebSocket',
       '_unwatchWebSocket',
       '_validateProcessJinjaFields',
+      '_startAutoRefresh',
+      '_stopAutoRefresh',
       // abstract
       '_handleHassUpdate',
       '_updateCSS',
@@ -17043,6 +17479,30 @@ class HACore extends HTMLElement {
   refresh() {
     this._cardView.refresh(this.hass);
     this._updateDynamicElements();
+  }
+
+  // ─── AUTO-REFRESH MANAGEMENT ──────────────────────────────────────────────
+  // Shared by every subclass (cards, badges, features): a running timer
+  // entity doesn't push a new hass state every second, so this simulates the
+  // tick locally. Lives here (not HABase) so EntityProgressFeatures - which
+  // extends HACore directly, not HABase - gets it too.
+
+  _startAutoRefresh() {
+    if (!this._resourceManager) return;
+    this._resourceManager.setInterval(
+      () => {
+        this.refresh(this.hass);
+        if (!this._cardView.isActiveTimer) {
+          this._stopAutoRefresh();
+        }
+      },
+      this._cardView.refreshSpeed,
+      'autoRefresh',
+    );
+  }
+
+  _stopAutoRefresh() {
+    if (this._resourceManager) this._resourceManager.remove('autoRefresh');
   }
 
   get isRendered() {
@@ -17202,6 +17662,24 @@ class HACore extends HTMLElement {
     this._dom.toggleClass(CARD.htmlStructure.card.element, `lwm-${type}`, !this._cardView.watermark.disable_low);
   }
 
+  // The visual editor (EntityProgressEffectChips) can only guard interactive
+  // selection - a Jinja template or a hand-written YAML list bypasses it
+  // entirely. Both glass/gradient(_reverse) and shimmer/shimmer_reverse write
+  // the same CSS custom property (see --progress-effect(-neg) in the
+  // stylesheet), so requesting an incompatible pair doesn't error, it just
+  // silently drops one effect depending on stylesheet order. This mirrors
+  // that same-source-of-truth exclusion here, first-requested-wins (the
+  // order the template/list actually wrote them in, not a fixed priority).
+  static #resolveEffectConflicts(labels) {
+    const incompatible = CARD.style.dynamic.progressBar.effectIncompatibilities;
+    const kept = [];
+    for (const label of labels) {
+      if (kept.some((keptLabel) => incompatible[keptLabel]?.includes(label))) continue;
+      kept.push(label);
+    }
+    return kept;
+  }
+
   _handleBarEffect(jinjaEffect = null) {
     this._log.debug('📎 HACore _handleBarEffect(jinjaEffect)', jinjaEffect);
 
@@ -17209,11 +17687,16 @@ class HACore extends HTMLElement {
     const isJinja = is.jinja(this._cardView.config.bar_effect);
     if (isJinja && !jinjaEffect) return;
 
+    const requested = isJinja
+      ? jinjaEffect
+      : is.array(this._cardView.config.bar_effect)
+        ? this._cardView.config.bar_effect
+        : [];
+    const resolved = HACore.#resolveEffectConflicts(requested);
+
     const effects = Object.values(CARD.style.dynamic.progressBar.effect);
     effects.forEach((effect) => {
-      const active = isJinja ? jinjaEffect.includes(effect.label) : this._cardView.hasBarEffect(effect.label);
-
-      this._dom.toggleClass(CARD.htmlStructure.card.element, effect.class, active);
+      this._dom.toggleClass(CARD.htmlStructure.card.element, effect.class, resolved.includes(effect.label));
     });
   }
 
@@ -17569,8 +18052,6 @@ class HABase extends HACore {
       '_renderBadgeIcon',
       '_renderBadgeColor',
       '_processStandardFields',
-      '_startAutoRefresh',
-      '_stopAutoRefresh',
     ];
   }
 
@@ -17593,11 +18074,31 @@ class HABase extends HACore {
     return cardSize;
   }
 
+  // Kept for HA < 2024.11 (hui-card.ts falls back to this, migrated through
+  // migrateLayoutToGridOptions, when getGridOptions isn't implemented -
+  // mirrors how lovelace-mushroom's MushroomBaseCard keeps both).
   getLayoutOptions() {
     if (![META.types.card.typeName, META.types.template.typeName].includes(this.baseClass)) return undefined;
     const cardLayoutOptions = this._cardView.cardLayoutOptions;
     this._log.debug('getLayoutOptions: ', cardLayoutOptions);
     return cardLayoutOptions;
+  }
+
+  // Current HA API (2024.11+): same numbers as getLayoutOptions, expressed on
+  // the 12-column grid instead of the older 4-column one - see
+  // CARD.layout.gridColumnMultiplier.
+  getGridOptions() {
+    if (![META.types.card.typeName, META.types.template.typeName].includes(this.baseClass)) return undefined;
+    const { grid_rows, grid_min_rows, grid_columns, grid_min_columns } = this._cardView.cardLayoutOptions;
+    const multiplier = CARD.layout.gridColumnMultiplier;
+    const gridOptions = {
+      rows: grid_rows,
+      min_rows: grid_min_rows,
+      columns: grid_columns * multiplier,
+      min_columns: grid_min_columns * multiplier,
+    };
+    this._log.debug('getGridOptions: ', gridOptions);
+    return gridOptions;
   }
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
@@ -17616,25 +18117,6 @@ class HABase extends HACore {
   get hasDisabledIconTap() {
     // check it soon
     return this.constructor._hasDisabledIconTap;
-  }
-
-  // ─── AUTO-REFRESH MANAGEMENT ──────────────────────────────────────────────
-
-  _startAutoRefresh() {
-    if (!this._resourceManager) return;
-    this._resourceManager.setInterval(
-      () => {
-        this.refresh(this.hass);
-        if (!this._cardView.isActiveTimer) {
-          this._stopAutoRefresh();
-        }
-      },
-      this._cardView.refreshSpeed,
-      'autoRefresh',
-    );
-  }
-  _stopAutoRefresh() {
-    if (this._resourceManager) this._resourceManager.remove('autoRefresh');
   }
 
   // ─── ERROR MESSAGE MANAGEMENT ─────────────────────────────────────────────
@@ -17763,6 +18245,8 @@ class HABase extends HACore {
         'alert-background',
         this._cardView.isAlertActive && this._cardView.config.alert_when?.highlight === 'background',
       ],
+      ['alert-anim-blink', this._cardView.isAlertActive && this._cardView.alertAnimation === 'blink'],
+      ['alert-anim-ping', this._cardView.isAlertActive && this._cardView.alertAnimation === 'ping'],
     ]);
   }
 
@@ -18257,7 +18741,7 @@ class EntityProgressCard extends EntityProgressCardBase {
   // ─── STATIC METHODS ===
 
   static get _loggedMethods() {
-    return [...super._loggedMethods, 'getCardSize', 'getLayoutOptions'];
+    return [...super._loggedMethods, 'getCardSize', 'getLayoutOptions', 'getGridOptions'];
   }
 }
 
@@ -18324,9 +18808,28 @@ class EntityProgressFeatures extends HACore {
    * feature to the card's border radius - `--row-size` is decremented by 1 to
    * cancel the extra row reserved by HA
    *
-   * A MutationObserver watches for HA re-applying `--row-size` and immediately
-   * corrects it. A `fixing` flag prevents infinite loops between our correction
-   * and the observer callback.
+   * A MutationObserver watches for HA re-applying `--row-size`: HA's own
+   * `hui-grid-section` recomputes and re-applies it (via a reactive style
+   * binding) on every relevant re-render of the tile card, not just once -
+   * for instance when a sibling feature's own space requirement legitimately
+   * changes (e.g. a native feature's control appearing/disappearing based on
+   * entity state, the same way lovelace-mushroom's own getGridOptions()
+   * varies with `active`). `--row-size` therefore isn't a constant to offset
+   * once and freeze - `targetRowSize` is recomputed from HA's current
+   * natural value every time the observer fires. The observer is disconnected
+   * for the duration of our own write (and reconnected right after) so it
+   * only ever reacts to HA's mutations, never an echo of our own - comparing
+   * against a remembered "last value we applied" instead would misfire the
+   * moment HA's new natural size happens to numerically match a past one
+   * (e.g. growing then shrinking back by exactly 1 row).
+   *
+   * CF5 - issue (major) resolved - the offset used to be computed once, from
+   * the first-seen --row-size, and reapplied forever after regardless of
+   * what HA did later. That silently clamped any later legitimate growth in
+   * HA's natural row-size back down to the stale first value, which could
+   * starve a sibling feature (like a native fan-speed control) of the row
+   * space it had actually grown into - reported as that feature disappearing
+   * after navigating away and back.
    *
    * Executed once per connection: the observer is tracked by the
    * ResourceManager (disconnected on cleanup) and its presence serves as the
@@ -18350,28 +18853,27 @@ class EntityProgressFeatures extends HACore {
     this._dom.register('ext:container', DOMHelper.walkUpThroughShadow(this, '.container'));
     this._dom.register('ext:features', DOMHelper.walkUpThroughShadow(this, 'hui-card-features'));
     this._dom.register('ext:card-container', cardContainer);
-    const targetRowSize = parseInt(getComputedStyle(cardContainer)?.getPropertyValue(HA_CONTEXT.styles.rowSize)) - 1;
 
-    let fixing = false;
+    const observerOptions = { attributes: true, attributeFilter: ['style'] };
+    let observer = null;
     const fix = () => {
-      if (fixing) return;
-      const rowSize = getComputedStyle(cardContainer)?.getPropertyValue(HA_CONTEXT.styles.rowSize);
-      if (rowSize && parseInt(rowSize) > targetRowSize) {
-        fixing = true;
-        this._dom.setStyleNow('ext:card', 'overflow', 'hidden');
-        this._dom.setStyleNow('ext:container', 'position', 'static');
-        this._dom.setStyleNow('ext:features', 'position', 'static');
-        this._dom.setStyleNow('ext:card-container', HA_CONTEXT.styles.rowSize, targetRowSize);
-        fixing = false;
-      }
+      const rowSize = parseInt(getComputedStyle(cardContainer)?.getPropertyValue(HA_CONTEXT.styles.rowSize));
+      if (!rowSize) return;
+      const targetRowSize = rowSize - 1;
+      // Disconnect first: these 4 writes must not be recorded as mutations
+      // to react to, or the next observer callback would treat our own
+      // corrected value as a new "natural" one and decrement it again.
+      observer?.disconnect();
+      this._dom.setStyleNow('ext:card', 'overflow', 'hidden');
+      this._dom.setStyleNow('ext:container', 'position', 'static');
+      this._dom.setStyleNow('ext:features', 'position', 'static');
+      this._dom.setStyleNow('ext:card-container', HA_CONTEXT.styles.rowSize, targetRowSize);
+      observer?.observe(cardContainer, observerOptions);
     };
 
     fix();
-    const observer = new MutationObserver(fix);
-    observer.observe(cardContainer, {
-      attributes: true,
-      attributeFilter: ['style'],
-    });
+    observer = new MutationObserver(fix);
+    observer.observe(cardContainer, observerOptions);
     this._resourceManager.add(() => observer.disconnect(), 'featureRowFix');
   }
 
@@ -18380,6 +18882,15 @@ class EntityProgressFeatures extends HACore {
   _handleHassUpdate() {
     this.#fixCardStyles();
     this.refresh();
+
+    // A running timer entity doesn't push a new hass state every second - see
+    // HACore._startAutoRefresh, which simulates the tick locally. Mirrors
+    // EntityProgressCardBase._handleHassUpdate.
+    if (!this._cardView.isActiveTimer) {
+      this._stopAutoRefresh();
+    } else if (!this._resourceManager?.has('autoRefresh')) {
+      this._startAutoRefresh();
+    }
   }
 
   // ─── CSS MANAGEMENT ───────────────────────────────────────────────────────
@@ -18534,8 +19045,17 @@ class EntityProgressTemplateBase extends HABase {
       this._updateTrend(NaN); // renders the error icon, keeps _lastPercent untouched
       return;
     }
-    this._updateTrend(value);
-    this._renderPercentCSS(value);
+    this._updateTrend(value); // unclamped: trend detection wants the true delta, same as ViewBase.getTrend
+
+    // CF5 - issue (major) resolved - a Jinja `percent` isn't bounded the way
+    // ProgressCalc's own min/max division is (see ViewCore.get percent(),
+    // which clamps for exactly this reason). The CSS fill is
+    // translateX-based (GPU, not width-based), so it doesn't self-clamp
+    // above 100%/below -100% - it overshoots past the container edge and
+    // the bar renders with an empty gap on one side instead of full.
+    const isCenterZero = Boolean(this._cardView.config.center_zero);
+    const clamped = isCenterZero ? Math.max(-100, Math.min(100, value)) : Math.max(0, Math.min(100, value));
+    this._renderPercentCSS(clamped);
   }
 
   // Called without param from HABase._updateDynamicElements (pre-Jinja),
@@ -18582,7 +19102,7 @@ class EntityProgressTemplateCard extends EntityProgressTemplateBase {
   static _baseClass = META.types.template.typeName;
 
   static get _loggedMethods() {
-    return [...super._loggedMethods, 'getCardSize', 'getLayoutOptions'];
+    return [...super._loggedMethods, 'getCardSize', 'getLayoutOptions', 'getGridOptions'];
   }
 }
 
@@ -18921,13 +19441,11 @@ class EntityProgressEffectChips extends ChipsBase {
     { value: 'shimmer_reverse' },
   ];
 
-  static #INCOMPATIBLE = {
-    gradient: ['gradient_reverse', 'glass'],
-    gradient_reverse: ['gradient', 'glass'],
-    glass: ['gradient', 'gradient_reverse'],
-    shimmer: ['shimmer_reverse'],
-    shimmer_reverse: ['shimmer'],
-  };
+  // Shared with the runtime guard in HACore._handleBarEffect - see
+  // CARD.style.dynamic.progressBar.effectIncompatibilities.
+  static get #INCOMPATIBLE() {
+    return CARD.style.dynamic.progressBar.effectIncompatibilities;
+  }
 
   #selected = [];
   #config = {};
@@ -19788,12 +20306,22 @@ class EditorBase extends HTMLElement {
       color: () => ({ 'ui-color': {} }),
       default: () => ({ text: { mode: 'box' } }),
       bar_size: () => buildSelect(options.bar_size),
+      // Badge/BadgeTemplate schemas reject 'xlarge' (see
+      // YamlSchemaFactory.badge) - reuses the same translated labels.
+      bar_size_no_xlarge: () =>
+        buildSelect({ small: options.bar_size.small, medium: options.bar_size.medium, large: options.bar_size.large }),
       bar_orientation: () => buildSelect(options.bar_orientation),
+      // Badge/BadgeTemplate schemas reject 'up' (see YamlSchemaFactory.badge)
+      // - reuses the same translated ltr/rtl labels, just without the option
+      // that would silently fall back to 'ltr' on save.
+      bar_orientation_no_up: () =>
+        buildSelect({ ltr: options.bar_orientation.ltr, rtl: options.bar_orientation.rtl }),
       bar_position: () => buildSelect(options.bar_position),
       bar_color_mode: () => buildSelect(options.bar_color_mode),
       bar_scale: () => buildSelect(options.bar_scale),
       icon_animation: () => buildSelect(options.icon_animation),
       alert_highlight: () => buildSelect(options.alert_highlight),
+      alert_animation: () => buildSelect(options.alert_animation),
       theme: () => buildSelect(options.theme),
       layout: () => buildBoxSelect(options.layout, tileImage),
       unit_spacing: () => buildSelect(options.unit_spacing),
@@ -20288,17 +20816,6 @@ const EditorFactory = {
             percent: EditorFieldsType.tpl('percent'),
           }
         : {
-            /* next release
-            bar_max_width: EditorFieldsType.slider('bar_max_width', {
-              target: 'bar_max_width',
-              resolveVirtual: (c) => parseInt(c.bar_max_width) || 0,
-              virtual: true,
-              onVirtualChange: (value, config) => ({
-                ...config,
-                bar_max_width: value ? `${value}px` : undefined,
-              }),
-            }),
-            */
             unit: EditorFieldsType.text('unit', { width: availableSpace(32, 1 / 3) }),
             // disable_unit is deprecated (see
             // BaseConfigHelper.#logDeprecatedOption): 'unit' is now just
@@ -20462,6 +20979,17 @@ const EditorFactory = {
           },
         },
 
+  // Badge/BadgeTemplate schemas reject some enum members that only make
+  // sense with a `layout`/`bar_position` a badge doesn't have (see
+  // YamlSchemaFactory.badge) - swaps in the matching restricted select type
+  // instead of a range check inline in theme() below.
+  badgeRestrictedType: (badge, restrictedType) => (badge ? { type: restrictedType } : {}),
+
+  // Per-variant width overrides (Card/Badge/Template/BadgeTemplate) below
+  // read oddly as inline ternaries repeated per field - one named condition
+  // per field instead.
+  widthUnless: (condition) => (condition ? {} : { width: availableSpace() }),
+
   theme: (template, badge) => ({
     title: 'editor.title.theme',
     icon: HA_CONTEXT.icons.listBox,
@@ -20492,9 +21020,16 @@ const EditorFactory = {
         : {
             icon_animation: EditorFieldsType.select('icon_animation'),
             force_circular_background: EditorFieldsType.toggle('force_circular_background'),
-            bar_size: EditorFieldsType.select('bar_size', { width: availableSpace() }),
             bar_position: EditorFieldsType.select('bar_position', { width: availableSpace() }),
           }),
+      // Not gated on `badge` - valid for badges too (not in
+      // YamlSchemaFactory.badge's delete list), unlike its former neighbors
+      // above.
+      bar_size: EditorFieldsType.select('bar_size', {
+        ...EditorFactory.badgeRestrictedType(badge, 'bar_size_no_xlarge'),
+        // Full-width for Badge Template only.
+        ...EditorFactory.widthUnless(badge && template),
+      }),
       bar_color: EditorFieldsType.templateOrType('bar_color', template, 'color', {
         showIf: (c) => is.nullish(c.theme) && !is.array(c.custom_theme),
         ...(template ? {} : { width: availableSpace() }),
@@ -20502,14 +21037,63 @@ const EditorFactory = {
       ...(badge
         ? {}
         : {
+            // Both require bar_position: 'overlay' (deleted from the badge
+            // schema, see YamlSchemaFactory.badge), so they're badge-only,
+            // unlike bar_segments right below.
             bar_single_line: EditorFieldsType.toggle('bar_single_line', {
               showIf: (c) => c.bar_position === 'overlay',
             }),
             text_shadow: EditorFieldsType.toggle('text_shadow', { showIf: (c) => c.bar_position === 'overlay' }),
-            bar_segments: EditorFieldsType.number('bar_segments', { width: availableSpace() }),
           }),
-      bar_scale: EditorFieldsType.select('bar_scale', { width: availableSpace(), showIf: (c) => !c.center_zero }),
-      bar_orientation: EditorFieldsType.select('bar_orientation', template ? {} : { width: availableSpace() }),
+      // Not gated on `badge` - valid for badges too (not in
+      // YamlSchemaFactory.badge's delete list), unlike its former neighbors
+      // above.
+      bar_segments: EditorFieldsType.number('bar_segments', { width: availableSpace() }),
+      // Not in YamlSchemaFactory.template: percent comes straight from Jinja
+      // there, so the log/linear min-max mapping this drives has nothing to
+      // act on - showing it would silently do nothing on save (same trap as
+      // #111's min_value/max_value on a template card).
+      ...(!template
+        ? {
+            bar_scale: EditorFieldsType.select('bar_scale', {
+              width: availableSpace(),
+              showIf: (c) => !c.center_zero,
+            }),
+          }
+        : {}),
+      bar_orientation: EditorFieldsType.select('bar_orientation', {
+        ...EditorFactory.badgeRestrictedType(badge, 'bar_orientation_no_up'),
+        // Half-width everywhere except plain Badge (full-width there).
+        ...EditorFactory.widthUnless(badge && !template),
+      }),
+      // bar_max_width only affects .horizontal.small/.medium/.large (see the
+      // CSS rule on .progress-container) - gating on 'horizontal' (not
+      // 'vertical') keeps the toggle from offering a control with no visible
+      // effect. Badge/badgeTemplate opt out entirely (see their own
+      // .delete(['bar_max_width'])): without a 'layout' key they never get
+      // the 'horizontal' class, so the option would be inert there.
+      ...(!badge
+        ? {
+            bar_max_width_toggle: EditorFieldsType.toggle('bar_max_width_toggle', {
+              virtual: true,
+              showIf: (c) => (c.layout ?? 'horizontal') === 'horizontal',
+              resolveVirtual: (c) => Boolean(c.bar_max_width),
+              onVirtualChange: (value, config) => ({
+                ...config,
+                bar_max_width: value ? '300px' : undefined,
+              }),
+            }),
+            bar_max_width: EditorFieldsType.slider('bar_max_width', {
+              virtual: true,
+              showIf: (c) => (c.layout ?? 'horizontal') === 'horizontal' && Boolean(c.bar_max_width),
+              resolveVirtual: (c) => parseInt(c.bar_max_width) || 0,
+              onVirtualChange: (value, config) => ({
+                ...config,
+                bar_max_width: value ? `${value}px` : undefined,
+              }),
+            }),
+          }
+        : {}),
       reverse_secondary_info_row: EditorFieldsType.toggle('reverse_secondary_info_row', {
         showIf: (c) => (!c.bar_position || c.bar_position === 'default') && c.layout === 'horizontal',
       }),
@@ -20563,38 +21147,39 @@ const EditorFactory = {
       }),
       bar_effect: EditorFieldsType.tpl('bar_effect', { noLabel: true, showIf: (c) => is.nonEmptyString(c.bar_effect) }),
       // ── Watermark ────────────────────────────────────────────────────────
-      ...(!template
-        ? (() => {
-            const wm = (extra) => (c) => Boolean(c.watermark) && (extra ? extra(c) : true);
-            return {
-              watermark_toggle: EditorFieldsType.toggle('watermark_toggle', {
-                virtual: true,
-                resolveVirtual: (c) => Boolean(c.watermark),
-                onVirtualChange: (value, config) => ({
-                  ...config,
-                  watermark: value ? {} : undefined,
-                }),
-              }),
-              'watermark.type': EditorFieldsType.select('watermark.type', {
-                type: 'watermark_type',
-                showIf: wm(),
-                width: availableSpace(),
-              }),
-              'watermark.opacity': EditorFieldsType.decimal('watermark.opacity', {
-                type: 'opacity',
-                showIf: wm(),
-                width: availableSpace(),
-              }),
-              // ── Groupes LOW / HIGH (générés par wmSide)
-              // ────────────────────────
-              ...wmSide('low', 20),
-              ...wmSide('high', 80),
-              'watermark.line_size': EditorFieldsType.text('watermark.line_size', {
-                showIf: wm((c) => c.watermark?.type === 'line'),
-              }),
-            };
-          })()
-        : {}),
+      // Not gated on `template` - watermarkSchema is the exact same shape for
+      // Card and Template (see YamlSchemaFactory.card/.template), and wmSide's
+      // toggle/entity/jinja machinery only ever reads config.watermark.*, so
+      // nothing here is Card-specific.
+      ...(() => {
+        const wm = (extra) => (c) => Boolean(c.watermark) && (extra ? extra(c) : true);
+        return {
+          watermark_toggle: EditorFieldsType.toggle('watermark_toggle', {
+            virtual: true,
+            resolveVirtual: (c) => Boolean(c.watermark),
+            onVirtualChange: (value, config) => ({
+              ...config,
+              watermark: value ? {} : undefined,
+            }),
+          }),
+          'watermark.type': EditorFieldsType.select('watermark.type', {
+            type: 'watermark_type',
+            showIf: wm(),
+            width: availableSpace(),
+          }),
+          'watermark.opacity': EditorFieldsType.decimal('watermark.opacity', {
+            type: 'opacity',
+            showIf: wm(),
+            width: availableSpace(),
+          }),
+          // ── Groupes LOW / HIGH (générés par wmSide) ────────────────────
+          ...wmSide('low', 20),
+          ...wmSide('high', 80),
+          'watermark.line_size': EditorFieldsType.text('watermark.line_size', {
+            showIf: wm((c) => c.watermark?.type === 'line'),
+          }),
+        };
+      })(),
       // ── Badge fields ─────────────────────────────────────────────────────
       ...(badge
         ? {}
@@ -20639,37 +21224,40 @@ const EditorFactory = {
             'alert_when.color': EditorFieldsType.select('alert_when.color', {
               type: 'color',
               showIf: (c) => Boolean(c.alert_when),
-              width: availableSpace(),
             }),
             'alert_when.highlight': EditorFieldsType.select('alert_when.highlight', {
               type: 'alert_highlight',
               showIf: (c) => Boolean(c.alert_when),
               width: availableSpace(),
             }),
+            // Leaving 'ping' selectable even with highlight: background is
+            // intentional - ViewCore.alertAnimation degrades that combination
+            // to 'static' rather than doing nothing, same as other
+            // invalid-combination fallbacks in this codebase (e.g. bar_scale
+            // log outside a valid range).
+            'alert_when.animation': EditorFieldsType.select('alert_when.animation', {
+              type: 'alert_animation',
+              showIf: (c) => Boolean(c.alert_when),
+              width: availableSpace(),
+            }),
           }
         : {}),
       // ── Card-only layout options ──────────────────────────────────────────
+      // frameless/marginless: still valid for badges in the schema (raw YAML
+      // still works) and documented as such - just not worth a control in the
+      // badge editor, a deliberate choice, not a dead-CSS case. `height` is
+      // genuinely deleted from the badge schema (see YamlSchemaFactory.badge).
       ...(!badge
         ? {
             frameless: EditorFieldsType.toggle('frameless', { width: availableSpace() }),
             marginless: EditorFieldsType.toggle('marginless', { width: availableSpace() }),
             height: EditorFieldsType.text('height', { width: availableSpace() }),
-            min_width: EditorFieldsType.text('min_width', { width: availableSpace() }),
           }
         : {}),
-      ...(!template && !badge
-        ? {
-            bar_max_width: EditorFieldsType.slider('bar_max_width', {
-              virtual: true,
-              showIf: (c) => (c.layout ?? 'horizontal') === 'vertical',
-              resolveVirtual: (c) => parseInt(c.bar_max_width) || 0,
-              onVirtualChange: (value, config) => ({
-                ...config,
-                bar_max_width: value ? `${value}px` : undefined,
-              }),
-            }),
-          }
-        : {}),
+      // Not gated on `badge` - valid for badges too (not in
+      // YamlSchemaFactory.badge's delete list), unlike its former neighbors
+      // above.
+      min_width: EditorFieldsType.text('min_width', EditorFactory.widthUnless(badge)),
       // ── Layout (always last) ──────────────────────────────────────────────
       ...(badge
         ? {}
