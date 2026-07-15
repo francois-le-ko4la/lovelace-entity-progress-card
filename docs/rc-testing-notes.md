@@ -1,5 +1,64 @@
 ## What's new
 
+### 🐛 Fixes
+
+- **Tile Feature: timer progress bar was frozen.** A running `timer` entity
+  doesn't push a new state every second — the standard card already simulated
+  that tick locally, the Feature never did. Fixed.  
+  ➡️ [Bug]: two issues with the timer feature #95 (@GauthierDumont)
+- **Tile Feature: a sibling feature (e.g. a native `fan-speed` control) could
+  disappear** after navigating away and back. Root cause: the overlay
+  (`top`/`bottom`) row-size correction was computed once and frozen forever,
+  silently clamping any later legitimate growth in a sibling feature's own
+  space. It's now recomputed live against HA's own value each time.  
+  ➡️ [Bug]: `fan-speed` disappearing with `bar_position: bottom` #95 (@Gunth)
+- **Tile Feature: `bar_size: small` looked lost** in a fixed-height row.
+  Feature's row height no longer scales with `bar_size` (HA's own
+  `--feature-height`), and the default is now `xlarge` to match.  
+  ➡️ #95 (@GauthierDumont, @Gunth)
+- **Template card: `percent` above 100% (or below -100% with `center_zero`)
+  rendered with an empty gap on one side** instead of a full bar — a regression
+  from the switch to a GPU-friendly transform-based fill. Clamped, same as the
+  standard card already was. ➡️ [Bug]: Progress bar renders incorrectly when
+  percent exceeds 100% #121 (@Gunth)
+- **Timer entities: watermark could cover the whole bar while idle**, or jump
+  position when the timer started. An idle timer's placeholder range collapsed
+  to `[0, 0.1]` instead of `[0, 100]`; separately, a raw watermark value doesn't
+  mean anything stable against a timer's own duration (it changes every run) —
+  `auto` now behaves like `percent` for timers, so the position stays put
+  regardless of state or run length.
+- Fixed a case where `bar_size: xlarge` on a Feature could silently force an
+  invalid `bar_position: 'below'` into the config.
+- Editor: `bar_size`, `bar_segments` were incorrectly hidden for Badge/Badge
+  Template despite being fully supported; `bar_scale` was incorrectly shown for
+  Template/Badge Template despite having no effect there (the same "looks
+  configurable, silently ignored" trap as `min_value`/`max_value` on a template
+  card).
+- Editor: the watermark section was entirely missing for Template/Badge
+  Template, even though the schema has always supported it identically to the
+  standard card.  
+  ➡️ [Enhancement]: Support number entities for watermark low/high values #111
+  (@Gunth, @GauthierDumont)
+
+### ✨ New
+
+- `alert_when.animation`: `static` / `blink` / `ping`, on top of the existing
+  `highlight: border/background`. See [alert_when].  
+  ➡️ alert_when Function #120 (@AndyDann)
+
+### 🧹 Under the hood
+
+- Card/Template height in a Sections dashboard now follows HA's own
+  `--ha-section-grid-row-height` live instead of a hardcoded copy.
+- `getGridOptions()` (the current HA sizing API) implemented natively, alongside
+  the legacy `getLayoutOptions()` kept for HA < 2024.11.
+- A handful of dead CSS variables and a leftover commented-out code block
+  removed.
+
+---
+
+## What's new
+
 This update is a major evolution for the Entity Progress Card: deeper Home
 Assistant integration, a faster rendering engine, and a brand-new CSS API for
 effortless styling. Everything below can be set up from the visual editor.
