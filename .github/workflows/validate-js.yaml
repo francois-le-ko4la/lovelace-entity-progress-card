@@ -3,13 +3,13 @@ name: Validate JS
 on:
   push:
     paths:
-      - "entity-progress-card.js"
+      - "src/**"
       - "eslint.config.mjs"
       - "package.json"
       - "package-lock.json"
   pull_request:
     paths:
-      - "entity-progress-card.js"
+      - "src/**"
       - "eslint.config.mjs"
       - "package.json"
       - "package-lock.json"

@@ -178,7 +178,7 @@ test: add validation for custom theme ranges
 Before submitting a PR, please ensure:
 
 - ✅ `npm run validate` passes locally (syntax check + lint + translations sync)
-  — CI runs the same check on `entity-progress-card.js` changes
+  — CI runs the same check on `src/**` changes
 - ✅ **Card loads** without console errors
 - ✅ **All existing features** still work
 - ✅ **New features** work as expected

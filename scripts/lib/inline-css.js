@@ -3,9 +3,8 @@
 // Resolves every `css`...`` tagged template literal in a JS source string to
 // its static string value, then minifies it as real CSS - esbuild's own
 // --minify pass never touches CSS embedded in JS strings/template literals.
-// Shared between scripts/build.js (builds from the entity-progress-card.js
-// monolith) and scripts/build-src.js (builds from the src/ split) so both
-// pipelines minify CSS-in-JS the same way.
+// Used by scripts/build.js, which bundles src/ with esbuild before running
+// this pass.
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -130,9 +129,9 @@ function resolveCssBlocks(src) {
     try {
       resolved = evalInFile(`${CSS_TAG_SHIM}\nmodule.exports = ${fullExpr};\n`);
     } catch {
-      // esbuild's bundler (used by scripts/build-src.js) rewrites top-level
-      // `const`/`let` declarations to `var` when it concatenates modules -
-      // match all three so the fallback still finds the variable name.
+      // esbuild's bundler rewrites top-level `const`/`let` declarations to
+      // `var` when it concatenates modules - match all three so the
+      // fallback still finds the variable name.
       const constMatch = /(?:const|let|var)\s+(\w+)\s*=\s*$/.exec(src.slice(0, tagStart));
       if (!constMatch) {
         console.warn(`⚠️  Skipped a css\`...\` block at index ${tagStart} (not self-contained, no top-level const).`);

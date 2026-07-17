@@ -22,11 +22,11 @@ for contributors and maintainers. It complements the user-facing
 
 ## Design principles
 
-- **Single file, zero dependency.** The whole project ships as one JavaScript
-  file (`entity-progress-card.js`). No build step, no runtime dependency, no CDN
-  request — what HACS installs is what runs. This constrains some choices (no
-  Lit, no external sanitizer) and explains the hand-rolled infrastructure
-  described below.
+- **Zero runtime dependency.** The card ships as one bundled, dependency-free
+  JavaScript file (built from the `src/` module tree by `scripts/build.js`,
+  see [Release process](#release-process)) — no Lit, no external sanitizer,
+  no CDN request at runtime. This constrains some choices and explains the
+  hand-rolled infrastructure described below.
 - **Vanilla web components.** Cards are plain `HTMLElement` subclasses with
   shadow DOM. The reactive-update machinery a framework would provide (batching,
   diffing, style sharing) is implemented by dedicated helper classes
@@ -467,7 +467,7 @@ const TRANSLATIONS = {
 > [`translations/`](../translations) (same `card`/`editor` tree, one file per
 > language code). Any language change — new key, fixed wording, new language —
 > goes through those JSON files first, then the block is rebuilt into
-> `entity-progress-card.js`:
+> `src/utils/translations.js`:
 >
 > ```bash
 > # everything goes through the unified toolchain:
@@ -572,9 +572,9 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
     validation (`hacs/action`, category `plugin`). Deliberately unscoped — it
     checks `hacs.json`/README compliance too, not just the JS file, so a path
     filter would risk missing a manifest/README-only regression.
-  - `validate-js.yaml` — on `entity-progress-card.js`/`eslint.config.mjs`/
-    `package.json`/`package-lock.json` changes: `npm run validate` (syntax
-    check, lint, full translations sync).
+  - `validate-js.yaml` — on `src/**`/`eslint.config.mjs`/`package.json`/
+    `package-lock.json` changes: `npm run validate` (syntax check, lint, full
+    translations sync).
   - `validate-i18n.yaml` — on `translations/**` changes:
     `npm run i18n:validate:structure` (well-formed JSON + template structure
     only — no JS sync required, so a translation-only PR isn't blocked on
@@ -591,19 +591,19 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
     `scripts/lib/release-flags.js`), a `node --check` sanity pass on the
     minified output, then uploads the artifact to the release assets. HACS
     serves that asset.
-- **Two build modes** (`scripts/build.js` from the monolith,
-  `scripts/build-src.js` from the `src/` split): `build:test`/`build:src:test`
-  (default, `CARD_CONTEXT` left exactly as committed) and
-  `build:prod`/`build:src:prod` (`--prod` flag, `CARD_CONTEXT.dev` and every
-  `debug.*` flag forced `false`). Only the `:prod` variants are safe to ship.
+- **Two build modes** (`scripts/build.js`, bundling `src/editor/editors.js`
+  via esbuild): `build:test` (default, `CARD_CONTEXT` left exactly as
+  committed) and `build:prod` (`--prod` flag, `CARD_CONTEXT.dev` and every
+  `debug.*` flag forced `false` regardless of the source state — see
+  `scripts/lib/release-flags.js`). Only `build:prod` is safe to ship.
 - **Language floor**: the esbuild target is `es2022` — private fields and class
   static blocks are fine, but syntax newer than es2022 will fail the release
   build even though it runs in dev. Test a release build locally with
   `npm run build:prod` when in doubt.
-- **HACS**: `hacs.json` declares `content_in_root` + the filename; the in-repo
-  file is what HACS installs for users tracking the default branch, the minified
-  release asset is what tagged installs get — both must work (hence: no
-  build-time-only syntax in the source).
+- **HACS**: `hacs.json` declares only the `filename` (no `content_in_root` —
+  nothing is served from the repo root). HACS installs from the release
+  asset `release.yaml` uploads; there is no in-repo fallback file, matching
+  how other HACS plugins (e.g. Mushroom) ship a pure `src/` + release setup.
 - Release notes are drafted in `docs/rc-testing-notes.md` during the RC cycle,
   then promoted to the GitHub release body.
 

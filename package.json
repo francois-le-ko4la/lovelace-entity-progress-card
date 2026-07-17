@@ -2,14 +2,14 @@
   "name": "lovelace-entity-progress-card",
   "version": "1.0.0",
   "description": "A modern Entity progress card for Home Assistant's Lovelace UI.",
-  "main": "entity-progress-card.js",
+  "main": "src/editor/editors.js",
   "private": true,
   "directories": {
     "doc": "docs"
   },
   "scripts": {
-    "check": "node --check entity-progress-card.js",
-    "lint": "eslint entity-progress-card.js",
+    "check": "find src -name '*.js' -print0 | xargs -0 -n1 node --check",
+    "lint": "eslint \"src/**/*.js\"",
     "i18n:validate": "node scripts/translations.js validate",
     "i18n:validate:structure": "node scripts/translations.js validate --structure-only",
     "i18n:sync": "node scripts/translations.js synchronize --to-js",
@@ -19,10 +19,7 @@
     "format:md": "prettier --write \"**/*.md\" \"!node_modules/**\"",
     "build": "node scripts/build.js",
     "build:test": "node scripts/build.js",
-    "build:prod": "node scripts/build.js --prod",
-    "build:src": "node scripts/build-src.js",
-    "build:src:test": "node scripts/build-src.js",
-    "build:src:prod": "node scripts/build-src.js --prod"
+    "build:prod": "node scripts/build.js --prod"
   },
   "repository": {
     "type": "git",

@@ -1,9 +1,9 @@
 .DEFAULT_GOAL := help
 
-.PHONY: help install check lint lint-src lint-md format-md \
+.PHONY: help install check lint lint-md format-md \
         i18n-validate i18n-validate-structure i18n-sync \
         validate check-release-flags \
-        build-test build-prod build-src-test build-src-prod build-all \
+        build-test build-prod \
         release-dry-run clean
 
 help: ## Show this help
@@ -12,14 +12,11 @@ help: ## Show this help
 install: ## Install dependencies (npm ci)
 	npm ci
 
-check: ## Syntax-check entity-progress-card.js (node --check)
+check: ## Syntax-check every src/ file (node --check)
 	npm run check
 
-lint: ## Lint entity-progress-card.js (eslint)
+lint: ## Lint the src/ module split (eslint)
 	npm run lint
-
-lint-src: ## Lint the src/ module split (not wired into validate/CI yet)
-	npx eslint "src/**/*.js"
 
 lint-md: ## Lint markdown files
 	npm run lint:md
@@ -27,44 +24,33 @@ lint-md: ## Lint markdown files
 format-md: ## Reformat markdown files in place (prettier)
 	npm run format:md
 
-i18n-validate: ## Validate translations/*.json against entity-progress-card.js
+i18n-validate: ## Validate translations/*.json against src/utils/translations.js
 	npm run i18n:validate
 
 i18n-validate-structure: ## Validate translations/*.json structure only (no JS sync needed)
 	npm run i18n:validate:structure
 
-i18n-sync: ## Regenerate TRANSLATIONS in entity-progress-card.js and src/utils/translations.js
+i18n-sync: ## Regenerate src/utils/translations.js from translations/*.json
 	npm run i18n:sync
 
-check-release-flags: ## Fail if CARD_CONTEXT.dev/debug is left true in the committed source
+check-release-flags: ## Fail if CARD_CONTEXT.dev/debug is left true in src/utils/parameters.js
 	npm run check:release-flags
 
 validate: check lint i18n-validate ## Run all pre-commit checks (check + lint + i18n:validate)
 
 # --- Build ---------------------------------------------------------------
-# Two independent axes:
-#   pipeline: monolith (entity-progress-card.js) vs src/ (the module split)
-#   mode:     test (dev:true, CARD_CONTEXT left exactly as committed)
-#          vs prod (dev:false + all debug flags forced false)
-# Both pipelines write to the same dist/ filenames by design (dist/ is a
-# gitignored build artifact dir, meant for comparing the two pipelines'
-# output, not for keeping every combination around at once):
-#   dist/entity-progress-card.js     <- prod (either pipeline)
-#   dist/entity-progress-card_dev.js <- test (either pipeline)
+# src/ is bundled by scripts/build.js; mode controls CARD_CONTEXT:
+#   test (default): dev:true, left exactly as committed
+#   prod:           dev:false + all debug flags forced false
+# dist/ is a gitignored build artifact dir - not committed, HACS never reads
+# it directly, only the release asset scripts/build.js:prod produces (see
+# .github/workflows/release.yaml).
 
-build-test: ## Build dist/entity-progress-card_dev.js from the monolith
+build-test: ## Build dist/entity-progress-card_dev.js from src/
 	npm run build:test
 
-build-prod: ## Build dist/entity-progress-card.js from the monolith (release build)
+build-prod: ## Build dist/entity-progress-card.js from src/ (release build)
 	npm run build:prod
-
-build-src-test: ## Build dist/entity-progress-card_dev.js from src/
-	npm run build:src:test
-
-build-src-prod: ## Build dist/entity-progress-card.js from src/
-	npm run build:src:prod
-
-build-all: build-test build-prod build-src-test build-src-prod ## Run all four build variants (dist/ ends up with the last test + last prod output only)
 
 release-dry-run: check-release-flags validate build-prod ## Mirror .github/workflows/release.yaml locally
 	node --check dist/entity-progress-card.js

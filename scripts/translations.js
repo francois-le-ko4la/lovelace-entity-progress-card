@@ -4,7 +4,7 @@
  *
  * Source of truth: translations/<lang>.json (one file per language).
  * template.json is the structural reference (key set), never shipped.
- * The TRANSLATIONS block inside entity-progress-card.js is GENERATED from
+ * The TRANSLATIONS block inside src/utils/translations.js is GENERATED from
  * the JSON files (synchronize --to-js) and must never be edited by hand.
  *
  * Usage: node scripts/translations.js <command> [args]
@@ -18,12 +18,8 @@ const readline = require('readline');
 
 const ROOT = path.resolve(__dirname, '..');
 const DIR = path.join(ROOT, 'translations');
-const JS_FILE = path.join(ROOT, 'entity-progress-card.js');
-// src/ is an in-progress module split (see entity-progress-card.js, the
-// authoritative source, for context) - its own copy of the same generated
-// TRANSLATIONS, kept in sync by this same command instead of a second
-// hand-maintained source.
-const JS_MODULE_FILE = path.join(ROOT, 'src/utils/translations.js');
+const JS_FILE = path.join(ROOT, 'src/utils/translations.js');
+const SRC_DIR = path.join(ROOT, 'src');
 const TEMPLATE = 'template.json';
 
 // ─── generic helpers ─────────────────────────────────────────────────────────
@@ -123,15 +119,6 @@ const formatJS = (obj, indent = 0) => {
 };
 
 const writeJsTranslations = (translations) => {
-  const src = fs.readFileSync(JS_FILE, 'utf8');
-  // Presence is checked directly: comparing src to the replacement output conflated
-  // "block not found" with "block already up to date", making idempotent re-runs die.
-  if (!JS_BLOCK_RE.test(src)) die('TRANSLATIONS block not found in JS file');
-  fs.writeFileSync(JS_FILE, src.replace(JS_BLOCK_RE, `const TRANSLATIONS = ${formatJS(translations)};`));
-};
-
-const writeJsModuleTranslations = (translations) => {
-  if (!fs.existsSync(path.dirname(JS_MODULE_FILE))) return; // src/ split doesn't exist (yet) in this checkout
   const content = [
     '/*',
     ' * Generated from translations/*.json (source of truth) - do not edit by',
@@ -145,11 +132,17 @@ const writeJsModuleTranslations = (translations) => {
     'export { TRANSLATIONS };',
     '',
   ].join('\n');
-  fs.writeFileSync(JS_MODULE_FILE, content);
+  fs.writeFileSync(JS_FILE, content);
 };
 
-/** JS source with the TRANSLATIONS block removed — for code-usage searches. */
-const jsCodeWithoutTranslations = () => fs.readFileSync(JS_FILE, 'utf8').replace(JS_BLOCK_RE, '');
+const walkJsFiles = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+  const full = path.join(dir, entry.name);
+  return entry.isDirectory() ? walkJsFiles(full) : (entry.name.endsWith('.js') ? [full] : []);
+});
+
+/** Every src/ file's code, translations.js itself excluded — for code-usage searches. */
+const jsCodeWithoutTranslations = () =>
+  walkJsFiles(SRC_DIR).filter((f) => f !== JS_FILE).map((f) => fs.readFileSync(f, 'utf8')).join('\n');
 
 // ─── diff engine ─────────────────────────────────────────────────────────────
 
@@ -252,7 +245,6 @@ const applyToJs = (dryRun) => {
     return;
   }
   writeJsTranslations(fromJson);
-  writeJsModuleTranslations(fromJson);
   console.log(`✅ JS TRANSLATIONS regenerated from JSON (${Object.keys(fromJson).length} languages).`);
 };
 
