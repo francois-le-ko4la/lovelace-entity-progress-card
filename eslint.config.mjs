@@ -59,4 +59,13 @@ export default [
       sourceType: 'commonjs',
     },
   },
+
+  // Node build scripts (not browser runtime code).
+  {
+    files: ['scripts/**/*.js'],
+    languageOptions: {
+      sourceType: 'commonjs',
+      globals: globals.node,
+    },
+  },
 ];

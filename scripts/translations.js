@@ -19,6 +19,11 @@ const readline = require('readline');
 const ROOT = path.resolve(__dirname, '..');
 const DIR = path.join(ROOT, 'translations');
 const JS_FILE = path.join(ROOT, 'entity-progress-card.js');
+// src/ is an in-progress module split (see entity-progress-card.js, the
+// authoritative source, for context) - its own copy of the same generated
+// TRANSLATIONS, kept in sync by this same command instead of a second
+// hand-maintained source.
+const JS_MODULE_FILE = path.join(ROOT, 'src/utils/translations.js');
 const TEMPLATE = 'template.json';
 
 // ─── generic helpers ─────────────────────────────────────────────────────────
@@ -125,6 +130,24 @@ const writeJsTranslations = (translations) => {
   fs.writeFileSync(JS_FILE, src.replace(JS_BLOCK_RE, `const TRANSLATIONS = ${formatJS(translations)};`));
 };
 
+const writeJsModuleTranslations = (translations) => {
+  if (!fs.existsSync(path.dirname(JS_MODULE_FILE))) return; // src/ split doesn't exist (yet) in this checkout
+  const content = [
+    '/*',
+    ' * Generated from translations/*.json (source of truth) - do not edit by',
+    ' * hand. Run: node scripts/translations.js synchronize --to-js',
+    ' */',
+    '',
+    '/* eslint-disable sonarjs/no-duplicate-string */',
+    `const TRANSLATIONS = ${formatJS(translations)};`,
+    '/* eslint-enable sonarjs/no-duplicate-string */',
+    '',
+    'export { TRANSLATIONS };',
+    '',
+  ].join('\n');
+  fs.writeFileSync(JS_MODULE_FILE, content);
+};
+
 /** JS source with the TRANSLATIONS block removed — for code-usage searches. */
 const jsCodeWithoutTranslations = () => fs.readFileSync(JS_FILE, 'utf8').replace(JS_BLOCK_RE, '');
 
@@ -229,6 +252,7 @@ const applyToJs = (dryRun) => {
     return;
   }
   writeJsTranslations(fromJson);
+  writeJsModuleTranslations(fromJson);
   console.log(`✅ JS TRANSLATIONS regenerated from JSON (${Object.keys(fromJson).length} languages).`);
 };
 

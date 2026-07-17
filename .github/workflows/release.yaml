@@ -19,7 +19,7 @@ jobs:
       - name: Validate before publishing (syntax, lint, translations sync)
         run: npm run validate
       - name: Build (minify)
-        run: npm run build
+        run: npm run build:prod
       - name: Sanity-check the minified output
         run: node --check dist/entity-progress-card.js
       - name: Upload to Release

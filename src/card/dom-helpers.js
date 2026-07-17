@@ -1,0 +1,654 @@
+/*
+ * Shared runtime helpers: ResourceManager (timers/observers cleanup), DOMHelper
+ * (cached element/style/class updates), and ActionHelper (tap/hold/double-tap
+ * dispatch).
+ */
+
+import { CARD_CONTEXT, HA_SVG_ICON_TAG, HA_ACTION_HANDLER_TAG } from '../utils/parameters.js';
+import { is } from '../utils/common-checks.js';
+import { initLogger } from '../utils/log.js';
+
+class ResourceManager {
+  #debug = CARD_CONTEXT.debug.ressourceManager;
+  #log = null;
+  #resources = new Map();
+  #throttles = new Map();
+
+  constructor() {
+    this.#log = initLogger(this, this.#debug, ['add', 'remove', 'cleanup']);
+  }
+
+  // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
+
+  get list() {
+    return [...this.#resources.keys()];
+  }
+
+  get count() {
+    return this.#resources.size;
+  }
+
+  // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
+
+  add(cleanupFn, id) {
+    if (!is.func(cleanupFn)) {
+      throw new Error('Resource must be a function');
+    }
+    const finalId = id || this.#generateUniqueId();
+    if (this.#resources.has(finalId)) {
+      this.remove(finalId);
+      this.#log.debug(`Remove: ${finalId}`);
+    }
+    this.#resources.set(finalId, cleanupFn);
+    this.#log.debug(`Set: ${finalId}`);
+
+    return finalId;
+  }
+
+  setInterval(handler, timeout, id) {
+    this.#log.debug('Starting interval with id:', id);
+    const timerId = setInterval(handler, timeout);
+    this.#log.debug('Timer started with timerId:', timerId);
+
+    this.add(() => {
+      this.#log.debug('Stopping interval with id:', id);
+      clearInterval(timerId);
+    }, id);
+
+    return id;
+  }
+
+  has(id) {
+    return this.#resources.has(id); // Vérifie si un ID existe dans la Map
+  }
+
+  setTimeout(handler, timeout, id) {
+    this.#log.debug('Starting timeout with id:', id);
+    const timerId = setTimeout(handler, timeout);
+    this.#log.debug('Timeout started with timerId:', timerId);
+    return this.add(() => clearTimeout(timerId), id);
+  }
+
+  addEventListener(target, event, handler, options, id) {
+    target.addEventListener(event, handler, options);
+    return this.add(() => target.removeEventListener(event, handler, options), id);
+  }
+
+  addSubscription(unsubscribeFn, id) {
+    return this.add(() => {
+      unsubscribeFn();
+    }, id);
+  }
+
+  throttle(fn, delay, id) {
+    if (!this.#throttles.has(id)) {
+      this.#throttles.set(id, { lastCall: 0 });
+      this.add(() => this.resetThrottle(id), id);
+    }
+
+    const context = this.#throttles.get(id);
+    const now = Date.now();
+
+    if (now - context.lastCall >= delay) {
+      context.lastCall = now;
+      fn();
+      this.#log.debug('Throttle function - ', id);
+    }
+  }
+
+  throttleDebounce(fn, delay, id) {
+    const now = Date.now();
+    const keys = {
+      throttle: `${id}-throttle`,
+      debounce: `${id}-debounce`,
+    };
+
+    // Throttle — exec if time is over
+    if (!this.#throttles.has(keys.throttle)) {
+      this.#throttles.set(keys.throttle, { lastCall: 0 });
+      this.add(() => this.resetThrottle(keys.throttle), keys.throttle);
+    }
+
+    const context = this.#throttles.get(keys.throttle);
+
+    // CF5 - issue (medium) resolved - the trailing timer was scheduled
+    // unconditionally, so a single isolated call always ran fn() twice (leading
+    // + trailing). The trailing run now only catches calls rejected by the
+    // throttle, and a leading run cancels any pending trailing.
+    if (now - context.lastCall >= delay) {
+      context.lastCall = now;
+      if (this.#resources.has(keys.debounce)) this.remove(keys.debounce);
+      fn();
+      this.#log.debug('ThrottleDebounce immediate - ', id);
+      return;
+    }
+
+    // Debounce — catch up throttled calls after delay
+    if (this.#resources.has(keys.debounce)) {
+      this.remove(keys.debounce);
+    }
+    this.setTimeout(
+      () => {
+        context.lastCall = Date.now();
+        fn();
+        this.#log.debug('ThrottleDebounce trailing - ', id);
+      },
+      delay,
+      keys.debounce,
+    );
+  }
+
+  resetThrottle(id) {
+    this.#throttles.delete(id);
+  }
+
+  remove(id) {
+    const cleanupFn = this.#resources.get(id);
+    if (cleanupFn) {
+      try {
+        cleanupFn();
+      } catch (e) {
+        console.error(`[ResourceManager] Error while removing '${id}'`, e);
+      }
+      this.#resources.delete(id);
+      this.#log.debug(`Removed: ${id}`);
+    }
+  }
+
+  cleanup() {
+    for (const [id, cleanupFn] of this.#resources) {
+      try {
+        cleanupFn();
+      } catch (e) {
+        console.error(`[ResourceManager] Error while clearing '${id}'`, e);
+      }
+      this.#log.debug(`Cleared: ${id}`);
+    }
+    this.#resources.clear();
+    this.#throttles.clear();
+    this.#log.debug('All resources cleared.');
+  }
+
+  // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
+
+  #generateUniqueId() {
+    // eslint-disable-next-line no-useless-assignment
+    let id = null;
+    do {
+      id = Math.random().toString(36).slice(2, 8);
+    } while (this.#resources.has(id));
+    return id;
+  }
+}
+
+/******************************************************************************
+ * 🛠️ DOMHelper
+ * ============================================================================
+ *
+ * ✅ Manages DOM elements, RAF queue, and applied values cache.
+ *
+ * // Init
+ * this._dom = new DOMHelper();
+ * this._dom.register("card",  this.shadowRoot.querySelector(".card"));
+ * this._dom.register("title", this.shadowRoot.querySelector(".title"));
+ *
+ * // Mises à jour — dédupliquées + batchées automatiquement
+ * this._dom.setStyle("card",  "--color-bg", "#fff");
+ * this._dom.setText ("title", "Température");
+ * this._dom.setHTML  ("card",  "<span>...</span>");
+ *
+ * // Destroy
+ * this._dom.destroy();
+ *
+ * @class
+ */
+class DOMHelper {
+  #debug = CARD_CONTEXT.debug.ressourceManager;
+  #log = null;
+
+  constructor() {
+    this.#log = initLogger(this, this.#debug, ['register', 'unregister', 'destroy']);
+    this._domElements = new Map(); // key → HTMLElement
+    this._appliedValues = new Map(); // "key:prop" → last applied value
+    this._pendingUpdates = new Map(); // "key:prop" → pending update function
+    this._rafScheduled = false;
+  }
+
+  // ─── Element registration ─────────────────────────────────────────────────
+
+  /**
+   * Registers a DOM element under a given key.
+   */
+  register(key, element) {
+    this.#log.debug('DOMHelper.register(key, element):', { key, element });
+    this._domElements.set(key, element);
+  }
+
+  /**
+   * Returns the DOM element associated with the given key.
+   */
+  get(key) {
+    return this._domElements.get(key);
+  }
+
+  /**
+   * Unregisters a DOM element and clears its associated cache entries.
+   */
+  unregister(key) {
+    this._domElements.delete(key);
+    for (const cacheKey of this._appliedValues.keys()) {
+      if (cacheKey.startsWith(`${key}:`)) {
+        this._appliedValues.delete(cacheKey);
+      }
+    }
+  }
+
+  // ─── RAF queue ────────────────────────────────────────────────────────────
+
+  /**
+   * Enqueues a DOM update identified by a unique key + prop combination. If the
+   * same key:prop is enqueued multiple times, only the latest function runs.
+   * Schedules a single RAF flush if not already pending.
+   */
+  enqueue(key, prop, updateFn) {
+    this._pendingUpdates.set(`${key}:${prop}`, updateFn);
+
+    if (!this._rafScheduled) {
+      this._rafScheduled = true;
+      requestAnimationFrame(() => this._flush());
+    }
+  }
+
+  /**
+   * Flushes all pending updates in a single RAF callback.
+   */
+  _flush() {
+    const updates = this._pendingUpdates;
+    this._pendingUpdates = new Map();
+    this._rafScheduled = false;
+
+    updates.forEach((fn) => fn());
+  }
+
+  // ─── DOM helpers with cache ───────────────────────────────────────────────
+
+  /**
+   * Sets a CSS custom property on the element registered under the given key.
+   * Skipped if the value matches the cache — no DOM read required.
+   */
+  setStyle(key, prop, value) {
+    if (is.nullish(value)) return;
+    const cacheKey = `${key}:style:${prop}`;
+    if (this._appliedValues.get(cacheKey) === value) return;
+
+    const el = this._domElements.get(key);
+    if (!el) return;
+
+    this.enqueue(key, `style:${prop}`, () => {
+      el.style.setProperty(prop, value);
+      this._appliedValues.set(cacheKey, value);
+    });
+  }
+
+  /**
+   * Removes a previously-set CSS custom property. setStyle() never unsets a
+   * value on its own (it only skips nullish writes), so a property that was
+   * conditionally set on an earlier render (e.g. the bar_stack diverging-arm
+   * gradient) needs this to go away once the condition no longer applies -
+   * otherwise it stays stuck from a stale render.
+   */
+  removeStyle(key, prop) {
+    const cacheKey = `${key}:style:${prop}`;
+    if (!this._appliedValues.has(cacheKey)) return;
+
+    const el = this._domElements.get(key);
+    if (!el) return;
+
+    this.enqueue(key, `style:${prop}`, () => {
+      el.style.removeProperty(prop);
+      this._appliedValues.delete(cacheKey);
+    });
+  }
+
+  /**
+   * Sets a CSS custom property synchronously — no RAF, no cache check, no
+   * queue. Use when immediate DOM update is required.
+   */
+  setStyleNow(key, prop, value) {
+    if (is.nullish(value)) return;
+
+    const el = this._domElements.get(key);
+    if (!el) return;
+
+    el.style.setProperty(prop, value);
+    this._appliedValues.set(`${key}:style:${prop}`, value); // ← met à jour le cache après
+  }
+
+  /**
+   * Sets the text content of the element registered under the given key.
+   * Skipped if the value matches the cache.
+   */
+  setText(key, value) {
+    if (is.nullish(value)) return;
+    const cacheKey = `${key}:text`;
+    if (this._appliedValues.get(cacheKey) === value) return;
+
+    const el = this._domElements.get(key);
+    if (!el) return;
+
+    this.enqueue(key, 'text', () => {
+      el.textContent = value;
+      this._appliedValues.set(cacheKey, value);
+    });
+  }
+
+  // CF5 - issue (security) resolved - Jinja results are injected via innerHTML
+  // and may interpolate attacker-influenceable strings (media titles, network
+  // device names…); allowlist sanitization keeps the HTML formatting feature
+  // while neutralizing script execution No BR here on purpose: name/name_info
+  // have no multiline option at all (see
+  // StructureElements.secondaryInfoWrapperMinimal) and must never wrap, while
+  // custom_info/secondary's own <br> is already consumed by
+  // HABase#_splitAtFirstBreak before it ever reaches this sanitizer - a literal
+  // <br> surviving to this point would only ever be an unhandled edge case, not
+  // a feature to preserve.
+  static #SAFE_HTML_TAGS = new Set(['B', 'I', 'U', 'SPAN', 'DIV']);
+  static #SAFE_STYLE_PROPS = new Set(['color', 'background-color']);
+  static #DROP_CONTENT_TAGS = new Set(['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'EMBED', 'TEMPLATE', 'NOSCRIPT']);
+
+  static sanitizeHTML(value) {
+    const html = String(value);
+    if (!html.includes('<')) return html; // fast path: no markup, nothing to sanitize
+    const body = new DOMParser().parseFromString(html, 'text/html').body;
+    DOMHelper.#sanitizeNode(body);
+    return body.innerHTML;
+  }
+
+  static #sanitizeNode(node) {
+    for (const child of [...node.childNodes]) {
+      if (child.nodeType === Node.TEXT_NODE) continue;
+      if (child.nodeType !== Node.ELEMENT_NODE || DOMHelper.#DROP_CONTENT_TAGS.has(child.tagName)) {
+        child.remove(); // comments, script/style & co: dropped entirely, content included
+        continue;
+      }
+      if (!DOMHelper.#SAFE_HTML_TAGS.has(child.tagName)) {
+        DOMHelper.#sanitizeNode(child);
+        child.replaceWith(...child.childNodes); // unknown tag: unwrap, keep sanitized children
+        continue;
+      }
+      DOMHelper.#scrubAttributes(child);
+      DOMHelper.#sanitizeNode(child);
+    }
+  }
+
+  static #scrubAttributes(el) {
+    for (const attr of [...el.attributes]) {
+      if (attr.name === 'class') continue; // kept for user Jinja markup relying on class-based styling (e.g. card_mod); classes cannot execute code
+      if (attr.name !== 'style') {
+        el.removeAttribute(attr.name); // on* handlers, href, src…
+        continue;
+      }
+      const kept = [...el.style]
+        .filter((prop) => DOMHelper.#SAFE_STYLE_PROPS.has(prop))
+        .map((prop) => `${prop}: ${el.style.getPropertyValue(prop)}`)
+        .join('; ');
+      if (kept) el.setAttribute('style', kept);
+      else el.removeAttribute('style');
+    }
+  }
+
+  /**
+   * Sets the inner HTML of the element registered under the given key.
+   * Content is sanitized (tag/attribute allowlist) before injection.
+   * Skipped if the value matches the cache.
+   */
+  setHTML(key, value) {
+    if (is.nullish(value)) return;
+    const cacheKey = `${key}:html`;
+    if (this._appliedValues.get(cacheKey) === value) return;
+
+    const el = this._domElements.get(key);
+    if (!el) return;
+
+    this.enqueue(key, 'html', () => {
+      el.innerHTML = DOMHelper.sanitizeHTML(value);
+      this._appliedValues.set(cacheKey, value);
+    });
+  }
+
+  /**
+   * Toggles a CSS class on the element registered under the given key.
+   * Skipped if the state matches the cache.
+   */
+  toggleClass(key, className, force) {
+    if (!className) return;
+    const cacheKey = `${key}:class:${className}`;
+    if (this._appliedValues.get(cacheKey) === force) return;
+
+    const el = this._domElements.get(key);
+    if (!el) return;
+
+    this.enqueue(key, `class:${className}`, () => {
+      el.classList.toggle(className, force);
+      this._appliedValues.set(cacheKey, force);
+    });
+  }
+
+  /**
+   * Adds one or more CSS classes to the element registered under the given key.
+   * Batched via the RAF queue.
+   */
+  addClass(key, ...classes) {
+    const el = this._domElements.get(key);
+    if (!el) return;
+
+    const filtered = classes.filter(Boolean);
+    if (!filtered.length) return;
+
+    this.enqueue(key, `addClass:${filtered.join(',')}`, () => {
+      el.classList.add(...filtered);
+    });
+  }
+
+  /**
+   * Sets an attribute on the element registered under the given key.
+   * Skipped if the value matches the cache.
+   */
+  setAttribute(key, attr, value) {
+    if (is.nullish(value)) return;
+    const cacheKey = `${key}:attr:${attr}`;
+    if (this._appliedValues.get(cacheKey) === value) return;
+
+    const el = this._domElements.get(key);
+    if (!el) return;
+
+    this.enqueue(key, `attr:${attr}`, () => {
+      el.setAttribute(attr, value);
+      this._appliedValues.set(cacheKey, value);
+    });
+  }
+  // ─── Walkthrough ──────────────────────────────────────────────────────────
+
+  static walkUpThroughShadow(node, selector) {
+    if (!node) return null;
+    if (node instanceof ShadowRoot) return DOMHelper.walkUpThroughShadow(node.host, selector);
+    if (node instanceof HTMLElement && node.matches(selector)) return node;
+    return DOMHelper.walkUpThroughShadow(node.parentNode, selector);
+  }
+
+  // ─── Cleanup ──────────────────────────────────────────────────────────────
+
+  /**
+   * Clears all internal state: elements, cache, and pending updates.
+   * Should be called when the component is destroyed.
+   */
+  destroy() {
+    this._domElements.clear();
+    this._appliedValues.clear();
+    this._pendingUpdates.clear();
+    this._rafScheduled = false;
+  }
+}
+
+/******************************************************************************
+ * 🛠️ ActionHelper — Utility Class
+ * ============================================================================
+ *
+ * ✅ Centralized handler for `xyz_action` logic.
+ * Deprecated for HA 2026.3+
+ *
+ * 📌 Purpose: - Encapsulates and manages the execution, validation, and
+ * dispatch of `xyz_action`. - Promotes reusable, maintainable logic for
+ * action-related features.
+ */
+
+class ActionHelper {
+  #target = null;
+  #config = null;
+  #fromIcon = false;
+  #initialized = false;
+  #disableIconTap = false;
+  #iconClickSources = new Set(['shape', HA_SVG_ICON_TAG, 'img']);
+
+  constructor(target) {
+    this.#target = target;
+  }
+
+  // CF5 - issue (major) resolved - the HA frontend creates <action-handler>
+  // lazily; querySelector could return null and crash if this card loads before
+  // any native card
+  static #getActionHandler() {
+    let handler = document.body.querySelector(HA_ACTION_HANDLER_TAG);
+    if (!handler) {
+      handler = document.createElement(HA_ACTION_HANDLER_TAG);
+      document.body.appendChild(handler);
+    }
+    return handler;
+  }
+
+  init(config, disableIconTap) {
+    // Config and options are refreshed on every call (each connectedCallback);
+    // listeners are attached once — see below.
+    this.#config = config;
+    this.#disableIconTap = disableIconTap;
+
+    if (!this.#target) return;
+
+    // CF5 - issue (major) resolved - init() runs on every connectedCallback
+    // (view navigation, edit mode); listeners accumulated and a single tap
+    // dispatched N hass-action events. init is now idempotent.
+    if (this.#initialized) return;
+    this.#initialized = true;
+
+    ActionHelper.#getActionHandler().bind(this.#target, {
+      hasHold: true,
+      hasDoubleClick: true,
+    });
+
+    this.#target.addEventListener(
+      'pointerdown',
+      (ev) => {
+        const localName = ev.composedPath()[0].localName;
+        this.#fromIcon = !this.#disableIconTap && this.#iconClickSources.has(localName);
+      },
+      { passive: true },
+    );
+
+    this.#target.addEventListener('action', (ev) => {
+      this.#handleAction(ev, this.#fromIcon);
+    });
+  }
+
+  #handleAction(ev, fromIcon) {
+    const action = ev.detail.action;
+    const iconActionKey = `icon_${action}_action`;
+
+    const actionConfig =
+      fromIcon && this.#config[iconActionKey]?.action !== 'none'
+        ? this.#config[iconActionKey]
+        : this.#config[`${action}_action`];
+
+    if (!actionConfig) return;
+
+    this.#target.dispatchEvent(
+      new CustomEvent('hass-action', {
+        bubbles: true,
+        composed: true,
+        detail: {
+          config: {
+            entity: this.#config.entity,
+            tap_action: actionConfig,
+          },
+          action: 'tap',
+        },
+      }),
+    );
+  }
+}
+
+/******************************************************************************
+ * 🛠️ HACore
+ * ============================================================================
+ *
+ * Base class for Home Assistant custom elements (cards, badges, features).
+ *
+ * HTMLElement
+ * └── HACore
+ *     ├── HABase
+ *     │   ├── EntityProgressCardBase
+ *     │   │   ├── EntityProgressCard
+ *     │   │   └── EntityProgressBadge
+ *     │   └── EntityProgressTemplateBase
+ *     │       ├── EntityProgressTemplateCard
+ *     │       └── EntityProgressTemplateBadge
+ *     └── EntityProgressFeatures
+ *
+ * Provides: - Shadow DOM initialization and lifecycle management
+ * (connectedCallback, disconnectedCallback) - Configuration handling via
+ * setConfig() - Hass state tracking and change detection - DOM rendering
+ * pipeline: render() → _createCardElements() → _buildStyle() - Batched DOM
+ * updates via DOMHelper (RAF queue + value cache) - Jinja2 template
+ * subscriptions via WebSocket - Resource lifecycle management (listeners,
+ * subscriptions, intervals)
+ *
+ * Subclasses MUST implement:
+ * - _handleHassUpdate()     → react to hass state changes
+ * - _updateCSS()            → apply dynamic CSS custom properties
+ * - _getJinjaHandlers()     → handle Jinja2 template results
+ *
+ * Subclasses MAY override: - _structureOptions (getter) → structure options
+ * passed to ObjStructure.clone() (barType, barPosition…) - _buildStyle() → CSS
+ * class application pipeline (watermark, bar effect, base classes) -
+ * _updateDynamicElements() → DOM update orchestration (CSS, Jinja processing)
+ *
+ * @abstract
+ * @extends HTMLElement
+ */
+
+/**
+ * Shared constructed stylesheets (Constructable Stylesheets API).
+ *
+ * CF5 - issue (perf) resolved - each card instance used to create its own
+ * <style> element holding the full ~47 KB CARD_CSS: N cards on a dashboard
+ * meant N parses and N CSSOM copies, re-done on every editor keystroke
+ * (setConfig → reset → render). A constructed CSSStyleSheet is parsed once
+ * per unique CSS text and shared BY REFERENCE by every shadowRoot that
+ * adopts it.
+ *
+ * Intent & constraints:
+ * - Progressive enhancement ONLY. The README promises Firefox 94+ and
+ *   Safari 15.4+, but `new CSSStyleSheet()` + `replaceSync` need
+ *   Firefox 101 / Safari 16.4. Older engines (e.g. wall-mounted iPads
+ *   stuck on iPadOS 15) must keep working: getSharedStyleSheet() returns
+ *   null there and the caller falls back to the legacy per-instance
+ *   <style> element — the exact pre-existing behavior, no better no worse.
+ * - The cache is keyed by CSS text (not by class) so a future subclass
+ *   overriding _cardStyle transparently gets its own shared sheet.
+ * - adoptedStyleSheets survive `shadowRoot.innerHTML = ''` (reset()):
+ *   adopting is done once per shadowRoot and needs no re-application on
+ *   re-render.
+ */
+
+export { ResourceManager };
+export { DOMHelper };
+export { ActionHelper };

@@ -17,7 +17,12 @@
     "check:release-flags": "node scripts/check-release-flags.js",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
     "format:md": "prettier --write \"**/*.md\" \"!node_modules/**\"",
-    "build": "node scripts/build.js"
+    "build": "node scripts/build.js",
+    "build:test": "node scripts/build.js",
+    "build:prod": "node scripts/build.js --prod",
+    "build:src": "node scripts/build-src.js",
+    "build:src:test": "node scripts/build-src.js",
+    "build:src:prod": "node scripts/build-src.js --prod"
   },
   "repository": {
     "type": "git",

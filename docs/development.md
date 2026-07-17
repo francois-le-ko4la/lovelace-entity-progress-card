@@ -582,15 +582,24 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
     [Internationalization](#internationalization)).
   - `validate-md.yaml` — on `**/*.md` changes: `npm run lint:md`.
   - `release.yaml` — on a **published GitHub release**:
-    `npm run check:release-flags` (fails if `CARD_CONTEXT.dev`/`debug` is left
-    `true` — see [Logging & debugging](#logging--debugging)),
-    `npm run validate`, `npm run build` (esbuild, `--target=es2022`, pinned as a
-    devDependency), a `node --check` sanity pass on the minified output, then
-    uploads the artifact to the release assets. HACS serves that asset.
+    `npm run check:release-flags` (safety net — fails if `CARD_CONTEXT.dev`/
+    `debug` is left `true` in the committed source; see
+    [Logging & debugging](#logging--debugging)), `npm run validate`,
+    `npm run build:prod` (esbuild, `--target=es2022`, pinned as a
+    devDependency — forces `CARD_CONTEXT.dev`/`debug` to `false` in the built
+    output regardless of the source state, see
+    `scripts/lib/release-flags.js`), a `node --check` sanity pass on the
+    minified output, then uploads the artifact to the release assets. HACS
+    serves that asset.
+- **Two build modes** (`scripts/build.js` from the monolith,
+  `scripts/build-src.js` from the `src/` split): `build:test`/`build:src:test`
+  (default, `CARD_CONTEXT` left exactly as committed) and
+  `build:prod`/`build:src:prod` (`--prod` flag, `CARD_CONTEXT.dev` and every
+  `debug.*` flag forced `false`). Only the `:prod` variants are safe to ship.
 - **Language floor**: the esbuild target is `es2022` — private fields and class
   static blocks are fine, but syntax newer than es2022 will fail the release
   build even though it runs in dev. Test a release build locally with
-  `npm run build` when in doubt.
+  `npm run build:prod` when in doubt.
 - **HACS**: `hacs.json` declares `content_in_root` + the filename; the in-repo
   file is what HACS installs for users tracking the default branch, the minified
   release asset is what tagged installs get — both must work (hence: no
