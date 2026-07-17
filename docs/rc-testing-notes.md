@@ -43,6 +43,20 @@
   (`bar_orientation: up`, `bar_single_line`, `text_shadow`,
   `bar_position: top`/`bottom`) across all 39 languages — the editor already
   only shows them in the relevant context.
+- **The single-file `entity-progress-card.js` monolith is gone.** The card is
+  now developed as a proper module tree under `src/` (`utils`/`card`/`editor`)
+  and assembled by `scripts/build.js` (esbuild bundle + CSS-in-JS
+  minification) into the same shipped output — no behavior change intended,
+  card/badge/feature registration and the console banner are unchanged. Two
+  build modes: `build:test` (dev mode, as committed) and `build:prod` (forces
+  dev/debug flags off regardless of source state — see `npm run
+  check:release-flags` and `scripts/lib/release-flags.js`).
+- **HACS distribution changed accordingly**: `hacs.json` no longer declares
+  `content_in_root` — there's nothing to serve at the repo root anymore.
+  Tagged installs are unaffected (already served from the release asset
+  `release.yaml` uploads); this only removes the now-nonexistent
+  default-branch-tracking fallback. Same pattern other HACS plugins use (e.g.
+  Mushroom: `src/` + release-only, no root file).
 
 ---
 

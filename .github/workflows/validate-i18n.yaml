@@ -17,5 +17,6 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
+          cache: 'npm'
       - name: Translations well-formed + template structure (JSON only, no JS sync required)
         run: npm run i18n:validate:structure

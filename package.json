@@ -2,7 +2,7 @@
   "name": "lovelace-entity-progress-card",
   "version": "1.0.0",
   "description": "A modern Entity progress card for Home Assistant's Lovelace UI.",
-  "main": "src/editor/editors.js",
+  "main": "src/index.js",
   "private": true,
   "directories": {
     "doc": "docs"

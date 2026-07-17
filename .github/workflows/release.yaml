@@ -13,6 +13,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
+          cache: 'npm'
       - run: npm ci
       - name: Ensure dev mode and debug logging are off
         run: npm run check:release-flags

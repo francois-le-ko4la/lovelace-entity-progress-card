@@ -591,8 +591,8 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
     `scripts/lib/release-flags.js`), a `node --check` sanity pass on the
     minified output, then uploads the artifact to the release assets. HACS
     serves that asset.
-- **Two build modes** (`scripts/build.js`, bundling `src/editor/editors.js`
-  via esbuild): `build:test` (default, `CARD_CONTEXT` left exactly as
+- **Two build modes** (`scripts/build.js`, bundling `src/index.js` via
+  esbuild): `build:test` (default, `CARD_CONTEXT` left exactly as
   committed) and `build:prod` (`--prod` flag, `CARD_CONTEXT.dev` and every
   `debug.*` flag forced `false` regardless of the source state — see
   `scripts/lib/release-flags.js`). Only `build:prod` is safe to ship.

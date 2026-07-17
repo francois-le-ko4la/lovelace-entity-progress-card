@@ -5,9 +5,9 @@
 // build pipeline; HACS installs from the release assets this produces (see
 // .github/workflows/release.yaml), there's no root-level file anymore.
 //
-// src/editor/editors.js is the true entry point: it's the last file in the
-// dependency order and is the one that actually registers the card/badge/
-// feature types and prints the console banner.
+// src/index.js is the entry point: it registers the card/badge/feature types
+// and prints the console banner (everything else in src/ is imported from
+// there, directly or transitively).
 //
 // esbuild bundles the ES modules into one script first (import/export
 // resolved away), then a CSS-in-JS resolve+minify pass (scripts/lib/
@@ -20,7 +20,7 @@ const esbuild = require('esbuild');
 const { resolveCssBlocks } = require('./lib/inline-css.js');
 const { forceCleanCardContext } = require('./lib/release-flags.js');
 
-const ENTRY = 'src/editor/editors.js';
+const ENTRY = 'src/index.js';
 const OUTDIR = 'dist';
 // --prod: force dev:false + all debug flags false regardless of the
 // committed source state (see scripts/lib/release-flags.js). Default (no
