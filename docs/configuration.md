@@ -1404,6 +1404,12 @@ Choose from small, medium, or large to adjust the visual scale of the bar.
 > only): it sets a fixed 42px bar height, taller than a badge's entire height
 > (`--ha-badge-size`, 36px by default), so it would overflow the badge.
 
+> [!IMPORTANT]
+>
+> If [`bar_position`](#bar_position) is `top`, `bottom`, `overlay`, or
+> `background`, `bar_size` is ignored: each of these positions sets its own
+> fixed bar thickness. `default` and `below` still honor `bar_size` normally.
+
 _Example_:
 
 ```yaml
@@ -1426,8 +1432,9 @@ Defines the position of the progress bar within the card.
 
 > [!WARNING]
 >
-> If bar_position is set (to any value other than "default"), the bar_size
-> option will be ignored.
+> If `bar_position` is `top`, `bottom`, `overlay`, or `background`, the
+> `bar_size` option is ignored (see [`bar_size`](#bar_size)). `below` still
+> honors it.
 
 _Example_:
 
@@ -1618,10 +1625,11 @@ Controls how theme colors are applied to the progress bar fill.
 > [!NOTE]
 >
 > `bar_color_mode` has no effect when `center_zero` is enabled — that mode
-> always uses `auto` coloring. For linear themes (e.g. `light`), zone boundaries
-> are derived automatically by splitting 0–100% into equal segments (5 levels →
-> 0–20%, 20–40%, …). It works with both predefined themes and
-> [`custom_theme`](#custom_theme).
+> always uses `auto` coloring. It also requires an active [`theme`](#theme) or
+> [`custom_theme`](#custom_theme) — `segment`/`rainbow` paint theme zones, so
+> without either one, `bar_color_mode` is reset to `auto` automatically. For
+> linear themes (e.g. `light`), zone boundaries are derived automatically by
+> splitting 0–100% into equal segments (5 levels → 0–20%, 20–40%, …).
 
 > [!NOTE]
 >
@@ -1703,9 +1711,15 @@ bar_scale: log
 
 > **`bar_max_width`** [String] _(optional)_
 
-Limits the maximum width of the progress bar in horizontal layout. Only applies
-to horizontal layout (`small`, `medium`, `large` sizes). Has no effect on
-`xlarge`.
+Limits the maximum width of the progress bar in horizontal layout.
+
+> [!IMPORTANT]
+>
+> Only applies with [`layout`](#layout): `horizontal`,
+> [`bar_position`](#bar_position): `default` (or unset), and
+> [`bar_size`](#bar_size) set to `small`, `medium`, or `large` (not `xlarge`).
+> Outside this combination the option is cleared automatically — it has no
+> effect anywhere else.
 
 _Example_:
 
@@ -1754,9 +1768,12 @@ reverse: true
 
 > [!IMPORTANT]
 >
-> 'up' can only be used with the vertical card layout and when the bar position
-> is set to overlay. Neither Badge/Badge Template nor the Tile Feature have a
-> vertical layout — `up` isn't offered there ({`rtl`|`ltr`} only).
+> `up` only has a visible effect in two combinations: [`layout`](#layout):
+> `vertical` with [`bar_position`](#bar_position): `overlay`, or `bar_position`:
+> `background` (this one works with either layout). Badge, Badge Template, and
+> the Tile Feature don't offer `up` at all ({`rtl`|`ltr`} only): none of them
+> have a `layout` option, and their `bar_position` values never include
+> `overlay` or `background`.
 
 [🔼 Back to top]
 
@@ -1830,8 +1847,9 @@ _Default value_:
 
 > **`text_shadow`** [Boolean] _(optional, default: false)_
 
-Displays a shadow behind the text when `bar_position` is set to `overlay`,
-improving readability over colored or gradient backgrounds.
+Displays a shadow behind the text when [`bar_position`](#bar_position) is set to
+`overlay` or `background`, improving readability over colored or gradient
+backgrounds.
 
 _Example_:
 
@@ -1984,6 +2002,14 @@ horizontal layout.
 When set to `true`, the secondary info appears to the right of the progress bar
 instead of the left. Useful for emphasizing the progress visually by aligning it
 first, or for adapting to specific design preferences.
+
+> [!IMPORTANT]
+>
+> Only applies with [`layout`](#layout): `horizontal` and
+> [`bar_position`](#bar_position): `default` (or unset) — `layout: vertical`
+> always renders the secondary info in a column regardless of this option,
+> ignoring it entirely. Outside that combination, `reverse_secondary_info_row`
+> is disabled automatically.
 
 ```yaml
 type: custom:entity-progress-card
@@ -2231,6 +2257,12 @@ Enables smooth color transition between consecutive steps of a custom theme.
 When set to true, the icon and bar colors are interpolated between the current
 step and the next one based on the current value's position within the step
 range.
+
+> [!NOTE]
+>
+> Requires an active [`theme`](#theme) or [`custom_theme`](#custom_theme), and
+> [`bar_color_mode`](#bar_color_mode) set to `auto` (the default) — outside
+> either condition, `interpolate` is disabled automatically.
 
 _Example_:
 

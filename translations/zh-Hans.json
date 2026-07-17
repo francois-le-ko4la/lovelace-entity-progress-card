@@ -35,7 +35,7 @@
       "bar_effect_jinja": "进度条效果 (Jinja 模式)",
       "bar_orientation": "进度条方向",
       "bar_position": "进度条位置",
-      "bar_single_line": "单行信息（覆盖显示）",
+      "bar_single_line": "单行信息",
       "bar_size": "进度条大小",
       "bar_segments": "Bar segments",
       "bar_color_mode": "颜色模式",
@@ -65,7 +65,7 @@
       "state_content": "状态内容",
       "show_all_actions": "显示所有交互",
       "tap_action": "点击动作",
-      "text_shadow": "添加文本阴影（overlay）",
+      "text_shadow": "添加文本阴影",
       "theme_mode": "Theme mode",
       "theme": "主题",
       "custom_theme": "Custom theme zones",
@@ -111,13 +111,13 @@
       "bar_orientation": {
         "ltr": "从左到右",
         "rtl": "从右到左",
-        "up": "向上（覆盖显示）"
+        "up": "向上"
       },
       "bar_position": {
         "default": "默认",
         "below": "内容下方的进度条",
-        "top": "顶部进度条（覆盖显示）",
-        "bottom": "底部进度条（覆盖显示）",
+        "top": "顶部进度条",
+        "bottom": "底部进度条",
         "overlay": "覆盖内容的进度条",
         "background": "卡片背景"
       },

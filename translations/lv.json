@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Joslas efekts (Jinja režīms)",
       "bar_orientation": "Joslas orientācija",
       "bar_position": "Joslas pozīcija",
-      "bar_single_line": "Informācija vienā rindā (overlay)",
+      "bar_single_line": "Informācija vienā rindā",
       "bar_size": "Joslas izmērs",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Krāsas režīms",
@@ -65,7 +65,7 @@
       "state_content": "Stāvokļa saturs",
       "show_all_actions": "Rādīt visas darbības",
       "tap_action": "Pieskāriens",
-      "text_shadow": "Pievienot teksta ēnu (overlay)",
+      "text_shadow": "Pievienot teksta ēnu",
       "theme_mode": "Theme mode",
       "theme": "Tēma",
       "custom_theme": "Custom theme zones",
@@ -111,13 +111,13 @@
       "bar_orientation": {
         "ltr": "No kreisās uz labo",
         "rtl": "No labās uz kreiso",
-        "up": "Uz augšu (overlay)"
+        "up": "Uz augšu"
       },
       "bar_position": {
         "default": "Noklusētais",
         "below": "Josla zem satura",
-        "top": "Josla augšā (overlay)",
-        "bottom": "Josla apakšā (overlay)",
+        "top": "Josla augšā",
+        "bottom": "Josla apakšā",
         "overlay": "Josla virs satura (overlay)",
         "background": "Kartes fons"
       },

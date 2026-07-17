@@ -35,7 +35,7 @@
       "bar_effect_jinja": "進度條效果 (Jinja 模式)",
       "bar_orientation": "進度條方向",
       "bar_position": "進度條位置",
-      "bar_single_line": "單行資訊（疊加）",
+      "bar_single_line": "單行資訊",
       "bar_size": "進度條大小",
       "bar_segments": "Bar segments",
       "bar_color_mode": "顏色模式",
@@ -65,7 +65,7 @@
       "state_content": "狀態內容",
       "show_all_actions": "顯示所有互動",
       "tap_action": "點擊操作",
-      "text_shadow": "文字陰影（疊加）",
+      "text_shadow": "文字陰影",
       "theme_mode": "Theme mode",
       "theme": "主題",
       "custom_theme": "Custom theme zones",
@@ -111,13 +111,13 @@
       "bar_orientation": {
         "ltr": "由左到右",
         "rtl": "由右到左",
-        "up": "向上（疊加）"
+        "up": "向上"
       },
       "bar_position": {
         "default": "預設",
         "below": "內容下方",
-        "top": "上方（疊加）",
-        "bottom": "下方（疊加）",
+        "top": "上方",
+        "bottom": "下方",
         "overlay": "疊加在內容上",
         "background": "卡片背景"
       },

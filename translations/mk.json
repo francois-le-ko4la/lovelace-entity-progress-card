@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Ефект на лентата (Jinja режим)",
       "bar_orientation": "Ориентација на лентата",
       "bar_position": "Позиција на лентата",
-      "bar_single_line": "Инфо во еден ред (overlay)",
+      "bar_single_line": "Инфо во еден ред",
       "bar_size": "Големина на лента",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Режим на боја",
@@ -65,7 +65,7 @@
       "state_content": "Содржина на состојба",
       "show_all_actions": "Прикажи ги сите дејства",
       "tap_action": "Дејство при краток допир",
-      "text_shadow": "Додај сенка на текст (overlay)",
+      "text_shadow": "Додај сенка на текст",
       "theme_mode": "Theme mode",
       "theme": "Тема",
       "custom_theme": "Custom theme zones",
@@ -96,14 +96,14 @@
       "bar_orientation": {
         "ltr": "Лево кон десно",
         "rtl": "Десно кон лево",
-        "up": "Нагоре (overlay)"
+        "up": "Нагоре"
       },
       "bar_position": {
         "below": "Лента под содржината",
-        "bottom": "Лента на дното (overlay)",
+        "bottom": "Лента на дното",
         "default": "Стандардно",
         "overlay": "Лента преку содржината (overlay)",
-        "top": "Лента на врвот (overlay)",
+        "top": "Лента на врвот",
         "background": "Позадина на картичката"
       },
       "bar_size": {

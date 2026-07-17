@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Эффект на полосе (режим Jinja)",
       "bar_orientation": "Ориентация полосы",
       "bar_position": "Положение полосы",
-      "bar_single_line": "Информация в одну строку (overlay)",
+      "bar_single_line": "Информация в одну строку",
       "bar_size": "Размер полосы",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Режим цвета",
@@ -65,7 +65,7 @@
       "state_content": "Содержимое состояния",
       "show_all_actions": "Показать все действия",
       "tap_action": "Поведение при нажатии",
-      "text_shadow": "Добавить тень к тексту (overlay)",
+      "text_shadow": "Добавить тень к тексту",
       "theme_mode": "Theme mode",
       "theme": "Тема",
       "custom_theme": "Custom theme zones",
@@ -96,14 +96,14 @@
       "bar_orientation": {
         "ltr": "Слева направо",
         "rtl": "Справа налево",
-        "up": "Вверх (overlay)"
+        "up": "Вверх"
       },
       "bar_position": {
         "below": "Полоса под содержимым",
-        "bottom": "Полоса внизу (overlay)",
+        "bottom": "Полоса внизу",
         "default": "По умолчанию",
         "overlay": "Полоса поверх содержимого (overlay)",
-        "top": "Полоса вверху (overlay)",
+        "top": "Полоса вверху",
         "background": "Фон карточки"
       },
       "bar_size": {

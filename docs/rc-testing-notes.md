@@ -2,6 +2,54 @@
 
 ### 🐛 Fixes
 
+- Editor: the `hide` chips control let Template/Badge Template select `Unit` — a
+  choice their schema always rejected (silently dropped on save, the same "looks
+  configurable, silently ignored" trap as elsewhere). Removed for those two.
+- Editor: `bar_size` was still offered when `bar_position` is `top`/`bottom`/
+  `overlay`/`background` — all four override the bar's thickness themselves, so
+  the option had no effect there. Hidden in that case; `bar_color` now takes the
+  freed-up width instead of sitting half-empty.
+- `bar_max_width` only ever worked with `layout: horizontal` +
+  `bar_position: default` + `bar_size` other than `xlarge` — now enforced at the
+  config level (cleared automatically outside that combination, not just hidden
+  in the editor), so a hand-written YAML config can't end up with a
+  silently-ignored value either. See [bar_max_width].
+- `bar_orientation: up` now only appears as a choice in the two combinations
+  where it actually does anything (`layout: vertical` + `bar_position: overlay`,
+  or `bar_position: background` with either layout) — and resets to `ltr`
+  automatically if a config drifts outside that. See [bar_orientation].
+- `text_shadow` now also applies with `bar_position: background` (previously
+  `overlay` only). See [text_shadow].
+- `bar_color_mode` (`segment`/`rainbow`) and `interpolate` silently did nothing
+  without an active theme (or with `center_zero` on) — both are now cleared
+  automatically instead of quietly having no effect. See [bar_color_mode] /
+  [interpolate].
+- `reverse_secondary_info_row` is now actually functional on Badge and Badge
+  Template — a strict equality check meant it could never match their config
+  shape, making the option permanently inert there despite validating fine.
+- Custom theme editor: adding a new zone was effectively impossible — the row
+  vanished the instant you started filling it in, before `min`/`max` were both
+  set, because the editor re-read the already-validated (and therefore
+  incomplete-zone-stripped) config on every keystroke instead of what you'd
+  actually typed.
+- `bar_color_mode: segment`/`rainbow` and `bar_stack` color gradients always
+  painted left-to-right, even when the bar itself fills bottom-to-top
+  (`bar_orientation: up` with `bar_position: overlay` or `background`) — the
+  gradient direction now follows the bar's actual fill direction.
+
+### 🧹 Under the hood
+
+- Removed the redundant "(overlay)" hint from several option labels
+  (`bar_orientation: up`, `bar_single_line`, `text_shadow`,
+  `bar_position: top`/`bottom`) across all 39 languages — the editor already
+  only shows them in the relevant context.
+
+---
+
+## What's new
+
+### 🐛 Fixes
+
 - **Tile Feature: timer progress bar was frozen.** A running `timer` entity
   doesn't push a new state every second — the standard card already simulated
   that tick locally, the Feature never did. Fixed.  
@@ -280,3 +328,11 @@ Thanks to everyone who reported, tested and contributed! 🙏
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_scale
 [multiline]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#multiline
+[bar_max_width]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_max_width
+[bar_orientation]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_orientation
+[text_shadow]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#text_shadow
+[interpolate]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#interpolate

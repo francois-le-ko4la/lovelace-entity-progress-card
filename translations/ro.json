@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Efect pe bară (mod Jinja)",
       "bar_orientation": "Orientarea barei",
       "bar_position": "Poziția barei",
-      "bar_single_line": "Info pe un singur rând (overlay)",
+      "bar_single_line": "Info pe un singur rând",
       "bar_size": "Dimensiunea barei",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Mod culoare",
@@ -65,7 +65,7 @@
       "state_content": "Conținutul stării",
       "show_all_actions": "Afișează toate acțiunile",
       "tap_action": "Acțiune la apăsare scurtă",
-      "text_shadow": "Adaugă umbră textului (overlay)",
+      "text_shadow": "Adaugă umbră textului",
       "theme_mode": "Theme mode",
       "theme": "Temă",
       "custom_theme": "Custom theme zones",
@@ -96,14 +96,14 @@
       "bar_orientation": {
         "ltr": "De la stânga la dreapta",
         "rtl": "De la dreapta la stânga",
-        "up": "În sus (overlay)"
+        "up": "În sus"
       },
       "bar_position": {
         "below": "Bară sub conținut",
-        "bottom": "Bară jos (overlay)",
+        "bottom": "Bară jos",
         "default": "Implicit",
         "overlay": "Bară suprapusă peste conținut (overlay)",
-        "top": "Bară sus (overlay)",
+        "top": "Bară sus",
         "background": "Fundal card"
       },
       "bar_size": {

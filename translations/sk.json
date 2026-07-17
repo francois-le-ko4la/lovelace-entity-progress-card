@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Efekt lišty (režim Jinja)",
       "bar_orientation": "Orientácia lišty",
       "bar_position": "Pozícia lišty",
-      "bar_single_line": "Informácie na jednej línii (overlay)",
+      "bar_single_line": "Informácie na jednej línii",
       "bar_size": "Veľkosť lišty",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Farebný režim",
@@ -65,7 +65,7 @@
       "state_content": "Obsah stavu",
       "show_all_actions": "Zobraziť všetky akcie",
       "tap_action": "Akcia pri ťuknutí",
-      "text_shadow": "Pridať tieň textu (overlay)",
+      "text_shadow": "Pridať tieň textu",
       "theme_mode": "Theme mode",
       "theme": "Téma",
       "custom_theme": "Custom theme zones",
@@ -111,13 +111,13 @@
       "bar_orientation": {
         "ltr": "Zľava doprava",
         "rtl": "Sprava doľava",
-        "up": "Nahor (overlay)"
+        "up": "Nahor"
       },
       "bar_position": {
         "default": "Predvolené",
         "below": "Pruh pod obsahom",
-        "top": "Pruh hore (overlay)",
-        "bottom": "Pruh dole (overlay)",
+        "top": "Pruh hore",
+        "bottom": "Pruh dole",
         "overlay": "Pruh cez obsah (overlay)",
         "background": "Pozadie karty"
       },

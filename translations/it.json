@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Effetto sulla barra (modalità Jinja)",
       "bar_orientation": "Orientamento della barra",
       "bar_position": "Posizione della barra",
-      "bar_single_line": "Info su una riga (overlay)",
+      "bar_single_line": "Info su una riga",
       "bar_size": "Dimensione della barra",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Modalità colore barra",
@@ -65,7 +65,7 @@
       "state_content": "Contenuto dello stato",
       "show_all_actions": "Mostra tutte le azioni",
       "tap_action": "Azione al tocco breve",
-      "text_shadow": "Aggiungi ombra al testo (overlay)",
+      "text_shadow": "Aggiungi ombra al testo",
       "theme_mode": "Theme mode",
       "theme": "Tema",
       "custom_theme": "Zone tema personalizzato",
@@ -96,14 +96,14 @@
       "bar_orientation": {
         "ltr": "Da sinistra a destra",
         "rtl": "Da destra a sinistra",
-        "up": "Verso l'alto (overlay)"
+        "up": "Verso l'alto"
       },
       "bar_position": {
         "below": "Barra sotto il contenuto",
-        "bottom": "Barra in basso (overlay)",
+        "bottom": "Barra in basso",
         "default": "Predefinito",
         "overlay": "Barra sovrapposta al contenuto (overlay)",
-        "top": "Barra in alto (overlay)",
+        "top": "Barra in alto",
         "background": "Sfondo della scheda"
       },
       "bar_size": {

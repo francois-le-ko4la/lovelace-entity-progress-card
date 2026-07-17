@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Effet sur la barre (mode Jinja)",
       "bar_orientation": "Orientation de la barre",
       "bar_position": "Position de la barre",
-      "bar_single_line": "Infos sur une ligne (overlay)",
+      "bar_single_line": "Infos sur une ligne",
       "bar_size": "Taille de la barre",
       "bar_segments": "Segments de barre",
       "bar_color_mode": "Mode de couleur de la barre",
@@ -65,7 +65,7 @@
       "state_content": "Contenu de l’état",
       "show_all_actions": "Afficher toutes les interactions",
       "tap_action": "Comportement lors d'un appui court",
-      "text_shadow": "Ajouter une ombre au texte (overlay)",
+      "text_shadow": "Ajouter une ombre au texte",
       "theme_mode": "Mode de thème",
       "theme": "Thème",
       "custom_theme": "Zones de thème personnalisé",
@@ -111,13 +111,13 @@
       "bar_orientation": {
         "ltr": "Gauche à droite",
         "rtl": "Droite à gauche",
-        "up": "Vers le haut (overlay)"
+        "up": "Vers le haut"
       },
       "bar_position": {
         "default": "Défaut",
         "below": "Barre en dessous du contenu",
-        "top": "Barre en haut (superposée)",
-        "bottom": "Barre en bas (superposée)",
+        "top": "Barre en haut",
+        "bottom": "Barre en bas",
         "overlay": "Barre superposée au contenu (overlay)",
         "background": "Arrière-plan de la carte"
       },

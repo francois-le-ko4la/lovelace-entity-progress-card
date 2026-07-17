@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Efeito na barra (modo Jinja)",
       "bar_orientation": "Orientação da barra",
       "bar_position": "Posição da barra",
-      "bar_single_line": "Info numa só linha (overlay)",
+      "bar_single_line": "Info numa só linha",
       "bar_size": "Tamanho da barra",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Modo de cor da barra",
@@ -65,7 +65,7 @@
       "state_content": "Conteúdo do estado",
       "show_all_actions": "Mostrar todas as ações",
       "tap_action": "Ação ao toque curto",
-      "text_shadow": "Adicionar sombra ao texto (overlay)",
+      "text_shadow": "Adicionar sombra ao texto",
       "theme_mode": "Theme mode",
       "theme": "Tema",
       "custom_theme": "Zonas de tema personalizado",
@@ -96,14 +96,14 @@
       "bar_orientation": {
         "ltr": "Da esquerda para a direita",
         "rtl": "Da direita para a esquerda",
-        "up": "Para cima (overlay)"
+        "up": "Para cima"
       },
       "bar_position": {
         "below": "Barra abaixo do conteúdo",
-        "bottom": "Barra em baixo (overlay)",
+        "bottom": "Barra em baixo",
         "default": "Padrão",
         "overlay": "Barra sobreposta ao conteúdo (overlay)",
-        "top": "Barra em cima (overlay)",
+        "top": "Barra em cima",
         "background": "Fundo do cartão"
       },
       "bar_size": {

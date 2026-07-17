@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Riba efekt (Jinja režiim)",
       "bar_orientation": "Riba orientatsioon",
       "bar_position": "Riba positsioon",
-      "bar_single_line": "Info ühel real (overlay)",
+      "bar_single_line": "Info ühel real",
       "bar_size": "Riba suurus",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Värvirežiim",
@@ -65,7 +65,7 @@
       "state_content": "Oleku sisu",
       "show_all_actions": "Kuva kõik toimingud",
       "tap_action": "Puudutuse tegevus",
-      "text_shadow": "Lisa teksti vari (overlay)",
+      "text_shadow": "Lisa teksti vari",
       "theme_mode": "Theme mode",
       "theme": "Teema",
       "custom_theme": "Custom theme zones",
@@ -111,13 +111,13 @@
       "bar_orientation": {
         "ltr": "Vasakult paremale",
         "rtl": "Paremalt vasakule",
-        "up": "Üles (overlay)"
+        "up": "Üles"
       },
       "bar_position": {
         "default": "Vaikimisi",
         "below": "Riba sisu all",
-        "top": "Riba üleval (overlay)",
-        "bottom": "Riba all (overlay)",
+        "top": "Riba üleval",
+        "bottom": "Riba all",
         "overlay": "Riba sisu kohal (overlay)",
         "background": "Kaardi taust"
       },

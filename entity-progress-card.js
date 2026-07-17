@@ -62,7 +62,7 @@ const META = {
 };
 
 const CARD_CONTEXT = {
-  dev: false,
+  dev: true,
   debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false, hass: false },
 };
 
@@ -826,7 +826,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'تأثير الشريط (وضع Jinja)',
         bar_orientation: 'اتجاه الشريط',
         bar_position: 'موضع الشريط',
-        bar_single_line: 'معلومات في سطر واحد (تراكب)',
+        bar_single_line: 'معلومات في سطر واحد',
         bar_size: 'حجم الشريط',
         bar_segments: 'Bar segments',
         bar_color_mode: 'وضع اللون',
@@ -856,7 +856,7 @@ const TRANSLATIONS = {
         state_content: 'محتوى الحالة',
         show_all_actions: 'إظهار جميع الإجراءات',
         tap_action: 'الإجراء عند النقر القصير',
-        text_shadow: 'إضافة ظل للنص (overlay)',
+        text_shadow: 'إضافة ظل للنص',
         theme_mode: 'Theme mode',
         theme: 'السمة',
         custom_theme: 'Custom theme zones',
@@ -902,13 +902,13 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'من اليسار إلى اليمين',
           rtl: 'من اليمين إلى اليسار',
-          up: 'اتجاه لأعلى (تراكب)'
+          up: 'اتجاه لأعلى'
         },
         bar_position: {
           default: 'افتراضي',
           below: 'الشريط تحت المحتوى',
-          top: 'الشريط أعلى المحتوى (تراكب)',
-          bottom: 'الشريط أسفل المحتوى (تراكب)',
+          top: 'الشريط أعلى المحتوى',
+          bottom: 'الشريط أسفل المحتوى',
           overlay: 'الشريط فوق المحتوى (تراكب)',
           background: 'خلفية البطاقة'
         },
@@ -1075,7 +1075,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'বারের প্রভাব (Jinja মোড)',
         bar_orientation: 'বারের অভিমুখ',
         bar_position: 'বারের অবস্থান',
-        bar_single_line: 'এক লাইনে তথ্য (ওভারলে)',
+        bar_single_line: 'এক লাইনে তথ্য',
         bar_size: 'বারের আকার',
         bar_segments: 'Bar segments',
         bar_color_mode: 'রঙের মোড',
@@ -1105,7 +1105,7 @@ const TRANSLATIONS = {
         state_content: 'স্টেটের বিষয়বস্তু',
         show_all_actions: 'সব অ্যাকশন দেখান',
         tap_action: 'ট্যাপ আচরণ',
-        text_shadow: 'টেক্সটে ছায়া যোগ করুন (overlay)',
+        text_shadow: 'টেক্সটে ছায়া যোগ করুন',
         theme_mode: 'Theme mode',
         theme: 'থিম',
         custom_theme: 'Custom theme zones',
@@ -1151,13 +1151,13 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'বাম থেকে ডানে',
           rtl: 'ডান থেকে বামে',
-          up: 'উপরের দিকে (ওভারলে)'
+          up: 'উপরের দিকে'
         },
         bar_position: {
           default: 'ডিফল্ট',
           below: 'বিষয়বস্তুর নিচে বার',
-          top: 'উপরের দিকে বার (ওভারলে)',
-          bottom: 'নিচের দিকে বার (ওভারলে)',
+          top: 'উপরের দিকে বার',
+          bottom: 'নিচের দিকে বার',
           overlay: 'বিষয়বস্তুর ওপর বার (ওভারলে)',
           background: 'কার্ড পটভূমি'
         },
@@ -1324,7 +1324,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Efecte de la barra (mode Jinja)',
         bar_orientation: 'Orientació de la barra',
         bar_position: 'Posició de la barra',
-        bar_single_line: 'Informació en una sola línia (overlay)',
+        bar_single_line: 'Informació en una sola línia',
         bar_size: 'Mida de la barra',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Mode de color',
@@ -1354,7 +1354,7 @@ const TRANSLATIONS = {
         state_content: 'Contingut de l\'estat',
         show_all_actions: 'Mostra totes les accions',
         tap_action: 'Acció al tocar breument',
-        text_shadow: 'Afegir ombra al text (overlay)',
+        text_shadow: 'Afegir ombra al text',
         theme_mode: 'Theme mode',
         theme: 'Tema',
         custom_theme: 'Custom theme zones',
@@ -1400,13 +1400,13 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'D\'esquerra a dreta',
           rtl: 'De dreta a esquerra',
-          up: 'Cap amunt (overlay)'
+          up: 'Cap amunt'
         },
         bar_position: {
           default: 'Predeterminada',
           below: 'Barra sota el contingut',
-          top: 'Barra a sobre (superposada)',
-          bottom: 'Barra a sota (superposada)',
+          top: 'Barra a sobre',
+          bottom: 'Barra a sota',
           overlay: 'Barra superposada al contingut (overlay)',
           background: 'Fons de la targeta'
         },
@@ -1573,7 +1573,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Efekt na liště (režim Jinja)',
         bar_orientation: 'Orientace lišty',
         bar_position: 'Umístění lišty',
-        bar_single_line: 'Info v jednom řádku (overlay)',
+        bar_single_line: 'Info v jednom řádku',
         bar_size: 'Velikost lišty',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Barevný režim',
@@ -1603,7 +1603,7 @@ const TRANSLATIONS = {
         state_content: 'Obsah stavu',
         show_all_actions: 'Zobrazit všechny akce',
         tap_action: 'Chování při klepnutí',
-        text_shadow: 'Přidat stín textu (overlay)',
+        text_shadow: 'Přidat stín textu',
         theme_mode: 'Theme mode',
         theme: 'Motiv',
         custom_theme: 'Custom theme zones',
@@ -1649,13 +1649,13 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Zleva doprava',
           rtl: 'Zprava doleva',
-          up: 'Nahoru (overlay)'
+          up: 'Nahoru'
         },
         bar_position: {
           default: 'Výchozí',
           below: 'Lišta pod obsahem',
-          top: 'Lišta nahoře (overlay)',
-          bottom: 'Lišta dole (overlay)',
+          top: 'Lišta nahoře',
+          bottom: 'Lišta dole',
           overlay: 'Lišta přes obsah (overlay)',
           background: 'Pozadí karty'
         },
@@ -1822,7 +1822,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Effekt på bar (Jinja-tilstand)',
         bar_orientation: 'Bar-retning',
         bar_position: 'Bar-placering',
-        bar_single_line: 'Info på én linje (overlay)',
+        bar_single_line: 'Info på én linje',
         bar_size: 'Bar størrelse',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Farvetilstand',
@@ -1852,7 +1852,7 @@ const TRANSLATIONS = {
         state_content: 'Indhold af tilstand',
         show_all_actions: 'Vis alle handlinger',
         tap_action: 'Handling ved kort tryk',
-        text_shadow: 'Tilføj tekstskygge (overlay)',
+        text_shadow: 'Tilføj tekstskygge',
         theme_mode: 'Theme mode',
         theme: 'Tema',
         custom_theme: 'Custom theme zones',
@@ -1898,13 +1898,13 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Venstre til højre',
           rtl: 'Højre til venstre',
-          up: 'Opad (overlay)'
+          up: 'Opad'
         },
         bar_position: {
           default: 'Standard',
           below: 'Bar under indhold',
-          top: 'Bar øverst (overlay)',
-          bottom: 'Bar nederst (overlay)',
+          top: 'Bar øverst',
+          bottom: 'Bar nederst',
           overlay: 'Bar over indhold (overlay)',
           background: 'Kortbaggrund'
         },
@@ -2071,7 +2071,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Effekt auf die Leiste (Jinja-Modus)',
         bar_orientation: 'Ausrichtung der Leiste',
         bar_position: 'Position der Leiste',
-        bar_single_line: 'Informationen in einer Zeile (Overlay)',
+        bar_single_line: 'Informationen in einer Zeile',
         bar_size: 'Größe der Bar',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Balkenfarbmodus',
@@ -2101,7 +2101,7 @@ const TRANSLATIONS = {
         state_content: 'Statusinhalt',
         show_all_actions: 'Alle Aktionen anzeigen',
         tap_action: 'Aktion bei kurzem Tippen',
-        text_shadow: 'Textschatten hinzufügen (Overlay)',
+        text_shadow: 'Textschatten hinzufügen',
         theme_mode: 'Theme mode',
         theme: 'Thema',
         custom_theme: 'Benutzerdefinierte Themenzonen',
@@ -2147,13 +2147,13 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Von links nach rechts',
           rtl: 'Von rechts nach links',
-          up: 'Nach oben (Overlay)'
+          up: 'Nach oben'
         },
         bar_position: {
           default: 'Standard',
           below: 'Leiste unter dem Inhalt',
-          top: 'Leiste oben (Overlay)',
-          bottom: 'Leiste unten (Overlay)',
+          top: 'Leiste oben',
+          bottom: 'Leiste unten',
           overlay: 'Leiste über dem Inhalt (Overlay)',
           background: 'Kartenhintergrund'
         },
@@ -2320,7 +2320,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Εφέ γραμμής (λειτουργία Jinja)',
         bar_orientation: 'Κατεύθυνση γραμμής',
         bar_position: 'Θέση γραμμής',
-        bar_single_line: 'Πληροφορίες σε μία γραμμή (overlay)',
+        bar_single_line: 'Πληροφορίες σε μία γραμμή',
         bar_size: 'Μέγεθος γραμμής',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Λειτουργία χρώματος',
@@ -2350,7 +2350,7 @@ const TRANSLATIONS = {
         state_content: 'Περιεχόμενο κατάστασης',
         show_all_actions: 'Εμφάνιση όλων των ενεργειών',
         tap_action: 'Ενέργεια κατά το σύντομο πάτημα',
-        text_shadow: 'Προσθήκη σκιάς στο κείμενο (overlay)',
+        text_shadow: 'Προσθήκη σκιάς στο κείμενο',
         theme_mode: 'Theme mode',
         theme: 'Θέμα',
         custom_theme: 'Custom theme zones',
@@ -2396,13 +2396,13 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Από αριστερά προς δεξιά',
           rtl: 'Από δεξιά προς αριστερά',
-          up: 'Προς τα πάνω (overlay)'
+          up: 'Προς τα πάνω'
         },
         bar_position: {
           default: 'Προεπιλογή',
           below: 'Γραμμή κάτω από το περιεχόμενο',
-          top: 'Γραμμή πάνω (επικάλυψη)',
-          bottom: 'Γραμμή κάτω (επικάλυψη)',
+          top: 'Γραμμή πάνω',
+          bottom: 'Γραμμή κάτω',
           overlay: 'Γραμμή πάνω από περιεχόμενο (overlay)',
           background: 'Φόντο κάρτας'
         },
@@ -2569,7 +2569,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Bar effect (Jinja mode)',
         bar_orientation: 'Bar orientation',
         bar_position: 'Bar position',
-        bar_single_line: 'Single line info (overlay)',
+        bar_single_line: 'Single line info',
         bar_size: 'Bar size',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Bar color mode',
@@ -2599,7 +2599,7 @@ const TRANSLATIONS = {
         state_content: 'State content',
         show_all_actions: 'Show all interactions',
         tap_action: 'Tap behavior',
-        text_shadow: 'Add text shadow (overlay)',
+        text_shadow: 'Add text shadow',
         theme_mode: 'Theme mode',
         theme: 'Theme',
         custom_theme: 'Custom theme zones',
@@ -2645,13 +2645,13 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Left to Right',
           rtl: 'Right to Left',
-          up: 'Up (overlay)'
+          up: 'Up'
         },
         bar_position: {
           default: 'Default',
           below: 'Bar below content',
-          top: 'Bar on top (overlay)',
-          bottom: 'Bar on bottom (overlay)',
+          top: 'Bar on top',
+          bottom: 'Bar on bottom',
           overlay: 'Bar overlay on content',
           background: 'Full card background'
         },
@@ -2818,7 +2818,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Efecto de la barra de progreso (modo Jinja)',
         bar_orientation: 'Orientación de la barra',
         bar_position: 'Posición de la barra',
-        bar_single_line: 'Información en línea (superpuesta)',
+        bar_single_line: 'Información en línea',
         bar_size: 'Tamaño de la barra',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Modo de color',
@@ -2848,7 +2848,7 @@ const TRANSLATIONS = {
         state_content: 'Contenido del estado',
         show_all_actions: 'Mostrar todas las acciones',
         tap_action: 'Acción al tocar',
-        text_shadow: 'Agregar sombra al texto (overlay)',
+        text_shadow: 'Agregar sombra al texto',
         theme_mode: 'Theme mode',
         theme: 'Tema',
         custom_theme: 'Custom theme zones',
@@ -2894,13 +2894,13 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'De izquierda a derecha',
           rtl: 'De derecha a izquierda',
-          up: 'Hacia arriba (superpuesta)'
+          up: 'Hacia arriba'
         },
         bar_position: {
           default: 'Predeterminado',
           below: 'Barra debajo del contenido',
-          top: 'Barra arriba (superpuesta)',
-          bottom: 'Barra abajo (superpuesta)',
+          top: 'Barra arriba',
+          bottom: 'Barra abajo',
           overlay: 'Superpuesta sobre el contenido',
           background: 'Fondo de la tarjeta'
         },
@@ -3067,7 +3067,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Efecto de la barra (modo Jinja)',
         bar_orientation: 'Orientación de la barra',
         bar_position: 'Posición de la barra',
-        bar_single_line: 'Información en una sola línea (overlay)',
+        bar_single_line: 'Información en una sola línea',
         bar_size: 'Tamaño de la barra',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Modo de color de la barra',
@@ -3097,7 +3097,7 @@ const TRANSLATIONS = {
         state_content: 'Contenido del estado',
         show_all_actions: 'Mostrar todas las acciones',
         tap_action: 'Acción al pulsar brevemente',
-        text_shadow: 'Añadir sombra al texto (overlay)',
+        text_shadow: 'Añadir sombra al texto',
         theme_mode: 'Theme mode',
         theme: 'Tema',
         custom_theme: 'Zonas de tema personalizado',
@@ -3143,13 +3143,13 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'De izquierda a derecha',
           rtl: 'De derecha a izquierda',
-          up: 'Hacia arriba (overlay)'
+          up: 'Hacia arriba'
         },
         bar_position: {
           default: 'Predeterminado',
           below: 'Barra debajo del contenido',
-          top: 'Barra arriba (superpuesta)',
-          bottom: 'Barra abajo (superpuesta)',
+          top: 'Barra arriba',
+          bottom: 'Barra abajo',
           overlay: 'Barra superpuesta al contenido (overlay)',
           background: 'Fondo de la tarjeta'
         },
@@ -3316,7 +3316,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Riba efekt (Jinja režiim)',
         bar_orientation: 'Riba orientatsioon',
         bar_position: 'Riba positsioon',
-        bar_single_line: 'Info ühel real (overlay)',
+        bar_single_line: 'Info ühel real',
         bar_size: 'Riba suurus',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Värvirežiim',
@@ -3346,7 +3346,7 @@ const TRANSLATIONS = {
         state_content: 'Oleku sisu',
         show_all_actions: 'Kuva kõik toimingud',
         tap_action: 'Puudutuse tegevus',
-        text_shadow: 'Lisa teksti vari (overlay)',
+        text_shadow: 'Lisa teksti vari',
         theme_mode: 'Theme mode',
         theme: 'Teema',
         custom_theme: 'Custom theme zones',
@@ -3392,13 +3392,13 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Vasakult paremale',
           rtl: 'Paremalt vasakule',
-          up: 'Üles (overlay)'
+          up: 'Üles'
         },
         bar_position: {
           default: 'Vaikimisi',
           below: 'Riba sisu all',
-          top: 'Riba üleval (overlay)',
-          bottom: 'Riba all (overlay)',
+          top: 'Riba üleval',
+          bottom: 'Riba all',
           overlay: 'Riba sisu kohal (overlay)',
           background: 'Kaardi taust'
         },
@@ -3565,7 +3565,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Palkin efekti (Jinja-tila)',
         bar_orientation: 'Palkin suunta',
         bar_position: 'Palkin sijainti',
-        bar_single_line: 'Tiedot yhdellä rivillä (overlay)',
+        bar_single_line: 'Tiedot yhdellä rivillä',
         bar_size: 'Palkin koko',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Väritila',
@@ -3595,7 +3595,7 @@ const TRANSLATIONS = {
         state_content: 'Tilan sisältö',
         show_all_actions: 'Näytä kaikki toiminnot',
         tap_action: 'Toiminto lyhyellä napautuksella',
-        text_shadow: 'Lisää tekstivarjo (overlay)',
+        text_shadow: 'Lisää tekstivarjo',
         theme_mode: 'Theme mode',
         theme: 'Teema',
         custom_theme: 'Custom theme zones',
@@ -3641,13 +3641,13 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Vasemmalta oikealle',
           rtl: 'Oikealta vasemmalle',
-          up: 'Ylös (overlay)'
+          up: 'Ylös'
         },
         bar_position: {
           default: 'Oletus',
           below: 'Palkki sisällön alla',
-          top: 'Palkki ylhäällä (päällekkäin)',
-          bottom: 'Palkki alhaalla (päällekkäin)',
+          top: 'Palkki ylhäällä',
+          bottom: 'Palkki alhaalla',
           overlay: 'Palkki sisällön päällä (overlay)',
           background: 'Kortin tausta'
         },
@@ -3814,7 +3814,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Effet sur la barre (mode Jinja)',
         bar_orientation: 'Orientation de la barre',
         bar_position: 'Position de la barre',
-        bar_single_line: 'Infos sur une ligne (overlay)',
+        bar_single_line: 'Infos sur une ligne',
         bar_size: 'Taille de la barre',
         bar_segments: 'Segments de barre',
         bar_color_mode: 'Mode de couleur de la barre',
@@ -3844,7 +3844,7 @@ const TRANSLATIONS = {
         state_content: 'Contenu de l’état',
         show_all_actions: 'Afficher toutes les interactions',
         tap_action: 'Comportement lors d\'un appui court',
-        text_shadow: 'Ajouter une ombre au texte (overlay)',
+        text_shadow: 'Ajouter une ombre au texte',
         theme_mode: 'Mode de thème',
         theme: 'Thème',
         custom_theme: 'Zones de thème personnalisé',
@@ -3890,13 +3890,13 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Gauche à droite',
           rtl: 'Droite à gauche',
-          up: 'Vers le haut (overlay)'
+          up: 'Vers le haut'
         },
         bar_position: {
           default: 'Défaut',
           below: 'Barre en dessous du contenu',
-          top: 'Barre en haut (superposée)',
-          bottom: 'Barre en bas (superposée)',
+          top: 'Barre en haut',
+          bottom: 'Barre en bas',
           overlay: 'Barre superposée au contenu (overlay)',
           background: 'Arrière-plan de la carte'
         },
@@ -4063,7 +4063,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'बार पर प्रभाव (Jinja मोड)',
         bar_orientation: 'बार की दिशा',
         bar_position: 'बार की स्थिति',
-        bar_single_line: 'एक पंक्ति में जानकारी (ओवरले)',
+        bar_single_line: 'एक पंक्ति में जानकारी',
         bar_size: 'बार का आकार',
         bar_segments: 'Bar segments',
         bar_color_mode: 'रंग मोड',
@@ -4093,7 +4093,7 @@ const TRANSLATIONS = {
         state_content: 'स्थिति की सामग्री',
         show_all_actions: 'सभी क्रियाएँ दिखाएँ',
         tap_action: 'टैप व्यवहार',
-        text_shadow: 'टेक्स्ट में छाया जोड़ें (overlay)',
+        text_shadow: 'टेक्स्ट में छाया जोड़ें',
         theme_mode: 'Theme mode',
         theme: 'थीम',
         custom_theme: 'Custom theme zones',
@@ -4124,14 +4124,14 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'बाएं से दाएं',
           rtl: 'दाएं से बाएं',
-          up: 'ऊपर की ओर (ओवरले)'
+          up: 'ऊपर की ओर'
         },
         bar_position: {
           below: 'सामग्री के नीचे बार',
-          bottom: 'नीचे बार (ओवरले)',
+          bottom: 'नीचे बार',
           default: 'डिफ़ॉल्ट',
           overlay: 'सामग्री पर ओवरले बार',
-          top: 'ऊपर बार (ओवरले)',
+          top: 'ऊपर बार',
           background: 'कार्ड पृष्ठभूमि'
         },
         bar_size: {
@@ -4312,7 +4312,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Efekt na traci (Jinja način)',
         bar_orientation: 'Orijentacija trake',
         bar_position: 'Položaj trake',
-        bar_single_line: 'Informacije u jednom retku (overlay)',
+        bar_single_line: 'Informacije u jednom retku',
         bar_size: 'Veličina trake',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Način boje',
@@ -4342,7 +4342,7 @@ const TRANSLATIONS = {
         state_content: 'Sadržaj stanja',
         show_all_actions: 'Prikaži sve radnje',
         tap_action: 'Radnja na kratki dodir',
-        text_shadow: 'Dodaj sjenu tekstu (overlay)',
+        text_shadow: 'Dodaj sjenu tekstu',
         theme_mode: 'Theme mode',
         theme: 'Tema',
         custom_theme: 'Custom theme zones',
@@ -4373,14 +4373,14 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Lijevo na desno',
           rtl: 'Desno na lijevo',
-          up: 'Prema gore (overlay)'
+          up: 'Prema gore'
         },
         bar_position: {
           below: 'Traka ispod sadržaja',
-          bottom: 'Traka na dnu (overlay)',
+          bottom: 'Traka na dnu',
           default: 'Zadano',
           overlay: 'Traka preklopljena na sadržaj (overlay)',
-          top: 'Traka na vrhu (overlay)',
+          top: 'Traka na vrhu',
           background: 'Pozadina kartice'
         },
         bar_size: {
@@ -4561,7 +4561,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Sáv effektus (Jinja mód)',
         bar_orientation: 'Sáv iránya',
         bar_position: 'Sáv pozíciója',
-        bar_single_line: 'Egy soros információ (overlay)',
+        bar_single_line: 'Egy soros információ',
         bar_size: 'Sáv mérete',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Szín mód',
@@ -4591,7 +4591,7 @@ const TRANSLATIONS = {
         state_content: 'Állapot tartalma',
         show_all_actions: 'Az összes művelet megjelenítése',
         tap_action: 'Koppintás művelet',
-        text_shadow: 'Szöveg árnyék hozzáadása (overlay)',
+        text_shadow: 'Szöveg árnyék hozzáadása',
         theme_mode: 'Theme mode',
         theme: 'Téma',
         custom_theme: 'Custom theme zones',
@@ -4637,13 +4637,13 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Balról jobbra',
           rtl: 'Jobbról balra',
-          up: 'Felfelé (overlay)'
+          up: 'Felfelé'
         },
         bar_position: {
           default: 'Alapértelmezett',
           below: 'Sáv a tartalom alatt',
-          top: 'Sáv fent (overlay)',
-          bottom: 'Sáv lent (overlay)',
+          top: 'Sáv fent',
+          bottom: 'Sáv lent',
           overlay: 'Sáv a tartalmon (overlay)',
           background: 'Kártya háttér'
         },
@@ -4810,7 +4810,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Efek pada bar (mode Jinja)',
         bar_orientation: 'Orientasi bar',
         bar_position: 'Posisi bar',
-        bar_single_line: 'Info dalam satu baris (overlay)',
+        bar_single_line: 'Info dalam satu baris',
         bar_size: 'Ukuran bar',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Mode warna',
@@ -4840,7 +4840,7 @@ const TRANSLATIONS = {
         state_content: 'Konten status',
         show_all_actions: 'Tampilkan semua tindakan',
         tap_action: 'Perilaku ketuk',
-        text_shadow: 'Tambahkan bayangan teks (overlay)',
+        text_shadow: 'Tambahkan bayangan teks',
         theme_mode: 'Theme mode',
         theme: 'Tema',
         custom_theme: 'Custom theme zones',
@@ -4871,14 +4871,14 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Kiri ke kanan',
           rtl: 'Kanan ke kiri',
-          up: 'Ke atas (overlay)'
+          up: 'Ke atas'
         },
         bar_position: {
           below: 'Bar di bawah konten',
-          bottom: 'Bar di bawah (overlay)',
+          bottom: 'Bar di bawah',
           default: 'Default',
           overlay: 'Bar ditumpangkan pada konten (overlay)',
-          top: 'Bar di atas (overlay)',
+          top: 'Bar di atas',
           background: 'Latar belakang kartu'
         },
         bar_size: {
@@ -5059,7 +5059,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Effetto sulla barra (modalità Jinja)',
         bar_orientation: 'Orientamento della barra',
         bar_position: 'Posizione della barra',
-        bar_single_line: 'Info su una riga (overlay)',
+        bar_single_line: 'Info su una riga',
         bar_size: 'Dimensione della barra',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Modalità colore barra',
@@ -5089,7 +5089,7 @@ const TRANSLATIONS = {
         state_content: 'Contenuto dello stato',
         show_all_actions: 'Mostra tutte le azioni',
         tap_action: 'Azione al tocco breve',
-        text_shadow: 'Aggiungi ombra al testo (overlay)',
+        text_shadow: 'Aggiungi ombra al testo',
         theme_mode: 'Theme mode',
         theme: 'Tema',
         custom_theme: 'Zone tema personalizzato',
@@ -5120,14 +5120,14 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Da sinistra a destra',
           rtl: 'Da destra a sinistra',
-          up: 'Verso l\'alto (overlay)'
+          up: 'Verso l\'alto'
         },
         bar_position: {
           below: 'Barra sotto il contenuto',
-          bottom: 'Barra in basso (overlay)',
+          bottom: 'Barra in basso',
           default: 'Predefinito',
           overlay: 'Barra sovrapposta al contenuto (overlay)',
-          top: 'Barra in alto (overlay)',
+          top: 'Barra in alto',
           background: 'Sfondo della scheda'
         },
         bar_size: {
@@ -5308,7 +5308,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'バーのエフェクト (Jinjaモード)',
         bar_orientation: 'バーの向き',
         bar_position: 'バーの位置',
-        bar_single_line: '1行で情報を表示（オーバーレイ）',
+        bar_single_line: '1行で情報を表示',
         bar_size: 'バーサイズ',
         bar_segments: 'Bar segments',
         bar_color_mode: 'カラーモード',
@@ -5338,7 +5338,7 @@ const TRANSLATIONS = {
         state_content: '状態の内容',
         show_all_actions: 'すべての操作を表示',
         tap_action: '短くタップしたときの動作',
-        text_shadow: 'テキストに影を追加 (オーバーレイ)',
+        text_shadow: 'テキストに影を追加',
         theme_mode: 'Theme mode',
         theme: 'テーマ',
         custom_theme: 'Custom theme zones',
@@ -5369,14 +5369,14 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: '左から右',
           rtl: '右から左',
-          up: '上方向（オーバーレイ）'
+          up: '上方向'
         },
         bar_position: {
           below: 'コンテンツの下にバー',
-          bottom: '下部にバー（オーバーレイ）',
+          bottom: '下部にバー',
           default: 'デフォルト',
           overlay: 'コンテンツに重ねてバー（オーバーレイ）',
-          top: '上部にバー（オーバーレイ）',
+          top: '上部にバー',
           background: 'カードの背景'
         },
         bar_size: {
@@ -5557,7 +5557,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: '바 효과 (Jinja 모드)',
         bar_orientation: '바 방향',
         bar_position: '바 위치',
-        bar_single_line: '한 줄로 정보 표시 (오버레이)',
+        bar_single_line: '한 줄로 정보 표시',
         bar_size: '바 크기',
         bar_segments: 'Bar segments',
         bar_color_mode: '색상 모드',
@@ -5587,7 +5587,7 @@ const TRANSLATIONS = {
         state_content: '상태 콘텐츠',
         show_all_actions: '모든 액션 표시',
         tap_action: '짧게 탭 시 동작',
-        text_shadow: '텍스트 그림자 추가 (오버레이)',
+        text_shadow: '텍스트 그림자 추가',
         theme_mode: 'Theme mode',
         theme: '테마',
         custom_theme: 'Custom theme zones',
@@ -5618,14 +5618,14 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: '왼쪽에서 오른쪽',
           rtl: '오른쪽에서 왼쪽',
-          up: '위쪽 방향 (오버레이)'
+          up: '위쪽 방향'
         },
         bar_position: {
           below: '콘텐츠 아래 바',
-          bottom: '하단 바 (오버레이)',
+          bottom: '하단 바',
           default: '기본',
           overlay: '콘텐츠 위에 바 (오버레이)',
-          top: '상단 바 (오버레이)',
+          top: '상단 바',
           background: '카드 배경'
         },
         bar_size: {
@@ -5806,7 +5806,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Juostos efektas (Jinja režimas)',
         bar_orientation: 'Juostos orientacija',
         bar_position: 'Juostos pozicija',
-        bar_single_line: 'Informacija vienoje eilutėje (overlay)',
+        bar_single_line: 'Informacija vienoje eilutėje',
         bar_size: 'Juostos dydis',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Spalvos režimas',
@@ -5836,7 +5836,7 @@ const TRANSLATIONS = {
         state_content: 'Būsenos turinys',
         show_all_actions: 'Rodyti visus veiksmus',
         tap_action: 'Bakstelėjimo veiksmas',
-        text_shadow: 'Pridėti teksto šešėlį (overlay)',
+        text_shadow: 'Pridėti teksto šešėlį',
         theme_mode: 'Theme mode',
         theme: 'Tema',
         custom_theme: 'Custom theme zones',
@@ -5882,13 +5882,13 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Iš kairės į dešinę',
           rtl: 'Iš dešinės į kairę',
-          up: 'Į viršų (overlay)'
+          up: 'Į viršų'
         },
         bar_position: {
           default: 'Numatyta',
           below: 'Juosta po turiniu',
-          top: 'Juosta viršuje (overlay)',
-          bottom: 'Juosta apačioje (overlay)',
+          top: 'Juosta viršuje',
+          bottom: 'Juosta apačioje',
           overlay: 'Juosta ant turinio (overlay)',
           background: 'Kortelės fonas'
         },
@@ -6055,7 +6055,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Joslas efekts (Jinja režīms)',
         bar_orientation: 'Joslas orientācija',
         bar_position: 'Joslas pozīcija',
-        bar_single_line: 'Informācija vienā rindā (overlay)',
+        bar_single_line: 'Informācija vienā rindā',
         bar_size: 'Joslas izmērs',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Krāsas režīms',
@@ -6085,7 +6085,7 @@ const TRANSLATIONS = {
         state_content: 'Stāvokļa saturs',
         show_all_actions: 'Rādīt visas darbības',
         tap_action: 'Pieskāriens',
-        text_shadow: 'Pievienot teksta ēnu (overlay)',
+        text_shadow: 'Pievienot teksta ēnu',
         theme_mode: 'Theme mode',
         theme: 'Tēma',
         custom_theme: 'Custom theme zones',
@@ -6131,13 +6131,13 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'No kreisās uz labo',
           rtl: 'No labās uz kreiso',
-          up: 'Uz augšu (overlay)'
+          up: 'Uz augšu'
         },
         bar_position: {
           default: 'Noklusētais',
           below: 'Josla zem satura',
-          top: 'Josla augšā (overlay)',
-          bottom: 'Josla apakšā (overlay)',
+          top: 'Josla augšā',
+          bottom: 'Josla apakšā',
           overlay: 'Josla virs satura (overlay)',
           background: 'Kartes fons'
         },
@@ -6304,7 +6304,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Ефект на лентата (Jinja режим)',
         bar_orientation: 'Ориентација на лентата',
         bar_position: 'Позиција на лентата',
-        bar_single_line: 'Инфо во еден ред (overlay)',
+        bar_single_line: 'Инфо во еден ред',
         bar_size: 'Големина на лента',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Режим на боја',
@@ -6334,7 +6334,7 @@ const TRANSLATIONS = {
         state_content: 'Содржина на состојба',
         show_all_actions: 'Прикажи ги сите дејства',
         tap_action: 'Дејство при краток допир',
-        text_shadow: 'Додај сенка на текст (overlay)',
+        text_shadow: 'Додај сенка на текст',
         theme_mode: 'Theme mode',
         theme: 'Тема',
         custom_theme: 'Custom theme zones',
@@ -6365,14 +6365,14 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Лево кон десно',
           rtl: 'Десно кон лево',
-          up: 'Нагоре (overlay)'
+          up: 'Нагоре'
         },
         bar_position: {
           below: 'Лента под содржината',
-          bottom: 'Лента на дното (overlay)',
+          bottom: 'Лента на дното',
           default: 'Стандардно',
           overlay: 'Лента преку содржината (overlay)',
-          top: 'Лента на врвот (overlay)',
+          top: 'Лента на врвот',
           background: 'Позадина на картичката'
         },
         bar_size: {
@@ -6553,7 +6553,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Effekt på baren (Jinja-modus)',
         bar_orientation: 'Orientering av baren',
         bar_position: 'Posisjon for baren',
-        bar_single_line: 'Info på én linje (overlay)',
+        bar_single_line: 'Info på én linje',
         bar_size: 'Bar størrelse',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Fargemodus',
@@ -6583,7 +6583,7 @@ const TRANSLATIONS = {
         state_content: 'Innhold i tilstand',
         show_all_actions: 'Vis alle handlinger',
         tap_action: 'Handling ved kort trykk',
-        text_shadow: 'Legg til tekstskygge (overlay)',
+        text_shadow: 'Legg til tekstskygge',
         theme_mode: 'Theme mode',
         theme: 'Tema',
         custom_theme: 'Custom theme zones',
@@ -6614,14 +6614,14 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Venstre til høyre',
           rtl: 'Høyre til venstre',
-          up: 'Oppover (overlay)'
+          up: 'Oppover'
         },
         bar_position: {
           below: 'Bar under innholdet',
-          bottom: 'Bar nederst (overlay)',
+          bottom: 'Bar nederst',
           default: 'Standard',
           overlay: 'Bar lagt over innholdet (overlay)',
-          top: 'Bar øverst (overlay)',
+          top: 'Bar øverst',
           background: 'Kortbakgrunn'
         },
         bar_size: {
@@ -6802,7 +6802,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Effect op de balk (Jinja-modus)',
         bar_orientation: 'Oriëntatie van de balk',
         bar_position: 'Positie van de balk',
-        bar_single_line: 'Info op één regel (overlay)',
+        bar_single_line: 'Info op één regel',
         bar_size: 'Balkgrootte',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Balkkleurmodus',
@@ -6832,7 +6832,7 @@ const TRANSLATIONS = {
         state_content: 'Inhoud van de status',
         show_all_actions: 'Toon alle acties',
         tap_action: 'Actie bij korte tik',
-        text_shadow: 'Tekstschaduw toevoegen (overlay)',
+        text_shadow: 'Tekstschaduw toevoegen',
         theme_mode: 'Theme mode',
         theme: 'Thema',
         custom_theme: 'Aangepaste themazones',
@@ -6863,14 +6863,14 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Links naar rechts',
           rtl: 'Rechts naar links',
-          up: 'Omhoog (overlay)'
+          up: 'Omhoog'
         },
         bar_position: {
           below: 'Balk onder de inhoud',
-          bottom: 'Balk onderaan (overlay)',
+          bottom: 'Balk onderaan',
           default: 'Standaard',
           overlay: 'Balk over de inhoud (overlay)',
-          top: 'Balk bovenaan (overlay)',
+          top: 'Balk bovenaan',
           background: 'Kaartachtergrond'
         },
         bar_size: {
@@ -7051,7 +7051,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Efekt na pasku (tryb Jinja)',
         bar_orientation: 'Orientacja paska',
         bar_position: 'Pozycja paska',
-        bar_single_line: 'Info w jednej linii (overlay)',
+        bar_single_line: 'Info w jednej linii',
         bar_size: 'Rozmiar paska',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Tryb koloru',
@@ -7081,7 +7081,7 @@ const TRANSLATIONS = {
         state_content: 'Zawartość stanu',
         show_all_actions: 'Pokaż wszystkie akcje',
         tap_action: 'Akcja przy krótkim naciśnięciu',
-        text_shadow: 'Dodaj cień tekstu (overlay)',
+        text_shadow: 'Dodaj cień tekstu',
         theme_mode: 'Theme mode',
         theme: 'Motyw',
         custom_theme: 'Custom theme zones',
@@ -7112,14 +7112,14 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Od lewej do prawej',
           rtl: 'Od prawej do lewej',
-          up: 'W górę (overlay)'
+          up: 'W górę'
         },
         bar_position: {
           below: 'Pasek pod zawartością',
-          bottom: 'Pasek na dole (overlay)',
+          bottom: 'Pasek na dole',
           default: 'Domyślnie',
           overlay: 'Pasek nałożony na zawartość (overlay)',
-          top: 'Pasek na górze (overlay)',
+          top: 'Pasek na górze',
           background: 'Tło karty'
         },
         bar_size: {
@@ -7300,7 +7300,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Efeito na barra (modo Jinja)',
         bar_orientation: 'Orientação da barra',
         bar_position: 'Posição da barra',
-        bar_single_line: 'Informações em uma linha (overlay)',
+        bar_single_line: 'Informações em uma linha',
         bar_size: 'Tamanho da barra',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Modo de cor',
@@ -7330,7 +7330,7 @@ const TRANSLATIONS = {
         state_content: 'Conteúdo do estado',
         show_all_actions: 'Mostrar todas as ações',
         tap_action: 'Ação ao tocar',
-        text_shadow: 'Adicionar sombra ao texto (overlay)',
+        text_shadow: 'Adicionar sombra ao texto',
         theme_mode: 'Theme mode',
         theme: 'Tema',
         custom_theme: 'Custom theme zones',
@@ -7376,13 +7376,13 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Esquerda para direita',
           rtl: 'Direita para esquerda',
-          up: 'Para cima (overlay)'
+          up: 'Para cima'
         },
         bar_position: {
           default: 'Padrão',
           below: 'Barra abaixo do conteúdo',
-          top: 'Barra acima (overlay)',
-          bottom: 'Barra abaixo (overlay)',
+          top: 'Barra acima',
+          bottom: 'Barra abaixo',
           overlay: 'Barra sobre o conteúdo (overlay)',
           background: 'Fundo do cartão'
         },
@@ -7549,7 +7549,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Efeito na barra (modo Jinja)',
         bar_orientation: 'Orientação da barra',
         bar_position: 'Posição da barra',
-        bar_single_line: 'Info numa só linha (overlay)',
+        bar_single_line: 'Info numa só linha',
         bar_size: 'Tamanho da barra',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Modo de cor da barra',
@@ -7579,7 +7579,7 @@ const TRANSLATIONS = {
         state_content: 'Conteúdo do estado',
         show_all_actions: 'Mostrar todas as ações',
         tap_action: 'Ação ao toque curto',
-        text_shadow: 'Adicionar sombra ao texto (overlay)',
+        text_shadow: 'Adicionar sombra ao texto',
         theme_mode: 'Theme mode',
         theme: 'Tema',
         custom_theme: 'Zonas de tema personalizado',
@@ -7610,14 +7610,14 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Da esquerda para a direita',
           rtl: 'Da direita para a esquerda',
-          up: 'Para cima (overlay)'
+          up: 'Para cima'
         },
         bar_position: {
           below: 'Barra abaixo do conteúdo',
-          bottom: 'Barra em baixo (overlay)',
+          bottom: 'Barra em baixo',
           default: 'Padrão',
           overlay: 'Barra sobreposta ao conteúdo (overlay)',
-          top: 'Barra em cima (overlay)',
+          top: 'Barra em cima',
           background: 'Fundo do cartão'
         },
         bar_size: {
@@ -7798,7 +7798,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Efect pe bară (mod Jinja)',
         bar_orientation: 'Orientarea barei',
         bar_position: 'Poziția barei',
-        bar_single_line: 'Info pe un singur rând (overlay)',
+        bar_single_line: 'Info pe un singur rând',
         bar_size: 'Dimensiunea barei',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Mod culoare',
@@ -7828,7 +7828,7 @@ const TRANSLATIONS = {
         state_content: 'Conținutul stării',
         show_all_actions: 'Afișează toate acțiunile',
         tap_action: 'Acțiune la apăsare scurtă',
-        text_shadow: 'Adaugă umbră textului (overlay)',
+        text_shadow: 'Adaugă umbră textului',
         theme_mode: 'Theme mode',
         theme: 'Temă',
         custom_theme: 'Custom theme zones',
@@ -7859,14 +7859,14 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'De la stânga la dreapta',
           rtl: 'De la dreapta la stânga',
-          up: 'În sus (overlay)'
+          up: 'În sus'
         },
         bar_position: {
           below: 'Bară sub conținut',
-          bottom: 'Bară jos (overlay)',
+          bottom: 'Bară jos',
           default: 'Implicit',
           overlay: 'Bară suprapusă peste conținut (overlay)',
-          top: 'Bară sus (overlay)',
+          top: 'Bară sus',
           background: 'Fundal card'
         },
         bar_size: {
@@ -8047,7 +8047,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Эффект на полосе (режим Jinja)',
         bar_orientation: 'Ориентация полосы',
         bar_position: 'Положение полосы',
-        bar_single_line: 'Информация в одну строку (overlay)',
+        bar_single_line: 'Информация в одну строку',
         bar_size: 'Размер полосы',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Режим цвета',
@@ -8077,7 +8077,7 @@ const TRANSLATIONS = {
         state_content: 'Содержимое состояния',
         show_all_actions: 'Показать все действия',
         tap_action: 'Поведение при нажатии',
-        text_shadow: 'Добавить тень к тексту (overlay)',
+        text_shadow: 'Добавить тень к тексту',
         theme_mode: 'Theme mode',
         theme: 'Тема',
         custom_theme: 'Custom theme zones',
@@ -8108,14 +8108,14 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Слева направо',
           rtl: 'Справа налево',
-          up: 'Вверх (overlay)'
+          up: 'Вверх'
         },
         bar_position: {
           below: 'Полоса под содержимым',
-          bottom: 'Полоса внизу (overlay)',
+          bottom: 'Полоса внизу',
           default: 'По умолчанию',
           overlay: 'Полоса поверх содержимого (overlay)',
-          top: 'Полоса вверху (overlay)',
+          top: 'Полоса вверху',
           background: 'Фон карточки'
         },
         bar_size: {
@@ -8296,7 +8296,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Efekt lišty (režim Jinja)',
         bar_orientation: 'Orientácia lišty',
         bar_position: 'Pozícia lišty',
-        bar_single_line: 'Informácie na jednej línii (overlay)',
+        bar_single_line: 'Informácie na jednej línii',
         bar_size: 'Veľkosť lišty',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Farebný režim',
@@ -8326,7 +8326,7 @@ const TRANSLATIONS = {
         state_content: 'Obsah stavu',
         show_all_actions: 'Zobraziť všetky akcie',
         tap_action: 'Akcia pri ťuknutí',
-        text_shadow: 'Pridať tieň textu (overlay)',
+        text_shadow: 'Pridať tieň textu',
         theme_mode: 'Theme mode',
         theme: 'Téma',
         custom_theme: 'Custom theme zones',
@@ -8372,13 +8372,13 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Zľava doprava',
           rtl: 'Sprava doľava',
-          up: 'Nahor (overlay)'
+          up: 'Nahor'
         },
         bar_position: {
           default: 'Predvolené',
           below: 'Pruh pod obsahom',
-          top: 'Pruh hore (overlay)',
-          bottom: 'Pruh dole (overlay)',
+          top: 'Pruh hore',
+          bottom: 'Pruh dole',
           overlay: 'Pruh cez obsah (overlay)',
           background: 'Pozadie karty'
         },
@@ -8545,7 +8545,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Učinek vrstice (način Jinja)',
         bar_orientation: 'Usmeritev vrstice',
         bar_position: 'Pozicija vrstice',
-        bar_single_line: 'Informacije v eni vrstici (overlay)',
+        bar_single_line: 'Informacije v eni vrstici',
         bar_size: 'Velikost vrstice',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Barvni način',
@@ -8575,7 +8575,7 @@ const TRANSLATIONS = {
         state_content: 'Vsebina stanja',
         show_all_actions: 'Prikaži vsa dejanja',
         tap_action: 'Akcija ob tap',
-        text_shadow: 'Dodaj senco besedila (overlay)',
+        text_shadow: 'Dodaj senco besedila',
         theme_mode: 'Theme mode',
         theme: 'Tema',
         custom_theme: 'Custom theme zones',
@@ -8621,13 +8621,13 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Levo proti desni',
           rtl: 'Desno proti levi',
-          up: 'Navzgor (overlay)'
+          up: 'Navzgor'
         },
         bar_position: {
           default: 'Privzeto',
           below: 'Vrstica pod vsebino',
-          top: 'Vrstica zgoraj (overlay)',
-          bottom: 'Vrstica spodaj (overlay)',
+          top: 'Vrstica zgoraj',
+          bottom: 'Vrstica spodaj',
           overlay: 'Vrstica čez vsebino (overlay)',
           background: 'Ozadje kartice'
         },
@@ -8794,7 +8794,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Effekt på baren (Jinja-läge)',
         bar_orientation: 'Orientering av baren',
         bar_position: 'Position för baren',
-        bar_single_line: 'Info på en rad (overlay)',
+        bar_single_line: 'Info på en rad',
         bar_size: 'Barstorlek',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Färgläge',
@@ -8824,7 +8824,7 @@ const TRANSLATIONS = {
         state_content: 'Statusinnehåll',
         show_all_actions: 'Visa alla åtgärder',
         tap_action: 'Åtgärd vid kort tryck',
-        text_shadow: 'Lägg till textskugga (overlay)',
+        text_shadow: 'Lägg till textskugga',
         theme_mode: 'Theme mode',
         theme: 'Tema',
         custom_theme: 'Custom theme zones',
@@ -8855,14 +8855,14 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Vänster till höger',
           rtl: 'Höger till vänster',
-          up: 'Uppåt (overlay)'
+          up: 'Uppåt'
         },
         bar_position: {
           below: 'Bar under innehållet',
-          bottom: 'Bar längst ned (overlay)',
+          bottom: 'Bar längst ned',
           default: 'Standard',
           overlay: 'Bar överlagrad på innehållet (overlay)',
-          top: 'Bar längst upp (overlay)',
+          top: 'Bar längst upp',
           background: 'Kortbakgrund'
         },
         bar_size: {
@@ -9043,7 +9043,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'เอฟเฟกต์บนแถบ (โหมด Jinja)',
         bar_orientation: 'การวางแนวแถบ',
         bar_position: 'ตำแหน่งแถบ',
-        bar_single_line: 'ข้อมูลในบรรทัดเดียว (overlay)',
+        bar_single_line: 'ข้อมูลในบรรทัดเดียว',
         bar_size: 'ขนาดแถบ',
         bar_segments: 'Bar segments',
         bar_color_mode: 'โหมดสี',
@@ -9073,7 +9073,7 @@ const TRANSLATIONS = {
         state_content: 'เนื้อหาของสถานะ',
         show_all_actions: 'แสดงการโต้ตอบทั้งหมด',
         tap_action: 'พฤติกรรมการแตะ',
-        text_shadow: 'เพิ่มเงาให้ข้อความ (overlay)',
+        text_shadow: 'เพิ่มเงาให้ข้อความ',
         theme_mode: 'Theme mode',
         theme: 'ธีม',
         custom_theme: 'Custom theme zones',
@@ -9104,14 +9104,14 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'ซ้ายไปขวา',
           rtl: 'ขวาไปซ้าย',
-          up: 'ขึ้นบน (overlay)'
+          up: 'ขึ้นบน'
         },
         bar_position: {
           below: 'แถบใต้เนื้อหา',
-          bottom: 'แถบด้านล่าง (overlay)',
+          bottom: 'แถบด้านล่าง',
           default: 'ค่าเริ่มต้น',
           overlay: 'แถบซ้อนทับเนื้อหา (overlay)',
-          top: 'แถบด้านบน (overlay)',
+          top: 'แถบด้านบน',
           background: 'พื้นหลังการ์ด'
         },
         bar_size: {
@@ -9292,7 +9292,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Çubuk efekti (Jinja modu)',
         bar_orientation: 'Çubuk yönü',
         bar_position: 'Çubuk konumu',
-        bar_single_line: 'Bilgiyi tek satırda göster (overlay)',
+        bar_single_line: 'Bilgiyi tek satırda göster',
         bar_size: 'Çubuk boyutu',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Renk modu',
@@ -9322,7 +9322,7 @@ const TRANSLATIONS = {
         state_content: 'Durum içeriği',
         show_all_actions: 'Tüm eylemleri göster',
         tap_action: 'Kısa dokunma davranışı',
-        text_shadow: 'Metne gölge ekle (overlay)',
+        text_shadow: 'Metne gölge ekle',
         theme_mode: 'Theme mode',
         theme: 'Tema',
         custom_theme: 'Custom theme zones',
@@ -9353,14 +9353,14 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Soldan sağa',
           rtl: 'Sağdan sola',
-          up: 'Yukarı (overlay)'
+          up: 'Yukarı'
         },
         bar_position: {
           below: 'İçeriğin altında çubuk',
-          bottom: 'Altta çubuk (overlay)',
+          bottom: 'Altta çubuk',
           default: 'Varsayılan',
           overlay: 'İçeriğin üzerine bindirme (overlay)',
-          top: 'Üstte çubuk (overlay)',
+          top: 'Üstte çubuk',
           background: 'Kart arka planı'
         },
         bar_size: {
@@ -9541,7 +9541,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Ефект на панелі (режим Jinja)',
         bar_orientation: 'Орієнтація панелі',
         bar_position: 'Положення панелі',
-        bar_single_line: 'Інформація в один рядок (overlay)',
+        bar_single_line: 'Інформація в один рядок',
         bar_size: 'Розмір панелі',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Режим кольору',
@@ -9571,7 +9571,7 @@ const TRANSLATIONS = {
         state_content: 'Вміст стану',
         show_all_actions: 'Показати всі дії',
         tap_action: 'Поведінка при дотику',
-        text_shadow: 'Додати тінь до тексту (overlay)',
+        text_shadow: 'Додати тінь до тексту',
         theme_mode: 'Theme mode',
         theme: 'Тема',
         custom_theme: 'Custom theme zones',
@@ -9602,14 +9602,14 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Зліва направо',
           rtl: 'Справа наліво',
-          up: 'Вгору (overlay)'
+          up: 'Вгору'
         },
         bar_position: {
           below: 'Панель під вмістом',
-          bottom: 'Панель знизу (overlay)',
+          bottom: 'Панель знизу',
           default: 'За замовчуванням',
           overlay: 'Панель поверх вмісту (overlay)',
-          top: 'Панель зверху (overlay)',
+          top: 'Панель зверху',
           background: 'Фон картки'
         },
         bar_size: {
@@ -9790,7 +9790,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: 'Hiệu ứng thanh (chế độ Jinja)',
         bar_orientation: 'Hướng thanh',
         bar_position: 'Vị trí thanh',
-        bar_single_line: 'Thông tin trên một dòng (overlay)',
+        bar_single_line: 'Thông tin trên một dòng',
         bar_size: 'Kích thước thanh',
         bar_segments: 'Bar segments',
         bar_color_mode: 'Chế độ màu',
@@ -9820,7 +9820,7 @@ const TRANSLATIONS = {
         state_content: 'Nội dung trạng thái',
         show_all_actions: 'Hiển thị tất cả hành động',
         tap_action: 'Hành vi chạm',
-        text_shadow: 'Thêm bóng cho văn bản (overlay)',
+        text_shadow: 'Thêm bóng cho văn bản',
         theme_mode: 'Theme mode',
         theme: 'Chủ đề',
         custom_theme: 'Custom theme zones',
@@ -9851,14 +9851,14 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: 'Trái sang phải',
           rtl: 'Phải sang trái',
-          up: 'Hướng lên (overlay)'
+          up: 'Hướng lên'
         },
         bar_position: {
           below: 'Thanh bên dưới nội dung',
-          bottom: 'Thanh ở dưới cùng (overlay)',
+          bottom: 'Thanh ở dưới cùng',
           default: 'Mặc định',
           overlay: 'Thanh phủ lên nội dung (overlay)',
-          top: 'Thanh ở trên cùng (overlay)',
+          top: 'Thanh ở trên cùng',
           background: 'Nền thẻ'
         },
         bar_size: {
@@ -10039,7 +10039,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: '进度条效果 (Jinja 模式)',
         bar_orientation: '进度条方向',
         bar_position: '进度条位置',
-        bar_single_line: '单行信息（覆盖显示）',
+        bar_single_line: '单行信息',
         bar_size: '进度条大小',
         bar_segments: 'Bar segments',
         bar_color_mode: '颜色模式',
@@ -10069,7 +10069,7 @@ const TRANSLATIONS = {
         state_content: '状态内容',
         show_all_actions: '显示所有交互',
         tap_action: '点击动作',
-        text_shadow: '添加文本阴影（overlay）',
+        text_shadow: '添加文本阴影',
         theme_mode: 'Theme mode',
         theme: '主题',
         custom_theme: 'Custom theme zones',
@@ -10115,13 +10115,13 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: '从左到右',
           rtl: '从右到左',
-          up: '向上（覆盖显示）'
+          up: '向上'
         },
         bar_position: {
           default: '默认',
           below: '内容下方的进度条',
-          top: '顶部进度条（覆盖显示）',
-          bottom: '底部进度条（覆盖显示）',
+          top: '顶部进度条',
+          bottom: '底部进度条',
           overlay: '覆盖内容的进度条',
           background: '卡片背景'
         },
@@ -10288,7 +10288,7 @@ const TRANSLATIONS = {
         bar_effect_jinja: '進度條效果 (Jinja 模式)',
         bar_orientation: '進度條方向',
         bar_position: '進度條位置',
-        bar_single_line: '單行資訊（疊加）',
+        bar_single_line: '單行資訊',
         bar_size: '進度條大小',
         bar_segments: 'Bar segments',
         bar_color_mode: '顏色模式',
@@ -10318,7 +10318,7 @@ const TRANSLATIONS = {
         state_content: '狀態內容',
         show_all_actions: '顯示所有互動',
         tap_action: '點擊操作',
-        text_shadow: '文字陰影（疊加）',
+        text_shadow: '文字陰影',
         theme_mode: 'Theme mode',
         theme: '主題',
         custom_theme: 'Custom theme zones',
@@ -10364,13 +10364,13 @@ const TRANSLATIONS = {
         bar_orientation: {
           ltr: '由左到右',
           rtl: '由右到左',
-          up: '向上（疊加）'
+          up: '向上'
         },
         bar_position: {
           default: '預設',
           below: '內容下方',
-          top: '上方（疊加）',
-          bottom: '下方（疊加）',
+          top: '上方',
+          bottom: '下方',
           overlay: '疊加在內容上',
           background: '卡片背景'
         },
@@ -10503,7 +10503,13 @@ const TRANSLATIONS = {
 };
 /* eslint-enable sonarjs/no-duplicate-string */
 
-const CARD_CSS = `
+// Identity tag - behaves exactly like an untagged template literal at
+// runtime. Marks a template literal as CSS so the build script
+// (scripts/build.js) can find and minify it without needing to know each
+// variable/usage by name.
+const css = (strings, ...values) => strings.reduce((acc, s, i) => acc + s + (i < values.length ? values[i] : ''), '');
+
+const CARD_CSS = css`
 /* =============================================================================
    PARAMS
    ============================================================================= */
@@ -11027,7 +11033,8 @@ ha-card.type-entities .${CARD.htmlStructure.sections.content.class} {
 }
 
 .progress-badge .${CARD.htmlStructure.elements.nameContent.class} {
-  --group-height: var(--ha-font-size-xs);
+  --group-height: 10px;
+  font-size: 10px;
 }
 
 .progress-badge .${CARD.htmlStructure.elements.secondaryInfoWrapper.class} {
@@ -11118,7 +11125,7 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
 
 .progress-badge .${CARD.htmlStructure.elements.nameValue.class} {
   --text-color: var(--epb-name-color, var(--secondary-text-color));
-  --text-font-size: var(--ha-font-size-xs);
+  --text-font-size: var(--epb-name-font-size, 10px);
   --text-font-weight: var(--ha-font-weight-medium);
   --text-height: 10px;
   --text-line-height: 10px;
@@ -11147,7 +11154,7 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
   --text-font-size: var(--ha-font-size-m);
 }
 
-.overlay.text-shadow :is(.${CARD.htmlStructure.elements.nameValue.class}, 
+:is(.overlay, .background).text-shadow :is(.${CARD.htmlStructure.elements.nameValue.class},
                     .${CARD.htmlStructure.elements.secondaryInfoValue.class}) {
   --text-shadow: 1px 1px 2px var(--card-background-color);
 }
@@ -13351,7 +13358,7 @@ class ThemeManager {
     return HA_CONTEXT.haColors.get(curColor) ?? curColor;
   }
 
-  buildGradient(fillPercent, mode, defaultColor = null) {
+  buildGradient(fillPercent, mode, defaultColor = null, isVertical = false) {
     if (!this.#isValid || !this.#currentStyle || mode === 'auto') return null;
     if (!(fillPercent > 0)) return null;
 
@@ -13369,9 +13376,12 @@ class ThemeManager {
 
     // Inner element uses translateX((value-1)*100%), shifted left by
     // (100-fillPercent)%. A zone boundary at container position B → element
-    // position B + offset.
+    // position B + offset. vertical-bar uses the exact same formula on
+    // translateY instead (see the CSS on .vertical-bar .inner) - only the
+    // gradient's own direction needs to follow, not this math.
     const offset = 100 - fillPercent;
     const toElemPos = (b) => `${(b + offset).toFixed(2)}%`;
+    const direction = isVertical ? 'to top' : 'to right';
     // color is optional per zone now (see types.customTheme) — a color-less
     // zone falls back the same way iconColor/barColor already do: the entity's
     // own negotiated color (e.g. a cover is pink open / grey closed, see
@@ -13386,7 +13396,7 @@ class ThemeManager {
         const end = level.max >= fillPercent ? '100%' : toElemPos(level.max);
         return [`${col(level)} ${start}`, `${col(level)} ${end}`];
       });
-      return `linear-gradient(to right, ${stops.join(', ')})`;
+      return `linear-gradient(${direction}, ${stops.join(', ')})`;
     }
 
     if (mode === 'rainbow') {
@@ -13397,7 +13407,7 @@ class ThemeManager {
         if (i > 0) stops.push(`${col(level)} ${toElemPos(level.min)}`);
       });
       stops.push(`${col(visible[visible.length - 1])} 100%`);
-      return `linear-gradient(to right, ${stops.join(', ')})`;
+      return `linear-gradient(${direction}, ${stops.join(', ')})`;
     }
 
     return null;
@@ -14177,12 +14187,12 @@ class EntityCollectionHelper {
     return `color-mix(in srgb, ${curColor} ${100 - whitePercent}%, black ${whitePercent}%)`;
   }
 
-  getEntitiesColor(curColor, progressRatio = 1, range = 0) {
+  getEntitiesColor(curColor, progressRatio = 1, range = 0, isVertical = false) {
     const available = this.getAvailableEntities();
     if (!available.length || !curColor) return null;
     return this.#mode === 'stacked'
-      ? EntityCollectionHelper.#stackedGradient(available, curColor, progressRatio, range)
-      : EntityCollectionHelper.#proportionalGradient(available, curColor, progressRatio);
+      ? EntityCollectionHelper.#stackedGradient(available, curColor, progressRatio, range, isVertical)
+      : EntityCollectionHelper.#proportionalGradient(available, curColor, progressRatio, range, isVertical);
   }
 
   // 'stacked'/'proportional' + center_zero only ('net' has its own
@@ -14191,7 +14201,7 @@ class EntityCollectionHelper {
   // per-mode algorithm as the non-centered case (on magnitudes, see
   // #magnitude), just scoped to its own half-range (max-zeroValue /
   // zeroValue-min).
-  getDivergingGradients(curColor, { min, max, zeroValue }) {
+  getDivergingGradients(curColor, { min, max, zeroValue }, isVertical = false) {
     const available = this.getAvailableEntities();
     if (!available.length || !curColor) return null;
 
@@ -14200,7 +14210,7 @@ class EntityCollectionHelper {
     const arm = (entities, range) => {
       if (!entities.length || range <= 0) return { gradient: null, size: 0 };
       const size = Math.min(1, Math.max(0, EntityCollectionHelper.#magnitudeSum(entities) / range));
-      return { gradient: build(entities, curColor, size, range), size };
+      return { gradient: build(entities, curColor, size, range, isVertical), size };
     };
 
     const { positive, negative } = EntityCollectionHelper.#splitByNegative(available);
@@ -14213,7 +14223,7 @@ class EntityCollectionHelper {
   // each entity's share is renormalized against the combined total, so the
   // visible fill is always divided between entities regardless of how that
   // total compares to min_value/max_value.
-  static #proportionalGradient(available, curColor, progressRatio) {
+  static #proportionalGradient(available, curColor, progressRatio, _range, isVertical = false) {
     const total = EntityCollectionHelper.#magnitudeSum(available);
     if (total === 0) return null;
 
@@ -14236,7 +14246,7 @@ class EntityCollectionHelper {
       currentPosition = end;
     });
 
-    return `linear-gradient(to right, ${gradientStops.join(', ')})`;
+    return `linear-gradient(${isVertical ? 'to top' : 'to right'}, ${gradientStops.join(', ')})`;
   }
 
   // 'stacked' mode: each entity occupies its own literal width on the card's
@@ -14245,7 +14255,7 @@ class EntityCollectionHelper {
   // past the last entity stays empty (no gap-filling color), and entities are
   // clipped/skipped once the cumulative width reaches 100% instead of shrinking
   // everyone to fit.
-  static #stackedGradient(available, curColor, progressRatio, range) {
+  static #stackedGradient(available, curColor, progressRatio, range, isVertical = false) {
     if (!range) return null;
 
     const shadeTotal = available.filter((helper) => !helper.isMain).length;
@@ -14265,7 +14275,9 @@ class EntityCollectionHelper {
       currentPosition = end;
     }
 
-    return gradientStops.length ? `linear-gradient(to right, ${gradientStops.join(', ')})` : null;
+    return gradientStops.length
+      ? `linear-gradient(${isVertical ? 'to top' : 'to right'}, ${gradientStops.join(', ')})`
+      : null;
   }
 
   get count() {
@@ -14804,6 +14816,70 @@ function struct(validator, { allowBelowBarPosition = true } = {}) {
 
     if (result.bar_position !== 'overlay' && result.bar_single_line) result.bar_single_line = false;
 
+    // bar_max_width only affects .horizontal.small/.medium/.large (see the
+    // CSS rule on .progress-container) - 'below'/'top'/'bottom'/'overlay'/
+    // 'background' all render through a separate container element instead
+    // (never .progress-container), and .horizontal.xlarge has no matching
+    // max-width rule either. By this point layout/bar_position/bar_size are
+    // already resolved to their final values (defaults applied, the
+    // xlarge+default->below rewrite above already ran), so this check can't
+    // be fooled by an unset field.
+    const barMaxWidthAllowed =
+      result.layout === CARD.layout.orientations.horizontal.label &&
+      result.bar_position === 'default' &&
+      result.bar_size !== CARD.style.bar.sizeOptions.xlarge.label;
+    if (result.bar_max_width && !barMaxWidthAllowed) result.bar_max_width = undefined;
+
+    // 'up' only has a visible effect in two combinations (see
+    // HACore#_addBaseClasses's vertical-bar/horizontal-bar decision, and the
+    // editor's own upAllowed/resetUpIfInvalid) - mirrored here so a raw
+    // YAML/Jinja config that bypasses the editor doesn't keep a stored 'up'
+    // that silently does nothing.
+    const upAllowed =
+      (result.layout === CARD.layout.orientations.vertical.label && result.bar_position === 'overlay') ||
+      result.bar_position === 'background';
+    if (result.bar_orientation === 'up' && !upAllowed) result.bar_orientation = 'ltr';
+
+    // text_shadow only applies via .overlay or .background (see the CSS rule
+    // on :is(.overlay, .background).text-shadow) - same reasoning as
+    // bar_single_line right above, just a different pair of valid positions.
+    if (result.bar_position !== 'overlay' && result.bar_position !== 'background' && result.text_shadow) {
+      result.text_shadow = false;
+    }
+
+    // bar_color_mode (segment/rainbow) only has an effect with a theme or
+    // custom_theme active, and never in center_zero (see ViewCore.
+    // colorGradient, which returns null in both cases regardless of mode) -
+    // mirrors the editor's own bar_color_mode showIf.
+    const hasTheme = !is.nullish(result.theme) || is.nonEmptyArray(result.custom_theme);
+    if (result.bar_color_mode && result.bar_color_mode !== 'auto' && !(hasTheme && !result.center_zero)) {
+      result.bar_color_mode = 'auto';
+    }
+
+    // interpolate needs the same active theme as bar_color_mode, and is only
+    // meaningful alongside bar_color_mode: 'auto' (or unset) - mirrors the
+    // editor's own interpolate showIf, and its onChange that already clears
+    // interpolate interactively when bar_color_mode changes to non-auto.
+    if (result.interpolate && !(hasTheme && (is.nullish(result.bar_color_mode) || result.bar_color_mode === 'auto'))) {
+      result.interpolate = false;
+    }
+
+    // reverse_secondary_info_row: layout: vertical hardcodes
+    // --current-secondary-info-flex-direction to 'column' unconditionally
+    // (see the CSS rule on .vertical), ignoring --secondary-info-row-reverse
+    // entirely - mirrors ViewCore#hasReversedSecondaryInfoRow (bar_position
+    // nullish-coalesced to 'default' so Badge/Badge Template, which never
+    // have that key at all, aren't wrongly treated as invalid).
+    if (
+      result.reverse_secondary_info_row &&
+      !(
+        result.layout === CARD.layout.orientations.horizontal.label &&
+        (result.bar_position ?? 'default') === 'default'
+      )
+    ) {
+      result.reverse_secondary_info_row = false;
+    }
+
     return result;
   };
   return {
@@ -15256,10 +15332,10 @@ class YamlSchemaFactory {
       // 'layout' key (deleted above) - keeping it would accept a config that
       // silently has no visual effect.
       'bar_max_width',
-      // Both only ever apply via the .overlay class (see .overlay.single-line
-      // and .overlay.text-shadow), which requires bar_position: 'overlay' -
-      // deleted above, so badges never get it either. Same dead-option
-      // reasoning as bar_max_width.
+      // Both only ever apply via bar_position values (bar_single_line:
+      // 'overlay' only; text_shadow: 'overlay' or 'background') that are
+      // deleted above (badges have no bar_position at all), so badges never
+      // get either. Same dead-option reasoning as bar_max_width.
       'bar_single_line',
       'text_shadow',
       // Not CSS-dead like the two above - a design choice: a trend arrow
@@ -15367,9 +15443,8 @@ class YamlSchemaFactory {
       // Same reason as YamlSchemaFactory.badge: no 'layout' key means no
       // 'horizontal' class, so the CSS rule never engages.
       'bar_max_width',
-      // Same reason as YamlSchemaFactory.badge: both only apply via the
-      // .overlay class, which requires bar_position: 'overlay' - deleted
-      // above.
+      // Same reason as YamlSchemaFactory.badge: both only apply via
+      // bar_position values that are deleted above (no bar_position at all).
       'bar_single_line',
       'text_shadow',
       // Same design choice as YamlSchemaFactory.badge: too small a scale for
@@ -15877,9 +15952,15 @@ class ViewCore {
     ]);
   }
   get hasReversedSecondaryInfoRow() {
+    // Nullish-coalesced, not strict equality: Badge/Badge Template have
+    // neither 'layout' nor 'bar_position' in their schema (always undefined
+    // here), but structurally render exactly like layout: horizontal +
+    // bar_position: default - the only shape they have. Treating "absent" as
+    // invalid would make this permanently false for them despite the option
+    // otherwise working fine.
     return (
-      this.config.layout === 'horizontal' &&
-      this.config.bar_position === 'default' &&
+      (this.config.layout ?? 'horizontal') === 'horizontal' &&
+      (this.config.bar_position ?? 'default') === 'default' &&
       this.config.reverse_secondary_info_row
     ); // ─── true
   }
@@ -16376,6 +16457,18 @@ class ViewBase extends ViewCore {
       CARD.style.color.default
     );
   }
+  // Mirrors HACore#_addBaseClasses's own vertical-bar/horizontal-bar
+  // decision: gradients (segment/rainbow/bar_stack) are built left-to-right
+  // by default, but the bar itself fills bottom-to-top in these two
+  // combinations, so the gradient direction has to follow or the color
+  // progression visibly runs the wrong way.
+  get #isVerticalBar() {
+    return (
+      this.config.bar_orientation === 'up' &&
+      ((this.config.layout === 'vertical' && this.config.bar_position === 'overlay') ||
+        this.config.bar_position === 'background')
+    );
+  }
   get barColor() {
     if (!this.isAvailable) return this.isUnknown ? CARD.style.color.default : CARD.style.color.disabled;
     const curColor = this.#curBarColor();
@@ -16388,6 +16481,7 @@ class ViewBase extends ViewCore {
           curColor,
           this.percent / 100,
           this.#percentHelper.max - this.#percentHelper.min,
+          this.#isVerticalBar,
         )
       : curColor;
   }
@@ -16398,11 +16492,15 @@ class ViewBase extends ViewCore {
   get divergingBarStack() {
     if (!this.isAvailable || !this.#percentHelper.isCenterZero) return null;
     if (!this.hasEntityCollection || this.#entityCollection.mode === 'net') return null;
-    return this.#entityCollection.getDivergingGradients(this.#curBarColor(), {
-      min: this.#percentHelper.min,
-      max: this.#percentHelper.max,
-      zeroValue: this.#percentHelper.zeroValue,
-    });
+    return this.#entityCollection.getDivergingGradients(
+      this.#curBarColor(),
+      {
+        min: this.#percentHelper.min,
+        max: this.#percentHelper.max,
+        zeroValue: this.#percentHelper.zeroValue,
+      },
+      this.#isVerticalBar,
+    );
   }
   get colorGradient() {
     if (!this.isAvailable || this.#percentHelper.isCenterZero) return null;
@@ -16410,6 +16508,7 @@ class ViewBase extends ViewCore {
       this.#percentHelper.percent,
       this._configHelper.config.bar_color_mode,
       this._currentValue.defaultColor,
+      this.#isVerticalBar,
     );
   }
   get percent() {
@@ -19222,6 +19321,29 @@ class EditorDOMHelper extends DOMHelper {
     });
   }
 
+  // ─── Width ────────────────────────────────────────────────────────────────
+
+  /**
+   * Updates a field's width. Only reached for fields whose `width` is a
+   * function of config (e.g. icon_animation pairing up with `icon` once
+   * `color`'s row disappears under a theme) - a plain string width is applied
+   * once in EditorBase#buildField and never revisited.
+   *
+   * @param {string} name
+   * @param {string} width
+   */
+  updateWidth(name, width) {
+    const cacheKey = `${name}:width`;
+    if (this._appliedValues.get(cacheKey) === width) return;
+
+    this.enqueue(name, 'width', () => {
+      const el = this._domElements.get(name);
+      if (!el) return;
+      el.style.width = width;
+      this._appliedValues.set(cacheKey, width);
+    });
+  }
+
   // ─── Action selector default ──────────────────────────────────────────────
 
   /**
@@ -19300,17 +19422,29 @@ class EditorDOMHelper extends DOMHelper {
     });
   }
 
-  updateAll(config, resolveValue, negotiated = null) {
+  updateAll(config, resolveValue, negotiated = null, resolveType = null) {
     for (const [name, el] of this._domElements) {
       const def = el._fieldDef;
-      if (def) this._updateField(name, def, config, resolveValue, negotiated);
+      if (def) this._updateField(name, def, config, resolveValue, negotiated, resolveType);
     }
   }
 
-  _updateField(name, def, config, resolveValue, negotiated = null) {
+  _updateField(name, def, config, resolveValue, negotiated = null, resolveType = null) {
     // Visibility
     if (def.showIf) {
       this.updateVisibility(name, def.showIf(config, negotiated));
+    }
+
+    // Width
+    if (is.func(def.width)) {
+      this.updateWidth(name, def.width(config));
+    }
+
+    // Dynamic type (e.g. bar_orientation offering 'up' only in the two
+    // combinations where it has a visible effect - see
+    // HACore#_addBaseClasses)
+    if (is.func(def.type) && resolveType) {
+      this.updateSelector(name, resolveType(def, config));
     }
 
     // Dynamic selector
@@ -19357,18 +19491,19 @@ class EditorDOMHelper extends DOMHelper {
   }
 }
 
-const CHIPS_HOST_STYLE =
-  ':host { display: block; width: 100%; }' +
-  ' .lbl { display: block; font-size: 1rem; font-weight: 400; line-height: 1.5;' +
-  ' color: var(--primary-text-color); padding-bottom: 4px; }' +
-  ' .chip-set { display: flex; flex-wrap: wrap; gap: 8px; }' +
-  ' .chip { display: inline-flex; align-items: center; height: 32px; padding: 0 16px; box-sizing: border-box;' +
-  ' border: 1px solid var(--divider-color, #e0e0e0); border-radius: 8px; background: transparent;' +
-  ' color: var(--primary-text-color); font-family: inherit; font-size: 14px; line-height: 1; cursor: pointer;' +
-  ' transition: background-color 0.15s, border-color 0.15s; }' +
-  ' .chip:hover { background: color-mix(in srgb, var(--primary-text-color) 8%, transparent); }' +
-  ' .chip.selected { background: var(--primary-color); border-color: var(--primary-color);' +
-  ' color: var(--text-primary-color, #fff); }';
+const CHIPS_HOST_STYLE = css`
+  :host { display: block; width: 100%; }
+  .lbl { display: block; font-size: 1rem; font-weight: 400; line-height: 1.5;
+    color: var(--primary-text-color); padding-bottom: 4px; }
+  .chip-set { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { display: inline-flex; align-items: center; height: 32px; padding: 0 16px; box-sizing: border-box;
+    border: 1px solid var(--divider-color, #e0e0e0); border-radius: 8px; background: transparent;
+    color: var(--primary-text-color); font-family: inherit; font-size: 14px; line-height: 1; cursor: pointer;
+    transition: background-color 0.15s, border-color 0.15s; }
+  .chip:hover { background: color-mix(in srgb, var(--primary-text-color) 8%, transparent); }
+  .chip.selected { background: var(--primary-color); border-color: var(--primary-color);
+    color: var(--text-primary-color, #fff); }
+`;
 
 class ChipsBase extends HTMLElement {
   // CF5 - issue (major) resolved - setLabels() is called by the editor before
@@ -19513,9 +19648,18 @@ class EntityProgressHideChips extends ChipsBase {
 
   #selected = [];
   #chips = new Map();
+  #items = EntityProgressHideChips.#ITEMS;
+
+  // Template/BadgeTemplate have no 'unit' key in their `hide` schema (see
+  // YamlSchemaFactory.template) - EditorFactory.content passes a restricted
+  // list there so the chip never appears, instead of getting silently
+  // stripped by jinjaOrArrayWithValidatedElem on save.
+  set items(list) {
+    this.#items = is.array(list) ? list : EntityProgressHideChips.#ITEMS;
+  }
 
   _buildDOM() {
-    this._buildChipSet(EntityProgressHideChips.#ITEMS, (value) => this.#toggle(value), this.#chips);
+    this._buildChipSet(this.#items, (value) => this.#toggle(value), this.#chips);
   }
 
   #toggle(value) {
@@ -19688,7 +19832,7 @@ class EntityProgressBarStackEditor extends ListEditorBase {
 
   _buildDOM() {
     const style = document.createElement('style');
-    style.textContent = `
+    style.textContent = css`
       :host { display: block; width: 100%; }
       .lbl {
         display: block;
@@ -19891,7 +20035,7 @@ class EntityProgressCustomThemeEditor extends ListEditorBase {
 
   _buildDOM() {
     const style = document.createElement('style');
-    style.textContent = `
+    style.textContent = css`
       :host { display: block; width: 100%; }
       .lbl {
         display: block;
@@ -20147,7 +20291,7 @@ class EditorBase extends HTMLElement {
     if (this.shadowRoot.querySelector('.editor')) return;
 
     const style = document.createElement('style');
-    style.textContent = `
+    style.textContent = css`
       .editor { display: flex; flex-direction: column; gap: 16px; }
       .panel-body { display: flex; flex-direction: row; gap: 16px; flex-wrap: wrap; align-content: flex-start; padding: 8px 0; }
       .panel-body ha-selector.field-toggle { margin-block: -18px; }
@@ -20368,6 +20512,7 @@ class EditorBase extends HTMLElement {
     const el = document.createElement(tagName);
     el.id = field.name;
     el.style.width = '100%';
+    if (field.items) el.items = field.items;
     el.setLabels(this.#localizedOptions?.[optionKey]);
     el.value = is.array(this.#config?.[field.target ?? field.name]) ? this.#config[field.target ?? field.name] : [];
     this.#dom.registerField(field.name, el, field);
@@ -20444,9 +20589,11 @@ class EditorBase extends HTMLElement {
     el.id = field.name;
     el.hass = this.hass;
     el.required = field.required ?? false;
-    el.style.width = field.width ?? '100%';
+    // width/type can be functions (re-evaluated reactively elsewhere in
+    // EditorDOMHelper) - this is just their initial value.
+    el.style.width = is.func(field.width) ? field.width(this.#config ?? {}) : (field.width ?? '100%');
     el.isArray = field.array ?? false;
-    el.selector = this.#getSelectorForType(field.type);
+    el.selector = this.#getSelectorForType(is.func(field.type) ? field.type(this.#config ?? {}) : field.type);
 
     if (field.isInGroup) el.classList.add(field.isInGroup);
     if (field.type === 'toggle') el.classList.add('field-toggle');
@@ -20478,7 +20625,11 @@ class EditorBase extends HTMLElement {
     if (def.virtual && def.resolveVirtual) return def.resolveVirtual(rawConfig);
 
     // template/action always use raw config — see #updateFields comment.
-    const config = negotiated && !['template', 'action'].includes(def.type) ? negotiated : rawConfig;
+    // custom_theme_editor too: types.customTheme (per-zone validator) drops
+    // any zone still missing a valid min/max, so a just-added row would
+    // otherwise vanish from the list the instant it round-trips through the
+    // negotiated config, before its fields are even filled in.
+    const config = negotiated && !['template', 'action', 'custom_theme_editor'].includes(def.type) ? negotiated : rawConfig;
 
     const isNested = def.name.includes('.');
     const [parentKey, childKey] = isNested ? def.name.split('.') : [def.name, null];
@@ -20524,11 +20675,17 @@ class EditorBase extends HTMLElement {
     // template/action fields read from raw config to avoid Jinja flicker during
     // typing: the validated config would fall back to default (e.g. []) the
     // moment the expression is temporarily malformed, causing the UI to flash
-    // between chip and Jinja mode. All other fields (select, toggle, number…)
-    // read from the negotiated config so that entity defaults (e.g. a light's
-    // default %) are reflected immediately.
+    // between chip and Jinja mode. custom_theme_editor reads raw config for
+    // the same reason (see #resolveValue). All other fields (select, toggle,
+    // number…) read from the negotiated config so that entity defaults (e.g.
+    // a light's default %) are reflected immediately.
     const negotiated = this._configHelper.config;
-    this.#dom.updateAll(this.#config, (def, raw) => EditorBase.#resolveValue(def, raw, negotiated), negotiated);
+    this.#dom.updateAll(
+      this.#config,
+      (def, raw) => EditorBase.#resolveValue(def, raw, negotiated),
+      negotiated,
+      (def, c) => this.#getSelectorForType(def.type(c)),
+    );
   }
 
   // ─── EVENTS ───────────────────────────────────────────────────────────────
@@ -20990,7 +21147,15 @@ const EditorFactory = {
   // per field instead.
   widthUnless: (condition) => (condition ? {} : { width: availableSpace() }),
 
-  theme: (template, badge) => ({
+  theme: (template, badge) => {
+    // 'up' only has a visible effect in these two combinations (see
+    // HACore#_addBaseClasses's vertical-bar/horizontal-bar decision) - shared
+    // by bar_orientation's own dynamic type below and the reset-on-change
+    // hooks on bar_position/layout.
+    const upAllowed = (c) => (c.layout === 'vertical' && c.bar_position === 'overlay') || c.bar_position === 'background';
+    const resetUpIfInvalid = (config) =>
+      config.bar_orientation === 'up' && !upAllowed(config) ? { ...config, bar_orientation: 'ltr' } : config;
+    return {
     title: 'editor.title.theme',
     icon: HA_CONTEXT.icons.listBox,
     fields: {
@@ -21018,37 +21183,66 @@ const EditorFactory = {
       ...(badge
         ? {}
         : {
-            icon_animation: EditorFieldsType.select('icon_animation'),
+            // Half-width once a theme is active, to pair with `icon` once
+            // `color` (icon's usual partner) hides.
+            icon_animation: EditorFieldsType.select('icon_animation', {
+              width: (c) => ((!is.nullish(c.theme) || is.array(c.custom_theme)) ? availableSpace() : '100%'),
+            }),
             force_circular_background: EditorFieldsType.toggle('force_circular_background'),
-            bar_position: EditorFieldsType.select('bar_position', { width: availableSpace() }),
+            bar_position: EditorFieldsType.select('bar_position', {
+              width: availableSpace(),
+              onChange: (value, config) => resetUpIfInvalid(config),
+            }),
           }),
-      // Not gated on `badge` - valid for badges too (not in
-      // YamlSchemaFactory.badge's delete list), unlike its former neighbors
-      // above.
+      bar_orientation: EditorFieldsType.select('bar_orientation', {
+        // Badge/Badge Template have no bar_position/layout, so 'up' is
+        // statically excluded there; elsewhere, only offered when upAllowed
+        // (see postProcess for the matching runtime reset).
+        type: badge ? 'bar_orientation_no_up' : (c) => (upAllowed(c) ? 'bar_orientation' : 'bar_orientation_no_up'),
+        // Half-width everywhere except plain Badge (full-width there).
+        ...EditorFactory.widthUnless(badge && !template),
+      }),
       bar_size: EditorFieldsType.select('bar_size', {
         ...EditorFactory.badgeRestrictedType(badge, 'bar_size_no_xlarge'),
-        // Full-width for Badge Template only.
-        ...EditorFactory.widthUnless(badge && template),
+        // Full-width for Template/Badge Template (bar_color is a Jinja field
+        // there, no row partner) or once a theme is active (bar_color hides).
+        width: (c) => (template || !is.nullish(c.theme) || is.array(c.custom_theme) ? '100%' : availableSpace()),
+        // top/bottom/overlay/background all hard-override the bar's own
+        // thickness in CSS regardless of bar_size (see ha-card.overlay,
+        // .bottom-container/.top-container, ha-card.background).
+        showIf: (c) => !['top', 'bottom', 'overlay', 'background'].includes(c.bar_position),
       }),
       bar_color: EditorFieldsType.templateOrType('bar_color', template, 'color', {
         showIf: (c) => is.nullish(c.theme) && !is.array(c.custom_theme),
-        ...(template ? {} : { width: availableSpace() }),
+        // Full-width once bar_size (its row partner) hides for the same
+        // bar_position values.
+        ...(template
+          ? {}
+          : {
+              width: (c) =>
+                ['top', 'bottom', 'overlay', 'background'].includes(c.bar_position) ? '100%' : availableSpace(),
+            }),
       }),
       ...(badge
         ? {}
         : {
-            // Both require bar_position: 'overlay' (deleted from the badge
-            // schema, see YamlSchemaFactory.badge), so they're badge-only,
-            // unlike bar_segments right below.
+            // Both are badge-only (deleted from the badge schema, see
+            // YamlSchemaFactory.badge). bar_single_line only ever applies via
+            // .overlay (postProcess forces it back to false for any other
+            // bar_position); text_shadow also applies via .background - text
+            // sits on top of the bar there too, same legibility need.
             bar_single_line: EditorFieldsType.toggle('bar_single_line', {
               showIf: (c) => c.bar_position === 'overlay',
             }),
-            text_shadow: EditorFieldsType.toggle('text_shadow', { showIf: (c) => c.bar_position === 'overlay' }),
+            text_shadow: EditorFieldsType.toggle('text_shadow', {
+              showIf: (c) => c.bar_position === 'overlay' || c.bar_position === 'background',
+            }),
           }),
-      // Not gated on `badge` - valid for badges too (not in
-      // YamlSchemaFactory.badge's delete list), unlike its former neighbors
-      // above.
-      bar_segments: EditorFieldsType.number('bar_segments', { width: availableSpace() }),
+      bar_segments: EditorFieldsType.number('bar_segments', {
+        // Full-width for Template/Badge Template: bar_scale (its row partner
+        // below) doesn't exist there at all.
+        ...(template ? { width: '100%' } : { width: availableSpace() }),
+      }),
       // Not in YamlSchemaFactory.template: percent comes straight from Jinja
       // there, so the log/linear min-max mapping this drives has nothing to
       // act on - showing it would silently do nothing on save (same trap as
@@ -21061,41 +21255,53 @@ const EditorFactory = {
             }),
           }
         : {}),
-      bar_orientation: EditorFieldsType.select('bar_orientation', {
-        ...EditorFactory.badgeRestrictedType(badge, 'bar_orientation_no_up'),
-        // Half-width everywhere except plain Badge (full-width there).
-        ...EditorFactory.widthUnless(badge && !template),
-      }),
       // bar_max_width only affects .horizontal.small/.medium/.large (see the
-      // CSS rule on .progress-container) - gating on 'horizontal' (not
-      // 'vertical') keeps the toggle from offering a control with no visible
-      // effect. Badge/badgeTemplate opt out entirely (see their own
+      // CSS rule on .progress-container) - 'below'/'top'/'bottom'/'overlay'/
+      // 'background' all render through a separate container element
+      // instead, and .horizontal.xlarge has no matching max-width rule
+      // either (see the schema's own postProcess, which clears bar_max_width
+      // server-side for the same reason - this is just the editor mirror of
+      // it). Badge/badgeTemplate opt out entirely (see their own
       // .delete(['bar_max_width'])): without a 'layout' key they never get
       // the 'horizontal' class, so the option would be inert there.
       ...(!badge
-        ? {
-            bar_max_width_toggle: EditorFieldsType.toggle('bar_max_width_toggle', {
-              virtual: true,
-              showIf: (c) => (c.layout ?? 'horizontal') === 'horizontal',
-              resolveVirtual: (c) => Boolean(c.bar_max_width),
-              onVirtualChange: (value, config) => ({
-                ...config,
-                bar_max_width: value ? '300px' : undefined,
+        ? (() => {
+            const barMaxWidthAllowed = (c) =>
+              (c.layout ?? 'horizontal') === 'horizontal' &&
+              (c.bar_position ?? 'default') === 'default' &&
+              (c.bar_size ?? 'small') !== 'xlarge';
+            return {
+              bar_max_width_toggle: EditorFieldsType.toggle('bar_max_width_toggle', {
+                virtual: true,
+                showIf: barMaxWidthAllowed,
+                resolveVirtual: (c) => Boolean(c.bar_max_width),
+                onVirtualChange: (value, config) => ({
+                  ...config,
+                  bar_max_width: value ? '300px' : undefined,
+                }),
               }),
-            }),
-            bar_max_width: EditorFieldsType.slider('bar_max_width', {
-              virtual: true,
-              showIf: (c) => (c.layout ?? 'horizontal') === 'horizontal' && Boolean(c.bar_max_width),
-              resolveVirtual: (c) => parseInt(c.bar_max_width) || 0,
-              onVirtualChange: (value, config) => ({
-                ...config,
-                bar_max_width: value ? `${value}px` : undefined,
+              bar_max_width: EditorFieldsType.slider('bar_max_width', {
+                virtual: true,
+                // The toggle right above already carries this label ("Bar max
+                // width") - repeating it on the slider itself is redundant.
+                noLabel: true,
+                showIf: (c) => barMaxWidthAllowed(c) && Boolean(c.bar_max_width),
+                resolveVirtual: (c) => parseInt(c.bar_max_width) || 0,
+                onVirtualChange: (value, config) => ({
+                  ...config,
+                  bar_max_width: value ? `${value}px` : undefined,
+                }),
               }),
-            }),
-          }
+            };
+          })()
         : {}),
       reverse_secondary_info_row: EditorFieldsType.toggle('reverse_secondary_info_row', {
-        showIf: (c) => (!c.bar_position || c.bar_position === 'default') && c.layout === 'horizontal',
+        // Badge/Badge Template have neither key at all (always undefined) but
+        // structurally render exactly like layout: horizontal + bar_position:
+        // default - the (?? 'horizontal') fallback (missing before) is what
+        // actually lets it show and work for them, matching bar_position's
+        // own fallback right next to it.
+        showIf: (c) => (!c.bar_position || c.bar_position === 'default') && (c.layout ?? 'horizontal') === 'horizontal',
       }),
       center_zero: EditorFieldsType.toggle('center_zero', {
         virtual: true,
@@ -21200,6 +21406,10 @@ const EditorFactory = {
         type: 'hide_chips',
         target: 'hide',
         showIf: (c) => !is.nonEmptyString(c.hide),
+        // Template/BadgeTemplate schemas reject 'unit' (see
+        // YamlSchemaFactory.template) - no separate unit field there, the
+        // value comes straight from Jinja `percent`.
+        ...(template ? { items: ['icon', 'name', 'value', 'secondary_info', 'progress_bar'] } : {}),
       }),
       hide: EditorFieldsType.tpl('hide', { noLabel: true, showIf: (c) => is.nonEmptyString(c.hide) }),
       // ── Alert (alert_when) — not in the template schema ─────────────────
@@ -21262,10 +21472,11 @@ const EditorFactory = {
       ...(badge
         ? {}
         : {
-            layout: EditorFieldsType.select('layout'),
+            layout: EditorFieldsType.select('layout', { onChange: (value, config) => resetUpIfInvalid(config) }),
           }),
     },
-  }),
+  };
+  },
 
   interactions: (badge) => {
     // isActive: show a field only if its negotiated action differs from the

@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Effekt på baren (Jinja-läge)",
       "bar_orientation": "Orientering av baren",
       "bar_position": "Position för baren",
-      "bar_single_line": "Info på en rad (overlay)",
+      "bar_single_line": "Info på en rad",
       "bar_size": "Barstorlek",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Färgläge",
@@ -65,7 +65,7 @@
       "state_content": "Statusinnehåll",
       "show_all_actions": "Visa alla åtgärder",
       "tap_action": "Åtgärd vid kort tryck",
-      "text_shadow": "Lägg till textskugga (overlay)",
+      "text_shadow": "Lägg till textskugga",
       "theme_mode": "Theme mode",
       "theme": "Tema",
       "custom_theme": "Custom theme zones",
@@ -96,14 +96,14 @@
       "bar_orientation": {
         "ltr": "Vänster till höger",
         "rtl": "Höger till vänster",
-        "up": "Uppåt (overlay)"
+        "up": "Uppåt"
       },
       "bar_position": {
         "below": "Bar under innehållet",
-        "bottom": "Bar längst ned (overlay)",
+        "bottom": "Bar längst ned",
         "default": "Standard",
         "overlay": "Bar överlagrad på innehållet (overlay)",
-        "top": "Bar längst upp (overlay)",
+        "top": "Bar längst upp",
         "background": "Kortbakgrund"
       },
       "bar_size": {

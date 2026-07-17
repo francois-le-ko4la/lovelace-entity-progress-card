@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Palkin efekti (Jinja-tila)",
       "bar_orientation": "Palkin suunta",
       "bar_position": "Palkin sijainti",
-      "bar_single_line": "Tiedot yhdellä rivillä (overlay)",
+      "bar_single_line": "Tiedot yhdellä rivillä",
       "bar_size": "Palkin koko",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Väritila",
@@ -65,7 +65,7 @@
       "state_content": "Tilan sisältö",
       "show_all_actions": "Näytä kaikki toiminnot",
       "tap_action": "Toiminto lyhyellä napautuksella",
-      "text_shadow": "Lisää tekstivarjo (overlay)",
+      "text_shadow": "Lisää tekstivarjo",
       "theme_mode": "Theme mode",
       "theme": "Teema",
       "custom_theme": "Custom theme zones",
@@ -111,13 +111,13 @@
       "bar_orientation": {
         "ltr": "Vasemmalta oikealle",
         "rtl": "Oikealta vasemmalle",
-        "up": "Ylös (overlay)"
+        "up": "Ylös"
       },
       "bar_position": {
         "default": "Oletus",
         "below": "Palkki sisällön alla",
-        "top": "Palkki ylhäällä (päällekkäin)",
-        "bottom": "Palkki alhaalla (päällekkäin)",
+        "top": "Palkki ylhäällä",
+        "bottom": "Palkki alhaalla",
         "overlay": "Palkki sisällön päällä (overlay)",
         "background": "Kortin tausta"
       },

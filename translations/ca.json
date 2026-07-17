@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Efecte de la barra (mode Jinja)",
       "bar_orientation": "Orientació de la barra",
       "bar_position": "Posició de la barra",
-      "bar_single_line": "Informació en una sola línia (overlay)",
+      "bar_single_line": "Informació en una sola línia",
       "bar_size": "Mida de la barra",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Mode de color",
@@ -65,7 +65,7 @@
       "state_content": "Contingut de l'estat",
       "show_all_actions": "Mostra totes les accions",
       "tap_action": "Acció al tocar breument",
-      "text_shadow": "Afegir ombra al text (overlay)",
+      "text_shadow": "Afegir ombra al text",
       "theme_mode": "Theme mode",
       "theme": "Tema",
       "custom_theme": "Custom theme zones",
@@ -111,13 +111,13 @@
       "bar_orientation": {
         "ltr": "D'esquerra a dreta",
         "rtl": "De dreta a esquerra",
-        "up": "Cap amunt (overlay)"
+        "up": "Cap amunt"
       },
       "bar_position": {
         "default": "Predeterminada",
         "below": "Barra sota el contingut",
-        "top": "Barra a sobre (superposada)",
-        "bottom": "Barra a sota (superposada)",
+        "top": "Barra a sobre",
+        "bottom": "Barra a sota",
         "overlay": "Barra superposada al contingut (overlay)",
         "background": "Fons de la targeta"
       },

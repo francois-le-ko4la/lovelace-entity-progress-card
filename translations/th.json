@@ -35,7 +35,7 @@
       "bar_effect_jinja": "เอฟเฟกต์บนแถบ (โหมด Jinja)",
       "bar_orientation": "การวางแนวแถบ",
       "bar_position": "ตำแหน่งแถบ",
-      "bar_single_line": "ข้อมูลในบรรทัดเดียว (overlay)",
+      "bar_single_line": "ข้อมูลในบรรทัดเดียว",
       "bar_size": "ขนาดแถบ",
       "bar_segments": "Bar segments",
       "bar_color_mode": "โหมดสี",
@@ -65,7 +65,7 @@
       "state_content": "เนื้อหาของสถานะ",
       "show_all_actions": "แสดงการโต้ตอบทั้งหมด",
       "tap_action": "พฤติกรรมการแตะ",
-      "text_shadow": "เพิ่มเงาให้ข้อความ (overlay)",
+      "text_shadow": "เพิ่มเงาให้ข้อความ",
       "theme_mode": "Theme mode",
       "theme": "ธีม",
       "custom_theme": "Custom theme zones",
@@ -96,14 +96,14 @@
       "bar_orientation": {
         "ltr": "ซ้ายไปขวา",
         "rtl": "ขวาไปซ้าย",
-        "up": "ขึ้นบน (overlay)"
+        "up": "ขึ้นบน"
       },
       "bar_position": {
         "below": "แถบใต้เนื้อหา",
-        "bottom": "แถบด้านล่าง (overlay)",
+        "bottom": "แถบด้านล่าง",
         "default": "ค่าเริ่มต้น",
         "overlay": "แถบซ้อนทับเนื้อหา (overlay)",
-        "top": "แถบด้านบน (overlay)",
+        "top": "แถบด้านบน",
         "background": "พื้นหลังการ์ด"
       },
       "bar_size": {

@@ -35,7 +35,7 @@
       "bar_effect_jinja": "تأثير الشريط (وضع Jinja)",
       "bar_orientation": "اتجاه الشريط",
       "bar_position": "موضع الشريط",
-      "bar_single_line": "معلومات في سطر واحد (تراكب)",
+      "bar_single_line": "معلومات في سطر واحد",
       "bar_size": "حجم الشريط",
       "bar_segments": "Bar segments",
       "bar_color_mode": "وضع اللون",
@@ -65,7 +65,7 @@
       "state_content": "محتوى الحالة",
       "show_all_actions": "إظهار جميع الإجراءات",
       "tap_action": "الإجراء عند النقر القصير",
-      "text_shadow": "إضافة ظل للنص (overlay)",
+      "text_shadow": "إضافة ظل للنص",
       "theme_mode": "Theme mode",
       "theme": "السمة",
       "custom_theme": "Custom theme zones",
@@ -111,13 +111,13 @@
       "bar_orientation": {
         "ltr": "من اليسار إلى اليمين",
         "rtl": "من اليمين إلى اليسار",
-        "up": "اتجاه لأعلى (تراكب)"
+        "up": "اتجاه لأعلى"
       },
       "bar_position": {
         "default": "افتراضي",
         "below": "الشريط تحت المحتوى",
-        "top": "الشريط أعلى المحتوى (تراكب)",
-        "bottom": "الشريط أسفل المحتوى (تراكب)",
+        "top": "الشريط أعلى المحتوى",
+        "bottom": "الشريط أسفل المحتوى",
         "overlay": "الشريط فوق المحتوى (تراكب)",
         "background": "خلفية البطاقة"
       },

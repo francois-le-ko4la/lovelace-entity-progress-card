@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Bar effect (Jinja mode)",
       "bar_orientation": "Bar orientation",
       "bar_position": "Bar position",
-      "bar_single_line": "Single line info (overlay)",
+      "bar_single_line": "Single line info",
       "bar_size": "Bar size",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Bar color mode",
@@ -65,7 +65,7 @@
       "state_content": "State content",
       "show_all_actions": "Show all interactions",
       "tap_action": "Tap behavior",
-      "text_shadow": "Add text shadow (overlay)",
+      "text_shadow": "Add text shadow",
       "theme_mode": "Theme mode",
       "theme": "Theme",
       "custom_theme": "Custom theme zones",
@@ -111,13 +111,13 @@
       "bar_orientation": {
         "ltr": "Left to Right",
         "rtl": "Right to Left",
-        "up": "Up (overlay)"
+        "up": "Up"
       },
       "bar_position": {
         "default": "Default",
         "below": "Bar below content",
-        "top": "Bar on top (overlay)",
-        "bottom": "Bar on bottom (overlay)",
+        "top": "Bar on top",
+        "bottom": "Bar on bottom",
         "overlay": "Bar overlay on content",
         "background": "Full card background"
       },

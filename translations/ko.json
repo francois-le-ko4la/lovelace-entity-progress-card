@@ -35,7 +35,7 @@
       "bar_effect_jinja": "바 효과 (Jinja 모드)",
       "bar_orientation": "바 방향",
       "bar_position": "바 위치",
-      "bar_single_line": "한 줄로 정보 표시 (오버레이)",
+      "bar_single_line": "한 줄로 정보 표시",
       "bar_size": "바 크기",
       "bar_segments": "Bar segments",
       "bar_color_mode": "색상 모드",
@@ -65,7 +65,7 @@
       "state_content": "상태 콘텐츠",
       "show_all_actions": "모든 액션 표시",
       "tap_action": "짧게 탭 시 동작",
-      "text_shadow": "텍스트 그림자 추가 (오버레이)",
+      "text_shadow": "텍스트 그림자 추가",
       "theme_mode": "Theme mode",
       "theme": "테마",
       "custom_theme": "Custom theme zones",
@@ -96,14 +96,14 @@
       "bar_orientation": {
         "ltr": "왼쪽에서 오른쪽",
         "rtl": "오른쪽에서 왼쪽",
-        "up": "위쪽 방향 (오버레이)"
+        "up": "위쪽 방향"
       },
       "bar_position": {
         "below": "콘텐츠 아래 바",
-        "bottom": "하단 바 (오버레이)",
+        "bottom": "하단 바",
         "default": "기본",
         "overlay": "콘텐츠 위에 바 (오버레이)",
-        "top": "상단 바 (오버레이)",
+        "top": "상단 바",
         "background": "카드 배경"
       },
       "bar_size": {

@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Sáv effektus (Jinja mód)",
       "bar_orientation": "Sáv iránya",
       "bar_position": "Sáv pozíciója",
-      "bar_single_line": "Egy soros információ (overlay)",
+      "bar_single_line": "Egy soros információ",
       "bar_size": "Sáv mérete",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Szín mód",
@@ -65,7 +65,7 @@
       "state_content": "Állapot tartalma",
       "show_all_actions": "Az összes művelet megjelenítése",
       "tap_action": "Koppintás művelet",
-      "text_shadow": "Szöveg árnyék hozzáadása (overlay)",
+      "text_shadow": "Szöveg árnyék hozzáadása",
       "theme_mode": "Theme mode",
       "theme": "Téma",
       "custom_theme": "Custom theme zones",
@@ -111,13 +111,13 @@
       "bar_orientation": {
         "ltr": "Balról jobbra",
         "rtl": "Jobbról balra",
-        "up": "Felfelé (overlay)"
+        "up": "Felfelé"
       },
       "bar_position": {
         "default": "Alapértelmezett",
         "below": "Sáv a tartalom alatt",
-        "top": "Sáv fent (overlay)",
-        "bottom": "Sáv lent (overlay)",
+        "top": "Sáv fent",
+        "bottom": "Sáv lent",
         "overlay": "Sáv a tartalmon (overlay)",
         "background": "Kártya háttér"
       },

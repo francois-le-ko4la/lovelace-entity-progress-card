@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Effekt auf die Leiste (Jinja-Modus)",
       "bar_orientation": "Ausrichtung der Leiste",
       "bar_position": "Position der Leiste",
-      "bar_single_line": "Informationen in einer Zeile (Overlay)",
+      "bar_single_line": "Informationen in einer Zeile",
       "bar_size": "Größe der Bar",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Balkenfarbmodus",
@@ -65,7 +65,7 @@
       "state_content": "Statusinhalt",
       "show_all_actions": "Alle Aktionen anzeigen",
       "tap_action": "Aktion bei kurzem Tippen",
-      "text_shadow": "Textschatten hinzufügen (Overlay)",
+      "text_shadow": "Textschatten hinzufügen",
       "theme_mode": "Theme mode",
       "theme": "Thema",
       "custom_theme": "Benutzerdefinierte Themenzonen",
@@ -111,13 +111,13 @@
       "bar_orientation": {
         "ltr": "Von links nach rechts",
         "rtl": "Von rechts nach links",
-        "up": "Nach oben (Overlay)"
+        "up": "Nach oben"
       },
       "bar_position": {
         "default": "Standard",
         "below": "Leiste unter dem Inhalt",
-        "top": "Leiste oben (Overlay)",
-        "bottom": "Leiste unten (Overlay)",
+        "top": "Leiste oben",
+        "bottom": "Leiste unten",
         "overlay": "Leiste über dem Inhalt (Overlay)",
         "background": "Kartenhintergrund"
       },

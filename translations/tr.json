@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Çubuk efekti (Jinja modu)",
       "bar_orientation": "Çubuk yönü",
       "bar_position": "Çubuk konumu",
-      "bar_single_line": "Bilgiyi tek satırda göster (overlay)",
+      "bar_single_line": "Bilgiyi tek satırda göster",
       "bar_size": "Çubuk boyutu",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Renk modu",
@@ -65,7 +65,7 @@
       "state_content": "Durum içeriği",
       "show_all_actions": "Tüm eylemleri göster",
       "tap_action": "Kısa dokunma davranışı",
-      "text_shadow": "Metne gölge ekle (overlay)",
+      "text_shadow": "Metne gölge ekle",
       "theme_mode": "Theme mode",
       "theme": "Tema",
       "custom_theme": "Custom theme zones",
@@ -96,14 +96,14 @@
       "bar_orientation": {
         "ltr": "Soldan sağa",
         "rtl": "Sağdan sola",
-        "up": "Yukarı (overlay)"
+        "up": "Yukarı"
       },
       "bar_position": {
         "below": "İçeriğin altında çubuk",
-        "bottom": "Altta çubuk (overlay)",
+        "bottom": "Altta çubuk",
         "default": "Varsayılan",
         "overlay": "İçeriğin üzerine bindirme (overlay)",
-        "top": "Üstte çubuk (overlay)",
+        "top": "Üstte çubuk",
         "background": "Kart arka planı"
       },
       "bar_size": {

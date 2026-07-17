@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Učinek vrstice (način Jinja)",
       "bar_orientation": "Usmeritev vrstice",
       "bar_position": "Pozicija vrstice",
-      "bar_single_line": "Informacije v eni vrstici (overlay)",
+      "bar_single_line": "Informacije v eni vrstici",
       "bar_size": "Velikost vrstice",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Barvni način",
@@ -65,7 +65,7 @@
       "state_content": "Vsebina stanja",
       "show_all_actions": "Prikaži vsa dejanja",
       "tap_action": "Akcija ob tap",
-      "text_shadow": "Dodaj senco besedila (overlay)",
+      "text_shadow": "Dodaj senco besedila",
       "theme_mode": "Theme mode",
       "theme": "Tema",
       "custom_theme": "Custom theme zones",
@@ -111,13 +111,13 @@
       "bar_orientation": {
         "ltr": "Levo proti desni",
         "rtl": "Desno proti levi",
-        "up": "Navzgor (overlay)"
+        "up": "Navzgor"
       },
       "bar_position": {
         "default": "Privzeto",
         "below": "Vrstica pod vsebino",
-        "top": "Vrstica zgoraj (overlay)",
-        "bottom": "Vrstica spodaj (overlay)",
+        "top": "Vrstica zgoraj",
+        "bottom": "Vrstica spodaj",
         "overlay": "Vrstica čez vsebino (overlay)",
         "background": "Ozadje kartice"
       },

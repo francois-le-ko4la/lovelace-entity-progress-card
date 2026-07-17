@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Hiệu ứng thanh (chế độ Jinja)",
       "bar_orientation": "Hướng thanh",
       "bar_position": "Vị trí thanh",
-      "bar_single_line": "Thông tin trên một dòng (overlay)",
+      "bar_single_line": "Thông tin trên một dòng",
       "bar_size": "Kích thước thanh",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Chế độ màu",
@@ -65,7 +65,7 @@
       "state_content": "Nội dung trạng thái",
       "show_all_actions": "Hiển thị tất cả hành động",
       "tap_action": "Hành vi chạm",
-      "text_shadow": "Thêm bóng cho văn bản (overlay)",
+      "text_shadow": "Thêm bóng cho văn bản",
       "theme_mode": "Theme mode",
       "theme": "Chủ đề",
       "custom_theme": "Custom theme zones",
@@ -96,14 +96,14 @@
       "bar_orientation": {
         "ltr": "Trái sang phải",
         "rtl": "Phải sang trái",
-        "up": "Hướng lên (overlay)"
+        "up": "Hướng lên"
       },
       "bar_position": {
         "below": "Thanh bên dưới nội dung",
-        "bottom": "Thanh ở dưới cùng (overlay)",
+        "bottom": "Thanh ở dưới cùng",
         "default": "Mặc định",
         "overlay": "Thanh phủ lên nội dung (overlay)",
-        "top": "Thanh ở trên cùng (overlay)",
+        "top": "Thanh ở trên cùng",
         "background": "Nền thẻ"
       },
       "bar_size": {

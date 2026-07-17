@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Juostos efektas (Jinja režimas)",
       "bar_orientation": "Juostos orientacija",
       "bar_position": "Juostos pozicija",
-      "bar_single_line": "Informacija vienoje eilutėje (overlay)",
+      "bar_single_line": "Informacija vienoje eilutėje",
       "bar_size": "Juostos dydis",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Spalvos režimas",
@@ -65,7 +65,7 @@
       "state_content": "Būsenos turinys",
       "show_all_actions": "Rodyti visus veiksmus",
       "tap_action": "Bakstelėjimo veiksmas",
-      "text_shadow": "Pridėti teksto šešėlį (overlay)",
+      "text_shadow": "Pridėti teksto šešėlį",
       "theme_mode": "Theme mode",
       "theme": "Tema",
       "custom_theme": "Custom theme zones",
@@ -111,13 +111,13 @@
       "bar_orientation": {
         "ltr": "Iš kairės į dešinę",
         "rtl": "Iš dešinės į kairę",
-        "up": "Į viršų (overlay)"
+        "up": "Į viršų"
       },
       "bar_position": {
         "default": "Numatyta",
         "below": "Juosta po turiniu",
-        "top": "Juosta viršuje (overlay)",
-        "bottom": "Juosta apačioje (overlay)",
+        "top": "Juosta viršuje",
+        "bottom": "Juosta apačioje",
         "overlay": "Juosta ant turinio (overlay)",
         "background": "Kortelės fonas"
       },

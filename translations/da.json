@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Effekt på bar (Jinja-tilstand)",
       "bar_orientation": "Bar-retning",
       "bar_position": "Bar-placering",
-      "bar_single_line": "Info på én linje (overlay)",
+      "bar_single_line": "Info på én linje",
       "bar_size": "Bar størrelse",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Farvetilstand",
@@ -65,7 +65,7 @@
       "state_content": "Indhold af tilstand",
       "show_all_actions": "Vis alle handlinger",
       "tap_action": "Handling ved kort tryk",
-      "text_shadow": "Tilføj tekstskygge (overlay)",
+      "text_shadow": "Tilføj tekstskygge",
       "theme_mode": "Theme mode",
       "theme": "Tema",
       "custom_theme": "Custom theme zones",
@@ -111,13 +111,13 @@
       "bar_orientation": {
         "ltr": "Venstre til højre",
         "rtl": "Højre til venstre",
-        "up": "Opad (overlay)"
+        "up": "Opad"
       },
       "bar_position": {
         "default": "Standard",
         "below": "Bar under indhold",
-        "top": "Bar øverst (overlay)",
-        "bottom": "Bar nederst (overlay)",
+        "top": "Bar øverst",
+        "bottom": "Bar nederst",
         "overlay": "Bar over indhold (overlay)",
         "background": "Kortbaggrund"
       },

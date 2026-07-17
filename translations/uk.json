@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Ефект на панелі (режим Jinja)",
       "bar_orientation": "Орієнтація панелі",
       "bar_position": "Положення панелі",
-      "bar_single_line": "Інформація в один рядок (overlay)",
+      "bar_single_line": "Інформація в один рядок",
       "bar_size": "Розмір панелі",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Режим кольору",
@@ -65,7 +65,7 @@
       "state_content": "Вміст стану",
       "show_all_actions": "Показати всі дії",
       "tap_action": "Поведінка при дотику",
-      "text_shadow": "Додати тінь до тексту (overlay)",
+      "text_shadow": "Додати тінь до тексту",
       "theme_mode": "Theme mode",
       "theme": "Тема",
       "custom_theme": "Custom theme zones",
@@ -96,14 +96,14 @@
       "bar_orientation": {
         "ltr": "Зліва направо",
         "rtl": "Справа наліво",
-        "up": "Вгору (overlay)"
+        "up": "Вгору"
       },
       "bar_position": {
         "below": "Панель під вмістом",
-        "bottom": "Панель знизу (overlay)",
+        "bottom": "Панель знизу",
         "default": "За замовчуванням",
         "overlay": "Панель поверх вмісту (overlay)",
-        "top": "Панель зверху (overlay)",
+        "top": "Панель зверху",
         "background": "Фон картки"
       },
       "bar_size": {

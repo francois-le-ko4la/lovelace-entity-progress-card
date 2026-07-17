@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Effect op de balk (Jinja-modus)",
       "bar_orientation": "Oriëntatie van de balk",
       "bar_position": "Positie van de balk",
-      "bar_single_line": "Info op één regel (overlay)",
+      "bar_single_line": "Info op één regel",
       "bar_size": "Balkgrootte",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Balkkleurmodus",
@@ -65,7 +65,7 @@
       "state_content": "Inhoud van de status",
       "show_all_actions": "Toon alle acties",
       "tap_action": "Actie bij korte tik",
-      "text_shadow": "Tekstschaduw toevoegen (overlay)",
+      "text_shadow": "Tekstschaduw toevoegen",
       "theme_mode": "Theme mode",
       "theme": "Thema",
       "custom_theme": "Aangepaste themazones",
@@ -96,14 +96,14 @@
       "bar_orientation": {
         "ltr": "Links naar rechts",
         "rtl": "Rechts naar links",
-        "up": "Omhoog (overlay)"
+        "up": "Omhoog"
       },
       "bar_position": {
         "below": "Balk onder de inhoud",
-        "bottom": "Balk onderaan (overlay)",
+        "bottom": "Balk onderaan",
         "default": "Standaard",
         "overlay": "Balk over de inhoud (overlay)",
-        "top": "Balk bovenaan (overlay)",
+        "top": "Balk bovenaan",
         "background": "Kaartachtergrond"
       },
       "bar_size": {

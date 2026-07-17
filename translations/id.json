@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Efek pada bar (mode Jinja)",
       "bar_orientation": "Orientasi bar",
       "bar_position": "Posisi bar",
-      "bar_single_line": "Info dalam satu baris (overlay)",
+      "bar_single_line": "Info dalam satu baris",
       "bar_size": "Ukuran bar",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Mode warna",
@@ -65,7 +65,7 @@
       "state_content": "Konten status",
       "show_all_actions": "Tampilkan semua tindakan",
       "tap_action": "Perilaku ketuk",
-      "text_shadow": "Tambahkan bayangan teks (overlay)",
+      "text_shadow": "Tambahkan bayangan teks",
       "theme_mode": "Theme mode",
       "theme": "Tema",
       "custom_theme": "Custom theme zones",
@@ -96,14 +96,14 @@
       "bar_orientation": {
         "ltr": "Kiri ke kanan",
         "rtl": "Kanan ke kiri",
-        "up": "Ke atas (overlay)"
+        "up": "Ke atas"
       },
       "bar_position": {
         "below": "Bar di bawah konten",
-        "bottom": "Bar di bawah (overlay)",
+        "bottom": "Bar di bawah",
         "default": "Default",
         "overlay": "Bar ditumpangkan pada konten (overlay)",
-        "top": "Bar di atas (overlay)",
+        "top": "Bar di atas",
         "background": "Latar belakang kartu"
       },
       "bar_size": {

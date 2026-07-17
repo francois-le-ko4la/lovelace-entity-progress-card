@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Εφέ γραμμής (λειτουργία Jinja)",
       "bar_orientation": "Κατεύθυνση γραμμής",
       "bar_position": "Θέση γραμμής",
-      "bar_single_line": "Πληροφορίες σε μία γραμμή (overlay)",
+      "bar_single_line": "Πληροφορίες σε μία γραμμή",
       "bar_size": "Μέγεθος γραμμής",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Λειτουργία χρώματος",
@@ -65,7 +65,7 @@
       "state_content": "Περιεχόμενο κατάστασης",
       "show_all_actions": "Εμφάνιση όλων των ενεργειών",
       "tap_action": "Ενέργεια κατά το σύντομο πάτημα",
-      "text_shadow": "Προσθήκη σκιάς στο κείμενο (overlay)",
+      "text_shadow": "Προσθήκη σκιάς στο κείμενο",
       "theme_mode": "Theme mode",
       "theme": "Θέμα",
       "custom_theme": "Custom theme zones",
@@ -111,13 +111,13 @@
       "bar_orientation": {
         "ltr": "Από αριστερά προς δεξιά",
         "rtl": "Από δεξιά προς αριστερά",
-        "up": "Προς τα πάνω (overlay)"
+        "up": "Προς τα πάνω"
       },
       "bar_position": {
         "default": "Προεπιλογή",
         "below": "Γραμμή κάτω από το περιεχόμενο",
-        "top": "Γραμμή πάνω (επικάλυψη)",
-        "bottom": "Γραμμή κάτω (επικάλυψη)",
+        "top": "Γραμμή πάνω",
+        "bottom": "Γραμμή κάτω",
         "overlay": "Γραμμή πάνω από περιεχόμενο (overlay)",
         "background": "Φόντο κάρτας"
       },

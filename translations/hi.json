@@ -35,7 +35,7 @@
       "bar_effect_jinja": "बार पर प्रभाव (Jinja मोड)",
       "bar_orientation": "बार की दिशा",
       "bar_position": "बार की स्थिति",
-      "bar_single_line": "एक पंक्ति में जानकारी (ओवरले)",
+      "bar_single_line": "एक पंक्ति में जानकारी",
       "bar_size": "बार का आकार",
       "bar_segments": "Bar segments",
       "bar_color_mode": "रंग मोड",
@@ -65,7 +65,7 @@
       "state_content": "स्थिति की सामग्री",
       "show_all_actions": "सभी क्रियाएँ दिखाएँ",
       "tap_action": "टैप व्यवहार",
-      "text_shadow": "टेक्स्ट में छाया जोड़ें (overlay)",
+      "text_shadow": "टेक्स्ट में छाया जोड़ें",
       "theme_mode": "Theme mode",
       "theme": "थीम",
       "custom_theme": "Custom theme zones",
@@ -96,14 +96,14 @@
       "bar_orientation": {
         "ltr": "बाएं से दाएं",
         "rtl": "दाएं से बाएं",
-        "up": "ऊपर की ओर (ओवरले)"
+        "up": "ऊपर की ओर"
       },
       "bar_position": {
         "below": "सामग्री के नीचे बार",
-        "bottom": "नीचे बार (ओवरले)",
+        "bottom": "नीचे बार",
         "default": "डिफ़ॉल्ट",
         "overlay": "सामग्री पर ओवरले बार",
-        "top": "ऊपर बार (ओवरले)",
+        "top": "ऊपर बार",
         "background": "कार्ड पृष्ठभूमि"
       },
       "bar_size": {

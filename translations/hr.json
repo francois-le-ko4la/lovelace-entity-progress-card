@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Efekt na traci (Jinja način)",
       "bar_orientation": "Orijentacija trake",
       "bar_position": "Položaj trake",
-      "bar_single_line": "Informacije u jednom retku (overlay)",
+      "bar_single_line": "Informacije u jednom retku",
       "bar_size": "Veličina trake",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Način boje",
@@ -65,7 +65,7 @@
       "state_content": "Sadržaj stanja",
       "show_all_actions": "Prikaži sve radnje",
       "tap_action": "Radnja na kratki dodir",
-      "text_shadow": "Dodaj sjenu tekstu (overlay)",
+      "text_shadow": "Dodaj sjenu tekstu",
       "theme_mode": "Theme mode",
       "theme": "Tema",
       "custom_theme": "Custom theme zones",
@@ -96,14 +96,14 @@
       "bar_orientation": {
         "ltr": "Lijevo na desno",
         "rtl": "Desno na lijevo",
-        "up": "Prema gore (overlay)"
+        "up": "Prema gore"
       },
       "bar_position": {
         "below": "Traka ispod sadržaja",
-        "bottom": "Traka na dnu (overlay)",
+        "bottom": "Traka na dnu",
         "default": "Zadano",
         "overlay": "Traka preklopljena na sadržaj (overlay)",
-        "top": "Traka na vrhu (overlay)",
+        "top": "Traka na vrhu",
         "background": "Pozadina kartice"
       },
       "bar_size": {

@@ -35,7 +35,7 @@
       "bar_effect_jinja": "バーのエフェクト (Jinjaモード)",
       "bar_orientation": "バーの向き",
       "bar_position": "バーの位置",
-      "bar_single_line": "1行で情報を表示（オーバーレイ）",
+      "bar_single_line": "1行で情報を表示",
       "bar_size": "バーサイズ",
       "bar_segments": "Bar segments",
       "bar_color_mode": "カラーモード",
@@ -65,7 +65,7 @@
       "state_content": "状態の内容",
       "show_all_actions": "すべての操作を表示",
       "tap_action": "短くタップしたときの動作",
-      "text_shadow": "テキストに影を追加 (オーバーレイ)",
+      "text_shadow": "テキストに影を追加",
       "theme_mode": "Theme mode",
       "theme": "テーマ",
       "custom_theme": "Custom theme zones",
@@ -96,14 +96,14 @@
       "bar_orientation": {
         "ltr": "左から右",
         "rtl": "右から左",
-        "up": "上方向（オーバーレイ）"
+        "up": "上方向"
       },
       "bar_position": {
         "below": "コンテンツの下にバー",
-        "bottom": "下部にバー（オーバーレイ）",
+        "bottom": "下部にバー",
         "default": "デフォルト",
         "overlay": "コンテンツに重ねてバー（オーバーレイ）",
-        "top": "上部にバー（オーバーレイ）",
+        "top": "上部にバー",
         "background": "カードの背景"
       },
       "bar_size": {

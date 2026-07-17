@@ -35,7 +35,7 @@
       "bar_effect_jinja": "Efekt na pasku (tryb Jinja)",
       "bar_orientation": "Orientacja paska",
       "bar_position": "Pozycja paska",
-      "bar_single_line": "Info w jednej linii (overlay)",
+      "bar_single_line": "Info w jednej linii",
       "bar_size": "Rozmiar paska",
       "bar_segments": "Bar segments",
       "bar_color_mode": "Tryb koloru",
@@ -65,7 +65,7 @@
       "state_content": "Zawartość stanu",
       "show_all_actions": "Pokaż wszystkie akcje",
       "tap_action": "Akcja przy krótkim naciśnięciu",
-      "text_shadow": "Dodaj cień tekstu (overlay)",
+      "text_shadow": "Dodaj cień tekstu",
       "theme_mode": "Theme mode",
       "theme": "Motyw",
       "custom_theme": "Custom theme zones",
@@ -96,14 +96,14 @@
       "bar_orientation": {
         "ltr": "Od lewej do prawej",
         "rtl": "Od prawej do lewej",
-        "up": "W górę (overlay)"
+        "up": "W górę"
       },
       "bar_position": {
         "below": "Pasek pod zawartością",
-        "bottom": "Pasek na dole (overlay)",
+        "bottom": "Pasek na dole",
         "default": "Domyślnie",
         "overlay": "Pasek nałożony na zawartość (overlay)",
-        "top": "Pasek na górze (overlay)",
+        "top": "Pasek na górze",
         "background": "Tło karty"
       },
       "bar_size": {

@@ -35,7 +35,7 @@
       "bar_effect_jinja": "বারের প্রভাব (Jinja মোড)",
       "bar_orientation": "বারের অভিমুখ",
       "bar_position": "বারের অবস্থান",
-      "bar_single_line": "এক লাইনে তথ্য (ওভারলে)",
+      "bar_single_line": "এক লাইনে তথ্য",
       "bar_size": "বারের আকার",
       "bar_segments": "Bar segments",
       "bar_color_mode": "রঙের মোড",
@@ -65,7 +65,7 @@
       "state_content": "স্টেটের বিষয়বস্তু",
       "show_all_actions": "সব অ্যাকশন দেখান",
       "tap_action": "ট্যাপ আচরণ",
-      "text_shadow": "টেক্সটে ছায়া যোগ করুন (overlay)",
+      "text_shadow": "টেক্সটে ছায়া যোগ করুন",
       "theme_mode": "Theme mode",
       "theme": "থিম",
       "custom_theme": "Custom theme zones",
@@ -111,13 +111,13 @@
       "bar_orientation": {
         "ltr": "বাম থেকে ডানে",
         "rtl": "ডান থেকে বামে",
-        "up": "উপরের দিকে (ওভারলে)"
+        "up": "উপরের দিকে"
       },
       "bar_position": {
         "default": "ডিফল্ট",
         "below": "বিষয়বস্তুর নিচে বার",
-        "top": "উপরের দিকে বার (ওভারলে)",
-        "bottom": "নিচের দিকে বার (ওভারলে)",
+        "top": "উপরের দিকে বার",
+        "bottom": "নিচের দিকে বার",
         "overlay": "বিষয়বস্তুর ওপর বার (ওভারলে)",
         "background": "কার্ড পটভূমি"
       },
