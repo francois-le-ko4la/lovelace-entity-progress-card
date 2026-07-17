@@ -566,12 +566,15 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
 - **Versioning**: `const VERSION = 'x.y.z[-dev]'` at the top of the file is the
   single source of truth displayed in the console banner; keep it in sync with
   the git tag. `-dev` marks unreleased builds.
-- **CI** (`.github/workflows/`), each path-scoped so a PR only triggers the
-  checks relevant to what it touches:
+- **CI** (`.github/workflows/`), path-scoped where relevant so a PR only
+  triggers the checks that matter for what it touches:
+  - `validate-hacs.yaml` — **not** path-scoped, runs on every push/PR: HACS
+    validation (`hacs/action`, category `plugin`). Deliberately unscoped — it
+    checks `hacs.json`/README compliance too, not just the JS file, so a path
+    filter would risk missing a manifest/README-only regression.
   - `validate-js.yaml` — on `entity-progress-card.js`/`eslint.config.mjs`/
-    `package.json`/`package-lock.json` changes: HACS validation (`hacs/action`,
-    category `plugin`) + `npm run validate` (syntax check, lint, full
-    translations sync).
+    `package.json`/`package-lock.json` changes: `npm run validate` (syntax
+    check, lint, full translations sync).
   - `validate-i18n.yaml` — on `translations/**` changes:
     `npm run i18n:validate:structure` (well-formed JSON + template structure
     only — no JS sync required, so a translation-only PR isn't blocked on

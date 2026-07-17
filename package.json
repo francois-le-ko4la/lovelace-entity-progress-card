@@ -17,7 +17,7 @@
     "check:release-flags": "node scripts/check-release-flags.js",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
     "format:md": "prettier --write \"**/*.md\" \"!node_modules/**\"",
-    "build": "esbuild entity-progress-card.js --minify --target=es2022 --outdir=dist"
+    "build": "node scripts/build.js"
   },
   "repository": {
     "type": "git",

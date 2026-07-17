@@ -16,14 +16,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  validate-hacs:
-    runs-on: "ubuntu-latest"
-    steps:
-      - name: HACS validation
-        uses: "hacs/action@main"
-        with:
-          category: "plugin"
-
   validate-js:
     runs-on: "ubuntu-latest"
     steps:
