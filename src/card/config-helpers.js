@@ -10,27 +10,31 @@ import { initLogger } from '../utils/log.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
 import { YamlSchemaFactory } from './schema.js';
 
-/******************************************************************************
- * 🛠️ BaseConfigHelper
- * ============================================================================
- *
- * ✅ base class for managing and validating all card configuration.
- *
- * @class
+/**
+ * base class for managing and validating all card configuration.
  */
 class BaseConfigHelper {
   #hassProvider = HassProviderSingleton.getInstance();
+
   #HAError = null;
+
   #lastMsgConsole = null;
+
   #log = null;
+
   #actions = {
     card: { tap: null, doubleTap: null, hold: null },
     icon: { tap: null, doubleTap: null, hold: null },
   };
+
   #actionsReady = false;
+
   _isDefined = false;
+
   _configParsed = {};
+
   _configResolved = {}; // valeurs dérivées de la config, calculées une seule fois par set config()
+
   _yamlSchema = null;
 
   constructor() {
@@ -142,6 +146,7 @@ class BaseConfigHelper {
       sev: errorSrc.severity,
     };
   }
+
   get msg() {
     return this._isDefined && (this._configParsed.errorCode || this.#HAError) ? this._errorMessage : null;
   }
@@ -164,6 +169,7 @@ class BaseConfigHelper {
     }
     return this.#actions;
   }
+
   #getAction(action) {
     return this.isValid ? this.config?.[action]?.action : null;
   }
@@ -264,17 +270,13 @@ class BaseConfigHelper {
   }
 }
 
-/******************************************************************************
- * 🛠️ CardConfigHelper
- * ============================================================================
- *
- * ✅ Config helper for the standard card/badge/feature types: negotiates the
+/**
+ * Config helper for the standard card/badge/feature types: negotiates the
  * YAML config against `YamlSchemaFactory.card`, migrates legacy option shapes
  * (bare `max_value` entity string, `disable_unit`, `additions`), and fills
  * computed defaults (center_zero's symmetric `min_value`, entity attribute
  * mapping).
  *
- * @class
  * @extends BaseConfigHelper
  */
 class CardConfigHelper extends BaseConfigHelper {
@@ -371,9 +373,9 @@ class CardConfigHelper extends BaseConfigHelper {
 }
 
 /**
- * ✅ CardConfigHelper variant for the Badge type — same negotiation logic,
+ * CardConfigHelper variant for the Badge type — same negotiation logic,
  * `YamlSchemaFactory.badge` schema.
- * @class
+ *
  * @extends CardConfigHelper
  */
 class BadgeConfigHelper extends CardConfigHelper {
@@ -381,9 +383,9 @@ class BadgeConfigHelper extends CardConfigHelper {
 }
 
 /**
- * ✅ CardConfigHelper variant for the Tile Feature type —
+ * CardConfigHelper variant for the Tile Feature type —
  * `YamlSchemaFactory.feature` schema.
- * @class
+ *
  * @extends CardConfigHelper
  */
 class FeatureConfigHelper extends CardConfigHelper {
@@ -391,9 +393,9 @@ class FeatureConfigHelper extends CardConfigHelper {
 }
 
 /**
- * ✅ Config helper for the Jinja-driven Template card —
+ * Config helper for the Jinja-driven Template card —
  * `YamlSchemaFactory.template` schema.
- * @class
+ *
  * @extends BaseConfigHelper
  */
 class TemplateConfigHelper extends BaseConfigHelper {
@@ -401,9 +403,9 @@ class TemplateConfigHelper extends BaseConfigHelper {
 }
 
 /**
- * ✅ Config helper for the Jinja-driven Template badge —
+ * Config helper for the Jinja-driven Template badge —
  * `YamlSchemaFactory.badgeTemplate` schema.
- * @class
+ *
  * @extends BaseConfigHelper
  */
 class BadgeTemplateConfigHelper extends BaseConfigHelper {

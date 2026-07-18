@@ -8,7 +8,13 @@ import { VERSION, META, CARD_CONTEXT, CARD, HA_SELECTOR_TAG, HA_ACTION_HANDLER_T
 import { CONSTRUCTED_SHEETS } from './utils/styles.js';
 import { RegistrationHelper } from './utils/register.js';
 import { HassProviderSingleton } from './utils/hass-provider.js';
-import { EntityProgressCard, EntityProgressBadge, EntityProgressFeatures, EntityProgressTemplateCard, EntityProgressTemplateBadge } from './card/cards.js';
+import {
+  EntityProgressCard,
+  EntityProgressBadge,
+  EntityProgressFeatures,
+  EntityProgressTemplateCard,
+  EntityProgressTemplateBadge,
+} from './card/cards.js';
 import {
   EntityProgressCardEditor,
   EntityProgressBadgeEditor,
@@ -78,5 +84,6 @@ if (!window.EPB_DIAG) {
  */
 
 console.groupCollapsed(CARD.console.message, CARD.console.css);
+// eslint-disable-next-line no-console -- startup banner, not a debug leftover
 console.log(CARD.console.link);
 console.groupEnd();

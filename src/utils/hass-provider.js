@@ -10,21 +10,18 @@ import { TRANSLATIONS } from './translations.js';
 import { is, has } from './common-checks.js';
 import { Logger } from './log.js';
 
-/******************************************************************************
- * 🛠️ HassProviderSingleton
- * ============================================================================
- *
- * ✅ Singleton wrapper around Home Assistant's `hass` object: entity/device/
+/**
+ * Singleton wrapper around Home Assistant's `hass` object: entity/device/
  * area lookups, attribute resolution, localization (`localize()`), and
  * number/relative-time formatting. Accessed via `getInstance()` — the
  * constructor throws if called directly, so every consumer shares the same
  * instance and the same current `hass` reference.
- *
- * @class
  */
 class HassProviderSingleton {
   static #instance = null;
+
   static #allowInit = false;
+
   static #entityMap = {
     device_class: { source: 'attribute' },
     friendly_name: { source: 'attribute' },
@@ -39,12 +36,19 @@ class HassProviderSingleton {
     last_updated: { source: 'state' },
     display_precision: { source: 'entity' },
   };
+
   #debug = CARD_CONTEXT.debug.hass;
+
   #log = null;
+
   #hass = null;
+
   #isValid = false;
+
   #translations = {};
+
   #rtf = null;
+
   #rtfLanguage = null;
 
   constructor() {
@@ -67,18 +71,23 @@ class HassProviderSingleton {
     this.#isValid = true;
     this.#log.debug('HASS updated!');
   }
+
   get hass() {
     return this.#hass;
   }
+
   get isValid() {
     return this.#isValid;
   }
+
   get language() {
     return this.#hass?.language in TRANSLATIONS ? this.#hass.language : CARD.config.language;
   }
+
   getMessage(code) {
     return this.localize('card.msg')[code] || `Unknown message code: ${code}`;
   }
+
   get numberFormat() {
     const localeFromLang = (lang) => {
       try {
@@ -96,9 +105,11 @@ class HassProviderSingleton {
     };
     return numberFormatMap[userDef] || localeFromLang(this.language);
   }
+
   get version() {
     return this.#hass?.config?.version ?? null;
   }
+
   get hasNewShapeStrategy() {
     const [year, month] = (this.version ?? '0.0').split('.').map(Number);
     return year > 2025 || (year === 2025 && month >= 3);
@@ -122,6 +133,7 @@ class HassProviderSingleton {
   getEntityProp(entityId, prop, format = false) {
     return format ? this.#formatEntityProp(entityId, prop) : this.#resolveEntityProp(entityId, prop);
   }
+
   #resolveEntityProp(entityId, prop) {
     const mapping = HassProviderSingleton.#entityMap[prop];
     if (!mapping) return null;
@@ -134,6 +146,7 @@ class HassProviderSingleton {
 
     return resolvers[mapping.source]?.() ?? null;
   }
+
   #formatEntityProp(entityId, prop) {
     if (prop === 'last_changed' || prop === 'last_updated')
       return this.getRelativeTime(this.#resolveEntityProp(entityId, prop));
@@ -144,31 +157,38 @@ class HassProviderSingleton {
 
     return this.#hass?.formatEntityAttributeValue?.(stateObj, prop) ?? '';
   }
+
   hasEntity(entityId) {
     return entityId in (this.#hass?.states || {});
   }
+
   getEntityStateObj(entityId) {
     return this.#hass?.states?.[entityId] ?? null;
   }
+
   #getAttributes(entityId) {
     return this.getEntityStateObj(entityId)?.attributes ?? {};
   }
+
   getEntityAttribute(entityId, attribute) {
     if (!attribute) return null;
     const attributes = this.#getAttributes(entityId);
     return attribute in attributes ? attributes[attribute] : null;
   }
+
   getEntityName(entityId) {
     // CF5 - issue (critical) resolved - entities without unique_id are absent
     // from hass.entities; missing optional chaining crashed name tokens (type:
     // entity)
     return this.#hass?.entities?.[entityId]?.name ?? null;
   }
+
   getEntityDevice(entityId) {
     const deviceId = this.#hass?.entities?.[entityId]?.device_id;
     if (!deviceId) return null;
     return this.#hass?.devices?.[deviceId]?.name ?? null;
   }
+
   // Used by ViewCore.isBatteryCharging/isWashingMachineActive to look at
   // other entities on the same device as the card's own `entity`, each then
   // filtering by state, not by entity_id: an id-based guess (e.g. requiring
@@ -183,6 +203,7 @@ class HassProviderSingleton {
       (id) => id !== entityId && this.#hass.entities[id].device_id === deviceId,
     );
   }
+
   getEntityArea(entityId) {
     const entityAreaId = this.#hass?.entities?.[entityId]?.area_id;
     if (entityAreaId) return this.#hass?.areas?.[entityAreaId]?.name ?? null;
@@ -192,6 +213,7 @@ class HassProviderSingleton {
     const deviceAreaId = this.#hass?.devices?.[deviceId]?.area_id;
     return this.#hass?.areas?.[deviceAreaId]?.name ?? null;
   }
+
   getEntityFloor(entityId) {
     const areaId =
       this.#hass?.entities?.[entityId]?.area_id ??
@@ -200,13 +222,16 @@ class HassProviderSingleton {
     const floorId = this.#hass?.areas?.[areaId]?.floor_id;
     return this.#hass?.floors?.[floorId]?.name ?? null;
   }
+
   static getEntityDomain(entityId) {
     return is.string(entityId) && entityId.includes('.') ? entityId.split('.')[0] : null;
   }
+
   isEntityAvailable(entityId) {
     const state = this.getEntityStateObj(entityId)?.state;
     return state !== 'unavailable' && state !== 'unknown';
   }
+
   getRelativeTime(curTime) {
     if (!curTime) return '';
 
@@ -232,6 +257,7 @@ class HassProviderSingleton {
     }
     return null;
   }
+
   getNumericAttributes(entityId) {
     return Object.fromEntries(
       Object.entries(this.#getAttributes(entityId))
@@ -239,10 +265,12 @@ class HassProviderSingleton {
         .map(([key, val]) => [key, is.number(val) ? val : parseFloat(val)]),
     );
   }
+
   #loadTranslations(lang) {
     const curLanguage = has.own(TRANSLATIONS, lang) ? lang : CARD.config.language;
     this.#translations = TRANSLATIONS[curLanguage];
   }
+
   #getRelativeTimeFormat() {
     if (!this.#rtf || this.#rtfLanguage !== this.language) {
       this.#rtfLanguage = this.language;
@@ -251,6 +279,5 @@ class HassProviderSingleton {
     return this.#rtf;
   }
 }
-
 
 export { HassProviderSingleton };

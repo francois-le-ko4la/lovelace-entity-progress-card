@@ -384,7 +384,7 @@ const EditorFactory = {
           // Half-width once a theme is active, to pair with `icon` once
           // `color` (icon's usual partner) hides.
           icon_animation: EditorFieldsType.select('icon_animation', {
-            width: (c) => ((!is.nullish(c.theme) || is.array(c.custom_theme)) ? availableSpace() : '100%'),
+            width: (c) => (!is.nullish(c.theme) || is.array(c.custom_theme) ? availableSpace() : '100%'),
           }),
           force_circular_background: EditorFieldsType.toggle('force_circular_background'),
           bar_position: EditorFieldsType.select('bar_position', {
@@ -559,7 +559,8 @@ const EditorFactory = {
     // HACore#_addBaseClasses's vertical-bar/horizontal-bar decision) - shared
     // by bar_orientation's own dynamic type below and the reset-on-change
     // hooks on bar_position/layout.
-    const upAllowed = (c) => (c.layout === 'vertical' && c.bar_position === 'overlay') || c.bar_position === 'background';
+    const upAllowed = (c) =>
+      (c.layout === 'vertical' && c.bar_position === 'overlay') || c.bar_position === 'background';
     const resetUpIfInvalid = (config) =>
       config.bar_orientation === 'up' && !upAllowed(config) ? { ...config, bar_orientation: 'ltr' } : config;
     return {
@@ -628,7 +629,8 @@ const EditorFactory = {
           // default - the (?? 'horizontal') fallback (missing before) is what
           // actually lets it show and work for them, matching bar_position's
           // own fallback right next to it.
-          showIf: (c) => (!c.bar_position || c.bar_position === 'default') && (c.layout ?? 'horizontal') === 'horizontal',
+          showIf: (c) =>
+            (!c.bar_position || c.bar_position === 'default') && (c.layout ?? 'horizontal') === 'horizontal',
         }),
         center_zero: EditorFieldsType.toggle('center_zero', {
           virtual: true,
@@ -680,7 +682,10 @@ const EditorFactory = {
           target: 'bar_effect',
           showIf: (c) => !is.nonEmptyString(c.bar_effect),
         }),
-        bar_effect: EditorFieldsType.tpl('bar_effect', { noLabel: true, showIf: (c) => is.nonEmptyString(c.bar_effect) }),
+        bar_effect: EditorFieldsType.tpl('bar_effect', {
+          noLabel: true,
+          showIf: (c) => is.nonEmptyString(c.bar_effect),
+        }),
         // ── Watermark ────────────────────────────────────────────────────────
         ...EditorFactory.themeWatermarkFields(),
         // ── Badge fields ─────────────────────────────────────────────────────

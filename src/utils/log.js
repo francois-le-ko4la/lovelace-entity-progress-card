@@ -101,6 +101,5 @@ function initLogger(ctx, debugFlag, methodNames = []) {
   return logger;
 }
 
-
 export { Logger };
 export { initLogger };

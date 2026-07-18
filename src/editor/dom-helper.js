@@ -10,11 +10,7 @@ import { DOMHelper } from '../card/dom-helpers.js';
 
 const availableSpace = (gap = 16, factor = 0.5) => `calc((100% - ${gap}px) * ${factor})`;
 
-/******************************************************************************
- * 🛠️ EditorDOMHelper
- * ============================================================================
- *
- * @class
+/**
  * @extends DOMHelper
  */
 
@@ -258,7 +254,6 @@ class EditorDOMHelper extends DOMHelper {
     this.updateValue(name, def.resolveVirtual(config));
   }
 }
-
 
 export { availableSpace };
 export { EditorDOMHelper };

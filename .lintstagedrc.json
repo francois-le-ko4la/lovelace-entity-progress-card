@@ -1,0 +1,4 @@
+{
+  "src/**/*.js": ["prettier --write", "eslint --fix"],
+  "*.md": ["prettier --write", "markdownlint-cli2 --fix"]
+}

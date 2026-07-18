@@ -1850,7 +1850,6 @@ const getSharedStyleSheet = (cssText) => {
   return sheet;
 };
 
-
 export { css };
 export { CARD_CSS };
 export { CHIPS_HOST_STYLE };

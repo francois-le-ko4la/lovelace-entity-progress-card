@@ -11,20 +11,22 @@ import { is } from '../utils/common-checks.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
 import { BaseConfigHelper } from '../card/config-helpers.js';
 import { EditorDOMHelper } from './dom-helper.js';
-import { EntityProgressEffectChips, EntityProgressHideChips, EntityProgressValueSourceModeChips, EntityProgressThemeModeChips, EntityProgressBarStackModeChips } from './chips.js';
+import {
+  EntityProgressEffectChips,
+  EntityProgressHideChips,
+  EntityProgressValueSourceModeChips,
+  EntityProgressThemeModeChips,
+  EntityProgressBarStackModeChips,
+} from './chips.js';
 import { EntityProgressBarStackEditor, EntityProgressCustomThemeEditor } from './list-editors.js';
 
-/******************************************************************************
- * 🛠️ EditorBase
- * ============================================================================
- *
- * ✅ Shared base for every per-card-type visual editor. Builds the
+/**
+ * Shared base for every per-card-type visual editor. Builds the
  * expansion-panel form from a subclass's static `_fields` tree (`EditorFactory`
  * output), and round-trips changes between the rendered `ha-selector`/chips
  * controls and the card config, via `_configHelper` (a `BaseConfigHelper`
  * subclass).
  *
- * @class
  * @abstract
  * @extends HTMLElement
  */
@@ -51,11 +53,17 @@ class EditorBase extends HTMLElement {
   // ─── private state ────────────────────────────────────────────────────────
 
   #config = {};
+
   #hassProvider = null;
+
   #dom = null;
+
   #boundOnChanged = null;
+
   #pendingSentConfig = null;
+
   #sendConfigScheduled = false;
+
   _configHelper = new BaseConfigHelper();
 
   get #localizedOptions() {
@@ -94,6 +102,7 @@ class EditorBase extends HTMLElement {
     this.#hassProvider.hass = hass;
     this.#dom.updateHass(hass);
   }
+
   get hass() {
     return this.#hassProvider.hass;
   }
@@ -278,8 +287,7 @@ class EditorBase extends HTMLElement {
       // Badge/BadgeTemplate schemas reject 'up' (see YamlSchemaFactory.badge)
       // - reuses the same translated ltr/rtl labels, just without the option
       // that would silently fall back to 'ltr' on save.
-      bar_orientation_no_up: () =>
-        buildSelect({ ltr: options.bar_orientation.ltr, rtl: options.bar_orientation.rtl }),
+      bar_orientation_no_up: () => buildSelect({ ltr: options.bar_orientation.ltr, rtl: options.bar_orientation.rtl }),
       bar_position: () => buildSelect(options.bar_position),
       bar_color_mode: () => buildSelect(options.bar_color_mode),
       bar_scale: () => buildSelect(options.bar_scale),
@@ -449,7 +457,8 @@ class EditorBase extends HTMLElement {
     // any zone still missing a valid min/max, so a just-added row would
     // otherwise vanish from the list the instant it round-trips through the
     // negotiated config, before its fields are even filled in.
-    const config = negotiated && !['template', 'action', 'custom_theme_editor'].includes(def.type) ? negotiated : rawConfig;
+    const config =
+      negotiated && !['template', 'action', 'custom_theme_editor'].includes(def.type) ? negotiated : rawConfig;
 
     const isNested = def.name.includes('.');
     const [parentKey, childKey] = isNested ? def.name.split('.') : [def.name, null];
@@ -614,6 +623,5 @@ class EditorBase extends HTMLElement {
     });
   }
 }
-
 
 export { EditorBase };

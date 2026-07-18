@@ -10,17 +10,12 @@ import { Logger } from '../utils/log.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
 import { StructureTemplates } from './structure.js';
 
-/******************************************************************************
- * 🛠️ ObjStructure
- * ============================================================================
- *
- * ✅ Builds and caches a card type's DOM structure (`StructureTemplates[
+/**
+ * Builds and caches a card type's DOM structure (`StructureTemplates[
  * cardType]`) as a `<template>`, cloned on each `render()`/`clone()` call
  * instead of re-parsing `innerHTML` every time. Cached per unique structure
  * options (barType, barPosition, layout, ...), since the markup only depends
  * on those, not on the entity's live state.
- *
- * @class
  */
 class ObjStructure {
   // CF5 - issue (perf) resolved - card.innerHTML re-parsed the full HTML string
@@ -56,16 +51,11 @@ class ObjStructure {
   }
 }
 
-/******************************************************************************
- * 🛠️ NumberFormatter
- * ============================================================================
- *
- * ✅ class for formatting value && unit.
+/**
+ * class for formatting value && unit.
  *
  * This class uses `Value`, `Unit`, and `Decimal` objects to manage and validate
  * its internal data.
- *
- * @class
  */
 class NumberFormatter {
   static unitsNoSpace = {
@@ -105,6 +95,7 @@ class NumberFormatter {
 
     return `${formattedValue}${space}${unit}`;
   }
+
   static formatTiming(
     totalSeconds,
     decimal = 0,
@@ -129,6 +120,7 @@ class NumberFormatter {
 
     return [pad(hours), pad(minutes), seconds].join(':');
   }
+
   static durationToSeconds(value, unit) {
     switch (unit) {
       case 'd': // Jour
@@ -150,6 +142,7 @@ class NumberFormatter {
         return null;
     }
   }
+
   static convertDuration(duration) {
     // CF5 - issue (critical) resolved - timer attributes (duration/remaining)
     // can be missing during HA startup; null.split() crashed the card
@@ -168,21 +161,19 @@ class NumberFormatter {
   }
 }
 
-/******************************************************************************
- * 🛠️ TypedValueHelper
- * ============================================================================
- *
- * ✅ Base class for a self-validating typed value: stores a value only if
+/**
+ * Base class for a self-validating typed value: stores a value only if
  * `_validate()` (overridden per subclass) accepts it, otherwise falls back
  * to the constructor's initial value. `isValid` reflects the last assignment.
  *
- * @class
  * @abstract
  */
 
 class TypedValueHelper {
   #value = null;
+
   #isValid = false;
+
   #defaultValue = null;
 
   constructor(newValue = null) {
@@ -193,9 +184,11 @@ class TypedValueHelper {
     this.#isValid = this._validate(newValue);
     this.#value = this.#isValid ? newValue : null;
   }
+
   get value() {
     return this.#isValid ? this.#value : this.#defaultValue;
   }
+
   get isValid() {
     return this.#isValid;
   }
@@ -206,8 +199,8 @@ class TypedValueHelper {
 }
 
 /**
- * ✅ TypedValueHelper accepting any finite number.
- * @class
+ * TypedValueHelper accepting any finite number.
+ *
  * @extends TypedValueHelper
  */
 class ValueHelper extends TypedValueHelper {
@@ -216,13 +209,8 @@ class ValueHelper extends TypedValueHelper {
   }
 }
 
-/******************************************************************************
- * 🛠️ DecimalHelper
- * ============================================================================
- *
- * ✅ Represents a non-negative integer value that can be valid or invalid.
- *
- * @class
+/**
+ * Represents a non-negative integer value that can be valid or invalid.
  */
 class DecimalHelper extends TypedValueHelper {
   _validate(v) {
@@ -230,16 +218,12 @@ class DecimalHelper extends TypedValueHelper {
   }
 }
 
-/******************************************************************************
- * 🛠️ UnitHelper
- * ============================================================================
- *
- * ✅ Represents a unit of measurement, stored as a string.
- *
- * @class
+/**
+ * Represents a unit of measurement, stored as a string.
  */
 class UnitHelper {
   #value = CARD.config.unit.default;
+
   #isDisabled = false;
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
@@ -249,18 +233,23 @@ class UnitHelper {
     // unit_of_measurement; .trim() crashed and the ?? fallback was dead code
     this.#value = is.nullish(newValue) ? CARD.config.unit.default : String(newValue).trim();
   }
+
   get value() {
     return this.#isDisabled ? '' : this.#value;
   }
+
   set isDisabled(newValue) {
     this.#isDisabled = is.boolean(newValue) ? newValue : false;
   }
+
   get isDisabled() {
     return this.#isDisabled;
   }
+
   get isTimerUnit() {
     return this.#value.toLowerCase() === CARD.config.unit.timer;
   }
+
   get isFlexTimerUnit() {
     return this.#value.toLowerCase() === CARD.config.unit.flexTimer;
   }
@@ -272,24 +261,28 @@ class UnitHelper {
   }
 }
 
-/******************************************************************************
- * 🛠️ PercentHelper
- * ============================================================================
- *
- * ✅ class for calculating and formatting percentages.
- *
- * @class
+/**
+ * class for calculating and formatting percentages.
  */
 class ProgressCalc {
   #min = new ValueHelper(CARD.config.value.min);
+
   #max = new ValueHelper(CARD.config.value.max);
+
   #current = new ValueHelper(0);
+
   #decimal = new DecimalHelper(CARD.config.decimal.percentage);
+
   #percent = 0;
+
   #isReversed = false;
+
   #isCenterZero = false;
+
   #zeroValue = 0;
+
   #growthPercent = false;
+
   #scale = 'linear';
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
@@ -297,6 +290,7 @@ class ProgressCalc {
   set isReversed(newValue) {
     this.#isReversed = is.boolean(newValue) ? newValue : CARD.config.reverse;
   }
+
   get isReversed() {
     return this.#isReversed;
   }
@@ -304,6 +298,7 @@ class ProgressCalc {
   set min(newValue) {
     this.#min.value = newValue;
   }
+
   get min() {
     return this.#min.value;
   }
@@ -311,6 +306,7 @@ class ProgressCalc {
   set max(newValue) {
     this.#max.value = newValue;
   }
+
   get max() {
     return this.#max.value;
   }
@@ -318,6 +314,7 @@ class ProgressCalc {
   set current(newCurrent) {
     this.#current.value = newCurrent;
   }
+
   get current() {
     return this.#current.value;
   }
@@ -325,6 +322,7 @@ class ProgressCalc {
   set decimal(newValue) {
     this.#decimal.value = newValue;
   }
+
   get decimal() {
     return this.#decimal.value;
   }
@@ -332,6 +330,7 @@ class ProgressCalc {
   set isCenterZero(newValue) {
     this.#isCenterZero = is.boolean(newValue) ? newValue : false;
   }
+
   get isCenterZero() {
     return this.#isCenterZero;
   }
@@ -339,6 +338,7 @@ class ProgressCalc {
   set zeroValue(newValue) {
     this.#zeroValue = is.number(newValue) ? newValue : 0;
   }
+
   get zeroValue() {
     return this.#zeroValue;
   }
@@ -346,6 +346,7 @@ class ProgressCalc {
   set growthPercent(newValue) {
     this.#growthPercent = is.boolean(newValue) ? newValue : false;
   }
+
   get growthPercent() {
     return this.#growthPercent;
   }
@@ -353,6 +354,7 @@ class ProgressCalc {
   set scale(newValue) {
     this.#scale = newValue === 'log' ? 'log' : 'linear';
   }
+
   get scale() {
     return this.#scale;
   }
@@ -368,16 +370,20 @@ class ProgressCalc {
   get actual() {
     return this.#isReversed ? this.max - this.current : this.current;
   }
+
   get isValid() {
     return this.range !== 0;
   }
+
   get range() {
     if (!this.isCenterZero) return this.max - this.min;
     return this.current >= this.#zeroValue ? this.max - this.#zeroValue : this.#zeroValue - this.min;
   }
+
   get correctedValue() {
     return this.isCenterZero ? this.current - this.#zeroValue : this.actual - this.min;
   }
+
   get percent() {
     return this.isValid ? this.#percent : null;
   }
@@ -428,18 +434,16 @@ class ProgressCalc {
   }
 }
 
-/******************************************************************************
- * 🛠️ PercentHelper
- * ============================================================================
- *
- * ✅ class for calculating and formatting percentages.
- *
- * @class
+/**
+ * class for calculating and formatting percentages.
  */
 class PercentHelper extends ProgressCalc {
   #hassProvider = null;
+
   #unit = new UnitHelper();
+
   #isTimer = false;
+
   #unitSpacing = CARD.config.unit.unitSpacing.auto;
 
   constructor() {
@@ -452,6 +456,7 @@ class PercentHelper extends ProgressCalc {
   set isTimer(newValue) {
     this.#isTimer = is.boolean(newValue) ? newValue : false;
   }
+
   get isTimer() {
     return this.#isTimer;
   }
@@ -459,6 +464,7 @@ class PercentHelper extends ProgressCalc {
   get unit() {
     return this.#unit.value;
   }
+
   set unit(newValue) {
     this.#unit.value = newValue ?? '';
   }
@@ -466,9 +472,11 @@ class PercentHelper extends ProgressCalc {
   get hasTimerUnit() {
     return this.#isTimer && this.#unit.isTimerUnit;
   }
+
   get hasFlexTimerUnit() {
     return this.#isTimer && this.#unit.isFlexTimerUnit;
   }
+
   get hasTimerOrFlexTimerUnit() {
     return this.hasTimerUnit || this.hasFlexTimerUnit;
   }
@@ -526,26 +534,31 @@ class PercentHelper extends ProgressCalc {
   }
 }
 
-/******************************************************************************
- * 🛠️ ThemeManager
- * ============================================================================
- *
- * ✅ Manages the theme and its associated icon and color based on a percentage
+/**
+ * Manages the theme and its associated icon and color based on a percentage
  * value.
- *
- * @class
  */
 class ThemeManager {
   #theme = null;
+
   #icon = null;
+
   #iconColor = null;
+
   #barColor = null;
+
   #value = 0;
+
   #isValid = false;
+
   #isLinear = false;
+
   #isBasedOnPercentage = false;
+
   #isCustomTheme = false;
+
   #currentStyle = null;
+
   #interpolate = false;
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
@@ -561,9 +574,11 @@ class ThemeManager {
     this.#isLinear = THEME[newTheme].linear;
     this.#isBasedOnPercentage = THEME[newTheme].percent;
   }
+
   get theme() {
     return this.#theme;
   }
+
   // Only a presence/shape check: per-zone validity (numeric min < max, sorted)
   // is already guaranteed by the schema's customTheme validator, the sole path
   // a config reaches here through — see BaseConfigHelper.set config.
@@ -575,34 +590,44 @@ class ThemeManager {
     this.#isLinear = false;
     this.#isCustomTheme = true;
   }
+
   get customTheme() {
     return this.#currentStyle;
   }
+
   get isLinear() {
     return this.#isLinear;
   }
+
   get isBasedOnPercentage() {
     return this.#isBasedOnPercentage;
   }
+
   get isCustomTheme() {
     return this.#isCustomTheme;
   }
+
   get isValid() {
     return this.#isValid;
   }
+
   set value(newValue) {
     this.#value = newValue;
     this.#refresh();
   }
+
   get value() {
     return this.#value;
   }
+
   get icon() {
     return this.#icon;
   }
+
   get iconColor() {
     return this.#iconColor;
   }
+
   get barColor() {
     return this.#barColor;
   }
@@ -632,6 +657,7 @@ class ThemeManager {
       this.#interpolate,
     ] = [null, null, null, null, null, 0, false, false, false, false, false];
   }
+
   #refresh() {
     if (!this.#isValid) return;
     const applyStyle = this.isLinear ? this.#setLinearStyle : this.#setStyle;
@@ -698,6 +724,7 @@ class ThemeManager {
       this.#barColor = ThemeManager.adaptColor(themeData.bar_color || themeData.color || null);
     }
   }
+
   static #interpolateColor(from, to, ratio) {
     if (!from || !to) return null;
     const pct = Math.round(ratio * 100);
@@ -765,17 +792,21 @@ class ThemeManager {
   }
 }
 
-/******************************************************************************
- * 🛠️ ChangeTracker
- * ============================================================================
+/**
  */
 class ChangeTracker {
   #debug = CARD_CONTEXT.debug.hass;
+
   #log = null;
+
   #firstTime = true;
+
   #watchedEntities = new Set();
+
   #entityCache = {};
+
   #updated = false;
+
   #hassState = { isUpdated: false };
 
   constructor() {
@@ -852,30 +883,39 @@ class ChangeTracker {
   }
 }
 
-/******************************************************************************
- * 🛠️ EntityHelper
- * ============================================================================
- *
- * ✅ Helper class for managing entities. This class validates and retrieves
+/**
+ * Helper class for managing entities. This class validates and retrieves
  * information from Home Assistant if it's an entity.
- *
- * @class
  */
 class EntityHelper {
   #hassProvider = null;
+
   #isValid = false;
+
   #value = {};
+
   #entityId = null;
+
   #attribute = null;
+
   #color = null;
+
   #subtract = false;
+
   #isMain = false;
+
   #state = null;
+
   #domain = null;
+
   #entityType = null;
+
   #entityTypeFlags = { isTimer: false, isDuration: false, isNumber: false, isCounter: false, isSynced: false };
+
   #stateContent = [];
+
   #nameTokens = null;
+
   static #handleRefreshType = new Map([
     [HA_CONTEXT.entity.type.timer, (self) => self._manageTimerEntity()],
     [HA_CONTEXT.entity.type.duration, (self) => self._manageDurationEntity()],
@@ -903,54 +943,71 @@ class EntityHelper {
   get entityId() {
     return this.#entityId;
   }
+
   set attribute(newValue) {
     this.#attribute = newValue;
   }
+
   get attribute() {
     return this.#attribute;
   }
+
   set color(newValue) {
     this.#color = newValue ?? null;
   }
+
   get color() {
     return this.#color;
   }
+
   set subtract(newValue) {
     this.#subtract = Boolean(newValue);
   }
+
   get subtract() {
     return this.#subtract;
   }
+
   set isMain(newValue) {
     this.#isMain = Boolean(newValue);
   }
+
   get isMain() {
     return this.#isMain;
   }
+
   set nameTokens(tok) {
     this.#nameTokens = is.nonEmptyArray(tok) ? tok : null;
   }
+
   get nameTokens() {
     return this.#nameTokens;
   }
+
   set stateContent(val) {
     this.#stateContent = val;
   }
+
   get stateContent() {
     return this.#stateContent;
   }
+
   get value() {
     return this.#isValid ? this.#value : 0;
   }
+
   get state() {
     return this.#state;
   }
+
   get isValid() {
     return this.#isValid;
   }
+
   get isAvailable() {
     return this.#hassProvider.isEntityAvailable(this.#entityId);
   }
+
   get attributes() {
     return this.#isValid &&
       !this.entityType.isCounter &&
@@ -960,15 +1017,19 @@ class EntityHelper {
       ? this.#hassProvider.getNumericAttributes(this.#entityId)
       : {};
   }
+
   get hasAttribute() {
     return this.#isValid && Object.keys(this.attributes).length > 0;
   }
+
   get defaultAttribute() {
     return HA_CONTEXT.attributeMapping[this.#domain]?.attribute ?? null;
   }
+
   get name() {
     return this.#hassProvider.getEntityProp(this.#entityId, 'friendly_name');
   }
+
   _nameResolver() {
     const resolvers = {
       text: (item) => item.text,
@@ -991,15 +1052,19 @@ class EntityHelper {
       .filter((v) => is.nonEmptyString(v))
       .join(' ');
   }
+
   get nameComposition() {
     return this.#nameTokens ? this._nameResolver() : this.name;
   }
+
   get stateObj() {
     return this.#hassProvider.getEntityStateObj(this.#entityId);
   }
+
   get formatedEntityState() {
     return this.#hassProvider.getEntityProp(this.#entityId, 'state', true);
   }
+
   get unit() {
     if (!this.#isValid) return null;
     if (this.entityType.isTimer) return CARD.config.unit.flexTimer;
@@ -1008,9 +1073,11 @@ class EntityHelper {
 
     return this.#hassProvider.getEntityProp(this.#entityId, 'unit_of_measurement');
   }
+
   get precision() {
     return this.#isValid ? (this.#hassProvider.getEntityProp(this.#entityId, 'display_precision') ?? null) : null;
   }
+
   get entityType() {
     if (!this.#entityTypeFlags.isSynced) {
       const type = this.getEntityType();
@@ -1020,9 +1087,11 @@ class EntityHelper {
     }
     return this.#entityTypeFlags;
   }
+
   get hasShapeByDefault() {
     return [HA_CONTEXT.entity.type.light, HA_CONTEXT.entity.type.fan].includes(this.#domain);
   }
+
   get defaultColor() {
     const colorMap = {
       [HA_CONTEXT.entity.type.timer]:
@@ -1040,6 +1109,7 @@ class EntityHelper {
 
     return colorMap[this.#domain] ?? colorMap[this.#hassProvider.getEntityProp(this.#entityId, 'device_class')] ?? null;
   }
+
   get stateContentToString() {
     const results = [];
 
@@ -1124,6 +1194,7 @@ class EntityHelper {
       this.#isValid = false;
     }
   }
+
   _manageTimerEntity() {
     // eslint-disable-next-line no-useless-assignment
     let [duration, elapsed] = [null, null];
@@ -1165,6 +1236,7 @@ class EntityHelper {
       state: this.#state,
     };
   }
+
   _manageCounterAndNumberEntity(min, max) {
     this.#value = {
       current: parseFloat(this.#state),
@@ -1172,6 +1244,7 @@ class EntityHelper {
       max: this.#hassProvider.getEntityAttribute(this.#entityId, max),
     };
   }
+
   _manageDurationEntity() {
     const unit = this.#hassProvider.getEntityProp(this.#entityId, 'unit_of_measurement');
     const value = parseFloat(this.#state);
@@ -1201,17 +1274,13 @@ class EntityHelper {
   }
 }
 
-/******************************************************************************
- * 🛠️ EntityCollectionHelper
- * ============================================================================
- *
- * ✅ Helper class for managing entities collection.
- *
- * @class
+/**
+ * Helper class for managing entities collection.
  */
 
 class EntityCollectionHelper {
   #entities = [];
+
   #mode = 'stacked';
 
   static #numericValue(helper) {
@@ -1250,6 +1319,7 @@ class EntityCollectionHelper {
   set mode(newMode) {
     this.#mode = ['proportional', 'net'].includes(newMode) ? newMode : 'stacked';
   }
+
   get mode() {
     return this.#mode;
   }
@@ -1275,6 +1345,7 @@ class EntityCollectionHelper {
   getTotalValue() {
     return EntityCollectionHelper.#magnitudeSum(this.getAvailableEntities());
   }
+
   getAvailableEntities() {
     return this.#entities.filter((helper) => helper.isValid && helper.isAvailable);
   }
@@ -1405,18 +1476,14 @@ class EntityCollectionHelper {
   }
 }
 
-/******************************************************************************
- * 🛠️ EntityOrValue
- * ============================================================================
- *
- * ✅ Represents either an entity ID or a direct value. This class validates the
+/**
+ * Represents either an entity ID or a direct value. This class validates the
  * provided value and retrieves information from Home Assistant if it's an
  * entity.
- *
- * @class
  */
 class EntityOrValue {
   #activeHelper = null;
+
   #isEntity = false;
 
   // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
@@ -1449,12 +1516,15 @@ class EntityOrValue {
   get value() {
     return this.#activeHelper?.value ?? null;
   }
+
   get isEntity() {
     return this.#isEntity;
   }
+
   get isValid() {
     return this.#activeHelper?.isValid ?? false;
   }
+
   get isAvailable() {
     if (!this.#activeHelper) return false;
     return this.#isEntity ? this.#activeHelper.isAvailable || this.#activeHelper.isValid : this.#activeHelper.isValid;
@@ -1463,28 +1533,36 @@ class EntityOrValue {
   get state() {
     return this.#entity()?.state ?? null;
   }
+
   get precision() {
     return this.#entity()?.precision ?? null;
   }
+
   get name() {
     return this.#entity()?.name ?? null;
   }
+
   get nameComposition() {
     return this.#entity()?.nameComposition ?? null;
   }
+
   get formatedEntityState() {
     return this.#entity()?.formatedEntityState ?? null;
   }
+
   get stateContent() {
     return this.#entity()?.stateContent ?? null;
   }
+
   set stateContent(newValue) {
     const entity = this.#entity();
     if (entity) entity.stateContent = newValue;
   }
+
   get stateContentToString() {
     return this.#entity()?.stateContentToString ?? null;
   }
+
   get entityType() {
     return (
       this.#entity()?.entityType ?? {
@@ -1496,37 +1574,48 @@ class EntityOrValue {
       }
     );
   }
+
   get hasShapeByDefault() {
     return this.#entity()?.hasShapeByDefault ?? false;
   }
+
   get defaultColor() {
     return this.#entity()?.defaultColor ?? false;
   }
+
   get hasAttribute() {
     return this.#entity()?.hasAttribute ?? false;
   }
+
   get defaultAttribute() {
     return this.#entity()?.defaultAttribute ?? null;
   }
+
   get attributes() {
     return this.#entity()?.attributes ?? null;
   }
+
   get unit() {
     return this.#entity()?.unit ?? null;
   }
+
   get stateObj() {
     return this.#entity()?.stateObj ?? null;
   }
+
   get nameTokens() {
     return this.#entity()?.nameTokens ?? null;
   }
+
   set nameTokens(tok) {
     const entity = this.#entity();
     if (entity) entity.nameTokens = tok;
   }
+
   get attribute() {
     return this.#entity()?.attribute ?? null;
   }
+
   set attribute(newValue) {
     const entity = this.#entity();
     if (entity) entity.attribute = newValue;

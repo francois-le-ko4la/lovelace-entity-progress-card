@@ -3,8 +3,6 @@
  * throughout the card and editor instead of ad hoc typeof/instanceof.
  */
 
-
-
 const is = {
   nullish: (val) => val == null, // null or undefined
   boolean: (val) => typeof val === 'boolean',
@@ -40,7 +38,6 @@ const has = {
   method: (obj, key) => typeof obj?.[key] === 'function',
   validKey: (obj, key) => typeof key === 'string' && key !== '' && has.own(obj, key),
 };
-
 
 export { is };
 export { has };

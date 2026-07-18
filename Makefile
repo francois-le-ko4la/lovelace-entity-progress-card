@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-.PHONY: help install check lint lint-md format-md \
+.PHONY: help install check lint lint-md format format-js format-js-check format-md \
         i18n-validate i18n-validate-structure i18n-sync \
         validate check-release-flags \
         build-test build-prod \
@@ -20,6 +20,15 @@ lint: ## Lint the src/ module split (eslint)
 
 lint-md: ## Lint markdown files
 	npm run lint:md
+
+format: ## Reformat src/ JS and markdown in place (prettier)
+	npm run format
+
+format-js: ## Reformat src/ JS in place (prettier)
+	npm run format:js
+
+format-js-check: ## Check src/ JS formatting without writing (prettier --check)
+	npm run format:js:check
 
 format-md: ## Reformat markdown files in place (prettier)
 	npm run format:md

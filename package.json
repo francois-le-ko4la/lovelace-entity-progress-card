@@ -17,9 +17,13 @@
     "check:release-flags": "node scripts/check-release-flags.js",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
     "format:md": "prettier --write \"**/*.md\" \"!node_modules/**\"",
+    "format:js": "prettier --write \"src/**/*.js\"",
+    "format:js:check": "prettier --check \"src/**/*.js\"",
+    "format": "npm run format:js && npm run format:md",
     "build": "node scripts/build.js",
     "build:test": "node scripts/build.js",
-    "build:prod": "node scripts/build.js --prod"
+    "build:prod": "node scripts/build.js --prod",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -42,8 +46,11 @@
     "esbuild": "^0.28.1",
     "eslint": "^10.6.0",
     "eslint-plugin-compat": "^7.0.2",
+    "eslint-plugin-import-x": "^4.17.1",
     "eslint-plugin-sonarjs": "^4.1.0",
     "globals": "^17.7.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.8",
     "markdownlint-cli2": "^0.23.0",
     "prettier": "^3.9.5"
   }

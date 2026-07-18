@@ -9,9 +9,7 @@ import { HA_CONTEXT, CARD, THEME, SEV } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
 
-/******************************************************************************
- * 🛠️ Manage YAML options
- * ============================================================================
+/**
  * structural validation ideas to manage inputs (1.5+).
  * deliberately verbose by design: no external dependencies, fully typed errors,
  * and scales cleanly across multiple card types.
@@ -393,7 +391,7 @@ function struct(validator, { allowBelowBarPosition = true } = {}) {
   // 'below' isn't a legal bar_position for every schema (the Feature one
   // restricts it to ['default', 'top', 'bottom']) - this rewrite would
   // otherwise inject a value never validated as legal there.
-  const applyBelowBarPositionRule = (result, allowBelowBarPosition) => {
+  const applyBelowBarPositionRule = (result) => {
     if (
       allowBelowBarPosition &&
       result.bar_size === CARD.style.bar.sizeOptions.xlarge.label &&
@@ -472,10 +470,7 @@ function struct(validator, { allowBelowBarPosition = true } = {}) {
   const applyReverseSecondaryInfoRowRule = (result) => {
     if (
       result.reverse_secondary_info_row &&
-      !(
-        result.layout === CARD.layout.orientations.horizontal.label &&
-        (result.bar_position ?? 'default') === 'default'
-      )
+      !(result.layout === CARD.layout.orientations.horizontal.label && (result.bar_position ?? 'default') === 'default')
     ) {
       result.reverse_secondary_info_row = false;
     }
@@ -485,7 +480,7 @@ function struct(validator, { allowBelowBarPosition = true } = {}) {
     const result = { ...data };
     if (!result.layout) result.layout = CARD.layout.orientations.horizontal.label;
 
-    applyBelowBarPositionRule(result, allowBelowBarPosition);
+    applyBelowBarPositionRule(result);
     applyBarSingleLineRule(result);
     applyBarMaxWidthRule(result);
     applyBarOrientationUpRule(result);
@@ -703,17 +698,12 @@ const watermarkSchema = {
   disable_high: types.optionalBooleanWithDefault(CARD.config.defaults.watermark.disable_high),
 };
 
-/******************************************************************************
- * 🛠️ YamlSchemaFactory
- * ============================================================================
- *
- * ✅ Builds the per-card-type YAML schemas (`card`, `badge`, `feature`,
+/**
+ * Builds the per-card-type YAML schemas (`card`, `badge`, `feature`,
  * `template`, `badgeTemplate`) from the `types`/`struct` primitives above.
  * Each static getter returns a `struct(...)`-validated schema, consumed by a
  * ConfigHelper's `_yamlSchema` (see config-helpers.js) to validate and
  * normalize a raw config.
- *
- * @class
  */
 class YamlSchemaFactory {
   static get feature() {
@@ -802,6 +792,7 @@ class YamlSchemaFactory {
       { allowBelowBarPosition: false },
     );
   }
+
   static get card() {
     return struct(
       types.object({
@@ -943,44 +934,46 @@ class YamlSchemaFactory {
   }
 
   static get badge() {
-    return YamlSchemaFactory.card.delete([
-      'bar_position',
-      'badge_icon',
-      'badge_color',
-      'force_circular_background',
-      'layout',
-      'height',
-      'icon_tap_action',
-      'icon_hold_action',
-      'icon_double_tap_action',
-      'multiline',
-      'icon_animation',
-      // Requires the 'horizontal' layout class (see the CSS rule on
-      // .progress-container), which badges never get since they have no
-      // 'layout' key (deleted above) - keeping it would accept a config that
-      // silently has no visual effect.
-      'bar_max_width',
-      // Both only ever apply via bar_position values (bar_single_line:
-      // 'overlay' only; text_shadow: 'overlay' or 'background') that are
-      // deleted above (badges have no bar_position at all), so badges never
-      // get either. Same dead-option reasoning as bar_max_width.
-      'bar_single_line',
-      'text_shadow',
-      // Not CSS-dead like the two above - a design choice: a trend arrow
-      // icon doesn't read well at badge scale (--ha-badge-size, ~36px).
-      'trend_indicator',
-    ]).extend({
-      // 'up' needs .vertical.overlay (see bar_orientation's CSS) - a badge
-      // has neither `layout` nor `bar_position` (both deleted above), so it
-      // would validate but have zero visual effect, same reasoning as
-      // YamlSchemaFactory.feature.
-      bar_orientation: types.enumsWithDefault(['ltr', 'rtl'], 'ltr'),
-      // 'xlarge' unconditionally sets --progress-container-height to 42px
-      // (see the .xlarge CSS rule) - a badge's total height is capped at
-      // --ha-badge-size (36px default), so xlarge would demand a taller
-      // progress-container than the badge itself, overflowing it.
-      bar_size: types.enumsWithDefault(['small', 'medium', 'large'], 'small'),
-    });
+    return YamlSchemaFactory.card
+      .delete([
+        'bar_position',
+        'badge_icon',
+        'badge_color',
+        'force_circular_background',
+        'layout',
+        'height',
+        'icon_tap_action',
+        'icon_hold_action',
+        'icon_double_tap_action',
+        'multiline',
+        'icon_animation',
+        // Requires the 'horizontal' layout class (see the CSS rule on
+        // .progress-container), which badges never get since they have no
+        // 'layout' key (deleted above) - keeping it would accept a config that
+        // silently has no visual effect.
+        'bar_max_width',
+        // Both only ever apply via bar_position values (bar_single_line:
+        // 'overlay' only; text_shadow: 'overlay' or 'background') that are
+        // deleted above (badges have no bar_position at all), so badges never
+        // get either. Same dead-option reasoning as bar_max_width.
+        'bar_single_line',
+        'text_shadow',
+        // Not CSS-dead like the two above - a design choice: a trend arrow
+        // icon doesn't read well at badge scale (--ha-badge-size, ~36px).
+        'trend_indicator',
+      ])
+      .extend({
+        // 'up' needs .vertical.overlay (see bar_orientation's CSS) - a badge
+        // has neither `layout` nor `bar_position` (both deleted above), so it
+        // would validate but have zero visual effect, same reasoning as
+        // YamlSchemaFactory.feature.
+        bar_orientation: types.enumsWithDefault(['ltr', 'rtl'], 'ltr'),
+        // 'xlarge' unconditionally sets --progress-container-height to 42px
+        // (see the .xlarge CSS rule) - a badge's total height is capped at
+        // --ha-badge-size (36px default), so xlarge would demand a taller
+        // progress-container than the badge itself, overflowing it.
+        bar_size: types.enumsWithDefault(['small', 'medium', 'large'], 'small'),
+      });
   }
 
   static get template() {
@@ -1056,37 +1049,39 @@ class YamlSchemaFactory {
   }
 
   static get badgeTemplate() {
-    return YamlSchemaFactory.template.delete([
-      'bar_position',
-      'badge_icon',
-      'badge_color',
-      'force_circular_background',
-      'layout',
-      'height',
-      'icon_tap_action',
-      'icon_hold_action',
-      'icon_double_tap_action',
-      'multiline',
-      'icon_animation',
-      // Same reason as YamlSchemaFactory.badge: no 'layout' key means no
-      // 'horizontal' class, so the CSS rule never engages.
-      'bar_max_width',
-      // Same reason as YamlSchemaFactory.badge: both only apply via
-      // bar_position values that are deleted above (no bar_position at all).
-      'bar_single_line',
-      'text_shadow',
-      // Same design choice as YamlSchemaFactory.badge: too small a scale for
-      // a trend arrow icon to read well.
-      'trend_indicator',
-    ]).extend({
-      // Same reason as YamlSchemaFactory.badge: 'up' needs .vertical.overlay,
-      // neither of which a badge template ever gets.
-      bar_orientation: types.enumsWithDefault(['ltr', 'rtl'], 'ltr'),
-      // Same reason as YamlSchemaFactory.badge: 'xlarge' would demand a
-      // 42px-tall progress-container inside a badge capped at
-      // --ha-badge-size (36px), overflowing it.
-      bar_size: types.enumsWithDefault(['small', 'medium', 'large'], 'small'),
-    });
+    return YamlSchemaFactory.template
+      .delete([
+        'bar_position',
+        'badge_icon',
+        'badge_color',
+        'force_circular_background',
+        'layout',
+        'height',
+        'icon_tap_action',
+        'icon_hold_action',
+        'icon_double_tap_action',
+        'multiline',
+        'icon_animation',
+        // Same reason as YamlSchemaFactory.badge: no 'layout' key means no
+        // 'horizontal' class, so the CSS rule never engages.
+        'bar_max_width',
+        // Same reason as YamlSchemaFactory.badge: both only apply via
+        // bar_position values that are deleted above (no bar_position at all).
+        'bar_single_line',
+        'text_shadow',
+        // Same design choice as YamlSchemaFactory.badge: too small a scale for
+        // a trend arrow icon to read well.
+        'trend_indicator',
+      ])
+      .extend({
+        // Same reason as YamlSchemaFactory.badge: 'up' needs .vertical.overlay,
+        // neither of which a badge template ever gets.
+        bar_orientation: types.enumsWithDefault(['ltr', 'rtl'], 'ltr'),
+        // Same reason as YamlSchemaFactory.badge: 'xlarge' would demand a
+        // 42px-tall progress-container inside a badge capped at
+        // --ha-badge-size (36px), overflowing it.
+        bar_size: types.enumsWithDefault(['small', 'medium', 'large'], 'small'),
+      });
   }
 }
 

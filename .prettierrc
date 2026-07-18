@@ -4,6 +4,7 @@
   "singleQuote": true,
   "trailingComma": "all",
   "semi": true,
+  "embeddedLanguageFormatting": "off",
   "overrides": [
     {
       "files": "*.md",

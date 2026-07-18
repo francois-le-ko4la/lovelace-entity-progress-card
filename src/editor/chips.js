@@ -8,18 +8,14 @@ import { CARD, VALUE_CHANGED_EVENT } from '../utils/parameters.js';
 import { CHIPS_HOST_STYLE } from '../utils/styles.js';
 import { is } from '../utils/common-checks.js';
 
-/******************************************************************************
- * 🛠️ ChipsBase
- * ============================================================================
- *
- * ✅ Shared base for the editor's chip-based selector custom elements: builds
+/**
+ * Shared base for the editor's chip-based selector custom elements: builds
  * the `<style>` + label + chip-set shadow DOM once (`_buildChipSet`), renders
  * chip labels from an optional localized map (`_labels`/`_chipLabel`), and
  * wires per-chip click handlers. Concrete subclasses implement `_buildDOM()`/
  * `_render()` and the selection model (multi-select vs single-select, see
  * `SingleSelectChipsBase`).
  *
- * @class
  * @abstract
  * @extends HTMLElement
  */
@@ -28,7 +24,9 @@ class ChipsBase extends HTMLElement {
   // the element is connected, when the chips Map is still empty; labels are now
   // stored and applied at build time
   _labels = null;
+
   #labelText = '';
+
   #labelEl = null;
 
   connectedCallback() {
@@ -40,6 +38,7 @@ class ChipsBase extends HTMLElement {
   get label() {
     return this.#labelText;
   }
+
   set label(val) {
     this.#labelText = val ?? '';
     if (this.#labelEl) this.#labelEl.textContent = this.#labelText;
@@ -84,14 +83,15 @@ class ChipsBase extends HTMLElement {
 }
 
 /**
- * ✅ Multi-select chips for `icon_animation`: toggles a set of visual bar
+ * Multi-select chips for `icon_animation`: toggles a set of visual bar
  * effects, hiding/blocking chips that are mutually incompatible with the
  * current selection (`effectIncompatibilities`).
- * @class
+ *
  * @extends ChipsBase
  */
 class EntityProgressEffectChips extends ChipsBase {
   static ELEMENT_NAME = 'entity-progress-effect-chips';
+
   static #EFFECTS = [
     { value: 'radius' },
     { value: 'glass', showIf: (c) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode) },
@@ -108,7 +108,9 @@ class EntityProgressEffectChips extends ChipsBase {
   }
 
   #selected = [];
+
   #config = {};
+
   #chips = new Map();
 
   _buildDOM() {
@@ -133,6 +135,7 @@ class EntityProgressEffectChips extends ChipsBase {
   get value() {
     return this.#selected;
   }
+
   set value(val) {
     this.#selected = is.array(val) ? val : [];
     this._render();
@@ -168,20 +171,27 @@ if (!customElements.get(EntityProgressEffectChips.ELEMENT_NAME)) {
 }
 
 /**
- * ✅ Multi-select chips for the `hide` option: toggles which card components
+ * Multi-select chips for the `hide` option: toggles which card components
  * (icon, name, value, unit, secondary info, progress bar) are hidden. The
  * offered item list is restricted per field via the `items` setter (e.g.
  * Template/Badge Template never offer `unit`).
- * @class
+ *
  * @extends ChipsBase
  */
 class EntityProgressHideChips extends ChipsBase {
   static ELEMENT_NAME = 'entity-progress-hide-chips';
+
   static #ITEMS = ['icon', 'name', 'value', 'unit', 'secondary_info', 'progress_bar'];
 
   #selected = [];
+
   #chips = new Map();
+
   #items = EntityProgressHideChips.#ITEMS;
+
+  get items() {
+    return this.#items;
+  }
 
   // Template/BadgeTemplate have no 'unit' key in their `hide` schema (see
   // YamlSchemaFactory.template) - EditorFactory.content passes a restricted
@@ -207,6 +217,7 @@ class EntityProgressHideChips extends ChipsBase {
   get value() {
     return this.#selected;
   }
+
   set value(val) {
     this.#selected = is.array(val) ? val : [];
     this._render();
@@ -227,16 +238,17 @@ if (!customElements.get(EntityProgressHideChips.ELEMENT_NAME)) {
 }
 
 /**
- * ✅ Single-select variant: exactly one mode is always active (no
+ * Single-select variant: exactly one mode is always active (no
  * deselect-to-empty), unlike EffectChips/HideChips which toggle membership in
  * an array. Concrete subclasses only need to declare `static MODES`;
  * `this.constructor.MODES` resolves polymorphically.
- * @class
+ *
  * @abstract
  * @extends ChipsBase
  */
 class SingleSelectChipsBase extends ChipsBase {
   #selected = null;
+
   #chips = new Map();
 
   _buildDOM() {
@@ -254,6 +266,7 @@ class SingleSelectChipsBase extends ChipsBase {
   get value() {
     return this.#selected ?? this.constructor.MODES[0];
   }
+
   set value(val) {
     this.#selected = this.constructor.MODES.includes(val) ? val : this.constructor.MODES[0];
     this._render();
@@ -270,18 +283,19 @@ class SingleSelectChipsBase extends ChipsBase {
 }
 
 /**
- * ✅ One element for every "value source" selector (min_value, max_value,
+ * One element for every "value source" selector (min_value, max_value,
  * watermark.low, watermark.high): the modes are identical, and everything
  * field-specific (id, label, localized option labels,
  * resolveVirtual/onVirtualChange) is per-instance, set by #buildModeChipsField
  * from the field definition — the class itself carries nothing to specialize. A
  * field whose modes ever diverge stops being a "value source" and gets its own
  * class, like theme_mode/bar_stack_mode below.
- * @class
+ *
  * @extends SingleSelectChipsBase
  */
 class EntityProgressValueSourceModeChips extends SingleSelectChipsBase {
   static ELEMENT_NAME = 'entity-progress-value-source-mode-chips';
+
   static MODES = ['standard', 'entity', 'jinja'];
 }
 if (!customElements.get(EntityProgressValueSourceModeChips.ELEMENT_NAME)) {
@@ -289,12 +303,13 @@ if (!customElements.get(EntityProgressValueSourceModeChips.ELEMENT_NAME)) {
 }
 
 /**
- * ✅ Single-select chips for `theme_mode`: preset theme vs custom_theme zones.
- * @class
+ * Single-select chips for `theme_mode`: preset theme vs custom_theme zones.
+ *
  * @extends SingleSelectChipsBase
  */
 class EntityProgressThemeModeChips extends SingleSelectChipsBase {
   static ELEMENT_NAME = 'entity-progress-theme-mode-chips';
+
   static MODES = ['preset', 'custom'];
 }
 if (!customElements.get(EntityProgressThemeModeChips.ELEMENT_NAME)) {
@@ -302,13 +317,14 @@ if (!customElements.get(EntityProgressThemeModeChips.ELEMENT_NAME)) {
 }
 
 /**
- * ✅ Single-select chips for `bar_stack.mode`: stacked/proportional/net
+ * Single-select chips for `bar_stack.mode`: stacked/proportional/net
  * aggregation of the additional bar_stack entities.
- * @class
+ *
  * @extends SingleSelectChipsBase
  */
 class EntityProgressBarStackModeChips extends SingleSelectChipsBase {
   static ELEMENT_NAME = 'entity-progress-bar-stack-mode-chips';
+
   static MODES = ['stacked', 'proportional', 'net'];
 }
 if (!customElements.get(EntityProgressBarStackModeChips.ELEMENT_NAME)) {

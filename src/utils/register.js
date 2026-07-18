@@ -5,21 +5,17 @@
 
 import { VERSION, META, CARD_CONTEXT } from './parameters.js';
 
-/******************************************************************************
- * 🛠️ RegistrationHelper
- * ============================================================================
- *
- * ✅ Registers a card/badge/feature custom element (and its editor, if any)
+/**
+ * Registers a card/badge/feature custom element (and its editor, if any)
  * with `customElements` and with Home Assistant's discovery arrays
  * (`window.customCards`/`customBadges`/`customCardFeatures`). In dev mode
  * (`CARD_CONTEXT.dev`), every type/editor tag and displayed name gets a
  * `-dev`/` (dev)` suffix so a dev build can be installed side by side with
  * the shipped one without colliding.
- *
- * @class
  */
 class RegistrationHelper {
   static _devMode = CARD_CONTEXT.dev;
+
   static #targetKey = {
     customCards: 'customCards',
     customBadges: 'customBadges',
@@ -35,6 +31,7 @@ class RegistrationHelper {
       editor: component.editor ? `${component.editor}-dev` : undefined,
     };
   }
+
   static #resolveEntry(component, targetKey) {
     return targetKey === RegistrationHelper.#targetKey.customCardFeatures
       ? { type: component.typeName, name: component.name, supported: () => true }
@@ -47,6 +44,7 @@ class RegistrationHelper {
           version: VERSION,
         };
   }
+
   static #registerComponent(component, targetKey, elementClass, editorClass) {
     try {
       // On tente l'enregistrement technique
@@ -98,6 +96,5 @@ class RegistrationHelper {
     );
   }
 }
-
 
 export { RegistrationHelper };

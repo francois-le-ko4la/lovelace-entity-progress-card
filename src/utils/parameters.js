@@ -5,8 +5,6 @@
  * No logic, just data.
  */
 
-
-
 /**
  * @fileoverview
  *
@@ -25,7 +23,6 @@
  *   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
  *
  * @author ko4la
- *
  */
 
 /** --------------------------------------------------------------------------
@@ -795,7 +792,6 @@ const SEV = {
 };
 
 // prettier-ignore-end
-
 
 const CONTENT_SLOT = '{{content}}';
 

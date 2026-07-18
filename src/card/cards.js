@@ -11,16 +11,12 @@ import { CardView, BadgeView, CardTemplateView, BadgeTemplateView } from './view
 import { DOMHelper } from './dom-helpers.js';
 import { HACore, HABase } from './core.js';
 
-/******************************************************************************
- * 🛠️ EntityProgressCardBase
- * ============================================================================
- *
- * ✅ Represents the base class for all standard cards:
+/**
+ * Represents the base class for all standard cards:
  *  - EntityProgressCardBase / "entity-progress-card"
  *  - EntityProgressBadge / "entity-progress-badge"
  *
  *
- * @class
  * @extends HABase
  */
 class EntityProgressCardBase extends HABase {
@@ -33,6 +29,7 @@ class EntityProgressCardBase extends HABase {
   static get _loggedMethods() {
     return [...super._loggedMethods, '_getStandardFields', '_renderCustomInfo', '_renderNameInfo'];
   }
+
   _handleHassUpdate() {
     this.refresh();
 
@@ -117,6 +114,7 @@ class EntityProgressCardBase extends HABase {
     this._cardView.refresh(this.hass);
     this._updateCSS();
   }
+
   _renderCustomInfo(content) {
     // Line 1 never carries a main (see StructureElements.secondaryInfoLine), so
     // it only gets the &nbsp; spacer in single-line mode, where it precedes the
@@ -134,17 +132,14 @@ class EntityProgressCardBase extends HABase {
   }
 }
 
-/******************************************************************************
- * 📦 EntityProgressCard
- * ============================================================================
+/**
+ * HA CARD "entity-progress-card"
  *
- * ✅ HA CARD "entity-progress-card"
- *
- * @class
  * @extends EntityProgressCardBase
  */
 class EntityProgressCard extends EntityProgressCardBase {
   _cardView = new CardView();
+
   static _baseClass = META.types.card.typeName;
 
   // ─── STATIC METHODS ===
@@ -154,20 +149,20 @@ class EntityProgressCard extends EntityProgressCardBase {
   }
 }
 
-/******************************************************************************
- * 📦 EntityProgressBadge
- * ============================================================================
+/**
+ * HA CARD "entity-progress-badge"
  *
- * ✅ HA CARD "entity-progress-badge"
- *
- * @class
  * @extends EntityProgressCardBase
  */
 class EntityProgressBadge extends EntityProgressCardBase {
   _cardView = new BadgeView();
+
   static _baseClass = META.types.badge.typeName;
+
   static _hasDisabledIconTap = true;
+
   static _hasDisabledBadge = true;
+
   static _cardStructure = new ObjStructure('badge');
 
   // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION === Derived from the Card map
@@ -183,18 +178,15 @@ class EntityProgressBadge extends EntityProgressCardBase {
   }
 }
 
-/******************************************************************************
- * 📦 EntityProgressFeatures
- * ============================================================================
+/**
+ * HA CARD "entity-progress-feature"
  *
- * ✅ HA CARD "entity-progress-feature"
- *
- * @class
  * @extends HACore
  */
 
 class EntityProgressFeatures extends HACore {
   static _baseClass = META.types.feature.typeName;
+
   static _cardElement = 'div';
 
   // ─── STATIC ===
@@ -324,10 +316,7 @@ class EntityProgressFeatures extends HACore {
   }
 }
 
-/******************************************************************************
- * 🛠️ EntityProgressTemplateBase
- * ============================================================================
- *
+/**
  * HABase subclass for Jinja-driven template cards. Unlike standard cards, all
  * display fields (name, secondary, icon, percent, badge, bar_effect) are
  * controlled via Jinja template subscriptions rather than entity state.
@@ -341,6 +330,7 @@ class EntityProgressFeatures extends HACore {
  */
 class EntityProgressTemplateBase extends HABase {
   static _cardStructure = new ObjStructure('template');
+
   _cardView = new CardTemplateView();
 
   static get _loggedMethods() {
@@ -498,13 +488,9 @@ class EntityProgressTemplateBase extends HABase {
   }
 }
 
-/******************************************************************************
- * 📦 EntityProgressTemplateCard
- * ============================================================================
+/**
+ * HA CARD "entity-progress-card-template"
  *
- * ✅ HA CARD "entity-progress-card-template"
- *
- * @class
  * @extends EntityProgressTemplateBase
  */
 class EntityProgressTemplateCard extends EntityProgressTemplateBase {
@@ -515,20 +501,20 @@ class EntityProgressTemplateCard extends EntityProgressTemplateBase {
   }
 }
 
-/******************************************************************************
- * 📦 EntityProgressTemplateBadge
- * ============================================================================
+/**
+ * HA CARD "entity-progress-badge-template"
  *
- * ✅ HA CARD "entity-progress-badge-template"
- *
- * @class
  * @extends EntityProgressTemplateBase
  */
 class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
   static _baseClass = META.types.badgeTemplate.typeName;
+
   static _hasDisabledIconTap = true;
+
   static _hasDisabledBadge = true;
+
   static _cardStructure = new ObjStructure('badge');
+
   _cardView = new BadgeTemplateView();
 
   setConfig(config) {
@@ -549,7 +535,6 @@ class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
 /******************************************************************************
  * 📦 CARD/BADGE EDITOR
  ******************************************************************************/
-
 
 export { EntityProgressCardBase };
 export { EntityProgressCard };

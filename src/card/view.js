@@ -8,25 +8,23 @@ import { HA_CONTEXT, CARD } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
 import { PercentHelper, ThemeManager, EntityCollectionHelper, EntityOrValue } from './value-helpers.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
-import { BaseConfigHelper, CardConfigHelper, BadgeConfigHelper, FeatureConfigHelper, TemplateConfigHelper, BadgeTemplateConfigHelper } from './config-helpers.js';
+import {
+  BaseConfigHelper,
+  CardConfigHelper,
+  BadgeConfigHelper,
+  FeatureConfigHelper,
+  TemplateConfigHelper,
+  BadgeTemplateConfigHelper,
+} from './config-helpers.js';
 
-/******************************************************************************
- * 🛠️ ViewCore
- * ============================================================================
- *
- * ✅ A view class for rendering minimal cards in a user interface. This class
+/**
+ * A view class for rendering minimal cards in a user interface. This class
  * manages configuration, entity states, user interactions, and visual
  * appearance of cards including layouts, orientations, watermarks, and
  * interactive elements.
  *
  * ViewCore ├── ViewBase │ ├── CardView │ ├── BadgeView │ └── FeatureView ├──
  * CardTemplateView └── BadgeTemplateView
- *
- * @class
- * @description Handles the display and behavior of minimal cards with support
- *              for Home Assistant entities, user actions, and visual
- *              customization (watermarks, shapes, orientations, clickable
- *              elements).
  *
  * @example
  * const cardView = new ViewCore();
@@ -49,10 +47,15 @@ import { BaseConfigHelper, CardConfigHelper, BadgeConfigHelper, FeatureConfigHel
  */
 class ViewCore {
   _hassProvider = HassProviderSingleton.getInstance();
+
   _lastPercent = null;
+
   _configHelper = new BaseConfigHelper(); // Base config
+
   _currentValue = new EntityOrValue();
+
   _lowValue = new EntityOrValue();
+
   _highValue = new EntityOrValue();
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
@@ -80,20 +83,24 @@ class ViewCore {
   get config() {
     return this._configHelper?.config;
   }
+
   refresh(hass) {
     this._hassProvider.hass = hass;
     this._currentValue.refresh();
     this._lowValue.refresh();
     this._highValue.refresh();
   }
+
   get entity() {
     return this.config?.entity;
   }
+
   get cardSize() {
     return this.config
       ? (CARD.layout.orientations[this.config.layout]?.grid?.grid_rows ?? 1)
       : CARD.layout.orientations.horizontal.grid.grid_rows;
   }
+
   get cardLayoutOptions() {
     if (!this.config) return CARD.layout.orientations.horizontal.grid;
     const layout = structuredClone(CARD.layout.orientations[this.config.layout]);
@@ -109,6 +116,7 @@ class ViewCore {
           : 0);
     return layout.grid;
   }
+
   _getEntityColor() {
     if (this._currentValue.state === HA_CONTEXT.entity.state.unavailable) return CARD.style.color.unavailable;
     if (this._currentValue.state === HA_CONTEXT.entity.state.notFound) return CARD.style.color.notFound;
@@ -118,9 +126,11 @@ class ViewCore {
   get barColor() {
     return this.entity && !this._configHelper.config.bar_color ? this._getEntityColor() : null;
   }
+
   get iconColor() {
     return this.entity && !this._configHelper.config.color ? this._getEntityColor() : null;
   }
+
   get hasClickableIcon() {
     return ViewCore.#hasAction([
       this._configHelper.action.icon.tap,
@@ -128,6 +138,7 @@ class ViewCore {
       this._configHelper.action.icon.doubleTap,
     ]);
   }
+
   get hasClickableCard() {
     return ViewCore.#hasAction([
       this._configHelper.action.card.tap,
@@ -135,6 +146,7 @@ class ViewCore {
       this._configHelper.action.card.doubleTap,
     ]);
   }
+
   get hasReversedSecondaryInfoRow() {
     // Nullish-coalesced, not strict equality: Badge/Badge Template have
     // neither 'layout' nor 'bar_position' in their schema (always undefined
@@ -148,22 +160,28 @@ class ViewCore {
       this.config.reverse_secondary_info_row
     ); // ─── true
   }
+
   get hasVisibleShape() {
     // this.config.force_circular_background === true
     return this.config.force_circular_background || this._hasDefaultShape || this._hasInteractiveShape;
   }
+
   get _hasDefaultShape() {
     return this._currentValue.hasShapeByDefault && ViewCore.#hasAction([this._configHelper.action.icon.tap]);
   }
+
   get _hasInteractiveShape() {
     return this._configHelper.action.icon.tap !== HA_CONTEXT.actions.none.action;
   }
+
   get hasWatermark() {
     return this.config.watermark !== undefined;
   }
+
   get barEffectsEnabled() {
     return this.config.bar_effect !== undefined;
   }
+
   get watermark() {
     const { watermark } = this.config;
     return watermark
@@ -373,11 +391,8 @@ class ViewCore {
     return actions.some((action) => action !== HA_CONTEXT.actions.none.action);
   }
 }
-/******************************************************************************
- * 🛠️ ViewBase
- * ============================================================================
- *
- * ✅ A comprehensive base card view that extends ViewCore to manage all
+/**
+ * A comprehensive base card view that extends ViewCore to manage all
  * information required for creating cards and badges. This class handles entity
  * states, theme management, percentage calculations, timers, and provides a
  * complete API for card rendering.
@@ -393,17 +408,16 @@ class ViewCore {
  *           ├── CardTemplateView          (TemplateConfigHelper)
  *           └── BadgeTemplateView         (BadgeTemplateConfigHelper)
  *
- * @class
- * @extends ViewCore
- * @description Manages the complete lifecycle of card display including:
- *              - Entity state management and validation
- *              - Theme and color management
- *              - Percentage and progress calculations
- *              - Timer and counter handling
- *              - Badge and watermark rendering
- *              - Multi-language support
- *              - Error state handling (unavailable, not found, unknown)
+ * Manages the complete lifecycle of card display including:
+ *  - Entity state management and validation
+ *  - Theme and color management
+ *  - Percentage and progress calculations
+ *  - Timer and counter handling
+ *  - Badge and watermark rendering
+ *  - Multi-language support
+ *  - Error state handling (unavailable, not found, unknown)
  *
+ * @extends ViewCore
  * @example
  * const cardView = new ViewBase();
  * cardView.config = {
@@ -437,16 +451,24 @@ class ViewCore {
  */
 class ViewBase extends ViewCore {
   #percentHelper = new PercentHelper();
+
   #theme = new ThemeManager();
+
   #maxValue = new EntityOrValue();
+
   #minValue = new EntityOrValue();
+
   // min_value/max_value resolved from a Jinja subscription (standard cards);
   // null = no override
   #jinjaMinValue = null;
+
   #jinjaMaxValue = null;
+
   // watermark.low/.high resolved from a Jinja subscription; null = no override
   #jinjaWatermarkLow = null;
+
   #jinjaWatermarkHigh = null;
+
   #entityCollection = new EntityCollectionHelper();
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
@@ -454,9 +476,11 @@ class ViewBase extends ViewCore {
   get hasValidatedConfig() {
     return this._configHelper.isValid;
   }
+
   get msg() {
     return this._configHelper.msg;
   }
+
   set config(config) {
     if (!config) {
       throw new Error(CARD.config.configError);
@@ -558,9 +582,11 @@ class ViewBase extends ViewCore {
     });
     this.#jinjaWatermarkHigh = null;
   }
+
   get config() {
     return this._configHelper.config;
   }
+
   static #resolveMaxValue(maxCfg) {
     const isMaxObj = is.plainObject(maxCfg);
     return {
@@ -572,6 +598,7 @@ class ViewBase extends ViewCore {
       attribute: isMaxObj ? maxCfg.attribute : undefined,
     };
   }
+
   static #resolveMinValue(minCfg) {
     const isMinObj = is.plainObject(minCfg);
     return {
@@ -579,6 +606,7 @@ class ViewBase extends ViewCore {
       attribute: isMinObj ? minCfg.attribute : undefined,
     };
   }
+
   // watermark.low/.high: number (fixed) | string (entity id) | {jinja}. A
   // {jinja} object is fed by the template subscription
   // (#jinjaWatermarkLow/#jinjaWatermarkHigh), not by EntityOrValue, so it
@@ -587,21 +615,26 @@ class ViewBase extends ViewCore {
   static #resolveWatermarkValue(sideCfg) {
     return is.plainObject(sideCfg) ? null : sideCfg;
   }
+
   #hasState(state) {
     const toEVal = this.hasWatermark
       ? [this._currentValue, this.#maxValue, this._lowValue, this._highValue]
       : [this._currentValue, this.#maxValue];
     return toEVal.some((v) => v.state === state);
   }
+
   get isUnknown() {
     return this.#hasState(HA_CONTEXT.entity.state.unknown);
   }
+
   get isUnavailable() {
     return this.#hasState(HA_CONTEXT.entity.state.unavailable);
   }
+
   get isNotFound() {
     return this.#hasState(HA_CONTEXT.entity.state.notFound);
   }
+
   get isAvailable() {
     // note: this used to test `this._configHelper.maxValue`, a getter that
     // never existed (always undefined), silently disabling the max-entity
@@ -615,6 +648,7 @@ class ViewBase extends ViewCore {
       (!this._highValue.isAvailable && this._configHelper.config?.watermark?.high)
     );
   }
+
   get hasStandardEntityError() {
     return this.isUnavailable || this.isNotFound || this.isUnknown;
   }
@@ -625,6 +659,7 @@ class ViewBase extends ViewCore {
     const notFound = this.isNotFound ? CARD.style.icon.notFound.icon : null;
     return notFound || this.#theme.icon || this._configHelper.config.icon;
   }
+
   get iconColor() {
     if (this.isUnavailable) return CARD.style.color.unavailable;
     if (this.isNotFound) return CARD.style.color.notFound;
@@ -634,6 +669,7 @@ class ViewBase extends ViewCore {
       CARD.style.color.default
     );
   }
+
   #curBarColor() {
     return (
       ThemeManager.adaptColor(this.#theme.barColor || this._configHelper.config.bar_color) ||
@@ -641,6 +677,7 @@ class ViewBase extends ViewCore {
       CARD.style.color.default
     );
   }
+
   // Mirrors HACore#_addBaseClasses's own vertical-bar/horizontal-bar
   // decision: gradients (segment/rainbow/bar_stack) are built left-to-right
   // by default, but the bar itself fills bottom-to-top in these two
@@ -653,6 +690,7 @@ class ViewBase extends ViewCore {
         this.config.bar_position === 'background')
     );
   }
+
   get barColor() {
     if (!this.isAvailable) return this.isUnknown ? CARD.style.color.default : CARD.style.color.disabled;
     const curColor = this.#curBarColor();
@@ -669,6 +707,7 @@ class ViewBase extends ViewCore {
         )
       : curColor;
   }
+
   // 'stacked'/'proportional' + center_zero: two independent per-arm gradients
   // (see EntityCollectionHelper.getDivergingGradients). null when not
   // applicable, so callers can tell whether to apply or clear the dedicated CSS
@@ -686,6 +725,7 @@ class ViewBase extends ViewCore {
       this.#isVerticalBar,
     );
   }
+
   get colorGradient() {
     if (!this.isAvailable || this.#percentHelper.isCenterZero) return null;
     return this.#theme.buildGradient(
@@ -695,6 +735,7 @@ class ViewBase extends ViewCore {
       this.#isVerticalBar,
     );
   }
+
   get percent() {
     if (!this.isAvailable) return 0;
     return this.#percentHelper.isCenterZero
@@ -722,11 +763,13 @@ class ViewBase extends ViewCore {
 
     return additionalInfo === '' ? valueInfo : [additionalInfo, valueInfo].join(CARD.config.separator);
   }
+
   get name() {
     return is.nonEmptyArray(this._configHelper.config.name)
       ? this._currentValue.nameComposition
       : this._configHelper.config.name || this._currentValue.name || this._configHelper.config.entity;
   }
+
   get badgeInfo() {
     if (this.isNotFound) return CARD.style.icon.badge.notFound;
     if (this.isUnavailable) return CARD.style.icon.badge.unavailable;
@@ -739,25 +782,31 @@ class ViewBase extends ViewCore {
     }
     return null;
   }
+
   get isActiveTimer() {
     return this._currentValue.entityType.isTimer && this._currentValue.state === HA_CONTEXT.entity.state.active;
   }
+
   get refreshSpeed() {
     const rawSpeed = this._currentValue.value.duration / CARD.config.refresh.ratio;
     const clampedSpeed = Math.min(CARD.config.refresh.max, Math.max(CARD.config.refresh.min, rawSpeed));
     return Math.max(100, Math.round(clampedSpeed / 100) * 100);
   }
+
   get hasVisibleShape() {
     return this._hassProvider.hasNewShapeStrategy ? super.hasVisibleShape : true;
   }
+
   get timerIsReversed() {
     return (
       this._configHelper.config.reverse !== false && this._currentValue.value.state !== HA_CONTEXT.entity.state.idle
     );
   }
+
   get hasWatermark() {
     return this._configHelper.config.watermark !== undefined;
   }
+
   get watermark() {
     const { watermark } = this.config;
     if (!watermark) return null;
@@ -778,6 +827,7 @@ class ViewBase extends ViewCore {
       high_color: ThemeManager.adaptColor(watermark.high_color),
     };
   }
+
   get hasEntityCollection() {
     return this.#entityCollection.count >= 2;
   }
@@ -815,6 +865,7 @@ class ViewBase extends ViewCore {
     }
     this.#percentHelper.refresh();
   }
+
   #setTimerValues() {
     Object.assign(this.#percentHelper, {
       isReversed: this.timerIsReversed,
@@ -859,24 +910,31 @@ class ViewBase extends ViewCore {
   get jinjaMinValue() {
     return this.#jinjaMinValue;
   }
+
   set jinjaMinValue(value) {
     this.#jinjaMinValue = is.number(value) ? value : null;
   }
+
   get jinjaMaxValue() {
     return this.#jinjaMaxValue;
   }
+
   set jinjaMaxValue(value) {
     this.#jinjaMaxValue = is.number(value) ? value : null;
   }
+
   get jinjaWatermarkLow() {
     return this.#jinjaWatermarkLow;
   }
+
   set jinjaWatermarkLow(value) {
     this.#jinjaWatermarkLow = is.number(value) ? value : null;
   }
+
   get jinjaWatermarkHigh() {
     return this.#jinjaWatermarkHigh;
   }
+
   set jinjaWatermarkHigh(value) {
     this.#jinjaWatermarkHigh = is.number(value) ? value : null;
   }
@@ -888,6 +946,7 @@ class ViewBase extends ViewCore {
     const unit = this._currentValue.unit;
     return unit === null ? CARD.config.unit.default : unit;
   }
+
   #getCurrentDecimal(currentUnit) {
     if (is.unsignedInteger(this._configHelper.config.decimal)) return this._configHelper.config.decimal;
     if (this._currentValue.precision) return this._currentValue.precision;
@@ -904,23 +963,13 @@ class ViewBase extends ViewCore {
     return currentUnit === CARD.config.unit.default ? CARD.config.decimal.percentage : CARD.config.decimal.other;
   }
 }
-/******************************************************************************
- * 🛠️ CardView
- * ============================================================================
+/**
+ * A concrete ViewBase implementation for full card rendering, using
+ * CardConfigHelper for card-specific configuration validation, processing,
+ * and management. Inherits all entity management, theme handling, and state
+ * processing from ViewBase.
  *
- * A specialized card view implementation that extends ViewBase specifically for
- * rendering full card components. This class provides the complete card
- * functionality with proper configuration management through CardConfigHelper.
- *
- * @class CardView
  * @extends ViewBase
- * @description A concrete implementation of ViewBase designed for full card
- * rendering. This class uses CardConfigHelper to handle
- * card-specific configuration validation, processing, and
- * management. It inherits all entity management, theme handling,
- * and state processing capabilities from ViewBase while providing
- * card-specific configuration logic.
- *
  * @see ViewBase For inherited functionality
  * @see CardConfigHelper For configuration management details
  */
@@ -929,8 +978,8 @@ class CardView extends ViewBase {
 }
 
 /**
- * ✅ ViewBase variant for the Badge type — BadgeConfigHelper.
- * @class
+ * ViewBase variant for the Badge type — BadgeConfigHelper.
+ *
  * @extends ViewBase
  */
 class BadgeView extends ViewBase {
@@ -938,8 +987,8 @@ class BadgeView extends ViewBase {
 }
 
 /**
- * ✅ ViewBase variant for the Tile Feature type — FeatureConfigHelper.
- * @class
+ * ViewBase variant for the Tile Feature type — FeatureConfigHelper.
+ *
  * @extends ViewBase
  */
 class FeatureView extends ViewBase {
@@ -947,23 +996,25 @@ class FeatureView extends ViewBase {
 }
 
 /**
- * ✅ ViewCore variant for the Jinja-driven Template card — TemplateConfigHelper.
- * @class
+ * ViewCore variant for the Jinja-driven Template card — TemplateConfigHelper.
+ *
  * @extends ViewCore
  */
 class CardTemplateView extends ViewCore {
   _configHelper = new TemplateConfigHelper();
+
   icon = null;
 }
 
 /**
- * ✅ ViewCore variant for the Jinja-driven Template badge —
+ * ViewCore variant for the Jinja-driven Template badge —
  * BadgeTemplateConfigHelper.
- * @class
+ *
  * @extends ViewCore
  */
 class BadgeTemplateView extends ViewCore {
   _configHelper = new BadgeTemplateConfigHelper();
+
   icon = null;
 }
 

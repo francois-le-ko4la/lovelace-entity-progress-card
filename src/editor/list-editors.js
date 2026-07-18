@@ -7,9 +7,7 @@ import { VALUE_CHANGED_EVENT, HA_SELECTOR_TAG, HA_SVG_ICON_TAG } from '../utils/
 import { BAR_STACK_EDITOR_STYLE, CUSTOM_THEME_EDITOR_STYLE } from '../utils/styles.js';
 import { is } from '../utils/common-checks.js';
 
-/******************************************************************************
- * 📝 ListEditorBase
- * ============================================================================
+/**
  * Shared base for custom elements that edit an array of row-objects: a label, a
  * list container, connectedCallback's build-once-then-render lifecycle, the
  * value setter, and delete-by-index all follow the exact same shape regardless
@@ -17,13 +15,15 @@ import { is } from '../utils/common-checks.js';
  * _render()/_dispatch() — the same template-method pattern ChipsBase already
  * uses for the chip family (_buildDOM overridden per concrete chip type).
  *
- * @class
  * @extends HTMLElement
  */
 class ListEditorBase extends HTMLElement {
   _labelText = '';
+
   _value = [];
+
   _list = null;
+
   _labelEl = null;
 
   connectedCallback() {
@@ -35,6 +35,7 @@ class ListEditorBase extends HTMLElement {
   get label() {
     return this._labelText;
   }
+
   set label(val) {
     this._labelText = val ?? '';
     if (this._labelEl) this._labelEl.textContent = this._labelText;
@@ -43,6 +44,7 @@ class ListEditorBase extends HTMLElement {
   get value() {
     return this._value;
   }
+
   set value(val) {
     this._value = is.array(val) ? val.filter(is.plainObject) : [];
     if (this._list) this._render();
@@ -62,21 +64,23 @@ class ListEditorBase extends HTMLElement {
 }
 
 /**
- * ✅ ListEditorBase for `bar_stack.entities`: each row is an additional
+ * ListEditorBase for `bar_stack.entities`: each row is an additional
  * entity (with `attribute`/`color`/`subtract`) aggregated into the bar
  * alongside the card's main entity.
- * @class
+ *
  * @extends ListEditorBase
  */
 class EntityProgressBarStackEditor extends ListEditorBase {
   static ELEMENT_NAME = 'entity-progress-bar-stack-editor';
 
   #hass = null;
+
   #addBtn = null;
 
   get hass() {
     return this.#hass;
   }
+
   set hass(hass) {
     this.#hass = hass;
     for (const el of this.shadowRoot?.querySelectorAll(HA_SELECTOR_TAG) ?? []) el.hass = hass;
@@ -214,15 +218,12 @@ if (!customElements.get(EntityProgressBarStackEditor.ELEMENT_NAME)) {
   customElements.define(EntityProgressBarStackEditor.ELEMENT_NAME, EntityProgressBarStackEditor);
 }
 
-/******************************************************************************
- * 🎨 EntityProgressCustomThemeEditor
- * ============================================================================
+/**
  * Custom element that renders an editable list of custom_theme zones, each a
  * contiguous { min, max, color?, icon_color?, bar_color?, icon? } range.
  * Mirrors EntityProgressBarStackEditor's row-list pattern (label, list, add
  * button, value-changed with the filtered array), with a richer per-row form.
  *
- * @class
  * @extends HTMLElement
  */
 
@@ -230,7 +231,9 @@ class EntityProgressCustomThemeEditor extends ListEditorBase {
   static ELEMENT_NAME = 'entity-progress-custom-theme-editor';
 
   #hass = null;
+
   #addBtn = null;
+
   #addLabel = 'Add zone';
 
   setAddLabel(val) {
@@ -241,6 +244,7 @@ class EntityProgressCustomThemeEditor extends ListEditorBase {
   get hass() {
     return this.#hass;
   }
+
   set hass(hass) {
     this.#hass = hass;
     for (const el of this.shadowRoot?.querySelectorAll(HA_SELECTOR_TAG) ?? []) el.hass = hass;

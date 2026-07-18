@@ -233,7 +233,6 @@ const StructureTemplates = {
   },
 };
 
-
 export { Element };
 export { StructureElements };
 export { StructureTemplates };
