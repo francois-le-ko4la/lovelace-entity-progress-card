@@ -139,7 +139,6 @@ class EntityProgressCardBase extends HABase {
  */
 class EntityProgressCard extends EntityProgressCardBase {
   _cardView = new CardView();
-
   static _baseClass = META.types.card.typeName;
 
   // ─── STATIC METHODS ===
@@ -156,13 +155,9 @@ class EntityProgressCard extends EntityProgressCardBase {
  */
 class EntityProgressBadge extends EntityProgressCardBase {
   _cardView = new BadgeView();
-
   static _baseClass = META.types.badge.typeName;
-
   static _hasDisabledIconTap = true;
-
   static _hasDisabledBadge = true;
-
   static _cardStructure = new ObjStructure('badge');
 
   // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION === Derived from the Card map
@@ -186,7 +181,6 @@ class EntityProgressBadge extends EntityProgressCardBase {
 
 class EntityProgressFeatures extends HACore {
   static _baseClass = META.types.feature.typeName;
-
   static _cardElement = 'div';
 
   // ─── STATIC ===
@@ -330,7 +324,6 @@ class EntityProgressFeatures extends HACore {
  */
 class EntityProgressTemplateBase extends HABase {
   static _cardStructure = new ObjStructure('template');
-
   _cardView = new CardTemplateView();
 
   static get _loggedMethods() {
@@ -508,13 +501,9 @@ class EntityProgressTemplateCard extends EntityProgressTemplateBase {
  */
 class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
   static _baseClass = META.types.badgeTemplate.typeName;
-
   static _hasDisabledIconTap = true;
-
   static _hasDisabledBadge = true;
-
   static _cardStructure = new ObjStructure('badge');
-
   _cardView = new BadgeTemplateView();
 
   setConfig(config) {

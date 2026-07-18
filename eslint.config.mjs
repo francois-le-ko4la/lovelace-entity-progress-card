@@ -47,7 +47,19 @@ export default [
       }],
       'eol-last': ['error', 'always'],
       'space-infix-ops': 'error',
-      'lines-between-class-members': ['error', 'always'],
+      // Fields stay grouped (no forced blank line between two consecutive
+      // fields); every method (including get/set pairs for the same
+      // property) always gets a blank line before and after.
+      'lines-between-class-members': [
+        'error',
+        {
+          enforce: [
+            { blankLine: 'always', prev: '*', next: 'method' },
+            { blankLine: 'always', prev: 'method', next: '*' },
+            { blankLine: 'never', prev: 'field', next: 'field' },
+          ],
+        },
+      ],
       eqeqeq: ['error', 'smart'],
       // console.log is banned (the usual accidental-debug-leftover offender);
       // everything else here has a deliberate, structured use (Logger,

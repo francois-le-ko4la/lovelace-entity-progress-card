@@ -24,9 +24,7 @@ class ChipsBase extends HTMLElement {
   // the element is connected, when the chips Map is still empty; labels are now
   // stored and applied at build time
   _labels = null;
-
   #labelText = '';
-
   #labelEl = null;
 
   connectedCallback() {
@@ -91,7 +89,6 @@ class ChipsBase extends HTMLElement {
  */
 class EntityProgressEffectChips extends ChipsBase {
   static ELEMENT_NAME = 'entity-progress-effect-chips';
-
   static #EFFECTS = [
     { value: 'radius' },
     { value: 'glass', showIf: (c) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode) },
@@ -108,9 +105,7 @@ class EntityProgressEffectChips extends ChipsBase {
   }
 
   #selected = [];
-
   #config = {};
-
   #chips = new Map();
 
   _buildDOM() {
@@ -180,13 +175,9 @@ if (!customElements.get(EntityProgressEffectChips.ELEMENT_NAME)) {
  */
 class EntityProgressHideChips extends ChipsBase {
   static ELEMENT_NAME = 'entity-progress-hide-chips';
-
   static #ITEMS = ['icon', 'name', 'value', 'unit', 'secondary_info', 'progress_bar'];
-
   #selected = [];
-
   #chips = new Map();
-
   #items = EntityProgressHideChips.#ITEMS;
 
   get items() {
@@ -248,7 +239,6 @@ if (!customElements.get(EntityProgressHideChips.ELEMENT_NAME)) {
  */
 class SingleSelectChipsBase extends ChipsBase {
   #selected = null;
-
   #chips = new Map();
 
   _buildDOM() {
@@ -295,7 +285,6 @@ class SingleSelectChipsBase extends ChipsBase {
  */
 class EntityProgressValueSourceModeChips extends SingleSelectChipsBase {
   static ELEMENT_NAME = 'entity-progress-value-source-mode-chips';
-
   static MODES = ['standard', 'entity', 'jinja'];
 }
 if (!customElements.get(EntityProgressValueSourceModeChips.ELEMENT_NAME)) {
@@ -309,7 +298,6 @@ if (!customElements.get(EntityProgressValueSourceModeChips.ELEMENT_NAME)) {
  */
 class EntityProgressThemeModeChips extends SingleSelectChipsBase {
   static ELEMENT_NAME = 'entity-progress-theme-mode-chips';
-
   static MODES = ['preset', 'custom'];
 }
 if (!customElements.get(EntityProgressThemeModeChips.ELEMENT_NAME)) {
@@ -324,7 +312,6 @@ if (!customElements.get(EntityProgressThemeModeChips.ELEMENT_NAME)) {
  */
 class EntityProgressBarStackModeChips extends SingleSelectChipsBase {
   static ELEMENT_NAME = 'entity-progress-bar-stack-mode-chips';
-
   static MODES = ['stacked', 'proportional', 'net'];
 }
 if (!customElements.get(EntityProgressBarStackModeChips.ELEMENT_NAME)) {

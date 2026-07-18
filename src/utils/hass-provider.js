@@ -19,9 +19,7 @@ import { Logger } from './log.js';
  */
 class HassProviderSingleton {
   static #instance = null;
-
   static #allowInit = false;
-
   static #entityMap = {
     device_class: { source: 'attribute' },
     friendly_name: { source: 'attribute' },
@@ -36,19 +34,12 @@ class HassProviderSingleton {
     last_updated: { source: 'state' },
     display_precision: { source: 'entity' },
   };
-
   #debug = CARD_CONTEXT.debug.hass;
-
   #log = null;
-
   #hass = null;
-
   #isValid = false;
-
   #translations = {};
-
   #rtf = null;
-
   #rtfLanguage = null;
 
   constructor() {

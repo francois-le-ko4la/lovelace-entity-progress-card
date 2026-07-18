@@ -50,31 +50,18 @@ import { ResourceManager, DOMHelper, ActionHelper } from './dom-helpers.js';
  */
 class HACore extends HTMLElement {
   static version = VERSION;
-
   static _baseClass = META.types.feature.typeName;
-
   static _cardStructure = new ObjStructure('feature');
-
   static _cardStyle = CARD_CSS;
-
   static _cardElement = CARD.htmlStructure.card.element;
-
   _debug = CARD_CONTEXT.debug.card;
-
   _log = null;
-
   _resourceManager = null;
-
   _cardView = new FeatureView();
-
   _dom = new DOMHelper();
-
   _hassProvider = HassProviderSingleton.getInstance();
-
   _changeTracker = new ChangeTracker();
-
   #isRendered = false;
-
   // CF5 - issue (perf) resolved - render_template subscriptions are push-based;
   // tracking the signature (template + entity variable) of each live/in-flight
   // subscription lets us skip the systematic unsubscribe/resubscribe cycle on
@@ -736,35 +723,25 @@ class HACore extends HTMLElement {
 
 class HABase extends HACore {
   static _baseClass = META.types.card.typeName;
-
   static _cardStructure = new ObjStructure('card');
-
   static _hasDisabledIconTap = false;
-
   static _hasDisabledBadge = false;
-
   static _hiddenComponents = [
     CARD.style.dynamic.hiddenComponent.icon,
     CARD.style.dynamic.hiddenComponent.name,
     CARD.style.dynamic.hiddenComponent.secondary_info,
     CARD.style.dynamic.hiddenComponent.progress_bar,
   ];
-
   _trendIcons = {
     up: HA_CONTEXT.icons.chevronUpBox,
     down: HA_CONTEXT.icons.chevronDownBox,
     flat: HA_CONTEXT.icons.equalBox,
     error: HA_CONTEXT.icons.progressQuestion,
   };
-
   _icon = null;
-
   _cardView = new CardView();
-
   _actionHelper = null;
-
   #jinjaStateBadge = { icon: false, color: false };
-
   #lastMessage = null;
 
   // ─── LIFECYCLE METHODS ===

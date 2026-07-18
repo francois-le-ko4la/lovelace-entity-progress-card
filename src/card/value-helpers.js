@@ -171,9 +171,7 @@ class NumberFormatter {
 
 class TypedValueHelper {
   #value = null;
-
   #isValid = false;
-
   #defaultValue = null;
 
   constructor(newValue = null) {
@@ -223,7 +221,6 @@ class DecimalHelper extends TypedValueHelper {
  */
 class UnitHelper {
   #value = CARD.config.unit.default;
-
   #isDisabled = false;
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
@@ -266,23 +263,14 @@ class UnitHelper {
  */
 class ProgressCalc {
   #min = new ValueHelper(CARD.config.value.min);
-
   #max = new ValueHelper(CARD.config.value.max);
-
   #current = new ValueHelper(0);
-
   #decimal = new DecimalHelper(CARD.config.decimal.percentage);
-
   #percent = 0;
-
   #isReversed = false;
-
   #isCenterZero = false;
-
   #zeroValue = 0;
-
   #growthPercent = false;
-
   #scale = 'linear';
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
@@ -439,11 +427,8 @@ class ProgressCalc {
  */
 class PercentHelper extends ProgressCalc {
   #hassProvider = null;
-
   #unit = new UnitHelper();
-
   #isTimer = false;
-
   #unitSpacing = CARD.config.unit.unitSpacing.auto;
 
   constructor() {
@@ -540,25 +525,15 @@ class PercentHelper extends ProgressCalc {
  */
 class ThemeManager {
   #theme = null;
-
   #icon = null;
-
   #iconColor = null;
-
   #barColor = null;
-
   #value = 0;
-
   #isValid = false;
-
   #isLinear = false;
-
   #isBasedOnPercentage = false;
-
   #isCustomTheme = false;
-
   #currentStyle = null;
-
   #interpolate = false;
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
@@ -796,17 +771,11 @@ class ThemeManager {
  */
 class ChangeTracker {
   #debug = CARD_CONTEXT.debug.hass;
-
   #log = null;
-
   #firstTime = true;
-
   #watchedEntities = new Set();
-
   #entityCache = {};
-
   #updated = false;
-
   #hassState = { isUpdated: false };
 
   constructor() {
@@ -889,33 +858,19 @@ class ChangeTracker {
  */
 class EntityHelper {
   #hassProvider = null;
-
   #isValid = false;
-
   #value = {};
-
   #entityId = null;
-
   #attribute = null;
-
   #color = null;
-
   #subtract = false;
-
   #isMain = false;
-
   #state = null;
-
   #domain = null;
-
   #entityType = null;
-
   #entityTypeFlags = { isTimer: false, isDuration: false, isNumber: false, isCounter: false, isSynced: false };
-
   #stateContent = [];
-
   #nameTokens = null;
-
   static #handleRefreshType = new Map([
     [HA_CONTEXT.entity.type.timer, (self) => self._manageTimerEntity()],
     [HA_CONTEXT.entity.type.duration, (self) => self._manageDurationEntity()],
@@ -1280,7 +1235,6 @@ class EntityHelper {
 
 class EntityCollectionHelper {
   #entities = [];
-
   #mode = 'stacked';
 
   static #numericValue(helper) {
@@ -1483,7 +1437,6 @@ class EntityCollectionHelper {
  */
 class EntityOrValue {
   #activeHelper = null;
-
   #isEntity = false;
 
   // ─── PRIVATE METHODS ──────────────────────────────────────────────────────

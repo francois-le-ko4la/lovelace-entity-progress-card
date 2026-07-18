@@ -20,7 +20,6 @@ import { EditorFactory } from './factory.js';
  */
 class EntityProgressCardEditor extends EditorBase {
   _configHelper = new CardConfigHelper();
-
   static _fields = EditorFactory.build(false, false);
 }
 
@@ -32,7 +31,6 @@ class EntityProgressCardEditor extends EditorBase {
  */
 class EntityProgressBadgeEditor extends EditorBase {
   _configHelper = new BadgeConfigHelper();
-
   static _fields = EditorFactory.build(false, true);
 }
 
@@ -45,7 +43,6 @@ class EntityProgressBadgeEditor extends EditorBase {
 
 class EntityProgressTemplateEditor extends EditorBase {
   _configHelper = new TemplateConfigHelper();
-
   static _fields = EditorFactory.build(true, false);
 }
 
@@ -58,7 +55,6 @@ class EntityProgressTemplateEditor extends EditorBase {
 
 class EntityProgressBadgeTemplateEditor extends EditorBase {
   _configHelper = new BadgeTemplateConfigHelper();
-
   static _fields = EditorFactory.build(true, true);
 }
 

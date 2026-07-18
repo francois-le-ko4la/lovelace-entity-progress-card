@@ -47,15 +47,10 @@ import {
  */
 class ViewCore {
   _hassProvider = HassProviderSingleton.getInstance();
-
   _lastPercent = null;
-
   _configHelper = new BaseConfigHelper(); // Base config
-
   _currentValue = new EntityOrValue();
-
   _lowValue = new EntityOrValue();
-
   _highValue = new EntityOrValue();
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
@@ -251,7 +246,6 @@ class ViewCore {
   // likelihood order; first one present wins. Covers both a boolean flag
   // (true) and a string status enum (e.g. battery_state: 'charging').
   static #CHARGING_ATTRIBUTES = ['battery_charging', 'charging', 'is_charging'];
-
   // Exact enum values, not a substring match: Renault's own charge_state
   // sensor has both 'charge_in_progress' AND 'charge_ended' /
   // 'waiting_for_a_planned_charge', which all contain "charge" - a loose
@@ -451,24 +445,16 @@ class ViewCore {
  */
 class ViewBase extends ViewCore {
   #percentHelper = new PercentHelper();
-
   #theme = new ThemeManager();
-
   #maxValue = new EntityOrValue();
-
   #minValue = new EntityOrValue();
-
   // min_value/max_value resolved from a Jinja subscription (standard cards);
   // null = no override
   #jinjaMinValue = null;
-
   #jinjaMaxValue = null;
-
   // watermark.low/.high resolved from a Jinja subscription; null = no override
   #jinjaWatermarkLow = null;
-
   #jinjaWatermarkHigh = null;
-
   #entityCollection = new EntityCollectionHelper();
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
@@ -1002,7 +988,6 @@ class FeatureView extends ViewBase {
  */
 class CardTemplateView extends ViewCore {
   _configHelper = new TemplateConfigHelper();
-
   icon = null;
 }
 
@@ -1014,7 +999,6 @@ class CardTemplateView extends ViewCore {
  */
 class BadgeTemplateView extends ViewCore {
   _configHelper = new BadgeTemplateConfigHelper();
-
   icon = null;
 }
 

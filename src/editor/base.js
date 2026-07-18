@@ -49,21 +49,13 @@ class EditorBase extends HTMLElement {
       },
     }, */
   };
-
   // ─── private state ────────────────────────────────────────────────────────
-
   #config = {};
-
   #hassProvider = null;
-
   #dom = null;
-
   #boundOnChanged = null;
-
   #pendingSentConfig = null;
-
   #sendConfigScheduled = false;
-
   _configHelper = new BaseConfigHelper();
 
   get #localizedOptions() {

@@ -13,11 +13,8 @@ import { initLogger } from '../utils/log.js';
  */
 class ResourceManager {
   #debug = CARD_CONTEXT.debug.ressourceManager;
-
   #log = null;
-
   #resources = new Map();
-
   #throttles = new Map();
 
   constructor() {
@@ -205,7 +202,6 @@ class ResourceManager {
  */
 class DOMHelper {
   #debug = CARD_CONTEXT.debug.ressourceManager;
-
   #log = null;
 
   constructor() {
@@ -355,9 +351,7 @@ class DOMHelper {
   // <br> surviving to this point would only ever be an unhandled edge case, not
   // a feature to preserve.
   static #SAFE_HTML_TAGS = new Set(['B', 'I', 'U', 'SPAN', 'DIV']);
-
   static #SAFE_STYLE_PROPS = new Set(['color', 'background-color']);
-
   static #DROP_CONTENT_TAGS = new Set(['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'EMBED', 'TEMPLATE', 'NOSCRIPT']);
 
   static sanitizeHTML(value) {
@@ -505,15 +499,10 @@ class DOMHelper {
 
 class ActionHelper {
   #target = null;
-
   #config = null;
-
   #fromIcon = false;
-
   #initialized = false;
-
   #disableIconTap = false;
-
   #iconClickSources = new Set(['shape', HA_SVG_ICON_TAG, 'img']);
 
   constructor(target) {

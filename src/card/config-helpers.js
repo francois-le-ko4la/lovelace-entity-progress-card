@@ -15,26 +15,17 @@ import { YamlSchemaFactory } from './schema.js';
  */
 class BaseConfigHelper {
   #hassProvider = HassProviderSingleton.getInstance();
-
   #HAError = null;
-
   #lastMsgConsole = null;
-
   #log = null;
-
   #actions = {
     card: { tap: null, doubleTap: null, hold: null },
     icon: { tap: null, doubleTap: null, hold: null },
   };
-
   #actionsReady = false;
-
   _isDefined = false;
-
   _configParsed = {};
-
   _configResolved = {}; // valeurs dérivées de la config, calculées une seule fois par set config()
-
   _yamlSchema = null;
 
   constructor() {

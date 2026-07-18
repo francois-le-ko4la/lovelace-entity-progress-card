@@ -15,7 +15,6 @@ import { VERSION, META, CARD_CONTEXT } from './parameters.js';
  */
 class RegistrationHelper {
   static _devMode = CARD_CONTEXT.dev;
-
   static #targetKey = {
     customCards: 'customCards',
     customBadges: 'customBadges',

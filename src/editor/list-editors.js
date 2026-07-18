@@ -19,11 +19,8 @@ import { is } from '../utils/common-checks.js';
  */
 class ListEditorBase extends HTMLElement {
   _labelText = '';
-
   _value = [];
-
   _list = null;
-
   _labelEl = null;
 
   connectedCallback() {
@@ -72,9 +69,7 @@ class ListEditorBase extends HTMLElement {
  */
 class EntityProgressBarStackEditor extends ListEditorBase {
   static ELEMENT_NAME = 'entity-progress-bar-stack-editor';
-
   #hass = null;
-
   #addBtn = null;
 
   get hass() {
@@ -229,11 +224,8 @@ if (!customElements.get(EntityProgressBarStackEditor.ELEMENT_NAME)) {
 
 class EntityProgressCustomThemeEditor extends ListEditorBase {
   static ELEMENT_NAME = 'entity-progress-custom-theme-editor';
-
   #hass = null;
-
   #addBtn = null;
-
   #addLabel = 'Add zone';
 
   setAddLabel(val) {
