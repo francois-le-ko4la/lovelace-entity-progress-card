@@ -9,6 +9,16 @@ import { HA_CONTEXT, CARD, THEME, SEV } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
 
+// A validation path is the sequence of object keys/array indices leading to
+// the value being checked (e.g. ['bar_stack', 'entities', 0, 'entity']).
+type Path = (string | number)[];
+// Validators (and the `value`/`config` they check) come from arbitrary raw
+// YAML - kept as `any` throughout rather than a generic `Validator<T>`, which
+// would need a type parameter threaded through every union/optional/fallback
+// combinator below for no real safety gain over the runtime checks they
+// already perform.
+type Validator = (value: any, path?: Path) => any;
+
 /**
  * structural validation ideas to manage inputs (1.5+).
  * deliberately verbose by design: no external dependencies, fully typed errors,
@@ -18,13 +28,20 @@ import { HassProviderSingleton } from '../utils/hass-provider.js';
  * @see https://github.com/ianstormtaylor/superstruct
  */
 class ValidationError extends Error {
+  path: Path;
+  errorCode: string | null;
+  severity: string;
+  partialConfig: any;
+  errors: any[];
+  fallback: any;
+
   constructor(
-    path = [],
-    errorCode = null,
-    severity = SEV.error,
-    fallback = null,
-    partialConfig = null,
-    allErrors = [],
+    path: Path = [],
+    errorCode: string | null = null,
+    severity: string = SEV.error,
+    fallback: any = null,
+    partialConfig: any = null,
+    allErrors: any[] = [],
   ) {
     super();
     this.name = 'ValidationError';
@@ -59,8 +76,8 @@ const ERROR_CODES = {
 };
 
 const validateType =
-  (typeCheck, errorCode) =>
-  (value, path = []) => {
+  (typeCheck: (v: any) => boolean, errorCode: { code: string; severity: string }): Validator =>
+  (value: any, path: Path = []) => {
     if (is.nullish(value))
       throw new ValidationError(
         path,
@@ -71,19 +88,19 @@ const validateType =
     return value;
   };
 
-const types = {
+const types: Record<string, any> = {
   string: validateType(is.string, ERROR_CODES.invalidTypeString),
   number: validateType(is.number, ERROR_CODES.invalidTypeNumber),
   boolean: validateType(is.boolean, ERROR_CODES.invalidTypeBoolean),
 
   array:
-    (itemValidator) =>
-    (value, path = []) => {
+    (itemValidator: Validator): Validator =>
+    (value: any, path: Path = []) => {
       if (!is.array(value))
         throw new ValidationError(path, ERROR_CODES.invalidTypeArray.code, ERROR_CODES.invalidTypeArray.severity);
 
-      const validItems = [];
-      value.forEach((item, index) => {
+      const validItems: any[] = [];
+      value.forEach((item: any, index: number) => {
         const validatedItem = itemValidator(item, [...path, index]);
         if (validatedItem !== SKIP_PROPERTY) {
           validItems.push(validatedItem);
@@ -92,14 +109,14 @@ const types = {
       return validItems;
     },
 
-  object: (schema) => {
-    const validator = (value, path = []) => {
+  object: (schema: Record<string, Validator>): Validator & { _schema: Record<string, Validator> } => {
+    const validator = (value: any, path: Path = []) => {
       if (!is.plainObject(value)) {
         throw new ValidationError(path, ERROR_CODES.invalidTypeObject.code, ERROR_CODES.invalidTypeObject.severity);
       }
 
-      const result = {};
-      const errors = [];
+      const result: Record<string, any> = {};
+      const errors: ValidationError[] = [];
 
       for (const [key, fieldValidator] of Object.entries(schema)) {
         try {
@@ -126,13 +143,13 @@ const types = {
       return result;
     };
 
-    validator._schema = schema;
-    return validator;
+    (validator as any)._schema = schema;
+    return validator as Validator & { _schema: Record<string, Validator> };
   },
 
   optional:
-    (validator) =>
-    (value, path = []) => {
+    (validator: Validator): Validator =>
+    (value: any, path: Path = []) => {
       if (is.nullish(value)) return SKIP_PROPERTY;
       try {
         return validator(value, path);
@@ -146,8 +163,8 @@ const types = {
     },
 
   fallbackTo:
-    (validator, defaultVal) =>
-    (value, path = []) => {
+    (validator: Validator, defaultVal: any): Validator =>
+    (value: any, path: Path = []) => {
       if (value === undefined) return defaultVal;
       try {
         return validator(value, path);
@@ -169,14 +186,15 @@ const types = {
   optionalNumber: () => types.optional(types.number),
   optionalBoolean: () => types.optional(types.boolean),
 
-  optionalWithDefault: (baseValidator, defaultVal) => types.fallbackTo(types.optional(baseValidator), defaultVal),
-  optionalStringWithDefault: (defaultVal) => types.optionalWithDefault(types.string, defaultVal),
-  optionalNumberWithDefault: (defaultVal) => types.optionalWithDefault(types.number, defaultVal),
-  optionalBooleanWithDefault: (defaultVal) => types.optionalWithDefault(types.boolean, defaultVal),
+  optionalWithDefault: (baseValidator: Validator, defaultVal: any) =>
+    types.fallbackTo(types.optional(baseValidator), defaultVal),
+  optionalStringWithDefault: (defaultVal: any) => types.optionalWithDefault(types.string, defaultVal),
+  optionalNumberWithDefault: (defaultVal: any) => types.optionalWithDefault(types.number, defaultVal),
+  optionalBooleanWithDefault: (defaultVal: any) => types.optionalWithDefault(types.boolean, defaultVal),
 
   enums:
-    (allowedValues) =>
-    (value, path = []) => {
+    (allowedValues: any[]): Validator =>
+    (value: any, path: Path = []) => {
       if (is.nullish(value)) {
         throw new ValidationError(
           path,
@@ -190,13 +208,13 @@ const types = {
       return value;
     },
 
-  enumsWithDefault: (allowedValues, defaultVal) => types.fallbackTo(types.enums(allowedValues), defaultVal),
+  enumsWithDefault: (allowedValues: any[], defaultVal: any) => types.fallbackTo(types.enums(allowedValues), defaultVal),
 
   theme:
-    (allowedValues) =>
-    (value, path = []) => {
+    (allowedValues: string[]): Validator =>
+    (value: any, path: Path = []) => {
       if (is.nullish(value) || is.emptyString(value)) return SKIP_PROPERTY;
-      const themeMap = {
+      const themeMap: Record<string, string> = {
         battery: 'optimal_when_high',
         memory: 'optimal_when_low',
         cpu: 'optimal_when_low',
@@ -208,14 +226,14 @@ const types = {
     },
 
   union:
-    (...validators) =>
-    (value, path = []) => {
-      const errors = [];
+    (...validators: Validator[]): Validator =>
+    (value: any, path: Path = []) => {
+      const errors: any[] = [];
 
       for (const validator of validators) {
         try {
           return validator(value, path);
-        } catch (error) {
+        } catch (error: any) {
           errors.push(error.message || error.errorCode);
         }
       }
@@ -224,12 +242,12 @@ const types = {
     },
 
   arrayWithValidatedElem:
-    (allowedValues) =>
-    (value, _path = []) => {
+    (allowedValues: any[]): Validator =>
+    (value: any, _path: Path = []) => {
       if (is.nullish(value)) return SKIP_PROPERTY;
 
       const valueArray = is.array(value) ? value : [value];
-      const validItems = valueArray.filter((item) => allowedValues.includes(item));
+      const validItems = valueArray.filter((item: any) => allowedValues.includes(item));
 
       if (validItems.length === 0) return SKIP_PROPERTY;
 
@@ -237,20 +255,20 @@ const types = {
     },
 
   jinjaOrArrayWithValidatedElem:
-    (allowedValues) =>
-    (value, path = []) => {
+    (allowedValues: any[]): Validator =>
+    (value: any, path: Path = []) => {
       if (is.jinja(value)) return value;
       return types.arrayWithValidatedElem(allowedValues)(value, path);
     },
 
   watermarkObject:
-    (schema) =>
-    (value, path = []) => {
+    (schema: Record<string, Validator>): Validator =>
+    (value: any, path: Path = []) => {
       if (is.nullish(value) || !is.plainObject(value)) return SKIP_PROPERTY;
 
-      const validateEntry = (key, validator) => {
+      const validateEntry = (key: string, validator: Validator) => {
         try {
-          return { key, value: validator(value[key], [...path, key]), error: null };
+          return { key, value: validator(value[key], [...path, key]), error: null as ValidationError | null };
         } catch (error) {
           if (!(error instanceof ValidationError)) throw error;
           return { key, value: error.fallback ?? undefined, error };
@@ -270,7 +288,7 @@ const types = {
       return result;
     },
 
-  entityId: (value, path = []) => {
+  entityId: (value: any, path: Path = []) => {
     if (is.nullish(value))
       throw new ValidationError(
         path,
@@ -285,7 +303,7 @@ const types = {
     return value;
   },
 
-  decimal: (value, path = []) => {
+  decimal: (value: any, path: Path = []) => {
     if (is.nullish(value)) return SKIP_PROPERTY;
     if (!is.unsignedInteger(value))
       throw new ValidationError(path, ERROR_CODES.invalidDecimal.code, ERROR_CODES.invalidDecimal.severity);
@@ -293,7 +311,7 @@ const types = {
     return value;
   },
 
-  tapAction: (value, path = []) => {
+  tapAction: (value: any, path: Path = []) => {
     if (!is.plainObject(value)) {
       throw new ValidationError(path, ERROR_CODES.invalidActionObject.code, ERROR_CODES.invalidActionObject.severity);
     }
@@ -308,7 +326,7 @@ const types = {
     return value;
   },
 
-  tapActionWithDefault: (defaultVal) => types.fallbackTo(types.tapAction, defaultVal),
+  tapActionWithDefault: (defaultVal: any) => types.fallbackTo(types.tapAction, defaultVal),
 
   // CF5 - issue (major) resolved - this used to throw (discarding the WHOLE
   // array via types.fallbackTo(..., SKIP_PROPERTY)) the instant any single zone
@@ -321,13 +339,13 @@ const types = {
   // nothing covers), and zones are sorted by min so edit order never matters —
   // mirrors barStackEntity's own per-item SKIP_PROPERTY leniency instead of an
   // all-or-nothing gate.
-  customTheme: (value, _path = []) => {
+  customTheme: (value: any, _path: Path = []) => {
     if (is.nullish(value)) return SKIP_PROPERTY;
     if (!is.array(value)) return SKIP_PROPERTY;
 
     const validItems = value
-      .filter((item) => is.plainObject(item) && is.number(item.min) && is.number(item.max) && item.min < item.max)
-      .map(({ min, max, color, icon_color, bar_color, icon }) => ({
+      .filter((item: any) => is.plainObject(item) && is.number(item.min) && is.number(item.max) && item.min < item.max)
+      .map(({ min, max, color, icon_color, bar_color, icon }: any) => ({
         min,
         max,
         ...(is.string(color) && { color }),
@@ -335,17 +353,17 @@ const types = {
         ...(is.string(bar_color) && { bar_color }),
         ...(is.string(icon) && { icon }),
       }))
-      .sort((a, b) => a.min - b.min);
+      .sort((a: any, b: any) => a.min - b.min);
 
     return validItems.length ? validItems : SKIP_PROPERTY;
   },
 
-  stateContent: (value, path = []) => {
+  stateContent: (value: any, path: Path = []) => {
     if (is.nullishOrEmptyString(value)) return SKIP_PROPERTY;
     if (is.string(value)) return [value];
 
     if (is.array(value)) {
-      const invalidIndex = value.findIndex((v) => !is.string(v));
+      const invalidIndex = value.findIndex((v: any) => !is.string(v));
       if (invalidIndex !== -1) {
         throw new ValidationError(
           [...path, invalidIndex],
@@ -360,8 +378,8 @@ const types = {
   },
 };
 
-function struct(validator, { allowBelowBarPosition = true } = {}) {
-  const preProcess = (data) => {
+function struct(validator: Validator & { _schema?: Record<string, Validator> }, { allowBelowBarPosition = true } = {}) {
+  const preProcess = (data: any) => {
     const result = { ...data };
 
     if (!data.type.includes('template')) {
@@ -374,7 +392,7 @@ function struct(validator, { allowBelowBarPosition = true } = {}) {
 
     if (is.nullish(result.icon_tap_action) && is.string(result.entity)) {
       const domain = HassProviderSingleton.getEntityDomain(result.entity);
-      const shouldPatch = HA_CONTEXT.actions.toggleDomain.includes(domain);
+      const shouldPatch = domain !== null && HA_CONTEXT.actions.toggleDomain.includes(domain);
       if (shouldPatch) result.icon_tap_action = HA_CONTEXT.actions.toggle;
     }
 
@@ -391,7 +409,7 @@ function struct(validator, { allowBelowBarPosition = true } = {}) {
   // 'below' isn't a legal bar_position for every schema (the Feature one
   // restricts it to ['default', 'top', 'bottom']) - this rewrite would
   // otherwise inject a value never validated as legal there.
-  const applyBelowBarPositionRule = (result) => {
+  const applyBelowBarPositionRule = (result: any) => {
     if (
       allowBelowBarPosition &&
       result.bar_size === CARD.style.bar.sizeOptions.xlarge.label &&
@@ -400,7 +418,7 @@ function struct(validator, { allowBelowBarPosition = true } = {}) {
       result.bar_position = 'below';
   };
 
-  const applyBarSingleLineRule = (result) => {
+  const applyBarSingleLineRule = (result: any) => {
     if (result.bar_position !== 'overlay' && result.bar_single_line) result.bar_single_line = false;
   };
 
@@ -412,7 +430,7 @@ function struct(validator, { allowBelowBarPosition = true } = {}) {
   // already resolved to their final values (defaults applied, the
   // xlarge+default->below rewrite above already ran), so this check can't be
   // fooled by an unset field.
-  const applyBarMaxWidthRule = (result) => {
+  const applyBarMaxWidthRule = (result: any) => {
     const barMaxWidthAllowed =
       result.layout === CARD.layout.orientations.horizontal.label &&
       result.bar_position === 'default' &&
@@ -425,7 +443,7 @@ function struct(validator, { allowBelowBarPosition = true } = {}) {
   // editor's own upAllowed/resetUpIfInvalid) - mirrored here so a raw
   // YAML/Jinja config that bypasses the editor doesn't keep a stored 'up'
   // that silently does nothing.
-  const applyBarOrientationUpRule = (result) => {
+  const applyBarOrientationUpRule = (result: any) => {
     const upAllowed =
       (result.layout === CARD.layout.orientations.vertical.label && result.bar_position === 'overlay') ||
       result.bar_position === 'background';
@@ -435,7 +453,7 @@ function struct(validator, { allowBelowBarPosition = true } = {}) {
   // text_shadow only applies via .overlay or .background (see the CSS rule on
   // :is(.overlay, .background).text-shadow) - same reasoning as
   // bar_single_line above, just a different pair of valid positions.
-  const applyTextShadowRule = (result) => {
+  const applyTextShadowRule = (result: any) => {
     if (result.bar_position !== 'overlay' && result.bar_position !== 'background' && result.text_shadow) {
       result.text_shadow = false;
     }
@@ -445,7 +463,7 @@ function struct(validator, { allowBelowBarPosition = true } = {}) {
   // custom_theme active, and never in center_zero (see ViewCore.
   // colorGradient, which returns null in both cases regardless of mode) -
   // mirrors the editor's own bar_color_mode showIf.
-  const applyBarColorModeRule = (result, hasTheme) => {
+  const applyBarColorModeRule = (result: any, hasTheme: boolean) => {
     if (result.bar_color_mode && result.bar_color_mode !== 'auto' && !(hasTheme && !result.center_zero)) {
       result.bar_color_mode = 'auto';
     }
@@ -455,7 +473,7 @@ function struct(validator, { allowBelowBarPosition = true } = {}) {
   // meaningful alongside bar_color_mode: 'auto' (or unset) - mirrors the
   // editor's own interpolate showIf, and its onChange that already clears
   // interpolate interactively when bar_color_mode changes to non-auto.
-  const applyInterpolateRule = (result, hasTheme) => {
+  const applyInterpolateRule = (result: any, hasTheme: boolean) => {
     if (result.interpolate && !(hasTheme && (is.nullish(result.bar_color_mode) || result.bar_color_mode === 'auto'))) {
       result.interpolate = false;
     }
@@ -467,7 +485,7 @@ function struct(validator, { allowBelowBarPosition = true } = {}) {
   // entirely - mirrors ViewCore#hasReversedSecondaryInfoRow (bar_position
   // nullish-coalesced to 'default' so Badge/Badge Template, which never have
   // that key at all, aren't wrongly treated as invalid).
-  const applyReverseSecondaryInfoRowRule = (result) => {
+  const applyReverseSecondaryInfoRowRule = (result: any) => {
     if (
       result.reverse_secondary_info_row &&
       !(result.layout === CARD.layout.orientations.horizontal.label && (result.bar_position ?? 'default') === 'default')
@@ -476,7 +494,7 @@ function struct(validator, { allowBelowBarPosition = true } = {}) {
     }
   };
 
-  const postProcess = (data) => {
+  const postProcess = (data: any) => {
     const result = { ...data };
     if (!result.layout) result.layout = CARD.layout.orientations.horizontal.label;
 
@@ -494,16 +512,16 @@ function struct(validator, { allowBelowBarPosition = true } = {}) {
     return result;
   };
   return {
-    validate: (data) => {
+    validate: (data: any) => {
       try {
         const preProcessed = preProcess(data);
         return { isValid: true, config: postProcess(validator(preProcessed)), error: null, path: null };
-      } catch (error) {
+      } catch (error: any) {
         return { isValid: false, config: null, error: error.message, path: error.path };
       }
     },
 
-    parse: (data) => {
+    parse: (data: any) => {
       try {
         const preProcessed = preProcess(data);
         const result = postProcess(validator(preProcessed));
@@ -515,13 +533,13 @@ function struct(validator, { allowBelowBarPosition = true } = {}) {
           severity: null,
           errors: [],
         };
-      } catch (error) {
+      } catch (error: any) {
         // extract error wo duplicates
-        const extractAllErrors = (errRoot) => {
-          const allErrors = [];
+        const extractAllErrors = (errRoot: any): any[] => {
+          const allErrors: any[] = [];
           const seen = new Set();
 
-          const addError = (err) => {
+          const addError = (err: any) => {
             const key = `${JSON.stringify(err.path)}-${err.errorCode}`;
             if (!seen.has(key)) {
               seen.add(key);
@@ -534,7 +552,7 @@ function struct(validator, { allowBelowBarPosition = true } = {}) {
           };
 
           if (is.nonEmptyArray(errRoot.errors)) {
-            errRoot.errors.forEach((subError) => {
+            errRoot.errors.forEach((subError: any) => {
               if (subError instanceof ValidationError) {
                 extractAllErrors(subError).forEach(addError);
               } else if (subError.errorCode) {
@@ -565,7 +583,7 @@ function struct(validator, { allowBelowBarPosition = true } = {}) {
       }
     },
 
-    extend: (additionalFields) => {
+    extend: (additionalFields: Record<string, Validator>) => {
       if (!validator._schema) {
         throw new Error('Can only extend object schemas created with types.object');
       }
@@ -578,14 +596,14 @@ function struct(validator, { allowBelowBarPosition = true } = {}) {
       return struct(types.object(newSchema));
     },
 
-    delete: (fieldsToDelete) => {
+    delete: (fieldsToDelete: string | string[]) => {
       if (!validator._schema) {
         throw new Error('Can only delete from object schemas created with types.object');
       }
 
       const fieldsArray = is.array(fieldsToDelete) ? fieldsToDelete : [fieldsToDelete];
       const newSchema = { ...validator._schema };
-      fieldsArray.forEach((field) => {
+      fieldsArray.forEach((field: string) => {
         delete newSchema[field];
       });
 
@@ -602,8 +620,8 @@ function struct(validator, { allowBelowBarPosition = true } = {}) {
 }
 
 types.discriminatedUnion =
-  (key, mapping) =>
-  (value, path = []) => {
+  (key: string, mapping: Record<string, Validator>): Validator =>
+  (value: any, path: Path = []) => {
     if (!is.plainObject(value)) {
       throw new ValidationError(path, ERROR_CODES.invalidTypeObject.code, ERROR_CODES.invalidTypeObject.severity);
     }

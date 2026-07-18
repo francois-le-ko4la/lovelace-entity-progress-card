@@ -6,27 +6,36 @@
 
 import { META, HA_CONTEXT, CARD, SEV, MIN_VALUE_ENTITY_PATH, MAX_VALUE_ENTITY_PATH } from '../utils/parameters.js';
 import { is, has } from '../utils/common-checks.js';
-import { initLogger } from '../utils/log.js';
+import { initLogger, type LoggerInstance } from '../utils/log.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
 import { YamlSchemaFactory } from './schema.js';
+import type { RawConfig, Config } from '../utils/types.js';
+
+// Every YamlSchemaFactory getter (card/badge/feature/template/badgeTemplate)
+// returns the same struct(...) shape - .card's is as good a reference as any.
+type Schema = typeof YamlSchemaFactory.card;
+type ActionBag = { tap: any; doubleTap: any; hold: any };
+type HAError = { path: string; errorCode: string | null; severity: string } | null;
 
 /**
  * base class for managing and validating all card configuration.
  */
 class BaseConfigHelper {
   #hassProvider = HassProviderSingleton.getInstance();
-  #HAError = null;
-  #lastMsgConsole = null;
-  #log = null;
-  #actions = {
+  #HAError: HAError = null;
+  #lastMsgConsole: string | null = null;
+  #log: LoggerInstance | null = null;
+  #actions: { card: ActionBag; icon: ActionBag } = {
     card: { tap: null, doubleTap: null, hold: null },
     icon: { tap: null, doubleTap: null, hold: null },
   };
   #actionsReady = false;
   _isDefined = false;
-  _configParsed = {};
-  _configResolved = {}; // valeurs dérivées de la config, calculées une seule fois par set config()
-  _yamlSchema = null;
+  _configParsed: any = {};
+  _configResolved: Config = {} as Config; // valeurs dérivées de la config, calculées une seule fois par set config()
+  // The real shape comes from YamlSchemaFactory (see schema.ts) - subclasses
+  // assign a concrete schema here (see CardConfigHelper etc. below).
+  _yamlSchema: Schema | null = null;
 
   constructor() {
     this.#log = initLogger(this, false);
@@ -34,15 +43,17 @@ class BaseConfigHelper {
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
-  get config() {
+  get config(): Config {
     return this._configResolved;
   }
 
-  set config(config) {
+  set config(config: RawConfig) {
     this.#actionsReady = false;
     this._isDefined = true;
     BaseConfigHelper.#logDeprecatedOption(config);
-    this._configParsed = this._yamlSchema.parse(this.constructor._customizeConfig(config));
+    this._configParsed = this._yamlSchema!.parse(
+      (this.constructor as typeof BaseConfigHelper)._customizeConfig(config),
+    );
     this._configResolved = BaseConfigHelper.#resolveConfig(this._configParsed?.config);
 
     this.#lastMsgConsole = null;
@@ -51,11 +62,11 @@ class BaseConfigHelper {
   // Calcule une seule fois, à partir de la config validée, la config brute +
   // les valeurs dérivées consommées ailleurs (évite de recalculer à chaque
   // accès).
-  static #resolveConfig(config) {
+  static #resolveConfig(config: any): Config {
     return {
       ...config,
       centerZero: BaseConfigHelper.#resolveCenterZero(config?.center_zero),
-    };
+    } as Config;
   }
 
   /**
@@ -63,7 +74,7 @@ class BaseConfigHelper {
    * exploitable. - false / undefined -> désactivé, zéro = 0 - true -> activé,
    * zéro = 0 - { value: 230 } -> activé, zéro = 230
    */
-  static #resolveCenterZero(centerZero) {
+  static #resolveCenterZero(centerZero: any): { enabled: boolean; zeroValue: number; growthPercent: boolean } {
     if (!centerZero) return { enabled: false, zeroValue: 0, growthPercent: false };
     if (centerZero === true) return { enabled: true, zeroValue: 0, growthPercent: false };
     return {
@@ -73,7 +84,7 @@ class BaseConfigHelper {
     };
   }
 
-  static _customizeConfig(config) {
+  static _customizeConfig(config: RawConfig): RawConfig {
     return config;
   }
 
@@ -81,11 +92,11 @@ class BaseConfigHelper {
   // max_value/disable_unit/additions to begin with. Matches _customizeConfig's
   // own polymorphic no-op above, so the editor's "Migrate config" button can
   // call this generically regardless of which config helper is active.
-  static _migrateLegacyOptions(config) {
+  static _migrateLegacyOptions(config: RawConfig): RawConfig {
     return config;
   }
 
-  static #logDeprecatedOption(config) {
+  static #logDeprecatedOption(config: RawConfig) {
     if (config.navigate_to !== undefined)
       console.warn(
         `${META.types.card.typeName.toUpperCase()} - navigate_to option is deprecated and has been removed.`,
@@ -126,11 +137,11 @@ class BaseConfigHelper {
       );
   }
 
-  get isValid() {
+  get isValid(): boolean {
     return this._isDefined ? this._configParsed.isValid && this.#HAError === null : false;
   }
 
-  get _errorMessage() {
+  get _errorMessage(): { content: string; sev: string } {
     const errorSrc = this.#HAError ? this.#HAError : this._configParsed;
     return {
       content: `${errorSrc.path}: ${this.#hassProvider.getMessage(errorSrc.errorCode)}`,
@@ -138,11 +149,11 @@ class BaseConfigHelper {
     };
   }
 
-  get msg() {
+  get msg(): { content: string; sev: string } | null {
     return this._isDefined && (this._configParsed.errorCode || this.#HAError) ? this._errorMessage : null;
   }
 
-  get action() {
+  get action(): { card: ActionBag; icon: ActionBag } {
     if (!this.#actionsReady) {
       this.#actions = {
         card: {
@@ -161,7 +172,7 @@ class BaseConfigHelper {
     return this.#actions;
   }
 
-  #getAction(action) {
+  #getAction(action: string): any {
     return this.isValid ? this.config?.[action]?.action : null;
   }
 
@@ -176,8 +187,8 @@ class BaseConfigHelper {
       const msgConsole = `${curError.path.join('.')} : ${this._hassProvider.getMessage(curError.errorCode)}`;
       if (this.#lastMsgConsole !== msgConsole) {
         this.#lastMsgConsole = msgConsole;
-        this.#log[curError.severity]?.(msgConsole);
-        this.#log[curError.severity]?.('config: ', this.config);
+        (this.#log as any)?.[curError.severity]?.(msgConsole);
+        (this.#log as any)?.[curError.severity]?.('config: ', this.config);
       }
     }
   }
@@ -185,7 +196,7 @@ class BaseConfigHelper {
   _checkHAEnvironment() {
     const ENTITY_NOT_FOUND = 'entityNotFound';
     const ATTRIBUTE_NOT_FOUND = 'attributeNotFound';
-    const resolve = (key) => (is.nonEmptyString(key) ? this._hassProvider.getEntityStateObj(key) : null);
+    const resolve = (key: any) => (is.nonEmptyString(key) ? this._hassProvider.getEntityStateObj(key) : null);
 
     const entityState = resolve(this.config.entity);
     const maxValueEntity = is.plainObject(this.config.max_value) ? this.config.max_value.entity : null;
@@ -256,8 +267,16 @@ class BaseConfigHelper {
     this.#HAError = failed ? { path: failed.path, errorCode: failed.errorCode, severity: SEV.error } : null;
   }
 
-  get _hassProvider() {
+  get _hassProvider(): HassProviderSingleton {
     return this.#hassProvider;
+  }
+
+  // Only CardConfigHelper (and its Badge/Feature subclasses) override this -
+  // Template/BadgeTemplate schemas have no state_content key at all, so this
+  // stays the property-not-defined default (undefined), same as before typing.
+  // eslint-disable-next-line class-methods-use-this
+  get stateContent(): string[] | undefined {
+    return undefined;
   }
 }
 
@@ -280,7 +299,7 @@ class CardConfigHelper extends BaseConfigHelper {
   // (or absent, i.e. the 100 default); an entity/jinja-based max can't be
   // mirrored at this config-negotiation stage. An explicit min_value (even 0)
   // is always left untouched.
-  static _applyCenterZeroMinDefault(config, normalized) {
+  static _applyCenterZeroMinDefault(config: RawConfig, normalized: RawConfig): RawConfig {
     if (!config?.center_zero || !is.nullish(config?.min_value)) return normalized;
     const maxForSymmetry = is.number(normalized?.max_value) ? normalized.max_value : CARD.config.value.max;
     return { ...normalized, min_value: -maxForSymmetry };
@@ -298,7 +317,7 @@ class CardConfigHelper extends BaseConfigHelper {
   // validation, so every downstream consumer only ever sees a number or that
   // map — no sniffing left anywhere. The deprecation warning for the bare form
   // is logged separately, see BaseConfigHelper.#logDeprecatedOption.
-  static _migrateLegacyOptions(config) {
+  static _migrateLegacyOptions(config: RawConfig): RawConfig {
     let normalized = config;
     if (is.nonEmptyString(config?.max_value)) {
       normalized = {
@@ -334,15 +353,15 @@ class CardConfigHelper extends BaseConfigHelper {
     return normalized;
   }
 
-  static _customizeConfig(config) {
+  static _customizeConfig(config: RawConfig): RawConfig {
     let normalized = CardConfigHelper._migrateLegacyOptions(config);
     normalized = CardConfigHelper._applyCenterZeroMinDefault(config, normalized);
+    const attrMapping: Record<string, { attribute?: string }> = HA_CONTEXT.attributeMapping;
     return {
       ...normalized,
       ...(is.nonEmptyString(normalized?.entity) && is.nullish(normalized?.attribute)
         ? {
-            attribute:
-              HA_CONTEXT.attributeMapping[HassProviderSingleton.getEntityDomain(normalized?.entity)]?.attribute,
+            attribute: attrMapping[HassProviderSingleton.getEntityDomain(normalized?.entity) as string]?.attribute,
           }
         : {}),
       ...(is.nonEmptyString(normalized?.max_value?.entity) && is.nullish(normalized?.max_value?.attribute)
@@ -350,15 +369,14 @@ class CardConfigHelper extends BaseConfigHelper {
             max_value: {
               ...normalized.max_value,
               attribute:
-                HA_CONTEXT.attributeMapping[HassProviderSingleton.getEntityDomain(normalized.max_value.entity)]
-                  ?.attribute,
+                attrMapping[HassProviderSingleton.getEntityDomain(normalized.max_value.entity) as string]?.attribute,
             },
           }
         : {}),
     };
   }
 
-  get stateContent() {
+  get stateContent(): string[] {
     return this.config?.state_content ?? [];
   }
 }

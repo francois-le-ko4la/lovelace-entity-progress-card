@@ -2,23 +2,24 @@
   "name": "lovelace-entity-progress-card",
   "version": "1.0.0",
   "description": "A modern Entity progress card for Home Assistant's Lovelace UI.",
-  "main": "src/index.js",
+  "main": "src/index.ts",
   "private": true,
   "directories": {
     "doc": "docs"
   },
   "scripts": {
     "check": "find src -name '*.js' -print0 | xargs -0 -n1 node --check",
-    "lint": "eslint \"src/**/*.js\"",
+    "lint": "eslint \"src/**/*.{js,ts}\"",
+    "type-check": "tsc",
     "i18n:validate": "node scripts/translations.js validate",
     "i18n:validate:structure": "node scripts/translations.js validate --structure-only",
     "i18n:sync": "node scripts/translations.js synchronize --to-js",
-    "validate": "npm run check && npm run lint && npm run i18n:validate",
+    "validate": "npm run check && npm run lint && npm run type-check && npm run i18n:validate",
     "check:release-flags": "node scripts/check-release-flags.js",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
     "format:md": "prettier --write \"**/*.md\" \"!node_modules/**\"",
-    "format:js": "prettier --write \"src/**/*.js\"",
-    "format:js:check": "prettier --check \"src/**/*.js\"",
+    "format:js": "prettier --write \"src/**/*.{js,ts}\"",
+    "format:js:check": "prettier --check \"src/**/*.{js,ts}\"",
     "format": "npm run format:js && npm run format:md",
     "build": "node scripts/build.js",
     "build:test": "node scripts/build.js",
@@ -43,6 +44,8 @@
   "homepage": "https://github.com/francois-le-ko4la/lovelace-entity-progress-card#readme",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@typescript-eslint/eslint-plugin": "^8.64.0",
+    "@typescript-eslint/parser": "^8.64.0",
     "esbuild": "^0.28.1",
     "eslint": "^10.6.0",
     "eslint-plugin-compat": "^7.0.2",
@@ -52,6 +55,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^17.0.8",
     "markdownlint-cli2": "^0.23.0",
-    "prettier": "^3.9.5"
+    "prettier": "^3.9.5",
+    "typescript": "^5.9.3"
   }
 }

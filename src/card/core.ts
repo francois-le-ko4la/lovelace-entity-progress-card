@@ -7,11 +7,12 @@
 import { VERSION, META, CARD_CONTEXT, devName, HA_CONTEXT, CARD } from '../utils/parameters.js';
 import { CARD_CSS, getSharedStyleSheet } from '../utils/styles.js';
 import { is } from '../utils/common-checks.js';
-import { initLogger } from '../utils/log.js';
+import { initLogger, type LoggerInstance } from '../utils/log.js';
 import { ObjStructure, ThemeManager, ChangeTracker } from './value-helpers.js';
-import { HassProviderSingleton } from '../utils/hass-provider.js';
+import { HassProviderSingleton, type Hass } from '../utils/hass-provider.js';
 import { CardView, FeatureView } from './view.js';
 import { ResourceManager, DOMHelper, ActionHelper } from './dom-helpers.js';
+import type { RawConfig } from '../utils/types.js';
 
 /**
  * Base class for Home Assistant custom elements (cards, badges, features).
@@ -50,14 +51,19 @@ import { ResourceManager, DOMHelper, ActionHelper } from './dom-helpers.js';
  */
 class HACore extends HTMLElement {
   static version = VERSION;
-  static _baseClass = META.types.feature.typeName;
-  static _cardStructure = new ObjStructure('feature');
+  static _baseClass: string = META.types.feature.typeName;
+  static _cardStructure: ObjStructure = new ObjStructure('feature');
   static _cardStyle = CARD_CSS;
   static _cardElement = CARD.htmlStructure.card.element;
   _debug = CARD_CONTEXT.debug.card;
-  _log = null;
-  _resourceManager = null;
-  _cardView = new FeatureView();
+  _log: LoggerInstance | null = null;
+  _resourceManager: ResourceManager | null = null;
+  // Concrete subclasses (in cards.ts) swap this in for CardView/BadgeView/
+  // FeatureView/CardTemplateView/BadgeTemplateView - the latter two extend
+  // ViewCore directly rather than ViewBase, so there's no single non-`any`
+  // type that's both accurate and covers every ViewBase-only member (msg,
+  // badgeInfo, isAvailable...) this class and HABase read from it.
+  _cardView: any = new FeatureView();
   _dom = new DOMHelper();
   _hassProvider = HassProviderSingleton.getInstance();
   _changeTracker = new ChangeTracker();
@@ -66,7 +72,7 @@ class HACore extends HTMLElement {
   // tracking the signature (template + entity variable) of each live/in-flight
   // subscription lets us skip the systematic unsubscribe/resubscribe cycle on
   // every refresh
-  #templateSignatures = new Map();
+  #templateSignatures = new Map<string, string>();
 
   // ─── LIFECYCLE METHODS ===
   static get _loggedMethods() {
@@ -101,12 +107,12 @@ class HACore extends HTMLElement {
 
   constructor() {
     super();
-    this._log = initLogger(this, this._debug, this.constructor._loggedMethods);
-    this.attachShadow({ mode: CARD.config.shadowMode });
+    this._log = initLogger(this, this._debug, (this.constructor as typeof HACore)._loggedMethods);
+    this.attachShadow({ mode: CARD.config.shadowMode as 'open' | 'closed' });
   }
 
-  static getConfigElement() {
-    const metaType = Object.values(META.types).find((t) => t.typeName === this._baseClass);
+  static getConfigElement(): HTMLElement | null {
+    const metaType: any = Object.values(META.types).find((t: any) => t.typeName === this._baseClass);
     return metaType?.editor ? document.createElement(devName(metaType.editor)) : null;
   }
 
@@ -135,8 +141,8 @@ class HACore extends HTMLElement {
   /**
    * Updates the component's configuration and triggers static changes.
    */
-  setConfig(config) {
-    this._log.debug('📎 HACore.setConfig()', config);
+  setConfig(config: RawConfig) {
+    this._log?.debug('📎 HACore.setConfig()', config);
 
     if (!config) throw new Error('setConfig: invalid config');
     if (this.isRendered) this.reset(); // Card/Badge editor
@@ -148,7 +154,7 @@ class HACore extends HTMLElement {
     if (this.hass) this._handleHassUpdate(); // Card/Badge editor
   }
 
-  _registerWatchedEntities(config) {
+  _registerWatchedEntities(config: RawConfig) {
     // CF5 - issue (minor) resolved - the watched set was only ever appended to:
     // entities removed from the config (editor changes) stayed watched and kept
     // triggering refreshes until reload. Rebuilt from scratch on every
@@ -175,8 +181,8 @@ class HACore extends HTMLElement {
    * @param {Object} hass - The Home Assistant instance containing the current
    *                        state and services.
    */
-  set hass(hass) {
-    this._log.debug('👉 HACore.set hass()');
+  set hass(hass: Hass) {
+    this._log?.debug('👉 HACore.set hass()');
     if (!hass) return;
 
     const isFirstHass = !this.hass;
@@ -189,7 +195,7 @@ class HACore extends HTMLElement {
     if (!this._wsInitialized) this._watchWebSocket();
   }
 
-  get hass() {
+  get hass(): Hass | null {
     return this._hassProvider.hass;
   }
 
@@ -198,7 +204,7 @@ class HACore extends HTMLElement {
   }
 
   refresh() {
-    this._cardView.refresh(this.hass);
+    this._cardView.refresh(this.hass as Hass);
     this._updateDynamicElements();
   }
 
@@ -212,7 +218,7 @@ class HACore extends HTMLElement {
     if (!this._resourceManager) return;
     this._resourceManager.setInterval(
       () => {
-        this.refresh(this.hass);
+        this.refresh();
         if (!this._cardView.isActiveTimer) {
           this._stopAutoRefresh();
         }
@@ -226,7 +232,7 @@ class HACore extends HTMLElement {
     if (this._resourceManager) this._resourceManager.remove('autoRefresh');
   }
 
-  get isRendered() {
+  get isRendered(): boolean {
     return this.#isRendered;
   }
 
@@ -239,16 +245,16 @@ class HACore extends HTMLElement {
     }
   }
 
-  get cardStyle() {
-    return this.constructor._cardStyle;
+  get cardStyle(): string {
+    return (this.constructor as typeof HACore)._cardStyle;
   }
 
-  get baseClass() {
-    return this.constructor._baseClass;
+  get baseClass(): string {
+    return (this.constructor as typeof HACore)._baseClass;
   }
 
-  get cardElement() {
-    return this.constructor._cardElement;
+  get cardElement(): string {
+    return (this.constructor as typeof HACore)._cardElement;
   }
 
   // ─── CARD BUILDING ────────────────────────────────────────────────────────
@@ -264,32 +270,32 @@ class HACore extends HTMLElement {
     this.#isRendered = true;
     const element = this._createCardElements();
     // element.style is null when the shared constructed sheet is adopted
-    this.shadowRoot.replaceChildren(...(element.style ? [element.style, element.card] : [element.card]));
+    this.shadowRoot!.replaceChildren(...(element.style ? [element.style, element.card] : [element.card]));
     this._storeDOM();
     requestAnimationFrame(() => {
       this._dom.addClass(CARD.htmlStructure.card.element, 'transition-ready');
     });
   }
 
-  get _structureOptions() {
+  get _structureOptions(): Record<string, any> {
     return {
       barType: this._cardView.config.center_zero ? 'centerZero' : 'default', // ─── true
       barPosition: this._cardView.config.bar_position,
     };
   }
 
-  _createCardElements() {
+  _createCardElements(): { style: HTMLStyleElement | null; card: HTMLElement } {
     // Preferred path: adopt the shared constructed sheet (parsed once for all
     // instances). Fallback path (older Firefox/Safari, see
     // getSharedStyleSheet): a per-instance <style> element, as before.
-    let style = null;
+    let style: HTMLStyleElement | null = null;
     const sharedSheet = getSharedStyleSheet(this.cardStyle);
     if (sharedSheet) {
-      if (!this.shadowRoot.adoptedStyleSheets.includes(sharedSheet)) {
-        this.shadowRoot.adoptedStyleSheets = [...this.shadowRoot.adoptedStyleSheets, sharedSheet];
+      if (!this.shadowRoot!.adoptedStyleSheets.includes(sharedSheet)) {
+        this.shadowRoot!.adoptedStyleSheets = [...this.shadowRoot!.adoptedStyleSheets, sharedSheet];
       }
     } else {
-      style = document.createElement(CARD.style.element);
+      style = document.createElement(CARD.style.element) as HTMLStyleElement;
       style.textContent = this.cardStyle;
     }
 
@@ -299,14 +305,14 @@ class HACore extends HTMLElement {
     this._dom.setStyle(CARD.htmlStructure.card.element, CARD.style.dynamic.progressBar.value.var, 0);
     if (this._cardView.hasClickableCard || this._cardView.hasClickableIcon) {
       Object.entries(CARD.htmlStructure.card.extraAttr).forEach(([key, value]) => {
-        this._dom.setAttribute(CARD.htmlStructure.card.element, key, value);
+        this._dom.setAttribute(CARD.htmlStructure.card.element, key, value as string);
       });
     }
     this._buildStyle();
     // Cloned from the per-options <template> cache; _structureOptions is read
     // fresh here so a setConfig that changes the structure picks the right
     // template.
-    card.replaceChildren(this.constructor._cardStructure.clone(this._structureOptions));
+    card.replaceChildren((this.constructor as typeof HACore)._cardStructure.clone(this._structureOptions));
 
     return { style, card };
   }
@@ -315,7 +321,7 @@ class HACore extends HTMLElement {
   // its first CSS class: silent collisions were possible and the map carried
   // dead weight. Only the elements actually driven through the DOMHelper are
   // registered now.
-  static get _domKeys() {
+  static get _domKeys(): string[] {
     return [
       CARD.htmlStructure.elements.progressBar.container.class,
       CARD.htmlStructure.elements.icon.class,
@@ -330,9 +336,9 @@ class HACore extends HTMLElement {
   }
 
   _storeDOM() {
-    for (const key of this.constructor._domKeys) {
-      const el = this.shadowRoot.querySelector(`.${CSS.escape(key)}`);
-      if (el) this._dom.register(key, el);
+    for (const key of (this.constructor as typeof HACore)._domKeys) {
+      const el = this.shadowRoot!.querySelector(`.${CSS.escape(key)}`);
+      if (el) this._dom.register(key, el as HTMLElement);
     }
   }
 
@@ -357,7 +363,7 @@ class HACore extends HTMLElement {
       this._cardView.config.layout,
       this._cardView.config.bar_size,
       this._cardView.config.bar_orientation
-        ? CARD.style.dynamic.progressBar.orientation[this._cardView.config.bar_orientation]
+        ? (CARD.style.dynamic.progressBar.orientation as Record<string, string>)[this._cardView.config.bar_orientation]
         : null,
       this._cardView.config.center_zero ? CARD.style.dynamic.progressBar.centerZero.class : null,
       (this._cardView.config.layout === 'vertical' &&
@@ -391,9 +397,9 @@ class HACore extends HTMLElement {
   // silently drops one effect depending on stylesheet order. This mirrors
   // that same-source-of-truth exclusion here, first-requested-wins (the
   // order the template/list actually wrote them in, not a fixed priority).
-  static #resolveEffectConflicts(labels) {
-    const incompatible = CARD.style.dynamic.progressBar.effectIncompatibilities;
-    const kept = [];
+  static #resolveEffectConflicts(labels: string[]): string[] {
+    const incompatible: Record<string, string[]> = CARD.style.dynamic.progressBar.effectIncompatibilities;
+    const kept: string[] = [];
     for (const label of labels) {
       if (kept.some((keptLabel) => incompatible[keptLabel]?.includes(label))) continue;
       kept.push(label);
@@ -401,8 +407,8 @@ class HACore extends HTMLElement {
     return kept;
   }
 
-  _handleBarEffect(jinjaEffect = null) {
-    this._log.debug('📎 HACore _handleBarEffect(jinjaEffect)', jinjaEffect);
+  _handleBarEffect(jinjaEffect: string[] | null = null) {
+    this._log?.debug('📎 HACore _handleBarEffect(jinjaEffect)', jinjaEffect);
 
     if (!this._cardView.barEffectsEnabled) return;
     const isJinja = is.jinja(this._cardView.config.bar_effect);
@@ -434,7 +440,10 @@ class HACore extends HTMLElement {
     throw new Error(`${this.constructor.name} must implement _updateCSS()`);
   }
 
-  _applyProgressCSS(progressValue, { barColor = null, iconColor = null, gradient = null, diverging = null } = {}) {
+  _applyProgressCSS(
+    progressValue: number | null,
+    { barColor = null, iconColor = null, gradient = null, diverging = null }: Record<string, any> = {},
+  ) {
     const cardKey = CARD.htmlStructure.card.element;
 
     const fillColor = gradient ?? barColor;
@@ -457,7 +466,7 @@ class HACore extends HTMLElement {
   // gradients/sizes (see ViewBase.divergingBarStack). Explicitly removed (not
   // left stale) when not applicable - setStyle() never unsets a value on its
   // own once written.
-  _applyDivergingBarStackCSS(cardKey, diverging) {
+  _applyDivergingBarStackCSS(cardKey: string, diverging: any) {
     const pb = CARD.style.dynamic.progressBar;
     if (!diverging) {
       this._dom.removeStyle(cardKey, pb.stackGradientPos.var);
@@ -474,7 +483,7 @@ class HACore extends HTMLElement {
     this._dom.setStyle(cardKey, pb.stackSizeNeg.var, diverging.negSize);
   }
 
-  _applyWatermarkCSS(watermark) {
+  _applyWatermarkCSS(watermark: any) {
     if (!watermark) return;
     const cardKey = CARD.htmlStructure.card.element;
     HACore._getWatermarkProperties(watermark).forEach(([variable, value]) => {
@@ -484,7 +493,7 @@ class HACore extends HTMLElement {
 
   // ─── WATERMARK MANAGEMENT ─────────────────────────────────────────────────
 
-  static _getWatermarkProperties(watermark) {
+  static _getWatermarkProperties(watermark: any): [string, any][] {
     return [
       [CARD.style.dynamic.watermark.high.value.var, `${watermark.high}%`],
       [CARD.style.dynamic.watermark.high.color.var, watermark.high_color],
@@ -497,15 +506,15 @@ class HACore extends HTMLElement {
 
   // ─── JINJA TEMPLATE RENDERING ─────────────────────────────────────────────
 
-  get validJinjaFields() {
+  get validJinjaFields(): Record<string, string> {
     // Most Jinja-capable options are flat string config values, but some
     // (min_value, watermark.low/.high) use an explicit { jinja: "..." } map
     // form instead of sniffing a bare string — extract accordingly. Dot-path
     // keys (watermark.low) walk one level of nesting; existing flat keys
     // (min_value) are unaffected since a 1-element path resolves identically.
-    const rawValueFor = (key) => {
+    const rawValueFor = (key: string) => {
       const raw = key.includes('.')
-        ? key.split('.').reduce((obj, k) => obj?.[k], this._cardView.config)
+        ? key.split('.').reduce((obj: any, k: string) => obj?.[k], this._cardView.config)
         : this._cardView.config[key];
       return is.plainObject(raw) ? (raw.jinja ?? '') : raw || '';
     };
@@ -515,16 +524,16 @@ class HACore extends HTMLElement {
         .map((key) => [key, rawValueFor(key)])
         .filter(([, value]) => is.nonEmptyString(value)),
     );
-    this._log.debug('validJinjaFields: ', { handler: handlers, config: this._cardView.config, result });
+    this._log?.debug('validJinjaFields: ', { handler: handlers, config: this._cardView.config, result });
     return result;
   }
 
-  _getJinjaHandlers(content) {
+  _getJinjaHandlers(content?: any): Record<string, () => void> {
     throw new Error(`${this.constructor.name} must implement _getJinjaHandlers(${content})`);
   }
 
-  _renderJinja(key, content) {
-    this._log.debug('📎 HACore._renderJinja():', { key, content });
+  _renderJinja(key: string, content: any) {
+    this._log?.debug('📎 HACore._renderJinja():', { key, content });
 
     const renderHandlers = this._getJinjaHandlers(content);
     const handler = renderHandlers[key];
@@ -536,25 +545,29 @@ class HACore extends HTMLElement {
       try {
         handler();
       } catch (error) {
-        this._log.error(`Jinja - render failed for ${key}:`, error);
+        this._log?.error(`Jinja - render failed for ${key}:`, error);
       }
     } else {
       console.error(`Jinja - Unknown case: ${key}`);
     }
   }
 
-  _refreshBarEffect(content) {
-    this._log.debug('📎 HACore._refreshBarEffect():', { content });
+  _refreshBarEffect(content: any) {
+    this._log?.debug('📎 HACore._refreshBarEffect():', { content });
     // CF5 - issue (critical) resolved - render_template returns native types: a
     // template yielding a list (e.g. {{ ['glass'] }}) crashed on .split()
-    const jinjaEffect = (is.array(content) ? content : String(content ?? '').split(',')).map((s) => String(s).trim());
+    const jinjaEffect = (is.array(content) ? content : String(content ?? '').split(',')).map((s: any) =>
+      String(s).trim(),
+    );
     this._handleBarEffect(jinjaEffect);
   }
 
   // ─── TEMPLATE PROCESSING ──────────────────────────────────────────────────
 
-  get _wsInitialized() {
-    return this._resourceManager?.has(CARD.network.disconnected) && this._resourceManager?.has(CARD.network.ready);
+  get _wsInitialized(): boolean {
+    return Boolean(
+      this._resourceManager?.has(CARD.network.disconnected) && this._resourceManager?.has(CARD.network.ready),
+    );
   }
 
   _unwatchWebSocket() {
@@ -567,13 +580,13 @@ class HACore extends HTMLElement {
     if (!this._resourceManager) return; // ISSUE 87
     this._unwatchWebSocket();
     this._resourceManager.addEventListener(
-      this.hass.connection,
+      this.hass!.connection,
       'disconnected',
       () => {
-        this._log.debug('🔌 WebSocket disconnected');
+        this._log?.debug('🔌 WebSocket disconnected');
         const templates = this.validJinjaFields;
         for (const key of Object.keys(templates)) {
-          this._resourceManager.remove(`template-${key}`);
+          this._resourceManager?.remove(`template-${key}`);
         }
         this.#templateSignatures.clear(); // connection lost — all subscriptions are dead server-side
       },
@@ -582,10 +595,10 @@ class HACore extends HTMLElement {
     );
 
     this._resourceManager.addEventListener(
-      this.hass.connection,
+      this.hass!.connection,
       'ready',
       () => {
-        this._log.debug('🔁 WebSocket ready — reprocessing templates');
+        this._log?.debug('🔁 WebSocket ready — reprocessing templates');
         this._ensureResourceManager();
         this._processJinjaFields();
       },
@@ -594,17 +607,17 @@ class HACore extends HTMLElement {
     );
   }
 
-  _validateProcessJinjaFields() {
+  _validateProcessJinjaFields(): boolean {
     return Boolean(this._resourceManager) && !(this._cardView.config?.entity && this._cardView.hasStandardEntityError);
   }
 
   _processJinjaFields() {
     if (!this._validateProcessJinjaFields()) {
-      this._log.debug('❌ Jinja processing skipped - validation failed');
+      this._log?.debug('❌ Jinja processing skipped - validation failed');
       return;
     }
 
-    this._log.debug('✅ Processing Jinja fields');
+    this._log?.debug('✅ Processing Jinja fields');
 
     this._resourceManager?.throttleDebounce(
       () => {
@@ -623,7 +636,7 @@ class HACore extends HTMLElement {
   // its subscription alive (pushing results into a DOM that no longer expects
   // them) until disconnect; drop subscriptions whose key is no longer
   // configured
-  #cleanupOrphanTemplates(templates) {
+  #cleanupOrphanTemplates(templates: Record<string, string>) {
     for (const subscriptionKey of [...this.#templateSignatures.keys()]) {
       const key = subscriptionKey.slice('template-'.length);
       if (!is.nonEmptyString(templates[key])) {
@@ -633,24 +646,24 @@ class HACore extends HTMLElement {
     }
   }
 
-  _getTemplateContext() {
+  _getTemplateContext(): { entity?: string } {
     const entity = this._cardView?.config?.entity;
     return entity ? { entity } : {};
   }
 
-  async _subscribeToTemplate(key, template) {
-    this._log.debug('📎 HACore._subscribeToTemplate:', { key, template });
+  async _subscribeToTemplate(key: string, template: string) {
+    this._log?.debug('📎 HACore._subscribeToTemplate:', { key, template });
     const subscriptionKey = `template-${key}`;
 
     if (!this.hass?.connection?.connected) {
-      this._log.debug(`[Template ${key}] WebSocket not connected, skipping subscription.`);
+      this._log?.debug(`[Template ${key}] WebSocket not connected, skipping subscription.`);
       return;
     }
-    this._log.debug('network ok...');
+    this._log?.debug('network ok...');
 
     // Add null check right before using _resourceManager
     if (!this._resourceManager) {
-      this._log.debug(`[Template ${key}] ResourceManager is null, skipping subscription.`);
+      this._log?.debug(`[Template ${key}] ResourceManager is null, skipping subscription.`);
       return;
     }
 
@@ -660,16 +673,16 @@ class HACore extends HTMLElement {
     // (orphan) subscription.
     const signature = `${template}\u0000${this._getTemplateContext().entity ?? ''}`;
     if (this.#templateSignatures.get(subscriptionKey) === signature) {
-      this._log.debug(`[Template ${key}] Identical subscription live or in-flight, skipping.`);
+      this._log?.debug(`[Template ${key}] Identical subscription live or in-flight, skipping.`);
       return;
     }
     this.#templateSignatures.set(subscriptionKey, signature);
 
     try {
-      this._log.debug('key:', key);
-      this._log.debug('template:', template);
+      this._log?.debug('key:', key);
+      this._log?.debug('template:', template);
 
-      const unsub = await this.hass.connection.subscribeMessage((msg) => this._renderJinja(key, msg.result), {
+      const unsub = await this.hass!.connection.subscribeMessage((msg: any) => this._renderJinja(key, msg.result), {
         type: 'render_template',
         template, //template: template,
         variables: this._getTemplateContext(),
@@ -682,7 +695,7 @@ class HACore extends HTMLElement {
         return;
       }
       if (!this._resourceManager) {
-        this._log.debug(`[Template ${key}] ResourceManager became null during subscription, cleaning up.`);
+        this._log?.debug(`[Template ${key}] ResourceManager became null during subscription, cleaning up.`);
         unsub(); // Clean up the subscription
         this.#templateSignatures.delete(subscriptionKey);
         return;
@@ -698,7 +711,7 @@ class HACore extends HTMLElement {
     } catch (error) {
       // Allow a retry on the next processing cycle.
       if (this.#templateSignatures.get(subscriptionKey) === signature) this.#templateSignatures.delete(subscriptionKey);
-      this._log.error(`Failed to subscribe to template ${key}:`, error);
+      this._log?.error(`Failed to subscribe to template ${key}:`, error);
     }
   }
 }
@@ -722,27 +735,27 @@ class HACore extends HTMLElement {
  */
 
 class HABase extends HACore {
-  static _baseClass = META.types.card.typeName;
-  static _cardStructure = new ObjStructure('card');
+  static _baseClass: string = META.types.card.typeName;
+  static _cardStructure: ObjStructure = new ObjStructure('card');
   static _hasDisabledIconTap = false;
   static _hasDisabledBadge = false;
-  static _hiddenComponents = [
+  static _hiddenComponents: any[] = [
     CARD.style.dynamic.hiddenComponent.icon,
     CARD.style.dynamic.hiddenComponent.name,
     CARD.style.dynamic.hiddenComponent.secondary_info,
     CARD.style.dynamic.hiddenComponent.progress_bar,
   ];
-  _trendIcons = {
+  _trendIcons: Record<string, string> = {
     up: HA_CONTEXT.icons.chevronUpBox,
     down: HA_CONTEXT.icons.chevronDownBox,
     flat: HA_CONTEXT.icons.equalBox,
     error: HA_CONTEXT.icons.progressQuestion,
   };
-  _icon = null;
-  _cardView = new CardView();
-  _actionHelper = null;
+  _icon: any = null;
+  _cardView: any = new CardView();
+  _actionHelper: ActionHelper | null = null;
   #jinjaStateBadge = { icon: false, color: false };
-  #lastMessage = null;
+  #lastMessage: any = null;
 
   // ─── LIFECYCLE METHODS ===
 
@@ -780,32 +793,32 @@ class HABase extends HACore {
 
   connectedCallback() {
     super.connectedCallback(); // render, _updateDynamicElements, watchWebSocket
-    this._actionHelper.init(this._cardView.config, this.hasDisabledIconTap);
+    this._actionHelper!.init(this._cardView.config, this.hasDisabledIconTap);
   }
 
   // disconnectedCallback() {}
 
-  getCardSize() {
+  getCardSize(): number | undefined {
     if (![META.types.card.typeName, META.types.template.typeName].includes(this.baseClass)) return undefined;
     const cardSize = this._cardView.cardSize;
-    this._log.debug('getCardSize: ', cardSize);
+    this._log?.debug('getCardSize: ', cardSize);
     return cardSize;
   }
 
   // Kept for HA < 2024.11 (hui-card.ts falls back to this, migrated through
   // migrateLayoutToGridOptions, when getGridOptions isn't implemented -
   // mirrors how lovelace-mushroom's MushroomBaseCard keeps both).
-  getLayoutOptions() {
+  getLayoutOptions(): any {
     if (![META.types.card.typeName, META.types.template.typeName].includes(this.baseClass)) return undefined;
     const cardLayoutOptions = this._cardView.cardLayoutOptions;
-    this._log.debug('getLayoutOptions: ', cardLayoutOptions);
+    this._log?.debug('getLayoutOptions: ', cardLayoutOptions);
     return cardLayoutOptions;
   }
 
   // Current HA API (2024.11+): same numbers as getLayoutOptions, expressed on
   // the 12-column grid instead of the older 4-column one - see
   // CARD.layout.gridColumnMultiplier.
-  getGridOptions() {
+  getGridOptions(): any {
     if (![META.types.card.typeName, META.types.template.typeName].includes(this.baseClass)) return undefined;
     const { grid_rows, grid_min_rows, grid_columns, grid_min_columns } = this._cardView.cardLayoutOptions;
     const multiplier = CARD.layout.gridColumnMultiplier;
@@ -815,14 +828,14 @@ class HABase extends HACore {
       columns: grid_columns * multiplier,
       min_columns: grid_min_columns * multiplier,
     };
-    this._log.debug('getGridOptions: ', gridOptions);
+    this._log?.debug('getGridOptions: ', gridOptions);
     return gridOptions;
   }
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
   refresh() {
-    this._cardView.refresh(this.hass);
+    this._cardView.refresh(this.hass as Hass);
     if (this._manageErrorMessage()) return;
     this._updateDynamicElements();
   }
@@ -832,14 +845,14 @@ class HABase extends HACore {
     this._icon = null;
   }
 
-  get hasDisabledIconTap() {
+  get hasDisabledIconTap(): boolean {
     // check it soon
-    return this.constructor._hasDisabledIconTap;
+    return (this.constructor as typeof HABase)._hasDisabledIconTap;
   }
 
   // ─── ERROR MESSAGE MANAGEMENT ─────────────────────────────────────────────
 
-  _manageErrorMessage() {
+  _manageErrorMessage(): boolean {
     if (
       this._cardView.msg &&
       (is.nullish(this._cardView.entity) || (this._cardView.isAvailable && !this._cardView.hasValidatedConfig))
@@ -855,16 +868,16 @@ class HABase extends HACore {
    * Displays an error alert with the provided message.
    *   'info', 'warning', 'error'
    */
-  _renderMessage(msg) {
+  _renderMessage(msg: any) {
     if (msg === this.#lastMessage) return;
     this.#lastMessage = msg;
 
     // ha-alert exists ?
-    let alert = this.shadowRoot.querySelector('ha-alert');
+    let alert: any = this.shadowRoot!.querySelector('ha-alert');
 
     if (!alert) {
       alert = document.createElement('ha-alert');
-      this.shadowRoot.replaceChildren(alert);
+      this.shadowRoot!.replaceChildren(alert);
     }
 
     // update the message
@@ -874,7 +887,7 @@ class HABase extends HACore {
 
   // ─── CARD BUILDING ===
 
-  get _structureOptions() {
+  get _structureOptions(): Record<string, any> {
     return {
       ...super._structureOptions,
       layout: this._cardView.config.layout,
@@ -907,18 +920,20 @@ class HABase extends HACore {
     const cardKey = CARD.htmlStructure.card.element;
     const config = this._cardView.config;
 
-    [
-      [this._cardView.hasReversedSecondaryInfoRow, '--secondary-info-row-reverse', 'row-reverse'],
-      [config.min_width, CARD.style.dynamic.card.minWidth.var, config.min_width],
-      [config.height, CARD.style.dynamic.card.height.var, config.height],
-      [config.bar_max_width, CARD.style.dynamic.progressBar.maxWidth.var, config.bar_max_width],
-      [config.alert_when?.color, '--alert-color', ThemeManager.adaptColor(config.alert_when?.color)],
-    ].forEach(([condition, prop, value]) => {
+    (
+      [
+        [this._cardView.hasReversedSecondaryInfoRow, '--secondary-info-row-reverse', 'row-reverse'],
+        [config.min_width, CARD.style.dynamic.card.minWidth.var, config.min_width],
+        [config.height, CARD.style.dynamic.card.height.var, config.height],
+        [config.bar_max_width, CARD.style.dynamic.progressBar.maxWidth.var, config.bar_max_width],
+        [config.alert_when?.color, '--alert-color', ThemeManager.adaptColor(config.alert_when?.color)],
+      ] as [any, string, any][]
+    ).forEach(([condition, prop, value]) => {
       if (condition) this._dom.setStyle(cardKey, prop, value);
     });
   }
 
-  get conditionalStyle() {
+  get conditionalStyle(): Map<string, boolean> {
     return new Map([
       [CARD.style.dynamic.clickable.card, this._cardView.hasClickableCard],
       [CARD.style.dynamic.clickable.icon, this._cardView.hasClickableIcon],
@@ -974,7 +989,7 @@ class HABase extends HACore {
     });
   }
 
-  _handleHiddenComponents(jinjaContent = null) {
+  _handleHiddenComponents(jinjaContent: any = null) {
     if (jinjaContent === null && is.jinja(this._cardView.config.hide)) return;
 
     // CF5 - issue (critical) resolved - a hide Jinja template yielding a native
@@ -982,10 +997,10 @@ class HABase extends HACore {
     const items = is.nullish(jinjaContent)
       ? null
       : (is.array(jinjaContent) ? jinjaContent : String(jinjaContent).split(','))
-          .map((s) => String(s).trim())
+          .map((s: any) => String(s).trim())
           .filter(Boolean);
 
-    this.constructor._hiddenComponents.forEach((component) => {
+    (this.constructor as typeof HABase)._hiddenComponents.forEach((component: any) => {
       this._dom.toggleClass(
         CARD.htmlStructure.card.element,
         component.class,
@@ -1029,8 +1044,8 @@ class HABase extends HACore {
 
   // ─── ICON MANAGEMENT ──────────────────────────────────────────────────────
 
-  _createImgIcon(altText, className = 'custom-icon-img') {
-    this._log.debug('📎 HABase._createImgIcon():', { altText, className });
+  _createImgIcon(altText: string, className = 'custom-icon-img'): HTMLImageElement {
+    this._log?.debug('📎 HABase._createImgIcon():', { altText, className });
 
     const img = document.createElement('img');
     img.className = className;
@@ -1039,8 +1054,8 @@ class HABase extends HACore {
     return img;
   }
 
-  _handleImgIcon(stateObj, srcPicture) {
-    this._log.debug('📎 HABase._handleImgIcon():', { stateObj, srcPicture });
+  _handleImgIcon(stateObj: any, srcPicture: string) {
+    this._log?.debug('📎 HABase._handleImgIcon():', { stateObj, srcPicture });
 
     const pictureAlt = stateObj?.attributes?.friendly_name || 'Entity picture';
     const iconContainer = this._dom.get(CARD.htmlStructure.elements.icon.class);
@@ -1057,8 +1072,8 @@ class HABase extends HACore {
     this._icon.alt = pictureAlt;
   }
 
-  _createStateObjIcon(stateObj, curIcon, hasIconOverride, hasPicture) {
-    this._log.debug('📎 HABase._createStateObjIcon():', { stateObj, curIcon, hasIconOverride, hasPicture });
+  _createStateObjIcon(stateObj: any, curIcon: any, hasIconOverride: boolean, hasPicture: boolean): any {
+    this._log?.debug('📎 HABase._createStateObjIcon():', { stateObj, curIcon, hasIconOverride, hasPicture });
 
     if (!stateObj) {
       return this.isConnected
@@ -1066,7 +1081,7 @@ class HABase extends HACore {
             entity_id: 'sensor.dummy',
             state: 'unknown',
             attributes: {
-              icon: curIcon || HA_CONTEXT.helpCircleOutline,
+              icon: curIcon || HA_CONTEXT.icons.helpCircleOutline,
               friendly_name: 'Unknown Entity',
             },
           }
@@ -1104,8 +1119,8 @@ class HABase extends HACore {
     }
   }
 
-  _handleStateIcon(iconContainer, stateObjIcon) {
-    this._log.debug('📎 HABase._handleStateIcon():', { iconContainer, stateObjIcon });
+  _handleStateIcon(iconContainer: HTMLElement, stateObjIcon: any) {
+    this._log?.debug('📎 HABase._handleStateIcon():', { iconContainer, stateObjIcon });
 
     this._cleanupImgIcon();
 
@@ -1122,14 +1137,14 @@ class HABase extends HACore {
     if (!this._cardView) return;
 
     const { entity: entityId, icon: curIcon } = this._cardView;
-    const stateObj = this._hassProvider.getEntityStateObj(entityId);
+    const stateObj = this._hassProvider.getEntityStateObj(entityId as string);
     const hasIconOverride = is.nonEmptyString(curIcon);
-    const srcPicture = this._hassProvider.getEntityProp(entityId, 'entity_picture');
+    const srcPicture = this._hassProvider.getEntityProp(entityId as string, 'entity_picture');
     const hasPicture = is.nonEmptyString(srcPicture);
 
     const iconContainer = this._dom.get(CARD.htmlStructure.elements.icon.class);
     if (!iconContainer) {
-      this._log.error('Icon container not found for _showIcon.');
+      this._log?.error('Icon container not found for _showIcon.');
       return;
     }
 
@@ -1158,16 +1173,16 @@ class HABase extends HACore {
    * Displays a badge (default info)
    */
   _showBadge() {
-    if (this.constructor._hasDisabledBadge) return;
+    if ((this.constructor as typeof HABase)._hasDisabledBadge) return;
     const badgeInfo = this._cardView.badgeInfo;
-    const isBadgeEnable = badgeInfo || this._cardView.config.badge_icon || this._cardView.config.badge_color;
+    const isBadgeEnable = Boolean(badgeInfo || this._cardView.config.badge_icon || this._cardView.config.badge_color);
 
     this._enableBadge(isBadgeEnable);
     if (badgeInfo) this._setBadgeIconColor(badgeInfo.icon, badgeInfo.color, badgeInfo.backgroundColor);
   }
 
-  _enableBadge(isBadgeEnable) {
-    this._log.debug('📎 HABase._enableBadge():', { isBadgeEnable });
+  _enableBadge(isBadgeEnable: boolean) {
+    this._log?.debug('📎 HABase._enableBadge():', { isBadgeEnable });
 
     this._dom.toggleClass(
       CARD.htmlStructure.card.element,
@@ -1176,25 +1191,25 @@ class HABase extends HACore {
     );
   }
 
-  _setBadgeIconColor(icon, color, backgroundColor) {
-    this._log.debug('📎 HABase._setBadgeIconColor():', { icon, color, backgroundColor });
+  _setBadgeIconColor(icon: string, color: string, backgroundColor: string) {
+    this._log?.debug('📎 HABase._setBadgeIconColor():', { icon, color, backgroundColor });
 
     this._setBadgeIcon(icon);
     this._setBadgeColor(color, backgroundColor);
   }
 
-  _setBadgeIcon(icon) {
+  _setBadgeIcon(icon: string) {
     this._dom.setAttribute(CARD.htmlStructure.elements.badge.icon.class, CARD.style.icon.badge.default.attribute, icon);
   }
 
-  _setBadgeColor(color, backgroundColor) {
+  _setBadgeColor(color: string, backgroundColor: string) {
     this._dom.setStyle(CARD.htmlStructure.card.element, CARD.style.dynamic.badge.backgroundColor.var, backgroundColor);
     this._dom.setStyle(CARD.htmlStructure.card.element, CARD.style.dynamic.badge.color.var, color);
   }
 
   // ─── JINJA TEMPLATE RENDERING ─────────────────────────────────────────────
 
-  _getJinjaBadgeState() {
+  _getJinjaBadgeState(): string {
     const hasIcon = this.#jinjaStateBadge.icon;
     const hasColor = this.#jinjaStateBadge.color;
 
@@ -1210,8 +1225,8 @@ class HABase extends HACore {
     this._enableBadge(shouldShow);
   }
 
-  _renderBadgeIcon(content) {
-    this._log.debug('📎 HABase._renderBadgeIcon():', { content });
+  _renderBadgeIcon(content: any) {
+    this._log?.debug('📎 HABase._renderBadgeIcon():', { content });
     this.#jinjaStateBadge.icon = is.nonEmptyString(content) && content.includes(HA_CONTEXT.icons.prefix);
 
     if (!is.nullish(this._cardView.badgeInfo)) return; // alert -> cancel custom badge
@@ -1221,14 +1236,14 @@ class HABase extends HACore {
     this._updateBadgeVisibility();
   }
 
-  _renderBadgeColor(content) {
-    this._log.debug('📎 HABase._renderBadgeColor():', { content });
+  _renderBadgeColor(content: any) {
+    this._log?.debug('📎 HABase._renderBadgeColor():', { content });
     this.#jinjaStateBadge.color = is.nonEmptyString(content);
 
     if (!is.nullish(this._cardView.badgeInfo)) return; // alert -> cancel custom badge
 
     if (this.#jinjaStateBadge.color) {
-      const backgroundColor = ThemeManager.adaptColor(content);
+      const backgroundColor = ThemeManager.adaptColor(content) as string;
       const color = 'var(--white-color)';
       this._setBadgeColor(color, backgroundColor);
     }
@@ -1236,19 +1251,19 @@ class HABase extends HACore {
   }
 
   // ─── STD FIELDS PROCESSING ────────────────────────────────────────────────
-  static _getStandardFields(/*cardView*/) {
+  static _getStandardFields(_cardView?: any): { className: string; value: any }[] {
     return [];
   }
 
   _processStandardFields() {
-    this.constructor._getStandardFields(this._cardView).forEach(({ className, value }) => {
+    (this.constructor as typeof HABase)._getStandardFields(this._cardView).forEach(({ className, value }) => {
       this._dom.setText(className, value);
     });
   }
 
   // ─── JINJA TEMPLATE RENDERING ─────────────────────────────────────────────
 
-  _baseJinjaHandlers(content) {
+  _baseJinjaHandlers(content: any): Record<string, () => void> {
     return {
       bar_effect: () => this._refreshBarEffect(content),
       hide: () => this._handleHiddenComponents(content),
@@ -1265,7 +1280,7 @@ class HABase extends HACore {
   // <span style="color:red">A<br>B</span>) is re-wrapped on both halves via
   // #domSplitOnce's ancestor cloning, instead of a naive string split that
   // would leave one half with an unclosed/orphaned tag.
-  _splitAtFirstBreak(content) {
+  _splitAtFirstBreak(content: any): [string, string | null] {
     const html = String(content);
     if (!this._cardView.config.multiline) return [html.replace(HABase.#BREAK_RE, ''), null];
 
@@ -1280,7 +1295,7 @@ class HABase extends HACore {
   // shallow clone of every ancestor it passed through so nested tags keep their
   // attributes on both halves. Returns [html, null] when there is no <br> at
   // all.
-  static #domSplitOnce(html) {
+  static #domSplitOnce(html: string): [string, string | null] {
     // Own non-global literal on purpose: #BREAK_RE carries the /g flag for the
     // .replace() call above, and .test() on a /g regex mutates lastIndex, which
     // would corrupt the *next* call's match position (this runs twice per
@@ -1289,7 +1304,7 @@ class HABase extends HACore {
 
     const root = new DOMParser().parseFromString(`<body>${html}</body>`, 'text/html').body;
     let found = false;
-    const split = (node) => {
+    const split = (node: Node): [Node, Node] => {
       const before = node.cloneNode(false);
       const after = node.cloneNode(false);
       for (const child of Array.from(node.childNodes)) {
@@ -1309,11 +1324,11 @@ class HABase extends HACore {
     };
 
     const [before, after] = split(root);
-    return [before.innerHTML, after.innerHTML];
+    return [(before as Element).innerHTML, (after as Element).innerHTML];
   }
 
   // ─── getStubConfig -> select entity ───────────────────────────────────────
-  static getStubEntity(hass) {
+  static getStubEntity(hass: Hass): string {
     return (
       Object.keys(hass.states).find((id) => /^(sensor\..*battery|fan\.|cover\.|light\.)/i.test(id)) ||
       'sensor.temperature'

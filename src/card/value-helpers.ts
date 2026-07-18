@@ -6,8 +6,8 @@
 
 import { CARD_CONTEXT, HA_CONTEXT, CARD, THEME, SEV } from '../utils/parameters.js';
 import { is, has } from '../utils/common-checks.js';
-import { Logger } from '../utils/log.js';
-import { HassProviderSingleton } from '../utils/hass-provider.js';
+import { Logger, type LoggerInstance } from '../utils/log.js';
+import { HassProviderSingleton, type EntityState } from '../utils/hass-provider.js';
 import { StructureTemplates } from './structure.js';
 
 /**
@@ -25,17 +25,21 @@ class ObjStructure {
   // options (barType, barPosition, layout, ...), so the cache is keyed on the
   // exact options object: any setConfig producing different structure options
   // gets its own template, identical configs share one.
-  #templates = new Map();
+  #templates = new Map<string, HTMLTemplateElement>();
+  _cardType: string;
 
-  constructor(cardType) {
+  constructor(cardType: string) {
     this._cardType = cardType;
   }
 
-  render(options = {}) {
-    return StructureTemplates[this._cardType](options);
+  // Structure options are small flat bags of primitives (barType, barPosition,
+  // layout...) that vary per card type and call site - kept as `any` rather
+  // than a shared interface, same reasoning as structure.ts's own `options`.
+  render(options: any = {}): string {
+    return (StructureTemplates as Record<string, (options: any) => string>)[this._cardType](options);
   }
 
-  clone(options = {}) {
+  clone(options: any = {}): Node {
     // Options are small flat objects of primitives built in a fixed key order
     // by each class's _structureOptions getter -> JSON is a stable cache key.
     // The option space is bounded (a handful of enums/booleans), so is the
@@ -58,24 +62,24 @@ class ObjStructure {
  * its internal data.
  */
 class NumberFormatter {
-  static unitsNoSpace = {
+  static unitsNoSpace: Record<string, Set<string>> = {
     'fr-FR': new Set(['j', 'd', 'h', 'min', 'ms', 'μs', '°']),
     'de-DE': new Set(['d', 'h', 'min', 'ms', 'μs', '°']),
     'en-US': new Set(['d', 'h', 'min', 'ms', 'μs', '°', '%']),
   };
 
-  static getSpaceCharacter(locale, unit) {
+  static getSpaceCharacter(locale: string, unit: string): string {
     const set = NumberFormatter.unitsNoSpace[locale] || NumberFormatter.unitsNoSpace['en-US'];
     return set.has(unit.toLowerCase()) ? '' : CARD.config.unit.space;
   }
 
   static formatValueAndUnit(
-    value,
+    value: number | null | undefined,
     decimal = 2,
     unit = '',
     locale = 'en-US',
-    unitSpacing = CARD.config.unit.unitSpacing.auto,
-  ) {
+    unitSpacing: string = CARD.config.unit.unitSpacing.auto,
+  ): string {
     if (is.nullish(value)) return '';
 
     const formattedValue = new Intl.NumberFormat(locale, {
@@ -86,28 +90,30 @@ class NumberFormatter {
 
     if (!unit) return formattedValue;
 
-    const spaceMap = {
+    const spaceMap: Record<string, string | (() => string)> = {
       space: CARD.config.unit.space,
       'no-space': '',
       auto: () => NumberFormatter.getSpaceCharacter(locale, unit),
     };
-    const space = has.method(spaceMap, unitSpacing) ? spaceMap[unitSpacing]() : spaceMap[unitSpacing];
+    const space = has.method(spaceMap, unitSpacing)
+      ? (spaceMap[unitSpacing] as () => string)()
+      : (spaceMap[unitSpacing] as string);
 
     return `${formattedValue}${space}${unit}`;
   }
 
   static formatTiming(
-    totalSeconds,
+    totalSeconds: number,
     decimal = 0,
     locale = 'en-US',
     flex = false,
-    unitSpacing = CARD.config.unit.unitSpacing.auto,
-  ) {
+    unitSpacing: string = CARD.config.unit.unitSpacing.auto,
+  ): string {
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
-    let seconds = (totalSeconds % 60).toFixed(decimal);
+    let seconds: string = (totalSeconds % 60).toFixed(decimal);
 
-    const pad = (value, length = 2) => String(value).padStart(length, '0');
+    const pad = (value: string | number, length = 2) => String(value).padStart(length, '0');
 
     const [intPart, decimalPart] = seconds.split('.');
     seconds = decimalPart !== undefined ? `${pad(intPart)}.${decimalPart}` : pad(seconds);
@@ -121,7 +127,7 @@ class NumberFormatter {
     return [pad(hours), pad(minutes), seconds].join(':');
   }
 
-  static durationToSeconds(value, unit) {
+  static durationToSeconds(value: number, unit: string): number | null {
     switch (unit) {
       case 'd': // Jour
         return value * 86400; // 1 jour = 86400 secondes
@@ -143,7 +149,7 @@ class NumberFormatter {
     }
   }
 
-  static convertDuration(duration) {
+  static convertDuration(duration: any): number {
     // CF5 - issue (critical) resolved - timer attributes (duration/remaining)
     // can be missing during HA startup; null.split() crashed the card
     if (!is.string(duration)) return 0;
@@ -153,7 +159,7 @@ class NumberFormatter {
     // NaN.
     const dayMatch = duration.match(/^(\d+) days?, (.*)$/);
     const days = dayMatch ? parseInt(dayMatch[1], 10) : 0;
-    const parts = (dayMatch ? dayMatch[2] : duration).split(':').map(Number);
+    const parts: number[] = (dayMatch ? dayMatch[2] : duration).split(':').map(Number);
     if (parts.length !== 3 || parts.some((p) => !Number.isFinite(p))) return 0;
     const [hours, minutes, seconds] = parts;
 
@@ -170,28 +176,28 @@ class NumberFormatter {
  */
 
 class TypedValueHelper {
-  #value = null;
+  #value: any = null;
   #isValid = false;
-  #defaultValue = null;
+  #defaultValue: any = null;
 
-  constructor(newValue = null) {
+  constructor(newValue: any = null) {
     if (this._validate(newValue)) this.#defaultValue = newValue;
   }
 
-  set value(newValue) {
+  set value(newValue: any) {
     this.#isValid = this._validate(newValue);
     this.#value = this.#isValid ? newValue : null;
   }
 
-  get value() {
+  get value(): any {
     return this.#isValid ? this.#value : this.#defaultValue;
   }
 
-  get isValid() {
+  get isValid(): boolean {
     return this.#isValid;
   }
 
-  _validate(_value) {
+  _validate(_value: any): boolean {
     return false;
   }
 }
@@ -202,7 +208,7 @@ class TypedValueHelper {
  * @extends TypedValueHelper
  */
 class ValueHelper extends TypedValueHelper {
-  _validate(v) {
+  _validate(v: any): boolean {
     return is.number(v);
   }
 }
@@ -211,7 +217,7 @@ class ValueHelper extends TypedValueHelper {
  * Represents a non-negative integer value that can be valid or invalid.
  */
 class DecimalHelper extends TypedValueHelper {
-  _validate(v) {
+  _validate(v: any): boolean {
     return Number.isInteger(v) && v >= 0;
   }
 }
@@ -220,40 +226,40 @@ class DecimalHelper extends TypedValueHelper {
  * Represents a unit of measurement, stored as a string.
  */
 class UnitHelper {
-  #value = CARD.config.unit.default;
+  #value: string = CARD.config.unit.default;
   #isDisabled = false;
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
-  set value(newValue) {
+  set value(newValue: any) {
     // CF5 - issue (critical) resolved - some integrations expose a non-string
     // unit_of_measurement; .trim() crashed and the ?? fallback was dead code
     this.#value = is.nullish(newValue) ? CARD.config.unit.default : String(newValue).trim();
   }
 
-  get value() {
+  get value(): string {
     return this.#isDisabled ? '' : this.#value;
   }
 
-  set isDisabled(newValue) {
+  set isDisabled(newValue: any) {
     this.#isDisabled = is.boolean(newValue) ? newValue : false;
   }
 
-  get isDisabled() {
+  get isDisabled(): boolean {
     return this.#isDisabled;
   }
 
-  get isTimerUnit() {
+  get isTimerUnit(): boolean {
     return this.#value.toLowerCase() === CARD.config.unit.timer;
   }
 
-  get isFlexTimerUnit() {
+  get isFlexTimerUnit(): boolean {
     return this.#value.toLowerCase() === CARD.config.unit.flexTimer;
   }
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
-  toString() {
+  toString(): string {
     return this.#isDisabled ? '' : this.#value;
   }
 }
@@ -275,75 +281,75 @@ class ProgressCalc {
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
-  set isReversed(newValue) {
+  set isReversed(newValue: any) {
     this.#isReversed = is.boolean(newValue) ? newValue : CARD.config.reverse;
   }
 
-  get isReversed() {
+  get isReversed(): boolean {
     return this.#isReversed;
   }
 
-  set min(newValue) {
+  set min(newValue: any) {
     this.#min.value = newValue;
   }
 
-  get min() {
+  get min(): number {
     return this.#min.value;
   }
 
-  set max(newValue) {
+  set max(newValue: any) {
     this.#max.value = newValue;
   }
 
-  get max() {
+  get max(): number {
     return this.#max.value;
   }
 
-  set current(newCurrent) {
+  set current(newCurrent: any) {
     this.#current.value = newCurrent;
   }
 
-  get current() {
+  get current(): number {
     return this.#current.value;
   }
 
-  set decimal(newValue) {
+  set decimal(newValue: any) {
     this.#decimal.value = newValue;
   }
 
-  get decimal() {
+  get decimal(): number {
     return this.#decimal.value;
   }
 
-  set isCenterZero(newValue) {
+  set isCenterZero(newValue: any) {
     this.#isCenterZero = is.boolean(newValue) ? newValue : false;
   }
 
-  get isCenterZero() {
+  get isCenterZero(): boolean {
     return this.#isCenterZero;
   }
 
-  set zeroValue(newValue) {
+  set zeroValue(newValue: any) {
     this.#zeroValue = is.number(newValue) ? newValue : 0;
   }
 
-  get zeroValue() {
+  get zeroValue(): number {
     return this.#zeroValue;
   }
 
-  set growthPercent(newValue) {
+  set growthPercent(newValue: any) {
     this.#growthPercent = is.boolean(newValue) ? newValue : false;
   }
 
-  get growthPercent() {
+  get growthPercent(): boolean {
     return this.#growthPercent;
   }
 
-  set scale(newValue) {
+  set scale(newValue: any) {
     this.#scale = newValue === 'log' ? 'log' : 'linear';
   }
 
-  get scale() {
+  get scale(): string {
     return this.#scale;
   }
 
@@ -351,28 +357,28 @@ class ProgressCalc {
   // undefined) — center_zero's own zeroValue/min/max split has no meaningful
   // log equivalent either, so both silently fall back to plain linear math in
   // #percentForValue rather than producing NaN.
-  get isLogScale() {
+  get isLogScale(): boolean {
     return this.#scale === 'log' && !this.isCenterZero && this.min > 0 && this.max > this.min;
   }
 
-  get actual() {
+  get actual(): number {
     return this.#isReversed ? this.max - this.current : this.current;
   }
 
-  get isValid() {
+  get isValid(): boolean {
     return this.range !== 0;
   }
 
-  get range() {
+  get range(): number {
     if (!this.isCenterZero) return this.max - this.min;
     return this.current >= this.#zeroValue ? this.max - this.#zeroValue : this.#zeroValue - this.min;
   }
 
-  get correctedValue() {
+  get correctedValue(): number {
     return this.isCenterZero ? this.current - this.#zeroValue : this.actual - this.min;
   }
 
-  get percent() {
+  get percent(): number | null {
     return this.isValid ? this.#percent : null;
   }
 
@@ -383,7 +389,7 @@ class ProgressCalc {
    * `zeroValue` n'est pas 0 (sinon le ratio est mathématiquement indéfini — on
    * retombe alors sur `percent`).
    */
-  get growthPercentValue() {
+  get growthPercentValue(): number | null {
     if (!this.isValid) return null;
     if (this.#zeroValue === 0) return this.percent;
     return Number((((this.current - this.#zeroValue) / this.#zeroValue) * 100).toFixed(this.decimal));
@@ -396,7 +402,7 @@ class ProgressCalc {
     this.#percent = this.isValid ? Number(this.#percentForValue(currentValue).toFixed(this.decimal)) : 0;
   }
 
-  calcWatermark(value) {
+  calcWatermark(value: any): number {
     const numericValue = is.number(value) ? value : (value?.current ?? 0);
     const percent = this.#percentForValue(numericValue);
     return this.isCenterZero ? 50 + percent / 2 : percent;
@@ -404,7 +410,7 @@ class ProgressCalc {
 
   // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
 
-  #percentForValue(value) {
+  #percentForValue(value: number): number {
     if (this.isCenterZero) {
       const corrected = value - this.#zeroValue;
       const halfRange = corrected >= 0 ? this.max - this.#zeroValue : this.#zeroValue - this.min;
@@ -426,10 +432,10 @@ class ProgressCalc {
  * class for calculating and formatting percentages.
  */
 class PercentHelper extends ProgressCalc {
-  #hassProvider = null;
+  #hassProvider: any = null;
   #unit = new UnitHelper();
   #isTimer = false;
-  #unitSpacing = CARD.config.unit.unitSpacing.auto;
+  #unitSpacing: string = CARD.config.unit.unitSpacing.auto;
 
   constructor() {
     super();
@@ -438,42 +444,42 @@ class PercentHelper extends ProgressCalc {
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
-  set isTimer(newValue) {
+  set isTimer(newValue: any) {
     this.#isTimer = is.boolean(newValue) ? newValue : false;
   }
 
-  get isTimer() {
+  get isTimer(): boolean {
     return this.#isTimer;
   }
 
-  get unit() {
+  get unit(): string {
     return this.#unit.value;
   }
 
-  set unit(newValue) {
+  set unit(newValue: any) {
     this.#unit.value = newValue ?? '';
   }
 
-  get hasTimerUnit() {
+  get hasTimerUnit(): boolean {
     return this.#isTimer && this.#unit.isTimerUnit;
   }
 
-  get hasFlexTimerUnit() {
+  get hasFlexTimerUnit(): boolean {
     return this.#isTimer && this.#unit.isFlexTimerUnit;
   }
 
-  get hasTimerOrFlexTimerUnit() {
+  get hasTimerOrFlexTimerUnit(): boolean {
     return this.hasTimerUnit || this.hasFlexTimerUnit;
   }
 
-  get processedValue() {
+  get processedValue(): number | null {
     if (this.unit !== CARD.config.unit.default) return this.actual;
     return this.isCenterZero && this.growthPercent ? this.growthPercentValue : this.percent;
   }
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
-  configure({ unitSpacing, hasDisabledUnit, isCenterZero, zeroValue, growthPercent, scale }) {
+  configure({ unitSpacing, hasDisabledUnit, isCenterZero, zeroValue, growthPercent, scale }: Record<string, any>) {
     this.#unitSpacing = unitSpacing;
     this.#unit.isDisabled = hasDisabledUnit;
     this.isCenterZero = isCenterZero;
@@ -482,7 +488,7 @@ class PercentHelper extends ProgressCalc {
     this.scale = scale;
   }
 
-  valueForThemes(isCustomTheme, valueBasedOnPercentage) {
+  valueForThemes(isCustomTheme: boolean, valueBasedOnPercentage: boolean): number | null {
     /*
      * Calculates the value to display based on the selected theme and unit
      * system.
@@ -491,7 +497,7 @@ class PercentHelper extends ProgressCalc {
      * before returning. - If the theme is linear or the unit is the default,
      * the percentage value is returned.
      */
-    let value = this.actual;
+    let value: number | null = this.actual;
     if (isCustomTheme) return value;
     if (this.unit === CARD.config.unit.fahrenheit) value = ((value - 32) * 5) / 9;
     return valueBasedOnPercentage || [CARD.config.unit.default, CARD.config.unit.disable].includes(this.unit)
@@ -499,7 +505,7 @@ class PercentHelper extends ProgressCalc {
       : value;
   }
 
-  toString() {
+  toString(): string {
     if (!this.isValid) return 'Div0';
     if (this.hasTimerOrFlexTimerUnit)
       return NumberFormatter.formatTiming(
@@ -524,40 +530,44 @@ class PercentHelper extends ProgressCalc {
  * value.
  */
 class ThemeManager {
-  #theme = null;
-  #icon = null;
-  #iconColor = null;
-  #barColor = null;
+  #theme: string | null = null;
+  #icon: string | null = null;
+  #iconColor: string | null = null;
+  #barColor: string | null = null;
   #value = 0;
   #isValid = false;
   #isLinear = false;
   #isBasedOnPercentage = false;
   #isCustomTheme = false;
-  #currentStyle = null;
+  // Theme "zones" come from either the built-in THEME table or a user's
+  // custom_theme YAML array - both are arrays of { min?, max?, color?,
+  // icon_color?, bar_color?, icon? } with slightly different optional fields,
+  // kept as `any[]` rather than a shared interface.
+  #currentStyle: any = null;
   #interpolate = false;
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
-  set theme(newTheme) {
+  set theme(newTheme: any) {
     if (is.nullish(newTheme) || !has.validKey(THEME, newTheme)) {
       this.#reset();
       return;
     }
     this.#isValid = true;
     this.#theme = newTheme;
-    this.#currentStyle = THEME[newTheme].style;
-    this.#isLinear = THEME[newTheme].linear;
-    this.#isBasedOnPercentage = THEME[newTheme].percent;
+    this.#currentStyle = THEME[newTheme as keyof typeof THEME].style;
+    this.#isLinear = THEME[newTheme as keyof typeof THEME].linear;
+    this.#isBasedOnPercentage = THEME[newTheme as keyof typeof THEME].percent;
   }
 
-  get theme() {
+  get theme(): string | null {
     return this.#theme;
   }
 
   // Only a presence/shape check: per-zone validity (numeric min < max, sorted)
   // is already guaranteed by the schema's customTheme validator, the sole path
   // a config reaches here through — see BaseConfigHelper.set config.
-  set customTheme(newTheme) {
+  set customTheme(newTheme: any) {
     if (!is.nonEmptyArray(newTheme)) return;
     this.#theme = CARD.theme.default;
     this.#currentStyle = newTheme;
@@ -566,50 +576,50 @@ class ThemeManager {
     this.#isCustomTheme = true;
   }
 
-  get customTheme() {
+  get customTheme(): any {
     return this.#currentStyle;
   }
 
-  get isLinear() {
+  get isLinear(): boolean {
     return this.#isLinear;
   }
 
-  get isBasedOnPercentage() {
+  get isBasedOnPercentage(): boolean {
     return this.#isBasedOnPercentage;
   }
 
-  get isCustomTheme() {
+  get isCustomTheme(): boolean {
     return this.#isCustomTheme;
   }
 
-  get isValid() {
+  get isValid(): boolean {
     return this.#isValid;
   }
 
-  set value(newValue) {
+  set value(newValue: number) {
     this.#value = newValue;
     this.#refresh();
   }
 
-  get value() {
+  get value(): number {
     return this.#value;
   }
 
-  get icon() {
+  get icon(): string | null {
     return this.#icon;
   }
 
-  get iconColor() {
+  get iconColor(): string | null {
     return this.#iconColor;
   }
 
-  get barColor() {
+  get barColor(): string | null {
     return this.#barColor;
   }
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
-  configure({ theme, customTheme, interpolate }) {
+  configure({ theme, customTheme, interpolate }: Record<string, any>) {
     this.theme = theme;
     this.customTheme = customTheme;
     this.#interpolate = interpolate;
@@ -618,19 +628,17 @@ class ThemeManager {
   // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
 
   #reset() {
-    [
-      this.#icon,
-      this.#barColor,
-      this.#iconColor,
-      this.#theme,
-      this.#currentStyle,
-      this.#value,
-      this.#isValid,
-      this.#isLinear,
-      this.#isBasedOnPercentage,
-      this.#isCustomTheme,
-      this.#interpolate,
-    ] = [null, null, null, null, null, 0, false, false, false, false, false];
+    this.#icon = null;
+    this.#barColor = null;
+    this.#iconColor = null;
+    this.#theme = null;
+    this.#currentStyle = null;
+    this.#value = 0;
+    this.#isValid = false;
+    this.#isLinear = false;
+    this.#isBasedOnPercentage = false;
+    this.#isCustomTheme = false;
+    this.#interpolate = false;
   }
 
   #refresh() {
@@ -649,7 +657,9 @@ class ThemeManager {
   }
 
   #setStyle() {
-    let [themeData, nextThemeData, ratio] = [null, null, 0];
+    let themeData: any = null;
+    let nextThemeData: any = null;
+    let ratio = 0;
 
     if (this.#value >= this.#currentStyle[this.#currentStyle.length - 1].max) {
       themeData = this.#currentStyle[this.#currentStyle.length - 1];
@@ -661,7 +671,7 @@ class ThemeManager {
       // themeData then stays null and #applyColors disengages the theme for
       // this render, deferring to whatever color source is next in priority
       // (see CardView.iconColor/barColor).
-      const index = this.#currentStyle.findIndex((level) => this.#value >= level.min && this.#value < level.max);
+      const index = this.#currentStyle.findIndex((level: any) => this.#value >= level.min && this.#value < level.max);
       if (index !== -1) {
         themeData = this.#currentStyle[index];
         nextThemeData = this.#currentStyle[index + 1] ?? null;
@@ -672,7 +682,7 @@ class ThemeManager {
     this.#applyColors(themeData, nextThemeData, ratio);
   }
 
-  #applyColors(themeData, nextThemeData, ratio) {
+  #applyColors(themeData: any, nextThemeData: any, ratio: number) {
     if (!themeData) {
       this.#icon = null;
       this.#iconColor = null;
@@ -700,31 +710,31 @@ class ThemeManager {
     }
   }
 
-  static #interpolateColor(from, to, ratio) {
+  static #interpolateColor(from: string | null, to: string | null, ratio: number): string | null {
     if (!from || !to) return null;
     const pct = Math.round(ratio * 100);
     return `color-mix(in srgb, ${to} ${pct}%, ${from})`; // from/to déjà adaptés
   }
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
-  static adaptColor(curColor) {
-    return HA_CONTEXT.haColors.get(curColor) ?? curColor;
+  static adaptColor(curColor: string | null): string | null {
+    return HA_CONTEXT.haColors.get(curColor as string) ?? curColor;
   }
 
-  buildGradient(fillPercent, mode, defaultColor = null, isVertical = false) {
+  buildGradient(fillPercent: number, mode: string, defaultColor: string | null = null, isVertical = false) {
     if (!this.#isValid || !this.#currentStyle || mode === 'auto') return null;
     if (!(fillPercent > 0)) return null;
 
     // For linear themes, derive min/max boundaries by splitting 0–100% equally.
     const style = this.#isLinear
-      ? this.#currentStyle.map((level, i, arr) => ({
+      ? this.#currentStyle.map((level: any, i: number, arr: any[]) => ({
           ...level,
           min: (i / arr.length) * 100,
           max: ((i + 1) / arr.length) * 100,
         }))
       : this.#currentStyle;
 
-    const visible = style.filter((level) => level.min < fillPercent);
+    const visible = style.filter((level: any) => level.min < fillPercent);
     if (visible.length === 0) return null;
 
     // Inner element uses translateX((value-1)*100%), shifted left by
@@ -733,18 +743,18 @@ class ThemeManager {
     // translateY instead (see the CSS on .vertical-bar .inner) - only the
     // gradient's own direction needs to follow, not this math.
     const offset = 100 - fillPercent;
-    const toElemPos = (b) => `${(b + offset).toFixed(2)}%`;
+    const toElemPos = (b: number) => `${(b + offset).toFixed(2)}%`;
     const direction = isVertical ? 'to top' : 'to right';
     // color is optional per zone now (see types.customTheme) — a color-less
     // zone falls back the same way iconColor/barColor already do: the entity's
     // own negotiated color (e.g. a cover is pink open / grey closed, see
     // EntityHelper.defaultColor), then the card's generic default, rather than
     // a flat neutral for every domain.
-    const col = (level) =>
+    const col = (level: any) =>
       ThemeManager.adaptColor(level.bar_color || level.color) || defaultColor || CARD.style.color.default;
 
     if (mode === 'segment') {
-      const stops = visible.flatMap((level, i) => {
+      const stops = visible.flatMap((level: any, i: number) => {
         const start = i === 0 ? '0%' : toElemPos(level.min);
         const end = level.max >= fillPercent ? '100%' : toElemPos(level.max);
         return [`${col(level)} ${start}`, `${col(level)} ${end}`];
@@ -756,7 +766,7 @@ class ThemeManager {
       const first = col(visible[0]);
       const stops = [`${first} 0%`];
       if (offset > 0) stops.push(`${first} ${offset.toFixed(2)}%`);
-      visible.forEach((level, i) => {
+      visible.forEach((level: any, i: number) => {
         if (i > 0) stops.push(`${col(level)} ${toElemPos(level.min)}`);
       });
       stops.push(`${col(visible[visible.length - 1])} 100%`);
@@ -771,10 +781,10 @@ class ThemeManager {
  */
 class ChangeTracker {
   #debug = CARD_CONTEXT.debug.hass;
-  #log = null;
+  #log: LoggerInstance;
   #firstTime = true;
-  #watchedEntities = new Set();
-  #entityCache = {};
+  #watchedEntities = new Set<string>();
+  #entityCache: Record<string, any> = {};
   #updated = false;
   #hassState = { isUpdated: false };
 
@@ -784,7 +794,7 @@ class ChangeTracker {
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
-  set hassState(hass) {
+  set hassState(hass: any) {
     this.#updated = false;
     if (!hass) return;
 
@@ -796,17 +806,17 @@ class ChangeTracker {
     this.#hassState = { isUpdated: this.#updated };
   }
 
-  get hassState() {
+  get hassState(): { isUpdated: boolean } {
     return this.#hassState;
   }
 
-  get isUpdated() {
+  get isUpdated(): boolean {
     return this.#updated;
   }
 
   // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
 
-  _hasChanged(newHass) {
+  _hasChanged(newHass: any): boolean {
     if (this.#firstTime) {
       this.#firstTime = false;
       return true;
@@ -832,7 +842,7 @@ class ChangeTracker {
     return false;
   }
 
-  _updateCache(hass) {
+  _updateCache(hass: any) {
     this.#entityCache = {};
     for (const entityId of this.#watchedEntities) {
       this.#entityCache[entityId] = hass.states?.[entityId] ?? null;
@@ -841,7 +851,7 @@ class ChangeTracker {
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
-  watchEntity(entityId) {
+  watchEntity(entityId: string) {
     if (entityId) {
       this.#watchedEntities.add(entityId);
     }
@@ -856,22 +866,32 @@ class ChangeTracker {
  * Helper class for managing entities. This class validates and retrieves
  * information from Home Assistant if it's an entity.
  */
+// Entity state/attributes/name-tokens all come from HA's own runtime data
+// (hass.states, hass.entities...) - kept as `any` throughout rather than
+// hand-modeling home-assistant-frontend's types, same rationale as
+// hass-provider.ts's own `#hass: any`.
 class EntityHelper {
-  #hassProvider = null;
+  #hassProvider: any = null;
   #isValid = false;
-  #value = {};
-  #entityId = null;
-  #attribute = null;
-  #color = null;
+  #value: any = {};
+  #entityId: string | null = null;
+  #attribute: string | null = null;
+  #color: string | null = null;
   #subtract = false;
   #isMain = false;
-  #state = null;
-  #domain = null;
-  #entityType = null;
-  #entityTypeFlags = { isTimer: false, isDuration: false, isNumber: false, isCounter: false, isSynced: false };
-  #stateContent = [];
-  #nameTokens = null;
-  static #handleRefreshType = new Map([
+  #state: string | null = null;
+  #domain: string | null = null;
+  #entityType: string | null = null;
+  #entityTypeFlags: Record<string, boolean> = {
+    isTimer: false,
+    isDuration: false,
+    isNumber: false,
+    isCounter: false,
+    isSynced: false,
+  };
+  #stateContent: string[] = [];
+  #nameTokens: any[] | null = null;
+  static #handleRefreshType = new Map<string, (self: EntityHelper) => void>([
     [HA_CONTEXT.entity.type.timer, (self) => self._manageTimerEntity()],
     [HA_CONTEXT.entity.type.duration, (self) => self._manageDurationEntity()],
     [HA_CONTEXT.entity.type.counter, (self) => self._manageCounterAndNumberEntity('minimum', 'maximum')],
@@ -885,7 +905,7 @@ class EntityHelper {
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
-  set entityId(newValue) {
+  set entityId(newValue: string) {
     this.#entityId = newValue;
     this.#nameTokens = null;
     this.#entityType = null;
@@ -895,75 +915,75 @@ class EntityHelper {
     this.#isValid = this.#hassProvider.hasEntity(this.#entityId);
   }
 
-  get entityId() {
+  get entityId(): string | null {
     return this.#entityId;
   }
 
-  set attribute(newValue) {
+  set attribute(newValue: string | null) {
     this.#attribute = newValue;
   }
 
-  get attribute() {
+  get attribute(): string | null {
     return this.#attribute;
   }
 
-  set color(newValue) {
+  set color(newValue: string | null) {
     this.#color = newValue ?? null;
   }
 
-  get color() {
+  get color(): string | null {
     return this.#color;
   }
 
-  set subtract(newValue) {
+  set subtract(newValue: any) {
     this.#subtract = Boolean(newValue);
   }
 
-  get subtract() {
+  get subtract(): boolean {
     return this.#subtract;
   }
 
-  set isMain(newValue) {
+  set isMain(newValue: any) {
     this.#isMain = Boolean(newValue);
   }
 
-  get isMain() {
+  get isMain(): boolean {
     return this.#isMain;
   }
 
-  set nameTokens(tok) {
+  set nameTokens(tok: any) {
     this.#nameTokens = is.nonEmptyArray(tok) ? tok : null;
   }
 
-  get nameTokens() {
+  get nameTokens(): any[] | null {
     return this.#nameTokens;
   }
 
-  set stateContent(val) {
+  set stateContent(val: string[]) {
     this.#stateContent = val;
   }
 
-  get stateContent() {
+  get stateContent(): string[] {
     return this.#stateContent;
   }
 
-  get value() {
+  get value(): any {
     return this.#isValid ? this.#value : 0;
   }
 
-  get state() {
+  get state(): string | null {
     return this.#state;
   }
 
-  get isValid() {
+  get isValid(): boolean {
     return this.#isValid;
   }
 
-  get isAvailable() {
+  get isAvailable(): boolean {
     return this.#hassProvider.isEntityAvailable(this.#entityId);
   }
 
-  get attributes() {
+  get attributes(): Record<string, number> {
     return this.#isValid &&
       !this.entityType.isCounter &&
       !this.entityType.isNumber &&
@@ -973,20 +993,20 @@ class EntityHelper {
       : {};
   }
 
-  get hasAttribute() {
+  get hasAttribute(): boolean {
     return this.#isValid && Object.keys(this.attributes).length > 0;
   }
 
-  get defaultAttribute() {
-    return HA_CONTEXT.attributeMapping[this.#domain]?.attribute ?? null;
+  get defaultAttribute(): string | null {
+    return HA_CONTEXT.attributeMapping[this.#domain as keyof typeof HA_CONTEXT.attributeMapping]?.attribute ?? null;
   }
 
-  get name() {
+  get name(): string {
     return this.#hassProvider.getEntityProp(this.#entityId, 'friendly_name');
   }
 
-  _nameResolver() {
-    const resolvers = {
+  _nameResolver(): string {
+    const resolvers: Record<string, (item: any) => any> = {
       text: (item) => item.text,
       entity: () => this.#hassProvider.getEntityName(this.entityId),
       device: () => this.#hassProvider.getEntityDevice(this.entityId),
@@ -994,33 +1014,32 @@ class EntityHelper {
       floor: () => this.#hassProvider.getEntityFloor(this.entityId),
     };
 
-    return this.#nameTokens
-      .map((item) => {
-        const resolver = resolvers[item.type];
-        if (!resolver) return null;
-        try {
-          return resolver(item);
-        } catch {
-          return null;
-        }
-      })
+    return this.#nameTokens!.map((item) => {
+      const resolver = resolvers[item.type];
+      if (!resolver) return null;
+      try {
+        return resolver(item);
+      } catch {
+        return null;
+      }
+    })
       .filter((v) => is.nonEmptyString(v))
       .join(' ');
   }
 
-  get nameComposition() {
+  get nameComposition(): string {
     return this.#nameTokens ? this._nameResolver() : this.name;
   }
 
-  get stateObj() {
+  get stateObj(): EntityState | null {
     return this.#hassProvider.getEntityStateObj(this.#entityId);
   }
 
-  get formatedEntityState() {
+  get formatedEntityState(): string {
     return this.#hassProvider.getEntityProp(this.#entityId, 'state', true);
   }
 
-  get unit() {
+  get unit(): string | null {
     if (!this.#isValid) return null;
     if (this.entityType.isTimer) return CARD.config.unit.flexTimer;
     if (this.entityType.isDuration) return CARD.config.unit.second;
@@ -1029,11 +1048,11 @@ class EntityHelper {
     return this.#hassProvider.getEntityProp(this.#entityId, 'unit_of_measurement');
   }
 
-  get precision() {
+  get precision(): number | null {
     return this.#isValid ? (this.#hassProvider.getEntityProp(this.#entityId, 'display_precision') ?? null) : null;
   }
 
-  get entityType() {
+  get entityType(): Record<string, boolean> {
     if (!this.#entityTypeFlags.isSynced) {
       const type = this.getEntityType();
       const key = `is${type.charAt(0).toUpperCase() + type.slice(1)}`;
@@ -1043,12 +1062,12 @@ class EntityHelper {
     return this.#entityTypeFlags;
   }
 
-  get hasShapeByDefault() {
-    return [HA_CONTEXT.entity.type.light, HA_CONTEXT.entity.type.fan].includes(this.#domain);
+  get hasShapeByDefault(): boolean {
+    return [HA_CONTEXT.entity.type.light, HA_CONTEXT.entity.type.fan].includes(this.#domain as string);
   }
 
-  get defaultColor() {
-    const colorMap = {
+  get defaultColor(): string | null {
+    const colorMap: Record<string, string> = {
       [HA_CONTEXT.entity.type.timer]:
         this.value?.state === HA_CONTEXT.entity.state.active ? CARD.style.color.active : CARD.style.color.inactive,
       [HA_CONTEXT.entity.type.cover]: this.value > 0 ? CARD.style.color.coverActive : CARD.style.color.inactive,
@@ -1062,11 +1081,15 @@ class EntityHelper {
       [HA_CONTEXT.entity.class.battery]: this.#getBatteryColor(),
     };
 
-    return colorMap[this.#domain] ?? colorMap[this.#hassProvider.getEntityProp(this.#entityId, 'device_class')] ?? null;
+    return (
+      colorMap[this.#domain as string] ??
+      colorMap[this.#hassProvider.getEntityProp(this.#entityId, 'device_class')] ??
+      null
+    );
   }
 
-  get stateContentToString() {
-    const results = [];
+  get stateContentToString(): string {
+    const results: string[] = [];
 
     for (const attr of this.#stateContent) {
       switch (attr) {
@@ -1090,9 +1113,9 @@ class EntityHelper {
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
-  getEntityType() {
-    this.#entityType ??= EntityHelper.#handleRefreshType.has(this.#domain)
-      ? this.#domain
+  getEntityType(): string {
+    this.#entityType ??= EntityHelper.#handleRefreshType.has(this.#domain as string)
+      ? (this.#domain as string)
       : this.#hassProvider.getEntityProp(this.#entityId, 'device_class') === HA_CONTEXT.entity.type.duration &&
           !this.#attribute
         ? HA_CONTEXT.entity.type.duration
@@ -1120,23 +1143,25 @@ class EntityHelper {
 
     const type = this.getEntityType();
     const handler =
-      EntityHelper.#handleRefreshType.get(type) ?? EntityHelper.#handleRefreshType.get(HA_CONTEXT.entity.type.default);
+      EntityHelper.#handleRefreshType.get(type) ?? EntityHelper.#handleRefreshType.get(HA_CONTEXT.entity.type.default)!;
     handler(this);
   }
 
   // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
 
   _manageStdEntity() {
-    this.#attribute = this.#attribute || HA_CONTEXT.attributeMapping[this.#domain]?.attribute;
+    this.#attribute =
+      this.#attribute ||
+      HA_CONTEXT.attributeMapping[this.#domain as keyof typeof HA_CONTEXT.attributeMapping]?.attribute;
     if (!this.#attribute) {
-      this.#value = parseFloat(this.#state) || 0;
+      this.#value = parseFloat(this.#state as string) || 0;
       return;
     }
 
     const attrValue = this.#hassProvider.getEntityAttribute(this.#entityId, this.#attribute);
 
     if (is.numericString(attrValue) || is.number(attrValue)) {
-      this.#value = parseFloat(attrValue);
+      this.#value = parseFloat(String(attrValue));
       if (
         this.#domain === HA_CONTEXT.attributeMapping.light.label &&
         this.#attribute === HA_CONTEXT.attributeMapping.light.attribute
@@ -1151,8 +1176,8 @@ class EntityHelper {
   }
 
   _manageTimerEntity() {
-    // eslint-disable-next-line no-useless-assignment
-    let [duration, elapsed] = [null, null];
+    let duration: number;
+    let elapsed: number;
     switch (this.#state) {
       case HA_CONTEXT.entity.state.idle: {
         // elapsed/duration aren't real millisecond durations here (no timer
@@ -1167,7 +1192,7 @@ class EntityHelper {
       }
       case HA_CONTEXT.entity.state.active: {
         const finished_at = new Date(this.#hassProvider.getEntityProp(this.#entityId, 'finishes_at')).getTime();
-        duration = NumberFormatter.convertDuration(this.#hassProvider.getEntityProp(this.#entityId, 'duration'));
+        duration = NumberFormatter.convertDuration(this.#hassProvider.getEntityProp(this.#entityId, 'duration'))!;
         const started_at = finished_at - duration;
         const now = new Date().getTime();
         elapsed = now - started_at;
@@ -1176,8 +1201,8 @@ class EntityHelper {
       case HA_CONTEXT.entity.state.paused: {
         const remaining = NumberFormatter.convertDuration(
           this.#hassProvider.getEntityProp(this.#entityId, 'remaining'),
-        );
-        duration = NumberFormatter.convertDuration(this.#hassProvider.getEntityProp(this.#entityId, 'duration'));
+        )!;
+        duration = NumberFormatter.convertDuration(this.#hassProvider.getEntityProp(this.#entityId, 'duration'))!;
         elapsed = duration - remaining;
         break;
       }
@@ -1192,9 +1217,9 @@ class EntityHelper {
     };
   }
 
-  _manageCounterAndNumberEntity(min, max) {
+  _manageCounterAndNumberEntity(min: string, max: string) {
     this.#value = {
-      current: parseFloat(this.#state),
+      current: parseFloat(this.#state as string),
       min: this.#hassProvider.getEntityAttribute(this.#entityId, min),
       max: this.#hassProvider.getEntityAttribute(this.#entityId, max),
     };
@@ -1202,7 +1227,7 @@ class EntityHelper {
 
   _manageDurationEntity() {
     const unit = this.#hassProvider.getEntityProp(this.#entityId, 'unit_of_measurement');
-    const value = parseFloat(this.#state);
+    const value = parseFloat(this.#state as string);
     // CF5 - issue (critical) resolved - getEntityProp returns null (never
     // undefined), so the guard never matched and a missing unit crashed in
     // durationToSeconds
@@ -1211,18 +1236,18 @@ class EntityHelper {
     this.#isValid = seconds !== null;
   }
 
-  #getClimateColor() {
-    const climateColorMap = {
+  #getClimateColor(): string {
+    const climateColorMap: Record<string, string> = {
       heat_cool: CARD.style.color.active,
       dry: CARD.style.color.climate.dry,
       cool: CARD.style.color.climate.cool,
       heat: CARD.style.color.climate.heat,
       fan_only: CARD.style.color.climate.fanOnly,
     };
-    return climateColorMap[this.#state] || CARD.style.color.inactive;
+    return climateColorMap[this.#state as string] || CARD.style.color.inactive;
   }
 
-  #getBatteryColor() {
+  #getBatteryColor(): string {
     if (!this.#value || this.#value <= 30) return CARD.style.color.battery.low;
     if (this.#value <= 70) return CARD.style.color.battery.medium;
     return CARD.style.color.battery.high;
@@ -1234,10 +1259,10 @@ class EntityHelper {
  */
 
 class EntityCollectionHelper {
-  #entities = [];
+  #entities: EntityHelper[] = [];
   #mode = 'stacked';
 
-  static #numericValue(helper) {
+  static #numericValue(helper: EntityHelper): number {
     const value = helper.value;
     return is.number(value) ? value : (value?.current ?? 0);
   }
@@ -1245,7 +1270,7 @@ class EntityCollectionHelper {
   // Width/share math always wants a magnitude - a negative raw value must never
   // turn into a negative width (nonsensical for a gradient stop or an arm
   // size).
-  static #magnitude(helper) {
+  static #magnitude(helper: EntityHelper): number {
     return Math.abs(EntityCollectionHelper.#numericValue(helper));
   }
 
@@ -1255,30 +1280,36 @@ class EntityCollectionHelper {
   // Checking both - rather than just blindly negating when `subtract` is set -
   // means `subtract: true` on an already-negative value can't double-negate it
   // back to positive.
-  static #isNegative(helper) {
+  static #isNegative(helper: EntityHelper): boolean {
     return helper.subtract || EntityCollectionHelper.#numericValue(helper) < 0;
   }
 
-  static #magnitudeSum(entities) {
+  static #magnitudeSum(entities: EntityHelper[]): number {
     return entities.reduce((sum, helper) => sum + EntityCollectionHelper.#magnitude(helper), 0);
   }
 
-  static #splitByNegative(entities) {
+  static #splitByNegative(entities: EntityHelper[]): { positive: EntityHelper[]; negative: EntityHelper[] } {
     return {
       positive: entities.filter((helper) => !EntityCollectionHelper.#isNegative(helper)),
       negative: entities.filter((helper) => EntityCollectionHelper.#isNegative(helper)),
     };
   }
 
-  set mode(newMode) {
+  set mode(newMode: string) {
     this.#mode = ['proportional', 'net'].includes(newMode) ? newMode : 'stacked';
   }
 
-  get mode() {
+  get mode(): string {
     return this.#mode;
   }
 
-  addEntity(entityId, attribute = null, color = null, subtract = false, isMain = false) {
+  addEntity(
+    entityId: string,
+    attribute: string | null = null,
+    color: string | null = null,
+    subtract = false,
+    isMain = false,
+  ) {
     const helper = new EntityHelper();
     helper.entityId = entityId;
     if (attribute) helper.attribute = attribute;
@@ -1296,11 +1327,11 @@ class EntityCollectionHelper {
   // 'stacked'/'proportional' (both centered and not) and the non-centered
   // text/value. See getNetValue() for the sign-aware total ('net' mode, and
   // 'stacked'/'proportional' + center_zero's label).
-  getTotalValue() {
+  getTotalValue(): number {
     return EntityCollectionHelper.#magnitudeSum(this.getAvailableEntities());
   }
 
-  getAvailableEntities() {
+  getAvailableEntities(): EntityHelper[] {
     return this.#entities.filter((helper) => helper.isValid && helper.isAvailable);
   }
 
@@ -1309,7 +1340,7 @@ class EntityCollectionHelper {
   // their text/value once center_zero splits them into two arms - a single flat
   // "88%" reading makes no sense once the bar itself is showing two
   // independent, possibly-opposing lengths (see ViewBase).
-  getNetValue() {
+  getNetValue(): number {
     const { positive, negative } = EntityCollectionHelper.#splitByNegative(this.getAvailableEntities());
     return EntityCollectionHelper.#magnitudeSum(positive) - EntityCollectionHelper.#magnitudeSum(negative);
   }
@@ -1321,14 +1352,14 @@ class EntityCollectionHelper {
   // negotiated curColor, unshaded, regardless of its position in the collection
   // (index 0 in 'stacked', last in 'proportional' - shading by raw position
   // used to darken whichever one landed first).
-  static #entityColor(helper, index, total, curColor) {
+  static #entityColor(helper: EntityHelper, index: number, total: number, curColor: string): string {
     if (helper.isMain) return curColor;
     if (helper.color) return ThemeManager.adaptColor(helper.color) ?? curColor;
     const whitePercent = Math.round((1 - index / (total - 1 || 1)) * 50); // de 50 → 0
     return `color-mix(in srgb, ${curColor} ${100 - whitePercent}%, black ${whitePercent}%)`;
   }
 
-  getEntitiesColor(curColor, progressRatio = 1, range = 0, isVertical = false) {
+  getEntitiesColor(curColor: string | null, progressRatio = 1, range = 0, isVertical = false): string | null {
     const available = this.getAvailableEntities();
     if (!available.length || !curColor) return null;
     return this.#mode === 'stacked'
@@ -1342,13 +1373,13 @@ class EntityCollectionHelper {
   // per-mode algorithm as the non-centered case (on magnitudes, see
   // #magnitude), just scoped to its own half-range (max-zeroValue /
   // zeroValue-min).
-  getDivergingGradients(curColor, { min, max, zeroValue }, isVertical = false) {
+  getDivergingGradients(curColor: string | null, { min, max, zeroValue }: Record<string, number>, isVertical = false) {
     const available = this.getAvailableEntities();
     if (!available.length || !curColor) return null;
 
     const build =
       this.#mode === 'stacked' ? EntityCollectionHelper.#stackedGradient : EntityCollectionHelper.#proportionalGradient;
-    const arm = (entities, range) => {
+    const arm = (entities: EntityHelper[], range: number) => {
       if (!entities.length || range <= 0) return { gradient: null, size: 0 };
       const size = Math.min(1, Math.max(0, EntityCollectionHelper.#magnitudeSum(entities) / range));
       return { gradient: build(entities, curColor, size, range, isVertical), size };
@@ -1364,13 +1395,19 @@ class EntityCollectionHelper {
   // each entity's share is renormalized against the combined total, so the
   // visible fill is always divided between entities regardless of how that
   // total compares to min_value/max_value.
-  static #proportionalGradient(available, curColor, progressRatio, _range, isVertical = false) {
+  static #proportionalGradient(
+    available: EntityHelper[],
+    curColor: string,
+    progressRatio: number,
+    _range: number,
+    isVertical = false,
+  ): string | null {
     const total = EntityCollectionHelper.#magnitudeSum(available);
     if (total === 0) return null;
 
     const shadeTotal = available.filter((helper) => !helper.isMain).length;
     let shadeIndex = 0;
-    const gradientStops = [];
+    const gradientStops: string[] = [];
     // With translateX-based fill, the inner element is 100% wide but only the
     // rightmost progressRatio% is visible. Segment stops must be offset so that
     // they land inside the visible portion instead of starting from position 0.
@@ -1396,12 +1433,18 @@ class EntityCollectionHelper {
   // past the last entity stays empty (no gap-filling color), and entities are
   // clipped/skipped once the cumulative width reaches 100% instead of shrinking
   // everyone to fit.
-  static #stackedGradient(available, curColor, progressRatio, range, isVertical = false) {
+  static #stackedGradient(
+    available: EntityHelper[],
+    curColor: string,
+    progressRatio: number,
+    range: number,
+    isVertical = false,
+  ): string | null {
     if (!range) return null;
 
     const shadeTotal = available.filter((helper) => !helper.isMain).length;
     let shadeIndex = 0;
-    const gradientStops = [];
+    const gradientStops: string[] = [];
     const offset = (1 - progressRatio) * 100;
     let currentPosition = offset;
 
@@ -1421,7 +1464,7 @@ class EntityCollectionHelper {
       : null;
   }
 
-  get count() {
+  get count(): number {
     return this.#entities.length;
   }
 
@@ -1436,18 +1479,18 @@ class EntityCollectionHelper {
  * entity.
  */
 class EntityOrValue {
-  #activeHelper = null;
+  #activeHelper: EntityHelper | ValueHelper | null = null;
   #isEntity = false;
 
   // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
 
-  #entity() {
-    return this.#isEntity ? this.#activeHelper : null;
+  #entity(): EntityHelper | null {
+    return this.#isEntity ? (this.#activeHelper as EntityHelper) : null;
   }
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
-  set value(newValue) {
+  set value(newValue: any) {
     if (is.string(newValue)) {
       if (!(this.#activeHelper instanceof EntityHelper)) {
         this.#activeHelper = new EntityHelper();
@@ -1466,57 +1509,59 @@ class EntityOrValue {
     }
   }
 
-  get value() {
+  get value(): any {
     return this.#activeHelper?.value ?? null;
   }
 
-  get isEntity() {
+  get isEntity(): boolean {
     return this.#isEntity;
   }
 
-  get isValid() {
+  get isValid(): boolean {
     return this.#activeHelper?.isValid ?? false;
   }
 
-  get isAvailable() {
+  get isAvailable(): boolean {
     if (!this.#activeHelper) return false;
-    return this.#isEntity ? this.#activeHelper.isAvailable || this.#activeHelper.isValid : this.#activeHelper.isValid;
+    return this.#isEntity
+      ? (this.#activeHelper as EntityHelper).isAvailable || this.#activeHelper.isValid
+      : this.#activeHelper.isValid;
   }
 
-  get state() {
+  get state(): string | null {
     return this.#entity()?.state ?? null;
   }
 
-  get precision() {
+  get precision(): number | null {
     return this.#entity()?.precision ?? null;
   }
 
-  get name() {
+  get name(): string | null {
     return this.#entity()?.name ?? null;
   }
 
-  get nameComposition() {
+  get nameComposition(): string | null {
     return this.#entity()?.nameComposition ?? null;
   }
 
-  get formatedEntityState() {
+  get formatedEntityState(): string | null {
     return this.#entity()?.formatedEntityState ?? null;
   }
 
-  get stateContent() {
+  get stateContent(): string[] | null {
     return this.#entity()?.stateContent ?? null;
   }
 
-  set stateContent(newValue) {
+  set stateContent(newValue: string[]) {
     const entity = this.#entity();
     if (entity) entity.stateContent = newValue;
   }
 
-  get stateContentToString() {
+  get stateContentToString(): string | null {
     return this.#entity()?.stateContentToString ?? null;
   }
 
-  get entityType() {
+  get entityType(): Record<string, boolean> {
     return (
       this.#entity()?.entityType ?? {
         isTimer: false,
@@ -1528,48 +1573,48 @@ class EntityOrValue {
     );
   }
 
-  get hasShapeByDefault() {
+  get hasShapeByDefault(): boolean {
     return this.#entity()?.hasShapeByDefault ?? false;
   }
 
-  get defaultColor() {
+  get defaultColor(): string | null | false {
     return this.#entity()?.defaultColor ?? false;
   }
 
-  get hasAttribute() {
+  get hasAttribute(): boolean {
     return this.#entity()?.hasAttribute ?? false;
   }
 
-  get defaultAttribute() {
+  get defaultAttribute(): string | null {
     return this.#entity()?.defaultAttribute ?? null;
   }
 
-  get attributes() {
+  get attributes(): Record<string, number> | null {
     return this.#entity()?.attributes ?? null;
   }
 
-  get unit() {
+  get unit(): string | null {
     return this.#entity()?.unit ?? null;
   }
 
-  get stateObj() {
+  get stateObj(): EntityState | null {
     return this.#entity()?.stateObj ?? null;
   }
 
-  get nameTokens() {
+  get nameTokens(): any[] | null {
     return this.#entity()?.nameTokens ?? null;
   }
 
-  set nameTokens(tok) {
+  set nameTokens(tok: any) {
     const entity = this.#entity();
     if (entity) entity.nameTokens = tok;
   }
 
-  get attribute() {
+  get attribute(): string | null {
     return this.#entity()?.attribute ?? null;
   }
 
-  set attribute(newValue) {
+  set attribute(newValue: string | null) {
     const entity = this.#entity();
     if (entity) entity.attribute = newValue;
   }

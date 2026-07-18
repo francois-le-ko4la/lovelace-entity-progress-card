@@ -6,9 +6,14 @@
 
 import { CARD, CONTENT_SLOT } from '../utils/parameters.js';
 
-const Element = (obj, extraClass = '') => {
+// `obj` shapes come from CARD.htmlStructure.* - heterogeneous (some carry
+// `id`/`extraAttr`, most don't) and `options` bags vary per call site (layout,
+// barPosition, barType, trendIndicator, multiline, barSingleLine...token
+// subsets, never all at once) - deliberately loose rather than modeling every
+// combination as its own interface.
+const Element = (obj: any, extraClass = '') => {
   const className = `${obj.class} ${extraClass}`.trim();
-  const renderAttrs = (attrsObj = {}) =>
+  const renderAttrs = (attrsObj: Record<string, any> = {}) =>
     Object.entries(attrsObj)
       .map(([key, value]) => `${key}="${value}"`)
       .join(' ');
@@ -16,7 +21,7 @@ const Element = (obj, extraClass = '') => {
   return {
     tag: obj.element,
     class: className,
-    html: (content = '', attrs = {}) => {
+    html: (content = '', attrs: Record<string, any> = {}) => {
       const allAttrs = { ...(obj.id ? { id: obj.id } : {}), ...(obj.extraAttr || {}), ...attrs };
       return `<${obj.element} class="${className}" ${renderAttrs(allAttrs)}>${content}</${obj.element}>`;
     },
@@ -25,7 +30,7 @@ const Element = (obj, extraClass = '') => {
 
 const StructureElements = {
   ripple: () => '<ha-ripple></ha-ripple>',
-  container: (options) =>
+  container: (options: any) =>
     StructureElements.ripple() + Element(CARD.htmlStructure.sections.container, options.layout).html(CONTENT_SLOT),
   belowContainer: () => Element(CARD.htmlStructure.sections.belowContainer).html(CONTENT_SLOT),
   topContainer: () => Element(CARD.htmlStructure.sections.topContainer).html(CONTENT_SLOT),
@@ -51,7 +56,7 @@ const StructureElements = {
   // (never a main, whatever the caller passes); line 2 adds the main span only
   // when this card type actually has one (card/badge: yes, template: no slot at
   // all - see StructureElements.secondaryInfoWrapperMinimal).
-  secondaryInfoLine: (index, hasMain) => {
+  secondaryInfoLine: (index: 1 | 2, hasMain: boolean) => {
     const extraEl =
       index === 1 ? CARD.htmlStructure.elements.secondaryInfoExtra : CARD.htmlStructure.elements.secondaryInfoExtra2;
     const showMain = index === 2 && hasMain;
@@ -62,12 +67,12 @@ const StructureElements = {
     );
   },
 
-  secondaryInfoWrapperMultiline: (hasMain) =>
+  secondaryInfoWrapperMultiline: (hasMain: boolean) =>
     Element(CARD.htmlStructure.elements.secondaryInfoWrapper).html(
       StructureElements.secondaryInfoLine(1, hasMain) + StructureElements.secondaryInfoLine(2, hasMain),
     ),
 
-  secondaryInfoWrapper: (options = {}) =>
+  secondaryInfoWrapper: (options: any = {}) =>
     options.multiline
       ? StructureElements.secondaryInfoWrapperMultiline(true)
       : Element(CARD.htmlStructure.elements.secondaryInfoWrapper).html(
@@ -79,7 +84,7 @@ const StructureElements = {
           ),
         ),
 
-  secondaryInfoWrapperMinimal: (options = {}) =>
+  secondaryInfoWrapperMinimal: (options: any = {}) =>
     options.multiline
       ? StructureElements.secondaryInfoWrapperMultiline(false)
       : Element(CARD.htmlStructure.elements.secondaryInfoWrapper).html(
@@ -90,7 +95,7 @@ const StructureElements = {
           ),
         ),
 
-  progressBar: (options) => {
+  progressBar: (options: any) => {
     const extraClass = options.barPosition === 'overlay' ? 'overlay' : '';
     const isCenterZero = options.barType === 'centerZero';
     const marks =
@@ -117,7 +122,7 @@ const StructureElements = {
     );
   },
 
-  createSecondaryInfo: (options, secondaryInfoWrapperFn) => {
+  createSecondaryInfo: (options: any, secondaryInfoWrapperFn: (options: any) => string) => {
     const { layout, barPosition } = options;
     const excludedPositions = ['top', 'bottom', 'below', 'overlay', 'background'];
     const excludedLayouts = ['vertical'];
@@ -131,12 +136,13 @@ const StructureElements = {
     return Element(CARD.htmlStructure.elements.secondaryInfo).html(content);
   },
 
-  secondaryInfo: (options) => StructureElements.createSecondaryInfo(options, StructureElements.secondaryInfoWrapper),
+  secondaryInfo: (options: any) =>
+    StructureElements.createSecondaryInfo(options, StructureElements.secondaryInfoWrapper),
 
-  secondaryInfoMinimal: (options) =>
+  secondaryInfoMinimal: (options: any) =>
     StructureElements.createSecondaryInfo(options, StructureElements.secondaryInfoWrapperMinimal),
 
-  createContent: (options, rightContent) => {
+  createContent: (options: any, rightContent: string) => {
     const isOverlay = options.barPosition === 'overlay';
     const isSingleLine = options.barSingleLine;
     const isVertical = options.layout === 'vertical';
@@ -150,12 +156,12 @@ const StructureElements = {
     return Element(CARD.htmlStructure.sections.content, extraClass).html(content);
   },
 
-  contentFull: (options) =>
+  contentFull: (options: any) =>
     StructureElements.createContent(
       options,
       StructureElements.nameContent() + StructureElements.secondaryInfo(options),
     ),
-  contentMini: (options) =>
+  contentMini: (options: any) =>
     StructureElements.createContent(
       options,
       StructureElements.nameContent(true) + StructureElements.secondaryInfoMinimal(options),
@@ -165,18 +171,18 @@ const StructureElements = {
     Element(CARD.htmlStructure.sections.icon).html(StructureElements.iconAndShape() + StructureElements.badge()),
   iconSectionWoBadge: () => Element(CARD.htmlStructure.sections.icon).html(StructureElements.iconAndShape()),
 
-  trendIndicator: (options) =>
+  trendIndicator: (options: any) =>
     options.trendIndicator
       ? Element(CARD.htmlStructure.elements.trendIndicator.container).html(
           Element(CARD.htmlStructure.elements.trendIndicator.icon).html(),
         )
       : '',
 
-  wrapWithBarPosition: (content, options) => {
+  wrapWithBarPosition: (content: string, options: any) => {
     const { barPosition } = options;
     const bar = () => StructureElements.progressBar(options);
 
-    const wrap = {
+    const wrap: Record<string, () => { before: string; after: string }> = {
       top: () => ({ before: StructureElements.topContainer().replace(CONTENT_SLOT, bar()), after: '' }),
       bottom: () => ({ before: '', after: StructureElements.bottomContainer().replace(CONTENT_SLOT, bar()) }),
       below: () => ({ before: '', after: StructureElements.belowContainer().replace(CONTENT_SLOT, bar()) }),
@@ -190,7 +196,7 @@ const StructureElements = {
 };
 
 const StructureTemplates = {
-  card: (options = {}) => {
+  card: (options: any = {}) => {
     return StructureElements.wrapWithBarPosition(
       StructureElements.container(options).replace(
         CONTENT_SLOT,
@@ -202,14 +208,14 @@ const StructureTemplates = {
     );
   },
 
-  badge: (options = {}) => {
+  badge: (options: any = {}) => {
     return StructureElements.container(options).replace(
       CONTENT_SLOT,
       StructureElements.iconSectionWoBadge() + StructureElements.contentFull(options),
     );
   },
 
-  template: (options = {}) => {
+  template: (options: any = {}) => {
     return StructureElements.wrapWithBarPosition(
       StructureElements.container(options).replace(
         CONTENT_SLOT,
@@ -220,11 +226,11 @@ const StructureTemplates = {
       options,
     );
   },
-  feature: (options = {}) => {
+  feature: (options: any = {}) => {
     const { barPosition } = options;
     const bar = () => StructureElements.progressBar(options);
 
-    const containers = {
+    const containers: Record<string, () => string> = {
       top: () => StructureElements.topContainer().replace(CONTENT_SLOT, bar()),
       bottom: () => StructureElements.bottomContainer().replace(CONTENT_SLOT, bar()),
     };

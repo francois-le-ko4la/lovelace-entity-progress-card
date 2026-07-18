@@ -22,6 +22,23 @@ import {
   EntityProgressBadgeTemplateEditor,
 } from './editor/editors.js';
 
+interface RegisteredEntry {
+  type: string;
+  version?: string;
+}
+
+declare global {
+  interface Window {
+    EPB_DIAG?: {
+      version: string;
+      dump: () => string;
+    };
+    customCards?: RegisteredEntry[];
+    customBadges?: RegisteredEntry[];
+    customCardFeatures?: RegisteredEntry[];
+  }
+}
+
 /******************************************************************************
  * 🔧 Register components
  */

@@ -6,6 +6,7 @@
 import { VALUE_CHANGED_EVENT, HA_SELECTOR_TAG, HA_SVG_ICON_TAG } from '../utils/parameters.js';
 import { BAR_STACK_EDITOR_STYLE, CUSTOM_THEME_EDITOR_STYLE } from '../utils/styles.js';
 import { is } from '../utils/common-checks.js';
+import type { Hass } from '../utils/hass-provider.js';
 
 /**
  * Shared base for custom elements that edit an array of row-objects: a label, a
@@ -17,11 +18,18 @@ import { is } from '../utils/common-checks.js';
  *
  * @extends HTMLElement
  */
-class ListEditorBase extends HTMLElement {
+// Rows are heterogeneous plain objects (bar_stack entities vs custom_theme
+// zones have entirely different shapes) - kept as `any` rather than a shared
+// interface neither concrete editor actually has in common beyond "object".
+abstract class ListEditorBase extends HTMLElement {
   _labelText = '';
-  _value = [];
-  _list = null;
-  _labelEl = null;
+  _value: any[] = [];
+  _list: HTMLElement | null = null;
+  _labelEl: HTMLElement | null = null;
+
+  abstract _buildDOM(): void;
+  abstract _render(): void;
+  abstract _dispatch(): void;
 
   connectedCallback() {
     if (!this.shadowRoot) this.attachShadow({ mode: 'open' });
@@ -29,31 +37,31 @@ class ListEditorBase extends HTMLElement {
     this._render();
   }
 
-  get label() {
+  get label(): string {
     return this._labelText;
   }
 
-  set label(val) {
+  set label(val: string) {
     this._labelText = val ?? '';
     if (this._labelEl) this._labelEl.textContent = this._labelText;
   }
 
-  get value() {
+  get value(): any[] {
     return this._value;
   }
 
-  set value(val) {
+  set value(val: any[]) {
     this._value = is.array(val) ? val.filter(is.plainObject) : [];
     if (this._list) this._render();
   }
 
-  _deleteRow(index) {
+  _deleteRow(index: number) {
     this._value = this._value.filter((_, i) => i !== index);
     this._render();
     this._dispatch();
   }
 
-  _updateItem(index, patch) {
+  _updateItem(index: number, patch: Record<string, any>) {
     this._value = this._value.map((item, i) => (i === index ? { ...item, ...patch } : item));
     this._render();
     this._dispatch();
@@ -69,16 +77,16 @@ class ListEditorBase extends HTMLElement {
  */
 class EntityProgressBarStackEditor extends ListEditorBase {
   static ELEMENT_NAME = 'entity-progress-bar-stack-editor';
-  #hass = null;
-  #addBtn = null;
+  #hass: Hass | null = null;
+  #addBtn: any = null;
 
-  get hass() {
+  get hass(): Hass | null {
     return this.#hass;
   }
 
-  set hass(hass) {
+  set hass(hass: Hass) {
     this.#hass = hass;
-    for (const el of this.shadowRoot?.querySelectorAll(HA_SELECTOR_TAG) ?? []) el.hass = hass;
+    for (const el of this.shadowRoot?.querySelectorAll(HA_SELECTOR_TAG) ?? []) (el as any).hass = hass;
   }
 
   _buildDOM() {
@@ -89,7 +97,7 @@ class EntityProgressBarStackEditor extends ListEditorBase {
     this._labelEl.textContent = this._labelText;
     this._list = document.createElement('div');
     this.#addBtn = document.createElement('ha-button');
-    const addIcon = document.createElement(HA_SVG_ICON_TAG);
+    const addIcon: any = document.createElement(HA_SVG_ICON_TAG);
     addIcon.setAttribute('slot', 'icon');
     addIcon.path = 'M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z';
     this.#addBtn.appendChild(addIcon);
@@ -101,7 +109,7 @@ class EntityProgressBarStackEditor extends ListEditorBase {
     const addRow = document.createElement('div');
     addRow.className = 'add-row';
     addRow.appendChild(this.#addBtn);
-    this.shadowRoot.append(style, this._labelEl, this._list, addRow);
+    this.shadowRoot!.append(style, this._labelEl, this._list, addRow);
   }
 
   _dispatch() {
@@ -115,42 +123,42 @@ class EntityProgressBarStackEditor extends ListEditorBase {
     );
   }
 
-  #entityField(item, index) {
-    const el = document.createElement(HA_SELECTOR_TAG);
+  #entityField(item: any, index: number): any {
+    const el: any = document.createElement(HA_SELECTOR_TAG);
     el.hass = this.#hass;
     el.selector = { entity: {} };
     el.value = item.entity ?? '';
     el.required = false;
     el.style.width = '100%';
-    el.addEventListener(VALUE_CHANGED_EVENT, (e) => {
+    el.addEventListener(VALUE_CHANGED_EVENT, (e: CustomEvent) => {
       e.stopPropagation();
       this._updateItem(index, { entity: e.detail.value || undefined, attribute: undefined });
     });
     return el;
   }
 
-  #attributeField(item, index) {
-    const el = document.createElement(HA_SELECTOR_TAG);
+  #attributeField(item: any, index: number): any {
+    const el: any = document.createElement(HA_SELECTOR_TAG);
     el.hass = this.#hass;
     el.selector = { attribute: { entity_id: item.entity ?? '' } };
     el.value = item.attribute ?? '';
     el.required = false;
     el.style.width = '100%';
-    el.addEventListener(VALUE_CHANGED_EVENT, (e) => {
+    el.addEventListener(VALUE_CHANGED_EVENT, (e: CustomEvent) => {
       e.stopPropagation();
       this._updateItem(index, { attribute: e.detail.value || undefined });
     });
     return el;
   }
 
-  #colorField(item, index) {
-    const el = document.createElement(HA_SELECTOR_TAG);
+  #colorField(item: any, index: number): any {
+    const el: any = document.createElement(HA_SELECTOR_TAG);
     el.hass = this.#hass;
     el.selector = { 'ui-color': {} };
     el.label = 'Color';
     el.style.width = '100%';
     el.value = item.color ?? '';
-    el.addEventListener(VALUE_CHANGED_EVENT, (e) => {
+    el.addEventListener(VALUE_CHANGED_EVENT, (e: CustomEvent) => {
       e.stopPropagation();
       this._updateItem(index, { color: e.detail.value || undefined });
     });
@@ -162,14 +170,14 @@ class EntityProgressBarStackEditor extends ListEditorBase {
   // effect otherwise (harmless no-op) - kept simple rather than conditionally
   // hiding this per-row based on sibling fields (mode, center_zero) the row
   // editor doesn't otherwise need to know about.
-  #subtractField(item, index) {
-    const el = document.createElement(HA_SELECTOR_TAG);
+  #subtractField(item: any, index: number): any {
+    const el: any = document.createElement(HA_SELECTOR_TAG);
     el.hass = this.#hass;
     el.selector = { boolean: {} };
     el.label = 'Subtract / negative side';
     el.style.width = '100%';
     el.value = item.subtract ?? false;
-    el.addEventListener(VALUE_CHANGED_EVENT, (e) => {
+    el.addEventListener(VALUE_CHANGED_EVENT, (e: CustomEvent) => {
       e.stopPropagation();
       this._updateItem(index, { subtract: e.detail.value || undefined });
     });
@@ -177,14 +185,14 @@ class EntityProgressBarStackEditor extends ListEditorBase {
   }
 
   _render() {
-    this._list.innerHTML = '';
+    this._list!.innerHTML = '';
     for (let i = 0; i < this._value.length; i++) {
       const item = this._value[i];
 
       const delBtn = document.createElement('button');
       delBtn.className = 'del-btn';
       delBtn.title = 'Delete';
-      const delIcon = document.createElement(HA_SVG_ICON_TAG);
+      const delIcon: any = document.createElement(HA_SVG_ICON_TAG);
       delIcon.path =
         'M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2C6.47,2 2,6.47 2,12C2,18.53 6.47,22 12,22C17.53,22 22,17.53 22,12C22,6.47 17.53,2 12,2M14.59,8L12,10.59L9.41,8L8,9.41L10.59,12L8,14.59L9.41,16L12,13.41L14.59,16L16,14.59L13.41,12L16,9.41L14.59,8Z';
       delBtn.appendChild(delIcon);
@@ -204,7 +212,7 @@ class EntityProgressBarStackEditor extends ListEditorBase {
       if (item.entity) card.append(this.#attributeField(item, i));
       card.append(this.#colorField(item, i), this.#subtractField(item, i));
 
-      this._list.appendChild(card);
+      this._list!.appendChild(card);
     }
   }
 }
@@ -224,22 +232,22 @@ if (!customElements.get(EntityProgressBarStackEditor.ELEMENT_NAME)) {
 
 class EntityProgressCustomThemeEditor extends ListEditorBase {
   static ELEMENT_NAME = 'entity-progress-custom-theme-editor';
-  #hass = null;
-  #addBtn = null;
+  #hass: Hass | null = null;
+  #addBtn: any = null;
   #addLabel = 'Add zone';
 
-  setAddLabel(val) {
+  setAddLabel(val: string) {
     this.#addLabel = val ?? this.#addLabel;
     if (this.#addBtn) this.#addBtn.lastChild.textContent = this.#addLabel;
   }
 
-  get hass() {
+  get hass(): Hass | null {
     return this.#hass;
   }
 
-  set hass(hass) {
+  set hass(hass: Hass) {
     this.#hass = hass;
-    for (const el of this.shadowRoot?.querySelectorAll(HA_SELECTOR_TAG) ?? []) el.hass = hass;
+    for (const el of this.shadowRoot?.querySelectorAll(HA_SELECTOR_TAG) ?? []) (el as any).hass = hass;
   }
 
   _buildDOM() {
@@ -250,7 +258,7 @@ class EntityProgressCustomThemeEditor extends ListEditorBase {
     this._labelEl.textContent = this._labelText;
     this._list = document.createElement('div');
     this.#addBtn = document.createElement('ha-button');
-    const addIcon = document.createElement(HA_SVG_ICON_TAG);
+    const addIcon: any = document.createElement(HA_SVG_ICON_TAG);
     addIcon.setAttribute('slot', 'icon');
     addIcon.path = 'M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z';
     this.#addBtn.appendChild(addIcon);
@@ -262,11 +270,11 @@ class EntityProgressCustomThemeEditor extends ListEditorBase {
     const addRow = document.createElement('div');
     addRow.className = 'add-row';
     addRow.appendChild(this.#addBtn);
-    this.shadowRoot.append(style, this._labelEl, this._list, addRow);
+    this.shadowRoot!.append(style, this._labelEl, this._list, addRow);
   }
 
   _dispatch() {
-    const isEmpty = (item) =>
+    const isEmpty = (item: any) =>
       !is.number(item.min) && !is.number(item.max) && !item.color && !item.icon_color && !item.bar_color && !item.icon;
     const clean = this._value.filter((item) => !isEmpty(item));
     this.dispatchEvent(
@@ -278,41 +286,41 @@ class EntityProgressCustomThemeEditor extends ListEditorBase {
     );
   }
 
-  #numberField(item, index, key) {
-    const el = document.createElement(HA_SELECTOR_TAG);
+  #numberField(item: any, index: number, key: string): any {
+    const el: any = document.createElement(HA_SELECTOR_TAG);
     el.hass = this.#hass;
     el.selector = { number: {} };
     el.label = key === 'min' ? 'Min' : 'Max';
     el.value = is.number(item[key]) ? item[key] : undefined;
-    el.addEventListener(VALUE_CHANGED_EVENT, (e) => {
+    el.addEventListener(VALUE_CHANGED_EVENT, (e: CustomEvent) => {
       e.stopPropagation();
       this._updateItem(index, { [key]: is.number(e.detail.value) ? e.detail.value : undefined });
     });
     return el;
   }
 
-  #colorField(item, index, key, label) {
-    const el = document.createElement(HA_SELECTOR_TAG);
+  #colorField(item: any, index: number, key: string, label: string): any {
+    const el: any = document.createElement(HA_SELECTOR_TAG);
     el.hass = this.#hass;
     el.selector = { 'ui-color': {} };
     el.label = label;
     el.style.width = '100%';
     el.value = item[key] ?? '';
-    el.addEventListener(VALUE_CHANGED_EVENT, (e) => {
+    el.addEventListener(VALUE_CHANGED_EVENT, (e: CustomEvent) => {
       e.stopPropagation();
       this._updateItem(index, { [key]: e.detail.value || undefined });
     });
     return el;
   }
 
-  #iconField(item, index) {
-    const el = document.createElement(HA_SELECTOR_TAG);
+  #iconField(item: any, index: number): any {
+    const el: any = document.createElement(HA_SELECTOR_TAG);
     el.hass = this.#hass;
     el.selector = { icon: { icon_set: ['mdi'] } };
     el.label = 'Icon';
     el.style.width = '100%';
     el.value = item.icon ?? '';
-    el.addEventListener(VALUE_CHANGED_EVENT, (e) => {
+    el.addEventListener(VALUE_CHANGED_EVENT, (e: CustomEvent) => {
       e.stopPropagation();
       this._updateItem(index, { icon: e.detail.value || undefined });
     });
@@ -320,14 +328,14 @@ class EntityProgressCustomThemeEditor extends ListEditorBase {
   }
 
   _render() {
-    this._list.innerHTML = '';
+    this._list!.innerHTML = '';
     for (let i = 0; i < this._value.length; i++) {
       const item = this._value[i];
 
       const delBtn = document.createElement('button');
       delBtn.className = 'del-btn';
       delBtn.title = 'Delete';
-      const delIcon = document.createElement(HA_SVG_ICON_TAG);
+      const delIcon: any = document.createElement(HA_SVG_ICON_TAG);
       delIcon.path =
         'M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2C6.47,2 2,6.47 2,12C2,18.53 6.47,22 12,22C17.53,22 22,17.53 22,12C22,6.47 17.53,2 12,2M14.59,8L12,10.59L9.41,8L8,9.41L10.59,12L8,14.59L9.41,16L12,13.41L14.59,16L16,14.59L13.41,12L16,9.41L14.59,8Z';
       delBtn.appendChild(delIcon);
@@ -354,7 +362,7 @@ class EntityProgressCustomThemeEditor extends ListEditorBase {
         this.#colorField(item, i, 'icon_color', 'Icon color'),
         this.#colorField(item, i, 'bar_color', 'Bar color'),
       );
-      this._list.appendChild(zone);
+      this._list!.appendChild(zone);
     }
   }
 }

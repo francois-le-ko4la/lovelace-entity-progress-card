@@ -1,10 +1,10 @@
 'use strict';
 
 // Resolves every `css`...`` tagged template literal in a JS source string to
-// its static string value, then minifies it as real CSS - esbuild's own
-// --minify pass never touches CSS embedded in JS strings/template literals.
-// Used by scripts/build.js, which bundles src/ with esbuild before running
-// this pass.
+// its static string value, then (unless `minify` is false) minifies it as
+// real CSS - esbuild's own --minify pass never touches CSS embedded in JS
+// strings/template literals. Used by scripts/build.js, which bundles src/
+// with esbuild before running this pass.
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -96,8 +96,20 @@ function evalInFile(code) {
   }
 }
 
-function minifyCss(css) {
-  return esbuild.transformSync(css, { loader: 'css', minify: true }).code.trim();
+function minifyCss(css, minify) {
+  return minify ? esbuild.transformSync(css, { loader: 'css', minify: true }).code.trim() : css.trim();
+}
+
+// Minified output is one line anyway, so a plain JSON-quoted string is fine.
+// Unminified output re-embeds as a real template literal instead: esbuild's
+// own printer only *sometimes* reformats a long \n-escaped string back into
+// one (an internal, size-dependent heuristic - CARD_CSS gets it, the smaller
+// editor stylesheets don't), which left the dev build inconsistently
+// readable depending on which stylesheet you looked at. A literal backtick
+// string prints as-is, every time.
+function toStringLiteral(css, minify) {
+  if (minify) return JSON.stringify(css);
+  return '`' + css.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${') + '`';
 }
 
 // Resolving a tagged block's value:
@@ -110,7 +122,7 @@ function minifyCss(css) {
 //     body): isolation only - there's no top-level variable to re-export for
 //     a prefix-eval fallback. Left unminified (with a warning) if isolation
 //     fails, rather than risk mishandling it.
-function resolveCssBlocks(src) {
+function resolveCssBlocks(src, minify = true) {
   let minifiedCount = 0;
   let skippedCount = 0;
 
@@ -149,8 +161,8 @@ function resolveCssBlocks(src) {
       }
     }
 
-    const minified = minifyCss(resolved);
-    src = src.slice(0, tagStart) + JSON.stringify(minified) + src.slice(literalEnd);
+    const minified = minifyCss(resolved, minify);
+    src = src.slice(0, tagStart) + toStringLiteral(minified, minify) + src.slice(literalEnd);
     minifiedCount++;
   }
 

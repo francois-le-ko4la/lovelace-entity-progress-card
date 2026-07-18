@@ -10,6 +10,8 @@ import { ObjStructure, ThemeManager } from './value-helpers.js';
 import { CardView, BadgeView, CardTemplateView, BadgeTemplateView } from './view.js';
 import { DOMHelper } from './dom-helpers.js';
 import { HACore, HABase } from './core.js';
+import type { Hass } from '../utils/hass-provider.js';
+import type { RawConfig } from '../utils/types.js';
 
 /**
  * Represents the base class for all standard cards:
@@ -20,9 +22,9 @@ import { HACore, HABase } from './core.js';
  * @extends HABase
  */
 class EntityProgressCardBase extends HABase {
-  static _hiddenComponents = [...super._hiddenComponents, CARD.style.dynamic.hiddenComponent.value];
+  static _hiddenComponents: any[] = [...super._hiddenComponents, CARD.style.dynamic.hiddenComponent.value];
 
-  static getStubConfig(hass) {
+  static getStubConfig(hass: Hass): any {
     return { type: `custom:${devName(this._baseClass)}`, entity: HABase.getStubEntity(hass) };
   }
 
@@ -45,7 +47,7 @@ class EntityProgressCardBase extends HABase {
   }
 
   // ─── CSS - CUSTOMIZATION ──────────────────────────────────────────────────
-  get conditionalStyle() {
+  get conditionalStyle(): Map<string, boolean> {
     return new Map([
       ...super.conditionalStyle,
       [CARD.style.dynamic.secondaryInfoError.class, this._cardView.hasStandardEntityError],
@@ -65,7 +67,7 @@ class EntityProgressCardBase extends HABase {
   }
 
   // ─── STD FIELDS PROCESSING - CUSTOMIZATION ────────────────────────────────
-  static _getStandardFields(cardView) {
+  static _getStandardFields(cardView: any): { className: string; value: any }[] {
     return [
       {
         className: CARD.htmlStructure.elements.nameMain.class,
@@ -83,21 +85,22 @@ class EntityProgressCardBase extends HABase {
   // each entry below only states its two specifics: which config path must
   // still be in { jinja } mode, and which view property receives the resolved
   // number.
-  _getJinjaHandlers(content) {
+  _getJinjaHandlers(content: any): Record<string, () => void> {
     return {
       ...this._baseJinjaHandlers(content),
       badge_icon: () => this._renderBadgeIcon(content),
       badge_color: () => this._renderBadgeColor(content),
       custom_info: () => this._renderCustomInfo(content),
       name_info: () => this._renderNameInfo(content),
-      min_value: () => this._renderJinjaNumber(content, (c) => c.min_value?.jinja, 'jinjaMinValue'),
-      max_value: () => this._renderJinjaNumber(content, (c) => c.max_value?.jinja, 'jinjaMaxValue'),
-      'watermark.low': () => this._renderJinjaNumber(content, (c) => c.watermark?.low?.jinja, 'jinjaWatermarkLow'),
-      'watermark.high': () => this._renderJinjaNumber(content, (c) => c.watermark?.high?.jinja, 'jinjaWatermarkHigh'),
+      min_value: () => this._renderJinjaNumber(content, (c: any) => c.min_value?.jinja, 'jinjaMinValue'),
+      max_value: () => this._renderJinjaNumber(content, (c: any) => c.max_value?.jinja, 'jinjaMaxValue'),
+      'watermark.low': () => this._renderJinjaNumber(content, (c: any) => c.watermark?.low?.jinja, 'jinjaWatermarkLow'),
+      'watermark.high': () =>
+        this._renderJinjaNumber(content, (c: any) => c.watermark?.high?.jinja, 'jinjaWatermarkHigh'),
     };
   }
 
-  _renderJinjaNumber(content, getJinja, viewProp) {
+  _renderJinjaNumber(content: any, getJinja: (c: any) => any, viewProp: string) {
     // Defensive: only apply while the option is still in { jinja: "..." } mode
     // — guards against a push arriving right as the user switches the mode
     // chips away from Jinja.
@@ -115,7 +118,7 @@ class EntityProgressCardBase extends HABase {
     this._updateCSS();
   }
 
-  _renderCustomInfo(content) {
+  _renderCustomInfo(content: any) {
     // Line 1 never carries a main (see StructureElements.secondaryInfoLine), so
     // it only gets the &nbsp; spacer in single-line mode, where it precedes the
     // main span on the same line. Line 2 always carries main here (card/badge
@@ -127,7 +130,7 @@ class EntityProgressCardBase extends HABase {
     if (multiline) this._dom.setHTML(CARD.htmlStructure.elements.secondaryInfoExtra2.class, `${line2 ?? ''}&nbsp;`);
   }
 
-  _renderNameInfo(content) {
+  _renderNameInfo(content: any) {
     this._dom.setHTML(CARD.htmlStructure.elements.nameExtra.class, `&nbsp;${content}`);
   }
 }
@@ -139,7 +142,7 @@ class EntityProgressCardBase extends HABase {
  */
 class EntityProgressCard extends EntityProgressCardBase {
   _cardView = new CardView();
-  static _baseClass = META.types.card.typeName;
+  static _baseClass: string = META.types.card.typeName;
 
   // ─── STATIC METHODS ===
 
@@ -155,17 +158,17 @@ class EntityProgressCard extends EntityProgressCardBase {
  */
 class EntityProgressBadge extends EntityProgressCardBase {
   _cardView = new BadgeView();
-  static _baseClass = META.types.badge.typeName;
+  static _baseClass: string = META.types.badge.typeName;
   static _hasDisabledIconTap = true;
   static _hasDisabledBadge = true;
-  static _cardStructure = new ObjStructure('badge');
+  static _cardStructure: ObjStructure = new ObjStructure('badge');
 
   // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION === Derived from the Card map
   // (minus the badge-only handlers) instead of hand-mirroring it: an earlier
   // hand-maintained copy silently missed min_value for months (CF5, medium), so
   // any handler added on the base class is now picked up here automatically by
   // construction.
-  _getJinjaHandlers(content) {
+  _getJinjaHandlers(content: any): Record<string, () => void> {
     const handlers = super._getJinjaHandlers(content);
     delete handlers.badge_icon;
     delete handlers.badge_color;
@@ -180,7 +183,7 @@ class EntityProgressBadge extends EntityProgressCardBase {
  */
 
 class EntityProgressFeatures extends HACore {
-  static _baseClass = META.types.feature.typeName;
+  static _baseClass: string = META.types.feature.typeName;
   static _cardElement = 'div';
 
   // ─── STATIC ===
@@ -241,18 +244,19 @@ class EntityProgressFeatures extends HACore {
     // tracked by the ResourceManager, and its presence replaces the #firstHack
     // guard so a reconnection re-installs it.
     if (!this._resourceManager || this._resourceManager.has('featureRowFix')) return;
+    const resourceManager = this._resourceManager;
     const cardContainer = DOMHelper.walkUpThroughShadow(this, '.card');
     if (!cardContainer) return;
 
-    this._dom.register('ext:card', DOMHelper.walkUpThroughShadow(this, 'ha-card'));
-    this._dom.register('ext:container', DOMHelper.walkUpThroughShadow(this, '.container'));
-    this._dom.register('ext:features', DOMHelper.walkUpThroughShadow(this, 'hui-card-features'));
+    this._dom.register('ext:card', DOMHelper.walkUpThroughShadow(this, 'ha-card') as HTMLElement);
+    this._dom.register('ext:container', DOMHelper.walkUpThroughShadow(this, '.container') as HTMLElement);
+    this._dom.register('ext:features', DOMHelper.walkUpThroughShadow(this, 'hui-card-features') as HTMLElement);
     this._dom.register('ext:card-container', cardContainer);
 
     const observerOptions = { attributes: true, attributeFilter: ['style'] };
-    let observer = null;
+    let observer: MutationObserver | null = null;
     const fix = () => {
-      const rowSize = parseInt(getComputedStyle(cardContainer)?.getPropertyValue(HA_CONTEXT.styles.rowSize));
+      const rowSize = parseInt(getComputedStyle(cardContainer).getPropertyValue(HA_CONTEXT.styles.rowSize));
       if (!rowSize) return;
       const targetRowSize = rowSize - 1;
       // Disconnect first: these 4 writes must not be recorded as mutations
@@ -269,7 +273,7 @@ class EntityProgressFeatures extends HACore {
     fix();
     observer = new MutationObserver(fix);
     observer.observe(cardContainer, observerOptions);
-    this._resourceManager.add(() => observer.disconnect(), 'featureRowFix');
+    resourceManager.add(() => observer!.disconnect(), 'featureRowFix');
   }
 
   // ─── HANDLE UPDATE ────────────────────────────────────────────────────────
@@ -303,7 +307,7 @@ class EntityProgressFeatures extends HACore {
 
   // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ─────────────────────────────
 
-  _getJinjaHandlers(content) {
+  _getJinjaHandlers(content: any): Record<string, () => void> {
     return {
       bar_effect: () => this._refreshBarEffect(content), // base
     };
@@ -323,8 +327,8 @@ class EntityProgressFeatures extends HACore {
  * @extends HABase
  */
 class EntityProgressTemplateBase extends HABase {
-  static _cardStructure = new ObjStructure('template');
-  _cardView = new CardTemplateView();
+  static _cardStructure: ObjStructure = new ObjStructure('template');
+  _cardView: any = new CardTemplateView();
 
   static get _loggedMethods() {
     return [
@@ -349,7 +353,7 @@ class EntityProgressTemplateBase extends HABase {
     this.refresh(); // refresh() → _cardView.refresh() → _showIcon() → _updateCSS()
   }
 
-  static getStubConfig(hass) {
+  static getStubConfig(hass: Hass): any {
     return {
       type: `custom:${devName(META.types.template.typeName)}`,
       entity: HABase.getStubEntity(hass),
@@ -378,7 +382,7 @@ class EntityProgressTemplateBase extends HABase {
 
   // ─── ICON MANAGEMENT ──────────────────────────────────────────────────────
 
-  _showIcon(iconFromJinja = null) {
+  _showIcon(iconFromJinja: any = null) {
     const jinjaIconNotReady = this._cardView.config.icon !== undefined && iconFromJinja === null;
     if (jinjaIconNotReady) return;
     this._cardView.icon = iconFromJinja;
@@ -387,7 +391,7 @@ class EntityProgressTemplateBase extends HABase {
 
   // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ─────────────────────────────
 
-  _getJinjaHandlers(content) {
+  _getJinjaHandlers(content: any): Record<string, () => void> {
     return {
       ...this._baseJinjaHandlers(content),
       badge_icon: () => this._renderBadgeIcon(content),
@@ -411,11 +415,11 @@ class EntityProgressTemplateBase extends HABase {
     };
   }
 
-  _renderName(content) {
+  _renderName(content: any) {
     this._dom.setHTML(CARD.htmlStructure.elements.nameMain.class, `${content}`.trim());
   }
 
-  _renderSecondary(content) {
+  _renderSecondary(content: any) {
     // Template has no secondary-info-main slot at all (see
     // StructureElements.secondaryInfoWrapperMinimal), so neither line ever
     // needs the &nbsp; spacer that card/badge's _renderCustomInfo adds before
@@ -427,7 +431,7 @@ class EntityProgressTemplateBase extends HABase {
     if (multiline) this._dom.setHTML(CARD.htmlStructure.elements.secondaryInfoExtra2.class, (line2 ?? '').trim());
   }
 
-  _managePercent(percent) {
+  _managePercent(percent: any) {
     // CF5 - issue (minor) resolved - a percent template returning a numeric
     // string was compared lexicographically in getTrend ('9' < '45' is false →
     // wrong trend); non-numeric results now show an explicit error icon instead
@@ -452,7 +456,7 @@ class EntityProgressTemplateBase extends HABase {
 
   // Called without param from HABase._updateDynamicElements (pre-Jinja),
   // and with percent from _managePercent when the Jinja template resolves.
-  _updateTrend(percent) {
+  _updateTrend(percent?: number) {
     if (!this._cardView.config.trend_indicator) return;
     // CF5 - issue (major) resolved - the paramless call from
     // _updateDynamicElements ran getTrend(undefined), which clobbered
@@ -470,13 +474,13 @@ class EntityProgressTemplateBase extends HABase {
     );
   }
 
-  _renderPercentCSS(percent) {
+  _renderPercentCSS(percent: number) {
     this._applyProgressCSS(percent / 100);
   }
 
   // ─── TEMPLATE PROCESSING ===
 
-  _validateProcessJinjaFields() {
+  _validateProcessJinjaFields(): boolean {
     return Boolean(this.hass) && Boolean(this._resourceManager);
   }
 }
@@ -487,7 +491,7 @@ class EntityProgressTemplateBase extends HABase {
  * @extends EntityProgressTemplateBase
  */
 class EntityProgressTemplateCard extends EntityProgressTemplateBase {
-  static _baseClass = META.types.template.typeName;
+  static _baseClass: string = META.types.template.typeName;
 
   static get _loggedMethods() {
     return [...super._loggedMethods, 'getCardSize', 'getLayoutOptions', 'getGridOptions'];
@@ -500,13 +504,13 @@ class EntityProgressTemplateCard extends EntityProgressTemplateBase {
  * @extends EntityProgressTemplateBase
  */
 class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
-  static _baseClass = META.types.badgeTemplate.typeName;
+  static _baseClass: string = META.types.badgeTemplate.typeName;
   static _hasDisabledIconTap = true;
   static _hasDisabledBadge = true;
-  static _cardStructure = new ObjStructure('badge');
-  _cardView = new BadgeTemplateView();
+  static _cardStructure: ObjStructure = new ObjStructure('badge');
+  _cardView: any = new BadgeTemplateView();
 
-  setConfig(config) {
+  setConfig(config: RawConfig) {
     super.setConfig(config);
     // Defer refresh by one tick so HA finishes its own DOM update cycle before
     // we read state. CF5 - issue (minor) resolved - the raw setTimeout was
@@ -516,7 +520,7 @@ class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
     if (this.hass) this._resourceManager?.setTimeout(() => this.refresh(), 0, 'deferredRefresh');
   }
 
-  static getStubConfig(hass) {
+  static getStubConfig(hass: Hass): any {
     return { type: `custom:${devName(META.types.badgeTemplate.typeName)}`, entity: HABase.getStubEntity(hass) };
   }
 }

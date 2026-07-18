@@ -19,34 +19,40 @@ import { is } from '../utils/common-checks.js';
  * @abstract
  * @extends HTMLElement
  */
-class ChipsBase extends HTMLElement {
+// `_labels` is an optional localized display-label map (value → label string),
+// set by the editor from translations - keyed dynamically per field, so kept
+// as a plain index signature rather than a fixed interface.
+abstract class ChipsBase extends HTMLElement {
   // CF5 - issue (major) resolved - setLabels() is called by the editor before
   // the element is connected, when the chips Map is still empty; labels are now
   // stored and applied at build time
-  _labels = null;
+  _labels: Record<string, string> | null = null;
   #labelText = '';
-  #labelEl = null;
+  #labelEl: HTMLElement | null = null;
+
+  abstract _buildDOM(): void;
+  abstract _render(): void;
 
   connectedCallback() {
-    if (!this.shadowRoot) this.attachShadow({ mode: 'open' });
-    if (!this.shadowRoot.querySelector('.chip-set')) this._buildDOM();
+    const root = this.shadowRoot ?? this.attachShadow({ mode: 'open' });
+    if (!root.querySelector('.chip-set')) this._buildDOM();
     this._render();
   }
 
-  get label() {
+  get label(): string {
     return this.#labelText;
   }
 
-  set label(val) {
+  set label(val: string) {
     this.#labelText = val ?? '';
     if (this.#labelEl) this.#labelEl.textContent = this.#labelText;
   }
 
-  _chipLabel(value) {
+  _chipLabel(value: string): string {
     return this._labels?.[value] ?? value;
   }
 
-  _createChip(value, onToggle) {
+  _createChip(value: string, onToggle: (value: string) => void): HTMLButtonElement {
     const chip = document.createElement('button');
     chip.type = 'button';
     chip.className = 'chip';
@@ -58,10 +64,10 @@ class ChipsBase extends HTMLElement {
     return chip;
   }
 
-  _buildChipSet(values, onToggle, chipsMap) {
+  _buildChipSet(values: string[], onToggle: (value: string) => void, chipsMap: Map<string, HTMLButtonElement>) {
     const style = document.createElement('style');
     style.textContent = CHIPS_HOST_STYLE;
-    const frag = [style];
+    const frag: HTMLElement[] = [style];
     if (this.#labelText) {
       this.#labelEl = document.createElement('div');
       this.#labelEl.className = 'lbl';
@@ -76,7 +82,7 @@ class ChipsBase extends HTMLElement {
       chipsMap.set(value, chip);
     }
     frag.push(chipSet);
-    this.shadowRoot.append(...frag);
+    this.shadowRoot!.append(...frag);
   }
 }
 
@@ -89,7 +95,7 @@ class ChipsBase extends HTMLElement {
  */
 class EntityProgressEffectChips extends ChipsBase {
   static ELEMENT_NAME = 'entity-progress-effect-chips';
-  static #EFFECTS = [
+  static #EFFECTS: { value: string; showIf?: (c: any) => boolean }[] = [
     { value: 'radius' },
     { value: 'glass', showIf: (c) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode) },
     { value: 'gradient', showIf: (c) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode) },
@@ -100,13 +106,13 @@ class EntityProgressEffectChips extends ChipsBase {
 
   // Shared with the runtime guard in HACore._handleBarEffect - see
   // CARD.style.dynamic.progressBar.effectIncompatibilities.
-  static get #INCOMPATIBLE() {
+  static get #INCOMPATIBLE(): Record<string, string[]> {
     return CARD.style.dynamic.progressBar.effectIncompatibilities;
   }
 
-  #selected = [];
-  #config = {};
-  #chips = new Map();
+  #selected: string[] = [];
+  #config: any = {};
+  #chips = new Map<string, HTMLButtonElement>();
 
   _buildDOM() {
     this._buildChipSet(
@@ -116,7 +122,7 @@ class EntityProgressEffectChips extends ChipsBase {
     );
   }
 
-  #toggle(value) {
+  #toggle(value: string) {
     const isSelected = this.#selected.includes(value);
     const blocked = isSelected ? [] : (EntityProgressEffectChips.#INCOMPATIBLE[value] ?? []);
     const updated = isSelected
@@ -127,21 +133,21 @@ class EntityProgressEffectChips extends ChipsBase {
     );
   }
 
-  get value() {
+  get value(): string[] {
     return this.#selected;
   }
 
-  set value(val) {
+  set value(val: string[]) {
     this.#selected = is.array(val) ? val : [];
     this._render();
   }
 
-  updateConfig(config) {
+  updateConfig(config: any) {
     this.#config = config ?? {};
     this._render();
   }
 
-  setLabels(labels) {
+  setLabels(labels: Record<string, string> | null) {
     this._labels = labels ?? null;
     for (const [value, chip] of this.#chips) chip.textContent = this._chipLabel(value);
   }
@@ -176,11 +182,11 @@ if (!customElements.get(EntityProgressEffectChips.ELEMENT_NAME)) {
 class EntityProgressHideChips extends ChipsBase {
   static ELEMENT_NAME = 'entity-progress-hide-chips';
   static #ITEMS = ['icon', 'name', 'value', 'unit', 'secondary_info', 'progress_bar'];
-  #selected = [];
-  #chips = new Map();
-  #items = EntityProgressHideChips.#ITEMS;
+  #selected: string[] = [];
+  #chips = new Map<string, HTMLButtonElement>();
+  #items: string[] = EntityProgressHideChips.#ITEMS;
 
-  get items() {
+  get items(): string[] {
     return this.#items;
   }
 
@@ -188,7 +194,7 @@ class EntityProgressHideChips extends ChipsBase {
   // YamlSchemaFactory.template) - EditorFactory.content passes a restricted
   // list there so the chip never appears, instead of getting silently
   // stripped by jinjaOrArrayWithValidatedElem on save.
-  set items(list) {
+  set items(list: string[]) {
     this.#items = is.array(list) ? list : EntityProgressHideChips.#ITEMS;
   }
 
@@ -196,7 +202,7 @@ class EntityProgressHideChips extends ChipsBase {
     this._buildChipSet(this.#items, (value) => this.#toggle(value), this.#chips);
   }
 
-  #toggle(value) {
+  #toggle(value: string) {
     const updated = this.#selected.includes(value)
       ? this.#selected.filter((v) => v !== value)
       : [...this.#selected, value];
@@ -205,16 +211,16 @@ class EntityProgressHideChips extends ChipsBase {
     );
   }
 
-  get value() {
+  get value(): string[] {
     return this.#selected;
   }
 
-  set value(val) {
+  set value(val: string[]) {
     this.#selected = is.array(val) ? val : [];
     this._render();
   }
 
-  setLabels(labels) {
+  setLabels(labels: Record<string, string> | null) {
     this._labels = labels ?? null;
     for (const [item, chip] of this.#chips) chip.textContent = this._chipLabel(item);
   }
@@ -237,32 +243,39 @@ if (!customElements.get(EntityProgressHideChips.ELEMENT_NAME)) {
  * @abstract
  * @extends ChipsBase
  */
-class SingleSelectChipsBase extends ChipsBase {
-  #selected = null;
-  #chips = new Map();
+// Concrete subclasses only declare `static MODES` (see the classes below);
+// this cast is how each instance reaches its own subclass's list.
+abstract class SingleSelectChipsBase extends ChipsBase {
+  static MODES: string[] = [];
+  #selected: string | null = null;
+  #chips = new Map<string, HTMLButtonElement>();
 
-  _buildDOM() {
-    this.#selected ??= this.constructor.MODES[0];
-    this._buildChipSet(this.constructor.MODES, (value) => this.#select(value), this.#chips);
+  get #modes(): string[] {
+    return (this.constructor as typeof SingleSelectChipsBase).MODES;
   }
 
-  #select(value) {
+  _buildDOM() {
+    this.#selected ??= this.#modes[0];
+    this._buildChipSet(this.#modes, (value) => this.#select(value), this.#chips);
+  }
+
+  #select(value: string) {
     if (value === this.#selected) return;
     this.#selected = value;
     this._render();
     this.dispatchEvent(new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value }, bubbles: true, composed: true }));
   }
 
-  get value() {
-    return this.#selected ?? this.constructor.MODES[0];
+  get value(): string {
+    return this.#selected ?? this.#modes[0];
   }
 
-  set value(val) {
-    this.#selected = this.constructor.MODES.includes(val) ? val : this.constructor.MODES[0];
+  set value(val: string) {
+    this.#selected = this.#modes.includes(val) ? val : this.#modes[0];
     this._render();
   }
 
-  setLabels(labels) {
+  setLabels(labels: Record<string, string> | null) {
     this._labels = labels ?? null;
     for (const [item, chip] of this.#chips) chip.textContent = this._chipLabel(item);
   }

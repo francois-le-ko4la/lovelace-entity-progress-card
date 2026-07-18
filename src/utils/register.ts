@@ -5,6 +5,13 @@
 
 import { VERSION, META, CARD_CONTEXT } from './parameters.js';
 
+interface Component {
+  typeName: string;
+  name: string;
+  description?: string;
+  editor?: string;
+}
+
 /**
  * Registers a card/badge/feature custom element (and its editor, if any)
  * with `customElements` and with Home Assistant's discovery arrays
@@ -19,9 +26,9 @@ class RegistrationHelper {
     customCards: 'customCards',
     customBadges: 'customBadges',
     customCardFeatures: 'customCardFeatures',
-  };
+  } as const;
 
-  static #resolveComponent(component) {
+  static #resolveComponent(component: Component): Component {
     if (!RegistrationHelper._devMode) return component;
     return {
       ...component,
@@ -31,7 +38,7 @@ class RegistrationHelper {
     };
   }
 
-  static #resolveEntry(component, targetKey) {
+  static #resolveEntry(component: Component, targetKey: string) {
     return targetKey === RegistrationHelper.#targetKey.customCardFeatures
       ? { type: component.typeName, name: component.name, supported: () => true }
       : {
@@ -44,7 +51,12 @@ class RegistrationHelper {
         };
   }
 
-  static #registerComponent(component, targetKey, elementClass, editorClass) {
+  static #registerComponent(
+    component: Component,
+    targetKey: string,
+    elementClass: CustomElementConstructor,
+    editorClass?: CustomElementConstructor,
+  ) {
     try {
       // On tente l'enregistrement technique
       if (!customElements.get(component.typeName)) customElements.define(component.typeName, elementClass);
@@ -52,15 +64,16 @@ class RegistrationHelper {
         customElements.define(component.editor, editorClass);
     } catch (error) {
       // Si ça échoue (déjà défini), on log mais on ne bloque pas la suite
-      console.warn(`[Entity Progress Card] Registration alert: ${error.message}`);
+      console.warn(`[Entity Progress Card] Registration alert: ${(error as Error).message}`);
     }
 
     // Le reste du code est protégé
     const registerUI = () => {
       try {
-        window[targetKey] = window[targetKey] || [];
-        if (window[targetKey].some((item) => item.type === component.typeName)) return;
-        window[targetKey].push(RegistrationHelper.#resolveEntry(component, targetKey));
+        const win = window as unknown as Record<string, { type: string }[]>;
+        win[targetKey] = win[targetKey] || [];
+        if (win[targetKey].some((item) => item.type === component.typeName)) return;
+        win[targetKey].push(RegistrationHelper.#resolveEntry(component, targetKey));
       } catch (uiError) {
         console.error('[Entity Progress Card] UI Registration failed', uiError);
       }
@@ -69,7 +82,7 @@ class RegistrationHelper {
     setTimeout(registerUI, 1000);
   }
 
-  static registerCard(card, elementClass, editorClass) {
+  static registerCard(card: Component, elementClass: CustomElementConstructor, editorClass?: CustomElementConstructor) {
     RegistrationHelper.#registerComponent(
       RegistrationHelper.#resolveComponent(card),
       RegistrationHelper.#targetKey.customCards,
@@ -78,7 +91,11 @@ class RegistrationHelper {
     );
   }
 
-  static registerBadge(badge, elementClass, editorClass) {
+  static registerBadge(
+    badge: Component,
+    elementClass: CustomElementConstructor,
+    editorClass?: CustomElementConstructor,
+  ) {
     RegistrationHelper.#registerComponent(
       RegistrationHelper.#resolveComponent(badge),
       RegistrationHelper.#targetKey.customBadges,
@@ -87,7 +104,7 @@ class RegistrationHelper {
     );
   }
 
-  static registerCardFeature(cardFeature, elementClass) {
+  static registerCardFeature(cardFeature: Component, elementClass: CustomElementConstructor) {
     RegistrationHelper.#registerComponent(
       RegistrationHelper.#resolveComponent(cardFeature),
       RegistrationHelper.#targetKey.customCardFeatures,

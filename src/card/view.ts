@@ -5,9 +5,10 @@
  */
 
 import { HA_CONTEXT, CARD } from '../utils/parameters.js';
+import type { RawConfig } from '../utils/types.js';
 import { is } from '../utils/common-checks.js';
 import { PercentHelper, ThemeManager, EntityCollectionHelper, EntityOrValue } from './value-helpers.js';
-import { HassProviderSingleton } from '../utils/hass-provider.js';
+import { HassProviderSingleton, type Hass } from '../utils/hass-provider.js';
 import {
   BaseConfigHelper,
   CardConfigHelper,
@@ -47,15 +48,15 @@ import {
  */
 class ViewCore {
   _hassProvider = HassProviderSingleton.getInstance();
-  _lastPercent = null;
-  _configHelper = new BaseConfigHelper(); // Base config
+  _lastPercent: number | null = null;
+  _configHelper: BaseConfigHelper = new BaseConfigHelper(); // Base config
   _currentValue = new EntityOrValue();
   _lowValue = new EntityOrValue();
   _highValue = new EntityOrValue();
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
-  set config(config) {
+  set config(config: RawConfig) {
     if (!config) {
       throw new Error(CARD.config.configError);
     }
@@ -75,30 +76,32 @@ class ViewCore {
     });
   }
 
-  get config() {
+  get config(): any {
     return this._configHelper?.config;
   }
 
-  refresh(hass) {
+  refresh(hass: Hass) {
     this._hassProvider.hass = hass;
     this._currentValue.refresh();
     this._lowValue.refresh();
     this._highValue.refresh();
   }
 
-  get entity() {
+  get entity(): string | null {
     return this.config?.entity;
   }
 
-  get cardSize() {
+  get cardSize(): number {
     return this.config
-      ? (CARD.layout.orientations[this.config.layout]?.grid?.grid_rows ?? 1)
+      ? (CARD.layout.orientations[this.config.layout as keyof typeof CARD.layout.orientations]?.grid?.grid_rows ?? 1)
       : CARD.layout.orientations.horizontal.grid.grid_rows;
   }
 
-  get cardLayoutOptions() {
+  get cardLayoutOptions(): any {
     if (!this.config) return CARD.layout.orientations.horizontal.grid;
-    const layout = structuredClone(CARD.layout.orientations[this.config.layout]);
+    const layout = structuredClone(
+      CARD.layout.orientations[this.config.layout as keyof typeof CARD.layout.orientations],
+    );
     layout.grid.grid_min_rows = this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.icon.label)
       ? 1
       : layout.grid.grid_min_rows +
@@ -112,21 +115,21 @@ class ViewCore {
     return layout.grid;
   }
 
-  _getEntityColor() {
+  _getEntityColor(): string | null {
     if (this._currentValue.state === HA_CONTEXT.entity.state.unavailable) return CARD.style.color.unavailable;
     if (this._currentValue.state === HA_CONTEXT.entity.state.notFound) return CARD.style.color.notFound;
     return ThemeManager.adaptColor(this._currentValue.defaultColor || CARD.style.color.default);
   }
 
-  get barColor() {
+  get barColor(): string | null {
     return this.entity && !this._configHelper.config.bar_color ? this._getEntityColor() : null;
   }
 
-  get iconColor() {
+  get iconColor(): string | null {
     return this.entity && !this._configHelper.config.color ? this._getEntityColor() : null;
   }
 
-  get hasClickableIcon() {
+  get hasClickableIcon(): boolean {
     return ViewCore.#hasAction([
       this._configHelper.action.icon.tap,
       this._configHelper.action.icon.hold,
@@ -134,7 +137,7 @@ class ViewCore {
     ]);
   }
 
-  get hasClickableCard() {
+  get hasClickableCard(): boolean {
     return ViewCore.#hasAction([
       this._configHelper.action.card.tap,
       this._configHelper.action.card.hold,
@@ -142,7 +145,7 @@ class ViewCore {
     ]);
   }
 
-  get hasReversedSecondaryInfoRow() {
+  get hasReversedSecondaryInfoRow(): boolean {
     // Nullish-coalesced, not strict equality: Badge/Badge Template have
     // neither 'layout' nor 'bar_position' in their schema (always undefined
     // here), but structurally render exactly like layout: horizontal +
@@ -156,28 +159,28 @@ class ViewCore {
     ); // ─── true
   }
 
-  get hasVisibleShape() {
+  get hasVisibleShape(): boolean {
     // this.config.force_circular_background === true
     return this.config.force_circular_background || this._hasDefaultShape || this._hasInteractiveShape;
   }
 
-  get _hasDefaultShape() {
+  get _hasDefaultShape(): boolean {
     return this._currentValue.hasShapeByDefault && ViewCore.#hasAction([this._configHelper.action.icon.tap]);
   }
 
-  get _hasInteractiveShape() {
+  get _hasInteractiveShape(): boolean {
     return this._configHelper.action.icon.tap !== HA_CONTEXT.actions.none.action;
   }
 
-  get hasWatermark() {
+  get hasWatermark(): boolean {
     return this.config.watermark !== undefined;
   }
 
-  get barEffectsEnabled() {
+  get barEffectsEnabled(): boolean {
     return this.config.bar_effect !== undefined;
   }
 
-  get watermark() {
+  get watermark(): any {
     const { watermark } = this.config;
     return watermark
       ? {
@@ -192,7 +195,7 @@ class ViewCore {
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
-  getTrend(currentPercent) {
+  getTrend(currentPercent: number): string {
     const result =
       this._lastPercent === null
         ? 'flat'
@@ -233,9 +236,9 @@ class ViewCore {
     'timer',
   ]);
 
-  get isEntityActive() {
+  get isEntityActive(): boolean {
     if (!this._currentValue.isAvailable) return false;
-    if (!ViewCore.#ANIMATABLE_DOMAINS.has(HassProviderSingleton.getEntityDomain(this.entity))) return false;
+    if (!ViewCore.#ANIMATABLE_DOMAINS.has(HassProviderSingleton.getEntityDomain(this.entity) ?? '')) return false;
     const state = String(this._currentValue.state ?? '').toLowerCase();
     return !['off', 'idle', 'standby', 'paused', 'closed', 'locked', 'docked', 'disarmed', 'none', ''].includes(state);
   }
@@ -271,7 +274,7 @@ class ViewCore {
   // 'charging' itself, since binary_sensor is always on/off. The device_class
   // check keeps a bare 'on' from matching any unrelated on/off entity a user
   // might point icon_animation at.
-  static #entityReportsCharging(hassProvider, entityId) {
+  static #entityReportsCharging(hassProvider: HassProviderSingleton, entityId: string): boolean {
     if (!hassProvider.isEntityAvailable(entityId)) return false;
     const state = String(hassProvider.getEntityProp(entityId, 'state') ?? '').toLowerCase();
     if (ViewCore.#CHARGING_STATES.has(state)) return true;
@@ -291,12 +294,11 @@ class ViewCore {
   // charging-status entity is named battery_state, no "charg" substring
   // anywhere, which an entity_id-based guess (like washing_machine's brands)
   // would never find, even though its state is plain 'charging'.
-  get isBatteryCharging() {
+  get isBatteryCharging(): boolean {
     const hassProvider = HassProviderSingleton.getInstance();
-    if (ViewCore.#entityReportsCharging(hassProvider, this.entity)) return true;
-    return hassProvider
-      .getSameDeviceEntities(this.entity)
-      .some((id) => ViewCore.#entityReportsCharging(hassProvider, id));
+    const entity = this.entity as string;
+    if (ViewCore.#entityReportsCharging(hassProvider, entity)) return true;
+    return hassProvider.getSameDeviceEntities(entity).some((id) => ViewCore.#entityReportsCharging(hassProvider, id));
   }
 
   // epb-icon-charge's clip-path is calibrated to the plain "mdi:battery"
@@ -305,8 +307,8 @@ class ViewCore {
   // outline within the icon's viewBox, so the fill wipe no longer lines up on
   // those - the CSS applies a compensating offset via this flag instead of
   // changing which icon is shown.
-  get isBatteryIconShifted() {
-    const icon = this._configHelper.config.icon || this._hassProvider.getEntityProp(this.entity, 'icon');
+  get isBatteryIconShifted(): boolean {
+    const icon = this._configHelper.config.icon || this._hassProvider.getEntityProp(this.entity as string, 'icon');
     return is.nonEmptyString(icon) && /charging|bluetooth/i.test(icon);
   }
 
@@ -318,7 +320,7 @@ class ViewCore {
   // smart-plug power monitor) keeps working exactly as before.
   static #WASHING_ACTIVE_STATES = new Set(['run', 'in_use']);
 
-  static #sensorReportsWashing(hassProvider, entityId) {
+  static #sensorReportsWashing(hassProvider: HassProviderSingleton, entityId: string): boolean {
     if (!hassProvider.isEntityAvailable(entityId)) return false;
     if (HassProviderSingleton.getEntityDomain(entityId) !== 'sensor') return false;
     const state = String(hassProvider.getEntityProp(entityId, 'state') ?? '').toLowerCase();
@@ -333,20 +335,19 @@ class ViewCore {
   // brands to filter on (operation_state/status/machine_state don't share a
   // substring), so the fallback checks every same-device sensor's state
   // instead of its name.
-  get isWashingMachineActive() {
+  get isWashingMachineActive(): boolean {
     if (this.isEntityActive) return true;
     const hassProvider = HassProviderSingleton.getInstance();
-    if (ViewCore.#sensorReportsWashing(hassProvider, this.entity)) return true;
-    return hassProvider
-      .getSameDeviceEntities(this.entity)
-      .some((id) => ViewCore.#sensorReportsWashing(hassProvider, id));
+    const entity = this.entity as string;
+    if (ViewCore.#sensorReportsWashing(hassProvider, entity)) return true;
+    return hassProvider.getSameDeviceEntities(entity).some((id) => ViewCore.#sensorReportsWashing(hassProvider, id));
   }
 
   /**
    * alert_when thresholds are expressed in the entity's native unit (like
    * watermark.low/high).
    */
-  get isAlertActive() {
+  get isAlertActive(): boolean {
     const alert = this.config?.alert_when;
     if (!alert || !this._currentValue.isAvailable) return false;
     const raw = this._currentValue.value;
@@ -363,7 +364,7 @@ class ViewCore {
    * with `highlight: background` it has no matching CSS rule, so it degrades
    * to that target's own default instead of silently doing nothing.
    */
-  get alertAnimation() {
+  get alertAnimation(): string | null {
     const alert = this.config?.alert_when;
     if (!alert) return null;
     const isBackground = alert.highlight === 'background';
@@ -371,17 +372,17 @@ class ViewCore {
     return alert.animation ?? (isBackground ? 'static' : 'blink');
   }
 
-  hasComponentHiddenFlag(component) {
+  hasComponentHiddenFlag(component: string): boolean {
     return this._hasInConfigArray('hide', component);
   }
 
   // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
 
-  _hasInConfigArray(key, value) {
+  _hasInConfigArray(key: string, value: any): boolean {
     return is.array(this.config?.[key]) && this.config[key].includes(value);
   }
 
-  static #hasAction(actions) {
+  static #hasAction(actions: any[]): boolean {
     return actions.some((action) => action !== HA_CONTEXT.actions.none.action);
   }
 }
@@ -450,24 +451,24 @@ class ViewBase extends ViewCore {
   #minValue = new EntityOrValue();
   // min_value/max_value resolved from a Jinja subscription (standard cards);
   // null = no override
-  #jinjaMinValue = null;
-  #jinjaMaxValue = null;
+  #jinjaMinValue: number | null = null;
+  #jinjaMaxValue: number | null = null;
   // watermark.low/.high resolved from a Jinja subscription; null = no override
-  #jinjaWatermarkLow = null;
-  #jinjaWatermarkHigh = null;
+  #jinjaWatermarkLow: number | null = null;
+  #jinjaWatermarkHigh: number | null = null;
   #entityCollection = new EntityCollectionHelper();
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
-  get hasValidatedConfig() {
+  get hasValidatedConfig(): boolean {
     return this._configHelper.isValid;
   }
 
-  get msg() {
+  get msg(): { content: string; sev: string } | null {
     return this._configHelper.msg;
   }
 
-  set config(config) {
+  set config(config: RawConfig) {
     if (!config) {
       throw new Error(CARD.config.configError);
     }
@@ -491,7 +492,7 @@ class ViewBase extends ViewCore {
           false,
           true,
         );
-      const addOne = ({ entity, attribute, color, subtract }) =>
+      const addOne = ({ entity, attribute, color, subtract }: Record<string, any>) =>
         this.#entityCollection.addEntity(entity, attribute, color, subtract);
       // One consistent order for both modes: main entity first, then entities[]
       // in list order. Exception: without center_zero, `subtract` is otherwise
@@ -503,9 +504,9 @@ class ViewBase extends ViewCore {
       // naturally-negative-but-unmarked entity can't be detected here and keeps
       // its normal after-main position.
       if (!centerZero.enabled) {
-        entities.filter((e) => e.subtract).forEach(addOne);
+        entities.filter((e: any) => e.subtract).forEach(addOne);
         addMain();
-        entities.filter((e) => !e.subtract).forEach(addOne);
+        entities.filter((e: any) => !e.subtract).forEach(addOne);
       } else {
         addMain();
         entities.forEach(addOne);
@@ -569,11 +570,11 @@ class ViewBase extends ViewCore {
     this.#jinjaWatermarkHigh = null;
   }
 
-  get config() {
+  get config(): any {
     return this._configHelper.config;
   }
 
-  static #resolveMaxValue(maxCfg) {
+  static #resolveMaxValue(maxCfg: any): { value: any; attribute: any } {
     const isMaxObj = is.plainObject(maxCfg);
     return {
       value: isMaxObj
@@ -585,7 +586,7 @@ class ViewBase extends ViewCore {
     };
   }
 
-  static #resolveMinValue(minCfg) {
+  static #resolveMinValue(minCfg: any): { value: any; attribute: any } {
     const isMinObj = is.plainObject(minCfg);
     return {
       value: isMinObj ? (minCfg.jinja ? null : (minCfg.entity ?? minCfg.value ?? null)) : minCfg,
@@ -598,30 +599,30 @@ class ViewBase extends ViewCore {
   // (#jinjaWatermarkLow/#jinjaWatermarkHigh), not by EntityOrValue, so it
   // resolves to null here — mirrors #resolveMaxValue/#resolveMinValue's own
   // jinja split.
-  static #resolveWatermarkValue(sideCfg) {
+  static #resolveWatermarkValue(sideCfg: any): any {
     return is.plainObject(sideCfg) ? null : sideCfg;
   }
 
-  #hasState(state) {
+  #hasState(state: string | null): boolean {
     const toEVal = this.hasWatermark
       ? [this._currentValue, this.#maxValue, this._lowValue, this._highValue]
       : [this._currentValue, this.#maxValue];
     return toEVal.some((v) => v.state === state);
   }
 
-  get isUnknown() {
+  get isUnknown(): boolean {
     return this.#hasState(HA_CONTEXT.entity.state.unknown);
   }
 
-  get isUnavailable() {
+  get isUnavailable(): boolean {
     return this.#hasState(HA_CONTEXT.entity.state.unavailable);
   }
 
-  get isNotFound() {
+  get isNotFound(): boolean {
     return this.#hasState(HA_CONTEXT.entity.state.notFound);
   }
 
-  get isAvailable() {
+  get isAvailable(): boolean {
     // note: this used to test `this._configHelper.maxValue`, a getter that
     // never existed (always undefined), silently disabling the max-entity
     // availability check.
@@ -635,18 +636,18 @@ class ViewBase extends ViewCore {
     );
   }
 
-  get hasStandardEntityError() {
+  get hasStandardEntityError(): boolean {
     return this.isUnavailable || this.isNotFound || this.isUnknown;
   }
 
   // ─── Getters for card ─────────────────────────────────────────────────────
 
-  get icon() {
+  get icon(): string | null {
     const notFound = this.isNotFound ? CARD.style.icon.notFound.icon : null;
     return notFound || this.#theme.icon || this._configHelper.config.icon;
   }
 
-  get iconColor() {
+  get iconColor(): string | null {
     if (this.isUnavailable) return CARD.style.color.unavailable;
     if (this.isNotFound) return CARD.style.color.notFound;
     return (
@@ -656,7 +657,7 @@ class ViewBase extends ViewCore {
     );
   }
 
-  #curBarColor() {
+  #curBarColor(): string | null {
     return (
       ThemeManager.adaptColor(this.#theme.barColor || this._configHelper.config.bar_color) ||
       this._currentValue.defaultColor ||
@@ -669,7 +670,7 @@ class ViewBase extends ViewCore {
   // by default, but the bar itself fills bottom-to-top in these two
   // combinations, so the gradient direction has to follow or the color
   // progression visibly runs the wrong way.
-  get #isVerticalBar() {
+  get #isVerticalBar(): boolean {
     return (
       this.config.bar_orientation === 'up' &&
       ((this.config.layout === 'vertical' && this.config.bar_position === 'overlay') ||
@@ -677,7 +678,7 @@ class ViewBase extends ViewCore {
     );
   }
 
-  get barColor() {
+  get barColor(): string | null {
     if (!this.isAvailable) return this.isUnknown ? CARD.style.color.default : CARD.style.color.disabled;
     const curColor = this.#curBarColor();
     // 'net' is always a single flat segment. The center_zero +
@@ -698,7 +699,7 @@ class ViewBase extends ViewCore {
   // (see EntityCollectionHelper.getDivergingGradients). null when not
   // applicable, so callers can tell whether to apply or clear the dedicated CSS
   // variables.
-  get divergingBarStack() {
+  get divergingBarStack(): any {
     if (!this.isAvailable || !this.#percentHelper.isCenterZero) return null;
     if (!this.hasEntityCollection || this.#entityCollection.mode === 'net') return null;
     return this.#entityCollection.getDivergingGradients(
@@ -712,28 +713,28 @@ class ViewBase extends ViewCore {
     );
   }
 
-  get colorGradient() {
+  get colorGradient(): string | null {
     if (!this.isAvailable || this.#percentHelper.isCenterZero) return null;
     return this.#theme.buildGradient(
-      this.#percentHelper.percent,
+      this.#percentHelper.percent ?? 0,
       this._configHelper.config.bar_color_mode,
-      this._currentValue.defaultColor,
+      this._currentValue.defaultColor || null,
       this.#isVerticalBar,
     );
   }
 
-  get percent() {
+  get percent(): number {
     if (!this.isAvailable) return 0;
     return this.#percentHelper.isCenterZero
-      ? Math.max(-100, Math.min(100, this.#percentHelper.percent))
-      : Math.max(0, Math.min(100, this.#percentHelper.percent));
+      ? Math.max(-100, Math.min(100, this.#percentHelper.percent ?? 0))
+      : Math.max(0, Math.min(100, this.#percentHelper.percent ?? 0));
   }
 
-  getTrend() {
-    return super.getTrend(this.#percentHelper.percent);
+  getTrend(): string {
+    return super.getTrend(this.#percentHelper.percent ?? 0);
   }
 
-  get secondaryInfoMain() {
+  get secondaryInfoMain(): string | null {
     if (
       this.hasStandardEntityError ||
       (this._currentValue.entityType.isTimer && this._currentValue.value.state === HA_CONTEXT.entity.state.idle)
@@ -750,13 +751,13 @@ class ViewBase extends ViewCore {
     return additionalInfo === '' ? valueInfo : [additionalInfo, valueInfo].join(CARD.config.separator);
   }
 
-  get name() {
+  get name(): string | null {
     return is.nonEmptyArray(this._configHelper.config.name)
       ? this._currentValue.nameComposition
       : this._configHelper.config.name || this._currentValue.name || this._configHelper.config.entity;
   }
 
-  get badgeInfo() {
+  get badgeInfo(): any {
     if (this.isNotFound) return CARD.style.icon.badge.notFound;
     if (this.isUnavailable) return CARD.style.icon.badge.unavailable;
 
@@ -769,31 +770,31 @@ class ViewBase extends ViewCore {
     return null;
   }
 
-  get isActiveTimer() {
+  get isActiveTimer(): boolean {
     return this._currentValue.entityType.isTimer && this._currentValue.state === HA_CONTEXT.entity.state.active;
   }
 
-  get refreshSpeed() {
+  get refreshSpeed(): number {
     const rawSpeed = this._currentValue.value.duration / CARD.config.refresh.ratio;
     const clampedSpeed = Math.min(CARD.config.refresh.max, Math.max(CARD.config.refresh.min, rawSpeed));
     return Math.max(100, Math.round(clampedSpeed / 100) * 100);
   }
 
-  get hasVisibleShape() {
+  get hasVisibleShape(): boolean {
     return this._hassProvider.hasNewShapeStrategy ? super.hasVisibleShape : true;
   }
 
-  get timerIsReversed() {
+  get timerIsReversed(): boolean {
     return (
       this._configHelper.config.reverse !== false && this._currentValue.value.state !== HA_CONTEXT.entity.state.idle
     );
   }
 
-  get hasWatermark() {
+  get hasWatermark(): boolean {
     return this._configHelper.config.watermark !== undefined;
   }
 
-  get watermark() {
+  get watermark(): any {
     const { watermark } = this.config;
     if (!watermark) return null;
     // A timer's own `max` isn't a stable scale the way a sensor's min/max is
@@ -803,7 +804,7 @@ class ViewBase extends ViewCore {
     // behavior for timers instead, so the configured value stays a stable
     // percentage regardless of how long any given run happens to be.
     const isTimer = this._currentValue.entityType.isTimer;
-    const toPos = (v, mode) =>
+    const toPos = (v: any, mode: string) =>
       mode === 'percent' || isTimer ? (is.number(v) ? v : (v?.current ?? 0)) : this.#percentHelper.calcWatermark(v);
     return {
       ...watermark,
@@ -814,13 +815,13 @@ class ViewBase extends ViewCore {
     };
   }
 
-  get hasEntityCollection() {
+  get hasEntityCollection(): boolean {
     return this.#entityCollection.count >= 2;
   }
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
-  refresh(hass) {
+  refresh(hass: Hass) {
     super.refresh(hass); // _hassProvider, _currentValue, _lowValue, _highValue
     this.#maxValue.refresh();
     this.#minValue.refresh();
@@ -830,7 +831,8 @@ class ViewBase extends ViewCore {
     if (!this.isAvailable) return;
 
     this.#updatePercentHelper();
-    this.#theme.value = this.#percentHelper.valueForThemes(this.#theme.isCustomTheme, this.#theme.isBasedOnPercentage);
+    this.#theme.value =
+      this.#percentHelper.valueForThemes(this.#theme.isCustomTheme, this.#theme.isBasedOnPercentage) ?? 0;
   }
 
   // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
@@ -893,39 +895,39 @@ class ViewBase extends ViewCore {
     });
   }
 
-  get jinjaMinValue() {
+  get jinjaMinValue(): number | null {
     return this.#jinjaMinValue;
   }
 
-  set jinjaMinValue(value) {
+  set jinjaMinValue(value: any) {
     this.#jinjaMinValue = is.number(value) ? value : null;
   }
 
-  get jinjaMaxValue() {
+  get jinjaMaxValue(): number | null {
     return this.#jinjaMaxValue;
   }
 
-  set jinjaMaxValue(value) {
+  set jinjaMaxValue(value: any) {
     this.#jinjaMaxValue = is.number(value) ? value : null;
   }
 
-  get jinjaWatermarkLow() {
+  get jinjaWatermarkLow(): number | null {
     return this.#jinjaWatermarkLow;
   }
 
-  set jinjaWatermarkLow(value) {
+  set jinjaWatermarkLow(value: any) {
     this.#jinjaWatermarkLow = is.number(value) ? value : null;
   }
 
-  get jinjaWatermarkHigh() {
+  get jinjaWatermarkHigh(): number | null {
     return this.#jinjaWatermarkHigh;
   }
 
-  set jinjaWatermarkHigh(value) {
+  set jinjaWatermarkHigh(value: any) {
     this.#jinjaWatermarkHigh = is.number(value) ? value : null;
   }
 
-  #getCurrentUnit() {
+  #getCurrentUnit(): string {
     if (this._configHelper.config.unit) return this._configHelper.config.unit;
     if (this.#maxValue.isEntity) return CARD.config.unit.default;
 
@@ -933,13 +935,14 @@ class ViewBase extends ViewCore {
     return unit === null ? CARD.config.unit.default : unit;
   }
 
-  #getCurrentDecimal(currentUnit) {
+  #getCurrentDecimal(currentUnit: string): number {
     if (is.unsignedInteger(this._configHelper.config.decimal)) return this._configHelper.config.decimal;
     if (this._currentValue.precision) return this._currentValue.precision;
     if (this._currentValue.entityType.isTimer) return CARD.config.decimal.timer;
     if (this._currentValue.entityType.isCounter) return CARD.config.decimal.counter;
     if (this._currentValue.entityType.isDuration) return CARD.config.decimal.duration;
-    if (['j', 'd', 'h', 'min', 's', 'ms', 'μs'].includes(this._currentValue.unit)) return CARD.config.decimal.duration;
+    if (['j', 'd', 'h', 'min', 's', 'ms', 'μs'].includes(this._currentValue.unit as string))
+      return CARD.config.decimal.duration;
 
     if (this._configHelper.config.unit)
       return this._configHelper.config.unit === CARD.config.unit.default
@@ -988,7 +991,7 @@ class FeatureView extends ViewBase {
  */
 class CardTemplateView extends ViewCore {
   _configHelper = new TemplateConfigHelper();
-  icon = null;
+  icon: string | null = null;
 }
 
 /**
@@ -999,7 +1002,7 @@ class CardTemplateView extends ViewCore {
  */
 class BadgeTemplateView extends ViewCore {
   _configHelper = new BadgeTemplateConfigHelper();
-  icon = null;
+  icon: string | null = null;
 }
 
 export { ViewCore };

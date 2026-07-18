@@ -5,15 +5,19 @@
 
 import { HA_CONTEXT, CARD } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
-import { HassProviderSingleton } from '../utils/hass-provider.js';
+import { HassProviderSingleton, type Hass } from '../utils/hass-provider.js';
+import type { RawConfig, Config, FieldDef } from '../utils/types.js';
 import { DOMHelper } from '../card/dom-helpers.js';
 
-const availableSpace = (gap = 16, factor = 0.5) => `calc((100% - ${gap}px) * ${factor})`;
+const availableSpace = (gap = 16, factor = 0.5): string => `calc((100% - ${gap}px) * ${factor})`;
 
-/**
- * @extends DOMHelper
- */
-
+// Field definitions (`def`, typed `FieldDef`), the raw config (`config`,
+// typed `RawConfig` - config-changed's own shape, plus editor UI state) and
+// the negotiated one (`negotiated`, typed `Config` - post schema validation)
+// are all dynamic `any`-shaped bags - branded so none of the three can be
+// swapped positionally in the functions below (see _updateField); selector/
+// context payloads stay plain `any`, no adjacent lookalike to confuse them
+// with.
 class EditorDOMHelper extends DOMHelper {
   // ─── Field registration ───────────────────────────────────────────────────
 
@@ -21,12 +25,8 @@ class EditorDOMHelper extends DOMHelper {
    * Registers a field element and its definition.
    * Wraps DOMHelper.register() — the def is stored on the element directly
    * so it travels with it without needing a separate Map.
-   *
-   * @param {string}      name — field id
-   * @param {HTMLElement} el   — ha-selector or ha-form element
-   * @param {object}      def  — field definition from _fields
    */
-  registerField(name, el, def) {
+  registerField(name: string, el: any, def: FieldDef) {
     el._fieldDef = def;
     this.register(name, el);
   }
@@ -36,10 +36,8 @@ class EditorDOMHelper extends DOMHelper {
   /**
    * Propagates hass to all registered field elements.
    * Batched in a single RAF call.
-   *
-   * @param {object} hass
    */
-  updateHass(hass) {
+  updateHass(hass: Hass) {
     this.enqueue('__hass__', 'hass', () => {
       for (const el of this._domElements.values()) {
         if (el.hass !== hass) el.hass = hass;
@@ -52,11 +50,8 @@ class EditorDOMHelper extends DOMHelper {
   /**
    * Updates the value of a ha-selector field.
    * Skipped if value hasn't changed.
-   *
-   * @param {string} name
-   * @param {*}      newVal
    */
-  updateValue(name, newVal) {
+  updateValue(name: string, newVal: any) {
     this.enqueue(name, 'value', () => {
       const el = this._domElements.get(name);
       if (!el) return;
@@ -69,11 +64,8 @@ class EditorDOMHelper extends DOMHelper {
   /**
    * Shows or hides a field.
    * Batched via RAF.
-   *
-   * @param {string}  name
-   * @param {boolean} visible
    */
-  updateVisibility(name, visible) {
+  updateVisibility(name: string, visible: boolean) {
     const cacheKey = `${name}:display`;
     if (this._appliedValues.get(cacheKey) === visible) return;
 
@@ -92,11 +84,8 @@ class EditorDOMHelper extends DOMHelper {
    * function of config (e.g. icon_animation pairing up with `icon` once
    * `color`'s row disappears under a theme) - a plain string width is applied
    * once in EditorBase#buildField and never revisited.
-   *
-   * @param {string} name
-   * @param {string} width
    */
-  updateWidth(name, width) {
+  updateWidth(name: string, width: string) {
     const cacheKey = `${name}:width`;
     if (this._appliedValues.get(cacheKey) === width) return;
 
@@ -114,17 +103,14 @@ class EditorDOMHelper extends DOMHelper {
    * Updates the ui-action selector with the effective default_action so that
    * the native ha-selector renders "Default (action-name)" inside the box.
    * Mirrors the validation preprocess logic for icon_tap_action (toggleDomain).
-   *
-   * @param {string} name
-   * @param {object} def    — field definition
-   * @param {object} config — raw config (this.#config)
    */
-  _updateActionSelector(name, def, config) {
+  _updateActionSelector(name: string, def: FieldDef, config: RawConfig) {
     const key = def.target ?? def.name;
-    let defaultAction = CARD.config.defaults[key]?.action ?? 'none';
+    const defaults: Record<string, any> = CARD.config.defaults;
+    let defaultAction = defaults[key]?.action ?? 'none';
     if (key === 'icon_tap_action' && config.entity) {
       const domain = HassProviderSingleton.getEntityDomain(config.entity);
-      if (HA_CONTEXT.actions.toggleDomain.includes(domain)) defaultAction = 'toggle';
+      if (domain && HA_CONTEXT.actions.toggleDomain.includes(domain)) defaultAction = 'toggle';
     }
     this.updateSelector(name, { 'ui-action': { default_action: defaultAction } });
   }
@@ -134,11 +120,8 @@ class EditorDOMHelper extends DOMHelper {
   /**
    * Updates the selector of a ha-selector field. Used for fields whose options
    * depend on another field (e.g. attribute → entity).
-   *
-   * @param {string} name
-   * @param {object} selector
    */
-  updateSelector(name, selector) {
+  updateSelector(name: string, selector: any) {
     // Was reassigned unconditionally on every #updateFields() pass (i.e. every
     // editor keystroke, for every field with selectorOf — not just the one
     // being edited), forcing the child ha-selector's attribute picker to fully
@@ -161,11 +144,8 @@ class EditorDOMHelper extends DOMHelper {
   /**
    * Iterates all registered fields and applies value, visibility,
    * and dynamic selector updates based on the current config.
-   *
-   * @param {object}   config       — current card config
-   * @param {function} resolveValue — (def, config) => raw value
    */
-  _applyContext(name, contextDef, config) {
+  _applyContext(name: string, contextDef: Record<string, string>, config: RawConfig) {
     // Same class of bug as updateSelector: reassigned a brand-new object on
     // every #updateFields() pass (i.e. on every keystroke anywhere in the form,
     // not just in this field), forcing the child selector (e.g. state_content's
@@ -186,14 +166,26 @@ class EditorDOMHelper extends DOMHelper {
     });
   }
 
-  updateAll(config, resolveValue, negotiated = null, resolveType = null) {
+  updateAll(
+    config: RawConfig,
+    resolveValue: (def: FieldDef, config: RawConfig) => any,
+    negotiated: Config | null = null,
+    resolveType: ((def: FieldDef, config: RawConfig) => any) | null = null,
+  ) {
     for (const [name, el] of this._domElements) {
       const def = el._fieldDef;
       if (def) this._updateField(name, def, config, resolveValue, negotiated, resolveType);
     }
   }
 
-  _updateField(name, def, config, resolveValue, negotiated = null, resolveType = null) {
+  _updateField(
+    name: string,
+    def: FieldDef,
+    config: RawConfig,
+    resolveValue: (def: FieldDef, config: RawConfig) => any,
+    negotiated: Config | null = null,
+    resolveType: ((def: FieldDef, config: RawConfig) => any) | null = null,
+  ) {
     // Visibility
     if (def.showIf) {
       this.updateVisibility(name, def.showIf(config, negotiated));
@@ -201,7 +193,7 @@ class EditorDOMHelper extends DOMHelper {
 
     // Width
     if (is.func(def.width)) {
-      this.updateWidth(name, def.width(config));
+      this.updateWidth(name, def.width(config) as string);
     }
 
     // Dynamic type (e.g. bar_orientation offering 'up' only in the two
@@ -214,7 +206,7 @@ class EditorDOMHelper extends DOMHelper {
     // Dynamic selector
     if (def.selectorOf) {
       const resolved = def.selectorOf.includes('.')
-        ? def.selectorOf.split('.').reduce((obj, k) => obj?.[k], config)
+        ? def.selectorOf.split('.').reduce((obj: any, k: string) => obj?.[k], config)
         : config[def.selectorOf];
       // The source key can hold a non-string shape (watermark.low: { jinja }) —
       // the native attribute selector expects an entity-id string, so anything
@@ -249,7 +241,7 @@ class EditorDOMHelper extends DOMHelper {
     if (def.type === 'action') this._updateActionSelector(name, def, config);
   }
 
-  _updateVirtualValue(name, def, config) {
+  _updateVirtualValue(name: string, def: FieldDef, config: RawConfig) {
     if (!def.resolveVirtual) return;
     this.updateValue(name, def.resolveVirtual(config));
   }

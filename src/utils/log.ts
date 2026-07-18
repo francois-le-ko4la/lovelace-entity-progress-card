@@ -7,14 +7,27 @@
 import { SEV } from './parameters.js';
 import { has } from './common-checks.js';
 
+type Level = 'info' | 'warning' | 'error' | 'debug';
+
+interface LoggerInstance {
+  name: string;
+  level: Level;
+  debug: (msg: string, data?: unknown) => void;
+  info: (msg: string, data?: unknown) => void;
+  warning: (msg: string, data?: unknown) => void;
+  error: (msg: string, data?: unknown) => void;
+  wrap: <T extends (...args: any[]) => any>(fn: T, fnName: string) => T;
+  wrapAll: (ctx: Record<string, any>, methodNames: string[]) => void;
+}
+
 const Logger = {
-  create(name, level = SEV.debug) {
+  create(name: string, level: Level = SEV.debug): LoggerInstance {
     const levels = { error: 0, warning: 1, info: 2, debug: 3 };
     const currentLevel = levels[level] || 3;
 
-    const shouldLog = (logLevel) => levels[logLevel] <= currentLevel;
+    const shouldLog = (logLevel: Level) => levels[logLevel] <= currentLevel;
 
-    const loggerInstance = {
+    const loggerInstance: LoggerInstance = {
       name,
       level,
 
@@ -31,14 +44,14 @@ const Logger = {
         const isAsync = fn.constructor.name === 'AsyncFunction';
 
         const logStart = () => shouldLog(SEV.debug) && console.debug(`[${name}] 👉 ${fnName}`);
-        const logSuccess = (start) =>
+        const logSuccess = (start: number) =>
           shouldLog(SEV.debug) && console.debug(`[${name}] ✅ ${fnName} (${(performance.now() - start).toFixed(2)}ms)`);
-        const logError = (start, error) =>
+        const logError = (start: number, error: unknown) =>
           shouldLog(SEV.error) &&
           console.error(`[${name}] ❌ ${fnName} failed (${(performance.now() - start).toFixed(2)}ms)`, error);
 
         if (isAsync) {
-          return async (...args) => {
+          return (async (...args: any[]) => {
             logStart();
             const start = performance.now();
             try {
@@ -49,9 +62,9 @@ const Logger = {
               logError(start, error);
               throw error;
             }
-          };
+          }) as any;
         } else {
-          return (...args) => {
+          return ((...args: any[]) => {
             logStart();
             const start = performance.now();
             try {
@@ -62,7 +75,7 @@ const Logger = {
               logError(start, error);
               throw error;
             }
-          };
+          }) as any;
         }
       },
 
@@ -73,28 +86,18 @@ const Logger = {
           }
         });
       },
-
-      state: (label, hass, config) => {
-        if (!shouldLog(SEV.debug)) return;
-        console.debug(`[${name}] 📊 ${label}`, {
-          hasHass: Boolean(hass),
-          hasConfig: Boolean(config),
-          entities: config?.entities?.length || 0,
-          connected: document.body.contains ? 'unknown' : 'checking',
-        });
-      },
     };
 
     return loggerInstance;
   },
 };
 
-function initLogger(ctx, debugFlag, methodNames = []) {
+function initLogger(ctx: object, debugFlag: boolean, methodNames: string[] = []): LoggerInstance {
   const className = ctx.constructor.name;
   const logger = Logger.create(className, debugFlag ? SEV.debug : SEV.info);
 
   if (debugFlag) {
-    logger.wrapAll(ctx, methodNames);
+    logger.wrapAll(ctx as Record<string, any>, methodNames);
     logger.debug(`${className} initialized`);
   }
 
@@ -103,3 +106,4 @@ function initLogger(ctx, debugFlag, methodNames = []) {
 
 export { Logger };
 export { initLogger };
+export type { LoggerInstance };

@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-.PHONY: help install check lint lint-md format format-js format-js-check format-md \
+.PHONY: help install check lint type-check lint-md format format-js format-js-check format-md \
         i18n-validate i18n-validate-structure i18n-sync \
         validate check-release-flags \
         build-test build-prod \
@@ -17,6 +17,9 @@ check: ## Syntax-check every src/ file (node --check)
 
 lint: ## Lint the src/ module split (eslint)
 	npm run lint
+
+type-check: ## Type-check files opted into // @ts-check (tsc --noEmit, allowJs)
+	npm run type-check
 
 lint-md: ## Lint markdown files
 	npm run lint:md
@@ -42,10 +45,10 @@ i18n-validate-structure: ## Validate translations/*.json structure only (no JS s
 i18n-sync: ## Regenerate src/utils/translations.js from translations/*.json
 	npm run i18n:sync
 
-check-release-flags: ## Fail if CARD_CONTEXT.dev/debug is left true in src/utils/parameters.js
+check-release-flags: ## Fail if CARD_CONTEXT.dev/debug is left true in src/utils/parameters.ts
 	npm run check:release-flags
 
-validate: check lint i18n-validate ## Run all pre-commit checks (check + lint + i18n:validate)
+validate: check lint type-check i18n-validate ## Run all pre-commit checks (check + lint + type-check + i18n:validate)
 
 # --- Build ---------------------------------------------------------------
 # src/ is bundled by scripts/build.js; mode controls CARD_CONTEXT:

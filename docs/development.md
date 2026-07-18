@@ -262,7 +262,7 @@ elapsed time from `finishes_at`.
 
 ### Registration
 
-At module load, in `src/index.js` (the bundle entry point):
+At module load, in `src/index.ts` (the bundle entry point):
 
 ```js
 RegistrationHelper.registerCard(META.types.card, EntityProgressCard, EntityProgressCardEditor);
@@ -573,33 +573,47 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
   split exists; nothing currently prevents a future circular import from
   creeping in except this rule). Notable custom rules: `eqeqeq: 'smart'` (bans
   `==`/ `!=` except the `x == null` null-or-undefined idiom, used once in
-  `common-checks.js`), `no-console` (only `debug`/`info`/`warn`/`error`/
+  `common-checks.ts`), `no-console` (only `debug`/`info`/`warn`/`error`/
   `groupCollapsed`/`groupEnd` allowed — `console.log` is banned everywhere
   except one inline-disabled call in the startup banner), and
   `lines-between-class-members: 'always'` (no exception for short members —
   every class member gets a blank line before it). `npm run lint` / `make lint`.
-- **Formatting**: `.prettierrc` applies to `src/**/*.js` too (not just markdown)
-  — `npm run format:js` / `format:js:check` / `format` (JS + MD).
+- **TypeScript, mixed with plain JS** (`tsconfig.json`: `allowJs`,
+  `checkJs: false` project-wide, `strict: true`): most of `src/` stays `.js` — a
+  handful of small, self-contained `utils/` files (`common-checks.ts`, `log.ts`,
+  `parameters.ts`, `register.ts`, `styles.ts`) are real `.ts`, type-checked by
+  `npm run type-check` (`tsc`, wired into `validate`). A `.js` file can opt into
+  the same checking without converting, via a `// @ts-check` pragma plus JSDoc
+  type annotations (TypeScript's language server understands both the same way).
+  `eslint.config.mjs` has a matching `**/*.ts` block
+  (`@typescript-eslint/parser` + plugin) alongside the JS one, sharing the same
+  rule set except identifier-resolution rules (`no-undef`/ `no-unused-vars`),
+  which TS itself already covers more reliably for `.ts` files. esbuild bundles
+  the mixed `.ts`/`.js` tree natively — no separate compile step, imports keep
+  the `.js` extension even when the real file is `.ts` (standard TS/esbuild
+  resolution convention).
+- **Formatting**: `.prettierrc` applies to `src/**/*.{js,ts}` too (not just
+  markdown) — `npm run format:js` / `format:js:check` / `format` (JS + MD).
   `embeddedLanguageFormatting: "off"` is deliberate: Prettier recognizes the
-  `css` identity tag in `src/utils/styles.js` (see `scripts/build.js`'s CSS
+  `css` identity tag in `src/utils/styles.ts` (see `scripts/build.js`'s CSS
   resolve/minify pass) as CSS-in-JS and would otherwise reformat the CSS _text
   itself_ inside every tagged template literal, producing a massive diff for a
   purely cosmetic change. `src/utils/translations.js` is excluded via
   `.prettierignore` (its own generator serializes it, not Prettier — formatting
   it here would just drift back out of sync on the next `i18n:sync`).
 - **Pre-commit hooks** (`husky` + `lint-staged`, `.lintstagedrc.json`): staged
-  `src/**/*.js` files get `prettier --write` then `eslint --fix`; staged `*.md`
-  files get `prettier --write` then `markdownlint-cli2 --fix`. Installed
+  `src/**/*.{js,ts}` files get `prettier --write` then `eslint --fix`; staged
+  `*.md` files get `prettier --write` then `markdownlint-cli2 --fix`. Installed
   automatically via the `prepare` script on `npm ci`/`npm install`.
 - **DeepSource** also runs as a CI status check (third-party static analysis,
   separate from ESLint) — treat its findings the same as an ESLint error: fix
   the root cause, don't suppress unless the finding is a false positive.
-- `make help` lists every available target (build, lint, format, i18n,
-  release-dry-run...) with a one-line description.
+- `make help` lists every available target (build, lint, type-check, format,
+  i18n, release-dry-run...) with a one-line description.
 
 ## Release process
 
-- **Versioning**: `const VERSION = 'x.y.z[-dev]'` in `src/utils/parameters.js`
+- **Versioning**: `const VERSION = 'x.y.z[-dev]'` in `src/utils/parameters.ts`
   is the single source of truth displayed in the console banner; keep it in sync
   with the git tag. `-dev` marks unreleased builds.
 - **CI** (`.github/workflows/`), path-scoped where relevant so a PR only
@@ -626,7 +640,7 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
     regardless of the source state, see `scripts/lib/release-flags.js`), a
     `node --check` sanity pass on the minified output, then uploads the artifact
     to the release assets. HACS serves that asset.
-- **Two build modes** (`scripts/build.js`, bundling `src/index.js` via esbuild):
+- **Two build modes** (`scripts/build.js`, bundling `src/index.ts` via esbuild):
   `build:test` (default, `CARD_CONTEXT` left exactly as committed) and
   `build:prod` (`--prod` flag, `CARD_CONTEXT.dev` and every `debug.*` flag
   forced `false` regardless of the source state — see

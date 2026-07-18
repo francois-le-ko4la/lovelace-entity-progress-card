@@ -7,11 +7,16 @@
 import { HA_CONTEXT, MIN_VALUE_ENTITY_PATH, MAX_VALUE_ENTITY_PATH } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
+import type { RawConfig, Config } from '../utils/types.js';
 import { availableSpace } from './dom-helper.js';
 
+// Field definitions are heterogeneous option bags (showIf/resolveVirtual/
+// onVirtualChange/width/target/... vary per field) - kept as `Record<string,
+// any>` rather than one interface trying to cover every combination
+// EditorBase/EditorDOMHelper actually consume.
 const field =
-  (type) =>
-  (name, o = {}) => ({ name, type, ...o });
+  (type: string) =>
+  (name: string, o: Record<string, any> = {}) => ({ name, type, ...o });
 
 const EditorFieldsType = {
   entity: field('entity'),
@@ -24,21 +29,22 @@ const EditorFieldsType = {
   toggle: field('toggle'),
   tpl: field('template'),
   action: field('action'),
-  select: (name, o = {}) => ({ name, type: name, ...o }),
-  templateOrType: (name, template, type, o = {}) => field(template ? 'template' : type)(name, o),
+  select: (name: string, o: Record<string, any> = {}) => ({ name, type: name, ...o }),
+  templateOrType: (name: string, template: boolean, type: string, o: Record<string, any> = {}) =>
+    field(template ? 'template' : type)(name, o),
 };
 
-const wmSide = (side, defaultVal) => {
+const wmSide = (side: string, defaultVal: any) => {
   const disableKey = `disable_${side}`;
   const attrType = `watermark${side.charAt(0).toUpperCase() + side.slice(1)}Attribute`;
   const modeType = `watermark_${side}_mode`;
-  const wm = (extra) => (c) => Boolean(c.watermark) && extra(c);
-  const on = (c) => !c.watermark?.[disableKey];
-  const ent = (c) => is.string(c.watermark?.[side]);
-  const tpl = (c) => is.nonEmptyString(c.watermark?.[side]?.jinja);
+  const wm = (extra: (c: RawConfig) => boolean) => (c: RawConfig) => Boolean(c.watermark) && extra(c);
+  const on = (c: RawConfig) => !c.watermark?.[disableKey];
+  const ent = (c: RawConfig) => is.string(c.watermark?.[side]);
+  const tpl = (c: RawConfig) => is.nonEmptyString(c.watermark?.[side]?.jinja);
   return {
     [`watermark.${disableKey}`]: EditorFieldsType.toggle(`watermark.${disableKey}`, {
-      showIf: (c) => Boolean(c.watermark),
+      showIf: (c: RawConfig) => Boolean(c.watermark),
     }),
     // A 2-state toggle can't represent 3 mutually exclusive modes
     // (standard/entity/Jinja) — mirrors min_value_mode/max_value_mode exactly,
@@ -48,8 +54,8 @@ const wmSide = (side, defaultVal) => {
       type: modeType,
       virtual: true,
       showIf: wm(on),
-      resolveVirtual: (c) => (tpl(c) ? 'jinja' : ent(c) ? 'entity' : 'standard'),
-      onVirtualChange: (mode, config) => {
+      resolveVirtual: (c: RawConfig) => (tpl(c) ? 'jinja' : ent(c) ? 'entity' : 'standard'),
+      onVirtualChange: (mode: any, config: RawConfig) => {
         const attrKey = `${side}_attribute`;
         if (mode === 'entity') {
           return {
@@ -74,14 +80,14 @@ const wmSide = (side, defaultVal) => {
       },
     },
     [`watermark.${side}`]: EditorFieldsType.number(`watermark.${side}`, {
-      showIf: wm((c) => on(c) && !ent(c) && !tpl(c)),
+      showIf: wm((c: RawConfig) => on(c) && !ent(c) && !tpl(c)),
     }),
     [`watermark.${side}_entity`]: EditorFieldsType.entity(`watermark.${side}_entity`, {
       virtual: true,
       noLabel: true,
-      showIf: wm((c) => on(c) && ent(c)),
-      resolveVirtual: (c) => (is.string(c.watermark?.[side]) ? c.watermark[side] : ''),
-      onVirtualChange: (value, config) => ({
+      showIf: wm((c: RawConfig) => on(c) && ent(c)),
+      resolveVirtual: (c: RawConfig) => (is.string(c.watermark?.[side]) ? c.watermark[side] : ''),
+      onVirtualChange: (value: any, config: RawConfig) => ({
         ...config,
         watermark: {
           ...config.watermark,
@@ -93,7 +99,7 @@ const wmSide = (side, defaultVal) => {
     [`watermark.${side}_attribute`]: EditorFieldsType.select(`watermark.${side}_attribute`, {
       type: attrType,
       selectorOf: `watermark.${side}`,
-      showIf: wm((c) => on(c) && ent(c) && c.watermark[side] !== ''),
+      showIf: wm((c: RawConfig) => on(c) && ent(c) && c.watermark[side] !== ''),
     }),
     // Virtual (not a plain dot-path field): the template string lives 2 levels
     // deep (watermark.<side>.jinja), one level past what the generic
@@ -102,9 +108,9 @@ const wmSide = (side, defaultVal) => {
     [`watermark_${side}_jinja`]: EditorFieldsType.tpl(`watermark_${side}_jinja`, {
       noLabel: true,
       virtual: true,
-      showIf: wm((c) => on(c) && tpl(c)),
-      resolveVirtual: (c) => c.watermark?.[side]?.jinja ?? '',
-      onVirtualChange: (value, config) => ({
+      showIf: wm((c: RawConfig) => on(c) && tpl(c)),
+      resolveVirtual: (c: RawConfig) => c.watermark?.[side]?.jinja ?? '',
+      onVirtualChange: (value: any, config: RawConfig) => ({
         ...config,
         watermark: { ...config.watermark, [side]: { jinja: value } },
       }),
@@ -122,7 +128,7 @@ const wmSide = (side, defaultVal) => {
 };
 
 const EditorFactory = {
-  general: (template) => ({
+  general: (template: boolean) => ({
     flat: true,
     fields: {
       entity: EditorFieldsType.entity('entity', { required: !template }),
@@ -130,15 +136,15 @@ const EditorFactory = {
         attribute: EditorFieldsType.select('attribute', {
           type: 'attribute',
           selectorOf: 'entity',
-          showIf: (c) => Boolean(c.entity),
+          showIf: (c: RawConfig) => Boolean(c.entity),
         }),
         bar_stack_mode: {
           name: 'bar_stack_mode',
           type: 'bar_stack_mode',
           virtual: true,
-          showIf: (c) => is.nonEmptyArray(c.bar_stack?.entities),
-          resolveVirtual: (c) => c.bar_stack?.mode ?? 'stacked',
-          onVirtualChange: (mode, config) => ({ ...config, bar_stack: { ...config.bar_stack, mode } }),
+          showIf: (c: RawConfig) => is.nonEmptyArray(c.bar_stack?.entities),
+          resolveVirtual: (c: RawConfig) => c.bar_stack?.mode ?? 'stacked',
+          onVirtualChange: (mode: any, config: RawConfig) => ({ ...config, bar_stack: { ...config.bar_stack, mode } }),
         },
         // CF5 - issue (major) resolved - a flat 'bar_stack' field name meant
         // the generic round-trip resolver (#resolveValue, run on every
@@ -160,7 +166,7 @@ const EditorFactory = {
     },
   }),
 
-  content: (template, badge) => ({
+  content: (template: boolean, badge: boolean) => ({
     title: 'editor.title.content',
     icon: HA_CONTEXT.icons.textShort,
     fields: {
@@ -192,7 +198,7 @@ const EditorFactory = {
             unit_spacing: EditorFieldsType.select('unit_spacing', {
               type: 'unit_spacing',
               width: availableSpace(32, 1 / 3),
-              showIf: (c) => !(c.disable_unit || (is.array(c.hide) && c.hide.includes('unit'))),
+              showIf: (c: RawConfig) => !(c.disable_unit || (is.array(c.hide) && c.hide.includes('unit'))),
             }),
             decimal: EditorFieldsType.decimal('decimal', { width: availableSpace(32, 1 / 3) }),
             // A 2-state toggle can't represent 3 mutually exclusive modes
@@ -209,9 +215,9 @@ const EditorFactory = {
               name: 'min_value_mode',
               type: 'min_value_mode',
               virtual: true,
-              resolveVirtual: (c) =>
+              resolveVirtual: (c: RawConfig) =>
                 is.nonEmptyString(c.min_value?.jinja) ? 'jinja' : is.plainObject(c.min_value) ? 'entity' : 'standard',
-              onVirtualChange: (mode, config) => {
+              onVirtualChange: (mode: any, config: RawConfig) => {
                 if (mode === 'entity') {
                   return {
                     ...config,
@@ -228,21 +234,21 @@ const EditorFactory = {
               },
             },
             min_value: EditorFieldsType.number('min_value', {
-              default: (c) => (c.center_zero ? -100 : 0),
-              showIf: (c) => !is.plainObject(c.min_value),
+              default: (c: RawConfig) => (c.center_zero ? -100 : 0),
+              showIf: (c: RawConfig) => !is.plainObject(c.min_value),
             }),
             [MIN_VALUE_ENTITY_PATH]: EditorFieldsType.entity(MIN_VALUE_ENTITY_PATH, {
               noLabel: true,
-              showIf: (c) => is.plainObject(c.min_value) && !is.nonEmptyString(c.min_value.jinja),
+              showIf: (c: RawConfig) => is.plainObject(c.min_value) && !is.nonEmptyString(c.min_value.jinja),
             }),
             'min_value.attribute': EditorFieldsType.select('min_value.attribute', {
               type: 'minValueAttribute',
               selectorOf: MIN_VALUE_ENTITY_PATH,
-              showIf: (c) => is.plainObject(c.min_value) && is.nonEmptyString(c.min_value.entity),
+              showIf: (c: RawConfig) => is.plainObject(c.min_value) && is.nonEmptyString(c.min_value.entity),
             }),
             'min_value.jinja': EditorFieldsType.tpl('min_value.jinja', {
               noLabel: true,
-              showIf: (c) => is.nonEmptyString(c.min_value?.jinja),
+              showIf: (c: RawConfig) => is.nonEmptyString(c.min_value?.jinja),
             }),
             // Explicit map shape (mirrors min_value): max_value: 10 | { entity,
             // attribute } | { jinja }. Reuses the codebase's nested
@@ -252,9 +258,9 @@ const EditorFactory = {
               name: 'max_value_mode',
               type: 'max_value_mode',
               virtual: true,
-              resolveVirtual: (c) =>
+              resolveVirtual: (c: RawConfig) =>
                 is.nonEmptyString(c.max_value?.jinja) ? 'jinja' : is.plainObject(c.max_value) ? 'entity' : 'standard',
-              onVirtualChange: (mode, config) => {
+              onVirtualChange: (mode: any, config: RawConfig) => {
                 if (mode === 'entity') {
                   return {
                     ...config,
@@ -270,19 +276,19 @@ const EditorFactory = {
                 return { ...config, max_value: undefined };
               },
             },
-            max_value: EditorFieldsType.number('max_value', { showIf: (c) => !is.plainObject(c.max_value) }),
+            max_value: EditorFieldsType.number('max_value', { showIf: (c: RawConfig) => !is.plainObject(c.max_value) }),
             [MAX_VALUE_ENTITY_PATH]: EditorFieldsType.entity(MAX_VALUE_ENTITY_PATH, {
               noLabel: true,
-              showIf: (c) => is.plainObject(c.max_value) && !is.nonEmptyString(c.max_value.jinja),
+              showIf: (c: RawConfig) => is.plainObject(c.max_value) && !is.nonEmptyString(c.max_value.jinja),
             }),
             'max_value.attribute': EditorFieldsType.select('max_value.attribute', {
               type: 'maxValueAttribute',
               selectorOf: MAX_VALUE_ENTITY_PATH,
-              showIf: (c) => is.plainObject(c.max_value) && is.nonEmptyString(c.max_value.entity),
+              showIf: (c: RawConfig) => is.plainObject(c.max_value) && is.nonEmptyString(c.max_value.entity),
             }),
             'max_value.jinja': EditorFieldsType.tpl('max_value.jinja', {
               noLabel: true,
-              showIf: (c) => is.nonEmptyString(c.max_value?.jinja),
+              showIf: (c: RawConfig) => is.nonEmptyString(c.max_value?.jinja),
             }),
             state_content: EditorFieldsType.stateContent('state_content', { context: { filter_entity: 'entity' } }),
             custom_info: EditorFieldsType.tpl('custom_info'),
@@ -291,7 +297,8 @@ const EditorFactory = {
             // there.
             ...(!badge ? { multiline: EditorFieldsType.toggle('multiline') } : {}),
             reverse: EditorFieldsType.toggle('reverse', {
-              showIf: (c) => Boolean(c.entity) && HassProviderSingleton.getEntityDomain(c.entity) === 'timer',
+              showIf: (c: RawConfig) =>
+                Boolean(c.entity) && HassProviderSingleton.getEntityDomain(c.entity) === 'timer',
             }),
           }),
     },
@@ -309,7 +316,7 @@ const EditorFactory = {
   // back. The inactive side is now parked in a `_`-prefixed draft
   // (session-only, stripped before dispatch by #sendConfig, same mechanism as
   // _show_all_actions) and restored when its mode is selected again.
-  themeModeFields: (template) =>
+  themeModeFields: (template: boolean) =>
     template
       ? {}
       : {
@@ -320,8 +327,8 @@ const EditorFactory = {
             // is.array (not is.nonEmptyArray): a freshly-entered custom mode
             // starts as an empty [] before the user adds a first zone, and must
             // still read as 'custom'.
-            resolveVirtual: (c) => (is.array(c.custom_theme) ? 'custom' : 'preset'),
-            onVirtualChange: (mode, config) => {
+            resolveVirtual: (c: RawConfig) => (is.array(c.custom_theme) ? 'custom' : 'preset'),
+            onVirtualChange: (mode: any, config: RawConfig) => {
               const wantsCustom = mode === 'custom';
               return {
                 ...config,
@@ -332,12 +339,12 @@ const EditorFactory = {
               };
             },
           },
-          theme: EditorFieldsType.select('theme', { showIf: (c) => !is.array(c.custom_theme) }),
+          theme: EditorFieldsType.select('theme', { showIf: (c: RawConfig) => !is.array(c.custom_theme) }),
           custom_theme: {
             name: 'custom_theme',
             type: 'custom_theme_editor',
-            showIf: (c) => is.array(c.custom_theme),
-            onClear: (config) => {
+            showIf: (c: RawConfig) => is.array(c.custom_theme),
+            onClear: (config: RawConfig) => {
               const rest = { ...config };
               delete rest.custom_theme;
               return rest;
@@ -349,47 +356,48 @@ const EditorFactory = {
   // sense with a `layout`/`bar_position` a badge doesn't have (see
   // YamlSchemaFactory.badge) - swaps in the matching restricted select type
   // instead of a range check inline in theme() below.
-  badgeRestrictedType: (badge, restrictedType) => (badge ? { type: restrictedType } : {}),
+  badgeRestrictedType: (badge: boolean, restrictedType: string) => (badge ? { type: restrictedType } : {}),
 
   // Per-variant width overrides (Card/Badge/Template/BadgeTemplate) below
   // read oddly as inline ternaries repeated per field - one named condition
   // per field instead.
-  widthUnless: (condition) => (condition ? {} : { width: availableSpace() }),
+  widthUnless: (condition: any) => (condition ? {} : { width: availableSpace() }),
 
   // Every themeXxxFields() below is pulled out of theme() itself for the same
   // reason as themeModeFields/widthUnless above: keep each conditional
   // block's own ternaries out of theme()'s cognitive complexity budget.
 
-  themeColorModeFields: (template) =>
+  themeColorModeFields: (template: boolean) =>
     template
       ? {}
       : {
           bar_color_mode: EditorFieldsType.select('bar_color_mode', {
-            showIf: (c) => (!is.nullish(c.theme) || is.nonEmptyArray(c.custom_theme)) && !c.center_zero,
+            showIf: (c: RawConfig) => (!is.nullish(c.theme) || is.nonEmptyArray(c.custom_theme)) && !c.center_zero,
             // Selecting a non-auto color mode is incompatible with
             // interpolate: clear it.
-            onChange: (value, config) => (value && value !== 'auto' ? { ...config, interpolate: undefined } : config),
+            onChange: (value: any, config: RawConfig) =>
+              value && value !== 'auto' ? { ...config, interpolate: undefined } : config,
           }),
           interpolate: EditorFieldsType.toggle('interpolate', {
-            showIf: (c) =>
+            showIf: (c: RawConfig) =>
               (!is.nullish(c.theme) || is.nonEmptyArray(c.custom_theme)) &&
               (is.nullish(c.bar_color_mode) || c.bar_color_mode === 'auto'),
           }),
         },
 
-  themeCardOnlyFields: (badge, resetUpIfInvalid) =>
+  themeCardOnlyFields: (badge: boolean, resetUpIfInvalid: (config: RawConfig) => any) =>
     badge
       ? {}
       : {
           // Half-width once a theme is active, to pair with `icon` once
           // `color` (icon's usual partner) hides.
           icon_animation: EditorFieldsType.select('icon_animation', {
-            width: (c) => (!is.nullish(c.theme) || is.array(c.custom_theme) ? availableSpace() : '100%'),
+            width: (c: RawConfig) => (!is.nullish(c.theme) || is.array(c.custom_theme) ? availableSpace() : '100%'),
           }),
           force_circular_background: EditorFieldsType.toggle('force_circular_background'),
           bar_position: EditorFieldsType.select('bar_position', {
             width: availableSpace(),
-            onChange: (value, config) => resetUpIfInvalid(config),
+            onChange: (value: any, config: RawConfig) => resetUpIfInvalid(config),
           }),
         },
 
@@ -398,15 +406,15 @@ const EditorFactory = {
   // (postProcess forces it back to false for any other bar_position);
   // text_shadow also applies via .background - text sits on top of the bar
   // there too, same legibility need.
-  themeSingleLineShadowFields: (badge) =>
+  themeSingleLineShadowFields: (badge: boolean) =>
     badge
       ? {}
       : {
           bar_single_line: EditorFieldsType.toggle('bar_single_line', {
-            showIf: (c) => c.bar_position === 'overlay',
+            showIf: (c: RawConfig) => c.bar_position === 'overlay',
           }),
           text_shadow: EditorFieldsType.toggle('text_shadow', {
-            showIf: (c) => c.bar_position === 'overlay' || c.bar_position === 'background',
+            showIf: (c: RawConfig) => c.bar_position === 'overlay' || c.bar_position === 'background',
           }),
         },
 
@@ -419,9 +427,9 @@ const EditorFactory = {
   // opt out entirely (see their own .delete(['bar_max_width'])): without a
   // 'layout' key they never get the 'horizontal' class, so the option would
   // be inert there.
-  themeMaxWidthFields: (badge) => {
+  themeMaxWidthFields: (badge: boolean) => {
     if (badge) return {};
-    const barMaxWidthAllowed = (c) =>
+    const barMaxWidthAllowed = (c: RawConfig) =>
       (c.layout ?? 'horizontal') === 'horizontal' &&
       (c.bar_position ?? 'default') === 'default' &&
       (c.bar_size ?? 'small') !== 'xlarge';
@@ -429,8 +437,8 @@ const EditorFactory = {
       bar_max_width_toggle: EditorFieldsType.toggle('bar_max_width_toggle', {
         virtual: true,
         showIf: barMaxWidthAllowed,
-        resolveVirtual: (c) => Boolean(c.bar_max_width),
-        onVirtualChange: (value, config) => ({
+        resolveVirtual: (c: RawConfig) => Boolean(c.bar_max_width),
+        onVirtualChange: (value: any, config: RawConfig) => ({
           ...config,
           bar_max_width: value ? '300px' : undefined,
         }),
@@ -440,9 +448,9 @@ const EditorFactory = {
         // The toggle right above already carries this label ("Bar max
         // width") - repeating it on the slider itself is redundant.
         noLabel: true,
-        showIf: (c) => barMaxWidthAllowed(c) && Boolean(c.bar_max_width),
-        resolveVirtual: (c) => parseInt(c.bar_max_width) || 0,
-        onVirtualChange: (value, config) => ({
+        showIf: (c: RawConfig) => barMaxWidthAllowed(c) && Boolean(c.bar_max_width),
+        resolveVirtual: (c: RawConfig) => parseInt(c.bar_max_width) || 0,
+        onVirtualChange: (value: any, config: RawConfig) => ({
           ...config,
           bar_max_width: value ? `${value}px` : undefined,
         }),
@@ -455,12 +463,13 @@ const EditorFactory = {
   // toggle/entity/jinja machinery only ever reads config.watermark.*, so
   // nothing here is Card-specific.
   themeWatermarkFields: () => {
-    const wm = (extra) => (c) => Boolean(c.watermark) && (extra ? extra(c) : true);
+    const wm = (extra?: (c: RawConfig) => boolean) => (c: RawConfig) =>
+      Boolean(c.watermark) && (extra ? extra(c) : true);
     return {
       watermark_toggle: EditorFieldsType.toggle('watermark_toggle', {
         virtual: true,
-        resolveVirtual: (c) => Boolean(c.watermark),
-        onVirtualChange: (value, config) => ({
+        resolveVirtual: (c: RawConfig) => Boolean(c.watermark),
+        onVirtualChange: (value: any, config: RawConfig) => ({
           ...config,
           watermark: value ? {} : undefined,
         }),
@@ -479,12 +488,12 @@ const EditorFactory = {
       ...wmSide('low', 20),
       ...wmSide('high', 80),
       'watermark.line_size': EditorFieldsType.text('watermark.line_size', {
-        showIf: wm((c) => c.watermark?.type === 'line'),
+        showIf: wm((c: RawConfig) => c.watermark?.type === 'line'),
       }),
     };
   },
 
-  themeBadgeIconColorFields: (badge) =>
+  themeBadgeIconColorFields: (badge: boolean) =>
     badge
       ? {}
       : {
@@ -493,33 +502,33 @@ const EditorFactory = {
         },
 
   // Alert (alert_when) — not in the template schema.
-  themeAlertFields: (template) =>
+  themeAlertFields: (template: boolean) =>
     template
       ? {}
       : {
           alert_toggle: EditorFieldsType.toggle('alert_toggle', {
             virtual: true,
-            resolveVirtual: (c) => Boolean(c.alert_when),
-            onVirtualChange: (value, config) => ({
+            resolveVirtual: (c: RawConfig) => Boolean(c.alert_when),
+            onVirtualChange: (value: any, config: RawConfig) => ({
               ...config,
               alert_when: value ? {} : undefined,
             }),
           }),
           'alert_when.above': EditorFieldsType.number('alert_when.above', {
-            showIf: (c) => Boolean(c.alert_when),
+            showIf: (c: RawConfig) => Boolean(c.alert_when),
             width: availableSpace(),
           }),
           'alert_when.below': EditorFieldsType.number('alert_when.below', {
-            showIf: (c) => Boolean(c.alert_when),
+            showIf: (c: RawConfig) => Boolean(c.alert_when),
             width: availableSpace(),
           }),
           'alert_when.color': EditorFieldsType.select('alert_when.color', {
             type: 'color',
-            showIf: (c) => Boolean(c.alert_when),
+            showIf: (c: RawConfig) => Boolean(c.alert_when),
           }),
           'alert_when.highlight': EditorFieldsType.select('alert_when.highlight', {
             type: 'alert_highlight',
-            showIf: (c) => Boolean(c.alert_when),
+            showIf: (c: RawConfig) => Boolean(c.alert_when),
             width: availableSpace(),
           }),
           // Leaving 'ping' selectable even with highlight: background is
@@ -529,7 +538,7 @@ const EditorFactory = {
           // log outside a valid range).
           'alert_when.animation': EditorFieldsType.select('alert_when.animation', {
             type: 'alert_animation',
-            showIf: (c) => Boolean(c.alert_when),
+            showIf: (c: RawConfig) => Boolean(c.alert_when),
             width: availableSpace(),
           }),
         },
@@ -538,7 +547,7 @@ const EditorFactory = {
   // still works) and documented as such - just not worth a control in the
   // badge editor, a deliberate choice, not a dead-CSS case. `height` is
   // genuinely deleted from the badge schema (see YamlSchemaFactory.badge).
-  themeCardLayoutFields: (badge) =>
+  themeCardLayoutFields: (badge: boolean) =>
     badge
       ? {}
       : {
@@ -547,21 +556,23 @@ const EditorFactory = {
           height: EditorFieldsType.text('height', { width: availableSpace() }),
         },
 
-  themeLayoutField: (badge, resetUpIfInvalid) =>
+  themeLayoutField: (badge: boolean, resetUpIfInvalid: (config: RawConfig) => any) =>
     badge
       ? {}
       : {
-          layout: EditorFieldsType.select('layout', { onChange: (value, config) => resetUpIfInvalid(config) }),
+          layout: EditorFieldsType.select('layout', {
+            onChange: (value: any, config: RawConfig) => resetUpIfInvalid(config),
+          }),
         },
 
-  theme: (template, badge) => {
+  theme: (template: boolean, badge: boolean) => {
     // 'up' only has a visible effect in these two combinations (see
     // HACore#_addBaseClasses's vertical-bar/horizontal-bar decision) - shared
     // by bar_orientation's own dynamic type below and the reset-on-change
     // hooks on bar_position/layout.
-    const upAllowed = (c) =>
+    const upAllowed = (c: RawConfig) =>
       (c.layout === 'vertical' && c.bar_position === 'overlay') || c.bar_position === 'background';
-    const resetUpIfInvalid = (config) =>
+    const resetUpIfInvalid = (config: RawConfig) =>
       config.bar_orientation === 'up' && !upAllowed(config) ? { ...config, bar_orientation: 'ltr' } : config;
     return {
       title: 'editor.title.theme',
@@ -571,7 +582,7 @@ const EditorFactory = {
         ...EditorFactory.themeColorModeFields(template),
         icon: EditorFieldsType.templateOrType('icon', template, 'icon', template ? {} : { width: availableSpace() }),
         color: EditorFieldsType.templateOrType('color', template, 'color', {
-          showIf: (c) => is.nullish(c.theme) && !is.array(c.custom_theme),
+          showIf: (c: RawConfig) => is.nullish(c.theme) && !is.array(c.custom_theme),
           ...(template ? {} : { width: availableSpace() }),
         }),
         ...EditorFactory.themeCardOnlyFields(badge, resetUpIfInvalid),
@@ -579,7 +590,9 @@ const EditorFactory = {
           // Badge/Badge Template have no bar_position/layout, so 'up' is
           // statically excluded there; elsewhere, only offered when upAllowed
           // (see postProcess for the matching runtime reset).
-          type: badge ? 'bar_orientation_no_up' : (c) => (upAllowed(c) ? 'bar_orientation' : 'bar_orientation_no_up'),
+          type: badge
+            ? 'bar_orientation_no_up'
+            : (c: RawConfig) => (upAllowed(c) ? 'bar_orientation' : 'bar_orientation_no_up'),
           // Half-width everywhere except plain Badge (full-width there).
           ...EditorFactory.widthUnless(badge && !template),
         }),
@@ -587,20 +600,21 @@ const EditorFactory = {
           ...EditorFactory.badgeRestrictedType(badge, 'bar_size_no_xlarge'),
           // Full-width for Template/Badge Template (bar_color is a Jinja field
           // there, no row partner) or once a theme is active (bar_color hides).
-          width: (c) => (template || !is.nullish(c.theme) || is.array(c.custom_theme) ? '100%' : availableSpace()),
+          width: (c: RawConfig) =>
+            template || !is.nullish(c.theme) || is.array(c.custom_theme) ? '100%' : availableSpace(),
           // top/bottom/overlay/background all hard-override the bar's own
           // thickness in CSS regardless of bar_size (see ha-card.overlay,
           // .bottom-container/.top-container, ha-card.background).
-          showIf: (c) => !['top', 'bottom', 'overlay', 'background'].includes(c.bar_position),
+          showIf: (c: RawConfig) => !['top', 'bottom', 'overlay', 'background'].includes(c.bar_position),
         }),
         bar_color: EditorFieldsType.templateOrType('bar_color', template, 'color', {
-          showIf: (c) => is.nullish(c.theme) && !is.array(c.custom_theme),
+          showIf: (c: RawConfig) => is.nullish(c.theme) && !is.array(c.custom_theme),
           // Full-width once bar_size (its row partner) hides for the same
           // bar_position values.
           ...(template
             ? {}
             : {
-                width: (c) =>
+                width: (c: RawConfig) =>
                   ['top', 'bottom', 'overlay', 'background'].includes(c.bar_position) ? '100%' : availableSpace(),
               }),
         }),
@@ -618,7 +632,7 @@ const EditorFactory = {
           ? {
               bar_scale: EditorFieldsType.select('bar_scale', {
                 width: availableSpace(),
-                showIf: (c) => !c.center_zero,
+                showIf: (c: RawConfig) => !c.center_zero,
               }),
             }
           : {}),
@@ -629,24 +643,25 @@ const EditorFactory = {
           // default - the (?? 'horizontal') fallback (missing before) is what
           // actually lets it show and work for them, matching bar_position's
           // own fallback right next to it.
-          showIf: (c) =>
+          showIf: (c: RawConfig) =>
             (!c.bar_position || c.bar_position === 'default') && (c.layout ?? 'horizontal') === 'horizontal',
         }),
         center_zero: EditorFieldsType.toggle('center_zero', {
           virtual: true,
-          showIf: (c) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode),
-          resolveVirtual: (c) => Boolean(c.center_zero),
-          onVirtualChange: (value, config) => ({
+          showIf: (c: RawConfig) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode),
+          resolveVirtual: (c: RawConfig) => Boolean(c.center_zero),
+          onVirtualChange: (value: any, config: RawConfig) => ({
             ...config,
             center_zero: value ? (is.plainObject(config.center_zero) ? config.center_zero : true) : false,
           }),
         }),
         center_zero_value: EditorFieldsType.number('center_zero_value', {
           target: 'center_zero',
-          showIf: (c) => Boolean(c.center_zero) && (c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode)),
+          showIf: (c: RawConfig) =>
+            Boolean(c.center_zero) && (c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode)),
           virtual: true,
-          resolveVirtual: (c) => (is.plainObject(c.center_zero) ? (c.center_zero.value ?? 0) : 0),
-          onVirtualChange: (value, config) => {
+          resolveVirtual: (c: RawConfig) => (is.plainObject(c.center_zero) ? (c.center_zero.value ?? 0) : 0),
+          onVirtualChange: (value: any, config: RawConfig) => {
             const growthPercent = is.plainObject(config.center_zero)
               ? Boolean(config.center_zero.growth_percent)
               : false;
@@ -658,10 +673,12 @@ const EditorFactory = {
         }),
         center_zero_growth_percent: EditorFieldsType.toggle('center_zero_growth_percent', {
           target: 'center_zero',
-          showIf: (c) => Boolean(c.center_zero) && (c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode)),
+          showIf: (c: RawConfig) =>
+            Boolean(c.center_zero) && (c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode)),
           virtual: true,
-          resolveVirtual: (c) => (is.plainObject(c.center_zero) ? Boolean(c.center_zero.growth_percent) : false),
-          onVirtualChange: (value, config) => {
+          resolveVirtual: (c: RawConfig) =>
+            is.plainObject(c.center_zero) ? Boolean(c.center_zero.growth_percent) : false,
+          onVirtualChange: (value: any, config: RawConfig) => {
             const currentValue = is.plainObject(config.center_zero) ? (config.center_zero.value ?? 0) : 0;
             return {
               ...config,
@@ -671,8 +688,8 @@ const EditorFactory = {
         }),
         bar_effect_jinja: EditorFieldsType.toggle('bar_effect_jinja', {
           virtual: true,
-          resolveVirtual: (c) => is.nonEmptyString(c.bar_effect),
-          onVirtualChange: (value, config) => ({
+          resolveVirtual: (c: RawConfig) => is.nonEmptyString(c.bar_effect),
+          onVirtualChange: (value: any, config: RawConfig) => ({
             ...config,
             bar_effect: value ? '{{ }}' : [],
           }),
@@ -680,11 +697,11 @@ const EditorFactory = {
         bar_effect_chips: EditorFieldsType.select('bar_effect_chips', {
           type: 'effect_chips',
           target: 'bar_effect',
-          showIf: (c) => !is.nonEmptyString(c.bar_effect),
+          showIf: (c: RawConfig) => !is.nonEmptyString(c.bar_effect),
         }),
         bar_effect: EditorFieldsType.tpl('bar_effect', {
           noLabel: true,
-          showIf: (c) => is.nonEmptyString(c.bar_effect),
+          showIf: (c: RawConfig) => is.nonEmptyString(c.bar_effect),
         }),
         // ── Watermark ────────────────────────────────────────────────────────
         ...EditorFactory.themeWatermarkFields(),
@@ -693,8 +710,8 @@ const EditorFactory = {
         // ── Hide ─────────────────────────────────────────────────────────────
         hide_jinja: EditorFieldsType.toggle('hide_jinja', {
           virtual: true,
-          resolveVirtual: (c) => is.nonEmptyString(c.hide),
-          onVirtualChange: (value, config) => ({
+          resolveVirtual: (c: RawConfig) => is.nonEmptyString(c.hide),
+          onVirtualChange: (value: any, config: RawConfig) => ({
             ...config,
             hide: value ? '{{ }}' : [],
           }),
@@ -702,13 +719,13 @@ const EditorFactory = {
         hide_chips: EditorFieldsType.select('hide_chips', {
           type: 'hide_chips',
           target: 'hide',
-          showIf: (c) => !is.nonEmptyString(c.hide),
+          showIf: (c: RawConfig) => !is.nonEmptyString(c.hide),
           // Template/BadgeTemplate schemas reject 'unit' (see
           // YamlSchemaFactory.template) - no separate unit field there, the
           // value comes straight from Jinja `percent`.
           ...(template ? { items: ['icon', 'name', 'value', 'secondary_info', 'progress_bar'] } : {}),
         }),
-        hide: EditorFieldsType.tpl('hide', { noLabel: true, showIf: (c) => is.nonEmptyString(c.hide) }),
+        hide: EditorFieldsType.tpl('hide', { noLabel: true, showIf: (c: RawConfig) => is.nonEmptyString(c.hide) }),
         ...EditorFactory.themeAlertFields(template),
         // ── Card-only layout options ──────────────────────────────────────
         ...EditorFactory.themeCardLayoutFields(badge),
@@ -722,7 +739,7 @@ const EditorFactory = {
     };
   },
 
-  interactions: (badge) => {
+  interactions: (badge: boolean) => {
     // isActive: show a field only if its negotiated action differs from the
     // 'none' default. orAll: also show when the "show all" toggle
     // (_show_all_actions) is on. _show_all_actions is ephemeral UI state:
@@ -733,8 +750,9 @@ const EditorFactory = {
     // for most entities, 'toggle' for lights, switches, etc. (patched at
     // validation time via toggleDomain). Always showing it lets the hint reveal
     // the effective default.
-    const isActive = (key) => (_, n) => n?.[key]?.action !== 'none';
-    const orAll = (pred) => (c, n) => Boolean(c._show_all_actions) || pred(c, n);
+    const isActive = (key: string) => (_: RawConfig, n: Config) => n?.[key]?.action !== 'none';
+    const orAll = (pred: (c: RawConfig, n: Config) => boolean) => (c: RawConfig, n: Config) =>
+      Boolean(c._show_all_actions) || pred(c, n);
     return {
       title: 'editor.title.interaction',
       icon: HA_CONTEXT.icons.gestureTapHold,
@@ -743,8 +761,8 @@ const EditorFactory = {
           name: 'show_all_actions',
           type: 'toggle',
           virtual: true,
-          resolveVirtual: (c) => Boolean(c._show_all_actions),
-          onVirtualChange: (value, config) => ({ ...config, _show_all_actions: value }),
+          resolveVirtual: (c: RawConfig) => Boolean(c._show_all_actions),
+          onVirtualChange: (value: any, config: RawConfig) => ({ ...config, _show_all_actions: value }),
         },
         tap_action: EditorFieldsType.action('tap_action'),
         hold_action: EditorFieldsType.action('hold_action', { showIf: orAll(isActive('hold_action')) }),
@@ -766,7 +784,7 @@ const EditorFactory = {
     };
   },
 
-  build: (template, badge) => ({
+  build: (template: boolean, badge: boolean) => ({
     general: EditorFactory.general(template),
     content: EditorFactory.content(template, badge),
     theme: EditorFactory.theme(template, badge),

@@ -7,7 +7,7 @@
 // type; a forgotten debug flag ships verbose console logging to every user.
 const fs = require('fs');
 
-const SOURCE = 'src/utils/parameters.js';
+const SOURCE = 'src/utils/parameters.ts';
 const src = fs.readFileSync(SOURCE, 'utf8');
 const match = src.match(/const CARD_CONTEXT = \{[\s\S]*?\n\};/);
 

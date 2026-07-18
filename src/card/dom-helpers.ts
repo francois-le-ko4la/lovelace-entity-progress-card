@@ -6,16 +6,18 @@
 
 import { CARD_CONTEXT, HA_SVG_ICON_TAG, HA_ACTION_HANDLER_TAG } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
-import { initLogger } from '../utils/log.js';
+import { initLogger, type LoggerInstance } from '../utils/log.js';
+
+type CleanupFn = () => void;
 
 /**
  * Manage ressources: interval, timeout, listener, subscription.
  */
 class ResourceManager {
   #debug = CARD_CONTEXT.debug.ressourceManager;
-  #log = null;
-  #resources = new Map();
-  #throttles = new Map();
+  #log: LoggerInstance | null = null;
+  #resources = new Map<string, CleanupFn>();
+  #throttles = new Map<string, { lastCall: number }>();
 
   constructor() {
     this.#log = initLogger(this, this.#debug, ['add', 'remove', 'cleanup']);
@@ -33,73 +35,79 @@ class ResourceManager {
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
-  add(cleanupFn, id) {
+  add(cleanupFn: CleanupFn, id?: string): string {
     if (!is.func(cleanupFn)) {
       throw new Error('Resource must be a function');
     }
     const finalId = id || this.#generateUniqueId();
     if (this.#resources.has(finalId)) {
       this.remove(finalId);
-      this.#log.debug(`Remove: ${finalId}`);
+      this.#log?.debug(`Remove: ${finalId}`);
     }
     this.#resources.set(finalId, cleanupFn);
-    this.#log.debug(`Set: ${finalId}`);
+    this.#log?.debug(`Set: ${finalId}`);
 
     return finalId;
   }
 
-  setInterval(handler, timeout, id) {
-    this.#log.debug('Starting interval with id:', id);
+  setInterval(handler: () => void, timeout: number, id: string): string {
+    this.#log?.debug('Starting interval with id:', id);
     const timerId = setInterval(handler, timeout);
-    this.#log.debug('Timer started with timerId:', timerId);
+    this.#log?.debug('Timer started with timerId:', timerId);
 
     this.add(() => {
-      this.#log.debug('Stopping interval with id:', id);
+      this.#log?.debug('Stopping interval with id:', id);
       clearInterval(timerId);
     }, id);
 
     return id;
   }
 
-  has(id) {
+  has(id: string): boolean {
     return this.#resources.has(id); // Vérifie si un ID existe dans la Map
   }
 
-  setTimeout(handler, timeout, id) {
-    this.#log.debug('Starting timeout with id:', id);
+  setTimeout(handler: () => void, timeout: number, id?: string): string {
+    this.#log?.debug('Starting timeout with id:', id);
     const timerId = setTimeout(handler, timeout);
-    this.#log.debug('Timeout started with timerId:', timerId);
+    this.#log?.debug('Timeout started with timerId:', timerId);
     return this.add(() => clearTimeout(timerId), id);
   }
 
-  addEventListener(target, event, handler, options, id) {
+  addEventListener(
+    target: EventTarget,
+    event: string,
+    handler: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+    id?: string,
+  ): string {
     target.addEventListener(event, handler, options);
     return this.add(() => target.removeEventListener(event, handler, options), id);
   }
 
-  addSubscription(unsubscribeFn, id) {
+  addSubscription(unsubscribeFn: () => void, id?: string): string {
     return this.add(() => {
       unsubscribeFn();
     }, id);
   }
 
-  throttle(fn, delay, id) {
+  throttle(fn: () => void, delay: number, id: string) {
     if (!this.#throttles.has(id)) {
       this.#throttles.set(id, { lastCall: 0 });
       this.add(() => this.resetThrottle(id), id);
     }
 
-    const context = this.#throttles.get(id);
+    const context = this.#throttles.get(id)!;
     const now = Date.now();
 
     if (now - context.lastCall >= delay) {
       context.lastCall = now;
       fn();
-      this.#log.debug('Throttle function - ', id);
+      this.#log?.debug('Throttle function - ', id);
     }
   }
 
-  throttleDebounce(fn, delay, id) {
+  throttleDebounce(fn: () => void, delay: number, id: string) {
     const now = Date.now();
     const keys = {
       throttle: `${id}-throttle`,
@@ -112,7 +120,7 @@ class ResourceManager {
       this.add(() => this.resetThrottle(keys.throttle), keys.throttle);
     }
 
-    const context = this.#throttles.get(keys.throttle);
+    const context = this.#throttles.get(keys.throttle)!;
 
     // CF5 - issue (medium) resolved - the trailing timer was scheduled
     // unconditionally, so a single isolated call always ran fn() twice (leading
@@ -122,7 +130,7 @@ class ResourceManager {
       context.lastCall = now;
       if (this.#resources.has(keys.debounce)) this.remove(keys.debounce);
       fn();
-      this.#log.debug('ThrottleDebounce immediate - ', id);
+      this.#log?.debug('ThrottleDebounce immediate - ', id);
       return;
     }
 
@@ -134,18 +142,18 @@ class ResourceManager {
       () => {
         context.lastCall = Date.now();
         fn();
-        this.#log.debug('ThrottleDebounce trailing - ', id);
+        this.#log?.debug('ThrottleDebounce trailing - ', id);
       },
       delay,
       keys.debounce,
     );
   }
 
-  resetThrottle(id) {
+  resetThrottle(id: string) {
     this.#throttles.delete(id);
   }
 
-  remove(id) {
+  remove(id: string) {
     const cleanupFn = this.#resources.get(id);
     if (cleanupFn) {
       try {
@@ -154,7 +162,7 @@ class ResourceManager {
         console.error(`[ResourceManager] Error while removing '${id}'`, e);
       }
       this.#resources.delete(id);
-      this.#log.debug(`Removed: ${id}`);
+      this.#log?.debug(`Removed: ${id}`);
     }
   }
 
@@ -165,18 +173,17 @@ class ResourceManager {
       } catch (e) {
         console.error(`[ResourceManager] Error while clearing '${id}'`, e);
       }
-      this.#log.debug(`Cleared: ${id}`);
+      this.#log?.debug(`Cleared: ${id}`);
     }
     this.#resources.clear();
     this.#throttles.clear();
-    this.#log.debug('All resources cleared.');
+    this.#log?.debug('All resources cleared.');
   }
 
   // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
 
-  #generateUniqueId() {
-    // eslint-disable-next-line no-useless-assignment
-    let id = null;
+  #generateUniqueId(): string {
+    let id: string;
     do {
       id = Math.random().toString(36).slice(2, 8);
     } while (this.#resources.has(id));
@@ -200,9 +207,20 @@ class ResourceManager {
  * // Destroy
  * this._dom.destroy();
  */
+type UpdateFn = () => void;
+type CacheValue = string | number | boolean | null | undefined;
+
+// _domElements is typed `any` (not HTMLElement) because EditorDOMHelper
+// (src/editor/dom-helper.ts) registers custom elements accessed through it
+// with dynamic, editor-specific properties (hass, value, selector, context,
+// _fieldDef, updateConfig) that don't exist on the base DOM type.
 class DOMHelper {
   #debug = CARD_CONTEXT.debug.ressourceManager;
-  #log = null;
+  #log: LoggerInstance | null = null;
+  _domElements: Map<string, any>;
+  _appliedValues: Map<string, CacheValue>;
+  _pendingUpdates: Map<string, UpdateFn>;
+  _rafScheduled: boolean;
 
   constructor() {
     this.#log = initLogger(this, this.#debug, ['register', 'unregister', 'destroy']);
@@ -217,22 +235,22 @@ class DOMHelper {
   /**
    * Registers a DOM element under a given key.
    */
-  register(key, element) {
-    this.#log.debug('DOMHelper.register(key, element):', { key, element });
+  register(key: string, element: HTMLElement) {
+    this.#log?.debug('DOMHelper.register(key, element):', { key, element });
     this._domElements.set(key, element);
   }
 
   /**
    * Returns the DOM element associated with the given key.
    */
-  get(key) {
+  get(key: string): HTMLElement | undefined {
     return this._domElements.get(key);
   }
 
   /**
    * Unregisters a DOM element and clears its associated cache entries.
    */
-  unregister(key) {
+  unregister(key: string) {
     this._domElements.delete(key);
     for (const cacheKey of this._appliedValues.keys()) {
       if (cacheKey.startsWith(`${key}:`)) {
@@ -248,7 +266,7 @@ class DOMHelper {
    * same key:prop is enqueued multiple times, only the latest function runs.
    * Schedules a single RAF flush if not already pending.
    */
-  enqueue(key, prop, updateFn) {
+  enqueue(key: string, prop: string, updateFn: UpdateFn) {
     this._pendingUpdates.set(`${key}:${prop}`, updateFn);
 
     if (!this._rafScheduled) {
@@ -274,7 +292,7 @@ class DOMHelper {
    * Sets a CSS custom property on the element registered under the given key.
    * Skipped if the value matches the cache — no DOM read required.
    */
-  setStyle(key, prop, value) {
+  setStyle(key: string, prop: string, value: CacheValue) {
     if (is.nullish(value)) return;
     const cacheKey = `${key}:style:${prop}`;
     if (this._appliedValues.get(cacheKey) === value) return;
@@ -283,7 +301,7 @@ class DOMHelper {
     if (!el) return;
 
     this.enqueue(key, `style:${prop}`, () => {
-      el.style.setProperty(prop, value);
+      el.style.setProperty(prop, String(value));
       this._appliedValues.set(cacheKey, value);
     });
   }
@@ -295,7 +313,7 @@ class DOMHelper {
    * gradient) needs this to go away once the condition no longer applies -
    * otherwise it stays stuck from a stale render.
    */
-  removeStyle(key, prop) {
+  removeStyle(key: string, prop: string) {
     const cacheKey = `${key}:style:${prop}`;
     if (!this._appliedValues.has(cacheKey)) return;
 
@@ -312,13 +330,13 @@ class DOMHelper {
    * Sets a CSS custom property synchronously — no RAF, no cache check, no
    * queue. Use when immediate DOM update is required.
    */
-  setStyleNow(key, prop, value) {
+  setStyleNow(key: string, prop: string, value: CacheValue) {
     if (is.nullish(value)) return;
 
     const el = this._domElements.get(key);
     if (!el) return;
 
-    el.style.setProperty(prop, value);
+    el.style.setProperty(prop, String(value));
     this._appliedValues.set(`${key}:style:${prop}`, value); // ← met à jour le cache après
   }
 
@@ -326,7 +344,7 @@ class DOMHelper {
    * Sets the text content of the element registered under the given key.
    * Skipped if the value matches the cache.
    */
-  setText(key, value) {
+  setText(key: string, value: CacheValue) {
     if (is.nullish(value)) return;
     const cacheKey = `${key}:text`;
     if (this._appliedValues.get(cacheKey) === value) return;
@@ -335,7 +353,7 @@ class DOMHelper {
     if (!el) return;
 
     this.enqueue(key, 'text', () => {
-      el.textContent = value;
+      el.textContent = String(value);
       this._appliedValues.set(cacheKey, value);
     });
   }
@@ -354,7 +372,7 @@ class DOMHelper {
   static #SAFE_STYLE_PROPS = new Set(['color', 'background-color']);
   static #DROP_CONTENT_TAGS = new Set(['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'EMBED', 'TEMPLATE', 'NOSCRIPT']);
 
-  static sanitizeHTML(value) {
+  static sanitizeHTML(value: CacheValue): string {
     const html = String(value);
     if (!html.includes('<')) return html; // fast path: no markup, nothing to sanitize
     const body = new DOMParser().parseFromString(html, 'text/html').body;
@@ -362,33 +380,35 @@ class DOMHelper {
     return body.innerHTML;
   }
 
-  static #sanitizeNode(node) {
+  static #sanitizeNode(node: ParentNode) {
     for (const child of [...node.childNodes]) {
       if (child.nodeType === Node.TEXT_NODE) continue;
-      if (child.nodeType !== Node.ELEMENT_NODE || DOMHelper.#DROP_CONTENT_TAGS.has(child.tagName)) {
+      if (child.nodeType !== Node.ELEMENT_NODE || DOMHelper.#DROP_CONTENT_TAGS.has(child.nodeName)) {
         child.remove(); // comments, script/style & co: dropped entirely, content included
         continue;
       }
-      if (!DOMHelper.#SAFE_HTML_TAGS.has(child.tagName)) {
-        DOMHelper.#sanitizeNode(child);
-        child.replaceWith(...child.childNodes); // unknown tag: unwrap, keep sanitized children
+      const el = child as Element;
+      if (!DOMHelper.#SAFE_HTML_TAGS.has(el.tagName)) {
+        DOMHelper.#sanitizeNode(el);
+        el.replaceWith(...el.childNodes); // unknown tag: unwrap, keep sanitized children
         continue;
       }
-      DOMHelper.#scrubAttributes(child);
-      DOMHelper.#sanitizeNode(child);
+      DOMHelper.#scrubAttributes(el);
+      DOMHelper.#sanitizeNode(el);
     }
   }
 
-  static #scrubAttributes(el) {
+  static #scrubAttributes(el: Element) {
+    const htmlEl = el as HTMLElement;
     for (const attr of [...el.attributes]) {
       if (attr.name === 'class') continue; // kept for user Jinja markup relying on class-based styling (e.g. card_mod); classes cannot execute code
       if (attr.name !== 'style') {
         el.removeAttribute(attr.name); // on* handlers, href, src…
         continue;
       }
-      const kept = [...el.style]
+      const kept = [...htmlEl.style]
         .filter((prop) => DOMHelper.#SAFE_STYLE_PROPS.has(prop))
-        .map((prop) => `${prop}: ${el.style.getPropertyValue(prop)}`)
+        .map((prop) => `${prop}: ${htmlEl.style.getPropertyValue(prop)}`)
         .join('; ');
       if (kept) el.setAttribute('style', kept);
       else el.removeAttribute('style');
@@ -400,7 +420,7 @@ class DOMHelper {
    * Content is sanitized (tag/attribute allowlist) before injection.
    * Skipped if the value matches the cache.
    */
-  setHTML(key, value) {
+  setHTML(key: string, value: CacheValue) {
     if (is.nullish(value)) return;
     const cacheKey = `${key}:html`;
     if (this._appliedValues.get(cacheKey) === value) return;
@@ -418,7 +438,7 @@ class DOMHelper {
    * Toggles a CSS class on the element registered under the given key.
    * Skipped if the state matches the cache.
    */
-  toggleClass(key, className, force) {
+  toggleClass(key: string, className: string, force: boolean) {
     if (!className) return;
     const cacheKey = `${key}:class:${className}`;
     if (this._appliedValues.get(cacheKey) === force) return;
@@ -436,11 +456,11 @@ class DOMHelper {
    * Adds one or more CSS classes to the element registered under the given key.
    * Batched via the RAF queue.
    */
-  addClass(key, ...classes) {
+  addClass(key: string, ...classes: (string | false | null | undefined)[]) {
     const el = this._domElements.get(key);
     if (!el) return;
 
-    const filtered = classes.filter(Boolean);
+    const filtered = classes.filter(Boolean) as string[];
     if (!filtered.length) return;
 
     this.enqueue(key, `addClass:${filtered.join(',')}`, () => {
@@ -452,7 +472,7 @@ class DOMHelper {
    * Sets an attribute on the element registered under the given key.
    * Skipped if the value matches the cache.
    */
-  setAttribute(key, attr, value) {
+  setAttribute(key: string, attr: string, value: CacheValue) {
     if (is.nullish(value)) return;
     const cacheKey = `${key}:attr:${attr}`;
     if (this._appliedValues.get(cacheKey) === value) return;
@@ -461,13 +481,13 @@ class DOMHelper {
     if (!el) return;
 
     this.enqueue(key, `attr:${attr}`, () => {
-      el.setAttribute(attr, value);
+      el.setAttribute(attr, String(value));
       this._appliedValues.set(cacheKey, value);
     });
   }
   // ─── Walkthrough ──────────────────────────────────────────────────────────
 
-  static walkUpThroughShadow(node, selector) {
+  static walkUpThroughShadow(node: Node | null, selector: string): HTMLElement | null {
     if (!node) return null;
     if (node instanceof ShadowRoot) return DOMHelper.walkUpThroughShadow(node.host, selector);
     if (node instanceof HTMLElement && node.matches(selector)) return node;
@@ -497,31 +517,38 @@ class DOMHelper {
  * action-related features.
  */
 
+// `config` is the raw card config (entity + per-action `*_action` bags) -
+// deliberately untyped: the action-config shape belongs to HA's own
+// tap/hold/double-tap action schema, not something this helper defines.
+interface ActionHandlerElement extends HTMLElement {
+  bind(target: HTMLElement, options: { hasHold: boolean; hasDoubleClick: boolean }): void;
+}
+
 class ActionHelper {
-  #target = null;
-  #config = null;
+  #target: HTMLElement | null = null;
+  #config: any = null;
   #fromIcon = false;
   #initialized = false;
   #disableIconTap = false;
   #iconClickSources = new Set(['shape', HA_SVG_ICON_TAG, 'img']);
 
-  constructor(target) {
+  constructor(target: HTMLElement | null) {
     this.#target = target;
   }
 
   // CF5 - issue (major) resolved - the HA frontend creates <action-handler>
   // lazily; querySelector could return null and crash if this card loads before
   // any native card
-  static #getActionHandler() {
-    let handler = document.body.querySelector(HA_ACTION_HANDLER_TAG);
+  static #getActionHandler(): ActionHandlerElement {
+    let handler = document.body.querySelector(HA_ACTION_HANDLER_TAG) as ActionHandlerElement | null;
     if (!handler) {
-      handler = document.createElement(HA_ACTION_HANDLER_TAG);
+      handler = document.createElement(HA_ACTION_HANDLER_TAG) as unknown as ActionHandlerElement;
       document.body.appendChild(handler);
     }
     return handler;
   }
 
-  init(config, disableIconTap) {
+  init(config: any, disableIconTap: boolean) {
     // Config and options are refreshed on every call (each connectedCallback);
     // listeners are attached once — see below.
     this.#config = config;
@@ -543,18 +570,18 @@ class ActionHelper {
     this.#target.addEventListener(
       'pointerdown',
       (ev) => {
-        const localName = ev.composedPath()[0].localName;
+        const localName = (ev.composedPath()[0] as HTMLElement).localName;
         this.#fromIcon = !this.#disableIconTap && this.#iconClickSources.has(localName);
       },
       { passive: true },
     );
 
     this.#target.addEventListener('action', (ev) => {
-      this.#handleAction(ev, this.#fromIcon);
+      this.#handleAction(ev as CustomEvent, this.#fromIcon);
     });
   }
 
-  #handleAction(ev, fromIcon) {
+  #handleAction(ev: CustomEvent, fromIcon: boolean) {
     const action = ev.detail.action;
     const iconActionKey = `icon_${action}_action`;
 
@@ -565,7 +592,7 @@ class ActionHelper {
 
     if (!actionConfig) return;
 
-    this.#target.dispatchEvent(
+    this.#target?.dispatchEvent(
       new CustomEvent('hass-action', {
         bubbles: true,
         composed: true,

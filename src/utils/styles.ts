@@ -7,7 +7,14 @@
 
 import { CARD } from './parameters.js';
 
-const css = (strings, ...values) => strings.reduce((acc, s, i) => acc + s + (i < values.length ? values[i] : ''), '');
+/**
+ * Identity tag - behaves exactly like an untagged template literal at
+ * runtime. Marks a template literal as CSS so the build script
+ * (scripts/build.js) can find and minify it without needing to know each
+ * variable/usage by name.
+ */
+const css = (strings: TemplateStringsArray, ...values: unknown[]): string =>
+  strings.reduce((acc, s, i) => acc + s + (i < values.length ? values[i] : ''), '');
 
 const CARD_CSS = css`
 /* =============================================================================
@@ -1834,10 +1841,10 @@ const EDITOR_BASE_STYLE = css`
  *   adopting is done once per shadowRoot and needs no re-application on
  *   re-render.
  */
-const CONSTRUCTED_SHEETS = new Map();
-const getSharedStyleSheet = (cssText) => {
-  if (CONSTRUCTED_SHEETS.has(cssText)) return CONSTRUCTED_SHEETS.get(cssText);
-  let sheet = null;
+const CONSTRUCTED_SHEETS = new Map<string, CSSStyleSheet | null>();
+const getSharedStyleSheet = (cssText: string): CSSStyleSheet | null => {
+  if (CONSTRUCTED_SHEETS.has(cssText)) return CONSTRUCTED_SHEETS.get(cssText) ?? null;
+  let sheet: CSSStyleSheet | null = null;
   try {
     const constructed = new CSSStyleSheet();
     constructed.replaceSync(cssText);

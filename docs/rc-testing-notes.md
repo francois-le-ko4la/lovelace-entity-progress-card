@@ -36,6 +36,23 @@
   painted left-to-right, even when the bar itself fills bottom-to-top
   (`bar_orientation: up` with `bar_position: overlay` or `background`) — the
   gradient direction now follows the bar's actual fill direction.
+- **The fallback icon for an unresolvable entity never rendered.** It was
+  reading `HA_CONTEXT.helpCircleOutline` instead of the actual
+  `HA_CONTEXT.icons.helpCircleOutline` path, so the "unknown entity" placeholder
+  silently ended up with no icon at all. Found by the TypeScript conversion
+  below — the wrong path doesn't exist on the real shape, so the compiler
+  flagged it immediately.
+- Two defensive gaps in `HassProviderSingleton` (`getSameDeviceEntities`,
+  `language`) could throw if called in the narrow window before `hass` is ever
+  set — both now short-circuit the same way every other accessor here already
+  does. Same discovery route as above.
+- **Custom theme editor: reopening a card with an incomplete zone (`min` set,
+  `max` never filled in) showed `theme_mode` stuck on "Preset"** even though the
+  zone list was right there and visible. The schema drops an all-invalid-zones
+  `custom_theme` entirely on validation, and the mode chip's very first render
+  read the validated config instead of the saved YAML — so it disagreed with the
+  zone list (which reads the YAML directly) until the next edit silently fixed
+  it. Now reads the same source the zone list always did.
 
 ### 🧹 Under the hood
 
@@ -80,6 +97,21 @@
   opposite), and the translations section explicitly separates "new language"
   from "fixing an existing one" with a no-coding- required note for
   translation-only contributors.
+- **`src/` is now TypeScript** (22 of 23 files; `utils/translations.js` stays
+  plain JS — it's generated data with no logic). Mixed `.ts`/`.js` via
+  `tsconfig.json`'s `allowJs` and esbuild's native resolution, no separate
+  compile step; `npm run type-check` (`tsc`) is wired into `npm run validate`.
+  Every conversion was checked against its pre-conversion behavior — the
+  data-heavy files and the runtime view/card classes were verified
+  byte-identical or behaviorally identical via bundled A/B comparisons, not just
+  "it still builds". A handful of small "phantom brand" types (`Hass`/
+  `EntityState` in `utils/hass-provider.ts`; `RawConfig`/`Config`/`FieldDef` in
+  the new `utils/types.ts` — `RawConfig` being the as-saved YAML, `Config` the
+  post-schema-validated one) catch an argument-order mixup between adjacent
+  same-shaped bags at compile time without forcing a full interface onto
+  genuinely dynamic runtime shapes - which is exactly what surfaced the
+  `theme_mode` bug above (`editor/base.ts` was quietly passing the wrong one of
+  the two into a field's initial-value resolver).
 
 ---
 
