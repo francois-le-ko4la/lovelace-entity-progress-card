@@ -7,6 +7,19 @@ import { VALUE_CHANGED_EVENT, HA_SELECTOR_TAG, HA_SVG_ICON_TAG } from '../utils/
 import { BAR_STACK_EDITOR_STYLE, CUSTOM_THEME_EDITOR_STYLE } from '../utils/styles.js';
 import { is } from '../utils/common-checks.js';
 
+/******************************************************************************
+ * 📝 ListEditorBase
+ * ============================================================================
+ * Shared base for custom elements that edit an array of row-objects: a label, a
+ * list container, connectedCallback's build-once-then-render lifecycle, the
+ * value setter, and delete-by-index all follow the exact same shape regardless
+ * of what a row actually contains. Concrete subclasses implement _buildDOM()/
+ * _render()/_dispatch() — the same template-method pattern ChipsBase already
+ * uses for the chip family (_buildDOM overridden per concrete chip type).
+ *
+ * @class
+ * @extends HTMLElement
+ */
 class ListEditorBase extends HTMLElement {
   _labelText = '';
   _value = [];
@@ -48,6 +61,13 @@ class ListEditorBase extends HTMLElement {
   }
 }
 
+/**
+ * ✅ ListEditorBase for `bar_stack.entities`: each row is an additional
+ * entity (with `attribute`/`color`/`subtract`) aggregated into the bar
+ * alongside the card's main entity.
+ * @class
+ * @extends ListEditorBase
+ */
 class EntityProgressBarStackEditor extends ListEditorBase {
   static ELEMENT_NAME = 'entity-progress-bar-stack-editor';
 
@@ -346,15 +366,6 @@ class EntityProgressCustomThemeEditor extends ListEditorBase {
 if (!customElements.get(EntityProgressCustomThemeEditor.ELEMENT_NAME)) {
   customElements.define(EntityProgressCustomThemeEditor.ELEMENT_NAME, EntityProgressCustomThemeEditor);
 }
-
-/******************************************************************************
- * 🛠️ EditorBase
- * ============================================================================
- *
- * @class
- * @extends HTMLElement
- */
-
 
 export { ListEditorBase };
 export { EntityProgressBarStackEditor };

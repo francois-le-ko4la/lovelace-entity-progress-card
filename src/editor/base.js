@@ -14,6 +14,20 @@ import { EditorDOMHelper } from './dom-helper.js';
 import { EntityProgressEffectChips, EntityProgressHideChips, EntityProgressValueSourceModeChips, EntityProgressThemeModeChips, EntityProgressBarStackModeChips } from './chips.js';
 import { EntityProgressBarStackEditor, EntityProgressCustomThemeEditor } from './list-editors.js';
 
+/******************************************************************************
+ * 🛠️ EditorBase
+ * ============================================================================
+ *
+ * ✅ Shared base for every per-card-type visual editor. Builds the
+ * expansion-panel form from a subclass's static `_fields` tree (`EditorFactory`
+ * output), and round-trips changes between the rendered `ha-selector`/chips
+ * controls and the card config, via `_configHelper` (a `BaseConfigHelper`
+ * subclass).
+ *
+ * @class
+ * @abstract
+ * @extends HTMLElement
+ */
 class EditorBase extends HTMLElement {
   static _fields = {
     /* --- customize it

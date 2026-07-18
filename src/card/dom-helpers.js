@@ -8,6 +8,14 @@ import { CARD_CONTEXT, HA_SVG_ICON_TAG, HA_ACTION_HANDLER_TAG } from '../utils/p
 import { is } from '../utils/common-checks.js';
 import { initLogger } from '../utils/log.js';
 
+/******************************************************************************
+ * 🛠️ ResourceManager
+ * ============================================================================
+ *
+ * ✅ Manage ressources: interval, timeout, listener, subscription.
+ *
+ * @class
+ */
 class ResourceManager {
   #debug = CARD_CONTEXT.debug.ressourceManager;
   #log = null;
@@ -585,69 +593,6 @@ class ActionHelper {
     );
   }
 }
-
-/******************************************************************************
- * 🛠️ HACore
- * ============================================================================
- *
- * Base class for Home Assistant custom elements (cards, badges, features).
- *
- * HTMLElement
- * └── HACore
- *     ├── HABase
- *     │   ├── EntityProgressCardBase
- *     │   │   ├── EntityProgressCard
- *     │   │   └── EntityProgressBadge
- *     │   └── EntityProgressTemplateBase
- *     │       ├── EntityProgressTemplateCard
- *     │       └── EntityProgressTemplateBadge
- *     └── EntityProgressFeatures
- *
- * Provides: - Shadow DOM initialization and lifecycle management
- * (connectedCallback, disconnectedCallback) - Configuration handling via
- * setConfig() - Hass state tracking and change detection - DOM rendering
- * pipeline: render() → _createCardElements() → _buildStyle() - Batched DOM
- * updates via DOMHelper (RAF queue + value cache) - Jinja2 template
- * subscriptions via WebSocket - Resource lifecycle management (listeners,
- * subscriptions, intervals)
- *
- * Subclasses MUST implement:
- * - _handleHassUpdate()     → react to hass state changes
- * - _updateCSS()            → apply dynamic CSS custom properties
- * - _getJinjaHandlers()     → handle Jinja2 template results
- *
- * Subclasses MAY override: - _structureOptions (getter) → structure options
- * passed to ObjStructure.clone() (barType, barPosition…) - _buildStyle() → CSS
- * class application pipeline (watermark, bar effect, base classes) -
- * _updateDynamicElements() → DOM update orchestration (CSS, Jinja processing)
- *
- * @abstract
- * @extends HTMLElement
- */
-
-/**
- * Shared constructed stylesheets (Constructable Stylesheets API).
- *
- * CF5 - issue (perf) resolved - each card instance used to create its own
- * <style> element holding the full ~47 KB CARD_CSS: N cards on a dashboard
- * meant N parses and N CSSOM copies, re-done on every editor keystroke
- * (setConfig → reset → render). A constructed CSSStyleSheet is parsed once
- * per unique CSS text and shared BY REFERENCE by every shadowRoot that
- * adopts it.
- *
- * Intent & constraints:
- * - Progressive enhancement ONLY. The README promises Firefox 94+ and
- *   Safari 15.4+, but `new CSSStyleSheet()` + `replaceSync` need
- *   Firefox 101 / Safari 16.4. Older engines (e.g. wall-mounted iPads
- *   stuck on iPadOS 15) must keep working: getSharedStyleSheet() returns
- *   null there and the caller falls back to the legacy per-instance
- *   <style> element — the exact pre-existing behavior, no better no worse.
- * - The cache is keyed by CSS text (not by class) so a future subclass
- *   overriding _cardStyle transparently gets its own shared sheet.
- * - adoptedStyleSheets survive `shadowRoot.innerHTML = ''` (reset()):
- *   adopting is done once per shadowRoot and needs no re-application on
- *   re-render.
- */
 
 export { ResourceManager };
 export { DOMHelper };

@@ -11,6 +11,18 @@ import { CardView, BadgeView, CardTemplateView, BadgeTemplateView } from './view
 import { DOMHelper } from './dom-helpers.js';
 import { HACore, HABase } from './core.js';
 
+/******************************************************************************
+ * 🛠️ EntityProgressCardBase
+ * ============================================================================
+ *
+ * ✅ Represents the base class for all standard cards:
+ *  - EntityProgressCardBase / "entity-progress-card"
+ *  - EntityProgressBadge / "entity-progress-badge"
+ *
+ *
+ * @class
+ * @extends HABase
+ */
 class EntityProgressCardBase extends HABase {
   static _hiddenComponents = [...super._hiddenComponents, CARD.style.dynamic.hiddenComponent.value];
 

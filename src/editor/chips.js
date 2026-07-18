@@ -8,6 +8,21 @@ import { CARD, VALUE_CHANGED_EVENT } from '../utils/parameters.js';
 import { CHIPS_HOST_STYLE } from '../utils/styles.js';
 import { is } from '../utils/common-checks.js';
 
+/******************************************************************************
+ * 🛠️ ChipsBase
+ * ============================================================================
+ *
+ * ✅ Shared base for the editor's chip-based selector custom elements: builds
+ * the `<style>` + label + chip-set shadow DOM once (`_buildChipSet`), renders
+ * chip labels from an optional localized map (`_labels`/`_chipLabel`), and
+ * wires per-chip click handlers. Concrete subclasses implement `_buildDOM()`/
+ * `_render()` and the selection model (multi-select vs single-select, see
+ * `SingleSelectChipsBase`).
+ *
+ * @class
+ * @abstract
+ * @extends HTMLElement
+ */
 class ChipsBase extends HTMLElement {
   // CF5 - issue (major) resolved - setLabels() is called by the editor before
   // the element is connected, when the chips Map is still empty; labels are now
@@ -68,6 +83,13 @@ class ChipsBase extends HTMLElement {
   }
 }
 
+/**
+ * ✅ Multi-select chips for `icon_animation`: toggles a set of visual bar
+ * effects, hiding/blocking chips that are mutually incompatible with the
+ * current selection (`effectIncompatibilities`).
+ * @class
+ * @extends ChipsBase
+ */
 class EntityProgressEffectChips extends ChipsBase {
   static ELEMENT_NAME = 'entity-progress-effect-chips';
   static #EFFECTS = [
@@ -145,6 +167,14 @@ if (!customElements.get(EntityProgressEffectChips.ELEMENT_NAME)) {
   customElements.define(EntityProgressEffectChips.ELEMENT_NAME, EntityProgressEffectChips);
 }
 
+/**
+ * ✅ Multi-select chips for the `hide` option: toggles which card components
+ * (icon, name, value, unit, secondary info, progress bar) are hidden. The
+ * offered item list is restricted per field via the `items` setter (e.g.
+ * Template/Badge Template never offer `unit`).
+ * @class
+ * @extends ChipsBase
+ */
 class EntityProgressHideChips extends ChipsBase {
   static ELEMENT_NAME = 'entity-progress-hide-chips';
   static #ITEMS = ['icon', 'name', 'value', 'unit', 'secondary_info', 'progress_bar'];
@@ -196,10 +226,15 @@ if (!customElements.get(EntityProgressHideChips.ELEMENT_NAME)) {
   customElements.define(EntityProgressHideChips.ELEMENT_NAME, EntityProgressHideChips);
 }
 
-// Single-select variant: exactly one mode is always active (no
-// deselect-to-empty), unlike EffectChips/HideChips which toggle membership in
-// an array. Concrete subclasses only need to declare `static MODES`;
-// `this.constructor.MODES` resolves polymorphically.
+/**
+ * ✅ Single-select variant: exactly one mode is always active (no
+ * deselect-to-empty), unlike EffectChips/HideChips which toggle membership in
+ * an array. Concrete subclasses only need to declare `static MODES`;
+ * `this.constructor.MODES` resolves polymorphically.
+ * @class
+ * @abstract
+ * @extends ChipsBase
+ */
 class SingleSelectChipsBase extends ChipsBase {
   #selected = null;
   #chips = new Map();
@@ -234,13 +269,17 @@ class SingleSelectChipsBase extends ChipsBase {
   }
 }
 
-// One element for every "value source" selector (min_value, max_value,
-// watermark.low, watermark.high): the modes are identical, and everything
-// field-specific (id, label, localized option labels,
-// resolveVirtual/onVirtualChange) is per-instance, set by #buildModeChipsField
-// from the field definition — the class itself carries nothing to specialize. A
-// field whose modes ever diverge stops being a "value source" and gets its own
-// class, like theme_mode/bar_stack_mode below.
+/**
+ * ✅ One element for every "value source" selector (min_value, max_value,
+ * watermark.low, watermark.high): the modes are identical, and everything
+ * field-specific (id, label, localized option labels,
+ * resolveVirtual/onVirtualChange) is per-instance, set by #buildModeChipsField
+ * from the field definition — the class itself carries nothing to specialize. A
+ * field whose modes ever diverge stops being a "value source" and gets its own
+ * class, like theme_mode/bar_stack_mode below.
+ * @class
+ * @extends SingleSelectChipsBase
+ */
 class EntityProgressValueSourceModeChips extends SingleSelectChipsBase {
   static ELEMENT_NAME = 'entity-progress-value-source-mode-chips';
   static MODES = ['standard', 'entity', 'jinja'];
@@ -249,6 +288,11 @@ if (!customElements.get(EntityProgressValueSourceModeChips.ELEMENT_NAME)) {
   customElements.define(EntityProgressValueSourceModeChips.ELEMENT_NAME, EntityProgressValueSourceModeChips);
 }
 
+/**
+ * ✅ Single-select chips for `theme_mode`: preset theme vs custom_theme zones.
+ * @class
+ * @extends SingleSelectChipsBase
+ */
 class EntityProgressThemeModeChips extends SingleSelectChipsBase {
   static ELEMENT_NAME = 'entity-progress-theme-mode-chips';
   static MODES = ['preset', 'custom'];
@@ -257,6 +301,12 @@ if (!customElements.get(EntityProgressThemeModeChips.ELEMENT_NAME)) {
   customElements.define(EntityProgressThemeModeChips.ELEMENT_NAME, EntityProgressThemeModeChips);
 }
 
+/**
+ * ✅ Single-select chips for `bar_stack.mode`: stacked/proportional/net
+ * aggregation of the additional bar_stack entities.
+ * @class
+ * @extends SingleSelectChipsBase
+ */
 class EntityProgressBarStackModeChips extends SingleSelectChipsBase {
   static ELEMENT_NAME = 'entity-progress-bar-stack-mode-chips';
   static MODES = ['stacked', 'proportional', 'net'];
@@ -264,20 +314,6 @@ class EntityProgressBarStackModeChips extends SingleSelectChipsBase {
 if (!customElements.get(EntityProgressBarStackModeChips.ELEMENT_NAME)) {
   customElements.define(EntityProgressBarStackModeChips.ELEMENT_NAME, EntityProgressBarStackModeChips);
 }
-
-/******************************************************************************
- * 📝 ListEditorBase
- * ============================================================================
- * Shared base for custom elements that edit an array of row-objects: a label, a
- * list container, connectedCallback's build-once-then-render lifecycle, the
- * value setter, and delete-by-index all follow the exact same shape regardless
- * of what a row actually contains. Concrete subclasses implement _buildDOM()/
- * _render()/_dispatch() — the same template-method pattern ChipsBase already
- * uses for the chip family (_buildDOM overridden per concrete chip type).
- *
- * @class
- * @extends HTMLElement
- */
 
 export { ChipsBase };
 export { EntityProgressEffectChips };

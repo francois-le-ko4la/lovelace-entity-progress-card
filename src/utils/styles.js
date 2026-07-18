@@ -1811,10 +1811,29 @@ const EDITOR_BASE_STYLE = css`
   .migrate-header { display: flex; justify-content: flex-end; }
 `;
 
-/******************************************************************************
- * 📦 Test utils
- ******************************************************************************/
-
+/**
+ * Shared constructed stylesheets (Constructable Stylesheets API).
+ *
+ * CF5 - issue (perf) resolved - each card instance used to create its own
+ * <style> element holding the full ~47 KB CARD_CSS: N cards on a dashboard
+ * meant N parses and N CSSOM copies, re-done on every editor keystroke
+ * (setConfig → reset → render). A constructed CSSStyleSheet is parsed once
+ * per unique CSS text and shared BY REFERENCE by every shadowRoot that
+ * adopts it.
+ *
+ * Intent & constraints:
+ * - Progressive enhancement ONLY. The README promises Firefox 94+ and
+ *   Safari 15.4+, but `new CSSStyleSheet()` + `replaceSync` need
+ *   Firefox 101 / Safari 16.4. Older engines (e.g. wall-mounted iPads
+ *   stuck on iPadOS 15) must keep working: getSharedStyleSheet() returns
+ *   null there and the caller falls back to the legacy per-instance
+ *   <style> element — the exact pre-existing behavior, no better no worse.
+ * - The cache is keyed by CSS text (not by class) so a future subclass
+ *   overriding _cardStyle transparently gets its own shared sheet.
+ * - adoptedStyleSheets survive `shadowRoot.innerHTML = ''` (reset()):
+ *   adopting is done once per shadowRoot and needs no re-application on
+ *   re-render.
+ */
 const CONSTRUCTED_SHEETS = new Map();
 const getSharedStyleSheet = (cssText) => {
   if (CONSTRUCTED_SHEETS.has(cssText)) return CONSTRUCTED_SHEETS.get(cssText);

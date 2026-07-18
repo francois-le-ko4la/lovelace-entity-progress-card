@@ -10,6 +10,43 @@ import { PercentHelper, ThemeManager, EntityCollectionHelper, EntityOrValue } fr
 import { HassProviderSingleton } from '../utils/hass-provider.js';
 import { BaseConfigHelper, CardConfigHelper, BadgeConfigHelper, FeatureConfigHelper, TemplateConfigHelper, BadgeTemplateConfigHelper } from './config-helpers.js';
 
+/******************************************************************************
+ * 🛠️ ViewCore
+ * ============================================================================
+ *
+ * ✅ A view class for rendering minimal cards in a user interface. This class
+ * manages configuration, entity states, user interactions, and visual
+ * appearance of cards including layouts, orientations, watermarks, and
+ * interactive elements.
+ *
+ * ViewCore ├── ViewBase │ ├── CardView │ ├── BadgeView │ └── FeatureView ├──
+ * CardTemplateView └── BadgeTemplateView
+ *
+ * @class
+ * @description Handles the display and behavior of minimal cards with support
+ *              for Home Assistant entities, user actions, and visual
+ *              customization (watermarks, shapes, orientations, clickable
+ *              elements).
+ *
+ * @example
+ * const cardView = new ViewCore();
+ * cardView.config = {
+ *   entity: 'sensor.temperature',
+ *   layout: 'vertical',
+ *   bar_orientation: 'rtl',
+ *   force_circular_background: true,
+ *   watermark: { low: 10, high: 30, type: 'gradient' }
+ * };
+ *
+ * // Check if components are hidden
+ * if (!cardView.hasComponentHiddenFlag('icon')) {
+ *   // Render icon
+ * }
+ *
+ * // Access computed properties
+ * const hasShape = cardView.hasVisibleShape;
+ * const isClickable = cardView.hasClickableCard;
+ */
 class ViewCore {
   _hassProvider = HassProviderSingleton.getInstance();
   _lastPercent = null;
@@ -891,32 +928,44 @@ class CardView extends ViewBase {
   _configHelper = new CardConfigHelper();
 }
 
+/**
+ * ✅ ViewBase variant for the Badge type — BadgeConfigHelper.
+ * @class
+ * @extends ViewBase
+ */
 class BadgeView extends ViewBase {
   _configHelper = new BadgeConfigHelper();
 }
 
+/**
+ * ✅ ViewBase variant for the Tile Feature type — FeatureConfigHelper.
+ * @class
+ * @extends ViewBase
+ */
 class FeatureView extends ViewBase {
   _configHelper = new FeatureConfigHelper();
 }
 
+/**
+ * ✅ ViewCore variant for the Jinja-driven Template card — TemplateConfigHelper.
+ * @class
+ * @extends ViewCore
+ */
 class CardTemplateView extends ViewCore {
   _configHelper = new TemplateConfigHelper();
   icon = null;
 }
 
+/**
+ * ✅ ViewCore variant for the Jinja-driven Template badge —
+ * BadgeTemplateConfigHelper.
+ * @class
+ * @extends ViewCore
+ */
 class BadgeTemplateView extends ViewCore {
   _configHelper = new BadgeTemplateConfigHelper();
   icon = null;
 }
-
-/******************************************************************************
- * 🛠️ ResourceManager
- * ============================================================================
- *
- * ✅ Manage ressources: interval, timeout, listener, subscription.
- *
- * @class
- */
 
 export { ViewCore };
 export { ViewBase };

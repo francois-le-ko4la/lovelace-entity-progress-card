@@ -9,6 +9,16 @@ import { HA_CONTEXT, CARD, THEME, SEV } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
 
+/******************************************************************************
+ * 🛠️ Manage YAML options
+ * ============================================================================
+ * structural validation ideas to manage inputs (1.5+).
+ * deliberately verbose by design: no external dependencies, fully typed errors,
+ * and scales cleanly across multiple card types.
+ *
+ * @inspired by superstruct (MIT License) - Copyright (c) @ianstormtaylor
+ * @see https://github.com/ianstormtaylor/superstruct
+ */
 class ValidationError extends Error {
   constructor(
     path = [],
@@ -374,77 +384,92 @@ function struct(validator, { allowBelowBarPosition = true } = {}) {
 
     return result;
   };
-  const postProcess = (data) => {
-    const result = { ...data };
+  // Each applyXxxRule below handles one independent config-consistency rule,
+  // pulled out of postProcess so its own conditions don't add to
+  // postProcess's cognitive complexity - postProcess itself is just the
+  // fixed pipeline order (later rules can depend on earlier ones having
+  // already resolved layout/bar_position/bar_size to their final values).
 
-    if (!result.layout) result.layout = CARD.layout.orientations.horizontal.label;
-
-    // 'below' isn't a legal bar_position for every schema (the Feature one
-    // restricts it to ['default', 'top', 'bottom']) - this rewrite would
-    // otherwise inject a value never validated as legal there.
+  // 'below' isn't a legal bar_position for every schema (the Feature one
+  // restricts it to ['default', 'top', 'bottom']) - this rewrite would
+  // otherwise inject a value never validated as legal there.
+  const applyBelowBarPositionRule = (result, allowBelowBarPosition) => {
     if (
       allowBelowBarPosition &&
       result.bar_size === CARD.style.bar.sizeOptions.xlarge.label &&
       result.bar_position === 'default'
     )
       result.bar_position = 'below';
+  };
 
+  const applyBarSingleLineRule = (result) => {
     if (result.bar_position !== 'overlay' && result.bar_single_line) result.bar_single_line = false;
+  };
 
-    // bar_max_width only affects .horizontal.small/.medium/.large (see the
-    // CSS rule on .progress-container) - 'below'/'top'/'bottom'/'overlay'/
-    // 'background' all render through a separate container element instead
-    // (never .progress-container), and .horizontal.xlarge has no matching
-    // max-width rule either. By this point layout/bar_position/bar_size are
-    // already resolved to their final values (defaults applied, the
-    // xlarge+default->below rewrite above already ran), so this check can't
-    // be fooled by an unset field.
+  // bar_max_width only affects .horizontal.small/.medium/.large (see the CSS
+  // rule on .progress-container) - 'below'/'top'/'bottom'/'overlay'/
+  // 'background' all render through a separate container element instead
+  // (never .progress-container), and .horizontal.xlarge has no matching
+  // max-width rule either. By this point layout/bar_position/bar_size are
+  // already resolved to their final values (defaults applied, the
+  // xlarge+default->below rewrite above already ran), so this check can't be
+  // fooled by an unset field.
+  const applyBarMaxWidthRule = (result) => {
     const barMaxWidthAllowed =
       result.layout === CARD.layout.orientations.horizontal.label &&
       result.bar_position === 'default' &&
       result.bar_size !== CARD.style.bar.sizeOptions.xlarge.label;
     if (result.bar_max_width && !barMaxWidthAllowed) result.bar_max_width = undefined;
+  };
 
-    // 'up' only has a visible effect in two combinations (see
-    // HACore#_addBaseClasses's vertical-bar/horizontal-bar decision, and the
-    // editor's own upAllowed/resetUpIfInvalid) - mirrored here so a raw
-    // YAML/Jinja config that bypasses the editor doesn't keep a stored 'up'
-    // that silently does nothing.
+  // 'up' only has a visible effect in two combinations (see
+  // HACore#_addBaseClasses's vertical-bar/horizontal-bar decision, and the
+  // editor's own upAllowed/resetUpIfInvalid) - mirrored here so a raw
+  // YAML/Jinja config that bypasses the editor doesn't keep a stored 'up'
+  // that silently does nothing.
+  const applyBarOrientationUpRule = (result) => {
     const upAllowed =
       (result.layout === CARD.layout.orientations.vertical.label && result.bar_position === 'overlay') ||
       result.bar_position === 'background';
     if (result.bar_orientation === 'up' && !upAllowed) result.bar_orientation = 'ltr';
+  };
 
-    // text_shadow only applies via .overlay or .background (see the CSS rule
-    // on :is(.overlay, .background).text-shadow) - same reasoning as
-    // bar_single_line right above, just a different pair of valid positions.
+  // text_shadow only applies via .overlay or .background (see the CSS rule on
+  // :is(.overlay, .background).text-shadow) - same reasoning as
+  // bar_single_line above, just a different pair of valid positions.
+  const applyTextShadowRule = (result) => {
     if (result.bar_position !== 'overlay' && result.bar_position !== 'background' && result.text_shadow) {
       result.text_shadow = false;
     }
+  };
 
-    // bar_color_mode (segment/rainbow) only has an effect with a theme or
-    // custom_theme active, and never in center_zero (see ViewCore.
-    // colorGradient, which returns null in both cases regardless of mode) -
-    // mirrors the editor's own bar_color_mode showIf.
-    const hasTheme = !is.nullish(result.theme) || is.nonEmptyArray(result.custom_theme);
+  // bar_color_mode (segment/rainbow) only has an effect with a theme or
+  // custom_theme active, and never in center_zero (see ViewCore.
+  // colorGradient, which returns null in both cases regardless of mode) -
+  // mirrors the editor's own bar_color_mode showIf.
+  const applyBarColorModeRule = (result, hasTheme) => {
     if (result.bar_color_mode && result.bar_color_mode !== 'auto' && !(hasTheme && !result.center_zero)) {
       result.bar_color_mode = 'auto';
     }
+  };
 
-    // interpolate needs the same active theme as bar_color_mode, and is only
-    // meaningful alongside bar_color_mode: 'auto' (or unset) - mirrors the
-    // editor's own interpolate showIf, and its onChange that already clears
-    // interpolate interactively when bar_color_mode changes to non-auto.
+  // interpolate needs the same active theme as bar_color_mode, and is only
+  // meaningful alongside bar_color_mode: 'auto' (or unset) - mirrors the
+  // editor's own interpolate showIf, and its onChange that already clears
+  // interpolate interactively when bar_color_mode changes to non-auto.
+  const applyInterpolateRule = (result, hasTheme) => {
     if (result.interpolate && !(hasTheme && (is.nullish(result.bar_color_mode) || result.bar_color_mode === 'auto'))) {
       result.interpolate = false;
     }
+  };
 
-    // reverse_secondary_info_row: layout: vertical hardcodes
-    // --current-secondary-info-flex-direction to 'column' unconditionally
-    // (see the CSS rule on .vertical), ignoring --secondary-info-row-reverse
-    // entirely - mirrors ViewCore#hasReversedSecondaryInfoRow (bar_position
-    // nullish-coalesced to 'default' so Badge/Badge Template, which never
-    // have that key at all, aren't wrongly treated as invalid).
+  // reverse_secondary_info_row: layout: vertical hardcodes
+  // --current-secondary-info-flex-direction to 'column' unconditionally (see
+  // the CSS rule on .vertical), ignoring --secondary-info-row-reverse
+  // entirely - mirrors ViewCore#hasReversedSecondaryInfoRow (bar_position
+  // nullish-coalesced to 'default' so Badge/Badge Template, which never have
+  // that key at all, aren't wrongly treated as invalid).
+  const applyReverseSecondaryInfoRowRule = (result) => {
     if (
       result.reverse_secondary_info_row &&
       !(
@@ -454,6 +479,22 @@ function struct(validator, { allowBelowBarPosition = true } = {}) {
     ) {
       result.reverse_secondary_info_row = false;
     }
+  };
+
+  const postProcess = (data) => {
+    const result = { ...data };
+    if (!result.layout) result.layout = CARD.layout.orientations.horizontal.label;
+
+    applyBelowBarPositionRule(result, allowBelowBarPosition);
+    applyBarSingleLineRule(result);
+    applyBarMaxWidthRule(result);
+    applyBarOrientationUpRule(result);
+    applyTextShadowRule(result);
+
+    const hasTheme = !is.nullish(result.theme) || is.nonEmptyArray(result.custom_theme);
+    applyBarColorModeRule(result, hasTheme);
+    applyInterpolateRule(result, hasTheme);
+    applyReverseSecondaryInfoRowRule(result);
 
     return result;
   };
@@ -662,6 +703,18 @@ const watermarkSchema = {
   disable_high: types.optionalBooleanWithDefault(CARD.config.defaults.watermark.disable_high),
 };
 
+/******************************************************************************
+ * 🛠️ YamlSchemaFactory
+ * ============================================================================
+ *
+ * ✅ Builds the per-card-type YAML schemas (`card`, `badge`, `feature`,
+ * `template`, `badgeTemplate`) from the `types`/`struct` primitives above.
+ * Each static getter returns a `struct(...)`-validated schema, consumed by a
+ * ConfigHelper's `_yamlSchema` (see config-helpers.js) to validate and
+ * normalize a raw config.
+ *
+ * @class
+ */
 class YamlSchemaFactory {
   static get feature() {
     return struct(
@@ -1036,16 +1089,6 @@ class YamlSchemaFactory {
     });
   }
 }
-
-/******************************************************************************
- * 🛠️ BaseConfigHelper
- * ============================================================================
- *
- * ✅ base class for managing and validating all card configuration.
- *
- * @class
- */
-
 
 export { ValidationError };
 export { SKIP_PROPERTY };

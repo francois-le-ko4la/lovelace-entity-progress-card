@@ -356,6 +356,204 @@ const EditorFactory = {
   // per field instead.
   widthUnless: (condition) => (condition ? {} : { width: availableSpace() }),
 
+  // Every themeXxxFields() below is pulled out of theme() itself for the same
+  // reason as themeModeFields/widthUnless above: keep each conditional
+  // block's own ternaries out of theme()'s cognitive complexity budget.
+
+  themeColorModeFields: (template) =>
+    template
+      ? {}
+      : {
+          bar_color_mode: EditorFieldsType.select('bar_color_mode', {
+            showIf: (c) => (!is.nullish(c.theme) || is.nonEmptyArray(c.custom_theme)) && !c.center_zero,
+            // Selecting a non-auto color mode is incompatible with
+            // interpolate: clear it.
+            onChange: (value, config) => (value && value !== 'auto' ? { ...config, interpolate: undefined } : config),
+          }),
+          interpolate: EditorFieldsType.toggle('interpolate', {
+            showIf: (c) =>
+              (!is.nullish(c.theme) || is.nonEmptyArray(c.custom_theme)) &&
+              (is.nullish(c.bar_color_mode) || c.bar_color_mode === 'auto'),
+          }),
+        },
+
+  themeCardOnlyFields: (badge, resetUpIfInvalid) =>
+    badge
+      ? {}
+      : {
+          // Half-width once a theme is active, to pair with `icon` once
+          // `color` (icon's usual partner) hides.
+          icon_animation: EditorFieldsType.select('icon_animation', {
+            width: (c) => ((!is.nullish(c.theme) || is.array(c.custom_theme)) ? availableSpace() : '100%'),
+          }),
+          force_circular_background: EditorFieldsType.toggle('force_circular_background'),
+          bar_position: EditorFieldsType.select('bar_position', {
+            width: availableSpace(),
+            onChange: (value, config) => resetUpIfInvalid(config),
+          }),
+        },
+
+  // Both are badge-only (deleted from the badge schema, see
+  // YamlSchemaFactory.badge). bar_single_line only ever applies via .overlay
+  // (postProcess forces it back to false for any other bar_position);
+  // text_shadow also applies via .background - text sits on top of the bar
+  // there too, same legibility need.
+  themeSingleLineShadowFields: (badge) =>
+    badge
+      ? {}
+      : {
+          bar_single_line: EditorFieldsType.toggle('bar_single_line', {
+            showIf: (c) => c.bar_position === 'overlay',
+          }),
+          text_shadow: EditorFieldsType.toggle('text_shadow', {
+            showIf: (c) => c.bar_position === 'overlay' || c.bar_position === 'background',
+          }),
+        },
+
+  // bar_max_width only affects .horizontal.small/.medium/.large (see the CSS
+  // rule on .progress-container) - 'below'/'top'/'bottom'/'overlay'/
+  // 'background' all render through a separate container element instead,
+  // and .horizontal.xlarge has no matching max-width rule either (see the
+  // schema's own postProcess, which clears bar_max_width server-side for the
+  // same reason - this is just the editor mirror of it). Badge/badgeTemplate
+  // opt out entirely (see their own .delete(['bar_max_width'])): without a
+  // 'layout' key they never get the 'horizontal' class, so the option would
+  // be inert there.
+  themeMaxWidthFields: (badge) => {
+    if (badge) return {};
+    const barMaxWidthAllowed = (c) =>
+      (c.layout ?? 'horizontal') === 'horizontal' &&
+      (c.bar_position ?? 'default') === 'default' &&
+      (c.bar_size ?? 'small') !== 'xlarge';
+    return {
+      bar_max_width_toggle: EditorFieldsType.toggle('bar_max_width_toggle', {
+        virtual: true,
+        showIf: barMaxWidthAllowed,
+        resolveVirtual: (c) => Boolean(c.bar_max_width),
+        onVirtualChange: (value, config) => ({
+          ...config,
+          bar_max_width: value ? '300px' : undefined,
+        }),
+      }),
+      bar_max_width: EditorFieldsType.slider('bar_max_width', {
+        virtual: true,
+        // The toggle right above already carries this label ("Bar max
+        // width") - repeating it on the slider itself is redundant.
+        noLabel: true,
+        showIf: (c) => barMaxWidthAllowed(c) && Boolean(c.bar_max_width),
+        resolveVirtual: (c) => parseInt(c.bar_max_width) || 0,
+        onVirtualChange: (value, config) => ({
+          ...config,
+          bar_max_width: value ? `${value}px` : undefined,
+        }),
+      }),
+    };
+  },
+
+  // Not gated on `template` - watermarkSchema is the exact same shape for
+  // Card and Template (see YamlSchemaFactory.card/.template), and wmSide's
+  // toggle/entity/jinja machinery only ever reads config.watermark.*, so
+  // nothing here is Card-specific.
+  themeWatermarkFields: () => {
+    const wm = (extra) => (c) => Boolean(c.watermark) && (extra ? extra(c) : true);
+    return {
+      watermark_toggle: EditorFieldsType.toggle('watermark_toggle', {
+        virtual: true,
+        resolveVirtual: (c) => Boolean(c.watermark),
+        onVirtualChange: (value, config) => ({
+          ...config,
+          watermark: value ? {} : undefined,
+        }),
+      }),
+      'watermark.type': EditorFieldsType.select('watermark.type', {
+        type: 'watermark_type',
+        showIf: wm(),
+        width: availableSpace(),
+      }),
+      'watermark.opacity': EditorFieldsType.decimal('watermark.opacity', {
+        type: 'opacity',
+        showIf: wm(),
+        width: availableSpace(),
+      }),
+      // ── Groupes LOW / HIGH (générés par wmSide) ────────────────────
+      ...wmSide('low', 20),
+      ...wmSide('high', 80),
+      'watermark.line_size': EditorFieldsType.text('watermark.line_size', {
+        showIf: wm((c) => c.watermark?.type === 'line'),
+      }),
+    };
+  },
+
+  themeBadgeIconColorFields: (badge) =>
+    badge
+      ? {}
+      : {
+          badge_icon: EditorFieldsType.tpl('badge_icon'),
+          badge_color: EditorFieldsType.tpl('badge_color'),
+        },
+
+  // Alert (alert_when) — not in the template schema.
+  themeAlertFields: (template) =>
+    template
+      ? {}
+      : {
+          alert_toggle: EditorFieldsType.toggle('alert_toggle', {
+            virtual: true,
+            resolveVirtual: (c) => Boolean(c.alert_when),
+            onVirtualChange: (value, config) => ({
+              ...config,
+              alert_when: value ? {} : undefined,
+            }),
+          }),
+          'alert_when.above': EditorFieldsType.number('alert_when.above', {
+            showIf: (c) => Boolean(c.alert_when),
+            width: availableSpace(),
+          }),
+          'alert_when.below': EditorFieldsType.number('alert_when.below', {
+            showIf: (c) => Boolean(c.alert_when),
+            width: availableSpace(),
+          }),
+          'alert_when.color': EditorFieldsType.select('alert_when.color', {
+            type: 'color',
+            showIf: (c) => Boolean(c.alert_when),
+          }),
+          'alert_when.highlight': EditorFieldsType.select('alert_when.highlight', {
+            type: 'alert_highlight',
+            showIf: (c) => Boolean(c.alert_when),
+            width: availableSpace(),
+          }),
+          // Leaving 'ping' selectable even with highlight: background is
+          // intentional - ViewCore.alertAnimation degrades that combination
+          // to 'static' rather than doing nothing, same as other
+          // invalid-combination fallbacks in this codebase (e.g. bar_scale
+          // log outside a valid range).
+          'alert_when.animation': EditorFieldsType.select('alert_when.animation', {
+            type: 'alert_animation',
+            showIf: (c) => Boolean(c.alert_when),
+            width: availableSpace(),
+          }),
+        },
+
+  // frameless/marginless: still valid for badges in the schema (raw YAML
+  // still works) and documented as such - just not worth a control in the
+  // badge editor, a deliberate choice, not a dead-CSS case. `height` is
+  // genuinely deleted from the badge schema (see YamlSchemaFactory.badge).
+  themeCardLayoutFields: (badge) =>
+    badge
+      ? {}
+      : {
+          frameless: EditorFieldsType.toggle('frameless', { width: availableSpace() }),
+          marginless: EditorFieldsType.toggle('marginless', { width: availableSpace() }),
+          height: EditorFieldsType.text('height', { width: availableSpace() }),
+        },
+
+  themeLayoutField: (badge, resetUpIfInvalid) =>
+    badge
+      ? {}
+      : {
+          layout: EditorFieldsType.select('layout', { onChange: (value, config) => resetUpIfInvalid(config) }),
+        },
+
   theme: (template, badge) => {
     // 'up' only has a visible effect in these two combinations (see
     // HACore#_addBaseClasses's vertical-bar/horizontal-bar decision) - shared
@@ -365,326 +563,158 @@ const EditorFactory = {
     const resetUpIfInvalid = (config) =>
       config.bar_orientation === 'up' && !upAllowed(config) ? { ...config, bar_orientation: 'ltr' } : config;
     return {
-    title: 'editor.title.theme',
-    icon: HA_CONTEXT.icons.listBox,
-    fields: {
-      ...EditorFactory.themeModeFields(template),
-      ...(template
-        ? {}
-        : {
-            bar_color_mode: EditorFieldsType.select('bar_color_mode', {
-              showIf: (c) => (!is.nullish(c.theme) || is.nonEmptyArray(c.custom_theme)) && !c.center_zero,
-              // Selecting a non-auto color mode is incompatible with
-              // interpolate: clear it.
-              onChange: (value, config) => (value && value !== 'auto' ? { ...config, interpolate: undefined } : config),
-            }),
-            interpolate: EditorFieldsType.toggle('interpolate', {
-              showIf: (c) =>
-                (!is.nullish(c.theme) || is.nonEmptyArray(c.custom_theme)) &&
-                (is.nullish(c.bar_color_mode) || c.bar_color_mode === 'auto'),
-            }),
+      title: 'editor.title.theme',
+      icon: HA_CONTEXT.icons.listBox,
+      fields: {
+        ...EditorFactory.themeModeFields(template),
+        ...EditorFactory.themeColorModeFields(template),
+        icon: EditorFieldsType.templateOrType('icon', template, 'icon', template ? {} : { width: availableSpace() }),
+        color: EditorFieldsType.templateOrType('color', template, 'color', {
+          showIf: (c) => is.nullish(c.theme) && !is.array(c.custom_theme),
+          ...(template ? {} : { width: availableSpace() }),
+        }),
+        ...EditorFactory.themeCardOnlyFields(badge, resetUpIfInvalid),
+        bar_orientation: EditorFieldsType.select('bar_orientation', {
+          // Badge/Badge Template have no bar_position/layout, so 'up' is
+          // statically excluded there; elsewhere, only offered when upAllowed
+          // (see postProcess for the matching runtime reset).
+          type: badge ? 'bar_orientation_no_up' : (c) => (upAllowed(c) ? 'bar_orientation' : 'bar_orientation_no_up'),
+          // Half-width everywhere except plain Badge (full-width there).
+          ...EditorFactory.widthUnless(badge && !template),
+        }),
+        bar_size: EditorFieldsType.select('bar_size', {
+          ...EditorFactory.badgeRestrictedType(badge, 'bar_size_no_xlarge'),
+          // Full-width for Template/Badge Template (bar_color is a Jinja field
+          // there, no row partner) or once a theme is active (bar_color hides).
+          width: (c) => (template || !is.nullish(c.theme) || is.array(c.custom_theme) ? '100%' : availableSpace()),
+          // top/bottom/overlay/background all hard-override the bar's own
+          // thickness in CSS regardless of bar_size (see ha-card.overlay,
+          // .bottom-container/.top-container, ha-card.background).
+          showIf: (c) => !['top', 'bottom', 'overlay', 'background'].includes(c.bar_position),
+        }),
+        bar_color: EditorFieldsType.templateOrType('bar_color', template, 'color', {
+          showIf: (c) => is.nullish(c.theme) && !is.array(c.custom_theme),
+          // Full-width once bar_size (its row partner) hides for the same
+          // bar_position values.
+          ...(template
+            ? {}
+            : {
+                width: (c) =>
+                  ['top', 'bottom', 'overlay', 'background'].includes(c.bar_position) ? '100%' : availableSpace(),
+              }),
+        }),
+        ...EditorFactory.themeSingleLineShadowFields(badge),
+        bar_segments: EditorFieldsType.number('bar_segments', {
+          // Full-width for Template/Badge Template: bar_scale (its row partner
+          // below) doesn't exist there at all.
+          ...(template ? { width: '100%' } : { width: availableSpace() }),
+        }),
+        // Not in YamlSchemaFactory.template: percent comes straight from Jinja
+        // there, so the log/linear min-max mapping this drives has nothing to
+        // act on - showing it would silently do nothing on save (same trap as
+        // #111's min_value/max_value on a template card).
+        ...(!template
+          ? {
+              bar_scale: EditorFieldsType.select('bar_scale', {
+                width: availableSpace(),
+                showIf: (c) => !c.center_zero,
+              }),
+            }
+          : {}),
+        ...EditorFactory.themeMaxWidthFields(badge),
+        reverse_secondary_info_row: EditorFieldsType.toggle('reverse_secondary_info_row', {
+          // Badge/Badge Template have neither key at all (always undefined) but
+          // structurally render exactly like layout: horizontal + bar_position:
+          // default - the (?? 'horizontal') fallback (missing before) is what
+          // actually lets it show and work for them, matching bar_position's
+          // own fallback right next to it.
+          showIf: (c) => (!c.bar_position || c.bar_position === 'default') && (c.layout ?? 'horizontal') === 'horizontal',
+        }),
+        center_zero: EditorFieldsType.toggle('center_zero', {
+          virtual: true,
+          showIf: (c) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode),
+          resolveVirtual: (c) => Boolean(c.center_zero),
+          onVirtualChange: (value, config) => ({
+            ...config,
+            center_zero: value ? (is.plainObject(config.center_zero) ? config.center_zero : true) : false,
           }),
-      icon: EditorFieldsType.templateOrType('icon', template, 'icon', template ? {} : { width: availableSpace() }),
-      color: EditorFieldsType.templateOrType('color', template, 'color', {
-        showIf: (c) => is.nullish(c.theme) && !is.array(c.custom_theme),
-        ...(template ? {} : { width: availableSpace() }),
-      }),
-      ...(badge
-        ? {}
-        : {
-            // Half-width once a theme is active, to pair with `icon` once
-            // `color` (icon's usual partner) hides.
-            icon_animation: EditorFieldsType.select('icon_animation', {
-              width: (c) => ((!is.nullish(c.theme) || is.array(c.custom_theme)) ? availableSpace() : '100%'),
-            }),
-            force_circular_background: EditorFieldsType.toggle('force_circular_background'),
-            bar_position: EditorFieldsType.select('bar_position', {
-              width: availableSpace(),
-              onChange: (value, config) => resetUpIfInvalid(config),
-            }),
-          }),
-      bar_orientation: EditorFieldsType.select('bar_orientation', {
-        // Badge/Badge Template have no bar_position/layout, so 'up' is
-        // statically excluded there; elsewhere, only offered when upAllowed
-        // (see postProcess for the matching runtime reset).
-        type: badge ? 'bar_orientation_no_up' : (c) => (upAllowed(c) ? 'bar_orientation' : 'bar_orientation_no_up'),
-        // Half-width everywhere except plain Badge (full-width there).
-        ...EditorFactory.widthUnless(badge && !template),
-      }),
-      bar_size: EditorFieldsType.select('bar_size', {
-        ...EditorFactory.badgeRestrictedType(badge, 'bar_size_no_xlarge'),
-        // Full-width for Template/Badge Template (bar_color is a Jinja field
-        // there, no row partner) or once a theme is active (bar_color hides).
-        width: (c) => (template || !is.nullish(c.theme) || is.array(c.custom_theme) ? '100%' : availableSpace()),
-        // top/bottom/overlay/background all hard-override the bar's own
-        // thickness in CSS regardless of bar_size (see ha-card.overlay,
-        // .bottom-container/.top-container, ha-card.background).
-        showIf: (c) => !['top', 'bottom', 'overlay', 'background'].includes(c.bar_position),
-      }),
-      bar_color: EditorFieldsType.templateOrType('bar_color', template, 'color', {
-        showIf: (c) => is.nullish(c.theme) && !is.array(c.custom_theme),
-        // Full-width once bar_size (its row partner) hides for the same
-        // bar_position values.
-        ...(template
-          ? {}
-          : {
-              width: (c) =>
-                ['top', 'bottom', 'overlay', 'background'].includes(c.bar_position) ? '100%' : availableSpace(),
-            }),
-      }),
-      ...(badge
-        ? {}
-        : {
-            // Both are badge-only (deleted from the badge schema, see
-            // YamlSchemaFactory.badge). bar_single_line only ever applies via
-            // .overlay (postProcess forces it back to false for any other
-            // bar_position); text_shadow also applies via .background - text
-            // sits on top of the bar there too, same legibility need.
-            bar_single_line: EditorFieldsType.toggle('bar_single_line', {
-              showIf: (c) => c.bar_position === 'overlay',
-            }),
-            text_shadow: EditorFieldsType.toggle('text_shadow', {
-              showIf: (c) => c.bar_position === 'overlay' || c.bar_position === 'background',
-            }),
-          }),
-      bar_segments: EditorFieldsType.number('bar_segments', {
-        // Full-width for Template/Badge Template: bar_scale (its row partner
-        // below) doesn't exist there at all.
-        ...(template ? { width: '100%' } : { width: availableSpace() }),
-      }),
-      // Not in YamlSchemaFactory.template: percent comes straight from Jinja
-      // there, so the log/linear min-max mapping this drives has nothing to
-      // act on - showing it would silently do nothing on save (same trap as
-      // #111's min_value/max_value on a template card).
-      ...(!template
-        ? {
-            bar_scale: EditorFieldsType.select('bar_scale', {
-              width: availableSpace(),
-              showIf: (c) => !c.center_zero,
-            }),
-          }
-        : {}),
-      // bar_max_width only affects .horizontal.small/.medium/.large (see the
-      // CSS rule on .progress-container) - 'below'/'top'/'bottom'/'overlay'/
-      // 'background' all render through a separate container element
-      // instead, and .horizontal.xlarge has no matching max-width rule
-      // either (see the schema's own postProcess, which clears bar_max_width
-      // server-side for the same reason - this is just the editor mirror of
-      // it). Badge/badgeTemplate opt out entirely (see their own
-      // .delete(['bar_max_width'])): without a 'layout' key they never get
-      // the 'horizontal' class, so the option would be inert there.
-      ...(!badge
-        ? (() => {
-            const barMaxWidthAllowed = (c) =>
-              (c.layout ?? 'horizontal') === 'horizontal' &&
-              (c.bar_position ?? 'default') === 'default' &&
-              (c.bar_size ?? 'small') !== 'xlarge';
+        }),
+        center_zero_value: EditorFieldsType.number('center_zero_value', {
+          target: 'center_zero',
+          showIf: (c) => Boolean(c.center_zero) && (c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode)),
+          virtual: true,
+          resolveVirtual: (c) => (is.plainObject(c.center_zero) ? (c.center_zero.value ?? 0) : 0),
+          onVirtualChange: (value, config) => {
+            const growthPercent = is.plainObject(config.center_zero)
+              ? Boolean(config.center_zero.growth_percent)
+              : false;
             return {
-              bar_max_width_toggle: EditorFieldsType.toggle('bar_max_width_toggle', {
-                virtual: true,
-                showIf: barMaxWidthAllowed,
-                resolveVirtual: (c) => Boolean(c.bar_max_width),
-                onVirtualChange: (value, config) => ({
-                  ...config,
-                  bar_max_width: value ? '300px' : undefined,
-                }),
-              }),
-              bar_max_width: EditorFieldsType.slider('bar_max_width', {
-                virtual: true,
-                // The toggle right above already carries this label ("Bar max
-                // width") - repeating it on the slider itself is redundant.
-                noLabel: true,
-                showIf: (c) => barMaxWidthAllowed(c) && Boolean(c.bar_max_width),
-                resolveVirtual: (c) => parseInt(c.bar_max_width) || 0,
-                onVirtualChange: (value, config) => ({
-                  ...config,
-                  bar_max_width: value ? `${value}px` : undefined,
-                }),
-              }),
-            };
-          })()
-        : {}),
-      reverse_secondary_info_row: EditorFieldsType.toggle('reverse_secondary_info_row', {
-        // Badge/Badge Template have neither key at all (always undefined) but
-        // structurally render exactly like layout: horizontal + bar_position:
-        // default - the (?? 'horizontal') fallback (missing before) is what
-        // actually lets it show and work for them, matching bar_position's
-        // own fallback right next to it.
-        showIf: (c) => (!c.bar_position || c.bar_position === 'default') && (c.layout ?? 'horizontal') === 'horizontal',
-      }),
-      center_zero: EditorFieldsType.toggle('center_zero', {
-        virtual: true,
-        showIf: (c) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode),
-        resolveVirtual: (c) => Boolean(c.center_zero),
-        onVirtualChange: (value, config) => ({
-          ...config,
-          center_zero: value ? (is.plainObject(config.center_zero) ? config.center_zero : true) : false,
-        }),
-      }),
-      center_zero_value: EditorFieldsType.number('center_zero_value', {
-        target: 'center_zero',
-        showIf: (c) => Boolean(c.center_zero) && (c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode)),
-        virtual: true,
-        resolveVirtual: (c) => (is.plainObject(c.center_zero) ? (c.center_zero.value ?? 0) : 0),
-        onVirtualChange: (value, config) => {
-          const growthPercent = is.plainObject(config.center_zero) ? Boolean(config.center_zero.growth_percent) : false;
-          return {
-            ...config,
-            center_zero: value || growthPercent ? { value: Number(value) || 0, growth_percent: growthPercent } : true,
-          };
-        },
-      }),
-      center_zero_growth_percent: EditorFieldsType.toggle('center_zero_growth_percent', {
-        target: 'center_zero',
-        showIf: (c) => Boolean(c.center_zero) && (c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode)),
-        virtual: true,
-        resolveVirtual: (c) => (is.plainObject(c.center_zero) ? Boolean(c.center_zero.growth_percent) : false),
-        onVirtualChange: (value, config) => {
-          const currentValue = is.plainObject(config.center_zero) ? (config.center_zero.value ?? 0) : 0;
-          return {
-            ...config,
-            center_zero: currentValue || value ? { value: currentValue, growth_percent: value } : true,
-          };
-        },
-      }),
-      bar_effect_jinja: EditorFieldsType.toggle('bar_effect_jinja', {
-        virtual: true,
-        resolveVirtual: (c) => is.nonEmptyString(c.bar_effect),
-        onVirtualChange: (value, config) => ({
-          ...config,
-          bar_effect: value ? '{{ }}' : [],
-        }),
-      }),
-      bar_effect_chips: EditorFieldsType.select('bar_effect_chips', {
-        type: 'effect_chips',
-        target: 'bar_effect',
-        showIf: (c) => !is.nonEmptyString(c.bar_effect),
-      }),
-      bar_effect: EditorFieldsType.tpl('bar_effect', { noLabel: true, showIf: (c) => is.nonEmptyString(c.bar_effect) }),
-      // ── Watermark ────────────────────────────────────────────────────────
-      // Not gated on `template` - watermarkSchema is the exact same shape for
-      // Card and Template (see YamlSchemaFactory.card/.template), and wmSide's
-      // toggle/entity/jinja machinery only ever reads config.watermark.*, so
-      // nothing here is Card-specific.
-      ...(() => {
-        const wm = (extra) => (c) => Boolean(c.watermark) && (extra ? extra(c) : true);
-        return {
-          watermark_toggle: EditorFieldsType.toggle('watermark_toggle', {
-            virtual: true,
-            resolveVirtual: (c) => Boolean(c.watermark),
-            onVirtualChange: (value, config) => ({
               ...config,
-              watermark: value ? {} : undefined,
-            }),
-          }),
-          'watermark.type': EditorFieldsType.select('watermark.type', {
-            type: 'watermark_type',
-            showIf: wm(),
-            width: availableSpace(),
-          }),
-          'watermark.opacity': EditorFieldsType.decimal('watermark.opacity', {
-            type: 'opacity',
-            showIf: wm(),
-            width: availableSpace(),
-          }),
-          // ── Groupes LOW / HIGH (générés par wmSide) ────────────────────
-          ...wmSide('low', 20),
-          ...wmSide('high', 80),
-          'watermark.line_size': EditorFieldsType.text('watermark.line_size', {
-            showIf: wm((c) => c.watermark?.type === 'line'),
-          }),
-        };
-      })(),
-      // ── Badge fields ─────────────────────────────────────────────────────
-      ...(badge
-        ? {}
-        : {
-            badge_icon: EditorFieldsType.tpl('badge_icon'),
-            badge_color: EditorFieldsType.tpl('badge_color'),
-          }),
-      // ── Hide ─────────────────────────────────────────────────────────────
-      hide_jinja: EditorFieldsType.toggle('hide_jinja', {
-        virtual: true,
-        resolveVirtual: (c) => is.nonEmptyString(c.hide),
-        onVirtualChange: (value, config) => ({
-          ...config,
-          hide: value ? '{{ }}' : [],
+              center_zero: value || growthPercent ? { value: Number(value) || 0, growth_percent: growthPercent } : true,
+            };
+          },
         }),
-      }),
-      hide_chips: EditorFieldsType.select('hide_chips', {
-        type: 'hide_chips',
-        target: 'hide',
-        showIf: (c) => !is.nonEmptyString(c.hide),
-        // Template/BadgeTemplate schemas reject 'unit' (see
-        // YamlSchemaFactory.template) - no separate unit field there, the
-        // value comes straight from Jinja `percent`.
-        ...(template ? { items: ['icon', 'name', 'value', 'secondary_info', 'progress_bar'] } : {}),
-      }),
-      hide: EditorFieldsType.tpl('hide', { noLabel: true, showIf: (c) => is.nonEmptyString(c.hide) }),
-      // ── Alert (alert_when) — not in the template schema ─────────────────
-      ...(!template
-        ? {
-            alert_toggle: EditorFieldsType.toggle('alert_toggle', {
-              virtual: true,
-              resolveVirtual: (c) => Boolean(c.alert_when),
-              onVirtualChange: (value, config) => ({
-                ...config,
-                alert_when: value ? {} : undefined,
-              }),
-            }),
-            'alert_when.above': EditorFieldsType.number('alert_when.above', {
-              showIf: (c) => Boolean(c.alert_when),
-              width: availableSpace(),
-            }),
-            'alert_when.below': EditorFieldsType.number('alert_when.below', {
-              showIf: (c) => Boolean(c.alert_when),
-              width: availableSpace(),
-            }),
-            'alert_when.color': EditorFieldsType.select('alert_when.color', {
-              type: 'color',
-              showIf: (c) => Boolean(c.alert_when),
-            }),
-            'alert_when.highlight': EditorFieldsType.select('alert_when.highlight', {
-              type: 'alert_highlight',
-              showIf: (c) => Boolean(c.alert_when),
-              width: availableSpace(),
-            }),
-            // Leaving 'ping' selectable even with highlight: background is
-            // intentional - ViewCore.alertAnimation degrades that combination
-            // to 'static' rather than doing nothing, same as other
-            // invalid-combination fallbacks in this codebase (e.g. bar_scale
-            // log outside a valid range).
-            'alert_when.animation': EditorFieldsType.select('alert_when.animation', {
-              type: 'alert_animation',
-              showIf: (c) => Boolean(c.alert_when),
-              width: availableSpace(),
-            }),
-          }
-        : {}),
-      // ── Card-only layout options ──────────────────────────────────────────
-      // frameless/marginless: still valid for badges in the schema (raw YAML
-      // still works) and documented as such - just not worth a control in the
-      // badge editor, a deliberate choice, not a dead-CSS case. `height` is
-      // genuinely deleted from the badge schema (see YamlSchemaFactory.badge).
-      ...(!badge
-        ? {
-            frameless: EditorFieldsType.toggle('frameless', { width: availableSpace() }),
-            marginless: EditorFieldsType.toggle('marginless', { width: availableSpace() }),
-            height: EditorFieldsType.text('height', { width: availableSpace() }),
-          }
-        : {}),
-      // Not gated on `badge` - valid for badges too (not in
-      // YamlSchemaFactory.badge's delete list), unlike its former neighbors
-      // above.
-      min_width: EditorFieldsType.text('min_width', EditorFactory.widthUnless(badge)),
-      // ── Layout (always last) ──────────────────────────────────────────────
-      ...(badge
-        ? {}
-        : {
-            layout: EditorFieldsType.select('layout', { onChange: (value, config) => resetUpIfInvalid(config) }),
+        center_zero_growth_percent: EditorFieldsType.toggle('center_zero_growth_percent', {
+          target: 'center_zero',
+          showIf: (c) => Boolean(c.center_zero) && (c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode)),
+          virtual: true,
+          resolveVirtual: (c) => (is.plainObject(c.center_zero) ? Boolean(c.center_zero.growth_percent) : false),
+          onVirtualChange: (value, config) => {
+            const currentValue = is.plainObject(config.center_zero) ? (config.center_zero.value ?? 0) : 0;
+            return {
+              ...config,
+              center_zero: currentValue || value ? { value: currentValue, growth_percent: value } : true,
+            };
+          },
+        }),
+        bar_effect_jinja: EditorFieldsType.toggle('bar_effect_jinja', {
+          virtual: true,
+          resolveVirtual: (c) => is.nonEmptyString(c.bar_effect),
+          onVirtualChange: (value, config) => ({
+            ...config,
+            bar_effect: value ? '{{ }}' : [],
           }),
-    },
-  };
+        }),
+        bar_effect_chips: EditorFieldsType.select('bar_effect_chips', {
+          type: 'effect_chips',
+          target: 'bar_effect',
+          showIf: (c) => !is.nonEmptyString(c.bar_effect),
+        }),
+        bar_effect: EditorFieldsType.tpl('bar_effect', { noLabel: true, showIf: (c) => is.nonEmptyString(c.bar_effect) }),
+        // ── Watermark ────────────────────────────────────────────────────────
+        ...EditorFactory.themeWatermarkFields(),
+        // ── Badge fields ─────────────────────────────────────────────────────
+        ...EditorFactory.themeBadgeIconColorFields(badge),
+        // ── Hide ─────────────────────────────────────────────────────────────
+        hide_jinja: EditorFieldsType.toggle('hide_jinja', {
+          virtual: true,
+          resolveVirtual: (c) => is.nonEmptyString(c.hide),
+          onVirtualChange: (value, config) => ({
+            ...config,
+            hide: value ? '{{ }}' : [],
+          }),
+        }),
+        hide_chips: EditorFieldsType.select('hide_chips', {
+          type: 'hide_chips',
+          target: 'hide',
+          showIf: (c) => !is.nonEmptyString(c.hide),
+          // Template/BadgeTemplate schemas reject 'unit' (see
+          // YamlSchemaFactory.template) - no separate unit field there, the
+          // value comes straight from Jinja `percent`.
+          ...(template ? { items: ['icon', 'name', 'value', 'secondary_info', 'progress_bar'] } : {}),
+        }),
+        hide: EditorFieldsType.tpl('hide', { noLabel: true, showIf: (c) => is.nonEmptyString(c.hide) }),
+        ...EditorFactory.themeAlertFields(template),
+        // ── Card-only layout options ──────────────────────────────────────
+        ...EditorFactory.themeCardLayoutFields(badge),
+        // Not gated on `badge` - valid for badges too (not in
+        // YamlSchemaFactory.badge's delete list), unlike its former neighbors
+        // above.
+        min_width: EditorFieldsType.text('min_width', EditorFactory.widthUnless(badge)),
+        // ── Layout (always last) ──────────────────────────────────────────
+        ...EditorFactory.themeLayoutField(badge, resetUpIfInvalid),
+      },
+    };
   },
 
   interactions: (badge) => {
@@ -738,11 +768,6 @@ const EditorFactory = {
     interactions: EditorFactory.interactions(badge),
   }),
 };
-
-/******************************************************************************
- * 🛠️ EntityProgressCardEditor
- * ============================================================================
- */
 
 export { field };
 export { EditorFieldsType };

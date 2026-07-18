@@ -13,6 +13,44 @@ import { HassProviderSingleton } from '../utils/hass-provider.js';
 import { CardView, FeatureView } from './view.js';
 import { ResourceManager, DOMHelper, ActionHelper } from './dom-helpers.js';
 
+/******************************************************************************
+ * 🛠️ HACore
+ * ============================================================================
+ *
+ * Base class for Home Assistant custom elements (cards, badges, features).
+ *
+ * HTMLElement
+ * └── HACore
+ *     ├── HABase
+ *     │   ├── EntityProgressCardBase
+ *     │   │   ├── EntityProgressCard
+ *     │   │   └── EntityProgressBadge
+ *     │   └── EntityProgressTemplateBase
+ *     │       ├── EntityProgressTemplateCard
+ *     │       └── EntityProgressTemplateBadge
+ *     └── EntityProgressFeatures
+ *
+ * Provides: - Shadow DOM initialization and lifecycle management
+ * (connectedCallback, disconnectedCallback) - Configuration handling via
+ * setConfig() - Hass state tracking and change detection - DOM rendering
+ * pipeline: render() → _createCardElements() → _buildStyle() - Batched DOM
+ * updates via DOMHelper (RAF queue + value cache) - Jinja2 template
+ * subscriptions via WebSocket - Resource lifecycle management (listeners,
+ * subscriptions, intervals)
+ *
+ * Subclasses MUST implement:
+ * - _handleHassUpdate()     → react to hass state changes
+ * - _updateCSS()            → apply dynamic CSS custom properties
+ * - _getJinjaHandlers()     → handle Jinja2 template results
+ *
+ * Subclasses MAY override: - _structureOptions (getter) → structure options
+ * passed to ObjStructure.clone() (barType, barPosition…) - _buildStyle() → CSS
+ * class application pipeline (watermark, bar effect, base classes) -
+ * _updateDynamicElements() → DOM update orchestration (CSS, Jinja processing)
+ *
+ * @abstract
+ * @extends HTMLElement
+ */
 class HACore extends HTMLElement {
   static version = VERSION;
   static _baseClass = META.types.feature.typeName;
@@ -1286,20 +1324,6 @@ class HABase extends HACore {
     );
   }
 }
-
-/******************************************************************************
- * 🛠️ EntityProgressCardBase
- * ============================================================================
- *
- * ✅ Represents the base class for all standard cards:
- *  - EntityProgressCardBase / "entity-progress-card"
- *  - EntityProgressBadge / "entity-progress-badge"
- *
- *
- * @class
- * @extends HABase
- */
-
 
 export { HACore };
 export { HABase };

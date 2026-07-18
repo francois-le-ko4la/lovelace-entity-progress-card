@@ -10,6 +10,14 @@ import { initLogger } from '../utils/log.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
 import { YamlSchemaFactory } from './schema.js';
 
+/******************************************************************************
+ * 🛠️ BaseConfigHelper
+ * ============================================================================
+ *
+ * ✅ base class for managing and validating all card configuration.
+ *
+ * @class
+ */
 class BaseConfigHelper {
   #hassProvider = HassProviderSingleton.getInstance();
   #HAError = null;
@@ -256,6 +264,19 @@ class BaseConfigHelper {
   }
 }
 
+/******************************************************************************
+ * 🛠️ CardConfigHelper
+ * ============================================================================
+ *
+ * ✅ Config helper for the standard card/badge/feature types: negotiates the
+ * YAML config against `YamlSchemaFactory.card`, migrates legacy option shapes
+ * (bare `max_value` entity string, `disable_unit`, `additions`), and fills
+ * computed defaults (center_zero's symmetric `min_value`, entity attribute
+ * mapping).
+ *
+ * @class
+ * @extends BaseConfigHelper
+ */
 class CardConfigHelper extends BaseConfigHelper {
   _yamlSchema = YamlSchemaFactory.card;
 
@@ -349,59 +370,45 @@ class CardConfigHelper extends BaseConfigHelper {
   }
 }
 
+/**
+ * ✅ CardConfigHelper variant for the Badge type — same negotiation logic,
+ * `YamlSchemaFactory.badge` schema.
+ * @class
+ * @extends CardConfigHelper
+ */
 class BadgeConfigHelper extends CardConfigHelper {
   _yamlSchema = YamlSchemaFactory.badge;
 }
 
+/**
+ * ✅ CardConfigHelper variant for the Tile Feature type —
+ * `YamlSchemaFactory.feature` schema.
+ * @class
+ * @extends CardConfigHelper
+ */
 class FeatureConfigHelper extends CardConfigHelper {
   _yamlSchema = YamlSchemaFactory.feature;
 }
 
+/**
+ * ✅ Config helper for the Jinja-driven Template card —
+ * `YamlSchemaFactory.template` schema.
+ * @class
+ * @extends BaseConfigHelper
+ */
 class TemplateConfigHelper extends BaseConfigHelper {
   _yamlSchema = YamlSchemaFactory.template;
 }
 
+/**
+ * ✅ Config helper for the Jinja-driven Template badge —
+ * `YamlSchemaFactory.badgeTemplate` schema.
+ * @class
+ * @extends BaseConfigHelper
+ */
 class BadgeTemplateConfigHelper extends BaseConfigHelper {
   _yamlSchema = YamlSchemaFactory.badgeTemplate;
 }
-
-/******************************************************************************
- * 🛠️ ViewCore
- * ============================================================================
- *
- * ✅ A view class for rendering minimal cards in a user interface. This class
- * manages configuration, entity states, user interactions, and visual
- * appearance of cards including layouts, orientations, watermarks, and
- * interactive elements.
- *
- * ViewCore ├── ViewBase │ ├── CardView │ ├── BadgeView │ └── FeatureView ├──
- * CardTemplateView └── BadgeTemplateView
- *
- * @class
- * @description Handles the display and behavior of minimal cards with support
- *              for Home Assistant entities, user actions, and visual
- *              customization (watermarks, shapes, orientations, clickable
- *              elements).
- *
- * @example
- * const cardView = new ViewCore();
- * cardView.config = {
- *   entity: 'sensor.temperature',
- *   layout: 'vertical',
- *   bar_orientation: 'rtl',
- *   force_circular_background: true,
- *   watermark: { low: 10, high: 30, type: 'gradient' }
- * };
- *
- * // Check if components are hidden
- * if (!cardView.hasComponentHiddenFlag('icon')) {
- *   // Render icon
- * }
- *
- * // Access computed properties
- * const hasShape = cardView.hasVisibleShape;
- * const isClickable = cardView.hasClickableCard;
- */
 
 export { BaseConfigHelper };
 export { CardConfigHelper };

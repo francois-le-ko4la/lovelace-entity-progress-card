@@ -5,6 +5,19 @@
 
 import { VERSION, META, CARD_CONTEXT } from './parameters.js';
 
+/******************************************************************************
+ * 🛠️ RegistrationHelper
+ * ============================================================================
+ *
+ * ✅ Registers a card/badge/feature custom element (and its editor, if any)
+ * with `customElements` and with Home Assistant's discovery arrays
+ * (`window.customCards`/`customBadges`/`customCardFeatures`). In dev mode
+ * (`CARD_CONTEXT.dev`), every type/editor tag and displayed name gets a
+ * `-dev`/` (dev)` suffix so a dev build can be installed side by side with
+ * the shipped one without colliding.
+ *
+ * @class
+ */
 class RegistrationHelper {
   static _devMode = CARD_CONTEXT.dev;
   static #targetKey = {

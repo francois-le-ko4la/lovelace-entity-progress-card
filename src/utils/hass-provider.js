@@ -10,6 +10,18 @@ import { TRANSLATIONS } from './translations.js';
 import { is, has } from './common-checks.js';
 import { Logger } from './log.js';
 
+/******************************************************************************
+ * 🛠️ HassProviderSingleton
+ * ============================================================================
+ *
+ * ✅ Singleton wrapper around Home Assistant's `hass` object: entity/device/
+ * area lookups, attribute resolution, localization (`localize()`), and
+ * number/relative-time formatting. Accessed via `getInstance()` — the
+ * constructor throws if called directly, so every consumer shares the same
+ * instance and the same current `hass` reference.
+ *
+ * @class
+ */
 class HassProviderSingleton {
   static #instance = null;
   static #allowInit = false;

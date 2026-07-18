@@ -10,6 +10,18 @@ import { Logger } from '../utils/log.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
 import { StructureTemplates } from './structure.js';
 
+/******************************************************************************
+ * 🛠️ ObjStructure
+ * ============================================================================
+ *
+ * ✅ Builds and caches a card type's DOM structure (`StructureTemplates[
+ * cardType]`) as a `<template>`, cloned on each `render()`/`clone()` call
+ * instead of re-parsing `innerHTML` every time. Cached per unique structure
+ * options (barType, barPosition, layout, ...), since the markup only depends
+ * on those, not on the entity's live state.
+ *
+ * @class
+ */
 class ObjStructure {
   // CF5 - issue (perf) resolved - card.innerHTML re-parsed the full HTML string
   // on every render (each card creation, each editor keystroke). The structure
@@ -157,13 +169,15 @@ class NumberFormatter {
 }
 
 /******************************************************************************
- * 🛠️ ValueHelper
+ * 🛠️ TypedValueHelper
  * ============================================================================
  *
- * ✅ Helper class for managing numeric values.
- * This class validates and stores a numeric value.
+ * ✅ Base class for a self-validating typed value: stores a value only if
+ * `_validate()` (overridden per subclass) accepts it, otherwise falls back
+ * to the constructor's initial value. `isValid` reflects the last assignment.
  *
  * @class
+ * @abstract
  */
 
 class TypedValueHelper {
@@ -191,6 +205,11 @@ class TypedValueHelper {
   }
 }
 
+/**
+ * ✅ TypedValueHelper accepting any finite number.
+ * @class
+ * @extends TypedValueHelper
+ */
 class ValueHelper extends TypedValueHelper {
   _validate(v) {
     return is.number(v);
@@ -1519,18 +1538,6 @@ class EntityOrValue {
     this.#entity()?.refresh();
   }
 }
-
-/******************************************************************************
- * 🛠️ Manage YAML options
- * ============================================================================
- * structural validation ideas to manage inputs (1.5+).
- * deliberately verbose by design: no external dependencies, fully typed errors,
- * and scales cleanly across multiple card types.
- *
- * @inspired by superstruct (MIT License) - Copyright (c) @ianstormtaylor
- * @see https://github.com/ianstormtaylor/superstruct
- */
-
 
 export { ObjStructure };
 export { NumberFormatter };
