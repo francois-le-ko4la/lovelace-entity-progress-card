@@ -112,6 +112,12 @@ We welcome translations for new languages! Currently supported languages:
 
 ## 🛠️ Getting Started
 
+> [!TIP]
+>
+> **Just fixing or adding a translation?** You don't need anything below — no
+> fork/clone, no `npm install`, no tooling. Edit `xx.json` directly in GitHub's
+> web editor and open a PR from there. See [Translations](#translations).
+
 ### Fork & Clone
 
 1. Fork the repository on GitHub
@@ -123,7 +129,9 @@ We welcome translations for new languages! Currently supported languages:
    ```
 
 3. Install dependencies (needed to run lint/validate locally, see
-   [Testing Your Changes](#contribution-guidelines)):
+   [Testing Your Changes](#contribution-guidelines)) — this also installs a
+   pre-commit hook (husky + lint-staged) that auto-formats/lints staged
+   `src/**/*.js` and `*.md` files on every commit:
 
    ```bash
    npm install
@@ -138,23 +146,40 @@ We welcome translations for new languages! Currently supported languages:
 - **JavaScript Vanilla** syntax
 - **HTMLElement**
 - **Clear variable names** and functions
-- **Comment complex logic** thoroughly
+- **Comment only the non-obvious**: a hidden constraint, a bug workaround, a WHY
+  a future reader would otherwise miss — not what the code already says by being
+  well-named. Terse when a comment is warranted at all.
 - **Follow existing code patterns**
-- **No dependencies**
+- **No runtime dependencies** — the shipped card stays dependency-free (see
+  [Design principles](development.md#design-principles)); devDependencies for
+  linting/building/testing are fine.
 
-### New translation
+### Translations
+
+**Adding a new language** (none of the existing `translations/*.json` covers it
+yet):
 
 - Copy the file `./translations/template.json` and name it with the language
   ([code](https://developers.home-assistant.io/docs/voice/intent-recognition/supported-languages/))
 - Fill in all the empty values in `xx.json` with your translations.
 - Submit a pull request with your `xx.json`
 
+**Fixing or improving an existing translation** (a typo, an awkward wording, a
+missing key added since you last translated):
+
+- Edit `translations/xx.json` directly — no template, no copy, just change the
+  value(s) you want to fix.
+- Submit a pull request with your change.
+
 > [!NOTE]
 >
-> CI only checks that your JSON is well-formed and matches `template.json`'s
-> structure (`npm run i18n:validate:structure`). You don't need to touch
-> anything else — merging translations into the JS bundle is a maintainer step
-> done before release.
+> **You don't need to know how to code for this.** CI only checks that your JSON
+> is well-formed and matches `template.json`'s structure — you don't need to
+> touch anything else, and merging translations into the JS bundle is a
+> maintainer step done before release. If you made a mistake, the PR checks will
+> simply fail and show what's wrong; nothing gets merged broken. Stuck, or the
+> error message doesn't make sense? Open a [GitHub Issues] or ask on [Discord] —
+> we'll sort it out together.
 
 ### Commit Messages
 
@@ -179,6 +204,8 @@ Before submitting a PR, please ensure:
 
 - ✅ `npm run validate` passes locally (syntax check + lint + translations sync)
   — CI runs the same check on `src/**` changes
+- ✅ `npm run format:js:check` passes (or just commit — the pre-commit hook
+  auto-fixes formatting for you)
 - ✅ **Card loads** without console errors
 - ✅ **All existing features** still work
 - ✅ **New features** work as expected

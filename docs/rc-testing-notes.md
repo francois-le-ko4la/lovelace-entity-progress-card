@@ -45,18 +45,41 @@
   only shows them in the relevant context.
 - **The single-file `entity-progress-card.js` monolith is gone.** The card is
   now developed as a proper module tree under `src/` (`utils`/`card`/`editor`)
-  and assembled by `scripts/build.js` (esbuild bundle + CSS-in-JS
-  minification) into the same shipped output — no behavior change intended,
-  card/badge/feature registration and the console banner are unchanged. Two
-  build modes: `build:test` (dev mode, as committed) and `build:prod` (forces
-  dev/debug flags off regardless of source state — see `npm run
-  check:release-flags` and `scripts/lib/release-flags.js`).
+  and assembled by `scripts/build.js` (esbuild bundle + CSS-in-JS minification)
+  into the same shipped output — no behavior change intended, card/badge/feature
+  registration and the console banner are unchanged. Two build modes:
+  `build:test` (dev mode, as committed) and `build:prod` (forces dev/debug flags
+  off regardless of source state — see `npm run check:release-flags` and
+  `scripts/lib/release-flags.js`).
 - **HACS distribution changed accordingly**: `hacs.json` no longer declares
-  `content_in_root` — there's nothing to serve at the repo root anymore.
-  Tagged installs are unaffected (already served from the release asset
-  `release.yaml` uploads); this only removes the now-nonexistent
-  default-branch-tracking fallback. Same pattern other HACS plugins use (e.g.
-  Mushroom: `src/` + release-only, no root file).
+  `content_in_root` — there's nothing to serve at the repo root anymore. Tagged
+  installs are unaffected (already served from the release asset `release.yaml`
+  uploads); this only removes the now-nonexistent default-branch-tracking
+  fallback. Same pattern other HACS plugins use (e.g. Mushroom: `src/` +
+  release-only, no root file).
+- **Class documentation standardized** across all of `src/` to plain JSDoc:
+  dropped the old banner-style headers that just repeated the class name, the
+  redundant `@class`/`@description` tags, and decorative emoji prefixes. Several
+  docblocks left orphaned by the split (describing a class defined in a
+  different file than the one they ended up in) were relocated to the right
+  place.
+- **Two long-standing ESLint complexity warnings fixed** (`schema.js`'s config
+  `postProcess`, `factory.js`'s `theme()` field builder) by extracting each
+  independent rule/section into its own small named function — same behavior,
+  `eslint` now reports 0 warnings.
+- **Linting hardened**: `eqeqeq` (smart — bans `==`/`!=` except the `x == null`
+  idiom), `no-console` (only the few deliberate uses allowed), strict blank
+  lines between every class member, and `eslint-plugin-import-x`'s `no-cycle`
+  (no circular imports today; now guarded going forward as `src/` grows).
+- **Prettier now formats the JS source too**, not just Markdown — and a
+  pre-commit hook (`husky` + `lint-staged`) auto-formats/lints staged files on
+  every commit, so this stays consistent without anyone having to remember to
+  run it.
+- `docs/contributing.md` clarified: comment guidance now matches the project's
+  actual terse-comments convention (was previously telling contributors the
+  opposite), and the translations section explicitly separates "new language"
+  from "fixing an existing one" with a no-coding- required note for
+  translation-only contributors.
 
 ---
 

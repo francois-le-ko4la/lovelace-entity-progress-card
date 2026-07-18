@@ -15,6 +15,7 @@ for contributors and maintainers. It complements the user-facing
 - [Editor architecture](#editor-architecture)
 - [Internationalization](#internationalization)
 - [Adding a new option](#adding-a-new-option)
+- [Code quality & tooling](#code-quality--tooling)
 - [Release process](#release-process)
 - [Logging & debugging](#logging--debugging)
 
@@ -23,10 +24,10 @@ for contributors and maintainers. It complements the user-facing
 ## Design principles
 
 - **Zero runtime dependency.** The card ships as one bundled, dependency-free
-  JavaScript file (built from the `src/` module tree by `scripts/build.js`,
-  see [Release process](#release-process)) — no Lit, no external sanitizer,
-  no CDN request at runtime. This constrains some choices and explains the
-  hand-rolled infrastructure described below.
+  JavaScript file (built from the `src/` module tree by `scripts/build.js`, see
+  [Release process](#release-process)) — no Lit, no external sanitizer, no CDN
+  request at runtime. This constrains some choices and explains the hand-rolled
+  infrastructure described below.
 - **Vanilla web components.** Cards are plain `HTMLElement` subclasses with
   shadow DOM. The reactive-update machinery a framework would provide (batching,
   diffing, style sharing) is implemented by dedicated helper classes
@@ -41,7 +42,7 @@ for contributors and maintainers. It complements the user-facing
 
 ## Object architecture
 
-The file is organized in layers, bottom-up:
+`src/` is organized in layers, bottom-up:
 
 ```text
 ┌─────────────────────────────────────────────────────────────────┐
@@ -261,7 +262,7 @@ elapsed time from `finishes_at`.
 
 ### Registration
 
-At module load (bottom of the file):
+At module load, in `src/index.js` (the bundle entry point):
 
 ```js
 RegistrationHelper.registerCard(META.types.card, EntityProgressCard, EntityProgressCardEditor);
@@ -561,17 +562,52 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
 9. **Watched entities** — if the option can reference another entity, add it to
    `_registerWatchedEntities` so state changes trigger a refresh.
 
+## Code quality & tooling
+
+- **Linting** (`eslint.config.mjs`, flat config): `js.configs.recommended` plus
+  `eslint-plugin-compat` (browser support matrix — Chrome/Edge/Firefox/Safari/
+  Opera floors matching the README's support table), `eslint-plugin-sonarjs`
+  (`cognitive-complexity` capped at 15, duplicate-string/collapsible-if/
+  identical-functions checks), and `eslint-plugin-import-x`
+  (`import-x/ no-cycle` — `src/` has real cross-file imports now that the module
+  split exists; nothing currently prevents a future circular import from
+  creeping in except this rule). Notable custom rules: `eqeqeq: 'smart'` (bans
+  `==`/ `!=` except the `x == null` null-or-undefined idiom, used once in
+  `common-checks.js`), `no-console` (only `debug`/`info`/`warn`/`error`/
+  `groupCollapsed`/`groupEnd` allowed — `console.log` is banned everywhere
+  except one inline-disabled call in the startup banner), and
+  `lines-between-class-members: 'always'` (no exception for short members —
+  every class member gets a blank line before it). `npm run lint` / `make lint`.
+- **Formatting**: `.prettierrc` applies to `src/**/*.js` too (not just markdown)
+  — `npm run format:js` / `format:js:check` / `format` (JS + MD).
+  `embeddedLanguageFormatting: "off"` is deliberate: Prettier recognizes the
+  `css` identity tag in `src/utils/styles.js` (see `scripts/build.js`'s CSS
+  resolve/minify pass) as CSS-in-JS and would otherwise reformat the CSS _text
+  itself_ inside every tagged template literal, producing a massive diff for a
+  purely cosmetic change. `src/utils/translations.js` is excluded via
+  `.prettierignore` (its own generator serializes it, not Prettier — formatting
+  it here would just drift back out of sync on the next `i18n:sync`).
+- **Pre-commit hooks** (`husky` + `lint-staged`, `.lintstagedrc.json`): staged
+  `src/**/*.js` files get `prettier --write` then `eslint --fix`; staged `*.md`
+  files get `prettier --write` then `markdownlint-cli2 --fix`. Installed
+  automatically via the `prepare` script on `npm ci`/`npm install`.
+- **DeepSource** also runs as a CI status check (third-party static analysis,
+  separate from ESLint) — treat its findings the same as an ESLint error: fix
+  the root cause, don't suppress unless the finding is a false positive.
+- `make help` lists every available target (build, lint, format, i18n,
+  release-dry-run...) with a one-line description.
+
 ## Release process
 
-- **Versioning**: `const VERSION = 'x.y.z[-dev]'` at the top of the file is the
-  single source of truth displayed in the console banner; keep it in sync with
-  the git tag. `-dev` marks unreleased builds.
+- **Versioning**: `const VERSION = 'x.y.z[-dev]'` in `src/utils/parameters.js`
+  is the single source of truth displayed in the console banner; keep it in sync
+  with the git tag. `-dev` marks unreleased builds.
 - **CI** (`.github/workflows/`), path-scoped where relevant so a PR only
   triggers the checks that matter for what it touches:
   - `validate-hacs.yaml` — **not** path-scoped, runs on every push/PR: HACS
     validation (`hacs/action`, category `plugin`). Deliberately unscoped — it
-    checks `hacs.json`/README compliance too, not just the JS file, so a path
-    filter would risk missing a manifest/README-only regression.
+    checks `hacs.json`/README compliance too, not just `src/`, so a path filter
+    would risk missing a manifest/README-only regression.
   - `validate-js.yaml` — on `src/**`/`eslint.config.mjs`/`package.json`/
     `package-lock.json` changes: `npm run validate` (syntax check, lint, full
     translations sync).
@@ -585,25 +621,24 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
     `npm run check:release-flags` (safety net — fails if `CARD_CONTEXT.dev`/
     `debug` is left `true` in the committed source; see
     [Logging & debugging](#logging--debugging)), `npm run validate`,
-    `npm run build:prod` (esbuild, `--target=es2022`, pinned as a
-    devDependency — forces `CARD_CONTEXT.dev`/`debug` to `false` in the built
-    output regardless of the source state, see
-    `scripts/lib/release-flags.js`), a `node --check` sanity pass on the
-    minified output, then uploads the artifact to the release assets. HACS
-    serves that asset.
-- **Two build modes** (`scripts/build.js`, bundling `src/index.js` via
-  esbuild): `build:test` (default, `CARD_CONTEXT` left exactly as
-  committed) and `build:prod` (`--prod` flag, `CARD_CONTEXT.dev` and every
-  `debug.*` flag forced `false` regardless of the source state — see
+    `npm run build:prod` (esbuild, `--target=es2022`, pinned as a devDependency
+    — forces `CARD_CONTEXT.dev`/`debug` to `false` in the built output
+    regardless of the source state, see `scripts/lib/release-flags.js`), a
+    `node --check` sanity pass on the minified output, then uploads the artifact
+    to the release assets. HACS serves that asset.
+- **Two build modes** (`scripts/build.js`, bundling `src/index.js` via esbuild):
+  `build:test` (default, `CARD_CONTEXT` left exactly as committed) and
+  `build:prod` (`--prod` flag, `CARD_CONTEXT.dev` and every `debug.*` flag
+  forced `false` regardless of the source state — see
   `scripts/lib/release-flags.js`). Only `build:prod` is safe to ship.
 - **Language floor**: the esbuild target is `es2022` — private fields and class
   static blocks are fine, but syntax newer than es2022 will fail the release
   build even though it runs in dev. Test a release build locally with
   `npm run build:prod` when in doubt.
 - **HACS**: `hacs.json` declares only the `filename` (no `content_in_root` —
-  nothing is served from the repo root). HACS installs from the release
-  asset `release.yaml` uploads; there is no in-repo fallback file, matching
-  how other HACS plugins (e.g. Mushroom) ship a pure `src/` + release setup.
+  nothing is served from the repo root). HACS installs from the release asset
+  `release.yaml` uploads; there is no in-repo fallback file, matching how other
+  HACS plugins (e.g. Mushroom) ship a pure `src/` + release setup.
 - Release notes are drafted in `docs/rc-testing-notes.md` during the RC cycle,
   then promoted to the GitHub release body.
 
