@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 'use strict';
 
 // Builds dist/entity-progress-card.js from the src/ module split - the only

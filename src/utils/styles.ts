@@ -918,46 +918,114 @@ ha-card.info-multiline {
 }
 
 /* === SEGMENTED BAR (bar_segments: N) ===
-   Discrete blocks (battery cells / signal bars) via a mask on the whole bar:
-   both the track and the fill are chopped, so the cells read as real cells.
-   The mask uses the element itself as reference (no fixed pixel width needed);
-   gap is fixed at 2px inside each 100%/N cell.
-   border-radius is forced to 0: the container also clips via border-radius
-   (overflow: hidden), and that curve was cutting into the first/last mask
-   stripe near the rounded corner — a cell there looked truncated compared to
-   the others. Flush ends read like real battery/signal-bar hardware anyway. */
+   Discrete blocks (battery cells / signal bars) via a static grid-line
+   overlay (.bar-segments, a plain sibling of .inner and .mark - see
+   StructureElements.progressBar), not a mask on .bar/.inner. Two things ruled
+   out masking entirely, not just which element it targeted:
+   1. .mark (watermark) elements are real DOM children of .bar alongside
+      .inner - a mask on .bar clips its own painted output including theirs.
+   2. .inner is the element that gets translateX/translateY'd to reveal the
+      current fill (see --inner-transform) - its own local box always spans
+      the bar's full width/height regardless of percent, so a mask defined in
+      that local box moves along with the transform. The mask's tiles would
+      slide with the fill instead of staying anchored to the bar's frame,
+      drifting out of phase with a watermark or the (untransformed) track
+      behind it as the percent changes.
+   The overlay sidesteps both: it's a plain sibling, never transformed, so its
+   tile is always anchored to the bar's own frame - painted on top of both
+   .inner and the track, cutting a visual "gap" wherever a tile's line falls,
+   in the track's own background color.
+   One tile (background-image, stops relative to ITS OWN box) is scaled to
+   exactly 100%/N via background-size, then tiled via background-repeat -
+   deliberately not a single repeating-linear-gradient with
+   calc(100%/N - 2px) stops: mixing a %-of-container stop with a px offset
+   inside one repeating gradient leaves the browser free to round the
+   per-repeat length independently of the declared count, which produced an
+   extra sliver cell that drifted the whole pattern out of phase with a
+   watermark placed at a plain percentage (see [watermark]).
+   border-radius is forced to 0 on .bar: it still clips via overflow: hidden
+   with its normal rounded corner, and that curve was rounding off the first/
+   last cell, reading as a stray sliver instead of a flush edge. Flush ends
+   read like real battery/signal-bar hardware anyway. */
 .bar-segmented .${CARD.htmlStructure.elements.progressBar.bar.class} {
   border-radius: 0;
-  -webkit-mask-image: repeating-linear-gradient(
+}
+
+.${CARD.htmlStructure.elements.progressBar.segments.class} {
+  display: none;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.bar-segmented .${CARD.htmlStructure.elements.progressBar.segments.class} {
+  display: block;
+  /* Scales with the bar's own thickness (--progress-size, 6-42px across
+     bar_size) instead of a flat 2px - a hairline that reads fine on a small
+     bar disappears on an xlarge/overlay one, and a thickness tuned for
+     xlarge would look like a thick bar of its own on a small one. Floored at
+     1.5px so it stays visible on the thinnest size. */
+  --bar-segment-gap: max(1.5px, calc(var(--progress-size, 8px) / 6));
+  /* Same variable the alert animation already uses for "the card's actual
+     background" (black-ish in dark themes, white-ish in light ones) - a gap
+     line in the track's own grey (--divider-color) barely showed up against
+     the darker segments; this reads as a genuine cut through the bar,
+     matching the surrounding page regardless of theme. */
+  background-image: linear-gradient(
     to right,
-    #000 0,
-    #000 calc(100% / var(--bar-segments, 10) - 2px),
-    transparent calc(100% / var(--bar-segments, 10) - 2px),
-    transparent calc(100% / var(--bar-segments, 10))
+    transparent 0,
+    transparent calc(100% - var(--bar-segment-gap)),
+    var(--ha-card-background, var(--card-background-color)) calc(100% - var(--bar-segment-gap))
   );
-  mask-image: repeating-linear-gradient(
+  background-size: calc(100% / var(--bar-segments, 10)) 100%;
+  background-repeat: repeat-x;
+  /* The tiling above puts a gap line at the end of every tile, including the
+     very last one - which falls exactly on the bar's own right edge. Masking
+     off a --bar-segment-gap-wide strip on both ends drops that trailing edge
+     line (and guards the leading edge symmetrically, though no line lands
+     there to begin with) - only the N-1 separators between segments remain. */
+  -webkit-mask-image: linear-gradient(
     to right,
-    #000 0,
-    #000 calc(100% / var(--bar-segments, 10) - 2px),
-    transparent calc(100% / var(--bar-segments, 10) - 2px),
-    transparent calc(100% / var(--bar-segments, 10))
+    transparent 0,
+    transparent var(--bar-segment-gap),
+    #000 var(--bar-segment-gap),
+    #000 calc(100% - var(--bar-segment-gap)),
+    transparent calc(100% - var(--bar-segment-gap))
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    transparent var(--bar-segment-gap),
+    #000 var(--bar-segment-gap),
+    #000 calc(100% - var(--bar-segment-gap)),
+    transparent calc(100% - var(--bar-segment-gap))
   );
 }
 
-.vertical-bar.bar-segmented .${CARD.htmlStructure.elements.progressBar.bar.class} {
-  -webkit-mask-image: repeating-linear-gradient(
+.vertical-bar.bar-segmented .${CARD.htmlStructure.elements.progressBar.segments.class} {
+  background-image: linear-gradient(
     to bottom,
-    #000 0,
-    #000 calc(100% / var(--bar-segments, 10) - 2px),
-    transparent calc(100% / var(--bar-segments, 10) - 2px),
-    transparent calc(100% / var(--bar-segments, 10))
+    transparent 0,
+    transparent calc(100% - var(--bar-segment-gap)),
+    var(--ha-card-background, var(--card-background-color)) calc(100% - var(--bar-segment-gap))
   );
-  mask-image: repeating-linear-gradient(
+  background-size: 100% calc(100% / var(--bar-segments, 10));
+  background-repeat: repeat-y;
+  -webkit-mask-image: linear-gradient(
     to bottom,
-    #000 0,
-    #000 calc(100% / var(--bar-segments, 10) - 2px),
-    transparent calc(100% / var(--bar-segments, 10) - 2px),
-    transparent calc(100% / var(--bar-segments, 10))
+    transparent 0,
+    transparent var(--bar-segment-gap),
+    #000 var(--bar-segment-gap),
+    #000 calc(100% - var(--bar-segment-gap)),
+    transparent calc(100% - var(--bar-segment-gap))
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent var(--bar-segment-gap),
+    #000 var(--bar-segment-gap),
+    #000 calc(100% - var(--bar-segment-gap)),
+    transparent calc(100% - var(--bar-segment-gap))
   );
 }
 

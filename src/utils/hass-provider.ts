@@ -98,8 +98,8 @@ class HassProviderSingleton {
     return this.#hass?.language in TRANSLATIONS ? this.#hass?.language : CARD.config.language;
   }
 
-  getMessage(code: string): string {
-    return this.localize('card.msg')[code] || `Unknown message code: ${code}`;
+  getMessage(code: string | null): string {
+    return this.localize('card.msg')[code ?? ''] || `Unknown message code: ${code}`;
   }
 
   get numberFormat() {
@@ -262,9 +262,13 @@ class HassProviderSingleton {
       { unit: 'second', seconds: 1 },
     ];
 
-    // 'second' (last entry) always matches, so find() never returns
-    // undefined - the array can't run out without a hit.
-    const { unit, seconds } = units.find(({ unit: u, seconds: s }) => Math.abs(diffInSeconds) >= s || u === 'second')!;
+    // 'second' (last entry) always matches, so find() never actually falls
+    // through to this fallback - the array can't run out without a hit. The
+    // fallback just gives the type checker a real, always-defined value
+    // instead of asserting one that's already unreachable.
+    const { unit, seconds } =
+      units.find(({ unit: u, seconds: s }) => Math.abs(diffInSeconds) >= s || u === 'second') ??
+      units[units.length - 1];
     const value = Math.round(diffInSeconds / seconds);
     return this.#getRelativeTimeFormat().format(value, unit);
   }

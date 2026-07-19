@@ -4,7 +4,15 @@
  * card type (card/badge/template/badgeTemplate).
  */
 
-import { HA_CONTEXT, MIN_VALUE_ENTITY_PATH, MAX_VALUE_ENTITY_PATH } from '../utils/parameters.js';
+import {
+  HA_CONTEXT,
+  MIN_VALUE_ENTITY_PATH,
+  MAX_VALUE_ENTITY_PATH,
+  WATERMARK_LOW_ENTITY_PATH,
+  WATERMARK_HIGH_ENTITY_PATH,
+  ALERT_ABOVE_ENTITY_PATH,
+  ALERT_BELOW_ENTITY_PATH,
+} from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
 import type { RawConfig, Config } from '../utils/types.js';
@@ -34,18 +42,77 @@ const EditorFieldsType = {
     field(template ? 'template' : type)(name, o),
 };
 
-const wmSide = (side: string, defaultVal: any) => {
-  const disableKey = `disable_${side}`;
-  const attrType = `watermark${side.charAt(0).toUpperCase() + side.slice(1)}Attribute`;
-  const modeType = `watermark_${side}_mode`;
-  const wm = (extra: (c: RawConfig) => boolean) => (c: RawConfig) => Boolean(c.watermark) && extra(c);
-  const on = (c: RawConfig) => !c.watermark?.[disableKey];
-  const ent = (c: RawConfig) => is.string(c.watermark?.[side]);
-  const tpl = (c: RawConfig) => is.nonEmptyString(c.watermark?.[side]?.jinja);
+// Shared by min_value/max_value below: both share the exact same explicit
+// shape (number (legacy) | { entity, attribute } | { jinja }, see schema.ts
+// and config-helpers.js's checkValueConfig) and, unlike watermark.low/high
+// (see wmSide below), sit at the top level of the config - one dot-path deep
+// at most - so entity/attribute/jinja can stay plain dot-path fields instead
+// of virtual ones.
+const valueField = (key: 'min_value' | 'max_value', entityPath: string, numberOverrides: Record<string, any> = {}) => {
+  const modeType = `${key}_mode`;
+  const attrType = `${key.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase())}Attribute`;
   return {
-    [`watermark.${disableKey}`]: EditorFieldsType.toggle(`watermark.${disableKey}`, {
-      showIf: (c: RawConfig) => Boolean(c.watermark),
+    [modeType]: {
+      name: modeType,
+      type: modeType,
+      virtual: true,
+      resolveVirtual: (c: RawConfig) =>
+        is.nonEmptyString(c[key]?.jinja) ? 'jinja' : is.plainObject(c[key]) ? 'entity' : 'standard',
+      onVirtualChange: (mode: 'entity' | 'jinja' | 'standard', config: RawConfig) => {
+        if (mode === 'entity') {
+          return { ...config, [key]: is.nonEmptyString(config[key]?.entity) ? config[key] : { entity: '' } };
+        }
+        if (mode === 'jinja') {
+          return { ...config, [key]: is.nonEmptyString(config[key]?.jinja) ? config[key] : { jinja: '{{ }}' } };
+        }
+        return { ...config, [key]: undefined };
+      },
+    },
+    [key]: EditorFieldsType.number(key, { showIf: (c: RawConfig) => !is.plainObject(c[key]), ...numberOverrides }),
+    [entityPath]: EditorFieldsType.entity(entityPath, {
+      noLabel: true,
+      showIf: (c: RawConfig) => is.plainObject(c[key]) && !is.nonEmptyString(c[key].jinja),
     }),
+    [`${key}.attribute`]: EditorFieldsType.select(`${key}.attribute`, {
+      type: attrType,
+      selectorOf: entityPath,
+      showIf: (c: RawConfig) => is.plainObject(c[key]) && is.nonEmptyString(c[key].entity),
+    }),
+    [`${key}.jinja`]: EditorFieldsType.tpl(`${key}.jinja`, {
+      noLabel: true,
+      showIf: (c: RawConfig) => is.nonEmptyString(c[key]?.jinja),
+    }),
+  };
+};
+
+const toCamel = (s: string) => s.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase());
+
+// Shared by watermark.low/high (wmSide) and alert_when.above/below
+// (alertField): both are number (fixed) | { entity, attribute } | { jinja }
+// (see schema.ts's numericEntityOrJinja) nested one level under a parent
+// object, so entity/attribute/jinja have to stay virtual fields rather than
+// plain dot-path ones (unlike min_value.entity/max_value.entity, see
+// valueField above): the generic nested-field machinery (#resolveValue/
+// #handleNestedField) only resolves one level of dot-path, and these are
+// already one level deep under their parent. `isEnabled` folds in whatever
+// extra condition gates the parent being "on" for a given caller (watermark's
+// own disable_low/high toggle; alert_when has none, just Boolean(c.alert_when)).
+// `defaultVal` is what 'standard' mode - and clearing the entity picker -
+// revert to: a real number for watermark, undefined for alert_when (genuinely
+// optional, no default).
+const nestedValueField = (
+  parentKey: string,
+  key: string,
+  entityPath: string,
+  isEnabled: (c: RawConfig) => boolean,
+  defaultVal: number | undefined,
+) => {
+  const modeType = `${parentKey}_${key}_mode`;
+  const attrType = `${toCamel(parentKey)}${key.charAt(0).toUpperCase() + key.slice(1)}Attribute`;
+  const entityFieldName = `${parentKey}.${key}_entity`;
+  const ent = (c: RawConfig) => is.plainObject(c[parentKey]?.[key]) && !is.nonEmptyString(c[parentKey][key].jinja);
+  const tpl = (c: RawConfig) => is.nonEmptyString(c[parentKey]?.[key]?.jinja);
+  return {
     // A 2-state toggle can't represent 3 mutually exclusive modes
     // (standard/entity/Jinja) — mirrors min_value_mode/max_value_mode exactly,
     // replacing the previous entity-only toggle.
@@ -53,78 +120,103 @@ const wmSide = (side: string, defaultVal: any) => {
       name: modeType,
       type: modeType,
       virtual: true,
-      showIf: wm(on),
+      showIf: isEnabled,
       resolveVirtual: (c: RawConfig) => (tpl(c) ? 'jinja' : ent(c) ? 'entity' : 'standard'),
-      onVirtualChange: (mode: any, config: RawConfig) => {
-        const attrKey = `${side}_attribute`;
+      onVirtualChange: (mode: 'entity' | 'jinja' | 'standard', config: RawConfig) => {
         if (mode === 'entity') {
           return {
             ...config,
-            watermark: {
-              ...config.watermark,
-              [side]: is.string(config.watermark?.[side]) ? config.watermark[side] : '',
+            [parentKey]: {
+              ...config[parentKey],
+              [key]: is.nonEmptyString(config[parentKey]?.[key]?.entity) ? config[parentKey][key] : { entity: '' },
             },
           };
         }
         if (mode === 'jinja') {
           return {
             ...config,
-            watermark: {
-              ...config.watermark,
-              [side]: is.nonEmptyString(config.watermark?.[side]?.jinja) ? config.watermark[side] : { jinja: '{{ }}' },
-              [attrKey]: undefined,
+            [parentKey]: {
+              ...config[parentKey],
+              [key]: is.nonEmptyString(config[parentKey]?.[key]?.jinja) ? config[parentKey][key] : { jinja: '{{ }}' },
             },
           };
         }
-        return { ...config, watermark: { ...config.watermark, [side]: defaultVal, [attrKey]: undefined } };
+        return { ...config, [parentKey]: { ...config[parentKey], [key]: defaultVal } };
       },
     },
-    [`watermark.${side}`]: EditorFieldsType.number(`watermark.${side}`, {
-      showIf: wm((c: RawConfig) => on(c) && !ent(c) && !tpl(c)),
+    [`${parentKey}.${key}`]: EditorFieldsType.number(`${parentKey}.${key}`, {
+      showIf: (c: RawConfig) => isEnabled(c) && !is.plainObject(c[parentKey]?.[key]),
     }),
-    [`watermark.${side}_entity`]: EditorFieldsType.entity(`watermark.${side}_entity`, {
+    [entityFieldName]: EditorFieldsType.entity(entityFieldName, {
       virtual: true,
       noLabel: true,
-      showIf: wm((c: RawConfig) => on(c) && ent(c)),
-      resolveVirtual: (c: RawConfig) => (is.string(c.watermark?.[side]) ? c.watermark[side] : ''),
-      onVirtualChange: (value: any, config: RawConfig) => ({
+      showIf: (c: RawConfig) => isEnabled(c) && ent(c),
+      resolveVirtual: (c: RawConfig) => c[parentKey]?.[key]?.entity ?? '',
+      onVirtualChange: (value: string, config: RawConfig) => ({
         ...config,
-        watermark: {
-          ...config.watermark,
-          [side]: value || defaultVal,
-          ...(!value ? { [`${side}_attribute`]: undefined } : {}),
+        [parentKey]: {
+          ...config[parentKey],
+          [key]: value ? { ...config[parentKey]?.[key], entity: value } : defaultVal,
         },
       }),
     }),
-    [`watermark.${side}_attribute`]: EditorFieldsType.select(`watermark.${side}_attribute`, {
+    [`${parentKey}.${key}_attribute`]: EditorFieldsType.select(`${parentKey}.${key}_attribute`, {
       type: attrType,
-      selectorOf: `watermark.${side}`,
-      showIf: wm((c: RawConfig) => on(c) && ent(c) && c.watermark[side] !== ''),
-    }),
-    // Virtual (not a plain dot-path field): the template string lives 2 levels
-    // deep (watermark.<side>.jinja), one level past what the generic
-    // nested-field machinery (#resolveValue/#handleNestedField) resolves — this
-    // reads/writes that path directly.
-    [`watermark_${side}_jinja`]: EditorFieldsType.tpl(`watermark_${side}_jinja`, {
-      noLabel: true,
       virtual: true,
-      showIf: wm((c: RawConfig) => on(c) && tpl(c)),
-      resolveVirtual: (c: RawConfig) => c.watermark?.[side]?.jinja ?? '',
-      onVirtualChange: (value: any, config: RawConfig) => ({
+      selectorOf: entityPath,
+      showIf: (c: RawConfig) => isEnabled(c) && ent(c) && is.nonEmptyString(c[parentKey][key]?.entity),
+      resolveVirtual: (c: RawConfig) => c[parentKey]?.[key]?.attribute ?? '',
+      onVirtualChange: (value: string, config: RawConfig) => ({
         ...config,
-        watermark: { ...config.watermark, [side]: { jinja: value } },
+        [parentKey]: { ...config[parentKey], [key]: { ...config[parentKey]?.[key], attribute: value || undefined } },
       }),
     }),
+    // Virtual (not a plain dot-path field): the template string lives 2 levels
+    // deep (<parentKey>.<key>.jinja), one level past what the generic
+    // nested-field machinery (#resolveValue/#handleNestedField) resolves — this
+    // reads/writes that path directly.
+    [`${parentKey}_${key}_jinja`]: EditorFieldsType.tpl(`${parentKey}_${key}_jinja`, {
+      noLabel: true,
+      virtual: true,
+      showIf: (c: RawConfig) => isEnabled(c) && tpl(c),
+      resolveVirtual: (c: RawConfig) => c[parentKey]?.[key]?.jinja ?? '',
+      onVirtualChange: (value: string, config: RawConfig) => ({
+        ...config,
+        [parentKey]: { ...config[parentKey], [key]: { jinja: value } },
+      }),
+    }),
+  };
+};
+
+const wmSide = (side: 'low' | 'high', defaultVal: number) => {
+  const disableKey = `disable_${side}`;
+  const entityPath = side === 'low' ? WATERMARK_LOW_ENTITY_PATH : WATERMARK_HIGH_ENTITY_PATH;
+  const isEnabled = (c: RawConfig) => Boolean(c.watermark) && !c.watermark?.[disableKey];
+  return {
+    [`watermark.${disableKey}`]: EditorFieldsType.toggle(`watermark.${disableKey}`, {
+      showIf: (c: RawConfig) => Boolean(c.watermark),
+    }),
+    ...nestedValueField('watermark', side, entityPath, isEnabled, defaultVal),
     [`watermark.${side}_as`]: EditorFieldsType.select(`watermark.${side}_as`, {
       type: 'watermark_as',
-      showIf: wm(on),
+      showIf: isEnabled,
       width: availableSpace(),
     }),
     [`watermark.${side}_color`]: EditorFieldsType.templateOrType(`watermark.${side}_color`, false, 'color', {
-      showIf: wm(on),
+      showIf: isEnabled,
       width: availableSpace(),
     }),
   };
+};
+
+// alert_when.above/.below - same explicit shape as min_value/max_value/
+// watermark.low/high, via the shared nestedValueField above. Unlike
+// watermark there's no per-side disable toggle or _as/_color options - just
+// the value itself - and no numeric default to fall back to (alert_when.
+// above/below are genuinely optional).
+const alertField = (side: 'above' | 'below') => {
+  const entityPath = side === 'above' ? ALERT_ABOVE_ENTITY_PATH : ALERT_BELOW_ENTITY_PATH;
+  return nestedValueField('alert_when', side, entityPath, (c: RawConfig) => Boolean(c.alert_when), undefined);
 };
 
 const EditorFactory = {
@@ -144,7 +236,10 @@ const EditorFactory = {
           virtual: true,
           showIf: (c: RawConfig) => is.nonEmptyArray(c.bar_stack?.entities),
           resolveVirtual: (c: RawConfig) => c.bar_stack?.mode ?? 'stacked',
-          onVirtualChange: (mode: any, config: RawConfig) => ({ ...config, bar_stack: { ...config.bar_stack, mode } }),
+          onVirtualChange: (mode: 'stacked' | 'proportional' | 'net', config: RawConfig) => ({
+            ...config,
+            bar_stack: { ...config.bar_stack, mode },
+          }),
         },
         // CF5 - issue (major) resolved - a flat 'bar_stack' field name meant
         // the generic round-trip resolver (#resolveValue, run on every
@@ -202,94 +297,17 @@ const EditorFactory = {
             }),
             decimal: EditorFieldsType.decimal('decimal', { width: availableSpace(32, 1 / 3) }),
             // A 2-state toggle can't represent 3 mutually exclusive modes
-            // (standard/entity/ Jinja) — a single-select chip group replaces
+            // (standard/entity/Jinja) — a single-select chip group replaces
             // the previous pair of toggles, which could both show at once and
-            // left the mode ambiguous. min_value's config shape is also
-            // explicit rather than sniffed: a bare number is the fixed value
-            // (legacy, unchanged), and { entity, attribute } / { jinja }
+            // left the mode ambiguous. min_value/max_value's config shape is
+            // also explicit rather than sniffed: a bare number is the fixed
+            // value (legacy, unchanged), and { entity, attribute } / { jinja }
             // replace what used to be a single overloaded string disambiguated
-            // at runtime by an is.jinja() regex test. This removes that
-            // sniffing entirely and reuses the codebase's existing nested
-            // dotted-field machinery (like watermark.*).
-            min_value_mode: {
-              name: 'min_value_mode',
-              type: 'min_value_mode',
-              virtual: true,
-              resolveVirtual: (c: RawConfig) =>
-                is.nonEmptyString(c.min_value?.jinja) ? 'jinja' : is.plainObject(c.min_value) ? 'entity' : 'standard',
-              onVirtualChange: (mode: any, config: RawConfig) => {
-                if (mode === 'entity') {
-                  return {
-                    ...config,
-                    min_value: is.nonEmptyString(config.min_value?.entity) ? config.min_value : { entity: '' },
-                  };
-                }
-                if (mode === 'jinja') {
-                  return {
-                    ...config,
-                    min_value: is.nonEmptyString(config.min_value?.jinja) ? config.min_value : { jinja: '{{ }}' },
-                  };
-                }
-                return { ...config, min_value: undefined };
-              },
-            },
-            min_value: EditorFieldsType.number('min_value', {
+            // at runtime by an is.jinja() regex test.
+            ...valueField('min_value', MIN_VALUE_ENTITY_PATH, {
               default: (c: RawConfig) => (c.center_zero ? -100 : 0),
-              showIf: (c: RawConfig) => !is.plainObject(c.min_value),
             }),
-            [MIN_VALUE_ENTITY_PATH]: EditorFieldsType.entity(MIN_VALUE_ENTITY_PATH, {
-              noLabel: true,
-              showIf: (c: RawConfig) => is.plainObject(c.min_value) && !is.nonEmptyString(c.min_value.jinja),
-            }),
-            'min_value.attribute': EditorFieldsType.select('min_value.attribute', {
-              type: 'minValueAttribute',
-              selectorOf: MIN_VALUE_ENTITY_PATH,
-              showIf: (c: RawConfig) => is.plainObject(c.min_value) && is.nonEmptyString(c.min_value.entity),
-            }),
-            'min_value.jinja': EditorFieldsType.tpl('min_value.jinja', {
-              noLabel: true,
-              showIf: (c: RawConfig) => is.nonEmptyString(c.min_value?.jinja),
-            }),
-            // Explicit map shape (mirrors min_value): max_value: 10 | { entity,
-            // attribute } | { jinja }. Reuses the codebase's nested
-            // dotted-field machinery instead of a target-based flat field, so
-            // sibling keys (attribute) merge naturally on write.
-            max_value_mode: {
-              name: 'max_value_mode',
-              type: 'max_value_mode',
-              virtual: true,
-              resolveVirtual: (c: RawConfig) =>
-                is.nonEmptyString(c.max_value?.jinja) ? 'jinja' : is.plainObject(c.max_value) ? 'entity' : 'standard',
-              onVirtualChange: (mode: any, config: RawConfig) => {
-                if (mode === 'entity') {
-                  return {
-                    ...config,
-                    max_value: is.nonEmptyString(config.max_value?.entity) ? config.max_value : { entity: '' },
-                  };
-                }
-                if (mode === 'jinja') {
-                  return {
-                    ...config,
-                    max_value: is.nonEmptyString(config.max_value?.jinja) ? config.max_value : { jinja: '{{ }}' },
-                  };
-                }
-                return { ...config, max_value: undefined };
-              },
-            },
-            max_value: EditorFieldsType.number('max_value', { showIf: (c: RawConfig) => !is.plainObject(c.max_value) }),
-            [MAX_VALUE_ENTITY_PATH]: EditorFieldsType.entity(MAX_VALUE_ENTITY_PATH, {
-              noLabel: true,
-              showIf: (c: RawConfig) => is.plainObject(c.max_value) && !is.nonEmptyString(c.max_value.jinja),
-            }),
-            'max_value.attribute': EditorFieldsType.select('max_value.attribute', {
-              type: 'maxValueAttribute',
-              selectorOf: MAX_VALUE_ENTITY_PATH,
-              showIf: (c: RawConfig) => is.plainObject(c.max_value) && is.nonEmptyString(c.max_value.entity),
-            }),
-            'max_value.jinja': EditorFieldsType.tpl('max_value.jinja', {
-              noLabel: true,
-              showIf: (c: RawConfig) => is.nonEmptyString(c.max_value?.jinja),
-            }),
+            ...valueField('max_value', MAX_VALUE_ENTITY_PATH),
             state_content: EditorFieldsType.stateContent('state_content', { context: { filter_entity: 'entity' } }),
             custom_info: EditorFieldsType.tpl('custom_info'),
             // Badge opts out (see YamlSchemaFactory's own
@@ -328,7 +346,7 @@ const EditorFactory = {
             // starts as an empty [] before the user adds a first zone, and must
             // still read as 'custom'.
             resolveVirtual: (c: RawConfig) => (is.array(c.custom_theme) ? 'custom' : 'preset'),
-            onVirtualChange: (mode: any, config: RawConfig) => {
+            onVirtualChange: (mode: 'custom' | 'preset', config: RawConfig) => {
               const wantsCustom = mode === 'custom';
               return {
                 ...config,
@@ -361,7 +379,7 @@ const EditorFactory = {
   // Per-variant width overrides (Card/Badge/Template/BadgeTemplate) below
   // read oddly as inline ternaries repeated per field - one named condition
   // per field instead.
-  widthUnless: (condition: any) => (condition ? {} : { width: availableSpace() }),
+  widthUnless: (condition: boolean) => (condition ? {} : { width: availableSpace() }),
 
   // Every themeXxxFields() below is pulled out of theme() itself for the same
   // reason as themeModeFields/widthUnless above: keep each conditional
@@ -375,7 +393,7 @@ const EditorFactory = {
             showIf: (c: RawConfig) => (!is.nullish(c.theme) || is.nonEmptyArray(c.custom_theme)) && !c.center_zero,
             // Selecting a non-auto color mode is incompatible with
             // interpolate: clear it.
-            onChange: (value: any, config: RawConfig) =>
+            onChange: (value: string | undefined, config: RawConfig) =>
               value && value !== 'auto' ? { ...config, interpolate: undefined } : config,
           }),
           interpolate: EditorFieldsType.toggle('interpolate', {
@@ -385,7 +403,7 @@ const EditorFactory = {
           }),
         },
 
-  themeCardOnlyFields: (badge: boolean, resetUpIfInvalid: (config: RawConfig) => any) =>
+  themeCardOnlyFields: (badge: boolean, resetUpIfInvalid: (config: RawConfig) => RawConfig) =>
     badge
       ? {}
       : {
@@ -397,7 +415,7 @@ const EditorFactory = {
           force_circular_background: EditorFieldsType.toggle('force_circular_background'),
           bar_position: EditorFieldsType.select('bar_position', {
             width: availableSpace(),
-            onChange: (value: any, config: RawConfig) => resetUpIfInvalid(config),
+            onChange: (_value: unknown, config: RawConfig) => resetUpIfInvalid(config),
           }),
         },
 
@@ -438,7 +456,7 @@ const EditorFactory = {
         virtual: true,
         showIf: barMaxWidthAllowed,
         resolveVirtual: (c: RawConfig) => Boolean(c.bar_max_width),
-        onVirtualChange: (value: any, config: RawConfig) => ({
+        onVirtualChange: (value: boolean, config: RawConfig) => ({
           ...config,
           bar_max_width: value ? '300px' : undefined,
         }),
@@ -450,7 +468,7 @@ const EditorFactory = {
         noLabel: true,
         showIf: (c: RawConfig) => barMaxWidthAllowed(c) && Boolean(c.bar_max_width),
         resolveVirtual: (c: RawConfig) => parseInt(c.bar_max_width) || 0,
-        onVirtualChange: (value: any, config: RawConfig) => ({
+        onVirtualChange: (value: number, config: RawConfig) => ({
           ...config,
           bar_max_width: value ? `${value}px` : undefined,
         }),
@@ -469,7 +487,7 @@ const EditorFactory = {
       watermark_toggle: EditorFieldsType.toggle('watermark_toggle', {
         virtual: true,
         resolveVirtual: (c: RawConfig) => Boolean(c.watermark),
-        onVirtualChange: (value: any, config: RawConfig) => ({
+        onVirtualChange: (value: boolean, config: RawConfig) => ({
           ...config,
           watermark: value ? {} : undefined,
         }),
@@ -509,19 +527,13 @@ const EditorFactory = {
           alert_toggle: EditorFieldsType.toggle('alert_toggle', {
             virtual: true,
             resolveVirtual: (c: RawConfig) => Boolean(c.alert_when),
-            onVirtualChange: (value: any, config: RawConfig) => ({
+            onVirtualChange: (value: boolean, config: RawConfig) => ({
               ...config,
               alert_when: value ? {} : undefined,
             }),
           }),
-          'alert_when.above': EditorFieldsType.number('alert_when.above', {
-            showIf: (c: RawConfig) => Boolean(c.alert_when),
-            width: availableSpace(),
-          }),
-          'alert_when.below': EditorFieldsType.number('alert_when.below', {
-            showIf: (c: RawConfig) => Boolean(c.alert_when),
-            width: availableSpace(),
-          }),
+          ...alertField('above'),
+          ...alertField('below'),
           'alert_when.color': EditorFieldsType.select('alert_when.color', {
             type: 'color',
             showIf: (c: RawConfig) => Boolean(c.alert_when),
@@ -556,12 +568,12 @@ const EditorFactory = {
           height: EditorFieldsType.text('height', { width: availableSpace() }),
         },
 
-  themeLayoutField: (badge: boolean, resetUpIfInvalid: (config: RawConfig) => any) =>
+  themeLayoutField: (badge: boolean, resetUpIfInvalid: (config: RawConfig) => RawConfig) =>
     badge
       ? {}
       : {
           layout: EditorFieldsType.select('layout', {
-            onChange: (value: any, config: RawConfig) => resetUpIfInvalid(config),
+            onChange: (_value: unknown, config: RawConfig) => resetUpIfInvalid(config),
           }),
         },
 
@@ -650,7 +662,7 @@ const EditorFactory = {
           virtual: true,
           showIf: (c: RawConfig) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode),
           resolveVirtual: (c: RawConfig) => Boolean(c.center_zero),
-          onVirtualChange: (value: any, config: RawConfig) => ({
+          onVirtualChange: (value: boolean, config: RawConfig) => ({
             ...config,
             center_zero: value ? (is.plainObject(config.center_zero) ? config.center_zero : true) : false,
           }),
@@ -661,7 +673,7 @@ const EditorFactory = {
             Boolean(c.center_zero) && (c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode)),
           virtual: true,
           resolveVirtual: (c: RawConfig) => (is.plainObject(c.center_zero) ? (c.center_zero.value ?? 0) : 0),
-          onVirtualChange: (value: any, config: RawConfig) => {
+          onVirtualChange: (value: number, config: RawConfig) => {
             const growthPercent = is.plainObject(config.center_zero)
               ? Boolean(config.center_zero.growth_percent)
               : false;
@@ -678,7 +690,7 @@ const EditorFactory = {
           virtual: true,
           resolveVirtual: (c: RawConfig) =>
             is.plainObject(c.center_zero) ? Boolean(c.center_zero.growth_percent) : false,
-          onVirtualChange: (value: any, config: RawConfig) => {
+          onVirtualChange: (value: boolean, config: RawConfig) => {
             const currentValue = is.plainObject(config.center_zero) ? (config.center_zero.value ?? 0) : 0;
             return {
               ...config,
@@ -689,7 +701,7 @@ const EditorFactory = {
         bar_effect_jinja: EditorFieldsType.toggle('bar_effect_jinja', {
           virtual: true,
           resolveVirtual: (c: RawConfig) => is.nonEmptyString(c.bar_effect),
-          onVirtualChange: (value: any, config: RawConfig) => ({
+          onVirtualChange: (value: boolean, config: RawConfig) => ({
             ...config,
             bar_effect: value ? '{{ }}' : [],
           }),
@@ -711,7 +723,7 @@ const EditorFactory = {
         hide_jinja: EditorFieldsType.toggle('hide_jinja', {
           virtual: true,
           resolveVirtual: (c: RawConfig) => is.nonEmptyString(c.hide),
-          onVirtualChange: (value: any, config: RawConfig) => ({
+          onVirtualChange: (value: boolean, config: RawConfig) => ({
             ...config,
             hide: value ? '{{ }}' : [],
           }),
@@ -762,7 +774,7 @@ const EditorFactory = {
           type: 'toggle',
           virtual: true,
           resolveVirtual: (c: RawConfig) => Boolean(c._show_all_actions),
-          onVirtualChange: (value: any, config: RawConfig) => ({ ...config, _show_all_actions: value }),
+          onVirtualChange: (value: boolean, config: RawConfig) => ({ ...config, _show_all_actions: value }),
         },
         tap_action: EditorFieldsType.action('tap_action'),
         hold_action: EditorFieldsType.action('hold_action', { showIf: orAll(isActive('hold_action')) }),

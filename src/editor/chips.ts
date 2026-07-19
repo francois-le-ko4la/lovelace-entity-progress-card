@@ -7,6 +7,7 @@
 import { CARD, VALUE_CHANGED_EVENT } from '../utils/parameters.js';
 import { CHIPS_HOST_STYLE } from '../utils/styles.js';
 import { is } from '../utils/common-checks.js';
+import type { RawConfig } from '../utils/types.js';
 
 /**
  * Shared base for the editor's chip-based selector custom elements: builds
@@ -29,13 +30,16 @@ abstract class ChipsBase extends HTMLElement {
   _labels: Record<string, string> | null = null;
   #labelText = '';
   #labelEl: HTMLElement | null = null;
+  // Always assigned first thing in connectedCallback, before _buildDOM()/
+  // _render() (the only methods that read it) can run.
+  #shadow!: ShadowRoot;
 
   abstract _buildDOM(): void;
   abstract _render(): void;
 
   connectedCallback() {
-    const root = this.shadowRoot ?? this.attachShadow({ mode: 'open' });
-    if (!root.querySelector('.chip-set')) this._buildDOM();
+    this.#shadow = this.shadowRoot ?? this.attachShadow({ mode: 'open' });
+    if (!this.#shadow.querySelector('.chip-set')) this._buildDOM();
     this._render();
   }
 
@@ -82,7 +86,7 @@ abstract class ChipsBase extends HTMLElement {
       chipsMap.set(value, chip);
     }
     frag.push(chipSet);
-    this.shadowRoot!.append(...frag);
+    this.#shadow.append(...frag);
   }
 }
 
@@ -95,7 +99,7 @@ abstract class ChipsBase extends HTMLElement {
  */
 class EntityProgressEffectChips extends ChipsBase {
   static ELEMENT_NAME = 'entity-progress-effect-chips';
-  static #EFFECTS: { value: string; showIf?: (c: any) => boolean }[] = [
+  static #EFFECTS: { value: string; showIf?: (c: RawConfig) => boolean }[] = [
     { value: 'radius' },
     { value: 'glass', showIf: (c) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode) },
     { value: 'gradient', showIf: (c) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode) },
@@ -111,7 +115,7 @@ class EntityProgressEffectChips extends ChipsBase {
   }
 
   #selected: string[] = [];
-  #config: any = {};
+  #config: RawConfig = {} as RawConfig;
   #chips = new Map<string, HTMLButtonElement>();
 
   _buildDOM() {
@@ -142,7 +146,7 @@ class EntityProgressEffectChips extends ChipsBase {
     this._render();
   }
 
-  updateConfig(config: any) {
+  updateConfig(config: RawConfig) {
     this.#config = config ?? {};
     this._render();
   }

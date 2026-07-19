@@ -438,6 +438,7 @@ const htmlStructure = {
       bar: { element: 'div', class: 'progress-bar', extraAttr: { 'aria-hidden': 'true' } },
       half: { element: 'div', class: 'bar-half', extraAttr: { 'aria-hidden': 'true' } },
       inner: { element: 'div', class: 'inner', extraAttr: { 'aria-hidden': 'true' } },
+      segments: { element: 'div', class: 'bar-segments', extraAttr: { 'aria-hidden': 'true' } },
       zeroMark: { element: 'div', class: 'zero', extraAttr: { 'aria-hidden': 'true' } },
       lowWatermark: { element: 'div', class: 'low', extraAttr: { 'aria-hidden': 'true' } },
       highWatermark: { element: 'div', class: 'high', extraAttr: { 'aria-hidden': 'true' } },
@@ -825,6 +826,19 @@ const HA_ACTION_HANDLER_TAG = 'action-handler';
 const EDITOR_FIELD_NS = 'editor.field';
 const MIN_VALUE_ENTITY_PATH = 'min_value.entity';
 const MAX_VALUE_ENTITY_PATH = 'max_value.entity';
+// Not an editor field name (watermark.low/.high's entity/attribute/jinja stay
+// virtual fields, see editor/factory.ts's wmSide - the generic dot-path field
+// machinery only resolves one level of nesting, and watermark.low is already
+// one level deep under `watermark`). Used as a plain config-path string
+// instead: HaSelector's selectorOf (arbitrary-depth reduce, unlike field
+// names) and _checkHAEnvironment's error paths.
+const WATERMARK_LOW_ENTITY_PATH = 'watermark.low.entity';
+const WATERMARK_HIGH_ENTITY_PATH = 'watermark.high.entity';
+// Same reasoning as WATERMARK_LOW_ENTITY_PATH/WATERMARK_HIGH_ENTITY_PATH:
+// alert_when.above/.below stay virtual editor fields (nested one level under
+// alert_when, same depth as watermark.low).
+const ALERT_ABOVE_ENTITY_PATH = 'alert_when.above.entity';
+const ALERT_BELOW_ENTITY_PATH = 'alert_when.below.entity';
 
 export { VERSION };
 export { META };
@@ -842,3 +856,7 @@ export { HA_ACTION_HANDLER_TAG };
 export { EDITOR_FIELD_NS };
 export { MIN_VALUE_ENTITY_PATH };
 export { MAX_VALUE_ENTITY_PATH };
+export { WATERMARK_LOW_ENTITY_PATH };
+export { WATERMARK_HIGH_ENTITY_PATH };
+export { ALERT_ABOVE_ENTITY_PATH };
+export { ALERT_BELOW_ENTITY_PATH };

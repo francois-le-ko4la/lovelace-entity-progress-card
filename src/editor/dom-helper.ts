@@ -51,7 +51,7 @@ class EditorDOMHelper extends DOMHelper {
    * Updates the value of a ha-selector field.
    * Skipped if value hasn't changed.
    */
-  updateValue(name: string, newVal: any) {
+  updateValue(name: string, newVal: unknown) {
     this.enqueue(name, 'value', () => {
       const el = this._domElements.get(name);
       if (!el) return;
@@ -121,7 +121,7 @@ class EditorDOMHelper extends DOMHelper {
    * Updates the selector of a ha-selector field. Used for fields whose options
    * depend on another field (e.g. attribute → entity).
    */
-  updateSelector(name: string, selector: any) {
+  updateSelector(name: string, selector: unknown) {
     // Was reassigned unconditionally on every #updateFields() pass (i.e. every
     // editor keystroke, for every field with selectorOf — not just the one
     // being edited), forcing the child ha-selector's attribute picker to fully
@@ -168,9 +168,9 @@ class EditorDOMHelper extends DOMHelper {
 
   updateAll(
     config: RawConfig,
-    resolveValue: (def: FieldDef, config: RawConfig) => any,
+    resolveValue: (def: FieldDef, config: RawConfig) => unknown,
     negotiated: Config | null = null,
-    resolveType: ((def: FieldDef, config: RawConfig) => any) | null = null,
+    resolveType: ((def: FieldDef, config: RawConfig) => unknown) | null = null,
   ) {
     for (const [name, el] of this._domElements) {
       const def = el._fieldDef;
@@ -182,9 +182,9 @@ class EditorDOMHelper extends DOMHelper {
     name: string,
     def: FieldDef,
     config: RawConfig,
-    resolveValue: (def: FieldDef, config: RawConfig) => any,
+    resolveValue: (def: FieldDef, config: RawConfig) => unknown,
     negotiated: Config | null = null,
-    resolveType: ((def: FieldDef, config: RawConfig) => any) | null = null,
+    resolveType: ((def: FieldDef, config: RawConfig) => unknown) | null = null,
   ) {
     // Visibility
     if (def.showIf) {

@@ -52,17 +52,21 @@ In this context, we have two types of deprecated options:
   of all those cards. Therefore, we allow time before disabling them, provide a
   system to detect if you are affected, and will remove them later.
 
-| Option / Value           | Status         | Replacement / Recommended Action                           | Since version | Current Behavior                               |
-| ------------------------ | -------------- | ---------------------------------------------------------- | ------------- | ---------------------------------------------- |
-| `navigate_to`            | **Removed**    | Use `tap_action: navigate`                                 | `v1.2.0`      | Ignored, console warning                       |
-| `show_more_info`         | **Removed**    | Use `tap_action: more-info`                                | `v1.2.0`      | Ignored, console warning                       |
-| `theme: 'battery'`       | **Deprecated** | Use `optimal_when_high`                                    | `v1.1.8-11`   | Still works, shows warning                     |
-| `theme: 'cpu'`           | **Deprecated** | Use `optimal_when_low`                                     | `v1.1.8-11`   | Still works, shows warning                     |
-| `theme: 'memory'`        | **Deprecated** | Use `optimal_when_low`                                     | `v1.1.8-11`   | Still works, shows warning                     |
-| `max_value: <entity id>` | **Deprecated** | Use `max_value: { entity: <id>, attribute: <optional> }`   | `v1.6.0`      | Auto-migrated for the session, console warning |
-| `max_value_attribute`    | **Deprecated** | Fold into `max_value: { entity, attribute }`               | `v1.6.0`      | Auto-migrated for the session, console warning |
-| `disable_unit`           | **Deprecated** | Use `hide: ['unit', ...]`                                  | `v1.6.0`      | Auto-migrated for the session, console warning |
-| `additions`              | **Deprecated** | Use `bar_stack: { mode: 'proportional', entities: [...] }` | `v1.6.0`      | Auto-migrated for the session, console warning |
+| Option / Value                | Status         | Replacement / Recommended Action                              | Since version | Current Behavior                               |
+| ----------------------------- | -------------- | ------------------------------------------------------------- | ------------- | ---------------------------------------------- |
+| `navigate_to`                 | **Removed**    | Use `tap_action: navigate`                                    | `v1.2.0`      | Ignored, console warning                       |
+| `show_more_info`              | **Removed**    | Use `tap_action: more-info`                                   | `v1.2.0`      | Ignored, console warning                       |
+| `theme: 'battery'`            | **Deprecated** | Use `optimal_when_high`                                       | `v1.1.8-11`   | Still works, shows warning                     |
+| `theme: 'cpu'`                | **Deprecated** | Use `optimal_when_low`                                        | `v1.1.8-11`   | Still works, shows warning                     |
+| `theme: 'memory'`             | **Deprecated** | Use `optimal_when_low`                                        | `v1.1.8-11`   | Still works, shows warning                     |
+| `max_value: <entity id>`      | **Deprecated** | Use `max_value: { entity: <id>, attribute: <optional> }`      | `v1.6.0`      | Auto-migrated for the session, console warning |
+| `max_value_attribute`         | **Deprecated** | Fold into `max_value: { entity, attribute }`                  | `v1.6.0`      | Auto-migrated for the session, console warning |
+| `disable_unit`                | **Deprecated** | Use `hide: ['unit', ...]`                                     | `v1.6.0`      | Auto-migrated for the session, console warning |
+| `additions`                   | **Deprecated** | Use `bar_stack: { mode: 'proportional', entities: [...] }`    | `v1.6.0`      | Auto-migrated for the session, console warning |
+| `watermark.low: <entity id>`  | **Deprecated** | Use `watermark.low: { entity: <id>, attribute: <optional> }`  | `v1.6.0`      | Auto-migrated for the session, console warning |
+| `watermark.high: <entity id>` | **Deprecated** | Use `watermark.high: { entity: <id>, attribute: <optional> }` | `v1.6.0`      | Auto-migrated for the session, console warning |
+| `watermark.low_attribute`     | **Deprecated** | Fold into `watermark.low: { entity, attribute }`              | `v1.6.0`      | Auto-migrated for the session, console warning |
+| `watermark.high_attribute`    | **Deprecated** | Fold into `watermark.high: { entity, attribute }`             | `v1.6.0`      | Auto-migrated for the session, console warning |
 
 <details>
 <summary><strong>Show the screenshot (click to expand)</strong></summary>

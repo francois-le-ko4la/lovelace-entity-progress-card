@@ -5,10 +5,28 @@
  */
 
 import { CARD_CONTEXT, HA_CONTEXT, CARD, THEME, SEV } from '../utils/parameters.js';
-import { is, has } from '../utils/common-checks.js';
+import { is, has, assertDefined } from '../utils/common-checks.js';
 import { Logger, type LoggerInstance } from '../utils/log.js';
-import { HassProviderSingleton, type EntityState } from '../utils/hass-provider.js';
-import { StructureTemplates } from './structure.js';
+import { HassProviderSingleton, type EntityState, type Hass } from '../utils/hass-provider.js';
+import { StructureTemplates, type StructureOptions } from './structure.js';
+
+// Theme "zones" come from either the built-in THEME table (parameters.ts) or
+// a user's custom_theme YAML array - both are arrays of { min?, max?, color?,
+// icon_color?, bar_color?, icon? } with slightly different optional fields
+// (built-in entries always set icon/color, possibly to null; custom_theme
+// zones may omit any of them), unified here rather than as two interfaces.
+// One entry of the `name` config option's composition array (see
+// EditorFieldsType.entityName / types.stateContent in schema.ts).
+type NameToken = { type: string; text?: string };
+
+type ThemeZone = {
+  min?: number;
+  max?: number;
+  color?: string | null;
+  icon_color?: string;
+  bar_color?: string;
+  icon?: string | null;
+};
 
 /**
  * Builds and caches a card type's DOM structure (`StructureTemplates[
@@ -32,14 +50,11 @@ class ObjStructure {
     this._cardType = cardType;
   }
 
-  // Structure options are small flat bags of primitives (barType, barPosition,
-  // layout...) that vary per card type and call site - kept as `any` rather
-  // than a shared interface, same reasoning as structure.ts's own `options`.
-  render(options: any = {}): string {
-    return (StructureTemplates as Record<string, (options: any) => string>)[this._cardType](options);
+  render(options: StructureOptions = {}): string {
+    return (StructureTemplates as Record<string, (options: StructureOptions) => string>)[this._cardType](options);
   }
 
-  clone(options: any = {}): Node {
+  clone(options: StructureOptions = {}): Node {
     // Options are small flat objects of primitives built in a fixed key order
     // by each class's _structureOptions getter -> JSON is a stable cache key.
     // The option space is bounded (a handful of enums/booleans), so is the
@@ -149,7 +164,7 @@ class NumberFormatter {
     }
   }
 
-  static convertDuration(duration: any): number {
+  static convertDuration(duration: unknown): number {
     // CF5 - issue (critical) resolved - timer attributes (duration/remaining)
     // can be missing during HA startup; null.split() crashed the card
     if (!is.string(duration)) return 0;
@@ -175,21 +190,21 @@ class NumberFormatter {
  * @abstract
  */
 
-class TypedValueHelper {
-  #value: any = null;
+class TypedValueHelper<T = unknown> {
+  #value: T | null = null;
   #isValid = false;
-  #defaultValue: any = null;
+  #defaultValue: T | null = null;
 
-  constructor(newValue: any = null) {
+  constructor(newValue: unknown = null) {
     if (this._validate(newValue)) this.#defaultValue = newValue;
   }
 
-  set value(newValue: any) {
+  set value(newValue: unknown) {
     this.#isValid = this._validate(newValue);
-    this.#value = this.#isValid ? newValue : null;
+    this.#value = this._validate(newValue) ? newValue : null;
   }
 
-  get value(): any {
+  get value(): T | null {
     return this.#isValid ? this.#value : this.#defaultValue;
   }
 
@@ -197,7 +212,7 @@ class TypedValueHelper {
     return this.#isValid;
   }
 
-  _validate(_value: any): boolean {
+  _validate(_value: unknown): _value is T {
     return false;
   }
 }
@@ -207,8 +222,8 @@ class TypedValueHelper {
  *
  * @extends TypedValueHelper
  */
-class ValueHelper extends TypedValueHelper {
-  _validate(v: any): boolean {
+class ValueHelper extends TypedValueHelper<number> {
+  _validate(v: unknown): v is number {
     return is.number(v);
   }
 }
@@ -216,9 +231,9 @@ class ValueHelper extends TypedValueHelper {
 /**
  * Represents a non-negative integer value that can be valid or invalid.
  */
-class DecimalHelper extends TypedValueHelper {
-  _validate(v: any): boolean {
-    return Number.isInteger(v) && v >= 0;
+class DecimalHelper extends TypedValueHelper<number> {
+  _validate(v: unknown): v is number {
+    return Number.isInteger(v) && (v as number) >= 0;
   }
 }
 
@@ -231,7 +246,7 @@ class UnitHelper {
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
-  set value(newValue: any) {
+  set value(newValue: unknown) {
     // CF5 - issue (critical) resolved - some integrations expose a non-string
     // unit_of_measurement; .trim() crashed and the ?? fallback was dead code
     this.#value = is.nullish(newValue) ? CARD.config.unit.default : String(newValue).trim();
@@ -241,7 +256,7 @@ class UnitHelper {
     return this.#isDisabled ? '' : this.#value;
   }
 
-  set isDisabled(newValue: any) {
+  set isDisabled(newValue: unknown) {
     this.#isDisabled = is.boolean(newValue) ? newValue : false;
   }
 
@@ -281,7 +296,7 @@ class ProgressCalc {
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
-  set isReversed(newValue: any) {
+  set isReversed(newValue: unknown) {
     this.#isReversed = is.boolean(newValue) ? newValue : CARD.config.reverse;
   }
 
@@ -289,39 +304,44 @@ class ProgressCalc {
     return this.#isReversed;
   }
 
-  set min(newValue: any) {
+  set min(newValue: unknown) {
     this.#min.value = newValue;
   }
 
+  // #min/#max/#current/#decimal are all constructed with a valid numeric
+  // default (see field initializers above), so .value is never null in
+  // practice - asserted rather than typed `number | null` throughout
+  // ProgressCalc's own math, which would otherwise need null-guards
+  // everywhere for a case that can't occur.
   get min(): number {
-    return this.#min.value;
+    return assertDefined(this.#min.value, 'ProgressCalc.min read with no valid value or default');
   }
 
-  set max(newValue: any) {
+  set max(newValue: unknown) {
     this.#max.value = newValue;
   }
 
   get max(): number {
-    return this.#max.value;
+    return assertDefined(this.#max.value, 'ProgressCalc.max read with no valid value or default');
   }
 
-  set current(newCurrent: any) {
+  set current(newCurrent: unknown) {
     this.#current.value = newCurrent;
   }
 
   get current(): number {
-    return this.#current.value;
+    return assertDefined(this.#current.value, 'ProgressCalc.current read with no valid value or default');
   }
 
-  set decimal(newValue: any) {
+  set decimal(newValue: unknown) {
     this.#decimal.value = newValue;
   }
 
   get decimal(): number {
-    return this.#decimal.value;
+    return assertDefined(this.#decimal.value, 'ProgressCalc.decimal read with no valid value or default');
   }
 
-  set isCenterZero(newValue: any) {
+  set isCenterZero(newValue: unknown) {
     this.#isCenterZero = is.boolean(newValue) ? newValue : false;
   }
 
@@ -329,7 +349,7 @@ class ProgressCalc {
     return this.#isCenterZero;
   }
 
-  set zeroValue(newValue: any) {
+  set zeroValue(newValue: unknown) {
     this.#zeroValue = is.number(newValue) ? newValue : 0;
   }
 
@@ -337,7 +357,7 @@ class ProgressCalc {
     return this.#zeroValue;
   }
 
-  set growthPercent(newValue: any) {
+  set growthPercent(newValue: unknown) {
     this.#growthPercent = is.boolean(newValue) ? newValue : false;
   }
 
@@ -345,7 +365,7 @@ class ProgressCalc {
     return this.#growthPercent;
   }
 
-  set scale(newValue: any) {
+  set scale(newValue: unknown) {
     this.#scale = newValue === 'log' ? 'log' : 'linear';
   }
 
@@ -402,7 +422,7 @@ class ProgressCalc {
     this.#percent = this.isValid ? Number(this.#percentForValue(currentValue).toFixed(this.decimal)) : 0;
   }
 
-  calcWatermark(value: any): number {
+  calcWatermark(value: number | { current: number } | null | undefined): number {
     const numericValue = is.number(value) ? value : (value?.current ?? 0);
     const percent = this.#percentForValue(numericValue);
     return this.isCenterZero ? 50 + percent / 2 : percent;
@@ -432,19 +452,14 @@ class ProgressCalc {
  * class for calculating and formatting percentages.
  */
 class PercentHelper extends ProgressCalc {
-  #hassProvider: any = null;
+  #hassProvider: HassProviderSingleton = HassProviderSingleton.getInstance();
   #unit = new UnitHelper();
   #isTimer = false;
   #unitSpacing: string = CARD.config.unit.unitSpacing.auto;
 
-  constructor() {
-    super();
-    this.#hassProvider = HassProviderSingleton.getInstance();
-  }
-
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
-  set isTimer(newValue: any) {
+  set isTimer(newValue: unknown) {
     this.#isTimer = is.boolean(newValue) ? newValue : false;
   }
 
@@ -456,7 +471,7 @@ class PercentHelper extends ProgressCalc {
     return this.#unit.value;
   }
 
-  set unit(newValue: any) {
+  set unit(newValue: unknown) {
     this.#unit.value = newValue ?? '';
   }
 
@@ -479,7 +494,21 @@ class PercentHelper extends ProgressCalc {
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
-  configure({ unitSpacing, hasDisabledUnit, isCenterZero, zeroValue, growthPercent, scale }: Record<string, any>) {
+  configure({
+    unitSpacing,
+    hasDisabledUnit,
+    isCenterZero,
+    zeroValue,
+    growthPercent,
+    scale,
+  }: {
+    unitSpacing: string;
+    hasDisabledUnit: unknown;
+    isCenterZero: unknown;
+    zeroValue: unknown;
+    growthPercent: unknown;
+    scale: unknown;
+  }) {
     this.#unitSpacing = unitSpacing;
     this.#unit.isDisabled = hasDisabledUnit;
     this.isCenterZero = isCenterZero;
@@ -539,16 +568,12 @@ class ThemeManager {
   #isLinear = false;
   #isBasedOnPercentage = false;
   #isCustomTheme = false;
-  // Theme "zones" come from either the built-in THEME table or a user's
-  // custom_theme YAML array - both are arrays of { min?, max?, color?,
-  // icon_color?, bar_color?, icon? } with slightly different optional fields,
-  // kept as `any[]` rather than a shared interface.
-  #currentStyle: any = null;
+  #currentStyle: ThemeZone[] | null = null;
   #interpolate = false;
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
-  set theme(newTheme: any) {
+  set theme(newTheme: unknown) {
     if (is.nullish(newTheme) || !has.validKey(THEME, newTheme)) {
       this.#reset();
       return;
@@ -567,16 +592,16 @@ class ThemeManager {
   // Only a presence/shape check: per-zone validity (numeric min < max, sorted)
   // is already guaranteed by the schema's customTheme validator, the sole path
   // a config reaches here through — see BaseConfigHelper.set config.
-  set customTheme(newTheme: any) {
+  set customTheme(newTheme: unknown) {
     if (!is.nonEmptyArray(newTheme)) return;
     this.#theme = CARD.theme.default;
-    this.#currentStyle = newTheme;
+    this.#currentStyle = newTheme as ThemeZone[];
     this.#isValid = true;
     this.#isLinear = false;
     this.#isCustomTheme = true;
   }
 
-  get customTheme(): any {
+  get customTheme(): ThemeZone[] | null {
     return this.#currentStyle;
   }
 
@@ -619,10 +644,10 @@ class ThemeManager {
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
-  configure({ theme, customTheme, interpolate }: Record<string, any>) {
+  configure({ theme, customTheme, interpolate }: { theme: unknown; customTheme: unknown; interpolate: unknown }) {
     this.theme = theme;
     this.customTheme = customTheme;
-    this.#interpolate = interpolate;
+    this.#interpolate = Boolean(interpolate);
   }
 
   // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
@@ -648,41 +673,47 @@ class ThemeManager {
   }
 
   #setLinearStyle() {
-    const lastStep = this.#currentStyle.length - 1;
+    // #refresh() only calls this when #isValid is true, which is only ever
+    // set alongside #currentStyle (see theme/customTheme setters).
+    const style = assertDefined(this.#currentStyle, 'ThemeManager.#setLinearStyle called with no #currentStyle');
+    const lastStep = style.length - 1;
     const thresholdSize = CARD.config.value.max / lastStep;
     const percentage = Math.max(0, Math.min(this.#value, CARD.config.value.max));
     const index = Math.min(Math.floor(percentage / thresholdSize), lastStep);
     const ratio = (percentage - index * thresholdSize) / thresholdSize;
-    this.#applyColors(this.#currentStyle[index], this.#currentStyle[index + 1] ?? null, ratio);
+    this.#applyColors(style[index], style[index + 1] ?? null, ratio);
   }
 
   #setStyle() {
-    let themeData: any = null;
-    let nextThemeData: any = null;
+    const style = assertDefined(this.#currentStyle, 'ThemeManager.#setStyle called with no #currentStyle');
+    let themeData: ThemeZone | null = null;
+    let nextThemeData: ThemeZone | null = null;
     let ratio = 0;
 
-    if (this.#value >= this.#currentStyle[this.#currentStyle.length - 1].max) {
-      themeData = this.#currentStyle[this.#currentStyle.length - 1];
-    } else if (this.#value < this.#currentStyle[0].min) {
-      themeData = this.#currentStyle[0];
+    if (this.#value >= (style[style.length - 1].max ?? Infinity)) {
+      themeData = style[style.length - 1];
+    } else if (this.#value < (style[0].min ?? -Infinity)) {
+      themeData = style[0];
     } else {
       // custom_theme zones no longer have to tile perfectly (gaps are
       // tolerated), so a value can land in a gap between two of them —
       // themeData then stays null and #applyColors disengages the theme for
       // this render, deferring to whatever color source is next in priority
       // (see CardView.iconColor/barColor).
-      const index = this.#currentStyle.findIndex((level: any) => this.#value >= level.min && this.#value < level.max);
+      const index = style.findIndex(
+        (level) => this.#value >= (level.min ?? -Infinity) && this.#value < (level.max ?? Infinity),
+      );
       if (index !== -1) {
-        themeData = this.#currentStyle[index];
-        nextThemeData = this.#currentStyle[index + 1] ?? null;
-        ratio = (this.#value - themeData.min) / (themeData.max - themeData.min);
+        themeData = style[index];
+        nextThemeData = style[index + 1] ?? null;
+        ratio = (this.#value - (themeData.min ?? 0)) / ((themeData.max ?? 0) - (themeData.min ?? 0));
       }
     }
 
     this.#applyColors(themeData, nextThemeData, ratio);
   }
 
-  #applyColors(themeData: any, nextThemeData: any, ratio: number) {
+  #applyColors(themeData: ThemeZone | null, nextThemeData: ThemeZone | null, ratio: number) {
     if (!themeData) {
       this.#icon = null;
       this.#iconColor = null;
@@ -722,19 +753,20 @@ class ThemeManager {
   }
 
   buildGradient(fillPercent: number, mode: string, defaultColor: string | null = null, isVertical = false) {
-    if (!this.#isValid || !this.#currentStyle || mode === 'auto') return null;
+    const currentStyle = this.#currentStyle;
+    if (!this.#isValid || !currentStyle || mode === 'auto') return null;
     if (!(fillPercent > 0)) return null;
 
     // For linear themes, derive min/max boundaries by splitting 0–100% equally.
-    const style = this.#isLinear
-      ? this.#currentStyle.map((level: any, i: number, arr: any[]) => ({
+    const style: ThemeZone[] = this.#isLinear
+      ? currentStyle.map((level, i, arr) => ({
           ...level,
           min: (i / arr.length) * 100,
           max: ((i + 1) / arr.length) * 100,
         }))
-      : this.#currentStyle;
+      : currentStyle;
 
-    const visible = style.filter((level: any) => level.min < fillPercent);
+    const visible = style.filter((level) => (level.min ?? 0) < fillPercent);
     if (visible.length === 0) return null;
 
     // Inner element uses translateX((value-1)*100%), shifted left by
@@ -750,13 +782,13 @@ class ThemeManager {
     // own negotiated color (e.g. a cover is pink open / grey closed, see
     // EntityHelper.defaultColor), then the card's generic default, rather than
     // a flat neutral for every domain.
-    const col = (level: any) =>
-      ThemeManager.adaptColor(level.bar_color || level.color) || defaultColor || CARD.style.color.default;
+    const col = (level: ThemeZone) =>
+      ThemeManager.adaptColor(level.bar_color || level.color || null) || defaultColor || CARD.style.color.default;
 
     if (mode === 'segment') {
-      const stops = visible.flatMap((level: any, i: number) => {
-        const start = i === 0 ? '0%' : toElemPos(level.min);
-        const end = level.max >= fillPercent ? '100%' : toElemPos(level.max);
+      const stops = visible.flatMap((level, i) => {
+        const start = i === 0 ? '0%' : toElemPos(level.min ?? 0);
+        const end = (level.max ?? 0) >= fillPercent ? '100%' : toElemPos(level.max ?? 0);
         return [`${col(level)} ${start}`, `${col(level)} ${end}`];
       });
       return `linear-gradient(${direction}, ${stops.join(', ')})`;
@@ -766,8 +798,8 @@ class ThemeManager {
       const first = col(visible[0]);
       const stops = [`${first} 0%`];
       if (offset > 0) stops.push(`${first} ${offset.toFixed(2)}%`);
-      visible.forEach((level: any, i: number) => {
-        if (i > 0) stops.push(`${col(level)} ${toElemPos(level.min)}`);
+      visible.forEach((level, i) => {
+        if (i > 0) stops.push(`${col(level)} ${toElemPos(level.min ?? 0)}`);
       });
       stops.push(`${col(visible[visible.length - 1])} 100%`);
       return `linear-gradient(${direction}, ${stops.join(', ')})`;
@@ -784,7 +816,7 @@ class ChangeTracker {
   #log: LoggerInstance;
   #firstTime = true;
   #watchedEntities = new Set<string>();
-  #entityCache: Record<string, any> = {};
+  #entityCache: Record<string, EntityState | null> = {};
   #updated = false;
   #hassState = { isUpdated: false };
 
@@ -794,7 +826,7 @@ class ChangeTracker {
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
-  set hassState(hass: any) {
+  set hassState(hass: Hass) {
     this.#updated = false;
     if (!hass) return;
 
@@ -816,7 +848,7 @@ class ChangeTracker {
 
   // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
 
-  _hasChanged(newHass: any): boolean {
+  _hasChanged(newHass: Hass): boolean {
     if (this.#firstTime) {
       this.#firstTime = false;
       return true;
@@ -842,7 +874,7 @@ class ChangeTracker {
     return false;
   }
 
-  _updateCache(hass: any) {
+  _updateCache(hass: Hass) {
     this.#entityCache = {};
     for (const entityId of this.#watchedEntities) {
       this.#entityCache[entityId] = hass.states?.[entityId] ?? null;
@@ -871,7 +903,7 @@ class ChangeTracker {
 // hand-modeling home-assistant-frontend's types, same rationale as
 // hass-provider.ts's own `#hass: any`.
 class EntityHelper {
-  #hassProvider: any = null;
+  #hassProvider: HassProviderSingleton = HassProviderSingleton.getInstance();
   #isValid = false;
   #value: any = {};
   #entityId: string | null = null;
@@ -890,7 +922,7 @@ class EntityHelper {
     isSynced: false,
   };
   #stateContent: string[] = [];
-  #nameTokens: any[] | null = null;
+  #nameTokens: NameToken[] | null = null;
   static #handleRefreshType = new Map<string, (self: EntityHelper) => void>([
     [HA_CONTEXT.entity.type.timer, (self) => self._manageTimerEntity()],
     [HA_CONTEXT.entity.type.duration, (self) => self._manageDurationEntity()],
@@ -898,10 +930,6 @@ class EntityHelper {
     [HA_CONTEXT.entity.type.number, (self) => self._manageCounterAndNumberEntity('min', 'max')],
     [HA_CONTEXT.entity.type.default, (self) => self._manageStdEntity()],
   ]);
-
-  constructor() {
-    this.#hassProvider = HassProviderSingleton.getInstance();
-  }
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
@@ -912,11 +940,20 @@ class EntityHelper {
     this.#entityTypeFlags.isSynced = false;
     this.#value = 0;
     this.#domain = HassProviderSingleton.getEntityDomain(newValue);
-    this.#isValid = this.#hassProvider.hasEntity(this.#entityId);
+    this.#isValid = this.#hassProvider.hasEntity(this.#entity);
   }
 
   get entityId(): string | null {
     return this.#entityId;
+  }
+
+  // Every other method below only ever runs after entityId has been set (the
+  // setter is always the first thing called on a fresh EntityHelper - see
+  // EntityOrValue.set value / EntityCollectionHelper.addEntity) - this getter
+  // documents and enforces that precondition once, instead of a bare
+  // `this.#entityId!` at every hassProvider call site.
+  get #entity(): string {
+    return assertDefined(this.#entityId, 'EntityHelper method called before entityId was set');
   }
 
   set attribute(newValue: string | null) {
@@ -935,7 +972,7 @@ class EntityHelper {
     return this.#color;
   }
 
-  set subtract(newValue: any) {
+  set subtract(newValue: unknown) {
     this.#subtract = Boolean(newValue);
   }
 
@@ -943,7 +980,7 @@ class EntityHelper {
     return this.#subtract;
   }
 
-  set isMain(newValue: any) {
+  set isMain(newValue: unknown) {
     this.#isMain = Boolean(newValue);
   }
 
@@ -951,11 +988,11 @@ class EntityHelper {
     return this.#isMain;
   }
 
-  set nameTokens(tok: any) {
-    this.#nameTokens = is.nonEmptyArray(tok) ? tok : null;
+  set nameTokens(tok: unknown) {
+    this.#nameTokens = is.nonEmptyArray(tok) ? (tok as NameToken[]) : null;
   }
 
-  get nameTokens(): any[] | null {
+  get nameTokens(): NameToken[] | null {
     return this.#nameTokens;
   }
 
@@ -980,7 +1017,7 @@ class EntityHelper {
   }
 
   get isAvailable(): boolean {
-    return this.#hassProvider.isEntityAvailable(this.#entityId);
+    return this.#hassProvider.isEntityAvailable(this.#entity);
   }
 
   get attributes(): Record<string, number> {
@@ -989,7 +1026,7 @@ class EntityHelper {
       !this.entityType.isNumber &&
       !this.entityType.isDuration &&
       !this.entityType.isTimer
-      ? this.#hassProvider.getNumericAttributes(this.#entityId)
+      ? this.#hassProvider.getNumericAttributes(this.#entity)
       : {};
   }
 
@@ -1002,27 +1039,30 @@ class EntityHelper {
   }
 
   get name(): string {
-    return this.#hassProvider.getEntityProp(this.#entityId, 'friendly_name');
+    return this.#hassProvider.getEntityProp(this.#entity, 'friendly_name');
   }
 
   _nameResolver(): string {
-    const resolvers: Record<string, (item: any) => any> = {
-      text: (item) => item.text,
-      entity: () => this.#hassProvider.getEntityName(this.entityId),
-      device: () => this.#hassProvider.getEntityDevice(this.entityId),
-      area: () => this.#hassProvider.getEntityArea(this.entityId),
-      floor: () => this.#hassProvider.getEntityFloor(this.entityId),
+    const resolvers: Record<string, (item: NameToken) => string | null> = {
+      text: (item) => item.text ?? null,
+      entity: () => this.#hassProvider.getEntityName(this.#entity),
+      device: () => this.#hassProvider.getEntityDevice(this.#entity),
+      area: () => this.#hassProvider.getEntityArea(this.#entity),
+      floor: () => this.#hassProvider.getEntityFloor(this.#entity),
     };
 
-    return this.#nameTokens!.map((item) => {
-      const resolver = resolvers[item.type];
-      if (!resolver) return null;
-      try {
-        return resolver(item);
-      } catch {
-        return null;
-      }
-    })
+    const tokens = assertDefined(this.#nameTokens, 'EntityHelper._nameResolver() called with no tokens set');
+
+    return tokens
+      .map((item) => {
+        const resolver = resolvers[item.type];
+        if (!resolver) return null;
+        try {
+          return resolver(item);
+        } catch {
+          return null;
+        }
+      })
       .filter((v) => is.nonEmptyString(v))
       .join(' ');
   }
@@ -1032,11 +1072,11 @@ class EntityHelper {
   }
 
   get stateObj(): EntityState | null {
-    return this.#hassProvider.getEntityStateObj(this.#entityId);
+    return this.#hassProvider.getEntityStateObj(this.#entity);
   }
 
   get formatedEntityState(): string {
-    return this.#hassProvider.getEntityProp(this.#entityId, 'state', true);
+    return this.#hassProvider.getEntityProp(this.#entity, 'state', true);
   }
 
   get unit(): string | null {
@@ -1045,11 +1085,11 @@ class EntityHelper {
     if (this.entityType.isDuration) return CARD.config.unit.second;
     if (this.entityType.isCounter) return CARD.config.unit.disable;
 
-    return this.#hassProvider.getEntityProp(this.#entityId, 'unit_of_measurement');
+    return this.#hassProvider.getEntityProp(this.#entity, 'unit_of_measurement');
   }
 
   get precision(): number | null {
-    return this.#isValid ? (this.#hassProvider.getEntityProp(this.#entityId, 'display_precision') ?? null) : null;
+    return this.#isValid ? (this.#hassProvider.getEntityProp(this.#entity, 'display_precision') ?? null) : null;
   }
 
   get entityType(): Record<string, boolean> {
@@ -1083,7 +1123,7 @@ class EntityHelper {
 
     return (
       colorMap[this.#domain as string] ??
-      colorMap[this.#hassProvider.getEntityProp(this.#entityId, 'device_class')] ??
+      colorMap[this.#hassProvider.getEntityProp(this.#entity, 'device_class')] ??
       null
     );
   }
@@ -1094,16 +1134,16 @@ class EntityHelper {
     for (const attr of this.#stateContent) {
       switch (attr) {
         case 'state':
-          results.push(this.#hassProvider.getEntityProp(this.#entityId, 'state', true));
+          results.push(this.#hassProvider.getEntityProp(this.#entity, 'state', true));
           break;
         case 'device_name':
-          results.push(this.#hassProvider.getEntityDevice(this.entityId));
+          results.push(this.#hassProvider.getEntityDevice(this.#entity) ?? '');
           break;
         case 'area_name':
-          results.push(this.#hassProvider.getEntityArea(this.#entityId));
+          results.push(this.#hassProvider.getEntityArea(this.#entity) ?? '');
           break;
         default:
-          results.push(this.#hassProvider.getEntityProp(this.#entityId, attr, true));
+          results.push(this.#hassProvider.getEntityProp(this.#entity, attr, true));
           break;
       }
     }
@@ -1116,7 +1156,7 @@ class EntityHelper {
   getEntityType(): string {
     this.#entityType ??= EntityHelper.#handleRefreshType.has(this.#domain as string)
       ? (this.#domain as string)
-      : this.#hassProvider.getEntityProp(this.#entityId, 'device_class') === HA_CONTEXT.entity.type.duration &&
+      : this.#hassProvider.getEntityProp(this.#entity, 'device_class') === HA_CONTEXT.entity.type.duration &&
           !this.#attribute
         ? HA_CONTEXT.entity.type.duration
         : HA_CONTEXT.entity.type.default;
@@ -1125,7 +1165,7 @@ class EntityHelper {
   }
 
   refresh() {
-    this.#isValid = this.#hassProvider.hasEntity(this.#entityId);
+    this.#isValid = this.#hassProvider.hasEntity(this.#entity);
 
     if (!this.#isValid) {
       this.#state = HA_CONTEXT.entity.state.notFound;
@@ -1136,14 +1176,16 @@ class EntityHelper {
       // CF5 - issue (major) resolved - getEntityAttribute returns null (never
       // undefined) when missing, so this check always passed and invalid
       // attributes produced NaN downstream
-      this.#isValid = this.#hassProvider.getEntityAttribute(this.#entityId, this.#attribute) !== null;
+      this.#isValid = this.#hassProvider.getEntityAttribute(this.#entity, this.#attribute) !== null;
 
-    this.#state = this.#hassProvider.getEntityProp(this.#entityId, 'state');
+    this.#state = this.#hassProvider.getEntityProp(this.#entity, 'state');
     if (!this.isValid || !this.isAvailable) return;
 
     const type = this.getEntityType();
-    const handler =
-      EntityHelper.#handleRefreshType.get(type) ?? EntityHelper.#handleRefreshType.get(HA_CONTEXT.entity.type.default)!;
+    const handler = assertDefined(
+      EntityHelper.#handleRefreshType.get(type) ?? EntityHelper.#handleRefreshType.get(HA_CONTEXT.entity.type.default),
+      `EntityHelper: no refresh handler for '${type}' and no default handler registered`,
+    );
     handler(this);
   }
 
@@ -1158,7 +1200,7 @@ class EntityHelper {
       return;
     }
 
-    const attrValue = this.#hassProvider.getEntityAttribute(this.#entityId, this.#attribute);
+    const attrValue = this.#hassProvider.getEntityAttribute(this.#entity, this.#attribute);
 
     if (is.numericString(attrValue) || is.number(attrValue)) {
       this.#value = parseFloat(String(attrValue));
@@ -1191,18 +1233,16 @@ class EntityHelper {
         break;
       }
       case HA_CONTEXT.entity.state.active: {
-        const finished_at = new Date(this.#hassProvider.getEntityProp(this.#entityId, 'finishes_at')).getTime();
-        duration = NumberFormatter.convertDuration(this.#hassProvider.getEntityProp(this.#entityId, 'duration'))!;
+        const finished_at = new Date(this.#hassProvider.getEntityProp(this.#entity, 'finishes_at')).getTime();
+        duration = NumberFormatter.convertDuration(this.#hassProvider.getEntityProp(this.#entity, 'duration'));
         const started_at = finished_at - duration;
         const now = new Date().getTime();
         elapsed = now - started_at;
         break;
       }
       case HA_CONTEXT.entity.state.paused: {
-        const remaining = NumberFormatter.convertDuration(
-          this.#hassProvider.getEntityProp(this.#entityId, 'remaining'),
-        )!;
-        duration = NumberFormatter.convertDuration(this.#hassProvider.getEntityProp(this.#entityId, 'duration'))!;
+        const remaining = NumberFormatter.convertDuration(this.#hassProvider.getEntityProp(this.#entity, 'remaining'));
+        duration = NumberFormatter.convertDuration(this.#hassProvider.getEntityProp(this.#entity, 'duration'));
         elapsed = duration - remaining;
         break;
       }
@@ -1220,13 +1260,13 @@ class EntityHelper {
   _manageCounterAndNumberEntity(min: string, max: string) {
     this.#value = {
       current: parseFloat(this.#state as string),
-      min: this.#hassProvider.getEntityAttribute(this.#entityId, min),
-      max: this.#hassProvider.getEntityAttribute(this.#entityId, max),
+      min: this.#hassProvider.getEntityAttribute(this.#entity, min),
+      max: this.#hassProvider.getEntityAttribute(this.#entity, max),
     };
   }
 
   _manageDurationEntity() {
-    const unit = this.#hassProvider.getEntityProp(this.#entityId, 'unit_of_measurement');
+    const unit = this.#hassProvider.getEntityProp(this.#entity, 'unit_of_measurement');
     const value = parseFloat(this.#state as string);
     // CF5 - issue (critical) resolved - getEntityProp returns null (never
     // undefined), so the guard never matched and a missing unit crashed in
@@ -1490,7 +1530,7 @@ class EntityOrValue {
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
-  set value(newValue: any) {
+  set value(newValue: unknown) {
     if (is.string(newValue)) {
       if (!(this.#activeHelper instanceof EntityHelper)) {
         this.#activeHelper = new EntityHelper();
@@ -1601,11 +1641,11 @@ class EntityOrValue {
     return this.#entity()?.stateObj ?? null;
   }
 
-  get nameTokens(): any[] | null {
+  get nameTokens(): NameToken[] | null {
     return this.#entity()?.nameTokens ?? null;
   }
 
-  set nameTokens(tok: any) {
+  set nameTokens(tok: unknown) {
     const entity = this.#entity();
     if (entity) entity.nameTokens = tok;
   }

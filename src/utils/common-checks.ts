@@ -41,9 +41,21 @@ const is = {
 
 const has = {
   own: (obj: object, key: PropertyKey): boolean => Object.hasOwn(obj, key),
-  method: (obj: unknown, key: PropertyKey): boolean => typeof (obj as any)?.[key] === 'function',
+  method: (obj: unknown, key: PropertyKey): boolean =>
+    typeof (obj as Record<PropertyKey, unknown>)?.[key] === 'function',
   validKey: (obj: object, key: unknown): key is string => typeof key === 'string' && key !== '' && has.own(obj, key),
 };
 
+// Runtime guard for a value that's non-null by construction/lifecycle (a ref
+// set once at connect/init time, a lookup keyed by something the caller just
+// registered) but not provable to the type checker. Throws instead of masking
+// a broken invariant with a silent `undefined`, the way a non-null assertion
+// (`x!`) would.
+function assertDefined<T>(value: T | null | undefined, message: string): T {
+  if (value == null) throw new Error(message);
+  return value;
+}
+
 export { is };
 export { has };
+export { assertDefined };

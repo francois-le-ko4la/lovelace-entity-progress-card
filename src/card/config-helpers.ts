@@ -4,8 +4,19 @@
  * of the card reads from.
  */
 
-import { META, HA_CONTEXT, CARD, SEV, MIN_VALUE_ENTITY_PATH, MAX_VALUE_ENTITY_PATH } from '../utils/parameters.js';
-import { is, has } from '../utils/common-checks.js';
+import {
+  META,
+  HA_CONTEXT,
+  CARD,
+  SEV,
+  MIN_VALUE_ENTITY_PATH,
+  MAX_VALUE_ENTITY_PATH,
+  WATERMARK_LOW_ENTITY_PATH,
+  WATERMARK_HIGH_ENTITY_PATH,
+  ALERT_ABOVE_ENTITY_PATH,
+  ALERT_BELOW_ENTITY_PATH,
+} from '../utils/parameters.js';
+import { is, has, assertDefined } from '../utils/common-checks.js';
 import { initLogger, type LoggerInstance } from '../utils/log.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
 import { YamlSchemaFactory } from './schema.js';
@@ -14,8 +25,23 @@ import type { RawConfig, Config } from '../utils/types.js';
 // Every YamlSchemaFactory getter (card/badge/feature/template/badgeTemplate)
 // returns the same struct(...) shape - .card's is as good a reference as any.
 type Schema = typeof YamlSchemaFactory.card;
-type ActionBag = { tap: any; doubleTap: any; hold: any };
+// Each holds an action *type* string ('navigate', 'toggle', 'none'...) - see
+// #getAction, which reads only the `.action` sub-property of a validated
+// tap_action/hold_action/double_tap_action config value, not the whole object.
+type ActionBag = { tap: string | null; doubleTap: string | null; hold: string | null };
 type HAError = { path: string; errorCode: string | null; severity: string } | null;
+// The shape schema.ts's struct(...).parse() actually returns (see schema.ts)
+// - written out explicitly rather than via ReturnType<Schema['parse']>: an
+// empty `errors: []` in one of parse()'s own return branches infers as
+// `never[]` with nothing else in schema.ts yet forcing it wider.
+type ParsedConfig = {
+  isValid: boolean;
+  config: any;
+  path: (string | number)[] | null;
+  errorCode: string | null;
+  severity: string | null;
+  errors: { path: (string | number)[]; errorCode: string | null; severity: string }[];
+};
 
 /**
  * base class for managing and validating all card configuration.
@@ -31,7 +57,14 @@ class BaseConfigHelper {
   };
   #actionsReady = false;
   _isDefined = false;
-  _configParsed: any = {};
+  _configParsed: ParsedConfig = {
+    isValid: false,
+    config: null,
+    path: null,
+    errorCode: null,
+    severity: null,
+    errors: [],
+  };
   _configResolved: Config = {} as Config; // valeurs dérivées de la config, calculées une seule fois par set config()
   // The real shape comes from YamlSchemaFactory (see schema.ts) - subclasses
   // assign a concrete schema here (see CardConfigHelper etc. below).
@@ -51,9 +84,11 @@ class BaseConfigHelper {
     this.#actionsReady = false;
     this._isDefined = true;
     BaseConfigHelper.#logDeprecatedOption(config);
-    this._configParsed = this._yamlSchema!.parse(
-      (this.constructor as typeof BaseConfigHelper)._customizeConfig(config),
+    const yamlSchema = assertDefined(
+      this._yamlSchema,
+      `${this.constructor.name}: set config called with no _yamlSchema (only concrete subclasses define one)`,
     );
+    this._configParsed = yamlSchema.parse((this.constructor as typeof BaseConfigHelper)._customizeConfig(config));
     this._configResolved = BaseConfigHelper.#resolveConfig(this._configParsed?.config);
 
     this.#lastMsgConsole = null;
@@ -74,7 +109,11 @@ class BaseConfigHelper {
    * exploitable. - false / undefined -> désactivé, zéro = 0 - true -> activé,
    * zéro = 0 - { value: 230 } -> activé, zéro = 230
    */
-  static #resolveCenterZero(centerZero: any): { enabled: boolean; zeroValue: number; growthPercent: boolean } {
+  static #resolveCenterZero(centerZero: boolean | { value?: number; growth_percent?: boolean } | null | undefined): {
+    enabled: boolean;
+    zeroValue: number;
+    growthPercent: boolean;
+  } {
     if (!centerZero) return { enabled: false, zeroValue: 0, growthPercent: false };
     if (centerZero === true) return { enabled: true, zeroValue: 0, growthPercent: false };
     return {
@@ -121,6 +160,22 @@ class BaseConfigHelper {
         `${META.types.card.typeName.toUpperCase()} - max_value: <entity id> is deprecated and will be removed in a future release. ` +
           'Please migrate to max_value: { entity: <entity id>, attribute: <optional> }. Your configuration was automatically migrated for this session.',
       );
+    // watermark.low/high used to accept the same bare entity-id-string form
+    // as pre-1.6 max_value, with attribute as a separate
+    // watermark.low_attribute/high_attribute sibling key - same
+    // disambiguation trap, same fix: an explicit map, folded in for this
+    // session (see
+    // CardConfigHelper._migrateLegacyOptions).
+    if (is.nonEmptyString(config.watermark?.low))
+      console.warn(
+        `${META.types.card.typeName.toUpperCase()} - watermark.low: <entity id> is deprecated and will be removed in a future release. ` +
+          'Please migrate to watermark.low: { entity: <entity id>, attribute: <optional> }. Your configuration was automatically migrated for this session.',
+      );
+    if (is.nonEmptyString(config.watermark?.high))
+      console.warn(
+        `${META.types.card.typeName.toUpperCase()} - watermark.high: <entity id> is deprecated and will be removed in a future release. ` +
+          'Please migrate to watermark.high: { entity: <entity id>, attribute: <optional> }. Your configuration was automatically migrated for this session.',
+      );
     if (config.disable_unit !== undefined)
       console.warn(
         `${META.types.card.typeName.toUpperCase()} - disable_unit is deprecated and will be removed in a future release. ` +
@@ -145,7 +200,7 @@ class BaseConfigHelper {
     const errorSrc = this.#HAError ? this.#HAError : this._configParsed;
     return {
       content: `${errorSrc.path}: ${this.#hassProvider.getMessage(errorSrc.errorCode)}`,
-      sev: errorSrc.severity,
+      sev: errorSrc.severity ?? SEV.error,
     };
   }
 
@@ -172,7 +227,7 @@ class BaseConfigHelper {
     return this.#actions;
   }
 
-  #getAction(action: string): any {
+  #getAction(action: string): string | null {
     return this.isValid ? this.config?.[action]?.action : null;
   }
 
@@ -187,8 +242,9 @@ class BaseConfigHelper {
       const msgConsole = `${curError.path.join('.')} : ${this._hassProvider.getMessage(curError.errorCode)}`;
       if (this.#lastMsgConsole !== msgConsole) {
         this.#lastMsgConsole = msgConsole;
-        (this.#log as any)?.[curError.severity]?.(msgConsole);
-        (this.#log as any)?.[curError.severity]?.('config: ', this.config);
+        const logMethod = this.#log?.[curError.severity as 'error' | 'warning' | 'info' | 'debug'];
+        logMethod?.(msgConsole);
+        logMethod?.('config: ', this.config);
       }
     }
   }
@@ -196,17 +252,27 @@ class BaseConfigHelper {
   _checkHAEnvironment() {
     const ENTITY_NOT_FOUND = 'entityNotFound';
     const ATTRIBUTE_NOT_FOUND = 'attributeNotFound';
-    const resolve = (key: any) => (is.nonEmptyString(key) ? this._hassProvider.getEntityStateObj(key) : null);
+    const resolve = (key: unknown) => (is.nonEmptyString(key) ? this._hassProvider.getEntityStateObj(key) : null);
 
     const entityState = resolve(this.config.entity);
-    const maxValueEntity = is.plainObject(this.config.max_value) ? this.config.max_value.entity : null;
-    const maxValueAttr = is.plainObject(this.config.max_value) ? this.config.max_value.attribute : null;
-    const maxValueState = resolve(maxValueEntity);
-    const minValueEntity = is.plainObject(this.config.min_value) ? this.config.min_value.entity : null;
-    const minValueAttr = is.plainObject(this.config.min_value) ? this.config.min_value.attribute : null;
-    const minValueState = resolve(minValueEntity);
-    const lowWMState = resolve(this.config?.watermark?.low);
-    const highWMState = resolve(this.config?.watermark?.high);
+    // max_value/min_value/watermark.low/watermark.high/alert_when.above/
+    // alert_when.below are all negotiated to the same shape (number |
+    // { entity, attribute } | { jinja }) - the same two checks (entity
+    // exists, attribute exists on it) apply identically to all six, just
+    // against a different config value and error path.
+    const checkValueConfig = (valueCfg: unknown, entityPath: string, attributePath: string) => {
+      const entityId = is.plainObject(valueCfg) ? valueCfg.entity : null;
+      const attribute = is.plainObject(valueCfg) ? valueCfg.attribute : null;
+      const state = resolve(entityId);
+      return [
+        { condition: is.nonEmptyString(entityId) && !state, path: entityPath, errorCode: ENTITY_NOT_FOUND },
+        {
+          condition: is.nonEmptyString(attribute) && state && !has.own(state.attributes, attribute),
+          path: attributePath,
+          errorCode: ATTRIBUTE_NOT_FOUND,
+        },
+      ];
+    };
 
     const checks = [
       {
@@ -215,52 +281,12 @@ class BaseConfigHelper {
         path: 'attribute',
         errorCode: ATTRIBUTE_NOT_FOUND,
       },
-      {
-        condition: is.nonEmptyString(maxValueEntity) && !maxValueState,
-        path: MAX_VALUE_ENTITY_PATH,
-        errorCode: ENTITY_NOT_FOUND,
-      },
-      {
-        condition: is.nonEmptyString(maxValueAttr) && maxValueState && !has.own(maxValueState.attributes, maxValueAttr),
-        path: 'max_value.attribute',
-        errorCode: ATTRIBUTE_NOT_FOUND,
-      },
-      {
-        condition: is.nonEmptyString(minValueEntity) && !minValueState,
-        path: MIN_VALUE_ENTITY_PATH,
-        errorCode: ENTITY_NOT_FOUND,
-      },
-      {
-        condition: is.nonEmptyString(minValueAttr) && minValueState && !has.own(minValueState.attributes, minValueAttr),
-        path: 'min_value.attribute',
-        errorCode: ATTRIBUTE_NOT_FOUND,
-      },
-      {
-        condition: is.nonEmptyString(this.config.watermark?.low) && !lowWMState,
-        path: 'watermark.low',
-        errorCode: ENTITY_NOT_FOUND,
-      },
-      {
-        condition:
-          is.nonEmptyString(this.config.watermark?.low_attribute) &&
-          lowWMState &&
-          !has.own(lowWMState.attributes, this.config.watermark.low_attribute),
-        path: 'watermark.low_attribute',
-        errorCode: ATTRIBUTE_NOT_FOUND,
-      },
-      {
-        condition: is.nonEmptyString(this.config.watermark?.high) && !highWMState,
-        path: 'watermark.high',
-        errorCode: ENTITY_NOT_FOUND,
-      },
-      {
-        condition:
-          is.nonEmptyString(this.config.watermark?.high_attribute) &&
-          highWMState &&
-          !has.own(highWMState.attributes, this.config.watermark.high_attribute),
-        path: 'watermark.high_attribute',
-        errorCode: ATTRIBUTE_NOT_FOUND,
-      },
+      ...checkValueConfig(this.config.max_value, MAX_VALUE_ENTITY_PATH, 'max_value.attribute'),
+      ...checkValueConfig(this.config.min_value, MIN_VALUE_ENTITY_PATH, 'min_value.attribute'),
+      ...checkValueConfig(this.config.watermark?.low, WATERMARK_LOW_ENTITY_PATH, 'watermark.low.attribute'),
+      ...checkValueConfig(this.config.watermark?.high, WATERMARK_HIGH_ENTITY_PATH, 'watermark.high.attribute'),
+      ...checkValueConfig(this.config.alert_when?.above, ALERT_ABOVE_ENTITY_PATH, 'alert_when.above.attribute'),
+      ...checkValueConfig(this.config.alert_when?.below, ALERT_BELOW_ENTITY_PATH, 'alert_when.below.attribute'),
     ];
 
     const failed = checks.find((c) => c.condition);
@@ -324,6 +350,27 @@ class CardConfigHelper extends BaseConfigHelper {
         ...config,
         max_value: { entity: config.max_value, attribute: config.max_value_attribute },
         max_value_attribute: undefined,
+      };
+    }
+    // watermark.low/high: same pre-1.6 trap as max_value above, just with the
+    // attribute carried on a watermark.low_attribute/high_attribute sibling
+    // key instead of a top-level one. Folded independently per side, so a
+    // config mixing a legacy low with an already-explicit high migrates
+    // correctly.
+    if (is.nonEmptyString(config?.watermark?.low) || is.nonEmptyString(config?.watermark?.high)) {
+      const migrateSide = (side: 'low' | 'high') => {
+        if (!is.nonEmptyString(config.watermark?.[side])) return {};
+        return { [side]: { entity: config.watermark[side], attribute: config.watermark[`${side}_attribute`] } };
+      };
+      normalized = {
+        ...normalized,
+        watermark: {
+          ...normalized.watermark,
+          ...migrateSide('low'),
+          ...migrateSide('high'),
+          low_attribute: undefined,
+          high_attribute: undefined,
+        },
       };
     }
     // disable_unit used to be a dedicated boolean; 'unit' is now just another

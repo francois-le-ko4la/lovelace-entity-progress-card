@@ -74,6 +74,8 @@
       "max_value_mode": "Max value source",
       "watermark_low_mode": "Low watermark source",
       "watermark_high_mode": "High watermark source",
+      "alert_when_above_mode": "Above alert source",
+      "alert_when_below_mode": "Below alert source",
       "bar_max_width": "Bar max width",
       "bar_max_width_toggle": "Bar max width",
       "frameless": "Frameless",
@@ -183,7 +185,6 @@
         "high_attribute": "Attribute"
       },
       "icon_animation": {
-        "none": "None",
         "spin": "Spin",
         "pulse": "Pulse",
         "bounce": "Bounce",
@@ -198,7 +199,9 @@
         "below": "Alert below",
         "color": "Alert color",
         "highlight": "Highlight",
-        "animation": "Animation"
+        "animation": "Animation",
+        "above_attribute": "Attribute",
+        "below_attribute": "Attribute"
       },
       "alert_highlight": {
         "border": "Border",
@@ -225,6 +228,16 @@
         "jinja": "Template"
       },
       "watermark_high_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "alert_when_above_mode": {
+        "standard": "Fixed value",
+        "entity": "Entity",
+        "jinja": "Template"
+      },
+      "alert_when_below_mode": {
         "standard": "Fixed value",
         "entity": "Entity",
         "jinja": "Template"

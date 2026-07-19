@@ -2385,7 +2385,6 @@ _Map definition_:
     `min_value`/`max_value`) — the card converts it to a bar position.
   - `percent`: value is a direct bar position (0–100), bypassing any unit
     conversion.
-- `high_attribute`: Entity’s attribute to use as the high threshold.
 - `high_color` (string): The CSS color used for the high watermark zone (name or
   hex).
 - `low` (number/entity/template): The lower threshold value. How it is
@@ -2395,7 +2394,6 @@ _Map definition_:
     `min_value`/`max_value`) — the card converts it to a bar position.
   - `percent`: value is a direct bar position (0–100), bypassing any unit
     conversion.
-- `low_attribute`: Entity’s attribute to use as the low threshold.
 - `low_color` (string): The CSS color used for the low watermark zone.
 - `type` (string): Defines the style of the watermark overlay.
   - `blended` (default): A subtle colored overlay that merges with the bar’s
@@ -2413,13 +2411,14 @@ _Map definition_:
 - `disable_low` (boolean): If set to true, disables the low watermark display.
 - `disable_high` (boolean): If set to true, disables the high watermark display.
 
-`low` and `high` each accept three forms — like `min_value`/`max_value`, a
-`{ jinja: ... }` map is explicit rather than sniffed from a bare string (an
-entity ID and a Jinja template are both strings):
+`low` and `high` each accept three forms — symmetric with
+`min_value`/`max_value`, each mode uses its own explicit key, so there is
+nothing to guess from the value's shape:
 
-- a fixed numeric value — same as before,
-- an entity ID (string) — same as before, optionally paired with
-  `low_attribute`/`high_attribute`,
+- a fixed numeric value (float or integer),
+- `{ entity: ..., attribute: ... }` — an entity ID whose state is used as the
+  threshold (`attribute` is optional, to read a specific attribute instead of
+  the state),
 - `{ jinja: ... }` — a Jinja template that dynamically returns a number.
 
 In the visual editor, a chip selector (Fixed value / Entity / Template) lets you
@@ -2430,6 +2429,26 @@ switch between the three modes, mirroring `min_value`/`max_value`.
 > The Jinja mode for `low`/`high` is available on the Card and the Badge only.
 > On the Tile Feature and the Template card, only the fixed value and entity
 > modes apply.
+
+> [!IMPORTANT]
+>
+> Earlier `1.6.0` release candidates accepted a bare entity ID string for
+> `low`/`high` (`watermark: { low: sensor.xxx }`), paired with a separate
+> `low_attribute`/`high_attribute` key. **This form is deprecated** (a console
+> warning is logged) but still works — it is automatically migrated to the map
+> form for you. Please update your YAML to the new form when convenient.
+
+_Entity example_:
+
+```yaml
+type: custom:entity-progress-card
+····
+watermark:
+  low:
+    entity: sensor.night_baseline_power
+    attribute: today # optional
+  high: 80
+```
 
 _Jinja example_:
 
@@ -2499,8 +2518,8 @@ wall-mounted dashboard.
 
 _Map definition_:
 
-- `above` (number): Alert when the value goes above this threshold.
-- `below` (number): Alert when the value goes below this threshold.
+- `above` (Float|Map): Alert when the value goes above this threshold.
+- `below` (Float|Map): Alert when the value goes below this threshold.
 - `color` (string): CSS color used for the alert (name or hex). Defaults to the
   theme's error color.
 - `highlight` (string): What reacts to the alert.
@@ -2516,16 +2535,29 @@ _Map definition_:
     `highlight: background` it has no matching effect and falls back to
     `static`.
 
-`above` and `below` are expressed in the entity's native unit, on the same scale
-as `min_value`/`max_value` — like `watermark.low`/`watermark.high`. Both can be
+`above`/`below` are expressed in the entity's native unit, on the same scale as
+`min_value`/`max_value` — like `watermark.low`/`watermark.high`. Both can be
 combined; the alert triggers if either condition is met.
+
+`above`/`below` accept three forms — same explicit shape as
+`min_value`/`max_value`/`watermark.low`/`watermark.high`, each mode uses its own
+explicit key, so there is nothing to guess from the value's shape:
+
+- a fixed numeric value (float or integer) — same as before,
+- `{ entity: ..., attribute: ... }` — an entity ID whose state is used as the
+  threshold (`attribute` is optional, to read a specific attribute instead of
+  the state),
+- `{ jinja: ... }` — a Jinja template that dynamically returns a number.
+
+In the visual editor, a chip selector (Fixed value / Entity / Template) lets you
+switch between the three modes, same as `min_value`/`max_value`.
 
 `blink` and `ping` are disabled automatically when the system-level "Reduce
 Motion" accessibility setting is on (see [Accessibility] in the README) — the
 border or background then stays statically colored, so the alert remains visible
 without the motion.
 
-_Example_:
+_Fixed value example_:
 
 ```yaml
 type: custom:entity-progress-card
@@ -2535,6 +2567,17 @@ alert_when:
   color: red
   highlight: border
   animation: ping
+```
+
+_Entity example_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.cpu_temperature
+alert_when:
+  above:
+    entity: sensor.cpu_temperature_limit
+  color: red
 ```
 
 [🔼 Back to top]

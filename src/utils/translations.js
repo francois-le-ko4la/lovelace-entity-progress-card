@@ -81,6 +81,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -190,7 +192,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -205,7 +206,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -232,6 +235,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -330,6 +343,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -439,7 +454,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -454,7 +468,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -481,6 +497,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -579,6 +605,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -688,7 +716,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -703,7 +730,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -730,6 +759,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -828,6 +867,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -937,7 +978,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -952,7 +992,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -979,6 +1021,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -1077,6 +1129,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -1186,7 +1240,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -1201,7 +1254,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -1228,6 +1283,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -1326,6 +1391,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -1435,7 +1502,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribut'
         },
         icon_animation: {
-          none: 'Keine',
           spin: 'Drehen',
           pulse: 'Pulsieren',
           bounce: 'Hüpfen',
@@ -1450,7 +1516,9 @@ const TRANSLATIONS = {
           below: 'Alarm unter',
           color: 'Alarmfarbe',
           highlight: 'Hervorhebung',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Rahmen',
@@ -1480,6 +1548,16 @@ const TRANSLATIONS = {
           standard: 'Fester Wert',
           entity: 'Entität',
           jinja: 'Vorlage'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
         },
         theme_mode: {
           preset: 'Voreinstellung',
@@ -1575,6 +1653,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -1684,7 +1764,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -1699,7 +1778,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -1726,6 +1807,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -1824,6 +1915,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -1933,7 +2026,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -1948,7 +2040,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -1975,6 +2069,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -2073,6 +2177,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -2182,7 +2288,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -2197,7 +2302,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -2224,6 +2331,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -2322,6 +2439,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -2431,7 +2550,6 @@ const TRANSLATIONS = {
           high_attribute: 'Atributo'
         },
         icon_animation: {
-          none: 'Ninguna',
           spin: 'Girar',
           pulse: 'Pulso',
           bounce: 'Rebote',
@@ -2446,7 +2564,9 @@ const TRANSLATIONS = {
           below: 'Alerta por debajo de',
           color: 'Color de alerta',
           highlight: 'Resaltado',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Borde',
@@ -2476,6 +2596,16 @@ const TRANSLATIONS = {
           standard: 'Valor fijo',
           entity: 'Entidad',
           jinja: 'Plantilla'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
         },
         theme_mode: {
           preset: 'Preestablecido',
@@ -2571,6 +2701,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -2680,7 +2812,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -2695,7 +2826,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -2722,6 +2855,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -2820,6 +2963,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -2929,7 +3074,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -2944,7 +3088,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -2971,6 +3117,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -3069,6 +3225,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Source de la valeur max',
         watermark_low_mode: 'Source du seuil bas',
         watermark_high_mode: 'Source du seuil haut',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -3178,7 +3336,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribut'
         },
         icon_animation: {
-          none: 'Aucune',
           spin: 'Rotation',
           pulse: 'Pulsation',
           bounce: 'Rebond',
@@ -3193,7 +3350,9 @@ const TRANSLATIONS = {
           below: 'Alerte en dessous de',
           color: 'Couleur d\'alerte',
           highlight: 'Mise en évidence',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Bordure',
@@ -3223,6 +3382,16 @@ const TRANSLATIONS = {
           standard: 'Valeur fixe',
           entity: 'Entité',
           jinja: 'Modèle'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
         },
         theme_mode: {
           preset: 'Prédéfini',
@@ -3318,6 +3487,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -3427,7 +3598,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -3442,7 +3612,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -3469,6 +3641,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -3567,6 +3749,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -3676,7 +3860,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -3691,7 +3874,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -3718,6 +3903,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -3816,6 +4011,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -3925,7 +4122,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -3940,7 +4136,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -3967,6 +4165,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -4065,6 +4273,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -4174,7 +4384,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -4189,7 +4398,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -4216,6 +4427,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -4314,6 +4535,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -4423,7 +4646,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attributo'
         },
         icon_animation: {
-          none: 'Nessuna',
           spin: 'Rotazione',
           pulse: 'Pulsazione',
           bounce: 'Rimbalzo',
@@ -4438,7 +4660,9 @@ const TRANSLATIONS = {
           below: 'Allerta sotto',
           color: 'Colore allerta',
           highlight: 'Evidenziazione',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Bordo',
@@ -4468,6 +4692,16 @@ const TRANSLATIONS = {
           standard: 'Valore fisso',
           entity: 'Entità',
           jinja: 'Modello'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
         },
         theme_mode: {
           preset: 'Predefinito',
@@ -4563,6 +4797,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -4672,7 +4908,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -4687,7 +4922,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -4714,6 +4951,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -4812,6 +5059,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -4921,7 +5170,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -4936,7 +5184,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -4963,6 +5213,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -5061,6 +5321,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -5170,7 +5432,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -5185,7 +5446,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -5212,6 +5475,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -5310,6 +5583,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -5419,7 +5694,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -5434,7 +5708,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -5461,6 +5737,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -5559,6 +5845,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -5668,7 +5956,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -5683,7 +5970,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -5710,6 +5999,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -5808,6 +6107,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -5917,7 +6218,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -5932,7 +6232,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -5959,6 +6261,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -6057,6 +6369,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -6166,7 +6480,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribuut'
         },
         icon_animation: {
-          none: 'Geen',
           spin: 'Draaien',
           pulse: 'Pulseren',
           bounce: 'Stuiteren',
@@ -6181,7 +6494,9 @@ const TRANSLATIONS = {
           below: 'Alarm onder',
           color: 'Alarmkleur',
           highlight: 'Markering',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Rand',
@@ -6211,6 +6526,16 @@ const TRANSLATIONS = {
           standard: 'Vaste waarde',
           entity: 'Entiteit',
           jinja: 'Sjabloon'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
         },
         theme_mode: {
           preset: 'Voorinstelling',
@@ -6306,6 +6631,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -6415,7 +6742,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -6430,7 +6756,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -6457,6 +6785,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -6555,6 +6893,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -6664,7 +7004,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -6679,7 +7018,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -6706,6 +7047,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -6804,6 +7155,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -6913,7 +7266,6 @@ const TRANSLATIONS = {
           high_attribute: 'Atributo'
         },
         icon_animation: {
-          none: 'Nenhuma',
           spin: 'Girar',
           pulse: 'Pulsar',
           bounce: 'Saltar',
@@ -6928,7 +7280,9 @@ const TRANSLATIONS = {
           below: 'Alerta abaixo de',
           color: 'Cor do alerta',
           highlight: 'Destaque',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Borda',
@@ -6958,6 +7312,16 @@ const TRANSLATIONS = {
           standard: 'Valor fixo',
           entity: 'Entidade',
           jinja: 'Modelo'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
         },
         theme_mode: {
           preset: 'Predefinido',
@@ -7053,6 +7417,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -7162,7 +7528,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -7177,7 +7542,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -7204,6 +7571,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -7302,6 +7679,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -7411,7 +7790,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -7426,7 +7804,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -7453,6 +7833,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -7551,6 +7941,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -7660,7 +8052,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -7675,7 +8066,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -7702,6 +8095,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -7800,6 +8203,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -7909,7 +8314,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -7924,7 +8328,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -7951,6 +8357,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -8049,6 +8465,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -8158,7 +8576,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -8173,7 +8590,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -8200,6 +8619,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -8298,6 +8727,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -8407,7 +8838,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -8422,7 +8852,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -8449,6 +8881,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -8547,6 +8989,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -8656,7 +9100,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -8671,7 +9114,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -8698,6 +9143,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -8796,6 +9251,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -8905,7 +9362,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -8920,7 +9376,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -8947,6 +9405,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -9045,6 +9513,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -9154,7 +9624,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -9169,7 +9638,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -9196,6 +9667,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -9294,6 +9775,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -9403,7 +9886,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -9418,7 +9900,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -9445,6 +9929,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'
@@ -9543,6 +10037,8 @@ const TRANSLATIONS = {
         max_value_mode: 'Max value source',
         watermark_low_mode: 'Low watermark source',
         watermark_high_mode: 'High watermark source',
+        alert_when_above_mode: 'Above alert source',
+        alert_when_below_mode: 'Below alert source',
         bar_max_width: 'Bar max width',
         bar_max_width_toggle: 'Bar max width',
         frameless: 'Frameless',
@@ -9652,7 +10148,6 @@ const TRANSLATIONS = {
           high_attribute: 'Attribute'
         },
         icon_animation: {
-          none: 'None',
           spin: 'Spin',
           pulse: 'Pulse',
           bounce: 'Bounce',
@@ -9667,7 +10162,9 @@ const TRANSLATIONS = {
           below: 'Alert below',
           color: 'Alert color',
           highlight: 'Highlight',
-          animation: 'Animation'
+          animation: 'Animation',
+          above_attribute: 'Attribute',
+          below_attribute: 'Attribute'
         },
         alert_highlight: {
           border: 'Border',
@@ -9694,6 +10191,16 @@ const TRANSLATIONS = {
           jinja: 'Template'
         },
         watermark_high_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_above_mode: {
+          standard: 'Fixed value',
+          entity: 'Entity',
+          jinja: 'Template'
+        },
+        alert_when_below_mode: {
           standard: 'Fixed value',
           entity: 'Entity',
           jinja: 'Template'

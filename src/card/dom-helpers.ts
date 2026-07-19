@@ -5,8 +5,9 @@
  */
 
 import { CARD_CONTEXT, HA_SVG_ICON_TAG, HA_ACTION_HANDLER_TAG } from '../utils/parameters.js';
-import { is } from '../utils/common-checks.js';
+import { is, assertDefined } from '../utils/common-checks.js';
 import { initLogger, type LoggerInstance } from '../utils/log.js';
+import type { Config } from '../utils/types.js';
 
 type CleanupFn = () => void;
 
@@ -97,7 +98,7 @@ class ResourceManager {
       this.add(() => this.resetThrottle(id), id);
     }
 
-    const context = this.#throttles.get(id)!;
+    const context = assertDefined(this.#throttles.get(id), `ResourceManager.throttle: no throttle state for '${id}'`);
     const now = Date.now();
 
     if (now - context.lastCall >= delay) {
@@ -120,7 +121,10 @@ class ResourceManager {
       this.add(() => this.resetThrottle(keys.throttle), keys.throttle);
     }
 
-    const context = this.#throttles.get(keys.throttle)!;
+    const context = assertDefined(
+      this.#throttles.get(keys.throttle),
+      `ResourceManager.throttleDebounce: no throttle state for '${keys.throttle}'`,
+    );
 
     // CF5 - issue (medium) resolved - the trailing timer was scheduled
     // unconditionally, so a single isolated call always ran fn() twice (leading
@@ -438,7 +442,7 @@ class DOMHelper {
    * Toggles a CSS class on the element registered under the given key.
    * Skipped if the state matches the cache.
    */
-  toggleClass(key: string, className: string, force: boolean) {
+  toggleClass(key: string, className: string | undefined, force: boolean) {
     if (!className) return;
     const cacheKey = `${key}:class:${className}`;
     if (this._appliedValues.get(cacheKey) === force) return;
@@ -526,7 +530,7 @@ interface ActionHandlerElement extends HTMLElement {
 
 class ActionHelper {
   #target: HTMLElement | null = null;
-  #config: any = null;
+  #config: Config | null = null;
   #fromIcon = false;
   #initialized = false;
   #disableIconTap = false;
@@ -548,7 +552,7 @@ class ActionHelper {
     return handler;
   }
 
-  init(config: any, disableIconTap: boolean) {
+  init(config: Config, disableIconTap: boolean) {
     // Config and options are refreshed on every call (each connectedCallback);
     // listeners are attached once — see below.
     this.#config = config;
@@ -582,13 +586,14 @@ class ActionHelper {
   }
 
   #handleAction(ev: CustomEvent, fromIcon: boolean) {
+    // Only reachable via the 'action' listener attached in #attachListeners,
+    // itself only wired up from init() once #config has already been set.
+    const config = assertDefined(this.#config, 'ActionHelper.#handleAction called before init()');
     const action = ev.detail.action;
     const iconActionKey = `icon_${action}_action`;
 
     const actionConfig =
-      fromIcon && this.#config[iconActionKey]?.action !== 'none'
-        ? this.#config[iconActionKey]
-        : this.#config[`${action}_action`];
+      fromIcon && config[iconActionKey]?.action !== 'none' ? config[iconActionKey] : config[`${action}_action`];
 
     if (!actionConfig) return;
 
@@ -598,7 +603,7 @@ class ActionHelper {
         composed: true,
         detail: {
           config: {
-            entity: this.#config.entity,
+            entity: config.entity,
             tap_action: actionConfig,
           },
           action: 'tap',

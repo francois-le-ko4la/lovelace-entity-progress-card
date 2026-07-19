@@ -19,6 +19,12 @@ type Path = (string | number)[];
 // already perform.
 type Validator = (value: any, path?: Path) => any;
 
+// The shape struct(...).parse()'s catch branch walks recursively (see
+// extractAllErrors below) - covers both real ValidationError instances and
+// the plain summary objects extractAllErrors itself returns.
+type ErrorLike = { path: Path; errorCode: string | null; severity: string; errors?: ErrorLike[] };
+type ErrorSummary = { path: Path; errorCode: string | null; severity: string };
+
 /**
  * structural validation ideas to manage inputs (1.5+).
  * deliberately verbose by design: no external dependencies, fully typed errors,
@@ -143,7 +149,7 @@ const types: Record<string, any> = {
       return result;
     };
 
-    (validator as any)._schema = schema;
+    (validator as Validator & { _schema: Record<string, Validator> })._schema = schema;
     return validator as Validator & { _schema: Record<string, Validator> };
   },
 
@@ -233,8 +239,9 @@ const types: Record<string, any> = {
       for (const validator of validators) {
         try {
           return validator(value, path);
-        } catch (error: any) {
-          errors.push(error.message || error.errorCode);
+        } catch (error) {
+          const err = error as ValidationError;
+          errors.push(err.message || err.errorCode);
         }
       }
 
@@ -302,6 +309,31 @@ const types: Record<string, any> = {
 
     return value;
   },
+
+  // Shared by min_value/max_value/watermark.low/watermark.high: number
+  // (fixed) | { entity, attribute } | { jinja } - explicit shape instead of
+  // type-sniffing a scalar (number vs entity-id string vs jinja-looking
+  // string) to disambiguate the three.
+  numericEntityOrJinja: (): Validator =>
+    types.union(
+      types.number,
+      types.object({ entity: types.entityId, attribute: types.optionalString() }),
+      types.object({ jinja: types.string }),
+    ),
+
+  // Shared by feature/card/template: boolean (on/off) | { value,
+  // growth_percent }.
+  centerZero: (): Validator =>
+    types.optionalWithDefault(
+      types.union(
+        types.boolean,
+        types.object({
+          value: types.optionalNumberWithDefault(0),
+          growth_percent: types.optionalBooleanWithDefault(false),
+        }),
+      ),
+      false,
+    ),
 
   decimal: (value: any, path: Path = []) => {
     if (is.nullish(value)) return SKIP_PROPERTY;
@@ -516,8 +548,9 @@ function struct(validator: Validator & { _schema?: Record<string, Validator> }, 
       try {
         const preProcessed = preProcess(data);
         return { isValid: true, config: postProcess(validator(preProcessed)), error: null, path: null };
-      } catch (error: any) {
-        return { isValid: false, config: null, error: error.message, path: error.path };
+      } catch (error) {
+        const err = error as ValidationError;
+        return { isValid: false, config: null, error: err.message, path: err.path };
       }
     },
 
@@ -533,13 +566,13 @@ function struct(validator: Validator & { _schema?: Record<string, Validator> }, 
           severity: null,
           errors: [],
         };
-      } catch (error: any) {
+      } catch (error) {
         // extract error wo duplicates
-        const extractAllErrors = (errRoot: any): any[] => {
-          const allErrors: any[] = [];
+        const extractAllErrors = (errRoot: ErrorLike): ErrorSummary[] => {
+          const allErrors: ErrorSummary[] = [];
           const seen = new Set();
 
-          const addError = (err: any) => {
+          const addError = (err: ErrorLike) => {
             const key = `${JSON.stringify(err.path)}-${err.errorCode}`;
             if (!seen.has(key)) {
               seen.add(key);
@@ -551,8 +584,8 @@ function struct(validator: Validator & { _schema?: Record<string, Validator> }, 
             }
           };
 
-          if (is.nonEmptyArray(errRoot.errors)) {
-            errRoot.errors.forEach((subError: any) => {
+          if (errRoot.errors && errRoot.errors.length > 0) {
+            errRoot.errors.forEach((subError) => {
               if (subError instanceof ValidationError) {
                 extractAllErrors(subError).forEach(addError);
               } else if (subError.errorCode) {
@@ -566,10 +599,11 @@ function struct(validator: Validator & { _schema?: Record<string, Validator> }, 
           return allErrors;
         };
 
-        const allErrors = extractAllErrors(error);
+        const err = error as ValidationError & { partialResult?: unknown };
+        const allErrors = extractAllErrors(err);
         const mainError = allErrors.find((e) => e.severity === 'error') || allErrors[0] || null;
 
-        const partialConfig = error.partialResult ?? error.partialConfig ?? null;
+        const partialConfig = err.partialResult ?? err.partialConfig ?? null;
         const postProcessedPartialConfig = partialConfig !== null ? postProcess(partialConfig) : null;
 
         return {
@@ -688,23 +722,17 @@ const barStackEntity = types.fallbackTo(
 );
 
 const watermarkSchema = {
-  // number (fixed) | string (entity id) | { jinja } - mirrors
-  // min_value/max_value's explicit jinja shape rather than sniffing a bare
-  // string (an entity id and a Jinja template are both strings; disambiguating
-  // them at runtime is exactly what min_value/max_value moved away from).
-  low: types.fallbackTo(
-    types.union(types.number, types.string, types.object({ jinja: types.string })),
-    CARD.config.defaults.watermark.low,
-  ),
+  // number (fixed) | { entity, attribute } | { jinja } - symmetric with
+  // min_value/max_value's own explicit shape (see YamlSchemaFactory.card),
+  // same reasoning: no sniffing a bare string to disambiguate an entity id
+  // from a Jinja template. low_attribute/high_attribute used to be separate
+  // sibling keys (a bare entity-id string form for low/high) - both are now
+  // folded into this shape by CardConfigHelper._migrateLegacyOptions.
+  low: types.fallbackTo(types.numericEntityOrJinja(), CARD.config.defaults.watermark.low),
   low_as: types.enumsWithDefault(['auto', 'percent'], CARD.config.defaults.watermark.low_as),
-  low_attribute: types.optionalString(),
   low_color: types.optionalStringWithDefault(CARD.config.defaults.watermark.low_color),
-  high: types.fallbackTo(
-    types.union(types.number, types.string, types.object({ jinja: types.string })),
-    CARD.config.defaults.watermark.high,
-  ),
+  high: types.fallbackTo(types.numericEntityOrJinja(), CARD.config.defaults.watermark.high),
   high_as: types.enumsWithDefault(['auto', 'percent'], CARD.config.defaults.watermark.high_as),
-  high_attribute: types.optionalString(),
   high_color: types.optionalStringWithDefault(CARD.config.defaults.watermark.high_color),
   opacity: types.optionalNumberWithDefault(CARD.config.defaults.watermark.opacity),
   type: types.enumsWithDefault(
@@ -731,29 +759,15 @@ class YamlSchemaFactory {
         entity: types.entityId,
         attribute: types.optionalString(),
         // Explicit shape instead of type-sniffing a scalar (number vs entity-id
-        // string vs jinja-looking string): min_value: 10 | {value: 10} |
-        // {entity, attribute} | {jinja}.
-        min_value: types.optional(
-          types.union(
-            types.number,
-            types.object({ value: types.number }),
-            types.object({ entity: types.entityId, attribute: types.optionalString() }),
-            types.object({ jinja: types.string }),
-          ),
-        ),
+        // string vs jinja-looking string), symmetric with max_value: min_value:
+        // 10 | {entity, attribute} | {jinja}.
+        min_value: types.optional(types.numericEntityOrJinja()),
         // Explicit shape, mirrors min_value: max_value: 10 | {entity,
         // attribute} | {jinja}. The legacy bare entity-id string is rewritten
         // into the map form by _customizeConfig before this schema ever sees it
         // (single call site, see BaseConfigHelper.set config), so no string
         // form is needed here.
-        max_value: types.fallbackTo(
-          types.union(
-            types.number,
-            types.object({ entity: types.entityId, attribute: types.optionalString() }),
-            types.object({ jinja: types.string }),
-          ),
-          100,
-        ),
+        max_value: types.fallbackTo(types.numericEntityOrJinja(), 100),
 
         // ─── Appearance ─────────────────────────────────────────────────────
         bar_color: types.optionalString(),
@@ -782,16 +796,7 @@ class YamlSchemaFactory {
         ),
         bar_position: types.enumsWithDefault(['default', 'top', 'bottom'], 'default'),
         bar_segments: types.optionalNumber(),
-        center_zero: types.optionalWithDefault(
-          types.union(
-            types.boolean,
-            types.object({
-              value: types.optionalNumberWithDefault(0),
-              growth_percent: types.optionalBooleanWithDefault(false),
-            }),
-          ),
-          false,
-        ),
+        center_zero: types.centerZero(),
 
         // ─── Theme & Watermark ──────────────────────────────────────────────
         theme: types.theme(Object.keys(THEME)),
@@ -823,29 +828,15 @@ class YamlSchemaFactory {
         disable_unit: types.optionalBooleanWithDefault(false),
         unit_spacing: types.enumsWithDefault(Object.values(CARD.config.unit.unitSpacing), 'auto'), //['auto', 'space', 'no-space']
         // Explicit shape instead of type-sniffing a scalar (number vs entity-id
-        // string vs jinja-looking string): min_value: 10 | {value: 10} |
-        // {entity, attribute} | {jinja}.
-        min_value: types.optional(
-          types.union(
-            types.number,
-            types.object({ value: types.number }),
-            types.object({ entity: types.entityId, attribute: types.optionalString() }),
-            types.object({ jinja: types.string }),
-          ),
-        ),
+        // string vs jinja-looking string), symmetric with max_value: min_value:
+        // 10 | {entity, attribute} | {jinja}.
+        min_value: types.optional(types.numericEntityOrJinja()),
         // Explicit shape, mirrors min_value: max_value: 10 | {entity,
         // attribute} | {jinja}. The legacy bare entity-id string is rewritten
         // into the map form by _customizeConfig before this schema ever sees it
         // (single call site, see BaseConfigHelper.set config), so no string
         // form is needed here.
-        max_value: types.fallbackTo(
-          types.union(
-            types.number,
-            types.object({ entity: types.entityId, attribute: types.optionalString() }),
-            types.object({ jinja: types.string }),
-          ),
-          100,
-        ),
+        max_value: types.fallbackTo(types.numericEntityOrJinja(), 100),
 
         // ─── Appearance ===
         icon: types.optionalString(),
@@ -870,9 +861,28 @@ class YamlSchemaFactory {
         bar_single_line: types.optionalBooleanWithDefault(false),
         bar_max_width: types.optionalString(),
         bar_segments: types.optionalNumber(),
-        icon_animation: types.enumsWithDefault(
-          ['none', 'spin', 'pulse', 'bounce', 'shake', 'ping', 'reveal', 'washing_machine', 'battery_charging'],
-          'none',
+        // No forced default (unlike most enums here): like `theme`, an unset
+        // value stays absent from the negotiated config (SKIP_PROPERTY)
+        // instead of being normalized to the literal string 'none' - the
+        // editor's dropdown no longer offers 'none' as a choice (removed from
+        // translations), so a selector showing that raw stored value with no
+        // matching option/label would display it as unstyled fallback text.
+        // 'none' stays a valid explicit value for existing YAML that already
+        // wrote it - every consumer below only ever compares against real
+        // animation names, never against 'none' itself, so an absent value
+        // behaves identically to an explicit 'none'.
+        icon_animation: types.optional(
+          types.enums([
+            'none',
+            'spin',
+            'pulse',
+            'bounce',
+            'shake',
+            'ping',
+            'reveal',
+            'washing_machine',
+            'battery_charging',
+          ]),
         ),
         layout: types.enumsWithDefault(
           Object.values(CARD.layout.orientations).map((e) => e.label),
@@ -885,16 +895,7 @@ class YamlSchemaFactory {
         reverse: types.optionalBooleanWithDefault(false),
         reverse_secondary_info_row: types.optionalBooleanWithDefault(false),
         force_circular_background: types.optionalBooleanWithDefault(false),
-        center_zero: types.optionalWithDefault(
-          types.union(
-            types.boolean,
-            types.object({
-              value: types.optionalNumberWithDefault(0),
-              growth_percent: types.optionalBooleanWithDefault(false),
-            }),
-          ),
-          false,
-        ),
+        center_zero: types.centerZero(),
         trend_indicator: types.optionalBooleanWithDefault(false),
         text_shadow: types.optionalBooleanWithDefault(false),
 
@@ -920,8 +921,13 @@ class YamlSchemaFactory {
         watermark: types.watermarkObject(watermarkSchema, CARD.config.defaults.watermark),
         alert_when: types.optional(
           types.object({
-            above: types.optionalNumber(),
-            below: types.optionalNumber(),
+            // number (fixed) | { entity, attribute } | { jinja } - same
+            // explicit shape as min_value/max_value/watermark.low/high (see
+            // types.numericEntityOrJinja above), for the same reason: the
+            // threshold can now come from another entity's state or a Jinja
+            // template instead of only a fixed number.
+            above: types.optional(types.numericEntityOrJinja()),
+            below: types.optional(types.numericEntityOrJinja()),
             color: types.optionalString(),
             highlight: types.enumsWithDefault(['border', 'background'], 'border'),
             // Left genuinely optional (no forced default): the effective
@@ -1023,9 +1029,28 @@ class YamlSchemaFactory {
         bar_single_line: types.optionalBooleanWithDefault(false),
         bar_max_width: types.optionalString(),
         bar_segments: types.optionalNumber(),
-        icon_animation: types.enumsWithDefault(
-          ['none', 'spin', 'pulse', 'bounce', 'shake', 'ping', 'reveal', 'washing_machine', 'battery_charging'],
-          'none',
+        // No forced default (unlike most enums here): like `theme`, an unset
+        // value stays absent from the negotiated config (SKIP_PROPERTY)
+        // instead of being normalized to the literal string 'none' - the
+        // editor's dropdown no longer offers 'none' as a choice (removed from
+        // translations), so a selector showing that raw stored value with no
+        // matching option/label would display it as unstyled fallback text.
+        // 'none' stays a valid explicit value for existing YAML that already
+        // wrote it - every consumer below only ever compares against real
+        // animation names, never against 'none' itself, so an absent value
+        // behaves identically to an explicit 'none'.
+        icon_animation: types.optional(
+          types.enums([
+            'none',
+            'spin',
+            'pulse',
+            'bounce',
+            'shake',
+            'ping',
+            'reveal',
+            'washing_machine',
+            'battery_charging',
+          ]),
         ),
         layout: types.enumsWithDefault(
           Object.values(CARD.layout.orientations).map((e) => e.label),
@@ -1037,16 +1062,7 @@ class YamlSchemaFactory {
         marginless: types.optionalBooleanWithDefault(false),
         reverse_secondary_info_row: types.optionalBooleanWithDefault(false),
         force_circular_background: types.optionalBooleanWithDefault(false),
-        center_zero: types.optionalWithDefault(
-          types.union(
-            types.boolean,
-            types.object({
-              value: types.optionalNumberWithDefault(0),
-              growth_percent: types.optionalBooleanWithDefault(false),
-            }),
-          ),
-          false,
-        ),
+        center_zero: types.centerZero(),
         trend_indicator: types.optionalBooleanWithDefault(false),
         text_shadow: types.optionalBooleanWithDefault(false),
 

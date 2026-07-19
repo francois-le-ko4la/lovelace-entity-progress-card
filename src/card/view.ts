@@ -5,7 +5,7 @@
  */
 
 import { HA_CONTEXT, CARD } from '../utils/parameters.js';
-import type { RawConfig } from '../utils/types.js';
+import type { RawConfig, Config } from '../utils/types.js';
 import { is } from '../utils/common-checks.js';
 import { PercentHelper, ThemeManager, EntityCollectionHelper, EntityOrValue } from './value-helpers.js';
 import { HassProviderSingleton, type Hass } from '../utils/hass-provider.js';
@@ -17,6 +17,29 @@ import {
   TemplateConfigHelper,
   BadgeTemplateConfigHelper,
 } from './config-helpers.js';
+
+// Mirrors schema.ts's watermarkSchema (see card/schema.ts) - the validated
+// shape of config.watermark as it comes out of the schema. low/high are
+// symmetric with min_value/max_value's own shape (number | { entity,
+// attribute } | { jinja }) here since the getters below immediately
+// overwrite them with the already-resolved EntityOrValue - this type only
+// describes what's read straight off the source object.
+type WatermarkConfig = {
+  low: number | { entity?: string; attribute?: string } | { jinja: string };
+  low_as: 'auto' | 'percent';
+  low_color: string;
+  high: number | { entity?: string; attribute?: string } | { jinja: string };
+  high_as: 'auto' | 'percent';
+  high_color: string;
+  opacity: number;
+  type: 'blended' | 'area' | 'striped' | 'triangle' | 'round' | 'line';
+  line_size: string;
+  disable_low: boolean;
+  disable_high: boolean;
+};
+
+// Mirrors schema.ts's barStackEntity - one row of bar_stack.entities.
+type BarStackEntityConfig = { entity: string; attribute?: string; color?: string; subtract?: boolean };
 
 /**
  * A view class for rendering minimal cards in a user interface. This class
@@ -53,6 +76,18 @@ class ViewCore {
   _currentValue = new EntityOrValue();
   _lowValue = new EntityOrValue();
   _highValue = new EntityOrValue();
+  // alert_when doesn't exist in the template schema, so these stay unset
+  // (isAlertActive short-circuits on `!this.config?.alert_when` before ever
+  // reading them) for ViewCore-only instances - declared here rather than on
+  // ViewBase because isAlertActive/alertAnimation below are read
+  // polymorphically through the shared _cardView reference (see
+  // HACore._addBaseClasses), not just from card/badge.
+  _aboveValue = new EntityOrValue();
+  _belowValue = new EntityOrValue();
+  // alert_when.above/.below resolved from a Jinja subscription; null = no
+  // override
+  #jinjaAlertAbove: number | null = null;
+  #jinjaAlertBelow: number | null = null;
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
@@ -66,18 +101,36 @@ class ViewCore {
       value: this._configHelper.config.entity,
       stateContent: this._configHelper.stateContent,
     });
-    Object.assign(this._lowValue, {
-      value: this._configHelper.config?.watermark?.low,
-      attribute: this._configHelper.config?.watermark?.low_attribute,
-    });
-    Object.assign(this._highValue, {
-      value: this._configHelper.config?.watermark?.high,
-      attribute: this._configHelper.config?.watermark?.high_attribute,
-    });
+    // watermark.low/high: number (legacy) | { entity, attribute } | { jinja }
+    // - jinja mode is fed by the template subscription elsewhere, not by
+    // EntityOrValue, so it resolves to null here (see _resolveValueConfig).
+    Object.assign(this._lowValue, ViewCore._resolveValueConfig(this._configHelper.config?.watermark?.low, null));
+    Object.assign(this._highValue, ViewCore._resolveValueConfig(this._configHelper.config?.watermark?.high, null));
   }
 
-  get config(): any {
-    return this._configHelper?.config;
+  get config(): Config {
+    return this._configHelper.config;
+  }
+
+  // Shared by watermark.low/high above (both ViewCore and ViewBase) and by
+  // ViewBase's own #resolveMaxValue/#resolveMinValue below: all four config
+  // options share the exact same "value config" shape (number (legacy) |
+  // { entity, attribute } | { jinja }, see schema.ts and
+  // config-helpers.js's checkValueConfig) - jinja mode resolves elsewhere
+  // (see #jinjaMaxValue/#jinjaMinValue/#jinjaWatermarkLow/#jinjaWatermarkHigh),
+  // so it's null here on purpose. `fallback` is the one thing that varies per
+  // caller: max_value always defaults to CARD.config.value.max, the other
+  // three have no default and stay null.
+  static _resolveValueConfig(
+    cfg: number | { entity?: string; attribute?: string; jinja?: string } | null | undefined,
+    fallback: number | null,
+  ): { value: number | string | null; attribute?: string } {
+    const isObj = is.plainObject(cfg);
+    const obj = cfg as { entity?: string; attribute?: string; jinja?: string };
+    return {
+      value: isObj ? (obj.jinja ? null : (obj.entity ?? fallback)) : ((cfg as number | null) ?? fallback),
+      attribute: isObj ? obj.attribute : undefined,
+    };
   }
 
   refresh(hass: Hass) {
@@ -97,7 +150,7 @@ class ViewCore {
       : CARD.layout.orientations.horizontal.grid.grid_rows;
   }
 
-  get cardLayoutOptions(): any {
+  get cardLayoutOptions() {
     if (!this.config) return CARD.layout.orientations.horizontal.grid;
     const layout = structuredClone(
       CARD.layout.orientations[this.config.layout as keyof typeof CARD.layout.orientations],
@@ -180,8 +233,8 @@ class ViewCore {
     return this.config.bar_effect !== undefined;
   }
 
-  get watermark(): any {
-    const { watermark } = this.config;
+  get watermark() {
+    const watermark = this.config.watermark as WatermarkConfig | undefined;
     return watermark
       ? {
           ...watermark,
@@ -343,9 +396,28 @@ class ViewCore {
     return hassProvider.getSameDeviceEntities(entity).some((id) => ViewCore.#sensorReportsWashing(hassProvider, id));
   }
 
+  get jinjaAlertAbove(): number | null {
+    return this.#jinjaAlertAbove;
+  }
+
+  set jinjaAlertAbove(value: unknown) {
+    this.#jinjaAlertAbove = is.number(value) ? value : null;
+  }
+
+  get jinjaAlertBelow(): number | null {
+    return this.#jinjaAlertBelow;
+  }
+
+  set jinjaAlertBelow(value: unknown) {
+    this.#jinjaAlertBelow = is.number(value) ? value : null;
+  }
+
   /**
    * alert_when thresholds are expressed in the entity's native unit (like
-   * watermark.low/high).
+   * watermark.low/high) - above/below resolve the same number (legacy) |
+   * { entity, attribute } | { jinja } shape as watermark.low/high (see
+   * _aboveValue/_belowValue, set from ViewBase.set config since alert_when
+   * isn't in the template schema).
    */
   get isAlertActive(): boolean {
     const alert = this.config?.alert_when;
@@ -353,7 +425,9 @@ class ViewCore {
     const raw = this._currentValue.value;
     const value = is.number(raw) ? raw : raw?.current;
     if (!is.number(value)) return false;
-    return (is.number(alert.above) && value > alert.above) || (is.number(alert.below) && value < alert.below);
+    const above = this.#jinjaAlertAbove ?? this._aboveValue.value;
+    const below = this.#jinjaAlertBelow ?? this._belowValue.value;
+    return (is.number(above) && value > above) || (is.number(below) && value < below);
   }
 
   /**
@@ -378,11 +452,11 @@ class ViewCore {
 
   // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
 
-  _hasInConfigArray(key: string, value: any): boolean {
+  _hasInConfigArray(key: string, value: unknown): boolean {
     return is.array(this.config?.[key]) && this.config[key].includes(value);
   }
 
-  static #hasAction(actions: any[]): boolean {
+  static #hasAction(actions: (string | null)[]): boolean {
     return actions.some((action) => action !== HA_CONTEXT.actions.none.action);
   }
 }
@@ -492,7 +566,7 @@ class ViewBase extends ViewCore {
           false,
           true,
         );
-      const addOne = ({ entity, attribute, color, subtract }: Record<string, any>) =>
+      const addOne = ({ entity, attribute, color, subtract }: BarStackEntityConfig) =>
         this.#entityCollection.addEntity(entity, attribute, color, subtract);
       // One consistent order for both modes: main entity first, then entities[]
       // in list order. Exception: without center_zero, `subtract` is otherwise
@@ -504,9 +578,9 @@ class ViewBase extends ViewCore {
       // naturally-negative-but-unmarked entity can't be detected here and keeps
       // its normal after-main position.
       if (!centerZero.enabled) {
-        entities.filter((e: any) => e.subtract).forEach(addOne);
+        entities.filter((e: BarStackEntityConfig) => e.subtract).forEach(addOne);
         addMain();
-        entities.filter((e: any) => !e.subtract).forEach(addOne);
+        entities.filter((e: BarStackEntityConfig) => !e.subtract).forEach(addOne);
       } else {
         addMain();
         entities.forEach(addOne);
@@ -557,56 +631,48 @@ class ViewBase extends ViewCore {
     // above, which a timer overrides): the schema defaults watermark: {} to
     // low: 20 / high: 80, so leaving these helpers unset on a timer made
     // isAvailable() permanently false — a timer card with any watermark
-    // configured froze instead of rendering.
-    Object.assign(this._lowValue, {
-      value: ViewBase.#resolveWatermarkValue(this._configHelper.config?.watermark?.low),
-      attribute: this._configHelper.config?.watermark?.low_attribute,
-    });
+    // configured froze instead of rendering. set config isn't chained via
+    // super here (this method fully replaces ViewCore's own), so this reuses
+    // ViewCore._resolveValueConfig directly rather than duplicating it.
+    Object.assign(this._lowValue, ViewCore._resolveValueConfig(this._configHelper.config?.watermark?.low, null));
     this.#jinjaWatermarkLow = null;
-    Object.assign(this._highValue, {
-      value: ViewBase.#resolveWatermarkValue(this._configHelper.config?.watermark?.high),
-      attribute: this._configHelper.config?.watermark?.high_attribute,
-    });
+    Object.assign(this._highValue, ViewCore._resolveValueConfig(this._configHelper.config?.watermark?.high, null));
     this.#jinjaWatermarkHigh = null;
+    // alert_when.above/.below: same shape and same reasoning as watermark
+    // low/high above (see isAlertActive) - wired unconditionally too,
+    // alert_when isn't overridden by the timer path either. _aboveValue/
+    // _belowValue and the jinja override are declared on ViewCore (not
+    // here): isAlertActive is read polymorphically through the shared
+    // _cardView reference (see HACore._addBaseClasses), so
+    // #jinjaAlertAbove/#jinjaAlertBelow must live in the same class body
+    // that getter reads them from - reset via the public setter rather than
+    // the private field directly for that reason.
+    Object.assign(this._aboveValue, ViewCore._resolveValueConfig(this._configHelper.config?.alert_when?.above, null));
+    this.jinjaAlertAbove = null;
+    Object.assign(this._belowValue, ViewCore._resolveValueConfig(this._configHelper.config?.alert_when?.below, null));
+    this.jinjaAlertBelow = null;
   }
 
-  get config(): any {
+  get config(): Config {
     return this._configHelper.config;
   }
 
-  static #resolveMaxValue(maxCfg: any): { value: any; attribute: any } {
-    const isMaxObj = is.plainObject(maxCfg);
-    return {
-      value: isMaxObj
-        ? maxCfg.jinja
-          ? null
-          : (maxCfg.entity ?? CARD.config.value.max)
-        : (maxCfg ?? CARD.config.value.max),
-      attribute: isMaxObj ? maxCfg.attribute : undefined,
-    };
+  static #resolveMaxValue(
+    maxCfg: number | { entity?: string; attribute?: string; jinja?: string } | null | undefined,
+  ): { value: number | string | null; attribute?: string } {
+    return ViewCore._resolveValueConfig(maxCfg, CARD.config.value.max);
   }
 
-  static #resolveMinValue(minCfg: any): { value: any; attribute: any } {
-    const isMinObj = is.plainObject(minCfg);
-    return {
-      value: isMinObj ? (minCfg.jinja ? null : (minCfg.entity ?? minCfg.value ?? null)) : minCfg,
-      attribute: isMinObj ? minCfg.attribute : undefined,
-    };
-  }
-
-  // watermark.low/.high: number (fixed) | string (entity id) | {jinja}. A
-  // {jinja} object is fed by the template subscription
-  // (#jinjaWatermarkLow/#jinjaWatermarkHigh), not by EntityOrValue, so it
-  // resolves to null here — mirrors #resolveMaxValue/#resolveMinValue's own
-  // jinja split.
-  static #resolveWatermarkValue(sideCfg: any): any {
-    return is.plainObject(sideCfg) ? null : sideCfg;
+  static #resolveMinValue(
+    minCfg: number | { entity?: string; attribute?: string; jinja?: string } | null | undefined,
+  ): { value: number | string | null; attribute?: string } {
+    return ViewCore._resolveValueConfig(minCfg, null);
   }
 
   #hasState(state: string | null): boolean {
-    const toEVal = this.hasWatermark
-      ? [this._currentValue, this.#maxValue, this._lowValue, this._highValue]
-      : [this._currentValue, this.#maxValue];
+    const toEVal = [this._currentValue, this.#maxValue];
+    if (this.hasWatermark) toEVal.push(this._lowValue, this._highValue);
+    if (this.config?.alert_when) toEVal.push(this._aboveValue, this._belowValue);
     return toEVal.some((v) => v.state === state);
   }
 
@@ -627,12 +693,20 @@ class ViewBase extends ViewCore {
     // never existed (always undefined), silently disabling the max-entity
     // availability check.
     const minIsEntity = is.nonEmptyString(this._configHelper.config?.min_value?.entity);
+    // Entity-mode only, like min_value/max_value above: in Jinja mode,
+    // EntityOrValue never has an active helper (that value is resolved
+    // separately via the template subscription, see #jinjaWatermarkLow/High),
+    // so .isAvailable is always false there by construction - it must not
+    // count against the card's own availability, or a Jinja watermark/alert
+    // threshold would permanently hide the whole card.
     return !(
       !this._currentValue.isAvailable ||
       (!this.#maxValue.isAvailable && is.nonEmptyString(this._configHelper.config?.max_value?.entity)) ||
       (!this.#minValue.isAvailable && minIsEntity) ||
-      (!this._lowValue.isAvailable && this._configHelper.config?.watermark?.low) ||
-      (!this._highValue.isAvailable && this._configHelper.config?.watermark?.high)
+      (!this._lowValue.isAvailable && is.nonEmptyString(this._configHelper.config?.watermark?.low?.entity)) ||
+      (!this._highValue.isAvailable && is.nonEmptyString(this._configHelper.config?.watermark?.high?.entity)) ||
+      (!this._aboveValue.isAvailable && is.nonEmptyString(this._configHelper.config?.alert_when?.above?.entity)) ||
+      (!this._belowValue.isAvailable && is.nonEmptyString(this._configHelper.config?.alert_when?.below?.entity))
     );
   }
 
@@ -699,7 +773,7 @@ class ViewBase extends ViewCore {
   // (see EntityCollectionHelper.getDivergingGradients). null when not
   // applicable, so callers can tell whether to apply or clear the dedicated CSS
   // variables.
-  get divergingBarStack(): any {
+  get divergingBarStack() {
     if (!this.isAvailable || !this.#percentHelper.isCenterZero) return null;
     if (!this.hasEntityCollection || this.#entityCollection.mode === 'net') return null;
     return this.#entityCollection.getDivergingGradients(
@@ -757,7 +831,7 @@ class ViewBase extends ViewCore {
       : this._configHelper.config.name || this._currentValue.name || this._configHelper.config.entity;
   }
 
-  get badgeInfo(): any {
+  get badgeInfo() {
     if (this.isNotFound) return CARD.style.icon.badge.notFound;
     if (this.isUnavailable) return CARD.style.icon.badge.unavailable;
 
@@ -794,8 +868,8 @@ class ViewBase extends ViewCore {
     return this._configHelper.config.watermark !== undefined;
   }
 
-  get watermark(): any {
-    const { watermark } = this.config;
+  get watermark() {
+    const watermark = this.config.watermark as WatermarkConfig | undefined;
     if (!watermark) return null;
     // A timer's own `max` isn't a stable scale the way a sensor's min/max is
     // - it's the running instance's actual duration (idle uses a [0, 100]
@@ -804,7 +878,7 @@ class ViewBase extends ViewCore {
     // behavior for timers instead, so the configured value stays a stable
     // percentage regardless of how long any given run happens to be.
     const isTimer = this._currentValue.entityType.isTimer;
-    const toPos = (v: any, mode: string) =>
+    const toPos = (v: number | { current: number } | null | undefined, mode: string) =>
       mode === 'percent' || isTimer ? (is.number(v) ? v : (v?.current ?? 0)) : this.#percentHelper.calcWatermark(v);
     return {
       ...watermark,
@@ -825,6 +899,8 @@ class ViewBase extends ViewCore {
     super.refresh(hass); // _hassProvider, _currentValue, _lowValue, _highValue
     this.#maxValue.refresh();
     this.#minValue.refresh();
+    this._aboveValue.refresh();
+    this._belowValue.refresh();
     this._configHelper.checkConfig();
     this.#entityCollection.refreshAll();
 
@@ -899,7 +975,7 @@ class ViewBase extends ViewCore {
     return this.#jinjaMinValue;
   }
 
-  set jinjaMinValue(value: any) {
+  set jinjaMinValue(value: unknown) {
     this.#jinjaMinValue = is.number(value) ? value : null;
   }
 
@@ -907,7 +983,7 @@ class ViewBase extends ViewCore {
     return this.#jinjaMaxValue;
   }
 
-  set jinjaMaxValue(value: any) {
+  set jinjaMaxValue(value: unknown) {
     this.#jinjaMaxValue = is.number(value) ? value : null;
   }
 
@@ -915,7 +991,7 @@ class ViewBase extends ViewCore {
     return this.#jinjaWatermarkLow;
   }
 
-  set jinjaWatermarkLow(value: any) {
+  set jinjaWatermarkLow(value: unknown) {
     this.#jinjaWatermarkLow = is.number(value) ? value : null;
   }
 
@@ -923,7 +999,7 @@ class ViewBase extends ViewCore {
     return this.#jinjaWatermarkHigh;
   }
 
-  set jinjaWatermarkHigh(value: any) {
+  set jinjaWatermarkHigh(value: unknown) {
     this.#jinjaWatermarkHigh = is.number(value) ? value : null;
   }
 

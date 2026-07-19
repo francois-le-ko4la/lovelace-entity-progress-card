@@ -22,10 +22,13 @@ import type { RawConfig } from '../utils/types.js';
  * @extends HABase
  */
 class EntityProgressCardBase extends HABase {
-  static _hiddenComponents: any[] = [...super._hiddenComponents, CARD.style.dynamic.hiddenComponent.value];
+  static _hiddenComponents: { label: string; class?: string }[] = [
+    ...super._hiddenComponents,
+    CARD.style.dynamic.hiddenComponent.value,
+  ];
 
-  static getStubConfig(hass: Hass): any {
-    return { type: `custom:${devName(this._baseClass)}`, entity: HABase.getStubEntity(hass) };
+  static getStubConfig(hass: Hass): RawConfig {
+    return { type: `custom:${devName(this._baseClass)}`, entity: HABase.getStubEntity(hass) } as unknown as RawConfig;
   }
 
   static get _loggedMethods() {
@@ -47,9 +50,13 @@ class EntityProgressCardBase extends HABase {
   }
 
   // ─── CSS - CUSTOMIZATION ──────────────────────────────────────────────────
-  get conditionalStyle(): Map<string, boolean> {
+  // secondaryInfoError depends on the entity's own state (hasStandardEntityError),
+  // not on icon_animation or alert_when - same "static-ish, not Jinja-driven"
+  // bucket as HABase's own _staticStyle entries, so it's folded into that
+  // layer rather than a new one of its own.
+  get _staticStyle(): Map<string, boolean> {
     return new Map([
-      ...super.conditionalStyle,
+      ...super._staticStyle,
       [CARD.style.dynamic.secondaryInfoError.class, this._cardView.hasStandardEntityError],
     ]);
   }
@@ -81,26 +88,41 @@ class EntityProgressCardBase extends HABase {
   }
 
   // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ─────────────────────────────
-  // The four numeric Jinja options share one mechanism (_renderJinjaNumber);
+  // The six numeric Jinja options share one mechanism (_renderJinjaNumber);
   // each entry below only states its two specifics: which config path must
   // still be in { jinja } mode, and which view property receives the resolved
   // number.
-  _getJinjaHandlers(content: any): Record<string, () => void> {
+  _getJinjaHandlers(content: unknown): Record<string, () => void> {
     return {
       ...this._baseJinjaHandlers(content),
       badge_icon: () => this._renderBadgeIcon(content),
       badge_color: () => this._renderBadgeColor(content),
       custom_info: () => this._renderCustomInfo(content),
       name_info: () => this._renderNameInfo(content),
-      min_value: () => this._renderJinjaNumber(content, (c: any) => c.min_value?.jinja, 'jinjaMinValue'),
-      max_value: () => this._renderJinjaNumber(content, (c: any) => c.max_value?.jinja, 'jinjaMaxValue'),
-      'watermark.low': () => this._renderJinjaNumber(content, (c: any) => c.watermark?.low?.jinja, 'jinjaWatermarkLow'),
+      min_value: () => this._renderJinjaNumber(content, (c: RawConfig) => c.min_value?.jinja, 'jinjaMinValue'),
+      max_value: () => this._renderJinjaNumber(content, (c: RawConfig) => c.max_value?.jinja, 'jinjaMaxValue'),
+      'watermark.low': () =>
+        this._renderJinjaNumber(content, (c: RawConfig) => c.watermark?.low?.jinja, 'jinjaWatermarkLow'),
       'watermark.high': () =>
-        this._renderJinjaNumber(content, (c: any) => c.watermark?.high?.jinja, 'jinjaWatermarkHigh'),
+        this._renderJinjaNumber(content, (c: RawConfig) => c.watermark?.high?.jinja, 'jinjaWatermarkHigh'),
+      'alert_when.above': () =>
+        this._renderJinjaNumber(content, (c: RawConfig) => c.alert_when?.above?.jinja, 'jinjaAlertAbove'),
+      'alert_when.below': () =>
+        this._renderJinjaNumber(content, (c: RawConfig) => c.alert_when?.below?.jinja, 'jinjaAlertBelow'),
     };
   }
 
-  _renderJinjaNumber(content: any, getJinja: (c: any) => any, viewProp: string) {
+  _renderJinjaNumber(
+    content: unknown,
+    getJinja: (c: RawConfig) => string | undefined,
+    viewProp:
+      | 'jinjaMinValue'
+      | 'jinjaMaxValue'
+      | 'jinjaWatermarkLow'
+      | 'jinjaWatermarkHigh'
+      | 'jinjaAlertAbove'
+      | 'jinjaAlertBelow',
+  ) {
     // Defensive: only apply while the option is still in { jinja: "..." } mode
     // — guards against a push arriving right as the user switches the mode
     // chips away from Jinja.
@@ -109,16 +131,34 @@ class EntityProgressCardBase extends HABase {
     if (value === this._cardView[viewProp]) return; // unchanged — skip the recompute below
     this._cardView[viewProp] = value;
     // Lightweight, like _managePercent on template cards: recompute + repaint
-    // the bar only. A full this.refresh() re-ran icon/badge/shape/trend AND
+    // only what this specific field can actually affect, not the full
+    // pipeline. A full this.refresh() re-ran icon/badge/shape/trend AND
     // _processJinjaFields() (which re-scans every Jinja field on the card) on
     // every single push — while typing the template in the editor, each
     // keystroke produces a push, so the full pipeline ran on every keystroke
     // and made the editor feel like it had frozen.
-    this._cardView.refresh(this.hass);
-    this._updateCSS();
+    if (viewProp === 'jinjaMinValue' || viewProp === 'jinjaMaxValue') {
+      // min_value/max_value feed #percentHelper (via refresh) - both the
+      // bar's own CSS (_updateCSS) and secondaryInfoMain (_processStandard
+      // Fields, the "45%" label) are derived from it.
+      this._cardView.refresh(this.hass);
+      this._updateCSS();
+      this._processStandardFields();
+    } else if (viewProp === 'jinjaWatermarkLow' || viewProp === 'jinjaWatermarkHigh') {
+      // Watermark position is resolved directly in _updateCSS
+      // (_applyWatermarkCSS) from the view's own watermark getter - it never
+      // touches #percentHelper or the value label.
+      this._updateCSS();
+    } else {
+      // jinjaAlertAbove/jinjaAlertBelow: isAlertActive only feeds _alertStyle
+      // (alert-active/alert-background/alert-anim-*) - no #percentHelper, bar
+      // CSS, or label involvement, and no need to re-walk _staticStyle/
+      // _iconAnimationStyle either.
+      this._applyAlertClasses();
+    }
   }
 
-  _renderCustomInfo(content: any) {
+  _renderCustomInfo(content: unknown) {
     // Line 1 never carries a main (see StructureElements.secondaryInfoLine), so
     // it only gets the &nbsp; spacer in single-line mode, where it precedes the
     // main span on the same line. Line 2 always carries main here (card/badge
@@ -130,7 +170,7 @@ class EntityProgressCardBase extends HABase {
     if (multiline) this._dom.setHTML(CARD.htmlStructure.elements.secondaryInfoExtra2.class, `${line2 ?? ''}&nbsp;`);
   }
 
-  _renderNameInfo(content: any) {
+  _renderNameInfo(content: unknown) {
     this._dom.setHTML(CARD.htmlStructure.elements.nameExtra.class, `&nbsp;${content}`);
   }
 }
@@ -168,7 +208,7 @@ class EntityProgressBadge extends EntityProgressCardBase {
   // hand-maintained copy silently missed min_value for months (CF5, medium), so
   // any handler added on the base class is now picked up here automatically by
   // construction.
-  _getJinjaHandlers(content: any): Record<string, () => void> {
+  _getJinjaHandlers(content: unknown): Record<string, () => void> {
     const handlers = super._getJinjaHandlers(content);
     delete handlers.badge_icon;
     delete handlers.badge_color;
@@ -188,8 +228,8 @@ class EntityProgressFeatures extends HACore {
 
   // ─── STATIC ===
 
-  static getStubConfig() {
-    return { type: `custom:${devName(META.types.feature.typeName)}` };
+  static getStubConfig(): RawConfig {
+    return { type: `custom:${devName(META.types.feature.typeName)}` } as unknown as RawConfig;
   }
 
   /**
@@ -271,9 +311,10 @@ class EntityProgressFeatures extends HACore {
     };
 
     fix();
-    observer = new MutationObserver(fix);
-    observer.observe(cardContainer, observerOptions);
-    resourceManager.add(() => observer!.disconnect(), 'featureRowFix');
+    const mutationObserver = new MutationObserver(fix);
+    mutationObserver.observe(cardContainer, observerOptions);
+    observer = mutationObserver;
+    resourceManager.add(() => mutationObserver.disconnect(), 'featureRowFix');
   }
 
   // ─── HANDLE UPDATE ────────────────────────────────────────────────────────
@@ -307,7 +348,7 @@ class EntityProgressFeatures extends HACore {
 
   // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ─────────────────────────────
 
-  _getJinjaHandlers(content: any): Record<string, () => void> {
+  _getJinjaHandlers(content: unknown): Record<string, () => void> {
     return {
       bar_effect: () => this._refreshBarEffect(content), // base
     };
@@ -353,12 +394,12 @@ class EntityProgressTemplateBase extends HABase {
     this.refresh(); // refresh() → _cardView.refresh() → _showIcon() → _updateCSS()
   }
 
-  static getStubConfig(hass: Hass): any {
+  static getStubConfig(hass: Hass): RawConfig {
     return {
       type: `custom:${devName(META.types.template.typeName)}`,
       entity: HABase.getStubEntity(hass),
       ...CARD.config.stub.template,
-    };
+    } as unknown as RawConfig;
   }
 
   // ─── CSS MANAGEMENT ───────────────────────────────────────────────────────
@@ -382,7 +423,7 @@ class EntityProgressTemplateBase extends HABase {
 
   // ─── ICON MANAGEMENT ──────────────────────────────────────────────────────
 
-  _showIcon(iconFromJinja: any = null) {
+  _showIcon(iconFromJinja: unknown = null) {
     const jinjaIconNotReady = this._cardView.config.icon !== undefined && iconFromJinja === null;
     if (jinjaIconNotReady) return;
     this._cardView.icon = iconFromJinja;
@@ -391,7 +432,7 @@ class EntityProgressTemplateBase extends HABase {
 
   // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ─────────────────────────────
 
-  _getJinjaHandlers(content: any): Record<string, () => void> {
+  _getJinjaHandlers(content: unknown): Record<string, () => void> {
     return {
       ...this._baseJinjaHandlers(content),
       badge_icon: () => this._renderBadgeIcon(content),
@@ -404,34 +445,34 @@ class EntityProgressTemplateBase extends HABase {
         this._dom.setStyle(
           CARD.htmlStructure.card.element,
           CARD.style.dynamic.iconAndShape.color.var,
-          ThemeManager.adaptColor(content),
+          ThemeManager.adaptColor(content as string | null),
         ),
       bar_color: () =>
         this._dom.setStyle(
           CARD.htmlStructure.card.element,
           CARD.style.dynamic.progressBar.color.var,
-          ThemeManager.adaptColor(content),
+          ThemeManager.adaptColor(content as string | null),
         ),
     };
   }
 
-  _renderName(content: any) {
+  _renderName(content: unknown) {
     this._dom.setHTML(CARD.htmlStructure.elements.nameMain.class, `${content}`.trim());
   }
 
-  _renderSecondary(content: any) {
+  _renderSecondary(content: unknown) {
     // Template has no secondary-info-main slot at all (see
     // StructureElements.secondaryInfoWrapperMinimal), so neither line ever
     // needs the &nbsp; spacer that card/badge's _renderCustomInfo adds before
-    // main. `info-multiline` itself is applied via conditionalStyle
-    // (config-driven), not here.
+    // main. `info-multiline` itself is applied via _staticStyle/
+    // _applyStaticClasses (config-driven), not here.
     const multiline = Boolean(this._cardView.config.multiline);
     const [line1, line2] = this._splitAtFirstBreak(content);
     this._dom.setHTML(CARD.htmlStructure.elements.secondaryInfoExtra.class, line1.trim());
     if (multiline) this._dom.setHTML(CARD.htmlStructure.elements.secondaryInfoExtra2.class, (line2 ?? '').trim());
   }
 
-  _managePercent(percent: any) {
+  _managePercent(percent: unknown) {
     // CF5 - issue (minor) resolved - a percent template returning a numeric
     // string was compared lexicographically in getTrend ('9' < '45' is false →
     // wrong trend); non-numeric results now show an explicit error icon instead
@@ -520,8 +561,11 @@ class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
     if (this.hass) this._resourceManager?.setTimeout(() => this.refresh(), 0, 'deferredRefresh');
   }
 
-  static getStubConfig(hass: Hass): any {
-    return { type: `custom:${devName(META.types.badgeTemplate.typeName)}`, entity: HABase.getStubEntity(hass) };
+  static getStubConfig(hass: Hass): RawConfig {
+    return {
+      type: `custom:${devName(META.types.badgeTemplate.typeName)}`,
+      entity: HABase.getStubEntity(hass),
+    } as unknown as RawConfig;
   }
 }
 

@@ -16,8 +16,8 @@ interface LoggerInstance {
   info: (msg: string, data?: unknown) => void;
   warning: (msg: string, data?: unknown) => void;
   error: (msg: string, data?: unknown) => void;
-  wrap: <T extends (...args: any[]) => any>(fn: T, fnName: string) => T;
-  wrapAll: (ctx: Record<string, any>, methodNames: string[]) => void;
+  wrap: <T extends (...args: unknown[]) => unknown>(fn: T, fnName: string) => T;
+  wrapAll: (ctx: Record<string, unknown>, methodNames: string[]) => void;
 }
 
 const Logger = {
@@ -40,7 +40,7 @@ const Logger = {
       error: (msg, data) =>
         shouldLog(SEV.error) && console.error(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
 
-      wrap: (fn, fnName) => {
+      wrap<T extends (...args: unknown[]) => unknown>(fn: T, fnName: string): T {
         const isAsync = fn.constructor.name === 'AsyncFunction';
 
         const logStart = () => shouldLog(SEV.debug) && console.debug(`[${name}] 👉 ${fnName}`);
@@ -51,7 +51,7 @@ const Logger = {
           console.error(`[${name}] ❌ ${fnName} failed (${(performance.now() - start).toFixed(2)}ms)`, error);
 
         if (isAsync) {
-          return (async (...args: any[]) => {
+          return (async (...args: unknown[]) => {
             logStart();
             const start = performance.now();
             try {
@@ -62,9 +62,9 @@ const Logger = {
               logError(start, error);
               throw error;
             }
-          }) as any;
+          }) as T;
         } else {
-          return ((...args: any[]) => {
+          return ((...args: unknown[]) => {
             logStart();
             const start = performance.now();
             try {
@@ -75,14 +75,15 @@ const Logger = {
               logError(start, error);
               throw error;
             }
-          }) as any;
+          }) as T;
         }
       },
 
       wrapAll: (ctx, methodNames) => {
         methodNames.forEach((method) => {
           if (has.method(ctx, method)) {
-            ctx[method] = loggerInstance.wrap(ctx[method].bind(ctx), method);
+            const fn = ctx[method] as (...args: unknown[]) => unknown;
+            ctx[method] = loggerInstance.wrap(fn.bind(ctx), method);
           }
         });
       },
@@ -97,7 +98,7 @@ function initLogger(ctx: object, debugFlag: boolean, methodNames: string[] = [])
   const logger = Logger.create(className, debugFlag ? SEV.debug : SEV.info);
 
   if (debugFlag) {
-    logger.wrapAll(ctx as Record<string, any>, methodNames);
+    logger.wrapAll(ctx as Record<string, unknown>, methodNames);
     logger.debug(`${className} initialized`);
   }
 

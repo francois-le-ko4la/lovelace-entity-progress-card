@@ -9,10 +9,33 @@ import { CARD_CSS, getSharedStyleSheet } from '../utils/styles.js';
 import { is } from '../utils/common-checks.js';
 import { initLogger, type LoggerInstance } from '../utils/log.js';
 import { ObjStructure, ThemeManager, ChangeTracker } from './value-helpers.js';
-import { HassProviderSingleton, type Hass } from '../utils/hass-provider.js';
+import { HassProviderSingleton, type Hass, type EntityState } from '../utils/hass-provider.js';
 import { CardView, FeatureView } from './view.js';
 import { ResourceManager, DOMHelper, ActionHelper } from './dom-helpers.js';
 import type { RawConfig } from '../utils/types.js';
+import type { StructureOptions } from './structure.js';
+
+// The resolved shape ViewBase/ViewCore's `watermark` getter returns (see
+// view.ts) - the validated WatermarkConfig plus low/high/low_color/high_color
+// already overwritten with their final resolved values.
+type ResolvedWatermark = {
+  high: number;
+  high_color: string | null;
+  low: number;
+  low_color: string | null;
+  opacity: number;
+  line_size: string;
+  type: string;
+  disable_high?: boolean;
+  disable_low?: boolean;
+};
+
+// ViewBase.divergingBarStack's return shape (see view.ts).
+type DivergingGradients = { posGradient: string | null; negGradient: string | null; posSize: number; negSize: number };
+
+// The icon element _showIcon()/_handleImgIcon()/_handleStateIcon() manage:
+// either a plain <img> (entity_picture) or a <ha-state-icon> (hass/stateObj).
+type IconElement = HTMLImageElement | (HTMLElement & { hass: Hass | null; stateObj: unknown });
 
 /**
  * Base class for Home Assistant custom elements (cards, badges, features).
@@ -57,6 +80,12 @@ class HACore extends HTMLElement {
   static _cardElement = CARD.htmlStructure.card.element;
   _debug = CARD_CONTEXT.debug.card;
   _log: LoggerInstance | null = null;
+  // Always assigned first thing in the constructor, before anything else in
+  // this class or HABase (subclass) can run - `attachShadow()` itself returns
+  // the real ShadowRoot (not the nullable `this.shadowRoot` getter, which
+  // would also go permanently null-from-outside if shadowMode were ever
+  // 'closed').
+  _shadow!: ShadowRoot;
   _resourceManager: ResourceManager | null = null;
   // Concrete subclasses (in cards.ts) swap this in for CardView/BadgeView/
   // FeatureView/CardTemplateView/BadgeTemplateView - the latter two extend
@@ -108,11 +137,12 @@ class HACore extends HTMLElement {
   constructor() {
     super();
     this._log = initLogger(this, this._debug, (this.constructor as typeof HACore)._loggedMethods);
-    this.attachShadow({ mode: CARD.config.shadowMode as 'open' | 'closed' });
+    this._shadow = this.attachShadow({ mode: CARD.config.shadowMode as 'open' | 'closed' });
   }
 
   static getConfigElement(): HTMLElement | null {
-    const metaType: any = Object.values(META.types).find((t: any) => t.typeName === this._baseClass);
+    const metaType = Object.values(META.types).find((t) => t.typeName === this._baseClass) as
+      { editor?: string } | undefined;
     return metaType?.editor ? document.createElement(devName(metaType.editor)) : null;
   }
 
@@ -240,9 +270,7 @@ class HACore extends HTMLElement {
     this._dom.toggleClass(CARD.htmlStructure.card.element, 'transition-ready', false); // retire AVANT purge
     this.#isRendered = false;
     this._dom.destroy();
-    if (this.shadowRoot) {
-      this.shadowRoot.innerHTML = ''; // purge le contenu shadow DOM
-    }
+    this._shadow.innerHTML = ''; // purge le contenu shadow DOM
   }
 
   get cardStyle(): string {
@@ -270,14 +298,14 @@ class HACore extends HTMLElement {
     this.#isRendered = true;
     const element = this._createCardElements();
     // element.style is null when the shared constructed sheet is adopted
-    this.shadowRoot!.replaceChildren(...(element.style ? [element.style, element.card] : [element.card]));
+    this._shadow.replaceChildren(...(element.style ? [element.style, element.card] : [element.card]));
     this._storeDOM();
     requestAnimationFrame(() => {
       this._dom.addClass(CARD.htmlStructure.card.element, 'transition-ready');
     });
   }
 
-  get _structureOptions(): Record<string, any> {
+  get _structureOptions(): StructureOptions {
     return {
       barType: this._cardView.config.center_zero ? 'centerZero' : 'default', // ─── true
       barPosition: this._cardView.config.bar_position,
@@ -291,8 +319,8 @@ class HACore extends HTMLElement {
     let style: HTMLStyleElement | null = null;
     const sharedSheet = getSharedStyleSheet(this.cardStyle);
     if (sharedSheet) {
-      if (!this.shadowRoot!.adoptedStyleSheets.includes(sharedSheet)) {
-        this.shadowRoot!.adoptedStyleSheets = [...this.shadowRoot!.adoptedStyleSheets, sharedSheet];
+      if (!this._shadow.adoptedStyleSheets.includes(sharedSheet)) {
+        this._shadow.adoptedStyleSheets = [...this._shadow.adoptedStyleSheets, sharedSheet];
       }
     } else {
       style = document.createElement(CARD.style.element) as HTMLStyleElement;
@@ -337,7 +365,7 @@ class HACore extends HTMLElement {
 
   _storeDOM() {
     for (const key of (this.constructor as typeof HACore)._domKeys) {
-      const el = this.shadowRoot!.querySelector(`.${CSS.escape(key)}`);
+      const el = this._shadow.querySelector(`.${CSS.escape(key)}`);
       if (el) this._dom.register(key, el as HTMLElement);
     }
   }
@@ -442,7 +470,17 @@ class HACore extends HTMLElement {
 
   _applyProgressCSS(
     progressValue: number | null,
-    { barColor = null, iconColor = null, gradient = null, diverging = null }: Record<string, any> = {},
+    {
+      barColor = null,
+      iconColor = null,
+      gradient = null,
+      diverging = null,
+    }: {
+      barColor?: string | null;
+      iconColor?: string | null;
+      gradient?: string | null;
+      diverging?: DivergingGradients | null;
+    } = {},
   ) {
     const cardKey = CARD.htmlStructure.card.element;
 
@@ -466,7 +504,7 @@ class HACore extends HTMLElement {
   // gradients/sizes (see ViewBase.divergingBarStack). Explicitly removed (not
   // left stale) when not applicable - setStyle() never unsets a value on its
   // own once written.
-  _applyDivergingBarStackCSS(cardKey: string, diverging: any) {
+  _applyDivergingBarStackCSS(cardKey: string, diverging: DivergingGradients | null) {
     const pb = CARD.style.dynamic.progressBar;
     if (!diverging) {
       this._dom.removeStyle(cardKey, pb.stackGradientPos.var);
@@ -483,7 +521,7 @@ class HACore extends HTMLElement {
     this._dom.setStyle(cardKey, pb.stackSizeNeg.var, diverging.negSize);
   }
 
-  _applyWatermarkCSS(watermark: any) {
+  _applyWatermarkCSS(watermark: ResolvedWatermark | null) {
     if (!watermark) return;
     const cardKey = CARD.htmlStructure.card.element;
     HACore._getWatermarkProperties(watermark).forEach(([variable, value]) => {
@@ -493,7 +531,7 @@ class HACore extends HTMLElement {
 
   // ─── WATERMARK MANAGEMENT ─────────────────────────────────────────────────
 
-  static _getWatermarkProperties(watermark: any): [string, any][] {
+  static _getWatermarkProperties(watermark: ResolvedWatermark): [string, string | number | null][] {
     return [
       [CARD.style.dynamic.watermark.high.value.var, `${watermark.high}%`],
       [CARD.style.dynamic.watermark.high.color.var, watermark.high_color],
@@ -528,11 +566,11 @@ class HACore extends HTMLElement {
     return result;
   }
 
-  _getJinjaHandlers(content?: any): Record<string, () => void> {
+  _getJinjaHandlers(content?: unknown): Record<string, () => void> {
     throw new Error(`${this.constructor.name} must implement _getJinjaHandlers(${content})`);
   }
 
-  _renderJinja(key: string, content: any) {
+  _renderJinja(key: string, content: unknown) {
     this._log?.debug('📎 HACore._renderJinja():', { key, content });
 
     const renderHandlers = this._getJinjaHandlers(content);
@@ -552,11 +590,11 @@ class HACore extends HTMLElement {
     }
   }
 
-  _refreshBarEffect(content: any) {
+  _refreshBarEffect(content: unknown) {
     this._log?.debug('📎 HACore._refreshBarEffect():', { content });
     // CF5 - issue (critical) resolved - render_template returns native types: a
     // template yielding a list (e.g. {{ ['glass'] }}) crashed on .split()
-    const jinjaEffect = (is.array(content) ? content : String(content ?? '').split(',')).map((s: any) =>
+    const jinjaEffect = (is.array(content) ? content : String(content ?? '').split(',')).map((s: unknown) =>
       String(s).trim(),
     );
     this._handleBarEffect(jinjaEffect);
@@ -577,10 +615,11 @@ class HACore extends HTMLElement {
   }
 
   _watchWebSocket() {
-    if (!this._resourceManager) return; // ISSUE 87
+    const { hass } = this;
+    if (!this._resourceManager || !hass) return; // ISSUE 87
     this._unwatchWebSocket();
     this._resourceManager.addEventListener(
-      this.hass!.connection,
+      hass.connection,
       'disconnected',
       () => {
         this._log?.debug('🔌 WebSocket disconnected');
@@ -595,7 +634,7 @@ class HACore extends HTMLElement {
     );
 
     this._resourceManager.addEventListener(
-      this.hass!.connection,
+      hass.connection,
       'ready',
       () => {
         this._log?.debug('🔁 WebSocket ready — reprocessing templates');
@@ -655,7 +694,8 @@ class HACore extends HTMLElement {
     this._log?.debug('📎 HACore._subscribeToTemplate:', { key, template });
     const subscriptionKey = `template-${key}`;
 
-    if (!this.hass?.connection?.connected) {
+    const { hass } = this;
+    if (!hass?.connection?.connected) {
       this._log?.debug(`[Template ${key}] WebSocket not connected, skipping subscription.`);
       return;
     }
@@ -682,11 +722,14 @@ class HACore extends HTMLElement {
       this._log?.debug('key:', key);
       this._log?.debug('template:', template);
 
-      const unsub = await this.hass!.connection.subscribeMessage((msg: any) => this._renderJinja(key, msg.result), {
-        type: 'render_template',
-        template, //template: template,
-        variables: this._getTemplateContext(),
-      });
+      const unsub = await hass.connection.subscribeMessage(
+        (msg: { result: unknown }) => this._renderJinja(key, msg.result),
+        {
+          type: 'render_template',
+          template, //template: template,
+          variables: this._getTemplateContext(),
+        },
+      );
 
       // Check again after the async operation
       if (this.#templateSignatures.get(subscriptionKey) !== signature) {
@@ -739,7 +782,7 @@ class HABase extends HACore {
   static _cardStructure: ObjStructure = new ObjStructure('card');
   static _hasDisabledIconTap = false;
   static _hasDisabledBadge = false;
-  static _hiddenComponents: any[] = [
+  static _hiddenComponents: { label: string; class?: string }[] = [
     CARD.style.dynamic.hiddenComponent.icon,
     CARD.style.dynamic.hiddenComponent.name,
     CARD.style.dynamic.hiddenComponent.secondary_info,
@@ -751,11 +794,12 @@ class HABase extends HACore {
     flat: HA_CONTEXT.icons.equalBox,
     error: HA_CONTEXT.icons.progressQuestion,
   };
-  _icon: any = null;
+  _icon: IconElement | null = null;
   _cardView: any = new CardView();
-  _actionHelper: ActionHelper | null = null;
+  // Always assigned unconditionally in the constructor below.
+  _actionHelper!: ActionHelper;
   #jinjaStateBadge = { icon: false, color: false };
-  #lastMessage: any = null;
+  #lastMessage: { content: string; sev: string } | null = null;
 
   // ─── LIFECYCLE METHODS ===
 
@@ -777,6 +821,9 @@ class HABase extends HACore {
       '_addBaseClasses',
       '_addBaseParameter',
       '_applyConditionalClasses',
+      '_applyStaticClasses',
+      '_applyIconAnimationClasses',
+      '_applyAlertClasses',
       '_handleHiddenComponents',
       '_manageErrorMessage',
       '_renderMessage',
@@ -793,7 +840,7 @@ class HABase extends HACore {
 
   connectedCallback() {
     super.connectedCallback(); // render, _updateDynamicElements, watchWebSocket
-    this._actionHelper!.init(this._cardView.config, this.hasDisabledIconTap);
+    this._actionHelper.init(this._cardView.config, this.hasDisabledIconTap);
   }
 
   // disconnectedCallback() {}
@@ -808,7 +855,7 @@ class HABase extends HACore {
   // Kept for HA < 2024.11 (hui-card.ts falls back to this, migrated through
   // migrateLayoutToGridOptions, when getGridOptions isn't implemented -
   // mirrors how lovelace-mushroom's MushroomBaseCard keeps both).
-  getLayoutOptions(): any {
+  getLayoutOptions() {
     if (![META.types.card.typeName, META.types.template.typeName].includes(this.baseClass)) return undefined;
     const cardLayoutOptions = this._cardView.cardLayoutOptions;
     this._log?.debug('getLayoutOptions: ', cardLayoutOptions);
@@ -818,7 +865,7 @@ class HABase extends HACore {
   // Current HA API (2024.11+): same numbers as getLayoutOptions, expressed on
   // the 12-column grid instead of the older 4-column one - see
   // CARD.layout.gridColumnMultiplier.
-  getGridOptions(): any {
+  getGridOptions() {
     if (![META.types.card.typeName, META.types.template.typeName].includes(this.baseClass)) return undefined;
     const { grid_rows, grid_min_rows, grid_columns, grid_min_columns } = this._cardView.cardLayoutOptions;
     const multiplier = CARD.layout.gridColumnMultiplier;
@@ -868,16 +915,16 @@ class HABase extends HACore {
    * Displays an error alert with the provided message.
    *   'info', 'warning', 'error'
    */
-  _renderMessage(msg: any) {
+  _renderMessage(msg: { content: string; sev: string }) {
     if (msg === this.#lastMessage) return;
     this.#lastMessage = msg;
 
     // ha-alert exists ?
-    let alert: any = this.shadowRoot!.querySelector('ha-alert');
+    let alert = this._shadow.querySelector('ha-alert');
 
     if (!alert) {
       alert = document.createElement('ha-alert');
-      this.shadowRoot!.replaceChildren(alert);
+      this._shadow.replaceChildren(alert);
     }
 
     // update the message
@@ -887,7 +934,7 @@ class HABase extends HACore {
 
   // ─── CARD BUILDING ===
 
-  get _structureOptions(): Record<string, any> {
+  get _structureOptions(): StructureOptions {
     return {
       ...super._structureOptions,
       layout: this._cardView.config.layout,
@@ -933,7 +980,12 @@ class HABase extends HACore {
     });
   }
 
-  get conditionalStyle(): Map<string, boolean> {
+  // Static-ish: clickable/frameless/marginless/multiline only depend on
+  // config, never on Jinja-pushed or fast-changing entity state - split out
+  // from icon animation/alert below so a caller that only needs to
+  // re-evaluate one of those two doesn't also re-walk this bucket for
+  // nothing (see _applyIconAnimationClasses/_applyAlertClasses).
+  get _staticStyle(): Map<string, boolean> {
     return new Map([
       [CARD.style.dynamic.clickable.card, this._cardView.hasClickableCard],
       [CARD.style.dynamic.clickable.icon, this._cardView.hasClickableIcon],
@@ -945,6 +997,11 @@ class HABase extends HACore {
       // a :has() re-derived at each level, which is what made every earlier
       // attempt only fix one ancestor at a time.
       ['info-multiline', Boolean(this._cardView.config.multiline)],
+    ]);
+  }
+
+  get _iconAnimationStyle(): Map<string, boolean> {
+    return new Map([
       ['icon-anim-spin', this._cardView.config.icon_animation === 'spin' && this._cardView.isEntityActive],
       ['icon-anim-pulse', this._cardView.config.icon_animation === 'pulse' && this._cardView.isEntityActive],
       ['icon-anim-bounce', this._cardView.config.icon_animation === 'bounce' && this._cardView.isEntityActive],
@@ -973,6 +1030,11 @@ class HABase extends HACore {
           this._cardView.isBatteryCharging &&
           this._cardView.isBatteryIconShifted,
       ],
+    ]);
+  }
+
+  get _alertStyle(): Map<string, boolean> {
+    return new Map([
       ['alert-active', this._cardView.isAlertActive],
       [
         'alert-background',
@@ -983,13 +1045,35 @@ class HABase extends HACore {
     ]);
   }
 
-  _applyConditionalClasses() {
-    this.conditionalStyle.forEach((condition, className) => {
+  #toggleClasses(style: Map<string, boolean>) {
+    style.forEach((condition, className) => {
       this._dom.toggleClass(CARD.htmlStructure.card.element, className, condition);
     });
   }
 
-  _handleHiddenComponents(jinjaContent: any = null) {
+  _applyStaticClasses() {
+    this.#toggleClasses(this._staticStyle);
+  }
+
+  _applyIconAnimationClasses() {
+    this.#toggleClasses(this._iconAnimationStyle);
+  }
+
+  _applyAlertClasses() {
+    this.#toggleClasses(this._alertStyle);
+  }
+
+  // Bridgehead used by a full render/refresh - re-applies all three layers.
+  // A caller that knows only one layer can have changed (e.g. a Jinja push
+  // touching only alert_when) should call that layer's own _apply*Classes
+  // method directly instead (see EntityProgressCardBase._renderJinjaNumber).
+  _applyConditionalClasses() {
+    this._applyStaticClasses();
+    this._applyIconAnimationClasses();
+    this._applyAlertClasses();
+  }
+
+  _handleHiddenComponents(jinjaContent: unknown = null) {
     if (jinjaContent === null && is.jinja(this._cardView.config.hide)) return;
 
     // CF5 - issue (critical) resolved - a hide Jinja template yielding a native
@@ -997,10 +1081,10 @@ class HABase extends HACore {
     const items = is.nullish(jinjaContent)
       ? null
       : (is.array(jinjaContent) ? jinjaContent : String(jinjaContent).split(','))
-          .map((s: any) => String(s).trim())
+          .map((s: unknown) => String(s).trim())
           .filter(Boolean);
 
-    (this.constructor as typeof HABase)._hiddenComponents.forEach((component: any) => {
+    (this.constructor as typeof HABase)._hiddenComponents.forEach((component) => {
       this._dom.toggleClass(
         CARD.htmlStructure.card.element,
         component.class,
@@ -1054,7 +1138,7 @@ class HABase extends HACore {
     return img;
   }
 
-  _handleImgIcon(stateObj: any, srcPicture: string) {
+  _handleImgIcon(stateObj: EntityState | null, srcPicture: string) {
     this._log?.debug('📎 HABase._handleImgIcon():', { stateObj, srcPicture });
 
     const pictureAlt = stateObj?.attributes?.friendly_name || 'Entity picture';
@@ -1068,11 +1152,17 @@ class HABase extends HACore {
       this._dom.setStyle(CARD.htmlStructure.card.element, CARD.style.dynamic.iconAndShape.icon.size.var, '36px');
     }
 
-    this._icon.src = srcPicture;
-    this._icon.alt = pictureAlt;
+    const img = this._icon as HTMLImageElement;
+    img.src = srcPicture;
+    img.alt = pictureAlt;
   }
 
-  _createStateObjIcon(stateObj: any, curIcon: any, hasIconOverride: boolean, hasPicture: boolean): any {
+  _createStateObjIcon(
+    stateObj: EntityState | null,
+    curIcon: string | null,
+    hasIconOverride: boolean,
+    hasPicture: boolean,
+  ): unknown {
     this._log?.debug('📎 HABase._createStateObjIcon():', { stateObj, curIcon, hasIconOverride, hasPicture });
 
     if (!stateObj) {
@@ -1119,18 +1209,19 @@ class HABase extends HACore {
     }
   }
 
-  _handleStateIcon(iconContainer: HTMLElement, stateObjIcon: any) {
+  _handleStateIcon(iconContainer: HTMLElement, stateObjIcon: unknown) {
     this._log?.debug('📎 HABase._handleStateIcon():', { iconContainer, stateObjIcon });
 
     this._cleanupImgIcon();
 
     if (!this._icon) {
-      this._icon = document.createElement('ha-state-icon');
+      this._icon = document.createElement('ha-state-icon') as HTMLElement & { hass: Hass | null; stateObj: unknown };
       iconContainer.replaceChildren(this._icon);
     }
 
-    this._icon.hass = this.hass;
-    this._icon.stateObj = stateObjIcon;
+    const stateIcon = this._icon as HTMLElement & { hass: Hass | null; stateObj: unknown };
+    stateIcon.hass = this.hass;
+    stateIcon.stateObj = stateObjIcon;
   }
 
   _showIcon() {
@@ -1225,25 +1316,25 @@ class HABase extends HACore {
     this._enableBadge(shouldShow);
   }
 
-  _renderBadgeIcon(content: any) {
+  _renderBadgeIcon(content: unknown) {
     this._log?.debug('📎 HABase._renderBadgeIcon():', { content });
     this.#jinjaStateBadge.icon = is.nonEmptyString(content) && content.includes(HA_CONTEXT.icons.prefix);
 
     if (!is.nullish(this._cardView.badgeInfo)) return; // alert -> cancel custom badge
     if (this.#jinjaStateBadge.icon) {
-      this._setBadgeIcon(content);
+      this._setBadgeIcon(content as string);
     }
     this._updateBadgeVisibility();
   }
 
-  _renderBadgeColor(content: any) {
+  _renderBadgeColor(content: unknown) {
     this._log?.debug('📎 HABase._renderBadgeColor():', { content });
     this.#jinjaStateBadge.color = is.nonEmptyString(content);
 
     if (!is.nullish(this._cardView.badgeInfo)) return; // alert -> cancel custom badge
 
     if (this.#jinjaStateBadge.color) {
-      const backgroundColor = ThemeManager.adaptColor(content) as string;
+      const backgroundColor = ThemeManager.adaptColor(content as string) as string;
       const color = 'var(--white-color)';
       this._setBadgeColor(color, backgroundColor);
     }
@@ -1263,7 +1354,7 @@ class HABase extends HACore {
 
   // ─── JINJA TEMPLATE RENDERING ─────────────────────────────────────────────
 
-  _baseJinjaHandlers(content: any): Record<string, () => void> {
+  _baseJinjaHandlers(content: unknown): Record<string, () => void> {
     return {
       bar_effect: () => this._refreshBarEffect(content),
       hide: () => this._handleHiddenComponents(content),
@@ -1280,7 +1371,7 @@ class HABase extends HACore {
   // <span style="color:red">A<br>B</span>) is re-wrapped on both halves via
   // #domSplitOnce's ancestor cloning, instead of a naive string split that
   // would leave one half with an unclosed/orphaned tag.
-  _splitAtFirstBreak(content: any): [string, string | null] {
+  _splitAtFirstBreak(content: unknown): [string, string | null] {
     const html = String(content);
     if (!this._cardView.config.multiline) return [html.replace(HABase.#BREAK_RE, ''), null];
 

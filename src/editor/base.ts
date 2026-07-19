@@ -21,6 +21,30 @@ import {
 } from './chips.js';
 import { EntityProgressBarStackEditor, EntityProgressCustomThemeEditor } from './list-editors.js';
 
+// Every dynamic editor field element built below (ha-selector, the chip
+// custom elements from chips.ts, the list editors from list-editors.ts)
+// shares this loose shape: a standard HTMLElement plus whichever of these
+// properties/methods that particular element family actually implements -
+// too heterogeneous across 4+ different custom element families to model
+// more precisely (mirrors list-editors.ts's own HaSelectorElement).
+type EditorFieldElement = HTMLElement & {
+  label?: string;
+  value: unknown;
+  hass?: Hass | null;
+  isArray?: boolean;
+  isInverted?: boolean;
+  context?: Record<string, unknown>;
+  selector?: Record<string, unknown>;
+  required?: boolean;
+  items?: unknown;
+  setLabels?: (labels: unknown) => void;
+  _fieldDef?: FieldDef;
+};
+
+// One of EditorFactory's top-level sections (general/content/theme/
+// interactions) - see factory.ts.
+type SectionDef = { flat?: boolean; title?: string; icon?: string; fields: Record<string, FieldDef> };
+
 /**
  * Shared base for every per-card-type visual editor. Builds the
  * expansion-panel form from a subclass's static `_fields` tree (`EditorFactory`
@@ -52,18 +76,24 @@ class EditorBase extends HTMLElement {
   };
   // ─── private state ────────────────────────────────────────────────────────
   #config: RawConfig = {} as RawConfig;
-  #hassProvider: HassProviderSingleton | null = null;
-  #dom: EditorDOMHelper | null = null;
-  #boundOnChanged: ((e: any) => void) | null = null;
+  // Always assigned first thing in the constructor - attachShadow()'s own
+  // return value, not the nullable `this.shadowRoot` getter.
+  #shadow!: ShadowRoot;
+  #hassProvider: HassProviderSingleton = HassProviderSingleton.getInstance();
+  #dom: EditorDOMHelper = new EditorDOMHelper();
+  #boundOnChanged: ((e: Event) => void) | null = null;
   #pendingSentConfig: RawConfig | null = null;
   #sendConfigScheduled = false;
   _configHelper: BaseConfigHelper = new BaseConfigHelper();
 
+  // Same dynamic-tree-lookup rationale as HassProviderSingleton.localize()
+  // (hass-provider.ts): typing this precisely would mean modeling the entire
+  // translations.json option tree for a handful of call sites below.
   get #localizedOptions(): any {
     // CF5 - issue (minor) resolved - localize() returns the key string before
     // translations load; select builders then crashed on
     // Object.entries(undefined). Fall back to the default language.
-    const options = this.#hassProvider!.localize('editor.option');
+    const options = this.#hassProvider.localize('editor.option');
     return is.plainObject(options)
       ? options
       : TRANSLATIONS[CARD.config.language as keyof typeof TRANSLATIONS].editor.option;
@@ -73,19 +103,17 @@ class EditorBase extends HTMLElement {
 
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
-    this.#hassProvider = HassProviderSingleton.getInstance();
-    this.#dom = new EditorDOMHelper();
+    this.#shadow = this.attachShadow({ mode: 'open' });
   }
 
   connectedCallback() {
     this.#boundOnChanged = this.#onChanged.bind(this);
     this.#render();
-    this.shadowRoot!.addEventListener(VALUE_CHANGED_EVENT, this.#boundOnChanged);
+    this.#shadow.addEventListener(VALUE_CHANGED_EVENT, this.#boundOnChanged);
   }
 
   disconnectedCallback() {
-    this.shadowRoot!.removeEventListener(VALUE_CHANGED_EVENT, this.#boundOnChanged as any);
+    if (this.#boundOnChanged) this.#shadow.removeEventListener(VALUE_CHANGED_EVENT, this.#boundOnChanged);
     this.#boundOnChanged = null;
     // this.#dom.destroy();
   }
@@ -94,12 +122,12 @@ class EditorBase extends HTMLElement {
 
   set hass(hass: Hass) {
     if (!hass) return;
-    this.#hassProvider!.hass = hass;
-    this.#dom!.updateHass(hass);
+    this.#hassProvider.hass = hass;
+    this.#dom.updateHass(hass);
   }
 
   get hass(): Hass | null {
-    return this.#hassProvider!.hass;
+    return this.#hassProvider.hass;
   }
 
   setConfig(config: RawConfig) {
@@ -117,7 +145,7 @@ class EditorBase extends HTMLElement {
   // ─── RENDER (once) ────────────────────────────────────────────────────────
 
   #render() {
-    if (this.shadowRoot!.querySelector('.editor')) return;
+    if (this.#shadow.querySelector('.editor')) return;
 
     const style = document.createElement('style');
     style.textContent = EDITOR_BASE_STYLE;
@@ -131,7 +159,7 @@ class EditorBase extends HTMLElement {
       container.appendChild(this.#buildExpansionPanel(section, def));
     }
 
-    this.shadowRoot!.append(style, container);
+    this.#shadow.append(style, container);
   }
 
   // Deprecated options this card can rewrite in one click, top-right of the
@@ -179,10 +207,10 @@ class EditorBase extends HTMLElement {
     const wrapper = document.createElement('div');
     wrapper.className = 'migrate-header';
 
-    const button: any = document.createElement('ha-button');
+    const button = document.createElement('ha-button');
     const fieldName = '_migrate_config';
     button.id = fieldName;
-    button.append(this.#hassProvider!.localize(EDITOR_FIELD_NS)?.migrate_config ?? 'Migrate config');
+    button.append(this.#hassProvider.localize(EDITOR_FIELD_NS)?.migrate_config ?? 'Migrate config');
     button.addEventListener('click', () => {
       button.dispatchEvent(
         new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value: true }, bubbles: true, composed: true }),
@@ -193,26 +221,29 @@ class EditorBase extends HTMLElement {
       name: fieldName,
       virtual: true,
       showIf: (config: RawConfig) => EditorBase.#hasDeprecatedOptions(config),
-      onVirtualChange: (_value: any, config: RawConfig) =>
+      onVirtualChange: (_value: unknown, config: RawConfig) =>
         EditorBase.#migrateDeprecatedConfig(config, this._configHelper),
     } as unknown as FieldDef;
-    this.#dom!.registerField(fieldName, button, field);
+    this.#dom.registerField(fieldName, button, field);
 
     wrapper.appendChild(button);
     return wrapper;
   }
 
-  #buildExpansionPanel(section: string, def: any): DocumentFragment | HTMLElement {
+  #buildExpansionPanel(section: string, def: SectionDef): DocumentFragment | HTMLElement {
     if (def.flat) {
       const frag = document.createDocumentFragment();
-      for (const field of Object.values(def.fields) as any[]) {
+      for (const field of Object.values(def.fields)) {
         frag.appendChild(this.#buildField(field));
       }
       return frag;
     }
 
-    const panel: any = document.createElement('ha-expansion-panel');
-    panel.header = this.#hassProvider!.localize(def.title);
+    const panel = document.createElement('ha-expansion-panel') as HTMLElement & {
+      header: string;
+      outlined: boolean;
+    };
+    panel.header = this.#hassProvider.localize(def.title ?? '');
     panel.outlined = true;
 
     if (def.icon) {
@@ -225,7 +256,7 @@ class EditorBase extends HTMLElement {
     const body = document.createElement('div');
     body.className = 'panel-body';
 
-    for (const field of Object.values(def.fields) as any[]) {
+    for (const field of Object.values(def.fields)) {
       body.appendChild(this.#buildField(field));
     }
 
@@ -234,12 +265,15 @@ class EditorBase extends HTMLElement {
     return panel;
   }
 
-  #getSelectorForType(type: any): any {
-    const buildSelect = (opts: Record<string, any>) => ({
+  #getSelectorForType(type: string): Record<string, unknown> {
+    const buildSelect = (opts: Record<string, string>) => ({
       select: { options: Object.entries(opts).map(([value, label]) => ({ value, label })), mode: 'dropdown' },
     });
 
-    const buildBoxSelect = (opts: Record<string, any>, imageFn: ((value: string) => any) | null = null) => ({
+    const buildBoxSelect = (
+      opts: Record<string, string>,
+      imageFn: ((value: string) => Record<string, unknown>) | null = null,
+    ) => ({
       // see
       // https://github.com/home-assistant/frontend/blob/dev/src/panels/lovelace/editor/config-elements/hui-tile-card-editor.ts#L158
       select: {
@@ -260,7 +294,7 @@ class EditorBase extends HTMLElement {
       flip_rtl: true,
     });
 
-    const selectors: Record<string, () => any> = {
+    const selectors: Record<string, () => Record<string, unknown>> = {
       text: () => ({ text: { mode: 'box' } }),
       entity: () => ({ entity: {} }),
       entity_name: () => ({ entity_name: {} }),
@@ -315,7 +349,7 @@ class EditorBase extends HTMLElement {
     return { isNested, parentKey, childKey };
   }
 
-  #resolveFieldMeta(field: FieldDef): { label: any; value: any; isInverted: boolean } {
+  #resolveFieldMeta(field: FieldDef): { label: string | undefined; value: any; isInverted: boolean } {
     const { isNested, parentKey, childKey } = EditorBase.#splitFieldName(field.name);
     // CF5 - issue (medium) resolved - this used to pass only the negotiated
     // config (as #resolveValue's `rawConfig` param, with `negotiated` left
@@ -336,7 +370,7 @@ class EditorBase extends HTMLElement {
         : (() => {
             const explicit = isNested
               ? this.#localizedOptions?.[parentKey]?.[childKey!]
-              : this.#hassProvider!.localize(EDITOR_FIELD_NS)[field.name];
+              : this.#hassProvider.localize(EDITOR_FIELD_NS)[field.name];
             if (explicit !== undefined) return explicit;
             // Guard rail: keep the "<Noun> color" pattern already established
             // by badge_color/bar_color/color/alert_when.color for any future
@@ -354,28 +388,28 @@ class EditorBase extends HTMLElement {
     };
   }
 
-  #buildChipsField(field: FieldDef, tagName: string, optionKey: string): any {
-    const el: any = document.createElement(tagName);
+  #buildChipsField(field: FieldDef, tagName: string, optionKey: string): EditorFieldElement {
+    const el = document.createElement(tagName) as EditorFieldElement;
     el.id = field.name;
     el.style.width = '100%';
     if (field.items) el.items = field.items;
-    el.setLabels(this.#localizedOptions?.[optionKey]);
+    el.setLabels?.(this.#localizedOptions?.[optionKey]);
     el.value = is.array(this.#config?.[field.target ?? field.name]) ? this.#config[field.target ?? field.name] : [];
-    this.#dom!.registerField(field.name, el, field);
+    this.#dom.registerField(field.name, el, field);
     return el;
   }
 
-  #buildModeChipsField(field: FieldDef, tagName: string): any {
-    const el: any = document.createElement(tagName);
+  #buildModeChipsField(field: FieldDef, tagName: string): EditorFieldElement {
+    const el = document.createElement(tagName) as EditorFieldElement;
     el.id = field.name;
     el.style.width = '100%';
-    el.label = this.#hassProvider!.localize(EDITOR_FIELD_NS)?.[field.name] ?? field.name;
-    el.setLabels(this.#localizedOptions?.[field.name]);
+    el.label = this.#hassProvider.localize(EDITOR_FIELD_NS)?.[field.name] ?? field.name;
+    el.setLabels?.(this.#localizedOptions?.[field.name]);
     // Mirrors the generic ha-selector path (#resolveFieldMeta), not
     // #buildChipsField: this is a single virtual string value (resolveVirtual),
     // not an array read from config[target].
     el.value = this.#resolveFieldMeta(field).value;
-    this.#dom!.registerField(field.name, el, field);
+    this.#dom.registerField(field.name, el, field);
     return el;
   }
 
@@ -383,14 +417,14 @@ class EditorBase extends HTMLElement {
   // from field.name because a dot-path field ('bar_stack.entities') labels
   // itself under its parent's translation key ('bar_stack'); rows is the config
   // array the editor round-trips.
-  #buildListEditorField(field: FieldDef, tagName: string, labelKey: string, rows: any): any {
-    const el: any = document.createElement(tagName);
+  #buildListEditorField(field: FieldDef, tagName: string, labelKey: string, rows: unknown): EditorFieldElement {
+    const el = document.createElement(tagName) as EditorFieldElement;
     el.id = field.name;
     el.style.width = '100%';
-    el.label = this.#hassProvider!.localize(EDITOR_FIELD_NS)?.[labelKey] ?? labelKey;
+    el.label = this.#hassProvider.localize(EDITOR_FIELD_NS)?.[labelKey] ?? labelKey;
     el.hass = this.hass;
     el.value = is.array(rows) ? rows : [];
-    this.#dom!.registerField(field.name, el, field);
+    this.#dom.registerField(field.name, el, field);
     return el;
   }
 
@@ -398,14 +432,16 @@ class EditorBase extends HTMLElement {
   // chain of sequential ifs, which had grown one field type at a time into a
   // cognitive-complexity warning — a lookup miss just falls through to the
   // generic ha-selector path below.
-  #buildSpecialField(field: FieldDef): any {
-    const builders: Record<string, () => any> = {
+  #buildSpecialField(field: FieldDef): EditorFieldElement | undefined {
+    const builders: Record<string, () => EditorFieldElement> = {
       effect_chips: () => this.#buildChipsField(field, EntityProgressEffectChips.ELEMENT_NAME, 'bar_effect'),
       hide_chips: () => this.#buildChipsField(field, EntityProgressHideChips.ELEMENT_NAME, 'hide'),
       min_value_mode: () => this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME),
       max_value_mode: () => this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME),
       watermark_low_mode: () => this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME),
       watermark_high_mode: () => this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME),
+      alert_when_above_mode: () => this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME),
+      alert_when_below_mode: () => this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME),
       theme_mode: () => this.#buildModeChipsField(field, EntityProgressThemeModeChips.ELEMENT_NAME),
       bar_stack_mode: () => this.#buildModeChipsField(field, EntityProgressBarStackModeChips.ELEMENT_NAME),
       bar_stack_editor: () =>
@@ -426,11 +462,11 @@ class EditorBase extends HTMLElement {
     return builders[field.type]?.();
   }
 
-  #buildField(field: FieldDef): any {
+  #buildField(field: FieldDef): EditorFieldElement {
     const special = this.#buildSpecialField(field);
     if (special) return special;
 
-    const el: any = document.createElement(HA_SELECTOR_TAG);
+    const el = document.createElement(HA_SELECTOR_TAG) as EditorFieldElement;
 
     el.id = field.name;
     el.hass = this.hass;
@@ -457,7 +493,7 @@ class EditorBase extends HTMLElement {
       );
     }
 
-    this.#dom!.registerField(field.name, el, field);
+    this.#dom.registerField(field.name, el, field);
 
     return el;
   }
@@ -533,7 +569,7 @@ class EditorBase extends HTMLElement {
     // number…) read from the negotiated config so that entity defaults (e.g.
     // a light's default %) are reflected immediately.
     const negotiated = this._configHelper.config;
-    this.#dom!.updateAll(
+    this.#dom.updateAll(
       this.#config,
       (def, raw) => EditorBase.#resolveValue(def, raw, negotiated),
       negotiated,
@@ -543,7 +579,7 @@ class EditorBase extends HTMLElement {
 
   // ─── EVENTS ───────────────────────────────────────────────────────────────
 
-  #handleVirtualField(def: FieldDef, value: any) {
+  #handleVirtualField(def: FieldDef, value: unknown) {
     if (!def.onVirtualChange) return;
     const newConfig = def.onVirtualChange(value, { ...this.#config });
     if (newConfig) {
@@ -557,7 +593,7 @@ class EditorBase extends HTMLElement {
     }
   }
 
-  #handleNestedArrayField(parentKey: string, childKey: string, value: any) {
+  #handleNestedArrayField(parentKey: string, childKey: string, value: unknown) {
     const current = [...(this.#config[parentKey] ?? [])];
     const updated = value ? [...current, childKey] : current.filter((v) => v !== childKey);
     // Mirrors #handleVirtualField: keep #config in sync locally instead of
@@ -569,7 +605,7 @@ class EditorBase extends HTMLElement {
     this.#sendConfig(this.#config);
   }
 
-  #handleNestedField(parentKey: string, childKey: string, value: any) {
+  #handleNestedField(parentKey: string, childKey: string, value: unknown) {
     this.#config = {
       ...this.#config,
       [parentKey]: { ...this.#config[parentKey], [childKey]: value },
@@ -577,7 +613,7 @@ class EditorBase extends HTMLElement {
     this.#sendConfig(this.#config);
   }
 
-  #handleStdField(def: FieldDef | undefined, key: string, value: any) {
+  #handleStdField(def: FieldDef | undefined, key: string, value: unknown) {
     const targetKey = def?.target ?? key;
     if (!value && def?.onClear) {
       this.#config = def.onClear({ ...this.#config });
@@ -589,20 +625,22 @@ class EditorBase extends HTMLElement {
     this.#sendConfig(this.#config);
   }
 
-  #onChanged(e: any) {
-    const key = e.target.id;
-    if (!key || !e.detail || !('value' in e.detail)) return;
+  #onChanged(e: Event) {
+    const target = e.target as EditorFieldElement;
+    const key = target.id;
+    const detail = (e as CustomEvent).detail;
+    if (!key || !detail || !('value' in detail)) return;
 
-    const def: FieldDef | undefined = (this.#dom!.get(key) as any)?._fieldDef;
-    let value = e.detail.value;
+    const def = (this.#dom.get(key) as EditorFieldElement | undefined)?._fieldDef;
+    let value = detail.value;
 
     if (def?.virtual) {
       this.#handleVirtualField(def, value);
       return;
     }
 
-    const isInverted = e.target?.isInverted ?? false;
-    const isArray = e.target.isArray ?? false;
+    const isInverted = target?.isInverted ?? false;
+    const isArray = target.isArray ?? false;
     const isNested = key.includes('.');
     const [parentKey, childKey] = isNested ? key.split('.') : [];
 

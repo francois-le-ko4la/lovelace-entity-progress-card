@@ -53,6 +53,19 @@
   read the validated config instead of the saved YAML — so it disagreed with the
   zone list (which reads the YAML directly) until the next edit silently fixed
   it. Now reads the same source the zone list always did.
+- **`watermark.low`/`watermark.high`'s entity form is now symmetric with
+  `min_value`/`max_value`**: `{ entity: ..., attribute: ... }` instead of a bare
+  entity-id string paired with a separate `low_attribute`/`high_attribute` key —
+  the same explicit-shape reasoning `max_value` already had. The earlier RC form
+  is auto-migrated for this session with a console warning. See [watermark].
+
+### ✨ New
+
+- **`alert_when.above`/`alert_when.below` can now come from an entity or a Jinja
+  template**, not just a fixed number: `{ entity: ..., attribute: ... }` or
+  `{ jinja: ... }`, same explicit shape as `min_value`/`max_value`/
+  `watermark.low`/`watermark.high`. Existing fixed-number configs keep working
+  unchanged. See [alert_when].
 
 ### 🧹 Under the hood
 

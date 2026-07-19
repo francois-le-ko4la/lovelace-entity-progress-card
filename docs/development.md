@@ -342,21 +342,24 @@ Techniques used to keep N cards cheap on a dashboard that updates constantly:
 ## Jinja template subscriptions
 
 Template-capable options (`badge_icon`, `bar_effect`, `hide`, `min_value`,
-`max_value`, `watermark.low`, `watermark.high`, and all fields of the template
-cards) are rendered **server-side by HA** via `render_template` WebSocket
-subscriptions: HA pushes a new result whenever an entity referenced inside the
-template changes. The card never evaluates Jinja itself.
+`max_value`, `watermark.low`, `watermark.high`, `alert_when.above`,
+`alert_when.below`, and all fields of the template cards) are rendered
+**server-side by HA** via `render_template` WebSocket subscriptions: HA pushes a
+new result whenever an entity referenced inside the template changes. The card
+never evaluates Jinja itself.
 
-`min_value`/`max_value`/`watermark.low`/`watermark.high` use an explicit
-`{ jinja: "..." }` map rather than sniffing a bare string, because a plain
-string is already meaningful there (an entity ID) — disambiguating the two at
-runtime is exactly what this shape avoids. `validJinjaFields`'s `rawValueFor`
-resolves both flat keys (`min_value`) and one level of nested dot-path keys
-(`watermark.low`) the same way `#resolveValue` does for editor fields. The
-resolved number is cached on the view (`jinjaMinValue`, `jinjaWatermarkLow`, …)
-and read with `??` ahead of the static value in `#setStdValues`/the `watermark`
-getter — never written directly into `EntityOrValue`, which only understands
-numbers and entity IDs.
+`min_value`/`max_value`/`watermark.low`/`watermark.high`/`alert_when.above`/
+`alert_when.below` all share the same explicit shape
+(`number | { entity, attribute } | { jinja: "..." }`) rather than sniffing a
+bare string for either the entity or the Jinja case — disambiguating either at
+runtime from just the value's shape is exactly what this avoids.
+`validJinjaFields`'s `rawValueFor` resolves both flat keys (`min_value`) and one
+level of nested dot-path keys (`watermark.low`, `alert_when.above`) the same way
+`#resolveValue` does for editor fields. The resolved number is cached on the
+view (`jinjaMinValue`, `jinjaWatermarkLow`, `jinjaAlertAbove`, …) and read with
+`??` ahead of the static value in `#setStdValues`/the `watermark`
+getter/`isAlertActive` — never written directly into `EntityOrValue`, which only
+understands numbers and entity IDs.
 
 Key mechanics (`_processJinjaFields` / `_subscribeToTemplate`):
 
