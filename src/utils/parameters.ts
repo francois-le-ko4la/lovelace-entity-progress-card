@@ -68,7 +68,7 @@ const META = {
 };
 
 const CARD_CONTEXT = {
-  dev: true,
+  dev: false,
   debug: { card: false, editor: false, interactionHandler: false, ressourceManager: false, hass: false },
 };
 
