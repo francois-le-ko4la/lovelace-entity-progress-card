@@ -24,6 +24,8 @@
   "editor": {
     "title": {
       "content": "المحتوى",
+      "markers": "Markers & Alerts",
+      "layout": "Layout & Sizing",
       "interaction": "التفاعلات",
       "theme": "المظهر"
     },

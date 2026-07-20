@@ -24,6 +24,8 @@
   "editor": {
     "title": {
       "content": "เนื้อหา",
+      "markers": "Markers & Alerts",
+      "layout": "Layout & Sizing",
       "interaction": "การโต้ตอบ",
       "theme": "รูปลักษณ์และความรู้สึก"
     },

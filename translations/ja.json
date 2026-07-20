@@ -24,6 +24,8 @@
   "editor": {
     "title": {
       "content": "コンテンツ",
+      "markers": "Markers & Alerts",
+      "layout": "Layout & Sizing",
       "interaction": "インタラクション",
       "theme": "外観"
     },

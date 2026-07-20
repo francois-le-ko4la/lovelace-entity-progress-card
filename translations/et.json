@@ -24,6 +24,8 @@
   "editor": {
     "title": {
       "content": "Sisu",
+      "markers": "Markers & Alerts",
+      "layout": "Layout & Sizing",
       "interaction": "Interaktsioonid",
       "theme": "Välimus ja kasutatavus"
     },

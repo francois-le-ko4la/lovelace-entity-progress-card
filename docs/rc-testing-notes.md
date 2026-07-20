@@ -1,4 +1,4 @@
-## What's new
+## What's new (1.6.0-rc3)
 
 ### 🐛 Fixes
 
@@ -58,6 +58,19 @@
   entity-id string paired with a separate `low_attribute`/`high_attribute` key —
   the same explicit-shape reasoning `max_value` already had. The earlier RC form
   is auto-migrated for this session with a console warning. See [watermark].
+- **A Jinja-driven watermark or `alert_when` threshold could make the whole card
+  falsely report itself unavailable**, hiding the bar entirely — the
+  availability check treated any non-entity form (including `{ jinja: ... }`)
+  the same as a broken entity reference.
+- Editor: `icon_animation` no longer offers `None` as an explicit, oddly
+  unlabeled choice in the dropdown - clearing the field (its native selector is
+  not required) does the same thing `None` used to.
+- **`bar_segments` grid lines could clip through watermark markers, drift out of
+  phase with the fill the more segments separated them from the start, and land
+  visibly off-center on their own boundary** - the underlying rendering was
+  rebuilt around a single, untransformed overlay so the lines stay anchored to
+  the bar regardless of the current value, with sizing that scales with
+  `bar_size` and is centered precisely on each boundary.
 
 ### ✨ New
 
@@ -73,6 +86,20 @@
   (`bar_orientation: up`, `bar_single_line`, `text_shadow`,
   `bar_position: top`/`bottom`) across all 39 languages — the editor already
   only shows them in the relevant context.
+- **Editor split into two more panels**: "Markers & Alerts" (watermark +
+  alert_when) and "Layout & Sizing" (frameless/marginless/height/min_width/
+  layout), both pulled out of "Look & Feel" - which had grown to hold most of
+  the card's options. Collapsing an unrelated panel now actually skips
+  re-evaluating its fields on every keystroke elsewhere in the form, instead of
+  the whole editor re-walking every field regardless of which panel is open.
+- A Jinja push to `alert_when`/`min_value`/`max_value`/`watermark` now only
+  recomputes the part of the render pipeline it can actually affect (the bar,
+  the value label, or the alert's own classes) instead of the full pipeline
+  every time.
+- `will-change: box-shadow` added to the alert/icon "ping" animations - a ring
+  burst that size isn't a compositor-only effect, so this hints the browser to
+  isolate the repaint cost up front instead of discovering it on the first
+  animated frame.
 - **The single-file `entity-progress-card.js` monolith is gone.** The card is
   now developed as a proper module tree under `src/` (`utils`/`card`/`editor`)
   and assembled by `scripts/build.js` (esbuild bundle + CSS-in-JS minification)
@@ -128,7 +155,7 @@
 
 ---
 
-## What's new
+## What's new (1.6.0-rc2)
 
 ### 🐛 Fixes
 
@@ -187,7 +214,7 @@
 
 ---
 
-## What's new
+## What's new (1.6.0-rc1)
 
 This update is a major evolution for the Entity Progress Card: deeper Home
 Assistant integration, a faster rendering engine, and a brand-new CSS API for

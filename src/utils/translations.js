@@ -31,6 +31,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'المحتوى',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'التفاعلات',
         theme: 'المظهر'
       },
@@ -293,6 +295,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'বিষয়বস্তু',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'মিথস্ক্রিয়া',
         theme: 'চেহারা এবং অনুভূতি'
       },
@@ -555,6 +559,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Contingut',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Interacció',
         theme: 'Aparença i tema'
       },
@@ -817,6 +823,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Obsah',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Interakce',
         theme: 'Vzhled a pocit'
       },
@@ -1079,6 +1087,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Indhold',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Interaktioner',
         theme: 'Udseende og funktionalitet'
       },
@@ -1341,6 +1351,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Inhalt',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Interaktionen',
         theme: 'Aussehen und Bedienung'
       },
@@ -1603,6 +1615,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Περιεχόμενο',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Αλληλεπιδράσεις',
         theme: 'Εμφάνιση'
       },
@@ -1865,6 +1879,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Content',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Interactions',
         theme: 'Look & Feel'
       },
@@ -2127,6 +2143,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Contenido',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Interacción',
         theme: 'Apariencia y tema'
       },
@@ -2389,6 +2407,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Contenido',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Interacciones',
         theme: 'Apariencia y funcionamiento'
       },
@@ -2651,6 +2671,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Sisu',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Interaktsioonid',
         theme: 'Välimus ja kasutatavus'
       },
@@ -2913,6 +2935,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Sisältö',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Vuorovaikutukset',
         theme: 'Ulkoasu'
       },
@@ -3175,6 +3199,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Contenu',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Interactions',
         theme: 'Aspect visuel et convivialité'
       },
@@ -3437,6 +3463,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'सामग्री',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'बातचीत',
         theme: 'रूप और अनुभव'
       },
@@ -3699,6 +3727,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Sadržaj',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Interakcije',
         theme: 'Izgled i funkcionalnost'
       },
@@ -3961,6 +3991,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Tartalom',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Interakciók',
         theme: 'Megjelenés és használhatóság'
       },
@@ -4223,6 +4255,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Konten',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Interaksi',
         theme: 'Tampilan & Nuansa'
       },
@@ -4485,6 +4519,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Contenuto',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Interazioni',
         theme: 'Aspetto e funzionalità'
       },
@@ -4747,6 +4783,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'コンテンツ',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'インタラクション',
         theme: '外観'
       },
@@ -5009,6 +5047,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: '콘텐츠',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: '상호작용',
         theme: '테마 및 스타일'
       },
@@ -5271,6 +5311,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Turinys',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Sąveikos',
         theme: 'Išvaizda ir naudojamumas'
       },
@@ -5533,6 +5575,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Saturs',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Saskarsme',
         theme: 'Izskats un lietojamība'
       },
@@ -5795,6 +5839,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Содржина',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Интеракции',
         theme: 'Изглед и функционалност'
       },
@@ -6057,6 +6103,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Innhold',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Interaksjoner',
         theme: 'Utseende og funksjonalitet'
       },
@@ -6319,6 +6367,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Inhoud',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Interactie',
         theme: 'Uiterlijk en gebruiksgemak'
       },
@@ -6581,6 +6631,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Zawartość',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Interakcje',
         theme: 'Wygląd i funkcjonalność'
       },
@@ -6843,6 +6895,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Conteúdo',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Interações',
         theme: 'Aparência e usabilidade'
       },
@@ -7105,6 +7159,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Conteúdo',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Interações',
         theme: 'Aparência e usabilidade'
       },
@@ -7367,6 +7423,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Conținut',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Interacțiuni',
         theme: 'Aspect & Stil'
       },
@@ -7629,6 +7687,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Содержимое',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Взаимодействия',
         theme: 'Внешний вид'
       },
@@ -7891,6 +7951,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Obsah',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Interakcie',
         theme: 'Vzhľad a použiteľnosť'
       },
@@ -8153,6 +8215,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Vsebina',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Interakcije',
         theme: 'Videz in uporabnost'
       },
@@ -8415,6 +8479,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Innehåll',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Interaktioner',
         theme: 'Utseende och funktionalitet'
       },
@@ -8677,6 +8743,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'เนื้อหา',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'การโต้ตอบ',
         theme: 'รูปลักษณ์และความรู้สึก'
       },
@@ -8939,6 +9007,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'İçerik',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Etkileşimler',
         theme: 'Görünüm'
       },
@@ -9201,6 +9271,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Вміст',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Взаємодії',
         theme: 'Вигляд та відчуття'
       },
@@ -9463,6 +9535,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: 'Nội dung',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: 'Tương tác',
         theme: 'Giao diện & Trải nghiệm'
       },
@@ -9725,6 +9799,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: '内容',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: '交互',
         theme: '外观与体验'
       },
@@ -9987,6 +10063,8 @@ const TRANSLATIONS = {
     editor: {
       title: {
         content: '內容',
+        markers: 'Markers & Alerts',
+        layout: 'Layout & Sizing',
         interaction: '互動',
         theme: '外觀與主題'
       },

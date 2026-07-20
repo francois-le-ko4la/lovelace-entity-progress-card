@@ -24,6 +24,8 @@
   "editor": {
     "title": {
       "content": "Turinys",
+      "markers": "Markers & Alerts",
+      "layout": "Layout & Sizing",
       "interaction": "Sąveikos",
       "theme": "Išvaizda ir naudojamumas"
     },

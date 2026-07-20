@@ -24,6 +24,8 @@
   "editor": {
     "title": {
       "content": "Tartalom",
+      "markers": "Markers & Alerts",
+      "layout": "Layout & Sizing",
       "interaction": "Interakciók",
       "theme": "Megjelenés és használhatóság"
     },

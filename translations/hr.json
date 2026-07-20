@@ -24,6 +24,8 @@
   "editor": {
     "title": {
       "content": "Sadržaj",
+      "markers": "Markers & Alerts",
+      "layout": "Layout & Sizing",
       "interaction": "Interakcije",
       "theme": "Izgled i funkcionalnost"
     },

@@ -95,11 +95,11 @@ const toCamel = (s: string) => s.replace(/_([a-z])/g, (_, c: string) => c.toUppe
 // valueField above): the generic nested-field machinery (#resolveValue/
 // #handleNestedField) only resolves one level of dot-path, and these are
 // already one level deep under their parent. `isEnabled` folds in whatever
-// extra condition gates the parent being "on" for a given caller (watermark's
-// own disable_low/high toggle; alert_when has none, just Boolean(c.alert_when)).
-// `defaultVal` is what 'standard' mode - and clearing the entity picker -
-// revert to: a real number for watermark, undefined for alert_when (genuinely
-// optional, no default).
+// extra condition gates the parent being "on" for a given caller
+// (watermark's own disable_low/high toggle; alert_when has none, just
+// Boolean(c.alert_when)). `defaultVal` is what 'standard' mode - and
+// clearing the entity picker - revert to: a real number for watermark,
+// undefined for alert_when (genuinely optional, no default).
 const nestedValueField = (
   parentKey: string,
   key: string,
@@ -577,15 +577,22 @@ const EditorFactory = {
           }),
         },
 
+  // 'up' only has a visible effect in these two combinations (see
+  // HACore#_addBaseClasses's vertical-bar/horizontal-bar decision) - shared by
+  // bar_orientation's own dynamic type in theme() and the reset-on-change
+  // hooks on bar_position (theme()) / layout (now in its own layout() panel,
+  // see below - lifted out of theme()'s closure so both can reach it).
+  upAllowed: (c: RawConfig) =>
+    (c.layout === 'vertical' && c.bar_position === 'overlay') || c.bar_position === 'background',
+
+  resetUpIfInvalid: (config: RawConfig) =>
+    config.bar_orientation === 'up' && !EditorFactory.upAllowed(config)
+      ? { ...config, bar_orientation: 'ltr' }
+      : config,
+
   theme: (template: boolean, badge: boolean) => {
-    // 'up' only has a visible effect in these two combinations (see
-    // HACore#_addBaseClasses's vertical-bar/horizontal-bar decision) - shared
-    // by bar_orientation's own dynamic type below and the reset-on-change
-    // hooks on bar_position/layout.
-    const upAllowed = (c: RawConfig) =>
-      (c.layout === 'vertical' && c.bar_position === 'overlay') || c.bar_position === 'background';
-    const resetUpIfInvalid = (config: RawConfig) =>
-      config.bar_orientation === 'up' && !upAllowed(config) ? { ...config, bar_orientation: 'ltr' } : config;
+    const upAllowed = EditorFactory.upAllowed;
+    const resetUpIfInvalid = EditorFactory.resetUpIfInvalid;
     return {
       title: 'editor.title.theme',
       icon: HA_CONTEXT.icons.listBox,
@@ -715,8 +722,6 @@ const EditorFactory = {
           noLabel: true,
           showIf: (c: RawConfig) => is.nonEmptyString(c.bar_effect),
         }),
-        // ── Watermark ────────────────────────────────────────────────────────
-        ...EditorFactory.themeWatermarkFields(),
         // ── Badge fields ─────────────────────────────────────────────────────
         ...EditorFactory.themeBadgeIconColorFields(badge),
         // ── Hide ─────────────────────────────────────────────────────────────
@@ -738,18 +743,42 @@ const EditorFactory = {
           ...(template ? { items: ['icon', 'name', 'value', 'secondary_info', 'progress_bar'] } : {}),
         }),
         hide: EditorFieldsType.tpl('hide', { noLabel: true, showIf: (c: RawConfig) => is.nonEmptyString(c.hide) }),
-        ...EditorFactory.themeAlertFields(template),
-        // ── Card-only layout options ──────────────────────────────────────
-        ...EditorFactory.themeCardLayoutFields(badge),
-        // Not gated on `badge` - valid for badges too (not in
-        // YamlSchemaFactory.badge's delete list), unlike its former neighbors
-        // above.
-        min_width: EditorFieldsType.text('min_width', EditorFactory.widthUnless(badge)),
-        // ── Layout (always last) ──────────────────────────────────────────
-        ...EditorFactory.themeLayoutField(badge, resetUpIfInvalid),
       },
     };
   },
+
+  // Split out of theme() (was its single biggest chunk, ~28 fields between
+  // the two): watermark and alert_when are both "react when the value
+  // crosses a threshold" markers, a different concern from theme()'s own
+  // pure appearance (color/bar shape/layout) - and collapsing this panel
+  // while working on the other skips a re-evaluation of all of it on every
+  // keystroke elsewhere in the editor, same idea in the other direction.
+  markers: (template: boolean) => ({
+    title: 'editor.title.markers',
+    icon: HA_CONTEXT.icons.radar,
+    fields: {
+      ...EditorFactory.themeWatermarkFields(),
+      ...EditorFactory.themeAlertFields(template),
+    },
+  }),
+
+  // Also split out of theme(): frameless/marginless/height/min_width/layout
+  // are the card's own sizing/shape, a different concern from its color/bar
+  // appearance above. Smaller win than markers() (5 fields vs ~28) but the
+  // same grouping logic - and it's the natural conceptual home for these
+  // regardless of the performance angle.
+  layout: (badge: boolean) => ({
+    title: 'editor.title.layout',
+    icon: HA_CONTEXT.icons.aspectRatio,
+    fields: {
+      ...EditorFactory.themeCardLayoutFields(badge),
+      // Not gated on `badge` - valid for badges too (not in
+      // YamlSchemaFactory.badge's delete list), unlike its former neighbors
+      // above.
+      min_width: EditorFieldsType.text('min_width', EditorFactory.widthUnless(badge)),
+      ...EditorFactory.themeLayoutField(badge, EditorFactory.resetUpIfInvalid),
+    },
+  }),
 
   interactions: (badge: boolean) => {
     // isActive: show a field only if its negotiated action differs from the
@@ -800,6 +829,8 @@ const EditorFactory = {
     general: EditorFactory.general(template),
     content: EditorFactory.content(template, badge),
     theme: EditorFactory.theme(template, badge),
+    markers: EditorFactory.markers(template),
+    layout: EditorFactory.layout(badge),
     interactions: EditorFactory.interactions(badge),
   }),
 };

@@ -24,6 +24,8 @@
   "editor": {
     "title": {
       "content": "Indhold",
+      "markers": "Markers & Alerts",
+      "layout": "Layout & Sizing",
       "interaction": "Interaktioner",
       "theme": "Udseende og funktionalitet"
     },

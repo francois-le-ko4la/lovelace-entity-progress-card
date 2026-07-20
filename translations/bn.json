@@ -24,6 +24,8 @@
   "editor": {
     "title": {
       "content": "বিষয়বস্তু",
+      "markers": "Markers & Alerts",
+      "layout": "Layout & Sizing",
       "interaction": "মিথস্ক্রিয়া",
       "theme": "চেহারা এবং অনুভূতি"
     },

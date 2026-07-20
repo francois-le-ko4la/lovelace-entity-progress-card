@@ -24,6 +24,8 @@
   "editor": {
     "title": {
       "content": "Περιεχόμενο",
+      "markers": "Markers & Alerts",
+      "layout": "Layout & Sizing",
       "interaction": "Αλληλεπιδράσεις",
       "theme": "Εμφάνιση"
     },

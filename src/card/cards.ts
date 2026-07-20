@@ -50,8 +50,9 @@ class EntityProgressCardBase extends HABase {
   }
 
   // ─── CSS - CUSTOMIZATION ──────────────────────────────────────────────────
-  // secondaryInfoError depends on the entity's own state (hasStandardEntityError),
-  // not on icon_animation or alert_when - same "static-ish, not Jinja-driven"
+  // secondaryInfoError depends on the entity's own state
+  // (hasStandardEntityError), not on icon_animation or alert_when - same
+  // "static-ish, not Jinja-driven"
   // bucket as HABase's own _staticStyle entries, so it's folded into that
   // layer rather than a new one of its own.
   get _staticStyle(): Map<string, boolean> {

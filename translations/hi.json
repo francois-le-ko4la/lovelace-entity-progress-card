@@ -24,6 +24,8 @@
   "editor": {
     "title": {
       "content": "सामग्री",
+      "markers": "Markers & Alerts",
+      "layout": "Layout & Sizing",
       "interaction": "बातचीत",
       "theme": "रूप और अनुभव"
     },

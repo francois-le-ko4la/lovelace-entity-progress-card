@@ -24,6 +24,8 @@
   "editor": {
     "title": {
       "content": "Obsah",
+      "markers": "Markers & Alerts",
+      "layout": "Layout & Sizing",
       "interaction": "Interakcie",
       "theme": "Vzhľad a použiteľnosť"
     },

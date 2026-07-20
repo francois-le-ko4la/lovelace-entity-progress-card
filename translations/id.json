@@ -24,6 +24,8 @@
   "editor": {
     "title": {
       "content": "Konten",
+      "markers": "Markers & Alerts",
+      "layout": "Layout & Sizing",
       "interaction": "Interaksi",
       "theme": "Tampilan & Nuansa"
     },

@@ -24,6 +24,8 @@
   "editor": {
     "title": {
       "content": "Nội dung",
+      "markers": "Markers & Alerts",
+      "layout": "Layout & Sizing",
       "interaction": "Tương tác",
       "theme": "Giao diện & Trải nghiệm"
     },

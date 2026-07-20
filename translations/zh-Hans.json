@@ -24,6 +24,8 @@
   "editor": {
     "title": {
       "content": "内容",
+      "markers": "Markers & Alerts",
+      "layout": "Layout & Sizing",
       "interaction": "交互",
       "theme": "外观与体验"
     },

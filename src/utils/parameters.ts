@@ -30,7 +30,7 @@
  */
 
 // prettier-ignore-start
-const VERSION = '1.6.0-rc2';
+const VERSION = '1.6.0-rc3';
 
 const META = {
   documentation: 'https://github.com/francois-le-ko4la/lovelace-entity-progress-card/',
@@ -103,6 +103,8 @@ const HA_CONTEXT = {
     airFilter: 'mdi:air-filter',
     listBox: 'mdi:list-box',
     textShort: 'mdi:text-short',
+    radar: 'mdi:radar',
+    aspectRatio: 'mdi:aspect-ratio',
     sizeSmall: 'mdi:size-s',
     sizeMedium: 'mdi:size-m',
     sizeLarge: 'mdi:size-l',

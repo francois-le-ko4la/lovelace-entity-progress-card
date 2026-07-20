@@ -24,6 +24,8 @@
   "editor": {
     "title": {
       "content": "Sisältö",
+      "markers": "Markers & Alerts",
+      "layout": "Layout & Sizing",
       "interaction": "Vuorovaikutukset",
       "theme": "Ulkoasu"
     },

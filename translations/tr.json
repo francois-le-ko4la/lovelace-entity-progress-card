@@ -24,6 +24,8 @@
   "editor": {
     "title": {
       "content": "İçerik",
+      "markers": "Markers & Alerts",
+      "layout": "Layout & Sizing",
       "interaction": "Etkileşimler",
       "theme": "Görünüm"
     },

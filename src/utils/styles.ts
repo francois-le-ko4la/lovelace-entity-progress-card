@@ -935,18 +935,17 @@ ha-card.info-multiline {
    tile is always anchored to the bar's own frame - painted on top of both
    .inner and the track, cutting a visual "gap" wherever a tile's line falls,
    in the track's own background color.
-   One tile (background-image, stops relative to ITS OWN box) is scaled to
-   exactly 100%/N via background-size, then tiled via background-repeat -
-   deliberately not a single repeating-linear-gradient with
-   calc(100%/N - 2px) stops: mixing a %-of-container stop with a px offset
-   inside one repeating gradient leaves the browser free to round the
-   per-repeat length independently of the declared count, which produced an
-   extra sliver cell that drifted the whole pattern out of phase with a
-   watermark placed at a plain percentage (see [watermark]).
+   The N cells are one repeating-linear-gradient (see the rule below), not
+   background-size + background-repeat: the latter renders each repeat as an
+   independent tile snapped to the device pixel grid on its own, and those
+   per-tile roundings accumulate across repeats - drifting further out of
+   phase with a watermark/mark (placed at one absolute percentage, never
+   tiled) the more repeats separate them from the start. A
+   repeating-linear-gradient is one analytic function evaluated across the
+   whole element in a single pass, so there's nothing to accumulate.
    border-radius is forced to 0 on .bar: it still clips via overflow: hidden
    with its normal rounded corner, and that curve was rounding off the first/
-   last cell, reading as a stray sliver instead of a flush edge. Flush ends
-   read like real battery/signal-bar hardware anyway. */
+   last cell unevenly compared to the others. */
 .bar-segmented .${CARD.htmlStructure.elements.progressBar.bar.class} {
   border-radius: 0;
 }
@@ -956,6 +955,13 @@ ha-card.info-multiline {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  /* Promotes this to its own compositing layer so the browser re-rasterizes
+     it as a whole on any invalidation, instead of attempting a partial
+     repaint of its cached tile - the latter is what left the gradient/mask
+     not fully repainted (missing cells at one end) after a page zoom on some
+     engines. transform: translateZ(0) is the standard (if slightly dated)
+     way to force that layer promotion without visually moving anything. */
+  transform: translateZ(0);
 }
 
 .bar-segmented .${CARD.htmlStructure.elements.progressBar.segments.class} {
@@ -963,69 +969,118 @@ ha-card.info-multiline {
   /* Scales with the bar's own thickness (--progress-size, 6-42px across
      bar_size) instead of a flat 2px - a hairline that reads fine on a small
      bar disappears on an xlarge/overlay one, and a thickness tuned for
-     xlarge would look like a thick bar of its own on a small one. Floored at
-     1.5px so it stays visible on the thinnest size. */
-  --bar-segment-gap: max(1.5px, calc(var(--progress-size, 8px) / 6));
-  /* Same variable the alert animation already uses for "the card's actual
-     background" (black-ish in dark themes, white-ish in light ones) - a gap
-     line in the track's own grey (--divider-color) barely showed up against
-     the darker segments; this reads as a genuine cut through the bar,
-     matching the surrounding page regardless of theme. */
-  background-image: linear-gradient(
+     xlarge would look like a thick bar of its own on a small one. Rounded to
+     the nearest even px (not left as a fractional value like 3.375px/4.5px):
+     this value gets halved everywhere it's used (centering each separator on
+     its boundary, see below) - an odd or fractional gap makes that half a
+     sub-pixel value, which the two repeats meeting at a boundary can each
+     round differently, reopening the same kind of drift switching to
+     repeating-linear-gradient was meant to close. Floored at 4px so it stays
+     visible on the thinnest size, capped at 6px (medium's own value) so it
+     stops growing past medium - large/xlarge/overlay would otherwise read as
+     a thick bar of their own rather than a thin cut. */
+  --bar-segment-gap: clamp(4px, round(nearest, calc(var(--progress-size, 8px) * 3 / 8), 2px), 6px);
+  /* One continuous repeating-linear-gradient, not background-size +
+     background-repeat: the latter renders each repeat as an independent
+     tile, snapped to the device pixel grid on its own - across N repeats
+     those per-tile roundings accumulate, drifting further out of phase with
+     a watermark/mark (placed at one absolute percentage, never tiled) the
+     more repeats separate them from the start (barely visible at the 1st
+     boundary, clearly off by the 8th). A repeating-linear-gradient is one
+     analytic function evaluated across the whole element in a single pass,
+     so there's no per-repeat snap to accumulate.
+     Each repeat unit still paints its own leading AND trailing
+     --bar-segment-gap/2 rather than one full gap at the end - a single unit
+     can't place its line "centered on the boundary" (a boundary is shared
+     between two adjacent units), so each side contributes half, and the two
+     halves meet exactly on the boundary once repeated. Same variable the
+     alert animation already uses for "the card's actual background"
+     (black-ish in dark themes, white-ish in light ones) - a gap line in the
+     track's own grey (--divider-color) barely showed up against the darker
+     segments; this reads as a genuine cut through the bar, matching the
+     surrounding page regardless of theme. */
+  background-image: repeating-linear-gradient(
     to right,
-    transparent 0,
-    transparent calc(100% - var(--bar-segment-gap)),
-    var(--ha-card-background, var(--card-background-color)) calc(100% - var(--bar-segment-gap))
+    var(--ha-card-background, var(--card-background-color)) 0,
+    var(--ha-card-background, var(--card-background-color)) calc(var(--bar-segment-gap) / 2),
+    transparent calc(var(--bar-segment-gap) / 2),
+    transparent calc(100% / var(--bar-segments, 10) - var(--bar-segment-gap) / 2),
+    var(--ha-card-background, var(--card-background-color))
+      calc(100% / var(--bar-segments, 10) - var(--bar-segment-gap) / 2),
+    var(--ha-card-background, var(--card-background-color)) calc(100% / var(--bar-segments, 10))
   );
-  background-size: calc(100% / var(--bar-segments, 10)) 100%;
-  background-repeat: repeat-x;
-  /* The tiling above puts a gap line at the end of every tile, including the
-     very last one - which falls exactly on the bar's own right edge. Masking
-     off a --bar-segment-gap-wide strip on both ends drops that trailing edge
-     line (and guards the leading edge symmetrically, though no line lands
-     there to begin with) - only the N-1 separators between segments remain. */
+  /* Each repeat unit's leading/trailing half-gap above pairs up with its
+     neighbor to form the real, centered separators - except at the bar's own
+     two edges, where there's no neighboring unit to pair with: the first
+     unit's leading half and the last unit's trailing half are phantom halves
+     of a boundary that doesn't exist. Masking off --bar-segment-gap/2 on
+     each end removes exactly those, leaving only the N-1 real (centered)
+     separators.
+     Trimmed 1px past that (not exactly --bar-segment-gap/2): the mask and the
+     background-image above are two independently rasterized layers sharing
+     the same calc(), but nothing guarantees a renderer snaps both to the
+     exact same device pixel - a 1px margin absorbs that residual mismatch
+     instead of leaving a hairline sliver of the phantom edge visible. */
   -webkit-mask-image: linear-gradient(
     to right,
     transparent 0,
-    transparent var(--bar-segment-gap),
-    #000 var(--bar-segment-gap),
-    #000 calc(100% - var(--bar-segment-gap)),
-    transparent calc(100% - var(--bar-segment-gap))
+    transparent calc(var(--bar-segment-gap) / 2 + 1px),
+    #000 calc(var(--bar-segment-gap) / 2 + 1px),
+    #000 calc(100% - var(--bar-segment-gap) / 2 - 1px),
+    transparent calc(100% - var(--bar-segment-gap) / 2 - 1px)
   );
   mask-image: linear-gradient(
     to right,
     transparent 0,
-    transparent var(--bar-segment-gap),
-    #000 var(--bar-segment-gap),
-    #000 calc(100% - var(--bar-segment-gap)),
-    transparent calc(100% - var(--bar-segment-gap))
+    transparent calc(var(--bar-segment-gap) / 2 + 1px),
+    #000 calc(var(--bar-segment-gap) / 2 + 1px),
+    #000 calc(100% - var(--bar-segment-gap) / 2 - 1px),
+    transparent calc(100% - var(--bar-segment-gap) / 2 - 1px)
   );
 }
 
+/* top/bottom force --progress-size down to the xs accent-bar thickness
+   (6px, see .bottom-container/.top-container above) regardless of bar_size;
+   below keeps the real bar_size, but that's most often left at its 8px
+   default too. The base ratio/floor above reads as a near-invisible hairline
+   at that thickness - doubled here (and floored higher) so these three "thin
+   accent bar" positions still show a clearly visible cut. Capped at 10px
+   (medium's own value here) for the same reason as the base rule - below can
+   reach bar_size: xlarge, which shouldn't keep growing past medium either. */
+.bar-segmented .top-container .${CARD.htmlStructure.elements.progressBar.segments.class},
+.bar-segmented .bottom-container .${CARD.htmlStructure.elements.progressBar.segments.class},
+.bar-segmented .below-container .${CARD.htmlStructure.elements.progressBar.segments.class} {
+  --bar-segment-gap: clamp(6px, round(nearest, calc(var(--progress-size, 8px) * 3 / 4), 2px), 10px);
+}
+
 .vertical-bar.bar-segmented .${CARD.htmlStructure.elements.progressBar.segments.class} {
-  background-image: linear-gradient(
+  /* One continuous repeating-linear-gradient - see the horizontal rule above
+     for why, same reasoning transposed to the vertical axis. */
+  background-image: repeating-linear-gradient(
     to bottom,
-    transparent 0,
-    transparent calc(100% - var(--bar-segment-gap)),
-    var(--ha-card-background, var(--card-background-color)) calc(100% - var(--bar-segment-gap))
+    var(--ha-card-background, var(--card-background-color)) 0,
+    var(--ha-card-background, var(--card-background-color)) calc(var(--bar-segment-gap) / 2),
+    transparent calc(var(--bar-segment-gap) / 2),
+    transparent calc(100% / var(--bar-segments, 10) - var(--bar-segment-gap) / 2),
+    var(--ha-card-background, var(--card-background-color))
+      calc(100% / var(--bar-segments, 10) - var(--bar-segment-gap) / 2),
+    var(--ha-card-background, var(--card-background-color)) calc(100% / var(--bar-segments, 10))
   );
-  background-size: 100% calc(100% / var(--bar-segments, 10));
-  background-repeat: repeat-y;
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent 0,
-    transparent var(--bar-segment-gap),
-    #000 var(--bar-segment-gap),
-    #000 calc(100% - var(--bar-segment-gap)),
-    transparent calc(100% - var(--bar-segment-gap))
+    transparent calc(var(--bar-segment-gap) / 2 + 1px),
+    #000 calc(var(--bar-segment-gap) / 2 + 1px),
+    #000 calc(100% - var(--bar-segment-gap) / 2 - 1px),
+    transparent calc(100% - var(--bar-segment-gap) / 2 - 1px)
   );
   mask-image: linear-gradient(
     to bottom,
     transparent 0,
-    transparent var(--bar-segment-gap),
-    #000 var(--bar-segment-gap),
-    #000 calc(100% - var(--bar-segment-gap)),
-    transparent calc(100% - var(--bar-segment-gap))
+    transparent calc(var(--bar-segment-gap) / 2 + 1px),
+    #000 calc(var(--bar-segment-gap) / 2 + 1px),
+    #000 calc(100% - var(--bar-segment-gap) / 2 - 1px),
+    transparent calc(100% - var(--bar-segment-gap) / 2 - 1px)
   );
 }
 
@@ -1161,6 +1216,11 @@ ha-card.info-multiline {
 
 .icon-anim-ping .${CARD.htmlStructure.elements.shape.class} {
   animation: epb-icon-ping 2s infinite;
+  /* box-shadow isn't a compositor-only property like transform/opacity - the
+     browser repaints on every frame of the (infinite) animation regardless.
+     will-change lets it isolate that cost to this element up front instead of
+     discovering it at the first animated frame. */
+  will-change: box-shadow;
 }
 
 .icon-anim-washing-machine .${CARD.htmlStructure.elements.icon.class} {
@@ -1223,6 +1283,9 @@ ha-card.info-multiline {
 
 .alert-active.alert-anim-ping {
   animation: epb-alert-ping 1.5s ease-out infinite;
+  /* Same box-shadow repaint cost as icon-anim-ping above, but on the whole
+     card rather than a small icon - more noticeable, so worth the same hint. */
+  will-change: box-shadow;
 }
 
 .alert-active.alert-background {
@@ -1554,6 +1617,18 @@ ha-card.info-multiline {
   --wm-half-circle: calc(var(--wm-circle-size) / 2);
   --wm-half-tri: calc(var(--wm-tri-size) / 2);
 }
+
+/* top/bottom force the bar down to 6px (see .bottom-container/.top-container
+   above) regardless of bar_size - the default 8px triangle is taller than
+   that, so .bar's overflow: hidden was clipping its bottom tip, reading as a
+   blunt/misplaced marker rather than a sharp one. Scoped to this context
+   only (not bar_size: small, which stays the normal 8px bar): still resolves
+   through --watermark-triangle-size first, so a user override wins here too. */
+.top-container .watermark,
+.bottom-container .watermark {
+  --wm-tri-size: var(--watermark-triangle-size, 5px);
+}
+
 .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
   --wm-value: var(--low-watermark-value, 20%);
   --wm-color: var(--epb-low-watermark-color, var(--low-watermark-color, var(--red-color)));
@@ -1880,7 +1955,12 @@ const CUSTOM_THEME_EDITOR_STYLE = css`
 `;
 
 const EDITOR_BASE_STYLE = css`
-  .editor { display: flex; flex-direction: column; gap: 16px; }
+  /* padding-bottom matches the same 16px used as the gap between every
+     top-level item (panels, the migrate-config header) - without it the last
+     panel's content sits flush against the editor's own bottom edge, unlike
+     every other item which always has that much breathing room on at least
+     one side. */
+  .editor { display: flex; flex-direction: column; gap: 16px; padding-bottom: 16px; }
   .panel-body { display: flex; flex-direction: row; gap: 16px; flex-wrap: wrap; align-content: flex-start; padding: 8px 0; }
   .panel-body ha-selector.field-toggle { margin-block: -18px; }
   .migrate-header { display: flex; justify-content: flex-end; }
