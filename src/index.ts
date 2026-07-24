@@ -85,8 +85,8 @@ if (activeDebugAreas.length > 0) {
   );
 }
 
-// noRegistration renders nothing, so the "run EPB_DIAG.dump()" cue never reaches
-// the reporter - emit the report automatically right after the banner (#108).
+// noRegistration renders nothing, so the EPB_DIAG.dump() cue never reaches the
+// reporter - emit the report automatically right after the banner (#108).
 if (CARD_CONTEXT.noRegistration) {
   window.EPB_DIAG?.dump();
 }

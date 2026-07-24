@@ -48,7 +48,7 @@ function installDiagnostic(): void {
       // CONSTRUCTED_SHEETS fills lazily on first card render, so an empty map
       // means "no card built yet" (e.g. noRegistration mode, or dump() run
       // before any card mounted) - not a legacy fallback. Report the browser
-      // capability, and only claim the active path once a sheet actually exists.
+      // capability, and only claim the active path once a sheet exists.
       const anyConstructed = CONSTRUCTED_SHEETS.size > 0 && [...CONSTRUCTED_SHEETS.values()].some(Boolean);
       const constructedCss = !CONSTRUCTIBLE_STYLESHEETS
         ? 'per-card fallback (browser lacks constructible stylesheets)'

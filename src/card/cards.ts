@@ -44,6 +44,7 @@ class EntityProgressCardBase extends HABase {
   // error becomes a rejected promise instead of a synchronous exception
   // that could abort whatever loop HA's card-picker uses to build previews
   // for every registered card type, not just this one.
+  // skipcq: JS-0116 -- async is intentional, no await by design.
   static async getStubConfig(hass: HomeAssistant): Promise<LovelaceConfig> {
     return {
       type: `custom:${devName(this._baseClass)}`,
@@ -99,7 +100,7 @@ class EntityProgressCardBase extends HABase {
   }
 
   // ─── STD FIELDS PROCESSING - CUSTOMIZATION ────────────────────────────────
-  static _getStandardFields(cardView: ViewBase): { className: string; value: any }[] {
+  static _getStandardFields(cardView: ViewBase): { className: string; value: string | null }[] {
     return [
       {
         className: CARD.htmlStructure.elements.nameMain.class,
@@ -258,6 +259,7 @@ class EntityProgressFeatures extends HACore {
   // ─── STATIC ───────────────────────────────────────────────────────────────
 
   // See EntityProgressCardBase.getStubConfig for why this is async.
+  // skipcq: JS-0116 -- async is intentional, no await by design.
   static async getStubConfig(): Promise<LovelaceConfig> {
     return { type: `custom:${devName(META.types.feature.typeName)}` } as unknown as LovelaceConfig;
   }
@@ -432,6 +434,7 @@ class EntityProgressTemplateBase extends HABase {
   }
 
   // See EntityProgressCardBase.getStubConfig for why this is async.
+  // skipcq: JS-0116 -- async is intentional, no await by design.
   static async getStubConfig(hass: HomeAssistant): Promise<LovelaceConfig> {
     return {
       type: `custom:${devName(META.types.template.typeName)}`,
@@ -600,6 +603,7 @@ class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
   }
 
   // See EntityProgressCardBase.getStubConfig for why this is async.
+  // skipcq: JS-0116 -- async is intentional, no await by design.
   static async getStubConfig(hass: HomeAssistant): Promise<LovelaceConfig> {
     return {
       type: `custom:${devName(META.types.badgeTemplate.typeName)}`,

@@ -247,7 +247,7 @@ class EntityHelper {
 
     return (
       colorMap[this.#domain as string] ??
-      colorMap[this.#hassProvider.getEntityProp(this.#entity, 'device_class')] ??
+      colorMap[this.#hassProvider.getEntityProp<string>(this.#entity, 'device_class')] ??
       null
     );
   }
@@ -390,7 +390,7 @@ class EntityHelper {
   }
 
   _manageDurationEntity() {
-    const unit = this.#hassProvider.getEntityProp(this.#entity, 'unit_of_measurement');
+    const unit = this.#hassProvider.getEntityProp<string>(this.#entity, 'unit_of_measurement');
     const value = parseFloat(this.#state as string);
     // CF5 - issue (critical) resolved - getEntityProp returns null (never
     // undefined), so the guard never matched and a missing unit crashed in

@@ -182,7 +182,7 @@ class EditorBase extends HTMLElement {
     // CF5 - issue (minor) resolved - localize() returns the key string before
     // translations load; select builders then crashed on
     // Object.entries(undefined). Fall back to the default language.
-    const options = this.#hassProvider.localize('editor.option');
+    const options = this.#hassProvider.localizeGroup('editor.option');
     return is.plainObject(options)
       ? options
       : TRANSLATIONS[CARD.config.language as keyof typeof TRANSLATIONS].editor.option;
@@ -315,7 +315,7 @@ class EditorBase extends HTMLElement {
     const button = document.createElement('ha-button');
     const fieldName = '_migrate_config';
     button.id = fieldName;
-    button.append(this.#hassProvider.localize(EDITOR_FIELD_NS)?.migrate_config ?? 'Migrate config');
+    button.append(this.#hassProvider.localizeGroup(EDITOR_FIELD_NS)?.migrate_config ?? 'Migrate config');
     button.addEventListener('click', () => {
       button.dispatchEvent(
         new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value: true }, bubbles: true, composed: true }),
@@ -480,7 +480,7 @@ class EditorBase extends HTMLElement {
         : (() => {
             const explicit = isNested
               ? this.#localizedOptions?.[parentKey]?.[childKey!]
-              : this.#hassProvider.localize(EDITOR_FIELD_NS)[field.name];
+              : this.#hassProvider.localizeGroup(EDITOR_FIELD_NS)[field.name];
             if (explicit !== undefined) return explicit;
             // Guard rail: keep the "<Noun> color" pattern already established
             // by badge_color/bar_color/color/alert_when.color for any future
@@ -513,7 +513,7 @@ class EditorBase extends HTMLElement {
     const el = document.createElement(tagName) as EditorFieldElement;
     el.id = field.name;
     el.style.width = '100%';
-    el.label = this.#hassProvider.localize(EDITOR_FIELD_NS)?.[field.name] ?? field.name;
+    el.label = this.#hassProvider.localizeGroup(EDITOR_FIELD_NS)?.[field.name] ?? field.name;
     el.setLabels?.(this.#localizedOptions?.[field.name]);
     // Mirrors the generic ha-selector path (#resolveFieldMeta), not
     // #buildChipsField: this is a single virtual string value (resolveVirtual),
@@ -531,7 +531,7 @@ class EditorBase extends HTMLElement {
     const el = document.createElement(tagName) as EditorFieldElement;
     el.id = field.name;
     el.style.width = '100%';
-    el.label = this.#hassProvider.localize(EDITOR_FIELD_NS)?.[labelKey] ?? labelKey;
+    el.label = this.#hassProvider.localizeGroup(EDITOR_FIELD_NS)?.[labelKey] ?? labelKey;
     el.hass = this.hass;
     el.value = is.array(rows) ? rows : [];
     this.#dom.registerField(field.name, el, field);

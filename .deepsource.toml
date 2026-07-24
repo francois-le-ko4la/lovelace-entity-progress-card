@@ -1,5 +1,12 @@
 version = 1
 
+# Build tooling (esbuild pipeline, CSS inliner, release-flag guard). These
+# scripts legitimately use console.* for their output and run under Node only -
+# excluded from analysis so their intentional patterns don't surface as issues.
+exclude_patterns = [
+  "scripts/**",
+]
+
 [[analyzers]]
 name = "javascript"
 

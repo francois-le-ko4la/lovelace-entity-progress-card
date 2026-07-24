@@ -597,7 +597,7 @@ class HACore extends HTMLElement {
     // (min_value) are unaffected since a 1-element path resolves identically.
     const rawValueFor = (key: string) => {
       const raw = key.includes('.')
-        ? key.split('.').reduce((obj: any, k: string) => obj?.[k], this._cardView.config)
+        ? key.split('.').reduce<unknown>((obj, k) => (obj as Record<string, unknown>)?.[k], this._cardView.config)
         : this._cardView.config[key];
       return is.plainObject(raw) ? (raw.jinja ?? '') : raw || '';
     };
@@ -774,7 +774,7 @@ class HACore extends HTMLElement {
       this._log?.debug('template:', template);
 
       const unsub = await hass.connection.subscribeMessage(
-        (msg: { result: unknown }) => this._renderJinja(key, msg.result),
+        (msg: unknown) => this._renderJinja(key, (msg as { result: unknown }).result),
         {
           type: 'render_template',
           template, //template: template,
@@ -1202,7 +1202,7 @@ class HABase extends HACore {
   _handleImgIcon(stateObj: EntityState | null, srcPicture: string) {
     this._log?.debug('📎 HABase._handleImgIcon():', { stateObj, srcPicture });
 
-    const pictureAlt = stateObj?.attributes?.friendly_name || 'Entity picture';
+    const pictureAlt = (stateObj?.attributes?.friendly_name as string) || 'Entity picture';
     const iconContainer = this._dom.get(CARD.htmlStructure.elements.icon.class);
     if (!iconContainer) return;
 
@@ -1410,7 +1410,7 @@ class HABase extends HACore {
   }
 
   // ─── STD FIELDS PROCESSING ────────────────────────────────────────────────
-  static _getStandardFields(_cardView?: ViewCore): { className: string; value: any }[] {
+  static _getStandardFields(_cardView?: ViewCore): { className: string; value: string | null }[] {
     return [];
   }
 

@@ -2023,7 +2023,10 @@ const getSharedStyleSheet = (cssText: string): CSSStyleSheet | null => {
 // fallback apart from a not-yet-rendered state.
 const CONSTRUCTIBLE_STYLESHEETS = (() => {
   try {
-    new CSSStyleSheet().replaceSync('');
+    // Split like getSharedStyleSheet above (not a chained call) so
+    // eslint-plugin-compat doesn't misflag this feature-detection probe.
+    const probe = new CSSStyleSheet();
+    probe.replaceSync('');
     return true;
   } catch {
     return false;

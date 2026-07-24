@@ -23,25 +23,25 @@ declare const hassBrand: unique symbol;
 // custom-card-helpers' HomeAssistant (which doesn't even cover entities/
 // devices/areas/floors; Mushroom maintains its own extended copy for that
 // exact reason). Catches a typo'd/wrong field name at compile time that
-// `Record<string, any>` alone never would; the trailing `& Record<string,
-// any>` keeps every other real field HA provides but we don't touch from
-// becoming a type error, and stays close to the previous "any-shaped brand"
+// `Record<string, unknown>` alone never would; the trailing `& Record<string,
+// unknown>` keeps every other real field HA provides but we don't touch from
+// becoming a type error (values stay `unknown`, so reads still have to narrow)
 // so nothing here can go stale-but-silently-wrong if HA's actual shape
 // evolves - the fields listed are exactly (and only) the ones grepped out of
 // this file, core.ts (hass.connection), and value-helpers.ts (hass.states).
-type EntityRegistryEntry = { name?: string; device_id?: string; area_id?: string } & Record<string, any>;
-type DeviceRegistryEntry = { name?: string; area_id?: string } & Record<string, any>;
-type AreaRegistryEntry = { name?: string; floor_id?: string } & Record<string, any>;
-type FloorRegistryEntry = { name?: string } & Record<string, any>;
+type EntityRegistryEntry = { name?: string; device_id?: string; area_id?: string } & Record<string, unknown>;
+type DeviceRegistryEntry = { name?: string; area_id?: string } & Record<string, unknown>;
+type AreaRegistryEntry = { name?: string; floor_id?: string } & Record<string, unknown>;
+type FloorRegistryEntry = { name?: string } & Record<string, unknown>;
 
 type HomeAssistant = {
   readonly [hassBrand]: true;
   language: string;
-  locale: { number_format?: string } & Record<string, any>;
-  config: { version?: string } & Record<string, any>;
+  locale: { number_format?: string } & Record<string, unknown>;
+  config: { version?: string } & Record<string, unknown>;
   connection: EventTarget & {
-    subscribeMessage: (callback: (msg: any) => void, msg: Record<string, any>) => Promise<() => void>;
-  } & Record<string, any>;
+    subscribeMessage: (callback: (msg: unknown) => void, msg: Record<string, unknown>) => Promise<() => void>;
+  } & Record<string, unknown>;
   states: Record<string, EntityState>;
   entities: Record<string, EntityRegistryEntry>;
   devices: Record<string, DeviceRegistryEntry>;
@@ -49,7 +49,7 @@ type HomeAssistant = {
   floors: Record<string, FloorRegistryEntry>;
   formatEntityState?: (stateObj: EntityState) => string;
   formatEntityAttributeValue?: (stateObj: EntityState | null, attribute: string) => string;
-} & Record<string, any>;
+} & Record<string, unknown>;
 
 // Same phantom-brand pattern, for a single entity's state object
 // (`hass.states[entityId]`) - distinct from `HomeAssistant` (the root object)
@@ -61,8 +61,8 @@ type HomeAssistant = {
 // last_changed/last_updated/context) around an `attributes` bag that
 // genuinely varies per domain/integration and stays untyped even in HA's
 // own official types (`HassEntity = HassEntityBase & { attributes: {[key:
-// string]: any} }`) - modeled here the same way, envelope typed,
-// attributes left as a Record.
+// string]: any} }`) - modeled here the same way (envelope typed, attributes a
+// Record), but tightened to `unknown` values so every read has to narrow.
 declare const entityStateBrand: unique symbol;
 type EntityState = {
   readonly [entityStateBrand]: true;
@@ -71,8 +71,8 @@ type EntityState = {
   last_changed: string;
   last_updated: string;
   context?: { id: string; user_id: string | null; parent_id: string | null };
-  attributes: Record<string, any>;
-} & Record<string, any>;
+  attributes: Record<string, unknown>;
+} & Record<string, unknown>;
 
 /**
  * Singleton wrapper around Home Assistant's `hass` object: entity/device/
@@ -106,7 +106,7 @@ class HassProviderSingleton {
   // all already defensively optional-chained against a missing/partial hass.
   #hass: HomeAssistant | null = null;
   #isValid = false;
-  #translations: Record<string, any> = {};
+  #translations: Record<string, unknown> = {};
   #rtf: Intl.RelativeTimeFormat | null = null;
   #rtfLanguage: string | null = null;
 
@@ -153,7 +153,7 @@ class HassProviderSingleton {
   }
 
   getMessage(code: string | null): string {
-    return this.localize('card.msg')[code ?? ''] || `Unknown message code: ${code}`;
+    return this.localizeGroup('card.msg')[code ?? ''] || `Unknown message code: ${code}`;
   }
 
   get numberFormat() {
@@ -185,9 +185,19 @@ class HassProviderSingleton {
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
-  localize(key: string): any {
-    const result = key.split('.').reduce((obj, k) => obj?.[k], this.#translations);
-    return result ?? key;
+  // Walks the dot-path into the (dynamically-shaped) translations tree; the
+  // leaf is a string, an intermediate node a sub-tree. localize() returns the
+  // leaf (or the key as fallback); localizeGroup() returns a node's children.
+  #resolveTranslation(key: string): unknown {
+    return key.split('.').reduce<unknown>((obj, k) => (obj as Record<string, unknown>)?.[k], this.#translations);
+  }
+
+  localize(key: string): string {
+    return (this.#resolveTranslation(key) ?? key) as string;
+  }
+
+  localizeGroup(key: string): Record<string, string> {
+    return (this.#resolveTranslation(key) ?? {}) as Record<string, string>;
   }
 
   static getInstance(): HassProviderSingleton {
@@ -198,15 +208,15 @@ class HassProviderSingleton {
     return HassProviderSingleton.#instance;
   }
 
-  getEntityProp(entityId: string, prop: string, format = false): any {
-    return format ? this.#formatEntityProp(entityId, prop) : this.#resolveEntityProp(entityId, prop);
+  getEntityProp<T = unknown>(entityId: string, prop: string, format = false): T {
+    return (format ? this.#formatEntityProp(entityId, prop) : this.#resolveEntityProp(entityId, prop)) as T;
   }
 
-  #resolveEntityProp(entityId: string, prop: string): any {
+  #resolveEntityProp(entityId: string, prop: string): unknown {
     const mapping = HassProviderSingleton.#entityMap[prop];
     if (!mapping) return null;
 
-    const resolvers: Record<string, () => any> = {
+    const resolvers: Record<string, () => unknown> = {
       attribute: () => this.getEntityAttribute(entityId, prop),
       state: () => this.getEntityStateObj(entityId)?.[prop] ?? null,
       entity: () => this.#hass?.entities?.[entityId]?.[prop] ?? null,
@@ -215,9 +225,9 @@ class HassProviderSingleton {
     return resolvers[mapping.source]?.() ?? null;
   }
 
-  #formatEntityProp(entityId: string, prop: string): any {
+  #formatEntityProp(entityId: string, prop: string): string {
     if (prop === 'last_changed' || prop === 'last_updated')
-      return this.getRelativeTime(this.#resolveEntityProp(entityId, prop));
+      return this.getRelativeTime(this.#resolveEntityProp(entityId, prop) as string | null);
 
     const stateObj = this.getEntityStateObj(entityId);
     if (prop === 'state')
@@ -234,14 +244,14 @@ class HassProviderSingleton {
     return this.#hass?.states?.[entityId] ?? null;
   }
 
-  #getAttributes(entityId: string): Record<string, any> {
+  #getAttributes(entityId: string): Record<string, unknown> {
     return this.getEntityStateObj(entityId)?.attributes ?? {};
   }
 
-  getEntityAttribute(entityId: string, attribute: string): any {
-    if (!attribute) return null;
+  getEntityAttribute<T = unknown>(entityId: string, attribute: string): T {
+    if (!attribute) return null as T;
     const attributes = this.#getAttributes(entityId);
-    return attribute in attributes ? attributes[attribute] : null;
+    return (attribute in attributes ? attributes[attribute] : null) as T;
   }
 
   getEntityName(entityId: string): string | null {
@@ -333,7 +343,7 @@ class HassProviderSingleton {
     return Object.fromEntries(
       Object.entries(this.#getAttributes(entityId))
         .filter(([, val]) => is.number(val) || is.numericString(val))
-        .map(([key, val]) => [key, is.number(val) ? val : parseFloat(val)]),
+        .map(([key, val]) => [key, is.number(val) ? val : parseFloat(val as string)]),
     );
   }
 

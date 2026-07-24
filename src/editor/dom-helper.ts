@@ -278,7 +278,9 @@ class EditorDOMHelper extends DOMHelper {
     // Dynamic selector
     if (def.selectorOf) {
       const resolved = def.selectorOf.includes('.')
-        ? def.selectorOf.split('.').reduce((obj: any, k: string) => obj?.[k], config)
+        ? (def.selectorOf as string)
+            .split('.')
+            .reduce<unknown>((obj, k) => (obj as Record<string, unknown>)?.[k], config)
         : config[def.selectorOf];
       // The source key can hold a non-string shape (watermark.low: { jinja }) —
       // the native attribute selector expects an entity-id string, so anything

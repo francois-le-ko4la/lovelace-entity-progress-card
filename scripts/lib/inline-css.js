@@ -116,7 +116,7 @@ function minifyCss(css, minify) {
 // string prints as-is, every time.
 function toStringLiteral(css, minify) {
   if (minify) return JSON.stringify(css);
-  return '`' + css.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${') + '`';
+  return `\`${css.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${')}\``;
 }
 
 // Resolving a tagged block's value:
@@ -144,7 +144,7 @@ function resolveCssBlocks(src, minify = true) {
     const literalEnd = contentEnd + 1; // include the closing backtick
     const fullExpr = src.slice(tagStart, literalEnd); // css`...`
 
-    let resolved;
+    let resolved = null;
     try {
       resolved = evalInFile(`${CSS_TAG_SHIM}\nmodule.exports = ${fullExpr};\n`);
     } catch {
@@ -169,7 +169,7 @@ function resolveCssBlocks(src, minify = true) {
     }
 
     const minified = minifyCss(resolved, minify);
-    src = src.slice(0, tagStart) + toStringLiteral(minified, minify) + src.slice(literalEnd);
+    src = `${src.slice(0, tagStart)}${toStringLiteral(minified, minify)}${src.slice(literalEnd)}`;
     minifiedCount++;
   }
 

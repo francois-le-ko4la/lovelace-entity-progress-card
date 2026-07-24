@@ -22,7 +22,7 @@ function forceCleanCardContext(src) {
   if (!match) {
     throw new Error('DEBUG_DEFAULTS block not found - refusing to produce a --prod build.');
   }
-  return src.slice(0, match.index) + `const${match[1]}${CLEAN_DEBUG_DEFAULTS_BODY}` + src.slice(match.index + match[0].length);
+  return `${src.slice(0, match.index)}const${match[1]}${CLEAN_DEBUG_DEFAULTS_BODY}${src.slice(match.index + match[0].length)}`;
 }
 
 module.exports = { forceCleanCardContext };
