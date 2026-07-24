@@ -1,21 +1,23 @@
 'use strict';
 
-// Fails the release build if CARD_CONTEXT (dev mode + debug logging) isn't
-// fully clean. A forgotten `dev: true` registers every card/badge/feature
-// under a "-dev" type name, breaking every dashboard using the documented
-// type; a forgotten debug flag ships verbose console logging to every user.
+// Fails the release build if the committed debug baseline (DEBUG_DEFAULTS in
+// parameters.ts) isn't fully clean. A forgotten debug flag would ship verbose
+// console logging to every user. `dev` is no longer checked here: it's derived
+// at runtime from the served URL (import.meta.url - *_dev.js or ?dev), so a
+// file shipped as entity-progress-card.js can never register under a "-dev"
+// type name in the first place.
 const fs = require('fs');
 
 const SOURCE = 'src/utils/parameters.ts';
 const src = fs.readFileSync(SOURCE, 'utf8');
-const match = src.match(/const CARD_CONTEXT = \{[\s\S]*?\n\};/);
+const match = src.match(/const DEBUG_DEFAULTS = \{[\s\S]*?\};/);
 
 if (!match) {
-  throw new Error(`❌ CARD_CONTEXT block not found in ${SOURCE}.`);
+  throw new Error(`❌ DEBUG_DEFAULTS block not found in ${SOURCE}.`);
 }
 
 if (/true/.test(match[0])) {
-  throw new Error(`❌ CARD_CONTEXT has a dev/debug flag set to true - not safe to release:\n${match[0]}`);
+  throw new Error(`❌ DEBUG_DEFAULTS has a debug flag set to true - not safe to release:\n${match[0]}`);
 }
 
-console.log('✅ CARD_CONTEXT is clean for release (dev: false, all debug flags false).');
+console.log('✅ DEBUG_DEFAULTS is clean for release (all debug flags false).');

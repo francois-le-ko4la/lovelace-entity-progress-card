@@ -11,23 +11,68 @@ import { is, has } from './common-checks.js';
 import { Logger, type LoggerInstance } from './log.js';
 
 // Phantom brand (never actually present at runtime) marking a value as "the
-// real HA hass object", vs. plain `any`. Shape stays untyped on purpose (see
-// #hass below) - the brand only guards against passing some OTHER
-// concretely-typed value (e.g. an `entityId: string`) into a `Hass`-typed
-// slot, or vice versa, such as an argument-order mixup. It does NOT catch a
-// wrong value that is itself already `any` - `any` is assignable to and from
-// every type, brands included. That gap closes only as more of the callers
-// that currently hand `hass` around untyped (core.js, view.js, editor/base.js)
-// get converted to real TypeScript themselves.
+// real HA hass object", vs. plain `any` - guards against passing some OTHER
+// concretely-typed value (e.g. an `entityId: string`) into a
+// `HomeAssistant`-typed slot, or vice versa, such as an argument-order mixup.
+// It does NOT catch a wrong value that is itself already `any` - `any` is
+// assignable to and from every type, brands included.
 declare const hassBrand: unique symbol;
-type Hass = { readonly [hassBrand]: true } & Record<string, any>;
+
+// Minimal, hand-maintained structural shape for the fields this card
+// actually reads off hass - not a full copy of home-assistant-frontend's or
+// custom-card-helpers' HomeAssistant (which doesn't even cover entities/
+// devices/areas/floors; Mushroom maintains its own extended copy for that
+// exact reason). Catches a typo'd/wrong field name at compile time that
+// `Record<string, any>` alone never would; the trailing `& Record<string,
+// any>` keeps every other real field HA provides but we don't touch from
+// becoming a type error, and stays close to the previous "any-shaped brand"
+// so nothing here can go stale-but-silently-wrong if HA's actual shape
+// evolves - the fields listed are exactly (and only) the ones grepped out of
+// this file, core.ts (hass.connection), and value-helpers.ts (hass.states).
+type EntityRegistryEntry = { name?: string; device_id?: string; area_id?: string } & Record<string, any>;
+type DeviceRegistryEntry = { name?: string; area_id?: string } & Record<string, any>;
+type AreaRegistryEntry = { name?: string; floor_id?: string } & Record<string, any>;
+type FloorRegistryEntry = { name?: string } & Record<string, any>;
+
+type HomeAssistant = {
+  readonly [hassBrand]: true;
+  language: string;
+  locale: { number_format?: string } & Record<string, any>;
+  config: { version?: string } & Record<string, any>;
+  connection: EventTarget & {
+    subscribeMessage: (callback: (msg: any) => void, msg: Record<string, any>) => Promise<() => void>;
+  } & Record<string, any>;
+  states: Record<string, EntityState>;
+  entities: Record<string, EntityRegistryEntry>;
+  devices: Record<string, DeviceRegistryEntry>;
+  areas: Record<string, AreaRegistryEntry>;
+  floors: Record<string, FloorRegistryEntry>;
+  formatEntityState?: (stateObj: EntityState) => string;
+  formatEntityAttributeValue?: (stateObj: EntityState | null, attribute: string) => string;
+} & Record<string, any>;
 
 // Same phantom-brand pattern, for a single entity's state object
-// (`hass.states[entityId]`) - distinct from `Hass` (the root object) so the
-// two can't be swapped positionally, e.g. in
+// (`hass.states[entityId]`) - distinct from `HomeAssistant` (the root object)
+// so the two can't be swapped positionally, e.g. in
 // `this.#hass?.formatEntityAttributeValue?.(stateObj, prop)` below.
+//
+// Home Assistant's own websocket client (home-assistant-js-websocket)
+// splits this the same way: a stable envelope (entity_id/state/
+// last_changed/last_updated/context) around an `attributes` bag that
+// genuinely varies per domain/integration and stays untyped even in HA's
+// own official types (`HassEntity = HassEntityBase & { attributes: {[key:
+// string]: any} }`) - modeled here the same way, envelope typed,
+// attributes left as a Record.
 declare const entityStateBrand: unique symbol;
-type EntityState = { readonly [entityStateBrand]: true } & Record<string, any>;
+type EntityState = {
+  readonly [entityStateBrand]: true;
+  entity_id: string;
+  state: string;
+  last_changed: string;
+  last_updated: string;
+  context?: { id: string; user_id: string | null; parent_id: string | null };
+  attributes: Record<string, any>;
+} & Record<string, any>;
 
 /**
  * Singleton wrapper around Home Assistant's `hass` object: entity/device/
@@ -59,7 +104,7 @@ class HassProviderSingleton {
   // owned shape (see home-assistant-frontend). Deliberately untyped: modeling
   // it precisely isn't worth it for the handful of properties read below,
   // all already defensively optional-chained against a missing/partial hass.
-  #hass: Hass | null = null;
+  #hass: HomeAssistant | null = null;
   #isValid = false;
   #translations: Record<string, any> = {};
   #rtf: Intl.RelativeTimeFormat | null = null;
@@ -75,7 +120,7 @@ class HassProviderSingleton {
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
-  set hass(hass: Hass) {
+  set hass(hass: HomeAssistant) {
     if (!hass) return;
     const firstHass = this.#hass === null;
     const previousLanguage = this.language;
@@ -83,10 +128,18 @@ class HassProviderSingleton {
     const currentLanguage = this.language;
     if (firstHass || previousLanguage !== currentLanguage) this.#loadTranslations(currentLanguage);
     this.#isValid = true;
-    this.#log?.debug('HASS updated!');
+    if (firstHass) {
+      this.#log?.debug(
+        `first HASS: HA core=${this.version ?? '?'}, lang=${currentLanguage}, connected=${hass.connection?.connected ?? '?'}`,
+      );
+    } else if (previousLanguage !== currentLanguage) {
+      this.#log?.debug(`language changed: ${previousLanguage} → ${currentLanguage}`);
+    } else {
+      this.#log?.debug('HASS updated');
+    }
   }
 
-  get hass(): Hass | null {
+  get hass(): HomeAssistant | null {
     return this.#hass;
   }
 
@@ -95,7 +148,8 @@ class HassProviderSingleton {
   }
 
   get language(): string {
-    return this.#hass?.language in TRANSLATIONS ? this.#hass?.language : CARD.config.language;
+    const lang = this.#hass?.language;
+    return lang && lang in TRANSLATIONS ? lang : CARD.config.language;
   }
 
   getMessage(code: string | null): string {
@@ -117,7 +171,7 @@ class HassProviderSingleton {
       system: Intl.NumberFormat().resolvedOptions().locale,
       none: 'en',
     };
-    return numberFormatMap[userDef] || localeFromLang(this.language);
+    return (userDef && numberFormatMap[userDef]) || localeFromLang(this.language);
   }
 
   get version(): string | null {
@@ -214,7 +268,7 @@ class HassProviderSingleton {
     const deviceId = this.#hass?.entities?.[entityId]?.device_id;
     if (!deviceId) return [];
     return Object.keys(this.#hass?.entities ?? {}).filter(
-      (id) => id !== entityId && this.#hass?.entities[id].device_id === deviceId,
+      (id) => id !== entityId && this.#hass?.entities?.[id]?.device_id === deviceId,
     );
   }
 
@@ -225,15 +279,17 @@ class HassProviderSingleton {
     const deviceId = this.#hass?.entities?.[entityId]?.device_id;
     if (!deviceId) return null;
     const deviceAreaId = this.#hass?.devices?.[deviceId]?.area_id;
+    if (!deviceAreaId) return null;
     return this.#hass?.areas?.[deviceAreaId]?.name ?? null;
   }
 
   getEntityFloor(entityId: string): string | null {
+    const deviceId = this.#hass?.entities?.[entityId]?.device_id;
     const areaId =
-      this.#hass?.entities?.[entityId]?.area_id ??
-      this.#hass?.devices?.[this.#hass?.entities?.[entityId]?.device_id]?.area_id;
+      this.#hass?.entities?.[entityId]?.area_id ?? (deviceId ? this.#hass?.devices?.[deviceId]?.area_id : undefined);
     if (!areaId) return null;
     const floorId = this.#hass?.areas?.[areaId]?.floor_id;
+    if (!floorId) return null;
     return this.#hass?.floors?.[floorId]?.name ?? null;
   }
 
@@ -296,4 +352,4 @@ class HassProviderSingleton {
 }
 
 export { HassProviderSingleton };
-export type { Hass, EntityState };
+export type { HomeAssistant, EntityState };

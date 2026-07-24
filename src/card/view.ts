@@ -4,11 +4,12 @@
  * negotiated config and current entity state.
  */
 
-import { HA_CONTEXT, CARD } from '../utils/parameters.js';
-import type { RawConfig, Config } from '../utils/types.js';
+import { HA_CONTEXT, CARD, CARD_CONTEXT } from '../utils/parameters.js';
+import type { LovelaceConfig, Config } from '../utils/types.js';
 import { is } from '../utils/common-checks.js';
+import { traceInstance } from '../utils/log.js';
 import { PercentHelper, ThemeManager, EntityCollectionHelper, EntityOrValue } from './value-helpers.js';
-import { HassProviderSingleton, type Hass } from '../utils/hass-provider.js';
+import { HassProviderSingleton, type HomeAssistant } from '../utils/hass-provider.js';
 import {
   BaseConfigHelper,
   CardConfigHelper,
@@ -89,9 +90,13 @@ class ViewCore {
   #jinjaAlertAbove: number | null = null;
   #jinjaAlertBelow: number | null = null;
 
+  constructor() {
+    traceInstance(this, CARD_CONTEXT.debug.instances);
+  }
+
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
-  set config(config: RawConfig) {
+  set config(config: LovelaceConfig) {
     if (!config) {
       throw new Error(CARD.config.configError);
     }
@@ -133,11 +138,25 @@ class ViewCore {
     };
   }
 
-  refresh(hass: Hass) {
+  refresh(hass: HomeAssistant) {
     this._hassProvider.hass = hass;
     this._currentValue.refresh();
     this._lowValue.refresh();
     this._highValue.refresh();
+    // Computed once per refresh instead of live in the isBatteryCharging
+    // getter: with battery_adaptive, a single refresh already reads it from
+    // resolvedTheme (this class) and twice more from
+    // HACore._iconAnimationStyle (icon-anim-battery-charging and its
+    // -shifted variant) - each access does a same-device entity scan, so
+    // without caching that's the same scan repeated 3x per hass update.
+    // Only bothers scanning at all when something on this card can actually
+    // read the result - every other card/badge/feature (the vast majority)
+    // would otherwise pay for a same-device entity scan on every single hass
+    // update for nothing.
+    this.#isBatteryChargingCache =
+      this.config?.icon_animation === 'battery_charging' || this.config?.theme === 'battery_adaptive'
+        ? ViewCore.#computeIsBatteryCharging(this.entity as string)
+        : false;
   }
 
   get entity(): string | null {
@@ -209,7 +228,7 @@ class ViewCore {
       (this.config.layout ?? 'horizontal') === 'horizontal' &&
       (this.config.bar_position ?? 'default') === 'default' &&
       this.config.reverse_secondary_info_row
-    ); // ─── true
+    );
   }
 
   get hasVisibleShape(): boolean {
@@ -347,11 +366,30 @@ class ViewCore {
   // charging-status entity is named battery_state, no "charg" substring
   // anywhere, which an entity_id-based guess (like washing_machine's brands)
   // would never find, even though its state is plain 'charging'.
-  get isBatteryCharging(): boolean {
+  static #computeIsBatteryCharging(entity: string): boolean {
     const hassProvider = HassProviderSingleton.getInstance();
-    const entity = this.entity as string;
     if (ViewCore.#entityReportsCharging(hassProvider, entity)) return true;
     return hassProvider.getSameDeviceEntities(entity).some((id) => ViewCore.#entityReportsCharging(hassProvider, id));
+  }
+
+  #isBatteryChargingCache = false;
+
+  get isBatteryCharging(): boolean {
+    return this.#isBatteryChargingCache;
+  }
+
+  // battery_adaptive is a virtual theme name, never seen by ThemeManager:
+  // it resolves to whichever real theme matches the entity's current
+  // charging state (via isBatteryCharging, the same signal icon_animation:
+  // battery_charging already relies on). critical_when_extreme while
+  // charging (li-ion health favors staying mid-range over topping off to
+  // 100%), critical_when_low once unplugged (only running out matters then).
+  static #BATTERY_ADAPTIVE_THEMES = { charging: 'critical_when_extreme', discharging: 'critical_when_low' };
+
+  get resolvedTheme(): string | undefined {
+    const theme = this._configHelper.config.theme;
+    if (theme !== 'battery_adaptive') return theme;
+    return ViewCore.#BATTERY_ADAPTIVE_THEMES[this.isBatteryCharging ? 'charging' : 'discharging'];
   }
 
   // epb-icon-charge's clip-path is calibrated to the plain "mdi:battery"
@@ -362,7 +400,7 @@ class ViewCore {
   // changing which icon is shown.
   get isBatteryIconShifted(): boolean {
     const icon = this._configHelper.config.icon || this._hassProvider.getEntityProp(this.entity as string, 'icon');
-    return is.nonEmptyString(icon) && /charging|bluetooth/i.test(icon);
+    return is.nonEmptyString(icon) && /-charging-|-bluetooth$/i.test(icon);
   }
 
   // Home Connect's sensor.<appliance>_operation_state uses 'run', Miele's
@@ -542,7 +580,7 @@ class ViewBase extends ViewCore {
     return this._configHelper.msg;
   }
 
-  set config(config: RawConfig) {
+  set config(config: LovelaceConfig) {
     if (!config) {
       throw new Error(CARD.config.configError);
     }
@@ -602,7 +640,7 @@ class ViewBase extends ViewCore {
     });
 
     this.#theme.configure({
-      theme: this._configHelper.config.theme,
+      theme: this.resolvedTheme,
       customTheme: this._configHelper.config.custom_theme,
       interpolate: this._configHelper.config.interpolate,
     });
@@ -794,7 +832,50 @@ class ViewBase extends ViewCore {
       this._configHelper.config.bar_color_mode,
       this._currentValue.defaultColor || null,
       this.#isVerticalBar,
+      [0, 100],
+      { min: this.#percentHelper.min, max: this.#percentHelper.max },
     );
+  }
+
+  // center_zero's own equivalent of divergingBarStack above: two independent
+  // per-arm theme gradients instead of one single-arm gradient, using the
+  // same ThemeManager.buildGradient this class's own colorGradient calls -
+  // just windowed to each arm's own slice of the min_value/max_value scale
+  // (see buildGradient's own comment). null when there's no active theme
+  // gradient to show (bar_color_mode: auto, or no theme/custom_theme), same
+  // convention as divergingBarStack, so callers can tell whether to apply or
+  // clear the dedicated CSS variables - and _updateCSS only reaches for this
+  // as a fallback when divergingBarStack (bar_stack's own, entity-driven
+  // diverging gradient) doesn't already own that pair of CSS variables.
+  get themeDivergingGradient() {
+    if (!this.isAvailable || !this.#percentHelper.isCenterZero) return null;
+    const { min, max, zeroValue, percent } = this.#percentHelper;
+    if (max === min) return null;
+    const zeroPercent = ((zeroValue - min) / (max - min)) * 100;
+    const signedPercent = percent ?? 0;
+    const posFill = Math.max(0, signedPercent);
+    const negFill = Math.max(0, -signedPercent);
+    const mode = this._configHelper.config.bar_color_mode;
+    const defaultColor = this._currentValue.defaultColor || null;
+    const valueRange = { min, max };
+    const posGradient = this.#theme.buildGradient(
+      posFill,
+      mode,
+      defaultColor,
+      this.#isVerticalBar,
+      [zeroPercent, 100],
+      valueRange,
+    );
+    const negGradient = this.#theme.buildGradient(
+      negFill,
+      mode,
+      defaultColor,
+      this.#isVerticalBar,
+      [zeroPercent, 0],
+      valueRange,
+    );
+    if (!posGradient && !negGradient) return null;
+    return { posGradient, negGradient, posSize: posFill / 100, negSize: negFill / 100 };
   }
 
   get percent(): number {
@@ -895,7 +976,7 @@ class ViewBase extends ViewCore {
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
-  refresh(hass: Hass) {
+  refresh(hass: HomeAssistant) {
     super.refresh(hass); // _hassProvider, _currentValue, _lowValue, _highValue
     this.#maxValue.refresh();
     this.#minValue.refresh();
@@ -907,6 +988,20 @@ class ViewBase extends ViewCore {
     if (!this.isAvailable) return;
 
     this.#updatePercentHelper();
+    // battery_adaptive is the one theme whose resolved value can change
+    // between refreshes (charging state, not config) - #theme.configure is
+    // otherwise only called from `set config` (card creation/config
+    // change), so without this it stays stuck on whatever charging state was
+    // true when the card first loaded. Every other theme is config-driven
+    // and stable across refreshes, so this stays scoped to the one case
+    // that actually needs re-resolving on every hass update.
+    if (this._configHelper.config.theme === 'battery_adaptive') {
+      this.#theme.configure({
+        theme: this.resolvedTheme,
+        customTheme: this._configHelper.config.custom_theme,
+        interpolate: this._configHelper.config.interpolate,
+      });
+    }
     this.#theme.value =
       this.#percentHelper.valueForThemes(this.#theme.isCustomTheme, this.#theme.isBasedOnPercentage) ?? 0;
   }
@@ -1081,8 +1176,17 @@ class BadgeTemplateView extends ViewCore {
   icon: string | null = null;
 }
 
+// CardTemplateView and BadgeTemplateView are siblings (both extend ViewCore
+// directly, neither extends the other), so there's no single concrete class
+// to name for EntityProgressTemplateBase's own `_cardView` (which is assigned
+// either one) - this names just the extra surface both actually add over
+// ViewCore, the same way ViewBase names the extra surface CardView/
+// BadgeView/FeatureView share.
+type TemplateView = ViewCore & { icon: string | null };
+
 export { ViewCore };
 export { ViewBase };
+export type { TemplateView };
 export { CardView };
 export { BadgeView };
 export { FeatureView };

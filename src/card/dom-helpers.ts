@@ -535,9 +535,12 @@ class ActionHelper {
   #initialized = false;
   #disableIconTap = false;
   #iconClickSources = new Set(['shape', HA_SVG_ICON_TAG, 'img']);
+  #debug = CARD_CONTEXT.debug.interactionHandler;
+  #log: LoggerInstance | null = null;
 
   constructor(target: HTMLElement | null) {
     this.#target = target;
+    this.#log = initLogger(this, this.#debug, ['init']);
   }
 
   // CF5 - issue (major) resolved - the HA frontend creates <action-handler>
@@ -595,6 +598,7 @@ class ActionHelper {
     const actionConfig =
       fromIcon && config[iconActionKey]?.action !== 'none' ? config[iconActionKey] : config[`${action}_action`];
 
+    this.#log?.debug(`action="${action}" fromIcon=${fromIcon} → resolved:`, actionConfig ?? '(none, ignored)');
     if (!actionConfig) return;
 
     this.#target?.dispatchEvent(

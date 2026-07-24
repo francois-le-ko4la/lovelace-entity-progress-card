@@ -38,6 +38,12 @@ function main() {
     format: 'esm',
     write: false,
     minify: false,
+    // Preserve original class/function names through bundling: esbuild
+    // otherwise prefixes some cross-module classes (e.g. _ThemeManager,
+    // _EntityHelper) to avoid collisions, which would surface in every
+    // `.name`-based debug line (initLogger's per-class logger and
+    // traceInstance's ?debug=instances counter).
+    keepNames: true,
   }).outputFiles[0].text;
 
   if (isProd) bundled = forceCleanCardContext(bundled);

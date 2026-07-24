@@ -635,19 +635,22 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
     [Internationalization](#internationalization)).
   - `validate-md.yaml` — on `**/*.md` changes: `npm run lint:md`.
   - `release.yaml` — on a **published GitHub release**:
-    `npm run check:release-flags` (safety net — fails if `CARD_CONTEXT.dev`/
-    `debug` is left `true` in the committed source; see
-    [Logging & debugging](#logging--debugging)), `npm run validate`,
-    `npm run build:prod` (esbuild, `--target=es2022`, pinned as a devDependency
-    — forces `CARD_CONTEXT.dev`/`debug` to `false` in the built output
-    regardless of the source state, see `scripts/lib/release-flags.js`), a
-    `node --check` sanity pass on the minified output, then uploads the artifact
-    to the release assets. HACS serves that asset.
-- **Two build modes** (`scripts/build.js`, bundling `src/index.ts` via esbuild):
-  `build:test` (default, `CARD_CONTEXT` left exactly as committed) and
-  `build:prod` (`--prod` flag, `CARD_CONTEXT.dev` and every `debug.*` flag
-  forced `false` regardless of the source state — see
-  `scripts/lib/release-flags.js`). Only `build:prod` is safe to ship.
+    `npm run check:release-flags` (safety net — fails if the committed
+    `DEBUG_DEFAULTS` baseline has any flag left `true`; `dev` is URL-derived so
+    it isn't checked here, see [Logging & debugging](#logging--debugging)),
+    `npm run validate`, `npm run build:prod` (esbuild, `--target=es2022`, pinned
+    as a devDependency — re-forces `DEBUG_DEFAULTS` all-`false` in the built
+    output regardless of the source state, see `scripts/lib/release-flags.js`),
+    a `node --check` sanity pass on the minified output, then uploads the
+    artifact to the release assets. HACS serves that asset.
+- **Two build modes** (`scripts/build.js`, bundling `src/index.ts` via esbuild
+  with `keepNames: true`): `build:test` → `entity-progress-card_dev.js` (debug
+  baseline left as committed) and `build:prod` (`--prod`) →
+  `entity-progress-card.js` (minified, `DEBUG_DEFAULTS` re-forced all-`false`,
+  see `scripts/lib/release-flags.js`). `dev` mode isn't baked into either — it
+  follows the served filename/URL at runtime (see
+  [Logging & debugging](#logging--debugging)). Only `build:prod` is minified and
+  safe to ship.
 - **Language floor**: the esbuild target is `es2022` — private fields and class
   static blocks are fine, but syntax newer than es2022 will fail the release
   build even though it runs in dev. Test a release build locally with
@@ -661,12 +664,58 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
 
 ## Logging & debugging
 
-- Per-class debug flags live in `CARD_CONTEXT.debug` (card, hass,
-  ressourceManager, …). Set one to `true` and rebuild-free reload: the matching
-  `Logger` instance wraps the class's `_loggedMethods` and traces every call
-  with timing (`👉` / `✅` / `❌`).
+`dev` and `debug` are **derived from the served URL** (`import.meta.url`) at
+module load, in `CARD_CONTEXT` (`src/utils/parameters.ts`) — not edited into the
+source and rebuilt. In an esbuild bundle `import.meta.url` resolves to the
+loaded bundle's own URL, so reading the served resource URL Just Works, and is
+guarded (`try/catch`) so a non-module eval falls back to the safe shipped state.
+
+- **dev** (`-dev` suffix on every registered element name, so a dev build
+  coexists with the shipped one): on when the file is served as `…_dev.js`, or
+  the resource URL carries `?dev`. The shipped `entity-progress-card.js`, served
+  without that marker, is inherently non-dev — a dev build can't be shipped by
+  accident, and HACS's own `?hacstag=…` doesn't trigger it. The two build
+  outputs are already named `entity-progress-card_dev.js` (test) and
+  `entity-progress-card.js` (prod), so the filename alone decides — no source
+  edit to toggle.
+- **debug** (`?debug=area1,area2`, or `?debug=all`): turns on per-area console
+  logging at runtime, no rebuild, and works against the shipped file too. The
+  committed baseline is `DEBUG_DEFAULTS` (all-`false`) — `?debug=` only ever
+  turns flags _on_. `check-release-flags.js` verifies `DEBUG_DEFAULTS` is
+  all-false and `build:prod` re-forces it, so verbose logging can't ship.
+- A **console warning** is printed after the load banner whenever dev or any
+  debug area is active (listing the active areas), so a non-shipped
+  configuration never runs silently. Normal prod loads stay quiet.
+
+**Debug areas** (each traces via a `Logger` that wraps the class's
+`_loggedMethods` — `👉` / `✅` / `❌` with timing — or logs directly):
+
+| Area                 | Wired in                                | Traces                                                                        |
+| -------------------- | --------------------------------------- | ----------------------------------------------------------------------------- |
+| `card`               | `HACore`/`HABase` (`core.ts`)           | lifecycle (connect / disconnect / **adopted** / setConfig / refresh / render) |
+| `editor`             | `EditorBase` (`editor/base.ts`)         | `setConfig` in, `config-changed` out                                          |
+| `interactionHandler` | `ActionHelper` (`dom-helpers.ts`)       | tap / hold / double-tap action resolution                                     |
+| `ressourceManager`   | `ResourceManager`/`DOMHelper`           | timers / listeners / subscriptions                                            |
+| `hass`               | `HassProviderSingleton`                 | first hass (HA version, language, connection), language change                |
+| `registration`       | `RegistrationHelper` (`register.ts`)    | every `define` (ok/skipped) + `customCards` push, with timing                 |
+| `instances`          | value-helper + view class constructors  | per-class instantiation counter (`traceInstance`, leak probe)                 |
+| `interference`       | `HACore` `MutationObserver` on the host | external mutations of our own host element (card-mod &c)                      |
+
+To add a debug area: add it to `DEBUG_DEFAULTS` and the `CARD_CONTEXT.debug`
+object (`parameters.ts`), the `CLEAN_DEBUG_DEFAULTS_BODY` literal
+(`scripts/lib/release-flags.js`), then consume `CARD_CONTEXT.debug.<area>` where
+you need it (via `initLogger`/`traceInstance`, or a module-level
+`Logger.create`).
+
+Other aids:
+
 - The console banner printed at load confirms which version is actually running
-  (cache issues are the #1 support topic).
+  (cache issues are the #1 support topic). `window.EPB_DIAG.dump()` prints an
+  anonymized environment/registration report.
+- `?debug=instances` counting relies on `constructor.name`; the esbuild build
+  runs with `keepNames: true` so cross-module class names survive
+  bundling/minification (otherwise `_ThemeManager` &c would surface in the
+  logs).
 - `window.customCards` can be inspected to verify registration.
 - In DevTools, a card's shadow root should contain **no `<style>` element** on
   modern browsers (adopted stylesheet) — seeing one means the fallback path was

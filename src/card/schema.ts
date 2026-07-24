@@ -492,11 +492,14 @@ function struct(validator: Validator & { _schema?: Record<string, Validator> }, 
   };
 
   // bar_color_mode (segment/rainbow) only has an effect with a theme or
-  // custom_theme active, and never in center_zero (see ViewCore.
-  // colorGradient, which returns null in both cases regardless of mode) -
-  // mirrors the editor's own bar_color_mode showIf.
+  // custom_theme active (see ViewBase.colorGradient/themeDivergingGradient,
+  // both of which return null without one regardless of mode) - mirrors the
+  // editor's own bar_color_mode showIf. center_zero no longer disables it:
+  // themeDivergingGradient reprojects the theme's zones onto each arm's own
+  // slice of the min_value/max_value scale instead of the single-arm math
+  // colorGradient uses.
   const applyBarColorModeRule = (result: any, hasTheme: boolean) => {
-    if (result.bar_color_mode && result.bar_color_mode !== 'auto' && !(hasTheme && !result.center_zero)) {
+    if (result.bar_color_mode && result.bar_color_mode !== 'auto' && !hasTheme) {
       result.bar_color_mode = 'auto';
     }
   };
@@ -838,7 +841,7 @@ class YamlSchemaFactory {
         // form is needed here.
         max_value: types.fallbackTo(types.numericEntityOrJinja(), 100),
 
-        // ─── Appearance ===
+        // ─── Appearance ─────────────────────────────────────────────────────
         icon: types.optionalString(),
         color: types.optionalString(),
         bar_color: types.optionalString(),
@@ -899,7 +902,7 @@ class YamlSchemaFactory {
         trend_indicator: types.optionalBooleanWithDefault(false),
         text_shadow: types.optionalBooleanWithDefault(false),
 
-        // ─── Visibility & Content ===
+        // ─── Visibility & Content ───────────────────────────────────────────
         hide: types.jinjaOrArrayWithValidatedElem(['icon', 'name', 'value', 'unit', 'secondary_info', 'progress_bar']),
         name_info: types.optionalString(),
         custom_info: types.optionalString(),
@@ -908,13 +911,11 @@ class YamlSchemaFactory {
         multiline: types.optionalBooleanWithDefault(false),
         state_content: types.optional(types.fallbackTo(types.stateContent, SKIP_PROPERTY)),
 
-        // ─── Badges ===
+        // ─── Badges ─────────────────────────────────────────────────────────
         badge_icon: types.optionalString(),
         badge_color: types.optionalString(),
 
-        // ─── Theme & Watermark === theme: types.theme(['optimal_when_low',
-        // 'optimal_when_high', 'light', 'temperature', 'humidity', 'pm25',
-        // 'voc']),
+        // ─── Theme & Watermark ──────────────────────────────────────────────
         theme: types.theme(Object.keys(THEME)),
         custom_theme: types.fallbackTo(types.customTheme, SKIP_PROPERTY),
         interpolate: types.optionalBooleanWithDefault(false),
@@ -938,7 +939,7 @@ class YamlSchemaFactory {
           }),
         ),
 
-        // ─── Bar Stack ===
+        // ─── Bar Stack ──────────────────────────────────────────────────────
         bar_stack: types.optional(
           types.object({
             mode: types.enumsWithDefault(['stacked', 'proportional', 'net'], 'stacked'),
@@ -946,7 +947,7 @@ class YamlSchemaFactory {
           }),
         ),
 
-        // ─── Actions ===
+        // ─── Actions ────────────────────────────────────────────────────────
         tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.moreInfo),
         hold_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),
         double_tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),
@@ -1003,7 +1004,7 @@ class YamlSchemaFactory {
   static get template() {
     return struct(
       types.object({
-        // ─── Entity & Data ===
+        // ─── Entity & Data ──────────────────────────────────────────────────
         entity: types.optional(types.entityId),
         name: types.optionalString(),
         secondary: types.optionalString(),
@@ -1012,7 +1013,7 @@ class YamlSchemaFactory {
         multiline: types.optionalBooleanWithDefault(false),
         percent: types.optionalString(),
 
-        // ─── Appearance ===
+        // ─── Appearance ─────────────────────────────────────────────────────
         icon: types.optionalString(),
         color: types.optionalString(),
         bar_color: types.optionalString(),
@@ -1071,7 +1072,7 @@ class YamlSchemaFactory {
         badge_color: types.optionalString(),
         watermark: types.watermarkObject(watermarkSchema, CARD.config.defaults.watermark),
 
-        // ─── Actions ===
+        // ─── Actions ────────────────────────────────────────────────────────
         tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.moreInfo),
         hold_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),
         double_tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),

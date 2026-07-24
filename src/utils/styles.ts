@@ -1146,52 +1146,62 @@ ha-card.info-multiline {
 
 /* battery-bolt fill wipe: a clip-path window sliding down the icon, repeating
    - the 80%-100% hold is the pause between charge sweeps
-   - the bolt's x-edges are CSS vars (--epb-charge-x1/x2, default 34%/67%) so
+   - the bolt's x-edges are CSS vars (--epb-charge-x1/x2, default 34%/67%) and
+     its fixed top edge is --epb-charge-y1 (default 29%, the rest of each
+     frame's vertical span is expressed as an offset from it via calc()) so
      .icon-anim-battery-charging-shifted can compensate for icon variants
-     (battery-charging-*, battery-bluetooth-*) whose glyph isn't centered the
-     same way the plain battery outline is - see ViewCore.isBatteryIconShifted */
+     (battery-charging-*, battery-bluetooth-*) whose glyph isn't centered/
+     positioned the same way the plain battery outline is - see
+     ViewCore.isBatteryIconShifted */
 @keyframes epb-icon-charge {
   0%, 80% { clip-path: inset(0 0 0 0); }
   10% {
     clip-path: polygon(
-      0% 0%, 0% 100%, var(--epb-charge-x1, 34%) 100%, var(--epb-charge-x1, 34%) 29%, var(--epb-charge-x2, 67%) 29%,
-      var(--epb-charge-x2, 67%) 89%, var(--epb-charge-x1, 34%) 89%, var(--epb-charge-x1, 34%) 100%, 100% 100%, 100% 0%
+      0% 0%, 0% 100%, var(--epb-charge-x1, 34%) 100%, var(--epb-charge-x1, 34%) var(--epb-charge-y1, 29%),
+      var(--epb-charge-x2, 67%) var(--epb-charge-y1, 29%), var(--epb-charge-x2, 67%) calc(var(--epb-charge-y1, 29%) + 60%),
+      var(--epb-charge-x1, 34%) calc(var(--epb-charge-y1, 29%) + 60%), var(--epb-charge-x1, 34%) 100%, 100% 100%, 100% 0%
     );
   }
   20% {
     clip-path: polygon(
-      0% 0%, 0% 100%, var(--epb-charge-x1, 34%) 100%, var(--epb-charge-x1, 34%) 29%, var(--epb-charge-x2, 67%) 29%,
-      var(--epb-charge-x2, 67%) 79%, var(--epb-charge-x1, 34%) 79%, var(--epb-charge-x1, 34%) 100%, 100% 100%, 100% 0%
+      0% 0%, 0% 100%, var(--epb-charge-x1, 34%) 100%, var(--epb-charge-x1, 34%) var(--epb-charge-y1, 29%),
+      var(--epb-charge-x2, 67%) var(--epb-charge-y1, 29%), var(--epb-charge-x2, 67%) calc(var(--epb-charge-y1, 29%) + 50%),
+      var(--epb-charge-x1, 34%) calc(var(--epb-charge-y1, 29%) + 50%), var(--epb-charge-x1, 34%) 100%, 100% 100%, 100% 0%
     );
   }
   30% {
     clip-path: polygon(
-      0% 0%, 0% 100%, var(--epb-charge-x1, 34%) 100%, var(--epb-charge-x1, 34%) 29%, var(--epb-charge-x2, 67%) 29%,
-      var(--epb-charge-x2, 67%) 69%, var(--epb-charge-x1, 34%) 69%, var(--epb-charge-x1, 34%) 100%, 100% 100%, 100% 0%
+      0% 0%, 0% 100%, var(--epb-charge-x1, 34%) 100%, var(--epb-charge-x1, 34%) var(--epb-charge-y1, 29%),
+      var(--epb-charge-x2, 67%) var(--epb-charge-y1, 29%), var(--epb-charge-x2, 67%) calc(var(--epb-charge-y1, 29%) + 40%),
+      var(--epb-charge-x1, 34%) calc(var(--epb-charge-y1, 29%) + 40%), var(--epb-charge-x1, 34%) 100%, 100% 100%, 100% 0%
     );
   }
   40% {
     clip-path: polygon(
-      0% 0%, 0% 100%, var(--epb-charge-x1, 34%) 100%, var(--epb-charge-x1, 34%) 29%, var(--epb-charge-x2, 67%) 29%,
-      var(--epb-charge-x2, 67%) 59%, var(--epb-charge-x1, 34%) 59%, var(--epb-charge-x1, 34%) 100%, 100% 100%, 100% 0%
+      0% 0%, 0% 100%, var(--epb-charge-x1, 34%) 100%, var(--epb-charge-x1, 34%) var(--epb-charge-y1, 29%),
+      var(--epb-charge-x2, 67%) var(--epb-charge-y1, 29%), var(--epb-charge-x2, 67%) calc(var(--epb-charge-y1, 29%) + 30%),
+      var(--epb-charge-x1, 34%) calc(var(--epb-charge-y1, 29%) + 30%), var(--epb-charge-x1, 34%) 100%, 100% 100%, 100% 0%
     );
   }
   50% {
     clip-path: polygon(
-      0% 0%, 0% 100%, var(--epb-charge-x1, 34%) 100%, var(--epb-charge-x1, 34%) 29%, var(--epb-charge-x2, 67%) 29%,
-      var(--epb-charge-x2, 67%) 49%, var(--epb-charge-x1, 34%) 49%, var(--epb-charge-x1, 34%) 100%, 100% 100%, 100% 0%
+      0% 0%, 0% 100%, var(--epb-charge-x1, 34%) 100%, var(--epb-charge-x1, 34%) var(--epb-charge-y1, 29%),
+      var(--epb-charge-x2, 67%) var(--epb-charge-y1, 29%), var(--epb-charge-x2, 67%) calc(var(--epb-charge-y1, 29%) + 20%),
+      var(--epb-charge-x1, 34%) calc(var(--epb-charge-y1, 29%) + 20%), var(--epb-charge-x1, 34%) 100%, 100% 100%, 100% 0%
     );
   }
   60% {
     clip-path: polygon(
-      0% 0%, 0% 100%, var(--epb-charge-x1, 34%) 100%, var(--epb-charge-x1, 34%) 29%, var(--epb-charge-x2, 67%) 29%,
-      var(--epb-charge-x2, 67%) 39%, var(--epb-charge-x1, 34%) 39%, var(--epb-charge-x1, 34%) 100%, 100% 100%, 100% 0%
+      0% 0%, 0% 100%, var(--epb-charge-x1, 34%) 100%, var(--epb-charge-x1, 34%) var(--epb-charge-y1, 29%),
+      var(--epb-charge-x2, 67%) var(--epb-charge-y1, 29%), var(--epb-charge-x2, 67%) calc(var(--epb-charge-y1, 29%) + 10%),
+      var(--epb-charge-x1, 34%) calc(var(--epb-charge-y1, 29%) + 10%), var(--epb-charge-x1, 34%) 100%, 100% 100%, 100% 0%
     );
   }
   70% {
     clip-path: polygon(
-      0% 0%, 0% 100%, var(--epb-charge-x1, 34%) 100%, var(--epb-charge-x1, 34%) 29%, var(--epb-charge-x2, 67%) 29%,
-      var(--epb-charge-x2, 67%) 29%, var(--epb-charge-x1, 34%) 29%, var(--epb-charge-x1, 34%) 100%, 100% 100%, 100% 0%
+      0% 0%, 0% 100%, var(--epb-charge-x1, 34%) 100%, var(--epb-charge-x1, 34%) var(--epb-charge-y1, 29%),
+      var(--epb-charge-x2, 67%) var(--epb-charge-y1, 29%), var(--epb-charge-x2, 67%) var(--epb-charge-y1, 29%),
+      var(--epb-charge-x1, 34%) var(--epb-charge-y1, 29%), var(--epb-charge-x1, 34%) 100%, 100% 100%, 100% 0%
     );
   }
 }
@@ -1239,8 +1249,9 @@ ha-card.info-multiline {
 /* Placeholder offset for battery-charging/battery-bluetooth icon variants -
    needs live tuning against the actual glyph, see ViewCore.isBatteryIconShifted */
 .icon-anim-battery-charging-shifted .${CARD.htmlStructure.elements.icon.class} {
-  --epb-charge-x1: 17%;
-  --epb-charge-x2: 50%;
+  --epb-charge-x1: 17.5%;
+  --epb-charge-x2: 50.5%;
+  --epb-charge-y1: 25%;
 }
 
 /* === ALERT (alert_when: {above/below, color, highlight, animation}) ===
@@ -2005,6 +2016,20 @@ const getSharedStyleSheet = (cssText: string): CSSStyleSheet | null => {
   return sheet;
 };
 
+// Browser capability probe, independent of whether any card has been built yet
+// (CONSTRUCTED_SHEETS fills lazily on first render, so an empty map means "none
+// built", NOT "unsupported"). Mirrors getSharedStyleSheet's exact requirement:
+// construct + replaceSync. Used by the diagnostic dump to tell a genuine legacy
+// fallback apart from a not-yet-rendered state.
+const CONSTRUCTIBLE_STYLESHEETS = (() => {
+  try {
+    new CSSStyleSheet().replaceSync('');
+    return true;
+  } catch {
+    return false;
+  }
+})();
+
 export { css };
 export { CARD_CSS };
 export { CHIPS_HOST_STYLE };
@@ -2012,4 +2037,5 @@ export { BAR_STACK_EDITOR_STYLE };
 export { CUSTOM_THEME_EDITOR_STYLE };
 export { EDITOR_BASE_STYLE };
 export { CONSTRUCTED_SHEETS };
+export { CONSTRUCTIBLE_STYLESHEETS };
 export { getSharedStyleSheet };

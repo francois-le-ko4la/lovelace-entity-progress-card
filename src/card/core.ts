@@ -9,10 +9,10 @@ import { CARD_CSS, getSharedStyleSheet } from '../utils/styles.js';
 import { is } from '../utils/common-checks.js';
 import { initLogger, type LoggerInstance } from '../utils/log.js';
 import { ObjStructure, ThemeManager, ChangeTracker } from './value-helpers.js';
-import { HassProviderSingleton, type Hass, type EntityState } from '../utils/hass-provider.js';
-import { CardView, FeatureView } from './view.js';
+import { HassProviderSingleton, type HomeAssistant, type EntityState } from '../utils/hass-provider.js';
+import { CardView, FeatureView, type ViewCore, type ViewBase } from './view.js';
 import { ResourceManager, DOMHelper, ActionHelper } from './dom-helpers.js';
-import type { RawConfig } from '../utils/types.js';
+import type { LovelaceConfig } from '../utils/types.js';
 import type { StructureOptions } from './structure.js';
 
 // The resolved shape ViewBase/ViewCore's `watermark` getter returns (see
@@ -35,7 +35,7 @@ type DivergingGradients = { posGradient: string | null; negGradient: string | nu
 
 // The icon element _showIcon()/_handleImgIcon()/_handleStateIcon() manage:
 // either a plain <img> (entity_picture) or a <ha-state-icon> (hass/stateObj).
-type IconElement = HTMLImageElement | (HTMLElement & { hass: Hass | null; stateObj: unknown });
+type IconElement = HTMLImageElement | (HTMLElement & { hass: HomeAssistant | null; stateObj: unknown });
 
 /**
  * Base class for Home Assistant custom elements (cards, badges, features).
@@ -53,7 +53,7 @@ type IconElement = HTMLImageElement | (HTMLElement & { hass: Hass | null; stateO
  *
  * Provides: - Shadow DOM initialization and lifecycle management
  * (connectedCallback, disconnectedCallback) - Configuration handling via
- * setConfig() - Hass state tracking and change detection - DOM rendering
+ * setConfig() - hass state tracking and change detection - DOM rendering
  * pipeline: render() → _createCardElements() → _buildStyle() - Batched DOM
  * updates via DOMHelper (RAF queue + value cache) - Jinja2 template
  * subscriptions via WebSocket - Resource lifecycle management (listeners,
@@ -89,10 +89,13 @@ class HACore extends HTMLElement {
   _resourceManager: ResourceManager | null = null;
   // Concrete subclasses (in cards.ts) swap this in for CardView/BadgeView/
   // FeatureView/CardTemplateView/BadgeTemplateView - the latter two extend
-  // ViewCore directly rather than ViewBase, so there's no single non-`any`
-  // type that's both accurate and covers every ViewBase-only member (msg,
-  // badgeInfo, isAvailable...) this class and HABase read from it.
-  _cardView: any = new FeatureView();
+  // ViewCore directly rather than ViewBase, so ViewCore (not a union, not
+  // `any`) is the widest type that's still accurate for every one of them.
+  // The handful of call sites below that read a ViewBase-only member (msg,
+  // badgeInfo, isAvailable, hasValidatedConfig - never present on the
+  // template views) cast to ViewBase explicitly instead of widening the
+  // field back to `any` for everyone.
+  _cardView: ViewCore = new FeatureView();
   _dom = new DOMHelper();
   _hassProvider = HassProviderSingleton.getInstance();
   _changeTracker = new ChangeTracker();
@@ -103,7 +106,7 @@ class HACore extends HTMLElement {
   // every refresh
   #templateSignatures = new Map<string, string>();
 
-  // ─── LIFECYCLE METHODS ===
+  // ─── LIFECYCLE METHODS ────────────────────────────────────────────────────
   static get _loggedMethods() {
     return [
       'connectedCallback',
@@ -154,12 +157,45 @@ class HACore extends HTMLElement {
       this._handleHassUpdate();
       this._watchWebSocket();
     }
+    this.#watchInterference();
   }
 
   disconnectedCallback() {
     this._resourceManager?.cleanup();
     this._resourceManager = null;
     this.#templateSignatures.clear(); // subscriptions died with cleanup() — allow resubscription on reconnect
+    this.#interferenceObserver?.disconnect();
+    this.#interferenceObserver = null;
+  }
+
+  // Implemented only to surface it under ?debug=card: fires when the element
+  // is adopted into a different document, e.g. moved into a popup/dialog's own
+  // document by webawesome/browser_mod - a prime suspect for the dropdown/
+  // popup freeze in issue #108, and otherwise completely silent.
+  adoptedCallback() {
+    this._log?.debug('adoptedCallback — element moved into a different document');
+  }
+
+  // ?debug=interference: watch our own host element for attribute mutations
+  // we didn't make - the fingerprint of another module (card-mod &c) styling/
+  // marking our card from the outside. Only ever created when the flag is on,
+  // so it's zero cost otherwise. Scoped to host attributes (card-mod's usual
+  // entry point); it can't see a reparent of the host itself - adoptedCallback
+  // above covers the cross-document case.
+  #interferenceObserver: MutationObserver | null = null;
+
+  #watchInterference() {
+    if (!CARD_CONTEXT.debug.interference || this.#interferenceObserver) return;
+    this.#interferenceObserver = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type !== 'attributes') continue;
+        const attr = mutation.attributeName ?? '';
+        console.debug(
+          `[interference] <${this.localName}> attribute "${attr}" changed externally: "${mutation.oldValue}" → "${this.getAttribute(attr)}"`,
+        );
+      }
+    });
+    this.#interferenceObserver.observe(this, { attributes: true, attributeOldValue: true });
   }
 
   _ensureResourceManager() {
@@ -171,7 +207,7 @@ class HACore extends HTMLElement {
   /**
    * Updates the component's configuration and triggers static changes.
    */
-  setConfig(config: RawConfig) {
+  setConfig(config: LovelaceConfig) {
     this._log?.debug('📎 HACore.setConfig()', config);
 
     if (!config) throw new Error('setConfig: invalid config');
@@ -184,7 +220,7 @@ class HACore extends HTMLElement {
     if (this.hass) this._handleHassUpdate(); // Card/Badge editor
   }
 
-  _registerWatchedEntities(config: RawConfig) {
+  _registerWatchedEntities(config: LovelaceConfig) {
     // CF5 - issue (minor) resolved - the watched set was only ever appended to:
     // entities removed from the config (editor changes) stayed watched and kept
     // triggering refreshes until reload. Rebuilt from scratch on every
@@ -211,7 +247,7 @@ class HACore extends HTMLElement {
    * @param {Object} hass - The Home Assistant instance containing the current
    *                        state and services.
    */
-  set hass(hass: Hass) {
+  set hass(hass: HomeAssistant) {
     this._log?.debug('👉 HACore.set hass()');
     if (!hass) return;
 
@@ -225,7 +261,7 @@ class HACore extends HTMLElement {
     if (!this._wsInitialized) this._watchWebSocket();
   }
 
-  get hass(): Hass | null {
+  get hass(): HomeAssistant | null {
     return this._hassProvider.hass;
   }
 
@@ -234,7 +270,7 @@ class HACore extends HTMLElement {
   }
 
   refresh() {
-    this._cardView.refresh(this.hass as Hass);
+    this._cardView.refresh(this.hass as HomeAssistant);
     this._updateDynamicElements();
   }
 
@@ -246,14 +282,19 @@ class HACore extends HTMLElement {
 
   _startAutoRefresh() {
     if (!this._resourceManager) return;
+    // isActiveTimer/refreshSpeed are ViewBase-only - the template views
+    // (CardTemplateView/BadgeTemplateView) don't have a timer concept, so
+    // this harmlessly reads undefined and stops the interval right away for
+    // them rather than never applying to that class at all.
+    const cardView = this._cardView as ViewBase;
     this._resourceManager.setInterval(
       () => {
         this.refresh();
-        if (!this._cardView.isActiveTimer) {
+        if (!cardView.isActiveTimer) {
           this._stopAutoRefresh();
         }
       },
-      this._cardView.refreshSpeed,
+      cardView.refreshSpeed,
       'autoRefresh',
     );
   }
@@ -307,7 +348,7 @@ class HACore extends HTMLElement {
 
   get _structureOptions(): StructureOptions {
     return {
-      barType: this._cardView.config.center_zero ? 'centerZero' : 'default', // ─── true
+      barType: this._cardView.config.center_zero ? 'centerZero' : 'default',
       barPosition: this._cardView.config.bar_position,
     };
   }
@@ -404,17 +445,21 @@ class HACore extends HTMLElement {
   }
 
   _handleWatermarkClasses() {
-    if (!this._cardView.hasWatermark) return;
+    // Captured once so the null-check below actually narrows what the rest
+    // of this method reads - hasWatermark and watermark are two separate
+    // getter calls that TypeScript can't otherwise correlate.
+    const watermark = this._cardView.watermark;
+    if (!watermark) return;
 
-    const type = ['area', 'blended', 'striped', 'line', 'triangle', 'round'].includes(this._cardView.watermark.type)
-      ? `${this._cardView.watermark.type}`
+    const type = ['area', 'blended', 'striped', 'line', 'triangle', 'round'].includes(watermark.type)
+      ? `${watermark.type}`
       : 'blended';
     const showClass = CARD.style.dynamic.show;
 
-    this._dom.toggleClass(CARD.htmlStructure.card.element, `${showClass}-hwm`, !this._cardView.watermark.disable_high);
-    this._dom.toggleClass(CARD.htmlStructure.card.element, `hwm-${type}`, !this._cardView.watermark.disable_high);
-    this._dom.toggleClass(CARD.htmlStructure.card.element, `${showClass}-lwm`, !this._cardView.watermark.disable_low);
-    this._dom.toggleClass(CARD.htmlStructure.card.element, `lwm-${type}`, !this._cardView.watermark.disable_low);
+    this._dom.toggleClass(CARD.htmlStructure.card.element, `${showClass}-hwm`, !watermark.disable_high);
+    this._dom.toggleClass(CARD.htmlStructure.card.element, `hwm-${type}`, !watermark.disable_high);
+    this._dom.toggleClass(CARD.htmlStructure.card.element, `${showClass}-lwm`, !watermark.disable_low);
+    this._dom.toggleClass(CARD.htmlStructure.card.element, `lwm-${type}`, !watermark.disable_low);
   }
 
   // The visual editor (EntityProgressEffectChips) can only guard interactive
@@ -443,9 +488,9 @@ class HACore extends HTMLElement {
     if (isJinja && !jinjaEffect) return;
 
     const requested = isJinja
-      ? jinjaEffect
+      ? (jinjaEffect ?? [])
       : is.array(this._cardView.config.bar_effect)
-        ? this._cardView.config.bar_effect
+        ? (this._cardView.config.bar_effect as string[])
         : [];
     const resolved = HACore.#resolveEffectConflicts(requested);
 
@@ -647,7 +692,13 @@ class HACore extends HTMLElement {
   }
 
   _validateProcessJinjaFields(): boolean {
-    return Boolean(this._resourceManager) && !(this._cardView.config?.entity && this._cardView.hasStandardEntityError);
+    // hasStandardEntityError is ViewBase-only (undefined, harmlessly, on the
+    // template views - which have no single "standard entity" concept to
+    // begin with).
+    return (
+      Boolean(this._resourceManager) &&
+      !(this._cardView.config?.entity && (this._cardView as ViewBase).hasStandardEntityError)
+    );
   }
 
   _processJinjaFields() {
@@ -795,13 +846,13 @@ class HABase extends HACore {
     error: HA_CONTEXT.icons.progressQuestion,
   };
   _icon: IconElement | null = null;
-  _cardView: any = new CardView();
+  _cardView: ViewCore = new CardView();
   // Always assigned unconditionally in the constructor below.
   _actionHelper!: ActionHelper;
   #jinjaStateBadge = { icon: false, color: false };
   #lastMessage: { content: string; sev: string } | null = null;
 
-  // ─── LIFECYCLE METHODS ===
+  // ─── LIFECYCLE METHODS ────────────────────────────────────────────────────
 
   static get _loggedMethods() {
     return [
@@ -845,7 +896,12 @@ class HABase extends HACore {
 
   // disconnectedCallback() {}
 
-  getCardSize(): number | undefined {
+  // custom-card-helpers' own LovelaceCard interface types this as
+  // `number | Promise<number>` - async here aligns with that contract (and,
+  // as with getStubConfig, turns any future throw into a rejected promise
+  // instead of a synchronous exception during HA's own layout pass over
+  // every card on a dashboard).
+  async getCardSize(): Promise<number | undefined> {
     if (![META.types.card.typeName, META.types.template.typeName].includes(this.baseClass)) return undefined;
     const cardSize = this._cardView.cardSize;
     this._log?.debug('getCardSize: ', cardSize);
@@ -882,7 +938,7 @@ class HABase extends HACore {
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
   refresh() {
-    this._cardView.refresh(this.hass as Hass);
+    this._cardView.refresh(this.hass as HomeAssistant);
     if (this._manageErrorMessage()) return;
     this._updateDynamicElements();
   }
@@ -900,11 +956,11 @@ class HABase extends HACore {
   // ─── ERROR MESSAGE MANAGEMENT ─────────────────────────────────────────────
 
   _manageErrorMessage(): boolean {
-    if (
-      this._cardView.msg &&
-      (is.nullish(this._cardView.entity) || (this._cardView.isAvailable && !this._cardView.hasValidatedConfig))
-    ) {
-      this._renderMessage(this._cardView.msg);
+    // msg/isAvailable/hasValidatedConfig are ViewBase-only (never present on
+    // the template views) - see _cardView's own declaration above.
+    const cardView = this._cardView as ViewBase;
+    if (cardView.msg && (is.nullish(this._cardView.entity) || (cardView.isAvailable && !cardView.hasValidatedConfig))) {
+      this._renderMessage(cardView.msg);
       return true;
     }
     this.#lastMessage = null;
@@ -932,7 +988,7 @@ class HABase extends HACore {
     alert.textContent = msg.content;
   }
 
-  // ─── CARD BUILDING ===
+  // ─── CARD BUILDING ────────────────────────────────────────────────────────
 
   get _structureOptions(): StructureOptions {
     return {
@@ -1109,14 +1165,19 @@ class HABase extends HACore {
     this._processStandardFields();
   }
 
-  // ─── Update Trend ===
+  // ─── Update Trend ─────────────────────────────────────────────────────────
   _updateTrend() {
     if (!this._cardView.config.trend_indicator) return;
 
+    // ViewBase.getTrend() overrides ViewCore's own (currentPercent: number)
+    // signature with a no-arg one that supplies its own current percent -
+    // the template views don't override it and have no trend concept to
+    // begin with, so this only ever meaningfully runs for ViewBase-family
+    // instances.
     this._dom.setAttribute(
       CARD.htmlStructure.elements.trendIndicator.icon.class,
       CARD.style.icon.badge.default.attribute,
-      this._trendIcons[this._cardView.getTrend()],
+      this._trendIcons[(this._cardView as ViewBase).getTrend()],
     );
   }
 
@@ -1215,11 +1276,14 @@ class HABase extends HACore {
     this._cleanupImgIcon();
 
     if (!this._icon) {
-      this._icon = document.createElement('ha-state-icon') as HTMLElement & { hass: Hass | null; stateObj: unknown };
+      this._icon = document.createElement('ha-state-icon') as HTMLElement & {
+        hass: HomeAssistant | null;
+        stateObj: unknown;
+      };
       iconContainer.replaceChildren(this._icon);
     }
 
-    const stateIcon = this._icon as HTMLElement & { hass: Hass | null; stateObj: unknown };
+    const stateIcon = this._icon as HTMLElement & { hass: HomeAssistant | null; stateObj: unknown };
     stateIcon.hass = this.hass;
     stateIcon.stateObj = stateObjIcon;
   }
@@ -1227,7 +1291,10 @@ class HABase extends HACore {
   _showIcon() {
     if (!this._cardView) return;
 
-    const { entity: entityId, icon: curIcon } = this._cardView;
+    // icon exists on every concrete view (ViewBase's own getter for
+    // CardView/BadgeView/FeatureView, a plain field on CardTemplateView/
+    // BadgeTemplateView), just not on the shared ViewCore base itself.
+    const { entity: entityId, icon: curIcon } = this._cardView as ViewCore & { icon: string | null };
     const stateObj = this._hassProvider.getEntityStateObj(entityId as string);
     const hasIconOverride = is.nonEmptyString(curIcon);
     const srcPicture = this._hassProvider.getEntityProp(entityId as string, 'entity_picture');
@@ -1265,7 +1332,8 @@ class HABase extends HACore {
    */
   _showBadge() {
     if ((this.constructor as typeof HABase)._hasDisabledBadge) return;
-    const badgeInfo = this._cardView.badgeInfo;
+    // badgeInfo is ViewBase-only (never present on the template views).
+    const badgeInfo = (this._cardView as ViewBase).badgeInfo;
     const isBadgeEnable = Boolean(badgeInfo || this._cardView.config.badge_icon || this._cardView.config.badge_color);
 
     this._enableBadge(isBadgeEnable);
@@ -1320,7 +1388,7 @@ class HABase extends HACore {
     this._log?.debug('📎 HABase._renderBadgeIcon():', { content });
     this.#jinjaStateBadge.icon = is.nonEmptyString(content) && content.includes(HA_CONTEXT.icons.prefix);
 
-    if (!is.nullish(this._cardView.badgeInfo)) return; // alert -> cancel custom badge
+    if (!is.nullish((this._cardView as ViewBase).badgeInfo)) return; // alert -> cancel custom badge
     if (this.#jinjaStateBadge.icon) {
       this._setBadgeIcon(content as string);
     }
@@ -1331,7 +1399,7 @@ class HABase extends HACore {
     this._log?.debug('📎 HABase._renderBadgeColor():', { content });
     this.#jinjaStateBadge.color = is.nonEmptyString(content);
 
-    if (!is.nullish(this._cardView.badgeInfo)) return; // alert -> cancel custom badge
+    if (!is.nullish((this._cardView as ViewBase).badgeInfo)) return; // alert -> cancel custom badge
 
     if (this.#jinjaStateBadge.color) {
       const backgroundColor = ThemeManager.adaptColor(content as string) as string;
@@ -1342,7 +1410,7 @@ class HABase extends HACore {
   }
 
   // ─── STD FIELDS PROCESSING ────────────────────────────────────────────────
-  static _getStandardFields(_cardView?: any): { className: string; value: any }[] {
+  static _getStandardFields(_cardView?: ViewCore): { className: string; value: any }[] {
     return [];
   }
 
@@ -1419,9 +1487,15 @@ class HABase extends HACore {
   }
 
   // ─── getStubConfig -> select entity ───────────────────────────────────────
-  static getStubEntity(hass: Hass): string {
+  // Called directly by HA's own card-picker/gallery to build the preview for
+  // this card type - an external caller we don't control, unlike our normal
+  // render path where hass is already known to be populated by the time
+  // anything reads it. hass?.states isn't optional in the HomeAssistant
+  // type, but that's a compile-time annotation, not a runtime guarantee
+  // from a caller outside this codebase.
+  static getStubEntity(hass: HomeAssistant): string {
     return (
-      Object.keys(hass.states).find((id) => /^(sensor\..*battery|fan\.|cover\.|light\.)/i.test(id)) ||
+      Object.keys(hass?.states ?? {}).find((id) => /^(sensor\..*battery|fan\.|cover\.|light\.)/i.test(id)) ||
       'sensor.temperature'
     );
   }

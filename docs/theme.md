@@ -8,6 +8,10 @@ Jump to the specific section:
 - [Predefined theme](#predefined-theme)
   - 🔋 [Optimal when high (Battery...)](#optimal-high)
   - 💽 [Optimal when low (CPU, RAM, disk...)](#optimal-low)
+  - 🪫 [Critical when low (Battery, disk space...)](#critical-low)
+  - 🔥 [Critical when high (CPU, RAM, disk usage...)](#critical-high)
+  - 🎯 [Critical when extreme (Tank level, deviation...)](#critical-extreme)
+  - 🔌 [Battery (adapts to charging state)](#battery-adaptive)
   - 💡 [Light](#light)
   - 🌡️ [Temperature](#temperature)
   - 💧 [Humidity](#humidity)
@@ -254,6 +258,121 @@ theme: optimal_when_low
 
 [🔼 Back to top]
 
+<a id="critical-low"></a>
+
+### 🪫 Critical when low (Battery, disk space...)
+
+The "Critical when Low" theme targets values that only become a problem near
+zero, and are otherwise fine across a wide range - a battery level or free disk
+space, for instance. Unlike `optimal_when_high`, the bands are not evenly split:
+they narrow sharply near zero to give more warning as the value approaches
+critical, and stay broadly "green" everywhere else.
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.in2013_battery_level
+theme: critical_when_low
+```
+
+| **Percentage Range** | **Color** | **Description** _(optional)_ |
+| :------------------- | :-------- | :--------------------------- |
+| 0% – 10%             | `red`     | Critical                     |
+| 10% – 20%            | `orange`  | Low                          |
+| 20% – 30%            | `yellow`  | Watch                        |
+| 30% – 100%           | `green`   | Fine                         |
+
+> [!NOTE]
+>
+> The icon is automatically retrieved from the entity but can be overridden
+> using the `icon` parameter.
+
+[🔼 Back to top]
+
+<a id="critical-high"></a>
+
+### 🔥 Critical when high (CPU, RAM, disk usage...)
+
+The mirror of `critical_when_low`: a metric that is fine across a wide low range
+and only becomes a problem near 100% - CPU load, RAM or disk usage, for
+instance. The bands narrow sharply near the top instead of the bottom.
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.system_monitor_cpu_usage
+theme: critical_when_high
+```
+
+| **Percentage Range** | **Color** | **Description** _(optional)_ |
+| :------------------- | :-------- | :--------------------------- |
+| 0% – 70%             | `green`   | Fine                         |
+| 70% – 80%            | `yellow`  | Watch                        |
+| 80% – 90%            | `orange`  | High                         |
+| 90% – 100%           | `red`     | Critical                     |
+
+> [!NOTE]
+>
+> The icon is automatically retrieved from the entity but can be overridden
+> using the `icon` parameter.
+
+[🔼 Back to top]
+
+<a id="critical-extreme"></a>
+
+### 🎯 Critical when extreme (Tank level, deviation...)
+
+The combination of `critical_when_low` and `critical_when_high`: both ends of
+the range are a problem, and the middle is a wide, comfortable "green" band - a
+tank level (too empty or too full), or a deviation from a target/setpoint (pairs
+well with `center_zero`), for instance.
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.water_tank_level
+theme: critical_when_extreme
+```
+
+| **Percentage Range** | **Color** | **Description** _(optional)_ |
+| :------------------- | :-------- | :--------------------------- |
+| 0% – 10%             | `red`     | Critical                     |
+| 10% – 20%            | `orange`  | Low                          |
+| 20% – 30%            | `yellow`  | Watch                        |
+| 30% – 70%            | `green`   | Fine                         |
+| 70% – 80%            | `yellow`  | Watch                        |
+| 80% – 90%            | `orange`  | High                         |
+| 90% – 100%           | `red`     | Critical                     |
+
+> [!NOTE]
+>
+> The icon is automatically retrieved from the entity but can be overridden
+> using the `icon` parameter.
+
+[🔼 Back to top]
+
+<a id="battery-adaptive"></a>
+
+### 🔌 Battery (adapts to charging state)
+
+A virtual theme, not a fixed set of zones: it checks whether the entity is
+currently charging - the same signal `icon_animation: battery_charging` already
+relies on (attribute, state, or a same-device sibling entity) - and switches
+between two of the themes above accordingly. While charging, it uses
+`critical_when_extreme`: li-ion batteries age faster from being held at 100%, so
+the "safe" zone is the 30–70% middle rather than the top. Once unplugged, it
+switches to `critical_when_low`, where only running out matters.
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.phone_battery_level
+theme: battery_adaptive
+```
+
+> [!NOTE]
+>
+> The icon is automatically retrieved from the entity but can be overridden
+> using the `icon` parameter.
+
+[🔼 Back to top]
+
 <a id="light"></a>
 
 ### 💡 Light
@@ -314,21 +433,17 @@ We can use `min_value` and `max_value` to define the range of values we want to
 represent with our color gradient. We use predefined intervals, each associated
 with a specific color:
 
-| **Temperature Range (°C / °F)** | **Color Variable**         | **Description** |
-| :------------------------------ | :------------------------- | :-------------- |
-| -50°C – -30°C / -58°F – -22°F   | `var(--deep-purple-color)` | Extremely cold  |
-| -30°C – -15°C / -22°F – 5°F     | `var(--dark-blue-color)`   | Very cold       |
-| -15°C – -2°C / 5°F – 28.4°F     | `var(--blue-color)`        | Cold            |
-| -2°C – 2°C / 28.4°F – 35.6°F    | `var(--light-blue-color)`  | Chilly          |
-| 2°C – 8°C / 35.6°F – 46.4°F     | `var(--cyan-color)`        | Cool            |
-| 8°C – 16°C / 46.4°F – 60.8°F    | `var(--teal-color)`        | Mild            |
-| 16°C – 18°C / 60.8°F – 64.4°F   | `var(--green-teal-color)`  | Slightly warm   |
-| 18°C – 20°C / 64.4°F – 68°F     | `var(--light-green-color)` | Comfortable     |
-| 20°C – 25°C / 68°F – 77°F       | `var(--green-color)`       | Optimal         |
-| 25°C – 27°C / 77°F – 80.6°F     | `var(--yellow-color)`      | Warm            |
-| 27°C – 29°C / 80.6°F – 84.2°F   | `var(--amber-color)`       | Hot             |
-| 29°C – 34°C / 84.2°F – 93.2°F   | `var(--deep-orange-color)` | Very hot        |
-| 34°C – 50°C / 93.2°F – 122°F    | `var(--red-color)`         | Extremely hot   |
+| **Temperature Range (°C / °F)** | **Color Variable**        | **Description** |
+| :------------------------------ | :------------------------ | :-------------- |
+| -50°C – -20°C / -58°F – -4°F    | `var(--indigo-color)`     | Extremely cold  |
+| -20°C – -2°C / -4°F – 28.4°F    | `var(--blue-color)`       | Very cold       |
+| -2°C – 2°C / 28.4°F – 35.6°F    | `var(--light-blue-color)` | Cold            |
+| 2°C – 15°C / 35.6°F – 59°F      | `var(--cyan-color)`       | Cool            |
+| 15°C – 20°C / 59°F – 68°F       | `var(--teal-color)`       | Mild            |
+| 20°C – 25°C / 68°F – 77°F       | `var(--green-color)`      | Optimal         |
+| 25°C – 27°C / 77°F – 80.6°F     | `var(--yellow-color)`     | Warm            |
+| 27°C – 30°C / 80.6°F – 86°F     | `var(--amber-color)`      | Hot             |
+| 30°C – 100°C / 86°F – 212°F     | `var(--red-color)`        | Extremely hot   |
 
 > [!IMPORTANT]
 >

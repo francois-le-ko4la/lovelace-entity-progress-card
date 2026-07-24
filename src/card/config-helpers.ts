@@ -20,7 +20,7 @@ import { is, has, assertDefined } from '../utils/common-checks.js';
 import { initLogger, type LoggerInstance } from '../utils/log.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
 import { YamlSchemaFactory } from './schema.js';
-import type { RawConfig, Config } from '../utils/types.js';
+import type { LovelaceConfig, Config } from '../utils/types.js';
 
 // Every YamlSchemaFactory getter (card/badge/feature/template/badgeTemplate)
 // returns the same struct(...) shape - .card's is as good a reference as any.
@@ -80,7 +80,7 @@ class BaseConfigHelper {
     return this._configResolved;
   }
 
-  set config(config: RawConfig) {
+  set config(config: LovelaceConfig) {
     this.#actionsReady = false;
     this._isDefined = true;
     BaseConfigHelper.#logDeprecatedOption(config);
@@ -123,7 +123,7 @@ class BaseConfigHelper {
     };
   }
 
-  static _customizeConfig(config: RawConfig): RawConfig {
+  static _customizeConfig(config: LovelaceConfig): LovelaceConfig {
     return config;
   }
 
@@ -131,11 +131,11 @@ class BaseConfigHelper {
   // max_value/disable_unit/additions to begin with. Matches _customizeConfig's
   // own polymorphic no-op above, so the editor's "Migrate config" button can
   // call this generically regardless of which config helper is active.
-  static _migrateLegacyOptions(config: RawConfig): RawConfig {
+  static _migrateLegacyOptions(config: LovelaceConfig): LovelaceConfig {
     return config;
   }
 
-  static #logDeprecatedOption(config: RawConfig) {
+  static #logDeprecatedOption(config: LovelaceConfig) {
     if (config.navigate_to !== undefined)
       console.warn(
         `${META.types.card.typeName.toUpperCase()} - navigate_to option is deprecated and has been removed.`,
@@ -325,7 +325,7 @@ class CardConfigHelper extends BaseConfigHelper {
   // (or absent, i.e. the 100 default); an entity/jinja-based max can't be
   // mirrored at this config-negotiation stage. An explicit min_value (even 0)
   // is always left untouched.
-  static _applyCenterZeroMinDefault(config: RawConfig, normalized: RawConfig): RawConfig {
+  static _applyCenterZeroMinDefault(config: LovelaceConfig, normalized: LovelaceConfig): LovelaceConfig {
     if (!config?.center_zero || !is.nullish(config?.min_value)) return normalized;
     const maxForSymmetry = is.number(normalized?.max_value) ? normalized.max_value : CARD.config.value.max;
     return { ...normalized, min_value: -maxForSymmetry };
@@ -343,7 +343,7 @@ class CardConfigHelper extends BaseConfigHelper {
   // validation, so every downstream consumer only ever sees a number or that
   // map — no sniffing left anywhere. The deprecation warning for the bare form
   // is logged separately, see BaseConfigHelper.#logDeprecatedOption.
-  static _migrateLegacyOptions(config: RawConfig): RawConfig {
+  static _migrateLegacyOptions(config: LovelaceConfig): LovelaceConfig {
     let normalized = config;
     if (is.nonEmptyString(config?.max_value)) {
       normalized = {
@@ -400,7 +400,7 @@ class CardConfigHelper extends BaseConfigHelper {
     return normalized;
   }
 
-  static _customizeConfig(config: RawConfig): RawConfig {
+  static _customizeConfig(config: LovelaceConfig): LovelaceConfig {
     let normalized = CardConfigHelper._migrateLegacyOptions(config);
     normalized = CardConfigHelper._applyCenterZeroMinDefault(config, normalized);
     const attrMapping: Record<string, { attribute?: string }> = HA_CONTEXT.attributeMapping;

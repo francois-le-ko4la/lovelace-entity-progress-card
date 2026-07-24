@@ -3,17 +3,18 @@
  * bar_stack entities and custom_theme zones.
  */
 
-import { VALUE_CHANGED_EVENT, HA_SELECTOR_TAG, HA_SVG_ICON_TAG } from '../utils/parameters.js';
+import { VALUE_CHANGED_EVENT, HA_SELECTOR_TAG, HA_SVG_ICON_TAG, devName } from '../utils/parameters.js';
 import { BAR_STACK_EDITOR_STYLE, CUSTOM_THEME_EDITOR_STYLE } from '../utils/styles.js';
 import { is, assertDefined } from '../utils/common-checks.js';
-import type { Hass } from '../utils/hass-provider.js';
+import { defineElement } from '../utils/register.js';
+import type { HomeAssistant } from '../utils/hass-provider.js';
 
 // The two dynamic HA custom elements built throughout this file: `ha-selector`
 // (whose `.selector`/`.value` shape depends on which selector type is
 // configured - too heterogeneous to model beyond "some value", same
 // reasoning as DOMHelper._domElements) and `ha-svg-icon` (just `.path`).
 type HaSelectorElement = HTMLElement & {
-  hass: Hass | null;
+  hass: HomeAssistant | null;
   selector: Record<string, unknown>;
   value: unknown;
   label?: string;
@@ -116,15 +117,15 @@ abstract class ListEditorBase extends HTMLElement {
  * @extends ListEditorBase
  */
 class EntityProgressBarStackEditor extends ListEditorBase {
-  static ELEMENT_NAME = 'entity-progress-bar-stack-editor';
-  #hass: Hass | null = null;
+  static ELEMENT_NAME = devName('entity-progress-bar-stack-editor');
+  #hass: HomeAssistant | null = null;
   #addBtn: HTMLElement | null = null;
 
-  get hass(): Hass | null {
+  get hass(): HomeAssistant | null {
     return this.#hass;
   }
 
-  set hass(hass: Hass) {
+  set hass(hass: HomeAssistant) {
     this.#hass = hass;
     for (const el of this.shadowRoot?.querySelectorAll(HA_SELECTOR_TAG) ?? []) (el as HaSelectorElement).hass = hass;
   }
@@ -261,9 +262,7 @@ class EntityProgressBarStackEditor extends ListEditorBase {
   }
 }
 
-if (!customElements.get(EntityProgressBarStackEditor.ELEMENT_NAME)) {
-  customElements.define(EntityProgressBarStackEditor.ELEMENT_NAME, EntityProgressBarStackEditor);
-}
+defineElement(EntityProgressBarStackEditor.ELEMENT_NAME, EntityProgressBarStackEditor);
 
 /**
  * Custom element that renders an editable list of custom_theme zones, each a
@@ -275,8 +274,8 @@ if (!customElements.get(EntityProgressBarStackEditor.ELEMENT_NAME)) {
  */
 
 class EntityProgressCustomThemeEditor extends ListEditorBase {
-  static ELEMENT_NAME = 'entity-progress-custom-theme-editor';
-  #hass: Hass | null = null;
+  static ELEMENT_NAME = devName('entity-progress-custom-theme-editor');
+  #hass: HomeAssistant | null = null;
   #addBtn: HTMLElement | null = null;
   #addLabel = 'Add zone';
 
@@ -285,11 +284,11 @@ class EntityProgressCustomThemeEditor extends ListEditorBase {
     if (this.#addBtn?.lastChild) this.#addBtn.lastChild.textContent = this.#addLabel;
   }
 
-  get hass(): Hass | null {
+  get hass(): HomeAssistant | null {
     return this.#hass;
   }
 
-  set hass(hass: Hass) {
+  set hass(hass: HomeAssistant) {
     this.#hass = hass;
     for (const el of this.shadowRoot?.querySelectorAll(HA_SELECTOR_TAG) ?? []) (el as HaSelectorElement).hass = hass;
   }
@@ -419,9 +418,7 @@ class EntityProgressCustomThemeEditor extends ListEditorBase {
   }
 }
 
-if (!customElements.get(EntityProgressCustomThemeEditor.ELEMENT_NAME)) {
-  customElements.define(EntityProgressCustomThemeEditor.ELEMENT_NAME, EntityProgressCustomThemeEditor);
-}
+defineElement(EntityProgressCustomThemeEditor.ELEMENT_NAME, EntityProgressCustomThemeEditor);
 
 export { ListEditorBase };
 export { EntityProgressBarStackEditor };

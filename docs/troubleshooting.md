@@ -207,6 +207,41 @@ leftover manual resource in **Settings → Dashboards → Resources**). If you s
 this warning, remove the extra resource entry first — it resolves most
 "impossible to reproduce" issues on its own.
 
+#### 🔎 Enable debug logging (`?debug=…`)
+
+For harder cases, the card can print detailed per-area logs to the browser
+console — no special build required. Add a `?debug=…` query to the card's
+resource URL in **Settings → Dashboards → ⋮ → Resources**, e.g.:
+
+```text
+/hacsfiles/lovelace-entity-progress-card/entity-progress-card.js?debug=card,registration
+```
+
+Reload the page (a hard refresh, `Ctrl`/`Cmd` + `Shift` + `R`). A console
+warning confirms which areas are active. Available areas (comma-separated, or
+`all`):
+
+| Area                 | What it logs                                                                              |
+| -------------------- | ----------------------------------------------------------------------------------------- |
+| `card`               | Card lifecycle — connect / disconnect / **document move** / config / refresh, with timing |
+| `registration`       | Custom-element registration order, duplicates, and card-picker entries                    |
+| `instances`          | A per-class object-creation counter (spot leaks / over-rendering)                         |
+| `interference`       | When **another module** changes this card's host element from outside                     |
+| `editor`             | The visual editor: config in, `config-changed` out                                        |
+| `interactionHandler` | tap / hold / double-tap action resolution                                                 |
+| `hass`               | First hass, HA core version, language changes                                             |
+| `ressourceManager`   | Timers / listeners / template subscriptions                                               |
+
+For a card that misbehaves only when other cards/modules are present,
+`?debug=card,registration,interference` is the most useful combination — it
+shows lifecycle churn, registration problems, and outside interference at once.
+Copy the console output into your issue.
+
+> [!NOTE]
+>
+> `?debug=…` only turns logging on — it changes nothing else, and has no effect
+> when the query is absent. Remove it once you're done.
+
 #### Open an issue on GitHub
 
 You don’t need to be a developer to report an issue! Whether you're a beginner

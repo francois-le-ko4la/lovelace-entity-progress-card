@@ -5,17 +5,40 @@
 
 import { HA_CONTEXT, CARD } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
-import { HassProviderSingleton, type Hass } from '../utils/hass-provider.js';
-import type { RawConfig, Config, FieldDef } from '../utils/types.js';
+import { HassProviderSingleton, type HomeAssistant } from '../utils/hass-provider.js';
+import type { LovelaceConfig, Config, FieldDef } from '../utils/types.js';
 import { DOMHelper } from '../card/dom-helpers.js';
 
 const availableSpace = (gap = 16, factor = 0.5): string => `calc((100% - ${gap}px) * ${factor})`;
 
+// HA's ha-expansion-panel, reduced to what we read: its reflected `expanded`
+// boolean. `expanded-changed` (a CustomEvent<{ expanded: boolean }>) is
+// listened to in EditorBase, not here.
+type HaExpansionPanel = HTMLElement & { expanded: boolean };
+
+// A registered field element with the lazily-cached reference to its owning
+// panel (undefined = not yet resolved, null = flat/no panel).
+type PanelAwareField = HTMLElement & { _ownerPanel?: HaExpansionPanel | null };
+
+// A field's owning ha-expansion-panel (or null for the flat `general`
+// section), resolved once via closest() and cached on the element - the
+// fields are appended into their panel only after registration, so this can't
+// be captured earlier, but by the first update pass the tree is fully
+// assembled. `closest` stays inside the editor's own shadow tree (fields and
+// panels share it), so it never crosses a shadow boundary.
+const ownerPanel = (el: PanelAwareField): HaExpansionPanel | null => {
+  if (el._ownerPanel === undefined) {
+    el._ownerPanel = el.closest('ha-expansion-panel') as HaExpansionPanel | null;
+  }
+  return el._ownerPanel;
+};
+
 // Field definitions (`def`, typed `FieldDef`), the raw config (`config`,
-// typed `RawConfig` - config-changed's own shape, plus editor UI state) and
-// the negotiated one (`negotiated`, typed `Config` - post schema validation)
-// are all dynamic `any`-shaped bags - branded so none of the three can be
-// swapped positionally in the functions below (see _updateField); selector/
+// typed `LovelaceConfig` - config-changed's own shape, plus editor UI state)
+// and the negotiated one (`negotiated`, typed `Config` - post schema
+// validation) are all dynamic `any`-shaped bags - branded so none of the
+// three can be swapped positionally in the functions below (see
+// _updateField); selector/
 // context payloads stay plain `any`, no adjacent lookalike to confuse them
 // with.
 class EditorDOMHelper extends DOMHelper {
@@ -31,13 +54,13 @@ class EditorDOMHelper extends DOMHelper {
     this.register(name, el);
   }
 
-  // ─── Hass propagation ─────────────────────────────────────────────────────
+  // ─── hass propagation ─────────────────────────────────────────────────────
 
   /**
    * Propagates hass to all registered field elements.
    * Batched in a single RAF call.
    */
-  updateHass(hass: Hass) {
+  updateHass(hass: HomeAssistant) {
     this.enqueue('__hass__', 'hass', () => {
       for (const el of this._domElements.values()) {
         if (el.hass !== hass) el.hass = hass;
@@ -104,7 +127,7 @@ class EditorDOMHelper extends DOMHelper {
    * the native ha-selector renders "Default (action-name)" inside the box.
    * Mirrors the validation preprocess logic for icon_tap_action (toggleDomain).
    */
-  _updateActionSelector(name: string, def: FieldDef, config: RawConfig) {
+  _updateActionSelector(name: string, def: FieldDef, config: LovelaceConfig) {
     const key = def.target ?? def.name;
     const defaults: Record<string, any> = CARD.config.defaults;
     let defaultAction = defaults[key]?.action ?? 'none';
@@ -145,7 +168,7 @@ class EditorDOMHelper extends DOMHelper {
    * Iterates all registered fields and applies value, visibility,
    * and dynamic selector updates based on the current config.
    */
-  _applyContext(name: string, contextDef: Record<string, string>, config: RawConfig) {
+  _applyContext(name: string, contextDef: Record<string, string>, config: LovelaceConfig) {
     // Same class of bug as updateSelector: reassigned a brand-new object on
     // every #updateFields() pass (i.e. on every keystroke anywhere in the form,
     // not just in this field), forcing the child selector (e.g. state_content's
@@ -167,24 +190,73 @@ class EditorDOMHelper extends DOMHelper {
   }
 
   updateAll(
-    config: RawConfig,
-    resolveValue: (def: FieldDef, config: RawConfig) => unknown,
+    config: LovelaceConfig,
+    resolveValue: (def: FieldDef, config: LovelaceConfig) => unknown,
     negotiated: Config | null = null,
-    resolveType: ((def: FieldDef, config: RawConfig) => unknown) | null = null,
+    resolveType: ((def: FieldDef, config: LovelaceConfig) => unknown) | null = null,
   ) {
     for (const [name, el] of this._domElements) {
       const def = el._fieldDef;
-      if (def) this._updateField(name, def, config, resolveValue, negotiated, resolveType);
+      if (!def) continue;
+      // Skip fields inside a collapsed panel: their content isn't even
+      // projected/laid out (ha-expansion-panel lazy-renders its slot), so
+      // recomputing them every keystroke is pure waste. EditorBase re-runs a
+      // targeted pass for a panel the moment it expands (see updatePanel),
+      // which brings any change made while it was collapsed - including a
+      // switch to the raw YAML editor and back - up to date exactly when the
+      // fields become visible again.
+      const panel = ownerPanel(el);
+      if (panel && !panel.expanded) continue;
+      this._updateField(name, def, config, resolveValue, negotiated, resolveType);
+    }
+  }
+
+  // Targeted counterpart to updateAll for a single panel's fields - called by
+  // EditorBase on `expanded-changed` so a just-opened panel catches up on any
+  // config change it skipped while collapsed.
+  updatePanel(
+    panel: HaExpansionPanel,
+    config: LovelaceConfig,
+    resolveValue: (def: FieldDef, config: LovelaceConfig) => unknown,
+    negotiated: Config | null = null,
+    resolveType: ((def: FieldDef, config: LovelaceConfig) => unknown) | null = null,
+  ) {
+    for (const [name, el] of this._domElements) {
+      const def = el._fieldDef;
+      if (def && ownerPanel(el) === panel) {
+        this._updateField(name, def, config, resolveValue, negotiated, resolveType);
+      }
+    }
+  }
+
+  // Targeted counterpart to updateAll for just the fields writing one of
+  // `keys` - called by EditorBase when only "isolated" (nothing-else-depends-
+  // on-them) config keys changed, so the other fields don't need re-walking.
+  // A field's config key is `target ?? name`. Collapsed panels are skipped
+  // like in updateAll (the expand handler catches them up).
+  updateKeys(
+    keys: Set<string>,
+    config: LovelaceConfig,
+    resolveValue: (def: FieldDef, config: LovelaceConfig) => unknown,
+    negotiated: Config | null = null,
+    resolveType: ((def: FieldDef, config: LovelaceConfig) => unknown) | null = null,
+  ) {
+    for (const [name, el] of this._domElements) {
+      const def = el._fieldDef;
+      if (!def || !keys.has(def.target ?? def.name)) continue;
+      const panel = ownerPanel(el);
+      if (panel && !panel.expanded) continue;
+      this._updateField(name, def, config, resolveValue, negotiated, resolveType);
     }
   }
 
   _updateField(
     name: string,
     def: FieldDef,
-    config: RawConfig,
-    resolveValue: (def: FieldDef, config: RawConfig) => unknown,
+    config: LovelaceConfig,
+    resolveValue: (def: FieldDef, config: LovelaceConfig) => unknown,
     negotiated: Config | null = null,
-    resolveType: ((def: FieldDef, config: RawConfig) => unknown) | null = null,
+    resolveType: ((def: FieldDef, config: LovelaceConfig) => unknown) | null = null,
   ) {
     // Visibility
     if (def.showIf) {
@@ -241,7 +313,7 @@ class EditorDOMHelper extends DOMHelper {
     if (def.type === 'action') this._updateActionSelector(name, def, config);
   }
 
-  _updateVirtualValue(name: string, def: FieldDef, config: RawConfig) {
+  _updateVirtualValue(name: string, def: FieldDef, config: LovelaceConfig) {
     if (!def.resolveVirtual) return;
     this.updateValue(name, def.resolveVirtual(config));
   }

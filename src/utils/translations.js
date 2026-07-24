@@ -111,7 +111,11 @@ const TRANSLATIONS = {
           temperature: 'درجة الحرارة',
           humidity: 'الرطوبة',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
           small: 'صغيرة',
@@ -375,7 +379,11 @@ const TRANSLATIONS = {
           temperature: 'তাপমাত্রা',
           humidity: 'আর্দ্রতা',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
           small: 'ছোট',
@@ -639,7 +647,11 @@ const TRANSLATIONS = {
           temperature: 'Temperatura',
           humidity: 'Humitat',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
           small: 'Petita',
@@ -903,7 +915,11 @@ const TRANSLATIONS = {
           temperature: 'Teplota',
           humidity: 'Vlhkost',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
           small: 'Malá',
@@ -1167,7 +1183,11 @@ const TRANSLATIONS = {
           temperature: 'Temperatur',
           humidity: 'Fugtighed',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
           small: 'Lille',
@@ -1431,7 +1451,11 @@ const TRANSLATIONS = {
           temperature: 'Temperatur',
           humidity: 'Feuchtigkeit',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
           small: 'Klein',
@@ -1695,7 +1719,11 @@ const TRANSLATIONS = {
           temperature: 'Θερμοκρασία',
           humidity: 'Υγρασία',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
           small: 'Μικρή',
@@ -1959,7 +1987,11 @@ const TRANSLATIONS = {
           temperature: 'Temperature',
           humidity: 'Humidity',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
           small: 'Small',
@@ -2223,7 +2255,11 @@ const TRANSLATIONS = {
           temperature: 'Temperatura',
           humidity: 'Humedad',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
           small: 'Pequeña',
@@ -2487,7 +2523,11 @@ const TRANSLATIONS = {
           temperature: 'Temperatura',
           humidity: 'Humedad',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
           small: 'Pequeña',
@@ -2751,7 +2791,11 @@ const TRANSLATIONS = {
           temperature: 'Temperatuur',
           humidity: 'Niiskus',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
           small: 'Väike',
@@ -3015,7 +3059,11 @@ const TRANSLATIONS = {
           temperature: 'Lämpötila',
           humidity: 'Kosteus',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
           small: 'Pieni',
@@ -3279,7 +3327,11 @@ const TRANSLATIONS = {
           temperature: 'Température',
           humidity: 'Humidité',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
           small: 'Petite',
@@ -3566,7 +3618,11 @@ const TRANSLATIONS = {
           optimal_when_low: 'कम होने पर इष्टतम (CPU, RAM,...)',
           pm25: 'PM2.5',
           temperature: 'तापमान',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'स्वचालित',
@@ -3830,7 +3886,11 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optimalno kada je nisko (CPU, RAM,...)',
           pm25: 'PM2.5',
           temperature: 'Temperatura',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Automatski',
@@ -4071,7 +4131,11 @@ const TRANSLATIONS = {
           temperature: 'Hőmérséklet',
           humidity: 'Páratartalom',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
           small: 'Kicsi',
@@ -4358,7 +4422,11 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optimal saat Rendah (CPU, RAM,...)',
           pm25: 'PM2.5',
           temperature: 'Suhu',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Otomatis',
@@ -4622,7 +4690,11 @@ const TRANSLATIONS = {
           optimal_when_low: 'Ottimale quando è basso (CPU, RAM,...)',
           pm25: 'PM2.5',
           temperature: 'Temperatura',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Automatico',
@@ -4886,7 +4958,11 @@ const TRANSLATIONS = {
           optimal_when_low: '低い時が最適（CPU、RAMなど）',
           pm25: 'PM2.5',
           temperature: '温度',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: '自動',
@@ -5150,7 +5226,11 @@ const TRANSLATIONS = {
           optimal_when_low: '낮을 때 최적 (CPU, RAM 등)',
           pm25: 'PM2.5',
           temperature: '온도',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: '자동',
@@ -5391,7 +5471,11 @@ const TRANSLATIONS = {
           temperature: 'Temperatūra',
           humidity: 'Drėgmė',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
           small: 'Maža',
@@ -5655,7 +5739,11 @@ const TRANSLATIONS = {
           temperature: 'Temperatūra',
           humidity: 'Mitrums',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
           small: 'Mazs',
@@ -5942,7 +6030,11 @@ const TRANSLATIONS = {
           optimal_when_low: 'Оптимално кога е ниско(CPU, RAM,...)',
           pm25: 'PM2.5',
           temperature: 'Температура',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Автоматски',
@@ -6206,7 +6298,11 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optimal når lavt (CPU, RAM,...)',
           pm25: 'PM2.5',
           temperature: 'Temperatur',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Auto',
@@ -6470,7 +6566,11 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optimaal wanneer laag (CPU, RAM,...)',
           pm25: 'PM2.5',
           temperature: 'Temperatuur',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Automatisch',
@@ -6734,7 +6834,11 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optymalny, gdy niskie (CPU, RAM,...)',
           pm25: 'PM2.5',
           temperature: 'Temperatura',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Automatycznie',
@@ -6975,7 +7079,11 @@ const TRANSLATIONS = {
           temperature: 'Temperatura',
           humidity: 'Umidade',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
           small: 'Pequena',
@@ -7262,7 +7370,11 @@ const TRANSLATIONS = {
           optimal_when_low: 'Ótimo quando é baixo (CPU, RAM,...)',
           pm25: 'PM2.5',
           temperature: 'Temperatura',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Auto',
@@ -7526,7 +7638,11 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optim când este scăzut (CPU, RAM...)',
           pm25: 'PM2.5',
           temperature: 'Temperatură',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Automat',
@@ -7790,7 +7906,11 @@ const TRANSLATIONS = {
           optimal_when_low: 'Оптимально при низких значениях (ЦП, ОЗУ,...)',
           pm25: 'PM2.5',
           temperature: 'Температура',
-          voc: 'ЛОС'
+          voc: 'ЛОС',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Авто',
@@ -8031,7 +8151,11 @@ const TRANSLATIONS = {
           temperature: 'Teplota',
           humidity: 'Vlhkosť',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
           small: 'Malá',
@@ -8295,7 +8419,11 @@ const TRANSLATIONS = {
           temperature: 'Temperatura',
           humidity: 'Vlažnost',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
           small: 'Majhna',
@@ -8582,7 +8710,11 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optimal när det är lågt (CPU, RAM,...)',
           pm25: 'PM2.5',
           temperature: 'Temperatur',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Auto',
@@ -8846,7 +8978,11 @@ const TRANSLATIONS = {
           optimal_when_low: 'เหมาะสมเมื่อต่ำ (CPU, RAM,...)',
           pm25: 'PM2.5',
           temperature: 'อุณหภูมิ',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'อัตโนมัติ',
@@ -9110,7 +9246,11 @@ const TRANSLATIONS = {
           optimal_when_low: 'Düşükken en iyi (CPU, RAM...)',
           pm25: 'PM2.5',
           temperature: 'Sıcaklık',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Otomatik',
@@ -9374,7 +9514,11 @@ const TRANSLATIONS = {
           optimal_when_low: 'Оптимально при низьких значеннях (CPU, RAM,...)',
           pm25: 'PM2.5',
           temperature: 'Температура',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Авто',
@@ -9638,7 +9782,11 @@ const TRANSLATIONS = {
           optimal_when_low: 'Tối ưu khi thấp (CPU, RAM,...)',
           pm25: 'PM2.5',
           temperature: 'Nhiệt độ',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Tự động',
@@ -9879,7 +10027,11 @@ const TRANSLATIONS = {
           temperature: '温度',
           humidity: '湿度',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
           small: '小',
@@ -10143,7 +10295,11 @@ const TRANSLATIONS = {
           temperature: '溫度',
           humidity: '濕度',
           pm25: 'PM2.5',
-          voc: 'VOC'
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
           small: '小',

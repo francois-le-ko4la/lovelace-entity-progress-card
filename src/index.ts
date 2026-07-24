@@ -1,13 +1,27 @@
 /*
- * Bundle entry point: registers every card/badge/feature type with Home
- * Assistant, exposes the window.EPB_DIAG diagnostic helper, and prints the
- * console banner. Runs once, on load.
+ * Entity Progress Card - a set of custom Lovelace elements for Home Assistant
+ * that show an entity's value as a progress bar with an icon, name and
+ * secondary info. Author: ko4la. Docs & source:
+ * https://github.com/francois-le-ko4la/lovelace-entity-progress-card/
+ *
+ * Ships five element types from one bundle: the card, a badge, an in-tile
+ * feature, and Jinja-template variants of the card and badge - each with its
+ * own visual editor. Zero runtime dependencies (no Lit, no external sanitizer,
+ * no CDN request): plain HTMLElement subclasses with hand-rolled batching/
+ * change-tracking/style-sharing helpers. Highlights: entity-, number- or
+ * Jinja-driven min/max/watermark/alert thresholds; theme presets and custom
+ * themes with segment/rainbow gradients; center-zero diverging bars; bar_stack
+ * aggregation; URL-derived per-area console logging and dev mode (?debug=…,
+ * …_dev.js/?dev); and the window.EPB_DIAG.dump() diagnostic.
+ *
+ * This file is the bundle entry point: it registers every card/badge/feature
+ * type with Home Assistant, exposes window.EPB_DIAG, and prints the console
+ * banner. Runs once, on load.
  */
 
-import { VERSION, META, CARD_CONTEXT, CARD, HA_SELECTOR_TAG, HA_ACTION_HANDLER_TAG } from './utils/parameters.js';
-import { CONSTRUCTED_SHEETS } from './utils/styles.js';
+import { META, CARD_CONTEXT, CARD } from './utils/parameters.js';
 import { RegistrationHelper } from './utils/register.js';
-import { HassProviderSingleton } from './utils/hass-provider.js';
+import { installDiagnostic } from './utils/diagnostic.js';
 import {
   EntityProgressCard,
   EntityProgressBadge,
@@ -21,23 +35,6 @@ import {
   EntityProgressTemplateEditor,
   EntityProgressBadgeTemplateEditor,
 } from './editor/editors.js';
-
-interface RegisteredEntry {
-  type: string;
-  version?: string;
-}
-
-declare global {
-  interface Window {
-    EPB_DIAG?: {
-      version: string;
-      dump: () => string;
-    };
-    customCards?: RegisteredEntry[];
-    customBadges?: RegisteredEntry[];
-    customCardFeatures?: RegisteredEntry[];
-  }
-}
 
 /******************************************************************************
  * 🔧 Register components
@@ -54,47 +51,10 @@ RegistrationHelper.registerBadge(
 RegistrationHelper.registerCardFeature(META.types.feature, EntityProgressFeatures);
 
 /******************************************************************************
- * 🔧 Diagnostic helper — `window.EPB_DIAG.dump()` in the browser console
- * prints an anonymized environment report to paste into bug reports.
+ * 🔧 Diagnostic helper — window.EPB_DIAG.dump(), see utils/diagnostic.ts
  */
 
-if (!window.EPB_DIAG) {
-  window.EPB_DIAG = Object.freeze({
-    version: VERSION,
-    dump() {
-      const hass = HassProviderSingleton.getInstance().hass;
-      // Multiple registrations of the same EPB type = duplicate resource (HACS
-      // + manual), the classic root cause of "impossible" bugs. Surface it
-      // front and center.
-      // Badges/badgeTemplate register under window.customBadges and the tile
-      // feature under window.customCardFeatures (see RegistrationHelper) -
-      // window.customCards alone only ever surfaces card/template.
-      const allRegistered = [
-        ...(window.customCards ?? []),
-        ...(window.customBadges ?? []),
-        ...(window.customCardFeatures ?? []),
-      ];
-      const epbEntries = allRegistered.filter((card) => card.type?.startsWith('entity-progress'));
-      const duplicates = epbEntries.length !== new Set(epbEntries.map((card) => card.type)).size;
-      const report = [
-        '=== Entity Progress Card — diagnostic ===',
-        `card version   : ${VERSION}${CARD_CONTEXT.dev ? ' (dev mode)' : ''}`,
-        `HA core        : ${hass?.config?.version ?? 'unknown (no hass yet)'}`,
-        `language       : ${hass?.locale?.language ?? navigator.language}`,
-        `browser        : ${navigator.userAgent}`,
-        `dark mode      : ${window.matchMedia?.('(prefers-color-scheme: dark)')?.matches ?? 'n/a'}`,
-        `reduced motion : ${window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? 'n/a'}`,
-        `EPB registered : ${epbEntries.map((card) => `${card.type}@${card.version ?? '?'}`).join(', ') || 'none'}`,
-        `duplicate load : ${duplicates ? '⚠️ YES — remove one of the two resources!' : 'no'}`,
-        `HA elements    : ha-card=${Boolean(customElements.get('ha-card'))} ha-selector=${Boolean(customElements.get(HA_SELECTOR_TAG))} action-handler=${Boolean(customElements.get(HA_ACTION_HANDLER_TAG))}`,
-        `constructed CSS: ${CONSTRUCTED_SHEETS.size > 0 && [...CONSTRUCTED_SHEETS.values()].some(Boolean) ? 'shared (modern)' : 'per-card fallback'}`,
-        '=========================================',
-      ].join('\n');
-      console.info(report);
-      return report;
-    },
-  });
-}
+installDiagnostic();
 
 /******************************************************************************
  * 🔧 Show module info
@@ -104,3 +64,29 @@ console.groupCollapsed(CARD.console.message, CARD.console.css);
 // eslint-disable-next-line no-console -- startup banner, not a debug leftover
 console.log(CARD.console.link);
 console.groupEnd();
+
+// dev/debug are derived from the served URL (see CARD_CONTEXT in
+// parameters.ts) - warn loudly when either is active so a *_dev.js / ?dev /
+// ?debug=… configuration is never running silently mistaken for the shipped
+// build.
+if (CARD_CONTEXT.dev) {
+  console.warn(CARD.console.devWarning, CARD.console.warnCss);
+}
+if (CARD_CONTEXT.noRegistration) {
+  console.warn(CARD.console.noRegistrationWarning, CARD.console.warnCss);
+}
+const activeDebugAreas = Object.entries(CARD_CONTEXT.debug)
+  .filter(([, on]) => on)
+  .map(([area]) => area);
+if (activeDebugAreas.length > 0) {
+  console.warn(
+    `${CARD.console.debugWarning}${activeDebugAreas.join(', ')}${CARD.console.debugWarningHint}`,
+    CARD.console.warnCss,
+  );
+}
+
+// noRegistration renders nothing, so the "run EPB_DIAG.dump()" cue never reaches
+// the reporter - emit the report automatically right after the banner (#108).
+if (CARD_CONTEXT.noRegistration) {
+  window.EPB_DIAG?.dump();
+}

@@ -127,7 +127,11 @@
         "optimal_when_low": "低い時が最適（CPU、RAMなど）",
         "pm25": "PM2.5",
         "temperature": "温度",
-        "voc": "VOC"
+        "voc": "VOC",
+        "critical_when_low": "Critical when Low (Battery, disk...)",
+        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
+        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
+        "battery_adaptive": "Battery (adapts to charging state)"
       },
       "bar_color_mode": {
         "auto": "自動",

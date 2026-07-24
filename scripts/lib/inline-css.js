@@ -87,7 +87,14 @@ function skipStringLiteral(src, start) {
 
 function evalInFile(code) {
   const tmpFile = path.join(os.tmpdir(), `epb-css-build-${Date.now()}-${Math.random().toString(36).slice(2)}.js`);
-  fs.writeFileSync(tmpFile, code);
+  // The prefix-eval path can include parameters.ts's `import.meta.url` (read
+  // to derive dev/debug from the served URL). A bare `import.meta` token makes
+  // Node auto-detect the temp file as ESM, which then breaks the CommonJS
+  // `module.exports = ...` this eval relies on. It's irrelevant to CSS
+  // resolution, so neutralize it to a harmless stand-in (`new URL("")` throws
+  // → the code already falls back to empty params).
+  const cjsSafe = code.replace(/\bimport\.meta\b/g, '({ url: "" })');
+  fs.writeFileSync(tmpFile, cjsSafe);
   try {
     delete require.cache[require.resolve(tmpFile)];
     return require(tmpFile);

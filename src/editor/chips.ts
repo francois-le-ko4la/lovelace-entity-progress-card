@@ -4,10 +4,11 @@
  * mode, bar_stack mode...).
  */
 
-import { CARD, VALUE_CHANGED_EVENT } from '../utils/parameters.js';
+import { CARD, VALUE_CHANGED_EVENT, devName } from '../utils/parameters.js';
 import { CHIPS_HOST_STYLE } from '../utils/styles.js';
 import { is } from '../utils/common-checks.js';
-import type { RawConfig } from '../utils/types.js';
+import { defineElement } from '../utils/register.js';
+import type { LovelaceConfig } from '../utils/types.js';
 
 /**
  * Shared base for the editor's chip-based selector custom elements: builds
@@ -98,8 +99,8 @@ abstract class ChipsBase extends HTMLElement {
  * @extends ChipsBase
  */
 class EntityProgressEffectChips extends ChipsBase {
-  static ELEMENT_NAME = 'entity-progress-effect-chips';
-  static #EFFECTS: { value: string; showIf?: (c: RawConfig) => boolean }[] = [
+  static ELEMENT_NAME = devName('entity-progress-effect-chips');
+  static #EFFECTS: { value: string; showIf?: (c: LovelaceConfig) => boolean }[] = [
     { value: 'radius' },
     { value: 'glass', showIf: (c) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode) },
     { value: 'gradient', showIf: (c) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode) },
@@ -115,7 +116,7 @@ class EntityProgressEffectChips extends ChipsBase {
   }
 
   #selected: string[] = [];
-  #config: RawConfig = {} as RawConfig;
+  #config: LovelaceConfig = {} as LovelaceConfig;
   #chips = new Map<string, HTMLButtonElement>();
 
   _buildDOM() {
@@ -146,7 +147,7 @@ class EntityProgressEffectChips extends ChipsBase {
     this._render();
   }
 
-  updateConfig(config: RawConfig) {
+  updateConfig(config: LovelaceConfig) {
     this.#config = config ?? {};
     this._render();
   }
@@ -171,9 +172,7 @@ class EntityProgressEffectChips extends ChipsBase {
   }
 }
 
-if (!customElements.get(EntityProgressEffectChips.ELEMENT_NAME)) {
-  customElements.define(EntityProgressEffectChips.ELEMENT_NAME, EntityProgressEffectChips);
-}
+defineElement(EntityProgressEffectChips.ELEMENT_NAME, EntityProgressEffectChips);
 
 /**
  * Multi-select chips for the `hide` option: toggles which card components
@@ -184,7 +183,7 @@ if (!customElements.get(EntityProgressEffectChips.ELEMENT_NAME)) {
  * @extends ChipsBase
  */
 class EntityProgressHideChips extends ChipsBase {
-  static ELEMENT_NAME = 'entity-progress-hide-chips';
+  static ELEMENT_NAME = devName('entity-progress-hide-chips');
   static #ITEMS = ['icon', 'name', 'value', 'unit', 'secondary_info', 'progress_bar'];
   #selected: string[] = [];
   #chips = new Map<string, HTMLButtonElement>();
@@ -234,9 +233,7 @@ class EntityProgressHideChips extends ChipsBase {
   }
 }
 
-if (!customElements.get(EntityProgressHideChips.ELEMENT_NAME)) {
-  customElements.define(EntityProgressHideChips.ELEMENT_NAME, EntityProgressHideChips);
-}
+defineElement(EntityProgressHideChips.ELEMENT_NAME, EntityProgressHideChips);
 
 /**
  * Single-select variant: exactly one mode is always active (no
@@ -301,12 +298,10 @@ abstract class SingleSelectChipsBase extends ChipsBase {
  * @extends SingleSelectChipsBase
  */
 class EntityProgressValueSourceModeChips extends SingleSelectChipsBase {
-  static ELEMENT_NAME = 'entity-progress-value-source-mode-chips';
+  static ELEMENT_NAME = devName('entity-progress-value-source-mode-chips');
   static MODES = ['standard', 'entity', 'jinja'];
 }
-if (!customElements.get(EntityProgressValueSourceModeChips.ELEMENT_NAME)) {
-  customElements.define(EntityProgressValueSourceModeChips.ELEMENT_NAME, EntityProgressValueSourceModeChips);
-}
+defineElement(EntityProgressValueSourceModeChips.ELEMENT_NAME, EntityProgressValueSourceModeChips);
 
 /**
  * Single-select chips for `theme_mode`: preset theme vs custom_theme zones.
@@ -314,12 +309,10 @@ if (!customElements.get(EntityProgressValueSourceModeChips.ELEMENT_NAME)) {
  * @extends SingleSelectChipsBase
  */
 class EntityProgressThemeModeChips extends SingleSelectChipsBase {
-  static ELEMENT_NAME = 'entity-progress-theme-mode-chips';
+  static ELEMENT_NAME = devName('entity-progress-theme-mode-chips');
   static MODES = ['preset', 'custom'];
 }
-if (!customElements.get(EntityProgressThemeModeChips.ELEMENT_NAME)) {
-  customElements.define(EntityProgressThemeModeChips.ELEMENT_NAME, EntityProgressThemeModeChips);
-}
+defineElement(EntityProgressThemeModeChips.ELEMENT_NAME, EntityProgressThemeModeChips);
 
 /**
  * Single-select chips for `bar_stack.mode`: stacked/proportional/net
@@ -328,12 +321,10 @@ if (!customElements.get(EntityProgressThemeModeChips.ELEMENT_NAME)) {
  * @extends SingleSelectChipsBase
  */
 class EntityProgressBarStackModeChips extends SingleSelectChipsBase {
-  static ELEMENT_NAME = 'entity-progress-bar-stack-mode-chips';
+  static ELEMENT_NAME = devName('entity-progress-bar-stack-mode-chips');
   static MODES = ['stacked', 'proportional', 'net'];
 }
-if (!customElements.get(EntityProgressBarStackModeChips.ELEMENT_NAME)) {
-  customElements.define(EntityProgressBarStackModeChips.ELEMENT_NAME, EntityProgressBarStackModeChips);
-}
+defineElement(EntityProgressBarStackModeChips.ELEMENT_NAME, EntityProgressBarStackModeChips);
 
 export { ChipsBase };
 export { EntityProgressEffectChips };

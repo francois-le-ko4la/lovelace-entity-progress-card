@@ -105,6 +105,24 @@ function initLogger(ctx: object, debugFlag: boolean, methodNames: string[] = [])
   return logger;
 }
 
+// ?debug=instances counter, kept deliberately cheap so it's safe to call from
+// hot-path constructors (EntityHelper/EntityOrValue & co are re-created every
+// refresh): when disabled it's a single boolean check with zero allocation.
+// Call it once per inheritance tree - from the root class's constructor - and
+// `this.constructor.name` reports the actual most-derived class, so a subclass
+// needs no call of its own (and would only double-count if it added one).
+// constructor.name survives esbuild's prod minify (verified), so counts stay
+// readable even when ?debug=instances is used against the shipped build.
+const instanceCounts = new Map<string, number>();
+function traceInstance(instance: object, enabled: boolean): void {
+  if (!enabled) return;
+  const className = instance.constructor.name;
+  const count = (instanceCounts.get(className) ?? 0) + 1;
+  instanceCounts.set(className, count);
+  console.debug(`[instances] ${className} instantiated (#${count})`);
+}
+
 export { Logger };
 export { initLogger };
+export { traceInstance };
 export type { LoggerInstance };

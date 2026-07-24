@@ -7,11 +7,19 @@
 import { META, devName, HA_CONTEXT, CARD } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
 import { ObjStructure, ThemeManager } from './value-helpers.js';
-import { CardView, BadgeView, CardTemplateView, BadgeTemplateView } from './view.js';
+import {
+  CardView,
+  BadgeView,
+  FeatureView,
+  CardTemplateView,
+  BadgeTemplateView,
+  type ViewBase,
+  type TemplateView,
+} from './view.js';
 import { DOMHelper } from './dom-helpers.js';
 import { HACore, HABase } from './core.js';
-import type { Hass } from '../utils/hass-provider.js';
-import type { RawConfig } from '../utils/types.js';
+import type { HomeAssistant } from '../utils/hass-provider.js';
+import type { LovelaceConfig, Config } from '../utils/types.js';
 
 /**
  * Represents the base class for all standard cards:
@@ -22,13 +30,25 @@ import type { RawConfig } from '../utils/types.js';
  * @extends HABase
  */
 class EntityProgressCardBase extends HABase {
+  // Narrows HABase's own ViewCore back to ViewBase: every concrete subclass
+  // of this class (EntityProgressCard/EntityProgressBadge) always assigns a
+  // CardView/BadgeView, never one of the template-only views - unlike HABase
+  // itself, which EntityProgressTemplateBase also extends.
+  _cardView: ViewBase = new CardView();
   static _hiddenComponents: { label: string; class?: string }[] = [
     ...super._hiddenComponents,
     CARD.style.dynamic.hiddenComponent.value,
   ];
 
-  static getStubConfig(hass: Hass): RawConfig {
-    return { type: `custom:${devName(this._baseClass)}`, entity: HABase.getStubEntity(hass) } as unknown as RawConfig;
+  // async (like most cards' getStubConfig, e.g. Mushroom's) so a thrown
+  // error becomes a rejected promise instead of a synchronous exception
+  // that could abort whatever loop HA's card-picker uses to build previews
+  // for every registered card type, not just this one.
+  static async getStubConfig(hass: HomeAssistant): Promise<LovelaceConfig> {
+    return {
+      type: `custom:${devName(this._baseClass)}`,
+      entity: HABase.getStubEntity(hass),
+    } as unknown as LovelaceConfig;
   }
 
   static get _loggedMethods() {
@@ -69,13 +89,17 @@ class EntityProgressCardBase extends HABase {
       barColor: bar.barColor,
       iconColor: bar.iconColor,
       gradient: bar.colorGradient,
-      diverging: bar.divergingBarStack,
+      // bar_stack's own entity-driven diverging gradient wins if configured;
+      // themeDivergingGradient is center_zero's fallback for a plain themed
+      // gradient (see ViewBase.themeDivergingGradient) when there's no
+      // bar_stack to drive the two arms instead.
+      diverging: bar.divergingBarStack ?? bar.themeDivergingGradient,
     });
     this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null);
   }
 
   // ─── STD FIELDS PROCESSING - CUSTOMIZATION ────────────────────────────────
-  static _getStandardFields(cardView: any): { className: string; value: any }[] {
+  static _getStandardFields(cardView: ViewBase): { className: string; value: any }[] {
     return [
       {
         className: CARD.htmlStructure.elements.nameMain.class,
@@ -100,22 +124,22 @@ class EntityProgressCardBase extends HABase {
       badge_color: () => this._renderBadgeColor(content),
       custom_info: () => this._renderCustomInfo(content),
       name_info: () => this._renderNameInfo(content),
-      min_value: () => this._renderJinjaNumber(content, (c: RawConfig) => c.min_value?.jinja, 'jinjaMinValue'),
-      max_value: () => this._renderJinjaNumber(content, (c: RawConfig) => c.max_value?.jinja, 'jinjaMaxValue'),
+      min_value: () => this._renderJinjaNumber(content, (c: Config) => c.min_value?.jinja, 'jinjaMinValue'),
+      max_value: () => this._renderJinjaNumber(content, (c: Config) => c.max_value?.jinja, 'jinjaMaxValue'),
       'watermark.low': () =>
-        this._renderJinjaNumber(content, (c: RawConfig) => c.watermark?.low?.jinja, 'jinjaWatermarkLow'),
+        this._renderJinjaNumber(content, (c: Config) => c.watermark?.low?.jinja, 'jinjaWatermarkLow'),
       'watermark.high': () =>
-        this._renderJinjaNumber(content, (c: RawConfig) => c.watermark?.high?.jinja, 'jinjaWatermarkHigh'),
+        this._renderJinjaNumber(content, (c: Config) => c.watermark?.high?.jinja, 'jinjaWatermarkHigh'),
       'alert_when.above': () =>
-        this._renderJinjaNumber(content, (c: RawConfig) => c.alert_when?.above?.jinja, 'jinjaAlertAbove'),
+        this._renderJinjaNumber(content, (c: Config) => c.alert_when?.above?.jinja, 'jinjaAlertAbove'),
       'alert_when.below': () =>
-        this._renderJinjaNumber(content, (c: RawConfig) => c.alert_when?.below?.jinja, 'jinjaAlertBelow'),
+        this._renderJinjaNumber(content, (c: Config) => c.alert_when?.below?.jinja, 'jinjaAlertBelow'),
     };
   }
 
   _renderJinjaNumber(
     content: unknown,
-    getJinja: (c: RawConfig) => string | undefined,
+    getJinja: (c: Config) => string | undefined,
     viewProp:
       | 'jinjaMinValue'
       | 'jinjaMaxValue'
@@ -142,7 +166,7 @@ class EntityProgressCardBase extends HABase {
       // min_value/max_value feed #percentHelper (via refresh) - both the
       // bar's own CSS (_updateCSS) and secondaryInfoMain (_processStandard
       // Fields, the "45%" label) are derived from it.
-      this._cardView.refresh(this.hass);
+      this._cardView.refresh(this.hass as HomeAssistant);
       this._updateCSS();
       this._processStandardFields();
     } else if (viewProp === 'jinjaWatermarkLow' || viewProp === 'jinjaWatermarkHigh') {
@@ -185,7 +209,7 @@ class EntityProgressCard extends EntityProgressCardBase {
   _cardView = new CardView();
   static _baseClass: string = META.types.card.typeName;
 
-  // ─── STATIC METHODS ===
+  // ─── STATIC METHODS ───────────────────────────────────────────────────────
 
   static get _loggedMethods() {
     return [...super._loggedMethods, 'getCardSize', 'getLayoutOptions', 'getGridOptions'];
@@ -204,11 +228,11 @@ class EntityProgressBadge extends EntityProgressCardBase {
   static _hasDisabledBadge = true;
   static _cardStructure: ObjStructure = new ObjStructure('badge');
 
-  // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION === Derived from the Card map
-  // (minus the badge-only handlers) instead of hand-mirroring it: an earlier
-  // hand-maintained copy silently missed min_value for months (CF5, medium), so
-  // any handler added on the base class is now picked up here automatically by
-  // construction.
+  // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ─────────────────────────────
+  // Derived from the Card map (minus the badge-only handlers) instead of
+  // hand-mirroring it: an earlier hand-maintained copy silently missed
+  // min_value for months (CF5, medium), so any handler added on the base class
+  // is now picked up here automatically by construction.
   _getJinjaHandlers(content: unknown): Record<string, () => void> {
     const handlers = super._getJinjaHandlers(content);
     delete handlers.badge_icon;
@@ -224,13 +248,18 @@ class EntityProgressBadge extends EntityProgressCardBase {
  */
 
 class EntityProgressFeatures extends HACore {
+  // Narrows HACore's own ViewCore back to ViewBase - this class always uses
+  // FeatureView, never one of the template-only views (see
+  // EntityProgressCardBase's own _cardView for the same reasoning).
+  _cardView: ViewBase = new FeatureView();
   static _baseClass: string = META.types.feature.typeName;
   static _cardElement = 'div';
 
-  // ─── STATIC ===
+  // ─── STATIC ───────────────────────────────────────────────────────────────
 
-  static getStubConfig(): RawConfig {
-    return { type: `custom:${devName(META.types.feature.typeName)}` } as unknown as RawConfig;
+  // See EntityProgressCardBase.getStubConfig for why this is async.
+  static async getStubConfig(): Promise<LovelaceConfig> {
+    return { type: `custom:${devName(META.types.feature.typeName)}` } as unknown as LovelaceConfig;
   }
 
   /**
@@ -342,7 +371,11 @@ class EntityProgressFeatures extends HACore {
     this._applyProgressCSS(progressValue, {
       barColor: bar.barColor,
       gradient: bar.colorGradient,
-      diverging: bar.divergingBarStack,
+      // bar_stack's own entity-driven diverging gradient wins if configured;
+      // themeDivergingGradient is center_zero's fallback for a plain themed
+      // gradient (see ViewBase.themeDivergingGradient) when there's no
+      // bar_stack to drive the two arms instead.
+      diverging: bar.divergingBarStack ?? bar.themeDivergingGradient,
     });
     this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null);
   }
@@ -370,7 +403,10 @@ class EntityProgressFeatures extends HACore {
  */
 class EntityProgressTemplateBase extends HABase {
   static _cardStructure: ObjStructure = new ObjStructure('template');
-  _cardView: any = new CardTemplateView();
+  // TemplateView (not the specific CardTemplateView) -
+  // EntityProgressTemplateBadge below overrides this with its sibling
+  // BadgeTemplateView, which wouldn't be assignable to CardTemplateView.
+  _cardView: TemplateView = new CardTemplateView();
 
   static get _loggedMethods() {
     return [
@@ -395,12 +431,13 @@ class EntityProgressTemplateBase extends HABase {
     this.refresh(); // refresh() → _cardView.refresh() → _showIcon() → _updateCSS()
   }
 
-  static getStubConfig(hass: Hass): RawConfig {
+  // See EntityProgressCardBase.getStubConfig for why this is async.
+  static async getStubConfig(hass: HomeAssistant): Promise<LovelaceConfig> {
     return {
       type: `custom:${devName(META.types.template.typeName)}`,
       entity: HABase.getStubEntity(hass),
       ...CARD.config.stub.template,
-    } as unknown as RawConfig;
+    } as unknown as LovelaceConfig;
   }
 
   // ─── CSS MANAGEMENT ───────────────────────────────────────────────────────
@@ -418,7 +455,7 @@ class EntityProgressTemplateBase extends HABase {
 
   _updateWatermark() {
     if (!this._cardView.hasWatermark) return;
-    this._cardView.refresh();
+    this._cardView.refresh(this.hass as HomeAssistant);
     this._applyWatermarkCSS(this._cardView.watermark);
   }
 
@@ -427,7 +464,7 @@ class EntityProgressTemplateBase extends HABase {
   _showIcon(iconFromJinja: unknown = null) {
     const jinjaIconNotReady = this._cardView.config.icon !== undefined && iconFromJinja === null;
     if (jinjaIconNotReady) return;
-    this._cardView.icon = iconFromJinja;
+    this._cardView.icon = iconFromJinja as string | null;
     super._showIcon();
   }
 
@@ -520,7 +557,7 @@ class EntityProgressTemplateBase extends HABase {
     this._applyProgressCSS(percent / 100);
   }
 
-  // ─── TEMPLATE PROCESSING ===
+  // ─── TEMPLATE PROCESSING ──────────────────────────────────────────────────
 
   _validateProcessJinjaFields(): boolean {
     return Boolean(this.hass) && Boolean(this._resourceManager);
@@ -550,9 +587,9 @@ class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
   static _hasDisabledIconTap = true;
   static _hasDisabledBadge = true;
   static _cardStructure: ObjStructure = new ObjStructure('badge');
-  _cardView: any = new BadgeTemplateView();
+  _cardView: TemplateView = new BadgeTemplateView();
 
-  setConfig(config: RawConfig) {
+  setConfig(config: LovelaceConfig) {
     super.setConfig(config);
     // Defer refresh by one tick so HA finishes its own DOM update cycle before
     // we read state. CF5 - issue (minor) resolved - the raw setTimeout was
@@ -562,11 +599,12 @@ class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
     if (this.hass) this._resourceManager?.setTimeout(() => this.refresh(), 0, 'deferredRefresh');
   }
 
-  static getStubConfig(hass: Hass): RawConfig {
+  // See EntityProgressCardBase.getStubConfig for why this is async.
+  static async getStubConfig(hass: HomeAssistant): Promise<LovelaceConfig> {
     return {
       type: `custom:${devName(META.types.badgeTemplate.typeName)}`,
       entity: HABase.getStubEntity(hass),
-    } as unknown as RawConfig;
+    } as unknown as LovelaceConfig;
   }
 }
 

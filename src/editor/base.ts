@@ -4,14 +4,15 @@
  * to/from the config.
  */
 
-import { CARD, VALUE_CHANGED_EVENT, HA_SELECTOR_TAG, EDITOR_FIELD_NS } from '../utils/parameters.js';
+import { CARD, CARD_CONTEXT, VALUE_CHANGED_EVENT, HA_SELECTOR_TAG, EDITOR_FIELD_NS } from '../utils/parameters.js';
 import { TRANSLATIONS } from '../utils/translations.js';
 import { EDITOR_BASE_STYLE } from '../utils/styles.js';
 import { is } from '../utils/common-checks.js';
-import { HassProviderSingleton, type Hass } from '../utils/hass-provider.js';
+import { initLogger, type LoggerInstance } from '../utils/log.js';
+import { HassProviderSingleton, type HomeAssistant } from '../utils/hass-provider.js';
 import { BaseConfigHelper } from '../card/config-helpers.js';
 import { EditorDOMHelper } from './dom-helper.js';
-import type { RawConfig, Config, FieldDef } from '../utils/types.js';
+import type { LovelaceConfig, Config, FieldDef } from '../utils/types.js';
 import {
   EntityProgressEffectChips,
   EntityProgressHideChips,
@@ -30,7 +31,7 @@ import { EntityProgressBarStackEditor, EntityProgressCustomThemeEditor } from '.
 type EditorFieldElement = HTMLElement & {
   label?: string;
   value: unknown;
-  hass?: Hass | null;
+  hass?: HomeAssistant | null;
   isArray?: boolean;
   isInverted?: boolean;
   context?: Record<string, unknown>;
@@ -45,6 +46,14 @@ type EditorFieldElement = HTMLElement & {
 // interactions) - see factory.ts.
 type SectionDef = { flat?: boolean; title?: string; icon?: string; fields: Record<string, FieldDef> };
 
+// HA's ha-expansion-panel, reduced to the `expanded` boolean we read for the
+// collapsed-panel field-update skip (see EditorDOMHelper.updateAll).
+type HaExpansionPanel = HTMLElement & { header: string; outlined: boolean; expanded: boolean };
+
+// Resolves a field's current value from the (raw) config - the one closure
+// #applyUpdateFields and #refreshPanel share (see #runFieldUpdate).
+type FieldValueResolver = (def: FieldDef, config: LovelaceConfig) => unknown;
+
 /**
  * Shared base for every per-card-type visual editor. Builds the
  * expansion-panel form from a subclass's static `_fields` tree (`EditorFactory`
@@ -56,6 +65,80 @@ type SectionDef = { flat?: boolean; title?: string; icon?: string; fields: Recor
  * @extends HTMLElement
  */
 class EditorBase extends HTMLElement {
+  // "Isolated" (leaf) config keys: nothing else's showIf / value / selector /
+  // width / context reads them (verified against every reactive read in
+  // EditorFactory), so changing one of them can't affect any other field.
+  // When a setConfig round-trip changed only isolated keys, EditorBase
+  // refreshes just those fields instead of re-walking every visible field
+  // (see setConfig). Deliberately an explicit allowlist, not a computed set:
+  // a key absent here (a gating key, or a newly-added field) safely falls
+  // back to the full walk - only a wrongly-listed key here could stale the
+  // UI, so additions must be checked against the factory's reactive reads.
+  static #ISOLATED_KEYS: ReadonlySet<string> = new Set([
+    'name',
+    'name_info',
+    'secondary',
+    'custom_info',
+    'multiline',
+    'unit',
+    'unit_spacing',
+    'decimal',
+    'icon',
+    'icon_animation',
+    'color',
+    'bar_color',
+    'bar_scale',
+    'bar_segments',
+    'bar_single_line',
+    'interpolate',
+    'text_shadow',
+    'reverse',
+    'reverse_secondary_info_row',
+    'force_circular_background',
+    'frameless',
+    'marginless',
+    'height',
+    'min_width',
+    'badge_icon',
+    'badge_color',
+    'tap_action',
+    'hold_action',
+    'double_tap_action',
+    'icon_tap_action',
+    'icon_hold_action',
+    'icon_double_tap_action',
+  ]);
+
+  // Top-level keys whose value differs between two configs, ignoring the
+  // _-prefixed editor UI state (which never round-trips through setConfig - a
+  // draft change goes through #handleVirtualField → a full #updateFields()).
+  static #changedTopLevelKeys(next: LovelaceConfig, prev: LovelaceConfig | undefined): Set<string> {
+    const changed = new Set<string>();
+    const keys = new Set([...Object.keys(next), ...Object.keys(prev ?? {})].filter((k) => !k.startsWith('_')));
+    for (const key of keys) {
+      if (JSON.stringify(next[key]) !== JSON.stringify(prev?.[key])) changed.add(key);
+    }
+    return changed;
+  }
+
+  // Canonical key order for the config the editor writes back (see
+  // #sendConfig) - purely cosmetic (YAML key order, no semantics; HA compares
+  // configs by value): `type` then `entity` on top, and HA's own
+  // framework-level card meta keys pinned to the bottom, in the declaration
+  // order of home-assistant-frontend's LovelaceCardConfig interface. Every
+  // other key keeps its existing relative order in between.
+  static #TOP_KEYS = ['type', 'entity'];
+  static #BOTTOM_KEYS = ['layout_options', 'grid_options', 'view_layout', 'visibility', 'disabled'];
+
+  static #canonicalOrder(config: LovelaceConfig): LovelaceConfig {
+    const isAnchor = (key: string) => EditorBase.#TOP_KEYS.includes(key) || EditorBase.#BOTTOM_KEYS.includes(key);
+    const ordered: Record<string, unknown> = {};
+    for (const key of EditorBase.#TOP_KEYS) if (key in config) ordered[key] = config[key];
+    for (const key of Object.keys(config)) if (!isAnchor(key)) ordered[key] = config[key];
+    for (const key of EditorBase.#BOTTOM_KEYS) if (key in config) ordered[key] = config[key];
+    return ordered as LovelaceConfig;
+  }
+
   static _fields: Record<string, any> = {
     /* --- customize it
     general: {
@@ -75,15 +158,21 @@ class EditorBase extends HTMLElement {
     }, */
   };
   // ─── private state ────────────────────────────────────────────────────────
-  #config: RawConfig = {} as RawConfig;
+  #config: LovelaceConfig = {} as LovelaceConfig;
+  // The config as of the last setConfig() call - the stable "previous" the
+  // isolated-key diff compares against (this.#config is mutated by field
+  // handlers between round-trips, so it can't serve as the baseline).
+  #lastConfig: LovelaceConfig = {} as LovelaceConfig;
   // Always assigned first thing in the constructor - attachShadow()'s own
   // return value, not the nullable `this.shadowRoot` getter.
   #shadow!: ShadowRoot;
   #hassProvider: HassProviderSingleton = HassProviderSingleton.getInstance();
   #dom: EditorDOMHelper = new EditorDOMHelper();
   #boundOnChanged: ((e: Event) => void) | null = null;
-  #pendingSentConfig: RawConfig | null = null;
+  #pendingSentConfig: LovelaceConfig | null = null;
   #sendConfigScheduled = false;
+  #debug = CARD_CONTEXT.debug.editor;
+  #log: LoggerInstance | null = null;
   _configHelper: BaseConfigHelper = new BaseConfigHelper();
 
   // Same dynamic-tree-lookup rationale as HassProviderSingleton.localize()
@@ -104,6 +193,7 @@ class EditorBase extends HTMLElement {
   constructor() {
     super();
     this.#shadow = this.attachShadow({ mode: 'open' });
+    this.#log = initLogger(this, this.#debug, ['setConfig']);
   }
 
   connectedCallback() {
@@ -120,26 +210,41 @@ class EditorBase extends HTMLElement {
 
   // ─── PUBLIC API ───────────────────────────────────────────────────────────
 
-  set hass(hass: Hass) {
+  set hass(hass: HomeAssistant) {
     if (!hass) return;
     this.#hassProvider.hass = hass;
     this.#dom.updateHass(hass);
   }
 
-  get hass(): Hass | null {
+  get hass(): HomeAssistant | null {
     return this.#hassProvider.hass;
   }
 
-  setConfig(config: RawConfig) {
+  setConfig(config: LovelaceConfig) {
     if (!config) throw new Error(CARD.config.configError);
     // _-prefixed keys are ephemeral UI state (e.g. _show_all_actions): stripped
     // from config-changed before dispatch so HA never saves them, but preserved
     // here across setConfig calls so the editor state survives HA's
     // config-changed → setConfig roundtrip.
     const uiState = Object.fromEntries(Object.entries(this.#config ?? {}).filter(([k]) => k.startsWith('_')));
+    // Diff against the last config setConfig itself saw, NOT this.#config: the
+    // field handlers (#handleStdField &c) update this.#config synchronously
+    // before #sendConfig round-trips, so by the time HA calls setConfig back
+    // this.#config already equals the incoming config (diff would be empty).
+    // #lastConfig is touched only here, so it's a stable "previous".
+    const changed = EditorBase.#changedTopLevelKeys(config, this.#lastConfig);
+    this.#lastConfig = config;
     this._configHelper.config = config;
     this.#config = { ...config, ...uiState };
-    this.#updateFields();
+    // If every changed key is a known-isolated leaf, only its own field needs
+    // refreshing - refresh just those instead of re-walking every visible
+    // field. Any gating or unknown key (or an ambiguous multi-change) falls
+    // back to the full pass.
+    if (changed.size > 0 && [...changed].every((key) => EditorBase.#ISOLATED_KEYS.has(key))) {
+      this.#updateFields(changed);
+    } else {
+      this.#updateFields();
+    }
   }
 
   // ─── RENDER (once) ────────────────────────────────────────────────────────
@@ -173,7 +278,7 @@ class EditorBase extends HTMLElement {
     cpu: 'optimal_when_low',
   };
 
-  static #hasDeprecatedOptions(config: RawConfig): boolean {
+  static #hasDeprecatedOptions(config: LovelaceConfig): boolean {
     return Boolean(
       is.nonEmptyString(config?.max_value) ||
       config?.disable_unit !== undefined ||
@@ -194,7 +299,7 @@ class EditorBase extends HTMLElement {
   // max_value/disable_unit/additions are delegated to the active config
   // helper's own _migrateLegacyOptions, so Template editors (whose schema never
   // had those options) safely no-op there instead of needing a special case.
-  static #migrateDeprecatedConfig(config: RawConfig, configHelper: BaseConfigHelper): RawConfig {
+  static #migrateDeprecatedConfig(config: LovelaceConfig, configHelper: BaseConfigHelper): LovelaceConfig {
     let migrated = (configHelper.constructor as typeof BaseConfigHelper)._migrateLegacyOptions(config);
     const themeAlias = EditorBase.#THEME_ALIASES[migrated.theme];
     if (themeAlias) migrated = { ...migrated, theme: themeAlias };
@@ -220,8 +325,8 @@ class EditorBase extends HTMLElement {
     const field = {
       name: fieldName,
       virtual: true,
-      showIf: (config: RawConfig) => EditorBase.#hasDeprecatedOptions(config),
-      onVirtualChange: (_value: unknown, config: RawConfig) =>
+      showIf: (config: LovelaceConfig) => EditorBase.#hasDeprecatedOptions(config),
+      onVirtualChange: (_value: unknown, config: LovelaceConfig) =>
         EditorBase.#migrateDeprecatedConfig(config, this._configHelper),
     } as unknown as FieldDef;
     this.#dom.registerField(fieldName, button, field);
@@ -239,12 +344,17 @@ class EditorBase extends HTMLElement {
       return frag;
     }
 
-    const panel = document.createElement('ha-expansion-panel') as HTMLElement & {
-      header: string;
-      outlined: boolean;
-    };
+    const panel = document.createElement('ha-expansion-panel') as HaExpansionPanel;
     panel.header = this.#hassProvider.localize(def.title ?? '');
     panel.outlined = true;
+    // Fields in a collapsed panel are skipped by updateAll (see
+    // EditorDOMHelper) - refresh them the moment the panel opens, so a change
+    // made while it was collapsed (another field, or a switch to the raw YAML
+    // editor and back) shows up right as they become visible. Fires on first
+    // open too, which is what makes an initially-collapsed panel correct.
+    panel.addEventListener('expanded-changed', (e) => {
+      if ((e as CustomEvent<{ expanded: boolean }>).detail.expanded) this.#refreshPanel(panel);
+    });
 
     if (def.icon) {
       const icon = document.createElement('ha-icon');
@@ -463,6 +573,20 @@ class EditorBase extends HTMLElement {
   }
 
   #buildField(field: FieldDef): EditorFieldElement {
+    const el = this.#buildFieldElement(field);
+    // Apply initial visibility here rather than leaving it to the first
+    // update pass: updateAll now skips collapsed panels (see
+    // EditorDOMHelper), so a field that should start hidden inside one would
+    // otherwise keep its default-visible state until that panel is first
+    // opened - and flash for a frame as the panel animates open before
+    // #refreshPanel corrects it.
+    if (field.showIf) {
+      el.style.display = field.showIf(this.#config, this._configHelper.config) ? '' : 'none';
+    }
+    return el;
+  }
+
+  #buildFieldElement(field: FieldDef): EditorFieldElement {
     const special = this.#buildSpecialField(field);
     if (special) return special;
 
@@ -501,12 +625,12 @@ class EditorBase extends HTMLElement {
   // `config` is deliberately either source: #resolveValue below picks
   // negotiated or raw per field type before calling this, so both must be
   // accepted here.
-  static #fallback(def: FieldDef, config: RawConfig | Config, empty: any): any {
+  static #fallback(def: FieldDef, config: LovelaceConfig | Config, empty: any): any {
     if (def.default === undefined) return empty;
     return typeof def.default === 'function' ? def.default(config) : def.default;
   }
 
-  static #resolveValue(def: FieldDef, rawConfig: RawConfig, negotiated: Config | null = null): any {
+  static #resolveValue(def: FieldDef, rawConfig: LovelaceConfig, negotiated: Config | null = null): any {
     const empty = ['toggle', 'number', 'decimal'].includes(def.type) ? undefined : '';
     if (!rawConfig) return empty;
 
@@ -550,30 +674,61 @@ class EditorBase extends HTMLElement {
   // setConfig() — only the expensive DOM pass is deferred and collapsed to at
   // most once per frame.
   #updateFieldsScheduled = false;
+  // The widest scope requested for the pending frame: null = nothing yet,
+  // 'full' = walk every visible field, a Set = only the fields writing those
+  // keys. A 'full' request always wins; otherwise successive calls union
+  // their keys (two isolated edits in one frame → both refreshed).
+  #pendingScope: 'full' | Set<string> | null = null;
 
-  #updateFields() {
+  #updateFields(changedKeys?: Set<string>) {
+    if (changedKeys === undefined) {
+      this.#pendingScope = 'full';
+    } else if (this.#pendingScope !== 'full') {
+      const set = this.#pendingScope ?? new Set<string>();
+      for (const key of changedKeys) set.add(key);
+      this.#pendingScope = set;
+    }
     if (this.#updateFieldsScheduled) return;
     this.#updateFieldsScheduled = true;
     requestAnimationFrame(() => {
       this.#updateFieldsScheduled = false;
-      this.#applyUpdateFields();
+      const scope = this.#pendingScope;
+      this.#pendingScope = null;
+      if (scope === 'full') this.#applyUpdateFields();
+      else if (scope) this.#updateChangedFields(scope);
     });
   }
 
-  #applyUpdateFields() {
-    // template/action fields read from raw config to avoid Jinja flicker during
-    // typing: the validated config would fall back to default (e.g. []) the
-    // moment the expression is temporarily malformed, causing the UI to flash
-    // between chip and Jinja mode. custom_theme_editor reads raw config for
-    // the same reason (see #resolveValue). All other fields (select, toggle,
-    // number…) read from the negotiated config so that entity defaults (e.g.
-    // a light's default %) are reflected immediately.
+  // Shared by #applyUpdateFields (all visible fields) and #refreshPanel (one
+  // panel's fields) - both need the exact same resolveValue/negotiated/
+  // resolveType closures, differing only in which fields they walk.
+  // template/action fields read from raw config to avoid Jinja flicker during
+  // typing: the validated config would fall back to default (e.g. []) the
+  // moment the expression is temporarily malformed, causing the UI to flash
+  // between chip and Jinja mode. custom_theme_editor reads raw config for
+  // the same reason (see #resolveValue). All other fields (select, toggle,
+  // number…) read from the negotiated config so that entity defaults (e.g.
+  // a light's default %) are reflected immediately.
+  #runFieldUpdate(walk: (config: LovelaceConfig, resolveValue: FieldValueResolver, negotiated: Config) => void) {
     const negotiated = this._configHelper.config;
-    this.#dom.updateAll(
-      this.#config,
-      (def, raw) => EditorBase.#resolveValue(def, raw, negotiated),
-      negotiated,
-      (def, c) => this.#getSelectorForType(def.type(c)),
+    walk(this.#config, (def, raw) => EditorBase.#resolveValue(def, raw, negotiated), negotiated);
+  }
+
+  #applyUpdateFields() {
+    this.#runFieldUpdate((config, resolveValue, negotiated) =>
+      this.#dom.updateAll(config, resolveValue, negotiated, (def, c) => this.#getSelectorForType(def.type(c))),
+    );
+  }
+
+  #refreshPanel(panel: HaExpansionPanel) {
+    this.#runFieldUpdate((config, resolveValue, negotiated) =>
+      this.#dom.updatePanel(panel, config, resolveValue, negotiated, (def, c) => this.#getSelectorForType(def.type(c))),
+    );
+  }
+
+  #updateChangedFields(keys: Set<string>) {
+    this.#runFieldUpdate((config, resolveValue, negotiated) =>
+      this.#dom.updateKeys(keys, config, resolveValue, negotiated, (def, c) => this.#getSelectorForType(def.type(c))),
     );
   }
 
@@ -664,12 +819,13 @@ class EditorBase extends HTMLElement {
   // latest config — each individual input event now only does O(1) work (store
   // + maybe schedule), so the browser can no longer fall behind regardless of
   // how fast native events fire. The 1-frame delay (~16ms) is not perceptible.
-  #sendConfig(config: RawConfig) {
-    // Strip _-prefixed UI state keys — they are editor-only and must never
-    // reach the saved YAML.
-    this.#pendingSentConfig = Object.fromEntries(
-      Object.entries(config).filter(([k]) => !k.startsWith('_')),
-    ) as RawConfig;
+  #sendConfig(config: LovelaceConfig) {
+    // Strip _-prefixed UI state keys (editor-only, must never reach the saved
+    // YAML), then normalize key order (entity on top, HA layout meta at the
+    // bottom - see #canonicalOrder).
+    this.#pendingSentConfig = EditorBase.#canonicalOrder(
+      Object.fromEntries(Object.entries(config).filter(([k]) => !k.startsWith('_'))) as LovelaceConfig,
+    );
     if (this.#sendConfigScheduled) return;
     this.#sendConfigScheduled = true;
 
@@ -677,6 +833,7 @@ class EditorBase extends HTMLElement {
       this.#sendConfigScheduled = false;
       const clean = this.#pendingSentConfig;
       this.#pendingSentConfig = null;
+      this.#log?.debug('config-changed →', clean);
       this.dispatchEvent(
         new CustomEvent('config-changed', {
           detail: { config: clean },

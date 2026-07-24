@@ -90,28 +90,25 @@ mkdir -p config/www/test/
 
 ##### ⬇️ Download and Add the RC version
 
-- Download the file `entity-progress-card.js` (RC version) to the
-  `/config/www/test/` directory in your Home Assistant setup.
-- Open the file in a text editor and check the `CARD_CONTEXT` block near the
-  top:
+- Download the file `entity-progress-card_dev.js` (RC version) to the
+  `/config/www/test/` directory in your Home Assistant setup. No editing needed
+  — the `_dev.js` filename automatically registers the extra
+  `custom:entity-progress-card-dev` type (on top of the regular one), which is
+  what keeps this test file isolated from your production install.
 
-  ```js
-  const CARD_CONTEXT = {
-    dev: true,
-    ...
-  };
-  ```
+  > [!NOTE]
+  >
+  > "dev mode" is detected from the served URL, not baked into the file: a file
+  > named `…_dev.js` — or any resource URL with a `?dev` query — turns it on. So
+  > if you happen to have the plain `entity-progress-card.js`, you can instead
+  > register it as `…/entity-progress-card.js?dev` to get the same isolated
+  > `-dev` type.
 
-  `dev: true` is what registers the extra `custom:entity-progress-card-dev`
-  type, on top of the regular one — it's what keeps this file isolated from your
-  production install. If it reads `dev: false`, set it to `true` yourself and
-  save the file before continuing.
-
-- Add `/local/test/entity-progress-card.js` to your Lovelace resources:
+- Add `/local/test/entity-progress-card_dev.js` to your Lovelace resources:
   - Go to **Settings** ➡️ **Dashboards** ➡️ **Resources** ➡️ **`⋮`** ➡️ **Add
     Resource**
   - Set:
-    - URL: `/local/test/entity-progress-card.js`
+    - URL: `/local/test/entity-progress-card_dev.js`
     - Type: `JavaScript Module`
   - Save
   - reload the browser cache (**`CTRL`** + **`F5`** or clear cache).
