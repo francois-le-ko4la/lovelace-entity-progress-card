@@ -24,7 +24,7 @@ import { availableSpace } from './dom-helper.js';
 // EditorBase/EditorDOMHelper actually consume.
 const field =
   (type: string) =>
-  (name: string, o: Record<string, any> = {}) => ({ name, type, ...o });
+  (name: string, o: Record<string, unknown> = {}) => ({ name, type, ...o });
 
 const EditorFieldsType = {
   entity: field('entity'),
@@ -37,8 +37,8 @@ const EditorFieldsType = {
   toggle: field('toggle'),
   tpl: field('template'),
   action: field('action'),
-  select: (name: string, o: Record<string, any> = {}) => ({ name, type: name, ...o }),
-  templateOrType: (name: string, template: boolean, type: string, o: Record<string, any> = {}) =>
+  select: (name: string, o: Record<string, unknown> = {}) => ({ name, type: name, ...o }),
+  templateOrType: (name: string, template: boolean, type: string, o: Record<string, unknown> = {}) =>
     field(template ? 'template' : type)(name, o),
 };
 
@@ -48,7 +48,11 @@ const EditorFieldsType = {
 // (see wmSide below), sit at the top level of the config - one dot-path deep
 // at most - so entity/attribute/jinja can stay plain dot-path fields instead
 // of virtual ones.
-const valueField = (key: 'min_value' | 'max_value', entityPath: string, numberOverrides: Record<string, any> = {}) => {
+const valueField = (
+  key: 'min_value' | 'max_value',
+  entityPath: string,
+  numberOverrides: Record<string, unknown> = {},
+) => {
   const modeType = `${key}_mode`;
   const attrType = `${key.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase())}Attribute`;
   return {
@@ -105,7 +109,7 @@ const nestedValueField = (
   key: string,
   entityPath: string,
   isEnabled: (c: LovelaceConfig) => boolean,
-  defaultVal: number | undefined,
+  defaultVal?: number,
 ) => {
   const modeType = `${parentKey}_${key}_mode`;
   const attrType = `${toCamel(parentKey)}${key.charAt(0).toUpperCase() + key.slice(1)}Attribute`;
@@ -216,7 +220,7 @@ const wmSide = (side: 'low' | 'high', defaultVal: number) => {
 // above/below are genuinely optional).
 const alertField = (side: 'above' | 'below') => {
   const entityPath = side === 'above' ? ALERT_ABOVE_ENTITY_PATH : ALERT_BELOW_ENTITY_PATH;
-  return nestedValueField('alert_when', side, entityPath, (c: LovelaceConfig) => Boolean(c.alert_when), undefined);
+  return nestedValueField('alert_when', side, entityPath, (c: LovelaceConfig) => Boolean(c.alert_when));
 };
 
 const EditorFactory = {

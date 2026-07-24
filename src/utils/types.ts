@@ -16,6 +16,7 @@ declare const lovelaceConfigBrand: unique symbol;
 // back to HA. Distinct from `Config` (below) so the two pipeline stages
 // can't be swapped positionally - see EditorDOMHelper#_updateField's
 // `config` (this one) vs `negotiated` (Config).
+// skipcq: JS-0323 -- deliberate dynamic config bag (see above)
 type LovelaceConfig = { readonly [lovelaceConfigBrand]: true } & Record<string, any>;
 
 declare const configBrand: unique symbol;
@@ -26,12 +27,14 @@ declare const configBrand: unique symbol;
 // further derived fields with no LovelaceConfig equivalent at all (e.g.
 // `centerZero`, computed from the raw `center_zero` value). Genuinely
 // dynamic per card type, kept as Record<string, any>.
+// skipcq: JS-0323 -- deliberate dynamic config bag (see above)
 type Config = { readonly [configBrand]: true } & Record<string, any>;
 
 declare const fieldDefBrand: unique symbol;
 // An editor field definition (EditorFactory's field-tree nodes) - distinct
 // from Config/LovelaceConfig so none of the three can be swapped positionally,
 // e.g. in EditorDOMHelper#_updateField(name, def, config, ...).
+// skipcq: JS-0323 -- deliberate dynamic field-definition bag (see above)
 type FieldDef = { readonly [fieldDefBrand]: true } & Record<string, any>;
 
 export type { LovelaceConfig, Config, FieldDef };

@@ -48,11 +48,12 @@ type CustomThemeZone = {
  * @extends HTMLElement
  */
 // Rows are heterogeneous plain objects (bar_stack entities vs custom_theme
-// zones have entirely different shapes) - kept as `any` rather than a shared
-// interface neither concrete editor actually has in common beyond "object".
+// zones have entirely different shapes) - kept as loose `Record<string,
+// unknown>` rather than a shared interface neither concrete editor actually
+// has in common beyond "object".
 abstract class ListEditorBase extends HTMLElement {
   _labelText = '';
-  _value: any[] = [];
+  _value: Record<string, unknown>[] = [];
   _list: HTMLElement | null = null;
   _labelEl: HTMLElement | null = null;
   // Always assigned first thing in connectedCallback, before _buildDOM()
@@ -87,11 +88,11 @@ abstract class ListEditorBase extends HTMLElement {
     if (this._labelEl) this._labelEl.textContent = this._labelText;
   }
 
-  get value(): any[] {
+  get value(): Record<string, unknown>[] {
     return this._value;
   }
 
-  set value(val: any[]) {
+  set value(val: unknown[]) {
     this._value = is.array(val) ? val.filter(is.plainObject) : [];
     if (this._list) this._render();
   }
@@ -102,7 +103,7 @@ abstract class ListEditorBase extends HTMLElement {
     this._dispatch();
   }
 
-  _updateItem(index: number, patch: Record<string, any>) {
+  _updateItem(index: number, patch: Record<string, unknown>) {
     this._value = this._value.map((item, i) => (i === index ? { ...item, ...patch } : item));
     this._render();
     this._dispatch();
