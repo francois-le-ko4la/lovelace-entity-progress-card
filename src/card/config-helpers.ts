@@ -36,8 +36,7 @@ type HAError = { path: string; errorCode: string | null; severity: string } | nu
 // `never[]` with nothing else in schema.ts yet forcing it wider.
 type ParsedConfig = {
   isValid: boolean;
-  // skipcq: JS-0323 -- parsed config bag, may be null; genuinely dynamic
-  config: any;
+  config: Record<string, unknown> | null;
   path: (string | number)[] | null;
   errorCode: string | null;
   severity: string | null;
@@ -98,12 +97,13 @@ class BaseConfigHelper {
   // Calcule une seule fois, à partir de la config validée, la config brute +
   // les valeurs dérivées consommées ailleurs (évite de recalculer à chaque
   // accès).
-  // skipcq: JS-0323 -- raw config bag in, derived Config out
-  static #resolveConfig(config: any): Config {
+  static #resolveConfig(config: Record<string, unknown> | null | undefined): Config {
     return {
       ...config,
-      centerZero: BaseConfigHelper.#resolveCenterZero(config?.center_zero),
-    } as Config;
+      centerZero: BaseConfigHelper.#resolveCenterZero(
+        config?.center_zero as boolean | { value?: number; growth_percent?: boolean } | null | undefined,
+      ),
+    } as unknown as Config;
   }
 
   /**

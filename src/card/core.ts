@@ -12,6 +12,7 @@ import { ObjStructure, ThemeManager, ChangeTracker } from './value-helpers.js';
 import { HassProviderSingleton, type HomeAssistant, type EntityState } from '../utils/hass-provider.js';
 import { CardView, FeatureView, type ViewCore, type ViewBase } from './view.js';
 import { ResourceManager, DOMHelper, ActionHelper } from './dom-helpers.js';
+import type { CacheValue } from './dom-helpers.js';
 import type { LovelaceConfig } from '../utils/types.js';
 import type { StructureOptions } from './structure.js';
 
@@ -1031,7 +1032,7 @@ class HABase extends HACore {
         [config.height, CARD.style.dynamic.card.height.var, config.height],
         [config.bar_max_width, CARD.style.dynamic.progressBar.maxWidth.var, config.bar_max_width],
         [config.alert_when?.color, '--alert-color', ThemeManager.adaptColor(config.alert_when?.color)],
-      ] as [any, string, any][]
+      ] as [unknown, string, CacheValue][]
     ).forEach(([condition, prop, value]) => {
       if (condition) this._dom.setStyle(cardKey, prop, value);
     });

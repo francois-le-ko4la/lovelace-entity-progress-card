@@ -49,8 +49,7 @@ class EditorDOMHelper extends DOMHelper {
    * Wraps DOMHelper.register() — the def is stored on the element directly
    * so it travels with it without needing a separate Map.
    */
-  // skipcq: JS-0323 -- augmented field element (_fieldDef assigned below)
-  registerField(name: string, el: any, def: FieldDef) {
+  registerField(name: string, el: HTMLElement & { _fieldDef?: FieldDef }, def: FieldDef) {
     el._fieldDef = def;
     this.register(name, el);
   }
@@ -130,8 +129,7 @@ class EditorDOMHelper extends DOMHelper {
    */
   _updateActionSelector(name: string, def: FieldDef, config: LovelaceConfig) {
     const key = def.target ?? def.name;
-    // skipcq: JS-0323 -- defaults bag indexed by a dynamic field key
-    const defaults: Record<string, any> = CARD.config.defaults;
+    const defaults = CARD.config.defaults as unknown as Record<string, { action?: string }>;
     let defaultAction = defaults[key]?.action ?? 'none';
     if (key === 'icon_tap_action' && config.entity) {
       const domain = HassProviderSingleton.getEntityDomain(config.entity);

@@ -621,3 +621,4 @@ class ActionHelper {
 export { ResourceManager };
 export { DOMHelper };
 export { ActionHelper };
+export type { CacheValue };

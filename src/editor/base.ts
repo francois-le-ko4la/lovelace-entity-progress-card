@@ -176,18 +176,20 @@ class EditorBase extends HTMLElement {
   #log: LoggerInstance | null = null;
   _configHelper: BaseConfigHelper = new BaseConfigHelper();
 
-  // Same dynamic-tree-lookup rationale as HassProviderSingleton.localize()
-  // (hass-provider.ts): typing this precisely would mean modeling the entire
-  // translations.json option tree for a handful of call sites below.
-  // skipcq: JS-0323 -- untyped translations option tree (see comment above)
-  get #localizedOptions(): any {
+  // The `editor.option` node of the translations tree: one level deeper than
+  // localizeGroup models (option group -> value -> label), so typed loosely as
+  // a nested string map rather than mirroring the whole translations.json.
+  get #localizedOptions(): Record<string, Record<string, string>> {
     // CF5 - issue (minor) resolved - localize() returns the key string before
     // translations load; select builders then crashed on
     // Object.entries(undefined). Fall back to the default language.
     const options = this.#hassProvider.localizeGroup('editor.option');
-    return is.plainObject(options)
+    return (is.plainObject(options)
       ? options
-      : TRANSLATIONS[CARD.config.language as keyof typeof TRANSLATIONS].editor.option;
+      : TRANSLATIONS[CARD.config.language as keyof typeof TRANSLATIONS].editor.option) as unknown as Record<
+      string,
+      Record<string, string>
+    >;
   }
 
   // ─── LIFECYCLE ────────────────────────────────────────────────────────────
@@ -480,9 +482,10 @@ class EditorBase extends HTMLElement {
       label: field.noLabel
         ? ''
         : (() => {
-            const explicit = isNested
-              ? this.#localizedOptions?.[parentKey]?.[childKey!]
-              : this.#hassProvider.localizeGroup(EDITOR_FIELD_NS)[field.name];
+            const explicit =
+              childKey !== null
+                ? this.#localizedOptions?.[parentKey]?.[childKey]
+                : this.#hassProvider.localizeGroup(EDITOR_FIELD_NS)[field.name];
             if (explicit !== undefined) return explicit;
             // Guard rail: keep the "<Noun> color" pattern already established
             // by badge_color/bar_color/color/alert_when.color for any future
@@ -654,8 +657,8 @@ class EditorBase extends HTMLElement {
     // Array membership is always checked on raw config (explicit user
     // selections).
     if (isNested && def.array) return rawConfig[parentKey]?.includes(childKey) ?? false;
-    if (isNested) {
-      const val = config[parentKey]?.[childKey!];
+    if (childKey !== null) {
+      const val = config[parentKey]?.[childKey];
       return val !== undefined ? val : fallback;
     }
     const val = config[key];
