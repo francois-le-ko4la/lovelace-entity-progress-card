@@ -139,6 +139,7 @@ class EditorBase extends HTMLElement {
     return ordered as LovelaceConfig;
   }
 
+  // skipcq: JS-0323 -- section/field definition tree, shape varies per subclass
   static _fields: Record<string, any> = {
     /* --- customize it
     general: {
@@ -178,6 +179,7 @@ class EditorBase extends HTMLElement {
   // Same dynamic-tree-lookup rationale as HassProviderSingleton.localize()
   // (hass-provider.ts): typing this precisely would mean modeling the entire
   // translations.json option tree for a handful of call sites below.
+  // skipcq: JS-0323 -- untyped translations option tree (see comment above)
   get #localizedOptions(): any {
     // CF5 - issue (minor) resolved - localize() returns the key string before
     // translations load; select builders then crashed on
@@ -459,7 +461,7 @@ class EditorBase extends HTMLElement {
     return { isNested, parentKey, childKey };
   }
 
-  #resolveFieldMeta(field: FieldDef): { label: string | undefined; value: any; isInverted: boolean } {
+  #resolveFieldMeta(field: FieldDef): { label: string | undefined; value: unknown; isInverted: boolean } {
     const { isNested, parentKey, childKey } = EditorBase.#splitFieldName(field.name);
     // CF5 - issue (medium) resolved - this used to pass only the negotiated
     // config (as #resolveValue's `rawConfig` param, with `negotiated` left
@@ -625,12 +627,12 @@ class EditorBase extends HTMLElement {
   // `config` is deliberately either source: #resolveValue below picks
   // negotiated or raw per field type before calling this, so both must be
   // accepted here.
-  static #fallback(def: FieldDef, config: LovelaceConfig | Config, empty: any): any {
+  static #fallback(def: FieldDef, config: LovelaceConfig | Config, empty: unknown): unknown {
     if (def.default === undefined) return empty;
     return typeof def.default === 'function' ? def.default(config) : def.default;
   }
 
-  static #resolveValue(def: FieldDef, rawConfig: LovelaceConfig, negotiated: Config | null = null): any {
+  static #resolveValue(def: FieldDef, rawConfig: LovelaceConfig, negotiated: Config | null = null): unknown {
     const empty = ['toggle', 'number', 'decimal'].includes(def.type) ? undefined : '';
     if (!rawConfig) return empty;
 

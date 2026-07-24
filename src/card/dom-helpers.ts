@@ -221,6 +221,7 @@ type CacheValue = string | number | boolean | null | undefined;
 class DOMHelper {
   #debug = CARD_CONTEXT.debug.ressourceManager;
   #log: LoggerInstance | null = null;
+  // skipcq: JS-0323 -- elements carry ad-hoc props (_fieldDef, updateConfig)
   _domElements: Map<string, any>;
   _appliedValues: Map<string, CacheValue>;
   _pendingUpdates: Map<string, UpdateFn>;

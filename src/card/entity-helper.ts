@@ -25,6 +25,7 @@ type NameToken = { type: string; text?: string };
 class EntityHelper {
   #hassProvider: HassProviderSingleton = HassProviderSingleton.getInstance();
   #isValid = false;
+  // skipcq: JS-0323 -- entity value is polymorphic (num/str/timer/object)
   #value: any = {};
   #entityId: string | null = null;
   #attribute: string | null = null;
@@ -128,6 +129,7 @@ class EntityHelper {
     return this.#stateContent;
   }
 
+  // skipcq: JS-0323 -- polymorphic entity value (see #value)
   get value(): any {
     return this.#isValid ? this.#value : 0;
   }

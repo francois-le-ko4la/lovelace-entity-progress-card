@@ -901,6 +901,7 @@ class HABase extends HACore {
   // as with getStubConfig, turns any future throw into a rejected promise
   // instead of a synchronous exception during HA's own layout pass over
   // every card on a dashboard).
+  // skipcq: JS-0116 -- async is intentional, no await by design.
   async getCardSize(): Promise<number | undefined> {
     if (![META.types.card.typeName, META.types.template.typeName].includes(this.baseClass)) return undefined;
     const cardSize = this._cardView.cardSize;

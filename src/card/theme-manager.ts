@@ -285,9 +285,13 @@ class ThemeManager {
     const toLocal = (globalPct: number) => ((globalPct - windowStart) / (windowEnd - windowStart)) * 100;
     const style: ThemeZone[] = fullStyle
       .map((level) => {
-        const a = toLocal(level.min ?? 0);
-        const b = toLocal(level.max ?? 100);
-        return { ...level, min: Math.max(0, Math.min(a, b)), max: Math.min(100, Math.max(a, b)) };
+        const localMin = toLocal(level.min ?? 0);
+        const localMax = toLocal(level.max ?? 100);
+        return {
+          ...level,
+          min: Math.max(0, Math.min(localMin, localMax)),
+          max: Math.min(100, Math.max(localMin, localMax)),
+        };
       })
       .filter((level) => (level.max ?? 0) > (level.min ?? 0));
 

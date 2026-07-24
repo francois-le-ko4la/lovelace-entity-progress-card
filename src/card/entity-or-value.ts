@@ -45,6 +45,7 @@ class EntityOrValue {
     }
   }
 
+  // skipcq: JS-0323 -- delegates to the polymorphic entity value
   get value(): any {
     return this.#activeHelper?.value ?? null;
   }
