@@ -12,12 +12,12 @@ import { HassProviderSingleton } from '../utils/hass-provider.js';
 // A validation path is the sequence of object keys/array indices leading to
 // the value being checked (e.g. ['bar_stack', 'entities', 0, 'entity']).
 type Path = (string | number)[];
-// Validators (and the `value`/`config` they check) come from arbitrary raw
-// YAML - kept as `any` throughout rather than a generic `Validator<T>`, which
-// would need a type parameter threaded through every union/optional/fallback
-// combinator below for no real safety gain over the runtime checks they
+// Validators take arbitrary raw YAML (`unknown` in) and return the coerced
+// value (`unknown` out) - deliberately not a generic `Validator<T>`, which
+// would thread a type parameter through every union/optional/fallback
+// combinator below for no real safety gain over the runtime is.* checks they
 // already perform.
-type Validator = (value: unknown, path?: Path) => any;
+type Validator = (value: unknown, path?: Path) => unknown;
 
 // The shape struct(...).parse()'s catch branch walks recursively (see
 // extractAllErrors below) - covers both real ValidationError instances and
@@ -569,7 +569,12 @@ function struct(validator: Validator & { _schema?: Record<string, Validator> }, 
     validate: (data: Record<string, unknown>) => {
       try {
         const preProcessed = preProcess(data);
-        return { isValid: true, config: postProcess(validator(preProcessed)), error: null, path: null };
+        return {
+          isValid: true,
+          config: postProcess(validator(preProcessed) as Record<string, unknown>),
+          error: null,
+          path: null,
+        };
       } catch (error) {
         const err = error as ValidationError;
         return { isValid: false, config: null, error: err.message, path: err.path };
@@ -579,7 +584,7 @@ function struct(validator: Validator & { _schema?: Record<string, Validator> }, 
     parse: (data: Record<string, unknown>) => {
       try {
         const preProcessed = preProcess(data);
-        const result = postProcess(validator(preProcessed));
+        const result = postProcess(validator(preProcessed) as Record<string, unknown>);
         return {
           isValid: true,
           config: result,
@@ -658,11 +663,8 @@ function struct(validator: Validator & { _schema?: Record<string, Validator> }, 
         throw new Error('Can only delete from object schemas created with types.object');
       }
 
-      const fieldsArray = is.array(fieldsToDelete) ? fieldsToDelete : [fieldsToDelete];
-      const newSchema = { ...validator._schema };
-      fieldsArray.forEach((field: string) => {
-        delete newSchema[field];
-      });
+      const toDelete = new Set(is.array(fieldsToDelete) ? fieldsToDelete : [fieldsToDelete]);
+      const newSchema = Object.fromEntries(Object.entries(validator._schema).filter(([key]) => !toDelete.has(key)));
 
       return struct(types.object(newSchema));
     },
@@ -774,8 +776,8 @@ const watermarkSchema = {
  * ConfigHelper's `_yamlSchema` (see config-helpers.js) to validate and
  * normalize a raw config.
  */
-class YamlSchemaFactory {
-  static get feature() {
+const YamlSchemaFactory = {
+  get feature() {
     return struct(
       types.object({
         // ─── Entity & Data ──────────────────────────────────────────────────
@@ -837,9 +839,9 @@ class YamlSchemaFactory {
       }),
       { allowBelowBarPosition: false },
     );
-  }
+  },
 
-  static get card() {
+  get card() {
     return struct(
       types.object({
         // ─── Entity & Data ──────────────────────────────────────────────────
@@ -976,9 +978,9 @@ class YamlSchemaFactory {
         icon_double_tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),
       }),
     );
-  }
+  },
 
-  static get badge() {
+  get badge() {
     return YamlSchemaFactory.card
       .delete([
         'bar_position',
@@ -1019,9 +1021,9 @@ class YamlSchemaFactory {
         // progress-container than the badge itself, overflowing it.
         bar_size: types.enumsWithDefault(['small', 'medium', 'large'], 'small'),
       });
-  }
+  },
 
-  static get template() {
+  get template() {
     return struct(
       types.object({
         // ─── Entity & Data ──────────────────────────────────────────────────
@@ -1101,9 +1103,9 @@ class YamlSchemaFactory {
         icon_double_tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),
       }),
     );
-  }
+  },
 
-  static get badgeTemplate() {
+  get badgeTemplate() {
     return YamlSchemaFactory.template
       .delete([
         'bar_position',
@@ -1137,8 +1139,8 @@ class YamlSchemaFactory {
         // --ha-badge-size (36px), overflowing it.
         bar_size: types.enumsWithDefault(['small', 'medium', 'large'], 'small'),
       });
-  }
-}
+  },
+};
 
 export { ValidationError };
 export { SKIP_PROPERTY };
