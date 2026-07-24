@@ -12,19 +12,19 @@ import { has, is } from '../utils/common-checks.js';
  * This class uses `Value`, `Unit`, and `Decimal` objects to manage and validate
  * its internal data.
  */
-class NumberFormatter {
-  static unitsNoSpace: Record<string, Set<string>> = {
+const NumberFormatter = {
+  unitsNoSpace: {
     'fr-FR': new Set(['j', 'd', 'h', 'min', 'ms', 'μs', '°']),
     'de-DE': new Set(['d', 'h', 'min', 'ms', 'μs', '°']),
     'en-US': new Set(['d', 'h', 'min', 'ms', 'μs', '°', '%']),
-  };
+  } as Record<string, Set<string>>,
 
-  static getSpaceCharacter(locale: string, unit: string): string {
+  getSpaceCharacter(locale: string, unit: string): string {
     const set = NumberFormatter.unitsNoSpace[locale] || NumberFormatter.unitsNoSpace['en-US'];
     return set.has(unit.toLowerCase()) ? '' : CARD.config.unit.space;
-  }
+  },
 
-  static formatValueAndUnit(
+  formatValueAndUnit(
     value: number | null | undefined,
     decimal = 2,
     unit = '',
@@ -51,9 +51,9 @@ class NumberFormatter {
       : (spaceMap[unitSpacing] as string);
 
     return `${formattedValue}${space}${unit}`;
-  }
+  },
 
-  static formatTiming(
+  formatTiming(
     totalSeconds: number,
     decimal = 0,
     locale = 'en-US',
@@ -76,9 +76,9 @@ class NumberFormatter {
     }
 
     return [pad(hours), pad(minutes), seconds].join(':');
-  }
+  },
 
-  static durationToSeconds(value: number, unit: string): number | null {
+  durationToSeconds(value: number, unit: string): number | null {
     switch (unit) {
       case 'd': // Jour
         return value * 86400; // 1 jour = 86400 secondes
@@ -98,9 +98,9 @@ class NumberFormatter {
         // invalid
         return null;
     }
-  }
+  },
 
-  static convertDuration(duration: unknown): number {
+  convertDuration(duration: unknown): number {
     // CF5 - issue (critical) resolved - timer attributes (duration/remaining)
     // can be missing during HA startup; null.split() crashed the card
     if (!is.string(duration)) return 0;
@@ -115,7 +115,7 @@ class NumberFormatter {
     const [hours, minutes, seconds] = parts;
 
     return ((days * 24 + hours) * 3600 + minutes * 60 + seconds) * CARD.config.msFactor;
-  }
-}
+  },
+};
 
 export { NumberFormatter };

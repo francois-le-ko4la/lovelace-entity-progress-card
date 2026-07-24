@@ -53,103 +53,86 @@ function defineElement(name: string, elementClass: CustomElementConstructor): vo
  * `-dev`/` (dev)` suffix so a dev build can be installed side by side with
  * the shipped one without colliding.
  */
-class RegistrationHelper {
-  static _devMode = CARD_CONTEXT.dev;
-  static #targetKey = {
-    customCards: 'customCards',
-    customBadges: 'customBadges',
-    customCardFeatures: 'customCardFeatures',
-  } as const;
+// Module-private (was a static-only class; kept the same encapsulation as the
+// former `#`-private static members, now via module scope).
+const DEV_MODE = CARD_CONTEXT.dev;
+const TARGET_KEY = {
+  customCards: 'customCards',
+  customBadges: 'customBadges',
+  customCardFeatures: 'customCardFeatures',
+} as const;
 
-  static #resolveComponent(component: Component): Component {
-    if (!RegistrationHelper._devMode) return component;
-    return {
-      ...component,
-      typeName: `${component.typeName}-dev`,
-      name: `${component.name} (dev)`,
-      editor: component.editor ? `${component.editor}-dev` : undefined,
-    };
+const resolveComponent = (component: Component): Component => {
+  if (!DEV_MODE) return component;
+  return {
+    ...component,
+    typeName: `${component.typeName}-dev`,
+    name: `${component.name} (dev)`,
+    editor: component.editor ? `${component.editor}-dev` : undefined,
+  };
+};
+
+const resolveEntry = (component: Component, targetKey: string) =>
+  targetKey === TARGET_KEY.customCardFeatures
+    ? { type: component.typeName, name: component.name, supported: () => true }
+    : {
+        type: component.typeName,
+        name: component.name,
+        preview: true,
+        description: component.description,
+        documentationURL: META.documentation,
+        version: VERSION,
+      };
+
+const registerComponent = (
+  component: Component,
+  targetKey: string,
+  elementClass: CustomElementConstructor,
+  editorClass?: CustomElementConstructor,
+) => {
+  // noRegistration: skip both the define(s) and the deferred customCards push
+  // in one shot, so the type is entirely absent from the browser and from
+  // HA's discovery arrays (see CARD_CONTEXT.noRegistration, issue #108).
+  if (CARD_CONTEXT.noRegistration) {
+    registrationLog.debug(`registration skipped (noRegistration): ${component.typeName}`);
+    return;
   }
 
-  static #resolveEntry(component: Component, targetKey: string) {
-    return targetKey === RegistrationHelper.#targetKey.customCardFeatures
-      ? { type: component.typeName, name: component.name, supported: () => true }
-      : {
-          type: component.typeName,
-          name: component.name,
-          preview: true,
-          description: component.description,
-          documentationURL: META.documentation,
-          version: VERSION,
-        };
-  }
+  defineElement(component.typeName, elementClass);
+  if (editorClass && component.editor) defineElement(component.editor, editorClass);
 
-  static #registerComponent(
-    component: Component,
-    targetKey: string,
-    elementClass: CustomElementConstructor,
-    editorClass?: CustomElementConstructor,
-  ) {
-    // noRegistration: skip both the define(s) and the deferred customCards push
-    // in one shot, so the type is entirely absent from the browser and from
-    // HA's discovery arrays (see CARD_CONTEXT.noRegistration, issue #108).
-    if (CARD_CONTEXT.noRegistration) {
-      registrationLog.debug(`registration skipped (noRegistration): ${component.typeName}`);
-      return;
-    }
-
-    defineElement(component.typeName, elementClass);
-    if (editorClass && component.editor) defineElement(component.editor, editorClass);
-
-    // Le reste du code est protégé
-    const registerUI = () => {
-      try {
-        const win = window as unknown as Record<string, { type: string }[]>;
-        win[targetKey] = win[targetKey] || [];
-        if (win[targetKey].some((item) => item.type === component.typeName)) {
-          registrationLog.debug(`${targetKey} push skipped (already present): ${component.typeName}`);
-          return;
-        }
-        win[targetKey].push(RegistrationHelper.#resolveEntry(component, targetKey));
-        registrationLog.debug(`${targetKey} push ok: ${component.typeName}`);
-      } catch (uiError) {
-        console.error('[Entity Progress Card] UI Registration failed', uiError);
+  // Le reste du code est protégé
+  const registerUI = () => {
+    try {
+      const win = window as unknown as Record<string, { type: string }[]>;
+      win[targetKey] = win[targetKey] || [];
+      if (win[targetKey].some((item) => item.type === component.typeName)) {
+        registrationLog.debug(`${targetKey} push skipped (already present): ${component.typeName}`);
+        return;
       }
-    };
+      win[targetKey].push(resolveEntry(component, targetKey));
+      registrationLog.debug(`${targetKey} push ok: ${component.typeName}`);
+    } catch (uiError) {
+      console.error('[Entity Progress Card] UI Registration failed', uiError);
+    }
+  };
 
-    registrationLog.debug(`scheduling ${targetKey} UI push (+1000ms): ${component.typeName}`);
-    setTimeout(registerUI, 1000);
-  }
+  registrationLog.debug(`scheduling ${targetKey} UI push (+1000ms): ${component.typeName}`);
+  setTimeout(registerUI, 1000);
+};
 
-  static registerCard(card: Component, elementClass: CustomElementConstructor, editorClass?: CustomElementConstructor) {
-    RegistrationHelper.#registerComponent(
-      RegistrationHelper.#resolveComponent(card),
-      RegistrationHelper.#targetKey.customCards,
-      elementClass,
-      editorClass,
-    );
-  }
+const RegistrationHelper = {
+  registerCard(card: Component, elementClass: CustomElementConstructor, editorClass?: CustomElementConstructor) {
+    registerComponent(resolveComponent(card), TARGET_KEY.customCards, elementClass, editorClass);
+  },
 
-  static registerBadge(
-    badge: Component,
-    elementClass: CustomElementConstructor,
-    editorClass?: CustomElementConstructor,
-  ) {
-    RegistrationHelper.#registerComponent(
-      RegistrationHelper.#resolveComponent(badge),
-      RegistrationHelper.#targetKey.customBadges,
-      elementClass,
-      editorClass,
-    );
-  }
+  registerBadge(badge: Component, elementClass: CustomElementConstructor, editorClass?: CustomElementConstructor) {
+    registerComponent(resolveComponent(badge), TARGET_KEY.customBadges, elementClass, editorClass);
+  },
 
-  static registerCardFeature(cardFeature: Component, elementClass: CustomElementConstructor) {
-    RegistrationHelper.#registerComponent(
-      RegistrationHelper.#resolveComponent(cardFeature),
-      RegistrationHelper.#targetKey.customCardFeatures,
-      elementClass,
-    );
-  }
-}
+  registerCardFeature(cardFeature: Component, elementClass: CustomElementConstructor) {
+    registerComponent(resolveComponent(cardFeature), TARGET_KEY.customCardFeatures, elementClass);
+  },
+};
 
 export { RegistrationHelper, defineElement };
