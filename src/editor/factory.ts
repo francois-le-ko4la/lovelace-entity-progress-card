@@ -416,12 +416,12 @@ const EditorFactory = {
         width: hasUnit ? 'calc(100% - 106px)' : '100%', // leave room for the 90px unit select + gap
         showIf: (c: LovelaceConfig) => !parsed(c).custom && gate(c),
         resolveVirtual: (c: LovelaceConfig) => {
-          const p = parsed(c);
-          return p.custom ? 0 : p.value;
+          const parsedLength = parsed(c);
+          return parsedLength.custom ? 0 : parsedLength.value;
         },
         onVirtualChange: (value: number, config: LovelaceConfig) => {
-          const p = parseLength(config[key]);
-          const unit = p.custom ? units[0] : p.unit;
+          const parsedLength = parseLength(config[key]);
+          const unit = parsedLength.custom ? units[0] : parsedLength.unit;
           return { ...config, [key]: serializeLength(value, unit) };
         },
       },
@@ -446,14 +446,14 @@ const EditorFactory = {
         width: '90px',
         showIf: (c: LovelaceConfig) => !parsed(c).custom && gate(c),
         resolveVirtual: (c: LovelaceConfig) => {
-          const p = parsed(c);
-          return p.custom ? units[0] : p.unit;
+          const parsedLength = parsed(c);
+          return parsedLength.custom ? units[0] : parsedLength.unit;
         },
         onVirtualChange: (rawUnit: string, config: LovelaceConfig) => {
-          const p = parseLength(config[key]);
-          if (p.custom) return config;
+          const parsedLength = parseLength(config[key]);
+          if (parsedLength.custom) return config;
           const unit = rawUnit || units[0]; // clearing the dropdown falls back to the first unit
-          const value = convertLengthValue(p.value, p.unit, unit, convertRef);
+          const value = convertLengthValue(parsedLength.value, parsedLength.unit, unit, convertRef);
           return { ...config, [key]: serializeLength(value, unit) };
         },
       };

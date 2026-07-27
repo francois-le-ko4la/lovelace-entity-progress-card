@@ -17,9 +17,9 @@ const LENGTH_RE = /^\s*(-?\d*\.?\d+)\s*(px|em|rem|%)\s*$/;
 
 const parseLength = (raw: unknown): ParsedLength => {
   if (typeof raw !== 'string' || raw.trim() === '') return { custom: false, value: 0, unit: 'px' };
-  const m = raw.match(LENGTH_RE);
-  if (!m) return { custom: true, raw };
-  return { custom: false, value: parseFloat(m[1]), unit: m[2] };
+  const match = raw.match(LENGTH_RE);
+  if (!match) return { custom: true, raw };
+  return { custom: false, value: parseFloat(match[1]), unit: match[2] };
 };
 
 // Back to a config string. Only the true default (0px) collapses to undefined
@@ -32,9 +32,9 @@ const serializeLength = (value: number, unit: string): string | undefined =>
 // stored value already exceeds it (a YAML-set value stays editable, never
 // clamped down on load - typed input is clamped to `max` natively by HA).
 const lengthSliderSelector = (raw: unknown): Record<string, unknown> => {
-  const p = parseLength(raw);
-  const unit = p.custom ? 'px' : p.unit;
-  const value = p.custom ? 0 : p.value;
+  const parsed = parseLength(raw);
+  const unit = parsed.custom ? 'px' : parsed.unit;
+  const value = parsed.custom ? 0 : parsed.value;
   const max = Math.max(LENGTH_MAX[unit] ?? 500, value);
   return { number: { min: 0, max, step: LENGTH_STEP[unit] ?? 1, mode: 'slider', unit_of_measurement: unit } };
 };
