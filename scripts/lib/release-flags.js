@@ -6,9 +6,9 @@
 // ship, the same failure mode scripts/check-release-flags.js guards against by
 // gating the release workflow on the committed source being clean.
 //
-// `dev` is no longer forced here: it's derived at runtime from the served URL
-// (import.meta.url - *_dev.js or ?dev), so the shipped entity-progress-card.js,
-// served without that marker, is inherently non-dev.
+// `dev` is not forced here: it's baked per build via esbuild's define
+// (__EPB_DEV_BUILD__ - true only in the *_dev.js build, false in --prod), so
+// the shipped entity-progress-card.js is inherently non-dev.
 //
 // (?:const|let|var) - esbuild's bundler rewrites top-level `const`/`let` to
 // `var` when it concatenates modules.

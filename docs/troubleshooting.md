@@ -115,6 +115,15 @@ encounter an issue.
   ➡️ Ensure the resource is properly added to Lovelace.
 - **HACS not detecting the card?**  
   ➡️ Try clearing your browser cache or restarting Home Assistant.
+- **Card not rendering, a `Cannot use 'import.meta' outside a module` error, or
+  pop-ups (e.g. browser_mod) freezing?**  
+  ➡️ Your resource is registered as a classic **"JavaScript"** type (deprecated
+  by Home Assistant) instead of **"JavaScript Module"**. HA loads classic
+  scripts differently, and older builds couldn't survive it — the card failed to
+  load and could freeze browser_mod pop-ups (see [#108]). **Fix:** Settings →
+  Dashboards → ⋮ → Resources, open the entry, set **Resource type → JavaScript
+  Module**, then hard-refresh. (Recent builds load correctly either way and
+  print a console warning when they detect the classic type.)
 - **Still not working?**  
   ➡️ Open your browser’s JavaScript console to check for any errors.
 

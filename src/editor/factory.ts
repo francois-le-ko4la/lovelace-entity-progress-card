@@ -17,6 +17,7 @@ import { is } from '../utils/common-checks.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
 import type { LovelaceConfig, Config } from '../utils/types.js';
 import { availableSpace } from './dom-helper.js';
+import { parseLength, serializeLength, convertLengthValue } from '../utils/length.js';
 
 // Field definitions are heterogeneous option bags (showIf/resolveVirtual/
 // onVirtualChange/width/target/... vary per field) - kept as `Record<string,
@@ -287,7 +288,10 @@ const EditorFactory = {
             percent: EditorFieldsType.tpl('percent'),
           }
         : {
-            unit: EditorFieldsType.text('unit', { width: availableSpace(32, 1 / 3) }),
+            unit: EditorFieldsType.text('unit', {
+              width: availableSpace(32, 1 / 3),
+              placeholder: (_c: LovelaceConfig, neg: Config) => (neg?.resolvedUnit as string) ?? '',
+            }),
             // disable_unit is deprecated (see
             // BaseConfigHelper.#logDeprecatedOption): 'unit' is now just
             // another hide target, folded into hide by _customizeConfig. The
@@ -299,7 +303,11 @@ const EditorFactory = {
               width: availableSpace(32, 1 / 3),
               showIf: (c: LovelaceConfig) => !(c.disable_unit || (is.array(c.hide) && c.hide.includes('unit'))),
             }),
-            decimal: EditorFieldsType.decimal('decimal', { width: availableSpace(32, 1 / 3) }),
+            decimal: EditorFieldsType.decimal('decimal', {
+              width: availableSpace(32, 1 / 3),
+              placeholder: (_c: LovelaceConfig, neg: Config) =>
+                neg?.resolvedDecimal == null ? '' : String(neg.resolvedDecimal),
+            }),
             // A 2-state toggle can't represent 3 mutually exclusive modes
             // (standard/entity/Jinja) — a single-select chip group replaces
             // the previous pair of toggles, which could both show at once and
@@ -385,6 +393,74 @@ const EditorFactory = {
   // per field instead.
   widthUnless: (condition: boolean) => (condition ? {} : { width: availableSpace() }),
 
+  // A CSS-length option (e.g. min_width) edited as a number+unit composite: a
+  // slider (value) + a unit dropdown, both virtual over the single string
+  // config key. A value that isn't a plain number+unit (calc(), auto…) falls
+  // back to a raw text field. See utils/length.ts. Config stays a string, so
+  // the schema is unchanged. `badge` narrows the unit list (px/% only) and
+  // enables the px<->% conversion (its % is redefined, see core.ts / #124).
+  lengthField: (
+    key: string,
+    opts: { units: string[]; convertRef?: number; showIf?: (c: LovelaceConfig) => boolean; noLabel?: boolean },
+  ) => {
+    const { units, convertRef, showIf, noLabel = false } = opts;
+    const parsed = (c: LovelaceConfig) => parseLength(c[key]);
+    const gate = (c: LovelaceConfig) => (showIf ? showIf(c) : true);
+    const hasUnit = units.length > 1; // a single unit (e.g. px) needs no dropdown
+    const fields: Record<string, unknown> = {
+      [key]: {
+        name: key,
+        type: () => `length:${key}`,
+        virtual: true,
+        noLabel,
+        width: hasUnit ? 'calc(100% - 106px)' : '100%', // leave room for the 90px unit select + gap
+        showIf: (c: LovelaceConfig) => !parsed(c).custom && gate(c),
+        resolveVirtual: (c: LovelaceConfig) => {
+          const p = parsed(c);
+          return p.custom ? 0 : p.value;
+        },
+        onVirtualChange: (value: number, config: LovelaceConfig) => {
+          const p = parseLength(config[key]);
+          const unit = p.custom ? units[0] : p.unit;
+          return { ...config, [key]: serializeLength(value, unit) };
+        },
+      },
+      [`${key}_custom`]: {
+        name: `${key}_custom`,
+        type: 'text',
+        virtual: true,
+        noLabel,
+        showIf: (c: LovelaceConfig) => parsed(c).custom && gate(c),
+        resolveVirtual: (c: LovelaceConfig) => (typeof c[key] === 'string' ? c[key] : ''),
+        onVirtualChange: (value: string, config: LovelaceConfig) => ({ ...config, [key]: value || undefined }),
+      },
+    };
+    if (hasUnit) {
+      fields[`${key}_unit`] = {
+        name: `${key}_unit`,
+        type: () => `lengthUnit:${units.join(',')}`,
+        virtual: true,
+        noLabel: true,
+        required: true,
+        isInGroup: 'length-unit', // CSS aligns it with the (labelled) slider row
+        width: '90px',
+        showIf: (c: LovelaceConfig) => !parsed(c).custom && gate(c),
+        resolveVirtual: (c: LovelaceConfig) => {
+          const p = parsed(c);
+          return p.custom ? units[0] : p.unit;
+        },
+        onVirtualChange: (rawUnit: string, config: LovelaceConfig) => {
+          const p = parseLength(config[key]);
+          if (p.custom) return config;
+          const unit = rawUnit || units[0]; // clearing the dropdown falls back to the first unit
+          const value = convertLengthValue(p.value, p.unit, unit, convertRef);
+          return { ...config, [key]: serializeLength(value, unit) };
+        },
+      };
+    }
+    return fields;
+  },
+
   // Every themeXxxFields() below is pulled out of theme() itself for the same
   // reason as themeModeFields/widthUnless above: keep each conditional
   // block's own ternaries out of theme()'s cognitive complexity budget.
@@ -468,17 +544,13 @@ const EditorFactory = {
           bar_max_width: value ? '300px' : undefined,
         }),
       }),
-      bar_max_width: EditorFieldsType.slider('bar_max_width', {
-        virtual: true,
-        // The toggle right above already carries this label ("Bar max
-        // width") - repeating it on the slider itself is redundant.
+      // The toggle above carries the "Bar max width" label, so the slider is
+      // noLabel. Same length component as min_width/height, locked to px (a
+      // single unit needs no dropdown).
+      ...EditorFactory.lengthField('bar_max_width', {
+        units: ['px', '%'],
         noLabel: true,
         showIf: (c: LovelaceConfig) => barMaxWidthAllowed(c) && Boolean(c.bar_max_width),
-        resolveVirtual: (c: LovelaceConfig) => parseInt(c.bar_max_width) || 0,
-        onVirtualChange: (value: number, config: LovelaceConfig) => ({
-          ...config,
-          bar_max_width: value ? `${value}px` : undefined,
-        }),
       }),
     };
   },
@@ -572,8 +644,34 @@ const EditorFactory = {
       : {
           frameless: EditorFieldsType.toggle('frameless', { width: availableSpace() }),
           marginless: EditorFieldsType.toggle('marginless', { width: availableSpace() }),
-          height: EditorFieldsType.text('height', { width: availableSpace() }),
         },
+
+  // A "Card size" toggle that reveals min_width (+ height on cards) without
+  // forcing a value: `_show_size` is ephemeral UI state (stripped before
+  // config-changed, never saved to YAML), same pattern as `_show_all_actions`.
+  // The toggle also reads as on when a value already exists (YAML round-trip).
+  cardSizeFields: (badge: boolean) => {
+    const shown = (c: LovelaceConfig) => Boolean(c._show_size || c.min_width || c.height);
+    return {
+      card_size_toggle: {
+        name: 'card_size_toggle',
+        type: 'toggle',
+        virtual: true,
+        resolveVirtual: shown,
+        onVirtualChange: (value: boolean, config: LovelaceConfig) =>
+          value
+            ? { ...config, _show_size: true }
+            : { ...config, _show_size: undefined, min_width: undefined, height: undefined },
+      },
+      ...EditorFactory.lengthField(
+        'min_width',
+        badge
+          ? { units: ['px', '%'], convertRef: 130, showIf: shown }
+          : { units: ['px', 'em', 'rem', '%'], showIf: shown },
+      ),
+      ...(badge ? {} : EditorFactory.lengthField('height', { units: ['px', 'em', 'rem', '%'], showIf: shown })),
+    };
+  },
 
   themeLayoutField: (badge: boolean, resetUpIfInvalid: (config: LovelaceConfig) => LovelaceConfig) =>
     badge
@@ -783,10 +881,10 @@ const EditorFactory = {
     icon: HA_CONTEXT.icons.aspectRatio,
     fields: {
       ...EditorFactory.themeCardLayoutFields(badge),
-      // Not gated on `badge` - valid for badges too (not in
-      // YamlSchemaFactory.badge's delete list), unlike its former neighbors
-      // above.
-      min_width: EditorFieldsType.text('min_width', EditorFactory.widthUnless(badge)),
+      // min_width (+ height on cards) behind a "Card size" reveal toggle. Not
+      // gated on `badge` for min_width - valid for badges too (not in
+      // YamlSchemaFactory.badge's delete list).
+      ...EditorFactory.cardSizeFields(badge),
       ...EditorFactory.themeLayoutField(badge, EditorFactory.resetUpIfInvalid),
     },
   }),

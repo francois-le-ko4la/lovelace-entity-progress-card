@@ -1974,6 +1974,7 @@ const EDITOR_BASE_STYLE = css`
   .editor { display: flex; flex-direction: column; gap: 16px; padding-bottom: 16px; }
   .panel-body { display: flex; flex-direction: row; gap: 16px; flex-wrap: wrap; align-content: flex-start; padding: 8px 0; }
   .panel-body ha-selector.field-toggle { margin-block: -18px; }
+  .panel-body ha-selector.length-unit { align-self: flex-end; margin-block-end: 8px; }
   .migrate-header { display: flex; justify-content: flex-end; }
 `;
 

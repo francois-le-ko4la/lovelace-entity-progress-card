@@ -6,9 +6,6 @@ and there's a whole set of new coloring, layout and alerting options — plus mo
 built-in themes and eleven new languages. Almost all of it can be set up
 straight from the visual editor.
 
-Coming from **1.5.2**? Your dashboards keep working as-is — this note covers
-only what actually changed for you along the way.
-
 ### ⭐ Highlights
 
 #### 🧩 Put a progress bar inside a Tile card
@@ -208,6 +205,20 @@ Compatible with Home Assistant 2026.2+. The notable fixes over 1.5.2:
 - Noticeably faster and lighter on dashboards with many cards.
 - Text formatting from templates keeps working, but scripts can no longer be
   injected through entity names or media titles (see [Supported HTML]).
+- Badge `min_width` given as a percentage no longer overflows and overlaps
+  neighbouring badges — on a badge, `%` is now relative to the badge's default
+  width (`120%` = 1.2× the normal size). Cards and templates keep the standard
+  CSS `%`. (Existing badge `%` values change meaning — they rendered broken
+  before.)  
+  ➡️ [Bug]: Bug with minimum width #124 (@vemboy200)
+- Changing a sensor's display precision now updates the card immediately,
+  instead of only taking effect after a full browser reload.
+- The card now loads correctly even when its resource is registered as a classic
+  **"JavaScript"** type instead of **"JavaScript Module"**. That deprecated type
+  could stop the card from loading and freeze pop-ups opened by browser_mod; the
+  card is now safe either way, and prints a console warning when it detects the
+  classic type so you can switch it to "JavaScript Module".  
+  ➡️ [Bug]: freeze on webawesome / browser_mod pop-ups #108 (@LiMEntal)
 
 ### 🧹 Under the hood
 

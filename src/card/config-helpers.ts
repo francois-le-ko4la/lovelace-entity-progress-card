@@ -20,6 +20,8 @@ import { is, has, assertDefined } from '../utils/common-checks.js';
 import { initLogger, type LoggerInstance } from '../utils/log.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
 import { YamlSchemaFactory } from './schema.js';
+import { EntityHelper } from './entity-helper.js';
+import { resolveDisplayUnit, resolveDisplayDecimal } from '../utils/display-defaults.js';
 import type { LovelaceConfig, Config } from '../utils/types.js';
 
 // Every YamlSchemaFactory getter (card/badge/feature/template/badgeTemplate)
@@ -90,8 +92,44 @@ class BaseConfigHelper {
     );
     this._configParsed = yamlSchema.parse((this.constructor as typeof BaseConfigHelper)._customizeConfig(config));
     this._configResolved = BaseConfigHelper.#resolveConfig(this._configParsed?.config);
+    this.#resolveDisplayDefaults();
 
     this.#lastMsgConsole = null;
+  }
+
+  // resolvedUnit/resolvedDecimal: the effective unit/decimal a card shows when
+  // the user leaves them unset (entity-derived, see display-defaults.ts). Added
+  // to the negotiated config as derived keys so the editor can offer them as a
+  // greyed placeholder without writing a YAML key. Needs live entity data
+  // (hence instance, not static #resolveConfig); the card itself recomputes
+  // these live at render (ViewCore) and ignores these copies.
+  // Re-run the entity-derived unit/decimal resolution against the current hass
+  // without re-parsing the schema. The editor calls this on `set hass` because
+  // config negotiation runs hass-independently (possibly before hass exists),
+  // so the derived defaults would otherwise stay stale until the next config.
+  refreshDisplayDefaults() {
+    this.#resolveDisplayDefaults();
+  }
+
+  #resolveDisplayDefaults() {
+    const config = this._configResolved;
+    if (!is.nonEmptyString(config.entity)) return;
+
+    const entity = new EntityHelper();
+    entity.entityId = config.entity;
+    entity.attribute = is.nonEmptyString(config.attribute) ? config.attribute : null;
+
+    const maxIsEntity = is.plainObject(config.max_value) && is.nonEmptyString(config.max_value.entity);
+    const resolvedUnit = resolveDisplayUnit(config.unit, maxIsEntity, entity.unit);
+    config.resolvedUnit = resolvedUnit;
+    config.resolvedDecimal = resolveDisplayDecimal(
+      config.decimal,
+      config.unit,
+      resolvedUnit,
+      entity.precision,
+      entity.entityType,
+      entity.unit,
+    );
   }
 
   // Calcule une seule fois, à partir de la config validée, la config brute +

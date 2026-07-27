@@ -5,6 +5,7 @@
  */
 
 import { HA_CONTEXT, CARD, CARD_CONTEXT } from '../utils/parameters.js';
+import { resolveDisplayUnit, resolveDisplayDecimal } from '../utils/display-defaults.js';
 import type { LovelaceConfig, Config } from '../utils/types.js';
 import { is } from '../utils/common-checks.js';
 import { traceInstance } from '../utils/log.js';
@@ -1099,28 +1100,18 @@ class ViewBase extends ViewCore {
   }
 
   #getCurrentUnit(): string {
-    if (this._configHelper.config.unit) return this._configHelper.config.unit;
-    if (this.#maxValue.isEntity) return CARD.config.unit.default;
-
-    const unit = this._currentValue.unit;
-    return unit === null ? CARD.config.unit.default : unit;
+    return resolveDisplayUnit(this._configHelper.config.unit, this.#maxValue.isEntity, this._currentValue.unit);
   }
 
   #getCurrentDecimal(currentUnit: string): number {
-    if (is.unsignedInteger(this._configHelper.config.decimal)) return this._configHelper.config.decimal;
-    if (this._currentValue.precision) return this._currentValue.precision;
-    if (this._currentValue.entityType.isTimer) return CARD.config.decimal.timer;
-    if (this._currentValue.entityType.isCounter) return CARD.config.decimal.counter;
-    if (this._currentValue.entityType.isDuration) return CARD.config.decimal.duration;
-    if (['j', 'd', 'h', 'min', 's', 'ms', 'μs'].includes(this._currentValue.unit as string))
-      return CARD.config.decimal.duration;
-
-    if (this._configHelper.config.unit)
-      return this._configHelper.config.unit === CARD.config.unit.default
-        ? CARD.config.decimal.percentage
-        : CARD.config.decimal.other;
-
-    return currentUnit === CARD.config.unit.default ? CARD.config.decimal.percentage : CARD.config.decimal.other;
+    return resolveDisplayDecimal(
+      this._configHelper.config.decimal,
+      this._configHelper.config.unit,
+      currentUnit,
+      this._currentValue.precision,
+      this._currentValue.entityType,
+      this._currentValue.unit,
+    );
   }
 }
 /**

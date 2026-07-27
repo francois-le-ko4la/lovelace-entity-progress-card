@@ -1975,8 +1975,20 @@ height: 140px
 
 > **`min_width`** [String] (optional)
 
-Sets a minimum width (e.g., 120px, 10em, 30%) for the card, badge or template.
-Useful for ensuring consistent layout in horizontal stacks or grids.
+Sets a minimum width for the card, badge or template. Absolute units (`px`,
+`em`, `rem`) work everywhere and are the safest choice — e.g.
+`min_width: 140px`.
+
+> [!IMPORTANT]
+>
+> **Percentages behave differently by type:**
+>
+> - **Card / template**: `%` is the standard CSS `min-width`, i.e. relative to
+>   the **parent container** (the grid cell / stack). A value over `100%`
+>   therefore overflows its container.
+> - **Badge / badge template**: `%` is relative to the **badge's default
+>   width**, not the parent. So `min_width: 120%` makes the badge 1.2× its
+>   normal size (no overflow), and `100%` is the default badge width.
 
 _Example_:
 

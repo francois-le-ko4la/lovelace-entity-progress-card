@@ -16,6 +16,7 @@ class ChangeTracker {
   #firstTime = true;
   #watchedEntities = new Set<string>();
   #entityCache: Record<string, EntityState | null> = {};
+  #precisionCache: Record<string, unknown> = {};
   #updated = false;
   #hassState = { isUpdated: false };
 
@@ -69,6 +70,12 @@ class ChangeTracker {
       // replaces the two full JSON.stringify serializations previously run per
       // entity on every hass update
       if (newState !== this.#entityCache?.[entityId]) return true;
+      // CF5 - issue (medium) resolved - display_precision lives in the entity
+      // registry (hass.entities), not the state object, so changing it doesn't
+      // swap the state reference above - the card rendered stale precision till
+      // a reload. Compared by value (not the entity entry reference, which HA
+      // can swap on unrelated registry changes).
+      if (newHass?.entities?.[entityId]?.display_precision !== this.#precisionCache?.[entityId]) return true;
     }
 
     return false;
@@ -76,8 +83,10 @@ class ChangeTracker {
 
   _updateCache(hass: HomeAssistant) {
     this.#entityCache = {};
+    this.#precisionCache = {};
     for (const entityId of this.#watchedEntities) {
       this.#entityCache[entityId] = hass.states?.[entityId] ?? null;
+      this.#precisionCache[entityId] = hass.entities?.[entityId]?.display_precision ?? null;
     }
   }
 

@@ -376,10 +376,11 @@ const consoleInfo = {
   // Emitted after the banner (see index.ts) only when the URL-derived dev/
   // debug modes are active, so a non-shipped configuration is never silent.
   warnCss: 'color:black; background-color:orange; font-weight:bold;',
-  devWarning: `%c⚠️ ${META.types.card.typeName.toUpperCase()} ${VERSION} — DEV MODE: elements registered under "…-dev" type names. Not for production dashboards. (served as …_dev.js or ?dev)`,
+  devWarning: `%c⚠️ ${META.types.card.typeName.toUpperCase()} ${VERSION} — DEV MODE: elements registered under "…-dev" type names. Not for production dashboards. (this is the _dev.js build, or ?dev=true is set)`,
   debugWarning: `%c⚠️ ${META.types.card.typeName.toUpperCase()} ${VERSION} — DEBUG logging ON for: `,
   debugWarningHint: ' — drop the ?debug query param to silence it.',
   noRegistrationWarning: `%c⚠️ ${META.types.card.typeName.toUpperCase()} ${VERSION} — NO-REGISTRATION MODE: no custom element defined, cards of this type will NOT render. Diagnostic only (issue #108). Drop the ?noRegistration query param to restore.`,
+  classicResourceWarning: `%c⚠️ ${META.types.card.typeName.toUpperCase()} ${VERSION} — this resource is registered as a classic "JavaScript" type, deprecated by Home Assistant. Switch it to "JavaScript Module" (Settings → Dashboards → Resources): the classic type can freeze pop-ups such as browser_mod and is being phased out. See the troubleshooting guide.`,
 };
 
 // Assembled last so every sub-object above (already fully resolved local

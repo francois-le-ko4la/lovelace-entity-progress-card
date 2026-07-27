@@ -84,6 +84,7 @@
       "height": "Height",
       "marginless": "Marginless",
       "min_width": "Min width",
+      "card_size_toggle": "Card size",
       "unit_spacing": "Unit spacing",
       "watermark_toggle": "Watermark",
       "alert_toggle": "Alert",

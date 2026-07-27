@@ -1025,10 +1025,20 @@ class HABase extends HACore {
     const cardKey = CARD.htmlStructure.card.element;
     const config = this._cardView.config;
 
+    // On a badge, `min_width: N%` is redefined as N% of the default badge
+    // width (var(--ha-badge-size, 130px)), not the CSS % (% of the parent,
+    // which overflows past 100% - see issue #124). Cards/templates keep the
+    // standard CSS %, and any non-% value passes through unchanged.
+    const isBadge = this.baseClass.includes('badge');
+    const minWidth =
+      isBadge && typeof config.min_width === 'string' && /^\s*-?[\d.]+%\s*$/.test(config.min_width)
+        ? `calc(${parseFloat(config.min_width) / 100} * var(--ha-badge-size, 130px))`
+        : config.min_width;
+
     (
       [
         [this._cardView.hasReversedSecondaryInfoRow, '--secondary-info-row-reverse', 'row-reverse'],
-        [config.min_width, CARD.style.dynamic.card.minWidth.var, config.min_width],
+        [config.min_width, CARD.style.dynamic.card.minWidth.var, minWidth],
         [config.height, CARD.style.dynamic.card.height.var, config.height],
         [config.bar_max_width, CARD.style.dynamic.progressBar.maxWidth.var, config.bar_max_width],
         [config.alert_when?.color, '--alert-color', ThemeManager.adaptColor(config.alert_when?.color)],

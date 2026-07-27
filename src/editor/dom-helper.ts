@@ -120,6 +120,32 @@ class EditorDOMHelper extends DOMHelper {
     });
   }
 
+  // ─── Placeholder ──────────────────────────────────────────────────────────
+
+  /**
+   * Greyed hint shown inside an empty field (e.g. unit/decimal's negotiated
+   * default). Recomputed each pass since it can depend on other config keys
+   * (decimal's default shifts with the chosen unit).
+   */
+  updatePlaceholder(name: string, placeholder: string) {
+    const cacheKey = `${name}:placeholder`;
+    if (this._appliedValues.get(cacheKey) === placeholder) return;
+
+    this.enqueue(name, 'placeholder', () => {
+      const el = this._domElements.get(name);
+      if (!el) return;
+      el.placeholder = placeholder;
+      this._appliedValues.set(cacheKey, placeholder);
+    });
+  }
+
+  // Guard kept out of _updateField (its own cognitive-complexity budget) - the
+  // field's placeholder is a fn of (rawConfig, negotiated) or absent.
+  _applyPlaceholder(name: string, def: FieldDef, config: LovelaceConfig, negotiated: Config | null) {
+    if (!def.placeholder) return;
+    this.updatePlaceholder(name, String(def.placeholder(config, negotiated) ?? ''));
+  }
+
   // ─── Action selector default ──────────────────────────────────────────────
 
   /**
@@ -292,6 +318,9 @@ class EditorDOMHelper extends DOMHelper {
     if (def.context) {
       this._applyContext(name, def.context, config);
     }
+
+    // Placeholder (negotiated default shown greyed - e.g. unit/decimal)
+    this._applyPlaceholder(name, def, config, negotiated);
 
     // Champs virtuels — pas de valeur dans le config, géré par showIf
     // uniquement

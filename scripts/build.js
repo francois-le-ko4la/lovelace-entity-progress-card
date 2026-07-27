@@ -38,6 +38,11 @@ function main() {
     format: 'esm',
     write: false,
     minify: false,
+    // Bake dev mode into the *_dev.js build itself (vs the shipped .js): the URL
+    // can't be read when the bundle is loaded as an ES module (no
+    // document.currentScript), so a filename/?dev=true signal alone would miss
+    // it. ?dev=true still works as a runtime override on the prod file.
+    define: { __EPB_DEV_BUILD__: isProd ? 'false' : 'true' },
     // Preserve original class/function names through bundling: esbuild
     // otherwise prefixes some cross-module classes (e.g. _ThemeManager,
     // _EntityHelper) to avoid collisions, which would surface in every

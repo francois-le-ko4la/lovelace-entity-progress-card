@@ -21,6 +21,7 @@ import {
   EntityProgressBarStackModeChips,
 } from './chips.js';
 import { EntityProgressBarStackEditor, EntityProgressCustomThemeEditor } from './list-editors.js';
+import { lengthSliderSelector, lengthUnitSelector } from '../utils/length.js';
 
 // Every dynamic editor field element built below (ha-selector, the chip
 // custom elements from chips.ts, the list editors from list-editors.ts)
@@ -37,6 +38,7 @@ type EditorFieldElement = HTMLElement & {
   context?: Record<string, unknown>;
   selector?: Record<string, unknown>;
   required?: boolean;
+  placeholder?: string;
   items?: unknown;
   setLabels?: (labels: unknown) => void;
   _fieldDef?: FieldDef;
@@ -218,6 +220,12 @@ class EditorBase extends HTMLElement {
     if (!hass) return;
     this.#hassProvider.hass = hass;
     this.#dom.updateHass(hass);
+    // unit/decimal placeholders are entity-state-derived, so they must track
+    // hass like the card re-renders: config negotiation ran hass-independently
+    // (possibly before hass existed). Recompute the defaults and refresh just
+    // those fields - updatePlaceholder's cache makes it a no-op when unchanged.
+    this._configHelper.refreshDisplayDefaults();
+    this.#updateFields(new Set(['unit', 'decimal']));
   }
 
   get hass(): HomeAssistant | null {
@@ -451,6 +459,12 @@ class EditorBase extends HTMLElement {
       watermarkHighAttribute: () => ({ attribute: { entity_id: this.#config?.watermark?.high ?? '' } }),
     };
 
+    // "length" fields (min_width…): a number+unit composite. The slider's
+    // range/step/unit follow the current value's unit (see length.ts); the unit
+    // list depends on the card type, encoded in the type string by the factory.
+    if (type.startsWith('length:')) return lengthSliderSelector(this.#config[type.slice('length:'.length)]);
+    if (type.startsWith('lengthUnit:')) return lengthUnitSelector(type.slice('lengthUnit:'.length).split(','));
+
     return (selectors[type] ?? (() => ({ text: {} })))();
   }
 
@@ -607,6 +621,12 @@ class EditorBase extends HTMLElement {
     el.selector = this.#getSelectorForType(
       is.func(field.type) ? (field.type(this.#config ?? {}) as string) : field.type,
     );
+
+    // Greyed hint for an empty field (unit/decimal negotiated default); a
+    // function of (rawConfig, negotiated), refreshed by EditorDOMHelper.
+    if (field.placeholder) {
+      el.placeholder = String(field.placeholder(this.#config ?? {}, this._configHelper.config) ?? '');
+    }
 
     if (field.isInGroup) el.classList.add(field.isInGroup);
     if (field.type === 'toggle') el.classList.add('field-toggle');

@@ -12,7 +12,7 @@
  * Jinja-driven min/max/watermark/alert thresholds; theme presets and custom
  * themes with segment/rainbow gradients; center-zero diverging bars; bar_stack
  * aggregation; URL-derived per-area console logging and dev mode (?debug=…,
- * …_dev.js/?dev); and the window.EPB_DIAG.dump() diagnostic.
+ * ?dev=true); and the window.EPB_DIAG.dump() diagnostic.
  *
  * This file is the bundle entry point: it registers every card/badge/feature
  * type with Home Assistant, exposes window.EPB_DIAG, and prints the console
@@ -66,11 +66,18 @@ console.log(CARD.console.link);
 console.groupEnd();
 
 // dev/debug are derived from the served URL (see CARD_CONTEXT in
-// parameters.ts) - warn loudly when either is active so a *_dev.js / ?dev /
+// parameters.ts) - warn loudly when either is active so a ?dev=true /
 // ?debug=… configuration is never running silently mistaken for the shipped
 // build.
 if (CARD_CONTEXT.dev) {
   console.warn(CARD.console.devWarning, CARD.console.warnCss);
+}
+// Loaded as a classic <script> (deprecated resource type). Harmless now the
+// bundle no longer uses import.meta, but it used to freeze browser_mod popups
+// (#108) - nudge the user to "JavaScript Module". Skipped in dev: the dev build
+// is loaded classic on purpose (?dev=true needs document.currentScript).
+if (CARD_CONTEXT.classicScript && !CARD_CONTEXT.dev) {
+  console.warn(CARD.console.classicResourceWarning, CARD.console.warnCss);
 }
 if (CARD_CONTEXT.noRegistration) {
   console.warn(CARD.console.noRegistrationWarning, CARD.console.warnCss);

@@ -16,23 +16,46 @@ import { HA_CONTEXT } from './ha-context.js';
 import { CARD } from './card-config.js';
 import { THEME } from './card-themes.js';
 
-// dev / debug are read from the module's own served URL (import.meta.url) at
-// load, instead of being edited into this file and rebuilt to flip them:
-//   - dev:   the file is served as *_dev.js, or the resource URL carries a
-//            ?dev query param. Drives the `-dev` suffix on every registered
-//            element name, so a dev build coexists with the shipped one.
+// Injected by scripts/build.js: true in the *_dev.js build, false in the
+// shipped .js. Baked in (not URL-derived) so dev mode survives being loaded as
+// an ES module, where document.currentScript - and thus any ?dev=true query -
+// is unreadable.
+declare const __EPB_DEV_BUILD__: boolean;
+
+// dev is baked per build (__EPB_DEV_BUILD__ above), debug is read from the
+// bundle's own served URL at load:
+//   - dev:   true in the *_dev.js build (drives the `-dev` suffix on every
+//            registered element name, so a dev build coexists with the shipped
+//            one). ?dev=true is an optional runtime override on the prod file.
+//            Baked rather than URL-derived because the URL is unreadable when
+//            the bundle loads as an ES module (no document.currentScript).
 //   - debug: ?debug=card,hass (or ?debug=all) turns on per-area console
-//            logging on top of DEBUG_DEFAULTS below.
-// import.meta.url is guarded: if the module is ever evaluated where
-// import.meta is unavailable, dev is off and only DEBUG_DEFAULTS apply - the
-// safe shipped state. In an esbuild bundle import.meta.url resolves to the
-// loaded bundle's own URL (not a per-source path), which is exactly the
-// served resource URL we want to read here.
+//            logging on top of DEBUG_DEFAULTS below (needs a classic-script
+//            load for document.currentScript to expose the URL).
+// The URL comes from document.currentScript.src, NOT import.meta.url: a bare
+// `import.meta` is a *parse-time* SyntaxError when the bundle is loaded as a
+// classic <script> (a resource typed `js`, or browser_mod re-loading it in a
+// popup - see issue #108), which kills the whole module before any try/catch
+// can run. currentScript.src is populated for a classic-script load and null
+// for an ES-module load (import()) - in the latter (prod via HACS) dev/debug
+// stay off, which is the safe shipped state anyway. Mushroom ships esm too and
+// works as a classic script precisely because it carries no `import.meta`.
 const MODULE_URL = (() => {
   try {
-    return import.meta.url;
+    return (document.currentScript as HTMLScriptElement | null)?.src ?? '';
   } catch {
     return '';
+  }
+})();
+// Loaded as a classic <script> (document.currentScript is set) rather than an
+// ES module (import() → null). A classic-typed resource is deprecated by HA and
+// used to freeze browser_mod popups (issue #108); we load fine either way now,
+// but still warn the user to switch to "JavaScript Module" (see index.ts).
+const IS_CLASSIC_SCRIPT = (() => {
+  try {
+    return document.currentScript !== null;
+  } catch {
+    return false;
   }
 })();
 const MODULE_PARAMS = (() => {
@@ -68,7 +91,8 @@ const debugOn = (area: keyof typeof DEBUG_DEFAULTS): boolean =>
   DEBUG_DEFAULTS[area] || DEBUG_AREAS.has('all') || DEBUG_AREAS.has(area);
 
 const CARD_CONTEXT = {
-  dev: /_dev\.js(?:$|\?)/.test(MODULE_URL) || MODULE_PARAMS.has('dev'),
+  dev: __EPB_DEV_BUILD__ || MODULE_PARAMS.get('dev') === 'true',
+  classicScript: IS_CLASSIC_SCRIPT,
   // ?noRegistration loads the whole module (banner, EPB_DIAG, everything) but
   // defines zero custom elements and pushes nothing to customCards/Badges/
   // Features - a diagnostic knob for issue #108: if a freeze/clash disappears
