@@ -112,9 +112,10 @@
         "background": "カードの背景"
       },
       "bar_size": {
-        "large": "大",
-        "medium": "中",
+        "xsmall": "Extra Small",
         "small": "小",
+        "medium": "中",
+        "large": "大",
         "xlarge": "特大"
       },
       "layout": {

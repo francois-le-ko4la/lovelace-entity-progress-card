@@ -184,6 +184,7 @@ const style = {
   },
   bar: {
     sizeOptions: {
+      xsmall: { label: 'xsmall', mdi: HA_CONTEXT.icons.sizeExtraSmall },
       small: { label: 'small', mdi: HA_CONTEXT.icons.sizeSmall },
       medium: { label: 'medium', mdi: HA_CONTEXT.icons.sizeMedium },
       large: { label: 'large', mdi: HA_CONTEXT.icons.sizeLarge },

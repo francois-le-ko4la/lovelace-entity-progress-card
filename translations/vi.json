@@ -112,9 +112,10 @@
         "background": "Nền thẻ"
       },
       "bar_size": {
-        "large": "Lớn",
-        "medium": "Trung bình",
+        "xsmall": "Extra Small",
         "small": "Nhỏ",
+        "medium": "Trung bình",
+        "large": "Lớn",
         "xlarge": "Rất lớn"
       },
       "layout": {

@@ -112,9 +112,10 @@
         "background": "Kaartachtergrond"
       },
       "bar_size": {
-        "large": "Groot",
-        "medium": "Middel",
+        "xsmall": "Extra Small",
         "small": "Klein",
+        "medium": "Middel",
+        "large": "Groot",
         "xlarge": "Extra groot"
       },
       "layout": {

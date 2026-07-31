@@ -112,9 +112,10 @@
         "background": "कार्ड पृष्ठभूमि"
       },
       "bar_size": {
-        "large": "बड़ी",
-        "medium": "मध्यम",
+        "xsmall": "Extra Small",
         "small": "छोटी",
+        "medium": "मध्यम",
+        "large": "बड़ी",
         "xlarge": "अतिरिक्त बड़ी"
       },
       "layout": {

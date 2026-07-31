@@ -112,9 +112,10 @@
         "background": "Fundal card"
       },
       "bar_size": {
-        "large": "Mare",
-        "medium": "Medie",
+        "xsmall": "Extra Small",
         "small": "Mică",
+        "medium": "Medie",
+        "large": "Mare",
         "xlarge": "Foarte mare"
       },
       "layout": {

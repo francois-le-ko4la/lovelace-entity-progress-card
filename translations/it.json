@@ -112,9 +112,10 @@
         "background": "Sfondo della scheda"
       },
       "bar_size": {
-        "large": "Grande",
-        "medium": "Media",
+        "xsmall": "Extra Small",
         "small": "Piccola",
+        "medium": "Media",
+        "large": "Grande",
         "xlarge": "Extra grande"
       },
       "layout": {

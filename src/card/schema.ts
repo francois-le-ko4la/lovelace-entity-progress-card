@@ -1019,7 +1019,7 @@ const YamlSchemaFactory = {
         // (see the .xlarge CSS rule) - a badge's total height is capped at
         // --ha-badge-size (36px default), so xlarge would demand a taller
         // progress-container than the badge itself, overflowing it.
-        bar_size: types.enumsWithDefault(['small', 'medium', 'large'], 'small'),
+        bar_size: types.enumsWithDefault(['xsmall', 'small', 'medium', 'large'], 'small'),
       });
   },
 
@@ -1137,7 +1137,7 @@ const YamlSchemaFactory = {
         // Same reason as YamlSchemaFactory.badge: 'xlarge' would demand a
         // 42px-tall progress-container inside a badge capped at
         // --ha-badge-size (36px), overflowing it.
-        bar_size: types.enumsWithDefault(['small', 'medium', 'large'], 'small'),
+        bar_size: types.enumsWithDefault(['xsmall', 'small', 'medium', 'large'], 'small'),
       });
   },
 };

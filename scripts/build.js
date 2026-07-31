@@ -38,8 +38,8 @@ function main() {
     format: 'esm',
     write: false,
     minify: false,
-    // Bake dev mode into the *_dev.js build itself (vs the shipped .js): the URL
-    // can't be read when the bundle is loaded as an ES module (no
+    // Bake dev mode into the *_dev.js build itself (vs the shipped .js): the
+    // URL can't be read when the bundle is loaded as an ES module (no
     // document.currentScript), so a filename/?dev=true signal alone would miss
     // it. ?dev=true still works as a runtime override on the prod file.
     define: { __EPB_DEV_BUILD__: isProd ? 'false' : 'true' },
@@ -54,7 +54,16 @@ function main() {
   if (isProd) bundled = forceCleanCardContext(bundled);
   const { src, minifiedCount } = resolveCssBlocks(bundled, isProd);
 
-  const result = esbuild.transformSync(src, { minify: isProd, target: 'es2022' });
+  // es2021, not es2022 (issue #128): es2022 lets esbuild emit `static {}`
+  // class blocks (its keepNames technique for static members) and other
+  // es2022-only syntax, which is a hard SyntaxError on any pre-2022 engine -
+  // not caught by dev-mode testing (modern browser) and not caught by
+  // `node --check` in CI (Node's parser is newer than the target). That
+  // broke the shipped card entirely on older/embedded Chromium (kiosk
+  // panels) that worked fine on the pre-esbuild 1.5.x monolith. es2021 keeps
+  // every syntax feature actually used here (private fields, `??=`,
+  // optional chaining) while forcing static blocks into an es2021-safe form.
+  const result = esbuild.transformSync(src, { minify: isProd, target: 'es2021' });
 
   fs.mkdirSync(OUTDIR, { recursive: true });
   fs.writeFileSync(path.join(OUTDIR, OUTFILE), result.code);

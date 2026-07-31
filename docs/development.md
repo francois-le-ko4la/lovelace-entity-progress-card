@@ -638,11 +638,14 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
     `npm run check:release-flags` (safety net — fails if the committed
     `DEBUG_DEFAULTS` baseline has any flag left `true`; `dev` is URL-derived so
     it isn't checked here, see [Logging & debugging](#logging--debugging)),
-    `npm run validate`, `npm run build:prod` (esbuild, `--target=es2022`, pinned
+    `npm run validate`, `npm run build:prod` (esbuild, `--target=es2021`, pinned
     as a devDependency — re-forces `DEBUG_DEFAULTS` all-`false` in the built
     output regardless of the source state, see `scripts/lib/release-flags.js`),
-    a `node --check` sanity pass on the minified output, then uploads the
-    artifact to the release assets. HACS serves that asset.
+    a `node --check` sanity pass on the minified output,
+    `npm run check:es-target` (`es-check`, catches syntax newer than the
+    language floor that `node --check` alone can't - Node's own parser is newer
+    than the target, see issue #128), then uploads the artifact to the release
+    assets. HACS serves that asset.
 - **Two build modes** (`scripts/build.js`, bundling `src/index.ts` via esbuild
   with `keepNames: true`): `build:test` → `entity-progress-card_dev.js` (debug
   baseline left as committed) and `build:prod` (`--prod`) →
@@ -651,16 +654,19 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
   follows the served filename/URL at runtime (see
   [Logging & debugging](#logging--debugging)). Only `build:prod` is minified and
   safe to ship.
-- **Language floor**: the esbuild target is `es2022` — private fields and class
-  static blocks are fine, but syntax newer than es2022 will fail the release
-  build even though it runs in dev. Test a release build locally with
-  `npm run build:prod` when in doubt.
+- **Language floor**: the esbuild target is `es2021` — private fields, `??=` and
+  optional chaining are fine, but syntax newer than es2021 (e.g. class
+  `static {}` blocks - esbuild's own `keepNames` technique for those on some
+  inputs) will fail `npm run check:es-target` in the release build even though
+  it runs in dev (modern browser) and passes `node --check` (Node's parser is
+  newer than the target). Test a release build locally with
+  `npm run build:prod && npm run check:es-target` when in doubt.
 - **HACS**: `hacs.json` declares only the `filename` (no `content_in_root` —
   nothing is served from the repo root). HACS installs from the release asset
   `release.yaml` uploads; there is no in-repo fallback file, matching how other
   HACS plugins (e.g. Mushroom) ship a pure `src/` + release setup.
-- Release notes are drafted in `docs/rc-testing-notes.md` during the RC cycle,
-  then promoted to the GitHub release body.
+- Release notes are drafted in `CHANGELOG.md` during the RC cycle, then promoted
+  to the GitHub release body.
 
 ## Logging & debugging
 

@@ -3,6 +3,8 @@
  * throughout the card and editor instead of ad hoc typeof/instanceof.
  */
 
+import { IN_SUPPORTED_MATRIX } from './browser-support.js';
+
 const is = {
   nullish: (val: unknown): val is null | undefined => val == null, // null or undefined
   boolean: (val: unknown): val is boolean => typeof val === 'boolean',
@@ -40,7 +42,9 @@ const is = {
 };
 
 const has = {
-  own: (obj: object, key: PropertyKey): boolean => Object.hasOwn(obj, key),
+  // Object.hasOwn (Chrome/Edge 93) - see IN_SUPPORTED_MATRIX (browser-support).
+  own: (obj: object, key: PropertyKey): boolean =>
+    IN_SUPPORTED_MATRIX ? Object.hasOwn(obj, key) : Object.prototype.hasOwnProperty.call(obj, key),
   method: (obj: unknown, key: PropertyKey): boolean =>
     typeof (obj as Record<PropertyKey, unknown>)?.[key] === 'function',
   validKey: (obj: object, key: unknown): key is string => typeof key === 'string' && key !== '' && has.own(obj, key),

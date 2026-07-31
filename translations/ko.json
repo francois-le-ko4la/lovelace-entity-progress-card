@@ -112,9 +112,10 @@
         "background": "카드 배경"
       },
       "bar_size": {
-        "large": "큰",
-        "medium": "중간",
+        "xsmall": "Extra Small",
         "small": "작은",
+        "medium": "중간",
+        "large": "큰",
         "xlarge": "매우 큰"
       },
       "layout": {

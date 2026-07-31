@@ -81,6 +81,9 @@
       - [`percent` (Jinja)](#percent-jinja)
       - [`color` (Jinja)](#color-jinja)
       - [`bar_color` (Jinja)](#bar_color-jinja)
+  - [🧩 entity-progress-multi-card / entity-progress-multi-feature](#multi)
+    - [`entities`](#multi-entities)
+    - [`rows`](#multi-rows)
 
 ## Introduction
 
@@ -1386,11 +1389,13 @@ bar_color: rgb(110, 65, 171)
 [![Template OK][Template-OK]](#compatibility)
 [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
-> **`bar_size`** [String] ➡️ {`small`|`medium`|`large`|`xlarge`} _(optional,
-> default: `small`, `xlarge` for the Tile Feature)_
+> **`bar_size`** [String] ➡️ {`xsmall`|`small`|`medium`|`large`|`xlarge`}
+> _(optional, default: `small`, `xlarge` for the Tile Feature)_
 
 Customizes the appearance of the progress bar by selecting a predefined size.
-Choose from small, medium, or large to adjust the visual scale of the bar.
+Choose from xsmall, small, medium, or large to adjust the visual scale of the
+bar (`xsmall` is mainly useful to pack more bars in a tight space, e.g.
+[`entity-progress-multi-feature`](#multi)).
 
 > [!NOTE]
 >
@@ -1400,9 +1405,9 @@ Choose from small, medium, or large to adjust the visual scale of the bar.
 
 > [!IMPORTANT]
 >
-> Badge and Badge Template don't offer `xlarge` ({`small`|`medium`|`large`}
-> only): it sets a fixed 42px bar height, taller than a badge's entire height
-> (`--ha-badge-size`, 36px by default), so it would overflow the badge.
+> Badge and Badge Template don't offer `xlarge` ({`xsmall`|`small`|`medium`|
+> `large`} only): it sets a fixed 42px bar height, taller than a badge's entire
+> height (`--ha-badge-size`, 36px by default), so it would overflow the badge.
 
 > [!IMPORTANT]
 >
@@ -2909,6 +2914,108 @@ bar_color: >-
   {% else %}
     linear-gradient(90deg, orange, red)
   {% endif %}
+```
+
+[🔼 Back to top]
+
+<a id="multi"></a>
+
+## 🧩 entity-progress-multi-card / entity-progress-multi-feature
+
+> [!NOTE]
+>
+> New in 1.6.1. YAML only for now — no visual editor yet.
+
+These two aggregate several progress bars into a single card
+(`entity-progress-multi-card`) or a single Tile feature
+(`entity-progress-multi-feature`), instead of one bar per entity. Each bar is a
+real `entity-progress-feature` under the hood, so it keeps its own more-info
+tap, its own colors, and its own state — the aggregator only stacks them and
+divides the available height.
+
+<a id="multi-entities"></a>
+
+### `entities`
+
+> **`entities`** [List] ➡️ list of maps _(required)_
+
+Each item is a card/feature config (see
+[entity-progress-card / entity-progress-badge / entity-progress-feature](#standard)
+for the available options) — at minimum an `entity`. Any option set at the **top
+level** of the multi config (outside `entities`) is applied to every item as a
+shared default; an item can override it individually.
+
+`bar_size` defaults to `small` for every item unless set otherwise. Pick
+`xsmall` (see [`bar_size`](#bar_size)) to fit more bars in the same space.
+
+_Example (`entity-progress-multi-card`, standalone)_:
+
+```yaml
+type: custom:entity-progress-multi-card
+bar_size: small
+entities:
+  - entity: sensor.printer_black_cartridge
+    bar_color: black
+  - entity: sensor.printer_cyan_cartridge
+    bar_color: cyan
+  - entity: sensor.printer_magenta_cartridge
+    bar_color: magenta
+  - entity: sensor.printer_yellow_cartridge
+    bar_color: yellow
+```
+
+_Example (`entity-progress-multi-feature`, inside a Tile card)_:
+
+```yaml
+type: tile
+entity: sensor.printer
+features:
+  - type: custom:entity-progress-multi-feature
+    bar_size: xsmall
+    entities:
+      - entity: sensor.printer_black_cartridge
+        bar_color: black
+      - entity: sensor.printer_cyan_cartridge
+        bar_color: cyan
+      - entity: sensor.printer_magenta_cartridge
+        bar_color: magenta
+      - entity: sensor.printer_yellow_cartridge
+        bar_color: yellow
+```
+
+> [!IMPORTANT]
+>
+> `entity-progress-multi-feature` always fits its bars into a **single** Tile
+> feature row (HA's own `--feature-height`, 42px by default) — it never spans
+> multiple rows. With too many entities for the chosen `bar_size`, bars get
+> thinner rather than overflowing; switch to `xsmall` to comfortably fit more
+> (up to 5, vs. 4 with `small`).
+
+[🔼 Back to top]
+
+<a id="multi-rows"></a>
+
+### `rows`
+
+[![Card OK][Card-OK]](#compatibility)
+
+> **`rows`** [Integer] ➡️ _(optional, default: one row per entity)_
+
+`entity-progress-multi-card` only. Sets how many Sections grid rows the card
+occupies (see Home Assistant's own `grid_options`). Unlike the Tile feature, a
+card in the Sections grid can reliably span multiple rows, so bars are evenly
+divided across the full, measured height instead of being capped to one row.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-multi-card
+rows: 2
+entities:
+  - entity: sensor.printer_black_cartridge
+  - entity: sensor.printer_cyan_cartridge
+  - entity: sensor.printer_magenta_cartridge
+  - entity: sensor.printer_yellow_cartridge
 ```
 
 [🔼 Back to top]

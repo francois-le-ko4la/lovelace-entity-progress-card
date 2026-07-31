@@ -112,9 +112,10 @@
         "background": "Позадина на картичката"
       },
       "bar_size": {
-        "large": "Голема",
-        "medium": "Средна",
+        "xsmall": "Extra Small",
         "small": "Мала",
+        "medium": "Средна",
+        "large": "Голема",
         "xlarge": "Многу голема"
       },
       "layout": {

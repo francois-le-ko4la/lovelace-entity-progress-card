@@ -8,6 +8,7 @@ import { HA_CONTEXT, CARD, CARD_CONTEXT } from '../utils/parameters.js';
 import { resolveDisplayUnit, resolveDisplayDecimal } from '../utils/display-defaults.js';
 import type { LovelaceConfig, Config } from '../utils/types.js';
 import { is } from '../utils/common-checks.js';
+import { cloneValue } from '../utils/browser-support.js';
 import { traceInstance } from '../utils/log.js';
 import { PercentHelper, ThemeManager, EntityCollectionHelper, EntityOrValue } from './value-helpers.js';
 import { HassProviderSingleton, type HomeAssistant } from '../utils/hass-provider.js';
@@ -172,9 +173,7 @@ class ViewCore {
 
   get cardLayoutOptions() {
     if (!this.config) return CARD.layout.orientations.horizontal.grid;
-    const layout = structuredClone(
-      CARD.layout.orientations[this.config.layout as keyof typeof CARD.layout.orientations],
-    );
+    const layout = cloneValue(CARD.layout.orientations[this.config.layout as keyof typeof CARD.layout.orientations]);
     layout.grid.grid_min_rows = this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.icon.label)
       ? 1
       : layout.grid.grid_min_rows +

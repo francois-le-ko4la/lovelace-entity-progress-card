@@ -112,9 +112,10 @@
         "background": "Tło karty"
       },
       "bar_size": {
-        "large": "Duża",
-        "medium": "Średnia",
+        "xsmall": "Extra Small",
         "small": "Mała",
+        "medium": "Średnia",
+        "large": "Duża",
         "xlarge": "Bardzo duża"
       },
       "layout": {

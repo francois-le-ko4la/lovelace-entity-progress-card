@@ -36,6 +36,7 @@ const HA_CONTEXT = {
     textShort: 'mdi:text-short',
     radar: 'mdi:radar',
     aspectRatio: 'mdi:aspect-ratio',
+    sizeExtraSmall: 'mdi:size-xs',
     sizeSmall: 'mdi:size-s',
     sizeMedium: 'mdi:size-m',
     sizeLarge: 'mdi:size-l',

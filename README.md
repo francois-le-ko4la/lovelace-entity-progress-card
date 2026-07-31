@@ -87,15 +87,31 @@ is based on custom CSS and leverages existing code to fine-tune the appearance.
 
 ### ⚙️ Prerequisites
 
-|      Platform      |        Browsers        |                    |                          |                        |                      |
-| :----------------: | :--------------------: | :----------------: | :----------------------: | :--------------------: | :------------------: |
-|   ![HA][ha-logo]   | ![Chrome][chrome-logo] | ![Edge][edge-logo] | ![Firefox][firefox-logo] | ![Safari][safari-logo] | ![Opera][opera-logo] |
-| **Home Assistant** |       **Chrome**       |      **Edge**      |       **Firefox**        |       **Safari**       |      **Opera**       |
-|     `2024.0+`      |         `98+`          |       `98+`        |          `94+`           |        `15.4+`         |        `84+`         |
+|      Platform       |        Browsers        |                    |                          |                        |                      |
+| :-----------------: | :--------------------: | :----------------: | :----------------------: | :--------------------: | :------------------: |
+|   ![HA][ha-logo]    | ![Chrome][chrome-logo] | ![Edge][edge-logo] | ![Firefox][firefox-logo] | ![Safari][safari-logo] | ![Opera][opera-logo] |
+| **Home Assistant**  |       **Chrome**       |      **Edge**      |       **Firefox**        |       **Safari**       |      **Opera**       |
+|      `2024.0+`      |         `98+`          |       `98+`        |          `94+`           |        `15.4+`         |        `84+`         |
+| Full visual effects |         `111+`         |       `111+`       |          `113+`          |        `16.2+`         |        `97+`         |
 
 > [!IMPORTANT]
 >
 > Ensure your Home Assistant instance is up to date to support this custom card.
+>
+> The first row is the functional minimum — the card loads and works. A handful
+> of purely decorative touches (a soft tint behind icons, the pulsing alert/ping
+> animations, the bar's gradient sheen) need the newer "Full visual effects"
+> versions and gracefully degrade below that: same information, just a little
+> less vivid. See the
+> [live degraded-mode comparison](https://htmlpreview.github.io/?https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/color-mix-effects.html)
+> for exactly what's affected.
+>
+> I'm aware upgrading an embedded/kiosk device (a wall-mounted control panel in
+> particular, e.g. an older Chromium like Chrome 92 — see
+> [issue #128](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues/128))
+> isn't always simple, so this is a deliberate, pragmatic trade-off rather than
+> an oversight: full functionality first, full polish where the browser allows
+> it.
 
 ### 📦 Installation Steps
 

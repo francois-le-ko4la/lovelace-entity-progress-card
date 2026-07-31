@@ -30,7 +30,7 @@ declare const hassBrand: unique symbol;
 // evolves - the fields listed are exactly (and only) the ones grepped out of
 // this file, core.ts (hass.connection), and value-helpers.ts (hass.states).
 type EntityRegistryEntry = { name?: string; device_id?: string; area_id?: string } & Record<string, unknown>;
-type DeviceRegistryEntry = { name?: string; area_id?: string } & Record<string, unknown>;
+type DeviceRegistryEntry = { name?: string; name_by_user?: string | null; area_id?: string } & Record<string, unknown>;
 type AreaRegistryEntry = { name?: string; floor_id?: string } & Record<string, unknown>;
 type FloorRegistryEntry = { name?: string } & Record<string, unknown>;
 
@@ -264,7 +264,13 @@ class HassProviderSingleton {
   getEntityDevice(entityId: string): string | null {
     const deviceId = this.#hass?.entities?.[entityId]?.device_id;
     if (!deviceId) return null;
-    return this.#hass?.devices?.[deviceId]?.name ?? null;
+    const device = this.#hass?.devices?.[deviceId];
+    // CF5 - issue (medium) resolved - only `.name` (the integration-assigned
+    // default) was read, ignoring `.name_by_user` (set when the user renames
+    // the device in Settings). HA's own computeDeviceNameDisplay prioritizes
+    // name_by_user || name - same precedence here, so a renamed device shows
+    // its renamed name instead of the original manufacturer one.
+    return device?.name_by_user || device?.name || null;
   }
 
   // Used by ViewCore.isBatteryCharging/isWashingMachineActive to look at

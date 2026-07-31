@@ -67,6 +67,19 @@ const CARD_CSS = css`
 
   /* === BORDER RADIUS === */
   --ha-standard-border-radius: var(--ha-card-border-radius, var(--ha-border-radius-lg));
+  /* CF5 - issue (medium) resolved - --feature-border-radius was referenced
+     (RADIUS EFFECT rule below) but never defined anywhere, so a Feature's own
+     bar/inner radius resolved to guaranteed-invalid -> border-radius fell back
+     to its initial value (0), always square regardless of theme. Unnoticed
+     inside a tile (features commonly look flat there anyway), but visible once
+     a Feature renders standalone. Same theme-matching chain as the standard
+     card's own bar (--ha-standard-border-radius); still a public override hook
+     for card_mod/theme, like --epb-progress-bar-radius. */
+  --feature-border-radius: var(--ha-standard-border-radius);
+}
+
+.${CARD.style.bar.sizeOptions.xsmall.label} {
+  --progress-size: var(--epb-progress-bar-size, var(--progress-size-xs));
 }
 
 .${CARD.style.bar.sizeOptions.small.label} {
@@ -478,6 +491,11 @@ ha-card.horizontal .${CARD.htmlStructure.sections.content.class} {
   --current-content-width: calc(100% - 56px);
   --current-content-flex-grow: 1;
   --current-content-gap: 0;
+  /* Cap the fixed name+detail height (36px) to the card so an explicit small
+     card height shrinks the content-section instead of overflowing into the
+     card's overflow:hidden and clipping the bar. justify-content:center then
+     recenters the visible content (a lone bar) in the reduced box. */
+  max-height: 100%;
 }
 
 ha-card.vertical .${CARD.htmlStructure.sections.content.class} {
@@ -776,6 +794,7 @@ ha-card.info-multiline {
   height: 100%;
 }
 
+.${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.xsmall.label} .${CARD.htmlStructure.elements.progressBar.container.class},
 .${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.elements.progressBar.container.class},
 .${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.container.class},
 .${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.container.class} {
@@ -1119,10 +1138,14 @@ ha-card.info-multiline {
 
 /**
  * ring bursts from the shape's own border, using the same icon/shape color as
- * everywhere else
+ * everywhere else. Fallback declared first (plain var(), no alpha) for
+ * engines that don't support color-mix() (Chrome/Edge < 111, Firefox < 113,
+ * Safari < 16.2 - see issue #128): they still get a solid ring instead of no
+ * ring at all. color-mix() overrides it wherever it's understood.
  */
 @keyframes epb-icon-ping {
   60% {
+    box-shadow: 0 0 0 0 var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}));
     box-shadow: 0 0 0 0 color-mix(in srgb, var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default})) 70%, transparent);
   }
   100% { box-shadow: 0 0 5px 15px transparent; }
@@ -1275,9 +1298,15 @@ ha-card.info-multiline {
   50% { background-color: var(--ha-card-background, var(--card-background-color)); }
 }
 
-/* ring bursts from the card's own border, reusing the epb-icon-ping technique */
+/* ring bursts from the card's own border, reusing the epb-icon-ping technique.
+   Fallback declared first (plain var(), no alpha) for engines that don't
+   support color-mix() (Chrome/Edge < 111, Firefox < 113, Safari < 16.2 - see
+   issue #128): they keep this ring solid instead of getting no ring at all,
+   since ping mode has no other persistent visual once the animation itself
+   can't run. color-mix() overrides it wherever it's understood. */
 @keyframes epb-alert-ping {
   60% {
+    box-shadow: 0 0 0 0 var(--alert-color-final);
     box-shadow: 0 0 0 0 color-mix(in srgb, var(--alert-color-final) 70%, transparent);
   }
   100% { box-shadow: 0 0 5px 15px transparent; }
@@ -1301,6 +1330,12 @@ ha-card.info-multiline {
 
 .alert-active.alert-background {
   border-color: var(--epb-card-border-color, var(--ha-card-border-color, var(--divider-color, #e0e0e0)));
+  /* Fallback declared first (plain var(), no alpha blending) for engines that
+     don't support color-mix() (Chrome/Edge < 111, Firefox < 113, Safari <
+     16.2 - see issue #128): this is the persistent, non-animated alert color
+     - it must stay visible even where the animation itself can't run.
+     color-mix() overrides it wherever it's understood. */
+  background-color: var(--alert-color-final);
   background-color: color-mix(in srgb, var(--alert-color-final) 15%, var(--ha-card-background, var(--card-background-color)));
 }
 
@@ -1876,7 +1911,10 @@ const CHIPS_HOST_STYLE = css`
     border: 1px solid var(--divider-color, #e0e0e0); border-radius: 8px; background: transparent;
     color: var(--primary-text-color); font-family: inherit; font-size: 14px; line-height: 1; cursor: pointer;
     transition: background-color 0.15s, border-color 0.15s; }
-  .chip:hover { background: color-mix(in srgb, var(--primary-text-color) 8%, transparent); }
+  /* Fallback first (var(), no alpha) for engines without color-mix() (Chrome/Edge
+     < 111, Firefox < 113, Safari < 16.2 - see issue #128): keeps a visible hover
+     hint instead of none at all. color-mix() overrides it where understood. */
+  .chip:hover { background: var(--divider-color, #e0e0e0); background: color-mix(in srgb, var(--primary-text-color) 8%, transparent); }
   .chip.selected { background: var(--primary-color); border-color: var(--primary-color);
     color: var(--text-primary-color, #fff); }
 `;

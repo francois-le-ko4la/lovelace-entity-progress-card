@@ -112,9 +112,10 @@
         "background": "Kart arka planı"
       },
       "bar_size": {
-        "large": "Büyük",
-        "medium": "Orta",
+        "xsmall": "Extra Small",
         "small": "Küçük",
+        "medium": "Orta",
+        "large": "Büyük",
         "xlarge": "Çok büyük"
       },
       "layout": {

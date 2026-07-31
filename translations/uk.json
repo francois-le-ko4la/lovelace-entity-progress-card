@@ -112,9 +112,10 @@
         "background": "Фон картки"
       },
       "bar_size": {
-        "large": "Велика",
-        "medium": "Середня",
+        "xsmall": "Extra Small",
         "small": "Мала",
+        "medium": "Середня",
+        "large": "Велика",
         "xlarge": "Дуже велика"
       },
       "layout": {

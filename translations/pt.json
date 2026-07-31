@@ -112,9 +112,10 @@
         "background": "Fundo do cartão"
       },
       "bar_size": {
-        "large": "Grande",
-        "medium": "Média",
+        "xsmall": "Extra Small",
         "small": "Pequena",
+        "medium": "Média",
+        "large": "Grande",
         "xlarge": "Extra grande"
       },
       "layout": {

@@ -374,7 +374,24 @@ class DOMHelper {
   // <br> surviving to this point would only ever be an unhandled edge case, not
   // a feature to preserve.
   static #SAFE_HTML_TAGS = new Set(['B', 'I', 'U', 'SPAN', 'DIV']);
-  static #SAFE_STYLE_PROPS = new Set(['color', 'background-color']);
+  // #129 discussion: this filters by property NAME only, not value - none
+  // of these execute code or load an external resource (unlike
+  // background-image/content, deliberately excluded: url() could leak data).
+  // `position`/`z-index` are a known, accepted exception: `position: fixed`
+  // escapes the card's own `overflow: hidden` and could overlay the whole
+  // dashboard (not just this card) - allowed anyway, by explicit request, in
+  // favor of the simpler name-only filter over a value-level one.
+  static #SAFE_STYLE_PROPS = new Set([
+    'color',
+    'background-color',
+    'font-size',
+    'font-weight',
+    'text-align',
+    'width',
+    'display',
+    'position',
+    'z-index',
+  ]);
   static #DROP_CONTENT_TAGS = new Set(['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'EMBED', 'TEMPLATE', 'NOSCRIPT']);
 
   static sanitizeHTML(value: CacheValue): string {

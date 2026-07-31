@@ -1,3 +1,46 @@
+# 📝 Changelog
+
+All notable changes to the Entity Progress Card are documented here, most recent
+first. See [`docs/rc-testing.md`](docs/rc-testing.md) for how to try a release
+candidate safely before it becomes stable.
+
+## What's new (1.6.1-rc1)
+
+### ✨ New
+
+- **`entity-progress-multi-card` / `entity-progress-multi-feature`**: aggregate
+  several progress bars — each a real, fully-featured bar (its own colors,
+  state, more-info tap) — into a single card or a single Tile feature, instead
+  of one bar per entity. See
+  [Configuration Reference](docs/configuration.md#multi).
+- **`bar_size: xsmall`**: a new, thinner bar size (6px) — mainly useful to fit
+  more bars in a tight space, e.g. inside `entity-progress-multi-feature`. See
+  [`bar_size`](docs/configuration.md#bar_size).
+- **Jinja-rendered `name`/`secondary`/`custom_info` now accept more inline
+  styles**: `font-size`, `font-weight`, `text-align`, `width`, `display`,
+  `position` and `z-index`, on top of the existing `color`/`background-color` —
+  enough to build simple multi-column layouts directly in a template.  
+  ➡️ [Enhancement]: JINJA Should accept more STYLE tags #129 (@emartoni)
+
+### 🐛 Fixes
+
+- **The card could fail to load entirely on older/embedded browsers** (e.g.
+  Chromium-based kiosk panels), even though it worked fine on 1.5.x. The 1.6.0
+  build pipeline could emit ES2022-only syntax that these engines can't even
+  parse - the whole module failed silently, showing an error card instead of the
+  progress bar. The build now targets ES2021 (matching what 1.5.x actually
+  required), and a new release-time check (`npm run check:es-target`) catches
+  this class of regression before it ever ships again.  
+  ➡️ [Browser Support]: chromium 92.0.4515.98 / After upgrade to 1.6.0 it
+  stopped working on chromium #128 (@Slomo5)
+- **`name: { type: device }` ignored a renamed device.** It only read the
+  device's original/manufacturer name, never the name you set yourself in
+  Settings → Devices → rename (`name_by_user`) — now it follows the same
+  precedence Home Assistant's own UI uses.  
+  ➡️ [Bug]: Friendly name is not used #130 (@zkurzyns)
+
+---
+
 ## 1.6.0
 
 The biggest release yet for the Entity Progress Card: it now lives **inside Tile

@@ -4,7 +4,7 @@
  * dev/debug context can both import it without an import cycle.
  */
 
-const VERSION = '1.6.0';
+const VERSION = '1.6.1-rc1';
 
 const META = {
   documentation: 'https://github.com/francois-le-ko4la/lovelace-entity-progress-card/',
@@ -37,6 +37,16 @@ const META = {
       typeName: 'entity-progress-feature',
       name: 'Entity Progress Feature',
       description: 'A cool custom feature in tile to show current entity status with a progress bar.',
+    },
+    multiCard: {
+      typeName: 'entity-progress-multi-card',
+      name: 'Entity Progress Multi Card',
+      description: 'Aggregates several entity progress bars in one grid-sized card.',
+    },
+    multiFeature: {
+      typeName: 'entity-progress-multi-feature',
+      name: 'Entity Progress Multi Feature',
+      description: 'Aggregates several entity progress bars in one tile feature.',
     },
   },
 };

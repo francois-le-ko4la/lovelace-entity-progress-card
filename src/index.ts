@@ -29,6 +29,7 @@ import {
   EntityProgressTemplateCard,
   EntityProgressTemplateBadge,
 } from './card/cards.js';
+import { EntityProgressMultiCard, EntityProgressMultiFeature } from './card/multi.js';
 import {
   EntityProgressCardEditor,
   EntityProgressBadgeEditor,
@@ -49,6 +50,8 @@ RegistrationHelper.registerBadge(
   EntityProgressBadgeTemplateEditor,
 );
 RegistrationHelper.registerCardFeature(META.types.feature, EntityProgressFeatures);
+RegistrationHelper.registerCard(META.types.multiCard, EntityProgressMultiCard);
+RegistrationHelper.registerCardFeature(META.types.multiFeature, EntityProgressMultiFeature);
 
 /******************************************************************************
  * 🔧 Diagnostic helper — window.EPB_DIAG.dump(), see utils/diagnostic.ts

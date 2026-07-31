@@ -112,9 +112,10 @@
         "background": "Latar belakang kartu"
       },
       "bar_size": {
-        "large": "Besar",
-        "medium": "Sedang",
+        "xsmall": "Extra Small",
         "small": "Kecil",
+        "medium": "Sedang",
+        "large": "Besar",
         "xlarge": "Sangat besar"
       },
       "layout": {

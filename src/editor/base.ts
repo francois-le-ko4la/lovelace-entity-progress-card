@@ -438,7 +438,12 @@ class EditorBase extends HTMLElement {
       // Badge/BadgeTemplate schemas reject 'xlarge' (see
       // YamlSchemaFactory.badge) - reuses the same translated labels.
       bar_size_no_xlarge: () =>
-        buildSelect({ small: options.bar_size.small, medium: options.bar_size.medium, large: options.bar_size.large }),
+        buildSelect({
+          xsmall: options.bar_size.xsmall,
+          small: options.bar_size.small,
+          medium: options.bar_size.medium,
+          large: options.bar_size.large,
+        }),
       bar_orientation: () => buildSelect(options.bar_orientation),
       // Badge/BadgeTemplate schemas reject 'up' (see YamlSchemaFactory.badge)
       // - reuses the same translated ltr/rtl labels, just without the option

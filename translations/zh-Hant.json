@@ -112,6 +112,7 @@
         "battery_adaptive": "Battery (adapts to charging state)"
       },
       "bar_size": {
+        "xsmall": "Extra Small",
         "small": "小",
         "medium": "中",
         "large": "大",

@@ -112,9 +112,10 @@
         "background": "Kortbakgrunn"
       },
       "bar_size": {
-        "large": "Stor",
-        "medium": "Medium",
+        "xsmall": "Extra Small",
         "small": "Liten",
+        "medium": "Medium",
+        "large": "Stor",
         "xlarge": "Ekstra stor"
       },
       "layout": {

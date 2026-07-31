@@ -119,6 +119,7 @@ const TRANSLATIONS = {
           battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
+          xsmall: 'Extra Small',
           small: 'صغيرة',
           medium: 'متوسطة',
           large: 'كبيرة',
@@ -388,6 +389,7 @@ const TRANSLATIONS = {
           battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
+          xsmall: 'Extra Small',
           small: 'ছোট',
           medium: 'মাঝারি',
           large: 'বড়',
@@ -657,6 +659,7 @@ const TRANSLATIONS = {
           battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
+          xsmall: 'Extra Small',
           small: 'Petita',
           medium: 'Mitjana',
           large: 'Gran',
@@ -926,6 +929,7 @@ const TRANSLATIONS = {
           battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
+          xsmall: 'Extra Small',
           small: 'Malá',
           medium: 'Střední',
           large: 'Velká',
@@ -1195,6 +1199,7 @@ const TRANSLATIONS = {
           battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
+          xsmall: 'Extra Small',
           small: 'Lille',
           medium: 'Medium',
           large: 'Stor',
@@ -1464,6 +1469,7 @@ const TRANSLATIONS = {
           battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
+          xsmall: 'Extra Small',
           small: 'Klein',
           medium: 'Mittel',
           large: 'Groß',
@@ -1733,6 +1739,7 @@ const TRANSLATIONS = {
           battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
+          xsmall: 'Extra Small',
           small: 'Μικρή',
           medium: 'Μεσαία',
           large: 'Μεγάλη',
@@ -2002,6 +2009,7 @@ const TRANSLATIONS = {
           battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
+          xsmall: 'Extra Small',
           small: 'Small',
           medium: 'Medium',
           large: 'Large',
@@ -2271,6 +2279,7 @@ const TRANSLATIONS = {
           battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
+          xsmall: 'Extra Small',
           small: 'Pequeña',
           medium: 'Mediana',
           large: 'Grande',
@@ -2540,6 +2549,7 @@ const TRANSLATIONS = {
           battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
+          xsmall: 'Extra Small',
           small: 'Pequeña',
           medium: 'Mediana',
           large: 'Grande',
@@ -2809,6 +2819,7 @@ const TRANSLATIONS = {
           battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
+          xsmall: 'Extra Small',
           small: 'Väike',
           medium: 'Keskmine',
           large: 'Suur',
@@ -3078,6 +3089,7 @@ const TRANSLATIONS = {
           battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
+          xsmall: 'Extra Small',
           small: 'Pieni',
           medium: 'Keski',
           large: 'Suuri',
@@ -3347,6 +3359,7 @@ const TRANSLATIONS = {
           battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
+          xsmall: 'Extra Small',
           small: 'Petite',
           medium: 'Moyenne',
           large: 'Grande',
@@ -3616,9 +3629,10 @@ const TRANSLATIONS = {
           background: 'कार्ड पृष्ठभूमि'
         },
         bar_size: {
-          large: 'बड़ी',
-          medium: 'मध्यम',
+          xsmall: 'Extra Small',
           small: 'छोटी',
+          medium: 'मध्यम',
+          large: 'बड़ी',
           xlarge: 'अतिरिक्त बड़ी'
         },
         layout: {
@@ -3885,9 +3899,10 @@ const TRANSLATIONS = {
           background: 'Pozadina kartice'
         },
         bar_size: {
-          large: 'Velika',
-          medium: 'Srednja',
+          xsmall: 'Extra Small',
           small: 'Mala',
+          medium: 'Srednja',
+          large: 'Velika',
           xlarge: 'Vrlo velika'
         },
         layout: {
@@ -4154,6 +4169,7 @@ const TRANSLATIONS = {
           battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
+          xsmall: 'Extra Small',
           small: 'Kicsi',
           medium: 'Közepes',
           large: 'Nagy',
@@ -4423,9 +4439,10 @@ const TRANSLATIONS = {
           background: 'Latar belakang kartu'
         },
         bar_size: {
-          large: 'Besar',
-          medium: 'Sedang',
+          xsmall: 'Extra Small',
           small: 'Kecil',
+          medium: 'Sedang',
+          large: 'Besar',
           xlarge: 'Sangat besar'
         },
         layout: {
@@ -4692,9 +4709,10 @@ const TRANSLATIONS = {
           background: 'Sfondo della scheda'
         },
         bar_size: {
-          large: 'Grande',
-          medium: 'Media',
+          xsmall: 'Extra Small',
           small: 'Piccola',
+          medium: 'Media',
+          large: 'Grande',
           xlarge: 'Extra grande'
         },
         layout: {
@@ -4961,9 +4979,10 @@ const TRANSLATIONS = {
           background: 'カードの背景'
         },
         bar_size: {
-          large: '大',
-          medium: '中',
+          xsmall: 'Extra Small',
           small: '小',
+          medium: '中',
+          large: '大',
           xlarge: '特大'
         },
         layout: {
@@ -5230,9 +5249,10 @@ const TRANSLATIONS = {
           background: '카드 배경'
         },
         bar_size: {
-          large: '큰',
-          medium: '중간',
+          xsmall: 'Extra Small',
           small: '작은',
+          medium: '중간',
+          large: '큰',
           xlarge: '매우 큰'
         },
         layout: {
@@ -5499,6 +5519,7 @@ const TRANSLATIONS = {
           battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
+          xsmall: 'Extra Small',
           small: 'Maža',
           medium: 'Vidutinė',
           large: 'Didelė',
@@ -5768,6 +5789,7 @@ const TRANSLATIONS = {
           battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
+          xsmall: 'Extra Small',
           small: 'Mazs',
           medium: 'Vidējs',
           large: 'Liels',
@@ -6037,9 +6059,10 @@ const TRANSLATIONS = {
           background: 'Позадина на картичката'
         },
         bar_size: {
-          large: 'Голема',
-          medium: 'Средна',
+          xsmall: 'Extra Small',
           small: 'Мала',
+          medium: 'Средна',
+          large: 'Голема',
           xlarge: 'Многу голема'
         },
         layout: {
@@ -6306,9 +6329,10 @@ const TRANSLATIONS = {
           background: 'Kortbakgrunn'
         },
         bar_size: {
-          large: 'Stor',
-          medium: 'Medium',
+          xsmall: 'Extra Small',
           small: 'Liten',
+          medium: 'Medium',
+          large: 'Stor',
           xlarge: 'Ekstra stor'
         },
         layout: {
@@ -6575,9 +6599,10 @@ const TRANSLATIONS = {
           background: 'Kaartachtergrond'
         },
         bar_size: {
-          large: 'Groot',
-          medium: 'Middel',
+          xsmall: 'Extra Small',
           small: 'Klein',
+          medium: 'Middel',
+          large: 'Groot',
           xlarge: 'Extra groot'
         },
         layout: {
@@ -6844,9 +6869,10 @@ const TRANSLATIONS = {
           background: 'Tło karty'
         },
         bar_size: {
-          large: 'Duża',
-          medium: 'Średnia',
+          xsmall: 'Extra Small',
           small: 'Mała',
+          medium: 'Średnia',
+          large: 'Duża',
           xlarge: 'Bardzo duża'
         },
         layout: {
@@ -7113,6 +7139,7 @@ const TRANSLATIONS = {
           battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
+          xsmall: 'Extra Small',
           small: 'Pequena',
           medium: 'Média',
           large: 'Grande',
@@ -7382,9 +7409,10 @@ const TRANSLATIONS = {
           background: 'Fundo do cartão'
         },
         bar_size: {
-          large: 'Grande',
-          medium: 'Média',
+          xsmall: 'Extra Small',
           small: 'Pequena',
+          medium: 'Média',
+          large: 'Grande',
           xlarge: 'Extra grande'
         },
         layout: {
@@ -7651,9 +7679,10 @@ const TRANSLATIONS = {
           background: 'Fundal card'
         },
         bar_size: {
-          large: 'Mare',
-          medium: 'Medie',
+          xsmall: 'Extra Small',
           small: 'Mică',
+          medium: 'Medie',
+          large: 'Mare',
           xlarge: 'Foarte mare'
         },
         layout: {
@@ -7920,9 +7949,10 @@ const TRANSLATIONS = {
           background: 'Фон карточки'
         },
         bar_size: {
-          large: 'Большая',
-          medium: 'Средняя',
+          xsmall: 'Extra Small',
           small: 'Маленькая',
+          medium: 'Средняя',
+          large: 'Большая',
           xlarge: 'Очень большая'
         },
         layout: {
@@ -8189,6 +8219,7 @@ const TRANSLATIONS = {
           battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
+          xsmall: 'Extra Small',
           small: 'Malá',
           medium: 'Stredná',
           large: 'Veľká',
@@ -8458,6 +8489,7 @@ const TRANSLATIONS = {
           battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
+          xsmall: 'Extra Small',
           small: 'Majhna',
           medium: 'Srednja',
           large: 'Velika',
@@ -8727,9 +8759,10 @@ const TRANSLATIONS = {
           background: 'Kortbakgrund'
         },
         bar_size: {
-          large: 'Stor',
-          medium: 'Medium',
+          xsmall: 'Extra Small',
           small: 'Liten',
+          medium: 'Medium',
+          large: 'Stor',
           xlarge: 'Extra stor'
         },
         layout: {
@@ -8996,9 +9029,10 @@ const TRANSLATIONS = {
           background: 'พื้นหลังการ์ด'
         },
         bar_size: {
-          large: 'ใหญ่',
-          medium: 'กลาง',
+          xsmall: 'Extra Small',
           small: 'เล็ก',
+          medium: 'กลาง',
+          large: 'ใหญ่',
           xlarge: 'ใหญ่พิเศษ'
         },
         layout: {
@@ -9265,9 +9299,10 @@ const TRANSLATIONS = {
           background: 'Kart arka planı'
         },
         bar_size: {
-          large: 'Büyük',
-          medium: 'Orta',
+          xsmall: 'Extra Small',
           small: 'Küçük',
+          medium: 'Orta',
+          large: 'Büyük',
           xlarge: 'Çok büyük'
         },
         layout: {
@@ -9534,9 +9569,10 @@ const TRANSLATIONS = {
           background: 'Фон картки'
         },
         bar_size: {
-          large: 'Велика',
-          medium: 'Середня',
+          xsmall: 'Extra Small',
           small: 'Мала',
+          medium: 'Середня',
+          large: 'Велика',
           xlarge: 'Дуже велика'
         },
         layout: {
@@ -9803,9 +9839,10 @@ const TRANSLATIONS = {
           background: 'Nền thẻ'
         },
         bar_size: {
-          large: 'Lớn',
-          medium: 'Trung bình',
+          xsmall: 'Extra Small',
           small: 'Nhỏ',
+          medium: 'Trung bình',
+          large: 'Lớn',
           xlarge: 'Rất lớn'
         },
         layout: {
@@ -10072,6 +10109,7 @@ const TRANSLATIONS = {
           battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
+          xsmall: 'Extra Small',
           small: '小',
           medium: '中',
           large: '大',
@@ -10341,6 +10379,7 @@ const TRANSLATIONS = {
           battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_size: {
+          xsmall: 'Extra Small',
           small: '小',
           medium: '中',
           large: '大',

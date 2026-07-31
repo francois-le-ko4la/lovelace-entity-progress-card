@@ -112,9 +112,10 @@
         "background": "Pozadina kartice"
       },
       "bar_size": {
-        "large": "Velika",
-        "medium": "Srednja",
+        "xsmall": "Extra Small",
         "small": "Mala",
+        "medium": "Srednja",
+        "large": "Velika",
         "xlarge": "Vrlo velika"
       },
       "layout": {

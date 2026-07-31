@@ -112,9 +112,10 @@
         "background": "พื้นหลังการ์ด"
       },
       "bar_size": {
-        "large": "ใหญ่",
-        "medium": "กลาง",
+        "xsmall": "Extra Small",
         "small": "เล็ก",
+        "medium": "กลาง",
+        "large": "ใหญ่",
         "xlarge": "ใหญ่พิเศษ"
       },
       "layout": {
