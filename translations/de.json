@@ -95,7 +95,10 @@
       "reverse": "Timer umkehren",
       "bar_stack_mode": "Stapelmodus",
       "bar_stack": "Weitere Entitäten",
-      "migrate_config": "Konfiguration migrieren"
+      "migrate_config": "Konfiguration migrieren",
+      "icon_animation_jinja_toggle": "Trigger via template",
+      "fast_refresh": "Fast refresh (per-second)",
+      "height_custom_toggle": "Shrink height (embedded)"
     },
     "option": {
       "theme": {

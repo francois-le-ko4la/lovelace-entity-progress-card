@@ -95,7 +95,10 @@
       "reverse": "Temporizador inverso",
       "bar_stack_mode": "Modo de apilado",
       "bar_stack": "Entidades adicionales",
-      "migrate_config": "Migrar configuración"
+      "migrate_config": "Migrar configuración",
+      "icon_animation_jinja_toggle": "Trigger via template",
+      "fast_refresh": "Fast refresh (per-second)",
+      "height_custom_toggle": "Shrink height (embedded)"
     },
     "option": {
       "theme": {

@@ -113,14 +113,20 @@ const THEME = {
   humidity: {
     linear: false,
     percent: true,
+    // Warm (dry) -> cool (humid) hue direction kept, band widths mirror
+    // around the 40-60 comfort zone (now one solid green band, not
+    // green/teal split - teal read as a washed-out green there instead of a
+    // distinct color) instead of the old lopsided split (7/10/23 dry vs
+    // 5/15/20 humid) - a 95% reading (mold/condensation risk) used to read
+    // as merely "different" (deep-purple) while a 15% reading hit red, the
+    // opposite of the actual risk profile.
     style: [
-      { min: 0, max: 23, icon: HA_CONTEXT.icons.waterPercent, color: HA_CONTEXT.colors.red },
-      { min: 23, max: 30, icon: HA_CONTEXT.icons.waterPercent, color: HA_CONTEXT.colors.orange },
+      { min: 0, max: 20, icon: HA_CONTEXT.icons.waterPercent, color: HA_CONTEXT.colors.red },
+      { min: 20, max: 30, icon: HA_CONTEXT.icons.waterPercent, color: HA_CONTEXT.colors.orange },
       { min: 30, max: 40, icon: HA_CONTEXT.icons.waterPercent, color: HA_CONTEXT.colors.yellow },
-      { min: 40, max: 50, icon: HA_CONTEXT.icons.waterPercent, color: HA_CONTEXT.colors.green },
-      { min: 50, max: 60, icon: HA_CONTEXT.icons.waterPercent, color: HA_CONTEXT.colors.teal },
-      { min: 60, max: 65, icon: HA_CONTEXT.icons.waterPercent, color: 'var(--light-blue-color)' },
-      { min: 65, max: 80, icon: HA_CONTEXT.icons.waterPercent, color: HA_CONTEXT.colors.indigo },
+      { min: 40, max: 60, icon: HA_CONTEXT.icons.waterPercent, color: HA_CONTEXT.colors.green },
+      { min: 60, max: 70, icon: HA_CONTEXT.icons.waterPercent, color: 'var(--light-blue-color)' },
+      { min: 70, max: 80, icon: HA_CONTEXT.icons.waterPercent, color: HA_CONTEXT.colors.indigo },
       { min: 80, max: 100, icon: HA_CONTEXT.icons.waterPercent, color: HA_CONTEXT.colors.deepPurple },
     ],
   },

@@ -363,6 +363,20 @@ class DOMHelper {
     });
   }
 
+  /**
+   * Sets the text content synchronously — no RAF, no cache check, no queue.
+   * Use when immediate DOM update is required (mirrors setStyleNow).
+   */
+  setTextNow(key: string, value: CacheValue) {
+    if (is.nullish(value)) return;
+
+    const el = this._domElements.get(key);
+    if (!el) return;
+
+    el.textContent = String(value);
+    this._appliedValues.set(`${key}:text`, value);
+  }
+
   // CF5 - issue (security) resolved - Jinja results are injected via innerHTML
   // and may interpolate attacker-influenceable strings (media titles, network
   // device names…); allowlist sanitization keeps the HTML formatting feature

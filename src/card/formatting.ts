@@ -62,7 +62,15 @@ const NumberFormatter = {
   ): string {
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
-    let seconds: string = (totalSeconds % 60).toFixed(decimal);
+    // Truncated, not rounded: hours/minutes above already floor, so a
+    // rounding seconds component (toFixed rounds to nearest) disagreed with
+    // them - e.g. 332.847s (5m32.847s truly elapsed) floors minutes to 5 but
+    // rounded seconds to "33", showing "05:33" up to ~500ms before the true
+    // 33rd second. A countdown should never show a value before it's
+    // actually reached - a small epsilon guards against float precision
+    // (332.847 * 1 landing on 32.99999999996 instead of 33).
+    const secondsFactor = 10 ** decimal;
+    let seconds: string = (Math.floor((totalSeconds % 60) * secondsFactor + 1e-9) / secondsFactor).toFixed(decimal);
 
     const pad = (value: string | number, length = 2) => String(value).padStart(length, '0');
 

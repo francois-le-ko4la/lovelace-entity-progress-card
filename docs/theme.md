@@ -21,9 +21,10 @@ Jump to the specific section:
 - [Adapt to HA custom theme](#adapt-to-ha-custom-theme)
   - [CSS variables](#css)
   - [Usage](#usage)
-- [card_mod and card structure](#card-mod-and-card-structure)
+- [card_mod / uix and card structure](#card-mod-and-card-structure)
   - [Class Name Updates & Migration Guide](#class-name-migration)
   - [DOM](#dom)
+- [Card sizing](#card-sizing)
 
 ## Token color
 
@@ -195,6 +196,17 @@ default. They allow you to quickly apply a consistent and visually appealing
 style to your dashboard or badge without any manual configuration. These themes
 are ideal for getting an immediate result and improving the look and feel of
 your interface with minimal effort.
+
+> [!NOTE]
+>
+> Most themes below (optimal/critical when low/high, battery-adaptive, light)
+> work in `%`, matching the card's own `0-100` default range. A few
+> (`temperature`, `voc`, `pm25`) define their zones in real-world units instead
+> — see each one's own table. For these, `max_value` automatically defaults to
+> that theme's own highest zone bound instead of `100` whenever it's left unset,
+> so `theme: voc` with no other config already fills and colors correctly. See
+> [`max_value`](configuration.md#max_value) for the full explanation and how to
+> override it.
 
 <a id="optimal-high"></a>
 
@@ -476,16 +488,19 @@ predefined humidity ranges, each associated with a specific color and icon.
 
 The ranges and their corresponding colors are as follows:
 
-| **Humidity Range** | **Color Variable**         | **Description**      |
-| :----------------- | :------------------------- | :------------------- |
-| 0% – 23%           | `var(--red-color)`         | Very dry air         |
-| 23% – 30%          | `var(--orange-color)`      | Dry air              |
-| 30% – 40%          | `var(--yellow-color)`      | Slightly dry air     |
-| 40% – 50%          | `var(--green-color)`       | Optimal humidity     |
-| 50% – 60%          | `var(--teal-color)`        | Comfortable humidity |
-| 60% – 65%          | `var(--light-blue-color)`  | Slightly humid air   |
-| 65% – 80%          | `var(--indigo-color)`      | Humid air            |
-| 80% – 100%         | `var(--deep-purple-color)` | Very humid air       |
+| **Humidity Range** | **Color Variable**         | **Description**    |
+| :----------------- | :------------------------- | :----------------- |
+| 0% – 20%           | `var(--red-color)`         | Very dry air       |
+| 20% – 30%          | `var(--orange-color)`      | Dry air            |
+| 30% – 40%          | `var(--yellow-color)`      | Slightly dry air   |
+| 40% – 60%          | `var(--green-color)`       | Optimal humidity   |
+| 60% – 70%          | `var(--light-blue-color)`  | Slightly humid air |
+| 70% – 80%          | `var(--indigo-color)`      | Humid air          |
+| 80% – 100%         | `var(--deep-purple-color)` | Very humid air     |
+
+Ranges are mirrored around the 40–60% comfort zone (10/10/10/20 on each side),
+so the same distance from optimal gets a comparably-weighted color on either the
+dry or humid end.
 
 Each range is visually represented using the `mdi:water-percent` icon, ensuring
 a clear and intuitive display of humidity levels.
@@ -766,15 +781,20 @@ my_custom_theme:
 
 This applies to all cards using that theme.
 
-#### card_mod
+#### card_mod / uix
 
 All public CSS variables can also be scoped to a single card using
-[card_mod](https://github.com/thomasloven/lovelace-card-mod):
+[card_mod](https://github.com/thomasloven/lovelace-card-mod) - or
+[UIX (UI eXtension)](https://github.com/Lint-Free-Technology/uix), a drop-in
+replacement built on the same heritage. Same configuration, same result: only
+the top-level key changes, `card_mod:` → `uix:` (theme-level keys become
+`uix-<thing>(-yaml):` too, if you use those). Everything below works identically
+under either key.
 
 ```yaml
 type: custom:entity-progress-card
 entity: sensor.battery
-card_mod:
+card_mod: # or: uix:
   style: |
     ha-card {
       --epb-card-height: 80px;
@@ -815,11 +835,11 @@ card_mod:
 
 <a id="card-mod-and-card-structure"></a>
 
-## card_mod and card structure
+## card_mod / uix and card structure
 
 <a id="class-name-migration"></a>
 
-### Class Name Updates & Migration Guide (v1.5.3+)
+### Class Name Updates & Migration Guide (v1.6.0+)
 
 This project has evolved with new use cases, which means that the original class
 names needed to be revisited. The goal of this update is to simplify the
@@ -1013,6 +1033,98 @@ ha-card...
          ├─ div.high.watermark.mark
          └─ div.zero.mark
 ```
+
+[🔼 Back to top]
+
+## Card sizing
+
+<a id="card-sizing"></a>
+
+How tall the card actually renders depends on where it's placed, since the card
+doesn't control its own container - it adapts to whatever height (or lack of
+one) its parent gives it. Three CSS layers work together:
+
+- **`getGridOptions()`** (Card/Template only, not Badge) tells Home Assistant's
+  own Sections grid how many rows to reserve - a plain integer count, not a
+  pixel value. HA turns that into the actual cell size.
+- **`min-height`** is the floor used everywhere that grid reservation doesn't
+  apply (Masonry, embedded in another card) - computed from the exact same row
+  count, translated into Home Assistant's own row-height/gap CSS variables
+  rather than a hardcoded pixel value, so a theme customizing those is followed
+  automatically.
+- **`height`** is `100%` by default - fills whatever the parent actually gives
+  it.
+
+Both the grid row count and the min-height floor come from the same calculation
+(`ViewCore.minGridRows` if you're reading the source): 1 row by default
+(horizontal) or 2 (vertical), +1 more for `bar_size: xlarge` or
+`bar_position: below`, and capped to 1 row entirely when the icon is hidden
+(hiding it only ever changes the base row count, never whether a large bar still
+needs its own extra row on top - see [issue #133]).
+
+### In a Sections view
+
+`getGridOptions()` reserves the right number of rows; `height: 100%` fills that
+cell exactly. This is the default, "just works" case - nothing to configure.
+
+### In a Masonry view
+
+Masonry doesn't call `getGridOptions()` at all, and its cards have no explicit
+parent height. Per the CSS spec, a percentage `height` against a parent with no
+defined height is ignored and behaves like `auto` - so the card falls back to
+its `min-height` floor (the same row-based calculation above, expressed in real
+pixels via `--ha-section-grid-row-height`/ `--ha-section-grid-row-gap`). If the
+content genuinely needs more room than that floor (wrapped text, etc.), the card
+grows past it - `min-height` is a floor, not a fixed size.
+
+### Inside another Lovelace card
+
+Two separate questions per container: does **sizing** work correctly (the
+mechanics above), and does it **auto-detect** the card and drop its frame/
+background for you (see [`frameless`](configuration.md#frameless)) - or do you
+have to set `frameless: true` yourself?
+
+| **Card**                            | **Sizing**                  | **Frameless auto-detected**                         | **Notes**                                                                                                                                                                                                                                                                                                                                                                          |
+| :---------------------------------- | :-------------------------- | :-------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `entities`                          | ✅ Yes                      | ✅ Yes                                              | Gets its own compact row height (~45px, matching a native entities row) on top of the automatic frameless styling - both keyed off a `type-entities` class the entities card adds to its rows, no config needed either way.                                                                                                                                                        |
+| `vertical-stack-in-card`            | ✅ Yes                      | ✅ Yes                                              | Frame/background auto-dropped the same way as `entities` (a `type-custom-vertical-stack-in-card` class), but sizing is regular Masonry-style (min-height floor), not the compact entities-row height.                                                                                                                                                                              |
+| `vertical-stack`                    | ✅ Yes                      | ❌ No - set `frameless: true` yourself if desired   | Regular Masonry-style sizing, one card per row.                                                                                                                                                                                                                                                                                                                                    |
+| `horizontal-stack`                  | ⚠️ Reliable in Masonry only | ❌ No - set `frameless: true` yourself if desired   | In a Sections view, a `horizontal-stack`'s children don't get `getGridOptions()` consulted the way a direct Sections card would, so sizing falls back to the CSS `min-height` floor - can look shorter than a sibling tile placed directly in the section.                                                                                                                         |
+| `grid`                              | ⚠️ Caveats                  | ❌ No - set `frameless: true` yourself if desired   | `square: true` (the default) forces every cell to a 1:1 aspect ratio via CSS, ignoring `getGridOptions()`/`min-height` entirely - height follows the cell's own width, which can be too short for the card's content. `square: false` gives row-based sizing instead (still stretches every card in a row to match the tallest one, not independent per-card height like Masonry). |
+| `custom:button-card` (custom field) | ⚠️ Caveats                  | ❌ No - set `frameless: true` yourself if desired   | A third-party card, not a native Lovelace container - no auto-detection exists for it. Sizing depends entirely on how the field itself is laid out; see the Embedded-in-another-card section below for the explicit recipe (issue #129).                                                                                                                                           |
+| `custom:auto-entities`              | ✅ Yes                      | ➖ Depends on the container it generates cards into | Just generates a list of cards - sizing/frameless behavior is whatever the _outer_ container (Sections, Masonry, `entities`, ...) gives each generated card, nothing specific to `auto-entities` itself.                                                                                                                                                                           |
+| `custom:layout-card` (thomasloven)  | ✅ Yes                      | ❌ No - set `frameless: true` yourself if desired   | No `getGridOptions()`/`getCardSize()`-based height forcing in any layout mode (`masonry`, `horizontal`, `vertical`, `grid`) - cards render at their natural/intrinsic height, same as native Masonry. No `type-X` auto-styling class either.                                                                                                                                       |
+
+### Embedded in another card (`custom:button-card`, a custom field, ...)
+
+Same mechanics as Masonry - if the wrapping element doesn't give the card an
+explicit height, `height: 100%` resolves to `auto` and `min-height` becomes the
+effective size. If the wrapper _does_ stretch its children to some ambient
+height (common with `custom:button-card` fields), the card fills that instead,
+which can look larger than expected if nothing else on the card needs it (see
+[issue #129]).
+
+For a card that shrinks fully to its content regardless of what the wrapper
+does, combine:
+
+```yaml
+type: custom:entity-progress-card
+height: auto
+marginless: true
+frameless: true
+```
+
+- [`height: auto`](configuration.md#height) - forces content-sized height
+  instead of `100%`, even where the parent _would_ otherwise stretch it.
+- [`marginless: true`](configuration.md#marginless) - drops the min-height floor
+  entirely (`unset`) and removes the card's own padding/margin.
+- [`frameless: true`](configuration.md#frameless) - drops the border/
+  background, useful when the wrapper already provides its own frame.
+
+[issue #133]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues/133
+[issue #129]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues/129
 
 [🔼 Back to top]
 

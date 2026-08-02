@@ -95,7 +95,10 @@
       "reverse": "Timer omdraaien",
       "bar_stack_mode": "Stapelmodus",
       "bar_stack": "Extra entiteiten",
-      "migrate_config": "Configuratie migreren"
+      "migrate_config": "Configuratie migreren",
+      "icon_animation_jinja_toggle": "Trigger via template",
+      "fast_refresh": "Fast refresh (per-second)",
+      "height_custom_toggle": "Shrink height (embedded)"
     },
     "option": {
       "bar_orientation": {

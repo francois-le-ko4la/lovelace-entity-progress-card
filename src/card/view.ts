@@ -21,6 +21,18 @@ import {
   BadgeTemplateConfigHelper,
 } from './config-helpers.js';
 
+// HA's own Sections grid row-span formula (hui-grid-section.ts's
+// `.card.fit-rows` rule): N rows spanning N*(rowHeight+gap) - gap. Collapses
+// to a plain rowHeight for N=1 (1*(h+g)-g = h), so this one formula replaces
+// what used to be two separate hardcoded CSS strings (a bare rowHeight for
+// horizontal, a fixed 2-row calc() for vertical). Takes ViewCore.minGridRows
+// (see cardLayoutOptions) - the same row count driving HA's own grid
+// reservation - so the CSS min-height fallback used everywhere that
+// reservation doesn't apply (Masonry, embedded in another card) can't drift
+// from it again (issue #133).
+const gridRowsToMinHeight = (rows: number): string =>
+  `calc((${rows} * (var(--ha-section-grid-row-height, 56px) + var(--ha-section-grid-row-gap, 8px))) - var(--ha-section-grid-row-gap, 8px))`;
+
 // Mirrors schema.ts's watermarkSchema (see card/schema.ts) - the validated
 // shape of config.watermark as it comes out of the schema. low/high are
 // symmetric with min_value/max_value's own shape (number | { entity,
@@ -91,6 +103,14 @@ class ViewCore {
   // override
   #jinjaAlertAbove: number | null = null;
   #jinjaAlertBelow: number | null = null;
+  // icon_animation: { effect, jinja } mode - the jinja-resolved boolean that
+  // decides whether `effect` plays, overriding HABase._iconAnimationStyle's
+  // automatic entity-based detection. null = not in that mode, or not
+  // resolved yet - declared here (not ViewBase) for the same
+  // read-polymorphically-through-_cardView reason as jinjaAlertAbove/Below
+  // above, since icon_animation applies to Template cards too (unlike
+  // alert_when).
+  #jinjaIconAnimationActive: boolean | null = null;
 
   constructor() {
     traceInstance(this, CARD_CONTEXT.debug.instances);
@@ -113,6 +133,7 @@ class ViewCore {
     // EntityOrValue, so it resolves to null here (see _resolveValueConfig).
     Object.assign(this._lowValue, ViewCore._resolveValueConfig(this._configHelper.config?.watermark?.low, null));
     Object.assign(this._highValue, ViewCore._resolveValueConfig(this._configHelper.config?.watermark?.high, null));
+    this.#jinjaIconAnimationActive = null;
   }
 
   get config(): Config {
@@ -156,7 +177,7 @@ class ViewCore {
     // would otherwise pay for a same-device entity scan on every single hass
     // update for nothing.
     this.#isBatteryChargingCache =
-      this.config?.icon_animation === 'battery_charging' || this.config?.theme === 'battery_adaptive'
+      this.iconAnimationEffect === 'battery_charging' || this.config?.theme === 'battery_adaptive'
         ? ViewCore.#computeIsBatteryCharging(this.entity as string)
         : false;
   }
@@ -165,25 +186,97 @@ class ViewCore {
     return this.config?.entity;
   }
 
+  // icon_animation: an enum name | { effect, jinja } - resolves either shape
+  // to the effect actually chosen (see schema.ts's enumOrJinjaTrigger and
+  // HABase._iconAnimationStyle, the sole consumer of both this and
+  // jinjaIconAnimationActive below).
+  get iconAnimationEffect(): string | null {
+    const raw = this.config?.icon_animation;
+    if (is.plainObject(raw)) return (raw as { effect?: string }).effect ?? null;
+    return typeof raw === 'string' ? raw : null;
+  }
+
+  get jinjaIconAnimationActive(): boolean | null {
+    return this.#jinjaIconAnimationActive;
+  }
+
+  set jinjaIconAnimationActive(value: unknown) {
+    this.#jinjaIconAnimationActive = is.boolean(value) ? value : null;
+  }
+
+  // Shared by ViewBase and the template views (CardTemplateView/
+  // BadgeTemplateView) alike - a running timer entity doesn't push a new hass
+  // state every second, and (for template views) HA's own render_template
+  // push for a now()/utcnow() Jinja field only fires once a minute absent a
+  // state change on a tracked entity (issue #127). Both cases rely on
+  // config.entity being the timer, resolved into _currentValue above.
+  get isActiveTimer(): boolean {
+    return this._currentValue.entityType.isTimer && this._currentValue.state === HA_CONTEXT.entity.state.active;
+  }
+
+  // How often (ms) to locally re-drive a template's display; null = no local
+  // loop needed at all. Template's default (fast_refresh unset/false) needs
+  // nothing here - HA's own render_template push already fires once a
+  // minute on its own for a now()/utcnow() Jinja field (issue #127), for
+  // free. `fast_refresh: true` opts into the same 1s/round-second cadence
+  // ViewBase uses for a seconds-showing unit below, via
+  // EntityProgressTemplateBase._onAutoRefreshTick's forced resubscribe (see
+  // cards.ts) - there's no unit to key off of for arbitrary Jinja text.
+  // Not gated on isActiveTimer: a now()-driven countdown against a
+  // non-timer entity (sun.sun, input_datetime...) needs the same per-second
+  // push and has no timer/active state to key off of - fast_refresh alone
+  // is the user's explicit opt-in, same as it always was for timers.
+  // ViewBase overrides this with unit-aware card/badge/feature behavior,
+  // which doesn't involve a Jinja push at all.
+  get autoRefreshInterval(): number | null {
+    return this.config?.fast_refresh ? 1000 : null;
+  }
+
   get cardSize(): number {
     return this.config
       ? (CARD.layout.orientations[this.config.layout as keyof typeof CARD.layout.orientations]?.grid?.grid_rows ?? 1)
       : CARD.layout.orientations.horizontal.grid.grid_rows;
   }
 
+  // issue #133 - a hidden icon needing an extra grid row for bar_size:
+  // xlarge (or bar_position: below) was a real, independent case the old
+  // ternary never composed with: `hidden ? 1 : base + extraRow` let the
+  // hidden branch's flat 1 short-circuit the extraRow check entirely, so an
+  // xlarge bar with the icon hidden got squeezed into a single grid row
+  // regardless. Hiding the icon only ever changes the *base* row count
+  // (irrelevant for horizontal, whose base is already 1; it's what lets
+  // vertical collapse from 2 rows to 1), never whether bar_size/bar_position
+  // need one more row on top of that base.
+  //
+  // Single source of truth for both consumers of this row count: HA's own
+  // Sections grid (cardLayoutOptions below → getGridOptions) *and*
+  // HABase._addBaseParameter's CSS min-height fallback (used everywhere
+  // that grid reservation doesn't apply - Masonry, embedded in another
+  // card). Before this was extracted, only cardLayoutOptions accounted for
+  // bar_size/bar_position/hidden-icon - the CSS fallback had its own,
+  // static "always 1 row (horizontal) / always 2 rows (vertical)" formula,
+  // so the exact same #133 squeeze could still happen outside Sections,
+  // just never reported there.
+  get minGridRows(): number {
+    if (!this.config) return CARD.layout.orientations.horizontal.grid.grid_min_rows;
+    const layout = CARD.layout.orientations[this.config.layout as keyof typeof CARD.layout.orientations];
+    const baseRows = this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.icon.label)
+      ? 1
+      : layout.grid.grid_min_rows;
+    const needsExtraRow =
+      this.config.bar_size === CARD.style.bar.sizeOptions.xlarge.label ||
+      (this.config.layout === 'horizontal' && this.config.bar_position === 'below') ||
+      (this.config.layout === 'vertical' &&
+        ['default', 'below'].includes(this.config.bar_position) &&
+        this.config.bar_size !== CARD.style.bar.sizeOptions.small.label &&
+        this.config.bar_size !== CARD.style.bar.sizeOptions.xsmall.label);
+    return baseRows + (needsExtraRow ? 1 : 0);
+  }
+
   get cardLayoutOptions() {
     if (!this.config) return CARD.layout.orientations.horizontal.grid;
     const layout = cloneValue(CARD.layout.orientations[this.config.layout as keyof typeof CARD.layout.orientations]);
-    layout.grid.grid_min_rows = this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.icon.label)
-      ? 1
-      : layout.grid.grid_min_rows +
-        (this.config.bar_size === CARD.style.bar.sizeOptions.xlarge.label ||
-        (this.config.layout === 'horizontal' && this.config.bar_position === 'below') ||
-        (this.config.layout === 'vertical' &&
-          ['default', 'below'].includes(this.config.bar_position) &&
-          this.config.bar_size !== 'small')
-          ? 1
-          : 0);
+    layout.grid.grid_min_rows = this.minGridRows;
     return layout.grid;
   }
 
@@ -472,16 +565,15 @@ class ViewCore {
    * Resolves the effective alert animation: an explicit `animation` wins;
    * otherwise falls back to the pre-1.6 default for the current `highlight`
    * (border -> blink, background -> static), so omitting it keeps old configs
-   * looking exactly as before. `ping` is a border-only ring burst - paired
-   * with `highlight: background` it has no matching CSS rule, so it degrades
-   * to that target's own default instead of silently doing nothing.
+   * looking exactly as before. `ping` is a box-shadow ring burst around the
+   * whole card (see .alert-anim-ping) - independent of highlight's
+   * border-color/background-color, so it applies the same regardless of
+   * `highlight`.
    */
   get alertAnimation(): string | null {
     const alert = this.config?.alert_when;
     if (!alert) return null;
-    const isBackground = alert.highlight === 'background';
-    if (alert.animation === 'ping' && isBackground) return 'static';
-    return alert.animation ?? (isBackground ? 'static' : 'blink');
+    return alert.animation ?? (alert.highlight === 'background' ? 'static' : 'blink');
   }
 
   hasComponentHiddenFlag(component: string): boolean {
@@ -552,8 +644,8 @@ class ViewCore {
  *
  * // Timer-specific usage
  * if (cardView.isActiveTimer) {
- *   const speed = cardView.refreshSpeed;
- *   // Update UI at calculated refresh rate
+ *   const interval = cardView.autoRefreshInterval;
+ *   // Update UI at that refresh rate
  * }
  */
 class ViewBase extends ViewCore {
@@ -925,16 +1017,6 @@ class ViewBase extends ViewCore {
     return null;
   }
 
-  get isActiveTimer(): boolean {
-    return this._currentValue.entityType.isTimer && this._currentValue.state === HA_CONTEXT.entity.state.active;
-  }
-
-  get refreshSpeed(): number {
-    const rawSpeed = this._currentValue.value.duration / CARD.config.refresh.ratio;
-    const clampedSpeed = Math.min(CARD.config.refresh.max, Math.max(CARD.config.refresh.min, rawSpeed));
-    return Math.max(100, Math.round(clampedSpeed / 100) * 100);
-  }
-
   get hasVisibleShape(): boolean {
     return this._hassProvider.hasNewShapeStrategy ? super.hasVisibleShape : true;
   }
@@ -1098,6 +1180,20 @@ class ViewBase extends ViewCore {
     this.#jinjaWatermarkHigh = is.number(value) ? value : null;
   }
 
+  // Overrides ViewCore's own (template-only, fast_refresh-gated): standard
+  // cards/badges/features compute their countdown locally, no Jinja push
+  // involved - so the only thing that matters is how granular what's
+  // actually shown is. 1s (round-second) when the resolved unit displays
+  // seconds (s/timer/flextimer - see the unit doc), 1min (round-minute)
+  // otherwise (min/h/d/HA's own natural duration format), replacing the
+  // fixed per-duration formula this used to be.
+  static #SECONDS_SHOWING_UNITS = new Set(['s', 'timer', 'flextimer']);
+
+  get autoRefreshInterval(): number | null {
+    if (!this.isActiveTimer) return null;
+    return ViewBase.#SECONDS_SHOWING_UNITS.has(this.#getCurrentUnit()) ? 1000 : 60000;
+  }
+
   #getCurrentUnit(): string {
     return resolveDisplayUnit(this._configHelper.config.unit, this.#maxValue.isEntity, this._currentValue.unit);
   }
@@ -1176,6 +1272,7 @@ type TemplateView = ViewCore & { icon: string | null };
 
 export { ViewCore };
 export { ViewBase };
+export { gridRowsToMinHeight };
 export type { TemplateView };
 export { CardView };
 export { BadgeView };

@@ -229,6 +229,16 @@ const EditorFactory = {
     flat: true,
     fields: {
       entity: EditorFieldsType.entity('entity', { required: !template }),
+      // Off by default: a now()/utcnow()-driven Jinja field already gets a
+      // free once-a-minute refresh from HA's own render_template push
+      // (issue #127) - this opts into a forced resubscribe every second
+      // instead, for a real ticking countdown. Not tied to `entity` being a
+      // timer. See schema.ts's fast_refresh.
+      ...(template && {
+        fast_refresh: EditorFieldsType.toggle('fast_refresh', {
+          showIf: (c: LovelaceConfig) => Boolean(c.entity),
+        }),
+      }),
       ...(!template && {
         attribute: EditorFieldsType.select('attribute', {
           type: 'attribute',
@@ -401,43 +411,70 @@ const EditorFactory = {
   // enables the px<->% conversion (its % is redefined, see core.ts / #124).
   lengthField: (
     key: string,
-    opts: { units: string[]; convertRef?: number; showIf?: (c: LovelaceConfig) => boolean; noLabel?: boolean },
+    opts: {
+      units: string[];
+      convertRef?: number;
+      showIf?: (c: LovelaceConfig) => boolean;
+      noLabel?: boolean;
+      customToggle?: boolean;
+    },
   ) => {
-    const { units, convertRef, showIf, noLabel = false } = opts;
+    const { units, convertRef, showIf, noLabel = false, customToggle = false } = opts;
     const parsed = (c: LovelaceConfig) => parseLength(c[key]);
     const gate = (c: LovelaceConfig) => (showIf ? showIf(c) : true);
+    // The toggle only ever writes the literal 'auto' (see below) - a custom
+    // value that came from elsewhere (YAML calc(), an unknown unit…) still
+    // falls back to the raw text field below.
+    const isAutoToggled = (c: LovelaceConfig) => customToggle && c[key] === 'auto';
     const hasUnit = units.length > 1; // a single unit (e.g. px) needs no dropdown
-    const fields: Record<string, unknown> = {
-      [key]: {
-        name: key,
-        type: () => `length:${key}`,
+    const fields: Record<string, unknown> = {};
+    if (customToggle) {
+      // Lets the user reach 'auto' from the slider UI - without this, custom
+      // mode (see length.ts) can only be entered by already having a
+      // non-number+unit value in the config (e.g. set through YAML), never
+      // discoverable from the visual editor alone.
+      fields[`${key}_custom_toggle`] = {
+        name: `${key}_custom_toggle`,
+        target: key,
+        type: 'toggle',
         virtual: true,
-        noLabel,
-        width: hasUnit ? 'calc(100% - 106px)' : '100%', // leave room for the 90px unit select + gap
-        showIf: (c: LovelaceConfig) => !parsed(c).custom && gate(c),
-        resolveVirtual: (c: LovelaceConfig) => {
-          const parsedLength = parsed(c);
-          return parsedLength.custom ? 0 : parsedLength.value;
-        },
-        onVirtualChange: (value: number, config: LovelaceConfig) => {
-          const parsedLength = parseLength(config[key]);
-          const unit = parsedLength.custom ? units[0] : parsedLength.unit;
-          return { ...config, [key]: serializeLength(value, unit) };
-        },
+        showIf: gate,
+        resolveVirtual: (c: LovelaceConfig) => parsed(c).custom,
+        onVirtualChange: (value: boolean, config: LovelaceConfig) =>
+          value ? { ...config, [key]: 'auto' } : { ...config, [key]: undefined },
+      };
+    }
+    fields[key] = {
+      name: key,
+      type: () => `length:${key}`,
+      virtual: true,
+      noLabel,
+      width: hasUnit ? 'calc(100% - 106px)' : '100%', // leave room for the 90px unit select + gap
+      showIf: (c: LovelaceConfig) => !parsed(c).custom && gate(c),
+      resolveVirtual: (c: LovelaceConfig) => {
+        const parsedLength = parsed(c);
+        return parsedLength.custom ? 0 : parsedLength.value;
       },
-      [`${key}_custom`]: {
-        name: `${key}_custom`,
-        type: 'text',
-        virtual: true,
-        noLabel,
-        showIf: (c: LovelaceConfig) => parsed(c).custom && gate(c),
-        resolveVirtual: (c: LovelaceConfig) => (typeof c[key] === 'string' ? c[key] : ''),
-        onVirtualChange: (value: string, config: LovelaceConfig) => ({ ...config, [key]: value || undefined }),
+      onVirtualChange: (value: number, config: LovelaceConfig) => {
+        const parsedLength = parseLength(config[key]);
+        const unit = parsedLength.custom ? units[0] : parsedLength.unit;
+        return { ...config, [key]: serializeLength(value, unit) };
       },
+    };
+    fields[`${key}_custom`] = {
+      name: `${key}_custom`,
+      target: key,
+      type: 'text',
+      virtual: true,
+      noLabel,
+      showIf: (c: LovelaceConfig) => parsed(c).custom && !isAutoToggled(c) && gate(c),
+      resolveVirtual: (c: LovelaceConfig) => (typeof c[key] === 'string' ? c[key] : ''),
+      onVirtualChange: (value: string, config: LovelaceConfig) => ({ ...config, [key]: value || undefined }),
     };
     if (hasUnit) {
       fields[`${key}_unit`] = {
         name: `${key}_unit`,
+        target: key,
         type: () => `lengthUnit:${units.join(',')}`,
         virtual: true,
         noLabel: true,
@@ -490,10 +527,54 @@ const EditorFactory = {
       ? {}
       : {
           // Half-width once a theme is active, to pair with `icon` once
-          // `color` (icon's usual partner) hides.
+          // `color` (icon's usual partner) hides. Virtual: icon_animation is
+          // an enum name | { effect, jinja } (see schema.ts's
+          // enumOrJinjaTrigger) - this same select reads/writes `effect` in
+          // both shapes so the dropdown stays a single control regardless of
+          // mode.
           icon_animation: EditorFieldsType.select('icon_animation', {
+            virtual: true,
             width: (c: LovelaceConfig) =>
               !is.nullish(c.theme) || is.array(c.custom_theme) ? availableSpace() : '100%',
+            resolveVirtual: (c: LovelaceConfig) =>
+              is.plainObject(c.icon_animation) ? (c.icon_animation.effect ?? '') : (c.icon_animation ?? ''),
+            onVirtualChange: (value: string, config: LovelaceConfig) =>
+              is.plainObject(config.icon_animation)
+                ? { ...config, icon_animation: { ...config.icon_animation, effect: value || undefined } }
+                : { ...config, icon_animation: value || undefined },
+          }),
+          // Switches icon_animation between its plain enum form and { effect,
+          // jinja }: on, the jinja condition below decides whether `effect`
+          // plays, replacing the automatic entity-based detection
+          // (isEntityActive/isWashingMachineActive/isBatteryCharging - see
+          // HABase._iconAnimationStyle) once it resolves.
+          icon_animation_jinja_toggle: EditorFieldsType.toggle('icon_animation_jinja_toggle', {
+            target: 'icon_animation',
+            virtual: true,
+            resolveVirtual: (c: LovelaceConfig) => is.plainObject(c.icon_animation),
+            onVirtualChange: (value: boolean, config: LovelaceConfig) => {
+              const current = config.icon_animation;
+              const effect = is.plainObject(current) ? current.effect : current;
+              return {
+                ...config,
+                icon_animation: value
+                  ? { effect, jinja: is.nonEmptyString(current?.jinja) ? current.jinja : '{{ }}' }
+                  : effect || undefined,
+              };
+            },
+          }),
+          icon_animation_jinja: EditorFieldsType.tpl('icon_animation_jinja', {
+            target: 'icon_animation',
+            virtual: true,
+            noLabel: true,
+            showIf: (c: LovelaceConfig) => is.plainObject(c.icon_animation),
+            resolveVirtual: (c: LovelaceConfig) =>
+              is.plainObject(c.icon_animation) ? (c.icon_animation.jinja ?? '') : '',
+            onVirtualChange: (value: string, config: LovelaceConfig) => {
+              const current = config.icon_animation;
+              const effect = is.plainObject(current) ? current.effect : current;
+              return { ...config, icon_animation: { effect, jinja: value || '' } };
+            },
           }),
           force_circular_background: EditorFieldsType.toggle('force_circular_background'),
           bar_position: EditorFieldsType.select('bar_position', {
@@ -622,11 +703,9 @@ const EditorFactory = {
             showIf: (c: LovelaceConfig) => Boolean(c.alert_when),
             width: availableSpace(),
           }),
-          // Leaving 'ping' selectable even with highlight: background is
-          // intentional - ViewCore.alertAnimation degrades that combination
-          // to 'static' rather than doing nothing, same as other
-          // invalid-combination fallbacks in this codebase (e.g. bar_scale
-          // log outside a valid range).
+          // 'ping' is selectable with any highlight: it's a box-shadow ring
+          // burst around the whole card (see .alert-anim-ping), independent
+          // of highlight's border-color/background-color.
           'alert_when.animation': EditorFieldsType.select('alert_when.animation', {
             type: 'alert_animation',
             showIf: (c: LovelaceConfig) => Boolean(c.alert_when),
@@ -669,7 +748,9 @@ const EditorFactory = {
           ? { units: ['px', '%'], convertRef: 130, showIf: shown }
           : { units: ['px', 'em', 'rem', '%'], showIf: shown },
       ),
-      ...(badge ? {} : EditorFactory.lengthField('height', { units: ['px', 'em', 'rem', '%'], showIf: shown })),
+      ...(badge
+        ? {}
+        : EditorFactory.lengthField('height', { units: ['px', 'em', 'rem', '%'], showIf: shown, customToggle: true })),
     };
   },
 

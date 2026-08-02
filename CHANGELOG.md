@@ -4,6 +4,160 @@ All notable changes to the Entity Progress Card are documented here, most recent
 first. See [`docs/rc-testing.md`](docs/rc-testing.md) for how to try a release
 candidate safely before it becomes stable.
 
+## What's new (1.6.1-rc2)
+
+### ✨ New
+
+- **`icon_animation` can now be triggered by a Jinja condition instead of entity
+  state** — `{ effect, jinja }`, where `jinja` resolves to `true`/`false` and
+  fully replaces the automatic entity-based detection. Covers cases like a plain
+  numeric `sensor` with no active/inactive concept at all, which nothing in the
+  automatic detection could ever match. See
+  [`icon_animation`](docs/configuration.md#icon_animation).  
+  ➡️ [Enhancement]: template/condition to trigger the icon animation directly
+  #125 (@FoxP)
+- **The refresh rate of an active timer's countdown is now driven by what's
+  actually displayed, and self-corrects against real time instead of drifting.**
+  Standard cards/badges/features refresh every second when `unit` shows seconds
+  (`s`/`timer`/`flextimer`), once a minute otherwise (`min`/`h`/ `d`/natural
+  format) — replacing the old fixed duration-based formula. Template cards get
+  this once-a-minute refresh for free from Home Assistant's own push (no extra
+  subscriptions); a new `fast_refresh: true` opts into a forced once-a-second
+  refresh for a real ticking `MM:SS` countdown, at a real cost (see
+  [`fast_refresh`](docs/configuration.md#fast_refresh)) — not tied to `entity`
+  being a `timer`, any `now()`-driven countdown benefits the same way (e.g. a
+  sunrise/sunset countdown against `sun.sun`). Every tick, standard or template,
+  now lands on a round second/minute boundary and re-aligns itself on every
+  cycle, instead of drifting from whatever moment the card happened to load.
+  Each tick also does only the minimal work its own display actually needs (the
+  bar + value for cards/badges, the bar alone for Tile features, a forced Jinja
+  resubscribe for templates) instead of the full
+  icon/badge/shape/trend/Jinja-processing pipeline - lighter, and less prone to
+  per-tick timing jitter from that pipeline's own variable cost. The bar-only
+  part is shared by every card type (defined once, not duplicated per type)
+  since it's the one thing a ticking timer always needs to repaint, regardless
+  of what else a given card type shows on top. The countdown text itself now
+  writes to the DOM immediately instead of through the usual RAF batching (new
+  `DOMHelper.setTextNow`, mirroring the existing `setStyleNow`) - a RAF callback
+  runs at the next display frame, whose cadence isn't aligned to our
+  wall-clock-second scheduling, so batching it reintroduced up to a frame's
+  worth of per-tick unevenness on the one thing a ticking countdown makes
+  visible (a discrete text jump, unlike the bar's own width change, which
+  already glides on its CSS transition regardless of paint timing).
+- **Timer/duration seconds were rounded instead of truncated
+  (`NumberFormatter.formatTiming`), unlike the hours/minutes next to them, which
+  already floored.** A timer at 332.847s truly elapsed floored to minute 5 but
+  rounded its seconds to "33", showing `05:33` up to ~500ms before the 33rd
+  second had actually passed - a real-value discrepancy against any reference
+  that floors (e.g. HA's own Tile), not a timing/jitter issue like the fixes
+  above. Seconds now floor the same way hours/minutes do.
+
+### 🐛 Fixes
+
+- **`bar_size: xlarge` (or `bar_position: below`) with the icon hidden got
+  squeezed into a single grid row instead of the extra row that size/position
+  needs**, cutting the bar off. A 1.6.0 regression - hiding the icon and needing
+  an extra row for a large bar were wrongly treated as mutually exclusive
+  instead of composing. Fixed for Home Assistant's own Sections grid, and also
+  for everywhere else the card can be placed (Masonry, embedded in another
+  card) - that fallback sizing had a second, independent copy of the same
+  row-count logic (a hardcoded "always 1 row (horizontal) / always 2 rows
+  (vertical)"), so the identical squeeze could still happen there even after the
+  Sections-only fix, just never reported. Both now read the same row count from
+  one place.  
+  ➡️ [Bug]: Card not rendering correctly with xlarge bar and icon hidden #133
+  (@Ascathon)
+- **`bar_size: xsmall` wasn't treated the same as `small` in the card's
+  height/grid-row calculation**, even though it's the smaller of the two - a
+  vertical card with `bar_size: xsmall` still reserved the extra row meant for
+  medium/large/xlarge bars, unlike `small`, which never needed it.
+- **`alert_when` with `animation: ping` and `highlight: background` silently
+  degraded to `static`** instead of ringing. `ping` animates a `box-shadow`
+  around the whole card, independent of `highlight`'s border-color/
+  background-color - the two combine fine, the fallback was based on a wrong
+  assumption that no matching CSS rule existed.
+- **`bar_color_mode: segment`/`rainbow` collapsed to a single flat color with a
+  theme whose zones are real-world values instead of `%` (`temperature`, `voc`,
+  `pm25`…), or with `custom_theme`, unless `max_value` happened to already match
+  the theme's own scale.** Each zone boundary is projected onto the
+  `min_value`/`max_value` window to paint the bar - left at the flat `100`
+  default while the theme's zones went into the thousands (`voc`), every zone
+  past the first got clamped to zero width and filtered out, leaving one color
+  for the whole bar. `max_value` now defaults to the active theme's (or
+  `custom_theme`'s) own highest zone bound instead of `100` whenever it's left
+  unset, so the fill and the color zones share one coherent scale out of the
+  box - an explicit `max_value` always overrides this and is used as-is. See
+  [`max_value`](docs/configuration.md#max_value).
+- **Secondary info (unit/state text) stayed capped at its narrow bar-sharing
+  width budget (45px–60%) with `bar_position: below`, `overlay` or
+  `background`**, even though the bar renders elsewhere for those positions and
+  isn't actually competing for room in that row. `top`/ `bottom` were already
+  exempted from that cap; `below`/`overlay`/ `background` share the exact same
+  "bar renders elsewhere" condition (see
+  `StructureElements.createSecondaryInfo`) but were missing from the CSS rule
+  that lifts it.
+- **A Jinja-templated countdown (e.g. `secondary: {{ now() - ... }}`) driven by
+  an active timer entity froze after a few seconds instead of ticking every
+  second.** Home Assistant only pushes a fresh render for a `now()`/`utcnow()`
+  template once a minute on its own, absent a state change on the tracked
+  entity - the 1.6.0 rewrite removed an incidental resubscribe-on-every-hass-
+  update that used to paper over this. Template cards/badges now force a fresh
+  render on every tick while their `entity:` is an active timer, the same way
+  standard cards already simulate a running timer's local tick.  
+  ➡️ Reported alongside [Bug]: "Run" status not catched #127 (@annaoskarson)
+- **Hiding `name` or `secondary_info` on a horizontal card left an empty gap
+  where the hidden row used to be, instead of shrinking the card.** The content
+  area's height was a fixed name+detail sum regardless of which rows were
+  actually visible. Fixed for horizontal layout - vertical's ring-shaped bar
+  still needs that reserved space, so it's unchanged for now. For a card
+  embedded outside Home Assistant's own grid sizing (e.g. as a
+  `custom:button-card` field), combine this with `height: auto` (an existing,
+  previously-undocumented valid value) and `frameless: true` to get a card that
+  shrinks fully to its content instead of stretching to fill the surrounding
+  element. With the default `bar_position`, the bar itself shares that row with
+  the secondary-info text rather than living in its own container - the first
+  pass at this fix zeroed the row's height whenever `secondary_info` was hidden
+  regardless, which starved the still-visible bar and shrank the name above it
+  too (flex-shrink pulling from the wrong row). Now that height is only
+  reclaimed when the row actually goes empty (bar elsewhere, or also hidden via
+  `hide: [progress_bar]`).  
+  ➡️ Follow-up to [Enhancement]: JINJA Should accept more STYLE tags #129
+  (@emartoni)
+
+### 🔧 Improvements
+
+- **The `height` field in the visual editor now has a toggle to switch between
+  the slider and a free-text value** (e.g. `auto`, `calc(...)`). Previously that
+  mode only activated if the config already held a non-number+unit value (set
+  through YAML) - there was no way to reach it from the visual editor alone.
+- **`theme: humidity`'s ranges rebalanced.** The comfort zone (40–60%) is now
+  one solid `green` band instead of a `green`/`teal` split that read as a
+  washed-out green rather than a distinct color, and the remaining ranges now
+  mirror symmetrically around it (10/10/10/20 on each side) instead of the old
+  lopsided split - a 95% reading (mold/condensation risk) used to land on
+  `deep-purple`, which doesn't read as "alert" the way a 15% reading's `red`
+  does, understating the actual risk on the humid end. See
+  [`theme: humidity`](docs/theme.md#humidity).
+- **`bar_position: overlay`'s `name`/`secondary_info` text now keeps 10px of
+  breathing room on the right edge**, matching the existing 7px it already had
+  on the left, instead of running flush against the card's edge.
+
+### 🧪 Try it: demo dashboard
+
+[`docs/demo-dashboard.yaml`](demo-dashboard.yaml) got a full rebuild — a
+comprehensive showroom covering essentially every option in this changelog
+(themes, watermarks, `bar_effect`, `icon_animation`, `center_zero`, `bar_stack`,
+aggregation, `card_mod`/UIX styling…) plus a regression-test view with one card
+per statically-reproducible closed issue. Import it and move the helper sliders
+to see everything react live. Two companion files ship alongside it:
+[`docs/demo-dashboard-dev.yaml`](demo-dashboard-dev.yaml) (same dashboard,
+targeting the `-dev` build for local testing) and
+[`docs/demo-dashboard-helpers.yaml`](demo-dashboard-helpers.yaml) (all the demo
+helper entities as a drop-in `homeassistant: packages:` file, instead of
+creating them one by one).
+
+---
+
 ## What's new (1.6.1-rc1)
 
 ### ✨ New

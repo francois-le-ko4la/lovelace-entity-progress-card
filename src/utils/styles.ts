@@ -498,6 +498,30 @@ ha-card.horizontal .${CARD.htmlStructure.sections.content.class} {
   max-height: 100%;
 }
 
+/* --current-content-height (above) sums --name-height + --detail-height
+   unconditionally - with hide: name (or secondary_info), the row's DOM
+   disappears but its share of that fixed height didn't, leaving the
+   remaining row centered with empty space above/below it (issue #129).
+   Vertical also folds --progress-size into that sum for its overlay/
+   background bar positioning, which still needs the full box regardless of
+   hidden rows, so this is horizontal-only. */
+ha-card.horizontal.${CARD.style.dynamic.hiddenComponent.name.class} .${CARD.htmlStructure.sections.content.class} {
+  --name-height: 0px;
+}
+
+/* Only zero --detail-height when the secondary-info row actually goes empty.
+   With bar_position: default (the .default class), the progress bar itself
+   renders *inside* that same row, next to the text (see
+   StructureElements.createSecondaryInfo) - hiding just the text there still
+   leaves the bar needing its usual share of height. Zeroing it anyway starved
+   the row, and .content's flex-shrink pulled height from --name-height too,
+   shrinking the name (regression from the #129 fix). Only zero it when the
+   bar isn't sharing the row: bar_position elsewhere (:not(.default), it
+   renders in its own container) or progress_bar is hidden too. */
+ha-card.horizontal.${CARD.style.dynamic.hiddenComponent.secondary_info.class}:is(:not(.default), .${CARD.style.dynamic.hiddenComponent.progress_bar.class}) .${CARD.htmlStructure.sections.content.class} {
+  --detail-height: 0px;
+}
+
 ha-card.vertical .${CARD.htmlStructure.sections.content.class} {
   --current-content-width: 100%;
   --current-content-flex-grow: 0;
@@ -545,6 +569,7 @@ ha-card.type-entities .${CARD.htmlStructure.sections.content.class} {
   text-align: var(--group-text-align, left);
   box-sizing: var(--group-box-sizing, content-box);
   margin-left: var(--group-margin-left);
+  margin-right: var(--group-margin-right);
 }
 
 .${CARD.htmlStructure.elements.nameContent.class} {
@@ -567,7 +592,15 @@ ha-card.type-entities .${CARD.htmlStructure.sections.content.class} {
   --group-max-width: unset;
 }
 
-ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.secondaryInfoWrapper.class} {
+/* Same set as StructureElements.createSecondaryInfo's excludedPositions
+   (structure.ts): the bar shares .secondary-info's row with the text only
+   for bar_position: default - for below/top/bottom/overlay/background it
+   renders elsewhere, so the text is the row's only occupant and can use its
+   full width. Missing .below/.overlay/.background here left those three
+   stuck at the same 45px-60% budget default (default) needs to leave room
+   for a bar sharing the row - even though no bar was actually competing for
+   space in their case. */
+ha-card:is(.vertical, .xlarge, .below, .bottom, .top, .overlay, .background) .${CARD.htmlStructure.elements.secondaryInfoWrapper.class} {
   --group-min-width: 100%;
   --group-max-width: 100%;
 }
@@ -591,9 +624,11 @@ ha-card:is(.vertical, .xlarge, .bottom, .top) .${CARD.htmlStructure.elements.sec
 
 .overlay :is(.${CARD.htmlStructure.elements.nameContent.class}, .${CARD.htmlStructure.elements.secondaryInfoWrapper.class}) {
   --group-margin-left: 7px;
+  --group-margin-right: 10px;
 }
 .vertical.up-orientation.overlay :is(.${CARD.htmlStructure.elements.nameContent.class}, .${CARD.htmlStructure.elements.secondaryInfoWrapper.class}) {
   --group-margin-left: 0;
+  --group-margin-right: 0;
 }
 
 .ellipsis-wrapper {

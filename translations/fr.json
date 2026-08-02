@@ -95,7 +95,10 @@
       "reverse": "Inverser le minuteur",
       "bar_stack_mode": "Mode d'empilement",
       "bar_stack": "Entités supplémentaires",
-      "migrate_config": "Migrer la config"
+      "migrate_config": "Migrer la config",
+      "icon_animation_jinja_toggle": "Trigger via template",
+      "fast_refresh": "Fast refresh (per-second)",
+      "height_custom_toggle": "Shrink height (embedded)"
     },
     "option": {
       "theme": {

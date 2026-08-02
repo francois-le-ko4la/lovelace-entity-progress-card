@@ -329,6 +329,18 @@ const types: Record<string, any> = {
       types.object({ jinja: types.string }),
     ),
 
+  // icon_animation: an enum name (today's behavior, gated by the automatic
+  // entity-based detection - see HABase._iconAnimationStyle) | { effect,
+  // jinja } - jinja is a boolean condition that decides whether `effect`
+  // plays, overriding that automatic detection once it resolves. `effect` is
+  // optional within the object form (no effect renders until one is chosen),
+  // not required - same leniency as the rest of this schema.
+  enumOrJinjaTrigger: (allowedValues: unknown[]): Validator =>
+    types.union(
+      types.enums(allowedValues),
+      types.object({ effect: types.optional(types.enums(allowedValues)), jinja: types.string }),
+    ),
+
   // Shared by feature/card/template: boolean (on/off) | { value,
   // growth_percent }.
   centerZero: (): Validator =>
@@ -448,6 +460,25 @@ function struct(validator: Validator & { _schema?: Record<string, Validator> }, 
     }
 
     if (['top', 'bottom', 'overlay', 'background'].includes(String(result.bar_position))) delete result.bar_size; // avoid conflict
+
+    // Themes/custom_theme whose zones are raw values rather than 0-100%
+    // (e.g. `temperature`'s -50..100°C, `voc`'s 0..50000ppb, or any
+    // custom_theme) need max_value on that same scale, or
+    // bar_color_mode: segment/rainbow collapses to a single color - every
+    // zone but the first gets clamped to zero width once projected onto the
+    // flat schema default of 100 (see ThemeManager.buildGradient's
+    // toValuePercent). Defaulting max_value to the zones' own top bound
+    // (only when the user hasn't set one) keeps the fill and the color
+    // zones on one coherent scale without the user having to know/repeat
+    // that number themselves.
+    if (is.nullish(result.max_value)) {
+      const theme = THEME[result.theme as keyof typeof THEME];
+      const zones = theme && theme.percent === false ? theme.style : result.custom_theme;
+      if (is.nonEmptyArray(zones)) {
+        const maxes = (zones as { max?: unknown }[]).map((zone) => zone.max).filter(is.number);
+        if (maxes.length) result.max_value = Math.max(...maxes);
+      }
+    }
 
     return result;
   };
@@ -897,7 +928,7 @@ const YamlSchemaFactory = {
         // animation names, never against 'none' itself, so an absent value
         // behaves identically to an explicit 'none'.
         icon_animation: types.optional(
-          types.enums([
+          types.enumOrJinjaTrigger([
             'none',
             'spin',
             'pulse',
@@ -1028,6 +1059,17 @@ const YamlSchemaFactory = {
       types.object({
         // ─── Entity & Data ──────────────────────────────────────────────────
         entity: types.optional(types.entityId),
+        // Off by default: a now()/utcnow()-driven countdown already gets a
+        // free once-a-minute refresh from HA's own render_template push
+        // (issue #127) - this opts into a forced resubscribe every second
+        // instead (see ViewCore.autoRefreshInterval), for a real ticking
+        // MM:SS countdown. Not tied to `entity` being a timer - any
+        // now()-based Jinja field (a timer countdown, sunrise/sunset,
+        // input_datetime...) benefits the same way. No unit to key off of
+        // the way ViewBase's own cards/badges/features do (see
+        // ViewBase.autoRefreshInterval) - the display is arbitrary Jinja
+        // text, so this has to be an explicit opt-in.
+        fast_refresh: types.optionalBooleanWithDefault(false),
         name: types.optionalString(),
         secondary: types.optionalString(),
         // badgeTemplate opts out (see its own .delete(['multiline'])): the row
@@ -1063,7 +1105,7 @@ const YamlSchemaFactory = {
         // animation names, never against 'none' itself, so an absent value
         // behaves identically to an explicit 'none'.
         icon_animation: types.optional(
-          types.enums([
+          types.enumOrJinjaTrigger([
             'none',
             'spin',
             'pulse',

@@ -32,7 +32,6 @@ const configBase = {
   decimal: { percentage: 0, timer: 0, counter: 0, duration: 0, other: 2 },
   msFactor: 1000,
   shadowMode: 'open',
-  refresh: { ratio: 500, min: 250, max: 1000 },
   stub: {
     template: {
       icon: HA_CONTEXT.icons.washingMachine,

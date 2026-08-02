@@ -10,7 +10,7 @@ import { is } from '../utils/common-checks.js';
 import { initLogger, type LoggerInstance } from '../utils/log.js';
 import { ObjStructure, ThemeManager, ChangeTracker } from './value-helpers.js';
 import { HassProviderSingleton, type HomeAssistant, type EntityState } from '../utils/hass-provider.js';
-import { CardView, FeatureView, type ViewCore, type ViewBase } from './view.js';
+import { CardView, FeatureView, gridRowsToMinHeight, type ViewCore, type ViewBase } from './view.js';
 import { ResourceManager, DOMHelper, ActionHelper } from './dom-helpers.js';
 import type { CacheValue } from './dom-helpers.js';
 import type { LovelaceConfig } from '../utils/types.js';
@@ -281,27 +281,68 @@ class HACore extends HTMLElement {
   // tick locally. Lives here (not HABase) so EntityProgressFeatures - which
   // extends HACore directly, not HABase - gets it too.
 
+  // A self-correcting setTimeout chain, not setInterval: each tick recomputes
+  // its delay from Date.now() rather than from when the previous tick fired,
+  // so ticks always land on a round boundary of `interval` (e.g. exactly
+  // :00, :01, :02... for 1000ms) - immune to setInterval's native drift
+  // (background-tab throttling, main-thread congestion) instead of just
+  // repeating whatever phase the first tick happened to start at. Date.now()
+  // is captured the instant the timer fires, before refresh()/
+  // _onAutoRefreshTick() do any work - capturing it after would fold their
+  // (variable, DOM-touching) execution time into the next delay, shortening
+  // that one cycle by however long the work took.
   _startAutoRefresh() {
     if (!this._resourceManager) return;
-    // isActiveTimer/refreshSpeed are ViewBase-only - the template views
-    // (CardTemplateView/BadgeTemplateView) don't have a timer concept, so
-    // this harmlessly reads undefined and stops the interval right away for
-    // them rather than never applying to that class at all.
-    const cardView = this._cardView as ViewBase;
-    this._resourceManager.setInterval(
-      () => {
-        this.refresh();
-        if (!cardView.isActiveTimer) {
-          this._stopAutoRefresh();
-        }
-      },
-      cardView.refreshSpeed,
-      'autoRefresh',
-    );
+    const cardView = this._cardView;
+    const tick = () => {
+      const firedAt = Date.now();
+      this._onAutoRefreshTick();
+      const nextInterval = cardView.autoRefreshInterval;
+      if (nextInterval === null) {
+        this._stopAutoRefresh();
+        return;
+      }
+      this._resourceManager?.setTimeout(tick, nextInterval - (firedAt % nextInterval), 'autoRefresh');
+    };
+    const interval = cardView.autoRefreshInterval;
+    if (interval !== null) this._resourceManager.setTimeout(tick, interval - (Date.now() % interval), 'autoRefresh');
+  }
+
+  // What a tick actually does - deliberately NOT a full this.refresh(): a
+  // ticking timer only ever moves #percentHelper (the bar + whatever value
+  // is derived from it), so recomputing the view and repainting its CSS is
+  // the one thing every subclass needs. icon/badge/shape/trend/
+  // conditional-classes/Jinja-processing are all state-driven - already
+  // re-run by _handleHassUpdate on a real hass change - so re-running them
+  // here on every tick was both wasted work and a source of per-tick timing
+  // jitter. This default already covers EntityProgressFeatures as-is (a
+  // feature has no text of its own, just the bar); EntityProgressCardBase
+  // overrides this to also update its value text (see cards.ts), and
+  // EntityProgressTemplateBase overrides it entirely (its display is
+  // Jinja-push-driven, not something a local refresh() can affect at all).
+  _onAutoRefreshTick() {
+    this._cardView.refresh(this.hass as HomeAssistant);
+    this._updateCSS();
   }
 
   _stopAutoRefresh() {
     if (this._resourceManager) this._resourceManager.remove('autoRefresh');
+  }
+
+  // Shared by EntityProgressCardBase, EntityProgressFeatures, and
+  // EntityProgressTemplateBase's own _handleHassUpdate: start/stop the local
+  // tick based on ViewCore/ViewBase's own autoRefreshInterval (null = no
+  // local loop needed - see view.ts).
+  // CF5 - issue (major) resolved - set hass calls _handleHassUpdate before
+  // _ensureResourceManager: with an active timer entity and hass assigned
+  // before connectedCallback (standard Lovelace order), _resourceManager was
+  // still null and .has() crashed.
+  _manageAutoRefresh() {
+    if (this._cardView.autoRefreshInterval === null) {
+      this._stopAutoRefresh();
+    } else if (!this._resourceManager?.has('autoRefresh')) {
+      this._startAutoRefresh();
+    }
   }
 
   get isRendered(): boolean {
@@ -742,7 +783,7 @@ class HACore extends HTMLElement {
     return entity ? { entity } : {};
   }
 
-  async _subscribeToTemplate(key: string, template: string) {
+  async _subscribeToTemplate(key: string, template: string, force = false) {
     this._log?.debug('📎 HACore._subscribeToTemplate:', { key, template });
     const subscriptionKey = `template-${key}`;
 
@@ -762,9 +803,12 @@ class HACore extends HTMLElement {
     // CF5 - issue (perf) resolved - subscriptions are push-based: skip when an
     // identical one is live or in-flight. Reserving the signature before the
     // await also fixes a race where two overlapping calls created a duplicate
-    // (orphan) subscription.
+    // (orphan) subscription. `force` (see _onAutoRefreshTick) bypasses this
+    // dedup on purpose - HA push for a now()/utcnow() template does not repeat
+    // every second on its own (issue #127), so ticking the countdown means
+    // creating a fresh subscription with the same signature.
     const signature = `${template}\u0000${this._getTemplateContext().entity ?? ''}`;
-    if (this.#templateSignatures.get(subscriptionKey) === signature) {
+    if (!force && this.#templateSignatures.get(subscriptionKey) === signature) {
       this._log?.debug(`[Template ${key}] Identical subscription live or in-flight, skipping.`);
       return;
     }
@@ -881,6 +925,7 @@ class HABase extends HACore {
       '_renderMessage',
       '_renderBadgeIcon',
       '_renderBadgeColor',
+      '_renderIconAnimationWhen',
       '_processStandardFields',
     ];
   }
@@ -1042,6 +1087,20 @@ class HABase extends HACore {
         [config.height, CARD.style.dynamic.card.height.var, config.height],
         [config.bar_max_width, CARD.style.dynamic.progressBar.maxWidth.var, config.bar_max_width],
         [config.alert_when?.color, '--alert-color', ThemeManager.adaptColor(config.alert_when?.color)],
+        // issue #133 - badges have their own unrelated min-height model
+        // (--ha-badge-size), so this is card/template-only (isBadge already
+        // covers exactly that split above). Set unconditionally (not just
+        // when it differs from the static .horizontal/.vertical CSS
+        // default) so it can't go stale if bar_size/bar_position/hidden
+        // icon change without a full re-render - see ViewCore.minGridRows,
+        // the single source of truth this and getGridOptions both read.
+        // marginless still wins (explicit 'unset', mirroring its own CSS
+        // rule) since an inline style can't be overridden by a class rule.
+        [
+          !isBadge,
+          '--current-card-min-height',
+          config.marginless ? 'unset' : gridRowsToMinHeight(this._cardView.minGridRows),
+        ],
       ] as [unknown, string, CacheValue][]
     ).forEach(([condition, prop, value]) => {
       if (condition) this._dom.setStyle(cardKey, prop, value);
@@ -1069,33 +1128,40 @@ class HABase extends HACore {
   }
 
   get _iconAnimationStyle(): Map<string, boolean> {
+    const effect = this._cardView.iconAnimationEffect;
+    // icon_animation: { effect, jinja } mode - the resolved boolean (once
+    // pushed) replaces the automatic entity-based detection below entirely,
+    // for whichever effect is chosen. null (not in that mode, or not
+    // resolved yet) falls through to today's per-effect behavior unchanged.
+    const override = this._cardView.jinjaIconAnimationActive;
+    const active = (autoDetect: () => boolean): boolean => (override === null ? autoDetect() : override);
     return new Map([
-      ['icon-anim-spin', this._cardView.config.icon_animation === 'spin' && this._cardView.isEntityActive],
-      ['icon-anim-pulse', this._cardView.config.icon_animation === 'pulse' && this._cardView.isEntityActive],
-      ['icon-anim-bounce', this._cardView.config.icon_animation === 'bounce' && this._cardView.isEntityActive],
-      ['icon-anim-shake', this._cardView.config.icon_animation === 'shake' && this._cardView.isEntityActive],
-      ['icon-anim-ping', this._cardView.config.icon_animation === 'ping' && this._cardView.isEntityActive],
-      ['icon-anim-reveal', this._cardView.config.icon_animation === 'reveal' && this._cardView.isEntityActive],
+      ['icon-anim-spin', effect === 'spin' && active(() => this._cardView.isEntityActive)],
+      ['icon-anim-pulse', effect === 'pulse' && active(() => this._cardView.isEntityActive)],
+      ['icon-anim-bounce', effect === 'bounce' && active(() => this._cardView.isEntityActive)],
+      ['icon-anim-shake', effect === 'shake' && active(() => this._cardView.isEntityActive)],
+      ['icon-anim-ping', effect === 'ping' && active(() => this._cardView.isEntityActive)],
+      ['icon-anim-reveal', effect === 'reveal' && active(() => this._cardView.isEntityActive)],
       [
         // Not isEntityActive alone: appliance integrations (Home Connect,
         // Miele) report the running program as a plain `sensor`, which
         // isEntityActive's domain gate excludes on purpose - see
         // ViewCore.isWashingMachineActive.
         'icon-anim-washing-machine',
-        this._cardView.config.icon_animation === 'washing_machine' && this._cardView.isWashingMachineActive,
+        effect === 'washing_machine' && active(() => this._cardView.isWashingMachineActive),
       ],
       [
         // Not isEntityActive: charging isn't a domain/state pair, it's an
         // attribute (see ViewCore.isBatteryCharging) — its own trigger.
         'icon-anim-battery-charging',
-        this._cardView.config.icon_animation === 'battery_charging' && this._cardView.isBatteryCharging,
+        effect === 'battery_charging' && active(() => this._cardView.isBatteryCharging),
       ],
       [
         // See ViewCore.isBatteryIconShifted: compensates the fill wipe for
         // charging/bluetooth battery icon variants, without changing the icon.
         'icon-anim-battery-charging-shifted',
-        this._cardView.config.icon_animation === 'battery_charging' &&
-          this._cardView.isBatteryCharging &&
+        effect === 'battery_charging' &&
+          active(() => this._cardView.isBatteryCharging) &&
           this._cardView.isBatteryIconShifted,
       ],
     ]);
@@ -1426,9 +1492,19 @@ class HABase extends HACore {
     return [];
   }
 
-  _processStandardFields() {
+  // `immediate`: bypasses DOMHelper's RAF batching (setTextNow instead of
+  // setText) - used by EntityProgressCardBase's own _onAutoRefreshTick. RAF
+  // callbacks run at the next display frame, whose own cadence isn't aligned
+  // to wall-clock second boundaries the way _startAutoRefresh's tick is - so
+  // even a perfectly-scheduled tick's text would still land up to ~16ms off
+  // from one paint to the next, which is exactly the kind of per-tick
+  // unevenness a ticking countdown makes visible. Everywhere else keeps the
+  // batched path (multiple fields updating together on a real hass change
+  // still coalesce into one paint).
+  _processStandardFields(immediate = false) {
     (this.constructor as typeof HABase)._getStandardFields(this._cardView).forEach(({ className, value }) => {
-      this._dom.setText(className, value);
+      if (immediate) this._dom.setTextNow(className, value);
+      else this._dom.setText(className, value);
     });
   }
 
@@ -1438,7 +1514,18 @@ class HABase extends HACore {
     return {
       bar_effect: () => this._refreshBarEffect(content),
       hide: () => this._handleHiddenComponents(content),
+      icon_animation: () => this._renderIconAnimationWhen(content),
     };
+  }
+
+  _renderIconAnimationWhen(content: unknown) {
+    this._log?.debug('📎 HACore._renderIconAnimationWhen():', { content });
+    // Defensive: only apply while icon_animation is still in { effect, jinja }
+    // mode - guards against a push arriving right as the user switches modes
+    // (mirrors EntityProgressCardBase._renderJinjaNumber).
+    const iconAnimation = this._cardView.config?.icon_animation;
+    if (!(is.plainObject(iconAnimation) && is.nonEmptyString((iconAnimation as { jinja?: string }).jinja))) return;
+    this._cardView.jinjaIconAnimationActive = content;
   }
 
   static #BREAK_RE = /<br\s*\/?>/gi;

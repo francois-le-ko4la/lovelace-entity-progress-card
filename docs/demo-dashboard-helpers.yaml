@@ -1,0 +1,281 @@
+# =============================================================================
+# Entity Progress Card — Demo dashboard helpers (packages format)
+# =============================================================================
+# Drop this file in your HA config folder (next to configuration.yaml, or in
+# your packages folder) and reference it as a package - see the `!include`
+# instructions at the top of demo-dashboard.yaml.
+input_number:
+  epb_demo_battery:
+    name: Demo battery
+    min: 0
+    max: 100
+    step: 1
+    initial: 42
+    unit_of_measurement: "%"
+    icon: mdi:battery-50
+  epb_demo_temperature:
+    name: Demo temperature
+    min: -20
+    max: 40
+    step: 0.5
+    initial: 21.5
+    unit_of_measurement: "°C"
+    icon: mdi:thermometer
+  epb_demo_power:
+    name: Demo power
+    min: -3000
+    max: 3000
+    step: 50
+    initial: -750
+    unit_of_measurement: "W"
+    icon: mdi:transmission-tower
+  epb_demo_battery_reserved:
+    name: Demo battery (reserved)
+    min: 0
+    max: 100
+    step: 1
+    initial: 15
+    unit_of_measurement: "%"
+    icon: mdi:battery-lock
+  epb_demo_grid_consumption:
+    name: Demo grid consumption
+    min: 0
+    max: 3000
+    step: 50
+    initial: 900
+    unit_of_measurement: "W"
+    icon: mdi:transmission-tower
+  epb_demo_solar_production:
+    name: Demo solar production
+    min: 0
+    max: 3000
+    step: 50
+    initial: 1600
+    unit_of_measurement: "W"
+    icon: mdi:solar-power
+  epb_demo_printer_ink_black:
+    name: Demo printer ink (black)
+    min: 0
+    max: 100
+    step: 1
+    initial: 78
+    unit_of_measurement: "%"
+    icon: mdi:water
+  epb_demo_printer_ink_cyan:
+    name: Demo printer ink (cyan)
+    min: 0
+    max: 100
+    step: 1
+    initial: 54
+    unit_of_measurement: "%"
+    icon: mdi:water
+  epb_demo_printer_ink_magenta:
+    name: Demo printer ink (magenta)
+    min: 0
+    max: 100
+    step: 1
+    initial: 32
+    unit_of_measurement: "%"
+    icon: mdi:water
+  epb_demo_printer_ink_yellow:
+    name: Demo printer ink (yellow)
+    min: 0
+    max: 100
+    step: 1
+    initial: 9
+    unit_of_measurement: "%"
+    icon: mdi:water
+  # Fixed reference points for the "same theme, different %" comparison -
+  # standard (non-template) cards read percent from entity state only, so
+  # each % needs its own entity pinned at that value. Not meant to be moved.
+  epb_demo_theme_25:
+    name: Demo theme ref 25%
+    min: 0
+    max: 100
+    step: 1
+    initial: 25
+    unit_of_measurement: "%"
+    icon: mdi:numeric-2-box-outline
+  epb_demo_theme_50:
+    name: Demo theme ref 50%
+    min: 0
+    max: 100
+    step: 1
+    initial: 50
+    unit_of_measurement: "%"
+    icon: mdi:numeric-5-box-outline
+  epb_demo_theme_75:
+    name: Demo theme ref 75%
+    min: 0
+    max: 100
+    step: 1
+    initial: 75
+    unit_of_measurement: "%"
+    icon: mdi:numeric-7-box-outline
+  epb_demo_theme_95:
+    name: Demo theme ref 95%
+    min: 0
+    max: 100
+    step: 1
+    initial: 95
+    unit_of_measurement: "%"
+    icon: mdi:numeric-9-box-outline
+  # Fixed reference points for the "same theme, different temperature"
+  # comparison - picked to land in 4 distinct zones of the built-in
+  # `temperature` theme (see src/utils/card-themes.ts): negative -> blue,
+  # positive -> cyan, temperate -> green (comfortable), very hot -> red.
+  epb_demo_temp_negative:
+    name: Demo temperature ref (negative)
+    min: -20
+    max: 40
+    step: 0.5
+    initial: -10
+    unit_of_measurement: "°C"
+    icon: mdi:thermometer-low
+  epb_demo_temp_positive:
+    name: Demo temperature ref (positive)
+    min: -20
+    max: 40
+    step: 0.5
+    initial: 10
+    unit_of_measurement: "°C"
+    icon: mdi:thermometer
+  epb_demo_temp_temperate:
+    name: Demo temperature ref (temperate)
+    min: -20
+    max: 40
+    step: 0.5
+    initial: 22
+    unit_of_measurement: "°C"
+    icon: mdi:thermometer
+  epb_demo_temp_hot:
+    name: Demo temperature ref (very hot)
+    min: -20
+    max: 40
+    step: 0.5
+    initial: 35
+    unit_of_measurement: "°C"
+    icon: mdi:thermometer-high
+  # Fixed reference points across the 5 zones of the built-in `voc` theme
+  # (see src/utils/card-themes.ts): good -> green, moderate -> yellow,
+  # poor -> orange, bad -> red, hazardous -> deep-purple.
+  epb_demo_voc_good:
+    name: Demo VOC ref (good)
+    min: 0
+    max: 50000
+    step: 50
+    initial: 150
+    unit_of_measurement: ppb
+    icon: mdi:molecule
+  epb_demo_voc_moderate:
+    name: Demo VOC ref (moderate)
+    min: 0
+    max: 50000
+    step: 50
+    initial: 400
+    unit_of_measurement: ppb
+    icon: mdi:molecule
+  epb_demo_voc_poor:
+    name: Demo VOC ref (poor)
+    min: 0
+    max: 50000
+    step: 50
+    initial: 1500
+    unit_of_measurement: ppb
+    icon: mdi:molecule
+  epb_demo_voc_bad:
+    name: Demo VOC ref (bad)
+    min: 0
+    max: 50000
+    step: 50
+    initial: 10000
+    unit_of_measurement: ppb
+    icon: mdi:molecule
+  epb_demo_voc_hazardous:
+    name: Demo VOC ref (hazardous)
+    min: 0
+    max: 50000
+    step: 50
+    initial: 35000
+    unit_of_measurement: ppb
+    icon: mdi:molecule
+
+input_boolean:
+  epb_demo_printer:
+    name: Demo printer (online)
+    icon: mdi:printer
+  epb_demo_charging:
+    name: Demo battery charging (toggle)
+    icon: mdi:power-plug
+
+timer:
+  epb_demo_timer:
+    name: Demo timer
+    duration: "00:05:00"
+
+# Real-world use case: a maintenance countdown (e.g. aquarium prefilter) -
+# the card's entity is a computed "days remaining" number, never written to
+# directly. The actual state that gets reset is the last-maintenance date
+# (input_datetime); a script (called from double_tap_action, same pattern as
+# a real automation) stamps it to now(). The template sensor derives days
+# remaining from it and can go negative once overdue.
+input_datetime:
+  epb_demo_maintenance_last:
+    name: Demo maintenance (last done)
+    has_date: true
+    has_time: false
+    initial: "2026-07-15"
+
+script:
+  epb_demo_reset_maintenance:
+    alias: "Demo: reset maintenance date"
+    sequence:
+      - action: input_datetime.set_datetime
+        target:
+          entity_id: input_datetime.epb_demo_maintenance_last
+        data:
+          timestamp: "{{ now().timestamp() }}"
+  # 35-day interval, back-dated 33 days -> 2 days left before the deadline.
+  epb_demo_set_maintenance_near_due:
+    alias: "Demo: set maintenance to 2 days before deadline"
+    sequence:
+      - action: input_datetime.set_datetime
+        target:
+          entity_id: input_datetime.epb_demo_maintenance_last
+        data:
+          timestamp: "{{ (now() - timedelta(days=33)).timestamp() }}"
+
+# Percentage + a `battery_charging` attribute on the SAME entity - the shape
+# icon_animation: battery_charging / theme: battery_adaptive look for (see
+# ViewCore.#CHARGING_ATTRIBUTES in src/card/view.ts). input_number can't carry
+# custom attributes, hence a template sensor mirroring it instead. Toggle
+# input_boolean.epb_demo_charging to see it switch live.
+template:
+  - sensor:
+      # entity_id is derived by slugifying `name` (not unique_id, which is
+      # registry-internal only, and this template schema doesn't support
+      # object_id) - "EPB " prefix here so it slugifies to the
+      # sensor.epb_demo_battery_ev the dashboard cards actually expect.
+      - name: EPB Demo battery (EV)
+        unique_id: epb_demo_battery_ev
+        state: "{{ states('input_number.epb_demo_battery') }}"
+        unit_of_measurement: "%"
+        device_class: battery
+        icon: mdi:battery-charging-50
+        attributes:
+          battery_charging: "{{ is_state('input_boolean.epb_demo_charging', 'on') }}"
+      # Days remaining before a 35-day maintenance interval is up, derived
+      # from input_datetime.epb_demo_maintenance_last - negative once
+      # overdue. See "EPB " naming note above for why the name is prefixed.
+      # `as_datetime | as_local` (not bare as_datetime) is required: a
+      # date-only input_datetime state ("2026-07-15") parses to a naive
+      # datetime, and naive - aware (now()) raises "can't subtract
+      # offset-naive and offset-aware datetimes" - as_local forces it
+      # timezone-aware, matching now()'s own tzinfo.
+      - name: EPB Demo maintenance days
+        unique_id: epb_demo_maintenance_days
+        state: >-
+          {% set last = states('input_datetime.epb_demo_maintenance_last') | as_datetime | as_local %}
+          {{ 35 - (last.date() - now().date()).days | abs }}
+        unit_of_measurement: days
+        icon: mdi:filter

@@ -95,7 +95,10 @@
       "reverse": "Timer inverso",
       "bar_stack_mode": "Modalità di impilamento",
       "bar_stack": "Entità aggiuntive",
-      "migrate_config": "Migra configurazione"
+      "migrate_config": "Migra configurazione",
+      "icon_animation_jinja_toggle": "Trigger via template",
+      "fast_refresh": "Fast refresh (per-second)",
+      "height_custom_toggle": "Shrink height (embedded)"
     },
     "option": {
       "bar_orientation": {

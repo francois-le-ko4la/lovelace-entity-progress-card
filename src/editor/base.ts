@@ -99,6 +99,7 @@ class EditorBase extends HTMLElement {
     'force_circular_background',
     'frameless',
     'marginless',
+    'fast_refresh',
     'height',
     'min_width',
     'badge_icon',

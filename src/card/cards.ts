@@ -58,16 +58,20 @@ class EntityProgressCardBase extends HABase {
 
   _handleHassUpdate() {
     this.refresh();
+    this._manageAutoRefresh();
+  }
 
-    if (!this._cardView.isActiveTimer) {
-      this._stopAutoRefresh();
-      // CF5 - issue (major) resolved - set hass calls _handleHassUpdate before
-      // _ensureResourceManager: with an active timer entity and hass assigned
-      // before connectedCallback (standard Lovelace order), _resourceManager
-      // was still null and .has() crashed
-    } else if (!this._resourceManager?.has('autoRefresh')) {
-      this._startAutoRefresh();
-    }
+  // Adds the value text on top of HACore's own default tick (refresh + bar
+  // CSS, shared with EntityProgressFeatures - see core.ts) - a Card/Badge
+  // also shows a text value Features don't have. immediate: see
+  // _processStandardFields's own comment - the bar's width change rides its
+  // own CSS transition regardless of RAF phase, but the countdown text is a
+  // discrete jump each tick and RAF's own frame timing isn't aligned to our
+  // wall-clock-second scheduling (mirrors the same fix already applied to
+  // _renderJinjaNumber's own min_value/max_value push, below).
+  _onAutoRefreshTick() {
+    super._onAutoRefreshTick();
+    this._processStandardFields(true);
   }
 
   // ─── CSS - CUSTOMIZATION ──────────────────────────────────────────────────
@@ -354,15 +358,7 @@ class EntityProgressFeatures extends HACore {
   _handleHassUpdate() {
     this.#fixCardStyles();
     this.refresh();
-
-    // A running timer entity doesn't push a new hass state every second - see
-    // HACore._startAutoRefresh, which simulates the tick locally. Mirrors
-    // EntityProgressCardBase._handleHassUpdate.
-    if (!this._cardView.isActiveTimer) {
-      this._stopAutoRefresh();
-    } else if (!this._resourceManager?.has('autoRefresh')) {
-      this._startAutoRefresh();
-    }
+    this._manageAutoRefresh();
   }
 
   // ─── CSS MANAGEMENT ───────────────────────────────────────────────────────
@@ -431,6 +427,26 @@ class EntityProgressTemplateBase extends HABase {
 
   _handleHassUpdate() {
     this.refresh(); // refresh() → _cardView.refresh() → _showIcon() → _updateCSS()
+    // Also compensates for HA's own render_template push, which for a
+    // now()/utcnow() Jinja field (issue #127) only fires once a minute absent
+    // a state change on config.entity - see _onAutoRefreshTick below.
+    this._manageAutoRefresh();
+  }
+
+  // Overrides HACore's own (plain refresh()): a template's display is
+  // entirely Jinja-push-driven, so the tick's only job is forcing a fresh
+  // resubscription for every Jinja field while config.entity is an active
+  // timer - the persistent subscription itself won't re-evaluate now()/
+  // utcnow() on its own between HA's once-a-minute pushes. refresh() itself
+  // would recompute nothing this tick could have changed (nothing here is
+  // state-driven), so it's skipped entirely, not just the icon/badge/shape/
+  // trend/conditional-classes part standard cards trim (see
+  // EntityProgressCardBase's own override).
+  _onAutoRefreshTick() {
+    const templates = this.validJinjaFields;
+    for (const [key, template] of Object.entries(templates)) {
+      if (is.nonEmptyString(template)) this._subscribeToTemplate(key, template, true);
+    }
   }
 
   // See EntityProgressCardBase.getStubConfig for why this is async.

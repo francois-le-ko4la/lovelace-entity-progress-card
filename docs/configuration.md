@@ -75,6 +75,7 @@
   - [🧩 entity-progress-card-template / entity-progress-badge-template](#template)
     - [Common options](#common-options)
     - [Specific options](#specific-options)
+      - [`fast_refresh`](#fast_refresh)
       - [`name` (Jinja)](#name-jinja)
       - [`icon` (Jinja)](#icon-jinja)
       - [`secondary` (Jinja)](#secondary-jinja)
@@ -510,6 +511,13 @@ _Unit selection_:
 > `max_value`. Even if the displayed value uses an automatically detected unit,
 > the progress bar still relies on max_value to calculate the percentage.
 
+> [!NOTE]
+>
+> While an active `timer` entity counts down, the card refreshes its display
+> every second when `unit` shows seconds (`s`, `timer`, `flextimer`), or once a
+> minute otherwise (`min`, `h`, `d`, or Home Assistant's own natural duration
+> format) — no extra config needed, this follows `unit` automatically.
+
 > [!WARNING]
 >
 > Setting the unit to % will display the percentage value, while using a
@@ -610,6 +618,14 @@ at its default, or `-3000` if `max_value: 3000`. Without this, the negative half
 would have no range at all (`0` to `0`) and could never show anything. Set
 `min_value` explicitly (even to `0`) to override this.
 
+> [!NOTE]
+>
+> Unlike `max_value` (see its own section below), `min_value` is never
+> auto-adjusted from an active theme's zones outside `center_zero` — it stays at
+> `0` by default even for a theme whose lowest zone goes negative (e.g.
+> `temperature`'s `-50°C`). Set it explicitly if you need the low end of a
+> theme's range to be reachable.
+
 `min_value` accepts three forms — like `max_value`, each mode uses its own
 explicit key, so there is nothing to guess from the value's shape:
 
@@ -701,7 +717,27 @@ switch between the three modes.
 
 _Default_:
 
-- `100`
+- `100`, unless a `theme` with real-world value zones (not `%`-based — e.g.
+  `temperature`, `voc`) or a `custom_theme` is active and `max_value` is left
+  unset: then it defaults to that theme's own highest zone bound instead (see
+  the note below).
+
+> [!NOTE]
+>
+> Some built-in themes (`temperature`, `voc`, `pm25`…) define their color zones
+> in real-world units, not `%` — e.g. `temperature`'s zones span `-50°C` to
+> `100°C`. `custom_theme` zones are always real values too, never `%`. For
+> [`bar_color_mode`](#bar_color_mode) `segment`/`rainbow` to paint correctly,
+> and for the fill percentage itself to make sense, `max_value` needs to be on
+> that same scale — leaving it at the flat `100` default while a `voc` value
+> sits in the thousands, for instance, clamps the bar fully "filled" and
+> collapses every color zone but the first one into a single flat color. When
+> `max_value` is left unset with one of these themes active, it's automatically
+> set to the theme's own highest zone bound instead of `100`, so a plain
+> `theme: voc` with no `max_value` just works. Setting `max_value` explicitly
+> (to any value, including `100`) always overrides this and is used as-is —
+> zones that fall outside the chosen range are clipped or omitted, not stretched
+> to fit. See [`theme`](theme.md) for each built-in theme's own zone ranges.
 
 _Fixed value example_:
 
@@ -1201,7 +1237,7 @@ color: rgb(110, 65, 171)
 
 > **`icon_animation`** [String] ➡️
 > {`none`|`spin`|`pulse`|`bounce`|`shake`|`ping`|`reveal`|`washing_machine`|`battery_charging`}
-> _(optional, default: `none`)_
+> | { effect, jinja } _(optional, default: `none`)_
 
 Animates the icon while the entity is in an active state — a spinning fan, a
 pulsing media player icon...
@@ -1298,6 +1334,25 @@ _Options_:
 | `reveal`           | Icon grows into view in circular steps                                                      |
 | `washing_machine`  | Shake + porthole wipe, for washer/dryer entities                                            |
 | `battery_charging` | Sweeping fill wipe, active while charging (device battery attribute or EV `charging` state) |
+
+**Triggering an animation from a condition instead of entity state**
+
+`icon_animation` also accepts an object form — `{ effect, jinja }` — for cases
+the automatic detection above doesn't cover (e.g. a plain `sensor` with a
+numeric value, no active/inactive concept at all). `effect` is any value from
+the table above; `jinja` is a template that must resolve to `true`/`false` and
+fully replaces the automatic detection: `effect` plays exactly when it's `true`,
+nothing else is checked.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card-template
+entity: sensor.robot_piscine_heures_de_filtrage_recommandees
+icon_animation:
+  effect: spin
+  jinja: "{{ states('sensor.robot_piscine_heures_de_filtrage_recommandees')|float(0) > 3 }}"
+```
 
 [🔼 Back to top]
 
@@ -1629,12 +1684,25 @@ Controls how theme colors are applied to the progress bar fill.
 
 > [!NOTE]
 >
-> `bar_color_mode` has no effect when `center_zero` is enabled — that mode
-> always uses `auto` coloring. It also requires an active [`theme`](#theme) or
+> `bar_color_mode` requires an active [`theme`](#theme) or
 > [`custom_theme`](#custom_theme) — `segment`/`rainbow` paint theme zones, so
 > without either one, `bar_color_mode` is reset to `auto` automatically. For
 > linear themes (e.g. `light`), zone boundaries are derived automatically by
 > splitting 0–100% into equal segments (5 levels → 0–20%, 20–40%, …).
+
+> [!NOTE]
+>
+> `bar_color_mode` also works with [`center_zero`](#center_zero): each arm
+> (positive/negative) gets its own independent `segment`/`rainbow` gradient,
+> projected onto that arm's own half of the `min_value`/`max_value` scale.
+
+> [!NOTE]
+>
+> Zone boundaries are always projected onto the `min_value`/`max_value` scale —
+> for a theme whose zones are real-world values rather than `%` (`temperature`,
+> `voc`…) or a `custom_theme`, that scale needs to cover the theme's own range
+> for `segment`/`rainbow` to render correctly. See [`max_value`](#max_value) for
+> the auto-default that handles this in most cases.
 
 > [!NOTE]
 >
@@ -1908,14 +1976,9 @@ Allows you to remove the default Lovelace card styling: the border and
 background color. When set to `true`, the card blends seamlessly into the
 interface or can be embedded in other designs without visual interference.
 
-_Compatibility_:
-
-| **Card**                 | **Compatible**       | **Notes**                                                                                          |
-| :----------------------- | :------------------- | :------------------------------------------------------------------------------------------------- |
-| `entities`               | ✅ Yes               | Automatically detected and styled. No need to set `frameless`.                                     |
-| `vertical-stack-in-card` | ✅ Yes               | Automatically detected and styled. No need to set `frameless`.                                     |
-| `vertical-stack`         | ✅ Yes               | Rendered with a frame by default — use `frameless` to remove it if desired.                        |
-| `horizontal-stack`       | ⚠️ Yes, with caveats | Only works reliably in Masonry view. Rendered with a frame by default — use `frameless` if needed. |
+For how this behaves once embedded in `entities`, `grid`, `vertical-stack`,
+`horizontal-stack`, etc. - and how sizing works in Sections/Masonry/embedded
+contexts generally - see [Card sizing] in the Theme Guide.
 
 _Example_:
 
@@ -1956,6 +2019,11 @@ marginless: true
 
 Sets the height (e.g., 120px, 10em, 30%) for the card. Useful for ensuring
 consistent layout in horizontal stacks or grids.
+
+`auto` is also a valid value: the card shrinks to fit its content instead of
+stretching to fill its parent. Combine it with `marginless: true` and
+`frameless: true` for a fully compact card - useful when embedding the card
+outside Home Assistant's own grid sizing, e.g. as a `custom:button-card` field.
 
 > [!NOTE]
 >
@@ -2548,9 +2616,8 @@ _Map definition_:
   the behavior before `animation` existed, so old configs are unaffected).
   - `static`: No motion — steady color.
   - `blink`: Pulses between the alert color and the resting color.
-  - `ping`: A ring bursts from the card border. Border-only: combined with
-    `highlight: background` it has no matching effect and falls back to
-    `static`.
+  - `ping`: A ring bursts around the whole card. Works the same with either
+    `highlight` — the ring is independent of the border/background tint.
 
 `above`/`below` are expressed in the entity's native unit, on the same scale as
 `min_value`/`max_value` — like `watermark.low`/`watermark.high`. Both can be
@@ -2760,6 +2827,50 @@ available for Templates as well:
 [🔼 Back to top]
 
 ### Specific options
+
+#### `fast_refresh`
+
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+
+> **`fast_refresh`** [Boolean] _(optional, default: `false`)_
+
+Any Jinja field using `now()`/`utcnow()` (e.g. a `secondary: {{ ... }}`
+countdown) already gets a free refresh once a minute — Home Assistant pushes it
+on its own, no config needed. Set `fast_refresh: true` to instead force a
+refresh every second, for a real ticking `MM:SS` countdown. This isn't tied to
+`entity` being a `timer` — it works the same for any `now()`-based countdown,
+e.g. against `sun.sun` for a sunrise/sunset countdown, or an `input_datetime`.
+
+There's a real cost to this: it resubscribes every Jinja field on the card once
+a second while active, instead of relying on the single persistent, free push.
+Leave it off unless you actually need second-level ticking.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card-template
+entity: timer.dishwasher
+fast_refresh: true
+secondary: >-
+  {% set remaining = as_datetime(state_attr('timer.dishwasher', 'finishes_at'))
+  - now() %}
+  {{ '%02d:%02d' % (remaining.seconds // 60, remaining.seconds % 60) }}
+```
+
+_Example (non-timer entity)_:
+
+```yaml
+type: custom:entity-progress-card-template
+entity: sun.sun
+fast_refresh: true
+secondary: >-
+  {% set next_rising = as_datetime(states('sensor.sun_next_rising')) %}
+  {% set remaining = next_rising - now() %}
+  {{ '%02d:%02d:%02d' % (remaining.seconds // 3600, (remaining.seconds % 3600) // 60, remaining.seconds % 60) }}
+```
+
+[🔼 Back to top]
 
 #### `name` (Jinja)
 
@@ -3044,6 +3155,8 @@ _This reference guide is adapted for entity-progress-card._
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/troubleshooting.md#deprecated-options
 [token-color]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/theme.md#token-color
+[Card sizing]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/theme.md#card-sizing
 [Accessibility]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/README.md#accessibility
 [official HA core]:

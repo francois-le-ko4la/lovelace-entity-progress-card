@@ -102,7 +102,10 @@ const TRANSLATIONS = {
         reverse: 'عكس المؤقت',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'كيانات إضافية',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         theme: {
@@ -372,7 +375,10 @@ const TRANSLATIONS = {
         reverse: 'টাইমার উল্টানো',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'অতিরিক্ত সত্তা',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         theme: {
@@ -642,7 +648,10 @@ const TRANSLATIONS = {
         reverse: 'Temporitzador invers',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Entitats addicionals',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         theme: {
@@ -912,7 +921,10 @@ const TRANSLATIONS = {
         reverse: 'Obrátit časovač',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Další entity',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         theme: {
@@ -1182,7 +1194,10 @@ const TRANSLATIONS = {
         reverse: 'Omvendt timer',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Ekstra entiteter',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         theme: {
@@ -1452,7 +1467,10 @@ const TRANSLATIONS = {
         reverse: 'Timer umkehren',
         bar_stack_mode: 'Stapelmodus',
         bar_stack: 'Weitere Entitäten',
-        migrate_config: 'Konfiguration migrieren'
+        migrate_config: 'Konfiguration migrieren',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         theme: {
@@ -1722,7 +1740,10 @@ const TRANSLATIONS = {
         reverse: 'Αντίστροφο χρονόμετρο',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Πρόσθετες οντότητες',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         theme: {
@@ -1992,7 +2013,10 @@ const TRANSLATIONS = {
         reverse: 'Reverse timer',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Additional entities',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         theme: {
@@ -2262,7 +2286,10 @@ const TRANSLATIONS = {
         reverse: 'Temporizador inverso',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Entidades adicionales',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         theme: {
@@ -2532,7 +2559,10 @@ const TRANSLATIONS = {
         reverse: 'Temporizador inverso',
         bar_stack_mode: 'Modo de apilado',
         bar_stack: 'Entidades adicionales',
-        migrate_config: 'Migrar configuración'
+        migrate_config: 'Migrar configuración',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         theme: {
@@ -2802,7 +2832,10 @@ const TRANSLATIONS = {
         reverse: 'Pööratud taimer',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Täiendavad üksused',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         theme: {
@@ -3072,7 +3105,10 @@ const TRANSLATIONS = {
         reverse: 'Käänteinen ajastin',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Lisäentiteetit',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         theme: {
@@ -3342,7 +3378,10 @@ const TRANSLATIONS = {
         reverse: 'Inverser le minuteur',
         bar_stack_mode: 'Mode d\'empilement',
         bar_stack: 'Entités supplémentaires',
-        migrate_config: 'Migrer la config'
+        migrate_config: 'Migrer la config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         theme: {
@@ -3612,7 +3651,10 @@ const TRANSLATIONS = {
         reverse: 'टाइमर उलटें',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'अतिरिक्त एंटिटी',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         bar_orientation: {
@@ -3882,7 +3924,10 @@ const TRANSLATIONS = {
         reverse: 'Obrnuti tajmer',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Dodatni entiteti',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         bar_orientation: {
@@ -4152,7 +4197,10 @@ const TRANSLATIONS = {
         reverse: 'Fordított időzítő',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'További entitások',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         theme: {
@@ -4422,7 +4470,10 @@ const TRANSLATIONS = {
         reverse: 'Timer terbalik',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Entitas tambahan',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         bar_orientation: {
@@ -4692,7 +4743,10 @@ const TRANSLATIONS = {
         reverse: 'Timer inverso',
         bar_stack_mode: 'Modalità di impilamento',
         bar_stack: 'Entità aggiuntive',
-        migrate_config: 'Migra configurazione'
+        migrate_config: 'Migra configurazione',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         bar_orientation: {
@@ -4962,7 +5016,10 @@ const TRANSLATIONS = {
         reverse: 'タイマーを逆にする',
         bar_stack_mode: 'Stack mode',
         bar_stack: '追加エンティティ',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         bar_orientation: {
@@ -5232,7 +5289,10 @@ const TRANSLATIONS = {
         reverse: '타이머 역방향',
         bar_stack_mode: 'Stack mode',
         bar_stack: '추가 엔티티',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         bar_orientation: {
@@ -5502,7 +5562,10 @@ const TRANSLATIONS = {
         reverse: 'Atvirkštinis laikmatis',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Papildomos esybės',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         theme: {
@@ -5772,7 +5835,10 @@ const TRANSLATIONS = {
         reverse: 'Apgriezts taimeris',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Papildu entītijas',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         theme: {
@@ -6042,7 +6108,10 @@ const TRANSLATIONS = {
         reverse: 'Обратен тајмер',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Дополнителни ентитети',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         bar_orientation: {
@@ -6312,7 +6381,10 @@ const TRANSLATIONS = {
         reverse: 'Omvendt tidtaker',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Ekstra enheter',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         bar_orientation: {
@@ -6582,7 +6654,10 @@ const TRANSLATIONS = {
         reverse: 'Timer omdraaien',
         bar_stack_mode: 'Stapelmodus',
         bar_stack: 'Extra entiteiten',
-        migrate_config: 'Configuratie migreren'
+        migrate_config: 'Configuratie migreren',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         bar_orientation: {
@@ -6852,7 +6927,10 @@ const TRANSLATIONS = {
         reverse: 'Odwróć licznik',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Dodatkowe encje',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         bar_orientation: {
@@ -7122,7 +7200,10 @@ const TRANSLATIONS = {
         reverse: 'Temporizador inverso',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Entidades adicionais',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         theme: {
@@ -7392,7 +7473,10 @@ const TRANSLATIONS = {
         reverse: 'Temporizador inverso',
         bar_stack_mode: 'Modo de empilhamento',
         bar_stack: 'Entidades adicionais',
-        migrate_config: 'Migrar configuração'
+        migrate_config: 'Migrar configuração',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         bar_orientation: {
@@ -7662,7 +7746,10 @@ const TRANSLATIONS = {
         reverse: 'Cronometru inverso',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Entități suplimentare',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         bar_orientation: {
@@ -7932,7 +8019,10 @@ const TRANSLATIONS = {
         reverse: 'Обратный таймер',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Дополнительные объекты',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         bar_orientation: {
@@ -8202,7 +8292,10 @@ const TRANSLATIONS = {
         reverse: 'Obrátený časovač',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Ďalšie entity',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         theme: {
@@ -8472,7 +8565,10 @@ const TRANSLATIONS = {
         reverse: 'Obrnjen časovnik',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Dodatni entiteti',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         theme: {
@@ -8742,7 +8838,10 @@ const TRANSLATIONS = {
         reverse: 'Omvänd timer',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Ytterligare entiteter',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         bar_orientation: {
@@ -9012,7 +9111,10 @@ const TRANSLATIONS = {
         reverse: 'กลับเวลานับถอยหลัง',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'เอนทิตีเพิ่มเติม',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         bar_orientation: {
@@ -9282,7 +9384,10 @@ const TRANSLATIONS = {
         reverse: 'Zamanlayıcıyı tersine çevir',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Ek varlıklar',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         bar_orientation: {
@@ -9552,7 +9657,10 @@ const TRANSLATIONS = {
         reverse: 'Зворотній таймер',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Додаткові об\'єкти',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         bar_orientation: {
@@ -9822,7 +9930,10 @@ const TRANSLATIONS = {
         reverse: 'Đảo ngược bộ đếm thời gian',
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Thực thể bổ sung',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         bar_orientation: {
@@ -10092,7 +10203,10 @@ const TRANSLATIONS = {
         reverse: '反转计时器',
         bar_stack_mode: 'Stack mode',
         bar_stack: '附加实体',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         theme: {
@@ -10362,7 +10476,10 @@ const TRANSLATIONS = {
         reverse: '反轉計時器',
         bar_stack_mode: 'Stack mode',
         bar_stack: '附加實體',
-        migrate_config: 'Migrate config'
+        migrate_config: 'Migrate config',
+        icon_animation_jinja_toggle: 'Trigger via template',
+        fast_refresh: 'Fast refresh (per-second)',
+        height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
         theme: {

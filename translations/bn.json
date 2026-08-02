@@ -95,7 +95,10 @@
       "reverse": "টাইমার উল্টানো",
       "bar_stack_mode": "Stack mode",
       "bar_stack": "অতিরিক্ত সত্তা",
-      "migrate_config": "Migrate config"
+      "migrate_config": "Migrate config",
+      "icon_animation_jinja_toggle": "Trigger via template",
+      "fast_refresh": "Fast refresh (per-second)",
+      "height_custom_toggle": "Shrink height (embedded)"
     },
     "option": {
       "theme": {
