@@ -376,7 +376,11 @@ class CardConfigHelper extends BaseConfigHelper {
     if (!config?.center_zero || !is.nullish(config?.min_value)) return normalized;
     const theme = THEME[config.theme as keyof typeof THEME];
     if (theme && theme.percent === false && is.nonEmptyArray(theme.style)) {
-      const mins = theme.style.map((zone) => zone.min).filter(is.number);
+      // Cast: percent === false already rules out themes like `light`
+      // (linear, no min/max per zone - split by index instead) at runtime,
+      // but TS still unions every theme's own zone shape here since the
+      // theme key isn't statically known.
+      const mins = (theme.style as { min?: unknown }[]).map((zone) => zone.min).filter(is.number);
       if (mins.length) return { ...normalized, min_value: Math.min(...mins) };
     }
     const maxForSymmetry = is.number(normalized?.max_value) ? normalized.max_value : CARD.config.value.max;

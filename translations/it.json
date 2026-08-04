@@ -101,18 +101,18 @@
       "height_custom_toggle": "Shrink height (embedded)"
     },
     "option": {
-      "bar_orientation": {
-        "ltr": "Da sinistra a destra",
-        "rtl": "Da destra a sinistra",
-        "up": "Verso l'alto"
-      },
-      "bar_position": {
-        "below": "Barra sotto il contenuto",
-        "bottom": "Barra in basso",
-        "default": "Predefinito",
-        "overlay": "Barra sovrapposta al contenuto (overlay)",
-        "top": "Barra in alto",
-        "background": "Sfondo della scheda"
+      "theme": {
+        "battery_adaptive": "Battery (adapts to charging state)",
+        "light": "Luce",
+        "temperature": "Temperatura",
+        "humidity": "Umidità",
+        "pm25": "PM2.5",
+        "voc": "VOC",
+        "critical_when_low": "Critical when Low (Battery, disk...)",
+        "optimal_when_low": "Ottimale quando è basso",
+        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
+        "optimal_when_high": "Ottimale quando è alto",
+        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)"
       },
       "bar_size": {
         "xsmall": "Extra Small",
@@ -121,22 +121,22 @@
         "large": "Grande",
         "xlarge": "Extra grande"
       },
+      "bar_orientation": {
+        "ltr": "Da sinistra a destra",
+        "rtl": "Da destra a sinistra",
+        "up": "Verso l'alto"
+      },
+      "bar_position": {
+        "default": "Predefinito",
+        "below": "Barra sotto il contenuto",
+        "top": "Barra in alto",
+        "bottom": "Barra in basso",
+        "overlay": "Barra sovrapposta al contenuto (overlay)",
+        "background": "Sfondo della scheda"
+      },
       "layout": {
         "horizontal": "Orizzontale (predefinito)",
         "vertical": "Verticale"
-      },
-      "theme": {
-        "humidity": "Umidità",
-        "light": "Luce",
-        "optimal_when_high": "Ottimale quando è alto (Batteria...)",
-        "optimal_when_low": "Ottimale quando è basso (CPU, RAM,...)",
-        "pm25": "PM2.5",
-        "temperature": "Temperatura",
-        "voc": "VOC",
-        "critical_when_low": "Critical when Low (Battery, disk...)",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "battery_adaptive": "Battery (adapts to charging state)"
       },
       "bar_color_mode": {
         "auto": "Automatico",

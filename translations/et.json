@@ -102,17 +102,17 @@
     },
     "option": {
       "theme": {
-        "optimal_when_low": "Optimaalne madalatel väärtustel (CPU, RAM...)",
-        "optimal_when_high": "Optimaalne kõrgetel väärtustel (Aku...)",
+        "battery_adaptive": "Battery (adapts to charging state)",
         "light": "Hele",
         "temperature": "Temperatuur",
         "humidity": "Niiskus",
         "pm25": "PM2.5",
         "voc": "VOC",
         "critical_when_low": "Critical when Low (Battery, disk...)",
+        "optimal_when_low": "Optimaalne madalatel väärtustel",
         "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "battery_adaptive": "Battery (adapts to charging state)"
+        "optimal_when_high": "Optimaalne kõrgetel väärtustel",
+        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)"
       },
       "bar_size": {
         "xsmall": "Extra Small",

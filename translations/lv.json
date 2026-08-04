@@ -102,17 +102,17 @@
     },
     "option": {
       "theme": {
-        "optimal_when_low": "Optimāli pie zemām vērtībām (CPU, RAM...)",
-        "optimal_when_high": "Optimāli pie augstām vērtībām (Akumulators...)",
+        "battery_adaptive": "Battery (adapts to charging state)",
         "light": "Gaiša",
         "temperature": "Temperatūra",
         "humidity": "Mitrums",
         "pm25": "PM2.5",
         "voc": "VOC",
         "critical_when_low": "Critical when Low (Battery, disk...)",
+        "optimal_when_low": "Optimāli pie zemām vērtībām",
         "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "battery_adaptive": "Battery (adapts to charging state)"
+        "optimal_when_high": "Optimāli pie augstām vērtībām",
+        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)"
       },
       "bar_size": {
         "xsmall": "Extra Small",

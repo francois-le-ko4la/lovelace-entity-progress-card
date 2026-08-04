@@ -102,17 +102,17 @@
     },
     "option": {
       "theme": {
-        "optimal_when_low": "Optimálne pri nízkej hodnote (CPU, RAM...)",
-        "optimal_when_high": "Optimálne pri vysokej hodnote (Batéria...)",
+        "battery_adaptive": "Battery (adapts to charging state)",
         "light": "Svetlá",
         "temperature": "Teplota",
         "humidity": "Vlhkosť",
         "pm25": "PM2.5",
         "voc": "VOC",
         "critical_when_low": "Critical when Low (Battery, disk...)",
+        "optimal_when_low": "Optimálne pri nízkej hodnote",
         "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "battery_adaptive": "Battery (adapts to charging state)"
+        "optimal_when_high": "Optimálne pri vysokej hodnote",
+        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)"
       },
       "bar_size": {
         "xsmall": "Extra Small",

@@ -101,18 +101,18 @@
       "height_custom_toggle": "Shrink height (embedded)"
     },
     "option": {
-      "bar_orientation": {
-        "ltr": "Слева направо",
-        "rtl": "Справа налево",
-        "up": "Вверх"
-      },
-      "bar_position": {
-        "below": "Полоса под содержимым",
-        "bottom": "Полоса внизу",
-        "default": "По умолчанию",
-        "overlay": "Полоса поверх содержимого (overlay)",
-        "top": "Полоса вверху",
-        "background": "Фон карточки"
+      "theme": {
+        "battery_adaptive": "Battery (adapts to charging state)",
+        "light": "Освещение",
+        "temperature": "Температура",
+        "humidity": "Влажность",
+        "pm25": "PM2.5",
+        "voc": "ЛОС",
+        "critical_when_low": "Critical when Low (Battery, disk...)",
+        "optimal_when_low": "Оптимально при низких значениях",
+        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
+        "optimal_when_high": "Оптимально при высоких значениях",
+        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)"
       },
       "bar_size": {
         "xsmall": "Extra Small",
@@ -121,22 +121,22 @@
         "large": "Большая",
         "xlarge": "Очень большая"
       },
+      "bar_orientation": {
+        "ltr": "Слева направо",
+        "rtl": "Справа налево",
+        "up": "Вверх"
+      },
+      "bar_position": {
+        "default": "По умолчанию",
+        "below": "Полоса под содержимым",
+        "top": "Полоса вверху",
+        "bottom": "Полоса внизу",
+        "overlay": "Полоса поверх содержимого (overlay)",
+        "background": "Фон карточки"
+      },
       "layout": {
         "horizontal": "Горизонтальный (по умолчанию)",
         "vertical": "Вертикальный"
-      },
-      "theme": {
-        "humidity": "Влажность",
-        "light": "Освещение",
-        "optimal_when_high": "Оптимально при высоких значениях (Батарея...)",
-        "optimal_when_low": "Оптимально при низких значениях (ЦП, ОЗУ,...)",
-        "pm25": "PM2.5",
-        "temperature": "Температура",
-        "voc": "ЛОС",
-        "critical_when_low": "Critical when Low (Battery, disk...)",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "battery_adaptive": "Battery (adapts to charging state)"
       },
       "bar_color_mode": {
         "auto": "Авто",

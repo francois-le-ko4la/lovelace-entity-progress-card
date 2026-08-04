@@ -494,7 +494,11 @@ function struct(validator: Validator & { _schema?: Record<string, Validator> }, 
     if (is.nullish(result.max_value)) {
       const theme = THEME[result.theme as keyof typeof THEME];
       if (theme && theme.percent === false && is.nonEmptyArray(theme.style)) {
-        const maxes = theme.style.map((zone) => zone.max).filter(is.number);
+        // Cast: percent === false already rules out themes like `light`
+        // (linear, no min/max per zone - split by index instead) at runtime,
+        // but TS still unions every theme's own zone shape here since the
+        // theme key isn't statically known.
+        const maxes = (theme.style as { max?: unknown }[]).map((zone) => zone.max).filter(is.number);
         if (maxes.length) result.max_value = Math.max(...maxes);
       }
     }

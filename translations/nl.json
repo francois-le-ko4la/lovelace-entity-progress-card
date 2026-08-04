@@ -101,18 +101,18 @@
       "height_custom_toggle": "Shrink height (embedded)"
     },
     "option": {
-      "bar_orientation": {
-        "ltr": "Links naar rechts",
-        "rtl": "Rechts naar links",
-        "up": "Omhoog"
-      },
-      "bar_position": {
-        "below": "Balk onder de inhoud",
-        "bottom": "Balk onderaan",
-        "default": "Standaard",
-        "overlay": "Balk over de inhoud (overlay)",
-        "top": "Balk bovenaan",
-        "background": "Kaartachtergrond"
+      "theme": {
+        "battery_adaptive": "Battery (adapts to charging state)",
+        "light": "Licht",
+        "temperature": "Temperatuur",
+        "humidity": "Vochtigheid",
+        "pm25": "PM2.5",
+        "voc": "VOC",
+        "critical_when_low": "Critical when Low (Battery, disk...)",
+        "optimal_when_low": "Optimaal wanneer laag",
+        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
+        "optimal_when_high": "Optimaal wanneer hoog",
+        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)"
       },
       "bar_size": {
         "xsmall": "Extra Small",
@@ -121,22 +121,22 @@
         "large": "Groot",
         "xlarge": "Extra groot"
       },
+      "bar_orientation": {
+        "ltr": "Links naar rechts",
+        "rtl": "Rechts naar links",
+        "up": "Omhoog"
+      },
+      "bar_position": {
+        "default": "Standaard",
+        "below": "Balk onder de inhoud",
+        "top": "Balk bovenaan",
+        "bottom": "Balk onderaan",
+        "overlay": "Balk over de inhoud (overlay)",
+        "background": "Kaartachtergrond"
+      },
       "layout": {
         "horizontal": "Horizontaal (standaard)",
         "vertical": "Verticaal"
-      },
-      "theme": {
-        "humidity": "Vochtigheid",
-        "light": "Licht",
-        "optimal_when_high": "Optimaal wanneer hoog (Batterij...)",
-        "optimal_when_low": "Optimaal wanneer laag (CPU, RAM,...)",
-        "pm25": "PM2.5",
-        "temperature": "Temperatuur",
-        "voc": "VOC",
-        "critical_when_low": "Critical when Low (Battery, disk...)",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "battery_adaptive": "Battery (adapts to charging state)"
       },
       "bar_color_mode": {
         "auto": "Automatisch",

@@ -101,18 +101,18 @@
       "height_custom_toggle": "Shrink height (embedded)"
     },
     "option": {
-      "bar_orientation": {
-        "ltr": "Venstre til høyre",
-        "rtl": "Høyre til venstre",
-        "up": "Oppover"
-      },
-      "bar_position": {
-        "below": "Bar under innholdet",
-        "bottom": "Bar nederst",
-        "default": "Standard",
-        "overlay": "Bar lagt over innholdet (overlay)",
-        "top": "Bar øverst",
-        "background": "Kortbakgrunn"
+      "theme": {
+        "battery_adaptive": "Battery (adapts to charging state)",
+        "light": "Lys",
+        "temperature": "Temperatur",
+        "humidity": "Fuktighet",
+        "pm25": "PM2.5",
+        "voc": "VOC",
+        "critical_when_low": "Critical when Low (Battery, disk...)",
+        "optimal_when_low": "Optimal når lavt",
+        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
+        "optimal_when_high": "Optimal når høyt",
+        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)"
       },
       "bar_size": {
         "xsmall": "Extra Small",
@@ -121,22 +121,22 @@
         "large": "Stor",
         "xlarge": "Ekstra stor"
       },
+      "bar_orientation": {
+        "ltr": "Venstre til høyre",
+        "rtl": "Høyre til venstre",
+        "up": "Oppover"
+      },
+      "bar_position": {
+        "default": "Standard",
+        "below": "Bar under innholdet",
+        "top": "Bar øverst",
+        "bottom": "Bar nederst",
+        "overlay": "Bar lagt over innholdet (overlay)",
+        "background": "Kortbakgrunn"
+      },
       "layout": {
         "horizontal": "Horisontal (standard)",
         "vertical": "Vertikal"
-      },
-      "theme": {
-        "humidity": "Fuktighet",
-        "light": "Lys",
-        "optimal_when_high": "Optimal når høyt (Batteri...)",
-        "optimal_when_low": "Optimal når lavt (CPU, RAM,...)",
-        "pm25": "PM2.5",
-        "temperature": "Temperatur",
-        "voc": "VOC",
-        "critical_when_low": "Critical when Low (Battery, disk...)",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "battery_adaptive": "Battery (adapts to charging state)"
       },
       "bar_color_mode": {
         "auto": "Auto",

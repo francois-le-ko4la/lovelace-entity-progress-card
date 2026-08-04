@@ -8,26 +8,19 @@
 import { HA_CONTEXT } from './ha-context.js';
 
 const THEME = {
-  optimal_when_low: {
+  // Virtual theme, resolved by ViewCore.resolvedTheme (src/card/view.ts) to
+  // critical_when_extreme (charging) or critical_when_low (not charging)
+  // before it ever reaches ThemeManager - these zones are only a fallback in
+  // case that resolution is ever bypassed.
+  battery_adaptive: {
     linear: false,
     percent: true,
     style: [
-      { min: 0, max: 20, icon: null, color: HA_CONTEXT.colors.green },
-      { min: 20, max: 40, icon: null, color: HA_CONTEXT.colors.lightGreen },
-      { min: 40, max: 60, icon: null, color: HA_CONTEXT.colors.yellow },
-      { min: 60, max: 80, icon: null, color: HA_CONTEXT.colors.orange },
-      { min: 80, max: 100, icon: null, color: HA_CONTEXT.colors.red },
-    ],
-  },
-  optimal_when_high: {
-    linear: false,
-    percent: true,
-    style: [
-      { min: 0, max: 20, icon: null, color: HA_CONTEXT.colors.red },
-      { min: 20, max: 40, icon: null, color: HA_CONTEXT.colors.orange },
-      { min: 40, max: 60, icon: null, color: HA_CONTEXT.colors.yellow },
-      { min: 60, max: 80, icon: null, color: HA_CONTEXT.colors.lightGreen },
-      { min: 80, max: 100, icon: null, color: HA_CONTEXT.colors.green },
+      { min: 0, max: 10, icon: null, color: HA_CONTEXT.colors.red },
+      { min: 10, max: 20, icon: null, color: HA_CONTEXT.colors.orange },
+      { min: 20, max: 30, icon: null, color: HA_CONTEXT.colors.yellow },
+      { min: 30, max: 40, icon: null, color: HA_CONTEXT.colors.green },
+      { min: 40, max: 100, icon: null, color: HA_CONTEXT.colors.green },
     ],
   },
   critical_when_low: {
@@ -41,6 +34,17 @@ const THEME = {
       { min: 40, max: 100, icon: null, color: HA_CONTEXT.colors.green },
     ],
   },
+  optimal_when_low: {
+    linear: false,
+    percent: true,
+    style: [
+      { min: 0, max: 20, icon: null, color: HA_CONTEXT.colors.green },
+      { min: 20, max: 40, icon: null, color: HA_CONTEXT.colors.lightGreen },
+      { min: 40, max: 60, icon: null, color: HA_CONTEXT.colors.yellow },
+      { min: 60, max: 80, icon: null, color: HA_CONTEXT.colors.orange },
+      { min: 80, max: 100, icon: null, color: HA_CONTEXT.colors.red },
+    ],
+  },
   critical_when_high: {
     linear: false,
     percent: true,
@@ -50,6 +54,17 @@ const THEME = {
       { min: 70, max: 80, icon: null, color: HA_CONTEXT.colors.yellow },
       { min: 80, max: 90, icon: null, color: HA_CONTEXT.colors.orange },
       { min: 90, max: 100, icon: null, color: HA_CONTEXT.colors.red },
+    ],
+  },
+  optimal_when_high: {
+    linear: false,
+    percent: true,
+    style: [
+      { min: 0, max: 20, icon: null, color: HA_CONTEXT.colors.red },
+      { min: 20, max: 40, icon: null, color: HA_CONTEXT.colors.orange },
+      { min: 40, max: 60, icon: null, color: HA_CONTEXT.colors.yellow },
+      { min: 60, max: 80, icon: null, color: HA_CONTEXT.colors.lightGreen },
+      { min: 80, max: 100, icon: null, color: HA_CONTEXT.colors.green },
     ],
   },
   critical_when_extreme: {
@@ -65,21 +80,6 @@ const THEME = {
       { min: 70, max: 80, icon: null, color: HA_CONTEXT.colors.yellow },
       { min: 80, max: 90, icon: null, color: HA_CONTEXT.colors.orange },
       { min: 90, max: 100, icon: null, color: HA_CONTEXT.colors.red },
-    ],
-  },
-  // Virtual theme, resolved by ViewCore.resolvedTheme (src/card/view.ts) to
-  // critical_when_extreme (charging) or critical_when_low (not charging)
-  // before it ever reaches ThemeManager - these zones are only a fallback in
-  // case that resolution is ever bypassed.
-  battery_adaptive: {
-    linear: false,
-    percent: true,
-    style: [
-      { min: 0, max: 10, icon: null, color: HA_CONTEXT.colors.red },
-      { min: 10, max: 20, icon: null, color: HA_CONTEXT.colors.orange },
-      { min: 20, max: 30, icon: null, color: HA_CONTEXT.colors.yellow },
-      { min: 30, max: 40, icon: null, color: HA_CONTEXT.colors.green },
-      { min: 40, max: 100, icon: null, color: HA_CONTEXT.colors.green },
     ],
   },
   // `light` theme (colors + lightbulb icon progression) contributed by

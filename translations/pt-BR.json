@@ -102,17 +102,17 @@
     },
     "option": {
       "theme": {
-        "optimal_when_low": "Ideal quando baixo (CPU, RAM...)",
-        "optimal_when_high": "Ideal quando alto (Bateria...)",
+        "battery_adaptive": "Battery (adapts to charging state)",
         "light": "Claro",
         "temperature": "Temperatura",
         "humidity": "Umidade",
         "pm25": "PM2.5",
         "voc": "VOC",
         "critical_when_low": "Critical when Low (Battery, disk...)",
+        "optimal_when_low": "Ideal quando baixo",
         "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "battery_adaptive": "Battery (adapts to charging state)"
+        "optimal_when_high": "Ideal quando alto",
+        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)"
       },
       "bar_size": {
         "xsmall": "Extra Small",

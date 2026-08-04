@@ -101,18 +101,18 @@
       "height_custom_toggle": "Shrink height (embedded)"
     },
     "option": {
-      "bar_orientation": {
-        "ltr": "बाएं से दाएं",
-        "rtl": "दाएं से बाएं",
-        "up": "ऊपर की ओर"
-      },
-      "bar_position": {
-        "below": "सामग्री के नीचे बार",
-        "bottom": "नीचे बार",
-        "default": "डिफ़ॉल्ट",
-        "overlay": "सामग्री पर ओवरले बार",
-        "top": "ऊपर बार",
-        "background": "कार्ड पृष्ठभूमि"
+      "theme": {
+        "battery_adaptive": "Battery (adapts to charging state)",
+        "light": "प्रकाश",
+        "temperature": "तापमान",
+        "humidity": "आर्द्रता",
+        "pm25": "PM2.5",
+        "voc": "VOC",
+        "critical_when_low": "Critical when Low (Battery, disk...)",
+        "optimal_when_low": "कम होने पर इष्टतम",
+        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
+        "optimal_when_high": "उच्च होने पर इष्टतम",
+        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)"
       },
       "bar_size": {
         "xsmall": "Extra Small",
@@ -121,22 +121,22 @@
         "large": "बड़ी",
         "xlarge": "अतिरिक्त बड़ी"
       },
+      "bar_orientation": {
+        "ltr": "बाएं से दाएं",
+        "rtl": "दाएं से बाएं",
+        "up": "ऊपर की ओर"
+      },
+      "bar_position": {
+        "default": "डिफ़ॉल्ट",
+        "below": "सामग्री के नीचे बार",
+        "top": "ऊपर बार",
+        "bottom": "नीचे बार",
+        "overlay": "सामग्री पर ओवरले बार",
+        "background": "कार्ड पृष्ठभूमि"
+      },
       "layout": {
         "horizontal": "क्षैतिज (डिफ़ॉल्ट)",
         "vertical": "लंबवत"
-      },
-      "theme": {
-        "humidity": "आर्द्रता",
-        "light": "प्रकाश",
-        "optimal_when_high": "उच्च होने पर इष्टतम (बैटरी...)",
-        "optimal_when_low": "कम होने पर इष्टतम (CPU, RAM,...)",
-        "pm25": "PM2.5",
-        "temperature": "तापमान",
-        "voc": "VOC",
-        "critical_when_low": "Critical when Low (Battery, disk...)",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "battery_adaptive": "Battery (adapts to charging state)"
       },
       "bar_color_mode": {
         "auto": "स्वचालित",

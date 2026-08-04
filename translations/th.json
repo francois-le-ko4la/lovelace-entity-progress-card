@@ -101,18 +101,18 @@
       "height_custom_toggle": "Shrink height (embedded)"
     },
     "option": {
-      "bar_orientation": {
-        "ltr": "ซ้ายไปขวา",
-        "rtl": "ขวาไปซ้าย",
-        "up": "ขึ้นบน"
-      },
-      "bar_position": {
-        "below": "แถบใต้เนื้อหา",
-        "bottom": "แถบด้านล่าง",
-        "default": "ค่าเริ่มต้น",
-        "overlay": "แถบซ้อนทับเนื้อหา (overlay)",
-        "top": "แถบด้านบน",
-        "background": "พื้นหลังการ์ด"
+      "theme": {
+        "battery_adaptive": "Battery (adapts to charging state)",
+        "light": "แสง",
+        "temperature": "อุณหภูมิ",
+        "humidity": "ความชื้น",
+        "pm25": "PM2.5",
+        "voc": "VOC",
+        "critical_when_low": "Critical when Low (Battery, disk...)",
+        "optimal_when_low": "เหมาะสมเมื่อต่ำ",
+        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
+        "optimal_when_high": "เหมาะสมเมื่อสูง",
+        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)"
       },
       "bar_size": {
         "xsmall": "Extra Small",
@@ -121,22 +121,22 @@
         "large": "ใหญ่",
         "xlarge": "ใหญ่พิเศษ"
       },
+      "bar_orientation": {
+        "ltr": "ซ้ายไปขวา",
+        "rtl": "ขวาไปซ้าย",
+        "up": "ขึ้นบน"
+      },
+      "bar_position": {
+        "default": "ค่าเริ่มต้น",
+        "below": "แถบใต้เนื้อหา",
+        "top": "แถบด้านบน",
+        "bottom": "แถบด้านล่าง",
+        "overlay": "แถบซ้อนทับเนื้อหา (overlay)",
+        "background": "พื้นหลังการ์ด"
+      },
       "layout": {
         "horizontal": "แนวนอน (เริ่มต้น)",
         "vertical": "แนวตั้ง"
-      },
-      "theme": {
-        "humidity": "ความชื้น",
-        "light": "แสง",
-        "optimal_when_high": "เหมาะสมเมื่อสูง (แบตเตอรี่...)",
-        "optimal_when_low": "เหมาะสมเมื่อต่ำ (CPU, RAM,...)",
-        "pm25": "PM2.5",
-        "temperature": "อุณหภูมิ",
-        "voc": "VOC",
-        "critical_when_low": "Critical when Low (Battery, disk...)",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "battery_adaptive": "Battery (adapts to charging state)"
       },
       "bar_color_mode": {
         "auto": "อัตโนมัติ",

@@ -109,17 +109,17 @@ const TRANSLATIONS = {
       },
       option: {
         theme: {
-          optimal_when_low: 'مثالي عند الانخفاض (CPU، RAM...)',
-          optimal_when_high: 'مثالي عند الارتفاع (البطارية...)',
+          battery_adaptive: 'Battery (adapts to charging state)',
           light: 'الضوء',
           temperature: 'درجة الحرارة',
           humidity: 'الرطوبة',
           pm25: 'PM2.5',
           voc: 'VOC',
           critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'مثالي عند الانخفاض',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
+          optimal_when_high: 'مثالي عند الارتفاع',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -382,17 +382,17 @@ const TRANSLATIONS = {
       },
       option: {
         theme: {
-          optimal_when_low: 'কম হলে সর্বোত্তম (CPU, RAM,...)',
-          optimal_when_high: 'বেশি হলে সর্বোত্তম (ব্যাটারি...)',
+          battery_adaptive: 'Battery (adapts to charging state)',
           light: 'আলো',
           temperature: 'তাপমাত্রা',
           humidity: 'আর্দ্রতা',
           pm25: 'PM2.5',
           voc: 'VOC',
           critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'কম হলে সর্বোত্তম',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
+          optimal_when_high: 'বেশি হলে সর্বোত্তম',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -655,17 +655,17 @@ const TRANSLATIONS = {
       },
       option: {
         theme: {
-          optimal_when_low: 'Òptim quan és baix (CPU, RAM…)',
-          optimal_when_high: 'Òptim quan és alt (Bateria…)',
+          battery_adaptive: 'Battery (adapts to charging state)',
           light: 'Llum',
           temperature: 'Temperatura',
           humidity: 'Humitat',
           pm25: 'PM2.5',
           voc: 'VOC',
           critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Òptim quan és baix',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
+          optimal_when_high: 'Òptim quan és alt',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -928,17 +928,17 @@ const TRANSLATIONS = {
       },
       option: {
         theme: {
-          optimal_when_low: 'Optimální při nízkých hodnotách (CPU, RAM...)',
-          optimal_when_high: 'Optimální při vysokých hodnotách (Baterie...)',
+          battery_adaptive: 'Battery (adapts to charging state)',
           light: 'Světlo',
           temperature: 'Teplota',
           humidity: 'Vlhkost',
           pm25: 'PM2.5',
           voc: 'VOC',
           critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Optimální při nízkých hodnotách',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
+          optimal_when_high: 'Optimální při vysokých hodnotách',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -1201,17 +1201,17 @@ const TRANSLATIONS = {
       },
       option: {
         theme: {
-          optimal_when_low: 'Optimal når lavt (CPU, RAM,...)',
-          optimal_when_high: 'Optimal når højt (Batteri...)',
+          battery_adaptive: 'Battery (adapts to charging state)',
           light: 'Lys',
           temperature: 'Temperatur',
           humidity: 'Fugtighed',
           pm25: 'PM2.5',
           voc: 'VOC',
           critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Optimal når lavt',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
+          optimal_when_high: 'Optimal når højt',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -1474,17 +1474,17 @@ const TRANSLATIONS = {
       },
       option: {
         theme: {
-          optimal_when_low: 'Optimal bei niedrig (CPU, RAM,...)',
-          optimal_when_high: 'Optimal bei hoch (Batterie...)',
+          battery_adaptive: 'Battery (adapts to charging state)',
           light: 'Licht',
           temperature: 'Temperatur',
           humidity: 'Feuchtigkeit',
           pm25: 'PM2.5',
           voc: 'VOC',
           critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Optimal bei niedrig',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
+          optimal_when_high: 'Optimal bei hoch',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -1747,17 +1747,17 @@ const TRANSLATIONS = {
       },
       option: {
         theme: {
-          optimal_when_low: 'Βέλτιστο όταν είναι χαμηλό (CPU, RAM...)',
-          optimal_when_high: 'Βέλτιστο όταν είναι υψηλό (Μπαταρία...)',
+          battery_adaptive: 'Battery (adapts to charging state)',
           light: 'Φωτεινότητα',
           temperature: 'Θερμοκρασία',
           humidity: 'Υγρασία',
           pm25: 'PM2.5',
           voc: 'VOC',
           critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Βέλτιστο όταν είναι χαμηλό',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
+          optimal_when_high: 'Βέλτιστο όταν είναι υψηλό',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -2020,17 +2020,17 @@ const TRANSLATIONS = {
       },
       option: {
         theme: {
-          optimal_when_low: 'Optimal when Low (CPU, RAM,...)',
-          optimal_when_high: 'Optimal when High (Battery...)',
+          battery_adaptive: 'Battery (adapts to charging state)',
           light: 'Light',
           temperature: 'Temperature',
           humidity: 'Humidity',
           pm25: 'PM2.5',
           voc: 'VOC',
           critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Optimal when Low',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
+          optimal_when_high: 'Optimal when High',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -2293,17 +2293,17 @@ const TRANSLATIONS = {
       },
       option: {
         theme: {
-          optimal_when_low: 'Óptimo cuando es bajo (CPU, RAM…)',
-          optimal_when_high: 'Óptimo cuando es alto (batería…)',
+          battery_adaptive: 'Battery (adapts to charging state)',
           light: 'Brillo',
           temperature: 'Temperatura',
           humidity: 'Humedad',
           pm25: 'PM2.5',
           voc: 'VOC',
           critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Óptimo cuando es bajo',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
+          optimal_when_high: 'Óptimo cuando es alto',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -2566,17 +2566,17 @@ const TRANSLATIONS = {
       },
       option: {
         theme: {
-          optimal_when_low: 'Óptimo cuando es bajo (CPU, RAM,...)',
-          optimal_when_high: 'Óptimo cuando es alto (Batería...)',
+          battery_adaptive: 'Battery (adapts to charging state)',
           light: 'Luz',
           temperature: 'Temperatura',
           humidity: 'Humedad',
           pm25: 'PM2.5',
           voc: 'VOC',
           critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Óptimo cuando es bajo',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
+          optimal_when_high: 'Óptimo cuando es alto',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -2839,17 +2839,17 @@ const TRANSLATIONS = {
       },
       option: {
         theme: {
-          optimal_when_low: 'Optimaalne madalatel väärtustel (CPU, RAM...)',
-          optimal_when_high: 'Optimaalne kõrgetel väärtustel (Aku...)',
+          battery_adaptive: 'Battery (adapts to charging state)',
           light: 'Hele',
           temperature: 'Temperatuur',
           humidity: 'Niiskus',
           pm25: 'PM2.5',
           voc: 'VOC',
           critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Optimaalne madalatel väärtustel',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
+          optimal_when_high: 'Optimaalne kõrgetel väärtustel',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -3112,17 +3112,17 @@ const TRANSLATIONS = {
       },
       option: {
         theme: {
-          optimal_when_low: 'Optimaalinen alhaisena (CPU, RAM...)',
-          optimal_when_high: 'Optimaalinen korkeana (Akku...)',
+          battery_adaptive: 'Battery (adapts to charging state)',
           light: 'Valoisuus',
           temperature: 'Lämpötila',
           humidity: 'Kosteus',
           pm25: 'PM2.5',
           voc: 'VOC',
           critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Optimaalinen alhaisena',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
+          optimal_when_high: 'Optimaalinen korkeana',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -3385,17 +3385,17 @@ const TRANSLATIONS = {
       },
       option: {
         theme: {
-          optimal_when_low: 'Optimal quand c\'est bas (CPU, RAM,...)',
-          optimal_when_high: 'Optimal quand c\'est élevé (Batterie...)',
+          battery_adaptive: 'Battery (adapts to charging state)',
           light: 'Lumière',
           temperature: 'Température',
           humidity: 'Humidité',
           pm25: 'PM2.5',
           voc: 'VOC',
           critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Optimal quand c\'est bas',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
+          optimal_when_high: 'Optimal quand c\'est élevé',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -3657,18 +3657,18 @@ const TRANSLATIONS = {
         height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
-        bar_orientation: {
-          ltr: 'बाएं से दाएं',
-          rtl: 'दाएं से बाएं',
-          up: 'ऊपर की ओर'
-        },
-        bar_position: {
-          below: 'सामग्री के नीचे बार',
-          bottom: 'नीचे बार',
-          default: 'डिफ़ॉल्ट',
-          overlay: 'सामग्री पर ओवरले बार',
-          top: 'ऊपर बार',
-          background: 'कार्ड पृष्ठभूमि'
+        theme: {
+          battery_adaptive: 'Battery (adapts to charging state)',
+          light: 'प्रकाश',
+          temperature: 'तापमान',
+          humidity: 'आर्द्रता',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'कम होने पर इष्टतम',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          optimal_when_high: 'उच्च होने पर इष्टतम',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -3677,22 +3677,22 @@ const TRANSLATIONS = {
           large: 'बड़ी',
           xlarge: 'अतिरिक्त बड़ी'
         },
+        bar_orientation: {
+          ltr: 'बाएं से दाएं',
+          rtl: 'दाएं से बाएं',
+          up: 'ऊपर की ओर'
+        },
+        bar_position: {
+          default: 'डिफ़ॉल्ट',
+          below: 'सामग्री के नीचे बार',
+          top: 'ऊपर बार',
+          bottom: 'नीचे बार',
+          overlay: 'सामग्री पर ओवरले बार',
+          background: 'कार्ड पृष्ठभूमि'
+        },
         layout: {
           horizontal: 'क्षैतिज (डिफ़ॉल्ट)',
           vertical: 'लंबवत'
-        },
-        theme: {
-          humidity: 'आर्द्रता',
-          light: 'प्रकाश',
-          optimal_when_high: 'उच्च होने पर इष्टतम (बैटरी...)',
-          optimal_when_low: 'कम होने पर इष्टतम (CPU, RAM,...)',
-          pm25: 'PM2.5',
-          temperature: 'तापमान',
-          voc: 'VOC',
-          critical_when_low: 'Critical when Low (Battery, disk...)',
-          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'स्वचालित',
@@ -3930,18 +3930,18 @@ const TRANSLATIONS = {
         height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
-        bar_orientation: {
-          ltr: 'Lijevo na desno',
-          rtl: 'Desno na lijevo',
-          up: 'Prema gore'
-        },
-        bar_position: {
-          below: 'Traka ispod sadržaja',
-          bottom: 'Traka na dnu',
-          default: 'Zadano',
-          overlay: 'Traka preklopljena na sadržaj (overlay)',
-          top: 'Traka na vrhu',
-          background: 'Pozadina kartice'
+        theme: {
+          battery_adaptive: 'Battery (adapts to charging state)',
+          light: 'Svjetlo',
+          temperature: 'Temperatura',
+          humidity: 'Vlažnost',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Optimalno kada je nisko',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          optimal_when_high: 'Optimalno kada je visoko',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -3950,22 +3950,22 @@ const TRANSLATIONS = {
           large: 'Velika',
           xlarge: 'Vrlo velika'
         },
+        bar_orientation: {
+          ltr: 'Lijevo na desno',
+          rtl: 'Desno na lijevo',
+          up: 'Prema gore'
+        },
+        bar_position: {
+          default: 'Zadano',
+          below: 'Traka ispod sadržaja',
+          top: 'Traka na vrhu',
+          bottom: 'Traka na dnu',
+          overlay: 'Traka preklopljena na sadržaj (overlay)',
+          background: 'Pozadina kartice'
+        },
         layout: {
           horizontal: 'Horizontalno (zadano)',
           vertical: 'Vertikalno'
-        },
-        theme: {
-          humidity: 'Vlažnost',
-          light: 'Svjetlo',
-          optimal_when_high: 'Optimalno kada je visoko (Baterija...)',
-          optimal_when_low: 'Optimalno kada je nisko (CPU, RAM,...)',
-          pm25: 'PM2.5',
-          temperature: 'Temperatura',
-          voc: 'VOC',
-          critical_when_low: 'Critical when Low (Battery, disk...)',
-          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Automatski',
@@ -4204,17 +4204,17 @@ const TRANSLATIONS = {
       },
       option: {
         theme: {
-          optimal_when_low: 'Optimális alacsony értéknél (CPU, RAM...)',
-          optimal_when_high: 'Optimális magas értéknél (Akkumulátor...)',
+          battery_adaptive: 'Battery (adapts to charging state)',
           light: 'Világos',
           temperature: 'Hőmérséklet',
           humidity: 'Páratartalom',
           pm25: 'PM2.5',
           voc: 'VOC',
           critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Optimális alacsony értéknél',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
+          optimal_when_high: 'Optimális magas értéknél',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -4476,18 +4476,18 @@ const TRANSLATIONS = {
         height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
-        bar_orientation: {
-          ltr: 'Kiri ke kanan',
-          rtl: 'Kanan ke kiri',
-          up: 'Ke atas'
-        },
-        bar_position: {
-          below: 'Bar di bawah konten',
-          bottom: 'Bar di bawah',
-          default: 'Default',
-          overlay: 'Bar ditumpangkan pada konten (overlay)',
-          top: 'Bar di atas',
-          background: 'Latar belakang kartu'
+        theme: {
+          battery_adaptive: 'Battery (adapts to charging state)',
+          light: 'Cahaya',
+          temperature: 'Suhu',
+          humidity: 'Kelembaban',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Optimal saat Rendah',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          optimal_when_high: 'Optimal saat Tinggi',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -4496,22 +4496,22 @@ const TRANSLATIONS = {
           large: 'Besar',
           xlarge: 'Sangat besar'
         },
+        bar_orientation: {
+          ltr: 'Kiri ke kanan',
+          rtl: 'Kanan ke kiri',
+          up: 'Ke atas'
+        },
+        bar_position: {
+          default: 'Default',
+          below: 'Bar di bawah konten',
+          top: 'Bar di atas',
+          bottom: 'Bar di bawah',
+          overlay: 'Bar ditumpangkan pada konten (overlay)',
+          background: 'Latar belakang kartu'
+        },
         layout: {
           horizontal: 'Horizontal (default)',
           vertical: 'Vertikal'
-        },
-        theme: {
-          humidity: 'Kelembaban',
-          light: 'Cahaya',
-          optimal_when_high: 'Optimal saat Tinggi (Baterai...)',
-          optimal_when_low: 'Optimal saat Rendah (CPU, RAM,...)',
-          pm25: 'PM2.5',
-          temperature: 'Suhu',
-          voc: 'VOC',
-          critical_when_low: 'Critical when Low (Battery, disk...)',
-          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Otomatis',
@@ -4749,18 +4749,18 @@ const TRANSLATIONS = {
         height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
-        bar_orientation: {
-          ltr: 'Da sinistra a destra',
-          rtl: 'Da destra a sinistra',
-          up: 'Verso l\'alto'
-        },
-        bar_position: {
-          below: 'Barra sotto il contenuto',
-          bottom: 'Barra in basso',
-          default: 'Predefinito',
-          overlay: 'Barra sovrapposta al contenuto (overlay)',
-          top: 'Barra in alto',
-          background: 'Sfondo della scheda'
+        theme: {
+          battery_adaptive: 'Battery (adapts to charging state)',
+          light: 'Luce',
+          temperature: 'Temperatura',
+          humidity: 'Umidità',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Ottimale quando è basso',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          optimal_when_high: 'Ottimale quando è alto',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -4769,22 +4769,22 @@ const TRANSLATIONS = {
           large: 'Grande',
           xlarge: 'Extra grande'
         },
+        bar_orientation: {
+          ltr: 'Da sinistra a destra',
+          rtl: 'Da destra a sinistra',
+          up: 'Verso l\'alto'
+        },
+        bar_position: {
+          default: 'Predefinito',
+          below: 'Barra sotto il contenuto',
+          top: 'Barra in alto',
+          bottom: 'Barra in basso',
+          overlay: 'Barra sovrapposta al contenuto (overlay)',
+          background: 'Sfondo della scheda'
+        },
         layout: {
           horizontal: 'Orizzontale (predefinito)',
           vertical: 'Verticale'
-        },
-        theme: {
-          humidity: 'Umidità',
-          light: 'Luce',
-          optimal_when_high: 'Ottimale quando è alto (Batteria...)',
-          optimal_when_low: 'Ottimale quando è basso (CPU, RAM,...)',
-          pm25: 'PM2.5',
-          temperature: 'Temperatura',
-          voc: 'VOC',
-          critical_when_low: 'Critical when Low (Battery, disk...)',
-          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Automatico',
@@ -5022,18 +5022,18 @@ const TRANSLATIONS = {
         height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
-        bar_orientation: {
-          ltr: '左から右',
-          rtl: '右から左',
-          up: '上方向'
-        },
-        bar_position: {
-          below: 'コンテンツの下にバー',
-          bottom: '下部にバー',
-          default: 'デフォルト',
-          overlay: 'コンテンツに重ねてバー（オーバーレイ）',
-          top: '上部にバー',
-          background: 'カードの背景'
+        theme: {
+          battery_adaptive: 'Battery (adapts to charging state)',
+          light: '明るさ',
+          temperature: '温度',
+          humidity: '湿度',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: '低い時が最適',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          optimal_when_high: '高い時が最適',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -5042,22 +5042,22 @@ const TRANSLATIONS = {
           large: '大',
           xlarge: '特大'
         },
+        bar_orientation: {
+          ltr: '左から右',
+          rtl: '右から左',
+          up: '上方向'
+        },
+        bar_position: {
+          default: 'デフォルト',
+          below: 'コンテンツの下にバー',
+          top: '上部にバー',
+          bottom: '下部にバー',
+          overlay: 'コンテンツに重ねてバー（オーバーレイ）',
+          background: 'カードの背景'
+        },
         layout: {
           horizontal: '水平（デフォルト）',
           vertical: '垂直'
-        },
-        theme: {
-          humidity: '湿度',
-          light: '明るさ',
-          optimal_when_high: '高い時が最適（バッテリーなど）',
-          optimal_when_low: '低い時が最適（CPU、RAMなど）',
-          pm25: 'PM2.5',
-          temperature: '温度',
-          voc: 'VOC',
-          critical_when_low: 'Critical when Low (Battery, disk...)',
-          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: '自動',
@@ -5295,18 +5295,18 @@ const TRANSLATIONS = {
         height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
-        bar_orientation: {
-          ltr: '왼쪽에서 오른쪽',
-          rtl: '오른쪽에서 왼쪽',
-          up: '위쪽 방향'
-        },
-        bar_position: {
-          below: '콘텐츠 아래 바',
-          bottom: '하단 바',
-          default: '기본',
-          overlay: '콘텐츠 위에 바 (오버레이)',
-          top: '상단 바',
-          background: '카드 배경'
+        theme: {
+          battery_adaptive: 'Battery (adapts to charging state)',
+          light: '조도',
+          temperature: '온도',
+          humidity: '습도',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: '낮을 때 최적',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          optimal_when_high: '높을 때 최적',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -5315,22 +5315,22 @@ const TRANSLATIONS = {
           large: '큰',
           xlarge: '매우 큰'
         },
+        bar_orientation: {
+          ltr: '왼쪽에서 오른쪽',
+          rtl: '오른쪽에서 왼쪽',
+          up: '위쪽 방향'
+        },
+        bar_position: {
+          default: '기본',
+          below: '콘텐츠 아래 바',
+          top: '상단 바',
+          bottom: '하단 바',
+          overlay: '콘텐츠 위에 바 (오버레이)',
+          background: '카드 배경'
+        },
         layout: {
           horizontal: '수평 (기본)',
           vertical: '수직'
-        },
-        theme: {
-          humidity: '습도',
-          light: '조도',
-          optimal_when_high: '높을 때 최적 (배터리 등)',
-          optimal_when_low: '낮을 때 최적 (CPU, RAM 등)',
-          pm25: 'PM2.5',
-          temperature: '온도',
-          voc: 'VOC',
-          critical_when_low: 'Critical when Low (Battery, disk...)',
-          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: '자동',
@@ -5569,17 +5569,17 @@ const TRANSLATIONS = {
       },
       option: {
         theme: {
-          optimal_when_low: 'Optimalu esant žemoms reikšmėms (CPU, RAM...)',
-          optimal_when_high: 'Optimalu esant aukštoms reikšmėms (Baterija...)',
+          battery_adaptive: 'Battery (adapts to charging state)',
           light: 'Šviesi',
           temperature: 'Temperatūra',
           humidity: 'Drėgmė',
           pm25: 'PM2.5',
           voc: 'VOC',
           critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Optimalu esant žemoms reikšmėms',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
+          optimal_when_high: 'Optimalu esant aukštoms reikšmėms',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -5842,17 +5842,17 @@ const TRANSLATIONS = {
       },
       option: {
         theme: {
-          optimal_when_low: 'Optimāli pie zemām vērtībām (CPU, RAM...)',
-          optimal_when_high: 'Optimāli pie augstām vērtībām (Akumulators...)',
+          battery_adaptive: 'Battery (adapts to charging state)',
           light: 'Gaiša',
           temperature: 'Temperatūra',
           humidity: 'Mitrums',
           pm25: 'PM2.5',
           voc: 'VOC',
           critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Optimāli pie zemām vērtībām',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
+          optimal_when_high: 'Optimāli pie augstām vērtībām',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -6114,18 +6114,18 @@ const TRANSLATIONS = {
         height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
-        bar_orientation: {
-          ltr: 'Лево кон десно',
-          rtl: 'Десно кон лево',
-          up: 'Нагоре'
-        },
-        bar_position: {
-          below: 'Лента под содржината',
-          bottom: 'Лента на дното',
-          default: 'Стандардно',
-          overlay: 'Лента преку содржината (overlay)',
-          top: 'Лента на врвот',
-          background: 'Позадина на картичката'
+        theme: {
+          battery_adaptive: 'Battery (adapts to charging state)',
+          light: 'Светлина',
+          temperature: 'Температура',
+          humidity: 'Влажност',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Оптимално кога е ниско',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          optimal_when_high: 'Оптимално кога е високо',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -6134,22 +6134,22 @@ const TRANSLATIONS = {
           large: 'Голема',
           xlarge: 'Многу голема'
         },
+        bar_orientation: {
+          ltr: 'Лево кон десно',
+          rtl: 'Десно кон лево',
+          up: 'Нагоре'
+        },
+        bar_position: {
+          default: 'Стандардно',
+          below: 'Лента под содржината',
+          top: 'Лента на врвот',
+          bottom: 'Лента на дното',
+          overlay: 'Лента преку содржината (overlay)',
+          background: 'Позадина на картичката'
+        },
         layout: {
           horizontal: 'Хоризонтално (стандардно)',
           vertical: 'Вертикално'
-        },
-        theme: {
-          humidity: 'Влажност',
-          light: 'Светлина',
-          optimal_when_high: 'Оптимално кога е високо (Батерија...)',
-          optimal_when_low: 'Оптимално кога е ниско(CPU, RAM,...)',
-          pm25: 'PM2.5',
-          temperature: 'Температура',
-          voc: 'VOC',
-          critical_when_low: 'Critical when Low (Battery, disk...)',
-          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Автоматски',
@@ -6387,18 +6387,18 @@ const TRANSLATIONS = {
         height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
-        bar_orientation: {
-          ltr: 'Venstre til høyre',
-          rtl: 'Høyre til venstre',
-          up: 'Oppover'
-        },
-        bar_position: {
-          below: 'Bar under innholdet',
-          bottom: 'Bar nederst',
-          default: 'Standard',
-          overlay: 'Bar lagt over innholdet (overlay)',
-          top: 'Bar øverst',
-          background: 'Kortbakgrunn'
+        theme: {
+          battery_adaptive: 'Battery (adapts to charging state)',
+          light: 'Lys',
+          temperature: 'Temperatur',
+          humidity: 'Fuktighet',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Optimal når lavt',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          optimal_when_high: 'Optimal når høyt',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -6407,22 +6407,22 @@ const TRANSLATIONS = {
           large: 'Stor',
           xlarge: 'Ekstra stor'
         },
+        bar_orientation: {
+          ltr: 'Venstre til høyre',
+          rtl: 'Høyre til venstre',
+          up: 'Oppover'
+        },
+        bar_position: {
+          default: 'Standard',
+          below: 'Bar under innholdet',
+          top: 'Bar øverst',
+          bottom: 'Bar nederst',
+          overlay: 'Bar lagt over innholdet (overlay)',
+          background: 'Kortbakgrunn'
+        },
         layout: {
           horizontal: 'Horisontal (standard)',
           vertical: 'Vertikal'
-        },
-        theme: {
-          humidity: 'Fuktighet',
-          light: 'Lys',
-          optimal_when_high: 'Optimal når høyt (Batteri...)',
-          optimal_when_low: 'Optimal når lavt (CPU, RAM,...)',
-          pm25: 'PM2.5',
-          temperature: 'Temperatur',
-          voc: 'VOC',
-          critical_when_low: 'Critical when Low (Battery, disk...)',
-          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Auto',
@@ -6660,18 +6660,18 @@ const TRANSLATIONS = {
         height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
-        bar_orientation: {
-          ltr: 'Links naar rechts',
-          rtl: 'Rechts naar links',
-          up: 'Omhoog'
-        },
-        bar_position: {
-          below: 'Balk onder de inhoud',
-          bottom: 'Balk onderaan',
-          default: 'Standaard',
-          overlay: 'Balk over de inhoud (overlay)',
-          top: 'Balk bovenaan',
-          background: 'Kaartachtergrond'
+        theme: {
+          battery_adaptive: 'Battery (adapts to charging state)',
+          light: 'Licht',
+          temperature: 'Temperatuur',
+          humidity: 'Vochtigheid',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Optimaal wanneer laag',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          optimal_when_high: 'Optimaal wanneer hoog',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -6680,22 +6680,22 @@ const TRANSLATIONS = {
           large: 'Groot',
           xlarge: 'Extra groot'
         },
+        bar_orientation: {
+          ltr: 'Links naar rechts',
+          rtl: 'Rechts naar links',
+          up: 'Omhoog'
+        },
+        bar_position: {
+          default: 'Standaard',
+          below: 'Balk onder de inhoud',
+          top: 'Balk bovenaan',
+          bottom: 'Balk onderaan',
+          overlay: 'Balk over de inhoud (overlay)',
+          background: 'Kaartachtergrond'
+        },
         layout: {
           horizontal: 'Horizontaal (standaard)',
           vertical: 'Verticaal'
-        },
-        theme: {
-          humidity: 'Vochtigheid',
-          light: 'Licht',
-          optimal_when_high: 'Optimaal wanneer hoog (Batterij...)',
-          optimal_when_low: 'Optimaal wanneer laag (CPU, RAM,...)',
-          pm25: 'PM2.5',
-          temperature: 'Temperatuur',
-          voc: 'VOC',
-          critical_when_low: 'Critical when Low (Battery, disk...)',
-          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Automatisch',
@@ -6933,18 +6933,18 @@ const TRANSLATIONS = {
         height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
-        bar_orientation: {
-          ltr: 'Od lewej do prawej',
-          rtl: 'Od prawej do lewej',
-          up: 'W górę'
-        },
-        bar_position: {
-          below: 'Pasek pod zawartością',
-          bottom: 'Pasek na dole',
-          default: 'Domyślnie',
-          overlay: 'Pasek nałożony na zawartość (overlay)',
-          top: 'Pasek na górze',
-          background: 'Tło karty'
+        theme: {
+          battery_adaptive: 'Battery (adapts to charging state)',
+          light: 'Światło',
+          temperature: 'Temperatura',
+          humidity: 'Wilgotność',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Optymalny, gdy niskie',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          optimal_when_high: 'Optymalny, gdy wysokie',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -6953,22 +6953,22 @@ const TRANSLATIONS = {
           large: 'Duża',
           xlarge: 'Bardzo duża'
         },
+        bar_orientation: {
+          ltr: 'Od lewej do prawej',
+          rtl: 'Od prawej do lewej',
+          up: 'W górę'
+        },
+        bar_position: {
+          default: 'Domyślnie',
+          below: 'Pasek pod zawartością',
+          top: 'Pasek na górze',
+          bottom: 'Pasek na dole',
+          overlay: 'Pasek nałożony na zawartość (overlay)',
+          background: 'Tło karty'
+        },
         layout: {
           horizontal: 'Poziomo (domyślnie)',
           vertical: 'Pionowy'
-        },
-        theme: {
-          humidity: 'Wilgotność',
-          light: 'Światło',
-          optimal_when_high: 'Optymalny, gdy wysokie (Bateria...)',
-          optimal_when_low: 'Optymalny, gdy niskie (CPU, RAM,...)',
-          pm25: 'PM2.5',
-          temperature: 'Temperatura',
-          voc: 'VOC',
-          critical_when_low: 'Critical when Low (Battery, disk...)',
-          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Automatycznie',
@@ -7207,17 +7207,17 @@ const TRANSLATIONS = {
       },
       option: {
         theme: {
-          optimal_when_low: 'Ideal quando baixo (CPU, RAM...)',
-          optimal_when_high: 'Ideal quando alto (Bateria...)',
+          battery_adaptive: 'Battery (adapts to charging state)',
           light: 'Claro',
           temperature: 'Temperatura',
           humidity: 'Umidade',
           pm25: 'PM2.5',
           voc: 'VOC',
           critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Ideal quando baixo',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
+          optimal_when_high: 'Ideal quando alto',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -7479,18 +7479,18 @@ const TRANSLATIONS = {
         height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
-        bar_orientation: {
-          ltr: 'Da esquerda para a direita',
-          rtl: 'Da direita para a esquerda',
-          up: 'Para cima'
-        },
-        bar_position: {
-          below: 'Barra abaixo do conteúdo',
-          bottom: 'Barra em baixo',
-          default: 'Padrão',
-          overlay: 'Barra sobreposta ao conteúdo (overlay)',
-          top: 'Barra em cima',
-          background: 'Fundo do cartão'
+        theme: {
+          battery_adaptive: 'Battery (adapts to charging state)',
+          light: 'Luz',
+          temperature: 'Temperatura',
+          humidity: 'Humidade',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Ótimo quando é baixo',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          optimal_when_high: 'Ótimo quando é alto',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -7499,22 +7499,22 @@ const TRANSLATIONS = {
           large: 'Grande',
           xlarge: 'Extra grande'
         },
+        bar_orientation: {
+          ltr: 'Da esquerda para a direita',
+          rtl: 'Da direita para a esquerda',
+          up: 'Para cima'
+        },
+        bar_position: {
+          default: 'Padrão',
+          below: 'Barra abaixo do conteúdo',
+          top: 'Barra em cima',
+          bottom: 'Barra em baixo',
+          overlay: 'Barra sobreposta ao conteúdo (overlay)',
+          background: 'Fundo do cartão'
+        },
         layout: {
           horizontal: 'Horizontal (padrão)',
           vertical: 'Vertical'
-        },
-        theme: {
-          humidity: 'Humidade',
-          light: 'Luz',
-          optimal_when_high: 'Ótimo quando é alto (Bateria...)',
-          optimal_when_low: 'Ótimo quando é baixo (CPU, RAM,...)',
-          pm25: 'PM2.5',
-          temperature: 'Temperatura',
-          voc: 'VOC',
-          critical_when_low: 'Critical when Low (Battery, disk...)',
-          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Auto',
@@ -7752,18 +7752,18 @@ const TRANSLATIONS = {
         height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
-        bar_orientation: {
-          ltr: 'De la stânga la dreapta',
-          rtl: 'De la dreapta la stânga',
-          up: 'În sus'
-        },
-        bar_position: {
-          below: 'Bară sub conținut',
-          bottom: 'Bară jos',
-          default: 'Implicit',
-          overlay: 'Bară suprapusă peste conținut (overlay)',
-          top: 'Bară sus',
-          background: 'Fundal card'
+        theme: {
+          battery_adaptive: 'Battery (adapts to charging state)',
+          light: 'Luminozitate',
+          temperature: 'Temperatură',
+          humidity: 'Umiditate',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Optim când este scăzut',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          optimal_when_high: 'Optim când este ridicat',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -7772,22 +7772,22 @@ const TRANSLATIONS = {
           large: 'Mare',
           xlarge: 'Foarte mare'
         },
+        bar_orientation: {
+          ltr: 'De la stânga la dreapta',
+          rtl: 'De la dreapta la stânga',
+          up: 'În sus'
+        },
+        bar_position: {
+          default: 'Implicit',
+          below: 'Bară sub conținut',
+          top: 'Bară sus',
+          bottom: 'Bară jos',
+          overlay: 'Bară suprapusă peste conținut (overlay)',
+          background: 'Fundal card'
+        },
         layout: {
           horizontal: 'Orizontal (implicit)',
           vertical: 'Vertical'
-        },
-        theme: {
-          humidity: 'Umiditate',
-          light: 'Luminozitate',
-          optimal_when_high: 'Optim când este ridicat (Baterie...)',
-          optimal_when_low: 'Optim când este scăzut (CPU, RAM...)',
-          pm25: 'PM2.5',
-          temperature: 'Temperatură',
-          voc: 'VOC',
-          critical_when_low: 'Critical when Low (Battery, disk...)',
-          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Automat',
@@ -8025,18 +8025,18 @@ const TRANSLATIONS = {
         height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
-        bar_orientation: {
-          ltr: 'Слева направо',
-          rtl: 'Справа налево',
-          up: 'Вверх'
-        },
-        bar_position: {
-          below: 'Полоса под содержимым',
-          bottom: 'Полоса внизу',
-          default: 'По умолчанию',
-          overlay: 'Полоса поверх содержимого (overlay)',
-          top: 'Полоса вверху',
-          background: 'Фон карточки'
+        theme: {
+          battery_adaptive: 'Battery (adapts to charging state)',
+          light: 'Освещение',
+          temperature: 'Температура',
+          humidity: 'Влажность',
+          pm25: 'PM2.5',
+          voc: 'ЛОС',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Оптимально при низких значениях',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          optimal_when_high: 'Оптимально при высоких значениях',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -8045,22 +8045,22 @@ const TRANSLATIONS = {
           large: 'Большая',
           xlarge: 'Очень большая'
         },
+        bar_orientation: {
+          ltr: 'Слева направо',
+          rtl: 'Справа налево',
+          up: 'Вверх'
+        },
+        bar_position: {
+          default: 'По умолчанию',
+          below: 'Полоса под содержимым',
+          top: 'Полоса вверху',
+          bottom: 'Полоса внизу',
+          overlay: 'Полоса поверх содержимого (overlay)',
+          background: 'Фон карточки'
+        },
         layout: {
           horizontal: 'Горизонтальный (по умолчанию)',
           vertical: 'Вертикальный'
-        },
-        theme: {
-          humidity: 'Влажность',
-          light: 'Освещение',
-          optimal_when_high: 'Оптимально при высоких значениях (Батарея...)',
-          optimal_when_low: 'Оптимально при низких значениях (ЦП, ОЗУ,...)',
-          pm25: 'PM2.5',
-          temperature: 'Температура',
-          voc: 'ЛОС',
-          critical_when_low: 'Critical when Low (Battery, disk...)',
-          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Авто',
@@ -8299,17 +8299,17 @@ const TRANSLATIONS = {
       },
       option: {
         theme: {
-          optimal_when_low: 'Optimálne pri nízkej hodnote (CPU, RAM...)',
-          optimal_when_high: 'Optimálne pri vysokej hodnote (Batéria...)',
+          battery_adaptive: 'Battery (adapts to charging state)',
           light: 'Svetlá',
           temperature: 'Teplota',
           humidity: 'Vlhkosť',
           pm25: 'PM2.5',
           voc: 'VOC',
           critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Optimálne pri nízkej hodnote',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
+          optimal_when_high: 'Optimálne pri vysokej hodnote',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -8572,17 +8572,17 @@ const TRANSLATIONS = {
       },
       option: {
         theme: {
-          optimal_when_low: 'Optimalno pri nizkih vrednostih (CPU, RAM...)',
-          optimal_when_high: 'Optimalno pri visokih vrednostih (Baterija...)',
+          battery_adaptive: 'Battery (adapts to charging state)',
           light: 'Svetla',
           temperature: 'Temperatura',
           humidity: 'Vlažnost',
           pm25: 'PM2.5',
           voc: 'VOC',
           critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Optimalno pri nizkih vrednostih',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
+          optimal_when_high: 'Optimalno pri visokih vrednostih',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -8844,18 +8844,18 @@ const TRANSLATIONS = {
         height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
-        bar_orientation: {
-          ltr: 'Vänster till höger',
-          rtl: 'Höger till vänster',
-          up: 'Uppåt'
-        },
-        bar_position: {
-          below: 'Bar under innehållet',
-          bottom: 'Bar längst ned',
-          default: 'Standard',
-          overlay: 'Bar överlagrad på innehållet (overlay)',
-          top: 'Bar längst upp',
-          background: 'Kortbakgrund'
+        theme: {
+          battery_adaptive: 'Battery (adapts to charging state)',
+          light: 'Ljus',
+          temperature: 'Temperatur',
+          humidity: 'Luftfuktighet',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Optimal när det är lågt',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          optimal_when_high: 'Optimal när det är högt',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -8864,22 +8864,22 @@ const TRANSLATIONS = {
           large: 'Stor',
           xlarge: 'Extra stor'
         },
+        bar_orientation: {
+          ltr: 'Vänster till höger',
+          rtl: 'Höger till vänster',
+          up: 'Uppåt'
+        },
+        bar_position: {
+          default: 'Standard',
+          below: 'Bar under innehållet',
+          top: 'Bar längst upp',
+          bottom: 'Bar längst ned',
+          overlay: 'Bar överlagrad på innehållet (overlay)',
+          background: 'Kortbakgrund'
+        },
         layout: {
           horizontal: 'Horisontell (standard)',
           vertical: 'Vertikal'
-        },
-        theme: {
-          humidity: 'Luftfuktighet',
-          light: 'Ljus',
-          optimal_when_high: 'Optimal när det är högt (Batteri...)',
-          optimal_when_low: 'Optimal när det är lågt (CPU, RAM,...)',
-          pm25: 'PM2.5',
-          temperature: 'Temperatur',
-          voc: 'VOC',
-          critical_when_low: 'Critical when Low (Battery, disk...)',
-          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Auto',
@@ -9117,18 +9117,18 @@ const TRANSLATIONS = {
         height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
-        bar_orientation: {
-          ltr: 'ซ้ายไปขวา',
-          rtl: 'ขวาไปซ้าย',
-          up: 'ขึ้นบน'
-        },
-        bar_position: {
-          below: 'แถบใต้เนื้อหา',
-          bottom: 'แถบด้านล่าง',
-          default: 'ค่าเริ่มต้น',
-          overlay: 'แถบซ้อนทับเนื้อหา (overlay)',
-          top: 'แถบด้านบน',
-          background: 'พื้นหลังการ์ด'
+        theme: {
+          battery_adaptive: 'Battery (adapts to charging state)',
+          light: 'แสง',
+          temperature: 'อุณหภูมิ',
+          humidity: 'ความชื้น',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'เหมาะสมเมื่อต่ำ',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          optimal_when_high: 'เหมาะสมเมื่อสูง',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -9137,22 +9137,22 @@ const TRANSLATIONS = {
           large: 'ใหญ่',
           xlarge: 'ใหญ่พิเศษ'
         },
+        bar_orientation: {
+          ltr: 'ซ้ายไปขวา',
+          rtl: 'ขวาไปซ้าย',
+          up: 'ขึ้นบน'
+        },
+        bar_position: {
+          default: 'ค่าเริ่มต้น',
+          below: 'แถบใต้เนื้อหา',
+          top: 'แถบด้านบน',
+          bottom: 'แถบด้านล่าง',
+          overlay: 'แถบซ้อนทับเนื้อหา (overlay)',
+          background: 'พื้นหลังการ์ด'
+        },
         layout: {
           horizontal: 'แนวนอน (เริ่มต้น)',
           vertical: 'แนวตั้ง'
-        },
-        theme: {
-          humidity: 'ความชื้น',
-          light: 'แสง',
-          optimal_when_high: 'เหมาะสมเมื่อสูง (แบตเตอรี่...)',
-          optimal_when_low: 'เหมาะสมเมื่อต่ำ (CPU, RAM,...)',
-          pm25: 'PM2.5',
-          temperature: 'อุณหภูมิ',
-          voc: 'VOC',
-          critical_when_low: 'Critical when Low (Battery, disk...)',
-          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'อัตโนมัติ',
@@ -9390,18 +9390,18 @@ const TRANSLATIONS = {
         height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
-        bar_orientation: {
-          ltr: 'Soldan sağa',
-          rtl: 'Sağdan sola',
-          up: 'Yukarı'
-        },
-        bar_position: {
-          below: 'İçeriğin altında çubuk',
-          bottom: 'Altta çubuk',
-          default: 'Varsayılan',
-          overlay: 'İçeriğin üzerine bindirme (overlay)',
-          top: 'Üstte çubuk',
-          background: 'Kart arka planı'
+        theme: {
+          battery_adaptive: 'Battery (adapts to charging state)',
+          light: 'Işık',
+          temperature: 'Sıcaklık',
+          humidity: 'Nem',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Düşükken en iyi',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          optimal_when_high: 'Yüksekken en iyi',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -9410,22 +9410,22 @@ const TRANSLATIONS = {
           large: 'Büyük',
           xlarge: 'Çok büyük'
         },
+        bar_orientation: {
+          ltr: 'Soldan sağa',
+          rtl: 'Sağdan sola',
+          up: 'Yukarı'
+        },
+        bar_position: {
+          default: 'Varsayılan',
+          below: 'İçeriğin altında çubuk',
+          top: 'Üstte çubuk',
+          bottom: 'Altta çubuk',
+          overlay: 'İçeriğin üzerine bindirme (overlay)',
+          background: 'Kart arka planı'
+        },
         layout: {
           horizontal: 'Yatay (varsayılan)',
           vertical: 'Dikey'
-        },
-        theme: {
-          humidity: 'Nem',
-          light: 'Işık',
-          optimal_when_high: 'Yüksekken en iyi (Pil...)',
-          optimal_when_low: 'Düşükken en iyi (CPU, RAM...)',
-          pm25: 'PM2.5',
-          temperature: 'Sıcaklık',
-          voc: 'VOC',
-          critical_when_low: 'Critical when Low (Battery, disk...)',
-          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Otomatik',
@@ -9663,18 +9663,18 @@ const TRANSLATIONS = {
         height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
-        bar_orientation: {
-          ltr: 'Зліва направо',
-          rtl: 'Справа наліво',
-          up: 'Вгору'
-        },
-        bar_position: {
-          below: 'Панель під вмістом',
-          bottom: 'Панель знизу',
-          default: 'За замовчуванням',
-          overlay: 'Панель поверх вмісту (overlay)',
-          top: 'Панель зверху',
-          background: 'Фон картки'
+        theme: {
+          battery_adaptive: 'Battery (adapts to charging state)',
+          light: 'Світло',
+          temperature: 'Температура',
+          humidity: 'Вологість',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Оптимально при низьких значеннях',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          optimal_when_high: 'Оптимально при високих значеннях',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -9683,22 +9683,22 @@ const TRANSLATIONS = {
           large: 'Велика',
           xlarge: 'Дуже велика'
         },
+        bar_orientation: {
+          ltr: 'Зліва направо',
+          rtl: 'Справа наліво',
+          up: 'Вгору'
+        },
+        bar_position: {
+          default: 'За замовчуванням',
+          below: 'Панель під вмістом',
+          top: 'Панель зверху',
+          bottom: 'Панель знизу',
+          overlay: 'Панель поверх вмісту (overlay)',
+          background: 'Фон картки'
+        },
         layout: {
           horizontal: 'Горизонтальний (за замовчуванням)',
           vertical: 'Вертикальний'
-        },
-        theme: {
-          humidity: 'Вологість',
-          light: 'Світло',
-          optimal_when_high: 'Оптимально при високих значеннях (Батарея...)',
-          optimal_when_low: 'Оптимально при низьких значеннях (CPU, RAM,...)',
-          pm25: 'PM2.5',
-          temperature: 'Температура',
-          voc: 'VOC',
-          critical_when_low: 'Critical when Low (Battery, disk...)',
-          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Авто',
@@ -9936,18 +9936,18 @@ const TRANSLATIONS = {
         height_custom_toggle: 'Shrink height (embedded)'
       },
       option: {
-        bar_orientation: {
-          ltr: 'Trái sang phải',
-          rtl: 'Phải sang trái',
-          up: 'Hướng lên'
-        },
-        bar_position: {
-          below: 'Thanh bên dưới nội dung',
-          bottom: 'Thanh ở dưới cùng',
-          default: 'Mặc định',
-          overlay: 'Thanh phủ lên nội dung (overlay)',
-          top: 'Thanh ở trên cùng',
-          background: 'Nền thẻ'
+        theme: {
+          battery_adaptive: 'Battery (adapts to charging state)',
+          light: 'Ánh sáng',
+          temperature: 'Nhiệt độ',
+          humidity: 'Độ ẩm',
+          pm25: 'PM2.5',
+          voc: 'VOC',
+          critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: 'Tối ưu khi thấp',
+          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
+          optimal_when_high: 'Tối ưu khi cao',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -9956,22 +9956,22 @@ const TRANSLATIONS = {
           large: 'Lớn',
           xlarge: 'Rất lớn'
         },
+        bar_orientation: {
+          ltr: 'Trái sang phải',
+          rtl: 'Phải sang trái',
+          up: 'Hướng lên'
+        },
+        bar_position: {
+          default: 'Mặc định',
+          below: 'Thanh bên dưới nội dung',
+          top: 'Thanh ở trên cùng',
+          bottom: 'Thanh ở dưới cùng',
+          overlay: 'Thanh phủ lên nội dung (overlay)',
+          background: 'Nền thẻ'
+        },
         layout: {
           horizontal: 'Ngang (mặc định)',
           vertical: 'Dọc'
-        },
-        theme: {
-          humidity: 'Độ ẩm',
-          light: 'Ánh sáng',
-          optimal_when_high: 'Tối ưu khi cao (Pin...)',
-          optimal_when_low: 'Tối ưu khi thấp (CPU, RAM,...)',
-          pm25: 'PM2.5',
-          temperature: 'Nhiệt độ',
-          voc: 'VOC',
-          critical_when_low: 'Critical when Low (Battery, disk...)',
-          critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
         },
         bar_color_mode: {
           auto: 'Tự động',
@@ -10210,17 +10210,17 @@ const TRANSLATIONS = {
       },
       option: {
         theme: {
-          optimal_when_low: '值低时最佳（CPU、内存等）',
-          optimal_when_high: '值高时最佳（电池等）',
+          battery_adaptive: 'Battery (adapts to charging state)',
           light: '亮度',
           temperature: '温度',
           humidity: '湿度',
           pm25: 'PM2.5',
           voc: 'VOC',
           critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: '值低时最佳',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
+          optimal_when_high: '值高时最佳',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -10483,17 +10483,17 @@ const TRANSLATIONS = {
       },
       option: {
         theme: {
-          optimal_when_low: '數值低時最佳（CPU, RAM…）',
-          optimal_when_high: '數值高時最佳（電池…）',
+          battery_adaptive: 'Battery (adapts to charging state)',
           light: '明亮',
           temperature: '溫度',
           humidity: '濕度',
           pm25: 'PM2.5',
           voc: 'VOC',
           critical_when_low: 'Critical when Low (Battery, disk...)',
+          optimal_when_low: '數值低時最佳',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
-          battery_adaptive: 'Battery (adapts to charging state)'
+          optimal_when_high: '數值高時最佳',
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
         },
         bar_size: {
           xsmall: 'Extra Small',

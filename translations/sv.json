@@ -101,18 +101,18 @@
       "height_custom_toggle": "Shrink height (embedded)"
     },
     "option": {
-      "bar_orientation": {
-        "ltr": "Vänster till höger",
-        "rtl": "Höger till vänster",
-        "up": "Uppåt"
-      },
-      "bar_position": {
-        "below": "Bar under innehållet",
-        "bottom": "Bar längst ned",
-        "default": "Standard",
-        "overlay": "Bar överlagrad på innehållet (overlay)",
-        "top": "Bar längst upp",
-        "background": "Kortbakgrund"
+      "theme": {
+        "battery_adaptive": "Battery (adapts to charging state)",
+        "light": "Ljus",
+        "temperature": "Temperatur",
+        "humidity": "Luftfuktighet",
+        "pm25": "PM2.5",
+        "voc": "VOC",
+        "critical_when_low": "Critical when Low (Battery, disk...)",
+        "optimal_when_low": "Optimal när det är lågt",
+        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
+        "optimal_when_high": "Optimal när det är högt",
+        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)"
       },
       "bar_size": {
         "xsmall": "Extra Small",
@@ -121,22 +121,22 @@
         "large": "Stor",
         "xlarge": "Extra stor"
       },
+      "bar_orientation": {
+        "ltr": "Vänster till höger",
+        "rtl": "Höger till vänster",
+        "up": "Uppåt"
+      },
+      "bar_position": {
+        "default": "Standard",
+        "below": "Bar under innehållet",
+        "top": "Bar längst upp",
+        "bottom": "Bar längst ned",
+        "overlay": "Bar överlagrad på innehållet (overlay)",
+        "background": "Kortbakgrund"
+      },
       "layout": {
         "horizontal": "Horisontell (standard)",
         "vertical": "Vertikal"
-      },
-      "theme": {
-        "humidity": "Luftfuktighet",
-        "light": "Ljus",
-        "optimal_when_high": "Optimal när det är högt (Batteri...)",
-        "optimal_when_low": "Optimal när det är lågt (CPU, RAM,...)",
-        "pm25": "PM2.5",
-        "temperature": "Temperatur",
-        "voc": "VOC",
-        "critical_when_low": "Critical when Low (Battery, disk...)",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "battery_adaptive": "Battery (adapts to charging state)"
       },
       "bar_color_mode": {
         "auto": "Auto",

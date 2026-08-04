@@ -101,18 +101,18 @@
       "height_custom_toggle": "Shrink height (embedded)"
     },
     "option": {
-      "bar_orientation": {
-        "ltr": "Soldan sağa",
-        "rtl": "Sağdan sola",
-        "up": "Yukarı"
-      },
-      "bar_position": {
-        "below": "İçeriğin altında çubuk",
-        "bottom": "Altta çubuk",
-        "default": "Varsayılan",
-        "overlay": "İçeriğin üzerine bindirme (overlay)",
-        "top": "Üstte çubuk",
-        "background": "Kart arka planı"
+      "theme": {
+        "battery_adaptive": "Battery (adapts to charging state)",
+        "light": "Işık",
+        "temperature": "Sıcaklık",
+        "humidity": "Nem",
+        "pm25": "PM2.5",
+        "voc": "VOC",
+        "critical_when_low": "Critical when Low (Battery, disk...)",
+        "optimal_when_low": "Düşükken en iyi",
+        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
+        "optimal_when_high": "Yüksekken en iyi",
+        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)"
       },
       "bar_size": {
         "xsmall": "Extra Small",
@@ -121,22 +121,22 @@
         "large": "Büyük",
         "xlarge": "Çok büyük"
       },
+      "bar_orientation": {
+        "ltr": "Soldan sağa",
+        "rtl": "Sağdan sola",
+        "up": "Yukarı"
+      },
+      "bar_position": {
+        "default": "Varsayılan",
+        "below": "İçeriğin altında çubuk",
+        "top": "Üstte çubuk",
+        "bottom": "Altta çubuk",
+        "overlay": "İçeriğin üzerine bindirme (overlay)",
+        "background": "Kart arka planı"
+      },
       "layout": {
         "horizontal": "Yatay (varsayılan)",
         "vertical": "Dikey"
-      },
-      "theme": {
-        "humidity": "Nem",
-        "light": "Işık",
-        "optimal_when_high": "Yüksekken en iyi (Pil...)",
-        "optimal_when_low": "Düşükken en iyi (CPU, RAM...)",
-        "pm25": "PM2.5",
-        "temperature": "Sıcaklık",
-        "voc": "VOC",
-        "critical_when_low": "Critical when Low (Battery, disk...)",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "battery_adaptive": "Battery (adapts to charging state)"
       },
       "bar_color_mode": {
         "auto": "Otomatik",

@@ -101,18 +101,18 @@
       "height_custom_toggle": "Shrink height (embedded)"
     },
     "option": {
-      "bar_orientation": {
-        "ltr": "Kiri ke kanan",
-        "rtl": "Kanan ke kiri",
-        "up": "Ke atas"
-      },
-      "bar_position": {
-        "below": "Bar di bawah konten",
-        "bottom": "Bar di bawah",
-        "default": "Default",
-        "overlay": "Bar ditumpangkan pada konten (overlay)",
-        "top": "Bar di atas",
-        "background": "Latar belakang kartu"
+      "theme": {
+        "battery_adaptive": "Battery (adapts to charging state)",
+        "light": "Cahaya",
+        "temperature": "Suhu",
+        "humidity": "Kelembaban",
+        "pm25": "PM2.5",
+        "voc": "VOC",
+        "critical_when_low": "Critical when Low (Battery, disk...)",
+        "optimal_when_low": "Optimal saat Rendah",
+        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
+        "optimal_when_high": "Optimal saat Tinggi",
+        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)"
       },
       "bar_size": {
         "xsmall": "Extra Small",
@@ -121,22 +121,22 @@
         "large": "Besar",
         "xlarge": "Sangat besar"
       },
+      "bar_orientation": {
+        "ltr": "Kiri ke kanan",
+        "rtl": "Kanan ke kiri",
+        "up": "Ke atas"
+      },
+      "bar_position": {
+        "default": "Default",
+        "below": "Bar di bawah konten",
+        "top": "Bar di atas",
+        "bottom": "Bar di bawah",
+        "overlay": "Bar ditumpangkan pada konten (overlay)",
+        "background": "Latar belakang kartu"
+      },
       "layout": {
         "horizontal": "Horizontal (default)",
         "vertical": "Vertikal"
-      },
-      "theme": {
-        "humidity": "Kelembaban",
-        "light": "Cahaya",
-        "optimal_when_high": "Optimal saat Tinggi (Baterai...)",
-        "optimal_when_low": "Optimal saat Rendah (CPU, RAM,...)",
-        "pm25": "PM2.5",
-        "temperature": "Suhu",
-        "voc": "VOC",
-        "critical_when_low": "Critical when Low (Battery, disk...)",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "battery_adaptive": "Battery (adapts to charging state)"
       },
       "bar_color_mode": {
         "auto": "Otomatis",

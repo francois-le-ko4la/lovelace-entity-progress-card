@@ -101,18 +101,18 @@
       "height_custom_toggle": "Shrink height (embedded)"
     },
     "option": {
-      "bar_orientation": {
-        "ltr": "Зліва направо",
-        "rtl": "Справа наліво",
-        "up": "Вгору"
-      },
-      "bar_position": {
-        "below": "Панель під вмістом",
-        "bottom": "Панель знизу",
-        "default": "За замовчуванням",
-        "overlay": "Панель поверх вмісту (overlay)",
-        "top": "Панель зверху",
-        "background": "Фон картки"
+      "theme": {
+        "battery_adaptive": "Battery (adapts to charging state)",
+        "light": "Світло",
+        "temperature": "Температура",
+        "humidity": "Вологість",
+        "pm25": "PM2.5",
+        "voc": "VOC",
+        "critical_when_low": "Critical when Low (Battery, disk...)",
+        "optimal_when_low": "Оптимально при низьких значеннях",
+        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
+        "optimal_when_high": "Оптимально при високих значеннях",
+        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)"
       },
       "bar_size": {
         "xsmall": "Extra Small",
@@ -121,22 +121,22 @@
         "large": "Велика",
         "xlarge": "Дуже велика"
       },
+      "bar_orientation": {
+        "ltr": "Зліва направо",
+        "rtl": "Справа наліво",
+        "up": "Вгору"
+      },
+      "bar_position": {
+        "default": "За замовчуванням",
+        "below": "Панель під вмістом",
+        "top": "Панель зверху",
+        "bottom": "Панель знизу",
+        "overlay": "Панель поверх вмісту (overlay)",
+        "background": "Фон картки"
+      },
       "layout": {
         "horizontal": "Горизонтальний (за замовчуванням)",
         "vertical": "Вертикальний"
-      },
-      "theme": {
-        "humidity": "Вологість",
-        "light": "Світло",
-        "optimal_when_high": "Оптимально при високих значеннях (Батарея...)",
-        "optimal_when_low": "Оптимально при низьких значеннях (CPU, RAM,...)",
-        "pm25": "PM2.5",
-        "temperature": "Температура",
-        "voc": "VOC",
-        "critical_when_low": "Critical when Low (Battery, disk...)",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "battery_adaptive": "Battery (adapts to charging state)"
       },
       "bar_color_mode": {
         "auto": "Авто",

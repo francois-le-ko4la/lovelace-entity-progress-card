@@ -102,17 +102,17 @@
     },
     "option": {
       "theme": {
-        "optimal_when_low": "Βέλτιστο όταν είναι χαμηλό (CPU, RAM...)",
-        "optimal_when_high": "Βέλτιστο όταν είναι υψηλό (Μπαταρία...)",
+        "battery_adaptive": "Battery (adapts to charging state)",
         "light": "Φωτεινότητα",
         "temperature": "Θερμοκρασία",
         "humidity": "Υγρασία",
         "pm25": "PM2.5",
         "voc": "VOC",
         "critical_when_low": "Critical when Low (Battery, disk...)",
+        "optimal_when_low": "Βέλτιστο όταν είναι χαμηλό",
         "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "battery_adaptive": "Battery (adapts to charging state)"
+        "optimal_when_high": "Βέλτιστο όταν είναι υψηλό",
+        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)"
       },
       "bar_size": {
         "xsmall": "Extra Small",

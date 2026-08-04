@@ -6,12 +6,12 @@ Jump to the specific section:
 
 - [Token color](#token-color)
 - [Predefined theme](#predefined-theme)
-  - 🔋 [Optimal when high (Battery...)](#optimal-high)
-  - 💽 [Optimal when low (CPU, RAM, disk...)](#optimal-low)
-  - 🪫 [Critical when low (Battery, disk space...)](#critical-low)
-  - 🔥 [Critical when high (CPU, RAM, disk usage...)](#critical-high)
-  - 🎯 [Critical when extreme (Tank level, deviation...)](#critical-extreme)
   - 🔌 [Battery (adapts to charging state)](#battery-adaptive)
+  - 🪫 [Critical when low (Battery, disk space...)](#critical-low)
+  - 💽 [Optimal when low](#optimal-low)
+  - 🔥 [Critical when high (CPU, RAM, disk usage...)](#critical-high)
+  - 🔋 [Optimal when high](#optimal-high)
+  - 🎯 [Critical when extreme (Tank level, deviation...)](#critical-extreme)
   - 💡 [Light](#light)
   - 🌡️ [Temperature](#temperature)
   - 💧 [Humidity](#humidity)
@@ -212,60 +212,23 @@ your interface with minimal effort.
 > the `[min_value, max_value]` "scope" `segment`/`rainbow` colors get projected
 > across) and how to override it.
 
-<a id="optimal-high"></a>
+<a id="battery-adaptive"></a>
 
-### 🔋 Optimal when high (Battery...)
+### 🔌 Battery (adapts to charging state)
 
-The "Optimal when High" parameter is particularly useful in cases where the
-system or component in question performs best at higher values. For instance, in
-the case of battery charge, the device functions more efficiently and with
-better performance when the battery level is high. By using "Optimal when High,"
-you can set a theme that visually emphasizes and prioritizes states where the
-value is at its peak.
-
-```yaml
-type: custom:entity-progress-card
-entity: sensor.in2013_battery_level
-theme: optimal_when_high
-```
-
-| **Percentage Range** | **Color**     | **Description** _(optional)_ |
-| :------------------- | :------------ | :--------------------------- |
-| 0% – 20%             | `red`         | Critical / Very low          |
-| 20% – 40%            | `orange`      | Low                          |
-| 40% – 60%            | `yellow`      | Moderate                     |
-| 60% – 80%            | `light-green` | Good                         |
-| 80% – 100%           | `green`       | Optimal / High               |
-
-> [!NOTE]
->
-> The icon is automatically retrieved from the entity but can be overridden
-> using the `icon` parameter.
-
-[🔼 Back to top]
-
-<a id="optimal-low"></a>
-
-### 💽 Optimal when low (CPU, RAM, disk...)
-
-The "Optimal when Low" parameter is particularly valuable for monitoring systems
-or components that perform best when their values are at a lower level. For
-example, in the case of memory usage or CPU load, lower values often indicate
-that the system is running efficiently and not overburdened.
+A virtual theme, not a fixed set of zones: it checks whether the entity is
+currently charging - the same signal `icon_animation: battery_charging` already
+relies on (attribute, state, or a same-device sibling entity) - and switches
+between two of the themes below accordingly. While charging, it uses
+`critical_when_extreme`: li-ion batteries age faster from being held at 100%, so
+the "safe" zone is the 30–70% middle rather than the top. Once unplugged, it
+switches to `critical_when_low`, where only running out matters.
 
 ```yaml
 type: custom:entity-progress-card
-entity: sensor.system_monitor_cpu_usage
-theme: optimal_when_low
+entity: sensor.phone_battery_level
+theme: battery_adaptive
 ```
-
-| **Percentage Range** | **Color**     | **Description** _(optional)_ |
-| :------------------- | :------------ | :--------------------------- |
-| 0% – 20%             | `green`       | Low level / Safe             |
-| 20% – 40%            | `light-green` | Good                         |
-| 40% – 60%            | `yellow`      | Moderate                     |
-| 60% – 80%            | `orange`      | Elevated                     |
-| 80% – 100%           | `red`         | High / Critical              |
 
 > [!NOTE]
 >
@@ -304,6 +267,36 @@ theme: critical_when_low
 
 [🔼 Back to top]
 
+<a id="optimal-low"></a>
+
+### 💽 Optimal when low
+
+The "Optimal when Low" parameter is particularly valuable for monitoring systems
+or components that perform best when their values are at a lower level. For
+example, in the case of memory usage or CPU load, lower values often indicate
+that the system is running efficiently and not overburdened.
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.system_monitor_cpu_usage
+theme: optimal_when_low
+```
+
+| **Percentage Range** | **Color**     | **Description** _(optional)_ |
+| :------------------- | :------------ | :--------------------------- |
+| 0% – 20%             | `green`       | Low level / Safe             |
+| 20% – 40%            | `light-green` | Good                         |
+| 40% – 60%            | `yellow`      | Moderate                     |
+| 60% – 80%            | `orange`      | Elevated                     |
+| 80% – 100%           | `red`         | High / Critical              |
+
+> [!NOTE]
+>
+> The icon is automatically retrieved from the entity but can be overridden
+> using the `icon` parameter.
+
+[🔼 Back to top]
+
 <a id="critical-high"></a>
 
 ### 🔥 Critical when high (CPU, RAM, disk usage...)
@@ -324,6 +317,38 @@ theme: critical_when_high
 | 70% – 80%            | `yellow`  | Watch                        |
 | 80% – 90%            | `orange`  | High                         |
 | 90% – 100%           | `red`     | Critical                     |
+
+> [!NOTE]
+>
+> The icon is automatically retrieved from the entity but can be overridden
+> using the `icon` parameter.
+
+[🔼 Back to top]
+
+<a id="optimal-high"></a>
+
+### 🔋 Optimal when high
+
+The "Optimal when High" parameter is particularly useful in cases where the
+system or component in question performs best at higher values. For instance, in
+the case of battery charge, the device functions more efficiently and with
+better performance when the battery level is high. By using "Optimal when High,"
+you can set a theme that visually emphasizes and prioritizes states where the
+value is at its peak.
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.in2013_battery_level
+theme: optimal_when_high
+```
+
+| **Percentage Range** | **Color**     | **Description** _(optional)_ |
+| :------------------- | :------------ | :--------------------------- |
+| 0% – 20%             | `red`         | Critical / Very low          |
+| 20% – 40%            | `orange`      | Low                          |
+| 40% – 60%            | `yellow`      | Moderate                     |
+| 60% – 80%            | `light-green` | Good                         |
+| 80% – 100%           | `green`       | Optimal / High               |
 
 > [!NOTE]
 >
@@ -356,31 +381,6 @@ theme: critical_when_extreme
 | 70% – 80%            | `yellow`  | Watch                        |
 | 80% – 90%            | `orange`  | High                         |
 | 90% – 100%           | `red`     | Critical                     |
-
-> [!NOTE]
->
-> The icon is automatically retrieved from the entity but can be overridden
-> using the `icon` parameter.
-
-[🔼 Back to top]
-
-<a id="battery-adaptive"></a>
-
-### 🔌 Battery (adapts to charging state)
-
-A virtual theme, not a fixed set of zones: it checks whether the entity is
-currently charging - the same signal `icon_animation: battery_charging` already
-relies on (attribute, state, or a same-device sibling entity) - and switches
-between two of the themes above accordingly. While charging, it uses
-`critical_when_extreme`: li-ion batteries age faster from being held at 100%, so
-the "safe" zone is the 30–70% middle rather than the top. Once unplugged, it
-switches to `critical_when_low`, where only running out matters.
-
-```yaml
-type: custom:entity-progress-card
-entity: sensor.phone_battery_level
-theme: battery_adaptive
-```
 
 > [!NOTE]
 >

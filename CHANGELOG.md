@@ -20,6 +20,15 @@ candidate safely before it becomes stable.
   and every value takes up the same fixed width instead of sizing to its own
   text, so bars meant to read as comparable actually line up regardless of digit
   count. See [`show_value`](docs/configuration.md#multi-show_value).
+- **The built-in `theme` picker (dropdown and docs) is reorganized for
+  readability**: `battery_adaptive` now sits first (it's the one most people
+  reach for), and each `critical_when_*`/`optimal_when_*` pair sits together
+  (`Critical when low` next to `Optimal when low`, `Critical when high` next to
+  `Optimal when high`) instead of all the criticals then all the optimals.
+  `Optimal when low`/`Optimal when high`'s labels also drop their parenthetical
+  examples (`(CPU, RAM...)`/`(Battery...)`) — plain text now, matching every
+  other theme's label. No config keys changed, purely a picker/docs reordering.
+  See [`theme`](docs/theme.md#predefined-theme).
 
 ### 🐛 Fixes
 
