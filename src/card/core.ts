@@ -1526,6 +1526,14 @@ class HABase extends HACore {
     const iconAnimation = this._cardView.config?.icon_animation;
     if (!(is.plainObject(iconAnimation) && is.nonEmptyString((iconAnimation as { jinja?: string }).jinja))) return;
     this._cardView.jinjaIconAnimationActive = content;
+    // Every other Jinja setter re-applies whatever layer it just changed
+    // itself (see _applyConditionalClasses's own comment) - this one didn't,
+    // so the new value only ever took visual effect once something else
+    // happened to re-run _applyIconAnimationClasses (e.g. a regular
+    // hass-driven refresh on a standard card, shortly after). A Template
+    // card has no such incidental refresh to piggyback on, so the animation
+    // never started there at all (issue #125 follow-up).
+    this._applyIconAnimationClasses();
   }
 
   static #BREAK_RE = /<br\s*\/?>/gi;

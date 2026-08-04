@@ -461,21 +461,40 @@ function struct(validator: Validator & { _schema?: Record<string, Validator> }, 
 
     if (['top', 'bottom', 'overlay', 'background'].includes(String(result.bar_position))) delete result.bar_size; // avoid conflict
 
-    // Themes/custom_theme whose zones are raw values rather than 0-100%
-    // (e.g. `temperature`'s -50..100°C, `voc`'s 0..50000ppb, or any
-    // custom_theme) need max_value on that same scale, or
-    // bar_color_mode: segment/rainbow collapses to a single color - every
-    // zone but the first gets clamped to zero width once projected onto the
-    // flat schema default of 100 (see ThemeManager.buildGradient's
-    // toValuePercent). Defaulting max_value to the zones' own top bound
-    // (only when the user hasn't set one) keeps the fill and the color
-    // zones on one coherent scale without the user having to know/repeat
-    // that number themselves.
+    // Built-in themes whose zones are raw values rather than 0-100% (e.g.
+    // `temperature`'s -50..100°C, `voc`'s 0..50000ppb, `pm25`) mean the
+    // entity's own real range genuinely is that theme's scale - picking one
+    // of these is already a deliberate, specific choice, so defaulting
+    // max_value to the theme's own top zone bound (only when the user hasn't
+    // set one) is safe and saves having to repeat that number: without it,
+    // the fill percentage itself would be meaningless for a raw value that
+    // routinely exceeds the flat 100 default (e.g. voc's ppb readings).
+    //
+    // min_value deliberately stays at its own default (0 outside
+    // center_zero - see CardConfigHelper._applyCenterZeroMinDefault for the
+    // center_zero/negative-branch case) rather than also being pulled from
+    // the theme's own lowest bound: [min_value, max_value] is the visible
+    // "scope" a color gradient is drawn across (see ThemeManager.
+    // buildGradient), and the assumption by default is that only the
+    // positive branch of a theme like temperature is in view (0..max_value)
+    // unless the user explicitly widens min_value (or enables center_zero).
+    // Pulling min_value down to the theme's own -50 by default would widen
+    // that scope to the theme's full range unconditionally, stretching every
+    // zone (including ones for values the entity may never reach) across the
+    // visible bar instead of just the ones the user's own scope covers.
+    //
+    // custom_theme is deliberately excluded (see issue #129): its zones are
+    // user-defined and may extend past the entity's real range on purpose
+    // (e.g. a color safety-margin zone on a percent sensor), without meaning
+    // to redefine max_value - and unlike a built-in theme choice, there's no
+    // reliable signal here that the zones' top bound is the entity's real
+    // range rather than just a color boundary. A custom_theme user whose
+    // entity's real range isn't 0-100 should set max_value themselves, same
+    // as for any other config value.
     if (is.nullish(result.max_value)) {
       const theme = THEME[result.theme as keyof typeof THEME];
-      const zones = theme && theme.percent === false ? theme.style : result.custom_theme;
-      if (is.nonEmptyArray(zones)) {
-        const maxes = (zones as { max?: unknown }[]).map((zone) => zone.max).filter(is.number);
+      if (theme && theme.percent === false && is.nonEmptyArray(theme.style)) {
+        const maxes = theme.style.map((zone) => zone.max).filter(is.number);
         if (maxes.length) result.max_value = Math.max(...maxes);
       }
     }

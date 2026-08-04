@@ -204,9 +204,13 @@ your interface with minimal effort.
 > (`temperature`, `voc`, `pm25`) define their zones in real-world units instead
 > — see each one's own table. For these, `max_value` automatically defaults to
 > that theme's own highest zone bound instead of `100` whenever it's left unset,
-> so `theme: voc` with no other config already fills and colors correctly. See
-> [`max_value`](configuration.md#max_value) for the full explanation and how to
-> override it.
+> so `theme: voc` with no other config already fills and colors correctly -
+> `min_value` stays `0` by default (the theme's positive branch), unless
+> `center_zero` is enabled, in which case its negative branch defaults to the
+> theme's own lowest zone bound instead. See
+> [`max_value`](configuration.md#max_value) for the full explanation (including
+> the `[min_value, max_value]` "scope" `segment`/`rainbow` colors get projected
+> across) and how to override it.
 
 <a id="optimal-high"></a>
 
@@ -667,6 +671,17 @@ custom_theme:
 > Zones don't need to be contiguous or declared in order — see
 > [`custom_theme`](configuration.md#custom_theme) in the configuration reference
 > for exactly how gaps, overlaps, and incomplete zones behave.
+>
+> Unlike the built-in real-world-unit themes above, `custom_theme` never changes
+> [`max_value`](configuration.md#max_value)'s default — even if a zone's `max`
+> goes past it (e.g. a top zone up to `120` as a color safety-margin on a `%`
+> sensor). `min_value`/`max_value` (`0`/`100` unless you set them) still control
+> the fill percentage on their own, and `segment`/`rainbow` colors are projected
+> onto that same `[min_value, max_value]` scope, same as any theme - if your
+> zones' own scale doesn't match it, the parts of your zones outside that scope
+> are clipped or omitted, not stretched to fit. Set `min_value`/`max_value`
+> yourself to match your zones' scale if your entity's real range isn't
+> `0`-`100`.
 
 ### `bar_color_mode`
 

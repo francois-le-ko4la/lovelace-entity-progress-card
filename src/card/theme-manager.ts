@@ -237,10 +237,16 @@ class ThemeManager {
   // local 100% at its full edge (at the scale's own 0%/min) - deliberately
   // reversed from the positive arm's (zeroPercent, 100), since the arm grows
   // toward the opposite end of the scale.
-  // `valueRange` is the bar's own min_value/max_value - needed to convert a
+  // `valueRange` is the bar's own min_value/max_value - the visible "scope" a
   // non-percentage theme's zone bounds (e.g. THEME.temperature's -50..100,
-  // real degrees, `percent: false`) into the same 0-100% space fillPercent
-  // and `window` already use. Without this, a value-based theme's zones were
+  // real degrees, `percent: false`, or any custom_theme) get projected onto,
+  // converting them into the same 0-100% space fillPercent/window already
+  // use. This is deliberately the bar's own scope, not the theme's full own
+  // range: by default (min_value 0, non-center_zero) only the theme's
+  // positive branch is in view, so only the zones inside [0, max_value] get
+  // stretched across the visible bar - widening min_value (or enabling
+  // center_zero, see ViewBase.themeDivergingGradient) widens what's in scope
+  // accordingly. Without this conversion, a value-based theme's zones were
   // compared directly against fillPercent as if they were already
   // percentages - meaningless for any theme whose bounds aren't already in
   // 0-100 (isBasedOnPercentage catches this correctly for the icon/bar color
@@ -293,7 +299,17 @@ class ThemeManager {
           max: Math.min(100, Math.max(localMin, localMax)),
         };
       })
-      .filter((level) => (level.max ?? 0) > (level.min ?? 0));
+      .filter((level) => (level.max ?? 0) > (level.min ?? 0))
+      // A reversed window (the negative arm's [zeroPercent, 0], see this
+      // method's own comment) inverts position order relative to
+      // currentStyle's own value-ascending order - e.g. temperature's indigo
+      // (lowest value) ends up at the highest local position. CSS
+      // linear-gradient stops must be non-decreasing or the browser clamps
+      // every stop after an out-of-order one up to that same position,
+      // collapsing everything past it into one flat color. Sorting by local
+      // position (a no-op for the non-reversed window, already in order)
+      // keeps stops monotonic regardless of window direction.
+      .sort((a, b) => (a.min ?? 0) - (b.min ?? 0));
 
     const visible = style.filter((level) => (level.min ?? 0) < fillPercent);
     if (visible.length === 0) return null;
@@ -305,7 +321,20 @@ class ThemeManager {
     // gradient's own direction needs to follow, not this math.
     const offset = 100 - fillPercent;
     const toElemPos = (b: number) => `${(b + offset).toFixed(2)}%`;
-    const direction = isVertical ? 'to top' : 'to right';
+    // A reversed window (center_zero's negative arm, [zeroPercent, 0]) uses
+    // the opposite CSS shift direction from every other case (see
+    // styles.ts's `.negative` vs `.positive`/plain `.inner` transforms: the
+    // negative arm's box slides the *other* way to grow from center toward
+    // the low end) - its own "tip" (current value) and "anchor" (zeroValue)
+    // end up on the box's opposite edges from what toElemPos above assumes.
+    // Rather than re-deriving toElemPos/the stop-building logic per
+    // direction, mirroring the gradient's own CSS direction achieves the
+    // same result: every position this function computes lands exactly
+    // where it would for a normal window, just reflected - verified against
+    // concrete pixel math for center_zero + a real-value theme's negative
+    // arm (issue #129 follow-up).
+    const isReversedWindow = windowEnd < windowStart;
+    const direction = isReversedWindow ? (isVertical ? 'to bottom' : 'to left') : isVertical ? 'to top' : 'to right';
     // color is optional per zone now (see types.customTheme) — a color-less
     // zone falls back the same way iconColor/barColor already do: the entity's
     // own negotiated color (e.g. a cover is pink open / grey closed, see

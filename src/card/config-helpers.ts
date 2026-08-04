@@ -8,6 +8,7 @@ import {
   META,
   HA_CONTEXT,
   CARD,
+  THEME,
   SEV,
   MIN_VALUE_ENTITY_PATH,
   MAX_VALUE_ENTITY_PATH,
@@ -365,8 +366,19 @@ class CardConfigHelper extends BaseConfigHelper {
   // (or absent, i.e. the 100 default); an entity/jinja-based max can't be
   // mirrored at this config-negotiation stage. An explicit min_value (even 0)
   // is always left untouched.
+  //
+  // A built-in theme with real-world value zones (temperature, voc, pm25)
+  // overrides the symmetric mirror with the theme's own lowest zone bound
+  // instead (e.g. -50 for temperature, not -max_value) - the theme itself
+  // already defines how far its negative branch realistically extends, and
+  // that's a better default than an arbitrary mirror of max_value.
   static _applyCenterZeroMinDefault(config: LovelaceConfig, normalized: LovelaceConfig): LovelaceConfig {
     if (!config?.center_zero || !is.nullish(config?.min_value)) return normalized;
+    const theme = THEME[config.theme as keyof typeof THEME];
+    if (theme && theme.percent === false && is.nonEmptyArray(theme.style)) {
+      const mins = theme.style.map((zone) => zone.min).filter(is.number);
+      if (mins.length) return { ...normalized, min_value: Math.min(...mins) };
+    }
     const maxForSymmetry = is.number(normalized?.max_value) ? normalized.max_value : CARD.config.value.max;
     return { ...normalized, min_value: -maxForSymmetry };
   }

@@ -274,6 +274,24 @@ views:
           - type: heading
             heading: Card, Badge, Template & Feature — the standard set
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              name: entity-progress-card
+              ```
+              The same entity, shown through the three basic building blocks:
+              the standalone **card**, a Tile **feature** (bare bar, no
+              frame - HA's own tile already provides one), and the
+              Jinja-driven **template** variant (icon/name/percent all
+              resolved from templates instead of reading the entity
+              directly, so it works without a bound `entity` at all).
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: entity-progress-card
@@ -357,6 +375,24 @@ views:
           - type: heading
             heading: unit — with/without, with/without space
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_temperature
+              unit: kW              # override the entity's own unit_of_measurement
+              unit_spacing: space   # auto | space | no-space
+              hide: [unit]          # or drop the unit entirely
+              ```
+              What varies below: the default (native unit, spaced), an
+              overridden unit, `no-space`/`space` spacing, hiding the unit
+              via `hide`, and an empty `unit: ""` (blank text, no space
+              either).
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_temperature
             name: Default (native unit, spaced)
@@ -387,6 +423,22 @@ views:
           - type: heading
             heading: decimal — automatic, 1, 2, 3
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_temperature
+              unit: °C
+              decimal: 1   # left unset: derived automatically from the entity
+              ```
+              `decimal` controls how many digits the displayed value shows -
+              left unset it's derived automatically (from the entity's own
+              precision, or a sensible per-type default).
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_temperature
             name: decimal unset (automatic)
@@ -411,6 +463,29 @@ views:
           - type: heading
             heading: Content & text
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              hide: [icon, unit]   # any of: icon, name, unit, secondary_info, value
+              state_content: [state, last_changed]
+              multiline: true
+              custom_info: "Feels like {{ states(entity) | float - 2 }} °C"
+              name_info: "{% if states(entity) | float < 20 %}⚠️ low{% endif %}"
+              reverse_secondary_info_row: true
+              ```
+              What varies below: hiding individual parts (`hide`), swapping
+              what `secondary_info` shows (`state_content`), a second line
+              (`multiline` + `custom_info`), a small aside next to the name
+              (`name_info`), flipping the secondary-info row's order, and
+              text placed directly over the bar (`bar_position: background`/
+              `overlay` + `text_shadow`/`bar_single_line`).
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: "hide: [icon, unit]"
@@ -444,11 +519,6 @@ views:
             name_info: "{% if states(entity) | float < 20 %}⚠️ low{% endif %}"
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
-            name: badge_icon / badge_color (Jinja, on a plain card)
-            badge_icon: "{% if states(entity) | float > 20 %}mdi:alert{% endif %}"
-            badge_color: red
-          - type: custom:entity-progress-card-dev
-            entity: input_number.epb_demo_battery
             name: "bar_position: background + text_shadow"
             bar_position: background
             text_shadow: true
@@ -464,6 +534,26 @@ views:
           - type: heading
             heading: More data sources
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: sun.sun
+              attribute: elevation   # read an attribute instead of the state
+              max_value:
+                entity: input_number.epb_demo_battery_reserved   # ...or another entity
+              min_value:
+                jinja: "{{ 5 }}"                                 # ...or a Jinja template
+              ```
+              `entity`/`attribute`/`min_value`/`max_value` don't have to be a
+              plain number or the bare state - an attribute on the same
+              entity, another entity's own state, or a Jinja template all
+              work the same way.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: sun.sun
             attribute: elevation
@@ -502,6 +592,26 @@ views:
           - type: heading
             heading: Templates — icon/color/bar_color in Jinja, fast_refresh
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-template-dev
+              entity: input_number.epb_demo_battery
+              percent: "{{ states(entity) }}"
+              icon: "{% if states(entity) | float > 20 %}mdi:battery-alert{% else %}mdi:battery{% endif %}"
+              color: "{% if states(entity) | float < 20 %}red{% else %}green{% endif %}"
+              fast_refresh: true   # force a render every tick (countdowns)
+              ```
+              The **template** card resolves `icon`/`color`/`bar_color`/
+              `percent` from Jinja instead of reading the entity directly.
+              `fast_refresh: true` keeps a ticking countdown accurate every
+              second - HA only pushes a fresh template render once a minute
+              on its own otherwise.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-template-dev
             entity: input_number.epb_demo_battery
             name: icon (Jinja)
@@ -542,6 +652,31 @@ views:
           - type: heading
             heading: Actions & badge min_width
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              tap_action:
+                action: more-info
+              hold_action:
+                action: none
+              double_tap_action:
+                action: toggle
+              icon_tap_action:        # the icon can have its own, separate actions
+                action: navigate
+                navigation_path: /config/helpers
+              ```
+              `tap_action`/`hold_action`/`double_tap_action` on the card
+              itself, and a fully separate set on just the icon
+              (`icon_tap_action`/`icon_hold_action`/`icon_double_tap_action`)
+              - plus `name` as a composed list of tokens instead of a plain
+              string.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: "tap: more-info / hold: none / double: toggle"
@@ -570,10 +705,6 @@ views:
               - type: text
                 text: "name: composition — "
               - type: entity
-          - type: custom:entity-progress-badge-dev
-            entity: input_number.epb_demo_battery
-            name: "min_width: 50% (badge-specific, #124)"
-            min_width: 50%
       - type: grid
         cards:
           - type: heading
@@ -669,6 +800,110 @@ views:
               columns: 6
               rows: 1
         column_span: 2
+      - type: grid
+        cards:
+          - type: heading
+            heading: Error / edge-case states
+            heading_style: title
+          - type: custom:entity-progress-card-dev
+            entity: sensor.epb_demo_unavailable
+            name: unavailable entity
+          - type: custom:entity-progress-card-dev
+            entity: sensor.epb_demo_unknown
+            name: unknown state
+          - type: custom:entity-progress-card-dev
+            entity: sensor.epb_demo_unicorn_speed
+            name: "entity doesn't exist"
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            attribute: this_attribute_does_not_exist
+            name: attribute not found
+      - type: grid
+        cards:
+          - type: heading
+            heading: "Compare with tile — different device classes"
+            heading_style: title
+          - type: custom:entity-progress-card-dev
+            entity: fan.epb_demo_fan
+            name: fan
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: tile
+            entity: fan.epb_demo_fan
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: custom:entity-progress-card-dev
+            entity: sensor.epb_demo_battery_ev
+            name: battery
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: tile
+            entity: sensor.epb_demo_battery_ev
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: custom:entity-progress-card-dev
+            entity: cover.epb_demo_cover
+            name: cover
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: tile
+            entity: cover.epb_demo_cover
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: custom:entity-progress-card-dev
+            entity: light.epb_demo_light
+            name: light
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: tile
+            entity: light.epb_demo_light
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: custom:entity-progress-card-dev
+            entity: timer.epb_demo_timer
+            name: timer
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: tile
+            entity: timer.epb_demo_timer
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: custom:entity-progress-card-dev
+            entity: counter.epb_demo_counter
+            name: "counter (tap +1 / hold -1 / dbl reset)"
+            tap_action:
+              action: call-service
+              service: counter.increment
+              target:
+                entity_id: counter.epb_demo_counter
+            hold_action:
+              action: call-service
+              service: counter.decrement
+              target:
+                entity_id: counter.epb_demo_counter
+            double_tap_action:
+              action: call-service
+              service: counter.reset
+              target:
+                entity_id: counter.epb_demo_counter
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: tile
+            entity: counter.epb_demo_counter
+            grid_options:
+              columns: 6
+              rows: 1
     badges:
       - type: entity
         show_name: false
@@ -688,6 +923,11 @@ views:
         entity: input_number.epb_demo_battery
         name: "min_width: 50% (badge-specific, #124)"
         min_width: 50%
+      - type: custom:entity-progress-badge-dev
+        entity: input_number.epb_demo_battery
+        name: "badge_icon / badge_color (Jinja)"
+        badge_icon: "{% if states(entity) | float > 20 %}mdi:alert{% endif %}"
+        badge_color: red
     cards: []
     show_icon_and_title: true
   - title: EP Demo - Theme, watermarks & effects
@@ -1263,8 +1503,131 @@ views:
       - type: grid
         cards:
           - type: heading
+            heading: "custom_theme — use cases"
+            heading_style: title
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: "custom_theme: color only"
+            custom_theme:
+              - min: 0
+                max: 30
+                color: red
+              - min: 30
+                max: 70
+                color: orange
+              - min: 70
+                max: 100
+                color: green
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: "custom_theme: color + icon"
+            custom_theme:
+              - min: 0
+                max: 30
+                color: red
+                icon: mdi:emoticon-sad
+              - min: 30
+                max: 70
+                color: orange
+                icon: mdi:emoticon-neutral
+              - min: 70
+                max: 100
+                color: green
+                icon: mdi:emoticon-happy
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_temp_hot
+            name: custom_theme -20/40
+            min_value: -20
+            max_value: 40
+            bar_color_mode: rainbow
+            custom_theme:
+              - min: -20
+                max: 0
+                color: blue
+              - min: 0
+                max: 20
+                color: green
+              - min: 20
+                max: 40
+                color: red
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_temp_negative
+            name: "custom_theme +/-: standard card"
+            min_value: -20
+            max_value: 40
+            bar_color_mode: rainbow
+            custom_theme:
+              - min: -20
+                max: 0
+                color: blue
+              - min: 0
+                max: 20
+                color: green
+              - min: 20
+                max: 40
+                color: red
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_temp_negative
+            name: "custom_theme +/-: center_zero (zero = 0)"
+            center_zero: true
+            min_value: -20
+            max_value: 40
+            bar_color_mode: rainbow
+            custom_theme:
+              - min: -20
+                max: 0
+                color: blue
+              - min: 0
+                max: 20
+                color: green
+              - min: 20
+                max: 40
+                color: red
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_temp_negative
+            name: "custom_theme +/-: center_zero (zero = 20)"
+            center_zero:
+              value: 20
+            min_value: -20
+            max_value: 40
+            bar_color_mode: rainbow
+            custom_theme:
+              - min: -20
+                max: 0
+                color: blue
+              - min: 0
+                max: 20
+                color: green
+              - min: 20
+                max: 40
+                color: red
+      - type: grid
+        cards:
+          - type: heading
             heading: center_zero — every variant
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_power
+              center_zero: true            # 50/50 split around 0, or:
+              center_zero:
+                value: 1000                 # offset the zero point
+                growth_percent: true        # arm width = magnitude, not a fixed half-scale
+              min_value: -3000
+              max_value: 3000
+              ```
+              Every `center_zero` variant: the default 50/50 split, an
+              offset zero point, `growth_percent` sizing, combined with a
+              theme (`segment`/`rainbow`), a watermark, `layout: vertical`,
+              and `bar_stack: { mode: net }` for a single signed balance
+              from two always-positive entities.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_power
             name: "center_zero: true (50/50 split)"
@@ -1356,8 +1719,8 @@ views:
             bar_segments: 10
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
-            name: "bar_max_width: 150px"
-            bar_max_width: 150px
+            name: "bar_max_width: 80px"
+            bar_max_width: 80px
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: "bar_orientation: rtl"
@@ -1395,6 +1758,21 @@ views:
           - type: heading
             heading: "layout: horizontal — every bar_position"
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              layout: horizontal
+              bar_position: default   # default | below | top | bottom | overlay | background
+              ```
+              Same entity, only `bar_position` changes below - where the
+              progress bar sits relative to the name/value text.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: default
@@ -1431,6 +1809,21 @@ views:
           - type: heading
             heading: "layout: vertical — every bar_position"
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              layout: vertical
+              bar_position: default   # default | below | top | bottom | overlay | background
+              ```
+              Same as the horizontal set above, but `layout: vertical` -
+              every `bar_position` still applies, just along the other axis.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: default
@@ -1548,6 +1941,23 @@ views:
           - type: heading
             heading: Série 1 — horizontal, hide progressif (secondary → icon → name)
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              layout: horizontal
+              hide: [secondary_info]   # then + icon, then + name below
+              ```
+              `hide` items strip progressively: standard, then without
+              `secondary_info`, then also without `icon`, then also without
+              `name` (bar only) - see how the card reclaims the freed-up
+              space at each step.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: Standard
@@ -1579,6 +1989,21 @@ views:
           - type: heading
             heading: Série 2 — vertical, hide progressif (secondary → icon → name)
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              layout: vertical
+              hide: [secondary_info]   # then + icon, then + name below
+              ```
+              Same progressive `hide` sequence as the horizontal set above,
+              with `layout: vertical`.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: Standard
@@ -1622,6 +2047,21 @@ views:
           - type: heading
             heading: Série 3 — horizontal, bar_size xsmall → xlarge
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              layout: horizontal
+              bar_size: medium   # xsmall | small | medium | large | xlarge
+              ```
+              Every `bar_size` step, `layout: horizontal`, default
+              `bar_position`.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: xsmall
@@ -1658,6 +2098,23 @@ views:
               Série 4 — horizontal, bar_position: below, bar_size xsmall →
               xlarge
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              layout: horizontal
+              bar_position: below
+              bar_size: medium   # xsmall | small | medium | large | xlarge
+              ```
+              Same `bar_size` sweep as Série 3, with `bar_position: below`
+              instead of the default - the bar drops to its own row under
+              the text instead of sharing one with it.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: xsmall
@@ -1694,6 +2151,22 @@ views:
           - type: heading
             heading: Série 5 — vertical, bar_size xsmall → xlarge
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              layout: vertical
+              bar_size: medium   # xsmall | small | medium | large | xlarge
+              ```
+              Same `bar_size` sweep, `layout: vertical` - shown at two
+              different row heights (2 vs 3 rows) to see how each size
+              adapts to the extra space.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: xsmall
@@ -1756,6 +2229,22 @@ views:
           - type: heading
             heading: "Série 6 — vertical, bar_position: below, bar_size xsmall → xlarge"
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              layout: vertical
+              bar_position: below
+              bar_size: medium   # xsmall | small | medium | large | xlarge
+              ```
+              Same `bar_size` sweep as Série 5, with `bar_position: below`
+              instead of the default.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: xsmall
@@ -1833,6 +2322,27 @@ views:
           - type: heading
             heading: "-feature / -multi-feature"
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: tile
+              entity: sensor.sun_next_midnight
+              features:
+                - type: custom:entity-progress-feature-dev
+                  entity: input_number.epb_demo_printer_ink_cyan
+                  bar_size: xlarge
+              ```
+              A plain `entity-progress-feature` is a bare bar attached to a
+              Tile card's own row - no frame, no name/value of its own
+              (that's the Tile's job). `entity-progress-multi-feature`
+              stacks several of these into one row (see below);
+              `entity-progress-multi-card` does the same as a standalone
+              card instead.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: tile
             entity: sensor.sun_next_midnight
             features:
@@ -1854,7 +2364,7 @@ views:
               columns: 6
               rows: 2
             entity: input_boolean.epb_demo_printer
-            name: "Multi-feature use case: printer ink levels"
+            name: "Printer ink levels - without show_value"
             features:
               - type: custom:entity-progress-multi-feature-dev
                 bar_size: xsmall
@@ -1872,12 +2382,50 @@ views:
               min_columns: 4
               columns: 6
               rows: 2
-            entity: input_number.epb_demo_power
+            entity: input_boolean.epb_demo_printer
+            name: "Printer ink levels - with show_value"
+            features:
+              - type: custom:entity-progress-multi-feature-dev
+                bar_size: xsmall
+                show_value: true
+                entities:
+                  - entity: input_number.epb_demo_printer_ink_black
+                    bar_color: black
+                  - entity: input_number.epb_demo_printer_ink_cyan
+                    bar_color: cyan
+                  - entity: input_number.epb_demo_printer_ink_magenta
+                    bar_color: magenta
+                  - entity: input_number.epb_demo_printer_ink_yellow
+                    bar_color: yellow
+          - type: tile
+            grid_options:
+              min_columns: 4
+              columns: 6
+              rows: 2
+            entity: sensor.epb_demo_energy_net
+            icon: mdi:transmission-tower
+            name: "Energy - without show_value"
+            features:
+              - type: custom:entity-progress-multi-feature-dev
+                bar_size: medium
+                entities:
+                  - entity: input_number.epb_demo_grid_consumption
+                    name: Consumption
+                    bar_color: blue
+                    max_value: 3000
+                  - entity: input_number.epb_demo_solar_production
+                    name: Production
+                    bar_color: green
+                    max_value: 3000
+          - type: tile
+            entity: sensor.epb_demo_energy_net
             icon: mdi:transmission-tower
             name: Energy (consumption vs production)
             features:
               - type: custom:entity-progress-multi-feature-dev
                 bar_size: medium
+                show_value: true
+                decimal: 0
                 entities:
                   - entity: input_number.epb_demo_grid_consumption
                     name: Consumption
@@ -1895,10 +2443,20 @@ views:
                 max_value: 3000
                 bar_color: green
                 bar_stack:
+                  mode: net
                   entities:
                     - entity: input_number.epb_demo_grid_consumption
                       subtract: true
                       color: blue
+            card_mod: # or: uix:
+              style: |
+                :host {
+                  --epb-multi-value-width: 45px;
+                }
+            grid_options:
+              min_columns: 4
+              columns: 6
+              rows: 2
       - type: grid
         cards:
           - type: heading
@@ -2122,6 +2680,23 @@ views:
           - type: heading
             heading: "#31 — watermark: only low defined, no phantom high line"
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              watermark:
+                type: line
+                low: 30
+                low_color: blue
+              ```
+              Only `low` is set, no `high`. Check: a single line renders, not
+              a phantom second one for the unset `high` bound.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: "#31 low only"
@@ -2134,6 +2709,21 @@ views:
           - type: heading
             heading: "#34 — percent decimal defaults to 0, not 2"
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-template-dev
+              entity: input_number.epb_demo_battery
+              percent: "{{ states(entity) }}"
+              ```
+              No `decimal` set on a template card driven by a Jinja
+              `percent`. Check: the value renders as a whole number (0
+              decimals), not with 2.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-template-dev
             entity: input_number.epb_demo_battery
             name: "#34 no decimal override"
@@ -2143,6 +2733,22 @@ views:
           - type: heading
             heading: "#41 — min_value == max_value shows Div0, doesn't crash"
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              min_value: 50
+              max_value: 50
+              ```
+              A degenerate range (`min_value == max_value`, division-by-zero
+              territory). Check: the card shows "Div0" gracefully instead of
+              crashing or rendering `NaN`.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: "#41 degenerate range"
@@ -2153,6 +2759,21 @@ views:
           - type: heading
             heading: "#63 — hide: [name] doesn't hide the bar (horizontal)"
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              layout: horizontal
+              hide: [name]
+              ```
+              Hiding `name` alone on a horizontal card. Check: the bar still
+              renders - it used to disappear along with the name.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: "#63 hide name only"
@@ -2164,6 +2785,29 @@ views:
           - type: heading
             heading: "#68 — disable_unit: true picks the right custom_theme zone"
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_temperature
+              disable_unit: true
+              min_value: -20
+              max_value: 40
+              custom_theme:
+                - min: -20
+                  max: 20
+                  color: red
+                - min: 20
+                  max: 40
+                  color: purple
+              ```
+              `disable_unit: true` used to shift which `custom_theme` zone
+              matched. Check: a reading below 20 shows red, not purple.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_temperature
             name: "#68 should be red (< 20)"
@@ -2182,12 +2826,41 @@ views:
           - type: heading
             heading: "#75 — bar_effect: radius, every corner (small & medium)"
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              bar_size: small
+              bar_effect: [radius]
+              ```
+              `bar_effect: radius` should round every corner, at every
+              `bar_size` - not just some of them.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: "#75 small"
             bar_size: small
             bar_effect:
               - radius
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              bar_size: medium
+              bar_effect: [radius]
+              ```
+              Same check, at `bar_size: medium`.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: "#75 medium"
@@ -2199,6 +2872,23 @@ views:
           - type: heading
             heading: "#99 — overlay text + reverse_secondary_info_row"
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              bar_position: overlay
+              reverse_secondary_info_row: true
+              bar_size: large
+              ```
+              Overlay text combined with a reversed secondary-info row.
+              Check: text stays readable and correctly positioned, not
+              overlapping or reversed oddly.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: "#99"
@@ -2210,6 +2900,20 @@ views:
           - type: heading
             heading: "#106 — state_content: [last_updated] resolves, not Unknown"
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              state_content: [last_updated]
+              ```
+              `state_content: [last_updated]` alone, no `state`. Check: it
+              shows a real relative time, not "Unknown".
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: "#106"
@@ -2220,6 +2924,20 @@ views:
           - type: heading
             heading: "#121 — percent > 100% renders fully filled, not glitched"
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-template-dev
+              entity: input_number.epb_demo_battery
+              percent: "150"
+              ```
+              A `percent` above 100. Check: the bar renders fully filled
+              (clamped), not visually glitched or overflowing.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-template-dev
             entity: input_number.epb_demo_battery
             name: "#121"
@@ -2229,6 +2947,24 @@ views:
           - type: heading
             heading: "#127/#125 — timer active-state icon_animation + Jinja trigger"
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: timer.epb_demo_timer
+              icon_animation: washing_machine
+              tap_action:
+                action: call-service
+                service: timer.start
+              ```
+              `icon_animation: washing_machine` should trigger from the
+              timer's own active state. Check: the icon animates once you
+              start the timer (tap the card).
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: timer.epb_demo_timer
             name: "#127 washing_machine (start the timer)"
@@ -2239,6 +2975,23 @@ views:
               target:
                 entity_id: timer.epb_demo_timer
             icon: mdi:washing-machine
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              icon_animation:
+                effect: battery_charging
+                jinja: "{{ states('input_number.epb_demo_battery') | float > 20 }}"
+              ```
+              `icon_animation` driven by a Jinja condition instead of the
+              entity's own active/inactive state. Check: the animation
+              follows the Jinja result, not the automatic detection.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: "#125 Jinja-triggered animation"
@@ -2250,12 +3003,43 @@ views:
           - type: heading
             heading: "#129/#133 — hide: name in horizontal doesn't leave a gap"
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              layout: horizontal
+              hide: [name]
+              ```
+              Hiding `name` on a horizontal card used to leave an empty gap
+              instead of shrinking. Check: no dead space where the name used
+              to be.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: "#129 hide name, no gap"
             layout: horizontal
             hide:
               - name
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              bar_size: xlarge
+              hide: [icon]
+              ```
+              `bar_size: xlarge` with the icon hidden used to get squeezed
+              into a single grid row. Check: the card gets its full 2 rows.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: "#133 xlarge + hidden icon, full 2 rows"
@@ -2265,6 +3049,44 @@ views:
             grid_options:
               columns: 6
               rows: 2
+      - type: grid
+        cards:
+          - type: heading
+            heading: "#129 follow-up — center_zero negative arm: theme gradient order/direction"
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_temp_negative
+              theme: temperature
+              bar_color_mode: rainbow
+              center_zero:
+                value: 100
+                growth_percent: false
+              min_value: -20
+              ```
+              `center_zero`'s negative arm with a theme + `rainbow` used to
+              render a single flat color instead of a gradient. Check: the
+              negative arm fades through its zones properly.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_temp_negative
+            theme: temperature
+            name: temperature
+            bar_color_mode: rainbow
+            icon: mdi:book
+            center_zero:
+              value: 100
+              growth_percent: false
+            min_value: -20
+            grid_options:
+              columns: 12
+              rows: 1
     subview: false
     cards: []
     badges:
@@ -2300,6 +3122,29 @@ views:
           - type: heading
             heading: Battery
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:auto-entities
+              filter:
+                include:
+                  - attributes:
+                      device_class: battery
+                    options:
+                      type: custom:entity-progress-card-dev
+                      theme: battery_adaptive
+                      bar_color_mode: rainbow
+                      icon_animation: battery_charging
+              ```
+              `auto-entities` (a separate HACS card) discovers every
+              `device_class: battery` entity and renders one
+              `entity-progress-card` per match - `theme: battery_adaptive`
+              reacts to charging state on its own.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:auto-entities
             filter:
               include:
@@ -2328,6 +3173,26 @@ views:
           - type: heading
             heading: Printer (#126 / @EDelsman)
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: tile
+              entity: input_boolean.epb_demo_printer
+              features:
+                - type: custom:entity-progress-multi-feature-dev
+                  entities:
+                    - entity: input_number.epb_demo_printer_ink_black
+                      bar_color: black
+                    # ...one entry per cartridge
+              ```
+              Real-world use case from issue #126 - one row per ink
+              cartridge, stacked with `entity-progress-multi-feature` under
+              a single Tile.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: tile
             grid_options:
               min_columns: 4
@@ -2350,6 +3215,24 @@ views:
           - type: heading
             heading: Sunset (#60 / @Duncan1106)
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-template-dev
+              entity: sun.sun
+              name: "{{ ... next rise/set time ... }}"
+              percent: "{{ ... % elapsed of the current day/night ... }}"
+              fast_refresh: true
+              ```
+              Real-world use case from issue #60 - `name`/`color`/
+              `bar_color`/`secondary`/`percent` all computed from `sun.sun`
+              plus its `sensor.sun_next_rising`/`sun_next_setting`, with
+              `fast_refresh` keeping the countdown ticking every second.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-template-dev
             entity: sun.sun
             name: >
@@ -2435,6 +3318,29 @@ views:
           - type: heading
             heading: Maintenance days (hold/double tap)
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: sensor.epb_demo_maintenance_days
+              bar_orientation: rtl
+              theme: critical_when_low
+              double_tap_action:
+                action: call-service
+                service: script.epb_demo_reset_maintenance
+              hold_action:
+                action: call-service
+                service: script.epb_demo_set_maintenance_near_due
+              ```
+              Real-world maintenance countdown - double-tap resets the
+              counter (calls a script that stamps "now" as the last
+              maintenance date), hold jumps it near-due to test the
+              `alert_when` threshold without waiting.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
           - type: custom:entity-progress-card-dev
             entity: sensor.epb_demo_maintenance_days
             name: "Real-world: maintenance countdown (double-tap to reset)"

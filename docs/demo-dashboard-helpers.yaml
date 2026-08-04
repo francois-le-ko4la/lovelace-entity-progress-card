@@ -279,3 +279,91 @@ template:
           {{ 35 - (last.date() - now().date()).days | abs }}
         unit_of_measurement: days
         icon: mdi:filter
+      # Net grid balance (production - consumption) for the "Energy" tile's
+      # own header state - previously that tile's `entity:` pointed at
+      # input_number.epb_demo_power, an unrelated free-slider entity (used
+      # elsewhere in the dashboard for other center_zero examples), whose
+      # value had nothing to do with the actual grid/solar bars underneath it
+      # (confusingly, e.g. a static -750W with no connection to either
+      # entity). This computes the real net value instead, so the tile's own
+      # state actually matches what the "Net" feature below it shows.
+      - name: EPB Demo energy net
+        unique_id: epb_demo_energy_net
+        state: >-
+          {{ states('input_number.epb_demo_solar_production') | float(0)
+             - states('input_number.epb_demo_grid_consumption') | float(0) }}
+        unit_of_measurement: "W"
+        icon: mdi:transmission-tower
+      # Error/edge-case demo states (EP Demo - Standard, unit & decimal view,
+      # last section). `availability: false` is the documented way to force a
+      # template entity into unavailable regardless of what `state` would
+      # otherwise compute - there's no equivalent "unknown" key, but a `state`
+      # template that renders to Python's `none` does the same for that state.
+      - name: EPB Demo unavailable
+        unique_id: epb_demo_unavailable
+        state: "{{ states('input_number.epb_demo_battery') }}"
+        unit_of_measurement: "%"
+        availability: "{{ false }}"
+      - name: EPB Demo unknown
+        unique_id: epb_demo_unknown
+        state: "{{ none }}"
+        unit_of_measurement: "%"
+
+  - fan:
+      # Backed by epb_demo_battery (reused as a generic 0-100 slider, same as
+      # the light/cover ones below) rather than a dedicated helper per domain -
+      # these are display-comparison demos (this card vs. a native tile), not
+      # meant to be independently controllable, so turn_on/turn_off/
+      # set_percentage are deliberately no-ops (empty action lists - still
+      # valid HA YAML, just nothing to actually do).
+      - name: EPB Demo fan
+        unique_id: epb_demo_fan
+        state: "{{ 'on' if states('input_number.epb_demo_battery') | float(0) > 0 else 'off' }}"
+        percentage: "{{ states('input_number.epb_demo_battery') | float(0) }}"
+        turn_on: []
+        turn_off: []
+        set_percentage: []
+
+  - cover:
+      - name: EPB Demo cover
+        unique_id: epb_demo_cover
+        device_class: shutter
+        state: "{{ 'open' if states('input_number.epb_demo_battery') | float(0) > 0 else 'closed' }}"
+        position: "{{ states('input_number.epb_demo_battery') | float(0) }}"
+        open_cover: []
+        close_cover: []
+        stop_cover: []
+        set_cover_position: []
+
+  - light:
+      # The card reads `brightness` for the light domain by default (see
+      # HA_CONTEXT.attributeMapping in src/utils/ha-context.ts). Per HA's
+      # actual template light source (homeassistant/components/template/
+      # light.py), supported_color_modes is inferred from which *action* is
+      # configured, not from the read-side template: ColorMode.BRIGHTNESS
+      # specifically comes from `set_level` being present, not `level`. A
+      # `level:` template with no `set_level:` action stays ColorMode.ONOFF
+      # forever, and never reports a `brightness` attribute at all - that's
+      # what was missing before, not a color-mode declaration key (there
+      # isn't one).
+      - name: EPB Demo light
+        unique_id: epb_demo_light
+        state: "{{ 'on' if states('input_number.epb_demo_battery') | float(0) > 0 else 'off' }}"
+        level: "{{ (states('input_number.epb_demo_battery') | float(0) * 2.55) | round(0) }}"
+        turn_on: []
+        turn_off: []
+        set_level: []
+
+# Compare-with-tile section (counter): fan/cover/light above are template:
+# entities (no native YAML helper domain for them); timer and a battery
+# device_class sensor already exist elsewhere in this file
+# (timer.epb_demo_timer, sensor.epb_demo_battery_ev) and are reused as-is.
+# climate was dropped - 'climate' isn't a valid platform under the unified
+# template: integration (confirmed via HA's own config-check error).
+counter:
+  epb_demo_counter:
+    name: EPB Demo counter
+    initial: 5
+    minimum: 0
+    maximum: 20
+    step: 1

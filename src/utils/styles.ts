@@ -480,7 +480,22 @@ ha-card.background {
   flex-grow: var(--current-content-flex-grow);
   flex-shrink: 1;
   width: var(--current-content-width);
-  height: var(--current-content-height);
+  /* min-height, not height (issue #131): --current-content-height is
+     calibrated for the default font scale - at that scale this computes to
+     the exact same box as before. If the OS/browser font-size setting is
+     scaled up (Android's own "Font size" accessibility option, which grows
+     rem-based text without growing anything sized in px), the name/detail
+     rows below need more room than that fixed sum to avoid clipping text
+     mid-glyph; min-height lets this box (and ha-card, already min-height
+     itself) grow to fit them instead of clipping at a boundary sized for
+     the default scale only. Excluded for .vertical.up-orientation.overlay
+     (see its own override below, which also explicitly clears this back to
+     min-height: auto - redeclaring height there isn't enough on its own,
+     min-height stays a *separate* property that keeps applying alongside
+     it, and coexisting with a non-shrinking icon sibling (flex-shrink: 0)
+     that combination measurably changed this flex item's computed size in
+     testing, not just in theory). */
+  min-height: var(--current-content-height);
   gap: var(--current-content-gap, 0);
   min-width: 0;
   overflow: hidden;
@@ -548,6 +563,16 @@ ha-card.type-entities .${CARD.htmlStructure.sections.content.class} {
   --current-content-flex-grow: 1;
   --current-content-width: var(--epb-progress-bar-size, 50%);
   --current-content-height: 100%;
+  /* Exclusion from the base rule's min-height (issue #131, see its own
+     comment): the overlay bar here is position: absolute; height: 100% -
+     that only resolves against a containing block with a *definite*
+     height. min-height: auto (its initial value), not just a re-declared
+     height, actually removes the min-height constraint for this scope -
+     leaving it in place alongside height (even at the same numeric value)
+     measurably changed how this item's size interacted with its
+     non-shrinking icon sibling (flex-shrink: 0) in testing. */
+  min-height: auto;
+  height: var(--current-content-height);
 }
 
 /* === TEXT ELEMENTS === */
@@ -563,8 +588,17 @@ ha-card.type-entities .${CARD.htmlStructure.sections.content.class} {
   width: var(--group-width, auto);
   min-width: var(--group-min-width, 0);
   max-width: var(--group-max-width, none);
-  height: var(--group-height);
-  line-height: var(--group-height); /*fix size*/
+  /* min-height + a real line-height, not one forced equal to it (issue
+     #131, see .content's own comment for the full reasoning): unchanged
+     look at the default font scale, only grows if a larger OS/browser
+     font-size setting needs more room than --group-height to avoid
+     clipping. Not excluded for .vertical.up-orientation.overlay, unlike
+     .content itself: this wrapper isn't a flex item competing with the
+     icon section for space the way .content is (its own parent, .content,
+     stays fixed-size there - see its exclusion), so it can safely grow on
+     its own without the same flex/icon-sharing conflict. */
+  min-height: var(--group-height);
+  line-height: max(var(--group-height), 1.2em);
   overflow: var(--group-overflow, hidden);
   text-align: var(--group-text-align, left);
   box-sizing: var(--group-box-sizing, content-box);
@@ -578,7 +612,16 @@ ha-card.type-entities .${CARD.htmlStructure.sections.content.class} {
 
 .${CARD.htmlStructure.elements.secondaryInfoWrapper.class} {
   --group-height: var(--detail-height);
-  --group-min-width: 45px;
+  /* min(45px, 25%): the 45px floor holds as long as the row (shared with
+     the bar) is wide enough to spare it - once the row itself is narrower
+     than 180px, it caps at a quarter instead. Deliberately lower than the
+     bar's own cap (33%, see .progress-container): on a tight row the text
+     can still fall back on its own ellipsis, but a bar squeezed thinner
+     than its floor loses all its meaning as a progress indicator, so it
+     gets the bigger guaranteed share once both floors can't fit alongside
+     each other and the row's gap (--current-secondary-info-gap, 10px by
+     default, not itself deducted from these percentages). */
+  --group-min-width: min(45px, 25%);
   --group-max-width: 60%;
 }
 
@@ -650,7 +693,14 @@ ha-card:is(.vertical, .xlarge, .below, .bottom, .top, .overlay, .background) .${
   color: var(--text-color);
   font-size: var(--text-font-size);
   font-weight: var(--text-font-weight);
-  height: var(--text-height);
+  /* min-height, not height (issue #131, see .content's own comment for the
+     full reasoning): --text-height stays the floor for the default font
+     scale (unchanged look), but a larger OS/browser font-size setting can
+     grow this box instead of clipping the text mid-glyph against it. Not
+     excluded for .vertical.up-orientation.overlay, unlike .content itself -
+     see .name-content/.secondary-info-wrapper's own comment on why this
+     level doesn't share .content's flex/icon-sharing conflict. */
+  min-height: var(--text-height);
   line-height: var(--text-line-height);
   letter-spacing: var(--text-letter-spacing);
   margin-right: var(--text-margin-right);
@@ -662,7 +712,15 @@ ha-card:is(.vertical, .xlarge, .below, .bottom, .top, .overlay, .background) .${
   --text-font-size: var(--epb-name-font-size, var(--ha-font-size-m));
   --text-font-weight: var(--epb-name-font-weight, var(--ha-font-weight-medium));
   --text-height: var(--name-height);
-  --text-line-height: var(--name-height);
+  /* max(), not a straight swap to a different token (issue #131): forcing
+     line-height to the same fixed px value as the box's own floor clips
+     the text mid-glyph as soon as a larger font-size (OS/browser
+     accessibility scaling) needs a taller line than that floor allows.
+     max() keeps --name-height as an unconditional floor (identical look
+     while nothing is scaled) and only grows past it via the em term
+     (relative to this element's own actual font-size, so it tracks real
+     scaling) once that's genuinely taller. */
+  --text-line-height: max(var(--name-height), 1.2em);
   --text-letter-spacing: var(--epb-name-letter-spacing, var(--name-letter-spacing));
   --text-margin-right: 0;
 }
@@ -678,7 +736,9 @@ ha-card:is(.vertical, .xlarge, .below, .bottom, .top, .overlay, .background) .${
   --text-font-size: var(--epb-detail-font-size, var(--ha-font-size-s));
   --text-font-weight: var(--epb-detail-font-weight, var(--ha-font-weight-body));
   --text-height: var(--detail-height);
-  --text-line-height: var(--detail-height);
+  /* See .name-value's own --text-line-height comment (issue #131) - same
+     max(fixed-floor, em-term) reasoning. */
+  --text-line-height: max(var(--detail-height), 1.2em);
   --text-letter-spacing: var(--epb-detail-letter-spacing, var(--detail-letter-spacing));
   --text-margin-right: 0;
 }
@@ -724,7 +784,12 @@ ha-card:is(.vertical, .xlarge, .below, .bottom, .top, .overlay, .background) .${
   display: flex;
   flex-direction: var(--current-secondary-info-flex-direction);
   align-items: var(--current-secondary-info-align-items);
-  gap: var(--current-secondary-info-gap, var(--spacing));
+  /* min(X, 6%): same shrink-under-pressure idea as the text/bar min-width
+     coupling above - the gap between them (10px by default) holds at its
+     full size while the row can spare it, and gives up a few px of its own
+     once the row gets tight, instead of staying a fixed cost oblivious to
+     how little room the text/bar floors already have to share. */
+  gap: min(var(--current-secondary-info-gap, var(--spacing)), 6%);
   width: var(--current-secondary-info-width, auto);
   min-width: var(--current-secondary-info-min-width, auto);
   justify-content: space-between;
@@ -820,6 +885,22 @@ ha-card.info-multiline {
   justify-content: center;
   align-items: center;
   flex-grow: 1;
+  /* Without this, the bar had no floor at all while its row sibling
+     (.secondary-info-wrapper) already has one - compressing the card
+     horizontally pushed 100% of the squeeze onto the bar (down to a
+     near-invisible sliver) before the text ever gave up any of its own
+     space. min(X, 33%) couples this floor with the text's own (see
+     .secondary-info-wrapper, capped lower at 25% - a squeezed bar loses
+     its whole purpose, a squeezed label still has ellipsis to fall back
+     on): each holds its preferred minimum only while the row can spare it,
+     and caps at its share once it can't. 33%+25% leaves room for the row's
+     own gap (--current-secondary-info-gap, 10px by default) between this
+     and the text, which percentages here don't account for on their own -
+     two floors summing to exactly 100% would leave nothing for it, pushing
+     the bar out past the card's own overflow: hidden by the gap's width.
+     --epb-progress-bar-min-width stays card_mod-overridable for
+     anyone who wants a different balance. */
+  min-width: min(var(--epb-progress-bar-min-width, 30px), 33%);
   height: var(--type-entities-combined-line-height, var(--current-progress-container-height));
 }
 

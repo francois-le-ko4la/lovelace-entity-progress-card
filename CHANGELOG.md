@@ -4,6 +4,144 @@ All notable changes to the Entity Progress Card are documented here, most recent
 first. See [`docs/rc-testing.md`](docs/rc-testing.md) for how to try a release
 candidate safely before it becomes stable.
 
+## What's new (1.6.1-rc3)
+
+### ✨ New
+
+- **`entity-progress-multi-card`/`entity-progress-multi-feature` can now show
+  each entity's own value next to its bar** (`show_value: true`, shared or per
+  item) — a bare bar is enough on its own for something like a printer
+  cartridge, but not for values where the number itself matters (energy in
+  Watts, a tank in liters…). The bar gives up part of its width for the value
+  instead of an overlay - a bare feature bar is already thin enough that
+  overlaid text would fight it for contrast. `decimal`/`unit`/`disable_unit`/
+  `unit_spacing` all work the same as on the standard card.
+  `value_position: left`/`right` (default `left`) picks which side it sits on,
+  and every value takes up the same fixed width instead of sizing to its own
+  text, so bars meant to read as comparable actually line up regardless of digit
+  count. See [`show_value`](docs/configuration.md#multi-show_value).
+
+### 🐛 Fixes
+
+- **`icon_animation: { effect, jinja }` never actually triggered the animation
+  on a Template card** (`entity-progress-card-template` and its badge), even for
+  a template that always resolves `true`. Every other Jinja-driven option
+  re-applies whatever it just changed itself right after resolving (e.g.
+  `min_value`/`max_value` call `_updateCSS()`, `alert_when` calls
+  `_applyAlertClasses()`) - `icon_animation`'s own handler was missing this and
+  only ever set the resolved value, relying on some _other_, unrelated refresh
+  to happen to re-check it afterward. A standard card gets one soon enough from
+  its regular entity-driven updates, masking the bug there, but a Template card
+  has no such incidental refresh to piggyback on, so the animation never
+  started. It now re-applies its own CSS classes right after resolving, the same
+  way every other option already does.  
+  ➡️ [Enhancement]: template/condition to trigger the icon animation directly
+  #125 (@FoxP)
+
+- **`center_zero`'s negative arm with `bar_color_mode: segment`/`rainbow` and a
+  theme (or `custom_theme`) could render as a single flat color instead of a
+  gradient** — e.g. `theme: temperature` with `center_zero: { value: 20 }`
+  showed solid blue (or another single theme color) across the whole negative
+  arm instead of fading through the zones its actual range covers. Two
+  independent bugs combined here, both pre-existing and never exercised until
+  now (not related to the `min_value`/`max_value`/theme-scope changes above):
+  - The negative arm's projection window is reversed (it grows away from center,
+    toward the scale's own low end), which flips the zones' position order
+    relative to their value-ascending declaration order (e.g. temperature's
+    coldest zone ends up at the _highest_ local position). CSS `linear-gradient`
+    clamps any stop whose position is lower than the previous one up to that
+    same position — once one out-of-order stop hit, every stop after it
+    collapsed onto it. Zones are now sorted by their projected local position
+    before building gradient stops (a no-op for the normal, non-reversed
+    direction), keeping stops properly ordered either way.
+  - Separately, the negative arm's CSS grows in the opposite direction from
+    every other bar (it slides toward the low end instead of away from it),
+    which puts its "current value" and "zeroValue" ends on the opposite box
+    edges from what the gradient math assumes - the real color transitions ended
+    up computed entirely outside the visible portion, leaving only a single
+    held-flat color showing. The gradient is now painted in the mirrored CSS
+    direction for this arm specifically, which corrects this without changing
+    any of the position math itself.
+- **On a compressed horizontal card, the progress bar could shrink to a
+  near-invisible sliver (or get pushed out past the card's edge entirely) while
+  the name/secondary-info text next to it never gave up any of its own space.**
+  The bar had no minimum width at all, while the text already had one (45px) -
+  every bit of horizontal squeeze landed on the bar alone instead of being
+  shared. The two now hold coupled, proportional floors: the bar keeps a `30px`
+  minimum (`--epb-progress-bar-min-width`, overridable via `card_mod` for anyone
+  who wants a different balance) and the text keeps `45px`, but each caps at a
+  fraction of the row (33% for the bar, 25% for the text - the bar gets the
+  bigger guaranteed share, since a squeezed bar loses its whole purpose as a
+  progress indicator while squeezed text still has ellipsis to fall back on)
+  once the row can't fit both floors at once, so they can never sum past the
+  row's width and force one or the other to overflow. The gap between them (10px
+  by default) shrinks the same way under pressure, freeing a few more pixels
+  right where the text and bar floors are already fighting for room.
+- **The card could clip `name`/`secondary_info` text when the OS or browser's
+  own font-size accessibility setting was scaled up** (e.g. Android's system
+  "Font size" option) — text rendered larger than the fixed-height row it sat
+  in, and got cut off mid-glyph instead of the row growing to fit. `name`/
+  `secondary_info` rows now hold a `min-height` (not a fixed `height`) with a
+  `line-height` that only ever grows past the default (`max(default, 1.2em)`)
+  - identical look at the default font scale, but room to grow instead of clip
+    once the actual font is genuinely larger. Not applied to
+    `layout: vertical` + `bar_position: overlay` + `bar_orientation: up`: there,
+    the text row is a flex item competing with the icon section
+    (`flex-shrink: 0`) for space, and letting it grow broke that specific layout
+    (confirmed via DevTools computed styles) - it keeps its original
+    fixed-height behavior for now (see [`docs/ideas.md`](docs/ideas.md) for a
+    possible follow-up).  
+    ➡️ [Bug]: Some parts of the card are not visible on Android #131 (@zkurzyns)
+- **A percent-based sensor (`unit_of_measurement: "%"`) with `custom_theme`
+  zones could stop filling the bar all the way at 100%**, if any zone's `max`
+  went past 100 (e.g. a top zone of `80-120` used purely as a color buffer for
+  values that might drift slightly above 100). 1.6.1-rc2 had `max_value`
+  auto-default from the active theme's/`custom_theme`'s own top zone bound
+  whenever left unset, so it picked up `120` here and used it as the bar's own
+  fill scale - a `100.0` reading only filled to `100/120 ≈ 83%`. `custom_theme`
+  is now dropped from that auto-default entirely - its zones are user-defined
+  and may extend past the entity's real range on purpose, with no reliable way
+  to tell that apart from a genuine `max_value`. A built-in theme with
+  real-world value zones (`temperature`, `voc`, `pm25`) keeps the auto-default
+  for `max_value` only - picking one of them is already a deliberate, specific
+  choice, so the theme's own top bound is safe to assume as the entity's real
+  range; `min_value` stays at its own default (`0`, or the theme's own lowest
+  bound with `center_zero` - see [`max_value`](docs/configuration.md#max_value)
+  for the full explanation). `bar_color_mode: segment`/`rainbow` always projects
+  a theme's zones onto `[min_value, max_value]` - the visible "scope": a
+  mismatch between an entity's real range and its theme's/`custom_theme`'s own
+  zone scale now only ever clips or shifts which zones are reachable, never the
+  fill percentage itself.  
+  ➡️ [Bug]: JINJA Should accept more STYLE tags #129 (@emartoni)
+
+### 🧪 Try it: demo dashboard
+
+[`docs/demo-dashboard.yaml`][demo-dashboard.yaml] got several new sections worth
+a look:
+
+- **"Error / edge-case states"** — what the card looks like when things go
+  wrong: an entity that's `unavailable`, one that's `unknown`, one that doesn't
+  exist at all, and a request for an attribute the entity doesn't have. Useful
+  to check before reporting something as a bug — it might just be one of these.
+- **"Compare with tile"** — the same entity shown with this card side-by-side
+  with Home Assistant's own built-in Tile card, across several kinds of entities
+  (fan, battery, cover, light, timer, counter), so you can see how the two
+  compare at a glance.
+- **"custom_theme — use cases"** — color-only zones, color + a per-zone icon
+  override, and a full negative/positive range (shown standalone, then with
+  `center_zero` at two different zero points), right next to the built-in theme
+  examples.
+
+The "Energy (consumption vs production)" example also got a fix: its "Net" bar
+now shows the actual balance (production minus consumption) as a single value,
+instead of showing both raw numbers stacked on top of each other, which never
+actually matched what "Net" was supposed to mean.
+
+Almost every section across the whole dashboard now starts with a small YAML
+snippet showing the config it's demonstrating, plus a short note on what changes
+from one card to the next — meant to make the dashboard readable on its own, not
+just clickable.
+
 ## What's new (1.6.1-rc2)
 
 ### ✨ New
@@ -144,15 +282,15 @@ candidate safely before it becomes stable.
 
 ### 🧪 Try it: demo dashboard
 
-[`docs/demo-dashboard.yaml`](demo-dashboard.yaml) got a full rebuild — a
+[`docs/demo-dashboard.yaml`][demo-dashboard.yaml] got a full rebuild — a
 comprehensive showroom covering essentially every option in this changelog
 (themes, watermarks, `bar_effect`, `icon_animation`, `center_zero`, `bar_stack`,
 aggregation, `card_mod`/UIX styling…) plus a regression-test view with one card
 per statically-reproducible closed issue. Import it and move the helper sliders
 to see everything react live. Two companion files ship alongside it:
-[`docs/demo-dashboard-dev.yaml`](demo-dashboard-dev.yaml) (same dashboard,
+[`docs/demo-dashboard-dev.yaml`][demo-dashboard-dev.yaml] (same dashboard,
 targeting the `-dev` build for local testing) and
-[`docs/demo-dashboard-helpers.yaml`](demo-dashboard-helpers.yaml) (all the demo
+[`docs/demo-dashboard-helpers.yaml`][demo-dashboard-helpers.yaml] (all the demo
 helper entities as a drop-in `homeassistant: packages:` file, instead of
 creating them one by one).
 
@@ -358,7 +496,7 @@ detects on its own whether the card is accidentally installed twice.
 
 ### 🧪 Try it: demo dashboard
 
-Import [`docs/demo-dashboard.yaml`](demo-dashboard.yaml) and move the sliders to
+Import [`docs/demo-dashboard.yaml`][demo-dashboard.yaml] and move the sliders to
 see the features live.
 
 ### ♿ Accessibility
@@ -932,7 +1070,7 @@ detects on its own whether the card is accidentally installed twice.
 
 ### 🧪 Try it: demo dashboard
 
-Import [`docs/demo-dashboard.yaml`](demo-dashboard.yaml) and move the sliders to
+Import [`docs/demo-dashboard.yaml`][demo-dashboard.yaml] and move the sliders to
 see the features live.
 
 ### ♿ Accessibility
@@ -4177,6 +4315,12 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_stack
 [max_value]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#max_value
+[demo-dashboard.yaml]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/demo-dashboard.yaml
+[demo-dashboard-dev.yaml]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/demo-dashboard-dev.yaml
+[demo-dashboard-helpers.yaml]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/demo-dashboard-helpers.yaml
 [hide]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#hide
 [Card types]:

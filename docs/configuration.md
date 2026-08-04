@@ -84,6 +84,7 @@
       - [`bar_color` (Jinja)](#bar_color-jinja)
   - [🧩 entity-progress-multi-card / entity-progress-multi-feature](#multi)
     - [`entities`](#multi-entities)
+    - [`show_value`](#multi-show_value)
     - [`rows`](#multi-rows)
 
 ## Introduction
@@ -620,11 +621,23 @@ would have no range at all (`0` to `0`) and could never show anything. Set
 
 > [!NOTE]
 >
-> Unlike `max_value` (see its own section below), `min_value` is never
-> auto-adjusted from an active theme's zones outside `center_zero` — it stays at
-> `0` by default even for a theme whose lowest zone goes negative (e.g.
-> `temperature`'s `-50°C`). Set it explicitly if you need the low end of a
-> theme's range to be reachable.
+> Outside `center_zero`, `min_value` always stays at its own default (`0`) even
+> with a built-in real-world-value theme active (e.g. `temperature`, whose zones
+> reach down to `-50°C`) — only `max_value` defaults from the theme (see its own
+> section below). `[min_value, max_value]` is the visible "scope" a theme's
+> zones get projected across (see [`bar_color_mode`](#bar_color_mode)
+> `segment`/`rainbow`): by default that scope is the theme's positive branch
+> only (`0` to `max_value`), which is assumed to be what's actually in view
+> unless you explicitly widen `min_value` yourself. Pulling `min_value` down to
+> the theme's own lowest bound automatically would instead stretch the _entire_
+> theme range (including zones for values the entity may never reach) across the
+> visible bar.
+>
+> With `center_zero` active and a built-in real-world-value theme, the
+> negative-branch default described above (negative of `max_value`) is instead
+> the theme's own lowest zone bound (e.g. `-50` for `temperature`, not `-100`) —
+> the theme already defines how far its negative branch realistically extends,
+> which is a better default than an arbitrary mirror of `max_value`.
 
 `min_value` accepts three forms — like `max_value`, each mode uses its own
 explicit key, so there is nothing to guess from the value's shape:
@@ -717,27 +730,45 @@ switch between the three modes.
 
 _Default_:
 
-- `100`, unless a `theme` with real-world value zones (not `%`-based — e.g.
-  `temperature`, `voc`) or a `custom_theme` is active and `max_value` is left
-  unset: then it defaults to that theme's own highest zone bound instead (see
-  the note below).
+- `100`, unless a built-in `theme` with real-world value zones (not `%`-based —
+  e.g. `temperature`, `voc`, `pm25`) is active and `max_value` is left unset:
+  then it defaults to that theme's own highest zone bound instead (see the note
+  below). `custom_theme` never changes this default — see the note. `min_value`
+  is unaffected either way — see its own section above.
 
 > [!NOTE]
 >
 > Some built-in themes (`temperature`, `voc`, `pm25`…) define their color zones
 > in real-world units, not `%` — e.g. `temperature`'s zones span `-50°C` to
-> `100°C`. `custom_theme` zones are always real values too, never `%`. For
-> [`bar_color_mode`](#bar_color_mode) `segment`/`rainbow` to paint correctly,
-> and for the fill percentage itself to make sense, `max_value` needs to be on
-> that same scale — leaving it at the flat `100` default while a `voc` value
-> sits in the thousands, for instance, clamps the bar fully "filled" and
-> collapses every color zone but the first one into a single flat color. When
-> `max_value` is left unset with one of these themes active, it's automatically
-> set to the theme's own highest zone bound instead of `100`, so a plain
-> `theme: voc` with no `max_value` just works. Setting `max_value` explicitly
-> (to any value, including `100`) always overrides this and is used as-is —
-> zones that fall outside the chosen range are clipped or omitted, not stretched
-> to fit. See [`theme`](theme.md) for each built-in theme's own zone ranges.
+> `100°C`. Since picking one of these themes is already a deliberate choice tied
+> to that specific kind of entity, `max_value` is safe to assume from the
+> theme's own scale: when it's left unset with one of these themes active, it
+> automatically defaults to the theme's own highest zone bound instead of `100`,
+> so a plain `theme: voc` with no other config already fills correctly
+> (`min_value` stays `0` by default — see its own section above for why, and for
+> the `center_zero` case). Setting `max_value` explicitly (to any value,
+> including `100`) always overrides this and is used as-is.
+>
+> [`bar_color_mode`](#bar_color_mode) `segment`/`rainbow` projects a theme's
+> zones onto `[min_value, max_value]` — that range is the visible "scope": zones
+> (or the parts of zones) that fall inside it get stretched proportionally
+> across the bar, and anything outside it is clipped or omitted, not stretched
+> to fit. This is what makes the zone at a given fill level match the raw value
+> it represents — e.g. with `theme: temperature`'s default scope (`0` to `100`),
+> a `35°C` reading lands in the zone that's genuinely at 35% of that scope.
+> Widening `min_value` (or enabling `center_zero`) widens the scope, and with
+> it, which of the theme's zones become reachable. See [`theme`](theme.md) for
+> each built-in theme's own zone ranges.
+>
+> `custom_theme` zones are real values too, but never drive `max_value`'s
+> default: their bounds are entirely user-defined and may intentionally extend
+> past the entity's real range (e.g. a color safety-margin zone on a percent
+> sensor that could technically read slightly above 100) without meaning to
+> redefine what counts as "full". `max_value` stays whatever you set (or the
+> flat `100` default) regardless of `custom_theme`'s zones — the same
+> `[min_value, max_value]` scope still applies to its zones for
+> `segment`/`rainbow`, so set both yourself if your entity's real range doesn't
+> match your zones' own scale.
 
 _Fixed value example_:
 
@@ -3101,6 +3132,56 @@ features:
 > multiple rows. With too many entities for the chosen `bar_size`, bars get
 > thinner rather than overflowing; switch to `xsmall` to comfortably fit more
 > (up to 5, vs. 4 with `small`).
+
+[🔼 Back to top]
+
+<a id="multi-show_value"></a>
+
+### `show_value`
+
+> **`show_value`** [Boolean] ➡️ _(optional, per item or shared, default:
+> `false`)_
+
+The bare bar alone doesn't say _how much_ — fine for something like a printer
+cartridge (a glance at the fill level is the point), less so for anything where
+the actual number matters (energy in Watts, a tank in liters…). Set
+`show_value: true` (top level for every item, or on a single item) to show the
+entity's own state and unit next to its bar. The bar gives up part of its width
+to make room — there's no overlay mode, a bare feature bar is already thin
+enough that overlaid text would fight it for contrast.
+
+`decimal`, `unit`, `disable_unit` and `unit_spacing` all work the same as on
+[entity-progress-card / entity-progress-feature](#standard) and can be set per
+item — left unset, the value falls back to the entity's own
+`unit_of_measurement` with 2 decimals.
+
+`value_position: left | right` (per item or shared, default `left`) picks which
+side of the bar the value sits on.
+
+Every value takes up the same fixed width (`30px` by default, overridable via
+`--epb-multi-value-width`) instead of sizing to its own text — several bars in
+the same stack rarely share the same digit count (`900` vs `1600 W`), and
+letting each value claim a different width would make bars meant to read as
+directly comparable end up different lengths for no meaningful reason. A value
+wider than this space only ever overflows visually — it's never clipped, since
+silently truncating the one thing this option exists to show would defeat its
+own purpose; widen `--epb-multi-value-width` if your values regularly need more
+room.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-multi-card
+show_value: true
+entities:
+  - entity: sensor.living_room_power
+    bar_color: amber
+  - entity: sensor.kitchen_power
+    bar_color: orange
+    decimal: 0
+  - entity: sensor.garage_power
+    bar_color: red
+```
 
 [🔼 Back to top]
 
