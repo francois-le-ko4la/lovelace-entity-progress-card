@@ -217,7 +217,16 @@
       },
       "alert_highlight": {
         "border": "Bordo",
-        "background": "Sfondo"
+        "background": "Sfondo",
+        "label": "Label"
+      },
+      "label": {
+        "jinja": "Status label",
+        "position": "Label position"
+      },
+      "label_position": {
+        "left": "Left",
+        "right": "Right"
       },
       "alert_animation": {
         "static": "Static",

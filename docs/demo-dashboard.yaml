@@ -1177,6 +1177,85 @@ views:
       - type: grid
         cards:
           - type: heading
+            heading: 'label: glacial → scorching (temperature)'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card
+              entity: input_number.epb_demo_temp_negative
+              theme: temperature
+              max_value: 40
+              label:
+                jinja: >-
+                  {% set t = states(entity) | float %}
+                  {% if t < -5 %}glacial
+                  {% elif t < 5 %}cold
+                  {% elif t < 15 %}cool
+                  {% elif t < 25 %}temperate
+                  {% elif t < 32 %}warm
+                  {% else %}scorching
+                  {% endif %}
+              ```
+              Same 4 reference temperatures as the section above
+              (-10/10/22/35°C), with `label` added - established weather-report
+              terms instead of a plain cold/hot split, still just a Jinja
+              condition on the value, no zone list to keep in sync with the
+              theme.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_temp_negative
+            name: negative
+            theme: temperature
+            center_zero: true
+            min_value: -20
+            max_value: 40
+            label:
+              jinja: >-
+                {% set t = states('input_number.epb_demo_temp_negative') |
+                float %} {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t
+                < 15 %}cool {% elif t < 25 %}temperate {% elif t < 32 %}warm
+                {% else %}scorching {% endif %}
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_temp_positive
+            name: positive
+            theme: temperature
+            max_value: 40
+            label:
+              jinja: >-
+                {% set t = states('input_number.epb_demo_temp_positive') |
+                float %} {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t
+                < 15 %}cool {% elif t < 25 %}temperate {% elif t < 32 %}warm
+                {% else %}scorching {% endif %}
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_temp_temperate
+            name: temperate
+            theme: temperature
+            max_value: 40
+            label:
+              jinja: >-
+                {% set t = states('input_number.epb_demo_temp_temperate') |
+                float %} {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t
+                < 15 %}cool {% elif t < 25 %}temperate {% elif t < 32 %}warm
+                {% else %}scorching {% endif %}
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_temp_hot
+            name: hot
+            theme: temperature
+            max_value: 40
+            label:
+              jinja: >-
+                {% set t = states('input_number.epb_demo_temp_hot') | float
+                %} {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t < 15
+                %}cool {% elif t < 25 %}temperate {% elif t < 32 %}warm {%
+                else %}scorching {% endif %}
+      - type: grid
+        cards:
+          - type: heading
             heading: Same theme, different % (light)
             heading_style: title
           - type: custom:entity-progress-card
@@ -1457,6 +1536,43 @@ views:
                 max: 100
                 color: green
           - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'label: status pill (custom_theme)'
+            custom_theme:
+              - min: 0
+                max: 30
+                color: red
+              - min: 30
+                max: 70
+                color: orange
+              - min: 70
+                max: 100
+                color: green
+            label:
+              jinja: >-
+                {% set v = states('input_number.epb_demo_battery') | float %}
+                {% if v < 30 %}low{% elif v < 70 %}ok{% else %}good{% endif
+                %}
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_temperature
+            name: 'label: status pill (built-in theme)'
+            theme: temperature
+            label:
+              jinja: >-
+                {% set t = states('input_number.epb_demo_temperature') |
+                float %} {% if t > 30 %}hot{% elif t < 0 %}cold{% else
+                %}ok{% endif %}
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_temperature
+            name: 'label: position left'
+            theme: temperature
+            label:
+              position: left
+              jinja: >-
+                {% set t = states('input_number.epb_demo_temperature') |
+                float %} {% if t > 30 %}hot{% elif t < 0 %}cold{% else
+                %}ok{% endif %}
+          - type: custom:entity-progress-card
             entity: input_number.epb_demo_temperature
             name: 'alert_when: above 25 (blink border)'
             alert_when:
@@ -1512,6 +1628,15 @@ views:
               highlight: border
               below: 25
               animation: static
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_temperature
+            name: 'alert_when: below 25 (label)'
+            alert_when:
+              color: red
+              highlight: label
+              label: 'LOW'
+              below: 25
+              animation: blink
       - type: grid
         cards:
           - type: heading

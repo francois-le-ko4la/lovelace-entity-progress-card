@@ -540,6 +540,14 @@ function struct(validator: Validator & { _schema?: Record<string, Validator> }, 
     }
   };
 
+  // label and trend_indicator both render in the same top-right corner -
+  // label wins, since setting a whole Jinja template is a more deliberate
+  // choice than a boolean toggle left over from before label was configured.
+  const applyLabelRule = (result: Record<string, unknown>) => {
+    const jinja = (result.label as { jinja?: string } | undefined)?.jinja;
+    if (is.nonEmptyString(jinja) && result.trend_indicator) result.trend_indicator = false;
+  };
+
   const applyBarSingleLineRule = (result: Record<string, unknown>) => {
     if (result.bar_position !== 'overlay' && result.bar_single_line) result.bar_single_line = false;
   };
@@ -625,6 +633,7 @@ function struct(validator: Validator & { _schema?: Record<string, Validator> }, 
 
     applyBelowBarPositionRule(result);
     applyCompactBelowRule(result);
+    applyLabelRule(result);
     applyBarSingleLineRule(result);
     applyBarMaxWidthRule(result);
     applyBarOrientationUpRule(result);
@@ -997,6 +1006,16 @@ const YamlSchemaFactory = {
         force_circular_background: types.optionalBooleanWithDefault(false),
         center_zero: types.centerZero(),
         trend_indicator: types.optionalBooleanWithDefault(false),
+        // jinja: Jinja-only, like name_info/custom_info - no separate enable
+        // flag, a non-empty resolved value is the signal to show it.
+        // Mutually exclusive with trend_indicator (see applyLabelRule): both
+        // occupy the same top corner - position picks which side.
+        label: types.optional(
+          types.object({
+            jinja: types.optionalString(),
+            position: types.enumsWithDefault(['left', 'right'], 'right'),
+          }),
+        ),
         text_shadow: types.optionalBooleanWithDefault(false),
 
         // ─── Visibility & Content ───────────────────────────────────────────
@@ -1027,12 +1046,25 @@ const YamlSchemaFactory = {
             above: types.optional(types.numericEntityOrJinja()),
             below: types.optional(types.numericEntityOrJinja()),
             color: types.optionalString(),
-            highlight: types.enumsWithDefault(['border', 'background'], 'border'),
+            // label: the status pill (see the card-level `label` option)
+            // instead of tinting the whole card - only shown while the
+            // alert is active, takes over the pill from a plain `label:`
+            // Jinja if both happen to be set (see HACore._renderLabel's own
+            // early-out). No visual effect on a Badge (same as `label`
+            // itself - too small a scale, see YamlSchemaFactory.badge's own
+            // .delete(['label'])) - inherited here rather than parametrized
+            // out, since alert_when's own shape doesn't vary by card type.
+            highlight: types.enumsWithDefault(['border', 'background', 'label'], 'border'),
             // Left genuinely optional (no forced default): the effective
-            // default depends on `highlight` (border -> blink, background ->
-            // static, both unchanged from pre-1.6 behavior) and is resolved
-            // in CSS/ViewCore, not here - see .alert-active in the stylesheet.
+            // default depends on `highlight` (border/label -> blink,
+            // background -> static, both unchanged from pre-1.6 behavior)
+            // and is resolved in CSS/ViewCore, not here - see .alert-active
+            // in the stylesheet.
             animation: types.optional(types.enums(['static', 'blink', 'ping'])),
+            // Plain string, not Jinja (unlike the card-level `label`): the
+            // point here is a short, fixed word chosen once alongside the
+            // threshold itself (e.g. "HIGH"), not a per-tick condition.
+            label: types.optionalString(),
           }),
         ),
 
@@ -1082,7 +1114,12 @@ const YamlSchemaFactory = {
         'text_shadow',
         // Not CSS-dead like the two above - a design choice: a trend arrow
         // icon doesn't read well at badge scale (--ha-badge-size, ~36px).
+        // label shares that same reasoning (its status pill is the same
+        // corner element at the same scale) - alert_when.highlight: 'label'
+        // stays a valid enum value there regardless (see its own comment),
+        // just as inert as the plain option would be.
         'trend_indicator',
+        'label',
       ])
       .extend({
         // 'up' needs .vertical.overlay (see bar_orientation's CSS) - a badge
@@ -1176,6 +1213,16 @@ const YamlSchemaFactory = {
         force_circular_background: types.optionalBooleanWithDefault(false),
         center_zero: types.centerZero(),
         trend_indicator: types.optionalBooleanWithDefault(false),
+        // jinja: Jinja-only, like name_info/custom_info - no separate enable
+        // flag, a non-empty resolved value is the signal to show it.
+        // Mutually exclusive with trend_indicator (see applyLabelRule): both
+        // occupy the same top corner - position picks which side.
+        label: types.optional(
+          types.object({
+            jinja: types.optionalString(),
+            position: types.enumsWithDefault(['left', 'right'], 'right'),
+          }),
+        ),
         text_shadow: types.optionalBooleanWithDefault(false),
 
         hide: types.jinjaOrArrayWithValidatedElem(['icon', 'name', 'value', 'secondary_info', 'progress_bar']),
@@ -1216,8 +1263,10 @@ const YamlSchemaFactory = {
         'bar_single_line',
         'text_shadow',
         // Same design choice as YamlSchemaFactory.badge: too small a scale for
-        // a trend arrow icon to read well.
+        // a trend arrow icon to read well - label shares that reasoning too
+        // (see YamlSchemaFactory.badge's own comment on 'label').
         'trend_indicator',
+        'label',
       ])
       .extend({
         // Same reason as YamlSchemaFactory.badge: 'up' needs .vertical.overlay,

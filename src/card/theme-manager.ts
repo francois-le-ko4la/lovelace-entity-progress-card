@@ -223,6 +223,54 @@ class ThemeManager {
     return HA_CONTEXT.haColors.get(curColor as string) ?? curColor;
   }
 
+  // label's pill (background/border/text all derived from one base color)
+  // ports GitHub Primer's own IssueLabelToken dark-theme recipe (see
+  // @primer/react's IssueLabelToken.module.css @define-mixin
+  // darkThemeIssueLabel) rather than a plain luminance-switched black/white
+  // pick: background stays a translucent tint of the base color, and
+  // border/text are the *same hue*, lightened just enough to read on a dark
+  // background - already-light colors barely move, dark/saturated ones
+  // (GitHub's own default reds/greens included) get lightened more. The CSS
+  // side does the actual calc() math (see .status-label in styles.ts,
+  // identical formula to Primer's own); this only splits the resolved color
+  // into the r/g/b/h/s/l components that formula needs. The caller passes
+  // the browser's own computed rgb(...)/rgba(...) readback rather than the
+  // raw config string, so this only ever has to parse one format (an HA
+  // color name already adapted above, a hex/rgb from a theme zone, a raw
+  // card_mod override, or a var() this function never sees resolved, are
+  // all normalized to rgb(...) by the browser before it gets here).
+  static labelColorComponents(
+    computedRgb: string,
+  ): { r: number; g: number; b: number; h: number; s: number; l: number } | null {
+    const match = /rgba?\((\d+),\s*(\d+),\s*(\d+)/.exec(computedRgb);
+    if (!match) return null;
+    const [r, g, b] = match.slice(1, 4).map(Number);
+    return { r, g, b, ...ThemeManager.#rgbToHsl(r, g, b) };
+  }
+
+  static #rgbToHsl(r: number, g: number, b: number): { h: number; s: number; l: number } {
+    const [rn, gn, bn] = [r / 255, g / 255, b / 255];
+    const max = Math.max(rn, gn, bn);
+    const min = Math.min(rn, gn, bn);
+    const l = (max + min) / 2;
+    if (max === min) return { h: 0, s: 0, l: Math.round(l * 100) };
+
+    const d = max - min;
+    const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    let h: number;
+    switch (max) {
+      case rn:
+        h = (gn - bn) / d + (gn < bn ? 6 : 0);
+        break;
+      case gn:
+        h = (bn - rn) / d + 2;
+        break;
+      default:
+        h = (rn - gn) / d + 4;
+    }
+    return { h: Math.round(h * 60), s: Math.round(s * 100), l: Math.round(l * 100) };
+  }
+
   // `window` is the [start, end] slice of the theme's own 0-100 scale (the
   // full min_value/max_value range) that this call represents - defaults to
   // the whole scale for the normal, non-center_zero single-arm bar. A

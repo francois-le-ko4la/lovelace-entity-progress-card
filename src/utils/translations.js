@@ -224,7 +224,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -498,7 +507,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -772,7 +790,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -1046,7 +1073,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -1320,7 +1356,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -1594,7 +1639,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Rahmen',
-          background: 'Hintergrund'
+          background: 'Hintergrund',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -1868,7 +1922,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -2142,7 +2205,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -2416,7 +2488,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -2690,7 +2771,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Borde',
-          background: 'Fondo'
+          background: 'Fondo',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -2964,7 +3054,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -3238,7 +3337,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -3512,7 +3620,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Bordure',
-          background: 'Fond'
+          background: 'Fond',
+          label: 'Étiquette'
+        },
+        label: {
+          jinja: 'Étiquette de statut',
+          position: 'Position de l\'étiquette'
+        },
+        label_position: {
+          left: 'Gauche',
+          right: 'Droite'
         },
         alert_animation: {
           static: 'Static',
@@ -3786,7 +3903,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -4060,7 +4186,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -4334,7 +4469,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -4608,7 +4752,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -4882,7 +5035,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Bordo',
-          background: 'Sfondo'
+          background: 'Sfondo',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -5156,7 +5318,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -5430,7 +5601,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -5704,7 +5884,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -5978,7 +6167,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -6252,7 +6450,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -6526,7 +6733,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -6800,7 +7016,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Rand',
-          background: 'Achtergrond'
+          background: 'Achtergrond',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -7074,7 +7299,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -7348,7 +7582,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -7622,7 +7865,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Borda',
-          background: 'Fundo'
+          background: 'Fundo',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -7896,7 +8148,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -8170,7 +8431,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -8444,7 +8714,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -8718,7 +8997,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -8992,7 +9280,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -9266,7 +9563,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -9540,7 +9846,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -9814,7 +10129,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -10088,7 +10412,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -10362,7 +10695,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',
@@ -10636,7 +10978,16 @@ const TRANSLATIONS = {
         },
         alert_highlight: {
           border: 'Border',
-          background: 'Background'
+          background: 'Background',
+          label: 'Label'
+        },
+        label: {
+          jinja: 'Status label',
+          position: 'Label position'
+        },
+        label_position: {
+          left: 'Left',
+          right: 'Right'
         },
         alert_animation: {
           static: 'Static',

@@ -20,12 +20,14 @@ type StructureElementSpec = {
 
 // The options bag threaded through StructureElements/StructureTemplates -
 // every call site only ever fills in a subset of these (layout, barPosition,
-// barType, trendIndicator, multiline, barSingleLine), never all at once.
+// barType, trendIndicator, hasLabel, multiline, barSingleLine), never all at
+// once.
 type StructureOptions = {
   layout?: string;
   barPosition?: string;
   barType?: string;
   trendIndicator?: boolean;
+  hasLabel?: boolean;
   multiline?: boolean;
   barSingleLine?: boolean;
 };
@@ -222,6 +224,8 @@ const StructureElements = {
         )
       : '',
 
+  label: (options: StructureOptions) => (options.hasLabel ? Element(CARD.htmlStructure.elements.label).html() : ''),
+
   wrapWithBarPosition: (content: string, options: StructureOptions) => {
     const { barPosition = '' } = options;
     const bar = () => StructureElements.progressBar(options);
@@ -245,6 +249,7 @@ const StructureTemplates = {
       StructureElements.container(options).replace(
         CONTENT_SLOT,
         StructureElements.trendIndicator(options) +
+          StructureElements.label(options) +
           StructureElements.iconSection() +
           StructureElements.contentFull(options),
       ),
@@ -264,6 +269,7 @@ const StructureTemplates = {
       StructureElements.container(options).replace(
         CONTENT_SLOT,
         StructureElements.trendIndicator(options) +
+          StructureElements.label(options) +
           StructureElements.iconSection() +
           StructureElements.contentMini(options),
       ),

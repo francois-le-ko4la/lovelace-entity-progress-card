@@ -82,6 +82,11 @@ const htmlStructure = {
       container: { element: 'div', class: 'trend-indicator' },
       icon: { element: 'ha-icon', class: 'trend-icon' },
     },
+    // GitHub-label-style status pill (label option) - same corner as
+    // trendIndicator, mutually exclusive with it (see schema.ts's
+    // applyLabelRule). Not aria-hidden: unlike trendIndicator's bare arrow
+    // icon, this is real status text (e.g. "hot") worth announcing.
+    label: { element: 'div', class: 'status-label' },
     secondaryInfo: { element: 'div', class: 'secondary-info' },
     secondaryInfoWrapper: { element: 'div', class: 'secondary-info-wrapper' },
     // div, not span: a span here is forced `display: inline` by the
@@ -202,6 +207,20 @@ const style = {
     badge: {
       color: { var: '--badge-color', default: HA_CONTEXT.colors.orange },
       backgroundColor: { var: '--badge-bgcolor', default: 'transparent' },
+    },
+    // Internal vars only - JS (HACore._renderLabel) sets these, never the
+    // public --epb-label-*/--epb-label-background-*/--epb-label-border-*
+    // ones directly, so a card_mod override of any of the three public vars
+    // always wins over the GitHub-Primer-style auto-derived color (see
+    // .status-label's own var() fallback chain in styles.ts, and
+    // ThemeManager.labelColorComponents for where r/g/b/h/s/l come from).
+    label: {
+      r: { var: '--label-r', default: '153' },
+      g: { var: '--label-g', default: '153' },
+      b: { var: '--label-b', default: '153' },
+      h: { var: '--label-h', default: '0' },
+      s: { var: '--label-s', default: '0' },
+      l: { var: '--label-l', default: '60' },
     },
     iconAndShape: {
       color: { var: '--icon-and-shape-color', default: HA_CONTEXT.colors.stateIcon },

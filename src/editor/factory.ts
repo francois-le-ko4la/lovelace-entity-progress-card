@@ -341,6 +341,21 @@ const EditorFactory = {
                 Boolean(c.entity) && HassProviderSingleton.getEntityDomain(c.entity) === 'timer',
             }),
           }),
+      // Card + Template only (same scope as trend_indicator, which the two
+      // share a corner with - see schema.ts's applyLabelRule): too small a
+      // scale to read well on a badge, same reasoning as trend_indicator's
+      // own badge exclusion. label: {jinja, position} - dot-path field names
+      // (#handleNestedField) create the parent object on first write, no
+      // explicit toggle needed (unlike alert_when's alert_toggle).
+      ...(!badge
+        ? {
+            'label.jinja': EditorFieldsType.tpl('label.jinja'),
+            'label.position': EditorFieldsType.select('label.position', {
+              type: 'label_position',
+              width: '100%',
+            }),
+          }
+        : {}),
     },
   }),
 
@@ -710,6 +725,15 @@ const EditorFactory = {
             type: 'alert_animation',
             showIf: (c: LovelaceConfig) => Boolean(c.alert_when),
             width: availableSpace(),
+          }),
+          // Only shown for highlight: label - a fixed word for the status
+          // pill (see schema.ts's alert_when.label), not Jinja like the
+          // card-level label field. Full width, own row - unlike
+          // color/highlight/animation, it's a free-text field, not a chip
+          // pair that benefits from sharing a row.
+          'alert_when.label': EditorFieldsType.text('alert_when.label', {
+            showIf: (c: LovelaceConfig) => (c.alert_when as { highlight?: string })?.highlight === 'label',
+            width: '100%',
           }),
         },
 

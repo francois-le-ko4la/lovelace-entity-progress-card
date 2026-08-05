@@ -456,6 +456,7 @@ class EditorBase extends HTMLElement {
       icon_animation: () => buildSelect(options.icon_animation),
       alert_highlight: () => buildSelect(options.alert_highlight),
       alert_animation: () => buildSelect(options.alert_animation),
+      label_position: () => buildSelect(options.label_position),
       theme: () => buildSelect(options.theme),
       layout: () => buildBoxSelect(options.layout, tileImage),
       unit_spacing: () => buildSelect(options.unit_spacing),

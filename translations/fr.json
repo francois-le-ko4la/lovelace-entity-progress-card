@@ -217,7 +217,16 @@
       },
       "alert_highlight": {
         "border": "Bordure",
-        "background": "Fond"
+        "background": "Fond",
+        "label": "Étiquette"
+      },
+      "label": {
+        "jinja": "Étiquette de statut",
+        "position": "Position de l'étiquette"
+      },
+      "label_position": {
+        "left": "Gauche",
+        "right": "Droite"
       },
       "alert_animation": {
         "static": "Static",

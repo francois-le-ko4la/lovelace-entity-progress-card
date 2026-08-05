@@ -382,6 +382,97 @@ ha-card.background {
 }
 
 /* =============================================================================
+   STATUS LABEL
+   ============================================================================= */
+
+/* GitHub-label-style pill (label option) - same corner as .trend-indicator,
+   mutually exclusive with it (see schema.ts's applyLabelRule). Same recipe
+   GitHub's own Primer design system uses for issue labels in dark mode (see
+   @primer/react's IssueLabelToken.module.css @define-mixin
+   darkThemeIssueLabel, and ThemeManager.labelColorComponents for where the
+   --label-r/g/b/h/s/l inputs below come from): background stays a
+   translucent tint of the resolved color, border/text are the same hue
+   lightened just enough to stay legible against the card's dark background
+   - already-light colors barely move, dark/saturated ones get lightened
+   more. --epb-label-color/-background-color/-border-color let card_mod
+   override any of the three independently, without touching how the other
+   two get auto-derived. :empty covers a Jinja template that currently
+   resolves to nothing (e.g. only shows a label past some threshold). */
+.status-label {
+  --label-perceived-lightness: calc(
+    ((var(${CARD.style.dynamic.label.r.var}, ${CARD.style.dynamic.label.r.default}) * 0.2126) +
+      (var(${CARD.style.dynamic.label.g.var}, ${CARD.style.dynamic.label.g.default}) * 0.7152) +
+      (var(${CARD.style.dynamic.label.b.var}, ${CARD.style.dynamic.label.b.default}) * 0.0722)) / 255
+  );
+  --label-lightness-threshold: 0.6;
+  --label-lightness-switch: max(
+    0,
+    min(calc(1 / (var(--label-lightness-threshold) - var(--label-perceived-lightness))), 1)
+  );
+  --label-lighten-by: calc(
+    ((var(--label-lightness-threshold) - var(--label-perceived-lightness)) * 100) * var(--label-lightness-switch)
+  );
+
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  max-width: calc(100% - 8px);
+  z-index: 1;
+  box-sizing: border-box;
+  padding: 0 4px;
+  border-radius: 999px;
+  /* Same 10px used by multiline's own secondary-info-value (see
+     .info-multiline .secondary-info-wrapper .secondary-info-value) - a
+     smaller, established "compact text" reference instead of matching
+     secondary_info's own full size. */
+  font-size: 10px;
+  font-weight: var(--ha-font-weight-medium);
+  line-height: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border: 1px solid
+    var(
+      --epb-label-border-color,
+      hsla(
+        var(${CARD.style.dynamic.label.h.var}, ${CARD.style.dynamic.label.h.default}),
+        calc(var(${CARD.style.dynamic.label.s.var}, ${CARD.style.dynamic.label.s.default}) * 1%),
+        calc((var(${CARD.style.dynamic.label.l.var}, ${CARD.style.dynamic.label.l.default}) + var(--label-lighten-by)) * 1%),
+        0.3
+      )
+    );
+  background-color: var(
+    --epb-label-background-color,
+    rgba(
+      var(${CARD.style.dynamic.label.r.var}, ${CARD.style.dynamic.label.r.default}),
+      var(${CARD.style.dynamic.label.g.var}, ${CARD.style.dynamic.label.g.default}),
+      var(${CARD.style.dynamic.label.b.var}, ${CARD.style.dynamic.label.b.default}),
+      0.18
+    )
+  );
+  color: var(
+    --epb-label-color,
+    hsl(
+      var(${CARD.style.dynamic.label.h.var}, ${CARD.style.dynamic.label.h.default}),
+      calc(var(${CARD.style.dynamic.label.s.var}, ${CARD.style.dynamic.label.s.default}) * 1%),
+      calc((var(${CARD.style.dynamic.label.l.var}, ${CARD.style.dynamic.label.l.default}) + var(--label-lighten-by)) * 1%)
+    )
+  );
+}
+
+.status-label:empty {
+  display: none;
+}
+
+/* label_position: left - swaps which corner the pill sits in (see
+   HACore._addBaseClasses). right stays the plain default above, no class
+   needed for it. */
+ha-card.label-left .status-label {
+  right: auto;
+  left: 4px;
+}
+
+/* =============================================================================
    ICON SECTION (ICON, SHAPE, BADGE)
    ============================================================================= */
 
@@ -1466,16 +1557,35 @@ ha-card.info-multiline {
   100% { box-shadow: 0 0 5px 15px transparent; }
 }
 
+/* highlight: label's own pill-scoped variants - same idea as the two above,
+   sized down for a small pill instead of the whole card border. */
+@keyframes epb-alert-label-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes epb-alert-label-ping {
+  60% {
+    box-shadow: 0 0 0 0 var(--alert-color-final);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--alert-color-final) 70%, transparent);
+  }
+  100% { box-shadow: 0 0 5px 8px transparent; }
+}
+
 .alert-active {
   --alert-color-final: var(--alert-color, var(--error-color, #db4437));
   border-color: var(--alert-color-final);
 }
 
-.alert-active.alert-anim-blink {
+/* :not(.alert-label): that mode neutralizes border-color itself (see
+   .alert-active.alert-label below) and animates .status-label instead -
+   without this exclusion, the border would still blink/ping underneath a
+   pill that's supposed to be carrying the alert on its own. */
+.alert-active.alert-anim-blink:not(.alert-label) {
   animation: epb-alert-border 1.2s ease-in-out infinite;
 }
 
-.alert-active.alert-anim-ping {
+.alert-active.alert-anim-ping:not(.alert-label) {
   animation: epb-alert-ping 1.5s ease-out infinite;
   /* Same box-shadow repaint cost as icon-anim-ping above, but on the whole
      card rather than a small icon - more noticeable, so worth the same hint. */
@@ -1495,6 +1605,27 @@ ha-card.info-multiline {
 
 .alert-active.alert-background.alert-anim-blink {
   animation: epb-alert-background 1.2s ease-in-out infinite;
+}
+
+/* highlight: label - the status pill (HACore._applyAlertLabel) carries the
+   alert instead of the card's own border/background, which stays neutral
+   here (same reset .alert-background already uses). Blink/ping target
+   .status-label itself rather than ha-card - :not(.alert-label) on the
+   border/ping rules above keeps this mode from *also* pulsing a border
+   nobody asked for. --alert-color-final is inherited from .alert-active
+   above (a plain CSS custom property, crosses the .status-label descendant
+   boundary same as anywhere else). */
+.alert-active.alert-label {
+  border-color: var(--epb-card-border-color, var(--ha-card-border-color, var(--divider-color, #e0e0e0)));
+}
+
+.alert-active.alert-label.alert-anim-blink .status-label {
+  animation: epb-alert-label-blink 1.2s ease-in-out infinite;
+}
+
+.alert-active.alert-label.alert-anim-ping .status-label {
+  animation: epb-alert-label-ping 1.5s ease-out infinite;
+  will-change: box-shadow;
 }
 
 /* === RADIUS EFFECT === */

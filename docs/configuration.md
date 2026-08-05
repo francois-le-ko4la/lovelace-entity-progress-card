@@ -55,6 +55,7 @@
       - [`bar_orientation`](#bar_orientation)
       - [`force_circular_background`](#force_circular_background)
       - [`trend_indicator`](#trend_indicator)
+      - [`label`](#label)
       - [`layout`](#layout)
       - [`frameless`](#frameless)
       - [`marginless`](#marginless)
@@ -1266,9 +1267,9 @@ color: rgb(110, 65, 171)
 [![Card OK][Card-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
 
-> **`icon_animation`** [String] ➡️
+> **`icon_animation`** [String]|[Map] ➡️
 > {`none`|`spin`|`pulse`|`bounce`|`shake`|`ping`|`reveal`|`washing_machine`|`battery_charging`}
-> | { effect, jinja } _(optional, default: `none`)_
+> _(optional, default: `none`)_
 
 Animates the icon while the entity is in an active state — a spinning fan, a
 pulsing media player icon...
@@ -1368,12 +1369,42 @@ _Options_:
 
 **Triggering an animation from a condition instead of entity state**
 
-`icon_animation` also accepts an object form — `{ effect, jinja }` — for cases
-the automatic detection above doesn't cover (e.g. a plain `sensor` with a
-numeric value, no active/inactive concept at all). `effect` is any value from
-the table above; `jinja` is a template that must resolve to `true`/`false` and
-fully replaces the automatic detection: `effect` plays exactly when it's `true`,
-nothing else is checked.
+`icon_animation` also accepts a Map form — `{ effect, jinja }` — for cases the
+automatic detection above doesn't cover (e.g. a plain `sensor` with a numeric
+value, no active/inactive concept at all). It fully replaces the automatic
+detection: `effect` plays exactly when `jinja` resolves to `true`, nothing else
+is checked.
+
+_Map definition_:
+
+- `effect` (string, optional): any value from the table above. No animation
+  plays until one is chosen.
+- `jinja` (JINJA): a boolean-evaluating expression.
+
+> [!IMPORTANT]
+>
+> `jinja` must be a bare `{{ ... }}` expression — not a `{% if %}...{% endif %}`
+> block, and not a plain non-templated string like `"true"`. Home Assistant's
+> `render_template` only preserves the native `true`/`false` type for a single
+> naked `{{ expression }}`; a block or a literal string comes back as the
+> stringified word `"true"`/`"false"` instead, which the card can't tell apart
+> from "not resolved yet" — it silently falls back to the automatic detection
+> above instead of erroring.
+>
+> ```yaml
+> # correct - a single boolean expression
+> jinja: "{{ states('sensor.x')|float(0) > 3 }}"
+>
+> # correct - a single boolean expression comparing a state
+> jinja: "{{ is_state('sensor.dishwasher_operation_state', 'Run') }}"
+>
+> # wrong - block syntax stringifies the result
+> jinja: >-
+>   {% if states('sensor.x')|float(0) > 3 %}true{% else %}false{% endif %}
+>
+> # wrong - a literal string, not a template at all
+> jinja: "true"
+> ```
 
 _Example_:
 
@@ -1953,6 +1984,71 @@ _Icons_:
 _Default value_:
 
 - `false`
+
+[🔼 Back to top]
+
+#### `label`
+
+[![Card OK][Card-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+
+> **`label`** [Map] _(optional)_
+
+Displays a GitHub-label-style status pill — a short piece of text describing the
+current status at a glance (e.g. `hot`, `critical`, `ok`). Unlike
+[`custom_info`](#custom_info)/[`name_info`](#name_info), the pill's text is
+plain (no inline HTML/styling): its colors are picked automatically instead,
+using the same recipe GitHub's own issue labels use — background is a
+translucent tint of whatever color the icon currently shows (theme zone,
+`custom_theme` zone, or a plain `color` override, whichever applies), and the
+border/text are that same color, lightened just enough to stay readable against
+the card.
+
+_Map definition_:
+
+- `jinja` (JINJA): The pill's text. No separate toggle to show/hide the pill —
+  an empty resolved value simply shows nothing. See [JINJA].
+- `position` (string, optional): Which top corner the pill sits in — `left` or
+  `right` (default).
+
+> [!TIP]
+>
+> Works the same way with a built-in `theme`, a `custom_theme`, or no theme at
+> all — write your own condition on the entity's value/state/attributes, there's
+> no zone list to keep in sync with anything.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.temperature
+theme: temperature
+label:
+  jinja: >-
+    {% set t = states('sensor.temperature') | float %}
+    {% if t > 30 %}hot{% elif t < 10 %}cold{% else %}ok{% endif %}
+  position: right
+```
+
+> [!NOTE]
+>
+> `label` and [`trend_indicator`](#trend_indicator) share the same corner —
+> setting `label` always wins, `trend_indicator` is forced off when both are
+> configured.
+>
+> With `bar_position: compact_below` or `background`, the pill can end up
+> sharing space with `secondary_info` or sitting over the bar itself — adjust
+> `height`/`min_width` or override `--epb-label-background-color` if it needs
+> more room to stand out.
+
+> [!TIP]
+>
+> [`alert_when`](#alert_when) can drive this same pill directly
+> (`highlight: label`) — only shown while the alert is active, using
+> `alert_when`'s own `color`/`label` instead of a Jinja condition you'd
+> otherwise have to write yourself. `alert_when` doesn't have its own `position`
+> — it follows whatever `label.position` (or the default `right`) is already set
+> to.
 
 [🔼 Back to top]
 
@@ -2654,13 +2750,24 @@ _Map definition_:
   - `border` (default): The card border takes the alert color.
   - `background`: A tint of the card background instead — the border stays
     neutral.
+  - `label`: Shows the [`label`](#label) status pill instead of touching the
+    border/background at all — only while the alert is active. Uses `label`
+    below for the pill's text, and `color` for its color (same
+    GitHub-label-style rendering as the standalone `label` option). Takes over
+    the pill from a plain `label` Jinja template if both happen to be set.
+- `label` (string, optional): Fixed text shown in the pill when
+  `highlight: label` and the alert is active (e.g. `"HIGH"`). Plain text, not
+  Jinja — chosen once alongside the threshold itself. No effect with any other
+  `highlight` value.
 - `animation` (string, optional): How that reaction moves. If omitted, it
-  defaults to `blink` for `border` and `static` for `background` (this matches
-  the behavior before `animation` existed, so old configs are unaffected).
+  defaults to `blink` for `border`/`label` and `static` for `background` (this
+  matches the behavior before `animation` existed, so old configs are
+  unaffected).
   - `static`: No motion — steady color.
-  - `blink`: Pulses between the alert color and the resting color.
-  - `ping`: A ring bursts around the whole card. Works the same with either
-    `highlight` — the ring is independent of the border/background tint.
+  - `blink`: Pulses between the alert color and the resting color (the pill's
+    own opacity, with `highlight: label`).
+  - `ping`: A ring bursts around the whole card, or around the pill with
+    `highlight: label` — independent of the border/background/pill color itself.
 
 `above`/`below` are expressed in the entity's native unit, on the same scale as
 `min_value`/`max_value` — like `watermark.low`/`watermark.high`. Both can be
@@ -2695,6 +2802,23 @@ alert_when:
   highlight: border
   animation: ping
 ```
+
+_`highlight: label` example_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.cpu_temperature
+alert_when:
+  above: 80
+  color: red
+  highlight: label
+  label: 'HIGH'
+```
+
+> [!NOTE]
+>
+> Like [`label`](#label) itself, `highlight: label` has no visible effect on a
+> Badge — accepted, just as inert as `label` would be there.
 
 _Entity example_:
 

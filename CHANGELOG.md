@@ -106,6 +106,8 @@ groups.
   purpose as a color safety margin) could stop the bar from ever filling all the
   way, even at a real 100% reading.  
   ➡️ [Bug]: JINJA Should accept more STYLE tags #129 (@emartoni)
+- Better height handling with the grid.  
+  ➡️ Discord @RKT62
 
 ### 🧪 Try it: demo dashboard
 

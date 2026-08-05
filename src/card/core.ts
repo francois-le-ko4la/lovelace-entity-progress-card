@@ -438,6 +438,7 @@ class HACore extends HTMLElement {
       CARD.htmlStructure.elements.icon.class,
       CARD.htmlStructure.elements.badge.icon.class,
       CARD.htmlStructure.elements.trendIndicator.icon.class,
+      CARD.htmlStructure.elements.label.class,
       CARD.htmlStructure.elements.nameMain.class,
       CARD.htmlStructure.elements.nameExtra.class,
       CARD.htmlStructure.elements.secondaryInfoMain.class,
@@ -1043,6 +1044,9 @@ class HABase extends HACore {
       layout: this._cardView.config.layout,
       barSingleLine: this._cardView.config.bar_single_line,
       trendIndicator: this._cardView.config.trend_indicator,
+      hasLabel:
+        is.nonEmptyString(this._cardView.config.label?.jinja) ||
+        this._cardView.config.alert_when?.highlight === 'label',
       multiline: Boolean(this._cardView.config.multiline),
     };
   }
@@ -1063,6 +1067,7 @@ class HABase extends HACore {
       this._cardView.config.bar_position,
       this._cardView.hasReversedSecondaryInfoRow ? 'row-reverse' : null,
       this._cardView.config.text_shadow ? 'text-shadow' : null,
+      this._cardView.config.label?.position === 'left' ? 'label-left' : null,
     );
   }
 
@@ -1174,6 +1179,7 @@ class HABase extends HACore {
         'alert-background',
         this._cardView.isAlertActive && this._cardView.config.alert_when?.highlight === 'background',
       ],
+      ['alert-label', this._cardView.isAlertActive && this._cardView.config.alert_when?.highlight === 'label'],
       ['alert-anim-blink', this._cardView.isAlertActive && this._cardView.alertAnimation === 'blink'],
       ['alert-anim-ping', this._cardView.isAlertActive && this._cardView.alertAnimation === 'ping'],
     ]);
@@ -1195,6 +1201,7 @@ class HABase extends HACore {
 
   _applyAlertClasses() {
     this.#toggleClasses(this._alertStyle);
+    this._applyAlertLabel();
   }
 
   // Bridgehead used by a full render/refresh - re-applies all three layers.
@@ -1515,7 +1522,61 @@ class HABase extends HACore {
       bar_effect: () => this._refreshBarEffect(content),
       hide: () => this._handleHiddenComponents(content),
       icon_animation: () => this._renderIconAnimationWhen(content),
+      'label.jinja': () => this._renderLabel(content),
     };
+  }
+
+  // GitHub-label-style status pill, shared by both of its drivers: a plain
+  // `label` Jinja template (_renderLabel below) and alert_when.highlight:
+  // 'label' (_applyAlertLabel, called from _applyAlertClasses since
+  // alert_when.label is a plain string, not Jinja - there's no push to
+  // piggyback on, it re-evaluates whenever isAlertActive might have
+  // changed). background/border/text color are derived from whatever color
+  // the caller passes using the same recipe GitHub's own Primer design
+  // system uses for issue labels (see ThemeManager.labelColorComponents and
+  // .status-label's CSS). outline-color is a scratch property here, not a
+  // real style choice: it's just a real CSS <color> property to assign the
+  // raw resolved color to so the browser normalizes it into rgb(...) for
+  // parsing (a var() or named color this code never sees resolved
+  // otherwise) - removed right after, it plays no part in the pill's actual
+  // look.
+  _paintLabel(text: string, color: string) {
+    const key = CARD.htmlStructure.elements.label.class;
+    this._dom.setText(key, text);
+    const el = this._dom.get(key);
+    if (!el || !text) return;
+    el.style.setProperty('outline-color', color);
+    const components = ThemeManager.labelColorComponents(getComputedStyle(el).outlineColor);
+    el.style.removeProperty('outline-color');
+    if (!components) return;
+    const label = CARD.style.dynamic.label;
+    el.style.setProperty(label.r.var, String(components.r));
+    el.style.setProperty(label.g.var, String(components.g));
+    el.style.setProperty(label.b.var, String(components.b));
+    el.style.setProperty(label.h.var, String(components.h));
+    el.style.setProperty(label.s.var, String(components.s));
+    el.style.setProperty(label.l.var, String(components.l));
+  }
+
+  _renderLabel(content: unknown) {
+    this._log?.debug('📎 HACore._renderLabel():', { content });
+    // alert_when.highlight: 'label' owns the pill while configured this
+    // way (see _applyAlertLabel) - a plain `label` Jinja alongside it would
+    // otherwise fight over the same element on every refresh.
+    if (this._cardView.config?.alert_when?.highlight === 'label') return;
+    this._paintLabel(String(content ?? '').trim(), this._cardView.iconColor ?? CARD.style.color.default);
+  }
+
+  // Only shown while the alert is active (like the border/background
+  // highlight modes) - alert_when.label is the user's own fixed text (not
+  // Jinja, see schema.ts), so there's no per-tick resolution to await, this
+  // can run synchronously off isAlertActive/alertAnimation, already
+  // recomputed by every _applyAlertClasses call.
+  _applyAlertLabel() {
+    const alert = this._cardView.config?.alert_when;
+    if (alert?.highlight !== 'label') return;
+    const text = this._cardView.isAlertActive ? String(alert.label ?? '').trim() : '';
+    this._paintLabel(text, ThemeManager.adaptColor(alert.color) ?? CARD.style.color.default);
   }
 
   _renderIconAnimationWhen(content: unknown) {
