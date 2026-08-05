@@ -149,7 +149,7 @@ const StructureElements = {
 
   createSecondaryInfo: (options: StructureOptions, secondaryInfoWrapperFn: (options: StructureOptions) => string) => {
     const { layout = '', barPosition = '' } = options;
-    const excludedPositions = ['top', 'bottom', 'below', 'overlay', 'background'];
+    const excludedPositions = ['top', 'bottom', 'below', 'compact_below', 'overlay', 'background'];
     const excludedLayouts = ['vertical'];
 
     let content = secondaryInfoWrapperFn(options);
@@ -181,15 +181,34 @@ const StructureElements = {
     return Element(CARD.htmlStructure.sections.content, extraClass).html(content);
   },
 
+  // bar_position: compact_below (#123) - name and secondary_info share one
+  // row (their own wrapper, see CARD.htmlStructure.sections.nameSecondaryRow),
+  // the bar becomes a separate sibling row below it - a real, explicit
+  // structural difference (like below/top/bottom/overlay), not a CSS
+  // rearrangement of the default DOM.
+  createContentBody: (
+    options: StructureOptions,
+    nameHtml: string,
+    secondaryInfoFn: (options: StructureOptions) => string,
+  ) =>
+    options.barPosition === 'compact_below'
+      ? Element(CARD.htmlStructure.sections.nameSecondaryRow).html(nameHtml + secondaryInfoFn(options)) +
+        StructureElements.progressBar(options)
+      : nameHtml + secondaryInfoFn(options),
+
   contentFull: (options: StructureOptions) =>
     StructureElements.createContent(
       options,
-      StructureElements.nameContent() + StructureElements.secondaryInfo(options),
+      StructureElements.createContentBody(options, StructureElements.nameContent(), StructureElements.secondaryInfo),
     ),
   contentMini: (options: StructureOptions) =>
     StructureElements.createContent(
       options,
-      StructureElements.nameContent(true) + StructureElements.secondaryInfoMinimal(options),
+      StructureElements.createContentBody(
+        options,
+        StructureElements.nameContent(true),
+        StructureElements.secondaryInfoMinimal,
+      ),
     ),
 
   iconSection: () =>

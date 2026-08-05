@@ -1537,21 +1537,33 @@ bar_position: overlay
 
 _Options:_
 
-| option       | description                                                     | Card | Template | Feature |
-| :----------- | :-------------------------------------------------------------- | :--: | :------: | :-----: |
-| `default`    | Standard position (inline with content)                         |  ✅  |    ✅    |   ✅    |
-| `below`      | Below the content as a dedicated row                            |  ✅  |    ✅    |    —    |
-| `top`        | At the top of the card edge                                     |  ✅  |    ✅    |   ✅    |
-| `bottom`     | At the bottom of the card edge                                  |  ✅  |    ✅    |   ✅    |
-| `overlay`    | Overlaid on top of the content                                  |  ✅  |    ✅    |    —    |
-| `background` | Fills the entire card as a background layer, behind the content |  ✅  |    ✅    |    —    |
+| option          | description                                                          | Card | Template | Feature |
+| :-------------- | :------------------------------------------------------------------- | :--: | :------: | :-----: |
+| `default`       | Standard position (inline with content)                              |  ✅  |    ✅    |   ✅    |
+| `below`         | Below the content as a dedicated row                                 |  ✅  |    ✅    |    —    |
+| `compact_below` | Like `below`, but `name`/value share one row (value right-justified) |  ✅  |    ✅    |    —    |
+| `top`           | At the top of the card edge                                          |  ✅  |    ✅    |   ✅    |
+| `bottom`        | At the bottom of the card edge                                       |  ✅  |    ✅    |   ✅    |
+| `overlay`       | Overlaid on top of the content                                       |  ✅  |    ✅    |    —    |
+| `background`    | Fills the entire card as a background layer, behind the content      |  ✅  |    ✅    |    —    |
 
 > [!NOTE]
 >
 > The Tile Feature only supports `default`/`top`/`bottom`: it's a single row
 > added to an existing Tile card, not a full card with its own dedicated rows or
-> content to overlay/background — `below`, `overlay`, and `background` don't
-> apply to that context. Badge and Badge Template don't have this option at all.
+> content to overlay/background — `below`, `compact_below`, `overlay`, and
+> `background` don't apply to that context. Badge and Badge Template don't have
+> this option at all.
+
+> [!NOTE]
+>
+> `compact_below` only has a distinct effect with `layout: horizontal` (the
+> default) — reuses the dead space to the right of `name` for the value/unit
+> instead of leaving it blank, freeing the bar below to use the card's full
+> width. With `layout: vertical`, where there's no such row to reuse, it
+> silently falls back to `default`. With [`bar_size`](#bar_size) `xlarge`, it
+> falls back to `below` instead — same as `default` does at that size, the
+> shared name/secondary_info row reads as too tight above a bar that large.
 
 _Default value_:
 

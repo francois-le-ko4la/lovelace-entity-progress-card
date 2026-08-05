@@ -652,6 +652,44 @@ ha-card:is(.vertical, .xlarge, .below, .bottom, .top, .overlay, .background) .${
   --group-min-width: unset;
 }
 
+/* bar_position: compact_below (#123) - a real, separate DOM shape (like
+   below/top/bottom/overlay), not a CSS rearrangement of the default one: see
+   StructureElements.createContentBody. .name and .secondary-info share a new
+   wrapper row (.name-secondary-row, name left, secondary right); the bar is
+   a sibling row below it, both stacked by .content-section's own existing
+   flex-column (same mechanism bar_position: default already uses to stack
+   .name above .secondary-info).
+   Horizontal-only (see schema.ts's applyCompactBelowRule): vertical already
+   stacks name/secondary/bar narrowly, with no "shared row" to switch to. */
+ha-card.horizontal.compact_below .${CARD.htmlStructure.sections.content.class} {
+  --current-content-height: calc(
+    max(var(--name-height), var(--detail-height)) + var(--current-progress-container-height)
+  );
+}
+ha-card.horizontal.compact_below .${CARD.htmlStructure.sections.nameSecondaryRow.class} {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing);
+  /* baseline, not center: .name and .secondary-info-wrapper render at
+     different font sizes (--ha-font-size-m vs -s) - centering each box
+     still centers two differently-sized line boxes on their own midpoints,
+     not on a shared text baseline, leaving the glyphs visibly offset. */
+  align-items: baseline;
+}
+ha-card.horizontal.compact_below .${CARD.htmlStructure.elements.nameContent.class} {
+  --group-flex-grow: 1;
+  --group-min-width: 0;
+  --group-max-width: none;
+}
+ha-card.horizontal.compact_below .${CARD.htmlStructure.elements.secondaryInfoWrapper.class} {
+  --group-min-width: unset;
+  --group-max-width: unset;
+}
+ha-card.horizontal.compact_below .${CARD.htmlStructure.elements.progressBar.container.class} {
+  margin-top: 2px;
+  min-width: unset;
+}
+
 .${CARD.layout.orientations.vertical.label} {
   --group-justify-content: center;
   --group-width: 100%;

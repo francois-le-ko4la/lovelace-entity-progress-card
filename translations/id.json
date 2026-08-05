@@ -129,6 +129,7 @@
       "bar_position": {
         "default": "Default",
         "below": "Bar di bawah konten",
+        "compact_below": "Compact bar below (name/value on one row)",
         "top": "Bar di atas",
         "bottom": "Bar di bawah",
         "overlay": "Bar ditumpangkan pada konten (overlay)",

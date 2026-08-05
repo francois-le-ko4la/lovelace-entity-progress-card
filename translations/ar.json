@@ -129,6 +129,7 @@
       "bar_position": {
         "default": "افتراضي",
         "below": "الشريط تحت المحتوى",
+        "compact_below": "Compact bar below (name/value on one row)",
         "top": "الشريط أعلى المحتوى",
         "bottom": "الشريط أسفل المحتوى",
         "overlay": "الشريط فوق المحتوى (تراكب)",

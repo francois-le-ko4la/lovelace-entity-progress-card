@@ -11,7 +11,7 @@ input_number:
     max: 100
     step: 1
     initial: 42
-    unit_of_measurement: "%"
+    unit_of_measurement: '%'
     icon: mdi:battery-50
   epb_demo_temperature:
     name: Demo temperature
@@ -19,7 +19,7 @@ input_number:
     max: 40
     step: 0.5
     initial: 21.5
-    unit_of_measurement: "°C"
+    unit_of_measurement: '°C'
     icon: mdi:thermometer
   epb_demo_power:
     name: Demo power
@@ -27,7 +27,7 @@ input_number:
     max: 3000
     step: 50
     initial: -750
-    unit_of_measurement: "W"
+    unit_of_measurement: 'W'
     icon: mdi:transmission-tower
   epb_demo_battery_reserved:
     name: Demo battery (reserved)
@@ -35,7 +35,7 @@ input_number:
     max: 100
     step: 1
     initial: 15
-    unit_of_measurement: "%"
+    unit_of_measurement: '%'
     icon: mdi:battery-lock
   epb_demo_grid_consumption:
     name: Demo grid consumption
@@ -43,7 +43,7 @@ input_number:
     max: 3000
     step: 50
     initial: 900
-    unit_of_measurement: "W"
+    unit_of_measurement: 'W'
     icon: mdi:transmission-tower
   epb_demo_solar_production:
     name: Demo solar production
@@ -51,7 +51,7 @@ input_number:
     max: 3000
     step: 50
     initial: 1600
-    unit_of_measurement: "W"
+    unit_of_measurement: 'W'
     icon: mdi:solar-power
   epb_demo_printer_ink_black:
     name: Demo printer ink (black)
@@ -59,7 +59,7 @@ input_number:
     max: 100
     step: 1
     initial: 78
-    unit_of_measurement: "%"
+    unit_of_measurement: '%'
     icon: mdi:water
   epb_demo_printer_ink_cyan:
     name: Demo printer ink (cyan)
@@ -67,7 +67,7 @@ input_number:
     max: 100
     step: 1
     initial: 54
-    unit_of_measurement: "%"
+    unit_of_measurement: '%'
     icon: mdi:water
   epb_demo_printer_ink_magenta:
     name: Demo printer ink (magenta)
@@ -75,7 +75,7 @@ input_number:
     max: 100
     step: 1
     initial: 32
-    unit_of_measurement: "%"
+    unit_of_measurement: '%'
     icon: mdi:water
   epb_demo_printer_ink_yellow:
     name: Demo printer ink (yellow)
@@ -83,7 +83,7 @@ input_number:
     max: 100
     step: 1
     initial: 9
-    unit_of_measurement: "%"
+    unit_of_measurement: '%'
     icon: mdi:water
   # Fixed reference points for the "same theme, different %" comparison -
   # standard (non-template) cards read percent from entity state only, so
@@ -94,7 +94,7 @@ input_number:
     max: 100
     step: 1
     initial: 25
-    unit_of_measurement: "%"
+    unit_of_measurement: '%'
     icon: mdi:numeric-2-box-outline
   epb_demo_theme_50:
     name: Demo theme ref 50%
@@ -102,7 +102,7 @@ input_number:
     max: 100
     step: 1
     initial: 50
-    unit_of_measurement: "%"
+    unit_of_measurement: '%'
     icon: mdi:numeric-5-box-outline
   epb_demo_theme_75:
     name: Demo theme ref 75%
@@ -110,7 +110,7 @@ input_number:
     max: 100
     step: 1
     initial: 75
-    unit_of_measurement: "%"
+    unit_of_measurement: '%'
     icon: mdi:numeric-7-box-outline
   epb_demo_theme_95:
     name: Demo theme ref 95%
@@ -118,7 +118,7 @@ input_number:
     max: 100
     step: 1
     initial: 95
-    unit_of_measurement: "%"
+    unit_of_measurement: '%'
     icon: mdi:numeric-9-box-outline
   # Fixed reference points for the "same theme, different temperature"
   # comparison - picked to land in 4 distinct zones of the built-in
@@ -130,7 +130,7 @@ input_number:
     max: 40
     step: 0.5
     initial: -10
-    unit_of_measurement: "°C"
+    unit_of_measurement: '°C'
     icon: mdi:thermometer-low
   epb_demo_temp_positive:
     name: Demo temperature ref (positive)
@@ -138,7 +138,7 @@ input_number:
     max: 40
     step: 0.5
     initial: 10
-    unit_of_measurement: "°C"
+    unit_of_measurement: '°C'
     icon: mdi:thermometer
   epb_demo_temp_temperate:
     name: Demo temperature ref (temperate)
@@ -146,7 +146,7 @@ input_number:
     max: 40
     step: 0.5
     initial: 22
-    unit_of_measurement: "°C"
+    unit_of_measurement: '°C'
     icon: mdi:thermometer
   epb_demo_temp_hot:
     name: Demo temperature ref (very hot)
@@ -154,7 +154,7 @@ input_number:
     max: 40
     step: 0.5
     initial: 35
-    unit_of_measurement: "°C"
+    unit_of_measurement: '°C'
     icon: mdi:thermometer-high
   # Fixed reference points across the 5 zones of the built-in `voc` theme
   # (see src/utils/card-themes.ts): good -> green, moderate -> yellow,
@@ -207,11 +207,14 @@ input_boolean:
   epb_demo_charging:
     name: Demo battery charging (toggle)
     icon: mdi:power-plug
+  epb_demo_simple_mode:
+    name: Demo simple mode (toggle)
+    icon: mdi:toggle-switch
 
 timer:
   epb_demo_timer:
     name: Demo timer
-    duration: "00:05:00"
+    duration: '00:05:00'
 
 # Real-world use case: a maintenance countdown (e.g. aquarium prefilter) -
 # the card's entity is a computed "days remaining" number, never written to
@@ -224,26 +227,26 @@ input_datetime:
     name: Demo maintenance (last done)
     has_date: true
     has_time: false
-    initial: "2026-07-15"
+    initial: '2026-07-15'
 
 script:
   epb_demo_reset_maintenance:
-    alias: "Demo: reset maintenance date"
+    alias: 'Demo: reset maintenance date'
     sequence:
       - action: input_datetime.set_datetime
         target:
           entity_id: input_datetime.epb_demo_maintenance_last
         data:
-          timestamp: "{{ now().timestamp() }}"
+          timestamp: '{{ now().timestamp() }}'
   # 35-day interval, back-dated 33 days -> 2 days left before the deadline.
   epb_demo_set_maintenance_near_due:
-    alias: "Demo: set maintenance to 2 days before deadline"
+    alias: 'Demo: set maintenance to 2 days before deadline'
     sequence:
       - action: input_datetime.set_datetime
         target:
           entity_id: input_datetime.epb_demo_maintenance_last
         data:
-          timestamp: "{{ (now() - timedelta(days=33)).timestamp() }}"
+          timestamp: '{{ (now() - timedelta(days=33)).timestamp() }}'
 
 # Percentage + a `battery_charging` attribute on the SAME entity - the shape
 # icon_animation: battery_charging / theme: battery_adaptive look for (see
@@ -259,7 +262,7 @@ template:
       - name: EPB Demo battery (EV)
         unique_id: epb_demo_battery_ev
         state: "{{ states('input_number.epb_demo_battery') }}"
-        unit_of_measurement: "%"
+        unit_of_measurement: '%'
         device_class: battery
         icon: mdi:battery-charging-50
         attributes:
@@ -292,7 +295,7 @@ template:
         state: >-
           {{ states('input_number.epb_demo_solar_production') | float(0)
              - states('input_number.epb_demo_grid_consumption') | float(0) }}
-        unit_of_measurement: "W"
+        unit_of_measurement: 'W'
         icon: mdi:transmission-tower
       # Error/edge-case demo states (EP Demo - Standard, unit & decimal view,
       # last section). `availability: false` is the documented way to force a
@@ -302,12 +305,12 @@ template:
       - name: EPB Demo unavailable
         unique_id: epb_demo_unavailable
         state: "{{ states('input_number.epb_demo_battery') }}"
-        unit_of_measurement: "%"
-        availability: "{{ false }}"
+        unit_of_measurement: '%'
+        availability: '{{ false }}'
       - name: EPB Demo unknown
         unique_id: epb_demo_unknown
-        state: "{{ none }}"
-        unit_of_measurement: "%"
+        state: '{{ none }}'
+        unit_of_measurement: '%'
 
   - fan:
       # Backed by epb_demo_battery (reused as a generic 0-100 slider, same as

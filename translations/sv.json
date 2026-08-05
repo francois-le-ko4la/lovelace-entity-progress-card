@@ -129,6 +129,7 @@
       "bar_position": {
         "default": "Standard",
         "below": "Bar under innehållet",
+        "compact_below": "Compact bar below (name/value on one row)",
         "top": "Bar längst upp",
         "bottom": "Bar längst ned",
         "overlay": "Bar överlagrad på innehållet (overlay)",

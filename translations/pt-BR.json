@@ -129,6 +129,7 @@
       "bar_position": {
         "default": "Padrão",
         "below": "Barra abaixo do conteúdo",
+        "compact_below": "Compact bar below (name/value on one row)",
         "top": "Barra acima",
         "bottom": "Barra abaixo",
         "overlay": "Barra sobre o conteúdo (overlay)",

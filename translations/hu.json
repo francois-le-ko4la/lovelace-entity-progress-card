@@ -129,6 +129,7 @@
       "bar_position": {
         "default": "Alapértelmezett",
         "below": "Sáv a tartalom alatt",
+        "compact_below": "Compact bar below (name/value on one row)",
         "top": "Sáv fent",
         "bottom": "Sáv lent",
         "overlay": "Sáv a tartalmon (overlay)",

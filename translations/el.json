@@ -129,6 +129,7 @@
       "bar_position": {
         "default": "Προεπιλογή",
         "below": "Γραμμή κάτω από το περιεχόμενο",
+        "compact_below": "Compact bar below (name/value on one row)",
         "top": "Γραμμή πάνω",
         "bottom": "Γραμμή κάτω",
         "overlay": "Γραμμή πάνω από περιεχόμενο (overlay)",

@@ -129,6 +129,7 @@
       "bar_position": {
         "default": "Zadano",
         "below": "Traka ispod sadržaja",
+        "compact_below": "Compact bar below (name/value on one row)",
         "top": "Traka na vrhu",
         "bottom": "Traka na dnu",
         "overlay": "Traka preklopljena na sadržaj (overlay)",

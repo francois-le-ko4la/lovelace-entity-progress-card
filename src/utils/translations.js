@@ -136,6 +136,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'افتراضي',
           below: 'الشريط تحت المحتوى',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'الشريط أعلى المحتوى',
           bottom: 'الشريط أسفل المحتوى',
           overlay: 'الشريط فوق المحتوى (تراكب)',
@@ -409,6 +410,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'ডিফল্ট',
           below: 'বিষয়বস্তুর নিচে বার',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'উপরের দিকে বার',
           bottom: 'নিচের দিকে বার',
           overlay: 'বিষয়বস্তুর ওপর বার (ওভারলে)',
@@ -682,6 +684,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Predeterminada',
           below: 'Barra sota el contingut',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Barra a sobre',
           bottom: 'Barra a sota',
           overlay: 'Barra superposada al contingut (overlay)',
@@ -955,6 +958,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Výchozí',
           below: 'Lišta pod obsahem',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Lišta nahoře',
           bottom: 'Lišta dole',
           overlay: 'Lišta přes obsah (overlay)',
@@ -1228,6 +1232,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Standard',
           below: 'Bar under indhold',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Bar øverst',
           bottom: 'Bar nederst',
           overlay: 'Bar over indhold (overlay)',
@@ -1501,6 +1506,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Standard',
           below: 'Leiste unter dem Inhalt',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Leiste oben',
           bottom: 'Leiste unten',
           overlay: 'Leiste über dem Inhalt (Overlay)',
@@ -1774,6 +1780,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Προεπιλογή',
           below: 'Γραμμή κάτω από το περιεχόμενο',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Γραμμή πάνω',
           bottom: 'Γραμμή κάτω',
           overlay: 'Γραμμή πάνω από περιεχόμενο (overlay)',
@@ -2047,6 +2054,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Default',
           below: 'Bar below content',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Bar on top',
           bottom: 'Bar on bottom',
           overlay: 'Bar overlay on content',
@@ -2320,6 +2328,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Predeterminado',
           below: 'Barra debajo del contenido',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Barra arriba',
           bottom: 'Barra abajo',
           overlay: 'Superpuesta sobre el contenido',
@@ -2593,6 +2602,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Predeterminado',
           below: 'Barra debajo del contenido',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Barra arriba',
           bottom: 'Barra abajo',
           overlay: 'Barra superpuesta al contenido (overlay)',
@@ -2866,6 +2876,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Vaikimisi',
           below: 'Riba sisu all',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Riba üleval',
           bottom: 'Riba all',
           overlay: 'Riba sisu kohal (overlay)',
@@ -3139,6 +3150,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Oletus',
           below: 'Palkki sisällön alla',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Palkki ylhäällä',
           bottom: 'Palkki alhaalla',
           overlay: 'Palkki sisällön päällä (overlay)',
@@ -3412,6 +3424,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Défaut',
           below: 'Barre en dessous du contenu',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Barre en haut',
           bottom: 'Barre en bas',
           overlay: 'Barre superposée au contenu (overlay)',
@@ -3685,6 +3698,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'डिफ़ॉल्ट',
           below: 'सामग्री के नीचे बार',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'ऊपर बार',
           bottom: 'नीचे बार',
           overlay: 'सामग्री पर ओवरले बार',
@@ -3958,6 +3972,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Zadano',
           below: 'Traka ispod sadržaja',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Traka na vrhu',
           bottom: 'Traka na dnu',
           overlay: 'Traka preklopljena na sadržaj (overlay)',
@@ -4231,6 +4246,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Alapértelmezett',
           below: 'Sáv a tartalom alatt',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Sáv fent',
           bottom: 'Sáv lent',
           overlay: 'Sáv a tartalmon (overlay)',
@@ -4504,6 +4520,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Default',
           below: 'Bar di bawah konten',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Bar di atas',
           bottom: 'Bar di bawah',
           overlay: 'Bar ditumpangkan pada konten (overlay)',
@@ -4777,6 +4794,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Predefinito',
           below: 'Barra sotto il contenuto',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Barra in alto',
           bottom: 'Barra in basso',
           overlay: 'Barra sovrapposta al contenuto (overlay)',
@@ -5050,6 +5068,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'デフォルト',
           below: 'コンテンツの下にバー',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: '上部にバー',
           bottom: '下部にバー',
           overlay: 'コンテンツに重ねてバー（オーバーレイ）',
@@ -5323,6 +5342,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: '기본',
           below: '콘텐츠 아래 바',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: '상단 바',
           bottom: '하단 바',
           overlay: '콘텐츠 위에 바 (오버레이)',
@@ -5596,6 +5616,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Numatyta',
           below: 'Juosta po turiniu',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Juosta viršuje',
           bottom: 'Juosta apačioje',
           overlay: 'Juosta ant turinio (overlay)',
@@ -5869,6 +5890,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Noklusētais',
           below: 'Josla zem satura',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Josla augšā',
           bottom: 'Josla apakšā',
           overlay: 'Josla virs satura (overlay)',
@@ -6142,6 +6164,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Стандардно',
           below: 'Лента под содржината',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Лента на врвот',
           bottom: 'Лента на дното',
           overlay: 'Лента преку содржината (overlay)',
@@ -6415,6 +6438,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Standard',
           below: 'Bar under innholdet',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Bar øverst',
           bottom: 'Bar nederst',
           overlay: 'Bar lagt over innholdet (overlay)',
@@ -6688,6 +6712,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Standaard',
           below: 'Balk onder de inhoud',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Balk bovenaan',
           bottom: 'Balk onderaan',
           overlay: 'Balk over de inhoud (overlay)',
@@ -6961,6 +6986,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Domyślnie',
           below: 'Pasek pod zawartością',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Pasek na górze',
           bottom: 'Pasek na dole',
           overlay: 'Pasek nałożony na zawartość (overlay)',
@@ -7234,6 +7260,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Padrão',
           below: 'Barra abaixo do conteúdo',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Barra acima',
           bottom: 'Barra abaixo',
           overlay: 'Barra sobre o conteúdo (overlay)',
@@ -7507,6 +7534,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Padrão',
           below: 'Barra abaixo do conteúdo',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Barra em cima',
           bottom: 'Barra em baixo',
           overlay: 'Barra sobreposta ao conteúdo (overlay)',
@@ -7780,6 +7808,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Implicit',
           below: 'Bară sub conținut',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Bară sus',
           bottom: 'Bară jos',
           overlay: 'Bară suprapusă peste conținut (overlay)',
@@ -8053,6 +8082,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'По умолчанию',
           below: 'Полоса под содержимым',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Полоса вверху',
           bottom: 'Полоса внизу',
           overlay: 'Полоса поверх содержимого (overlay)',
@@ -8326,6 +8356,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Predvolené',
           below: 'Pruh pod obsahom',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Pruh hore',
           bottom: 'Pruh dole',
           overlay: 'Pruh cez obsah (overlay)',
@@ -8599,6 +8630,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Privzeto',
           below: 'Vrstica pod vsebino',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Vrstica zgoraj',
           bottom: 'Vrstica spodaj',
           overlay: 'Vrstica čez vsebino (overlay)',
@@ -8872,6 +8904,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Standard',
           below: 'Bar under innehållet',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Bar längst upp',
           bottom: 'Bar längst ned',
           overlay: 'Bar överlagrad på innehållet (overlay)',
@@ -9145,6 +9178,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'ค่าเริ่มต้น',
           below: 'แถบใต้เนื้อหา',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'แถบด้านบน',
           bottom: 'แถบด้านล่าง',
           overlay: 'แถบซ้อนทับเนื้อหา (overlay)',
@@ -9418,6 +9452,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Varsayılan',
           below: 'İçeriğin altında çubuk',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Üstte çubuk',
           bottom: 'Altta çubuk',
           overlay: 'İçeriğin üzerine bindirme (overlay)',
@@ -9691,6 +9726,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'За замовчуванням',
           below: 'Панель під вмістом',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Панель зверху',
           bottom: 'Панель знизу',
           overlay: 'Панель поверх вмісту (overlay)',
@@ -9964,6 +10000,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: 'Mặc định',
           below: 'Thanh bên dưới nội dung',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: 'Thanh ở trên cùng',
           bottom: 'Thanh ở dưới cùng',
           overlay: 'Thanh phủ lên nội dung (overlay)',
@@ -10237,6 +10274,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: '默认',
           below: '内容下方的进度条',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: '顶部进度条',
           bottom: '底部进度条',
           overlay: '覆盖内容的进度条',
@@ -10510,6 +10548,7 @@ const TRANSLATIONS = {
         bar_position: {
           default: '預設',
           below: '內容下方',
+          compact_below: 'Compact bar below (name/value on one row)',
           top: '上方',
           bottom: '下方',
           overlay: '疊加在內容上',

@@ -129,6 +129,7 @@
       "bar_position": {
         "default": "Vaikimisi",
         "below": "Riba sisu all",
+        "compact_below": "Compact bar below (name/value on one row)",
         "top": "Riba üleval",
         "bottom": "Riba all",
         "overlay": "Riba sisu kohal (overlay)",

@@ -65,6 +65,10 @@ const htmlStructure = {
     backgroundContainer: { element: 'div', class: 'background-container' },
     icon: { element: 'div', class: 'icon-section', extraAttr: { 'aria-hidden': 'true' } },
     content: { element: 'div', class: 'content-section' },
+    // bar_position: compact_below (#123) only - wraps name+secondary_info so
+    // they can share one row, with the bar as a separate sibling row below
+    // (see StructureElements.createContentBody).
+    nameSecondaryRow: { element: 'div', class: 'name-secondary-row' },
   },
   elements: {
     icon: { element: 'div', class: 'icon' },

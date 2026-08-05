@@ -304,8 +304,8 @@ views:
           - type: custom:entity-progress-card-template
             entity: input_number.epb_demo_battery
             name: entity-progress-card-template
-            secondary: "{{ states(entity) }}%"
-            percent: "{{ states(entity) }}"
+            secondary: '{{ states(entity) }}%'
+            percent: '{{ states(entity) }}'
             grid_options:
               columns: 6
               rows: 1
@@ -347,7 +347,7 @@ views:
                   subtract: true
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_solar_production
-            name: "Energy: production (+) vs consumption (−)"
+            name: 'Energy: production (+) vs consumption (−)'
             center_zero: true
             min_value: -3000
             max_value: 3000
@@ -392,26 +392,26 @@ views:
             name: Default (native unit, spaced)
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_temperature
-            name: "unit: kW (override)"
+            name: 'unit: kW (override)'
             unit: kW
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_temperature
-            name: "hide: [unit]"
+            name: 'hide: [unit]'
             hide:
               - unit
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_temperature
-            name: "unit_spacing: no-space"
+            name: 'unit_spacing: no-space'
             unit_spacing: no-space
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_temperature
-            name: "unit_spacing: space"
-            unit: "%"
+            name: 'unit_spacing: space'
+            unit: '%'
             unit_spacing: space
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_temperature
             name: "unit: '' (blank, no space either)"
-            unit: ""
+            unit: ''
       - type: grid
         cards:
           - type: heading
@@ -439,17 +439,17 @@ views:
             unit: °C
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_temperature
-            name: "decimal: 1"
+            name: 'decimal: 1'
             unit: °C
             decimal: 1
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_temperature
-            name: "decimal: 2"
+            name: 'decimal: 2'
             unit: °C
             decimal: 2
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_temperature
-            name: "decimal: 3"
+            name: 'decimal: 3'
             unit: °C
             decimal: 3
       - type: grid
@@ -482,19 +482,19 @@ views:
               rows: 2
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "hide: [icon, unit]"
+            name: 'hide: [icon, unit]'
             hide:
               - icon
               - unit
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "hide: [name, secondary_info] (bar + icon only)"
+            name: 'hide: [name, secondary_info] (bar + icon only)'
             hide:
               - name
               - secondary_info
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "state_content: [state, last_changed]"
+            name: 'state_content: [state, last_changed]'
             state_content:
               - state
               - last_changed
@@ -510,16 +510,16 @@ views:
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
             name: name_info (Jinja, next to the name)
-            name_info: "{% if states(entity) | float < 20 %}⚠️ low{% endif %}"
+            name_info: '{% if states(entity) | float < 20 %}⚠️ low{% endif %}'
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "bar_position: background + text_shadow"
+            name: 'bar_position: background + text_shadow'
             bar_position: background
             text_shadow: true
             color: white
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "bar_position: overlay + bar_single_line"
+            name: 'bar_position: overlay + bar_single_line'
             bar_position: overlay
             bar_single_line: true
             bar_size: large
@@ -557,21 +557,21 @@ views:
             center_zero: true
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "max_value: {entity} (dynamic, from another entity)"
+            name: 'max_value: {entity} (dynamic, from another entity)'
             max_value:
               entity: input_number.epb_demo_battery_reserved
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "min_value: {jinja}"
+            name: 'min_value: {jinja}'
             min_value:
-              jinja: "{{ 5 }}"
+              jinja: '{{ 5 }}'
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "reverse: true (fills from the other end)"
+            name: 'reverse: true (fills from the other end)'
             reverse: true
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_grid_consumption
-            name: "bar_stack mode: proportional"
+            name: 'bar_stack mode: proportional'
             center_zero: true
             min_value: -3000
             max_value: 3000
@@ -609,23 +609,23 @@ views:
           - type: custom:entity-progress-card-template
             entity: input_number.epb_demo_battery
             name: icon (Jinja)
-            percent: "{{ states(entity) }}"
+            percent: '{{ states(entity) }}'
             icon: >-
               {% if states(entity) | float > 20 %}mdi:battery-alert {% else
               %}mdi:battery{% endif %}
           - type: custom:entity-progress-card-template
             entity: input_number.epb_demo_battery
             name: color (Jinja)
-            percent: "{{ states(entity) }}"
-            color: "{% if states(entity) | float < 20 %}red{% else %}green{% endif %}"
+            percent: '{{ states(entity) }}'
+            color: '{% if states(entity) | float < 20 %}red{% else %}green{% endif %}'
           - type: custom:entity-progress-card-template
             entity: input_number.epb_demo_battery
             name: bar_color (Jinja)
-            percent: "{{ states(entity) }}"
-            bar_color: "{% if states(entity) | float < 20 %}red{% else %}green{% endif %}"
+            percent: '{{ states(entity) }}'
+            bar_color: '{% if states(entity) | float < 20 %}red{% else %}green{% endif %}'
           - type: custom:entity-progress-card-template
             entity: timer.epb_demo_timer
-            name: "fast_refresh: true — real ticking MM:SS (start the timer!)"
+            name: 'fast_refresh: true — real ticking MM:SS (start the timer!)'
             fast_refresh: true
             secondary: >-
               {% set remaining = as_datetime(state_attr(entity, 'finishes_at'))
@@ -673,7 +673,7 @@ views:
               rows: 2
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "tap: more-info / hold: none / double: toggle"
+            name: 'tap: more-info / hold: none / double: toggle'
             tap_action:
               action: more-info
             hold_action:
@@ -682,7 +682,7 @@ views:
               action: toggle
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "icon_tap_action: navigate"
+            name: 'icon_tap_action: navigate'
             icon_tap_action:
               action: navigate
               navigation_path: /config/helpers
@@ -697,7 +697,7 @@ views:
             entity: input_number.epb_demo_battery
             name:
               - type: text
-                text: "name: composition — "
+                text: 'name: composition — '
               - type: entity
       - type: grid
         cards:
@@ -815,7 +815,7 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: "Compare with tile — different device classes"
+            heading: 'Compare with tile — different device classes'
             heading_style: title
           - type: custom:entity-progress-card
             entity: fan.epb_demo_fan
@@ -874,7 +874,7 @@ views:
               rows: 1
           - type: custom:entity-progress-card
             entity: counter.epb_demo_counter
-            name: "counter (tap +1 / hold -1 / dbl reset)"
+            name: 'counter (tap +1 / hold -1 / dbl reset)'
             tap_action:
               action: call-service
               service: counter.increment
@@ -911,16 +911,16 @@ views:
       - type: custom:entity-progress-badge-template
         entity: input_number.epb_demo_battery
         name: entity-progress-badge-template
-        secondary: "{{ states(entity) }}%"
-        percent: "{{ states(entity) }}"
+        secondary: '{{ states(entity) }}%'
+        percent: '{{ states(entity) }}'
       - type: custom:entity-progress-badge
         entity: input_number.epb_demo_battery
-        name: "min_width: 50% (badge-specific, #124)"
+        name: 'min_width: 50% (badge-specific, #124)'
         min_width: 50%
       - type: custom:entity-progress-badge
         entity: input_number.epb_demo_battery
-        name: "badge_icon / badge_color (Jinja)"
-        badge_icon: "{% if states(entity) | float > 20 %}mdi:alert{% endif %}"
+        name: 'badge_icon / badge_color (Jinja)'
+        badge_icon: '{% if states(entity) | float > 20 %}mdi:alert{% endif %}'
         badge_color: red
     cards: []
     show_icon_and_title: true
@@ -1228,18 +1228,22 @@ views:
               columns: 12
               rows: 1
           - type: custom:entity-progress-card
+            name: good
             entity: input_number.epb_demo_voc_good
             theme: voc
             max_value: 5000
           - type: custom:entity-progress-card
+            name: moderate
             entity: input_number.epb_demo_voc_moderate
             theme: voc
             max_value: 5000
           - type: custom:entity-progress-card
+            name: bad
             entity: input_number.epb_demo_voc_bad
             theme: voc
             max_value: 5000
           - type: custom:entity-progress-card
+            name: hazardous
             entity: input_number.epb_demo_voc_hazardous
             theme: voc
             max_value: 5000
@@ -1396,6 +1400,20 @@ views:
             name: reveal
             icon_animation: reveal
           - type: custom:entity-progress-card
+            entity: timer.epb_demo_timer
+            icon: mdi:washing-machine
+            bar_size: medium
+            reverse: true
+            unit: flextimer
+            name: Remaining Time reverse
+            bar_orientation: rtl
+            state_content:
+              - state
+            icon_animation: washing_machine
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: custom:entity-progress-card
             entity: sensor.epb_demo_battery_ev
             name: battery_charging (tap to toggle charging)
             icon_animation: battery_charging
@@ -1417,12 +1435,12 @@ views:
             heading_style: title
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "bar_color_mode: segment (needs a theme)"
+            name: 'bar_color_mode: segment (needs a theme)'
             theme: optimal_when_high
             bar_color_mode: segment
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "bar_color_mode: rainbow (needs a theme)"
+            name: 'bar_color_mode: rainbow (needs a theme)'
             theme: optimal_when_high
             bar_color_mode: rainbow
           - type: custom:entity-progress-card
@@ -1440,7 +1458,7 @@ views:
                 color: green
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_temperature
-            name: "alert_when: above 25 (blink border)"
+            name: 'alert_when: above 25 (blink border)'
             alert_when:
               above: 25
               color: red
@@ -1448,7 +1466,7 @@ views:
               animation: blink
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_temperature
-            name: "alert_when: below 25 (ping background)"
+            name: 'alert_when: below 25 (static background)'
             alert_when:
               color: red
               highlight: background
@@ -1456,7 +1474,7 @@ views:
               animation: static
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_temperature
-            name: "alert_when: below 25 (ping background)"
+            name: 'alert_when: below 25 (blink background)'
             alert_when:
               color: red
               highlight: background
@@ -1464,7 +1482,7 @@ views:
               animation: blink
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_temperature
-            name: "alert_when: below 25 (ping background)"
+            name: 'alert_when: below 25 (ping background)'
             alert_when:
               color: red
               highlight: background
@@ -1472,7 +1490,7 @@ views:
               animation: ping
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_temperature
-            name: "alert_when: below 25 (ping background)"
+            name: 'alert_when: below 25 (ping border)'
             alert_when:
               color: red
               highlight: border
@@ -1480,7 +1498,7 @@ views:
               animation: ping
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_temperature
-            name: "alert_when: below 25 (ping background)"
+            name: 'alert_when: below 25 (blink border)'
             alert_when:
               color: red
               highlight: border
@@ -1488,7 +1506,7 @@ views:
               animation: blink
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_temperature
-            name: "alert_when: below 25 (ping background)"
+            name: 'alert_when: below 25 (static border)'
             alert_when:
               color: red
               highlight: border
@@ -1497,11 +1515,11 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: "custom_theme — use cases"
+            heading: 'custom_theme — use cases'
             heading_style: title
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "custom_theme: color only"
+            name: 'custom_theme: color only'
             custom_theme:
               - min: 0
                 max: 30
@@ -1514,7 +1532,7 @@ views:
                 color: green
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "custom_theme: color + icon"
+            name: 'custom_theme: color + icon'
             custom_theme:
               - min: 0
                 max: 30
@@ -1546,7 +1564,7 @@ views:
                 color: red
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_temp_negative
-            name: "custom_theme +/-: standard card"
+            name: 'custom_theme +/-: standard card'
             min_value: -20
             max_value: 40
             bar_color_mode: rainbow
@@ -1562,7 +1580,7 @@ views:
                 color: red
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_temp_negative
-            name: "custom_theme +/-: center_zero (zero = 0)"
+            name: 'custom_theme +/-: center_zero (zero = 0)'
             center_zero: true
             min_value: -20
             max_value: 40
@@ -1579,7 +1597,7 @@ views:
                 color: red
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_temp_negative
-            name: "custom_theme +/-: center_zero (zero = 20)"
+            name: 'custom_theme +/-: center_zero (zero = 20)'
             center_zero:
               value: 20
             min_value: -20
@@ -1624,27 +1642,27 @@ views:
               rows: 2
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_power
-            name: "center_zero: true (50/50 split)"
+            name: 'center_zero: true (50/50 split)'
             center_zero: true
             min_value: -3000
             max_value: 3000
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_power
-            name: "center_zero: {value: 1000} (offset zero point)"
+            name: 'center_zero: {value: 1000} (offset zero point)'
             center_zero:
               value: 1000
             min_value: -3000
             max_value: 3000
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_power
-            name: "center_zero: {growth_percent: true} (arm width = magnitude)"
+            name: 'center_zero: {growth_percent: true} (arm width = magnitude)'
             center_zero:
               growth_percent: true
             min_value: -3000
             max_value: 3000
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_power
-            name: "center_zero + theme + bar_color_mode: segment"
+            name: 'center_zero + theme + bar_color_mode: segment'
             center_zero: true
             min_value: -3000
             max_value: 3000
@@ -1652,7 +1670,7 @@ views:
             bar_color_mode: segment
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_power
-            name: "center_zero + theme + bar_color_mode: rainbow"
+            name: 'center_zero + theme + bar_color_mode: rainbow'
             center_zero: true
             min_value: -3000
             max_value: 3000
@@ -1672,7 +1690,7 @@ views:
               high_color: green
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_power
-            name: "center_zero, layout: vertical"
+            name: 'center_zero, layout: vertical'
             center_zero: true
             min_value: -3000
             max_value: 3000
@@ -1693,7 +1711,7 @@ views:
                   subtract: true
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_solar_production
-            name: "Energy use case: expense (−) vs production (+)"
+            name: 'Energy use case: expense (−) vs production (+)'
             center_zero: true
             min_value: -3000
             max_value: 3000
@@ -1709,15 +1727,15 @@ views:
             heading_style: title
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "bar_segments: 10"
+            name: 'bar_segments: 10'
             bar_segments: 10
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "bar_max_width: 80px"
+            name: 'bar_max_width: 80px'
             bar_max_width: 80px
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "bar_orientation: rtl"
+            name: 'bar_orientation: rtl'
             bar_orientation: rtl
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
@@ -1725,7 +1743,7 @@ views:
             force_circular_background: true
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_power
-            name: "center_zero: {value, growth_percent}"
+            name: 'center_zero: {value, growth_percent}'
             center_zero:
               value: 0
               growth_percent: true
@@ -1733,7 +1751,7 @@ views:
             max_value: 3000
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "watermark: disable_low + disable_high"
+            name: 'watermark: disable_low + disable_high'
             watermark:
               low: 20
               high: 80
@@ -1750,7 +1768,7 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: "layout: horizontal — every bar_position"
+            heading: 'layout: horizontal — every bar_position'
             heading_style: title
           - type: markdown
             content: |
@@ -1759,7 +1777,7 @@ views:
               type: custom:entity-progress-card
               entity: input_number.epb_demo_battery
               layout: horizontal
-              bar_position: default   # default | below | top | bottom | overlay | background
+              bar_position: default   # default | below | compact_below | top | bottom | overlay | background
               ```
               Same entity, only `bar_position` changes below - where the
               progress bar sits relative to the name/value text.
@@ -1777,6 +1795,11 @@ views:
             name: below
             layout: horizontal
             bar_position: below
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'compact_below (#123)'
+            layout: horizontal
+            bar_position: compact_below
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
             name: top
@@ -1801,7 +1824,7 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: "layout: vertical — every bar_position"
+            heading: 'layout: vertical — every bar_position'
             heading_style: title
           - type: markdown
             content: |
@@ -1810,7 +1833,7 @@ views:
               type: custom:entity-progress-card
               entity: input_number.epb_demo_battery
               layout: vertical
-              bar_position: default   # default | below | top | bottom | overlay | background
+              bar_position: default   # default | below | compact_below | top | bottom | overlay | background
               ```
               Same as the horizontal set above, but `layout: vertical` -
               every `bar_position` still applies, just along the other axis.
@@ -1836,6 +1859,14 @@ views:
               rows: 2
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
+            name: 'compact_below → default (#123)'
+            layout: vertical
+            bar_position: compact_below
+            grid_options:
+              columns: 4
+              rows: 2
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
             name: top
             layout: vertical
             bar_position: top
@@ -1870,7 +1901,7 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: "bar_orientation: up — only valid on overlay/background"
+            heading: 'bar_orientation: up — only valid on overlay/background'
             heading_style: title
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_printer_ink_black
@@ -1958,20 +1989,20 @@ views:
             layout: horizontal
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "- secondary_info"
+            name: '- secondary_info'
             layout: horizontal
             hide:
               - secondary_info
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "- secondary_info - icon"
+            name: '- secondary_info - icon'
             layout: horizontal
             hide:
               - secondary_info
               - icon
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "- secondary_info - icon - name"
+            name: '- secondary_info - icon - name'
             layout: horizontal
             hide:
               - secondary_info
@@ -1981,7 +2012,67 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: Série 2 — vertical, hide progressif (secondary → icon → name)
+            heading: 'Série 2 — compact_below, hide progressif (#123)'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card
+              entity: input_number.epb_demo_battery
+              layout: horizontal
+              bar_position: compact_below
+              hide: [icon]   # then + unit, then + secondary_info, then + name
+              ```
+              Same idea as Série 1, with `bar_position: compact_below`: name
+              and value share one row, `hide` items strip progressively from
+              there.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: Standard
+            layout: horizontal
+            bar_position: compact_below
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: '- icon'
+            layout: horizontal
+            bar_position: compact_below
+            hide:
+              - icon
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: '- icon - unit'
+            unit: '%'
+            layout: horizontal
+            bar_position: compact_below
+            hide:
+              - icon
+              - unit
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: '- icon - secondary_info'
+            layout: horizontal
+            bar_position: compact_below
+            hide:
+              - icon
+              - secondary_info
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: '- icon - name'
+            layout: horizontal
+            bar_position: compact_below
+            hide:
+              - icon
+              - name
+        column_span: 2
+      - type: grid
+        cards:
+          - type: heading
+            heading: Série 3 — vertical, hide progressif (secondary → icon → name)
             heading_style: title
           - type: markdown
             content: |
@@ -2007,7 +2098,7 @@ views:
               rows: 2
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "- secondary_info"
+            name: '- secondary_info'
             layout: vertical
             hide:
               - secondary_info
@@ -2016,7 +2107,7 @@ views:
               rows: 2
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "- secondary_info - icon"
+            name: '- secondary_info - icon'
             layout: vertical
             hide:
               - secondary_info
@@ -2026,7 +2117,7 @@ views:
               rows: 2
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "- secondary_info - icon - name"
+            name: '- secondary_info - icon - name'
             layout: vertical
             hide:
               - secondary_info
@@ -2039,7 +2130,41 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: Série 3 — horizontal, bar_size xsmall → xlarge
+            heading: 'hide: Jinja template (dynamic)'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card
+              entity: input_number.epb_demo_battery
+              hide: >
+                {% if is_state('input_boolean.epb_demo_simple_mode', 'on') %}
+                  secondary_info, progress_bar
+                {% endif %}
+              ```
+              `hide` also accepts a Jinja template returning a list, instead
+              of a static list - toggle the helper below to hide
+              `secondary_info` and `progress_bar` on the fly.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'hide: {{ jinja }}'
+            layout: horizontal
+            hide: >
+              {% if is_state('input_boolean.epb_demo_simple_mode', 'on') %}
+                secondary_info, progress_bar
+              {% endif %}
+          - type: tile
+            entity: input_boolean.epb_demo_simple_mode
+            name: Toggle to hide secondary_info + progress_bar
+      - type: grid
+        cards:
+          - type: heading
+            heading: Série 4 — horizontal, bar_size xsmall → xlarge
             heading_style: title
           - type: markdown
             content: |
@@ -2089,7 +2214,7 @@ views:
         cards:
           - type: heading
             heading: >-
-              Série 4 — horizontal, bar_position: below, bar_size xsmall →
+              Série 5 — horizontal, bar_position: below, bar_size xsmall →
               xlarge
             heading_style: title
           - type: markdown
@@ -2102,7 +2227,7 @@ views:
               bar_position: below
               bar_size: medium   # xsmall | small | medium | large | xlarge
               ```
-              Same `bar_size` sweep as Série 3, with `bar_position: below`
+              Same `bar_size` sweep as Série 4, with `bar_position: below`
               instead of the default - the bar drops to its own row under
               the text instead of sharing one with it.
               {% endraw %}
@@ -2143,7 +2268,7 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: Série 5 — vertical, bar_size xsmall → xlarge
+            heading: Série 6 — vertical, bar_size xsmall → xlarge
             heading_style: title
           - type: markdown
             content: |
@@ -2221,7 +2346,7 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: "Série 6 — vertical, bar_position: below, bar_size xsmall → xlarge"
+            heading: 'Série 7 — vertical, bar_position: below, bar_size xsmall → xlarge'
             heading_style: title
           - type: markdown
             content: |
@@ -2233,7 +2358,7 @@ views:
               bar_position: below
               bar_size: medium   # xsmall | small | medium | large | xlarge
               ```
-              Same `bar_size` sweep as Série 5, with `bar_position: below`
+              Same `bar_size` sweep as Série 6, with `bar_position: below`
               instead of the default.
               {% endraw %}
             grid_options:
@@ -2314,7 +2439,7 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: "-feature / -multi-feature"
+            heading: '-feature / -multi-feature'
             heading_style: title
           - type: markdown
             content: |
@@ -2358,7 +2483,7 @@ views:
               columns: 6
               rows: 2
             entity: input_boolean.epb_demo_printer
-            name: "Printer ink levels - without show_value"
+            name: 'Printer ink levels - without show_value'
             features:
               - type: custom:entity-progress-multi-feature
                 bar_size: xsmall
@@ -2377,7 +2502,7 @@ views:
               columns: 6
               rows: 2
             entity: input_boolean.epb_demo_printer
-            name: "Printer ink levels - with show_value"
+            name: 'Printer ink levels - with show_value'
             features:
               - type: custom:entity-progress-multi-feature
                 bar_size: xsmall
@@ -2391,6 +2516,32 @@ views:
                     bar_color: magenta
                   - entity: input_number.epb_demo_printer_ink_yellow
                     bar_color: yellow
+            card_mod:
+              style: |
+                :host {
+                  --epb-multi-value-width: 45px;
+                }
+          - type: heading
+            heading: 'Printer ink levels - standalone entity-progress-multi-card'
+            heading_style: subtitle
+            grid_options:
+              columns: full
+          - type: custom:entity-progress-multi-card
+            bar_size: xsmall
+            show_value: true
+            entities:
+              - entity: input_number.epb_demo_printer_ink_black
+                bar_color: black
+              - entity: input_number.epb_demo_printer_ink_cyan
+                bar_color: cyan
+              - entity: input_number.epb_demo_printer_ink_magenta
+                bar_color: magenta
+              - entity: input_number.epb_demo_printer_ink_yellow
+                bar_color: yellow
+            grid_options:
+              min_columns: 4
+              columns: 6
+              rows: 2
           - type: tile
             grid_options:
               min_columns: 4
@@ -2398,7 +2549,7 @@ views:
               rows: 2
             entity: sensor.epb_demo_energy_net
             icon: mdi:transmission-tower
-            name: "Energy - without show_value"
+            name: 'Energy - without show_value'
             features:
               - type: custom:entity-progress-multi-feature
                 bar_size: medium
@@ -2476,7 +2627,7 @@ views:
                   - icon
                 marginless: true
                 frameless: true
-                heigh: auto
+                height: auto
                 decimal: 0
               - type: custom:entity-progress-card
                 entity: input_number.epb_demo_printer_ink_cyan
@@ -2487,7 +2638,7 @@ views:
                   - icon
                 marginless: true
                 frameless: true
-                heigh: auto
+                height: auto
                 decimal: 0
               - type: custom:entity-progress-card
                 entity: input_number.epb_demo_printer_ink_magenta
@@ -2498,7 +2649,7 @@ views:
                   - icon
                 marginless: true
                 frameless: true
-                heigh: auto
+                height: auto
                 decimal: 0
               - type: custom:entity-progress-card
                 entity: input_number.epb_demo_printer_ink_yellow
@@ -2509,7 +2660,7 @@ views:
                   - icon
                 marginless: true
                 frameless: true
-                heigh: auto
+                height: auto
                 decimal: 0
             grid_options:
               columns: full
@@ -2550,7 +2701,7 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: Vertical stack in card
+            heading: Vertical stack
             heading_style: title
           - type: vertical-stack
             cards:
@@ -2580,7 +2731,8 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: New section
+            heading: Vertical stack in card
+            heading_style: title
           - type: custom:vertical-stack-in-card
             title: vertical-stack-in-card
             cards:
@@ -2613,6 +2765,45 @@ views:
           - type: heading
             heading: Embedded in custom:button-card (needs the HACS plugin)
             heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:button-card
+              entity: input_number.epb_demo_battery
+              show_name: true
+              show_state: false
+              show_icon: false
+              custom_fields:
+                progress:
+                  card:
+                    type: custom:entity-progress-card
+                    entity: input_number.epb_demo_battery
+                    height: auto
+                    marginless: true
+                    frameless: true
+              ```
+              Recipe from the Theme Guide's "Embedded in another card" section:
+              `height: auto` + `marginless: true` + `frameless: true` shrinks
+              the card fully to its content instead of stretching to whatever
+              height the field's wrapper gives it.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:button-card
+            entity: input_number.epb_demo_battery
+            show_name: true
+            show_state: false
+            show_icon: false
+            custom_fields:
+              progress:
+                card:
+                  type: custom:entity-progress-card
+                  entity: input_number.epb_demo_battery
+                  height: auto
+                  marginless: true
+                  frameless: true
       - type: grid
         cards:
           - type: heading
@@ -2625,7 +2816,7 @@ views:
             secondary: Template
             badge_icon: mdi:update
             badge_color: green
-            percent: "{{ states(entity) }}"
+            percent: '{{ states(entity) }}'
             force_circular_background: true
             center_zero: true
             card_mod:
@@ -2672,7 +2863,7 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: "#31 — watermark: only low defined, no phantom high line"
+            heading: '#31 — watermark: only low defined, no phantom high line'
             heading_style: title
           - type: markdown
             content: |
@@ -2693,7 +2884,7 @@ views:
               rows: 2
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "#31 low only"
+            name: '#31 low only'
             watermark:
               type: line
               low: 30
@@ -2701,7 +2892,7 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: "#34 — percent decimal defaults to 0, not 2"
+            heading: '#34 — percent decimal defaults to 0, not 2'
             heading_style: title
           - type: markdown
             content: |
@@ -2720,8 +2911,8 @@ views:
               rows: 2
           - type: custom:entity-progress-card-template
             entity: input_number.epb_demo_battery
-            name: "#34 no decimal override"
-            percent: "{{ states(entity) }}"
+            name: '#34 no decimal override'
+            percent: '{{ states(entity) }}'
       - type: grid
         cards:
           - type: heading
@@ -2745,7 +2936,7 @@ views:
               rows: 2
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "#41 degenerate range"
+            name: '#41 degenerate range'
             min_value: 50
             max_value: 50
       - type: grid
@@ -2770,14 +2961,14 @@ views:
               rows: 2
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "#63 hide name only"
+            name: '#63 hide name only'
             layout: horizontal
             hide:
               - name
       - type: grid
         cards:
           - type: heading
-            heading: "#68 — disable_unit: true picks the right custom_theme zone"
+            heading: '#68 — disable_unit: true picks the right custom_theme zone'
             heading_style: title
           - type: markdown
             content: |
@@ -2804,7 +2995,7 @@ views:
               rows: 2
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_temperature
-            name: "#68 should be red (< 20)"
+            name: '#68 should be red (< 20)'
             disable_unit: true
             min_value: -20
             max_value: 40
@@ -2818,7 +3009,7 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: "#75 — bar_effect: radius, every corner (small & medium)"
+            heading: '#75 — bar_effect: radius, every corner (small & medium)'
             heading_style: title
           - type: markdown
             content: |
@@ -2837,7 +3028,7 @@ views:
               rows: 2
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "#75 small"
+            name: '#75 small'
             bar_size: small
             bar_effect:
               - radius
@@ -2857,14 +3048,14 @@ views:
               rows: 2
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "#75 medium"
+            name: '#75 medium'
             bar_size: medium
             bar_effect:
               - radius
       - type: grid
         cards:
           - type: heading
-            heading: "#99 — overlay text + reverse_secondary_info_row"
+            heading: '#99 — overlay text + reverse_secondary_info_row'
             heading_style: title
           - type: markdown
             content: |
@@ -2885,14 +3076,14 @@ views:
               rows: 2
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "#99"
+            name: '#99'
             bar_position: overlay
             reverse_secondary_info_row: true
             bar_size: large
       - type: grid
         cards:
           - type: heading
-            heading: "#106 — state_content: [last_updated] resolves, not Unknown"
+            heading: '#106 — state_content: [last_updated] resolves, not Unknown'
             heading_style: title
           - type: markdown
             content: |
@@ -2910,13 +3101,13 @@ views:
               rows: 2
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "#106"
+            name: '#106'
             state_content:
               - last_updated
       - type: grid
         cards:
           - type: heading
-            heading: "#121 — percent > 100% renders fully filled, not glitched"
+            heading: '#121 — percent > 100% renders fully filled, not glitched'
             heading_style: title
           - type: markdown
             content: |
@@ -2934,12 +3125,12 @@ views:
               rows: 2
           - type: custom:entity-progress-card-template
             entity: input_number.epb_demo_battery
-            name: "#121"
-            percent: "150"
+            name: '#121'
+            percent: '150'
       - type: grid
         cards:
           - type: heading
-            heading: "#127/#125 — timer active-state icon_animation + Jinja trigger"
+            heading: '#127/#125 — timer active-state icon_animation + Jinja trigger'
             heading_style: title
           - type: markdown
             content: |
@@ -2961,7 +3152,7 @@ views:
               rows: 2
           - type: custom:entity-progress-card
             entity: timer.epb_demo_timer
-            name: "#127 washing_machine (start the timer)"
+            name: '#127 washing_machine (start the timer)'
             icon_animation: washing_machine
             tap_action:
               action: call-service
@@ -2988,7 +3179,7 @@ views:
               rows: 2
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "#125 Jinja-triggered animation"
+            name: '#125 Jinja-triggered animation'
             icon_animation:
               effect: battery_charging
               jinja: "{{ states('input_number.epb_demo_battery') | float > 20 }}"
@@ -3015,7 +3206,7 @@ views:
               rows: 2
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "#129 hide name, no gap"
+            name: '#129 hide name, no gap'
             layout: horizontal
             hide:
               - name
@@ -3036,7 +3227,7 @@ views:
               rows: 2
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: "#133 xlarge + hidden icon, full 2 rows"
+            name: '#133 xlarge + hidden icon, full 2 rows'
             bar_size: xlarge
             hide:
               - icon
@@ -3046,7 +3237,7 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: "#129 follow-up — center_zero negative arm: theme gradient order/direction"
+            heading: '#129 follow-up — center_zero negative arm: theme gradient order/direction'
             heading_style: title
           - type: markdown
             content: |
@@ -3071,7 +3262,7 @@ views:
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_temp_negative
             theme: temperature
-            name: temperature
+            name: '#129 follow-up'
             bar_color_mode: rainbow
             icon: mdi:book
             center_zero:
@@ -3086,30 +3277,30 @@ views:
     badges:
       - type: custom:entity-progress-badge-template
         entity: input_number.epb_demo_battery
-        name: "#97"
-        secondary: "{{ states(entity) }}%"
-        percent: "{{ states(entity) }}"
+        name: '#97'
+        secondary: '{{ states(entity) }}%'
+        percent: '{{ states(entity) }}'
       - type: custom:entity-progress-badge-template
         entity: input_number.epb_demo_battery
-        name: "#104"
-        secondary: "{% if states(entity) | float < 20 %}low{% else %}ok{% endif %}"
-        percent: "{{ states(entity) }}"
-        color: "{% if states(entity) | float > 20 %}red{% else %}primary{% endif %}"
+        name: '#104'
+        secondary: '{% if states(entity) | float < 20 %}low{% else %}ok{% endif %}'
+        percent: '{{ states(entity) }}'
+        color: '{% if states(entity) | float > 20 %}red{% else %}primary{% endif %}'
         badge_icon: >-
           {% if states(entity) | float < 20 %}mdi:battery-alert {% else
           %}mdi:battery{% endif %}
-        badge_color: "{% if states(entity) | float < 20 %}red{% else %}green{% endif %}"
+        badge_color: '{% if states(entity) | float < 20 %}red{% else %}green{% endif %}'
       - type: custom:entity-progress-badge
         entity: input_number.epb_demo_battery
-        name: "#124"
+        name: '#124'
         min_width: 200px
     show_icon_and_title: true
-  - type: sections
-    max_columns: 2
-    title: EPB Demo - Examples
-    path: epb-demo-examples
-    show_icon_and_title: true
+  - title: EP Demo - Examples
     icon: mdi:chemical-weapon
+    path: epb-demo-examples
+    type: sections
+    max_columns: 2
+    show_icon_and_title: true
     sections:
       - type: grid
         cards:
@@ -3193,7 +3384,7 @@ views:
               columns: 6
               rows: 2
             entity: input_boolean.epb_demo_printer
-            name: "Multi-feature use case: printer ink levels"
+            name: 'Multi-feature use case: printer ink levels'
             features:
               - type: custom:entity-progress-multi-feature
                 bar_size: xsmall
@@ -3337,7 +3528,7 @@ views:
               rows: 2
           - type: custom:entity-progress-card
             entity: sensor.epb_demo_maintenance_days
-            name: "Real-world: maintenance countdown (double-tap to reset)"
+            name: 'Real-world: maintenance countdown (double-tap to reset)'
             bar_orientation: rtl
             unit: days
             max_value: 35
@@ -3398,7 +3589,7 @@ views:
           - type: custom:entity-progress-badge-template
             entity: input_number.epb_demo_power
             name: GRID/USD
-            percent: "{{ ((states(entity) | float + 3000) / 60) }}"
+            percent: '{{ ((states(entity) | float + 3000) / 60) }}'
             secondary: >-
               {{ '▲' if states(entity) | float > 0 else '▼' }} {{ states(entity)
               | float | abs }} W
@@ -3423,13 +3614,13 @@ views:
             custom_theme:
               - min: 0
                 max: 60
-                color: "#39ff14"
+                color: '#39ff14'
               - min: 60
                 max: 85
-                color: "#ffd400"
+                color: '#ffd400'
               - min: 85
                 max: 100
-                color: "#ff2200"
+                color: '#ff2200'
             bar_color_mode: segment
             bar_effect:
               - radius
@@ -3469,11 +3660,11 @@ views:
                 entities:
                   - entity: input_number.epb_demo_grid_consumption
                     name: GRID IN
-                    bar_color: "#ff2d78"
+                    bar_color: '#ff2d78'
                     max_value: 3000
                   - entity: input_number.epb_demo_solar_production
                     name: SOLAR
-                    bar_color: "#00ffc8"
+                    bar_color: '#00ffc8'
                     max_value: 3000
               - type: custom:entity-progress-feature
                 bar_size: medium
@@ -3483,12 +3674,12 @@ views:
                 center_zero: true
                 min_value: -3000
                 max_value: 3000
-                bar_color: "#7b2ff7"
+                bar_color: '#7b2ff7'
                 bar_stack:
                   entities:
                     - entity: input_number.epb_demo_grid_consumption
                       subtract: true
-                      color: "#ff2d78"
+                      color: '#ff2d78'
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_power
             name: 🌊 ABYSS PRESSURE
@@ -3503,8 +3694,8 @@ views:
               type: area
               low: -1000
               high: 1000
-              low_color: "#001a33"
-              high_color: "#00b4d8"
+              low_color: '#001a33'
+              high_color: '#00b4d8'
               opacity: 0.5
             force_circular_background: true
             card_mod:
@@ -3548,7 +3739,7 @@ views:
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_power
             name: ⚡ REACTOR CORE
-            secondary: "{{ states(entity) | float | abs }} W"
+            secondary: '{{ states(entity) | float | abs }} W'
             icon: mdi:atom
             center_zero:
               growth_percent: true
@@ -3565,8 +3756,8 @@ views:
               type: round
               low: -2000
               high: 2000
-              low_color: "#ff2d55"
-              high_color: "#00ffc8"
+              low_color: '#ff2d55'
+              high_color: '#00ffc8'
               opacity: 0.6
             icon_animation:
               effect: pulse
@@ -3597,8 +3788,8 @@ views:
           - type: custom:entity-progress-card-template
             entity: input_number.epb_demo_battery
             name: 🎰 JACKPOT METER
-            percent: "{{ states(entity) }}"
-            secondary: "{{ (states(entity) | float * 7.77) | round(0) }} pts"
+            percent: '{{ states(entity) }}'
+            secondary: '{{ (states(entity) | float * 7.77) | round(0) }} pts'
             icon: mdi:slot-machine
             badge_icon: "{{ '✨' if states(entity) | float > 77 else '' }}"
             badge_color: gold
@@ -3634,12 +3825,12 @@ views:
               type: striped
               low: 3000
               high: 25000
-              low_color: "#ffb300"
-              high_color: "#ff0033"
+              low_color: '#ffb300'
+              high_color: '#ff0033'
               opacity: 0.5
             alert_when:
               above: 25000
-              color: "#ff0033"
+              color: '#ff0033'
               highlight: background
               animation: ping
             card_mod:
@@ -3671,15 +3862,15 @@ views:
                 entities:
                   - entity: input_number.epb_demo_battery
                     name: SpO2
-                    bar_color: "#39ff14"
+                    bar_color: '#39ff14'
                   - entity: input_number.epb_demo_temperature
                     name: TEMP
-                    bar_color: "#ff2d78"
+                    bar_color: '#ff2d78'
                     min_value: 30
                     max_value: 42
                   - entity: input_number.epb_demo_power
                     name: BPM
-                    bar_color: "#00e5ff"
+                    bar_color: '#00e5ff'
                     min_value: -3000
                     max_value: 3000
             grid_options:
@@ -3697,7 +3888,7 @@ views:
               - shimmer
             force_circular_background: true
             multiline: true
-            custom_info: "{{ (states(entity) | float / 3000 * 100) | round(1) }}% velocity"
+            custom_info: '{{ (states(entity) | float / 3000 * 100) | round(1) }}% velocity'
             icon: mdi:orbit-variant
             card_mod:
               style: |
@@ -3727,24 +3918,24 @@ views:
             custom_theme:
               - min: -20
                 max: 25
-                color: "#00ff41"
+                color: '#00ff41'
                 icon: mdi:check-circle
               - min: 25
                 max: 32
-                color: "#ffb300"
+                color: '#ffb300'
                 icon: mdi:alert
               - min: 32
                 max: 40
-                color: "#ff0033"
+                color: '#ff0033'
                 icon: mdi:alert-octagon
             bar_color_mode: segment
             alert_when:
               above: 32
-              color: "#ff0033"
+              color: '#ff0033'
               highlight: background
               animation: ping
             badge_icon: "{{ 'mdi:radioactive' if states(entity) | float > 32 else '' }}"
-            badge_color: "#ff0033"
+            badge_color: '#ff0033'
             name_info: >-
               {% if states(entity) | float > 32 %}<span
               style="color:#ff0033;font-weight:900;">⚠ CRITICAL</span>{% endif

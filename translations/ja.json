@@ -129,6 +129,7 @@
       "bar_position": {
         "default": "デフォルト",
         "below": "コンテンツの下にバー",
+        "compact_below": "Compact bar below (name/value on one row)",
         "top": "上部にバー",
         "bottom": "下部にバー",
         "overlay": "コンテンツに重ねてバー（オーバーレイ）",

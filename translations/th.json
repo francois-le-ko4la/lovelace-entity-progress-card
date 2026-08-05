@@ -129,6 +129,7 @@
       "bar_position": {
         "default": "ค่าเริ่มต้น",
         "below": "แถบใต้เนื้อหา",
+        "compact_below": "Compact bar below (name/value on one row)",
         "top": "แถบด้านบน",
         "bottom": "แถบด้านล่าง",
         "overlay": "แถบซ้อนทับเนื้อหา (overlay)",

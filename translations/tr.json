@@ -129,6 +129,7 @@
       "bar_position": {
         "default": "Varsayılan",
         "below": "İçeriğin altında çubuk",
+        "compact_below": "Compact bar below (name/value on one row)",
         "top": "Üstte çubuk",
         "bottom": "Altta çubuk",
         "overlay": "İçeriğin üzerine bindirme (overlay)",

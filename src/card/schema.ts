@@ -513,14 +513,31 @@ function struct(validator: Validator & { _schema?: Record<string, Validator> }, 
 
   // 'below' isn't a legal bar_position for every schema (the Feature one
   // restricts it to ['default', 'top', 'bottom']) - this rewrite would
-  // otherwise inject a value never validated as legal there.
+  // otherwise inject a value never validated as legal there. Same switch for
+  // compact_below as for default: at xlarge, compact_below's tight shared
+  // name/secondary_info row reads as disproportionate stacked above a 42px
+  // bar - below's own two full-height rows carry that size better.
   const applyBelowBarPositionRule = (result: Record<string, unknown>) => {
     if (
       allowBelowBarPosition &&
       result.bar_size === CARD.style.bar.sizeOptions.xlarge.label &&
-      result.bar_position === 'default'
+      (result.bar_position === 'default' || result.bar_position === 'compact_below')
     )
       result.bar_position = 'below';
+  };
+
+  // compact_below (name/secondary_info sharing one row, bar in its own row
+  // below) only has a distinct visual effect on layout: horizontal - vertical
+  // already stacks name/secondary_info's own rows narrowly, with no "shared
+  // row" arrangement to switch to. Falls back to 'default', not 'below':
+  // compact_below and below are two different bar placements (secondary_info
+  // sharing a row vs its own dedicated one) that only look the same in
+  // horizontal - defaulting to 'below' would silently swap in a placement
+  // the user never chose.
+  const applyCompactBelowRule = (result: Record<string, unknown>) => {
+    if (result.bar_position === 'compact_below' && result.layout !== CARD.layout.orientations.horizontal.label) {
+      result.bar_position = 'default';
+    }
   };
 
   const applyBarSingleLineRule = (result: Record<string, unknown>) => {
@@ -607,6 +624,7 @@ function struct(validator: Validator & { _schema?: Record<string, Validator> }, 
     if (!result.layout) result.layout = CARD.layout.orientations.horizontal.label;
 
     applyBelowBarPositionRule(result);
+    applyCompactBelowRule(result);
     applyBarSingleLineRule(result);
     applyBarMaxWidthRule(result);
     applyBarOrientationUpRule(result);
@@ -936,7 +954,10 @@ const YamlSchemaFactory = {
         bar_effect: types.jinjaOrArrayWithValidatedElem(
           Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label),
         ),
-        bar_position: types.enumsWithDefault(['default', 'below', 'top', 'bottom', 'overlay', 'background'], 'default'),
+        bar_position: types.enumsWithDefault(
+          ['default', 'below', 'compact_below', 'top', 'bottom', 'overlay', 'background'],
+          'default',
+        ),
         bar_single_line: types.optionalBooleanWithDefault(false),
         bar_max_width: types.optionalString(),
         bar_segments: types.optionalNumber(),
@@ -1113,7 +1134,10 @@ const YamlSchemaFactory = {
         bar_effect: types.jinjaOrArrayWithValidatedElem(
           Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label),
         ),
-        bar_position: types.enumsWithDefault(['default', 'below', 'top', 'bottom', 'overlay', 'background'], 'default'),
+        bar_position: types.enumsWithDefault(
+          ['default', 'below', 'compact_below', 'top', 'bottom', 'overlay', 'background'],
+          'default',
+        ),
         bar_single_line: types.optionalBooleanWithDefault(false),
         bar_max_width: types.optionalString(),
         bar_segments: types.optionalNumber(),

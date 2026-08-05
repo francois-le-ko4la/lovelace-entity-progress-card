@@ -129,6 +129,7 @@
       "bar_position": {
         "default": "ডিফল্ট",
         "below": "বিষয়বস্তুর নিচে বার",
+        "compact_below": "Compact bar below (name/value on one row)",
         "top": "উপরের দিকে বার",
         "bottom": "নিচের দিকে বার",
         "overlay": "বিষয়বস্তুর ওপর বার (ওভারলে)",

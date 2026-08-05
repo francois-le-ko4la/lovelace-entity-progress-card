@@ -4,6 +4,148 @@ All notable changes to the Entity Progress Card are documented here, most recent
 first. See [`docs/rc-testing.md`](docs/rc-testing.md) for how to try a release
 candidate safely before it becomes stable.
 
+## 1.6.1
+
+A quieter release than 1.6.0, focused on filling in the gaps it left behind:
+combine several bars into one card, see the actual value next to a bar instead
+of just a fill level, and a handful of layout options that couldn't quite do
+what people needed yet. Fully backward compatible — nothing to change in your
+existing dashboards.
+
+### ⭐ Highlights
+
+#### 📊 Combine several bars into one card or Tile feature
+
+`entity-progress-multi-card` / `entity-progress-multi-feature` stack several
+full-featured progress bars (each with its own colors, state and tap actions)
+into a single card or a single Tile feature row, instead of one card per entity
+— handy for printer ink cartridges, a set of batteries, or any group of related
+sensors. A new, thinner `bar_size: xsmall` helps fit more of them in a tight
+space. See [multi].
+
+➡️ [Feature]: Multi-bar card/feature #126 (@EDelsman)
+
+#### 🔢 Show the value next to each bar
+
+A bare bar is enough on its own for something like a printer cartridge, but not
+when the number itself matters (energy in Watts, a tank in liters…). Set
+`show_value: true` on `entity-progress-multi-card` / `-multi-feature` to show
+each entity's own value right next to its bar, left- or right-aligned, all lined
+up at the same width regardless of digit count. See [show_value].
+
+#### 📐 A more compact layout: `bar_position: compact_below`
+
+`name` and the value now share one row (value right-justified), freeing the
+progress bar to use the card's full width on its own row underneath — instead of
+the bar and the value fighting for the same narrow space, or the value sitting
+in empty, unused room. See [bar_position].
+
+➡️ [Enhancement]: Display value above bar #123 (@davidcoulson)
+
+#### 🎬 Trigger icon animations from a template
+
+`icon_animation` now accepts a Jinja condition (`{ effect, jinja }`) instead of
+relying only on automatic entity-state detection — useful for a plain numeric
+sensor with no built-in "active" concept for the card to recognize on its own.
+See [icon_animation].
+
+➡️ [Enhancement]: template/condition to trigger the icon animation directly #125
+(@FoxP)
+
+#### ⏱️ Smarter countdown refresh
+
+Timers and countdowns now refresh at the rate they actually need — every second
+when the display shows seconds, once a minute otherwise — and self-correct to
+the real clock instead of slowly drifting. `fast_refresh: true` forces a real
+per-second countdown on Template cards for any `now()`-driven timer, not just
+Home Assistant `timer` entities. See [fast_refresh].
+
+#### 🎨 A friendlier theme picker
+
+The built-in theme list is reordered for readability: `battery_adaptive` (the
+one most people reach for) comes first, and each `Critical when X`/
+`Optimal when X` pair now sits together instead of being split into two separate
+groups.
+
+### 🐛 Notable fixes
+
+- The card could fail to load entirely on some older or embedded browsers (kiosk
+  panels), even though 1.5.x worked fine there.  
+  ➡️ [Browser Support]: #128 (@Slomo5)
+- A renamed device (Settings → Devices → rename) wasn't reflected in the card's
+  name.  
+  ➡️ [Bug]: Friendly name is not used #130 (@zkurzyns)
+- `bar_size: xlarge` (or `bar_position: below`) with the icon hidden could get
+  squeezed into too small a space, cutting the bar off.  
+  ➡️ [Bug]: Card not rendering correctly with xlarge bar and icon hidden #133
+  (@Ascathon)
+- `alert_when` with `animation: ping` and `highlight: background` silently
+  stopped ringing.
+- The bar could render as one flat color instead of the expected gradient with
+  certain themes (`bar_color_mode: segment`/`rainbow`, real-value themes like
+  `temperature`/`voc`/`pm25`, `custom_theme`, and `center_zero`'s negative half)
+  — several related scaling bugs, all fixed.
+- The value/unit text next to the bar stayed capped at a narrow width with
+  `bar_position: below`, `overlay` or `background`, even though the bar wasn't
+  actually sharing that row anymore.
+- A Jinja-templated countdown driven by an active timer could freeze after a few
+  seconds instead of ticking.  
+  ➡️ Reported alongside [Bug]: "Run" status not catched #127 (@annaoskarson)
+- Hiding `name` or `secondary_info` on a horizontal card left an empty gap
+  instead of the card shrinking to fit.  
+  ➡️ Follow-up to [Enhancement]: JINJA Should accept more STYLE tags #129
+  (@emartoni)
+- `icon_animation` silently never triggered on a Template card, even with a
+  condition that always matched.
+- On a narrow horizontal card, the progress bar could shrink to an invisible
+  sliver while the text next to it never gave up any of its own space.
+- Text could get clipped when the OS/browser font-size accessibility setting was
+  scaled up (e.g. Android's system "Font size" option).  
+  ➡️ [Bug]: Some parts of the card are not visible on Android #131 (@zkurzyns)
+- A percent sensor with `custom_theme` zones extending past 100% (used on
+  purpose as a color safety margin) could stop the bar from ever filling all the
+  way, even at a real 100% reading.  
+  ➡️ [Bug]: JINJA Should accept more STYLE tags #129 (@emartoni)
+
+### 🧪 Try it: demo dashboard
+
+[`docs/demo-dashboard.yaml`][demo-dashboard.yaml] is now a comprehensive,
+interactive showroom covering essentially every option in this changelog, plus a
+regression-test view with one card per closed issue that can be reproduced
+statically. Import it (or
+[`docs/demo-dashboard-dev.yaml`][demo-dashboard-dev.yaml] for local `-dev`
+builds) with [`docs/demo-dashboard-helpers.yaml`][demo-dashboard-helpers.yaml]
+as a drop-in `homeassistant: packages:` file, and move the sliders to see
+everything react live.
+
+Thanks to everyone who reported, tested and contributed 🙏
+
+---
+
+## What's new (1.6.1-rc4)
+
+### ✨ New
+
+- **New `bar_position: compact_below`** — `name` and the secondary info
+  (state/value) now share one row, with the value right-justified, and the
+  progress bar takes the full width of its own row underneath instead of
+  squeezing next to the text. Reclaims the dead space that used to sit empty to
+  the right of `name` on a horizontal card, and lets the bar grow to the card's
+  full width. Horizontal-only — with `layout: vertical`, where there's no such
+  row to reuse, it silently falls back to `default`. See
+  [`bar_position`](docs/configuration.md#bar_position).  
+  ➡️ [Enhancement]: Display value above bar #123 (@davidcoulson)
+
+### 🧪 Try it: demo dashboard
+
+[`docs/demo-dashboard.yaml`][demo-dashboard.yaml]'s "Layout & bar_position" view
+got a `compact_below` card in both the horizontal and vertical "every
+bar_position" galleries (the vertical one shows the fallback to `default`), plus
+a new "Série 2 — compact_below, hide progressif (#123)" section walking through
+`hide` combinations on top of it.
+
+---
+
 ## What's new (1.6.1-rc3)
 
 ### ✨ New
@@ -4324,6 +4466,14 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_stack
 [max_value]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#max_value
+[multi]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#multi
+[show_value]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#multi-show_value
+[bar_position]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_position
+[fast_refresh]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#fast_refresh
 [demo-dashboard.yaml]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/demo-dashboard.yaml
 [demo-dashboard-dev.yaml]:

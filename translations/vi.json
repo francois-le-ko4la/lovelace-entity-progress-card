@@ -129,6 +129,7 @@
       "bar_position": {
         "default": "Mặc định",
         "below": "Thanh bên dưới nội dung",
+        "compact_below": "Compact bar below (name/value on one row)",
         "top": "Thanh ở trên cùng",
         "bottom": "Thanh ở dưới cùng",
         "overlay": "Thanh phủ lên nội dung (overlay)",

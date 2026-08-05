@@ -129,6 +129,7 @@
       "bar_position": {
         "default": "預設",
         "below": "內容下方",
+        "compact_below": "Compact bar below (name/value on one row)",
         "top": "上方",
         "bottom": "下方",
         "overlay": "疊加在內容上",

@@ -129,6 +129,7 @@
       "bar_position": {
         "default": "По умолчанию",
         "below": "Полоса под содержимым",
+        "compact_below": "Compact bar below (name/value on one row)",
         "top": "Полоса вверху",
         "bottom": "Полоса внизу",
         "overlay": "Полоса поверх содержимого (overlay)",

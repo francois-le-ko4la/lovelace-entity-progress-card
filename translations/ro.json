@@ -129,6 +129,7 @@
       "bar_position": {
         "default": "Implicit",
         "below": "Bară sub conținut",
+        "compact_below": "Compact bar below (name/value on one row)",
         "top": "Bară sus",
         "bottom": "Bară jos",
         "overlay": "Bară suprapusă peste conținut (overlay)",

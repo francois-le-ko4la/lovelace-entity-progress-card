@@ -129,6 +129,7 @@
       "bar_position": {
         "default": "Výchozí",
         "below": "Lišta pod obsahem",
+        "compact_below": "Compact bar below (name/value on one row)",
         "top": "Lišta nahoře",
         "bottom": "Lišta dole",
         "overlay": "Lišta přes obsah (overlay)",

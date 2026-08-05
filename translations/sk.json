@@ -129,6 +129,7 @@
       "bar_position": {
         "default": "Predvolené",
         "below": "Pruh pod obsahom",
+        "compact_below": "Compact bar below (name/value on one row)",
         "top": "Pruh hore",
         "bottom": "Pruh dole",
         "overlay": "Pruh cez obsah (overlay)",

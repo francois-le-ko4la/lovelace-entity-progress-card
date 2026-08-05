@@ -129,6 +129,7 @@
       "bar_position": {
         "default": "Стандардно",
         "below": "Лента под содржината",
+        "compact_below": "Compact bar below (name/value on one row)",
         "top": "Лента на врвот",
         "bottom": "Лента на дното",
         "overlay": "Лента преку содржината (overlay)",

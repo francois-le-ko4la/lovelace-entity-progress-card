@@ -129,6 +129,7 @@
       "bar_position": {
         "default": "डिफ़ॉल्ट",
         "below": "सामग्री के नीचे बार",
+        "compact_below": "Compact bar below (name/value on one row)",
         "top": "ऊपर बार",
         "bottom": "नीचे बार",
         "overlay": "सामग्री पर ओवरले बार",

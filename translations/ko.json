@@ -129,6 +129,7 @@
       "bar_position": {
         "default": "기본",
         "below": "콘텐츠 아래 바",
+        "compact_below": "Compact bar below (name/value on one row)",
         "top": "상단 바",
         "bottom": "하단 바",
         "overlay": "콘텐츠 위에 바 (오버레이)",

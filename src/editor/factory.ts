@@ -759,7 +759,8 @@ const EditorFactory = {
       ? {}
       : {
           layout: EditorFieldsType.select('layout', {
-            onChange: (_value: unknown, config: LovelaceConfig) => resetUpIfInvalid(config),
+            onChange: (_value: unknown, config: LovelaceConfig) =>
+              EditorFactory.resetCompactBelowIfInvalid(resetUpIfInvalid(config)),
           }),
         },
 
@@ -774,6 +775,15 @@ const EditorFactory = {
   resetUpIfInvalid: (config: LovelaceConfig) =>
     config.bar_orientation === 'up' && !EditorFactory.upAllowed(config)
       ? { ...config, bar_orientation: 'ltr' }
+      : config,
+
+  // compact_below (#123) mirrors 'up' above: only has a distinct effect with
+  // layout: horizontal (see schema.ts's applyCompactBelowRule, the matching
+  // save-time safety net) - falls back to 'default', not 'below': the two
+  // are different bar placements that only coincide in horizontal.
+  resetCompactBelowIfInvalid: (config: LovelaceConfig) =>
+    config.bar_position === 'compact_below' && config.layout !== 'horizontal'
+      ? { ...config, bar_position: 'default' }
       : config,
 
   theme: (template: boolean, badge: boolean) => {

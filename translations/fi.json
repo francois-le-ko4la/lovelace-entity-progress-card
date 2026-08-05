@@ -129,6 +129,7 @@
       "bar_position": {
         "default": "Oletus",
         "below": "Palkki sisällön alla",
+        "compact_below": "Compact bar below (name/value on one row)",
         "top": "Palkki ylhäällä",
         "bottom": "Palkki alhaalla",
         "overlay": "Palkki sisällön päällä (overlay)",
