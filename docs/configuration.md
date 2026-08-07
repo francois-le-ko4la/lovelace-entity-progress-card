@@ -1743,8 +1743,8 @@ chips when a conflicting effect is active.
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 [![Feature OK][Feature-OK]](#compatibility)
 
-> **`bar_color_mode`** [String] ➡️ {`auto`|`segment`|`rainbow`} _(optional,
-> default: `auto`)_
+> **`bar_color_mode`** [String] ➡️ {`auto`|`segment`|`rainbow`|`rainbow_full`}
+> _(optional, default: `auto`)_
 
 Controls how theme colors are applied to the progress bar fill.
 
@@ -1755,6 +1755,11 @@ Controls how theme colors are applied to the progress bar fill.
   far through each zone the entity has progressed.
 - `rainbow` — the bar displays a smooth color gradient across all visible zones,
   transitioning between each zone's color up to the current value.
+- `rainbow_full` — the track always shows the theme's complete gradient, end to
+  end, regardless of the current value — like a hue-picker strip. A small
+  circular marker slides along it to show where the current value sits. Useful
+  when the zones themselves (not how full the bar is) are what matters at a
+  glance.
 
 > [!NOTE]
 >
@@ -1767,8 +1772,24 @@ Controls how theme colors are applied to the progress bar fill.
 > [!NOTE]
 >
 > `bar_color_mode` also works with [`center_zero`](#center_zero): each arm
-> (positive/negative) gets its own independent `segment`/`rainbow` gradient,
-> projected onto that arm's own half of the `min_value`/`max_value` scale.
+> (positive/negative) gets its own independent gradient, projected onto that
+> arm's own half of the `min_value`/`max_value` scale — `rainbow_full` included
+> (each arm always shows its own half of the theme in full, and the marker
+> slides from one end of the bar to the other through the visual center, which
+> always represents zero regardless of where `center_zero_value` actually sits
+> numerically). [`bar_stack`](#bar_stack) is the one combination that doesn't
+> apply: several entities, no single position for one marker — so `rainbow_full`
+> falls back to plain `rainbow` automatically there.
+
+> [!NOTE]
+>
+> `rainbow_full`'s marker can be restyled by overriding
+> `--epb-rainbow-marker-size` (default `5px` for `bar_size: xsmall`/`small`,
+> `7px`/`9px`/`12px` for `medium`/`large`/`xlarge`),
+> `--epb-rainbow-marker-color` (default: whatever color the icon currently
+> shows), `--epb-rainbow-marker-border-color` (default a translucent white ring)
+> and `--epb-rainbow-marker-border-width` (default `1px`/`1.5px`/`2px`/ `3px`,
+> same `bar_size` breakpoints as the width).
 
 > [!NOTE]
 >
@@ -1809,6 +1830,14 @@ custom_theme:
     max: 100
     color: orange
 bar_color_mode: rainbow
+```
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.living_room_temperature
+theme: temperature
+max_value: 40
+bar_color_mode: rainbow_full
 ```
 
 [🔼 Back to top]

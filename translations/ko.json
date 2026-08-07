@@ -142,7 +142,8 @@
       "bar_color_mode": {
         "auto": "자동",
         "segment": "세그먼트",
-        "rainbow": "무지개"
+        "rainbow": "무지개",
+        "rainbow_full": "Rainbow (full)"
       },
       "bar_scale": {
         "linear": "Linear",

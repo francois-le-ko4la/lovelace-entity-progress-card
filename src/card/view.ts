@@ -269,7 +269,18 @@ class ViewCore {
       (this.config.layout === 'vertical' &&
         ['default', 'below'].includes(this.config.bar_position) &&
         this.config.bar_size !== CARD.style.bar.sizeOptions.small.label &&
-        this.config.bar_size !== CARD.style.bar.sizeOptions.xsmall.label);
+        this.config.bar_size !== CARD.style.bar.sizeOptions.xsmall.label) ||
+      // rainbow_full's bar-row is forced up to horizontal's own 16px in
+      // vertical layout too (see the matching CSS in styles.ts) for
+      // xsmall/small/medium (large already reaches 16px natively there,
+      // xlarge is well past it) - the extra row gives the card the budget
+      // for that growth instead of squeezing it out of the rest of the
+      // layout.
+      (this.config.layout === 'vertical' &&
+        this.config.bar_color_mode === 'rainbow_full' &&
+        (this.config.bar_size === CARD.style.bar.sizeOptions.xsmall.label ||
+          this.config.bar_size === CARD.style.bar.sizeOptions.small.label ||
+          this.config.bar_size === CARD.style.bar.sizeOptions.medium.label));
     return baseRows + (needsExtraRow ? 1 : 0);
   }
 

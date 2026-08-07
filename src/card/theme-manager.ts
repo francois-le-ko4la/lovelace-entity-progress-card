@@ -249,26 +249,26 @@ class ThemeManager {
   }
 
   static #rgbToHsl(r: number, g: number, b: number): { h: number; s: number; l: number } {
-    const [rn, gn, bn] = [r / 255, g / 255, b / 255];
-    const max = Math.max(rn, gn, bn);
-    const min = Math.min(rn, gn, bn);
-    const l = (max + min) / 2;
-    if (max === min) return { h: 0, s: 0, l: Math.round(l * 100) };
+    const [rNorm, gNorm, bNorm] = [r / 255, g / 255, b / 255];
+    const max = Math.max(rNorm, gNorm, bNorm);
+    const min = Math.min(rNorm, gNorm, bNorm);
+    const lightness = (max + min) / 2;
+    if (max === min) return { h: 0, s: 0, l: Math.round(lightness * 100) };
 
-    const d = max - min;
-    const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    let h: number;
+    const delta = max - min;
+    const saturation = lightness > 0.5 ? delta / (2 - max - min) : delta / (max + min);
+    let hue: number;
     switch (max) {
-      case rn:
-        h = (gn - bn) / d + (gn < bn ? 6 : 0);
+      case rNorm:
+        hue = (gNorm - bNorm) / delta + (gNorm < bNorm ? 6 : 0);
         break;
-      case gn:
-        h = (bn - rn) / d + 2;
+      case gNorm:
+        hue = (bNorm - rNorm) / delta + 2;
         break;
       default:
-        h = (rn - gn) / d + 4;
+        hue = (rNorm - gNorm) / delta + 4;
     }
-    return { h: Math.round(h * 60), s: Math.round(s * 100), l: Math.round(l * 100) };
+    return { h: Math.round(hue * 60), s: Math.round(saturation * 100), l: Math.round(lightness * 100) };
   }
 
   // `window` is the [start, end] slice of the theme's own 0-100 scale (the
@@ -309,7 +309,6 @@ class ThemeManager {
   ) {
     const currentStyle = this.#currentStyle;
     if (!this.#isValid || !currentStyle || mode === 'auto') return null;
-    if (!(fillPercent > 0)) return null;
 
     // For linear themes, derive min/max boundaries by splitting 0–100% equally
     // (already percentage-based by construction, no further conversion needed).
@@ -328,6 +327,18 @@ class ThemeManager {
           min: toValuePercent(level.min ?? 0),
           max: toValuePercent(level.max ?? 100),
         }));
+
+    // rainbow_full always paints every zone across the *whole current window*
+    // (not just "up to fillPercent" - see .rainbow-full-bar in styles.ts, the
+    // current value is conveyed by a moving marker instead) - so the
+    // fillPercent > 0 guard below, which exists only to bail out on a
+    // partial reveal with nothing yet to show, doesn't apply to it. The
+    // window/toLocal/style computation right after is still shared as-is:
+    // it's what makes center_zero's two arms (see
+    // ViewBase.themeDivergingGradient's [zeroPercent, 100]/[zeroPercent, 0]
+    // windows) each show only their own half of the theme, same as
+    // segment/rainbow already do.
+    if (mode !== 'rainbow_full' && !(fillPercent > 0)) return null;
 
     const [windowStart, windowEnd] = window;
     // A degenerate window (center_zero_value pinned exactly to min/max, so
@@ -359,6 +370,32 @@ class ThemeManager {
       // keeps stops monotonic regardless of window direction.
       .sort((a, b) => (a.min ?? 0) - (b.min ?? 0));
 
+    // A reversed window (center_zero's negative arm, [zeroPercent, 0]) uses
+    // the opposite CSS shift direction from every other case (see
+    // styles.ts's `.negative` vs `.positive`/plain `.inner` transforms: the
+    // negative arm's box slides the *other* way to grow from center toward
+    // the low end) - its own "tip" (current value) and "anchor" (zeroValue)
+    // end up on the box's opposite edges from what toElemPos below assumes.
+    // Rather than re-deriving toElemPos/the stop-building logic per
+    // direction, mirroring the gradient's own CSS direction achieves the
+    // same result: every position this function computes lands exactly
+    // where it would for a normal window, just reflected - verified against
+    // concrete pixel math for center_zero + a real-value theme's negative
+    // arm (issue #129 follow-up). Hoisted above the mode branches - both
+    // rainbow_full and segment/rainbow below need it.
+    const isReversedWindow = windowEnd < windowStart;
+    const direction = isReversedWindow ? (isVertical ? 'to bottom' : 'to left') : isVertical ? 'to top' : 'to right';
+
+    // rainbow_full: every zone in the current window, laid out edge-to-edge -
+    // unlike segment/rainbow just below, not clipped to "up to fillPercent"
+    // (the whole window is always shown - see .rainbow-full-bar in
+    // styles.ts). `style` is already windowed/clamped to this arm's own
+    // slice (center_zero's [zeroPercent, 100]/[zeroPercent, 0]), so this
+    // works identically for a single-arm bar and each of center_zero's two.
+    if (mode === 'rainbow_full') {
+      return ThemeManager.#buildFullRainbowGradient(style, defaultColor, direction);
+    }
+
     const visible = style.filter((level) => (level.min ?? 0) < fillPercent);
     if (visible.length === 0) return null;
 
@@ -369,20 +406,6 @@ class ThemeManager {
     // gradient's own direction needs to follow, not this math.
     const offset = 100 - fillPercent;
     const toElemPos = (b: number) => `${(b + offset).toFixed(2)}%`;
-    // A reversed window (center_zero's negative arm, [zeroPercent, 0]) uses
-    // the opposite CSS shift direction from every other case (see
-    // styles.ts's `.negative` vs `.positive`/plain `.inner` transforms: the
-    // negative arm's box slides the *other* way to grow from center toward
-    // the low end) - its own "tip" (current value) and "anchor" (zeroValue)
-    // end up on the box's opposite edges from what toElemPos above assumes.
-    // Rather than re-deriving toElemPos/the stop-building logic per
-    // direction, mirroring the gradient's own CSS direction achieves the
-    // same result: every position this function computes lands exactly
-    // where it would for a normal window, just reflected - verified against
-    // concrete pixel math for center_zero + a real-value theme's negative
-    // arm (issue #129 follow-up).
-    const isReversedWindow = windowEnd < windowStart;
-    const direction = isReversedWindow ? (isVertical ? 'to bottom' : 'to left') : isVertical ? 'to top' : 'to right';
     // color is optional per zone now (see types.customTheme) — a color-less
     // zone falls back the same way iconColor/barColor already do: the entity's
     // own negotiated color (e.g. a cover is pink open / grey closed, see
@@ -422,6 +445,31 @@ class ThemeManager {
     }
 
     return null;
+  }
+
+  // rainbow_full's own gradient: every zone in `style` laid out edge-to-edge,
+  // each holding its color through its own midpoint before fading into the
+  // next - same qualitative "hold, then fade" shape as the 'rainbow' branch
+  // above, just unscaled/unclipped by fillPercent since the whole window is
+  // always shown regardless of the current value. `style` is already
+  // windowed/clamped to local 0-100% and `direction` already accounts for a
+  // reversed window (see buildGradient's own callsite) - both shared as-is
+  // with the segment/rainbow branches, so this needs no window/direction
+  // logic of its own.
+  static #buildFullRainbowGradient(style: ThemeZone[], defaultColor: string | null, direction: string): string | null {
+    if (style.length === 0) return null;
+
+    const col = (level: ThemeZone) =>
+      ThemeManager.adaptColor(level.bar_color || level.color || null) || defaultColor || CARD.style.color.default;
+    const first = col(style[0]);
+    const last = col(style[style.length - 1]);
+    const stops = [`${first} 0%`];
+    style.forEach((level) => {
+      const mid = ((level.min ?? 0) + (level.max ?? 100)) / 2;
+      stops.push(`${col(level)} ${mid.toFixed(2)}%`);
+    });
+    stops.push(`${last} 100%`);
+    return `linear-gradient(${direction}, ${stops.join(', ')})`;
   }
 }
 

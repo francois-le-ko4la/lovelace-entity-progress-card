@@ -142,7 +142,8 @@
       "bar_color_mode": {
         "auto": "Automaattinen",
         "segment": "Segmentit",
-        "rainbow": "Sateenkaari"
+        "rainbow": "Sateenkaari",
+        "rainbow_full": "Rainbow (full)"
       },
       "bar_scale": {
         "linear": "Linear",

@@ -52,13 +52,38 @@ See [icon_animation].
 ➡️ [Enhancement]: template/condition to trigger the icon animation directly #125
 (@FoxP)
 
-#### ⏱️ Smarter countdown refresh
+#### 🏷️ Status label pill
 
-Timers and countdowns now refresh at the rate they actually need — every second
-when the display shows seconds, once a minute otherwise — and self-correct to
-the real clock instead of slowly drifting. `fast_refresh: true` forces a real
-per-second countdown on Template cards for any `now()`-driven timer, not just
-Home Assistant `timer` entities. See [fast_refresh].
+`label` draws a small rounded status pill in the card's corner
+(`{ jinja, position }`) — colored automatically from whatever color the icon
+currently shows (theme, `custom_theme`, or a plain `color` override).
+`alert_when.highlight: 'label'` reuses the same pill to flash a fixed alert
+label instead of tinting the border or background. See [label] and [alert_when].
+
+#### 🌈 A hue-picker style bar: `bar_color_mode: rainbow_full`
+
+The track always shows the theme's complete gradient end to end — not just the
+filled portion, like `rainbow` already does — with a small marker sliding along
+it to show where the current value sits, closer to a hue-picker strip than a
+traditional progress bar. Works with `center_zero` too (each arm shows its own
+half of the theme in full, the marker crossing the visual center at zero). See
+[bar_color_mode].
+
+#### ⏱️ Smarter countdown refresh (and a fix for stalled Template timers)
+
+1.6.0's rewrite streamlined how Jinja templates get re-evaluated — but as a side
+effect, a Template card's `now()`-driven countdown (a `secondary:` line ticking
+down a timer, for example) could stop advancing after its first render: Home
+Assistant only pushes a fresh value for a `now()`/`utcnow()` template once a
+minute on its own, and the incidental resubscribe that used to paper over that
+in older versions was removed along the way. 1.6.1 adds `fast_refresh: true` so
+a Template card can opt back into a forced per-second refresh for any
+`now()`-driven countdown — not automatic, since it isn't free (it re-subscribes
+every second), so it needs to be added explicitly to whichever Template card
+needs it. Standard cards/badges/features aren't affected — they already refresh
+every second when the display shows seconds, once a minute otherwise, and
+self-correct to the real clock instead of slowly drifting, no extra config
+needed. See [fast_refresh].
 
 #### 🎨 A friendlier theme picker
 
@@ -88,8 +113,9 @@ groups.
 - The value/unit text next to the bar stayed capped at a narrow width with
   `bar_position: below`, `overlay` or `background`, even though the bar wasn't
   actually sharing that row anymore.
-- A Jinja-templated countdown driven by an active timer could freeze after a few
-  seconds instead of ticking.  
+- A Jinja-templated countdown on a Template card could freeze after a few
+  seconds instead of ticking — add [`fast_refresh: true`][fast_refresh] to get
+  it ticking every second again (see the highlight above for why).  
   ➡️ Reported alongside [Bug]: "Run" status not catched #127 (@annaoskarson)
 - Hiding `name` or `secondary_info` on a horizontal card left an empty gap
   instead of the card shrinking to fit.  
@@ -137,6 +163,35 @@ Thanks to everyone who reported, tested and contributed 🙏
   row to reuse, it silently falls back to `default`. See
   [`bar_position`](docs/configuration.md#bar_position).  
   ➡️ [Enhancement]: Display value above bar #123 (@davidcoulson)
+- **New `label`** — a small rounded status pill in the card's corner
+  (`{ jinja, position }`), colored automatically from whatever color the icon
+  currently shows (theme, `custom_theme`, or a plain `color` override).
+  `alert_when.highlight: 'label'` reuses the same pill to flash a fixed alert
+  label instead of tinting the border or background. See
+  [`label`](docs/configuration.md#label) and
+  [`alert_when`](docs/configuration.md#alert_when).
+- **New `bar_color_mode: rainbow_full`** — the track always shows the theme's
+  complete gradient end to end, not just the filled portion, like a hue-picker
+  strip — with a small marker sliding along it to show where the current value
+  sits. Works with [`center_zero`](docs/configuration.md#center_zero) (each arm
+  shows its own half of the theme in full, the marker crosses the visual center
+  at zero). Falls back to plain `rainbow` with
+  [`bar_stack`](docs/configuration.md#bar_stack) — several entities, no single
+  position for one marker. See
+  [`bar_color_mode`](docs/configuration.md#bar_color_mode).
+
+### 🐛 Fixes
+
+- `icon_animation`'s `{ effect, jinja }` docs didn't warn that `jinja` must be a
+  bare `{{ ... }}` expression — a `{% if %}` block or a literal string like
+  `"true"` renders back as text instead of a native boolean, and silently falls
+  back to automatic detection instead of erroring.
+- `layout: vertical`'s min-height formula for the name/value/bar column never
+  accounted for the small gaps between those three rows, so the card's real
+  rendered height consistently ran a couple pixels taller than the formula
+  claimed — harmless on its own (nothing clipped), but it meant
+  `grid_options: rows: auto` could never land on a clean Sections grid row
+  multiple.
 
 ### 🧪 Try it: demo dashboard
 
@@ -144,7 +199,13 @@ Thanks to everyone who reported, tested and contributed 🙏
 got a `compact_below` card in both the horizontal and vertical "every
 bar_position" galleries (the vertical one shows the fallback to `default`), plus
 a new "Série 2 — compact_below, hide progressif (#123)" section walking through
-`hide` combinations on top of it.
+`hide` combinations on top of it. The "bar_color_mode, custom_theme, alert_when,
+trend" view gets new `label` demo cards (custom-theme-based,
+built-in-theme-based, `position: left`, and `alert_when.highlight: label`), a
+"Full rainbow" section showing `rainbow_full` at every `bar_size`, and a
+showcase section covering different temperatures/layouts/`center_zero`
+combinations with labels enabled. The "Sunset" real-world example (#60) gets a
+second, alternate version contributed by @WarC0zes (HACF).
 
 ---
 
@@ -387,14 +448,17 @@ just clickable.
   "bar renders elsewhere" condition (see
   `StructureElements.createSecondaryInfo`) but were missing from the CSS rule
   that lifts it.
-- **A Jinja-templated countdown (e.g. `secondary: {{ now() - ... }}`) driven by
-  an active timer entity froze after a few seconds instead of ticking every
-  second.** Home Assistant only pushes a fresh render for a `now()`/`utcnow()`
-  template once a minute on its own, absent a state change on the tracked
-  entity - the 1.6.0 rewrite removed an incidental resubscribe-on-every-hass-
-  update that used to paper over this. Template cards/badges now force a fresh
-  render on every tick while their `entity:` is an active timer, the same way
-  standard cards already simulate a running timer's local tick.  
+- **A Jinja-templated countdown (e.g. `secondary: {{ now() - ... }}`) froze
+  after a few seconds instead of ticking every second.** Home Assistant only
+  pushes a fresh render for a `now()`/`utcnow()` template once a minute on its
+  own, absent a state change on a tracked entity - the 1.6.0 rewrite removed an
+  incidental resubscribe-on-every-hass-update that used to paper over this on
+  Template cards/badges. Fix: a new opt-in,
+  [`fast_refresh: true`](docs/configuration.md#fast_refresh), forces a
+  per-second resubscribe instead - it isn't automatic (Template's display is
+  arbitrary Jinja text, not a fixed field the card can key a local tick off of
+  the way standard cards do for an active timer), so it needs to be added
+  explicitly to any Template card with a `now()`-driven countdown.  
   ➡️ Reported alongside [Bug]: "Run" status not catched #127 (@annaoskarson)
 - **Hiding `name` or `secondary_info` on a horizontal card left an empty gap
   where the hidden row used to be, instead of shrinking the card.** The content
@@ -493,6 +557,28 @@ cards**, taps feel native, the bar can be **styled straight from your theme**,
 and there's a whole set of new coloring, layout and alerting options — plus more
 built-in themes and eleven new languages. Almost all of it can be set up
 straight from the visual editor.
+
+### ⚠️ Known issues (fixed in the upcoming 1.6.1 stable release)
+
+- The card can fail to load entirely on older/embedded browsers (Chromium-based
+  kiosk panels) — fixed in **1.6.1-rc1**.  
+  ➡️ [Browser Support]: chromium 92.0.4515.98 / After upgrade to 1.6.0 it
+  stopped working on chromium #128 (@Slomo5)
+- `bar_size: xlarge` (or `bar_position: below`) with the icon hidden can get
+  squeezed into too small a space, cutting the bar off — fixed in
+  **1.6.1-rc2**.  
+  ➡️ [Bug]: Card not rendering correctly with xlarge bar and icon hidden #133
+  (@Ascathon)
+- Countdown Jinja templates on Template cards can freeze after a few seconds
+  instead of ticking — fixed in **1.6.1-rc2** (new `fast_refresh: true`
+  option).  
+  ➡️ Reported alongside [Bug]: "Run" status not catched #127 (@annaoskarson)
+
+All three fixes are already merged and will be part of the **1.6.1** stable
+release. In the meantime, you can test them ahead of time via the
+[1.6.1 pre-releases](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/releases)
+— see the [safe testing guide](docs/rc-testing.md) for how to try a release
+candidate without disrupting your main dashboard.
 
 ### ⭐ Highlights
 
@@ -4494,6 +4580,8 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#icon_animation
 [alert_when]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#alert_when
+[label]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#label
 [min_value]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#min_value
 [center_zero]:

@@ -142,7 +142,8 @@
       "bar_color_mode": {
         "auto": "Auto",
         "segment": "Segmenté",
-        "rainbow": "Arc-en-ciel"
+        "rainbow": "Arc-en-ciel",
+        "rainbow_full": "Arc-en-ciel complet"
       },
       "bar_scale": {
         "linear": "Linéaire",

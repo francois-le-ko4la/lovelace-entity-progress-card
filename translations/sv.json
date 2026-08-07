@@ -142,7 +142,8 @@
       "bar_color_mode": {
         "auto": "Auto",
         "segment": "Segment",
-        "rainbow": "Regnbåge"
+        "rainbow": "Regnbåge",
+        "rainbow_full": "Rainbow (full)"
       },
       "bar_scale": {
         "linear": "Linear",

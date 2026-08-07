@@ -142,7 +142,8 @@
       "bar_color_mode": {
         "auto": "Αυτόματο",
         "segment": "Τμήματα",
-        "rainbow": "Ουράνιο τόξο"
+        "rainbow": "Ουράνιο τόξο",
+        "rainbow_full": "Rainbow (full)"
       },
       "bar_scale": {
         "linear": "Linear",

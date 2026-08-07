@@ -142,7 +142,8 @@
       "bar_color_mode": {
         "auto": "Automàtic",
         "segment": "Segments",
-        "rainbow": "Arc de Sant Martí"
+        "rainbow": "Arc de Sant Martí",
+        "rainbow_full": "Rainbow (full)"
       },
       "bar_scale": {
         "linear": "Linear",

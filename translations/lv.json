@@ -142,7 +142,8 @@
       "bar_color_mode": {
         "auto": "Automātisks",
         "segment": "Segmenti",
-        "rainbow": "Varavīksne"
+        "rainbow": "Varavīksne",
+        "rainbow_full": "Rainbow (full)"
       },
       "bar_scale": {
         "linear": "Linear",

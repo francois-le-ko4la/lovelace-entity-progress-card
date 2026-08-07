@@ -142,7 +142,8 @@
       "bar_color_mode": {
         "auto": "Авто",
         "segment": "Сегменти",
-        "rainbow": "Веселка"
+        "rainbow": "Веселка",
+        "rainbow_full": "Rainbow (full)"
       },
       "bar_scale": {
         "linear": "Linear",

@@ -602,6 +602,23 @@ function struct(validator: Validator & { _schema?: Record<string, Validator> }, 
     }
   };
 
+  // rainbow_full paints the whole track at once and a single moving marker
+  // for the current value (see .rainbow-full-bar in styles.ts). It does
+  // generalize to center_zero: each arm gets its own always-full gradient
+  // and the marker's own CSS formula switches to a zero-centered one (see
+  // .center-zero.rainbow-full-bar .value-mark) - same per-arm windowing
+  // segment/rainbow already rely on (ThemeManager.buildGradient's window
+  // param). bar_stack's per-entity segments are a different story - several
+  // entities, no single position for one marker - so that combination still
+  // falls back to plain 'rainbow', same graceful-degradation pattern as
+  // applyBarColorModeRule above.
+  const applyRainbowFullRule = (result: Record<string, unknown>) => {
+    const hasStack = is.nonEmptyArray((result.bar_stack as { entities?: unknown[] } | undefined)?.entities);
+    if (result.bar_color_mode === 'rainbow_full' && hasStack) {
+      result.bar_color_mode = 'rainbow';
+    }
+  };
+
   // interpolate needs the same active theme as bar_color_mode, and is only
   // meaningful alongside bar_color_mode: 'auto' (or unset) - mirrors the
   // editor's own interpolate showIf, and its onChange that already clears
@@ -641,6 +658,7 @@ function struct(validator: Validator & { _schema?: Record<string, Validator> }, 
 
     const hasTheme = !is.nullish(result.theme) || is.nonEmptyArray(result.custom_theme);
     applyBarColorModeRule(result, hasTheme);
+    applyRainbowFullRule(result);
     applyInterpolateRule(result, hasTheme);
     applyReverseSecondaryInfoRowRule(result);
 
@@ -890,7 +908,7 @@ const YamlSchemaFactory = {
         // never gets the .vertical class (no 'layout' option in this
         // schema) - it would validate but have zero visual effect.
         bar_orientation: types.enumsWithDefault(['ltr', 'rtl'], 'ltr'),
-        bar_color_mode: types.enumsWithDefault(['auto', 'segment', 'rainbow'], 'auto'),
+        bar_color_mode: types.enumsWithDefault(['auto', 'segment', 'rainbow', 'rainbow_full'], 'auto'),
         // Only engages outside center_zero with a well-formed positive range
         // (min > 0, max > min) — ProgressCalc.isLogScale falls back to linear
         // otherwise, so an invalid combination degrades quietly instead of
@@ -953,7 +971,7 @@ const YamlSchemaFactory = {
           'small',
         ), //[('small', 'medium', 'large', 'xlarge')]
         bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
-        bar_color_mode: types.enumsWithDefault(['auto', 'segment', 'rainbow'], 'auto'),
+        bar_color_mode: types.enumsWithDefault(['auto', 'segment', 'rainbow', 'rainbow_full'], 'auto'),
         // Only engages outside center_zero with a well-formed positive range
         // (min > 0, max > min) — ProgressCalc.isLogScale falls back to linear
         // otherwise, so an invalid combination degrades quietly instead of

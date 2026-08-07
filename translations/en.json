@@ -142,7 +142,8 @@
       "bar_color_mode": {
         "auto": "Auto",
         "segment": "Segment",
-        "rainbow": "Rainbow"
+        "rainbow": "Rainbow",
+        "rainbow_full": "Rainbow (full)"
       },
       "bar_scale": {
         "linear": "Linear",

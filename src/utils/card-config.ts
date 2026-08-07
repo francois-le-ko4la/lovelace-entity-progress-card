@@ -122,6 +122,11 @@ const htmlStructure = {
       zeroMark: { element: 'div', class: 'zero', extraAttr: { 'aria-hidden': 'true' } },
       lowWatermark: { element: 'div', class: 'low', extraAttr: { 'aria-hidden': 'true' } },
       highWatermark: { element: 'div', class: 'high', extraAttr: { 'aria-hidden': 'true' } },
+      // bar_color_mode: rainbow_full's own moving cursor (see .value-mark in
+      // styles.ts) - built on the same .mark mechanism as the watermarks
+      // above, shown/positioned purely via CSS (--progress-bar-value is
+      // already set every render), no dedicated JS wiring needed.
+      valueMarker: { element: 'div', class: 'value-mark', extraAttr: { 'aria-hidden': 'true' } },
       watermark: { class: 'progress-bar-wm' },
     },
     badge: {

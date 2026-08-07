@@ -142,7 +142,8 @@
       "bar_color_mode": {
         "auto": "স্বয়ংক্রিয়",
         "segment": "বিভাগ",
-        "rainbow": "রেইনবো"
+        "rainbow": "রেইনবো",
+        "rainbow_full": "Rainbow (full)"
       },
       "bar_scale": {
         "linear": "Linear",

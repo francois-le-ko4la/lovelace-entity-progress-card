@@ -140,11 +140,17 @@ const StructureElements = {
         marks
       : Element(CARD.htmlStructure.elements.progressBar.inner, 'positive').html() + marks;
 
+    // valueMarker is a sibling of .bar, not one of the marks nested inside it
+    // (see the block above) - .bar has overflow: hidden (needed to clip the
+    // fill sweep/segments to its own thin frame), which would clip the
+    // marker down to the bar's own height too, drowning it at small
+    // bar_size. .bar-container has no such clipping, so the marker can be
+    // taller than the (possibly tiny) bar it marks and still read clearly.
     return Element(CARD.htmlStructure.elements.progressBar.container, extraClass).html(
       Element(
         CARD.htmlStructure.elements.progressBar.bar,
         isCenterZero ? CARD.style.dynamic.progressBar.centerZero.class : 'default',
-      ).html(innerHtml),
+      ).html(innerHtml) + Element(CARD.htmlStructure.elements.progressBar.valueMarker, 'mark').html(),
       isCenterZero ? { 'aria-valuemin': '-100' } : {},
     );
   },

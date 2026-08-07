@@ -149,7 +149,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'تلقائي',
           segment: 'مقطعي',
-          rainbow: 'قوس قزح'
+          rainbow: 'قوس قزح',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -432,7 +433,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'স্বয়ংক্রিয়',
           segment: 'বিভাগ',
-          rainbow: 'রেইনবো'
+          rainbow: 'রেইনবো',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -715,7 +717,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Automàtic',
           segment: 'Segments',
-          rainbow: 'Arc de Sant Martí'
+          rainbow: 'Arc de Sant Martí',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -998,7 +1001,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Automaticky',
           segment: 'Segmenty',
-          rainbow: 'Duha'
+          rainbow: 'Duha',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -1281,7 +1285,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Auto',
           segment: 'Segmenter',
-          rainbow: 'Regnbue'
+          rainbow: 'Regnbue',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -1564,7 +1569,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Automatisch',
           segment: 'Segmente',
-          rainbow: 'Regenbogen'
+          rainbow: 'Regenbogen',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -1847,7 +1853,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Αυτόματο',
           segment: 'Τμήματα',
-          rainbow: 'Ουράνιο τόξο'
+          rainbow: 'Ουράνιο τόξο',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -2130,7 +2137,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Auto',
           segment: 'Segment',
-          rainbow: 'Rainbow'
+          rainbow: 'Rainbow',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -2413,7 +2421,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Auto',
           segment: 'Segmentos',
-          rainbow: 'Arcoíris'
+          rainbow: 'Arcoíris',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -2696,7 +2705,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Auto',
           segment: 'Segmentos',
-          rainbow: 'Arcoíris'
+          rainbow: 'Arcoíris',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Lineal',
@@ -2979,7 +2989,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Automaatne',
           segment: 'Segmendid',
-          rainbow: 'Vikerkaar'
+          rainbow: 'Vikerkaar',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -3262,7 +3273,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Automaattinen',
           segment: 'Segmentit',
-          rainbow: 'Sateenkaari'
+          rainbow: 'Sateenkaari',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -3545,7 +3557,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Auto',
           segment: 'Segmenté',
-          rainbow: 'Arc-en-ciel'
+          rainbow: 'Arc-en-ciel',
+          rainbow_full: 'Arc-en-ciel complet'
         },
         bar_scale: {
           linear: 'Linéaire',
@@ -3828,7 +3841,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'स्वचालित',
           segment: 'खंड',
-          rainbow: 'इंद्रधनुष'
+          rainbow: 'इंद्रधनुष',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -4111,7 +4125,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Automatski',
           segment: 'Segmenti',
-          rainbow: 'Duga'
+          rainbow: 'Duga',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -4394,7 +4409,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Automatikus',
           segment: 'Szegmens',
-          rainbow: 'Szivárvány'
+          rainbow: 'Szivárvány',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -4677,7 +4693,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Otomatis',
           segment: 'Segmen',
-          rainbow: 'Pelangi'
+          rainbow: 'Pelangi',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -4960,7 +4977,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Automatico',
           segment: 'Segmenti',
-          rainbow: 'Arcobaleno'
+          rainbow: 'Arcobaleno',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Lineare',
@@ -5243,7 +5261,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: '自動',
           segment: 'セグメント',
-          rainbow: 'レインボー'
+          rainbow: 'レインボー',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -5526,7 +5545,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: '자동',
           segment: '세그먼트',
-          rainbow: '무지개'
+          rainbow: '무지개',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -5809,7 +5829,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Automatinis',
           segment: 'Segmentai',
-          rainbow: 'Vaivorykštė'
+          rainbow: 'Vaivorykštė',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -6092,7 +6113,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Automātisks',
           segment: 'Segmenti',
-          rainbow: 'Varavīksne'
+          rainbow: 'Varavīksne',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -6375,7 +6397,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Автоматски',
           segment: 'Сегменти',
-          rainbow: 'Виножито'
+          rainbow: 'Виножито',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -6658,7 +6681,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Auto',
           segment: 'Segmenter',
-          rainbow: 'Regnbue'
+          rainbow: 'Regnbue',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -6941,7 +6965,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Automatisch',
           segment: 'Segmenten',
-          rainbow: 'Regenboog'
+          rainbow: 'Regenboog',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Lineair',
@@ -7224,7 +7249,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Automatycznie',
           segment: 'Segmenty',
-          rainbow: 'Tęcza'
+          rainbow: 'Tęcza',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -7507,7 +7533,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Auto',
           segment: 'Segmentos',
-          rainbow: 'Arco-Íris'
+          rainbow: 'Arco-Íris',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -7790,7 +7817,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Auto',
           segment: 'Segmentos',
-          rainbow: 'Arco-Íris'
+          rainbow: 'Arco-Íris',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -8073,7 +8101,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Automat',
           segment: 'Segmente',
-          rainbow: 'Curcubeu'
+          rainbow: 'Curcubeu',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -8356,7 +8385,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Авто',
           segment: 'Сегменты',
-          rainbow: 'Радуга'
+          rainbow: 'Радуга',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -8639,7 +8669,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Automaticky',
           segment: 'Segmenty',
-          rainbow: 'Dúha'
+          rainbow: 'Dúha',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -8922,7 +8953,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Samodejno',
           segment: 'Segmenti',
-          rainbow: 'Mavrica'
+          rainbow: 'Mavrica',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -9205,7 +9237,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Auto',
           segment: 'Segment',
-          rainbow: 'Regnbåge'
+          rainbow: 'Regnbåge',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -9488,7 +9521,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'อัตโนมัติ',
           segment: 'ส่วน',
-          rainbow: 'สีรุ้ง'
+          rainbow: 'สีรุ้ง',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -9771,7 +9805,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Otomatik',
           segment: 'Bölümler',
-          rainbow: 'Gökkuşağı'
+          rainbow: 'Gökkuşağı',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -10054,7 +10089,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Авто',
           segment: 'Сегменти',
-          rainbow: 'Веселка'
+          rainbow: 'Веселка',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -10337,7 +10373,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: 'Tự động',
           segment: 'Phân đoạn',
-          rainbow: 'Cầu vồng'
+          rainbow: 'Cầu vồng',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -10620,7 +10657,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: '自动',
           segment: '分段',
-          rainbow: '彩虹'
+          rainbow: '彩虹',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',
@@ -10903,7 +10941,8 @@ const TRANSLATIONS = {
         bar_color_mode: {
           auto: '自動',
           segment: '分段',
-          rainbow: '彩虹'
+          rainbow: '彩虹',
+          rainbow_full: 'Rainbow (full)'
         },
         bar_scale: {
           linear: 'Linear',

@@ -1530,6 +1530,11 @@ views:
             bar_color_mode: rainbow
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
+            name: 'bar_color_mode: rainbow_full (always shows the full gradient)'
+            theme: optimal_when_high
+            bar_color_mode: rainbow_full
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
             name: custom_theme (per-zone colors)
             custom_theme:
               - min: 0
@@ -1809,6 +1814,14 @@ views:
             bar_color_mode: rainbow
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_power
+            name: 'center_zero + theme + bar_color_mode: rainbow_full'
+            center_zero: true
+            min_value: -3000
+            max_value: 3000
+            theme: optimal_when_high
+            bar_color_mode: rainbow_full
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_power
             name: center_zero + watermark
             center_zero: true
             min_value: -3000
@@ -1851,6 +1864,201 @@ views:
                 - entity: input_number.epb_demo_grid_consumption
                   subtract: true
                   color: red
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Full rainbow (bar_color_mode: rainbow_full), every bar_size'
+            heading_style: title
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_temperature
+            name: 'Full rainbow: bar_size: xsmall'
+            theme: temperature
+            bar_color_mode: rainbow_full
+            center_zero: true
+            bar_size: xsmall
+            grid_options:
+              columns: 12
+              rows: auto
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_temperature
+            name: 'Full rainbow: bar_size: small'
+            theme: temperature
+            bar_color_mode: rainbow_full
+            center_zero: true
+            bar_size: small
+            grid_options:
+              columns: 12
+              rows: auto
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_temperature
+            name: 'Full rainbow: bar_size: medium'
+            theme: temperature
+            bar_color_mode: rainbow_full
+            center_zero: true
+            bar_size: medium
+            grid_options:
+              columns: 12
+              rows: auto
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_temperature
+            name: 'Full rainbow: bar_size: large'
+            theme: temperature
+            bar_color_mode: rainbow_full
+            center_zero: true
+            bar_size: large
+            grid_options:
+              columns: 12
+              rows: auto
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_temperature
+            name: 'Full rainbow: bar_size: xlarge'
+            theme: temperature
+            bar_color_mode: rainbow_full
+            center_zero: true
+            bar_size: xlarge
+            grid_options:
+              columns: 12
+              rows: auto
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Full rainbow showcase - temperatures, layouts, center_zero, labels'
+            heading_style: title
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_temp_negative
+            name: negative
+            theme: temperature
+            bar_color_mode: rainbow_full
+            center_zero: true
+            min_value: -20
+            max_value: 40
+            label:
+              jinja: >-
+                {% set t = states('input_number.epb_demo_temp_negative') |
+                float %} {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t
+                < 15 %}cool {% elif t < 25 %}temperate {% elif t < 32 %}warm
+                {% else %}scorching {% endif %}
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_temp_positive
+            name: positive
+            theme: temperature
+            bar_color_mode: rainbow_full
+            center_zero: true
+            min_value: -20
+            max_value: 40
+            label:
+              jinja: >-
+                {% set t = states('input_number.epb_demo_temp_positive') |
+                float %} {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t
+                < 15 %}cool {% elif t < 25 %}temperate {% elif t < 32 %}warm
+                {% else %}scorching {% endif %}
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_temp_temperate
+            name: temperate
+            theme: temperature
+            bar_color_mode: rainbow_full
+            max_value: 40
+            label:
+              jinja: >-
+                {% set t = states('input_number.epb_demo_temp_temperate') |
+                float %} {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t
+                < 15 %}cool {% elif t < 25 %}temperate {% elif t < 32 %}warm
+                {% else %}scorching {% endif %}
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_temp_hot
+            name: hot
+            theme: temperature
+            bar_color_mode: rainbow_full
+            max_value: 40
+            label:
+              jinja: >-
+                {% set t = states('input_number.epb_demo_temp_hot') | float %}
+                {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t < 15
+                %}cool {% elif t < 25 %}temperate {% elif t < 32 %}warm {%
+                else %}scorching {% endif %}
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_temp_negative
+            name: 'negative, layout: vertical'
+            layout: vertical
+            theme: temperature
+            bar_color_mode: rainbow_full
+            center_zero: true
+            min_value: -20
+            max_value: 40
+            grid_options:
+              columns: 4
+              rows: 2
+            label:
+              jinja: >-
+                {% set t = states('input_number.epb_demo_temp_negative') |
+                float %} {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t
+                < 15 %}cool {% elif t < 25 %}temperate {% elif t < 32 %}warm
+                {% else %}scorching {% endif %}
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_temp_positive
+            name: 'positive, layout: vertical'
+            layout: vertical
+            theme: temperature
+            bar_color_mode: rainbow_full
+            grid_options:
+              columns: 4
+              rows: 2
+            label:
+              jinja: >-
+                {% set t = states('input_number.epb_demo_temp_positive') |
+                float %} {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t
+                < 15 %}cool {% elif t < 25 %}temperate {% elif t < 32 %}warm
+                {% else %}scorching {% endif %}
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_temp_temperate
+            name: 'temperate, layout: vertical, center_zero'
+            layout: vertical
+            theme: temperature
+            bar_color_mode: rainbow_full
+            center_zero: true
+            min_value: -20
+            max_value: 40
+            grid_options:
+              columns: 4
+              rows: 2
+            label:
+              jinja: >-
+                {% set t = states('input_number.epb_demo_temp_temperate') |
+                float %} {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t
+                < 15 %}cool {% elif t < 25 %}temperate {% elif t < 32 %}warm
+                {% else %}scorching {% endif %}
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_temp_hot
+            name: 'hot, layout: vertical'
+            layout: vertical
+            theme: temperature
+            bar_color_mode: rainbow_full
+            grid_options:
+              columns: 4
+              rows: 2
+            label:
+              jinja: >-
+                {% set t = states('input_number.epb_demo_temp_hot') | float %}
+                {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t < 15
+                %}cool {% elif t < 25 %}temperate {% elif t < 32 %}warm {%
+                else %}scorching {% endif %}
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_temp_hot
+            name: 'hot, bar_orientation: up (true vertical bar)'
+            layout: vertical
+            bar_orientation: up
+            bar_position: overlay
+            theme: temperature
+            bar_color_mode: rainbow_full
+            grid_options:
+              columns: 4
+              rows: 2
+            label:
+              jinja: >-
+                {% set t = states('input_number.epb_demo_temp_hot') | float %}
+                {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t < 15
+                %}cool {% elif t < 25 %}temperate {% elif t < 32 %}warm {%
+                else %}scorching {% endif %}
       - type: grid
         cards:
           - type: heading
@@ -3631,6 +3839,94 @@ views:
             grid_options:
               columns: 12
               rows: 1
+          - type: heading
+            heading: 'Sunset - alternate version (@WarC0zes, HACF)'
+            heading_style: title
+          - type: custom:entity-progress-card-template-dev
+            entity: sun.sun
+            height: 45px
+            bar_size: medium
+            bar_effect: radius
+            name: >
+              {% set sunrise = as_datetime(states('sensor.sun_next_rising')) %} {% set
+              sunset = as_datetime(states('sensor.sun_next_setting')) %} {% set now_time
+              = now() %} {% if sunrise and sunset %}
+                {% if sunrise < sunset %}
+                  Soleil sous l'horizon | Prochain lever: {{ sunrise.timestamp() | timestamp_custom('%Hh%M', true) }}
+                {% else %}
+                  Soleil au-dessus de l'horizon | Prochain coucher: {{ sunset.timestamp() | timestamp_custom('%Hh%M', true) }}
+                {% endif %}
+              {% else %}
+                Sun information pas disponible
+              {% endif %}
+            bar_color: |
+              {% if states('sun.sun') == 'below_horizon' %}
+                #40445a
+              {% else %}
+                yellow
+              {% endif %}
+            color: |
+              {% if states('sun.sun') == 'below_horizon' %}
+                #40445a
+              {% else %}
+                yellow
+              {% endif %}
+            secondary: >
+              {% set sunrise = as_datetime(states('sensor.sun_next_rising')) %} {% set
+              sunset = as_datetime(states('sensor.sun_next_setting')) %} {% set now_time
+              = now() %} {% if sunrise and sunset %}
+                {% if sunrise < sunset %}
+                  {% set next_event = sunrise %}
+                  {% set last_event = sunrise - timedelta(days=1) %}
+                {% else %}
+                  {% set next_event = sunset %}
+                  {% set last_event = sunset - timedelta(days=1) %}
+                {% endif %}
+                {% set delta = next_event - now_time %}
+                {% set total_seconds = delta.total_seconds() %}
+                {% if total_seconds > 1 %}
+                  {% set days = (total_seconds // 86400) | int %}
+                  {% set hours = (total_seconds % 86400) // 3600 %}
+                  {% set minutes = (total_seconds % 3600) // 60 %}
+                  {% set seconds = (total_seconds % 60) %}
+                  Dans
+                  {% if days > 0 %}
+                    {{ days }}d
+                  {% endif %}
+                  {{ '%02dh%02dm%02ds' | format(hours | int, minutes | int, seconds | int) }}
+                {% else %}
+                  now
+                {% endif %}
+              {% else %}
+                --h--m--s
+              {% endif %}
+            percent: >
+              {% set sunrise = as_datetime(states('sensor.sun_next_rising')) %} {% set
+              sunset = as_datetime(states('sensor.sun_next_setting')) %} {% set now_time
+              = now() %} {% if sunrise and sunset %}
+                {% if sunrise < sunset %}
+                  {% set next_event = sunrise %}
+                  {% set last_event = sunrise - timedelta(days=1) %}
+                {% else %}
+                  {% set next_event = sunset %}
+                  {% set last_event = sunset - timedelta(days=1) %}
+                {% endif %}
+                {% set total = (next_event - last_event).total_seconds() %}
+                {% set elapsed = (now_time - last_event).total_seconds() %}
+                {% if total > 0 %}
+                  {{ ((elapsed / total) * 100) | round(2) }}
+                {% else %}
+                  0
+                {% endif %}
+              {% else %}
+                0
+              {% endif %}
+            tap_action:
+              action: more-info
+            fast_refresh: true
+            grid_options:
+              columns: 12
+              rows: 2
           - type: heading
             heading: Maintenance days (hold/double tap)
             heading_style: title

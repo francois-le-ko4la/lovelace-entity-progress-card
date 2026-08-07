@@ -142,7 +142,8 @@
       "bar_color_mode": {
         "auto": "自动",
         "segment": "分段",
-        "rainbow": "彩虹"
+        "rainbow": "彩虹",
+        "rainbow_full": "Rainbow (full)"
       },
       "bar_scale": {
         "linear": "Linear",

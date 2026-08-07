@@ -478,6 +478,7 @@ class HACore extends HTMLElement {
         ? (CARD.style.dynamic.progressBar.orientation as Record<string, string>)[this._cardView.config.bar_orientation]
         : null,
       this._cardView.config.center_zero ? CARD.style.dynamic.progressBar.centerZero.class : null,
+      this._cardView.config.bar_color_mode === 'rainbow_full' ? 'rainbow-full-bar' : null,
       (this._cardView.config.layout === 'vertical' &&
         this._cardView.config.bar_orientation === 'up' &&
         this._cardView.config.bar_position === 'overlay') ||

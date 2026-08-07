@@ -142,7 +142,8 @@
       "bar_color_mode": {
         "auto": "Automatinis",
         "segment": "Segmentai",
-        "rainbow": "Vaivorykštė"
+        "rainbow": "Vaivorykštė",
+        "rainbow_full": "Rainbow (full)"
       },
       "bar_scale": {
         "linear": "Linear",

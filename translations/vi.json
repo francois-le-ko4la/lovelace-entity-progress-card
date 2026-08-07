@@ -142,7 +142,8 @@
       "bar_color_mode": {
         "auto": "Tự động",
         "segment": "Phân đoạn",
-        "rainbow": "Cầu vồng"
+        "rainbow": "Cầu vồng",
+        "rainbow_full": "Rainbow (full)"
       },
       "bar_scale": {
         "linear": "Linear",

@@ -59,7 +59,7 @@ const CARD_CSS = css`
   --detail-letter-spacing: 0.4px;
 
   /* === LAYOUT VARIABLES === */
-  --vertical-gap: 1px;
+  --vertical-gap: 0px;
 
   /* === HA RIPPLE === */
   --ha-ripple-hover-opacity: 0.04;
@@ -228,7 +228,14 @@ ${CARD.htmlStructure.card.element} {
   width: 100%;
   height: 100%;
   overflow: var(--current-container-overflow, visible);
-  padding-top: var(--current-container-padding-top, 0);
+  /* --current-specific-padding-top: a dedicated override slot (see
+     .rainbow-full-bar's own rule below) - a brand new custom property
+     name that nothing else declares, so it can't be shadowed by an
+     intermediate element redeclaring the *same* variable the way
+     --current-container-padding-top's own value used to be at risk of
+     (see --current-specific-progress-container-height's comment below for
+     that exact failure mode). */
+  padding-top: var(--current-specific-padding-top, var(--current-container-padding-top, 0));
   box-sizing: var(--current-container-box-sizing, content-box);
   flex-wrap: var(--current-container-flex-wrap, nowrap);
 }
@@ -305,7 +312,12 @@ ha-card.vertical.xlarge.below .${CARD.htmlStructure.elements.progressBar.contain
   width: 100%;
   display: flex;
   overflow: hidden;
-  height: var(--progress-size);
+  /* --current-specific-progress-container-height: see the rainbow_full +
+     vertical + below rule in the RAINBOW FULL BAR section further down -
+     this box hard-codes the bar's row height independently of
+     --current-progress-container-height/.bar-container's own height, so
+     that override needs its own fallback slot here too. */
+  height: var(--current-specific-progress-container-height, var(--progress-size));
   flex-shrink: 0;
 }
 
@@ -635,7 +647,18 @@ ha-card.vertical .${CARD.htmlStructure.sections.content.class} {
 }
 
 ha-card.vertical.default .${CARD.htmlStructure.sections.content.class} {
-  --current-content-height: calc(var(--name-height) + var(--detail-height) + var(--progress-size));
+  /* name-content, secondary-info and the bar-container are 3 flex children
+     of .content stacked with a 1px gap between each (--current-content-gap:
+     var(--vertical-gap), set just above) - 2 gaps this sum never accounted
+     for, so .content's real natural height always ran 2px (2 * 1px) taller
+     than this min-height floor claimed. Harmless on its own (min-height
+     just gets exceeded, nothing clips) but it means a card sized via
+     grid_options: rows: auto never lands on a clean row multiple - fixed
+     verified against real getBoundingClientRect() measurements (44px
+     predicted vs 46px actual before this fix). */
+  --current-content-height: calc(
+    var(--name-height) + var(--detail-height) + var(--progress-size) + (2 * var(--vertical-gap))
+  );
 }
 
 ha-card.type-entities .${CARD.htmlStructure.sections.content.class} {
@@ -1014,6 +1037,10 @@ ha-card.info-multiline {
   justify-content: center;
   align-items: center;
   flex-grow: 1;
+  /* Positioning context for .value-mark (rainbow_full's marker) - it sits
+     here rather than inside .bar precisely so it isn't clipped by .bar's own
+     overflow: hidden (see StructureElements.progressBar). */
+  position: relative;
   /* Without this, the bar had no floor at all while its row sibling
      (.secondary-info-wrapper) already has one - compressing the card
      horizontally pushed 100% of the squeeze onto the bar (down to a
@@ -1030,7 +1057,21 @@ ha-card.info-multiline {
      --epb-progress-bar-min-width stays card_mod-overridable for
      anyone who wants a different balance. */
   min-width: min(var(--epb-progress-bar-min-width, 30px), 33%);
-  height: var(--type-entities-combined-line-height, var(--current-progress-container-height));
+  /* --current-specific-progress-container-height: a dedicated override
+     slot, same idea as .container's own --current-specific-padding-top
+     above - a fresh custom property nothing else declares. Needed because
+     --current-progress-container-height is an *inherited* value, and
+     .container (an ancestor of this element) carries the exact same
+     'vertical' class its own generic rule keys off - a plain override on
+     ha-card, however specific, never reached .bar-container: .container's
+     own direct declaration of --current-progress-container-height always
+     won over the inherited one from further up. Still behind
+     --type-entities-combined-line-height, which stays the user's own
+     override and wins over both. */
+  height: var(
+    --type-entities-combined-line-height,
+    var(--current-specific-progress-container-height, var(--current-progress-container-height))
+  );
 }
 
 .overlay .${CARD.htmlStructure.elements.progressBar.container.class} {
@@ -2072,6 +2113,227 @@ ha-card.info-multiline {
   border-top: var(--wm-half-tri) solid transparent;
   border-left: var(--wm-tri-size) solid var(--wm-color);
   border-bottom: var(--wm-half-tri) solid transparent;
+}
+
+/* =============================================================================
+   RAINBOW FULL BAR (bar_color_mode: rainbow_full)
+   The track always shows the theme's complete gradient (not just the filled
+   portion) - .inner's normal reveal-by-translate sweep is hidden entirely,
+   and a small marker (built on the same .mark mechanism as the watermarks
+   above) tracks the current value's position instead. --progress-bar-value
+   (0-1) is already set every render (see HACore._applyProgressCSS), so the
+   marker needs no dedicated JS wiring of its own - purely CSS.
+
+   center_zero is a different wiring: its two gradients (one per arm) never
+   reach --progress-bar-color/.bar at all - HABase._updateCSS only ever
+   passes bar.colorGradient (always null for center_zero, see
+   ViewBase.colorGradient) as the plain single-arm gradient, and routes
+   bar.themeDivergingGradient's own posGradient/negGradient through
+   --epb-stack-gradient-pos/-neg instead (see
+   HACore._applyDivergingBarStackCSS), which only .inner.positive/.inner.
+   negative's own --inner-background ever reads. So for center_zero, .inner
+   can't be hidden - it's kept, its normal value-scaled reveal (--inner-size)
+   is forced to fully open instead, so both halves show their whole gradient
+   plain and only the marker (below) still moves.
+   ============================================================================= */
+
+.rainbow-full-bar:not(.${CARD.style.dynamic.progressBar.centerZero.class})
+  .${CARD.htmlStructure.elements.progressBar.inner.class} {
+  display: none;
+}
+
+.rainbow-full-bar:not(.${CARD.style.dynamic.progressBar.centerZero.class})
+  .${CARD.htmlStructure.elements.progressBar.bar.class} {
+  background-color: transparent;
+  background-image: var(--epb-progress-bar-color, var(${CARD.style.dynamic.progressBar.color.var}, none));
+}
+
+.${CARD.style.dynamic.progressBar.centerZero.class}.rainbow-full-bar
+  .${CARD.htmlStructure.elements.progressBar.inner.class} {
+  --inner-size: 1;
+}
+
+/* Narrow pill on the bar's own fill axis (like a fatter, moving version of
+   the center-zero mark below) rather than a disc - full-height/width on the
+   cross axis, narrow on the axis the value moves along. Centered via top:50%
+   + transform rather than top:0/height:100%: this now lives in
+   .bar-container (see StructureElements.progressBar), which for the
+   smallest bar_size is barely taller than the bar itself.
+
+   Self-relative (100% minus 2x the ring width, the ring being a
+   box-shadow drawn *outside* the box - see below), not a fixed px number:
+   .bar-container's actual height varies by more than bar_size alone (the
+   generic 16px cushion horizontal gets for small vs vertical's own bare
+   --progress-size, and --type-entities-combined-line-height - see .bar-
+   container's own height rule above - lets a user pin it to yet another
+   value entirely, taking priority over anything this file assumes). A
+   fixed height that happened to match one specific case clipped or
+   shifted the moment any of those differed - this always fits exactly
+   whatever height actually applies, no matter the source, same formula
+   medium/large/xlarge below already rely on. */
+.${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
+  --mark-top: 50%;
+  --mark-height: calc(100% - 2px);
+  /* --rainbow-marker-width/-border-width: internal, bar_size-scaled
+     defaults (see the size rules below) - never set by JS, only ever the
+     inner fallback of the public --epb-rainbow-marker-* var so a card_mod
+     override always wins regardless of bar_size. xsmall/small don't set
+     either (5px/1px, same numbers as before this got size-aware) - they
+     already read clearly at that scale and were asked to stay untouched. */
+  --mark-width: var(--epb-rainbow-marker-size, var(--rainbow-marker-width, 5px));
+  --mark-left: calc(var(${CARD.style.dynamic.progressBar.value.var}, 0) * 100%);
+  /* Whatever color the icon currently shows (theme zone/custom_theme/color
+     override - see ThemeManager#setStyle) rather than a flat neutral, same
+     "current color" source label's own pill background already uses. */
+  --mark-background: var(--epb-rainbow-marker-color, var(${CARD.style.dynamic.iconAndShape.color.var}, white));
+  box-sizing: border-box;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  border: none;
+  /* "Glass pin": a thin ring (drawn as a spread box-shadow, not a real
+     border - doesn't affect box-sizing/layout) instead of a solid outline,
+     plus a soft drop shadow for a bit of lift/depth. The ring reads clearly
+     against any of the gradient's own colors, light or dark - a solid black
+     border read as a flat, cut-out sticker by comparison. */
+  box-shadow:
+    0 0 0 var(--epb-rainbow-marker-border-width, var(--rainbow-marker-border-width, 1px))
+      var(--epb-rainbow-marker-border-color, rgba(255, 255, 255, 0.9)),
+    0 2px 3px rgba(0, 0, 0, 0.35);
+  opacity: 1; /* full opacity, unlike the watermarks' translucent default */
+}
+
+.rainbow-full-bar .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
+  --mark-display: flex;
+}
+
+/* layout: vertical reserves only the bar's own thin thickness for its row
+   by default (--current-progress-container-height: var(--progress-size),
+   6/8/12px for xsmall/small/medium - no generic 16px cushion the way
+   horizontal gets there), and .container's own padding-top scales with
+   that same raw size. Both forced up to that same 16px here (via the
+   dedicated --current-specific-* overrides declared on .container/
+   .bar-container above - immune to being shadowed by an intermediate
+   element the way directly overriding --current-progress-container-height/
+   --current-container-padding-top themselves would be, since nothing else
+   declares these two names) so the marker (self-relative, see above) gets
+   the same room to be a proper pill in both layouts instead of shrinking
+   into a near-circle, and the row doesn't sit off from where large's
+   already-16px row naturally lands. large already reaches 16px natively
+   in vertical (--progress-size-l is 16px) - no forcing needed; xlarge is
+   well past it already. ViewCore.minGridRows reserves one extra grid row
+   for this same combination, so the card has the budget for the growth
+   instead of squeezing it out of the rest of the layout. */
+ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.xsmall.label},
+ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.small.label},
+ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium.label} {
+  --current-specific-progress-container-height: 16px;
+  --current-specific-padding-top: 16px;
+}
+ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.xsmall.label} .${CARD.htmlStructure.sections.content.class},
+ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.sections.content.class},
+ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.sections.content.class} {
+  --current-content-height: calc(var(--name-height) + var(--detail-height) + 16px);
+}
+
+/* bar_position: below puts the bar in its own sibling (.below-container),
+   not inside .content - no padding-top/content-height sum to correct
+   there (.content's own base formula never accounted for the bar to
+   begin with), just the same container-height forcing, on both boxes
+   that separately hard-code the bar's row height for this position (see
+   ha-card.below .bar-container and .below-container's own height rule -
+   neither goes through --current-progress-container-height/
+   --progress-size via inheritance the way .default's .container does, so
+   --current-specific-progress-container-height needs a fallback slot on
+   .below-container too, added at its own rule below). */
+ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.xsmall.label},
+ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.small.label},
+ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium.label} {
+  --current-specific-progress-container-height: 16px;
+}
+
+/* bar_position: top/bottom forces the bar down to 6px regardless of
+   bar_size (see the .top-container/.bottom-container rule declaring
+   --progress-size/--progress-container-height directly, further up) -
+   the same xsmall scale (6px container, 1px ring). Purely self-relative
+   (calc(100% - 2px), same as everywhere else) fit inside that 6px flush
+   with the bar, but read poorly there: at 4px the marker's own fill
+   (current color) often lands on a same-hued patch of the gradient right
+   behind it, and the thin ring alone isn't enough contrast to save it. A
+   small fixed floor lets it overshoot the 6px bar a little - not the full
+   "always xlarge-sized" treatment vertical + up + overlay gets above,
+   just enough to read clearly. .top-container/.bottom-container don't
+   clip (position: absolute, no overflow: hidden), so the overshoot shows. */
+.rainbow-full-bar .top-container .${CARD.htmlStructure.elements.progressBar.valueMarker.class},
+.rainbow-full-bar .bottom-container .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
+  --mark-height: max(calc(100% - 2px), 10px);
+}
+
+/* From medium up, the bar itself gets visibly chunkier while the marker
+   stayed fixed at xsmall/small's own scale - a bit more width and a
+   thicker border keep it from getting lost against the wider track.
+   --mark-height also gets pulled in here by exactly 2x the ring width
+   (the ring is a box-shadow, drawn *outside* the box, not counted in its
+   own height): xsmall/small's height (max(100%, 14px)) has slack to spare
+   from that floor alone (the bar itself is shorter than 14px, and the row
+   around it taller still), but from medium up 100% already reaches or
+   exceeds 14px, so the box has zero slack of its own and the ring
+   overshoots past .bar-container's own bounds into whatever's flush
+   against it - clipped instead of a clean rounded cap. */
+.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
+  --rainbow-marker-width: 7px;
+  --rainbow-marker-border-width: 1.5px;
+  --mark-height: calc(100% - 3px);
+}
+.rainbow-full-bar.${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
+  --rainbow-marker-width: 9px;
+  --rainbow-marker-border-width: 2px;
+  --mark-height: calc(100% - 4px);
+}
+.rainbow-full-bar.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
+  --rainbow-marker-width: 12px;
+  --rainbow-marker-border-width: 3px;
+  --mark-height: calc(100% - 6px);
+}
+
+/* Always styled like xlarge here (12px wide, 3px ring), not scaled by
+   bar_size the way the horizontal per-size rules further up are: a
+   vertical + up + overlay bar is a full-height strip regardless of
+   bar_size (see .vertical.up-orientation.overlay .content's own
+   height: 100%), so it reads as "big" no matter what bar_size says -
+   graduating the marker by bar_size the same way horizontal does would
+   make it look undersized against that strip at anything below xlarge.
+   --mark-width's -6px matches 2x the 3px ring, same ring-overshoot
+   correction the horizontal per-size rules use, just fixed instead of
+   graduated. */
+.vertical.up-orientation.overlay.rainbow-full-bar .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
+  --mark-top: auto;
+  --mark-left: 50%;
+  --mark-width: calc(100% - 6px);
+  --mark-height: var(--epb-rainbow-marker-size, 12px);
+  --mark-bottom: calc(var(${CARD.style.dynamic.progressBar.value.var}, 0) * 100%);
+  --rainbow-marker-border-width: 3px;
+  transform: translate(-50%, 50%);
+}
+
+/* center_zero: the two arms are a fixed 50/50 split of the bar (see
+   .half's own width: 50% CSS, not proportional to the actual zero value's
+   position) - --progress-bar-value is signed here (-1..1, see
+   HABase._updateCSS/ViewBase.percent), so 0 always lands the marker at the
+   visual center regardless of min_value/max_value/center_zero_value. */
+.${CARD.style.dynamic.progressBar.centerZero.class}.rainbow-full-bar .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
+  --mark-left: calc(50% + (var(${CARD.style.dynamic.progressBar.value.var}, 0) * 50%));
+}
+.vertical.up-orientation.overlay.${CARD.style.dynamic.progressBar.centerZero.class}.rainbow-full-bar .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
+  /* --mark-left stays the base rule's fixed 50% (it's the cross axis here -
+     centers the pill across the bar's *width* - unrelated to center_zero,
+     which only ever affects position along the *fill* axis: --mark-bottom
+     for a vertical bar, --mark-left for a horizontal one, see the generic
+     .center-zero rule above). Only --mark-bottom needs the center-zero
+     formula. This rule used to also reset --mark-left to 0, which combined
+     with the base rule's translateX(-50%) on a ~full-width box shoved the
+     whole pill half the bar's width to the left - left edge off past the
+     bar's own edge, right edge landing mid-bar instead of on the value. */
+  --mark-bottom: calc(50% + (var(${CARD.style.dynamic.progressBar.value.var}, 0) * 50%));
 }
 
 /* =============================================================================

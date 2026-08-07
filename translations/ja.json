@@ -142,7 +142,8 @@
       "bar_color_mode": {
         "auto": "自動",
         "segment": "セグメント",
-        "rainbow": "レインボー"
+        "rainbow": "レインボー",
+        "rainbow_full": "Rainbow (full)"
       },
       "bar_scale": {
         "linear": "Linear",

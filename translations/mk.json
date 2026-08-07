@@ -142,7 +142,8 @@
       "bar_color_mode": {
         "auto": "Автоматски",
         "segment": "Сегменти",
-        "rainbow": "Виножито"
+        "rainbow": "Виножито",
+        "rainbow_full": "Rainbow (full)"
       },
       "bar_scale": {
         "linear": "Linear",

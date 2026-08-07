@@ -142,7 +142,8 @@
       "bar_color_mode": {
         "auto": "Automatycznie",
         "segment": "Segmenty",
-        "rainbow": "Tęcza"
+        "rainbow": "Tęcza",
+        "rainbow_full": "Rainbow (full)"
       },
       "bar_scale": {
         "linear": "Linear",

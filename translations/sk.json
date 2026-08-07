@@ -142,7 +142,8 @@
       "bar_color_mode": {
         "auto": "Automaticky",
         "segment": "Segmenty",
-        "rainbow": "Dúha"
+        "rainbow": "Dúha",
+        "rainbow_full": "Rainbow (full)"
       },
       "bar_scale": {
         "linear": "Linear",
