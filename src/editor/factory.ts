@@ -823,7 +823,7 @@ const EditorFactory = {
               if (value) {
                 return {
                   ...EditorFactory.applyDensityConstraints({ ...config, density: 'compact' }),
-                  grid_options: { columns: 1 * CARD.layout.gridColumnMultiplier, rows: 1 },
+                  grid_options: { columns: Number(CARD.layout.gridColumnMultiplier), rows: 1 },
                   _grid_options_draft: config.grid_options,
                 };
               }
