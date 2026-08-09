@@ -99,6 +99,11 @@ class ViewCore {
   // above, since icon_animation applies to Template cards too (unlike
   // alert_when).
   #jinjaIconAnimationActive: boolean | null = null;
+  // hide's Jinja-resolved state (see hasComponentHiddenFlag/setResolvedHide
+  // below) - null means "no push has landed yet, fall back to config.hide"
+  // (also what a plain static hide: [...] array stays at forever, since
+  // nothing ever calls setResolvedHide for it).
+  #resolvedHide: Set<string> | null = null;
 
   constructor() {
     traceInstance(this, CARD_CONTEXT.debug.instances);
@@ -122,6 +127,7 @@ class ViewCore {
     Object.assign(this._lowValue, ViewCore._resolveValueConfig(this._configHelper.config?.watermark?.low, null));
     Object.assign(this._highValue, ViewCore._resolveValueConfig(this._configHelper.config?.watermark?.high, null));
     this.#jinjaIconAnimationActive = null;
+    this.#resolvedHide = null;
   }
 
   get config(): Config {
@@ -272,10 +278,29 @@ class ViewCore {
     return baseRows + (needsExtraRow ? 1 : 0);
   }
 
+  // horizontal-only (issue #134): without the bar, a horizontal card only
+  // needs enough width for icon+name/value, not the full 2/12 columns
+  // (reported as 6/12 after gridColumnMultiplier) every other horizontal
+  // config still needs to give the bar room to be worth showing at all.
+  // vertical's own grid_min_columns (already 1, the multiplier's floor)
+  // stays untouched - nothing narrower to give back there.
+  get minGridColumns(): number {
+    if (!this.config) return CARD.layout.orientations.horizontal.grid.grid_min_columns;
+    const layout = CARD.layout.orientations[this.config.layout as keyof typeof CARD.layout.orientations];
+    if (
+      this.config.layout === CARD.layout.orientations.horizontal.label &&
+      this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.progress_bar.label)
+    ) {
+      return 1;
+    }
+    return layout.grid.grid_min_columns;
+  }
+
   get cardLayoutOptions() {
     if (!this.config) return CARD.layout.orientations.horizontal.grid;
     const layout = cloneValue(CARD.layout.orientations[this.config.layout as keyof typeof CARD.layout.orientations]);
     layout.grid.grid_min_rows = this.minGridRows;
+    layout.grid.grid_min_columns = this.minGridColumns;
     return layout.grid;
   }
 
@@ -575,14 +600,22 @@ class ViewCore {
     return alert.animation ?? (alert.highlight === 'background' ? 'static' : 'blink');
   }
 
+  // Single source of truth for "is X currently hidden", static `hide: [...]`
+  // and Jinja `hide: "{{ ... }}"` alike. #resolvedHide is null until a real
+  // Jinja push writes to it via setResolvedHide (see HABase
+  // #_handleHiddenComponents) - reading config.hide directly below then
+  // covers exactly the static-array case (an unresolved Jinja string fails
+  // is.array, correctly reporting "nothing hidden yet", matching the CSS
+  // classes' own identical wait-for-first-push behavior). Once a push has
+  // landed, the cache wins outright and config.hide (still the raw template
+  // string) is never consulted again until the next `set config`.
   hasComponentHiddenFlag(component: string): boolean {
-    return this._hasInConfigArray('hide', component);
+    if (this.#resolvedHide) return this.#resolvedHide.has(component);
+    return is.array(this.config?.hide) && this.config.hide.includes(component);
   }
 
-  // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
-
-  _hasInConfigArray(key: string, value: unknown): boolean {
-    return is.array(this.config?.[key]) && this.config[key].includes(value);
+  setResolvedHide(items: string[]): void {
+    this.#resolvedHide = new Set(items);
   }
 
   static #hasAction(actions: (string | null)[]): boolean {

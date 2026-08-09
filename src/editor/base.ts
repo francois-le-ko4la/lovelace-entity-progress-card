@@ -453,6 +453,21 @@ class EditorBase extends HTMLElement {
       // that would silently fall back to 'ltr' on save.
       bar_orientation_no_up: () => buildSelect({ ltr: options.bar_orientation.ltr, rtl: options.bar_orientation.rtl }),
       bar_position: () => buildSelect(options.bar_position),
+      // layout: vertical rejects compact_below (see schema.ts's
+      // applyCompactBelowRule, the matching save-time safety net, and
+      // EditorFactory.resetCompactBelowIfInvalid for the layout-change
+      // reset) - mirrors bar_orientation_no_up just above: offering it only
+      // to silently revert it on save is a worse experience than not
+      // offering it at all.
+      bar_position_no_compact_below: () =>
+        buildSelect({
+          default: options.bar_position.default,
+          below: options.bar_position.below,
+          top: options.bar_position.top,
+          bottom: options.bar_position.bottom,
+          overlay: options.bar_position.overlay,
+          background: options.bar_position.background,
+        }),
       bar_color_mode: () => buildSelect(options.bar_color_mode),
       bar_scale: () => buildSelect(options.bar_scale),
       icon_animation: () => buildSelect(options.icon_animation),

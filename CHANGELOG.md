@@ -106,6 +106,35 @@ tall content could still silently outgrow. Full freedom for whoever sets it on
 purpose, full protection for whoever doesn't. See
 [`height`](docs/configuration.md#height).
 
+#### 🧹 Consistent `hide:` behavior
+
+Hiding a field (`hide: [icon, name, secondary_info, progress_bar]`) now always
+gives its reserved space back, the same way, in every layout. Previously each
+field followed its own, inconsistent rule: `name`/`secondary_info` reclaimed
+their row with `layout: horizontal` but never with `vertical`; the progress
+bar's own container never collapsed at all — only its fill did, leaving an empty
+box wherever `bar_position` gave it a dedicated row (`below`/`top`/ `bottom`, or
+sharing `secondary_info`'s row by default); and `icon` never gave back its
+column on purpose, a deliberate quirk matching how Mushroom/Tile-style cards
+keep name/value aligned to the same column whether or not an icon is shown. That
+last one is now dropped too, in favor of one predictable rule everywhere: hide
+it, get the space back. `value`/`unit` get the same treatment too, but derived
+from actual content instead of config — an empty secondary-info row (no value,
+no custom `state_content` either) now collapses on its own, whatever made it
+empty (`hide: value`, a `hide` Jinja template, or just an entity with nothing to
+show). See [`hide`](docs/configuration.md#hide).
+
+#### 📶 Sturdier `bar_segments`
+
+`bar_segments: N`'s divider lines are real elements now, not a CSS gradient/
+mask trick, fixing a real browser-compat bug (see below) along the way. All `N`
+segments are the same width, edges included — previously the two end segments
+quietly read wider than the rest. Divider thickness can now scale with the bar's
+own length (how much room each segment actually has) instead of a fixed size, on
+browsers new enough to support it, and a `--epb-bar-segment-gap`
+[hook](docs/theme.md#css) lets you pin an exact size yourself either way. See
+[`bar_segments`](docs/configuration.md#bar_segments).
+
 ### 🐛 Notable fixes
 
 - The card could fail to load entirely on some older or embedded browsers (kiosk
@@ -164,17 +193,46 @@ purpose, full protection for whoever doesn't. See
   and console-warned like every other deprecated option, but the button's own
   detection check was missing those two specifically, so there was no one-click
   way to actually rewrite the YAML. See [Deprecated Options].
+- The editor's `bar_position` dropdown still offered "Compact bar below" with
+  `layout: vertical`, even though it only has a distinct effect with
+  `layout: horizontal` and silently reverts to `default` on save - it's no
+  longer in the list once `layout: vertical` is selected, instead of being
+  offered only to be quietly rewritten away.
+- `hide: value`/`hide: unit` never actually worked as a Jinja template — only
+  the static `hide: [value, ...]` array form did. The template's live result was
+  tracked correctly for `icon`/`name`/`secondary_info`/`progress_bar` (each has
+  its own CSS class), but `value`/`unit` hide by leaving text out of the
+  assembled string instead, and that check only ever read the _static_ config
+  shape - silently blind to a Jinja result. Present since `hide` itself first
+  accepted a Jinja template.
+- The "nothing left to show, collapse the row" check for a `secondary_info`
+  driven by `custom_info` (or a Template's `secondary`) relied on `:has()`
+  (Firefox 121+), past this card's documented 94+ floor — silently left a small
+  empty gap on an older browser instead of collapsing the row. Replaced with a
+  JS-computed check, so it now degrades correctly all the way down to the
+  documented floor instead of quietly depending on a newer one. Present since
+  `icon_animation`'s washing-machine/battery-charging modes shipped.
+- `bar_segments: N`'s divider lines relied on `round()` (Chrome/Edge 114+,
+  Firefox 118+, Safari 16.4+), well past this card's documented 94+ floor — the
+  whole divider layer silently failed to render at all below that, invisible
+  dividers with no console warning or visual clue anything was wrong. Rebuilt
+  without `round()`; see the
+  [📶 Sturdier `bar_segments`](#-sturdier-bar_segments) highlight above. Present
+  since `bar_segments` itself shipped.
 
 ### 🧪 Try it: demo dashboard
 
 [`docs/demo-dashboard.yaml`][demo-dashboard.yaml] is now a comprehensive,
 interactive showroom covering essentially every option in this changelog, plus a
 regression-test view with one card per closed issue that can be reproduced
-statically. Import it (or
-[`docs/demo-dashboard-dev.yaml`][demo-dashboard-dev.yaml] for local `-dev`
-builds) with [`docs/demo-dashboard-helpers.yaml`][demo-dashboard-helpers.yaml]
-as a drop-in `homeassistant: packages:` file, and move the sliders to see
-everything react live.
+statically, a dedicated deprecated-options view, and a new "README examples"
+view reproducing the README's own real-world recipes live (the ones that don't
+need a brand-specific integration or system-level dependency to actually run).
+Import it (or [`docs/demo-dashboard-dev.yaml`][demo-dashboard-dev.yaml] for
+local `-dev` builds) with
+[`docs/demo-dashboard-helpers.yaml`][demo-dashboard-helpers.yaml] as a drop-in
+`homeassistant: packages:` file, and move the sliders to see everything react
+live.
 
 Thanks to everyone who reported, tested and contributed 🙏
 
@@ -242,6 +300,160 @@ Thanks to everyone who reported, tested and contributed 🙏
   & Alerts" panel earlier. `status_label` moves into that same panel too - it's
   the same "react to a condition" status-pill marker
   `alert_when.highlight: label` reuses, not core entity/display content.
+- **`hide:` reclaims space consistently everywhere**, not just in the cases each
+  field happened to already handle:
+  - `hide: icon` with `layout: horizontal` - `.content`'s width formula
+    (`calc(100% - 56px)`) deducted a fixed 56px column for the icon
+    unconditionally, on purpose, matching how Mushroom/Tile-style cards keep
+    name/value aligned to the same column with or without an icon shown. Traded
+    that alignment for consistency instead - the 56px is given back once the
+    icon is hidden, same as every other field below.
+  - `hide: name`/`hide: secondary_info` with `layout: vertical` - only
+    `layout: horizontal` zeroed the hidden row's height term before (issue
+    #129's fix never got a vertical equivalent).
+    `layout: vertical + bar_position: default` stacks name/secondary-info/bar as
+    3 independent rows (unlike horizontal's default, which shares one row
+    between secondary-info and the bar) - safe to always zero either one's
+    height term with no conditional needed, unlike horizontal's own exception
+    just above it.
+  - `hide: progress_bar` - only ever hid the fill (`.bar`), never
+    `.bar-container` itself, which kept its own `height`/`min-width`
+    regardless - an empty box wherever `bar_position` gave the bar a dedicated
+    row (`below`/`top`/`bottom`), or extra reserved width sharing
+    `secondary_info`'s row by default. `.bar-container`'s height now reads from
+    `--current-specific-progress-container-height` (the same dedicated
+    top-priority override slot `.bar-container` already checked first for
+    everything else) whenever `hide: progress_bar` is set, so this one rule
+    collapses it the same way regardless of `bar_position` or layout,
+    `min-width`/`flex-grow` reset alongside it.
+  - `layout: vertical + bar_position: default`'s own `padding-top` (proportional
+    to `--progress-size`, pushes the icon+content group down so it stays
+    visually centered against just the text once the bar renders below it) now
+    drops to 0 once the bar itself is hidden - nothing left below to stay
+    centered against. Left untouched by `hide: icon`: that padding was never
+    about the icon, so it stays regardless.
+  - `hide: value`/`hide: unit` closed the same way, but differently: neither has
+    a CSS class (both are a pure text-level omission, see
+    `ViewBase#secondaryInfoMain`), so reclaiming an empty row needs the _parent_
+    to react to that emptiness - not something plain CSS can do at this card's
+    documented browser floor without `:has()` (Firefox 121+ vs. the 94+ floor -
+    see the Prerequisites table in [README.md], and note that `styles.ts`'s
+    existing `.info-multiline` collapse rule already relies on it anyway, an
+    inconsistency worth revisiting separately). Solved with a JS-computed flag
+    instead, following the pattern the rest of `hide:` already uses:
+    `_processStandardFields` (the one place `secondaryInfoMain`'s final string
+    is both computed and written) pushes `--detail-height: 0px` inline on
+    `ha-card` whenever that string comes out empty, `removeStyle` otherwise -
+    content-driven, not config-driven, so it reclaims the row regardless of
+    _why_ it's empty.
+- **`hide: value`/`hide: unit` as a Jinja template never actually worked** -
+  found while building the reclaim logic above. Root cause: no single source of
+  truth for "what's hidden right now". `_handleHiddenComponents` toggled CSS
+  classes straight from a Jinja push and threw the resolved list away afterward;
+  `hasComponentHiddenFlag` (which `secondaryInfoMain`'s value/unit omission and
+  `minGridRows`'s icon check both call) independently re-read `config.hide`
+  directly, which only ever works for the static array shape - a Jinja _string_
+  silently fails `is.array()`, so the check always came back "nothing hidden",
+  regardless of what the template actually resolved to.
+  - New `ViewCore#resolvedHide` (a `Set<string> | null`, `null` until a real
+    Jinja push writes to it via the new `setResolvedHide()`, reset on every
+    `set config`) is now the one state everything reads.
+    `hasComponentHiddenFlag` checks it first, falling back to `config.hide`
+    directly only when it's still `null` - which is also exactly what a plain
+    static `hide: [...]` array leaves it at forever, so one code path now covers
+    both shapes with no branching.
+  - `_baseJinjaHandlers.hide` now also calls `_processStandardFields()` after
+    `_handleHiddenComponents(content)` - `icon`/`name`/`secondary_info`/
+    `progress_bar` are purely visual (CSS class, no text to recompute), but
+    `value`/`unit` need the assembled string itself redone the moment the
+    template's result changes, not just on the next unrelated entity refresh.
+  - `minGridRows` (Sections grid row reservation) reads the same resolved state
+    now too, but stays effectively static-only regardless: it's computed once at
+    config negotiation, and HA's own `getGridOptions()` isn't reactive - a Jinja
+    `hide: icon` was never going to resize the grid reservation live, before or
+    after this fix. Not a regression, a pre-existing ceiling.
+- **Two `:has()`-based CSS rules replaced with a JS-computed check** - found
+  while reviewing this card's own browser-compat floor (Firefox 94+ per
+  [README.md]) against features actually in use. Both collapsed
+  `.secondary-info-wrapper` (`display: none`) once every line inside it
+  (`custom_info`/Template's `secondary`, single- or multi-line) had gone empty,
+  using `.secondary-info-extra-1:empty`/`.secondary-info-extra-2:empty`/
+  `.secondary-info-main:empty` chained through `:has()`/`:not(:has())` -
+  `:has()` itself needs Firefox 121+, well past the documented floor; below that
+  version the rule was just silently invalid, leaving a small empty gap instead
+  of collapsing.
+  - `HABase#_secondaryInfoEmpty` (`{ extra1, extra2, main }`) is the new shared
+    state, updated at each of the three places that already write that content -
+    `EntityProgressCardBase#_renderCustomInfo`/`EntityProgressTemplateBase #_renderSecondary`
+    for extra1/extra2, `_processStandardFields` (the same hook as the
+    `--detail-height` reclaim above) for main -
+    `_updateSecondaryInfoWrapperVisibility` then toggles one
+    `.secondary-info-blank` class on `ha-card` from the combined result.
+  - `main` defaults to `false` ("not empty", blocking) rather than `true`:
+    Template has no `secondary-info-main` element at all, so
+    `_processStandardFields` never touches it there - staying permanently
+    `false` reproduces the old `:has(main:empty)` chain's exact behavior for
+    that shape (a nonexistent element can never satisfy `:empty` either).
+  - Emptiness is judged on the raw line content, not the HTML actually written
+    to the DOM: single-line mode's trailing `&nbsp;` spacer (kept for layout,
+    see `_renderCustomInfo`) meant the element itself was never truly `:empty`
+    once the handler had run at all, regardless of whether the real content was
+    blank - reading the pre-spacer value sidesteps that entirely instead of
+    inheriting it.
+  - Present since `icon_animation`'s washing-machine/battery-charging modes
+    shipped (`a6708dd`) - a real gap in every 1.6.0/1.6.1 release so far, not
+    something this RC introduced.
+- **`bar_segments: N` rebuilt around real divider elements, not a CSS
+  gradient/mask** - found while reviewing this card's browser-compat floor, same
+  pass as the `:has()` entry above: the divider gap width used
+  `round(nearest, ..., 2px)` to keep it an even px (needed so halving it for
+  centering never lands on a sub-pixel value) - `round()` is CSS Values 4
+  (Chrome/Edge 114+, Firefox 118+, Safari 16.4+), well past the documented 94+
+  floor, and a browser without it fails the whole `calc()` at computed-value
+  time - the entire divider layer silently never rendered at all, no console
+  warning, nothing to see wrong except dividers that just never showed up.
+  - First fix (drop `round()`, keep the gradient) surfaced a second, independent
+    bug: with only `N-1` internal dividers and none at the bar's own two edges,
+    each internal divider borrows half its width from both neighboring segments
+    while the two end segments only have one real neighbor to borrow from - they
+    read visibly wider than the rest. Not new, just never visible before (the
+    whole layer never painted).
+  - Rebuilt as `N+1` real `.segment-divider` elements (the `N-1` internal
+    boundaries plus the bar's own two edges, closing the width gap above),
+    grouped in a `.bar-segments` wrapper instead of loose alongside the
+    watermark/zero/value marks - built once per `render()`
+    (`HABase#_buildSegmentDividers`), percent-positioned via a per-divider
+    `--segment-position` custom property so orientation/RTL/resize all keep
+    working the same way everything else on the bar already does.
+  - Divider width is now a fixed odd px value (was a `calc()` ratio of
+    `--progress-size`) - odd on purpose: each divider centers on its boundary
+    via a whole-pixel offset (`(gap - 1px) / 2`, not
+    `transform: translateX(-50%)`, which for an odd width is itself a fractional
+    half-pixel shift), and an even width only has a symmetric half/half split
+    available - fractional either way a boundary doesn't land on a whole device
+    pixel itself.
+  - A `repeating-linear-gradient` alternative without the mask was tried in
+    between (a gradient sized to exactly `N` repeats includes the two edge
+    boundaries "for free", no extra elements needed) - reverted, it rendered
+    inconsistently in practice and wasn't worth the fragility over the explicit
+    DOM version.
+  - New: divider thickness can scale with the bar's own _length_
+    (`100% / --bar-segments`, i.e. how much room a segment actually has) instead
+    of only a fixed size tied to `--progress-size` (the bar's thickness) -
+    `round()`/`mod()` again, so this specific enhancement is itself gated the
+    same way: declared twice at each consuming property (the fixed value first,
+    the length-relative one second), an engine that can't resolve
+    `round()`/`mod()` fails the second declaration and silently keeps the first,
+    same graceful-degradation shape as `color-mix()` elsewhere in this file.
+  - New `--epb-bar-segment-gap` override hook, same pattern as
+    `--epb-progress-bar-radius`/`--epb-progress-bar-min-width` - checked first
+    in both declarations above, so it wins outright regardless of engine or
+    which tier would otherwise apply. See [`docs/theme.md`](docs/theme.md#css)
+    ("CSS hooks", renamed from "CSS variables" for accuracy while touching this
+    section anyway).
+  - Present since `bar_segments` itself shipped, well before 1.6.0 - not
+    something this RC introduced, just the first time anyone could actually see
+    it broken.
 
 ### 🐛 Fixes
 
@@ -269,6 +481,14 @@ Thanks to everyone who reported, tested and contributed 🙏
   documented deprecated option (see below) - present since the button itself
   shipped (`56809fc`), so a real gap in every 1.6.0/1.6.1 release so far, not
   something this RC introduced.
+- The editor's `bar_position` dropdown still offered "Compact bar below" with
+  `layout: vertical` selected, even though it only has a distinct effect with
+  `layout: horizontal` (`schema.ts`'s `applyCompactBelowRule` already silently
+  rewrites it to `default` on save, `resetCompactBelowIfInvalid` already reset
+  it on a `layout` change away from horizontal) - the option itself just never
+  stopped being offered in the dropdown. New `bar_position_no_compact_below`
+  select type, swapped in dynamically once `layout: vertical`, mirrors
+  `bar_orientation_no_up`'s exact same pattern for `bar_orientation: up`.
 
 ### 🧪 Try it: demo dashboard
 
@@ -287,6 +507,27 @@ New "EP Demo - Deprecated options" view in
 [Deprecated Options] table, written in its old syntax on purpose: console
 warning, auto-migration, and the "Migrate config" button, each checked live.
 Found the `watermark.low`/`watermark.high` button gap above while building it.
+
+New "EP Demo - README examples" view, same two files - reproduces the README's
+own real-world recipes live wherever that's actually possible: "Follow the sun"
+(Template card, `sun.sun`, no helper needed), the litter-box min/max example,
+the `auto-entities`/`device_class: battery` dashboard recipe (both plain and
+wrapped in `vertical-stack-in-card`), the `card_mod` icon animation, and a
+native `vertical-stack` + `visibility` combo. Two more `device_class: battery`
+template sensors added to
+[`docs/demo-dashboard-helpers.yaml`][demo-dashboard-helpers.yaml] so the
+`auto-entities` recipes have more than one card to actually lay out. The
+brand-specific/system-dependent recipes (washing machine × 2, the print-job
+helper example, SSL certificate expiry) stay reference-only - reproduced
+verbatim in a markdown card, not runnable without entities this demo can't
+fabricate.
+
+`docs/configuration.md`'s [`hide`](docs/configuration.md#hide) section didn't
+say a Jinja `hide` template could return a plain comma-separated string
+(`secondary_info, progress_bar`, the only form actually shown in its own
+example) _or_ a native Jinja list (`{{ ['secondary_info', 'progress_bar'] }}`)
+
+- both work, now both are documented.
 
 ---
 
@@ -4741,3 +4982,5 @@ experience:
 [interpolate]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#interpolate
 [card_mod]: https://github.com/thomasloven/lovelace-card-mod
+[README.md]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card#-prerequisites

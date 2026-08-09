@@ -119,13 +119,13 @@ const StructureElements = {
   progressBar: (options: StructureOptions) => {
     const extraClass = options.barPosition === 'overlay' ? 'overlay' : '';
     const isCenterZero = options.barType === 'centerZero';
-    // Sits between .inner (transformed to reveal the fill) and the marks: a
-    // plain, never-transformed sibling so bar_segments' grid lines stay
-    // anchored to the bar's own frame instead of sliding with the fill (see
-    // .bar-segments in styles.ts).
-    const segments = Element(CARD.htmlStructure.elements.progressBar.segments).html();
+    // bar_segments' dividers are NOT built here: a variable number of real
+    // divs (N+1 for bar_segments: N, including the two edge markers), built
+    // directly in JS (HABase#_buildSegmentDividers) after this static
+    // template is cloned in, not part of it - see that method's own comment
+    // for why (this template is cached per unique options set; bar_segments
+    // ranges freely, unlike every other option here).
     const marks =
-      segments +
       Element(CARD.htmlStructure.elements.progressBar.lowWatermark, 'watermark mark').html() +
       Element(CARD.htmlStructure.elements.progressBar.highWatermark, 'watermark mark').html() +
       (isCenterZero ? Element(CARD.htmlStructure.elements.progressBar.zeroMark, 'mark').html() : '');

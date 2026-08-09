@@ -715,6 +715,14 @@ ha-card.horizontal .${CARD.htmlStructure.sections.content.class} {
   max-height: 100%;
 }
 
+/* hide: icon reclaims the 56px column .content's width otherwise always
+   deducts for it (see the base rule above) - consistent with every other
+   hide target below: hiding a field always gives its space back, nothing
+   stays reserved for something that's gone. */
+ha-card.horizontal.${CARD.style.dynamic.hiddenComponent.icon.class} .${CARD.htmlStructure.sections.content.class} {
+  --current-content-width: 100%;
+}
+
 /* --current-content-height (above) sums --name-height + --detail-height
    unconditionally - with hide: name (or secondary_info), the row's DOM
    disappears but its share of that fixed height didn't, leaving the
@@ -758,6 +766,42 @@ ha-card.vertical.default .${CARD.htmlStructure.sections.content.class} {
   --current-content-height: calc(
     var(--name-height) + var(--detail-height) + var(--progress-size) + (2 * var(--vertical-gap))
   );
+}
+
+/* Vertical + default's 3 stacked rows (name/secondary-info/bar) never shared
+   a row the way horizontal's default does (see .content's own comment
+   above), so unlike horizontal's --detail-height exception, no bar_position/
+   hide:progress_bar condition is needed here - each row's own term in the
+   sum above can always be zeroed independently when that field is hidden.
+   Doesn't re-account for the 2 fixed gaps (one fewer visible row also means
+   one fewer real gap) - a few px of slack rather than pixel-perfect, revisit
+   if it turns out to matter in practice. */
+ha-card.vertical.default.${CARD.style.dynamic.hiddenComponent.name.class} .${CARD.htmlStructure.sections.content.class} {
+  --name-height: 0px;
+}
+
+ha-card.vertical.default.${CARD.style.dynamic.hiddenComponent.secondary_info.class} .${CARD.htmlStructure.sections.content.class} {
+  --detail-height: 0px;
+}
+
+/* --progress-size zeroed here (not just --current-content-height's own
+   term) cascades down to .bar-container's own height too (.vertical
+   { --current-progress-container-height: var(--progress-size); }) - one
+   override collapses both the content-height formula's share AND the
+   container that would otherwise sit there empty, fill already hidden by
+   .hide-progress-bar's display:none elsewhere. */
+ha-card.vertical.default.${CARD.style.dynamic.hiddenComponent.progress_bar.class} {
+  --progress-size: 0px;
+}
+
+/* .vertical.default's own padding-top reserves room proportional to the bar
+   (see its declaration above) so the icon+text block stays visually
+   centered against just the text once the bar renders below it - once the
+   bar itself is gone, nothing needs that room back. hide: icon deliberately
+   does NOT get an equivalent override: this padding isn't about the icon at
+   all, it stays regardless of icon visibility. */
+ha-card.vertical.default.${CARD.style.dynamic.hiddenComponent.progress_bar.class} .${CARD.htmlStructure.sections.container.class} {
+  --current-container-padding-top: 0;
 }
 
 ha-card.type-entities .${CARD.htmlStructure.sections.content.class} {
@@ -1045,7 +1089,13 @@ ha-card.horizontal.compact_below .${CARD.htmlStructure.elements.progressBar.cont
   justify-content: space-between;
 }
 
-.secondary-info-wrapper:has(.secondary-info-extra-1:empty):has(.secondary-info-main:empty) {
+/* .secondary-info-blank: pushed by HABase#_updateSecondaryInfoWrapperVisibility
+   (core.ts) whenever custom_info/secondary's line(s) and the main value line
+   are all empty - single/multiline both covered there, so this one rule
+   replaces what used to be two separate :has()-based rules here (one per
+   mode). Kept class-based, not :has(), on purpose: :has() needs Firefox
+   121+, past this card's documented 94+ floor. */
+.secondary-info-blank .secondary-info-wrapper {
   display: none;
 }
 
@@ -1112,10 +1162,6 @@ ha-card.info-multiline {
   --text-height: 10px;
   --text-line-height: 0.95;
   --text-font-size: 10px;
-}
-
-.info-multiline .secondary-info-wrapper:has(.secondary-info-extra-1:empty):has(.secondary-info-extra-2:empty):not(:has(.secondary-info-main:not(:empty))) {
-  display: none;
 }
 
 .info-multiline .secondary-info .bar-container {
@@ -1331,170 +1377,145 @@ ha-card.info-multiline {
 }
 
 /* === SEGMENTED BAR (bar_segments: N) ===
-   Discrete blocks (battery cells / signal bars) via a static grid-line
-   overlay (.bar-segments, a plain sibling of .inner and .mark - see
-   StructureElements.progressBar), not a mask on .bar/.inner. Two things ruled
-   out masking entirely, not just which element it targeted:
-   1. .mark (watermark) elements are real DOM children of .bar alongside
-      .inner - a mask on .bar clips its own painted output including theirs.
-   2. .inner is the element that gets translateX/translateY'd to reveal the
-      current fill (see --inner-transform) - its own local box always spans
-      the bar's full width/height regardless of percent, so a mask defined in
-      that local box moves along with the transform. The mask's tiles would
-      slide with the fill instead of staying anchored to the bar's frame,
-      drifting out of phase with a watermark or the (untransformed) track
-      behind it as the percent changes.
-   The overlay sidesteps both: it's a plain sibling, never transformed, so its
-   tile is always anchored to the bar's own frame - painted on top of both
-   .inner and the track, cutting a visual "gap" wherever a tile's line falls,
-   in the track's own background color.
-   The N cells are one repeating-linear-gradient (see the rule below), not
-   background-size + background-repeat: the latter renders each repeat as an
-   independent tile snapped to the device pixel grid on its own, and those
-   per-tile roundings accumulate across repeats - drifting further out of
-   phase with a watermark/mark (placed at one absolute percentage, never
-   tiled) the more repeats separate them from the start. A
-   repeating-linear-gradient is one analytic function evaluated across the
-   whole element in a single pass, so there's nothing to accumulate.
-   border-radius is forced to 0 on .bar: it still clips via overflow: hidden
-   with its normal rounded corner, and that curve was rounding off the first/
-   last cell unevenly compared to the others. */
+   N+1 real divs (.segment-divider - N-1 internal boundaries plus the bar's
+   own two edges, see HABase#_buildSegmentDividers's own comment for why the
+   edges are included too), not a CSS gradient/mask trick (tried, reverted -
+   a repeating-linear-gradient sized to exactly N repeats should in theory
+   include the two edge boundaries for free, but it rendered unreliably in
+   practice - unresolved, not worth the fragility). Built directly in JS
+   after this static template is cloned in (structure.ts itself never
+   renders them - the template cache is keyed on structure options assumed
+   to be a small, bounded set, and bar_segments ranges freely). Each carries
+   its own --segment-position (a plain percentage along the bar, computed in
+   JS); the rules below decide whether that's a left or a bottom offset
+   depending on orientation - JS only ever needs to know "how far along the
+   bar", never which axis. Appended after .inner in the DOM (same stacking
+   context, later paints on top - no z-index needed), in the card's own
+   background color, so each reads as a genuine cut through the bar/fill
+   rather than a drawn line. border-radius is forced to 0 on .bar: it still
+   clips via overflow: hidden with its normal rounded corner, and that curve
+   rounds off the first/last cell unevenly compared to the others. */
 .bar-segmented .${CARD.htmlStructure.elements.progressBar.bar.class} {
   border-radius: 0;
 }
 
+/* Wrapper grouping every .segment-divider (see HABase#_buildSegmentDividers)
+   instead of leaving them loose alongside the watermark/zero/value marks
+   that already live directly in .bar. inset: 0 keeps it (and everything
+   positioned inside it) spanning the exact same box .bar itself does, so
+   --segment-position below still means the same thing it would have meant
+   positioned directly against .bar. */
 .${CARD.htmlStructure.elements.progressBar.segments.class} {
-  display: none;
   position: absolute;
   inset: 0;
   pointer-events: none;
-  /* Promotes this to its own compositing layer so the browser re-rasterizes
-     it as a whole on any invalidation, instead of attempting a partial
-     repaint of its cached tile - the latter is what left the gradient/mask
-     not fully repainted (missing cells at one end) after a page zoom on some
-     engines. transform: translateZ(0) is the standard (if slightly dated)
-     way to force that layer promotion without visually moving anything. */
-  transform: translateZ(0);
 }
 
-.bar-segmented .${CARD.htmlStructure.elements.progressBar.segments.class} {
-  display: block;
-  /* Scales with the bar's own thickness (--progress-size, 6-42px across
-     bar_size) instead of a flat 2px - a hairline that reads fine on a small
-     bar disappears on an xlarge/overlay one, and a thickness tuned for
-     xlarge would look like a thick bar of its own on a small one. Rounded to
-     the nearest even px (not left as a fractional value like 3.375px/4.5px):
-     this value gets halved everywhere it's used (centering each separator on
-     its boundary, see below) - an odd or fractional gap makes that half a
-     sub-pixel value, which the two repeats meeting at a boundary can each
-     round differently, reopening the same kind of drift switching to
-     repeating-linear-gradient was meant to close. Floored at 4px so it stays
-     visible on the thinnest size, capped at 6px (medium's own value) so it
-     stops growing past medium - large/xlarge/overlay would otherwise read as
-     a thick bar of their own rather than a thin cut. */
-  --bar-segment-gap: clamp(4px, round(nearest, calc(var(--progress-size, 8px) * 3 / 8), 2px), 6px);
-  /* One continuous repeating-linear-gradient, not background-size +
-     background-repeat: the latter renders each repeat as an independent
-     tile, snapped to the device pixel grid on its own - across N repeats
-     those per-tile roundings accumulate, drifting further out of phase with
-     a watermark/mark (placed at one absolute percentage, never tiled) the
-     more repeats separate them from the start (barely visible at the 1st
-     boundary, clearly off by the 8th). A repeating-linear-gradient is one
-     analytic function evaluated across the whole element in a single pass,
-     so there's no per-repeat snap to accumulate.
-     Each repeat unit still paints its own leading AND trailing
-     --bar-segment-gap/2 rather than one full gap at the end - a single unit
-     can't place its line "centered on the boundary" (a boundary is shared
-     between two adjacent units), so each side contributes half, and the two
-     halves meet exactly on the boundary once repeated. Same variable the
-     alert animation already uses for "the card's actual background"
-     (black-ish in dark themes, white-ish in light ones) - a gap line in the
-     track's own grey (--divider-color) barely showed up against the darker
-     segments; this reads as a genuine cut through the bar, matching the
-     surrounding page regardless of theme. */
-  background-image: repeating-linear-gradient(
-    to right,
-    var(--ha-card-background, var(--card-background-color)) 0,
-    var(--ha-card-background, var(--card-background-color)) calc(var(--bar-segment-gap) / 2),
-    transparent calc(var(--bar-segment-gap) / 2),
-    transparent calc(100% / var(--bar-segments, 10) - var(--bar-segment-gap) / 2),
-    var(--ha-card-background, var(--card-background-color))
-      calc(100% / var(--bar-segments, 10) - var(--bar-segment-gap) / 2),
-    var(--ha-card-background, var(--card-background-color)) calc(100% / var(--bar-segments, 10))
-  );
-  /* Each repeat unit's leading/trailing half-gap above pairs up with its
-     neighbor to form the real, centered separators - except at the bar's own
-     two edges, where there's no neighboring unit to pair with: the first
-     unit's leading half and the last unit's trailing half are phantom halves
-     of a boundary that doesn't exist. Masking off --bar-segment-gap/2 on
-     each end removes exactly those, leaving only the N-1 real (centered)
-     separators.
-     Trimmed 1px past that (not exactly --bar-segment-gap/2): the mask and the
-     background-image above are two independently rasterized layers sharing
-     the same calc(), but nothing guarantees a renderer snaps both to the
-     exact same device pixel - a 1px margin absorbs that residual mismatch
-     instead of leaving a hairline sliver of the phantom edge visible. */
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent 0,
-    transparent calc(var(--bar-segment-gap) / 2 + 1px),
-    #000 calc(var(--bar-segment-gap) / 2 + 1px),
-    #000 calc(100% - var(--bar-segment-gap) / 2 - 1px),
-    transparent calc(100% - var(--bar-segment-gap) / 2 - 1px)
-  );
-  mask-image: linear-gradient(
-    to right,
-    transparent 0,
-    transparent calc(var(--bar-segment-gap) / 2 + 1px),
-    #000 calc(var(--bar-segment-gap) / 2 + 1px),
-    #000 calc(100% - var(--bar-segment-gap) / 2 - 1px),
-    transparent calc(100% - var(--bar-segment-gap) / 2 - 1px)
+.${CARD.htmlStructure.elements.progressBar.segmentDivider.class} {
+  position: absolute;
+  pointer-events: none;
+  background: var(--ha-card-background, var(--card-background-color));
+  /* Fixed, odd px values (not calc()-derived from --progress-size) - odd on
+     purpose: each divider centers on its boundary via a whole-pixel offset
+     below, and an even width would only have a symmetric half/half split
+     available, fractional (sub-pixel) either way a boundary doesn't itself
+     land on a whole device pixel. Doubled for medium/large/xlarge (a
+     hairline that reads fine on a small bar disappears on a bigger one).
+     This is the fallback tier, consumed below - see
+     --bar-segment-gap-modern just below for the length-relative value
+     recent engines actually use instead. */
+  --bar-segment-gap: 3px;
+  /* Modern alternative: scales with the bar's own LENGTH (one segment's own
+     share of it) instead of the fixed thickness-based tiers above - 40% of
+     one segment's cell width (100% / --bar-segments), floored to a whole
+     px, nudged up by 1px when that lands even (needs to stay odd, same
+     whole-pixel-centering reasoning as the fallback), then clamped to
+     [3px, 9px] - floored so it stays visible with lots of segments, capped
+     so a bar with very few segments (e.g. bar_segments: 2) doesn't turn
+     into a huge divider with nothing bounding it. 3px/9px are both odd on
+     purpose: clamp() only ever returns one of its three inputs verbatim, so
+     as long as all three (the floor, the ceiling, and the already-oddified
+     value) are odd, the result is guaranteed odd too - clamping AFTER the
+     +1px nudge (not before) means that nudge can never push a
+     ceiling-clamped value 1px past the ceiling.
+     round()/mod() are CSS Values 4 (Chrome/Edge 114+, Firefox 118+, Safari
+     16.4+) - a custom property's own declaration never "fails" just because
+     it contains a function this engine doesn't recognize (it's inert token
+     text until substituted into a real property), so declaring this here is
+     always harmless. The actual fallback happens where these get consumed
+     below (width/height/left/bottom, each declared twice: the fixed
+     --bar-segment-gap first, this one second) - an engine that can't
+     resolve round()/mod() fails that second declaration specifically
+     (invalid at computed-value time) and silently keeps the first. */
+  --bar-segment-gap-floor: round(down, calc(100% / var(--bar-segments, 10) * 0.4), 1px);
+  --bar-segment-gap-modern: clamp(
+    3px,
+    calc(var(--bar-segment-gap-floor) + 1px - mod(var(--bar-segment-gap-floor), 2px)),
+    9px
   );
 }
 
-/* top/bottom force --progress-size down to the xs accent-bar thickness
-   (6px, see .bottom-container/.top-container above) regardless of bar_size;
-   below keeps the real bar_size, but that's most often left at its 8px
-   default too. The base ratio/floor above reads as a near-invisible hairline
-   at that thickness - doubled here (and floored higher) so these three "thin
-   accent bar" positions still show a clearly visible cut. Capped at 10px
-   (medium's own value here) for the same reason as the base rule - below can
-   reach bar_size: xlarge, which shouldn't keep growing past medium either. */
-.bar-segmented .top-container .${CARD.htmlStructure.elements.progressBar.segments.class},
-.bar-segmented .bottom-container .${CARD.htmlStructure.elements.progressBar.segments.class},
-.bar-segmented .below-container .${CARD.htmlStructure.elements.progressBar.segments.class} {
-  --bar-segment-gap: clamp(6px, round(nearest, calc(var(--progress-size, 8px) * 3 / 4), 2px), 10px);
+.${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.segmentDivider.class},
+.${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.segmentDivider.class},
+.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.elements.progressBar.segmentDivider.class} {
+  --bar-segment-gap: 5px;
 }
 
-.vertical-bar.bar-segmented .${CARD.htmlStructure.elements.progressBar.segments.class} {
-  /* One continuous repeating-linear-gradient - see the horizontal rule above
-     for why, same reasoning transposed to the vertical axis. */
-  background-image: repeating-linear-gradient(
-    to bottom,
-    var(--ha-card-background, var(--card-background-color)) 0,
-    var(--ha-card-background, var(--card-background-color)) calc(var(--bar-segment-gap) / 2),
-    transparent calc(var(--bar-segment-gap) / 2),
-    transparent calc(100% / var(--bar-segments, 10) - var(--bar-segment-gap) / 2),
-    var(--ha-card-background, var(--card-background-color))
-      calc(100% / var(--bar-segments, 10) - var(--bar-segment-gap) / 2),
-    var(--ha-card-background, var(--card-background-color)) calc(100% / var(--bar-segments, 10))
-  );
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent calc(var(--bar-segment-gap) / 2 + 1px),
-    #000 calc(var(--bar-segment-gap) / 2 + 1px),
-    #000 calc(100% - var(--bar-segment-gap) / 2 - 1px),
-    transparent calc(100% - var(--bar-segment-gap) / 2 - 1px)
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent calc(var(--bar-segment-gap) / 2 + 1px),
-    #000 calc(var(--bar-segment-gap) / 2 + 1px),
-    #000 calc(100% - var(--bar-segment-gap) / 2 - 1px),
-    transparent calc(100% - var(--bar-segment-gap) / 2 - 1px)
-  );
+/* top/bottom/overlay/background have no bar_size class at all to key off of
+   above (schema.ts deletes bar_size entirely for these four - never a
+   meaningful choice there, the editor hides the field too) - fixed values
+   instead, same odd-width reasoning. below is deliberately NOT included
+   here: unlike the other three, it keeps its real bar_size, so it already
+   gets the right value from the rules above. */
+.top-container .${CARD.htmlStructure.elements.progressBar.segmentDivider.class},
+.bottom-container .${CARD.htmlStructure.elements.progressBar.segmentDivider.class} {
+  --bar-segment-gap: 3px;
+}
+
+.overlay .${CARD.htmlStructure.elements.progressBar.segmentDivider.class},
+.background .${CARD.htmlStructure.elements.progressBar.segmentDivider.class} {
+  --bar-segment-gap: 5px;
+}
+
+.horizontal-bar .${CARD.htmlStructure.elements.progressBar.segmentDivider.class} {
+  top: 0;
+  bottom: 0;
+  /* Not left: var(--segment-position) + transform: translateX(-50%) - -50%
+     of an ODD width is itself a fractional (half-pixel) offset, reopening
+     the exact sub-pixel problem the odd width was chosen to avoid.
+     (--epb-bar-segment-gap - 1px) / 2 is a whole-number offset instead (1px
+     for 3px, 2px for 5px): shifts left just enough that the divider's own
+     center *pixel* - not its geometric center point - lands on
+     --segment-position. --epb-bar-segment-gap: a card_mod override hook,
+     same pattern as --epb-progress-bar-radius/--epb-progress-bar-min-width
+     above - checked here at the single point both width and the centering
+     math actually consume --bar-segment-gap, so a card_mod override always
+     wins outright regardless of which bar_size/bar_position tier would
+     otherwise have set it. */
+  left: calc(var(--segment-position) - (var(--epb-bar-segment-gap, var(--bar-segment-gap)) - 1px) / 2);
+  width: var(--epb-bar-segment-gap, var(--bar-segment-gap));
+  /* Second declaration, modern engines only - see --bar-segment-gap-modern's
+     own comment above for the fallback mechanics. --epb-bar-segment-gap
+     still checked first in both: a card_mod override always wins outright,
+     old engine or new. */
+  left: calc(var(--segment-position) - (var(--epb-bar-segment-gap, var(--bar-segment-gap-modern)) - 1px) / 2);
+  width: var(--epb-bar-segment-gap, var(--bar-segment-gap-modern));
+}
+
+.vertical-bar .${CARD.htmlStructure.elements.progressBar.segmentDivider.class} {
+  left: 0;
+  right: 0;
+  /* bottom, not top: value/percent grows from the bottom up on a true
+     vertical bar (see .vertical-bar .inner's own translateY), so
+     --segment-position (also counted from 0%) needs the same reference
+     edge. Same whole-pixel centering offset and --epb-bar-segment-gap
+     override as the horizontal rule above. */
+  bottom: calc(var(--segment-position) - (var(--epb-bar-segment-gap, var(--bar-segment-gap)) - 1px) / 2);
+  height: var(--epb-bar-segment-gap, var(--bar-segment-gap));
+  /* Second declaration, modern engines only - see --bar-segment-gap-modern's
+     own comment (horizontal rule above) for the fallback mechanics. */
+  bottom: calc(var(--segment-position) - (var(--epb-bar-segment-gap, var(--bar-segment-gap-modern)) - 1px) / 2);
+  height: var(--epb-bar-segment-gap, var(--bar-segment-gap-modern));
 }
 
 /**
@@ -2488,6 +2509,22 @@ ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium.labe
 /* Shape transparency when hidden */
 .${CARD.style.dynamic.hiddenComponent.shape.class} .${CARD.htmlStructure.elements.shape.class} {
   background-color: transparent;
+}
+
+/* hide: progress_bar above only hides the fill (.bar) - .bar-container itself
+   (the flex item actually reserving height/min-width in the row, e.g.
+   sharing bar_position: default's row with secondary_info in horizontal)
+   never collapsed on its own. --current-specific-progress-container-height
+   is the dedicated top-priority slot .bar-container's own height already
+   checks first (see its declaration above), so this wins regardless of
+   which bar_position/bar_size rule would otherwise feed
+   --current-progress-container-height on the same element. min-width/
+   flex-grow reset alongside it so a shared row (horizontal.default) doesn't
+   keep reserving width for a container with nothing left to show. */
+.${CARD.style.dynamic.hiddenComponent.progress_bar.class} .${CARD.htmlStructure.elements.progressBar.container.class} {
+  --current-specific-progress-container-height: 0px;
+  min-width: 0;
+  flex-grow: 0;
 }
 
 /* Show elements when needed */

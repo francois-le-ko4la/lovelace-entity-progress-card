@@ -2598,8 +2598,13 @@ hide: >
   {% endif %}
 ```
 
-The template must return a list containing any combination of the supported
-element names.
+The template must return either form, both are equivalent:
+
+- a comma-separated string, as in the example above
+  (`secondary_info, progress_bar`), or
+- a native Jinja list (`{{ ['secondary_info', 'progress_bar'] }}`).
+
+Any combination of the supported element names, in either form.
 
 [🔼 Back to top]
 

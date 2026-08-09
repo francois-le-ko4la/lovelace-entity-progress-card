@@ -198,6 +198,14 @@ class EntityProgressCardBase extends HABase {
     const [line1, line2] = this._splitAtFirstBreak(content);
     this._dom.setHTML(CARD.htmlStructure.elements.secondaryInfoExtra.class, multiline ? line1 : `${line1}&nbsp;`);
     if (multiline) this._dom.setHTML(CARD.htmlStructure.elements.secondaryInfoExtra2.class, `${line2 ?? ''}&nbsp;`);
+
+    // Emptiness judged on the raw lines, not the HTML actually written above:
+    // single-line mode's `&nbsp;` spacer means extra-1's own DOM content is
+    // never truly empty once this handler has run at all, regardless of
+    // line1 - see _updateSecondaryInfoWrapperVisibility (core.ts).
+    this._secondaryInfoEmpty.extra1 = line1.trim() === '';
+    this._secondaryInfoEmpty.extra2 = (line2 ?? '').trim() === '';
+    this._updateSecondaryInfoWrapperVisibility();
   }
 
   _renderNameInfo(content: unknown) {
@@ -527,6 +535,14 @@ class EntityProgressTemplateBase extends HABase {
     const [line1, line2] = this._splitAtFirstBreak(content);
     this._dom.setHTML(CARD.htmlStructure.elements.secondaryInfoExtra.class, line1.trim());
     if (multiline) this._dom.setHTML(CARD.htmlStructure.elements.secondaryInfoExtra2.class, (line2 ?? '').trim());
+
+    // main stays permanently false here (see _secondaryInfoEmpty's own
+    // comment) - Template has no main slot, so extra1/extra2 tracked below
+    // can never collapse the wrapper on their own, matching the old
+    // :has(main:empty) rule's exact behavior for this shape.
+    this._secondaryInfoEmpty.extra1 = line1.trim() === '';
+    this._secondaryInfoEmpty.extra2 = (line2 ?? '').trim() === '';
+    this._updateSecondaryInfoWrapperVisibility();
   }
 
   _managePercent(percent: unknown) {

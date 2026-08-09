@@ -383,6 +383,7 @@ class HACore extends HTMLElement {
     // element.style is null when the shared constructed sheet is adopted
     this._shadow.replaceChildren(...(element.style ? [element.style, element.card] : [element.card]));
     this._storeDOM();
+    this._buildSegmentDividers();
     requestAnimationFrame(() => {
       this._dom.addClass(CARD.htmlStructure.card.element, 'transition-ready');
     });
@@ -458,14 +459,59 @@ class HACore extends HTMLElement {
     this._addBaseClasses();
     this._handleWatermarkClasses();
     this._handleBarEffect();
-    this._handleBarSegments();
   }
 
-  _handleBarSegments() {
+  // Real N+1 divs (bar_segments: N, including the two edge markers - see the
+  // loop's own comment), not a CSS gradient/mask trick - runs once per
+  // render() (after the structure clone is actually in the DOM, .bar
+  // included - _buildStyle() above runs too early for that, see render()'s
+  // own call order), rebuilt fresh every time since render() itself always
+  // starts from a divider-less cloned template (see
+  // StructureElements.progressBar's own comment). Percent-based position,
+  // not px: stays correct regardless of the bar's own current width, no
+  // resize listener needed. --segment-position is consumed by
+  // .horizontal-bar/.vertical-bar .segment-divider in styles.ts, which
+  // decide whether that's a left or a bottom offset - this method only
+  // ever needs to know "how far along the bar", never which axis.
+  _buildSegmentDividers() {
     const count = this._cardView.config.bar_segments;
     const active = is.number(count) && count >= 2;
+    // .bar-segmented itself only still matters for .bar's own border-radius
+    // reset below (styles.ts) - everything else keys off the divider
+    // elements' own presence now, not this class.
     this._dom.toggleClass(CARD.htmlStructure.card.element, 'bar-segmented', active);
-    if (active) this._dom.setStyle(CARD.htmlStructure.card.element, '--bar-segments', Math.round(count));
+    if (!active) return;
+    const rounded = Math.round(count);
+    const bars = this._shadow.querySelectorAll(`.${CSS.escape(CARD.htmlStructure.elements.progressBar.bar.class)}`);
+    const containerSpec = CARD.htmlStructure.elements.progressBar.segments;
+    const dividerSpec = CARD.htmlStructure.elements.progressBar.segmentDivider;
+    bars.forEach((bar) => {
+      // One wrapper per .bar, grouping every divider together instead of
+      // leaving them loose alongside the watermark/zero/value marks that
+      // already live directly in .bar.
+      const container = document.createElement(containerSpec.element);
+      container.className = containerSpec.class;
+      Object.entries(containerSpec.extraAttr ?? {}).forEach(([key, value]) =>
+        container.setAttribute(key, String(value)),
+      );
+      // i=0 and i=rounded (the bar's own two edges) get a divider too, not
+      // just the N-1 internal boundaries: every *internal* divider straddles
+      // its boundary, eating half its own width from each of its two
+      // neighboring cells - a cell at the very start/end only has one real
+      // neighbor, so it would otherwise lose half as much as every middle
+      // cell and read visibly wider. These two extra dividers center on 0%/
+      // 100% exactly like an internal one; .bar's own overflow: hidden clips
+      // away the half that falls outside the bar, leaving exactly the same
+      // half-width sliver a real neighbor would have contributed.
+      for (let i = 0; i <= rounded; i += 1) {
+        const divider = document.createElement(dividerSpec.element);
+        divider.className = dividerSpec.class;
+        Object.entries(dividerSpec.extraAttr ?? {}).forEach(([key, value]) => divider.setAttribute(key, String(value)));
+        divider.style.setProperty('--segment-position', `${(100 * i) / rounded}%`);
+        container.appendChild(divider);
+      }
+      bar.appendChild(container);
+    });
   }
 
   _addBaseClasses() {
@@ -1217,19 +1263,26 @@ class HABase extends HACore {
   _handleHiddenComponents(jinjaContent: unknown = null) {
     if (jinjaContent === null && is.jinja(this._cardView.config.hide)) return;
 
-    // CF5 - issue (critical) resolved - a hide Jinja template yielding a native
-    // list crashed on .split(); normalize list and string results alike
-    const items = is.nullish(jinjaContent)
-      ? null
-      : (is.array(jinjaContent) ? jinjaContent : String(jinjaContent).split(','))
-          .map((s: unknown) => String(s).trim())
-          .filter(Boolean);
+    if (jinjaContent !== null) {
+      // CF5 - issue (critical) resolved - a hide Jinja template yielding a
+      // native list crashed on .split(); normalize list and string results
+      // alike. Written into the view's own resolved-hide cache (not just
+      // used locally here) so every other hasComponentHiddenFlag() consumer
+      // (secondaryInfoMain's value/unit text, minGridRows) sees the same
+      // Jinja-resolved truth instead of each re-deriving it from
+      // config.hide directly, which only ever worked for the static array
+      // shape.
+      const items = (is.array(jinjaContent) ? jinjaContent : String(jinjaContent).split(','))
+        .map((s: unknown) => String(s).trim())
+        .filter(Boolean);
+      this._cardView.setResolvedHide(items);
+    }
 
     (this.constructor as typeof HABase)._hiddenComponents.forEach((component) => {
       this._dom.toggleClass(
         CARD.htmlStructure.card.element,
         component.class,
-        items ? items.includes(component.label) : this._cardView.hasComponentHiddenFlag(component.label),
+        this._cardView.hasComponentHiddenFlag(component.label),
       );
     });
   }
@@ -1512,7 +1565,48 @@ class HABase extends HACore {
     (this.constructor as typeof HABase)._getStandardFields(this._cardView).forEach(({ className, value }) => {
       if (immediate) this._dom.setTextNow(className, value);
       else this._dom.setText(className, value);
+
+      // secondaryInfoMain going empty (no value text and no custom
+      // state_content either - see ViewBase#secondaryInfoMain) means the row
+      // has nothing left to show: the same "give the space back" rule
+      // hide: secondary_info already gets (.hide-secondary-info in
+      // styles.ts), just driven by actual content instead of config. Inline
+      // on ha-card (always wins, no class needed) since this can flip on
+      // any refresh - a live value going in and out of availability, not
+      // just once at config time - including via hide: value/unit resolved
+      // as a Jinja template, now that hasComponentHiddenFlag can see that
+      // too (see _baseJinjaHandlers's hide entry).
+      if (className === CARD.htmlStructure.elements.secondaryInfoMain.class) {
+        const cardKey = CARD.htmlStructure.card.element;
+        if (value === '') this._dom.setStyle(cardKey, '--detail-height', '0px');
+        else this._dom.removeStyle(cardKey, '--detail-height');
+
+        this._secondaryInfoEmpty.main = value === '';
+        this._updateSecondaryInfoWrapperVisibility();
+      }
     });
+  }
+
+  // Tracks whether custom_info/secondary's own line(s) (extra1/extra2,
+  // written by EntityProgressCardBase#_renderCustomInfo or
+  // EntityProgressTemplateBase#_renderSecondary) and the main value line
+  // above are each currently empty - replaces two :has()-based CSS rules
+  // that used to do this in pure CSS (.secondary-info-wrapper:has(...):
+  // has(...)), past this card's documented browser floor (:has() needs
+  // Firefox 121+, the floor is 94+). main defaults to false ("not empty",
+  // blocking) rather than true: Template has no secondary-info-main slot at
+  // all (see ViewBase#_renderSecondary's own comment), so _processStandardFields
+  // above never touches it there - staying permanently false keeps the
+  // wrapper from ever auto-collapsing on Template, the exact behavior the
+  // old :has(main:empty) already had (a nonexistent element can never
+  // satisfy :empty).
+  _secondaryInfoEmpty = { extra1: true, extra2: true, main: false };
+
+  _updateSecondaryInfoWrapperVisibility() {
+    const { extra1, extra2, main } = this._secondaryInfoEmpty;
+    const multiline = Boolean(this._cardView.config?.multiline);
+    const empty = extra1 && main && (!multiline || extra2);
+    this._dom.toggleClass(CARD.htmlStructure.card.element, 'secondary-info-blank', empty);
   }
 
   // ─── JINJA TEMPLATE RENDERING ─────────────────────────────────────────────
@@ -1520,7 +1614,16 @@ class HABase extends HACore {
   _baseJinjaHandlers(content: unknown): Record<string, () => void> {
     return {
       bar_effect: () => this._refreshBarEffect(content),
-      hide: () => this._handleHiddenComponents(content),
+      // _handleHiddenComponents only toggles CSS classes (icon/name/
+      // secondary_info/progress_bar) - value/unit have no class of their own
+      // (a pure text-level omission, see ViewBase#secondaryInfoMain), so a
+      // changed Jinja result needs _processStandardFields() too, to actually
+      // re-render the text once hasComponentHiddenFlag can see the new
+      // resolved state.
+      hide: () => {
+        this._handleHiddenComponents(content);
+        this._processStandardFields();
+      },
       icon_animation: () => this._renderIconAnimationWhen(content),
       'status_label.jinja': () => this._renderLabel(content),
     };

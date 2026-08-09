@@ -294,6 +294,21 @@ template:
         icon: mdi:battery-charging-50
         attributes:
           battery_charging: "{{ is_state('input_boolean.epb_demo_charging', 'on') }}"
+      # Two more device_class: battery sensors, only here so the README's
+      # `auto-entities` recipes (filter: device_class: battery) have more
+      # than one card to actually lay out - see "EP Demo - README examples".
+      - name: EPB Demo battery (reserved)
+        unique_id: epb_demo_battery_reserved_sensor
+        state: "{{ states('input_number.epb_demo_battery_reserved') }}"
+        unit_of_measurement: '%'
+        device_class: battery
+        icon: mdi:battery-lock
+      - name: EPB Demo battery (printer)
+        unique_id: epb_demo_battery_printer
+        state: "{{ states('input_number.epb_demo_printer_ink_black') }}"
+        unit_of_measurement: '%'
+        device_class: battery
+        icon: mdi:battery
       # Days remaining before a 35-day maintenance interval is up, derived
       # from input_datetime.epb_demo_maintenance_last - negative once
       # overdue. See "EPB " naming note above for why the name is prefixed.

@@ -118,7 +118,14 @@ const htmlStructure = {
       bar: { element: 'div', class: 'progress-bar', extraAttr: { 'aria-hidden': 'true' } },
       half: { element: 'div', class: 'bar-half', extraAttr: { 'aria-hidden': 'true' } },
       inner: { element: 'div', class: 'inner', extraAttr: { 'aria-hidden': 'true' } },
+      // Both built directly in JS (HABase#_buildSegmentDividers), not part of
+      // the static template (unlike every other entry here), so only the
+      // class is used, never Element(...).html(). segments is one wrapper per
+      // .bar, created once; segmentDivider is N+1 children inside it (N-1
+      // internal boundaries + the bar's own two edges) - grouped there
+      // instead of loose alongside the watermark/zero/value marks below.
       segments: { element: 'div', class: 'bar-segments', extraAttr: { 'aria-hidden': 'true' } },
+      segmentDivider: { element: 'div', class: 'segment-divider', extraAttr: { 'aria-hidden': 'true' } },
       zeroMark: { element: 'div', class: 'zero', extraAttr: { 'aria-hidden': 'true' } },
       lowWatermark: { element: 'div', class: 'low', extraAttr: { 'aria-hidden': 'true' } },
       highWatermark: { element: 'div', class: 'high', extraAttr: { 'aria-hidden': 'true' } },

@@ -3397,8 +3397,10 @@ views:
           # frameless/marginless bars sharing one visually combined card with a
           # Mushroom entity row - each bar's own bar_color Jinja recolors the
           # fill red past a threshold (litter level low / waste drawer full),
-          # the outer combined-card's card_mod adds the frosted-glass
-          # background/border.
+          # the outer combined-card's card_mod drops its background entirely
+          # (blends with the section instead of fighting it in dark mode) and
+          # borders with var(--divider-color), same as everywhere else on the
+          # card - no hardcoded color needs its own light/dark split.
           - type: custom:combined-card
             cards:
               - type: custom:mushroom-entity-card
@@ -3431,18 +3433,7 @@ views:
                 frameless: true
                 marginless: false
                 bar_position: compact_below
-                height: '20px'
-                bar_color: |
-                  {% if states('input_number.epb_demo_litter_level') | int(0) < 30 %}
-                    rgb(128,0,0)
-                  {% else %}
-                    dodgerblue
-                  {% endif %}
-                card_mod:
-                  style: |
-                    ha-card {
-                      margin: -10px 0px -4px 0px !important;    /* Top Right Bottom Left */
-                    }
+                height: 40px
               - type: custom:entity-progress-card
                 entity: input_number.epb_demo_litter_waste_drawer
                 hide:
@@ -3453,36 +3444,13 @@ views:
                 frameless: true
                 marginless: false
                 bar_position: compact_below
-                height: '20px'
-                bar_color: |
-                  {% if states('input_number.epb_demo_litter_waste_drawer') | int(0) > 70 %}
-                    rgb(128,0,0)
-                  {% else %}
-                    dodgerblue
-                  {% endif %}
-                card_mod:
-                  style: |
-                    ha-card {
-                      margin: -8px 0px -4px 0px !important;    /* Top Right Bottom Left */
-                    }
+                height: 40px
             stackMode: vertical-stack
             hideGap: true
             card_mod:
               style: |
-                @media (prefers-color-scheme: light) {
-                  ha-card {
-                    background: rgba(255,255,255,0.8) !important;
-                  }
-                }
-                @media (prefers-color-scheme: dark) {
-                  ha-card {
-                    background: rgba(0,0,0,0.4) !important;
-                  }
-                }
                 ha-card {
-                  border: 1px solid #555 !important;
-                  backdrop-filter: blur(8px);
-                  -webkit-backdrop-filter: blur(8px);
+                  border: 1px solid var(--divider-color) !important;
                   padding-bottom: 6px;
                 }
           - type: heading
@@ -3914,6 +3882,42 @@ views:
             grid_options:
               columns: 12
               rows: 1
+      - type: grid
+        cards:
+          - type: heading
+            heading: >-
+              multiline collapse when empty (replaces the old `:has()`-based
+              rule, Firefox 94+ safe)
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card
+              entity: input_number.epb_demo_battery
+              multiline: true
+              custom_info: >-
+                {% if is_state('input_boolean.epb_demo_simple_mode', 'on') %}
+                {% else %}Line one<br>Line two{% endif %}
+              ```
+              Toggle the helper below: `custom_info` resolves to an empty
+              string when on (both multiline rows empty) - check the
+              secondary-info row collapses entirely, no leftover gap. Off:
+              both lines show.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'multiline: collapse when empty'
+            multiline: true
+            custom_info: >-
+              {% if is_state('input_boolean.epb_demo_simple_mode', 'on') %}
+              {% else %}Line one<br>Line two{% endif %}
+          - type: tile
+            entity: input_boolean.epb_demo_simple_mode
+            name: Toggle to empty the multiline content
     subview: false
     cards: []
     badges:
@@ -4161,6 +4165,432 @@ views:
             disable_unit: true
             additions:
               - entity: input_number.epb_demo_printer_ink_cyan
+    show_icon_and_title: true
+    cards: []
+  - title: EP Demo - README examples
+    icon: mdi:book-open-variant
+    path: epb-readme-examples
+    type: sections
+    max_columns: 2
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: '🌅 Follow the sun (README - Template Card Power Features)'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              Dynamic name/color/countdown/percent, all from `sun.sun` -
+              native entity, no helper needed. `sensor.sun_next_rising`/
+              `sensor.sun_next_setting` need the extra Sun sensors enabled
+              (Settings → Devices & services → Sun → entities) if they don't
+              already show up.
+              {% endraw %}
+          - type: custom:entity-progress-card-template
+            name: >
+              {% set sunrise = as_datetime(states('sensor.sun_next_rising')) %} {% set
+              sunset = as_datetime(states('sensor.sun_next_setting')) %} {% set now_time =
+              now() %} {% if sunrise and sunset %}
+                {% if sunrise < sunset %}
+                  Next Rise: {{ sunrise.timestamp() | timestamp_custom('%H:%M', true) }}
+                {% else %}
+                  Next Setting: {{ sunset.timestamp() | timestamp_custom('%H:%M', true) }}
+                {% endif %}
+              {% else %}
+                Sun information not available
+              {% endif %}
+            entity: sun.sun
+            bar_color: |
+              {% if states('sun.sun') == 'below_horizon' %}
+                lightgray
+              {% else %}
+                orange
+              {% endif %}
+            color: |
+              {% if states('sun.sun') == 'below_horizon' %}
+                none
+              {% else %}
+                orange
+              {% endif %}
+            secondary: >
+              {% set sunrise = as_datetime(states('sensor.sun_next_rising')) %} {% set
+              sunset = as_datetime(states('sensor.sun_next_setting')) %} {% set now_time =
+              now() %} {% if sunrise and sunset %}
+                {% if sunrise < sunset %}
+                  {% set next_event = sunrise %}
+                  {% set last_event = sunrise - timedelta(days=1) %}
+                {% else %}
+                  {% set next_event = sunset %}
+                  {% set last_event = sunset - timedelta(days=1) %}
+                {% endif %}
+                {% set delta = next_event - now_time %}
+                {% set total_seconds = delta.total_seconds() %}
+                {% if total_seconds > 1 %}
+                  {% set days = (total_seconds // 86400) | int %}
+                  {% set hours = (total_seconds % 86400) // 3600 %}
+                  {% set minutes = (total_seconds % 3600) // 60 %}
+                  {% set seconds = (total_seconds % 60) %}
+                  in
+                  {% if days > 0 %}
+                    {{ days }}d
+                  {% endif %}
+                  {{ '%02d:%02d:%02d' | format(hours | int, minutes | int, seconds | int) }}
+                {% else %}
+                  now
+                {% endif %}
+              {% else %}
+                --:--:--
+              {% endif %}
+            percent: >
+              {% set sunrise = as_datetime(states('sensor.sun_next_rising')) %} {% set
+              sunset = as_datetime(states('sensor.sun_next_setting')) %} {% set now_time =
+              now() %} {% if sunrise and sunset %}
+                {% if sunrise < sunset %}
+                  {% set next_event = sunrise %}
+                  {% set last_event = sunrise - timedelta(days=1) %}
+                {% else %}
+                  {% set next_event = sunset %}
+                  {% set last_event = sunset - timedelta(days=1) %}
+                {% endif %}
+                {% set total = (next_event - last_event).total_seconds() %}
+                {% set elapsed = (now_time - last_event).total_seconds() %}
+                {% if total > 0 %}
+                  {{ ((elapsed / total) * 100) | round(2) }}
+                {% else %}
+                  0
+                {% endif %}
+              {% else %}
+                0
+              {% endif %}
+            tap_action:
+              action: more-info
+            grid_options:
+              columns: 12
+              rows: 1
+      - type: grid
+        cards:
+          - type: heading
+            heading: '🐱 Litter box (README - min/max on a raw quantity)'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card
+              entity: sensor.petkit_puramax_2_poids_litiere
+              min_value: 6
+              max_value: 12
+              name: Litter
+              theme: optimal_when_high
+              ```
+              Original README entity is a raw kg weight (6-12kg range), hence
+              `min_value`/`max_value`. Our demo helper is already a 0-100%
+              slider, so the live card below doesn't need them - same idea,
+              different source unit.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 1
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_litter_level
+            name: Litter
+            theme: optimal_when_high
+            grid_options:
+              columns: 6
+              rows: 1
+      - type: grid
+        cards:
+          - type: heading
+            heading: '🔋 Battery dashboard (README - auto-entities + device_class filter)'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              A streamlined battery dashboard: `auto-entities` filters every
+              `device_class: battery` sensor in this Home Assistant instance
+              and generates one card per match, no per-entity config needed.
+              Demo has 3 matching sensors on purpose, to actually show the
+              grid laying out more than one card.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 1
+          - type: custom:auto-entities
+            filter:
+              include:
+                - attributes:
+                    device_class: battery
+                  options:
+                    type: custom:entity-progress-card
+                    entity: this.entity_id
+                    theme: optimal_when_high
+                    icon_tap_action:
+                      action: more-info
+            card:
+              square: false
+              type: grid
+              columns: 2
+            show_empty: true
+            card_param: cards
+            sort:
+              method: state
+              numeric: true
+              ignore_case: false
+      - type: grid
+        cards:
+          - type: heading
+            heading: '🎨 card_mod / animation (README - icon boing keyframes)'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              `.icon`/`.shape` are exposed specifically so card_mod can
+              target them for animations like this one.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 1
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_printer_ink_black
+            name: RVB
+            icon: mdi:grain
+            color: rgb(110, 65, 171)
+            bar_color: rgb(110, 65, 171)
+            card_mod:
+              style: |-
+                .icon {
+                  animation: boing 3s ease infinite;
+                  transform-origin: 50% 90%;
+                }
+                @keyframes boing {
+                  0% { transform: scale3d(1, 1, 1); }
+                  7% { transform: scale3d(1.25, 0.75, 1); }
+                  10% { transform: scale3d(0.75, 1.25, 1); }
+                  12% { transform: scale3d(1.15, 0.85, 1); }
+                  16% { transform: scale3d(0.95, 1.05, 1); }
+                  19% { transform: scale3d(1.05, 0.95, 1); }
+                  25% { transform: scale3d(1, 1, 1); }
+                }
+      - type: grid
+        cards:
+          - type: heading
+            heading: '📚 vertical-stack-in-card (README - auto-entities + card_mod borderless)'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              Same `auto-entities`/`device_class: battery` filter as above,
+              wrapped in `vertical-stack-in-card` for a cohesive group, with
+              `card_mod` stripping the border/shadow for a seamless look.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 1
+          - type: custom:vertical-stack-in-card
+            cards:
+              - type: custom:auto-entities
+                filter:
+                  include:
+                    - attributes:
+                        device_class: battery
+                      options:
+                        type: custom:entity-progress-card
+                        entity: this.entity_id
+                        name: sample
+                        theme: optimal_when_high
+                        icon_tap_action:
+                          action: more-info
+                        card_mod:
+                          style:
+                            .: |-
+                              :host {
+                                --ha-card-border-width: 0px !important;
+                                box-shadow: none !important;
+                              }
+                sort:
+                  method: friendly_name
+                card:
+                  square: false
+                  type: grid
+                  columns: 2
+                card_param: cards
+      - type: grid
+        cards:
+          - type: heading
+            heading: '📦 vertical-stack (README - native stack + visibility)'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              Native `vertical-stack`, no custom card needed - `visibility`
+              hides the whole stack unless `input_number.epb_demo_battery` is
+              above 0 (toggle the slider to 0 to see it disappear).
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 1
+          - type: vertical-stack
+            cards:
+              - type: custom:entity-progress-card
+                name: Sofa
+                icon: mdi:sofa
+                entity: input_number.epb_demo_battery
+            grid_options:
+              columns: 6
+              rows: auto
+            visibility:
+              - condition: numeric_state
+                entity: input_number.epb_demo_battery
+                above: 0
+      - type: grid
+        cards:
+          - type: heading
+            heading: '🧺 The Laundry Mystery (README - Power Features, reference only)'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              Not runnable here (needs a real washing machine integration) -
+              exact recipe from the README, badge_icon/badge_color/name_info
+              all driven by the same `sensor.washing_machine_operation_state`.
+              ```yaml
+              type: custom:entity-progress-card
+              entity: sensor.washing_machine_progress_current_percentage
+              name: Washing Machine
+              color: primary
+              tap_action:
+                action: more-info
+              icon_tap_action:
+                action: more-info
+              bar_color: primary
+              bar_size: large
+              badge_icon: >-
+                {% if states('sensor.washing_machine_operation_state') == 'run'
+                %}mdi:power-on{% else %}mdi:power-off {% endif %}
+              badge_color: >-
+                {% if states('sensor.washing_machine_operation_state') == 'run' %} blue {%
+                else %} disabled {% endif %}
+              name_info: >-
+                {% if has_value('sensor.washing_machine_remaining_program_time') %} ready at
+                {{ as_timestamp( states('sensor.washing_machine_remaining_program_time') ) |
+                timestamp_custom('%H:%M', true) }}{% endif %}
+              ```
+              Full write-up: [README - The Laundry
+              Mystery](https://github.com/francois-le-ko4la/lovelace-entity-progress-card#-usage).
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 3
+      - type: grid
+        cards:
+          - type: heading
+            heading: >-
+              🧺 Washing Machine Progress: Three Brands (README - Power
+              Features, reference only)
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              Not runnable here (brand-specific integrations) - three
+              verified approaches depending on what your washer's
+              integration actually exposes.
+
+              **Home Connect (Bosch/Siemens)** - direct, no extra config:
+              ```yaml
+              type: custom:entity-progress-card
+              entity: sensor.washing_machine_program_progress
+              name: Washing Machine
+              ```
+
+              **Miele** - Jinja `max_value`, no helper needed:
+              ```yaml
+              type: custom:entity-progress-card
+              entity: sensor.washing_machine_elapsed_time
+              unit: '%'
+              max_value:
+                jinja: >
+                  {{ (states('sensor.washing_machine_elapsed_time') | float(0))
+                     + (states('sensor.washing_machine_remaining_time') | float(0)) }}
+              ```
+
+              **Samsung (SmartThings)** - only `machine_state`/`job_state`/
+              `completion_time`, no elapsed/remaining time: needs an
+              `input_datetime` helper + automation to anchor a start time
+              first, then the same technique as the next card below. Full
+              write-up: [README - Washing Machine Progress](https://github.com/francois-le-ko4la/lovelace-entity-progress-card#-usage).
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 4
+      - type: grid
+        cards:
+          - type: heading
+            heading: >-
+              🖨️ Cracking a Complex Case with a Simple Helper (README - Power
+              Features, reference only)
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              Not runnable here (needs a real print job's start/end time
+              entities) - a Template helper (Number) computes the total
+              duration from start/end timestamps, then feeds it straight into
+              `max_value` as an entity reference:
+              ```yaml
+              type: custom:entity-progress-card
+              entity: sensor.print_puppy_remaining_time
+              max_value: number.totaldurationofthetask
+              decimal: 0
+              bar_color: green
+              icon: mdi:clock-end
+              ```
+              Full write-up (helper template + math model): [README -
+              Cracking a Complex
+              Case](https://github.com/francois-le-ko4la/lovelace-entity-progress-card#-usage).
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 3
+      - type: grid
+        cards:
+          - type: heading
+            heading: "🔒 Don't Let It Expire! (README - Power Features, reference only)"
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              Not runnable here (needs a real cert-monitoring sensor) - a
+              color-coded countdown to SSL certificate expiry. The README
+              covers two approaches: a `command_line` sensor (fully custom,
+              more portable dependency-wise) and the built-in `cert_expiry`
+              integration (recommended - the epilogue explains why):
+              ```yaml
+              type: custom:entity-progress-card
+              entity: number.cert_expiry_entity_id
+              name: SSL Certificate Expiry
+              icon: mdi:certificate
+              decimal: 0
+              bar_orientation: rtl
+              custom_theme:
+                - min: 0
+                  max: 10
+                  color: red
+                - min: 10
+                  max: 20
+                  color: yellow
+                - min: 20
+                  max: 90
+                  color: green
+              unit: '%'
+              state_content: state
+              ```
+              Full write-up: [README - Don't Let It
+              Expire](https://github.com/francois-le-ko4la/lovelace-entity-progress-card#-usage).
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 4
     show_icon_and_title: true
     cards: []
   - title: EP Demo - Examples

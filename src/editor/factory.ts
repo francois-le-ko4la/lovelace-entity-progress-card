@@ -578,6 +578,11 @@ const EditorFactory = {
           }),
           force_circular_background: EditorFieldsType.toggle('force_circular_background'),
           bar_position: EditorFieldsType.select('bar_position', {
+            // compact_below only has a distinct effect with layout: horizontal
+            // (see resetCompactBelowIfInvalid's own comment) - not offered at
+            // all once layout: vertical, same reasoning as bar_orientation's
+            // 'up' just above.
+            type: (c: LovelaceConfig) => (c.layout === 'vertical' ? 'bar_position_no_compact_below' : 'bar_position'),
             width: availableSpace(),
             onChange: (_value: unknown, config: LovelaceConfig) => resetUpIfInvalid(config),
           }),

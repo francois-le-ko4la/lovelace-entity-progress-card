@@ -19,7 +19,7 @@ Jump to the specific section:
   - 🦠 [PM 2.5](#pm25)
 - [Custom theme & bar_color_mode](#custom-theme)
 - [Adapt to HA custom theme](#adapt-to-ha-custom-theme)
-  - [CSS variables](#css)
+  - [CSS hooks](#css)
   - [Usage](#usage)
 - [card_mod / uix and card structure](#card-mod-and-card-structure)
   - [Class Name Updates & Migration Guide](#class-name-migration)
@@ -734,7 +734,7 @@ bar_color_mode: rainbow
 
 <a id="css"></a>
 
-### CSS variables
+### CSS hooks
 
 | Variable                              | Target       | Category   | Description                                              | Example       |
 | ------------------------------------- | ------------ | ---------- | -------------------------------------------------------- | ------------- |
@@ -798,7 +798,7 @@ This applies to all cards using that theme.
 
 #### card_mod / uix
 
-All public CSS variables can also be scoped to a single card using
+All public CSS hooks can also be scoped to a single card using
 [card_mod](https://github.com/thomasloven/lovelace-card-mod) - or
 [UIX (UI eXtension)](https://github.com/Lint-Free-Technology/uix), a drop-in
 replacement built on the same heritage. Same configuration, same result: only
