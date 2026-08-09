@@ -105,7 +105,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -228,7 +229,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -389,7 +390,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -512,7 +514,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -673,7 +675,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -796,7 +799,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -957,7 +960,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -1080,7 +1084,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -1241,7 +1245,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -1364,7 +1369,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -1525,7 +1530,8 @@ const TRANSLATIONS = {
         migrate_config: 'Konfiguration migrieren',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -1648,7 +1654,7 @@ const TRANSLATIONS = {
           background: 'Hintergrund',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -1809,7 +1815,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -1932,7 +1939,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -2029,7 +2036,7 @@ const TRANSLATIONS = {
         badge_color: 'Badge color',
         badge_icon: 'Badge icon',
         bar_color: 'Bar color',
-        bar_effect_jinja: 'Bar effect (Jinja mode)',
+        bar_effect_jinja: 'Bar effect (Jinja)',
         bar_orientation: 'Bar orientation',
         bar_position: 'Bar position',
         bar_single_line: 'Single line info',
@@ -2045,7 +2052,7 @@ const TRANSLATIONS = {
         double_tap_action: 'Double tap behavior',
         entity: 'Entity',
         force_circular_background: 'Force icon circular background',
-        hide_jinja: 'Hide (Jinja mode)',
+        hide_jinja: 'Hide (Jinja)',
         hold_action: 'Hold behavior',
         icon: 'Icon',
         icon_animation: 'Icon animation',
@@ -2091,9 +2098,10 @@ const TRANSLATIONS = {
         bar_stack_mode: 'Stack mode',
         bar_stack: 'Additional entities',
         migrate_config: 'Migrate config',
-        icon_animation_jinja_toggle: 'Trigger via template',
+        icon_animation_jinja_toggle: 'Icon animation trigger (Jinja)',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Auto height',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -2216,7 +2224,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -2377,7 +2385,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -2500,7 +2509,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -2661,7 +2670,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrar configuración',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -2784,7 +2794,7 @@ const TRANSLATIONS = {
           background: 'Fondo',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -2945,7 +2955,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -3068,7 +3079,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -3229,7 +3240,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -3352,7 +3364,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -3513,7 +3525,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrer la config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -3636,7 +3649,7 @@ const TRANSLATIONS = {
           background: 'Fond',
           label: 'Étiquette'
         },
-        label: {
+        status_label: {
           jinja: 'Étiquette de statut',
           position: 'Position de l\'étiquette'
         },
@@ -3797,7 +3810,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -3920,7 +3934,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -4081,7 +4095,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -4204,7 +4219,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -4365,7 +4380,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -4488,7 +4504,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -4649,7 +4665,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -4772,7 +4789,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -4933,7 +4950,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migra configurazione',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -5056,7 +5074,7 @@ const TRANSLATIONS = {
           background: 'Sfondo',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -5217,7 +5235,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -5340,7 +5359,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -5501,7 +5520,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -5624,7 +5644,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -5785,7 +5805,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -5908,7 +5929,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -6069,7 +6090,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -6192,7 +6214,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -6353,7 +6375,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -6476,7 +6499,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -6637,7 +6660,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -6760,7 +6784,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -6921,7 +6945,8 @@ const TRANSLATIONS = {
         migrate_config: 'Configuratie migreren',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -7044,7 +7069,7 @@ const TRANSLATIONS = {
           background: 'Achtergrond',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -7205,7 +7230,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -7328,7 +7354,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -7489,7 +7515,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -7612,7 +7639,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -7773,7 +7800,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrar configuração',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -7896,7 +7924,7 @@ const TRANSLATIONS = {
           background: 'Fundo',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -8057,7 +8085,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -8180,7 +8209,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -8341,7 +8370,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -8464,7 +8494,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -8625,7 +8655,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -8748,7 +8779,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -8909,7 +8940,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -9032,7 +9064,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -9193,7 +9225,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -9316,7 +9349,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -9477,7 +9510,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -9600,7 +9634,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -9761,7 +9795,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -9884,7 +9919,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -10045,7 +10080,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -10168,7 +10204,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -10329,7 +10365,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -10452,7 +10489,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -10613,7 +10650,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -10736,7 +10774,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },
@@ -10897,7 +10935,8 @@ const TRANSLATIONS = {
         migrate_config: 'Migrate config',
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
-        height_custom_toggle: 'Shrink height (embedded)'
+        height_custom_toggle: 'Shrink height (embedded)',
+        status_label_toggle: 'Status label'
       },
       option: {
         theme: {
@@ -11020,7 +11059,7 @@ const TRANSLATIONS = {
           background: 'Background',
           label: 'Label'
         },
-        label: {
+        status_label: {
           jinja: 'Status label',
           position: 'Label position'
         },

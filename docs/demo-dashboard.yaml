@@ -1177,7 +1177,7 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: 'label: glacial → scorching (temperature)'
+            heading: 'status_label: glacial → scorching (temperature)'
             heading_style: title
           - type: markdown
             content: |
@@ -1187,7 +1187,7 @@ views:
               entity: input_number.epb_demo_temp_negative
               theme: temperature
               max_value: 40
-              label:
+              status_label:
                 jinja: >-
                   {% set t = states(entity) | float %}
                   {% if t < -5 %}glacial
@@ -1199,7 +1199,7 @@ views:
                   {% endif %}
               ```
               Same 4 reference temperatures as the section above
-              (-10/10/22/35°C), with `label` added - established weather-report
+              (-10/10/22/35°C), with `status_label` added - established weather-report
               terms instead of a plain cold/hot split, still just a Jinja
               condition on the value, no zone list to keep in sync with the
               theme.
@@ -1214,7 +1214,7 @@ views:
             center_zero: true
             min_value: -20
             max_value: 40
-            label:
+            status_label:
               jinja: >-
                 {% set t = states('input_number.epb_demo_temp_negative') |
                 float %} {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t
@@ -1225,7 +1225,7 @@ views:
             name: positive
             theme: temperature
             max_value: 40
-            label:
+            status_label:
               jinja: >-
                 {% set t = states('input_number.epb_demo_temp_positive') |
                 float %} {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t
@@ -1236,7 +1236,7 @@ views:
             name: temperate
             theme: temperature
             max_value: 40
-            label:
+            status_label:
               jinja: >-
                 {% set t = states('input_number.epb_demo_temp_temperate') |
                 float %} {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t
@@ -1247,7 +1247,7 @@ views:
             name: hot
             theme: temperature
             max_value: 40
-            label:
+            status_label:
               jinja: >-
                 {% set t = states('input_number.epb_demo_temp_hot') | float
                 %} {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t < 15
@@ -1542,7 +1542,7 @@ views:
                 color: green
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
-            name: 'label: status pill (custom_theme)'
+            name: 'status_label: status pill (custom_theme)'
             custom_theme:
               - min: 0
                 max: 30
@@ -1553,25 +1553,25 @@ views:
               - min: 70
                 max: 100
                 color: green
-            label:
+            status_label:
               jinja: >-
                 {% set v = states('input_number.epb_demo_battery') | float %}
                 {% if v < 30 %}low{% elif v < 70 %}ok{% else %}good{% endif
                 %}
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_temperature
-            name: 'label: status pill (built-in theme)'
+            name: 'status_label: status pill (built-in theme)'
             theme: temperature
-            label:
+            status_label:
               jinja: >-
                 {% set t = states('input_number.epb_demo_temperature') |
                 float %} {% if t > 30 %}hot{% elif t < 0 %}cold{% else
                 %}ok{% endif %}
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_temperature
-            name: 'label: position left'
+            name: 'status_label: position left'
             theme: temperature
-            label:
+            status_label:
               position: left
               jinja: >-
                 {% set t = states('input_number.epb_demo_temperature') |
@@ -1926,7 +1926,7 @@ views:
             center_zero: true
             min_value: -20
             max_value: 40
-            label:
+            status_label:
               jinja: >-
                 {% set t = states('input_number.epb_demo_temp_negative') |
                 float %} {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t
@@ -1940,7 +1940,7 @@ views:
             center_zero: true
             min_value: -20
             max_value: 40
-            label:
+            status_label:
               jinja: >-
                 {% set t = states('input_number.epb_demo_temp_positive') |
                 float %} {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t
@@ -1952,7 +1952,7 @@ views:
             theme: temperature
             bar_color_mode: rainbow_full
             max_value: 40
-            label:
+            status_label:
               jinja: >-
                 {% set t = states('input_number.epb_demo_temp_temperate') |
                 float %} {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t
@@ -1964,7 +1964,7 @@ views:
             theme: temperature
             bar_color_mode: rainbow_full
             max_value: 40
-            label:
+            status_label:
               jinja: >-
                 {% set t = states('input_number.epb_demo_temp_hot') | float %}
                 {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t < 15
@@ -1982,7 +1982,7 @@ views:
             grid_options:
               columns: 4
               rows: 2
-            label:
+            status_label:
               jinja: >-
                 {% set t = states('input_number.epb_demo_temp_negative') |
                 float %} {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t
@@ -1997,7 +1997,7 @@ views:
             grid_options:
               columns: 4
               rows: 2
-            label:
+            status_label:
               jinja: >-
                 {% set t = states('input_number.epb_demo_temp_positive') |
                 float %} {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t
@@ -2015,7 +2015,7 @@ views:
             grid_options:
               columns: 4
               rows: 2
-            label:
+            status_label:
               jinja: >-
                 {% set t = states('input_number.epb_demo_temp_temperate') |
                 float %} {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t
@@ -2027,10 +2027,11 @@ views:
             layout: vertical
             theme: temperature
             bar_color_mode: rainbow_full
+            max_value: 40
             grid_options:
               columns: 4
               rows: 2
-            label:
+            status_label:
               jinja: >-
                 {% set t = states('input_number.epb_demo_temp_hot') | float %}
                 {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t < 15
@@ -2044,10 +2045,11 @@ views:
             bar_position: overlay
             theme: temperature
             bar_color_mode: rainbow_full
+            max_value: 40
             grid_options:
               columns: 4
               rows: 2
-            label:
+            status_label:
               jinja: >-
                 {% set t = states('input_number.epb_demo_temp_hot') | float %}
                 {% if t < -5 %}glacial {% elif t < 5 %}cold {% elif t < 15
@@ -2530,7 +2532,7 @@ views:
             layout: horizontal
             bar_size: xlarge
             grid_options:
-              columns: 12
+              columns: 6
               rows: 2
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
@@ -2625,7 +2627,7 @@ views:
             layout: vertical
             bar_size: xsmall
             grid_options:
-              columns: 3
+              columns: 6
               rows: 2
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
@@ -2633,7 +2635,7 @@ views:
             layout: vertical
             bar_size: small
             grid_options:
-              columns: 3
+              columns: 6
               rows: 2
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
@@ -2673,7 +2675,7 @@ views:
             layout: vertical
             bar_size: xlarge
             grid_options:
-              columns: 3
+              columns: 6
               rows: 2
         column_span: 2
       - type: grid
@@ -2704,7 +2706,7 @@ views:
             bar_position: below
             bar_size: xsmall
             grid_options:
-              columns: 3
+              columns: 6
               rows: 2
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
@@ -2713,7 +2715,7 @@ views:
             bar_position: below
             bar_size: small
             grid_options:
-              columns: 3
+              columns: 6
               rows: 2
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
@@ -2758,7 +2760,7 @@ views:
             bar_position: below
             bar_size: xlarge
             grid_options:
-              columns: 3
+              columns: 6
               rows: 2
         column_span: 2
     show_icon_and_title: true
@@ -2938,7 +2940,7 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: Native containers
+            heading: 'Native containers — entities'
             heading_style: title
           - type: entities
             title: entities
@@ -2948,6 +2950,46 @@ views:
                 layout: horizontal
                 bar_size: small
               - entity: sensor.sun_next_setting
+          - type: heading
+            heading: Height tests
+            heading_style: subtitle
+          - type: entities
+            title: entities
+            entities:
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_battery
+                layout: horizontal
+                bar_size: small
+              - entity: sensor.sun_next_setting
+                secondary_info: last-updated
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_battery
+                layout: horizontal
+                bar_size: small
+                bar_position: compact_below
+                hide:
+                  - progress_bar
+                  - secondary_info
+                  - unit
+                  - value
+              - entity: sensor.sun_next_setting
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_battery
+                name: 100px
+                layout: horizontal
+                bar_size: small
+                height: 100px
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_battery
+                name: 35px
+                layout: horizontal
+                bar_size: small
+                height: 35px
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Native containers — grid'
+            heading_style: title
           - square: false
             type: grid
             cards:
@@ -3000,6 +3042,61 @@ views:
               rows: auto
             columns: 2
             title: Grid Card
+          - type: heading
+            heading: 'Height tests (8px / 15px / auto / 50px) — square: false, explicit height wins outright'
+            heading_style: subtitle
+          - square: false
+            type: grid
+            cards:
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_printer_ink_black
+                custom_info: ↓
+                bar_color: black
+                hide:
+                  - name
+                  - icon
+                marginless: true
+                frameless: true
+                height: 8px
+                decimal: 0
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_printer_ink_cyan
+                custom_info: ↓
+                bar_color: cyan
+                hide:
+                  - name
+                  - icon
+                marginless: true
+                frameless: true
+                height: 15px
+                decimal: 0
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_printer_ink_magenta
+                custom_info: ↓
+                bar_color: magenta
+                hide:
+                  - name
+                  - icon
+                marginless: true
+                frameless: true
+                height: auto
+                decimal: 0
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_printer_ink_yellow
+                custom_info: ↓
+                bar_color: yellow
+                hide:
+                  - name
+                  - icon
+                marginless: true
+                frameless: true
+                height: 50px
+                decimal: 0
+            grid_options:
+              columns: full
+              rows: auto
+            columns: 2
+            title: Grid Card
       - type: grid
         cards:
           - type: heading
@@ -3031,6 +3128,28 @@ views:
                 bar_size: small
                 frameless: true
             title: Horizontal stack + frameless
+          - type: heading
+            heading: Height tests
+            heading_style: subtitle
+          - type: horizontal-stack
+            cards:
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_battery
+                name: default (no height)
+                layout: horizontal
+                bar_size: small
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_battery
+                name: 100px
+                layout: horizontal
+                bar_size: small
+                height: 100px
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_battery
+                name: 35px
+                layout: horizontal
+                bar_size: small
+                height: 35px
       - type: grid
         cards:
           - type: heading
@@ -3061,6 +3180,28 @@ views:
                 bar_size: small
                 frameless: true
             title: Vertical stack + frameless
+          - type: heading
+            heading: Height tests
+            heading_style: subtitle
+          - type: vertical-stack
+            cards:
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_battery
+                name: default (no height)
+                layout: horizontal
+                bar_size: small
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_battery
+                name: 100px
+                layout: horizontal
+                bar_size: small
+                height: 100px
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_battery
+                name: 35px
+                layout: horizontal
+                bar_size: small
+                height: 35px
       - type: grid
         cards:
           - type: heading
@@ -3077,6 +3218,29 @@ views:
                 entity: input_number.epb_demo_battery
                 layout: horizontal
                 bar_size: small
+          - type: heading
+            heading: Height tests
+            heading_style: subtitle
+          - type: custom:vertical-stack-in-card
+            title: vertical-stack-in-card
+            cards:
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_battery
+                name: default (no height)
+                layout: horizontal
+                bar_size: small
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_battery
+                name: 100px
+                layout: horizontal
+                bar_size: small
+                height: 100px
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_battery
+                name: 35px
+                layout: horizontal
+                bar_size: small
+                height: 35px
       - type: grid
         cards:
           - type: heading
@@ -3093,6 +3257,29 @@ views:
                 entity: input_number.epb_demo_battery
                 layout: horizontal
                 bar_size: small
+          - type: heading
+            heading: Height tests
+            heading_style: subtitle
+          - type: custom:layout-card
+            layout_type: masonry
+            cards:
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_battery
+                name: default (no height)
+                layout: horizontal
+                bar_size: small
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_battery
+                name: 100px
+                layout: horizontal
+                bar_size: small
+                height: 100px
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_battery
+                name: 35px
+                layout: horizontal
+                bar_size: small
+                height: 35px
       - type: grid
         cards:
           - type: heading
@@ -3137,6 +3324,191 @@ views:
                   height: auto
                   marginless: true
                   frameless: true
+          - type: heading
+            heading: Height tests
+            heading_style: subtitle
+          - type: horizontal-stack
+            cards:
+              - type: custom:button-card
+                entity: input_number.epb_demo_battery
+                name: default (no height)
+                show_name: true
+                show_state: false
+                show_icon: false
+                custom_fields:
+                  progress:
+                    card:
+                      type: custom:entity-progress-card
+                      entity: input_number.epb_demo_battery
+                      layout: horizontal
+                      bar_size: small
+                      marginless: true
+                      frameless: true
+              - type: custom:button-card
+                entity: input_number.epb_demo_battery
+                name: 100px
+                show_name: true
+                show_state: false
+                show_icon: false
+                custom_fields:
+                  progress:
+                    card:
+                      type: custom:entity-progress-card
+                      entity: input_number.epb_demo_battery
+                      layout: horizontal
+                      bar_size: small
+                      marginless: true
+                      frameless: true
+                      height: 100px
+              - type: custom:button-card
+                entity: input_number.epb_demo_battery
+                name: 35px
+                show_name: true
+                show_state: false
+                show_icon: false
+                custom_fields:
+                  progress:
+                    card:
+                      type: custom:entity-progress-card
+                      entity: input_number.epb_demo_battery
+                      layout: horizontal
+                      bar_size: small
+                      marginless: true
+                      frameless: true
+                      height: 35px
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Native containers — combined-card (#123, @davidcoulson)'
+            heading_style: title
+          # Prerequisites:
+          #  - custom:combined-card (HACS custom repo, category "Dashboard"):
+          #    https://github.com/catdad-experiments/ha-utility-cards
+          #    - search "Catdad Utility Cards" after adding the repo.
+          #    - merges the 3 stacked cards below into one seamless <ha-card>
+          #      (no nested borders/shadows), without losing the visual editor.
+          #  - custom:mushroom-entity-card (default HACS): piitaya/lovelace-mushroom
+          #  - card_mod (default HACS): thomasloven/lovelace-card-mod
+          #  - stands in for a real Litter-Robot integration entity with the
+          #    epb_demo_litter_* helpers from demo-dashboard-helpers.yaml -
+          #    swap for your own sensor.litter_robot_* entities in a real setup.
+          #
+          # What it demonstrates: bar_position: compact_below (#123) on two
+          # frameless/marginless bars sharing one visually combined card with a
+          # Mushroom entity row - each bar's own bar_color Jinja recolors the
+          # fill red past a threshold (litter level low / waste drawer full),
+          # the outer combined-card's card_mod adds the frosted-glass
+          # background/border.
+          - type: custom:combined-card
+            cards:
+              - type: custom:mushroom-entity-card
+                entity: input_select.epb_demo_litter_status
+                name: Robot 1
+                icon: phu:litter-robot
+                fill_container: false
+                secondary_info: state
+                icon_type: entity-picture
+                tap_action:
+                  action: none
+                hold_action:
+                  action: none
+                double_tap_action:
+                  action: none
+                icon_color: blue-grey
+                card_mod:
+                  style: |
+                    ha-card {
+                      background: none;
+                      border: none;
+                    }
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_litter_level
+                hide:
+                  - icon
+                bar_size: medium
+                layout: horizontal
+                name: Litter
+                frameless: true
+                marginless: false
+                bar_position: compact_below
+                height: '20px'
+                bar_color: |
+                  {% if states('input_number.epb_demo_litter_level') | int(0) < 30 %}
+                    rgb(128,0,0)
+                  {% else %}
+                    dodgerblue
+                  {% endif %}
+                card_mod:
+                  style: |
+                    ha-card {
+                      margin: -10px 0px -4px 0px !important;    /* Top Right Bottom Left */
+                    }
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_litter_waste_drawer
+                hide:
+                  - icon
+                bar_size: medium
+                layout: horizontal
+                name: Waste
+                frameless: true
+                marginless: false
+                bar_position: compact_below
+                height: '20px'
+                bar_color: |
+                  {% if states('input_number.epb_demo_litter_waste_drawer') | int(0) > 70 %}
+                    rgb(128,0,0)
+                  {% else %}
+                    dodgerblue
+                  {% endif %}
+                card_mod:
+                  style: |
+                    ha-card {
+                      margin: -8px 0px -4px 0px !important;    /* Top Right Bottom Left */
+                    }
+            stackMode: vertical-stack
+            hideGap: true
+            card_mod:
+              style: |
+                @media (prefers-color-scheme: light) {
+                  ha-card {
+                    background: rgba(255,255,255,0.8) !important;
+                  }
+                }
+                @media (prefers-color-scheme: dark) {
+                  ha-card {
+                    background: rgba(0,0,0,0.4) !important;
+                  }
+                }
+                ha-card {
+                  border: 1px solid #555 !important;
+                  backdrop-filter: blur(8px);
+                  -webkit-backdrop-filter: blur(8px);
+                  padding-bottom: 6px;
+                }
+          - type: heading
+            heading: Height tests
+            heading_style: subtitle
+          - type: custom:combined-card
+            cards:
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_battery
+                name: default (no height)
+                layout: horizontal
+                bar_size: small
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_battery
+                name: 100px
+                layout: horizontal
+                bar_size: small
+                height: 100px
+              - type: custom:entity-progress-card
+                entity: input_number.epb_demo_battery
+                name: 35px
+                layout: horizontal
+                bar_size: small
+                height: 35px
+            stackMode: vertical-stack
+            hideGap: true
       - type: grid
         cards:
           - type: heading
@@ -3208,9 +3580,11 @@ views:
                 type: line
                 low: 30
                 low_color: blue
+                disable_high: true
               ```
-              Only `low` is set, no `high`. Check: a single line renders, not
-              a phantom second one for the unset `high` bound.
+              Only `low` is set, `high` explicitly disabled (it has its own
+              fallback default, so leaving it merely unset isn't enough).
+              Check: a single line renders, not a phantom second one.
               {% endraw %}
             grid_options:
               columns: 12
@@ -3222,30 +3596,7 @@ views:
               type: line
               low: 30
               low_color: blue
-      - type: grid
-        cards:
-          - type: heading
-            heading: '#34 — percent decimal defaults to 0, not 2'
-            heading_style: title
-          - type: markdown
-            content: |
-              {% raw %}
-              ```yaml
-              type: custom:entity-progress-card-template
-              entity: input_number.epb_demo_battery
-              percent: "{{ states(entity) }}"
-              ```
-              No `decimal` set on a template card driven by a Jinja
-              `percent`. Check: the value renders as a whole number (0
-              decimals), not with 2.
-              {% endraw %}
-            grid_options:
-              columns: 12
-              rows: 2
-          - type: custom:entity-progress-card-template
-            entity: input_number.epb_demo_battery
-            name: '#34 no decimal override'
-            percent: '{{ states(entity) }}'
+              disable_high: true
       - type: grid
         cards:
           - type: heading
@@ -3301,47 +3652,6 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: '#68 — disable_unit: true picks the right custom_theme zone'
-            heading_style: title
-          - type: markdown
-            content: |
-              {% raw %}
-              ```yaml
-              type: custom:entity-progress-card
-              entity: input_number.epb_demo_temperature
-              disable_unit: true
-              min_value: -20
-              max_value: 40
-              custom_theme:
-                - min: -20
-                  max: 20
-                  color: red
-                - min: 20
-                  max: 40
-                  color: purple
-              ```
-              `disable_unit: true` used to shift which `custom_theme` zone
-              matched. Check: a reading below 20 shows red, not purple.
-              {% endraw %}
-            grid_options:
-              columns: 12
-              rows: 2
-          - type: custom:entity-progress-card
-            entity: input_number.epb_demo_temperature
-            name: '#68 should be red (< 20)'
-            disable_unit: true
-            min_value: -20
-            max_value: 40
-            custom_theme:
-              - min: -20
-                max: 20
-                color: red
-              - min: 20
-                max: 40
-                color: purple
-      - type: grid
-        cards:
-          - type: heading
             heading: '#75 — bar_effect: radius, every corner (small & medium)'
             heading_style: title
           - type: markdown
@@ -3388,7 +3698,7 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: '#99 — overlay text + reverse_secondary_info_row'
+            heading: '#99 — overlay text, bar_single_line'
             heading_style: title
           - type: markdown
             content: |
@@ -3397,12 +3707,11 @@ views:
               type: custom:entity-progress-card
               entity: input_number.epb_demo_battery
               bar_position: overlay
-              reverse_secondary_info_row: true
+              bar_single_line: true
               bar_size: large
               ```
-              Overlay text combined with a reversed secondary-info row.
-              Check: text stays readable and correctly positioned, not
-              overlapping or reversed oddly.
+              Overlay text with `bar_single_line: true`. Check: text stays
+              readable and centered on the bar, not fuzzy/shadowed.
               {% endraw %}
             grid_options:
               columns: 12
@@ -3411,7 +3720,7 @@ views:
             entity: input_number.epb_demo_battery
             name: '#99'
             bar_position: overlay
-            reverse_secondary_info_row: true
+            bar_single_line: true
             bar_size: large
       - type: grid
         cards:
@@ -3628,6 +3937,232 @@ views:
         name: '#124'
         min_width: 200px
     show_icon_and_title: true
+  - title: EP Demo - Deprecated options
+    icon: mdi:alert-outline
+    path: epb-deprecated
+    type: sections
+    max_columns: 2
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'theme: battery/cpu/memory (deprecated aliases)'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card
+              entity: input_number.epb_demo_battery
+              theme: battery   # or: cpu | memory
+              ```
+              Each alias console-warns once and still renders with its
+              modern equivalent (`battery` -> `optimal_when_high`,
+              `cpu`/`memory` -> `optimal_when_low`). Migrate button should
+              rewrite `theme:` in place.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'theme: battery'
+            theme: battery
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'theme: cpu'
+            theme: cpu
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'theme: memory'
+            theme: memory
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'max_value: <entity id> (bare string, pre-1.6)'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card
+              entity: input_number.epb_demo_battery
+              max_value: input_number.epb_demo_battery_reserved
+              ```
+              Migrated for the session to
+              `max_value: { entity: input_number.epb_demo_battery_reserved }`.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'max_value: <entity id>'
+            max_value: input_number.epb_demo_battery_reserved
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'max_value: <entity id> + max_value_attribute'
+            max_value: sun.sun
+            max_value_attribute: elevation
+      - type: grid
+        cards:
+          - type: heading
+            heading: >-
+              watermark.low/high: <entity id> (bare string + low_attribute/
+              high_attribute, early 1.6.0-rc)
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card
+              entity: input_number.epb_demo_battery
+              watermark:
+                low: input_number.epb_demo_battery_reserved
+              ```
+              Migrated for the session to
+              `watermark.low: { entity: input_number.epb_demo_battery_reserved }`.
+              Regression test for the "Migrate config" button not showing up
+              for this specific form - fixed alongside this view, see
+              CHANGELOG.md.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'watermark.low: <entity id>'
+            watermark:
+              low: input_number.epb_demo_battery_reserved
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'watermark.low: <entity id> + low_attribute'
+            watermark:
+              low: sun.sun
+              low_attribute: elevation
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'watermark.high: <entity id>'
+            watermark:
+              high: input_number.epb_demo_battery_reserved
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'watermark.high: <entity id> + high_attribute'
+            watermark:
+              high: sun.sun
+              high_attribute: elevation
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'disable_unit: true (pre-1.6)'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card
+              entity: input_number.epb_demo_battery
+              disable_unit: true
+              ```
+              Migrated for the session to `hide: ['unit']`.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'disable_unit: true'
+            disable_unit: true
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'additions: [...] (bare list, pre-1.6)'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card
+              entity: input_number.epb_demo_printer_ink_black
+              additions:
+                - entity: input_number.epb_demo_printer_ink_cyan
+                - entity: input_number.epb_demo_printer_ink_magenta
+              ```
+              Migrated for the session to
+              `bar_stack: { mode: proportional, entities: [...] }` - same
+              renormalized values, segment order changes (main entity first
+              instead of last, see docs/configuration.md#bar_stack).
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_printer_ink_black
+            name: 'additions: [...]'
+            additions:
+              - entity: input_number.epb_demo_printer_ink_cyan
+              - entity: input_number.epb_demo_printer_ink_magenta
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'navigate_to / show_more_info (removed since v1.2.0)'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card
+              entity: input_number.epb_demo_battery
+              navigate_to: /lovelace/0   # or: show_more_info: true
+              ```
+              Both are pure no-ops now (console warning only) - no
+              `tap_action` here on purpose, so tapping the card should do
+              nothing at all. Migrate button just deletes the dead key,
+              nothing to rewrite it to.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'navigate_to (inert)'
+            navigate_to: /lovelace/0
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'show_more_info (inert)'
+            show_more_info: true
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Combo - several legacy options on one card'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card
+              entity: input_number.epb_demo_printer_ink_black
+              max_value: input_number.epb_demo_battery_reserved
+              disable_unit: true
+              additions:
+                - entity: input_number.epb_demo_printer_ink_cyan
+              ```
+              Three independent legacy options at once. Check: three console
+              warnings fire together, one Migrate config click rewrites all
+              three in the same pass.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_printer_ink_black
+            name: 'combo: max_value + disable_unit + additions'
+            max_value: input_number.epb_demo_battery_reserved
+            disable_unit: true
+            additions:
+              - entity: input_number.epb_demo_printer_ink_cyan
+    show_icon_and_title: true
+    cards: []
   - title: EP Demo - Examples
     icon: mdi:chemical-weapon
     path: epb-demo-examples

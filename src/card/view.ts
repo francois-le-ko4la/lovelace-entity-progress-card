@@ -21,18 +21,6 @@ import {
   BadgeTemplateConfigHelper,
 } from './config-helpers.js';
 
-// HA's own Sections grid row-span formula (hui-grid-section.ts's
-// `.card.fit-rows` rule): N rows spanning N*(rowHeight+gap) - gap. Collapses
-// to a plain rowHeight for N=1 (1*(h+g)-g = h), so this one formula replaces
-// what used to be two separate hardcoded CSS strings (a bare rowHeight for
-// horizontal, a fixed 2-row calc() for vertical). Takes ViewCore.minGridRows
-// (see cardLayoutOptions) - the same row count driving HA's own grid
-// reservation - so the CSS min-height fallback used everywhere that
-// reservation doesn't apply (Masonry, embedded in another card) can't drift
-// from it again (issue #133).
-const gridRowsToMinHeight = (rows: number): string =>
-  `calc((${rows} * (var(--ha-section-grid-row-height, 56px) + var(--ha-section-grid-row-gap, 8px))) - var(--ha-section-grid-row-gap, 8px))`;
-
 // Mirrors schema.ts's watermarkSchema (see card/schema.ts) - the validated
 // shape of config.watermark as it comes out of the schema. low/high are
 // symmetric with min_value/max_value's own shape (number | { entity,
@@ -1283,7 +1271,6 @@ type TemplateView = ViewCore & { icon: string | null };
 
 export { ViewCore };
 export { ViewBase };
-export { gridRowsToMinHeight };
 export type { TemplateView };
 export { CardView };
 export { BadgeView };

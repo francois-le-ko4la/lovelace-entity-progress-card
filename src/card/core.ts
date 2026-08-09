@@ -10,7 +10,7 @@ import { is } from '../utils/common-checks.js';
 import { initLogger, type LoggerInstance } from '../utils/log.js';
 import { ObjStructure, ThemeManager, ChangeTracker } from './value-helpers.js';
 import { HassProviderSingleton, type HomeAssistant, type EntityState } from '../utils/hass-provider.js';
-import { CardView, FeatureView, gridRowsToMinHeight, type ViewCore, type ViewBase } from './view.js';
+import { CardView, FeatureView, type ViewCore, type ViewBase } from './view.js';
 import { ResourceManager, DOMHelper, ActionHelper } from './dom-helpers.js';
 import type { CacheValue } from './dom-helpers.js';
 import type { LovelaceConfig } from '../utils/types.js';
@@ -1046,7 +1046,7 @@ class HABase extends HACore {
       barSingleLine: this._cardView.config.bar_single_line,
       trendIndicator: this._cardView.config.trend_indicator,
       hasLabel:
-        is.nonEmptyString(this._cardView.config.label?.jinja) ||
+        is.nonEmptyString(this._cardView.config.status_label?.jinja) ||
         this._cardView.config.alert_when?.highlight === 'label',
       multiline: Boolean(this._cardView.config.multiline),
     };
@@ -1068,7 +1068,7 @@ class HABase extends HACore {
       this._cardView.config.bar_position,
       this._cardView.hasReversedSecondaryInfoRow ? 'row-reverse' : null,
       this._cardView.config.text_shadow ? 'text-shadow' : null,
-      this._cardView.config.label?.position === 'left' ? 'label-left' : null,
+      this._cardView.config.status_label?.position === 'left' ? 'label-left' : null,
     );
   }
 
@@ -1093,20 +1093,19 @@ class HABase extends HACore {
         [config.height, CARD.style.dynamic.card.height.var, config.height],
         [config.bar_max_width, CARD.style.dynamic.progressBar.maxWidth.var, config.bar_max_width],
         [config.alert_when?.color, '--alert-color', ThemeManager.adaptColor(config.alert_when?.color)],
-        // issue #133 - badges have their own unrelated min-height model
+        // issue #133 - badges have their own unrelated height model
         // (--ha-badge-size), so this is card/template-only (isBadge already
-        // covers exactly that split above). Set unconditionally (not just
-        // when it differs from the static .horizontal/.vertical CSS
-        // default) so it can't go stale if bar_size/bar_position/hidden
-        // icon change without a full re-render - see ViewCore.minGridRows,
-        // the single source of truth this and getGridOptions both read.
-        // marginless still wins (explicit 'unset', mirroring its own CSS
-        // rule) since an inline style can't be overridden by a class rule.
-        [
-          !isBadge,
-          '--current-card-min-height',
-          config.marginless ? 'unset' : gridRowsToMinHeight(this._cardView.minGridRows),
-        ],
+        // covers exactly that split above). Just the row count - the actual
+        // row-height math lives in CSS now (the base ha-card rule's own
+        // --current-card-height, see styles.ts), reading this same
+        // var(--min-grid-rows) - set unconditionally (not just when it
+        // differs from that CSS rule's own default) so it can't go stale if
+        // bar_size/bar_position/hidden icon change without a full re-render.
+        // See ViewCore.minGridRows, the single source of truth this and
+        // getGridOptions both read. Harmless to still set while marginless:
+        // .marginless's own CSS rule clears --current-card-height entirely,
+        // which doesn't reference --min-grid-rows at all.
+        [!isBadge, '--min-grid-rows', this._cardView.minGridRows],
       ] as [unknown, string, CacheValue][]
     ).forEach(([condition, prop, value]) => {
       if (condition) this._dom.setStyle(cardKey, prop, value);
@@ -1523,12 +1522,12 @@ class HABase extends HACore {
       bar_effect: () => this._refreshBarEffect(content),
       hide: () => this._handleHiddenComponents(content),
       icon_animation: () => this._renderIconAnimationWhen(content),
-      'label.jinja': () => this._renderLabel(content),
+      'status_label.jinja': () => this._renderLabel(content),
     };
   }
 
   // GitHub-label-style status pill, shared by both of its drivers: a plain
-  // `label` Jinja template (_renderLabel below) and alert_when.highlight:
+  // `status_label` Jinja template (_renderLabel below) and alert_when.highlight:
   // 'label' (_applyAlertLabel, called from _applyAlertClasses since
   // alert_when.label is a plain string, not Jinja - there's no push to
   // piggyback on, it re-evaluates whenever isAlertActive might have

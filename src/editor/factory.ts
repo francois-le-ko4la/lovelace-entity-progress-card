@@ -341,21 +341,6 @@ const EditorFactory = {
                 Boolean(c.entity) && HassProviderSingleton.getEntityDomain(c.entity) === 'timer',
             }),
           }),
-      // Card + Template only (same scope as trend_indicator, which the two
-      // share a corner with - see schema.ts's applyLabelRule): too small a
-      // scale to read well on a badge, same reasoning as trend_indicator's
-      // own badge exclusion. label: {jinja, position} - dot-path field names
-      // (#handleNestedField) create the parent object on first write, no
-      // explicit toggle needed (unlike alert_when's alert_toggle).
-      ...(!badge
-        ? {
-            'label.jinja': EditorFieldsType.tpl('label.jinja'),
-            'label.position': EditorFieldsType.select('label.position', {
-              type: 'label_position',
-              width: '100%',
-            }),
-          }
-        : {}),
     },
   }),
 
@@ -977,11 +962,45 @@ const EditorFactory = {
   // pure appearance (color/bar shape/layout) - and collapsing this panel
   // while working on the other skips a re-evaluation of all of it on every
   // keystroke elsewhere in the editor, same idea in the other direction.
-  markers: (template: boolean) => ({
+  markers: (template: boolean, badge: boolean) => ({
     title: 'editor.title.markers',
     icon: HA_CONTEXT.icons.radar,
     fields: {
       ...EditorFactory.themeWatermarkFields(),
+      // Card + Template only (same scope as trend_indicator, which the two
+      // share a corner with - see schema.ts's applyLabelRule): too small a
+      // scale to read well on a badge, same reasoning as trend_indicator's
+      // own badge exclusion. Lives here (not content()) because it's the
+      // same status-pill marker alert_when.highlight: 'label' reuses - a
+      // "react to a condition" concern, not the card's core entity/display
+      // content. status_label_toggle mirrors watermark_toggle/alert_toggle
+      // below - same collapse-to-reveal pattern, for consistency (the
+      // dot-path fields below would otherwise auto-create the parent object
+      // on first write with no toggle at all, unlike its two siblings here).
+      // Ordered before alert_when on purpose: alert_when.highlight: 'label'
+      // reuses this same pill, reads better once status_label's own shape is
+      // already established above it.
+      ...(!badge
+        ? {
+            status_label_toggle: EditorFieldsType.toggle('status_label_toggle', {
+              virtual: true,
+              resolveVirtual: (c: LovelaceConfig) => Boolean(c.status_label),
+              onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
+                ...config,
+                status_label: value ? {} : undefined,
+              }),
+            }),
+            'status_label.jinja': EditorFieldsType.tpl('status_label.jinja', {
+              noLabel: true,
+              showIf: (c: LovelaceConfig) => Boolean(c.status_label),
+            }),
+            'status_label.position': EditorFieldsType.select('status_label.position', {
+              type: 'label_position',
+              width: '100%',
+              showIf: (c: LovelaceConfig) => Boolean(c.status_label),
+            }),
+          }
+        : {}),
       ...EditorFactory.themeAlertFields(template),
     },
   }),
@@ -1053,7 +1072,7 @@ const EditorFactory = {
     general: EditorFactory.general(template),
     content: EditorFactory.content(template, badge),
     theme: EditorFactory.theme(template, badge),
-    markers: EditorFactory.markers(template),
+    markers: EditorFactory.markers(template, badge),
     layout: EditorFactory.layout(badge),
     interactions: EditorFactory.interactions(badge),
   }),

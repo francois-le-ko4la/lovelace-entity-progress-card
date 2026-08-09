@@ -199,6 +199,22 @@ input_number:
     initial: 35000
     unit_of_measurement: ppb
     icon: mdi:molecule
+  epb_demo_litter_level:
+    name: Demo litter level
+    min: 0
+    max: 100
+    step: 1
+    initial: 20
+    unit_of_measurement: '%'
+    icon: mdi:grain
+  epb_demo_litter_waste_drawer:
+    name: Demo litter waste drawer
+    min: 0
+    max: 100
+    step: 1
+    initial: 85
+    unit_of_measurement: '%'
+    icon: mdi:trash-can
 
 input_boolean:
   epb_demo_printer:
@@ -210,6 +226,17 @@ input_boolean:
   epb_demo_simple_mode:
     name: Demo simple mode (toggle)
     icon: mdi:toggle-switch
+
+input_select:
+  epb_demo_litter_status:
+    name: Demo litter robot status
+    options:
+      - Ready
+      - Clean Cycle
+      - Cat Sensor Interrupted
+      - Sleeping
+    initial: Ready
+    icon: mdi:robot-vacuum
 
 timer:
   epb_demo_timer:

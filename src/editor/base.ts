@@ -294,6 +294,8 @@ class EditorBase extends HTMLElement {
   static #hasDeprecatedOptions(config: LovelaceConfig): boolean {
     return Boolean(
       is.nonEmptyString(config?.max_value) ||
+      is.nonEmptyString(config?.watermark?.low) ||
+      is.nonEmptyString(config?.watermark?.high) ||
       config?.disable_unit !== undefined ||
       is.array(config?.additions) ||
       config?.navigate_to !== undefined ||

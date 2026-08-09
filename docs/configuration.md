@@ -55,7 +55,7 @@
       - [`bar_orientation`](#bar_orientation)
       - [`force_circular_background`](#force_circular_background)
       - [`trend_indicator`](#trend_indicator)
-      - [`label`](#label)
+      - [`status_label`](#status_label)
       - [`layout`](#layout)
       - [`frameless`](#frameless)
       - [`marginless`](#marginless)
@@ -570,7 +570,7 @@ The `decimal` value will be determined based on the following priority:
   - If the value represents a `timer`, the timer default is used.
   - If the value represents a `counter`, the counter default is used.
   - If the value represents a `duration`, or if the unit is one of j, d, h, min,
-    s, or ms, the duration default is used.
+    s, ms, or μs, the duration default is used.
   - If the unit is `%` (the default unit), the `percentage` default is used.
   - Otherwise, the other default is applied (for units like °C, kWh, etc.).
 
@@ -2016,12 +2016,12 @@ _Default value_:
 
 [🔼 Back to top]
 
-#### `label`
+#### `status_label`
 
 [![Card OK][Card-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
 
-> **`label`** [Map] _(optional)_
+> **`status_label`** [Map] _(optional)_
 
 Displays a GitHub-label-style status pill — a short piece of text describing the
 current status at a glance (e.g. `hot`, `critical`, `ok`). Unlike
@@ -2052,7 +2052,7 @@ _Example_:
 type: custom:entity-progress-card
 entity: sensor.temperature
 theme: temperature
-label:
+status_label:
   jinja: >-
     {% set t = states('sensor.temperature') | float %}
     {% if t > 30 %}hot{% elif t < 10 %}cold{% else %}ok{% endif %}
@@ -2061,9 +2061,9 @@ label:
 
 > [!NOTE]
 >
-> `label` and [`trend_indicator`](#trend_indicator) share the same corner —
-> setting `label` always wins, `trend_indicator` is forced off when both are
-> configured.
+> `status_label` and [`trend_indicator`](#trend_indicator) share the same corner
+> — setting `status_label` always wins, `trend_indicator` is forced off when
+> both are configured.
 >
 > With `bar_position: compact_below` or `background`, the pill can end up
 > sharing space with `secondary_info` or sitting over the bar itself — adjust
@@ -2076,8 +2076,8 @@ label:
 > (`highlight: label`) — only shown while the alert is active, using
 > `alert_when`'s own `color`/`label` instead of a Jinja condition you'd
 > otherwise have to write yourself. `alert_when` doesn't have its own `position`
-> — it follows whatever `label.position` (or the default `right`) is already set
-> to.
+> — it follows whatever `status_label.position` (or the default `right`) is
+> already set to.
 
 [🔼 Back to top]
 
@@ -2197,6 +2197,19 @@ outside Home Assistant's own grid sizing, e.g. as a `custom:button-card` field.
 >
 > If the main objective is to reduce the size, test the `marginless` parameter
 > before adjusting the `height`.
+
+> [!NOTE]
+>
+> **Left unset**, the card's height is a **floor, not a fixed size** - it never
+> shrinks below what a Sections/Masonry layout computes for it, but it can still
+> grow taller if the content genuinely needs more room (e.g. a larger OS/browser
+> text-size accessibility setting). This is on purpose: it stops text from
+> getting silently clipped.
+>
+> **Set explicitly**, `height` wins outright as the card's **exact** height,
+> everywhere - a Sections view, Masonry, embedded in any other card. Nothing
+> protects against it being too small for the actual content once you've set
+> it - that trade-off is yours to make on purpose.
 
 _Example_:
 
@@ -2779,11 +2792,12 @@ _Map definition_:
   - `border` (default): The card border takes the alert color.
   - `background`: A tint of the card background instead — the border stays
     neutral.
-  - `label`: Shows the [`label`](#label) status pill instead of touching the
-    border/background at all — only while the alert is active. Uses `label`
-    below for the pill's text, and `color` for its color (same
-    GitHub-label-style rendering as the standalone `label` option). Takes over
-    the pill from a plain `label` Jinja template if both happen to be set.
+  - `label`: Shows the [`status_label`](#status_label) status pill instead of
+    touching the border/background at all — only while the alert is active. Uses
+    `label` below for the pill's text, and `color` for its color (same
+    GitHub-label-style rendering as the standalone `status_label` option). Takes
+    over the pill from a plain `status_label` Jinja template if both happen to
+    be set.
 - `label` (string, optional): Fixed text shown in the pill when
   `highlight: label` and the alert is active (e.g. `"HIGH"`). Plain text, not
   Jinja — chosen once alongside the threshold itself. No effect with any other
@@ -2846,8 +2860,8 @@ alert_when:
 
 > [!NOTE]
 >
-> Like [`label`](#label) itself, `highlight: label` has no visible effect on a
-> Badge — accepted, just as inert as `label` would be there.
+> Like [`status_label`](#status_label) itself, `highlight: label` has no visible
+> effect on a Badge — accepted, just as inert as `status_label` would be there.
 
 _Entity example_:
 

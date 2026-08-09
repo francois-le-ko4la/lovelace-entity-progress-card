@@ -24,9 +24,11 @@ const parseLength = (raw: unknown): ParsedLength => {
 
 // Back to a config string. Only the true default (0px) collapses to undefined
 // (i.e. unset); any other unit is kept even at 0 so a chosen unit sticks while
-// the value is still 0 (e.g. "0em").
+// the value is still 0 (e.g. "0em"). A cleared number field reports
+// `undefined` (not 0) - !Number.isFinite catches that (and any other
+// non-numeric value) before it can be stringified into "undefinedpx".
 const serializeLength = (value: number, unit: string): string | undefined =>
-  value === 0 && unit === 'px' ? undefined : `${value}${unit}`;
+  !Number.isFinite(value) || (value === 0 && unit === 'px') ? undefined : `${value}${unit}`;
 
 // Slider params for a raw value: the range widens past LENGTH_MAX when the
 // stored value already exceeds it (a YAML-set value stays editable, never

@@ -54,11 +54,12 @@ See [icon_animation].
 
 #### 🏷️ Status label pill
 
-`label` draws a small rounded status pill in the card's corner
+`status_label` draws a small rounded status pill in the card's corner
 (`{ jinja, position }`) — colored automatically from whatever color the icon
 currently shows (theme, `custom_theme`, or a plain `color` override).
 `alert_when.highlight: 'label'` reuses the same pill to flash a fixed alert
-label instead of tinting the border or background. See [label] and [alert_when].
+label instead of tinting the border or background. See [status_label] and
+[alert_when].
 
 #### 🌈 A hue-picker style bar: `bar_color_mode: rainbow_full`
 
@@ -91,6 +92,19 @@ The built-in theme list is reordered for readability: `battery_adaptive` (the
 one most people reach for) comes first, and each `Critical when X`/
 `Optimal when X` pair now sits together instead of being split into two separate
 groups.
+
+#### 📏 A hardened `height`
+
+Card sizing got a real pass end to end: the same `min-height`-as-a-floor
+protection (issue #131 - never clip text when the OS/browser text-size
+accessibility setting is scaled up) now applies consistently everywhere a card
+can live — Sections, Masonry, or embedded in another card — instead of each
+context computing its own, sometimes-inconsistent height. On top of that, an
+explicit `height:` now always wins outright as a real, exact size — everywhere,
+no matter which container the card lives in — instead of just another floor a
+tall content could still silently outgrow. Full freedom for whoever sets it on
+purpose, full protection for whoever doesn't. See
+[`height`](docs/configuration.md#height).
 
 ### 🐛 Notable fixes
 
@@ -132,8 +146,24 @@ groups.
   purpose as a color safety margin) could stop the bar from ever filling all the
   way, even at a real 100% reading.  
   ➡️ [Bug]: JINJA Should accept more STYLE tags #129 (@emartoni)
-- Better height handling with the grid.  
+- Better height handling generally, `type: grid` and `type: entities` included
+  (both had a hardcoded ~44.8px row-height guess — wrong the moment
+  `secondary_info` isn't shown — now gone, replaced by real content-driven
+  sizing; an explicit `height:` now wins outright there too, `square: false` for
+  grid) — see the [📏 A hardened `height`](#-a-hardened-height) highlight
+  above.  
   ➡️ Discord @RKT62
+- The badge's `name` text could get its descenders (the tails on g, q, j, y)
+  visually clipped — its line-height was pinned to exactly the font-size instead
+  of leaving the same accessibility-safe margin the rest of the card's text
+  already follows (issue #131). Unrelated to font _size_ itself — purely a
+  line-height/clipping bug.
+- The editor's **Migrate config** button never appeared for a config using the
+  legacy bare-entity-string `watermark.low`/`watermark.high` (with a
+  `low_attribute`/`high_attribute` sibling key) — it was already auto-migrated
+  and console-warned like every other deprecated option, but the button's own
+  detection check was missing those two specifically, so there was no one-click
+  way to actually rewrite the YAML. See [Deprecated Options].
 
 ### 🧪 Try it: demo dashboard
 
@@ -150,6 +180,116 @@ Thanks to everyone who reported, tested and contributed 🙏
 
 ---
 
+## What's new (1.6.1-rc5)
+
+### 🔧 Improvements
+
+- **Hardened `height` handling.** Left unset, the card's height has always been
+  a _floor_ rather than a fixed size on purpose (issue #131 - it lets the card
+  grow instead of clipping text when the OS/browser text-size accessibility
+  setting is scaled up). The gap: an explicit `height:` used to become that same
+  floor too, so it could be silently outgrown by the card's own content (a
+  bigger font-scale setting, a taller theme, `secondary_info` wrapping...) with
+  no way for a deliberate value to actually pin an exact size — a "sometimes my
+  height isn't respected" report that traced back to exactly this.
+  - **Left unset** — unchanged: still a floor, can still grow past it,
+    everywhere (Sections, Masonry, embedded in any other card).
+  - **Set explicitly** — now wins outright as a real, exact height, everywhere,
+    no exceptions. The trade-off (clipping if the value is too small for the
+    actual content) is the user's to make once they've set it on purpose, not
+    something the card second-guesses for them.
+  - First attempt at this only applied inside a handful of containers the card
+    could auto-detect via a class a [card_mod] convention injects (`entities`,
+    `picture-elements` - not native HA, needs card_mod installed) - `type: grid`
+    looked like a good next candidate (confirmed live: `hui-grid-card` does mark
+    itself the same way) until a live DOM dump showed that marker never actually
+    reaches this card's own `ha-card`. Rather than chase down containers one at
+    a time, `height:` set explicitly is now unconditional - it doesn't need to
+    detect anything about its surroundings anymore, so it works the same
+    everywhere, `type: grid`/`custom:combined-card` (which never got
+    auto-detected at all) included. The one exception: `type: grid` with
+    `square: true` (the default) forces a 1:1 cell regardless of any height,
+    explicit or not - see the [`height`](docs/configuration.md#height) note and
+    the
+    ["Inside another Lovelace card"](docs/theme.md#inside-another-lovelace-card)
+    table.
+  - `entities`'s hardcoded ~44.8px row-height guess for the _unconfigured_
+    default (based on a Tile row with `secondary_info` shown - not a real HA
+    constant, and wrong the moment `secondary_info` is hidden) is gone too,
+    replaced by ordinary content-driven sizing there by default.  
+    ➡️ Discord @RKT62
+  - That entities default surfaced two more edge cases live-tested inside a real
+    `entities` row: `bar_size: xlarge` and `bar_position: background` were both
+    getting squeezed down to the tiny default bar thickness instead of their own
+    dedicated size, since they shared the same override slot the new default was
+    feeding - both excluded now.
+  - `bar_orientation: up` combined with `bar_position: overlay` lost the
+    vertical room it needs to actually show a vertical bar. Root cause: the
+    overlay bar is `position: absolute`, so it never contributed to the card's
+    own auto-height in the first place - harmless under the old unconditional
+    `height: 100%` fallback, exposed once unset height became genuinely
+    content-driven (`auto`) above. That specific combination now gets its own
+    `100%` fallback instead of `auto`, everything else unaffected.
+- **`label` renamed to `status_label`.** It shared its name with
+  `alert_when.label` (a different field - a fixed string, not a Jinja template)
+  despite both driving the same status pill, an ambiguity made more visible now
+  that the two live in the same editor panel (see below). Safe to rename now:
+  `status_label` only ever shipped in a 1.6.1 release candidate,
+  `alert_when.label` has been stable since 1.6.0 and keeps its name. See
+  [`status_label`](docs/configuration.md#status_label).
+- The visual editor's "Look & Feel" panel had regrown to ~28 fields, the same
+  size that justified splitting `watermark`/`alert_when` into their own "Markers
+  & Alerts" panel earlier. `status_label` moves into that same panel too - it's
+  the same "react to a condition" status-pill marker
+  `alert_when.highlight: label` reuses, not core entity/display content.
+
+### 🐛 Fixes
+
+- The visual editor's `height`/`min_width` slider produced the literal string
+  `"undefinedpx"` in the saved config when the numeric field was cleared,
+  instead of unsetting the option.
+- `bar_position: compact_below` had a stray, undocumented `margin-top: 2px` on
+  its progress bar row, left over from early development with no real
+  justification - removed.
+- The badge's `name` text could get its descenders (the tails on g, q, j, y)
+  visually clipped. Its wrapper already reserved the right amount of room
+  (`max(10px, 1.2em)`, the same accessibility-safe floor pattern issue #131 uses
+  everywhere else), but the text itself hardcoded a flat `10px` line-height - a
+  1.0 ratio, tighter than a 10px font's own ascent+descent - overriding that
+  reserved space instead of matching it.
+- The editor's **Migrate config** button (`EditorBase.#hasDeprecatedOptions`)
+  never showed up for a config using the legacy bare-entity-string
+  `watermark.low`/`watermark.high` form -
+  `BaseConfigHelper.#logDeprecatedOption` and
+  `CardConfigHelper._migrateLegacyOptions` both already handled it (console
+  warning + auto-migration for the session), but the button's own detection list
+  checked `max_value`/`disable_unit`/`additions`/
+  `navigate_to`/`show_more_info`/theme aliases only, watermark never made the
+  list. Found while building a dedicated regression-test view for every
+  documented deprecated option (see below) - present since the button itself
+  shipped (`56809fc`), so a real gap in every 1.6.0/1.6.1 release so far, not
+  something this RC introduced.
+
+### 🧪 Try it: demo dashboard
+
+The new "Real-world example — `bar_position: compact_below` (#123,
+@davidcoulson)" card (Aggregation & card_mod view) — a `custom:combined-card`
+recipe combining a Mushroom entity row with two `compact_below` bars — switched
+from a `card_mod`/`.progress-bar-inner` selector hack (which never matched
+anything; the real fill class is `.inner`) to the native
+[`bar_color`](docs/configuration.md#bar_color) Jinja option, and from a fixed,
+unitless `height: '20'` to `height: auto`, matching this release's own `height`
+hardening.
+
+New "EP Demo - Deprecated options" view in
+[`docs/demo-dashboard.yaml`][demo-dashboard.yaml] (and its
+[`-dev`][demo-dashboard-dev.yaml] mirror) - one card per option in the
+[Deprecated Options] table, written in its old syntax on purpose: console
+warning, auto-migration, and the "Migrate config" button, each checked live.
+Found the `watermark.low`/`watermark.high` button gap above while building it.
+
+---
+
 ## What's new (1.6.1-rc4)
 
 ### ✨ New
@@ -163,12 +303,12 @@ Thanks to everyone who reported, tested and contributed 🙏
   row to reuse, it silently falls back to `default`. See
   [`bar_position`](docs/configuration.md#bar_position).  
   ➡️ [Enhancement]: Display value above bar #123 (@davidcoulson)
-- **New `label`** — a small rounded status pill in the card's corner
+- **New `status_label`** — a small rounded status pill in the card's corner
   (`{ jinja, position }`), colored automatically from whatever color the icon
   currently shows (theme, `custom_theme`, or a plain `color` override).
   `alert_when.highlight: 'label'` reuses the same pill to flash a fixed alert
   label instead of tinting the border or background. See
-  [`label`](docs/configuration.md#label) and
+  [`status_label`](docs/configuration.md#status_label) and
   [`alert_when`](docs/configuration.md#alert_when).
 - **New `bar_color_mode: rainbow_full`** — the track always shows the theme's
   complete gradient end to end, not just the filled portion, like a hue-picker
@@ -200,7 +340,7 @@ got a `compact_below` card in both the horizontal and vertical "every
 bar_position" galleries (the vertical one shows the fallback to `default`), plus
 a new "Série 2 — compact_below, hide progressif (#123)" section walking through
 `hide` combinations on top of it. The "bar_color_mode, custom_theme, alert_when,
-trend" view gets new `label` demo cards (custom-theme-based,
+trend" view gets new `status_label` demo cards (custom-theme-based,
 built-in-theme-based, `position: left`, and `alert_when.highlight: label`), a
 "Full rainbow" section showing `rainbow_full` at every `bar_size`, and a
 showcase section covering different temperatures/layouts/`center_zero`
@@ -4580,8 +4720,8 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#icon_animation
 [alert_when]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#alert_when
-[label]:
-  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#label
+[status_label]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#status_label
 [min_value]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#min_value
 [center_zero]:
@@ -4600,3 +4740,4 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#text_shadow
 [interpolate]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#interpolate
+[card_mod]: https://github.com/thomasloven/lovelace-card-mod

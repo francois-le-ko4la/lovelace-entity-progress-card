@@ -1079,45 +1079,52 @@ needs its own extra row on top - see [issue #133]).
 
 ### In a Sections view
 
-`getGridOptions()` reserves the right number of rows; `height: 100%` fills that
-cell exactly. This is the default, "just works" case - nothing to configure.
+`getGridOptions()` reserves the right number of rows; the card's own
+`min-height` (see [`height`](configuration.md#height)) reads HA's own
+`--row-size` first, so it lands on the exact same pixel height Sections reserved
+for it. This is the default, "just works" case - nothing to configure.
 
 ### In a Masonry view
 
 Masonry doesn't call `getGridOptions()` at all, and its cards have no explicit
-parent height. Per the CSS spec, a percentage `height` against a parent with no
-defined height is ignored and behaves like `auto` - so the card falls back to
-its `min-height` floor (the same row-based calculation above, expressed in real
-pixels via `--ha-section-grid-row-height`/ `--ha-section-grid-row-gap`). If the
-content genuinely needs more room than that floor (wrapped text, etc.), the card
-grows past it - `min-height` is a floor, not a fixed size.
+parent height. The card falls back to its `min-height` floor (the same row-based
+calculation above, expressed in real pixels via
+`--ha-section-grid-row-height`/`--ha-section-grid-row-gap`). If the content
+genuinely needs more room than that floor (wrapped text, a larger accessibility
+text-size setting), the card grows past it - `min-height` is a floor, not a
+fixed size, precisely so that can happen instead of clipping.
 
 ### Inside another Lovelace card
 
-Two separate questions per container: does **sizing** work correctly (the
-mechanics above), and does it **auto-detect** the card and drop its frame/
-background for you (see [`frameless`](configuration.md#frameless)) - or do you
-have to set `frameless: true` yourself?
+An explicit [`height`](configuration.md#height) always wins outright as the
+card's exact size, in every container below - it doesn't depend on the card
+detecting anything about its surroundings. What actually varies per container is
+what happens **without** an explicit `height` (does the `min-height` floor land
+on something sensible?), and whether the container gets **auto-detected** to
+drop the card's own frame/background for you (see
+[`frameless`](configuration.md#frameless)) - or you have to set
+`frameless: true` yourself.
 
-| **Card**                            | **Sizing**                  | **Frameless auto-detected**                         | **Notes**                                                                                                                                                                                                                                                                                                                                                                          |
-| :---------------------------------- | :-------------------------- | :-------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `entities`                          | ✅ Yes                      | ✅ Yes                                              | Gets its own compact row height (~45px, matching a native entities row) on top of the automatic frameless styling - both keyed off a `type-entities` class the entities card adds to its rows, no config needed either way.                                                                                                                                                        |
-| `vertical-stack-in-card`            | ✅ Yes                      | ✅ Yes                                              | Frame/background auto-dropped the same way as `entities` (a `type-custom-vertical-stack-in-card` class), but sizing is regular Masonry-style (min-height floor), not the compact entities-row height.                                                                                                                                                                              |
-| `vertical-stack`                    | ✅ Yes                      | ❌ No - set `frameless: true` yourself if desired   | Regular Masonry-style sizing, one card per row.                                                                                                                                                                                                                                                                                                                                    |
-| `horizontal-stack`                  | ⚠️ Reliable in Masonry only | ❌ No - set `frameless: true` yourself if desired   | In a Sections view, a `horizontal-stack`'s children don't get `getGridOptions()` consulted the way a direct Sections card would, so sizing falls back to the CSS `min-height` floor - can look shorter than a sibling tile placed directly in the section.                                                                                                                         |
-| `grid`                              | ⚠️ Caveats                  | ❌ No - set `frameless: true` yourself if desired   | `square: true` (the default) forces every cell to a 1:1 aspect ratio via CSS, ignoring `getGridOptions()`/`min-height` entirely - height follows the cell's own width, which can be too short for the card's content. `square: false` gives row-based sizing instead (still stretches every card in a row to match the tallest one, not independent per-card height like Masonry). |
-| `custom:button-card` (custom field) | ⚠️ Caveats                  | ❌ No - set `frameless: true` yourself if desired   | A third-party card, not a native Lovelace container - no auto-detection exists for it. Sizing depends entirely on how the field itself is laid out; see the Embedded-in-another-card section below for the explicit recipe (issue #129).                                                                                                                                           |
-| `custom:auto-entities`              | ✅ Yes                      | ➖ Depends on the container it generates cards into | Just generates a list of cards - sizing/frameless behavior is whatever the _outer_ container (Sections, Masonry, `entities`, ...) gives each generated card, nothing specific to `auto-entities` itself.                                                                                                                                                                           |
-| `custom:layout-card` (thomasloven)  | ✅ Yes                      | ❌ No - set `frameless: true` yourself if desired   | No `getGridOptions()`/`getCardSize()`-based height forcing in any layout mode (`masonry`, `horizontal`, `vertical`, `grid`) - cards render at their natural/intrinsic height, same as native Masonry. No `type-X` auto-styling class either.                                                                                                                                       |
+| **Card**                                                                                              | **Default sizing (no `height` set)**                | **Frameless auto-detected**                         | **Notes**                                                                                                                                                                                                                                                                                                                                                                                                            |
+| :---------------------------------------------------------------------------------------------------- | :-------------------------------------------------- | :-------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `entities`                                                                                            | ✅ Content-sized                                    | ✅ Yes                                              | Both keyed off a `type-entities` class the entities card adds to its rows - no config needed either way.                                                                                                                                                                                                                                                                                                             |
+| `picture-elements`                                                                                    | ➖ Width only                                       | ❌ No - set `frameless: true` yourself if desired   | Auto-detected only for `min_width` (defaults to 200px in this context, off a `type-picture-elements` class) - height isn't otherwise special-cased.                                                                                                                                                                                                                                                                  |
+| `vertical-stack-in-card`                                                                              | ➖ Masonry-style floor                              | ✅ Yes                                              | Frame/background auto-dropped the same way as `entities` (a `type-custom-vertical-stack-in-card` class).                                                                                                                                                                                                                                                                                                             |
+| `vertical-stack`                                                                                      | ➖ Masonry-style floor                              | ❌ No - set `frameless: true` yourself if desired   | One card per row.                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `horizontal-stack`                                                                                    | ⚠️ Reliable in Masonry only                         | ❌ No - set `frameless: true` yourself if desired   | In a Sections view, a `horizontal-stack`'s children don't get `getGridOptions()` consulted the way a direct Sections card would, so sizing falls back to the CSS `min-height` floor - can look shorter than a sibling tile placed directly in the section.                                                                                                                                                           |
+| `grid`                                                                                                | ⚠️ Depends on `square`                              | ❌ No - set `frameless: true` yourself if desired   | `square: true` (the default) forces every cell to a 1:1 aspect ratio via CSS, following the cell's own width regardless of the card's content or an explicit `height` - the one exception to "height always wins" above, since the grid never lets the card be any other size in this mode. `square: false` drops that forcing (Masonry-style floor without `height` set, exact size with it, like everywhere else). |
+| `custom:combined-card` ([catdad-experiments](https://github.com/catdad-experiments/ha-utility-cards)) | ➖ Masonry-style floor                              | ❌ No - set `frameless: true` yourself if desired   | Renders its children through an internal native `vertical-stack`/`horizontal-stack` card - no `type-*` class ever reaches it (that class-injection is a [card_mod] feature scoped to a handful of specific container types, stack cards aren't among them), so no frame/background auto-drop either.                                                                                                                 |
+| `custom:button-card` (custom field)                                                                   | ✅ Content-sized                                    | ❌ No - set `frameless: true` yourself if desired   | Auto-detected for sizing (a `type-custom-button-card` class). Frame/background aren't auto-dropped - use `frameless: true` if you want that too; see the Embedded-in-another-card section below for the full recipe (issue #129).                                                                                                                                                                                    |
+| `custom:auto-entities`                                                                                | ➖ Depends on the container it generates cards into | ➖ Depends on the container it generates cards into | Just generates a list of cards - sizing/frameless behavior is whatever the _outer_ container (Sections, Masonry, `entities`, ...) gives each generated card, nothing specific to `auto-entities` itself.                                                                                                                                                                                                             |
+| `custom:layout-card` (thomasloven)                                                                    | ➖ Masonry-style floor                              | ❌ No - set `frameless: true` yourself if desired   | No `getGridOptions()`/`getCardSize()`-based height forcing in any layout mode (`masonry`, `horizontal`, `vertical`, `grid`) - cards render at their natural/intrinsic height, same as native Masonry. No `type-X` auto-styling class either.                                                                                                                                                                         |
 
 ### Embedded in another card (`custom:button-card`, a custom field, ...)
 
-Same mechanics as Masonry - if the wrapping element doesn't give the card an
-explicit height, `height: 100%` resolves to `auto` and `min-height` becomes the
-effective size. If the wrapper _does_ stretch its children to some ambient
-height (common with `custom:button-card` fields), the card fills that instead,
-which can look larger than expected if nothing else on the card needs it (see
-[issue #129]).
+Same mechanics as Masonry - the card's `min-height` floor is the effective size
+unless the wrapper stretches its children to some ambient height (common with
+`custom:button-card` fields), in which case the card fills that instead, which
+can look larger than expected if nothing else on the card needs it (see
+[issue \#129](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues/129)).
 
 For a card that shrinks fully to its content regardless of what the wrapper
 does, combine:
@@ -1138,8 +1145,7 @@ frameless: true
 
 [issue #133]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues/133
-[issue #129]:
-  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues/129
+[card_mod]: https://github.com/thomasloven/lovelace-card-mod
 
 [🔼 Back to top]
 

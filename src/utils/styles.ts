@@ -44,7 +44,6 @@ const CARD_CSS = css`
   --name-height: 20px;
   --detail-height: 16px;
   --entities-height: 22.4px;
-  --entities-card-min-height: 44.8px;
   --vertical-name-large-height: 18px;
   --progress-container-height: 16px;
 
@@ -138,9 +137,41 @@ ${CARD.htmlStructure.card.element} {
   --shape-default-size: var(--epb-shape-size, 36px);
   --icon-default-size: var(--epb-icon-size, 24px);
   --progress-transition: var(--epb-progress-transition, 0.5s cubic-bezier(0.4, 0, 0.2, 1));
-  --current-card-min-width: var(${CARD.style.dynamic.card.minWidth.var}, 100%);
-  --current-card-min-height: 0;
-  --current-card-height: var(${CARD.style.dynamic.card.height.var}, 100%);
+  /* --current-embed-*: fed by the .type-entities/.type-picture-elements
+     input rules below (single declaration point for the terminal vars
+     stays here - those rules only ever set the -embed- input, never
+     -card-height/-card-min-width directly anymore). */
+  --current-card-min-width: var(${CARD.style.dynamic.card.minWidth.var}, var(--current-embed-min-width, 100%));
+  /* --min-grid-rows: the row count itself, injected as a plain number by JS
+     (HACore._addBaseParameter, from ViewCore.minGridRows, already
+     orientation-aware) - the actual row-height math lives here instead, in
+     CSS, the same HA Sections grid formula hui-grid-section.ts's own
+     .card.fit-rows rule uses: N rows spanning N*(rowHeight+gap) - gap.
+     --row-size (read first) is HA's own variable - set as an *inline*
+     style on the .card wrapper whenever grid_options.rows resolves to an
+     actual number, so it always wins and keeps our own floor in lock-step
+     with whatever HA actually decided; only unset when rows resolves to
+     "auto", where --min-grid-rows is what's left to fall back on. Reads
+     HA's own row-height/gap vars (custom properties cross shadow
+     boundaries) instead of a static copy, so a theme override of
+     --ha-section-grid-row-height is followed instead of silently
+     drifting; 56px/8px are HA's own defaults, kept as the fallback for
+     Masonry/other views where those vars aren't set at all.
+     --min-grid-rows-fallback: only used on the rare frame where JS hasn't
+     run yet (--min-grid-rows itself unset) - .vertical sets it to 2 below,
+     everything else (incl. .horizontal) leaves it at the default 1. Single
+     declaration point for the whole formula: .horizontal/.vertical only
+     ever feed this one small input now, never redeclare the formula. */
+  --current-card-height: var(
+    ${CARD.style.dynamic.card.height.var},
+    var(
+      --current-embed-height,
+      calc(
+        (var(--row-size, var(--min-grid-rows, var(--min-grid-rows-fallback, 1))) * (var(--ha-section-grid-row-height, 56px) + var(--ha-section-grid-row-gap, 8px))) -
+          var(--ha-section-grid-row-gap, 8px)
+      )
+    )
+  );
   --current-card-padding: 0 var(--spacing);
   --current-card-margin: 0 auto;
   --current-card-border-radius: var(--ha-standard-border-radius);
@@ -153,8 +184,44 @@ ${CARD.htmlStructure.card.element} {
   padding: var(--current-card-padding);
   min-width: var(--epb-card-width, var(--current-card-min-width));
   width: var(--epb-card-width, auto);
-  min-height: var(--current-card-min-height);
-  height: var(--epb-card-height, var(--current-card-height));
+  /* min-height, not height (issue #131): a fixed height caps the card at
+     exactly that size, and with overflow: hidden below, content that needs
+     more room - the OS/browser "larger text" accessibility setting scales
+     font-size without scaling anything in px - gets clipped mid-glyph
+     instead of the card growing to fit it. min-height keeps the same
+     number in the normal case (identical chain, so nothing looks
+     different) but never traps content that legitimately needs more space.
+     This is the *unconfigured* default's protection - see height: right
+     below for what happens once the user sets their own value on purpose. */
+  min-height: var(--epb-card-height, var(--current-card-height));
+  /* height: an explicit height: config is the user taking full, deliberate
+     control of the card's size - once set, it wins outright everywhere
+     (Sections, Masonry, embedded in any other card, detectable or not),
+     not just a floor the content/embed-context chain above can still grow
+     past. The user owns that choice entirely: if their number is too small
+     for the actual content (a bigger OS/browser font-size setting
+     included), it clips instead of growing, and that is on them - the
+     opposite of min-height above, which protects the *unconfigured*
+     default automatically without asking anything of the user.
+     --card-height only ever gets set (inline, by JS) when config.height is
+     truthy (see HACore._addBaseParameter) - the fallback here is a true
+     no-op otherwise: height's own initial value is already auto, so
+     nothing changes when height isn't configured, min-height above keeps
+     driving everything exactly as it already did.
+     Deliberately NOT scoped to any particular container: an earlier version
+     of this only applied inside containers this card could detect via a
+     card_mod class-injection convention (type-entities and friends) - that
+     turned out to depend on which container card_mod happens to have a
+     patch for (confirmed live: entities/picture-elements/
+     vertical-stack-in-card/custom:button-card get it, type: grid and
+     custom:combined-card don't, for unrelated reasons each), an
+     unpredictable, undocumented dependency to build a feature on. Reading
+     the same config-driven value unconditionally here sidesteps all of
+     that - works the same everywhere, with or without card_mod.
+     --current-height-fallback lets a specific context override what
+     "unconfigured" resolves to (see .overlay below) without touching this
+     rule again - still a single declaration point for height. */
+  height: var(--card-height, var(--current-height-fallback, auto));
   border-radius: var(--epb-card-border-radius, var(--current-card-border-radius));
   border-width: var(--epb-card-border-width, var(--ha-card-border-width, 1px));
   border-color: var(--epb-card-border-color, var(--ha-card-border-color, var(--divider-color, #e0e0e0)));
@@ -167,17 +234,21 @@ ${CARD.htmlStructure.card.element} {
 }
 
 .horizontal {
-  --current-card-min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.horizontal.minHeight});
   --current-card-padding: 0 var(--spacing);
 }
 
 .vertical {
-  --current-card-min-height: var(${CARD.style.dynamic.card.height.var}, ${CARD.layout.orientations.vertical.minHeight});
+  --min-grid-rows-fallback: 2;
   --current-card-padding: var(--spacing);
 }
 
+/* --current-card-height's formula lives solely on the base
+   ${CARD.htmlStructure.card.element} rule above (a type selector,
+   specificity 0-0-1) - .marginless is a class selector (0-1-0), so it
+   always wins on specificity alone, regardless of source order or which
+   other class rules are declared where. */
 .marginless {
-  --current-card-min-height: unset;
+  --current-card-height: unset;
   --current-card-padding: 0;
   --current-card-margin: 0;
 }
@@ -185,14 +256,17 @@ ${CARD.htmlStructure.card.element} {
 /* === BADGE === */
 .progress-badge {
   --current-card-height: var(--ha-badge-size, 36px);
-  --current-card-min-height: var(--ha-badge-size, 36px);
   --current-card-min-width: var(--card-min-width, var(--ha-badge-size, 130px));
   --current-card-border-radius: var(--ha-badge-border-radius,calc(var(--ha-badge-size,36px)/ 2));
 }
 
 /* === TYPE: PICTURE-ELEMENTS === */
+/* Embedded-context input only (see --current-embed-min-width in the base
+   ha-card rule above, the single place the terminal var is set) - HA marks
+   the ancestor card with this same class, .type-entities below relies on
+   the exact same convention. */
 .type-picture-elements {
-  --current-card-min-width: var(${CARD.style.dynamic.card.minWidth.var}, 200px);
+  --current-embed-min-width: 200px;
 }
 
 /* === FRAMELESS & ENTITIES STYLES === */
@@ -204,15 +278,40 @@ ${CARD.htmlStructure.card.element} {
   --ha-card-box-shadow: none;
 }
 
+/* Embedded-context input only (see --current-embed-height in the base
+   ha-card rule above, the only place the terminal height var is set) -
+   this class marks "embedded inside a hui-entities-card row", same
+   convention as .type-picture-elements / .type-custom-vertical-stack-in-card
+   above/below. --current-embed-height: auto, not a fixed px guess - a
+   native HA entity row's own height isn't a constant either (it varies
+   with whether secondary_info is shown, among other things), so there's no
+   single "right" number to hardcode here. Content-driven sizing is the
+   correct default; an explicit height: config (see the height: override
+   rule below) is how a user pins an exact value if they want one. */
 .type-entities {
   --current-card-padding: 0;
   --current-card-margin: 0;
   --ha-ripple-hover-opacity: 0;
   --ha-ripple-pressed-opacity: 0;
-  --current-card-height: var(--entities-card-min-height); /* 44.8 px*/
-  --current-card-min-height: var(--entities-card-min-height);
-  
+  --current-embed-height: auto;
+
   transition: none !important;
+}
+
+/* Same value as --text-height (see .type-entities's secondary-info rule) -
+   without this, .bar-container stays at the generic 16px
+   (--progress-container-height) instead of matching the row's own text
+   line-height, so it doesn't end up vertically centered against a native
+   entities row's actual content. :not(.xlarge) - xlarge already forces its
+   own, taller --progress-container-height (--progress-size-xl, 42px) via
+   the normal chain; --current-specific-progress-container-height sits ahead
+   of that chain and would otherwise squeeze it down to this row's 22.4px
+   regardless of bar_size. :not(.background) - same reasoning: bar_position:
+   background forces --progress-container-height: 100% (see ha-card.background)
+   through that same chain, to cover the whole card as a background fill -
+   squeezed to 22.4px here, it stopped covering the card's actual bottom. */
+.type-entities:not(.xlarge):not(.background) {
+  --current-specific-progress-container-height: var(--entities-height);
 }
 
 /* =============================================================================
@@ -800,7 +899,6 @@ ha-card.horizontal.compact_below .${CARD.htmlStructure.elements.secondaryInfoWra
   --group-max-width: unset;
 }
 ha-card.horizontal.compact_below .${CARD.htmlStructure.elements.progressBar.container.class} {
-  margin-top: 2px;
   min-width: unset;
 }
 
@@ -900,7 +998,7 @@ ha-card.horizontal.compact_below .${CARD.htmlStructure.elements.progressBar.cont
   --text-font-size: var(--epb-name-font-size, 10px);
   --text-font-weight: var(--ha-font-weight-medium);
   --text-height: 10px;
-  --text-line-height: 10px;
+  --text-line-height: max(10px, 1.2em);
   --text-margin-right: 5px;
   --text-letter-spacing: var(--name-letter-spacing);
 }
@@ -1078,6 +1176,16 @@ ha-card.info-multiline {
   position: absolute;
   width: 100%;
   height: 100%;
+}
+
+/* .bar-container above is absolutely positioned, so it never contributes to
+   ha-card's own auto-height (height: var(--card-height, auto) on the base
+   rule) - fine for ltr/rtl, where the bar just lies flat over content that
+   already sizes the card. .vertical.up-orientation needs actual vertical
+   room for the bar to be visible at all, so falls back to 100% (matching
+   what an embedding container reserves) instead of shrinking to content. */
+.vertical.up-orientation.overlay {
+  --current-height-fallback: 100%;
 }
 
 .${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.xsmall.label} .${CARD.htmlStructure.elements.progressBar.container.class},

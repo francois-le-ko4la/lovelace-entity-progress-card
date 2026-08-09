@@ -82,7 +82,7 @@ const htmlStructure = {
       container: { element: 'div', class: 'trend-indicator' },
       icon: { element: 'ha-icon', class: 'trend-icon' },
     },
-    // GitHub-label-style status pill (label option) - same corner as
+    // GitHub-label-style status pill (status_label option) - same corner as
     // trendIndicator, mutually exclusive with it (see schema.ts's
     // applyLabelRule). Not aria-hidden: unlike trendIndicator's bare arrow
     // icon, this is real status text (e.g. "hot") worth announcing.
@@ -306,24 +306,11 @@ const layout = {
       label: 'horizontal',
       grid: { grid_rows: 1, grid_min_rows: 1, grid_columns: 2, grid_min_columns: 2 },
       mdi: HA_CONTEXT.icons.focusHorizontal,
-      // 1 Sections grid row. Reads HA's own row-height var (custom
-      // properties cross shadow boundaries) instead of a static copy, so a
-      // theme override of --ha-section-grid-row-height is followed instead
-      // of silently drifting. 56px is HA's own default, kept as the
-      // fallback for masonry/other views where the var isn't set.
-      minHeight: 'var(--ha-section-grid-row-height, 56px)',
     },
     vertical: {
       label: 'vertical',
       grid: { grid_rows: 2, grid_min_rows: 2, grid_columns: 1, grid_min_columns: 1 },
       mdi: HA_CONTEXT.icons.focusVertical,
-      // 2 Sections grid rows: HA's own formula is
-      // (row_size * (row_height + row_gap)) - row_gap - see
-      // hui-grid-section.ts's `.card.fit-rows` rule. 120px (HA's defaults:
-      // 56px row height + 8px row gap) is the fallback for masonry/other
-      // views.
-      minHeight:
-        'calc((2 * (var(--ha-section-grid-row-height, 56px) + var(--ha-section-grid-row-gap, 8px))) - var(--ha-section-grid-row-gap, 8px))',
     },
   },
   // HA's own getGridOptions() uses a 12-column grid; getLayoutOptions()
