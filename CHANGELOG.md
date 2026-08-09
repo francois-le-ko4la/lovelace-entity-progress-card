@@ -135,6 +135,21 @@ browsers new enough to support it, and a `--epb-bar-segment-gap`
 [hook](docs/theme.md#css) lets you pin an exact size yourself either way. See
 [`bar_segments`](docs/configuration.md#bar_segments).
 
+#### 📱 A compact `density`
+
+`density: compact` shrinks the card to its smallest useful footprint — without
+hand-tuning every option that gets in the way one by one. It forces
+`layout: horizontal`, restricts `bar_position` to `top`/`bottom`/`background`,
+and clears `multiline` for you, editor included (the now-irrelevant choices
+simply stop being offered instead of silently reverting on save) —
+`status_label`/`trend_indicator` still work as usual, both fit fine in a narrow
+card's corner. Flipping it on through the visual editor also pins the card's
+size outright in a Sections grid (`grid_options: { columns: 3, rows: 1 }`,
+restored automatically if you switch it back off) instead of just narrowing how
+far a manual resize could go — the only way to actually shrink a card that's
+already placed, not just a newly added one. See
+[`density`](docs/configuration.md#density).
+
 ### 🐛 Notable fixes
 
 - The card could fail to load entirely on some older or embedded browsers (kiosk
@@ -219,6 +234,10 @@ browsers new enough to support it, and a `--epb-bar-segment-gap`
   without `round()`; see the
   [📶 Sturdier `bar_segments`](#-sturdier-bar_segments) highlight above. Present
   since `bar_segments` itself shipped.
+- A horizontal card that doesn't need the bar's own width (e.g. icon+name/value
+  only) still reported a Sections grid minimum sized for a full card with a bar
+  — see the [📱 A compact `density`](#-a-compact-density) highlight above.  
+  ➡️ [Enhancement]: Set minimum width to 3 #134 (@FoxP)
 
 ### 🧪 Try it: demo dashboard
 
@@ -454,6 +473,73 @@ Thanks to everyone who reported, tested and contributed 🙏
   - Present since `bar_segments` itself shipped, well before 1.6.0 - not
     something this RC introduced, just the first time anyone could actually see
     it broken.
+- **New `density: default | compact`** (Card/Template only) - a preset for the
+  smallest useful footprint (icon, name/value, thin bar), instead of hand-tuning
+  every option that gets in the way one at a time.
+  - Started life scoped to issue #134's specific report (`hide: progress_bar` +
+    `layout: horizontal` still reported a 6-column Sections minimum, sized for
+    the bar it no longer shows) - generalized once it became clear the same
+    "smallest useful card" shape applies whether or not the bar itself is
+    hidden, `hide: progress_bar` included but no longer the trigger.
+  - `applyDensityRule` (`schema.ts`, runs first in the `postProcess` pipeline so
+    every other rule sees its resolved output) forces `layout: horizontal`,
+    falls `bar_position` back to `top` unless it's already `top`/`bottom`/
+    `background`, and clears `multiline`. `status_label`/`trend_indicator` are
+    left alone - both still fit fine in a narrow card's corner. `bar_max_width`,
+    `bar_size`, and `reverse_secondary_info_row` don't need their own rule
+    either - each already turns itself off outside `bar_position: default`/
+    `layout: horizontal`, which `compact` never allows once the above has run.
+  - Editor: a plain on/off `density_toggle` switch (virtual field, resolves to
+    `density === 'compact'`, writes `'compact'`/`undefined` back) instead of a
+    two-option dropdown for what's really a binary choice - same shape as
+    `status_label_toggle`/`watermark_toggle`. Sits above `layout` on purpose:
+    flipping it immediately narrows `layout`/`bar_position`'s own choices right
+    below it, cause before effect. `layout`'s box-select swaps to a
+    `vertical`-less variant and `bar_position`'s select swaps to a
+    `top`/`bottom`/`background`-only variant while it's on - same "restricted
+    select-type variant" pattern as
+    `bar_orientation_no_up`/`bar_position_no_compact_below` - instead of
+    offering a choice the schema immediately overrides on save. `multiline`'s
+    field hides outright. `density_toggle`'s own `onVirtualChange`
+    (`applyDensityConstraints`) fixes up an already-saved `layout: vertical`/
+    invalid `bar_position` the instant it's switched on, so flipping it doesn't
+    leave a stale value sitting in the config unseen until the next unrelated
+    save.
+  - `ViewCore#cardLayoutOptions` also sets `grid_rows`/`grid_columns` and new
+    `grid_max_rows`/`grid_max_columns` (not just the existing `_min_`
+    counterparts) to `minGridRows`/`minGridColumns` under `density: compact` - a
+    compact card is meant to be born at its smallest useful size **and** capped
+    there, not just resizable down to it - `getGridOptions()` (`core.ts`) only
+    reports `max_rows`/`max_columns` at all once they're actually set
+    (`undefined` outside `compact` reads as "no ceiling" to HA, same as before).
+    New optional `grid_max_rows`/`grid_max_columns` fields on
+    `CARD.layout.orientations[...].grid` (`card-config.ts`), typed in from the
+    start rather than left absent, so `cardLayoutOptions` can assign a real
+    number into them without TypeScript narrowing the property away.
+  - All of the above only ever affects `getGridOptions()`'s/
+    `getLayoutOptions()`'s own **computed** default/min/max - a card with its
+    own explicit `grid_options` already in its config keeps that size regardless
+    (same "explicit wins" precedent as `height`), and in practice almost every
+    already-placed Sections card carries one (HA writes it in the moment a card
+    is first added, or the user drags it to a size) - computed values alone were
+    never going to visibly resize an existing card, only a freshly added one.
+    `density_toggle`'s `onVirtualChange` covers that gap directly instead:
+    switching it on pins `grid_options: { columns: 3, rows: 1 }` onto the config
+    outright - the same 1-column-of-3/1-row `minGridColumns`/`minGridRows`
+    always resolve to under `compact` (never config-dependent - compact forces
+    `layout: horizontal` and `bar_position` out of `below`, the only two things
+    that could otherwise change either number), so this is exactly what a user
+    resizing the card by hand to its allowed floor would produce themselves.
+    Whatever `grid_options` held before is stashed in a new ephemeral
+    `_grid_options_draft` (stripped before save, same pattern as
+    `custom_theme`'s own `_theme_draft`) and restored automatically the instant
+    `compact` is switched back off. `density: compact` set directly in YAML
+    (bypassing the editor) only ever gets the computed-default side of this -
+    documented as a real, deliberate asymmetry rather than silently left
+    unmentioned.
+  - `ViewCore#minGridColumns` (mirrors the existing `minGridRows`) reports a
+    real 1-column-of-3 (issue #134's original 3/12) Sections minimum instead of
+    the class default's 2-of-3 (6/12) whenever `density: compact` is active.
 
 ### 🐛 Fixes
 
@@ -528,6 +614,12 @@ say a Jinja `hide` template could return a plain comma-separated string
 example) _or_ a native Jinja list (`{{ ['secondary_info', 'progress_bar'] }}`)
 
 - both work, now both are documented.
+
+New "`density: compact` — smallest useful footprint (#134)" section in the
+"Layout & bar_position" view, same two files - non-compact vertical and
+horizontal cards next to several `density: compact` variants
+(`bottom`/`background` `bar_position`, `status_label` combined with
+`hide: secondary_info`), side by side.
 
 ---
 

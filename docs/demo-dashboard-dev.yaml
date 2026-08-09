@@ -2769,6 +2769,72 @@ views:
               columns: 6
               rows: 2
         column_span: 2
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'density: compact — smallest useful footprint (#134)'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              density: compact
+              ```
+              A preset for the smallest useful card footprint - forces
+              `layout: horizontal`, restricts `bar_position` to
+              `top`/`bottom`/`background`, and clears `multiline` for you
+              (editor included - it stops being offered instead of silently
+              reverting on save). `status_label`/`trend_indicator` still work
+              as usual. Cards below have no `grid_options` of their own, so
+              their default Sections size shrinks with them - no manual
+              resize needed. Toggling `compact` on through the visual editor
+              (instead of writing YAML directly, like here) goes one step
+              further and pins `grid_options` outright, since that's the only
+              way to actually resize a card that's already placed.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: not compact
+            layout: vertical
+            bar_position: overlay
+            status_label:
+              jinja: standard
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: not compact
+            layout: horizontal
+            status_label:
+              jinja: standard
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: density compact
+            density: compact
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'compact + bottom'
+            density: compact
+            bar_position: bottom
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'compact + background'
+            density: compact
+            bar_position: background
+            color: white
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'compact + status_label'
+            density: compact
+            bar_position: bottom
+            status_label:
+              jinja: standard
+            hide:
+              - secondary_info
+        column_span: 2
     show_icon_and_title: true
     cards: []
   - title: EP Demo - Aggregation & card_mod

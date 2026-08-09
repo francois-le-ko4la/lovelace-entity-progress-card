@@ -645,10 +645,36 @@ function struct(validator: Validator & { _schema?: Record<string, Validator> }, 
     }
   };
 
+  // density: 'compact' forces this card into a narrow horizontal footprint
+  // (issue #134's root ask, generalized): layout: vertical has no matching
+  // narrow shape (it's already stacked, not side-by-side), and bar_position
+  // outside {top, bottom, background} all render the bar sharing a row with
+  // name/secondary_info (see .progress-container's own width math), which
+  // needs the room this mode is specifically about giving back. multiline
+  // only ever has an effect in a configuration 'compact' now excludes
+  // (custom_info/secondary spanning two lines needs the extra vertical room
+  // that config no longer gives it), cleared for the same reason; status_label
+  // and trend_indicator both fit fine in a narrow card's corner, left alone on
+  // purpose. bar_max_width and reverse_secondary_info_row are already cleared
+  // by applyBarMaxWidthRule/applyReverseSecondaryInfoRowRule below once
+  // bar_position leaves 'default' (nothing extra needed here), and bar_size is
+  // already deleted entirely for top/bottom/background by YamlSchemaFactory
+  // itself. Runs first, before every rule below that reads layout/bar_position,
+  // so they all see the final, density-corrected value rather than racing it.
+  const applyDensityRule = (result: Record<string, unknown>) => {
+    if (result.density !== 'compact') return;
+    result.layout = CARD.layout.orientations.horizontal.label;
+    if (!['top', 'bottom', 'background'].includes(result.bar_position as string)) {
+      result.bar_position = 'top';
+    }
+    result.multiline = false;
+  };
+
   const postProcess = (data: Record<string, unknown>) => {
     const result = { ...data };
     if (!result.layout) result.layout = CARD.layout.orientations.horizontal.label;
 
+    applyDensityRule(result);
     applyBelowBarPositionRule(result);
     applyCompactBelowRule(result);
     applyLabelRule(result);
@@ -1016,6 +1042,10 @@ const YamlSchemaFactory = {
           Object.values(CARD.layout.orientations).map((e) => e.label),
           'horizontal',
         ), // [('horizontal', 'vertical')]
+        // 'compact' forces layout: horizontal and bar_position into
+        // {top, bottom, background} - see applyDensityRule for the full
+        // rewrite/clear list this triggers.
+        density: types.enumsWithDefault(['default', 'compact'], 'default'),
         min_width: types.optionalString(),
         height: types.optionalString(),
         frameless: types.optionalBooleanWithDefault(false),
@@ -1115,6 +1145,10 @@ const YamlSchemaFactory = {
         'badge_color',
         'force_circular_background',
         'layout',
+        // Meaningless without 'layout' (deleted above) - density's whole
+        // point is forcing a specific layout/bar_position combination a
+        // badge has neither of.
+        'density',
         'height',
         'icon_tap_action',
         'icon_hold_action',
@@ -1225,6 +1259,10 @@ const YamlSchemaFactory = {
           Object.values(CARD.layout.orientations).map((e) => e.label),
           'horizontal',
         ), // [('horizontal', 'vertical')]
+        // 'compact' forces layout: horizontal and bar_position into
+        // {top, bottom, background} - see applyDensityRule for the full
+        // rewrite/clear list this triggers.
+        density: types.enumsWithDefault(['default', 'compact'], 'default'),
         min_width: types.optionalString(),
         height: types.optionalString(),
         frameless: types.optionalBooleanWithDefault(false),
@@ -1269,6 +1307,9 @@ const YamlSchemaFactory = {
         'badge_color',
         'force_circular_background',
         'layout',
+        // Same reason as YamlSchemaFactory.badge: meaningless without
+        // 'layout' (deleted above).
+        'density',
         'height',
         'icon_tap_action',
         'icon_hold_action',

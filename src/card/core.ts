@@ -1018,13 +1018,19 @@ class HABase extends HACore {
   // CARD.layout.gridColumnMultiplier.
   getGridOptions() {
     if (![META.types.card.typeName, META.types.template.typeName].includes(this.baseClass)) return undefined;
-    const { grid_rows, grid_min_rows, grid_columns, grid_min_columns } = this._cardView.cardLayoutOptions;
+    const { grid_rows, grid_min_rows, grid_max_rows, grid_columns, grid_min_columns, grid_max_columns } =
+      this._cardView.cardLayoutOptions;
     const multiplier = CARD.layout.gridColumnMultiplier;
     const gridOptions = {
       rows: grid_rows,
       min_rows: grid_min_rows,
       columns: grid_columns * multiplier,
       min_columns: grid_min_columns * multiplier,
+      // undefined (the default outside density: compact) means "no ceiling" -
+      // left out entirely rather than sent as columns/rows: undefined, so it
+      // reads the same to HA as never having been set at all.
+      ...(grid_max_rows !== undefined ? { max_rows: grid_max_rows } : {}),
+      ...(grid_max_columns !== undefined ? { max_columns: grid_max_columns * multiplier } : {}),
     };
     this._log?.debug('getGridOptions: ', gridOptions);
     return gridOptions;

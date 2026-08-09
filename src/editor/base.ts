@@ -468,6 +468,17 @@ class EditorBase extends HTMLElement {
           overlay: options.bar_position.overlay,
           background: options.bar_position.background,
         }),
+      // density: compact restricts bar_position further still, to exactly
+      // the three positions that don't share a row with name/secondary_info
+      // (see schema.ts's applyDensityRule, the matching save-time safety
+      // net) - same reasoning as bar_position_no_compact_below just above,
+      // a shorter list this time.
+      bar_position_density_compact: () =>
+        buildSelect({
+          top: options.bar_position.top,
+          bottom: options.bar_position.bottom,
+          background: options.bar_position.background,
+        }),
       bar_color_mode: () => buildSelect(options.bar_color_mode),
       bar_scale: () => buildSelect(options.bar_scale),
       icon_animation: () => buildSelect(options.icon_animation),
@@ -476,6 +487,11 @@ class EditorBase extends HTMLElement {
       label_position: () => buildSelect(options.label_position),
       theme: () => buildSelect(options.theme),
       layout: () => buildBoxSelect(options.layout, tileImage),
+      // density: compact only has a meaningful shape in layout: horizontal
+      // (see schema.ts's applyDensityRule) - vertical dropped from the
+      // choices entirely, same "don't offer it just to silently revert it"
+      // reasoning as bar_orientation_no_up/bar_position_no_compact_below.
+      layout_horizontal_only: () => buildBoxSelect({ horizontal: options.layout.horizontal }, tileImage),
       unit_spacing: () => buildSelect(options.unit_spacing),
       watermark_type: () => buildSelect(options.watermark_type),
       watermark_as: () => buildSelect(options.watermark_as),

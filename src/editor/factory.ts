@@ -5,6 +5,7 @@
  */
 
 import {
+  CARD,
   HA_CONTEXT,
   MIN_VALUE_ENTITY_PATH,
   MAX_VALUE_ENTITY_PATH,
@@ -293,8 +294,15 @@ const EditorFactory = {
             secondary: EditorFieldsType.tpl('secondary'),
             // Badge/badgeTemplate opt out (see YamlSchemaFactory's own
             // .delete(['multiline'])): the row is too small for a second line
-            // there.
-            ...(!badge ? { multiline: EditorFieldsType.toggle('multiline') } : {}),
+            // there. density: compact clears it too (see
+            // schema.ts's applyDensityRule).
+            ...(!badge
+              ? {
+                  multiline: EditorFieldsType.toggle('multiline', {
+                    showIf: (c: LovelaceConfig) => c.density !== 'compact',
+                  }),
+                }
+              : {}),
             percent: EditorFieldsType.tpl('percent'),
           }
         : {
@@ -334,8 +342,15 @@ const EditorFactory = {
             custom_info: EditorFieldsType.tpl('custom_info'),
             // Badge opts out (see YamlSchemaFactory's own
             // .delete(['multiline'])): the row is too small for a second line
-            // there.
-            ...(!badge ? { multiline: EditorFieldsType.toggle('multiline') } : {}),
+            // there. density: compact clears it too (see
+            // schema.ts's applyDensityRule).
+            ...(!badge
+              ? {
+                  multiline: EditorFieldsType.toggle('multiline', {
+                    showIf: (c: LovelaceConfig) => c.density !== 'compact',
+                  }),
+                }
+              : {}),
             reverse: EditorFieldsType.toggle('reverse', {
               showIf: (c: LovelaceConfig) =>
                 Boolean(c.entity) && HassProviderSingleton.getEntityDomain(c.entity) === 'timer',
@@ -578,11 +593,19 @@ const EditorFactory = {
           }),
           force_circular_background: EditorFieldsType.toggle('force_circular_background'),
           bar_position: EditorFieldsType.select('bar_position', {
-            // compact_below only has a distinct effect with layout: horizontal
-            // (see resetCompactBelowIfInvalid's own comment) - not offered at
-            // all once layout: vertical, same reasoning as bar_orientation's
-            // 'up' just above.
-            type: (c: LovelaceConfig) => (c.layout === 'vertical' ? 'bar_position_no_compact_below' : 'bar_position'),
+            // density: compact is the most restrictive case (top/bottom/
+            // background only - see EditorFactory.applyDensityConstraints)
+            // and wins outright when active. Otherwise: compact_below only
+            // has a distinct effect with layout: horizontal (see
+            // resetCompactBelowIfInvalid's own comment) - not offered at all
+            // once layout: vertical, same reasoning as bar_orientation's 'up'
+            // just above.
+            type: (c: LovelaceConfig) =>
+              c.density === 'compact'
+                ? 'bar_position_density_compact'
+                : c.layout === 'vertical'
+                  ? 'bar_position_no_compact_below'
+                  : 'bar_position',
             width: availableSpace(),
             onChange: (_value: unknown, config: LovelaceConfig) => resetUpIfInvalid(config),
           }),
@@ -772,7 +795,50 @@ const EditorFactory = {
     badge
       ? {}
       : {
+          // Ahead of layout on purpose: flipping it on immediately narrows
+          // layout/bar_position's own choices below it (via
+          // applyDensityConstraints), reads better cause-before-effect than
+          // the other way around.
+          density_toggle: EditorFieldsType.toggle('density_toggle', {
+            virtual: true,
+            resolveVirtual: (c: LovelaceConfig) => c.density === 'compact',
+            // A card already placed in a Sections view almost always carries
+            // its own explicit grid_options (HA writes one in the moment a
+            // card is first added, or the user drags it to a size) - that
+            // stored value always wins over getGridOptions()'s computed
+            // default/min/max (see ViewCore#cardLayoutOptions), so shrinking
+            // just the computed side is never enough to actually resize an
+            // existing card on its own. Pin grid_options here instead, the
+            // same way the user would by hand: 1 column-of-3 (the multiplier
+            // ViewCore#getGridOptions itself uses)/1 row, exactly what
+            // density: compact's own minGridColumns/minGridRows always
+            // resolve to (never config-dependent - compact forces
+            // layout: horizontal and bar_position out of 'below', the only
+            // two things that could otherwise change either number).
+            // Whatever grid_options held before is stashed in
+            // _grid_options_draft (ephemeral, stripped before save - same
+            // pattern as custom_theme's own _theme_draft) and restored the
+            // moment compact is switched back off.
+            onVirtualChange: (value: boolean, config: LovelaceConfig): LovelaceConfig => {
+              if (value) {
+                return {
+                  ...EditorFactory.applyDensityConstraints({ ...config, density: 'compact' }),
+                  grid_options: { columns: 1 * CARD.layout.gridColumnMultiplier, rows: 1 },
+                  _grid_options_draft: config.grid_options,
+                };
+              }
+              return {
+                ...config,
+                density: undefined,
+                grid_options: config._grid_options_draft,
+                _grid_options_draft: undefined,
+              };
+            },
+          }),
           layout: EditorFieldsType.select('layout', {
+            // density: compact only has a meaningful shape in horizontal -
+            // see EditorFactory.applyDensityConstraints.
+            type: (c: LovelaceConfig) => (c.density === 'compact' ? 'layout_horizontal_only' : 'layout'),
             onChange: (_value: unknown, config: LovelaceConfig) =>
               EditorFactory.resetCompactBelowIfInvalid(resetUpIfInvalid(config)),
           }),
@@ -799,6 +865,25 @@ const EditorFactory = {
     config.bar_position === 'compact_below' && config.layout !== 'horizontal'
       ? { ...config, bar_position: 'default' }
       : config,
+
+  // density: compact (issue #134's ask, generalized) forces layout:
+  // horizontal and bar_position into {top, bottom, background} - see
+  // schema.ts's applyDensityRule, the matching save-time safety net. Applied
+  // from density_toggle's own onVirtualChange (the moment it flips on, an
+  // already-saved layout: vertical / unsupported bar_position needs fixing
+  // up) - layout's and bar_position's own fields can't drift into an invalid
+  // state on their own once density: compact is active, since their
+  // available choices are already restricted to valid ones
+  // (layout_horizontal_only/bar_position_density_compact above), so neither
+  // needs this same call in its own onChange.
+  applyDensityConstraints: (config: LovelaceConfig): LovelaceConfig => {
+    if (config.density !== 'compact') return config;
+    const next: LovelaceConfig = { ...config, layout: 'horizontal' };
+    if (!['top', 'bottom', 'background'].includes(next.bar_position as string)) {
+      next.bar_position = 'top';
+    }
+    return next;
+  },
 
   theme: (template: boolean, badge: boolean) => {
     const upAllowed = EditorFactory.upAllowed;

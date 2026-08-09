@@ -106,7 +106,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -391,7 +392,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -676,7 +678,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -961,7 +964,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -1246,7 +1250,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -1531,7 +1536,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -1816,7 +1822,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -2101,7 +2108,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Icon animation trigger (Jinja)',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Auto height',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -2386,7 +2394,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -2671,7 +2680,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -2956,7 +2966,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -3241,7 +3252,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -3526,7 +3538,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -3811,7 +3824,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -4096,7 +4110,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -4381,7 +4396,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -4666,7 +4682,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -4951,7 +4968,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -5236,7 +5254,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -5521,7 +5540,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -5806,7 +5826,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -6091,7 +6112,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -6376,7 +6398,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -6661,7 +6684,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -6946,7 +6970,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -7231,7 +7256,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -7516,7 +7542,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -7801,7 +7828,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -8086,7 +8114,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -8371,7 +8400,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -8656,7 +8686,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -8941,7 +8972,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -9226,7 +9258,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -9511,7 +9544,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -9796,7 +9830,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -10081,7 +10116,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -10366,7 +10402,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -10651,7 +10688,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {
@@ -10936,7 +10974,8 @@ const TRANSLATIONS = {
         icon_animation_jinja_toggle: 'Trigger via template',
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
-        status_label_toggle: 'Status label'
+        status_label_toggle: 'Status label',
+        density_toggle: 'Compact'
       },
       option: {
         theme: {

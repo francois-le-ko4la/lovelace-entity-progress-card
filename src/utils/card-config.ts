@@ -307,16 +307,35 @@ const style = {
   },
 };
 
+// grid_max_rows/grid_max_columns start undefined (no ceiling) for both
+// orientations - typed in from the start (rather than left absent) so
+// ViewCore#cardLayoutOptions can assign a real number into them for
+// density: compact (pins the card's size outright, not just its floor)
+// without TypeScript narrowing the property away entirely.
 const layout = {
   orientations: {
     horizontal: {
       label: 'horizontal',
-      grid: { grid_rows: 1, grid_min_rows: 1, grid_columns: 2, grid_min_columns: 2 },
+      grid: {
+        grid_rows: 1,
+        grid_min_rows: 1,
+        grid_max_rows: undefined as number | undefined,
+        grid_columns: 2,
+        grid_min_columns: 2,
+        grid_max_columns: undefined as number | undefined,
+      },
       mdi: HA_CONTEXT.icons.focusHorizontal,
     },
     vertical: {
       label: 'vertical',
-      grid: { grid_rows: 2, grid_min_rows: 2, grid_columns: 1, grid_min_columns: 1 },
+      grid: {
+        grid_rows: 2,
+        grid_min_rows: 2,
+        grid_max_rows: undefined as number | undefined,
+        grid_columns: 1,
+        grid_min_columns: 1,
+        grid_max_columns: undefined as number | undefined,
+      },
       mdi: HA_CONTEXT.icons.focusVertical,
     },
   },

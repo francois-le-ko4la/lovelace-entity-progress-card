@@ -56,6 +56,7 @@
       - [`force_circular_background`](#force_circular_background)
       - [`trend_indicator`](#trend_indicator)
       - [`status_label`](#status_label)
+      - [`density`](#density)
       - [`layout`](#layout)
       - [`frameless`](#frameless)
       - [`marginless`](#marginless)
@@ -975,6 +976,11 @@ in the Jinja output at the point where the second line should start.
 - Not available on `entity-progress-badge` / `entity-progress-badge-template`:
   the row is too small to fit a second line.
 
+> [!NOTE]
+>
+> [`density: compact`](#density) clears this option and hides the field from the
+> editor while active.
+
 _Example_:
 
 ```yaml
@@ -1596,6 +1602,11 @@ _Options:_
 > falls back to `below` instead — same as `default` does at that size, the
 > shared name/secondary_info row reads as too tight above a bar that large.
 
+> [!NOTE]
+>
+> [`density: compact`](#density) restricts this to `top`, `bottom`, or
+> `background` — any other value falls back to `top` while `compact` is active.
+
 _Default value_:
 
 - `default`
@@ -2108,6 +2119,63 @@ _Default value_:
 
 [🔼 Back to top]
 
+#### `density`
+
+[![Card OK][Card-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+
+> **`density`** [String] ➡️ {`default` | `compact`} _(optional, default:
+> `default`)_:
+
+A preset that trims the card down to its smallest useful footprint. Rather than
+juggling `layout`/`bar_position`/`multiline` by hand to get there,
+`density: compact` sets them for you:
+
+- Forces [`layout`](#layout) to `horizontal` (the `vertical` option is removed
+  from the editor's layout selector while `compact` is active).
+- Restricts [`bar_position`](#bar_position) to `top`, `bottom`, or
+  `background` - any other value (including the `default` position) falls back
+  to `top`.
+- Clears [`multiline`](#multiline) - the field is hidden from the editor while
+  `compact` is active.
+
+[`status_label`](#status_label) and [`trend_indicator`](#trend_indicator) still
+work as usual under `compact` - both fit fine in the corner of a narrow card.
+
+[`bar_max_width`](#bar_max_width) and
+[`reverse_secondary_info_row`](#reverse_secondary_info_row) don't need clearing
+explicitly: both already turn themselves off outside `bar_position: default`,
+which `compact` never allows. Likewise, `bar_size` has no effect on
+`top`/`bottom`/`background` bars, so it's a no-op rather than something that
+needs to be forced.
+
+> [!NOTE]
+>
+> In a Sections view, `compact` pins the card's size outright - both the minimum
+> it's allowed to shrink to _and_ the default/maximum it's born and capped at -
+> instead of just narrowing how far a manual resize could go. Turning it on
+> through the visual editor writes an explicit
+> `grid_options: { columns: 3, rows: 1 }` into the card's own config (the
+> previous `grid_options`, if any, comes back automatically the moment `compact`
+> is switched back off) - a card already placed with its own size otherwise
+> keeps that size regardless of `compact` (like [`height`](#height), an explicit
+> override always wins), so pinning it this way is the only way to actually
+> resize an existing card, not just a new one. Written directly in YAML instead,
+> `compact` only affects a fresh card's own computed default/minimum/maximum,
+> without touching `grid_options` on your behalf - set it yourself
+> (`grid_options: { columns: 3, rows: 1 }`) if you want the same pinned effect
+> there too.
+
+_Example:_
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.cpu_usage
+density: compact
+```
+
+[🔼 Back to top]
+
 #### `layout`
 
 [![Card OK][Card-OK]](#compatibility)
@@ -2121,6 +2189,11 @@ different layouts based on your visual preferences:
 
 - `horizontal`: Displays the elements horizontally, with a row layout.
 - `vertical`: Displays the elements vertically, with a column layout.
+
+> [!NOTE]
+>
+> [`density: compact`](#density) forces this to `horizontal` and removes
+> `vertical` from the editor's selector while it's active.
 
 _Examples:_
 

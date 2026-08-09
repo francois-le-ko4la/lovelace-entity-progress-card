@@ -278,19 +278,16 @@ class ViewCore {
     return baseRows + (needsExtraRow ? 1 : 0);
   }
 
-  // horizontal-only (issue #134): without the bar, a horizontal card only
-  // needs enough width for icon+name/value, not the full 2/12 columns
-  // (reported as 6/12 after gridColumnMultiplier) every other horizontal
-  // config still needs to give the bar room to be worth showing at all.
-  // vertical's own grid_min_columns (already 1, the multiplier's floor)
-  // stays untouched - nothing narrower to give back there.
+  // horizontal-only (issue #134): a compact-density card only needs enough
+  // width for icon+name/value, not the full 2/12 columns (reported as 6/12
+  // after gridColumnMultiplier) - density: compact is always horizontal, so
+  // no layout check is needed here on top of it. vertical's own
+  // grid_min_columns (already 1, the multiplier's floor) stays untouched -
+  // nothing narrower to give back there.
   get minGridColumns(): number {
     if (!this.config) return CARD.layout.orientations.horizontal.grid.grid_min_columns;
     const layout = CARD.layout.orientations[this.config.layout as keyof typeof CARD.layout.orientations];
-    if (
-      this.config.layout === CARD.layout.orientations.horizontal.label &&
-      this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.progress_bar.label)
-    ) {
+    if (this.config.density === 'compact') {
       return 1;
     }
     return layout.grid.grid_min_columns;
@@ -301,6 +298,21 @@ class ViewCore {
     const layout = cloneValue(CARD.layout.orientations[this.config.layout as keyof typeof CARD.layout.orientations]);
     layout.grid.grid_min_rows = this.minGridRows;
     layout.grid.grid_min_columns = this.minGridColumns;
+    // density: compact pins the card to its smallest useful size outright -
+    // default *and* ceiling, not just a narrower floor - without this, a card
+    // added (or a card whose config has no explicit grid_options override
+    // yet) still starts at the orientation's normal default footprint, and
+    // even once the default shrinks too (grid_rows/grid_columns just below),
+    // Sections still lets it be dragged back out wider/taller by hand - a max
+    // is the only way to actually rule that out. A card with its own explicit
+    // `grid_options` in config keeps it regardless - same "explicit wins"
+    // precedent as `height`.
+    if (this.config.density === 'compact') {
+      layout.grid.grid_rows = this.minGridRows;
+      layout.grid.grid_columns = this.minGridColumns;
+      layout.grid.grid_max_rows = this.minGridRows;
+      layout.grid.grid_max_columns = this.minGridColumns;
+    }
     return layout.grid;
   }
 
