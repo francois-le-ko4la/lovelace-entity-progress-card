@@ -4,7 +4,7 @@
  * dev/debug context can both import it without an import cycle.
  */
 
-const VERSION = '1.6.1-rc5';
+const VERSION = '1.6.1-rc6';
 
 const META = {
   documentation: 'https://github.com/francois-le-ko4la/lovelace-entity-progress-card/',

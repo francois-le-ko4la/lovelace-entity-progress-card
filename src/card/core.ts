@@ -6,7 +6,7 @@
 
 import { VERSION, META, CARD_CONTEXT, devName, HA_CONTEXT, CARD } from '../utils/parameters.js';
 import { CARD_CSS, getSharedStyleSheet } from '../utils/styles.js';
-import { is } from '../utils/common-checks.js';
+import { is, assertDefined } from '../utils/common-checks.js';
 import { initLogger, type LoggerInstance } from '../utils/log.js';
 import { ObjStructure, ThemeManager, ChangeTracker } from './value-helpers.js';
 import { HassProviderSingleton, type HomeAssistant, type EntityState } from '../utils/hass-provider.js';
@@ -1058,9 +1058,13 @@ class HABase extends HACore {
 
   connectedCallback() {
     super.connectedCallback(); // render, _updateDynamicElements, watchWebSocket
-    // Non-null: always assigned unconditionally in the constructor above,
-    // for every HABase instance.
-    this._actionHelper!.init(this._cardView.config, this.hasDisabledIconTap);
+    // Always assigned unconditionally in the constructor above, for every
+    // HABase instance - assertDefined throws instead of masking a broken
+    // invariant the way a non-null assertion (!) would.
+    assertDefined(this._actionHelper, 'HABase.connectedCallback: _actionHelper not assigned').init(
+      this._cardView.config,
+      this.hasDisabledIconTap,
+    );
   }
 
   // disconnectedCallback() {}
