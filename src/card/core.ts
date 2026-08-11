@@ -79,6 +79,12 @@ class HACore extends HTMLElement {
   static _cardStructure: ObjStructure = new ObjStructure('feature');
   static _cardStyle = CARD_CSS;
   static _cardElement = CARD.htmlStructure.card.element;
+  // Overridden true by EntityProgressBadge/EntityProgressTemplateBadge (see
+  // cards.ts) - badges only ever have a card-level action, never the icon's
+  // own. Declared here (not just HABase) so _createCardElements's own
+  // icon-keyboard wiring, shared by every subclass including Feature, can
+  // read it without a cast.
+  static _hasDisabledIconTap = false;
   _debug = CARD_CONTEXT.debug.card;
   _log: LoggerInstance | null = null;
   // Always assigned first thing in the constructor, before anything else in
@@ -88,6 +94,10 @@ class HACore extends HTMLElement {
   // 'closed').
   _shadow!: ShadowRoot;
   _resourceManager: ResourceManager | null = null;
+  // Only ever assigned by HABase (see its own init) - Feature (extends
+  // HACore directly) leaves it null, which _createCardElements's own
+  // optional-chained triggerIconTap() call already handles as a no-op.
+  _actionHelper: ActionHelper | null = null;
   // Concrete subclasses (in cards.ts) swap this in for CardView/BadgeView/
   // FeatureView/CardTemplateView/BadgeTemplateView - the latter two extend
   // ViewCore directly rather than ViewBase, so ViewCore (not a union, not
@@ -396,6 +406,10 @@ class HACore extends HTMLElement {
     };
   }
 
+  get hasDisabledIconTap(): boolean {
+    return (this.constructor as typeof HACore)._hasDisabledIconTap;
+  }
+
   _createCardElements(): { style: HTMLStyleElement | null; card: HTMLElement } {
     // Preferred path: adopt the shared constructed sheet (parsed once for all
     // instances). Fallback path (older Firefox/Safari, see
@@ -415,16 +429,75 @@ class HACore extends HTMLElement {
     this._dom.destroy();
     this._dom.register(CARD.htmlStructure.card.element, card);
     this._dom.setStyle(CARD.htmlStructure.card.element, CARD.style.dynamic.progressBar.value.var, 0);
-    if (this._cardView.hasClickableCard || this._cardView.hasClickableIcon) {
-      Object.entries(CARD.htmlStructure.card.extraAttr).forEach(([key, value]) => {
-        this._dom.setAttribute(CARD.htmlStructure.card.element, key, value as string);
-      });
-    }
     this._buildStyle();
     // Cloned from the per-options <template> cache; _structureOptions is read
     // fresh here so a setConfig that changes the structure picks the right
     // template.
     card.replaceChildren((this.constructor as typeof HACore)._cardStructure.clone(this._structureOptions));
+
+    // The card's own interactive target: .ripple-zone (a sibling of
+    // .container/.shape - see its own comment in card-config.ts), not
+    // ha-card itself - avoids nesting this role="button" around .shape's
+    // own one below. hasClickableCard specifically, not hasClickableIcon
+    // too (unlike the old ha-card-targeted version) - matches .ripple-zone's
+    // own CSS (pointer-events: none unless .clickable-card), and an
+    // icon-only action shouldn't make the rest of the card announce as a
+    // button it isn't.
+    if (this._cardView.hasClickableCard) {
+      const rippleZone = card.querySelector<HTMLElement>(`.${CARD.htmlStructure.sections.rippleZone.class}`);
+      if (rippleZone) {
+        rippleZone.removeAttribute('aria-hidden');
+        rippleZone.setAttribute('role', 'button');
+        rippleZone.setAttribute('tabindex', '0');
+        // Entity-specific, not the generic card type name (META.types.card.name
+        // as a last-resort fallback only - e.g. entity not yet resolved, or a
+        // Template variant, whose ViewCore has no .name at all) - a dashboard
+        // with several of these cards otherwise reads identically to a screen
+        // reader regardless of which entity each one shows. Duck-typed access
+        // (.name only exists on ViewBase, not the declared ViewCore type) since
+        // _cardView's concrete class varies by card/badge/feature/template.
+        const cardName = (this._cardView as { name?: string | null }).name;
+        rippleZone.setAttribute('aria-label', cardName || META.types.card.name);
+        // References the same #entity-value the progressbar's own
+        // aria-describedby already points to (elements.secondaryInfoMain) -
+        // aria-label alone only carries the entity name, and a role="button"
+        // with its own aria-label isn't read into by a screen reader, so the
+        // value/state a sighted user sees at a glance was never announced. A
+        // static ID reference, not the value text itself - resolves against
+        // whatever that element's current content is, so it stays in sync
+        // with no extra update-cycle wiring needed.
+        rippleZone.setAttribute('aria-describedby', 'entity-value');
+      }
+    }
+
+    // Icon's own independent keyboard entry point - only when it actually
+    // has its own action (hasClickableIcon) AND that action isn't disabled
+    // outright (hasDisabledIconTap - Badge/TemplateBadge: card-level action
+    // only, same guard the real click path already applies in ActionHelper.
+    // init's own disableIconTap - see .clickable-icon's own condition above
+    // for the CSS-only equivalent), matching ha-tile-icon's own role="button"
+    // tabindex="0" pattern (verified against HA's real source). .shape is
+    // fresh every time this method runs (a brand new <ha-card> is created
+    // above, never patched in place), so there's no stale attribute/listener
+    // to clean up on a later re-render where this condition turns false. See
+    // ActionHelper.triggerIconTap's own comment for why this is a plain
+    // keydown listener instead of a second <action-handler> binding.
+    if (this._cardView.hasClickableIcon && !this.hasDisabledIconTap) {
+      const shape = card.querySelector<HTMLElement>(`.${CARD.htmlStructure.elements.shape.class}`);
+      if (shape) {
+        shape.setAttribute('role', 'button');
+        shape.setAttribute('tabindex', '0');
+        // Without this, a screen reader announces a bare "button" here - the
+        // icon glyph itself (ha-state-icon/similar) carries no accessible
+        // name of its own to fall back on.
+        shape.setAttribute('aria-label', 'Icon action');
+        shape.addEventListener('keydown', (ev: KeyboardEvent) => {
+          if (ev.key !== 'Enter' && ev.key !== ' ') return;
+          ev.preventDefault();
+          this._actionHelper?.triggerIconTap();
+        });
+      }
+    }
 
     return { style, card };
   }
@@ -924,7 +997,6 @@ class HACore extends HTMLElement {
 class HABase extends HACore {
   static _baseClass: string = META.types.card.typeName;
   static _cardStructure: ObjStructure = new ObjStructure('card');
-  static _hasDisabledIconTap = false;
   static _hasDisabledBadge = false;
   static _hiddenComponents: { label: string; class?: string }[] = [
     CARD.style.dynamic.hiddenComponent.icon,
@@ -940,8 +1012,9 @@ class HABase extends HACore {
   };
   _icon: IconElement | null = null;
   _cardView: ViewCore = new CardView();
-  // Always assigned unconditionally in the constructor below.
-  _actionHelper!: ActionHelper;
+  // _actionHelper itself inherited from HACore (nullable there) - always
+  // assigned unconditionally in the constructor below, for every HABase
+  // instance.
   #jinjaStateBadge = { icon: false, color: false };
   #lastMessage: { content: string; sev: string } | null = null;
 
@@ -985,7 +1058,9 @@ class HABase extends HACore {
 
   connectedCallback() {
     super.connectedCallback(); // render, _updateDynamicElements, watchWebSocket
-    this._actionHelper.init(this._cardView.config, this.hasDisabledIconTap);
+    // Non-null: always assigned unconditionally in the constructor above,
+    // for every HABase instance.
+    this._actionHelper!.init(this._cardView.config, this.hasDisabledIconTap);
   }
 
   // disconnectedCallback() {}
@@ -1047,11 +1122,6 @@ class HABase extends HACore {
   reset() {
     super.reset(); // #isRendered, _dom.destroy(), shadowRoot.innerHTML
     this._icon = null;
-  }
-
-  get hasDisabledIconTap(): boolean {
-    // check it soon
-    return (this.constructor as typeof HABase)._hasDisabledIconTap;
   }
 
   // ─── ERROR MESSAGE MANAGEMENT ─────────────────────────────────────────────
@@ -1172,7 +1242,7 @@ class HABase extends HACore {
   get _staticStyle(): Map<string, boolean> {
     return new Map([
       [CARD.style.dynamic.clickable.card, this._cardView.hasClickableCard],
-      [CARD.style.dynamic.clickable.icon, this._cardView.hasClickableIcon],
+      [CARD.style.dynamic.clickable.icon, this._cardView.hasClickableIcon && !this.hasDisabledIconTap],
       [CARD.style.dynamic.frameless.class, this._cardView.config.frameless],
       [CARD.style.dynamic.marginless.class, this._cardView.config.marginless],
       // One card-level flag every ancestor that needs to relax its single-line

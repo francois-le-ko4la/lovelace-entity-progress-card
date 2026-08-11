@@ -1,0 +1,828 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Graphic effects browser compatibility — Entity Progress Card</title>
+<style>
+  :root {
+    --bg: #14100f;
+    --surface: #1e1918;
+    --surface-2: #241e1c;
+    --text: #ece7e5;
+    --muted: #9c8b87;
+    --accent: #db4437;      /* real --error-color default used by alert_when */
+    --accent-dim: #4a231f;  /* darker red, for borders/dividers */
+    --icon-demo: #6c93b3;   /* illustrative stand-in for --state-icon-color */
+    --ok: #6ba36c;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace;
+    --sans: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    padding: 40px 24px 64px;
+    line-height: 1.5;
+  }
+
+  .wrap { max-width: 1080px; margin: 0 auto; }
+
+  a { color: var(--icon-demo); }
+
+  header h1 {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: clamp(1.5rem, 2.4vw, 2.1rem);
+    letter-spacing: -0.01em;
+    margin: 0 0 10px;
+    text-wrap: balance;
+  }
+
+  header p {
+    color: var(--muted);
+    max-width: 68ch;
+    margin: 0 0 24px;
+  }
+
+  header p code, td code {
+    font-family: var(--mono);
+    font-size: 0.85em;
+    background: var(--surface-2);
+    padding: 0.1em 0.4em;
+    border-radius: 4px;
+    color: var(--text);
+  }
+
+  .matrix {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    background: var(--accent-dim);
+    border: 1px solid var(--accent-dim);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 40px;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+  }
+
+  .matrix > div {
+    background: var(--surface);
+    padding: 10px 12px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .matrix .hd {
+    background: var(--surface-2);
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.68rem;
+  }
+
+  .matrix .req { color: var(--accent); font-weight: 600; }
+
+  h2.section {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin: 40px 0 16px;
+    padding-top: 8px;
+    border-top: 1px solid var(--accent-dim);
+  }
+
+  h2.section:first-of-type { margin-top: 0; }
+
+  h2.section .status { color: var(--muted); text-transform: none; letter-spacing: normal; font-size: 0.8rem; }
+
+  /* ---- comparison table (icon animations) ---- */
+  .table-wrap { overflow-x: auto; }
+
+  table.compare {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.85rem;
+  }
+
+  table.compare th, table.compare td {
+    padding: 12px 14px;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--accent-dim);
+  }
+
+  table.compare thead th {
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.68rem;
+    font-weight: 600;
+  }
+
+  table.compare tbody tr:hover { background: var(--surface); }
+
+  table.compare .effect-name { font-weight: 700; white-space: nowrap; }
+  table.compare .effect-loc { display: block; font-family: var(--mono); font-size: 0.7rem; color: var(--muted); font-weight: 400; margin-top: 2px; }
+
+  table.compare td.demo-cell { text-align: center; width: 110px; }
+
+  .remark { color: var(--muted); font-size: 0.8rem; max-width: 34ch; }
+  .remark .iso { color: var(--ok); font-weight: 600; }
+  .remark .fixed { color: var(--accent); font-weight: 600; }
+
+  .icon-stage {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--surface-2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin: 0 auto;
+  }
+
+  .icon-glyph {
+    color: var(--icon-demo);
+    font-size: 20px;
+    line-height: 1;
+    display: inline-block;
+  }
+
+  /* ---- 1. spin ---- */
+  @keyframes demo-icon-spin { to { transform: rotate(360deg); } }
+  .anim-spin { animation: demo-icon-spin 2s linear infinite; }
+
+  /* ---- 2. pulse ---- */
+  @keyframes demo-icon-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.15); opacity: 0.7; }
+  }
+  .anim-pulse { animation: demo-icon-pulse 1.6s ease-in-out infinite; }
+
+  /* ---- 3. bounce ---- */
+  @keyframes demo-icon-bounce {
+    0% { transform: scale3d(1, 1, 1); }
+    7% { transform: scale3d(1.25, 0.75, 1); }
+    10% { transform: scale3d(0.75, 1.25, 1); }
+    12% { transform: scale3d(1.15, 0.85, 1); }
+    16% { transform: scale3d(0.95, 1.05, 1); }
+    19% { transform: scale3d(1.05, 0.95, 1); }
+    25%, 100% { transform: scale3d(1, 1, 1); }
+  }
+  .anim-bounce { animation: demo-icon-bounce 3s ease infinite; }
+
+  /* ---- 4. shake ---- */
+  @keyframes demo-icon-shake {
+    0%, 100% { transform: translate(0, 0) rotate(0); }
+    20% { transform: translate(0.6px, -0.6px) rotate(-6deg); }
+    40% { transform: translate(-0.6px, 0.6px) rotate(6deg); }
+    60% { transform: translate(0.6px, 0.6px) rotate(-6deg); }
+    80% { transform: translate(-0.6px, -0.6px) rotate(6deg); }
+  }
+  .anim-shake { animation: demo-icon-shake 800ms ease-in-out infinite; }
+
+  /* ---- 5. reveal ---- */
+  @keyframes demo-icon-reveal {
+    0% { clip-path: circle(0% at 50% 85%); }
+    20% { clip-path: circle(30% at 50% 85%); }
+    40% { clip-path: circle(55% at 50% 85%); }
+    60%, 100% { clip-path: circle(80% at 50% 85%); }
+  }
+  .anim-reveal { animation: demo-icon-reveal 2s steps(1) infinite; }
+
+  /* ---- 6. washing_machine (shake + drum wipe, simplified porthole) ---- */
+  @keyframes demo-icon-drum {
+    50% { clip-path: polygon(0 0, 0 100%, 40% 100%, 40% 60%, 60% 60%, 60% 100%, 100% 100%, 100% 0); }
+  }
+  .anim-washing-machine { animation: demo-icon-shake 400ms ease-in-out infinite, demo-icon-drum 2s ease infinite; }
+
+  /* ---- 7. battery_charging (simplified bolt wipe) ---- */
+  @keyframes demo-icon-charge {
+    0%, 80% { clip-path: inset(0 0 0 0); }
+    30% { clip-path: inset(60% 0 0 0); }
+    60% { clip-path: inset(20% 0 0 0); }
+  }
+  .anim-battery-charging { animation: demo-icon-charge 3s linear infinite; }
+
+  /* ---- 8. ping (real difference: solid ring vs translucent ring) ---- */
+  @keyframes demo-ping-fallback {
+    60% { box-shadow: 0 0 0 0 var(--icon-demo); }
+    100% { box-shadow: 0 0 8px 20px transparent; }
+  }
+  @keyframes demo-ping-modern {
+    60% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--icon-demo) 70%, transparent); }
+    100% { box-shadow: 0 0 8px 20px transparent; }
+  }
+  .anim-ping-fallback { animation: demo-ping-fallback 2s ease-out infinite; }
+  .anim-ping-modern { animation: demo-ping-modern 2s ease-out infinite; }
+
+  /* ---- 9. shape/icon background - now iso, plain opacity everywhere ---- */
+  .shape-tint::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background-color: var(--icon-demo);
+    opacity: 0.2;
+  }
+
+  /* ---- table group divider row ---- */
+  tr.group-row td {
+    background: var(--surface-2);
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.68rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--accent-dim);
+  }
+
+  /* ---- 10. alert border blink (border-color toggle, iso) ---- */
+  .card-stage {
+    width: 64px;
+    height: 44px;
+    border-radius: 8px;
+    background: var(--surface-2);
+    border: 3px solid var(--accent);
+    margin: 0 auto;
+    position: relative;
+  }
+  @keyframes demo-alert-border-blink {
+    0%, 100% { border-color: var(--accent); }
+    50% { border-color: #4a4441; }
+  }
+  .anim-alert-border { animation: demo-alert-border-blink 1.2s ease-in-out infinite; }
+
+  /* ---- 11. alert ping (border ring, same fix as icon ping) ---- */
+  @keyframes demo-alert-ping-fallback {
+    60% { box-shadow: 0 0 0 0 var(--accent); }
+    100% { box-shadow: 0 0 8px 20px transparent; }
+  }
+  @keyframes demo-alert-ping-modern {
+    60% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 70%, transparent); }
+    100% { box-shadow: 0 0 8px 20px transparent; }
+  }
+  .anim-alert-ping-fallback { animation: demo-alert-ping-fallback 1.5s ease-out infinite; }
+  .anim-alert-ping-modern { animation: demo-alert-ping-modern 1.5s ease-out infinite; }
+
+  /* ---- 12. alert background blink (opacity overlay vs animated color-mix()) ---- */
+  .bg-stage {
+    width: 64px;
+    height: 44px;
+    border-radius: 8px;
+    background: var(--surface-2);
+    position: relative;
+    overflow: hidden;
+    margin: 0 auto;
+  }
+  .bg-stage-overlay::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+  }
+  @keyframes demo-alert-bg-blink-fallback {
+    0%, 100% { opacity: 0.15; }
+    50% { opacity: 0; }
+  }
+  @keyframes demo-alert-bg-blink-modern {
+    0%, 100% { background-color: color-mix(in srgb, var(--accent) 15%, var(--surface-2)); }
+    50% { background-color: var(--surface-2); }
+  }
+  .anim-alert-bg-fallback::before { animation: demo-alert-bg-blink-fallback 1.2s ease-in-out infinite; }
+  .anim-alert-bg-modern { animation: demo-alert-bg-blink-modern 1.2s ease-in-out infinite; }
+
+  /* ---- 13/14. alert label blink / ping (small pill) ---- */
+  .pill-stage {
+    min-width: 56px;
+    height: 26px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: var(--accent);
+    margin: 0 auto;
+    position: relative;
+  }
+  @keyframes demo-label-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  .anim-label-blink { animation: demo-label-blink 1.2s ease-in-out infinite; }
+
+  @keyframes demo-label-ping-fallback {
+    60% { box-shadow: 0 0 0 0 var(--accent); }
+    100% { box-shadow: 0 0 4px 10px transparent; }
+  }
+  @keyframes demo-label-ping-modern {
+    60% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 70%, transparent); }
+    100% { box-shadow: 0 0 4px 10px transparent; }
+  }
+  .anim-label-ping-fallback { animation: demo-label-ping-fallback 1.5s ease-out infinite; }
+  .anim-label-ping-modern { animation: demo-label-ping-modern 1.5s ease-out infinite; }
+
+  /* ---- progress bar effects ---- */
+  .bar-stage {
+    width: 90px;
+    height: 14px;
+    border-radius: 7px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+    background: var(--surface-2);
+  }
+
+  /* shimmer / shimmer_reverse - iso, linear-gradient + transform only */
+  .bar-shimmer { background: var(--icon-demo); }
+  .bar-shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+    animation: demo-shimmer 2s infinite;
+  }
+  @keyframes demo-shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  /* rainbow / rainbow_full - iso, plain gradient, no color-mix() anywhere */
+  .bar-rainbow {
+    background: linear-gradient(90deg, #e74c3c, #f1c40f, #2ecc71, #3498db, #9b59b6);
+  }
+  .bar-rainbow .marker-pin {
+    position: absolute;
+    top: 50%;
+    left: 62%;
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background: #fff;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9), 0 2px 3px rgba(0, 0, 0, 0.35);
+  }
+
+  /* bar_segments - adapted, but a DIFFERENT threshold than the rest of this
+     page (round()/mod(): Chrome/Edge 114+, Firefox 118+, Safari 16.4+ - a
+     notch above the 111/113/16.2 "Full visual effects" row). Illustrative
+     only below: the real fallback is a clamp()-based approximation, not
+     simply a wider gap. */
+  .bar-segments-fallback {
+    background: linear-gradient(90deg, var(--icon-demo) 0 18px, var(--surface-2) 18px 21px) repeat-x;
+    background-size: 21px 100%;
+  }
+  .bar-segments-modern {
+    background: linear-gradient(90deg, var(--icon-demo) 0 17px, var(--surface-2) 17px 19px) repeat-x;
+    background-size: 19px 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [class^="anim-"], [class*=" anim-"] { animation: none !important; }
+  }
+
+  /* ---- existing cards below (chip / alert / bar) ---- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--accent-dim);
+    border-radius: 10px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .card h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+
+  .card .loc {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: -10px;
+  }
+
+  .swatches {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .swatch {
+    background: var(--surface-2);
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .swatch .tag {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+
+  .stage {
+    height: 84px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  code.snippet {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    background: var(--surface-2);
+    border-radius: 6px;
+    padding: 10px 12px;
+    white-space: pre-wrap;
+    overflow-x: auto;
+  }
+
+  code.snippet .prop { color: #e8b4ae; }
+  code.snippet .fn { color: var(--accent); }
+
+  /* ---- chip hover ---- */
+  .demo-chip {
+    display: inline-flex;
+    align-items: center;
+    height: 32px;
+    padding: 0 16px;
+    border: 1px solid #4a4441;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+  }
+  .chip-colormix { background: color-mix(in srgb, var(--text) 8%, transparent); }
+
+  /* ---- alert background (static, non-animated state) ---- */
+  .demo-alert {
+    width: 90%;
+    height: 56px;
+    border-radius: 10px;
+    border: 1px solid #4a4441;
+    position: relative;
+    overflow: hidden;
+    background: var(--surface-2);
+  }
+  .alert-fallback::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    opacity: 0.15;
+  }
+  .alert-colormix { background: color-mix(in srgb, var(--accent) 15%, var(--surface-2)); }
+
+  /* ---- bar effect: gradient ---- */
+  .demo-bar {
+    width: 100%;
+    height: 14px;
+    border-radius: 7px;
+  }
+  /* fallback: the exact real values - a translucent white overlay (rgba, no
+     color-mix()) layered over the bar's own solid color, same technique
+     .glass already used. */
+  .bar-fallback {
+    background-color: var(--icon-demo);
+    background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.4), transparent);
+  }
+  .bar-colormix {
+    background: linear-gradient(90deg, color-mix(in srgb, white 40%, var(--icon-demo)), var(--icon-demo));
+  }
+
+  footer {
+    margin-top: 40px;
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+
+  .protocol {
+    background: var(--surface);
+    border: 1px solid var(--accent-dim);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin-bottom: 40px;
+  }
+
+  .protocol h2 {
+    margin: 0 0 12px;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+
+  .protocol ol {
+    margin: 0;
+    padding-left: 1.2em;
+    color: var(--text);
+    font-size: 0.85rem;
+  }
+
+  .protocol li { margin: 0 0 8px; }
+  .protocol li:last-child { margin-bottom: 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Graphic effects browser compatibility</h1>
+    <p>
+      Reference for the <a href="../README.md#installation">browser support
+      matrix</a> "full visual effects" row. Every swatch below is real, live
+      CSS rendered by your own browser — not a mockup. The table forces both
+      tiers to render side by side (via explicit classes, not
+      <code>@supports</code>) so you can compare them without needing actual
+      old hardware.
+    </p>
+  </header>
+
+  <div class="matrix">
+    <div class="hd"></div>
+    <div class="hd">Chrome / Edge</div>
+    <div class="hd">Firefox</div>
+    <div class="hd">Safari</div>
+    <div class="hd">Opera</div>
+    <div>Card matrix (README)</div>
+    <div class="req">98+</div>
+    <div class="req">94+</div>
+    <div class="req">15.4+</div>
+    <div class="req">84+</div>
+    <div>Full visual effects</div>
+    <div class="req">111+</div>
+    <div class="req">113+</div>
+    <div class="req">16.2+</div>
+    <div class="req">97+</div>
+  </div>
+
+  <div class="protocol">
+    <h2>Test protocol</h2>
+    <ol>
+      <li>Automated pass over <code>styles.ts</code> to extract every declaration that could be a compat risk (<code>color-mix()</code>, <code>round()</code>, duplicated declarations inside a keyframe).</li>
+      <li>Each one adapted here as closely as possible to the real card CSS - same properties, same values, illustrative colors only.</li>
+      <li>Legacy vs modern declarations reused as-is (not rewritten) to build the comparison swatches, so what you see is the actual shipped CSS, not a paraphrase.</li>
+      <li>Visually checked against Chromium <code>Version 92.0.4496.0 (Developer Build) (64-bit)</code>.</li>
+    </ol>
+  </div>
+
+  <h2 class="section">Icon &amp; alert animations — Chrome 92 vs a recent browser</h2>
+  <div class="table-wrap">
+    <table class="compare">
+      <thead>
+        <tr>
+          <th>Effect</th>
+          <th>Chrome 92 (fallback tier)</th>
+          <th>Recent browser</th>
+          <th>Remark</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr class="group-row"><td colspan="4">Icon effects</td></tr>
+
+        <tr>
+          <td class="effect-name">spin<span class="effect-loc">epb-icon-spin</span></td>
+          <td class="demo-cell"><div class="icon-stage"><span class="icon-glyph anim-spin">➤</span></div></td>
+          <td class="demo-cell"><div class="icon-stage"><span class="icon-glyph anim-spin">➤</span></div></td>
+          <td class="remark"><span class="iso">Iso.</span> Pure <code>transform</code>, no <code>color-mix()</code> involved.</td>
+        </tr>
+
+        <tr>
+          <td class="effect-name">pulse<span class="effect-loc">epb-icon-pulse</span></td>
+          <td class="demo-cell"><div class="icon-stage"><span class="icon-glyph anim-pulse">➤</span></div></td>
+          <td class="demo-cell"><div class="icon-stage"><span class="icon-glyph anim-pulse">➤</span></div></td>
+          <td class="remark"><span class="iso">Iso.</span> <code>transform</code> + <code>opacity</code> only.</td>
+        </tr>
+
+        <tr>
+          <td class="effect-name">bounce<span class="effect-loc">epb-icon-bounce</span></td>
+          <td class="demo-cell"><div class="icon-stage"><span class="icon-glyph anim-bounce">➤</span></div></td>
+          <td class="demo-cell"><div class="icon-stage"><span class="icon-glyph anim-bounce">➤</span></div></td>
+          <td class="remark"><span class="iso">Iso.</span> <code>scale3d()</code> only.</td>
+        </tr>
+
+        <tr>
+          <td class="effect-name">shake<span class="effect-loc">epb-icon-shake</span></td>
+          <td class="demo-cell"><div class="icon-stage"><span class="icon-glyph anim-shake">➤</span></div></td>
+          <td class="demo-cell"><div class="icon-stage"><span class="icon-glyph anim-shake">➤</span></div></td>
+          <td class="remark"><span class="iso">Iso.</span> <code>translate()</code>/<code>rotate()</code> only.</td>
+        </tr>
+
+        <tr>
+          <td class="effect-name">reveal<span class="effect-loc">epb-icon-reveal</span></td>
+          <td class="demo-cell"><div class="icon-stage"><span class="icon-glyph anim-reveal">➤</span></div></td>
+          <td class="demo-cell"><div class="icon-stage"><span class="icon-glyph anim-reveal">➤</span></div></td>
+          <td class="remark"><span class="iso">Iso.</span> <code>clip-path: circle()</code> only.</td>
+        </tr>
+
+        <tr>
+          <td class="effect-name">washing_machine<span class="effect-loc">epb-icon-shake + epb-icon-drum</span></td>
+          <td class="demo-cell"><div class="icon-stage"><span class="icon-glyph anim-washing-machine">➤</span></div></td>
+          <td class="demo-cell"><div class="icon-stage"><span class="icon-glyph anim-washing-machine">➤</span></div></td>
+          <td class="remark"><span class="iso">Iso.</span> <code>transform</code> + <code>clip-path: polygon()</code>, simplified shape here.</td>
+        </tr>
+
+        <tr>
+          <td class="effect-name">battery_charging<span class="effect-loc">epb-icon-charge</span></td>
+          <td class="demo-cell"><div class="icon-stage"><span class="icon-glyph anim-battery-charging">➤</span></div></td>
+          <td class="demo-cell"><div class="icon-stage"><span class="icon-glyph anim-battery-charging">➤</span></div></td>
+          <td class="remark"><span class="iso">Iso.</span> <code>clip-path</code> wipe, simplified here (real one is a bolt-shaped polygon).</td>
+        </tr>
+
+        <tr>
+          <td class="effect-name">ping<span class="effect-loc">epb-icon-ping / -modern</span></td>
+          <td class="demo-cell"><div class="icon-stage anim-ping-fallback"><span class="icon-glyph">➤</span></div></td>
+          <td class="demo-cell"><div class="icon-stage anim-ping-modern"><span class="icon-glyph">➤</span></div></td>
+          <td class="remark"><span class="fixed">Adapted.</span> Used to duplicate the <code>box-shadow</code> declaration inside one <code>60%</code> frame - could drop the whole frame on Chrome 92 and never start at all. The styles were adapted for older browsers: two full separate <code>@keyframes</code>, picked via <code>@supports</code> - always runs, solid ring on the fallback tier, translucent on the modern one.</td>
+        </tr>
+
+        <tr>
+          <td class="effect-name">shape / icon background<span class="effect-loc">.shape::before</span></td>
+          <td class="demo-cell"><div class="icon-stage shape-tint"><span class="icon-glyph">➤</span></div></td>
+          <td class="demo-cell"><div class="icon-stage shape-tint"><span class="icon-glyph">➤</span></div></td>
+          <td class="remark"><span class="iso">Iso.</span> The styles were adapted for older browsers to use plain <code>opacity</code> instead of <code>color-mix()</code> - no gap left, renders the same everywhere.</td>
+        </tr>
+
+        <tr class="group-row"><td colspan="4">Alert effects (<code>alert_when</code>)</td></tr>
+
+        <tr>
+          <td class="effect-name">blink · border<span class="effect-loc">epb-alert-border</span></td>
+          <td class="demo-cell"><div class="card-stage anim-alert-border"></div></td>
+          <td class="demo-cell"><div class="card-stage anim-alert-border"></div></td>
+          <td class="remark"><span class="iso">Iso.</span> Plain <code>border-color</code> toggle between two vars, no <code>color-mix()</code> involved.</td>
+        </tr>
+
+        <tr>
+          <td class="effect-name">ping · border<span class="effect-loc">epb-alert-ping / -modern</span></td>
+          <td class="demo-cell"><div class="card-stage anim-alert-ping-fallback"></div></td>
+          <td class="demo-cell"><div class="card-stage anim-alert-ping-modern"></div></td>
+          <td class="remark"><span class="fixed">Adapted.</span> Same fix as icon <code>ping</code> above - two full <code>@keyframes</code> instead of a duplicated declaration, so it always starts.</td>
+        </tr>
+
+        <tr>
+          <td class="effect-name">blink · background<span class="effect-loc">epb-alert-background / -modern</span></td>
+          <td class="demo-cell"><div class="bg-stage bg-stage-overlay anim-alert-bg-fallback"></div></td>
+          <td class="demo-cell"><div class="bg-stage anim-alert-bg-modern"></div></td>
+          <td class="remark"><span class="fixed">Adapted.</span> The styles were adapted for older browsers: an opacity-animated overlay (capped at <code>--epb-alert-background-opacity</code>, 0.15) instead of animating <code>background-color</code> directly - cheaper, and capped to match the modern tier's own 15% intensity instead of the old fully-solid look.</td>
+        </tr>
+
+        <tr>
+          <td class="effect-name">blink · label<span class="effect-loc">epb-alert-label-blink</span></td>
+          <td class="demo-cell"><div class="pill-stage anim-label-blink"></div></td>
+          <td class="demo-cell"><div class="pill-stage anim-label-blink"></div></td>
+          <td class="remark"><span class="iso">Iso.</span> Plain <code>opacity</code> toggle, no <code>color-mix()</code> involved.</td>
+        </tr>
+
+        <tr>
+          <td class="effect-name">ping · label<span class="effect-loc">epb-alert-label-ping / -modern</span></td>
+          <td class="demo-cell"><div class="pill-stage anim-label-ping-fallback"></div></td>
+          <td class="demo-cell"><div class="pill-stage anim-label-ping-modern"></div></td>
+          <td class="remark"><span class="fixed">Adapted.</span> Same fix as the two <code>ping</code> rows above, sized down for the pill.</td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="section">Progress bar effects — Chrome 92 vs a recent browser</h2>
+  <div class="table-wrap">
+    <table class="compare">
+      <thead>
+        <tr>
+          <th>Effect</th>
+          <th>Chrome 92 (fallback tier)</th>
+          <th>Recent browser</th>
+          <th>Remark</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr>
+          <td class="effect-name">shimmer / shimmer_reverse<span class="effect-loc">.effect.shimmer / .shimmerReverse</span></td>
+          <td class="demo-cell"><div class="bar-stage bar-shimmer"></div></td>
+          <td class="demo-cell"><div class="bar-stage bar-shimmer"></div></td>
+          <td class="remark"><span class="iso">Iso.</span> <code>linear-gradient</code> + <code>transform</code> only, no <code>color-mix()</code>/<code>round()</code> involved.</td>
+        </tr>
+
+        <tr>
+          <td class="effect-name">rainbow<span class="effect-loc">bar_color_mode: rainbow</span></td>
+          <td class="demo-cell"><div class="bar-stage bar-rainbow"></div></td>
+          <td class="demo-cell"><div class="bar-stage bar-rainbow"></div></td>
+          <td class="remark"><span class="iso">Iso.</span> Plain multi-stop gradient, no <code>color-mix()</code> anywhere.</td>
+        </tr>
+
+        <tr>
+          <td class="effect-name">rainbow_full<span class="effect-loc">bar_color_mode: rainbow_full</span></td>
+          <td class="demo-cell"><div class="bar-stage bar-rainbow"><span class="marker-pin"></span></div></td>
+          <td class="demo-cell"><div class="bar-stage bar-rainbow"><span class="marker-pin"></span></div></td>
+          <td class="remark"><span class="iso">Iso.</span> Same full-width gradient, plus a static "glass pin" marker (plain <code>box-shadow</code>, no <code>color-mix()</code>).</td>
+        </tr>
+
+        <tr>
+          <td class="effect-name">bar_segments<span class="effect-loc">.segment-divider</span></td>
+          <td class="demo-cell"><div class="bar-stage bar-segments-fallback"></div></td>
+          <td class="demo-cell"><div class="bar-stage bar-segments-modern"></div></td>
+          <td class="remark"><span class="fixed">Adapted.</span> Unrelated to <code>color-mix()</code> - depends on <code>round()</code>/<code>mod()</code> instead, a notch above the rest of this page's threshold (Chrome/Edge 114+, Firefox 118+, Safari 16.4+). The styles were adapted for older browsers with a <code>clamp()</code>-based approximation instead of the exact pixel gap - the difference is subtle, illustrated here for clarity.</td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="section">Other <code>color-mix()</code> effects <span class="status">(unrelated to icon_animation)</span></h2>
+  <div class="grid">
+
+    <div class="card">
+      <h3>Chip hover (editor) <span class="iso" style="font-weight:400;font-size:0.7rem;">— iso, no longer uses color-mix()</span></h3>
+      <div class="loc">styles.ts · .chip::before</div>
+      <div class="swatches">
+        <div class="swatch">
+          <span class="tag">Every browser</span>
+          <div class="stage"><span class="demo-chip chip-colormix">bar_size</span></div>
+        </div>
+        <div class="swatch">
+          <span class="tag">Every browser</span>
+          <div class="stage"><span class="demo-chip chip-colormix">bar_size</span></div>
+        </div>
+      </div>
+      <code class="snippet"><span class="prop">/* own ::before layer, same technique as .shape::before */</span>
+background: var(--primary-text-color);
+opacity: 0; /* 0.08 on :hover */</code>
+    </div>
+
+    <div class="card">
+      <h3>Alert · background mode (static)</h3>
+      <div class="loc">styles.ts · .alert-active.alert-background</div>
+      <div class="swatches">
+        <div class="swatch">
+          <span class="tag">Fallback</span>
+          <div class="stage"><div class="demo-alert alert-fallback"></div></div>
+        </div>
+        <div class="swatch">
+          <span class="tag">color-mix()</span>
+          <div class="stage"><div class="demo-alert alert-colormix"></div></div>
+        </div>
+      </div>
+      <code class="snippet"><span class="prop">/* fallback: a solid ::before overlay at a fixed */</span>
+<span class="prop">   opacity, --epb-alert-background-opacity (0.15) */</span>
+<span class="prop">background-color</span>: <span class="fn">color-mix</span>(in srgb, var(--alert-color-final) 15%, var(--ha-card-background));</code>
+    </div>
+
+    <div class="card">
+      <h3>Bar effect: gradient <span class="fixed" style="font-weight:400;font-size:0.7rem;">— now has a fallback too</span></h3>
+      <div class="loc">styles.ts · .effect.gradient / .gradientReverse</div>
+      <div class="swatches">
+        <div class="swatch">
+          <span class="tag">Fallback</span>
+          <div class="stage"><div class="demo-bar bar-fallback"></div></div>
+        </div>
+        <div class="swatch">
+          <span class="tag">color-mix()</span>
+          <div class="stage"><div class="demo-bar bar-colormix"></div></div>
+        </div>
+      </div>
+      <code class="snippet"><span class="prop">/* fallback: a translucent white overlay, no color-mix() -</span>
+<span class="prop">   same technique .glass already uses */</span>
+--progress-effect-gradient: var(--progress-effect-gradient-modern,
+  linear-gradient(90deg, <span class="fn">rgba</span>(255, 255, 255, 0.4), transparent));
+
+<span class="prop">/* modern tier, untouched, gated behind @supports */</span>
+--progress-effect-gradient-modern: linear-gradient(90deg,
+  <span class="fn">color-mix</span>(in srgb, white 40%, var(--progress-bar-color)),
+  var(--progress-bar-color));</code>
+    </div>
+
+  </div>
+
+  <footer>
+    Rendered live in your own browser. See
+    <a href="https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues/128">issue #128</a>
+    for the background on the browser-compat work itself.
+  </footer>
+</div>
+</body>
+</html>

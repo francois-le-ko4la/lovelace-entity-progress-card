@@ -315,6 +315,53 @@ ${CARD.htmlStructure.card.element} {
 }
 
 /* =============================================================================
+   RIPPLE ZONE (card-level <ha-ripple>'s own control - see
+   CARD.htmlStructure.sections.rippleZone's own comment for why it's a
+   sibling of .container instead of a bare child)
+   ============================================================================= */
+
+.${CARD.htmlStructure.sections.rippleZone.class} {
+  position: absolute;
+  inset: 0;
+  /* Same var() chain ha-card's own border-radius reads (styles.ts's own
+     ${CARD.htmlStructure.card.element} rule), not "inherit" - confirmed
+     live that inherit wasn't giving this the same curve as ha-card's own
+     corners, cutting into the :focus-visible border below at each corner. */
+  border-radius: var(--epb-card-border-radius, var(--current-card-border-radius));
+  overflow: hidden;
+}
+
+/* No action configured on the card itself - nothing for this to catch, and
+   left alone it would otherwise still intercept every click that falls
+   through .container (pointer-events: none below), silently swallowing
+   clicks that should have gone nowhere instead of doing nothing visibly. */
+${CARD.htmlStructure.card.element}:not(.${CARD.style.dynamic.clickable.card}) .${CARD.htmlStructure.sections.rippleZone.class} {
+  pointer-events: none;
+}
+
+/* This card's own click target is .ripple-zone, not ha-card (see its own
+   comment in card-config.ts for why) - so this is where its focus ring
+   lives too. A real border, not box-shadow/outline: both of those get
+   clipped by this element's own overflow: hidden (verified - it's not just
+   an outline quirk, the spec clips box-shadow the same way), but a border
+   is part of the box itself, never subject to its own overflow. Since
+   .ripple-zone's edges are pinned by inset: 0 rather than an explicit
+   width/height, adding a border eats inward from that fixed edge instead
+   of growing the box.
+   Stays fully inside .ripple-zone's own inset: 0 box on purpose - a
+   negative margin to reach past it, all the way to ha-card's own outer
+   edge (matching ha-tile-container's .background technique) sounds nicer,
+   but ha-card has its own overflow: hidden (needed elsewhere - bars/images
+   clipped to its rounded corners), which clips any child bleeding past its
+   padding edge the same way .ripple-zone's own overflow: hidden clips its
+   own box-shadow/outline - confirmed live, corners got cut. Sits just
+   inside the card's existing border instead of visually replacing it. */
+.${CARD.htmlStructure.sections.rippleZone.class}:focus-visible {
+  outline: none;
+  border: 2px solid var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}));
+}
+
+/* =============================================================================
    MAIN CONTAINER
    ============================================================================= */
 
@@ -337,6 +384,13 @@ ${CARD.htmlStructure.card.element} {
   padding-top: var(--current-specific-padding-top, var(--current-container-padding-top, 0));
   box-sizing: var(--current-container-box-sizing, content-box);
   flex-wrap: var(--current-container-flex-wrap, nowrap);
+  /* Transparent to clicks by default (ha-tile-container's own .content does
+     the same) - a click anywhere that isn't over an explicitly re-enabled
+     interactive descendant (.shape, only while .clickable-icon - see below)
+     falls straight through to .ripple-zone underneath instead of this
+     element (or a non-interactive .shape) capturing it first. Inherited by
+     every descendant unless one opts back in. */
+  pointer-events: none;
 }
 
 .horizontal {
@@ -610,9 +664,6 @@ ha-card.label-left .status-label {
 
 /* === SHAPE & ICON === */
 .${CARD.htmlStructure.elements.shape.class} {
-  --current-shape-background-color: color-mix(in srgb, var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default})) var(--shape-opacity), transparent);
-  --ha-ripple-hover-opacity: 0.15;
-
   position: relative;
   display: flex;
   align-items: center;
@@ -620,13 +671,78 @@ ha-card.label-left .status-label {
   width: var(--current-shape-size);
   height: var(--current-shape-size);
   border-radius: 50%;
-  background-color: var(--current-shape-background-color);
+  transition: transform 180ms ease-in-out;
 }
 
-.type-entities .${CARD.htmlStructure.elements.shape.class} {
-  --ha-ripple-hover-opacity: 0;
-  --ha-ripple-pressed-opacity: 0;
-  --current-shape-background-color: transparent;
+/* box-shadow, not border - .shape has an explicit width/height (no
+   box-sizing: border-box), so a border would grow it on focus; box-shadow
+   never participates in layout. Same technique/color source ha-tile-icon
+   uses (verified against its own source: .container:focus-visible {
+   box-shadow: 0 0 0 2px var(--tile-icon-color); }). No overflow: hidden on
+   .shape, so nothing to clip here. */
+.${CARD.htmlStructure.elements.shape.class}:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}));
+}
+
+/* Own layer for the tinted circle instead of background-color directly on
+   .shape: opacity only ever fades the element carrying it *and its own
+   descendants together, still composited as one flattened unit first* - it
+   can never create contrast between a parent and a child of its own (the
+   icon glyph, sharing this same color, would fade at the exact same rate
+   and stay just as invisible against it). A childless ::before sidesteps
+   that entirely: the icon (a real child of .shape, rendered after this in
+   the same stacking context) stays fully opaque regardless, same technique
+   ha-tile-icon uses (verified against its actual source) - opacity is all
+   it needs too, no color-mix() anywhere. Plain opacity on a solid color is
+   mathematically identical to color-mix(in srgb, color X%, transparent)
+   for this exact "toward transparent" case (real difference only shows up
+   mixing two actual colors in a perceptual space like oklch) - so there's
+   nothing color-mix() would add here, and opacity is the cheaper of the
+   two for the :hover/:active transitions below (compositor-only, no
+   repaint, unlike animating a color-mix()-computed value would be). Works
+   identically on every browser this card supports - no @supports/fallback
+   tier needed at all. */
+.${CARD.htmlStructure.elements.shape.class}::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  /* --shape-background-color: a dedicated override slot (same "own,
+     specifically-named variable" pattern as --current-progress-container-
+     height elsewhere) rather than a context redefining background-color
+     directly - a bare property name is a much easier accidental collision
+     target (any other rule, including a user's own card_mod, could target
+     it for an unrelated reason) than a project-namespaced variable nothing
+     else declares. */
+  background-color: var(--shape-background-color, var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default})));
+  opacity: var(--shape-opacity);
+}
+
+/* CSS-only click feedback (ha-tile-icon's own technique) instead of a second
+   <ha-ripple> - only while the icon actually has an action of its own
+   (.clickable-icon, same negotiated-action detection - domain defaults
+   included - that already gates the ripple-zone fallthrough below and, on
+   ha-card itself, the card's own ripple). pointer-events: auto opts back in
+   from .container's own blanket none (see MAIN CONTAINER above) - without
+   this the icon would be transparent to clicks too, falling through to the
+   ripple-zone/card action underneath exactly like a non-interactive icon
+   does on purpose. The opacity bump on hover (20% -> 35%, ha-tile-icon's own
+   numbers) reaches ::before through plain custom-property inheritance. */
+.${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.elements.shape.class} {
+  pointer-events: auto;
+}
+
+.${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.elements.shape.class}:hover {
+  --shape-opacity: 35%;
+}
+
+.${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.elements.shape.class}:active {
+  transform: scale(1.2);
+}
+
+.type-entities .${CARD.htmlStructure.elements.shape.class}::before {
+  --shape-background-color: transparent;
 }
 
 .${CARD.htmlStructure.elements.icon.class},
@@ -1421,38 +1537,46 @@ ha-card.info-multiline {
      available, fractional (sub-pixel) either way a boundary doesn't itself
      land on a whole device pixel. Doubled for medium/large/xlarge (a
      hairline that reads fine on a small bar disappears on a bigger one).
-     This is the fallback tier, consumed below - see
-     --bar-segment-gap-modern just below for the length-relative value
-     recent engines actually use instead. */
+     This is the fallback tier - see --bar-segment-gap-final just below. */
   --bar-segment-gap: 3px;
-  /* Modern alternative: scales with the bar's own LENGTH (one segment's own
-     share of it) instead of the fixed thickness-based tiers above - 40% of
-     one segment's cell width (100% / --bar-segments), floored to a whole
-     px, nudged up by 1px when that lands even (needs to stay odd, same
-     whole-pixel-centering reasoning as the fallback), then clamped to
-     [3px, 9px] - floored so it stays visible with lots of segments, capped
-     so a bar with very few segments (e.g. bar_segments: 2) doesn't turn
-     into a huge divider with nothing bounding it. 3px/9px are both odd on
-     purpose: clamp() only ever returns one of its three inputs verbatim, so
-     as long as all three (the floor, the ceiling, and the already-oddified
-     value) are odd, the result is guaranteed odd too - clamping AFTER the
-     +1px nudge (not before) means that nudge can never push a
-     ceiling-clamped value 1px past the ceiling.
-     round()/mod() are CSS Values 4 (Chrome/Edge 114+, Firefox 118+, Safari
-     16.4+) - a custom property's own declaration never "fails" just because
-     it contains a function this engine doesn't recognize (it's inert token
-     text until substituted into a real property), so declaring this here is
-     always harmless. The actual fallback happens where these get consumed
-     below (width/height/left/bottom, each declared twice: the fixed
-     --bar-segment-gap first, this one second) - an engine that can't
-     resolve round()/mod() fails that second declaration specifically
-     (invalid at computed-value time) and silently keeps the first. */
-  --bar-segment-gap-floor: round(down, calc(100% / var(--bar-segments, 10) * 0.4), 1px);
-  --bar-segment-gap-modern: clamp(
-    3px,
-    calc(var(--bar-segment-gap-floor) + 1px - mod(var(--bar-segment-gap-floor), 2px)),
-    9px
-  );
+  /* Resolves to the modern (length-relative) tier wherever it exists, the
+     fixed odd tier everywhere else - --bar-segment-gap-modern is only ever
+     declared inside the @supports block below, so on an engine that doesn't
+     match it the property stays genuinely unset (not just "invalid"), and
+     var()'s own fallback here does the rest - same shape as the watermark
+     triangle's --wm-half-tri. Every consumer below (width/height/left/
+     bottom) reads this single variable now instead of each duplicating both
+     tiers itself. */
+  --bar-segment-gap-final: var(--bar-segment-gap-modern, var(--bar-segment-gap));
+}
+
+/* Modern tier, feature-gated via @supports (see --bar-segment-gap-final
+   above) instead of duplicating every consuming declaration - round()/mod()
+   are CSS Values 4 (Chrome/Edge 114+, Firefox 118+, Safari 16.4+), past the
+   documented 94+ floor; both ship together in every engine that has either,
+   so testing round() alone is a reliable proxy for mod() too. */
+@supports (top: round(down, 1px, 1px)) {
+  .${CARD.htmlStructure.elements.progressBar.segmentDivider.class} {
+    /* Scales with the bar's own LENGTH (one segment's own share of it)
+       instead of the fixed thickness-based tiers above - 40% of one
+       segment's cell width (100% / --bar-segments), floored to a whole px,
+       nudged up by 1px when that lands even (needs to stay odd, same
+       whole-pixel-centering reasoning as the fallback), then clamped to
+       [3px, 9px] - floored so it stays visible with lots of segments,
+       capped so a bar with very few segments (e.g. bar_segments: 2) doesn't
+       turn into a huge divider with nothing bounding it. 3px/9px are both
+       odd on purpose: clamp() only ever returns one of its three inputs
+       verbatim, so as long as all three (the floor, the ceiling, and the
+       already-oddified value) are odd, the result is guaranteed odd too -
+       clamping AFTER the +1px nudge (not before) means that nudge can never
+       push a ceiling-clamped value 1px past the ceiling. */
+    --bar-segment-gap-floor: round(down, calc(100% / var(--bar-segments, 10) * 0.4), 1px);
+    --bar-segment-gap-modern: clamp(
+      3px,
+      calc(var(--bar-segment-gap-floor) + 1px - mod(var(--bar-segment-gap-floor), 2px)),
+      9px
+    );
+  }
 }
 
 .${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.segmentDivider.class},
@@ -1489,17 +1613,11 @@ ha-card.info-multiline {
      --segment-position. --epb-bar-segment-gap: a card_mod override hook,
      same pattern as --epb-progress-bar-radius/--epb-progress-bar-min-width
      above - checked here at the single point both width and the centering
-     math actually consume --bar-segment-gap, so a card_mod override always
-     wins outright regardless of which bar_size/bar_position tier would
+     math actually consume --bar-segment-gap-final, so a card_mod override
+     always wins outright regardless of which tier (fixed or modern) would
      otherwise have set it. */
-  left: calc(var(--segment-position) - (var(--epb-bar-segment-gap, var(--bar-segment-gap)) - 1px) / 2);
-  width: var(--epb-bar-segment-gap, var(--bar-segment-gap));
-  /* Second declaration, modern engines only - see --bar-segment-gap-modern's
-     own comment above for the fallback mechanics. --epb-bar-segment-gap
-     still checked first in both: a card_mod override always wins outright,
-     old engine or new. */
-  left: calc(var(--segment-position) - (var(--epb-bar-segment-gap, var(--bar-segment-gap-modern)) - 1px) / 2);
-  width: var(--epb-bar-segment-gap, var(--bar-segment-gap-modern));
+  left: calc(var(--segment-position) - (var(--epb-bar-segment-gap, var(--bar-segment-gap-final)) - 1px) / 2);
+  width: var(--epb-bar-segment-gap, var(--bar-segment-gap-final));
 }
 
 .vertical-bar .${CARD.htmlStructure.elements.progressBar.segmentDivider.class} {
@@ -1510,12 +1628,8 @@ ha-card.info-multiline {
      --segment-position (also counted from 0%) needs the same reference
      edge. Same whole-pixel centering offset and --epb-bar-segment-gap
      override as the horizontal rule above. */
-  bottom: calc(var(--segment-position) - (var(--epb-bar-segment-gap, var(--bar-segment-gap)) - 1px) / 2);
-  height: var(--epb-bar-segment-gap, var(--bar-segment-gap));
-  /* Second declaration, modern engines only - see --bar-segment-gap-modern's
-     own comment (horizontal rule above) for the fallback mechanics. */
-  bottom: calc(var(--segment-position) - (var(--epb-bar-segment-gap, var(--bar-segment-gap-modern)) - 1px) / 2);
-  height: var(--epb-bar-segment-gap, var(--bar-segment-gap-modern));
+  bottom: calc(var(--segment-position) - (var(--epb-bar-segment-gap, var(--bar-segment-gap-final)) - 1px) / 2);
+  height: var(--epb-bar-segment-gap, var(--bar-segment-gap-final));
 }
 
 /**
@@ -1553,14 +1667,23 @@ ha-card.info-multiline {
 
 /**
  * ring bursts from the shape's own border, using the same icon/shape color as
- * everywhere else. Fallback declared first (plain var(), no alpha) for
- * engines that don't support color-mix() (Chrome/Edge < 111, Firefox < 113,
- * Safari < 16.2 - see issue #128): they still get a solid ring instead of no
- * ring at all. color-mix() overrides it wherever it's understood.
+ * everywhere else. Two full keyframes rather than a duplicated declaration
+ * inside the frame: an engine that doesn't support color-mix() (Chrome/Edge <
+ * 111, Firefox < 113, Safari < 16.2 - see issue #128) can drop the whole 60%
+ * frame instead of just the invalid declaration, which silently kills the
+ * animation entirely (confirmed live on Chrome 92) rather than just losing
+ * the alpha blending. -modern is only picked up where @supports below can
+ * confirm color-mix() actually resolves.
  */
 @keyframes epb-icon-ping {
   60% {
     box-shadow: 0 0 0 0 var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}));
+  }
+  100% { box-shadow: 0 0 5px 15px transparent; }
+}
+
+@keyframes epb-icon-ping-modern {
+  60% {
     box-shadow: 0 0 0 0 color-mix(in srgb, var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default})) 70%, transparent);
   }
   100% { box-shadow: 0 0 5px 15px transparent; }
@@ -1671,6 +1794,12 @@ ha-card.info-multiline {
   will-change: box-shadow;
 }
 
+@supports (background: color-mix(in srgb, red, blue)) {
+  .icon-anim-ping .${CARD.htmlStructure.elements.shape.class} {
+    animation-name: epb-icon-ping-modern;
+  }
+}
+
 .icon-anim-washing-machine .${CARD.htmlStructure.elements.icon.class} {
   animation: epb-icon-shake 400ms ease-in-out infinite, epb-icon-drum 2s ease infinite;
   transform-origin: 50% 110%;
@@ -1708,7 +1837,21 @@ ha-card.info-multiline {
   50% { border-color: var(--epb-card-border-color, var(--ha-card-border-color, var(--divider-color, #e0e0e0))); }
 }
 
+/* Base tier: an opacity-animated overlay (::before, solid alert color)
+   instead of animating background-color directly on ha-card each frame -
+   background-color isn't compositor-only, so that repaints every frame
+   (same reasoning as epb-icon-ping's own sonar-disc rewrite above). ha-card's
+   own background-color goes neutral for the duration (see .alert-anim-blink
+   below) so the overlay fading in/out over it reads the same as before.
+   Modern tier (epb-alert-background-modern) is untouched - still the
+   original background-color + color-mix() animation, which already worked
+   well - the overlay is switched off there instead of running both. */
 @keyframes epb-alert-background {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0; }
+}
+
+@keyframes epb-alert-background-modern {
   0%, 100% { background-color: color-mix(in srgb, var(--alert-color-final) 15%, var(--ha-card-background, var(--card-background-color))); }
   50% { background-color: var(--ha-card-background, var(--card-background-color)); }
 }
@@ -1722,6 +1865,12 @@ ha-card.info-multiline {
 @keyframes epb-alert-ping {
   60% {
     box-shadow: 0 0 0 0 var(--alert-color-final);
+  }
+  100% { box-shadow: 0 0 5px 15px transparent; }
+}
+
+@keyframes epb-alert-ping-modern {
+  60% {
     box-shadow: 0 0 0 0 color-mix(in srgb, var(--alert-color-final) 70%, transparent);
   }
   100% { box-shadow: 0 0 5px 15px transparent; }
@@ -1737,6 +1886,12 @@ ha-card.info-multiline {
 @keyframes epb-alert-label-ping {
   60% {
     box-shadow: 0 0 0 0 var(--alert-color-final);
+  }
+  100% { box-shadow: 0 0 5px 8px transparent; }
+}
+
+@keyframes epb-alert-label-ping-modern {
+  60% {
     box-shadow: 0 0 0 0 color-mix(in srgb, var(--alert-color-final) 70%, transparent);
   }
   100% { box-shadow: 0 0 5px 8px transparent; }
@@ -1762,19 +1917,56 @@ ha-card.info-multiline {
   will-change: box-shadow;
 }
 
-.alert-active.alert-background {
-  border-color: var(--epb-card-border-color, var(--ha-card-border-color, var(--divider-color, #e0e0e0)));
-  /* Fallback declared first (plain var(), no alpha blending) for engines that
-     don't support color-mix() (Chrome/Edge < 111, Firefox < 113, Safari <
-     16.2 - see issue #128): this is the persistent, non-animated alert color
-     - it must stay visible even where the animation itself can't run.
-     color-mix() overrides it wherever it's understood. */
-  background-color: var(--alert-color-final);
-  background-color: color-mix(in srgb, var(--alert-color-final) 15%, var(--ha-card-background, var(--card-background-color)));
+@supports (background: color-mix(in srgb, red, blue)) {
+  .alert-active.alert-anim-ping:not(.alert-label) {
+    animation-name: epb-alert-ping-modern;
+  }
 }
 
-.alert-active.alert-background.alert-anim-blink {
+/* Base tier: ha-card's own background stays neutral - a ::before overlay
+   (solid alert color at a fixed low opacity) carries the tint instead,
+   matching modern's 15% color-mix() look without needing color-mix() at
+   all (old engines can't compute it - see issue #128). Modern tier
+   (@supports below) is untouched - still color-mix() directly on ha-card's
+   own background-color - the overlay is switched off there instead of
+   stacking both. */
+.alert-active.alert-background {
+  border-color: var(--epb-card-border-color, var(--ha-card-border-color, var(--divider-color, #e0e0e0)));
+  background-color: var(--ha-card-background, var(--card-background-color));
+}
+
+.alert-active.alert-background::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: var(--alert-color-final);
+  opacity: var(--epb-alert-background-opacity, 0.15);
+  pointer-events: none;
+}
+
+@supports (background: color-mix(in srgb, red, blue)) {
+  .alert-active.alert-background::before {
+    content: none;
+  }
+
+  .alert-active.alert-background {
+    background-color: color-mix(in srgb, var(--alert-color-final) 15%, var(--ha-card-background, var(--card-background-color)));
+  }
+}
+
+/* Blink: the overlay above swaps its fixed opacity for the animated one
+   instead of getting a whole separate layer. */
+.alert-active.alert-background.alert-anim-blink::before {
   animation: epb-alert-background 1.2s ease-in-out infinite;
+}
+
+@supports (background: color-mix(in srgb, red, blue)) {
+  /* Modern tier: the original background-color + color-mix() animation on
+     ha-card itself, unchanged - overlay already off (see above). */
+  .alert-active.alert-background.alert-anim-blink {
+    animation: epb-alert-background-modern 1.2s ease-in-out infinite;
+  }
 }
 
 /* highlight: label - the status pill (HACore._applyAlertLabel) carries the
@@ -1796,6 +1988,12 @@ ha-card.info-multiline {
 .alert-active.alert-label.alert-anim-ping .status-label {
   animation: epb-alert-label-ping 1.5s ease-out infinite;
   will-change: box-shadow;
+}
+
+@supports (background: color-mix(in srgb, red, blue)) {
+  .alert-active.alert-label.alert-anim-ping .status-label {
+    animation-name: epb-alert-label-ping-modern;
+  }
 }
 
 /* === RADIUS EFFECT === */
@@ -1834,32 +2032,58 @@ ha-card.info-multiline {
 }
 
 /* ----- gradient / gradient-reverse ----- */
+/* Fallback: a translucent white overlay (rgba, no color-mix()) instead of
+   the bar's own plain color - same technique .glass already uses above:
+   this gradient is painted on .inner's own ::before, layered over its real
+   solid color underneath (see "gradient/glass: ::before compositor-only
+   scale" further down), so a partly-transparent white stop lightens it by
+   simple compositing instead of needing color-mix() to compute a lightened
+   color from scratch. Works on every browser this card supports - no gap
+   left to fall back from. Modern tier (the real 2-stop color-mix()
+   gradient) untouched, gated behind @supports below - it already looked
+   right, no reason to touch it. */
 .${CARD.style.dynamic.progressBar.effect.gradient.class},
 .${CARD.style.dynamic.progressBar.effect.gradientReverse.class} {
-  --progress-effect-gradient: linear-gradient(
-    90deg,
-    color-mix(in srgb, white 40%, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})),
-    var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})
-  );
-  --progress-effect-gradient-rev: linear-gradient(
-    270deg,
-    color-mix(in srgb, white 40%, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})),
-    var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})
-  );
+  --progress-effect-gradient: var(--progress-effect-gradient-modern, linear-gradient(90deg, rgba(255, 255, 255, 0.4), transparent));
+  --progress-effect-gradient-rev: var(--progress-effect-gradient-rev-modern, linear-gradient(270deg, rgba(255, 255, 255, 0.4), transparent));
+}
+
+@supports (background: color-mix(in srgb, red, blue)) {
+  .${CARD.style.dynamic.progressBar.effect.gradient.class},
+  .${CARD.style.dynamic.progressBar.effect.gradientReverse.class} {
+    --progress-effect-gradient-modern: linear-gradient(
+      90deg,
+      color-mix(in srgb, white 40%, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})),
+      var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})
+    );
+    --progress-effect-gradient-rev-modern: linear-gradient(
+      270deg,
+      color-mix(in srgb, white 40%, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})),
+      var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default})
+    );
+  }
 }
 
 .vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.gradient.class},
 .vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.gradientReverse.class} {
-  --progress-effect-gradient: linear-gradient(
-    0deg,
-    color-mix(in srgb, white 40%, var(--progress-bar-color, var(--state-icon-color))),
-    var(--progress-bar-color, var(--state-icon-color))
-  );
-  --progress-effect-gradient-rev: linear-gradient(
-    180deg,
-    color-mix(in srgb, white 40%, var(--progress-bar-color, var(--state-icon-color))),
-    var(--progress-bar-color, var(--state-icon-color))
-  );
+  --progress-effect-gradient: var(--progress-effect-gradient-up-modern, linear-gradient(0deg, rgba(255, 255, 255, 0.4), transparent));
+  --progress-effect-gradient-rev: var(--progress-effect-gradient-rev-up-modern, linear-gradient(180deg, rgba(255, 255, 255, 0.4), transparent));
+}
+
+@supports (background: color-mix(in srgb, red, blue)) {
+  .vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.gradient.class},
+  .vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.gradientReverse.class} {
+    --progress-effect-gradient-up-modern: linear-gradient(
+      0deg,
+      color-mix(in srgb, white 40%, var(--progress-bar-color, var(--state-icon-color))),
+      var(--progress-bar-color, var(--state-icon-color))
+    );
+    --progress-effect-gradient-rev-up-modern: linear-gradient(
+      180deg,
+      color-mix(in srgb, white 40%, var(--progress-bar-color, var(--state-icon-color))),
+      var(--progress-bar-color, var(--state-icon-color))
+    );
+  }
 }
 
 .${CARD.style.dynamic.progressBar.effect.gradient.class} {
@@ -2115,8 +2339,26 @@ ha-card.info-multiline {
   --wm-circle-size: var(--watermark-circle-size, 5px);
   --wm-tri-size: var(--watermark-triangle-size, 8px);
   --wm-half-line: calc(var(--wm-line-size) /2);
-  --wm-half-circle: calc(var(--wm-circle-size) / 2);
-  --wm-half-tri: calc(var(--wm-tri-size) / 2);
+  --wm-half-tri-base: calc(var(--wm-tri-size) / 2);
+  /* Resolves to the modern (whole-pixel) tier wherever it exists, the plain
+     fallback everywhere else - --wm-half-tri-base-modern is only ever
+     declared inside the @supports block below, so on an engine that doesn't
+     match it the property stays genuinely unset (not just "invalid"), and
+     var()'s own fallback here does the rest. Every consumer below keeps
+     reading this single variable, untouched either way. */
+  --wm-half-tri: var(--wm-half-tri-base-modern, var(--wm-half-tri-base));
+}
+
+/* Modern tier, feature-gated via @supports rather than this file's usual
+   "declare the consuming property twice" pattern (bar_segments' own gap) -
+   a single custom property, resolved once above, reads cleaner here than
+   duplicating every border/left/bottom declaration that touches
+   --wm-half-tri. round() is CSS Values 4 (Chrome/Edge 114+, Firefox 118+,
+   Safari 16.4+), past the documented 94+ floor. */
+@supports (top: round(down, 1px, 1px)) {
+  .watermark {
+    --wm-half-tri-base-modern: round(down, calc(var(--wm-tri-size) / 2), 1px);
+  }
 }
 
 /* top/bottom force the bar down to 6px (see .bottom-container/.top-container
@@ -2124,10 +2366,14 @@ ha-card.info-multiline {
    that, so .bar's overflow: hidden was clipping its bottom tip, reading as a
    blunt/misplaced marker rather than a sharp one. Scoped to this context
    only (not bar_size: small, which stays the normal 8px bar): still resolves
-   through --watermark-triangle-size first, so a user override wins here too. */
+   through --watermark-triangle-size first, so a user override wins here too.
+   4px (even), not 5px: base = wm-tri-size + 1 always, so an odd base -
+   without round() support needed to floor it there - only ever comes out of
+   an even wm-tri-size (odd/2 stays fractional, flipping base's own parity
+   the wrong way on an engine that can't round() it back down). */
 .top-container .watermark,
 .bottom-container .watermark {
-  --wm-tri-size: var(--watermark-triangle-size, 5px);
+  --wm-tri-size: var(--watermark-triangle-size, 4px);
 }
 
 .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
@@ -2198,32 +2444,48 @@ ha-card.info-multiline {
 }
 
 /* ---------- Round ---------- */
+/* Whole-pixel centering, same reasoning as bar_segments' dividers: this is a
+   real box (--mark-width/height: wm-circle-size), not a border-triangle
+   trick, so a plain /2 half or transform: translate(-50%) is fractional for
+   an odd size (5px default) - either rounds independently on each edge and
+   can blur/drift off-center by half a device pixel. (wm-circle-size - 1px) /
+   2 lands on a whole pixel instead, both for the value-axis offset and for
+   centering across the bar's own thickness (replaces the old top/left: 50% +
+   transform: translate(-50%) pair below). Assumes an odd --watermark-circle-
+   size, like the shipped default - same assumption bar_segments' own fixed
+   gap tiers make. */
 .lwm-round .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
 .hwm-round .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  --mark-top: 50%;
+  --mark-top: calc(50% - (var(--wm-circle-size) - 1px) / 2);
   --mark-width: var(--wm-circle-size);
   --mark-height: var(--wm-circle-size);
-  transform: translateY(-50%);
   border-radius: 50%;
   border: none;
 }
 .lwm-round .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-  --mark-left: calc(var(--wm-value) - var(--wm-half-circle));
+  --mark-left: calc(var(--wm-value) - (var(--wm-circle-size) - 1px) / 2);
 }
 .hwm-round .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  --mark-left: calc(var(--wm-value) - var(--wm-half-circle));
+  --mark-left: calc(var(--wm-value) - (var(--wm-circle-size) - 1px) / 2);
 }
 .vertical.up-orientation.overlay.lwm-round .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
 .vertical.up-orientation.overlay.hwm-round .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  --mark-left: 50%;
+  --mark-left: calc(50% - (var(--wm-circle-size) - 1px) / 2);
   --mark-right: auto;
   --mark-top: auto;
-  --mark-bottom: calc(var(--wm-value) - var(--wm-half-circle));
+  --mark-bottom: calc(var(--wm-value) - (var(--wm-circle-size) - 1px) / 2);
   --mark-width: var(--wm-circle-size);
-  transform: translateX(-50%);
 }
 
 /* ---------- Triangle ---------- */
+/* Base widened by 1px on the side that isn't part of the position formula
+   (border-right here, border-top in the vertical rule below) - an odd total
+   base by construction, no visual effect on the apex: with width:0 forcing
+   the browser to expand the border-box to fit the borders anyway, the apex
+   sits exactly at left + border-left (where border-left ends and
+   border-right begins), never at the base's own midpoint - --wm-half-tri
+   cancels out of "left: calc(value - half-tri)" + "border-left: half-tri"
+   symbolically regardless of what border-right is set to. */
 .lwm-triangle .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
 .hwm-triangle .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   --mark-left: calc(var(--wm-value) - var(--wm-half-tri));
@@ -2232,14 +2494,14 @@ ha-card.info-multiline {
   --mark-background: transparent;
   border-top: var(--wm-tri-size) solid var(--wm-color);
   border-left: var(--wm-half-tri) solid transparent;
-  border-right: var(--wm-half-tri) solid transparent;
+  border-right: calc(var(--wm-half-tri) + 1px) solid transparent;
 }
 .vertical.up-orientation.overlay.lwm-triangle .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
 .vertical.up-orientation.overlay.hwm-triangle .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   --mark-left: 0;
   --mark-bottom: calc(var(--wm-value) - var(--wm-half-tri));
   border-right: none;
-  border-top: var(--wm-half-tri) solid transparent;
+  border-top: calc(var(--wm-half-tri) + 1px) solid transparent;
   border-left: var(--wm-tri-size) solid var(--wm-color);
   border-bottom: var(--wm-half-tri) solid transparent;
 }
@@ -2273,7 +2535,7 @@ ha-card.info-multiline {
 
 .rainbow-full-bar:not(.${CARD.style.dynamic.progressBar.centerZero.class})
   .${CARD.htmlStructure.elements.progressBar.bar.class} {
-  background-color: transparent;
+  --epb-progress-bar-background-color: transparent;
   background-image: var(--epb-progress-bar-color, var(${CARD.style.dynamic.progressBar.color.var}, none));
 }
 
@@ -2328,7 +2590,11 @@ ha-card.info-multiline {
     0 0 0 var(--epb-rainbow-marker-border-width, var(--rainbow-marker-border-width, 1px))
       var(--epb-rainbow-marker-border-color, rgba(255, 255, 255, 0.9)),
     0 2px 3px rgba(0, 0, 0, 0.35);
-  opacity: 1; /* full opacity, unlike the watermarks' translucent default */
+  /* Own dedicated var (matches --epb-rainbow-marker-size/-color/-border-*
+     above) rather than a bare literal - full opacity by default, unlike the
+     watermarks' translucent one, but still overridable without colliding
+     with an unrelated rule targeting the bare opacity property. */
+  opacity: var(--epb-rainbow-marker-opacity, 1);
 }
 
 .rainbow-full-bar .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
@@ -2501,14 +2767,13 @@ ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium.labe
 .${CARD.style.dynamic.hiddenComponent.icon.class} :is(.${CARD.htmlStructure.sections.icon.class}, .${CARD.htmlStructure.elements.shape.class}),
 .${CARD.style.dynamic.hiddenComponent.name.class} .${CARD.htmlStructure.elements.nameContent.class},
 .${CARD.style.dynamic.hiddenComponent.secondary_info.class} .${CARD.htmlStructure.elements.secondaryInfoWrapper.class},
-.${CARD.style.dynamic.hiddenComponent.progress_bar.class} .${CARD.htmlStructure.elements.progressBar.bar.class},
-.${CARD.style.dynamic.hiddenComponent.shape.class} .${CARD.htmlStructure.elements.shape.class} ha-ripple {
+.${CARD.style.dynamic.hiddenComponent.progress_bar.class} .${CARD.htmlStructure.elements.progressBar.bar.class} {
   display: none;
 }
 
 /* Shape transparency when hidden */
-.${CARD.style.dynamic.hiddenComponent.shape.class} .${CARD.htmlStructure.elements.shape.class} {
-  background-color: transparent;
+.${CARD.style.dynamic.hiddenComponent.shape.class} .${CARD.htmlStructure.elements.shape.class}::before {
+  --shape-background-color: transparent;
 }
 
 /* hide: progress_bar above only hides the fill (.bar) - .bar-container itself
@@ -2542,12 +2807,6 @@ ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium.labe
 
 /* Suppress card-level ripple when card has no action */
 ${CARD.htmlStructure.card.element}:not(.${CARD.style.dynamic.clickable.card}) {
-  --ha-ripple-hover-opacity: 0;
-  --ha-ripple-pressed-opacity: 0;
-}
-
-/* Suppress shape/icon ripple when icon has no action */
-${CARD.htmlStructure.card.element}:not(.${CARD.style.dynamic.clickable.icon}) .${CARD.htmlStructure.elements.shape.class} {
   --ha-ripple-hover-opacity: 0;
   --ha-ripple-pressed-opacity: 0;
 }
@@ -2599,14 +2858,18 @@ const CHIPS_HOST_STYLE = css`
   .lbl { display: block; font-size: 1rem; font-weight: 400; line-height: 1.5;
     color: var(--primary-text-color); padding-bottom: 4px; }
   .chip-set { display: flex; flex-wrap: wrap; gap: 8px; }
-  .chip { display: inline-flex; align-items: center; height: 32px; padding: 0 16px; box-sizing: border-box;
+  .chip { position: relative; display: inline-flex; align-items: center; height: 32px; padding: 0 16px; box-sizing: border-box;
     border: 1px solid var(--divider-color, #e0e0e0); border-radius: 8px; background: transparent;
     color: var(--primary-text-color); font-family: inherit; font-size: 14px; line-height: 1; cursor: pointer;
     transition: background-color 0.15s, border-color 0.15s; }
-  /* Fallback first (var(), no alpha) for engines without color-mix() (Chrome/Edge
-     < 111, Firefox < 113, Safari < 16.2 - see issue #128): keeps a visible hover
-     hint instead of none at all. color-mix() overrides it where understood. */
-  .chip:hover { background: var(--divider-color, #e0e0e0); background: color-mix(in srgb, var(--primary-text-color) 8%, transparent); }
+  /* Own layer for the hover tint instead of background directly on .chip -
+     opacity on .chip itself would fade its own text/border along with the
+     tint (same reasoning as .shape::before - see styles.ts). A childless
+     ::before sidesteps that, and works identically on every browser this
+     card supports - no color-mix()/@supports/fallback tier needed at all. */
+  .chip::before { content: ''; position: absolute; inset: 0; border-radius: inherit;
+    background: var(--primary-text-color); opacity: 0; transition: opacity 0.15s; pointer-events: none; }
+  .chip:hover::before { opacity: 0.08; }
   .chip.selected { background: var(--primary-color); border-color: var(--primary-color);
     color: var(--text-primary-color, #fff); }
 `;

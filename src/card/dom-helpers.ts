@@ -620,6 +620,23 @@ class ActionHelper {
     });
   }
 
+  // Keyboard entry point for the icon's own action (Enter/Space while the
+  // icon itself is focused - see .clickable-icon .shape's tabindex/role in
+  // core.ts). Deliberately NOT a second <action-handler> binding on .shape:
+  // that binding's own pointerdown listener would ALSO see (and re-dispatch)
+  // any real mouse/touch click on the icon, since action-handler never calls
+  // stopPropagation() - a real double-fire, the same class of bug as the
+  // card/icon ripple one fixed earlier. Reuses #handleAction's own action
+  // resolution instead (icon_tap_action, falling back to the card's own
+  // tap_action - identical rule the pointer path already applies), just
+  // triggered from a keydown instead of a real 'action' gesture event. Only
+  // "tap" - Enter/Space has no hold/double-tap equivalent, same as any
+  // other keyboard-activated button.
+  triggerIconTap() {
+    if (!this.#config) return;
+    this.#handleAction(new CustomEvent('action', { detail: { action: 'tap' } }), true);
+  }
+
   #handleAction(ev: CustomEvent, fromIcon: boolean) {
     // Only reachable via the 'action' listener attached in #attachListeners,
     // itself only wired up from init() once #config has already been set.

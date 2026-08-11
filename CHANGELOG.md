@@ -150,6 +150,26 @@ far a manual resize could go — the only way to actually shrink a card that's
 already placed, not just a newly added one. See
 [`density`](docs/configuration.md#density).
 
+#### ♿ Better keyboard and screen reader support
+
+The card and its icon (when either has its own tap action) are now properly
+reachable and understandable for keyboard and screen-reader users, not just
+mouse/touch:
+
+- Tab reaches the card, and separately the icon if it has its own distinct
+  action (`icon_tap_action`) — each now announces something meaningful (the
+  entity's name and current value for the card, "Icon action" for the icon)
+  instead of a bare, unlabeled "button". A badge, where only the card itself is
+  ever clickable, no longer exposes its icon as a confusing extra stop.
+- Enter/Space activates each one, same as a mouse click.
+- Tabbing to the card or the icon now shows a clear, colored outline (matching
+  the entity's own color, following the card's rounded corners properly) instead
+  of the browser's plain default rectangle.
+- Fixed a structural issue where the card and its icon were both marked as
+  "buttons" nested one inside the other — some screen readers and touch
+  navigation handle that inconsistently. They're independent controls now, side
+  by side rather than one inside the other.
+
 ### 🐛 Notable fixes
 
 - The card could fail to load entirely on some older or embedded browsers (kiosk
@@ -238,6 +258,15 @@ already placed, not just a newly added one. See
   only) still reported a Sections grid minimum sized for a full card with a bar
   — see the [📱 A compact `density`](#-a-compact-density) highlight above.  
   ➡️ [Enhancement]: Set minimum width to 3 #134 (@FoxP)
+- Clicking the icon lit up the whole card too — fixed by rebuilding the
+  click-feedback layering, modeled on Home Assistant's own native Tile card.
+- `bar_effect: gradient`/`gradient_reverse`, the alert `blink` animation, and
+  `icon_animation`/`alert_when`'s `ping` animation could each fail on an older
+  browser (Chrome/Edge < 111, Firefox < 113, Safari < 16.2 — see issue #128) — a
+  flat, un-lightened bar for the first, a glitchy mid-cycle color for the
+  second, not starting at all for `ping`; all degrade gracefully now. The icon's
+  circular background had the same issue, fixed by simplifying it to a technique
+  that needs no fallback at all.
 
 ### 🧪 Try it: demo dashboard
 
@@ -254,6 +283,64 @@ local `-dev` builds) with
 live.
 
 Thanks to everyone who reported, tested and contributed 🙏
+
+---
+
+## What's new (1.6.1-rc6)
+
+### 🔧 Improvements
+
+- **`watermark` editor labels reworded to "marker(s)"** (issue #133, @Ascathon)
+  — `Watermark` toggle → `Markers`, `Low/High watermark source` →
+  `Low/High marker source`. Editor wording only, the `watermark:` YAML option
+  itself is unchanged.
+- **`round`/`triangle` watermark markers now center precisely on their value**,
+  same pixel-rounding fix `bar_segments`' own dividers already got.
+- **Browser-compat fallbacks (`round()`/`color-mix()`) cleaned up and extended**
+  across the file — same graceful-degradation behavior, less duplicated CSS to
+  maintain. Turned up several real gaps along the way, see Fixes.
+- New `--epb-alert-background-opacity` [hook](docs/theme.md#css) tunes the
+  `alert_when.highlight: background` tint on browsers using the fallback above
+  (defaults to matching the same look modern browsers already get).
+
+### 🐛 Fixes
+
+- The icon's circular background could disappear entirely on an older browser
+  (Chrome/Edge < 111, Firefox < 113, Safari < 16.2 — see issue #128) —
+  simplified to a technique that renders the same way on every supported
+  browser, so there's no gap left to fall back from.
+- `bar_effect: gradient`/`gradient_reverse` could silently do nothing on the
+  same class of browser — now falls back to a softly lightened bar instead of a
+  flat, un-lightened one.
+- The alert `blink` animation's background color could glitch mid-cycle on the
+  same class of browser — now falls back consistently.
+- `icon_animation: ping` and `alert_when`'s `ping`/`blink` animations could fail
+  to start at all on the same class of browser — not just lose the color
+  blending like the others above, the animation itself never ran. Same fallback
+  approach applied there too.
+- **Clicking the icon also lit up the whole card** — a real double-ripple,
+  confirmed and fixed by rebuilding the click-feedback layering after comparing
+  directly against Home Assistant's own native Tile card. The icon now gives its
+  own visual feedback (a quick highlight/scale) instead of triggering a second
+  ripple.
+
+### ♿ Accessibility
+
+A full pass on keyboard and screen-reader support for the card and its icon:
+
+- The card (and its icon, when it has its own separate `icon_tap_action`) are
+  now correctly announced as buttons with a real, specific name — the entity's
+  own name and current value for the card, "Icon action" for the icon — instead
+  of a generic, unlabeled one. A badge (only ever the card itself is clickable
+  there) no longer exposes its icon as a confusing extra keyboard stop.
+- The icon's own action, when it has one, is now reachable and activatable from
+  the keyboard (Tab, then Enter/Space) — previously mouse/touch only.
+- Tabbing to the card or the icon now shows a clear, colored focus outline (the
+  entity's own color, following the card's rounded corners correctly) instead of
+  the browser's plain default rectangle.
+- Fixed the card and its icon being marked as two "buttons" nested one inside
+  the other — inconsistent handling on some screen readers/touch navigation.
+  They're independent, side-by-side controls now.
 
 ---
 

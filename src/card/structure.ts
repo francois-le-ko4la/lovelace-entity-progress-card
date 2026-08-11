@@ -51,17 +51,24 @@ const Element = (obj: StructureElementSpec, extraClass = '') => {
 
 const StructureElements = {
   ripple: () => '<ha-ripple></ha-ripple>',
+  // The card-level ripple lives in its own sibling div (see
+  // CARD.htmlStructure.sections.rippleZone) rather than as a bare direct
+  // child of .container - see that token's own comment for why.
   container: (options: StructureOptions) =>
-    StructureElements.ripple() + Element(CARD.htmlStructure.sections.container, options.layout).html(CONTENT_SLOT),
+    Element(CARD.htmlStructure.sections.rippleZone).html(StructureElements.ripple()) +
+    Element(CARD.htmlStructure.sections.container, options.layout).html(CONTENT_SLOT),
   belowContainer: () => Element(CARD.htmlStructure.sections.belowContainer).html(CONTENT_SLOT),
   topContainer: () => Element(CARD.htmlStructure.sections.topContainer).html(CONTENT_SLOT),
   backgroundContainer: () => Element(CARD.htmlStructure.sections.backgroundContainer).html(CONTENT_SLOT),
   bottomContainer: () => Element(CARD.htmlStructure.sections.bottomContainer).html(CONTENT_SLOT),
 
-  iconAndShape: () =>
-    Element(CARD.htmlStructure.elements.shape).html(
-      StructureElements.ripple() + Element(CARD.htmlStructure.elements.icon).html(),
-    ),
+  // No ripple here anymore (was: ripple() + icon()) - the icon's own click
+  // feedback is CSS-only now (opacity/scale on :hover/:active, gated by
+  // .clickable-icon - see styles.ts), same technique ha-tile-icon uses
+  // instead of a second <ha-ripple>. .shape re-enables pointer-events itself
+  // (also gated by .clickable-icon) so it still receives its own clicks
+  // rather than falling through to the card-level ripple underneath.
+  iconAndShape: () => Element(CARD.htmlStructure.elements.shape).html(Element(CARD.htmlStructure.elements.icon).html()),
   badge: () =>
     Element(CARD.htmlStructure.elements.badge.container).html(Element(CARD.htmlStructure.elements.badge.icon).html()),
   nameContent: (minimal = false) =>

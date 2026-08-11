@@ -50,15 +50,35 @@ const configBase = {
 const htmlStructure = {
   card: {
     element: 'ha-card',
-    extraAttr: {
-      role: 'region',
-      tabindex: '0',
-      'aria-label': META.types.card.name,
-    },
+    // No role/tabindex/aria-label here anymore - that's .ripple-zone's job
+    // now (see its own comment below). ha-card itself is a plain structural
+    // wrapper, same as .container - putting the card's own interactive role
+    // on it would nest it around .shape's own role="button" (a real,
+    // audited a11y violation: interactive controls must not be nested,
+    // inconsistent screen-reader/touch-exploration behavior). ha-tile-icon/
+    // ha-tile-container avoid this the same way: .background (the card's
+    // own button) and .content (which holds the icon) are siblings, never
+    // one inside the other.
   },
   sections: {
     container: { element: 'div', class: 'container' },
     ripple: { element: 'ha-ripple' },
+    // Card-level ripple's own control (Nested Ripple mode - the <ha-ripple>'s
+    // parentElement). Sibling of .container, not an ancestor of .shape -
+    // .container itself goes pointer-events: none (see styles.ts), so a
+    // click anywhere on the card that isn't over an interactive descendant
+    // (the icon, when clickable) falls straight through to this div instead
+    // of ever bubbling into it - same shape as ha-tile-container's own
+    // .background/.content split, minus the shadow DOM/slots (not needed -
+    // the isolation comes from this sibling relationship, not from being a
+    // separate web component).
+    // aria-hidden here is the safe default (not clickable) - _createCardElements
+    // removes it and adds role="button"/tabindex/aria-label/aria-describedby
+    // instead, whenever hasClickableCard - the card's own interactive target
+    // now lives here rather than on ha-card itself, precisely so it stays a
+    // sibling of .container/.shape instead of an ancestor (see ha-card's own
+    // comment above for why that split matters).
+    rippleZone: { element: 'div', class: 'ripple-zone', extraAttr: { 'aria-hidden': 'true' } },
     belowContainer: { element: 'div', class: 'below-container' },
     topContainer: { element: 'div', class: 'top-container' },
     bottomContainer: { element: 'div', class: 'bottom-container' },

@@ -736,39 +736,40 @@ bar_color_mode: rainbow
 
 ### CSS hooks
 
-| Variable                              | Target       | Category   | Description                                              | Example       |
-| ------------------------------------- | ------------ | ---------- | -------------------------------------------------------- | ------------- |
-| `--epb-card-height`                   | Card         | Dimension  | Card height                                              | `80px`        |
-| `--epb-card-width`                    | Card         | Dimension  | Card width                                               | `300px`       |
-| `--epb-card-border-width`             | Card         | Border     | Border thickness                                         | `2px`         |
-| `--epb-card-border-color`             | Card         | Border     | Border color                                             | `#ff6600`     |
-| `--epb-card-border-radius`            | Card         | Border     | Card corner radius                                       | `20px`        |
-| `--epb-card-border-style`             | Card         | Border     | Border style                                             | `dashed`      |
-| `--epb-card-font-family`              | Card         | Typography | Card font family                                         | `monospace`   |
-| `--epb-spacing`                       | Card         | Dimension  | Global density: paddings and gaps of the whole card      | `6px`         |
-| `--epb-icon-size`                     | Icon         | Dimension  | Icon size (standard card layout)                         | `28px`        |
-| `--epb-shape-size`                    | Icon         | Dimension  | Circular shape size behind the icon                      | `42px`        |
-| `--epb-progress-transition`           | Progress Bar | Animation  | Bar fill transition (duration/easing, `none` to disable) | `0.2s linear` |
-| `--epb-progress-bar-color`            | Progress Bar | Color      | Progress bar fill color                                  | `#ff6600`     |
-| `--epb-progress-bar-background-color` | Progress Bar | Color      | Progress bar background color                            | `#333333`     |
-| `--epb-progress-bar-size`             | Progress Bar | Dimension  | Forces the bar fill size (overrides computed value)      | `60%`         |
-| `--epb-progress-bar-radius`           | Progress Bar | Border     | Progress bar container border radius                     | `4px`         |
-| `--epb-progress-inner-radius`         | Progress Bar | Border     | Progress bar inner fill border radius                    | `4px`         |
-| `--epb-icon-and-shape-color`          | Icon         | Color      | Icon and shape background color                          | `#ff6600`     |
-| `--epb-name-color`                    | Name         | Color      | Name color                                               | `#ffffff`     |
-| `--epb-name-font-size`                | Name         | Typography | Name font size                                           | `16px`        |
-| `--epb-name-font-weight`              | Name         | Typography | Name font weight                                         | `700`         |
-| `--epb-name-letter-spacing`           | Name         | Typography | Name letter spacing                                      | `2px`         |
-| `--epb-detail-color`                  | Detail       | Color      | Detail color                                             | `#aaaaaa`     |
-| `--epb-detail-font-size`              | Detail       | Typography | Detail font size                                         | `12px`        |
-| `--epb-detail-font-weight`            | Detail       | Typography | Detail font weight                                       | `300`         |
-| `--epb-detail-letter-spacing`         | Detail       | Typography | Detail letter spacing                                    | `1px`         |
-| `--epb-watermark-line-size`           | Watermark    | Dimension  | Line watermark thickness                                 | `3px`         |
-| `--epb-watermark-opacity`             | Watermark    | Opacity    | Watermark opacity                                        | `0.5`         |
-| `--epb-low-watermark-color`           | Watermark    | Color      | Low watermark color                                      | `#ff0000`     |
-| `--epb-high-watermark-color`          | Watermark    | Color      | High watermark color                                     | `#00ff00`     |
-| `--epb-zero-mark-width`               | Marker       | Dimension  | Zero marker thickness                                    | `2px`         |
-| `--epb-zero-mark-color`               | Marker       | Color      | Zero marker color                                        | `#ff0000`     |
+| Variable                              | Target       | Category   | Description                                                                                                                                          | Example       |
+| ------------------------------------- | ------------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| `--epb-card-height`                   | Card         | Dimension  | Card height                                                                                                                                          | `80px`        |
+| `--epb-card-width`                    | Card         | Dimension  | Card width                                                                                                                                           | `300px`       |
+| `--epb-card-border-width`             | Card         | Border     | Border thickness                                                                                                                                     | `2px`         |
+| `--epb-card-border-color`             | Card         | Border     | Border color                                                                                                                                         | `#ff6600`     |
+| `--epb-card-border-radius`            | Card         | Border     | Card corner radius                                                                                                                                   | `20px`        |
+| `--epb-card-border-style`             | Card         | Border     | Border style                                                                                                                                         | `dashed`      |
+| `--epb-card-font-family`              | Card         | Typography | Card font family                                                                                                                                     | `monospace`   |
+| `--epb-spacing`                       | Card         | Dimension  | Global density: paddings and gaps of the whole card                                                                                                  | `6px`         |
+| `--epb-icon-size`                     | Icon         | Dimension  | Icon size (standard card layout)                                                                                                                     | `28px`        |
+| `--epb-shape-size`                    | Icon         | Dimension  | Circular shape size behind the icon                                                                                                                  | `42px`        |
+| `--epb-progress-transition`           | Progress Bar | Animation  | Bar fill transition (duration/easing, `none` to disable)                                                                                             | `0.2s linear` |
+| `--epb-progress-bar-color`            | Progress Bar | Color      | Progress bar fill color                                                                                                                              | `#ff6600`     |
+| `--epb-progress-bar-background-color` | Progress Bar | Color      | Progress bar background color                                                                                                                        | `#333333`     |
+| `--epb-progress-bar-size`             | Progress Bar | Dimension  | Forces the bar fill size (overrides computed value)                                                                                                  | `60%`         |
+| `--epb-progress-bar-radius`           | Progress Bar | Border     | Progress bar container border radius                                                                                                                 | `4px`         |
+| `--epb-progress-inner-radius`         | Progress Bar | Border     | Progress bar inner fill border radius                                                                                                                | `4px`         |
+| `--epb-icon-and-shape-color`          | Icon         | Color      | Icon and shape background color                                                                                                                      | `#ff6600`     |
+| `--epb-name-color`                    | Name         | Color      | Name color                                                                                                                                           | `#ffffff`     |
+| `--epb-name-font-size`                | Name         | Typography | Name font size                                                                                                                                       | `16px`        |
+| `--epb-name-font-weight`              | Name         | Typography | Name font weight                                                                                                                                     | `700`         |
+| `--epb-name-letter-spacing`           | Name         | Typography | Name letter spacing                                                                                                                                  | `2px`         |
+| `--epb-detail-color`                  | Detail       | Color      | Detail color                                                                                                                                         | `#aaaaaa`     |
+| `--epb-detail-font-size`              | Detail       | Typography | Detail font size                                                                                                                                     | `12px`        |
+| `--epb-detail-font-weight`            | Detail       | Typography | Detail font weight                                                                                                                                   | `300`         |
+| `--epb-detail-letter-spacing`         | Detail       | Typography | Detail letter spacing                                                                                                                                | `1px`         |
+| `--epb-watermark-line-size`           | Watermark    | Dimension  | Line watermark thickness                                                                                                                             | `3px`         |
+| `--epb-watermark-opacity`             | Watermark    | Opacity    | Watermark opacity                                                                                                                                    | `0.5`         |
+| `--epb-low-watermark-color`           | Watermark    | Color      | Low watermark color                                                                                                                                  | `#ff0000`     |
+| `--epb-high-watermark-color`          | Watermark    | Color      | High watermark color                                                                                                                                 | `#00ff00`     |
+| `--epb-zero-mark-width`               | Marker       | Dimension  | Zero marker thickness                                                                                                                                | `2px`         |
+| `--epb-zero-mark-color`               | Marker       | Color      | Zero marker color                                                                                                                                    | `#ff0000`     |
+| `--epb-alert-background-opacity`      | Alert        | Opacity    | `alert_when.highlight: background` tint opacity, browsers below the "Full visual effects" tier only (see [Prerequisites](../README.md#installation)) | `0.3`         |
 
 <a id="usage"></a>
 

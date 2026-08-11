@@ -103,7 +103,7 @@ is based on custom CSS and leverages existing code to fine-tune the appearance.
 > animations, the bar's gradient sheen) need the newer "Full visual effects"
 > versions and gracefully degrade below that: same information, just a little
 > less vivid. See the
-> [live degraded-mode comparison](https://htmlpreview.github.io/?https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/color-mix-effects.html)
+> [live degraded-mode comparison](https://htmlpreview.github.io/?https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/graphic-effects-compatibility.html)
 > for exactly what's affected.
 >
 > I'm aware upgrading an embedded/kiosk device (a wall-mounted control panel in
