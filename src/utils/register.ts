@@ -5,12 +5,18 @@
 
 import { VERSION, META, CARD_CONTEXT, SEV } from './parameters.js';
 import { Logger } from './log.js';
+import type { HomeAssistant } from './hass-provider.js';
+import type { EntitySuggestion } from './entity-suggestions.js';
 
 interface Component {
   typeName: string;
   name: string;
   description?: string;
   editor?: string;
+  // HA 2026.6+ entity-first card picker (customCards/customBadges only - see
+  // entity-suggestions.ts and registerCardFeature below, which never reads
+  // this field).
+  getEntitySuggestion?: (hass: HomeAssistant, entityId: string) => EntitySuggestion | null;
 }
 
 // ?debug=registration traces the custom-element registration lifecycle
@@ -72,6 +78,24 @@ const resolveComponent = (component: Component): Component => {
   };
 };
 
+// HA requires the suggestion's own `config` to carry a real `type: "custom:
+// ..."` itself (see home-assistant/frontend's CustomCardSuggestion - every
+// built-in provider, e.g. hui-gauge-card-suggestions.ts, does the same) - the
+// entity-suggestions.ts resolver stays pure domain/attribute logic and knows
+// nothing about type names, so it's injected here instead, off the same
+// (already dev-suffix-resolved by resolveComponent above) component.typeName
+// every other field on this entry already uses.
+const withSuggestionType = (
+  component: Component,
+  resolver: (hass: HomeAssistant, entityId: string) => EntitySuggestion | null,
+) => {
+  const type = `custom:${component.typeName}`;
+  return (hass: HomeAssistant, entityId: string) => {
+    const suggestion = resolver(hass, entityId);
+    return suggestion ? { ...suggestion, config: { type, ...suggestion.config } } : null;
+  };
+};
+
 const resolveEntry = (component: Component, targetKey: string) =>
   targetKey === TARGET_KEY.customCardFeatures
     ? { type: component.typeName, name: component.name, supported: () => true }
@@ -82,6 +106,9 @@ const resolveEntry = (component: Component, targetKey: string) =>
         description: component.description,
         documentationURL: META.documentation,
         version: VERSION,
+        ...(component.getEntitySuggestion
+          ? { getEntitySuggestion: withSuggestionType(component, component.getEntitySuggestion) }
+          : {}),
       };
 
 const registerComponent = (

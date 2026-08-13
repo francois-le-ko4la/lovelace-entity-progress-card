@@ -12,6 +12,8 @@ Jump to the specific section:
   - 🔥 [Critical when high (CPU, RAM, disk usage...)](#critical-high)
   - 🔋 [Optimal when high](#optimal-high)
   - 🎯 [Critical when extreme (Tank level, deviation...)](#critical-extreme)
+  - 🎯
+    [Critical when extreme, centered (`center_zero`)](#critical-extreme-center)
   - 💡 [Light](#light)
   - 🌡️ [Temperature](#temperature)
   - 💧 [Humidity](#humidity)
@@ -386,6 +388,44 @@ theme: critical_when_extreme
 >
 > The icon is automatically retrieved from the entity but can be overridden
 > using the `icon` parameter.
+
+[🔼 Back to top]
+
+<a id="critical-extreme-center"></a>
+
+### 🎯 Critical when extreme, centered (`center_zero`)
+
+`critical_when_extreme`'s own shape, but built for
+[`center_zero`](configuration.md#center_zero) specifically: one continuous scale
+from -100% to 100% instead of the same 0-100% zones mirrored onto each arm —
+safe (green) sits at the center (zero), danger (red) at both ends, whichever
+direction the value swings. A net power flow (charging/discharging), or a
+deviation from a target/setpoint that can go either way, for instance.
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.battery_power_flow
+center_zero: true
+theme: critical_when_extreme_center
+```
+
+| **Percentage Range** | **Color** | **Description** _(optional)_ |
+| :------------------- | :-------- | :--------------------------- |
+| -100% – -80%         | `red`     | Critical                     |
+| -80% – -60%          | `orange`  | Low                          |
+| -60% – -40%          | `yellow`  | Watch                        |
+| -40% – 40%           | `green`   | Fine (centered on zero)      |
+| 40% – 60%            | `yellow`  | Watch                        |
+| 60% – 80%            | `orange`  | High                         |
+| 80% – 100%           | `red`     | Critical                     |
+
+> [!NOTE]
+>
+> The icon is automatically retrieved from the entity but can be overridden
+> using the `icon` parameter. Outside `center_zero`, this theme still works but
+> only shows its own 0%–100% half (the same shape `critical_when_extreme`
+> already covers more fully) — pick the plain `critical_when_extreme` instead
+> for a non-`center_zero` card.
 
 [🔼 Back to top]
 

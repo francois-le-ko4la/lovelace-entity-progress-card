@@ -1,8 +1,10 @@
 /*
  * THEME: the built-in theme presets. Each is a list of value zones (min/max +
  * color, optionally an icon), plus `linear` (split 0-100% evenly, ignore
- * min/max) and `percent` (zones are already 0-100 vs raw values). No logic,
- * just data - consumed by card/value-helpers.ts's ThemeManager.
+ * min/max), `percent` (zones are already 0-100 vs raw values), and `signed`
+ * (zones span -100..100, for center_zero's own signed percent scale - see
+ * ThemeManager.isSigned/ViewBase.themeDivergingGradient). No logic, just
+ * data - consumed by card/value-helpers.ts's ThemeManager.
  */
 
 import { HA_CONTEXT } from './ha-context.js';
@@ -15,6 +17,7 @@ const THEME = {
   battery_adaptive: {
     linear: false,
     percent: true,
+    signed: false,
     style: [
       { min: 0, max: 10, icon: null, color: HA_CONTEXT.colors.red },
       { min: 10, max: 20, icon: null, color: HA_CONTEXT.colors.orange },
@@ -26,6 +29,7 @@ const THEME = {
   critical_when_low: {
     linear: false,
     percent: true,
+    signed: false,
     style: [
       { min: 0, max: 10, icon: null, color: HA_CONTEXT.colors.red },
       { min: 10, max: 20, icon: null, color: HA_CONTEXT.colors.orange },
@@ -37,6 +41,7 @@ const THEME = {
   optimal_when_low: {
     linear: false,
     percent: true,
+    signed: false,
     style: [
       { min: 0, max: 20, icon: null, color: HA_CONTEXT.colors.green },
       { min: 20, max: 40, icon: null, color: HA_CONTEXT.colors.lightGreen },
@@ -48,6 +53,7 @@ const THEME = {
   critical_when_high: {
     linear: false,
     percent: true,
+    signed: false,
     style: [
       { min: 0, max: 60, icon: null, color: HA_CONTEXT.colors.green },
       { min: 60, max: 70, icon: null, color: HA_CONTEXT.colors.green },
@@ -59,6 +65,7 @@ const THEME = {
   optimal_when_high: {
     linear: false,
     percent: true,
+    signed: false,
     style: [
       { min: 0, max: 20, icon: null, color: HA_CONTEXT.colors.red },
       { min: 20, max: 40, icon: null, color: HA_CONTEXT.colors.orange },
@@ -70,6 +77,7 @@ const THEME = {
   critical_when_extreme: {
     linear: false,
     percent: true,
+    signed: false,
     style: [
       { min: 0, max: 10, icon: null, color: HA_CONTEXT.colors.red },
       { min: 10, max: 20, icon: null, color: HA_CONTEXT.colors.orange },
@@ -82,11 +90,36 @@ const THEME = {
       { min: 90, max: 100, icon: null, color: HA_CONTEXT.colors.red },
     ],
   },
+  // center_zero's own equivalent of critical_when_extreme above - same shape,
+  // linearly stretched from 0-100 onto -100..100 (old 50% midpoint -> new 0,
+  // the scale's own center) instead of duplicated per arm. `signed: true` is
+  // what tells ThemeManager/ViewBase.themeDivergingGradient to treat it as
+  // one continuous -100..100 scale (danger at both ends, safe at the center)
+  // rather than projecting the same 0-100 zones onto each arm independently
+  // (which would put red at the center and green partway down each arm -
+  // backwards for this shape).
+  critical_when_extreme_center: {
+    linear: false,
+    percent: true,
+    signed: true,
+    style: [
+      { min: -100, max: -80, icon: null, color: HA_CONTEXT.colors.red },
+      { min: -80, max: -60, icon: null, color: HA_CONTEXT.colors.orange },
+      { min: -60, max: -40, icon: null, color: HA_CONTEXT.colors.yellow },
+      { min: -40, max: -20, icon: null, color: HA_CONTEXT.colors.green },
+      { min: -20, max: 20, icon: null, color: HA_CONTEXT.colors.green },
+      { min: 20, max: 40, icon: null, color: HA_CONTEXT.colors.green },
+      { min: 40, max: 60, icon: null, color: HA_CONTEXT.colors.yellow },
+      { min: 60, max: 80, icon: null, color: HA_CONTEXT.colors.orange },
+      { min: 80, max: 100, icon: null, color: HA_CONTEXT.colors.red },
+    ],
+  },
   // `light` theme (colors + lightbulb icon progression) contributed by
   // @harmonie-durrant. @see https://github.com/harmonie-durrant
   light: {
     linear: true,
     percent: true,
+    signed: false,
     style: [
       { icon: HA_CONTEXT.icons.lightbulbOutline, color: '#4B4B4B' },
       { icon: HA_CONTEXT.icons.lightbulbOutline, color: '#877F67' },
@@ -98,6 +131,7 @@ const THEME = {
   temperature: {
     linear: false,
     percent: false,
+    signed: false,
     style: [
       { min: -50, max: -20, icon: HA_CONTEXT.icons.thermometer, color: HA_CONTEXT.colors.indigo },
       { min: -20, max: -2, icon: HA_CONTEXT.icons.thermometer, color: HA_CONTEXT.colors.blue },
@@ -113,6 +147,7 @@ const THEME = {
   humidity: {
     linear: false,
     percent: true,
+    signed: false,
     // Warm (dry) -> cool (humid) hue direction kept, band widths mirror
     // around the 40-60 comfort zone (now one solid green band, not
     // green/teal split - teal read as a washed-out green there instead of a
@@ -133,6 +168,7 @@ const THEME = {
   voc: {
     linear: false,
     percent: false,
+    signed: false,
     style: [
       { min: 0, max: 300, icon: HA_CONTEXT.icons.airFilter, color: HA_CONTEXT.colors.green },
       { min: 300, max: 500, icon: HA_CONTEXT.icons.airFilter, color: HA_CONTEXT.colors.yellow },
@@ -144,6 +180,7 @@ const THEME = {
   pm25: {
     linear: false,
     percent: false,
+    signed: false,
     style: [
       { min: 0, max: 12, icon: HA_CONTEXT.icons.airFilter, color: HA_CONTEXT.colors.green },
       { min: 12, max: 35, icon: HA_CONTEXT.icons.airFilter, color: HA_CONTEXT.colors.yellow },
@@ -154,4 +191,10 @@ const THEME = {
   },
 };
 
-export { THEME };
+// Theme keys usable where only a 0-100 percent is available (no min_value/
+// max_value to project real-value zones onto) - e.g. Template's `theme:`
+// field (schema.ts) and its editor selector (editor/base.ts). Single source
+// so both stay in sync automatically as themes are added/changed.
+const PERCENT_THEME_KEYS = Object.keys(THEME).filter((key) => THEME[key as keyof typeof THEME].percent);
+
+export { THEME, PERCENT_THEME_KEYS };

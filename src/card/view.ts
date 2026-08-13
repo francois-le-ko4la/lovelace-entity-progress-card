@@ -91,6 +91,13 @@ class ViewCore {
   // override
   #jinjaAlertAbove: number | null = null;
   #jinjaAlertBelow: number | null = null;
+  // watermark.low/.high resolved from a Jinja subscription; null = no
+  // override. Declared here (not ViewBase) for the same
+  // read-polymorphically-through-_cardView reason as jinjaAlertAbove/Below
+  // above - ViewCore's own watermark getter below reads these directly, and
+  // Template (ViewCore's own direct subclass) needs to write to them too.
+  #jinjaWatermarkLow: number | null = null;
+  #jinjaWatermarkHigh: number | null = null;
   // icon_animation: { effect, jinja } mode - the jinja-resolved boolean that
   // decides whether `effect` plays, overriding HABase._iconAnimationStyle's
   // automatic entity-based detection. null = not in that mode, or not
@@ -104,6 +111,25 @@ class ViewCore {
   // (also what a plain static hide: [...] array stays at forever, since
   // nothing ever calls setResolvedHide for it).
   #resolvedHide: Set<string> | null = null;
+  // Template's own theme support (percent: true themes only - see
+  // schema.ts's own comment on Template's `theme` field). Declared here
+  // rather than ViewBase, which already has its own separate #theme (entity
+  // value/min-max driven) - CardTemplateView/BadgeTemplateView are ViewCore's
+  // own direct subclasses (siblings of ViewBase, not descendants of it), so
+  // this is the shared spot both reach. Unused (inert) on ViewBase's own
+  // subclasses, same as _actionHelper/hasDisabledIconTap's own promotion to
+  // HACore earlier.
+  #templateTheme = new ThemeManager();
+  // Template's own plain color/bar_color Jinja (no theme active) - see
+  // barColor/iconColor below. cards.ts's own color/bar_color handlers write
+  // straight to CSS via _dom.setStyle and nothing else, so without caching
+  // the resolved value here too, anything that needs to *read* the current
+  // color (status_label's own color_source: 'bar'/'icon' fallback, in
+  // particular) had nothing to read - barColor/iconColor returned null
+  // whenever a plain Jinja override was active, same class of gap
+  // #templateTheme itself was built to close for the theme case.
+  #templateColorValue: string | null = null;
+  #templateBarColorValue: string | null = null;
 
   constructor() {
     traceInstance(this, CARD_CONTEXT.debug.instances);
@@ -126,12 +152,33 @@ class ViewCore {
     // EntityOrValue, so it resolves to null here (see _resolveValueConfig).
     Object.assign(this._lowValue, ViewCore._resolveValueConfig(this._configHelper.config?.watermark?.low, null));
     Object.assign(this._highValue, ViewCore._resolveValueConfig(this._configHelper.config?.watermark?.high, null));
+    this.#jinjaWatermarkLow = null;
+    this.#jinjaWatermarkHigh = null;
     this.#jinjaIconAnimationActive = null;
     this.#resolvedHide = null;
+    this.#templateColorValue = null;
+    this.#templateBarColorValue = null;
   }
 
   get config(): Config {
     return this._configHelper.config;
+  }
+
+  // Mirrors HACore#_addBaseClasses's own vertical-bar/horizontal-bar
+  // decision: gradients (segment/rainbow/bar_stack) are built left-to-right
+  // by default, but the bar itself fills bottom-to-top in these two
+  // combinations, so the gradient direction has to follow or the color
+  // progression visibly runs the wrong way. Lives here (not as a private
+  // #isVerticalBar on ViewBase, where every other reader of it lives) so
+  // Template's own templateThemeGradient/-DivergingGradient below - defined
+  // on ViewCore, a ViewBase sibling, not a descendant - can read it too
+  // (same private-field-scoping reason as #templateTheme's own comment).
+  get isVerticalBar(): boolean {
+    return (
+      this.config.bar_orientation === 'up' &&
+      ((this.config.layout === 'vertical' && this.config.bar_position === 'overlay') ||
+        this.config.bar_position === 'background')
+    );
   }
 
   // Shared by watermark.low/high above (both ViewCore and ViewBase) and by
@@ -322,12 +369,35 @@ class ViewCore {
     return ThemeManager.adaptColor(this._currentValue.defaultColor || CARD.style.color.default);
   }
 
+  // theme (percent: true only) wins outright when configured - same
+  // precedence as ViewBase.iconColor's own `theme.iconColor || config.color`.
+  // Reading it here (not just from _managePercent's own one-off push) is what
+  // makes every other repaint (_updateCSS, called on every hass update -
+  // EntityProgressTemplateBase._handleHassUpdate → refresh()) see the themed
+  // color too, instead of only the instant right after a percent Jinja push -
+  // #templateTheme.value already holds the last pushed percent regardless of
+  // what triggered this particular read.
   get barColor(): string | null {
-    return this.entity && !this._configHelper.config.bar_color ? this._getEntityColor() : null;
+    if (this._configHelper.config.theme) return ThemeManager.adaptColor(this.templateThemeBarColor);
+    if (this._configHelper.config.bar_color) return this.#templateBarColorValue;
+    return this.entity ? this._getEntityColor() : null;
   }
 
   get iconColor(): string | null {
-    return this.entity && !this._configHelper.config.color ? this._getEntityColor() : null;
+    if (this._configHelper.config.theme) return ThemeManager.adaptColor(this.templateThemeIconColor);
+    if (this._configHelper.config.color) return this.#templateColorValue;
+    return this.entity ? this._getEntityColor() : null;
+  }
+
+  // Called from cards.ts's own color/bar_color Jinja handlers, right
+  // alongside (not instead of) their existing _dom.setStyle - see
+  // #templateColorValue/-BarColorValue's own comment above.
+  setTemplateColorValue(value: string | null) {
+    this.#templateColorValue = value;
+  }
+
+  setTemplateBarColorValue(value: string | null) {
+    this.#templateBarColorValue = value;
   }
 
   get hasClickableIcon(): boolean {
@@ -383,12 +453,18 @@ class ViewCore {
 
   get watermark() {
     const watermark = this.config.watermark as WatermarkConfig | undefined;
+    // No toPos/calcWatermark here (unlike ViewBase's own override below): a
+    // ViewCore-direct instance (Template) has no min_value/max_value scale to
+    // project onto in the first place (see schema.ts's own comment on
+    // Template's `theme` field for the same limitation) - low_as/high_as
+    // 'auto' and 'percent' already coincide, the raw resolved number IS the
+    // bar position.
     return watermark
       ? {
           ...watermark,
-          low: this._lowValue.value,
+          low: this.#jinjaWatermarkLow ?? this._lowValue.value,
           low_color: ThemeManager.adaptColor(watermark.low_color),
-          high: this._highValue.value,
+          high: this.#jinjaWatermarkHigh ?? this._highValue.value,
           high_color: ThemeManager.adaptColor(watermark.high_color),
         }
       : null;
@@ -521,6 +597,105 @@ class ViewCore {
     return ViewCore.#BATTERY_ADAPTIVE_THEMES[this.isBatteryCharging ? 'charging' : 'discharging'];
   }
 
+  // ─── Template's own theme support (percent themes only) ───────────────────
+  // #templateTheme's own comment above explains why this lives here rather
+  // than reusing ViewBase's #theme. setTemplateThemeValue is only ever
+  // reached from _managePercent's own `if (config.theme)` branch (cards.ts) -
+  // deliberately not wired into the shared set config above, which every
+  // card/badge/feature instance runs through regardless of whether it ever
+  // reads templateThemeIconColor/-BarColor below. #templateTheme.value stays
+  // memoized at that last-pushed percent, so barColor/iconColor above read
+  // the right color on *any* repaint - not just the instant right after a
+  // push. Without this, a plain hass update (_updateCSS, run on every
+  // EntityProgressTemplateBase._handleHassUpdate) used to repaint from these
+  // two getters and revert to the plain, untheme'd default a moment later.
+
+  setTemplateThemeValue(percent: number) {
+    this.#templateTheme.value = percent;
+  }
+
+  // Re-resolved on every read below, not just cached once at
+  // setTemplateThemeValue's own push - resolvedTheme's battery_adaptive
+  // branch depends on isBatteryCharging, which can flip without percent
+  // itself changing at that exact instant (plugging in a charger while the
+  // reading briefly holds steady) - same reasoning as ViewBase.refresh's own
+  // unconditional re-configure of #theme for battery_adaptive on every hass
+  // update. Reconfiguring costs a few property assignments (ThemeManager.
+  // theme's own setter, no loop/computation) - cheap enough to redo on every
+  // color/gradient read instead of tracking a separate "did the resolved
+  // theme name change" flag.
+  #refreshTemplateTheme() {
+    this.#templateTheme.configure({ theme: this.resolvedTheme, customTheme: undefined, interpolate: false });
+  }
+
+  // null when no theme is configured (ThemeManager.iconColor/barColor
+  // resolve to null then) - barColor/iconColor above fall back to the plain
+  // color/bar_color Jinja fields in that case, same shape as ViewBase.
+  // iconColor's own `theme.iconColor || config.color` (theme wins when both
+  // apply).
+  get templateThemeIconColor(): string | null {
+    this.#refreshTemplateTheme();
+    return this.#templateTheme.iconColor;
+  }
+
+  get templateThemeBarColor(): string | null {
+    this.#refreshTemplateTheme();
+    return this.#templateTheme.barColor;
+  }
+
+  // bar_color_mode's gradient equivalent of ViewBase.colorGradient, same
+  // buildGradient this class's own templateThemeIconColor/-BarColor read
+  // through #templateTheme - stands down for center_zero (templateTheme
+  // DivergingGradient below owns that case instead), same convention as
+  // colorGradient/themeDivergingGradient.
+  get templateThemeGradient(): string | null {
+    if (!this._configHelper.config.theme || this._configHelper.config.center_zero) return null;
+    this.#refreshTemplateTheme();
+    return this.#templateTheme.buildGradient(
+      this.#templateTheme.value,
+      this._configHelper.config.bar_color_mode,
+      null,
+      this.isVerticalBar,
+    );
+  }
+
+  // center_zero's own equivalent of templateThemeGradient above - mirrors
+  // ViewBase.themeDivergingGradient, but Template has no min_value/max_value
+  // to derive a zeroPercent from: its percent field is -100..100 by
+  // convention under center_zero (see card-themes.ts's own signed-theme
+  // comment), so zero always sits at the fixed midpoint (50) for a regular
+  // theme; a signed theme (critical_when_extreme_center et al.) still spans
+  // the full -100..100 as one continuous scale, same as
+  // ViewBase.themeDivergingGradient's own isSigned branch.
+  get templateThemeDivergingGradient() {
+    if (!this._configHelper.config.theme || !this._configHelper.config.center_zero) return null;
+    this.#refreshTemplateTheme();
+    const signedPercent = this.#templateTheme.value;
+    // Capped at 100, not just floored at 0 - a Jinja `percent` isn't bounded
+    // the way ProgressCalc's own division is (see _managePercent's own
+    // comment on the exact same issue for the plain fill) - posSize/negSize
+    // below feed --epb-stack-size-pos/-neg directly, and a value above 1
+    // there pushes the fill past .half's own overflow: hidden instead of
+    // just filling it, the same empty-gap symptom the fill's own clamp
+    // exists to prevent.
+    const posFill = Math.min(100, Math.max(0, signedPercent));
+    const negFill = Math.min(100, Math.max(0, -signedPercent));
+    const mode = this._configHelper.config.bar_color_mode;
+    const [posWindow, negWindow]: [[number, number], [number, number]] = this.#templateTheme.isSigned
+      ? [
+          [0, 100],
+          [0, -100],
+        ]
+      : [
+          [50, 100],
+          [50, 0],
+        ];
+    const posGradient = this.#templateTheme.buildGradient(posFill, mode, null, this.isVerticalBar, posWindow);
+    const negGradient = this.#templateTheme.buildGradient(negFill, mode, null, this.isVerticalBar, negWindow);
+    if (!posGradient && !negGradient) return null;
+    return { posGradient, negGradient, posSize: posFill / 100, negSize: negFill / 100 };
+  }
+
   // epb-icon-charge's clip-path is calibrated to the plain "mdi:battery"
   // outline. MDI's charging/bluetooth battery variants (battery-charging-60,
   // battery-bluetooth...) draw a bolt or bluetooth glyph that shifts the
@@ -577,6 +752,22 @@ class ViewCore {
 
   set jinjaAlertBelow(value: unknown) {
     this.#jinjaAlertBelow = is.number(value) ? value : null;
+  }
+
+  get jinjaWatermarkLow(): number | null {
+    return this.#jinjaWatermarkLow;
+  }
+
+  set jinjaWatermarkLow(value: unknown) {
+    this.#jinjaWatermarkLow = is.number(value) ? value : null;
+  }
+
+  get jinjaWatermarkHigh(): number | null {
+    return this.#jinjaWatermarkHigh;
+  }
+
+  set jinjaWatermarkHigh(value: unknown) {
+    this.#jinjaWatermarkHigh = is.number(value) ? value : null;
   }
 
   /**
@@ -701,9 +892,6 @@ class ViewBase extends ViewCore {
   // null = no override
   #jinjaMinValue: number | null = null;
   #jinjaMaxValue: number | null = null;
-  // watermark.low/.high resolved from a Jinja subscription; null = no override
-  #jinjaWatermarkLow: number | null = null;
-  #jinjaWatermarkHigh: number | null = null;
   #entityCollection = new EntityCollectionHelper();
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
@@ -808,10 +996,12 @@ class ViewBase extends ViewCore {
     // configured froze instead of rendering. set config isn't chained via
     // super here (this method fully replaces ViewCore's own), so this reuses
     // ViewCore._resolveValueConfig directly rather than duplicating it.
+    // jinjaWatermarkLow/High themselves are declared on ViewCore (not here),
+    // same reasoning/reset-via-public-setter as jinjaAlertAbove/Below below.
     Object.assign(this._lowValue, ViewCore._resolveValueConfig(this._configHelper.config?.watermark?.low, null));
-    this.#jinjaWatermarkLow = null;
+    this.jinjaWatermarkLow = null;
     Object.assign(this._highValue, ViewCore._resolveValueConfig(this._configHelper.config?.watermark?.high, null));
-    this.#jinjaWatermarkHigh = null;
+    this.jinjaWatermarkHigh = null;
     // alert_when.above/.below: same shape and same reasoning as watermark
     // low/high above (see isAlertActive) - wired unconditionally too,
     // alert_when isn't overridden by the timer path either. _aboveValue/
@@ -913,19 +1103,6 @@ class ViewBase extends ViewCore {
     );
   }
 
-  // Mirrors HACore#_addBaseClasses's own vertical-bar/horizontal-bar
-  // decision: gradients (segment/rainbow/bar_stack) are built left-to-right
-  // by default, but the bar itself fills bottom-to-top in these two
-  // combinations, so the gradient direction has to follow or the color
-  // progression visibly runs the wrong way.
-  get #isVerticalBar(): boolean {
-    return (
-      this.config.bar_orientation === 'up' &&
-      ((this.config.layout === 'vertical' && this.config.bar_position === 'overlay') ||
-        this.config.bar_position === 'background')
-    );
-  }
-
   get barColor(): string | null {
     if (!this.isAvailable) return this.isUnknown ? CARD.style.color.default : CARD.style.color.disabled;
     const curColor = this.#curBarColor();
@@ -938,7 +1115,7 @@ class ViewBase extends ViewCore {
           curColor,
           this.percent / 100,
           this.#percentHelper.max - this.#percentHelper.min,
-          this.#isVerticalBar,
+          this.isVerticalBar,
         )
       : curColor;
   }
@@ -957,7 +1134,7 @@ class ViewBase extends ViewCore {
         max: this.#percentHelper.max,
         zeroValue: this.#percentHelper.zeroValue,
       },
-      this.#isVerticalBar,
+      this.isVerticalBar,
     );
   }
 
@@ -967,7 +1144,7 @@ class ViewBase extends ViewCore {
       this.#percentHelper.percent ?? 0,
       this._configHelper.config.bar_color_mode,
       this._currentValue.defaultColor || null,
-      this.#isVerticalBar,
+      this.isVerticalBar,
       [0, 100],
       { min: this.#percentHelper.min, max: this.#percentHelper.max },
     );
@@ -989,25 +1166,47 @@ class ViewBase extends ViewCore {
     if (max === min) return null;
     const zeroPercent = ((zeroValue - min) / (max - min)) * 100;
     const signedPercent = percent ?? 0;
-    const posFill = Math.max(0, signedPercent);
-    const negFill = Math.max(0, -signedPercent);
+    // Capped at 100, not just floored at 0 - this.percent (the fill's own
+    // value) already clamps for exactly this reason (a real-value entity can
+    // exceed max_value), but #percentHelper.percent above is the raw,
+    // unclamped one. posSize/negSize below feed --epb-stack-size-pos/-neg
+    // directly, and a value above 1 there pushes the fill past .half's own
+    // overflow: hidden instead of just filling it - the same empty-gap
+    // symptom this.percent's own clamp exists to prevent.
+    const posFill = Math.min(100, Math.max(0, signedPercent));
+    const negFill = Math.min(100, Math.max(0, -signedPercent));
     const mode = this._configHelper.config.bar_color_mode;
     const defaultColor = this._currentValue.defaultColor || null;
     const valueRange = { min, max };
+    // A signed theme (critical_when_extreme_center and friends) already
+    // spans -100..100 as one continuous scale - [0, 100]/[0, -100] read its
+    // own zone numbers directly, one continuous curve across both arms
+    // (danger at both ends, safe at the center). A regular theme still gets
+    // windowed against zeroPercent, the same zones mirrored onto each arm
+    // independently (this is what every other theme's own shape assumes).
+    const [posWindow, negWindow]: [[number, number], [number, number]] = this.#theme.isSigned
+      ? [
+          [0, 100],
+          [0, -100],
+        ]
+      : [
+          [zeroPercent, 100],
+          [zeroPercent, 0],
+        ];
     const posGradient = this.#theme.buildGradient(
       posFill,
       mode,
       defaultColor,
-      this.#isVerticalBar,
-      [zeroPercent, 100],
+      this.isVerticalBar,
+      posWindow,
       valueRange,
     );
     const negGradient = this.#theme.buildGradient(
       negFill,
       mode,
       defaultColor,
-      this.#isVerticalBar,
-      [zeroPercent, 0],
+      this.isVerticalBar,
+      negWindow,
       valueRange,
     );
     if (!posGradient && !negGradient) return null;
@@ -1089,9 +1288,9 @@ class ViewBase extends ViewCore {
       mode === 'percent' || isTimer ? (is.number(v) ? v : (v?.current ?? 0)) : this.#percentHelper.calcWatermark(v);
     return {
       ...watermark,
-      low: toPos(this.#jinjaWatermarkLow ?? this._lowValue.value, watermark.low_as),
+      low: toPos(this.jinjaWatermarkLow ?? this._lowValue.value, watermark.low_as),
       low_color: ThemeManager.adaptColor(watermark.low_color),
-      high: toPos(this.#jinjaWatermarkHigh ?? this._highValue.value, watermark.high_as),
+      high: toPos(this.jinjaWatermarkHigh ?? this._highValue.value, watermark.high_as),
       high_color: ThemeManager.adaptColor(watermark.high_color),
     };
   }
@@ -1206,22 +1405,6 @@ class ViewBase extends ViewCore {
 
   set jinjaMaxValue(value: unknown) {
     this.#jinjaMaxValue = is.number(value) ? value : null;
-  }
-
-  get jinjaWatermarkLow(): number | null {
-    return this.#jinjaWatermarkLow;
-  }
-
-  set jinjaWatermarkLow(value: unknown) {
-    this.#jinjaWatermarkLow = is.number(value) ? value : null;
-  }
-
-  get jinjaWatermarkHigh(): number | null {
-    return this.#jinjaWatermarkHigh;
-  }
-
-  set jinjaWatermarkHigh(value: unknown) {
-    this.#jinjaWatermarkHigh = is.number(value) ? value : null;
   }
 
   // Overrides ViewCore's own (template-only, fast_refresh-gated): standard

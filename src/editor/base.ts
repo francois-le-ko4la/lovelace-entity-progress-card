@@ -4,7 +4,14 @@
  * to/from the config.
  */
 
-import { CARD, CARD_CONTEXT, VALUE_CHANGED_EVENT, HA_SELECTOR_TAG, EDITOR_FIELD_NS } from '../utils/parameters.js';
+import {
+  CARD,
+  CARD_CONTEXT,
+  VALUE_CHANGED_EVENT,
+  HA_SELECTOR_TAG,
+  EDITOR_FIELD_NS,
+  PERCENT_THEME_KEYS,
+} from '../utils/parameters.js';
 import { TRANSLATIONS } from '../utils/translations.js';
 import { EDITOR_BASE_STYLE } from '../utils/styles.js';
 import { is } from '../utils/common-checks.js';
@@ -485,7 +492,18 @@ class EditorBase extends HTMLElement {
       alert_highlight: () => buildSelect(options.alert_highlight),
       alert_animation: () => buildSelect(options.alert_animation),
       label_position: () => buildSelect(options.label_position),
+      status_label_color_source: () => buildSelect(options.status_label_color_source),
       theme: () => buildSelect(options.theme),
+      // Template's own restricted list (schema.ts's own theme field: percent:
+      // true only, no min_value/max_value to project a real-value theme's
+      // zones onto) - same "narrower select type" pattern as
+      // bar_orientation_no_up/bar_position_no_compact_below above, just
+      // derived from PERCENT_THEME_KEYS instead of hand-picked keys (too many
+      // to list).
+      theme_percent_only: () =>
+        buildSelect(
+          Object.fromEntries(Object.entries(options.theme).filter(([key]) => PERCENT_THEME_KEYS.includes(key))),
+        ),
       layout: () => buildBoxSelect(options.layout, tileImage),
       // density: compact only has a meaningful shape in layout: horizontal
       // (see schema.ts's applyDensityRule) - vertical dropped from the

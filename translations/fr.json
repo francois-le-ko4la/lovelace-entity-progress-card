@@ -100,7 +100,9 @@
       "fast_refresh": "Fast refresh (per-second)",
       "height_custom_toggle": "Shrink height (embedded)",
       "status_label_toggle": "Status label",
-      "density_toggle": "Compact"
+      "density_toggle": "Compact",
+      "badge_toggle": "Badge",
+      "badge_color_toggle": "Independent color"
     },
     "option": {
       "theme": {
@@ -114,7 +116,8 @@
         "optimal_when_low": "Optimal quand c'est bas",
         "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
         "optimal_when_high": "Optimal quand c'est élevé",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)"
+        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
+        "critical_when_extreme_center": "Critical when Extreme, centered (center_zero)"
       },
       "bar_size": {
         "xsmall": "Extra Small",
@@ -225,11 +228,16 @@
       },
       "status_label": {
         "jinja": "Étiquette de statut",
-        "position": "Position de l'étiquette"
+        "position": "Position de l'étiquette",
+        "color_source": "Color source"
       },
       "label_position": {
         "left": "Gauche",
         "right": "Droite"
+      },
+      "status_label_color_source": {
+        "bar": "Progress bar",
+        "icon": "Icon"
       },
       "alert_animation": {
         "static": "Static",

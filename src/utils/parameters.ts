@@ -14,7 +14,7 @@
 import { VERSION, META } from './meta.js';
 import { HA_CONTEXT } from './ha-context.js';
 import { CARD } from './card-config.js';
-import { THEME } from './card-themes.js';
+import { THEME, PERCENT_THEME_KEYS } from './card-themes.js';
 
 // Injected by scripts/build.js: true in the *_dev.js build, false in the
 // shipped .js. Baked in (not URL-derived) so dev mode survives being loaded as
@@ -150,6 +150,7 @@ export { devName };
 export { HA_CONTEXT };
 export { CARD };
 export { THEME };
+export { PERCENT_THEME_KEYS };
 export { SEV };
 export { CONTENT_SLOT };
 export { VALUE_CHANGED_EVENT };

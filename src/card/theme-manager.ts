@@ -34,6 +34,7 @@ class ThemeManager {
   #isValid = false;
   #isLinear = false;
   #isBasedOnPercentage = false;
+  #isSigned = false;
   #isCustomTheme = false;
   #currentStyle: ThemeZone[] | null = null;
   #interpolate = false;
@@ -54,6 +55,7 @@ class ThemeManager {
     this.#currentStyle = THEME[newTheme as keyof typeof THEME].style;
     this.#isLinear = THEME[newTheme as keyof typeof THEME].linear;
     this.#isBasedOnPercentage = THEME[newTheme as keyof typeof THEME].percent;
+    this.#isSigned = THEME[newTheme as keyof typeof THEME].signed;
   }
 
   get theme(): string | null {
@@ -82,6 +84,16 @@ class ThemeManager {
 
   get isBasedOnPercentage(): boolean {
     return this.#isBasedOnPercentage;
+  }
+
+  // Only ever true for a built-in theme with signed: true (e.g.
+  // critical_when_extreme_center) - zones already span -100..100 as one
+  // continuous scale, for center_zero's own signed percent (see
+  // ViewBase.themeDivergingGradient). Not reset in set customTheme, same as
+  // isBasedOnPercentage right above - a custom_theme's zones are real-value
+  // ranges, never this shape.
+  get isSigned(): boolean {
+    return this.#isSigned;
   }
 
   get isCustomTheme(): boolean {
@@ -133,6 +145,7 @@ class ThemeManager {
     this.#isValid = false;
     this.#isLinear = false;
     this.#isBasedOnPercentage = false;
+    this.#isSigned = false;
     this.#isCustomTheme = false;
     this.#interpolate = false;
   }

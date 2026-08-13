@@ -5,7 +5,7 @@
  * them.
  */
 
-import { HA_CONTEXT, CARD, THEME, SEV } from '../utils/parameters.js';
+import { HA_CONTEXT, CARD, THEME, PERCENT_THEME_KEYS, SEV } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
 
@@ -1063,6 +1063,12 @@ const YamlSchemaFactory = {
           types.object({
             jinja: types.optionalString(),
             position: types.enumsWithDefault(['left', 'right'], 'right'),
+            // Which color the pill follows when its own `jinja` doesn't
+            // return an explicit `{label, color}` (see HACore._repaintStatus
+            // Label) - 'bar' by default (the theme zones that actually carry
+            // "status" semantics live there), 'icon' for whoever colors the
+            // icon specifically and wants the pill to match it instead.
+            color_source: types.enumsWithDefault(['bar', 'icon'], 'bar'),
           }),
         ),
         text_shadow: types.optionalBooleanWithDefault(false),
@@ -1216,6 +1222,19 @@ const YamlSchemaFactory = {
         icon: types.optionalString(),
         color: types.optionalString(),
         bar_color: types.optionalString(),
+        // percent: true themes only - Template has no min_value/max_value to
+        // project a real-value theme's zones onto (see ViewCore's own
+        // #templateTheme/setTemplateThemeValue), it only ever has the
+        // already-computed percent Jinja field above. Wins over color/
+        // bar_color when both apply, same precedence as Card's own
+        // ViewBase.iconColor (theme.iconColor || config.color).
+        theme: types.theme(PERCENT_THEME_KEYS),
+        // Same restriction as theme above (percent-only), and only has an
+        // effect once theme is actually set - applyBarColorModeRule
+        // (postProcess, shared across every type) already resets this back
+        // to 'auto' otherwise, same safety net as Card. See ViewCore's own
+        // templateThemeGradient/-DivergingGradient.
+        bar_color_mode: types.enumsWithDefault(['auto', 'segment', 'rainbow', 'rainbow_full'], 'auto'),
         bar_size: types.enumsWithDefault(
           Object.values(CARD.style.bar.sizeOptions).map((e) => e.label),
           'small',
@@ -1279,6 +1298,12 @@ const YamlSchemaFactory = {
           types.object({
             jinja: types.optionalString(),
             position: types.enumsWithDefault(['left', 'right'], 'right'),
+            // Which color the pill follows when its own `jinja` doesn't
+            // return an explicit `{label, color}` (see HACore._repaintStatus
+            // Label) - 'bar' by default (the theme zones that actually carry
+            // "status" semantics live there), 'icon' for whoever colors the
+            // icon specifically and wants the pill to match it instead.
+            color_source: types.enumsWithDefault(['bar', 'icon'], 'bar'),
           }),
         ),
         text_shadow: types.optionalBooleanWithDefault(false),

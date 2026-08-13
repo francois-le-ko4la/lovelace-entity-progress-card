@@ -1488,7 +1488,14 @@ ha-card.info-multiline {
 }
 
 /* === ORIENTATION === */
-.${CARD.style.dynamic.progressBar.orientation.rtl} .${CARD.htmlStructure.elements.progressBar.bar.class} {
+/* On .bar-container (not .bar itself): .value-mark (rainbow_full's marker)
+   sits in the container as .bar's sibling, specifically to escape .bar's own
+   overflow: hidden (see .value-mark's own comment further down) - flipping
+   only .bar left it out of the mirror, so the marker landed on the wrong
+   side of the (correctly mirrored) fill. .bar is centered in the container
+   via flex, so this produces the exact same pixels for .bar's own content as
+   flipping .bar directly did, while now also carrying .value-mark along. */
+.${CARD.style.dynamic.progressBar.orientation.rtl} .${CARD.htmlStructure.elements.progressBar.container.class} {
   transform: scaleX(-1);
 }
 
@@ -2572,7 +2579,27 @@ ha-card.info-multiline {
      either (5px/1px, same numbers as before this got size-aware) - they
      already read clearly at that scale and were asked to stay untouched. */
   --mark-width: var(--epb-rainbow-marker-size, var(--rainbow-marker-width, 5px));
-  --mark-left: calc(var(${CARD.style.dynamic.progressBar.value.var}, 0) * 100%);
+  /* The "glass pin" ring below is a box-shadow, not a real border - it
+     doesn't affect box-sizing/layout, so it isn't part of --mark-width at
+     all. Extracted here (rather than inlined only in the box-shadow
+     declaration below) so --mark-left's own clamp bounds can account for it
+     too - the ring pushes the marker's actual visible footprint past
+     --mark-width alone. */
+  --mark-border-width: var(--epb-rainbow-marker-border-width, var(--rainbow-marker-border-width, 1px));
+  /* Clamped, not the bare raw position - centered on this position
+     (transform: translate(-50%, -50%) below), a bare 0%/100% pushed half
+     its own visible footprint (--mark-width plus the ring, see
+     --mark-border-width above) past the container's own edge at the
+     extremes, clipped by .content-section's overflow: hidden (most visible
+     with bar_position: compact_below's tighter row, but not specific to
+     it). The raw position already sits within these bounds for the vast
+     majority of the range, so this is a no-op there - only the very ends
+     freeze at the boundary instead of pushing further out. */
+  --mark-left: clamp(
+    calc(var(--mark-width) / 2 + var(--mark-border-width)),
+    calc(var(${CARD.style.dynamic.progressBar.value.var}, 0) * 100%),
+    calc(100% - var(--mark-width) / 2 - var(--mark-border-width))
+  );
   /* Whatever color the icon currently shows (theme zone/custom_theme/color
      override - see ThemeManager#setStyle) rather than a flat neutral, same
      "current color" source label's own pill background already uses. */
@@ -2583,13 +2610,19 @@ ha-card.info-multiline {
   border: none;
   /* "Glass pin": a thin ring (drawn as a spread box-shadow, not a real
      border - doesn't affect box-sizing/layout) instead of a solid outline,
-     plus a soft drop shadow for a bit of lift/depth. The ring reads clearly
+     plus a soft shadow for a bit of lift/depth. The ring reads clearly
      against any of the gradient's own colors, light or dark - a solid black
-     border read as a flat, cut-out sticker by comparison. */
+     border read as a flat, cut-out sticker by comparison. Symmetric (no
+     offset) with blur tied to --mark-border-width, not a fixed 2px offset
+     + 3px blur - --mark-height/-top above only ever reserve
+     --mark-border-width of margin around the box (exactly enough for the
+     ring), so a fixed, offset shadow bigger than that reserved margin
+     overflowed past it - downward-biased offset meant only the bottom ever
+     clipped. Tying the blur to the same variable the margin is already
+     sized from guarantees they always match, at every bar_size. */
   box-shadow:
-    0 0 0 var(--epb-rainbow-marker-border-width, var(--rainbow-marker-border-width, 1px))
-      var(--epb-rainbow-marker-border-color, rgba(255, 255, 255, 0.9)),
-    0 2px 3px rgba(0, 0, 0, 0.35);
+    0 0 0 var(--mark-border-width) var(--epb-rainbow-marker-border-color, rgba(255, 255, 255, 0.9)),
+    0 0 var(--mark-border-width) rgba(0, 0, 0, 0.35);
   /* Own dedicated var (matches --epb-rainbow-marker-size/-color/-border-*
      above) rather than a bare literal - full opacity by default, unlike the
      watermarks' translucent one, but still overridable without colliding
@@ -2716,7 +2749,14 @@ ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium.labe
    HABase._updateCSS/ViewBase.percent), so 0 always lands the marker at the
    visual center regardless of min_value/max_value/center_zero_value. */
 .${CARD.style.dynamic.progressBar.centerZero.class}.rainbow-full-bar .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
-  --mark-left: calc(50% + (var(${CARD.style.dynamic.progressBar.value.var}, 0) * 50%));
+  /* Same clamp reasoning as the base rule's own --mark-left above (ring
+     width included), just centered on 50% (signed -1..1 value) instead of
+     running 0-100%. */
+  --mark-left: clamp(
+    calc(var(--mark-width) / 2 + var(--mark-border-width)),
+    calc(50% + (var(${CARD.style.dynamic.progressBar.value.var}, 0) * 50%)),
+    calc(100% - var(--mark-width) / 2 - var(--mark-border-width))
+  );
 }
 .vertical.up-orientation.overlay.${CARD.style.dynamic.progressBar.centerZero.class}.rainbow-full-bar .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
   /* --mark-left stays the base rule's fixed 50% (it's the cross axis here -

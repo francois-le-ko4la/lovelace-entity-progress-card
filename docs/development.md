@@ -277,7 +277,14 @@ RegistrationHelper.registerCardFeature(META.types.feature, EntityProgressFeature
    double-load (HACS + manual resource) logs a warning instead of throwing.
 2. Pushes a descriptor into `window.customCards` / `window.customBadges` /
    `window.customCardFeatures` (deferred by 1 s) so the card appears in HA's
-   card picker with name, description and preview support.
+   card picker with name, description and preview support. Card/Badge only, the
+   descriptor also carries `getEntitySuggestion` (HA 2026.6+ entity-first card
+   picker) — see `src/utils/entity-suggestions.ts` for the domain/ attribute
+   rules deciding which entities get a suggestion and what config comes back.
+   Template/Badge Template/Feature don't get one: Template needs a hand-written
+   Jinja `percent:` to render anything meaningful, and Features are never picked
+   through this entity-first flow at all (`customCardFeatures`, not
+   `customCards`).
 
 ### The HA ↔ card contract
 

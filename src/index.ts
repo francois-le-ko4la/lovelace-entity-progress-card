@@ -21,6 +21,7 @@
 
 import { META, CARD_CONTEXT, CARD } from './utils/parameters.js';
 import { RegistrationHelper } from './utils/register.js';
+import { resolveEntitySuggestion } from './utils/entity-suggestions.js';
 import { installDiagnostic } from './utils/diagnostic.js';
 import {
   EntityProgressCard,
@@ -41,8 +42,16 @@ import {
  * 🔧 Register components
  */
 
-RegistrationHelper.registerCard(META.types.card, EntityProgressCard, EntityProgressCardEditor);
-RegistrationHelper.registerBadge(META.types.badge, EntityProgressBadge, EntityProgressBadgeEditor);
+RegistrationHelper.registerCard(
+  { ...META.types.card, getEntitySuggestion: resolveEntitySuggestion },
+  EntityProgressCard,
+  EntityProgressCardEditor,
+);
+RegistrationHelper.registerBadge(
+  { ...META.types.badge, getEntitySuggestion: resolveEntitySuggestion },
+  EntityProgressBadge,
+  EntityProgressBadgeEditor,
+);
 RegistrationHelper.registerCard(META.types.template, EntityProgressTemplateCard, EntityProgressTemplateEditor);
 RegistrationHelper.registerBadge(
   META.types.badgeTemplate,

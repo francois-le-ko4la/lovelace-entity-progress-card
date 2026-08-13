@@ -2496,6 +2496,8 @@ views:
           - type: tile
             entity: input_boolean.epb_demo_simple_mode
             name: Toggle to hide secondary_info + progress_bar
+            tap_action:
+              action: toggle
       - type: grid
         cards:
           - type: heading
@@ -3445,7 +3447,7 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: 'Native containers — combined-card (#123, @davidcoulson)'
+            heading: 'External combined-card + Mushroom — compact_below (#123, @davidcoulson)'
             heading_style: title
           # Prerequisites:
           #  - custom:combined-card (HACS custom repo, category "Dashboard"):
@@ -3472,7 +3474,7 @@ views:
               - type: custom:mushroom-entity-card
                 entity: input_select.epb_demo_litter_status
                 name: Robot 1
-                icon: phu:litter-robot
+                icon: mdi:robot-vacuum
                 fill_container: false
                 secondary_info: state
                 icon_type: entity-picture
@@ -3951,6 +3953,478 @@ views:
       - type: grid
         cards:
           - type: heading
+            heading: "Template percent: '' still paints (not blank)"
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-template
+              entity: input_number.epb_demo_battery
+              theme: critical_when_low
+              percent: ''
+              ```
+              An empty `percent` used to never subscribe at all, leaving the
+              icon/bar/theme unpainted forever. Check: icon and bar still
+              show 0%'s own theme color instead of staying blank.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card-template
+            entity: input_number.epb_demo_battery
+            name: "percent: ''"
+            theme: critical_when_low
+            percent: ''
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'center_zero + theme + bar_color_mode: no gap past max_value'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-template
+              entity: input_number.epb_demo_battery
+              percent: '150'
+              theme: critical_when_low
+              center_zero: true
+              bar_color_mode: segment
+              ```
+              A value past 100% used to leave a gap in the positive arm
+              instead of a clean, fully-filled edge. Check: the arm fills
+              cleanly, no hole.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card-template
+            entity: input_number.epb_demo_battery
+            name: 'percent: 150, center_zero'
+            percent: '150'
+            theme: critical_when_low
+            center_zero: true
+            bar_color_mode: segment
+      - type: grid
+        cards:
+          - type: heading
+            heading: "status_label color: '' falls back, doesn't go blank"
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card
+              entity: input_number.epb_demo_battery
+              theme: critical_when_low
+              status_label:
+                jinja: "{{ {'label': 'test', 'color': ''} }}"
+              ```
+              An explicit but empty `color` in the {label, color} object used
+              to leave the pill without a color at all. Check: the pill
+              falls back to the bar's own color instead.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: "status_label color: ''"
+            theme: critical_when_low
+            status_label:
+              jinja: "{{ {'label': 'test', 'color': ''} }}"
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'badge_icon {icon, color}: color clears when dropped, not stuck'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card
+              entity: input_number.epb_demo_battery
+              badge_icon: >-
+                {% set c = states('counter.epb_demo_counter') | int(0) %}
+                {% if c % 2 == 0 %}
+                  {{ {'icon': 'mdi:robot-vacuum', 'color': 'red'} }}
+                {% else %}
+                  {{ {'icon': 'mdi:robot-vacuum'} }}
+                {% endif %}
+              ```
+              Tap the counter tile next to it to increment. Even: icon on a
+              red badge. Odd: same icon, no color key at all - check the
+              badge background actually resets instead of staying red.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'badge color clears'
+            badge_icon: >-
+              {% set c = states('counter.epb_demo_counter') | int(0) %}
+              {% if c % 2 == 0 %}
+                {{ {'icon': 'mdi:robot-vacuum', 'color': 'red'} }}
+              {% else %}
+                {{ {'icon': 'mdi:robot-vacuum'} }}
+              {% endif %}
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: tile
+            entity: counter.epb_demo_counter
+            name: 'counter (tap +1 / hold -1 / dbl reset)'
+            tap_action:
+              action: call-service
+              service: counter.increment
+              target:
+                entity_id: counter.epb_demo_counter
+            hold_action:
+              action: call-service
+              service: counter.decrement
+              target:
+                entity_id: counter.epb_demo_counter
+            double_tap_action:
+              action: call-service
+              service: counter.reset
+              target:
+                entity_id: counter.epb_demo_counter
+            grid_options:
+              columns: 6
+              rows: 1
+      - type: grid
+        cards:
+          - type: heading
+            heading: >-
+              status_label repaints immediately on a percent-driven theme
+              change
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-template
+              entity: input_number.epb_demo_battery
+              percent: "{{ states('counter.epb_demo_counter') | int(0) }}"
+              theme: critical_when_low
+              status_label:
+                jinja: watching
+              ```
+              Tap the counter tile next to it to cross a theme zone (e.g.
+              below 20 into the red). `status_label.jinja` is static text,
+              so it never re-pushes on its own. Check: the pill's color
+              follows the bar immediately, not just on some unrelated
+              refresh.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card-template
+            entity: input_number.epb_demo_battery
+            name: titi
+            percent: "{{ states('counter.epb_demo_counter') | int(0) }}"
+            theme: critical_when_low
+            status_label:
+              jinja: watching
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: tile
+            entity: counter.epb_demo_counter
+            name: 'counter (tap +1 / hold -1 / dbl reset)'
+            tap_action:
+              action: call-service
+              service: counter.increment
+              target:
+                entity_id: counter.epb_demo_counter
+            hold_action:
+              action: call-service
+              service: counter.decrement
+              target:
+                entity_id: counter.epb_demo_counter
+            double_tap_action:
+              action: call-service
+              service: counter.reset
+              target:
+                entity_id: counter.epb_demo_counter
+            grid_options:
+              columns: 6
+              rows: 1
+      - type: grid
+        cards:
+          - type: heading
+            heading: >-
+              Removing badge_icon in the editor doesn't leave a phantom badge
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              Manual test (an editor workflow, not visible just by loading
+              this page): open this card's editor, delete the `badge_icon`
+              line entirely (not just clear its content) and Save. Check:
+              the badge disappears cleanly - it used to stay stuck on screen
+              after the key was removed, because its resolved state was
+              never reset on `setConfig`.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'delete badge_icon below, then Save'
+            badge_icon: "{{ 'mdi:alert' }}"
+            badge_color: "{{ 'red' }}"
+      - type: grid
+        cards:
+          - type: heading
+            heading: >-
+              Editor: "Independent color" toggle only shows once Badge is on
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              Manual test (editor UI, not visible just by loading this
+              page): open this card's editor (Markers panel). Neither
+              `badge_icon` nor `badge_color` is set below, so the "Badge"
+              toggle is off. Check: the "Independent color" toggle is not
+              shown at all yet - it's nested under "Badge", not offered as
+              its own starting point. Now switch "Badge" on: check
+              "Independent color" appears right below it.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'toggle Badge, watch Independent color appear'
+      - type: grid
+        cards:
+          - type: heading
+            heading: "Editor: badge_color field has no redundant label"
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              Manual test (editor UI, not visible just by loading this
+              page): open this card's editor (Markers panel) - "Badge" and
+              "Independent color" are both already on below. Check: the
+              Jinja field under "Independent color" has no separate "Badge
+              color" label above it, same as the "Badge" field right above
+              it - the toggle's own name already says what it is.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'check the field label below Independent color'
+            badge_icon: "{{ 'mdi:alert' }}"
+            badge_color: "{{ 'red' }}"
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'theme: battery_adaptive on Template stays in sync with charging'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-template
+              entity: sensor.epb_demo_battery_ev
+              percent: "{{ states('sensor.epb_demo_battery_ev') }}"
+              theme: battery_adaptive
+              bar_color_mode: rainbow_full
+              icon_animation: battery_charging
+              ```
+              Tap the card to toggle charging - the percent itself doesn't
+              change, only the `battery_charging` attribute does, so the
+              theme used to stay stuck on whatever it resolved to at the
+              last percent push. `rainbow_full` shows the whole gradient
+              shape at once (not just the fill up to the current value), so
+              the switch between `critical_when_extreme`/`critical_when_low`
+              reads clearly regardless of the current percent.
+              `icon_animation: battery_charging` is a second, independent
+              signal - if the icon animates but the bar doesn't react, the
+              theme side specifically is still broken. Check: both react
+              immediately on tap, not just eventually.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card-template
+            entity: sensor.epb_demo_battery_ev
+            name: 'battery_adaptive (tap to toggle charging)'
+            percent: "{{ states('sensor.epb_demo_battery_ev') }}"
+            theme: battery_adaptive
+            bar_color_mode: rainbow_full
+            icon_animation: battery_charging
+            tap_action:
+              action: call-service
+              service: input_boolean.toggle
+              target:
+                entity_id: input_boolean.epb_demo_charging
+      - type: grid
+        cards:
+          - type: heading
+            heading: >-
+              status_label.color_source follows a plain Jinja bar_color, no
+              theme needed
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-template
+              entity: input_number.epb_demo_battery
+              percent: "{{ states('input_number.epb_demo_battery') }}"
+              bar_color: >-
+                {{ 'red' if states('input_number.epb_demo_battery') | float > 50
+                   else 'green' }}
+              status_label:
+                jinja: watching
+                color_source: bar
+              ```
+              No `theme:` here - `bar_color` is a plain Jinja color.
+              `color_source: bar` used to only work once a theme was active
+              (`ViewCore.barColor` returned null for a plain Jinja push,
+              nothing cached the resolved color anywhere `status_label`
+              could read). Check: the pill follows the bar's red/green
+              directly, no theme required.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card-template
+            entity: input_number.epb_demo_battery
+            name: 'color_source without theme'
+            percent: "{{ states('input_number.epb_demo_battery') }}"
+            bar_color: >-
+              {{ 'red' if states('input_number.epb_demo_battery') | float > 50
+                 else 'green' }}
+            status_label:
+              jinja: watching
+              color_source: bar
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'status_label.color_source: icon vs bar, side by side'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card
+              entity: input_number.epb_demo_battery
+              color: red
+              bar_color: green
+              status_label:
+                jinja: icon color
+                color_source: icon
+              ```
+              Icon is red, bar is green. Check: this pill (`color_source:
+              icon`) reads red - the one next to it (`color_source: bar`)
+              reads green instead, same icon/bar colors.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'color_source: icon'
+            color: red
+            bar_color: green
+            status_label:
+              jinja: icon color
+              color_source: icon
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'color_source: bar'
+            color: red
+            bar_color: green
+            status_label:
+              jinja: bar color
+              color_source: bar
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Template watermark.low/.high in jinja mode now resolves'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-template
+              percent: '60'
+              watermark:
+                low:
+                  jinja: "{{ 30 }}"
+              ```
+              `jinjaWatermarkLow`/`.High` are now declared on `ViewCore`
+              itself (shared with `ViewBase`, same reasoning as
+              `jinjaAlertAbove`/`.Below`), and both Card's and Template's
+              `_getJinjaHandlers` route `watermark.low`/`.high` through the
+              new shared `HABase._renderWatermarkJinja`. Both cards below now
+              show the low mark.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'Card (mark shows)'
+            watermark:
+              low:
+                jinja: "{{ 30 }}"
+          - type: custom:entity-progress-card-template
+            entity: input_number.epb_demo_battery
+            name: 'Template (mark shows too)'
+            percent: '60'
+            watermark:
+              low:
+                jinja: "{{ 30 }}"
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'rainbow_full marker now mirrors for bar_orientation: rtl'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card
+              entity: input_number.epb_demo_battery
+              theme: optimal_when_high
+              bar_color_mode: rainbow_full
+              bar_orientation: rtl
+              ```
+              A theme is required - `applyBarColorModeRule` (schema.ts)
+              silently resets `bar_color_mode` back to `auto` without one.
+              `transform: scaleX(-1)` now sits on `.bar-container` (shared
+              parent of both `.bar` and `.value-mark`) instead of `.bar`
+              alone, so the marker mirrors right along with the fill.
+              Compare: both cards below have the marker right at the fill's
+              edge now.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'ltr (correct)'
+            theme: optimal_when_high
+            bar_color_mode: rainbow_full
+            bar_orientation: ltr
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'rtl (correct too)'
+            theme: optimal_when_high
+            bar_color_mode: rainbow_full
+            bar_orientation: rtl
+      - type: grid
+        cards:
+          - type: heading
             heading: >-
               multiline collapse when empty (replaces the old `:has()`-based
               rule, Firefox 94+ safe)
@@ -3984,6 +4458,8 @@ views:
           - type: tile
             entity: input_boolean.epb_demo_simple_mode
             name: Toggle to empty the multiline content
+            tap_action:
+              action: toggle
     subview: false
     cards: []
     badges:

@@ -13,7 +13,7 @@ import { HassProviderSingleton, type HomeAssistant, type EntityState } from '../
 import { CardView, FeatureView, type ViewCore, type ViewBase } from './view.js';
 import { ResourceManager, DOMHelper, ActionHelper } from './dom-helpers.js';
 import type { CacheValue } from './dom-helpers.js';
-import type { LovelaceConfig } from '../utils/types.js';
+import type { LovelaceConfig, Config } from '../utils/types.js';
 import type { StructureOptions } from './structure.js';
 
 // The resolved shape ViewBase/ViewCore's `watermark` getter returns (see
@@ -31,8 +31,15 @@ type ResolvedWatermark = {
   disable_low?: boolean;
 };
 
-// ViewBase.divergingBarStack's return shape (see view.ts).
-type DivergingGradients = { posGradient: string | null; negGradient: string | null; posSize: number; negSize: number };
+// ViewBase.divergingBarStack's return shape (see view.ts). Exported -
+// cards.ts's own _renderPercentCSS forwards the same shape (ViewCore.
+// templateThemeDivergingGradient) through to _applyProgressCSS below.
+export type DivergingGradients = {
+  posGradient: string | null;
+  negGradient: string | null;
+  posSize: number;
+  negSize: number;
+};
 
 // The icon element _showIcon()/_handleImgIcon()/_handleStateIcon() manage:
 // either a plain <img> (entity_picture) or a <ha-state-icon> (hass/stateObj).
@@ -1016,7 +1023,34 @@ class HABase extends HACore {
   // assigned unconditionally in the constructor below, for every HABase
   // instance.
   #jinjaStateBadge = { icon: false, color: false };
+  // Badge icon/color's own last-resolved state, one cache per independent
+  // source - badge_icon's own icon (always its own single source), the color
+  // badge_icon's object provides (null when it doesn't, or when it's a plain
+  // string), and badge_color field's own separate color. #repaintBadge below
+  // recomputes and repaints from these three on every push from either field
+  // - never a one-off snapshot taken only at the instant one specific field
+  // happened to push, which used to leave a stale icon/color showing once
+  // the OTHER field's own state changed independently (e.g. a static
+  // badge_color keeping the badge visible while badge_icon's own icon/color
+  // had already gone empty) - same reasoning as _repaintStatusLabel's own
+  // comment/fix.
+  #badgeIconValue: string | null = null;
+  #badgeIconObjectColor: string | null = null;
+  #badgeColorFieldValue: string | null = null;
   #lastMessage: { content: string; sev: string } | null = null;
+  // status_label's own last-resolved state (_renderLabel below) - null text
+  // means no push has landed yet (pill stays untouched). Cached so
+  // _repaintStatusLabel can repaint the pill with a fresh bar color on every
+  // _updateDynamicElements pass, not just the instant a Jinja push happens to
+  // land - same reasoning as ViewCore's own #templateTheme comment: on
+  // Template, barColor only becomes correct once percent's own separate
+  // Jinja push has landed, and status_label's own push (often a static
+  // string with nothing to resubscribe on) may never fire again after that -
+  // without this, the pill could get stuck showing whichever color barColor
+  // happened to resolve to at that one push, base or themed, depending on
+  // which of the two pushes won the race.
+  _lastStatusLabelText: string | null = null;
+  _lastStatusLabelColor: string | null = null;
 
   // ─── LIFECYCLE METHODS ────────────────────────────────────────────────────
 
@@ -1054,6 +1088,26 @@ class HABase extends HACore {
   constructor() {
     super();
     this._actionHelper = new ActionHelper(this);
+  }
+
+  // Badge/status_label caches (#jinjaStateBadge, #badgeIconValue/-Object
+  // Color/-ColorFieldValue, _lastStatusLabelText/-Color - see their own
+  // comments) reset here, same as every comparable ViewCore-level cache
+  // (#resolvedHide, #jinjaIconAnimationActive) already does in its own `set
+  // config` - these live on HABase instead (shared by Card/Badge/Feature/
+  // Template), so `set config` there doesn't reach them. Without this, a
+  // config that just removed badge_icon/status_label left the old resolved
+  // state around after render() rebuilds the shadow DOM (a phantom badge/
+  // pill), with no future push ever left to correct it since the field's
+  // own subscription is gone too.
+  setConfig(config: LovelaceConfig) {
+    super.setConfig(config);
+    this.#jinjaStateBadge = { icon: false, color: false };
+    this.#badgeIconValue = null;
+    this.#badgeIconObjectColor = null;
+    this.#badgeColorFieldValue = null;
+    this._lastStatusLabelText = null;
+    this._lastStatusLabelColor = null;
   }
 
   connectedCallback() {
@@ -1375,6 +1429,7 @@ class HABase extends HACore {
     this._manageShape();
     this._updateTrend();
     this._updateCSS();
+    this._repaintStatusLabel();
     // Re-applied on every refresh (not only at render): some conditions are
     // state-driven (icon_animation active state, entity error), and toggleClass
     // is value-cached so unchanged classes cost nothing.
@@ -1552,10 +1607,22 @@ class HABase extends HACore {
     if ((this.constructor as typeof HABase)._hasDisabledBadge) return;
     // badgeInfo is ViewBase-only (never present on the template views).
     const badgeInfo = (this._cardView as ViewBase).badgeInfo;
-    const isBadgeEnable = Boolean(badgeInfo || this._cardView.config.badge_icon || this._cardView.config.badge_color);
-
-    this._enableBadge(isBadgeEnable);
-    if (badgeInfo) this._setBadgeIconColor(badgeInfo.icon, badgeInfo.color, badgeInfo.backgroundColor);
+    if (badgeInfo) {
+      this._enableBadge(true);
+      this._setBadgeIconColor(badgeInfo.icon, badgeInfo.color, badgeInfo.backgroundColor);
+      return;
+    }
+    // badge_icon/badge_color are Jinja-resolved - config.badge_icon/-color
+    // here would be the raw, unevaluated template *source* (always a
+    // non-empty string once configured, regardless of what its condition
+    // currently resolves to), not whether either is CURRENTLY showing
+    // anything. _showBadge runs on every refresh (not just a Jinja push), so
+    // checking raw presence used to force the badge back on every unrelated
+    // hass update even while the condition was false - fighting
+    // _renderBadgeIcon/_renderBadgeColor's own correct hide. #jinjaStateBadge
+    // (kept current by those two, via _updateBadgeVisibility) is the only
+    // real source of truth here.
+    this._updateBadgeVisibility();
   }
 
   _enableBadge(isBadgeEnable: boolean) {
@@ -1584,6 +1651,16 @@ class HABase extends HACore {
     this._dom.setStyle(CARD.htmlStructure.card.element, CARD.style.dynamic.badge.color.var, color);
   }
 
+  // setStyle() never unsets a value on its own once written (see
+  // _applyDivergingBarStackCSS's own comment) - #repaintBadge below needs
+  // this whenever neither color source (badge_icon's own object,
+  // badge_color) currently applies, so a color that was set a moment ago
+  // doesn't stay stuck once nothing provides one anymore.
+  _clearBadgeColor() {
+    this._dom.removeStyle(CARD.htmlStructure.card.element, CARD.style.dynamic.badge.backgroundColor.var);
+    this._dom.removeStyle(CARD.htmlStructure.card.element, CARD.style.dynamic.badge.color.var);
+  }
+
   // ─── JINJA TEMPLATE RENDERING ─────────────────────────────────────────────
 
   _getJinjaBadgeState(): string {
@@ -1604,25 +1681,53 @@ class HABase extends HACore {
 
   _renderBadgeIcon(content: unknown) {
     this._log?.debug('📎 HABase._renderBadgeIcon():', { content });
-    this.#jinjaStateBadge.icon = is.nonEmptyString(content) && content.includes(HA_CONTEXT.icons.prefix);
-
-    if (!is.nullish((this._cardView as ViewBase).badgeInfo)) return; // alert -> cancel custom badge
-    if (this.#jinjaStateBadge.icon) {
-      this._setBadgeIcon(content as string);
-    }
-    this._updateBadgeVisibility();
+    // A single {{ expression }} (or each branch of a block {% if %}) that
+    // resolves to a dict literal comes through as a native object, not a
+    // string (see docs/configuration.md's own JINJA chapter, "Returning a
+    // native type") - `{{ {'icon': 'mdi:...', 'color': '#ff0000'} }}` lets
+    // one template drive both icon and color together instead of needing a
+    // separate badge_color Jinja alongside it. A plain string keeps working
+    // exactly as before (icon only, badge_color still independently owns
+    // color) - same "two independent fields, or one combined" duality as
+    // icon_animation's own enum | { effect, jinja } shape. Either key can be
+    // left out of the object (e.g. `{'color': '#f00'}` alone) - an absent or
+    // empty one simply doesn't win that dimension, same as a plain string
+    // with nothing else.
+    const iconRaw = is.plainObject(content) ? content.icon : content;
+    const colorRaw = is.plainObject(content) ? content.color : undefined;
+    this.#badgeIconValue = is.nonEmptyString(iconRaw) && iconRaw.includes(HA_CONTEXT.icons.prefix) ? iconRaw : null;
+    this.#badgeIconObjectColor = is.nonEmptyString(colorRaw) ? colorRaw : null;
+    this.#repaintBadge();
   }
 
   _renderBadgeColor(content: unknown) {
     this._log?.debug('📎 HABase._renderBadgeColor():', { content });
-    this.#jinjaStateBadge.color = is.nonEmptyString(content);
+    this.#badgeColorFieldValue = is.nonEmptyString(content) ? content : null;
+    this.#repaintBadge();
+  }
 
+  // Shared by _renderBadgeIcon/_renderBadgeColor above - recomputes the
+  // whole badge (icon + color) from the three caches every time either field
+  // pushes, instead of each handler only touching its own half and leaving
+  // the other stale. #badgeIconObjectColor wins over #badgeColorFieldValue
+  // when both are set (badge_icon's object wins outright, same precedence as
+  // theme over color/bar_color) - and, critically, the icon/color DOM state
+  // is explicitly cleared (not just left untouched) whenever its resolved
+  // value is null, so a source going empty can't leave the OTHER source's
+  // earlier value on screen (e.g. a static badge_color keeping the badge
+  // visible while badge_icon's own icon had already gone empty - the icon
+  // used to stay stuck showing whatever it was last set to).
+  #repaintBadge() {
     if (!is.nullish((this._cardView as ViewBase).badgeInfo)) return; // alert -> cancel custom badge
-
-    if (this.#jinjaStateBadge.color) {
-      const backgroundColor = ThemeManager.adaptColor(content as string) as string;
-      const color = 'var(--white-color)';
-      this._setBadgeColor(color, backgroundColor);
+    const icon = this.#badgeIconValue;
+    const color = this.#badgeIconObjectColor ?? this.#badgeColorFieldValue;
+    this.#jinjaStateBadge.icon = icon !== null;
+    this.#jinjaStateBadge.color = color !== null;
+    this._setBadgeIcon(icon ?? '');
+    if (color !== null) {
+      this._setBadgeColor('var(--white-color)', ThemeManager.adaptColor(color) as string);
+    } else {
+      this._clearBadgeColor();
     }
     this._updateBadgeVisibility();
   }
@@ -1675,11 +1780,11 @@ class HABase extends HACore {
   // has(...)), past this card's documented browser floor (:has() needs
   // Firefox 121+, the floor is 94+). main defaults to false ("not empty",
   // blocking) rather than true: Template has no secondary-info-main slot at
-  // all (see ViewBase#_renderSecondary's own comment), so _processStandardFields
-  // above never touches it there - staying permanently false keeps the
-  // wrapper from ever auto-collapsing on Template, the exact behavior the
-  // old :has(main:empty) already had (a nonexistent element can never
-  // satisfy :empty).
+  // all (see ViewBase#_renderSecondary's own comment), so
+  // _processStandardFields above never touches it there - staying
+  // permanently false keeps the wrapper from ever auto-collapsing on
+  // Template, the exact behavior the old :has(main:empty) already had (a
+  // nonexistent element can never satisfy :empty).
   _secondaryInfoEmpty = { extra1: true, extra2: true, main: false };
 
   _updateSecondaryInfoWrapperVisibility() {
@@ -1709,20 +1814,54 @@ class HABase extends HACore {
     };
   }
 
+  // Shared by EntityProgressBadge/EntityProgressTemplateBadge's own
+  // _getJinjaHandlers overrides (both delete the exact same two keys from
+  // whatever their own base class's _getJinjaHandlers returns) - a badge
+  // never has a badge of its own, whether Card or Template. static (no
+  // instance state involved) - called as HABase._stripBadgeHandlers(...).
+  static _stripBadgeHandlers(handlers: Record<string, () => void>): Record<string, () => void> {
+    delete handlers.badge_icon;
+    delete handlers.badge_color;
+    return handlers;
+  }
+
+  // watermark.low/.high jinja mode: shared by Card and Template (both have
+  // `watermark` in schema, unlike min_value/max_value/alert_when, which are
+  // Card-only - see EntityProgressCardBase's own _renderJinjaNumber for
+  // those). Lives here rather than there so EntityProgressTemplateBase's own
+  // _getJinjaHandlers can reuse it too - jinjaWatermarkLow/High themselves
+  // are declared on ViewCore for exactly that reason (see view.ts).
+  _renderWatermarkJinja(
+    content: unknown,
+    getJinja: (c: Config) => string | undefined,
+    viewProp: 'jinjaWatermarkLow' | 'jinjaWatermarkHigh',
+  ) {
+    // Defensive: only apply while the option is still in { jinja: "..." }
+    // mode - guards against a push arriving right as the user switches the
+    // mode chips away from Jinja (mirrors _renderJinjaNumber's own guard).
+    if (!is.nonEmptyString(getJinja(this._cardView.config))) return;
+    const value = is.number(content) ? content : is.strictNumericString(content) ? Number(content) : null;
+    if (value === this._cardView[viewProp]) return; // unchanged - skip the recompute below
+    this._cardView[viewProp] = value;
+    // Watermark position is resolved directly in _updateCSS
+    // (_applyWatermarkCSS) from the view's own watermark getter.
+    this._updateCSS();
+  }
+
   // GitHub-label-style status pill, shared by both of its drivers: a plain
-  // `status_label` Jinja template (_renderLabel below) and alert_when.highlight:
-  // 'label' (_applyAlertLabel, called from _applyAlertClasses since
-  // alert_when.label is a plain string, not Jinja - there's no push to
-  // piggyback on, it re-evaluates whenever isAlertActive might have
-  // changed). background/border/text color are derived from whatever color
-  // the caller passes using the same recipe GitHub's own Primer design
-  // system uses for issue labels (see ThemeManager.labelColorComponents and
-  // .status-label's CSS). outline-color is a scratch property here, not a
-  // real style choice: it's just a real CSS <color> property to assign the
-  // raw resolved color to so the browser normalizes it into rgb(...) for
-  // parsing (a var() or named color this code never sees resolved
-  // otherwise) - removed right after, it plays no part in the pill's actual
-  // look.
+  // `status_label` Jinja template (_renderLabel below) and
+  // alert_when.highlight: 'label' (_applyAlertLabel, called from
+  // _applyAlertClasses since alert_when.label is a plain string, not Jinja -
+  // there's no push to piggyback on, it re-evaluates whenever isAlertActive
+  // might have changed). background/border/text color are derived from
+  // whatever color the caller passes using the same recipe GitHub's own
+  // Primer design system uses for issue labels (see
+  // ThemeManager.labelColorComponents and .status-label's CSS). outline-color
+  // is a scratch property here, not a real style choice: it's just a real CSS
+  // <color> property to assign the raw resolved color to so the browser
+  // normalizes it into rgb(...) for parsing (a var() or named color this code
+  // never sees resolved otherwise) - removed right after, it plays no part in
+  // the pill's actual look.
   _paintLabel(text: string, color: string) {
     const key = CARD.htmlStructure.elements.label.class;
     this._dom.setText(key, text);
@@ -1747,7 +1886,43 @@ class HABase extends HACore {
     // way (see _applyAlertLabel) - a plain `label` Jinja alongside it would
     // otherwise fight over the same element on every refresh.
     if (this._cardView.config?.alert_when?.highlight === 'label') return;
-    this._paintLabel(String(content ?? '').trim(), this._cardView.iconColor ?? CARD.style.color.default);
+    // A single {{ expression }} (or each branch of a block {% if %}) that
+    // resolves to a dict literal comes through as a native object, not a
+    // string (see docs/configuration.md's own JINJA chapter, "Returning a
+    // native type") - `{{ {'label': 'hot', 'color': '#ff0000'} }}` lets one
+    // template drive both text and color together instead of needing a
+    // separate color/icon Jinja alongside it. `_lastStatusLabelColor` null =
+    // no explicit override, _repaintStatusLabel below falls back to the
+    // bar's own color.
+    if (is.plainObject(content)) {
+      this._lastStatusLabelText = String(content.label ?? '').trim();
+      // is.nonEmptyString, not is.string - an explicit but empty `color: ''`
+      // must fall back too (adaptColor('') returns '' as-is, and _repaint
+      // StatusLabel's own `?? fallbackColor` wouldn't have caught that, only
+      // a real null/undefined).
+      this._lastStatusLabelColor = ThemeManager.adaptColor(is.nonEmptyString(content.color) ? content.color : null);
+    } else {
+      this._lastStatusLabelText = String(content ?? '').trim();
+      this._lastStatusLabelColor = null;
+    }
+    this._repaintStatusLabel();
+  }
+
+  // Called again from _updateDynamicElements (HABase's own override, the
+  // only one) on every refresh, and from _managePercent/color/bar_color's
+  // own pushes (cards.ts) - not just from _renderLabel's own push above. See
+  // _lastStatusLabelText's own comment for why the pill needs repainting
+  // outside a status_label push too.
+  _repaintStatusLabel() {
+    if (this._cardView.config?.alert_when?.highlight === 'label') return;
+    if (this._lastStatusLabelText === null) return;
+    // status_label.color_source picks which of the two the pill falls back
+    // to when its own `jinja` doesn't return an explicit {label, color} -
+    // 'bar' by default (see schema.ts's own comment on why).
+    const fallbackColor =
+      this._cardView.config?.status_label?.color_source === 'icon' ? this._cardView.iconColor : this._cardView.barColor;
+    const color = this._lastStatusLabelColor ?? fallbackColor ?? CARD.style.color.default;
+    this._paintLabel(this._lastStatusLabelText, color);
   }
 
   // Only shown while the alert is active (like the border/background

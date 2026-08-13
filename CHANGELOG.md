@@ -6,11 +6,11 @@ candidate safely before it becomes stable.
 
 ## 1.6.1
 
-A quieter release than 1.6.0, focused on filling in the gaps it left behind:
-combine several bars into one card, see the actual value next to a bar instead
-of just a fill level, and a handful of layout options that couldn't quite do
-what people needed yet. Fully backward compatible — nothing to change in your
-existing dashboards.
+A bigger release than it looks: combine several bars into one card, themes and
+per-icon animations reach Template, `status_label`/`badge_icon` can drive their
+own color from a single Jinja condition, a proper keyboard/screen reader pass,
+and a handful of layout options that couldn't quite do what people needed yet.
+Fully backward compatible — nothing to change in your existing dashboards.
 
 ### ⭐ Highlights
 
@@ -21,17 +21,15 @@ full-featured progress bars (each with its own colors, state and tap actions)
 into a single card or a single Tile feature row, instead of one card per entity
 — handy for printer ink cartridges, a set of batteries, or any group of related
 sensors. A new, thinner `bar_size: xsmall` helps fit more of them in a tight
-space. See [multi].
+space.
+
+A small bar is enough on its own for something like a printer cartridge, but not
+when the number itself matters. Set `show_value: true` to show each entity's own
+value right next to its bar.
+
+See [multi] and [show_value].
 
 ➡️ [Feature]: Multi-bar card/feature #126 (@EDelsman)
-
-#### 🔢 Show the value next to each bar
-
-A bare bar is enough on its own for something like a printer cartridge, but not
-when the number itself matters (energy in Watts, a tank in liters…). Set
-`show_value: true` on `entity-progress-multi-card` / `-multi-feature` to show
-each entity's own value right next to its bar, left- or right-aligned, all lined
-up at the same width regardless of digit count. See [show_value].
 
 #### 📐 A more compact layout: `bar_position: compact_below`
 
@@ -45,9 +43,7 @@ in empty, unused room. See [bar_position].
 #### 🎬 Trigger icon animations from a template
 
 `icon_animation` now accepts a Jinja condition (`{ effect, jinja }`) instead of
-relying only on automatic entity-state detection — useful for a plain numeric
-sensor with no built-in "active" concept for the card to recognize on its own.
-See [icon_animation].
+relying only on automatic entity-state detection. See [icon_animation].
 
 ➡️ [Enhancement]: template/condition to trigger the icon animation directly #125
 (@FoxP)
@@ -55,36 +51,40 @@ See [icon_animation].
 #### 🏷️ Status label pill
 
 `status_label` draws a small rounded status pill in the card's corner
-(`{ jinja, position }`) — colored automatically from whatever color the icon
-currently shows (theme, `custom_theme`, or a plain `color` override).
+(`{ jinja, position, color_source }`) — colored automatically from whatever
+color the progress bar currently shows by default (`color_source: icon` to
+follow the icon instead), or set your own color directly by returning
+`{label, color}` from the template instead of plain text.
 `alert_when.highlight: 'label'` reuses the same pill to flash a fixed alert
 label instead of tinting the border or background. See [status_label] and
 [alert_when].
+
+#### 🎫 One template, both badge icon and color
+
+`badge_icon` can now return a `{icon, color}` object instead of just an icon
+name — one condition drives both at once.
+
+See [badge_icon].
 
 #### 🌈 A hue-picker style bar: `bar_color_mode: rainbow_full`
 
 The track always shows the theme's complete gradient end to end — not just the
 filled portion, like `rainbow` already does — with a small marker sliding along
 it to show where the current value sits, closer to a hue-picker strip than a
-traditional progress bar. Works with `center_zero` too (each arm shows its own
-half of the theme in full, the marker crossing the visual center at zero). See
-[bar_color_mode].
+traditional progress bar. Works with `center_zero` too, each arm showing its own
+half of the gradient in full.
+
+See [bar_color_mode].
 
 #### ⏱️ Smarter countdown refresh (and a fix for stalled Template timers)
 
-1.6.0's rewrite streamlined how Jinja templates get re-evaluated — but as a side
-effect, a Template card's `now()`-driven countdown (a `secondary:` line ticking
-down a timer, for example) could stop advancing after its first render: Home
-Assistant only pushes a fresh value for a `now()`/`utcnow()` template once a
-minute on its own, and the incidental resubscribe that used to paper over that
-in older versions was removed along the way. 1.6.1 adds `fast_refresh: true` so
-a Template card can opt back into a forced per-second refresh for any
-`now()`-driven countdown — not automatic, since it isn't free (it re-subscribes
-every second), so it needs to be added explicitly to whichever Template card
-needs it. Standard cards/badges/features aren't affected — they already refresh
-every second when the display shows seconds, once a minute otherwise, and
-self-correct to the real clock instead of slowly drifting, no extra config
-needed. See [fast_refresh].
+A Template card's `now()`-driven countdown (e.g. a `secondary:` line ticking
+down a timer) could freeze after its first render — Home Assistant only pushes a
+fresh `now()`/`utcnow()` value once a minute on its own. Add
+`fast_refresh: true` to opt that Template card into a forced per-second refresh
+instead. Not automatic (it re-subscribes every second), and standard
+cards/badges/features don't need it — they already self-correct on their own.
+See [fast_refresh].
 
 #### 🎨 A friendlier theme picker
 
@@ -93,62 +93,74 @@ one most people reach for) comes first, and each `Critical when X`/
 `Optimal when X` pair now sits together instead of being split into two separate
 groups.
 
+#### 🎯 A `center_zero`-aware "Critical when extreme" theme
+
+`theme: critical_when_extreme_center` brings `critical_when_extreme`'s "danger
+at both ends, safe in the middle" shape to
+[`center_zero`](docs/configuration.md#center_zero) — green at zero, red at both
+extremes, one continuous -100%/100% scale. Handy for a net power flow or a
+deviation from a setpoint that can swing either way. See
+[theme.md](docs/theme.md#critical-extreme-center).
+
+#### 🖌️ Theme support for Template
+
+`entity-progress-card-template` / `-badge-template` can now pick a built-in
+[theme] instead of writing your own color Jinja by hand — the icon and bar color
+follow your `percent:` value automatically. [bar_color_mode]
+(`segment`/`rainbow`/`rainbow_full`) is available too, for a gradient look
+instead of a flat color.
+
 #### 📏 A hardened `height`
 
-Card sizing got a real pass end to end: the same `min-height`-as-a-floor
-protection (issue #131 - never clip text when the OS/browser text-size
-accessibility setting is scaled up) now applies consistently everywhere a card
-can live — Sections, Masonry, or embedded in another card — instead of each
-context computing its own, sometimes-inconsistent height. On top of that, an
-explicit `height:` now always wins outright as a real, exact size — everywhere,
-no matter which container the card lives in — instead of just another floor a
-tall content could still silently outgrow. Full freedom for whoever sets it on
-purpose, full protection for whoever doesn't. See
-[`height`](docs/configuration.md#height).
+Card sizing got a real pass end to end: the `min-height`-as-a-floor protection
+(never clip text when the OS/browser text-size accessibility setting is scaled
+up) now applies consistently everywhere a card can live — Sections, Masonry, or
+embedded in another card. An explicit `height:` now always wins outright as a
+real, exact size everywhere too, instead of just another floor tall content
+could still outgrow. See [`height`](docs/configuration.md#height).
+
+➡️ [Bug]: Some parts of the card are not visible on Android #131 (@zkurzyns)
 
 #### 🧹 Consistent `hide:` behavior
 
 Hiding a field (`hide: [icon, name, secondary_info, progress_bar]`) now always
-gives its reserved space back, the same way, in every layout. Previously each
-field followed its own, inconsistent rule: `name`/`secondary_info` reclaimed
-their row with `layout: horizontal` but never with `vertical`; the progress
-bar's own container never collapsed at all — only its fill did, leaving an empty
-box wherever `bar_position` gave it a dedicated row (`below`/`top`/ `bottom`, or
-sharing `secondary_info`'s row by default); and `icon` never gave back its
-column on purpose, a deliberate quirk matching how Mushroom/Tile-style cards
-keep name/value aligned to the same column whether or not an icon is shown. That
-last one is now dropped too, in favor of one predictable rule everywhere: hide
-it, get the space back. `value`/`unit` get the same treatment too, but derived
-from actual content instead of config — an empty secondary-info row (no value,
-no custom `state_content` either) now collapses on its own, whatever made it
-empty (`hide: value`, a `hide` Jinja template, or just an entity with nothing to
-show). See [`hide`](docs/configuration.md#hide).
+gives its reserved space back, the same way, in every layout — previously each
+field followed its own inconsistent rule. An empty `value`/`unit` row now
+collapses too, whatever made it empty. See [`hide`](docs/configuration.md#hide).
 
 #### 📶 Sturdier `bar_segments`
 
-`bar_segments: N`'s divider lines are real elements now, not a CSS gradient/
-mask trick, fixing a real browser-compat bug (see below) along the way. All `N`
-segments are the same width, edges included — previously the two end segments
-quietly read wider than the rest. Divider thickness can now scale with the bar's
-own length (how much room each segment actually has) instead of a fixed size, on
-browsers new enough to support it, and a `--epb-bar-segment-gap`
-[hook](docs/theme.md#css) lets you pin an exact size yourself either way. See
+`bar_segments: N`'s divider lines are real elements now, not a CSS gradient/mask
+trick — all `N` segments are the same width now (the two end ones used to read
+wider), and divider thickness can scale with the bar's own length instead of a
+fixed size, tunable via `--epb-bar-segment-gap` [hook](docs/theme.md#css). See
 [`bar_segments`](docs/configuration.md#bar_segments).
 
 #### 📱 A compact `density`
 
-`density: compact` shrinks the card to its smallest useful footprint — without
-hand-tuning every option that gets in the way one by one. It forces
-`layout: horizontal`, restricts `bar_position` to `top`/`bottom`/`background`,
-and clears `multiline` for you, editor included (the now-irrelevant choices
-simply stop being offered instead of silently reverting on save) —
-`status_label`/`trend_indicator` still work as usual, both fit fine in a narrow
-card's corner. Flipping it on through the visual editor also pins the card's
-size outright in a Sections grid (`grid_options: { columns: 3, rows: 1 }`,
-restored automatically if you switch it back off) instead of just narrowing how
-far a manual resize could go — the only way to actually shrink a card that's
-already placed, not just a newly added one. See
-[`density`](docs/configuration.md#density).
+`density: compact` shrinks the card to the smallest a _complete_ card (icon,
+name, value, bar) can be in a Sections grid, in one toggle — instead of
+hand-tuning `layout`/`bar_position`/`multiline` yourself. Flipping it on through
+the visual editor also pins the card's size outright, restored automatically if
+you switch it back off. See [`density`](docs/configuration.md#density).
+
+#### 🃏 Show up when you pick an entity, not just when you search for a card
+
+Home Assistant 2026.6 added an entity-first card picker: pick an entity, and
+compatible cards show live previews right there instead of you having to search
+for this card by name first. The Card and Badge now opt in — pick a compatible
+entity (a numeric sensor, a `cover`, a `light`...) and they show up under
+"Community" with a working config already filled in. Template/Badge Template
+don't suggest themselves — they need a hand-written Jinja `percent:` to render
+anything meaningful.
+
+#### ✍️ More inline styles for Jinja-rendered text
+
+`name`/`secondary`/`custom_info` templates now also accept `font-size`,
+`font-weight`, `text-align`, `width`, `display`, `position` and `z-index` (on
+top of the existing `color`/`background-color`) — enough to build simple
+multi-column layouts directly in a template.  
+➡️ [Enhancement]: JINJA Should accept more STYLE tags #129 (@emartoni)
 
 #### ♿ Better keyboard and screen reader support
 
@@ -188,6 +200,10 @@ mouse/touch:
   certain themes (`bar_color_mode: segment`/`rainbow`, real-value themes like
   `temperature`/`voc`/`pm25`, `custom_theme`, and `center_zero`'s negative half)
   — several related scaling bugs, all fixed.
+- `center_zero` with a `theme` and `bar_color_mode` set could leave a gap in the
+  fill instead of a clean edge, for any value past `max_value` (or below
+  `min_value`) — the two arms' own gradient size wasn't capped at 100% the way
+  the fill itself already is.
 - The value/unit text next to the bar stayed capped at a narrow width with
   `bar_position: below`, `overlay` or `background`, even though the bar wasn't
   actually sharing that row anymore.
@@ -195,6 +211,14 @@ mouse/touch:
   seconds instead of ticking — add [`fast_refresh: true`][fast_refresh] to get
   it ticking every second again (see the highlight above for why).  
   ➡️ Reported alongside [Bug]: "Run" status not catched #127 (@annaoskarson)
+- A conditional [`badge_icon`](docs/configuration.md#badge_icon)/
+  [`badge_color`](docs/configuration.md#badge_color) (only showing while some
+  state holds) could flicker back on right after correctly hiding — any
+  unrelated dashboard update was enough to force it back, ignoring the
+  template's own current result.
+- A Template card with an empty `percent` (e.g. still waiting on the entity it
+  depends on) never painted its icon/bar/theme at all — now falls back to a
+  plain 0% render instead of staying blank.
 - Hiding `name` or `secondary_info` on a horizontal card left an empty gap
   instead of the card shrinking to fit.  
   ➡️ Follow-up to [Enhancement]: JINJA Should accept more STYLE tags #129
@@ -266,23 +290,123 @@ mouse/touch:
   flat, un-lightened bar for the first, a glitchy mid-cycle color for the
   second, not starting at all for `ping`; all degrade gracefully now. The icon's
   circular background had the same issue, fixed by simplifying it to a technique
-  that needs no fallback at all.
+  that needs no fallback at all. See
+  [graphic-effects-compatibility.html](docs/graphic-effects-compatibility.html)
+  for a full side-by-side of what changes on an older browser and how to test it
+  yourself.
+- Template's [`watermark`](docs/configuration.md#watermark) `low`/`high` in
+  `{ jinja: ... }` mode never actually resolved — no subscription was ever wired
+  for it, so the mark just silently never appeared (`entity`/plain-number modes
+  were unaffected). Present since Template's `watermark` option shipped.
+- `bar_color_mode: rainbow_full`'s marker didn't mirror with
+  `bar_orientation: rtl` — the fill visually flipped, the marker stayed put and
+  ended up on the wrong side of it. Present since `rainbow_full` itself shipped.
+- `theme: humidity`'s comfort zone (40–60%) used to split into a washed-out
+  `green`/`teal` band instead of one solid color, and a 95% reading (mold/
+  condensation risk) landed on `deep-purple` — a color that doesn't read as
+  "alert" the way a 15% reading's `red` does, understating the actual risk on
+  the humid end. Ranges rebalanced to a symmetric 10/10/10/20 spread on each
+  side of one solid green comfort zone. See
+  [`theme: humidity`](docs/theme.md#humidity).
+- The editor's watermark-related labels used the internal option name
+  (`Watermark`, `Low/High watermark source`) instead of the everyday term for
+  what they actually mark on the bar — relabeled to
+  `Markers`/`Low/High marker source`. The `watermark:` YAML key itself is
+  unchanged.
+- `round`/`triangle` watermark markers didn't center precisely on their
+  configured value — same pixel-rounding fix `bar_segments`'s own dividers
+  already got.
+- The visual editor's `height` field had no way to switch from the slider to a
+  free-text value (e.g. `auto`, `calc(...)`) — that mode only ever activated if
+  the config already held one, set through YAML. A toggle now exposes it
+  directly.
+- `bar_position: overlay`'s `name`/`secondary_info` text ran flush against the
+  card's right edge, unlike the 7px of breathing room it already had on the left
+  — now matches with 10px on the right too.
 
 ### 🧪 Try it: demo dashboard
 
 [`docs/demo-dashboard.yaml`][demo-dashboard.yaml] is now a comprehensive,
 interactive showroom covering essentially every option in this changelog, plus a
-regression-test view with one card per closed issue that can be reproduced
-statically, a dedicated deprecated-options view, and a new "README examples"
-view reproducing the README's own real-world recipes live (the ones that don't
-need a brand-specific integration or system-level dependency to actually run).
-Import it (or [`docs/demo-dashboard-dev.yaml`][demo-dashboard-dev.yaml] for
-local `-dev` builds) with
+regression-test view (one card per closed issue) and a "README examples" view
+reproducing the README's own recipes live. Import it with
 [`docs/demo-dashboard-helpers.yaml`][demo-dashboard-helpers.yaml] as a drop-in
 `homeassistant: packages:` file, and move the sliders to see everything react
 live.
 
 Thanks to everyone who reported, tested and contributed 🙏
+
+---
+
+## What's new (1.6.1-rc7)
+
+### ✨ New
+
+- **Card/Badge suggest themselves in Home Assistant's entity-first card picker**
+  (HA 2026.6+, "Pick a card, any card") — pick an entity there and, for a
+  compatible one, the card/badge shows up under "Community" with a live preview
+  already wired to it: entities whose own state is a plain number (`sensor`,
+  `number`, `input_number`, `counter`), `timer` (native support), and entities
+  whose _value_ lives in an attribute (`cover`/`valve`'s `current_position`,
+  `fan`'s `percentage`, `light`'s `brightness`, `humidifier`'s
+  `current_humidity`). Deliberately conservative — anything more
+  context-dependent (climate targets, a text sensor...) is left out rather than
+  guessed, so the suggestion never shows up somewhere it'd render empty or
+  nonsensical. Template/Badge Template don't suggest themselves: they need a
+  hand-written Jinja `percent:` to render anything meaningful.
+
+### 🔧 Improvements
+
+- **Template/Badge Template gained `theme`** (percentage-based themes only —
+  `battery_adaptive`, `critical_when_low`/`_high`, `optimal_when_low`/`_high`,
+  `critical_when_extreme`/`_center`, `light`, `humidity`) and `bar_color_mode`
+  (`segment`/`rainbow`/`rainbow_full`) — drives icon/bar color straight off the
+  `percent:` Jinja field, no manual color Jinja needed.
+- **New theme: `critical_when_extreme_center`** — `critical_when_extreme`'s own
+  shape, built for `center_zero` specifically (green at zero, red at both ends,
+  one continuous -100%/100% scale instead of the same zones mirrored onto each
+  arm).
+- **`status_label.jinja` can return `{label, color}`**, and **`badge_icon` can
+  return `{icon, color}`** — one Jinja condition drives text/icon and color
+  together, instead of two separate fields kept in sync by hand.
+- **New `status_label.color_source`** (`bar` default, or `icon`) — picks which
+  color the pill falls back to when its own `jinja` doesn't return an explicit
+  `{label, color}`.
+- `badge_icon`/`badge_color` moved to the editor's Markers panel (were in
+  Theme/appearance) — same "reacts to a condition" grouping as
+  `watermark`/`status_label`/`alert_when`. New toggle shows/hides both together.
+
+### 🐛 Fixes
+
+- A conditional `badge_icon`/`badge_color` (only showing while some state holds)
+  could flicker back on right after correctly hiding — any unrelated dashboard
+  update was enough to force it back, ignoring the template's own current
+  result.
+- `bar_color_mode: rainbow_full`'s marker got clipped near a value close to
+  0%/100% (or either end with `center_zero`) - it's centered on its own
+  position, so at the extremes part of it pushed past the bar row's own boundary
+  and got cut off by the card's `overflow: hidden`. Its position now clamps to
+  stay fully inside instead. A second, unrelated clip also showed at the bottom
+  regardless of value, `bar_position: default` included - the marker's soft
+  shadow wasn't accounted for in the vertical room reserved for it; now sized
+  off the same variable that room already comes from.
+- A Template card with `percent: ''` (empty, e.g. still waiting on the entity it
+  depends on) never painted its icon/bar/theme at all - an empty `percent` was
+  never subscribed to in the first place, so nothing ever called the code that
+  renders them. Now falls back to a plain 0% render instead of staying blank.
+- `badge_icon`'s own `{icon, color}` object (see the highlight above): if a
+  later push kept the icon but dropped `color`, the badge's background stayed on
+  whatever color it last showed instead of clearing.
+- `center_zero` with a `theme` and `bar_color_mode` set (`segment`/`rainbow`/
+  `rainbow_full`) could leave a gap in the fill instead of a clean edge, for any
+  value past `max_value` (or below `min_value`) — the two arms' own gradient
+  size wasn't capped at 100% the way the fill itself already is.
+- Template's `watermark.low`/`.high` in `{ jinja: ... }` mode never resolved —
+  no subscription was ever wired for it, so the mark just never appeared.
+  `entity`/plain-number modes were unaffected.
+- `bar_color_mode: rainbow_full`'s marker didn't mirror with
+  `bar_orientation: rtl` — the fill visually flipped, the marker stayed put and
+  ended up on the wrong side of it.
 
 ---
 
@@ -302,6 +426,10 @@ Thanks to everyone who reported, tested and contributed 🙏
 - New `--epb-alert-background-opacity` [hook](docs/theme.md#css) tunes the
   `alert_when.highlight: background` tint on browsers using the fallback above
   (defaults to matching the same look modern browsers already get).
+- **New theme: `critical_when_extreme_center`** — `critical_when_extreme`'s own
+  shape, built for `center_zero` specifically (green at zero, red at both ends,
+  one continuous -100%/100% scale instead of the same zones mirrored onto each
+  arm). See the highlight above.
 
 ### 🐛 Fixes
 
@@ -5134,6 +5262,10 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#standard
 [bar_color_mode]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_color_mode
+[theme]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#theme
+[badge_icon]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#badge_icon
 [bar_segments]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_segments
 [icon_animation]:

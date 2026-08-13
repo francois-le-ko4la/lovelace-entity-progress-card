@@ -238,6 +238,51 @@ _Example_:
 option: "{{ state_attr('sensor.temperature', 'unit_of_measurement') }}"
 ```
 
+##### Returning a native type (not just text)
+
+A Jinja template is normally rendered as text - but Home Assistant's own
+template engine can preserve the template's _native_ type (list, dict, number,
+boolean…) instead of coercing it to a string, for the handful of fields built to
+read it that way (check each option's own description for whether it applies).
+
+This only works when the rendered output boils down to a **single expression** -
+either a bare `{{ ... }}` on its own, or an `{% if %}` / `{% elif %}` /
+`{% else %}` block where each branch is itself just one `{{ ... }}` (the tags
+themselves produce no text, so the actual output is still a single expression,
+whichever branch runs).
+
+_Examples_ (both forms tested live and confirmed to preserve the native type):
+
+```yaml
+# inline conditional expression
+option: "{{ ['shimmer', 'gradient'] if states(entity) | float > 22 else ['gradient'] }}"
+```
+
+```yaml
+# block form - just as valid, often more readable with more than two cases
+option: |-
+  {% if states(entity) | float > 22 %}
+    {{ ['shimmer', 'gradient'] }}
+  {% else %}
+    {{ ['gradient'] }}
+  {% endif %}
+```
+
+> [!NOTE]
+>
+> Any literal text around the expression - even a stray word or extra
+> punctuation outside the `{{ }}` - forces normal text rendering instead: the
+> result becomes a plain string again, handled the same way any other Jinja text
+> output would be.
+
+[`bar_effect`](#bar_effect) is one such field - a template can return a real
+list (`{{ ['shimmer', 'gradient'] }}`) instead of the comma-separated string
+form shown in its own examples above. [`status_label`](#status_label)'s `jinja`
+is another - it can return a `{label, color}` object to set the pill's color
+directly instead of following the progress bar's own color.
+[`badge_icon`](#badge_icon) is a third - it can return a `{icon, color}` object
+to drive both the badge's icon and color from one condition instead of two.
+
 [🔼 Back to top]
 
 ### Option description
@@ -1454,6 +1499,33 @@ badge_icon: >-
 > If the template returns nothing (i.e., empty string or None), the badge will
 > not be displayed.
 
+> [!TIP]
+>
+> `badge_icon` can also resolve to a native `{icon, color}` object instead of
+> just an icon name, to set both from the same condition instead of writing it
+> twice across `badge_icon` and [`badge_color`](#badge_color) — which then
+> stands down while `badge_icon`'s object provides its own `color`. Omit `color`
+> (or leave it empty) from the object and [`badge_color`](#badge_color) takes
+> back over automatically, if configured. See
+> [Returning a native type](#returning-a-native-type-not-just-text) for the
+> Jinja syntax this needs.
+>
+> ```yaml
+> badge_icon: >-
+>   {{ {'icon': 'mdi:weather-sunny-alert', 'color': '#ff0000'}
+>      if states('sensor.temperature') | float > 30
+>      else {'icon': 'mdi:thermometer', 'color': '#4caf50'} }}
+> ```
+
+> [!TIP]
+>
+> Either key can be left out of the object - only `color` (no `icon`) is handy
+> to set the badge's color alone from `badge_icon`, without an icon of its own:
+>
+> ```yaml
+> badge_icon: "{{ {'color': '#ff0000'} if is_state('binary_sensor.door', 'on') else {} }}"
+> ```
+
 [🔼 Back to top]
 
 #### `badge_color`
@@ -1753,6 +1825,8 @@ chips when a conflicting effect is active.
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 [![Feature OK][Feature-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
 > **`bar_color_mode`** [String] ➡️ {`auto`|`segment`|`rainbow`|`rainbow_full`}
 > _(optional, default: `auto`)_
@@ -1791,6 +1865,14 @@ Controls how theme colors are applied to the progress bar fill.
 > numerically). [`bar_stack`](#bar_stack) is the one combination that doesn't
 > apply: several entities, no single position for one marker — so `rainbow_full`
 > falls back to plain `rainbow` automatically there.
+
+> [!NOTE]
+>
+> On Template/Badge Template: only a built-in [`theme`](#theme) applies
+> (`custom_theme` doesn't exist there); with `center_zero`, the two arms split
+> at a fixed 50% instead of `min_value`/`max_value`'s zero point, since
+> `percent` is already the -100%/+100% scale directly. `bar_stack` doesn't exist
+> on Template either, so `rainbow_full` is always available.
 
 > [!NOTE]
 >
@@ -2039,10 +2121,10 @@ current status at a glance (e.g. `hot`, `critical`, `ok`). Unlike
 [`custom_info`](#custom_info)/[`name_info`](#name_info), the pill's text is
 plain (no inline HTML/styling): its colors are picked automatically instead,
 using the same recipe GitHub's own issue labels use — background is a
-translucent tint of whatever color the icon currently shows (theme zone,
-`custom_theme` zone, or a plain `color` override, whichever applies), and the
-border/text are that same color, lightened just enough to stay readable against
-the card.
+translucent tint of whatever color the progress bar currently shows (theme zone,
+`custom_theme` zone, or a plain `bar_color` override, whichever applies), and
+the border/text are that same color, lightened just enough to stay readable
+against the card.
 
 _Map definition_:
 
@@ -2050,12 +2132,32 @@ _Map definition_:
   an empty resolved value simply shows nothing. See [JINJA].
 - `position` (string, optional): Which top corner the pill sits in — `left` or
   `right` (default).
+- `color_source` (string, optional): Which color the pill follows when `jinja`
+  doesn't return an explicit `{label, color}` — `bar` (default, the progress
+  bar's own color) or `icon` (the icon's own color instead).
 
 > [!TIP]
 >
 > Works the same way with a built-in `theme`, a `custom_theme`, or no theme at
 > all — write your own condition on the entity's value/state/attributes, there's
 > no zone list to keep in sync with anything.
+
+> [!TIP]
+>
+> `jinja` can also resolve to a native `{label, color}` object instead of plain
+> text, to pick the pill's color directly rather than following the bar's own
+> color — handy when the pill's own condition doesn't match the bar's (e.g. a
+> `theme`-driven bar color, but a status label with its own separate logic).
+> Omit `color` (or leave it empty) from the object and the pill falls back to
+> the bar's own color automatically. See
+> [Returning a native type](#returning-a-native-type-not-just-text) for the
+> Jinja syntax this needs (a single `{{ expression }}`, or each branch of a
+> block `{% if %}`).
+>
+> ```yaml
+> status_label:
+>   jinja: "{{ {'label': 'hot', 'color': '#ff0000'} if is_state('sensor.status', 'hot') else {'label': 'ok', 'color': '#00ff00'} }}"
+> ```
 
 _Example_:
 
@@ -2445,9 +2547,13 @@ grown relative to the center point — rather than the bar's raw fill ratio.
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 [![Feature OK][Feature-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
-> **`theme`** [String] ➡️ {`optimal_when_low`|`optimal_when_high`|`light`|
-> `temperature`|`humidity`|`pm25`|`voc`} _(optional)_
+> **`theme`** [String] ➡️ {`battery_adaptive`|`critical_when_low`|
+> `optimal_when_low`|`critical_when_high`|`optimal_when_high`|
+> `critical_when_extreme`|`critical_when_extreme_center`|`light`|
+> `temperature`|`humidity`|`voc`|`pm25`} _(optional)_
 
 Allows customization of the progress bar's appearance using a predefined theme.
 This theme dynamically adjusts the `icon`, `color` and `bar-color` parameters
@@ -2469,6 +2575,20 @@ theme: light
 > replaced by `optimal_when_low` or `optimal_when_high`. These new parameters,
 > introduced in version `1.1.7`, eliminate the need for multiple theme
 > definitions and are sufficient to replace the deprecated themes.
+
+> [!NOTE]
+>
+> On Template/Badge Template, only percentage-based themes are available -
+> `battery_adaptive`, `critical_when_low`, `optimal_when_low`,
+> `critical_when_high`, `optimal_when_high`, `critical_when_extreme`,
+> `critical_when_extreme_center`, `light` and `humidity`. `temperature`, `voc`
+> and `pm25` are excluded: their zones are defined in raw values (°C, ppb,
+> µg/m³...) projected against `min_value`/`max_value`, which Template has no
+> equivalent of - it only ever has the already-computed `percent` Jinja field,
+> so only themes whose zones are already expressed as a 0-100% scale apply. When
+> set, `theme` wins over `color`/`bar_color` and also enables
+> [`bar_color_mode`](#bar_color_mode) (`interpolate` isn't available there,
+> unlike Card/Feature).
 
 [🔼 Back to top]
 
@@ -2770,9 +2890,9 @@ switch between the three modes, mirroring `min_value`/`max_value`.
 
 > [!NOTE]
 >
-> The Jinja mode for `low`/`high` is available on the Card and the Badge only.
-> On the Tile Feature and the Template card, only the fixed value and entity
-> modes apply.
+> The Jinja mode for `low`/`high` is available on the Card, the Badge, the
+> Template card and the Badge Template. On the Tile Feature, only the fixed
+> value and entity modes apply.
 
 > [!IMPORTANT]
 >

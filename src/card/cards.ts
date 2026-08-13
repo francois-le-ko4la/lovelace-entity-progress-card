@@ -18,6 +18,7 @@ import {
 } from './view.js';
 import { DOMHelper } from './dom-helpers.js';
 import { HACore, HABase } from './core.js';
+import type { DivergingGradients } from './core.js';
 import type { HomeAssistant } from '../utils/hass-provider.js';
 import type { LovelaceConfig, Config } from '../utils/types.js';
 
@@ -118,10 +119,11 @@ class EntityProgressCardBase extends HABase {
   }
 
   // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ─────────────────────────────
-  // The six numeric Jinja options share one mechanism (_renderJinjaNumber);
-  // each entry below only states its two specifics: which config path must
-  // still be in { jinja } mode, and which view property receives the resolved
-  // number.
+  // min_value/max_value/alert_when.above/.below share one mechanism
+  // (_renderJinjaNumber, Card-only - neither exists in the template schema);
+  // watermark.low/.high go through HABase's own _renderWatermarkJinja
+  // instead, since Template needs that one too (see EntityProgressTemplate
+  // Base's own _getJinjaHandlers).
   _getJinjaHandlers(content: unknown): Record<string, () => void> {
     return {
       ...this._baseJinjaHandlers(content),
@@ -132,9 +134,9 @@ class EntityProgressCardBase extends HABase {
       min_value: () => this._renderJinjaNumber(content, (c: Config) => c.min_value?.jinja, 'jinjaMinValue'),
       max_value: () => this._renderJinjaNumber(content, (c: Config) => c.max_value?.jinja, 'jinjaMaxValue'),
       'watermark.low': () =>
-        this._renderJinjaNumber(content, (c: Config) => c.watermark?.low?.jinja, 'jinjaWatermarkLow'),
+        this._renderWatermarkJinja(content, (c: Config) => c.watermark?.low?.jinja, 'jinjaWatermarkLow'),
       'watermark.high': () =>
-        this._renderJinjaNumber(content, (c: Config) => c.watermark?.high?.jinja, 'jinjaWatermarkHigh'),
+        this._renderWatermarkJinja(content, (c: Config) => c.watermark?.high?.jinja, 'jinjaWatermarkHigh'),
       'alert_when.above': () =>
         this._renderJinjaNumber(content, (c: Config) => c.alert_when?.above?.jinja, 'jinjaAlertAbove'),
       'alert_when.below': () =>
@@ -145,13 +147,7 @@ class EntityProgressCardBase extends HABase {
   _renderJinjaNumber(
     content: unknown,
     getJinja: (c: Config) => string | undefined,
-    viewProp:
-      | 'jinjaMinValue'
-      | 'jinjaMaxValue'
-      | 'jinjaWatermarkLow'
-      | 'jinjaWatermarkHigh'
-      | 'jinjaAlertAbove'
-      | 'jinjaAlertBelow',
+    viewProp: 'jinjaMinValue' | 'jinjaMaxValue' | 'jinjaAlertAbove' | 'jinjaAlertBelow',
   ) {
     // Defensive: only apply while the option is still in { jinja: "..." } mode
     // — guards against a push arriving right as the user switches the mode
@@ -174,11 +170,6 @@ class EntityProgressCardBase extends HABase {
       this._cardView.refresh(this.hass as HomeAssistant);
       this._updateCSS();
       this._processStandardFields();
-    } else if (viewProp === 'jinjaWatermarkLow' || viewProp === 'jinjaWatermarkHigh') {
-      // Watermark position is resolved directly in _updateCSS
-      // (_applyWatermarkCSS) from the view's own watermark getter - it never
-      // touches #percentHelper or the value label.
-      this._updateCSS();
     } else {
       // jinjaAlertAbove/jinjaAlertBelow: isAlertActive only feeds _alertStyle
       // (alert-active/alert-background/alert-anim-*) - no #percentHelper, bar
@@ -247,10 +238,7 @@ class EntityProgressBadge extends EntityProgressCardBase {
   // min_value for months (CF5, medium), so any handler added on the base class
   // is now picked up here automatically by construction.
   _getJinjaHandlers(content: unknown): Record<string, () => void> {
-    const handlers = super._getJinjaHandlers(content);
-    delete handlers.badge_icon;
-    delete handlers.badge_color;
-    return handlers;
+    return HABase._stripBadgeHandlers(super._getJinjaHandlers(content));
   }
 }
 
@@ -433,6 +421,23 @@ class EntityProgressTemplateBase extends HABase {
     this._updateWatermark();
   }
 
+  // percent drives the entire visual pipeline (icon/bar color, theme,
+  // gradient - see _managePercent) - unlike every other Jinja field, where
+  // "nothing to render" is a valid end state, an empty/unset percent still
+  // needs *something* painted (0%'s own fallback, see _managePercent's own
+  // comment). A literal `percent: ''` never gets subscribed to at all
+  // (is.nonEmptyString filters it out of validJinjaFields/_processJinjaFields,
+  // same as any other empty Jinja field) - there's no push left to ever call
+  // _managePercent, so nothing else in the pipeline would ever paint. This is
+  // the one synchronous fallback for exactly that case, re-checked on every
+  // setConfig (not just first connect, so switching a live percent back to
+  // empty in the editor recovers too) - a real percent (static or Jinja)
+  // keeps going through the normal subscription/push instead, unaffected.
+  setConfig(config: LovelaceConfig) {
+    super.setConfig(config);
+    if (!is.nonEmptyString(this._cardView.config.percent)) this._managePercent('');
+  }
+
   _handleHassUpdate() {
     this.refresh(); // refresh() → _cardView.refresh() → _showIcon() → _updateCSS()
     // Also compensates for HA's own render_template push, which for a
@@ -474,6 +479,8 @@ class EntityProgressTemplateBase extends HABase {
     this._applyProgressCSS(null, {
       barColor: bar.barColor,
       iconColor: bar.iconColor,
+      gradient: bar.templateThemeGradient,
+      diverging: bar.templateThemeDivergingGradient,
     });
     this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null);
   }
@@ -498,7 +505,7 @@ class EntityProgressTemplateBase extends HABase {
   // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ─────────────────────────────
 
   _getJinjaHandlers(content: unknown): Record<string, () => void> {
-    return {
+    const handlers: Record<string, () => void> = {
       ...this._baseJinjaHandlers(content),
       badge_icon: () => this._renderBadgeIcon(content),
       badge_color: () => this._renderBadgeColor(content),
@@ -506,19 +513,39 @@ class EntityProgressTemplateBase extends HABase {
       secondary: () => this._renderSecondary(content),
       icon: () => this._showIcon(content),
       percent: () => this._managePercent(content),
-      color: () =>
-        this._dom.setStyle(
-          CARD.htmlStructure.card.element,
-          CARD.style.dynamic.iconAndShape.color.var,
-          ThemeManager.adaptColor(content as string | null),
-        ),
-      bar_color: () =>
-        this._dom.setStyle(
-          CARD.htmlStructure.card.element,
-          CARD.style.dynamic.progressBar.color.var,
-          ThemeManager.adaptColor(content as string | null),
-        ),
+      'watermark.low': () =>
+        this._renderWatermarkJinja(content, (c: Config) => c.watermark?.low?.jinja, 'jinjaWatermarkLow'),
+      'watermark.high': () =>
+        this._renderWatermarkJinja(content, (c: Config) => c.watermark?.high?.jinja, 'jinjaWatermarkHigh'),
+      color: () => {
+        const adapted = ThemeManager.adaptColor(content as string | null);
+        // Cached (not just written to CSS) so status_label.color_source:
+        // 'icon' has something to read - see ViewCore.iconColor/
+        // setTemplateColorValue's own comment.
+        this._cardView.setTemplateColorValue(adapted);
+        this._dom.setStyle(CARD.htmlStructure.card.element, CARD.style.dynamic.iconAndShape.color.var, adapted);
+        this._repaintStatusLabel();
+      },
+      bar_color: () => {
+        const adapted = ThemeManager.adaptColor(content as string | null);
+        this._cardView.setTemplateBarColorValue(adapted);
+        this._dom.setStyle(CARD.htmlStructure.card.element, CARD.style.dynamic.progressBar.color.var, adapted);
+        this._repaintStatusLabel();
+      },
     };
+    // theme (percent: true only - see schema.ts's own comment) wins outright
+    // when configured, same precedence as Card's own ViewBase.iconColor
+    // (theme.iconColor || config.color) - deleted here (like
+    // EntityProgressBadge/-TemplateBadge's own badge_icon/badge_color
+    // deletion above the class) rather than just guarded inside the handler,
+    // so validJinjaFields never subscribes to either at all while a theme is
+    // active, instead of maintaining two render_template subscriptions whose
+    // result is always thrown away.
+    if (this._cardView.config.theme) {
+      delete handlers.color;
+      delete handlers.bar_color;
+    }
+    return handlers;
   }
 
   _renderName(content: unknown) {
@@ -550,12 +577,17 @@ class EntityProgressTemplateBase extends HABase {
     // string was compared lexicographically in getTrend ('9' < '45' is false →
     // wrong trend); non-numeric results now show an explicit error icon instead
     // of corrupting the trend and the bar CSS
-    const value = is.number(percent) ? percent : is.strictNumericString(percent) ? Number(percent) : null;
-    if (value === null) {
+    const parsed = is.number(percent) ? percent : is.strictNumericString(percent) ? Number(percent) : null;
+    // An invalid/empty result (e.g. percent: '' while the entity it depends
+    // on is momentarily unknown) still gets the trend's own error icon, but
+    // no longer bails out of the rest of the render entirely - falls back to
+    // 0 so the icon/bar/theme stay visible (0%'s own zone/color) instead of
+    // freezing on whatever they last showed, or never painting at all on
+    // first render.
+    if (parsed === null)
       this._updateTrend(NaN); // renders the error icon, keeps _lastPercent untouched
-      return;
-    }
-    this._updateTrend(value); // unclamped: trend detection wants the true delta, same as ViewBase.getTrend
+    else this._updateTrend(parsed); // unclamped: trend detection wants the true delta, same as ViewBase.getTrend
+    const value = parsed ?? 0;
 
     // CF5 - issue (major) resolved - a Jinja `percent` isn't bounded the way
     // ProgressCalc's own min/max division is (see ViewCore.get percent(),
@@ -565,7 +597,30 @@ class EntityProgressTemplateBase extends HABase {
     // the bar renders with an empty gap on one side instead of full.
     const isCenterZero = Boolean(this._cardView.config.center_zero);
     const clamped = isCenterZero ? Math.max(-100, Math.min(100, value)) : Math.max(0, Math.min(100, value));
-    this._renderPercentCSS(clamped);
+
+    // theme (percent: true only) re-derives icon/bar color (and, with
+    // bar_color_mode set, the gradient) from this same push - see
+    // _getJinjaHandlers's own color/bar_color comment for why those two
+    // stand down instead of fighting over the same CSS var. Unclamped value,
+    // not clamped: ThemeManager.#setStyle already clamps to its own
+    // first/last zone for an out-of-range value, same as ViewBase's own
+    // theme consumers. All four options read straight off _cardView, same
+    // getters _updateCSS's own repaint on the next hass update would read -
+    // no local computation to keep in sync between the two.
+    if (this._cardView.config.theme) this._cardView.setTemplateThemeValue(value);
+    const bar = this._cardView;
+    this._renderPercentCSS(clamped, {
+      iconColor: bar.iconColor,
+      barColor: bar.barColor,
+      gradient: bar.templateThemeGradient,
+      diverging: bar.templateThemeDivergingGradient,
+    });
+    // status_label's own fallback color (color_source: 'bar'/'icon', see its
+    // own comment) depends on the same theme this push may have just moved -
+    // without this, the pill only caught up on some unrelated hass update
+    // happening to run _updateDynamicElements, not on the push that actually
+    // changed the color.
+    this._repaintStatusLabel();
   }
 
   // Called without param from HABase._updateDynamicElements (pre-Jinja),
@@ -588,8 +643,16 @@ class EntityProgressTemplateBase extends HABase {
     );
   }
 
-  _renderPercentCSS(percent: number) {
-    this._applyProgressCSS(percent / 100);
+  _renderPercentCSS(
+    percent: number,
+    options: {
+      iconColor?: string | null;
+      barColor?: string | null;
+      gradient?: string | null;
+      diverging?: DivergingGradients | null;
+    } = {},
+  ) {
+    this._applyProgressCSS(percent / 100, options);
   }
 
   // ─── TEMPLATE PROCESSING ──────────────────────────────────────────────────
@@ -623,6 +686,16 @@ class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
   static _hasDisabledBadge = true;
   static _cardStructure: ObjStructure = new ObjStructure('badge');
   _cardView: TemplateView = new BadgeTemplateView();
+
+  // Same reasoning as EntityProgressBadge's own override - schema.ts already
+  // deletes badge_icon/badge_color from badgeTemplate's own schema (a badge
+  // has no badge of its own), so validJinjaFields never sees them regardless
+  // (there's no config value to subscribe to) - this just makes that
+  // explicit here too instead of relying on the schema alone, matching the
+  // standard Badge class.
+  _getJinjaHandlers(content: unknown): Record<string, () => void> {
+    return HABase._stripBadgeHandlers(super._getJinjaHandlers(content));
+  }
 
   setConfig(config: LovelaceConfig) {
     super.setConfig(config);

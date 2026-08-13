@@ -373,7 +373,11 @@ const EditorFactory = {
   // _show_all_actions) and restored when its mode is selected again.
   themeModeFields: (template: boolean) =>
     template
-      ? {}
+      ? // Template has no custom_theme (no min_value/max_value to project real-value
+        // zones onto) - just the plain select, restricted to percent: true
+        // themes (see schema.ts's own theme field and base.ts's
+        // theme_percent_only selector).
+        { theme: { name: 'theme', type: 'theme_percent_only' } }
       : {
           theme_mode: {
             name: 'theme_mode',
@@ -519,7 +523,16 @@ const EditorFactory = {
 
   themeColorModeFields: (template: boolean) =>
     template
-      ? {}
+      ? {
+          // No interpolate here (Template has no such field - schema.ts's
+          // own template schema never declared one, unlike Card/Feature) -
+          // ViewCore.templateThemeGradient/-DivergingGradient don't support
+          // it either. custom_theme doesn't exist on Template (see theme()'s
+          // own comment above), so showIf only ever checks c.theme.
+          bar_color_mode: EditorFieldsType.select('bar_color_mode', {
+            showIf: (c: LovelaceConfig) => !is.nullish(c.theme),
+          }),
+        }
       : {
           bar_color_mode: EditorFieldsType.select('bar_color_mode', {
             // center_zero no longer excludes this - see
@@ -537,20 +550,28 @@ const EditorFactory = {
           }),
         },
 
-  themeCardOnlyFields: (badge: boolean, resetUpIfInvalid: (config: LovelaceConfig) => LovelaceConfig) =>
+  themeCardOnlyFields: (
+    template: boolean,
+    badge: boolean,
+    resetUpIfInvalid: (config: LovelaceConfig) => LovelaceConfig,
+  ) =>
     badge
       ? {}
       : {
           // Half-width once a theme is active, to pair with `icon` once
-          // `color` (icon's usual partner) hides. Virtual: icon_animation is
-          // an enum name | { effect, jinja } (see schema.ts's
-          // enumOrJinjaTrigger) - this same select reads/writes `effect` in
-          // both shapes so the dropdown stays a single control regardless of
-          // mode.
+          // `color` (icon's usual partner) hides - same reasoning as
+          // bar_size's own width function below. Full-width on Template
+          // regardless of theme though (also same as bar_size): `icon` is
+          // always a full-width Jinja textarea there (template ? {} : ... in
+          // icon's own width above), never a half-width row partner to pair
+          // with. Virtual: icon_animation is an enum name | { effect, jinja }
+          // (see schema.ts's enumOrJinjaTrigger) - this same select
+          // reads/writes `effect` in both shapes so the dropdown stays a
+          // single control regardless of mode.
           icon_animation: EditorFieldsType.select('icon_animation', {
             virtual: true,
             width: (c: LovelaceConfig) =>
-              !is.nullish(c.theme) || is.array(c.custom_theme) ? availableSpace() : '100%',
+              template || (is.nullish(c.theme) && !is.array(c.custom_theme)) ? '100%' : availableSpace(),
             resolveVirtual: (c: LovelaceConfig) =>
               is.plainObject(c.icon_animation) ? (c.icon_animation.effect ?? '') : (c.icon_animation ?? ''),
             onVirtualChange: (value: string, config: LovelaceConfig) =>
@@ -703,8 +724,51 @@ const EditorFactory = {
     badge
       ? {}
       : {
-          badge_icon: EditorFieldsType.tpl('badge_icon'),
-          badge_color: EditorFieldsType.tpl('badge_color'),
+          // badge_icon/badge_color are two independent optional strings (not
+          // one nested map like watermark/status_label) - each gets its own
+          // collapse-to-reveal toggle instead of one shared toggle forcing
+          // both together, same reasoning badge_icon's own {icon, color}
+          // object exists for: sometimes the color genuinely needs a
+          // condition decorrelated from the icon's own. "Badge" (this
+          // toggle) counts as on whenever EITHER field already has a value -
+          // existing hand-written YAML with only badge_color set (a legit,
+          // independent use) still needs to land on an active "Badge" toggle
+          // with badge_icon's own field visible (empty, ready to fill in),
+          // not hidden just because badge_icon itself is unset.
+          // badge_color_toggle is nested under it (showIf matches the same
+          // condition) - a badge color with no badge at all isn't offered as
+          // a starting point, only as a refinement once "Badge" is already
+          // on. Turning "Badge" off clears both fields outright (it's the
+          // master switch for the whole concept); "Independent color" keeps
+          // owning badge_color specifically while "Badge" stays on. noLabel
+          // on both fields - their own field label would just repeat the
+          // toggle's own name right above it.
+          badge_toggle: EditorFieldsType.toggle('badge_toggle', {
+            virtual: true,
+            resolveVirtual: (c: LovelaceConfig) => Boolean(c.badge_icon) || Boolean(c.badge_color),
+            onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
+              ...config,
+              badge_icon: value ? '{{ }}' : undefined,
+              badge_color: value ? config.badge_color : undefined,
+            }),
+          }),
+          badge_icon: EditorFieldsType.tpl('badge_icon', {
+            noLabel: true,
+            showIf: (c: LovelaceConfig) => Boolean(c.badge_icon) || Boolean(c.badge_color),
+          }),
+          badge_color_toggle: EditorFieldsType.toggle('badge_color_toggle', {
+            virtual: true,
+            showIf: (c: LovelaceConfig) => Boolean(c.badge_icon) || Boolean(c.badge_color),
+            resolveVirtual: (c: LovelaceConfig) => Boolean(c.badge_color),
+            onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
+              ...config,
+              badge_color: value ? '{{ }}' : undefined,
+            }),
+          }),
+          badge_color: EditorFieldsType.tpl('badge_color', {
+            noLabel: true,
+            showIf: (c: LovelaceConfig) => Boolean(c.badge_color),
+          }),
         },
 
   // Alert (alert_when) — not in the template schema.
@@ -899,7 +963,7 @@ const EditorFactory = {
           showIf: (c: LovelaceConfig) => is.nullish(c.theme) && !is.array(c.custom_theme),
           ...(template ? {} : { width: availableSpace() }),
         }),
-        ...EditorFactory.themeCardOnlyFields(badge, resetUpIfInvalid),
+        ...EditorFactory.themeCardOnlyFields(template, badge, resetUpIfInvalid),
         bar_orientation: EditorFieldsType.select('bar_orientation', {
           // Badge/Badge Template have no bar_position/layout, so 'up' is
           // statically excluded there; elsewhere, only offered when upAllowed
@@ -1021,8 +1085,6 @@ const EditorFactory = {
           noLabel: true,
           showIf: (c: LovelaceConfig) => is.nonEmptyString(c.bar_effect),
         }),
-        // ── Badge fields ─────────────────────────────────────────────────────
-        ...EditorFactory.themeBadgeIconColorFields(badge),
         // ── Hide ─────────────────────────────────────────────────────────────
         hide_jinja: EditorFieldsType.toggle('hide_jinja', {
           virtual: true,
@@ -1057,6 +1119,11 @@ const EditorFactory = {
     icon: HA_CONTEXT.icons.radar,
     fields: {
       ...EditorFactory.themeWatermarkFields(),
+      // Jinja-driven, same "react to a condition" concern as watermark/
+      // alert_when/status_label below, not theme()'s own pure appearance -
+      // moved here from theme() for that reason (see themeBadgeIconColor
+      // Fields's own definition, unchanged otherwise).
+      ...EditorFactory.themeBadgeIconColorFields(badge),
       // Card + Template only (same scope as trend_indicator, which the two
       // share a corner with - see schema.ts's applyLabelRule): too small a
       // scale to read well on a badge, same reasoning as trend_indicator's
@@ -1086,7 +1153,15 @@ const EditorFactory = {
             }),
             'status_label.position': EditorFieldsType.select('status_label.position', {
               type: 'label_position',
-              width: '100%',
+              width: availableSpace(),
+              showIf: (c: LovelaceConfig) => Boolean(c.status_label),
+            }),
+            // Which color the pill falls back to (see HACore._repaintStatus
+            // Label) when its own `jinja` doesn't return an explicit
+            // {label, color} - 'bar' by default (schema.ts's own default).
+            'status_label.color_source': EditorFieldsType.select('status_label.color_source', {
+              type: 'status_label_color_source',
+              width: availableSpace(),
               showIf: (c: LovelaceConfig) => Boolean(c.status_label),
             }),
           }

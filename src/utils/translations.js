@@ -107,7 +107,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -121,7 +123,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'مثالي عند الانخفاض',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'مثالي عند الارتفاع',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -232,11 +235,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -393,7 +401,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -407,7 +417,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'কম হলে সর্বোত্তম',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'বেশি হলে সর্বোত্তম',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -518,11 +529,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -679,7 +695,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -693,7 +711,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Òptim quan és baix',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Òptim quan és alt',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -804,11 +823,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -965,7 +989,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -979,7 +1005,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optimální při nízkých hodnotách',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Optimální při vysokých hodnotách',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -1090,11 +1117,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -1251,7 +1283,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -1265,7 +1299,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optimal når lavt',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Optimal når højt',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -1376,11 +1411,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -1537,7 +1577,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -1551,7 +1593,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optimal bei niedrig',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Optimal bei hoch',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -1662,11 +1705,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -1823,7 +1871,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -1837,7 +1887,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Βέλτιστο όταν είναι χαμηλό',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Βέλτιστο όταν είναι υψηλό',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -1948,11 +1999,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -2109,7 +2165,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Auto height',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -2123,7 +2181,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optimal when Low',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Optimal when High',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -2234,11 +2293,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -2395,7 +2459,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -2409,7 +2475,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Óptimo cuando es bajo',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Óptimo cuando es alto',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -2520,11 +2587,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -2681,7 +2753,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -2695,7 +2769,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Óptimo cuando es bajo',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Óptimo cuando es alto',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -2806,11 +2881,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -2967,7 +3047,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -2981,7 +3063,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optimaalne madalatel väärtustel',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Optimaalne kõrgetel väärtustel',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -3092,11 +3175,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -3253,7 +3341,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -3267,7 +3357,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optimaalinen alhaisena',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Optimaalinen korkeana',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -3378,11 +3469,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -3539,7 +3635,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -3553,7 +3651,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optimal quand c\'est bas',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Optimal quand c\'est élevé',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -3664,11 +3763,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Étiquette de statut',
-          position: 'Position de l\'étiquette'
+          position: 'Position de l\'étiquette',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Gauche',
           right: 'Droite'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -3825,7 +3929,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -3839,7 +3945,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'कम होने पर इष्टतम',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'उच्च होने पर इष्टतम',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -3950,11 +4057,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -4111,7 +4223,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -4125,7 +4239,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optimalno kada je nisko',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Optimalno kada je visoko',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -4236,11 +4351,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -4397,7 +4517,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -4411,7 +4533,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optimális alacsony értéknél',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Optimális magas értéknél',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -4522,11 +4645,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -4683,7 +4811,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -4697,7 +4827,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optimal saat Rendah',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Optimal saat Tinggi',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -4808,11 +4939,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -4969,7 +5105,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -4983,7 +5121,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Ottimale quando è basso',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Ottimale quando è alto',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -5094,11 +5233,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -5255,7 +5399,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -5269,7 +5415,8 @@ const TRANSLATIONS = {
           optimal_when_low: '低い時が最適',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: '高い時が最適',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -5380,11 +5527,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -5541,7 +5693,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -5555,7 +5709,8 @@ const TRANSLATIONS = {
           optimal_when_low: '낮을 때 최적',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: '높을 때 최적',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -5666,11 +5821,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -5827,7 +5987,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -5841,7 +6003,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optimalu esant žemoms reikšmėms',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Optimalu esant aukštoms reikšmėms',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -5952,11 +6115,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -6113,7 +6281,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -6127,7 +6297,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optimāli pie zemām vērtībām',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Optimāli pie augstām vērtībām',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -6238,11 +6409,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -6399,7 +6575,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -6413,7 +6591,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Оптимално кога е ниско',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Оптимално кога е високо',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -6524,11 +6703,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -6685,7 +6869,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -6699,7 +6885,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optimal når lavt',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Optimal når høyt',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -6810,11 +6997,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -6971,7 +7163,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -6985,7 +7179,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optimaal wanneer laag',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Optimaal wanneer hoog',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -7096,11 +7291,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -7257,7 +7457,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -7271,7 +7473,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optymalny, gdy niskie',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Optymalny, gdy wysokie',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -7382,11 +7585,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -7543,7 +7751,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -7557,7 +7767,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Ideal quando baixo',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Ideal quando alto',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -7668,11 +7879,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -7829,7 +8045,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -7843,7 +8061,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Ótimo quando é baixo',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Ótimo quando é alto',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -7954,11 +8173,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -8115,7 +8339,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -8129,7 +8355,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optim când este scăzut',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Optim când este ridicat',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -8240,11 +8467,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -8401,7 +8633,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -8415,7 +8649,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Оптимально при низких значениях',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Оптимально при высоких значениях',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -8526,11 +8761,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -8687,7 +8927,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -8701,7 +8943,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optimálne pri nízkej hodnote',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Optimálne pri vysokej hodnote',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -8812,11 +9055,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -8973,7 +9221,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -8987,7 +9237,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optimalno pri nizkih vrednostih',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Optimalno pri visokih vrednostih',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -9098,11 +9349,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -9259,7 +9515,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -9273,7 +9531,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Optimal när det är lågt',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Optimal när det är högt',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -9384,11 +9643,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -9545,7 +9809,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -9559,7 +9825,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'เหมาะสมเมื่อต่ำ',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'เหมาะสมเมื่อสูง',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -9670,11 +9937,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -9831,7 +10103,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -9845,7 +10119,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Düşükken en iyi',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Yüksekken en iyi',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -9956,11 +10231,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -10117,7 +10397,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -10131,7 +10413,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Оптимально при низьких значеннях',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Оптимально при високих значеннях',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -10242,11 +10525,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -10403,7 +10691,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -10417,7 +10707,8 @@ const TRANSLATIONS = {
           optimal_when_low: 'Tối ưu khi thấp',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: 'Tối ưu khi cao',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -10528,11 +10819,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -10689,7 +10985,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -10703,7 +11001,8 @@ const TRANSLATIONS = {
           optimal_when_low: '值低时最佳',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: '值高时最佳',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -10814,11 +11113,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
@@ -10975,7 +11279,9 @@ const TRANSLATIONS = {
         fast_refresh: 'Fast refresh (per-second)',
         height_custom_toggle: 'Shrink height (embedded)',
         status_label_toggle: 'Status label',
-        density_toggle: 'Compact'
+        density_toggle: 'Compact',
+        badge_toggle: 'Badge',
+        badge_color_toggle: 'Independent color'
       },
       option: {
         theme: {
@@ -10989,7 +11295,8 @@ const TRANSLATIONS = {
           optimal_when_low: '數值低時最佳',
           critical_when_high: 'Critical when High (CPU, RAM, disk usage...)',
           optimal_when_high: '數值高時最佳',
-          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)'
+          critical_when_extreme: 'Critical when Extreme (Tank level, deviation...)',
+          critical_when_extreme_center: 'Critical when Extreme, centered (center_zero)'
         },
         bar_size: {
           xsmall: 'Extra Small',
@@ -11100,11 +11407,16 @@ const TRANSLATIONS = {
         },
         status_label: {
           jinja: 'Status label',
-          position: 'Label position'
+          position: 'Label position',
+          color_source: 'Color source'
         },
         label_position: {
           left: 'Left',
           right: 'Right'
+        },
+        status_label_color_source: {
+          bar: 'Progress bar',
+          icon: 'Icon'
         },
         alert_animation: {
           static: 'Static',
