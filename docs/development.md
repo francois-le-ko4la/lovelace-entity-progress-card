@@ -401,6 +401,28 @@ Key mechanics (`_processJinjaFields` / `_subscribeToTemplate`):
   their back.
 - Deprecated options are detected and logged with a migration hint.
 
+### `Config` is derived from the schema, not hand-maintained
+
+`schema.ts`'s `Validator<T>` (and all of its `types` combinators — `string`,
+`object`, `array`, `optional`, `enums`, `discriminatedUnion`, …) is generic, so
+`struct()` returns a properly typed `{ validate, parse, extend }` instead of
+`any`. `Infer<S>` extracts the resulting config type straight from a
+`YamlSchemaFactory` entry:
+
+```ts
+type Infer<S> = Extract<ReturnType<S['validate']>, { isValid: true }>['config'];
+```
+
+`utils/types.ts`'s `Config` is
+`Partial<Infer<Card> & Infer<Badge> & Infer<Template> & Infer<BadgeTemplate> & Infer<Feature>>`
+— an intersection of all five schemas, then made fully optional. It's an
+intersection rather than a union on purpose: shared code (`HACore`, `ViewCore`,
+…) reads config fields without knowing which card family is actually running,
+and TypeScript only allows property access on a union when the property exists
+on every member. When adding or changing a property, edit the relevant
+`YamlSchemaFactory` schema — `Config` picks it up automatically, nothing to
+update by hand.
+
 ## Security
 
 Jinja results rendered as HTML (`name`, `secondary`, `custom_info`, `name_info`)

@@ -4098,6 +4098,121 @@ views:
         cards:
           - type: heading
             heading: >-
+              Issue #135 non-regression: two near-identical Template
+              badge/animation conditions, only one is ever true
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-template
+              icon: mdi:fan
+              density: compact
+              hide: [progress_bar]
+              icon_animation:
+                effect: spin
+                jinja: |-
+                  {{ is_state('input_boolean.epb_demo_ac_status', 'on')
+                     and is_state('input_select.epb_demo_ac_mode', 'Faible') }}
+              badge_icon: |
+                {% if is_state('input_boolean.epb_demo_ac_status', 'on')
+                   and is_state('input_select.epb_demo_ac_mode', 'Faible') %}
+                  mdi:lightning-bolt
+                {% endif %}
+              badge_color: |
+                {% if is_state('input_boolean.epb_demo_ac_status', 'on')
+                   and is_state('input_select.epb_demo_ac_mode', 'Faible') %}
+                  green
+                {% endif %}
+              ```
+              Reproduces issue #135 as closely as possible: two Template
+              cards, same two helper entities, structurally identical
+              `badge_icon`/`badge_color`/`icon_animation.jinja` each checking
+              a *different* `input_select` option ("Faible" vs "Fort").
+              Toggle the AC status on, then tap each mode tile - each tap
+              runs a script changing both helpers at once, just like the
+              reporter's real dashboard. Fixed in 1.6.1-rc8: only the card
+              matching the current mode shows a badge or spins now (was a
+              debounce/race condition - HA pushes one intermediate Jinja
+              result per helper change, not just the final settled one).
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 3
+          - type: custom:entity-progress-card-template
+            icon: mdi:fan
+            name: 'Faible'
+            density: compact
+            hide: [progress_bar]
+            icon_animation:
+              effect: spin
+              jinja: |-
+                {{ is_state('input_boolean.epb_demo_ac_status', 'on')
+                   and is_state('input_select.epb_demo_ac_mode', 'Faible') }}
+            badge_icon: |
+              {% if is_state('input_boolean.epb_demo_ac_status', 'on')
+                 and is_state('input_select.epb_demo_ac_mode', 'Faible') %}
+                mdi:lightning-bolt
+              {% endif %}
+            badge_color: |
+              {% if is_state('input_boolean.epb_demo_ac_status', 'on')
+                 and is_state('input_select.epb_demo_ac_mode', 'Faible') %}
+                green
+              {% endif %}
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              target:
+                entity_id: script.epb_demo_ac_faible
+            grid_options:
+              columns: 3
+              rows: 1
+          - type: custom:entity-progress-card-template
+            icon: mdi:snowflake
+            name: 'Fort'
+            density: compact
+            hide: [progress_bar]
+            icon_animation:
+              effect: spin
+              jinja: |-
+                {{ is_state('input_boolean.epb_demo_ac_status', 'on')
+                   and is_state('input_select.epb_demo_ac_mode', 'Fort') }}
+            badge_icon: |
+              {% if is_state('input_boolean.epb_demo_ac_status', 'on')
+                 and is_state('input_select.epb_demo_ac_mode', 'Fort') %}
+                mdi:lightning-bolt
+              {% endif %}
+            badge_color: |
+              {% if is_state('input_boolean.epb_demo_ac_status', 'on')
+                 and is_state('input_select.epb_demo_ac_mode', 'Fort') %}
+                green
+              {% endif %}
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              target:
+                entity_id: script.epb_demo_ac_fort
+            grid_options:
+              columns: 3
+              rows: 1
+          - type: tile
+            entity: input_boolean.epb_demo_ac_status
+            name: 'AC status (toggle)'
+            tap_action:
+              action: toggle
+            grid_options:
+              columns: 3
+              rows: 1
+          - type: entities
+            entities:
+              - input_select.epb_demo_ac_mode
+            grid_options:
+              columns: 3
+              rows: 1
+      - type: grid
+        cards:
+          - type: heading
+            heading: >-
               status_label repaints immediately on a percent-driven theme
               change
             heading_style: title

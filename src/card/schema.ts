@@ -13,11 +13,24 @@ import { HassProviderSingleton } from '../utils/hass-provider.js';
 // the value being checked (e.g. ['bar_stack', 'entities', 0, 'entity']).
 type Path = (string | number)[];
 // Validators take arbitrary raw YAML (`unknown` in) and return the coerced
-// value (`unknown` out) - deliberately not a generic `Validator<T>`, which
-// would thread a type parameter through every union/optional/fallback
-// combinator below for no real safety gain over the runtime is.* checks they
-// already perform.
-type Validator = (value: unknown, path?: Path) => unknown;
+// value - generic so Config/RawConfig (types.ts) can be derived directly from
+// YamlSchemaFactory instead of hand-maintained as a separate brand-typed
+// blob (see Infer<> at the bottom of this file). T defaults to `unknown` so
+// any call site not yet threading a real type still compiles.
+type Validator<T = unknown> = (value: unknown, path?: Path) => T;
+
+// The shape every numericEntityOrJinja()-typed field produces (min_value/
+// max_value/watermark.low/.high/alert_when.above/.below) - flattened
+// (entity/attribute/jinja all optional siblings on one object) rather than
+// the discriminated union the validator itself actually checks, matching
+// ViewCore._resolveValueConfig's own pre-existing parameter shape. Exported
+// so consumers can read one sub-field without re-deriving the same
+// union-narrowing check each time (see entityOf/attributeOf/jinjaOf below).
+type ValueConfig = number | { entity?: string; attribute?: string; jinja?: string } | undefined;
+const entityOf = (cfg: ValueConfig): string | undefined => (is.plainObject(cfg) ? (cfg.entity as string) : undefined);
+const attributeOf = (cfg: ValueConfig): string | undefined =>
+  is.plainObject(cfg) ? (cfg.attribute as string) : undefined;
+const jinjaOf = (cfg: ValueConfig): string | undefined => (is.plainObject(cfg) ? (cfg.jinja as string) : undefined);
 
 // The shape struct(...).parse()'s catch branch walks recursively (see
 // extractAllErrors below) - covers both real ValidationError instances and
@@ -82,7 +95,7 @@ const ERROR_CODES = {
 };
 
 const validateType =
-  (typeCheck: (v: unknown) => boolean, errorCode: { code: string; severity: string }): Validator =>
+  <T>(typeCheck: (v: unknown) => v is T, errorCode: { code: string; severity: string }): Validator<T> =>
   (value: unknown, path: Path = []) => {
     if (is.nullish(value))
       throw new ValidationError(
@@ -94,31 +107,46 @@ const validateType =
     return value;
   };
 
-// skipcq: JS-0323 -- heterogeneous registry of validators and validator
-// factories (different arities/returns); typing it would cascade to every
-// types.xxx() call site for no runtime-safety gain.
-const types: Record<string, any> = {
+// Was `Record<string, any>` (skipcq: JS-0323) - now that Validator<T> and
+// each combinator below carry a real type, the registry infers its own
+// shape; every types.xxx() call site gets the real return type for free.
+const types = {
   string: validateType(is.string, ERROR_CODES.invalidTypeString),
   number: validateType(is.number, ERROR_CODES.invalidTypeNumber),
   boolean: validateType(is.boolean, ERROR_CODES.invalidTypeBoolean),
 
+  // SKIP_PROPERTY isn't threaded into T here (an item that skips is dropped,
+  // not returned as SKIP_PROPERTY inside the array) - matches runtime
+  // behavior, the array itself never contains the sentinel.
   array:
-    (itemValidator: Validator): Validator =>
+    <T>(itemValidator: Validator<T>): Validator<Exclude<T, typeof SKIP_PROPERTY>[]> =>
     (value: unknown, path: Path = []) => {
       if (!is.array(value))
         throw new ValidationError(path, ERROR_CODES.invalidTypeArray.code, ERROR_CODES.invalidTypeArray.severity);
 
-      const validItems: unknown[] = [];
+      const validItems: Exclude<T, typeof SKIP_PROPERTY>[] = [];
       value.forEach((item: unknown, index: number) => {
         const validatedItem = itemValidator(item, [...path, index]);
-        if (validatedItem !== SKIP_PROPERTY) {
-          validItems.push(validatedItem);
+        if ((validatedItem as unknown) !== SKIP_PROPERTY) {
+          validItems.push(validatedItem as Exclude<T, typeof SKIP_PROPERTY>);
         }
       });
       return validItems;
     },
 
-  object: (schema: Record<string, Validator>): Validator & { _schema: Record<string, Validator> } => {
+  // The mapped type below infers each field's own T from its Validator<T>,
+  // Exclude<T, typeof SKIP_PROPERTY> since a field that skips is simply
+  // absent from the result object at runtime (see the loop below), never
+  // stored as the sentinel itself - same fix as array() above. Doesn't mark
+  // the key itself optional (a real "K in keyof S, but ? per-field
+  // depending on whether SKIP_PROPERTY is reachable" mapped type is a step
+  // further TS makes awkward) - every consumer already reads through `?.`/
+  // `??` regardless, so undefined-shaped absence reads the same either way.
+  object: <S extends Record<string, Validator<any>>>(
+    schema: S,
+  ): Validator<{ [K in keyof S]: S[K] extends Validator<infer T> ? Exclude<T, typeof SKIP_PROPERTY> : never }> & {
+    _schema: S;
+  } => {
     const validator = (value: unknown, path: Path = []) => {
       if (!is.plainObject(value)) {
         throw new ValidationError(path, ERROR_CODES.invalidTypeObject.code, ERROR_CODES.invalidTypeObject.severity);
@@ -130,7 +158,7 @@ const types: Record<string, any> = {
       for (const [key, fieldValidator] of Object.entries(schema)) {
         try {
           const validatedValue = fieldValidator(value[key], [...path, key]);
-          if (validatedValue !== SKIP_PROPERTY) {
+          if ((validatedValue as unknown) !== SKIP_PROPERTY) {
             result[key] = validatedValue;
           }
         } catch (error) {
@@ -152,14 +180,21 @@ const types: Record<string, any> = {
       return result;
     };
 
-    (validator as Validator & { _schema: Record<string, Validator> })._schema = schema;
-    return validator as Validator & { _schema: Record<string, Validator> };
+    (validator as unknown as { _schema: S })._schema = schema;
+    return validator as unknown as Validator<{
+      [K in keyof S]: S[K] extends Validator<infer T> ? Exclude<T, typeof SKIP_PROPERTY> : never;
+    }> & {
+      _schema: S;
+    };
   },
 
+  // SKIP_PROPERTY here IS the field's own declared T | typeof SKIP_PROPERTY
+  // - object()'s mapped type above reads through it via the `unknown` cast on
+  // the sentinel check, not through this return type, so it stays simple.
   optional:
-    (validator: Validator): Validator =>
+    <T>(validator: Validator<T>): Validator<T | undefined> =>
     (value: unknown, path: Path = []) => {
-      if (is.nullish(value)) return SKIP_PROPERTY;
+      if (is.nullish(value)) return SKIP_PROPERTY as unknown as undefined;
       try {
         return validator(value, path);
       } catch (error) {
@@ -172,7 +207,7 @@ const types: Record<string, any> = {
     },
 
   fallbackTo:
-    (validator: Validator, defaultVal: unknown): Validator =>
+    <T, D>(validator: Validator<T>, defaultVal: D): Validator<T | D> =>
     (value: unknown, path: Path = []) => {
       if (value === undefined) return defaultVal;
       try {
@@ -195,14 +230,19 @@ const types: Record<string, any> = {
   optionalNumber: () => types.optional(types.number),
   optionalBoolean: () => types.optional(types.boolean),
 
-  optionalWithDefault: (baseValidator: Validator, defaultVal: unknown) =>
-    types.fallbackTo(types.optional(baseValidator), defaultVal),
-  optionalStringWithDefault: (defaultVal: unknown) => types.optionalWithDefault(types.string, defaultVal),
-  optionalNumberWithDefault: (defaultVal: unknown) => types.optionalWithDefault(types.number, defaultVal),
-  optionalBooleanWithDefault: (defaultVal: unknown) => types.optionalWithDefault(types.boolean, defaultVal),
+  // Exclude<T, undefined> - not just T | D - because the undefined branch of
+  // the composed validator (types.optional(baseValidator)) is exactly the
+  // one this combinator eliminates at runtime (defaultVal replaces it); a
+  // bare T | D union would leave a field with a real default typed as
+  // possibly undefined, which it never is.
+  optionalWithDefault: <T, D>(baseValidator: Validator<T>, defaultVal: D) =>
+    types.fallbackTo(types.optional(baseValidator), defaultVal) as Validator<Exclude<T, undefined> | D>,
+  optionalStringWithDefault: (defaultVal: string) => types.optionalWithDefault(types.string, defaultVal),
+  optionalNumberWithDefault: (defaultVal: number) => types.optionalWithDefault(types.number, defaultVal),
+  optionalBooleanWithDefault: (defaultVal: boolean) => types.optionalWithDefault(types.boolean, defaultVal),
 
   enums:
-    (allowedValues: unknown[]): Validator =>
+    <T extends readonly unknown[]>(allowedValues: T): Validator<T[number]> =>
     (value: unknown, path: Path = []) => {
       if (is.nullish(value)) {
         throw new ValidationError(
@@ -214,16 +254,19 @@ const types: Record<string, any> = {
       if (!allowedValues.includes(value)) {
         throw new ValidationError(path, ERROR_CODES.invalidEnumValue.code, ERROR_CODES.invalidEnumValue.severity);
       }
-      return value;
+      return value as T[number];
     },
 
-  enumsWithDefault: (allowedValues: unknown[], defaultVal: unknown) =>
+  enumsWithDefault: <T extends readonly unknown[], D>(allowedValues: T, defaultVal: D) =>
     types.fallbackTo(types.enums(allowedValues), defaultVal),
 
+  // resolved is always a member of allowedValues by the time it's returned
+  // (the alias map only ever redirects to another allowed value, and the
+  // includes() check below throws otherwise) - T[number], not string.
   theme:
-    (allowedValues: string[]): Validator =>
+    <T extends readonly string[]>(allowedValues: T): Validator<T[number]> =>
     (value: unknown, path: Path = []) => {
-      if (is.nullish(value) || is.emptyString(value)) return SKIP_PROPERTY;
+      if (is.nullish(value) || is.emptyString(value)) return SKIP_PROPERTY as unknown as T[number];
       if (!is.string(value))
         throw new ValidationError(path, ERROR_CODES.invalidTheme.code, ERROR_CODES.invalidTheme.severity);
       const themeMap: Record<string, string> = {
@@ -231,14 +274,18 @@ const types: Record<string, any> = {
         memory: 'optimal_when_low',
         cpu: 'optimal_when_low',
       };
-      const resolved = themeMap[value] || value;
+      const resolved = (themeMap[value] || value) as T[number];
       if (!allowedValues.includes(resolved))
         throw new ValidationError(path, ERROR_CODES.invalidTheme.code, ERROR_CODES.invalidTheme.severity);
       return resolved;
     },
 
+  // Variadic, not limited to two - tries each validator in order, returns
+  // whichever succeeds first. T[number] extracts each validator's own type
+  // out of the tuple, infer U captures its output type - the result is the
+  // union of every possible shape, not a merge of all of them at once.
   union:
-    (...validators: Validator[]): Validator =>
+    <T extends Validator<any>[]>(...validators: T): Validator<T[number] extends Validator<infer U> ? U : never> =>
     (value: unknown, path: Path = []) => {
       // Dead accumulator: collected for readability but not attached to the
       // thrown error below - kept as the string codes/messages it holds.
@@ -257,28 +304,34 @@ const types: Record<string, any> = {
     },
 
   arrayWithValidatedElem:
-    (allowedValues: unknown[]): Validator =>
+    <T extends readonly unknown[]>(allowedValues: T): Validator<T[number][]> =>
     (value: unknown, _path: Path = []) => {
-      if (is.nullish(value)) return SKIP_PROPERTY;
+      if (is.nullish(value)) return SKIP_PROPERTY as unknown as T[number][];
 
       const valueArray = is.array(value) ? value : [value];
-      const validItems = valueArray.filter((item: unknown) => allowedValues.includes(item));
+      const validItems = valueArray.filter((item: unknown) => allowedValues.includes(item)) as T[number][];
 
-      if (validItems.length === 0) return SKIP_PROPERTY;
+      if (validItems.length === 0) return SKIP_PROPERTY as unknown as T[number][];
 
       return validItems;
     },
 
   jinjaOrArrayWithValidatedElem:
-    (allowedValues: unknown[]): Validator =>
+    <T extends readonly unknown[]>(allowedValues: T): Validator<string | T[number][]> =>
     (value: unknown, path: Path = []) => {
       if (is.jinja(value)) return value;
       return types.arrayWithValidatedElem(allowedValues)(value, path);
     },
 
-  watermarkObject:
-    (schema: Record<string, Validator>): Validator =>
-    (value: unknown, path: Path = []) => {
+  // Same mapped-type shape as object() above (and the same SKIP_PROPERTY
+  // caveat) - kept as its own combinator rather than delegating to object()
+  // since it tolerates per-field failures (a malformed zone doesn't drop the
+  // whole watermark, see the CF5 fix this behavior traces back to) instead
+  // of object()'s all-or-nothing error bundling.
+  watermarkObject: <S extends Record<string, Validator<any>>>(
+    schema: S,
+  ): Validator<{ [K in keyof S]: S[K] extends Validator<infer T> ? Exclude<T, typeof SKIP_PROPERTY> : never }> =>
+    ((value: unknown, path: Path = []) => {
       if (is.nullish(value) || !is.plainObject(value)) return SKIP_PROPERTY;
 
       const validateEntry = (key: string, validator: Validator) => {
@@ -301,9 +354,9 @@ const types: Record<string, any> = {
       }
 
       return result;
-    },
+    }) as Validator<{ [K in keyof S]: S[K] extends Validator<infer T> ? Exclude<T, typeof SKIP_PROPERTY> : never }>,
 
-  entityId: (value: unknown, path: Path = []) => {
+  entityId: ((value: unknown, path: Path = []) => {
     if (is.nullish(value))
       throw new ValidationError(
         path,
@@ -316,18 +369,24 @@ const types: Record<string, any> = {
       throw new ValidationError(path, ERROR_CODES.invalidEntityId.code, ERROR_CODES.invalidEntityId.severity);
 
     return value;
-  },
+  }) as Validator<string>,
 
   // Shared by min_value/max_value/watermark.low/watermark.high: number
   // (fixed) | { entity, attribute } | { jinja } - explicit shape instead of
   // type-sniffing a scalar (number vs entity-id string vs jinja-looking
   // string) to disambiguate the three.
-  numericEntityOrJinja: (): Validator =>
+  // Exposed flattened (entity/attribute/jinja all optional siblings on one
+  // object), not as the discriminated union the validator itself actually
+  // checks - matches ViewCore._resolveValueConfig's own pre-existing
+  // parameter shape, which every consumer (min_value/max_value/watermark.
+  // low/.high/alert_when.above/.below) already reads through. The runtime
+  // validation is unaffected, only the type consumers see.
+  numericEntityOrJinja: (): Validator<ValueConfig> =>
     types.union(
       types.number,
       types.object({ entity: types.entityId, attribute: types.optionalString() }),
       types.object({ jinja: types.string }),
-    ),
+    ) as Validator<ValueConfig>,
 
   // icon_animation: an enum name (today's behavior, gated by the automatic
   // entity-based detection - see HABase._iconAnimationStyle) | { effect,
@@ -335,7 +394,7 @@ const types: Record<string, any> = {
   // plays, overriding that automatic detection once it resolves. `effect` is
   // optional within the object form (no effect renders until one is chosen),
   // not required - same leniency as the rest of this schema.
-  enumOrJinjaTrigger: (allowedValues: unknown[]): Validator =>
+  enumOrJinjaTrigger: <T extends readonly unknown[]>(allowedValues: T) =>
     types.union(
       types.enums(allowedValues),
       types.object({ effect: types.optional(types.enums(allowedValues)), jinja: types.string }),
@@ -343,7 +402,7 @@ const types: Record<string, any> = {
 
   // Shared by feature/card/template: boolean (on/off) | { value,
   // growth_percent }.
-  centerZero: (): Validator =>
+  centerZero: () =>
     types.optionalWithDefault(
       types.union(
         types.boolean,
@@ -355,15 +414,19 @@ const types: Record<string, any> = {
       false,
     ),
 
-  decimal: (value: unknown, path: Path = []) => {
+  decimal: ((value: unknown, path: Path = []) => {
     if (is.nullish(value)) return SKIP_PROPERTY;
     if (!is.unsignedInteger(value))
       throw new ValidationError(path, ERROR_CODES.invalidDecimal.code, ERROR_CODES.invalidDecimal.severity);
 
     return value;
-  },
+  }) as Validator<number>,
 
-  tapAction: (value: unknown, path: Path = []) => {
+  // Only `action: string` is actually validated - the different shapes
+  // (call-service/navigate/more-info/toggle/none...) are never distinguished
+  // here, so `{ action: string } & Record<string, unknown>` is the honest
+  // output type, not a fully tagged union of every action kind.
+  tapAction: ((value: unknown, path: Path = []) => {
     if (!is.plainObject(value)) {
       throw new ValidationError(path, ERROR_CODES.invalidActionObject.code, ERROR_CODES.invalidActionObject.severity);
     }
@@ -376,9 +439,9 @@ const types: Record<string, any> = {
     }
 
     return value;
-  },
+  }) as Validator<{ action: string } & Record<string, unknown>>,
 
-  tapActionWithDefault: (defaultVal: unknown) => types.fallbackTo(types.tapAction, defaultVal),
+  tapActionWithDefault: <D>(defaultVal: D) => types.fallbackTo(types.tapAction, defaultVal),
 
   // CF5 - issue (major) resolved - this used to throw (discarding the WHOLE
   // array via types.fallbackTo(..., SKIP_PROPERTY)) the instant any single zone
@@ -391,7 +454,7 @@ const types: Record<string, any> = {
   // nothing covers), and zones are sorted by min so edit order never matters —
   // mirrors barStackEntity's own per-item SKIP_PROPERTY leniency instead of an
   // all-or-nothing gate.
-  customTheme: (value: unknown, _path: Path = []) => {
+  customTheme: ((value: unknown, _path: Path = []) => {
     if (is.nullish(value)) return SKIP_PROPERTY;
     if (!is.array(value)) return SKIP_PROPERTY;
 
@@ -419,9 +482,11 @@ const types: Record<string, any> = {
       .sort((a, b) => a.min - b.min);
 
     return validItems.length ? validItems : SKIP_PROPERTY;
-  },
+  }) as Validator<
+    { min: number; max: number; color?: string; icon_color?: string; bar_color?: string; icon?: string }[]
+  >,
 
-  stateContent: (value: unknown, path: Path = []) => {
+  stateContent: ((value: unknown, path: Path = []) => {
     if (is.nullishOrEmptyString(value)) return SKIP_PROPERTY;
     if (is.string(value)) return [value];
 
@@ -438,10 +503,80 @@ const types: Record<string, any> = {
     }
 
     throw new ValidationError(path, ERROR_CODES.invalidStateContent.code, ERROR_CODES.invalidStateContent.severity);
-  },
+  }) as Validator<string[]>,
+
+  // Discriminated on `key` (usually 'type') - picks the one validator in
+  // `mapping` whose entry matches the discriminator's value. M[keyof M]
+  // extracts every possible validator in the mapping, infer T its output -
+  // the result is the union of every shape, same idea as union() above but
+  // keyed instead of tried-in-order.
+  discriminatedUnion: <M extends Record<string, Validator<any>>>(
+    key: string,
+    mapping: M,
+  ): Validator<M[keyof M] extends Validator<infer T> ? T : never> =>
+    ((value: unknown, path: Path = []) => {
+      if (!is.plainObject(value)) {
+        throw new ValidationError(path, ERROR_CODES.invalidTypeObject.code, ERROR_CODES.invalidTypeObject.severity);
+      }
+
+      const discriminator = value[key];
+
+      if (!is.string(discriminator)) {
+        throw new ValidationError(
+          [...path, key],
+          ERROR_CODES.invalidTypeString.code,
+          ERROR_CODES.invalidTypeString.severity,
+        );
+      }
+
+      const validator = mapping[discriminator];
+
+      if (!validator) {
+        throw new ValidationError(
+          [...path, key],
+          ERROR_CODES.invalidEnumValue.code,
+          ERROR_CODES.invalidEnumValue.severity,
+        );
+      }
+
+      return validator(value, path);
+    }) as Validator<M[keyof M] extends Validator<infer T> ? T : never>,
 };
 
-function struct(validator: Validator & { _schema?: Record<string, Validator> }, { allowBelowBarPosition = true } = {}) {
+// name: [{type:'text',text} | {type:'entity'} | {type:'device'} | {type:
+// 'area'} | {type:'floor'}] - moved out of the types registry itself (not a
+// reusable combinator, a one-off derived schema) so it doesn't need
+// types.name to exist as a literal property on an object TS otherwise infers
+// as closed/sealed once every entry lives in one literal.
+const nameItem = types.discriminatedUnion('type', {
+  text: types.object({
+    type: types.enums(['text'] as const),
+    text: types.string,
+  }),
+
+  entity: types.object({
+    type: types.enums(['entity'] as const),
+  }),
+
+  device: types.object({
+    type: types.enums(['device'] as const),
+  }),
+
+  area: types.object({
+    type: types.enums(['area'] as const),
+  }),
+
+  floor: types.object({
+    type: types.enums(['floor'] as const),
+  }),
+});
+
+const nameValidator = types.array(nameItem);
+
+function struct<T>(
+  validator: Validator<T> & { _schema?: Record<string, Validator<any>> },
+  { allowBelowBarPosition = true } = {},
+) {
   const preProcess = (data: Record<string, unknown>) => {
     const result = { ...data };
 
@@ -670,8 +805,15 @@ function struct(validator: Validator & { _schema?: Record<string, Validator> }, 
     result.multiline = false;
   };
 
-  const postProcess = (data: Record<string, unknown>) => {
-    const result = { ...data };
+  // Same type in and out (T, not Record<string, unknown>) - every applyXxxRule
+  // only ever writes a value already a member of that field's own declared
+  // type (an enum-string field gets one of its own allowed literals, a
+  // boolean field gets a boolean, never a different shape or a new key) -
+  // verified by reading each rule, not assumed. The internal cast is just to
+  // let the untyped applyXxxRule helpers (still Record<string, unknown>,
+  // not worth re-typing individually for the same reason) read/write freely.
+  const postProcess = (data: T): T => {
+    const result = { ...data } as Record<string, unknown>;
     if (!result.layout) result.layout = CARD.layout.orientations.horizontal.label;
 
     applyDensityRule(result);
@@ -689,15 +831,19 @@ function struct(validator: Validator & { _schema?: Record<string, Validator> }, 
     applyInterpolateRule(result, hasTheme);
     applyReverseSecondaryInfoRowRule(result);
 
-    return result;
+    return result as T;
   };
   return {
-    validate: (data: Record<string, unknown>) => {
+    validate: (
+      data: Record<string, unknown>,
+    ):
+      | { isValid: true; config: T; error: null; path: null }
+      | { isValid: false; config: null; error: string; path: Path } => {
       try {
         const preProcessed = preProcess(data);
         return {
           isValid: true,
-          config: postProcess(validator(preProcessed) as Record<string, unknown>),
+          config: postProcess(validator(preProcessed)),
           error: null,
           path: null,
         };
@@ -710,7 +856,7 @@ function struct(validator: Validator & { _schema?: Record<string, Validator> }, 
     parse: (data: Record<string, unknown>) => {
       try {
         const preProcessed = preProcess(data);
-        const result = postProcess(validator(preProcessed) as Record<string, unknown>);
+        const result = postProcess(validator(preProcessed));
         return {
           isValid: true,
           config: result,
@@ -757,8 +903,7 @@ function struct(validator: Validator & { _schema?: Record<string, Validator> }, 
         const mainError = allErrors.find((e) => e.severity === 'error') || allErrors[0] || null;
 
         const partialConfig = err.partialResult ?? err.partialConfig ?? null;
-        const postProcessedPartialConfig =
-          partialConfig !== null ? postProcess(partialConfig as Record<string, unknown>) : null;
+        const postProcessedPartialConfig = partialConfig !== null ? postProcess(partialConfig as T) : null;
 
         return {
           isValid: !mainError || mainError.severity !== 'error',
@@ -771,7 +916,11 @@ function struct(validator: Validator & { _schema?: Record<string, Validator> }, 
       }
     },
 
-    extend: (additionalFields: Record<string, Validator>) => {
+    // extend()/delete() each build a fresh schema object and re-run it
+    // through types.object(...) - a brand new call, so its own generic
+    // infers the merged/filtered shape straight from newSchema's structure;
+    // no need to thread the exact per-field S type through struct<T> itself.
+    extend: <E extends Record<string, Validator<any>>>(additionalFields: E) => {
       if (!validator._schema) {
         throw new Error('Can only extend object schemas created with types.object');
       }
@@ -804,60 +953,14 @@ function struct(validator: Validator & { _schema?: Record<string, Validator> }, 
   };
 }
 
-types.discriminatedUnion =
-  (key: string, mapping: Record<string, Validator>): Validator =>
-  (value: unknown, path: Path = []) => {
-    if (!is.plainObject(value)) {
-      throw new ValidationError(path, ERROR_CODES.invalidTypeObject.code, ERROR_CODES.invalidTypeObject.severity);
-    }
-
-    const discriminator = value[key];
-
-    if (!is.string(discriminator)) {
-      throw new ValidationError(
-        [...path, key],
-        ERROR_CODES.invalidTypeString.code,
-        ERROR_CODES.invalidTypeString.severity,
-      );
-    }
-
-    const validator = mapping[discriminator];
-
-    if (!validator) {
-      throw new ValidationError(
-        [...path, key],
-        ERROR_CODES.invalidEnumValue.code,
-        ERROR_CODES.invalidEnumValue.severity,
-      );
-    }
-
-    return validator(value, path);
-  };
-
-const nameItem = types.discriminatedUnion('type', {
-  text: types.object({
-    type: types.enums(['text']),
-    text: types.string,
-  }),
-
-  entity: types.object({
-    type: types.enums(['entity']),
-  }),
-
-  device: types.object({
-    type: types.enums(['device']),
-  }),
-
-  area: types.object({
-    type: types.enums(['area']),
-  }),
-
-  floor: types.object({
-    type: types.enums(['floor']),
-  }),
-});
-
-types.name = types.array(nameItem);
+// Derives the negotiated config shape straight from a struct(), instead of
+// hand-maintaining it as a separate brand-typed blob (see Config/RawConfig,
+// types.ts) - Extract<..., {isValid: true}> picks validate()'s success
+// branch of the discriminated union, ['config'] reads its T.
+type Infer<S extends { validate: (data: Record<string, unknown>) => { isValid: boolean; config: unknown } }> = Extract<
+  ReturnType<S['validate']>,
+  { isValid: true }
+>['config'];
 
 const barStackEntity = types.fallbackTo(
   types.object({
@@ -953,7 +1056,7 @@ const YamlSchemaFactory = {
         theme: types.theme(Object.keys(THEME)),
         custom_theme: types.fallbackTo(types.customTheme, SKIP_PROPERTY),
         interpolate: types.optionalBooleanWithDefault(false),
-        watermark: types.watermarkObject(watermarkSchema, CARD.config.defaults.watermark),
+        watermark: types.watermarkObject(watermarkSchema),
 
         // ─── Bar Stack ──────────────────────────────────────────────────────
         bar_stack: types.optional(
@@ -973,7 +1076,7 @@ const YamlSchemaFactory = {
         // ─── Entity & Data ──────────────────────────────────────────────────
         entity: types.entityId,
         attribute: types.optionalString(),
-        name: types.optional(types.name),
+        name: types.optional(nameValidator),
         decimal: types.decimal,
         unit: types.optionalString(),
         disable_unit: types.optionalBooleanWithDefault(false),
@@ -1090,7 +1193,7 @@ const YamlSchemaFactory = {
         theme: types.theme(Object.keys(THEME)),
         custom_theme: types.fallbackTo(types.customTheme, SKIP_PROPERTY),
         interpolate: types.optionalBooleanWithDefault(false),
-        watermark: types.watermarkObject(watermarkSchema, CARD.config.defaults.watermark),
+        watermark: types.watermarkObject(watermarkSchema),
         alert_when: types.optional(
           types.object({
             // number (fixed) | { entity, attribute } | { jinja } - same
@@ -1311,7 +1414,7 @@ const YamlSchemaFactory = {
         hide: types.jinjaOrArrayWithValidatedElem(['icon', 'name', 'value', 'secondary_info', 'progress_bar']),
         badge_icon: types.optionalString(),
         badge_color: types.optionalString(),
-        watermark: types.watermarkObject(watermarkSchema, CARD.config.defaults.watermark),
+        watermark: types.watermarkObject(watermarkSchema),
 
         // ─── Actions ────────────────────────────────────────────────────────
         tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.moreInfo),
@@ -1373,6 +1476,9 @@ export { ERROR_CODES };
 export { validateType };
 export { types };
 export { struct };
+export type { Infer };
+export type { ValueConfig };
+export { entityOf, attributeOf, jinjaOf };
 export { nameItem };
 export { barStackEntity };
 export { watermarkSchema };

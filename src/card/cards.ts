@@ -21,6 +21,7 @@ import { HACore, HABase } from './core.js';
 import type { DivergingGradients } from './core.js';
 import type { HomeAssistant } from '../utils/hass-provider.js';
 import type { LovelaceConfig, Config } from '../utils/types.js';
+import { jinjaOf } from './schema.js';
 
 /**
  * Represents the base class for all standard cards:
@@ -131,16 +132,16 @@ class EntityProgressCardBase extends HABase {
       badge_color: () => this._renderBadgeColor(content),
       custom_info: () => this._renderCustomInfo(content),
       name_info: () => this._renderNameInfo(content),
-      min_value: () => this._renderJinjaNumber(content, (c: Config) => c.min_value?.jinja, 'jinjaMinValue'),
-      max_value: () => this._renderJinjaNumber(content, (c: Config) => c.max_value?.jinja, 'jinjaMaxValue'),
+      min_value: () => this._renderJinjaNumber(content, (c: Config) => jinjaOf(c.min_value), 'jinjaMinValue'),
+      max_value: () => this._renderJinjaNumber(content, (c: Config) => jinjaOf(c.max_value), 'jinjaMaxValue'),
       'watermark.low': () =>
-        this._renderWatermarkJinja(content, (c: Config) => c.watermark?.low?.jinja, 'jinjaWatermarkLow'),
+        this._renderWatermarkJinja(content, (c: Config) => jinjaOf(c.watermark?.low), 'jinjaWatermarkLow'),
       'watermark.high': () =>
-        this._renderWatermarkJinja(content, (c: Config) => c.watermark?.high?.jinja, 'jinjaWatermarkHigh'),
+        this._renderWatermarkJinja(content, (c: Config) => jinjaOf(c.watermark?.high), 'jinjaWatermarkHigh'),
       'alert_when.above': () =>
-        this._renderJinjaNumber(content, (c: Config) => c.alert_when?.above?.jinja, 'jinjaAlertAbove'),
+        this._renderJinjaNumber(content, (c: Config) => jinjaOf(c.alert_when?.above), 'jinjaAlertAbove'),
       'alert_when.below': () =>
-        this._renderJinjaNumber(content, (c: Config) => c.alert_when?.below?.jinja, 'jinjaAlertBelow'),
+        this._renderJinjaNumber(content, (c: Config) => jinjaOf(c.alert_when?.below), 'jinjaAlertBelow'),
     };
   }
 
@@ -309,7 +310,7 @@ class EntityProgressFeatures extends HACore {
    * @see https://github.com/ytilis/hass-progress-bar-feature
    */
   #fixCardStyles() {
-    if (!['top', 'bottom'].includes(this._cardView.config.bar_position)) return;
+    if (!['top', 'bottom'].includes(this._cardView.config.bar_position ?? '')) return;
     // CF5 - issue (medium) resolved - the MutationObserver was never
     // disconnected: it kept observing the external card container after the
     // feature left the DOM (leak + callbacks on a dead element). It is now
@@ -514,9 +515,9 @@ class EntityProgressTemplateBase extends HABase {
       icon: () => this._showIcon(content),
       percent: () => this._managePercent(content),
       'watermark.low': () =>
-        this._renderWatermarkJinja(content, (c: Config) => c.watermark?.low?.jinja, 'jinjaWatermarkLow'),
+        this._renderWatermarkJinja(content, (c: Config) => jinjaOf(c.watermark?.low), 'jinjaWatermarkLow'),
       'watermark.high': () =>
-        this._renderWatermarkJinja(content, (c: Config) => c.watermark?.high?.jinja, 'jinjaWatermarkHigh'),
+        this._renderWatermarkJinja(content, (c: Config) => jinjaOf(c.watermark?.high), 'jinjaWatermarkHigh'),
       color: () => {
         const adapted = ThemeManager.adaptColor(content as string | null);
         // Cached (not just written to CSS) so status_label.color_source:

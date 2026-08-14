@@ -785,9 +785,25 @@ class HACore extends HTMLElement {
     throw new Error(`${this.constructor.name} must implement _getJinjaHandlers(${content})`);
   }
 
+  // A multi-step automation/script (e.g. turn an input_boolean on, then pick
+  // an input_select option right after) can make HA re-evaluate a template
+  // once per intermediate state, not just once for the final settled one -
+  // two entities referenced by the same `and` condition don't change
+  // atomically. Applied immediately, that transient push renders (and can
+  // get visually stuck on) a value nothing in the final state actually
+  // supports (issue #135). Debounced per key (not globally - each Jinja
+  // field settles on its own schedule, one field's burst shouldn't delay an
+  // unrelated one) via ResourceManager.setTimeout's own existing
+  // cancel-and-replace-by-id behavior (see ResourceManager#add) - no new
+  // debounce mechanism needed, ~80ms is short enough nothing feels laggy
+  // but long enough to coalesce a script's own back-to-back service calls
+  // into just the last, settled push.
   _renderJinja(key: string, content: unknown) {
     this._log?.debug('📎 HACore._renderJinja():', { key, content });
+    this._resourceManager?.setTimeout(() => this.#applyJinja(key, content), 80, `jinja-render-${key}`);
+  }
 
+  #applyJinja(key: string, content: unknown) {
     const renderHandlers = this._getJinjaHandlers(content);
     const handler = renderHandlers[key];
 
@@ -1272,7 +1288,7 @@ class HABase extends HACore {
         [config.min_width, CARD.style.dynamic.card.minWidth.var, minWidth],
         [config.height, CARD.style.dynamic.card.height.var, config.height],
         [config.bar_max_width, CARD.style.dynamic.progressBar.maxWidth.var, config.bar_max_width],
-        [config.alert_when?.color, '--alert-color', ThemeManager.adaptColor(config.alert_when?.color)],
+        [config.alert_when?.color, '--alert-color', ThemeManager.adaptColor(config.alert_when?.color ?? null)],
         // issue #133 - badges have their own unrelated height model
         // (--ha-badge-size), so this is card/template-only (isBadge already
         // covers exactly that split above). Just the row count - the actual
@@ -1301,8 +1317,8 @@ class HABase extends HACore {
     return new Map([
       [CARD.style.dynamic.clickable.card, this._cardView.hasClickableCard],
       [CARD.style.dynamic.clickable.icon, this._cardView.hasClickableIcon && !this.hasDisabledIconTap],
-      [CARD.style.dynamic.frameless.class, this._cardView.config.frameless],
-      [CARD.style.dynamic.marginless.class, this._cardView.config.marginless],
+      [CARD.style.dynamic.frameless.class, this._cardView.config.frameless ?? false],
+      [CARD.style.dynamic.marginless.class, this._cardView.config.marginless ?? false],
       // One card-level flag every ancestor that needs to relax its single-line
       // assumptions (.content's height, .secondary-info's bar stretch, …) reads
       // via a plain descendant selector (.info-multiline .content {...}) — not
@@ -1316,10 +1332,21 @@ class HABase extends HACore {
     const effect = this._cardView.iconAnimationEffect;
     // icon_animation: { effect, jinja } mode - the resolved boolean (once
     // pushed) replaces the automatic entity-based detection below entirely,
-    // for whichever effect is chosen. null (not in that mode, or not
-    // resolved yet) falls through to today's per-effect behavior unchanged.
+    // for whichever effect is chosen. CF5-adjacent fix: `jinjaIconAnimation
+    // Active === null` used to be treated as "fall back to autoDetect", but
+    // it means two different things - genuinely not in jinja mode, OR in
+    // jinja mode with no push resolved yet (right after connect, or right
+    // after a config change resets the cache). The second case used to
+    // silently run the automatic entity-based detection instead of just
+    // staying off until the real result arrives - configuring jinja mode
+    // never fully switched autoDetect off, it only overrode it once
+    // something had already pushed. hasJinjaIconAnimation checks the
+    // *config*, not the cache, so jinja mode now disengages autoDetect
+    // unconditionally the moment it's configured, default false until the
+    // first real push lands.
     const override = this._cardView.jinjaIconAnimationActive;
-    const active = (autoDetect: () => boolean): boolean => (override === null ? autoDetect() : override);
+    const active = (autoDetect: () => boolean): boolean =>
+      this._cardView.hasJinjaIconAnimation ? (override ?? false) : autoDetect();
     return new Map([
       ['icon-anim-spin', effect === 'spin' && active(() => this._cardView.isEntityActive)],
       ['icon-anim-pulse', effect === 'pulse' && active(() => this._cardView.isEntityActive)],
@@ -1934,7 +1961,7 @@ class HABase extends HACore {
     const alert = this._cardView.config?.alert_when;
     if (alert?.highlight !== 'label') return;
     const text = this._cardView.isAlertActive ? String(alert.label ?? '').trim() : '';
-    this._paintLabel(text, ThemeManager.adaptColor(alert.color) ?? CARD.style.color.default);
+    this._paintLabel(text, ThemeManager.adaptColor(alert.color ?? null) ?? CARD.style.color.default);
   }
 
   _renderIconAnimationWhen(content: unknown) {

@@ -25,9 +25,16 @@ import { EntityHelper } from './entity-helper.js';
 import { resolveDisplayUnit, resolveDisplayDecimal } from '../utils/display-defaults.js';
 import type { LovelaceConfig, Config } from '../utils/types.js';
 
-// Every YamlSchemaFactory getter (card/badge/feature/template/badgeTemplate)
-// returns the same struct(...) shape - .card's is as good a reference as any.
-type Schema = typeof YamlSchemaFactory.card;
+// Each YamlSchemaFactory getter (card/badge/feature/template/badgeTemplate)
+// now returns its own precisely-typed struct(...) (see schema.ts's Infer<>)
+// - a union of all five, not just .card's, since each concrete subclass
+// below assigns a different one to its own _yamlSchema.
+type Schema =
+  | typeof YamlSchemaFactory.card
+  | typeof YamlSchemaFactory.badge
+  | typeof YamlSchemaFactory.template
+  | typeof YamlSchemaFactory.badgeTemplate
+  | typeof YamlSchemaFactory.feature;
 // Each holds an action *type* string ('navigate', 'toggle', 'none'...) - see
 // #getAction, which reads only the `.action` sub-property of a validated
 // tap_action/hold_action/double_tap_action config value, not the whole object.
@@ -357,7 +364,11 @@ class BaseConfigHelper {
  * @extends BaseConfigHelper
  */
 class CardConfigHelper extends BaseConfigHelper {
-  _yamlSchema = YamlSchemaFactory.card;
+  // Explicit Schema (not inferred from the initializer) - BadgeConfigHelper/
+  // FeatureConfigHelper below narrow this to their own schema, which now
+  // that each YamlSchemaFactory getter has its own precise Infer<> shape,
+  // needs the wider declared type to narrow from.
+  _yamlSchema: Schema = YamlSchemaFactory.card;
 
   // center_zero with no explicit min_value would otherwise default to 0
   // (CARD.config.value.min), making the negative half meaningless (zeroValue -

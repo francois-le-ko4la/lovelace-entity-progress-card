@@ -323,6 +323,18 @@ mouse/touch:
 - `bar_position: overlay`'s `name`/`secondary_info` text ran flush against the
   card's right edge, unlike the 7px of breathing room it already had on the left
   — now matches with 10px on the right too.
+- A Jinja-driven `icon_animation: { effect, jinja }` could briefly fall back to
+  automatic entity-based detection instead of staying off, right after the
+  template's own result changed but before the next push resolved. Present since
+  `icon_animation`'s Jinja mode shipped in `1.6.1-rc2`.
+- Jinja-driven `badge_icon`/`badge_color`/`icon_animation` fields could get
+  visually stuck on a value that never matched the final, settled state — a
+  multi-step script/automation (e.g. turning on a helper, then picking an
+  option) makes Home Assistant push one intermediate template result per entity
+  change, not just once for the final state, since the entities an `and`
+  condition depends on don't change atomically. Now debounced so only the last,
+  settled result is ever rendered.  
+  ➡️ [Bug]: Cached / invalid Jinja result? #135 (@FoxP)
 
 ### 🧪 Try it: demo dashboard
 
@@ -335,6 +347,37 @@ reproducing the README's own recipes live. Import it with
 live.
 
 Thanks to everyone who reported, tested and contributed 🙏
+
+---
+
+## What's new (1.6.1-rc8)
+
+### 🐛 Fixes
+
+- A Jinja-driven `icon_animation: { effect, jinja }` could briefly fall back to
+  the automatic entity-based detection instead of staying off — configuring
+  jinja mode only ever overrode the automatic detection once a push had resolved
+  to a real boolean; right after connect, or right after a config change reset
+  the cache, it silently ran the automatic detection instead of just staying off
+  until the real result arrived.
+- Jinja-driven `badge_icon`/`badge_color`/`icon_animation` fields could get
+  visually stuck on a value that never matched the final, settled state — a
+  multi-step automation/script (e.g. turning an `input_boolean` on, then picking
+  an `input_select` option right after) makes Home Assistant re-evaluate a
+  template once per intermediate state, not just once for the final one, since
+  the entities referenced by an `and` condition don't change atomically. Applied
+  immediately, that transient push could render (and get stuck showing) a value
+  nothing in the final state actually supports. Every Jinja field now settles
+  for ~80ms before rendering, so only the last, settled push of a rapid burst is
+  ever shown.  
+  ➡️ [Bug]: Cached / invalid Jinja result? #135 (@FoxP)
+
+### 🧰 Internal
+
+- Continuing 1.6.0's TypeScript hardening pass (`Hass` → `HomeAssistant`,
+  removing hand-maintained `any` blobs): `Config` is now derived directly from
+  the YAML validation schema instead of a separately maintained type — one less
+  place for the two to silently drift apart. No behavior change.
 
 ---
 

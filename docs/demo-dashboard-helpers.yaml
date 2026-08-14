@@ -226,6 +226,14 @@ input_boolean:
   epb_demo_simple_mode:
     name: Demo simple mode (toggle)
     icon: mdi:toggle-switch
+  # issue #135 repro: two Template cards, same two entities, near-identical
+  # badge_icon/badge_color/icon_animation.jinja each checking a DIFFERENT
+  # input_select option - reproduces the reporter's own AC mode setup
+  # (input_boolean.salon_climatisation_status +
+  # input_select.climatisation_salon_mode) as closely as possible.
+  epb_demo_ac_status:
+    name: Demo AC status (toggle)
+    icon: mdi:air-conditioner
 
 input_select:
   epb_demo_litter_status:
@@ -237,6 +245,13 @@ input_select:
       - Sleeping
     initial: Ready
     icon: mdi:robot-vacuum
+  epb_demo_ac_mode:
+    name: Demo AC mode (issue #135 repro)
+    options:
+      - Faible
+      - Fort
+    initial: Faible
+    icon: mdi:air-conditioner
 
 timer:
   epb_demo_timer:
@@ -274,6 +289,32 @@ script:
           entity_id: input_datetime.epb_demo_maintenance_last
         data:
           timestamp: '{{ (now() - timedelta(days=33)).timestamp() }}'
+  # issue #135 repro: the reporter's own tap_action calls a script that turns
+  # the AC on AND picks a mode in one go (two state changes close together,
+  # not one at a time like a plain toggle+select) - our first repro attempt
+  # only changed one entity per tap, which turned out not to reproduce it.
+  epb_demo_ac_faible:
+    alias: 'Demo: AC on, mode Faible (issue #135 repro)'
+    sequence:
+      - action: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.epb_demo_ac_status
+      - action: input_select.select_option
+        target:
+          entity_id: input_select.epb_demo_ac_mode
+        data:
+          option: Faible
+  epb_demo_ac_fort:
+    alias: 'Demo: AC on, mode Fort (issue #135 repro)'
+    sequence:
+      - action: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.epb_demo_ac_status
+      - action: input_select.select_option
+        target:
+          entity_id: input_select.epb_demo_ac_mode
+        data:
+          option: Fort
 
 # Percentage + a `battery_charging` attribute on the SAME entity - the shape
 # icon_animation: battery_charging / theme: battery_adaptive look for (see

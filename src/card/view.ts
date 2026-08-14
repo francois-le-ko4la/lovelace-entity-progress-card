@@ -7,7 +7,8 @@
 import { HA_CONTEXT, CARD, CARD_CONTEXT } from '../utils/parameters.js';
 import { resolveDisplayUnit, resolveDisplayDecimal } from '../utils/display-defaults.js';
 import type { LovelaceConfig, Config } from '../utils/types.js';
-import { is } from '../utils/common-checks.js';
+import { is, assertDefined } from '../utils/common-checks.js';
+import { entityOf } from './schema.js';
 import { cloneValue } from '../utils/browser-support.js';
 import { traceInstance } from '../utils/log.js';
 import { PercentHelper, ThemeManager, EntityCollectionHelper, EntityOrValue } from './value-helpers.js';
@@ -224,7 +225,7 @@ class ViewCore {
   }
 
   get entity(): string | null {
-    return this.config?.entity;
+    return this.config?.entity ?? null;
   }
 
   // icon_animation: an enum name | { effect, jinja } - resolves either shape
@@ -235,6 +236,16 @@ class ViewCore {
     const raw = this.config?.icon_animation;
     if (is.plainObject(raw)) return (raw as { effect?: string }).effect ?? null;
     return typeof raw === 'string' ? raw : null;
+  }
+
+  // Whether { effect, jinja } mode is configured at all, regardless of
+  // whether a push has resolved yet - see HABase._iconAnimationStyle's own
+  // comment on why this needs to be checked separately from
+  // jinjaIconAnimationActive === null (which also means "no push yet",
+  // not just "not in that mode").
+  get hasJinjaIconAnimation(): boolean {
+    const raw = this.config?.icon_animation;
+    return is.plainObject(raw) && is.nonEmptyString((raw as { jinja?: string }).jinja);
   }
 
   get jinjaIconAnimationActive(): boolean | null {
@@ -308,7 +319,7 @@ class ViewCore {
       this.config.bar_size === CARD.style.bar.sizeOptions.xlarge.label ||
       (this.config.layout === 'horizontal' && this.config.bar_position === 'below') ||
       (this.config.layout === 'vertical' &&
-        ['default', 'below'].includes(this.config.bar_position) &&
+        ['default', 'below'].includes(this.config.bar_position ?? '') &&
         this.config.bar_size !== CARD.style.bar.sizeOptions.small.label &&
         this.config.bar_size !== CARD.style.bar.sizeOptions.xsmall.label) ||
       // rainbow_full's bar-row is forced up to horizontal's own 16px in
@@ -426,7 +437,7 @@ class ViewCore {
     return (
       (this.config.layout ?? 'horizontal') === 'horizontal' &&
       (this.config.bar_position ?? 'default') === 'default' &&
-      this.config.reverse_secondary_info_row
+      Boolean(this.config.reverse_secondary_info_row)
     );
   }
 
@@ -653,7 +664,7 @@ class ViewCore {
     this.#refreshTemplateTheme();
     return this.#templateTheme.buildGradient(
       this.#templateTheme.value,
-      this._configHelper.config.bar_color_mode,
+      this._configHelper.config.bar_color_mode ?? 'auto',
       null,
       this.isVerticalBar,
     );
@@ -680,7 +691,7 @@ class ViewCore {
     // exists to prevent.
     const posFill = Math.min(100, Math.max(0, signedPercent));
     const negFill = Math.min(100, Math.max(0, -signedPercent));
-    const mode = this._configHelper.config.bar_color_mode;
+    const mode = this._configHelper.config.bar_color_mode ?? 'auto';
     const [posWindow, negWindow]: [[number, number], [number, number]] = this.#templateTheme.isSigned
       ? [
           [0, 100],
@@ -920,10 +931,13 @@ class ViewBase extends ViewCore {
     if (is.nonEmptyArray(this._configHelper.config.bar_stack?.entities)) {
       const { mode, entities } = this._configHelper.config.bar_stack;
       this.#entityCollection.mode = mode;
+      // entity is only ever optional on Template's own schema (no bar_stack
+      // there at all) - genuinely required on Card/Badge/Feature, the only
+      // three that reach this branch, just not provable from Config alone.
       const addMain = () =>
         this.#entityCollection.addEntity(
-          this._configHelper.config.entity,
-          this._configHelper.config.attribute,
+          assertDefined(this._configHelper.config.entity, 'bar_stack main entity requires config.entity'),
+          this._configHelper.config.attribute ?? null,
           null,
           false,
           true,
@@ -950,7 +964,7 @@ class ViewBase extends ViewCore {
     }
 
     this.#percentHelper.configure({
-      unitSpacing: this._configHelper.config.unit_spacing,
+      unitSpacing: this._configHelper.config.unit_spacing ?? CARD.config.unit.unitSpacing.auto,
       // disable_unit is deprecated (folded into hide: ['unit', ...] by
       // _customizeConfig) but left untouched, and thus still checked here, when
       // hide is a Jinja template.
@@ -978,7 +992,7 @@ class ViewBase extends ViewCore {
     if (this._currentValue.entityType.isTimer) {
       this.#maxValue.value = CARD.config.value.max;
     } else {
-      this._currentValue.attribute = this._configHelper.config.attribute;
+      this._currentValue.attribute = this._configHelper.config.attribute ?? null;
       // max_value/min_value: number (legacy) | {value} | {entity, attribute} |
       // {jinja}. Jinja mode is fed by the template subscription
       // (#jinjaMaxValue/#jinjaMinValue), not by EntityOrValue — see
@@ -1056,7 +1070,7 @@ class ViewBase extends ViewCore {
     // note: this used to test `this._configHelper.maxValue`, a getter that
     // never existed (always undefined), silently disabling the max-entity
     // availability check.
-    const minIsEntity = is.nonEmptyString(this._configHelper.config?.min_value?.entity);
+    const minIsEntity = is.nonEmptyString(entityOf(this._configHelper.config?.min_value));
     // Entity-mode only, like min_value/max_value above: in Jinja mode,
     // EntityOrValue never has an active helper (that value is resolved
     // separately via the template subscription, see #jinjaWatermarkLow/High),
@@ -1065,12 +1079,12 @@ class ViewBase extends ViewCore {
     // threshold would permanently hide the whole card.
     return !(
       !this._currentValue.isAvailable ||
-      (!this.#maxValue.isAvailable && is.nonEmptyString(this._configHelper.config?.max_value?.entity)) ||
+      (!this.#maxValue.isAvailable && is.nonEmptyString(entityOf(this._configHelper.config?.max_value))) ||
       (!this.#minValue.isAvailable && minIsEntity) ||
-      (!this._lowValue.isAvailable && is.nonEmptyString(this._configHelper.config?.watermark?.low?.entity)) ||
-      (!this._highValue.isAvailable && is.nonEmptyString(this._configHelper.config?.watermark?.high?.entity)) ||
-      (!this._aboveValue.isAvailable && is.nonEmptyString(this._configHelper.config?.alert_when?.above?.entity)) ||
-      (!this._belowValue.isAvailable && is.nonEmptyString(this._configHelper.config?.alert_when?.below?.entity))
+      (!this._lowValue.isAvailable && is.nonEmptyString(entityOf(this._configHelper.config?.watermark?.low))) ||
+      (!this._highValue.isAvailable && is.nonEmptyString(entityOf(this._configHelper.config?.watermark?.high))) ||
+      (!this._aboveValue.isAvailable && is.nonEmptyString(entityOf(this._configHelper.config?.alert_when?.above))) ||
+      (!this._belowValue.isAvailable && is.nonEmptyString(entityOf(this._configHelper.config?.alert_when?.below)))
     );
   }
 
@@ -1082,14 +1096,14 @@ class ViewBase extends ViewCore {
 
   get icon(): string | null {
     const notFound = this.isNotFound ? CARD.style.icon.notFound.icon : null;
-    return notFound || this.#theme.icon || this._configHelper.config.icon;
+    return notFound || this.#theme.icon || this._configHelper.config.icon || null;
   }
 
   get iconColor(): string | null {
     if (this.isUnavailable) return CARD.style.color.unavailable;
     if (this.isNotFound) return CARD.style.color.notFound;
     return (
-      ThemeManager.adaptColor(this.#theme.iconColor || this._configHelper.config.color) ||
+      ThemeManager.adaptColor(this.#theme.iconColor || this._configHelper.config.color || null) ||
       this._currentValue.defaultColor ||
       CARD.style.color.default
     );
@@ -1097,7 +1111,7 @@ class ViewBase extends ViewCore {
 
   #curBarColor(): string | null {
     return (
-      ThemeManager.adaptColor(this.#theme.barColor || this._configHelper.config.bar_color) ||
+      ThemeManager.adaptColor(this.#theme.barColor || this._configHelper.config.bar_color || null) ||
       this._currentValue.defaultColor ||
       CARD.style.color.default
     );
@@ -1142,7 +1156,7 @@ class ViewBase extends ViewCore {
     if (!this.isAvailable || this.#percentHelper.isCenterZero) return null;
     return this.#theme.buildGradient(
       this.#percentHelper.percent ?? 0,
-      this._configHelper.config.bar_color_mode,
+      this._configHelper.config.bar_color_mode ?? 'auto',
       this._currentValue.defaultColor || null,
       this.isVerticalBar,
       [0, 100],
@@ -1175,7 +1189,7 @@ class ViewBase extends ViewCore {
     // symptom this.percent's own clamp exists to prevent.
     const posFill = Math.min(100, Math.max(0, signedPercent));
     const negFill = Math.min(100, Math.max(0, -signedPercent));
-    const mode = this._configHelper.config.bar_color_mode;
+    const mode = this._configHelper.config.bar_color_mode ?? 'auto';
     const defaultColor = this._currentValue.defaultColor || null;
     const valueRange = { min, max };
     // A signed theme (critical_when_extreme_center and friends) already
@@ -1244,7 +1258,7 @@ class ViewBase extends ViewCore {
   get name(): string | null {
     return is.nonEmptyArray(this._configHelper.config.name)
       ? this._currentValue.nameComposition
-      : this._configHelper.config.name || this._currentValue.name || this._configHelper.config.entity;
+      : this._configHelper.config.name || this._currentValue.name || this._configHelper.config.entity || null;
   }
 
   get badgeInfo() {
