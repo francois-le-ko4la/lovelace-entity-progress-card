@@ -142,7 +142,7 @@ const types = {
   // depending on whether SKIP_PROPERTY is reachable" mapped type is a step
   // further TS makes awkward) - every consumer already reads through `?.`/
   // `??` regardless, so undefined-shaped absence reads the same either way.
-  object: <S extends Record<string, Validator<any>>>(
+  object: <S extends Record<string, Validator<unknown>>>(
     schema: S,
   ): Validator<{ [K in keyof S]: S[K] extends Validator<infer T> ? Exclude<T, typeof SKIP_PROPERTY> : never }> & {
     _schema: S;
@@ -284,9 +284,10 @@ const types = {
   // whichever succeeds first. T[number] extracts each validator's own type
   // out of the tuple, infer U captures its output type - the result is the
   // union of every possible shape, not a merge of all of them at once.
-  union:
-    <T extends Validator<any>[]>(...validators: T): Validator<T[number] extends Validator<infer U> ? U : never> =>
-    (value: unknown, path: Path = []) => {
+  union: <T extends Validator<unknown>[]>(
+    ...validators: T
+  ): Validator<T[number] extends Validator<infer U> ? U : never> =>
+    ((value: unknown, path: Path = []) => {
       // Dead accumulator: collected for readability but not attached to the
       // thrown error below - kept as the string codes/messages it holds.
       const errors: (string | null)[] = [];
@@ -301,7 +302,7 @@ const types = {
       }
 
       throw new ValidationError(path, ERROR_CODES.invalidUnionType.code, ERROR_CODES.invalidUnionType.severity);
-    },
+    }) as Validator<T[number] extends Validator<infer U> ? U : never>,
 
   arrayWithValidatedElem:
     <T extends readonly unknown[]>(allowedValues: T): Validator<T[number][]> =>
@@ -328,7 +329,7 @@ const types = {
   // since it tolerates per-field failures (a malformed zone doesn't drop the
   // whole watermark, see the CF5 fix this behavior traces back to) instead
   // of object()'s all-or-nothing error bundling.
-  watermarkObject: <S extends Record<string, Validator<any>>>(
+  watermarkObject: <S extends Record<string, Validator<unknown>>>(
     schema: S,
   ): Validator<{ [K in keyof S]: S[K] extends Validator<infer T> ? Exclude<T, typeof SKIP_PROPERTY> : never }> =>
     ((value: unknown, path: Path = []) => {
@@ -510,7 +511,7 @@ const types = {
   // extracts every possible validator in the mapping, infer T its output -
   // the result is the union of every shape, same idea as union() above but
   // keyed instead of tried-in-order.
-  discriminatedUnion: <M extends Record<string, Validator<any>>>(
+  discriminatedUnion: <M extends Record<string, Validator<unknown>>>(
     key: string,
     mapping: M,
   ): Validator<M[keyof M] extends Validator<infer T> ? T : never> =>
@@ -574,6 +575,12 @@ const nameItem = types.discriminatedUnion('type', {
 const nameValidator = types.array(nameItem);
 
 function struct<T>(
+  // skipcq: JS-0323 -- `_schema` is used for dynamic per-field introspection
+  // elsewhere (extend()/config-helpers.ts/dom-helpers.ts read a field
+  // validator by name and call it expecting its own specific return shape,
+  // e.g. tap_action's `{action}` or center_zero's boolean) - `unknown` here
+  // breaks every one of those call sites' property access; measured, not
+  // guessed (see git history for this line).
   validator: Validator<T> & { _schema?: Record<string, Validator<any>> },
   { allowBelowBarPosition = true } = {},
 ) {
@@ -920,7 +927,7 @@ function struct<T>(
     // through types.object(...) - a brand new call, so its own generic
     // infers the merged/filtered shape straight from newSchema's structure;
     // no need to thread the exact per-field S type through struct<T> itself.
-    extend: <E extends Record<string, Validator<any>>>(additionalFields: E) => {
+    extend: <E extends Record<string, Validator<unknown>>>(additionalFields: E) => {
       if (!validator._schema) {
         throw new Error('Can only extend object schemas created with types.object');
       }
