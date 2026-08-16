@@ -57,6 +57,13 @@ const valueField = (
 ) => {
   const modeType = `${key}_mode`;
   const attrType = `${key.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase())}Attribute`;
+  // Ephemeral (see _theme_draft's own precedent) - each holds whatever the
+  // OTHER mode last looked like, so switching e.g. jinja -> standard ->
+  // jinja again restores the typed template instead of starting blank.
+  // Stripped before dispatch, never saved to YAML (any `_`-prefixed key is).
+  const numberDraftKey = `_${key}_number_draft`;
+  const entityDraftKey = `_${key}_entity_draft`;
+  const jinjaDraftKey = `_${key}_jinja_draft`;
   return {
     [modeType]: {
       name: modeType,
@@ -65,13 +72,40 @@ const valueField = (
       resolveVirtual: (c: LovelaceConfig) =>
         is.nonEmptyString(c[key]?.jinja) ? 'jinja' : is.plainObject(c[key]) ? 'entity' : 'standard',
       onVirtualChange: (mode: 'entity' | 'jinja' | 'standard', config: LovelaceConfig) => {
+        const current = config[key];
+        // Whatever `current` already is gets stashed into its own draft
+        // slot before switching away - the mode not being entered keeps (or
+        // refreshes) its draft, the one being entered consumes its own.
+        const numberDraft = is.number(current) ? current : config[numberDraftKey];
+        const entityDraft =
+          is.plainObject(current) && !is.nonEmptyString(current?.jinja) ? current : config[entityDraftKey];
+        const jinjaDraft =
+          is.plainObject(current) && is.nonEmptyString(current?.jinja) ? current.jinja : config[jinjaDraftKey];
         if (mode === 'entity') {
-          return { ...config, [key]: is.nonEmptyString(config[key]?.entity) ? config[key] : { entity: '' } };
+          return {
+            ...config,
+            [key]: entityDraft ?? { entity: '' },
+            [numberDraftKey]: numberDraft,
+            [entityDraftKey]: undefined,
+            [jinjaDraftKey]: jinjaDraft,
+          };
         }
         if (mode === 'jinja') {
-          return { ...config, [key]: is.nonEmptyString(config[key]?.jinja) ? config[key] : { jinja: '{{ }}' } };
+          return {
+            ...config,
+            [key]: jinjaDraft ? { jinja: jinjaDraft } : { jinja: '{{ }}' },
+            [numberDraftKey]: numberDraft,
+            [jinjaDraftKey]: undefined,
+            [entityDraftKey]: entityDraft,
+          };
         }
-        return { ...config, [key]: undefined };
+        return {
+          ...config,
+          [key]: numberDraft,
+          [numberDraftKey]: undefined,
+          [entityDraftKey]: entityDraft,
+          [jinjaDraftKey]: jinjaDraft,
+        };
       },
     },
     [key]: EditorFieldsType.number(key, { showIf: (c: LovelaceConfig) => !is.plainObject(c[key]), ...numberOverrides }),
@@ -86,6 +120,7 @@ const valueField = (
     }),
     [`${key}.jinja`]: EditorFieldsType.tpl(`${key}.jinja`, {
       noLabel: true,
+      helper: true,
       showIf: (c: LovelaceConfig) => is.nonEmptyString(c[key]?.jinja),
     }),
   };
@@ -94,18 +129,14 @@ const valueField = (
 const toCamel = (s: string) => s.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase());
 
 // Shared by watermark.low/high (wmSide) and alert_when.above/below
-// (alertField): both are number (fixed) | { entity, attribute } | { jinja }
-// (see schema.ts's numericEntityOrJinja) nested one level under a parent
-// object, so entity/attribute/jinja have to stay virtual fields rather than
-// plain dot-path ones (unlike min_value.entity/max_value.entity, see
-// valueField above): the generic nested-field machinery (#resolveValue/
-// #handleNestedField) only resolves one level of dot-path, and these are
-// already one level deep under their parent. `isEnabled` folds in whatever
-// extra condition gates the parent being "on" for a given caller
-// (watermark's own disable_low/high toggle; alert_when has none, just
-// Boolean(c.alert_when)). `defaultVal` is what 'standard' mode - and
-// clearing the entity picker - revert to: a real number for watermark,
-// undefined for alert_when (genuinely optional, no default).
+// (alertField): both are number | { entity, attribute } | { jinja } (see
+// schema.ts's numericEntityOrJinja) nested one level under a parent object,
+// so entity/attribute/jinja stay virtual fields - the generic nested-field
+// machinery only resolves one level of dot-path, and these are already one
+// level deep. `isEnabled` folds in the parent's own "on" condition
+// (watermark's disable_low/high toggle; alert_when has none). `defaultVal`
+// is what 'standard' mode reverts to: a real number for watermark,
+// undefined for alert_when.
 const nestedValueField = (
   parentKey: string,
   key: string,
@@ -118,6 +149,12 @@ const nestedValueField = (
   const entityFieldName = `${parentKey}.${key}_entity`;
   const ent = (c: LovelaceConfig) => is.plainObject(c[parentKey]?.[key]) && !is.nonEmptyString(c[parentKey][key].jinja);
   const tpl = (c: LovelaceConfig) => is.nonEmptyString(c[parentKey]?.[key]?.jinja);
+  // Same draft precedent as valueField above (min_value/max_value) - flat
+  // top-level keys even though the real value lives nested, since drafts are
+  // pure ephemeral UI state anyway, never round-tripped as `parentKey.key`.
+  const numberDraftKey = `_${parentKey}_${key}_number_draft`;
+  const entityDraftKey = `_${parentKey}_${key}_entity_draft`;
+  const jinjaDraftKey = `_${parentKey}_${key}_jinja_draft`;
   return {
     // A 2-state toggle can't represent 3 mutually exclusive modes
     // (standard/entity/Jinja) — mirrors min_value_mode/max_value_mode exactly,
@@ -129,25 +166,37 @@ const nestedValueField = (
       showIf: isEnabled,
       resolveVirtual: (c: LovelaceConfig) => (tpl(c) ? 'jinja' : ent(c) ? 'entity' : 'standard'),
       onVirtualChange: (mode: 'entity' | 'jinja' | 'standard', config: LovelaceConfig) => {
+        const current = config[parentKey]?.[key];
+        const numberDraft = is.number(current) ? current : config[numberDraftKey];
+        const entityDraft =
+          is.plainObject(current) && !is.nonEmptyString(current?.jinja) ? current : config[entityDraftKey];
+        const jinjaDraft =
+          is.plainObject(current) && is.nonEmptyString(current?.jinja) ? current.jinja : config[jinjaDraftKey];
         if (mode === 'entity') {
           return {
             ...config,
-            [parentKey]: {
-              ...config[parentKey],
-              [key]: is.nonEmptyString(config[parentKey]?.[key]?.entity) ? config[parentKey][key] : { entity: '' },
-            },
+            [parentKey]: { ...config[parentKey], [key]: entityDraft ?? { entity: '' } },
+            [numberDraftKey]: numberDraft,
+            [entityDraftKey]: undefined,
+            [jinjaDraftKey]: jinjaDraft,
           };
         }
         if (mode === 'jinja') {
           return {
             ...config,
-            [parentKey]: {
-              ...config[parentKey],
-              [key]: is.nonEmptyString(config[parentKey]?.[key]?.jinja) ? config[parentKey][key] : { jinja: '{{ }}' },
-            },
+            [parentKey]: { ...config[parentKey], [key]: jinjaDraft ? { jinja: jinjaDraft } : { jinja: '{{ }}' } },
+            [numberDraftKey]: numberDraft,
+            [jinjaDraftKey]: undefined,
+            [entityDraftKey]: entityDraft,
           };
         }
-        return { ...config, [parentKey]: { ...config[parentKey], [key]: defaultVal } };
+        return {
+          ...config,
+          [parentKey]: { ...config[parentKey], [key]: numberDraft ?? defaultVal },
+          [numberDraftKey]: undefined,
+          [entityDraftKey]: entityDraft,
+          [jinjaDraftKey]: jinjaDraft,
+        };
       },
     },
     [`${parentKey}.${key}`]: EditorFieldsType.number(`${parentKey}.${key}`, {
@@ -184,6 +233,7 @@ const nestedValueField = (
     [`${parentKey}_${key}_jinja`]: EditorFieldsType.tpl(`${parentKey}_${key}_jinja`, {
       noLabel: true,
       virtual: true,
+      helper: true,
       showIf: (c: LovelaceConfig) => isEnabled(c) && tpl(c),
       resolveVirtual: (c: LovelaceConfig) => c[parentKey]?.[key]?.jinja ?? '',
       onVirtualChange: (value: string, config: LovelaceConfig) => ({
@@ -287,7 +337,9 @@ const EditorFactory = {
           }
         : {
             name: EditorFieldsType.entityName('name', { context: { entity: 'entity' } }),
-            name_info: EditorFieldsType.tpl('name_info'),
+            name_info: EditorFieldsType.tpl('name_info', {
+              helper: true,
+            }),
           }),
       ...(template
         ? {
@@ -306,40 +358,53 @@ const EditorFactory = {
             percent: EditorFieldsType.tpl('percent'),
           }
         : {
-            unit: EditorFieldsType.text('unit', {
-              width: availableSpace(32, 1 / 3),
-              placeholder: (_c: LovelaceConfig, neg: Config) => (neg?.resolvedUnit as string) ?? '',
-            }),
-            // disable_unit is deprecated (see
-            // BaseConfigHelper.#logDeprecatedOption): 'unit' is now just
-            // another hide target, folded into hide by _customizeConfig. The
-            // disable_unit check here only matters for a legacy raw config on
-            // first load, before that fold has round-tripped through the
-            // editor's own config-changed.
-            unit_spacing: EditorFieldsType.select('unit_spacing', {
-              type: 'unit_spacing',
-              width: availableSpace(32, 1 / 3),
-              showIf: (c: LovelaceConfig) => !(c.disable_unit || (is.array(c.hide) && c.hide.includes('unit'))),
-            }),
-            decimal: EditorFieldsType.decimal('decimal', {
-              width: availableSpace(32, 1 / 3),
-              placeholder: (_c: LovelaceConfig, neg: Config) =>
-                neg?.resolvedDecimal == null ? '' : String(neg.resolvedDecimal),
-            }),
+            // Normally a 1/3-1/3-1/3 trio - but unit_spacing (the middle one)
+            // hides once unit itself is hidden (disable_unit / hide: [unit]),
+            // leaving unit+decimal at a third each with an empty gap where it
+            // sat. unitSpacingShown tracks the same condition so the other
+            // two can widen to fill the row instead.
+            ...(() => {
+              const unitSpacingShown = (c: LovelaceConfig) =>
+                !(c.disable_unit || (is.array(c.hide) && c.hide.includes('unit')));
+              const thirdOrHalf = (c: LovelaceConfig) =>
+                unitSpacingShown(c) ? availableSpace(32, 1 / 3) : availableSpace();
+              return {
+                unit: EditorFieldsType.text('unit', {
+                  width: thirdOrHalf,
+                  placeholder: (_c: LovelaceConfig, neg: Config) => (neg?.resolvedUnit as string) ?? '',
+                }),
+                // disable_unit is deprecated (see
+                // BaseConfigHelper.#logDeprecatedOption): 'unit' is now just
+                // another hide target, folded into hide by _customizeConfig.
+                // The disable_unit check here only matters for a legacy raw
+                // config on first load, before that fold has round-tripped
+                // through the editor's own config-changed.
+                unit_spacing: EditorFieldsType.select('unit_spacing', {
+                  type: 'unit_spacing',
+                  width: availableSpace(32, 1 / 3),
+                  showIf: unitSpacingShown,
+                }),
+                decimal: EditorFieldsType.decimal('decimal', {
+                  width: thirdOrHalf,
+                  placeholder: (_c: LovelaceConfig, neg: Config) =>
+                    neg?.resolvedDecimal == null ? '' : String(neg.resolvedDecimal),
+                }),
+              };
+            })(),
             // A 2-state toggle can't represent 3 mutually exclusive modes
-            // (standard/entity/Jinja) — a single-select chip group replaces
-            // the previous pair of toggles, which could both show at once and
-            // left the mode ambiguous. min_value/max_value's config shape is
-            // also explicit rather than sniffed: a bare number is the fixed
-            // value (legacy, unchanged), and { entity, attribute } / { jinja }
-            // replace what used to be a single overloaded string disambiguated
-            // at runtime by an is.jinja() regex test.
+            // (standard/entity/Jinja) - a single-select chip group replaces
+            // the previous pair of toggles, which could both show at once.
+            // min_value/max_value's shape is explicit too: a bare number is
+            // the fixed value, { entity, attribute }/{ jinja } replace what
+            // used to be sniffed at runtime via is.jinja().
             ...valueField('min_value', MIN_VALUE_ENTITY_PATH, {
               default: (c: LovelaceConfig) => (c.center_zero ? -100 : 0),
             }),
             ...valueField('max_value', MAX_VALUE_ENTITY_PATH),
             state_content: EditorFieldsType.stateContent('state_content', { context: { filter_entity: 'entity' } }),
-            custom_info: EditorFieldsType.tpl('custom_info'),
+            custom_info: EditorFieldsType.tpl('custom_info', {
+              helper: true,
+            }),
             // Badge opts out (see YamlSchemaFactory's own
             // .delete(['multiline'])): the row is too small for a second line
             // there. density: compact clears it too (see
@@ -377,7 +442,23 @@ const EditorFactory = {
         // zones onto) - just the plain select, restricted to percent: true
         // themes (see schema.ts's own theme field and base.ts's
         // theme_percent_only selector).
-        { theme: { name: 'theme', type: 'theme_percent_only' } }
+        {
+          theme: {
+            name: 'theme',
+            type: 'theme_percent_only',
+            // Without onClear, #handleStdField writes theme: '' instead of
+            // deleting the key - every is.nullish(c.theme) check downstream
+            // then reads '' as "a theme IS set", stuck permanently since ''
+            // persists across reloads. bar_color_mode goes with it, or the
+            // stale value would linger in the saved config.
+            onClear: (config: LovelaceConfig) => {
+              const rest = { ...config };
+              delete rest.theme;
+              delete rest.bar_color_mode;
+              return rest;
+            },
+          },
+        }
       : {
           theme_mode: {
             name: 'theme_mode',
@@ -389,23 +470,54 @@ const EditorFactory = {
             resolveVirtual: (c: LovelaceConfig) => (is.array(c.custom_theme) ? 'custom' : 'preset'),
             onVirtualChange: (mode: 'custom' | 'preset', config: LovelaceConfig) => {
               const wantsCustom = mode === 'custom';
+              const nextTheme = wantsCustom ? undefined : (config._theme_draft ?? config.theme);
+              // Switching to custom is always "a theme is active" (even an
+              // empty just-entered [] counts, see themeActive/resolveVirtual
+              // above) - switching to preset only still is if the restored
+              // draft actually held a real theme. Neither `theme` nor
+              // `custom_theme`'s own onClear runs on this path (both are
+              // rewritten inline here, not cleared), so bar_color_mode/
+              // interpolate need the same cleanup spelled out again.
+              const stillActive = wantsCustom || !is.nullish(nextTheme);
               return {
                 ...config,
-                theme: wantsCustom ? undefined : (config._theme_draft ?? config.theme),
+                theme: nextTheme,
                 _theme_draft: wantsCustom ? (config.theme ?? config._theme_draft) : undefined,
                 custom_theme: wantsCustom ? (config._custom_theme_draft ?? config.custom_theme ?? []) : undefined,
                 _custom_theme_draft: wantsCustom ? undefined : (config.custom_theme ?? config._custom_theme_draft),
+                ...(stillActive ? {} : { bar_color_mode: undefined, interpolate: undefined }),
               };
             },
           },
-          theme: EditorFieldsType.select('theme', { showIf: (c: LovelaceConfig) => !is.array(c.custom_theme) }),
+          theme: EditorFieldsType.select('theme', {
+            showIf: (c: LovelaceConfig) => !is.array(c.custom_theme),
+            // See the template branch's own onClear above for why this
+            // matters: without it, clearing the dropdown writes theme: ''
+            // instead of deleting the key, which reads as "a theme IS set"
+            // everywhere else that checks is.nullish(c.theme). Removing a
+            // theme takes bar_color_mode/interpolate down with it too - both
+            // are meaningless without one, and would otherwise linger unseen
+            // in the saved config (their own showIf already hides them).
+            onClear: (config: LovelaceConfig) => {
+              const rest = { ...config };
+              delete rest.theme;
+              delete rest.bar_color_mode;
+              delete rest.interpolate;
+              return rest;
+            },
+          }),
           custom_theme: {
             name: 'custom_theme',
             type: 'custom_theme_editor',
             showIf: (c: LovelaceConfig) => is.array(c.custom_theme),
+            // Same reasoning as theme's own onClear right above - a custom
+            // theme counts as "a theme is active" too, so losing it should
+            // clear bar_color_mode/interpolate the same way.
             onClear: (config: LovelaceConfig) => {
               const rest = { ...config };
               delete rest.custom_theme;
+              delete rest.bar_color_mode;
+              delete rest.interpolate;
               return rest;
             },
           },
@@ -416,11 +528,6 @@ const EditorFactory = {
   // YamlSchemaFactory.badge) - swaps in the matching restricted select type
   // instead of a range check inline in theme() below.
   badgeRestrictedType: (badge: boolean, restrictedType: string) => (badge ? { type: restrictedType } : {}),
-
-  // Per-variant width overrides (Card/Badge/Template/BadgeTemplate) below
-  // read oddly as inline ternaries repeated per field - one named condition
-  // per field instead.
-  widthUnless: (condition: boolean) => (condition ? {} : { width: availableSpace() }),
 
   // A CSS-length option (e.g. min_width) edited as a number+unit composite: a
   // slider (value) + a unit dropdown, both virtual over the single string
@@ -518,8 +625,8 @@ const EditorFactory = {
   },
 
   // Every themeXxxFields() below is pulled out of theme() itself for the same
-  // reason as themeModeFields/widthUnless above: keep each conditional
-  // block's own ternaries out of theme()'s cognitive complexity budget.
+  // reason as themeModeFields above: keep each conditional block's own
+  // ternaries out of theme()'s cognitive complexity budget.
 
   themeColorModeFields: (template: boolean) =>
     template
@@ -538,6 +645,7 @@ const EditorFactory = {
             // center_zero no longer excludes this - see
             // ViewBase.themeDivergingGradient.
             showIf: (c: LovelaceConfig) => !is.nullish(c.theme) || is.nonEmptyArray(c.custom_theme),
+            width: '100%',
             // Selecting a non-auto color mode is incompatible with
             // interpolate: clear it.
             onChange: (value: string | undefined, config: LovelaceConfig) =>
@@ -547,6 +655,7 @@ const EditorFactory = {
             showIf: (c: LovelaceConfig) =>
               (!is.nullish(c.theme) || is.nonEmptyArray(c.custom_theme)) &&
               (is.nullish(c.bar_color_mode) || c.bar_color_mode === 'auto'),
+            width: '100%',
           }),
         },
 
@@ -559,15 +668,12 @@ const EditorFactory = {
       ? {}
       : {
           // Half-width once a theme is active, to pair with `icon` once
-          // `color` (icon's usual partner) hides - same reasoning as
-          // bar_size's own width function below. Full-width on Template
-          // regardless of theme though (also same as bar_size): `icon` is
-          // always a full-width Jinja textarea there (template ? {} : ... in
-          // icon's own width above), never a half-width row partner to pair
-          // with. Virtual: icon_animation is an enum name | { effect, jinja }
-          // (see schema.ts's enumOrJinjaTrigger) - this same select
-          // reads/writes `effect` in both shapes so the dropdown stays a
-          // single control regardless of mode.
+          // `color` hides - same reasoning as bar_size's width function
+          // below. Full-width on Template regardless of theme: `icon` is
+          // always a full-width Jinja textarea there, never a partner to
+          // pair with. Virtual: icon_animation is an enum name |
+          // { effect, jinja } (schema.ts's enumOrJinjaTrigger) - this select
+          // reads/writes `effect` in both shapes.
           icon_animation: EditorFieldsType.select('icon_animation', {
             virtual: true,
             width: (c: LovelaceConfig) =>
@@ -591,11 +697,15 @@ const EditorFactory = {
             onVirtualChange: (value: boolean, config: LovelaceConfig) => {
               const current = config.icon_animation;
               const effect = is.plainObject(current) ? current.effect : current;
+              const currentJinja = is.plainObject(current) ? current.jinja : undefined;
               return {
                 ...config,
                 icon_animation: value
-                  ? { effect, jinja: is.nonEmptyString(current?.jinja) ? current.jinja : '{{ }}' }
+                  ? { effect, jinja: currentJinja || config._icon_animation_jinja_draft || '{{ }}' }
                   : effect || undefined,
+                // Ephemeral - see valueField's own _<key>_jinja_draft
+                // precedent.
+                _icon_animation_jinja_draft: value ? undefined : (currentJinja ?? config._icon_animation_jinja_draft),
               };
             },
           }),
@@ -603,6 +713,7 @@ const EditorFactory = {
             target: 'icon_animation',
             virtual: true,
             noLabel: true,
+            helper: true,
             showIf: (c: LovelaceConfig) => is.plainObject(c.icon_animation),
             resolveVirtual: (c: LovelaceConfig) =>
               is.plainObject(c.icon_animation) ? (c.icon_animation.jinja ?? '') : '',
@@ -641,23 +752,27 @@ const EditorFactory = {
     badge
       ? {}
       : {
+          // bar_single_line only ever shows for 'overlay', where text_shadow
+          // is always shown too (its own condition includes 'overlay') - so
+          // it always has that row partner and can stay a flat half-width.
+          // text_shadow itself also shows alone for 'background' (no
+          // bar_single_line there), so its own width stays conditional.
           bar_single_line: EditorFieldsType.toggle('bar_single_line', {
             showIf: (c: LovelaceConfig) => c.bar_position === 'overlay',
+            width: availableSpace(),
           }),
           text_shadow: EditorFieldsType.toggle('text_shadow', {
             showIf: (c: LovelaceConfig) => c.bar_position === 'overlay' || c.bar_position === 'background',
+            width: (c: LovelaceConfig) => (c.bar_position === 'overlay' ? availableSpace() : '100%'),
           }),
         },
 
-  // bar_max_width only affects .horizontal.small/.medium/.large (see the CSS
-  // rule on .progress-container) - 'below'/'top'/'bottom'/'overlay'/
-  // 'background' all render through a separate container element instead,
-  // and .horizontal.xlarge has no matching max-width rule either (see the
-  // schema's own postProcess, which clears bar_max_width server-side for the
-  // same reason - this is just the editor mirror of it). Badge/badgeTemplate
-  // opt out entirely (see their own .delete(['bar_max_width'])): without a
-  // 'layout' key they never get the 'horizontal' class, so the option would
-  // be inert there.
+  // bar_max_width only affects .horizontal.small/.medium/.large - the other
+  // bar_position values render through a separate container, and
+  // .horizontal.xlarge has no matching rule either (schema.ts's postProcess
+  // clears it server-side for the same reason, this is the editor mirror).
+  // Badge/badgeTemplate opt out entirely: without a 'layout' key they never
+  // get the 'horizontal' class, so the option would be inert there.
   themeMaxWidthFields: (badge: boolean) => {
     if (badge) return {};
     const barMaxWidthAllowed = (c: LovelaceConfig) =>
@@ -724,36 +839,35 @@ const EditorFactory = {
     badge
       ? {}
       : {
-          // badge_icon/badge_color are two independent optional strings (not
-          // one nested map like watermark/status_label) - each gets its own
-          // collapse-to-reveal toggle instead of one shared toggle forcing
-          // both together, same reasoning badge_icon's own {icon, color}
-          // object exists for: sometimes the color genuinely needs a
-          // condition decorrelated from the icon's own. "Badge" (this
-          // toggle) counts as on whenever EITHER field already has a value -
-          // existing hand-written YAML with only badge_color set (a legit,
-          // independent use) still needs to land on an active "Badge" toggle
-          // with badge_icon's own field visible (empty, ready to fill in),
-          // not hidden just because badge_icon itself is unset.
-          // badge_color_toggle is nested under it (showIf matches the same
-          // condition) - a badge color with no badge at all isn't offered as
-          // a starting point, only as a refinement once "Badge" is already
-          // on. Turning "Badge" off clears both fields outright (it's the
-          // master switch for the whole concept); "Independent color" keeps
-          // owning badge_color specifically while "Badge" stays on. noLabel
-          // on both fields - their own field label would just repeat the
-          // toggle's own name right above it.
+          // badge_icon/badge_color are two independent optional strings, not
+          // one nested map - each gets its own collapse-to-reveal toggle
+          // instead of one shared toggle forcing both together. "Badge"
+          // counts as on whenever EITHER field has a value - existing YAML
+          // with only badge_color set still needs an active "Badge" toggle
+          // with badge_icon's field visible, empty, ready to fill in.
+          // badge_color_toggle nests under it (same showIf condition): a
+          // badge color with no badge at all isn't offered as a starting
+          // point. Turning "Badge" off clears both fields (the master
+          // switch); "Independent color" keeps owning badge_color while
+          // "Badge" stays on.
           badge_toggle: EditorFieldsType.toggle('badge_toggle', {
             virtual: true,
             resolveVirtual: (c: LovelaceConfig) => Boolean(c.badge_icon) || Boolean(c.badge_color),
+            // Ephemeral drafts - see valueField's own _<key>_jinja_draft
+            // precedent. badge_color_toggle below shares _badge_color_draft:
+            // whichever path last cleared badge_color, the same slot
+            // restores it.
             onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
               ...config,
-              badge_icon: value ? '{{ }}' : undefined,
-              badge_color: value ? config.badge_color : undefined,
+              badge_icon: value ? config._badge_icon_draft || '{{ }}' : undefined,
+              badge_color: value ? config._badge_color_draft : undefined,
+              _badge_icon_draft: value ? undefined : (config.badge_icon ?? config._badge_icon_draft),
+              _badge_color_draft: value ? undefined : (config.badge_color ?? config._badge_color_draft),
             }),
           }),
           badge_icon: EditorFieldsType.tpl('badge_icon', {
             noLabel: true,
+            helper: true,
             showIf: (c: LovelaceConfig) => Boolean(c.badge_icon) || Boolean(c.badge_color),
           }),
           badge_color_toggle: EditorFieldsType.toggle('badge_color_toggle', {
@@ -762,11 +876,13 @@ const EditorFactory = {
             resolveVirtual: (c: LovelaceConfig) => Boolean(c.badge_color),
             onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
               ...config,
-              badge_color: value ? '{{ }}' : undefined,
+              badge_color: value ? config._badge_color_draft || '{{ }}' : undefined,
+              _badge_color_draft: value ? undefined : (config.badge_color ?? config._badge_color_draft),
             }),
           }),
           badge_color: EditorFieldsType.tpl('badge_color', {
             noLabel: true,
+            helper: true,
             showIf: (c: LovelaceConfig) => Boolean(c.badge_color),
           }),
         },
@@ -866,23 +982,16 @@ const EditorFactory = {
           density_toggle: EditorFieldsType.toggle('density_toggle', {
             virtual: true,
             resolveVirtual: (c: LovelaceConfig) => c.density === 'compact',
-            // A card already placed in a Sections view almost always carries
-            // its own explicit grid_options (HA writes one in the moment a
-            // card is first added, or the user drags it to a size) - that
-            // stored value always wins over getGridOptions()'s computed
-            // default/min/max (see ViewCore#cardLayoutOptions), so shrinking
-            // just the computed side is never enough to actually resize an
-            // existing card on its own. Pin grid_options here instead, the
-            // same way the user would by hand: 1 column-of-3 (the multiplier
-            // ViewCore#getGridOptions itself uses)/1 row, exactly what
-            // density: compact's own minGridColumns/minGridRows always
-            // resolve to (never config-dependent - compact forces
-            // layout: horizontal and bar_position out of 'below', the only
-            // two things that could otherwise change either number).
-            // Whatever grid_options held before is stashed in
-            // _grid_options_draft (ephemeral, stripped before save - same
-            // pattern as custom_theme's own _theme_draft) and restored the
-            // moment compact is switched back off.
+            // A card already in a Sections view almost always carries its own
+            // explicit grid_options (HA writes one when a card is added or
+            // dragged to a size) - that stored value always wins over
+            // getGridOptions()'s computed default, so shrinking the computed
+            // side alone never resizes an existing card. Pin grid_options
+            // here instead, the same way the user would by hand: 1
+            // column-of-3/1 row, exactly what density: compact always
+            // resolves to. Whatever grid_options held before is stashed in
+            // _grid_options_draft (ephemeral, same pattern as custom_theme's
+            // _theme_draft) and restored once compact is switched back off.
             onVirtualChange: (value: boolean, config: LovelaceConfig): LovelaceConfig => {
               if (value) {
                 return {
@@ -916,6 +1025,10 @@ const EditorFactory = {
   upAllowed: (c: LovelaceConfig) =>
     (c.layout === 'vertical' && c.bar_position === 'overlay') || c.bar_position === 'background',
 
+  // Shared by icon/bar_scale (theme()) and themeBarSizingFields below - a
+  // built-in theme or a custom_theme zone list, either one counts.
+  themeActive: (c: LovelaceConfig) => !is.nullish(c.theme) || is.array(c.custom_theme),
+
   resetUpIfInvalid: (config: LovelaceConfig) =>
     config.bar_orientation === 'up' && !EditorFactory.upAllowed(config)
       ? { ...config, bar_orientation: 'ltr' }
@@ -930,16 +1043,12 @@ const EditorFactory = {
       ? { ...config, bar_position: 'default' }
       : config,
 
-  // density: compact (issue #134's ask, generalized) forces layout:
-  // horizontal and bar_position into {top, bottom, background} - see
-  // schema.ts's applyDensityRule, the matching save-time safety net. Applied
-  // from density_toggle's own onVirtualChange (the moment it flips on, an
-  // already-saved layout: vertical / unsupported bar_position needs fixing
-  // up) - layout's and bar_position's own fields can't drift into an invalid
-  // state on their own once density: compact is active, since their
-  // available choices are already restricted to valid ones
-  // (layout_horizontal_only/bar_position_density_compact above), so neither
-  // needs this same call in its own onChange.
+  // density: compact (issue #134) forces layout: horizontal and bar_position
+  // into {top, bottom, background} - see schema.ts's applyDensityRule, the
+  // matching save-time safety net. Applied from density_toggle's own
+  // onVirtualChange, the moment it flips on, since layout/bar_position can't
+  // drift into an invalid state on their own once compact is active (their
+  // choices are already restricted to valid ones).
   applyDensityConstraints: (config: LovelaceConfig): LovelaceConfig => {
     if (config.density !== 'compact') return config;
     const next: LovelaceConfig = { ...config, layout: 'horizontal' };
@@ -947,6 +1056,82 @@ const EditorFactory = {
       next.bar_position = 'top';
     }
     return next;
+  },
+
+  // bar_orientation/bar_size/bar_color/bar_segments' row-partner logic
+  // pulled out of theme() for the same cognitive-complexity reason as every
+  // other themeXxxFields() here.
+  // - bar_orientation and bar_size are both a flat half-width, always: on
+  //   Card/Template, bar_orientation pairs with bar_position and bar_size
+  //   with bar_color/bar_segments; on Badge/Badge Template (no
+  //   bar_position), the two just sit next to each other instead.
+  // - bar_scale (Card/Badge only) is a flat full width, never paired.
+  // - bar_color/bar_segments fill in as bar_size's actual partner: bar_color
+  //   hides once a theme is active, bar_segments picks up the slack for
+  //   Card/Badge. Template's bar_color is always a full-width Jinja field,
+  //   so bar_segments is its only possible partner. Badge Template's
+  //   bar_size is already paired with bar_orientation, so bar_segments
+  //   never gets a turn there.
+  themeBarSizingFields: (template: boolean, badge: boolean, upAllowed: (c: LovelaceConfig) => boolean) => {
+    const themeActive = EditorFactory.themeActive;
+    // Mirrors bar_size's own showIf below - whenever bar_size is actually
+    // visible at all, bar_single_line/text_shadow (the only other fields
+    // that could otherwise land between it and bar_segments) are hidden by
+    // construction (they need the exact bar_position values excluded here),
+    // so bar_size and bar_segments are always neighbors when this is true.
+    const barSizeAllowed = (c: LovelaceConfig) => !['top', 'bottom', 'overlay', 'background'].includes(c.bar_position);
+    return {
+      bar_orientation: EditorFieldsType.select('bar_orientation', {
+        // Badge/Badge Template have no bar_position/layout, so 'up' is
+        // statically excluded there; elsewhere, only offered when upAllowed
+        // (see postProcess for the matching runtime reset).
+        type: badge
+          ? 'bar_orientation_no_up'
+          : (c: LovelaceConfig) => (upAllowed(c) ? 'bar_orientation' : 'bar_orientation_no_up'),
+        width: availableSpace(),
+      }),
+      bar_size: EditorFieldsType.select('bar_size', {
+        ...EditorFactory.badgeRestrictedType(badge, 'bar_size_no_xlarge'),
+        // Flat half for Card/Badge/Badge Template. Plain Template is the one
+        // exception: full without a theme (bar_segments, its only possible
+        // partner there, has nothing to pair with either then), half once a
+        // theme is active (both step into place together).
+        width:
+          template && !badge ? (c: LovelaceConfig) => (themeActive(c) ? availableSpace() : '100%') : availableSpace(),
+        // top/bottom/overlay/background all hard-override the bar's own
+        // thickness in CSS regardless of bar_size (see ha-card.overlay,
+        // .bottom-container/.top-container, ha-card.background).
+        showIf: barSizeAllowed,
+      }),
+      bar_color: EditorFieldsType.templateOrType('bar_color', template, 'color', {
+        showIf: (c: LovelaceConfig) => !themeActive(c),
+        // Full-width once bar_size (its row partner) hides for the same
+        // bar_position values.
+        ...(template
+          ? { helper: true }
+          : { width: (c: LovelaceConfig) => (barSizeAllowed(c) ? availableSpace() : '100%') }),
+      }),
+      ...EditorFactory.themeSingleLineShadowFields(badge),
+      bar_segments: EditorFieldsType.number('bar_segments', {
+        width: (c: LovelaceConfig) => {
+          // Badge Template: bar_size already sits next to bar_orientation
+          // (both always half, see above) - bar_segments never gets a turn.
+          if (badge && template) return '100%';
+          // Badge: flat half, always - bar_scale (below) tags along whenever
+          // it's visible too (center_zero off), same as it always has.
+          if (badge) return availableSpace();
+          // Plain Template: bar_color is always a full-width Jinja field,
+          // never a partner - pairs with bar_size instead, which is itself
+          // full without a theme (nothing to pair with either then) and
+          // half with one (see bar_size's own width above).
+          if (template) return themeActive(c) ? availableSpace() : '100%';
+          // Card: flat half, always - pairs with bar_scale (below) without a
+          // theme, or with bar_size once one hides bar_color (bar_size's own
+          // usual partner then) and bar_scale goes full-width itself.
+          return availableSpace();
+        },
+      }),
+    };
   },
 
   theme: (template: boolean, badge: boolean) => {
@@ -958,50 +1143,26 @@ const EditorFactory = {
       fields: {
         ...EditorFactory.themeModeFields(template),
         ...EditorFactory.themeColorModeFields(template),
-        icon: EditorFieldsType.templateOrType('icon', template, 'icon', template ? {} : { width: availableSpace() }),
-        color: EditorFieldsType.templateOrType('color', template, 'color', {
-          showIf: (c: LovelaceConfig) => is.nullish(c.theme) && !is.array(c.custom_theme),
-          ...(template ? {} : { width: availableSpace() }),
-        }),
-        ...EditorFactory.themeCardOnlyFields(template, badge, resetUpIfInvalid),
-        bar_orientation: EditorFieldsType.select('bar_orientation', {
-          // Badge/Badge Template have no bar_position/layout, so 'up' is
-          // statically excluded there; elsewhere, only offered when upAllowed
-          // (see postProcess for the matching runtime reset).
-          type: badge
-            ? 'bar_orientation_no_up'
-            : (c: LovelaceConfig) => (upAllowed(c) ? 'bar_orientation' : 'bar_orientation_no_up'),
-          // Half-width everywhere except plain Badge (full-width there).
-          ...EditorFactory.widthUnless(badge && !template),
-        }),
-        bar_size: EditorFieldsType.select('bar_size', {
-          ...EditorFactory.badgeRestrictedType(badge, 'bar_size_no_xlarge'),
-          // Full-width for Template/Badge Template (bar_color is a Jinja field
-          // there, no row partner) or once a theme is active (bar_color hides).
-          width: (c: LovelaceConfig) =>
-            template || !is.nullish(c.theme) || is.array(c.custom_theme) ? '100%' : availableSpace(),
-          // top/bottom/overlay/background all hard-override the bar's own
-          // thickness in CSS regardless of bar_size (see ha-card.overlay,
-          // .bottom-container/.top-container, ha-card.background).
-          showIf: (c: LovelaceConfig) => !['top', 'bottom', 'overlay', 'background'].includes(c.bar_position),
-        }),
-        bar_color: EditorFieldsType.templateOrType('bar_color', template, 'color', {
-          showIf: (c: LovelaceConfig) => is.nullish(c.theme) && !is.array(c.custom_theme),
-          // Full-width once bar_size (its row partner) hides for the same
-          // bar_position values.
+        // Half-width to pair with `color` below - but `color` hides once a
+        // theme/custom_theme is active, so `icon` needs to reclaim the full
+        // row then. Card: always half now, whether or not `color` is
+        // actually showing (matches bar_orientation/bar_size below). Badge
+        // keeps the old theme-aware behavior (full once `color` hides).
+        icon: EditorFieldsType.templateOrType('icon', template, 'icon', {
           ...(template
-            ? {}
+            ? { helper: true }
             : {
-                width: (c: LovelaceConfig) =>
-                  ['top', 'bottom', 'overlay', 'background'].includes(c.bar_position) ? '100%' : availableSpace(),
+                width: badge
+                  ? (c: LovelaceConfig) => (EditorFactory.themeActive(c) ? '100%' : availableSpace())
+                  : availableSpace(),
               }),
         }),
-        ...EditorFactory.themeSingleLineShadowFields(badge),
-        bar_segments: EditorFieldsType.number('bar_segments', {
-          // Full-width for Template/Badge Template: bar_scale (its row partner
-          // below) doesn't exist there at all.
-          ...(template ? { width: '100%' } : { width: availableSpace() }),
+        color: EditorFieldsType.templateOrType('color', template, 'color', {
+          showIf: (c: LovelaceConfig) => is.nullish(c.theme) && !is.array(c.custom_theme),
+          ...(template ? { helper: true } : { width: availableSpace() }),
         }),
+        ...EditorFactory.themeCardOnlyFields(template, badge, resetUpIfInvalid),
+        ...EditorFactory.themeBarSizingFields(template, badge, upAllowed),
         // Not in YamlSchemaFactory.template: percent comes straight from Jinja
         // there, so the log/linear min-max mapping this drives has nothing to
         // act on - showing it would silently do nothing on save (same trap as
@@ -1009,7 +1170,14 @@ const EditorFactory = {
         ...(!template
           ? {
               bar_scale: EditorFieldsType.select('bar_scale', {
-                width: availableSpace(),
+                // Badge: full without a theme, half once one is active -
+                // the opposite of Card's own rule right below.
+                // Card: half without a theme (pairs with bar_segments there
+                // too), full once one is active (bar_segments goes full then
+                // as well - see its own width above).
+                width: badge
+                  ? (c: LovelaceConfig) => (EditorFactory.themeActive(c) ? availableSpace() : '100%')
+                  : (c: LovelaceConfig) => (EditorFactory.themeActive(c) ? '100%' : availableSpace()),
                 showIf: (c: LovelaceConfig) => !c.center_zero,
               }),
             }
@@ -1071,10 +1239,19 @@ const EditorFactory = {
         bar_effect_jinja: EditorFieldsType.toggle('bar_effect_jinja', {
           virtual: true,
           resolveVirtual: (c: LovelaceConfig) => is.nonEmptyString(c.bar_effect),
-          onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
-            ...config,
-            bar_effect: value ? '{{ }}' : [],
-          }),
+          // Ephemeral - both directions, so switching chips <-> Jinja and
+          // back restores whichever shape was left behind either way.
+          onVirtualChange: (value: boolean, config: LovelaceConfig) => {
+            const current = config.bar_effect;
+            const arrayDraft = is.array(current) ? current : config._bar_effect_array_draft;
+            const jinjaDraft = is.nonEmptyString(current) ? current : config._bar_effect_jinja_draft;
+            return {
+              ...config,
+              bar_effect: value ? jinjaDraft || '{{ }}' : (arrayDraft ?? []),
+              _bar_effect_array_draft: value ? arrayDraft : undefined,
+              _bar_effect_jinja_draft: value ? undefined : jinjaDraft,
+            };
+          },
         }),
         bar_effect_chips: EditorFieldsType.select('bar_effect_chips', {
           type: 'effect_chips',
@@ -1083,16 +1260,26 @@ const EditorFactory = {
         }),
         bar_effect: EditorFieldsType.tpl('bar_effect', {
           noLabel: true,
+          helper: true,
           showIf: (c: LovelaceConfig) => is.nonEmptyString(c.bar_effect),
         }),
         // ── Hide ─────────────────────────────────────────────────────────────
         hide_jinja: EditorFieldsType.toggle('hide_jinja', {
           virtual: true,
           resolveVirtual: (c: LovelaceConfig) => is.nonEmptyString(c.hide),
-          onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
-            ...config,
-            hide: value ? '{{ }}' : [],
-          }),
+          // Ephemeral - both directions, same reasoning as bar_effect_jinja
+          // above.
+          onVirtualChange: (value: boolean, config: LovelaceConfig) => {
+            const current = config.hide;
+            const arrayDraft = is.array(current) ? current : config._hide_array_draft;
+            const jinjaDraft = is.nonEmptyString(current) ? current : config._hide_jinja_draft;
+            return {
+              ...config,
+              hide: value ? jinjaDraft || '{{ }}' : (arrayDraft ?? []),
+              _hide_array_draft: value ? arrayDraft : undefined,
+              _hide_jinja_draft: value ? undefined : jinjaDraft,
+            };
+          },
         }),
         hide_chips: EditorFieldsType.select('hide_chips', {
           type: 'hide_chips',
@@ -1103,7 +1290,11 @@ const EditorFactory = {
           // value comes straight from Jinja `percent`.
           ...(template ? { items: ['icon', 'name', 'value', 'secondary_info', 'progress_bar'] } : {}),
         }),
-        hide: EditorFieldsType.tpl('hide', { noLabel: true, showIf: (c: LovelaceConfig) => is.nonEmptyString(c.hide) }),
+        hide: EditorFieldsType.tpl('hide', {
+          noLabel: true,
+          helper: true,
+          showIf: (c: LovelaceConfig) => is.nonEmptyString(c.hide),
+        }),
       },
     };
   },
@@ -1124,31 +1315,30 @@ const EditorFactory = {
       // moved here from theme() for that reason (see themeBadgeIconColor
       // Fields's own definition, unchanged otherwise).
       ...EditorFactory.themeBadgeIconColorFields(badge),
-      // Card + Template only (same scope as trend_indicator, which the two
-      // share a corner with - see schema.ts's applyLabelRule): too small a
-      // scale to read well on a badge, same reasoning as trend_indicator's
-      // own badge exclusion. Lives here (not content()) because it's the
-      // same status-pill marker alert_when.highlight: 'label' reuses - a
-      // "react to a condition" concern, not the card's core entity/display
-      // content. status_label_toggle mirrors watermark_toggle/alert_toggle
-      // below - same collapse-to-reveal pattern, for consistency (the
-      // dot-path fields below would otherwise auto-create the parent object
-      // on first write with no toggle at all, unlike its two siblings here).
-      // Ordered before alert_when on purpose: alert_when.highlight: 'label'
-      // reuses this same pill, reads better once status_label's own shape is
-      // already established above it.
+      // Card + Template only (same scope as trend_indicator, which shares a
+      // corner with it, see schema.ts's applyLabelRule): too small a scale
+      // to read well on a badge. Lives here, not content(), since it's the
+      // same status-pill marker alert_when.highlight: 'label' reuses.
+      // status_label_toggle mirrors watermark_toggle/alert_toggle below,
+      // same collapse-to-reveal pattern. Ordered before alert_when on
+      // purpose: alert_when.highlight: 'label' reuses this pill, reads
+      // better once status_label's shape is already established above it.
       ...(!badge
         ? {
             status_label_toggle: EditorFieldsType.toggle('status_label_toggle', {
               virtual: true,
               resolveVirtual: (c: LovelaceConfig) => Boolean(c.status_label),
+              // Ephemeral - the whole object (jinja/position/color_source),
+              // not just jinja, so re-enabling restores all three.
               onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
                 ...config,
-                status_label: value ? {} : undefined,
+                status_label: value ? config._status_label_draft || {} : undefined,
+                _status_label_draft: value ? undefined : (config.status_label ?? config._status_label_draft),
               }),
             }),
             'status_label.jinja': EditorFieldsType.tpl('status_label.jinja', {
               noLabel: true,
+              helper: true,
               showIf: (c: LovelaceConfig) => Boolean(c.status_label),
             }),
             'status_label.position': EditorFieldsType.select('status_label.position', {
@@ -1190,15 +1380,12 @@ const EditorFactory = {
 
   interactions: (badge: boolean) => {
     // isActive: show a field only if its negotiated action differs from the
-    // 'none' default. orAll: also show when the "show all" toggle
-    // (_show_all_actions) is on. _show_all_actions is ephemeral UI state:
-    // stored in raw config with _ prefix, stripped before config-changed
-    // dispatch, never saved to YAML. tap_action and icon_tap_action are always
-    // visible (no showIf): - tap_action default is 'more-info' — always
-    // relevant. - icon_tap_action default depends on the entity domain: 'none'
-    // for most entities, 'toggle' for lights, switches, etc. (patched at
-    // validation time via toggleDomain). Always showing it lets the hint reveal
-    // the effective default.
+    // 'none' default. orAll: also show when "show all" (_show_all_actions,
+    // ephemeral UI state) is on. tap_action/icon_tap_action stay always
+    // visible: tap_action's default ('more-info') is always relevant;
+    // icon_tap_action's default depends on entity domain ('toggle' for
+    // lights/switches, patched via toggleDomain) - always showing it lets
+    // the hint reveal the effective default.
     const isActive = (key: string) => (_: LovelaceConfig, n: Config) => n?.[key]?.action !== 'none';
     const orAll = (pred: (c: LovelaceConfig, n: Config) => boolean) => (c: LovelaceConfig, n: Config) =>
       Boolean(c._show_all_actions) || pred(c, n);

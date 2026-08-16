@@ -182,6 +182,22 @@ mouse/touch:
   navigation handle that inconsistently. They're independent controls now, side
   by side rather than one inside the other.
 
+### 🔧 Improvements
+
+- The visual editor now remembers a field's value across a mode toggle
+  (standard/entity/Jinja) instead of resetting it to blank — switch
+  `min_value`/`max_value`/`watermark.low`/`.high`/`alert_when.above`/`.below`,
+  `badge_icon`/`badge_color`, `bar_effect`, `hide`, `icon_animation`, or
+  `status_label` away from Jinja and back, and your template is still there.
+- Jinja-capable fields in the editor now show a short hint under the field for
+  what the template is expected to return (a number, a boolean, a string, or an
+  object with specific keys) instead of leaving you to guess from the docs.
+- Several fields in the editor's theme panel (`icon`/`color`, `bar_orientation`,
+  `bar_size`, `bar_segments`, `bar_scale`, `bar_color_mode`, `interpolate`)
+  could end up alone in their row instead of sharing it with their usual
+  neighbor, depending on which other options were active — all paired up
+  correctly now.
+
 ### 🐛 Notable fixes
 
 - The card could fail to load entirely on some older or embedded browsers (kiosk
@@ -335,6 +351,19 @@ mouse/touch:
   condition depends on don't change atomically. Now debounced so only the last,
   settled result is ever rendered.  
   ➡️ [Bug]: Cached / invalid Jinja result? #135 (@FoxP)
+- `climate`/`weather` entities used without an explicit `attribute:` rendered as
+  a flat 0% — the card now defaults to the setpoint temperature for `climate`
+  and the ambient temperature for `weather`, each shown with the correct unit
+  (`climate`: the system's configured °C/°F; `weather`: the unit that specific
+  attribute reports).
+- Clearing `theme` in the editor could leave it silently stuck — it wrote an
+  empty value instead of removing the key, which could wedge `bar_size`/
+  `bar_segments`/`bar_color_mode`/`interpolate` as if a theme were still active,
+  even on a config that was already saved that way.
+- A `bar_effect`/`hide` chip that became incompatible or hidden while still
+  selected (e.g. after changing `bar_color_mode`) stayed selected in the saved
+  config with no way to remove it from the editor — it's dropped automatically
+  now.
 
 ### 🧪 Try it: demo dashboard
 
@@ -345,6 +374,24 @@ reproducing the README's own recipes live. Import it with
 [`docs/demo-dashboard-helpers.yaml`][demo-dashboard-helpers.yaml] as a drop-in
 `homeassistant: packages:` file, and move the sliders to see everything react
 live.
+
+### 📚 Documentation
+
+Wondering how any of this degrades on an older or embedded browser?
+[`docs/graphic-effects-compatibility.html`](docs/graphic-effects-compatibility.html)
+is a standalone side-by-side of every graphic effect (gradients, `ping`/`blink`
+animations, `rainbow_full`, …) at both its modern and fallback tier — open it
+directly in the browser you want to check.
+
+The docs got a pass of their own alongside the code this cycle:
+[`docs/development.md`](docs/development.md) gains a Quick start chapter (clone,
+install, build, where to actually see your change), a clearer explanation of why
+the build targets `es2021`, and a couple of stale claims corrected;
+[`docs/troubleshooting.md`](docs/troubleshooting.md)'s Browser Compatibility
+section moved up front and got its own heading instead of being buried mid-page;
+and [`docs/configuration.md`](docs/configuration.md)/
+[`docs/contributing.md`](docs/contributing.md) were brought back in sync with
+everything this release actually shipped.
 
 Thanks to everyone who reported, tested and contributed 🙏
 

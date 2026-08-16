@@ -212,6 +212,9 @@ const HA_CONTEXT = {
     cover: { label: 'cover', attribute: 'current_position' },
     light: { label: 'light', attribute: 'brightness' },
     fan: { label: 'fan', attribute: 'percentage' },
+    // No unit_of_measurement on climate/weather - see EntityHelper.unit.
+    climate: { label: 'climate', attribute: 'temperature' },
+    weather: { label: 'weather', attribute: 'temperature' },
   },
   numberFormat: {
     decimal_comma: 'de-DE', // 1.234,56 (Allemagne, France, etc.)

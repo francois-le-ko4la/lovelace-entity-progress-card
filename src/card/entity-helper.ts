@@ -210,6 +210,14 @@ class EntityHelper {
     if (this.entityType.isTimer) return CARD.config.unit.flexTimer;
     if (this.entityType.isDuration) return CARD.config.unit.second;
     if (this.entityType.isCounter) return CARD.config.unit.disable;
+    // Neither carries unit_of_measurement: climate uses the global unit
+    // system, weather its own per-attribute `<attr>_unit` key.
+    if (this.#domain === HA_CONTEXT.attributeMapping.climate.label) return this.#hassProvider.temperatureUnit;
+    if (this.#domain === HA_CONTEXT.attributeMapping.weather.label) {
+      const attr = this.#attribute || HA_CONTEXT.attributeMapping.weather.attribute;
+      const unitAttr = this.#hassProvider.getEntityAttribute<unknown>(this.#entity, `${attr}_unit`);
+      return is.nonEmptyString(unitAttr) ? unitAttr : null;
+    }
 
     return this.#hassProvider.getEntityProp(this.#entity, 'unit_of_measurement');
   }

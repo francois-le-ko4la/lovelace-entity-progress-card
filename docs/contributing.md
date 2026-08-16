@@ -200,7 +200,10 @@ test: add validation for custom theme ranges
 
 ### Testing Your Changes
 
-Before submitting a PR, please ensure:
+There's no automated test suite (see
+[Rendering & performance](development.md#rendering--performance) and elsewhere
+in the dev guide for how correctness is verified instead). Before submitting a
+PR, please ensure:
 
 - ✅ `npm run validate` passes locally (syntax check + lint + translations sync)
   — CI runs the same check on `src/**` changes
@@ -213,6 +216,23 @@ Before submitting a PR, please ensure:
 - ✅ **Mobile/tablet** compatibility
 - ✅ **Various entity types** are supported
 - ✅ **Documentation** is updated
+
+**How to actually check the boxes above**: `npm run build:test` gives you
+`dist/entity-progress-card_dev.js` — point a `dashboard-resources:` entry (or a
+manually-added Lovelace resource) at it, then import
+[`docs/demo-dashboard-dev.yaml`][demo-dashboard-dev.yaml] as a Lovelace
+dashboard (and [`docs/demo-dashboard-helpers.yaml`][demo-dashboard-helpers.yaml]
+as a `homeassistant: packages:` file, for the input_helpers/scripts it
+references) in a real Home Assistant instance. It's a comprehensive showroom —
+one section per documented option, plus a non-regression card per closed bug —
+and is the actual way every fix in this project gets confirmed, not just read
+through. If your change is worth demonstrating, add a card for it in both
+`docs/demo-dashboard.yaml` and `docs/demo-dashboard-dev.yaml` (kept structurally
+parallel — the `-dev` file only differs by a `-dev` suffix on every custom card
+`type:`).
+
+[demo-dashboard-dev.yaml]: demo-dashboard-dev.yaml
+[demo-dashboard-helpers.yaml]: demo-dashboard-helpers.yaml
 
 <a id="community"></a>
 

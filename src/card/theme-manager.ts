@@ -236,22 +236,17 @@ class ThemeManager {
     return HA_CONTEXT.haColors.get(curColor as string) ?? curColor;
   }
 
-  // label's pill (background/border/text all derived from one base color)
-  // ports GitHub Primer's own IssueLabelToken dark-theme recipe (see
-  // @primer/react's IssueLabelToken.module.css @define-mixin
-  // darkThemeIssueLabel) rather than a plain luminance-switched black/white
-  // pick: background stays a translucent tint of the base color, and
-  // border/text are the *same hue*, lightened just enough to read on a dark
-  // background - already-light colors barely move, dark/saturated ones
-  // (GitHub's own default reds/greens included) get lightened more. The CSS
-  // side does the actual calc() math (see .status-label in styles.ts,
-  // identical formula to Primer's own); this only splits the resolved color
-  // into the r/g/b/h/s/l components that formula needs. The caller passes
-  // the browser's own computed rgb(...)/rgba(...) readback rather than the
-  // raw config string, so this only ever has to parse one format (an HA
-  // color name already adapted above, a hex/rgb from a theme zone, a raw
-  // card_mod override, or a var() this function never sees resolved, are
-  // all normalized to rgb(...) by the browser before it gets here).
+  // label's pill ports GitHub Primer's IssueLabelToken dark-theme recipe
+  // rather than a plain luminance-switched black/white pick: background
+  // stays a translucent tint of the base color, border/text are the *same
+  // hue*, lightened just enough to read on a dark background - dark/
+  // saturated colors get lightened more, light ones barely move. The CSS
+  // side does the actual calc() math (.status-label in styles.ts, same
+  // formula as Primer's); this only splits the resolved color into the
+  // r/g/b/h/s/l components that formula needs. The caller passes the
+  // browser's computed rgb(...) readback, so this only ever parses one
+  // format regardless of the original source (HA color name, hex, theme
+  // zone, card_mod override).
   static labelColorComponents(
     computedRgb: string,
   ): { r: number; g: number; b: number; h: number; s: number; l: number } | null {
@@ -284,34 +279,22 @@ class ThemeManager {
     return { h: Math.round(hue * 60), s: Math.round(saturation * 100), l: Math.round(lightness * 100) };
   }
 
-  // `window` is the [start, end] slice of the theme's own 0-100 scale (the
-  // full min_value/max_value range) that this call represents - defaults to
-  // the whole scale for the normal, non-center_zero single-arm bar. A
-  // center_zero arm only ever covers part of that scale (zeroValue..max for
-  // the positive arm, zeroValue..min for the negative one, see
-  // ViewBase.themeDivergingGradient) - passing that sub-range here reprojects
-  // just the zones that fall inside it onto the arm's own local 0-100%,
-  // exactly the same idea as EntityCollectionHelper.getDivergingGradients
-  // scoping bar_stack's magnitude math to each arm's own half-range. `start`
-  // and `end` don't have to be in ascending order: the negative arm's window
-  // is (zeroPercent, 0) - local 0% at the arm's empty edge (near center),
-  // local 100% at its full edge (at the scale's own 0%/min) - deliberately
-  // reversed from the positive arm's (zeroPercent, 100), since the arm grows
+  // `window` is the [start, end] slice of the theme's 0-100 scale this call
+  // covers - defaults to the whole scale for a normal single-arm bar. A
+  // center_zero arm only covers part of it (zeroValue..max / zeroValue..min,
+  // see ViewBase.themeDivergingGradient); passing that sub-range reprojects
+  // the zones inside it onto the arm's own local 0-100%. `start`/`end` don't
+  // need ascending order: the negative arm's window is (zeroPercent, 0) -
+  // reversed from the positive arm's (zeroPercent, 100), since it grows
   // toward the opposite end of the scale.
-  // `valueRange` is the bar's own min_value/max_value - the visible "scope" a
-  // non-percentage theme's zone bounds (e.g. THEME.temperature's -50..100,
-  // real degrees, `percent: false`, or any custom_theme) get projected onto,
-  // converting them into the same 0-100% space fillPercent/window already
-  // use. This is deliberately the bar's own scope, not the theme's full own
-  // range: by default (min_value 0, non-center_zero) only the theme's
-  // positive branch is in view, so only the zones inside [0, max_value] get
-  // stretched across the visible bar - widening min_value (or enabling
-  // center_zero, see ViewBase.themeDivergingGradient) widens what's in scope
-  // accordingly. Without this conversion, a value-based theme's zones were
-  // compared directly against fillPercent as if they were already
-  // percentages - meaningless for any theme whose bounds aren't already in
-  // 0-100 (isBasedOnPercentage catches this correctly for the icon/bar color
-  // in #setStyle already; buildGradient just never consulted it before).
+  // `valueRange` is the bar's own min_value/max_value - the visible scope a
+  // non-percentage theme's zone bounds (e.g. temperature's -50..100) get
+  // projected onto, converting them into the same 0-100% space fillPercent
+  // already uses. Deliberately the bar's own scope, not the theme's full
+  // range: by default only [0, max_value] is in view, widening min_value (or
+  // center_zero) widens it accordingly. Without this, a value-based theme's
+  // zones were compared directly against fillPercent as if already
+  // percentages - meaningless for bounds not already 0-100.
   buildGradient(
     fillPercent: number,
     mode: string,
@@ -341,16 +324,12 @@ class ThemeManager {
           max: toValuePercent(level.max ?? 100),
         }));
 
-    // rainbow_full always paints every zone across the *whole current window*
-    // (not just "up to fillPercent" - see .rainbow-full-bar in styles.ts, the
-    // current value is conveyed by a moving marker instead) - so the
-    // fillPercent > 0 guard below, which exists only to bail out on a
-    // partial reveal with nothing yet to show, doesn't apply to it. The
-    // window/toLocal/style computation right after is still shared as-is:
-    // it's what makes center_zero's two arms (see
-    // ViewBase.themeDivergingGradient's [zeroPercent, 100]/[zeroPercent, 0]
-    // windows) each show only their own half of the theme, same as
-    // segment/rainbow already do.
+    // rainbow_full always paints every zone across the whole current window,
+    // not just "up to fillPercent" (the value is conveyed by a moving marker
+    // instead, see .rainbow-full-bar in styles.ts) - so the fillPercent > 0
+    // guard below doesn't apply to it. The window/toLocal/style computation
+    // right after is still shared: it's what makes center_zero's two arms
+    // each show only their own half of the theme, same as segment/rainbow.
     if (mode !== 'rainbow_full' && !(fillPercent > 0)) return null;
 
     const [windowStart, windowEnd] = window;
@@ -372,30 +351,23 @@ class ThemeManager {
         };
       })
       .filter((level) => (level.max ?? 0) > (level.min ?? 0))
-      // A reversed window (the negative arm's [zeroPercent, 0], see this
-      // method's own comment) inverts position order relative to
-      // currentStyle's own value-ascending order - e.g. temperature's indigo
-      // (lowest value) ends up at the highest local position. CSS
+      // A reversed window (the negative arm's [zeroPercent, 0]) inverts
+      // position order relative to currentStyle's value-ascending order -
+      // e.g. temperature's indigo ends up at the highest local position. CSS
       // linear-gradient stops must be non-decreasing or the browser clamps
-      // every stop after an out-of-order one up to that same position,
-      // collapsing everything past it into one flat color. Sorting by local
-      // position (a no-op for the non-reversed window, already in order)
-      // keeps stops monotonic regardless of window direction.
+      // everything past an out-of-order stop into one flat color. Sorting by
+      // local position (a no-op for the normal window) keeps stops
+      // monotonic regardless of direction.
       .sort((a, b) => (a.min ?? 0) - (b.min ?? 0));
 
-    // A reversed window (center_zero's negative arm, [zeroPercent, 0]) uses
-    // the opposite CSS shift direction from every other case (see
-    // styles.ts's `.negative` vs `.positive`/plain `.inner` transforms: the
-    // negative arm's box slides the *other* way to grow from center toward
-    // the low end) - its own "tip" (current value) and "anchor" (zeroValue)
-    // end up on the box's opposite edges from what toElemPos below assumes.
-    // Rather than re-deriving toElemPos/the stop-building logic per
-    // direction, mirroring the gradient's own CSS direction achieves the
-    // same result: every position this function computes lands exactly
-    // where it would for a normal window, just reflected - verified against
-    // concrete pixel math for center_zero + a real-value theme's negative
-    // arm (issue #129 follow-up). Hoisted above the mode branches - both
-    // rainbow_full and segment/rainbow below need it.
+    // A reversed window (center_zero's negative arm) uses the opposite CSS
+    // shift direction from every other case (styles.ts's `.negative` box
+    // slides the other way, growing from center toward the low end) - its
+    // "tip"/"anchor" land on the box's opposite edges from what toElemPos
+    // assumes. Rather than re-deriving the stop-building logic per
+    // direction, mirroring the gradient's CSS direction achieves the same
+    // result, reflected (verified against concrete pixel math, issue #129
+    // follow-up). Hoisted above the mode branches - both need it.
     const isReversedWindow = windowEnd < windowStart;
     const direction = isReversedWindow ? (isVertical ? 'to bottom' : 'to left') : isVertical ? 'to top' : 'to right';
 
@@ -440,14 +412,13 @@ class ThemeManager {
       const first = col(visible[0]);
       const stops = [`${first} 0%`];
       if (offset > 0) stops.push(`${first} ${offset.toFixed(2)}%`);
-      // A stop at each zone's own midpoint rather than its start: the first
-      // zone gets to hold its own color through half its width instead of
-      // fading from the very first instant, matching the qualitative shape
-      // (hold, then fade) every other zone already gets one way or another -
-      // no hard cut, and two same-colored zones back to back (see the
-      // critical_when_* theme splits) naturally hold flat between their
-      // midpoints. The last visible zone is only ever partially filled, so
-      // its midpoint uses fillPercent instead of its (not yet reached) max.
+      // A stop at each zone's midpoint, not its start: the first zone holds
+      // its color through half its width instead of fading from the first
+      // instant, matching the "hold, then fade" shape every other zone gets.
+      // Two same-colored zones back to back (critical_when_* splits)
+      // naturally hold flat between their midpoints. The last visible zone
+      // is only partially filled, so its midpoint uses fillPercent instead
+      // of its not-yet-reached max.
       visible.forEach((level, i) => {
         const start = level.min ?? 0;
         const end = i === visible.length - 1 ? fillPercent : (level.max ?? 100);
@@ -460,15 +431,11 @@ class ThemeManager {
     return null;
   }
 
-  // rainbow_full's own gradient: every zone in `style` laid out edge-to-edge,
-  // each holding its color through its own midpoint before fading into the
-  // next - same qualitative "hold, then fade" shape as the 'rainbow' branch
-  // above, just unscaled/unclipped by fillPercent since the whole window is
-  // always shown regardless of the current value. `style` is already
-  // windowed/clamped to local 0-100% and `direction` already accounts for a
-  // reversed window (see buildGradient's own callsite) - both shared as-is
-  // with the segment/rainbow branches, so this needs no window/direction
-  // logic of its own.
+  // rainbow_full's gradient: every zone in `style` laid out edge-to-edge,
+  // same "hold, then fade" shape as 'rainbow' above, just unclipped by
+  // fillPercent since the whole window is always shown. `style` is already
+  // windowed and `direction` already accounts for a reversed window (shared
+  // with segment/rainbow), so this needs no window/direction logic of its own.
   static #buildFullRainbowGradient(style: ThemeZone[], defaultColor: string | null, direction: string): string | null {
     if (style.length === 0) return null;
 

@@ -112,23 +112,17 @@ class ViewCore {
   // (also what a plain static hide: [...] array stays at forever, since
   // nothing ever calls setResolvedHide for it).
   #resolvedHide: Set<string> | null = null;
-  // Template's own theme support (percent: true themes only - see
-  // schema.ts's own comment on Template's `theme` field). Declared here
-  // rather than ViewBase, which already has its own separate #theme (entity
-  // value/min-max driven) - CardTemplateView/BadgeTemplateView are ViewCore's
-  // own direct subclasses (siblings of ViewBase, not descendants of it), so
-  // this is the shared spot both reach. Unused (inert) on ViewBase's own
-  // subclasses, same as _actionHelper/hasDisabledIconTap's own promotion to
-  // HACore earlier.
+  // Template's own theme support (percent: true themes only). Declared here
+  // rather than ViewBase (which has its own separate #theme) since
+  // CardTemplateView/BadgeTemplateView are ViewCore's direct siblings of
+  // ViewBase, not descendants - this is the shared spot both reach. Inert on
+  // ViewBase's own subclasses.
   #templateTheme = new ThemeManager();
   // Template's own plain color/bar_color Jinja (no theme active) - see
-  // barColor/iconColor below. cards.ts's own color/bar_color handlers write
-  // straight to CSS via _dom.setStyle and nothing else, so without caching
-  // the resolved value here too, anything that needs to *read* the current
-  // color (status_label's own color_source: 'bar'/'icon' fallback, in
-  // particular) had nothing to read - barColor/iconColor returned null
-  // whenever a plain Jinja override was active, same class of gap
-  // #templateTheme itself was built to close for the theme case.
+  // barColor/iconColor below. cards.ts's own handlers write straight to CSS
+  // via _dom.setStyle only, so without caching it here too, status_label's
+  // color_source: 'bar'/'icon' fallback had nothing to read - same class of
+  // gap #templateTheme closes for the theme case.
   #templateColorValue: string | null = null;
   #templateBarColorValue: string | null = null;
 
@@ -165,15 +159,11 @@ class ViewCore {
     return this._configHelper.config;
   }
 
-  // Mirrors HACore#_addBaseClasses's own vertical-bar/horizontal-bar
-  // decision: gradients (segment/rainbow/bar_stack) are built left-to-right
-  // by default, but the bar itself fills bottom-to-top in these two
-  // combinations, so the gradient direction has to follow or the color
-  // progression visibly runs the wrong way. Lives here (not as a private
-  // #isVerticalBar on ViewBase, where every other reader of it lives) so
-  // Template's own templateThemeGradient/-DivergingGradient below - defined
-  // on ViewCore, a ViewBase sibling, not a descendant - can read it too
-  // (same private-field-scoping reason as #templateTheme's own comment).
+  // Mirrors HACore#_addBaseClasses's vertical-bar/horizontal-bar decision:
+  // gradients are built left-to-right by default, but the bar fills
+  // bottom-to-top in these two combinations, so the direction has to follow.
+  // Lives here, not on ViewBase, so Template's own templateThemeGradient
+  // below (on ViewCore, a ViewBase sibling) can read it too.
   get isVerticalBar(): boolean {
     return (
       this.config.bar_orientation === 'up' &&
@@ -182,15 +172,12 @@ class ViewCore {
     );
   }
 
-  // Shared by watermark.low/high above (both ViewCore and ViewBase) and by
-  // ViewBase's own #resolveMaxValue/#resolveMinValue below: all four config
-  // options share the exact same "value config" shape (number (legacy) |
-  // { entity, attribute } | { jinja }, see schema.ts and
-  // config-helpers.js's checkValueConfig) - jinja mode resolves elsewhere
-  // (see #jinjaMaxValue/#jinjaMinValue/#jinjaWatermarkLow/#jinjaWatermarkHigh),
-  // so it's null here on purpose. `fallback` is the one thing that varies per
-  // caller: max_value always defaults to CARD.config.value.max, the other
-  // three have no default and stay null.
+  // Shared by watermark.low/high and #resolveMaxValue/#resolveMinValue
+  // below: all four share the same "value config" shape (number | { entity,
+  // attribute } | { jinja }, see schema.ts). Jinja mode resolves elsewhere
+  // (#jinjaMaxValue/#jinjaMinValue/etc.), so it's null here on purpose.
+  // `fallback` varies per caller: max_value defaults to CARD.config.value.max,
+  // the other three stay null.
   static _resolveValueConfig(
     cfg: number | { entity?: string; attribute?: string; jinja?: string } | null | undefined,
     fallback: number | null,
@@ -208,16 +195,11 @@ class ViewCore {
     this._currentValue.refresh();
     this._lowValue.refresh();
     this._highValue.refresh();
-    // Computed once per refresh instead of live in the isBatteryCharging
-    // getter: with battery_adaptive, a single refresh already reads it from
-    // resolvedTheme (this class) and twice more from
-    // HACore._iconAnimationStyle (icon-anim-battery-charging and its
-    // -shifted variant) - each access does a same-device entity scan, so
-    // without caching that's the same scan repeated 3x per hass update.
-    // Only bothers scanning at all when something on this card can actually
-    // read the result - every other card/badge/feature (the vast majority)
-    // would otherwise pay for a same-device entity scan on every single hass
-    // update for nothing.
+    // Computed once per refresh instead of live in isBatteryCharging: with
+    // battery_adaptive, a single refresh reads it 3x (resolvedTheme +
+    // icon-anim-battery-charging + its -shifted variant), each a same-device
+    // entity scan without caching. Only scans when something can actually
+    // read the result, or every card would pay for it on every hass update.
     this.#isBatteryChargingCache =
       this.iconAnimationEffect === 'battery_charging' || this.config?.theme === 'battery_adaptive'
         ? ViewCore.#computeIsBatteryCharging(this.entity as string)
@@ -267,19 +249,14 @@ class ViewCore {
   }
 
   // How often (ms) to locally re-drive a template's display; null = no local
-  // loop needed at all. Template's default (fast_refresh unset/false) needs
-  // nothing here - HA's own render_template push already fires once a
-  // minute on its own for a now()/utcnow() Jinja field (issue #127), for
-  // free. `fast_refresh: true` opts into the same 1s/round-second cadence
-  // ViewBase uses for a seconds-showing unit below, via
-  // EntityProgressTemplateBase._onAutoRefreshTick's forced resubscribe (see
-  // cards.ts) - there's no unit to key off of for arbitrary Jinja text.
-  // Not gated on isActiveTimer: a now()-driven countdown against a
-  // non-timer entity (sun.sun, input_datetime...) needs the same per-second
-  // push and has no timer/active state to key off of - fast_refresh alone
-  // is the user's explicit opt-in, same as it always was for timers.
-  // ViewBase overrides this with unit-aware card/badge/feature behavior,
-  // which doesn't involve a Jinja push at all.
+  // loop needed. Default (fast_refresh unset/false) needs nothing - HA's own
+  // render_template push already fires once a minute for a now()/utcnow()
+  // field (#127), for free. `fast_refresh: true` opts into the same
+  // 1s/round-second cadence ViewBase uses, via
+  // EntityProgressTemplateBase._onAutoRefreshTick's forced resubscribe. Not
+  // gated on isActiveTimer: any now()-driven Jinja field (sun.sun,
+  // input_datetime...) needs the same push, so fast_refresh is the explicit
+  // opt-in. ViewBase overrides this with unit-aware behavior instead.
   get autoRefreshInterval(): number | null {
     return this.config?.fast_refresh ? 1000 : null;
   }
@@ -290,25 +267,17 @@ class ViewCore {
       : CARD.layout.orientations.horizontal.grid.grid_rows;
   }
 
-  // issue #133 - a hidden icon needing an extra grid row for bar_size:
-  // xlarge (or bar_position: below) was a real, independent case the old
-  // ternary never composed with: `hidden ? 1 : base + extraRow` let the
-  // hidden branch's flat 1 short-circuit the extraRow check entirely, so an
-  // xlarge bar with the icon hidden got squeezed into a single grid row
-  // regardless. Hiding the icon only ever changes the *base* row count
-  // (irrelevant for horizontal, whose base is already 1; it's what lets
-  // vertical collapse from 2 rows to 1), never whether bar_size/bar_position
-  // need one more row on top of that base.
+  // issue #133 - a hidden icon needing an extra row for bar_size: xlarge (or
+  // bar_position: below) was a case the old ternary never composed with:
+  // `hidden ? 1 : base + extraRow` let the hidden branch's flat 1
+  // short-circuit extraRow entirely. Hiding the icon only changes the
+  // *base* row count, never whether bar_size/bar_position need one more.
   //
-  // Single source of truth for both consumers of this row count: HA's own
-  // Sections grid (cardLayoutOptions below → getGridOptions) *and*
-  // HABase._addBaseParameter's CSS min-height fallback (used everywhere
-  // that grid reservation doesn't apply - Masonry, embedded in another
-  // card). Before this was extracted, only cardLayoutOptions accounted for
-  // bar_size/bar_position/hidden-icon - the CSS fallback had its own,
-  // static "always 1 row (horizontal) / always 2 rows (vertical)" formula,
-  // so the exact same #133 squeeze could still happen outside Sections,
-  // just never reported there.
+  // Single source of truth for both consumers: HA's Sections grid
+  // (cardLayoutOptions → getGridOptions) *and* HABase._addBaseParameter's
+  // CSS min-height fallback (Masonry, embedded cards). Before this was
+  // extracted, the CSS fallback had its own static formula, so the same
+  // #133 squeeze could happen outside Sections, just unreported.
   get minGridRows(): number {
     if (!this.config) return CARD.layout.orientations.horizontal.grid.grid_min_rows;
     const layout = CARD.layout.orientations[this.config.layout as keyof typeof CARD.layout.orientations];
@@ -357,14 +326,10 @@ class ViewCore {
     layout.grid.grid_min_rows = this.minGridRows;
     layout.grid.grid_min_columns = this.minGridColumns;
     // density: compact pins the card to its smallest useful size outright -
-    // default *and* ceiling, not just a narrower floor - without this, a card
-    // added (or a card whose config has no explicit grid_options override
-    // yet) still starts at the orientation's normal default footprint, and
-    // even once the default shrinks too (grid_rows/grid_columns just below),
-    // Sections still lets it be dragged back out wider/taller by hand - a max
-    // is the only way to actually rule that out. A card with its own explicit
-    // `grid_options` in config keeps it regardless - same "explicit wins"
-    // precedent as `height`.
+    // default *and* ceiling, not just a narrower floor. Without a max,
+    // Sections still lets it be dragged back out wider/taller by hand. A
+    // card with its own explicit `grid_options` keeps it regardless - same
+    // "explicit wins" precedent as `height`.
     if (this.config.density === 'compact') {
       layout.grid.grid_rows = this.minGridRows;
       layout.grid.grid_columns = this.minGridColumns;
@@ -381,13 +346,10 @@ class ViewCore {
   }
 
   // theme (percent: true only) wins outright when configured - same
-  // precedence as ViewBase.iconColor's own `theme.iconColor || config.color`.
-  // Reading it here (not just from _managePercent's own one-off push) is what
-  // makes every other repaint (_updateCSS, called on every hass update -
-  // EntityProgressTemplateBase._handleHassUpdate → refresh()) see the themed
-  // color too, instead of only the instant right after a percent Jinja push -
-  // #templateTheme.value already holds the last pushed percent regardless of
-  // what triggered this particular read.
+  // precedence as ViewBase.iconColor's `theme.iconColor || config.color`.
+  // Reading it here (not just from _managePercent's one-off push) is what
+  // makes every other repaint (_updateCSS on every hass update) see the
+  // themed color too, not just right after a percent Jinja push.
   get barColor(): string | null {
     if (this._configHelper.config.theme) return ThemeManager.adaptColor(this.templateThemeBarColor);
     if (this._configHelper.config.bar_color) return this.#templateBarColorValue;
@@ -537,14 +499,12 @@ class ViewCore {
   // likelihood order; first one present wins. Covers both a boolean flag
   // (true) and a string status enum (e.g. battery_state: 'charging').
   static #CHARGING_ATTRIBUTES = ['battery_charging', 'charging', 'is_charging'];
-  // Exact enum values, not a substring match: Renault's own charge_state
-  // sensor has both 'charge_in_progress' AND 'charge_ended' /
-  // 'waiting_for_a_planned_charge', which all contain "charge" - a loose
-  // match would treat "finished" and "not yet started" as charging too. Same
-  // trap with MG SAIC's "Charging Status" sensor (bmsChrgSts): "charging
-  // (ac)"/"charging (dc)"/"super offboard charging" are actively charging,
-  // but "charging finished"/"charging stopped"/"fault charging"/"scheduled
-  // charging" all also contain "charging" while meaning the opposite.
+  // Exact enum values, not a substring match: Renault's charge_state sensor
+  // has both 'charge_in_progress' AND 'charge_ended'/'waiting_for_a_planned_
+  // charge', all containing "charge" - a loose match would treat "finished"
+  // as charging too. Same trap with MG SAIC's bmsChrgSts: "charging (ac/dc)"
+  // is active, but "charging finished/stopped/fault/scheduled" all also
+  // contain "charging" while meaning the opposite.
   static #CHARGING_STATES = new Set([
     'charging',
     'charge_in_progress',
@@ -554,14 +514,12 @@ class ViewCore {
     'super offboard charging',
   ]);
 
-  // EV integrations tend to report charging as the entity's own state rather
-  // than an attribute, in one of two shapes: a text status sensor (Tesla
-  // Fleet's sensor.<car>_charging_state, state === 'charging') or, more
-  // canonically, a binary_sensor with device_class: battery_charging (BYD's
-  // hass-byd-vehicle "is_charging"), where 'on' means charging - never
-  // 'charging' itself, since binary_sensor is always on/off. The device_class
-  // check keeps a bare 'on' from matching any unrelated on/off entity a user
-  // might point icon_animation at.
+  // EV integrations tend to report charging as the entity's own state, in
+  // one of two shapes: a text status sensor (Tesla Fleet's
+  // sensor.<car>_charging_state === 'charging') or, more canonically, a
+  // binary_sensor with device_class: battery_charging (BYD's "is_charging",
+  // 'on' means charging). The device_class check keeps a bare 'on' from
+  // matching any unrelated on/off entity.
   static #entityReportsCharging(hassProvider: HassProviderSingleton, entityId: string): boolean {
     if (!hassProvider.isEntityAvailable(entityId)) return false;
     const state = String(hassProvider.getEntityProp(entityId, 'state') ?? '').toLowerCase();
@@ -573,15 +531,12 @@ class ViewCore {
     });
   }
 
-  // Trust the card's own `entity` first - it's what the user actually
-  // configured, and a same-device sibling should never shadow a signal
-  // already present on it. Falls back to scanning every same-device entity
-  // (not just ones whose id contains "charg") for integrations that split
-  // the percentage and the charging status across two entities: Home
-  // Assistant's own Companion App is the case that forced this - its
-  // charging-status entity is named battery_state, no "charg" substring
-  // anywhere, which an entity_id-based guess (like washing_machine's brands)
-  // would never find, even though its state is plain 'charging'.
+  // Trust the card's own `entity` first - a same-device sibling should never
+  // shadow a signal already present on it. Falls back to scanning every
+  // same-device entity (not just ones with "charg" in the id) for
+  // integrations that split percentage and charging status: HA's Companion
+  // App is the case that forced this - its charging entity is named
+  // battery_state, no "charg" substring, but state is plain 'charging'.
   static #computeIsBatteryCharging(entity: string): boolean {
     const hassProvider = HassProviderSingleton.getInstance();
     if (ViewCore.#entityReportsCharging(hassProvider, entity)) return true;
@@ -609,32 +564,22 @@ class ViewCore {
   }
 
   // ─── Template's own theme support (percent themes only) ───────────────────
-  // #templateTheme's own comment above explains why this lives here rather
-  // than reusing ViewBase's #theme. setTemplateThemeValue is only ever
-  // reached from _managePercent's own `if (config.theme)` branch (cards.ts) -
-  // deliberately not wired into the shared set config above, which every
-  // card/badge/feature instance runs through regardless of whether it ever
-  // reads templateThemeIconColor/-BarColor below. #templateTheme.value stays
-  // memoized at that last-pushed percent, so barColor/iconColor above read
-  // the right color on *any* repaint - not just the instant right after a
-  // push. Without this, a plain hass update (_updateCSS, run on every
-  // EntityProgressTemplateBase._handleHassUpdate) used to repaint from these
-  // two getters and revert to the plain, untheme'd default a moment later.
+  // setTemplateThemeValue is only reached from _managePercent's own
+  // `if (config.theme)` branch, not wired into the shared set config above.
+  // #templateTheme.value stays memoized at the last-pushed percent, so
+  // barColor/iconColor read the right color on *any* repaint - without this,
+  // a plain hass update used to repaint and revert to the untheme'd default.
 
   setTemplateThemeValue(percent: number) {
     this.#templateTheme.value = percent;
   }
 
-  // Re-resolved on every read below, not just cached once at
-  // setTemplateThemeValue's own push - resolvedTheme's battery_adaptive
-  // branch depends on isBatteryCharging, which can flip without percent
-  // itself changing at that exact instant (plugging in a charger while the
-  // reading briefly holds steady) - same reasoning as ViewBase.refresh's own
-  // unconditional re-configure of #theme for battery_adaptive on every hass
-  // update. Reconfiguring costs a few property assignments (ThemeManager.
-  // theme's own setter, no loop/computation) - cheap enough to redo on every
-  // color/gradient read instead of tracking a separate "did the resolved
-  // theme name change" flag.
+  // Re-resolved on every read, not just cached at setTemplateThemeValue's
+  // push - resolvedTheme's battery_adaptive branch depends on
+  // isBatteryCharging, which can flip without percent itself changing
+  // (plugging in a charger while the reading briefly holds steady).
+  // Reconfiguring costs a few property assignments only, cheap enough to
+  // redo on every read instead of tracking a separate "did it change" flag.
   #refreshTemplateTheme() {
     this.#templateTheme.configure({ theme: this.resolvedTheme, customTheme: undefined, interpolate: false });
   }
@@ -673,11 +618,8 @@ class ViewCore {
   // center_zero's own equivalent of templateThemeGradient above - mirrors
   // ViewBase.themeDivergingGradient, but Template has no min_value/max_value
   // to derive a zeroPercent from: its percent field is -100..100 by
-  // convention under center_zero (see card-themes.ts's own signed-theme
-  // comment), so zero always sits at the fixed midpoint (50) for a regular
-  // theme; a signed theme (critical_when_extreme_center et al.) still spans
-  // the full -100..100 as one continuous scale, same as
-  // ViewBase.themeDivergingGradient's own isSigned branch.
+  // convention under center_zero, so zero sits at the fixed midpoint (50)
+  // for a regular theme; a signed theme still spans -100..100 as one scale.
   get templateThemeDivergingGradient() {
     if (!this._configHelper.config.theme || !this._configHelper.config.center_zero) return null;
     this.#refreshTemplateTheme();
@@ -734,13 +676,10 @@ class ViewCore {
   }
 
   // Same split as isBatteryCharging: the card's `entity` is usually the
-  // progress value (Home Connect's program_progress %, Miele's
-  // elapsed_time), not the status sensor that actually carries 'run'/
-  // 'in_use' (operation_state/status) - a different entity on the same
-  // device. Unlike charging, there's no shared entity_id keyword across
-  // brands to filter on (operation_state/status/machine_state don't share a
-  // substring), so the fallback checks every same-device sensor's state
-  // instead of its name.
+  // progress value (Home Connect's program_progress %, Miele's elapsed_time),
+  // not the status sensor carrying 'run'/'in_use' - a different entity on
+  // the same device. No shared entity_id keyword across brands to filter on,
+  // so the fallback checks every same-device sensor's state, not its name.
   get isWashingMachineActive(): boolean {
     if (this.isEntityActive) return true;
     const hassProvider = HassProviderSingleton.getInstance();
@@ -816,13 +755,10 @@ class ViewCore {
 
   // Single source of truth for "is X currently hidden", static `hide: [...]`
   // and Jinja `hide: "{{ ... }}"` alike. #resolvedHide is null until a real
-  // Jinja push writes to it via setResolvedHide (see HABase
-  // #_handleHiddenComponents) - reading config.hide directly below then
-  // covers exactly the static-array case (an unresolved Jinja string fails
-  // is.array, correctly reporting "nothing hidden yet", matching the CSS
-  // classes' own identical wait-for-first-push behavior). Once a push has
-  // landed, the cache wins outright and config.hide (still the raw template
-  // string) is never consulted again until the next `set config`.
+  // Jinja push writes it via setResolvedHide - reading config.hide directly
+  // then covers the static-array case (an unresolved Jinja string fails
+  // is.array, correctly reporting "nothing hidden yet"). Once a push lands,
+  // the cache wins outright until the next `set config`.
   hasComponentHiddenFlag(component: string): boolean {
     if (this.#resolvedHide) return this.#resolvedHide.has(component);
     return is.array(this.config?.hide) && this.config.hide.includes(component);
@@ -944,15 +880,11 @@ class ViewBase extends ViewCore {
         );
       const addOne = ({ entity, attribute, color, subtract }: BarStackEntityConfig) =>
         this.#entityCollection.addEntity(entity, attribute, color, subtract);
-      // One consistent order for both modes: main entity first, then entities[]
-      // in list order. Exception: without center_zero, `subtract` is otherwise
-      // a silent no-op (there's no negative arm to place it in - see docs) -
-      // move subtract-marked entities before the main entity instead, as a
-      // visual tell that something atypical is configured here. Based on the
-      // static `subtract` flag only: an entity's live value isn't known yet at
-      // this point (only once refresh(hass) runs), so a
-      // naturally-negative-but-unmarked entity can't be detected here and keeps
-      // its normal after-main position.
+      // One consistent order: main entity first, then entities[] in list
+      // order. Exception: without center_zero, `subtract` is otherwise a
+      // silent no-op (no negative arm to place it in) - move subtract-marked
+      // entities before the main entity as a visual tell. Based on the
+      // static `subtract` flag only, since a live value isn't known yet here.
       if (!centerZero.enabled) {
         entities.filter((e: BarStackEntityConfig) => e.subtract).forEach(addOne);
         addMain();
@@ -1003,28 +935,21 @@ class ViewBase extends ViewCore {
       Object.assign(this.#minValue, ViewBase.#resolveMinValue(this._configHelper.config.min_value));
       this.#jinjaMinValue = null;
     }
-    // Watermark low/high are wired for timers too (unlike attribute/min/max
-    // above, which a timer overrides): the schema defaults watermark: {} to
-    // low: 20 / high: 80, so leaving these helpers unset on a timer made
-    // isAvailable() permanently false — a timer card with any watermark
-    // configured froze instead of rendering. set config isn't chained via
-    // super here (this method fully replaces ViewCore's own), so this reuses
-    // ViewCore._resolveValueConfig directly rather than duplicating it.
-    // jinjaWatermarkLow/High themselves are declared on ViewCore (not here),
-    // same reasoning/reset-via-public-setter as jinjaAlertAbove/Below below.
+    // Watermark low/high are wired for timers too (unlike attribute/min/max,
+    // which a timer overrides): the schema defaults watermark: {} to
+    // low: 20/high: 80, so leaving these unset made isAvailable() permanently
+    // false - a timer card with any watermark froze instead of rendering.
+    // Reuses ViewCore._resolveValueConfig directly since set config isn't
+    // chained via super here.
     Object.assign(this._lowValue, ViewCore._resolveValueConfig(this._configHelper.config?.watermark?.low, null));
     this.jinjaWatermarkLow = null;
     Object.assign(this._highValue, ViewCore._resolveValueConfig(this._configHelper.config?.watermark?.high, null));
     this.jinjaWatermarkHigh = null;
-    // alert_when.above/.below: same shape and same reasoning as watermark
-    // low/high above (see isAlertActive) - wired unconditionally too,
-    // alert_when isn't overridden by the timer path either. _aboveValue/
-    // _belowValue and the jinja override are declared on ViewCore (not
-    // here): isAlertActive is read polymorphically through the shared
-    // _cardView reference (see HACore._addBaseClasses), so
-    // #jinjaAlertAbove/#jinjaAlertBelow must live in the same class body
-    // that getter reads them from - reset via the public setter rather than
-    // the private field directly for that reason.
+    // alert_when.above/.below: same shape and reasoning as watermark low/high
+    // above - alert_when isn't overridden by the timer path either.
+    // #jinjaAlertAbove/#jinjaAlertBelow live on ViewCore since isAlertActive
+    // reads them polymorphically through the shared _cardView reference,
+    // reset via the public setter rather than the private field.
     Object.assign(this._aboveValue, ViewCore._resolveValueConfig(this._configHelper.config?.alert_when?.above, null));
     this.jinjaAlertAbove = null;
     Object.assign(this._belowValue, ViewCore._resolveValueConfig(this._configHelper.config?.alert_when?.below, null));
@@ -1166,14 +1091,11 @@ class ViewBase extends ViewCore {
 
   // center_zero's own equivalent of divergingBarStack above: two independent
   // per-arm theme gradients instead of one single-arm gradient, using the
-  // same ThemeManager.buildGradient this class's own colorGradient calls -
-  // just windowed to each arm's own slice of the min_value/max_value scale
-  // (see buildGradient's own comment). null when there's no active theme
-  // gradient to show (bar_color_mode: auto, or no theme/custom_theme), same
-  // convention as divergingBarStack, so callers can tell whether to apply or
-  // clear the dedicated CSS variables - and _updateCSS only reaches for this
-  // as a fallback when divergingBarStack (bar_stack's own, entity-driven
-  // diverging gradient) doesn't already own that pair of CSS variables.
+  // same ThemeManager.buildGradient colorGradient calls, windowed to each
+  // arm's own slice of the min_value/max_value scale. null when there's no
+  // active theme gradient (bar_color_mode: auto, or no theme) - _updateCSS
+  // only falls back to this when divergingBarStack doesn't already own the
+  // CSS variables.
   get themeDivergingGradient() {
     if (!this.isAvailable || !this.#percentHelper.isCenterZero) return null;
     const { min, max, zeroValue, percent } = this.#percentHelper;

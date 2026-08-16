@@ -159,6 +159,11 @@ class EntityProgressEffectChips extends ChipsBase {
 
   _render() {
     if (!this.#chips.size) return;
+    // A chip that goes from visible to hidden mid-selection (bar_color_mode
+    // switched away from 'auto' while e.g. 'gradient' was picked) must drop
+    // out of the selection too, not just visually disappear - otherwise it
+    // stays in config with no way left to remove it from this UI.
+    const stillHidden: string[] = [];
     for (const effect of EntityProgressEffectChips.#EFFECTS) {
       const chip = this.#chips.get(effect.value);
       if (!chip) continue;
@@ -166,8 +171,16 @@ class EntityProgressEffectChips extends ChipsBase {
       const blocked = (EntityProgressEffectChips.#INCOMPATIBLE[effect.value] ?? []).some((v) =>
         this.#selected.includes(v),
       );
-      chip.style.display = visible && !blocked ? '' : 'none';
+      const isVisible = visible && !blocked;
+      chip.style.display = isVisible ? '' : 'none';
       chip.classList.toggle('selected', this.#selected.includes(effect.value));
+      if (!isVisible && this.#selected.includes(effect.value)) stillHidden.push(effect.value);
+    }
+    if (stillHidden.length) {
+      this.#selected = this.#selected.filter((v) => !stillHidden.includes(v));
+      this.dispatchEvent(
+        new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value: this.#selected }, bubbles: true, composed: true }),
+      );
     }
   }
 }

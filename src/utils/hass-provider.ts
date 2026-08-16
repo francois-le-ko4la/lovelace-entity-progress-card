@@ -19,16 +19,13 @@ import { Logger, type LoggerInstance } from './log.js';
 declare const hassBrand: unique symbol;
 
 // Minimal, hand-maintained structural shape for the fields this card
-// actually reads off hass - not a full copy of home-assistant-frontend's or
-// custom-card-helpers' HomeAssistant (which doesn't even cover entities/
-// devices/areas/floors; Mushroom maintains its own extended copy for that
-// exact reason). Catches a typo'd/wrong field name at compile time that
-// `Record<string, unknown>` alone never would; the trailing `& Record<string,
-// unknown>` keeps every other real field HA provides but we don't touch from
-// becoming a type error (values stay `unknown`, so reads still have to narrow)
-// so nothing here can go stale-but-silently-wrong if HA's actual shape
-// evolves - the fields listed are exactly (and only) the ones grepped out of
-// this file, core.ts (hass.connection), and value-helpers.ts (hass.states).
+// actually reads off hass - not a full copy of custom-card-helpers'
+// HomeAssistant (doesn't cover entities/devices/areas/floors; Mushroom
+// maintains its own extended copy for that reason). Catches a typo'd field
+// name at compile time that `Record<string, unknown>` alone never would; the
+// trailing `& Record<string, unknown>` keeps every other real HA field from
+// becoming a type error. Fields listed are exactly the ones grepped out of
+// this file, core.ts, and value-helpers.ts.
 type EntityRegistryEntry = { name?: string; device_id?: string; area_id?: string } & Record<string, unknown>;
 type DeviceRegistryEntry = { name?: string; name_by_user?: string | null; area_id?: string } & Record<string, unknown>;
 type AreaRegistryEntry = { name?: string; floor_id?: string } & Record<string, unknown>;
@@ -52,17 +49,13 @@ type HomeAssistant = {
 } & Record<string, unknown>;
 
 // Same phantom-brand pattern, for a single entity's state object
-// (`hass.states[entityId]`) - distinct from `HomeAssistant` (the root object)
-// so the two can't be swapped positionally, e.g. in
+// (`hass.states[entityId]`) - distinct from `HomeAssistant` so the two can't
+// be swapped positionally, e.g. in
 // `this.#hass?.formatEntityAttributeValue?.(stateObj, prop)` below.
-//
-// Home Assistant's own websocket client (home-assistant-js-websocket)
-// splits this the same way: a stable envelope (entity_id/state/
-// last_changed/last_updated/context) around an `attributes` bag that
-// genuinely varies per domain/integration and stays untyped even in HA's
-// own official types (`HassEntity = HassEntityBase & { attributes: {[key:
-// string]: any} }`) - modeled here the same way (envelope typed, attributes a
-// Record), but tightened to `unknown` values so every read has to narrow.
+// HA's own websocket client splits this the same way: a stable envelope
+// around an `attributes` bag that varies per domain and stays untyped even
+// in HA's official types - modeled the same way here, tightened to
+// `unknown` values so every read has to narrow.
 declare const entityStateBrand: unique symbol;
 type EntityState = {
   readonly [entityStateBrand]: true;
@@ -176,6 +169,12 @@ class HassProviderSingleton {
 
   get version(): string | null {
     return this.#hass?.config?.version ?? null;
+  }
+
+  // Climate has no unit_of_measurement - HA's global unit setting instead.
+  get temperatureUnit(): string | null {
+    const unitSystem = this.#hass?.config?.unit_system;
+    return is.plainObject(unitSystem) && is.nonEmptyString(unitSystem.temperature) ? unitSystem.temperature : null;
   }
 
   get hasNewShapeStrategy(): boolean {

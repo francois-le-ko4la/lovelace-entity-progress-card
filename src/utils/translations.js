@@ -111,6 +111,25 @@ const TRANSLATIONS = {
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
       },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
+      },
       option: {
         theme: {
           battery_adaptive: 'Battery (adapts to charging state)',
@@ -404,6 +423,25 @@ const TRANSLATIONS = {
         density_toggle: 'Compact',
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
+      },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
       },
       option: {
         theme: {
@@ -699,6 +737,25 @@ const TRANSLATIONS = {
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
       },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
+      },
       option: {
         theme: {
           battery_adaptive: 'Battery (adapts to charging state)',
@@ -992,6 +1049,25 @@ const TRANSLATIONS = {
         density_toggle: 'Compact',
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
+      },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
       },
       option: {
         theme: {
@@ -1287,6 +1363,25 @@ const TRANSLATIONS = {
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
       },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
+      },
       option: {
         theme: {
           battery_adaptive: 'Battery (adapts to charging state)',
@@ -1580,6 +1675,25 @@ const TRANSLATIONS = {
         density_toggle: 'Compact',
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
+      },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
       },
       option: {
         theme: {
@@ -1875,6 +1989,25 @@ const TRANSLATIONS = {
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
       },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
+      },
       option: {
         theme: {
           battery_adaptive: 'Battery (adapts to charging state)',
@@ -2167,7 +2300,26 @@ const TRANSLATIONS = {
         status_label_toggle: 'Status label',
         density_toggle: 'Compact',
         badge_toggle: 'Badge',
-        badge_color_toggle: 'Independent color'
+        badge_color_toggle: 'Independent badge color'
+      },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
       },
       option: {
         theme: {
@@ -2463,6 +2615,25 @@ const TRANSLATIONS = {
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
       },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
+      },
       option: {
         theme: {
           battery_adaptive: 'Battery (adapts to charging state)',
@@ -2756,6 +2927,25 @@ const TRANSLATIONS = {
         density_toggle: 'Compact',
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
+      },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
       },
       option: {
         theme: {
@@ -3051,6 +3241,25 @@ const TRANSLATIONS = {
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
       },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
+      },
       option: {
         theme: {
           battery_adaptive: 'Battery (adapts to charging state)',
@@ -3344,6 +3553,25 @@ const TRANSLATIONS = {
         density_toggle: 'Compact',
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
+      },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
       },
       option: {
         theme: {
@@ -3639,6 +3867,25 @@ const TRANSLATIONS = {
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
       },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
+      },
       option: {
         theme: {
           battery_adaptive: 'Battery (adapts to charging state)',
@@ -3932,6 +4179,25 @@ const TRANSLATIONS = {
         density_toggle: 'Compact',
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
+      },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
       },
       option: {
         theme: {
@@ -4227,6 +4493,25 @@ const TRANSLATIONS = {
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
       },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
+      },
       option: {
         theme: {
           battery_adaptive: 'Battery (adapts to charging state)',
@@ -4520,6 +4805,25 @@ const TRANSLATIONS = {
         density_toggle: 'Compact',
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
+      },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
       },
       option: {
         theme: {
@@ -4815,6 +5119,25 @@ const TRANSLATIONS = {
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
       },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
+      },
       option: {
         theme: {
           battery_adaptive: 'Battery (adapts to charging state)',
@@ -5108,6 +5431,25 @@ const TRANSLATIONS = {
         density_toggle: 'Compact',
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
+      },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
       },
       option: {
         theme: {
@@ -5403,6 +5745,25 @@ const TRANSLATIONS = {
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
       },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
+      },
       option: {
         theme: {
           battery_adaptive: 'Battery (adapts to charging state)',
@@ -5696,6 +6057,25 @@ const TRANSLATIONS = {
         density_toggle: 'Compact',
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
+      },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
       },
       option: {
         theme: {
@@ -5991,6 +6371,25 @@ const TRANSLATIONS = {
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
       },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
+      },
       option: {
         theme: {
           battery_adaptive: 'Battery (adapts to charging state)',
@@ -6284,6 +6683,25 @@ const TRANSLATIONS = {
         density_toggle: 'Compact',
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
+      },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
       },
       option: {
         theme: {
@@ -6579,6 +6997,25 @@ const TRANSLATIONS = {
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
       },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
+      },
       option: {
         theme: {
           battery_adaptive: 'Battery (adapts to charging state)',
@@ -6872,6 +7309,25 @@ const TRANSLATIONS = {
         density_toggle: 'Compact',
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
+      },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
       },
       option: {
         theme: {
@@ -7167,6 +7623,25 @@ const TRANSLATIONS = {
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
       },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
+      },
       option: {
         theme: {
           battery_adaptive: 'Battery (adapts to charging state)',
@@ -7460,6 +7935,25 @@ const TRANSLATIONS = {
         density_toggle: 'Compact',
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
+      },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
       },
       option: {
         theme: {
@@ -7755,6 +8249,25 @@ const TRANSLATIONS = {
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
       },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
+      },
       option: {
         theme: {
           battery_adaptive: 'Battery (adapts to charging state)',
@@ -8048,6 +8561,25 @@ const TRANSLATIONS = {
         density_toggle: 'Compact',
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
+      },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
       },
       option: {
         theme: {
@@ -8343,6 +8875,25 @@ const TRANSLATIONS = {
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
       },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
+      },
       option: {
         theme: {
           battery_adaptive: 'Battery (adapts to charging state)',
@@ -8636,6 +9187,25 @@ const TRANSLATIONS = {
         density_toggle: 'Compact',
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
+      },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
       },
       option: {
         theme: {
@@ -8931,6 +9501,25 @@ const TRANSLATIONS = {
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
       },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
+      },
       option: {
         theme: {
           battery_adaptive: 'Battery (adapts to charging state)',
@@ -9224,6 +9813,25 @@ const TRANSLATIONS = {
         density_toggle: 'Compact',
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
+      },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
       },
       option: {
         theme: {
@@ -9519,6 +10127,25 @@ const TRANSLATIONS = {
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
       },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
+      },
       option: {
         theme: {
           battery_adaptive: 'Battery (adapts to charging state)',
@@ -9812,6 +10439,25 @@ const TRANSLATIONS = {
         density_toggle: 'Compact',
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
+      },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
       },
       option: {
         theme: {
@@ -10107,6 +10753,25 @@ const TRANSLATIONS = {
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
       },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
+      },
       option: {
         theme: {
           battery_adaptive: 'Battery (adapts to charging state)',
@@ -10400,6 +11065,25 @@ const TRANSLATIONS = {
         density_toggle: 'Compact',
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
+      },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
       },
       option: {
         theme: {
@@ -10695,6 +11379,25 @@ const TRANSLATIONS = {
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
       },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
+      },
       option: {
         theme: {
           battery_adaptive: 'Battery (adapts to charging state)',
@@ -10989,6 +11692,25 @@ const TRANSLATIONS = {
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
       },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
+      },
       option: {
         theme: {
           battery_adaptive: 'Battery (adapts to charging state)',
@@ -11282,6 +12004,25 @@ const TRANSLATIONS = {
         density_toggle: 'Compact',
         badge_toggle: 'Badge',
         badge_color_toggle: 'Independent color'
+      },
+      field_helper: {
+        min_value_jinja: 'Returns Number (42)',
+        max_value_jinja: 'Returns Number (100)',
+        watermark_low_jinja: 'Returns Number (20)',
+        watermark_high_jinja: 'Returns Number (80)',
+        alert_when_above_jinja: 'Returns Number (90)',
+        alert_when_below_jinja: 'Returns Number (10)',
+        icon_animation_jinja: 'Returns Boolean (true)',
+        badge_icon: 'Returns String (mdi:fan) or Object ({icon, color})',
+        badge_color: 'Returns String (#ff0000)',
+        status_label_jinja: 'Returns String (hot) or Object ({label, color})',
+        bar_effect: 'Returns String (shimmer) or List ([shimmer, gradient])',
+        hide: 'Returns String (icon, name) or List ([icon, name])',
+        name_info: 'Returns String (Living Room)',
+        custom_info: 'Returns String (Charging)',
+        icon: 'Returns String (mdi:fan)',
+        color: 'Returns String (#ff0000)',
+        bar_color: 'Returns String (#ff0000)'
       },
       option: {
         theme: {

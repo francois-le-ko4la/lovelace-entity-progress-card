@@ -25,15 +25,13 @@ interface Component {
 // most relevant to diagnosing load-order/registration issues (see issue #108).
 const registrationLog = Logger.create('EPB-registration', CARD_CONTEXT.debug.registration ? SEV.debug : SEV.info);
 
-// Shared by RegistrationHelper below and by the standalone editor
-// sub-components (chips.ts/list-editors.ts) that self-register at module
-// top-level: an uncaught throw here happens during module evaluation, not
-// inside any card's lifecycle, so it isn't scoped to a single instance - in a
-// bundled build, everything after it in evaluation order (including,
-// depending on where it sits in the bundle, unrelated code from other
-// modules) never runs. The !customElements.get(...) guard already covers the
-// expected "already registered" case; this catches anything else so a
-// surprise there can't take out code that has nothing to do with it.
+// Shared by RegistrationHelper and the standalone editor sub-components
+// (chips.ts/list-editors.ts) that self-register at module top-level: an
+// uncaught throw here happens during module evaluation, not inside a card's
+// lifecycle - in a bundled build, everything after it in evaluation order
+// never runs. The !customElements.get(...) guard covers "already
+// registered"; this catches anything else so a surprise can't take out
+// unrelated code.
 function defineElement(name: string, elementClass: CustomElementConstructor): void {
   if (CARD_CONTEXT.noRegistration) {
     registrationLog.debug(`define skipped (noRegistration): ${name}`);

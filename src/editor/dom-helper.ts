@@ -34,13 +34,9 @@ const ownerPanel = (el: PanelAwareField): HaExpansionPanel | null => {
 };
 
 // Field definitions (`def`, typed `FieldDef`), the raw config (`config`,
-// typed `LovelaceConfig` - config-changed's own shape, plus editor UI state)
-// and the negotiated one (`negotiated`, typed `Config` - post schema
-// validation) are all dynamic `any`-shaped bags - branded so none of the
-// three can be swapped positionally in the functions below (see
-// _updateField); selector/
-// context payloads stay plain `any`, no adjacent lookalike to confuse them
-// with.
+// typed `LovelaceConfig`) and the negotiated one (`negotiated`, typed
+// `Config`) are all dynamic `any`-shaped bags - branded so none of the three
+// can be swapped positionally in the functions below (see _updateField).
 class EditorDOMHelper extends DOMHelper {
   // ─── Field registration ───────────────────────────────────────────────────
 

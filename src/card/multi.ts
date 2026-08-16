@@ -53,17 +53,15 @@ type ValueTarget = {
 const FEATURE_HEIGHT_VAR = '--feature-height';
 
 // Minimal own stylesheet (V1). TODO: fold into the shared constructed-sheet
-// path the cards use (getSharedStyleSheet) instead of a per-instance <style>.
+// path the cards use instead of a per-instance <style>.
 //
-// Bare rules (no wrapper) suit the Feature case: HA's own tile feature row
-// (hui-card-feature) already provides the horizontal inset and measures our
-// natural (unconstrained) height to size the tile - so children just stack in
-// their own natural height, no padding/height override needed from us.
+// Bare rules (no wrapper) suit the Feature case: HA's tile feature row
+// already provides the horizontal inset and measures our natural height to
+// size the tile, so children just stack, no override needed.
 //
-// The `ha-card.multi-card` descendant rules only ever match when
-// EntityProgressMultiCard's _wrapFrame() actually adds that wrapper - they
-// turn the same bare stack into a self-contained, fixed-height, equally
-// divided card (see EntityProgressMultiBase._applySizing).
+// The `ha-card.multi-card` descendant rules only match when
+// EntityProgressMultiCard's _wrapFrame() adds that wrapper - they turn the
+// same bare stack into a self-contained, fixed-height, equally divided card.
 const MULTI_CSS = `
   .multi-container { display: flex; flex-direction: column; gap: 0; box-sizing: border-box; }
   /* Homogeneous split, shared by both variants: every bar gets an equal slice
@@ -312,15 +310,13 @@ class EntityProgressMultiBase extends HACore {
   }
 
   // Default (Feature) sizing - always exactly ONE HA feature row, never more.
-  // Earlier attempt let the container grow to N rows and relied on HA's
-  // hui-grid-section measuring that natural height to reserve them - live
-  // testing showed this doesn't work reliably (a single feature announcing
-  // extra height isn't the same thing, in HA's own sizing model, as several
-  // native features actually stacked). So this deliberately does NOT try to
-  // span multiple rows: bars are split evenly within one fixed row and get
-  // thinner instead of overflowing if too many are packed in - pick `xsmall`
-  // (6px) for more entities in the same row. Revisit only after confirming
-  // HA's real per-feature row-reservation mechanism (see #126).
+  // An earlier attempt let the container grow to N rows and relied on HA's
+  // hui-grid-section measuring that height to reserve them - live testing
+  // showed this doesn't work reliably. So this deliberately does NOT try to
+  // span multiple rows: bars split evenly within one fixed row and get
+  // thinner instead of overflowing (pick `xsmall` for more entities in the
+  // same row). Revisit only after confirming HA's real row-reservation
+  // mechanism (#126).
   _applySizing() {
     const container = this._container;
     const count = this._children.length;

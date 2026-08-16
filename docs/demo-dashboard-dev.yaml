@@ -868,6 +868,17 @@ views:
               columns: 6
               rows: 1
           - type: custom:entity-progress-card-dev
+            entity: climate.epb_demo_thermostat
+            name: climate
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: tile
+            entity: climate.epb_demo_thermostat
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: custom:entity-progress-card-dev
             entity: timer.epb_demo_timer
             name: timer
             grid_options:

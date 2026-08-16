@@ -134,14 +134,11 @@ const types = {
       return validItems;
     },
 
-  // The mapped type below infers each field's own T from its Validator<T>,
-  // Exclude<T, typeof SKIP_PROPERTY> since a field that skips is simply
-  // absent from the result object at runtime (see the loop below), never
-  // stored as the sentinel itself - same fix as array() above. Doesn't mark
-  // the key itself optional (a real "K in keyof S, but ? per-field
-  // depending on whether SKIP_PROPERTY is reachable" mapped type is a step
-  // further TS makes awkward) - every consumer already reads through `?.`/
-  // `??` regardless, so undefined-shaped absence reads the same either way.
+  // Exclude<T, typeof SKIP_PROPERTY>: a skipped field is simply absent from
+  // the result object at runtime, never stored as the sentinel - same fix
+  // as array() above. Doesn't mark the key itself optional (a real
+  // per-field-conditional mapped type is a step further TS makes awkward) -
+  // every consumer already reads through `?.`/`??` regardless.
   object: <S extends Record<string, Validator<unknown>>>(
     schema: S,
   ): Validator<{ [K in keyof S]: S[K] extends Validator<infer T> ? Exclude<T, typeof SKIP_PROPERTY> : never }> & {
@@ -372,16 +369,11 @@ const types = {
     return value;
   }) as Validator<string>,
 
-  // Shared by min_value/max_value/watermark.low/watermark.high: number
-  // (fixed) | { entity, attribute } | { jinja } - explicit shape instead of
-  // type-sniffing a scalar (number vs entity-id string vs jinja-looking
-  // string) to disambiguate the three.
-  // Exposed flattened (entity/attribute/jinja all optional siblings on one
-  // object), not as the discriminated union the validator itself actually
-  // checks - matches ViewCore._resolveValueConfig's own pre-existing
-  // parameter shape, which every consumer (min_value/max_value/watermark.
-  // low/.high/alert_when.above/.below) already reads through. The runtime
-  // validation is unaffected, only the type consumers see.
+  // Shared by min_value/max_value/watermark.low/.high: number (fixed) |
+  // { entity, attribute } | { jinja } - explicit shape, not sniffing a
+  // scalar. Exposed flattened, not as the discriminated union the validator
+  // actually checks - matches ViewCore._resolveValueConfig's own shape,
+  // which every consumer already reads through.
   numericEntityOrJinja: (): Validator<ValueConfig> =>
     types.union(
       types.number,
@@ -603,36 +595,17 @@ function struct<T>(
 
     if (['top', 'bottom', 'overlay', 'background'].includes(String(result.bar_position))) delete result.bar_size; // avoid conflict
 
-    // Built-in themes whose zones are raw values rather than 0-100% (e.g.
-    // `temperature`'s -50..100°C, `voc`'s 0..50000ppb, `pm25`) mean the
-    // entity's own real range genuinely is that theme's scale - picking one
-    // of these is already a deliberate, specific choice, so defaulting
-    // max_value to the theme's own top zone bound (only when the user hasn't
-    // set one) is safe and saves having to repeat that number: without it,
-    // the fill percentage itself would be meaningless for a raw value that
-    // routinely exceeds the flat 100 default (e.g. voc's ppb readings).
-    //
-    // min_value deliberately stays at its own default (0 outside
-    // center_zero - see CardConfigHelper._applyCenterZeroMinDefault for the
-    // center_zero/negative-branch case) rather than also being pulled from
-    // the theme's own lowest bound: [min_value, max_value] is the visible
-    // "scope" a color gradient is drawn across (see ThemeManager.
-    // buildGradient), and the assumption by default is that only the
-    // positive branch of a theme like temperature is in view (0..max_value)
-    // unless the user explicitly widens min_value (or enables center_zero).
-    // Pulling min_value down to the theme's own -50 by default would widen
-    // that scope to the theme's full range unconditionally, stretching every
-    // zone (including ones for values the entity may never reach) across the
-    // visible bar instead of just the ones the user's own scope covers.
-    //
-    // custom_theme is deliberately excluded (see issue #129): its zones are
-    // user-defined and may extend past the entity's real range on purpose
-    // (e.g. a color safety-margin zone on a percent sensor), without meaning
-    // to redefine max_value - and unlike a built-in theme choice, there's no
-    // reliable signal here that the zones' top bound is the entity's real
-    // range rather than just a color boundary. A custom_theme user whose
-    // entity's real range isn't 0-100 should set max_value themselves, same
-    // as for any other config value.
+    // Built-in themes with raw-value zones (e.g. temperature's -50..100°C,
+    // voc's 0..50000ppb) mean the entity's real range genuinely is that
+    // theme's scale - default max_value to the theme's top bound (only when
+    // unset), or the fill % is meaningless for a value that exceeds the flat
+    // 100 default. min_value deliberately stays at its own default rather
+    // than the theme's low bound: pulling it down would widen the gradient's
+    // visible scope (ThemeManager.buildGradient) to the theme's full range,
+    // stretching zones for values the entity may never reach. custom_theme is
+    // excluded (issue #129): its zones are user-defined and may extend past
+    // the entity's real range on purpose, with no reliable signal that the
+    // top bound is the real range rather than just a color boundary.
     if (is.nullish(result.max_value)) {
       const theme = THEME[result.theme as keyof typeof THEME];
       if (theme && theme.percent === false && is.nonEmptyArray(theme.style)) {
@@ -668,14 +641,10 @@ function struct<T>(
       result.bar_position = 'below';
   };
 
-  // compact_below (name/secondary_info sharing one row, bar in its own row
-  // below) only has a distinct visual effect on layout: horizontal - vertical
-  // already stacks name/secondary_info's own rows narrowly, with no "shared
-  // row" arrangement to switch to. Falls back to 'default', not 'below':
-  // compact_below and below are two different bar placements (secondary_info
-  // sharing a row vs its own dedicated one) that only look the same in
-  // horizontal - defaulting to 'below' would silently swap in a placement
-  // the user never chose.
+  // compact_below only has a distinct effect on layout: horizontal - vertical
+  // already stacks name/secondary_info narrowly. Falls back to 'default', not
+  // 'below': the two are different bar placements that only look the same in
+  // horizontal - defaulting to 'below' would swap in a placement never chosen.
   const applyCompactBelowRule = (result: Record<string, unknown>) => {
     if (result.bar_position === 'compact_below' && result.layout !== CARD.layout.orientations.horizontal.label) {
       result.bar_position = 'default';
@@ -695,14 +664,11 @@ function struct<T>(
     if (result.bar_position !== 'overlay' && result.bar_single_line) result.bar_single_line = false;
   };
 
-  // bar_max_width only affects .horizontal.small/.medium/.large (see the CSS
-  // rule on .progress-container) - 'below'/'top'/'bottom'/'overlay'/
-  // 'background' all render through a separate container element instead
-  // (never .progress-container), and .horizontal.xlarge has no matching
-  // max-width rule either. By this point layout/bar_position/bar_size are
-  // already resolved to their final values (defaults applied, the
-  // xlarge+default->below rewrite above already ran), so this check can't be
-  // fooled by an unset field.
+  // bar_max_width only affects .horizontal.small/.medium/.large - the other
+  // bar_position values render through a separate container (never
+  // .progress-container), and .horizontal.xlarge has no matching rule
+  // either. By this point layout/bar_position/bar_size are already resolved
+  // to final values, so this check can't be fooled by an unset field.
   const applyBarMaxWidthRule = (result: Record<string, unknown>) => {
     const barMaxWidthAllowed =
       result.layout === CARD.layout.orientations.horizontal.label &&
@@ -745,16 +711,11 @@ function struct<T>(
     }
   };
 
-  // rainbow_full paints the whole track at once and a single moving marker
-  // for the current value (see .rainbow-full-bar in styles.ts). It does
-  // generalize to center_zero: each arm gets its own always-full gradient
-  // and the marker's own CSS formula switches to a zero-centered one (see
-  // .center-zero.rainbow-full-bar .value-mark) - same per-arm windowing
-  // segment/rainbow already rely on (ThemeManager.buildGradient's window
-  // param). bar_stack's per-entity segments are a different story - several
-  // entities, no single position for one marker - so that combination still
-  // falls back to plain 'rainbow', same graceful-degradation pattern as
-  // applyBarColorModeRule above.
+  // rainbow_full paints the whole track at once with a single moving marker
+  // (.rainbow-full-bar in styles.ts) - generalizes to center_zero fine (each
+  // arm gets its own gradient + a zero-centered marker formula). bar_stack's
+  // per-entity segments have no single position for one marker, so that
+  // combination falls back to plain 'rainbow' instead.
   const applyRainbowFullRule = (result: Record<string, unknown>) => {
     const hasStack = is.nonEmptyArray((result.bar_stack as { entities?: unknown[] } | undefined)?.entities);
     if (result.bar_color_mode === 'rainbow_full' && hasStack) {
@@ -787,22 +748,15 @@ function struct<T>(
     }
   };
 
-  // density: 'compact' forces this card into a narrow horizontal footprint
-  // (issue #134's root ask, generalized): layout: vertical has no matching
-  // narrow shape (it's already stacked, not side-by-side), and bar_position
-  // outside {top, bottom, background} all render the bar sharing a row with
-  // name/secondary_info (see .progress-container's own width math), which
-  // needs the room this mode is specifically about giving back. multiline
-  // only ever has an effect in a configuration 'compact' now excludes
-  // (custom_info/secondary spanning two lines needs the extra vertical room
-  // that config no longer gives it), cleared for the same reason; status_label
-  // and trend_indicator both fit fine in a narrow card's corner, left alone on
-  // purpose. bar_max_width and reverse_secondary_info_row are already cleared
-  // by applyBarMaxWidthRule/applyReverseSecondaryInfoRowRule below once
-  // bar_position leaves 'default' (nothing extra needed here), and bar_size is
-  // already deleted entirely for top/bottom/background by YamlSchemaFactory
-  // itself. Runs first, before every rule below that reads layout/bar_position,
-  // so they all see the final, density-corrected value rather than racing it.
+  // density: 'compact' forces a narrow horizontal footprint (issue #134):
+  // layout: vertical has no matching narrow shape, and bar_position outside
+  // {top, bottom, background} shares a row with name/secondary_info, which
+  // needs the room back. multiline is cleared for the same reason
+  // (secondary spanning two lines needs room 'compact' no longer gives);
+  // status_label/trend_indicator fit fine, left alone. bar_max_width/
+  // reverse_secondary_info_row are already cleared by the rules below once
+  // bar_position leaves 'default'. Runs first so every later rule sees the
+  // final, density-corrected value.
   const applyDensityRule = (result: Record<string, unknown>) => {
     if (result.density !== 'compact') return;
     result.layout = CARD.layout.orientations.horizontal.label;
@@ -1126,15 +1080,12 @@ const YamlSchemaFactory = {
         bar_max_width: types.optionalString(),
         bar_segments: types.optionalNumber(),
         // No forced default (unlike most enums here): like `theme`, an unset
-        // value stays absent from the negotiated config (SKIP_PROPERTY)
-        // instead of being normalized to the literal string 'none' - the
-        // editor's dropdown no longer offers 'none' as a choice (removed from
-        // translations), so a selector showing that raw stored value with no
-        // matching option/label would display it as unstyled fallback text.
-        // 'none' stays a valid explicit value for existing YAML that already
-        // wrote it - every consumer below only ever compares against real
-        // animation names, never against 'none' itself, so an absent value
-        // behaves identically to an explicit 'none'.
+        // value stays absent (SKIP_PROPERTY) instead of being normalized to
+        // the literal 'none' - the editor's dropdown no longer offers 'none'
+        // (removed from translations), so a stored 'none' would show as
+        // unstyled fallback text. 'none' stays valid for existing YAML that
+        // already wrote it; every consumer compares only real animation
+        // names, so absent behaves identically to explicit 'none'.
         icon_animation: types.optional(
           types.enumOrJinjaTrigger([
             'none',
@@ -1211,15 +1162,11 @@ const YamlSchemaFactory = {
             above: types.optional(types.numericEntityOrJinja()),
             below: types.optional(types.numericEntityOrJinja()),
             color: types.optionalString(),
-            // label: the status pill (see the card-level `status_label`
-            // option) instead of tinting the whole card - only shown while
-            // the alert is active, takes over the pill from a plain
-            // `status_label:` Jinja if both happen to be set (see
-            // HACore._renderLabel's own early-out). No visual effect on a
-            // Badge (same as `status_label` itself - too small a scale, see
-            // YamlSchemaFactory.badge's own .delete(['status_label'])) -
-            // inherited here rather than parametrized out, since
-            // alert_when's own shape doesn't vary by card type.
+            // label: the status pill instead of tinting the whole card - only
+            // shown while the alert is active, takes over the pill from a
+            // plain `status_label:` Jinja if both are set (see
+            // HACore._renderLabel's early-out). No visual effect on a Badge,
+            // same as `status_label` itself (too small a scale).
             highlight: types.enumsWithDefault(['border', 'background', 'label'], 'border'),
             // Left genuinely optional (no forced default): the effective
             // default depends on `highlight` (border/label -> blink,
@@ -1310,16 +1257,12 @@ const YamlSchemaFactory = {
       types.object({
         // ─── Entity & Data ──────────────────────────────────────────────────
         entity: types.optional(types.entityId),
-        // Off by default: a now()/utcnow()-driven countdown already gets a
-        // free once-a-minute refresh from HA's own render_template push
-        // (issue #127) - this opts into a forced resubscribe every second
-        // instead (see ViewCore.autoRefreshInterval), for a real ticking
-        // MM:SS countdown. Not tied to `entity` being a timer - any
-        // now()-based Jinja field (a timer countdown, sunrise/sunset,
-        // input_datetime...) benefits the same way. No unit to key off of
-        // the way ViewBase's own cards/badges/features do (see
-        // ViewBase.autoRefreshInterval) - the display is arbitrary Jinja
-        // text, so this has to be an explicit opt-in.
+        // Off by default: a now()/utcnow() countdown already gets a free
+        // once-a-minute refresh from HA's render_template push (#127) - this
+        // opts into a forced resubscribe every second instead, for a real
+        // ticking MM:SS countdown. Not tied to `entity` being a timer - any
+        // now()-based Jinja field benefits the same way, explicit opt-in
+        // since the display is arbitrary Jinja text with no unit to key off.
         fast_refresh: types.optionalBooleanWithDefault(false),
         name: types.optionalString(),
         secondary: types.optionalString(),
@@ -1362,15 +1305,12 @@ const YamlSchemaFactory = {
         bar_max_width: types.optionalString(),
         bar_segments: types.optionalNumber(),
         // No forced default (unlike most enums here): like `theme`, an unset
-        // value stays absent from the negotiated config (SKIP_PROPERTY)
-        // instead of being normalized to the literal string 'none' - the
-        // editor's dropdown no longer offers 'none' as a choice (removed from
-        // translations), so a selector showing that raw stored value with no
-        // matching option/label would display it as unstyled fallback text.
-        // 'none' stays a valid explicit value for existing YAML that already
-        // wrote it - every consumer below only ever compares against real
-        // animation names, never against 'none' itself, so an absent value
-        // behaves identically to an explicit 'none'.
+        // value stays absent (SKIP_PROPERTY) instead of being normalized to
+        // the literal 'none' - the editor's dropdown no longer offers 'none'
+        // (removed from translations), so a stored 'none' would show as
+        // unstyled fallback text. 'none' stays valid for existing YAML that
+        // already wrote it; every consumer compares only real animation
+        // names, so absent behaves identically to explicit 'none'.
         icon_animation: types.optional(
           types.enumOrJinjaTrigger([
             'none',

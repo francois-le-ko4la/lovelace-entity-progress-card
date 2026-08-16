@@ -25,21 +25,16 @@ declare const __EPB_DEV_BUILD__: boolean;
 // dev is baked per build (__EPB_DEV_BUILD__ above), debug is read from the
 // bundle's own served URL at load:
 //   - dev:   true in the *_dev.js build (drives the `-dev` suffix on every
-//            registered element name, so a dev build coexists with the shipped
-//            one). ?dev=true is an optional runtime override on the prod file.
-//            Baked rather than URL-derived because the URL is unreadable when
-//            the bundle loads as an ES module (no document.currentScript).
-//   - debug: ?debug=card,hass (or ?debug=all) turns on per-area console
-//            logging on top of DEBUG_DEFAULTS below (needs a classic-script
-//            load for document.currentScript to expose the URL).
+//            registered element name). ?dev=true is an optional runtime
+//            override on the prod file. Baked rather than URL-derived
+//            because the URL is unreadable when loaded as an ES module.
+//   - debug: ?debug=card,hass (or ?debug=all) turns on per-area logging on
+//            top of DEBUG_DEFAULTS below (needs a classic-script load).
 // The URL comes from document.currentScript.src, NOT import.meta.url: a bare
-// `import.meta` is a *parse-time* SyntaxError when the bundle is loaded as a
-// classic <script> (a resource typed `js`, or browser_mod re-loading it in a
-// popup - see issue #108), which kills the whole module before any try/catch
-// can run. currentScript.src is populated for a classic-script load and null
-// for an ES-module load (import()) - in the latter (prod via HACS) dev/debug
-// stay off, which is the safe shipped state anyway. Mushroom ships esm too and
-// works as a classic script precisely because it carries no `import.meta`.
+// `import.meta` is a *parse-time* SyntaxError when loaded as a classic
+// <script> (a resource typed `js`, or browser_mod reloading it in a popup -
+// see issue #108), killing the module before any try/catch can run.
+// currentScript.src is null for an ES-module load, the safe shipped state.
 const MODULE_URL = (() => {
   try {
     return (document.currentScript as HTMLScriptElement | null)?.src ?? '';
@@ -127,6 +122,7 @@ const HA_SELECTOR_TAG = 'ha-selector';
 const HA_SVG_ICON_TAG = 'ha-svg-icon';
 const HA_ACTION_HANDLER_TAG = 'action-handler';
 const EDITOR_FIELD_NS = 'editor.field';
+const EDITOR_FIELD_HELPER_NS = 'editor.field_helper';
 const MIN_VALUE_ENTITY_PATH = 'min_value.entity';
 const MAX_VALUE_ENTITY_PATH = 'max_value.entity';
 // Not an editor field name (watermark.low/.high's entity/attribute/jinja stay
@@ -158,6 +154,7 @@ export { HA_SELECTOR_TAG };
 export { HA_SVG_ICON_TAG };
 export { HA_ACTION_HANDLER_TAG };
 export { EDITOR_FIELD_NS };
+export { EDITOR_FIELD_HELPER_NS };
 export { MIN_VALUE_ENTITY_PATH };
 export { MAX_VALUE_ENTITY_PATH };
 export { WATERMARK_LOW_ENTITY_PATH };

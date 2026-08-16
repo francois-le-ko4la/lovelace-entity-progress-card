@@ -105,14 +105,10 @@ class HACore extends HTMLElement {
   // HACore directly) leaves it null, which _createCardElements's own
   // optional-chained triggerIconTap() call already handles as a no-op.
   _actionHelper: ActionHelper | null = null;
-  // Concrete subclasses (in cards.ts) swap this in for CardView/BadgeView/
-  // FeatureView/CardTemplateView/BadgeTemplateView - the latter two extend
-  // ViewCore directly rather than ViewBase, so ViewCore (not a union, not
-  // `any`) is the widest type that's still accurate for every one of them.
-  // The handful of call sites below that read a ViewBase-only member (msg,
-  // badgeInfo, isAvailable, hasValidatedConfig - never present on the
-  // template views) cast to ViewBase explicitly instead of widening the
-  // field back to `any` for everyone.
+  // Concrete subclasses swap this in for CardView/BadgeView/FeatureView/
+  // CardTemplateView/BadgeTemplateView - ViewCore (not a union, not `any`)
+  // is the widest type accurate for all of them. Call sites reading a
+  // ViewBase-only member (msg, badgeInfo, …) cast to ViewBase explicitly.
   _cardView: ViewCore = new FeatureView();
   _dom = new DOMHelper();
   _hassProvider = HassProviderSingleton.getInstance();
@@ -298,16 +294,12 @@ class HACore extends HTMLElement {
   // tick locally. Lives here (not HABase) so EntityProgressFeatures - which
   // extends HACore directly, not HABase - gets it too.
 
-  // A self-correcting setTimeout chain, not setInterval: each tick recomputes
-  // its delay from Date.now() rather than from when the previous tick fired,
-  // so ticks always land on a round boundary of `interval` (e.g. exactly
-  // :00, :01, :02... for 1000ms) - immune to setInterval's native drift
-  // (background-tab throttling, main-thread congestion) instead of just
-  // repeating whatever phase the first tick happened to start at. Date.now()
-  // is captured the instant the timer fires, before refresh()/
-  // _onAutoRefreshTick() do any work - capturing it after would fold their
-  // (variable, DOM-touching) execution time into the next delay, shortening
-  // that one cycle by however long the work took.
+  // Self-correcting setTimeout chain, not setInterval: each tick recomputes
+  // its delay from Date.now(), so ticks land on round boundaries of
+  // `interval` (e.g. :00, :01, :02 for 1000ms) - immune to setInterval's
+  // native drift instead of repeating the first tick's own phase. Date.now()
+  // is captured before refresh()/_onAutoRefreshTick() run, not after -
+  // doing it after would fold their execution time into the next delay.
   _startAutoRefresh() {
     if (!this._resourceManager) return;
     const cardView = this._cardView;
@@ -325,18 +317,12 @@ class HACore extends HTMLElement {
     if (interval !== null) this._resourceManager.setTimeout(tick, interval - (Date.now() % interval), 'autoRefresh');
   }
 
-  // What a tick actually does - deliberately NOT a full this.refresh(): a
-  // ticking timer only ever moves #percentHelper (the bar + whatever value
-  // is derived from it), so recomputing the view and repainting its CSS is
-  // the one thing every subclass needs. icon/badge/shape/trend/
-  // conditional-classes/Jinja-processing are all state-driven - already
-  // re-run by _handleHassUpdate on a real hass change - so re-running them
-  // here on every tick was both wasted work and a source of per-tick timing
-  // jitter. This default already covers EntityProgressFeatures as-is (a
-  // feature has no text of its own, just the bar); EntityProgressCardBase
-  // overrides this to also update its value text (see cards.ts), and
-  // EntityProgressTemplateBase overrides it entirely (its display is
-  // Jinja-push-driven, not something a local refresh() can affect at all).
+  // Deliberately NOT a full this.refresh(): a ticking timer only ever moves
+  // the bar, so recomputing the view and repainting CSS is all every
+  // subclass needs - icon/badge/shape/trend/Jinja are state-driven, already
+  // re-run by _handleHassUpdate on a real hass change. EntityProgressCardBase
+  // overrides this to also update its value text; EntityProgressTemplateBase
+  // overrides it entirely (Jinja-push-driven display).
   _onAutoRefreshTick() {
     this._cardView.refresh(this.hass as HomeAssistant);
     this._updateCSS();
@@ -442,61 +428,45 @@ class HACore extends HTMLElement {
     // template.
     card.replaceChildren((this.constructor as typeof HACore)._cardStructure.clone(this._structureOptions));
 
-    // The card's own interactive target: .ripple-zone (a sibling of
-    // .container/.shape - see its own comment in card-config.ts), not
-    // ha-card itself - avoids nesting this role="button" around .shape's
-    // own one below. hasClickableCard specifically, not hasClickableIcon
-    // too (unlike the old ha-card-targeted version) - matches .ripple-zone's
-    // own CSS (pointer-events: none unless .clickable-card), and an
-    // icon-only action shouldn't make the rest of the card announce as a
-    // button it isn't.
+    // .ripple-zone (sibling of .container/.shape, see card-config.ts), not
+    // ha-card - avoids nesting role="button" around .shape's own one below.
+    // hasClickableCard only, not hasClickableIcon too: matches .ripple-zone's
+    // CSS (pointer-events: none unless .clickable-card) - an icon-only
+    // action shouldn't make the whole card announce as a button it isn't.
     if (this._cardView.hasClickableCard) {
       const rippleZone = card.querySelector<HTMLElement>(`.${CARD.htmlStructure.sections.rippleZone.class}`);
       if (rippleZone) {
         rippleZone.removeAttribute('aria-hidden');
         rippleZone.setAttribute('role', 'button');
         rippleZone.setAttribute('tabindex', '0');
-        // Entity-specific, not the generic card type name (META.types.card.name
-        // as a last-resort fallback only - e.g. entity not yet resolved, or a
-        // Template variant, whose ViewCore has no .name at all) - a dashboard
-        // with several of these cards otherwise reads identically to a screen
-        // reader regardless of which entity each one shows. Duck-typed access
-        // (.name only exists on ViewBase, not the declared ViewCore type) since
-        // _cardView's concrete class varies by card/badge/feature/template.
+        // Entity-specific label, not the generic card type name (fallback
+        // only for unresolved entities / Template variants with no .name) -
+        // otherwise several of these cards on one dashboard read identically
+        // to a screen reader. Duck-typed (.name isn't on the declared
+        // ViewCore type) since _cardView's concrete class varies.
         const cardName = (this._cardView as { name?: string | null }).name;
         rippleZone.setAttribute('aria-label', cardName || META.types.card.name);
-        // References the same #entity-value the progressbar's own
-        // aria-describedby already points to (elements.secondaryInfoMain) -
-        // aria-label alone only carries the entity name, and a role="button"
-        // with its own aria-label isn't read into by a screen reader, so the
-        // value/state a sighted user sees at a glance was never announced. A
-        // static ID reference, not the value text itself - resolves against
-        // whatever that element's current content is, so it stays in sync
-        // with no extra update-cycle wiring needed.
+        // Same #entity-value id the progress bar's own aria-describedby
+        // already uses - aria-label alone only carries the entity name, so
+        // the value a sighted user sees at a glance was never announced
+        // through a bare role="button". A static id, not the value text
+        // itself, so it stays in sync with no extra update-cycle wiring.
         rippleZone.setAttribute('aria-describedby', 'entity-value');
       }
     }
 
-    // Icon's own independent keyboard entry point - only when it actually
-    // has its own action (hasClickableIcon) AND that action isn't disabled
-    // outright (hasDisabledIconTap - Badge/TemplateBadge: card-level action
-    // only, same guard the real click path already applies in ActionHelper.
-    // init's own disableIconTap - see .clickable-icon's own condition above
-    // for the CSS-only equivalent), matching ha-tile-icon's own role="button"
-    // tabindex="0" pattern (verified against HA's real source). .shape is
-    // fresh every time this method runs (a brand new <ha-card> is created
-    // above, never patched in place), so there's no stale attribute/listener
-    // to clean up on a later re-render where this condition turns false. See
-    // ActionHelper.triggerIconTap's own comment for why this is a plain
-    // keydown listener instead of a second <action-handler> binding.
+    // Icon's own keyboard entry point - only when hasClickableIcon AND not
+    // hasDisabledIconTap. Matches ha-tile-icon's role="button"/tabindex="0"
+    // pattern. .shape is rebuilt fresh every render, so no stale listener to
+    // clean up later. See ActionHelper.triggerIconTap for why a plain
+    // keydown, not a second <action-handler> binding.
     if (this._cardView.hasClickableIcon && !this.hasDisabledIconTap) {
       const shape = card.querySelector<HTMLElement>(`.${CARD.htmlStructure.elements.shape.class}`);
       if (shape) {
         shape.setAttribute('role', 'button');
         shape.setAttribute('tabindex', '0');
-        // Without this, a screen reader announces a bare "button" here - the
-        // icon glyph itself (ha-state-icon/similar) carries no accessible
-        // name of its own to fall back on.
+        // No accessible name to fall back on otherwise - the icon glyph
+        // itself carries none.
         shape.setAttribute('aria-label', 'Icon action');
         shape.addEventListener('keydown', (ev: KeyboardEvent) => {
           if (ev.key !== 'Enter' && ev.key !== ' ') return;
@@ -541,18 +511,10 @@ class HACore extends HTMLElement {
     this._handleBarEffect();
   }
 
-  // Real N+1 divs (bar_segments: N, including the two edge markers - see the
-  // loop's own comment), not a CSS gradient/mask trick - runs once per
-  // render() (after the structure clone is actually in the DOM, .bar
-  // included - _buildStyle() above runs too early for that, see render()'s
-  // own call order), rebuilt fresh every time since render() itself always
-  // starts from a divider-less cloned template (see
-  // StructureElements.progressBar's own comment). Percent-based position,
-  // not px: stays correct regardless of the bar's own current width, no
-  // resize listener needed. --segment-position is consumed by
-  // .horizontal-bar/.vertical-bar .segment-divider in styles.ts, which
-  // decide whether that's a left or a bottom offset - this method only
-  // ever needs to know "how far along the bar", never which axis.
+  // Real N+1 divs (bar_segments: N, plus the two edge markers), not a CSS
+  // gradient/mask trick - runs once per render(), after the structure clone
+  // is in the DOM. Percent-based position, not px, so it stays correct
+  // regardless of the bar's current width, no resize listener needed.
   _buildSegmentDividers() {
     const count = this._cardView.config.bar_segments;
     const active = is.number(count) && count >= 2;
@@ -566,23 +528,19 @@ class HACore extends HTMLElement {
     const containerSpec = CARD.htmlStructure.elements.progressBar.segments;
     const dividerSpec = CARD.htmlStructure.elements.progressBar.segmentDivider;
     bars.forEach((bar) => {
-      // One wrapper per .bar, grouping every divider together instead of
-      // leaving them loose alongside the watermark/zero/value marks that
-      // already live directly in .bar.
+      // One wrapper per .bar, grouping every divider instead of leaving them
+      // loose alongside the watermark/zero/value marks already in .bar.
       const container = document.createElement(containerSpec.element);
       container.className = containerSpec.class;
       Object.entries(containerSpec.extraAttr ?? {}).forEach(([key, value]) =>
         container.setAttribute(key, String(value)),
       );
       // i=0 and i=rounded (the bar's own two edges) get a divider too, not
-      // just the N-1 internal boundaries: every *internal* divider straddles
-      // its boundary, eating half its own width from each of its two
-      // neighboring cells - a cell at the very start/end only has one real
-      // neighbor, so it would otherwise lose half as much as every middle
-      // cell and read visibly wider. These two extra dividers center on 0%/
-      // 100% exactly like an internal one; .bar's own overflow: hidden clips
-      // away the half that falls outside the bar, leaving exactly the same
-      // half-width sliver a real neighbor would have contributed.
+      // just the N-1 internal ones: an internal divider straddles its
+      // boundary, eating half its width from each neighbor - an edge cell
+      // has only one real neighbor and would read visibly wider without a
+      // matching half-divider. .bar's overflow: hidden clips the half that
+      // falls outside the bar, leaving the same sliver a real neighbor would.
       for (let i = 0; i <= rounded; i += 1) {
         const divider = document.createElement(dividerSpec.element);
         divider.className = dividerSpec.class;
@@ -632,14 +590,12 @@ class HACore extends HTMLElement {
     this._dom.toggleClass(CARD.htmlStructure.card.element, `lwm-${type}`, !watermark.disable_low);
   }
 
-  // The visual editor (EntityProgressEffectChips) can only guard interactive
-  // selection - a Jinja template or a hand-written YAML list bypasses it
-  // entirely. Both glass/gradient(_reverse) and shimmer/shimmer_reverse write
-  // the same CSS custom property (see --progress-effect(-neg) in the
-  // stylesheet), so requesting an incompatible pair doesn't error, it just
-  // silently drops one effect depending on stylesheet order. This mirrors
-  // that same-source-of-truth exclusion here, first-requested-wins (the
-  // order the template/list actually wrote them in, not a fixed priority).
+  // The editor (EntityProgressEffectChips) can only guard interactive
+  // selection - Jinja/hand-written YAML bypasses it. Incompatible pairs
+  // (glass/gradient(_reverse) vs. shimmer/shimmer_reverse share the same CSS
+  // custom property) don't error, they just silently drop one depending on
+  // stylesheet order - this mirrors that exclusion explicitly here,
+  // first-requested-wins.
   static #resolveEffectConflicts(labels: string[]): string[] {
     const incompatible: Record<string, string[]> = CARD.style.dynamic.progressBar.effectIncompatibilities;
     const kept: string[] = [];
@@ -760,11 +716,10 @@ class HACore extends HTMLElement {
   // ─── JINJA TEMPLATE RENDERING ─────────────────────────────────────────────
 
   get validJinjaFields(): Record<string, string> {
-    // Most Jinja-capable options are flat string config values, but some
-    // (min_value, watermark.low/.high) use an explicit { jinja: "..." } map
-    // form instead of sniffing a bare string — extract accordingly. Dot-path
-    // keys (watermark.low) walk one level of nesting; existing flat keys
-    // (min_value) are unaffected since a 1-element path resolves identically.
+    // Most Jinja-capable options are flat strings, but some (min_value,
+    // watermark.low/.high) use an explicit { jinja: "..." } map instead of
+    // sniffing a bare string - extract accordingly. Dot-path keys walk one
+    // level of nesting.
     const rawValueFor = (key: string) => {
       const raw = key.includes('.')
         ? key.split('.').reduce<unknown>((obj, k) => (obj as Record<string, unknown>)?.[k], this._cardView.config)
@@ -785,19 +740,12 @@ class HACore extends HTMLElement {
     throw new Error(`${this.constructor.name} must implement _getJinjaHandlers(${content})`);
   }
 
-  // A multi-step automation/script (e.g. turn an input_boolean on, then pick
-  // an input_select option right after) can make HA re-evaluate a template
-  // once per intermediate state, not just once for the final settled one -
-  // two entities referenced by the same `and` condition don't change
-  // atomically. Applied immediately, that transient push renders (and can
-  // get visually stuck on) a value nothing in the final state actually
-  // supports (issue #135). Debounced per key (not globally - each Jinja
-  // field settles on its own schedule, one field's burst shouldn't delay an
-  // unrelated one) via ResourceManager.setTimeout's own existing
-  // cancel-and-replace-by-id behavior (see ResourceManager#add) - no new
-  // debounce mechanism needed, ~80ms is short enough nothing feels laggy
-  // but long enough to coalesce a script's own back-to-back service calls
-  // into just the last, settled push.
+  // A multi-step script (e.g. turn an input_boolean on, then pick an
+  // input_select option) can make HA push one intermediate template result
+  // per entity change, not just the final settled one (issue #135). Debounced
+  // per key, not globally, via ResourceManager.setTimeout's existing
+  // cancel-and-replace-by-id (~80ms: short enough to feel instant, long
+  // enough to coalesce a script's back-to-back pushes into the last one).
   _renderJinja(key: string, content: unknown) {
     this._log?.debug('📎 HACore._renderJinja():', { key, content });
     this._resourceManager?.setTimeout(() => this.#applyJinja(key, content), 80, `jinja-render-${key}`);
@@ -1039,32 +987,21 @@ class HABase extends HACore {
   // assigned unconditionally in the constructor below, for every HABase
   // instance.
   #jinjaStateBadge = { icon: false, color: false };
-  // Badge icon/color's own last-resolved state, one cache per independent
-  // source - badge_icon's own icon (always its own single source), the color
-  // badge_icon's object provides (null when it doesn't, or when it's a plain
-  // string), and badge_color field's own separate color. #repaintBadge below
-  // recomputes and repaints from these three on every push from either field
-  // - never a one-off snapshot taken only at the instant one specific field
-  // happened to push, which used to leave a stale icon/color showing once
-  // the OTHER field's own state changed independently (e.g. a static
-  // badge_color keeping the badge visible while badge_icon's own icon/color
-  // had already gone empty) - same reasoning as _repaintStatusLabel's own
-  // comment/fix.
+  // One cache per independent badge_icon/badge_color source - #repaintBadge
+  // recomputes and repaints from all three on every push from either field,
+  // never a one-off snapshot from whichever field last pushed. Without this
+  // a static badge_color could keep the badge visible after badge_icon's
+  // own icon/color had gone empty (same fix shape as _repaintStatusLabel).
   #badgeIconValue: string | null = null;
   #badgeIconObjectColor: string | null = null;
   #badgeColorFieldValue: string | null = null;
   #lastMessage: { content: string; sev: string } | null = null;
-  // status_label's own last-resolved state (_renderLabel below) - null text
-  // means no push has landed yet (pill stays untouched). Cached so
-  // _repaintStatusLabel can repaint the pill with a fresh bar color on every
-  // _updateDynamicElements pass, not just the instant a Jinja push happens to
-  // land - same reasoning as ViewCore's own #templateTheme comment: on
-  // Template, barColor only becomes correct once percent's own separate
-  // Jinja push has landed, and status_label's own push (often a static
-  // string with nothing to resubscribe on) may never fire again after that -
-  // without this, the pill could get stuck showing whichever color barColor
-  // happened to resolve to at that one push, base or themed, depending on
-  // which of the two pushes won the race.
+  // status_label's last-resolved state; null text = no push landed yet.
+  // Cached so _repaintStatusLabel can refresh the pill's bar color on every
+  // _updateDynamicElements pass, not just when a Jinja push lands - on
+  // Template, barColor only settles once percent's own push arrives, and
+  // status_label may never push again after that, so without this cache the
+  // pill could get stuck on whichever color won that one race.
   _lastStatusLabelText: string | null = null;
   _lastStatusLabelColor: string | null = null;
 
@@ -1106,16 +1043,11 @@ class HABase extends HACore {
     this._actionHelper = new ActionHelper(this);
   }
 
-  // Badge/status_label caches (#jinjaStateBadge, #badgeIconValue/-Object
-  // Color/-ColorFieldValue, _lastStatusLabelText/-Color - see their own
-  // comments) reset here, same as every comparable ViewCore-level cache
-  // (#resolvedHide, #jinjaIconAnimationActive) already does in its own `set
-  // config` - these live on HABase instead (shared by Card/Badge/Feature/
-  // Template), so `set config` there doesn't reach them. Without this, a
-  // config that just removed badge_icon/status_label left the old resolved
-  // state around after render() rebuilds the shadow DOM (a phantom badge/
-  // pill), with no future push ever left to correct it since the field's
-  // own subscription is gone too.
+  // Badge/status_label caches reset here since they live on HABase (shared
+  // by Card/Badge/Feature/Template), not ViewCore's own `set config`.
+  // Without this, a config that removed badge_icon/status_label left the
+  // old resolved state around after render() (a phantom badge/pill), with
+  // no future push left to correct it since the subscription is gone too.
   setConfig(config: LovelaceConfig) {
     super.setConfig(config);
     this.#jinjaStateBadge = { icon: false, color: false };
@@ -1289,18 +1221,12 @@ class HABase extends HACore {
         [config.height, CARD.style.dynamic.card.height.var, config.height],
         [config.bar_max_width, CARD.style.dynamic.progressBar.maxWidth.var, config.bar_max_width],
         [config.alert_when?.color, '--alert-color', ThemeManager.adaptColor(config.alert_when?.color ?? null)],
-        // issue #133 - badges have their own unrelated height model
-        // (--ha-badge-size), so this is card/template-only (isBadge already
-        // covers exactly that split above). Just the row count - the actual
-        // row-height math lives in CSS now (the base ha-card rule's own
-        // --current-card-height, see styles.ts), reading this same
-        // var(--min-grid-rows) - set unconditionally (not just when it
-        // differs from that CSS rule's own default) so it can't go stale if
-        // bar_size/bar_position/hidden icon change without a full re-render.
-        // See ViewCore.minGridRows, the single source of truth this and
-        // getGridOptions both read. Harmless to still set while marginless:
-        // .marginless's own CSS rule clears --current-card-height entirely,
-        // which doesn't reference --min-grid-rows at all.
+        // issue #133 - badges have their own height model (--ha-badge-size),
+        // card/template-only. Just the row count - the actual row-height
+        // math lives in CSS (styles.ts's --current-card-height reads this
+        // same var), set unconditionally so it can't go stale without a full
+        // re-render. See ViewCore.minGridRows, the source of truth this and
+        // getGridOptions both read.
         [!isBadge, '--min-grid-rows', this._cardView.minGridRows],
       ] as [unknown, string, CacheValue][]
     ).forEach(([condition, prop, value]) => {
@@ -1319,31 +1245,21 @@ class HABase extends HACore {
       [CARD.style.dynamic.clickable.icon, this._cardView.hasClickableIcon && !this.hasDisabledIconTap],
       [CARD.style.dynamic.frameless.class, this._cardView.config.frameless ?? false],
       [CARD.style.dynamic.marginless.class, this._cardView.config.marginless ?? false],
-      // One card-level flag every ancestor that needs to relax its single-line
-      // assumptions (.content's height, .secondary-info's bar stretch, …) reads
-      // via a plain descendant selector (.info-multiline .content {...}) — not
-      // a :has() re-derived at each level, which is what made every earlier
-      // attempt only fix one ancestor at a time.
+      // One card-level flag every ancestor needing to relax its single-line
+      // assumptions reads via a plain descendant selector - not :has()
+      // re-derived at each level, which only fixed one ancestor at a time.
       ['info-multiline', Boolean(this._cardView.config.multiline)],
     ]);
   }
 
   get _iconAnimationStyle(): Map<string, boolean> {
     const effect = this._cardView.iconAnimationEffect;
-    // icon_animation: { effect, jinja } mode - the resolved boolean (once
-    // pushed) replaces the automatic entity-based detection below entirely,
-    // for whichever effect is chosen. CF5-adjacent fix: `jinjaIconAnimation
-    // Active === null` used to be treated as "fall back to autoDetect", but
-    // it means two different things - genuinely not in jinja mode, OR in
-    // jinja mode with no push resolved yet (right after connect, or right
-    // after a config change resets the cache). The second case used to
-    // silently run the automatic entity-based detection instead of just
-    // staying off until the real result arrives - configuring jinja mode
-    // never fully switched autoDetect off, it only overrode it once
-    // something had already pushed. hasJinjaIconAnimation checks the
-    // *config*, not the cache, so jinja mode now disengages autoDetect
-    // unconditionally the moment it's configured, default false until the
-    // first real push lands.
+    // icon_animation: { effect, jinja } mode - once pushed, the resolved
+    // boolean fully replaces automatic entity-based detection. Fix:
+    // `jinjaIconAnimationActive === null` used to mean both "not in jinja
+    // mode" and "no push yet", falling back to autoDetect either way.
+    // hasJinjaIconAnimation checks the *config*, not the cache, so jinja
+    // mode disengages autoDetect immediately, default false until the push.
     const override = this._cardView.jinjaIconAnimationActive;
     const active = (autoDetect: () => boolean): boolean =>
       this._cardView.hasJinjaIconAnimation ? (override ?? false) : autoDetect();
@@ -1639,15 +1555,11 @@ class HABase extends HACore {
       this._setBadgeIconColor(badgeInfo.icon, badgeInfo.color, badgeInfo.backgroundColor);
       return;
     }
-    // badge_icon/badge_color are Jinja-resolved - config.badge_icon/-color
-    // here would be the raw, unevaluated template *source* (always a
-    // non-empty string once configured, regardless of what its condition
-    // currently resolves to), not whether either is CURRENTLY showing
-    // anything. _showBadge runs on every refresh (not just a Jinja push), so
-    // checking raw presence used to force the badge back on every unrelated
-    // hass update even while the condition was false - fighting
-    // _renderBadgeIcon/_renderBadgeColor's own correct hide. #jinjaStateBadge
-    // (kept current by those two, via _updateBadgeVisibility) is the only
+    // config.badge_icon/-color is the raw, unevaluated template source
+    // (always non-empty once configured), not whether it's CURRENTLY
+    // showing anything. Checking raw presence used to force the badge back
+    // on every refresh even while the Jinja condition was false.
+    // #jinjaStateBadge (kept current via _updateBadgeVisibility) is the only
     // real source of truth here.
     this._updateBadgeVisibility();
   }
@@ -1708,18 +1620,11 @@ class HABase extends HACore {
 
   _renderBadgeIcon(content: unknown) {
     this._log?.debug('📎 HABase._renderBadgeIcon():', { content });
-    // A single {{ expression }} (or each branch of a block {% if %}) that
-    // resolves to a dict literal comes through as a native object, not a
-    // string (see docs/configuration.md's own JINJA chapter, "Returning a
+    // A native dict return (docs/configuration.md's Jinja "Returning a
     // native type") - `{{ {'icon': 'mdi:...', 'color': '#ff0000'} }}` lets
-    // one template drive both icon and color together instead of needing a
-    // separate badge_color Jinja alongside it. A plain string keeps working
-    // exactly as before (icon only, badge_color still independently owns
-    // color) - same "two independent fields, or one combined" duality as
-    // icon_animation's own enum | { effect, jinja } shape. Either key can be
-    // left out of the object (e.g. `{'color': '#f00'}` alone) - an absent or
-    // empty one simply doesn't win that dimension, same as a plain string
-    // with nothing else.
+    // one template drive both icon and color, instead of needing a separate
+    // badge_color Jinja alongside it. A plain string still works as before
+    // (icon only); either key can be left out of the object.
     const iconRaw = is.plainObject(content) ? content.icon : content;
     const colorRaw = is.plainObject(content) ? content.color : undefined;
     this.#badgeIconValue = is.nonEmptyString(iconRaw) && iconRaw.includes(HA_CONTEXT.icons.prefix) ? iconRaw : null;
@@ -1733,17 +1638,13 @@ class HABase extends HACore {
     this.#repaintBadge();
   }
 
-  // Shared by _renderBadgeIcon/_renderBadgeColor above - recomputes the
-  // whole badge (icon + color) from the three caches every time either field
-  // pushes, instead of each handler only touching its own half and leaving
-  // the other stale. #badgeIconObjectColor wins over #badgeColorFieldValue
-  // when both are set (badge_icon's object wins outright, same precedence as
-  // theme over color/bar_color) - and, critically, the icon/color DOM state
-  // is explicitly cleared (not just left untouched) whenever its resolved
-  // value is null, so a source going empty can't leave the OTHER source's
-  // earlier value on screen (e.g. a static badge_color keeping the badge
-  // visible while badge_icon's own icon had already gone empty - the icon
-  // used to stay stuck showing whatever it was last set to).
+  // Shared by _renderBadgeIcon/_renderBadgeColor - recomputes the whole
+  // badge (icon + color) from all three caches on every push, instead of
+  // each handler only touching its own half and leaving the other stale.
+  // #badgeIconObjectColor wins over #badgeColorFieldValue when both are set
+  // (same precedence as theme over color/bar_color); the DOM state is
+  // explicitly cleared when a source resolves null, so it can't leave the
+  // OTHER source's earlier value stuck on screen.
   #repaintBadge() {
     if (!is.nullish((this._cardView as ViewBase).badgeInfo)) return; // alert -> cancel custom badge
     const icon = this.#badgeIconValue;
@@ -1765,29 +1666,20 @@ class HABase extends HACore {
   }
 
   // `immediate`: bypasses DOMHelper's RAF batching (setTextNow instead of
-  // setText) - used by EntityProgressCardBase's own _onAutoRefreshTick. RAF
-  // callbacks run at the next display frame, whose own cadence isn't aligned
-  // to wall-clock second boundaries the way _startAutoRefresh's tick is - so
-  // even a perfectly-scheduled tick's text would still land up to ~16ms off
-  // from one paint to the next, which is exactly the kind of per-tick
-  // unevenness a ticking countdown makes visible. Everywhere else keeps the
-  // batched path (multiple fields updating together on a real hass change
-  // still coalesce into one paint).
+  // setText), used by _onAutoRefreshTick - a RAF callback's own cadence isn't
+  // aligned to _startAutoRefresh's wall-clock tick, so a ticking countdown's
+  // text would land up to ~16ms off from one paint to the next otherwise.
+  // Everywhere else keeps the batched path.
   _processStandardFields(immediate = false) {
     (this.constructor as typeof HABase)._getStandardFields(this._cardView).forEach(({ className, value }) => {
       if (immediate) this._dom.setTextNow(className, value);
       else this._dom.setText(className, value);
 
-      // secondaryInfoMain going empty (no value text and no custom
-      // state_content either - see ViewBase#secondaryInfoMain) means the row
-      // has nothing left to show: the same "give the space back" rule
-      // hide: secondary_info already gets (.hide-secondary-info in
-      // styles.ts), just driven by actual content instead of config. Inline
-      // on ha-card (always wins, no class needed) since this can flip on
-      // any refresh - a live value going in and out of availability, not
-      // just once at config time - including via hide: value/unit resolved
-      // as a Jinja template, now that hasComponentHiddenFlag can see that
-      // too (see _baseJinjaHandlers's hide entry).
+      // secondaryInfoMain going empty means the row has nothing left to
+      // show - the same "give the space back" rule hide: secondary_info
+      // already gets (.hide-secondary-info in styles.ts), driven by actual
+      // content instead of config. Inline on ha-card since this can flip on
+      // any refresh, not just once at config time.
       if (className === CARD.htmlStructure.elements.secondaryInfoMain.class) {
         const cardKey = CARD.htmlStructure.card.element;
         if (value === '') this._dom.setStyle(cardKey, '--detail-height', '0px');
@@ -1799,19 +1691,12 @@ class HABase extends HACore {
     });
   }
 
-  // Tracks whether custom_info/secondary's own line(s) (extra1/extra2,
-  // written by EntityProgressCardBase#_renderCustomInfo or
-  // EntityProgressTemplateBase#_renderSecondary) and the main value line
-  // above are each currently empty - replaces two :has()-based CSS rules
-  // that used to do this in pure CSS (.secondary-info-wrapper:has(...):
-  // has(...)), past this card's documented browser floor (:has() needs
-  // Firefox 121+, the floor is 94+). main defaults to false ("not empty",
-  // blocking) rather than true: Template has no secondary-info-main slot at
-  // all (see ViewBase#_renderSecondary's own comment), so
-  // _processStandardFields above never touches it there - staying
-  // permanently false keeps the wrapper from ever auto-collapsing on
-  // Template, the exact behavior the old :has(main:empty) already had (a
-  // nonexistent element can never satisfy :empty).
+  // Tracks whether custom_info/secondary's line(s) and the main value line
+  // are each currently empty - replaces a :has()-based CSS rule that was
+  // past this card's browser floor (:has() needs Firefox 121+, floor is
+  // 94+). main defaults to false: Template has no secondary-info-main slot,
+  // so it's never touched there, keeping the wrapper from ever
+  // auto-collapsing on Template (same as the old :has(main:empty)).
   _secondaryInfoEmpty = { extra1: true, extra2: true, main: false };
 
   _updateSecondaryInfoWrapperVisibility() {
@@ -1826,12 +1711,9 @@ class HABase extends HACore {
   _baseJinjaHandlers(content: unknown): Record<string, () => void> {
     return {
       bar_effect: () => this._refreshBarEffect(content),
-      // _handleHiddenComponents only toggles CSS classes (icon/name/
-      // secondary_info/progress_bar) - value/unit have no class of their own
-      // (a pure text-level omission, see ViewBase#secondaryInfoMain), so a
-      // changed Jinja result needs _processStandardFields() too, to actually
-      // re-render the text once hasComponentHiddenFlag can see the new
-      // resolved state.
+      // _handleHiddenComponents only toggles CSS classes - value/unit have
+      // no class of their own (a text-level omission), so a changed Jinja
+      // result needs _processStandardFields() too to re-render the text.
       hide: () => {
         this._handleHiddenComponents(content);
         this._processStandardFields();
@@ -1842,10 +1724,8 @@ class HABase extends HACore {
   }
 
   // Shared by EntityProgressBadge/EntityProgressTemplateBadge's own
-  // _getJinjaHandlers overrides (both delete the exact same two keys from
-  // whatever their own base class's _getJinjaHandlers returns) - a badge
-  // never has a badge of its own, whether Card or Template. static (no
-  // instance state involved) - called as HABase._stripBadgeHandlers(...).
+  // _getJinjaHandlers overrides - a badge never has a badge of its own.
+  // Static (no instance state) - called as HABase._stripBadgeHandlers(...).
   static _stripBadgeHandlers(handlers: Record<string, () => void>): Record<string, () => void> {
     delete handlers.badge_icon;
     delete handlers.badge_color;
@@ -1853,11 +1733,9 @@ class HABase extends HACore {
   }
 
   // watermark.low/.high jinja mode: shared by Card and Template (both have
-  // `watermark` in schema, unlike min_value/max_value/alert_when, which are
-  // Card-only - see EntityProgressCardBase's own _renderJinjaNumber for
-  // those). Lives here rather than there so EntityProgressTemplateBase's own
-  // _getJinjaHandlers can reuse it too - jinjaWatermarkLow/High themselves
-  // are declared on ViewCore for exactly that reason (see view.ts).
+  // `watermark` in schema, unlike min_value/max_value/alert_when which are
+  // Card-only). Lives here so EntityProgressTemplateBase's own
+  // _getJinjaHandlers can reuse it too.
   _renderWatermarkJinja(
     content: unknown,
     getJinja: (c: Config) => string | undefined,
@@ -1875,20 +1753,12 @@ class HABase extends HACore {
     this._updateCSS();
   }
 
-  // GitHub-label-style status pill, shared by both of its drivers: a plain
-  // `status_label` Jinja template (_renderLabel below) and
-  // alert_when.highlight: 'label' (_applyAlertLabel, called from
-  // _applyAlertClasses since alert_when.label is a plain string, not Jinja -
-  // there's no push to piggyback on, it re-evaluates whenever isAlertActive
-  // might have changed). background/border/text color are derived from
-  // whatever color the caller passes using the same recipe GitHub's own
-  // Primer design system uses for issue labels (see
-  // ThemeManager.labelColorComponents and .status-label's CSS). outline-color
-  // is a scratch property here, not a real style choice: it's just a real CSS
-  // <color> property to assign the raw resolved color to so the browser
-  // normalizes it into rgb(...) for parsing (a var() or named color this code
-  // never sees resolved otherwise) - removed right after, it plays no part in
-  // the pill's actual look.
+  // GitHub-label-style status pill, shared by `status_label` Jinja
+  // (_renderLabel) and alert_when.highlight: 'label' (_applyAlertLabel).
+  // background/border/text color follow GitHub's Primer recipe for issue
+  // labels (ThemeManager.labelColorComponents). outline-color is a scratch
+  // property, not a real style choice: assigning the raw color to it lets
+  // the browser normalize it into rgb(...) for parsing, then it's removed.
   _paintLabel(text: string, color: string) {
     const key = CARD.htmlStructure.elements.label.class;
     this._dom.setText(key, text);
@@ -1913,14 +1783,10 @@ class HABase extends HACore {
     // way (see _applyAlertLabel) - a plain `label` Jinja alongside it would
     // otherwise fight over the same element on every refresh.
     if (this._cardView.config?.alert_when?.highlight === 'label') return;
-    // A single {{ expression }} (or each branch of a block {% if %}) that
-    // resolves to a dict literal comes through as a native object, not a
-    // string (see docs/configuration.md's own JINJA chapter, "Returning a
-    // native type") - `{{ {'label': 'hot', 'color': '#ff0000'} }}` lets one
-    // template drive both text and color together instead of needing a
-    // separate color/icon Jinja alongside it. `_lastStatusLabelColor` null =
-    // no explicit override, _repaintStatusLabel below falls back to the
-    // bar's own color.
+    // Native dict return (docs/configuration.md's Jinja "Returning a native
+    // type") - `{{ {'label': 'hot', 'color': '#ff0000'} }}` lets one
+    // template drive both. `_lastStatusLabelColor` null = no override,
+    // _repaintStatusLabel falls back to the bar's own color.
     if (is.plainObject(content)) {
       this._lastStatusLabelText = String(content.label ?? '').trim();
       // is.nonEmptyString, not is.string - an explicit but empty `color: ''`
@@ -1972,26 +1838,20 @@ class HABase extends HACore {
     const iconAnimation = this._cardView.config?.icon_animation;
     if (!(is.plainObject(iconAnimation) && is.nonEmptyString((iconAnimation as { jinja?: string }).jinja))) return;
     this._cardView.jinjaIconAnimationActive = content;
-    // Every other Jinja setter re-applies whatever layer it just changed
-    // itself (see _applyConditionalClasses's own comment) - this one didn't,
-    // so the new value only ever took visual effect once something else
-    // happened to re-run _applyIconAnimationClasses (e.g. a regular
-    // hass-driven refresh on a standard card, shortly after). A Template
-    // card has no such incidental refresh to piggyback on, so the animation
-    // never started there at all (issue #125 follow-up).
+    // Every other Jinja setter re-applies its own changed layer - this one
+    // didn't, so the value only took effect once something else re-ran
+    // _applyIconAnimationClasses. Template has no incidental refresh to
+    // piggyback on, so the animation never started there (issue #125).
     this._applyIconAnimationClasses();
   }
 
   static #BREAK_RE = /<br\s*\/?>/gi;
 
-  // Splits Jinja-sourced HTML at the first <br> — shared by _renderCustomInfo
-  // (card/badge) and _renderSecondary (template/badgeTemplate), the only two
-  // callers. When `multiline` is off, any <br> is stripped instead of honored:
-  // [content, null]. When on, only the first <br> is kept; anything from a 2nd
-  // <br> onward is discarded. A tag straddling the break (e.g.
-  // <span style="color:red">A<br>B</span>) is re-wrapped on both halves via
-  // #domSplitOnce's ancestor cloning, instead of a naive string split that
-  // would leave one half with an unclosed/orphaned tag.
+  // Splits Jinja-sourced HTML at the first <br> - shared by _renderCustomInfo
+  // and _renderSecondary. `multiline` off: any <br> is stripped. On: only
+  // the first is kept, anything past a 2nd <br> is discarded. A tag
+  // straddling the break is re-wrapped on both halves via #domSplitOnce's
+  // ancestor cloning, not a naive string split (would orphan a tag).
   _splitAtFirstBreak(content: unknown): [string, string | null] {
     const html = String(content);
     if (!this._cardView.config.multiline) return [html.replace(HABase.#BREAK_RE, ''), null];

@@ -90,14 +90,12 @@ const THEME = {
       { min: 90, max: 100, icon: null, color: HA_CONTEXT.colors.red },
     ],
   },
-  // center_zero's own equivalent of critical_when_extreme above - same shape,
-  // linearly stretched from 0-100 onto -100..100 (old 50% midpoint -> new 0,
-  // the scale's own center) instead of duplicated per arm. `signed: true` is
-  // what tells ThemeManager/ViewBase.themeDivergingGradient to treat it as
-  // one continuous -100..100 scale (danger at both ends, safe at the center)
-  // rather than projecting the same 0-100 zones onto each arm independently
-  // (which would put red at the center and green partway down each arm -
-  // backwards for this shape).
+  // center_zero's own equivalent of critical_when_extreme above - same
+  // shape, linearly stretched from 0-100 onto -100..100 (old 50% midpoint ->
+  // new 0) instead of duplicated per arm. `signed: true` tells
+  // ThemeManager/ViewBase.themeDivergingGradient to treat it as one
+  // continuous -100..100 scale rather than projecting the same zones onto
+  // each arm independently (which would put red at the center - backwards).
   critical_when_extreme_center: {
     linear: false,
     percent: true,

@@ -211,6 +211,13 @@ entity: sensor.sma_current_day_yield
 secondary: '{{ states(entity, with_unit=True) }}'
 ```
 
+> [!TIP]
+>
+> In the visual editor (HA 2026.2+), every Jinja field has a 🐛 icon in its
+> top-right corner — click it to test your template live: it shows the exact
+> value your expression currently renders to (or the error, if it doesn't
+> parse), right below the field, without saving the card first.
+
 ##### Supported HTML
 
 Fields that render Jinja results as HTML (`name`, `secondary`, `custom_info`,

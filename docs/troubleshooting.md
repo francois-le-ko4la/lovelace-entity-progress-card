@@ -35,6 +35,8 @@ stays clean and stable. We handle two main categories of errors in the card:
 
 ## ⚠️ Deprecated Options
 
+### 📋 What's removed or deprecated
+
 Over time, some configuration options have been deprecated in favor of more
 flexible or clearer alternatives. While the card tries to maintain backward
 compatibility, these options may stop working in future releases.
@@ -107,23 +109,55 @@ encounter an issue.
 > This card **does not alter** your existing configuration. It only displays
 > entities — nothing is modified, removed, or broken in your actual setup.
 
+<a id="browser-compatibility"></a>
+
+### 🌐 Browser Compatibility
+
+Some issues aren't a bug — the browser is simply below the supported version.
+
+|      Platform       |        Browsers        |                    |                          |                        |                      |
+| :-----------------: | :--------------------: | :----------------: | :----------------------: | :--------------------: | :------------------: |
+|   ![HA][ha-logo]    | ![Chrome][chrome-logo] | ![Edge][edge-logo] | ![Firefox][firefox-logo] | ![Safari][safari-logo] | ![Opera][opera-logo] |
+| **Home Assistant**  |       **Chrome**       |      **Edge**      |       **Firefox**        |       **Safari**       |      **Opera**       |
+|      `2024.0+`      |         `98+`          |       `98+`        |          `94+`           |        `15.4+`         |        `84+`         |
+| Full visual effects |         `111+`         |       `111+`       |          `113+`          |        `16.2+`         |        `97+`         |
+
+- **First row** — functional minimum: the card loads and works.
+- **Second row** — a few purely decorative touches (icon tint, alert/ping pulse,
+  bar gradient sheen) need these newer versions; below that they just degrade
+  gracefully, same information, less vivid. See the [graphic effects
+  compatibility overview] for exactly what's affected on which browser.
+- **Older Chromium (e.g. Chrome 92, common on embedded/kiosk panels)** — best
+  effort only: the card itself loads and works (see [issue #128]), but matching
+  this version isn't a guarantee, just a courtesy where it's cheap.
+
 ### ✅ What to do?
 
 #### Try common quick checks first
 
+- **Already on the latest version?**  
+  ➡️ Check your installed version against the [latest release] — HACS flags an
+  update when one is available.
+- **A pre-release (RC) already fixes it?**  
+  ➡️ Patches and new features often ship first as a release candidate
+  (`x.y.z-rcN`) before the stable release. Check [all releases] (includes
+  pre-releases) — your issue may already be fixed there.
 - **Card not loading?**  
   ➡️ Ensure the resource is properly added to Lovelace.
 - **HACS not detecting the card?**  
   ➡️ Try clearing your browser cache or restarting Home Assistant.
+- **Card missing gradients/pulse animations, or looks a bit flat?**  
+  ➡️ Likely just an older browser — see
+  [Browser Compatibility](#browser-compatibility) above.
 - **Card not rendering, a `Cannot use 'import.meta' outside a module` error, or
   pop-ups (e.g. browser_mod) freezing?**  
   ➡️ Your resource is registered as a classic **"JavaScript"** type (deprecated
   by Home Assistant) instead of **"JavaScript Module"**. HA loads classic
   scripts differently, and older builds couldn't survive it — the card failed to
-  load and could freeze browser_mod pop-ups (see [#108]). **Fix:** Settings →
-  Dashboards → ⋮ → Resources, open the entry, set **Resource type → JavaScript
-  Module**, then hard-refresh. (Recent builds load correctly either way and
-  print a console warning when they detect the classic type.)
+  load and could freeze browser_mod pop-ups (see [issue #108]). **Fix:**
+  Settings → Dashboards → ⋮ → Resources, open the entry, set **Resource type →
+  JavaScript Module**, then hard-refresh. (Recent builds load correctly either
+  way and print a console warning when they detect the classic type.)
 - **Still not working?**  
   ➡️ Open your browser’s JavaScript console to check for any errors.
 
@@ -290,3 +324,25 @@ If you recently **updated** the card and the issue started afterward, you can:
 ---
 
 _This troubleshooting guide is inspired by open source best practices._
+
+[latest release]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/releases/latest
+[all releases]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/releases
+[issue #108]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues/108
+[issue #128]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues/128
+[graphic effects compatibility overview]:
+  https://htmlpreview.github.io/?https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/graphic-effects-compatibility.html
+[ha-logo]: https://avatars.githubusercontent.com/u/13844975?s=64&v=4
+[chrome-logo]:
+  https://raw.githubusercontent.com/alrra/browser-logos/main/src/chrome/chrome_64x64.png
+[edge-logo]:
+  https://raw.githubusercontent.com/alrra/browser-logos/main/src/edge/edge_64x64.png
+[firefox-logo]:
+  https://raw.githubusercontent.com/alrra/browser-logos/main/src/firefox/firefox_64x64.png
+[safari-logo]:
+  https://raw.githubusercontent.com/alrra/browser-logos/main/src/safari/safari_64x64.png
+[opera-logo]:
+  https://raw.githubusercontent.com/alrra/browser-logos/main/src/opera/opera_64x64.png

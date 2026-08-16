@@ -63,14 +63,11 @@ class EntityProgressCardBase extends HABase {
     this._manageAutoRefresh();
   }
 
-  // Adds the value text on top of HACore's own default tick (refresh + bar
-  // CSS, shared with EntityProgressFeatures - see core.ts) - a Card/Badge
-  // also shows a text value Features don't have. immediate: see
-  // _processStandardFields's own comment - the bar's width change rides its
-  // own CSS transition regardless of RAF phase, but the countdown text is a
-  // discrete jump each tick and RAF's own frame timing isn't aligned to our
-  // wall-clock-second scheduling (mirrors the same fix already applied to
-  // _renderJinjaNumber's own min_value/max_value push, below).
+  // Adds the value text on top of HACore's default tick (refresh + bar CSS,
+  // shared with EntityProgressFeatures) - Card/Badge also shows a text value
+  // Features don't have. immediate: see _processStandardFields's own
+  // comment - the countdown text is a discrete jump each tick, and RAF's
+  // frame timing isn't aligned to our wall-clock-second scheduling.
   _onAutoRefreshTick() {
     super._onAutoRefreshTick();
     this._processStandardFields(true);
@@ -423,17 +420,13 @@ class EntityProgressTemplateBase extends HABase {
   }
 
   // percent drives the entire visual pipeline (icon/bar color, theme,
-  // gradient - see _managePercent) - unlike every other Jinja field, where
-  // "nothing to render" is a valid end state, an empty/unset percent still
-  // needs *something* painted (0%'s own fallback, see _managePercent's own
-  // comment). A literal `percent: ''` never gets subscribed to at all
-  // (is.nonEmptyString filters it out of validJinjaFields/_processJinjaFields,
-  // same as any other empty Jinja field) - there's no push left to ever call
-  // _managePercent, so nothing else in the pipeline would ever paint. This is
-  // the one synchronous fallback for exactly that case, re-checked on every
-  // setConfig (not just first connect, so switching a live percent back to
-  // empty in the editor recovers too) - a real percent (static or Jinja)
-  // keeps going through the normal subscription/push instead, unaffected.
+  // gradient), unlike every other Jinja field where "nothing to render" is a
+  // valid end state - an empty/unset percent still needs something painted
+  // (0%'s fallback). A literal `percent: ''` never gets subscribed to at all
+  // (filtered out like any empty Jinja field), so nothing would ever call
+  // _managePercent - this is the one synchronous fallback for that case,
+  // re-checked on every setConfig so switching a live percent back to empty
+  // recovers too.
   setConfig(config: LovelaceConfig) {
     super.setConfig(config);
     if (!is.nonEmptyString(this._cardView.config.percent)) this._managePercent('');
@@ -449,13 +442,10 @@ class EntityProgressTemplateBase extends HABase {
 
   // Overrides HACore's own (plain refresh()): a template's display is
   // entirely Jinja-push-driven, so the tick's only job is forcing a fresh
-  // resubscription for every Jinja field while config.entity is an active
-  // timer - the persistent subscription itself won't re-evaluate now()/
-  // utcnow() on its own between HA's once-a-minute pushes. refresh() itself
-  // would recompute nothing this tick could have changed (nothing here is
-  // state-driven), so it's skipped entirely, not just the icon/badge/shape/
-  // trend/conditional-classes part standard cards trim (see
-  // EntityProgressCardBase's own override).
+  // resubscription for every Jinja field - the persistent subscription won't
+  // re-evaluate now()/utcnow() on its own between HA's once-a-minute pushes.
+  // refresh() would recompute nothing this tick could have changed, so it's
+  // skipped entirely, not just trimmed like EntityProgressCardBase's override.
   _onAutoRefreshTick() {
     const templates = this.validJinjaFields;
     for (const [key, template] of Object.entries(templates)) {
@@ -534,14 +524,11 @@ class EntityProgressTemplateBase extends HABase {
         this._repaintStatusLabel();
       },
     };
-    // theme (percent: true only - see schema.ts's own comment) wins outright
-    // when configured, same precedence as Card's own ViewBase.iconColor
-    // (theme.iconColor || config.color) - deleted here (like
-    // EntityProgressBadge/-TemplateBadge's own badge_icon/badge_color
-    // deletion above the class) rather than just guarded inside the handler,
-    // so validJinjaFields never subscribes to either at all while a theme is
-    // active, instead of maintaining two render_template subscriptions whose
-    // result is always thrown away.
+    // theme (percent: true only) wins outright when configured, same
+    // precedence as ViewBase.iconColor's `theme.iconColor || config.color` -
+    // deleted here rather than just guarded inside the handler, so
+    // validJinjaFields never subscribes to either while a theme is active,
+    // instead of maintaining two subscriptions whose result is thrown away.
     if (this._cardView.config.theme) {
       delete handlers.color;
       delete handlers.bar_color;
@@ -602,12 +589,10 @@ class EntityProgressTemplateBase extends HABase {
     // theme (percent: true only) re-derives icon/bar color (and, with
     // bar_color_mode set, the gradient) from this same push - see
     // _getJinjaHandlers's own color/bar_color comment for why those two
-    // stand down instead of fighting over the same CSS var. Unclamped value,
-    // not clamped: ThemeManager.#setStyle already clamps to its own
-    // first/last zone for an out-of-range value, same as ViewBase's own
-    // theme consumers. All four options read straight off _cardView, same
-    // getters _updateCSS's own repaint on the next hass update would read -
-    // no local computation to keep in sync between the two.
+    // stand down. Unclamped value: ThemeManager.#setStyle already clamps to
+    // its own first/last zone for an out-of-range value. All four options
+    // read straight off _cardView, the same getters _updateCSS's own repaint
+    // would read - no local computation to keep in sync.
     if (this._cardView.config.theme) this._cardView.setTemplateThemeValue(value);
     const bar = this._cardView;
     this._renderPercentCSS(clamped, {

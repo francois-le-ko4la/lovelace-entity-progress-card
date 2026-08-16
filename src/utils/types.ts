@@ -11,36 +11,26 @@
 import type { Infer, YamlSchemaFactory } from '../card/schema.js';
 
 declare const lovelaceConfigBrand: unique symbol;
-// The config exactly as Lovelace itself hands it over - setConfig()'s own
-// argument (matching custom-card-helpers' LovelaceCardConfig), before
-// YamlSchemaFactory validation: may still hold deprecated/legacy shapes (a
-// bare max_value string, disable_unit...), and in the editor is merged with
-// `_`-prefixed ephemeral UI state (EditorBase#config) that never gets sent
-// back to HA. Distinct from `Config` (below) so the two pipeline stages
-// can't be swapped positionally - see EditorDOMHelper#_updateField's
-// `config` (this one) vs `negotiated` (Config).
+// The config exactly as Lovelace hands it over - setConfig()'s own argument,
+// before YamlSchemaFactory validation: may still hold deprecated shapes, and
+// in the editor is merged with `_`-prefixed ephemeral UI state that never
+// gets sent back to HA. Distinct from `Config` below so the two pipeline
+// stages can't be swapped positionally.
 // skipcq: JS-0323 -- deliberate dynamic config bag (see above)
 type LovelaceConfig = { readonly [lovelaceConfigBrand]: true } & Record<string, any>;
 
 declare const configBrand: unique symbol;
 // The negotiated/resolved config: LovelaceConfig after schema validation,
-// default-filling, and legacy-shape migration - BaseConfigHelper.config, and
-// what ViewCore/HACore read everywhere else. Derived straight from
-// YamlSchemaFactory (schema.ts's Infer<>) instead of hand-maintained as a
-// separate blob. This is the one deliberate exception to utils/ never
-// importing from card/: the import is type-only (erased at compile time,
-// zero runtime/bundle cost), and Config's own source of truth genuinely
-// lives in schema.ts now.
+// default-filling, and legacy-shape migration - what ViewCore/HACore read
+// everywhere. Derived from YamlSchemaFactory (schema.ts's Infer<>) instead
+// of hand-maintained. The one deliberate exception to utils/ never importing
+// from card/: the import is type-only, erased at compile time.
 //
-// A *union* of the five card-type shapes (the first thing tried) doesn't
-// work here: HACore#_addBaseClasses and friends are shared by all five
-// concrete types and read fields only some of them actually declare (e.g.
-// `layout`, deleted from badge's own schema) - TypeScript only lets you
-// read a property off a union when every member has it. Intersecting the
-// five instead (every field from every schema, all optional via Partial)
-// matches the real runtime pattern: shared code reads whatever field it
-// wants and lets `undefined` flow through comparisons/optional chains
-// safely, the same way plain JS always did before this was typed at all.
+// A *union* of the five card-type shapes (tried first) doesn't work: shared
+// code reads fields only some types declare, and TS only lets you read a
+// union property when every member has it. Intersecting the five instead
+// (all optional via Partial) matches the real runtime pattern: shared code
+// reads whatever field it wants and lets `undefined` flow through safely.
 type Config = { readonly [configBrand]: true } & Partial<
   Infer<typeof YamlSchemaFactory.card> &
     Infer<typeof YamlSchemaFactory.badge> &

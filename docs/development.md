@@ -2,13 +2,16 @@
 
 This document describes the internal architecture of the Entity Progress Card
 for contributors and maintainers. It complements the user-facing
-[Configuration Reference](configuration.md) and [Theme Guide](theme.md).
+[Configuration Reference](configuration.md) and [Theme Guide](theme.md), and the
+setup/PR-facing [Contributing Guide](contributing.md).
 
+- [Quick start](#quick-start)
 - [Design principles](#design-principles)
 - [Object architecture](#object-architecture)
 - [Card lifecycle](#card-lifecycle)
 - [Home Assistant integration](#home-assistant-integration)
 - [Rendering & performance](#rendering--performance)
+- [Browser compatibility matrix](#browser-compatibility-matrix)
 - [Jinja template subscriptions](#jinja-template-subscriptions)
 - [Configuration validation](#configuration-validation)
 - [Security](#security)
@@ -16,10 +19,36 @@ for contributors and maintainers. It complements the user-facing
 - [Internationalization](#internationalization)
 - [Adding a new option](#adding-a-new-option)
 - [Code quality & tooling](#code-quality--tooling)
+- [Considered and deferred](#considered-and-deferred)
 - [Release process](#release-process)
 - [Logging & debugging](#logging--debugging)
 
 ---
+
+## Quick start
+
+```bash
+git clone https://github.com/francois-le-ko4la/lovelace-entity-progress-card.git
+cd lovelace-entity-progress-card
+npm install          # Node 24 (see .nvmrc / package.json's engines); also
+                      # installs the husky pre-commit hook (format + lint on
+                      # staged files)
+npm run build:test   # → dist/entity-progress-card_dev.js (readable, not minified)
+```
+
+`src/index.ts` is where execution actually starts: it registers the card/badge/
+feature custom elements and prints the console banner — everything else in
+`src/` is reached from there, directly or transitively.
+
+To see it render against real entities rather than just type-check, there's no
+automated test suite (see [Rendering & performance](#rendering--performance)) —
+point a Lovelace resource at the dev build and import
+[`docs/demo-dashboard-dev.yaml`](demo-dashboard-dev.yaml) into a real Home
+Assistant instance. Full steps (and the PR checklist) are in the
+[Contributing Guide](contributing.md#contribution-guidelines).
+
+Before opening a PR: `npm run validate` (syntax check + lint + type-check +
+translations sync) — the same gate CI runs.
 
 ## Design principles
 
@@ -118,7 +147,10 @@ classDiagram
   state computation.
 
 Each view owns a matching **config helper** (`CardConfigHelper`,
-`BadgeTemplateConfigHelper`, …) that validates and negotiates the raw YAML.
+`BadgeTemplateConfigHelper`, …) that validates and negotiates the raw YAML —
+this is the diagram's "Config helpers + validation" layer; see
+[Configuration validation](#configuration-validation) for the full detail
+(`preProcess`/`postProcess`, schema-derived `Config` type).
 
 ### Domain helpers
 
@@ -334,9 +366,27 @@ Techniques used to keep N cards cheap on a dashboard that updates constantly:
    options object — **the DOM structure depends on config options** (layout, bar
    position, center-zero…), so each distinct combination gets its own template
    and identical cards share one.
-3. **Value-cached, RAF-batched DOM writes** (`DOMHelper`). Redundant writes are
-   dropped before touching the DOM; the rest are coalesced into one
-   `requestAnimationFrame` flush.
+3. **Value-cached, RAF-batched DOM writes** (`DOMHelper`, shared by the card and
+   by `EditorDOMHelper extends DOMHelper`). Two independent mechanisms, both
+   keyed `${key}:${prop}` (the registered element's key + the property being
+   written, e.g. `bar_size:style:width`):
+   - **Value cache** (`_appliedValues`) — every `setStyle`/`setText`/
+     `toggleClass`/… checks this map first and returns immediately if the
+     incoming value already equals the last one _applied_; nothing gets enqueued
+     at all for a no-op change, so an unrelated hass update that recomputes the
+     same values costs a handful of map lookups, not DOM writes.
+   - **RAF queue** (`enqueue(key, prop, updateFn)` → `_pendingUpdates`) — writes
+     that do need to happen go into a `Map<"key:prop", updateFn>` instead of
+     touching the DOM synchronously. Enqueuing again under the _same_ `key:prop`
+     before the next frame just overwrites the map entry (last write wins)
+     rather than queuing a second one, so N redundant writes to the same target
+     collapse into the one that actually mattered. A single
+     `requestAnimationFrame` callback flushes the whole map once per frame,
+     however many distinct keys ended up queued. This is also the project's
+     general-purpose debounce building block — see
+     `ResourceManager.setTimeout(handler, ms, id)`'s own cancel-and-replace-
+     by-id semantics, used the same way for the Jinja render debounce
+     ([Jinja template subscriptions](#jinja-template-subscriptions)).
 4. **Reference-based change detection** (`ChangeTracker`), so the per-update
    cost of an idle card is a few `!==`.
 5. **Compositor-only animations.** The bar fill animates with
@@ -345,6 +395,88 @@ Techniques used to keep N cards cheap on a dashboard that updates constantly:
    repaint. `contain: layout paint` bounds invalidation to the bar.
 6. **Push-based Jinja** with subscription dedup (next section) instead of
    polling or resubscribing.
+
+## Browser compatibility matrix
+
+The card ships to a wide range of Home Assistant setups — including
+embedded/kiosk panels running an old, unupdatable browser — so compatibility is
+handled as two distinct floors, not one:
+
+| Tier                | Home Assistant | Chrome/Edge | Firefox | Safari  | Opera |
+| ------------------- | -------------- | ----------- | ------- | ------- | ----- |
+| Functional minimum  | `2024.0+`      | `98+`       | `94+`   | `15.4+` | `84+` |
+| Full visual effects | —              | `111+`      | `113+`  | `16.2+` | `97+` |
+
+(kept in sync with the table in the [README](../README.md#prerequisites) —
+update both when either floor changes.) Below the functional-minimum row, the
+card may not load at all. Between the two rows, it loads and works completely —
+every option, every interaction — but a handful of purely decorative touches (a
+soft tint behind icons, the pulsing alert/ping animations, the bar's gradient
+sheen) fall back to a plainer look instead of the modern one. This is a
+deliberate trade-off, not an oversight: full functionality first, full polish
+where the browser allows it.
+
+### How the two floors are enforced
+
+- **Syntax** (does the JS itself parse/run) is handled by the **build target**,
+  not by writing fallback code — `scripts/build.js` passes `target: 'es2021'` to
+  esbuild's minifier, and `npm run check:es-target` (`es-check`, part of the
+  release build) re-verifies that language floor on the **minified** output.
+  This is the direct fix for
+  [issue #128](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues/128)
+  (filed against Chrome 92): the build used to target `es2022`, which let
+  esbuild emit class `static {}` blocks (its `keepNames` technique on static
+  members) — a hard `SyntaxError` on any pre-2022 engine, caught by neither
+  dev-mode testing (a modern browser) nor `node --check` in CI (Node's own
+  parser is newer than the target), so it shipped broken to exactly the
+  embedded/kiosk browsers this matters most for. `es2021` keeps every syntax
+  feature actually used in `src/` (private fields, `??=`, optional chaining —
+  all supported since Chrome ~80-85) while forcing static blocks into an
+  es2021-safe form — no fallback branch needed, the build just never emits the
+  unsafe syntax in the first place. `eslint-plugin-compat` lints the **source**
+  against the same functional-minimum matrix during `npm run lint`, catching a
+  problem earlier, before it'd otherwise only surface in `check:es-target` on
+  the built output. See [Release process](#release-process) for exactly where
+  the build-time check runs.
+- **Visual/CSS degradation** is a separate, manual mechanism — there's no build
+  target or linter for "does this gradient look right on Safari 15.4". Effects
+  that use a modern CSS feature (`color-mix()`, `round()`, Constructable
+  Stylesheets) ship a **fallback tier** picked via `@supports` (or a `try/catch`
+  around the feature-detection itself, for JS APIs like Constructable
+  Stylesheets), and a **modern tier** for browsers that support the real thing.
+  Both tiers render the same underlying state, just with a plainer technique on
+  the fallback side — never a missing feature.
+  `docs/graphic-effects-compatibility.html` is the living side-by-side
+  reference: every animation/gradient/effect in the card, fallback tier next to
+  modern tier, with a note on exactly what technique change makes each one safe.
+  Read it before adding a new visual effect, and add the new effect to it.
+
+### When adding something that needs a newer CSS/JS feature
+
+1. Check whether it's purely decorative (an animation flourish, a gradient
+   sheen) or functional (the option doesn't work at all without it). Only
+   decorative effects get the two-tier treatment — a functional gap has to be
+   solved a different way (a simpler technique that works everywhere, or the
+   option genuinely requires the floor to move, which needs a deliberate
+   discussion, not a silent regression).
+2. Write the fallback tier first (the one that works at the functional- minimum
+   floor), confirm it looks reasonable on its own, then add the modern tier
+   behind `@supports` (or equivalent feature detection).
+3. Add the pair to `docs/graphic-effects-compatibility.html` so it's visible in
+   the living comparison, not just correct in isolation.
+
+### Pushing the floor lower where it's cheap
+
+The `98+`/`94+`/`15.4+`/`84+` row is where the project draws the line on
+**effort**, not a hard technical wall. Issue #128's own reporter was on Chrome
+92 — an embedded kiosk panel, the kind of device that's often the hardest to get
+upgraded. The JS syntax side is already covered for that case (the `es2021`
+build target above), so this is really about the **CSS fallback tier**: when a
+tier you're already writing for `@supports` also happens to work on something
+like Chrome 92 at no extra cost, prefer that shape. Don't spend real effort
+chasing 92 specifically, and don't let it constrain the modern tier's
+implementation — it's "free wins welcome," not a second floor to formally test
+against.
 
 ## Jinja template subscriptions
 
@@ -387,6 +519,20 @@ Key mechanics (`_processJinjaFields` / `_subscribeToTemplate`):
   normalize (`list` or comma-string for `bar_effect`/`hide`, number or numeric
   string for `percent`) and render errors are caught and logged rather than
   crashing the WS callback.
+- **Per-key render debounce.** Every pushed result funnels through
+  `HACore._renderJinja(key, content)`, which debounces ~80ms per `key` (id
+  `jinja-render-<key>`) via `ResourceManager.setTimeout` before calling the real
+  handler (`#applyJinja`) — no new mechanism, just reusing `ResourceManager`'s
+  existing cancel-and-replace-by-id semantics for the same id. This exists
+  because a multi-step HA script/automation (e.g. turning on an `input_boolean`,
+  then picking an `input_select` option) makes entities referenced by an `and`
+  condition change one at a time, not atomically — HA pushes one intermediate
+  `render_template` result per entity it touches, not just the final settled
+  one. Without the debounce, a field could visibly render (and stay stuck on) a
+  transient value nothing in the final state actually supports (issue #135). The
+  300ms throttle above governs how often a _subscription_ gets (re)established;
+  this 80ms debounce governs how often an already-subscribed field's _result_
+  gets applied to the DOM — different problems, both needed.
 
 ## Configuration validation
 
@@ -400,6 +546,33 @@ Key mechanics (`_processJinjaFields` / `_subscribeToTemplate`):
   config is what the editor round-trips, so user YAML is never rewritten behind
   their back.
 - Deprecated options are detected and logged with a migration hint.
+
+### `preProcess` / `postProcess` (`struct()`, `schema.ts`)
+
+Every schema's pipeline is
+`preProcess(rawData) → per-field validator() → postProcess(result)`:
+
+- **`preProcess`** runs on the **raw, untyped** `Record<string, unknown>`,
+  before any field validator sees it. It's for reshaping input whose YAML
+  shorthand differs from the internal shape — e.g. a bare `name: "text"` string
+  gets normalized into the real `[{type: 'text', text: ...}]` array the field
+  validator expects, so the validator itself only has to handle one shape.
+- **`postProcess`** runs on the **validated, typed** result. It's the
+  cross-field safety net for "field B is meaningless without field A" — e.g.
+  `bar_color_mode`/`interpolate` reset to their defaults once no theme is active
+  (`applyBarColorModeRule`/`applyInterpolateRule`), `bar_single_line` resets
+  once `bar_position` isn't `overlay`. This runs for _every_ config,
+  hand-written YAML included, which is what actually protects rendering — the
+  editor's own `onClear`/draft-preservation (see
+  [Editor architecture](#editor-architecture)) is a separate, UI-only nicety for
+  keeping the _saved_ YAML tidy, not a substitute for this.
+
+**When adding an option gated by another one, add both**: a `postProcess` rule
+so a hand-written-YAML user never gets a stuck or silently-wrong render, and an
+editor `onClear` so the visual editor doesn't leave a stale value behind when
+the gate closes. Neither is where you'd reject bad input — that's the field
+validator's own job (throw `ValidationError`, or return `SKIP_PROPERTY` to drop
+silently).
 
 ### `Config` is derived from the schema, not hand-maintained
 
@@ -445,22 +618,69 @@ assignment.
 
 ## Editor architecture
 
-Editors share `EditorBase`:
+### `EditorFactory` builds the field-def tree
+
+`EditorFactory.build(template, badge)` produces the whole `static _fields` tree
+consumed by `EditorBase`, one entry per panel: `general`, `content`, `theme`,
+`markers`, `layout`, `interactions`. Every section function takes the same two
+booleans (`template`/`badge`) identifying which of the four editable variants
+(Card/Badge/Template/Badge Template) is being built, and returns a plain object
+of field definitions — there's no class hierarchy here, just parameterized
+functions returning data.
+
+The `theme` panel in particular is assembled from a dozen small
+`themeXxxFields(...)` helpers (`themeModeFields`, `themeColorModeFields`,
+`themeCardOnlyFields`, `themeBarSizingFields`, …) instead of one large function
+— this is deliberate, not just tidiness: `theme()`'s own body would trip
+`sonarjs/cognitive-complexity`'s 15-branch cap if every card-type ternary lived
+inline. Adding a field to that panel usually means extending the right existing
+`themeXxxFields` helper, not adding to `theme()` itself.
+`valueField`/`nestedValueField` are the equivalent factories for the 3-way
+(standard/entity/jinja) value fields
+(`min_value`/`max_value`/`watermark.low`/`.high`/`alert_when.above`/ `.below`) —
+one implementation, five call sites.
 
 - A declarative **field map** (`static _fields`) organized in expansion panels;
   each field is an `ha-selector` (or a custom element:
   `entity-progress-effect-chips`, `entity-progress-hide-chips`,
   `entity-progress-bar-stack-editor`).
+
+### `EditorBase` runtime conventions
+
 - **Render once, update forever**: the DOM is built on first
   `connectedCallback`; every subsequent `setConfig` only pushes values,
   visibility (`showIf`) and dynamic selectors through `EditorDOMHelper` (same
-  RAF/cache batching as the card).
+  RAF-queue + value-cache batching as the card — see
+  [Rendering & performance](#rendering--performance)).
 - Fields read the **negotiated** config so entity-driven defaults show up,
   except `template`/`action` fields which read the raw config to avoid flicker
   while typing Jinja.
 - `virtual` fields (UI-only toggles), `target` remapping, `onChange`/`onClear`
   hooks cover the YAML↔UI mismatches; `_`-prefixed keys carry ephemeral UI state
-  and are stripped before `config-changed` is dispatched.
+  and are stripped before `config-changed` is dispatched (never round-tripped to
+  the saved YAML), but survive across a `setConfig` round-trip like the rest of
+  `#config` does.
+- **Draft-preservation pattern**: when a toggle/mode-switch (`badge_toggle`,
+  `icon_animation_jinja_toggle`, `min_value_mode`, …) discards a value to switch
+  shape, stash it in a matching `_<field>_<mode>_draft` key first (one draft per
+  _other_ mode, e.g. `_min_value_entity_draft` + `_min_value_jinja_draft` for
+  `min_value_mode`'s 3-way switch) instead of just dropping it. Re-entering that
+  mode later reads the draft back before falling to a blank default, so
+  switching jinja → standard → jinja restores the typed template instead of
+  starting over. `valueField`/`nestedValueField` in `factory.ts` are the
+  reference implementation for the 3-way (standard/ entity/jinja) case; every
+  2-way jinja toggle (`hide_jinja`, `bar_effect_jinja`, `status_label_toggle`,
+  …) follows the same shape with one draft each way.
+- **Field `width`** can be a plain string (set once, at build) or a function of
+  config (re-evaluated on every relevant update via `EditorDOMHelper`, same as a
+  dynamic `type`). Two fields meant to sit side by side in the same flex-wrap
+  row must agree on when each goes half vs. full — if field B's `showIf` can go
+  false while field A stays visible and half-width, A needs a matching
+  conditional width (falling back to `100%`) or it ends up alone with empty
+  space beside it. `EditorFactory.themeBarSizingFields` is the most elaborate
+  real example (four different pairing rules depending on card type, spelled out
+  in its own header comment) - read it before adding a new field to that same
+  panel.
 - Custom elements that edit an **array of row-objects** (`bar_stack`'s entities,
   `custom_theme`'s zones) share `ListEditorBase`: a label, a list container, the
   build-once/render-on-change lifecycle, and `_deleteRow`/`_updateItem` — the
@@ -536,9 +756,15 @@ workflow — run it without argument for the full help:
 
 ### Naming rules
 
-The existing surface grew organically and carries some inconsistencies (`color`
-vs `bar_color`, `disable_unit` vs `frameless`…). **Every new option must follow
-these rules** so the API stops degrading:
+Two naming layers coexist by design, not by accident: these rules govern every
+_new_ option, while the existing YAML surface is constrained by backward
+compatibility with dashboards already written against it — renaming or reshaping
+a shipped key is a breaking change (rule 6 below), so pre-rule options are kept
+as-is rather than retrofitted. `color` vs `bar_color`, `disable_unit` vs
+`frameless`, `watermark.disable_low`/`disable_high` (a negative boolean, rule 2)
+all predate these rules and stay exactly as shipped. **Every new option must
+follow these rules**, so the gap between "what's possible now" and "what's
+actually out there" stops growing:
 
 1. **Family prefix**: options belonging to a visual family share its prefix —
    `bar_*`, `icon_*`, `badge_*`. A bare name (`color`) is ambiguous forever.
@@ -597,33 +823,34 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
 ## Code quality & tooling
 
 - **Linting** (`eslint.config.mjs`, flat config): `js.configs.recommended` plus
-  `eslint-plugin-compat` (browser support matrix — Chrome/Edge/Firefox/Safari/
-  Opera floors matching the README's support table), `eslint-plugin-sonarjs`
-  (`cognitive-complexity` capped at 15, duplicate-string/collapsible-if/
-  identical-functions checks), and `eslint-plugin-import-x`
-  (`import-x/ no-cycle` — `src/` has real cross-file imports now that the module
-  split exists; nothing currently prevents a future circular import from
-  creeping in except this rule). Notable custom rules: `eqeqeq: 'smart'` (bans
-  `==`/ `!=` except the `x == null` null-or-undefined idiom, used once in
-  `common-checks.ts`), `no-console` (only `debug`/`info`/`warn`/`error`/
-  `groupCollapsed`/`groupEnd` allowed — `console.log` is banned everywhere
-  except one inline-disabled call in the startup banner), and
-  `lines-between-class-members: 'always'` (no exception for short members —
-  every class member gets a blank line before it). `npm run lint` / `make lint`.
-- **TypeScript, mixed with plain JS** (`tsconfig.json`: `allowJs`,
-  `checkJs: false` project-wide, `strict: true`): most of `src/` stays `.js` — a
-  handful of small, self-contained `utils/` files (`common-checks.ts`, `log.ts`,
-  `parameters.ts`, `register.ts`, `styles.ts`) are real `.ts`, type-checked by
-  `npm run type-check` (`tsc`, wired into `validate`). A `.js` file can opt into
-  the same checking without converting, via a `// @ts-check` pragma plus JSDoc
-  type annotations (TypeScript's language server understands both the same way).
-  `eslint.config.mjs` has a matching `**/*.ts` block
-  (`@typescript-eslint/parser` + plugin) alongside the JS one, sharing the same
-  rule set except identifier-resolution rules (`no-undef`/ `no-unused-vars`),
-  which TS itself already covers more reliably for `.ts` files. esbuild bundles
-  the mixed `.ts`/`.js` tree natively — no separate compile step, imports keep
-  the `.js` extension even when the real file is `.ts` (standard TS/esbuild
-  resolution convention).
+  `eslint-plugin-compat` (browser support matrix — see
+  [Browser compatibility matrix](#browser-compatibility-matrix)),
+  `eslint-plugin-sonarjs` (`cognitive-complexity` capped at 15,
+  duplicate-string/collapsible-if/ identical-functions checks), and
+  `eslint-plugin-import-x` (`import-x/ no-cycle` — `src/` has real cross-file
+  imports now that the module split exists; nothing currently prevents a future
+  circular import from creeping in except this rule). Notable custom rules:
+  `eqeqeq: 'smart'` (bans `==`/ `!=` except the `x == null` null-or-undefined
+  idiom, used once in `common-checks.ts`), `no-console` (only
+  `debug`/`info`/`warn`/`error`/ `groupCollapsed`/`groupEnd` allowed —
+  `console.log` is banned everywhere except one inline-disabled call in the
+  startup banner), and `lines-between-class-members: 'always'` (no exception for
+  short members — every class member gets a blank line before it).
+  `npm run lint` / `make lint`.
+- **Nearly all TypeScript** (`tsconfig.json`: `allowJs`, `checkJs: false`
+  project-wide, `strict: true`): `src/` is virtually 100% `.ts` — the one
+  remaining `.js` file, `translations.js`, is generated and never hand-edited
+  (see [Internationalization](#internationalization)). `.ts` files are
+  type-checked by `npm run type-check` (`tsc`, wired into `validate`).
+  `allowJs`/`checkJs: false` stay in place for the day a `.js` file is added: it
+  can opt into the same checking without converting, via a `// @ts-check` pragma
+  plus JSDoc type annotations. `eslint.config.mjs` has a matching `**/*.ts`
+  block (`@typescript-eslint/parser` + plugin) alongside the JS one, sharing the
+  same rule set except identifier-resolution rules (`no-undef`/
+  `no-unused-vars`), which TS itself already covers more reliably for `.ts`
+  files. esbuild bundles the mixed `.ts`/`.js` tree natively — no separate
+  compile step, imports keep the `.js` extension even when the real file is
+  `.ts` (standard TS/esbuild resolution convention).
 - **Formatting**: `.prettierrc` applies to `src/**/*.{js,ts}` too (not just
   markdown) — `npm run format:js` / `format:js:check` / `format` (JS + MD).
   `embeddedLanguageFormatting: "off"` is deliberate: Prettier recognizes the
@@ -642,12 +869,71 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
   the root cause, don't suppress unless the finding is a false positive.
 - `make help` lists every available target (build, lint, type-check, format,
   i18n, release-dry-run...) with a one-line description.
+- **Identifier naming** (a followed convention, not lint-enforced): classes
+  PascalCase, functions/methods/variables camelCase, private fields
+  `#camelCase`, module-level constant objects (`CARD`, `HA_CONTEXT`, `SEV`, …)
+  UPPER_SNAKE_CASE, filenames kebab-case. Distinct from the YAML option surface
+  (snake_case, see [Naming rules](#naming-rules)) — negotiated/ derived config
+  keys deliberately switch to camelCase to mark "computed, not raw YAML":
+  `config.resolvedUnit`/`resolvedDecimal`, `center_zero`'s derived
+  `{ enabled, zeroValue, growthPercent }` shape (`config-helpers.ts`).
+
+## Considered and deferred
+
+Ideas that came up, were scoped seriously, and were set aside on purpose —
+recorded so nobody re-proposes or re-investigates them from zero, and so the
+reasoning survives a maintainer handoff instead of living only in chat history.
+
+- **Incremental editor preview** (instead of full reset+render on every
+  keystroke). Today `HACore.setConfig` does a full `reset()`
+  (`shadowRoot.innerHTML = ''`) + `render()` on every single editor edit, which
+  is the dominant cost of typing in the visual editor (well past the field-walk
+  itself, already optimized — see [Editor architecture](#editor-architecture)).
+  The lever: only reset+render when the DOM **structure** actually changed; a
+  same-structure value edit (a color, a threshold, a label) could instead go
+  through an incremental update path. `ObjStructure.clone`'s own
+  structure-signature (the same options —
+  `barType`/`barPosition`/`layout`/`bar_size`/`orientation`/
+  `center_zero`/`segments`/… — that already decides the `<template>` cache key,
+  see [Rendering & performance](#rendering--performance)) is the natural "did
+  structure change" check to reuse rather than re-derive. Risk: any structural
+  option missing from that reused signature leaves a stale DOM; the incremental
+  path would still need to re-process Jinja and re-register watched entities on
+  every edit, just skip the teardown. Real correction surface, not started.
+- **A dedicated "+ Add interaction" picker** for the optional action fields
+  (`hold_action`, `icon_hold_action`, `double_tap_action`,
+  `icon_double_tap_action`) below the existing `show_all_actions` toggle — the
+  same "+" pattern Mushroom and HA's native Tile card use. Checked against their
+  actual source (`hui-tile-card-editor.ts`, Mushroom's
+  `template-card-editor.ts`): that widget is `ha-form`'s native
+  `type: "optional_actions"` field, provided by HA for free — not something
+  those projects built themselves. This editor is a hand-rolled form engine
+  (`EditorFactory`/`EditorBase`/`EditorDOMHelper`), not `ha-form`-based, so it
+  can't just declare that field type; migrating the whole editor to `ha-form`
+  would be a rewrite far bigger than this one widget justifies. If revisited:
+  build an equivalent "+" picker inside the existing custom engine, added below
+  `show_all_actions` (`interactions()` in `factory.ts`) as a second, coexisting
+  mechanism rather than a replacement — `tap_action`/ `icon_tap_action` are
+  correctly out of scope either way (their default depends on the entity's
+  domain, already handled separately).
+- **The progress bar as a standalone "dumb" web component**
+  (`<entity- progress-bar>` receiving pre-computed `%`/color/segments as props,
+  with the calculation engine — `HACore`/`ViewCore`/`ProgressCalc` — living
+  entirely outside it). Verdict: cosmetic for the current architecture, not
+  worth it on its own — the Tile Feature (`entity-progress-feature`) already
+  plays the role of a reusable bar-only building block for anything that needs
+  one, so a formal smart/dumb split would mostly duplicate that without a
+  concrete consumer needing it. Only worth reconsidering inside a genuine
+  ground-up rendering rewrite, not as a standalone refactor.
 
 ## Release process
 
 - **Versioning**: `const VERSION = 'x.y.z[-dev]'` in `src/utils/parameters.ts`
   is the single source of truth displayed in the console banner; keep it in sync
-  with the git tag. `-dev` marks unreleased builds.
+  with the git tag. `-dev` marks unreleased builds. `package.json`'s own
+  `"version": "1.0.0"` is a deliberately frozen stub — this package is never
+  published to npm (`private: true`), so it has no consumer; don't bump it,
+  `VERSION` above is the only one that matters.
 - **CI** (`.github/workflows/`), path-scoped where relevant so a PR only
   triggers the checks that matter for what it touches:
   - `validate-hacs.yaml` — **not** path-scoped, runs on every push/PR: HACS
@@ -699,25 +985,42 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
 
 ## Logging & debugging
 
-`dev` and `debug` are **derived from the served URL** (`import.meta.url`) at
-module load, in `CARD_CONTEXT` (`src/utils/parameters.ts`) — not edited into the
-source and rebuilt. In an esbuild bundle `import.meta.url` resolves to the
-loaded bundle's own URL, so reading the served resource URL Just Works, and is
-guarded (`try/catch`) so a non-module eval falls back to the safe shipped state.
+`dev`/`debug`/`noRegistration` live in `CARD_CONTEXT`
+(`src/utils/parameters.ts`).
 
 - **dev** (`-dev` suffix on every registered element name, so a dev build
-  coexists with the shipped one): on when the file is served as `…_dev.js`, or
-  the resource URL carries `?dev`. The shipped `entity-progress-card.js`, served
-  without that marker, is inherently non-dev — a dev build can't be shipped by
-  accident, and HACS's own `?hacstag=…` doesn't trigger it. The two build
-  outputs are already named `entity-progress-card_dev.js` (test) and
-  `entity-progress-card.js` (prod), so the filename alone decides — no source
-  edit to toggle.
-- **debug** (`?debug=area1,area2`, or `?debug=all`): turns on per-area console
+  coexists with the shipped one) is **baked in per build** (`__EPB_DEV_BUILD__`,
+  injected by `scripts/build.js` — `true` in `entity-progress-card_dev.js`,
+  `false` in the shipped file), not URL-derived. A dev build can't be shipped by
+  accident, and HACS's own `?hacstag=…` doesn't trigger it. `?dev=true` is an
+  optional _runtime override_ on the **prod** file on top of that baked value,
+  for testing dev behavior against the exact shipped bundle.
+- **debug** (`?debug=area1,area2`, or `?debug=all`) turns on per-area console
   logging at runtime, no rebuild, and works against the shipped file too. The
   committed baseline is `DEBUG_DEFAULTS` (all-`false`) — `?debug=` only ever
   turns flags _on_. `check-release-flags.js` verifies `DEBUG_DEFAULTS` is
   all-false and `build:prod` re-forces it, so verbose logging can't ship.
+- **`?noRegistration`** loads the whole module (banner, `EPB_DIAG`, everything)
+  but defines zero custom elements and pushes nothing to
+  `customCards`/`Badges`/`Features` — a diagnostic knob for telling apart "the
+  bundle loading at all" from "the bundle registering itself" when chasing a
+  freeze/clash (issue #108's own troubleshooting flow). URL-derived only, off
+  unless asked.
+- **Why `?dev`/`?debug`/`?noRegistration` read `document.currentScript.src`,
+  never `import.meta.url`**: a bare `import.meta` is a _parse-time_
+  `SyntaxError` when the bundle is loaded as a classic `<script>` (a resource
+  typed `js` instead of `module` in HA, or `browser_mod` re-loading it inside a
+  popup) — it kills the whole module before any `try/catch` can even run, which
+  is exactly what issue #108 turned out to be: a silent freeze with no console
+  error, because the failure happens before the module's own error handling
+  exists. `document.currentScript.src` is populated for a classic-script load
+  and `null` for an ES-module load (`import()`, the real HACS path) — in the
+  latter case these three stay off, which is the safe shipped state anyway.
+  **Never reintroduce `import.meta` anywhere in `src/`.**
+  `CARD_CONTEXT.classicScript` (`document.currentScript !== null`) is the same
+  signal, used to show a one-time console nudge toward switching the resource to
+  "JavaScript Module" — the classic type still loads fine now, but stays
+  deprecated by HA.
 - A **console warning** is printed after the load banner whenever dev or any
   debug area is active (listing the active areas), so a non-shipped
   configuration never runs silently. Normal prod loads stay quiet.

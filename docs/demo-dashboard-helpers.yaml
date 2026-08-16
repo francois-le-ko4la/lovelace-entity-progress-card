@@ -215,6 +215,16 @@ input_number:
     initial: 85
     unit_of_measurement: '%'
     icon: mdi:trash-can
+  # generic_thermostat's target_sensor (current temperature reading) - see
+  # `climate:` below for why this isn't a `template:` entity.
+  epb_demo_thermostat_temperature:
+    name: Demo thermostat room temperature
+    min: 0
+    max: 35
+    step: 0.5
+    initial: 18
+    unit_of_measurement: '°C'
+    icon: mdi:thermometer
 
 input_boolean:
   epb_demo_printer:
@@ -234,6 +244,10 @@ input_boolean:
   epb_demo_ac_status:
     name: Demo AC status (toggle)
     icon: mdi:air-conditioner
+  # generic_thermostat's heater switch - see `climate:` below.
+  epb_demo_thermostat_heater:
+    name: Demo thermostat heater
+    icon: mdi:radiator
 
 input_select:
   epb_demo_litter_status:
@@ -444,8 +458,21 @@ template:
 # entities (no native YAML helper domain for them); timer and a battery
 # device_class sensor already exist elsewhere in this file
 # (timer.epb_demo_timer, sensor.epb_demo_battery_ev) and are reused as-is.
-# climate was dropped - 'climate' isn't a valid platform under the unified
-# template: integration (confirmed via HA's own config-check error).
+# climate isn't a valid platform under the unified template: integration
+# (confirmed via HA's own config-check error) - generic_thermostat is the
+# real climate platform instead, same pattern Mushroom's own dev config
+# uses (piitaya/lovelace-mushroom, .hass_dev/packages/climate.yaml).
+climate:
+  - platform: generic_thermostat
+    name: EPB Demo thermostat
+    heater: input_boolean.epb_demo_thermostat_heater
+    target_sensor: input_number.epb_demo_thermostat_temperature
+    min_temp: 7
+    max_temp: 35
+    precision: 0.5
+    target_temp_step: 0.5
+    ac_mode: false
+
 counter:
   epb_demo_counter:
     name: EPB Demo counter

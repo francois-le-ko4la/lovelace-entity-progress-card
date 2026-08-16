@@ -105,16 +105,15 @@ class BaseConfigHelper {
     this.#lastMsgConsole = null;
   }
 
-  // resolvedUnit/resolvedDecimal: the effective unit/decimal a card shows when
-  // the user leaves them unset (entity-derived, see display-defaults.ts). Added
-  // to the negotiated config as derived keys so the editor can offer them as a
-  // greyed placeholder without writing a YAML key. Needs live entity data
-  // (hence instance, not static #resolveConfig); the card itself recomputes
-  // these live at render (ViewCore) and ignores these copies.
-  // Re-run the entity-derived unit/decimal resolution against the current hass
-  // without re-parsing the schema. The editor calls this on `set hass` because
-  // config negotiation runs hass-independently (possibly before hass exists),
-  // so the derived defaults would otherwise stay stale until the next config.
+  // resolvedUnit/resolvedDecimal: the effective unit/decimal a card shows
+  // when unset (entity-derived, see display-defaults.ts). Added to the
+  // negotiated config so the editor can offer them as a greyed placeholder
+  // without writing a YAML key. Needs live entity data (instance, not static
+  // #resolveConfig); the card recomputes these live at render and ignores
+  // these copies.
+  // Re-run the entity-derived resolution against the current hass without
+  // re-parsing the schema - the editor calls this on `set hass` since
+  // negotiation runs hass-independently, or the defaults would stay stale.
   refreshDisplayDefaults() {
     this.#resolveDisplayDefaults();
   }
@@ -370,19 +369,16 @@ class CardConfigHelper extends BaseConfigHelper {
   // needs the wider declared type to narrow from.
   _yamlSchema: Schema = YamlSchemaFactory.card;
 
-  // center_zero with no explicit min_value would otherwise default to 0
-  // (CARD.config.value.min), making the negative half meaningless (zeroValue -
-  // min = 0, nothing to render on that side). Default it to the symmetric
-  // negative of max_value instead - but only when max_value is a plain number
-  // (or absent, i.e. the 100 default); an entity/jinja-based max can't be
-  // mirrored at this config-negotiation stage. An explicit min_value (even 0)
-  // is always left untouched.
+  // center_zero with no explicit min_value would otherwise default to 0,
+  // making the negative half meaningless. Default it to the symmetric
+  // negative of max_value instead - only when max_value is a plain number;
+  // an entity/jinja-based max can't be mirrored at this stage. An explicit
+  // min_value (even 0) is always left untouched.
   //
   // A built-in theme with real-world value zones (temperature, voc, pm25)
   // overrides the symmetric mirror with the theme's own lowest zone bound
-  // instead (e.g. -50 for temperature, not -max_value) - the theme itself
-  // already defines how far its negative branch realistically extends, and
-  // that's a better default than an arbitrary mirror of max_value.
+  // instead (-50 for temperature, not -max_value) - it already defines how
+  // far its negative branch realistically extends.
   static _applyCenterZeroMinDefault(config: LovelaceConfig, normalized: LovelaceConfig): LovelaceConfig {
     if (!config?.center_zero || !is.nullish(config?.min_value)) return normalized;
     const theme = THEME[config.theme as keyof typeof THEME];

@@ -10,6 +10,7 @@ import {
   VALUE_CHANGED_EVENT,
   HA_SELECTOR_TAG,
   EDITOR_FIELD_NS,
+  EDITOR_FIELD_HELPER_NS,
   PERCENT_THEME_KEYS,
 } from '../utils/parameters.js';
 import { TRANSLATIONS } from '../utils/translations.js';
@@ -40,12 +41,12 @@ type EditorFieldElement = HTMLElement & {
   label?: string;
   value: unknown;
   hass?: HomeAssistant | null;
-  isArray?: boolean;
   isInverted?: boolean;
   context?: Record<string, unknown>;
   selector?: Record<string, unknown>;
   required?: boolean;
   placeholder?: string;
+  helper?: string;
   items?: unknown;
   setLabels?: (labels: unknown) => void;
   _fieldDef?: FieldDef;
@@ -74,22 +75,22 @@ type FieldValueResolver = (def: FieldDef, config: LovelaceConfig) => unknown;
  * @extends HTMLElement
  */
 class EditorBase extends HTMLElement {
-  // "Isolated" (leaf) config keys: nothing else's showIf / value / selector /
-  // width / context reads them (verified against every reactive read in
-  // EditorFactory), so changing one of them can't affect any other field.
+  // "Isolated" (leaf) config keys: nothing else's showIf/value/selector/
+  // width/context reads them, so changing one can't affect any other field.
   // When a setConfig round-trip changed only isolated keys, EditorBase
-  // refreshes just those fields instead of re-walking every visible field
-  // (see setConfig). Deliberately an explicit allowlist, not a computed set:
-  // a key absent here (a gating key, or a newly-added field) safely falls
-  // back to the full walk - only a wrongly-listed key here could stale the
-  // UI, so additions must be checked against the factory's reactive reads.
+  // refreshes just those instead of re-walking every visible field.
+  // Deliberately an explicit allowlist: a key absent here safely falls back
+  // to the full walk - only a wrongly-listed key here could stale the UI.
   static #ISOLATED_KEYS: ReadonlySet<string> = new Set([
     'name',
     'name_info',
     'secondary',
     'custom_info',
     'multiline',
-    'unit',
+    // 'unit' is deliberately NOT here: decimal's own placeholder is derived
+    // from it too (resolveDisplayDecimal reads configUnit - see
+    // display-defaults.ts), so an isolated-only refresh would leave that
+    // placeholder stale until some other, non-isolated field also changed.
     'unit_spacing',
     'decimal',
     'icon',
@@ -312,15 +313,12 @@ class EditorBase extends HTMLElement {
   }
 
   // Rewrites deprecated syntax to its modern equivalent only — never the
-  // unrelated defaults _customizeConfig also applies (center_zero's min_value
-  // fill-in, device_class attribute defaults), so the button only ever changes
-  // what it documents. `navigate_to`/`show_more_info` are deleted rather than
-  // converted to tap_action: both have been fully inert since v1.2.0, so
-  // reconstructing one from a value that hasn't run in years would be a guess,
-  // not a migration — and could clobber a tap_action the user configured since.
-  // max_value/disable_unit/additions are delegated to the active config
-  // helper's own _migrateLegacyOptions, so Template editors (whose schema never
-  // had those options) safely no-op there instead of needing a special case.
+  // unrelated defaults _customizeConfig also applies, so the button only
+  // changes what it documents. `navigate_to`/`show_more_info` are deleted
+  // rather than converted: both have been fully inert since v1.2.0, so
+  // reconstructing a tap_action from a value that hasn't run in years would
+  // be a guess. max_value/disable_unit/additions are delegated to the
+  // active config helper's own _migrateLegacyOptions.
   static #migrateDeprecatedConfig(config: LovelaceConfig, configHelper: BaseConfigHelper): LovelaceConfig {
     let migrated = (configHelper.constructor as typeof BaseConfigHelper)._migrateLegacyOptions(config);
     const themeAlias = EditorBase.#THEME_ALIASES[migrated.theme];
@@ -675,7 +673,6 @@ class EditorBase extends HTMLElement {
     // width/type can be functions (re-evaluated reactively elsewhere in
     // EditorDOMHelper) - this is just their initial value.
     el.style.width = is.func(field.width) ? (field.width(this.#config ?? {}) as string) : (field.width ?? '100%');
-    el.isArray = field.array ?? false;
     el.selector = this.#getSelectorForType(
       is.func(field.type) ? (field.type(this.#config ?? {}) as string) : field.type,
     );
@@ -684,6 +681,18 @@ class EditorBase extends HTMLElement {
     // function of (rawConfig, negotiated), refreshed by EditorDOMHelper.
     if (field.placeholder) {
       el.placeholder = String(field.placeholder(this.#config ?? {}, this._configHelper.config) ?? '');
+    }
+
+    // Static text under the field (ha-selector forwards it to whichever
+    // selector renders) - spells out the shape a Jinja field is expected to
+    // return, since HA's template selector only shows the raw rendered
+    // value. Opt-in boolean, keyed by field.name with dots replaced by
+    // underscores - translations.js's add-key/flatten treats every '.' as a
+    // nesting level, same reason virtual jinja fields are already named
+    // watermark_low_jinja, not watermark.low.jinja.
+    if (field.helper) {
+      const helperKey = field.name.replace(/\./g, '_');
+      el.helper = this.#hassProvider.localizeGroup(EDITOR_FIELD_HELPER_NS)?.[helperKey] ?? '';
     }
 
     if (field.isInGroup) el.classList.add(field.isInGroup);
@@ -728,13 +737,10 @@ class EditorBase extends HTMLElement {
     const config =
       negotiated && !['template', 'action', 'custom_theme_editor'].includes(def.type) ? negotiated : rawConfig;
 
-    const { isNested, parentKey, childKey } = EditorBase.#splitFieldName(def.name);
+    const { parentKey, childKey } = EditorBase.#splitFieldName(def.name);
     const key = def.target ?? def.name;
     const fallback = EditorBase.#fallback(def, config, empty);
 
-    // Array membership is always checked on raw config (explicit user
-    // selections).
-    if (isNested && def.array) return rawConfig[parentKey]?.includes(childKey) ?? false;
     if (childKey !== null) {
       const val = config[parentKey]?.[childKey];
       return val !== undefined ? val : fallback;
@@ -783,15 +789,13 @@ class EditorBase extends HTMLElement {
   }
 
   // Shared by #applyUpdateFields (all visible fields) and #refreshPanel (one
-  // panel's fields) - both need the exact same resolveValue/negotiated/
-  // resolveType closures, differing only in which fields they walk.
-  // template/action fields read from raw config to avoid Jinja flicker during
-  // typing: the validated config would fall back to default (e.g. []) the
-  // moment the expression is temporarily malformed, causing the UI to flash
-  // between chip and Jinja mode. custom_theme_editor reads raw config for
-  // the same reason (see #resolveValue). All other fields (select, toggle,
-  // number…) read from the negotiated config so that entity defaults (e.g.
-  // a light's default %) are reflected immediately.
+  // panel's fields) - both need the same resolveValue/negotiated/resolveType
+  // closures, differing only in which fields they walk. template/action
+  // fields (and custom_theme_editor) read from raw config to avoid Jinja
+  // flicker during typing: the validated config would fall back to a
+  // default the moment the expression is temporarily malformed. All other
+  // fields read from the negotiated config so entity defaults show up
+  // immediately.
   #runFieldUpdate(walk: (config: LovelaceConfig, resolveValue: FieldValueResolver, negotiated: Config) => void) {
     const negotiated = this._configHelper.config;
     walk(this.#config, (def, raw) => EditorBase.#resolveValue(def, raw, negotiated), negotiated);
@@ -831,18 +835,6 @@ class EditorBase extends HTMLElement {
     }
   }
 
-  #handleNestedArrayField(parentKey: string, childKey: string, value: unknown) {
-    const current = [...(this.#config[parentKey] ?? [])];
-    const updated = value ? [...current, childKey] : current.filter((v) => v !== childKey);
-    // Mirrors #handleVirtualField: keep #config in sync locally instead of
-    // waiting for HA's setConfig round trip, which #sendConfig now defers by up
-    // to one frame — without this, two different fields edited within that same
-    // frame would each compute their newConfig off a stale base and could
-    // clobber each other's change on send.
-    this.#config = { ...this.#config, [parentKey]: updated };
-    this.#sendConfig(this.#config);
-  }
-
   #handleNestedField(parentKey: string, childKey: string, value: unknown) {
     this.#config = {
       ...this.#config,
@@ -878,14 +870,12 @@ class EditorBase extends HTMLElement {
     }
 
     const isInverted = target?.isInverted ?? false;
-    const isArray = target.isArray ?? false;
     const isNested = key.includes('.');
     const [parentKey, childKey] = isNested ? key.split('.') : [];
 
     if (isInverted) value = !value;
 
-    if (isNested && isArray) this.#handleNestedArrayField(parentKey, childKey, value);
-    else if (isNested) this.#handleNestedField(parentKey, childKey, value);
+    if (isNested) this.#handleNestedField(parentKey, childKey, value);
     else this.#handleStdField(def, key, value);
   }
 
