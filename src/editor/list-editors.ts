@@ -447,9 +447,17 @@ class EntityProgressActionPicker extends HTMLElement {
     if (!this.contains(e.target as Node)) this.#closeMenu();
   };
 
+  get buttonLabel(): string {
+    return this.#buttonLabel;
+  }
+
   set buttonLabel(val: string) {
     this.#buttonLabel = val ?? this.#buttonLabel;
     if (this.#btn?.lastChild) this.#btn.lastChild.textContent = this.#buttonLabel;
+  }
+
+  get actionLabels(): Record<string, string> {
+    return this.#labels;
   }
 
   set actionLabels(val: Record<string, string>) {
