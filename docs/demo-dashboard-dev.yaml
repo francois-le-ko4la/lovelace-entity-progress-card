@@ -387,8 +387,8 @@ views:
               ```
               What varies below: the default (native unit, spaced), an
               overridden unit, `no-space`/`space` spacing, hiding the unit
-              via `hide`, and an empty `unit: ""` (blank text, no space
-              either).
+              via `hide`, an empty `unit: ""` (blank text, no space either),
+              and `unit_position: before` for a currency-style prefix.
               {% endraw %}
             grid_options:
               columns: 12
@@ -418,6 +418,43 @@ views:
             entity: input_number.epb_demo_temperature
             name: "unit: '' (blank, no space either)"
             unit: ''
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_temperature
+            name: 'unit_position: before ($ prefix)'
+            unit: '$'
+            unit_position: before
+            unit_spacing: no-space
+      - type: grid
+        cards:
+          - type: heading
+            heading: value_compact — abbreviate large values
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: sensor.total_energy
+              value_compact: true   # 1250000 -> "1.3M" instead of "1,250,000"
+              ```
+              `decimal` still caps the fraction digits, but trailing zeros are
+              trimmed - `1.3M`, never `1.30M`.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_total_energy
+            name: Default (full number)
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_total_energy
+            name: 'value_compact: true'
+            value_compact: true
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_total_energy
+            name: 'value_compact + decimal: 2'
+            value_compact: true
+            decimal: 2
       - type: grid
         cards:
           - type: heading
@@ -629,6 +666,16 @@ views:
             name: bar_color (Jinja)
             percent: '{{ states(entity) }}'
             bar_color: '{% if states(entity) | float < 20 %}red{% else %}green{% endif %}'
+          - type: custom:entity-progress-card-template-dev
+            entity: input_number.epb_demo_temperature
+            name: 'alert_when.jinja (Template, object only)'
+            percent: >-
+              {{ (states(entity) | float - (-20)) / (40 - (-20)) * 100 }}
+            alert_when:
+              jinja: >-
+                {% set t = states(entity) | float %} {% if t < 10 %}{{
+                {'color': 'blue', 'highlight': 'background', 'animation':
+                'ping'} }} {% else %}false{% endif %}
           - type: custom:entity-progress-card-template-dev
             entity: timer.epb_demo_timer
             name: 'fast_refresh: true — real ticking MM:SS (start the timer!)'
@@ -1659,6 +1706,25 @@ views:
               label: 'LOW'
               below: 25
               animation: blink
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_temperature
+            name: 'alert_when.jinja: Advanced, plain boolean'
+            alert_when:
+              jinja: "{{ states('input_number.epb_demo_temperature') | float < 10 }}"
+              color: red
+              highlight: border
+              animation: ping
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_temperature
+            name: 'alert_when.jinja: Advanced, object with partial override'
+            alert_when:
+              jinja: >-
+                {% set t = states('input_number.epb_demo_temperature') | float
+                %} {% if t < 0 %}{{ {'color': 'blue', 'animation': 'ping'} }}
+                {% elif t < 10 %}{{ {'color': 'blue'} }} {% else %}false{%
+                endif %}
+              color: red
+              animation: static
       - type: grid
         cards:
           - type: heading
@@ -1779,10 +1845,10 @@ views:
               max_value: 3000
               ```
               Every `center_zero` variant: the default 50/50 split, an
-              offset zero point, `growth_percent` sizing, combined with a
-              theme (`segment`/`rainbow`), a watermark, `layout: vertical`,
-              and `bar_stack: { mode: net }` for a single signed balance
-              from two always-positive entities.
+              offset zero point, `growth_percent` sizing, `value_sign` for an
+              explicit `+`/`-`, combined with a theme (`segment`/`rainbow`),
+              a watermark, `layout: vertical`, and `bar_stack: { mode: net }`
+              for a single signed balance from two always-positive entities.
               {% endraw %}
             grid_options:
               columns: 12
@@ -1793,6 +1859,13 @@ views:
             center_zero: true
             min_value: -3000
             max_value: 3000
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_power
+            name: 'center_zero + value_sign: true'
+            center_zero: true
+            min_value: -3000
+            max_value: 3000
+            value_sign: true
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_power
             name: 'center_zero: {value: 1000} (offset zero point)'
@@ -3612,6 +3685,423 @@ views:
         theme: optimal_when_high
     show_icon_and_title: true
     cards: []
+  - title: EP Demo - CSS hooks (--epb-*)
+    icon: mdi:palette-swatch-outline
+    path: epb-css-hooks
+    type: sections
+    max_columns: 2
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: All 46 --epb-* CSS hooks, one at a time
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              Each card below sets exactly one `--epb-*` variable via
+              `card_mod`, with every other card in its row left at its
+              default for comparison. See
+              [CSS hooks](../docs/theme.md#css) for the full reference table.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 1
+      - type: grid
+        cards:
+          - type: heading
+            heading: Card
+            heading_style: subtitle
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'default (no override)'
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-card-height: 120px'
+            card_mod:
+              style: |
+                :host { --epb-card-height: 120px; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-card-width: 300px'
+            card_mod:
+              style: |
+                :host { --epb-card-width: 300px; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-card-border-width: 4px'
+            card_mod:
+              style: |
+                :host { --epb-card-border-width: 4px; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-card-border-color: #ff6600'
+            card_mod:
+              style: |
+                :host { --epb-card-border-color: #ff6600; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-card-border-radius: 20px'
+            card_mod:
+              style: |
+                :host { --epb-card-border-radius: 20px; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-card-border-style: dashed'
+            card_mod:
+              style: |
+                :host { --epb-card-border-style: dashed; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-card-font-family: monospace'
+            card_mod:
+              style: |
+                :host { --epb-card-font-family: monospace; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-spacing: 20px'
+            card_mod:
+              style: |
+                :host { --epb-spacing: 20px; }
+      - type: grid
+        cards:
+          - type: heading
+            heading: Icon
+            heading_style: subtitle
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-icon-size: 40px'
+            card_mod:
+              style: |
+                :host { --epb-icon-size: 40px; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-shape-size: 60px'
+            card_mod:
+              style: |
+                :host { --epb-shape-size: 60px; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-icon-and-shape-color: #ff6600'
+            card_mod:
+              style: |
+                :host { --epb-icon-and-shape-color: #ff6600; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-icon-shape-opacity: 0 (issue #136)'
+            card_mod:
+              style: |
+                :host { --epb-icon-shape-opacity: 0; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'hide: shape (YAML equivalent, Card only)'
+            hide:
+              - shape
+          - type: custom:entity-progress-card-dev
+            entity: sensor.epb_demo_battery_ev
+            name: '--epb-charge-x1: 15% (tap to toggle charging)'
+            icon_animation: battery_charging
+            tap_action:
+              action: call-service
+              service: input_boolean.toggle
+              target:
+                entity_id: input_boolean.epb_demo_charging
+            card_mod:
+              style: |
+                :host { --epb-charge-x1: 15%; }
+          - type: custom:entity-progress-card-dev
+            entity: sensor.epb_demo_battery_ev
+            name: '--epb-charge-x2: 85% (tap to toggle charging)'
+            icon_animation: battery_charging
+            tap_action:
+              action: call-service
+              service: input_boolean.toggle
+              target:
+                entity_id: input_boolean.epb_demo_charging
+            card_mod:
+              style: |
+                :host { --epb-charge-x2: 85%; }
+          - type: custom:entity-progress-card-dev
+            entity: sensor.epb_demo_battery_ev
+            name: '--epb-charge-y1: 45% (tap to toggle charging)'
+            icon_animation: battery_charging
+            tap_action:
+              action: call-service
+              service: input_boolean.toggle
+              target:
+                entity_id: input_boolean.epb_demo_charging
+            card_mod:
+              style: |
+                :host { --epb-charge-y1: 45%; }
+      - type: grid
+        cards:
+          - type: heading
+            heading: Progress Bar
+            heading_style: subtitle
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-progress-transition: 2s linear (move the slider)'
+            card_mod:
+              style: |
+                :host { --epb-progress-transition: 2s linear; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-progress-bar-color: magenta'
+            card_mod:
+              style: |
+                :host { --epb-progress-bar-color: magenta; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-progress-bar-background-color: #222222'
+            card_mod:
+              style: |
+                :host { --epb-progress-bar-background-color: #222222; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-progress-bar-size: 90%'
+            card_mod:
+              style: |
+                :host { --epb-progress-bar-size: 90%; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-progress-bar-radius: 0px (square)'
+            card_mod:
+              style: |
+                :host { --epb-progress-bar-radius: 0px; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-progress-inner-radius: 0px (square fill)'
+            card_mod:
+              style: |
+                :host { --epb-progress-inner-radius: 0px; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-progress-bar-min-width: 80px (set slider near 0%)'
+            card_mod:
+              style: |
+                :host { --epb-progress-bar-min-width: 80px; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-bar-segment-gap: 8px'
+            bar_segments: 5
+            card_mod:
+              style: |
+                :host { --epb-bar-segment-gap: 8px; }
+      - type: grid
+        cards:
+          - type: heading
+            heading: Marker (rainbow_full + zero-mark)
+            heading_style: subtitle
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-rainbow-marker-color: lime'
+            theme: optimal_when_high
+            bar_color_mode: rainbow_full
+            card_mod:
+              style: |
+                :host { --epb-rainbow-marker-color: lime; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-rainbow-marker-opacity: 0.3'
+            theme: optimal_when_high
+            bar_color_mode: rainbow_full
+            card_mod:
+              style: |
+                :host { --epb-rainbow-marker-opacity: 0.3; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-rainbow-marker-size: 16px'
+            theme: optimal_when_high
+            bar_color_mode: rainbow_full
+            card_mod:
+              style: |
+                :host { --epb-rainbow-marker-size: 16px; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-rainbow-marker-border-color: black'
+            theme: optimal_when_high
+            bar_color_mode: rainbow_full
+            card_mod:
+              style: |
+                :host { --epb-rainbow-marker-border-color: black; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-rainbow-marker-border-width: 4px'
+            theme: optimal_when_high
+            bar_color_mode: rainbow_full
+            card_mod:
+              style: |
+                :host { --epb-rainbow-marker-border-width: 4px; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_power
+            name: '--epb-zero-mark-width: 6px'
+            center_zero: true
+            min_value: -3000
+            max_value: 3000
+            card_mod:
+              style: |
+                :host { --epb-zero-mark-width: 6px; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_power
+            name: '--epb-zero-mark-color: lime'
+            center_zero: true
+            min_value: -3000
+            max_value: 3000
+            card_mod:
+              style: |
+                :host { --epb-zero-mark-color: lime; }
+      - type: grid
+        cards:
+          - type: heading
+            heading: Name
+            heading_style: subtitle
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-name-color: #ff6600'
+            card_mod:
+              style: |
+                :host { --epb-name-color: #ff6600; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-name-font-size: 24px'
+            card_mod:
+              style: |
+                :host { --epb-name-font-size: 24px; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-name-font-weight: 900'
+            card_mod:
+              style: |
+                :host { --epb-name-font-weight: 900; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-name-letter-spacing: 6px'
+            card_mod:
+              style: |
+                :host { --epb-name-letter-spacing: 6px; }
+      - type: grid
+        cards:
+          - type: heading
+            heading: Detail (secondary_info)
+            heading_style: subtitle
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-detail-color: #ff6600'
+            secondary_info: last_changed
+            card_mod:
+              style: |
+                :host { --epb-detail-color: #ff6600; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-detail-font-size: 18px'
+            secondary_info: last_changed
+            card_mod:
+              style: |
+                :host { --epb-detail-font-size: 18px; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-detail-font-weight: 900'
+            secondary_info: last_changed
+            card_mod:
+              style: |
+                :host { --epb-detail-font-weight: 900; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-detail-letter-spacing: 4px'
+            secondary_info: last_changed
+            card_mod:
+              style: |
+                :host { --epb-detail-letter-spacing: 4px; }
+      - type: grid
+        cards:
+          - type: heading
+            heading: Watermark
+            heading_style: subtitle
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-watermark-line-size: 6px'
+            watermark:
+              type: blended
+              low: 20
+              high: 80
+            card_mod:
+              style: |
+                :host { --epb-watermark-line-size: 6px; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-watermark-opacity: 1'
+            watermark:
+              type: blended
+              low: 20
+              high: 80
+            card_mod:
+              style: |
+                :host { --epb-watermark-opacity: 1; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-low-watermark-color: lime'
+            watermark:
+              type: blended
+              low: 20
+              high: 80
+            card_mod:
+              style: |
+                :host { --epb-low-watermark-color: lime; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-high-watermark-color: magenta'
+            watermark:
+              type: blended
+              low: 20
+              high: 80
+            card_mod:
+              style: |
+                :host { --epb-high-watermark-color: magenta; }
+      - type: grid
+        cards:
+          - type: heading
+            heading: Alert
+            heading_style: subtitle
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_temperature
+            name: '--epb-alert-background-opacity: 0.9'
+            alert_when:
+              color: red
+              highlight: background
+              below: 25
+              animation: static
+            card_mod:
+              style: |
+                :host { --epb-alert-background-opacity: 0.9; }
+      - type: grid
+        cards:
+          - type: heading
+            heading: Status Label
+            heading_style: subtitle
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-label-color: black'
+            status_label:
+              jinja: status
+            card_mod:
+              style: |
+                :host { --epb-label-color: black; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-label-background-color: yellow'
+            status_label:
+              jinja: status
+            card_mod:
+              style: |
+                :host { --epb-label-background-color: yellow; }
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '--epb-label-border-color: blue'
+            status_label:
+              jinja: status
+            card_mod:
+              style: |
+                :host { --epb-label-border-color: blue; }
   - title: EP Demo - Regression tests (past issues)
     icon: mdi:flask-outline
     path: epb-regression

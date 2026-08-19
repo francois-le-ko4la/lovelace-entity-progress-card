@@ -2,148 +2,158 @@
   "card": {
     "msg": {
       "appliedDefaultValue": "A default value has been applied automatically.",
-      "attributeNotFound": "Attribute not found in HA.",
-      "entityNotFound": "Entity not found in HA.",
-      "invalidActionObject": "The action object is invalid or improperly structured.",
       "invalidDecimal": "The value must be a valid decimal number.",
-      "invalidEntityId": "The entity ID is invalid or malformed.",
       "invalidEnumValue": "The provided value is not one of the allowed options.",
-      "invalidStateContent": "The state content is invalid or malformed.",
+      "invalidNoun": "Invalid or malformed: {noun}.",
       "invalidStateContentEntry": "One or more entries in the state content are invalid.",
       "invalidTheme": "The specified theme is unknown. Default theme will be used.",
-      "invalidTypeArray": "Expected a value of type array.",
-      "invalidTypeBoolean": "Expected a value of type boolean.",
-      "invalidTypeNumber": "Expected a value of type number.",
-      "invalidTypeObject": "Expected a value of type object.",
-      "invalidTypeString": "Expected a value of type string.",
+      "invalidType": "Expected type: {type}.",
       "invalidUnionType": "The value does not match any of the allowed types.",
       "missingActionKey": "A required key is missing in the action object.",
-      "missingRequiredProperty": "Required property is missing."
+      "missingRequiredProperty": "Required property is missing.",
+      "notFound": "Not found in HA: {noun}.",
+      "words": {
+        "nouns": {
+          "action_object": "action object",
+          "attribute": "attribute",
+          "entity": "entity",
+          "entity_id": "entity ID",
+          "state_content": "state content"
+        },
+        "types": {
+          "array": "array",
+          "boolean": "boolean",
+          "number": "number",
+          "object": "object",
+          "string": "string"
+        }
+      }
     }
   },
   "editor": {
-    "title": {
-      "content": "Content",
-      "markers": "Markers & Alerts",
-      "layout": "Layout & Sizing",
-      "interaction": "Interactions",
-      "theme": "Look & Feel"
-    },
     "field": {
+      "action": {
+        "double_tap": "Double tap behavior",
+        "hold": "Hold behavior",
+        "icon_double_tap": "Icon double tap behavior",
+        "icon_hold": "Icon hold behavior",
+        "icon_tap": "Icon tap behavior",
+        "tap": "Tap behavior"
+      },
+      "action_picker": "Add interaction",
+      "alert_toggle": "Alert",
+      "alert_when_above_mode": "Above alert source",
+      "alert_when_below_mode": "Below alert source",
       "attribute": "Attribute",
       "badge_color": "Badge color",
+      "badge_color_toggle": "Independent badge color",
       "badge_icon": "Badge icon",
+      "badge_toggle": "Badge",
       "bar_color": "Bar color",
-      "bar_effect_jinja": "Bar effect (Jinja)",
-      "bar_orientation": "Bar orientation",
-      "bar_position": "Bar position",
-      "bar_single_line": "Single line info",
-      "bar_size": "Bar size",
-      "bar_segments": "Bar segments",
       "bar_color_mode": "Bar color mode",
-      "bar_scale": "Bar scale",
+      "bar_effect_mode": "Bar effect",
+      "bar_group": "Bar",
+      "bar_max_width": "Bar max width",
+      "bar_max_width_toggle": "Bar max width",
+      "bar_orientation": "Orientation",
+      "bar_scale": "Scale",
+      "bar_segments": "Segments",
+      "bar_single_line": "Single line",
+      "bar_size": "Size",
+      "bar_stack": "Additional entities",
+      "bar_stack_mode": "Stack mode",
+      "card_size_toggle": "Card size",
       "center_zero": "Zero at center",
-      "center_zero_value": "Center value",
       "center_zero_growth_percent": "Growth percentage",
+      "center_zero_value": "Center value",
       "color": "Icon color",
+      "custom_info": "Custom secondary info",
+      "custom_theme": "Custom theme zones",
       "decimal": "decimal",
-      "double_tap_action": "Double tap behavior",
+      "density_toggle": "Compact",
       "entity": "Entity",
-      "force_circular_background": "Force icon circular background",
-      "hide_jinja": "Hide (Jinja)",
-      "hold_action": "Hold behavior",
+      "fast_refresh": "Fast refresh (per-second)",
+      "force_circular_background_mode": "Icon circular background",
+      "frameless": "Frameless",
+      "height": "Height",
+      "height_custom_toggle": "Auto height",
+      "hide_mode": "Hide",
       "icon": "Icon",
       "icon_animation": "Icon animation",
-      "icon_double_tap_action": "Icon double tap behavior",
-      "icon_hold_action": "Icon hold behavior",
-      "icon_tap_action": "Icon tap behavior",
+      "interpolate": "Interpolate colors",
       "layout": "Content layout",
+      "marginless": "Marginless",
       "max_value": "Maximum value",
+      "max_value_mode": "Max value source",
+      "migrate_config": "Migrate config",
       "min_value": "Minimum value",
+      "min_value_mode": "Min value source",
+      "min_width": "Min width",
+      "multiline": "Multiline",
       "name": "Name",
+      "name_info": "Custom name info",
       "percent": "Percentage",
+      "position": "Position",
+      "reverse": "Reverse timer",
       "reverse_secondary_info_row": "Swap bar and text",
       "secondary": "Secondary info",
       "state_content": "State content",
-      "show_all_actions": "Show all interactions",
-      "tap_action": "Tap behavior",
-      "text_shadow": "Add text shadow",
-      "theme_mode": "Theme mode",
-      "theme": "Theme",
-      "custom_theme": "Custom theme zones",
-      "unit": "Unit",
-      "min_value_mode": "Min value source",
-      "max_value_mode": "Max value source",
-      "watermark_low_mode": "Low marker source",
-      "watermark_high_mode": "High marker source",
-      "alert_when_above_mode": "Above alert source",
-      "alert_when_below_mode": "Below alert source",
-      "bar_max_width": "Bar max width",
-      "bar_max_width_toggle": "Bar max width",
-      "frameless": "Frameless",
-      "height": "Height",
-      "marginless": "Marginless",
-      "min_width": "Min width",
-      "card_size_toggle": "Card size",
-      "unit_spacing": "Unit spacing",
-      "watermark_toggle": "Markers",
-      "alert_toggle": "Alert",
-      "custom_info": "Custom secondary info",
-      "multiline": "Multiline",
-      "interpolate": "Interpolate colors",
-      "name_info": "Custom name info",
-      "reverse": "Reverse timer",
-      "bar_stack_mode": "Stack mode",
-      "bar_stack": "Additional entities",
-      "migrate_config": "Migrate config",
-      "icon_animation_jinja_toggle": "Icon animation trigger (Jinja)",
-      "fast_refresh": "Fast refresh (per-second)",
-      "height_custom_toggle": "Auto height",
       "status_label_toggle": "Status label",
-      "density_toggle": "Compact",
-      "badge_toggle": "Badge",
-      "badge_color_toggle": "Independent badge color"
+      "text_shadow": "Add text shadow",
+      "theme": "Theme",
+      "trigger": "Trigger",
+      "unit": "Unit",
+      "unit_spacing": "Spacing",
+      "value_compact": "Compact value (1.2k)",
+      "value_sign": "Show sign (+/-)",
+      "watermark_high_mode": "High marker source",
+      "watermark_low_mode": "Low marker source",
+      "watermark_toggle": "Markers"
     },
     "field_helper": {
-      "min_value_jinja": "Returns Number (42)",
-      "max_value_jinja": "Returns Number (100)",
-      "watermark_low_jinja": "Returns Number (20)",
-      "watermark_high_jinja": "Returns Number (80)",
-      "alert_when_above_jinja": "Returns Number (90)",
-      "alert_when_below_jinja": "Returns Number (10)",
-      "icon_animation_jinja": "Returns Boolean (true)",
+      "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
       "badge_icon": "Returns String (mdi:fan) or Object ({icon, color})",
-      "badge_color": "Returns String (#ff0000)",
-      "status_label_jinja": "Returns String (hot) or Object ({label, color})",
       "bar_effect": "Returns String (shimmer) or List ([shimmer, gradient])",
-      "hide": "Returns String (icon, name) or List ([icon, name])",
-      "name_info": "Returns String (Living Room)",
-      "custom_info": "Returns String (Charging)",
-      "icon": "Returns String (mdi:fan)",
       "color": "Returns String (#ff0000)",
-      "bar_color": "Returns String (#ff0000)"
+      "custom_info": "Returns String (Charging)",
+      "hide": "Returns String (icon, name) or List ([icon, name])",
+      "icon": "Returns String (mdi:fan)",
+      "icon_animation_jinja": "Returns Boolean (true)",
+      "name_info": "Returns String (Living Room)",
+      "returns_number": "Returns Number (42)",
+      "status_label_jinja": "Returns String (hot) or Object ({label, color})"
     },
     "option": {
-      "theme": {
-        "battery_adaptive": "Battery (adapts to charging state)",
-        "light": "Light",
-        "temperature": "Temperature",
-        "humidity": "Humidity",
-        "pm25": "PM2.5",
-        "voc": "VOC",
-        "critical_when_low": "Critical when Low (Battery, disk...)",
-        "optimal_when_low": "Optimal when Low",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "optimal_when_high": "Optimal when High",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "critical_when_extreme_center": "Critical when Extreme, centered (center_zero)"
+      "alert_animation": {
+        "blink": "Blink",
+        "ping": "Ping",
+        "static": "Static"
       },
-      "bar_size": {
-        "xsmall": "Extra Small",
-        "small": "Small",
-        "medium": "Medium",
-        "large": "Large",
-        "xlarge": "Extra Large"
+      "alert_highlight": {
+        "background": "Background",
+        "border": "Border",
+        "label": "Label"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "animation": "Animation",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "bar_color_mode": {
+        "auto": "Auto",
+        "rainbow": "Rainbow",
+        "rainbow_full": "Rainbow (full)",
+        "segment": "Segment"
+      },
+      "bar_effect": {
+        "glass": "Glass",
+        "gradient": "Gradient",
+        "gradient_reverse": "Gradient reverse",
+        "radius": "Rounded corners",
+        "shimmer": "Shimmer",
+        "shimmer_reverse": "Shimmer reverse"
       },
       "bar_orientation": {
         "ltr": "Left to Right",
@@ -151,163 +161,145 @@
         "up": "Up"
       },
       "bar_position": {
-        "default": "Default",
+        "background": "Full card background",
         "below": "Bar below content",
-        "compact_below": "Compact bar below (name/value on one row)",
-        "top": "Bar on top",
         "bottom": "Bar on bottom",
+        "compact_below": "Compact bar below (name/value on one row)",
+        "default": "Default",
         "overlay": "Bar overlay on content",
-        "background": "Full card background"
-      },
-      "layout": {
-        "horizontal": "Horizontal (default)",
-        "vertical": "Vertical"
-      },
-      "bar_color_mode": {
-        "auto": "Auto",
-        "segment": "Segment",
-        "rainbow": "Rainbow",
-        "rainbow_full": "Rainbow (full)"
+        "top": "Bar on top"
       },
       "bar_scale": {
         "linear": "Linear",
         "log": "Logarithmic"
       },
-      "bar_effect": {
-        "radius": "Rounded corners",
-        "glass": "Glass",
-        "gradient": "Gradient",
-        "gradient_reverse": "Gradient reverse",
-        "shimmer": "Shimmer",
-        "shimmer_reverse": "Shimmer reverse"
+      "bar_size": {
+        "large": "Large",
+        "medium": "Medium",
+        "small": "Small",
+        "xlarge": "Extra Large",
+        "xsmall": "Extra Small"
+      },
+      "bar_stack_mode": {
+        "net": "Net",
+        "proportional": "Proportional",
+        "stacked": "Stacked"
+      },
+      "force_circular_background_mode": {
+        "auto": "Auto",
+        "forced": "Forced"
       },
       "hide": {
         "icon": "Icon",
         "name": "Name",
-        "value": "Value",
-        "unit": "Unit",
+        "progress_bar": "Bar",
         "secondary_info": "Secondary info",
-        "progress_bar": "Bar"
-      },
-      "unit_spacing": {
-        "auto": "Auto",
-        "space": "Space",
-        "no-space": "No space"
-      },
-      "watermark_type": {
-        "blended": "Blended",
-        "area": "Area",
-        "striped": "Striped",
-        "triangle": "Triangle",
-        "round": "Round",
-        "line": "Line"
-      },
-      "watermark_as": {
-        "auto": "Auto",
-        "percent": "Percent"
-      },
-      "watermark": {
-        "low": "Low",
-        "high": "High",
-        "type": "Type",
-        "opacity": "Opacity",
-        "low_color": "Low color",
-        "high_color": "High color",
-        "low_as": "Low unit",
-        "high_as": "High unit",
-        "line_size": "Line size",
-        "disable_low": "Disable low",
-        "disable_high": "Disable high",
-        "low_attribute": "Attribute",
-        "high_attribute": "Attribute"
+        "shape": "Icon's circular background",
+        "unit": "Unit",
+        "value": "Value"
       },
       "icon_animation": {
-        "spin": "Spin",
-        "pulse": "Pulse",
+        "battery_charging": "Battery charging",
         "bounce": "Bounce",
-        "shake": "Shake",
         "ping": "Ping",
+        "pulse": "Pulse",
         "reveal": "Reveal",
-        "washing_machine": "Washing machine",
-        "battery_charging": "Battery charging"
+        "shake": "Shake",
+        "spin": "Spin",
+        "washing_machine": "Washing machine"
       },
-      "alert_when": {
-        "above": "Alert above",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight",
-        "animation": "Animation",
-        "above_attribute": "Attribute",
-        "below_attribute": "Attribute"
-      },
-      "alert_highlight": {
-        "border": "Border",
-        "background": "Background",
-        "label": "Label"
-      },
-      "status_label": {
-        "jinja": "Status label",
-        "position": "Label position",
-        "color_source": "Color source"
+      "icon_animation_mode": {
+        "auto": "Auto",
+        "template": "Template"
       },
       "label_position": {
         "left": "Left",
         "right": "Right"
       },
+      "layout": {
+        "horizontal": "Horizontal (default)",
+        "vertical": "Vertical"
+      },
+      "simple_advanced_mode": {
+        "advanced": "Advanced",
+        "simple": "Simple"
+      },
+      "status_label": {
+        "color_source": "Color source",
+        "jinja": "Status label",
+        "position": "Label position"
+      },
       "status_label_color_source": {
         "bar": "Progress bar",
         "icon": "Icon"
       },
-      "alert_animation": {
-        "static": "Static",
-        "blink": "Blink",
-        "ping": "Ping"
-      },
-      "min_value_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "max_value_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "watermark_low_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "watermark_high_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_above_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_below_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
+      "theme": {
+        "battery_adaptive": "Battery (adapts to charging state)",
+        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
+        "critical_when_extreme_center": "Critical when Extreme, centered (center_zero)",
+        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
+        "critical_when_low": "Critical when Low (Battery, disk...)",
+        "humidity": "Humidity",
+        "light": "Light",
+        "optimal_when_high": "Optimal when High",
+        "optimal_when_low": "Optimal when Low",
+        "pm25": "PM2.5",
+        "temperature": "Temperature",
+        "voc": "VOC"
       },
       "theme_mode": {
-        "preset": "Preset",
-        "custom": "Custom"
+        "custom": "Custom",
+        "preset": "Preset"
       },
-      "min_value": {
+      "unit_position": {
+        "after": "After value",
+        "before": "Before value"
+      },
+      "unit_spacing": {
+        "auto": "Auto",
+        "no-space": "No space",
+        "space": "Space"
+      },
+      "value_shape": {
         "attribute": "Attribute"
       },
-      "max_value": {
-        "attribute": "Attribute"
+      "value_source_mode": {
+        "entity": "Entity",
+        "jinja": "Template",
+        "standard": "Fixed value"
       },
-      "bar_stack_mode": {
-        "stacked": "Stacked",
-        "proportional": "Proportional",
-        "net": "Net"
+      "watermark": {
+        "disable_high": "Disable high",
+        "disable_low": "Disable low",
+        "high": "High",
+        "high_as": "High unit",
+        "high_color": "High color",
+        "line_size": "Line size",
+        "low": "Low",
+        "low_as": "Low unit",
+        "low_color": "Low color",
+        "opacity": "Opacity",
+        "type": "Type"
+      },
+      "watermark_as": {
+        "auto": "Auto",
+        "percent": "Percent"
+      },
+      "watermark_type": {
+        "area": "Area",
+        "blended": "Blended",
+        "line": "Line",
+        "round": "Round",
+        "striped": "Striped",
+        "triangle": "Triangle"
       }
+    },
+    "title": {
+      "content": "Content",
+      "interaction": "Interactions",
+      "layout": "Layout & Sizing",
+      "markers": "Markers & Alerts",
+      "theme": "Look & Feel"
     }
   }
 }

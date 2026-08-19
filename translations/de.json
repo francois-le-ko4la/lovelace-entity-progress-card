@@ -2,148 +2,158 @@
   "card": {
     "msg": {
       "appliedDefaultValue": "Ein Standardwert wurde automatisch angewendet.",
-      "attributeNotFound": "Attribut in Home Assistant nicht gefunden.",
-      "entityNotFound": "Entität in Home Assistant nicht gefunden.",
-      "invalidActionObject": "Das Aktionsobjekt ist ungültig oder falsch strukturiert.",
       "invalidDecimal": "Der Wert muss eine gültige Dezimalzahl sein.",
-      "invalidEntityId": "Die Entity-ID ist ungültig oder fehlerhaft.",
       "invalidEnumValue": "Der angegebene Wert gehört nicht zu den erlaubten Optionen.",
-      "invalidStateContent": "Der Statusinhalt ist ungültig oder fehlerhaft.",
+      "invalidNoun": "Ungültig oder fehlerhaft: {noun}.",
       "invalidStateContentEntry": "Ein oder mehrere Einträge im Statusinhalt sind ungültig.",
       "invalidTheme": "Das angegebene Theme ist unbekannt. Das Standard-Theme wird verwendet.",
-      "invalidTypeArray": "Ein Wert vom Typ Array wurde erwartet.",
-      "invalidTypeBoolean": "Ein Wert vom Typ Boolesch wurde erwartet.",
-      "invalidTypeNumber": "Ein Wert vom Typ Zahl wurde erwartet.",
-      "invalidTypeObject": "Ein Wert vom Typ Objekt wurde erwartet.",
-      "invalidTypeString": "Ein Wert vom Typ Zeichenkette wurde erwartet.",
+      "invalidType": "Erwarteter Typ: {type}.",
       "invalidUnionType": "Der Wert entspricht keinem der erlaubten Typen.",
       "missingActionKey": "Ein erforderlicher Schlüssel fehlt im Aktionsobjekt.",
-      "missingRequiredProperty": "Eine erforderliche Eigenschaft fehlt."
+      "missingRequiredProperty": "Eine erforderliche Eigenschaft fehlt.",
+      "notFound": "Nicht gefunden in HA: {noun}.",
+      "words": {
+        "nouns": {
+          "action_object": "Aktionsobjekt",
+          "attribute": "Attribut",
+          "entity": "Entität",
+          "entity_id": "Entity-ID",
+          "state_content": "Statusinhalt"
+        },
+        "types": {
+          "array": "Array",
+          "boolean": "Boolesch",
+          "number": "Zahl",
+          "object": "Objekt",
+          "string": "Zeichenkette"
+        }
+      }
     }
   },
   "editor": {
-    "title": {
-      "content": "Inhalt",
-      "markers": "Markers & Alerts",
-      "layout": "Layout & Sizing",
-      "interaction": "Interaktionen",
-      "theme": "Aussehen und Bedienung"
-    },
     "field": {
+      "action": {
+        "tap": "Verhalten bei Antippen",
+        "hold": "Verhalten bei Festhalten",
+        "double_tap": "Verhalten bei Doppeltippen",
+        "icon_tap": "Verhalten bei Antippen des Symbols",
+        "icon_hold": "Verhalten bei Festhalten des Symbols",
+        "icon_double_tap": "Verhalten bei Doppeltippen des Symbols"
+      },
+      "action_picker": "Interaktion hinzufügen",
+      "alert_toggle": "Alarm",
+      "alert_when_above_mode": "Quelle des oberen Alarms",
+      "alert_when_below_mode": "Quelle des unteren Alarms",
       "attribute": "Attribut",
       "badge_color": "Farbe des Badges",
+      "badge_color_toggle": "Independent color",
       "badge_icon": "Symbol des Badges",
+      "badge_toggle": "Badge",
       "bar_color": "Balkenfarbe",
-      "bar_effect_jinja": "Effekt auf die Leiste (Jinja-Modus)",
-      "bar_orientation": "Ausrichtung der Leiste",
-      "bar_position": "Position der Leiste",
-      "bar_single_line": "Informationen in einer Zeile",
-      "bar_size": "Größe der Bar",
-      "bar_segments": "Bar segments",
       "bar_color_mode": "Balkenfarbmodus",
-      "bar_scale": "Balkenskala",
+      "bar_effect_mode": "Effekt auf die Leiste",
+      "bar_group": "Leiste",
+      "bar_max_width": "Max. Balkenbreite",
+      "bar_max_width_toggle": "Max. Balkenbreite",
+      "bar_orientation": "Ausrichtung",
+      "bar_scale": "Skala",
+      "bar_segments": "Segmente",
+      "bar_single_line": "Einzeilig",
+      "bar_size": "Größe",
+      "bar_stack": "Weitere Entitäten",
+      "bar_stack_mode": "Stapelmodus",
+      "card_size_toggle": "Kartengröße",
       "center_zero": "Null in der Mitte",
-      "center_zero_value": "Zentrumswert",
       "center_zero_growth_percent": "Wachstumsprozentsatz",
+      "center_zero_value": "Zentrumswert",
       "color": "Symbolfarbe",
+      "custom_info": "Zusatzinfo (sekundär)",
+      "custom_theme": "Benutzerdefinierte Themenzonen",
       "decimal": "dezimal",
-      "double_tap_action": "Aktion bei doppelt Tippen",
+      "density_toggle": "Kompakt",
       "entity": "Entität",
-      "force_circular_background": "Kreisförmigen Hintergrund erzwingen",
-      "hide_jinja": "Ausblenden (Jinja-Modus)",
-      "hold_action": "Aktion bei langem Tippen",
+      "fast_refresh": "Schnelle Aktualisierung (jede Sekunde)",
+      "force_circular_background_mode": "Kreisförmiger Symbolhintergrund",
+      "frameless": "Rahmenlos",
+      "height": "Höhe",
+      "height_custom_toggle": "Shrink height (embedded)",
+      "hide_mode": "Ausblenden",
       "icon": "Symbol",
-      "icon_animation": "Icon animation",
-      "icon_double_tap_action": "Aktion bei doppelt Tippen auf das Symbol",
-      "icon_hold_action": "Aktion bei langem Tippen auf das Symbol",
-      "icon_tap_action": "Aktion beim Tippen auf das Symbol",
+      "icon_animation": "Symbolanimation",
+      "interpolate": "Farben interpolieren",
       "layout": "Inhaltslayout",
+      "marginless": "Randlos",
       "max_value": "Höchstwert",
+      "max_value_mode": "Quelle des Maximalwerts",
+      "migrate_config": "Konfiguration migrieren",
       "min_value": "Mindestwert",
+      "min_value_mode": "Quelle des Minimalwerts",
+      "min_width": "Mindestbreite",
+      "multiline": "Mehrzeilig",
       "name": "Name",
+      "name_info": "Zusatzinfo (Name)",
       "percent": "Prozent",
+      "position": "Position",
+      "reverse": "Timer umkehren",
       "reverse_secondary_info_row": "Barra und Text tauschen",
       "secondary": "Sekundäre Informationen",
       "state_content": "Statusinhalt",
-      "show_all_actions": "Alle Aktionen anzeigen",
-      "tap_action": "Aktion bei kurzem Tippen",
+      "status_label_toggle": "Statusbeschriftung",
       "text_shadow": "Textschatten hinzufügen",
-      "theme_mode": "Theme mode",
       "theme": "Thema",
-      "custom_theme": "Benutzerdefinierte Themenzonen",
+      "trigger": "Auslöser",
       "unit": "Einheit",
-      "min_value_mode": "Min value source",
-      "max_value_mode": "Max value source",
-      "watermark_low_mode": "Low marker source",
-      "watermark_high_mode": "High marker source",
-      "alert_when_above_mode": "Above alert source",
-      "alert_when_below_mode": "Below alert source",
-      "bar_max_width": "Bar max width",
-      "bar_max_width_toggle": "Bar max width",
-      "frameless": "Frameless",
-      "height": "Height",
-      "marginless": "Marginless",
-      "min_width": "Min width",
-      "card_size_toggle": "Card size",
-      "unit_spacing": "Unit spacing",
-      "watermark_toggle": "Markers",
-      "alert_toggle": "Alert",
-      "custom_info": "Zusatzinfo (sekundär)",
-      "multiline": "Mehrzeilig",
-      "interpolate": "Farben interpolieren",
-      "name_info": "Zusatzinfo (Name)",
-      "reverse": "Timer umkehren",
-      "bar_stack_mode": "Stapelmodus",
-      "bar_stack": "Weitere Entitäten",
-      "migrate_config": "Konfiguration migrieren",
-      "icon_animation_jinja_toggle": "Trigger via template",
-      "fast_refresh": "Fast refresh (per-second)",
-      "height_custom_toggle": "Shrink height (embedded)",
-      "status_label_toggle": "Status label",
-      "density_toggle": "Compact",
-      "badge_toggle": "Badge",
-      "badge_color_toggle": "Independent color"
+      "unit_spacing": "Abstand",
+      "value_compact": "Kompakter Wert (1.2k)",
+      "value_sign": "Vorzeichen anzeigen (+/-)",
+      "watermark_high_mode": "Quelle der oberen Markierung",
+      "watermark_low_mode": "Quelle der unteren Markierung",
+      "watermark_toggle": "Markierungen"
     },
     "field_helper": {
-      "min_value_jinja": "Returns Number (42)",
-      "max_value_jinja": "Returns Number (100)",
-      "watermark_low_jinja": "Returns Number (20)",
-      "watermark_high_jinja": "Returns Number (80)",
-      "alert_when_above_jinja": "Returns Number (90)",
-      "alert_when_below_jinja": "Returns Number (10)",
-      "icon_animation_jinja": "Returns Boolean (true)",
+      "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
       "badge_icon": "Returns String (mdi:fan) or Object ({icon, color})",
-      "badge_color": "Returns String (#ff0000)",
-      "status_label_jinja": "Returns String (hot) or Object ({label, color})",
       "bar_effect": "Returns String (shimmer) or List ([shimmer, gradient])",
-      "hide": "Returns String (icon, name) or List ([icon, name])",
-      "name_info": "Returns String (Living Room)",
-      "custom_info": "Returns String (Charging)",
-      "icon": "Returns String (mdi:fan)",
       "color": "Returns String (#ff0000)",
-      "bar_color": "Returns String (#ff0000)"
+      "custom_info": "Returns String (Charging)",
+      "hide": "Returns String (icon, name) or List ([icon, name])",
+      "icon": "Returns String (mdi:fan)",
+      "icon_animation_jinja": "Returns Boolean (true)",
+      "name_info": "Returns String (Living Room)",
+      "returns_number": "Returns Number (42)",
+      "status_label_jinja": "Returns String (hot) or Object ({label, color})"
     },
     "option": {
-      "theme": {
-        "battery_adaptive": "Battery (adapts to charging state)",
-        "light": "Licht",
-        "temperature": "Temperatur",
-        "humidity": "Feuchtigkeit",
-        "pm25": "PM2.5",
-        "voc": "VOC",
-        "critical_when_low": "Critical when Low (Battery, disk...)",
-        "optimal_when_low": "Optimal bei niedrig",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "optimal_when_high": "Optimal bei hoch",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "critical_when_extreme_center": "Critical when Extreme, centered (center_zero)"
+      "alert_animation": {
+        "blink": "Blinken",
+        "ping": "Ping",
+        "static": "Statisch"
       },
-      "bar_size": {
-        "xsmall": "Extra Small",
-        "small": "Klein",
-        "medium": "Mittel",
-        "large": "Groß",
-        "xlarge": "Extra groß"
+      "alert_highlight": {
+        "background": "Hintergrund",
+        "border": "Rahmen",
+        "label": "Beschriftung"
+      },
+      "alert_when": {
+        "above": "Alarm über",
+        "animation": "Animation",
+        "below": "Alarm unter",
+        "color": "Alarmfarbe",
+        "highlight": "Hervorhebung"
+      },
+      "bar_color_mode": {
+        "auto": "Automatisch",
+        "rainbow": "Regenbogen",
+        "rainbow_full": "Regenbogen (voll)",
+        "segment": "Segmente"
+      },
+      "bar_effect": {
+        "glass": "Glas",
+        "gradient": "Verlauf",
+        "gradient_reverse": "Verlauf umgekehrt",
+        "radius": "Abgerundete Ecken",
+        "shimmer": "Schimmer",
+        "shimmer_reverse": "Schimmer umgekehrt"
       },
       "bar_orientation": {
         "ltr": "Von links nach rechts",
@@ -151,163 +161,145 @@
         "up": "Nach oben"
       },
       "bar_position": {
-        "default": "Standard",
+        "background": "Kartenhintergrund",
         "below": "Leiste unter dem Inhalt",
-        "compact_below": "Compact bar below (name/value on one row)",
-        "top": "Leiste oben",
         "bottom": "Leiste unten",
+        "compact_below": "Kompakter Balken unten (Name/Wert in einer Zeile)",
+        "default": "Standard",
         "overlay": "Leiste über dem Inhalt (Overlay)",
-        "background": "Kartenhintergrund"
-      },
-      "layout": {
-        "horizontal": "Horizontal (Standard)",
-        "vertical": "Vertikal"
-      },
-      "bar_color_mode": {
-        "auto": "Automatisch",
-        "segment": "Segmente",
-        "rainbow": "Regenbogen",
-        "rainbow_full": "Rainbow (full)"
+        "top": "Leiste oben"
       },
       "bar_scale": {
         "linear": "Linear",
         "log": "Logarithmisch"
       },
-      "bar_effect": {
-        "radius": "Abgerundete Ecken",
-        "glass": "Glas",
-        "gradient": "Verlauf",
-        "gradient_reverse": "Verlauf umgekehrt",
-        "shimmer": "Schimmer",
-        "shimmer_reverse": "Schimmer umgekehrt"
+      "bar_size": {
+        "large": "Groß",
+        "medium": "Mittel",
+        "small": "Klein",
+        "xlarge": "Extra groß",
+        "xsmall": "Extra klein"
+      },
+      "bar_stack_mode": {
+        "net": "Netto",
+        "proportional": "Proportional",
+        "stacked": "Gestapelt"
+      },
+      "force_circular_background_mode": {
+        "auto": "Automatisch",
+        "forced": "Erzwungen"
       },
       "hide": {
         "icon": "Symbol",
         "name": "Name",
-        "value": "Wert",
-        "unit": "Einheit",
+        "progress_bar": "Balken",
         "secondary_info": "Info",
-        "progress_bar": "Balken"
-      },
-      "unit_spacing": {
-        "auto": "Auto",
-        "space": "Space",
-        "no-space": "No space"
-      },
-      "watermark_type": {
-        "blended": "Blended",
-        "area": "Area",
-        "striped": "Striped",
-        "triangle": "Triangle",
-        "round": "Round",
-        "line": "Line"
-      },
-      "watermark_as": {
-        "auto": "Auto",
-        "percent": "Percent"
-      },
-      "watermark": {
-        "low": "Unterer Wert",
-        "high": "Oberer Wert",
-        "type": "Typ",
-        "opacity": "Deckkraft",
-        "low_color": "Untere Farbe",
-        "high_color": "Obere Farbe",
-        "low_as": "Einheit (unterer Wert)",
-        "high_as": "Einheit (oberer Wert)",
-        "line_size": "Linienstärke",
-        "disable_low": "Unteren Wert deaktivieren",
-        "disable_high": "Oberen Wert deaktivieren",
-        "low_attribute": "Attribut",
-        "high_attribute": "Attribut"
+        "shape": "Kreisförmiger Hintergrund des Symbols",
+        "unit": "Einheit",
+        "value": "Wert"
       },
       "icon_animation": {
-        "spin": "Drehen",
-        "pulse": "Pulsieren",
+        "battery_charging": "Akku lädt",
         "bounce": "Hüpfen",
-        "shake": "Wackeln",
         "ping": "Ping",
+        "pulse": "Pulsieren",
         "reveal": "Einblenden",
-        "washing_machine": "Waschmaschine",
-        "battery_charging": "Akku lädt"
+        "shake": "Wackeln",
+        "spin": "Drehen",
+        "washing_machine": "Waschmaschine"
       },
-      "alert_when": {
-        "above": "Alarm über",
-        "below": "Alarm unter",
-        "color": "Alarmfarbe",
-        "highlight": "Hervorhebung",
-        "animation": "Animation",
-        "above_attribute": "Attribute",
-        "below_attribute": "Attribute"
-      },
-      "alert_highlight": {
-        "border": "Rahmen",
-        "background": "Hintergrund",
-        "label": "Label"
-      },
-      "status_label": {
-        "jinja": "Status label",
-        "position": "Label position",
-        "color_source": "Color source"
+      "icon_animation_mode": {
+        "auto": "Automatisch",
+        "template": "Vorlage"
       },
       "label_position": {
-        "left": "Left",
-        "right": "Right"
+        "left": "Links",
+        "right": "Rechts"
+      },
+      "layout": {
+        "horizontal": "Horizontal (Standard)",
+        "vertical": "Vertikal"
+      },
+      "simple_advanced_mode": {
+        "advanced": "Erweitert",
+        "simple": "Einfach"
+      },
+      "status_label": {
+        "color_source": "Farbquelle",
+        "jinja": "Statusbeschriftung",
+        "position": "Position der Beschriftung"
       },
       "status_label_color_source": {
-        "bar": "Progress bar",
-        "icon": "Icon"
+        "bar": "Fortschrittsbalken",
+        "icon": "Symbol"
       },
-      "alert_animation": {
-        "static": "Static",
-        "blink": "Blink",
-        "ping": "Ping"
-      },
-      "min_value_mode": {
-        "standard": "Fester Wert",
-        "entity": "Entität",
-        "jinja": "Vorlage"
-      },
-      "max_value_mode": {
-        "standard": "Fester Wert",
-        "entity": "Entität",
-        "jinja": "Vorlage"
-      },
-      "watermark_low_mode": {
-        "standard": "Fester Wert",
-        "entity": "Entität",
-        "jinja": "Vorlage"
-      },
-      "watermark_high_mode": {
-        "standard": "Fester Wert",
-        "entity": "Entität",
-        "jinja": "Vorlage"
-      },
-      "alert_when_above_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_below_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
+      "theme": {
+        "battery_adaptive": "Akku (passt sich dem Ladezustand an)",
+        "critical_when_extreme": "Kritisch im Extrem (Tankfüllstand, Abweichung...)",
+        "critical_when_extreme_center": "Kritisch im Extrem, zentriert (center_zero)",
+        "critical_when_high": "Kritisch bei hoch (CPU, RAM, Speichernutzung...)",
+        "critical_when_low": "Kritisch bei niedrig (Akku, Speicher...)",
+        "humidity": "Feuchtigkeit",
+        "light": "Licht",
+        "optimal_when_high": "Optimal bei hoch",
+        "optimal_when_low": "Optimal bei niedrig",
+        "pm25": "PM2.5",
+        "temperature": "Temperatur",
+        "voc": "VOC"
       },
       "theme_mode": {
-        "preset": "Voreinstellung",
-        "custom": "Benutzerdefiniert"
+        "custom": "Benutzerdefiniert",
+        "preset": "Voreinstellung"
       },
-      "min_value": {
+      "unit_position": {
+        "after": "Nach dem Wert",
+        "before": "Vor dem Wert"
+      },
+      "unit_spacing": {
+        "auto": "Automatisch",
+        "no-space": "Kein Abstand",
+        "space": "Abstand"
+      },
+      "value_shape": {
         "attribute": "Attribut"
       },
-      "max_value": {
-        "attribute": "Attribut"
+      "value_source_mode": {
+        "entity": "Entität",
+        "jinja": "Vorlage",
+        "standard": "Fester Wert"
       },
-      "bar_stack_mode": {
-        "stacked": "Gestapelt",
-        "proportional": "Proportional",
-        "net": "Netto"
+      "watermark": {
+        "disable_high": "Oberen Wert deaktivieren",
+        "disable_low": "Unteren Wert deaktivieren",
+        "high": "Oberer Wert",
+        "high_as": "Einheit (oberer Wert)",
+        "high_color": "Obere Farbe",
+        "line_size": "Linienstärke",
+        "low": "Unterer Wert",
+        "low_as": "Einheit (unterer Wert)",
+        "low_color": "Untere Farbe",
+        "opacity": "Deckkraft",
+        "type": "Typ"
+      },
+      "watermark_as": {
+        "auto": "Automatisch",
+        "percent": "Prozent"
+      },
+      "watermark_type": {
+        "area": "Fläche",
+        "blended": "Verlaufend",
+        "line": "Linie",
+        "round": "Rund",
+        "striped": "Gestreift",
+        "triangle": "Dreieck"
       }
+    },
+    "title": {
+      "content": "Inhalt",
+      "interaction": "Interaktionen",
+      "layout": "Layout & Größe",
+      "markers": "Markierungen & Alarme",
+      "theme": "Aussehen und Bedienung"
     }
   }
 }

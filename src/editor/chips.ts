@@ -69,7 +69,12 @@ abstract class ChipsBase extends HTMLElement {
     return chip;
   }
 
-  _buildChipSet(values: string[], onToggle: (value: string) => void, chipsMap: Map<string, HTMLButtonElement>) {
+  _buildChipSet(
+    values: string[],
+    onToggle: (value: string) => void,
+    chipsMap: Map<string, HTMLButtonElement>,
+    extraClass?: string,
+  ) {
     const style = document.createElement('style');
     style.textContent = CHIPS_HOST_STYLE;
     const frag: HTMLElement[] = [style];
@@ -80,7 +85,7 @@ abstract class ChipsBase extends HTMLElement {
       frag.push(this.#labelEl);
     }
     const chipSet = document.createElement('div');
-    chipSet.className = 'chip-set';
+    chipSet.className = extraClass ? `chip-set ${extraClass}` : 'chip-set';
     for (const value of values) {
       const chip = this._createChip(value, onToggle);
       chipSet.appendChild(chip);
@@ -270,7 +275,11 @@ abstract class SingleSelectChipsBase extends ChipsBase {
 
   _buildDOM() {
     this.#selected ??= this.#modes[0];
-    this._buildChipSet(this.#modes, (value) => this.#select(value), this.#chips);
+    // 2-mode sets (Simple/Advanced, Preset/Custom) render as one fused
+    // segmented pill instead of separate chips - see .chip-set.segmented.
+    const segmented = this.#modes.length === 2;
+    if (segmented) this.classList.add('inline-row');
+    this._buildChipSet(this.#modes, (value) => this.#select(value), this.#chips, segmented ? 'segmented' : undefined);
   }
 
   #select(value: string) {
@@ -339,6 +348,27 @@ class EntityProgressBarStackModeChips extends SingleSelectChipsBase {
 }
 defineElement(EntityProgressBarStackModeChips.ELEMENT_NAME, EntityProgressBarStackModeChips);
 
+// icon_animation_mode: automatic entity-based detection vs a Jinja condition.
+class EntityProgressIconAnimationModeChips extends SingleSelectChipsBase {
+  static ELEMENT_NAME = devName('entity-progress-icon-animation-mode-chips');
+  static MODES = ['auto', 'template'];
+}
+defineElement(EntityProgressIconAnimationModeChips.ELEMENT_NAME, EntityProgressIconAnimationModeChips);
+
+// force_circular_background_mode: Auto (default shape) vs always Forced.
+class EntityProgressCircularBackgroundModeChips extends SingleSelectChipsBase {
+  static ELEMENT_NAME = devName('entity-progress-circular-background-mode-chips');
+  static MODES = ['auto', 'forced'];
+}
+defineElement(EntityProgressCircularBackgroundModeChips.ELEMENT_NAME, EntityProgressCircularBackgroundModeChips);
+
+// Shared by trigger/bar_effect_mode/hide_mode (Simple/Advanced).
+class EntityProgressSimpleAdvancedChips extends SingleSelectChipsBase {
+  static ELEMENT_NAME = devName('entity-progress-simple-advanced-chips');
+  static MODES = ['simple', 'advanced'];
+}
+defineElement(EntityProgressSimpleAdvancedChips.ELEMENT_NAME, EntityProgressSimpleAdvancedChips);
+
 export { ChipsBase };
 export { EntityProgressEffectChips };
 export { EntityProgressHideChips };
@@ -346,3 +376,6 @@ export { SingleSelectChipsBase };
 export { EntityProgressValueSourceModeChips };
 export { EntityProgressThemeModeChips };
 export { EntityProgressBarStackModeChips };
+export { EntityProgressIconAnimationModeChips };
+export { EntityProgressCircularBackgroundModeChips };
+export { EntityProgressSimpleAdvancedChips };

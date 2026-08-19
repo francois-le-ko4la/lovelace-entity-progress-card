@@ -42,6 +42,7 @@ const EditorFieldsType = {
   select: (name: string, o: Record<string, unknown> = {}) => ({ name, type: name, ...o }),
   templateOrType: (name: string, template: boolean, type: string, o: Record<string, unknown> = {}) =>
     field(template ? 'template' : type)(name, o),
+  sectionLabel: field('section_label'),
 };
 
 // Shared by min_value/max_value below: both share the exact same explicit
@@ -116,11 +117,13 @@ const valueField = (
     [`${key}.attribute`]: EditorFieldsType.select(`${key}.attribute`, {
       type: attrType,
       selectorOf: entityPath,
+      labelKey: ['value_shape', 'attribute'],
       showIf: (c: LovelaceConfig) => is.plainObject(c[key]) && is.nonEmptyString(c[key].entity),
     }),
     [`${key}.jinja`]: EditorFieldsType.tpl(`${key}.jinja`, {
       noLabel: true,
       helper: true,
+      helperKey: 'returns_number',
       showIf: (c: LovelaceConfig) => is.nonEmptyString(c[key]?.jinja),
     }),
   };
@@ -219,6 +222,7 @@ const nestedValueField = (
       type: attrType,
       virtual: true,
       selectorOf: entityPath,
+      labelKey: ['value_shape', 'attribute'],
       showIf: (c: LovelaceConfig) => isEnabled(c) && ent(c) && is.nonEmptyString(c[parentKey][key]?.entity),
       resolveVirtual: (c: LovelaceConfig) => c[parentKey]?.[key]?.attribute ?? '',
       onVirtualChange: (value: string, config: LovelaceConfig) => ({
@@ -234,6 +238,7 @@ const nestedValueField = (
       noLabel: true,
       virtual: true,
       helper: true,
+      helperKey: 'returns_number',
       showIf: (c: LovelaceConfig) => isEnabled(c) && tpl(c),
       resolveVirtual: (c: LovelaceConfig) => c[parentKey]?.[key]?.jinja ?? '',
       onVirtualChange: (value: string, config: LovelaceConfig) => ({
@@ -270,9 +275,61 @@ const wmSide = (side: 'low' | 'high', defaultVal: number) => {
 // watermark there's no per-side disable toggle or _as/_color options - just
 // the value itself - and no numeric default to fall back to (alert_when.
 // above/below are genuinely optional).
+// Simple mode only - Advanced mode (alert_when.jinja) replaces above/below
+// as the trigger entirely, see alertModeField below.
+const isAlertSimple = (c: LovelaceConfig) => Boolean(c.alert_when) && !is.nonEmptyString(c.alert_when?.jinja);
+
 const alertField = (side: 'above' | 'below') => {
   const entityPath = side === 'above' ? ALERT_ABOVE_ENTITY_PATH : ALERT_BELOW_ENTITY_PATH;
-  return nestedValueField('alert_when', side, entityPath, (c: LovelaceConfig) => Boolean(c.alert_when));
+  return nestedValueField('alert_when', side, entityPath, isAlertSimple);
+};
+
+// Shared master on/off toggle - same draft precedent as status_label_toggle.
+const alertToggleField = () => ({
+  alert_toggle: EditorFieldsType.toggle('alert_toggle', {
+    virtual: true,
+    resolveVirtual: (c: LovelaceConfig) => Boolean(c.alert_when),
+    onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
+      ...config,
+      alert_when: value ? config._alert_when_draft || {} : undefined,
+      _alert_when_draft: value ? undefined : (config.alert_when ?? config._alert_when_draft),
+    }),
+  }),
+});
+
+// Simple (above/below) vs Advanced (alert_when.jinja) - unlike valueField's
+// standard/entity/jinja triad, this swaps which *fields* are shown rather
+// than one field's own representation, so above/below/jinja each keep their
+// own draft slot restored on the way back into their mode.
+const alertModeField = () => {
+  const aboveDraftKey = '_alert_when_above_draft';
+  const belowDraftKey = '_alert_when_below_draft';
+  const jinjaDraftKey = '_alert_when_jinja_draft';
+  return {
+    trigger: {
+      name: 'trigger',
+      type: 'trigger',
+      virtual: true,
+      showIf: (c: LovelaceConfig) => Boolean(c.alert_when),
+      resolveVirtual: (c: LovelaceConfig) => (is.nonEmptyString(c.alert_when?.jinja) ? 'advanced' : 'simple'),
+      onVirtualChange: (mode: 'simple' | 'advanced', config: LovelaceConfig) => {
+        const alert = config.alert_when ?? {};
+        const aboveDraft = alert.above !== undefined ? alert.above : config[aboveDraftKey];
+        const belowDraft = alert.below !== undefined ? alert.below : config[belowDraftKey];
+        const jinjaDraft = is.nonEmptyString(alert.jinja) ? alert.jinja : config[jinjaDraftKey];
+        return {
+          ...config,
+          alert_when:
+            mode === 'advanced'
+              ? { ...alert, above: undefined, below: undefined, jinja: jinjaDraft || '{{ }}' }
+              : { ...alert, above: aboveDraft, below: belowDraft, jinja: undefined },
+          [aboveDraftKey]: mode === 'advanced' ? aboveDraft : undefined,
+          [belowDraftKey]: mode === 'advanced' ? belowDraft : undefined,
+          [jinjaDraftKey]: mode === 'advanced' ? undefined : jinjaDraft,
+        };
+      },
+    },
+  };
 };
 
 const EditorFactory = {
@@ -358,20 +415,23 @@ const EditorFactory = {
             percent: EditorFieldsType.tpl('percent'),
           }
         : {
-            // Normally a 1/3-1/3-1/3 trio - but unit_spacing (the middle one)
-            // hides once unit itself is hidden (disable_unit / hide: [unit]),
-            // leaving unit+decimal at a third each with an empty gap where it
-            // sat. unitSpacingShown tracks the same condition so the other
-            // two can widen to fill the row instead.
+            // Two half-half rows; unitSpacingShown widens unit/decimal to
+            // fill the row once unit_spacing/unit_position hide (hidden unit).
             ...(() => {
               const unitSpacingShown = (c: LovelaceConfig) =>
                 !(c.disable_unit || (is.array(c.hide) && c.hide.includes('unit')));
-              const thirdOrHalf = (c: LovelaceConfig) =>
-                unitSpacingShown(c) ? availableSpace(32, 1 / 3) : availableSpace();
+              const halfOrFull = (c: LovelaceConfig) =>
+                unitSpacingShown(c) ? availableSpace(32, 1 / 2) : availableSpace();
               return {
                 unit: EditorFieldsType.text('unit', {
-                  width: thirdOrHalf,
+                  width: halfOrFull,
                   placeholder: (_c: LovelaceConfig, neg: Config) => (neg?.resolvedUnit as string) ?? '',
+                }),
+                unit_position: EditorFieldsType.select('unit_position', {
+                  type: 'unit_position',
+                  labelKey: 'position',
+                  width: availableSpace(32, 1 / 2),
+                  showIf: unitSpacingShown,
                 }),
                 // disable_unit is deprecated (see
                 // BaseConfigHelper.#logDeprecatedOption): 'unit' is now just
@@ -381,16 +441,18 @@ const EditorFactory = {
                 // through the editor's own config-changed.
                 unit_spacing: EditorFieldsType.select('unit_spacing', {
                   type: 'unit_spacing',
-                  width: availableSpace(32, 1 / 3),
+                  width: availableSpace(32, 1 / 2),
                   showIf: unitSpacingShown,
                 }),
                 decimal: EditorFieldsType.decimal('decimal', {
-                  width: thirdOrHalf,
+                  width: halfOrFull,
                   placeholder: (_c: LovelaceConfig, neg: Config) =>
                     neg?.resolvedDecimal == null ? '' : String(neg.resolvedDecimal),
                 }),
               };
             })(),
+            value_compact: EditorFieldsType.toggle('value_compact'),
+            value_sign: EditorFieldsType.toggle('value_sign'),
             // A 2-state toggle can't represent 3 mutually exclusive modes
             // (standard/entity/Jinja) - a single-select chip group replaces
             // the previous pair of toggles, which could both show at once.
@@ -433,9 +495,8 @@ const EditorFactory = {
   // switching modes used to hard-clear the field being left behind (theme when
   // entering custom, custom_theme when leaving it), destroying a
   // carefully-built zone list the moment someone peeked at a preset and came
-  // back. The inactive side is now parked in a `_`-prefixed draft
-  // (session-only, stripped before dispatch by #sendConfig, same mechanism as
-  // _show_all_actions) and restored when its mode is selected again.
+  // back. The inactive side is now parked in a `_`-prefixed draft (same
+  // ephemeral mechanism as _visible_actions) and restored when re-selected.
   themeModeFields: (template: boolean) =>
     template
       ? // Template has no custom_theme (no min_value/max_value to project real-value
@@ -463,6 +524,7 @@ const EditorFactory = {
           theme_mode: {
             name: 'theme_mode',
             type: 'theme_mode',
+            labelKey: 'theme',
             virtual: true,
             // is.array (not is.nonEmptyArray): a freshly-entered custom mode
             // starts as an empty [] before the user adds a first zone, and must
@@ -690,25 +752,30 @@ const EditorFactory = {
           // plays, replacing the automatic entity-based detection
           // (isEntityActive/isWashingMachineActive/isBatteryCharging - see
           // HABase._iconAnimationStyle) once it resolves.
-          icon_animation_jinja_toggle: EditorFieldsType.toggle('icon_animation_jinja_toggle', {
+          icon_animation_mode: {
+            name: 'icon_animation_mode',
+            type: 'icon_animation_mode',
             target: 'icon_animation',
+            labelKey: 'trigger',
             virtual: true,
-            resolveVirtual: (c: LovelaceConfig) => is.plainObject(c.icon_animation),
-            onVirtualChange: (value: boolean, config: LovelaceConfig) => {
+            resolveVirtual: (c: LovelaceConfig) => (is.plainObject(c.icon_animation) ? 'template' : 'auto'),
+            onVirtualChange: (mode: 'auto' | 'template', config: LovelaceConfig) => {
               const current = config.icon_animation;
               const effect = is.plainObject(current) ? current.effect : current;
               const currentJinja = is.plainObject(current) ? current.jinja : undefined;
               return {
                 ...config,
-                icon_animation: value
-                  ? { effect, jinja: currentJinja || config._icon_animation_jinja_draft || '{{ }}' }
-                  : effect || undefined,
+                icon_animation:
+                  mode === 'template'
+                    ? { effect, jinja: currentJinja || config._icon_animation_jinja_draft || '{{ }}' }
+                    : effect || undefined,
                 // Ephemeral - see valueField's own _<key>_jinja_draft
                 // precedent.
-                _icon_animation_jinja_draft: value ? undefined : (currentJinja ?? config._icon_animation_jinja_draft),
+                _icon_animation_jinja_draft:
+                  mode === 'template' ? undefined : (currentJinja ?? config._icon_animation_jinja_draft),
               };
             },
-          }),
+          },
           icon_animation_jinja: EditorFieldsType.tpl('icon_animation_jinja', {
             target: 'icon_animation',
             virtual: true,
@@ -723,7 +790,18 @@ const EditorFactory = {
               return { ...config, icon_animation: { effect, jinja: value || '' } };
             },
           }),
-          force_circular_background: EditorFieldsType.toggle('force_circular_background'),
+          force_circular_background_mode: {
+            name: 'force_circular_background_mode',
+            type: 'force_circular_background_mode',
+            target: 'force_circular_background',
+            virtual: true,
+            resolveVirtual: (c: LovelaceConfig) => (c.force_circular_background ? 'forced' : 'auto'),
+            onVirtualChange: (mode: 'auto' | 'forced', config: LovelaceConfig) => ({
+              ...config,
+              force_circular_background: mode === 'forced',
+            }),
+          },
+          bar_group: EditorFieldsType.sectionLabel('bar_group'),
           bar_position: EditorFieldsType.select('bar_position', {
             // density: compact is the most restrictive case (top/bottom/
             // background only - see EditorFactory.applyDensityConstraints)
@@ -738,6 +816,7 @@ const EditorFactory = {
                 : c.layout === 'vertical'
                   ? 'bar_position_no_compact_below'
                   : 'bar_position',
+            labelKey: 'position',
             width: availableSpace(),
             onChange: (_value: unknown, config: LovelaceConfig) => resetUpIfInvalid(config),
           }),
@@ -786,7 +865,8 @@ const EditorFactory = {
         resolveVirtual: (c: LovelaceConfig) => Boolean(c.bar_max_width),
         onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
           ...config,
-          bar_max_width: value ? '300px' : undefined,
+          bar_max_width: value ? config._bar_max_width_draft || '300px' : undefined,
+          _bar_max_width_draft: value ? undefined : (config.bar_max_width ?? config._bar_max_width_draft),
         }),
       }),
       // The toggle above carries the "Bar max width" label, so the slider is
@@ -813,7 +893,8 @@ const EditorFactory = {
         resolveVirtual: (c: LovelaceConfig) => Boolean(c.watermark),
         onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
           ...config,
-          watermark: value ? {} : undefined,
+          watermark: value ? config._watermark_draft || {} : undefined,
+          _watermark_draft: value ? undefined : (config.watermark ?? config._watermark_draft),
         }),
       }),
       'watermark.type': EditorFieldsType.select('watermark.type', {
@@ -883,25 +964,33 @@ const EditorFactory = {
           badge_color: EditorFieldsType.tpl('badge_color', {
             noLabel: true,
             helper: true,
+            helperKey: 'color',
             showIf: (c: LovelaceConfig) => Boolean(c.badge_color),
           }),
         },
 
-  // Alert (alert_when) — not in the template schema.
+  // Template/BadgeTemplate: Jinja-only, no above/below/color/highlight/
+  // animation/label - nothing static to pair a mode chip against.
   themeAlertFields: (template: boolean) =>
     template
-      ? {}
-      : {
-          alert_toggle: EditorFieldsType.toggle('alert_toggle', {
-            virtual: true,
-            resolveVirtual: (c: LovelaceConfig) => Boolean(c.alert_when),
-            onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
-              ...config,
-              alert_when: value ? {} : undefined,
-            }),
+      ? {
+          ...alertToggleField(),
+          'alert_when.jinja': EditorFieldsType.tpl('alert_when.jinja', {
+            noLabel: true,
+            helper: true,
+            showIf: (c: LovelaceConfig) => Boolean(c.alert_when),
           }),
+        }
+      : {
+          ...alertToggleField(),
+          ...alertModeField(),
           ...alertField('above'),
           ...alertField('below'),
+          'alert_when.jinja': EditorFieldsType.tpl('alert_when.jinja', {
+            noLabel: true,
+            helper: true,
+            showIf: (c: LovelaceConfig) => is.nonEmptyString(c.alert_when?.jinja),
+          }),
           'alert_when.color': EditorFieldsType.select('alert_when.color', {
             type: 'color',
             showIf: (c: LovelaceConfig) => Boolean(c.alert_when),
@@ -943,9 +1032,8 @@ const EditorFactory = {
         },
 
   // A "Card size" toggle that reveals min_width (+ height on cards) without
-  // forcing a value: `_show_size` is ephemeral UI state (stripped before
-  // config-changed, never saved to YAML), same pattern as `_show_all_actions`.
-  // The toggle also reads as on when a value already exists (YAML round-trip).
+  // forcing a value: `_show_size` is ephemeral UI state, same pattern as
+  // `_visible_actions`. Also reads as on when a value already exists.
   cardSizeFields: (badge: boolean) => {
     const shown = (c: LovelaceConfig) => Boolean(c._show_size || c.min_width || c.height);
     return {
@@ -975,12 +1063,17 @@ const EditorFactory = {
     badge
       ? {}
       : {
-          // Ahead of layout on purpose: flipping it on immediately narrows
-          // layout/bar_position's own choices below it (via
-          // applyDensityConstraints), reads better cause-before-effect than
-          // the other way around.
+          layout: EditorFieldsType.select('layout', {
+            // density: compact only has a meaningful shape in horizontal -
+            // see EditorFactory.applyDensityConstraints.
+            type: (c: LovelaceConfig) => (c.density === 'compact' ? 'layout_horizontal_only' : 'layout'),
+            onChange: (_value: unknown, config: LovelaceConfig) =>
+              EditorFactory.resetCompactBelowIfInvalid(resetUpIfInvalid(config)),
+          }),
           density_toggle: EditorFieldsType.toggle('density_toggle', {
             virtual: true,
+            // Meaningless once layout: vertical is picked.
+            showIf: (c: LovelaceConfig) => c.layout !== 'vertical',
             resolveVirtual: (c: LovelaceConfig) => c.density === 'compact',
             // A card already in a Sections view almost always carries its own
             // explicit grid_options (HA writes one when a card is added or
@@ -1008,13 +1101,6 @@ const EditorFactory = {
               };
             },
           }),
-          layout: EditorFieldsType.select('layout', {
-            // density: compact only has a meaningful shape in horizontal -
-            // see EditorFactory.applyDensityConstraints.
-            type: (c: LovelaceConfig) => (c.density === 'compact' ? 'layout_horizontal_only' : 'layout'),
-            onChange: (_value: unknown, config: LovelaceConfig) =>
-              EditorFactory.resetCompactBelowIfInvalid(resetUpIfInvalid(config)),
-          }),
         },
 
   // 'up' only has a visible effect in these two combinations (see
@@ -1033,6 +1119,13 @@ const EditorFactory = {
     config.bar_orientation === 'up' && !EditorFactory.upAllowed(config)
       ? { ...config, bar_orientation: 'ltr' }
       : config,
+
+  // Template rejects 'unit'; Badge/BadgeTemplate lack 'shape' (see schema.ts).
+  hideChipsItems: (template: boolean, badge: boolean): string[] | undefined => {
+    if (badge) return template ? ['icon', 'name', 'value', 'secondary_info', 'progress_bar'] : undefined;
+    if (template) return ['icon', 'shape', 'name', 'value', 'secondary_info', 'progress_bar'];
+    return ['icon', 'shape', 'name', 'value', 'unit', 'secondary_info', 'progress_bar'];
+  },
 
   // compact_below (#123) mirrors 'up' above: only has a distinct effect with
   // layout: horizontal (see schema.ts's applyCompactBelowRule, the matching
@@ -1081,6 +1174,9 @@ const EditorFactory = {
     // so bar_size and bar_segments are always neighbors when this is true.
     const barSizeAllowed = (c: LovelaceConfig) => !['top', 'bottom', 'overlay', 'background'].includes(c.bar_position);
     return {
+      // Badge has no bar_position (where the label normally sits, see
+      // themeCardOnlyFields) - bar_orientation is its first bar field.
+      ...(badge ? { bar_group: EditorFieldsType.sectionLabel('bar_group') } : {}),
       bar_orientation: EditorFieldsType.select('bar_orientation', {
         // Badge/Badge Template have no bar_position/layout, so 'up' is
         // statically excluded there; elsewhere, only offered when upAllowed
@@ -1108,7 +1204,7 @@ const EditorFactory = {
         // Full-width once bar_size (its row partner) hides for the same
         // bar_position values.
         ...(template
-          ? { helper: true }
+          ? { helper: true, helperKey: 'color' }
           : { width: (c: LovelaceConfig) => (barSizeAllowed(c) ? availableSpace() : '100%') }),
       }),
       ...EditorFactory.themeSingleLineShadowFields(badge),
@@ -1236,23 +1332,25 @@ const EditorFactory = {
             };
           },
         }),
-        bar_effect_jinja: EditorFieldsType.toggle('bar_effect_jinja', {
+        bar_effect_mode: {
+          name: 'bar_effect_mode',
+          type: 'bar_effect_mode',
           virtual: true,
-          resolveVirtual: (c: LovelaceConfig) => is.nonEmptyString(c.bar_effect),
+          resolveVirtual: (c: LovelaceConfig) => (is.nonEmptyString(c.bar_effect) ? 'advanced' : 'simple'),
           // Ephemeral - both directions, so switching chips <-> Jinja and
           // back restores whichever shape was left behind either way.
-          onVirtualChange: (value: boolean, config: LovelaceConfig) => {
+          onVirtualChange: (mode: 'simple' | 'advanced', config: LovelaceConfig) => {
             const current = config.bar_effect;
             const arrayDraft = is.array(current) ? current : config._bar_effect_array_draft;
             const jinjaDraft = is.nonEmptyString(current) ? current : config._bar_effect_jinja_draft;
             return {
               ...config,
-              bar_effect: value ? jinjaDraft || '{{ }}' : (arrayDraft ?? []),
-              _bar_effect_array_draft: value ? arrayDraft : undefined,
-              _bar_effect_jinja_draft: value ? undefined : jinjaDraft,
+              bar_effect: mode === 'advanced' ? jinjaDraft || '{{ }}' : (arrayDraft ?? []),
+              _bar_effect_array_draft: mode === 'advanced' ? arrayDraft : undefined,
+              _bar_effect_jinja_draft: mode === 'advanced' ? undefined : jinjaDraft,
             };
           },
-        }),
+        },
         bar_effect_chips: EditorFieldsType.select('bar_effect_chips', {
           type: 'effect_chips',
           target: 'bar_effect',
@@ -1264,31 +1362,35 @@ const EditorFactory = {
           showIf: (c: LovelaceConfig) => is.nonEmptyString(c.bar_effect),
         }),
         // ── Hide ─────────────────────────────────────────────────────────────
-        hide_jinja: EditorFieldsType.toggle('hide_jinja', {
+        hide_mode: {
+          name: 'hide_mode',
+          type: 'hide_mode',
           virtual: true,
-          resolveVirtual: (c: LovelaceConfig) => is.nonEmptyString(c.hide),
-          // Ephemeral - both directions, same reasoning as bar_effect_jinja
-          // above.
-          onVirtualChange: (value: boolean, config: LovelaceConfig) => {
+          resolveVirtual: (c: LovelaceConfig) => (is.nonEmptyString(c.hide) ? 'advanced' : 'simple'),
+          // Ephemeral - both directions, same reasoning as bar_effect_mode.
+          onVirtualChange: (mode: 'simple' | 'advanced', config: LovelaceConfig) => {
             const current = config.hide;
             const arrayDraft = is.array(current) ? current : config._hide_array_draft;
             const jinjaDraft = is.nonEmptyString(current) ? current : config._hide_jinja_draft;
             return {
               ...config,
-              hide: value ? jinjaDraft || '{{ }}' : (arrayDraft ?? []),
-              _hide_array_draft: value ? arrayDraft : undefined,
-              _hide_jinja_draft: value ? undefined : jinjaDraft,
+              hide: mode === 'advanced' ? jinjaDraft || '{{ }}' : (arrayDraft ?? []),
+              _hide_array_draft: mode === 'advanced' ? arrayDraft : undefined,
+              _hide_jinja_draft: mode === 'advanced' ? undefined : jinjaDraft,
             };
           },
-        }),
+        },
         hide_chips: EditorFieldsType.select('hide_chips', {
           type: 'hide_chips',
           target: 'hide',
           showIf: (c: LovelaceConfig) => !is.nonEmptyString(c.hide),
-          // Template/BadgeTemplate schemas reject 'unit' (see
-          // YamlSchemaFactory.template) - no separate unit field there, the
-          // value comes straight from Jinja `percent`.
-          ...(template ? { items: ['icon', 'name', 'value', 'secondary_info', 'progress_bar'] } : {}),
+          items: EditorFactory.hideChipsItems(template, badge),
+          // Meaningless once unit itself is hidden - drop the stale values
+          // instead of leaving them saved but inert.
+          onChange: (_value: unknown, config: LovelaceConfig) =>
+            is.array(config.hide) && config.hide.includes('unit')
+              ? { ...config, unit_spacing: undefined, unit_position: undefined }
+              : config,
         }),
         hide: EditorFieldsType.tpl('hide', {
           noLabel: true,
@@ -1379,43 +1481,62 @@ const EditorFactory = {
   }),
 
   interactions: (badge: boolean) => {
-    // isActive: show a field only if its negotiated action differs from the
-    // 'none' default. orAll: also show when "show all" (_show_all_actions,
-    // ephemeral UI state) is on. tap_action/icon_tap_action stay always
-    // visible: tap_action's default ('more-info') is always relevant;
-    // icon_tap_action's default depends on entity domain ('toggle' for
-    // lights/switches, patched via toggleDomain) - always showing it lets
-    // the hint reveal the effective default.
-    const isActive = (key: string) => (_: LovelaceConfig, n: Config) => n?.[key]?.action !== 'none';
-    const orAll = (pred: (c: LovelaceConfig, n: Config) => boolean) => (c: LovelaceConfig, n: Config) =>
-      Boolean(c._show_all_actions) || pred(c, n);
+    // isActive: negotiated action differs from 'none'. isRevealed: manually
+    // added via the "+" picker (_visible_actions, ephemeral UI state).
+    // Boolean(...) guard: resolveVirtual below only has raw config, where an
+    // untouched key is absent (undefined !== 'none' would read as "active").
+    const isActive = (key: string) => (_: LovelaceConfig, n: Config) =>
+      Boolean(n?.[key]?.action) && n[key].action !== 'none';
+    const isRevealed = (key: string) => (c: LovelaceConfig) =>
+      Array.isArray(c._visible_actions) && c._visible_actions.includes(key);
+    const orRevealed =
+      (key: string, pred: (c: LovelaceConfig, n: Config) => boolean) => (c: LovelaceConfig, n: Config) =>
+        isRevealed(key)(c) || pred(c, n);
+    const optionalKeys = badge
+      ? ['hold_action', 'double_tap_action']
+      : ['hold_action', 'double_tap_action', 'icon_hold_action', 'icon_double_tap_action'];
+    // Hidden = neither active nor revealed. n defaults to c: resolveVirtual
+    // has no negotiated, unlike showIf.
+    const hiddenKeys = (c: LovelaceConfig, n: Config = c as unknown as Config) =>
+      optionalKeys.filter((k) => !isRevealed(k)(c) && !isActive(k)(c, n));
     return {
       title: 'editor.title.interaction',
       icon: HA_CONTEXT.icons.gestureTapHold,
       fields: {
-        show_all_actions: {
-          name: 'show_all_actions',
-          type: 'toggle',
-          virtual: true,
-          resolveVirtual: (c: LovelaceConfig) => Boolean(c._show_all_actions),
-          onVirtualChange: (value: boolean, config: LovelaceConfig) => ({ ...config, _show_all_actions: value }),
-        },
-        tap_action: EditorFieldsType.action('tap_action'),
-        hold_action: EditorFieldsType.action('hold_action', { showIf: orAll(isActive('hold_action')) }),
+        tap_action: EditorFieldsType.action('tap_action', { labelKey: 'action.tap' }),
+        hold_action: EditorFieldsType.action('hold_action', {
+          labelKey: 'action.hold',
+          showIf: orRevealed('hold_action', isActive('hold_action')),
+        }),
         double_tap_action: EditorFieldsType.action('double_tap_action', {
-          showIf: orAll(isActive('double_tap_action')),
+          labelKey: 'action.double_tap',
+          showIf: orRevealed('double_tap_action', isActive('double_tap_action')),
         }),
         ...(!badge
           ? {
-              icon_tap_action: EditorFieldsType.action('icon_tap_action'),
+              icon_tap_action: EditorFieldsType.action('icon_tap_action', { labelKey: 'action.icon_tap' }),
               icon_hold_action: EditorFieldsType.action('icon_hold_action', {
-                showIf: orAll(isActive('icon_hold_action')),
+                labelKey: 'action.icon_hold',
+                showIf: orRevealed('icon_hold_action', isActive('icon_hold_action')),
               }),
               icon_double_tap_action: EditorFieldsType.action('icon_double_tap_action', {
-                showIf: orAll(isActive('icon_double_tap_action')),
+                labelKey: 'action.icon_double_tap',
+                showIf: orRevealed('icon_double_tap_action', isActive('icon_double_tap_action')),
               }),
             }
           : {}),
+        action_picker: {
+          name: 'action_picker',
+          type: 'action_picker',
+          virtual: true,
+          items: optionalKeys,
+          showIf: (c: LovelaceConfig, n: Config) => hiddenKeys(c, n).length > 0,
+          resolveVirtual: (c: LovelaceConfig) => ({
+            visible: Array.isArray(c._visible_actions) ? c._visible_actions : [],
+            hidden: hiddenKeys(c),
+          }),
+          onVirtualChange: (value: string[], config: LovelaceConfig) => ({ ...config, _visible_actions: value }),
+        },
       },
     };
   },

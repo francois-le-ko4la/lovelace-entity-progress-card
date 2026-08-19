@@ -1042,6 +1042,9 @@ const YamlSchemaFactory = {
         unit: types.optionalString(),
         disable_unit: types.optionalBooleanWithDefault(false),
         unit_spacing: types.enumsWithDefault(Object.values(CARD.config.unit.unitSpacing), 'auto'), //['auto', 'space', 'no-space']
+        unit_position: types.enumsWithDefault(['after', 'before'], 'after'),
+        value_compact: types.optionalBooleanWithDefault(false),
+        value_sign: types.optionalBooleanWithDefault(false),
         // Explicit shape instead of type-sniffing a scalar (number vs entity-id
         // string vs jinja-looking string), symmetric with max_value: min_value:
         // 10 | {entity, attribute} | {jinja}.
@@ -1135,7 +1138,15 @@ const YamlSchemaFactory = {
         text_shadow: types.optionalBooleanWithDefault(false),
 
         // ─── Visibility & Content ───────────────────────────────────────────
-        hide: types.jinjaOrArrayWithValidatedElem(['icon', 'name', 'value', 'unit', 'secondary_info', 'progress_bar']),
+        hide: types.jinjaOrArrayWithValidatedElem([
+          'icon',
+          'name',
+          'value',
+          'unit',
+          'secondary_info',
+          'progress_bar',
+          'shape',
+        ]),
         name_info: types.optionalString(),
         custom_info: types.optionalString(),
         // Badge/badgeTemplate opt out (see their own .delete(['multiline'])):
@@ -1161,6 +1172,9 @@ const YamlSchemaFactory = {
             // template instead of only a fixed number.
             above: types.optional(types.numericEntityOrJinja()),
             below: types.optional(types.numericEntityOrJinja()),
+            // Advanced mode: replaces above/below as the trigger (see
+            // configuration.md#alert_when).
+            jinja: types.optionalString(),
             color: types.optionalString(),
             // label: the status pill instead of tinting the whole card - only
             // shown while the alert is active, takes over the pill from a
@@ -1249,6 +1263,8 @@ const YamlSchemaFactory = {
         // --ha-badge-size (36px default), so xlarge would demand a taller
         // progress-container than the badge itself, overflowing it.
         bar_size: types.enumsWithDefault(['xsmall', 'small', 'medium', 'large'], 'small'),
+        // Re-declared without 'shape' - no force_circular_background here.
+        hide: types.jinjaOrArrayWithValidatedElem(['icon', 'name', 'value', 'unit', 'secondary_info', 'progress_bar']),
       });
   },
 
@@ -1358,10 +1374,12 @@ const YamlSchemaFactory = {
         ),
         text_shadow: types.optionalBooleanWithDefault(false),
 
-        hide: types.jinjaOrArrayWithValidatedElem(['icon', 'name', 'value', 'secondary_info', 'progress_bar']),
+        hide: types.jinjaOrArrayWithValidatedElem(['icon', 'name', 'value', 'secondary_info', 'progress_bar', 'shape']),
         badge_icon: types.optionalString(),
         badge_color: types.optionalString(),
         watermark: types.watermarkObject(watermarkSchema),
+        // Jinja-only - see configuration.md#alert_when.
+        alert_when: types.optional(types.object({ jinja: types.optionalString() })),
 
         // ─── Actions ────────────────────────────────────────────────────────
         tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.moreInfo),
@@ -1413,6 +1431,8 @@ const YamlSchemaFactory = {
         // 42px-tall progress-container inside a badge capped at
         // --ha-badge-size (36px), overflowing it.
         bar_size: types.enumsWithDefault(['xsmall', 'small', 'medium', 'large'], 'small'),
+        // Re-declared without 'shape' - no force_circular_background here.
+        hide: types.jinjaOrArrayWithValidatedElem(['icon', 'name', 'value', 'secondary_info', 'progress_bar']),
       });
   },
 };

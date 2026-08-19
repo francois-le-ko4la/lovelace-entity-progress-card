@@ -13,11 +13,10 @@ import {
   EDITOR_FIELD_HELPER_NS,
   PERCENT_THEME_KEYS,
 } from '../utils/parameters.js';
-import { TRANSLATIONS } from '../utils/translations.js';
 import { EDITOR_BASE_STYLE } from '../utils/styles.js';
 import { is } from '../utils/common-checks.js';
 import { initLogger, type LoggerInstance } from '../utils/log.js';
-import { HassProviderSingleton, type HomeAssistant } from '../utils/hass-provider.js';
+import { HassProviderSingleton, buildTranslationTree, type HomeAssistant } from '../utils/hass-provider.js';
 import { BaseConfigHelper } from '../card/config-helpers.js';
 import { EditorDOMHelper } from './dom-helper.js';
 import type { LovelaceConfig, Config, FieldDef } from '../utils/types.js';
@@ -27,8 +26,15 @@ import {
   EntityProgressValueSourceModeChips,
   EntityProgressThemeModeChips,
   EntityProgressBarStackModeChips,
+  EntityProgressIconAnimationModeChips,
+  EntityProgressCircularBackgroundModeChips,
+  EntityProgressSimpleAdvancedChips,
 } from './chips.js';
-import { EntityProgressBarStackEditor, EntityProgressCustomThemeEditor } from './list-editors.js';
+import {
+  EntityProgressBarStackEditor,
+  EntityProgressCustomThemeEditor,
+  EntityProgressActionPicker,
+} from './list-editors.js';
 import { lengthSliderSelector, lengthUnitSelector } from '../utils/length.js';
 
 // Every dynamic editor field element built below (ha-selector, the chip
@@ -49,6 +55,8 @@ type EditorFieldElement = HTMLElement & {
   helper?: string;
   items?: unknown;
   setLabels?: (labels: unknown) => void;
+  buttonLabel?: string;
+  actionLabels?: Record<string, string>;
   _fieldDef?: FieldDef;
 };
 
@@ -197,7 +205,7 @@ class EditorBase extends HTMLElement {
     const options = this.#hassProvider.localizeGroup('editor.option');
     return (is.plainObject(options)
       ? options
-      : TRANSLATIONS[CARD.config.language as keyof typeof TRANSLATIONS].editor.option) as unknown as Record<
+      : (buildTranslationTree(CARD.config.language).editor as Record<string, unknown>).option) as unknown as Record<
       string,
       Record<string, string>
     >;
@@ -243,7 +251,7 @@ class EditorBase extends HTMLElement {
 
   setConfig(config: LovelaceConfig) {
     if (!config) throw new Error(CARD.config.configError);
-    // _-prefixed keys are ephemeral UI state (e.g. _show_all_actions): stripped
+    // _-prefixed keys are ephemeral UI state (e.g. _visible_actions): stripped
     // from config-changed before dispatch so HA never saves them, but preserved
     // here across setConfig calls so the editor state survives HA's
     // config-changed → setConfig roundtrip.
@@ -509,6 +517,7 @@ class EditorBase extends HTMLElement {
       // reasoning as bar_orientation_no_up/bar_position_no_compact_below.
       layout_horizontal_only: () => buildBoxSelect({ horizontal: options.layout.horizontal }, tileImage),
       unit_spacing: () => buildSelect(options.unit_spacing),
+      unit_position: () => buildSelect(options.unit_position),
       watermark_type: () => buildSelect(options.watermark_type),
       watermark_as: () => buildSelect(options.watermark_as),
       watermarkLowAttribute: () => ({ attribute: { entity_id: this.#config?.watermark?.low ?? '' } }),
@@ -533,6 +542,20 @@ class EditorBase extends HTMLElement {
     return { isNested, parentKey, childKey };
   }
 
+  // labelKey opts a field out of its own name-derived label: a dot-path
+  // string walks EDITOR_FIELD_NS, a [group, key] pair reads EDITOR_OPTION_NS.
+  #resolveExplicitLabel(field: FieldDef, parentKey: string, childKey: string | null): string | undefined {
+    if (is.string(field.labelKey)) {
+      const root = this.#hassProvider.localizeGroup(EDITOR_FIELD_NS);
+      const walk = (node: unknown, seg: string) => (node as Record<string, unknown> | undefined)?.[seg];
+      return field.labelKey.split('.').reduce(walk, root) as string | undefined;
+    }
+    const [lkGroup, lkKey]: [string, string | null] = field.labelKey ?? [parentKey, childKey];
+    return lkKey !== null
+      ? this.#localizedOptions?.[lkGroup]?.[lkKey]
+      : this.#hassProvider.localizeGroup(EDITOR_FIELD_NS)[field.name];
+  }
+
   #resolveFieldMeta(field: FieldDef): { label: string | undefined; value: unknown; isInverted: boolean } {
     const { isNested, parentKey, childKey } = EditorBase.#splitFieldName(field.name);
     // CF5 - issue (medium) resolved - this used to pass only the negotiated
@@ -552,10 +575,7 @@ class EditorBase extends HTMLElement {
       label: field.noLabel
         ? ''
         : (() => {
-            const explicit =
-              childKey !== null
-                ? this.#localizedOptions?.[parentKey]?.[childKey]
-                : this.#hassProvider.localizeGroup(EDITOR_FIELD_NS)[field.name];
+            const explicit = this.#resolveExplicitLabel(field, parentKey, childKey);
             if (explicit !== undefined) return explicit;
             // Guard rail: keep the "<Noun> color" pattern already established
             // by badge_color/bar_color/color/alert_when.color for any future
@@ -573,6 +593,18 @@ class EditorBase extends HTMLElement {
     };
   }
 
+  // Non-interactive - just a small caption grouping the fields after it
+  // (e.g. bar_size/orientation/scale/segments) under one visible word.
+  #buildSectionLabel(field: FieldDef): EditorFieldElement {
+    const el = document.createElement('div') as unknown as EditorFieldElement;
+    el.className = 'section-label';
+    el.style.width = '100%';
+    el.textContent = this.#hassProvider.localizeGroup(EDITOR_FIELD_NS)?.[field.name] ?? field.name;
+    el.value = undefined;
+    this.#dom.registerField(field.name, el, field);
+    return el;
+  }
+
   #buildChipsField(field: FieldDef, tagName: string, optionKey: string): EditorFieldElement {
     const el = document.createElement(tagName) as EditorFieldElement;
     el.id = field.name;
@@ -584,16 +616,18 @@ class EditorBase extends HTMLElement {
     return el;
   }
 
-  #buildModeChipsField(field: FieldDef, tagName: string): EditorFieldElement {
+  // optionKey defaults to field.name; overridden below for fields sharing a
+  // chip class, so they share one translated option group instead of N copies.
+  #buildModeChipsField(field: FieldDef, tagName: string, optionKey: string = field.name): EditorFieldElement {
     const el = document.createElement(tagName) as EditorFieldElement;
     el.id = field.name;
     el.style.width = '100%';
-    el.label = this.#hassProvider.localizeGroup(EDITOR_FIELD_NS)?.[field.name] ?? field.name;
-    el.setLabels?.(this.#localizedOptions?.[field.name]);
-    // Mirrors the generic ha-selector path (#resolveFieldMeta), not
-    // #buildChipsField: this is a single virtual string value (resolveVirtual),
-    // not an array read from config[target].
-    el.value = this.#resolveFieldMeta(field).value;
+    // #resolveFieldMeta so labelKey is honored (this used to look up
+    // field.name directly, stale once a field shares another's label).
+    const { label, value } = this.#resolveFieldMeta(field);
+    el.label = label ?? field.name;
+    el.setLabels?.(this.#localizedOptions?.[optionKey]);
+    el.value = value;
     this.#dom.registerField(field.name, el, field);
     return el;
   }
@@ -613,22 +647,55 @@ class EditorBase extends HTMLElement {
     return el;
   }
 
+  // field.items is the optional-action key list; mirrors each field's own
+  // labelKey convention ('hold_action' -> action.hold).
+  #buildActionPickerField(field: FieldDef): EditorFieldElement {
+    const el = document.createElement(EntityProgressActionPicker.ELEMENT_NAME) as EditorFieldElement;
+    el.id = field.name;
+    el.style.width = '100%';
+    const fieldLabels = this.#hassProvider.localizeGroup(EDITOR_FIELD_NS);
+    const actionLabels = fieldLabels?.action as unknown as Record<string, string> | undefined;
+    el.buttonLabel = fieldLabels?.action_picker ?? 'Add interaction';
+    el.actionLabels = Object.fromEntries(
+      (field.items ?? []).map((k: string) => [k, actionLabels?.[k.replace(/_action$/, '')] ?? k]),
+    );
+    el.value = this.#resolveFieldMeta(field).value;
+    this.#dom.registerField(field.name, el, field);
+    return el;
+  }
+
   // Dispatch table (mirrors #getSelectorForType's own pattern) instead of a
   // chain of sequential ifs, which had grown one field type at a time into a
   // cognitive-complexity warning — a lookup miss just falls through to the
   // generic ha-selector path below.
   #buildSpecialField(field: FieldDef): EditorFieldElement | undefined {
     const builders: Record<string, () => EditorFieldElement> = {
+      section_label: () => this.#buildSectionLabel(field),
       effect_chips: () => this.#buildChipsField(field, EntityProgressEffectChips.ELEMENT_NAME, 'bar_effect'),
       hide_chips: () => this.#buildChipsField(field, EntityProgressHideChips.ELEMENT_NAME, 'hide'),
-      min_value_mode: () => this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME),
-      max_value_mode: () => this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME),
-      watermark_low_mode: () => this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME),
-      watermark_high_mode: () => this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME),
-      alert_when_above_mode: () => this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME),
-      alert_when_below_mode: () => this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME),
+      min_value_mode: () =>
+        this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME, 'value_source_mode'),
+      max_value_mode: () =>
+        this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME, 'value_source_mode'),
+      watermark_low_mode: () =>
+        this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME, 'value_source_mode'),
+      watermark_high_mode: () =>
+        this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME, 'value_source_mode'),
+      alert_when_above_mode: () =>
+        this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME, 'value_source_mode'),
+      alert_when_below_mode: () =>
+        this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME, 'value_source_mode'),
       theme_mode: () => this.#buildModeChipsField(field, EntityProgressThemeModeChips.ELEMENT_NAME),
       bar_stack_mode: () => this.#buildModeChipsField(field, EntityProgressBarStackModeChips.ELEMENT_NAME),
+      trigger: () =>
+        this.#buildModeChipsField(field, EntityProgressSimpleAdvancedChips.ELEMENT_NAME, 'simple_advanced_mode'),
+      bar_effect_mode: () =>
+        this.#buildModeChipsField(field, EntityProgressSimpleAdvancedChips.ELEMENT_NAME, 'simple_advanced_mode'),
+      hide_mode: () =>
+        this.#buildModeChipsField(field, EntityProgressSimpleAdvancedChips.ELEMENT_NAME, 'simple_advanced_mode'),
+      icon_animation_mode: () => this.#buildModeChipsField(field, EntityProgressIconAnimationModeChips.ELEMENT_NAME),
+      force_circular_background_mode: () =>
+        this.#buildModeChipsField(field, EntityProgressCircularBackgroundModeChips.ELEMENT_NAME),
       bar_stack_editor: () =>
         this.#buildListEditorField(
           field,
@@ -643,6 +710,7 @@ class EditorBase extends HTMLElement {
           field.name,
           this.#config?.[field.name],
         ),
+      action_picker: () => this.#buildActionPickerField(field),
     };
     return builders[field.type]?.();
   }
@@ -691,7 +759,9 @@ class EditorBase extends HTMLElement {
     // nesting level, same reason virtual jinja fields are already named
     // watermark_low_jinja, not watermark.low.jinja.
     if (field.helper) {
-      const helperKey = field.name.replace(/\./g, '_');
+      // helperKey overrides the field.name-derived key - e.g. bar_color/
+      // badge_color sharing color's own "Returns String (#ff0000)".
+      const helperKey = field.helperKey ?? field.name.replace(/\./g, '_');
       el.helper = this.#hassProvider.localizeGroup(EDITOR_FIELD_HELPER_NS)?.[helperKey] ?? '';
     }
 
@@ -826,10 +896,8 @@ class EditorBase extends HTMLElement {
     const newConfig = def.onVirtualChange(value, { ...this.#config });
     if (newConfig) {
       this.#config = newConfig;
-      // Update fields ourselves (next frame): HA may skip calling setConfig
-      // back if the stripped config is unchanged (e.g. toggling
-      // _show_all_actions produces the same visible config as before), so we
-      // can't rely on that round trip alone.
+      // Update ourselves (next frame): HA may skip calling setConfig back if
+      // the stripped config is unchanged, so the round trip alone isn't enough.
       this.#updateFields();
       this.#sendConfig(newConfig);
     }

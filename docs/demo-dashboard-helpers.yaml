@@ -225,6 +225,16 @@ input_number:
     initial: 18
     unit_of_measurement: '°C'
     icon: mdi:thermometer
+  # value_compact demo - large enough that the compact/full formatting
+  # difference (1.3M vs 1,250,000) is obvious at a glance.
+  epb_demo_total_energy:
+    name: Demo total energy
+    min: 0
+    max: 5000000
+    step: 1000
+    initial: 1250000
+    unit_of_measurement: 'Wh'
+    icon: mdi:lightning-bolt
 
 input_boolean:
   epb_demo_printer:

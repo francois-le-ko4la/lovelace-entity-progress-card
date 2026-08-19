@@ -2,148 +2,158 @@
   "card": {
     "msg": {
       "appliedDefaultValue": "Een standaardwaarde is automatisch toegepast.",
-      "attributeNotFound": "Attribuut niet gevonden in Home Assistant.",
-      "entityNotFound": "Entiteit niet gevonden in Home Assistant.",
-      "invalidActionObject": "Het actieobject is ongeldig of onjuist gestructureerd.",
       "invalidDecimal": "De waarde moet een geldig decimaal getal zijn.",
-      "invalidEntityId": "De entity ID is ongeldig of foutief geformatteerd.",
       "invalidEnumValue": "De opgegeven waarde is geen geldige optie.",
-      "invalidStateContent": "De statusinhoud is ongeldig of foutief.",
+      "invalidNoun": "Ongeldig of foutief geformatteerd: {noun}.",
       "invalidStateContentEntry": "Een of meer onderdelen van de statusinhoud zijn ongeldig.",
       "invalidTheme": "Het opgegeven thema is onbekend. Het standaardthema wordt gebruikt.",
-      "invalidTypeArray": "Verwachte waarde van het type array.",
-      "invalidTypeBoolean": "Verwachte waarde van het type boolean.",
-      "invalidTypeNumber": "Verwachte waarde van het type nummer.",
-      "invalidTypeObject": "Verwachte waarde van het type object.",
-      "invalidTypeString": "Verwachte waarde van het type string.",
+      "invalidType": "Verwacht type: {type}.",
       "invalidUnionType": "De waarde komt niet overeen met toegestane types.",
       "missingActionKey": "Er ontbreekt een verplichte sleutel in het actieobject.",
-      "missingRequiredProperty": "Vereiste eigenschap ontbreekt."
+      "missingRequiredProperty": "Vereiste eigenschap ontbreekt.",
+      "notFound": "Niet gevonden in HA: {noun}.",
+      "words": {
+        "nouns": {
+          "action_object": "actie-object",
+          "attribute": "attribuut",
+          "entity": "entiteit",
+          "entity_id": "entity-ID",
+          "state_content": "statusinhoud"
+        },
+        "types": {
+          "array": "array",
+          "boolean": "boolean",
+          "number": "nummer",
+          "object": "object",
+          "string": "string"
+        }
+      }
     }
   },
   "editor": {
-    "title": {
-      "content": "Inhoud",
-      "markers": "Markers & Alerts",
-      "layout": "Layout & Sizing",
-      "interaction": "Interactie",
-      "theme": "Uiterlijk en gebruiksgemak"
-    },
     "field": {
+      "action": {
+        "tap": "Tik gedrag",
+        "hold": "Gedrag vasthouden",
+        "double_tap": "Gedrag bij dubbeltikken",
+        "icon_tap": "Icoon tikgedrag",
+        "icon_hold": "Icoon-vasthoudgedrag",
+        "icon_double_tap": "Dubbeltikgedrag icoon"
+      },
+      "action_picker": "Interactie toevoegen",
+      "alert_toggle": "Alarm",
+      "alert_when_above_mode": "Bron van bovengrens-alarm",
+      "alert_when_below_mode": "Bron van ondergrens-alarm",
       "attribute": "Attribuut",
       "badge_color": "Kleur van badge",
+      "badge_color_toggle": "Independent color",
       "badge_icon": "Pictogram van badge",
-      "bar_color": "Kleur van de balk",
-      "bar_effect_jinja": "Effect op de balk (Jinja-modus)",
-      "bar_orientation": "Oriëntatie van de balk",
-      "bar_position": "Positie van de balk",
-      "bar_single_line": "Info op één regel",
-      "bar_size": "Balkgrootte",
-      "bar_segments": "Bar segments",
+      "badge_toggle": "Badge",
+      "bar_color": "Kleur balk",
       "bar_color_mode": "Balkkleurmodus",
-      "bar_scale": "Balkschaal",
+      "bar_effect_mode": "Effect op de balk",
+      "bar_group": "Balk",
+      "bar_max_width": "Max. balkbreedte",
+      "bar_max_width_toggle": "Max. balkbreedte",
+      "bar_orientation": "Oriëntatie",
+      "bar_scale": "Schaal",
+      "bar_segments": "Segmenten",
+      "bar_single_line": "Eén regel",
+      "bar_size": "Grootte",
+      "bar_stack": "Extra entiteiten",
+      "bar_stack_mode": "Stapelmodus",
+      "card_size_toggle": "Kaartgrootte",
       "center_zero": "Nul in het midden",
-      "center_zero_value": "Centrumwaarde",
       "center_zero_growth_percent": "Groeipercentage",
-      "color": "Kleur van het pictogram",
+      "center_zero_value": "Centrumwaarde",
+      "color": "Kleur pictogram",
+      "custom_info": "Aangepaste secundaire info",
+      "custom_theme": "Aangepaste themazones",
       "decimal": "decimaal",
-      "double_tap_action": "Actie bij dubbel tikken",
+      "density_toggle": "Compact",
       "entity": "Entiteit",
-      "force_circular_background": "Geforceerde cirkelvormige achtergrond",
-      "hide_jinja": "Verbergen (Jinja-modus)",
-      "hold_action": "Actie bij lang ingedrukt houden",
+      "fast_refresh": "Snel vernieuwen (elke seconde)",
+      "force_circular_background_mode": "Cirkelvormige pictogramachtergrond",
+      "frameless": "Zonder kader",
+      "height": "Hoogte",
+      "height_custom_toggle": "Shrink height (embedded)",
+      "hide_mode": "Verbergen",
       "icon": "Pictogram",
-      "icon_animation": "Icon animation",
-      "icon_double_tap_action": "Actie bij dubbel tikken op pictogram",
-      "icon_hold_action": "Actie bij lang ingedrukt houden op pictogram",
-      "icon_tap_action": "Actie bij tikken op pictogram",
+      "icon_animation": "Pictogramanimatie",
+      "interpolate": "Kleuren interpoleren",
       "layout": "Inhoudsindeling",
+      "marginless": "Zonder marge",
       "max_value": "Maximale waarde",
+      "max_value_mode": "Bron van maximumwaarde",
+      "migrate_config": "Configuratie migreren",
       "min_value": "Minimale waarde",
+      "min_value_mode": "Bron van minimumwaarde",
+      "min_width": "Min. breedte",
+      "multiline": "Meerdere regels",
       "name": "Naam",
+      "name_info": "Aangepaste naaminfo",
       "percent": "Percentage",
+      "position": "Positie",
+      "reverse": "Timer omdraaien",
       "reverse_secondary_info_row": "Balk en tekst omwisselen",
       "secondary": "Secundaire informatie",
       "state_content": "Inhoud van de status",
-      "show_all_actions": "Toon alle acties",
-      "tap_action": "Actie bij korte tik",
+      "status_label_toggle": "Statuslabel",
       "text_shadow": "Tekstschaduw toevoegen",
-      "theme_mode": "Theme mode",
       "theme": "Thema",
-      "custom_theme": "Aangepaste themazones",
+      "trigger": "Trigger",
       "unit": "Eenheid",
-      "min_value_mode": "Min value source",
-      "max_value_mode": "Max value source",
-      "watermark_low_mode": "Low marker source",
-      "watermark_high_mode": "High marker source",
-      "alert_when_above_mode": "Above alert source",
-      "alert_when_below_mode": "Below alert source",
-      "bar_max_width": "Bar max width",
-      "bar_max_width_toggle": "Bar max width",
-      "frameless": "Frameless",
-      "height": "Height",
-      "marginless": "Marginless",
-      "min_width": "Min width",
-      "card_size_toggle": "Card size",
-      "unit_spacing": "Unit spacing",
-      "watermark_toggle": "Markers",
-      "alert_toggle": "Alert",
-      "custom_info": "Aangepaste secundaire info",
-      "multiline": "Meerdere regels",
-      "interpolate": "Kleuren interpoleren",
-      "name_info": "Aangepaste naaminfo",
-      "reverse": "Timer omdraaien",
-      "bar_stack_mode": "Stapelmodus",
-      "bar_stack": "Extra entiteiten",
-      "migrate_config": "Configuratie migreren",
-      "icon_animation_jinja_toggle": "Trigger via template",
-      "fast_refresh": "Fast refresh (per-second)",
-      "height_custom_toggle": "Shrink height (embedded)",
-      "status_label_toggle": "Status label",
-      "density_toggle": "Compact",
-      "badge_toggle": "Badge",
-      "badge_color_toggle": "Independent color"
+      "unit_spacing": "Afstand",
+      "value_compact": "Compacte waarde (1.2k)",
+      "value_sign": "Teken tonen (+/-)",
+      "watermark_high_mode": "Bron van hoge markering",
+      "watermark_low_mode": "Bron van lage markering",
+      "watermark_toggle": "Markeringen"
     },
     "field_helper": {
-      "min_value_jinja": "Returns Number (42)",
-      "max_value_jinja": "Returns Number (100)",
-      "watermark_low_jinja": "Returns Number (20)",
-      "watermark_high_jinja": "Returns Number (80)",
-      "alert_when_above_jinja": "Returns Number (90)",
-      "alert_when_below_jinja": "Returns Number (10)",
-      "icon_animation_jinja": "Returns Boolean (true)",
+      "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
       "badge_icon": "Returns String (mdi:fan) or Object ({icon, color})",
-      "badge_color": "Returns String (#ff0000)",
-      "status_label_jinja": "Returns String (hot) or Object ({label, color})",
       "bar_effect": "Returns String (shimmer) or List ([shimmer, gradient])",
-      "hide": "Returns String (icon, name) or List ([icon, name])",
-      "name_info": "Returns String (Living Room)",
-      "custom_info": "Returns String (Charging)",
-      "icon": "Returns String (mdi:fan)",
       "color": "Returns String (#ff0000)",
-      "bar_color": "Returns String (#ff0000)"
+      "custom_info": "Returns String (Charging)",
+      "hide": "Returns String (icon, name) or List ([icon, name])",
+      "icon": "Returns String (mdi:fan)",
+      "icon_animation_jinja": "Returns Boolean (true)",
+      "name_info": "Returns String (Living Room)",
+      "returns_number": "Returns Number (42)",
+      "status_label_jinja": "Returns String (hot) or Object ({label, color})"
     },
     "option": {
-      "theme": {
-        "battery_adaptive": "Battery (adapts to charging state)",
-        "light": "Licht",
-        "temperature": "Temperatuur",
-        "humidity": "Vochtigheid",
-        "pm25": "PM2.5",
-        "voc": "VOC",
-        "critical_when_low": "Critical when Low (Battery, disk...)",
-        "optimal_when_low": "Optimaal wanneer laag",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "optimal_when_high": "Optimaal wanneer hoog",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "critical_when_extreme_center": "Critical when Extreme, centered (center_zero)"
+      "alert_animation": {
+        "blink": "Knipperen",
+        "ping": "Ping",
+        "static": "Statisch"
       },
-      "bar_size": {
-        "xsmall": "Extra Small",
-        "small": "Klein",
-        "medium": "Middel",
-        "large": "Groot",
-        "xlarge": "Extra groot"
+      "alert_highlight": {
+        "background": "Achtergrond",
+        "border": "Rand",
+        "label": "Label"
+      },
+      "alert_when": {
+        "above": "Alarm boven",
+        "animation": "Animatie",
+        "below": "Alarm onder",
+        "color": "Alarmkleur",
+        "highlight": "Markering"
+      },
+      "bar_color_mode": {
+        "auto": "Automatisch",
+        "rainbow": "Regenboog",
+        "rainbow_full": "Regenboog (volledig)",
+        "segment": "Segmenten"
+      },
+      "bar_effect": {
+        "glass": "Glas",
+        "gradient": "Verloop",
+        "gradient_reverse": "Omgekeerd verloop",
+        "radius": "Afgeronde hoeken",
+        "shimmer": "Glinstering",
+        "shimmer_reverse": "Omgekeerde glinstering"
       },
       "bar_orientation": {
         "ltr": "Links naar rechts",
@@ -151,163 +161,145 @@
         "up": "Omhoog"
       },
       "bar_position": {
-        "default": "Standaard",
+        "background": "Kaartachtergrond",
         "below": "Balk onder de inhoud",
-        "compact_below": "Compact bar below (name/value on one row)",
-        "top": "Balk bovenaan",
         "bottom": "Balk onderaan",
+        "compact_below": "Compacte balk onderaan (naam/waarde op één regel)",
+        "default": "Standaard",
         "overlay": "Balk over de inhoud (overlay)",
-        "background": "Kaartachtergrond"
-      },
-      "layout": {
-        "horizontal": "Horizontaal (standaard)",
-        "vertical": "Verticaal"
-      },
-      "bar_color_mode": {
-        "auto": "Automatisch",
-        "segment": "Segmenten",
-        "rainbow": "Regenboog",
-        "rainbow_full": "Rainbow (full)"
+        "top": "Balk bovenaan"
       },
       "bar_scale": {
         "linear": "Lineair",
         "log": "Logaritmisch"
       },
-      "bar_effect": {
-        "radius": "Afgeronde hoeken",
-        "glass": "Glas",
-        "gradient": "Verloop",
-        "gradient_reverse": "Omgekeerd verloop",
-        "shimmer": "Glinstering",
-        "shimmer_reverse": "Omgekeerde glinstering"
+      "bar_size": {
+        "large": "Groot",
+        "medium": "Middel",
+        "small": "Klein",
+        "xlarge": "Extra groot",
+        "xsmall": "Extra klein"
+      },
+      "bar_stack_mode": {
+        "net": "Netto",
+        "proportional": "Proportioneel",
+        "stacked": "Gestapeld"
+      },
+      "force_circular_background_mode": {
+        "auto": "Automatisch",
+        "forced": "Geforceerd"
       },
       "hide": {
         "icon": "Pictogram",
         "name": "Naam",
-        "value": "Waarde",
-        "unit": "Eenheid",
+        "progress_bar": "Balk",
         "secondary_info": "Info",
-        "progress_bar": "Balk"
-      },
-      "unit_spacing": {
-        "auto": "Auto",
-        "space": "Space",
-        "no-space": "No space"
-      },
-      "watermark_type": {
-        "blended": "Blended",
-        "area": "Area",
-        "striped": "Striped",
-        "triangle": "Triangle",
-        "round": "Round",
-        "line": "Line"
-      },
-      "watermark_as": {
-        "auto": "Auto",
-        "percent": "Percent"
-      },
-      "watermark": {
-        "low": "Lage waarde",
-        "high": "Hoge waarde",
-        "type": "Type",
-        "opacity": "Dekking",
-        "low_color": "Lage kleur",
-        "high_color": "Hoge kleur",
-        "low_as": "Eenheid (lage waarde)",
-        "high_as": "Eenheid (hoge waarde)",
-        "line_size": "Lijndikte",
-        "disable_low": "Lage waarde uitschakelen",
-        "disable_high": "Hoge waarde uitschakelen",
-        "low_attribute": "Attribuut",
-        "high_attribute": "Attribuut"
+        "shape": "Cirkelvormige achtergrond van het pictogram",
+        "unit": "Eenheid",
+        "value": "Waarde"
       },
       "icon_animation": {
-        "spin": "Draaien",
-        "pulse": "Pulseren",
+        "battery_charging": "Batterij wordt opgeladen",
         "bounce": "Stuiteren",
-        "shake": "Trillen",
         "ping": "Ping",
+        "pulse": "Pulseren",
         "reveal": "Onthullen",
-        "washing_machine": "Wasmachine",
-        "battery_charging": "Batterij wordt opgeladen"
+        "shake": "Trillen",
+        "spin": "Draaien",
+        "washing_machine": "Wasmachine"
       },
-      "alert_when": {
-        "above": "Alarm boven",
-        "below": "Alarm onder",
-        "color": "Alarmkleur",
-        "highlight": "Markering",
-        "animation": "Animation",
-        "above_attribute": "Attribute",
-        "below_attribute": "Attribute"
-      },
-      "alert_highlight": {
-        "border": "Rand",
-        "background": "Achtergrond",
-        "label": "Label"
-      },
-      "status_label": {
-        "jinja": "Status label",
-        "position": "Label position",
-        "color_source": "Color source"
+      "icon_animation_mode": {
+        "auto": "Automatisch",
+        "template": "Sjabloon"
       },
       "label_position": {
-        "left": "Left",
-        "right": "Right"
+        "left": "Links",
+        "right": "Rechts"
+      },
+      "layout": {
+        "horizontal": "Horizontaal (standaard)",
+        "vertical": "Verticaal"
+      },
+      "simple_advanced_mode": {
+        "advanced": "Geavanceerd",
+        "simple": "Eenvoudig"
+      },
+      "status_label": {
+        "color_source": "Bron van kleur",
+        "jinja": "Statuslabel",
+        "position": "Positie van label"
       },
       "status_label_color_source": {
-        "bar": "Progress bar",
-        "icon": "Icon"
+        "bar": "Voortgangsbalk",
+        "icon": "Pictogram"
       },
-      "alert_animation": {
-        "static": "Static",
-        "blink": "Blink",
-        "ping": "Ping"
-      },
-      "min_value_mode": {
-        "standard": "Vaste waarde",
-        "entity": "Entiteit",
-        "jinja": "Sjabloon"
-      },
-      "max_value_mode": {
-        "standard": "Vaste waarde",
-        "entity": "Entiteit",
-        "jinja": "Sjabloon"
-      },
-      "watermark_low_mode": {
-        "standard": "Vaste waarde",
-        "entity": "Entiteit",
-        "jinja": "Sjabloon"
-      },
-      "watermark_high_mode": {
-        "standard": "Vaste waarde",
-        "entity": "Entiteit",
-        "jinja": "Sjabloon"
-      },
-      "alert_when_above_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_below_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
+      "theme": {
+        "battery_adaptive": "Batterij (past zich aan de laadstatus aan)",
+        "critical_when_extreme": "Kritiek bij extreem (tankniveau, afwijking...)",
+        "critical_when_extreme_center": "Kritiek bij extreem, gecentreerd (center_zero)",
+        "critical_when_high": "Kritiek bij hoog (CPU, RAM, schijfgebruik...)",
+        "critical_when_low": "Kritiek bij laag (batterij, schijf...)",
+        "humidity": "Vochtigheid",
+        "light": "Licht",
+        "optimal_when_high": "Optimaal wanneer hoog",
+        "optimal_when_low": "Optimaal wanneer laag",
+        "pm25": "PM2.5",
+        "temperature": "Temperatuur",
+        "voc": "VOC"
       },
       "theme_mode": {
-        "preset": "Voorinstelling",
-        "custom": "Aangepast"
+        "custom": "Aangepast",
+        "preset": "Voorinstelling"
       },
-      "min_value": {
+      "unit_position": {
+        "after": "Na de waarde",
+        "before": "Voor de waarde"
+      },
+      "unit_spacing": {
+        "auto": "Automatisch",
+        "no-space": "Geen spatie",
+        "space": "Spatie"
+      },
+      "value_shape": {
         "attribute": "Attribuut"
       },
-      "max_value": {
-        "attribute": "Attribuut"
+      "value_source_mode": {
+        "entity": "Entiteit",
+        "jinja": "Sjabloon",
+        "standard": "Vaste waarde"
       },
-      "bar_stack_mode": {
-        "stacked": "Gestapeld",
-        "proportional": "Proportioneel",
-        "net": "Netto"
+      "watermark": {
+        "disable_high": "Hoge waarde uitschakelen",
+        "disable_low": "Lage waarde uitschakelen",
+        "high": "Hoge waarde",
+        "high_as": "Eenheid (hoge waarde)",
+        "high_color": "Hoge kleur",
+        "line_size": "Lijndikte",
+        "low": "Lage waarde",
+        "low_as": "Eenheid (lage waarde)",
+        "low_color": "Lage kleur",
+        "opacity": "Dekking",
+        "type": "Type"
+      },
+      "watermark_as": {
+        "auto": "Automatisch",
+        "percent": "Percentage"
+      },
+      "watermark_type": {
+        "area": "Gebied",
+        "blended": "Vervaagd",
+        "line": "Lijn",
+        "round": "Rond",
+        "striped": "Gestreept",
+        "triangle": "Driehoek"
       }
+    },
+    "title": {
+      "content": "Inhoud",
+      "interaction": "Interactie",
+      "layout": "Layout & grootte",
+      "markers": "Markeringen & alarmen",
+      "theme": "Uiterlijk en gebruiksgemak"
     }
   }
 }

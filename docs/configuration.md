@@ -64,6 +64,9 @@
       - [`min_width`](#min_width)
       - [`reverse_secondary_info_row`](#reverse_secondary_info_row)
       - [`unit_spacing`](#unit_spacing)
+      - [`unit_position`](#unit_position)
+      - [`value_compact`](#value_compact)
+      - [`value_sign`](#value_sign)
       - [`center_zero`](#center_zero)
       - [`theme`](#theme)
       - [`custom_theme`](#custom_theme)
@@ -2486,6 +2489,68 @@ following locale rules or overriding them explicitly.
 
 [🔼 Back to top]
 
+#### `unit_position`
+
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+
+> **`unit_position`** [String] ➡️ {`after`|`before`} _(optional, default:
+> `after`)_
+
+Places the unit before the value instead of after - useful for currency symbols
+(`$100` rather than `100$`). Has no effect once `unit` is empty or hidden.
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.account_balance
+unit: $
+unit_position: before
+unit_spacing: no-space
+```
+
+[🔼 Back to top]
+
+#### `value_compact`
+
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+
+> **`value_compact`** [Boolean] _(optional, default: `false`)_
+
+Abbreviates large values using locale-aware suffixes instead of the full
+number - `1200` becomes `1.2k`, `1500000` becomes `1.5M`. `decimal` still caps
+how many fraction digits can show, but trailing zeros are trimmed (`1.2k`, not
+`1.20k`).
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.total_energy
+max_value: 5000
+value_compact: true
+```
+
+[🔼 Back to top]
+
+#### `value_sign`
+
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+
+> **`value_sign`** [Boolean] _(optional, default: `false`)_
+
+Forces an explicit `+`/`-` sign on the displayed value, even when it's
+positive - `42` becomes `+42`. Zero stays unsigned. Most useful on
+`center_zero`/`bar_stack: { mode: net }` cards, where the sign clarifies the
+direction of a delta at a glance.
+
+```yaml
+type: custom:entity-progress-card
+entity: input_number.epb_demo_power
+center_zero: true
+min_value: -3000
+max_value: 3000
+value_sign: true
+```
+
+[🔼 Back to top]
+
 #### `center_zero`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
@@ -2758,6 +2823,11 @@ interpolate: true
 
 > **`hide`** [List] or [JINJA] (optional):
 
+> [!NOTE]
+>
+> `shape` is new in 1.6.2. Card only — Badge/Template have no shape by default
+> (see [`force_circular_background`](#force_circular_background)).
+
 Defines which elements should be hidden in the card.
 
 `hide` accepts either:
@@ -2775,6 +2845,8 @@ When using the list syntax, the following elements are available:
   option, see [Deprecated Options]).
 - secondary_info: Hides the secondary information.
 - progress_bar: Hides the visual progress bar.
+- shape: Hides the circular shape behind the icon, keeping the icon itself
+  visible (Card only).
 
 _Static example_:
 
@@ -2980,6 +3052,8 @@ watermark:
 #### `alert_when`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
 > **`alert_when`** [Map] _(optional)_
 
@@ -2987,10 +3061,26 @@ Draws attention to the card when the value crosses a threshold — a step furthe
 than theme colors: the card itself reacts, which is more noticeable on a
 wall-mounted dashboard.
 
+> [!NOTE]
+>
+> Template/Badge Template only get `jinja` — new in 1.6.2, no `above`/`below`/
+> `color`/`highlight`/`animation`/`label`, nothing static to fall back to. Use
+> the object return form; a plain `true` still triggers, but with no way to set
+> a color it's rarely useful there.
+
 _Map definition_:
 
-- `above` (Float|Map): Alert when the value goes above this threshold.
-- `below` (Float|Map): Alert when the value goes below this threshold.
+- `above` (Float|Map): Alert when the value goes above this threshold. Ignored
+  in Advanced mode (see `jinja` below).
+- `below` (Float|Map): Alert when the value goes below this threshold. Ignored
+  in Advanced mode.
+- `jinja` (string, optional): Advanced mode — replaces `above`/`below` as the
+  trigger entirely. Returns either:
+  - `true`/`false`: just triggers or clears the alert, `color`/`highlight`/
+    `animation`/`label` below stay as configured.
+  - an object with any of `{color, animation, highlight, label}`: triggers the
+    alert **and** overrides those specific fields for this push — any key left
+    out falls back to its static value below.
 - `color` (string): CSS color used for the alert (name or hex). Defaults to the
   theme's error color.
 - `highlight` (string): What reacts to the alert.
@@ -3032,7 +3122,9 @@ explicit key, so there is nothing to guess from the value's shape:
 - `{ jinja: ... }` — a Jinja template that dynamically returns a number.
 
 In the visual editor, a chip selector (Fixed value / Entity / Template) lets you
-switch between the three modes, same as `min_value`/`max_value`.
+switch between the three modes, same as `min_value`/`max_value`. A second,
+top-level chip (Simple / Advanced) switches between `above`/`below` and `jinja`
+— Advanced hides `above`/`below` entirely.
 
 `blink` and `ping` are disabled automatically when the system-level "Reduce
 Motion" accessibility setting is on (see [Accessibility] in the README) — the
@@ -3077,6 +3169,51 @@ alert_when:
   above:
     entity: sensor.cpu_temperature_limit
   color: red
+```
+
+_Advanced (Jinja trigger) example — plain boolean_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.cpu_temperature
+alert_when:
+  jinja: >-
+    {{ states('sensor.cpu_temperature') | float > 80 and
+       is_state('input_boolean.alerts_enabled', 'on') }}
+  color: red
+  highlight: border
+  animation: ping
+```
+
+_Advanced (Jinja trigger) example — object, partial override_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.cpu_temperature
+alert_when:
+  jinja: >-
+    {% set t = states('sensor.cpu_temperature') | float %}
+    {% if t > 90 %}{{ {'color': 'red', 'animation': 'ping'} }}
+    {% elif t > 80 %}{{ {'color': 'orange'} }}
+    {% else %}false{% endif %}
+  color: red
+  animation: static
+```
+
+The 80-90°C range only overrides `color` — `animation` falls back to the static
+`static` above; past 90°C both are overridden.
+
+_Template example — object return, the only form worth using here since there's
+no static `color`/`highlight` to fall back to_:
+
+```yaml
+type: custom:entity-progress-card-template
+percent: "{{ states('sensor.cpu_temperature') | float }}"
+alert_when:
+  jinja: >-
+    {% set t = states('sensor.cpu_temperature') | float %}
+    {% if t > 80 %}{{ {'color': 'red', 'highlight': 'background', 'animation': 'ping'} }}
+    {% else %}false{% endif %}
 ```
 
 [🔼 Back to top]

@@ -4,7 +4,7 @@
  */
 
 import { VALUE_CHANGED_EVENT, HA_SELECTOR_TAG, HA_SVG_ICON_TAG, devName } from '../utils/parameters.js';
-import { BAR_STACK_EDITOR_STYLE, CUSTOM_THEME_EDITOR_STYLE } from '../utils/styles.js';
+import { BAR_STACK_EDITOR_STYLE, CUSTOM_THEME_EDITOR_STYLE, ACTION_PICKER_STYLE } from '../utils/styles.js';
 import { is, assertDefined } from '../utils/common-checks.js';
 import { defineElement } from '../utils/register.js';
 import type { HomeAssistant } from '../utils/hass-provider.js';
@@ -21,6 +21,9 @@ type HaSelectorElement = HTMLElement & {
   required?: boolean;
 };
 type HaSvgIconElement = HTMLElement & { path: string };
+
+// mdi:plus - shared by every "+ Add ..." button built in this file.
+const ADD_ICON_PATH = 'M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z';
 
 // One row of bar_stack.entities, as built up field-by-field by the editor -
 // unlike the fully-validated shape the schema produces, a row here can be
@@ -139,9 +142,13 @@ class EntityProgressBarStackEditor extends ListEditorBase {
     this._labelEl.textContent = this._labelText;
     this._list = document.createElement('div');
     this.#addBtn = document.createElement('ha-button');
+    // Native default is variant="brand" (solid accent fill) - matches
+    // ha-form-optional_actions.ts's own "+ Add interaction" button instead.
+    this.#addBtn.setAttribute('appearance', 'filled');
+    this.#addBtn.setAttribute('size', 's');
     const addIcon = document.createElement(HA_SVG_ICON_TAG) as HaSvgIconElement;
-    addIcon.setAttribute('slot', 'icon');
-    addIcon.path = 'M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z';
+    addIcon.setAttribute('slot', 'start');
+    addIcon.path = ADD_ICON_PATH;
     this.#addBtn.appendChild(addIcon);
     this.#addBtn.append('Add entity');
     this.#addBtn.addEventListener('click', () => {
@@ -302,9 +309,13 @@ class EntityProgressCustomThemeEditor extends ListEditorBase {
     this._labelEl.textContent = this._labelText;
     this._list = document.createElement('div');
     this.#addBtn = document.createElement('ha-button');
+    // Native default is variant="brand" (solid accent fill) - matches
+    // ha-form-optional_actions.ts's own "+ Add interaction" button instead.
+    this.#addBtn.setAttribute('appearance', 'filled');
+    this.#addBtn.setAttribute('size', 's');
     const addIcon = document.createElement(HA_SVG_ICON_TAG) as HaSvgIconElement;
-    addIcon.setAttribute('slot', 'icon');
-    addIcon.path = 'M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z';
+    addIcon.setAttribute('slot', 'start');
+    addIcon.path = ADD_ICON_PATH;
     this.#addBtn.appendChild(addIcon);
     this.#addBtn.append(this.#addLabel);
     this.#addBtn.addEventListener('click', () => {
@@ -421,6 +432,108 @@ class EntityProgressCustomThemeEditor extends ListEditorBase {
 
 defineElement(EntityProgressCustomThemeEditor.ELEMENT_NAME, EntityProgressCustomThemeEditor);
 
+// "+" picker for the interactions panel: reveals one hidden action field at
+// a time. value: { visible, hidden }; picking a key dispatches the new array.
+class EntityProgressActionPicker extends HTMLElement {
+  static ELEMENT_NAME = devName('entity-progress-action-picker');
+  #shadow!: ShadowRoot;
+  #btn: HTMLElement | null = null;
+  #menu: HTMLElement | null = null;
+  #visible: string[] = [];
+  #hidden: string[] = [];
+  #labels: Record<string, string> = {};
+  #buttonLabel = 'Add interaction';
+  #boundOutsideClick = (e: Event) => {
+    if (!this.contains(e.target as Node)) this.#closeMenu();
+  };
+
+  set buttonLabel(val: string) {
+    this.#buttonLabel = val ?? this.#buttonLabel;
+    if (this.#btn?.lastChild) this.#btn.lastChild.textContent = this.#buttonLabel;
+  }
+
+  set actionLabels(val: Record<string, string>) {
+    this.#labels = val ?? {};
+  }
+
+  get value(): { visible: string[]; hidden: string[] } {
+    return { visible: this.#visible, hidden: this.#hidden };
+  }
+
+  set value(val: { visible?: string[]; hidden?: string[] } | undefined) {
+    this.#visible = is.array(val?.visible) ? val.visible : [];
+    this.#hidden = is.array(val?.hidden) ? val.hidden : [];
+    if (this.#shadow) this.#render();
+  }
+
+  connectedCallback() {
+    this.#shadow = this.shadowRoot ?? this.attachShadow({ mode: 'open' });
+    if (!this.#btn) this.#buildDOM();
+    this.#render();
+    document.addEventListener('click', this.#boundOutsideClick);
+  }
+
+  disconnectedCallback() {
+    document.removeEventListener('click', this.#boundOutsideClick);
+  }
+
+  #buildDOM() {
+    const style = document.createElement('style');
+    style.textContent = ACTION_PICKER_STYLE;
+    this.#btn = document.createElement('ha-button');
+    this.#btn.setAttribute('appearance', 'filled');
+    this.#btn.setAttribute('size', 's');
+    const addIcon = document.createElement(HA_SVG_ICON_TAG) as HaSvgIconElement;
+    addIcon.setAttribute('slot', 'start');
+    addIcon.path = ADD_ICON_PATH;
+    this.#btn.appendChild(addIcon);
+    this.#btn.append(this.#buttonLabel);
+    this.#btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.#menu?.classList.toggle('open');
+    });
+    this.#menu = document.createElement('div');
+    this.#menu.className = 'menu';
+    const picker = document.createElement('div');
+    picker.className = 'picker';
+    picker.append(this.#btn, this.#menu);
+    this.#shadow.append(style, picker);
+  }
+
+  #closeMenu() {
+    this.#menu?.classList.remove('open');
+  }
+
+  #render() {
+    this.style.display = this.#hidden.length ? '' : 'none';
+    if (!this.#menu) return;
+    this.#menu.replaceChildren(
+      ...this.#hidden.map((key) => {
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.className = 'menu-item';
+        item.textContent = this.#labels[key] ?? key;
+        item.addEventListener('click', () => this.#pick(key));
+        return item;
+      }),
+    );
+  }
+
+  #pick(key: string) {
+    this.#closeMenu();
+    this.dispatchEvent(
+      new CustomEvent(VALUE_CHANGED_EVENT, {
+        detail: { value: [...this.#visible, key] },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+}
+
+defineElement(EntityProgressActionPicker.ELEMENT_NAME, EntityProgressActionPicker);
+
 export { ListEditorBase };
 export { EntityProgressBarStackEditor };
 export { EntityProgressCustomThemeEditor };
+export { EntityProgressActionPicker };

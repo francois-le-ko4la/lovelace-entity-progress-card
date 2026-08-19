@@ -2,148 +2,158 @@
   "card": {
     "msg": {
       "appliedDefaultValue": "تم تطبيق قيمة افتراضية تلقائيًا.",
-      "attributeNotFound": "لم يتم العثور على الخاصية في Home Assistant.",
-      "entityNotFound": "لم يتم العثور على الكيان في Home Assistant.",
-      "invalidActionObject": "كائن الإجراء غير صالح أو غير منظم بشكل صحيح.",
       "invalidDecimal": "يجب أن تكون القيمة رقمًا عشريًا صحيحًا.",
-      "invalidEntityId": "معرّف الكيان غير صالح أو به خلل.",
       "invalidEnumValue": "القيمة المُقدمة ليست من الخيارات المسموح بها.",
-      "invalidStateContent": "محتوى الحالة غير صالح أو معيب.",
+      "invalidNoun": "غير صالح أو تالف: {noun}.",
       "invalidStateContentEntry": "إدخال أو أكثر في محتوى الحالة غير صالحة.",
       "invalidTheme": "السمة المحددة غير معروفة. سيتم استخدام السمة الافتراضية.",
-      "invalidTypeArray": "كان من المتوقع قيمة من نوع مصفوفة.",
-      "invalidTypeBoolean": "كان من المتوقع قيمة من نوع منطقي.",
-      "invalidTypeNumber": "كان من المتوقع قيمة من نوع رقم.",
-      "invalidTypeObject": "كان من المتوقع قيمة من نوع كائن.",
-      "invalidTypeString": "كان من المتوقع قيمة من نوع سلسلة.",
+      "invalidType": "النوع المتوقع: {type}.",
       "invalidUnionType": "القيمة لا تطابق أي نوع مسموح.",
       "missingActionKey": "مفتاح مطلوب مفقود في كائن الإجراء.",
-      "missingRequiredProperty": "خاصية مطلوبة مفقودة."
+      "missingRequiredProperty": "خاصية مطلوبة مفقودة.",
+      "notFound": "لم يتم العثور على: {noun} في Home Assistant.",
+      "words": {
+        "nouns": {
+          "action_object": "كائن الإجراء",
+          "attribute": "الخاصية",
+          "entity": "الكيان",
+          "entity_id": "معرّف الكيان",
+          "state_content": "محتوى الحالة"
+        },
+        "types": {
+          "array": "مصفوفة",
+          "boolean": "منطقي",
+          "number": "رقم",
+          "object": "كائن",
+          "string": "سلسلة"
+        }
+      }
     }
   },
   "editor": {
-    "title": {
-      "content": "المحتوى",
-      "markers": "Markers & Alerts",
-      "layout": "Layout & Sizing",
-      "interaction": "التفاعلات",
-      "theme": "المظهر"
-    },
     "field": {
+      "action": {
+        "tap": "سلوك النقر",
+        "hold": "سلوك النقر المطول",
+        "double_tap": "سلوك النقر المزدوج",
+        "icon_tap": "سلوك النقر على الأيقونة",
+        "icon_hold": "سلوك النقر المطول للأيقونة",
+        "icon_double_tap": "سلوك النقر المزدوج للأيقونة"
+      },
+      "action_picker": "إضافة تفاعل",
+      "alert_toggle": "تنبيه",
+      "alert_when_above_mode": "مصدر تنبيه الحد الأعلى",
+      "alert_when_below_mode": "مصدر تنبيه الحد الأدنى",
       "attribute": "السمة",
       "badge_color": "لون الشارة",
+      "badge_color_toggle": "Independent color",
       "badge_icon": "أيقونة الشارة",
+      "badge_toggle": "شارة",
       "bar_color": "لون الشريط",
-      "bar_effect_jinja": "تأثير الشريط (وضع Jinja)",
-      "bar_orientation": "اتجاه الشريط",
-      "bar_position": "موضع الشريط",
-      "bar_single_line": "معلومات في سطر واحد",
-      "bar_size": "حجم الشريط",
-      "bar_segments": "Bar segments",
       "bar_color_mode": "وضع اللون",
-      "bar_scale": "Bar scale",
+      "bar_effect_mode": "تأثير الشريط",
+      "bar_group": "الشريط",
+      "bar_max_width": "أقصى عرض للشريط",
+      "bar_max_width_toggle": "أقصى عرض للشريط",
+      "bar_orientation": "اتجاه",
+      "bar_scale": "المقياس",
+      "bar_segments": "الأجزاء",
+      "bar_single_line": "سطر واحد",
+      "bar_size": "الحجم",
+      "bar_stack": "كيانات إضافية",
+      "bar_stack_mode": "Stack mode",
+      "card_size_toggle": "حجم البطاقة",
       "center_zero": "صفر في الوسط",
-      "center_zero_value": "قيمة المركز",
       "center_zero_growth_percent": "نسبة النمو",
+      "center_zero_value": "قيمة المركز",
       "color": "اللون الأساسي",
+      "custom_info": "معلومات إضافية (ثانوية)",
+      "custom_theme": "Custom theme zones",
       "decimal": "عشري",
-      "double_tap_action": "الإجراء عند النقر المزدوج",
+      "density_toggle": "مضغوط",
       "entity": "الكيان",
-      "force_circular_background": "فرض خلفية دائرية",
-      "hide_jinja": "إخفاء (وضع Jinja)",
-      "hold_action": "الإجراء عند الضغط المطول",
+      "fast_refresh": "تحديث سريع (كل ثانية)",
+      "force_circular_background_mode": "خلفية الأيقونة الدائرية",
+      "frameless": "بدون إطار",
+      "height": "الارتفاع",
+      "height_custom_toggle": "Shrink height (embedded)",
+      "hide_mode": "إخفاء",
       "icon": "أيقونة",
-      "icon_animation": "Icon animation",
-      "icon_double_tap_action": "الإجراء عند النقر المزدوج على الأيقونة",
-      "icon_hold_action": "الإجراء عند الضغط المطول على الأيقونة",
-      "icon_tap_action": "الإجراء عند النقر على الأيقونة",
+      "icon_animation": "حركة الأيقونة",
+      "interpolate": "تدرج الألوان",
       "layout": "تخطيط المحتوى",
+      "marginless": "بدون هامش",
       "max_value": "القيمة القصوى",
+      "max_value_mode": "مصدر القيمة القصوى",
+      "migrate_config": "Migrate config",
       "min_value": "القيمة الدنيا",
+      "min_value_mode": "مصدر القيمة الدنيا",
+      "min_width": "أدنى عرض",
+      "multiline": "Multiline",
       "name": "الاسم",
+      "name_info": "معلومات إضافية (الاسم)",
       "percent": "النسبة المئوية",
+      "position": "الموضع",
+      "reverse": "عكس المؤقت",
       "reverse_secondary_info_row": "تبديل الشريط والنص",
       "secondary": "معلومات ثانوية",
       "state_content": "محتوى الحالة",
-      "show_all_actions": "إظهار جميع الإجراءات",
-      "tap_action": "الإجراء عند النقر القصير",
+      "status_label_toggle": "تسمية الحالة",
       "text_shadow": "إضافة ظل للنص",
-      "theme_mode": "Theme mode",
       "theme": "السمة",
-      "custom_theme": "Custom theme zones",
+      "trigger": "المشغل",
       "unit": "الوحدة",
-      "min_value_mode": "Min value source",
-      "max_value_mode": "Max value source",
-      "watermark_low_mode": "Low marker source",
-      "watermark_high_mode": "High marker source",
-      "alert_when_above_mode": "Above alert source",
-      "alert_when_below_mode": "Below alert source",
-      "bar_max_width": "Bar max width",
-      "bar_max_width_toggle": "Bar max width",
-      "frameless": "Frameless",
-      "height": "Height",
-      "marginless": "Marginless",
-      "min_width": "Min width",
-      "card_size_toggle": "Card size",
-      "unit_spacing": "Unit spacing",
-      "watermark_toggle": "Markers",
-      "alert_toggle": "Alert",
-      "custom_info": "معلومات إضافية (ثانوية)",
-      "multiline": "Multiline",
-      "interpolate": "تدرج الألوان",
-      "name_info": "معلومات إضافية (الاسم)",
-      "reverse": "عكس المؤقت",
-      "bar_stack_mode": "Stack mode",
-      "bar_stack": "كيانات إضافية",
-      "migrate_config": "Migrate config",
-      "icon_animation_jinja_toggle": "Trigger via template",
-      "fast_refresh": "Fast refresh (per-second)",
-      "height_custom_toggle": "Shrink height (embedded)",
-      "status_label_toggle": "Status label",
-      "density_toggle": "Compact",
-      "badge_toggle": "Badge",
-      "badge_color_toggle": "Independent color"
+      "unit_spacing": "التباعد",
+      "value_compact": "قيمة مختصرة (1.2k)",
+      "value_sign": "إظهار الإشارة (+/-)",
+      "watermark_high_mode": "مصدر العلامة المرتفعة",
+      "watermark_low_mode": "مصدر العلامة المنخفضة",
+      "watermark_toggle": "العلامات"
     },
     "field_helper": {
-      "min_value_jinja": "Returns Number (42)",
-      "max_value_jinja": "Returns Number (100)",
-      "watermark_low_jinja": "Returns Number (20)",
-      "watermark_high_jinja": "Returns Number (80)",
-      "alert_when_above_jinja": "Returns Number (90)",
-      "alert_when_below_jinja": "Returns Number (10)",
-      "icon_animation_jinja": "Returns Boolean (true)",
+      "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
       "badge_icon": "Returns String (mdi:fan) or Object ({icon, color})",
-      "badge_color": "Returns String (#ff0000)",
-      "status_label_jinja": "Returns String (hot) or Object ({label, color})",
       "bar_effect": "Returns String (shimmer) or List ([shimmer, gradient])",
-      "hide": "Returns String (icon, name) or List ([icon, name])",
-      "name_info": "Returns String (Living Room)",
-      "custom_info": "Returns String (Charging)",
-      "icon": "Returns String (mdi:fan)",
       "color": "Returns String (#ff0000)",
-      "bar_color": "Returns String (#ff0000)"
+      "custom_info": "Returns String (Charging)",
+      "hide": "Returns String (icon, name) or List ([icon, name])",
+      "icon": "Returns String (mdi:fan)",
+      "icon_animation_jinja": "Returns Boolean (true)",
+      "name_info": "Returns String (Living Room)",
+      "returns_number": "Returns Number (42)",
+      "status_label_jinja": "Returns String (hot) or Object ({label, color})"
     },
     "option": {
-      "theme": {
-        "battery_adaptive": "Battery (adapts to charging state)",
-        "light": "الضوء",
-        "temperature": "درجة الحرارة",
-        "humidity": "الرطوبة",
-        "pm25": "PM2.5",
-        "voc": "VOC",
-        "critical_when_low": "Critical when Low (Battery, disk...)",
-        "optimal_when_low": "مثالي عند الانخفاض",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "optimal_when_high": "مثالي عند الارتفاع",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "critical_when_extreme_center": "Critical when Extreme, centered (center_zero)"
+      "alert_animation": {
+        "blink": "وميض",
+        "ping": "نبض",
+        "static": "ثابت"
       },
-      "bar_size": {
-        "xsmall": "Extra Small",
-        "small": "صغيرة",
-        "medium": "متوسطة",
-        "large": "كبيرة",
-        "xlarge": "كبيرة جدًا"
+      "alert_highlight": {
+        "background": "Background",
+        "border": "Border",
+        "label": "تسمية"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "animation": "حركة",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "bar_color_mode": {
+        "auto": "تلقائي",
+        "rainbow": "قوس قزح",
+        "rainbow_full": "قوس قزح (كامل)",
+        "segment": "مقطعي"
+      },
+      "bar_effect": {
+        "glass": "زجاج",
+        "gradient": "تدرج",
+        "gradient_reverse": "تدرج معكوس",
+        "radius": "حواف دائرية",
+        "shimmer": "لمعان",
+        "shimmer_reverse": "لمعان معكوس"
       },
       "bar_orientation": {
         "ltr": "من اليسار إلى اليمين",
@@ -151,163 +161,145 @@
         "up": "اتجاه لأعلى"
       },
       "bar_position": {
-        "default": "افتراضي",
+        "background": "خلفية البطاقة",
         "below": "الشريط تحت المحتوى",
-        "compact_below": "Compact bar below (name/value on one row)",
-        "top": "الشريط أعلى المحتوى",
         "bottom": "الشريط أسفل المحتوى",
+        "compact_below": "شريط مضغوط أسفل (الاسم/القيمة في سطر واحد)",
+        "default": "افتراضي",
         "overlay": "الشريط فوق المحتوى (تراكب)",
-        "background": "خلفية البطاقة"
-      },
-      "layout": {
-        "horizontal": "أفقي (افتراضي)",
-        "vertical": "رأسي"
-      },
-      "bar_color_mode": {
-        "auto": "تلقائي",
-        "segment": "مقطعي",
-        "rainbow": "قوس قزح",
-        "rainbow_full": "Rainbow (full)"
+        "top": "الشريط أعلى المحتوى"
       },
       "bar_scale": {
         "linear": "Linear",
         "log": "Logarithmic"
       },
-      "bar_effect": {
-        "radius": "حواف دائرية",
-        "glass": "زجاج",
-        "gradient": "تدرج",
-        "gradient_reverse": "تدرج معكوس",
-        "shimmer": "لمعان",
-        "shimmer_reverse": "لمعان معكوس"
+      "bar_size": {
+        "large": "كبيرة",
+        "medium": "متوسطة",
+        "small": "صغيرة",
+        "xlarge": "كبيرة جدًا",
+        "xsmall": "صغير جدًا"
+      },
+      "bar_stack_mode": {
+        "net": "Net",
+        "proportional": "Sum",
+        "stacked": "Stacked"
+      },
+      "force_circular_background_mode": {
+        "auto": "تلقائي",
+        "forced": "مفروض"
       },
       "hide": {
         "icon": "أيقونة",
         "name": "الاسم",
-        "value": "القيمة",
-        "unit": "الوحدة",
+        "progress_bar": "الشريط",
         "secondary_info": "المعلومات",
-        "progress_bar": "الشريط"
-      },
-      "unit_spacing": {
-        "auto": "Auto",
-        "space": "Space",
-        "no-space": "No space"
-      },
-      "watermark_type": {
-        "blended": "Blended",
-        "area": "Area",
-        "striped": "Striped",
-        "triangle": "Triangle",
-        "round": "Round",
-        "line": "Line"
-      },
-      "watermark_as": {
-        "auto": "Auto",
-        "percent": "Percent"
-      },
-      "watermark": {
-        "low": "Low",
-        "high": "High",
-        "type": "Type",
-        "opacity": "Opacity",
-        "low_color": "Low color",
-        "high_color": "High color",
-        "low_as": "Low unit",
-        "high_as": "High unit",
-        "line_size": "Line size",
-        "disable_low": "Disable low",
-        "disable_high": "Disable high",
-        "low_attribute": "Attribute",
-        "high_attribute": "Attribute"
+        "shape": "الخلفية الدائرية للأيقونة",
+        "unit": "الوحدة",
+        "value": "القيمة"
       },
       "icon_animation": {
-        "spin": "Spin",
-        "pulse": "Pulse",
+        "battery_charging": "Battery charging",
         "bounce": "Bounce",
-        "shake": "Shake",
-        "ping": "Ping",
+        "ping": "نبض",
+        "pulse": "Pulse",
         "reveal": "Reveal",
-        "washing_machine": "Washing machine",
-        "battery_charging": "Battery charging"
+        "shake": "Shake",
+        "spin": "Spin",
+        "washing_machine": "Washing machine"
       },
-      "alert_when": {
-        "above": "Alert above",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight",
-        "animation": "Animation",
-        "above_attribute": "Attribute",
-        "below_attribute": "Attribute"
-      },
-      "alert_highlight": {
-        "border": "Border",
-        "background": "Background",
-        "label": "Label"
-      },
-      "status_label": {
-        "jinja": "Status label",
-        "position": "Label position",
-        "color_source": "Color source"
+      "icon_animation_mode": {
+        "auto": "تلقائي",
+        "template": "قالب"
       },
       "label_position": {
-        "left": "Left",
-        "right": "Right"
+        "left": "يسار",
+        "right": "يمين"
+      },
+      "layout": {
+        "horizontal": "أفقي (افتراضي)",
+        "vertical": "رأسي"
+      },
+      "simple_advanced_mode": {
+        "advanced": "متقدم",
+        "simple": "بسيط"
+      },
+      "status_label": {
+        "color_source": "مصدر اللون",
+        "jinja": "تسمية الحالة",
+        "position": "موضع التسمية"
       },
       "status_label_color_source": {
-        "bar": "Progress bar",
-        "icon": "Icon"
+        "bar": "شريط التقدم",
+        "icon": "أيقونة"
       },
-      "alert_animation": {
-        "static": "Static",
-        "blink": "Blink",
-        "ping": "Ping"
-      },
-      "min_value_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "max_value_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "watermark_low_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "watermark_high_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_above_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_below_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
+      "theme": {
+        "battery_adaptive": "بطارية (تتكيف مع حالة الشحن)",
+        "critical_when_extreme": "حرج عند التطرف (مستوى الخزان، الانحراف...)",
+        "critical_when_extreme_center": "حرج عند التطرف، ممركز (center_zero)",
+        "critical_when_high": "حرج عند الارتفاع (المعالج، الذاكرة، القرص...)",
+        "critical_when_low": "حرج عند الانخفاض (بطارية، قرص...)",
+        "humidity": "الرطوبة",
+        "light": "الضوء",
+        "optimal_when_high": "مثالي عند الارتفاع",
+        "optimal_when_low": "مثالي عند الانخفاض",
+        "pm25": "PM2.5",
+        "temperature": "درجة الحرارة",
+        "voc": "VOC"
       },
       "theme_mode": {
-        "preset": "Preset",
-        "custom": "Custom"
+        "custom": "Custom",
+        "preset": "Preset"
       },
-      "min_value": {
+      "unit_position": {
+        "after": "بعد القيمة",
+        "before": "قبل القيمة"
+      },
+      "unit_spacing": {
+        "auto": "تلقائي",
+        "no-space": "بدون مسافة",
+        "space": "مسافة"
+      },
+      "value_shape": {
         "attribute": "Attribute"
       },
-      "max_value": {
-        "attribute": "Attribute"
+      "value_source_mode": {
+        "entity": "Entity",
+        "jinja": "Template",
+        "standard": "Fixed value"
       },
-      "bar_stack_mode": {
-        "stacked": "Stacked",
-        "proportional": "Sum",
-        "net": "Net"
+      "watermark": {
+        "disable_high": "Disable high",
+        "disable_low": "Disable low",
+        "high": "High",
+        "high_as": "High unit",
+        "high_color": "High color",
+        "line_size": "Line size",
+        "low": "Low",
+        "low_as": "Low unit",
+        "low_color": "Low color",
+        "opacity": "Opacity",
+        "type": "Type"
+      },
+      "watermark_as": {
+        "auto": "تلقائي",
+        "percent": "نسبة مئوية"
+      },
+      "watermark_type": {
+        "area": "منطقة",
+        "blended": "ممزوج",
+        "line": "خط",
+        "round": "دائري",
+        "striped": "مخطط",
+        "triangle": "مثلث"
       }
+    },
+    "title": {
+      "content": "المحتوى",
+      "interaction": "التفاعلات",
+      "layout": "التخطيط والحجم",
+      "markers": "العلامات والتنبيهات",
+      "theme": "المظهر"
     }
   }
 }

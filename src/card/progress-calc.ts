@@ -191,6 +191,9 @@ class PercentHelper extends ProgressCalc {
   #unit = new UnitHelper();
   #isTimer = false;
   #unitSpacing: string = CARD.config.unit.unitSpacing.auto;
+  #unitPosition: string = CARD.config.unit.unitPosition.after;
+  #compact = false;
+  #sign = false;
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
@@ -236,6 +239,9 @@ class PercentHelper extends ProgressCalc {
     zeroValue,
     growthPercent,
     scale,
+    compact,
+    sign,
+    unitPosition,
   }: {
     unitSpacing: string;
     hasDisabledUnit: unknown;
@@ -243,6 +249,9 @@ class PercentHelper extends ProgressCalc {
     zeroValue: unknown;
     growthPercent: unknown;
     scale: unknown;
+    compact: unknown;
+    sign: unknown;
+    unitPosition: string;
   }) {
     this.#unitSpacing = unitSpacing;
     this.#unit.isDisabled = hasDisabledUnit;
@@ -250,6 +259,9 @@ class PercentHelper extends ProgressCalc {
     this.zeroValue = zeroValue;
     this.growthPercent = growthPercent;
     this.scale = scale;
+    this.#compact = is.boolean(compact) ? compact : false;
+    this.#sign = is.boolean(sign) ? sign : false;
+    this.#unitPosition = unitPosition;
   }
 
   valueForThemes(isCustomTheme: boolean, valueBasedOnPercentage: boolean): number | null {
@@ -285,6 +297,9 @@ class PercentHelper extends ProgressCalc {
       this.unit,
       this.#hassProvider.numberFormat,
       this.#unitSpacing,
+      this.#compact,
+      this.#sign,
+      this.#unitPosition,
     );
   }
 }

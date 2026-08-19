@@ -2,148 +2,158 @@
   "card": {
     "msg": {
       "appliedDefaultValue": "एक डिफ़ॉल्ट मान स्वचालित रूप से लागू किया गया है।",
-      "attributeNotFound": "HA में एट्रिब्यूट नहीं मिला।",
-      "entityNotFound": "HA में एंटिटी नहीं मिली।",
-      "invalidActionObject": "एक्शन ऑब्जेक्ट अमान्य या गलत तरीके से संरचित है।",
       "invalidDecimal": "मान एक वैध दशमलव संख्या होना चाहिए।",
-      "invalidEntityId": "एंटिटी आईडी अमान्य या गलत तरीके से बनाई गई है।",
       "invalidEnumValue": "प्रदान किया गया मान अनुमतित विकल्पों में से एक नहीं है।",
-      "invalidStateContent": "स्थिति सामग्री अमान्य या गलत तरीके से बनाई गई है।",
+      "invalidNoun": "अमान्य या गलत तरीके से बना: {noun}।",
       "invalidStateContentEntry": "स्थिति सामग्री में एक या अधिक प्रविष्टियां अमान्य हैं।",
       "invalidTheme": "निर्दिष्ट थीम अज्ञात है। डिफ़ॉल्ट थीम का उपयोग किया जाएगा।",
-      "invalidTypeArray": "एरे प्रकार का मान अपेक्षित है।",
-      "invalidTypeBoolean": "बूलियन प्रकार का मान अपेक्षित है।",
-      "invalidTypeNumber": "संख्या प्रकार का मान अपेक्षित है।",
-      "invalidTypeObject": "ऑब्जेक्ट प्रकार का मान अपेक्षित है।",
-      "invalidTypeString": "स्ट्रिंग प्रकार का मान अपेक्षित है।",
+      "invalidType": "अपेक्षित प्रकार: {type}।",
       "invalidUnionType": "मान अनुमतित प्रकारों में से किसी से मेल नहीं खाता।",
       "missingActionKey": "एक्शन ऑब्जेक्ट में एक आवश्यक कुंजी गायब है।",
-      "missingRequiredProperty": "आवश्यक गुण गायब है।"
+      "missingRequiredProperty": "आवश्यक गुण गायब है।",
+      "notFound": "HA में नहीं मिला: {noun}।",
+      "words": {
+        "nouns": {
+          "action_object": "एक्शन ऑब्जेक्ट",
+          "attribute": "एट्रिब्यूट",
+          "entity": "एंटिटी",
+          "entity_id": "एंटिटी आईडी",
+          "state_content": "स्थिति सामग्री"
+        },
+        "types": {
+          "array": "एरे",
+          "boolean": "बूलियन",
+          "number": "संख्या",
+          "object": "ऑब्जेक्ट",
+          "string": "स्ट्रिंग"
+        }
+      }
     }
   },
   "editor": {
-    "title": {
-      "content": "सामग्री",
-      "markers": "Markers & Alerts",
-      "layout": "Layout & Sizing",
-      "interaction": "बातचीत",
-      "theme": "रूप और अनुभव"
-    },
     "field": {
+      "action": {
+        "tap": "टैप पर क्रिया",
+        "hold": "लंबे प्रेस पर क्रिया",
+        "double_tap": "डबल टैप पर क्रिया",
+        "icon_tap": "आइकन पर टैप करने की क्रिया",
+        "icon_hold": "आइकन पर लंबे प्रेस की क्रिया",
+        "icon_double_tap": "आइकन पर डबल टैप की क्रिया"
+      },
+      "action_picker": "इंटरैक्शन जोड़ें",
+      "alert_toggle": "अलर्ट",
+      "alert_when_above_mode": "ऊपरी अलर्ट स्रोत",
+      "alert_when_below_mode": "निचला अलर्ट स्रोत",
       "attribute": "एट्रिब्यूट",
       "badge_color": "बैज का रंग",
+      "badge_color_toggle": "Independent color",
       "badge_icon": "बैज का आइकन",
-      "bar_color": "मुख्य रंग",
-      "bar_effect_jinja": "बार पर प्रभाव (Jinja मोड)",
-      "bar_orientation": "बार की दिशा",
-      "bar_position": "बार की स्थिति",
-      "bar_single_line": "एक पंक्ति में जानकारी",
-      "bar_size": "बार का आकार",
-      "bar_segments": "Bar segments",
+      "badge_toggle": "बैज",
+      "bar_color": "बार का रंग",
       "bar_color_mode": "रंग मोड",
-      "bar_scale": "Bar scale",
+      "bar_effect_mode": "बार पर प्रभाव",
+      "bar_group": "बार",
+      "bar_max_width": "बार की अधिकतम चौड़ाई",
+      "bar_max_width_toggle": "बार की अधिकतम चौड़ाई",
+      "bar_orientation": "अभिविन्यास",
+      "bar_scale": "स्केल",
+      "bar_segments": "खंड",
+      "bar_single_line": "एक पंक्ति",
+      "bar_size": "आकार",
+      "bar_stack": "अतिरिक्त एंटिटी",
+      "bar_stack_mode": "Stack mode",
+      "card_size_toggle": "कार्ड का आकार",
       "center_zero": "शून्य केंद्र में",
-      "center_zero_value": "केंद्र मान",
       "center_zero_growth_percent": "वृद्धि प्रतिशत",
+      "center_zero_value": "केंद्र मान",
       "color": "मुख्य रंग",
+      "custom_info": "कस्टम द्वितीयक जानकारी",
+      "custom_theme": "Custom theme zones",
       "decimal": "दशमलव",
-      "double_tap_action": "डबल टैप व्यवहार",
+      "density_toggle": "कॉम्पैक्ट",
       "entity": "एंटिटी",
-      "force_circular_background": "गोलाकार पृष्ठभूमि को बाध्य करें",
-      "hide_jinja": "छिपाएँ (Jinja मोड)",
-      "hold_action": "होल्ड व्यवहार",
+      "fast_refresh": "तेज़ रिफ्रेश (प्रति सेकंड)",
+      "force_circular_background_mode": "आइकन का गोलाकार पृष्ठभूमि",
+      "frameless": "फ्रेमरहित",
+      "height": "ऊँचाई",
+      "height_custom_toggle": "Shrink height (embedded)",
+      "hide_mode": "छिपाएँ",
       "icon": "आइकन",
-      "icon_animation": "Icon animation",
-      "icon_double_tap_action": "आइकन डबल टैप व्यवहार",
-      "icon_hold_action": "आइकन होल्ड व्यवहार",
-      "icon_tap_action": "आइकन टैप व्यवहार",
+      "icon_animation": "आइकन एनिमेशन",
+      "interpolate": "रंग इंटरपोलेशन",
       "layout": "सामग्री लेआउट",
+      "marginless": "मार्जिनरहित",
       "max_value": "अधिकतम मान",
+      "max_value_mode": "अधिकतम मान स्रोत",
+      "migrate_config": "Migrate config",
       "min_value": "न्यूनतम मान",
+      "min_value_mode": "न्यूनतम मान स्रोत",
+      "min_width": "न्यूनतम चौड़ाई",
+      "multiline": "Multiline",
       "name": "नाम",
+      "name_info": "कस्टम नाम जानकारी",
       "percent": "प्रतिशत",
+      "position": "स्थिति",
+      "reverse": "टाइमर उलटें",
       "reverse_secondary_info_row": "बार और टेक्स्ट बदलें",
       "secondary": "सहायक जानकारी",
       "state_content": "स्थिति की सामग्री",
-      "show_all_actions": "सभी क्रियाएँ दिखाएँ",
-      "tap_action": "टैप व्यवहार",
+      "status_label_toggle": "स्थिति लेबल",
       "text_shadow": "टेक्स्ट में छाया जोड़ें",
-      "theme_mode": "Theme mode",
       "theme": "थीम",
-      "custom_theme": "Custom theme zones",
+      "trigger": "ट्रिगर",
       "unit": "इकाई",
-      "min_value_mode": "Min value source",
-      "max_value_mode": "Max value source",
-      "watermark_low_mode": "Low marker source",
-      "watermark_high_mode": "High marker source",
-      "alert_when_above_mode": "Above alert source",
-      "alert_when_below_mode": "Below alert source",
-      "bar_max_width": "Bar max width",
-      "bar_max_width_toggle": "Bar max width",
-      "frameless": "Frameless",
-      "height": "Height",
-      "marginless": "Marginless",
-      "min_width": "Min width",
-      "card_size_toggle": "Card size",
-      "unit_spacing": "Unit spacing",
-      "watermark_toggle": "Markers",
-      "alert_toggle": "Alert",
-      "custom_info": "कस्टम द्वितीयक जानकारी",
-      "multiline": "Multiline",
-      "interpolate": "रंग इंटरपोलेशन",
-      "name_info": "कस्टम नाम जानकारी",
-      "reverse": "टाइमर उलटें",
-      "bar_stack_mode": "Stack mode",
-      "bar_stack": "अतिरिक्त एंटिटी",
-      "migrate_config": "Migrate config",
-      "icon_animation_jinja_toggle": "Trigger via template",
-      "fast_refresh": "Fast refresh (per-second)",
-      "height_custom_toggle": "Shrink height (embedded)",
-      "status_label_toggle": "Status label",
-      "density_toggle": "Compact",
-      "badge_toggle": "Badge",
-      "badge_color_toggle": "Independent color"
+      "unit_spacing": "रिक्ति",
+      "value_compact": "संक्षिप्त मान (1.2k)",
+      "value_sign": "चिह्न दिखाएं (+/-)",
+      "watermark_high_mode": "उच्च मार्कर स्रोत",
+      "watermark_low_mode": "निम्न मार्कर स्रोत",
+      "watermark_toggle": "मार्कर"
     },
     "field_helper": {
-      "min_value_jinja": "Returns Number (42)",
-      "max_value_jinja": "Returns Number (100)",
-      "watermark_low_jinja": "Returns Number (20)",
-      "watermark_high_jinja": "Returns Number (80)",
-      "alert_when_above_jinja": "Returns Number (90)",
-      "alert_when_below_jinja": "Returns Number (10)",
-      "icon_animation_jinja": "Returns Boolean (true)",
+      "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
       "badge_icon": "Returns String (mdi:fan) or Object ({icon, color})",
-      "badge_color": "Returns String (#ff0000)",
-      "status_label_jinja": "Returns String (hot) or Object ({label, color})",
       "bar_effect": "Returns String (shimmer) or List ([shimmer, gradient])",
-      "hide": "Returns String (icon, name) or List ([icon, name])",
-      "name_info": "Returns String (Living Room)",
-      "custom_info": "Returns String (Charging)",
-      "icon": "Returns String (mdi:fan)",
       "color": "Returns String (#ff0000)",
-      "bar_color": "Returns String (#ff0000)"
+      "custom_info": "Returns String (Charging)",
+      "hide": "Returns String (icon, name) or List ([icon, name])",
+      "icon": "Returns String (mdi:fan)",
+      "icon_animation_jinja": "Returns Boolean (true)",
+      "name_info": "Returns String (Living Room)",
+      "returns_number": "Returns Number (42)",
+      "status_label_jinja": "Returns String (hot) or Object ({label, color})"
     },
     "option": {
-      "theme": {
-        "battery_adaptive": "Battery (adapts to charging state)",
-        "light": "प्रकाश",
-        "temperature": "तापमान",
-        "humidity": "आर्द्रता",
-        "pm25": "PM2.5",
-        "voc": "VOC",
-        "critical_when_low": "Critical when Low (Battery, disk...)",
-        "optimal_when_low": "कम होने पर इष्टतम",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "optimal_when_high": "उच्च होने पर इष्टतम",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "critical_when_extreme_center": "Critical when Extreme, centered (center_zero)"
+      "alert_animation": {
+        "blink": "ब्लिंक",
+        "ping": "पिंग",
+        "static": "स्थिर"
       },
-      "bar_size": {
-        "xsmall": "Extra Small",
-        "small": "छोटी",
-        "medium": "मध्यम",
-        "large": "बड़ी",
-        "xlarge": "अतिरिक्त बड़ी"
+      "alert_highlight": {
+        "background": "Background",
+        "border": "Border",
+        "label": "लेबल"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "animation": "एनिमेशन",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "bar_color_mode": {
+        "auto": "स्वचालित",
+        "rainbow": "इंद्रधनुष",
+        "rainbow_full": "इंद्रधनुष (पूर्ण)",
+        "segment": "खंड"
+      },
+      "bar_effect": {
+        "glass": "कांच",
+        "gradient": "ग्रेडिएंट",
+        "gradient_reverse": "उल्टा ग्रेडिएंट",
+        "radius": "गोल कोने",
+        "shimmer": "चमक",
+        "shimmer_reverse": "उल्टी चमक"
       },
       "bar_orientation": {
         "ltr": "बाएं से दाएं",
@@ -151,163 +161,145 @@
         "up": "ऊपर की ओर"
       },
       "bar_position": {
-        "default": "डिफ़ॉल्ट",
+        "background": "कार्ड पृष्ठभूमि",
         "below": "सामग्री के नीचे बार",
-        "compact_below": "Compact bar below (name/value on one row)",
-        "top": "ऊपर बार",
         "bottom": "नीचे बार",
+        "compact_below": "कॉम्पैक्ट बार नीचे (नाम/मान एक पंक्ति में)",
+        "default": "डिफ़ॉल्ट",
         "overlay": "सामग्री पर ओवरले बार",
-        "background": "कार्ड पृष्ठभूमि"
-      },
-      "layout": {
-        "horizontal": "क्षैतिज (डिफ़ॉल्ट)",
-        "vertical": "लंबवत"
-      },
-      "bar_color_mode": {
-        "auto": "स्वचालित",
-        "segment": "खंड",
-        "rainbow": "इंद्रधनुष",
-        "rainbow_full": "Rainbow (full)"
+        "top": "ऊपर बार"
       },
       "bar_scale": {
         "linear": "Linear",
         "log": "Logarithmic"
       },
-      "bar_effect": {
-        "radius": "गोल कोने",
-        "glass": "कांच",
-        "gradient": "ग्रेडिएंट",
-        "gradient_reverse": "उल्टा ग्रेडिएंट",
-        "shimmer": "चमक",
-        "shimmer_reverse": "उल्टी चमक"
+      "bar_size": {
+        "large": "बड़ी",
+        "medium": "मध्यम",
+        "small": "छोटी",
+        "xlarge": "अतिरिक्त बड़ी",
+        "xsmall": "अतिरिक्त छोटा"
+      },
+      "bar_stack_mode": {
+        "net": "Net",
+        "proportional": "Sum",
+        "stacked": "Stacked"
+      },
+      "force_circular_background_mode": {
+        "auto": "स्वचालित",
+        "forced": "बलपूर्वक"
       },
       "hide": {
         "icon": "आइकन",
         "name": "नाम",
-        "value": "मूल्य",
-        "unit": "इकाई",
+        "progress_bar": "बार",
         "secondary_info": "जानकारी",
-        "progress_bar": "बार"
-      },
-      "unit_spacing": {
-        "auto": "Auto",
-        "space": "Space",
-        "no-space": "No space"
-      },
-      "watermark_type": {
-        "blended": "Blended",
-        "area": "Area",
-        "striped": "Striped",
-        "triangle": "Triangle",
-        "round": "Round",
-        "line": "Line"
-      },
-      "watermark_as": {
-        "auto": "Auto",
-        "percent": "Percent"
-      },
-      "watermark": {
-        "low": "Low",
-        "high": "High",
-        "type": "Type",
-        "opacity": "Opacity",
-        "low_color": "Low color",
-        "high_color": "High color",
-        "low_as": "Low unit",
-        "high_as": "High unit",
-        "line_size": "Line size",
-        "disable_low": "Disable low",
-        "disable_high": "Disable high",
-        "low_attribute": "Attribute",
-        "high_attribute": "Attribute"
+        "shape": "आइकन की गोलाकार पृष्ठभूमि",
+        "unit": "इकाई",
+        "value": "मूल्य"
       },
       "icon_animation": {
-        "spin": "Spin",
-        "pulse": "Pulse",
+        "battery_charging": "Battery charging",
         "bounce": "Bounce",
-        "shake": "Shake",
-        "ping": "Ping",
+        "ping": "पिंग",
+        "pulse": "Pulse",
         "reveal": "Reveal",
-        "washing_machine": "Washing machine",
-        "battery_charging": "Battery charging"
+        "shake": "Shake",
+        "spin": "Spin",
+        "washing_machine": "Washing machine"
       },
-      "alert_when": {
-        "above": "Alert above",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight",
-        "animation": "Animation",
-        "above_attribute": "Attribute",
-        "below_attribute": "Attribute"
-      },
-      "alert_highlight": {
-        "border": "Border",
-        "background": "Background",
-        "label": "Label"
-      },
-      "status_label": {
-        "jinja": "Status label",
-        "position": "Label position",
-        "color_source": "Color source"
+      "icon_animation_mode": {
+        "auto": "स्वचालित",
+        "template": "टेम्पलेट"
       },
       "label_position": {
-        "left": "Left",
-        "right": "Right"
+        "left": "बाएं",
+        "right": "दाएं"
+      },
+      "layout": {
+        "horizontal": "क्षैतिज (डिफ़ॉल्ट)",
+        "vertical": "लंबवत"
+      },
+      "simple_advanced_mode": {
+        "advanced": "उन्नत",
+        "simple": "सरल"
+      },
+      "status_label": {
+        "color_source": "रंग स्रोत",
+        "jinja": "स्थिति लेबल",
+        "position": "लेबल की स्थिति"
       },
       "status_label_color_source": {
-        "bar": "Progress bar",
-        "icon": "Icon"
+        "bar": "प्रगति बार",
+        "icon": "आइकन"
       },
-      "alert_animation": {
-        "static": "Static",
-        "blink": "Blink",
-        "ping": "Ping"
-      },
-      "min_value_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "max_value_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "watermark_low_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "watermark_high_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_above_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_below_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
+      "theme": {
+        "battery_adaptive": "बैटरी (चार्जिंग स्थिति के अनुसार अनुकूलित)",
+        "critical_when_extreme": "चरम पर गंभीर (टैंक स्तर, विचलन...)",
+        "critical_when_extreme_center": "चरम पर गंभीर, केंद्रित (center_zero)",
+        "critical_when_high": "अधिक होने पर गंभीर (CPU, RAM, डिस्क उपयोग...)",
+        "critical_when_low": "कम होने पर गंभीर (बैटरी, डिस्क...)",
+        "humidity": "आर्द्रता",
+        "light": "प्रकाश",
+        "optimal_when_high": "उच्च होने पर इष्टतम",
+        "optimal_when_low": "कम होने पर इष्टतम",
+        "pm25": "PM2.5",
+        "temperature": "तापमान",
+        "voc": "VOC"
       },
       "theme_mode": {
-        "preset": "Preset",
-        "custom": "Custom"
+        "custom": "Custom",
+        "preset": "Preset"
       },
-      "min_value": {
+      "unit_position": {
+        "after": "मान के बाद",
+        "before": "मान से पहले"
+      },
+      "unit_spacing": {
+        "auto": "स्वचालित",
+        "no-space": "बिना स्पेस",
+        "space": "स्पेस"
+      },
+      "value_shape": {
         "attribute": "Attribute"
       },
-      "max_value": {
-        "attribute": "Attribute"
+      "value_source_mode": {
+        "entity": "Entity",
+        "jinja": "Template",
+        "standard": "Fixed value"
       },
-      "bar_stack_mode": {
-        "stacked": "Stacked",
-        "proportional": "Sum",
-        "net": "Net"
+      "watermark": {
+        "disable_high": "Disable high",
+        "disable_low": "Disable low",
+        "high": "High",
+        "high_as": "High unit",
+        "high_color": "High color",
+        "line_size": "Line size",
+        "low": "Low",
+        "low_as": "Low unit",
+        "low_color": "Low color",
+        "opacity": "Opacity",
+        "type": "Type"
+      },
+      "watermark_as": {
+        "auto": "स्वचालित",
+        "percent": "प्रतिशत"
+      },
+      "watermark_type": {
+        "area": "क्षेत्र",
+        "blended": "मिश्रित",
+        "line": "रेखा",
+        "round": "गोल",
+        "striped": "धारीदार",
+        "triangle": "त्रिकोण"
       }
+    },
+    "title": {
+      "content": "सामग्री",
+      "interaction": "बातचीत",
+      "layout": "लेआउट और आकार",
+      "markers": "मार्कर और अलर्ट",
+      "theme": "रूप और अनुभव"
     }
   }
 }

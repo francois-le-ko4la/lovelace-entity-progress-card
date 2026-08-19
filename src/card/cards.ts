@@ -117,11 +117,7 @@ class EntityProgressCardBase extends HABase {
   }
 
   // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ─────────────────────────────
-  // min_value/max_value/alert_when.above/.below share one mechanism
-  // (_renderJinjaNumber, Card-only - neither exists in the template schema);
-  // watermark.low/.high go through HABase's own _renderWatermarkJinja
-  // instead, since Template needs that one too (see EntityProgressTemplate
-  // Base's own _getJinjaHandlers).
+  // _renderJinjaNumber below is Card-only - absent from the template schema.
   _getJinjaHandlers(content: unknown): Record<string, () => void> {
     return {
       ...this._baseJinjaHandlers(content),

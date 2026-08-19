@@ -30,13 +30,19 @@ const NumberFormatter = {
     unit = '',
     locale = 'en-US',
     unitSpacing: string = CARD.config.unit.unitSpacing.auto,
+    compact = false,
+    sign = false,
+    unitPosition: string = CARD.config.unit.unitPosition.after,
   ): string {
     if (is.nullish(value)) return '';
 
+    // notation: 'compact' trims its own trailing zeros - forcing
+    // minimumFractionDigits here would turn "1.2k" back into "1.20k".
     const formattedValue = new Intl.NumberFormat(locale, {
-      minimumFractionDigits: decimal,
-      maximumFractionDigits: decimal,
-      useGrouping: locale !== 'en',
+      ...(compact
+        ? { notation: 'compact', minimumFractionDigits: 0, maximumFractionDigits: decimal }
+        : { minimumFractionDigits: decimal, maximumFractionDigits: decimal, useGrouping: locale !== 'en' }),
+      ...(sign ? { signDisplay: 'exceptZero' } : {}),
     }).format(value);
 
     if (!unit) return formattedValue;
@@ -50,7 +56,9 @@ const NumberFormatter = {
       ? (spaceMap[unitSpacing] as () => string)()
       : (spaceMap[unitSpacing] as string);
 
-    return `${formattedValue}${space}${unit}`;
+    return unitPosition === CARD.config.unit.unitPosition.before
+      ? `${unit}${space}${formattedValue}`
+      : `${formattedValue}${space}${unit}`;
   },
 
   formatTiming(

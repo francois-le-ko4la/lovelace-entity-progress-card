@@ -2,148 +2,158 @@
   "card": {
     "msg": {
       "appliedDefaultValue": "Vaikimisi väärtus rakendati automaatselt.",
-      "attributeNotFound": "Atribuut ei leitud Home Assistantis.",
-      "entityNotFound": "Objekti ei leitud Home Assistantis.",
-      "invalidActionObject": "Tegevuse objekt on vigane või valesti struktureeritud.",
       "invalidDecimal": "Väärtus peab olema positiivne täisarv.",
-      "invalidEntityId": "Objekti ID on vigane või valesti vormistatud.",
       "invalidEnumValue": "Antud väärtus ei kuulu lubatud valikute hulka.",
-      "invalidStateContent": "Seisundi sisu on vigane või valesti vormistatud.",
+      "invalidNoun": "Vigane või valesti vormistatud: {noun}.",
       "invalidStateContentEntry": "Üks või mitu seisundi sisu kirjet on vigased.",
       "invalidTheme": "Määratud teema on tundmatu. Kasutatakse vaikimisi teemat.",
-      "invalidTypeArray": "Oodati massiivi tüüpi väärtust.",
-      "invalidTypeBoolean": "Oodati loogilist (boolean) tüüpi väärtust.",
-      "invalidTypeNumber": "Oodati numbri tüüpi väärtust.",
-      "invalidTypeObject": "Oodati objekti tüüpi väärtust.",
-      "invalidTypeString": "Oodati stringi tüüpi väärtust.",
+      "invalidType": "Oodatud tüüp: {type}.",
       "invalidUnionType": "Väärtus ei vasta ühelegi lubatud tüübile.",
       "missingActionKey": "Tegevuse objektist puudub kohustuslik võti.",
-      "missingRequiredProperty": "Puudub kohustuslik atribuut."
+      "missingRequiredProperty": "Puudub kohustuslik atribuut.",
+      "notFound": "Ei leitud HA-st: {noun}.",
+      "words": {
+        "nouns": {
+          "action_object": "toiminguobjekt",
+          "attribute": "atribuut",
+          "entity": "olem",
+          "entity_id": "olemi ID",
+          "state_content": "oleku sisu"
+        },
+        "types": {
+          "array": "massiiv",
+          "boolean": "tõeväärtus",
+          "number": "number",
+          "object": "objekt",
+          "string": "string"
+        }
+      }
     }
   },
   "editor": {
-    "title": {
-      "content": "Sisu",
-      "markers": "Markers & Alerts",
-      "layout": "Layout & Sizing",
-      "interaction": "Interaktsioonid",
-      "theme": "Välimus ja kasutatavus"
-    },
     "field": {
+      "action": {
+        "tap": "Puudutuse käitumine",
+        "hold": "Pika vajutuse käitumine",
+        "double_tap": "Topeltpuudutuse käitumine",
+        "icon_tap": "Ikoonipuudutuse käitumine",
+        "icon_hold": "Ikooni pika vajutuse käitumine",
+        "icon_double_tap": "Ikooni topeltpuudutuse käitumine"
+      },
+      "action_picker": "Lisa interaktsioon",
+      "alert_toggle": "Hoiatus",
+      "alert_when_above_mode": "Ülemise hoiatuse allikas",
+      "alert_when_below_mode": "Alumise hoiatuse allikas",
       "attribute": "Atribuut",
       "badge_color": "Märgi värv",
+      "badge_color_toggle": "Independent color",
       "badge_icon": "Märgi ikoon",
+      "badge_toggle": "Märk",
       "bar_color": "Riba värv",
-      "bar_effect_jinja": "Riba efekt (Jinja režiim)",
-      "bar_orientation": "Riba orientatsioon",
-      "bar_position": "Riba positsioon",
-      "bar_single_line": "Info ühel real",
-      "bar_size": "Riba suurus",
-      "bar_segments": "Bar segments",
       "bar_color_mode": "Värvirežiim",
-      "bar_scale": "Bar scale",
+      "bar_effect_mode": "Riba efekt",
+      "bar_group": "Riba",
+      "bar_max_width": "Riba max laius",
+      "bar_max_width_toggle": "Riba max laius",
+      "bar_orientation": "Suund",
+      "bar_scale": "Skaala",
+      "bar_segments": "Segmendid",
+      "bar_single_line": "Üherealine",
+      "bar_size": "Suurus",
+      "bar_stack": "Täiendavad üksused",
+      "bar_stack_mode": "Stack mode",
+      "card_size_toggle": "Kaardi suurus",
       "center_zero": "Null keskel",
-      "center_zero_value": "Keskväärtus",
       "center_zero_growth_percent": "Kasvuprotsent",
+      "center_zero_value": "Keskväärtus",
       "color": "Ikooni värv",
+      "custom_info": "Kohandatud sekundaarne teave",
+      "custom_theme": "Custom theme zones",
       "decimal": "Kümnendkoht",
-      "double_tap_action": "Topeltpuudutuse tegevus",
+      "density_toggle": "Kompaktne",
       "entity": "Objekt",
-      "force_circular_background": "Sunnitud ümmargune taust",
-      "hide_jinja": "Peida (Jinja režiim)",
-      "hold_action": "Pikema vajutuse tegevus",
+      "fast_refresh": "Kiire värskendus (iga sekund)",
+      "force_circular_background_mode": "Ikooni ümmargune taust",
+      "frameless": "Raamita",
+      "height": "Kõrgus",
+      "height_custom_toggle": "Shrink height (embedded)",
+      "hide_mode": "Peida",
       "icon": "Ikoon",
-      "icon_animation": "Icon animation",
-      "icon_double_tap_action": "Ikooni topeltpuudutuse tegevus",
-      "icon_hold_action": "Ikooni pika vajutuse tegevus",
-      "icon_tap_action": "Ikooni puudutuse tegevus",
+      "icon_animation": "Ikooni animatsioon",
+      "interpolate": "Värvide interpoleerimine",
       "layout": "Sisu paigutus",
+      "marginless": "Ilma veeriseta",
       "max_value": "Maksimaalne väärtus",
+      "max_value_mode": "Maksimumväärtuse allikas",
+      "migrate_config": "Migrate config",
       "min_value": "Minimaalne väärtus",
+      "min_value_mode": "Miinimumväärtuse allikas",
+      "min_width": "Min laius",
+      "multiline": "Multiline",
       "name": "Nimi",
+      "name_info": "Kohandatud nime teave",
       "percent": "Protsent",
+      "position": "Asukoht",
+      "reverse": "Pööratud taimer",
       "reverse_secondary_info_row": "Vaheta riba ja tekst",
       "secondary": "Täiendav info",
       "state_content": "Oleku sisu",
-      "show_all_actions": "Kuva kõik toimingud",
-      "tap_action": "Puudutuse tegevus",
+      "status_label_toggle": "Oleku silt",
       "text_shadow": "Lisa teksti vari",
-      "theme_mode": "Theme mode",
       "theme": "Teema",
-      "custom_theme": "Custom theme zones",
+      "trigger": "Käivitaja",
       "unit": "Ühik",
-      "min_value_mode": "Min value source",
-      "max_value_mode": "Max value source",
-      "watermark_low_mode": "Low marker source",
-      "watermark_high_mode": "High marker source",
-      "alert_when_above_mode": "Above alert source",
-      "alert_when_below_mode": "Below alert source",
-      "bar_max_width": "Bar max width",
-      "bar_max_width_toggle": "Bar max width",
-      "frameless": "Frameless",
-      "height": "Height",
-      "marginless": "Marginless",
-      "min_width": "Min width",
-      "card_size_toggle": "Card size",
-      "unit_spacing": "Unit spacing",
-      "watermark_toggle": "Markers",
-      "alert_toggle": "Alert",
-      "custom_info": "Kohandatud sekundaarne teave",
-      "multiline": "Multiline",
-      "interpolate": "Värvide interpoleerimine",
-      "name_info": "Kohandatud nime teave",
-      "reverse": "Pööratud taimer",
-      "bar_stack_mode": "Stack mode",
-      "bar_stack": "Täiendavad üksused",
-      "migrate_config": "Migrate config",
-      "icon_animation_jinja_toggle": "Trigger via template",
-      "fast_refresh": "Fast refresh (per-second)",
-      "height_custom_toggle": "Shrink height (embedded)",
-      "status_label_toggle": "Status label",
-      "density_toggle": "Compact",
-      "badge_toggle": "Badge",
-      "badge_color_toggle": "Independent color"
+      "unit_spacing": "Vahe",
+      "value_compact": "Kompaktne väärtus (1.2k)",
+      "value_sign": "Näita märki (+/-)",
+      "watermark_high_mode": "Kõrge markeri allikas",
+      "watermark_low_mode": "Madala markeri allikas",
+      "watermark_toggle": "Markerid"
     },
     "field_helper": {
-      "min_value_jinja": "Returns Number (42)",
-      "max_value_jinja": "Returns Number (100)",
-      "watermark_low_jinja": "Returns Number (20)",
-      "watermark_high_jinja": "Returns Number (80)",
-      "alert_when_above_jinja": "Returns Number (90)",
-      "alert_when_below_jinja": "Returns Number (10)",
-      "icon_animation_jinja": "Returns Boolean (true)",
+      "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
       "badge_icon": "Returns String (mdi:fan) or Object ({icon, color})",
-      "badge_color": "Returns String (#ff0000)",
-      "status_label_jinja": "Returns String (hot) or Object ({label, color})",
       "bar_effect": "Returns String (shimmer) or List ([shimmer, gradient])",
-      "hide": "Returns String (icon, name) or List ([icon, name])",
-      "name_info": "Returns String (Living Room)",
-      "custom_info": "Returns String (Charging)",
-      "icon": "Returns String (mdi:fan)",
       "color": "Returns String (#ff0000)",
-      "bar_color": "Returns String (#ff0000)"
+      "custom_info": "Returns String (Charging)",
+      "hide": "Returns String (icon, name) or List ([icon, name])",
+      "icon": "Returns String (mdi:fan)",
+      "icon_animation_jinja": "Returns Boolean (true)",
+      "name_info": "Returns String (Living Room)",
+      "returns_number": "Returns Number (42)",
+      "status_label_jinja": "Returns String (hot) or Object ({label, color})"
     },
     "option": {
-      "theme": {
-        "battery_adaptive": "Battery (adapts to charging state)",
-        "light": "Hele",
-        "temperature": "Temperatuur",
-        "humidity": "Niiskus",
-        "pm25": "PM2.5",
-        "voc": "VOC",
-        "critical_when_low": "Critical when Low (Battery, disk...)",
-        "optimal_when_low": "Optimaalne madalatel väärtustel",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "optimal_when_high": "Optimaalne kõrgetel väärtustel",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "critical_when_extreme_center": "Critical when Extreme, centered (center_zero)"
+      "alert_animation": {
+        "blink": "Vilkumine",
+        "ping": "Ping",
+        "static": "Staatiline"
       },
-      "bar_size": {
-        "xsmall": "Extra Small",
-        "small": "Väike",
-        "medium": "Keskmine",
-        "large": "Suur",
-        "xlarge": "Väga suur"
+      "alert_highlight": {
+        "background": "Background",
+        "border": "Border",
+        "label": "Silt"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "animation": "Animatsioon",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "bar_color_mode": {
+        "auto": "Automaatne",
+        "rainbow": "Vikerkaar",
+        "rainbow_full": "Vikerkaar (täielik)",
+        "segment": "Segmendid"
+      },
+      "bar_effect": {
+        "glass": "Klaas",
+        "gradient": "Gradient",
+        "gradient_reverse": "Gradient pööratud",
+        "radius": "Ümarad nurgad",
+        "shimmer": "Sära",
+        "shimmer_reverse": "Sära pööratud"
       },
       "bar_orientation": {
         "ltr": "Vasakult paremale",
@@ -151,163 +161,145 @@
         "up": "Üles"
       },
       "bar_position": {
-        "default": "Vaikimisi",
+        "background": "Kaardi taust",
         "below": "Riba sisu all",
-        "compact_below": "Compact bar below (name/value on one row)",
-        "top": "Riba üleval",
         "bottom": "Riba all",
+        "compact_below": "Kompaktne riba all (nimi/väärtus samal real)",
+        "default": "Vaikimisi",
         "overlay": "Riba sisu kohal (overlay)",
-        "background": "Kaardi taust"
-      },
-      "layout": {
-        "horizontal": "Horisontaalne (vaikimisi)",
-        "vertical": "Vertikaalne"
-      },
-      "bar_color_mode": {
-        "auto": "Automaatne",
-        "segment": "Segmendid",
-        "rainbow": "Vikerkaar",
-        "rainbow_full": "Rainbow (full)"
+        "top": "Riba üleval"
       },
       "bar_scale": {
         "linear": "Linear",
         "log": "Logarithmic"
       },
-      "bar_effect": {
-        "radius": "Ümarad nurgad",
-        "glass": "Klaas",
-        "gradient": "Gradient",
-        "gradient_reverse": "Gradient pööratud",
-        "shimmer": "Sära",
-        "shimmer_reverse": "Sära pööratud"
+      "bar_size": {
+        "large": "Suur",
+        "medium": "Keskmine",
+        "small": "Väike",
+        "xlarge": "Väga suur",
+        "xsmall": "Väga väike"
+      },
+      "bar_stack_mode": {
+        "net": "Net",
+        "proportional": "Sum",
+        "stacked": "Stacked"
+      },
+      "force_circular_background_mode": {
+        "auto": "Automaatne",
+        "forced": "Sundatud"
       },
       "hide": {
         "icon": "Ikoon",
         "name": "Nimi",
-        "value": "Väärtus",
-        "unit": "Ühik",
+        "progress_bar": "Riba",
         "secondary_info": "Info",
-        "progress_bar": "Riba"
-      },
-      "unit_spacing": {
-        "auto": "Auto",
-        "space": "Space",
-        "no-space": "No space"
-      },
-      "watermark_type": {
-        "blended": "Blended",
-        "area": "Area",
-        "striped": "Striped",
-        "triangle": "Triangle",
-        "round": "Round",
-        "line": "Line"
-      },
-      "watermark_as": {
-        "auto": "Auto",
-        "percent": "Percent"
-      },
-      "watermark": {
-        "low": "Low",
-        "high": "High",
-        "type": "Type",
-        "opacity": "Opacity",
-        "low_color": "Low color",
-        "high_color": "High color",
-        "low_as": "Low unit",
-        "high_as": "High unit",
-        "line_size": "Line size",
-        "disable_low": "Disable low",
-        "disable_high": "Disable high",
-        "low_attribute": "Attribute",
-        "high_attribute": "Attribute"
+        "shape": "Ikooni ümmargune taust",
+        "unit": "Ühik",
+        "value": "Väärtus"
       },
       "icon_animation": {
-        "spin": "Spin",
-        "pulse": "Pulse",
+        "battery_charging": "Battery charging",
         "bounce": "Bounce",
-        "shake": "Shake",
         "ping": "Ping",
+        "pulse": "Pulse",
         "reveal": "Reveal",
-        "washing_machine": "Washing machine",
-        "battery_charging": "Battery charging"
+        "shake": "Shake",
+        "spin": "Spin",
+        "washing_machine": "Washing machine"
       },
-      "alert_when": {
-        "above": "Alert above",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight",
-        "animation": "Animation",
-        "above_attribute": "Attribute",
-        "below_attribute": "Attribute"
-      },
-      "alert_highlight": {
-        "border": "Border",
-        "background": "Background",
-        "label": "Label"
-      },
-      "status_label": {
-        "jinja": "Status label",
-        "position": "Label position",
-        "color_source": "Color source"
+      "icon_animation_mode": {
+        "auto": "Automaatne",
+        "template": "Mall"
       },
       "label_position": {
-        "left": "Left",
-        "right": "Right"
+        "left": "Vasak",
+        "right": "Parem"
+      },
+      "layout": {
+        "horizontal": "Horisontaalne (vaikimisi)",
+        "vertical": "Vertikaalne"
+      },
+      "simple_advanced_mode": {
+        "advanced": "Täpsem",
+        "simple": "Lihtne"
+      },
+      "status_label": {
+        "color_source": "Värvi allikas",
+        "jinja": "Oleku silt",
+        "position": "Sildi asukoht"
       },
       "status_label_color_source": {
-        "bar": "Progress bar",
-        "icon": "Icon"
+        "bar": "Edenemisriba",
+        "icon": "Ikoon"
       },
-      "alert_animation": {
-        "static": "Static",
-        "blink": "Blink",
-        "ping": "Ping"
-      },
-      "min_value_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "max_value_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "watermark_low_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "watermark_high_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_above_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_below_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
+      "theme": {
+        "battery_adaptive": "Aku (kohandub laadimisolekuga)",
+        "critical_when_extreme": "Kriitiline äärmuslikul (paagi tase, kõrvalekalle...)",
+        "critical_when_extreme_center": "Kriitiline äärmuslikul, tsentreeritud (center_zero)",
+        "critical_when_high": "Kriitiline kõrgel (CPU, RAM, kettakasutus...)",
+        "critical_when_low": "Kriitiline madalal (aku, ketas...)",
+        "humidity": "Niiskus",
+        "light": "Hele",
+        "optimal_when_high": "Optimaalne kõrgetel väärtustel",
+        "optimal_when_low": "Optimaalne madalatel väärtustel",
+        "pm25": "PM2.5",
+        "temperature": "Temperatuur",
+        "voc": "VOC"
       },
       "theme_mode": {
-        "preset": "Preset",
-        "custom": "Custom"
+        "custom": "Custom",
+        "preset": "Preset"
       },
-      "min_value": {
+      "unit_position": {
+        "after": "Väärtuse järel",
+        "before": "Väärtuse ees"
+      },
+      "unit_spacing": {
+        "auto": "Automaatne",
+        "no-space": "Tühikuta",
+        "space": "Tühik"
+      },
+      "value_shape": {
         "attribute": "Attribute"
       },
-      "max_value": {
-        "attribute": "Attribute"
+      "value_source_mode": {
+        "entity": "Entity",
+        "jinja": "Template",
+        "standard": "Fixed value"
       },
-      "bar_stack_mode": {
-        "stacked": "Stacked",
-        "proportional": "Sum",
-        "net": "Net"
+      "watermark": {
+        "disable_high": "Disable high",
+        "disable_low": "Disable low",
+        "high": "High",
+        "high_as": "High unit",
+        "high_color": "High color",
+        "line_size": "Line size",
+        "low": "Low",
+        "low_as": "Low unit",
+        "low_color": "Low color",
+        "opacity": "Opacity",
+        "type": "Type"
+      },
+      "watermark_as": {
+        "auto": "Automaatne",
+        "percent": "Protsent"
+      },
+      "watermark_type": {
+        "area": "Ala",
+        "blended": "Sulatatud",
+        "line": "Joon",
+        "round": "Ümmargune",
+        "striped": "Triibuline",
+        "triangle": "Kolmnurk"
       }
+    },
+    "title": {
+      "content": "Sisu",
+      "interaction": "Interaktsioonid",
+      "layout": "Paigutus ja suurus",
+      "markers": "Markerid ja hoiatused",
+      "theme": "Välimus ja kasutatavus"
     }
   }
 }

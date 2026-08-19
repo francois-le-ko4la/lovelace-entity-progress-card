@@ -2,148 +2,158 @@
   "card": {
     "msg": {
       "appliedDefaultValue": "Nilai default telah diterapkan secara otomatis.",
-      "attributeNotFound": "Atribut tidak ditemukan di HA.",
-      "entityNotFound": "Entitas tidak ditemukan di HA.",
-      "invalidActionObject": "Objek aksi tidak valid atau struktur salah.",
       "invalidDecimal": "Nilai harus berupa angka desimal yang valid.",
-      "invalidEntityId": "ID entitas tidak valid atau salah format.",
       "invalidEnumValue": "Nilai yang diberikan bukan salah satu dari opsi yang diizinkan.",
-      "invalidStateContent": "Konten state tidak valid atau salah format.",
+      "invalidNoun": "Tidak valid atau salah format: {noun}.",
       "invalidStateContentEntry": "Satu atau lebih entri dalam konten state tidak valid.",
       "invalidTheme": "Tema yang ditentukan tidak dikenal. Tema default akan digunakan.",
-      "invalidTypeArray": "Mengharapkan nilai bertipe array.",
-      "invalidTypeBoolean": "Mengharapkan nilai bertipe boolean.",
-      "invalidTypeNumber": "Mengharapkan nilai bertipe angka.",
-      "invalidTypeObject": "Mengharapkan nilai bertipe object.",
-      "invalidTypeString": "Mengharapkan nilai bertipe string.",
+      "invalidType": "Tipe yang diharapkan: {type}.",
       "invalidUnionType": "Nilai tidak cocok dengan tipe yang diizinkan.",
       "missingActionKey": "Kunci yang diperlukan hilang dalam objek aksi.",
-      "missingRequiredProperty": "Properti yang diperlukan hilang."
+      "missingRequiredProperty": "Properti yang diperlukan hilang.",
+      "notFound": "Tidak ditemukan di HA: {noun}.",
+      "words": {
+        "nouns": {
+          "action_object": "objek aksi",
+          "attribute": "atribut",
+          "entity": "entitas",
+          "entity_id": "ID entitas",
+          "state_content": "konten status"
+        },
+        "types": {
+          "array": "array",
+          "boolean": "boolean",
+          "number": "angka",
+          "object": "object",
+          "string": "string"
+        }
+      }
     }
   },
   "editor": {
-    "title": {
-      "content": "Konten",
-      "markers": "Markers & Alerts",
-      "layout": "Layout & Sizing",
-      "interaction": "Interaksi",
-      "theme": "Tampilan & Nuansa"
-    },
     "field": {
+      "action": {
+        "tap": "Perilaku ketuk",
+        "hold": "Perilaku tahan",
+        "double_tap": "Perilaku ketuk ganda",
+        "icon_tap": "Perilaku ketuk ikon",
+        "icon_hold": "Perilaku ketuk-tahan ikon",
+        "icon_double_tap": "Perilaku ketuk ganda ikon"
+      },
+      "action_picker": "Tambahkan interaksi",
+      "alert_toggle": "Peringatan",
+      "alert_when_above_mode": "Sumber peringatan atas",
+      "alert_when_below_mode": "Sumber peringatan bawah",
       "attribute": "Atribut",
       "badge_color": "Warna lencana",
+      "badge_color_toggle": "Independent color",
       "badge_icon": "Ikon lencana",
+      "badge_toggle": "Lencana",
       "bar_color": "Warna bar",
-      "bar_effect_jinja": "Efek pada bar (mode Jinja)",
-      "bar_orientation": "Orientasi bar",
-      "bar_position": "Posisi bar",
-      "bar_single_line": "Info dalam satu baris",
-      "bar_size": "Ukuran bar",
-      "bar_segments": "Bar segments",
       "bar_color_mode": "Mode warna",
-      "bar_scale": "Bar scale",
+      "bar_effect_mode": "Efek pada bar",
+      "bar_group": "Bilah",
+      "bar_max_width": "Lebar maks. batang",
+      "bar_max_width_toggle": "Lebar maks. batang",
+      "bar_orientation": "Orientasi",
+      "bar_scale": "Skala",
+      "bar_segments": "Segmen",
+      "bar_single_line": "Satu baris",
+      "bar_size": "Ukuran",
+      "bar_stack": "Entitas tambahan",
+      "bar_stack_mode": "Stack mode",
+      "card_size_toggle": "Ukuran kartu",
       "center_zero": "Nol di tengah",
-      "center_zero_value": "Nilai tengah",
       "center_zero_growth_percent": "Persentase pertumbuhan",
+      "center_zero_value": "Nilai tengah",
       "color": "Warna utama",
+      "custom_info": "Info sekunder kustom",
+      "custom_theme": "Custom theme zones",
       "decimal": "desimal",
-      "double_tap_action": "Perilaku ketuk ganda",
+      "density_toggle": "Ringkas",
       "entity": "Entitas",
-      "force_circular_background": "Paksa latar belakang melingkar",
-      "hide_jinja": "Sembunyikan (mode Jinja)",
-      "hold_action": "Perilaku tahan",
+      "fast_refresh": "Penyegaran cepat (per detik)",
+      "force_circular_background_mode": "Latar belakang bulat ikon",
+      "frameless": "Tanpa bingkai",
+      "height": "Tinggi",
+      "height_custom_toggle": "Shrink height (embedded)",
+      "hide_mode": "Sembunyikan",
       "icon": "Ikon",
-      "icon_animation": "Icon animation",
-      "icon_double_tap_action": "Perilaku ketuk ganda ikon",
-      "icon_hold_action": "Perilaku tahan ikon",
-      "icon_tap_action": "Perilaku ketuk ikon",
+      "icon_animation": "Animasi ikon",
+      "interpolate": "Interpolasi warna",
       "layout": "Tata letak konten",
+      "marginless": "Tanpa margin",
       "max_value": "Nilai maksimum",
+      "max_value_mode": "Sumber nilai maksimum",
+      "migrate_config": "Migrate config",
       "min_value": "Nilai minimum",
+      "min_value_mode": "Sumber nilai minimum",
+      "min_width": "Lebar min.",
+      "multiline": "Multiline",
       "name": "Nama",
+      "name_info": "Info nama kustom",
       "percent": "Persentase",
+      "position": "Posisi",
+      "reverse": "Timer terbalik",
       "reverse_secondary_info_row": "Tukar bilah dan teks",
       "secondary": "Informasi sekunder",
       "state_content": "Konten status",
-      "show_all_actions": "Tampilkan semua tindakan",
-      "tap_action": "Perilaku ketuk",
+      "status_label_toggle": "Label status",
       "text_shadow": "Tambahkan bayangan teks",
-      "theme_mode": "Theme mode",
       "theme": "Tema",
-      "custom_theme": "Custom theme zones",
+      "trigger": "Pemicu",
       "unit": "Unit",
-      "min_value_mode": "Min value source",
-      "max_value_mode": "Max value source",
-      "watermark_low_mode": "Low marker source",
-      "watermark_high_mode": "High marker source",
-      "alert_when_above_mode": "Above alert source",
-      "alert_when_below_mode": "Below alert source",
-      "bar_max_width": "Bar max width",
-      "bar_max_width_toggle": "Bar max width",
-      "frameless": "Frameless",
-      "height": "Height",
-      "marginless": "Marginless",
-      "min_width": "Min width",
-      "card_size_toggle": "Card size",
-      "unit_spacing": "Unit spacing",
-      "watermark_toggle": "Markers",
-      "alert_toggle": "Alert",
-      "custom_info": "Info sekunder kustom",
-      "multiline": "Multiline",
-      "interpolate": "Interpolasi warna",
-      "name_info": "Info nama kustom",
-      "reverse": "Timer terbalik",
-      "bar_stack_mode": "Stack mode",
-      "bar_stack": "Entitas tambahan",
-      "migrate_config": "Migrate config",
-      "icon_animation_jinja_toggle": "Trigger via template",
-      "fast_refresh": "Fast refresh (per-second)",
-      "height_custom_toggle": "Shrink height (embedded)",
-      "status_label_toggle": "Status label",
-      "density_toggle": "Compact",
-      "badge_toggle": "Badge",
-      "badge_color_toggle": "Independent color"
+      "unit_spacing": "Jarak",
+      "value_compact": "Nilai ringkas (1.2k)",
+      "value_sign": "Tampilkan tanda (+/-)",
+      "watermark_high_mode": "Sumber penanda tinggi",
+      "watermark_low_mode": "Sumber penanda rendah",
+      "watermark_toggle": "Penanda"
     },
     "field_helper": {
-      "min_value_jinja": "Returns Number (42)",
-      "max_value_jinja": "Returns Number (100)",
-      "watermark_low_jinja": "Returns Number (20)",
-      "watermark_high_jinja": "Returns Number (80)",
-      "alert_when_above_jinja": "Returns Number (90)",
-      "alert_when_below_jinja": "Returns Number (10)",
-      "icon_animation_jinja": "Returns Boolean (true)",
+      "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
       "badge_icon": "Returns String (mdi:fan) or Object ({icon, color})",
-      "badge_color": "Returns String (#ff0000)",
-      "status_label_jinja": "Returns String (hot) or Object ({label, color})",
       "bar_effect": "Returns String (shimmer) or List ([shimmer, gradient])",
-      "hide": "Returns String (icon, name) or List ([icon, name])",
-      "name_info": "Returns String (Living Room)",
-      "custom_info": "Returns String (Charging)",
-      "icon": "Returns String (mdi:fan)",
       "color": "Returns String (#ff0000)",
-      "bar_color": "Returns String (#ff0000)"
+      "custom_info": "Returns String (Charging)",
+      "hide": "Returns String (icon, name) or List ([icon, name])",
+      "icon": "Returns String (mdi:fan)",
+      "icon_animation_jinja": "Returns Boolean (true)",
+      "name_info": "Returns String (Living Room)",
+      "returns_number": "Returns Number (42)",
+      "status_label_jinja": "Returns String (hot) or Object ({label, color})"
     },
     "option": {
-      "theme": {
-        "battery_adaptive": "Battery (adapts to charging state)",
-        "light": "Cahaya",
-        "temperature": "Suhu",
-        "humidity": "Kelembaban",
-        "pm25": "PM2.5",
-        "voc": "VOC",
-        "critical_when_low": "Critical when Low (Battery, disk...)",
-        "optimal_when_low": "Optimal saat Rendah",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "optimal_when_high": "Optimal saat Tinggi",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "critical_when_extreme_center": "Critical when Extreme, centered (center_zero)"
+      "alert_animation": {
+        "blink": "Berkedip",
+        "ping": "Ping",
+        "static": "Statis"
       },
-      "bar_size": {
-        "xsmall": "Extra Small",
-        "small": "Kecil",
-        "medium": "Sedang",
-        "large": "Besar",
-        "xlarge": "Sangat besar"
+      "alert_highlight": {
+        "background": "Background",
+        "border": "Border",
+        "label": "Label"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "animation": "Animasi",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "bar_color_mode": {
+        "auto": "Otomatis",
+        "rainbow": "Pelangi",
+        "rainbow_full": "Pelangi (penuh)",
+        "segment": "Segmen"
+      },
+      "bar_effect": {
+        "glass": "Kaca",
+        "gradient": "Gradien",
+        "gradient_reverse": "Gradien terbalik",
+        "radius": "Sudut membulat",
+        "shimmer": "Kilau",
+        "shimmer_reverse": "Kilau terbalik"
       },
       "bar_orientation": {
         "ltr": "Kiri ke kanan",
@@ -151,163 +161,145 @@
         "up": "Ke atas"
       },
       "bar_position": {
-        "default": "Default",
+        "background": "Latar belakang kartu",
         "below": "Bar di bawah konten",
-        "compact_below": "Compact bar below (name/value on one row)",
-        "top": "Bar di atas",
         "bottom": "Bar di bawah",
+        "compact_below": "Batang ringkas di bawah (nama/nilai dalam satu baris)",
+        "default": "Default",
         "overlay": "Bar ditumpangkan pada konten (overlay)",
-        "background": "Latar belakang kartu"
-      },
-      "layout": {
-        "horizontal": "Horizontal (default)",
-        "vertical": "Vertikal"
-      },
-      "bar_color_mode": {
-        "auto": "Otomatis",
-        "segment": "Segmen",
-        "rainbow": "Pelangi",
-        "rainbow_full": "Rainbow (full)"
+        "top": "Bar di atas"
       },
       "bar_scale": {
         "linear": "Linear",
         "log": "Logarithmic"
       },
-      "bar_effect": {
-        "radius": "Sudut membulat",
-        "glass": "Kaca",
-        "gradient": "Gradien",
-        "gradient_reverse": "Gradien terbalik",
-        "shimmer": "Kilau",
-        "shimmer_reverse": "Kilau terbalik"
+      "bar_size": {
+        "large": "Besar",
+        "medium": "Sedang",
+        "small": "Kecil",
+        "xlarge": "Sangat besar",
+        "xsmall": "Ekstra kecil"
+      },
+      "bar_stack_mode": {
+        "net": "Net",
+        "proportional": "Sum",
+        "stacked": "Stacked"
+      },
+      "force_circular_background_mode": {
+        "auto": "Otomatis",
+        "forced": "Dipaksa"
       },
       "hide": {
         "icon": "Ikon",
         "name": "Nama",
-        "value": "Nilai",
-        "unit": "Unit",
+        "progress_bar": "Bilah",
         "secondary_info": "Info",
-        "progress_bar": "Bilah"
-      },
-      "unit_spacing": {
-        "auto": "Auto",
-        "space": "Space",
-        "no-space": "No space"
-      },
-      "watermark_type": {
-        "blended": "Blended",
-        "area": "Area",
-        "striped": "Striped",
-        "triangle": "Triangle",
-        "round": "Round",
-        "line": "Line"
-      },
-      "watermark_as": {
-        "auto": "Auto",
-        "percent": "Percent"
-      },
-      "watermark": {
-        "low": "Low",
-        "high": "High",
-        "type": "Type",
-        "opacity": "Opacity",
-        "low_color": "Low color",
-        "high_color": "High color",
-        "low_as": "Low unit",
-        "high_as": "High unit",
-        "line_size": "Line size",
-        "disable_low": "Disable low",
-        "disable_high": "Disable high",
-        "low_attribute": "Attribute",
-        "high_attribute": "Attribute"
+        "shape": "Latar belakang bulat ikon",
+        "unit": "Unit",
+        "value": "Nilai"
       },
       "icon_animation": {
-        "spin": "Spin",
-        "pulse": "Pulse",
+        "battery_charging": "Battery charging",
         "bounce": "Bounce",
-        "shake": "Shake",
         "ping": "Ping",
+        "pulse": "Pulse",
         "reveal": "Reveal",
-        "washing_machine": "Washing machine",
-        "battery_charging": "Battery charging"
+        "shake": "Shake",
+        "spin": "Spin",
+        "washing_machine": "Washing machine"
       },
-      "alert_when": {
-        "above": "Alert above",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight",
-        "animation": "Animation",
-        "above_attribute": "Attribute",
-        "below_attribute": "Attribute"
-      },
-      "alert_highlight": {
-        "border": "Border",
-        "background": "Background",
-        "label": "Label"
-      },
-      "status_label": {
-        "jinja": "Status label",
-        "position": "Label position",
-        "color_source": "Color source"
+      "icon_animation_mode": {
+        "auto": "Otomatis",
+        "template": "Templat"
       },
       "label_position": {
-        "left": "Left",
-        "right": "Right"
+        "left": "Kiri",
+        "right": "Kanan"
+      },
+      "layout": {
+        "horizontal": "Horizontal (default)",
+        "vertical": "Vertikal"
+      },
+      "simple_advanced_mode": {
+        "advanced": "Lanjutan",
+        "simple": "Sederhana"
+      },
+      "status_label": {
+        "color_source": "Sumber warna",
+        "jinja": "Label status",
+        "position": "Posisi label"
       },
       "status_label_color_source": {
-        "bar": "Progress bar",
-        "icon": "Icon"
+        "bar": "Bilah kemajuan",
+        "icon": "Ikon"
       },
-      "alert_animation": {
-        "static": "Static",
-        "blink": "Blink",
-        "ping": "Ping"
-      },
-      "min_value_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "max_value_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "watermark_low_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "watermark_high_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_above_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_below_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
+      "theme": {
+        "battery_adaptive": "Baterai (menyesuaikan status pengisian daya)",
+        "critical_when_extreme": "Kritis saat ekstrem (level tangki, deviasi...)",
+        "critical_when_extreme_center": "Kritis saat ekstrem, terpusat (center_zero)",
+        "critical_when_high": "Kritis saat tinggi (CPU, RAM, penggunaan disk...)",
+        "critical_when_low": "Kritis saat rendah (baterai, disk...)",
+        "humidity": "Kelembaban",
+        "light": "Cahaya",
+        "optimal_when_high": "Optimal saat Tinggi",
+        "optimal_when_low": "Optimal saat Rendah",
+        "pm25": "PM2.5",
+        "temperature": "Suhu",
+        "voc": "VOC"
       },
       "theme_mode": {
-        "preset": "Preset",
-        "custom": "Custom"
+        "custom": "Custom",
+        "preset": "Preset"
       },
-      "min_value": {
+      "unit_position": {
+        "after": "Setelah nilai",
+        "before": "Sebelum nilai"
+      },
+      "unit_spacing": {
+        "auto": "Otomatis",
+        "no-space": "Tanpa spasi",
+        "space": "Spasi"
+      },
+      "value_shape": {
         "attribute": "Attribute"
       },
-      "max_value": {
-        "attribute": "Attribute"
+      "value_source_mode": {
+        "entity": "Entity",
+        "jinja": "Template",
+        "standard": "Fixed value"
       },
-      "bar_stack_mode": {
-        "stacked": "Stacked",
-        "proportional": "Sum",
-        "net": "Net"
+      "watermark": {
+        "disable_high": "Disable high",
+        "disable_low": "Disable low",
+        "high": "High",
+        "high_as": "High unit",
+        "high_color": "High color",
+        "line_size": "Line size",
+        "low": "Low",
+        "low_as": "Low unit",
+        "low_color": "Low color",
+        "opacity": "Opacity",
+        "type": "Type"
+      },
+      "watermark_as": {
+        "auto": "Otomatis",
+        "percent": "Persen"
+      },
+      "watermark_type": {
+        "area": "Area",
+        "blended": "Berbaur",
+        "line": "Garis",
+        "round": "Bulat",
+        "striped": "Bergaris",
+        "triangle": "Segitiga"
       }
+    },
+    "title": {
+      "content": "Konten",
+      "interaction": "Interaksi",
+      "layout": "Tata Letak & Ukuran",
+      "markers": "Penanda & Peringatan",
+      "theme": "Tampilan & Nuansa"
     }
   }
 }

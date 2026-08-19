@@ -2,148 +2,158 @@
   "card": {
     "msg": {
       "appliedDefaultValue": "Oletusarvo on asetettu automaattisesti.",
-      "attributeNotFound": "Attribuuttia ei löytynyt Home Assistantista.",
-      "entityNotFound": "Entiteettiä ei löytynyt Home Assistantista.",
-      "invalidActionObject": "Toiminto-objekti on virheellinen tai huonosti rakennettu.",
       "invalidDecimal": "Arvon on oltava kelvollinen desimaaliluku.",
-      "invalidEntityId": "Entiteetin tunniste on virheellinen tai väärin muotoiltu.",
       "invalidEnumValue": "Annettu arvo ei ole sallituista vaihtoehdoista.",
-      "invalidStateContent": "Tilasisältö on virheellinen tai väärässä muodossa.",
+      "invalidNoun": "Virheellinen tai väärin muotoiltu: {noun}.",
       "invalidStateContentEntry": "Yksi tai useampi tilasisällön merkintä on virheellinen.",
       "invalidTheme": "Määritetty teema on tuntematon. Käytetään oletusteemaa.",
-      "invalidTypeArray": "Odotettiin taulukkoarvoa.",
-      "invalidTypeBoolean": "Odotettiin totuusarvoa (boolean).",
-      "invalidTypeNumber": "Odotettiin numeerista arvoa.",
-      "invalidTypeObject": "Odotettiin objektityyppistä arvoa.",
-      "invalidTypeString": "Odotettiin merkkijonotyyppistä arvoa.",
+      "invalidType": "Odotettu tyyppi: {type}.",
       "invalidUnionType": "Arvo ei vastaa mitään sallituista tyypeistä.",
       "missingActionKey": "Toiminto-objektista puuttuu vaadittu avain.",
-      "missingRequiredProperty": "Pakollinen ominaisuus puuttuu."
+      "missingRequiredProperty": "Pakollinen ominaisuus puuttuu.",
+      "notFound": "Ei löytynyt HA:sta: {noun}.",
+      "words": {
+        "nouns": {
+          "action_object": "toiminto-objekti",
+          "attribute": "attribuutti",
+          "entity": "entiteetti",
+          "entity_id": "entiteetin tunniste",
+          "state_content": "tilasisältö"
+        },
+        "types": {
+          "array": "taulukko",
+          "boolean": "totuusarvo",
+          "number": "numero",
+          "object": "objekti",
+          "string": "merkkijono"
+        }
+      }
     }
   },
   "editor": {
-    "title": {
-      "content": "Sisältö",
-      "markers": "Markers & Alerts",
-      "layout": "Layout & Sizing",
-      "interaction": "Vuorovaikutukset",
-      "theme": "Ulkoasu"
-    },
     "field": {
+      "action": {
+        "tap": "Napautuksen käyttäytyminen",
+        "hold": "Pitkään painamisen käyttäytyminen",
+        "double_tap": "Kaksoisnapautus käyttäytyminen",
+        "icon_tap": "Kuvakkeen napauttamisen käyttäytyminen",
+        "icon_hold": "Kuvakkeen pito käyttäytyminen",
+        "icon_double_tap": "Kuvakkeen kaksoisnapautus käyttäytyminen"
+      },
+      "action_picker": "Lisää vuorovaikutus",
+      "alert_toggle": "Hälytys",
+      "alert_when_above_mode": "Ylähälytyksen lähde",
+      "alert_when_below_mode": "Alahälytyksen lähde",
       "attribute": "Attribuutti",
       "badge_color": "Badge-väri",
+      "badge_color_toggle": "Independent color",
       "badge_icon": "Badge-ikoni",
-      "bar_color": "Pääväri",
-      "bar_effect_jinja": "Palkin efekti (Jinja-tila)",
-      "bar_orientation": "Palkin suunta",
-      "bar_position": "Palkin sijainti",
-      "bar_single_line": "Tiedot yhdellä rivillä",
-      "bar_size": "Palkin koko",
-      "bar_segments": "Bar segments",
+      "badge_toggle": "Merkki",
+      "bar_color": "Palkin väri",
       "bar_color_mode": "Väritila",
-      "bar_scale": "Bar scale",
+      "bar_effect_mode": "Palkin efekti",
+      "bar_group": "Palkki",
+      "bar_max_width": "Palkin enimmäisleveys",
+      "bar_max_width_toggle": "Palkin enimmäisleveys",
+      "bar_orientation": "Suunta",
+      "bar_scale": "Asteikko",
+      "bar_segments": "Segmentit",
+      "bar_single_line": "Yksi rivi",
+      "bar_size": "Koko",
+      "bar_stack": "Lisäentiteetit",
+      "bar_stack_mode": "Stack mode",
+      "card_size_toggle": "Kortin koko",
       "center_zero": "Nolla keskellä",
-      "center_zero_value": "Keskiarvo",
       "center_zero_growth_percent": "Kasvuprosentti",
+      "center_zero_value": "Keskiarvo",
       "color": "Pääväri",
+      "custom_info": "Mukautettu toissijainen tieto",
+      "custom_theme": "Custom theme zones",
       "decimal": "desimaali",
-      "double_tap_action": "Toiminto kahdella napautuksella",
+      "density_toggle": "Kompakti",
       "entity": "Entiteetti",
-      "force_circular_background": "Pakota pyöreä tausta",
-      "hide_jinja": "Piilota (Jinja-tila)",
-      "hold_action": "Toiminto pitkällä painalluksella",
+      "fast_refresh": "Nopea päivitys (joka sekunti)",
+      "force_circular_background_mode": "Kuvakkeen pyöreä tausta",
+      "frameless": "Kehyksetön",
+      "height": "Korkeus",
+      "height_custom_toggle": "Shrink height (embedded)",
+      "hide_mode": "Piilota",
       "icon": "Ikoni",
-      "icon_animation": "Icon animation",
-      "icon_double_tap_action": "Toiminto kahdella napautuksella kuvaketta",
-      "icon_hold_action": "Toiminto pitkällä painalluksella kuvaketta",
-      "icon_tap_action": "Toiminto kuvaketta napautettaessa",
+      "icon_animation": "Kuvakkeen animaatio",
+      "interpolate": "Interpoloi värit",
       "layout": "Sisällön asettelu",
+      "marginless": "Marginaaliton",
       "max_value": "Maksimiarvo",
+      "max_value_mode": "Enimmäisarvon lähde",
+      "migrate_config": "Migrate config",
       "min_value": "Minimiarvo",
+      "min_value_mode": "Vähimmäisarvon lähde",
+      "min_width": "Vähimmäisleveys",
+      "multiline": "Multiline",
       "name": "Nimi",
+      "name_info": "Mukautettu nimitieto",
       "percent": "Prosentti",
+      "position": "Sijainti",
+      "reverse": "Käänteinen ajastin",
       "reverse_secondary_info_row": "Vaihda palkki ja teksti",
       "secondary": "Lisätiedot",
       "state_content": "Tilan sisältö",
-      "show_all_actions": "Näytä kaikki toiminnot",
-      "tap_action": "Toiminto lyhyellä napautuksella",
+      "status_label_toggle": "Tilamerkintä",
       "text_shadow": "Lisää tekstivarjo",
-      "theme_mode": "Theme mode",
       "theme": "Teema",
-      "custom_theme": "Custom theme zones",
+      "trigger": "Laukaisin",
       "unit": "Yksikkö",
-      "min_value_mode": "Min value source",
-      "max_value_mode": "Max value source",
-      "watermark_low_mode": "Low marker source",
-      "watermark_high_mode": "High marker source",
-      "alert_when_above_mode": "Above alert source",
-      "alert_when_below_mode": "Below alert source",
-      "bar_max_width": "Bar max width",
-      "bar_max_width_toggle": "Bar max width",
-      "frameless": "Frameless",
-      "height": "Height",
-      "marginless": "Marginless",
-      "min_width": "Min width",
-      "card_size_toggle": "Card size",
-      "unit_spacing": "Unit spacing",
-      "watermark_toggle": "Markers",
-      "alert_toggle": "Alert",
-      "custom_info": "Mukautettu toissijainen tieto",
-      "multiline": "Multiline",
-      "interpolate": "Interpoloi värit",
-      "name_info": "Mukautettu nimitieto",
-      "reverse": "Käänteinen ajastin",
-      "bar_stack_mode": "Stack mode",
-      "bar_stack": "Lisäentiteetit",
-      "migrate_config": "Migrate config",
-      "icon_animation_jinja_toggle": "Trigger via template",
-      "fast_refresh": "Fast refresh (per-second)",
-      "height_custom_toggle": "Shrink height (embedded)",
-      "status_label_toggle": "Status label",
-      "density_toggle": "Compact",
-      "badge_toggle": "Badge",
-      "badge_color_toggle": "Independent color"
+      "unit_spacing": "Väli",
+      "value_compact": "Tiivistetty arvo (1.2k)",
+      "value_sign": "Näytä etumerkki (+/-)",
+      "watermark_high_mode": "Ylärajan merkin lähde",
+      "watermark_low_mode": "Alarajan merkin lähde",
+      "watermark_toggle": "Merkit"
     },
     "field_helper": {
-      "min_value_jinja": "Returns Number (42)",
-      "max_value_jinja": "Returns Number (100)",
-      "watermark_low_jinja": "Returns Number (20)",
-      "watermark_high_jinja": "Returns Number (80)",
-      "alert_when_above_jinja": "Returns Number (90)",
-      "alert_when_below_jinja": "Returns Number (10)",
-      "icon_animation_jinja": "Returns Boolean (true)",
+      "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
       "badge_icon": "Returns String (mdi:fan) or Object ({icon, color})",
-      "badge_color": "Returns String (#ff0000)",
-      "status_label_jinja": "Returns String (hot) or Object ({label, color})",
       "bar_effect": "Returns String (shimmer) or List ([shimmer, gradient])",
-      "hide": "Returns String (icon, name) or List ([icon, name])",
-      "name_info": "Returns String (Living Room)",
-      "custom_info": "Returns String (Charging)",
-      "icon": "Returns String (mdi:fan)",
       "color": "Returns String (#ff0000)",
-      "bar_color": "Returns String (#ff0000)"
+      "custom_info": "Returns String (Charging)",
+      "hide": "Returns String (icon, name) or List ([icon, name])",
+      "icon": "Returns String (mdi:fan)",
+      "icon_animation_jinja": "Returns Boolean (true)",
+      "name_info": "Returns String (Living Room)",
+      "returns_number": "Returns Number (42)",
+      "status_label_jinja": "Returns String (hot) or Object ({label, color})"
     },
     "option": {
-      "theme": {
-        "battery_adaptive": "Battery (adapts to charging state)",
-        "light": "Valoisuus",
-        "temperature": "Lämpötila",
-        "humidity": "Kosteus",
-        "pm25": "PM2.5",
-        "voc": "VOC",
-        "critical_when_low": "Critical when Low (Battery, disk...)",
-        "optimal_when_low": "Optimaalinen alhaisena",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "optimal_when_high": "Optimaalinen korkeana",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "critical_when_extreme_center": "Critical when Extreme, centered (center_zero)"
+      "alert_animation": {
+        "blink": "Vilkkuva",
+        "ping": "Ping",
+        "static": "Staattinen"
       },
-      "bar_size": {
-        "xsmall": "Extra Small",
-        "small": "Pieni",
-        "medium": "Keski",
-        "large": "Suuri",
-        "xlarge": "Erittäin suuri"
+      "alert_highlight": {
+        "background": "Background",
+        "border": "Border",
+        "label": "Merkintä"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "animation": "Animaatio",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "bar_color_mode": {
+        "auto": "Automaattinen",
+        "rainbow": "Sateenkaari",
+        "rainbow_full": "Sateenkaari (täysi)",
+        "segment": "Segmentit"
+      },
+      "bar_effect": {
+        "glass": "Lasi",
+        "gradient": "Liukuväri",
+        "gradient_reverse": "Liukuväri käänteinen",
+        "radius": "Pyöristetyt kulmat",
+        "shimmer": "Hohto",
+        "shimmer_reverse": "Hohto käänteinen"
       },
       "bar_orientation": {
         "ltr": "Vasemmalta oikealle",
@@ -151,163 +161,145 @@
         "up": "Ylös"
       },
       "bar_position": {
-        "default": "Oletus",
+        "background": "Kortin tausta",
         "below": "Palkki sisällön alla",
-        "compact_below": "Compact bar below (name/value on one row)",
-        "top": "Palkki ylhäällä",
         "bottom": "Palkki alhaalla",
+        "compact_below": "Kompakti palkki alla (nimi/arvo samalla rivillä)",
+        "default": "Oletus",
         "overlay": "Palkki sisällön päällä (overlay)",
-        "background": "Kortin tausta"
-      },
-      "layout": {
-        "horizontal": "Vaakasuora (oletus)",
-        "vertical": "Pystysuora"
-      },
-      "bar_color_mode": {
-        "auto": "Automaattinen",
-        "segment": "Segmentit",
-        "rainbow": "Sateenkaari",
-        "rainbow_full": "Rainbow (full)"
+        "top": "Palkki ylhäällä"
       },
       "bar_scale": {
         "linear": "Linear",
         "log": "Logarithmic"
       },
-      "bar_effect": {
-        "radius": "Pyöristetyt kulmat",
-        "glass": "Lasi",
-        "gradient": "Liukuväri",
-        "gradient_reverse": "Liukuväri käänteinen",
-        "shimmer": "Hohto",
-        "shimmer_reverse": "Hohto käänteinen"
+      "bar_size": {
+        "large": "Suuri",
+        "medium": "Keski",
+        "small": "Pieni",
+        "xlarge": "Erittäin suuri",
+        "xsmall": "Erittäin pieni"
+      },
+      "bar_stack_mode": {
+        "net": "Net",
+        "proportional": "Sum",
+        "stacked": "Stacked"
+      },
+      "force_circular_background_mode": {
+        "auto": "Automaattinen",
+        "forced": "Pakotettu"
       },
       "hide": {
         "icon": "Kuvake",
         "name": "Nimi",
-        "value": "Arvo",
-        "unit": "Yksikkö",
+        "progress_bar": "Palkki",
         "secondary_info": "Tiedot",
-        "progress_bar": "Palkki"
-      },
-      "unit_spacing": {
-        "auto": "Auto",
-        "space": "Space",
-        "no-space": "No space"
-      },
-      "watermark_type": {
-        "blended": "Blended",
-        "area": "Area",
-        "striped": "Striped",
-        "triangle": "Triangle",
-        "round": "Round",
-        "line": "Line"
-      },
-      "watermark_as": {
-        "auto": "Auto",
-        "percent": "Percent"
-      },
-      "watermark": {
-        "low": "Low",
-        "high": "High",
-        "type": "Type",
-        "opacity": "Opacity",
-        "low_color": "Low color",
-        "high_color": "High color",
-        "low_as": "Low unit",
-        "high_as": "High unit",
-        "line_size": "Line size",
-        "disable_low": "Disable low",
-        "disable_high": "Disable high",
-        "low_attribute": "Attribute",
-        "high_attribute": "Attribute"
+        "shape": "Kuvakkeen pyöreä tausta",
+        "unit": "Yksikkö",
+        "value": "Arvo"
       },
       "icon_animation": {
-        "spin": "Spin",
-        "pulse": "Pulse",
+        "battery_charging": "Battery charging",
         "bounce": "Bounce",
-        "shake": "Shake",
         "ping": "Ping",
+        "pulse": "Pulse",
         "reveal": "Reveal",
-        "washing_machine": "Washing machine",
-        "battery_charging": "Battery charging"
+        "shake": "Shake",
+        "spin": "Spin",
+        "washing_machine": "Washing machine"
       },
-      "alert_when": {
-        "above": "Alert above",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight",
-        "animation": "Animation",
-        "above_attribute": "Attribute",
-        "below_attribute": "Attribute"
-      },
-      "alert_highlight": {
-        "border": "Border",
-        "background": "Background",
-        "label": "Label"
-      },
-      "status_label": {
-        "jinja": "Status label",
-        "position": "Label position",
-        "color_source": "Color source"
+      "icon_animation_mode": {
+        "auto": "Automaattinen",
+        "template": "Malline"
       },
       "label_position": {
-        "left": "Left",
-        "right": "Right"
+        "left": "Vasen",
+        "right": "Oikea"
+      },
+      "layout": {
+        "horizontal": "Vaakasuora (oletus)",
+        "vertical": "Pystysuora"
+      },
+      "simple_advanced_mode": {
+        "advanced": "Lisäasetukset",
+        "simple": "Yksinkertainen"
+      },
+      "status_label": {
+        "color_source": "Värin lähde",
+        "jinja": "Tilamerkintä",
+        "position": "Merkinnän sijainti"
       },
       "status_label_color_source": {
-        "bar": "Progress bar",
-        "icon": "Icon"
+        "bar": "Edistymispalkki",
+        "icon": "Kuvake"
       },
-      "alert_animation": {
-        "static": "Static",
-        "blink": "Blink",
-        "ping": "Ping"
-      },
-      "min_value_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "max_value_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "watermark_low_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "watermark_high_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_above_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_below_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
+      "theme": {
+        "battery_adaptive": "Akku (mukautuu latauksen tilaan)",
+        "critical_when_extreme": "Kriittinen ääriarvossa (säiliön taso, poikkeama...)",
+        "critical_when_extreme_center": "Kriittinen ääriarvossa, keskitetty (center_zero)",
+        "critical_when_high": "Kriittinen korkeana (CPU, RAM, levyn käyttö...)",
+        "critical_when_low": "Kriittinen matalana (akku, levy...)",
+        "humidity": "Kosteus",
+        "light": "Valoisuus",
+        "optimal_when_high": "Optimaalinen korkeana",
+        "optimal_when_low": "Optimaalinen alhaisena",
+        "pm25": "PM2.5",
+        "temperature": "Lämpötila",
+        "voc": "VOC"
       },
       "theme_mode": {
-        "preset": "Preset",
-        "custom": "Custom"
+        "custom": "Custom",
+        "preset": "Preset"
       },
-      "min_value": {
+      "unit_position": {
+        "after": "Arvon jälkeen",
+        "before": "Ennen arvoa"
+      },
+      "unit_spacing": {
+        "auto": "Automaattinen",
+        "no-space": "Ei väliä",
+        "space": "Väli"
+      },
+      "value_shape": {
         "attribute": "Attribute"
       },
-      "max_value": {
-        "attribute": "Attribute"
+      "value_source_mode": {
+        "entity": "Entity",
+        "jinja": "Template",
+        "standard": "Fixed value"
       },
-      "bar_stack_mode": {
-        "stacked": "Stacked",
-        "proportional": "Sum",
-        "net": "Net"
+      "watermark": {
+        "disable_high": "Disable high",
+        "disable_low": "Disable low",
+        "high": "High",
+        "high_as": "High unit",
+        "high_color": "High color",
+        "line_size": "Line size",
+        "low": "Low",
+        "low_as": "Low unit",
+        "low_color": "Low color",
+        "opacity": "Opacity",
+        "type": "Type"
+      },
+      "watermark_as": {
+        "auto": "Automaattinen",
+        "percent": "Prosentti"
+      },
+      "watermark_type": {
+        "area": "Alue",
+        "blended": "Sulautettu",
+        "line": "Viiva",
+        "round": "Pyöreä",
+        "striped": "Raidallinen",
+        "triangle": "Kolmio"
       }
+    },
+    "title": {
+      "content": "Sisältö",
+      "interaction": "Vuorovaikutukset",
+      "layout": "Asettelu ja koko",
+      "markers": "Merkit ja hälytykset",
+      "theme": "Ulkoasu"
     }
   }
 }

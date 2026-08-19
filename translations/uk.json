@@ -2,148 +2,158 @@
   "card": {
     "msg": {
       "appliedDefaultValue": "Значення за замовчуванням було застосовано автоматично.",
-      "attributeNotFound": "Атрибут не знайдено в HA.",
-      "entityNotFound": "Сутність не знайдена в HA.",
-      "invalidActionObject": "Об'єкт дії недійсний або неправильно структурований.",
       "invalidDecimal": "Значення повинно бути дійсним десятковим числом.",
-      "invalidEntityId": "ID сутності недійсний або неправильно сформований.",
       "invalidEnumValue": "Надане значення не є одним з дозволених варіантів.",
-      "invalidStateContent": "Вміст стану недійсний або неправильно сформований.",
+      "invalidNoun": "Недійсне або пошкоджене: {noun}.",
       "invalidStateContentEntry": "Один або кілька записів у вмісті стану недійсні.",
       "invalidTheme": "Зазначена тема невідома. Буде використана тема за замовчуванням.",
-      "invalidTypeArray": "Очікується значення типу масив.",
-      "invalidTypeBoolean": "Очікується значення типу булевий.",
-      "invalidTypeNumber": "Очікується значення типу число.",
-      "invalidTypeObject": "Очікується значення типу об'єкт.",
-      "invalidTypeString": "Очікується значення типу рядок.",
+      "invalidType": "Очікуваний тип: {type}.",
       "invalidUnionType": "Значення не відповідає жодному з дозволених типів.",
       "missingActionKey": "Відсутній обов'язковий ключ в об'єкті дії.",
-      "missingRequiredProperty": "Відсутня обов'язкова властивість."
+      "missingRequiredProperty": "Відсутня обов'язкова властивість.",
+      "notFound": "Не знайдено в HA: {noun}.",
+      "words": {
+        "nouns": {
+          "action_object": "обʼєкт дії",
+          "attribute": "атрибут",
+          "entity": "сутність",
+          "entity_id": "ідентифікатор сутності",
+          "state_content": "вміст стану"
+        },
+        "types": {
+          "array": "масив",
+          "boolean": "булевий",
+          "number": "число",
+          "object": "об'єкт",
+          "string": "рядок"
+        }
+      }
     }
   },
   "editor": {
-    "title": {
-      "content": "Вміст",
-      "markers": "Markers & Alerts",
-      "layout": "Layout & Sizing",
-      "interaction": "Взаємодії",
-      "theme": "Вигляд та відчуття"
-    },
     "field": {
+      "action": {
+        "tap": "Поведінка при натисканні",
+        "hold": "Поведінка при утримуванні",
+        "double_tap": "Поведінка при подвійному натисканні",
+        "icon_tap": "Поведінка при натисканні на значок",
+        "icon_hold": "Поведінка при утримуванні значка",
+        "icon_double_tap": "Поведінка при подвійному натисканні на значок"
+      },
+      "action_picker": "Додати взаємодію",
+      "alert_toggle": "Сповіщення",
+      "alert_when_above_mode": "Джерело верхнього сповіщення",
+      "alert_when_below_mode": "Джерело нижнього сповіщення",
       "attribute": "Атрибут",
       "badge_color": "Колір значка",
+      "badge_color_toggle": "Independent color",
       "badge_icon": "Іконка значка",
+      "badge_toggle": "Значок",
       "bar_color": "Колір панелі",
-      "bar_effect_jinja": "Ефект на панелі (режим Jinja)",
-      "bar_orientation": "Орієнтація панелі",
-      "bar_position": "Положення панелі",
-      "bar_single_line": "Інформація в один рядок",
-      "bar_size": "Розмір панелі",
-      "bar_segments": "Bar segments",
       "bar_color_mode": "Режим кольору",
-      "bar_scale": "Bar scale",
+      "bar_effect_mode": "Ефект на панелі",
+      "bar_group": "Смуга",
+      "bar_max_width": "Макс. ширина смуги",
+      "bar_max_width_toggle": "Макс. ширина смуги",
+      "bar_orientation": "Орієнтація",
+      "bar_scale": "Масштаб",
+      "bar_segments": "Сегменти",
+      "bar_single_line": "Один рядок",
+      "bar_size": "Розмір",
+      "bar_stack": "Додаткові об'єкти",
+      "bar_stack_mode": "Stack mode",
+      "card_size_toggle": "Розмір картки",
       "center_zero": "Không ở giữa",
-      "center_zero_value": "Центральне значення",
       "center_zero_growth_percent": "Відсоток зростання",
+      "center_zero_value": "Центральне значення",
       "color": "Основний колір",
+      "custom_info": "Додаткова вторинна інформація",
+      "custom_theme": "Custom theme zones",
       "decimal": "десятковий",
-      "double_tap_action": "Поведінка при подвійному дотику",
+      "density_toggle": "Компактно",
       "entity": "Сутність",
-      "force_circular_background": "Примусовий круглий фон",
-      "hide_jinja": "Приховати (режим Jinja)",
-      "hold_action": "Поведінка при утриманні",
+      "fast_refresh": "Швидке оновлення (щосекунди)",
+      "force_circular_background_mode": "Кругле тло значка",
+      "frameless": "Без рамки",
+      "height": "Висота",
+      "height_custom_toggle": "Shrink height (embedded)",
+      "hide_mode": "Приховати",
       "icon": "Іконка",
-      "icon_animation": "Icon animation",
-      "icon_double_tap_action": "Поведінка подвійного дотику іконки",
-      "icon_hold_action": "Поведінка утримання іконки",
-      "icon_tap_action": "Поведінка дотику іконки",
+      "icon_animation": "Анімація значка",
+      "interpolate": "Інтерполяція кольорів",
       "layout": "Розташування вмісту",
+      "marginless": "Без відступу",
       "max_value": "Максимальне значення",
+      "max_value_mode": "Джерело максимального значення",
+      "migrate_config": "Migrate config",
       "min_value": "Мінімальне значення",
+      "min_value_mode": "Джерело мінімального значення",
+      "min_width": "Мін. ширина",
+      "multiline": "Multiline",
       "name": "Назва",
+      "name_info": "Додаткова інформація (назва)",
       "percent": "Відсоток",
+      "position": "Позиція",
+      "reverse": "Зворотній таймер",
       "reverse_secondary_info_row": "Поміняти місцями панель і текст",
       "secondary": "Додаткова інформація",
       "state_content": "Вміст стану",
-      "show_all_actions": "Показати всі дії",
-      "tap_action": "Поведінка при дотику",
+      "status_label_toggle": "Мітка стану",
       "text_shadow": "Додати тінь до тексту",
-      "theme_mode": "Theme mode",
       "theme": "Тема",
-      "custom_theme": "Custom theme zones",
+      "trigger": "Тригер",
       "unit": "Одиниця",
-      "min_value_mode": "Min value source",
-      "max_value_mode": "Max value source",
-      "watermark_low_mode": "Low marker source",
-      "watermark_high_mode": "High marker source",
-      "alert_when_above_mode": "Above alert source",
-      "alert_when_below_mode": "Below alert source",
-      "bar_max_width": "Bar max width",
-      "bar_max_width_toggle": "Bar max width",
-      "frameless": "Frameless",
-      "height": "Height",
-      "marginless": "Marginless",
-      "min_width": "Min width",
-      "card_size_toggle": "Card size",
-      "unit_spacing": "Unit spacing",
-      "watermark_toggle": "Markers",
-      "alert_toggle": "Alert",
-      "custom_info": "Додаткова вторинна інформація",
-      "multiline": "Multiline",
-      "interpolate": "Інтерполяція кольорів",
-      "name_info": "Додаткова інформація (назва)",
-      "reverse": "Зворотній таймер",
-      "bar_stack_mode": "Stack mode",
-      "bar_stack": "Додаткові об'єкти",
-      "migrate_config": "Migrate config",
-      "icon_animation_jinja_toggle": "Trigger via template",
-      "fast_refresh": "Fast refresh (per-second)",
-      "height_custom_toggle": "Shrink height (embedded)",
-      "status_label_toggle": "Status label",
-      "density_toggle": "Compact",
-      "badge_toggle": "Badge",
-      "badge_color_toggle": "Independent color"
+      "unit_spacing": "Інтервал",
+      "value_compact": "Компактне значення (1.2k)",
+      "value_sign": "Показувати знак (+/-)",
+      "watermark_high_mode": "Джерело верхнього маркера",
+      "watermark_low_mode": "Джерело нижнього маркера",
+      "watermark_toggle": "Маркери"
     },
     "field_helper": {
-      "min_value_jinja": "Returns Number (42)",
-      "max_value_jinja": "Returns Number (100)",
-      "watermark_low_jinja": "Returns Number (20)",
-      "watermark_high_jinja": "Returns Number (80)",
-      "alert_when_above_jinja": "Returns Number (90)",
-      "alert_when_below_jinja": "Returns Number (10)",
-      "icon_animation_jinja": "Returns Boolean (true)",
+      "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
       "badge_icon": "Returns String (mdi:fan) or Object ({icon, color})",
-      "badge_color": "Returns String (#ff0000)",
-      "status_label_jinja": "Returns String (hot) or Object ({label, color})",
       "bar_effect": "Returns String (shimmer) or List ([shimmer, gradient])",
-      "hide": "Returns String (icon, name) or List ([icon, name])",
-      "name_info": "Returns String (Living Room)",
-      "custom_info": "Returns String (Charging)",
-      "icon": "Returns String (mdi:fan)",
       "color": "Returns String (#ff0000)",
-      "bar_color": "Returns String (#ff0000)"
+      "custom_info": "Returns String (Charging)",
+      "hide": "Returns String (icon, name) or List ([icon, name])",
+      "icon": "Returns String (mdi:fan)",
+      "icon_animation_jinja": "Returns Boolean (true)",
+      "name_info": "Returns String (Living Room)",
+      "returns_number": "Returns Number (42)",
+      "status_label_jinja": "Returns String (hot) or Object ({label, color})"
     },
     "option": {
-      "theme": {
-        "battery_adaptive": "Battery (adapts to charging state)",
-        "light": "Світло",
-        "temperature": "Температура",
-        "humidity": "Вологість",
-        "pm25": "PM2.5",
-        "voc": "VOC",
-        "critical_when_low": "Critical when Low (Battery, disk...)",
-        "optimal_when_low": "Оптимально при низьких значеннях",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "optimal_when_high": "Оптимально при високих значеннях",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "critical_when_extreme_center": "Critical when Extreme, centered (center_zero)"
+      "alert_animation": {
+        "blink": "Блимання",
+        "ping": "Пінг",
+        "static": "Статично"
       },
-      "bar_size": {
-        "xsmall": "Extra Small",
-        "small": "Мала",
-        "medium": "Середня",
-        "large": "Велика",
-        "xlarge": "Дуже велика"
+      "alert_highlight": {
+        "background": "Background",
+        "border": "Border",
+        "label": "Мітка"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "animation": "Анімація",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "bar_color_mode": {
+        "auto": "Авто",
+        "rainbow": "Веселка",
+        "rainbow_full": "Веселка (повна)",
+        "segment": "Сегменти"
+      },
+      "bar_effect": {
+        "glass": "Скло",
+        "gradient": "Градієнт",
+        "gradient_reverse": "Зворотній градієнт",
+        "radius": "Заокруглені кути",
+        "shimmer": "Мерехтіння",
+        "shimmer_reverse": "Зворотнє мерехтіння"
       },
       "bar_orientation": {
         "ltr": "Зліва направо",
@@ -151,163 +161,145 @@
         "up": "Вгору"
       },
       "bar_position": {
-        "default": "За замовчуванням",
+        "background": "Фон картки",
         "below": "Панель під вмістом",
-        "compact_below": "Compact bar below (name/value on one row)",
-        "top": "Панель зверху",
         "bottom": "Панель знизу",
+        "compact_below": "Компактна смуга знизу (назва/значення в одному рядку)",
+        "default": "За замовчуванням",
         "overlay": "Панель поверх вмісту (overlay)",
-        "background": "Фон картки"
-      },
-      "layout": {
-        "horizontal": "Горизонтальний (за замовчуванням)",
-        "vertical": "Вертикальний"
-      },
-      "bar_color_mode": {
-        "auto": "Авто",
-        "segment": "Сегменти",
-        "rainbow": "Веселка",
-        "rainbow_full": "Rainbow (full)"
+        "top": "Панель зверху"
       },
       "bar_scale": {
         "linear": "Linear",
         "log": "Logarithmic"
       },
-      "bar_effect": {
-        "radius": "Заокруглені кути",
-        "glass": "Скло",
-        "gradient": "Градієнт",
-        "gradient_reverse": "Зворотній градієнт",
-        "shimmer": "Мерехтіння",
-        "shimmer_reverse": "Зворотнє мерехтіння"
+      "bar_size": {
+        "large": "Велика",
+        "medium": "Середня",
+        "small": "Мала",
+        "xlarge": "Дуже велика",
+        "xsmall": "Дуже малий"
+      },
+      "bar_stack_mode": {
+        "net": "Net",
+        "proportional": "Sum",
+        "stacked": "Stacked"
+      },
+      "force_circular_background_mode": {
+        "auto": "Автоматично",
+        "forced": "Примусово"
       },
       "hide": {
         "icon": "Іконка",
         "name": "Ім'я",
-        "value": "Значення",
-        "unit": "Одиниця",
+        "progress_bar": "Смуга",
         "secondary_info": "Інфо",
-        "progress_bar": "Смуга"
-      },
-      "unit_spacing": {
-        "auto": "Auto",
-        "space": "Space",
-        "no-space": "No space"
-      },
-      "watermark_type": {
-        "blended": "Blended",
-        "area": "Area",
-        "striped": "Striped",
-        "triangle": "Triangle",
-        "round": "Round",
-        "line": "Line"
-      },
-      "watermark_as": {
-        "auto": "Auto",
-        "percent": "Percent"
-      },
-      "watermark": {
-        "low": "Low",
-        "high": "High",
-        "type": "Type",
-        "opacity": "Opacity",
-        "low_color": "Low color",
-        "high_color": "High color",
-        "low_as": "Low unit",
-        "high_as": "High unit",
-        "line_size": "Line size",
-        "disable_low": "Disable low",
-        "disable_high": "Disable high",
-        "low_attribute": "Attribute",
-        "high_attribute": "Attribute"
+        "shape": "Кругле тло значка",
+        "unit": "Одиниця",
+        "value": "Значення"
       },
       "icon_animation": {
-        "spin": "Spin",
-        "pulse": "Pulse",
+        "battery_charging": "Battery charging",
         "bounce": "Bounce",
-        "shake": "Shake",
-        "ping": "Ping",
+        "ping": "Пінг",
+        "pulse": "Pulse",
         "reveal": "Reveal",
-        "washing_machine": "Washing machine",
-        "battery_charging": "Battery charging"
+        "shake": "Shake",
+        "spin": "Spin",
+        "washing_machine": "Washing machine"
       },
-      "alert_when": {
-        "above": "Alert above",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight",
-        "animation": "Animation",
-        "above_attribute": "Attribute",
-        "below_attribute": "Attribute"
-      },
-      "alert_highlight": {
-        "border": "Border",
-        "background": "Background",
-        "label": "Label"
-      },
-      "status_label": {
-        "jinja": "Status label",
-        "position": "Label position",
-        "color_source": "Color source"
+      "icon_animation_mode": {
+        "auto": "Автоматично",
+        "template": "Шаблон"
       },
       "label_position": {
-        "left": "Left",
-        "right": "Right"
+        "left": "Ліворуч",
+        "right": "Праворуч"
+      },
+      "layout": {
+        "horizontal": "Горизонтальний (за замовчуванням)",
+        "vertical": "Вертикальний"
+      },
+      "simple_advanced_mode": {
+        "advanced": "Розширений",
+        "simple": "Простий"
+      },
+      "status_label": {
+        "color_source": "Джерело кольору",
+        "jinja": "Мітка стану",
+        "position": "Розташування мітки"
       },
       "status_label_color_source": {
-        "bar": "Progress bar",
-        "icon": "Icon"
+        "bar": "Смуга прогресу",
+        "icon": "Значок"
       },
-      "alert_animation": {
-        "static": "Static",
-        "blink": "Blink",
-        "ping": "Ping"
-      },
-      "min_value_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "max_value_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "watermark_low_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "watermark_high_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_above_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_below_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
+      "theme": {
+        "battery_adaptive": "Батарея (адаптується до стану заряджання)",
+        "critical_when_extreme": "Критично при екстремальному значенні (рівень бака, відхилення...)",
+        "critical_when_extreme_center": "Критично при екстремальному значенні, по центру (center_zero)",
+        "critical_when_high": "Критично при високому значенні (CPU, RAM, використання диска...)",
+        "critical_when_low": "Критично при низькому значенні (батарея, диск...)",
+        "humidity": "Вологість",
+        "light": "Світло",
+        "optimal_when_high": "Оптимально при високих значеннях",
+        "optimal_when_low": "Оптимально при низьких значеннях",
+        "pm25": "PM2.5",
+        "temperature": "Температура",
+        "voc": "VOC"
       },
       "theme_mode": {
-        "preset": "Preset",
-        "custom": "Custom"
+        "custom": "Custom",
+        "preset": "Preset"
       },
-      "min_value": {
+      "unit_position": {
+        "after": "Після значення",
+        "before": "Перед значенням"
+      },
+      "unit_spacing": {
+        "auto": "Автоматично",
+        "no-space": "Без пробілу",
+        "space": "Пробіл"
+      },
+      "value_shape": {
         "attribute": "Attribute"
       },
-      "max_value": {
-        "attribute": "Attribute"
+      "value_source_mode": {
+        "entity": "Entity",
+        "jinja": "Template",
+        "standard": "Fixed value"
       },
-      "bar_stack_mode": {
-        "stacked": "Stacked",
-        "proportional": "Sum",
-        "net": "Net"
+      "watermark": {
+        "disable_high": "Disable high",
+        "disable_low": "Disable low",
+        "high": "High",
+        "high_as": "High unit",
+        "high_color": "High color",
+        "line_size": "Line size",
+        "low": "Low",
+        "low_as": "Low unit",
+        "low_color": "Low color",
+        "opacity": "Opacity",
+        "type": "Type"
+      },
+      "watermark_as": {
+        "auto": "Автоматично",
+        "percent": "Відсоток"
+      },
+      "watermark_type": {
+        "area": "Область",
+        "blended": "Змішування",
+        "line": "Лінія",
+        "round": "Круглий",
+        "striped": "Смугастий",
+        "triangle": "Трикутник"
       }
+    },
+    "title": {
+      "content": "Вміст",
+      "interaction": "Взаємодії",
+      "layout": "Розташування і розмір",
+      "markers": "Маркери та сповіщення",
+      "theme": "Вигляд та відчуття"
     }
   }
 }

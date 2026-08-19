@@ -2,148 +2,158 @@
   "card": {
     "msg": {
       "appliedDefaultValue": "S'ha aplicat automàticament un valor per defecte.",
-      "attributeNotFound": "No s'ha trobat l'atribut a Home Assistant.",
-      "entityNotFound": "No s'ha trobat l'entitat a Home Assistant.",
-      "invalidActionObject": "L'objecte d'acció és invàlid o té una estructura incorrecta.",
       "invalidDecimal": "El valor ha de ser un decimal vàlid.",
-      "invalidEntityId": "L'ID de l'entitat no és vàlid o té un format incorrecte.",
       "invalidEnumValue": "El valor proporcionat no és una opció vàlida.",
-      "invalidStateContent": "El contingut de l'estat és invàlid o té un format incorrecte.",
+      "invalidNoun": "No vàlid o mal format: {noun}.",
       "invalidStateContentEntry": "Una o més entrades del contingut de l'estat són invàlides.",
       "invalidTheme": "El tema especificat és desconegut. S'utilitzarà el tema per defecte.",
-      "invalidTypeArray": "S'esperava un valor de tipus array.",
-      "invalidTypeBoolean": "S'esperava un valor de tipus boolean.",
-      "invalidTypeNumber": "S'esperava un valor de tipus número.",
-      "invalidTypeObject": "S'esperava un valor de tipus objecte.",
-      "invalidTypeString": "S'esperava un valor de tipus cadena.",
+      "invalidType": "Tipus esperat: {type}.",
       "invalidUnionType": "El valor no coincideix amb cap dels tipus permesos.",
       "missingActionKey": "Falta una clau obligatòria a l'objecte d'acció.",
-      "missingRequiredProperty": "Falta una propietat obligatòria."
+      "missingRequiredProperty": "Falta una propietat obligatòria.",
+      "notFound": "No trobat a Home Assistant: {noun}.",
+      "words": {
+        "nouns": {
+          "action_object": "objecte d'acció",
+          "attribute": "atribut",
+          "entity": "entitat",
+          "entity_id": "ID de l'entitat",
+          "state_content": "contingut de l'estat"
+        },
+        "types": {
+          "array": "array",
+          "boolean": "boolean",
+          "number": "número",
+          "object": "objecte",
+          "string": "cadena"
+        }
+      }
     }
   },
   "editor": {
-    "title": {
-      "content": "Contingut",
-      "markers": "Markers & Alerts",
-      "layout": "Layout & Sizing",
-      "interaction": "Interacció",
-      "theme": "Aparença i tema"
-    },
     "field": {
+      "action": {
+        "tap": "Comportament en clicar",
+        "hold": "Comportament en mantenir",
+        "double_tap": "Comportament del doble clic",
+        "icon_tap": "Comportament en tocar la icona",
+        "icon_hold": "Comportament en mantenir la icona premuda",
+        "icon_double_tap": "Comportament del doble clic d'icona"
+      },
+      "action_picker": "Afegeix interacció",
+      "alert_toggle": "Alerta",
+      "alert_when_above_mode": "Font de l'alerta superior",
+      "alert_when_below_mode": "Font de l'alerta inferior",
       "attribute": "Atribut",
       "badge_color": "Color de la insígnia",
+      "badge_color_toggle": "Independent color",
       "badge_icon": "Icona de la insígnia",
-      "bar_color": "Color principal",
-      "bar_effect_jinja": "Efecte de la barra (mode Jinja)",
-      "bar_orientation": "Orientació de la barra",
-      "bar_position": "Posició de la barra",
-      "bar_single_line": "Informació en una sola línia",
-      "bar_size": "Mida de la barra",
-      "bar_segments": "Bar segments",
+      "badge_toggle": "Insígnia",
+      "bar_color": "Color barra",
       "bar_color_mode": "Mode de color",
-      "bar_scale": "Bar scale",
+      "bar_effect_mode": "Efecte de la barra",
+      "bar_group": "Barra",
+      "bar_max_width": "Amplada màxima de la barra",
+      "bar_max_width_toggle": "Amplada màxima de la barra",
+      "bar_orientation": "Orientació",
+      "bar_scale": "Escala",
+      "bar_segments": "Segments",
+      "bar_single_line": "Una línia",
+      "bar_size": "Mida",
+      "bar_stack": "Entitats addicionals",
+      "bar_stack_mode": "Stack mode",
+      "card_size_toggle": "Mida de la targeta",
       "center_zero": "Zero al centre",
-      "center_zero_value": "Valor de centratge",
       "center_zero_growth_percent": "Percentatge de creixement",
+      "center_zero_value": "Valor de centratge",
       "color": "Color principal",
+      "custom_info": "Informació addicional (secundària)",
+      "custom_theme": "Custom theme zones",
       "decimal": "Decimal",
-      "double_tap_action": "Acció al doble tocar",
+      "density_toggle": "Compacte",
       "entity": "Entitat",
-      "force_circular_background": "Forçar fons circular",
-      "hide_jinja": "Amaga (mode Jinja)",
-      "hold_action": "Acció en mantenir premut",
+      "fast_refresh": "Actualització ràpida (per segon)",
+      "force_circular_background_mode": "Fons circular de la icona",
+      "frameless": "Sense marc",
+      "height": "Alçada",
+      "height_custom_toggle": "Shrink height (embedded)",
+      "hide_mode": "Amaga",
       "icon": "Icona",
-      "icon_animation": "Icon animation",
-      "icon_double_tap_action": "Acció al doble tocar la icona",
-      "icon_hold_action": "Acció en mantenir premuda la icona",
-      "icon_tap_action": "Acció al tocar la icona",
+      "icon_animation": "Animació de la icona",
+      "interpolate": "Interpolar colors",
       "layout": "Disposició del contingut",
+      "marginless": "Sense marge",
       "max_value": "Valor màxim",
+      "max_value_mode": "Font del valor màxim",
+      "migrate_config": "Migrate config",
       "min_value": "Valor mínim",
+      "min_value_mode": "Font del valor mínim",
+      "min_width": "Amplada mínima",
+      "multiline": "Multiline",
       "name": "Nom",
+      "name_info": "Informació addicional (nom)",
       "percent": "Percentatge",
+      "position": "Posició",
+      "reverse": "Temporitzador invers",
       "reverse_secondary_info_row": "Intercanvia barra i text",
       "secondary": "Informació secundària",
       "state_content": "Contingut de l'estat",
-      "show_all_actions": "Mostra totes les accions",
-      "tap_action": "Acció al tocar breument",
+      "status_label_toggle": "Etiqueta d'estat",
       "text_shadow": "Afegir ombra al text",
-      "theme_mode": "Theme mode",
       "theme": "Tema",
-      "custom_theme": "Custom theme zones",
+      "trigger": "Disparador",
       "unit": "Unitat",
-      "min_value_mode": "Min value source",
-      "max_value_mode": "Max value source",
-      "watermark_low_mode": "Low marker source",
-      "watermark_high_mode": "High marker source",
-      "alert_when_above_mode": "Above alert source",
-      "alert_when_below_mode": "Below alert source",
-      "bar_max_width": "Bar max width",
-      "bar_max_width_toggle": "Bar max width",
-      "frameless": "Frameless",
-      "height": "Height",
-      "marginless": "Marginless",
-      "min_width": "Min width",
-      "card_size_toggle": "Card size",
-      "unit_spacing": "Unit spacing",
-      "watermark_toggle": "Markers",
-      "alert_toggle": "Alert",
-      "custom_info": "Informació addicional (secundària)",
-      "multiline": "Multiline",
-      "interpolate": "Interpolar colors",
-      "name_info": "Informació addicional (nom)",
-      "reverse": "Temporitzador invers",
-      "bar_stack_mode": "Stack mode",
-      "bar_stack": "Entitats addicionals",
-      "migrate_config": "Migrate config",
-      "icon_animation_jinja_toggle": "Trigger via template",
-      "fast_refresh": "Fast refresh (per-second)",
-      "height_custom_toggle": "Shrink height (embedded)",
-      "status_label_toggle": "Status label",
-      "density_toggle": "Compact",
-      "badge_toggle": "Badge",
-      "badge_color_toggle": "Independent color"
+      "unit_spacing": "Espaiat",
+      "value_compact": "Valor compacte (1.2k)",
+      "value_sign": "Mostra el signe (+/-)",
+      "watermark_high_mode": "Font del marcador alt",
+      "watermark_low_mode": "Font del marcador baix",
+      "watermark_toggle": "Marcadors"
     },
     "field_helper": {
-      "min_value_jinja": "Returns Number (42)",
-      "max_value_jinja": "Returns Number (100)",
-      "watermark_low_jinja": "Returns Number (20)",
-      "watermark_high_jinja": "Returns Number (80)",
-      "alert_when_above_jinja": "Returns Number (90)",
-      "alert_when_below_jinja": "Returns Number (10)",
-      "icon_animation_jinja": "Returns Boolean (true)",
+      "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
       "badge_icon": "Returns String (mdi:fan) or Object ({icon, color})",
-      "badge_color": "Returns String (#ff0000)",
-      "status_label_jinja": "Returns String (hot) or Object ({label, color})",
       "bar_effect": "Returns String (shimmer) or List ([shimmer, gradient])",
-      "hide": "Returns String (icon, name) or List ([icon, name])",
-      "name_info": "Returns String (Living Room)",
-      "custom_info": "Returns String (Charging)",
-      "icon": "Returns String (mdi:fan)",
       "color": "Returns String (#ff0000)",
-      "bar_color": "Returns String (#ff0000)"
+      "custom_info": "Returns String (Charging)",
+      "hide": "Returns String (icon, name) or List ([icon, name])",
+      "icon": "Returns String (mdi:fan)",
+      "icon_animation_jinja": "Returns Boolean (true)",
+      "name_info": "Returns String (Living Room)",
+      "returns_number": "Returns Number (42)",
+      "status_label_jinja": "Returns String (hot) or Object ({label, color})"
     },
     "option": {
-      "theme": {
-        "battery_adaptive": "Battery (adapts to charging state)",
-        "light": "Llum",
-        "temperature": "Temperatura",
-        "humidity": "Humitat",
-        "pm25": "PM2.5",
-        "voc": "VOC",
-        "critical_when_low": "Critical when Low (Battery, disk...)",
-        "optimal_when_low": "Òptim quan és baix",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "optimal_when_high": "Òptim quan és alt",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "critical_when_extreme_center": "Critical when Extreme, centered (center_zero)"
+      "alert_animation": {
+        "blink": "Parpelleig",
+        "ping": "Ping",
+        "static": "Estàtic"
       },
-      "bar_size": {
-        "xsmall": "Extra Small",
-        "small": "Petita",
-        "medium": "Mitjana",
-        "large": "Gran",
-        "xlarge": "Extra gran"
+      "alert_highlight": {
+        "background": "Background",
+        "border": "Border",
+        "label": "Etiqueta"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "animation": "Animació",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "bar_color_mode": {
+        "auto": "Automàtic",
+        "rainbow": "Arc de Sant Martí",
+        "rainbow_full": "Arc de Sant Martí (complet)",
+        "segment": "Segments"
+      },
+      "bar_effect": {
+        "glass": "Vidre",
+        "gradient": "Degradat",
+        "gradient_reverse": "Degradat invers",
+        "radius": "Cantonades arrodonides",
+        "shimmer": "Resplendor",
+        "shimmer_reverse": "Resplendor invers"
       },
       "bar_orientation": {
         "ltr": "D'esquerra a dreta",
@@ -151,163 +161,145 @@
         "up": "Cap amunt"
       },
       "bar_position": {
-        "default": "Predeterminada",
+        "background": "Fons de la targeta",
         "below": "Barra sota el contingut",
-        "compact_below": "Compact bar below (name/value on one row)",
-        "top": "Barra a sobre",
         "bottom": "Barra a sota",
+        "compact_below": "Barra compacta a sota (nom/valor en una línia)",
+        "default": "Predeterminada",
         "overlay": "Barra superposada al contingut (overlay)",
-        "background": "Fons de la targeta"
-      },
-      "layout": {
-        "horizontal": "Horitzontal (predeterminada)",
-        "vertical": "Vertical"
-      },
-      "bar_color_mode": {
-        "auto": "Automàtic",
-        "segment": "Segments",
-        "rainbow": "Arc de Sant Martí",
-        "rainbow_full": "Rainbow (full)"
+        "top": "Barra a sobre"
       },
       "bar_scale": {
         "linear": "Linear",
         "log": "Logarithmic"
       },
-      "bar_effect": {
-        "radius": "Cantonades arrodonides",
-        "glass": "Vidre",
-        "gradient": "Degradat",
-        "gradient_reverse": "Degradat invers",
-        "shimmer": "Resplendor",
-        "shimmer_reverse": "Resplendor invers"
+      "bar_size": {
+        "large": "Gran",
+        "medium": "Mitjana",
+        "small": "Petita",
+        "xlarge": "Extra gran",
+        "xsmall": "Molt petit"
+      },
+      "bar_stack_mode": {
+        "net": "Net",
+        "proportional": "Sum",
+        "stacked": "Stacked"
+      },
+      "force_circular_background_mode": {
+        "auto": "Automàtic",
+        "forced": "Forçat"
       },
       "hide": {
         "icon": "Icona",
         "name": "Nom",
-        "value": "Valor",
-        "unit": "Unitat",
+        "progress_bar": "Barra",
         "secondary_info": "Info",
-        "progress_bar": "Barra"
-      },
-      "unit_spacing": {
-        "auto": "Auto",
-        "space": "Space",
-        "no-space": "No space"
-      },
-      "watermark_type": {
-        "blended": "Blended",
-        "area": "Area",
-        "striped": "Striped",
-        "triangle": "Triangle",
-        "round": "Round",
-        "line": "Line"
-      },
-      "watermark_as": {
-        "auto": "Auto",
-        "percent": "Percent"
-      },
-      "watermark": {
-        "low": "Low",
-        "high": "High",
-        "type": "Type",
-        "opacity": "Opacity",
-        "low_color": "Low color",
-        "high_color": "High color",
-        "low_as": "Low unit",
-        "high_as": "High unit",
-        "line_size": "Line size",
-        "disable_low": "Disable low",
-        "disable_high": "Disable high",
-        "low_attribute": "Attribute",
-        "high_attribute": "Attribute"
+        "shape": "Fons circular de la icona",
+        "unit": "Unitat",
+        "value": "Valor"
       },
       "icon_animation": {
-        "spin": "Spin",
-        "pulse": "Pulse",
+        "battery_charging": "Battery charging",
         "bounce": "Bounce",
-        "shake": "Shake",
         "ping": "Ping",
+        "pulse": "Pulse",
         "reveal": "Reveal",
-        "washing_machine": "Washing machine",
-        "battery_charging": "Battery charging"
+        "shake": "Shake",
+        "spin": "Spin",
+        "washing_machine": "Washing machine"
       },
-      "alert_when": {
-        "above": "Alert above",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight",
-        "animation": "Animation",
-        "above_attribute": "Attribute",
-        "below_attribute": "Attribute"
-      },
-      "alert_highlight": {
-        "border": "Border",
-        "background": "Background",
-        "label": "Label"
-      },
-      "status_label": {
-        "jinja": "Status label",
-        "position": "Label position",
-        "color_source": "Color source"
+      "icon_animation_mode": {
+        "auto": "Automàtic",
+        "template": "Plantilla"
       },
       "label_position": {
-        "left": "Left",
-        "right": "Right"
+        "left": "Esquerra",
+        "right": "Dreta"
+      },
+      "layout": {
+        "horizontal": "Horitzontal (predeterminada)",
+        "vertical": "Vertical"
+      },
+      "simple_advanced_mode": {
+        "advanced": "Avançat",
+        "simple": "Simple"
+      },
+      "status_label": {
+        "color_source": "Font del color",
+        "jinja": "Etiqueta d'estat",
+        "position": "Posició de l'etiqueta"
       },
       "status_label_color_source": {
-        "bar": "Progress bar",
-        "icon": "Icon"
+        "bar": "Barra de progrés",
+        "icon": "Icona"
       },
-      "alert_animation": {
-        "static": "Static",
-        "blink": "Blink",
-        "ping": "Ping"
-      },
-      "min_value_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "max_value_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "watermark_low_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "watermark_high_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_above_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_below_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
+      "theme": {
+        "battery_adaptive": "Bateria (s'adapta a l'estat de càrrega)",
+        "critical_when_extreme": "Crític en extrem (nivell de dipòsit, desviació...)",
+        "critical_when_extreme_center": "Crític en extrem, centrat (center_zero)",
+        "critical_when_high": "Crític si és alt (CPU, RAM, ús de disc...)",
+        "critical_when_low": "Crític si és baix (bateria, disc...)",
+        "humidity": "Humitat",
+        "light": "Llum",
+        "optimal_when_high": "Òptim quan és alt",
+        "optimal_when_low": "Òptim quan és baix",
+        "pm25": "PM2.5",
+        "temperature": "Temperatura",
+        "voc": "VOC"
       },
       "theme_mode": {
-        "preset": "Preset",
-        "custom": "Custom"
+        "custom": "Custom",
+        "preset": "Preset"
       },
-      "min_value": {
+      "unit_position": {
+        "after": "Després del valor",
+        "before": "Abans del valor"
+      },
+      "unit_spacing": {
+        "auto": "Automàtic",
+        "no-space": "Sense espai",
+        "space": "Espai"
+      },
+      "value_shape": {
         "attribute": "Attribute"
       },
-      "max_value": {
-        "attribute": "Attribute"
+      "value_source_mode": {
+        "entity": "Entity",
+        "jinja": "Template",
+        "standard": "Fixed value"
       },
-      "bar_stack_mode": {
-        "stacked": "Stacked",
-        "proportional": "Sum",
-        "net": "Net"
+      "watermark": {
+        "disable_high": "Disable high",
+        "disable_low": "Disable low",
+        "high": "High",
+        "high_as": "High unit",
+        "high_color": "High color",
+        "line_size": "Line size",
+        "low": "Low",
+        "low_as": "Low unit",
+        "low_color": "Low color",
+        "opacity": "Opacity",
+        "type": "Type"
+      },
+      "watermark_as": {
+        "auto": "Automàtic",
+        "percent": "Percentatge"
+      },
+      "watermark_type": {
+        "area": "Àrea",
+        "blended": "Fusionat",
+        "line": "Línia",
+        "round": "Rodó",
+        "striped": "Ratllat",
+        "triangle": "Triangle"
       }
+    },
+    "title": {
+      "content": "Contingut",
+      "interaction": "Interacció",
+      "layout": "Disposició i mida",
+      "markers": "Marcadors i alertes",
+      "theme": "Aparença i tema"
     }
   }
 }

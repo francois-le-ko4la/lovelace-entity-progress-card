@@ -4,6 +4,264 @@ All notable changes to the Entity Progress Card are documented here, most recent
 first. See [`docs/rc-testing.md`](docs/rc-testing.md) for how to try a release
 candidate safely before it becomes stable.
 
+## 1.6.2
+
+Quieter than 1.6.1, but not a small release: `alert_when` gains a Jinja-driven
+trigger, and the full `--epb-*` CSS styling API finally gets documented and
+tested.
+
+### ⭐ Highlights
+
+#### 🎯 `alert_when` goes Advanced: trigger it from a Jinja condition
+
+A new Simple/Advanced chip in the editor switches `alert_when` between the
+static `above`/`below` thresholds and a single `jinja` condition that replaces
+them entirely — polymorphic like `status_label`/`badge_icon`: return a plain
+`true`/`false` to trigger the alert with its existing
+`color`/`highlight`/`animation`/`label`, or an object with any of those four
+keys to override just that push, falling back to the static value for whatever's
+left out. See [`alert_when`](docs/configuration.md#alert_when).
+
+`alert_when` also reaches Template and Badge Template for the first time —
+Jinja-only there (no `above`/`below`, no static fields to fall back to), so the
+object return is the only form worth using.
+
+#### 🎨 The full CSS styling API, finally documented and tested
+
+Most `--epb-*` custom properties date back to 1.6.1's browser-compat CSS rework,
+but were never written down — there wasn't yet a way to be confident every
+single one actually did what it claimed. [`docs/theme.md`](docs/theme.md#css)
+now documents all 46 of them (13 were previously undocumented), backed by a new
+CSS hooks view in [`docs/demo-dashboard.yaml`](docs/demo-dashboard.yaml) that
+gives each one its own card, isolating a single override so the effect is
+obvious at a glance — the test bench that made trusting this documentation
+possible.
+
+On top of that, two ways to remove the circular shape behind the icon: the new
+`--epb-icon-shape-opacity` CSS hook, and — Card and Template — `hide: [shape]`
+for anyone who'd rather not reach for `card_mod` at all. Neither reaches Badge/
+BadgeTemplate, which have no shape by default. Either replaces the `card_mod`
+override that stopped working once 1.6.1 moved that background onto its own
+layer.  
+➡️ [Feature]: Configuration possibility for the icon background visibility #136
+(@RkcCorian)
+
+#### 🔢 Three new ways to format the displayed value
+
+All opt-in, Card and Badge:
+[`value_compact`](docs/configuration.md#value_compact) abbreviates large numbers
+(`1250000` → `1.3M`, locale-aware, `decimal` caps the digits without forcing
+trailing zeros); [`unit_position`](docs/configuration.md#unit_position) moves
+the unit before the value for currency-style display (`$100`);
+[`value_sign`](docs/configuration.md#value_sign) forces an explicit `+`/`-`,
+handy on `center_zero`/`bar_stack: { mode: net }` deltas.
+
+#### 🎛️ The editor never looked this close to native Home Assistant
+
+Every 2-mode toggle — `theme_mode` (Preset/Custom), `alert_when_mode`/
+`bar_effect_mode`/`hide_mode` (Simple/Advanced), and two new ones,
+`icon_animation_mode` (Auto/Template) and `force_circular_background_mode`
+(Auto/Forced), both replacing their old plain boolean switch — now renders as
+one fused segmented pill instead of separate chips, styled straight from Home
+Assistant's own design tokens (`--wa-color-brand-fill-loud`/`-normal`, falling
+back to the legacy `--primary-color` family on older HA) instead of one-off
+colors. Found along the way: `icon_animation`'s own toggle had never been
+translated correctly — every language showed the literal placeholder "Trigger
+via template" instead of its own text.
+
+The interactions panel's `hold_action`/`double_tap_action`/`icon_hold_action`/
+`icon_double_tap_action` also drop the old "show all" toggle for a "+ Add
+interaction" button that reveals them one at a time — the same picker
+`ha-form`'s native `optional_actions` field offers, hand-built here since this
+editor predates and isn't based on `ha-form`.
+
+### 🐛 Notable fixes
+
+- `status_label`'s own Jinja pill stayed permanently hidden once
+  `alert_when.highlight: 'label'` was configured, even while the alert itself
+  was inactive — the pill is now handed back to `status_label` whenever the
+  alert isn't currently triggered.
+- The editor's "Alert" toggle used to wipe the whole `alert_when` config
+  (including a typed `alert_when.jinja` template) every time it was switched off
+  — now preserves a draft, like `status_label`'s own toggle already did.
+- Same bug on the "Markers" toggle: switching it off used to permanently discard
+  the whole `watermark` setup (type, thresholds, colors, …) instead of just
+  hiding it — now preserves a draft too. `bar_max_width`'s toggle had the milder
+  version of the same issue (lost a custom value, fell back to the 300px
+  default) — fixed the same way.
+- The editor's "Compact" toggle (`density: compact`) stayed visible with
+  `layout: vertical` selected, even though it only has a meaningful shape in
+  horizontal — now hidden while vertical instead of silently switching it back
+  on toggle.
+- **Editor translations are now complete across all 39 supported languages** —
+  several labels had silently stayed in English since the day they shipped,
+  invisible to the usual checks.
+- Translations are organized more consistently under the hood, with a welcome
+  side effect: a noticeably lighter download.
+- A few editor labels were simplified or clarified where two different fields
+  ended up showing the exact same text.
+
+### 📚 Documentation
+
+- The release notes' and CHANGELOG's own `graphic-effects-compatibility.html`
+  links now point through `htmlpreview.github.io` instead of GitHub's raw blob
+  view, so the page actually renders instead of opening as source code.
+- [`configuration.md`](docs/configuration.md) gains `hide`'s `shape` option,
+  `alert_when`'s Advanced mode with new examples, `value_compact`,
+  `unit_position`, and `value_sign`.
+- `hide: [shape]`'s editor label translated across all 39 languages + template —
+  a descriptive phrase ("Icon's circular background") rather than the bare
+  English word, matching how the option is described in
+  [`configuration.md`](docs/configuration.md#hide).
+
+### 🧹 Under the hood
+
+- Badge's own schema silently accepted `hide: [shape]` even though Badge has no
+  shape to hide in the first place (Badge Template already excluded it) — now
+  consistently blocked for both.
+- **The full card is about 109 KB lighter than 1.6.1 (-16%)**, despite
+  everything new above. Translations no longer repeat each key's full name in
+  every language (it did, 39 times over), and a long tail of
+  internally-duplicated text now shares one entry instead of a copy each. Purely
+  internal; the translated text you see hasn't changed.
+- A handful of editor fields that happened to carry the exact same label as a
+  neighboring one (`bar_position`/`unit_position` both said "Position",
+  `alert_when_mode`/`icon_animation_mode` both said "Trigger mode") now share a
+  single, shorter label instead of two redundant copies.
+
+---
+
+## What's new (1.6.2-rc1)
+
+### ✨ New
+
+- **`--epb-icon-shape-opacity`**: new CSS hook, `0` removes the circular shape
+  behind the icon entirely. See [CSS hooks](docs/theme.md#css).
+- **`hide: [shape]`**: same result as the hook above, without `card_mod` — Card
+  and Template, Badge/BadgeTemplate have no shape by default.  
+  ➡️ [Feature]: Configuration possibility for the icon background visibility
+  #136 (@RkcCorian)
+- **`alert_when.jinja`**: new Advanced mode (Simple/Advanced chip in the editor)
+  — a Jinja condition replaces `above`/`below` as the trigger, returning
+  `true`/`false` or an object overriding any of `color`/
+  `animation`/`highlight`/`label` for that push. See
+  [`alert_when`](docs/configuration.md#alert_when).
+- **`alert_when` on Template/Badge Template**: new, Jinja-only — neither variant
+  had `alert_when` in any form before. No `above`/`below`/`color`/
+  `highlight`/`animation`/`label`, so the object return is the only form with a
+  visible effect.
+- **`value_compact`**: Card and Badge, opt-in — abbreviates large values using
+  locale-aware suffixes (`1250000` → `1.3M`) instead of the full number.
+  `decimal` still caps the fraction digits, trailing zeros are trimmed. See
+  [`value_compact`](docs/configuration.md#value_compact).
+- **`unit_position`**: Card and Badge, opt-in — moves the unit before the value
+  instead of after (`$100` rather than `100$`) for currency-style display. See
+  [`unit_position`](docs/configuration.md#unit_position).
+- **`value_sign`**: Card and Badge, opt-in — forces an explicit `+`/`-` on the
+  displayed value (zero stays unsigned), clarifying the direction of a
+  `center_zero`/`bar_stack: { mode: net }` delta at a glance. See
+  [`value_sign`](docs/configuration.md#value_sign).
+- **Editor**: 2-mode chip selectors now render as a single fused segmented pill
+  instead of two separate chips or a plain toggle - `theme_mode`
+  (Preset/Custom), `alert_when_mode`/`bar_effect_mode`/`hide_mode`
+  (Simple/Advanced, replacing their old boolean toggle), the new
+  `icon_animation_mode` (Auto/Template, same replacement), and
+  `force_circular_background_mode` (Auto/Forced, same replacement).
+- **Editor**: `hold_action`/`double_tap_action`/`icon_hold_action`/
+  `icon_double_tap_action` now stay hidden behind a "+ Add interaction" button,
+  revealed one at a time — replaces the old "show all" toggle.
+
+### 🐛 Fixes
+
+- `status_label`'s own Jinja pill stayed permanently hidden once
+  `alert_when.highlight: 'label'` was configured, even while the alert itself
+  was inactive.
+- The editor's "Alert" toggle wiped the whole `alert_when` config (including a
+  typed `alert_when.jinja` template) every time it was switched off, unlike
+  `status_label`'s own toggle — now preserves a draft, same pattern.
+- Same bug on the "Markers" toggle: switching it off permanently discarded the
+  whole `watermark` setup (type, thresholds, colors, …) instead of just hiding
+  it — now preserves a draft too. `bar_max_width`'s toggle had the milder
+  version (lost a custom value, fell back to the 300px default) — fixed the same
+  way.
+- The editor's "Compact" toggle (`density: compact`) stayed visible and
+  clickable with `layout: vertical` selected, even though compact density only
+  has a meaningful shape in horizontal — toggling it on silently forced layout
+  back to horizontal instead. Now hidden while vertical.
+- **Editor translations are now complete across all 39 supported languages** —
+  several labels had silently stayed in English since the day they shipped,
+  invisible to the usual checks.
+- Translations are organized more consistently under the hood, with a welcome
+  side effect: a noticeably lighter download.
+- A few editor labels were simplified or clarified where two different fields
+  ended up showing the exact same text.
+
+### 📚 Documentation
+
+- **The `--epb-*` CSS styling API is now fully documented.** Most of it was
+  built during 1.6.1's browser-compat CSS rework, but stayed undocumented —
+  there wasn't yet a test bench to confirm every hook actually did what it
+  claimed. 13 previously-undocumented variables added to
+  [`docs/theme.md`](docs/theme.md#css) (icon `battery-charging` bolt geometry,
+  `bar_segments`/`progress-bar-min-width`, the `rainbow_full` marker set,
+  `status_label` pill colors), backed by a new CSS hooks view in
+  `docs/demo-dashboard.yaml` — one card per `--epb-*` variable, each isolating a
+  single override.
+- `graphic-effects-compatibility.html` links (release notes + CHANGELOG) now go
+  through `htmlpreview.github.io` so the page renders instead of showing as raw
+  source.
+- [`configuration.md`](docs/configuration.md) updated: `hide`'s `shape` option,
+  `alert_when`'s Advanced mode (with two new examples) and its reach onto
+  Template/Badge Template, `value_compact`, `unit_position`, and `value_sign`.
+- `editor.option.hide.shape` added to all 39 languages + template, using a
+  descriptive phrase ("Icon's circular background") instead of a bare "Shape".
+- `alert_when.jinja`'s editor labels/field-helper added to all 39 languages +
+  template; two demo cards in `docs/demo-dashboard.yaml` (plain boolean, and an
+  object with a partial override).
+- One more demo card for Template's own `alert_when.jinja` — reuses the same
+  translation keys, no new ones needed.
+- `value_compact`'s editor label added to all 39 languages + template; three
+  demo cards in `docs/demo-dashboard.yaml` (default, compact, compact with
+  `decimal: 2`) on a new `input_number.epb_demo_total_energy` helper.
+- `unit_position`'s editor label + `after`/`before` options, and `value_sign`'s
+  editor label, added to all 39 languages + template; a currency-prefix demo
+  card and a `center_zero` + `value_sign` demo card in
+  `docs/demo-dashboard.yaml`.
+- [`docs/troubleshooting.md`](docs/troubleshooting.md): a version check that
+  still shows the old one right after updating is usually HACS lagging behind
+  the actual release — use **⋮ → Redownload** to force a fresh install instead
+  of assuming the update failed.  
+  ➡️ #137
+
+### 🧹 Under the hood
+
+- `translations/template.json` (the structural reference file, never shipped) no
+  longer picks up stray real text — it should only ever hold placeholders.
+- Badge's schema silently accepted `hide: [shape]` even though Badge has no
+  shape to hide in the first place (Badge Template already excluded it) — now
+  consistently blocked for both.
+- **Bundle down ~195 KB (-27%)**: the generated translations file used to repeat
+  every key's full name in each of the 39 languages. Restated once, with each
+  language's values kept separately — same translated text, same behavior,
+  meaningfully less to download. Verified against the previous version
+  value-by-value before shipping (9672 values × 39 languages, 0 mismatches). See
+  [Internationalization](docs/development.md#internationalization).
+- **A further ~32 KB shaved off on top of that**: a long tail of
+  internally-duplicated text — the same word or sentence stored separately for
+  half a dozen near-identical fields or error messages — now shares one entry
+  instead of a copy each (mode-toggle option words like "Simple"/"Advanced", the
+  Jinja-helper hints, several developer-console-only validation messages).
+  Purely internal; nothing translated changed.
+- **Net result: the full prod bundle (`dist/entity-progress-card.js`) ships ~109
+  KB smaller than 1.6.1 (-16%)**, even after every feature and fix above —
+  verified by comparing the built file between the two tags.
+- A handful of editor fields that happened to carry the exact same label as a
+  neighboring one (`bar_position`/`unit_position` both said "Position",
+  `alert_when_mode`/`icon_animation_mode` both said "Trigger mode") now share
+  one, shorter label instead of two redundant copies.
+
+---
+
 ## 1.6.1
 
 A bigger release than it looks: combine several bars into one card, themes and
@@ -306,9 +564,8 @@ mouse/touch:
   flat, un-lightened bar for the first, a glitchy mid-cycle color for the
   second, not starting at all for `ping`; all degrade gracefully now. The icon's
   circular background had the same issue, fixed by simplifying it to a technique
-  that needs no fallback at all. See
-  [graphic-effects-compatibility.html](docs/graphic-effects-compatibility.html)
-  for a full side-by-side of what changes on an older browser and how to test it
+  that needs no fallback at all. See [graphic-effects-compatibility.html] for a
+  full side-by-side of what changes on an older browser and how to test it
   yourself.
 - Template's [`watermark`](docs/configuration.md#watermark) `low`/`high` in
   `{ jinja: ... }` mode never actually resolved — no subscription was ever wired
@@ -377,11 +634,11 @@ live.
 
 ### 📚 Documentation
 
-Wondering how any of this degrades on an older or embedded browser?
-[`docs/graphic-effects-compatibility.html`](docs/graphic-effects-compatibility.html)
-is a standalone side-by-side of every graphic effect (gradients, `ping`/`blink`
-animations, `rainbow_full`, …) at both its modern and fallback tier — open it
-directly in the browser you want to check.
+Wondering how any of this degrades on an older or embedded browser? The
+[graphic-effects-compatibility.html] page is a standalone side-by-side of every
+graphic effect (gradients, `ping`/`blink` animations, `rainbow_full`, …) at both
+its modern and fallback tier — rendered live, open it directly in the browser
+you want to check.
 
 The docs got a pass of their own alongside the code this cycle:
 [`docs/development.md`](docs/development.md) gains a Quick start chapter (clone,
@@ -5328,6 +5585,8 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/theme.md
 [Deprecated Options]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/troubleshooting.md#deprecated-options
+[graphic-effects-compatibility.html]:
+  https://htmlpreview.github.io/?https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/graphic-effects-compatibility.html
 [bar_stack]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_stack
 [max_value]:

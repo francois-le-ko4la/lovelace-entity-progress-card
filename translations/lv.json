@@ -2,148 +2,158 @@
   "card": {
     "msg": {
       "appliedDefaultValue": "Noklusējuma vērtība tika automātiski piemērota.",
-      "attributeNotFound": "Atribūts nav atrasts Home Assistant.",
-      "entityNotFound": "Vienība nav atrasta Home Assistant.",
-      "invalidActionObject": "Darbības objekts nav derīgs vai ir nepareizi strukturēts.",
       "invalidDecimal": "Vērtībai jābūt pozitīvam veselajam skaitlim.",
-      "invalidEntityId": "Vienības ID nav derīgs vai ir nepareizs.",
       "invalidEnumValue": "Ievadītā vērtība nav atļauto opciju sarakstā.",
-      "invalidStateContent": "Stāvokļa saturs nav derīgs vai ir nepareizi strukturēts.",
+      "invalidNoun": "Nederīgs vai nepareizi strukturēts: {noun}.",
       "invalidStateContentEntry": "Viena vai vairākas stāvokļa satura ievades nav derīgas.",
       "invalidTheme": "Norādītā tēma nav zināma. Tiks izmantota noklusējuma tēma.",
-      "invalidTypeArray": "Tika gaidīta masīva tipa vērtība.",
-      "invalidTypeBoolean": "Tika gaidīta loģiska (boolean) vērtība.",
-      "invalidTypeNumber": "Tika gaidīta skaitļa tipa vērtība.",
-      "invalidTypeObject": "Tika gaidīta objekta tipa vērtība.",
-      "invalidTypeString": "Tika gaidīta virknes tipa vērtība.",
+      "invalidType": "Gaidītais tips: {type}.",
       "invalidUnionType": "Vērtība neatbilst nevienam atļautajam tipam.",
       "missingActionKey": "Trūkst obligātā atslēga darbības objektā.",
-      "missingRequiredProperty": "Trūkst obligātā īpašība."
+      "missingRequiredProperty": "Trūkst obligātā īpašība.",
+      "notFound": "Nav atrasts HA: {noun}.",
+      "words": {
+        "nouns": {
+          "action_object": "darbības objekts",
+          "attribute": "atribūts",
+          "entity": "entītija",
+          "entity_id": "entītijas ID",
+          "state_content": "stāvokļa saturs"
+        },
+        "types": {
+          "array": "masīvs",
+          "boolean": "loģiska vērtība",
+          "number": "skaitlis",
+          "object": "objekts",
+          "string": "virkne"
+        }
+      }
     }
   },
   "editor": {
-    "title": {
-      "content": "Saturs",
-      "markers": "Markers & Alerts",
-      "layout": "Layout & Sizing",
-      "interaction": "Saskarsme",
-      "theme": "Izskats un lietojamība"
-    },
     "field": {
+      "action": {
+        "tap": "Darbība pieskaroties",
+        "hold": "Darbība turot piespiestu",
+        "double_tap": "Darbība veicot dubultskārienu",
+        "icon_tap": "Darbība pieskaroties ikonai",
+        "icon_hold": "Ikonu noturēšanas darbība",
+        "icon_double_tap": "Ikonas dubultskāriena darbība"
+      },
+      "action_picker": "Pievienot mijiedarbību",
+      "alert_toggle": "Brīdinājums",
+      "alert_when_above_mode": "Augšējā brīdinājuma avots",
+      "alert_when_below_mode": "Apakšējā brīdinājuma avots",
       "attribute": "Atribūts",
       "badge_color": "Žetona krāsa",
+      "badge_color_toggle": "Independent color",
       "badge_icon": "Žetona ikona",
+      "badge_toggle": "Nozīmīte",
       "bar_color": "Joslas krāsa",
-      "bar_effect_jinja": "Joslas efekts (Jinja režīms)",
-      "bar_orientation": "Joslas orientācija",
-      "bar_position": "Joslas pozīcija",
-      "bar_single_line": "Informācija vienā rindā",
-      "bar_size": "Joslas izmērs",
-      "bar_segments": "Bar segments",
       "bar_color_mode": "Krāsas režīms",
-      "bar_scale": "Bar scale",
+      "bar_effect_mode": "Joslas efekts",
+      "bar_group": "Josla",
+      "bar_max_width": "Maks. joslas platums",
+      "bar_max_width_toggle": "Maks. joslas platums",
+      "bar_orientation": "Orientācija",
+      "bar_scale": "Skala",
+      "bar_segments": "Segmenti",
+      "bar_single_line": "Viena rinda",
+      "bar_size": "Izmērs",
+      "bar_stack": "Papildu entītijas",
+      "bar_stack_mode": "Stack mode",
+      "card_size_toggle": "Kartītes izmērs",
       "center_zero": "Nulles centrā",
-      "center_zero_value": "Centra vērtība",
       "center_zero_growth_percent": "Pieauguma procents",
+      "center_zero_value": "Centra vērtība",
       "color": "Ikonas krāsa",
+      "custom_info": "Pielāgota sekundārā informācija",
+      "custom_theme": "Custom theme zones",
       "decimal": "Decimāldaļa",
-      "double_tap_action": "Divreiz pieskaroties",
+      "density_toggle": "Kompakts",
       "entity": "Vienība",
-      "force_circular_background": "Piespiest apļu fonu",
-      "hide_jinja": "Slēpt (Jinja režīms)",
-      "hold_action": "Ilgs pieskāriens",
+      "fast_refresh": "Ātra atsvaidze (katru sekundi)",
+      "force_circular_background_mode": "Ikonas apaļais fons",
+      "frameless": "Bez rāmja",
+      "height": "Augstums",
+      "height_custom_toggle": "Shrink height (embedded)",
+      "hide_mode": "Slēpt",
       "icon": "Ikona",
-      "icon_animation": "Icon animation",
-      "icon_double_tap_action": "Ikonas dubults pieskāriens",
-      "icon_hold_action": "Ikonas ilgs pieskāriens",
-      "icon_tap_action": "Ikonas pieskāriens",
+      "icon_animation": "Ikonas animācija",
+      "interpolate": "Krāsu interpolācija",
       "layout": "Satura izkārtojums",
+      "marginless": "Bez malas",
       "max_value": "Maksimālā vērtība",
+      "max_value_mode": "Maksimālās vērtības avots",
+      "migrate_config": "Migrate config",
       "min_value": "Minimālā vērtība",
+      "min_value_mode": "Minimālās vērtības avots",
+      "min_width": "Min. platums",
+      "multiline": "Multiline",
       "name": "Nosaukums",
+      "name_info": "Pielāgota nosaukuma informācija",
       "percent": "Procenti",
+      "position": "Pozīcija",
+      "reverse": "Apgriezts taimeris",
       "reverse_secondary_info_row": "Mainīt joslu un tekstu",
       "secondary": "Papildu informācija",
       "state_content": "Stāvokļa saturs",
-      "show_all_actions": "Rādīt visas darbības",
-      "tap_action": "Pieskāriens",
+      "status_label_toggle": "Statusa etiķete",
       "text_shadow": "Pievienot teksta ēnu",
-      "theme_mode": "Theme mode",
       "theme": "Tēma",
-      "custom_theme": "Custom theme zones",
+      "trigger": "Aktivizētājs",
       "unit": "Vienība",
-      "min_value_mode": "Min value source",
-      "max_value_mode": "Max value source",
-      "watermark_low_mode": "Low marker source",
-      "watermark_high_mode": "High marker source",
-      "alert_when_above_mode": "Above alert source",
-      "alert_when_below_mode": "Below alert source",
-      "bar_max_width": "Bar max width",
-      "bar_max_width_toggle": "Bar max width",
-      "frameless": "Frameless",
-      "height": "Height",
-      "marginless": "Marginless",
-      "min_width": "Min width",
-      "card_size_toggle": "Card size",
-      "unit_spacing": "Unit spacing",
-      "watermark_toggle": "Markers",
-      "alert_toggle": "Alert",
-      "custom_info": "Pielāgota sekundārā informācija",
-      "multiline": "Multiline",
-      "interpolate": "Krāsu interpolācija",
-      "name_info": "Pielāgota nosaukuma informācija",
-      "reverse": "Apgriezts taimeris",
-      "bar_stack_mode": "Stack mode",
-      "bar_stack": "Papildu entītijas",
-      "migrate_config": "Migrate config",
-      "icon_animation_jinja_toggle": "Trigger via template",
-      "fast_refresh": "Fast refresh (per-second)",
-      "height_custom_toggle": "Shrink height (embedded)",
-      "status_label_toggle": "Status label",
-      "density_toggle": "Compact",
-      "badge_toggle": "Badge",
-      "badge_color_toggle": "Independent color"
+      "unit_spacing": "Atstarpe",
+      "value_compact": "Kompakta vērtība (1.2k)",
+      "value_sign": "Rādīt zīmi (+/-)",
+      "watermark_high_mode": "Augstā marķiera avots",
+      "watermark_low_mode": "Zemā marķiera avots",
+      "watermark_toggle": "Marķieri"
     },
     "field_helper": {
-      "min_value_jinja": "Returns Number (42)",
-      "max_value_jinja": "Returns Number (100)",
-      "watermark_low_jinja": "Returns Number (20)",
-      "watermark_high_jinja": "Returns Number (80)",
-      "alert_when_above_jinja": "Returns Number (90)",
-      "alert_when_below_jinja": "Returns Number (10)",
-      "icon_animation_jinja": "Returns Boolean (true)",
+      "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
       "badge_icon": "Returns String (mdi:fan) or Object ({icon, color})",
-      "badge_color": "Returns String (#ff0000)",
-      "status_label_jinja": "Returns String (hot) or Object ({label, color})",
       "bar_effect": "Returns String (shimmer) or List ([shimmer, gradient])",
-      "hide": "Returns String (icon, name) or List ([icon, name])",
-      "name_info": "Returns String (Living Room)",
-      "custom_info": "Returns String (Charging)",
-      "icon": "Returns String (mdi:fan)",
       "color": "Returns String (#ff0000)",
-      "bar_color": "Returns String (#ff0000)"
+      "custom_info": "Returns String (Charging)",
+      "hide": "Returns String (icon, name) or List ([icon, name])",
+      "icon": "Returns String (mdi:fan)",
+      "icon_animation_jinja": "Returns Boolean (true)",
+      "name_info": "Returns String (Living Room)",
+      "returns_number": "Returns Number (42)",
+      "status_label_jinja": "Returns String (hot) or Object ({label, color})"
     },
     "option": {
-      "theme": {
-        "battery_adaptive": "Battery (adapts to charging state)",
-        "light": "Gaiša",
-        "temperature": "Temperatūra",
-        "humidity": "Mitrums",
-        "pm25": "PM2.5",
-        "voc": "VOC",
-        "critical_when_low": "Critical when Low (Battery, disk...)",
-        "optimal_when_low": "Optimāli pie zemām vērtībām",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "optimal_when_high": "Optimāli pie augstām vērtībām",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "critical_when_extreme_center": "Critical when Extreme, centered (center_zero)"
+      "alert_animation": {
+        "blink": "Mirgošana",
+        "ping": "Ping",
+        "static": "Statisks"
       },
-      "bar_size": {
-        "xsmall": "Extra Small",
-        "small": "Mazs",
-        "medium": "Vidējs",
-        "large": "Liels",
-        "xlarge": "Ļoti liels"
+      "alert_highlight": {
+        "background": "Background",
+        "border": "Border",
+        "label": "Etiķete"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "animation": "Animācija",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "bar_color_mode": {
+        "auto": "Automātisks",
+        "rainbow": "Varavīksne",
+        "rainbow_full": "Varavīksne (pilna)",
+        "segment": "Segmenti"
+      },
+      "bar_effect": {
+        "glass": "Stikls",
+        "gradient": "Gradients",
+        "gradient_reverse": "Apgriezts gradients",
+        "radius": "Noapaļoti stūri",
+        "shimmer": "Mirdzums",
+        "shimmer_reverse": "Apgriezts mirdzums"
       },
       "bar_orientation": {
         "ltr": "No kreisās uz labo",
@@ -151,163 +161,145 @@
         "up": "Uz augšu"
       },
       "bar_position": {
-        "default": "Noklusētais",
+        "background": "Kartes fons",
         "below": "Josla zem satura",
-        "compact_below": "Compact bar below (name/value on one row)",
-        "top": "Josla augšā",
         "bottom": "Josla apakšā",
+        "compact_below": "Kompakta josla apakšā (nosaukums/vērtība vienā rindā)",
+        "default": "Noklusētais",
         "overlay": "Josla virs satura (overlay)",
-        "background": "Kartes fons"
-      },
-      "layout": {
-        "horizontal": "Horizontāls (noklusēts)",
-        "vertical": "Vertikāls"
-      },
-      "bar_color_mode": {
-        "auto": "Automātisks",
-        "segment": "Segmenti",
-        "rainbow": "Varavīksne",
-        "rainbow_full": "Rainbow (full)"
+        "top": "Josla augšā"
       },
       "bar_scale": {
         "linear": "Linear",
         "log": "Logarithmic"
       },
-      "bar_effect": {
-        "radius": "Noapaļoti stūri",
-        "glass": "Stikls",
-        "gradient": "Gradients",
-        "gradient_reverse": "Apgriezts gradients",
-        "shimmer": "Mirdzums",
-        "shimmer_reverse": "Apgriezts mirdzums"
+      "bar_size": {
+        "large": "Liels",
+        "medium": "Vidējs",
+        "small": "Mazs",
+        "xlarge": "Ļoti liels",
+        "xsmall": "Ļoti mazs"
+      },
+      "bar_stack_mode": {
+        "net": "Net",
+        "proportional": "Sum",
+        "stacked": "Stacked"
+      },
+      "force_circular_background_mode": {
+        "auto": "Automātisks",
+        "forced": "Piespiedu"
       },
       "hide": {
         "icon": "Ikona",
         "name": "Nosaukums",
-        "value": "Vērtība",
-        "unit": "Vienība",
+        "progress_bar": "Josla",
         "secondary_info": "Info",
-        "progress_bar": "Josla"
-      },
-      "unit_spacing": {
-        "auto": "Auto",
-        "space": "Space",
-        "no-space": "No space"
-      },
-      "watermark_type": {
-        "blended": "Blended",
-        "area": "Area",
-        "striped": "Striped",
-        "triangle": "Triangle",
-        "round": "Round",
-        "line": "Line"
-      },
-      "watermark_as": {
-        "auto": "Auto",
-        "percent": "Percent"
-      },
-      "watermark": {
-        "low": "Low",
-        "high": "High",
-        "type": "Type",
-        "opacity": "Opacity",
-        "low_color": "Low color",
-        "high_color": "High color",
-        "low_as": "Low unit",
-        "high_as": "High unit",
-        "line_size": "Line size",
-        "disable_low": "Disable low",
-        "disable_high": "Disable high",
-        "low_attribute": "Attribute",
-        "high_attribute": "Attribute"
+        "shape": "Ikonas apļveida fons",
+        "unit": "Vienība",
+        "value": "Vērtība"
       },
       "icon_animation": {
-        "spin": "Spin",
-        "pulse": "Pulse",
+        "battery_charging": "Battery charging",
         "bounce": "Bounce",
-        "shake": "Shake",
         "ping": "Ping",
+        "pulse": "Pulse",
         "reveal": "Reveal",
-        "washing_machine": "Washing machine",
-        "battery_charging": "Battery charging"
+        "shake": "Shake",
+        "spin": "Spin",
+        "washing_machine": "Washing machine"
       },
-      "alert_when": {
-        "above": "Alert above",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight",
-        "animation": "Animation",
-        "above_attribute": "Attribute",
-        "below_attribute": "Attribute"
-      },
-      "alert_highlight": {
-        "border": "Border",
-        "background": "Background",
-        "label": "Label"
-      },
-      "status_label": {
-        "jinja": "Status label",
-        "position": "Label position",
-        "color_source": "Color source"
+      "icon_animation_mode": {
+        "auto": "Automātisks",
+        "template": "Veidne"
       },
       "label_position": {
-        "left": "Left",
-        "right": "Right"
+        "left": "Kreisā",
+        "right": "Labā"
+      },
+      "layout": {
+        "horizontal": "Horizontāls (noklusēts)",
+        "vertical": "Vertikāls"
+      },
+      "simple_advanced_mode": {
+        "advanced": "Papildu",
+        "simple": "Vienkāršs"
+      },
+      "status_label": {
+        "color_source": "Krāsas avots",
+        "jinja": "Statusa etiķete",
+        "position": "Etiķetes novietojums"
       },
       "status_label_color_source": {
-        "bar": "Progress bar",
-        "icon": "Icon"
+        "bar": "Progresa josla",
+        "icon": "Ikona"
       },
-      "alert_animation": {
-        "static": "Static",
-        "blink": "Blink",
-        "ping": "Ping"
-      },
-      "min_value_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "max_value_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "watermark_low_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "watermark_high_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_above_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_below_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
+      "theme": {
+        "battery_adaptive": "Baterija (pielāgojas uzlādes stāvoklim)",
+        "critical_when_extreme": "Kritiski ekstremālā vērtībā (tvertnes līmenis, novirze...)",
+        "critical_when_extreme_center": "Kritiski ekstremālā vērtībā, centrēts (center_zero)",
+        "critical_when_high": "Kritiski augstā vērtībā (CPU, RAM, diska lietojums...)",
+        "critical_when_low": "Kritiski zemā vērtībā (baterija, disks...)",
+        "humidity": "Mitrums",
+        "light": "Gaiša",
+        "optimal_when_high": "Optimāli pie augstām vērtībām",
+        "optimal_when_low": "Optimāli pie zemām vērtībām",
+        "pm25": "PM2.5",
+        "temperature": "Temperatūra",
+        "voc": "VOC"
       },
       "theme_mode": {
-        "preset": "Preset",
-        "custom": "Custom"
+        "custom": "Custom",
+        "preset": "Preset"
       },
-      "min_value": {
+      "unit_position": {
+        "after": "Aiz vērtības",
+        "before": "Pirms vērtības"
+      },
+      "unit_spacing": {
+        "auto": "Automātisks",
+        "no-space": "Bez atstarpes",
+        "space": "Atstarpe"
+      },
+      "value_shape": {
         "attribute": "Attribute"
       },
-      "max_value": {
-        "attribute": "Attribute"
+      "value_source_mode": {
+        "entity": "Entity",
+        "jinja": "Template",
+        "standard": "Fixed value"
       },
-      "bar_stack_mode": {
-        "stacked": "Stacked",
-        "proportional": "Sum",
-        "net": "Net"
+      "watermark": {
+        "disable_high": "Disable high",
+        "disable_low": "Disable low",
+        "high": "High",
+        "high_as": "High unit",
+        "high_color": "High color",
+        "line_size": "Line size",
+        "low": "Low",
+        "low_as": "Low unit",
+        "low_color": "Low color",
+        "opacity": "Opacity",
+        "type": "Type"
+      },
+      "watermark_as": {
+        "auto": "Automātisks",
+        "percent": "Procenti"
+      },
+      "watermark_type": {
+        "area": "Zona",
+        "blended": "Sapludināts",
+        "line": "Līnija",
+        "round": "Apaļš",
+        "striped": "Svītrains",
+        "triangle": "Trīsstūris"
       }
+    },
+    "title": {
+      "content": "Saturs",
+      "interaction": "Saskarsme",
+      "layout": "Izkārtojums un izmērs",
+      "markers": "Marķieri un brīdinājumi",
+      "theme": "Izskats un lietojamība"
     }
   }
 }

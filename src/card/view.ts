@@ -92,6 +92,9 @@ class ViewCore {
   // override
   #jinjaAlertAbove: number | null = null;
   #jinjaAlertBelow: number | null = null;
+  // alert_when.jinja (Advanced mode) resolved trigger - true/an override
+  // object mean active, false/empty/null mean inactive or not pushed yet.
+  #jinjaAlertResult: boolean | Record<string, unknown> | null = null;
   // watermark.low/.high resolved from a Jinja subscription; null = no
   // override. Declared here (not ViewBase) for the same
   // read-polymorphically-through-_cardView reason as jinjaAlertAbove/Below
@@ -704,6 +707,18 @@ class ViewCore {
     this.#jinjaAlertBelow = is.number(value) ? value : null;
   }
 
+  get hasJinjaAlertWhen(): boolean {
+    return is.nonEmptyString(this.config?.alert_when?.jinja);
+  }
+
+  get jinjaAlertResult(): boolean | Record<string, unknown> | null {
+    return this.#jinjaAlertResult;
+  }
+
+  set jinjaAlertResult(value: unknown) {
+    this.#jinjaAlertResult = is.boolean(value) || is.plainObject(value) ? value : null;
+  }
+
   get jinjaWatermarkLow(): number | null {
     return this.#jinjaWatermarkLow;
   }
@@ -729,13 +744,40 @@ class ViewCore {
    */
   get isAlertActive(): boolean {
     const alert = this.config?.alert_when;
-    if (!alert || !this._currentValue.isAvailable) return false;
+    if (!alert) return false;
+    // Advanced mode: the trigger IS the jinja result, above/below never
+    // consulted - true or an override object both mean active.
+    if (this.hasJinjaAlertWhen) {
+      const result = this.#jinjaAlertResult;
+      return result === true || is.plainObject(result);
+    }
+    if (!this._currentValue.isAvailable) return false;
     const raw = this._currentValue.value;
     const value = is.number(raw) ? raw : raw?.current;
     if (!is.number(value)) return false;
     const above = this.#jinjaAlertAbove ?? this._aboveValue.value;
     const below = this.#jinjaAlertBelow ?? this._belowValue.value;
     return (is.number(above) && value > above) || (is.number(below) && value < below);
+  }
+
+  // Any key can be omitted - each resolved getter below falls back to config.
+  get #alertOverride(): Record<string, unknown> {
+    return is.plainObject(this.#jinjaAlertResult) ? this.#jinjaAlertResult : {};
+  }
+
+  get resolvedAlertColor(): string | null {
+    const override = this.#alertOverride.color;
+    return is.nonEmptyString(override) ? override : (this.config?.alert_when?.color ?? null);
+  }
+
+  get resolvedAlertHighlight(): string {
+    const override = this.#alertOverride.highlight;
+    return is.nonEmptyString(override) ? override : (this.config?.alert_when?.highlight ?? 'border');
+  }
+
+  get resolvedAlertLabel(): string {
+    const override = this.#alertOverride.label;
+    return is.nonEmptyString(override) ? override : (this.config?.alert_when?.label ?? '');
   }
 
   /**
@@ -750,7 +792,9 @@ class ViewCore {
   get alertAnimation(): string | null {
     const alert = this.config?.alert_when;
     if (!alert) return null;
-    return alert.animation ?? (alert.highlight === 'background' ? 'static' : 'blink');
+    const override = this.#alertOverride.animation;
+    if (is.nonEmptyString(override)) return override;
+    return alert.animation ?? (this.resolvedAlertHighlight === 'background' ? 'static' : 'blink');
   }
 
   // Single source of truth for "is X currently hidden", static `hide: [...]`
@@ -907,6 +951,9 @@ class ViewBase extends ViewCore {
       zeroValue: centerZero.zeroValue,
       growthPercent: centerZero.growthPercent,
       scale: this._configHelper.config.bar_scale,
+      compact: this._configHelper.config.value_compact,
+      sign: this._configHelper.config.value_sign,
+      unitPosition: this._configHelper.config.unit_position ?? CARD.config.unit.unitPosition.after,
     });
 
     this.#theme.configure({
@@ -954,6 +1001,7 @@ class ViewBase extends ViewCore {
     this.jinjaAlertAbove = null;
     Object.assign(this._belowValue, ViewCore._resolveValueConfig(this._configHelper.config?.alert_when?.below, null));
     this.jinjaAlertBelow = null;
+    this.jinjaAlertResult = null;
   }
 
   get config(): Config {

@@ -15,6 +15,7 @@ setup/PR-facing [Contributing Guide](contributing.md).
 - [Jinja template subscriptions](#jinja-template-subscriptions)
 - [Configuration validation](#configuration-validation)
 - [Security](#security)
+- [Editor components: native HA elements vs. our own](#editor-components-native-ha-elements-vs-our-own)
 - [Editor architecture](#editor-architecture)
 - [Internationalization](#internationalization)
 - [Adding a new option](#adding-a-new-option)
@@ -616,6 +617,119 @@ When adding a new render path, use `setText` unless HTML is a documented feature
 of the field — and never bypass `setHTML`'s sanitizer with a raw `innerHTML`
 assignment.
 
+## Editor components: native HA elements vs. our own
+
+### Why this is a real constraint, not a style preference
+
+Home Assistant's own `ha-*` elements (`ha-selector`, `ha-button`, `ha-form`, …)
+are internal implementation details of the frontend, not a published, versioned
+API for third-party cards. Depending on them directly is a known risk: HA can
+rename or restructure any of them without notice, and a change that breaks a
+community card is a real, precedented failure mode — HA 0.115 introduced
+lazy-loading for these elements specifically, which broke custom card editors
+relying on them being already loaded, badly enough that the change was reverted
+in 0.115.3 while a real fix was worked out (see
+[home-assistant/frontend#11294][ha-11294]).
+
+That discussion is also where Thomas Loven (of `card-mod`/`layout-card` fame)
+laid out the community's still-current workaround, quoted directly there: force
+an element to load as a side effect of using `window.loadCardHelpers()` (a
+helper HA itself exposes for custom cards, undocumented on the official site but
+stable in practice) — e.g.
+`(await window.loadCardHelpers()).createRowElement({type: "..."})` for a row
+type that internally imports the target element — rather than depending on it
+directly. His [`lovelace-card-tools`][card-tools] library packages the same idea
+as a reusable `load_lovelace()` helper (loads the whole Lovelace panel, and with
+it every native element it registers).
+
+[ha-11294]: https://github.com/home-assistant/frontend/discussions/11294
+[card-tools]: https://github.com/thomasloven/lovelace-card-tools
+
+### How this project's approach evolved
+
+Early on, this project used that same preload trick — it's a genuinely clever
+piece of community engineering, and it was the right call at the time: it's what
+let this card have a real visual editor at all, years before writing one this
+way would even have been an option. As the editor grew, the project moved to a
+factory built directly on `ha-selector` (`EditorBase#getSelectorForType`, see
+below) — `ha-selector` is itself HA's own dispatcher component: mount it with a
+`.selector` config object and it renders whichever concrete widget HA currently
+ships for that selector type. That means this editor picks up HA's own selector
+improvements (the WebAwesome-based restyling referenced throughout this
+document, for one) automatically, with no maintenance here — less a correction
+of the earlier approach than a natural next step once the editor had enough
+surface for that to pay off.
+
+No explicit preload step is needed in practice anymore: reaching this editor at
+all requires going through HA's own "Edit card" dialog first, which already uses
+`ha-selector` pervasively for its own built-in card editors — by the time our
+editor mounts, it's already registered.
+
+### Two strategies, side by side
+
+#### `ha-selector` — for anything HA's own selector system already models
+
+`EditorBase#getSelectorForType` maps this project's own field-type strings to a
+native `Selector` config object — the exact shape HA's own built-in card editors
+pass to `<ha-selector>` (cross-checked against HA's source, e.g. the `box`-mode
+`select` with tile images mirrors `hui-tile-card-editor.ts`, linked directly in
+the code). This covers most of the field surface:
+entity/attribute/action/color/icon/text/number/boolean pickers, and any generic
+dropdown.
+
+Check [HA's own `Selector` union type][ha-selector-ts] before building anything
+custom — if the shape you need already exists there, mapping it in
+`#getSelectorForType` is the whole job, and it stays free of maintenance as HA's
+own widget evolves.
+
+[ha-selector-ts]:
+  https://github.com/home-assistant/frontend/blob/dev/src/data/selector.ts
+
+#### Our own components — for anything it doesn't
+
+HA's selector system has no public field type for a few things this editor
+needs: a fused 2-mode segmented pill, a repeatable-row list editor, a
+progressive-disclosure "+" picker (confirmed by checking `ha-form`'s own
+`LOAD_ELEMENTS` registry — see the `entity-progress-action-picker` note above).
+For those, two class families follow the same template-method pattern:
+
+- `ChipsBase`/`SingleSelectChipsBase` (`chips.ts`) — chip sets and 2-mode
+  segmented pills.
+- `ListEditorBase` (`list-editors.ts`) — repeatable row editors (`bar_stack`
+  entities, `custom_theme` zones) and `EntityProgressActionPicker`.
+
+**Construction**: plain `HTMLElement` subclasses, their own shadow DOM, a
+build-once/render-on-`value`-change lifecycle, dispatching a
+`VALUE_CHANGED_EVENT` that bubbles out — the same event contract `<ha-selector>`
+itself uses, so `EditorBase#onChanged` handles both kinds of field identically
+without knowing which one it's talking to.
+
+**Reproducing HA's look & feel**: styled from HA's own CSS custom properties,
+not one-off colors, with a fallback chain that keeps working on HA installs
+still on the pre-WebAwesome theme system:
+
+```css
+--chip-accent: var(--wa-color-brand-fill-loud, var(--primary-color));
+--chip-accent-text: var(--wa-color-brand-on-loud, var(--text-primary-color, #fff));
+--chip-standby: var(--wa-color-brand-fill-normal, var(--secondary-background-color));
+--chip-standby-text: var(--wa-color-brand-on-normal, var(--primary-text-color));
+```
+
+(`CHIPS_HOST_STYLE`, `styles.ts`) — "loud" = selected/active, "normal" =
+standby/inactive, traced directly from `ha-button.ts`'s own
+`:host([variant="brand"])` block and `wa.globals.ts`. Every left-hand variable
+is HA-owned; every fallback resolves to a pre-WebAwesome HA variable, never a
+literal color, so theming keeps working either way.
+
+Where a genuine native element already exists with no selector wrapper around
+it, use it directly instead of imitating its look: the "+ Add …" buttons
+(`EntityProgressBarStackEditor`, `EntityProgressCustomThemeEditor`,
+`EntityProgressActionPicker`) are real `document.createElement('ha-button')`
+instances — `appearance="filled" size="s"`, matching how HA's own
+`ha-form-optional_actions.ts` builds its own "+ Add interaction" button — not a
+lookalike, so it's theme-reactive automatically and stays visually in sync with
+HA for free.
+
 ## Editor architecture
 
 ### `EditorFactory` builds the field-def tree
@@ -643,7 +757,16 @@ one implementation, five call sites.
 - A declarative **field map** (`static _fields`) organized in expansion panels;
   each field is an `ha-selector` (or a custom element:
   `entity-progress-effect-chips`, `entity-progress-hide-chips`,
-  `entity-progress-bar-stack-editor`).
+  `entity-progress-bar-stack-editor`, `entity-progress-action-picker`), or
+  `type: 'section_label'` - a non-interactive caption grouping the fields after
+  it (no value, no `ha-selector`; see `EditorFieldsType.sectionLabel`).
+  `entity-progress-action-picker` is the interactions panel's "+ Add
+  interaction" reveal-one-at-a-time picker (`hold_action`, `icon_hold_action`,
+  `double_tap_action`, `icon_double_tap_action`) - the same UX as `ha-form`'s
+  native `optional_actions` field type, built on this custom engine instead
+  since the editor isn't `ha-form`-based. `_visible_actions` (ephemeral) tracks
+  manually-revealed keys; `interactions()` in `factory.ts` derives the
+  hidden/shown split.
 
 ### `EditorBase` runtime conventions
 
@@ -661,16 +784,16 @@ one implementation, five call sites.
   the saved YAML), but survive across a `setConfig` round-trip like the rest of
   `#config` does.
 - **Draft-preservation pattern**: when a toggle/mode-switch (`badge_toggle`,
-  `icon_animation_jinja_toggle`, `min_value_mode`, …) discards a value to switch
-  shape, stash it in a matching `_<field>_<mode>_draft` key first (one draft per
+  `icon_animation_mode`, `min_value_mode`, …) discards a value to switch shape,
+  stash it in a matching `_<field>_<mode>_draft` key first (one draft per
   _other_ mode, e.g. `_min_value_entity_draft` + `_min_value_jinja_draft` for
   `min_value_mode`'s 3-way switch) instead of just dropping it. Re-entering that
   mode later reads the draft back before falling to a blank default, so
   switching jinja → standard → jinja restores the typed template instead of
   starting over. `valueField`/`nestedValueField` in `factory.ts` are the
   reference implementation for the 3-way (standard/ entity/jinja) case; every
-  2-way jinja toggle (`hide_jinja`, `bar_effect_jinja`, `status_label_toggle`,
-  …) follows the same shape with one draft each way.
+  2-way jinja toggle (`hide_mode`, `bar_effect_mode`, `status_label_toggle`, …)
+  follows the same shape with one draft each way.
 - **Field `width`** can be a plain string (set once, at build) or a function of
   config (re-evaluated on every relevant update via `EditorDOMHelper`, same as a
   dynamic `type`). Two fields meant to sit side by side in the same flex-wrap
@@ -690,37 +813,39 @@ one implementation, five call sites.
 
 ## Internationalization
 
-All user-visible strings live in the module-level `TRANSLATIONS` constant — **39
-languages**, one flat object per language code:
+All user-visible strings live in two module-level constants — **39 languages**,
+248 leaf keys:
 
 ```js
-const TRANSLATIONS = {
-  en: {
-    card:   { msg:   { entityNotFound: '…', … } },        // runtime messages
-    editor: { title: { … },                               // panel headers
-              field: { … },                               // field labels
-              option: { bar_size: { … }, hide: { … }, … } // select/chip options
-            },
-  },
-  fr: { … },
+const TRANSLATION_KEYS = ['card.msg.entityNotFound', 'editor.field.unit', …]; // stated once
+const TRANSLATIONS_FLAT = {
+  en: ['…', '…', …], // one value per TRANSLATION_KEYS entry, same order
+  fr: ['…', 0, …],   // 0 = "same as English" (untranslated or genuinely identical)
   …
 };
 ```
 
+Not a per-language nested tree: the key path (`editor.field.unit`) used to be
+repeated in full 39 times, once per language object — restructured (1.6.2) into
+a shared key list plus flat value arrays, cutting the shipped bundle by ~27%. A
+value identical to English (roughly half of them, mostly untranslated technical
+terms) is stored as the sentinel `0` instead of the string again.
+
 - Lookup goes through `HassProviderSingleton.localize('editor.field.unit')` — a
-  dot-path resolver over the active language, loaded on the first `hass`
-  assignment and reloaded on language change. Missing keys return the key itself
-  (never `undefined`), and editor option maps fall back to the default language
-  (`CARD.config.language = 'en'`).
+  dot-path resolver over the active language's **reconstructed** nested tree
+  (`buildTranslationTree()`, rebuilt once per language load/change, never per
+  lookup — the resolver itself never changed). Missing keys return the key
+  itself (never `undefined`), and editor option maps fall back to the default
+  language (`CARD.config.language = 'en'`).
 
 > [!IMPORTANT]
 >
-> **The `TRANSLATIONS` block in the JS is generated — never edit it by hand.**
-> The source of truth is the per-language JSON files in
+> **The `TRANSLATION_KEYS`/`TRANSLATIONS_FLAT` block in the JS is generated —
+> never edit it by hand.** The source of truth is the per-language JSON files in
 > [`translations/`](../translations) (same `card`/`editor` tree, one file per
-> language code). Any language change — new key, fixed wording, new language —
-> goes through those JSON files first, then the block is rebuilt into
-> `src/utils/translations.js`:
+> language code, still fully nested — only the generated JS shape changed). Any
+> language change — new key, fixed wording, new language — goes through those
+> JSON files first, then the block is rebuilt into `src/utils/translations.js`:
 >
 > ```bash
 > # everything goes through the unified toolchain:
@@ -751,6 +876,52 @@ workflow — run it without argument for the full help:
   in every language file — the trees are strictly parallel.
 - Contributor-friendly rule: an imperfect machine translation beats a missing
   key — native speakers regularly submit fixes.
+
+### Cross-checking wording against Home Assistant's own translations
+
+For any string whose _concept_ already exists natively in HA (interaction labels
+like "Hold behavior", generic action/entity terminology, …), HA's own
+translation is a better reference than translating from scratch — it's what
+users already see everywhere else in their dashboard, in every supported
+language, done by HA's own translator community.
+
+`home-assistant/frontend`'s repo only commits `src/translations/en.json`
+directly — the other 60+ languages are managed in Lokalise and never land in
+git. But the **deployed** frontend (e.g. the public demo at
+`demo.home-assistant.io`, no auth needed) serves every language's fully compiled
+translations as plain static JSON, fetchable directly:
+
+1. Fetch the site's main JS entry chunk (its hashed filename is in the page's
+   own `<script src="...">`, e.g. `/frontend_latest/main.<hash>.js`).
+2. Search it for the per-language hash table: a JSON-ish literal shaped like
+   `"fr":{"nativeName":"Français","hash":"<32 hex chars>"}` — one entry per
+   supported language code.
+3. Build the URL:
+   `https://demo.home-assistant.io/static/translations/<fragment/>/<lang>-<hash>.json`.
+   - Omit `<fragment>/` for the "core" bundle (most common UI strings).
+   - Use `lovelace/` for anything under a Lovelace card/editor (confirmed
+     working: `ui.panel.lovelace.editor.card.generic.*`, `...card.tile.*`, and
+     generally anything under `ui.panel.lovelace.*`) — other panels (`config/`,
+     `history/`, …) likely follow the same pattern, not yet verified.
+4. The result is a **flat** object —
+   `"ui.panel.lovelace.editor.card.tile.icon_hold_action"` as one literal key,
+   not a nested tree. Look the key up directly (find it first in the fetched
+   `en.json`/`en` fragment by searching for the English string you already
+   know).
+
+> [!WARNING]
+>
+> **Not every language has every string translated in HA itself.** When a
+> language's value is byte-identical to the English one, that's HA's own
+> untranslated fallback, not a real translation — fetch the `en` fragment the
+> same way and diff against it before trusting a value. Copying an English
+> fallback into our own `<lang>.json` would silently reintroduce the exact
+> "shows English in a non-English language" bug this project has repeatedly had
+> to hunt down.
+
+This only helps for strings that overlap HA's own vocabulary — most of this
+project's option-specific wording (`bar_effect`, `watermark`, …) has no HA
+equivalent to check against, so still needs translating from scratch.
 
 ## Adding a new option
 
@@ -811,7 +982,7 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
 6. **Translations** — `editor.field.<name>` label (+ `editor.option.<name>` map
    for selects/chips) via `node scripts/translations.js add-key …`, then
    `synchronize --to-js` (see [Internationalization](#internationalization) —
-   never edit the JS `TRANSLATIONS` block directly).
+   never edit the generated JS block directly).
 7. **Jinja support** (optional) — if the option accepts templates: declare it in
    `validJinjaFields`/`_getJinjaHandlers`, normalize the pushed result (native
    types!), and route any HTML rendering through `setHTML`.
@@ -900,22 +1071,6 @@ reasoning survives a maintainer handoff instead of living only in chat history.
   option missing from that reused signature leaves a stale DOM; the incremental
   path would still need to re-process Jinja and re-register watched entities on
   every edit, just skip the teardown. Real correction surface, not started.
-- **A dedicated "+ Add interaction" picker** for the optional action fields
-  (`hold_action`, `icon_hold_action`, `double_tap_action`,
-  `icon_double_tap_action`) below the existing `show_all_actions` toggle — the
-  same "+" pattern Mushroom and HA's native Tile card use. Checked against their
-  actual source (`hui-tile-card-editor.ts`, Mushroom's
-  `template-card-editor.ts`): that widget is `ha-form`'s native
-  `type: "optional_actions"` field, provided by HA for free — not something
-  those projects built themselves. This editor is a hand-rolled form engine
-  (`EditorFactory`/`EditorBase`/`EditorDOMHelper`), not `ha-form`-based, so it
-  can't just declare that field type; migrating the whole editor to `ha-form`
-  would be a rewrite far bigger than this one widget justifies. If revisited:
-  build an equivalent "+" picker inside the existing custom engine, added below
-  `show_all_actions` (`interactions()` in `factory.ts`) as a second, coexisting
-  mechanism rather than a replacement — `tap_action`/ `icon_tap_action` are
-  correctly out of scope either way (their default depends on the entity's
-  domain, already handled separately).
 - **The progress bar as a standalone "dumb" web component**
   (`<entity- progress-bar>` receiving pre-computed `%`/color/segments as props,
   with the calculation engine — `HACore`/`ViewCore`/`ProgressCalc` — living

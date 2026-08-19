@@ -1173,9 +1173,11 @@ class HABase extends HACore {
       layout: this._cardView.config.layout,
       barSingleLine: this._cardView.config.bar_single_line,
       trendIndicator: this._cardView.config.trend_indicator,
+      // A jinja push can return highlight: 'label' even off static config.
       hasLabel:
         is.nonEmptyString(this._cardView.config.status_label?.jinja) ||
-        this._cardView.config.alert_when?.highlight === 'label',
+        this._cardView.config.alert_when?.highlight === 'label' ||
+        this._cardView.hasJinjaAlertWhen,
       multiline: Boolean(this._cardView.config.multiline),
     };
   }
@@ -1298,11 +1300,8 @@ class HABase extends HACore {
   get _alertStyle(): Map<string, boolean> {
     return new Map([
       ['alert-active', this._cardView.isAlertActive],
-      [
-        'alert-background',
-        this._cardView.isAlertActive && this._cardView.config.alert_when?.highlight === 'background',
-      ],
-      ['alert-label', this._cardView.isAlertActive && this._cardView.config.alert_when?.highlight === 'label'],
+      ['alert-background', this._cardView.isAlertActive && this._cardView.resolvedAlertHighlight === 'background'],
+      ['alert-label', this._cardView.isAlertActive && this._cardView.resolvedAlertHighlight === 'label'],
       ['alert-anim-blink', this._cardView.isAlertActive && this._cardView.alertAnimation === 'blink'],
       ['alert-anim-ping', this._cardView.isAlertActive && this._cardView.alertAnimation === 'ping'],
     ]);
@@ -1325,6 +1324,13 @@ class HABase extends HACore {
   _applyAlertClasses() {
     this.#toggleClasses(this._alertStyle);
     this._applyAlertLabel();
+    // Re-applied here too (not just _addBaseParameter's one-time build pass)
+    // so Advanced mode's color override reaches border/background on push.
+    this._dom.setStyle(
+      CARD.htmlStructure.card.element,
+      '--alert-color',
+      ThemeManager.adaptColor(this._cardView.resolvedAlertColor),
+    );
   }
 
   // Bridgehead used by a full render/refresh - re-applies all three layers.
@@ -1537,7 +1543,9 @@ class HABase extends HACore {
     this._dom.toggleClass(
       CARD.htmlStructure.card.element,
       CARD.style.dynamic.hiddenComponent.shape.class,
-      !this._cardView.hasVisibleShape || this.hasDisabledIconTap,
+      !this._cardView.hasVisibleShape ||
+        this.hasDisabledIconTap ||
+        this._cardView.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.shape.label),
     );
   }
 
@@ -1720,6 +1728,7 @@ class HABase extends HACore {
       },
       icon_animation: () => this._renderIconAnimationWhen(content),
       'status_label.jinja': () => this._renderLabel(content),
+      'alert_when.jinja': () => this._renderAlertWhenJinja(content),
     };
   }
 
@@ -1732,10 +1741,16 @@ class HABase extends HACore {
     return handlers;
   }
 
-  // watermark.low/.high jinja mode: shared by Card and Template (both have
-  // `watermark` in schema, unlike min_value/max_value/alert_when which are
-  // Card-only). Lives here so EntityProgressTemplateBase's own
-  // _getJinjaHandlers can reuse it too.
+  // Advanced mode's own trigger (see schema.ts's alert_when.jinja) - shared
+  // by every variant, unlike above/below (_renderJinjaNumber, Card-only).
+  _renderAlertWhenJinja(content: unknown) {
+    if (!is.nonEmptyString(this._cardView.config?.alert_when?.jinja)) return;
+    this._cardView.jinjaAlertResult = content;
+    this._applyAlertClasses();
+  }
+
+  // watermark.low/.high jinja mode - shared by Card and Template, unlike
+  // min_value/max_value (Card-only).
   _renderWatermarkJinja(
     content: unknown,
     getJinja: (c: Config) => string | undefined,
@@ -1782,7 +1797,7 @@ class HABase extends HACore {
     // alert_when.highlight: 'label' owns the pill while configured this
     // way (see _applyAlertLabel) - a plain `label` Jinja alongside it would
     // otherwise fight over the same element on every refresh.
-    if (this._cardView.config?.alert_when?.highlight === 'label') return;
+    if (this._cardView.isAlertActive && this._cardView.resolvedAlertHighlight === 'label') return;
     // Native dict return (docs/configuration.md's Jinja "Returning a native
     // type") - `{{ {'label': 'hot', 'color': '#ff0000'} }}` lets one
     // template drive both. `_lastStatusLabelColor` null = no override,
@@ -1807,7 +1822,7 @@ class HABase extends HACore {
   // _lastStatusLabelText's own comment for why the pill needs repainting
   // outside a status_label push too.
   _repaintStatusLabel() {
-    if (this._cardView.config?.alert_when?.highlight === 'label') return;
+    if (this._cardView.isAlertActive && this._cardView.resolvedAlertHighlight === 'label') return;
     if (this._lastStatusLabelText === null) return;
     // status_label.color_source picks which of the two the pill falls back
     // to when its own `jinja` doesn't return an explicit {label, color} -
@@ -1818,16 +1833,19 @@ class HABase extends HACore {
     this._paintLabel(this._lastStatusLabelText, color);
   }
 
-  // Only shown while the alert is active (like the border/background
-  // highlight modes) - alert_when.label is the user's own fixed text (not
-  // Jinja, see schema.ts), so there's no per-tick resolution to await, this
-  // can run synchronously off isAlertActive/alertAnimation, already
-  // recomputed by every _applyAlertClasses call.
+  // resolvedAlertLabel/Color already fold in Advanced mode's own override.
+  // Inactive: hands the pill back to status_label instead of blanking it
+  // (CF5-adjacent fix - the pill used to stay alert-owned even once idle).
   _applyAlertLabel() {
-    const alert = this._cardView.config?.alert_when;
-    if (alert?.highlight !== 'label') return;
-    const text = this._cardView.isAlertActive ? String(alert.label ?? '').trim() : '';
-    this._paintLabel(text, ThemeManager.adaptColor(alert.color ?? null) ?? CARD.style.color.default);
+    if (this._cardView.resolvedAlertHighlight !== 'label') return;
+    if (!this._cardView.isAlertActive) {
+      this._repaintStatusLabel();
+      return;
+    }
+    this._paintLabel(
+      this._cardView.resolvedAlertLabel.trim(),
+      ThemeManager.adaptColor(this._cardView.resolvedAlertColor) ?? CARD.style.color.default,
+    );
   }
 
   _renderIconAnimationWhen(content: unknown) {

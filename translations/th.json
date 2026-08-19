@@ -2,148 +2,158 @@
   "card": {
     "msg": {
       "appliedDefaultValue": "ค่าเริ่มต้นถูกนำไปใช้โดยอัตโนมัติ",
-      "attributeNotFound": "ไม่พบแอตทริบิวต์ใน HA",
-      "entityNotFound": "ไม่พบเอนทิตีใน HA",
-      "invalidActionObject": "ออบเจ็กต์แอ็กชันไม่ถูกต้องหรือโครงสร้างผิด",
       "invalidDecimal": "ค่าต้องเป็นตัวเลขทศนิยมที่ถูกต้อง",
-      "invalidEntityId": "ID เอนทิตีไม่ถูกต้องหรือรูปแบบผิด",
       "invalidEnumValue": "ค่าที่ให้มาไม่ใช่หนึ่งในตัวเลือกที่อนุญาต",
-      "invalidStateContent": "เนื้อหาสถานะไม่ถูกต้องหรือรูปแบบผิด",
+      "invalidNoun": "ไม่ถูกต้องหรือมีรูปแบบผิดพลาด: {noun}",
       "invalidStateContentEntry": "หนึ่งหรือหลายรายการในเนื้อหาสถานะไม่ถูกต้อง",
       "invalidTheme": "ธีมที่ระบุไม่รู้จัก จะใช้ธีมเริ่มต้น",
-      "invalidTypeArray": "คาดหวังค่าประเภทอาร์เรย์",
-      "invalidTypeBoolean": "คาดหวังค่าประเภทบูลีน",
-      "invalidTypeNumber": "คาดหวังค่าประเภทตัวเลข",
-      "invalidTypeObject": "คาดหวังค่าประเภทออบเจ็กต์",
-      "invalidTypeString": "คาดหวังค่าประเภทสตริง",
+      "invalidType": "ประเภทที่คาดไว้: {type}",
       "invalidUnionType": "ค่าไม่ตรงกับประเภทที่อนุญาตใด ๆ",
       "missingActionKey": "ขาดคีย์ที่จำเป็นในออบเจ็กต์แอ็กชัน",
-      "missingRequiredProperty": "ขาดคุณสมบัติที่จำเป็น"
+      "missingRequiredProperty": "ขาดคุณสมบัติที่จำเป็น",
+      "notFound": "ไม่พบใน HA: {noun}",
+      "words": {
+        "nouns": {
+          "action_object": "ออบเจ็กต์การกระทำ",
+          "attribute": "แอตทริบิวต์",
+          "entity": "เอนทิตี",
+          "entity_id": "ไอดีเอนทิตี",
+          "state_content": "เนื้อหาสถานะ"
+        },
+        "types": {
+          "array": "อาร์เรย์",
+          "boolean": "บูลีน",
+          "number": "ตัวเลข",
+          "object": "ออบเจ็กต์",
+          "string": "สตริง"
+        }
+      }
     }
   },
   "editor": {
-    "title": {
-      "content": "เนื้อหา",
-      "markers": "Markers & Alerts",
-      "layout": "Layout & Sizing",
-      "interaction": "การโต้ตอบ",
-      "theme": "รูปลักษณ์และความรู้สึก"
-    },
     "field": {
+      "action": {
+        "tap": "การกระทำเมื่อแตะ",
+        "hold": "การกระทำเมื่อกดค้าง",
+        "double_tap": "การกระทำเมื่อแตะสองครั้ง",
+        "icon_tap": "การกระทำเมื่อแตะไอคอน",
+        "icon_hold": "การกระทำเมื่อกดค้างที่ไอคอน",
+        "icon_double_tap": "การกระทำเมื่อแตะไอคอนสองครั้ง"
+      },
+      "action_picker": "เพิ่มการโต้ตอบ",
+      "alert_toggle": "การแจ้งเตือน",
+      "alert_when_above_mode": "แหล่งการแจ้งเตือนขอบบน",
+      "alert_when_below_mode": "แหล่งการแจ้งเตือนขอบล่าง",
       "attribute": "แอตทริบิวต์",
       "badge_color": "สีของป้าย",
+      "badge_color_toggle": "Independent color",
       "badge_icon": "ไอคอนของป้าย",
+      "badge_toggle": "ป้าย",
       "bar_color": "สีแถบ",
-      "bar_effect_jinja": "เอฟเฟกต์บนแถบ (โหมด Jinja)",
-      "bar_orientation": "การวางแนวแถบ",
-      "bar_position": "ตำแหน่งแถบ",
-      "bar_single_line": "ข้อมูลในบรรทัดเดียว",
-      "bar_size": "ขนาดแถบ",
-      "bar_segments": "Bar segments",
       "bar_color_mode": "โหมดสี",
-      "bar_scale": "Bar scale",
+      "bar_effect_mode": "เอฟเฟกต์บนแถบ",
+      "bar_group": "แถบ",
+      "bar_max_width": "ความกว้างสูงสุดของแถบ",
+      "bar_max_width_toggle": "ความกว้างสูงสุดของแถบ",
+      "bar_orientation": "ทิศทาง",
+      "bar_scale": "มาตราส่วน",
+      "bar_segments": "ส่วน",
+      "bar_single_line": "บรรทัดเดียว",
+      "bar_size": "ขนาด",
+      "bar_stack": "เอนทิตีเพิ่มเติม",
+      "bar_stack_mode": "Stack mode",
+      "card_size_toggle": "ขนาดการ์ด",
       "center_zero": "Sıfırı ortala",
-      "center_zero_value": "ค่ากึ่งกลาง",
       "center_zero_growth_percent": "เปอร์เซ็นต์การเติบโต",
+      "center_zero_value": "ค่ากึ่งกลาง",
       "color": "สีหลัก",
+      "custom_info": "ข้อมูลรองที่กำหนดเอง",
+      "custom_theme": "Custom theme zones",
       "decimal": "ทศนิยม",
-      "double_tap_action": "พฤติกรรมการแตะสองครั้ง",
+      "density_toggle": "กะทัดรัด",
       "entity": "เอนทิตี",
-      "force_circular_background": "บังคับพื้นหลังวงกลม",
-      "hide_jinja": "ซ่อน (โหมด Jinja)",
-      "hold_action": "พฤติกรรมการกด",
+      "fast_refresh": "รีเฟรชเร็ว (ทุกวินาที)",
+      "force_circular_background_mode": "พื้นหลังวงกลมของไอคอน",
+      "frameless": "ไม่มีกรอบ",
+      "height": "ความสูง",
+      "height_custom_toggle": "Shrink height (embedded)",
+      "hide_mode": "ซ่อน",
       "icon": "ไอคอน",
-      "icon_animation": "Icon animation",
-      "icon_double_tap_action": "พฤติกรรมการแตะไอคอนสองครั้ง",
-      "icon_hold_action": "พฤติกรรมการกดไอคอน",
-      "icon_tap_action": "พฤติกรรมการแตะไอคอน",
+      "icon_animation": "แอนิเมชันไอคอน",
+      "interpolate": "การสอดแทรกสี",
       "layout": "รูปแบบเนื้อหา",
+      "marginless": "ไม่มีระยะขอบ",
       "max_value": "ค่าสูงสุด",
+      "max_value_mode": "แหล่งค่าสูงสุด",
+      "migrate_config": "Migrate config",
       "min_value": "ค่าต่ำสุด",
+      "min_value_mode": "แหล่งค่าต่ำสุด",
+      "min_width": "ความกว้างต่ำสุด",
+      "multiline": "Multiline",
       "name": "ชื่อ",
+      "name_info": "ข้อมูลชื่อที่กำหนดเอง",
       "percent": "เปอร์เซ็นต์",
+      "position": "ตำแหน่ง",
+      "reverse": "กลับเวลานับถอยหลัง",
       "reverse_secondary_info_row": "แถบและข้อความสลับกัน",
       "secondary": "ข้อมูลรอง",
       "state_content": "เนื้อหาของสถานะ",
-      "show_all_actions": "แสดงการโต้ตอบทั้งหมด",
-      "tap_action": "พฤติกรรมการแตะ",
+      "status_label_toggle": "ป้ายสถานะ",
       "text_shadow": "เพิ่มเงาให้ข้อความ",
-      "theme_mode": "Theme mode",
       "theme": "ธีม",
-      "custom_theme": "Custom theme zones",
+      "trigger": "ทริกเกอร์",
       "unit": "หน่วย",
-      "min_value_mode": "Min value source",
-      "max_value_mode": "Max value source",
-      "watermark_low_mode": "Low marker source",
-      "watermark_high_mode": "High marker source",
-      "alert_when_above_mode": "Above alert source",
-      "alert_when_below_mode": "Below alert source",
-      "bar_max_width": "Bar max width",
-      "bar_max_width_toggle": "Bar max width",
-      "frameless": "Frameless",
-      "height": "Height",
-      "marginless": "Marginless",
-      "min_width": "Min width",
-      "card_size_toggle": "Card size",
-      "unit_spacing": "Unit spacing",
-      "watermark_toggle": "Markers",
-      "alert_toggle": "Alert",
-      "custom_info": "ข้อมูลรองที่กำหนดเอง",
-      "multiline": "Multiline",
-      "interpolate": "การสอดแทรกสี",
-      "name_info": "ข้อมูลชื่อที่กำหนดเอง",
-      "reverse": "กลับเวลานับถอยหลัง",
-      "bar_stack_mode": "Stack mode",
-      "bar_stack": "เอนทิตีเพิ่มเติม",
-      "migrate_config": "Migrate config",
-      "icon_animation_jinja_toggle": "Trigger via template",
-      "fast_refresh": "Fast refresh (per-second)",
-      "height_custom_toggle": "Shrink height (embedded)",
-      "status_label_toggle": "Status label",
-      "density_toggle": "Compact",
-      "badge_toggle": "Badge",
-      "badge_color_toggle": "Independent color"
+      "unit_spacing": "ระยะห่าง",
+      "value_compact": "ค่าแบบย่อ (1.2k)",
+      "value_sign": "แสดงเครื่องหมาย (+/-)",
+      "watermark_high_mode": "แหล่งเครื่องหมายสูง",
+      "watermark_low_mode": "แหล่งเครื่องหมายต่ำ",
+      "watermark_toggle": "เครื่องหมาย"
     },
     "field_helper": {
-      "min_value_jinja": "Returns Number (42)",
-      "max_value_jinja": "Returns Number (100)",
-      "watermark_low_jinja": "Returns Number (20)",
-      "watermark_high_jinja": "Returns Number (80)",
-      "alert_when_above_jinja": "Returns Number (90)",
-      "alert_when_below_jinja": "Returns Number (10)",
-      "icon_animation_jinja": "Returns Boolean (true)",
+      "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
       "badge_icon": "Returns String (mdi:fan) or Object ({icon, color})",
-      "badge_color": "Returns String (#ff0000)",
-      "status_label_jinja": "Returns String (hot) or Object ({label, color})",
       "bar_effect": "Returns String (shimmer) or List ([shimmer, gradient])",
-      "hide": "Returns String (icon, name) or List ([icon, name])",
-      "name_info": "Returns String (Living Room)",
-      "custom_info": "Returns String (Charging)",
-      "icon": "Returns String (mdi:fan)",
       "color": "Returns String (#ff0000)",
-      "bar_color": "Returns String (#ff0000)"
+      "custom_info": "Returns String (Charging)",
+      "hide": "Returns String (icon, name) or List ([icon, name])",
+      "icon": "Returns String (mdi:fan)",
+      "icon_animation_jinja": "Returns Boolean (true)",
+      "name_info": "Returns String (Living Room)",
+      "returns_number": "Returns Number (42)",
+      "status_label_jinja": "Returns String (hot) or Object ({label, color})"
     },
     "option": {
-      "theme": {
-        "battery_adaptive": "Battery (adapts to charging state)",
-        "light": "แสง",
-        "temperature": "อุณหภูมิ",
-        "humidity": "ความชื้น",
-        "pm25": "PM2.5",
-        "voc": "VOC",
-        "critical_when_low": "Critical when Low (Battery, disk...)",
-        "optimal_when_low": "เหมาะสมเมื่อต่ำ",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "optimal_when_high": "เหมาะสมเมื่อสูง",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "critical_when_extreme_center": "Critical when Extreme, centered (center_zero)"
+      "alert_animation": {
+        "blink": "กะพริบ",
+        "ping": "Ping",
+        "static": "คงที่"
       },
-      "bar_size": {
-        "xsmall": "Extra Small",
-        "small": "เล็ก",
-        "medium": "กลาง",
-        "large": "ใหญ่",
-        "xlarge": "ใหญ่พิเศษ"
+      "alert_highlight": {
+        "background": "Background",
+        "border": "Border",
+        "label": "ป้ายกำกับ"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "animation": "แอนิเมชัน",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "bar_color_mode": {
+        "auto": "อัตโนมัติ",
+        "rainbow": "สีรุ้ง",
+        "rainbow_full": "รุ้ง (เต็ม)",
+        "segment": "ส่วน"
+      },
+      "bar_effect": {
+        "glass": "กระจก",
+        "gradient": "ไล่สี",
+        "gradient_reverse": "ไล่สีย้อน",
+        "radius": "มุมโค้งมน",
+        "shimmer": "แวววาว",
+        "shimmer_reverse": "แวววาวย้อน"
       },
       "bar_orientation": {
         "ltr": "ซ้ายไปขวา",
@@ -151,163 +161,145 @@
         "up": "ขึ้นบน"
       },
       "bar_position": {
-        "default": "ค่าเริ่มต้น",
+        "background": "พื้นหลังการ์ด",
         "below": "แถบใต้เนื้อหา",
-        "compact_below": "Compact bar below (name/value on one row)",
-        "top": "แถบด้านบน",
         "bottom": "แถบด้านล่าง",
+        "compact_below": "แถบกะทัดรัดด้านล่าง (ชื่อ/ค่าในบรรทัดเดียว)",
+        "default": "ค่าเริ่มต้น",
         "overlay": "แถบซ้อนทับเนื้อหา (overlay)",
-        "background": "พื้นหลังการ์ด"
-      },
-      "layout": {
-        "horizontal": "แนวนอน (เริ่มต้น)",
-        "vertical": "แนวตั้ง"
-      },
-      "bar_color_mode": {
-        "auto": "อัตโนมัติ",
-        "segment": "ส่วน",
-        "rainbow": "สีรุ้ง",
-        "rainbow_full": "Rainbow (full)"
+        "top": "แถบด้านบน"
       },
       "bar_scale": {
         "linear": "Linear",
         "log": "Logarithmic"
       },
-      "bar_effect": {
-        "radius": "มุมโค้งมน",
-        "glass": "กระจก",
-        "gradient": "ไล่สี",
-        "gradient_reverse": "ไล่สีย้อน",
-        "shimmer": "แวววาว",
-        "shimmer_reverse": "แวววาวย้อน"
+      "bar_size": {
+        "large": "ใหญ่",
+        "medium": "กลาง",
+        "small": "เล็ก",
+        "xlarge": "ใหญ่พิเศษ",
+        "xsmall": "เล็กพิเศษ"
+      },
+      "bar_stack_mode": {
+        "net": "Net",
+        "proportional": "Sum",
+        "stacked": "Stacked"
+      },
+      "force_circular_background_mode": {
+        "auto": "อัตโนมัติ",
+        "forced": "บังคับ"
       },
       "hide": {
         "icon": "ไอคอน",
         "name": "ชื่อ",
-        "value": "ค่า",
-        "unit": "หน่วย",
+        "progress_bar": "แถบ",
         "secondary_info": "ข้อมูล",
-        "progress_bar": "แถบ"
-      },
-      "unit_spacing": {
-        "auto": "Auto",
-        "space": "Space",
-        "no-space": "No space"
-      },
-      "watermark_type": {
-        "blended": "Blended",
-        "area": "Area",
-        "striped": "Striped",
-        "triangle": "Triangle",
-        "round": "Round",
-        "line": "Line"
-      },
-      "watermark_as": {
-        "auto": "Auto",
-        "percent": "Percent"
-      },
-      "watermark": {
-        "low": "Low",
-        "high": "High",
-        "type": "Type",
-        "opacity": "Opacity",
-        "low_color": "Low color",
-        "high_color": "High color",
-        "low_as": "Low unit",
-        "high_as": "High unit",
-        "line_size": "Line size",
-        "disable_low": "Disable low",
-        "disable_high": "Disable high",
-        "low_attribute": "Attribute",
-        "high_attribute": "Attribute"
+        "shape": "พื้นหลังวงกลมของไอคอน",
+        "unit": "หน่วย",
+        "value": "ค่า"
       },
       "icon_animation": {
-        "spin": "Spin",
-        "pulse": "Pulse",
+        "battery_charging": "Battery charging",
         "bounce": "Bounce",
-        "shake": "Shake",
         "ping": "Ping",
+        "pulse": "Pulse",
         "reveal": "Reveal",
-        "washing_machine": "Washing machine",
-        "battery_charging": "Battery charging"
+        "shake": "Shake",
+        "spin": "Spin",
+        "washing_machine": "Washing machine"
       },
-      "alert_when": {
-        "above": "Alert above",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight",
-        "animation": "Animation",
-        "above_attribute": "Attribute",
-        "below_attribute": "Attribute"
-      },
-      "alert_highlight": {
-        "border": "Border",
-        "background": "Background",
-        "label": "Label"
-      },
-      "status_label": {
-        "jinja": "Status label",
-        "position": "Label position",
-        "color_source": "Color source"
+      "icon_animation_mode": {
+        "auto": "อัตโนมัติ",
+        "template": "เทมเพลต"
       },
       "label_position": {
-        "left": "Left",
-        "right": "Right"
+        "left": "ซ้าย",
+        "right": "ขวา"
+      },
+      "layout": {
+        "horizontal": "แนวนอน (เริ่มต้น)",
+        "vertical": "แนวตั้ง"
+      },
+      "simple_advanced_mode": {
+        "advanced": "ขั้นสูง",
+        "simple": "ธรรมดา"
+      },
+      "status_label": {
+        "color_source": "แหล่งสี",
+        "jinja": "ป้ายสถานะ",
+        "position": "ตำแหน่งป้ายกำกับ"
       },
       "status_label_color_source": {
-        "bar": "Progress bar",
-        "icon": "Icon"
+        "bar": "แถบความคืบหน้า",
+        "icon": "ไอคอน"
       },
-      "alert_animation": {
-        "static": "Static",
-        "blink": "Blink",
-        "ping": "Ping"
-      },
-      "min_value_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "max_value_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "watermark_low_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "watermark_high_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_above_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_below_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
+      "theme": {
+        "battery_adaptive": "แบตเตอรี่ (ปรับตามสถานะการชาร์จ)",
+        "critical_when_extreme": "วิกฤตเมื่อค่าสุดขั้ว (ระดับถัง, ค่าเบี่ยงเบน...)",
+        "critical_when_extreme_center": "วิกฤตเมื่อค่าสุดขั้ว, จัดกึ่งกลาง (center_zero)",
+        "critical_when_high": "วิกฤตเมื่อค่าสูง (CPU, RAM, การใช้ดิสก์...)",
+        "critical_when_low": "วิกฤตเมื่อค่าต่ำ (แบตเตอรี่, ดิสก์...)",
+        "humidity": "ความชื้น",
+        "light": "แสง",
+        "optimal_when_high": "เหมาะสมเมื่อสูง",
+        "optimal_when_low": "เหมาะสมเมื่อต่ำ",
+        "pm25": "PM2.5",
+        "temperature": "อุณหภูมิ",
+        "voc": "VOC"
       },
       "theme_mode": {
-        "preset": "Preset",
-        "custom": "Custom"
+        "custom": "Custom",
+        "preset": "Preset"
       },
-      "min_value": {
+      "unit_position": {
+        "after": "หลังค่า",
+        "before": "ก่อนค่า"
+      },
+      "unit_spacing": {
+        "auto": "อัตโนมัติ",
+        "no-space": "ไม่เว้นวรรค",
+        "space": "เว้นวรรค"
+      },
+      "value_shape": {
         "attribute": "Attribute"
       },
-      "max_value": {
-        "attribute": "Attribute"
+      "value_source_mode": {
+        "entity": "Entity",
+        "jinja": "Template",
+        "standard": "Fixed value"
       },
-      "bar_stack_mode": {
-        "stacked": "Stacked",
-        "proportional": "Sum",
-        "net": "Net"
+      "watermark": {
+        "disable_high": "Disable high",
+        "disable_low": "Disable low",
+        "high": "High",
+        "high_as": "High unit",
+        "high_color": "High color",
+        "line_size": "Line size",
+        "low": "Low",
+        "low_as": "Low unit",
+        "low_color": "Low color",
+        "opacity": "Opacity",
+        "type": "Type"
+      },
+      "watermark_as": {
+        "auto": "อัตโนมัติ",
+        "percent": "เปอร์เซ็นต์"
+      },
+      "watermark_type": {
+        "area": "พื้นที่",
+        "blended": "ผสมกลมกลืน",
+        "line": "เส้น",
+        "round": "กลม",
+        "striped": "ลายทาง",
+        "triangle": "สามเหลี่ยม"
       }
+    },
+    "title": {
+      "content": "เนื้อหา",
+      "interaction": "การโต้ตอบ",
+      "layout": "เค้าโครงและขนาด",
+      "markers": "เครื่องหมายและการแจ้งเตือน",
+      "theme": "รูปลักษณ์และความรู้สึก"
     }
   }
 }

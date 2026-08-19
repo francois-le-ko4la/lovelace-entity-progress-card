@@ -2,148 +2,158 @@
   "card": {
     "msg": {
       "appliedDefaultValue": "默认值已自动应用。",
-      "attributeNotFound": "在 Home Assistant 中未找到属性。",
-      "entityNotFound": "在 Home Assistant 中未找到实体。",
-      "invalidActionObject": "操作对象无效或结构错误。",
       "invalidDecimal": "值必须为有效的小数。",
-      "invalidEntityId": "实体 ID 无效或格式错误。",
       "invalidEnumValue": "提供的值不在允许选项内。",
-      "invalidStateContent": "状态内容无效或格式错误。",
+      "invalidNoun": "无效或格式错误：{noun}",
       "invalidStateContentEntry": "状态内容中的一项或多项无效。",
       "invalidTheme": "指定的主题未知，将使用默认主题。",
-      "invalidTypeArray": "应为数组类型的值。",
-      "invalidTypeBoolean": "应为布尔类型的值。",
-      "invalidTypeNumber": "应为数字类型的值。",
-      "invalidTypeObject": "应为对象类型的值。",
-      "invalidTypeString": "应为字符串类型的值。",
+      "invalidType": "期望的类型：{type}",
       "invalidUnionType": "值不符合任何允许类型。",
       "missingActionKey": "操作对象缺少必需的键。",
-      "missingRequiredProperty": "缺少必需的属性。"
+      "missingRequiredProperty": "缺少必需的属性。",
+      "notFound": "在 HA 中未找到：{noun}",
+      "words": {
+        "nouns": {
+          "action_object": "动作对象",
+          "attribute": "属性",
+          "entity": "实体",
+          "entity_id": "实体 ID",
+          "state_content": "状态内容"
+        },
+        "types": {
+          "array": "数组",
+          "boolean": "布尔",
+          "number": "数字",
+          "object": "对象",
+          "string": "字符串"
+        }
+      }
     }
   },
   "editor": {
-    "title": {
-      "content": "内容",
-      "markers": "Markers & Alerts",
-      "layout": "Layout & Sizing",
-      "interaction": "交互",
-      "theme": "外观与体验"
-    },
     "field": {
+      "action": {
+        "tap": "点击行为",
+        "hold": "长按行为",
+        "double_tap": "双击行为",
+        "icon_tap": "图标点击行为",
+        "icon_hold": "图标按住行为",
+        "icon_double_tap": "图标双击行为"
+      },
+      "action_picker": "添加交互",
+      "alert_toggle": "警报",
+      "alert_when_above_mode": "上限警报来源",
+      "alert_when_below_mode": "下限警报来源",
       "attribute": "属性",
       "badge_color": "徽章颜色",
+      "badge_color_toggle": "Independent color",
       "badge_icon": "徽章图标",
+      "badge_toggle": "徽章",
       "bar_color": "进度条颜色",
-      "bar_effect_jinja": "进度条效果 (Jinja 模式)",
-      "bar_orientation": "进度条方向",
-      "bar_position": "进度条位置",
-      "bar_single_line": "单行信息",
-      "bar_size": "进度条大小",
-      "bar_segments": "Bar segments",
       "bar_color_mode": "颜色模式",
-      "bar_scale": "Bar scale",
+      "bar_effect_mode": "进度条效果",
+      "bar_group": "进度条",
+      "bar_max_width": "进度条最大宽度",
+      "bar_max_width_toggle": "进度条最大宽度",
+      "bar_orientation": "方向",
+      "bar_scale": "比例",
+      "bar_segments": "分段",
+      "bar_single_line": "单行",
+      "bar_size": "大小",
+      "bar_stack": "附加实体",
+      "bar_stack_mode": "Stack mode",
+      "card_size_toggle": "卡片尺寸",
       "center_zero": "中心為零",
-      "center_zero_value": "中心值",
       "center_zero_growth_percent": "增长百分比",
+      "center_zero_value": "中心值",
       "color": "主色",
+      "custom_info": "自定义次要信息",
+      "custom_theme": "Custom theme zones",
       "decimal": "小数",
-      "double_tap_action": "双击动作",
+      "density_toggle": "紧凑",
       "entity": "实体",
-      "force_circular_background": "强制圆形背景",
-      "hide_jinja": "隐藏 (Jinja 模式)",
-      "hold_action": "长按动作",
+      "fast_refresh": "快速刷新（每秒）",
+      "force_circular_background_mode": "图标圆形背景",
+      "frameless": "无边框",
+      "height": "高度",
+      "height_custom_toggle": "Shrink height (embedded)",
+      "hide_mode": "隐藏",
       "icon": "图标",
-      "icon_animation": "Icon animation",
-      "icon_double_tap_action": "图标双击动作",
-      "icon_hold_action": "图标长按动作",
-      "icon_tap_action": "图标点击动作",
+      "icon_animation": "图标动画",
+      "interpolate": "颜色插值",
       "layout": "内容布局",
+      "marginless": "无边距",
       "max_value": "最大值",
+      "max_value_mode": "最大值来源",
+      "migrate_config": "Migrate config",
       "min_value": "最小值",
+      "min_value_mode": "最小值来源",
+      "min_width": "最小宽度",
+      "multiline": "Multiline",
       "name": "名称",
+      "name_info": "自定义名称信息",
       "percent": "百分比",
+      "position": "位置",
+      "reverse": "反转计时器",
       "reverse_secondary_info_row": "交换进度条和文本",
       "secondary": "次要信息",
       "state_content": "状态内容",
-      "show_all_actions": "显示所有交互",
-      "tap_action": "点击动作",
+      "status_label_toggle": "状态标签",
       "text_shadow": "添加文本阴影",
-      "theme_mode": "Theme mode",
       "theme": "主题",
-      "custom_theme": "Custom theme zones",
+      "trigger": "触发器",
       "unit": "单位",
-      "min_value_mode": "Min value source",
-      "max_value_mode": "Max value source",
-      "watermark_low_mode": "Low marker source",
-      "watermark_high_mode": "High marker source",
-      "alert_when_above_mode": "Above alert source",
-      "alert_when_below_mode": "Below alert source",
-      "bar_max_width": "Bar max width",
-      "bar_max_width_toggle": "Bar max width",
-      "frameless": "Frameless",
-      "height": "Height",
-      "marginless": "Marginless",
-      "min_width": "Min width",
-      "card_size_toggle": "Card size",
-      "unit_spacing": "Unit spacing",
-      "watermark_toggle": "Markers",
-      "alert_toggle": "Alert",
-      "custom_info": "自定义次要信息",
-      "multiline": "Multiline",
-      "interpolate": "颜色插值",
-      "name_info": "自定义名称信息",
-      "reverse": "反转计时器",
-      "bar_stack_mode": "Stack mode",
-      "bar_stack": "附加实体",
-      "migrate_config": "Migrate config",
-      "icon_animation_jinja_toggle": "Trigger via template",
-      "fast_refresh": "Fast refresh (per-second)",
-      "height_custom_toggle": "Shrink height (embedded)",
-      "status_label_toggle": "Status label",
-      "density_toggle": "Compact",
-      "badge_toggle": "Badge",
-      "badge_color_toggle": "Independent color"
+      "unit_spacing": "间距",
+      "value_compact": "紧凑数值 (1.2k)",
+      "value_sign": "显示符号 (+/-)",
+      "watermark_high_mode": "高标记来源",
+      "watermark_low_mode": "低标记来源",
+      "watermark_toggle": "标记"
     },
     "field_helper": {
-      "min_value_jinja": "Returns Number (42)",
-      "max_value_jinja": "Returns Number (100)",
-      "watermark_low_jinja": "Returns Number (20)",
-      "watermark_high_jinja": "Returns Number (80)",
-      "alert_when_above_jinja": "Returns Number (90)",
-      "alert_when_below_jinja": "Returns Number (10)",
-      "icon_animation_jinja": "Returns Boolean (true)",
+      "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
       "badge_icon": "Returns String (mdi:fan) or Object ({icon, color})",
-      "badge_color": "Returns String (#ff0000)",
-      "status_label_jinja": "Returns String (hot) or Object ({label, color})",
       "bar_effect": "Returns String (shimmer) or List ([shimmer, gradient])",
-      "hide": "Returns String (icon, name) or List ([icon, name])",
-      "name_info": "Returns String (Living Room)",
-      "custom_info": "Returns String (Charging)",
-      "icon": "Returns String (mdi:fan)",
       "color": "Returns String (#ff0000)",
-      "bar_color": "Returns String (#ff0000)"
+      "custom_info": "Returns String (Charging)",
+      "hide": "Returns String (icon, name) or List ([icon, name])",
+      "icon": "Returns String (mdi:fan)",
+      "icon_animation_jinja": "Returns Boolean (true)",
+      "name_info": "Returns String (Living Room)",
+      "returns_number": "Returns Number (42)",
+      "status_label_jinja": "Returns String (hot) or Object ({label, color})"
     },
     "option": {
-      "theme": {
-        "battery_adaptive": "Battery (adapts to charging state)",
-        "light": "亮度",
-        "temperature": "温度",
-        "humidity": "湿度",
-        "pm25": "PM2.5",
-        "voc": "VOC",
-        "critical_when_low": "Critical when Low (Battery, disk...)",
-        "optimal_when_low": "值低时最佳",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "optimal_when_high": "值高时最佳",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "critical_when_extreme_center": "Critical when Extreme, centered (center_zero)"
+      "alert_animation": {
+        "blink": "闪烁",
+        "ping": "Ping",
+        "static": "静态"
       },
-      "bar_size": {
-        "xsmall": "Extra Small",
-        "small": "小",
-        "medium": "中",
-        "large": "大",
-        "xlarge": "超大"
+      "alert_highlight": {
+        "background": "Background",
+        "border": "Border",
+        "label": "标签"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "animation": "动画",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "bar_color_mode": {
+        "auto": "自动",
+        "rainbow": "彩虹",
+        "rainbow_full": "彩虹（完整）",
+        "segment": "分段"
+      },
+      "bar_effect": {
+        "glass": "玻璃",
+        "gradient": "渐变",
+        "gradient_reverse": "反向渐变",
+        "radius": "圆角",
+        "shimmer": "微光",
+        "shimmer_reverse": "反向微光"
       },
       "bar_orientation": {
         "ltr": "从左到右",
@@ -151,163 +161,145 @@
         "up": "向上"
       },
       "bar_position": {
-        "default": "默认",
+        "background": "卡片背景",
         "below": "内容下方的进度条",
-        "compact_below": "Compact bar below (name/value on one row)",
-        "top": "顶部进度条",
         "bottom": "底部进度条",
+        "compact_below": "下方紧凑进度条（名称/数值同一行）",
+        "default": "默认",
         "overlay": "覆盖内容的进度条",
-        "background": "卡片背景"
-      },
-      "layout": {
-        "horizontal": "水平（默认）",
-        "vertical": "垂直"
-      },
-      "bar_color_mode": {
-        "auto": "自动",
-        "segment": "分段",
-        "rainbow": "彩虹",
-        "rainbow_full": "Rainbow (full)"
+        "top": "顶部进度条"
       },
       "bar_scale": {
         "linear": "Linear",
         "log": "Logarithmic"
       },
-      "bar_effect": {
-        "radius": "圆角",
-        "glass": "玻璃",
-        "gradient": "渐变",
-        "gradient_reverse": "反向渐变",
-        "shimmer": "微光",
-        "shimmer_reverse": "反向微光"
+      "bar_size": {
+        "large": "大",
+        "medium": "中",
+        "small": "小",
+        "xlarge": "超大",
+        "xsmall": "超小"
+      },
+      "bar_stack_mode": {
+        "net": "Net",
+        "proportional": "Sum",
+        "stacked": "Stacked"
+      },
+      "force_circular_background_mode": {
+        "auto": "自动",
+        "forced": "强制"
       },
       "hide": {
         "icon": "图标",
         "name": "名称",
-        "value": "数值",
-        "unit": "单位",
+        "progress_bar": "进度条",
         "secondary_info": "补充信息",
-        "progress_bar": "进度条"
-      },
-      "unit_spacing": {
-        "auto": "Auto",
-        "space": "Space",
-        "no-space": "No space"
-      },
-      "watermark_type": {
-        "blended": "Blended",
-        "area": "Area",
-        "striped": "Striped",
-        "triangle": "Triangle",
-        "round": "Round",
-        "line": "Line"
-      },
-      "watermark_as": {
-        "auto": "Auto",
-        "percent": "Percent"
-      },
-      "watermark": {
-        "low": "Low",
-        "high": "High",
-        "type": "Type",
-        "opacity": "Opacity",
-        "low_color": "Low color",
-        "high_color": "High color",
-        "low_as": "Low unit",
-        "high_as": "High unit",
-        "line_size": "Line size",
-        "disable_low": "Disable low",
-        "disable_high": "Disable high",
-        "low_attribute": "Attribute",
-        "high_attribute": "Attribute"
+        "shape": "图标的圆形背景",
+        "unit": "单位",
+        "value": "数值"
       },
       "icon_animation": {
-        "spin": "Spin",
-        "pulse": "Pulse",
+        "battery_charging": "Battery charging",
         "bounce": "Bounce",
-        "shake": "Shake",
         "ping": "Ping",
+        "pulse": "Pulse",
         "reveal": "Reveal",
-        "washing_machine": "Washing machine",
-        "battery_charging": "Battery charging"
+        "shake": "Shake",
+        "spin": "Spin",
+        "washing_machine": "Washing machine"
       },
-      "alert_when": {
-        "above": "Alert above",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight",
-        "animation": "Animation",
-        "above_attribute": "Attribute",
-        "below_attribute": "Attribute"
-      },
-      "alert_highlight": {
-        "border": "Border",
-        "background": "Background",
-        "label": "Label"
-      },
-      "status_label": {
-        "jinja": "Status label",
-        "position": "Label position",
-        "color_source": "Color source"
+      "icon_animation_mode": {
+        "auto": "自动",
+        "template": "模板"
       },
       "label_position": {
-        "left": "Left",
-        "right": "Right"
+        "left": "左",
+        "right": "右"
+      },
+      "layout": {
+        "horizontal": "水平（默认）",
+        "vertical": "垂直"
+      },
+      "simple_advanced_mode": {
+        "advanced": "高级",
+        "simple": "简单"
+      },
+      "status_label": {
+        "color_source": "颜色来源",
+        "jinja": "状态标签",
+        "position": "标签位置"
       },
       "status_label_color_source": {
-        "bar": "Progress bar",
-        "icon": "Icon"
+        "bar": "进度条",
+        "icon": "图标"
       },
-      "alert_animation": {
-        "static": "Static",
-        "blink": "Blink",
-        "ping": "Ping"
-      },
-      "min_value_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "max_value_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "watermark_low_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "watermark_high_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_above_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_below_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
+      "theme": {
+        "battery_adaptive": "电池（根据充电状态自适应）",
+        "critical_when_extreme": "极端值告警（水箱液位、偏差...）",
+        "critical_when_extreme_center": "极端值告警，居中（center_zero）",
+        "critical_when_high": "高值告警（CPU、内存、磁盘使用率...）",
+        "critical_when_low": "低值告警（电池、磁盘...）",
+        "humidity": "湿度",
+        "light": "亮度",
+        "optimal_when_high": "值高时最佳",
+        "optimal_when_low": "值低时最佳",
+        "pm25": "PM2.5",
+        "temperature": "温度",
+        "voc": "VOC"
       },
       "theme_mode": {
-        "preset": "Preset",
-        "custom": "Custom"
+        "custom": "Custom",
+        "preset": "Preset"
       },
-      "min_value": {
+      "unit_position": {
+        "after": "数值之后",
+        "before": "数值之前"
+      },
+      "unit_spacing": {
+        "auto": "自动",
+        "no-space": "无空格",
+        "space": "空格"
+      },
+      "value_shape": {
         "attribute": "Attribute"
       },
-      "max_value": {
-        "attribute": "Attribute"
+      "value_source_mode": {
+        "entity": "Entity",
+        "jinja": "Template",
+        "standard": "Fixed value"
       },
-      "bar_stack_mode": {
-        "stacked": "Stacked",
-        "proportional": "Sum",
-        "net": "Net"
+      "watermark": {
+        "disable_high": "Disable high",
+        "disable_low": "Disable low",
+        "high": "High",
+        "high_as": "High unit",
+        "high_color": "High color",
+        "line_size": "Line size",
+        "low": "Low",
+        "low_as": "Low unit",
+        "low_color": "Low color",
+        "opacity": "Opacity",
+        "type": "Type"
+      },
+      "watermark_as": {
+        "auto": "自动",
+        "percent": "百分比"
+      },
+      "watermark_type": {
+        "area": "面积",
+        "blended": "渐变融合",
+        "line": "线条",
+        "round": "圆形",
+        "striped": "条纹",
+        "triangle": "三角形"
       }
+    },
+    "title": {
+      "content": "内容",
+      "interaction": "交互",
+      "layout": "布局与尺寸",
+      "markers": "标记与警报",
+      "theme": "外观与体验"
     }
   }
 }

@@ -26,6 +26,7 @@ const configBase = {
     disable: '',
     space: ' ', // HA dont use '\u202F'
     unitSpacing: { auto: 'auto', space: 'space', noSpace: 'no-space' },
+    unitPosition: { after: 'after', before: 'before' },
   },
   showMoreInfo: true,
   reverse: false,

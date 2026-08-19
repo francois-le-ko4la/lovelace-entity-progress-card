@@ -137,7 +137,10 @@ Some issues aren't a bug — the browser is simply below the supported version.
 
 - **Already on the latest version?**  
   ➡️ Check your installed version against the [latest release] — HACS flags an
-  update when one is available.
+  update when one is available. HACS can lag before it shows a new release
+  though: if your version looks outdated but no update is offered, open the card
+  in HACS and use **⋮ → Redownload** to force a fresh install of the current
+  release rather than waiting.
 - **A pre-release (RC) already fixes it?**  
   ➡️ Patches and new features often ship first as a release candidate
   (`x.y.z-rcN`) before the stable release. Check [all releases] (includes

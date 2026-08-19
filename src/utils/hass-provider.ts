@@ -6,7 +6,7 @@
  */
 
 import { CARD_CONTEXT, HA_CONTEXT, CARD, SEV } from './parameters.js';
-import { TRANSLATIONS } from './translations.js';
+import { TRANSLATION_KEYS, TRANSLATIONS_FLAT } from './translations.js';
 import { is, has } from './common-checks.js';
 import { Logger, type LoggerInstance } from './log.js';
 
@@ -66,6 +66,26 @@ type EntityState = {
   context?: { id: string; user_id: string | null; parent_id: string | null };
   attributes: Record<string, unknown>;
 } & Record<string, unknown>;
+
+// 0 is the "same as English" sentinel (see translations.js). Cached per
+// language - base.ts's hass-not-loaded-yet fallback can call this per field.
+const translationTreeCache = new Map<string, Record<string, unknown>>();
+
+function buildTranslationTree(lang: string): Record<string, unknown> {
+  const cached = translationTreeCache.get(lang);
+  if (cached) return cached;
+  const values = TRANSLATIONS_FLAT[lang as keyof typeof TRANSLATIONS_FLAT];
+  const enValues = TRANSLATIONS_FLAT.en;
+  const tree: Record<string, unknown> = {};
+  TRANSLATION_KEYS.forEach((key, i) => {
+    const segments = key.split('.');
+    let node = tree;
+    for (let s = 0; s < segments.length - 1; s++) node = (node[segments[s]] ??= {}) as Record<string, unknown>;
+    node[segments[segments.length - 1]] = values[i] === 0 ? enValues[i] : values[i];
+  });
+  translationTreeCache.set(lang, tree);
+  return tree;
+}
 
 /**
  * Singleton wrapper around Home Assistant's `hass` object: entity/device/
@@ -142,11 +162,36 @@ class HassProviderSingleton {
 
   get language(): string {
     const lang = this.#hass?.language;
-    return lang && lang in TRANSLATIONS ? lang : CARD.config.language;
+    return lang && lang in TRANSLATIONS_FLAT ? lang : CARD.config.language;
   }
 
+  // Codes sharing a template+noun pair instead of a full sentence each -
+  // see #getMessage below.
+  static #NOUN_CODES: Record<string, [template: string, noun: string]> = {
+    attributeNotFound: ['notFound', 'attribute'],
+    entityNotFound: ['notFound', 'entity'],
+    invalidEntityId: ['invalidNoun', 'entity_id'],
+    invalidStateContent: ['invalidNoun', 'state_content'],
+    invalidActionObject: ['invalidNoun', 'action_object'],
+  };
+
   getMessage(code: string | null): string {
-    return this.localizeGroup('card.msg')[code ?? ''] || `Unknown message code: ${code}`;
+    const msg = this.localizeGroup('card.msg');
+
+    const typeMatch = code?.match(/^invalidType([A-Z]\w+)$/);
+    if (typeMatch) {
+      const type = this.localizeGroup('card.msg.words.types')[typeMatch[1].toLowerCase()];
+      if (msg.invalidType && type) return msg.invalidType.replace('{type}', type);
+    }
+
+    const nounEntry = code ? HassProviderSingleton.#NOUN_CODES[code] : undefined;
+    if (nounEntry) {
+      const [template, nounKey] = nounEntry;
+      const noun = this.localizeGroup('card.msg.words.nouns')[nounKey];
+      if (msg[template] && noun) return msg[template].replace('{noun}', noun);
+    }
+
+    return msg[code ?? ''] || `Unknown message code: ${code}`;
   }
 
   get numberFormat() {
@@ -230,7 +275,7 @@ class HassProviderSingleton {
 
     const stateObj = this.getEntityStateObj(entityId);
     if (prop === 'state')
-      return stateObj ? (this.#hass?.formatEntityState?.(stateObj) ?? '') : this.localize('card.msg.entityNotFound');
+      return stateObj ? (this.#hass?.formatEntityState?.(stateObj) ?? '') : this.getMessage('entityNotFound');
 
     return this.#hass?.formatEntityAttributeValue?.(stateObj, prop) ?? '';
   }
@@ -353,8 +398,8 @@ class HassProviderSingleton {
   }
 
   #loadTranslations(lang: string) {
-    const curLanguage = has.own(TRANSLATIONS, lang) ? lang : CARD.config.language;
-    this.#translations = TRANSLATIONS[curLanguage as keyof typeof TRANSLATIONS];
+    const curLanguage = has.own(TRANSLATIONS_FLAT, lang) ? lang : CARD.config.language;
+    this.#translations = buildTranslationTree(curLanguage);
   }
 
   #getRelativeTimeFormat(): Intl.RelativeTimeFormat {
@@ -366,5 +411,5 @@ class HassProviderSingleton {
   }
 }
 
-export { HassProviderSingleton };
+export { HassProviderSingleton, buildTranslationTree };
 export type { HomeAssistant, EntityState };

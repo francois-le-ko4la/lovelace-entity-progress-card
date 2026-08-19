@@ -716,7 +716,7 @@ ha-card.label-left .status-label {
      it for an unrelated reason) than a project-namespaced variable nothing
      else declares. */
   background-color: var(--shape-background-color, var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default})));
-  opacity: var(--shape-opacity);
+  opacity: var(--epb-icon-shape-opacity, var(--shape-opacity));
 }
 
 /* CSS-only click feedback (ha-tile-icon's own technique) instead of a second
@@ -2894,24 +2894,43 @@ ${CARD.htmlStructure.card.element}:not(.${CARD.style.dynamic.clickable.card}) {
  ******************************************************************************/
 
 const CHIPS_HOST_STYLE = css`
-  :host { display: block; width: 100%; }
+  :host {
+    display: block;
+    width: 100%;
+    /* "loud" = selected, "normal" = standby (ha-button.ts's own mapping). */
+    --chip-accent: var(--wa-color-brand-fill-loud, var(--primary-color));
+    --chip-accent-text: var(--wa-color-brand-on-loud, var(--text-primary-color, #fff));
+    --chip-standby: var(--wa-color-brand-fill-normal, var(--secondary-background-color));
+    --chip-standby-text: var(--wa-color-brand-on-normal, var(--primary-text-color));
+    --chip-standby-hover: var(--ha-color-fill-primary-normal-hover, var(--divider-color));
+    --chip-accent-hover: var(--ha-color-fill-primary-loud-hover, var(--primary-color));
+  }
   .lbl { display: block; font-size: 1rem; font-weight: 400; line-height: 1.5;
     color: var(--primary-text-color); padding-bottom: 4px; }
+  /* Segmented (2-mode) sets read as one control, not a stacked list - label
+     and pill share a row, set on the host itself (see chips.ts). */
+  :host(.inline-row) { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  :host(.inline-row) .lbl {
+    padding-bottom: 0;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  :host(.inline-row) .chip-set.segmented { flex-shrink: 0; }
   .chip-set { display: flex; flex-wrap: wrap; gap: 8px; }
+  /* Solid standby/accent fills everywhere, not an opacity-layer tint -
+     that layer didn't repaint live on a theme switch (see :host's tokens). */
   .chip { position: relative; display: inline-flex; align-items: center; height: 32px; padding: 0 16px; box-sizing: border-box;
-    border: 1px solid var(--divider-color, #e0e0e0); border-radius: 8px; background: transparent;
-    color: var(--primary-text-color); font-family: inherit; font-size: 14px; line-height: 1; cursor: pointer;
-    transition: background-color 0.15s, border-color 0.15s; }
-  /* Own layer for the hover tint instead of background directly on .chip -
-     opacity on .chip itself would fade its own text/border along with the
-     tint (same reasoning as .shape::before - see styles.ts). A childless
-     ::before sidesteps that, and works identically on every browser this
-     card supports - no color-mix()/@supports/fallback tier needed at all. */
-  .chip::before { content: ''; position: absolute; inset: 0; border-radius: inherit;
-    background: var(--primary-text-color); opacity: 0; transition: opacity 0.15s; pointer-events: none; }
-  .chip:hover::before { opacity: 0.08; }
-  .chip.selected { background: var(--primary-color); border-color: var(--primary-color);
-    color: var(--text-primary-color, #fff); }
+    border: none; border-radius: 8px; font-family: inherit; font-size: 14px; line-height: 1; font-weight: 500; cursor: pointer;
+    background: var(--chip-standby); color: var(--chip-standby-text);
+    transition: background-color 0.15s; }
+  .chip:hover { background: var(--chip-standby-hover); }
+  .chip.selected { background: var(--chip-accent); color: var(--chip-accent-text); font-weight: 700; }
+  .chip.selected:hover { background: var(--chip-accent-hover); }
+  /* 2-mode sets fuse into one pill instead of separate chips. */
+  .chip-set.segmented { display: inline-flex; flex-wrap: nowrap; gap: 0; border-radius: 999px; overflow: hidden; }
+  .chip-set.segmented .chip { border-radius: 0; }
 `;
 
 const BAR_STACK_EDITOR_STYLE = css`
@@ -2953,6 +2972,45 @@ const BAR_STACK_EDITOR_STYLE = css`
   .del-btn:hover { color: var(--primary-color); }
   .del-btn ha-svg-icon { width: 16px; height: 16px; }
   .add-row { display: flex; justify-content: flex-start; margin-top: 4px; }
+`;
+
+const ACTION_PICKER_STYLE = css`
+  :host { display: block; width: 100%; }
+  .picker { position: relative; display: inline-flex; }
+  .menu {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 0;
+    z-index: 10;
+    flex-direction: column;
+    gap: 2px;
+    width: max-content;
+    min-width: 200px;
+    max-width: min(90vw, 320px);
+    padding: 4px;
+    box-sizing: border-box;
+    background: var(--card-background-color, #fff);
+    border: 1px solid var(--divider-color, #e0e0e0);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.24);
+  }
+  .menu.open { display: flex; }
+  .menu-item {
+    all: unset;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--primary-text-color);
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .menu-item:hover, .menu-item:focus-visible { background: var(--secondary-background-color); }
 `;
 
 const CUSTOM_THEME_EDITOR_STYLE = css`
@@ -3006,8 +3064,18 @@ const EDITOR_BASE_STYLE = css`
      one side. */
   .editor { display: flex; flex-direction: column; gap: 16px; padding-bottom: 16px; }
   .panel-body { display: flex; flex-direction: row; gap: 16px; flex-wrap: wrap; align-content: flex-start; padding: 8px 0; }
+  /* min-width: auto (flex default) lets a narrow field wrap its label to
+     2 lines instead of eliding - throws its row height off from siblings. */
+  .panel-body > * { min-width: 0; }
   .panel-body ha-selector.field-toggle { margin-block: -18px; }
   .panel-body ha-selector.length-unit { align-self: flex-end; margin-block-end: 8px; }
+  .section-label {
+    display: block;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--primary-text-color);
+  }
   .migrate-header { display: flex; justify-content: flex-end; }
 `;
 
@@ -3071,6 +3139,7 @@ export { css };
 export { CARD_CSS };
 export { CHIPS_HOST_STYLE };
 export { BAR_STACK_EDITOR_STYLE };
+export { ACTION_PICKER_STYLE };
 export { CUSTOM_THEME_EDITOR_STYLE };
 export { EDITOR_BASE_STYLE };
 export { CONSTRUCTED_SHEETS };

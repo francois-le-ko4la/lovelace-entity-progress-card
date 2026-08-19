@@ -2,148 +2,158 @@
   "card": {
     "msg": {
       "appliedDefaultValue": "Ett standardvärde har tillämpats automatiskt.",
-      "attributeNotFound": "Attributet kunde inte hittas i Home Assistant.",
-      "entityNotFound": "Enheten kunde inte hittas i Home Assistant.",
-      "invalidActionObject": "Åtgärdsobjektet är ogiltigt eller felstrukturerat.",
       "invalidDecimal": "Värdet måste vara ett giltigt decimaltal.",
-      "invalidEntityId": "Enhets-ID är ogiltigt eller felaktigt formaterat.",
       "invalidEnumValue": "Det angivna värdet är inte ett giltigt alternativ.",
-      "invalidStateContent": "Tillståndsinnehållet är ogiltigt eller felaktigt.",
+      "invalidNoun": "Ogiltig eller felformaterad: {noun}.",
       "invalidStateContentEntry": "En eller flera poster i tillståndsinnehållet är ogiltiga.",
       "invalidTheme": "Det angivna temat är okänt. Standardtema används.",
-      "invalidTypeArray": "Förväntade ett värde av typen array.",
-      "invalidTypeBoolean": "Förväntade ett värde av typen boolean.",
-      "invalidTypeNumber": "Förväntade ett värde av typen nummer.",
-      "invalidTypeObject": "Förväntade ett värde av typen objekt.",
-      "invalidTypeString": "Förväntade ett värde av typen sträng.",
+      "invalidType": "Förväntad typ: {type}.",
       "invalidUnionType": "Värdet matchar inte något av de tillåtna typerna.",
       "missingActionKey": "En obligatorisk nyckel saknas i åtgärdsobjektet.",
-      "missingRequiredProperty": "En obligatorisk egenskap saknas."
+      "missingRequiredProperty": "En obligatorisk egenskap saknas.",
+      "notFound": "Hittades inte i HA: {noun}.",
+      "words": {
+        "nouns": {
+          "action_object": "åtgärdsobjekt",
+          "attribute": "attribut",
+          "entity": "entitet",
+          "entity_id": "entitets-ID",
+          "state_content": "tillståndsinnehåll"
+        },
+        "types": {
+          "array": "array",
+          "boolean": "boolean",
+          "number": "nummer",
+          "object": "objekt",
+          "string": "sträng"
+        }
+      }
     }
   },
   "editor": {
-    "title": {
-      "content": "Innehåll",
-      "markers": "Markers & Alerts",
-      "layout": "Layout & Sizing",
-      "interaction": "Interaktioner",
-      "theme": "Utseende och funktionalitet"
-    },
     "field": {
+      "action": {
+        "tap": "Beteende vid tryck",
+        "hold": "Beteende vid långtryck",
+        "double_tap": "Beteende vid dubbeltryck",
+        "icon_tap": "Beteende vid tryck på ikonen",
+        "icon_hold": "Beteende för hållning på ikonen",
+        "icon_double_tap": "Beteende för dubbeltryck på ikonen"
+      },
+      "action_picker": "Lägg till interaktion",
+      "alert_toggle": "Larm",
+      "alert_when_above_mode": "Källa för övre larm",
+      "alert_when_below_mode": "Källa för nedre larm",
       "attribute": "Attribut",
       "badge_color": "Färg på bricka",
+      "badge_color_toggle": "Independent color",
       "badge_icon": "Ikon för bricka",
+      "badge_toggle": "Märke",
       "bar_color": "Färg för baren",
-      "bar_effect_jinja": "Effekt på baren (Jinja-läge)",
-      "bar_orientation": "Orientering av baren",
-      "bar_position": "Position för baren",
-      "bar_single_line": "Info på en rad",
-      "bar_size": "Barstorlek",
-      "bar_segments": "Bar segments",
       "bar_color_mode": "Färgläge",
-      "bar_scale": "Bar scale",
+      "bar_effect_mode": "Effekt på baren",
+      "bar_group": "Stapel",
+      "bar_max_width": "Max stapelbredd",
+      "bar_max_width_toggle": "Max stapelbredd",
+      "bar_orientation": "Riktning",
+      "bar_scale": "Skala",
+      "bar_segments": "Segment",
+      "bar_single_line": "En rad",
+      "bar_size": "Storlek",
+      "bar_stack": "Ytterligare entiteter",
+      "bar_stack_mode": "Stack mode",
+      "card_size_toggle": "Kortstorlek",
       "center_zero": "Noll i mitten",
-      "center_zero_value": "Centervärde",
       "center_zero_growth_percent": "Tillväxtprocent",
+      "center_zero_value": "Centervärde",
       "color": "Primärfärg",
+      "custom_info": "Anpassad sekundär info",
+      "custom_theme": "Custom theme zones",
       "decimal": "decimal",
-      "double_tap_action": "Åtgärd vid dubbeltryck",
+      "density_toggle": "Kompakt",
       "entity": "Enhet",
-      "force_circular_background": "Tvinga cirkulär bakgrund",
-      "hide_jinja": "Dölj (Jinja-läge)",
-      "hold_action": "Åtgärd vid långt tryck",
+      "fast_refresh": "Snabb uppdatering (varje sekund)",
+      "force_circular_background_mode": "Cirkulär ikonbakgrund",
+      "frameless": "Utan ram",
+      "height": "Höjd",
+      "height_custom_toggle": "Shrink height (embedded)",
+      "hide_mode": "Dölj",
       "icon": "Ikon",
-      "icon_animation": "Icon animation",
-      "icon_double_tap_action": "Åtgärd vid dubbeltryck på ikonen",
-      "icon_hold_action": "Åtgärd vid långt tryck på ikonen",
-      "icon_tap_action": "Åtgärd vid tryck på ikonen",
+      "icon_animation": "Ikonanimering",
+      "interpolate": "Interpolera färger",
       "layout": "Innehållslayout",
+      "marginless": "Utan marginal",
       "max_value": "Maximalt värde",
+      "max_value_mode": "Källa för maxvärde",
+      "migrate_config": "Migrate config",
       "min_value": "Minsta värde",
+      "min_value_mode": "Källa för minimivärde",
+      "min_width": "Min bredd",
+      "multiline": "Multiline",
       "name": "Namn",
+      "name_info": "Anpassad namninfo",
       "percent": "Procent",
+      "position": "Position",
+      "reverse": "Omvänd timer",
       "reverse_secondary_info_row": "Byt ut stapel och text",
       "secondary": "Sekundär information",
       "state_content": "Statusinnehåll",
-      "show_all_actions": "Visa alla åtgärder",
-      "tap_action": "Åtgärd vid kort tryck",
+      "status_label_toggle": "Statusetikett",
       "text_shadow": "Lägg till textskugga",
-      "theme_mode": "Theme mode",
       "theme": "Tema",
-      "custom_theme": "Custom theme zones",
+      "trigger": "Utlösare",
       "unit": "Enhet",
-      "min_value_mode": "Min value source",
-      "max_value_mode": "Max value source",
-      "watermark_low_mode": "Low marker source",
-      "watermark_high_mode": "High marker source",
-      "alert_when_above_mode": "Above alert source",
-      "alert_when_below_mode": "Below alert source",
-      "bar_max_width": "Bar max width",
-      "bar_max_width_toggle": "Bar max width",
-      "frameless": "Frameless",
-      "height": "Height",
-      "marginless": "Marginless",
-      "min_width": "Min width",
-      "card_size_toggle": "Card size",
-      "unit_spacing": "Unit spacing",
-      "watermark_toggle": "Markers",
-      "alert_toggle": "Alert",
-      "custom_info": "Anpassad sekundär info",
-      "multiline": "Multiline",
-      "interpolate": "Interpolera färger",
-      "name_info": "Anpassad namninfo",
-      "reverse": "Omvänd timer",
-      "bar_stack_mode": "Stack mode",
-      "bar_stack": "Ytterligare entiteter",
-      "migrate_config": "Migrate config",
-      "icon_animation_jinja_toggle": "Trigger via template",
-      "fast_refresh": "Fast refresh (per-second)",
-      "height_custom_toggle": "Shrink height (embedded)",
-      "status_label_toggle": "Status label",
-      "density_toggle": "Compact",
-      "badge_toggle": "Badge",
-      "badge_color_toggle": "Independent color"
+      "unit_spacing": "Avstånd",
+      "value_compact": "Kompakt värde (1.2k)",
+      "value_sign": "Visa tecken (+/-)",
+      "watermark_high_mode": "Källa för övre markör",
+      "watermark_low_mode": "Källa för nedre markör",
+      "watermark_toggle": "Markörer"
     },
     "field_helper": {
-      "min_value_jinja": "Returns Number (42)",
-      "max_value_jinja": "Returns Number (100)",
-      "watermark_low_jinja": "Returns Number (20)",
-      "watermark_high_jinja": "Returns Number (80)",
-      "alert_when_above_jinja": "Returns Number (90)",
-      "alert_when_below_jinja": "Returns Number (10)",
-      "icon_animation_jinja": "Returns Boolean (true)",
+      "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
       "badge_icon": "Returns String (mdi:fan) or Object ({icon, color})",
-      "badge_color": "Returns String (#ff0000)",
-      "status_label_jinja": "Returns String (hot) or Object ({label, color})",
       "bar_effect": "Returns String (shimmer) or List ([shimmer, gradient])",
-      "hide": "Returns String (icon, name) or List ([icon, name])",
-      "name_info": "Returns String (Living Room)",
-      "custom_info": "Returns String (Charging)",
-      "icon": "Returns String (mdi:fan)",
       "color": "Returns String (#ff0000)",
-      "bar_color": "Returns String (#ff0000)"
+      "custom_info": "Returns String (Charging)",
+      "hide": "Returns String (icon, name) or List ([icon, name])",
+      "icon": "Returns String (mdi:fan)",
+      "icon_animation_jinja": "Returns Boolean (true)",
+      "name_info": "Returns String (Living Room)",
+      "returns_number": "Returns Number (42)",
+      "status_label_jinja": "Returns String (hot) or Object ({label, color})"
     },
     "option": {
-      "theme": {
-        "battery_adaptive": "Battery (adapts to charging state)",
-        "light": "Ljus",
-        "temperature": "Temperatur",
-        "humidity": "Luftfuktighet",
-        "pm25": "PM2.5",
-        "voc": "VOC",
-        "critical_when_low": "Critical when Low (Battery, disk...)",
-        "optimal_when_low": "Optimal när det är lågt",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "optimal_when_high": "Optimal när det är högt",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
-        "critical_when_extreme_center": "Critical when Extreme, centered (center_zero)"
+      "alert_animation": {
+        "blink": "Blinkning",
+        "ping": "Ping",
+        "static": "Statisk"
       },
-      "bar_size": {
-        "xsmall": "Extra Small",
-        "small": "Liten",
-        "medium": "Medium",
-        "large": "Stor",
-        "xlarge": "Extra stor"
+      "alert_highlight": {
+        "background": "Background",
+        "border": "Border",
+        "label": "Etikett"
+      },
+      "alert_when": {
+        "above": "Alert above",
+        "animation": "Animering",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight"
+      },
+      "bar_color_mode": {
+        "auto": "Auto",
+        "rainbow": "Regnbåge",
+        "rainbow_full": "Regnbåge (full)",
+        "segment": "Segment"
+      },
+      "bar_effect": {
+        "glass": "Glas",
+        "gradient": "Gradient",
+        "gradient_reverse": "Omvänd gradient",
+        "radius": "Rundade hörn",
+        "shimmer": "Glans",
+        "shimmer_reverse": "Omvänd glans"
       },
       "bar_orientation": {
         "ltr": "Vänster till höger",
@@ -151,163 +161,145 @@
         "up": "Uppåt"
       },
       "bar_position": {
-        "default": "Standard",
+        "background": "Kortbakgrund",
         "below": "Bar under innehållet",
-        "compact_below": "Compact bar below (name/value on one row)",
-        "top": "Bar längst upp",
         "bottom": "Bar längst ned",
+        "compact_below": "Kompakt stapel under (namn/värde på en rad)",
+        "default": "Standard",
         "overlay": "Bar överlagrad på innehållet (overlay)",
-        "background": "Kortbakgrund"
-      },
-      "layout": {
-        "horizontal": "Horisontell (standard)",
-        "vertical": "Vertikal"
-      },
-      "bar_color_mode": {
-        "auto": "Auto",
-        "segment": "Segment",
-        "rainbow": "Regnbåge",
-        "rainbow_full": "Rainbow (full)"
+        "top": "Bar längst upp"
       },
       "bar_scale": {
         "linear": "Linear",
         "log": "Logarithmic"
       },
-      "bar_effect": {
-        "radius": "Rundade hörn",
-        "glass": "Glas",
-        "gradient": "Gradient",
-        "gradient_reverse": "Omvänd gradient",
-        "shimmer": "Glans",
-        "shimmer_reverse": "Omvänd glans"
+      "bar_size": {
+        "large": "Stor",
+        "medium": "Medium",
+        "small": "Liten",
+        "xlarge": "Extra stor",
+        "xsmall": "Extra liten"
+      },
+      "bar_stack_mode": {
+        "net": "Net",
+        "proportional": "Sum",
+        "stacked": "Stacked"
+      },
+      "force_circular_background_mode": {
+        "auto": "Automatisk",
+        "forced": "Tvingad"
       },
       "hide": {
         "icon": "Ikon",
         "name": "Namn",
-        "value": "Värde",
-        "unit": "Enhet",
+        "progress_bar": "Stapel",
         "secondary_info": "Info",
-        "progress_bar": "Stapel"
-      },
-      "unit_spacing": {
-        "auto": "Auto",
-        "space": "Space",
-        "no-space": "No space"
-      },
-      "watermark_type": {
-        "blended": "Blended",
-        "area": "Area",
-        "striped": "Striped",
-        "triangle": "Triangle",
-        "round": "Round",
-        "line": "Line"
-      },
-      "watermark_as": {
-        "auto": "Auto",
-        "percent": "Percent"
-      },
-      "watermark": {
-        "low": "Low",
-        "high": "High",
-        "type": "Type",
-        "opacity": "Opacity",
-        "low_color": "Low color",
-        "high_color": "High color",
-        "low_as": "Low unit",
-        "high_as": "High unit",
-        "line_size": "Line size",
-        "disable_low": "Disable low",
-        "disable_high": "Disable high",
-        "low_attribute": "Attribute",
-        "high_attribute": "Attribute"
+        "shape": "Cirkulär bakgrund för ikonen",
+        "unit": "Enhet",
+        "value": "Värde"
       },
       "icon_animation": {
-        "spin": "Spin",
-        "pulse": "Pulse",
+        "battery_charging": "Battery charging",
         "bounce": "Bounce",
-        "shake": "Shake",
         "ping": "Ping",
+        "pulse": "Pulse",
         "reveal": "Reveal",
-        "washing_machine": "Washing machine",
-        "battery_charging": "Battery charging"
+        "shake": "Shake",
+        "spin": "Spin",
+        "washing_machine": "Washing machine"
       },
-      "alert_when": {
-        "above": "Alert above",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight",
-        "animation": "Animation",
-        "above_attribute": "Attribute",
-        "below_attribute": "Attribute"
-      },
-      "alert_highlight": {
-        "border": "Border",
-        "background": "Background",
-        "label": "Label"
-      },
-      "status_label": {
-        "jinja": "Status label",
-        "position": "Label position",
-        "color_source": "Color source"
+      "icon_animation_mode": {
+        "auto": "Automatisk",
+        "template": "Mall"
       },
       "label_position": {
-        "left": "Left",
-        "right": "Right"
+        "left": "Vänster",
+        "right": "Höger"
+      },
+      "layout": {
+        "horizontal": "Horisontell (standard)",
+        "vertical": "Vertikal"
+      },
+      "simple_advanced_mode": {
+        "advanced": "Avancerat",
+        "simple": "Enkel"
+      },
+      "status_label": {
+        "color_source": "Färgkälla",
+        "jinja": "Statusetikett",
+        "position": "Etikettposition"
       },
       "status_label_color_source": {
-        "bar": "Progress bar",
-        "icon": "Icon"
+        "bar": "Förloppsindikator",
+        "icon": "Ikon"
       },
-      "alert_animation": {
-        "static": "Static",
-        "blink": "Blink",
-        "ping": "Ping"
-      },
-      "min_value_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "max_value_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "watermark_low_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "watermark_high_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_above_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
-      },
-      "alert_when_below_mode": {
-        "standard": "Fixed value",
-        "entity": "Entity",
-        "jinja": "Template"
+      "theme": {
+        "battery_adaptive": "Batteri (anpassar sig till laddningsstatus)",
+        "critical_when_extreme": "Kritiskt vid extremvärde (tanknivå, avvikelse...)",
+        "critical_when_extreme_center": "Kritiskt vid extremvärde, centrerat (center_zero)",
+        "critical_when_high": "Kritiskt vid högt värde (CPU, RAM, diskanvändning...)",
+        "critical_when_low": "Kritiskt vid lågt värde (batteri, disk...)",
+        "humidity": "Luftfuktighet",
+        "light": "Ljus",
+        "optimal_when_high": "Optimal när det är högt",
+        "optimal_when_low": "Optimal när det är lågt",
+        "pm25": "PM2.5",
+        "temperature": "Temperatur",
+        "voc": "VOC"
       },
       "theme_mode": {
-        "preset": "Preset",
-        "custom": "Custom"
+        "custom": "Custom",
+        "preset": "Preset"
       },
-      "min_value": {
+      "unit_position": {
+        "after": "Efter värdet",
+        "before": "Före värdet"
+      },
+      "unit_spacing": {
+        "auto": "Automatisk",
+        "no-space": "Inget mellanrum",
+        "space": "Mellanrum"
+      },
+      "value_shape": {
         "attribute": "Attribute"
       },
-      "max_value": {
-        "attribute": "Attribute"
+      "value_source_mode": {
+        "entity": "Entity",
+        "jinja": "Template",
+        "standard": "Fixed value"
       },
-      "bar_stack_mode": {
-        "stacked": "Stacked",
-        "proportional": "Sum",
-        "net": "Net"
+      "watermark": {
+        "disable_high": "Disable high",
+        "disable_low": "Disable low",
+        "high": "High",
+        "high_as": "High unit",
+        "high_color": "High color",
+        "line_size": "Line size",
+        "low": "Low",
+        "low_as": "Low unit",
+        "low_color": "Low color",
+        "opacity": "Opacity",
+        "type": "Type"
+      },
+      "watermark_as": {
+        "auto": "Automatisk",
+        "percent": "Procent"
+      },
+      "watermark_type": {
+        "area": "Yta",
+        "blended": "Blandad",
+        "line": "Linje",
+        "round": "Rund",
+        "striped": "Randig",
+        "triangle": "Triangel"
       }
+    },
+    "title": {
+      "content": "Innehåll",
+      "interaction": "Interaktioner",
+      "layout": "Layout & storlek",
+      "markers": "Markörer & larm",
+      "theme": "Utseende och funktionalitet"
     }
   }
 }
