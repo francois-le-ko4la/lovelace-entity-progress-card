@@ -1316,7 +1316,6 @@ A light sweep loops continuously across the bar — the "still working" cue for
 anything long-running. Combinable (`[radius, shimmer]`), reversible
 (`shimmer_reverse`, `gradient_reverse`).
 
-<br />
 <details>
 <summary>Show YAML</summary>
 
@@ -1329,7 +1328,6 @@ bar_effect:
 ```
 
 </details>
-<br />
 
 See [`bar_effect`](configuration.md#bar_effect) for the full list.
 
@@ -1344,8 +1342,6 @@ See [`bar_effect`](configuration.md#bar_effect) for the full list.
 
 Battery-cell style — both the track and the fill are split into blocks, gaps
 visible on both the empty and filled portions:
-
-<br />
 <details>
 <summary>Show YAML</summary>
 
@@ -1356,7 +1352,6 @@ bar_segments: 10
 ```
 
 </details>
-<br />
 
 Works with any orientation, size, or color mode/effect.
 
@@ -1371,8 +1366,6 @@ Works with any orientation, size, or color mode/effect.
 
 Without it, `custom_theme` zones cut sharply from one color to the next. With
 it, the color blends smoothly as the value crosses each boundary:
-
-<br />
 <details>
 <summary>Show YAML</summary>
 
@@ -1390,7 +1383,6 @@ custom_theme:
 ```
 
 </details>
-<br />
 
 [🔼 Back to top]
 
@@ -1404,8 +1396,6 @@ custom_theme:
 The opposite of [`hide: [shape]`](#effect-hide-shape) — forces the circular
 background behind the icon regardless of HA version, entity domain, or action
 configured, for a consistent Mushroom-style look everywhere:
-
-<br />
 <details>
 <summary>Show YAML</summary>
 
@@ -1416,7 +1406,6 @@ force_circular_background: true
 ```
 
 </details>
-<br />
 
 [🔼 Back to top]
 
@@ -1733,7 +1722,6 @@ bar is already showing (theme zone, `custom_theme` zone, or a plain
 weather-report terms instead of a plain cold/hot split, still just a Jinja
 condition on the value — no zone list to keep in sync with the theme.
 
-<br />
 <details>
 <summary>Show YAML</summary>
 
@@ -1756,7 +1744,6 @@ status_label:
 ```
 
 </details>
-<br />
 
 See [`status_label`](configuration.md#status_label) for the `{label, color}`
 object form and `color_source`.
@@ -1772,8 +1759,6 @@ object form and `color_source`.
 
 A small chevron in the top-right corner — up, down, or flat. Shares that corner
 with `status_label`, which wins if both are set:
-
-<br />
 <details>
 <summary>Show YAML</summary>
 
@@ -1784,7 +1769,6 @@ trend_indicator: true
 ```
 
 </details>
-<br />
 
 [🔼 Back to top]
 
@@ -1799,8 +1783,6 @@ Marks the minimum, maximum, and average value seen over a time window, directly
 on the bar — Card only. Each mark is opt-in: `true` (top-level
 `type`/`opacity`), a color string (shorthand), or a full
 `{ type, opacity, color }` override:
-
-<br />
 <details>
 <summary>Show YAML</summary>
 
@@ -1817,7 +1799,6 @@ peak_marker:
 ```
 
 </details>
-<br />
 
 [🔼 Back to top]
 
@@ -1830,8 +1811,6 @@ peak_marker:
 
 Not every value fits a built-in theme. Define your own value-range → color (+
 icon) rules directly:
-
-<br />
 <details>
 <summary>Show YAML</summary>
 
@@ -1854,7 +1833,6 @@ custom_theme:
 ```
 
 </details>
-<br />
 
 [🔼 Back to top]
 
@@ -1870,8 +1848,6 @@ Three modes, three different questions answered:
 - **`stacked`** (default) — a breakdown, each entity keeps its own literal
   width. A home battery's charged capacity, with what's reserved shown
   separately:
-
-  <br />
   <details>
   <summary>Show YAML</summary>
 
@@ -1885,12 +1861,9 @@ Three modes, three different questions answered:
   ```
 
   </details>
-  <br />
 
 - **`proportional`** — every entity's share of a shared target, the bar always
   fills edge-to-edge. Several circuits against one breaker limit:
-
-  <br />
   <details>
   <summary>Show YAML</summary>
 
@@ -1906,13 +1879,10 @@ Three modes, three different questions answered:
   ```
 
   </details>
-  <br />
 
 - **`net`** — one algebraic total, positive or negative. Combined with
   `center_zero`, a balance that can go either way — grid draw when positive,
   export when negative:
-
-  <br />
   <details>
   <summary>Show YAML</summary>
 
@@ -1930,7 +1900,6 @@ Three modes, three different questions answered:
   ```
 
   </details>
-  <br />
 
 See [`bar_stack`](configuration.md#bar_stack) for `subtract`, ordering, and
 auto-shaded colors.
@@ -1946,8 +1915,6 @@ auto-shaded colors.
 
 For anything that fluctuates around a baseline — a power balance, a temperature
 delta — the bar grows from the center instead of from an edge:
-
-<br />
 <details>
 <summary>Show YAML</summary>
 
@@ -1960,7 +1927,6 @@ max_value: 3000
 ```
 
 </details>
-<br />
 
 See [`center_zero`](configuration.md#center_zero) for a custom center point
 (e.g. a nominal voltage) and [`bar_stack`](configuration.md#bar_stack)'s `net`
@@ -1976,8 +1942,6 @@ mode, which combines naturally with it.
 <img src="images/effect-hide-shape-d412c4.png" alt="hide: shape" height="84px"/>
 
 For a flatter look, without `card_mod`:
-
-<br />
 <details>
 <summary>Show YAML</summary>
 
@@ -1989,7 +1953,6 @@ hide:
 ```
 
 </details>
-<br />
 
 Same result, via CSS instead of YAML: the
 [`--epb-icon-shape-opacity`](theme.md#css) hook.
@@ -2007,8 +1970,6 @@ One option, two shapes depending on [`layout`](configuration.md#layout):
 `horizontal` narrows the card to a single column, name and value still shown;
 `vertical` has no matching narrow shape, so it hides `name`/ `secondary_info`
 instead and drops to a single grid row — icon and a thin bar, nothing else:
-
-<br />
 <details>
 <summary>Show YAML</summary>
 
@@ -2026,7 +1987,6 @@ density: compact
 ```
 
 </details>
-<br />
 
 See [`density`](configuration.md#density) for exactly what it sets under the
 hood (`bar_position`, `hide`, `multiline`) and how it interacts with a Sections
@@ -2390,8 +2350,6 @@ to "you need a helper".
 
 Home Connect exposes progress natively as a percentage sensor
 (`sensor.<appliance>_program_progress`, 0-100%). Just point `entity` at it:
-
-<br />
 <details>
 <summary>Show YAML</summary>
 
@@ -2402,7 +2360,6 @@ name: Washing Machine
 ```
 
 </details>
-<br />
 
 **2. Miele — Jinja `max_value`, no helper needed**
 
@@ -2411,8 +2368,6 @@ percentage. Combine them with a Jinja `max_value`. `unit: '%'` is required here:
 `elapsed_time` has `device_class: duration`, and without it the card would show
 the raw elapsed time instead of the percentage (the bar fill itself is correct
 either way — only the text label is affected):
-
-<br />
 <details>
 <summary>Show YAML</summary>
 
@@ -2427,7 +2382,6 @@ max_value:
 ```
 
 </details>
-<br />
 
 **3. Samsung (SmartThings) — the worst case, full helper setup**
 
@@ -2490,8 +2444,6 @@ and can be set up according to various needs.
   `Template` > `Template a number`
 - Define the template to do the delta automatically
   - Choose a name and define your state template:
-
-    <br />
     <details>
     <summary>Show YAML</summary>
 
@@ -2506,7 +2458,6 @@ and can be set up according to various needs.
     ```
 
     </details>
-    <br />
 
     > Check your syntax. Here, we are using entity values; therefore, we access
     > the value through xyz.state. Sometimes, the value will be an attribute.
@@ -2515,8 +2466,6 @@ and can be set up according to various needs.
   - Check the current value to ensure it's working properly.
 
 - Define the card:
-
-  <br />
   <details>
   <summary>Show YAML</summary>
 
@@ -2530,7 +2479,6 @@ and can be set up according to various needs.
   ```
 
   </details>
-  <br />
 
 **Conclusion**
 
@@ -2586,8 +2534,6 @@ We will:
 
 - Create the command_line sensor, add this to your configuration.yaml (or
   sensors.yaml if split):
-
-  <br />
   <details>
   <summary>Show YAML</summary>
 
@@ -2606,13 +2552,10 @@ We will:
   ```
 
   </details>
-  <br />
 
   You'll need to adjust this part to match your specific environment.
 
 - Add this card to your Lovelace dashboard:
-
-  <br />
   <details>
   <summary>Show YAML</summary>
 
@@ -2641,7 +2584,6 @@ We will:
   ```
 
   </details>
-  <br />
 
 **Conclusion**
 
@@ -2670,8 +2612,6 @@ countdown with:
 - create the template helper
 - define a name (number.cert_expiry_entity_id)
 - define state template
-
-  <br />
   <details>
   <summary>Show YAML</summary>
 
@@ -2688,15 +2628,12 @@ countdown with:
   ```
 
   </details>
-  <br />
 
 - define min/max value: 0 and 90
 - step: 1
 - unit_of_measurement: days
 
 Create the card:
-
-<br />
 <details>
 <summary>Show YAML</summary>
 
@@ -2725,7 +2662,6 @@ grid_options:
 ```
 
 </details>
-<br />
 
 Now you have a working solution that avoids operating system dependencies and is
 more efficient within Home Assistant's ecosystem. Obviously, in the case of a
@@ -2865,7 +2801,6 @@ grid_options:
 ```
 
 </details>
-<br />
 
 **✅ Conclusion**
 

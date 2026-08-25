@@ -1,35 +1,35 @@
-# Lovelace Entity Progress Card [![ReadMe](https://img.shields.io/badge/ReadMe-018EF5?logo=readme&logoColor=fff)](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/README.md)
+# Lovelace Entity Progress Card
 
 [![Home Assistant][ha-badge]][repo-link] [![JavaScript][js-badge]][repo-link]
-[![HACS Custom][hacs-badge]][hacs-link]
-[![Discord][discord-badge]][discord-link]
-
 [![Latest stable release][release-badge]][release-link]
 [![License][license-badge]][GPL-3.0 license] [![CI][ci-badge]][ci-link]
+[![HACS Custom][hacs-badge]][hacs-link]
 [![HACS validation][hacs-ci-badge]][hacs-ci-link]
 [![DeepSource][deepsource-badge]][deepsource-link]
+[![Discord][discord-badge]][discord-link]
 
 A modern Entity progress card for Home Assistant's Lovelace UI.
 
 <!-- markdownlint-disable-next-line MD013 -->
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/thumbnail-c81470.png" alt="thumbnail" width="800"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/thumbnail-c81470.png" alt="thumbnail" width="100%" style="max-width: 1200px;"/>
 
 <!-- markdownlint-disable-next-line MD013 -->
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/showcase-loop-3d6a2b.gif" alt="Entity Progress Card Showcase" width="800"/>
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/showcase-loop-3d6a2b.gif" alt="Entity Progress Card Showcase" width="100%" style="max-width: 1200px;" />
 
-Thousands of Home Assistant dashboards run this card, every day. On a
-wall-mounted tablet. A phone. A screen that never turns off.
-
-A glance is all it takes. A battery. A washing machine. A boiler. Read at a
-distance, in half a second — not deciphered.
-
-Want simple? One click, and it's done. The right unit. The right icon. The right
-math. Resolved automatically, the moment you add an entity. No YAML required.
-
-Want more? Every value can be a Jinja template. As deep as you want to go.
-
-Not another progress bar. The progress bar that disappears — because it simply
-does what it's supposed to.
+> Thousands of Home Assistant dashboards run this card, every day. On a
+> wall-mounted tablet. A phone. A screen that never turns off.
+>
+> A glance is all it takes. A battery. A washing machine. A boiler. Read at a
+> distance, in half a second — not deciphered.
+>
+> Want simple? One click, and it's done. The right unit. The right icon. The
+> right math. Resolved automatically, the moment you add an entity. No YAML
+> required.
+>
+> Want more? Every value can be a Jinja template. As deep as you want to go.
+>
+> Not another progress bar. The progress bar that disappears — because it simply
+> does what it's supposed to.
 
 ## 🚀 Features
 
@@ -55,14 +55,22 @@ does what it's supposed to.
   needed.
 - **Alerts that find you**: cross an [`alert_when`][config-alert_when] threshold
   and the card reacts on its own — a glowing border, a tinted background, a
-  status pill, static or Jinja-driven. Pair it with
-  [`watermark`][config-watermark] reference lines, or `center_zero` for
+  status pill, static or Jinja-driven. Pair it with `center_zero` for
   bidirectional flows like charge/discharge in a single bar.
+- **Reference lines that read as intent**: [`watermark`][config-watermark] marks
+  a low/high threshold — blended, striped, triangle, round, or a hard line —
+  sourced from a fixed value, another entity, or a Jinja template. Each side can
+  override its own color/opacity/style, or just hide with a single `false`.
+- **Knows where it's been**: [`trend_indicator`][config-trend_indicator] reads a
+  real history window to show ↑/↓/flat instead of reacting to a single noisy
+  sample; [`peak_marker`][config-peak_marker] marks the min/max/average observed
+  over that same window directly on the bar. Both seed themselves from Home
+  Assistant's own history on load — no separate helper entity needed.
 - **Jinja everywhere**: skip the helper sensors — the Template variants compute
   the percentage, color, icon and text directly in YAML, non-linear math and
   multi-sensor logic included.
 - **Style without reverse-engineering the DOM**: every color, spacing, border
-  and animation is exposed as a documented CSS variable (46 `--epb-*` hooks, see
+  and animation is exposed as a documented CSS variable (58 `--epb-*` hooks, see
   the [Theme Guide]) — apply them from a theme, or point `card_mod` at exactly
   the ones that matter instead of guessing at internal class names. Zero runtime
   dependencies, so nothing extra to break.
@@ -122,10 +130,12 @@ Use this link to directly go to the repository in HACS
 >
 > If you are unable to use the button above, follow the steps below:
 >
-> - Add this repository to HACS: Go to **HACS** ➡️ **Integrations** ➡️ **`⋮`**
->   ➡️ **Custom repositories**.
-> - Paste the URL of this repository and select **Dashboard** as the category.
-> - Install the Entity Progress Card from HACS.
+> ✅ Add this repository to HACS: Go to **HACS** ➡️ **Integrations** ➡️ **`⋮`**
+> ➡️ **Custom repositories**.
+>
+> ✅ Paste the URL of this repository and select **Dashboard** as the category.
+>
+> ✅ Install the Entity Progress Card from HACS.
 
 <details>
 <summary><strong>Manual Installation (click to expand)</strong></summary>
@@ -180,15 +190,16 @@ Want a specific color, a different bar style, an alert when it crosses a
 threshold? Same options work the same way across all **7 variants** — Card,
 Template Card, Badge, Badge Template, Tile Feature, Multi-Card, Multi-Feature.
 
-**Want more?** Every option, every variant, real-world recipes (brand-specific
-washing machine quirks, an SSL certificate countdown, a sun-tracking bar) — it's
-all in the [Cookbook][cookbook]. Or jump straight to the [Full Configuration
-Reference][FCR].
+## 📚 Guides
 
-## 🎨 Theme
+That's enough to get started. Past that, here's where the rest of the depth
+lives — pick whichever guide matches what you're trying to do:
 
-Explore all the customization options and learn how to style your setup by
-reading the [Theme Guide].
+| Guide                                  | What's in it                                                                                                                                                 |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 🍳 [Cookbook][cookbook]                | Every variant's option summary, every visual effect with a screenshot, and real-world recipes (washing machine brands, an SSL countdown, a sun-tracking bar) |
+| 🎨 [Theme Guide]                       | All 12 built-in themes with their exact value ranges, the full `--epb-*` CSS API, and the DOM reference for `card_mod`/UI-X styling                          |
+| 📖 [Full Configuration Reference][FCR] | Every option, every variant — type, default, and a working example                                                                                           |
 
 <a id="accessibility"></a>
 
@@ -356,7 +367,8 @@ Check out the [Contributing Guide] to get started.
   [@Duncan1106](https://github.com/Duncan1106)**  
   ➡️ README proofreading and improvements
 
-- **Special thanks to [@mooseBringer](https://github.com/mooseBringer)**  
+- **Special thanks to [@mooseBringer](https://github.com/mooseBringer) & @RKT62
+  from [Discord]**  
   ➡️ Discord activity  
   ➡️ Regular tests & feedbacks
 
@@ -370,21 +382,20 @@ This project is licensed under the [GPL-3.0 license].
 <!-- Links -->
 
 [ha-badge]:
-  https://img.shields.io/badge/Home%20Assistant-blue?style=for-the-badge&logo=homeassistant&logoColor=white&color=blue
+  https://img.shields.io/badge/Home%20Assistant-blue?style=flat&logo=homeassistant&logoColor=white&color=blue
 [js-badge]:
-  https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=Javascript&logoColor=black&color=%23F7DF1E
+  https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=Javascript&logoColor=black&color=%23F7DF1E
 [discord-badge]:
-  https://img.shields.io/badge/Discord-%235865F2?style=for-the-badge&logo=Discord&logoColor=white&color=%235865F2
-[hacs-badge]:
-  https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge
+  https://img.shields.io/badge/Discord-%235865F2?style=flat&logo=Discord&logoColor=white&color=%235865F2
+[hacs-badge]: https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=flat
 [release-badge]:
-  https://img.shields.io/github/v/release/francois-le-ko4la/lovelace-entity-progress-card?label=latest%20stable&style=for-the-badge&color=blue
+  https://img.shields.io/github/v/release/francois-le-ko4la/lovelace-entity-progress-card?label=latest%20stable&style=flat&color=blue
 [license-badge]:
-  https://img.shields.io/github/license/francois-le-ko4la/lovelace-entity-progress-card?style=for-the-badge
+  https://img.shields.io/github/license/francois-le-ko4la/lovelace-entity-progress-card?style=flat
 [ci-badge]:
-  https://img.shields.io/github/actions/workflow/status/francois-le-ko4la/lovelace-entity-progress-card/validate-js.yaml?label=CI&style=for-the-badge
+  https://img.shields.io/github/actions/workflow/status/francois-le-ko4la/lovelace-entity-progress-card/validate-js.yaml?label=CI&style=flat
 [hacs-ci-badge]:
-  https://img.shields.io/github/actions/workflow/status/francois-le-ko4la/lovelace-entity-progress-card/validate-hacs.yaml?label=HACS%20validation&style=for-the-badge
+  https://img.shields.io/github/actions/workflow/status/francois-le-ko4la/lovelace-entity-progress-card/validate-hacs.yaml?label=HACS%20validation&style=flat
 [deepsource-badge]:
   https://app.deepsource.com/gh/francois-le-ko4la/lovelace-entity-progress-card.svg/?label=active+issues
 [repo-link]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card
@@ -430,3 +441,7 @@ This project is licensed under the [GPL-3.0 license].
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#watermark
 [config-custom_theme]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#custom_theme
+[config-trend_indicator]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#trend_indicator
+[config-peak_marker]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#peak_marker

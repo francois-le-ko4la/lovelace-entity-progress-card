@@ -117,12 +117,14 @@ class EntityProgressCardBase extends HABase {
 
   async _fetchHistory(windowSeconds: number): Promise<{ t: number; value: number }[]> {
     const cached = this.#inFlightHistoryFetches.get(windowSeconds);
-    if (cached) return cached;
+    if (cached) return await cached;
     const promise = this.#fetchHistoryUncached(windowSeconds).finally(() =>
       this.#inFlightHistoryFetches.delete(windowSeconds),
     );
     this.#inFlightHistoryFetches.set(windowSeconds, promise);
-    return promise;
+    // Awaited, not returned bare - log.ts's wrap() only takes its
+    // timing/error branch for a real `AsyncFunction` (fn.constructor.name).
+    return await promise;
   }
 
   // Raw {timestamp, state} points for `entity` over the last `windowSeconds`,
@@ -161,8 +163,8 @@ class EntityProgressCardBase extends HABase {
     const points = (result?.[entity] ?? [])
       .map((point) => {
         const value = Number(point.s);
-        const t = point.lu * 1000;
-        return Number.isFinite(value) && Number.isFinite(t) ? { t, value } : null;
+        const timestamp = point.lu * 1000;
+        return Number.isFinite(value) && Number.isFinite(timestamp) ? { t: timestamp, value } : null;
       })
       .filter((point): point is { t: number; value: number } => point !== null);
     this._log?.debug(`_fetchHistory: ${points.length} usable point(s)`);
