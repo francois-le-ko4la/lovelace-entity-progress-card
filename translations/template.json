@@ -108,7 +108,11 @@
       "value_sign": "",
       "watermark_high_mode": "",
       "watermark_low_mode": "",
-      "watermark_toggle": ""
+      "watermark_toggle": "",
+      "peak_marker_toggle": "",
+      "peak_marker_unsupported": "",
+      "trend_indicator_toggle": "",
+      "trend_indicator_mode": ""
     },
     "field_helper": {
       "alert_when_jinja": "",
@@ -269,8 +273,8 @@
         "standard": ""
       },
       "watermark": {
-        "disable_high": "",
-        "disable_low": "",
+        "high_toggle": "",
+        "low_toggle": "",
         "high": "",
         "high_as": "",
         "high_color": "",
@@ -279,7 +283,12 @@
         "low_as": "",
         "low_color": "",
         "opacity": "",
-        "type": ""
+        "type": "",
+        "color": "",
+        "low_type": "",
+        "low_opacity": "",
+        "high_type": "",
+        "high_opacity": ""
       },
       "watermark_as": {
         "auto": "",
@@ -292,6 +301,49 @@
         "round": "",
         "striped": "",
         "triangle": ""
+      },
+      "peak_marker": {
+        "window": "",
+        "type": "",
+        "opacity": "",
+        "min_toggle": "",
+        "min_type": "",
+        "min_opacity": "",
+        "min_color": "",
+        "max_toggle": "",
+        "max_type": "",
+        "max_opacity": "",
+        "max_color": "",
+        "average_toggle": "",
+        "average_type": "",
+        "average_opacity": "",
+        "average_color": "",
+        "color": ""
+      },
+      "duration_unit": {
+        "s": "",
+        "min": "",
+        "h": "",
+        "d": ""
+      },
+      "enabled_disabled_mode": {
+        "disabled": "",
+        "enabled": ""
+      },
+      "trend_indicator": {
+        "window_toggle": "",
+        "window": "",
+        "basis": "",
+        "threshold": "",
+        "colored": "",
+        "up_color": "",
+        "down_color": "",
+        "flat_color": ""
+      },
+      "trend_indicator_basis": {
+        "average": "",
+        "edge": "",
+        "slope": ""
       }
     },
     "title": {

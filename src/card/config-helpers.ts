@@ -20,7 +20,7 @@ import {
 import { is, has, assertDefined } from '../utils/common-checks.js';
 import { initLogger, type LoggerInstance } from '../utils/log.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
-import { YamlSchemaFactory } from './schema.js';
+import { YamlSchemaFactory, markValue, isMarkOverride } from './schema.js';
 import { EntityHelper } from './entity-helper.js';
 import { resolveDisplayUnit, resolveDisplayDecimal } from '../utils/display-defaults.js';
 import type { LovelaceConfig, Config } from '../utils/types.js';
@@ -170,16 +170,68 @@ class BaseConfigHelper {
     };
   }
 
+  // CardConfigHelper overrides this with its own extra migrations, but still
+  // routes through _migrateLegacyOptions - Template/BadgeTemplate don't
+  // override either, so this is the only call site keeping them migrated.
   static _customizeConfig(config: LovelaceConfig): LovelaceConfig {
-    return config;
+    return (this as typeof BaseConfigHelper)._migrateLegacyOptions(config);
   }
 
-  // No-op here: Template/BadgeTemplate cards' schema never had
-  // max_value/disable_unit/additions to begin with. Matches _customizeConfig's
-  // own polymorphic no-op above, so the editor's "Migrate config" button can
-  // call this generically regardless of which config helper is active.
+  // Only watermark migrates here - Template/BadgeTemplate's schema has no
+  // max_value/disable_unit/additions, but does share watermark.low/.high
+  // with Card (see #140). CardConfigHelper's override calls this too, then
+  // layers its own extra migrations on top.
   static _migrateLegacyOptions(config: LovelaceConfig): LovelaceConfig {
-    return config;
+    return BaseConfigHelper._migrateWatermarkOptions(config);
+  }
+
+  // watermark.low/high: two legacy layers, folded per side in one pass -
+  // (1) the pre-1.6 bare-entity-string trap (same as max_value's, with a
+  // low_attribute/high_attribute sibling), (2) low_as/high_as/low_color/
+  // high_color/disable_low/disable_high, now part of types.watermarkMark's
+  // own shape (`false`, or { value, as, color }).
+  static _migrateWatermarkOptions(config: LovelaceConfig): LovelaceConfig {
+    const wm = config?.watermark;
+    if (!wm) return config;
+    const hasLegacyKeys =
+      is.nonEmptyString(wm.low) ||
+      is.nonEmptyString(wm.high) ||
+      wm.low_as !== undefined ||
+      wm.high_as !== undefined ||
+      wm.low_color !== undefined ||
+      wm.high_color !== undefined ||
+      wm.disable_low !== undefined ||
+      wm.disable_high !== undefined;
+    if (!hasLegacyKeys) return config;
+    const migrateSide = (side: 'low' | 'high') => {
+      const raw = wm[side];
+      // Checked before any legacy color/as merge: `low: false` (already the
+      // modern hidden shorthand) must win outright, even alongside a stale
+      // low_color sibling - otherwise it gets wrapped into a shown override
+      // object with a nonsensical value: false.
+      if (raw === false || wm[`disable_${side}`] === true) return { [side]: false };
+      const value = is.nonEmptyString(raw) ? { entity: raw, attribute: wm[`${side}_attribute`] } : raw;
+      const as = wm[`${side}_as`];
+      const color = wm[`${side}_color`];
+      if (as === undefined && color === undefined) return is.nonEmptyString(raw) ? { [side]: value } : {};
+      return { [side]: { value, ...(as !== undefined && { as }), ...(color !== undefined && { color }) } };
+    };
+    return {
+      ...config,
+      watermark: {
+        ...wm,
+        ...migrateSide('low'),
+        ...migrateSide('high'),
+        low_attribute: undefined,
+        high_attribute: undefined,
+        low_as: undefined,
+        high_as: undefined,
+        low_color: undefined,
+        high_color: undefined,
+        disable_low: undefined,
+        disable_high: undefined,
+      },
+    };
   }
 
   static #logDeprecatedOption(config: LovelaceConfig) {
@@ -208,11 +260,9 @@ class BaseConfigHelper {
           'Please migrate to max_value: { entity: <entity id>, attribute: <optional> }. Your configuration was automatically migrated for this session.',
       );
     // watermark.low/high used to accept the same bare entity-id-string form
-    // as pre-1.6 max_value, with attribute as a separate
-    // watermark.low_attribute/high_attribute sibling key - same
-    // disambiguation trap, same fix: an explicit map, folded in for this
-    // session (see
-    // CardConfigHelper._migrateLegacyOptions).
+    // as pre-1.6 max_value, with attribute as a separate low_attribute/
+    // high_attribute sibling key - same trap, same fix (see
+    // BaseConfigHelper._migrateWatermarkOptions).
     if (is.nonEmptyString(config.watermark?.low))
       console.warn(
         `${META.types.card.typeName.toUpperCase()} - watermark.low: <entity id> is deprecated and will be removed in a future release. ` +
@@ -223,6 +273,21 @@ class BaseConfigHelper {
         `${META.types.card.typeName.toUpperCase()} - watermark.high: <entity id> is deprecated and will be removed in a future release. ` +
           'Please migrate to watermark.high: { entity: <entity id>, attribute: <optional> }. Your configuration was automatically migrated for this session.',
       );
+    // low_as/high_as/low_color/high_color/disable_low/disable_high are now
+    // part of watermark.low/.high's own shape ({ value, as, color } | false)
+    // instead of sibling keys - one combined warning per side is enough,
+    // no need to enumerate which specific sibling triggered it.
+    (['low', 'high'] as const).forEach((side) => {
+      if (
+        config.watermark?.[`${side}_as`] !== undefined ||
+        config.watermark?.[`${side}_color`] !== undefined ||
+        config.watermark?.[`disable_${side}`] !== undefined
+      )
+        console.warn(
+          `${META.types.card.typeName.toUpperCase()} - watermark.${side}_as/${side}_color/disable_${side} are deprecated and will be removed in a future release. ` +
+            `Please migrate to watermark.${side}: { value: ..., as, color } or watermark.${side}: false. Your configuration was automatically migrated for this session.`,
+        );
+    });
     if (config.disable_unit !== undefined)
       console.warn(
         `${META.types.card.typeName.toUpperCase()} - disable_unit is deprecated and will be removed in a future release. ` +
@@ -330,8 +395,19 @@ class BaseConfigHelper {
       },
       ...checkValueConfig(this.config.max_value, MAX_VALUE_ENTITY_PATH, 'max_value.attribute'),
       ...checkValueConfig(this.config.min_value, MIN_VALUE_ENTITY_PATH, 'min_value.attribute'),
-      ...checkValueConfig(this.config.watermark?.low, WATERMARK_LOW_ENTITY_PATH, 'watermark.low.attribute'),
-      ...checkValueConfig(this.config.watermark?.high, WATERMARK_HIGH_ENTITY_PATH, 'watermark.high.attribute'),
+      // watermark.low/.high are unwrapped first (types.watermarkMark: false |
+      // value | { value, as, opacity, color }) - the error path picks the
+      // short or the .value-nested form depending on which one is present.
+      ...checkValueConfig(
+        markValue(this.config.watermark?.low, CARD.config.defaults.watermark.low),
+        isMarkOverride(this.config.watermark?.low) ? WATERMARK_LOW_ENTITY_PATH : 'watermark.low.entity',
+        isMarkOverride(this.config.watermark?.low) ? 'watermark.low.value.attribute' : 'watermark.low.attribute',
+      ),
+      ...checkValueConfig(
+        markValue(this.config.watermark?.high, CARD.config.defaults.watermark.high),
+        isMarkOverride(this.config.watermark?.high) ? WATERMARK_HIGH_ENTITY_PATH : 'watermark.high.entity',
+        isMarkOverride(this.config.watermark?.high) ? 'watermark.high.value.attribute' : 'watermark.high.attribute',
+      ),
       ...checkValueConfig(this.config.alert_when?.above, ALERT_ABOVE_ENTITY_PATH, 'alert_when.above.attribute'),
       ...checkValueConfig(this.config.alert_when?.below, ALERT_BELOW_ENTITY_PATH, 'alert_when.below.attribute'),
     ];
@@ -415,27 +491,7 @@ class CardConfigHelper extends BaseConfigHelper {
         max_value_attribute: undefined,
       };
     }
-    // watermark.low/high: same pre-1.6 trap as max_value above, just with the
-    // attribute carried on a watermark.low_attribute/high_attribute sibling
-    // key instead of a top-level one. Folded independently per side, so a
-    // config mixing a legacy low with an already-explicit high migrates
-    // correctly.
-    if (is.nonEmptyString(config?.watermark?.low) || is.nonEmptyString(config?.watermark?.high)) {
-      const migrateSide = (side: 'low' | 'high') => {
-        if (!is.nonEmptyString(config.watermark?.[side])) return {};
-        return { [side]: { entity: config.watermark[side], attribute: config.watermark[`${side}_attribute`] } };
-      };
-      normalized = {
-        ...normalized,
-        watermark: {
-          ...normalized.watermark,
-          ...migrateSide('low'),
-          ...migrateSide('high'),
-          low_attribute: undefined,
-          high_attribute: undefined,
-        },
-      };
-    }
+    normalized = BaseConfigHelper._migrateWatermarkOptions(normalized);
     // disable_unit used to be a dedicated boolean; 'unit' is now just another
     // hide target, consistent with icon/name/value/progress_bar. Skip the fold
     // when hide is a Jinja template (a string): merging into user-authored

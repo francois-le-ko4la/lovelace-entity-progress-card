@@ -12,12 +12,16 @@
  * Deliberately conservative, per HA's own guidance ("check the domain,
  * device class, or supported features... return null otherwise"): only
  * domains with one clear, unambiguous numeric source are covered. Anything
- * more context-dependent (climate targets, media_player volume vs. position,
- * a text sensor...) is left out rather than guessed - same reasoning
- * `HABase.getStubEntity`'s own narrow regex already follows, just extended to
- * every domain this card actually supports well (see docs/configuration.md's
- * `entity`/`attribute` options), not just the four picked for that one
- * example stub entity.
+ * more context-dependent (climate's own *target* - `temperature` vs.
+ * `target_temp_high`/`target_temp_low` depending on hvac_mode -,
+ * media_player volume vs. position, a text sensor...) is left out rather
+ * than guessed - same reasoning `HABase.getStubEntity`'s own narrow regex
+ * already follows, just extended to every domain this card actually
+ * supports well (see docs/configuration.md's `entity`/`attribute`
+ * options), not just the four picked for that one example stub entity.
+ * climate's own *current* reading (`current_temperature`) has no such
+ * ambiguity - same shape as humidifier's `current_humidity` below - so it's
+ * covered even though the target isn't.
  */
 
 import type { HomeAssistant, EntityState } from './hass-provider.js';
@@ -47,6 +51,7 @@ const ATTRIBUTE_BY_DOMAIN: Record<string, { attribute: string; max_value?: numbe
   fan: { attribute: 'percentage' },
   light: { attribute: 'brightness', max_value: 255 },
   humidifier: { attribute: 'current_humidity' },
+  climate: { attribute: 'current_temperature' },
 };
 
 // Domains whose own state is already a plain, directly-usable number -

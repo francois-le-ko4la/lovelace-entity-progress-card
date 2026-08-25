@@ -10,26 +10,12 @@ import { is, assertDefined } from '../utils/common-checks.js';
 import { initLogger, type LoggerInstance } from '../utils/log.js';
 import { ObjStructure, ThemeManager, ChangeTracker } from './value-helpers.js';
 import { HassProviderSingleton, type HomeAssistant, type EntityState } from '../utils/hass-provider.js';
-import { CardView, FeatureView, type ViewCore, type ViewBase } from './view.js';
+import { CardView, FeatureView, type ViewCore, type ViewBase, type ResolvedWatermark } from './view.js';
+import { isMarkOverride, type WatermarkMark, statusLabelObj } from './schema.js';
 import { ResourceManager, DOMHelper, ActionHelper } from './dom-helpers.js';
 import type { CacheValue } from './dom-helpers.js';
 import type { LovelaceConfig, Config } from '../utils/types.js';
 import type { StructureOptions } from './structure.js';
-
-// The resolved shape ViewBase/ViewCore's `watermark` getter returns (see
-// view.ts) - the validated WatermarkConfig plus low/high/low_color/high_color
-// already overwritten with their final resolved values.
-type ResolvedWatermark = {
-  high: number;
-  high_color: string | null;
-  low: number;
-  low_color: string | null;
-  opacity: number;
-  line_size: string;
-  type: string;
-  disable_high?: boolean;
-  disable_low?: boolean;
-};
 
 // ViewBase.divergingBarStack's return shape (see view.ts). Exported -
 // cards.ts's own _renderPercentCSS forwards the same shape (ViewCore.
@@ -508,7 +494,26 @@ class HACore extends HTMLElement {
   _buildStyle() {
     this._addBaseClasses();
     this._handleWatermarkClasses();
+    this._handlePeakMarkerClasses();
     this._handleBarEffect();
+  }
+
+  _handlePeakMarkerClasses() {
+    const marker = (this._cardView as ViewBase).peakMarker;
+    if (!marker) return;
+
+    const showClass = CARD.style.dynamic.show;
+    const cardKey = CARD.htmlStructure.card.element;
+    (
+      [
+        ['min', marker.min],
+        ['max', marker.max],
+        ['avg', marker.average],
+      ] as const
+    ).forEach(([key, mark]) => {
+      this._dom.toggleClass(cardKey, `${showClass}-peak-${key}`, mark.shown);
+      this._dom.toggleClass(cardKey, `peak-${key}-${mark.type}`, mark.shown);
+    });
   }
 
   // Real N+1 divs (bar_segments: N, plus the two edge markers), not a CSS
@@ -579,15 +584,15 @@ class HACore extends HTMLElement {
     const watermark = this._cardView.watermark;
     if (!watermark) return;
 
-    const type = ['area', 'blended', 'striped', 'line', 'triangle', 'round'].includes(watermark.type)
-      ? `${watermark.type}`
-      : 'blended';
+    const validTypes = ['area', 'blended', 'striped', 'line', 'triangle', 'round'];
+    const resolveType = (t: string) => (validTypes.includes(t) ? t : 'blended');
     const showClass = CARD.style.dynamic.show;
+    const cardKey = CARD.htmlStructure.card.element;
 
-    this._dom.toggleClass(CARD.htmlStructure.card.element, `${showClass}-hwm`, !watermark.disable_high);
-    this._dom.toggleClass(CARD.htmlStructure.card.element, `hwm-${type}`, !watermark.disable_high);
-    this._dom.toggleClass(CARD.htmlStructure.card.element, `${showClass}-lwm`, !watermark.disable_low);
-    this._dom.toggleClass(CARD.htmlStructure.card.element, `lwm-${type}`, !watermark.disable_low);
+    this._dom.toggleClass(cardKey, `${showClass}-hwm`, watermark.high.shown);
+    this._dom.toggleClass(cardKey, `hwm-${resolveType(watermark.high.type)}`, watermark.high.shown);
+    this._dom.toggleClass(cardKey, `${showClass}-lwm`, watermark.low.shown);
+    this._dom.toggleClass(cardKey, `lwm-${resolveType(watermark.low.type)}`, watermark.low.shown);
   }
 
   // The editor (EntityProgressEffectChips) can only guard interactive
@@ -695,22 +700,38 @@ class HACore extends HTMLElement {
   _applyWatermarkCSS(watermark: ResolvedWatermark | null) {
     if (!watermark) return;
     const cardKey = CARD.htmlStructure.card.element;
-    HACore._getWatermarkProperties(watermark).forEach(([variable, value]) => {
-      if (!is.nullish(value)) this._dom.setStyle(cardKey, variable, value);
+    const wm = CARD.style.dynamic.watermark;
+    (
+      [
+        [wm.low, watermark.low],
+        [wm.high, watermark.high],
+      ] as const
+    ).forEach(([vars, mark]) => {
+      this._dom.setStyle(cardKey, vars.value.var, `${mark.value}%`);
+      this._dom.setStyle(cardKey, vars.opacity.var, mark.opacity);
+      if (mark.color) this._dom.setStyle(cardKey, vars.color.var, mark.color);
+      else this._dom.removeStyle(cardKey, vars.color.var);
     });
+    this._dom.setStyle(cardKey, wm.opacity.var, watermark.opacity);
+    this._dom.setStyle(cardKey, wm.lineSize.var, watermark.line_size);
   }
 
-  // ─── WATERMARK MANAGEMENT ─────────────────────────────────────────────────
-
-  static _getWatermarkProperties(watermark: ResolvedWatermark): [string, string | number | null][] {
-    return [
-      [CARD.style.dynamic.watermark.high.value.var, `${watermark.high}%`],
-      [CARD.style.dynamic.watermark.high.color.var, watermark.high_color],
-      [CARD.style.dynamic.watermark.low.value.var, `${watermark.low}%`],
-      [CARD.style.dynamic.watermark.low.color.var, watermark.low_color],
-      [CARD.style.dynamic.watermark.opacity.var, watermark.opacity],
-      [CARD.style.dynamic.watermark.lineSize.var, watermark.line_size],
-    ];
+  _applyPeakMarkerCSS(marker: ViewBase['peakMarker']) {
+    if (!marker) return;
+    const cardKey = CARD.htmlStructure.card.element;
+    const pm = CARD.style.dynamic.peakMarker;
+    (
+      [
+        [pm.min, marker.min],
+        [pm.max, marker.max],
+        [pm.average, marker.average],
+      ] as const
+    ).forEach(([vars, mark]) => {
+      this._dom.setStyle(cardKey, vars.value.var, `${mark.value}%`);
+      this._dom.setStyle(cardKey, vars.opacity.var, mark.opacity);
+      if (mark.color) this._dom.setStyle(cardKey, vars.color.var, mark.color);
+      else this._dom.removeStyle(cardKey, vars.color.var);
+    });
   }
 
   // ─── JINJA TEMPLATE RENDERING ─────────────────────────────────────────────
@@ -718,13 +739,23 @@ class HACore extends HTMLElement {
   get validJinjaFields(): Record<string, string> {
     // Most Jinja-capable options are flat strings, but some (min_value,
     // watermark.low/.high) use an explicit { jinja: "..." } map instead of
-    // sniffing a bare string - extract accordingly. Dot-path keys walk one
-    // level of nesting.
+    // sniffing a bare string - extract accordingly. watermark.low/.high can
+    // wrap that map one level deeper (types.watermarkMark) - isMarkOverride
+    // unwraps it, same as markValue elsewhere; every other key passes through.
+    // status_label's own shorthand (a bare string for { jinja: string })
+    // means the walk can hit a string before reaching the last segment -
+    // that string IS the target already, .jinja on it would be undefined.
     const rawValueFor = (key: string) => {
       const raw = key.includes('.')
-        ? key.split('.').reduce<unknown>((obj, k) => (obj as Record<string, unknown>)?.[k], this._cardView.config)
+        ? key
+            .split('.')
+            .reduce<unknown>(
+              (obj, k) => (is.string(obj) ? obj : (obj as Record<string, unknown>)?.[k]),
+              this._cardView.config,
+            )
         : this._cardView.config[key];
-      return is.plainObject(raw) ? (raw.jinja ?? '') : raw || '';
+      const unwrapped = isMarkOverride(raw as WatermarkMark) ? (raw as { value?: unknown }).value : raw;
+      return is.plainObject(unwrapped) ? (unwrapped.jinja ?? '') : unwrapped || '';
     };
     const handlers = this._getJinjaHandlers();
     const result = Object.fromEntries(
@@ -1172,10 +1203,10 @@ class HABase extends HACore {
       ...super._structureOptions,
       layout: this._cardView.config.layout,
       barSingleLine: this._cardView.config.bar_single_line,
-      trendIndicator: this._cardView.config.trend_indicator,
+      trendIndicator: Boolean(this._cardView.config.trend_indicator),
       // A jinja push can return highlight: 'label' even off static config.
       hasLabel:
-        is.nonEmptyString(this._cardView.config.status_label?.jinja) ||
+        is.nonEmptyString(statusLabelObj(this._cardView.config.status_label).jinja) ||
         this._cardView.config.alert_when?.highlight === 'label' ||
         this._cardView.hasJinjaAlertWhen,
       multiline: Boolean(this._cardView.config.multiline),
@@ -1198,7 +1229,7 @@ class HABase extends HACore {
       this._cardView.config.bar_position,
       this._cardView.hasReversedSecondaryInfoRow ? 'row-reverse' : null,
       this._cardView.config.text_shadow ? 'text-shadow' : null,
-      this._cardView.config.status_label?.position === 'left' ? 'label-left' : null,
+      statusLabelObj(this._cardView.config.status_label).position === 'left' ? 'label-left' : null,
     );
   }
 
@@ -1396,11 +1427,26 @@ class HABase extends HACore {
     // the template views don't override it and have no trend concept to
     // begin with, so this only ever meaningfully runs for ViewBase-family
     // instances.
+    this._applyTrendVisuals((this._cardView as ViewBase).getTrend());
+  }
+
+  // Shared with EntityProgressTemplateBase's own _updateTrend (cards.ts).
+  _applyTrendVisuals(direction: string) {
     this._dom.setAttribute(
       CARD.htmlStructure.elements.trendIndicator.icon.class,
       CARD.style.icon.badge.default.attribute,
-      this._trendIcons[(this._cardView as ViewBase).getTrend()],
+      this._trendIcons[direction] ?? this._trendIcons.error,
     );
+
+    const cardKey = CARD.htmlStructure.card.element;
+    const varName = CARD.style.dynamic.trendIndicator.color.var;
+    const config = this._cardView.config.trend_indicator;
+    const resolved =
+      is.plainObject(config) && (direction === 'up' || direction === 'down' || direction === 'flat')
+        ? ((config[`${direction}_color`] as string | undefined) ?? (config.colored ? this._cardView.iconColor : null))
+        : null;
+    if (resolved) this._dom.setStyle(cardKey, varName, resolved);
+    else this._dom.removeStyle(cardKey, varName);
   }
 
   // ─── CSS MANAGEMENT ───────────────────────────────────────────────────────
@@ -1828,7 +1874,9 @@ class HABase extends HACore {
     // to when its own `jinja` doesn't return an explicit {label, color} -
     // 'bar' by default (see schema.ts's own comment on why).
     const fallbackColor =
-      this._cardView.config?.status_label?.color_source === 'icon' ? this._cardView.iconColor : this._cardView.barColor;
+      statusLabelObj(this._cardView.config?.status_label).color_source === 'icon'
+        ? this._cardView.iconColor
+        : this._cardView.barColor;
     const color = this._lastStatusLabelColor ?? fallbackColor ?? CARD.style.color.default;
     this._paintLabel(this._lastStatusLabelText, color);
   }

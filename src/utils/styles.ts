@@ -543,7 +543,7 @@ ha-card.background {
 }
 
 .trend-icon {
-  color: var(--state-icon-color);
+  color: var(--epb-trend-icon-color, var(${CARD.style.dynamic.trendIndicator.color.var}, var(--state-icon-color)));
 }
 
 /* =============================================================================
@@ -715,7 +715,7 @@ ha-card.label-left .status-label {
      target (any other rule, including a user's own card_mod, could target
      it for an unrelated reason) than a project-namespaced variable nothing
      else declares. */
-  background-color: var(--shape-background-color, var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default})));
+  background-color: var(--shape-hover-color, var(--shape-background-color, var(--epb-icon-shape-color, var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default})))));
   opacity: var(--epb-icon-shape-opacity, var(--shape-opacity));
 }
 
@@ -733,8 +733,11 @@ ha-card.label-left .status-label {
   pointer-events: auto;
 }
 
+/* No fallback here is deliberate - unset --epb-icon-shape-hover-color makes
+   --shape-hover-color invalid, so ::before's chain falls through untouched. */
 .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.elements.shape.class}:hover {
   --shape-opacity: 35%;
+  --shape-hover-color: var(--epb-icon-shape-hover-color);
 }
 
 .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.elements.shape.class}:active {
@@ -777,7 +780,7 @@ ha-card.label-left .status-label {
 
 
 .${CARD.htmlStructure.elements.icon.class} {
-  color: var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}));
+  color: var(--epb-icon-color, var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default})));
 }
 
 .custom-icon-img {
@@ -884,20 +887,32 @@ ha-card.vertical.default .${CARD.htmlStructure.sections.content.class} {
   );
 }
 
-/* Vertical + default's 3 stacked rows (name/secondary-info/bar) never shared
-   a row the way horizontal's default does (see .content's own comment
-   above), so unlike horizontal's --detail-height exception, no bar_position/
-   hide:progress_bar condition is needed here - each row's own term in the
-   sum above can always be zeroed independently when that field is hidden.
-   Doesn't re-account for the 2 fixed gaps (one fewer visible row also means
-   one fewer real gap) - a few px of slack rather than pixel-perfect, revisit
-   if it turns out to matter in practice. */
-ha-card.vertical.default.${CARD.style.dynamic.hiddenComponent.name.class} .${CARD.htmlStructure.sections.content.class} {
+/* Not .default-scoped (unlike --progress-size below): the base .content
+   --name-height/--detail-height sum also applies to bar_position: top/
+   bottom/background - .default-only left a hidden row reserved there too,
+   stealing space from the icon under a small explicit height (#139). */
+ha-card.vertical.${CARD.style.dynamic.hiddenComponent.name.class} .${CARD.htmlStructure.sections.content.class} {
   --name-height: 0px;
 }
 
-ha-card.vertical.default.${CARD.style.dynamic.hiddenComponent.secondary_info.class} .${CARD.htmlStructure.sections.content.class} {
+ha-card.vertical.${CARD.style.dynamic.hiddenComponent.secondary_info.class} .${CARD.htmlStructure.sections.content.class} {
   --detail-height: 0px;
+}
+
+/* General, not layout-scoped: name+secondary_info both invisible (explicit
+   hide, or secondary_info auto-blanked below) still leaves .content a real
+   flex item, biasing the centered icon off (#139). default/overlay/
+   compact_below excluded - .content still hosts the bar or fill there. */
+ha-card:not(.default):not(.overlay):not(.compact_below).${CARD.style.dynamic.hiddenComponent.name.class}:is(.${CARD.style.dynamic.hiddenComponent.secondary_info.class}, .secondary-info-blank) .${CARD.htmlStructure.sections.content.class} {
+  display: none;
+}
+
+/* .vertical only: minGridRows()'s 1-row floor (56px default) minus the
+   default 36px shape leaves 20px for padding+border - 2px short of the
+   usual 2x10px --spacing, so the icon-only row grows past its reserved row.
+   9px (not 10px) makes it fit exactly, assuming the default shape size. */
+ha-card.vertical:not(.default):not(.overlay):not(.compact_below).${CARD.style.dynamic.hiddenComponent.name.class}:is(.${CARD.style.dynamic.hiddenComponent.secondary_info.class}, .secondary-info-blank) {
+  --current-card-padding: 9px;
 }
 
 /* --progress-size zeroed here (not just --current-content-height's own
@@ -2386,10 +2401,14 @@ ha-card.info-multiline {
 .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
   --wm-value: var(--low-watermark-value, 20%);
   --wm-color: var(--epb-low-watermark-color, var(--low-watermark-color, var(--red-color)));
+  /* --epb-watermark-opacity (documented, shared) still overrides both sides
+     when set; --epb-low-watermark-opacity is the new, more specific hook. */
+  opacity: var(--epb-low-watermark-opacity, var(--epb-watermark-opacity, var(--low-watermark-opacity-value, 0.8)));
 }
 .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   --wm-value: var(--high-watermark-value, 80%);
   --wm-color: var(--epb-high-watermark-color, var(--high-watermark-color, var(--red-color)));
+  opacity: var(--epb-high-watermark-opacity, var(--epb-watermark-opacity, var(--high-watermark-opacity-value, 0.8)));
 }
 :is(.lwm-area, .lwm-blended, .lwm-line, .lwm-round) .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
 :is(.hwm-area, .hwm-blended, .hwm-line, .hwm-round) .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
@@ -2505,6 +2524,97 @@ ha-card.info-multiline {
 }
 .vertical.up-orientation.overlay.lwm-triangle .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
 .vertical.up-orientation.overlay.hwm-triangle .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+  --mark-left: 0;
+  --mark-bottom: calc(var(--wm-value) - var(--wm-half-tri));
+  border-right: none;
+  border-top: calc(var(--wm-half-tri) + 1px) solid transparent;
+  border-left: var(--wm-tri-size) solid var(--wm-color);
+  border-bottom: var(--wm-half-tri) solid transparent;
+}
+
+/* =============================================================================
+   PEAK MARKER (peak_marker: min/max/average from HA history)
+   Each mark can have its own type/opacity (unlike watermark's shared low/
+   high type), so the type classes below key off the mark, not the card.
+   ============================================================================= */
+
+.${CARD.htmlStructure.elements.progressBar.minMarker.class} {
+  --wm-value: var(--peak-min-value, 0%);
+  --wm-color: var(--epb-peak-min-color, var(--peak-min-color, var(--state-icon-color)));
+  opacity: var(--epb-peak-min-opacity, var(--peak-min-opacity-value, 0.8));
+}
+.${CARD.htmlStructure.elements.progressBar.maxMarker.class} {
+  --wm-value: var(--peak-max-value, 100%);
+  --wm-color: var(--epb-peak-max-color, var(--peak-max-color, var(--state-icon-color)));
+  opacity: var(--epb-peak-max-opacity, var(--peak-max-opacity-value, 0.8));
+}
+.${CARD.htmlStructure.elements.progressBar.averageMarker.class} {
+  --wm-value: var(--peak-average-value, 50%);
+  --wm-color: var(--epb-peak-average-color, var(--peak-average-color, var(--state-icon-color)));
+  opacity: var(--epb-peak-average-opacity, var(--peak-average-opacity-value, 0.8));
+}
+
+.show-peak-min .${CARD.htmlStructure.elements.progressBar.minMarker.class},
+.show-peak-max .${CARD.htmlStructure.elements.progressBar.maxMarker.class},
+.show-peak-avg .${CARD.htmlStructure.elements.progressBar.averageMarker.class} {
+  --mark-display: flex;
+}
+
+/* ---------- Line ---------- */
+.peak-min-line .${CARD.htmlStructure.elements.progressBar.minMarker.class},
+.peak-max-line .${CARD.htmlStructure.elements.progressBar.maxMarker.class},
+.peak-avg-line .${CARD.htmlStructure.elements.progressBar.averageMarker.class} {
+  --wm-position: calc(var(--wm-value) - var(--wm-half-line));
+  --mark-width: var(--wm-line-size);
+  --mark-left: var(--wm-position);
+  --mark-background: var(--wm-color);
+  border: none;
+  transform: none;
+}
+.vertical.up-orientation.overlay.peak-min-line .${CARD.htmlStructure.elements.progressBar.minMarker.class},
+.vertical.up-orientation.overlay.peak-max-line .${CARD.htmlStructure.elements.progressBar.maxMarker.class},
+.vertical.up-orientation.overlay.peak-avg-line .${CARD.htmlStructure.elements.progressBar.averageMarker.class} {
+  --mark-height: var(--wm-line-size);
+  --mark-bottom: var(--wm-position);
+}
+
+/* ---------- Round ---------- */
+.peak-min-round .${CARD.htmlStructure.elements.progressBar.minMarker.class},
+.peak-max-round .${CARD.htmlStructure.elements.progressBar.maxMarker.class},
+.peak-avg-round .${CARD.htmlStructure.elements.progressBar.averageMarker.class} {
+  --mark-top: calc(50% - (var(--wm-circle-size) - 1px) / 2);
+  --mark-left: calc(var(--wm-value) - (var(--wm-circle-size) - 1px) / 2);
+  --mark-width: var(--wm-circle-size);
+  --mark-height: var(--wm-circle-size);
+  --mark-background: var(--wm-color);
+  border-radius: 50%;
+  border: none;
+}
+.vertical.up-orientation.overlay.peak-min-round .${CARD.htmlStructure.elements.progressBar.minMarker.class},
+.vertical.up-orientation.overlay.peak-max-round .${CARD.htmlStructure.elements.progressBar.maxMarker.class},
+.vertical.up-orientation.overlay.peak-avg-round .${CARD.htmlStructure.elements.progressBar.averageMarker.class} {
+  --mark-left: calc(50% - (var(--wm-circle-size) - 1px) / 2);
+  --mark-right: auto;
+  --mark-top: auto;
+  --mark-bottom: calc(var(--wm-value) - (var(--wm-circle-size) - 1px) / 2);
+  --mark-width: var(--wm-circle-size);
+}
+
+/* ---------- Triangle ---------- */
+.peak-min-triangle .${CARD.htmlStructure.elements.progressBar.minMarker.class},
+.peak-max-triangle .${CARD.htmlStructure.elements.progressBar.maxMarker.class},
+.peak-avg-triangle .${CARD.htmlStructure.elements.progressBar.averageMarker.class} {
+  --mark-left: calc(var(--wm-value) - var(--wm-half-tri));
+  --mark-width: 0;
+  --mark-height: 0;
+  --mark-background: transparent;
+  border-top: var(--wm-tri-size) solid var(--wm-color);
+  border-left: var(--wm-half-tri) solid transparent;
+  border-right: calc(var(--wm-half-tri) + 1px) solid transparent;
+}
+.vertical.up-orientation.overlay.peak-min-triangle .${CARD.htmlStructure.elements.progressBar.minMarker.class},
+.vertical.up-orientation.overlay.peak-max-triangle .${CARD.htmlStructure.elements.progressBar.maxMarker.class},
+.vertical.up-orientation.overlay.peak-avg-triangle .${CARD.htmlStructure.elements.progressBar.averageMarker.class} {
   --mark-left: 0;
   --mark-bottom: calc(var(--wm-value) - var(--wm-half-tri));
   border-right: none;
@@ -2928,6 +3038,8 @@ const CHIPS_HOST_STYLE = css`
   .chip:hover { background: var(--chip-standby-hover); }
   .chip.selected { background: var(--chip-accent); color: var(--chip-accent-text); font-weight: 700; }
   .chip.selected:hover { background: var(--chip-accent-hover); }
+  .chip.forced { cursor: default; opacity: 0.7; }
+  .chip.forced:hover { background: var(--chip-accent); }
   /* 2-mode sets fuse into one pill instead of separate chips. */
   .chip-set.segmented { display: inline-flex; flex-wrap: nowrap; gap: 0; border-radius: 999px; overflow: hidden; }
   .chip-set.segmented .chip { border-radius: 0; }

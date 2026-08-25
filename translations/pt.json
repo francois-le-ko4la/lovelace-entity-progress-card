@@ -108,7 +108,11 @@
       "value_sign": "Mostrar sinal (+/-)",
       "watermark_high_mode": "Origem do marcador alto",
       "watermark_low_mode": "Origem do marcador baixo",
-      "watermark_toggle": "Marcadores"
+      "watermark_toggle": "Marcadores",
+      "peak_marker_toggle": "Peak markers",
+      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
+      "trend_indicator_toggle": "Trend indicator",
+      "trend_indicator_mode": "Mode"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -269,8 +273,8 @@
         "standard": "Valor fixo"
       },
       "watermark": {
-        "disable_high": "Desativar limite alto",
-        "disable_low": "Desativar limite baixo",
+        "high_toggle": "Show high",
+        "low_toggle": "Show low",
         "high": "Limite alto",
         "high_as": "Unidade (limite alto)",
         "high_color": "Cor do limite alto",
@@ -279,7 +283,12 @@
         "low_as": "Unidade (limite baixo)",
         "low_color": "Cor do limite baixo",
         "opacity": "Opacidade",
-        "type": "Tipo"
+        "type": "Tipo",
+        "color": "Color",
+        "low_type": "Low type",
+        "low_opacity": "Low opacity",
+        "high_type": "High type",
+        "high_opacity": "High opacity"
       },
       "watermark_as": {
         "auto": "Automático",
@@ -292,6 +301,49 @@
         "round": "Redondo",
         "striped": "Listrado",
         "triangle": "Triângulo"
+      },
+      "peak_marker": {
+        "window": "Time window",
+        "type": "Type",
+        "opacity": "Opacity",
+        "min_toggle": "Show minimum",
+        "min_type": "Minimum type",
+        "min_opacity": "Minimum opacity",
+        "min_color": "Minimum color",
+        "max_toggle": "Show maximum",
+        "max_type": "Maximum type",
+        "max_opacity": "Maximum opacity",
+        "max_color": "Maximum color",
+        "average_toggle": "Show average",
+        "average_type": "Average type",
+        "average_opacity": "Average opacity",
+        "average_color": "Average color",
+        "color": "Color"
+      },
+      "duration_unit": {
+        "s": "Seconds",
+        "min": "Minutes",
+        "h": "Hours",
+        "d": "Days"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "Disabled",
+        "enabled": "Enabled"
+      },
+      "trend_indicator": {
+        "window_toggle": "Use a time window",
+        "window": "Time window",
+        "basis": "Comparison basis",
+        "threshold": "Dead zone (points)",
+        "colored": "Tint with icon color",
+        "up_color": "Up color",
+        "down_color": "Down color",
+        "flat_color": "Flat color"
+      },
+      "trend_indicator_basis": {
+        "average": "Average",
+        "edge": "Edge",
+        "slope": "Slope"
       }
     },
     "title": {

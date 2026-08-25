@@ -38,6 +38,7 @@ type HomeAssistant = {
   config: { version?: string } & Record<string, unknown>;
   connection: EventTarget & {
     subscribeMessage: (callback: (msg: unknown) => void, msg: Record<string, unknown>) => Promise<() => void>;
+    sendMessagePromise: (msg: Record<string, unknown>) => Promise<unknown>;
   } & Record<string, unknown>;
   states: Record<string, EntityState>;
   entities: Record<string, EntityRegistryEntry>;

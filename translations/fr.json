@@ -108,7 +108,11 @@
       "value_sign": "Afficher le signe (+/-)",
       "watermark_high_mode": "Source du marqueur haut",
       "watermark_low_mode": "Source du marqueur bas",
-      "watermark_toggle": "Marqueurs"
+      "watermark_toggle": "Marqueurs",
+      "peak_marker_toggle": "Marqueurs de pic",
+      "peak_marker_unsupported": "Les marqueurs de pic nécessitent une entité sensor ou number, sans attribut, hors timer et counter — indisponible pour cette entité.",
+      "trend_indicator_toggle": "Indicateur de tendance",
+      "trend_indicator_mode": "Mode"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -269,8 +273,8 @@
         "standard": "Valeur fixe"
       },
       "watermark": {
-        "disable_high": "Désactiver le seuil haut",
-        "disable_low": "Désactiver le seuil bas",
+        "high_toggle": "Afficher le seuil haut",
+        "low_toggle": "Afficher le seuil bas",
         "high": "Seuil haut",
         "high_as": "Unité (seuil haut)",
         "high_color": "Couleur du seuil haut",
@@ -279,7 +283,12 @@
         "low_as": "Unité (seuil bas)",
         "low_color": "Couleur du seuil bas",
         "opacity": "Opacité",
-        "type": "Type"
+        "type": "Type",
+        "color": "Couleur",
+        "low_type": "Type (seuil bas)",
+        "low_opacity": "Opacité (seuil bas)",
+        "high_type": "Type (seuil haut)",
+        "high_opacity": "Opacité (seuil haut)"
       },
       "watermark_as": {
         "auto": "Auto",
@@ -292,6 +301,49 @@
         "round": "Rond",
         "striped": "Rayé",
         "triangle": "Triangle"
+      },
+      "peak_marker": {
+        "window": "Fenêtre temporelle",
+        "type": "Type",
+        "opacity": "Opacité",
+        "min_toggle": "Afficher le minimum",
+        "min_type": "Type (minimum)",
+        "min_opacity": "Opacité (minimum)",
+        "min_color": "Couleur (minimum)",
+        "max_toggle": "Afficher le maximum",
+        "max_type": "Type (maximum)",
+        "max_opacity": "Opacité (maximum)",
+        "max_color": "Couleur (maximum)",
+        "average_toggle": "Afficher la moyenne",
+        "average_type": "Type (moyenne)",
+        "average_opacity": "Opacité (moyenne)",
+        "average_color": "Couleur (moyenne)",
+        "color": "Couleur"
+      },
+      "duration_unit": {
+        "s": "Secondes",
+        "min": "Minutes",
+        "h": "Heures",
+        "d": "Jours"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "Désactivé",
+        "enabled": "Activé"
+      },
+      "trend_indicator": {
+        "window_toggle": "Utiliser une fenêtre temporelle",
+        "window": "Fenêtre temporelle",
+        "basis": "Base de comparaison",
+        "threshold": "Zone morte (points)",
+        "colored": "Teinter avec la couleur de l'icône",
+        "up_color": "Couleur (hausse)",
+        "down_color": "Couleur (baisse)",
+        "flat_color": "Couleur (stable)"
+      },
+      "trend_indicator_basis": {
+        "average": "Moyenne",
+        "edge": "Bord",
+        "slope": "Pente"
       }
     },
     "title": {

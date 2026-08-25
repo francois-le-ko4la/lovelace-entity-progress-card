@@ -53,6 +53,33 @@ input_number:
     initial: 1600
     unit_of_measurement: 'W'
     icon: mdi:solar-power
+  # Three separate loads sharing one breaker budget - what bar_stack:
+  # proportional actually models. Defaults sum to 1800W, under the 3000W
+  # breaker used as max_value, so the demo shows a partial fill.
+  epb_demo_circuit_kitchen:
+    name: Demo circuit (kitchen)
+    min: 0
+    max: 3000
+    step: 50
+    initial: 800
+    unit_of_measurement: 'W'
+    icon: mdi:stove
+  epb_demo_circuit_living_room:
+    name: Demo circuit (living room)
+    min: 0
+    max: 3000
+    step: 50
+    initial: 600
+    unit_of_measurement: 'W'
+    icon: mdi:sofa
+  epb_demo_circuit_garage:
+    name: Demo circuit (garage)
+    min: 0
+    max: 3000
+    step: 50
+    initial: 400
+    unit_of_measurement: 'W'
+    icon: mdi:garage
   epb_demo_printer_ink_black:
     name: Demo printer ink (black)
     min: 0
@@ -199,6 +226,49 @@ input_number:
     initial: 35000
     unit_of_measurement: ppb
     icon: mdi:molecule
+  # Fixed reference points across the 5 zones of the built-in `pm25` theme
+  # (see src/utils/card-themes.ts): good -> green, moderate -> yellow,
+  # unhealthy_sensitive -> orange, unhealthy -> red, hazardous -> deep-purple.
+  epb_demo_pm25_good:
+    name: Demo PM2.5 ref (good)
+    min: 0
+    max: 200
+    step: 1
+    initial: 6
+    unit_of_measurement: µg/m³
+    icon: mdi:air-filter
+  epb_demo_pm25_moderate:
+    name: Demo PM2.5 ref (moderate)
+    min: 0
+    max: 200
+    step: 1
+    initial: 20
+    unit_of_measurement: µg/m³
+    icon: mdi:air-filter
+  epb_demo_pm25_unhealthy_sensitive:
+    name: Demo PM2.5 ref (unhealthy for sensitive groups)
+    min: 0
+    max: 200
+    step: 1
+    initial: 45
+    unit_of_measurement: µg/m³
+    icon: mdi:air-filter
+  epb_demo_pm25_unhealthy:
+    name: Demo PM2.5 ref (unhealthy)
+    min: 0
+    max: 200
+    step: 1
+    initial: 100
+    unit_of_measurement: µg/m³
+    icon: mdi:air-filter
+  epb_demo_pm25_hazardous:
+    name: Demo PM2.5 ref (hazardous)
+    min: 0
+    max: 200
+    step: 1
+    initial: 180
+    unit_of_measurement: µg/m³
+    icon: mdi:air-filter
   epb_demo_litter_level:
     name: Demo litter level
     min: 0
@@ -240,6 +310,7 @@ input_boolean:
   epb_demo_printer:
     name: Demo printer (online)
     icon: mdi:printer
+    initial: true
   epb_demo_charging:
     name: Demo battery charging (toggle)
     icon: mdi:power-plug
@@ -359,21 +430,63 @@ template:
         icon: mdi:battery-charging-50
         attributes:
           battery_charging: "{{ is_state('input_boolean.epb_demo_charging', 'on') }}"
-      # Two more device_class: battery sensors, only here so the README's
-      # `auto-entities` recipes (filter: device_class: battery) have more
-      # than one card to actually lay out - see "EP Demo - README examples".
-      - name: EPB Demo battery (reserved)
-        unique_id: epb_demo_battery_reserved_sensor
-        state: "{{ states('input_number.epb_demo_battery_reserved') }}"
+      # Fixed-value device_class: battery sensors spanning the full range,
+      # so the auto-entities battery dashboards lay out a realistic spread
+      # (critical/low/mid/high/near-full/full) without depending on the
+      # sliders above. Static on purpose - no `input_number` behind them.
+      - name: EPB Demo battery (5%)
+        unique_id: epb_demo_battery_5
+        state: "5"
         unit_of_measurement: '%'
         device_class: battery
-        icon: mdi:battery-lock
-      - name: EPB Demo battery (printer)
-        unique_id: epb_demo_battery_printer
-        state: "{{ states('input_number.epb_demo_printer_ink_black') }}"
+        icon: mdi:battery-10
+      - name: EPB Demo battery (30%)
+        unique_id: epb_demo_battery_30
+        state: "30"
+        unit_of_measurement: '%'
+        device_class: battery
+        icon: mdi:battery-30
+      - name: EPB Demo battery (50%)
+        unique_id: epb_demo_battery_50
+        state: "50"
+        unit_of_measurement: '%'
+        device_class: battery
+        icon: mdi:battery-50
+      - name: EPB Demo battery (80%)
+        unique_id: epb_demo_battery_80
+        state: "80"
+        unit_of_measurement: '%'
+        device_class: battery
+        icon: mdi:battery-80
+      - name: EPB Demo battery (93%)
+        unique_id: epb_demo_battery_93
+        state: "93"
+        unit_of_measurement: '%'
+        device_class: battery
+        icon: mdi:battery-90
+      - name: EPB Demo battery (95%)
+        unique_id: epb_demo_battery_95
+        state: "95"
+        unit_of_measurement: '%'
+        device_class: battery
+        icon: mdi:battery-charging-90
+        attributes:
+          # Explicit Jinja literal, not a bare YAML `true` - cv.template
+          # stringifies a raw boolean before rendering it.
+          battery_charging: "{{ true }}"
+      - name: EPB Demo battery (100%)
+        unique_id: epb_demo_battery_100
+        state: "100"
         unit_of_measurement: '%'
         device_class: battery
         icon: mdi:battery
+      # Fixed at 95% on purpose - the "Badge Template color escalation"
+      # Cookbook example (docs/cookbook.md) is meant to show red by default.
+      - name: EPB Demo disk usage
+        unique_id: epb_demo_disk_usage
+        state: "95"
+        unit_of_measurement: '%'
+        icon: mdi:harddisk
       # Days remaining before a 35-day maintenance interval is up, derived
       # from input_datetime.epb_demo_maintenance_last - negative once
       # overdue. See "EPB " naming note above for why the name is prefixed.

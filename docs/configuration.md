@@ -22,6 +22,10 @@
         - [Supported values](#supported-values)
         - [Jinja](#jinja)
       - [Typical description](#typical-description)
+    - [Value shapes & shortcuts](#value-shapes--shortcuts)
+      - [The value/entity/Jinja shape](#the-valueentityjinja-shape)
+      - [Marks: shorthand is whatever varies](#marks-shorthand-is-whatever-varies)
+      - [Single-field collapse](#single-field-collapse)
   - [🧩 entity-progress-card / entity-progress-badge / entity-progress-feature](#standard)
     - [Data Options](#data-options)
       - [`entity`](#entity)
@@ -55,6 +59,7 @@
       - [`bar_orientation`](#bar_orientation)
       - [`force_circular_background`](#force_circular_background)
       - [`trend_indicator`](#trend_indicator)
+      - [`peak_marker`](#peak_marker)
       - [`status_label`](#status_label)
       - [`density`](#density)
       - [`layout`](#layout)
@@ -292,6 +297,53 @@ is another - it can return a `{label, color}` object to set the pill's color
 directly instead of following the progress bar's own color.
 [`badge_icon`](#badge_icon) is a third - it can return a `{icon, color}` object
 to drive both the badge's icon and color from one condition instead of two.
+
+[🔼 Back to top]
+
+### Value shapes & shortcuts
+
+Several unrelated options share the same underlying shape, or the same overall
+idea for their shorthand form. Named once here — each option's own section still
+shows its full YAML, but points back here instead of re-deriving the pattern
+from scratch.
+
+#### The value/entity/Jinja shape
+
+[`min_value`](#min_value), [`max_value`](#max_value),
+[`alert_when`](#alert_when)'s `above`/`below`, and the value inside
+[`watermark`](#watermark)'s `low`/`high` all accept the exact same three forms,
+reused as-is rather than reinvented per option:
+
+- A plain number: `min_value: 10`
+- Another entity's state, optionally a specific attribute:
+  `min_value: { entity: sensor.foo, attribute: bar }`
+- A Jinja template: `min_value: { jinja: '{{ ... }}' }`
+
+#### Marks: shorthand is whatever varies
+
+[`watermark`](#watermark)'s `low`/`high` and [`peak_marker`](#peak_marker)'s
+`min`/`max`/`average` are both a "mark": a per-item override object
+(`type`/`opacity`/`color`) that falls back to the feature's own shared defaults
+until it sets its own. Both also accept a single-word shorthand instead of the
+full object — but the shorthand isn't the same _kind_ of value in both:
+
+| Option                              | Shorthand is a... | Why                                                                                |
+| ----------------------------------- | ----------------- | ---------------------------------------------------------------------------------- |
+| `watermark.low`/`.high`             | **value**         | the threshold is the whole point — where the mark sits is what you're setting      |
+| `peak_marker.min`/`.max`/`.average` | **color**         | the value comes from history automatically — color is the only knob worth one word |
+
+Neither is "more correct" — a mark's shorthand always stands for whichever
+single value is actually user-decided for that particular option. Check the
+option's own section for what that is there.
+
+#### Single-field collapse
+
+[`badge_icon`](#badge_icon)/[`badge_color`](#badge_color) have always been plain
+Jinja strings, no object form at all — there was never anything else to set
+alongside them. [`status_label`](#status_label) follows the same idea despite
+being a Map underneath: a plain string is shorthand for `{ jinja: '...' }`,
+covering most cases, and the full Map form is there whenever
+`position`/`color_source` are actually needed.
 
 [🔼 Back to top]
 
@@ -697,7 +749,9 @@ would have no range at all (`0` to `0`) and could never show anything. Set
 > which is a better default than an arbitrary mirror of `max_value`.
 
 `min_value` accepts three forms — like `max_value`, each mode uses its own
-explicit key, so there is nothing to guess from the value's shape:
+explicit key, so there is nothing to guess from the value's shape (see
+[Value shapes & shortcuts](#value-shapes--shortcuts) — the same shape is reused
+by several other options):
 
 - a fixed numeric value (float or integer) — same as before,
 - `{ entity: ..., attribute: ... }` — an entity ID whose state is used as the
@@ -760,7 +814,8 @@ Allows representing standard values and calculating the percentage relative to
 the maximum value. Real value must be > 0.
 
 `max_value` accepts three forms — like `min_value`, each mode uses its own
-explicit key, so there is nothing to guess from the value's shape:
+explicit key, so there is nothing to guess from the value's shape (see
+[Value shapes & shortcuts](#value-shapes--shortcuts)):
 
 - a fixed numeric value (float or integer) — same as before,
 - `{ entity: ..., attribute: ... }` — an entity ID whose state is used as the
@@ -2092,12 +2147,12 @@ force_circular_background: true
 [![Card OK][Card-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
 
-> **`trend_indicator`** [Boolean] _(optional, default: false)_
+> **`trend_indicator`** [Boolean | Object] _(optional, default: false)_
 
-Displays trend icons indicating the direction of the entity's value. Icons are
-automatically positioned at the top right of the card.
+Displays a trend icon indicating the direction of the entity's value, positioned
+at the top right of the card.
 
-_Example_:
+_Example — simple boolean_:
 
 ```yaml
 type: custom:entity-progress-card
@@ -2105,17 +2160,129 @@ entity: sensor.temperature
 trend_indicator: true
 ```
 
+`true` compares each new value against the previous one, with a small built-in
+dead zone so it doesn't flip on pure sensor noise. For a time-windowed
+comparison instead, pass an object:
+
+| Property     | Type    | Default   | Description                                                                                                                |
+| ------------ | ------- | --------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `window`     | String  | —         | How far back to compare: `'30s'`, `'5min'`, `'2h'`, `'1d'`.                                                                |
+| `basis`      | String  | `average` | `average` (smooths noise), `edge` (vs. the oldest sample in the window), or `slope` (fits a trend line across the window). |
+| `threshold`  | Number  | `0`       | Dead zone in percentage points — a smaller change reads as stable.                                                         |
+| `colored`    | Boolean | `false`   | Tint the icon with its current icon color instead of a fixed neutral.                                                      |
+| `up_color`   | String  | —         | Explicit color when trending up, overriding `colored`.                                                                     |
+| `down_color` | String  | —         | Explicit color when trending down, overriding `colored`.                                                                   |
+| `flat_color` | String  | —         | Explicit color when stable, overriding `colored`.                                                                          |
+
+_Example — time-windowed, theme-colored_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.temperature
+trend_indicator:
+  window: 2h
+  basis: slope
+  threshold: 1
+  colored: true
+```
+
+> ℹ️ For sensor/number entities with no `attribute` override, `window` seeds
+> itself once from Home Assistant's own recorder history on load (capped at 7
+> days), so a long window isn't empty right after a dashboard reload. An
+> `attribute`-based percent, `timer`/`counter` entities, and the Template
+> variant's Jinja `percent` have no equivalent in HA's history — those fall back
+> to live sampling only, showing the "unknown" icon until the window fills.
+
 _Icons_:
 
-| icon                   | meaning        |
-| :--------------------- | :------------- |
-| `mdi:chevron-up-box`   | Upward trend   |
-| `mdi:chevron-down-box` | Downward trend |
-| `mdi:equal-box`        | Stable trend   |
+| icon                    | meaning                         |
+| :---------------------- | :------------------------------ |
+| `mdi:chevron-up-box`    | Upward trend                    |
+| `mdi:chevron-down-box`  | Downward trend                  |
+| `mdi:equal-box`         | Stable trend                    |
+| `mdi:progress-question` | Not enough data yet, or invalid |
 
 _Default value_:
 
 - `false`
+
+[🔼 Back to top]
+
+#### `peak_marker`
+
+[![Card OK][Card-OK]](#compatibility)
+
+> **`peak_marker`** [Object] _(optional)_
+
+Marks the minimum, maximum, and average value observed over a time window,
+directly on the bar — reads at a glance where the current value sits relative to
+its own recent history. `min`/`max`/`average` are each absent by default (no
+mark shown) — set one to opt it in.
+
+| Property  | Type                    | Default | Description                                                         |
+| --------- | ----------------------- | ------- | ------------------------------------------------------------------- |
+| `window`  | String                  | —       | How far back to look: `'30s'`, `'5min'`, `'2h'`, `'1d'` (required). |
+| `type`    | String                  | `line`  | Default mark shape: `line`, `round`, or `triangle`.                 |
+| `opacity` | Number                  | `0.8`   | Default opacity, applied to every mark that doesn't override it.    |
+| `color`   | String                  | —       | Default color, applied to every mark that doesn't override it.      |
+| `min`     | Boolean\|String\|Object | —       | Shows the minimum mark. See below.                                  |
+| `max`     | Boolean\|String\|Object | —       | Shows the maximum mark. See below.                                  |
+| `average` | Boolean\|String\|Object | —       | Shows the average mark. See below.                                  |
+
+`min`/`max`/`average` each accept:
+
+- `true` — shown, using the top-level `type`/`opacity`/`color`.
+- `false` — explicitly hidden (same as leaving it unset).
+- a color string — shorthand for `{ color: '...' }`, overriding the top-level
+  `color` for this mark only.
+- an object `{ type, opacity, color }` — overrides just that mark, falling back
+  to the top-level `type`/`opacity`/`color` for whatever's left out.
+
+A color, not a value: unlike [`watermark`](#watermark)'s marks, the position
+here always comes from history — see
+[Value shapes & shortcuts](#value-shapes--shortcuts) for why the two shorthands
+differ.
+
+_Example — same shape and opacity for all three_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.temperature
+peak_marker:
+  window: 1d
+  type: round
+  min: true
+  max: true
+  average: '#888'
+```
+
+_Example — per-mark overrides_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.temperature
+peak_marker:
+  window: 1d
+  min: dodgerblue
+  max:
+    type: triangle
+    color: tomato
+    opacity: 0.5
+```
+
+> ℹ️ Same history source as [`trend_indicator`](#trend_indicator)'s own
+> `window`: sensor/number entities with no `attribute` override only —
+> `attribute`-based percent and `timer`/`counter` entities have no history to
+> read from, so `peak_marker` silently has no effect there. `window` is capped
+> at 7 days regardless of unit (`'604800s'`/`'10080min'`/`'168h'`/ `'7d'` are
+> all the same limit) — the visual editor's slider enforces it, a longer value
+> typed directly in YAML is silently clamped to it. The visual editor also won't
+> offer to enable `peak_marker` at all for an ineligible entity — it shows why
+> instead of a toggle that would silently do nothing.
+
+_Default value_:
+
+- Not configured (no marks)
 
 [🔼 Back to top]
 
@@ -2124,7 +2291,7 @@ _Default value_:
 [![Card OK][Card-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
 
-> **`status_label`** [Map] _(optional)_
+> **`status_label`** [String|Map] _(optional)_
 
 Displays a GitHub-label-style status pill — a short piece of text describing the
 current status at a glance (e.g. `hot`, `critical`, `ok`). Unlike
@@ -2136,7 +2303,15 @@ translucent tint of whatever color the progress bar currently shows (theme zone,
 the border/text are that same color, lightened just enough to stay readable
 against the card.
 
-_Map definition_:
+A plain string is shorthand for `{ jinja: '...' }`, covering most cases. Use the
+full Map form below whenever you also need `position`/`color_source` (see
+[Value shapes & shortcuts](#value-shapes--shortcuts)):
+
+```yaml
+status_label: "{{ 'hot' if states('sensor.temperature') | float > 30 else 'ok' }}"
+```
+
+_Map definition_ — use this form to also set `position`/`color_source`:
 
 - `jinja` (JINJA): The pill's text. No separate toggle to show/hide the pill —
   an empty resolved value simply shows nothing. See [JINJA].
@@ -2239,13 +2414,18 @@ _Default value_:
 > **`density`** [String] ➡️ {`default` | `compact`} _(optional, default:
 > `default`)_:
 
-A preset that trims the card down to its smallest useful footprint. Rather than
-juggling `layout`/`bar_position`/`multiline` by hand to get there,
-`density: compact` sets them for you:
+A preset that trims the card down to its smallest useful footprint for whichever
+[`layout`](#layout) is already set. Rather than juggling
+`bar_position`/`hide`/`multiline` by hand to get there, `density: compact` sets
+them for you:
 
-- Forces [`layout`](#layout) to `horizontal` (the `vertical` option is removed
-  from the editor's layout selector while `compact` is active).
-- Restricts [`bar_position`](#bar_position) to `top`, `bottom`, or
+- `layout: horizontal` (the default): narrows the card to a single column,
+  `name`/`value` still shown.
+- `layout: vertical`: has no matching narrow shape, so `name`/`secondary_info`
+  are forced hidden instead, down to a single grid row (icon + thin bar only)
+  - the editor greys them out under [`hide`](#hide) to match, even behind a
+    Jinja `hide` template (its own result never overrides this).
+- Either way, restricts [`bar_position`](#bar_position) to `top`, `bottom`, or
   `background` - any other value (including the `default` position) falls back
   to `top`.
 - Clears [`multiline`](#multiline) - the field is hidden from the editor while
@@ -2278,11 +2458,18 @@ needs to be forced.
 > (`grid_options: { columns: 3, rows: 1 }`) if you want the same pinned effect
 > there too.
 
-_Example:_
+_Examples:_
 
 ```yaml
 type: custom:entity-progress-card
 entity: sensor.cpu_usage
+density: compact
+```
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.cpu_usage
+layout: vertical
 density: compact
 ```
 
@@ -2304,8 +2491,9 @@ different layouts based on your visual preferences:
 
 > [!NOTE]
 >
-> [`density: compact`](#density) forces this to `horizontal` and removes
-> `vertical` from the editor's selector while it's active.
+> [`density: compact`](#density) works with either value - it hides
+> `name`/`secondary_info` instead of narrowing the column once this is
+> `vertical`, since vertical has no matching narrow shape of its own.
 
 _Examples:_
 
@@ -2828,6 +3016,14 @@ interpolate: true
 > `shape` is new in 1.6.2. Card only — Badge/Template have no shape by default
 > (see [`force_circular_background`](#force_circular_background)).
 
+> [!NOTE]
+>
+> [`density: compact`](#density) with `layout: vertical` forces `name` and
+> `secondary_info` hidden regardless of this option — even a Jinja `hide`
+> template's own result never brings them back. `value`/`unit` only ever affect
+> text rendered inside that same row, so they're moot there too - the editor
+> drops both chips instead of showing them with no visible effect.
+
 Defines which elements should be hidden in the card.
 
 `hide` accepts either:
@@ -2921,24 +3117,11 @@ the current state at a glance.
 
 _Map definition_:
 
-- `high` (number/entity/template): The upper threshold value. How it is
-  interpreted depends on `high_as` (see below).
-- `high_as` (string): Controls how `high` is interpreted.
-  - `auto` (default): value in the entity’s own unit and scale (same as
-    `min_value`/`max_value`) — the card converts it to a bar position.
-  - `percent`: value is a direct bar position (0–100), bypassing any unit
-    conversion.
-- `high_color` (string): The CSS color used for the high watermark zone (name or
-  hex).
-- `low` (number/entity/template): The lower threshold value. How it is
-  interpreted depends on `low_as` (see below).
-- `low_as` (string): Controls how `low` is interpreted.
-  - `auto` (default): value in the entity’s own unit and scale (same as
-    `min_value`/`max_value`) — the card converts it to a bar position.
-  - `percent`: value is a direct bar position (0–100), bypassing any unit
-    conversion.
-- `low_color` (string): The CSS color used for the low watermark zone.
-- `type` (string): Defines the style of the watermark overlay.
+- `low` / `high` (Boolean|Number|Object): The lower/upper threshold. Both
+  default to showing (`low: 20`, `high: 80`) the moment `watermark` is
+  configured at all — see below for the accepted shapes.
+- `type` (string): Default style, used by whichever of `low`/`high` doesn't
+  override its own.
   - `blended` (default): A subtle colored overlay that merges with the bar’s
     colors for a more integrated look.
   - `area`: A soft transparent shape placed over the bar, without blending into
@@ -2947,25 +3130,42 @@ _Map definition_:
   - `triangle`: Triangle shapes as a watermark.
   - `round`: Rounded shapes applied as a watermark.
   - `line`: Vertical lines pattern (like a hatch effect).
-- `line_size` (string): Defines the thickness of the lines when the watermark
-  type is `line` (e.g., `"3px"`).
-- `opacity` (number): Adjusts the transparency of the watermark overlay (from 0
-  = fully transparent to 1 = fully opaque).
-- `disable_low` (boolean): If set to true, disables the low watermark display.
-- `disable_high` (boolean): If set to true, disables the high watermark display.
+- `line_size` (string): Defines the thickness of the lines when a side's
+  effective type (its own, or the default above) is `line` (e.g., `"3px"`).
+- `opacity` (number): Default transparency (0 = fully transparent to 1 = fully
+  opaque), used by whichever of `low`/`high` doesn't override it.
+- `color` (string, optional): Default CSS color, used by whichever of
+  `low`/`high` doesn't override it. Falls back to a neutral color if not set
+  either.
 
-`low` and `high` each accept three forms — symmetric with
-`min_value`/`max_value`, each mode uses its own explicit key, so there is
-nothing to guess from the value's shape:
+`low`/`high` each accept (see
+[Value shapes & shortcuts](#value-shapes--shortcuts) for why this shorthand is a
+value, unlike [`peak_marker`](#peak_marker)'s):
 
-- a fixed numeric value (float or integer),
-- `{ entity: ..., attribute: ... }` — an entity ID whose state is used as the
-  threshold (`attribute` is optional, to read a specific attribute instead of
-  the state),
-- `{ jinja: ... }` — a Jinja template that dynamically returns a number.
+- `false` — hides that side entirely.
+- a fixed numeric value, `{ entity: ..., attribute: ... }`, or `{ jinja: ... }`
+  — shown, using `watermark`'s own `type`/`opacity`/`color`.
+- `{ value: ..., as, type, opacity, color }` — full control over just that side,
+  each falling back to `watermark`'s own value when omitted:
+  - `value`: the threshold itself, same three forms as above (fixed number,
+    entity, or Jinja).
+  - `as` (string): how `value` is interpreted.
+    - `auto` (default): value in the entity’s own unit and scale (same as
+      `min_value`/`max_value`) — the card converts it to a bar position.
+    - `percent`: value is a direct bar position (0–100), bypassing any unit
+      conversion.
+  - `type` (string, optional): overrides `watermark.type` for this side only.
+  - `opacity` (number, optional): overrides `watermark.opacity` for this side
+    only.
+  - `color` (string, optional): overrides `watermark.color` for this side only.
 
 In the visual editor, a chip selector (Fixed value / Entity / Template) lets you
-switch between the three modes, mirroring `min_value`/`max_value`.
+switch `value`'s mode, mirroring `min_value`/`max_value`; a "Show low"/"Show
+high" toggle replaces the old `disable_low`/`disable_high`. Each side's own
+Type/Opacity/Color fields show the global value until you pick something else
+for that side — once **both** sides have their own value for a given field, the
+global one is dropped (nothing reads it anymore); its editor field then shows a
+greyed placeholder (`blended`/`0.8`) instead of a live value nothing reads.
 
 > [!NOTE]
 >
@@ -2975,11 +3175,16 @@ switch between the three modes, mirroring `min_value`/`max_value`.
 
 > [!IMPORTANT]
 >
-> Earlier `1.6.0` release candidates accepted a bare entity ID string for
-> `low`/`high` (`watermark: { low: sensor.xxx }`), paired with a separate
-> `low_attribute`/`high_attribute` key. **This form is deprecated** (a console
-> warning is logged) but still works — it is automatically migrated to the map
-> form for you. Please update your YAML to the new form when convenient.
+> Three earlier shapes are deprecated (console warning logged) but still work —
+> automatically migrated for the session:
+>
+> - A bare entity ID string for `low`/`high` (`watermark: { low: sensor.xxx }`,
+>   pre-`1.6.0`), paired with a separate `low_attribute`/`high_attribute` key.
+> - `low_as`/`high_as`/`low_color`/`high_color` as sibling keys of `watermark` —
+>   now `as`/`color` inside `low`/`high`'s own object form.
+> - `disable_low`/`disable_high: true` — now `low`/`high: false`.
+>
+> Please update your YAML to the new form when convenient.
 
 _Entity example_:
 
@@ -3004,6 +3209,22 @@ watermark:
   high: 80
 ```
 
+_Entity value with overrides example_ — combining an entity-sourced `value` with
+`as`/`color` requires the full `{ value: ..., as, color }` form; a flattened
+`{ entity: ..., as: ..., color: ... }` (no `value` wrapper) is normalized to
+this shape internally, but writing it out explicitly is clearer:
+
+```yaml
+type: custom:entity-progress-card-template
+····
+watermark:
+  high:
+    value:
+      entity: sensor.monthly_target_percentage
+    as: percent # sensor already reports a bar position (0–100), not a raw unit to convert
+    color: '#c6a445'
+```
+
 **Value interpretation**
 
 `low` and `high` are always expressed in the **entity’s native unit**, on the
@@ -3018,21 +3239,21 @@ bar position automatically — they are never raw percentages of the bar.
 > different position every time. `auto` keeps `low`/`high` as a stable
 > percentage of the bar for timers, regardless of how long any given run is.
 
-| Scenario                                                 | `low_as` / `high_as` | `low` / `high` unit       | Example                                                          |
-| -------------------------------------------------------- | -------------------- | ------------------------- | ---------------------------------------------------------------- |
-| Percentage sensor (`%`), default range 0–100             | `auto`               | Percentage (0–100)        | `low: 20` → marker at 20 % on the bar                            |
-| Percentage sensor (`%`), custom range `min=-100 max=100` | `auto`               | Same custom scale         | `low: 10` → marker at 55 % visually                              |
-| Temperature sensor (`°C`), `min=-10 max=50`              | `auto`               | °C                        | `low: -5` → marker at −5 °C                                      |
-| Power sensor (`W`), `min=-7000 max=7000`                 | `auto`               | W                         | `low: -3700` → marker at −3700 W                                 |
-| `max_value` is another entity (bar shows %)              | `auto`               | Still the entity’s unit   | `low: 20` means 20 °C even if bar shows %                        |
-| `center_zero: true`                                      | `auto`               | Entity’s unit, full range | `low: -5` on a −10…50 scale → placed in the left (negative) half |
-| Any sensor, explicit bar position                        | `percent`            | Bar position (0–100)      | `low: 25, low_as: percent` → marker fixed at 25 % of the bar     |
+| Scenario                                                 | `as`      | `low` / `high` unit       | Example                                                             |
+| -------------------------------------------------------- | --------- | ------------------------- | ------------------------------------------------------------------- |
+| Percentage sensor (`%`), default range 0–100             | `auto`    | Percentage (0–100)        | `low: 20` → marker at 20 % on the bar                               |
+| Percentage sensor (`%`), custom range `min=-100 max=100` | `auto`    | Same custom scale         | `low: 10` → marker at 55 % visually                                 |
+| Temperature sensor (`°C`), `min=-10 max=50`              | `auto`    | °C                        | `low: -5` → marker at −5 °C                                         |
+| Power sensor (`W`), `min=-7000 max=7000`                 | `auto`    | W                         | `low: -3700` → marker at −3700 W                                    |
+| `max_value` is another entity (bar shows %)              | `auto`    | Still the entity’s unit   | `low: 20` means 20 °C even if bar shows %                           |
+| `center_zero: true`                                      | `auto`    | Entity’s unit, full range | `low: -5` on a −10…50 scale → placed in the left (negative) half    |
+| Any sensor, explicit bar position                        | `percent` | Bar position (0–100)      | `low: { value: 25, as: percent }` → marker fixed at 25 % of the bar |
 
 > **`center_zero` note** — The bar is split into two visual halves: left (min →
 > zero) and right (zero → max). `low`/`high` values are mapped to their correct
 > half automatically regardless of whether the range is symmetric or not. With
-> `low_as: percent` / `high_as: percent`, the value is a direct position on the
-> full bar (0 = left edge, 100 = right edge), bypassing the two-half mapping.
+> `as: percent`, the value is a direct position on the full bar (0 = left edge,
+> 100 = right edge), bypassing the two-half mapping.
 
 _Example_:
 
@@ -3040,11 +3261,13 @@ _Example_:
 type: custom:entity-progress-card
 ····
 watermark:
-  type: striped     # red and yellow stripes
-  high: 80          # 🔺 Upper threshold (e.g., max recommended battery level)
-  high_color: red   # 🎨 Color to indicate the high watermark zone
-  low: 10           # 🔻 Lower threshold (e.g., minimum safe battery level)
-  low_color: yellow # 🎨 Color to indicate the low watermark zone
+  type: striped # red and yellow stripes
+  high:
+    value: 80 # 🔺 Upper threshold (e.g., max recommended battery level)
+    color: red # 🎨 Color to indicate the high watermark zone
+  low:
+    value: 10 # 🔻 Lower threshold (e.g., minimum safe battery level)
+    color: yellow # 🎨 Color to indicate the low watermark zone
 ```
 
 [🔼 Back to top]
@@ -3071,9 +3294,11 @@ wall-mounted dashboard.
 _Map definition_:
 
 - `above` (Float|Map): Alert when the value goes above this threshold. Ignored
-  in Advanced mode (see `jinja` below).
+  in Advanced mode (see `jinja` below). Same value/entity/Jinja shape as
+  [`min_value`](#min_value) — see
+  [Value shapes & shortcuts](#value-shapes--shortcuts).
 - `below` (Float|Map): Alert when the value goes below this threshold. Ignored
-  in Advanced mode.
+  in Advanced mode. Same shape as `above`.
 - `jinja` (string, optional): Advanced mode — replaces `above`/`below` as the
   trigger entirely. Returns either:
   - `true`/`false`: just triggers or clears the alert, `color`/`highlight`/
@@ -3345,36 +3570,37 @@ tap_action:
 These options are the same as those of the `entity-progress-card` and are
 available for Templates as well:
 
-| **Option**                   | **Type**           | **Default**  | **Description**                   | **Link**                                   |
-| :--------------------------- | :----------------- | :----------- | :-------------------------------- | :----------------------------------------- |
-| **Data Options**             |                    |              |                                   |                                            |
-| `entity`                     | string (optional)  | —            | Main entity ID                    | [Config Ref.](#entity)                     |
-| **Styling Options**          |                    |              |                                   |                                            |
-| `badge_icon`                 | Jinja (optional)   | —            | Dynamic badge icon                | [Config Ref.](#badge_icon)                 |
-| `badge_color`                | Jinja (optional)   | —            | Dynamic badge color               | [Config Ref.](#badge_color)                |
-| `bar_size`                   | string (optional)  | `small`      | Size of the progress bar          | [Config Ref.](#bar_size)                   |
-| `bar_position`               | string (optional)  | `default`    | Position of the progress bar      | [Config Ref.](#bar_position)               |
-| `bar_single_line`            | boolean (optional) | `false`      | single-line mode for overlay bars | [Config Ref.](#bar_single_line)            |
-| `bar_segments`               | integer (optional) | —            | Render bar as discrete segments   | [Config Ref.](#bar_segments)               |
-| `bar_effect`                 | string/list/jinja  | —            | Visual effects for the bar        | [Config Ref.](#bar_effect)                 |
-| `bar_max_width`              | string (optional)  | -            | Limits the max width of the bar   | [Config Ref.](#bar_max_width)              |
-| `bar_orientation`            | string (optional)  | `ltr`        | Bar direction                     | [Config Ref.](#bar_orientation)            |
-| `bar_scale`                  | string (optional)  | `linear`     | Value-to-width mapping            | [Config Ref.](#bar_scale)                  |
-| `icon_animation`             | string (optional)  | `none`       | Animate icon on active state      | [Config Ref.](#icon_animation)             |
-| `force_circular_background`  | boolean (optional) | `false`      | Force icon circle background      | [Config Ref.](#force_circular_background)  |
-| `trend_indicator`            | string (optional)  | `false`      | Displays trend icons.             | [Config Ref.](#trend_indicator)            |
-| `layout`                     | string (optional)  | `horizontal` | Layout direction                  | [Config Ref.](#layout)                     |
-| `frameless`                  | boolean (optional) | `false`      | Remove card frame                 | [Config Ref.](#frameless)                  |
-| `marginless`                 | boolean (optional) | `false`      | Remove top/bottom margin          | [Config Ref.](#marginless)                 |
-| `height`                     | string (optional)  | —            | Card height                       | [Config Ref.](#height)                     |
-| `min_width`                  | string (optional)  | —            | Minimum width                     | [Config Ref.](#min_width)                  |
-| `reverse_secondary_info_row` | boolean (optional) | `false`      | Flip info bar layout              | [Config Ref.](#reverse_secondary_info_row) |
-| `multiline`                  | boolean (optional) | `false`      | Split secondary text on 2 lines   | [Config Ref.](#multiline)                  |
-| `center_zero`                | boolean (optional) | `false`      | Center the bar on 0               | [Config Ref.](#center_zero)                |
-| `hide`                       | list (optional)    | —            | Hide parts of the card            | [Config Ref.](#hide)                       |
-| `watermark`                  | map (optional)     | —            | Adds min/max overlays             | [Config Ref.](#watermark)                  |
-| **Behavior And Actions**     |                    |              |                                   |                                            |
-| `xyz_action`                 | map (optional)     | see defaults | Tap/double/hold actions           | [Config Ref.](#xyz_action)                 |
+| **Option**                   | **Type**           | **Default**  | **Description**                    | **Link**                                   |
+| :--------------------------- | :----------------- | :----------- | :--------------------------------- | :----------------------------------------- |
+| **Data Options**             |                    |              |                                    |                                            |
+| `entity`                     | string (optional)  | —            | Main entity ID                     | [Config Ref.](#entity)                     |
+| **Styling Options**          |                    |              |                                    |                                            |
+| `badge_icon`                 | Jinja (optional)   | —            | Dynamic badge icon                 | [Config Ref.](#badge_icon)                 |
+| `badge_color`                | Jinja (optional)   | —            | Dynamic badge color                | [Config Ref.](#badge_color)                |
+| `bar_size`                   | string (optional)  | `small`      | Size of the progress bar           | [Config Ref.](#bar_size)                   |
+| `bar_position`               | string (optional)  | `default`    | Position of the progress bar       | [Config Ref.](#bar_position)               |
+| `bar_single_line`            | boolean (optional) | `false`      | single-line mode for overlay bars  | [Config Ref.](#bar_single_line)            |
+| `bar_segments`               | integer (optional) | —            | Render bar as discrete segments    | [Config Ref.](#bar_segments)               |
+| `bar_effect`                 | string/list/jinja  | —            | Visual effects for the bar         | [Config Ref.](#bar_effect)                 |
+| `bar_max_width`              | string (optional)  | -            | Limits the max width of the bar    | [Config Ref.](#bar_max_width)              |
+| `bar_orientation`            | string (optional)  | `ltr`        | Bar direction                      | [Config Ref.](#bar_orientation)            |
+| `bar_scale`                  | string (optional)  | `linear`     | Value-to-width mapping             | [Config Ref.](#bar_scale)                  |
+| `icon_animation`             | string (optional)  | `none`       | Animate icon on active state       | [Config Ref.](#icon_animation)             |
+| `force_circular_background`  | boolean (optional) | `false`      | Force icon circle background       | [Config Ref.](#force_circular_background)  |
+| `trend_indicator`            | string (optional)  | `false`      | Displays trend icons.              | [Config Ref.](#trend_indicator)            |
+| `peak_marker`                | Map (optional)     | —            | Min/max/average marks from history | [Config Ref.](#peak_marker)                |
+| `layout`                     | string (optional)  | `horizontal` | Layout direction                   | [Config Ref.](#layout)                     |
+| `frameless`                  | boolean (optional) | `false`      | Remove card frame                  | [Config Ref.](#frameless)                  |
+| `marginless`                 | boolean (optional) | `false`      | Remove top/bottom margin           | [Config Ref.](#marginless)                 |
+| `height`                     | string (optional)  | —            | Card height                        | [Config Ref.](#height)                     |
+| `min_width`                  | string (optional)  | —            | Minimum width                      | [Config Ref.](#min_width)                  |
+| `reverse_secondary_info_row` | boolean (optional) | `false`      | Flip info bar layout               | [Config Ref.](#reverse_secondary_info_row) |
+| `multiline`                  | boolean (optional) | `false`      | Split secondary text on 2 lines    | [Config Ref.](#multiline)                  |
+| `center_zero`                | boolean (optional) | `false`      | Center the bar on 0                | [Config Ref.](#center_zero)                |
+| `hide`                       | list (optional)    | —            | Hide parts of the card             | [Config Ref.](#hide)                       |
+| `watermark`                  | map (optional)     | —            | Adds min/max overlays              | [Config Ref.](#watermark)                  |
+| **Behavior And Actions**     |                    |              |                                    |                                            |
+| `xyz_action`                 | map (optional)     | see defaults | Tap/double/hold actions            | [Config Ref.](#xyz_action)                 |
 
 [🔼 Back to top]
 

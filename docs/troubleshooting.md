@@ -28,7 +28,7 @@ stays clean and stable. We handle two main categories of errors in the card:
    <details>
    <summary><strong>Show the screenshot (click to expand)</strong></summary>
    <!-- markdownlint-disable-next-line MD013 -->
-   <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/errors.png" alt="errors" width="1000px"/>
+   <img src="images/errors-f73970.png" alt="errors" width="1000px"/>
    </details>
 
 <a id="deprecated-options"></a>
@@ -73,7 +73,7 @@ In this context, we have two types of deprecated options:
 <details>
 <summary><strong>Show the screenshot (click to expand)</strong></summary>
 <!-- markdownlint-disable-next-line MD013 -->
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/deprecated.png" alt="deprecated" width="1000px"/>
+<img src="images/deprecated-a040a4.png" alt="deprecated" width="1000px"/>
 </details>
 
 ### 🔄 How migration works
@@ -313,7 +313,7 @@ or an advanced user, your feedback is valuable!
   <details>
   <summary><strong>Show the screenshot (click to expand)</strong></summary>
   <!-- markdownlint-disable-next-line MD013 -->
-  <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/create_issue.png" alt="create issue" width="750px"/>
+  <img src="images/create-issue-40db50.png" alt="create issue" width="750px"/>
   </details>
 
 #### (Optional) roll back

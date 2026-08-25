@@ -126,13 +126,11 @@ const EDITOR_FIELD_HELPER_NS = 'editor.field_helper';
 const MIN_VALUE_ENTITY_PATH = 'min_value.entity';
 const MAX_VALUE_ENTITY_PATH = 'max_value.entity';
 // Not an editor field name (watermark.low/.high's entity/attribute/jinja stay
-// virtual fields, see editor/factory.ts's wmSide - the generic dot-path field
-// machinery only resolves one level of nesting, and watermark.low is already
-// one level deep under `watermark`). Used as a plain config-path string
-// instead: HaSelector's selectorOf (arbitrary-depth reduce, unlike field
-// names) and _checkHAEnvironment's error paths.
-const WATERMARK_LOW_ENTITY_PATH = 'watermark.low.entity';
-const WATERMARK_HIGH_ENTITY_PATH = 'watermark.high.entity';
+// virtual fields, see editor/factory.ts's wmSide). The editor always wraps
+// low/high as { value, as, opacity, color } once touched - a hand-written
+// short (unwrapped) config resolves its own path inline in checkValueConfig.
+const WATERMARK_LOW_ENTITY_PATH = 'watermark.low.value.entity';
+const WATERMARK_HIGH_ENTITY_PATH = 'watermark.high.value.entity';
 // Same reasoning as WATERMARK_LOW_ENTITY_PATH/WATERMARK_HIGH_ENTITY_PATH:
 // alert_when.above/.below stay virtual editor fields (nested one level under
 // alert_when, same depth as watermark.low).

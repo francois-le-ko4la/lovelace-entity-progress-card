@@ -206,6 +206,7 @@ class EntityProgressHideChips extends ChipsBase {
   #selected: string[] = [];
   #chips = new Map<string, HTMLButtonElement>();
   #items: string[] = EntityProgressHideChips.#ITEMS;
+  #config: LovelaceConfig = {} as LovelaceConfig;
 
   get items(): string[] {
     return this.#items;
@@ -223,7 +224,23 @@ class EntityProgressHideChips extends ChipsBase {
     this._buildChipSet(this.#items, (value) => this.#toggle(value), this.#chips);
   }
 
+  // density: compact + layout: vertical forces name/secondary_info hidden
+  // regardless of this field (ViewCore.hasComponentHiddenFlag) - shown here
+  // as forced-on/locked so the chips don't silently disagree with the render.
+  #forcedItems(): string[] {
+    return this.#config.density === 'compact' && this.#config.layout === 'vertical' ? ['name', 'secondary_info'] : [];
+  }
+
+  // value/unit only ever affect text rendered *inside* secondary_info's own
+  // row - moot once that whole row is gone (#forcedItems above), not just
+  // redundant, so hidden from the picker entirely rather than shown disabled
+  // like name/secondary_info themselves (there's no forced state to convey).
+  #mootItems(): string[] {
+    return this.#forcedItems().length ? ['value', 'unit'] : [];
+  }
+
   #toggle(value: string) {
+    if (this.#forcedItems().includes(value)) return;
     const updated = this.#selected.includes(value)
       ? this.#selected.filter((v) => v !== value)
       : [...this.#selected, value];
@@ -241,13 +258,25 @@ class EntityProgressHideChips extends ChipsBase {
     this._render();
   }
 
+  updateConfig(config: LovelaceConfig) {
+    this.#config = config ?? ({} as LovelaceConfig);
+    this._render();
+  }
+
   setLabels(labels: Record<string, string> | null) {
     this._labels = labels ?? null;
     for (const [item, chip] of this.#chips) chip.textContent = this._chipLabel(item);
   }
 
   _render() {
-    for (const [item, chip] of this.#chips) chip.classList.toggle('selected', this.#selected.includes(item));
+    const forced = this.#forcedItems();
+    const moot = this.#mootItems();
+    for (const [item, chip] of this.#chips) {
+      const isForced = forced.includes(item);
+      chip.classList.toggle('selected', isForced || this.#selected.includes(item));
+      chip.classList.toggle('forced', isForced);
+      chip.style.display = moot.includes(item) ? 'none' : '';
+    }
   }
 }
 
@@ -369,6 +398,15 @@ class EntityProgressSimpleAdvancedChips extends SingleSelectChipsBase {
 }
 defineElement(EntityProgressSimpleAdvancedChips.ELEMENT_NAME, EntityProgressSimpleAdvancedChips);
 
+// markers()'s 5 master on/off toggles (watermark/peak_marker/badge/
+// status_label/alert_when) - a pill instead of a switch, distinct from the
+// plain toggles nested under them once enabled.
+class EntityProgressEnabledDisabledChips extends SingleSelectChipsBase {
+  static ELEMENT_NAME = devName('entity-progress-enabled-disabled-chips');
+  static MODES = ['disabled', 'enabled'];
+}
+defineElement(EntityProgressEnabledDisabledChips.ELEMENT_NAME, EntityProgressEnabledDisabledChips);
+
 export { ChipsBase };
 export { EntityProgressEffectChips };
 export { EntityProgressHideChips };
@@ -378,4 +416,5 @@ export { EntityProgressThemeModeChips };
 export { EntityProgressBarStackModeChips };
 export { EntityProgressIconAnimationModeChips };
 export { EntityProgressCircularBackgroundModeChips };
+export { EntityProgressEnabledDisabledChips };
 export { EntityProgressSimpleAdvancedChips };

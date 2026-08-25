@@ -21,7 +21,7 @@ import { HACore, HABase } from './core.js';
 import type { DivergingGradients } from './core.js';
 import type { HomeAssistant } from '../utils/hass-provider.js';
 import type { LovelaceConfig, Config } from '../utils/types.js';
-import { jinjaOf } from './schema.js';
+import { jinjaOf, markValue } from './schema.js';
 
 /**
  * Represents the base class for all standard cards:
@@ -55,12 +55,157 @@ class EntityProgressCardBase extends HABase {
   }
 
   static get _loggedMethods() {
-    return [...super._loggedMethods, '_getStandardFields', '_renderCustomInfo', '_renderNameInfo'];
+    return [
+      ...super._loggedMethods,
+      '_getStandardFields',
+      '_renderCustomInfo',
+      '_renderNameInfo',
+      '_seedPeakMarkerHistoryOnce',
+      '_seedPeakMarkerHistory',
+      '_fetchHistory',
+    ];
   }
 
   _handleHassUpdate() {
     this.refresh();
     this._manageAutoRefresh();
+    this._seedTrendHistoryOnce();
+    this._seedPeakMarkerHistoryOnce();
+  }
+
+  // trend_indicator.window/peak_marker.window seed from HA's own history -
+  // Card only, keyed by entity/attribute/window rather than a bare boolean:
+  // the live editor reuses this instance across an entity swap, and a plain
+  // "already tried" flag would leave the PREVIOUS entity's marks/trend
+  // stuck forever since nothing else re-triggers the fetch.
+  #trendSeedSignature: string | null = null;
+  #peakMarkerSeedSignature: string | null = null;
+
+  // null when `window` itself is absent/invalid (nothing to seed).
+  _seedSignature(window: unknown): string | null {
+    if (!is.number(window)) return null;
+    const config = this._cardView.config;
+    return `${config.entity ?? ''} ${config.attribute ?? ''} ${window}`;
+  }
+
+  _seedTrendHistoryOnce() {
+    const config = this._cardView.config.trend_indicator;
+    const signature = this._seedSignature(is.plainObject(config) ? config.window : undefined);
+    if (signature === null || signature === this.#trendSeedSignature) return;
+    this.#trendSeedSignature = signature;
+    this._seedTrendHistory().catch(() => {
+      // best-effort: live sampling alone still works from here
+    });
+  }
+
+  _seedPeakMarkerHistoryOnce() {
+    const config = this._cardView.config.peak_marker;
+    const signature = this._seedSignature(is.plainObject(config) ? config.window : undefined);
+    if (signature === null || signature === this.#peakMarkerSeedSignature) return;
+    this.#peakMarkerSeedSignature = signature;
+    // Clears the previous entity's marks before the fetch resolves - unlike
+    // trend's TrendTracker, nothing else self-corrects in between.
+    this._cardView.setPeakMarker(null);
+    this._updateCSS();
+    this._seedPeakMarkerHistory().catch(() => {
+      // best-effort: no min/max/average marks without history, card unaffected
+    });
+  }
+
+  // Shares one in-flight WS call when trend/peak_marker share a window.
+  #inFlightHistoryFetches = new Map<number, Promise<{ t: number; value: number }[]>>();
+
+  async _fetchHistory(windowSeconds: number): Promise<{ t: number; value: number }[]> {
+    const cached = this.#inFlightHistoryFetches.get(windowSeconds);
+    if (cached) return cached;
+    const promise = this.#fetchHistoryUncached(windowSeconds).finally(() =>
+      this.#inFlightHistoryFetches.delete(windowSeconds),
+    );
+    this.#inFlightHistoryFetches.set(windowSeconds, promise);
+    return promise;
+  }
+
+  // Raw {timestamp, state} points for `entity` over the last `windowSeconds`,
+  // or [] if the entity/window is ineligible (attribute:, timer/counter/
+  // duration - recorder keeps no attribute history) or the fetch fails.
+  async #fetchHistoryUncached(windowSeconds: number): Promise<{ t: number; value: number }[]> {
+    const entity = this._cardView.config.entity;
+    const entityType = this._cardView._currentValue.entityType;
+    const isHistoryEligible = !entityType.isTimer && !entityType.isCounter && !entityType.isDuration;
+    if (!entity || this._cardView.config.attribute || !isHistoryEligible) {
+      this._log?.debug('_fetchHistory: ineligible', {
+        entity,
+        attribute: this._cardView.config.attribute,
+        isHistoryEligible,
+      });
+      return [];
+    }
+
+    const hass = this.hass;
+    if (!hass?.connection?.connected) {
+      this._log?.debug('_fetchHistory: no live connection', { connected: hass?.connection?.connected });
+      return [];
+    }
+
+    const cappedWindow = Math.min(windowSeconds, CARD.config.history.maxWindowSeconds);
+    // Compressed-state reply (s/lu, not state/last_updated; lu is epoch
+    // seconds) - see history/websocket_api.py's _history_compressed_state().
+    const result = (await hass.connection.sendMessagePromise({
+      type: 'history/history_during_period',
+      start_time: new Date(Date.now() - cappedWindow * 1000).toISOString(),
+      entity_ids: [entity],
+      no_attributes: true,
+    })) as Record<string, { s: string; lu: number }[]> | undefined;
+    this._log?.debug('_fetchHistory: raw result', result);
+
+    const points = (result?.[entity] ?? [])
+      .map((point) => {
+        const value = Number(point.s);
+        const t = point.lu * 1000;
+        return Number.isFinite(value) && Number.isFinite(t) ? { t, value } : null;
+      })
+      .filter((point): point is { t: number; value: number } => point !== null);
+    this._log?.debug(`_fetchHistory: ${points.length} usable point(s)`);
+    return points;
+  }
+
+  async _seedTrendHistory() {
+    const config = this._cardView.config.trend_indicator;
+    if (!is.plainObject(config) || !is.number(config.window)) return;
+    const signature = this._seedSignature(config.window);
+
+    const points = await this._fetchHistory(config.window);
+    // A newer entity/config swap may have started its own seed while this
+    // fetch was in flight - only the still-current signature applies.
+    if (!points.length || signature !== this.#trendSeedSignature) return;
+    this._cardView.seedTrend(points.map((p) => ({ t: p.t, percent: this._cardView.percentForRawValue(p.value) })));
+  }
+
+  async _seedPeakMarkerHistory() {
+    const config = this._cardView.config.peak_marker;
+    if (!is.plainObject(config) || !is.number(config.window)) {
+      this._log?.debug('_seedPeakMarkerHistory: no eligible peak_marker config', config);
+      return;
+    }
+    const signature = this._seedSignature(config.window);
+
+    const points = await this._fetchHistory(config.window);
+    if (!points.length) {
+      this._log?.debug('_seedPeakMarkerHistory: no history points, skipping');
+      return;
+    }
+    // A newer entity/config swap may have started its own seed while this
+    // fetch was in flight - only the still-current signature applies.
+    if (signature !== this.#peakMarkerSeedSignature) return;
+    const values = points.map((p) => p.value);
+    const marker = {
+      min: this._cardView.percentForRawValue(Math.min(...values)),
+      max: this._cardView.percentForRawValue(Math.max(...values)),
+      average: this._cardView.percentForRawValue(values.reduce((sum, v) => sum + v, 0) / values.length),
+    };
+    this._log?.debug('_seedPeakMarkerHistory: setPeakMarker', marker);
+    this._cardView.setPeakMarker(marker);
+    this._updateCSS();
   }
 
   // Adds the value text on top of HACore's default tick (refresh + bar CSS,
@@ -100,6 +245,10 @@ class EntityProgressCardBase extends HABase {
       diverging: bar.divergingBarStack ?? bar.themeDivergingGradient,
     });
     this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null);
+    this._applyPeakMarkerCSS(bar.peakMarker);
+    // History-seeded (async, resolves after the initial _buildStyle() pass) -
+    // show-peak-* needs recomputing here too, not just at render() time.
+    this._handlePeakMarkerClasses();
   }
 
   // ─── STD FIELDS PROCESSING - CUSTOMIZATION ────────────────────────────────
@@ -128,9 +277,17 @@ class EntityProgressCardBase extends HABase {
       min_value: () => this._renderJinjaNumber(content, (c: Config) => jinjaOf(c.min_value), 'jinjaMinValue'),
       max_value: () => this._renderJinjaNumber(content, (c: Config) => jinjaOf(c.max_value), 'jinjaMaxValue'),
       'watermark.low': () =>
-        this._renderWatermarkJinja(content, (c: Config) => jinjaOf(c.watermark?.low), 'jinjaWatermarkLow'),
+        this._renderWatermarkJinja(
+          content,
+          (c: Config) => jinjaOf(markValue(c.watermark?.low, CARD.config.defaults.watermark.low)),
+          'jinjaWatermarkLow',
+        ),
       'watermark.high': () =>
-        this._renderWatermarkJinja(content, (c: Config) => jinjaOf(c.watermark?.high), 'jinjaWatermarkHigh'),
+        this._renderWatermarkJinja(
+          content,
+          (c: Config) => jinjaOf(markValue(c.watermark?.high, CARD.config.defaults.watermark.high)),
+          'jinjaWatermarkHigh',
+        ),
       'alert_when.above': () =>
         this._renderJinjaNumber(content, (c: Config) => jinjaOf(c.alert_when?.above), 'jinjaAlertAbove'),
       'alert_when.below': () =>
@@ -501,9 +658,17 @@ class EntityProgressTemplateBase extends HABase {
       icon: () => this._showIcon(content),
       percent: () => this._managePercent(content),
       'watermark.low': () =>
-        this._renderWatermarkJinja(content, (c: Config) => jinjaOf(c.watermark?.low), 'jinjaWatermarkLow'),
+        this._renderWatermarkJinja(
+          content,
+          (c: Config) => jinjaOf(markValue(c.watermark?.low, CARD.config.defaults.watermark.low)),
+          'jinjaWatermarkLow',
+        ),
       'watermark.high': () =>
-        this._renderWatermarkJinja(content, (c: Config) => jinjaOf(c.watermark?.high), 'jinjaWatermarkHigh'),
+        this._renderWatermarkJinja(
+          content,
+          (c: Config) => jinjaOf(markValue(c.watermark?.high, CARD.config.defaults.watermark.high)),
+          'jinjaWatermarkHigh',
+        ),
       color: () => {
         const adapted = ThemeManager.adaptColor(content as string | null);
         // Cached (not just written to CSS) so status_label.color_source:
@@ -610,19 +775,11 @@ class EntityProgressTemplateBase extends HABase {
   _updateTrend(percent?: number) {
     if (!this._cardView.config.trend_indicator) return;
     // CF5 - issue (major) resolved - the paramless call from
-    // _updateDynamicElements ran getTrend(undefined), which clobbered
-    // _lastPercent on every refresh: the trend indicator stayed 'flat' whenever
-    // a hass update interleaved two Jinja percent pushes. Only Jinja pushes may
-    // update the trend.
+    // _updateDynamicElements used to corrupt the trend on every hass refresh
+    // interleaved with a Jinja percent push. Only real pushes may record a
+    // sample; NaN (invalid template result) shows the error icon without one.
     if (percent === undefined) return;
-    // NaN = invalid template result: show the error icon without touching
-    // _lastPercent
-    const icon = Number.isNaN(percent) ? this._trendIcons.error : this._trendIcons[this._cardView.getTrend(percent)];
-    this._dom.setAttribute(
-      CARD.htmlStructure.elements.trendIndicator.icon.class,
-      CARD.style.icon.badge.default.attribute,
-      icon,
-    );
+    this._applyTrendVisuals(Number.isNaN(percent) ? 'error' : this._cardView.getTrend(percent));
   }
 
   _renderPercentCSS(

@@ -8,6 +8,7 @@
 import { HA_CONTEXT, CARD, THEME, PERCENT_THEME_KEYS, SEV } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
+import { NumberFormatter } from './formatting.js';
 
 // A validation path is the sequence of object keys/array indices leading to
 // the value being checked (e.g. ['bar_stack', 'entities', 0, 'entity']).
@@ -31,6 +32,61 @@ const entityOf = (cfg: ValueConfig): string | undefined => (is.plainObject(cfg) 
 const attributeOf = (cfg: ValueConfig): string | undefined =>
   is.plainObject(cfg) ? (cfg.attribute as string) : undefined;
 const jinjaOf = (cfg: ValueConfig): string | undefined => (is.plainObject(cfg) ? (cfg.jinja as string) : undefined);
+
+// watermark.low/.high's own shape (types.watermarkMark): false (hidden) |
+// true | ValueConfig (value only) | { value, as, type, opacity, color }
+// (per-mark override). mark*() reads through it the same way entityOf/etc.
+// do above.
+type WatermarkMarkOverride = {
+  value?: ValueConfig;
+  as?: string;
+  type?: string;
+  opacity?: number;
+  color?: string;
+};
+type WatermarkMark = boolean | ValueConfig | WatermarkMarkOverride;
+// Discriminates the override object from ValueConfig's own {entity,
+// attribute,jinja} shape - both are plain objects, so this checks for the
+// absence of ValueConfig's own keys rather than the presence of `value`:
+// `{ color: 'white' }` alone (no `value`) is still an override, defaulting
+// its threshold like `watermark: {}` itself always has.
+const isMarkOverride = (mark: WatermarkMark): mark is WatermarkMarkOverride =>
+  is.plainObject(mark) && !('entity' in mark) && !('jinja' in mark);
+// Nests a flattened `{ entity, attribute, color }` under `value` - otherwise
+// the union's bare-ValueConfig branch matches first and drops `color`.
+const nestValueShapeUnderValue = (mark: unknown): unknown => {
+  if (!is.plainObject(mark)) return mark;
+  const { entity, attribute, jinja, ...rest } = mark as Record<string, unknown>;
+  if ((entity === undefined && jinja === undefined) || Object.keys(rest).length === 0) return mark;
+  return { ...rest, value: { ...(entity !== undefined ? { entity, attribute } : { jinja }) } };
+};
+const markShown = (mark: WatermarkMark): boolean => mark !== false;
+const markValue = (mark: WatermarkMark, defaultValue: number): ValueConfig =>
+  isMarkOverride(mark)
+    ? ((mark.value as ValueConfig) ?? defaultValue)
+    : is.boolean(mark)
+      ? defaultValue
+      : (mark as ValueConfig);
+const markAs = (mark: WatermarkMark): 'auto' | 'percent' =>
+  isMarkOverride(mark) ? ((mark.as as 'auto' | 'percent') ?? 'auto') : 'auto';
+const markOpacity = (mark: WatermarkMark, fallback: number): number =>
+  isMarkOverride(mark) && is.number(mark.opacity) ? mark.opacity : fallback;
+const markType = (mark: WatermarkMark, fallback: string): string =>
+  isMarkOverride(mark) && is.string(mark.type) ? mark.type : fallback;
+const markColor = (mark: WatermarkMark, fallback?: string): string | undefined =>
+  (isMarkOverride(mark) ? mark.color : undefined) ?? fallback;
+
+// status_label: string (shorthand for { jinja }) | { jinja, position,
+// color_source } - same idea as badge_icon/badge_color, already bare Jinja
+// strings, applied here since real usage is 100% jinja-only in practice.
+type StatusLabelObj = { jinja?: string; position?: string; color_source?: string };
+const statusLabelObj = (sl: unknown): StatusLabelObj => (is.plainObject(sl) ? sl : is.string(sl) ? { jinja: sl } : {});
+// Collapses back to the bare string once only `jinja` is left set.
+const rewrapStatusLabel = (sl: unknown, patch: Partial<StatusLabelObj>): unknown => {
+  const merged: StatusLabelObj = { ...statusLabelObj(sl), ...patch };
+  const keys = (Object.keys(merged) as (keyof StatusLabelObj)[]).filter((k) => merged[k] !== undefined);
+  return keys.length === 1 && keys[0] === 'jinja' ? merged.jinja : merged;
+};
 
 // The shape struct(...).parse()'s catch branch walks recursively (see
 // extractAllErrors below) - covers both real ValidationError instances and
@@ -195,10 +251,16 @@ const types = {
       try {
         return validator(value, path);
       } catch (error) {
-        if (error instanceof ValidationError) {
-          // Si c'est optional, on change la sévérité en INFO
-          error.severity = SEV.info;
-        }
+        // Downgrades every error object()/union() may have bundled in
+        // .errors too, not just this one - a required leaf failing inside
+        // an optional parent (e.g. peak_marker.window) must not fail the
+        // whole card just because extractAllErrors walks .errors for its
+        // own severity, ignoring the top error's already-downgraded one.
+        const downgrade = (e: ErrorLike) => {
+          e.severity = SEV.info;
+          e.errors?.forEach(downgrade);
+        };
+        if (error instanceof ValidationError) downgrade(error);
         throw error;
       }
     },
@@ -405,6 +467,105 @@ const types = {
         }),
       ),
       false,
+    ),
+
+  // trend_indicator.window: a suffixed duration string ('30s' | '5min' |
+  // '2h' | '1d') - reuses NumberFormatter.durationToSeconds's own unit
+  // vocabulary (formatting.ts) instead of a parallel parser, resolved to
+  // seconds so every consumer works in one unit.
+  duration: ((value: unknown, path: Path = []) => {
+    const match = is.string(value) ? value.match(/^(\d+(?:\.\d+)?)(s|min|h|d)$/) : null;
+    if (!match)
+      throw new ValidationError(path, ERROR_CODES.invalidTypeString.code, ERROR_CODES.invalidTypeString.severity);
+    return NumberFormatter.durationToSeconds(Number(match[1]), match[2]) as number;
+  }) as Validator<number>,
+
+  // trend_indicator: boolean | { window, basis, threshold, colored,
+  // up_color, down_color, flat_color } (see TrendTracker).
+  trendIndicator: () =>
+    types.optionalWithDefault(
+      types.union(
+        types.boolean,
+        types.object({
+          window: types.optional(types.duration),
+          basis: types.enumsWithDefault(['average', 'edge', 'slope'], 'average'),
+          threshold: types.optionalNumberWithDefault(0),
+          colored: types.optionalBooleanWithDefault(false),
+          up_color: types.optionalString(),
+          down_color: types.optionalString(),
+          flat_color: types.optionalString(),
+        }),
+      ),
+      false,
+    ),
+
+  // watermark.low/.high: false (hidden) | number|{entity,attribute}|{jinja}
+  // (value only) | { value, as, type, opacity, color } (per-mark override,
+  // each falling back to watermark's own shared type/opacity/color) - unlike
+  // peakMark, the value itself is always user-supplied here, so there's no
+  // bare-color shorthand. `as` mirrors the old low_as/high_as.
+  watermarkMark: (defaultValue: number) =>
+    types.optionalWithDefault(
+      ((value: unknown, path: Path = []) =>
+        types.union(
+          types.boolean,
+          types.numericEntityOrJinja(),
+          types.object({
+            value: types.optional(types.numericEntityOrJinja()),
+            as: types.enumsWithDefault(['auto', 'percent'], 'auto'),
+            type: types.optional(types.enums(['blended', 'area', 'striped', 'triangle', 'round', 'line'])),
+            opacity: types.optionalNumber(),
+            color: types.optionalString(),
+          }),
+        )(nestValueShapeUnderValue(value), path)) as Validator<WatermarkMark>,
+      defaultValue,
+    ),
+
+  // peak_marker.min/.max/.average: absent (hidden) | true (shown, inherits
+  // the top-level type/opacity) | a color string (shorthand) | { type,
+  // opacity, color } to override just that mark.
+  peakMark: () =>
+    types.union(
+      types.boolean,
+      types.string,
+      types.object({
+        type: types.optional(types.enums(['line', 'round', 'triangle'])),
+        opacity: types.optionalNumber(),
+        color: types.optionalString(),
+      }),
+    ),
+
+  // status_label: string (shorthand for { jinja }) | { jinja, position,
+  // color_source } - see statusLabelObj/rewrapStatusLabel above.
+  statusLabel: () =>
+    types.optional(
+      types.union(
+        types.string,
+        types.object({
+          jinja: types.optionalString(),
+          position: types.enumsWithDefault(['left', 'right'], 'right'),
+          // Which color the pill follows when its own `jinja` doesn't return
+          // an explicit `{label, color}` (see HACore._repaintStatusLabel) -
+          // 'bar' by default (the theme zones that actually carry "status"
+          // semantics live there), 'icon' for whoever colors the icon
+          // specifically and wants the pill to match it instead.
+          color_source: types.enumsWithDefault(['bar', 'icon'], 'bar'),
+        }),
+      ),
+    ),
+
+  // peak_marker: { window, type, opacity, min, max, average } (Card only).
+  peakMarker: () =>
+    types.optional(
+      types.object({
+        window: types.duration,
+        type: types.enumsWithDefault(['line', 'round', 'triangle'], 'line'),
+        opacity: types.optionalNumberWithDefault(0.8),
+        color: types.optionalString(),
+        min: types.optional(types.peakMark()),
+        max: types.optional(types.peakMark()),
+        average: types.optional(types.peakMark()),
+      }),
     ),
 
   decimal: ((value: unknown, path: Path = []) => {
@@ -656,7 +817,7 @@ function struct<T>(
   // more deliberate choice than a boolean toggle left over from before
   // status_label was configured.
   const applyLabelRule = (result: Record<string, unknown>) => {
-    const jinja = (result.status_label as { jinja?: string } | undefined)?.jinja;
+    const jinja = statusLabelObj(result.status_label).jinja;
     if (is.nonEmptyString(jinja) && result.trend_indicator) result.trend_indicator = false;
   };
 
@@ -748,18 +909,13 @@ function struct<T>(
     }
   };
 
-  // density: 'compact' forces a narrow horizontal footprint (issue #134):
-  // layout: vertical has no matching narrow shape, and bar_position outside
-  // {top, bottom, background} shares a row with name/secondary_info, which
-  // needs the room back. multiline is cleared for the same reason
-  // (secondary spanning two lines needs room 'compact' no longer gives);
-  // status_label/trend_indicator fit fine, left alone. bar_max_width/
-  // reverse_secondary_info_row are already cleared by the rules below once
-  // bar_position leaves 'default'. Runs first so every later rule sees the
-  // final, density-corrected value.
+  // density: 'compact' shrinks whichever layout is set: horizontal narrows
+  // the column (minGridColumns), vertical has no narrow shape so
+  // name/secondary_info are force-hidden instead (hasComponentHiddenFlag).
+  // Either way bar_position must leave {default, below, compact_below},
+  // which share a row with name/secondary_info and need the room back.
   const applyDensityRule = (result: Record<string, unknown>) => {
     if (result.density !== 'compact') return;
-    result.layout = CARD.layout.orientations.horizontal.label;
     if (!['top', 'bottom', 'background'].includes(result.bar_position as string)) {
       result.bar_position = 'top';
     }
@@ -937,26 +1093,21 @@ const barStackEntity = types.fallbackTo(
 );
 
 const watermarkSchema = {
-  // number (fixed) | { entity, attribute } | { jinja } - symmetric with
-  // min_value/max_value's own explicit shape (see YamlSchemaFactory.card),
-  // same reasoning: no sniffing a bare string to disambiguate an entity id
-  // from a Jinja template. low_attribute/high_attribute used to be separate
-  // sibling keys (a bare entity-id string form for low/high) - both are now
-  // folded into this shape by CardConfigHelper._migrateLegacyOptions.
-  low: types.fallbackTo(types.numericEntityOrJinja(), CARD.config.defaults.watermark.low),
-  low_as: types.enumsWithDefault(['auto', 'percent'], CARD.config.defaults.watermark.low_as),
-  low_color: types.optionalStringWithDefault(CARD.config.defaults.watermark.low_color),
-  high: types.fallbackTo(types.numericEntityOrJinja(), CARD.config.defaults.watermark.high),
-  high_as: types.enumsWithDefault(['auto', 'percent'], CARD.config.defaults.watermark.high_as),
-  high_color: types.optionalStringWithDefault(CARD.config.defaults.watermark.high_color),
-  opacity: types.optionalNumberWithDefault(CARD.config.defaults.watermark.opacity),
-  type: types.enumsWithDefault(
-    ['blended', 'area', 'striped', 'triangle', 'round', 'line'],
-    CARD.config.defaults.watermark.type,
-  ),
+  // See types.watermarkMark: false (replaces disable_low/high) | value only |
+  // { value, as, type, opacity, color }, omitted falling back to 20/80 so a
+  // bare `watermark: {}` still shows both sides. type/opacity/color below
+  // are each side's default until it overrides its own.
+  low: types.watermarkMark(CARD.config.defaults.watermark.low),
+  high: types.watermarkMark(CARD.config.defaults.watermark.high),
+  // No *WithDefault here (unlike low/high/line_size): once neither side nor
+  // this shared field is set, staying genuinely absent (not the schema
+  // pre-filling 'blended'/0.8) is what lets the editor tell "inert" apart
+  // from "still in use by one side" - see view.ts's own fallback to
+  // CARD.config.defaults.watermark for where the real default now applies.
+  opacity: types.optionalNumber(),
+  color: types.optionalString(),
+  type: types.optional(types.enums(['blended', 'area', 'striped', 'triangle', 'round', 'line'])),
   line_size: types.optionalStringWithDefault(CARD.config.defaults.watermark.line_size),
-  disable_low: types.optionalBooleanWithDefault(CARD.config.defaults.watermark.disable_low),
-  disable_high: types.optionalBooleanWithDefault(CARD.config.defaults.watermark.disable_high),
 };
 
 /**
@@ -1118,23 +1269,13 @@ const YamlSchemaFactory = {
         reverse_secondary_info_row: types.optionalBooleanWithDefault(false),
         force_circular_background: types.optionalBooleanWithDefault(false),
         center_zero: types.centerZero(),
-        trend_indicator: types.optionalBooleanWithDefault(false),
+        trend_indicator: types.trendIndicator(),
+        peak_marker: types.peakMarker(),
         // jinja: Jinja-only, like name_info/custom_info - no separate enable
         // flag, a non-empty resolved value is the signal to show it.
         // Mutually exclusive with trend_indicator (see applyLabelRule): both
         // occupy the same top corner - position picks which side.
-        status_label: types.optional(
-          types.object({
-            jinja: types.optionalString(),
-            position: types.enumsWithDefault(['left', 'right'], 'right'),
-            // Which color the pill follows when its own `jinja` doesn't
-            // return an explicit `{label, color}` (see HACore._repaintStatus
-            // Label) - 'bar' by default (the theme zones that actually carry
-            // "status" semantics live there), 'icon' for whoever colors the
-            // icon specifically and wants the pill to match it instead.
-            color_source: types.enumsWithDefault(['bar', 'icon'], 'bar'),
-          }),
-        ),
+        status_label: types.statusLabel(),
         text_shadow: types.optionalBooleanWithDefault(false),
 
         // ─── Visibility & Content ───────────────────────────────────────────
@@ -1250,6 +1391,8 @@ const YamlSchemaFactory = {
         // 'label' stays a valid enum value there regardless (see its own
         // comment), just as inert as the plain option would be.
         'trend_indicator',
+        // Same history-eligibility scope as trend_indicator - Card only.
+        'peak_marker',
         'status_label',
       ])
       .extend({
@@ -1355,23 +1498,12 @@ const YamlSchemaFactory = {
         reverse_secondary_info_row: types.optionalBooleanWithDefault(false),
         force_circular_background: types.optionalBooleanWithDefault(false),
         center_zero: types.centerZero(),
-        trend_indicator: types.optionalBooleanWithDefault(false),
+        trend_indicator: types.trendIndicator(),
         // jinja: Jinja-only, like name_info/custom_info - no separate enable
         // flag, a non-empty resolved value is the signal to show it.
         // Mutually exclusive with trend_indicator (see applyLabelRule): both
         // occupy the same top corner - position picks which side.
-        status_label: types.optional(
-          types.object({
-            jinja: types.optionalString(),
-            position: types.enumsWithDefault(['left', 'right'], 'right'),
-            // Which color the pill follows when its own `jinja` doesn't
-            // return an explicit `{label, color}` (see HACore._repaintStatus
-            // Label) - 'bar' by default (the theme zones that actually carry
-            // "status" semantics live there), 'icon' for whoever colors the
-            // icon specifically and wants the pill to match it instead.
-            color_source: types.enumsWithDefault(['bar', 'icon'], 'bar'),
-          }),
-        ),
+        status_label: types.statusLabel(),
         text_shadow: types.optionalBooleanWithDefault(false),
 
         hide: types.jinjaOrArrayWithValidatedElem(['icon', 'name', 'value', 'secondary_info', 'progress_bar', 'shape']),
@@ -1446,6 +1578,9 @@ export { struct };
 export type { Infer };
 export type { ValueConfig };
 export { entityOf, attributeOf, jinjaOf };
+export { markShown, markValue, markAs, markType, markOpacity, markColor, isMarkOverride };
+export { statusLabelObj, rewrapStatusLabel };
+export type { WatermarkMark };
 export { nameItem };
 export { barStackEntity };
 export { watermarkSchema };

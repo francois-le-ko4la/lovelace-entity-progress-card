@@ -19,6 +19,8 @@ import { HassProviderSingleton } from '../utils/hass-provider.js';
 import type { LovelaceConfig, Config } from '../utils/types.js';
 import { availableSpace } from './dom-helper.js';
 import { parseLength, serializeLength, convertLengthValue } from '../utils/length.js';
+import { parseDuration, serializeDuration } from '../utils/duration.js';
+import { statusLabelObj, rewrapStatusLabel, isMarkOverride, type WatermarkMark } from '../card/schema.js';
 
 // Field definitions are heterogeneous option bags (showIf/resolveVirtual/
 // onVirtualChange/width/target/... vary per field) - kept as `Record<string,
@@ -44,6 +46,25 @@ const EditorFieldsType = {
     field(template ? 'template' : type)(name, o),
   sectionLabel: field('section_label'),
 };
+
+// markers()'s 5 master toggles (watermark/peak_marker/badge/status_label/
+// alert_when) render as an Enabled/Disabled pill instead of a plain switch -
+// visually distinct from the plain toggles nested under them once on.
+const enabledToggleField = (
+  name: string,
+  resolveEnabled: (c: LovelaceConfig) => boolean,
+  onChange: (enabled: boolean, config: LovelaceConfig) => LovelaceConfig,
+  extra: Record<string, unknown> = {},
+) => ({
+  [name]: {
+    name,
+    type: 'enabled_toggle',
+    virtual: true,
+    resolveVirtual: (c: LovelaceConfig) => (resolveEnabled(c) ? 'enabled' : 'disabled'),
+    onVirtualChange: (value: 'enabled' | 'disabled', config: LovelaceConfig) => onChange(value === 'enabled', config),
+    ...extra,
+  },
+});
 
 // Shared by min_value/max_value below: both share the exact same explicit
 // shape (number (legacy) | { entity, attribute } | { jinja }, see schema.ts
@@ -146,12 +167,34 @@ const nestedValueField = (
   entityPath: string,
   isEnabled: (c: LovelaceConfig) => boolean,
   defaultVal?: number,
+  nestedUnder?: string,
 ) => {
   const modeType = `${parentKey}_${key}_mode`;
   const attrType = `${toCamel(parentKey)}${key.charAt(0).toUpperCase() + key.slice(1)}Attribute`;
   const entityFieldName = `${parentKey}.${key}_entity`;
-  const ent = (c: LovelaceConfig) => is.plainObject(c[parentKey]?.[key]) && !is.nonEmptyString(c[parentKey][key].jinja);
-  const tpl = (c: LovelaceConfig) => is.nonEmptyString(c[parentKey]?.[key]?.jinja);
+  // readValue/writeValue: with nestedUnder (watermark.low/.high - the value
+  // sits one level deeper than alert_when.above/.below's, wrapped alongside
+  // as/opacity/color siblings, see types.watermarkMark), a short-form value
+  // (no wrapper) still reads fine, but every write settles into the wrapped
+  // form from then on, preserving whatever siblings already exist.
+  // isMarkOverride (not a bare nestedUnder-in-raw check): the only real
+  // caller here is watermark, and an override object with no `value` set
+  // yet (type/color touched first) must still read/write as one - see
+  // schema.ts's own isMarkOverride comment for why the naive check broke it.
+  const readValue = (c: LovelaceConfig): unknown => {
+    const raw = c[parentKey]?.[key];
+    if (!nestedUnder) return raw;
+    return isMarkOverride(raw as WatermarkMark) ? (raw as Record<string, unknown>)[nestedUnder] : raw;
+  };
+  const writeValue = (c: LovelaceConfig, newValue: unknown) => {
+    if (!nestedUnder) return { ...c[parentKey], [key]: newValue };
+    const raw = c[parentKey]?.[key];
+    const wrapper = isMarkOverride(raw as WatermarkMark) ? raw : {};
+    return { ...c[parentKey], [key]: { ...wrapper, [nestedUnder]: newValue } };
+  };
+  const ent = (c: LovelaceConfig) =>
+    is.plainObject(readValue(c)) && !is.nonEmptyString((readValue(c) as { jinja?: string })?.jinja);
+  const tpl = (c: LovelaceConfig) => is.nonEmptyString((readValue(c) as { jinja?: string } | undefined)?.jinja);
   // Same draft precedent as valueField above (min_value/max_value) - flat
   // top-level keys even though the real value lives nested, since drafts are
   // pure ephemeral UI state anyway, never round-tripped as `parentKey.key`.
@@ -169,7 +212,7 @@ const nestedValueField = (
       showIf: isEnabled,
       resolveVirtual: (c: LovelaceConfig) => (tpl(c) ? 'jinja' : ent(c) ? 'entity' : 'standard'),
       onVirtualChange: (mode: 'entity' | 'jinja' | 'standard', config: LovelaceConfig) => {
-        const current = config[parentKey]?.[key];
+        const current = readValue(config) as { jinja?: string } | number | undefined;
         const numberDraft = is.number(current) ? current : config[numberDraftKey];
         const entityDraft =
           is.plainObject(current) && !is.nonEmptyString(current?.jinja) ? current : config[entityDraftKey];
@@ -178,7 +221,7 @@ const nestedValueField = (
         if (mode === 'entity') {
           return {
             ...config,
-            [parentKey]: { ...config[parentKey], [key]: entityDraft ?? { entity: '' } },
+            [parentKey]: writeValue(config, entityDraft ?? { entity: '' }),
             [numberDraftKey]: numberDraft,
             [entityDraftKey]: undefined,
             [jinjaDraftKey]: jinjaDraft,
@@ -187,7 +230,7 @@ const nestedValueField = (
         if (mode === 'jinja') {
           return {
             ...config,
-            [parentKey]: { ...config[parentKey], [key]: jinjaDraft ? { jinja: jinjaDraft } : { jinja: '{{ }}' } },
+            [parentKey]: writeValue(config, jinjaDraft ? { jinja: jinjaDraft } : { jinja: '{{ }}' }),
             [numberDraftKey]: numberDraft,
             [jinjaDraftKey]: undefined,
             [entityDraftKey]: entityDraft,
@@ -195,7 +238,7 @@ const nestedValueField = (
         }
         return {
           ...config,
-          [parentKey]: { ...config[parentKey], [key]: numberDraft ?? defaultVal },
+          [parentKey]: writeValue(config, numberDraft ?? defaultVal),
           [numberDraftKey]: undefined,
           [entityDraftKey]: entityDraft,
           [jinjaDraftKey]: jinjaDraft,
@@ -203,19 +246,30 @@ const nestedValueField = (
       },
     },
     [`${parentKey}.${key}`]: EditorFieldsType.number(`${parentKey}.${key}`, {
-      showIf: (c: LovelaceConfig) => isEnabled(c) && !is.plainObject(c[parentKey]?.[key]),
+      showIf: (c: LovelaceConfig) => isEnabled(c) && !is.plainObject(readValue(c)),
+      // defaultVal is only ever a real number for watermark (alert_when's own
+      // above/below have none) - shows once the mark has no explicit value.
+      ...(is.number(defaultVal) && { placeholder: () => String(defaultVal) }),
+      // nestedUnder only: parentKey.key is now 2 levels past the value (see
+      // writeValue) - past what the generic dot-path field resolves, so this
+      // goes through the same virtual read/write as every other field here.
+      ...(nestedUnder && {
+        virtual: true,
+        resolveVirtual: (c: LovelaceConfig) => (is.number(readValue(c)) ? readValue(c) : ''),
+        onVirtualChange: (value: number, config: LovelaceConfig) => ({
+          ...config,
+          [parentKey]: writeValue(config, value),
+        }),
+      }),
     }),
     [entityFieldName]: EditorFieldsType.entity(entityFieldName, {
       virtual: true,
       noLabel: true,
       showIf: (c: LovelaceConfig) => isEnabled(c) && ent(c),
-      resolveVirtual: (c: LovelaceConfig) => c[parentKey]?.[key]?.entity ?? '',
+      resolveVirtual: (c: LovelaceConfig) => (readValue(c) as { entity?: string } | undefined)?.entity ?? '',
       onVirtualChange: (value: string, config: LovelaceConfig) => ({
         ...config,
-        [parentKey]: {
-          ...config[parentKey],
-          [key]: value ? { ...config[parentKey]?.[key], entity: value } : defaultVal,
-        },
+        [parentKey]: writeValue(config, value ? { ...(readValue(config) as object), entity: value } : defaultVal),
       }),
     }),
     [`${parentKey}.${key}_attribute`]: EditorFieldsType.select(`${parentKey}.${key}_attribute`, {
@@ -223,50 +277,314 @@ const nestedValueField = (
       virtual: true,
       selectorOf: entityPath,
       labelKey: ['value_shape', 'attribute'],
-      showIf: (c: LovelaceConfig) => isEnabled(c) && ent(c) && is.nonEmptyString(c[parentKey][key]?.entity),
-      resolveVirtual: (c: LovelaceConfig) => c[parentKey]?.[key]?.attribute ?? '',
+      showIf: (c: LovelaceConfig) =>
+        isEnabled(c) && ent(c) && is.nonEmptyString((readValue(c) as { entity?: string })?.entity),
+      resolveVirtual: (c: LovelaceConfig) => (readValue(c) as { attribute?: string } | undefined)?.attribute ?? '',
       onVirtualChange: (value: string, config: LovelaceConfig) => ({
         ...config,
-        [parentKey]: { ...config[parentKey], [key]: { ...config[parentKey]?.[key], attribute: value || undefined } },
+        [parentKey]: writeValue(config, { ...(readValue(config) as object), attribute: value || undefined }),
       }),
     }),
     // Virtual (not a plain dot-path field): the template string lives 2 levels
-    // deep (<parentKey>.<key>.jinja), one level past what the generic
-    // nested-field machinery (#resolveValue/#handleNestedField) resolves — this
-    // reads/writes that path directly.
+    // deep (<parentKey>.<key>.jinja, one more with nestedUnder), past what the
+    // generic nested-field machinery (#resolveValue/#handleNestedField)
+    // resolves — this reads/writes that path directly.
     [`${parentKey}_${key}_jinja`]: EditorFieldsType.tpl(`${parentKey}_${key}_jinja`, {
       noLabel: true,
       virtual: true,
       helper: true,
       helperKey: 'returns_number',
       showIf: (c: LovelaceConfig) => isEnabled(c) && tpl(c),
-      resolveVirtual: (c: LovelaceConfig) => c[parentKey]?.[key]?.jinja ?? '',
+      resolveVirtual: (c: LovelaceConfig) => (readValue(c) as { jinja?: string } | undefined)?.jinja ?? '',
       onVirtualChange: (value: string, config: LovelaceConfig) => ({
         ...config,
-        [parentKey]: { ...config[parentKey], [key]: { jinja: value } },
+        [parentKey]: writeValue(config, { jinja: value }),
       }),
     }),
   };
 };
 
+// Cascades a watermark-level field (type/opacity/color) from low/high's own
+// override down to the shared global value - same fallback the runtime
+// itself applies (see schema.ts's markType/markOpacity/markColor).
+const watermarkEffective = (config: LovelaceConfig, side: 'low' | 'high', field: 'type' | 'opacity' | 'color') => {
+  const mark = config.watermark?.[side] as WatermarkMark;
+  const own = isMarkOverride(mark) ? mark[field] : undefined;
+  return own ?? config.watermark?.[field];
+};
+
+// True once `side` has its own value for `field` that differs from the
+// current global one - the exact condition pruneWatermarkGlobal removes the
+// global on, reused by the global field's own showIf below so visibility
+// always matches whether the raw key is actually still there.
+const watermarkSideDiverges = (config: LovelaceConfig, side: 'low' | 'high', field: 'type' | 'opacity' | 'color') => {
+  const globalVal = config.watermark?.[field];
+  const mark = config.watermark?.[side] as WatermarkMark;
+  const sideVal = isMarkOverride(mark) ? mark[field] : undefined;
+  return sideVal !== undefined && sideVal !== globalVal;
+};
+
+// Once low AND high both explicitly override a watermark-level field (type/
+// opacity/color) away from the global value, nothing reads the global one
+// anymore - dropped so the YAML doesn't carry a dead default around.
+const pruneWatermarkGlobal = (config: LovelaceConfig, field: 'type' | 'opacity' | 'color'): LovelaceConfig => {
+  if (config.watermark?.[field] === undefined) return config;
+  if (!watermarkSideDiverges(config, 'low', field) || !watermarkSideDiverges(config, 'high', field)) return config;
+  return { ...config, watermark: { ...config.watermark, [field]: undefined } };
+};
+
+// Shared by wmSide (per-side) and factorizeWatermarkGlobal (both sides at
+// once) - drops a patched key when undefined (rewrapPeakMark's precedent),
+// and wraps a bare `true` mark as `{ value: defaultVal, ...patch }` - `true`
+// itself isn't a valid ValueConfig once nested under `value`.
+const rewrapMark = (mark: unknown, patch: Record<string, unknown>, defaultVal: number): unknown => {
+  const markAsWm = mark as WatermarkMark;
+  const value = is.boolean(mark) ? defaultVal : mark;
+  const merged: Record<string, unknown> = { ...(isMarkOverride(markAsWm) ? markAsWm : { value }), ...patch };
+  return Object.fromEntries(Object.entries(merged).filter(([, v]) => v !== undefined));
+};
+
+const WM_SIDES = ['low', 'high'] as const;
+const WM_DEFAULTS: Record<(typeof WM_SIDES)[number], number> = {
+  low: CARD.config.defaults.watermark.low,
+  high: CARD.config.defaults.watermark.high,
+};
+// Opposite of pruneWatermarkGlobal: once low and high explicitly agree on
+// the same value, it moves to the global field and each side drops its own.
+const factorizeWatermarkGlobal = (config: LovelaceConfig, field: 'type' | 'opacity' | 'color'): LovelaceConfig => {
+  const values = WM_SIDES.map((s) => {
+    const mark = config.watermark?.[s] as WatermarkMark;
+    return isMarkOverride(mark) ? mark[field] : undefined;
+  });
+  const [shared] = values;
+  if (shared === undefined || values.some((v) => v !== shared)) return config;
+  const sides = Object.fromEntries(
+    WM_SIDES.map((s) => [s, rewrapMark(config.watermark?.[s], { [field]: undefined }, WM_DEFAULTS[s])]),
+  );
+  return { ...config, watermark: { ...config.watermark, ...sides, [field]: shared } };
+};
+
+// watermark.low/high are now types.watermarkMark: false (hidden) | value |
+// { value, as, type, opacity, color } - `false` replaces disable_low/high.
+// type/opacity/color each cascade from the matching global watermark.*
+// field (see themeWatermarkFields) until a side explicitly overrides it.
 const wmSide = (side: 'low' | 'high', defaultVal: number) => {
-  const disableKey = `disable_${side}`;
   const entityPath = side === 'low' ? WATERMARK_LOW_ENTITY_PATH : WATERMARK_HIGH_ENTITY_PATH;
-  const isEnabled = (c: LovelaceConfig) => Boolean(c.watermark) && !c.watermark?.[disableKey];
+  const isShown = (c: LovelaceConfig) => c.watermark?.[side] !== false;
+  const isEnabled = (c: LovelaceConfig) => Boolean(c.watermark) && isShown(c);
+  const toggleKey = `watermark.${side}_toggle`;
+  const hiddenDraftKey = `_watermark_${side}_hidden_draft`;
+  const asOf = (mark: unknown) =>
+    isMarkOverride(mark as WatermarkMark) ? ((mark as { as?: string }).as ?? 'auto') : 'auto';
+  const overrideField = (
+    field: 'type' | 'opacity' | 'color',
+    fieldDef: (name: string, opts: Record<string, unknown>) => Record<string, unknown>,
+    fieldOpts: Record<string, unknown>,
+  ) =>
+    fieldDef(`watermark.${side}_${field}`, {
+      ...fieldOpts,
+      virtual: true,
+      showIf: isEnabled,
+      width: availableSpace(),
+      // Only shows once both this side's own override AND the global
+      // watermark.type/.opacity are unset - same ultimate fallback the
+      // global field itself already hints at.
+      ...(field !== 'color' && { placeholder: () => String(CARD.config.defaults.watermark[field]) }),
+      resolveVirtual: (c: LovelaceConfig) => watermarkEffective(c, side, field),
+      onVirtualChange: (value: unknown, config: LovelaceConfig) => {
+        const patched = {
+          ...config,
+          watermark: {
+            ...config.watermark,
+            [side]: rewrapMark(config.watermark?.[side], { [field]: value }, defaultVal),
+          },
+        };
+        return pruneWatermarkGlobal(factorizeWatermarkGlobal(patched, field), field);
+      },
+    });
   return {
-    [`watermark.${disableKey}`]: EditorFieldsType.toggle(`watermark.${disableKey}`, {
+    [toggleKey]: EditorFieldsType.toggle(toggleKey, {
+      virtual: true,
       showIf: (c: LovelaceConfig) => Boolean(c.watermark),
+      resolveVirtual: isShown,
+      onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
+        ...config,
+        watermark: { ...config.watermark, [side]: value ? (config[hiddenDraftKey] ?? defaultVal) : false },
+        [hiddenDraftKey]: value ? undefined : config.watermark?.[side],
+      }),
     }),
-    ...nestedValueField('watermark', side, entityPath, isEnabled, defaultVal),
+    ...nestedValueField('watermark', side, entityPath, isEnabled, defaultVal, 'value'),
     [`watermark.${side}_as`]: EditorFieldsType.select(`watermark.${side}_as`, {
       type: 'watermark_as',
+      virtual: true,
       showIf: isEnabled,
       width: availableSpace(),
+      resolveVirtual: (c: LovelaceConfig) => asOf(c.watermark?.[side]),
+      onVirtualChange: (value: string, config: LovelaceConfig) => ({
+        ...config,
+        watermark: { ...config.watermark, [side]: rewrapMark(config.watermark?.[side], { as: value }, defaultVal) },
+      }),
     }),
-    [`watermark.${side}_color`]: EditorFieldsType.templateOrType(`watermark.${side}_color`, false, 'color', {
+    [`watermark.${side}_type`]: overrideField('type', EditorFieldsType.select, { type: 'watermark_type' }),
+    [`watermark.${side}_opacity`]: overrideField('opacity', EditorFieldsType.decimal, { type: 'opacity' }),
+    [`watermark.${side}_color`]: overrideField(
+      'color',
+      (name, opts) => EditorFieldsType.templateOrType(name, false, 'color', opts),
+      {},
+    ),
+  };
+};
+
+// Mirrors _fetchHistory's own eligibility check (cards.ts): sensor/number
+// only, no attribute override, not timer/counter/duration - recorder keeps
+// no attribute history and those domains/device_class have no numeric trend.
+const peakMarkerEligible = (c: LovelaceConfig): boolean => {
+  if (!is.nonEmptyString(c.entity) || is.nonEmptyString(c.attribute)) return false;
+  const domain = HassProviderSingleton.getEntityDomain(c.entity);
+  if (domain === 'timer' || domain === 'counter') return false;
+  return (
+    HassProviderSingleton.getInstance().getEntityProp(c.entity, 'device_class') !== HA_CONTEXT.entity.type.duration
+  );
+};
+
+// peak_marker.min/max/average: boolean | string (color shorthand) | { type?,
+// opacity?, color? } (types.peakMark, schema.ts) - simpler than wmSide, no
+// entity/jinja/value, just a show toggle + overrides cascading from the
+// global peak_marker.type/.opacity (mirrors view.ts's resolve()).
+const peakMarkObj = (mark: unknown): { type?: string; opacity?: number; color?: string } =>
+  is.plainObject(mark) ? mark : is.string(mark) ? { color: mark } : {};
+
+// Collapses to the simplest equivalent shape - color alone stays the string
+// shorthand (types.peakMark()'s own short form), nothing left reverts to
+// bare `true` (shown, all defaults).
+const rewrapPeakMark = (mark: unknown, patch: Record<string, unknown>): unknown => {
+  const merged: Record<string, unknown> = { ...peakMarkObj(mark), ...patch };
+  const keys = Object.keys(merged).filter((k) => merged[k] !== undefined);
+  if (keys.length === 0) return true;
+  if (keys.length === 1 && keys[0] === 'color') return merged.color;
+  return merged;
+};
+
+const peakMarkEffective = (config: LovelaceConfig, mark: 'min' | 'max' | 'average', field: PeakMarkField) =>
+  peakMarkObj(config.peak_marker?.[mark])[field] ?? config.peak_marker?.[field];
+
+// Same idea as watermarkSideDiverges/pruneWatermarkGlobal, generalized to 3
+// marks instead of 2 sides - once min/max/average all override a field,
+// nothing reads the global one anymore.
+const PEAK_MARKS = ['min', 'max', 'average'] as const;
+type PeakMarkField = 'type' | 'opacity' | 'color';
+const peakMarkDiverges = (config: LovelaceConfig, mark: 'min' | 'max' | 'average', field: PeakMarkField) => {
+  const own = peakMarkObj(config.peak_marker?.[mark])[field];
+  return own !== undefined && own !== config.peak_marker?.[field];
+};
+const prunePeakMarkerGlobal = (config: LovelaceConfig, field: PeakMarkField): LovelaceConfig => {
+  if (config.peak_marker?.[field] === undefined) return config;
+  if (PEAK_MARKS.some((m) => !peakMarkDiverges(config, m, field))) return config;
+  return { ...config, peak_marker: { ...config.peak_marker, [field]: undefined } };
+};
+// Opposite direction: once min/max/average all explicitly agree on the same
+// value, it moves to the global field and each mark drops its own
+// (rewrapPeakMark's own undefined-key filtering cleans each mark up).
+const factorizePeakMarkerGlobal = (config: LovelaceConfig, field: PeakMarkField): LovelaceConfig => {
+  const values = PEAK_MARKS.map((m) => peakMarkObj(config.peak_marker?.[m])[field]);
+  const [shared] = values;
+  if (shared === undefined || values.some((v) => v !== shared)) return config;
+  const marks = Object.fromEntries(
+    PEAK_MARKS.map((m) => [m, rewrapPeakMark(config.peak_marker?.[m], { [field]: undefined })]),
+  );
+  return { ...config, peak_marker: { ...config.peak_marker, ...marks, [field]: shared } };
+};
+
+const peakMark = (mark: 'min' | 'max' | 'average') => {
+  const isShown = (c: LovelaceConfig) => {
+    const raw = c.peak_marker?.[mark];
+    return raw !== undefined && raw !== false;
+  };
+  const isEnabled = (c: LovelaceConfig) => peakMarkerEligible(c) && Boolean(c.peak_marker) && isShown(c);
+  const toggleKey = `peak_marker.${mark}_toggle`;
+  const hiddenDraftKey = `_peak_marker_${mark}_hidden_draft`;
+  const overrideField = (
+    field: 'type' | 'opacity' | 'color',
+    fieldDef: (name: string, opts: Record<string, unknown>) => Record<string, unknown>,
+    fieldOpts: Record<string, unknown>,
+  ) =>
+    fieldDef(`peak_marker.${mark}_${field}`, {
+      ...fieldOpts,
+      virtual: true,
       showIf: isEnabled,
       width: availableSpace(),
+      // Same reasoning as wmSide's own overrideField: only shows once this
+      // mark's own override AND peak_marker.type/.opacity are both unset.
+      ...(field !== 'color' && { placeholder: () => String(CARD.config.defaults.peakMarker[field]) }),
+      resolveVirtual: (c: LovelaceConfig) => peakMarkEffective(c, mark, field),
+      onVirtualChange: (value: unknown, config: LovelaceConfig) => {
+        const patched = {
+          ...config,
+          peak_marker: {
+            ...config.peak_marker,
+            [mark]: rewrapPeakMark(config.peak_marker?.[mark], { [field]: value }),
+          },
+        };
+        return prunePeakMarkerGlobal(factorizePeakMarkerGlobal(patched, field), field);
+      },
+    });
+  return {
+    [toggleKey]: EditorFieldsType.toggle(toggleKey, {
+      virtual: true,
+      showIf: (c: LovelaceConfig) => peakMarkerEligible(c) && Boolean(c.peak_marker),
+      resolveVirtual: isShown,
+      onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
+        ...config,
+        peak_marker: { ...config.peak_marker, [mark]: value ? (config[hiddenDraftKey] ?? true) : false },
+        [hiddenDraftKey]: value ? undefined : config.peak_marker?.[mark],
+      }),
     }),
+    [`peak_marker.${mark}_type`]: overrideField('type', EditorFieldsType.select, { type: 'peak_marker_type' }),
+    [`peak_marker.${mark}_opacity`]: overrideField('opacity', EditorFieldsType.decimal, { type: 'opacity' }),
+    [`peak_marker.${mark}_color`]: overrideField(
+      'color',
+      (name, opts) => EditorFieldsType.templateOrType(name, false, 'color', opts),
+      {},
+    ),
+  };
+};
+
+// A duration string ("2h") nested one level under parentKey, as a
+// number+unit composite - same slider+dropdown split as lengthField, minus
+// the calc()/custom fallback (types.duration only ever produces this shape).
+// Shared by peak_marker.window (required) and trend_indicator.window
+// (optional, gated by its own reveal toggle) - showIf decides which.
+const durationFields = (parentKey: string, key: string, showIf: (c: LovelaceConfig) => boolean) => {
+  const fullKey = `${parentKey}.${key}`;
+  const parsed = (c: LovelaceConfig) => parseDuration(c[parentKey]?.[key]);
+  return {
+    [fullKey]: {
+      name: fullKey,
+      type: (c: LovelaceConfig) => `duration:${parsed(c).unit}`,
+      virtual: true,
+      width: 'calc(100% - 106px)',
+      showIf,
+      resolveVirtual: (c: LovelaceConfig) => parsed(c).value,
+      onVirtualChange: (value: number, config: LovelaceConfig) => ({
+        ...config,
+        [parentKey]: { ...config[parentKey], [key]: serializeDuration(value, parsed(config).unit) },
+      }),
+    },
+    [`${fullKey}_unit`]: {
+      name: `${fullKey}_unit`,
+      type: 'duration_unit',
+      virtual: true,
+      noLabel: true,
+      required: true,
+      isInGroup: 'length-unit',
+      width: '90px',
+      showIf,
+      resolveVirtual: (c: LovelaceConfig) => parsed(c).unit,
+      onVirtualChange: (unit: string, config: LovelaceConfig) => ({
+        ...config,
+        [parentKey]: { ...config[parentKey], [key]: serializeDuration(parsed(config).value, unit) },
+      }),
+    },
   };
 };
 
@@ -286,15 +604,15 @@ const alertField = (side: 'above' | 'below') => {
 
 // Shared master on/off toggle - same draft precedent as status_label_toggle.
 const alertToggleField = () => ({
-  alert_toggle: EditorFieldsType.toggle('alert_toggle', {
-    virtual: true,
-    resolveVirtual: (c: LovelaceConfig) => Boolean(c.alert_when),
-    onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
+  ...enabledToggleField(
+    'alert_toggle',
+    (c) => Boolean(c.alert_when),
+    (value, config) => ({
       ...config,
       alert_when: value ? config._alert_when_draft || {} : undefined,
       _alert_when_draft: value ? undefined : (config.alert_when ?? config._alert_when_draft),
     }),
-  }),
+  ),
 });
 
 // Simple (above/below) vs Advanced (alert_when.jinja) - unlike valueField's
@@ -888,30 +1206,169 @@ const EditorFactory = {
     const wm = (extra?: (c: LovelaceConfig) => boolean) => (c: LovelaceConfig) =>
       Boolean(c.watermark) && (extra ? extra(c) : true);
     return {
-      watermark_toggle: EditorFieldsType.toggle('watermark_toggle', {
-        virtual: true,
-        resolveVirtual: (c: LovelaceConfig) => Boolean(c.watermark),
-        onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
+      ...enabledToggleField(
+        'watermark_toggle',
+        (c) => Boolean(c.watermark),
+        (value, config) => ({
           ...config,
           watermark: value ? config._watermark_draft || {} : undefined,
           _watermark_draft: value ? undefined : (config.watermark ?? config._watermark_draft),
         }),
-      }),
+      ),
+      // type/opacity have no schema default anymore (see schema.ts's
+      // watermarkSchema) - once neither side needs them either, they're
+      // genuinely absent, so the field shows CARD.config.defaults.watermark
+      // as a greyed placeholder (same mechanism as unit/decimal) instead of
+      // a live value nothing reads.
       'watermark.type': EditorFieldsType.select('watermark.type', {
         type: 'watermark_type',
         showIf: wm(),
         width: availableSpace(),
+        placeholder: () => CARD.config.defaults.watermark.type,
       }),
       'watermark.opacity': EditorFieldsType.decimal('watermark.opacity', {
         type: 'opacity',
+        showIf: wm(),
+        width: availableSpace(),
+        placeholder: () => String(CARD.config.defaults.watermark.opacity),
+      }),
+      'watermark.color': EditorFieldsType.templateOrType('watermark.color', false, 'color', {
         showIf: wm(),
         width: availableSpace(),
       }),
       // ── Groupes LOW / HIGH (générés par wmSide) ────────────────────
       ...wmSide('low', 20),
       ...wmSide('high', 80),
+      // 'line' on either side (own override or inherited from the global
+      // type) needs line_size - not just a global type: line anymore.
       'watermark.line_size': EditorFieldsType.text('watermark.line_size', {
-        showIf: wm((c: LovelaceConfig) => c.watermark?.type === 'line'),
+        showIf: wm(
+          (c: LovelaceConfig) =>
+            watermarkEffective(c, 'low', 'type') === 'line' || watermarkEffective(c, 'high', 'type') === 'line',
+        ),
+      }),
+    };
+  },
+
+  // peak_marker: min/max/average from HA history (Card only, cards.ts's
+  // _seedPeakMarkerHistory) - toggle + window + global type/opacity, then
+  // the 3 marks (peakMark). No global color: unlike watermark, each mark
+  // wants its own, no shared default to cascade from.
+  peakMarkerFields: () => {
+    const showIf = (c: LovelaceConfig) => peakMarkerEligible(c) && Boolean(c.peak_marker);
+    return {
+      // Replaces the toggle entirely when an entity is picked but ineligible
+      // (see peakMarkerEligible) - spells out the requirement instead of just
+      // hiding the option with no explanation.
+      peak_marker_unsupported: EditorFieldsType.sectionLabel('peak_marker_unsupported', {
+        showIf: (c: LovelaceConfig) => is.nonEmptyString(c.entity) && !peakMarkerEligible(c),
+      }),
+      ...enabledToggleField(
+        'peak_marker_toggle',
+        (c) => Boolean(c.peak_marker),
+        (value, config) => ({
+          ...config,
+          peak_marker: value
+            ? (config._peak_marker_draft ?? { window: CARD.config.defaults.peakMarker.window })
+            : undefined,
+          _peak_marker_draft: value ? undefined : (config.peak_marker ?? config._peak_marker_draft),
+        }),
+        { showIf: peakMarkerEligible },
+      ),
+      ...durationFields('peak_marker', 'window', showIf),
+      'peak_marker.type': EditorFieldsType.select('peak_marker.type', {
+        type: 'peak_marker_type',
+        showIf,
+        width: availableSpace(),
+        placeholder: () => CARD.config.defaults.peakMarker.type,
+      }),
+      'peak_marker.opacity': EditorFieldsType.decimal('peak_marker.opacity', {
+        type: 'opacity',
+        showIf,
+        width: availableSpace(),
+        placeholder: () => String(CARD.config.defaults.peakMarker.opacity),
+      }),
+      'peak_marker.color': EditorFieldsType.templateOrType('peak_marker.color', false, 'color', {
+        showIf,
+        width: availableSpace(),
+      }),
+      ...peakMark('min'),
+      ...peakMark('max'),
+      ...peakMark('average'),
+    };
+  },
+
+  // trend_indicator: boolean | { window?, basis, threshold, colored,
+  // up_color, down_color, flat_color } (Card + Template, schema.ts) - toggle
+  // gates the feature, Simple/Advanced picks the plain boolean vs the object
+  // form. window stays optional within Advanced (own reveal toggle), unlike
+  // peak_marker's own required window.
+  trendIndicatorFields: () => {
+    const on = (c: LovelaceConfig) => Boolean(c.trend_indicator);
+    const advanced = (c: LovelaceConfig) => is.plainObject(c.trend_indicator);
+    return {
+      ...enabledToggleField('trend_indicator_toggle', on, (value, config) => ({
+        ...config,
+        trend_indicator: value ? (config._trend_indicator_draft ?? true) : undefined,
+        _trend_indicator_draft: value ? undefined : (config.trend_indicator ?? config._trend_indicator_draft),
+      })),
+      trend_indicator_mode: {
+        name: 'trend_indicator_mode',
+        type: 'trend_indicator_mode',
+        virtual: true,
+        showIf: on,
+        resolveVirtual: (c: LovelaceConfig) => (advanced(c) ? 'advanced' : 'simple'),
+        onVirtualChange: (mode: 'simple' | 'advanced', config: LovelaceConfig) => ({
+          ...config,
+          // First switch to Advanced carries over Simple's own built-in dead
+          // zone (CARD.config.trendIndicator.defaultThreshold) as an explicit
+          // threshold - otherwise the schema's own Advanced default (0, see
+          // types.trendIndicator) silently removes it on a mere mode toggle.
+          trend_indicator:
+            mode === 'advanced'
+              ? (config._trend_indicator_advanced_draft ?? { threshold: CARD.config.trendIndicator.defaultThreshold })
+              : true,
+          _trend_indicator_advanced_draft: mode === 'advanced' ? undefined : config.trend_indicator,
+        }),
+      },
+      'trend_indicator.window_toggle': {
+        name: 'trend_indicator.window_toggle',
+        type: 'toggle',
+        virtual: true,
+        showIf: advanced,
+        resolveVirtual: (c: LovelaceConfig) => Boolean(c.trend_indicator?.window),
+        onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
+          ...config,
+          trend_indicator: {
+            ...config.trend_indicator,
+            window: value
+              ? (config._trend_indicator_window_draft ?? CARD.config.defaults.trendIndicator.window)
+              : undefined,
+          },
+          _trend_indicator_window_draft: value ? undefined : config.trend_indicator?.window,
+        }),
+      },
+      ...durationFields('trend_indicator', 'window', (c) => advanced(c) && Boolean(c.trend_indicator?.window)),
+      'trend_indicator.basis': EditorFieldsType.select('trend_indicator.basis', {
+        type: 'trend_indicator_basis',
+        showIf: advanced,
+        width: availableSpace(),
+        placeholder: () => CARD.config.defaults.trendIndicator.basis,
+      }),
+      'trend_indicator.threshold': EditorFieldsType.decimal('trend_indicator.threshold', {
+        showIf: advanced,
+        width: availableSpace(),
+        placeholder: () => String(CARD.config.defaults.trendIndicator.threshold),
+      }),
+      'trend_indicator.colored': EditorFieldsType.toggle('trend_indicator.colored', { showIf: advanced }),
+      'trend_indicator.up_color': EditorFieldsType.templateOrType('trend_indicator.up_color', false, 'color', {
+        showIf: advanced,
+      }),
+      'trend_indicator.down_color': EditorFieldsType.templateOrType('trend_indicator.down_color', false, 'color', {
+        showIf: advanced,
+      }),
+      'trend_indicator.flat_color': EditorFieldsType.templateOrType('trend_indicator.flat_color', false, 'color', {
+        showIf: advanced,
       }),
     };
   },
@@ -931,21 +1388,20 @@ const EditorFactory = {
           // point. Turning "Badge" off clears both fields (the master
           // switch); "Independent color" keeps owning badge_color while
           // "Badge" stays on.
-          badge_toggle: EditorFieldsType.toggle('badge_toggle', {
-            virtual: true,
-            resolveVirtual: (c: LovelaceConfig) => Boolean(c.badge_icon) || Boolean(c.badge_color),
-            // Ephemeral drafts - see valueField's own _<key>_jinja_draft
-            // precedent. badge_color_toggle below shares _badge_color_draft:
-            // whichever path last cleared badge_color, the same slot
-            // restores it.
-            onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
+          // Ephemeral drafts - see valueField's own _<key>_jinja_draft
+          // precedent. badge_color_toggle below shares _badge_color_draft:
+          // whichever path last cleared badge_color, the same slot restores it.
+          ...enabledToggleField(
+            'badge_toggle',
+            (c) => Boolean(c.badge_icon) || Boolean(c.badge_color),
+            (value, config) => ({
               ...config,
               badge_icon: value ? config._badge_icon_draft || '{{ }}' : undefined,
               badge_color: value ? config._badge_color_draft : undefined,
               _badge_icon_draft: value ? undefined : (config.badge_icon ?? config._badge_icon_draft),
               _badge_color_draft: value ? undefined : (config.badge_color ?? config._badge_color_draft),
             }),
-          }),
+          ),
           badge_icon: EditorFieldsType.tpl('badge_icon', {
             noLabel: true,
             helper: true,
@@ -1064,16 +1520,11 @@ const EditorFactory = {
       ? {}
       : {
           layout: EditorFieldsType.select('layout', {
-            // density: compact only has a meaningful shape in horizontal -
-            // see EditorFactory.applyDensityConstraints.
-            type: (c: LovelaceConfig) => (c.density === 'compact' ? 'layout_horizontal_only' : 'layout'),
             onChange: (_value: unknown, config: LovelaceConfig) =>
               EditorFactory.resetCompactBelowIfInvalid(resetUpIfInvalid(config)),
           }),
           density_toggle: EditorFieldsType.toggle('density_toggle', {
             virtual: true,
-            // Meaningless once layout: vertical is picked.
-            showIf: (c: LovelaceConfig) => c.layout !== 'vertical',
             resolveVirtual: (c: LovelaceConfig) => c.density === 'compact',
             // A card already in a Sections view almost always carries its own
             // explicit grid_options (HA writes one when a card is added or
@@ -1136,15 +1587,14 @@ const EditorFactory = {
       ? { ...config, bar_position: 'default' }
       : config,
 
-  // density: compact (issue #134) forces layout: horizontal and bar_position
-  // into {top, bottom, background} - see schema.ts's applyDensityRule, the
-  // matching save-time safety net. Applied from density_toggle's own
-  // onVirtualChange, the moment it flips on, since layout/bar_position can't
-  // drift into an invalid state on their own once compact is active (their
-  // choices are already restricted to valid ones).
+  // density: compact (issue #134) forces bar_position into {top, bottom,
+  // background}, whichever layout is already set - see schema.ts's
+  // applyDensityRule, the matching save-time safety net. Applied the moment
+  // density_toggle flips on, since bar_position can't drift into an invalid
+  // value on its own once compact is active.
   applyDensityConstraints: (config: LovelaceConfig): LovelaceConfig => {
     if (config.density !== 'compact') return config;
-    const next: LovelaceConfig = { ...config, layout: 'horizontal' };
+    const next: LovelaceConfig = { ...config };
     if (!['top', 'bottom', 'background'].includes(next.bar_position as string)) {
       next.bar_position = 'top';
     }
@@ -1412,6 +1862,11 @@ const EditorFactory = {
     icon: HA_CONTEXT.icons.radar,
     fields: {
       ...EditorFactory.themeWatermarkFields(),
+      // Card only (cards.ts's _seedPeakMarkerHistory, schema.ts's peakMarker
+      // comment) - Badge/Template have no history-seeding pipeline.
+      ...(!template && !badge ? EditorFactory.peakMarkerFields() : {}),
+      // Card + Template, not Badge (schema.ts's trendIndicator() usage).
+      ...(!badge ? EditorFactory.trendIndicatorFields() : {}),
       // Jinja-driven, same "react to a condition" concern as watermark/
       // alert_when/status_label below, not theme()'s own pure appearance -
       // moved here from theme() for that reason (see themeBadgeIconColor
@@ -1427,35 +1882,60 @@ const EditorFactory = {
       // better once status_label's shape is already established above it.
       ...(!badge
         ? {
-            status_label_toggle: EditorFieldsType.toggle('status_label_toggle', {
-              virtual: true,
-              resolveVirtual: (c: LovelaceConfig) => Boolean(c.status_label),
-              // Ephemeral - the whole object (jinja/position/color_source),
-              // not just jinja, so re-enabling restores all three.
-              onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
+            // Ephemeral - the whole object (jinja/position/color_source), not
+            // just jinja, so re-enabling restores all three.
+            ...enabledToggleField(
+              'status_label_toggle',
+              (c) => Boolean(c.status_label),
+              (value, config) => ({
                 ...config,
                 status_label: value ? config._status_label_draft || {} : undefined,
                 _status_label_draft: value ? undefined : (config.status_label ?? config._status_label_draft),
               }),
-            }),
-            'status_label.jinja': EditorFieldsType.tpl('status_label.jinja', {
+            ),
+            // Virtual: status_label can be the bare-string shorthand (see
+            // statusLabelObj/rewrapStatusLabel, schema.ts) - the generic
+            // dot-path field machinery can't read/write through that.
+            'status_label.jinja': {
+              name: 'status_label.jinja',
+              type: 'template',
+              virtual: true,
               noLabel: true,
               helper: true,
               showIf: (c: LovelaceConfig) => Boolean(c.status_label),
-            }),
-            'status_label.position': EditorFieldsType.select('status_label.position', {
+              resolveVirtual: (c: LovelaceConfig) => statusLabelObj(c.status_label).jinja ?? '',
+              onVirtualChange: (value: string, config: LovelaceConfig) => ({
+                ...config,
+                status_label: rewrapStatusLabel(config.status_label, { jinja: value }),
+              }),
+            },
+            'status_label.position': {
+              name: 'status_label.position',
               type: 'label_position',
+              virtual: true,
               width: availableSpace(),
               showIf: (c: LovelaceConfig) => Boolean(c.status_label),
-            }),
+              resolveVirtual: (c: LovelaceConfig) => statusLabelObj(c.status_label).position ?? 'right',
+              onVirtualChange: (value: string, config: LovelaceConfig) => ({
+                ...config,
+                status_label: rewrapStatusLabel(config.status_label, { position: value }),
+              }),
+            },
             // Which color the pill falls back to (see HACore._repaintStatus
             // Label) when its own `jinja` doesn't return an explicit
             // {label, color} - 'bar' by default (schema.ts's own default).
-            'status_label.color_source': EditorFieldsType.select('status_label.color_source', {
+            'status_label.color_source': {
+              name: 'status_label.color_source',
               type: 'status_label_color_source',
+              virtual: true,
               width: availableSpace(),
               showIf: (c: LovelaceConfig) => Boolean(c.status_label),
-            }),
+              resolveVirtual: (c: LovelaceConfig) => statusLabelObj(c.status_label).color_source ?? 'bar',
+              onVirtualChange: (value: string, config: LovelaceConfig) => ({
+                ...config,
+                status_label: rewrapStatusLabel(config.status_label, { color_source: value }),
+              }),
+            },
           }
         : {}),
       ...EditorFactory.themeAlertFields(template),

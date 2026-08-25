@@ -299,10 +299,16 @@ class EditorDOMHelper extends DOMHelper {
 
     // Dynamic selector
     if (def.selectorOf) {
+      // A '.value.' segment (watermark.low/.high's own entity path) only
+      // exists once the mark is wrapped ({ value: {...}, as, type, opacity,
+      // color }) - a short, never-wrapped form ({ entity: ... } directly) has
+      // no 'value' key to walk through, so treat that step as a no-op instead
+      // of losing the rest of the path.
       const resolved = def.selectorOf.includes('.')
-        ? (def.selectorOf as string)
-            .split('.')
-            .reduce<unknown>((obj, k) => (obj as Record<string, unknown>)?.[k], config)
+        ? (def.selectorOf as string).split('.').reduce<unknown>((obj, k) => {
+            if (k === 'value' && is.plainObject(obj) && !('value' in obj)) return obj;
+            return (obj as Record<string, unknown>)?.[k];
+          }, config)
         : config[def.selectorOf];
       // The source key can hold a non-string shape (watermark.low: { jinja }) —
       // the native attribute selector expects an entity-id string, so anything

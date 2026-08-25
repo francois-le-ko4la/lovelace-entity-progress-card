@@ -132,9 +132,13 @@ const StructureElements = {
     // template is cloned in, not part of it - see that method's own comment
     // for why (this template is cached per unique options set; bar_segments
     // ranges freely, unlike every other option here).
+    const markClass = 'watermark mark';
     const marks =
-      Element(CARD.htmlStructure.elements.progressBar.lowWatermark, 'watermark mark').html() +
-      Element(CARD.htmlStructure.elements.progressBar.highWatermark, 'watermark mark').html() +
+      Element(CARD.htmlStructure.elements.progressBar.lowWatermark, markClass).html() +
+      Element(CARD.htmlStructure.elements.progressBar.highWatermark, markClass).html() +
+      Element(CARD.htmlStructure.elements.progressBar.minMarker, markClass).html() +
+      Element(CARD.htmlStructure.elements.progressBar.maxMarker, markClass).html() +
+      Element(CARD.htmlStructure.elements.progressBar.averageMarker, markClass).html() +
       (isCenterZero ? Element(CARD.htmlStructure.elements.progressBar.zeroMark, 'mark').html() : '');
 
     const innerHtml = isCenterZero

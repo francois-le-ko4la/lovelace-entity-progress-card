@@ -8,10 +8,20 @@ import { HA_CONTEXT, CARD, CARD_CONTEXT } from '../utils/parameters.js';
 import { resolveDisplayUnit, resolveDisplayDecimal } from '../utils/display-defaults.js';
 import type { LovelaceConfig, Config } from '../utils/types.js';
 import { is, assertDefined } from '../utils/common-checks.js';
-import { entityOf } from './schema.js';
+import {
+  entityOf,
+  markShown,
+  markValue,
+  markAs,
+  markType,
+  markOpacity,
+  markColor,
+  type WatermarkMark,
+} from './schema.js';
 import { cloneValue } from '../utils/browser-support.js';
 import { traceInstance } from '../utils/log.js';
 import { PercentHelper, ThemeManager, EntityCollectionHelper, EntityOrValue } from './value-helpers.js';
+import { TrendTracker, type TrendBasis } from './trend-tracker.js';
 import { HassProviderSingleton, type HomeAssistant } from '../utils/hass-provider.js';
 import {
   BaseConfigHelper,
@@ -24,23 +34,45 @@ import {
 
 // Mirrors schema.ts's watermarkSchema (see card/schema.ts) - the validated
 // shape of config.watermark as it comes out of the schema. low/high are
-// symmetric with min_value/max_value's own shape (number | { entity,
-// attribute } | { jinja }) here since the getters below immediately
-// overwrite them with the already-resolved EntityOrValue - this type only
-// describes what's read straight off the source object.
+// types.watermarkMark's own shape (see WatermarkMark in schema.ts) since the
+// getters below immediately resolve them via markValue/markShown/etc.
+type WatermarkType = 'blended' | 'area' | 'striped' | 'triangle' | 'round' | 'line';
 type WatermarkConfig = {
-  low: number | { entity?: string; attribute?: string } | { jinja: string };
-  low_as: 'auto' | 'percent';
-  low_color: string;
-  high: number | { entity?: string; attribute?: string } | { jinja: string };
-  high_as: 'auto' | 'percent';
-  high_color: string;
-  opacity: number;
-  type: 'blended' | 'area' | 'striped' | 'triangle' | 'round' | 'line';
+  low: WatermarkMark;
+  high: WatermarkMark;
+  // No schema default (unlike low/high/line_size) - genuinely absent once
+  // neither side needs it, see the `watermark` getter's own fallback to
+  // CARD.config.defaults.watermark for the real default.
+  opacity?: number;
+  color?: string;
+  type?: WatermarkType;
   line_size: string;
-  disable_low: boolean;
-  disable_high: boolean;
 };
+
+// What ViewCore/ViewBase's `watermark` getter resolves each side to -
+// consumed by HACore._applyWatermarkCSS/_handleWatermarkClasses (core.ts).
+// type/opacity are never undefined here (unlike WatermarkConfig's own) -
+// the getter always resolves them against CARD.config.defaults.watermark
+// first.
+type ResolvedWatermarkMark = {
+  shown: boolean;
+  value: number;
+  type: WatermarkType;
+  opacity: number;
+  color: string | null;
+};
+type ResolvedWatermark = {
+  low: ResolvedWatermarkMark;
+  high: ResolvedWatermarkMark;
+  opacity: number;
+  type: WatermarkType;
+  line_size: string;
+};
+
+type PeakMarkType = 'line' | 'round' | 'triangle';
+// One resolved peak_marker.min/.max/.average - shown=false still carries a
+// type/opacity/value so callers never need an extra null-check per field.
+type ResolvedPeakMark = { shown: boolean; type: PeakMarkType; opacity: number; color: string | null; value: number };
 
 // Mirrors schema.ts's barStackEntity - one row of bar_stack.entities.
 type BarStackEntityConfig = { entity: string; attribute?: string; color?: string; subtract?: boolean };
@@ -75,7 +107,8 @@ type BarStackEntityConfig = { entity: string; attribute?: string; color?: string
  */
 class ViewCore {
   _hassProvider = HassProviderSingleton.getInstance();
-  _lastPercent: number | null = null;
+  _trendTracker: TrendTracker | null = null;
+  _trendEntityId: string | null = null;
   _configHelper: BaseConfigHelper = new BaseConfigHelper(); // Base config
   _currentValue = new EntityOrValue();
   _lowValue = new EntityOrValue();
@@ -145,11 +178,23 @@ class ViewCore {
       value: this._configHelper.config.entity,
       stateContent: this._configHelper.stateContent,
     });
-    // watermark.low/high: number (legacy) | { entity, attribute } | { jinja }
-    // - jinja mode is fed by the template subscription elsewhere, not by
-    // EntityOrValue, so it resolves to null here (see _resolveValueConfig).
-    Object.assign(this._lowValue, ViewCore._resolveValueConfig(this._configHelper.config?.watermark?.low, null));
-    Object.assign(this._highValue, ViewCore._resolveValueConfig(this._configHelper.config?.watermark?.high, null));
+    // markValue unwraps watermark.low/.high's own shape (types.watermarkMark)
+    // to the plain triad; jinja mode is fed by the template subscription
+    // elsewhere, not EntityOrValue, so it resolves to null here.
+    Object.assign(
+      this._lowValue,
+      ViewCore._resolveValueConfig(
+        markValue(this._configHelper.config?.watermark?.low, CARD.config.defaults.watermark.low),
+        null,
+      ),
+    );
+    Object.assign(
+      this._highValue,
+      ViewCore._resolveValueConfig(
+        markValue(this._configHelper.config?.watermark?.high, CARD.config.defaults.watermark.high),
+        null,
+      ),
+    );
     this.#jinjaWatermarkLow = null;
     this.#jinjaWatermarkHigh = null;
     this.#jinjaIconAnimationActive = null;
@@ -284,9 +329,19 @@ class ViewCore {
   get minGridRows(): number {
     if (!this.config) return CARD.layout.orientations.horizontal.grid.grid_min_rows;
     const layout = CARD.layout.orientations[this.config.layout as keyof typeof CARD.layout.orientations];
-    const baseRows = this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.icon.label)
-      ? 1
-      : layout.grid.grid_min_rows;
+    // top/bottom/background overlay the bar on the icon row instead of
+    // giving it one of their own (see styles.ts's .content display:none
+    // rule, same three positions) - name+secondary_info both hidden then
+    // leaves a single icon row to show, same as hide: icon itself.
+    const contentCollapsed =
+      this.config.layout === CARD.layout.orientations.vertical.label &&
+      ['top', 'bottom', 'background'].includes(this.config.bar_position ?? '') &&
+      this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.name.label) &&
+      this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.secondary_info.label);
+    const baseRows =
+      this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.icon.label) || contentCollapsed
+        ? 1
+        : layout.grid.grid_min_rows;
     const needsExtraRow =
       this.config.bar_size === CARD.style.bar.sizeOptions.xlarge.label ||
       (this.config.layout === 'horizontal' && this.config.bar_position === 'below') ||
@@ -308,12 +363,9 @@ class ViewCore {
     return baseRows + (needsExtraRow ? 1 : 0);
   }
 
-  // horizontal-only (issue #134): a compact-density card only needs enough
-  // width for icon+name/value, not the full 2/12 columns (reported as 6/12
-  // after gridColumnMultiplier) - density: compact is always horizontal, so
-  // no layout check is needed here on top of it. vertical's own
-  // grid_min_columns (already 1, the multiplier's floor) stays untouched -
-  // nothing narrower to give back there.
+  // issue #134: a compact-density card only needs 1 column's worth of width
+  // (reported as 6/12 before gridColumnMultiplier) - no layout check needed,
+  // vertical's own grid_min_columns is already 1 regardless of density.
   get minGridColumns(): number {
     if (!this.config) return CARD.layout.orientations.horizontal.grid.grid_min_columns;
     const layout = CARD.layout.orientations[this.config.layout as keyof typeof CARD.layout.orientations];
@@ -427,39 +479,76 @@ class ViewCore {
     return this.config.bar_effect !== undefined;
   }
 
-  get watermark() {
+  get watermark(): ResolvedWatermark | null {
     const watermark = this.config.watermark as WatermarkConfig | undefined;
+    if (!watermark) return null;
     // No toPos/calcWatermark here (unlike ViewBase's own override below): a
     // ViewCore-direct instance (Template) has no min_value/max_value scale to
     // project onto in the first place (see schema.ts's own comment on
-    // Template's `theme` field for the same limitation) - low_as/high_as
-    // 'auto' and 'percent' already coincide, the raw resolved number IS the
-    // bar position.
-    return watermark
-      ? {
-          ...watermark,
-          low: this.#jinjaWatermarkLow ?? this._lowValue.value,
-          low_color: ThemeManager.adaptColor(watermark.low_color),
-          high: this.#jinjaWatermarkHigh ?? this._highValue.value,
-          high_color: ThemeManager.adaptColor(watermark.high_color),
-        }
-      : null;
+    // Template's `theme` field for the same limitation) - `as`'s 'auto' and
+    // 'percent' already coincide, the raw resolved number IS the bar position.
+    // type/opacity carry no schema default (see WatermarkConfig) - applied
+    // here from CARD.config.defaults.watermark instead.
+    const globalType = watermark.type ?? CARD.config.defaults.watermark.type;
+    const globalOpacity = watermark.opacity ?? CARD.config.defaults.watermark.opacity;
+    const resolveMark = (
+      mark: WatermarkMark,
+      jinjaOverride: number | null,
+      resolvedValue: unknown,
+    ): ResolvedWatermarkMark => ({
+      shown: markShown(mark),
+      value: (jinjaOverride ?? resolvedValue) as number,
+      type: markType(mark, globalType) as WatermarkType,
+      opacity: markOpacity(mark, globalOpacity),
+      color: ThemeManager.adaptColor(markColor(mark, watermark.color) ?? null),
+    });
+    return {
+      low: resolveMark(watermark.low, this.#jinjaWatermarkLow, this._lowValue.value),
+      high: resolveMark(watermark.high, this.#jinjaWatermarkHigh, this._highValue.value),
+      opacity: globalOpacity,
+      type: globalType as WatermarkType,
+      line_size: watermark.line_size,
+    };
   }
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
   getTrend(currentPercent: number): string {
-    const result =
-      this._lastPercent === null
-        ? 'flat'
-        : this._lastPercent < currentPercent
-          ? 'up'
-          : this._lastPercent > currentPercent
-            ? 'down'
-            : 'flat';
-    this._lastPercent = currentPercent;
+    const tracker = this.#ensureTrendTracker();
+    tracker.push(currentPercent);
+    // null (not enough data yet, cold start) falls back to 'flat' - the
+    // question-mark 'error' icon would otherwise flash on every single
+    // trend_indicator: true card until a second sample lands.
+    return tracker.direction() ?? 'flat';
+  }
 
-    return result;
+  // History seeding (Card only, see HACore) - same lazy resolver as getTrend.
+  seedTrend(samples: { t: number; percent: number }[]) {
+    this.#ensureTrendTracker().seed(samples);
+  }
+
+  #ensureTrendTracker(): TrendTracker {
+    const entity = this.config?.entity ?? null;
+    if (this._trendTracker && this._trendEntityId === entity) return this._trendTracker;
+    this._trendTracker = new TrendTracker(ViewCore.#trendTrackerOptions(this.config?.trend_indicator));
+    this._trendEntityId = entity;
+    return this._trendTracker;
+  }
+
+  static #trendTrackerOptions(config: unknown): {
+    windowMs: number | null;
+    basis: TrendBasis;
+    thresholdPoints: number;
+  } {
+    if (!is.plainObject(config)) {
+      return { windowMs: null, basis: 'average', thresholdPoints: CARD.config.trendIndicator.defaultThreshold };
+    }
+    const windowSeconds = config.window;
+    return {
+      windowMs: is.number(windowSeconds) ? windowSeconds * 1000 : null,
+      basis: (config.basis as TrendBasis) ?? 'average',
+      thresholdPoints: is.number(config.threshold) ? config.threshold : 0,
+    };
   }
 
   // icon_animation only makes sense for domains with a real on/active vs
@@ -797,13 +886,19 @@ class ViewCore {
     return alert.animation ?? (this.resolvedAlertHighlight === 'background' ? 'static' : 'blink');
   }
 
-  // Single source of truth for "is X currently hidden", static `hide: [...]`
-  // and Jinja `hide: "{{ ... }}"` alike. #resolvedHide is null until a real
-  // Jinja push writes it via setResolvedHide - reading config.hide directly
-  // then covers the static-array case (an unresolved Jinja string fails
-  // is.array, correctly reporting "nothing hidden yet"). Once a push lands,
-  // the cache wins outright until the next `set config`.
+  // Single source of truth for "is X currently hidden": static `hide: [...]`
+  // and Jinja `hide: "{{ ... }}"` alike (#resolvedHide caches a Jinja push,
+  // config.hide covers the static-array case). density: compact + layout:
+  // vertical forces name/secondary_info hidden ahead of both, unconditionally
+  // - no room left for them at a single grid row (applyDensityRule).
   hasComponentHiddenFlag(component: string): boolean {
+    if (
+      this.config?.density === 'compact' &&
+      this.config.layout === CARD.layout.orientations.vertical.label &&
+      (component === CARD.style.dynamic.hiddenComponent.name.label ||
+        component === CARD.style.dynamic.hiddenComponent.secondary_info.label)
+    )
+      return true;
     if (this.#resolvedHide) return this.#resolvedHide.has(component);
     return is.array(this.config?.hide) && this.config.hide.includes(component);
   }
@@ -988,9 +1083,21 @@ class ViewBase extends ViewCore {
     // false - a timer card with any watermark froze instead of rendering.
     // Reuses ViewCore._resolveValueConfig directly since set config isn't
     // chained via super here.
-    Object.assign(this._lowValue, ViewCore._resolveValueConfig(this._configHelper.config?.watermark?.low, null));
+    Object.assign(
+      this._lowValue,
+      ViewCore._resolveValueConfig(
+        markValue(this._configHelper.config?.watermark?.low, CARD.config.defaults.watermark.low),
+        null,
+      ),
+    );
     this.jinjaWatermarkLow = null;
-    Object.assign(this._highValue, ViewCore._resolveValueConfig(this._configHelper.config?.watermark?.high, null));
+    Object.assign(
+      this._highValue,
+      ViewCore._resolveValueConfig(
+        markValue(this._configHelper.config?.watermark?.high, CARD.config.defaults.watermark.high),
+        null,
+      ),
+    );
     this.jinjaWatermarkHigh = null;
     // alert_when.above/.below: same shape and reasoning as watermark low/high
     // above - alert_when isn't overridden by the timer path either.
@@ -1054,8 +1161,14 @@ class ViewBase extends ViewCore {
       !this._currentValue.isAvailable ||
       (!this.#maxValue.isAvailable && is.nonEmptyString(entityOf(this._configHelper.config?.max_value))) ||
       (!this.#minValue.isAvailable && minIsEntity) ||
-      (!this._lowValue.isAvailable && is.nonEmptyString(entityOf(this._configHelper.config?.watermark?.low))) ||
-      (!this._highValue.isAvailable && is.nonEmptyString(entityOf(this._configHelper.config?.watermark?.high))) ||
+      (!this._lowValue.isAvailable &&
+        is.nonEmptyString(
+          entityOf(markValue(this._configHelper.config?.watermark?.low, CARD.config.defaults.watermark.low)),
+        )) ||
+      (!this._highValue.isAvailable &&
+        is.nonEmptyString(
+          entityOf(markValue(this._configHelper.config?.watermark?.high, CARD.config.defaults.watermark.high)),
+        )) ||
       (!this._aboveValue.isAvailable && is.nonEmptyString(entityOf(this._configHelper.config?.alert_when?.above))) ||
       (!this._belowValue.isAvailable && is.nonEmptyString(entityOf(this._configHelper.config?.alert_when?.below)))
     );
@@ -1208,6 +1321,55 @@ class ViewBase extends ViewCore {
     return super.getTrend(this.#percentHelper.percent ?? 0);
   }
 
+  // Reuses the same min/max/center-zero math as the live percent, applied to
+  // an arbitrary raw value - lets trend_indicator's history seeding (Card
+  // only, HACore) reconstruct past percent from HA's own state history.
+  percentForRawValue(value: number): number {
+    return this.#percentHelper.calcWatermark(value);
+  }
+
+  // peak_marker's own history-derived positions (Card only, see HACore's
+  // _seedPeakMarkerHistory) - percents already resolved at fetch time, set
+  // once per window fetch rather than recomputed on every repaint.
+  #peakMarker: { min: number; max: number; average: number } | null = null;
+
+  // null clears a previous entity's marks before a re-seed (HACore's
+  // _seedPeakMarkerHistoryOnce) - unlike TrendTracker, there's no live
+  // recompute to fall back on between the clear and the next fetch resolving.
+  setPeakMarker(marker: { min: number; max: number; average: number } | null) {
+    this.#peakMarker = marker;
+  }
+
+  get peakMarker(): { min: ResolvedPeakMark; max: ResolvedPeakMark; average: ResolvedPeakMark } | null {
+    if (!this.#peakMarker || !is.plainObject(this.config.peak_marker)) return null;
+    const config = this.config.peak_marker;
+    const globalColor = config.color as string | undefined;
+    const resolve = (mark: unknown, value: number): ResolvedPeakMark => {
+      const defaults = { type: config.type as PeakMarkType, opacity: config.opacity as number };
+      if (is.plainObject(mark))
+        return {
+          shown: true,
+          value,
+          type: (mark.type as PeakMarkType) ?? defaults.type,
+          opacity: (mark.opacity as number) ?? defaults.opacity,
+          color: ThemeManager.adaptColor((mark.color as string) ?? globalColor ?? null),
+        };
+      return {
+        // false is the editor's explicit "hidden" state (types.peakMark()'s
+        // boolean branch) - distinct from absent, which is also hidden.
+        shown: mark !== undefined && mark !== false,
+        value,
+        ...defaults,
+        color: ThemeManager.adaptColor((is.string(mark) ? mark : globalColor) ?? null),
+      };
+    };
+    return {
+      min: resolve(config.min, this.#peakMarker.min),
+      max: resolve(config.max, this.#peakMarker.max),
+      average: resolve(config.average, this.#peakMarker.average),
+    };
+  }
+
   get secondaryInfoMain(): string | null {
     if (
       this.hasStandardEntityError ||
@@ -1258,7 +1420,7 @@ class ViewBase extends ViewCore {
     return this._configHelper.config.watermark !== undefined;
   }
 
-  get watermark() {
+  get watermark(): ResolvedWatermark | null {
     const watermark = this.config.watermark as WatermarkConfig | undefined;
     if (!watermark) return null;
     // A timer's own `max` isn't a stable scale the way a sensor's min/max is
@@ -1268,14 +1430,29 @@ class ViewBase extends ViewCore {
     // behavior for timers instead, so the configured value stays a stable
     // percentage regardless of how long any given run happens to be.
     const isTimer = this._currentValue.entityType.isTimer;
-    const toPos = (v: number | { current: number } | null | undefined, mode: string) =>
-      mode === 'percent' || isTimer ? (is.number(v) ? v : (v?.current ?? 0)) : this.#percentHelper.calcWatermark(v);
+    const toPos = (v: number | { current: number } | null | undefined, as: string) =>
+      as === 'percent' || isTimer ? (is.number(v) ? v : (v?.current ?? 0)) : this.#percentHelper.calcWatermark(v);
+    // type/opacity carry no schema default (see WatermarkConfig) - applied
+    // here from CARD.config.defaults.watermark instead.
+    const globalType = watermark.type ?? CARD.config.defaults.watermark.type;
+    const globalOpacity = watermark.opacity ?? CARD.config.defaults.watermark.opacity;
+    const resolveMark = (
+      mark: WatermarkMark,
+      jinjaOverride: number | null,
+      resolvedValue: unknown,
+    ): ResolvedWatermarkMark => ({
+      shown: markShown(mark),
+      value: toPos(jinjaOverride ?? (resolvedValue as number | { current: number } | null), markAs(mark)),
+      type: markType(mark, globalType) as WatermarkType,
+      opacity: markOpacity(mark, globalOpacity),
+      color: ThemeManager.adaptColor(markColor(mark, watermark.color) ?? null),
+    });
     return {
-      ...watermark,
-      low: toPos(this.jinjaWatermarkLow ?? this._lowValue.value, watermark.low_as),
-      low_color: ThemeManager.adaptColor(watermark.low_color),
-      high: toPos(this.jinjaWatermarkHigh ?? this._highValue.value, watermark.high_as),
-      high_color: ThemeManager.adaptColor(watermark.high_color),
+      low: resolveMark(watermark.low, this.jinjaWatermarkLow, this._lowValue.value),
+      high: resolveMark(watermark.high, this.jinjaWatermarkHigh, this._highValue.value),
+      opacity: globalOpacity,
+      type: globalType as WatermarkType,
+      line_size: watermark.line_size,
     };
   }
 
@@ -1484,6 +1661,7 @@ type TemplateView = ViewCore & { icon: string | null };
 export { ViewCore };
 export { ViewBase };
 export type { TemplateView };
+export type { ResolvedWatermark };
 export { CardView };
 export { BadgeView };
 export { FeatureView };

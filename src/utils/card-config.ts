@@ -31,6 +31,11 @@ const configBase = {
   showMoreInfo: true,
   reverse: false,
   decimal: { percentage: 0, timer: 0, counter: 0, duration: 0, other: 2 },
+  // trend_indicator: true's dead zone (percentage points).
+  trendIndicator: { defaultThreshold: 1 },
+  // How far back trend_indicator.window/peak_marker.window may seed from HA
+  // history (7 days) - shared cap, both read the same recorder data.
+  history: { maxWindowSeconds: 604800 },
   msFactor: 1000,
   shadowMode: 'open',
   stub: {
@@ -141,6 +146,11 @@ const htmlStructure = {
       zeroMark: { element: 'div', class: 'zero', extraAttr: { 'aria-hidden': 'true' } },
       lowWatermark: { element: 'div', class: 'low', extraAttr: { 'aria-hidden': 'true' } },
       highWatermark: { element: 'div', class: 'high', extraAttr: { 'aria-hidden': 'true' } },
+      // peak_marker's three marks - same 'watermark mark' base class as
+      // low/high above, so they share the same size tokens for free.
+      minMarker: { element: 'div', class: 'peak-min', extraAttr: { 'aria-hidden': 'true' } },
+      maxMarker: { element: 'div', class: 'peak-max', extraAttr: { 'aria-hidden': 'true' } },
+      averageMarker: { element: 'div', class: 'peak-avg', extraAttr: { 'aria-hidden': 'true' } },
       // bar_color_mode: rainbow_full's own moving cursor (see .value-mark in
       // styles.ts) - built on the same .mark mechanism as the watermarks
       // above, shown/positioned purely via CSS (--progress-bar-value is
@@ -251,6 +261,9 @@ const style = {
       icon: { size: { var: '--icon-size' } },
       shape: { size: { var: '--shape-size' } },
     },
+    trendIndicator: {
+      color: { var: '--trend-icon-color' },
+    },
     haRipple: {
       color: { var: '--ha-ripple-color' },
     },
@@ -294,13 +307,34 @@ const style = {
       low: {
         value: { var: '--low-watermark-value', default: 20 },
         color: { var: '--low-watermark-color', default: 'red' },
+        opacity: { var: '--low-watermark-opacity-value' },
       },
       high: {
         value: { var: '--high-watermark-value', default: 80 },
         color: { var: '--high-watermark-color', default: 'red' },
+        opacity: { var: '--high-watermark-opacity-value' },
       },
       lineSize: { var: '--watermark-line-size' },
+      // Still the base .mark opacity (zeroMark/valueMarker, and low/high's
+      // own fallback when a side doesn't override it) - see styles.ts.
       opacity: { var: '--watermark-opacity-value' },
+    },
+    peakMarker: {
+      min: {
+        value: { var: '--peak-min-value' },
+        color: { var: '--peak-min-color', default: HA_CONTEXT.colors.stateIcon },
+        opacity: { var: '--peak-min-opacity-value' },
+      },
+      max: {
+        value: { var: '--peak-max-value' },
+        color: { var: '--peak-max-color', default: HA_CONTEXT.colors.stateIcon },
+        opacity: { var: '--peak-max-opacity-value' },
+      },
+      average: {
+        value: { var: '--peak-average-value' },
+        color: { var: '--peak-average-color', default: HA_CONTEXT.colors.stateIcon },
+        opacity: { var: '--peak-average-opacity-value' },
+      },
     },
     secondaryInfoError: { class: 'secondary-info-error' },
     show: 'show',
@@ -409,23 +443,27 @@ const configDefaults = {
   center_zero: false,
   watermark: {
     low: 20,
-    low_as: 'auto',
-    low_color: 'red',
     high: 80,
-    high_as: 'auto',
-    high_color: 'red',
     opacity: 0.8,
     type: 'blended',
     line_size: '1px',
-    disable_low: false,
-    disable_high: false,
+  },
+  peakMarker: {
+    window: '2h',
+    type: 'line',
+    opacity: 0.8,
+  },
+  trendIndicator: {
+    window: '2h',
+    basis: 'average',
+    threshold: 0,
   },
 };
 
 const consoleInfo = {
   message: `%c✨${META.types.card.typeName.toUpperCase()} ${VERSION} IS INSTALLED.`,
   css: 'color:orange; background-color:black; font-weight: bold;',
-  link: '      For more details, check the README: https://github.com/francois-le-ko4la/lovelace-entity-progress-card',
+  link: `      For more details, check the README: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/tree/${VERSION}`,
   // Emitted after the banner (see index.ts) only when the URL-derived dev/
   // debug modes are active, so a non-shipped configuration is never silent.
   warnCss: 'color:black; background-color:orange; font-weight:bold;',

@@ -108,7 +108,11 @@
       "value_sign": "Vis fortegn (+/-)",
       "watermark_high_mode": "Kilde til øvre markør",
       "watermark_low_mode": "Kilde til nedre markør",
-      "watermark_toggle": "Markører"
+      "watermark_toggle": "Markører",
+      "peak_marker_toggle": "Peak markers",
+      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
+      "trend_indicator_toggle": "Trend indicator",
+      "trend_indicator_mode": "Mode"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -269,8 +273,8 @@
         "standard": "Fixed value"
       },
       "watermark": {
-        "disable_high": "Disable high",
-        "disable_low": "Disable low",
+        "high_toggle": "Show high",
+        "low_toggle": "Show low",
         "high": "High",
         "high_as": "High unit",
         "high_color": "High color",
@@ -279,7 +283,12 @@
         "low_as": "Low unit",
         "low_color": "Low color",
         "opacity": "Opacity",
-        "type": "Type"
+        "type": "Type",
+        "color": "Color",
+        "low_type": "Low type",
+        "low_opacity": "Low opacity",
+        "high_type": "High type",
+        "high_opacity": "High opacity"
       },
       "watermark_as": {
         "auto": "Automatisk",
@@ -292,6 +301,49 @@
         "round": "Rund",
         "striped": "Stripet",
         "triangle": "Trekant"
+      },
+      "peak_marker": {
+        "window": "Time window",
+        "type": "Type",
+        "opacity": "Opacity",
+        "min_toggle": "Show minimum",
+        "min_type": "Minimum type",
+        "min_opacity": "Minimum opacity",
+        "min_color": "Minimum color",
+        "max_toggle": "Show maximum",
+        "max_type": "Maximum type",
+        "max_opacity": "Maximum opacity",
+        "max_color": "Maximum color",
+        "average_toggle": "Show average",
+        "average_type": "Average type",
+        "average_opacity": "Average opacity",
+        "average_color": "Average color",
+        "color": "Color"
+      },
+      "duration_unit": {
+        "s": "Seconds",
+        "min": "Minutes",
+        "h": "Hours",
+        "d": "Days"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "Disabled",
+        "enabled": "Enabled"
+      },
+      "trend_indicator": {
+        "window_toggle": "Use a time window",
+        "window": "Time window",
+        "basis": "Comparison basis",
+        "threshold": "Dead zone (points)",
+        "colored": "Tint with icon color",
+        "up_color": "Up color",
+        "down_color": "Down color",
+        "flat_color": "Flat color"
+      },
+      "trend_indicator_basis": {
+        "average": "Average",
+        "edge": "Edge",
+        "slope": "Slope"
       }
     },
     "title": {

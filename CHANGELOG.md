@@ -31,18 +31,23 @@ object return is the only form worth using.
 Most `--epb-*` custom properties date back to 1.6.1's browser-compat CSS rework,
 but were never written down — there wasn't yet a way to be confident every
 single one actually did what it claimed. [`docs/theme.md`](docs/theme.md#css)
-now documents all 46 of them (13 were previously undocumented), backed by a new
-CSS hooks view in [`docs/demo-dashboard.yaml`](docs/demo-dashboard.yaml) that
-gives each one its own card, isolating a single override so the effect is
-obvious at a glance — the test bench that made trusting this documentation
-possible.
+now documents all 58 of them: 13 were pre-existing gaps in undocumented code,
+the rest are new hooks introduced by this release's own features (detailed
+below), backed by a new CSS hooks view in
+[`docs/demo-dashboard.yaml`](docs/demo-dashboard.yaml) that gives each one its
+own card, isolating a single override so the effect is obvious at a glance — the
+test bench that made trusting this documentation possible.
 
 On top of that, two ways to remove the circular shape behind the icon: the new
 `--epb-icon-shape-opacity` CSS hook, and — Card and Template — `hide: [shape]`
 for anyone who'd rather not reach for `card_mod` at all. Neither reaches Badge/
 BadgeTemplate, which have no shape by default. Either replaces the `card_mod`
 override that stopped working once 1.6.1 moved that background onto its own
-layer.  
+layer. Two more hooks join them: `--epb-icon-color`/`--epb-icon-shape-color`
+recolor the icon and its background independently, on top of the existing
+`--epb-icon-and-shape-color` for recoloring both at once, and
+`--epb-icon-shape-hover-color` restores a hover color for a clickable icon
+straight from a theme, no `card_mod` needed.  
 ➡️ [Feature]: Configuration possibility for the icon background visibility #136
 (@RkcCorian)
 
@@ -55,6 +60,54 @@ trailing zeros); [`unit_position`](docs/configuration.md#unit_position) moves
 the unit before the value for currency-style display (`$100`);
 [`value_sign`](docs/configuration.md#value_sign) forces an explicit `+`/`-`,
 handy on `center_zero`/`bar_stack: { mode: net }` deltas.
+
+#### 📈 `trend_indicator` finally has a real memory
+
+Until now, it compared whatever was on screen against whatever showed up next —
+a single tick of sensor noise flipped the arrow, and every dashboard reload
+started over from a meaningless "flat". It's now backed by a real sample buffer:
+`window` (`'5min'`, `'2h'`, `'1d'`…) sets how far back to look, `basis` picks
+how (`average` smooths noise, `edge` compares to the oldest sample in the
+window, `slope` fits a trend line so one wobble at the end doesn't flip the
+read), and `threshold` sets a dead zone in percentage points. For sensor/number
+entities without an `attribute` override, the window seeds itself from Home
+Assistant's own history on load, so a long window doesn't start out empty.
+`colored: true` tints the arrow with the icon's current color instead of a fixed
+neutral; `up_color`/`down_color`/ `flat_color` override per direction
+explicitly. The plain `trend_indicator: true` boolean keeps working exactly as
+before, just with a small built-in dead zone so it stops flickering on pure
+noise. See [`trend_indicator`](docs/configuration.md#trend_indicator).
+
+#### 🎯 `peak_marker`: min, max, and average, right on the bar
+
+Born from the same history read as `trend_indicator` above: marks the minimum,
+maximum, and average value observed over a `window` directly on the bar — reads
+at a glance where the current value sits relative to its own recent history, no
+separate helper or template needed. `min`/`max`/`average` are each opt-in:
+`true` for the default look, a color string as shorthand, or
+`{ type, opacity, color }` to override just that one mark, falling back to
+`peak_marker`'s own top-level `type`/`opacity` for the rest. Same eligibility as
+`trend_indicator`'s history seeding (sensor/number, no `attribute`, not
+timer/counter), Card only. See
+[`peak_marker`](docs/configuration.md#peak_marker).
+
+#### 🧹 `watermark` cleaned up, inspired by `peak_marker`
+
+`watermark.low`/`.high` used to spread their color across sibling
+`low_color`/`high_color` keys and hide behind `disable_low`/`disable_high`
+booleans. Both now live on `low`/`high` themselves: `false` hides a side, a
+plain value shows it with the default look, and
+`{ value, as, type, opacity, color }` overrides just that one side — the same
+shape `peak_marker` just introduced. `type`/`opacity`/`color` are also new
+top-level defaults: whichever side doesn't set its own falls back to them, and
+once **both** sides have their own value for one of these three, the shared
+default quietly drops out of the config (nothing reads it anymore). Old configs
+keep working exactly as before — `low_as`/`high_as`/
+`low_color`/`high_color`/`disable_low`/`disable_high` are auto-migrated for the
+session (console-warned), and the editor's "Show low"/"Show high" toggles
+replace the old disable switches, with per-side Type/Opacity/Color fields
+alongside the existing per-side value/unit ones. See
+[`watermark`](docs/configuration.md#watermark).
 
 #### 🎛️ The editor never looked this close to native Home Assistant
 
@@ -77,6 +130,13 @@ editor predates and isn't based on `ha-form`.
 
 ### 🐛 Notable fixes
 
+- **Template/Badge Template never migrated `watermark.low`/`.high`'s legacy
+  forms** (bare entity-id string, `low_as`/`high_as`/`low_color`/
+  `high_color`/`disable_low`/`disable_high`) — they inherited
+  `BaseConfigHelper`'s no-op instead of `CardConfigHelper`'s real migration, so
+  an entity-sourced `watermark.high` silently ignored the entity, despite a
+  console warning claiming it had been migrated. Now shared by every variant.  
+  ➡️ #140 (@Gunth)
 - `status_label`'s own Jinja pill stayed permanently hidden once
   `alert_when.highlight: 'label'` was configured, even while the alert itself
   was inactive — the pill is now handed back to `status_label` whenever the
@@ -89,10 +149,15 @@ editor predates and isn't based on `ha-form`.
   hiding it — now preserves a draft too. `bar_max_width`'s toggle had the milder
   version of the same issue (lost a custom value, fell back to the 300px
   default) — fixed the same way.
-- The editor's "Compact" toggle (`density: compact`) stayed visible with
-  `layout: vertical` selected, even though it only has a meaningful shape in
-  horizontal — now hidden while vertical instead of silently switching it back
-  on toggle.
+- **`density: compact` now works with `layout: vertical` too** — vertical has no
+  matching narrow shape, so instead of horizontal's narrow-column treatment, it
+  hides `name`/`secondary_info` and drops to a single grid row (icon + thin bar
+  only). The editor's "Compact" toggle offers it either way, greying
+  `name`/`secondary_info` out under Hide (they stay hidden regardless of the
+  toggle there — even a Jinja `hide` template can't override it); `value`/`unit`
+  only ever affect text inside that same now-gone row, so their chips drop out
+  entirely instead of sitting there with no effect.  
+  ➡️ #139 (@RkcCorian)
 - **Editor translations are now complete across all 39 supported languages** —
   several labels had silently stayed in English since the day they shipped,
   invisible to the usual checks.
@@ -100,9 +165,25 @@ editor predates and isn't based on `ha-form`.
   side effect: a noticeably lighter download.
 - A few editor labels were simplified or clarified where two different fields
   ended up showing the exact same text.
+- `layout: vertical` with `bar_position: top`/`bottom`/`background` and a hidden
+  `name`/`secondary_info` still reserved that row's height internally (only
+  `bar_position: default` zeroed it) — under a small explicit `height:` this
+  squeezed the icon into whatever was left over instead of centering it.  
+  ➡️ #139 (@RkcCorian)
 
 ### 📚 Documentation
 
+- **New: a Cookbook** ([`docs/cookbook.md`](docs/cookbook.md)) — copy-paste YAML
+  recipes for every visual effect, layout option, and card variant, each with a
+  screenshot and a companion demo-dashboard card.
+- **New:
+  [Value shapes & shortcuts](docs/configuration.md#value-shapes--shortcuts)** in
+  `configuration.md`'s Conventions — names, once, the value/entity/Jinja shape
+  shared by `min_value`/`max_value`/`alert_when`/`watermark`'s value, and
+  explains why `watermark`'s and `peak_marker`'s one-word mark shorthand each
+  stand for something different (a value vs. a color) rather than looking like
+  an inconsistency. Each option's own section now links back to it instead of
+  re-deriving the pattern.
 - The release notes' and CHANGELOG's own `graphic-effects-compatibility.html`
   links now point through `htmlpreview.github.io` instead of GitHub's raw blob
   view, so the page actually renders instead of opening as source code.
@@ -113,6 +194,20 @@ editor predates and isn't based on `ha-form`.
   a descriptive phrase ("Icon's circular background") rather than the bare
   English word, matching how the option is described in
   [`configuration.md`](docs/configuration.md#hide).
+- **All 12 built-in themes now have a real screenshot** in
+  [`docs/theme.md`](docs/theme.md#predefined-theme) — 7 were text-only before.
+  Every theme (plus `custom_theme`/`bar_color_mode` right after) follows the
+  same shape now too: image, description, collapsible YAML, collapsible ranges
+  table, note — matching the Cookbook's own visual-effect entries.
+- Corrected a stale claim in `docs/theme.md`: `bar_color_mode` was documented as
+  having no effect under `center_zero` — it does, and `rainbow_full`
+  specifically was built with `center_zero` in mind (each arm keeps its own
+  always-full gradient, marker crossing the visual center at zero).
+- `docs/theme.md`'s DOM reference gains `peak_marker`'s own mark elements
+  (`.peak-min`/`.peak-max`/`.peak-avg`), missing since that feature shipped
+  above; the `ViewCore.minGridRows` description updated for the new single-row
+  case (`layout: vertical` + `bar_position: top`/`bottom`/ `background` +
+  `name`/`secondary_info` both hidden).
 
 ### 🧹 Under the hood
 
@@ -128,6 +223,142 @@ editor predates and isn't based on `ha-form`.
   neighboring one (`bar_position`/`unit_position` both said "Position",
   `alert_when_mode`/`icon_animation_mode` both said "Trigger mode") now share a
   single, shorter label instead of two redundant copies.
+
+---
+
+## What's new (1.6.2-rc2)
+
+### ✨ New
+
+- **`--epb-icon-color`/`--epb-icon-shape-color`**: new CSS hooks — the icon and
+  its circular background can now take different colors. Both override
+  `--epb-icon-and-shape-color` at just their own spot; the combined hook keeps
+  working exactly as before for the common "recolor both at once" case. ➡️ #136
+  (@RkcCorian)
+- **`--epb-icon-shape-hover-color`**: new CSS hook — sets the shape's color on
+  hover for a clickable icon. Unlike a `card_mod` `:hover` rule, it can be set
+  as a plain value in a theme YAML. See
+  [Icon and shape color](docs/theme.md#icon-and-shape-color).
+- **`trend_indicator` gains a time-windowed mode**:
+  `{ window, basis, threshold, colored, up_color, down_color, flat_color }` —
+  `window` (`'5min'`/`'2h'`/`'1d'`…) compares against a real time window instead
+  of just the last render, `basis` picks `average`/`edge`/`slope`, `threshold`
+  sets a percentage-point dead zone. Seeds itself from HA's own history on load
+  for eligible entities (sensor/number, no `attribute`, not timer/counter). The
+  plain boolean form keeps working, now with a built-in dead zone so it doesn't
+  flicker on sensor noise. Card and Card Template only. Full visual editor
+  support (Markers panel): a toggle, a Simple/ Advanced pill, and — in Advanced
+  — a reveal toggle for the optional `window` (number+unit slider, shared with
+  `peak_marker`'s), plus `basis`/ `threshold`/`colored`/the 3 color overrides.
+  See [`trend_indicator`](docs/configuration.md#trend_indicator).
+- **`peak_marker`**: new, Card only —
+  `{ window, type, opacity, color, min, max, average }` marks the
+  min/max/average value over `window` directly on the bar. Each of
+  `min`/`max`/`average` is opt-in: `true`, a color string, or
+  `{ type, opacity, color }` to override just that mark, falling back to the
+  top-level `type`/`opacity`/`color` otherwise. Reuses `trend_indicator`'s own
+  history read, same eligibility (sensor/number, no `attribute`, not
+  timer/counter). Full visual editor support (Markers panel): a toggle plus
+  per-mark show/color/type/opacity, and `window` as a number+unit slider (capped
+  at 7 days). The toggle is replaced by an explanation instead of offered for an
+  ineligible entity. The editor also keeps the YAML minimal both ways: a field
+  it writes to all 3 marks (or both `watermark` sides) moves up to the shared
+  top-level default, and one it can no longer read from the shared default (a
+  mark override diverges) drops back down — same behavior on both `watermark`
+  and `peak_marker`. See [`peak_marker`](docs/configuration.md#peak_marker).
+- **Editor: master toggles read as a pill now**: the Markers & Alerts panel's 5
+  whole-feature switches (`watermark`, `peak_marker`, badge, status label,
+  alert) render as a Disabled/Enabled segmented pill instead of a plain switch,
+  distinct at a glance from the plain toggles nested under each once turned on.
+- **`watermark.low`/`.high` reshaped**: `false` (hides that side, replaces
+  `disable_low`/`disable_high`), a plain value (unchanged), or
+  `{ value, as, type, opacity, color }` to override just that side —
+  `as`/`color` replace the old `low_as`/`high_as`/`low_color`/`high_color`
+  sibling keys. `type`/ `opacity`/`color` are now also top-level `watermark.*`
+  defaults that cascade to whichever side doesn't set its own, auto-dropped once
+  both sides do. Old configs auto-migrate for the session (console-warned); the
+  editor's per-side toggle/color/unit fields now read and write the new shape,
+  plus new per-side Type/Opacity fields. New public CSS hooks
+  `--epb-low-watermark-opacity`/`--epb-high-watermark-opacity` (per side; the
+  existing `--epb-watermark-opacity` still overrides both when set). See
+  [`watermark`](docs/configuration.md#watermark).
+- **`density: compact` now works with `layout: vertical` too** — vertical has no
+  matching narrow shape, so instead of horizontal's narrow-column treatment, it
+  hides `name`/`secondary_info` and drops to a single grid row (icon + thin bar
+  only). The editor's "Compact" toggle offers it either way, greying
+  `name`/`secondary_info` out under Hide (forced regardless of a Jinja `hide`
+  template's own result); `value`/`unit` drop out of the picker entirely, moot
+  once that row is gone.  
+  ➡️ #139 (@RkcCorian)
+- **`status_label` accepts a plain string** — shorthand for `{ jinja: '...' }`,
+  covering most cases, same pattern `badge_icon`/`badge_color` already use. The
+  Map form works exactly as before whenever `position`/`color_source` are also
+  needed. See [`status_label`](docs/configuration.md#status_label).
+
+### 🐛 Fixes
+
+- **`layout: vertical` with `bar_position: top`/`bottom`/`background`**: a
+  hidden `name`/`secondary_info` still reserved that row's height internally
+  (only `bar_position: default` zeroed it) — under a small explicit `height:`
+  this squeezed the icon into whatever was left over instead of centering it. A
+  second pass fixed a related gap: `.content` stayed a real flex item even once
+  fully empty, so the gap reserved toward it still biased the icon off-center;
+  the fix generalizes to `layout: horizontal` too, for the same three
+  `bar_position` values (never reported there, but the same bug).  
+  ➡️ #139 (@RkcCorian)
+- **Template/Badge Template never migrated `watermark.low`/`.high`'s legacy
+  forms** (bare entity-id string, `low_as`/`high_as`/`low_color`/
+  `high_color`/`disable_low`/`disable_high`) — they inherited
+  `BaseConfigHelper`'s no-op instead of `CardConfigHelper`'s real migration, so
+  an entity-sourced `watermark.high` silently ignored the entity, despite a
+  console warning claiming it had been migrated. Now shared by every variant.  
+  ➡️ #140 (@Gunth)
+
+### 📚 Documentation
+
+- **New: a Cookbook** ([`docs/cookbook.md`](docs/cookbook.md)) — copy-paste YAML
+  recipes for every visual effect, layout option, and card variant, each with a
+  screenshot and a companion demo-dashboard card.
+- **New:
+  [Value shapes & shortcuts](docs/configuration.md#value-shapes--shortcuts)** in
+  `configuration.md`'s Conventions — names, once, the value/entity/Jinja shape
+  shared by `min_value`/`max_value`/`alert_when`/`watermark`'s value, and
+  explains why `watermark`'s and `peak_marker`'s one-word mark shorthand each
+  stand for something different (a value vs. a color) rather than looking like
+  an inconsistency. Each option's own section now links back to it instead of
+  re-deriving the pattern.
+- **All 12 built-in themes now have a real screenshot** in
+  [`docs/theme.md`](docs/theme.md#predefined-theme) — `battery_adaptive`,
+  `critical_when_low`/`_high`, `optimal_when_low`/`_high`,
+  `critical_when_extreme`/`_center` never had one; `light`/`temperature`/
+  `humidity`/`voc`/`pm25` got a fresh capture too. Every theme entry (plus
+  `custom_theme`/`bar_color_mode` right after) restructured to the same shape:
+  image, description, collapsible YAML, collapsible ranges table, note —
+  matching the Cookbook's own visual-effect entries. Demo dashboard gained
+  matching reference cards for every theme that didn't already have one
+  (`critical_when_extreme`, `critical_when_extreme_center`, `battery_adaptive`,
+  `pm25` — the last needed 5 new helper entities in
+  `docs/demo-dashboard-helpers.yaml`, mirroring the existing `voc` ones).
+- **The `--epb-*` CSS reference grows from 46 to 58 hooks**, all the new ones
+  from the features above (`--epb-icon-color`/`--epb-icon-shape-color`/
+  `--epb-icon-shape-hover-color`, `peak_marker`'s 6 mark hooks,
+  `--epb-trend-icon-color`, watermark's per-side opacity hooks) — each gets its
+  own card in the CSS hooks view of `docs/demo-dashboard.yaml`, same as the
+  rest.
+- Corrected a stale claim in `docs/theme.md`: `bar_color_mode` was documented as
+  having no effect under `center_zero` — it's worked since 1.6.0-rc4, and
+  `rainbow_full` specifically was built with `center_zero` in mind (each arm
+  keeps its own always-full gradient, marker crossing the visual center at
+  zero). Added a matching demo card for `critical_when_extreme_center`.
+- `docs/theme.md`'s DOM reference gains `peak_marker`'s own mark elements
+  (`.peak-min`/`.peak-max`/`.peak-avg`, always present alongside the `watermark`
+  ones, missing since `peak_marker` shipped above); the `ViewCore.minGridRows`
+  description updated for the new single-row case.
+- Every `<img>` in `docs/theme.md` gets a real `alt` description instead of the
+  leftover placeholder text ("Image title") every single one still had.
+- `watermark`'s own section gains an example combining an entity-sourced `value`
+  with `as`/`color` overrides — the exact shape behind #140, missing from the
+  existing entity/Jinja/plain-value examples.
 
 ---
 

@@ -29,6 +29,7 @@ import {
   EntityProgressIconAnimationModeChips,
   EntityProgressCircularBackgroundModeChips,
   EntityProgressSimpleAdvancedChips,
+  EntityProgressEnabledDisabledChips,
 } from './chips.js';
 import {
   EntityProgressBarStackEditor,
@@ -36,6 +37,8 @@ import {
   EntityProgressActionPicker,
 } from './list-editors.js';
 import { lengthSliderSelector, lengthUnitSelector } from '../utils/length.js';
+import { durationSliderSelector } from '../utils/duration.js';
+import { isMarkOverride, type WatermarkMark } from '../card/schema.js';
 
 // Every dynamic editor field element built below (ha-selector, the chip
 // custom elements from chips.ts, the list editors from list-editors.ts)
@@ -308,16 +311,31 @@ class EditorBase extends HTMLElement {
   };
 
   static #hasDeprecatedOptions(config: LovelaceConfig): boolean {
+    const wm = config?.watermark;
     return Boolean(
       is.nonEmptyString(config?.max_value) ||
-      is.nonEmptyString(config?.watermark?.low) ||
-      is.nonEmptyString(config?.watermark?.high) ||
+      is.nonEmptyString(wm?.low) ||
+      is.nonEmptyString(wm?.high) ||
+      wm?.low_as !== undefined ||
+      wm?.high_as !== undefined ||
+      wm?.low_color !== undefined ||
+      wm?.high_color !== undefined ||
+      wm?.disable_low !== undefined ||
+      wm?.disable_high !== undefined ||
       config?.disable_unit !== undefined ||
       is.array(config?.additions) ||
       config?.navigate_to !== undefined ||
       config?.show_more_info !== undefined ||
       EditorBase.#THEME_ALIASES[config?.theme],
     );
+  }
+
+  // watermark.low/.high can be a bare {entity,...} or wrap it one level
+  // deeper ({value: {entity,...}, as, type, opacity, color}) - unwrap before
+  // reading .entity, same shape as types.watermarkMark elsewhere.
+  static #watermarkEntity(mark: unknown): string {
+    const value = isMarkOverride(mark as WatermarkMark) ? (mark as { value?: unknown }).value : mark;
+    return is.plainObject(value) && is.nonEmptyString(value.entity) ? value.entity : '';
   }
 
   // Rewrites deprecated syntax to its modern equivalent only — never the
@@ -511,17 +529,29 @@ class EditorBase extends HTMLElement {
           Object.fromEntries(Object.entries(options.theme).filter(([key]) => PERCENT_THEME_KEYS.includes(key))),
         ),
       layout: () => buildBoxSelect(options.layout, tileImage),
-      // density: compact only has a meaningful shape in layout: horizontal
-      // (see schema.ts's applyDensityRule) - vertical dropped from the
-      // choices entirely, same "don't offer it just to silently revert it"
-      // reasoning as bar_orientation_no_up/bar_position_no_compact_below.
-      layout_horizontal_only: () => buildBoxSelect({ horizontal: options.layout.horizontal }, tileImage),
       unit_spacing: () => buildSelect(options.unit_spacing),
       unit_position: () => buildSelect(options.unit_position),
       watermark_type: () => buildSelect(options.watermark_type),
       watermark_as: () => buildSelect(options.watermark_as),
-      watermarkLowAttribute: () => ({ attribute: { entity_id: this.#config?.watermark?.low ?? '' } }),
-      watermarkHighAttribute: () => ({ attribute: { entity_id: this.#config?.watermark?.high ?? '' } }),
+      // Narrower than watermark_type (peak_marker's own enum) - same pattern
+      // as theme_percent_only, reusing watermark_type's labels (DRY).
+      peak_marker_type: () =>
+        buildSelect({
+          line: options.watermark_type.line,
+          round: options.watermark_type.round,
+          triangle: options.watermark_type.triangle,
+        }),
+      duration_unit: () => buildSelect(options.duration_unit),
+      trend_indicator_basis: () => buildSelect(options.trend_indicator_basis),
+      // watermark.low/.high can be a bare {entity,...} or wrap it one level
+      // deeper ({value: {entity,...}, as, type, opacity, color}) - unwrap
+      // before reading .entity, same shape as types.watermarkMark elsewhere.
+      watermarkLowAttribute: () => ({
+        attribute: { entity_id: EditorBase.#watermarkEntity(this.#config?.watermark?.low) },
+      }),
+      watermarkHighAttribute: () => ({
+        attribute: { entity_id: EditorBase.#watermarkEntity(this.#config?.watermark?.high) },
+      }),
     };
 
     // "length" fields (min_width…): a number+unit composite. The slider's
@@ -529,6 +559,9 @@ class EditorBase extends HTMLElement {
     // list depends on the card type, encoded in the type string by the factory.
     if (type.startsWith('length:')) return lengthSliderSelector(this.#config[type.slice('length:'.length)]);
     if (type.startsWith('lengthUnit:')) return lengthUnitSelector(type.slice('lengthUnit:'.length).split(','));
+    // peak_marker.window: the unit is baked into the type string by the
+    // factory's own type() function (config-derived, unlike length: above).
+    if (type.startsWith('duration:')) return durationSliderSelector(type.slice('duration:'.length));
 
     return (selectors[type] ?? (() => ({ text: {} })))();
   }
@@ -693,9 +726,13 @@ class EditorBase extends HTMLElement {
         this.#buildModeChipsField(field, EntityProgressSimpleAdvancedChips.ELEMENT_NAME, 'simple_advanced_mode'),
       hide_mode: () =>
         this.#buildModeChipsField(field, EntityProgressSimpleAdvancedChips.ELEMENT_NAME, 'simple_advanced_mode'),
+      trend_indicator_mode: () =>
+        this.#buildModeChipsField(field, EntityProgressSimpleAdvancedChips.ELEMENT_NAME, 'simple_advanced_mode'),
       icon_animation_mode: () => this.#buildModeChipsField(field, EntityProgressIconAnimationModeChips.ELEMENT_NAME),
       force_circular_background_mode: () =>
         this.#buildModeChipsField(field, EntityProgressCircularBackgroundModeChips.ELEMENT_NAME),
+      enabled_toggle: () =>
+        this.#buildModeChipsField(field, EntityProgressEnabledDisabledChips.ELEMENT_NAME, 'enabled_disabled_mode'),
       bar_stack_editor: () =>
         this.#buildListEditorField(
           field,

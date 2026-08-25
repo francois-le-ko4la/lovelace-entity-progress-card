@@ -218,6 +218,11 @@ your interface with minimal effort.
 
 ### 🔌 Battery (adapts to charging state)
 
+<img
+  src="images/theme-battery-adaptive-52b29a.png"
+  alt="theme: battery_adaptive example" height="84"
+/>
+
 A virtual theme, not a fixed set of zones: it checks whether the entity is
 currently charging - the same signal `icon_animation: battery_charging` already
 relies on (attribute, state, or a same-device sibling entity) - and switches
@@ -226,11 +231,18 @@ between two of the themes below accordingly. While charging, it uses
 the "safe" zone is the 30–70% middle rather than the top. Once unplugged, it
 switches to `critical_when_low`, where only running out matters.
 
+<br />
+<details>
+<summary>Show YAML</summary>
+
 ```yaml
 type: custom:entity-progress-card
 entity: sensor.phone_battery_level
 theme: battery_adaptive
 ```
+
+</details>
+<br />
 
 > [!NOTE]
 >
@@ -243,11 +255,20 @@ theme: battery_adaptive
 
 ### 🪫 Critical when low (Battery, disk space...)
 
+<img
+  src="images/theme-critical-low-e3c0fa.png"
+  alt="theme: critical_when_low example" height="320"
+/>
+
 The "Critical when Low" theme targets values that only become a problem near
 zero, and are otherwise fine across a wide range - a battery level or free disk
 space, for instance. Unlike `optimal_when_high`, the bands are not evenly split:
 they narrow sharply near zero to give more warning as the value approaches
 critical, and stay broadly "green" everywhere else.
+
+<br />
+<details>
+<summary>Show YAML</summary>
 
 ```yaml
 type: custom:entity-progress-card
@@ -255,12 +276,20 @@ entity: sensor.in2013_battery_level
 theme: critical_when_low
 ```
 
+</details>
+
+<details>
+<summary>Show ranges</summary>
+
 | **Percentage Range** | **Color** | **Description** _(optional)_ |
 | :------------------- | :-------- | :--------------------------- |
 | 0% – 10%             | `red`     | Critical                     |
 | 10% – 20%            | `orange`  | Low                          |
 | 20% – 30%            | `yellow`  | Watch                        |
 | 30% – 100%           | `green`   | Fine                         |
+
+</details>
+<br />
 
 > [!NOTE]
 >
@@ -273,16 +302,30 @@ theme: critical_when_low
 
 ### 💽 Optimal when low
 
+<img
+  src="images/theme-optimal-low-59ca00.png"
+  alt="theme: optimal_when_low example" height="320"
+/>
+
 The "Optimal when Low" parameter is particularly valuable for monitoring systems
 or components that perform best when their values are at a lower level. For
 example, in the case of memory usage or CPU load, lower values often indicate
 that the system is running efficiently and not overburdened.
+
+<br />
+<details>
+<summary>Show YAML</summary>
 
 ```yaml
 type: custom:entity-progress-card
 entity: sensor.system_monitor_cpu_usage
 theme: optimal_when_low
 ```
+
+</details>
+
+<details>
+<summary>Show ranges</summary>
 
 | **Percentage Range** | **Color**     | **Description** _(optional)_ |
 | :------------------- | :------------ | :--------------------------- |
@@ -291,6 +334,9 @@ theme: optimal_when_low
 | 40% – 60%            | `yellow`      | Moderate                     |
 | 60% – 80%            | `orange`      | Elevated                     |
 | 80% – 100%           | `red`         | High / Critical              |
+
+</details>
+<br />
 
 > [!NOTE]
 >
@@ -303,9 +349,18 @@ theme: optimal_when_low
 
 ### 🔥 Critical when high (CPU, RAM, disk usage...)
 
+<img
+  src="images/theme-critical-high-9ab8fb.png"
+  alt="theme: critical_when_high example" height="320"
+/>
+
 The mirror of `critical_when_low`: a metric that is fine across a wide low range
 and only becomes a problem near 100% - CPU load, RAM or disk usage, for
 instance. The bands narrow sharply near the top instead of the bottom.
+
+<br />
+<details>
+<summary>Show YAML</summary>
 
 ```yaml
 type: custom:entity-progress-card
@@ -313,12 +368,20 @@ entity: sensor.system_monitor_cpu_usage
 theme: critical_when_high
 ```
 
+</details>
+
+<details>
+<summary>Show ranges</summary>
+
 | **Percentage Range** | **Color** | **Description** _(optional)_ |
 | :------------------- | :-------- | :--------------------------- |
 | 0% – 70%             | `green`   | Fine                         |
 | 70% – 80%            | `yellow`  | Watch                        |
 | 80% – 90%            | `orange`  | High                         |
 | 90% – 100%           | `red`     | Critical                     |
+
+</details>
+<br />
 
 > [!NOTE]
 >
@@ -331,6 +394,11 @@ theme: critical_when_high
 
 ### 🔋 Optimal when high
 
+<img
+  src="images/theme-optimal-high-c1e953.png"
+  alt="theme: optimal_when_high example" height="320"
+/>
+
 The "Optimal when High" parameter is particularly useful in cases where the
 system or component in question performs best at higher values. For instance, in
 the case of battery charge, the device functions more efficiently and with
@@ -338,11 +406,20 @@ better performance when the battery level is high. By using "Optimal when High,"
 you can set a theme that visually emphasizes and prioritizes states where the
 value is at its peak.
 
+<br />
+<details>
+<summary>Show YAML</summary>
+
 ```yaml
 type: custom:entity-progress-card
 entity: sensor.in2013_battery_level
 theme: optimal_when_high
 ```
+
+</details>
+
+<details>
+<summary>Show ranges</summary>
 
 | **Percentage Range** | **Color**     | **Description** _(optional)_ |
 | :------------------- | :------------ | :--------------------------- |
@@ -351,6 +428,9 @@ theme: optimal_when_high
 | 40% – 60%            | `yellow`      | Moderate                     |
 | 60% – 80%            | `light-green` | Good                         |
 | 80% – 100%           | `green`       | Optimal / High               |
+
+</details>
+<br />
 
 > [!NOTE]
 >
@@ -363,16 +443,30 @@ theme: optimal_when_high
 
 ### 🎯 Critical when extreme (Tank level, deviation...)
 
+<img
+  src="images/theme-critical-extreme-ab54c6.png"
+  alt="theme: critical_when_extreme example" height="320"
+/>
+
 The combination of `critical_when_low` and `critical_when_high`: both ends of
 the range are a problem, and the middle is a wide, comfortable "green" band - a
 tank level (too empty or too full), or a deviation from a target/setpoint (pairs
 well with `center_zero`), for instance.
+
+<br />
+<details>
+<summary>Show YAML</summary>
 
 ```yaml
 type: custom:entity-progress-card
 entity: sensor.water_tank_level
 theme: critical_when_extreme
 ```
+
+</details>
+
+<details>
+<summary>Show ranges</summary>
 
 | **Percentage Range** | **Color** | **Description** _(optional)_ |
 | :------------------- | :-------- | :--------------------------- |
@@ -383,6 +477,9 @@ theme: critical_when_extreme
 | 70% – 80%            | `yellow`  | Watch                        |
 | 80% – 90%            | `orange`  | High                         |
 | 90% – 100%           | `red`     | Critical                     |
+
+</details>
+<br />
 
 > [!NOTE]
 >
@@ -395,6 +492,11 @@ theme: critical_when_extreme
 
 ### 🎯 Critical when extreme, centered (`center_zero`)
 
+<img
+  src="images/theme-critical-extreme-center-e918cc.png"
+  alt="theme: critical_when_extreme_center example" height="84"
+/>
+
 `critical_when_extreme`'s own shape, but built for
 [`center_zero`](configuration.md#center_zero) specifically: one continuous scale
 from -100% to 100% instead of the same 0-100% zones mirrored onto each arm —
@@ -402,12 +504,21 @@ safe (green) sits at the center (zero), danger (red) at both ends, whichever
 direction the value swings. A net power flow (charging/discharging), or a
 deviation from a target/setpoint that can go either way, for instance.
 
+<br />
+<details>
+<summary>Show YAML</summary>
+
 ```yaml
 type: custom:entity-progress-card
 entity: sensor.battery_power_flow
 center_zero: true
 theme: critical_when_extreme_center
 ```
+
+</details>
+
+<details>
+<summary>Show ranges</summary>
 
 | **Percentage Range** | **Color** | **Description** _(optional)_ |
 | :------------------- | :-------- | :--------------------------- |
@@ -418,6 +529,9 @@ theme: critical_when_extreme_center
 | 40% – 60%            | `yellow`  | Watch                        |
 | 60% – 80%            | `orange`  | High                         |
 | 80% – 100%           | `red`     | Critical                     |
+
+</details>
+<br />
 
 > [!NOTE]
 >
@@ -433,6 +547,24 @@ theme: critical_when_extreme_center
 
 ### 💡 Light
 
+<img
+  src="images/theme-light-bcf481.png"
+  alt="theme: light example" height="320"
+/>
+
+The `light` configuration, designed by
+[@harmonie-durrant](https://github.com/harmonie-durrant), defines how different
+brightness levels are visually represented using colors and icons. This system
+uses a **linear gradient**, meaning the color transitions smoothly across the
+brightness percentage range. The `mdi:lightbulb-outline` icon is used for lower
+brightness levels, while `mdi:lightbulb` is displayed when the light intensity
+increases - thanks to the **linear** approach, the brightness smoothly
+transitions between these levels.
+
+<br />
+<details>
+<summary>Show YAML</summary>
+
 ```yaml
 type: custom:entity-progress-card
 entity: light.bandeau_led
@@ -442,13 +574,10 @@ icon_tap_action:
   action: more-info
 ```
 
-The `light` configuration, designed by
-[@harmonie-durrant](https://github.com/harmonie-durrant), defines how different
-brightness levels are visually represented using colors and icons. This system
-uses a **linear gradient**, meaning the color transitions smoothly across the
-brightness percentage range.
+</details>
 
-The brightness levels and their corresponding colors are as follows:
+<details>
+<summary>Show ranges</summary>
 
 | **Brightness Level** | **Color Code** | **Description**    | **Icon**                |
 | :------------------- | :------------- | :----------------- | :---------------------- |
@@ -458,20 +587,27 @@ The brightness levels and their corresponding colors are as follows:
 | ≥ 75%                | `#FFE79E`      | Bright warm light  | `mdi:lightbulb`         |
 | ≥ 100%               | `#FFE79E`      | Maximum brightness | `mdi:lightbulb`         |
 
-The `mdi:lightbulb-outline` icon is used for lower brightness levels, while
-`mdi:lightbulb` is displayed when the light intensity increases. Thanks to the
-**linear** approach, the brightness smoothly transitions between these levels.
-
-<img
-  src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/light.png"
-  alt="Image title" width="500"
-/>
+</details>
+<br />
 
 [🔼 Back to top]
 
 <a id="temperature"></a>
 
 ### 🌡️ Temperature
+
+<img
+  src="images/theme-temperature-42e372.png"
+  alt="theme: temperature example" height="320"
+/>
+
+We can use `min_value` and `max_value` to define the range of values we want to
+represent with our color gradient. We use predefined intervals, each associated
+with a specific color.
+
+<br />
+<details>
+<summary>Show YAML</summary>
 
 ```yaml
 type: custom:entity-progress-card
@@ -485,9 +621,10 @@ icon_tap_action:
   action: more-info
 ```
 
-We can use `min_value` and `max_value` to define the range of values we want to
-represent with our color gradient. We use predefined intervals, each associated
-with a specific color:
+</details>
+
+<details>
+<summary>Show ranges</summary>
 
 | **Temperature Range (°C / °F)** | **Color Variable**        | **Description** |
 | :------------------------------ | :------------------------ | :-------------- |
@@ -501,21 +638,37 @@ with a specific color:
 | 27°C – 30°C / 80.6°F – 86°F     | `var(--amber-color)`      | Hot             |
 | 30°C – 100°C / 86°F – 212°F     | `var(--red-color)`        | Extremely hot   |
 
+</details>
+<br />
+
 > [!IMPORTANT]
 >
 > Fahrenheit values are converted to apply the correct color. Make sure to set
 > your unit to `°F` correctly in order to see the accurate color representation.
-
-<img
-  src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/temperature.png"
-  alt="Image title" width="500"
-/>
 
 [🔼 Back to top]
 
 <a id="humidity"></a>
 
 ### 💧 Humidity
+
+<img
+  src="images/theme-humidity-f7ee02.png"
+  alt="theme: humidity example" height="320"
+/>
+
+The `humidity` configuration defines how different humidity levels are
+represented with colors and icons. Unlike a linear gradient, this system uses
+predefined humidity ranges, each associated with a specific color and icon.
+Ranges are mirrored around the 40–60% comfort zone (10/10/10/20 on each side),
+so the same distance from optimal gets a comparably-weighted color on either the
+dry or humid end. Each range is visually represented using the
+`mdi:water-percent` icon, ensuring a clear and intuitive display of humidity
+levels.
+
+<br />
+<details>
+<summary>Show YAML</summary>
 
 ```yaml
 type: custom:entity-progress-card
@@ -526,11 +679,10 @@ icon_tap_action:
   action: more-info
 ```
 
-The `humidity` configuration defines how different humidity levels are
-represented with colors and icons. Unlike a linear gradient, this system uses
-predefined humidity ranges, each associated with a specific color and icon.
+</details>
 
-The ranges and their corresponding colors are as follows:
+<details>
+<summary>Show ranges</summary>
 
 | **Humidity Range** | **Color Variable**         | **Description**    |
 | :----------------- | :------------------------- | :----------------- |
@@ -542,23 +694,30 @@ The ranges and their corresponding colors are as follows:
 | 70% – 80%          | `var(--indigo-color)`      | Humid air          |
 | 80% – 100%         | `var(--deep-purple-color)` | Very humid air     |
 
-Ranges are mirrored around the 40–60% comfort zone (10/10/10/20 on each side),
-so the same distance from optimal gets a comparably-weighted color on either the
-dry or humid end.
-
-Each range is visually represented using the `mdi:water-percent` icon, ensuring
-a clear and intuitive display of humidity levels.
-
-<img
-  src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/humidity.png"
-  alt="Image title" width="500"
-/>
+</details>
+<br />
 
 [🔼 Back to top]
 
 <a id="voc"></a>
 
 ### 🦠 VOC
+
+<img
+  src="images/theme-voc-e130da.png"
+  alt="theme: voc example" height="320"
+/>
+
+The `voc` configuration defines how different levels of volatile organic
+compounds (VOCs) are represented using colors and icons. Instead of a linear
+gradient, this system categorizes VOC levels into predefined ranges, each
+associated with a specific color for better visualization. Each range is
+visually represented using the `mdi:air-filter` icon, ensuring a clear and
+intuitive display of VOC levels.
+
+<br />
+<details>
+<summary>Show YAML</summary>
 
 ```yaml
 type: custom:entity-progress-card
@@ -571,12 +730,10 @@ icon_tap_action:
   action: more-info
 ```
 
-The `voc` configuration defines how different levels of volatile organic
-compounds (VOCs) are represented using colors and icons. Instead of a linear
-gradient, this system categorizes VOC levels into predefined ranges, each
-associated with a specific color for better visualization.
+</details>
 
-The ranges and their corresponding colors are as follows:
+<details>
+<summary>Show ranges</summary>
 
 | **TVOC Range (ppb)** | **Color Variable**         | **Description**        |
 | :------------------- | :------------------------- | :--------------------- |
@@ -585,6 +742,9 @@ The ranges and their corresponding colors are as follows:
 | 500 – 3000           | `var(--orange-color)`      | Moderate air quality   |
 | 3000 – 25,000        | `var(--red-color)`         | Poor air quality       |
 | 25,000 – 50,000      | `var(--deep-purple-color)` | Hazardous              |
+
+</details>
+<br />
 
 > [!IMPORTANT]
 >
@@ -599,19 +759,27 @@ The ranges and their corresponding colors are as follows:
 > shall prevail. The lower the value, the better it is generally considered to
 > be. With this card you can use `custom_theme` to define your own ranges.
 
-Each range is visually represented using the `mdi:air-filter` icon, ensuring a
-clear and intuitive display of VOC levels.
-
-<img
-  src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/voc.png"
-  alt="Image title" width="250"
-/>
-
 [🔼 Back to top]
 
 <a id="pm25"></a>
 
 ### 🦠 PM 2.5
+
+<img
+  src="images/theme-pm-db1279.png"
+  alt="theme: pm25 example" height="320"
+/>
+
+The `pm25` configuration defines how different concentrations of fine
+particulate matter (PM2.5) are represented using colors and icons. Rather than a
+linear gradient, this system categorizes PM2.5 levels into predefined ranges,
+each mapped to a specific color for easy interpretation. Each range is visually
+represented using the `mdi:air-filter` icon, ensuring a clear and intuitive
+display of PM2.5 pollution levels.
+
+<br />
+<details>
+<summary>Show YAML</summary>
 
 ```yaml
 type: custom:entity-progress-card
@@ -624,12 +792,10 @@ icon_tap_action:
   action: more-info
 ```
 
-The `pm25` configuration defines how different concentrations of fine
-particulate matter (PM2.5) are represented using colors and icons. Rather than a
-linear gradient, this system categorizes PM2.5 levels into predefined ranges,
-each mapped to a specific color for easy interpretation.
+</details>
 
-The ranges and their corresponding colors are as follows:
+<details>
+<summary>Show ranges</summary>
 
 | **PM2.5 Range (µg/m³)** | **Color Variable**         | **Description**                |
 | :---------------------- | :------------------------- | :----------------------------- |
@@ -638,6 +804,9 @@ The ranges and their corresponding colors are as follows:
 | 35 – 55                 | `var(--orange-color)`      | Unhealthy for sensitive groups |
 | 55 – 150                | `var(--red-color)`         | Unhealthy air quality          |
 | 150 – 200               | `var(--deep-purple-color)` | Very unhealthy air quality     |
+
+</details>
+<br />
 
 > [!IMPORTANT]
 >
@@ -652,14 +821,6 @@ The ranges and their corresponding colors are as follows:
 > shall prevail. The lower the value, the better it is generally considered to
 > be. With this card you can use `custom_theme` to define your own ranges.
 
-Each range is visually represented using the `mdi:air-filter` icon, ensuring a
-clear and intuitive display of PM2.5 pollution levels.
-
-<img
-  src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/pm.png"
-  alt="Image title" width="250"
-/>
-
 [🔼 Back to top]
 
 <a id="custom-theme"></a>
@@ -671,7 +832,12 @@ clear and intuitive display of PM2.5 pollution levels.
 In addition to predefined themes, you can define your own color zones using
 [`custom_theme`](configuration.md#custom_theme) as an array. Each entry needs
 `min` and `max`; a color key (`color`, `bar_color`, `icon_color`) and `icon` are
-optional.
+optional. You can also use separate colors for the bar and the icon instead of
+one shared `color`.
+
+<br />
+<details>
+<summary>Show YAML</summary>
 
 ```yaml
 type: custom:entity-progress-card
@@ -688,8 +854,6 @@ custom_theme:
     color: orange
 ```
 
-You can also use separate colors for the bar and the icon:
-
 ```yaml
 custom_theme:
   - min: 0
@@ -701,6 +865,9 @@ custom_theme:
     bar_color: green
     icon_color: green
 ```
+
+</details>
+<br />
 
 > [!NOTE]
 >
@@ -726,23 +893,21 @@ custom_theme:
 ### `bar_color_mode`
 
 The `bar_color_mode` parameter controls how theme colors are rendered on the
-progress bar. It works with both predefined and custom themes.
-
-| Value     | Description                                                             |
-| :-------- | :---------------------------------------------------------------------- |
-| `auto`    | Default. The bar is filled with the solid color of the current zone.    |
-| `segment` | Each zone is drawn as a distinct colored block up to the current value. |
-| `rainbow` | A smooth gradient flows across all visible zone colors.                 |
-
-#### `segment` example
-
-For a battery at 69% with `optimal_when_high`, the bar shows each zone as a
-solid block:
+progress bar. It works with both predefined and custom themes. For a battery at
+69% with `optimal_when_high`, `segment` shows each zone as a distinct solid
+block up to the current value:
 
 ```text
 [██ red ██][████ orange ████][██████ yellow ██████][████ light-green ▓▓▓]
  0%       20%               40%                   60%                 69%
 ```
+
+`rainbow` renders the same sensor as a smooth gradient flowing across all
+visible zone colors instead.
+
+<br />
+<details>
+<summary>Show YAML</summary>
 
 ```yaml
 type: custom:entity-progress-card
@@ -751,10 +916,6 @@ theme: optimal_when_high
 bar_color_mode: segment
 ```
 
-#### `rainbow` example
-
-The same sensor with a smooth gradient transitioning between zone colors:
-
 ```yaml
 type: custom:entity-progress-card
 entity: sensor.battery_level
@@ -762,11 +923,33 @@ theme: optimal_when_high
 bar_color_mode: rainbow
 ```
 
+</details>
+<br />
+
+<br />
+<details>
+<summary>Show modes</summary>
+
+| Value     | Description                                                             |
+| :-------- | :---------------------------------------------------------------------- |
+| `auto`    | Default. The bar is filled with the solid color of the current zone.    |
+| `segment` | Each zone is drawn as a distinct colored block up to the current value. |
+| `rainbow` | A smooth gradient flows across all visible zone colors.                 |
+
+</details>
+<br />
+
 > [!NOTE]
 >
-> `bar_color_mode` has no effect when `center_zero` is enabled. For linear
-> themes (e.g. `light`), zone boundaries are derived automatically by splitting
-> 0–100% into equal segments (5 levels → 0–20%, 20–40%, …).
+> `bar_color_mode` also works with
+> [`center_zero`](configuration.md#center_zero): a signed theme like
+> `critical_when_extreme_center` reads as one continuous curve across both arms,
+> while a regular theme gets its zones mirrored onto each arm independently.
+> `rainbow_full` in particular was built with `center_zero` in mind: each arm
+> gets its own always-full gradient, with the marker crossing the visual center
+> at zero. For linear themes (e.g. `light`), zone boundaries are derived
+> automatically by splitting 0–100% into equal segments (5 levels → 0–20%,
+> 20–40%, …).
 
 [🔼 Back to top]
 
@@ -776,54 +959,66 @@ bar_color_mode: rainbow
 
 ### CSS hooks
 
-| Variable                              | Target       | Category   | Description                                                                                                                                          | Example       |
-| ------------------------------------- | ------------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
-| `--epb-card-height`                   | Card         | Dimension  | Card height                                                                                                                                          | `80px`        |
-| `--epb-card-width`                    | Card         | Dimension  | Card width                                                                                                                                           | `300px`       |
-| `--epb-card-border-width`             | Card         | Border     | Border thickness                                                                                                                                     | `2px`         |
-| `--epb-card-border-color`             | Card         | Border     | Border color                                                                                                                                         | `#ff6600`     |
-| `--epb-card-border-radius`            | Card         | Border     | Card corner radius                                                                                                                                   | `20px`        |
-| `--epb-card-border-style`             | Card         | Border     | Border style                                                                                                                                         | `dashed`      |
-| `--epb-card-font-family`              | Card         | Typography | Card font family                                                                                                                                     | `monospace`   |
-| `--epb-spacing`                       | Card         | Dimension  | Global density: paddings and gaps of the whole card                                                                                                  | `6px`         |
-| `--epb-icon-size`                     | Icon         | Dimension  | Icon size (standard card layout)                                                                                                                     | `28px`        |
-| `--epb-shape-size`                    | Icon         | Dimension  | Circular shape size behind the icon                                                                                                                  | `42px`        |
-| `--epb-progress-transition`           | Progress Bar | Animation  | Bar fill transition (duration/easing, `none` to disable)                                                                                             | `0.2s linear` |
-| `--epb-progress-bar-color`            | Progress Bar | Color      | Progress bar fill color                                                                                                                              | `#ff6600`     |
-| `--epb-progress-bar-background-color` | Progress Bar | Color      | Progress bar background color                                                                                                                        | `#333333`     |
-| `--epb-progress-bar-size`             | Progress Bar | Dimension  | Forces the bar fill size (overrides computed value)                                                                                                  | `60%`         |
-| `--epb-progress-bar-radius`           | Progress Bar | Border     | Progress bar container border radius                                                                                                                 | `4px`         |
-| `--epb-progress-inner-radius`         | Progress Bar | Border     | Progress bar inner fill border radius                                                                                                                | `4px`         |
-| `--epb-progress-bar-min-width`        | Progress Bar | Dimension  | Minimum bar width before it stops shrinking further                                                                                                  | `30px`        |
-| `--epb-bar-segment-gap`               | Progress Bar | Dimension  | `bar_segments` divider thickness (overrides computed value)                                                                                          | `2px`         |
-| `--epb-rainbow-marker-color`          | Marker       | Color      | `bar_color_mode: rainbow_full` marker color                                                                                                          | `#ffffff`     |
-| `--epb-rainbow-marker-opacity`        | Marker       | Opacity    | `bar_color_mode: rainbow_full` marker opacity                                                                                                        | `1`           |
-| `--epb-rainbow-marker-size`           | Marker       | Dimension  | `bar_color_mode: rainbow_full` marker width                                                                                                          | `5px`         |
-| `--epb-rainbow-marker-border-color`   | Marker       | Border     | `bar_color_mode: rainbow_full` marker border color                                                                                                   | `#ffffff`     |
-| `--epb-rainbow-marker-border-width`   | Marker       | Border     | `bar_color_mode: rainbow_full` marker border thickness                                                                                               | `1px`         |
-| `--epb-icon-and-shape-color`          | Icon         | Color      | Icon and shape background color                                                                                                                      | `#ff6600`     |
-| `--epb-icon-shape-opacity`            | Icon         | Opacity    | Circular shape opacity behind the icon (`0` removes it entirely, new in 1.6.2)                                                                       | `0`           |
-| `--epb-charge-x1`                     | Icon         | Dimension  | `icon_animation: battery-charging` bolt left edge                                                                                                    | `34%`         |
-| `--epb-charge-x2`                     | Icon         | Dimension  | `icon_animation: battery-charging` bolt right edge                                                                                                   | `67%`         |
-| `--epb-charge-y1`                     | Icon         | Dimension  | `icon_animation: battery-charging` bolt top edge                                                                                                     | `29%`         |
-| `--epb-name-color`                    | Name         | Color      | Name color                                                                                                                                           | `#ffffff`     |
-| `--epb-name-font-size`                | Name         | Typography | Name font size                                                                                                                                       | `16px`        |
-| `--epb-name-font-weight`              | Name         | Typography | Name font weight                                                                                                                                     | `700`         |
-| `--epb-name-letter-spacing`           | Name         | Typography | Name letter spacing                                                                                                                                  | `2px`         |
-| `--epb-detail-color`                  | Detail       | Color      | Detail color                                                                                                                                         | `#aaaaaa`     |
-| `--epb-detail-font-size`              | Detail       | Typography | Detail font size                                                                                                                                     | `12px`        |
-| `--epb-detail-font-weight`            | Detail       | Typography | Detail font weight                                                                                                                                   | `300`         |
-| `--epb-detail-letter-spacing`         | Detail       | Typography | Detail letter spacing                                                                                                                                | `1px`         |
-| `--epb-watermark-line-size`           | Watermark    | Dimension  | Line watermark thickness                                                                                                                             | `3px`         |
-| `--epb-watermark-opacity`             | Watermark    | Opacity    | Watermark opacity                                                                                                                                    | `0.5`         |
-| `--epb-low-watermark-color`           | Watermark    | Color      | Low watermark color                                                                                                                                  | `#ff0000`     |
-| `--epb-high-watermark-color`          | Watermark    | Color      | High watermark color                                                                                                                                 | `#00ff00`     |
-| `--epb-zero-mark-width`               | Marker       | Dimension  | Zero marker thickness                                                                                                                                | `2px`         |
-| `--epb-zero-mark-color`               | Marker       | Color      | Zero marker color                                                                                                                                    | `#ff0000`     |
-| `--epb-alert-background-opacity`      | Alert        | Opacity    | `alert_when.highlight: background` tint opacity, browsers below the "Full visual effects" tier only (see [Prerequisites](../README.md#installation)) | `0.3`         |
-| `--epb-label-color`                   | Status Label | Color      | `status_label` pill text color                                                                                                                       | `#ffffff`     |
-| `--epb-label-background-color`        | Status Label | Color      | `status_label` pill background color                                                                                                                 | `#333333`     |
-| `--epb-label-border-color`            | Status Label | Border     | `status_label` pill border color                                                                                                                     | `#ff6600`     |
+| Variable                              | Target       | Category   | Description                                                                                                                                           | Example       |
+| ------------------------------------- | ------------ | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| `--epb-card-height`                   | Card         | Dimension  | Card height                                                                                                                                           | `80px`        |
+| `--epb-card-width`                    | Card         | Dimension  | Card width                                                                                                                                            | `300px`       |
+| `--epb-card-border-width`             | Card         | Border     | Border thickness                                                                                                                                      | `2px`         |
+| `--epb-card-border-color`             | Card         | Border     | Border color                                                                                                                                          | `#ff6600`     |
+| `--epb-card-border-radius`            | Card         | Border     | Card corner radius                                                                                                                                    | `20px`        |
+| `--epb-card-border-style`             | Card         | Border     | Border style                                                                                                                                          | `dashed`      |
+| `--epb-card-font-family`              | Card         | Typography | Card font family                                                                                                                                      | `monospace`   |
+| `--epb-spacing`                       | Card         | Dimension  | Global density: paddings and gaps of the whole card                                                                                                   | `6px`         |
+| `--epb-icon-size`                     | Icon         | Dimension  | Icon size (standard card layout)                                                                                                                      | `28px`        |
+| `--epb-shape-size`                    | Icon         | Dimension  | Circular shape size behind the icon                                                                                                                   | `42px`        |
+| `--epb-progress-transition`           | Progress Bar | Animation  | Bar fill transition (duration/easing, `none` to disable)                                                                                              | `0.2s linear` |
+| `--epb-progress-bar-color`            | Progress Bar | Color      | Progress bar fill color                                                                                                                               | `#ff6600`     |
+| `--epb-progress-bar-background-color` | Progress Bar | Color      | Progress bar background color                                                                                                                         | `#333333`     |
+| `--epb-progress-bar-size`             | Progress Bar | Dimension  | Forces the bar fill size (overrides computed value)                                                                                                   | `60%`         |
+| `--epb-progress-bar-radius`           | Progress Bar | Border     | Progress bar container border radius                                                                                                                  | `4px`         |
+| `--epb-progress-inner-radius`         | Progress Bar | Border     | Progress bar inner fill border radius                                                                                                                 | `4px`         |
+| `--epb-progress-bar-min-width`        | Progress Bar | Dimension  | Minimum bar width before it stops shrinking further                                                                                                   | `30px`        |
+| `--epb-bar-segment-gap`               | Progress Bar | Dimension  | `bar_segments` divider thickness (overrides computed value)                                                                                           | `2px`         |
+| `--epb-rainbow-marker-color`          | Marker       | Color      | `bar_color_mode: rainbow_full` marker color                                                                                                           | `#ffffff`     |
+| `--epb-rainbow-marker-opacity`        | Marker       | Opacity    | `bar_color_mode: rainbow_full` marker opacity                                                                                                         | `1`           |
+| `--epb-rainbow-marker-size`           | Marker       | Dimension  | `bar_color_mode: rainbow_full` marker width                                                                                                           | `5px`         |
+| `--epb-rainbow-marker-border-color`   | Marker       | Border     | `bar_color_mode: rainbow_full` marker border color                                                                                                    | `#ffffff`     |
+| `--epb-rainbow-marker-border-width`   | Marker       | Border     | `bar_color_mode: rainbow_full` marker border thickness                                                                                                | `1px`         |
+| `--epb-icon-and-shape-color`          | Icon         | Color      | Icon and shape background color, both at once                                                                                                         | `#ff6600`     |
+| `--epb-icon-color`                    | Icon         | Color      | Icon color only, overrides `--epb-icon-and-shape-color` for just the icon (new in 1.6.2)                                                              | `#ff6600`     |
+| `--epb-icon-shape-color`              | Icon         | Color      | Shape background color only, overrides `--epb-icon-and-shape-color` for just the shape (new in 1.6.2)                                                 | `#ff6600`     |
+| `--epb-icon-shape-hover-color`        | Icon         | Color      | Shape background color on hover, for a clickable icon — settable from a theme, no `card_mod` needed (new in 1.6.2)                                    | `#ff6600`     |
+| `--epb-icon-shape-opacity`            | Icon         | Opacity    | Circular shape opacity behind the icon (`0` removes it entirely, new in 1.6.2)                                                                        | `0`           |
+| `--epb-charge-x1`                     | Icon         | Dimension  | `icon_animation: battery-charging` bolt left edge                                                                                                     | `34%`         |
+| `--epb-charge-x2`                     | Icon         | Dimension  | `icon_animation: battery-charging` bolt right edge                                                                                                    | `67%`         |
+| `--epb-charge-y1`                     | Icon         | Dimension  | `icon_animation: battery-charging` bolt top edge                                                                                                      | `29%`         |
+| `--epb-name-color`                    | Name         | Color      | Name color                                                                                                                                            | `#ffffff`     |
+| `--epb-name-font-size`                | Name         | Typography | Name font size                                                                                                                                        | `16px`        |
+| `--epb-name-font-weight`              | Name         | Typography | Name font weight                                                                                                                                      | `700`         |
+| `--epb-name-letter-spacing`           | Name         | Typography | Name letter spacing                                                                                                                                   | `2px`         |
+| `--epb-detail-color`                  | Detail       | Color      | Detail color                                                                                                                                          | `#aaaaaa`     |
+| `--epb-detail-font-size`              | Detail       | Typography | Detail font size                                                                                                                                      | `12px`        |
+| `--epb-detail-font-weight`            | Detail       | Typography | Detail font weight                                                                                                                                    | `300`         |
+| `--epb-detail-letter-spacing`         | Detail       | Typography | Detail letter spacing                                                                                                                                 | `1px`         |
+| `--epb-trend-icon-color`              | Trend        | Color      | `trend_indicator` arrow color, overrides the direction's own computed color                                                                           | `#ff6600`     |
+| `--epb-watermark-line-size`           | Watermark    | Dimension  | Line watermark thickness                                                                                                                              | `3px`         |
+| `--epb-watermark-opacity`             | Watermark    | Opacity    | Watermark opacity, both sides (overridden per side by the two below)                                                                                  | `0.5`         |
+| `--epb-low-watermark-opacity`         | Watermark    | Opacity    | Low watermark opacity only                                                                                                                            | `0.5`         |
+| `--epb-high-watermark-opacity`        | Watermark    | Opacity    | High watermark opacity only                                                                                                                           | `0.5`         |
+| `--epb-low-watermark-color`           | Watermark    | Color      | Low watermark color                                                                                                                                   | `#ff0000`     |
+| `--epb-high-watermark-color`          | Watermark    | Color      | High watermark color                                                                                                                                  | `#00ff00`     |
+| `--epb-peak-min-color`                | Peak Marker  | Color      | `peak_marker` minimum mark color                                                                                                                      | `#00ffff`     |
+| `--epb-peak-min-opacity`              | Peak Marker  | Opacity    | `peak_marker` minimum mark opacity                                                                                                                    | `0.8`         |
+| `--epb-peak-max-color`                | Peak Marker  | Color      | `peak_marker` maximum mark color                                                                                                                      | `#ff00ff`     |
+| `--epb-peak-max-opacity`              | Peak Marker  | Opacity    | `peak_marker` maximum mark opacity                                                                                                                    | `0.8`         |
+| `--epb-peak-average-color`            | Peak Marker  | Color      | `peak_marker` average mark color                                                                                                                      | `#ffff00`     |
+| `--epb-peak-average-opacity`          | Peak Marker  | Opacity    | `peak_marker` average mark opacity                                                                                                                    | `0.8`         |
+| `--epb-zero-mark-width`               | Marker       | Dimension  | Zero marker thickness                                                                                                                                 | `2px`         |
+| `--epb-zero-mark-color`               | Marker       | Color      | Zero marker color                                                                                                                                     | `#ff0000`     |
+| `--epb-alert-background-opacity`      | Alert        | Opacity    | `alert_when.highlight: background` tint opacity, browsers below the "Full visual effects" tier only (see [Prerequisites](../README.md#prerequisites)) | `0.3`         |
+| `--epb-label-color`                   | Status Label | Color      | `status_label` pill text color                                                                                                                        | `#ffffff`     |
+| `--epb-label-background-color`        | Status Label | Color      | `status_label` pill background color                                                                                                                  | `#333333`     |
+| `--epb-label-border-color`            | Status Label | Border     | `status_label` pill border color                                                                                                                      | `#ff6600`     |
 
 <a id="usage"></a>
 
@@ -901,6 +1096,65 @@ card_mod: # or: uix:
     }
 ```
 
+#### Icon and shape color
+
+The shape (the circular background behind the icon) has its own opacity,
+independent of `--epb-icon-and-shape-color`/`--epb-icon-shape-color` — 20% at
+rest, 35% on hover for a clickable icon (`ha-tile-icon`'s own numbers). CSS
+`opacity` multiplies with whatever alpha the color itself already carries, so an
+`rgba(...)` shape color and that built-in opacity **compose**: a
+`rgba(255, 102, 0, 0.3)` shape color actually renders at roughly 0.3 × 20% ≈ 6%
+visible opacity at rest, not 30%.
+
+If you're picking the alpha yourself, set `--epb-icon-shape-opacity: 1` too so
+your `rgba()` value is the only transparency in effect:
+
+```yaml
+card_mod: # or: uix:
+  style: |
+    ha-card {
+      --epb-icon-shape-color: rgba(255, 102, 0, 0.3);
+      --epb-icon-shape-opacity: 1;
+    }
+```
+
+Doing that also turns off the built-in hover brighten (20% → 35%), since it's
+driven by that same opacity. `--epb-icon-shape-hover-color` restores a hover
+effect for a clickable icon without `card_mod` — a plain value in your theme
+YAML, since a theme can't declare a `:hover` selector itself:
+
+```yaml
+my_custom_theme:
+  # ...
+  epb-icon-shape-color: 'rgba(255, 102, 0, 0.3)'
+  epb-icon-shape-opacity: 1
+  epb-icon-shape-hover-color: 'rgba(255, 102, 0, 0.5)'
+```
+
+The same thing also works from `card_mod`, scoped to a single card. Its `style:`
+is injected straight into the card's own shadow root, so it can also target
+`.shape` directly if you need a real `:hover` rule instead — shown in the
+[DOM tree](#dom) below:
+
+```yaml
+card_mod: # or: uix:
+  style: |
+    ha-card {
+      --epb-icon-shape-color: rgba(255, 102, 0, 0.3);
+      --epb-icon-shape-opacity: 1;
+    }
+    .shape:hover {
+      --epb-icon-shape-color: rgba(255, 102, 0, 0.5);
+    }
+```
+
+> [!NOTE]
+>
+> Unlike the `--epb-*` variables, `.shape` is an internal class name, not a
+> versioned public hook — see the
+> [Class Name Updates & Migration Guide](#class-name-migration) if it's ever
+> renamed in a future release.
+
 [🔼 Back to top]
 
 <a id="card-mod-and-card-structure"></a>
@@ -977,6 +1231,9 @@ ha-card.entity-progress-card...
              ├─ div.inner
              ├─ div.low.watermark.mark
              ├─ div.high.watermark.mark
+             ├─ div.peak-min.watermark.mark (Card only)
+             ├─ div.peak-max.watermark.mark (Card only)
+             ├─ div.peak-avg.watermark.mark (Card only)
              └─ div.zero.mark (if center-zero)
 ```
 
@@ -1035,6 +1292,9 @@ ha-card...
              ├─ div.inner
              ├─ div.low.watermark.mark
              ├─ div.high.watermark.mark
+             ├─ div.peak-min.watermark.mark (always present, never shown - peak_marker is Card only)
+             ├─ div.peak-max.watermark.mark (always present, never shown - peak_marker is Card only)
+             ├─ div.peak-avg.watermark.mark (always present, never shown - peak_marker is Card only)
              └─ div.zero.mark (if center-zero)
 ```
 
@@ -1101,6 +1361,9 @@ ha-card...
          │   └─ div.inner.positive
          ├─ div.low.watermark.mark
          ├─ div.high.watermark.mark
+         ├─ div.peak-min.watermark.mark (Card only)
+         ├─ div.peak-max.watermark.mark (Card only)
+         ├─ div.peak-avg.watermark.mark (Card only)
          └─ div.zero.mark
 ```
 
@@ -1130,7 +1393,12 @@ Both the grid row count and the min-height floor come from the same calculation
 (horizontal) or 2 (vertical), +1 more for `bar_size: xlarge` or
 `bar_position: below`, and capped to 1 row entirely when the icon is hidden
 (hiding it only ever changes the base row count, never whether a large bar still
-needs its own extra row on top - see [issue #133]).
+needs its own extra row on top - see [issue #133]). Also capped to 1 row for
+`layout: vertical` + `bar_position: top`/`bottom`/`background` once `name` and
+`secondary_info` are both hidden - the bar overlays the icon row there instead
+of needing one of its own, same as
+[`density: compact`](configuration.md#density) always resolves to on that
+layout.
 
 ### In a Sections view
 

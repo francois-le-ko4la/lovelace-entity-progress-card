@@ -547,6 +547,18 @@ Key mechanics (`_processJinjaFields` / `_subscribeToTemplate`):
   config is what the editor round-trips, so user YAML is never rewritten behind
   their back.
 - Deprecated options are detected and logged with a migration hint.
+- **Migration is per-class, not automatic** —
+  `BaseConfigHelper._customizeConfig` calls `_migrateLegacyOptions`
+  polymorphically, but only `CardConfigHelper` (Card/Badge/Feature) overrode it
+  with real transformations until #140:
+  `TemplateConfigHelper`/`BadgeTemplateConfigHelper` inherited
+  `BaseConfigHelper`'s no-op, so `watermark.low`/`.high`'s legacy forms were
+  silently dropped there despite the shared console warning claiming otherwise.
+  A migration that applies to every variant belongs in
+  `BaseConfigHelper._migrateLegacyOptions` itself (see
+  `_migrateWatermarkOptions`), not bolted onto `CardConfigHelper` alone — check
+  which config helpers actually call the override before adding a migration only
+  one subclass will ever run.
 
 ### `preProcess` / `postProcess` (`struct()`, `schema.ts`)
 
@@ -931,11 +943,12 @@ Two naming layers coexist by design, not by accident: these rules govern every
 _new_ option, while the existing YAML surface is constrained by backward
 compatibility with dashboards already written against it — renaming or reshaping
 a shipped key is a breaking change (rule 6 below), so pre-rule options are kept
-as-is rather than retrofitted. `color` vs `bar_color`, `disable_unit` vs
-`frameless`, `watermark.disable_low`/`disable_high` (a negative boolean, rule 2)
-all predate these rules and stay exactly as shipped. **Every new option must
-follow these rules**, so the gap between "what's possible now" and "what's
-actually out there" stops growing:
+as-is rather than retrofitted. `color` vs `bar_color` and `disable_unit` vs
+`frameless` predate these rules and stay exactly as shipped;
+`watermark.disable_low`/`disable_high` (a negative boolean, rule 2) is the same
+case but has since been reshaped into `low`/`high: false` - the old form still
+works as a migrated alias. **Every new option must follow these rules**, so the
+gap between "what's possible now" and "what's actually out there" stops growing:
 
 1. **Family prefix**: options belonging to a visual family share its prefix —
    `bar_*`, `icon_*`, `badge_*`. A bare name (`color`) is ambiguous forever.
@@ -990,6 +1003,21 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
    (badges, type, example, back-to-top link) and a line in the release notes.
 9. **Watched entities** — if the option can reference another entity, add it to
    `_registerWatchedEntities` so state changes trigger a refresh.
+10. **Value-shape/mark reuse** — if the option is a value/entity/jinja triad
+    (like `min_value`) or a "mark" (a per-item override falling back to a shared
+    default, like `watermark.low`/`peak_marker.min`), read and write it
+    exclusively through schema.ts's own exported helpers (`entityOf`/
+    `attributeOf`/`jinjaOf` for the triad; `markValue`/`markAs`/`markType`/
+    `markOpacity`/`markColor`/`isMarkOverride` for marks). Never re-derive the
+    discriminator (`'entity' in x` vs. `'value' in x`) ad hoc in a new spot —
+    this exact drift produced the same bug independently in 5+ places in one
+    session before being consolidated onto these helpers.
+11. **Legacy migration reach** — a migration added to `_migrateLegacyOptions`
+    only runs for the config helpers whose `_customizeConfig` actually calls it.
+    Check whether it belongs on `BaseConfigHelper` (every variant) or is safely
+    `CardConfigHelper`-only (Card/Badge/Feature) because the option doesn't
+    exist on Template/Badge Template's schema — getting this wrong silently
+    drops the legacy value instead of migrating it (#140).
 
 ## Code quality & tooling
 
@@ -1137,6 +1165,29 @@ reasoning survives a maintainer handoff instead of living only in chat history.
   HACS plugins (e.g. Mushroom) ship a pure `src/` + release setup.
 - Release notes are drafted in `CHANGELOG.md` during the RC cycle, then promoted
   to the GitHub release body.
+- **`docs/images/` is content-addressed and append-only.** README.md is the only
+  doc HACS renders in its own in-app viewer, and that viewer needs absolute
+  `raw.githubusercontent.com/.../main/...` URLs to resolve at all — every other
+  doc (cookbook/theme/troubleshooting/...) is only ever viewed on GitHub
+  directly, where a relative path (`images/x.png`) resolves against **the ref
+  actually being browsed**, tag included - so those use relative paths instead.
+  Absolute URLs resolve against `main` **at view time**, not at the tag's commit
+  — a tagged release's README text is frozen, but its image URLs keep following
+  `main` forever, so renaming or replacing a file under its existing name
+  silently breaks every past release's README (issue found post-1.6.1:
+  `RVB.png`, `stack.png`, and others were renamed/replaced in place). The fix,
+  applied uniformly across every doc (not just README) so nothing needs
+  re-thinking the day an image moves between docs: every file actually
+  referenced anywhere is named `<name>-<sha256:6>.<ext>` (computed once with
+  `sha256sum file | cut -c1-6`, no script) — same content always yields the same
+  hash, so a real content change always produces a new filename instead of
+  overwriting one an old release still points to. Never delete or overwrite a
+  file already referenced anywhere; add a new hashed file and repoint current
+  docs to it instead. Optimize losslessly before hashing (`optipng -o7` for PNG;
+  verified pixel-identical output, including its palette/grayscale color-type
+  conversions) - `gifsicle -O3` merges duplicate GIF frames instead, changing
+  frame count/timing rather than pixels, so it's excluded until that's verified
+  too.
 
 ## Logging & debugging
 
