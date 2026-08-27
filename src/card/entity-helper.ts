@@ -345,7 +345,6 @@ class EntityHelper {
         this.#value = (100 * this.#value) / 255;
       }
     } else {
-      // Si l'attribut n'est pas trouvé, définir un comportement
       this.#value = 0;
       this.#isValid = false;
     }

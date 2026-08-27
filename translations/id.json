@@ -242,7 +242,7 @@
         "critical_when_extreme": "Kritis saat ekstrem (level tangki, deviasi...)",
         "critical_when_extreme_center": "Kritis saat ekstrem, terpusat (center_zero)",
         "critical_when_high": "Kritis saat tinggi (CPU, RAM, penggunaan disk...)",
-        "critical_when_low": "Kritis saat rendah (baterai, disk...)",
+        "critical_when_low": "Kritis saat rendah (baterai...)",
         "humidity": "Kelembaban",
         "light": "Cahaya",
         "optimal_when_high": "Optimal saat Tinggi",

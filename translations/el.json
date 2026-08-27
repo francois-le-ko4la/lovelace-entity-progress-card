@@ -242,7 +242,7 @@
         "critical_when_extreme": "Κρίσιμο σε ακραία τιμή (στάθμη δεξαμενής, απόκλιση...)",
         "critical_when_extreme_center": "Κρίσιμο σε ακραία τιμή, κεντραρισμένο (center_zero)",
         "critical_when_high": "Κρίσιμο σε υψηλή τιμή (CPU, RAM, χρήση δίσκου...)",
-        "critical_when_low": "Κρίσιμο σε χαμηλή τιμή (μπαταρία, δίσκος...)",
+        "critical_when_low": "Κρίσιμο σε χαμηλή τιμή (μπαταρία...)",
         "humidity": "Υγρασία",
         "light": "Φωτεινότητα",
         "optimal_when_high": "Βέλτιστο όταν είναι υψηλό",

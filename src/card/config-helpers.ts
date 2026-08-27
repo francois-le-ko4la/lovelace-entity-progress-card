@@ -139,9 +139,8 @@ class BaseConfigHelper {
     );
   }
 
-  // Calcule une seule fois, à partir de la config validée, la config brute +
-  // les valeurs dérivées consommées ailleurs (évite de recalculer à chaque
-  // accès).
+  // Computed once from the validated config - raw config + derived values
+  // consumed elsewhere - avoids recomputing on every access.
   static #resolveConfig(config: Record<string, unknown> | null | undefined): Config {
     return {
       ...config,

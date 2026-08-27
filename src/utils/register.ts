@@ -126,7 +126,6 @@ const registerComponent = (
   defineElement(component.typeName, elementClass);
   if (editorClass && component.editor) defineElement(component.editor, editorClass);
 
-  // Le reste du code est protégé
   const registerUI = () => {
     try {
       const win = window as unknown as Record<string, { type: string }[]>;

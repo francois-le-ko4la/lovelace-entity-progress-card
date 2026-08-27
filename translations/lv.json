@@ -242,7 +242,7 @@
         "critical_when_extreme": "Kritiski ekstremālā vērtībā (tvertnes līmenis, novirze...)",
         "critical_when_extreme_center": "Kritiski ekstremālā vērtībā, centrēts (center_zero)",
         "critical_when_high": "Kritiski augstā vērtībā (CPU, RAM, diska lietojums...)",
-        "critical_when_low": "Kritiski zemā vērtībā (baterija, disks...)",
+        "critical_when_low": "Kritiski zemā vērtībā (baterija...)",
         "humidity": "Mitrums",
         "light": "Gaiša",
         "optimal_when_high": "Optimāli pie augstām vērtībām",

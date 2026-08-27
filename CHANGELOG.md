@@ -7,10 +7,31 @@ candidate safely before it becomes stable.
 ## 1.6.2
 
 Quieter than 1.6.1, but not a small release: `alert_when` gains a Jinja-driven
-trigger, and the full `--epb-*` CSS styling API finally gets documented and
-tested.
+trigger, `trend_indicator` and the new `peak_marker` finally get a real
+history-backed memory instead of comparing against whatever was on screen a
+moment ago, and `bar_segments` gets rebuilt from the ground up — real cells,
+real gaps, and working correctly with `center_zero` for the first time.
+Documentation gets a full overhaul too — a new Cookbook of copy-paste recipes,
+every `--epb-*` CSS hook finally documented and tested, and all 12 built-in
+themes get a real screenshot. One config shape changed along the way
+(`watermark.low`/`.high`), fully backward-compatible — see
+[Breaking Changes](#️-breaking-changes) below.
 
-### ⭐ Highlights
+### ⚠️ Breaking Changes
+
+#### 🧹 `watermark.low`/`.high` reshaped
+
+**You can update right away — no extra action needed on your part.**
+`low_color`/`high_color`/`disable_low`/`disable_high` and `low_as`/`high_as` are
+gone. Both sides now live on `low`/`high` directly: `false` hides a side, a
+plain value shows it with the default look, and
+`{ value, as, type, opacity, color }` overrides just that one side. Old configs
+keep working exactly as before — auto-migrated for the session (console-warned)
+— use the editor's **Migrate config** button to update your YAML permanently
+whenever you're ready, no rush. See
+[`watermark`](docs/configuration.md#watermark).
+
+### ✨ New
 
 #### 🎯 `alert_when` goes Advanced: trigger it from a Jinja condition
 
@@ -93,18 +114,11 @@ timer/counter), Card only. See
 
 #### 🧹 `watermark` cleaned up, inspired by `peak_marker`
 
-`watermark.low`/`.high` used to spread their color across sibling
-`low_color`/`high_color` keys and hide behind `disable_low`/`disable_high`
-booleans. Both now live on `low`/`high` themselves: `false` hides a side, a
-plain value shows it with the default look, and
-`{ value, as, type, opacity, color }` overrides just that one side — the same
-shape `peak_marker` just introduced. `type`/`opacity`/`color` are also new
-top-level defaults: whichever side doesn't set its own falls back to them, and
-once **both** sides have their own value for one of these three, the shared
-default quietly drops out of the config (nothing reads it anymore). Old configs
-keep working exactly as before — `low_as`/`high_as`/
-`low_color`/`high_color`/`disable_low`/`disable_high` are auto-migrated for the
-session (console-warned), and the editor's "Show low"/"Show high" toggles
+Building on the reshape above, `type`/`opacity`/`color` are now also top-level
+`watermark` defaults — the same shape `peak_marker` just introduced: whichever
+side doesn't set its own falls back to them, and once **both** sides have their
+own value for one of these three, the shared default quietly drops out of the
+config (nothing reads it anymore). The editor's "Show low"/"Show high" toggles
 replace the old disable switches, with per-side Type/Opacity/Color fields
 alongside the existing per-side value/unit ones. See
 [`watermark`](docs/configuration.md#watermark).
@@ -128,15 +142,49 @@ interaction" button that reveals them one at a time — the same picker
 `ha-form`'s native `optional_actions` field offers, hand-built here since this
 editor predates and isn't based on `ha-form`.
 
-### 🐛 Notable fixes
+- **Editor: master toggles read as a pill now**: the Markers & Alerts panel's 5
+  whole-feature switches (`watermark`, `peak_marker`, badge, status label,
+  alert) render as a Disabled/Enabled segmented pill instead of a plain switch,
+  distinct at a glance from the plain toggles nested under each once turned on.
+- **`status_label` accepts a plain string** — shorthand for `{ jinja: '...' }`,
+  covering most cases, same pattern `badge_icon`/`badge_color` already use. The
+  Map form works exactly as before whenever `position`/`color_source` are also
+  needed. See [`status_label`](docs/configuration.md#status_label).
+
+### 🔧 Improvements
+
+#### `bar_segments` now works properly with `center_zero`
+
+Rebuilt around real fill cells with genuine gaps between them (see Fixes below
+for why) — and along with it, each
+[`center_zero`](docs/configuration.md#center_zero) arm now segments
+independently, instead of sharing one set of divisions across the whole bar: set
+`bar_segments: 10` and both the positive and negative arm get their own 10-cell
+breakdown, meeting cleanly at the zero point. Not available together with
+`bar_color_mode: rainbow_full` or `bar_stack` — neither has a single fill
+fraction for cells to represent, so both automatically clear `bar_segments`
+instead of producing a meaningless combination.
+
+#### `density: compact` now works with `layout: vertical` too
+
+Vertical has no matching narrow shape, so instead of horizontal's narrow-column
+treatment, it hides `name`/`secondary_info` and drops to a single grid row
+(icon + thin bar only). The editor's "Compact" toggle offers it either way,
+greying `name`/`secondary_info` out under Hide (they stay hidden regardless of
+the toggle there — even a Jinja `hide` template can't override it);
+`value`/`unit` only ever affect text inside that same now-gone row, so their
+chips drop out entirely instead of sitting there with no effect.  
+➡️ [Bug]: Misaligned icon #139 (@RkcCorian)
+
+### 🐛 Fixes
 
 - **Template/Badge Template never migrated `watermark.low`/`.high`'s legacy
   forms** (bare entity-id string, `low_as`/`high_as`/`low_color`/
-  `high_color`/`disable_low`/`disable_high`) — they inherited
-  `BaseConfigHelper`'s no-op instead of `CardConfigHelper`'s real migration, so
-  an entity-sourced `watermark.high` silently ignored the entity, despite a
-  console warning claiming it had been migrated. Now shared by every variant.  
-  ➡️ #140 (@Gunth)
+  `high_color`/`disable_low`/`disable_high`) — an entity-sourced
+  `watermark.high` silently ignored the entity, despite a console warning
+  claiming it had been migrated. Now shared by every variant.  
+  ➡️ [Bug]: watermark.high renders at the wrong position when set to an entity,
+  correct when hardcoded #140 (@Gunth)
 - `status_label`'s own Jinja pill stayed permanently hidden once
   `alert_when.highlight: 'label'` was configured, even while the alert itself
   was inactive — the pill is now handed back to `status_label` whenever the
@@ -149,15 +197,6 @@ editor predates and isn't based on `ha-form`.
   hiding it — now preserves a draft too. `bar_max_width`'s toggle had the milder
   version of the same issue (lost a custom value, fell back to the 300px
   default) — fixed the same way.
-- **`density: compact` now works with `layout: vertical` too** — vertical has no
-  matching narrow shape, so instead of horizontal's narrow-column treatment, it
-  hides `name`/`secondary_info` and drops to a single grid row (icon + thin bar
-  only). The editor's "Compact" toggle offers it either way, greying
-  `name`/`secondary_info` out under Hide (they stay hidden regardless of the
-  toggle there — even a Jinja `hide` template can't override it); `value`/`unit`
-  only ever affect text inside that same now-gone row, so their chips drop out
-  entirely instead of sitting there with no effect.  
-  ➡️ #139 (@RkcCorian)
 - **Editor translations are now complete across all 39 supported languages** —
   several labels had silently stayed in English since the day they shipped,
   invisible to the usual checks.
@@ -165,11 +204,22 @@ editor predates and isn't based on `ha-form`.
   side effect: a noticeably lighter download.
 - A few editor labels were simplified or clarified where two different fields
   ended up showing the exact same text.
+- **`theme: critical_when_low`'s editor label listed "disk" as an example
+  alongside battery** — misleading: the disk sensor most people actually have
+  (`disk_use_percent`, % used) belongs to `critical_when_high` instead, already
+  listed there. Removed from `critical_when_low`, across all 39 languages and
+  `docs/theme.md`.
 - `layout: vertical` with `bar_position: top`/`bottom`/`background` and a hidden
-  `name`/`secondary_info` still reserved that row's height internally (only
-  `bar_position: default` zeroed it) — under a small explicit `height:` this
-  squeezed the icon into whatever was left over instead of centering it.  
-  ➡️ #139 (@RkcCorian)
+  `name`/`secondary_info` could squeeze the icon into whatever space was left
+  over under a small explicit `height:`, instead of centering it.  
+  ➡️ [Bug]: Misaligned icon #139 (@RkcCorian)
+- **`bar_segments`: a marker (watermark, peak marker, or the zero mark) landing
+  on a segment boundary is no longer hidden.**  
+  ➡️ Discord @RKT62
+- **`watermark`/`peak_marker` with `low_as`/`high_as: 'percent'` could land on
+  the wrong side of [`center_zero`](docs/configuration.md#center_zero)'s
+  midpoint** (Template/Badge Template: always, values are shaped that way there)
+  — now lands on the same side as the value it represents.
 
 ### 📚 Documentation
 
@@ -224,17 +274,76 @@ editor predates and isn't based on `ha-form`.
   `alert_when_mode`/`icon_animation_mode` both said "Trigger mode") now share a
   single, shorter label instead of two redundant copies.
 
+> We care about getting the details right — but even so, something here might
+> have slipped through. You don't need to be a developer to notice it. If
+> something feels off, that's reason enough. Open a [GitHub issue]. Or say hi on
+> [Discord]. We'd rather know than have you go looking for a workaround on your
+> own.
+
+---
+
+## What's new (1.6.2-rc3)
+
+### 🔧 Improvements
+
+#### `bar_segments` now works properly with `center_zero`
+
+Each [`center_zero`](docs/configuration.md#center_zero) arm segments
+independently now, instead of sharing one set of dividers across the whole bar —
+`bar_segments: 10` gives each arm its own 10-cell breakdown, meeting cleanly at
+the zero point. Forbidden with `bar_color_mode: rainbow_full` and `bar_stack`
+(neither has a single fill fraction for cells to represent) — both now clear
+`bar_segments` automatically instead of rendering something meaningless.
+
+### 🐛 Fixes
+
+- **`bar_segments` no longer hides watermark/peak_marker/zero markers that land
+  on a segment boundary.** Dividers were a layer painted over the fill (rebuilt
+  twice already for this exact class of bug, see the 1.6.1 entries above) — now
+  built from real fill cells with genuine gaps between them instead.  
+  ➡️ Discord @RKT62
+- **`watermark`/`peak_marker` could land on the wrong side of
+  [`center_zero`](docs/configuration.md#center_zero)'s midpoint** with
+  `low_as`/`high_as: 'percent'` (Template/Badge Template: any value, always this
+  shape there) — sitting on the opposite arm from where its own value would
+  actually fill. Now applies the same 50/50 recentering the bar's own value
+  already gets under `center_zero`.
+- **`theme: critical_when_low`'s editor label listed "disk" as an example
+  alongside battery** — misleading: the disk sensor most people actually have
+  (`disk_use_percent`, % used) belongs to `critical_when_high` instead, already
+  listed there. Removed from `critical_when_low`, across all 39 languages and
+  `docs/theme.md`.
+
 ---
 
 ## What's new (1.6.2-rc2)
 
+### ⚠️ Breaking Changes
+
+- **`watermark.low`/`.high` reshaped**: you can update right away — no extra
+  action needed on your part. The `low_as`/`high_as`/`low_color`/ `high_color`
+  sibling keys are gone, replaced by `as`/`color` inside
+  `{ value, as, type, opacity, color }`; `disable_low`/`disable_high` are
+  replaced by `low`/`high: false`. `type`/`opacity`/`color` are also new
+  top-level `watermark.*` defaults, cascading to whichever side doesn't set its
+  own (dropped once both do). Old configs auto-migrate for the session
+  (console-warned) — no YAML edits required; use the editor's **Migrate config**
+  button to update permanently whenever convenient.
+
 ### ✨ New
 
+- **`watermark.low`/`.high` gain per-side `type`/`opacity` overrides** on top of
+  the reshape above. New CSS hooks
+  `--epb-low-watermark-opacity`/`--epb-high-watermark-opacity` (the existing
+  `--epb-watermark-opacity` still overrides both when set). Editor: per-side
+  toggle/color/unit fields updated for the new shape, plus new per-side
+  Type/Opacity fields.
 - **`--epb-icon-color`/`--epb-icon-shape-color`**: new CSS hooks — the icon and
   its circular background can now take different colors. Both override
   `--epb-icon-and-shape-color` at just their own spot; the combined hook keeps
-  working exactly as before for the common "recolor both at once" case. ➡️ #136
-  (@RkcCorian)
+  working exactly as before for the common "recolor both at once" case.  
+  ➡️ [Feature]: Configuration possibility for the icon background visibility
+  #136 (@RkcCorian)
 - **`--epb-icon-shape-hover-color`**: new CSS hook — sets the shape's color on
   hover for a clickable icon. Unlike a `card_mod` `:hover` rule, it can be set
   as a plain value in a theme YAML. See
@@ -270,49 +379,40 @@ editor predates and isn't based on `ha-form`.
   whole-feature switches (`watermark`, `peak_marker`, badge, status label,
   alert) render as a Disabled/Enabled segmented pill instead of a plain switch,
   distinct at a glance from the plain toggles nested under each once turned on.
-- **`watermark.low`/`.high` reshaped**: `false` (hides that side, replaces
-  `disable_low`/`disable_high`), a plain value (unchanged), or
-  `{ value, as, type, opacity, color }` to override just that side —
-  `as`/`color` replace the old `low_as`/`high_as`/`low_color`/`high_color`
-  sibling keys. `type`/ `opacity`/`color` are now also top-level `watermark.*`
-  defaults that cascade to whichever side doesn't set its own, auto-dropped once
-  both sides do. Old configs auto-migrate for the session (console-warned); the
-  editor's per-side toggle/color/unit fields now read and write the new shape,
-  plus new per-side Type/Opacity fields. New public CSS hooks
-  `--epb-low-watermark-opacity`/`--epb-high-watermark-opacity` (per side; the
-  existing `--epb-watermark-opacity` still overrides both when set). See
-  [`watermark`](docs/configuration.md#watermark).
-- **`density: compact` now works with `layout: vertical` too** — vertical has no
-  matching narrow shape, so instead of horizontal's narrow-column treatment, it
-  hides `name`/`secondary_info` and drops to a single grid row (icon + thin bar
-  only). The editor's "Compact" toggle offers it either way, greying
-  `name`/`secondary_info` out under Hide (forced regardless of a Jinja `hide`
-  template's own result); `value`/`unit` drop out of the picker entirely, moot
-  once that row is gone.  
-  ➡️ #139 (@RkcCorian)
 - **`status_label` accepts a plain string** — shorthand for `{ jinja: '...' }`,
   covering most cases, same pattern `badge_icon`/`badge_color` already use. The
   Map form works exactly as before whenever `position`/`color_source` are also
   needed. See [`status_label`](docs/configuration.md#status_label).
 
+### 🔧 Improvements
+
+#### `density: compact` now works with `layout: vertical` too
+
+Vertical has no matching narrow shape, so instead of horizontal's narrow-column
+treatment, it hides `name`/`secondary_info` and drops to a single grid row
+(icon + thin bar only). The editor's "Compact" toggle offers it either way,
+greying `name`/`secondary_info` out under Hide (forced regardless of a Jinja
+`hide` template's own result); `value`/`unit` drop out of the picker entirely,
+moot once that row is gone.  
+➡️ [Bug]: Misaligned icon #139 (@RkcCorian)
+
 ### 🐛 Fixes
 
 - **`layout: vertical` with `bar_position: top`/`bottom`/`background`**: a
-  hidden `name`/`secondary_info` still reserved that row's height internally
-  (only `bar_position: default` zeroed it) — under a small explicit `height:`
-  this squeezed the icon into whatever was left over instead of centering it. A
-  second pass fixed a related gap: `.content` stayed a real flex item even once
-  fully empty, so the gap reserved toward it still biased the icon off-center;
-  the fix generalizes to `layout: horizontal` too, for the same three
+  hidden `name`/`secondary_info` could squeeze the icon into whatever space was
+  left over under a small explicit `height:`, instead of centering it. A second
+  pass: `.content` staying a flex item even once empty could still bias the icon
+  off-center — generalized to `layout: horizontal` too, same three
   `bar_position` values (never reported there, but the same bug).  
-  ➡️ #139 (@RkcCorian)
+  ➡️ [Bug]: Misaligned icon #139 (@RkcCorian)
 - **Template/Badge Template never migrated `watermark.low`/`.high`'s legacy
   forms** (bare entity-id string, `low_as`/`high_as`/`low_color`/
-  `high_color`/`disable_low`/`disable_high`) — they inherited
-  `BaseConfigHelper`'s no-op instead of `CardConfigHelper`'s real migration, so
-  an entity-sourced `watermark.high` silently ignored the entity, despite a
-  console warning claiming it had been migrated. Now shared by every variant.  
-  ➡️ #140 (@Gunth)
+  `high_color`/`disable_low`/`disable_high`) — routed through
+  `BaseConfigHelper`'s no-op instead of `CardConfigHelper`'s real migration. An
+  entity-sourced `watermark.high` silently ignored the entity, despite a console
+  warning claiming it had been migrated. Now shared by every variant.  
+  ➡️ [Bug]: watermark.high renders at the wrong position when set to an entity,
+  correct when hardcoded #140 (@Gunth)
 
 ### 📚 Documentation
 
@@ -462,7 +562,7 @@ editor predates and isn't based on `ha-form`.
   still shows the old one right after updating is usually HACS lagging behind
   the actual release — use **⋮ → Redownload** to force a fresh install instead
   of assuming the update failed.  
-  ➡️ #137
+  ➡️ Configuration Error on mobile devices #137
 
 ### 🧹 Under the hood
 
@@ -5875,3 +5975,6 @@ experience:
 [card_mod]: https://github.com/thomasloven/lovelace-card-mod
 [README.md]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card#-prerequisites
+[Discord]: https://discord.gg/tyMQ2SfyNG
+[GitHub issue]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues

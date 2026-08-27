@@ -242,7 +242,7 @@
         "critical_when_extreme": "Kriitiline äärmuslikul (paagi tase, kõrvalekalle...)",
         "critical_when_extreme_center": "Kriitiline äärmuslikul, tsentreeritud (center_zero)",
         "critical_when_high": "Kriitiline kõrgel (CPU, RAM, kettakasutus...)",
-        "critical_when_low": "Kriitiline madalal (aku, ketas...)",
+        "critical_when_low": "Kriitiline madalal (aku...)",
         "humidity": "Niiskus",
         "light": "Hele",
         "optimal_when_high": "Optimaalne kõrgetel väärtustel",

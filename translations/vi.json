@@ -242,7 +242,7 @@
         "critical_when_extreme": "Nghiêm trọng khi cực đoan (mức bồn chứa, độ lệch...)",
         "critical_when_extreme_center": "Nghiêm trọng khi cực đoan, căn giữa (center_zero)",
         "critical_when_high": "Nghiêm trọng khi cao (CPU, RAM, mức sử dụng ổ đĩa...)",
-        "critical_when_low": "Nghiêm trọng khi thấp (pin, ổ đĩa...)",
+        "critical_when_low": "Nghiêm trọng khi thấp (pin...)",
         "humidity": "Độ ẩm",
         "light": "Ánh sáng",
         "optimal_when_high": "Tối ưu khi cao",

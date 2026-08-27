@@ -16,25 +16,12 @@ import { HA_CONTEXT } from './ha-context.js';
 import { CARD } from './card-config.js';
 import { THEME, PERCENT_THEME_KEYS } from './card-themes.js';
 
-// Injected by scripts/build.js: true in the *_dev.js build, false in the
-// shipped .js. Baked in (not URL-derived) so dev mode survives being loaded as
-// an ES module, where document.currentScript - and thus any ?dev=true query -
-// is unreadable.
+// Injected by scripts/build.js - see development.md's Logging & debugging
+// section for why baked in rather than URL-derived like `debug` below.
 declare const __EPB_DEV_BUILD__: boolean;
 
-// dev is baked per build (__EPB_DEV_BUILD__ above), debug is read from the
-// bundle's own served URL at load:
-//   - dev:   true in the *_dev.js build (drives the `-dev` suffix on every
-//            registered element name). ?dev=true is an optional runtime
-//            override on the prod file. Baked rather than URL-derived
-//            because the URL is unreadable when loaded as an ES module.
-//   - debug: ?debug=card,hass (or ?debug=all) turns on per-area logging on
-//            top of DEBUG_DEFAULTS below (needs a classic-script load).
-// The URL comes from document.currentScript.src, NOT import.meta.url: a bare
-// `import.meta` is a *parse-time* SyntaxError when loaded as a classic
-// <script> (a resource typed `js`, or browser_mod reloading it in a popup -
-// see issue #108), killing the module before any try/catch can run.
-// currentScript.src is null for an ES-module load, the safe shipped state.
+// document.currentScript.src, not import.meta.url - a bare import.meta is a
+// parse-time SyntaxError on a classic-script load (issue #108).
 const MODULE_URL = (() => {
   try {
     return (document.currentScript as HTMLScriptElement | null)?.src ?? '';

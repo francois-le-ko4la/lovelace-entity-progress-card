@@ -302,6 +302,7 @@ class ThemeManager {
     isVertical = false,
     window: [number, number] = [0, 100],
     valueRange: { min: number; max: number } | null = null,
+    isSegmented = false,
   ) {
     const currentStyle = this.#currentStyle;
     if (!this.#isValid || !currentStyle || mode === 'auto') return null;
@@ -389,8 +390,13 @@ class ThemeManager {
     // position B + offset. vertical-bar uses the exact same formula on
     // translateY instead (see the CSS on .vertical-bar .inner) - only the
     // gradient's own direction needs to follow, not this math.
-    const offset = 100 - fillPercent;
+    // bar_segments has no .inner to shift - each cell windows this same
+    // gradient by its own true container position, so it needs offset 0.
+    const offset = isSegmented ? 0 : 100 - fillPercent;
     const toElemPos = (b: number) => `${(b + offset).toFixed(2)}%`;
+    // '100%' below pins a stop to .inner's shifted edge (= fillPercent) -
+    // segmented has no such edge, so it needs the real position instead.
+    const filledEdge = isSegmented ? `${fillPercent.toFixed(2)}%` : '100%';
     // color is optional per zone now (see types.customTheme) — a color-less
     // zone falls back the same way iconColor/barColor already do: the entity's
     // own negotiated color (e.g. a cover is pink open / grey closed, see
@@ -402,7 +408,7 @@ class ThemeManager {
     if (mode === 'segment') {
       const stops = visible.flatMap((level, i) => {
         const start = i === 0 ? '0%' : toElemPos(level.min ?? 0);
-        const end = (level.max ?? 0) >= fillPercent ? '100%' : toElemPos(level.max ?? 0);
+        const end = (level.max ?? 0) >= fillPercent ? filledEdge : toElemPos(level.max ?? 0);
         return [`${col(level)} ${start}`, `${col(level)} ${end}`];
       });
       return `linear-gradient(${direction}, ${stops.join(', ')})`;
@@ -424,7 +430,7 @@ class ThemeManager {
         const end = i === visible.length - 1 ? fillPercent : (level.max ?? 100);
         stops.push(`${col(level)} ${toElemPos((start + end) / 2)}`);
       });
-      stops.push(`${col(visible[visible.length - 1])} 100%`);
+      stops.push(`${col(visible[visible.length - 1])} ${filledEdge}`);
       return `linear-gradient(${direction}, ${stops.join(', ')})`;
     }
 

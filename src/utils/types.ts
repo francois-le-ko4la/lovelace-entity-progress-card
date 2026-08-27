@@ -8,6 +8,8 @@
  * dynamic anymore (see its own comment below) - derived from schema.ts.
  */
 
+// Type-only, erased at compile time - the one exception to utils/ never
+// importing from card/.
 import type { Infer, YamlSchemaFactory } from '../card/schema.js';
 
 declare const lovelaceConfigBrand: unique symbol;
@@ -20,17 +22,8 @@ declare const lovelaceConfigBrand: unique symbol;
 type LovelaceConfig = { readonly [lovelaceConfigBrand]: true } & Record<string, any>;
 
 declare const configBrand: unique symbol;
-// The negotiated/resolved config: LovelaceConfig after schema validation,
-// default-filling, and legacy-shape migration - what ViewCore/HACore read
-// everywhere. Derived from YamlSchemaFactory (schema.ts's Infer<>) instead
-// of hand-maintained. The one deliberate exception to utils/ never importing
-// from card/: the import is type-only, erased at compile time.
-//
-// A *union* of the five card-type shapes (tried first) doesn't work: shared
-// code reads fields only some types declare, and TS only lets you read a
-// union property when every member has it. Intersecting the five instead
-// (all optional via Partial) matches the real runtime pattern: shared code
-// reads whatever field it wants and lets `undefined` flow through safely.
+// Negotiated config, derived from YamlSchemaFactory - see development.md's
+// Configuration validation section for why intersection, not union.
 type Config = { readonly [configBrand]: true } & Partial<
   Infer<typeof YamlSchemaFactory.card> &
     Infer<typeof YamlSchemaFactory.badge> &

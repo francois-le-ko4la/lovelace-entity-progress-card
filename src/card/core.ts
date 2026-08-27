@@ -372,7 +372,7 @@ class HACore extends HTMLElement {
     // element.style is null when the shared constructed sheet is adopted
     this._shadow.replaceChildren(...(element.style ? [element.style, element.card] : [element.card]));
     this._storeDOM();
-    this._buildSegmentDividers();
+    this._buildSegmentCells();
     requestAnimationFrame(() => {
       this._dom.addClass(CARD.htmlStructure.card.element, 'transition-ready');
     });
@@ -516,44 +516,52 @@ class HACore extends HTMLElement {
     });
   }
 
-  // Real N+1 divs (bar_segments: N, plus the two edge markers), not a CSS
-  // gradient/mask trick - runs once per render(), after the structure clone
-  // is in the DOM. Percent-based position, not px, so it stays correct
-  // regardless of the bar's current width, no resize listener needed.
-  _buildSegmentDividers() {
+  // N real fill cells per fillable half (bar_segments: N), not a divider
+  // layer painted over the fill (see CHANGELOG.md - that approach kept
+  // clipping through markers across two prior rebuilds). Built once per
+  // render(); each cell's own fill is pure CSS off --progress-bar-value.
+  _buildSegmentCells() {
     const count = this._cardView.config.bar_segments;
     const active = is.number(count) && count >= 2;
     // .bar-segmented itself only still matters for .bar's own border-radius
-    // reset below (styles.ts) - everything else keys off the divider
-    // elements' own presence now, not this class.
+    // reset and hiding .inner below (styles.ts) - everything else keys off
+    // the cell elements' own presence now, not this class.
     this._dom.toggleClass(CARD.htmlStructure.card.element, 'bar-segmented', active);
     if (!active) return;
     const rounded = Math.round(count);
-    const bars = this._shadow.querySelectorAll(`.${CSS.escape(CARD.htmlStructure.elements.progressBar.bar.class)}`);
+    // center_zero: one independent N-cell row per arm (.bar-half), off that
+    // arm's own --arm-fill (styles.ts). --bar-segments always goes on .bar
+    // itself though, never a .bar-half - it's the only ancestor a mark and
+    // every cell both share (a mark is .bar's own child, not arm-nested).
+    const isCenterZero = Boolean(this._cardView.config.center_zero);
+    const halfSpec = CARD.htmlStructure.elements.progressBar.half;
+    const bars = this._shadow.querySelectorAll<HTMLElement>(
+      `.${CSS.escape(CARD.htmlStructure.elements.progressBar.bar.class)}`,
+    );
     const containerSpec = CARD.htmlStructure.elements.progressBar.segments;
-    const dividerSpec = CARD.htmlStructure.elements.progressBar.segmentDivider;
+    const cellSpec = CARD.htmlStructure.elements.progressBar.segmentCell;
     bars.forEach((bar) => {
-      // One wrapper per .bar, grouping every divider instead of leaving them
-      // loose alongside the watermark/zero/value marks already in .bar.
-      const container = document.createElement(containerSpec.element);
-      container.className = containerSpec.class;
-      Object.entries(containerSpec.extraAttr ?? {}).forEach(([key, value]) =>
-        container.setAttribute(key, String(value)),
-      );
-      // i=0 and i=rounded (the bar's own two edges) get a divider too, not
-      // just the N-1 internal ones: an internal divider straddles its
-      // boundary, eating half its width from each neighbor - an edge cell
-      // has only one real neighbor and would read visibly wider without a
-      // matching half-divider. .bar's overflow: hidden clips the half that
-      // falls outside the bar, leaving the same sliver a real neighbor would.
-      for (let i = 0; i <= rounded; i += 1) {
-        const divider = document.createElement(dividerSpec.element);
-        divider.className = dividerSpec.class;
-        Object.entries(dividerSpec.extraAttr ?? {}).forEach(([key, value]) => divider.setAttribute(key, String(value)));
-        divider.style.setProperty('--segment-position', `${(100 * i) / rounded}%`);
-        container.appendChild(divider);
-      }
-      bar.appendChild(container);
+      bar.style.setProperty('--bar-segments', String(rounded));
+      const targets = isCenterZero ? Array.from(bar.querySelectorAll(`.${CSS.escape(halfSpec.class)}`)) : [bar];
+      targets.forEach((target) => {
+        const container = document.createElement(containerSpec.element);
+        container.className = containerSpec.class;
+        Object.entries(containerSpec.extraAttr ?? {}).forEach(([key, value]) =>
+          container.setAttribute(key, String(value)),
+        );
+        for (let i = 0; i < rounded; i += 1) {
+          const cell = document.createElement(cellSpec.element);
+          cell.className = cellSpec.class;
+          Object.entries(cellSpec.extraAttr ?? {}).forEach(([key, value]) => cell.setAttribute(key, String(value)));
+          cell.style.setProperty('--segment-index', String(i));
+          container.appendChild(cell);
+        }
+        // Before .inner/marks, not appended after: each cell now paints an
+        // opaque track-color base across its own whole width (styles.ts), so
+        // appending last would once again cover a mark landing on it - DOM
+        // order is what keeps marks on top now, same as before this feature.
+        target.insertBefore(container, target.firstChild);
+      });
     });
   }
 
@@ -708,6 +716,10 @@ class HACore extends HTMLElement {
       ] as const
     ).forEach(([vars, mark]) => {
       this._dom.setStyle(cardKey, vars.value.var, `${mark.value}%`);
+      // Bare-number companion, read by the bar_segments position compensation
+      // (styles.ts) - a value/value calc() there would need percentage
+      // division, which isn't reliably supported for producing a number.
+      this._dom.setStyle(cardKey, `${vars.value.var}-num`, mark.value);
       this._dom.setStyle(cardKey, vars.opacity.var, mark.opacity);
       if (mark.color) this._dom.setStyle(cardKey, vars.color.var, mark.color);
       else this._dom.removeStyle(cardKey, vars.color.var);
@@ -728,6 +740,7 @@ class HACore extends HTMLElement {
       ] as const
     ).forEach(([vars, mark]) => {
       this._dom.setStyle(cardKey, vars.value.var, `${mark.value}%`);
+      this._dom.setStyle(cardKey, `${vars.value.var}-num`, mark.value);
       this._dom.setStyle(cardKey, vars.opacity.var, mark.opacity);
       if (mark.color) this._dom.setStyle(cardKey, vars.color.var, mark.color);
       else this._dom.removeStyle(cardKey, vars.color.var);
@@ -917,7 +930,6 @@ class HACore extends HTMLElement {
     }
     this._log?.debug('network ok...');
 
-    // Add null check right before using _resourceManager
     if (!this._resourceManager) {
       this._log?.debug(`[Template ${key}] ResourceManager is null, skipping subscription.`);
       return;
@@ -950,7 +962,6 @@ class HACore extends HTMLElement {
         },
       );
 
-      // Check again after the async operation
       if (this.#templateSignatures.get(subscriptionKey) !== signature) {
         // A newer subscription attempt superseded this one while we awaited.
         unsub();

@@ -242,7 +242,7 @@
         "critical_when_extreme": "Krytyczne przy wartości ekstremalnej (poziom zbiornika, odchylenie...)",
         "critical_when_extreme_center": "Krytyczne przy wartości ekstremalnej, wyśrodkowane (center_zero)",
         "critical_when_high": "Krytyczne przy wysokiej wartości (CPU, RAM, użycie dysku...)",
-        "critical_when_low": "Krytyczne przy niskiej wartości (bateria, dysk...)",
+        "critical_when_low": "Krytyczne przy niskiej wartości (bateria...)",
         "humidity": "Wilgotność",
         "light": "Światło",
         "optimal_when_high": "Optymalny, gdy wysokie",

@@ -242,7 +242,7 @@
         "critical_when_extreme": "Kritisk ved ekstremverdi (tanknivå, avvik...)",
         "critical_when_extreme_center": "Kritisk ved ekstremverdi, sentrert (center_zero)",
         "critical_when_high": "Kritisk ved høy verdi (CPU, RAM, diskbruk...)",
-        "critical_when_low": "Kritisk ved lav verdi (batteri, disk...)",
+        "critical_when_low": "Kritisk ved lav verdi (batteri...)",
         "humidity": "Fuktighet",
         "light": "Lys",
         "optimal_when_high": "Optimal når høyt",

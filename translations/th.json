@@ -242,7 +242,7 @@
         "critical_when_extreme": "วิกฤตเมื่อค่าสุดขั้ว (ระดับถัง, ค่าเบี่ยงเบน...)",
         "critical_when_extreme_center": "วิกฤตเมื่อค่าสุดขั้ว, จัดกึ่งกลาง (center_zero)",
         "critical_when_high": "วิกฤตเมื่อค่าสูง (CPU, RAM, การใช้ดิสก์...)",
-        "critical_when_low": "วิกฤตเมื่อค่าต่ำ (แบตเตอรี่, ดิสก์...)",
+        "critical_when_low": "วิกฤตเมื่อค่าต่ำ (แบตเตอรี่...)",
         "humidity": "ความชื้น",
         "light": "แสง",
         "optimal_when_high": "เหมาะสมเมื่อสูง",

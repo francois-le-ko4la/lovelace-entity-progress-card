@@ -6021,6 +6021,85 @@ views:
                 height: 55px
                 hide: [name, secondary_info]
                 percent: '{{ states(entity) }}'
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'bar_segments: markers no longer hidden by segment gaps'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card
+              entity: input_number.epb_demo_battery
+              bar_segments: 10
+              watermark:
+                low: 30
+                high: 70
+              peak_marker:
+                window: 2h
+                min: true
+                max: true
+                average: true
+              ```
+              A segment divider used to paint over a watermark/peak marker
+              landing on it, hiding the line entirely. Check: both stay
+              visible on top of the segmented bar.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'bar_segments + markers'
+            bar_segments: 10
+            watermark:
+              low: 30
+              high: 70
+            peak_marker:
+              window: 2h
+              min: true
+              max: true
+              average: true
+            grid_options:
+              columns: 12
+              rows: 1
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'bar_segments + center_zero: each arm segments independently'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card
+              entity: input_number.epb_demo_temp_negative
+              theme: temperature
+              bar_segments: 8
+              center_zero:
+                value: 100
+                growth_percent: false
+              min_value: -20
+              ```
+              Each arm now cuts into its own 8 cells instead of sharing one
+              count across the whole bar.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_temp_negative
+            theme: temperature
+            name: 'bar_segments + center_zero'
+            bar_segments: 8
+            center_zero:
+              value: 100
+              growth_percent: false
+            min_value: -20
+            grid_options:
+              columns: 12
+              rows: 1
     subview: false
     cards: []
     badges:

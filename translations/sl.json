@@ -242,7 +242,7 @@
         "critical_when_extreme": "Kritično pri skrajni vrednosti (nivo rezervoarja, odstopanje...)",
         "critical_when_extreme_center": "Kritično pri skrajni vrednosti, sredinsko (center_zero)",
         "critical_when_high": "Kritično pri visoki vrednosti (CPU, RAM, uporaba diska...)",
-        "critical_when_low": "Kritično pri nizki vrednosti (baterija, disk...)",
+        "critical_when_low": "Kritično pri nizki vrednosti (baterija...)",
         "humidity": "Vlažnost",
         "light": "Svetla",
         "optimal_when_high": "Optimalno pri visokih vrednostih",

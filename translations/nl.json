@@ -242,7 +242,7 @@
         "critical_when_extreme": "Kritiek bij extreem (tankniveau, afwijking...)",
         "critical_when_extreme_center": "Kritiek bij extreem, gecentreerd (center_zero)",
         "critical_when_high": "Kritiek bij hoog (CPU, RAM, schijfgebruik...)",
-        "critical_when_low": "Kritiek bij laag (batterij, schijf...)",
+        "critical_when_low": "Kritiek bij laag (batterij...)",
         "humidity": "Vochtigheid",
         "light": "Licht",
         "optimal_when_high": "Optimaal wanneer hoog",

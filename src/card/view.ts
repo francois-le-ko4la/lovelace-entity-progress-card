@@ -220,6 +220,12 @@ class ViewCore {
     );
   }
 
+  // Mirrors HACore#_buildSegmentCells's own active check - both need to
+  // agree on when bar_segments actually renders real cells.
+  get isSegmented(): boolean {
+    return is.number(this.config.bar_segments) && this.config.bar_segments >= 2;
+  }
+
   // Shared by watermark.low/high and #resolveMaxValue/#resolveMinValue
   // below: all four share the same "value config" shape (number | { entity,
   // attribute } | { jinja }, see schema.ts). Jinja mode resolves elsewhere
@@ -482,11 +488,13 @@ class ViewCore {
   get watermark(): ResolvedWatermark | null {
     const watermark = this.config.watermark as WatermarkConfig | undefined;
     if (!watermark) return null;
-    // No toPos/calcWatermark here (unlike ViewBase's own override below): a
-    // ViewCore-direct instance (Template) has no min_value/max_value scale to
-    // project onto in the first place (see schema.ts's own comment on
-    // Template's `theme` field for the same limitation) - `as`'s 'auto' and
-    // 'percent' already coincide, the raw resolved number IS the bar position.
+    // No full toPos/calcWatermark here (unlike ViewBase's override below) - a
+    // ViewCore-direct instance (Template) has no min_value/max_value to
+    // project onto, so `as` is moot. center_zero still needs the same
+    // 50 + value/2 recenter percent itself gets in _managePercent, though -
+    // without it a mark landed in the wrong half of the bar.
+    const isCenterZero = Boolean(this.config.center_zero);
+    const toPos = (value: number) => (isCenterZero ? 50 + value / 2 : value);
     // type/opacity carry no schema default (see WatermarkConfig) - applied
     // here from CARD.config.defaults.watermark instead.
     const globalType = watermark.type ?? CARD.config.defaults.watermark.type;
@@ -497,7 +505,7 @@ class ViewCore {
       resolvedValue: unknown,
     ): ResolvedWatermarkMark => ({
       shown: markShown(mark),
-      value: (jinjaOverride ?? resolvedValue) as number,
+      value: toPos((jinjaOverride ?? resolvedValue) as number),
       type: markType(mark, globalType) as WatermarkType,
       opacity: markOpacity(mark, globalOpacity),
       color: ThemeManager.adaptColor(markColor(mark, watermark.color) ?? null),
@@ -704,6 +712,9 @@ class ViewCore {
       this._configHelper.config.bar_color_mode ?? 'auto',
       null,
       this.isVerticalBar,
+      [0, 100],
+      null,
+      this.isSegmented,
     );
   }
 
@@ -735,8 +746,24 @@ class ViewCore {
           [50, 100],
           [50, 0],
         ];
-    const posGradient = this.#templateTheme.buildGradient(posFill, mode, null, this.isVerticalBar, posWindow);
-    const negGradient = this.#templateTheme.buildGradient(negFill, mode, null, this.isVerticalBar, negWindow);
+    const posGradient = this.#templateTheme.buildGradient(
+      posFill,
+      mode,
+      null,
+      this.isVerticalBar,
+      posWindow,
+      null,
+      this.isSegmented,
+    );
+    const negGradient = this.#templateTheme.buildGradient(
+      negFill,
+      mode,
+      null,
+      this.isVerticalBar,
+      negWindow,
+      null,
+      this.isSegmented,
+    );
     if (!posGradient && !negGradient) return null;
     return { posGradient, negGradient, posSize: posFill / 100, negSize: negFill / 100 };
   }
@@ -1247,6 +1274,7 @@ class ViewBase extends ViewCore {
       this.isVerticalBar,
       [0, 100],
       { min: this.#percentHelper.min, max: this.#percentHelper.max },
+      this.isSegmented,
     );
   }
 
@@ -1297,6 +1325,7 @@ class ViewBase extends ViewCore {
       this.isVerticalBar,
       posWindow,
       valueRange,
+      this.isSegmented,
     );
     const negGradient = this.#theme.buildGradient(
       negFill,
@@ -1305,6 +1334,7 @@ class ViewBase extends ViewCore {
       this.isVerticalBar,
       negWindow,
       valueRange,
+      this.isSegmented,
     );
     if (!posGradient && !negGradient) return null;
     return { posGradient, negGradient, posSize: posFill / 100, negSize: negFill / 100 };
@@ -1430,8 +1460,16 @@ class ViewBase extends ViewCore {
     // behavior for timers instead, so the configured value stays a stable
     // percentage regardless of how long any given run happens to be.
     const isTimer = this._currentValue.entityType.isTimer;
-    const toPos = (v: number | { current: number } | null | undefined, as: string) =>
-      as === 'percent' || isTimer ? (is.number(v) ? v : (v?.current ?? 0)) : this.#percentHelper.calcWatermark(v);
+    // as: 'percent' skips calcWatermark's min/max projection (the value is
+    // already a position), but under center_zero a position still needs the
+    // same 50 + value/2 recenter calcWatermark itself applies - same bug as
+    // ViewCore's own watermark getter, fixed there for the same reason.
+    const toPos = (v: number | { current: number } | null | undefined, as: string) => {
+      if (isTimer) return is.number(v) ? v : (v?.current ?? 0);
+      if (as !== 'percent') return this.#percentHelper.calcWatermark(v);
+      const raw = is.number(v) ? v : (v?.current ?? 0);
+      return this.#percentHelper.isCenterZero ? 50 + raw / 2 : raw;
+    };
     // type/opacity carry no schema default (see WatermarkConfig) - applied
     // here from CARD.config.defaults.watermark instead.
     const globalType = watermark.type ?? CARD.config.defaults.watermark.type;

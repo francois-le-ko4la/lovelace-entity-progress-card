@@ -242,7 +242,7 @@
         "critical_when_extreme": "चरम पर गंभीर (टैंक स्तर, विचलन...)",
         "critical_when_extreme_center": "चरम पर गंभीर, केंद्रित (center_zero)",
         "critical_when_high": "अधिक होने पर गंभीर (CPU, RAM, डिस्क उपयोग...)",
-        "critical_when_low": "कम होने पर गंभीर (बैटरी, डिस्क...)",
+        "critical_when_low": "कम होने पर गंभीर (बैटरी...)",
         "humidity": "आर्द्रता",
         "light": "प्रकाश",
         "optimal_when_high": "उच्च होने पर इष्टतम",

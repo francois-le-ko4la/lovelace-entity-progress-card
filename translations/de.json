@@ -242,7 +242,7 @@
         "critical_when_extreme": "Kritisch im Extrem (Tankfüllstand, Abweichung...)",
         "critical_when_extreme_center": "Kritisch im Extrem, zentriert (center_zero)",
         "critical_when_high": "Kritisch bei hoch (CPU, RAM, Speichernutzung...)",
-        "critical_when_low": "Kritisch bei niedrig (Akku, Speicher...)",
+        "critical_when_low": "Kritisch bei niedrig (Akku...)",
         "humidity": "Feuchtigkeit",
         "light": "Licht",
         "optimal_when_high": "Optimal bei hoch",

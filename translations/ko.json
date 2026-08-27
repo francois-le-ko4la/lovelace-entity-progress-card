@@ -242,7 +242,7 @@
         "critical_when_extreme": "극단일 때 위험 (탱크 수위, 편차...)",
         "critical_when_extreme_center": "극단일 때 위험, 중앙 정렬 (center_zero)",
         "critical_when_high": "높을 때 위험 (CPU, RAM, 디스크 사용량...)",
-        "critical_when_low": "낮을 때 위험 (배터리, 디스크...)",
+        "critical_when_low": "낮을 때 위험 (배터리...)",
         "humidity": "습도",
         "light": "조도",
         "optimal_when_high": "높을 때 최적",

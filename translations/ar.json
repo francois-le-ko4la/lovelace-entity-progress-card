@@ -242,7 +242,7 @@
         "critical_when_extreme": "حرج عند التطرف (مستوى الخزان، الانحراف...)",
         "critical_when_extreme_center": "حرج عند التطرف، ممركز (center_zero)",
         "critical_when_high": "حرج عند الارتفاع (المعالج، الذاكرة، القرص...)",
-        "critical_when_low": "حرج عند الانخفاض (بطارية، قرص...)",
+        "critical_when_low": "حرج عند الانخفاض (بطارية...)",
         "humidity": "الرطوبة",
         "light": "الضوء",
         "optimal_when_high": "مثالي عند الارتفاع",

@@ -462,6 +462,9 @@ class EditorBase extends HTMLElement {
       decimal: () => ({ number: { min: 0, max: 10, mode: 'box' } }),
       opacity: () => ({ number: { min: 0, max: 1, step: 0.05, mode: 'box' } }),
       slider: () => ({ number: { min: 0, max: 300, step: 1, mode: 'slider', unit_of_measurement: 'px' } }),
+      // Below 2, HABase#_buildSegmentCells never builds any cell - same
+      // floor as its own count >= 2 check.
+      bar_segments: () => ({ number: { min: 2, max: 10, step: 1, mode: 'box' } }),
       template: () => ({ template: {} }),
       toggle: () => ({ boolean: {} }),
       action: () => ({ 'ui-action': {} }),

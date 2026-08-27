@@ -1489,17 +1489,20 @@ ha-card.info-multiline {
   --inner-transform: translateY(calc((1 - var(--inner-size, 0)) * -100%));
 }
 
-/**
- * --- inner size/background (auto-clamped per zone: irrelevant zone resolves to
- * 0) ---
- */
+/* --inner-background lives on .bar/.bar-half.negative-zone, not .inner
+   itself, so a sibling .segment-cell (bar_segments) can inherit it too -
+   .inner reads the same value back below, just by inheritance now. */
+.${CARD.htmlStructure.elements.progressBar.bar.class} {
+  --inner-background: var(--epb-progress-bar-color, var(--progress-effect, var(${CARD.style.dynamic.progressBar.stackGradientPos.var}, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default}))));
+}
+.${CARD.htmlStructure.elements.progressBar.half.class}.negative-zone {
+  --inner-background: var(--epb-progress-bar-color, var(--progress-effect-neg, var(${CARD.style.dynamic.progressBar.stackGradientNeg.var}, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default}))));
+}
 .${CARD.htmlStructure.elements.progressBar.inner.class}.positive {
   --inner-size: var(${CARD.style.dynamic.progressBar.stackSizePos.var}, max(var(${CARD.style.dynamic.progressBar.value.var}, 0), 0));
-  --inner-background: var(--epb-progress-bar-color, var(--progress-effect, var(${CARD.style.dynamic.progressBar.stackGradientPos.var}, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default}))));
 }
 .center-zero .${CARD.htmlStructure.elements.progressBar.inner.class}.negative {
   --inner-size: var(${CARD.style.dynamic.progressBar.stackSizeNeg.var}, max(calc(var(${CARD.style.dynamic.progressBar.value.var}, 0) * -1), 0));
-  --inner-background: var(--epb-progress-bar-color, var(--progress-effect-neg, var(${CARD.style.dynamic.progressBar.stackGradientNeg.var}, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default}))));
 }
 
 /* === ORIENTATION === */
@@ -1514,84 +1517,40 @@ ha-card.info-multiline {
   transform: scaleX(-1);
 }
 
-/* === SEGMENTED BAR (bar_segments: N) ===
-   N+1 real divs (.segment-divider - N-1 internal boundaries plus the bar's
-   own two edges, see HABase#_buildSegmentDividers's own comment for why the
-   edges are included too), not a CSS gradient/mask trick (tried, reverted -
-   a repeating-linear-gradient sized to exactly N repeats should in theory
-   include the two edge boundaries for free, but it rendered unreliably in
-   practice - unresolved, not worth the fragility). Built directly in JS
-   after this static template is cloned in (structure.ts itself never
-   renders them - the template cache is keyed on structure options assumed
-   to be a small, bounded set, and bar_segments ranges freely). Each carries
-   its own --segment-position (a plain percentage along the bar, computed in
-   JS); the rules below decide whether that's a left or a bottom offset
-   depending on orientation - JS only ever needs to know "how far along the
-   bar", never which axis. Appended after .inner in the DOM (same stacking
-   context, later paints on top - no z-index needed), in the card's own
-   background color, so each reads as a genuine cut through the bar/fill
-   rather than a drawn line. border-radius is forced to 0 on .bar: it still
-   clips via overflow: hidden with its normal rounded corner, and that curve
-   rounds off the first/last cell unevenly compared to the others. */
+/* === SEGMENTED BAR (bar_segments: N, HABase#_buildSegmentCells) ===
+   N real cells with a genuine flex gap between them, not a divider painted
+   over the fill (rebuilt twice already for that: a divider landing on a
+   marker hid it, see CHANGELOG.md). border-radius forced to 0 on .bar: its
+   rounded corner would round the first/last cell unevenly otherwise. */
 .bar-segmented .${CARD.htmlStructure.elements.progressBar.bar.class} {
   border-radius: 0;
 }
 
-/* Wrapper grouping every .segment-divider (see HABase#_buildSegmentDividers)
-   instead of leaving them loose alongside the watermark/zero/value marks
-   that already live directly in .bar. inset: 0 keeps it (and everything
-   positioned inside it) spanning the exact same box .bar itself does, so
-   --segment-position below still means the same thing it would have meant
-   positioned directly against .bar. */
-.${CARD.htmlStructure.elements.progressBar.segments.class} {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
+/* Replaced by the cell row in segmented mode - left visible, its own
+   continuous fill would show right through every gap. */
+.bar-segmented .${CARD.htmlStructure.elements.progressBar.inner.class} {
+  display: none;
 }
 
-.${CARD.htmlStructure.elements.progressBar.segmentDivider.class} {
-  position: absolute;
-  pointer-events: none;
-  background: var(--ha-card-background, var(--card-background-color));
-  /* Fixed, odd px values (not calc()-derived from --progress-size) - odd on
-     purpose: each divider centers on its boundary via a whole-pixel offset
-     below, and an even width would only have a symmetric half/half split
-     available, fractional (sub-pixel) either way a boundary doesn't itself
-     land on a whole device pixel. Doubled for medium/large/xlarge (a
-     hairline that reads fine on a small bar disappears on a bigger one).
-     This is the fallback tier - see --bar-segment-gap-final just below. */
+/* --bar-segments/gap live on .bar itself, not .segments - a watermark/
+   peak_marker mark sits alongside .segments as .bar's own child, never
+   inside it, so it can only ever inherit what .bar itself carries (see the
+   mark compensation rules further down). */
+.bar-segmented .${CARD.htmlStructure.elements.progressBar.bar.class} {
+  /* Fixed fallback tier, superseded by the length-relative one below
+     wherever it resolves. */
   --bar-segment-gap: 3px;
-  /* Resolves to the modern (length-relative) tier wherever it exists, the
-     fixed odd tier everywhere else - --bar-segment-gap-modern is only ever
-     declared inside the @supports block below, so on an engine that doesn't
-     match it the property stays genuinely unset (not just "invalid"), and
-     var()'s own fallback here does the rest - same shape as the watermark
-     triangle's --wm-half-tri. Every consumer below (width/height/left/
-     bottom) reads this single variable now instead of each duplicating both
-     tiers itself. */
   --bar-segment-gap-final: var(--bar-segment-gap-modern, var(--bar-segment-gap));
+  /* --epb-bar-segment-gap (theme.md) overrides the computed gap - read here
+     too, or a themed gap would only move the real cells, not the marks. */
+  --bar-segment-gap-effective: var(--epb-bar-segment-gap, var(--bar-segment-gap-final));
 }
 
-/* Modern tier, feature-gated via @supports (see --bar-segment-gap-final
-   above) instead of duplicating every consuming declaration - round()/mod()
-   are CSS Values 4 (Chrome/Edge 114+, Firefox 118+, Safari 16.4+), past the
-   documented 94+ floor; both ship together in every engine that has either,
-   so testing round() alone is a reliable proxy for mod() too. */
+/* Modern tier, gated on round()/mod() (CSS Values 4), past the documented
+   94+ floor. */
 @supports (top: round(down, 1px, 1px)) {
-  .${CARD.htmlStructure.elements.progressBar.segmentDivider.class} {
-    /* Scales with the bar's own LENGTH (one segment's own share of it)
-       instead of the fixed thickness-based tiers above - 40% of one
-       segment's cell width (100% / --bar-segments), floored to a whole px,
-       nudged up by 1px when that lands even (needs to stay odd, same
-       whole-pixel-centering reasoning as the fallback), then clamped to
-       [3px, 9px] - floored so it stays visible with lots of segments,
-       capped so a bar with very few segments (e.g. bar_segments: 2) doesn't
-       turn into a huge divider with nothing bounding it. 3px/9px are both
-       odd on purpose: clamp() only ever returns one of its three inputs
-       verbatim, so as long as all three (the floor, the ceiling, and the
-       already-oddified value) are odd, the result is guaranteed odd too -
-       clamping AFTER the +1px nudge (not before) means that nudge can never
-       push a ceiling-clamped value 1px past the ceiling. */
+  .bar-segmented .${CARD.htmlStructure.elements.progressBar.bar.class} {
+    /* One segment's own share of the bar's length, clamped to [3px, 9px]. */
     --bar-segment-gap-floor: round(down, calc(100% / var(--bar-segments, 10) * 0.4), 1px);
     --bar-segment-gap-modern: clamp(
       3px,
@@ -1601,57 +1560,201 @@ ha-card.info-multiline {
   }
 }
 
-.${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.segmentDivider.class},
-.${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.segmentDivider.class},
-.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.elements.progressBar.segmentDivider.class} {
+.${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.bar.class},
+.${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.bar.class},
+.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
   --bar-segment-gap: 5px;
 }
 
-/* top/bottom/overlay/background have no bar_size class at all to key off of
-   above (schema.ts deletes bar_size entirely for these four - never a
-   meaningful choice there, the editor hides the field too) - fixed values
-   instead, same odd-width reasoning. below is deliberately NOT included
-   here: unlike the other three, it keeps its real bar_size, so it already
-   gets the right value from the rules above. */
-.top-container .${CARD.htmlStructure.elements.progressBar.segmentDivider.class},
-.bottom-container .${CARD.htmlStructure.elements.progressBar.segmentDivider.class} {
+/* top/bottom/overlay/background have no bar_size class to key off of above
+   (schema.ts deletes it for these four) - fixed values instead. Plain
+   descendant selectors, not compounded with .bar-segmented: .top-container/
+   .bottom-container are a separate wrapper div, not a root class. */
+.top-container .${CARD.htmlStructure.elements.progressBar.bar.class},
+.bottom-container .${CARD.htmlStructure.elements.progressBar.bar.class} {
   --bar-segment-gap: 3px;
 }
 
-.overlay .${CARD.htmlStructure.elements.progressBar.segmentDivider.class},
-.background .${CARD.htmlStructure.elements.progressBar.segmentDivider.class} {
+.overlay .${CARD.htmlStructure.elements.progressBar.bar.class},
+.background .${CARD.htmlStructure.elements.progressBar.bar.class} {
   --bar-segment-gap: 5px;
 }
 
-.horizontal-bar .${CARD.htmlStructure.elements.progressBar.segmentDivider.class} {
-  top: 0;
-  bottom: 0;
-  /* Not left: var(--segment-position) + transform: translateX(-50%) - -50%
-     of an ODD width is itself a fractional (half-pixel) offset, reopening
-     the exact sub-pixel problem the odd width was chosen to avoid.
-     (--epb-bar-segment-gap - 1px) / 2 is a whole-number offset instead (1px
-     for 3px, 2px for 5px): shifts left just enough that the divider's own
-     center *pixel* - not its geometric center point - lands on
-     --segment-position. --epb-bar-segment-gap: a card_mod override hook,
-     same pattern as --epb-progress-bar-radius/--epb-progress-bar-min-width
-     above - checked here at the single point both width and the centering
-     math actually consume --bar-segment-gap-final, so a card_mod override
-     always wins outright regardless of which tier (fixed or modern) would
-     otherwise have set it. */
-  left: calc(var(--segment-position) - (var(--epb-bar-segment-gap, var(--bar-segment-gap-final)) - 1px) / 2);
-  width: var(--epb-bar-segment-gap, var(--bar-segment-gap-final));
+.${CARD.htmlStructure.elements.progressBar.segments.class} {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  pointer-events: none;
+  gap: var(--bar-segment-gap-effective);
+  /* Each opaque cell paints over its own share of this - only the real gaps
+     between them show it, reading as a cut to the card rather than to
+     .bar's own track color. */
+  background-color: var(--ha-card-background, var(--card-background-color));
 }
 
-.vertical-bar .${CARD.htmlStructure.elements.progressBar.segmentDivider.class} {
-  left: 0;
-  right: 0;
-  /* bottom, not top: value/percent grows from the bottom up on a true
-     vertical bar (see .vertical-bar .inner's own translateY), so
-     --segment-position (also counted from 0%) needs the same reference
-     edge. Same whole-pixel centering offset and --epb-bar-segment-gap
-     override as the horizontal rule above. */
-  bottom: calc(var(--segment-position) - (var(--epb-bar-segment-gap, var(--bar-segment-gap-final)) - 1px) / 2);
-  height: var(--epb-bar-segment-gap, var(--bar-segment-gap-final));
+/* --- Cell layout & windowing ---
+   Default row already places --segment-index: 0 at the anchor - only
+   vertical (bottom-up) and the negative arm need an explicit direction
+   below. Fill lives on ::before, not the cell - the cell's own background
+   is the empty-track color underneath it, .bar's own role for a plain bar. */
+.${CARD.htmlStructure.elements.progressBar.segmentCell.class} {
+  position: relative;
+  flex: 1 1 0%;
+  overflow: hidden;
+  background-color: var(${CARD.style.dynamic.progressBar.background.var}, var(--divider-color));
+}
+.${CARD.htmlStructure.elements.progressBar.segmentCell.class}::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--inner-background);
+}
+
+.vertical-bar .${CARD.htmlStructure.elements.progressBar.segments.class} {
+  flex-direction: column-reverse;
+}
+.horizontal-bar .${CARD.htmlStructure.elements.progressBar.half.class}.negative-zone .${CARD.htmlStructure.elements.progressBar.segments.class} {
+  flex-direction: row-reverse;
+}
+.vertical-bar .${CARD.htmlStructure.elements.progressBar.half.class}.negative-zone .${CARD.htmlStructure.elements.progressBar.segments.class} {
+  flex-direction: column;
+}
+
+/* background-size N cells wide turns the whole row back into one
+   window onto --inner-background; -position places each cell at its own
+   --segment-index-th slice. The two "flipped" cases mirror the
+   flex-direction overrides just above - same anchor, opposite formula. */
+.horizontal-bar .${CARD.htmlStructure.elements.progressBar.segmentCell.class}::before {
+  background-size: calc(var(--bar-segments, 2) * 100%) 100%;
+  background-position-x: calc(var(--segment-index, 0) / (var(--bar-segments, 2) - 1) * 100%);
+}
+.vertical-bar .${CARD.htmlStructure.elements.progressBar.segmentCell.class}::before {
+  background-size: 100% calc(var(--bar-segments, 2) * 100%);
+  background-position-y: calc((1 - var(--segment-index, 0) / (var(--bar-segments, 2) - 1)) * 100%);
+}
+.horizontal-bar .${CARD.htmlStructure.elements.progressBar.half.class}.negative-zone .${CARD.htmlStructure.elements.progressBar.segmentCell.class}::before {
+  background-position-x: calc((1 - var(--segment-index, 0) / (var(--bar-segments, 2) - 1)) * 100%);
+}
+.vertical-bar .${CARD.htmlStructure.elements.progressBar.half.class}.negative-zone .${CARD.htmlStructure.elements.progressBar.segmentCell.class}::before {
+  background-position-y: calc(var(--segment-index, 0) / (var(--bar-segments, 2) - 1) * 100%);
+}
+
+/* --- Fill amount & reveal ---
+   Plain bar: one fill fraction for the whole row, off the same
+   --progress-bar-value .inner itself reads. Set on the cell (::before
+   inherits it) - .bar > .segments (direct child) excludes center_zero's
+   arms just below, nested one level deeper via .bar-half instead. */
+.${CARD.htmlStructure.elements.progressBar.bar.class}
+  > .${CARD.htmlStructure.elements.progressBar.segments.class}
+  .${CARD.htmlStructure.elements.progressBar.segmentCell.class} {
+  --segment-fill: clamp(
+    0%,
+    calc((var(${CARD.style.dynamic.progressBar.value.var}, 0) * var(--bar-segments, 2) - var(--segment-index, 0)) * 100%),
+    100%
+  );
+}
+
+/* --arm-fill mirrors .inner.positive/.negative's own --inner-size exactly
+   (a theme/bar_stack diverging size first, the signed value as fallback) -
+   using only the fallback half broke a themed/stacked center_zero bar. */
+.${CARD.htmlStructure.elements.progressBar.half.class}.positive-zone {
+  --arm-fill: var(${CARD.style.dynamic.progressBar.stackSizePos.var}, max(var(${CARD.style.dynamic.progressBar.value.var}, 0), 0));
+}
+.${CARD.htmlStructure.elements.progressBar.half.class}.negative-zone {
+  --arm-fill: var(${CARD.style.dynamic.progressBar.stackSizeNeg.var}, max(calc(var(${CARD.style.dynamic.progressBar.value.var}, 0) * -1), 0));
+}
+.${CARD.htmlStructure.elements.progressBar.half.class} .${CARD.htmlStructure.elements.progressBar.segmentCell.class} {
+  --segment-fill: clamp(
+    0%,
+    calc((var(--arm-fill, 0) * var(--bar-segments, 2) - var(--segment-index, 0)) * 100%),
+    100%
+  );
+}
+
+/* Plain bar and the positive arm share the same anchor (left/bottom), but
+   need separate selectors: .bar > .segments (direct child) is what excludes
+   center_zero's arms from the plain --segment-fill rule above, so the
+   positive arm needs its own explicit match here too, not just the
+   negative one below - grouped since the formula itself is identical. */
+.horizontal-bar
+  .${CARD.htmlStructure.elements.progressBar.bar.class}
+  > .${CARD.htmlStructure.elements.progressBar.segments.class}
+  .${CARD.htmlStructure.elements.progressBar.segmentCell.class}::before,
+.horizontal-bar .${CARD.htmlStructure.elements.progressBar.half.class}.positive-zone .${CARD.htmlStructure.elements.progressBar.segmentCell.class}::before {
+  clip-path: inset(0 calc(100% - var(--segment-fill)) 0 0);
+}
+.vertical-bar
+  .${CARD.htmlStructure.elements.progressBar.bar.class}
+  > .${CARD.htmlStructure.elements.progressBar.segments.class}
+  .${CARD.htmlStructure.elements.progressBar.segmentCell.class}::before,
+.vertical-bar .${CARD.htmlStructure.elements.progressBar.half.class}.positive-zone .${CARD.htmlStructure.elements.progressBar.segmentCell.class}::before {
+  clip-path: inset(calc(100% - var(--segment-fill)) 0 0 0);
+}
+.horizontal-bar .${CARD.htmlStructure.elements.progressBar.half.class}.negative-zone .${CARD.htmlStructure.elements.progressBar.segmentCell.class}::before {
+  clip-path: inset(0 0 0 calc(100% - var(--segment-fill)));
+}
+.vertical-bar .${CARD.htmlStructure.elements.progressBar.half.class}.negative-zone .${CARD.htmlStructure.elements.progressBar.segmentCell.class}::before {
+  clip-path: inset(0 0 calc(100% - var(--segment-fill)) 0);
+}
+
+/* Cell boundaries aren't at i/N of the box - gaps make cellWidth narrower
+   than 100%/N, shifting every internal boundary left of the naive value%
+   (only 0%/100% still line up). Same slot/index/frac split as --segment-fill
+   above, applied to position instead of fill fraction: continuous within a
+   cell (real sub-cell precision), only crosses cells at the true boundary. */
+@supports (top: round(down, 1px, 1px)) {
+  .bar-segmented.${CARD.style.dynamic.progressBar.centerZero.class} .${CARD.htmlStructure.elements.progressBar.bar.class} {
+    --bar-segment-gap-cz-floor: round(down, calc(50% / var(--bar-segments, 10) * 0.4), 1px);
+    --bar-segment-gap-cz-modern: clamp(
+      3px,
+      calc(var(--bar-segment-gap-cz-floor) + 1px - mod(var(--bar-segment-gap-cz-floor), 2px)),
+      9px
+    );
+    --bar-segment-gap-cz-final: var(--bar-segment-gap-cz-modern, var(--bar-segment-gap));
+    --bar-segment-gap-cz-effective: var(--epb-bar-segment-gap, var(--bar-segment-gap-cz-final));
+  }
+
+  .bar-segmented:not(.${CARD.style.dynamic.progressBar.centerZero.class}) .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+  .bar-segmented:not(.${CARD.style.dynamic.progressBar.centerZero.class}) .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
+  .bar-segmented:not(.${CARD.style.dynamic.progressBar.centerZero.class}) .${CARD.htmlStructure.elements.progressBar.minMarker.class},
+  .bar-segmented:not(.${CARD.style.dynamic.progressBar.centerZero.class}) .${CARD.htmlStructure.elements.progressBar.maxMarker.class},
+  .bar-segmented:not(.${CARD.style.dynamic.progressBar.centerZero.class}) .${CARD.htmlStructure.elements.progressBar.averageMarker.class} {
+    --segment-slot: calc(var(--wm-value-num, 0) / 100 * var(--bar-segments, 2));
+    --segment-cell-index: clamp(0, round(down, var(--segment-slot), 1), calc(var(--bar-segments, 2) - 1));
+    --segment-frac: calc(var(--segment-slot) - var(--segment-cell-index));
+    --segment-cell-width: calc(
+      (100% - (var(--bar-segments, 2) - 1) * var(--bar-segment-gap-effective)) / var(--bar-segments, 2)
+    );
+    --wm-value: calc(
+      var(--segment-cell-index) * (var(--segment-cell-width) + var(--bar-segment-gap-effective)) +
+        var(--segment-frac) * var(--segment-cell-width)
+    );
+  }
+
+  .bar-segmented.${CARD.style.dynamic.progressBar.centerZero.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+  .bar-segmented.${CARD.style.dynamic.progressBar.centerZero.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
+  .bar-segmented.${CARD.style.dynamic.progressBar.centerZero.class} .${CARD.htmlStructure.elements.progressBar.minMarker.class},
+  .bar-segmented.${CARD.style.dynamic.progressBar.centerZero.class} .${CARD.htmlStructure.elements.progressBar.maxMarker.class},
+  .bar-segmented.${CARD.style.dynamic.progressBar.centerZero.class} .${CARD.htmlStructure.elements.progressBar.averageMarker.class} {
+    --segment-cell-width: calc(
+      (50% - (var(--bar-segments, 2) - 1) * var(--bar-segment-gap-cz-effective)) / var(--bar-segments, 2)
+    );
+    --segment-slot-pos: calc(max(0, var(--wm-value-num, 0) - 50) * 2 / 100 * var(--bar-segments, 2));
+    --segment-cell-index-pos: clamp(0, round(down, var(--segment-slot-pos), 1), calc(var(--bar-segments, 2) - 1));
+    --segment-frac-pos: calc(var(--segment-slot-pos) - var(--segment-cell-index-pos));
+    --segment-offset-pos: calc(
+      var(--segment-cell-index-pos) * (var(--segment-cell-width) + var(--bar-segment-gap-cz-effective)) +
+        var(--segment-frac-pos) * var(--segment-cell-width)
+    );
+    --segment-slot-neg: calc(max(0, 50 - var(--wm-value-num, 0)) * 2 / 100 * var(--bar-segments, 2));
+    --segment-cell-index-neg: clamp(0, round(down, var(--segment-slot-neg), 1), calc(var(--bar-segments, 2) - 1));
+    --segment-frac-neg: calc(var(--segment-slot-neg) - var(--segment-cell-index-neg));
+    --segment-offset-neg: calc(
+      var(--segment-cell-index-neg) * (var(--segment-cell-width) + var(--bar-segment-gap-cz-effective)) +
+        var(--segment-frac-neg) * var(--segment-cell-width)
+    );
+    --wm-value: calc(50% + var(--segment-offset-pos, 0) - var(--segment-offset-neg, 0));
+  }
 }
 
 /**
@@ -2400,6 +2503,7 @@ ha-card.info-multiline {
 
 .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
   --wm-value: var(--low-watermark-value, 20%);
+  --wm-value-num: var(--low-watermark-value-num, 20);
   --wm-color: var(--epb-low-watermark-color, var(--low-watermark-color, var(--red-color)));
   /* --epb-watermark-opacity (documented, shared) still overrides both sides
      when set; --epb-low-watermark-opacity is the new, more specific hook. */
@@ -2407,6 +2511,7 @@ ha-card.info-multiline {
 }
 .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   --wm-value: var(--high-watermark-value, 80%);
+  --wm-value-num: var(--high-watermark-value-num, 80);
   --wm-color: var(--epb-high-watermark-color, var(--high-watermark-color, var(--red-color)));
   opacity: var(--epb-high-watermark-opacity, var(--epb-watermark-opacity, var(--high-watermark-opacity-value, 0.8)));
 }
@@ -2540,16 +2645,19 @@ ha-card.info-multiline {
 
 .${CARD.htmlStructure.elements.progressBar.minMarker.class} {
   --wm-value: var(--peak-min-value, 0%);
+  --wm-value-num: var(--peak-min-value-num, 0);
   --wm-color: var(--epb-peak-min-color, var(--peak-min-color, var(--state-icon-color)));
   opacity: var(--epb-peak-min-opacity, var(--peak-min-opacity-value, 0.8));
 }
 .${CARD.htmlStructure.elements.progressBar.maxMarker.class} {
   --wm-value: var(--peak-max-value, 100%);
+  --wm-value-num: var(--peak-max-value-num, 100);
   --wm-color: var(--epb-peak-max-color, var(--peak-max-color, var(--state-icon-color)));
   opacity: var(--epb-peak-max-opacity, var(--peak-max-opacity-value, 0.8));
 }
 .${CARD.htmlStructure.elements.progressBar.averageMarker.class} {
   --wm-value: var(--peak-average-value, 50%);
+  --wm-value-num: var(--peak-average-value-num, 50);
   --wm-color: var(--epb-peak-average-color, var(--peak-average-color, var(--state-icon-color)));
   opacity: var(--epb-peak-average-opacity, var(--peak-average-opacity-value, 0.8));
 }

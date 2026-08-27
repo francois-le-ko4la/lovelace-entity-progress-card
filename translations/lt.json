@@ -242,7 +242,7 @@
         "critical_when_extreme": "Kritiška ekstremaliu atveju (bako lygis, nuokrypis...)",
         "critical_when_extreme_center": "Kritiška ekstremaliu atveju, centruota (center_zero)",
         "critical_when_high": "Kritiška, kai aukšta (CPU, RAM, disko naudojimas...)",
-        "critical_when_low": "Kritiška, kai žema (baterija, diskas...)",
+        "critical_when_low": "Kritiška, kai žema (baterija...)",
         "humidity": "Drėgmė",
         "light": "Šviesi",
         "optimal_when_high": "Optimalu esant aukštoms reikšmėms",

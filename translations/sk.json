@@ -242,7 +242,7 @@
         "critical_when_extreme": "Kritické pri extrémnej hodnote (hladina nádrže, odchýlka...)",
         "critical_when_extreme_center": "Kritické pri extrémnej hodnote, vystredené (center_zero)",
         "critical_when_high": "Kritické pri vysokej hodnote (CPU, RAM, využitie disku...)",
-        "critical_when_low": "Kritické pri nízkej hodnote (batéria, disk...)",
+        "critical_when_low": "Kritické pri nízkej hodnote (batéria...)",
         "humidity": "Vlhkosť",
         "light": "Svetlá",
         "optimal_when_high": "Optimálne pri vysokej hodnote",

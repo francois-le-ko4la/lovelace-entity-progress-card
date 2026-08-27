@@ -280,12 +280,10 @@ class EditorDOMHelper extends DOMHelper {
     negotiated: Config | null = null,
     resolveType: ((def: FieldDef, config: LovelaceConfig) => unknown) | null = null,
   ) {
-    // Visibility
     if (def.showIf) {
       this.updateVisibility(name, def.showIf(config, negotiated));
     }
 
-    // Width
     if (is.func(def.width)) {
       this.updateWidth(name, def.width(config) as string);
     }
@@ -316,7 +314,6 @@ class EditorDOMHelper extends DOMHelper {
       this.updateSelector(name, { attribute: { entity_id: is.string(resolved) ? resolved : '' } });
     }
 
-    // Context
     if (def.context) {
       this._applyContext(name, def.context, config);
     }
@@ -324,14 +321,12 @@ class EditorDOMHelper extends DOMHelper {
     // Placeholder (negotiated default shown greyed - e.g. unit/decimal)
     this._applyPlaceholder(name, def, config, negotiated);
 
-    // Champs virtuels — pas de valeur dans le config, géré par showIf
-    // uniquement
+    // Virtual fields: no value in config, showIf alone drives them.
     if (def.virtual) {
       this._updateVirtualValue(name, def, config);
       return;
     }
 
-    // Value
     const raw = resolveValue(def, config);
     const val = def.invert ? !raw : raw;
     this.updateValue(name, val);

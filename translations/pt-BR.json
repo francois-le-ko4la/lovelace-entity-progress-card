@@ -242,7 +242,7 @@
         "critical_when_extreme": "Crítico quando extremo (nível do reservatório, desvio...)",
         "critical_when_extreme_center": "Crítico quando extremo, centralizado (center_zero)",
         "critical_when_high": "Crítico quando alto (CPU, RAM, uso de disco...)",
-        "critical_when_low": "Crítico quando baixo (bateria, disco...)",
+        "critical_when_low": "Crítico quando baixo (bateria...)",
         "humidity": "Umidade",
         "light": "Claro",
         "optimal_when_high": "Ideal quando alto",

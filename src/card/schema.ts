@@ -884,6 +884,15 @@ function struct<T>(
     }
   };
 
+  // Neither rainbow_full (no global fill fraction, a marker instead) nor
+  // bar_stack (one fraction per entity) has anything for cells to cut into.
+  const applyBarSegmentsRule = (result: Record<string, unknown>) => {
+    const hasStack = is.nonEmptyArray((result.bar_stack as { entities?: unknown[] } | undefined)?.entities);
+    if (result.bar_segments && (result.bar_color_mode === 'rainbow_full' || hasStack)) {
+      result.bar_segments = undefined;
+    }
+  };
+
   // interpolate needs the same active theme as bar_color_mode, and is only
   // meaningful alongside bar_color_mode: 'auto' (or unset) - mirrors the
   // editor's own interpolate showIf, and its onChange that already clears
@@ -945,6 +954,7 @@ function struct<T>(
     const hasTheme = !is.nullish(result.theme) || is.nonEmptyArray(result.custom_theme);
     applyBarColorModeRule(result, hasTheme);
     applyRainbowFullRule(result);
+    applyBarSegmentsRule(result);
     applyInterpolateRule(result, hasTheme);
     applyReverseSecondaryInfoRowRule(result);
 

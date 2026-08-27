@@ -242,7 +242,7 @@
         "critical_when_extreme": "極端なときにクリティカル（タンクレベル、偏差など）",
         "critical_when_extreme_center": "極端なときにクリティカル、中央揃え（center_zero）",
         "critical_when_high": "高いときにクリティカル（CPU、RAM、ディスク使用量など）",
-        "critical_when_low": "低いときにクリティカル（バッテリー、ディスクなど）",
+        "critical_when_low": "低いときにクリティカル（バッテリーなど）",
         "humidity": "湿度",
         "light": "明るさ",
         "optimal_when_high": "高い時が最適",

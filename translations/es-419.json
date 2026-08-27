@@ -242,7 +242,7 @@
         "critical_when_extreme": "Crítico en valor extremo (nivel de tanque, desviación...)",
         "critical_when_extreme_center": "Crítico en valor extremo, centrado (center_zero)",
         "critical_when_high": "Crítico en valor alto (CPU, RAM, uso de disco...)",
-        "critical_when_low": "Crítico en valor bajo (batería, disco...)",
+        "critical_when_low": "Crítico en valor bajo (batería...)",
         "humidity": "Humedad",
         "light": "Brillo",
         "optimal_when_high": "Óptimo cuando es alto",

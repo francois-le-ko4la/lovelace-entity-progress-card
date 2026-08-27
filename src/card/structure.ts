@@ -126,12 +126,10 @@ const StructureElements = {
   progressBar: (options: StructureOptions) => {
     const extraClass = options.barPosition === 'overlay' ? 'overlay' : '';
     const isCenterZero = options.barType === 'centerZero';
-    // bar_segments' dividers are NOT built here: a variable number of real
-    // divs (N+1 for bar_segments: N, including the two edge markers), built
-    // directly in JS (HABase#_buildSegmentDividers) after this static
-    // template is cloned in, not part of it - see that method's own comment
-    // for why (this template is cached per unique options set; bar_segments
-    // ranges freely, unlike every other option here).
+    // bar_segments' cells are NOT built here: a variable number of real divs,
+    // built directly in JS (HABase#_buildSegmentCells) after this static
+    // template is cloned in - this template is cached per unique options set,
+    // and bar_segments ranges freely, unlike every other option here.
     const markClass = 'watermark mark';
     const marks =
       Element(CARD.htmlStructure.elements.progressBar.lowWatermark, markClass).html() +

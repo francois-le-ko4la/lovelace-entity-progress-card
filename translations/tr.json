@@ -242,7 +242,7 @@
         "critical_when_extreme": "Uç değerde kritik (tank seviyesi, sapma...)",
         "critical_when_extreme_center": "Uç değerde kritik, ortalanmış (center_zero)",
         "critical_when_high": "Yüksekken kritik (CPU, RAM, disk kullanımı...)",
-        "critical_when_low": "Düşükken kritik (pil, disk...)",
+        "critical_when_low": "Düşükken kritik (pil...)",
         "humidity": "Nem",
         "light": "Işık",
         "optimal_when_high": "Yüksekken en iyi",

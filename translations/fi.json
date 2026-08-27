@@ -242,7 +242,7 @@
         "critical_when_extreme": "Kriittinen ääriarvossa (säiliön taso, poikkeama...)",
         "critical_when_extreme_center": "Kriittinen ääriarvossa, keskitetty (center_zero)",
         "critical_when_high": "Kriittinen korkeana (CPU, RAM, levyn käyttö...)",
-        "critical_when_low": "Kriittinen matalana (akku, levy...)",
+        "critical_when_low": "Kriittinen matalana (akku...)",
         "humidity": "Kosteus",
         "light": "Valoisuus",
         "optimal_when_high": "Optimaalinen korkeana",

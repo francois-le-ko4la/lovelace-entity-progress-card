@@ -242,7 +242,7 @@
         "critical_when_extreme": "Crític en extrem (nivell de dipòsit, desviació...)",
         "critical_when_extreme_center": "Crític en extrem, centrat (center_zero)",
         "critical_when_high": "Crític si és alt (CPU, RAM, ús de disc...)",
-        "critical_when_low": "Crític si és baix (bateria, disc...)",
+        "critical_when_low": "Crític si és baix (bateria...)",
         "humidity": "Humitat",
         "light": "Llum",
         "optimal_when_high": "Òptim quan és alt",

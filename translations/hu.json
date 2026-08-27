@@ -242,7 +242,7 @@
         "critical_when_extreme": "Kritikus szélsőértéknél (tartályszint, eltérés...)",
         "critical_when_extreme_center": "Kritikus szélsőértéknél, középre igazítva (center_zero)",
         "critical_when_high": "Kritikus magas értéknél (CPU, RAM, lemezhasználat...)",
-        "critical_when_low": "Kritikus alacsony értéknél (akkumulátor, lemez...)",
+        "critical_when_low": "Kritikus alacsony értéknél (akkumulátor...)",
         "humidity": "Páratartalom",
         "light": "Világos",
         "optimal_when_high": "Optimális magas értéknél",

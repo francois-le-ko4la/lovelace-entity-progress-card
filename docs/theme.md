@@ -7,7 +7,7 @@ Jump to the specific section:
 - [Token color](#token-color)
 - [Predefined theme](#predefined-theme)
   - 🔌 [Battery (adapts to charging state)](#battery-adaptive)
-  - 🪫 [Critical when low (Battery, disk space...)](#critical-low)
+  - 🪫 [Critical when low (Battery...)](#critical-low)
   - 💽 [Optimal when low](#optimal-low)
   - 🔥 [Critical when high (CPU, RAM, disk usage...)](#critical-high)
   - 🔋 [Optimal when high](#optimal-high)
@@ -253,7 +253,7 @@ theme: battery_adaptive
 
 <a id="critical-low"></a>
 
-### 🪫 Critical when low (Battery, disk space...)
+### 🪫 Critical when low (Battery...)
 
 <img
   src="images/theme-critical-low-e3c0fa.png"
@@ -261,10 +261,10 @@ theme: battery_adaptive
 />
 
 The "Critical when Low" theme targets values that only become a problem near
-zero, and are otherwise fine across a wide range - a battery level or free disk
-space, for instance. Unlike `optimal_when_high`, the bands are not evenly split:
-they narrow sharply near zero to give more warning as the value approaches
-critical, and stay broadly "green" everywhere else.
+zero, and are otherwise fine across a wide range - a battery level, for
+instance. Unlike `optimal_when_high`, the bands are not evenly split: they
+narrow sharply near zero to give more warning as the value approaches critical,
+and stay broadly "green" everywhere else.
 
 <br />
 <details>
@@ -978,7 +978,7 @@ bar_color_mode: rainbow
 | `--epb-progress-bar-radius`           | Progress Bar | Border     | Progress bar container border radius                                                                                                                  | `4px`         |
 | `--epb-progress-inner-radius`         | Progress Bar | Border     | Progress bar inner fill border radius                                                                                                                 | `4px`         |
 | `--epb-progress-bar-min-width`        | Progress Bar | Dimension  | Minimum bar width before it stops shrinking further                                                                                                   | `30px`        |
-| `--epb-bar-segment-gap`               | Progress Bar | Dimension  | `bar_segments` divider thickness (overrides computed value)                                                                                           | `2px`         |
+| `--epb-bar-segment-gap`               | Progress Bar | Dimension  | `bar_segments` gap between cells (overrides computed value)                                                                                           | `2px`         |
 | `--epb-rainbow-marker-color`          | Marker       | Color      | `bar_color_mode: rainbow_full` marker color                                                                                                           | `#ffffff`     |
 | `--epb-rainbow-marker-opacity`        | Marker       | Opacity    | `bar_color_mode: rainbow_full` marker opacity                                                                                                         | `1`           |
 | `--epb-rainbow-marker-size`           | Marker       | Dimension  | `bar_color_mode: rainbow_full` marker width                                                                                                           | `5px`         |

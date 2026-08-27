@@ -242,7 +242,7 @@
         "critical_when_extreme": "Critique si extrême (niveau de cuve, écart...)",
         "critical_when_extreme_center": "Critique si extrême, centré (center_zero)",
         "critical_when_high": "Critique si haut (CPU, RAM, usage disque...)",
-        "critical_when_low": "Critique si bas (batterie, disque...)",
+        "critical_when_low": "Critique si bas (batterie...)",
         "humidity": "Humidité",
         "light": "Lumière",
         "optimal_when_high": "Optimal quand c'est élevé",

@@ -242,7 +242,7 @@
         "critical_when_extreme": "極端時嚴重（水箱液位、偏差...）",
         "critical_when_extreme_center": "極端時嚴重，置中（center_zero）",
         "critical_when_high": "偏高時嚴重（CPU、RAM、磁碟使用率...）",
-        "critical_when_low": "偏低時嚴重（電池、磁碟...）",
+        "critical_when_low": "偏低時嚴重（電池...）",
         "humidity": "濕度",
         "light": "明亮",
         "optimal_when_high": "數值高時最佳",

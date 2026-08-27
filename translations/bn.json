@@ -242,7 +242,7 @@
         "critical_when_extreme": "চরমে ক্রিটিক্যাল (ট্যাংক লেভেল, বিচ্যুতি...)",
         "critical_when_extreme_center": "চরমে ক্রিটিক্যাল, কেন্দ্রীভূত (center_zero)",
         "critical_when_high": "উচ্চে ক্রিটিক্যাল (CPU, RAM, ডিস্ক ব্যবহার...)",
-        "critical_when_low": "নিম্নে ক্রিটিক্যাল (ব্যাটারি, ডিস্ক...)",
+        "critical_when_low": "নিম্নে ক্রিটিক্যাল (ব্যাটারি...)",
         "humidity": "আর্দ্রতা",
         "light": "আলো",
         "optimal_when_high": "বেশি হলে সর্বোত্তম",

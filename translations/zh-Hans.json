@@ -242,7 +242,7 @@
         "critical_when_extreme": "极端值告警（水箱液位、偏差...）",
         "critical_when_extreme_center": "极端值告警，居中（center_zero）",
         "critical_when_high": "高值告警（CPU、内存、磁盘使用率...）",
-        "critical_when_low": "低值告警（电池、磁盘...）",
+        "critical_when_low": "低值告警（电池...）",
         "humidity": "湿度",
         "light": "亮度",
         "optimal_when_high": "值高时最佳",

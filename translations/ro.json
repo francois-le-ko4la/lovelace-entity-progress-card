@@ -242,7 +242,7 @@
         "critical_when_extreme": "Critic la valoare extremă (nivel rezervor, deviație...)",
         "critical_when_extreme_center": "Critic la valoare extremă, centrat (center_zero)",
         "critical_when_high": "Critic la valoare mare (CPU, RAM, utilizare disc...)",
-        "critical_when_low": "Critic la valoare mică (baterie, disc...)",
+        "critical_when_low": "Critic la valoare mică (baterie...)",
         "humidity": "Umiditate",
         "light": "Luminozitate",
         "optimal_when_high": "Optim când este ridicat",

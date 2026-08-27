@@ -1794,7 +1794,7 @@ _Default value_:
 Renders the progress bar as discrete blocks — like battery cells or a signal
 strength indicator — instead of a continuous fill. Both the track and the fill
 are segmented, so gaps are visible in both the empty and filled portions of the
-bar.
+bar. With [`center_zero`](#center_zero), each arm is segmented independently.
 
 _Example_:
 
@@ -1806,6 +1806,14 @@ bar_segments: 10
 
 Works with any bar orientation, size, and color mode/effect. The visual editor
 exposes this as a numeric field.
+
+> [!NOTE]
+>
+> `bar_segments` doesn't combine with [`bar_color_mode`](#bar_color_mode)
+> `rainbow_full` (no single fill fraction to cut into cells — the whole track is
+> always shown, with a moving marker instead) or [`bar_stack`](#bar_stack) (one
+> fill fraction per entity, not one for the whole bar) — either one clears
+> `bar_segments` automatically.
 
 [🔼 Back to top]
 
