@@ -4,8 +4,9 @@ import { is, has, assertDefined } from '../../src/utils/common-checks.js';
 
 describe('is.nullish / emptyString / nonEmptyString / nullishOrEmptyString - drawing the line consistently', () => {
   test('nullish is true only for null/undefined, never for an empty string or 0', () => {
+    const notSet = undefined;
     assert.equal(is.nullish(null), true);
-    assert.equal(is.nullish(undefined), true);
+    assert.equal(is.nullish(notSet), true);
     assert.equal(is.nullish(''), false);
     assert.equal(is.nullish(0), false);
   });
